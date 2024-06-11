@@ -69,22 +69,16 @@ export default defineNuxtConfig({
     // store (alternative to vuex)
     ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],
     '@pinia-plugin-persistedstate/nuxt',
-    // 'nuxt-monaco-editor'
   ],
   piniaPersistedState: {
     key: (id: string) => `opsiui-${id}`,
     storage: 'localStorage',
-    // storage: 'localStorage',
     debug: true,
   },
   tailwindcss: {
     viewer: false,
   },
-  // colorMode: {
-  //   classSuffix: '',
-  // },
 
-  // vueuse
   vueuse: {
     ssrHandlers: true,
   },
@@ -103,7 +97,6 @@ export default defineNuxtConfig({
     '~/assets/scss/bv-colors.scss', // bv import colors
   ],
   elementPlus: {
-    // useSource: true,
     icon: false,
     importStyle: "scss",
     themes: ['dark'], // from docs: "import style css or sass(scss) with components, disable automatically import styles with false."
@@ -112,12 +105,8 @@ export default defineNuxtConfig({
 
   primevue: {
     usePrimeVue: true,
-    /* Options */
-    // cssLayerOrder: 'reset,primevue',
     options: {
       ripple: false,
-      // unstyled: true,
-      // pt: Tailwind,
       pt: {}
     },
 

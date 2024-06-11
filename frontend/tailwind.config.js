@@ -1,14 +1,11 @@
 export default {
-  purge: {
-    enabled: true, // process.env.NODE_ENV === 'production'
-    content: [
-      './components/**/*.{vue,js,ts,tsx}',
-      './layouts/**/*.vue',
-      './pages/**/*.vue',
-      './plugins/**/*.{js,ts,tsx}',
-      './nuxt.config.{js,ts}',
-    ],
-  },
+  content: [
+    './components/**/*.{vue,js,ts,tsx}',
+    './layouts/**/*.vue',
+    './pages/**/*.vue',
+    './plugins/**/*.{js,ts,tsx}',
+    './nuxt.config.{js,ts}',
+  ],
   theme: {
     extend: {
       width: {
