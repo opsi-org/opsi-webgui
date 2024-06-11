@@ -58,6 +58,8 @@ const rightSideVisible = ref<boolean>(!mq.isMobile.value)
 onMounted(async ()=>{
   await checkConfig()
   settings.initColormode()
+  leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
+  rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
 })
 
 function setLeftCollapse (v: boolean) {
