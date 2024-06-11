@@ -29,10 +29,13 @@
           class=" min-h-192"
         >
           <template #content="{ items }">
+            {{settings.colormode}}
             <table class="table-auto w-full min-h-96">
               <thead class="sticky top-0 z-[999] !h-[50px] !max-h-[50px] bg-light"
               :class="{
-                'bg-dark': settings.colormode === 'dark'
+                'bg-light': settings.colormode === undefined || settings.colormode === 'light',
+                'bg-dark': settings.colormode === 'dark',
+                // 'bg-dark': settings.colormode === 'dark'
               }">
                 <tr class="h-[50px]">
                   <template v-for="col in (visibleColumns as any)" :key="col.key">
@@ -386,7 +389,6 @@ import type { SortState } from 'element-plus'
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { TRowData } from '~/types/Datatypes'
 import type { ITableData } from '~/types/ttable'
-import { useMouse } from '@vueuse/core'
 // import Column from 'primevue/column'
 // import ColumnGroup from 'primevue/columngroup'   // optional
 // import Row from 'primevue/row'                   // optional
