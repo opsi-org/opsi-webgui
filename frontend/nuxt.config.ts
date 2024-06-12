@@ -11,6 +11,14 @@ console.log("---------------------------------------------------")
 export default defineNuxtConfig({
   build: {
     analyze: true,
+    hardSource: true,  // reuse cache between builds
+    webpack: {
+      loaders: {
+        vue: {
+          hotReload: false, // disable HMR
+        },
+      },
+    },
     webpack: {
       optimization: {
         usedExports: true,
