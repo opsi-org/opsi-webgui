@@ -18,8 +18,6 @@ export default defineNuxtConfig({
           hotReload: false, // disable HMR
         },
       },
-    },
-    webpack: {
       optimization: {
         usedExports: true,
       },
