@@ -637,7 +637,7 @@ async function wsBusMsgObjectChanged (msg: any = undefined) {
       // check if we may cause the event...
       console.log(`MBUS; ${msg.data.productType}`, msg)
       notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.poc_updated', { productId: msg.data.productId }),
-          button: { label: $t('label.reloadPage'), onClick() {
+          button: { label: $t('label.reloadPage'), onClick() { 
             async () => {
               await tableHelper.fetch()
             }
