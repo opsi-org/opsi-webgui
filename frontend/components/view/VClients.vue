@@ -287,22 +287,24 @@ const columns = ref<ITableHeaderRow>({
         return (
           <>
           {/* { <el-tag>{fetchedData.value.findIndex((e: any) => e.clientId === rowData.clientId) + 1}</el-tag> } */}
-          <BTNRowLink
-            isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'config'}
-            icon={icons.settings}
-            onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'config')}
-          />
-          <BTNRowLink
-            isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'logs'}
-            icon={icons.log}
-            onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'logs')}
-          />
-          <BTNRowLink
-            isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'clone'}
-            icon={icons.client}
-            onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'clone')}
-          />
-          <DDClientActions clientIds={[rowData.clientId]} />
+          <div class="flex flex-row">
+            <BTNRowLink
+              isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'config'}
+              icon={icons.settings}
+              onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'config')}
+            />
+            <BTNRowLink
+              isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'logs'}
+              icon={icons.log}
+              onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'logs')}
+            />
+            <BTNRowLink
+              isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'clone'}
+              icon={icons.client}
+              onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'clone')}
+            />
+            <DDClientActions clientIds={[rowData.clientId]} />
+        </div>
           </>
       )},
     }

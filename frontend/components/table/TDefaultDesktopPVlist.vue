@@ -6,6 +6,8 @@
       <!-- SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }} -->
       <div class="flex justify-content-between">
         <div>
+          <slot name="header-title"></slot>
+
           <!-- <h4>{{ props.id }}</h4> -->
         </div>
         <div class="flex">
@@ -82,11 +84,14 @@
               </thead>
               <tbody>
                 <tr v-for="item in dataModel" :key="item[props.rowId]"
-                :class="{ 'h-[50px]': true }"
+                  :class="{
+                    'h-[50px]': true,
+                    'border-b border-slate-600/50': true
+                  }"
                   @click="rowEventHandlers.onClick(item)"
                   @dblclick="rowEventHandlers.onDblclick(item)"
                   @contextmenu="rowEventHandlers.onContextmenu({rowData: item, event: $event})"
-                  >
+                >
                   <template v-for="col in (visibleColumns as any)" :key="col.key">
 
                     <td v-if="!renderCells"><el-text>{{ item[col.key] }}</el-text></td>

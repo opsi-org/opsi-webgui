@@ -41,16 +41,13 @@ async function useAPI2<T> (
   let status: any = null;
 
   let fullBody = body
-  let query = {}
-
-
   if (method === 'GET' && body != undefined) {
     fullURL = fullURL +'?'+ _getBodyParams(body)
-    // query = body
     fullBody = undefined
   }
 
   const fetch = useFetch<T>(fullURL, {
+    baseURL: baseUrl,
     onRequest({ request, options }: any) {
       // Set the request headers
       const headers = { ...opts?.headers }
@@ -74,19 +71,25 @@ async function useAPI2<T> (
       options.credentials = 'include'
       options.method = method
       options.body = fullBody
+      options.baseURL = baseUrl
       // options.query = query
       options.headers = headers
     },
     onRequestError({ request, options, error }: any) {
       // Handle the request errors
-      console.log('onRequestError', error, typeof error)
       callerror.value = { response: { data: { class: "", message: String(error) } } }
     },
     onResponse({ request, response, options }:any) {
       // Process the response data
       callresponse.value = response.data || response._data || response.body || {}
       callheaders = response.headers
-      console.log('onResponse', callheaders)
+      var username = callheaders.get('x-opsi-user-id')
+      if (username) {
+        username = username.split('user:')[1]
+        if (username) {
+          storeAuth().setUser(username)
+        }
+      }
       status = response.status
       pendingState.value = false
     },

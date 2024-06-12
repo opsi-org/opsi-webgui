@@ -244,11 +244,13 @@ const columns = ref<ITableHeaderRow>({
         })
         return (
         <>
+          <div class="flex flex-row">
           <BTNRowLink
             is-pressed={navigation.rowactionConfigChecked.value[rowData.depotId]}
             icon={icons.settings}
             onOnClick={(e: Event) => changeRowLink(e, rowData.depotId)}
           />
+          </div>
         </>
       )},
       // onClick={change}

@@ -17,7 +17,7 @@
 
       <el-main :class="{ 'main-content': true }">
         <el-scrollbar>
-          <BreadcrumbBPageNavigation />
+          <BreadcrumbBPageNavigation v-if="!props.error"/>
           <slot />
         </el-scrollbar>
 
@@ -46,6 +46,10 @@ import { ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent'
 import type { T_DisaledFeatures, T_configuration } from '~/types/APItypes'
 
+const props = defineProps({
+  error: { type: Boolean, default: false }
+})
+
 const { notifyError } = useNotification()
 const $t = useI18n().t
 const mq = useMQ()
@@ -53,13 +57,20 @@ const settings = storeSettings()
 const configapp = storeConfigapp()
 const leftSideIsSmall = ref<boolean>(false)
 const leftSideVisible = ref<boolean>(!mq.isMobile.value)
-const rightSideVisible = ref<boolean>(!mq.isMobile.value)
+const rightSideVisible = ref<boolean>(!mq.isMobile.value && !props.error)
+
+
 
 onMounted(async ()=>{
-  await checkConfig()
   settings.initColormode()
-  leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
-  rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
+  await checkConfig()
+  if (props.error){
+    rightSideVisible.value = false
+    leftSideIsSmall.value = false
+  } else {
+    leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
+    rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
+  }
 })
 
 function setLeftCollapse (v: boolean) {
