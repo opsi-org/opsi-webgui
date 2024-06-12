@@ -6,6 +6,8 @@
       <!-- SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }} -->
       <div class="flex justify-content-between">
         <div>
+          <slot name="header-title"></slot>
+
           <!-- <h4>{{ props.id }}</h4> -->
         </div>
         <div class="flex">
@@ -32,7 +34,9 @@
             <table class="table-auto w-full min-h-96">
               <thead class="sticky top-0 z-[999] !h-[50px] !max-h-[50px] bg-light"
               :class="{
-                'bg-dark': settings.colormode === 'dark'
+                'bg-light': settings.colormode === undefined || settings.colormode === 'light',
+                'bg-dark': settings.colormode === 'dark',
+                // 'bg-dark': settings.colormode === 'dark'
               }">
                 <tr class="h-[50px]">
                   <template v-for="col in (visibleColumns as any)" :key="col.key">
@@ -80,11 +84,14 @@
               </thead>
               <tbody>
                 <tr v-for="item in dataModel" :key="item[props.rowId]"
-                :class="{ 'h-[50px]': true }"
+                  :class="{
+                    'h-[50px]': true,
+                    'border-b border-slate-600/50': true
+                  }"
                   @click="rowEventHandlers.onClick(item)"
                   @dblclick="rowEventHandlers.onDblclick(item)"
                   @contextmenu="rowEventHandlers.onContextmenu({rowData: item, event: $event})"
-                  >
+                >
                   <template v-for="col in (visibleColumns as any)" :key="col.key">
 
                     <td v-if="!renderCells"><el-text>{{ item[col.key] }}</el-text></td>
@@ -386,7 +393,6 @@ import type { SortState } from 'element-plus'
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { TRowData } from '~/types/Datatypes'
 import type { ITableData } from '~/types/ttable'
-import { useMouse } from '@vueuse/core'
 // import Column from 'primevue/column'
 // import ColumnGroup from 'primevue/columngroup'   // optional
 // import Row from 'primevue/row'                   // optional

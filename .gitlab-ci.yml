@@ -197,7 +197,7 @@ check:versions:
     - VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
     - TAG=$VERSION_YML
     - echo $VERSION_YML
-    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 20 -e pull-binaries | grep -m 1 "\"version\"" | awk '{print $2}')
+    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 20 -e pull-binaries | grep -m 1 "\"version:\"" | awk '{print $2}')
     - VERSION_YML2=${VERSION_YML2//,/}
     - echo $VERSION_YML2
     - VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
