@@ -103,7 +103,7 @@ async function doLogin () {
       return
     }
     if (data.value == undefined) {
-      notifyError({ message: $t('message.error.empty-response') })
+      notifyError({ message: $t('message.error.empty-response', { details: "Login" }) })
       return
     }
     if (data.value.result !== 'Login success') {

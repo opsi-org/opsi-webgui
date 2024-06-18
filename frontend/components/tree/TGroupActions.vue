@@ -205,7 +205,7 @@ async function fetchProdGroups() {
     notifyError({ message: error?.response?.data?.message })
     return
   } else if (data.value == undefined) {
-    notifyError({ message: $t('message.error.empty-response') })
+    notifyError({ message: $t('message.error.empty-response', { details: "GroupActions" }) })
     return
   }
   // TODO: Backend: change groups data structure
@@ -220,7 +220,7 @@ async function fetchProductList() {
     notifyError({ message: error?.response?.data?.message })
     return
   } else if (data.value == undefined) {
-    notifyError({ message: $t('message.error.empty-response') })
+    notifyError({ message: $t('message.error.empty-response', { details: "GroupActions" }) })
     return
   }
   idList.value = data.value.map(function (item: { productId: any; }) { return item.productId })

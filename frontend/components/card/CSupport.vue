@@ -5,7 +5,8 @@
     </template>
     <el-text > {{ $t(item.description) }}</el-text>
     <br>
-    <el-link :href="item.link" target="_blank">{{ $t(item.buttonname) }}</el-link>
+    <el-link :href="item.link" target="_blank"
+    style="--el-link-hover-text-color: var(--opsi-general-red)">{{ $t(item.buttonname) }}</el-link>
   </el-card>
 </template>
 
