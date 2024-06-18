@@ -1,8 +1,10 @@
 <template>
   <div data-testid="BSide">
-    <el-menu router unique-opened :default-active="router.currentRoute.value?.fullPath" :collapse="isCollapse"
+    <el-menu router unique-opened
+      :default-active="router.currentRoute.value?.fullPath" :collapse="isCollapse"
       class="el-menu-mywrapper overflow-hidden max-w-full" :class="{'max-height-side': !mq.isMobile.value }"
-      style="--el-menu-icon-width: 244px;" type="primary">
+      style="--el-menu-icon-width: 244px;" type="primary"
+    >
       <span v-for="item in navItems" :key="item.title">
         <el-sub-menu v-if="item.submenu" :index="item.route" :route="item.route"
           popper-class="text-on-primary" class="text-on-primary" :data-testid="'NSidebar-' + item.title">
@@ -24,8 +26,8 @@
         </el-menu-item>
       </span>
     </el-menu>
-    <div v-if="!mq.isMobile.value" class="menu-footer relative inset-x-0 bottom-10 w-full text-on-primary">
-      <el-checkbox-button v-model="isCollapse" class="w-full text-on-primary" type="">
+    <div v-if="!mq.isMobile.value" class="menu-footer relative inset-x-0 bottom w-full text-on-primary">
+      <el-checkbox-button v-model="isCollapse" class="w-full text-on-primary " type="">
         {{ isCollapse ? '>>' : 'Collapse' }}
       </el-checkbox-button>
     </div>
@@ -99,9 +101,9 @@ const showTitle = computed(() => mq.isMobile.value || !isCollapse.value)
 
 <style scoped>
 .contents{
-  display:contents!important}
-
-.selected{
+  display:contents!important;
+}
+.selected {
   color:var(--el-color-primary);
   color:var(--el-menu-active-color);
 }
@@ -110,7 +112,7 @@ const showTitle = computed(() => mq.isMobile.value || !isCollapse.value)
   height:calc(100vh - 82px);
 }
 :deep(.el-menu-item.is-active path){
-    color:var(--opsi-genral-white)!important;
+  color:var(--opsi-genral-white)!important;
   color:var(--el-menu-active-color)!important;
 }
 :deep(.el-menu-item.is-active),
@@ -141,8 +143,8 @@ const showTitle = computed(() => mq.isMobile.value || !isCollapse.value)
 .el-menu-mywrapper{
   border:0!important;
 }
-  :deep(.iconify){
-    min-width:40px;
+:deep(.iconify){
+  min-width:40px;
 }
 :deep(.el-sub-menu__title){
   max-width:100%!important;

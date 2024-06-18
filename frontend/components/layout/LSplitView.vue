@@ -87,25 +87,16 @@ const page2Condition = computed(()=> {
   max-width: calc(100vw - 90px) !important;
   max-width: 100% !important;
 }
-.is-mobile .pagecontent {
-  /* max-height: calc(100vh - 70px) !important; */
-}
 .is-mobile .pagecontent,
 .is-mobile .pagecontent .mycol {
-  /* max-width: calc(100vw - 0px) !important; */
-  height: calc(100vh - 80px) !important;
-  max-height: calc(100vh - 80px) !important;
+  --above-main: 180px;
+  height: calc(100vh - var(--above-main)) !important;
+  max-height: calc(100vh - var(--above-main)) !important;
 }
 .el-main {
   padding: 0px !important;
-  height: calc(100vh - 80px) !important;
-  max-height: calc(100vh - 80px) !important;
-  /* max-height: calc(100vh - 60px); */
-  /* border: 1px solid #ddd; */
-  /* resize: horizontal; */
-}
-.el-aside {
-  /* border: 1px solid #ddd; */
-  /* resize: horizontal; */
+  --above-main: 90px;
+  height: calc(100vh - var(--above-main)) !important;
+  max-height: calc(100vh - var(--above-main)) !important;
 }
 </style>
