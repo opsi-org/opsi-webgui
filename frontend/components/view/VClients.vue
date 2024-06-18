@@ -12,19 +12,24 @@
         </template>
       </template>
     </el-dropdown>
+    <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" v-infinite-scroll="loadMore">
+      <el-table :data="fetchedData" v-loading="isLoading">
+        <template v-for="column in tableColumn">
+          <el-table-column
+            v-if="column.visible || column.alwaysVisible"
+            :key="column.key"
+            :prop="column.key"
+            :label="column.title"
+            :type="column.type"
+          >
+          </el-table-column>
+        </template>
+      </el-table>
+      <div v-if="!isLastPage" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+        Scroll down to load more...
+      </div>
+    </div>
 
-    <el-table :data="fetchedData" v-loading="isLoading" height="80vh">
-      <template v-for="column in tableColumn">
-        <el-table-column
-          v-if="column.visible || column.alwaysVisible"
-          :key="column.key"
-          :prop="column.key"
-          :label="column.title"
-          :type="column.type"
-        >
-        </el-table-column>
-      </template>
-    </el-table>
     <div class="flex justify-end">
       <el-pagination
         @current-change="handleCurrentChange"
@@ -48,6 +53,8 @@ const currentPage = ref(1)
 const pageSize = ref(20)
 // let fetchedData = ref({} as T_ClientsList)
 const isLoading = ref(false)
+let isLastPage = ref(false)
+let infiniteScrollDiv = ref<HTMLElement | null>(null)
 
 const tableColumn = ref([
   {title: 'selected', key: 'selected', sortable: false, type: 'selection', visible: true, alwaysVisible: true},
@@ -70,6 +77,12 @@ const tableColumn = ref([
 
 onMounted(() => {
   fetchClients()
+})
+
+watch(isLoading, (newVal) => {
+  if (newVal && infiniteScrollDiv.value) {
+    infiniteScrollDiv.value.scrollTop = 0;
+  }
 })
 
 async function fetchClients() {
@@ -95,6 +108,9 @@ async function fetchClients() {
     }
     fetchedData.value = data.value
     totalItems.value = parseInt(headers.get('x-total-count') || '0')
+    if (headers.get('x-total-count')) {
+      isLastPage.value = currentPage.value * pageSize.value >= parseInt(headers.get('x-total-count') || '0')
+    }
   } catch (error) {
     notifyError({ message: $t('message.error.unexpected') })
   } finally {
@@ -105,5 +121,12 @@ async function fetchClients() {
 function handleCurrentChange(val: number) {
   currentPage.value = val
   fetchClients()
+}
+
+function loadMore() {
+  if (!isLoading.value && !isLastPage.value) {
+    currentPage.value++
+    fetchClients()
+  }
 }
 </script>
