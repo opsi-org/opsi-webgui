@@ -12,7 +12,11 @@
         </template>
       </template>
     </el-dropdown>
-    <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" v-infinite-scroll="loadMore">
+
+    <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" @scroll="handleScroll">
+      <div v-if="!isFirstPage" style="height: 300px; display: flex; align-items: center; justify-content: center;">
+        Scroll up to load previous page...
+      </div>
       <el-table :data="fetchedData" v-loading="isLoading">
         <template v-for="column in tableColumn">
           <el-table-column
@@ -25,8 +29,8 @@
           </el-table-column>
         </template>
       </el-table>
-      <div v-if="!isLastPage" style="height: 200px; display: flex; align-items: center; justify-content: center;">
-        Scroll down to load more...
+      <div v-if="!isLastPage" style="height: 300px; display: flex; align-items: center; justify-content: center;">
+        Scroll down to load next page...
       </div>
     </div>
 
@@ -53,6 +57,7 @@ const currentPage = ref(1)
 const pageSize = ref(20)
 // let fetchedData = ref({} as T_ClientsList)
 const isLoading = ref(false)
+let isFirstPage = ref(false)
 let isLastPage = ref(false)
 let infiniteScrollDiv = ref<HTMLElement | null>(null)
 
@@ -79,11 +84,42 @@ onMounted(() => {
   fetchClients()
 })
 
-watch(isLoading, (newVal) => {
-  if (newVal && infiniteScrollDiv.value) {
-    infiniteScrollDiv.value.scrollTop = 0;
+function handleScroll(event: Event) {
+  let target = event.target as HTMLElement;
+  // Adjust scroll threshold based on the height of the scrollable area and the number of items on the page
+  let dynamicScrollThreshold = target.clientHeight / fetchedData.value.length;
+  if (target.scrollTop <= dynamicScrollThreshold) {
+    scrollUp();
+  } else if (target.scrollHeight - target.scrollTop <= target.clientHeight + dynamicScrollThreshold) {
+    scrollDown();
   }
-})
+}
+
+async function scrollUp() {
+  if (!isLoading.value && !isFirstPage.value) {
+    currentPage.value--
+    await fetchClients()
+  }
+}
+
+async function scrollDown() {
+  if (!isLoading.value && !isLastPage.value) {
+    currentPage.value++
+    await fetchClients()
+  }
+}
+
+function handleScrollPosition() {
+  if (infiniteScrollDiv.value) {
+    if (isLastPage.value) {
+      infiniteScrollDiv.value.scrollTo(0, infiniteScrollDiv.value.scrollHeight)
+    } else if (isFirstPage.value) {
+      infiniteScrollDiv.value.scrollTo(0, 0)
+    } else {
+      infiniteScrollDiv.value.scrollTo(0, 100)
+    }
+  }
+}
 
 async function fetchClients() {
   isLoading.value = true
@@ -109,12 +145,14 @@ async function fetchClients() {
     fetchedData.value = data.value
     totalItems.value = parseInt(headers.get('x-total-count') || '0')
     if (headers.get('x-total-count')) {
+      isFirstPage.value = currentPage.value == 1
       isLastPage.value = currentPage.value * pageSize.value >= parseInt(headers.get('x-total-count') || '0')
     }
   } catch (error) {
     notifyError({ message: $t('message.error.unexpected') })
   } finally {
     isLoading.value = false
+    handleScrollPosition()
   }
 }
 
@@ -122,11 +160,5 @@ function handleCurrentChange(val: number) {
   currentPage.value = val
   fetchClients()
 }
-
-function loadMore() {
-  if (!isLoading.value && !isLastPage.value) {
-    currentPage.value++
-    fetchClients()
-  }
-}
 </script>
+
