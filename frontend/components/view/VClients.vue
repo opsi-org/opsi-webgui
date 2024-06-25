@@ -14,8 +14,8 @@
     </el-dropdown>
 
     <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" @scroll="handleScroll">
-      <div v-if="!isFirstPage" style="height: 300px; display: flex; align-items: center; justify-content: center;">
-        Scroll up to load previous page...
+      <div v-if="!isFirstPage" style="height: 400px; display: flex; align-items: center; justify-content: center;">
+        <div v-if="!isLoading">Scroll up to load previous page...</div>
       </div>
       <el-table :data="fetchedData" v-loading="isLoading">
         <template v-for="column in tableColumn">
@@ -29,8 +29,8 @@
           </el-table-column>
         </template>
       </el-table>
-      <div v-if="!isLastPage" style="height: 300px; display: flex; align-items: center; justify-content: center;">
-        Scroll down to load next page...
+      <div style="height: 400px; display: flex; align-items: center; justify-content: center;">
+        <span v-if="!isLastPage && !isLoading" >Scroll down to load next page...</span>
       </div>
     </div>
 
@@ -55,7 +55,6 @@ let fetchedData = ref()
 const totalItems = ref<number>(0)
 const currentPage = ref(1)
 const pageSize = ref(20)
-// let fetchedData = ref({} as T_ClientsList)
 const isLoading = ref(false)
 let isFirstPage = ref(false)
 let isLastPage = ref(false)
@@ -86,7 +85,6 @@ onMounted(() => {
 
 function handleScroll(event: Event) {
   let target = event.target as HTMLElement;
-  // Adjust scroll threshold based on the height of the scrollable area and the number of items on the page
   let dynamicScrollThreshold = target.clientHeight / fetchedData.value.length;
   if (target.scrollTop <= dynamicScrollThreshold) {
     scrollUp();
@@ -109,15 +107,19 @@ async function scrollDown() {
   }
 }
 
-function handleScrollPosition() {
+function scrollToTopOfTable() {
   if (infiniteScrollDiv.value) {
-    if (isLastPage.value) {
-      infiniteScrollDiv.value.scrollTo(0, infiniteScrollDiv.value.scrollHeight)
-    } else if (isFirstPage.value) {
-      infiniteScrollDiv.value.scrollTo(0, 0)
-    } else {
-      infiniteScrollDiv.value.scrollTo(0, 100)
+    if (currentPage.value == 1) {
+      infiniteScrollDiv.value.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      return
     }
+    infiniteScrollDiv.value.scrollTo({
+      top: 400,
+      behavior: 'smooth'
+    });
   }
 }
 
@@ -152,7 +154,7 @@ async function fetchClients() {
     notifyError({ message: $t('message.error.unexpected') })
   } finally {
     isLoading.value = false
-    handleScrollPosition()
+    scrollToTopOfTable()
   }
 }
 
