@@ -13,8 +13,8 @@
       </template>
     </el-dropdown>
 
-    <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" @scroll="handleScroll">
-      <div v-if="!isFirstPage" style="height: 400px; display: flex; align-items: center; justify-content: center;">
+    <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" @scroll="debouncedHandleScroll">
+      <div v-if="!isFirstPage" class="extra-column">
         <div v-if="!isLoading">Scroll up to load previous page...</div>
       </div>
       <el-table :data="fetchedData" v-loading="isLoading">
@@ -25,11 +25,12 @@
             :prop="column.key"
             :label="column.title"
             :type="column.type"
+            :sortable="column.sortable"
           >
           </el-table-column>
         </template>
       </el-table>
-      <div style="height: 400px; display: flex; align-items: center; justify-content: center;">
+      <div class="extra-column">
         <span v-if="!isLastPage && !isLoading" >Scroll down to load next page...</span>
       </div>
     </div>
@@ -46,6 +47,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { debounce } from 'lodash'
 import type { T_ClientsList } from '~/types/APItypes';
 import { useNotification } from '~/composables/mixins/useComponent';
 const { notifyError } = useNotification()
@@ -92,6 +94,8 @@ function handleScroll(event: Event) {
     scrollDown();
   }
 }
+
+const debouncedHandleScroll = debounce(handleScroll, 200)
 
 async function scrollUp() {
   if (!isLoading.value && !isFirstPage.value) {
@@ -164,3 +168,12 @@ function handleCurrentChange(val: number) {
 }
 </script>
 
+<style scoped>
+.extra-column {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+</style>
