@@ -27,6 +27,10 @@
             :type="column.type"
             :sortable="column.sortable"
           >
+            <template #default="scope" v-if="column.key === 'actions'">
+              <el-button type="text" @click="handleActionClick(scope.row)">Action</el-button>
+              <el-button type="text" @click="useRouter().push('/clients/client/logs/' + scope.row.ident)">Log</el-button>
+            </template>
           </el-table-column>
         </template>
       </el-table>
@@ -166,6 +170,10 @@ function handlePagination(val: number) {
   currentPage.value = val
   fetchClients()
 }
+
+function handleActionClick(rowData: any) {
+  console.log('Action clicked for row:', rowData);
+}
 </script>
 
 <style scoped>
@@ -175,5 +183,4 @@ function handlePagination(val: number) {
   align-items: center;
   justify-content: center;
 }
-
 </style>
