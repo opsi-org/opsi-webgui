@@ -323,7 +323,7 @@ async function _fetch() {
     return []
   }
   if (data.value == undefined) {
-    notifyError({ message: $t('message.error.empty-response') })
+    notifyError({ message: $t('message.error.empty-response', { details: "Servers" }) })
     return []
   }
 

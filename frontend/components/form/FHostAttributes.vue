@@ -42,7 +42,7 @@ async function fetchData(id:string) {
       return
     }
     if (data.value == undefined) {
-      notifyError({ message: $t('message.error.empty-response') })
+      notifyError({ message: $t('message.error.empty-response', { details: "HostAttributes" }) })
       return
     }
     fetchedData.value = data.value

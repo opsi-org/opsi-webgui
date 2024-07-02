@@ -51,7 +51,7 @@ async function fetchClientGroups() {
     notifyError({ message: error?.response?.data?.message })
     return
   } else if (data.value == undefined) {
-    notifyError({ message: $t('message.error.empty-response') })
+    notifyError({ message: $t('message.error.empty-response', { details: "ClientGroupSelections" }) })
     return
   }
     // TODO: Backend: change groups data structure
@@ -68,7 +68,7 @@ async function fetchProdGroups() {
     notifyError({ message: error?.response?.data?.message })
     return
   } else if (data.value == undefined) {
-    notifyError({ message: $t('message.error.empty-response') })
+    notifyError({ message: $t('message.error.empty-response', { details: "ProductGroupSelections" }) })
     return
   }
   fetchedData.value = data.value.groups ?

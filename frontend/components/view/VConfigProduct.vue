@@ -109,7 +109,7 @@ async function fetchProperties (refetch: boolean = false) {
     errorText.value.properties = error.response.data.message
     return
   } else if (data.value == undefined) {
-    notifyError({ message: $t('message.error.empty-response') })
+    notifyError({ message: $t('message.error.empty-response', { details: "ConfigProductProperties" }) })
     return
   }
   fetchedData.value.properties = data.value
@@ -126,7 +126,7 @@ async function fetchDependencies () {
     errorText.value.dependencies = error.response.data.message
     return
   } else if (data.value == undefined) {
-    notifyError({ message: $t('message.error.empty-response') })
+    notifyError({ message: $t('message.error.empty-response', { details: "ConfigProductDependencies" }) })
     return
   }
   fetchedData.value.dependencies = data.value
