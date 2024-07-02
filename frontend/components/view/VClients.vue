@@ -1,17 +1,25 @@
 <template>
   <div>
     <el-dropdown trigger="click">
-      <el-button type="text">
-        Columns <i class="el-icon-arrow-down el-icon--right"></i>
+      <el-button>
+        <IconIIcon :icon="icons.columns" />
       </el-button>
       <template #dropdown>
-        <template v-for="column in tableColumn" >
-          <el-dropdown-item v-if="!column.alwaysVisible" :key="column.key">
-            <el-checkbox v-model="column.visible" @click.stop>{{ column.title }}</el-checkbox>
-          </el-dropdown-item>
-        </template>
+          <div style="display: flex; font-weight: bold; padding: 10px;">
+            <div class="pr-10"><IconIIcon :icon="icons.filter" /></div>
+            <div class="pr-10"><el-button type="text"><IconIIcon :icon="icons.sortDesc" />Sort</el-button></div>
+            <div><IconIIcon :icon="icons.columns" /></div>
+          </div>
+          <template v-for="column in tableColumn" :key="column.key">
+            <el-dropdown-item>
+              <el-checkbox :disabled="!column.filter" v-model="filterBy" @change="applyFilter(column.key)"></el-checkbox>
+              <el-radio :disabled="!column.sortable" v-model="sortBy" @change="applySort(column.key)"></el-radio>
+              <el-checkbox v-model="column.visible" @click.stop :disabled="column.alwaysVisible">{{ column.title }}</el-checkbox>
+            </el-dropdown-item>
+          </template>
       </template>
     </el-dropdown>
+    <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50"></el-input>
 
     <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" @scroll="debouncedHandleScroll">
       <div v-if="!isFirstPage" class="extra-column">
@@ -54,6 +62,8 @@
 import { debounce } from 'lodash'
 import type { T_ClientsList } from '~/types/APItypes';
 import { useNotification } from '~/composables/mixins/useComponent';
+import {useIcons} from '../../composables/mixins/useIcons'
+const icons = useIcons()
 const { notifyError } = useNotification()
 const storeSelection = storeSelections()
 const $t = useI18n().t
@@ -65,10 +75,12 @@ const isLoading = ref(false)
 let isFirstPage = ref(false)
 let isLastPage = ref(false)
 let infiniteScrollDiv = ref<HTMLElement | null>(null)
-
+const filterQuery = ref('')
+const sortBy = ref('ident')
+const filterBy = ref('ident')
 const tableColumn = ref([
   {title: 'selected', key: 'selected', sortable: false, type: 'selection', visible: true, alwaysVisible: true},
-  {title: 'clientId', key: 'clientId', sortable: true, visible: true, alwaysVisible: true},
+  {title: 'clientId', key: 'clientId', sortable: true, visible: true, alwaysVisible: true, filter: true},
   {title: 'macAddress', key: 'macAddress', sortable: false, visible: false},
   {title: 'ipAddress', key: 'ipAddress', sortable: true, visible: false},
   {title: 'description', key: 'description', sortable: false, visible: false},
@@ -134,7 +146,7 @@ function scrollToTopOfTable() {
 async function fetchClients() {
   isLoading.value = true
   const params = {
-    filterQuery: '',
+    filterQuery: filterQuery.value,
     pageNumber: currentPage.value,
     perPage: pageSize.value,
     sortBy:'clientId',
@@ -173,6 +185,16 @@ function handlePagination(val: number) {
 
 function handleActionClick(rowData: any) {
   console.log('Action clicked for row:', rowData);
+}
+
+function applyFilter(columnKey: string) {
+  filterBy.value = columnKey
+  // fetchClients()
+}
+
+function applySort(columnKey: string) {
+  sortBy.value = columnKey
+  // fetchClients()
 }
 </script>
 
