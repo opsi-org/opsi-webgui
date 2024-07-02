@@ -37,7 +37,7 @@
 
     <div class="flex justify-end">
       <el-pagination
-        @current-change="handleCurrentChange"
+        @current-change="handlePagination"
         :current-page="currentPage"
         :page-size="pageSize"
         layout="total, prev, pager, next, jumper"
@@ -162,7 +162,7 @@ async function fetchClients() {
   }
 }
 
-function handleCurrentChange(val: number) {
+function handlePagination(val: number) {
   currentPage.value = val
   fetchClients()
 }
