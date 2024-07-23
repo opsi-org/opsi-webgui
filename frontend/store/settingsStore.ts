@@ -40,16 +40,9 @@ export const storeSettings = defineStore('settings', {
       // if colormode is auto, use bt-mode as default (and set ep-mode to this)
       // if colormode is not auto (specific), set bt and ep to colormode
       const _colormode = getter.colormodeCookie
-      if (_colormode === undefined || _colormode === 'auto') {
-        // specific mode is not set. so return current bootstrap mode
-        return useColorMode().value // current bootstrap mode
-      }
       return _colormode as 'light'|'dark'|'auto'
     },
     isLight: (getter: any) => {
-      if (getter.colormode === 'auto') {
-        return useColorMode().value === 'light'
-      }
       return getter.colormode === 'light'
     }
   },
@@ -93,9 +86,6 @@ export const storeSettings = defineStore('settings', {
     },
     toggleTheme() {
       let _mode = this.colormode
-      if (_mode === 'auto') {
-        _mode = useColorMode().value // current bootstrap mode
-      }
       const newMode = (_mode === 'light') ? 'dark' : 'light'
       this.setColormode(newMode)
     },
@@ -103,12 +93,7 @@ export const storeSettings = defineStore('settings', {
       if (saveCookie) {
         useCookie('colormode').value = colormode
       }
-
-      const color_bt = useColorMode() // bootstrap
-      color_bt.value = colormode // set bootstrap colormode to given colormode
-
       const color_ep_isDark = useDark() // element plus
-      color_ep_isDark.value = color_bt.value === 'dark' // set elementplus colormode to same as bootstrap
     },
   },
 })

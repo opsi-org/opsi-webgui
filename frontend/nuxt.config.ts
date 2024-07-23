@@ -72,7 +72,6 @@ export default defineNuxtConfig({
   pages: true, // not necessary, will be done auttttomatically
   modules: [
     '@nuxtjs/i18n',
-    '@bootstrap-vue-next/nuxt',
     'nuxt-primevue',
     '@element-plus/nuxt',
     '@nuxtjs/tailwindcss',
@@ -104,7 +103,6 @@ export default defineNuxtConfig({
   css: [
     'primevue/resources/themes/md-dark-indigo/theme.css',
     '~/assets/scss/index.scss', // ep import colors
-    '~/assets/scss/bv-colors.scss', // bv import colors
   ],
   elementPlus: {
     icon: false,
