@@ -1,39 +1,35 @@
 <template>
-    <b-dropdown
-      id="quicksettingsDD"
-      data-testid="DropdownDDLang"
-      :aria-label="$t('button.lang.tooltip')"
-      :title="$t('button.lang.tooltip')"
-      :class="footer? 'border-0 ' : ''"
-      :variant="footer? 'primary' : 'outline-primary'"
-      size="sm"
-      :dropup="footer"
-    >
-      <template #button-content>
-        <span class="inline-flex min-w-max">
-          <IconIIcon :icon="icon.language" class=""/>
-          <span v-if="footer !== false" class="text-xs uppercase pl-1 ">{{ $i18n.locale }}</span>
-        </span>
-      </template>
-      <b-dropdown-item
-        v-for="(lang, i) in $i18n.availableLocales"
-        :key="i"
-        :class="{ selected: lang==$i18n.locale }"
-        :data-testid="`DropdownDDLang-Item-${lang}`"
-        @click="$i18n.locale = lang"
-      >
-        <span style="text-transform:uppercase;"> {{ lang }} </span>
-        <span>{{ (['en', 'de', 'fr'].includes(lang)) ? '': $t('button.lang.community-created') }}</span>
-      </b-dropdown-item>
-      <b-dropdown-item
-        :data-testid="`DropdownDDLang-Item-contribute`"
-        :title="$t('button.contribute-transifex.tooltip')"
-        href="https://app.transifex.com/opsi-org/opsiorg/opsiweb-uijson/"
-        target="_blank"
+  <el-dropdown
+    id="quicksettingsDD"
+    :class="footer ? 'border-0' : 'border'"
+    @command="$i18n.locale = $event"
+  >
+    <IconIIcon :icon="icon.language"/>
+    <el-text>{{ $i18n.locale.toUpperCase() }}</el-text>
+    <template #dropdown>
+      <el-dropdown-menu>
+        <el-dropdown-item
+          v-for="(lang, i) in $i18n.availableLocales"
+          :key="i"
+          :command="lang"
+          :class="{ 'is-active': lang === $i18n.locale }"
+          :data-testid="`DropdownDDLang-Item-${lang}`"
         >
-        <span> {{ $t('button.contribute-transifex') }} </span>
-      </b-dropdown-item>
-    </b-dropdown>
+          <span style="text-transform:uppercase;">{{ lang }}</span>
+          <span>{{ ['en', 'de', 'fr'].includes(lang) ? '' : $t('button.lang.community-created') }}</span>
+        </el-dropdown-item>
+        <el-dropdown-item
+          divided
+          :data-testid="`DropdownDDLang-Item-contribute`"
+          :title="$t('button.contribute-transifex.tooltip')"
+        >
+          <a href="https://app.transifex.com/opsi-org/opsiorg/opsiweb-uijson/" target="_blank" class="dropdown-item-link">
+            {{ $t('button.contribute-transifex') }}
+          </a>
+        </el-dropdown-item>
+      </el-dropdown-menu>
+    </template>
+  </el-dropdown>
 </template>
 
 <script setup>
