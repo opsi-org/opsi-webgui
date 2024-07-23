@@ -296,7 +296,7 @@
   "label.server_id": "Server ID",
   "label.password": "Password",
   "label.create.prodgroup": "Create Product Group",
-  "placeholder.fileupload": "Choose or drop a file",
+  "placeholder.fileupload": "Choose a file",
   "label.backup": "Backup",
   "label.local": "Local",
   "label.new": "New",

@@ -70,10 +70,11 @@
             <el-input class="ml-2" v-if="actions[key] === 'new'" :placeholder="$t('placeholder.enterNewID')" required v-model="actions[key]" />
           </el-input-group>
           <el-input-group v-else-if="key === 'file_id'" class="w-100 flex">
-            <b-form-file v-model="actions[key]" :state="Boolean(actions[key])" :placeholder="$t('placeholder.fileupload')" size="sm" />
-            <el-button @click="adminTasks.restoreBackup.file_id = ''">
-              {{ $t('button.clear') }}
-            </el-button>
+            <el-upload
+              v-model:file-list="actions[key]"
+            >
+              <el-button type="primary">{{ $t('placeholder.fileupload') }}</el-button>
+            </el-upload>
           </el-input-group>
           <el-input v-else v-model="actions[key]" />
       </el-form-item>
