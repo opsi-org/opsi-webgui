@@ -32,10 +32,14 @@
   - [ ] index page
   - [x] Depots
   - [-] WIP Depots-config
+    - [x] Server Attributes + Saving
+    - [-] Server Parameters
   - [-] Clients
   - [x] Client Actions
   - [x] Clients Clone
   - [-] WIP Clients Config
+    - [x] Client Attributes + Saving
+    - [-] Client Parameters
   - [x] WIP Clients Creation
   - [x] Clients Log
   - [x] Clients Products

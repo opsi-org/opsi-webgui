@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h6>Properties</h6>
     <FormrowFRItems
       :items="Object.values(props.properties.properties)"
       id-key="propertyId"

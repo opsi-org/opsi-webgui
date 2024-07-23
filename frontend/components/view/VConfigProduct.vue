@@ -1,11 +1,19 @@
 <template>
-  <h5>{{  $t('title.properties') }}</h5>
-  <h6>Id: {{ props.id }}</h6>
-  <h7>Version: {{ getVersion(fetchedData.properties, fetchedData.properties.productVersions || fetchedData.dependencies.productVersions) }}</h7> <br />
-  <!-- TODO: render description and advice as markdown -->
-  <b>{{ $t('table.fields.description') }}:</b><pre><Markdown> {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }} </Markdown></pre>
-  <b>{{ $t('table.fields.advice') }}:</b><pre><Markdown> {{ fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice }} </Markdown></pre>
-
+  <el-form label-position="left" label-width="180px">
+    <el-form-item :label="$t('table.fields.version')">
+      {{ getVersion(fetchedData.properties, fetchedData.properties.productVersions || fetchedData.dependencies.productVersions) }}
+    </el-form-item>
+    <el-form-item :label="$t('table.fields.description')">
+      <Markdown>
+        {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
+      </Markdown>
+    </el-form-item>
+    <el-form-item :label="$t('table.fields.advice')">
+      <Markdown>
+        {{ fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice }}
+      </Markdown>
+    </el-form-item>
+  </el-form>
   <el-alert v-if="selectionClients.length <= 0" :title="$t('message.warning.noClientsSelectedShowDepot')" type="warning" />
   <el-alert v-if="Object.values(fetchedData.properties.productVersions).filter(n => n).length !== selectionDepots.length" :title="$t('message.warning.notOnEachDepot', {count:Object.values(fetchedData.properties.productVersions).filter(n => n).length, countall:selectionDepots.length})" type="warning" />
   <el-alert v-if="Object.values(fetchedData.properties.productVersions).filter(n => n).some((v)=>v!=Object.values(fetchedData.properties.productVersions).filter(n => n)[0])" :title="$t('message.warning.differentProductVersions')" type="warning" />
@@ -27,7 +35,6 @@
     <el-tab-pane :label="$t('title.dependencies') + ' ' + (fetchedData.dependencies.dependencies?.length > 0 ? '': $t('title.dependenciesEmpty'))" name="dependencies"
       :disabled="fetchedData.dependencies.dependencies?.length <= 0">
       <ViewVConfigProductDependencies :dependencies="fetchedData.dependencies" />
-    <!-- <FormrowFRItemsText /> -->
     {{ errorText.dependencies  }}
     </el-tab-pane>
   </el-tabs>
@@ -82,7 +89,6 @@ watch(()=>props.id, async ()=>{
 })
 onMounted(async ()=>{
   if (props.isChild) await fetch()
-  // otherwise fetch already called
 })
 
 async function fetch(){
@@ -143,8 +149,6 @@ async function changeProperty (item: any, values: any, originValue: any) {
   }
   const data: any = {
     properties: { [item.propertyId]: values },
-    // depotIds: undefined,
-    // clientIds: undefined
   }
   if (selectionClients.value.length > 0) {
     data.clientIds = [...selectionClients.value]

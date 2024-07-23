@@ -207,6 +207,7 @@
   "table.fields.priority": "Priority",
   "table.fields.stats": "Statistics",
   "table.fields.version": "(Server) Version",
+  "table.fields.advice": "Advice",
   "table.fields.version.tooltip.serverversions": "Server versions:",
   "table.fields.version.tooltip.clientversions": "Client versions:",
   "table.fields.version.tooltip.depot_version_diff": "Do selected server have different versions?",
