@@ -10,24 +10,18 @@ webgui server methods
 
 from fastapi import APIRouter, Request, status
 
-
-from opsiconfd.logging import logger
 from opsiconfd.config import config
-from opsiconfd.rest import (
-	OpsiApiException,
-	RESTResponse,
-	rest_api,
-)
+from opsiconfd.logging import logger
+from opsiconfd.rest import OpsiApiException, RESTResponse, rest_api
 
 from .utils import backend
-
 
 server_router = APIRouter()
 
 
 @server_router.get("/api/opsidata/server/health")
 @rest_api
-def get_health_check(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
+async def get_health_check(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	get server health
 	"""
