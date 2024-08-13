@@ -223,9 +223,6 @@ function updateData() {
 </script>
 
 <style scoped>
-/* .maxVisibleNoOverflow {
-  height: calc(100vh - 800px);
-} */
 :global(section > section > main.el-main) {
   overflow: hidden;
 }

@@ -92,5 +92,3 @@ const propsDesktop = computed (()=>{
 const $emit = defineEmits(['fetch', 'selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed', 'update-input-filter'])
 </script>
 
-<style scoped>
-</style>

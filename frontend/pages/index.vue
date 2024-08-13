@@ -1,36 +1,20 @@
 <template>
-  <div class="max-w-[480px] index-card m-auto  ">
+  <div class="max-w-[480px] m-auto shadow-lg rounded-lg">
     <div class="grid place-items-center">
-
-    <h1 class="title m-auto">
-      {{ t_fixed("title.project") }} <br/>
-    </h1>
-    <!-- <h2 class="m-auto">
-      OPSICONFD PORT {{ $config.public.OPSICONFD_PORT }}
-    </h2> -->
-    <IconIOpsiLogo
-      :short="false"
-      :light="storeSettings().isLight"
-      classes="w-100 index-opsi-logo"
-    />
-    <IconIUibLogo
-      :short="false"
-      :light="storeSettings().isLight"
-      classes="w-50 index-uib-logo "
+      <IconIOpsiLogo
+        :short="false"
+        :light="storeSettings().isLight"
+        class="w-full max-w-[700px]"
       />
-    <!--
-    <TestEPButton />
-    <FormitemDDTheme />
-    <br /> screen: {{  mq.$mq }}
-    <TestI18n />
-
-    <TestMixin />
-    <IconILoading animation="cylon" />
-    <TestFetch /> -->
-    <!-- <br /> isPreferredDark: {{  mq.isPreferredDark }} -->
-    <!-- <IconELILoading animation="cylon" /> -->
+      <h1 class="text-4xl m-auto">
+        {{ t_fixed("title.project") }} <br/>
+      </h1>
+      <IconIUibLogo
+        :short="false"
+        :light="storeSettings().isLight"
+        class="mt-20 ml-auto h-10"
+      />
     </div>
-
   </div>
 </template>
 
@@ -49,19 +33,3 @@ function wsBusMsgObjectChanged(msg) {
 }
 </script>
 
-<style>
-/* .theme-light {}
-.theme-dark {
-  background-color: rgb(56, 56, 56);
-  color: blue;
-} */
-.index-card .index-opsi-logo {
-  max-width: 700px;
-}
-.index-card .index-uib-logo {
-  max-width: 400px;
-}
-.index-card .title {
-  font-size: xx-large;
-}
-</style>

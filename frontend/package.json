@@ -15,7 +15,6 @@
     "////nuxt-monaco-editor": "^1.2.3",
     "//monaco-editor": "^0.43.0",
     "//@vue/compat": "^3.3.4",
-    "//@nuxtjs/color-mode": "^3.3.0 // currently imported by bootstrap-next ? ",
     "//@element-plus/icons-vue": "^2.1.0",
     "//@iconify/json": "^2.2.132",
     "//unplugin-icons": "^0.17.1",
@@ -44,7 +43,6 @@
     "xterm-addon-web-links": "^0.x.x"
   },
   "devDependencies": {
-    "@bootstrap-vue-next/nuxt": "^0.14.10",
     "@element-plus/nuxt": "^1.x.x",
     "@histoire/plugin-nuxt": "0.17.6",
     "@histoire/plugin-vue": "0.17.6",
@@ -54,10 +52,9 @@
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.2",
     "@pinia/nuxt": "^0.x.x",
-    "@playwright/test": "^1.44.1",
+    "@playwright/test": "^1.45.3",
     "@vitejs/plugin-vue": "^4.5.0",
-    "bootstrap": "^5.3.2",
-    "bootstrap-vue-next": "^0.14.10",
+    "@volar/typescript": "^2.3.4",
     "histoire": "0.17.6",
     "npm-check-updates": "^16.14.6",
     "nuxt-primevue": "^0.x.x",

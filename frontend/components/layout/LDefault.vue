@@ -1,90 +1,57 @@
 <template>
-  <div :class="{
-    'is-mobile': mq.isMobile.value,
-    'is-not-mobile': !mq.isMobile.value,
-  }" >
+  <div :class="{'is-mobile': mq.isMobile.value, 'is-not-mobile': !mq.isMobile.value}">
     <el-container class="h-screen w-screen">
-      <el-header class="min-w-screen max-h-12 p-0 m-0 border-0">
+      <el-header class="max-h-12 min-w-screen bg-opsi-blue">
         <BarBTop
           class="max-h-full max-w-full"
-          @toggle-left="()=>toggleSide('left')"
-          @toggle-right="()=>toggleSide('right')"
+          @toggle-left="() => toggleSide('left')"
+          @toggle-right="() => toggleSide('right')"
         />
       </el-header>
       <el-container
-       class="h-screen max-h-screen overflow-hidden"
-       :class="{
-        'left-collapsed': !mq.isMobile.value && leftSideIsSmall,
-        'left-opened': !mq.isMobile.value && !leftSideIsSmall,
-        'right-opened': !mq.isMobile.value && rightSideVisible,
-       }"
+        class="h-screen max-h-screen overflow-hidden"
+        :class="{
+          'left-collapsed': !mq.isMobile.value && leftSideIsSmall,
+          'left-opened': !mq.isMobile.value && !leftSideIsSmall,
+          'right-opened': !mq.isMobile.value && rightSideVisible,
+        }"
       >
         <!-- LEFT SIDE -->
         <el-aside
           v-if="!mq.isMobile.value || leftSideVisible"
-          class="el-aside-left"
-          :class="{
-            'absolute z-20 grid w-screen': mq.isMobile.value
-            }"
+          :class="['el-aside-left bg-opsi-blue', {'absolute z-20 grid w-screen': mq.isMobile.value}]"
         >
-          <div
-            :class="{
-              'hidden': !mq.isMobile.value,
-              'fixed bg-color opacity-70 z-10 w-screen h-full': mq.isMobile.value,
-              }"
-            @click.self="toggleSide('left')"
-          ></div>
           <el-scrollbar
-            style="border-right: 1px solid var(--el-border-color)"
             :class="{
-            'border-0 border-r': true,
-            // 'w-48': !mq.isMobile.value && !leftSideIsSmall,
-            'max-w-full': true,
-            'w-16': !mq.isMobile.value && leftSideIsSmall,
-            'z-40 bg-color opacity-100': mq.isMobile.value,
-          }">
-            <BarBSide @change-small="setLeftCollapse"/>
+              'max-w-full': true,
+              'w-16': !mq.isMobile.value && leftSideIsSmall,
+              'z-40 opacity-100': mq.isMobile.value,
+            }"
+          >
+            <BarBSide @change-small="setLeftCollapse" />
           </el-scrollbar>
         </el-aside>
 
         <!-- MAIN CONTENT -->
-        <el-main class="z-0 p-2"
-          :class="{ 'el-overlay': mq.isMobile.value && (leftSideVisible || rightSideVisible) }"
-        >
-          <el-scrollbar
-          class="p-0 m-0"
-          wrap-class="p-0 m-0"
-          view-class="p-0 m-0"
-          >
-            <BreadcrumbBPageNavigation />
-            <div class="main-minus-creadcrumb">
-              <slot />
-            </div>
+        <el-main class="z-0 p-2">
+          <BreadcrumbBPageNavigation />
+          <el-scrollbar>
+            <slot />
           </el-scrollbar>
         </el-main>
 
         <!-- RIGHT SIDE -->
         <el-aside
           v-if="rightSideVisible"
-          style="border-left: 1px solid var(--el-border-color)"
-          :class="{
-            'el-aside-right': true,
-            'p-0 w-full': !mq.isMobile.value,
-            'absolute right-0 z-20 grid': mq.isMobile.value
-            }"
+          style="box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1)"
+          :class="['el-aside-right p-1', {'fixed right-0 bg-general z-50 overflow-y-auto backdrop-blur-lg': mq.isMobile.value}]"
         >
-          <div
+          <el-scrollbar
             :class="{
-              'hidden': !mq.isMobile.value,
-              'fixed bg-color left-0 opacity-70 z-30 w-screen h-screen max-w-screen': mq.isMobile.value
+              'w-full max-w-full right-0 opacity-100 justify-self-end border-0 p-2': true,
+              'max-w-full z-30': mq.isMobile.value,
             }"
-            @click.self="toggleSide('right')"
-          ></div>
-          <el-scrollbar :class="{
-            'w-full max-w-full right-0 opacity-100 justify-self-end qp-background border-0 p-2': true,
-            // 'w-80': !mq.isMobile.value,
-            'max-w-full z-30': mq.isMobile.value,
-            }">
+          >
             <BarBQuickPanel />
           </el-scrollbar>
         </el-aside>
@@ -119,36 +86,25 @@ watch(useRouter().currentRoute, () => {
 // onMounted(async ()=>{
 await checkConfig()
 settings.initColormode()
-
-leftSideIsSmall.value = false
-if (settings.menuCollapsed && !mq.isMobile.value) {
-  leftSideIsSmall.value = true
-}
-
-rightSideVisible.value = false
-if (settings.quickpanelOpened && !mq.isMobile.value) {
-  rightSideVisible.value = true
-}
+leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value;
+rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value;
 // })
 
-function setLeftCollapse (v: boolean) {
+function setLeftCollapse(v: boolean) {
   leftSideIsSmall.value = v
   settings.setMenuCollapsed(v)
-  // (v: any) => leftSideIsSmall = v
 }
-function toggleSide (side: string) {
-  if (side === 'left') {
-    rightSideVisible.value = false
-    leftSideVisible.value = !leftSideVisible.value
-  } else if (side === 'right') {
-    leftSideVisible.value = false
-    rightSideVisible.value = !rightSideVisible.value
+
+function toggleSide(side: 'left' | 'right') {
+  const isLeft = side === 'left'
+  leftSideVisible.value = isLeft ? !leftSideVisible.value : false
+  rightSideVisible.value = isLeft ? false : !rightSideVisible.value
+
+  if (!isLeft) {
     settings.setQuickpanelOpened(rightSideVisible.value)
   }
 }
 
-// interface ApiResConf { data: Ref<T_configuration>, error: string, headers: Headers }
-// interface ApiResDF { data: Ref<Array<string>>, error: string, headers: Headers }
 async function checkConfig () {
   const result = await useApiGET<T_configuration>('/user/configuration')
   if (result.error) {
@@ -171,7 +127,7 @@ async function checkConfig () {
     return
   }
 
-  const _config = { ...result.data.value.configuration }
+  const _config : { [key: string]: boolean } = { ...result.data.value.configuration }
   forbidden.data.value.forEach((forbElem:string) => {
     _config[forbElem + '.forbidden'] = true
   })
@@ -181,99 +137,56 @@ async function checkConfig () {
 
 
 <style scoped>
-
-/* Quickpanel uses the same colors as the main content to reduce visual clutter */
-/* If users require the same colors as the navigation bar, the options can be made available later in the GUI Settings feature. */
-.qp-background {
-  background-color: var(--bg-color) !important;
-  color: var(--fg-color) !important;
-}
-
-.el-header {
-  position: relative;
-  height: calc(var(--el-header-height) + 1px);
-  background-color: var(--opsi-general-blue);
-  --el-color: green;
-}
-
-.el-main {
-  --minus-width: 0px; /* will be overwritten */
-  --main-width: 100vw;
-  width: calc(var(--main-width) - var(--minus-width));
-  min-width: calc(var(--main-width) - var(--minus-width));
-  max-width: calc(var(--main-width) - var(--minus-width));
-}
-/* .main-minus-creadcrumb {
-  --minus-height: 20px;
-  --height: 100%;
-  min-height: calc(var(--height) - var(--minus-height));
-  height: calc(var(--height) - var(--minus-height));
-  max-height: calc(var(--height) - var(--minus-height));
-} */
-:deep(main.el-main .el-main.mycol ) {
-  max-width: 100% !important;
-  overflow: hidden;
-}
-
-/*  BOTH SIDES */
-.el-aside>.el-scrollbar {
-  --width: 100%;
-  max-width: var(--width);
-  min-width: var(--width);
-}
-.el-aside {
-  --height: 100%;
+:root {
   --minus-height: 1px;
-  min-height: calc(var(--height) - var(--minus-height));
-  height: calc(var(--height) - var(--minus-height));
-  max-height: calc(var(--height) - var(--minus-height));
-
-  background-color: var(--opsi-general-blue);
-  --width: 100%; /* fallback */
-  --minus-width: 0px; /* fallback */
-  width: calc(var(--width) - var(--minus-width));
-  min-width: calc(var(--width) - var(--minus-width));
-  max-width: calc(var(--width) - var(--minus-width));
 }
 
+.el-aside {
+  width: calc(var(--width, 100%) - var(--minus-width, 0px));
+  height: calc(100% - var(--minus-height));
+}
 
-/*  LEFT SIDE */
-.el-aside-left { /*mobile*/
+.el-aside-left {
   --width: 150px;
 }
 
-
-/*  RIGHT SIDE */
 .el-aside-right {
   --width: 285px;
 }
 
-/* BOTH SIDES */
-.is-mobile {
-  .el-aside { --minus-height: 40px; }
-  .el-aside-left { --width: 60%; }
-  .el-aside-right { --width: 70%; }
-}
-.is-not-mobile {
-  .left-opened .el-aside-left {
-    --width: 250px;
-  }
-  .left-collapsed .el-aside-left {
-    --width: 65px;
-  }
+.is-mobile .el-aside {
+  --minus-height: 10%;
 }
 
-.el-overlay {
-  background-color: var(--el-overlay-color-lighter) !important;
+.is-mobile .el-aside-left {
+  --width: 70%;
 }
 
-.left-opened:not(.right-opened) .el-main { --minus-width: 250px; }
-.left-opened.right-opened .el-main { --minus-width: 545px; }
-.left-collapsed.right-opened .el-main { --minus-width: 350px; }
-.left-collapsed:not(.right-opened) .el-main { --minus-width: 70px; }
+.is-mobile .el-aside-right {
+  --width: 100%;
+}
 
-/* OTHER */
-.border-r {
-  border-color: var(--el-border-color)
+.is-not-mobile .left-opened .el-aside-left {
+  --width: 250px;
+}
+
+.is-not-mobile .left-collapsed .el-aside-left {
+  --width: 65px;
+}
+
+.left-opened:not(.right-opened) .el-main {
+  --minus-width: 250px;
+}
+
+.left-opened.right-opened .el-main {
+  --minus-width: 545px;
+}
+
+.left-collapsed.right-opened .el-main {
+  --minus-width: 350px;
+}
+
+.left-collapsed:not(.right-opened) .el-main {
+  --minus-width: 70px;
 }
 </style>

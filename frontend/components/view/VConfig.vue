@@ -1,7 +1,7 @@
 
 <template>
   <SelectSHosts v-if="props.isChild === false" :id="currentId" :type="type" @change="setId" />
-  <el-tabs v-model="activeName" class="demo-tabs">
+  <el-tabs v-model="activeName">
     <el-tab-pane
       :label="currentId ? $t('title.hostparam') : $t('title.hostparam.defaults')"
       name="config"

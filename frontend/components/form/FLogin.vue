@@ -1,7 +1,7 @@
 <template>
   <main data-testid="FLogin" :class="$mq === 'mobile'? 'px-[4%]': ''" v-loading="isLoading">
     <h1 class="sr-only">{{ $t('button.login') }}</h1>
-    <el-card class="text-center bg-primary mx-auto" :class="$mq === 'mobile'? 'w-full' : 'w-1/2; max-w-md'">
+    <el-card class="text-center bg-opsi-blue text-white mx-auto" :class="$mq === 'mobile'? 'w-full' : 'w-1/2; max-w-md'">
       <IconIOpsiLogo :light="false" :short="false" class="mb-2" classes="w-full" />
       <div @keyup.enter="doLogin">
         <el-form class="mt-1">
@@ -17,7 +17,7 @@
           <el-form-item>
             <el-input data-testid="login_otp" v-model="totp" :disabled="isLoading" :aria-label="$t('table.fields.oneTimePassword')" :placeholder="$t('table.fields.oneTimePassword')" show-password />
           </el-form-item>
-          <el-button data-testid="btn-login" :disabled="!form.username || !form.password" type="primary" class="mt-2 login w-100" style="--el-button-border-color: var(--el-text-color-regular);" @click="doLogin">
+          <el-button data-testid="btn-login" :disabled="!form.username || !form.password" class="mt-2 login w-100" @click="doLogin">
             {{ $t('button.login') }}
           </el-button>
         </el-form>
@@ -118,22 +118,3 @@ async function doLogin () {
   }
 }
 </script>
-
-<style scoped>
-:deep(.el-input-group__append) {
-  --el-fill-color-light: transparent;
-  --el-color-info: var(--el-input-text-color);
-}
-.el-input.is-disabled {
-  --el-input-text-color: #E1E1E1;
-  background-color: var(--el-input-text-color);
-}
-.el-input {
-  --el-text-color-regular: #e1e1e1;
-  border: 1px solid var(--el-input-text-color);
-  color: var(--el-input-text-color);
-}
-:deep(.el-input__wrapper) {
-  border-radius: 0px !important;
-}
-</style>

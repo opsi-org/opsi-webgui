@@ -1,28 +1,22 @@
 <template>
-  <!-- <b-card class="text-center index-card"> -->
+
     <div class="">
     <h1 class="title">
       {{ $t("uib") }} <br>
       {{ $t("button.login") }} <br>
     </h1>
-
     <TestEPButton />
     <br />
     <FormitemDDTheme />
     <br /> screen: {{  mq.$mq }}
     <TestI18n />
-
     <TestMixin />
     <IconILoading animation="cylon" />
     <TestFetch />
     If data visible login worked : {{ fetchResult }}
-    <!-- <br /> isPreferredDark: {{  mq.isPreferredDark }} -->
-
-    <!-- <IconELILoading animation="cylon" /> -->
-
     <PopconfirmPLogout />
   </div>
-  <!-- </b-card> -->
+
 </template>
 
 <script setup>
@@ -44,5 +38,3 @@ onMounted( async () => {
 });
 </script>
 
-<style>
-</style>

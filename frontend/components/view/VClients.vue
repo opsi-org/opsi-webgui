@@ -649,18 +649,3 @@ export default class VClients extends Vue {
 */
 </script>
 
-<style scoped>
-/*
-.tableheader_products:hover {
-  background-color: var(--bg-btn-hover) !important;
-}
-.tableheader_products:focus {
-  background-color: var(--bg-btn-hover) !important;
-  border: var(--bg-btn-hover) !important;
-}
-.row-selected.btn,
-.row-selected>.btn {
-color: var(--primary-foreground) !important;
-}
-*/
-</style>

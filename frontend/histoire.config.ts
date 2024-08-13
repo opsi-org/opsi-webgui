@@ -74,10 +74,11 @@ export default defineConfig({
         },
       },
     },
-    css:{
+    css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@use "assets/scss/element/index.scss" as element;`,
+          // additionalData: `@use "@/assets/scss/element/index.scss" as element;`,
+          additionalData: `@use "@/assets/scss/opsi.scss" as *;`
         },
       },
     },
