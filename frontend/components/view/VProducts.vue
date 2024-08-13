@@ -918,15 +918,4 @@ function fetchProductsPrepareParams (type: string) {
 }
 </script>
 
-<style>
-/* .VProducts {
-  max-height: min-content;
-} */
-/* .products_horizontaltabs .nav-item{
-  min-width: min-content;
-}
-.VProductGroupsExpanded {
-  width: 98% ;
-  height: 80vh;
-} */
-</style>
+

@@ -24,7 +24,6 @@ export const storeSettings = defineStore('settings', {
     menuCollapsed: false as boolean,
     twoColumnLayoutCollapsed: { tabledepots: false, tableclients: false },
     expiresInterval: undefined as NodeJS.Timeout|undefined,
-    // _colormode: 'auto' as 'light'|'dark'|'auto',
   }),
   getters: {
     // twoColumnLayoutCollapsed: (state: any) => state._twoColumnLayoutCollapsed,
@@ -36,14 +35,12 @@ export const storeSettings = defineStore('settings', {
     // expiresInterval: (state: any) => state._expiresInterval,
     colormodeCookie: (state: any) => useCookie('colormode').value,
     colormode: (getter: any) => {
-      // check if specific colormode for webgui is set
-      // if colormode is auto, use bt-mode as default (and set ep-mode to this)
-      // if colormode is not auto (specific), set bt and ep to colormode
       const _colormode = getter.colormodeCookie
-      return _colormode as 'light'|'dark'|'auto'
+      return _colormode as 'light'|'dark'
     },
     isLight: (getter: any) => {
-      return getter.colormode === 'light'
+      const _colormode = getter.colormodeCookie
+      return _colormode === 'light'
     }
   },
   actions: {
@@ -55,8 +52,6 @@ export const storeSettings = defineStore('settings', {
     },
     setLanguage (lang: string) {
       this.language = lang
-      // Cookie.set('Language', this._language, { expires: 365 })
-      // Cookies.options.methods.setCookie('Language', this._language)
       useCookie('Language').value = this.language
     },
     setQuicksave (isQuickSave: boolean) {
@@ -75,25 +70,16 @@ export const storeSettings = defineStore('settings', {
       // only for testing purpose
       this.isMobile = isMobile
     },
-    setColumnLayoutCollapsed (obj: IColumnLayoutCollapsed) {
-      this.twoColumnLayoutCollapsed[obj.parentId] = obj.value
+    initColormode() {
+      const colormode = this.colormode;
+      this.setColormode(colormode, false);
     },
-    initColormode () { // init colormode without saving as cookie
-      const colormode = this.colormode // getter:
-      // if colormode is auto use bt-mode as default (and set ep-mode to this)
-      // if colormode is not auto set bt and ep to colormode
-      this.setColormode(colormode, false)
-    },
-    toggleTheme() {
-      let _mode = this.colormode
-      const newMode = (_mode === 'light') ? 'dark' : 'light'
-      this.setColormode(newMode)
-    },
-    setColormode (colormode: 'light'|'dark'|'auto', saveCookie = true) {
+    setColormode(colormode: 'light' | 'dark' , saveCookie = true) {
       if (saveCookie) {
-        useCookie('colormode').value = colormode
+        useCookie('colormode').value = colormode;
       }
-      const color_ep_isDark = useDark() // element plus
+      const isDark = colormode === 'dark'
+      document.documentElement.classList.toggle('dark', isDark)
     },
   },
 })

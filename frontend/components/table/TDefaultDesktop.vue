@@ -354,23 +354,4 @@ function onEndReached() {
 </script>
 
 
-<style scoped>
-/* :deep([data-key="rowactions"]) { */
-  /* width: 40px !important; */
-  /* background-color: aqua !important; */
-/* } */
-/* :deep([role="row"].el-table-v2__row:nth-last-of-type(10)) { */
-  /* border: 1px solid red; */
-/* } */
-/* :deep([role="row"].el-table-v2__row:last-of-type) { */
-/* :deep(.el-table-v2__row:last-of-type) { */
-  /* border: 1px solid #ebeef5; */
-  /* margin-bottom: 100px !important;
-  height: 100px !important;
-  align-content: flex-start !important; */
-  /* padding-bottom: 100px !important; */
-/* } */
-/* :deep(.el-table-v2__body > div) {
-  padding-bottom: 100px;
-} */
-</style>
+

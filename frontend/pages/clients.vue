@@ -6,8 +6,6 @@
     :width="routeNameSettings?.width || width"
     classeachcol=""
     >
-    <!-- :classeachcol="isMobile ? 'm-1': 'm-1 h-full'" -->
-    <!-- classlastcol="mt-0 mb-0" -->
     <template #default>
       <el-button class="float-right" v-if="routeName.startsWith('clients-products') && routeNameSettings?.page1Condition" @click="toggleClientstableVisibility">{{'v'}}</el-button>
       <ViewVClients v-if="clientstableVisible" :is-mobile="mq.isMobile.value"/>
@@ -54,7 +52,3 @@ const isMobile = computed(()=> {
   return mq.isMobile.value
 })
 </script>
-
-<style scoped>
-
-</style>
