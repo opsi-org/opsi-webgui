@@ -1,33 +1,25 @@
 <template>
-  <div data-testid="BSide">
-    <el-menu router unique-opened
-      :default-active="router.currentRoute.value?.fullPath" :collapse="isCollapse"
-      class="el-menu-mywrapper overflow-hidden max-w-full" :class="{'max-height-side': !mq.isMobile.value }"
-      style="--el-menu-icon-width: 244px;" type="primary"
-    >
-      <span v-for="item in navItems" :key="item.title">
-        <el-sub-menu v-if="item.submenu" :index="item.route" :route="item.route"
-          popper-class="text-on-primary" class="text-on-primary" :data-testid="'NSidebar-' + item.title">
+  <div data-testid="BSide" class="bg-opsi-blue">
+    <el-menu router unique-opened :default-active="router.currentRoute.value?.fullPath" :collapse="isCollapse" class="h-[90vh] bg-opsi-blue">
+      <template v-for="item in navItems" :key="item.title">
+        <el-sub-menu v-if="item.submenu" :index="item.route" :route="item.route" :data-testid="'NSidebar-' + item.title">
           <template #title>
-            <div class="text-on-primary" :class="{'contents': true, 'selected': isSelected(item)}">
-              <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1"/>
-              <span v-if="showTitle">{{ $t(item.title) }}</span>
-            </div>
+            <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-2" />
+            <span v-if="showTitle">{{ $t(item.title) }}</span>
           </template>
           <el-menu-item v-for="sub in item.submenu" :key="sub.title" :disabled="sub.disabled" :index="sub.route" :route="sub.route"
-            :data-testid="'NICollapsible-submenu-' + sub.title" class="text-on-primary">
-            <span class="text-on-primary">{{ $t(sub.title) }}</span>
+            :data-testid="'NICollapsible-submenu-' + sub.title">
+            <span>{{ $t(sub.title) }}</span>
           </el-menu-item>
         </el-sub-menu>
-        <el-menu-item v-else :index="item.route" :route="item.route" class="text-on-primary"
-          :data-testid="'NSidebar-' + item.title">
-          <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
+        <el-menu-item v-else :index="item.route" :route="item.route" :data-testid="'NSidebar-' + item.title">
+          <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-2" />
           <span v-if="showTitle">{{ $t(item.title) }}</span>
         </el-menu-item>
-      </span>
+      </template>
     </el-menu>
-    <div v-if="!mq.isMobile.value" class="menu-footer relative inset-x-0 bottom w-full text-on-primary">
-      <el-checkbox-button v-model="isCollapse" class="w-full text-on-primary " type="">
+    <div v-if="!mq.isMobile.value" class="text-center">
+      <el-checkbox-button v-model="isCollapse">
         {{ isCollapse ? '>>' : 'Collapse' }}
       </el-checkbox-button>
     </div>
@@ -91,70 +83,8 @@ const navItems = computed<Array<INavItem>>(() => [
   { title: 'title.support', icon: icons.support, route: '/support' }
 ])
 
-watch(isCollapse, (val: boolean) => {
-  emit('changeSmall', val)
-})
+watch(isCollapse, (val) => emit('changeSmall', val))
 
 const isSelected = (item: INavItem) => item.route && router.currentRoute.value?.fullPath.includes(item.route)
 const showTitle = computed(() => mq.isMobile.value || !isCollapse.value)
 </script>
-
-<style scoped>
-.contents{
-  display:contents!important;
-}
-.selected {
-  color:var(--el-color-primary);
-  color:var(--el-menu-active-color);
-}
-.max-height-side{
-  border: 1px solid red !important;
-  height:calc(100vh - 82px);
-}
-:deep(.el-menu-item.is-active path){
-  color:var(--opsi-genral-white)!important;
-  color:var(--el-menu-active-color)!important;
-}
-:deep(.el-menu-item.is-active),
-:deep(.el-menu-item.is-active svg),
-:deep(.el-sub-menu.is-active > .el-sub-menu__title){
-  --el-menu-active-color:var(--opsi-genral-white);
-  color:var(--opsi-genral-white);
-  background-color:var(--primary-color-dark);
-}
-.el-menu-item.text-on-primary:hover,
-.el-menu-item.text-on-primary:hover .text-on-primary,
-:deep(.el-sub-menu__title:hover .text-on-primary),
-:deep(.el-sub-menu__title:hover .el-sub-menu__icon-arrow){
-  --el-text-color-regular:var(--fg-color)!important;
-  color:var(--el-text-color-regular)!important
-}
-:deep(.el-sub-menu__icon-arrow){
-  margin-right:-10px!important;
-  --el-text-color-regular:var(--opsi-genral-white);
-  color:var(--el-text-color-regular);
-}
-:deep(.el-checkbox-button__inner){
-  width:100%!important;
-  background-color:var(--el-checkbox-button-bg-color);
-  border:0;
-  border-top:1px solid var(--el-menu-border-color);
-}
-.el-menu-mywrapper{
-  border:0!important;
-}
-:deep(.iconify){
-  min-width:40px;
-}
-:deep(.el-sub-menu__title){
-  max-width:100%!important;
-  padding:5px!important;
-  text-align:left;
-}
-.el-menu > span > .el-menu-item{
-  padding-left:50px!important;
-}
-.el-menu-mywrapper > span > .el-menu-item{
-  padding-left:5px!important;
-}
-</style>

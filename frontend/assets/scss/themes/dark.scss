@@ -1,0 +1,18 @@
+@import '../opsi.scss';
+
+html.dark {
+  --color-background: #{$opsi-base-dark-background};
+  --color-text: #{$opsi-base-dark-text};
+  --hover: #{$opsi-gray};
+  --border: #{$opsi-log-light-debug};
+  --placeholder: #{$opsi-medium-gray};
+}
+
+/* Switch */
+html.dark .el-switch {
+  --el-switch-on-color: #{$opsi-blue};
+  --el-switch-off-color: #{$opsi-gray};
+}
+html.dark .el-switch__core {
+  border: 1px solid #{$opsi-medium-gray};
+}

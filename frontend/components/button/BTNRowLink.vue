@@ -1,7 +1,7 @@
 <template>
   <el-button
     :class="{
-      pressed: props.isPressed,
+      'bg-opsi-blue': props.isPressed,
       'm-0': true
     }"
     data-testid="BTNRowLink"
@@ -22,9 +22,3 @@ const props = defineProps({
   link: { type: String, default: '' },
 })
 </script>
-
-<style scoped>
-.el-button {
-  margin: 0;
-}
-</style>

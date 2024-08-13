@@ -4,8 +4,5 @@
 
 <script setup>
 definePageMeta({ layout: "auth" });
-
 </script>
 
-<style>
-</style>

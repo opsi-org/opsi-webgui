@@ -1,8 +1,8 @@
 
 <template>
-  <el-menu mode="horizontal" :ellipsis="false" class="border-0 text-on-primary" data-testid="BTop">
+  <el-menu mode="horizontal" :ellipsis="false" class="bg-opsi-blue" data-testid="BTop">
     <el-menu-item v-if="mq.isMobile.value" index="0" @click="toggleLeft" data-testid="menu_routes" class="min-w-14 w-14">
-      <IconIIcon :icon="icons.navmenu" class="text-on-primary"/>
+      <IconIIcon :icon="icons.navmenu"/>
     </el-menu-item>
 
     <div v-if="mq.isMobile.value" class="flex-grow" />
@@ -12,11 +12,11 @@
 
     <div class="flex-grow" />
 
-    <el-menu-item index="2" type="text" @click="toggleRight" data-testid="menu-quickpanel" class="min-w-14 w-14">
-      <IconIIcon :icon="icons.quickpanel" class="text-on-primary"/>
+    <el-menu-item index="2" type="text" @click="toggleRight" data-testid="menu-quickpanel" class="!bg-transparent">
+      <IconIIcon :icon="icons.quickpanel" class="text-white" />
     </el-menu-item>
 
-    <PopconfirmPLogout v-if="!mq.isMobile.value" index="3" :is-menu-item="true"/>
+    <PopconfirmPLogout v-if="!mq.isMobile.value" index="3" :is-menu-item="true" />
   </el-menu>
 </template>
 
@@ -35,14 +35,6 @@ const navigateToClients = () => router.push('/clients/')
 </script>
 
 <style scoped>
-.el-menu-item,
-.el-menu-item.is-active {
-  color: var(--fg-color);
-}
-[data-testid="menu-quickpanel"].text-on-primary:hover .text-on-primary {
-  --el-text-color-regular: var(--fg-color);
-  color: var(--el-text-color-regular);
-}
 .opsi-logo {
   height: 40px;
 }

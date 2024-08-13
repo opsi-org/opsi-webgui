@@ -46,8 +46,3 @@ const imageUrl = computed<string>({
 })
 </script>
 
-<style>
-/* .uiblogo_white {
-  filter: saturate(0) brightness(5) !important;
-} */
-</style>
