@@ -4,28 +4,22 @@
   </el-button>
   <el-dialog v-model="popoverVisible">
     <template #header>
-      <h5> {{ $t('label.prodquickaction') }} </h5>
+      <h5>{{ $t('label.prodquickaction') }}</h5>
     </template>
-    <el-form :label-width="mq.isMobile.value ? '': '300px'" :label-position="mq.isMobile.value ? 'top': 'right'">
-      <div v-for="options, category, index in productActions" :key="index">
+    <el-form :label-width="mq.isMobile.value ? '' : '300px'" :label-position="mq.isMobile.value ? 'top' : 'right'">
+      <div v-for="(options, category, index) in productActions" :key="index">
         <el-row>
           <b>{{ $t('title.' + category) }} </b>
         </el-row>
-        <div v-for="value, label in options">
+        <div v-for="(value, label) in options">
           <el-form-item :label="$t('table.fields.' + label)">
             <el-checkbox v-if="typeof value == 'boolean'" v-model="productActions[category][label]" />
             <el-select v-else-if="Array.isArray(value)" v-model="productActions[category][label]" multiple>
-              <el-option
-                v-for="item in value"
-                :key="item"
-                :label="item"
-                :value="item"
-              />
+              <el-option v-for="item in value" :key="item" :label="item" :value="item" />
             </el-select>
             <div v-else>
               {{ value }}
             </div>
-
           </el-form-item>
         </div>
       </div>
@@ -37,33 +31,33 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import { useIcons } from '@/composables/mixins/useIcons'
-import { useNotification } from '~/composables/mixins/useComponent';
-const { notifySuccess, notifyError } = useNotification()
-const $t = useI18n().t
-const icon = useIcons()
-const mq = useMQ()
-const popoverVisible = ref(false)
-const productActions = ref({
-  conditions: {
-    instStatus: ['not_installed', 'installed', 'unknown'],
-    actionResult: ['null', 'failed', 'successful', 'none'],
-    outdatedonclient: false
-  },
-  possibleActions: {
-    rowactions: ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
-  },
-  scope: {
-    apply: ['To both selected servers and clients', 'Only to selected servers', 'Only to selected clients']
-  },
-  demo: {
-    demoInfo: 'Demo mode will not make any changes, but will return the expected result. This allows to see where these actions are going to be performed without actually executing them.',
-    demoMode: true,
-    demoResult: '--'
-  }
-})
+  import { useIcons } from '@/composables/mixins/useIcons'
+  import { useNotification } from '~/composables/mixins/useComponent'
+  const { notifySuccess, notifyError } = useNotification()
+  const $t = useI18n().t
+  const icon = useIcons()
+  const mq = useMQ()
+  const popoverVisible = ref(false)
+  const productActions = ref({
+    conditions: {
+      instStatus: ['not_installed', 'installed', 'unknown'],
+      actionResult: ['null', 'failed', 'successful', 'none'],
+      outdatedonclient: false,
+    },
+    possibleActions: {
+      rowactions: ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'],
+    },
+    scope: {
+      apply: ['To both selected servers and clients', 'Only to selected servers', 'Only to selected clients'],
+    },
+    demo: {
+      demoInfo:
+        'Demo mode will not make any changes, but will return the expected result. This allows to see where these actions are going to be performed without actually executing them.',
+      demoMode: true,
+      demoResult: '--',
+    },
+  })
 </script>
-
 
 <!-- <template>
       <OverlayOLoading :is-loading="isLoading" />

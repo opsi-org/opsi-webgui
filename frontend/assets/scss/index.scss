@@ -3,7 +3,7 @@
 @import './themes/dark.scss';
 
 /* General Colors */
-$white: #FFFFFF;
+$white: #ffffff;
 $black: #000000;
 
 /* Global Variables */
@@ -28,13 +28,11 @@ html body {
   --el-color-info-light-9: var(--hover);
 }
 
-
 /* Text */
 html .text-white {
   --el-text-color-regular: $white;
   color: $white;
 }
-
 
 /* Backgrounds */
 .bg-general {
@@ -115,13 +113,11 @@ html .el-tabs__item:hover {
   color: var(--color-text);
 }
 
-
 /* Buttons */
 html .el-button:hover {
   background-color: $opsi-blue;
   color: $white;
 }
-
 
 /* Dropdowns */
 .el-dropdown__popper {

@@ -6,10 +6,10 @@
     type="primary"
     plain
     class="ml-0"
-    :class="{'is-fullwidth': props.short !== false}"
+    :class="{ 'is-fullwidth': props.short !== false }"
     size="small"
     @click="click"
-    >
+  >
     <IconIIcon :icon="icons.clear" />
     <span v-if="props.showLabel == true">{{ props.label ? props.label : $t('table.selection.clear') }}</span>
     <span class="sr-only">{{ $t('table.selection.clear') }}</span>
@@ -17,17 +17,17 @@
 </template>
 
 <script setup lang="ts">
-import { useIcons } from '~/composables/mixins/useIcons';
-const icons = useIcons()
-const props = defineProps({
-  label: { type: String, default: '' },
-  showLabel: { type: Boolean, default: false },
-  short: { type: Boolean, default: true },
-})
+  import { useIcons } from '~/composables/mixins/useIcons'
+  const icons = useIcons()
+  const props = defineProps({
+    label: { type: String, default: '' },
+    showLabel: { type: Boolean, default: false },
+    short: { type: Boolean, default: true },
+  })
 
-const click = () => {
-  $emit('clearselection')
-}
+  const click = () => {
+    $emit('clearselection')
+  }
 
-const $emit = defineEmits(['clearselection'])
+  const $emit = defineEmits(['clearselection'])
 </script>

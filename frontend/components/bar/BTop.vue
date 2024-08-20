@@ -1,12 +1,11 @@
-
 <template>
   <el-menu mode="horizontal" :ellipsis="false" class="bg-opsi-blue" data-testid="BTop">
     <el-menu-item v-if="mq.isMobile.value" index="0" @click="toggleLeft" data-testid="menu_routes" class="min-w-14 w-14">
-      <IconIIcon :icon="icons.navmenu"/>
+      <IconIIcon :icon="icons.navmenu" />
     </el-menu-item>
 
     <div v-if="mq.isMobile.value" class="flex-grow" />
-    <el-menu-item index="1" @click="navigateToClients"  class="!bg-transparent !hover:!bg-transparent">
+    <el-menu-item index="1" @click="navigateToClients" class="!bg-transparent !hover:!bg-transparent">
       <IconIOpsiLogo class="opsi-logo" />
     </el-menu-item>
 
@@ -21,22 +20,21 @@
 </template>
 
 <script setup lang="ts">
-import { useIcons } from '~/composables/mixins/useIcons';
-import { useRouter } from 'vue-router';
+  import { useIcons } from '~/composables/mixins/useIcons'
+  import { useRouter } from 'vue-router'
 
-const mq = useMQ()
-const emit = defineEmits(['toggleLeft', 'toggleRight'])
-const icons = useIcons()
-const router = useRouter()
+  const mq = useMQ()
+  const emit = defineEmits(['toggleLeft', 'toggleRight'])
+  const icons = useIcons()
+  const router = useRouter()
 
-const toggleLeft = () => emit('toggleLeft')
-const toggleRight = () => emit('toggleRight')
-const navigateToClients = () => router.push('/clients/')
+  const toggleLeft = () => emit('toggleLeft')
+  const toggleRight = () => emit('toggleRight')
+  const navigateToClients = () => router.push('/clients/')
 </script>
 
 <style scoped>
-.opsi-logo {
-  height: 40px;
-}
+  .opsi-logo {
+    height: 40px;
+  }
 </style>
-
