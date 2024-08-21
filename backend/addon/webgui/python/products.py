@@ -19,7 +19,7 @@ from sqlalchemy import alias, and_, column, select, text  # type: ignore[import]
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
-
+from opsicommon.objects import ProductOnClient
 from opsiconfd.config import get_configserver_id
 
 from opsiconfd.logging import logger
@@ -633,20 +633,20 @@ def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statemen
 				)
 
 			values = {
-				"clientId": client_id,
 				"productId": product_id,
 				"productType": get_product_type(product_id, product_version, package_version),
+				"clientId": client_id,
 				"productVersion": product_version,
 				"packageVersion": package_version,
 			}
 			for attr in ("actionRequest", "actionProgress", "actionResult", "installationStatus"):
 				if getattr(data, attr) is not None:
 					values[attr] = getattr(data, attr)
-			poc_list.append(values)
+			poc_list.append(ProductOnClient(**values))
 			result_data[client_id][product_id] = values
 
 	try:
-		backend.productOnClient_updateObjects(poc_list)
+		backend.productOnClient_updateObjectsWithDependencies(poc_list)
 
 	except Exception as err:  # pylint: disable=broad-except
 		if isinstance(err, OpsiApiException):
