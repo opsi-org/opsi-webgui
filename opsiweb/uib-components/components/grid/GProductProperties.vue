@@ -12,11 +12,11 @@
         {{ selectionClients.length }}
       </AlertAAlertLocal>
     </div>
-    <div v-if="!errorText && Object.values(properties.productVersions).filter((n) => n).length !== selectionDepots.length">
+    <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
       <AlertAAlertLocal show variant="warning" class="notOnEachDepot">
         {{
           $t('message.warning.notOnEachDepot', {
-            count: Object.values(properties.productVersions).filter((n) => n).length,
+            count: Object.values(properties.productVersions).filter(n => n).length,
             countall: selectionDepots.length,
           })
         }}
@@ -26,8 +26,8 @@
       v-if="
         !errorText &&
         Object.values(properties.productVersions)
-          .filter((n) => n)
-          .some((v) => v != Object.values(properties.productVersions).filter((n) => n)[0])
+          .filter(n => n)
+          .some(v => v != Object.values(properties.productVersions).filter(n => n)[0])
       "
     >
       <AlertAAlertLocal show variant="warning">
@@ -92,108 +92,108 @@
 </template>
 
 <script lang="ts">
-  import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-  import { IProp, IProperty } from '../../.utils/types/ttable'
-  import { IObjectString2Any } from '../../.utils/types/tgeneral'
-  import { ChangeObj } from '../../.utils/types/tchanges'
-  import { arrayEqual } from '../../.utils/utils/scompares'
-  import { Icons } from '../../mixins/icons'
-  import { Client } from '../../mixins/get'
-  import { SaveProductProperties } from '../../mixins/save'
-  import { Strings } from '../../mixins/strings'
-  const selections = namespace('selections')
-  const settings = namespace('settings')
-  const changes = namespace('changes')
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { IProp, IProperty } from '../../.utils/types/ttable'
+import { IObjectString2Any } from '../../.utils/types/tgeneral'
+import { ChangeObj } from '../../.utils/types/tchanges'
+import { arrayEqual } from '../../.utils/utils/scompares'
+import { Icons } from '../../mixins/icons'
+import { Client } from '../../mixins/get'
+import { SaveProductProperties } from '../../mixins/save'
+import { Strings } from '../../mixins/strings'
+const selections = namespace('selections')
+const settings = namespace('settings')
+const changes = namespace('changes')
 
-  @Component({ mixins: [Icons, Strings, SaveProductProperties, Client] })
-  export default class GProductProperties extends Vue {
-    @Prop({}) id!: string
-    @Prop({ default: '' }) errorText!: string
-    @Prop({}) properties!: IProp
-    saveProdProperties: any
-    getClientToDepot: any
-    icon: any
-    $axios: any
-    $nuxt: any
-    $mq: any
-    $t: any
-    t_fixed: any
-    result: Object = {}
-    isLoading: boolean = false
-    fetchedDataClients2Depots: object = {}
+@Component({ mixins: [Icons, Strings, SaveProductProperties, Client] })
+export default class GProductProperties extends Vue {
+  @Prop({}) id!: string
+  @Prop({ default: '' }) errorText!: string
+  @Prop({}) properties!: IProp
+  saveProdProperties: any
+  getClientToDepot: any
+  icon: any
+  $axios: any
+  $nuxt: any
+  $mq: any
+  $t: any
+  t_fixed: any
+  result: Object = {}
+  isLoading: boolean = false
+  fetchedDataClients2Depots: object = {}
 
-    @selections.Getter public selectionDepots!: Array<string>
-    @selections.Getter public selectionClients!: Array<string>
-    @changes.Getter public changesProducts!: Array<ChangeObj>
-    @changes.Mutation public pushToChangesProducts!: (o: object) => void
-    @changes.Mutation public delWithIndexChangesProducts!: (i: number) => void
-    @settings.Getter public quicksave!: boolean
+  @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
+  @changes.Getter public changesProducts!: Array<ChangeObj>
+  @changes.Mutation public pushToChangesProducts!: (o: object) => void
+  @changes.Mutation public delWithIndexChangesProducts!: (i: number) => void
+  @settings.Getter public quicksave!: boolean
 
-    async fetch() {
+  async fetch () {
+    if (this.selectionClients.length > 0) {
+      await this.getClientToDepot(this.selectionClients)
+    }
+  }
+
+  async handleChange (
+    propertyId: string,
+    values: Array<string | boolean>,
+    orgValues: Array<string | boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */
+  ) {
+    if (!this.quicksave) {
       if (this.selectionClients.length > 0) {
-        await this.getClientToDepot(this.selectionClients)
+        this.handleTrackingChanges(this.selectionClients, 'clientId', propertyId, values, orgValues)
+      } else {
+        this.handleTrackingChanges(this.selectionDepots, 'depotId', propertyId, values, orgValues)
       }
+      return
     }
-
-    async handleChange(
-      propertyId: string,
-      values: Array<string | boolean>,
-      orgValues: Array<string | boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */
-    ) {
-      if (!this.quicksave) {
-        if (this.selectionClients.length > 0) {
-          this.handleTrackingChanges(this.selectionClients, 'clientId', propertyId, values, orgValues)
-        } else {
-          this.handleTrackingChanges(this.selectionDepots, 'depotId', propertyId, values, orgValues)
-        }
-        return
+    this.isLoading = true
+    if (!arrayEqual(values, orgValues)) {
+      const propObj: any = {}
+      propObj[propertyId] = values
+      const data: IObjectString2Any = { properties: propObj }
+      if (this.selectionClients.length > 0) {
+        data.clientIds = this.selectionClients
+      } else {
+        data.depotIds = this.selectionDepots
       }
-      this.isLoading = true
+      await this.saveProdProperties(this.id, data, null, true)
+    }
+    this.isLoading = false
+  }
+
+  handleTrackingChanges (
+    hosts: Array<string>,
+    key: string,
+    propertyId: string,
+    values: Array<string | boolean>,
+    orgValues: Array<string | boolean>
+  ) {
+    for (const h in hosts) {
+      const changeObject: Object = {
+        user: localStorage.getItem('username'),
+        [key]: hosts[h],
+        productId: this.id,
+        property: propertyId,
+        propertyValue: values
+      }
+      const objIndex = this.changesProducts.findIndex(
+        item => item[key] === hosts[h] && item.productId === this.id && item.property === propertyId
+      )
+      if (objIndex > -1) {
+        this.delWithIndexChangesProducts(objIndex)
+      }
       if (!arrayEqual(values, orgValues)) {
-        const propObj: any = {}
-        propObj[propertyId] = values
-        const data: IObjectString2Any = { properties: propObj }
-        if (this.selectionClients.length > 0) {
-          data.clientIds = this.selectionClients
-        } else {
-          data.depotIds = this.selectionDepots
-        }
-        await this.saveProdProperties(this.id, data, null, true)
-      }
-      this.isLoading = false
-    }
-
-    handleTrackingChanges(
-      hosts: Array<string>,
-      key: string,
-      propertyId: string,
-      values: Array<string | boolean>,
-      orgValues: Array<string | boolean>
-    ) {
-      for (const h in hosts) {
-        const changeObject: Object = {
-          user: localStorage.getItem('username'),
-          [key]: hosts[h],
-          productId: this.id,
-          property: propertyId,
-          propertyValue: values,
-        }
-        const objIndex = this.changesProducts.findIndex(
-          (item) => item[key] === hosts[h] && item.productId === this.id && item.property === propertyId
-        )
-        if (objIndex > -1) {
-          this.delWithIndexChangesProducts(objIndex)
-        }
-        if (!arrayEqual(values, orgValues)) {
-          this.pushToChangesProducts(changeObject)
-        }
-      }
-    }
-
-    updateNewPropertyValuesRow(rowItem: IProperty) {
-      if (rowItem.newValue && rowItem.newValues) {
-        rowItem.newValues.push(rowItem.newValue)
+        this.pushToChangesProducts(changeObject)
       }
     }
   }
+
+  updateNewPropertyValuesRow (rowItem: IProperty) {
+    if (rowItem.newValue && rowItem.newValues) {
+      rowItem.newValues.push(rowItem.newValue)
+    }
+  }
+}
 </script>

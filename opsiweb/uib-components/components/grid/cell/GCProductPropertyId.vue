@@ -10,7 +10,7 @@
     </div>
     <IconIDetails
       v-if="
-        Object.values(productVersions).filter((n) => n).length == selectionDepots.length &&
+        Object.values(productVersions).filter(n => n).length == selectionDepots.length &&
         Object.keys(row.depots).length != selectionDepots.length
       "
       :id="`btn_tt_${row.propertyId}`"
@@ -21,18 +21,18 @@
 </template>
 
 <script lang="ts">
-  import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-  import { IObjectString2StringOrUndefined } from '../../../.utils/types/tgeneral'
-  const selections = namespace('selections')
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { IObjectString2StringOrUndefined } from '../../../.utils/types/tgeneral'
+const selections = namespace('selections')
 
-  @Component
-  export default class GCProductPropertyId extends Vue {
-    @Prop({}) row!: any
-    @Prop({}) productVersions!: IObjectString2StringOrUndefined
+@Component
+export default class GCProductPropertyId extends Vue {
+@Prop({}) row!: any
+@Prop({}) productVersions!: IObjectString2StringOrUndefined
 
-    @selections.Getter public selectionDepots!: Array<string>
-    @selections.Getter public selectionClients!: Array<string>
-  }
+@selections.Getter public selectionDepots!: Array<string>
+@selections.Getter public selectionClients!: Array<string>
+}
 </script>
 
 <style>
