@@ -52,7 +52,7 @@
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.2",
     "@pinia/nuxt": "^0.x.x",
-    "@playwright/test": "^1.46.0",
+    "@playwright/test": "^1.46.1",
     "@vitejs/plugin-vue": "^4.5.0",
     "@volar/typescript": "^2.3.4",
     "histoire": "0.17.6",

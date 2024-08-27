@@ -3,9 +3,9 @@
 import pkg from './package.json'
 
 const CONFD_PORT = process.env.OPSICONFD_PORT || 4447
-console.log("---------------------------------------------------")
+console.log('---------------------------------------------------')
 console.log('OPSI CONFD PORT', CONFD_PORT)
-console.log("---------------------------------------------------")
+console.log('---------------------------------------------------')
 
 export default defineNuxtConfig({
   build: {
@@ -23,8 +23,11 @@ export default defineNuxtConfig({
     },
   },
   ignore: [
-    '**/tests-configs/**', '**/*.test.component.ts',
-    '**/*.test.accessibility.ts', '**/*.test.usecase.ts', '**/*.test.screenshot.ts'
+    '**/tests-configs/**',
+    '**/*.test.component.ts',
+    '**/*.test.accessibility.ts',
+    '**/*.test.usecase.ts',
+    '**/*.test.screenshot.ts',
   ],
   devtools: {
     enabled: false,
@@ -56,7 +59,7 @@ export default defineNuxtConfig({
       packageVersion: pkg.version,
       API_PATH: '/addons/webgui/api',
       OWN_PATH: '/addons/webgui/app',
-      NUXT_PUBLIC_API_BASE: (process.env.NODE_ENV === 'production') ? '' : 'https://localhost:' + CONFD_PORT,
+      NUXT_PUBLIC_API_BASE: process.env.NODE_ENV === 'production' ? '' : 'https://localhost:' + CONFD_PORT,
     },
   },
   modules: [
@@ -72,14 +75,12 @@ export default defineNuxtConfig({
     storage: 'localStorage',
     debug: true,
   },
-  css: [
-    '~/assets/scss/index.scss',
-  ],
+  css: ['~/assets/scss/index.scss', '~/assets/css/tailwind.css'],
   vite: {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@use "@/assets/scss/opsi.scss" as *;`
+          additionalData: `@use "@/assets/scss/opsi.scss" as *;`,
         },
       },
     },
@@ -107,4 +108,3 @@ export default defineNuxtConfig({
     dirs: ['store'],
   },
 })
-
