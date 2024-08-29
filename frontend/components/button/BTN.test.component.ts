@@ -13,7 +13,12 @@ test.describe('snapshot', () => {
     //     if (version) version.innerHTML = 'x.x.x'
     //   })
     // }
-    await simpleScreenshotTest(page, folder, filename.toLocaleLowerCase() + '-story-vue', filename,undefined,
+    await simpleScreenshotTest(
+      page,
+      folder,
+      filename.toLocaleLowerCase() + '-story-vue',
+      filename,
+      undefined
       // afterDataTestidFound
     )
   })

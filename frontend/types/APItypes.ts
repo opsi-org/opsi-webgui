@@ -37,14 +37,14 @@ export interface T_ClientAttr {
   type: string
   description: string
   notes: string
-  hardwareAddress: string | null
-  ipAddress: string | null
+  hardwareAddress: string | undefined
+  ipAddress: string | undefined
   inventoryNumber: string
-  systemUUID: string | null
+  systemUUID: string | undefined
   created: string
   lastSeen: string
   opsiHostKey: string
-  oneTimePassword: string | null
+  oneTimePassword: string | undefined
   uefi: boolean
 }
 export interface T_ServerAttr {
@@ -52,7 +52,7 @@ export interface T_ServerAttr {
   type: string
   description: string
   notes: string
-  hardwareAddress: string | null
+  hardwareAddress: string | undefined
   ipAddress: string
   inventoryNumber: string
   systemUUID: string
@@ -67,7 +67,7 @@ export interface T_ServerAttr {
   networkAddress: string
   maxBandwidth: number
   isMasterDepot: boolean
-  masterDepotId: string | null
+  masterDepotId: string | undefined
 }
 
 export interface T_HostParameter {

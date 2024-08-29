@@ -9,18 +9,11 @@ webgui server methods
 """
 
 from fastapi import APIRouter, Request, status
-
-
-from opsiconfd.logging import logger
 from opsiconfd.config import config
-from opsiconfd.rest import (
-	OpsiApiException,
-	RESTResponse,
-	rest_api,
-)
+from opsiconfd.logging import logger
+from opsiconfd.rest import OpsiApiException, RESTResponse, rest_api
 
 from .utils import backend
-
 
 server_router = APIRouter()
 
@@ -76,4 +69,3 @@ def get_server_disabled_freatures(request: Request) -> RESTResponse:  # pylint: 
 	"""
 
 	return RESTResponse(http_status=200, data=config.disabled_features)
-

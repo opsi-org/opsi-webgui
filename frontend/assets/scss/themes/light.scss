@@ -1,0 +1,15 @@
+@import '../opsi.scss';
+
+html {
+  --color-background: #{$opsi-base-light-background};
+  --color-text: #{$opsi-base-light-text};
+  --hover: #{$opsi-light-gray};
+  --border: #{$opsi-medium-gray};
+  --placeholder: #{$opsi-gray};
+}
+
+/* Switch */
+html .el-switch {
+  --el-switch-on-color: #{$opsi-blue};
+  --el-switch-off-color: #{$opsi-medium-gray};
+}

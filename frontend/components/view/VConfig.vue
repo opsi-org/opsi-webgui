@@ -1,13 +1,12 @@
 
 <template>
   <SelectSHosts v-if="props.isChild === false" :id="currentId" :type="type" @change="setId" />
-  <el-tabs v-model="activeName" class="demo-tabs">
+  <el-tabs v-model="activeName">
     <el-tab-pane
       :label="currentId ? $t('title.hostparam') : $t('title.hostparam.defaults')"
       name="config"
       active :disabled="!(type == 'clients' || type == 'servers')"
     >
-        <!-- <el-text>Config of {{ type }} {{ currentId }}</el-text> -->
         <FormFHostParameter v-if="activeName==='config'" :id="currentId" :type="type" :is-child="props.isChild"/>
       </el-tab-pane>
     <el-tab-pane :label="$t('title.hostattr')" name="attr" :disabled="isIdEmpty">

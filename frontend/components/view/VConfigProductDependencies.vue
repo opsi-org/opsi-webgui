@@ -1,12 +1,9 @@
 <template>
   <div>
-    <h6>Dependencies</h6>
     <el-form
       v-for="item in props.dependencies.dependencies"
       label-width="50%"
       label-position="left"
-      class="bg-transparent mr-3 ml-3"
-      label-suffix=""
     >
       <el-form-item>
       <template #label>

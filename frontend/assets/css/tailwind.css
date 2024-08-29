@@ -1,20 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* @layer tailwind-base, primevue, tailwind-utilities;
-
-@layer tailwind-base {
-    @tailwind base;
-}
-
-@layer tailwind-utilities {
-    @tailwind components;
-    @tailwind utilities;
-} */
-/* :root {
-    --bg-surface-50: #f9f9f9;
-    --bg-surface-0: #ffffff;
-    --bg-surface-800: #1f1f1f;
-    --bg-surface-800: green;
-} */

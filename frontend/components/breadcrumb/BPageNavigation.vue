@@ -7,6 +7,6 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const pathSegments = computed(() => route.path.split('/').filter((segment: string) => segment));
+  const route = useRoute()
+  const pathSegments = computed(() => route.path.split('/').filter((segment: string) => segment))
 </script>

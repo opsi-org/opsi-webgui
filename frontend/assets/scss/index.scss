@@ -1,180 +1,125 @@
-html,
-body,
-#app {
-  background: unset !important;
-  margin: 0;
-  padding: 0;
-}
-body {
-  background-color: unset !important;
-  color: unset !important;
-}
+@import './opsi.scss';
+@import './themes/light.scss';
+@import './themes/dark.scss';
 
-html {
-  --opsi-genral-white: #E1E1E1;
-  --opsi-general-red: #cb1e58;
-  --opsi-general-blue: #3f5aa6;
-  --opsi-general-blue-dark: #2d4178;
-  --opsi-general-lighter: #e4e4e3;
-  --opsi-general-light: #b2b2b2;
-  --opsi-general-dark: #4b4b49;
-  --opsi-general-darker: #3f3f3e;
+/* General Colors */
+$white: #ffffff;
+$black: #000000;
 
-  --opsi-log-secret: #D500F9;
-  --opsi-log-trace: #8B8B8B;
-  --opsi-log-debug: #565656;
-  --opsi-log-info: #212121;
-  --opsi-log-notice: #009605;
-  --opsi-log-warning: #FF9100;
-  --opsi-log-error: #E51D3B;
-  --opsi-log-critical: #E20066;
-  --opsi-log-essential: #2979FF;
-}
-html {
-  /* PrimeVue */
-  --highlight-bg: #f0f0f0;
-  --primary-color: var(--opsi-general-blue);
-  --primary-color-dark: var(--opsi-general-blue-dark);
-  --primary-color-text: var(--opsi-genral-white);
+/* Global Variables */
+html body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+
+  /* Element Plus Variables */
+  --el-text-color-regular: var(--color-text);
+  --el-fill-color-blank: var(--color-background);
+  --el-text-color-primary: var(--color-text);
+  --el-border-color: var(--border);
+  --el-border-color-light: var(--border);
+  --el-border-color-lighter: var(--border);
+  --el-color-primary: #{$opsi-blue};
+  --el-bg-color: var(--color-background);
+  --el-bg-color-overlay: var(--color-background);
+  --el-fill-color-light: var(--hover);
+  --el-color-primary-light-9: var(--hover);
+  --el-text-color-placeholder: var(--placeholder);
+  --el-color-info: var(--color-text);
+  --el-color-info-light-9: var(--hover);
 }
 
-html.light, html:not(.light):not(.dark),
-body[data-bs-theme="light"] {
-  --el-bg-color: #FFFFFF;
-  --bs-body-bg: var(--el-bg-color);
-  --bg-color: var(--el-bg-color);
-  --bg-color-hover: var(--el-bg-color);
-  // --el-fill-color: #aaaaaa;
-  // --el-fill-color-light: var(--el-fill-color);
+/* Text */
+html .text-white {
+  --el-text-color-regular: $white;
+  color: $white;
+}
 
-  --fg-color: #000000;
-  // --el-text-color-regular: #e1e1e1;
-  // --el-input-text-color: #E1E1E1;
-  --el-text-color-primary: #000000;
-  --el-notification-content-color: var(--el-text-color-primary);
-  // --el-text-color-regular: #000000;
-  --el-menu-text-color: #000000;
-  background: var(--bg-color) !important;
-  color: var(--fg-color) !important;
-  --el-border-color: #c6c6c6; //This property was added to fix the input fields without borders that looked hidden.
-  --el-border-color-hover: #404040;
+/* Backgrounds */
+.bg-general {
+  --el-text-color-regular: var(--color-text);
+  --el-fill-color-blank: var(--color-background);
+  background-color: var(--color-background);
+}
 
-  /* PrimeVue */
-  --text-color: var(--fg-color);
-  --text-secondary-color: var(--opsi-general-dark);
-  --primary-color: --opsi-general-blue;
-  --primary-color-text: var(--el-text-color-regular);
-  --font-family: 'Roboto', sans-serif;
-  /* --inline-spacing	Spacing between to adjacent items.*/
-  /* --border-radius	Common border radius of elements. */
-  /* --focus-ring	Box shadow of a focused element. */
-  /* --mask-bg	Background of an overlay mask. */
-  --highlight-bg: var(--bg-color);	/* Background of a highlighted element. */
-  /* --highlight-text-color Text color of a highlighted element.*/
+.bg-opsi-blue {
+  --el-color-primary: $white;
+  --el-border-color: #{$opsi-medium-gray};
+  --el-border-color-light: #{$opsi-gray};
+  --el-text-color-placeholder: #{$opsi-medium-gray};
+  --color-background: $opsi-blue;
+  --color-text: $white;
+  --el-disabled-bg-color: #{$opsi-blue};
+  --el-disabled-text-color: #{$opsi-medium-gray};
+  background-color: $opsi-blue;
+  color: $white;
 
-  .el-notification,
-  .el-notification__content {
-    --el-notification-content-color: var(--el-text-color-primary);
-    color: var(--el-notification-content-color);
+  &.el-card {
+    --el-fill-color-blank: #{$opsi-blue};
+    --el-card-bg-color: #{$opsi-blue};
+    border: none;
   }
 
-  .text-on-primary {
-    --el-text-color-regular: var(--opsi-genral-white);
-    color: var(--el-text-color-regular);
+  &.el-menu,
+  &.el-menu--horizontal.el-menu,
+  &.el-menu--horizontal > .el-menu-item.is-active,
+  .el-menu-item.is-active,
+  .el-menu-item:hover,
+  &.el-menu--collapse .el-sub-menu.is-active .el-sub-menu__title,
+  &.el-menu--collapse .el-sub-menu.is-active .el-sub-menu__title:hover {
+    --el-menu-bg-color: #{$opsi-blue};
+    --el-menu-text-color: #{$white};
+    background-color: $opsi-blue;
   }
-  .el-card {
-    background-color:var(--bg-color);
-  }
-  .el-card__header {
-    background-color:var(--bg-color);
-  }
-}
-// html.dark {
-html.dark,
-body[data-bs-theme="dark"] {
-  --el-bg-color: #3f3f3e;
-  --bs-body-bg: var(--el-bg-color);
-  --bg-color: var(--el-bg-color);
-  --bg-color-hover: #4b4b49;
-  --el-bg-color-overlay: #4b4b49 !important;
-  // --fg-color: var(--el-text-color-primary);
-  --fg-color: var(--opsi-genral-white);
-  --el-text-color-primary: var(--opsi-genral-white);
-  --el-input-text-color: var(--opsi-genral-white);
 
-  --el-notification-content-color: var(--el-text-color-regular);
-  // --el-text-color-regular: #CFD3DC;
-  background: var(--bg-color) !important;
-  color: var(--fg-color) !important;
-  --el-border-color: #616161; //This property was added to fix the input fields without borders that looked hidden.
-  --el-border-color-hover: #b3b3b3;
+  &.el-menu {
+    border-right: none;
 
-  .text-on-primary {
-    --el-text-color-regular: var(--opsi-genral-white);
-    color: var(--el-text-color-regular);
+    &--horizontal.el-menu,
+    &--horizontal > .el-menu-item.is-active {
+      border-bottom: none;
+    }
+  }
+
+  .el-menu-item.is-active,
+  .el-menu-item:hover,
+  &.el-menu--collapse .el-sub-menu.is-active .el-sub-menu__title,
+  .el-sub-menu.is-active,
+  .el-sub-menu__title.is-active,
+  .el-sub-menu__title:hover {
+    background-color: $opsi-deep-blue;
+    color: $white;
+  }
+
+  .el-checkbox-button__inner,
+  .el-button {
+    background-color: $opsi-blue;
+    color: $white;
+  }
+
+  .el-button:hover {
+    background-color: $opsi-deep-blue;
+    color: $white;
   }
 }
 
-
-h1, h2, h3, h4, h5, h6 {
-  --bs-heading-color: var(--fg-color);
-}
-.el-input {
-  max-height: 2rem;
-  border: 0px !important;
-}
-.el-input .el-select__wrapper,
-.el-input input,
-.el-input .el-button {
-  min-height: 30px !important;
-  height: 30px !important;
-  max-height: 30px !important;
-  border-top: 0px !important;
-  border-bottom: 0px !important;
-  border: 0px !important;
-  border-radius: 0%;
-  box-shadow: none !important;
-}
-.el-popper .el-menu .text-on-primary {
-  /* BSIDE items during hover. cannot be inside component, cause el-popper is directly in body tag*/
-  --el-text-color-regular: var(--fg-color) !important;
-}
-.el-popper .el-menu .el-menu-item.is-active.text-on-primary,
-.el-popper .el-menu .el-menu-item.is-active.text-on-primary .text-on-primary {
-  /* BSIDE items during hover. cannot be inside component, cause el-popper is directly in body tag*/
-  --el-text-color-regular: var(--opsi-general-lighter) !important;
-}
-.el-popper .el-menu .el-menu-item.is-active.text-on-primary:hover,
-.el-popper .el-menu .el-menu-item.is-active.text-on-primary:hover .text-on-primary {
---el-text-color-regular: var(--opsi-general-light) !important;
-}
-a {
-  font-weight: 400;
-  color: var(--el-color-primary);
-}
-button.pressed {
-  // color: var(--el-button-hover-text-color);
-  border-color: var(--opsi-general-blue);
-  // background-color: var(--el-button-hover-bg-color);
-  background-color: var(--opsi-general-blue);
-  outline: none;
+/* Tabs */
+html .el-tabs__item.is-active {
+  background-color: $opsi-blue;
+  color: $white;
 }
 
-.el-popper.el-select__popper, .el-popper .el-select-dropdown, .el-popper .el-vl__window  {
-  // width: 500px !important;
-  width: fit-content;
-  min-width: 200px;
-  // max-width: 400px;
+html .el-tabs__item:hover {
+  background-color: var(--hover);
+  color: var(--color-text);
 }
 
+/* Buttons */
+html .el-button:hover {
+  background-color: $opsi-blue;
+  color: $white;
+}
 
-body > .p-contextmenu {
-  position: absolute;
-
-  z-index: 1000;
-  padding: 2px;
-  display: block;
-  margin: 0;
-  list-style-type: none;
-  list-style: none;
+/* Dropdowns */
+.el-dropdown__popper {
+  --el-color-primary: var(--color-text);
 }

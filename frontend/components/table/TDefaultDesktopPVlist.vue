@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="max-w-full" :class="{small: props.small !== false}">
+    <!-- :class="{small: props.small !== false}" -->
+    <div class="max-w-full" >
       <IconILoading v-if="dataModel.length <= 0" />
       <!-- HEADER -->
       <!-- SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }} -->
@@ -882,20 +883,10 @@ function clearSelection (event:any) {
 <style scoped>
 :deep(.noHoverRow){
   --bg-color-hover: transparent;
-  /* background-color: blue !important; */
 }
 :deep(.p-column-header-content .p-checkbox) {
   display: none;
 }
-/* :deep(.p-dropdown-items-wrapper) {
-  background-color: black !important;
-}
-.p-dropdown-item {
-  color: black !important;
-} */
-/* p-dropdown-items-wrapper = el-select-dropdown__list
-p-dropdown-items
-p-dropdown-item = el-select-dropdown__item */
 :deep(.p-datatable .p-datatable-thead > tr > th .p-column-title) {
   display: none !important;
 }
