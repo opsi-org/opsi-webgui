@@ -15,7 +15,7 @@
     </el-row>
     <div class="flex justify-evenly">
       <DropdownDDClientActions :clientIds="storeSelection.selectionClients" icon="client" />
-      <DialogDProductActions />
+      <DialogDProductQuickActions />
     </div>
 
     <el-row>

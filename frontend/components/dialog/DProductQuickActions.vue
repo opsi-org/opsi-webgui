@@ -12,7 +12,8 @@
           <b>{{ $t('title.' + category) }} </b>
         </el-row>
         <div v-for="(value, label) in options">
-          <el-form-item :label="$t('table.fields.' + label)">
+          <el-alert v-if="label == 'demoInfo'" :title="value" type="info" :closable="false" />
+          <el-form-item v-else :label="$t('table.fields.' + label)">
             <el-checkbox v-if="typeof value == 'boolean'" v-model="productActions[category][label]" />
             <el-select v-else-if="Array.isArray(value)" v-model="productActions[category][label]" multiple>
               <el-option v-for="item in value" :key="item" :label="item" :value="item" />
@@ -38,6 +39,15 @@
   const icon = useIcons()
   const mq = useMQ()
   const popoverVisible = ref(false)
+  const productQuickAction = {
+    action: null,
+    outdated: false,
+    installation_status: null,
+    action_result: null,
+    selectedClients: null,
+    selectedDepots: null,
+    demoMode: true,
+  }
   const productActions = ref({
     conditions: {
       instStatus: ['not_installed', 'installed', 'unknown'],
@@ -51,8 +61,7 @@
       apply: ['To both selected servers and clients', 'Only to selected servers', 'Only to selected clients'],
     },
     demo: {
-      demoInfo:
-        'Demo mode will not make any changes, but will return the expected result. This allows to see where these actions are going to be performed without actually executing them.',
+      demoInfo: 'Demo mode simulates product quick actions without making changes, showing expected results.',
       demoMode: true,
       demoResult: '--',
     },
@@ -61,9 +70,6 @@
 
 <!-- <template>
       <OverlayOLoading :is-loading="isLoading" />
-      <b-row class="text-small mb-2">
-        <b>{{ $t('label.conditions') }} </b>
-      </b-row>
       <GridGFormItem variant="longlabel" :label="$t('table.fields.instStatus')">
         <template #value>
           <b-form-select v-model="quickaction.installation_status" size="sm" :options="conditn_InstStatus">
