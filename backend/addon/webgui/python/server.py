@@ -42,13 +42,13 @@ def get_health_check(request: Request) -> RESTResponse:  # pylint: disable=unuse
 
 @server_router.get("/api/opsidata/server/diagnostic")
 @rest_api
-def get_diagnostic_data(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
+async def get_diagnostic_data(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	get server diagnostic data
 	"""
 
 	try:
-		diagnostic_data = backend.service_getDiagnosticData()
+		diagnostic_data = await backend.service_getDiagnosticData()
 	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Could not get diagnostic data.")
 		logger.error(err)

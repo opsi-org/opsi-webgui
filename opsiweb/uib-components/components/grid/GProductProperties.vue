@@ -6,17 +6,30 @@
         {{ $t('message.warning.noClientsSelectedShowDepot') }}
       </AlertAAlertLocal>
     </div>
-    <div v-else-if="!errorText && $mq=='mobile'">
+    <div v-else-if="!errorText && $mq == 'mobile'">
       <AlertAAlertLocal show variant="primary">
-        {{ $t('table.fields.clientsIds') + t_fixed('keep-english.colon') }} {{ selectionClients.length }}
+        {{ $t('table.fields.clientsIds') + t_fixed('keep-english.colon') }}
+        {{ selectionClients.length }}
       </AlertAAlertLocal>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
       <AlertAAlertLocal show variant="warning" class="notOnEachDepot">
-        {{ $t('message.warning.notOnEachDepot', {count:Object.values(properties.productVersions).filter(n => n).length, countall:selectionDepots.length}) }}
+        {{
+          $t('message.warning.notOnEachDepot', {
+            count: Object.values(properties.productVersions).filter(n => n).length,
+            countall: selectionDepots.length,
+          })
+        }}
       </AlertAAlertLocal>
     </div>
-    <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).some((v)=>v!=Object.values(properties.productVersions).filter(n => n)[0])">
+    <div
+      v-if="
+        !errorText &&
+        Object.values(properties.productVersions)
+          .filter(n => n)
+          .some(v => v != Object.values(properties.productVersions).filter(n => n)[0])
+      "
+    >
       <AlertAAlertLocal show variant="warning">
         {{ $t('message.warning.differentProductVersions') }}
       </AlertAAlertLocal>
@@ -24,7 +37,7 @@
     <p v-if="errorText">
       {{ errorText }}
     </p>
-    <span v-for="item, index in properties.properties" :key="index">
+    <span v-for="(item, index) in properties.properties" :key="index">
       <GridGFormItem variant="longlabel" :new-row-for-value="$mq !== 'desktop'">
         <template #label>
           <div class="d-inline-flex">
@@ -33,30 +46,35 @@
           </div>
           <b-tooltip :target="`property_${item.propertyId}`" triggers="hover">
             <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${item.propertyId}`" class="text-left">
-              <small>
-                {{ $t('table.details.productproperty.defaults') }} <b v-if="item.default!==$t('values.mixed')">{{ t_fixed('keep-english.[content]').replace('content', item.details) }}</b>
-                <div v-else>
-                  <p v-for="v,k in item.defaultDetails" :key="k">
+              <b-form>
+                <b-form-group :label="$t('table.details.productproperty.defaults')">
+                  <b v-if="item.default !== $t('values.mixed')">
+                    {{ t_fixed('keep-english.[content]').replace('content', item.default) }}
+                  </b>
+                  <div v-else>
+                    <p v-for="(v, k) in item.defaultDetails" :key="k">
+                      {{ k + t_fixed('keep-english.colon') }} <b>{{ v }}</b>
+                    </p>
+                  </div>
+                </b-form-group>
+
+                <b-form-group v-if="item.anyDepotDifferentFromDefault" :label="$t('table.details.productproperty.server')">
+                  <p v-for="(v, k) in item.depots" :key="k">
                     {{ k + t_fixed('keep-english.colon') }} <b>{{ v }}</b>
                   </p>
-                </div>
-                <br>
-                <div v-if="item.anyDepotDifferentFromDefault">
-                  {{ $t('table.details.productproperty.server') }}
-                  <p v-for="v,k in item.depots" :key="k">
-                    {{ k + t_fixed('keep-english.colon') }} <b>{{ v }}</b>
-                  </p>
-                </div>
-                <br>
-                {{ $t('table.fields.description') }} <b v-if="item.description!=$t('values.mixed')">{{ item.description }}</b>
-                <div v-else>
-                  <p v-for="v,k in item.descriptionDetails" :key="k">
-                    {{ k + t_fixed('keep-english.colon') }} <b>{{ v }}</b>
-                  </p>
-                </div>
-                <br>
-              </small>
-              <br>
+                </b-form-group>
+
+                <b-form-group :label="$t('table.fields.description')">
+                  <b v-if="item.description != $t('values.mixed')">
+                    {{ item.description }}
+                  </b>
+                  <div v-else>
+                    <p v-for="(v, k) in item.descriptionDetails" :key="k">
+                      {{ k + t_fixed('keep-english.colon') }} <b>{{ v }}</b>
+                    </p>
+                  </div>
+                </b-form-group>
+              </b-form>
             </b-container>
           </b-tooltip>
         </template>
@@ -89,18 +107,18 @@ const changes = namespace('changes')
 
 @Component({ mixins: [Icons, Strings, SaveProductProperties, Client] })
 export default class GProductProperties extends Vue {
-  @Prop({ }) id!: string
+  @Prop({}) id!: string
   @Prop({ default: '' }) errorText!: string
-  @Prop({ }) properties!: IProp
-  saveProdProperties:any
-  getClientToDepot:any
+  @Prop({}) properties!: IProp
+  saveProdProperties: any
+  getClientToDepot: any
   icon: any
   $axios: any
   $nuxt: any
   $mq: any
-  $t:any
+  $t: any
   t_fixed: any
-  result:Object = {}
+  result: Object = {}
   isLoading: boolean = false
   fetchedDataClients2Depots: object = {}
 
@@ -108,7 +126,7 @@ export default class GProductProperties extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public pushToChangesProducts!: (o: object) => void
-  @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
+  @changes.Mutation public delWithIndexChangesProducts!: (i: number) => void
   @settings.Getter public quicksave!: boolean
 
   async fetch () {
@@ -117,7 +135,11 @@ export default class GProductProperties extends Vue {
     }
   }
 
-  async handleChange (propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
+  async handleChange (
+    propertyId: string,
+    values: Array<string | boolean>,
+    orgValues: Array<string | boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */
+  ) {
     if (!this.quicksave) {
       if (this.selectionClients.length > 0) {
         this.handleTrackingChanges(this.selectionClients, 'clientId', propertyId, values, orgValues)
@@ -141,7 +163,13 @@ export default class GProductProperties extends Vue {
     this.isLoading = false
   }
 
-  handleTrackingChanges (hosts:Array<string>, key:string, propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean>) {
+  handleTrackingChanges (
+    hosts: Array<string>,
+    key: string,
+    propertyId: string,
+    values: Array<string | boolean>,
+    orgValues: Array<string | boolean>
+  ) {
     for (const h in hosts) {
       const changeObject: Object = {
         user: localStorage.getItem('username'),
@@ -150,7 +178,9 @@ export default class GProductProperties extends Vue {
         property: propertyId,
         propertyValue: values
       }
-      const objIndex = this.changesProducts.findIndex(item => item[key] === hosts[h] && item.productId === this.id && item.property === propertyId)
+      const objIndex = this.changesProducts.findIndex(
+        item => item[key] === hosts[h] && item.productId === this.id && item.property === propertyId
+      )
       if (objIndex > -1) {
         this.delWithIndexChangesProducts(objIndex)
       }
