@@ -58,6 +58,7 @@ export const storeAuth = defineStore('auth', {
     },
     clearSession () {
       this.sessionEndTime = ''
+      this.username = ''
     },
   },
 })

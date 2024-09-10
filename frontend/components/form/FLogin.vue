@@ -39,7 +39,7 @@ const { notifySuccess, notifyError } = useNotification()
 const config = useRuntimeConfig()
 const $mq = useMQ().$mq
 const form = ref({ username: '', password: '' })
-const isLoading = ref(false)
+const isLoading = ref(true)
 const totp = ref('')
 const opsiconfigserver = ref('');
 
@@ -76,7 +76,6 @@ function createUserFormData() {
 
 function handleSuccessfulLogin() {
   notifySuccess({ message: $t('message.page.redirect') })
-  storeAuth().login(form.value.username)
   storeAuth().setSession()
   const route = useRoute()
   const router = useRouter()

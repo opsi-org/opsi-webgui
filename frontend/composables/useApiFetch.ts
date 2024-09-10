@@ -50,7 +50,7 @@ async function useAPI2<T> (
     baseURL: baseUrl,
     onRequest({ request, options }: any) {
       // Set the request headers
-      const headers = { ...opts?.headers }
+      const headers: any = { ...opts?.headers }
       if (!urlsWithoutAuthentication.includes(url)) {
         headers['X-opsi-session-lifetime'] = 3600  // TODO: get from store
       }
@@ -83,13 +83,6 @@ async function useAPI2<T> (
       // Process the response data
       callresponse.value = response.data || response._data || response.body || {}
       callheaders = response.headers
-      var username = callheaders.get('x-opsi-user-id')
-      if (username) {
-        username = username.split('user:')[1]
-        if (username) {
-          storeAuth().setUser(username)
-        }
-      }
       status = response.status
       pendingState.value = false
     },
@@ -126,6 +119,13 @@ async function useAPI2<T> (
       callerror.value = { response: { data: { class: 'error', message: 'no response' } } }
     }
   }
+  var username = callheaders.get('x-opsi-user-id')
+  if (username) {
+    username = username.split('user:')[1]
+    if (username) {
+      storeAuth().setUser(username)
+    }else { storeAuth().clearSession()}
+  }else { storeAuth().clearSession()}
   return {pending:pendingState, data: callresponse, error: callerror.value, headers: callheaders, status }
 }
 

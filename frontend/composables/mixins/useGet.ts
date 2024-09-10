@@ -31,7 +31,6 @@ export const useConfigserver = async (init: boolean = false, _store:any=undefine
 
   async function getOpsiConfigServer (alertRef: any = undefined) {
     const { data, error } = await useApiGET<T_Opsiserver>('/user/opsiserver')
-    console.log('getOpsiConfigServer', data, error)
     if (error || !data?.value) {
       const errordata = { response: { data: {class: '', details: '', message: $t('message.error.opsiconfd')}} }
       notifyError({ title:$t('message.error.login'), message: notifyError({ message: error?.response?.data?.message }) })
@@ -40,7 +39,6 @@ export const useConfigserver = async (init: boolean = false, _store:any=undefine
     storeCache().setOpsiconfigserver(data.value.result)
     return storeCache().opsiconfigserver
   }
-
   return { getOpsiConfigServer }
 }
 

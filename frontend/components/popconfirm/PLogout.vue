@@ -45,19 +45,20 @@ async function doLogout () {
 
   const { data, error } = await useApiPOST<T_Logout>('/auth/logout')
   if (error?.response.data.message === 'Unauthorized' /* xxx */ || error?.response.data.message === 'Method Not Allowed' /*405*/) {
-    // pass
+    // pass, cause already logged out
   } else if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
   }
 
+  console.log('Logged out')
   useMBus(undefined, false, $t).wsDisconnect()
   authStore.logout()
   authStore.clearSession()
-  // authStore.setExpiresInterval(undefined)
 
   if (useRoute().name !== 'login') {
-    await useRouter().push({ path: '/login' })
+    console.log('Redirecting to login page')
+    reloadNuxtApp()
   }
   // TODO clearAllSelection()
 }
