@@ -46,6 +46,9 @@
       </el-card>
       <el-card :shadow="(events.ondemand.params.onlyIdFromParams == 2) ? 'always' : 'never'" body-class="p-0"
         :body-style="(events.ondemand.params.onlyIdFromParams != 2) ? 'color: var(--el-text-color-disabled)' : ''">
+        <p v-if="events.ondemand.params.onlyIdFromParams == 1">
+          {{$t('button.event.ondemand.notincluded')}}
+        </p>
       <ul>
         <li v-for="c in selection" :key="c" class="p-2 ">
           <el-button
