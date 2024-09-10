@@ -41,7 +41,7 @@ export const useTableHelper = (
     if (totalItems.value === 0) {
       return []
     }
-    tableDataWrapper.value.perPage = totalItems.value
+    // tableDataWrapper.value.perPage = totalItems.value
     updateTableData(tableDataWrapper.value)
   }
   async function fetch (location: string|undefined = undefined) {

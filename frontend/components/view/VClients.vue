@@ -22,6 +22,7 @@
           :icon="icons.product"
           @click="openLink('/clients/products/LocalbootProduct')"
         > {{$t('table.fields.products')}} </ButtonBTNRowLink>
+        PerPage: {{tableData.perPage}}
       </template>
     </TableTDefault>
 </template>
@@ -54,7 +55,7 @@ const fetchedData = ref<Array<any>>([])
 const totalItems = ref<number>(0)
 const tableData = ref<ITableData>({
   pageNumber: 1,
-  perPage: 1000000,
+  perPage: 50,
   _lastScrollDirection: '',
   // sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortBy: storeTable.clientsSorting.column,
@@ -359,7 +360,6 @@ function _objectWithoutProperties(obj: any, keys: string[]): any {
 }
 
 async function _fetch() {
-
   const params: any = _objectWithoutProperties(tableData.value, ["_lastScrollDirection"]);
   // const params:any = { ...tableData.value }
   params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)

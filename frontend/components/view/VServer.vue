@@ -140,7 +140,7 @@ const fetchedData = ref<T_ServerList>([])
 const totalItems = ref<number>(0)
 const tableData = ref<ITableData>({
   pageNumber: 1,
-  perPage: 100000,
+  perPage: 50,
   // sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortBy: storeTable.serversSorting.column,
   // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),

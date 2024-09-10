@@ -163,7 +163,7 @@ const tableData = ref<tproductITableData>({
   'LocalbootProduct': {
     type: 'LocalbootProduct',
     pageNumber: 1,
-    perPage: 1000000,
+    perPage: 50,
     // sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
     sortBy: tableSettings.productsSorting.column,
     sortDesc: Boolean(tableSettings.productsSorting.isDesc),
@@ -174,7 +174,7 @@ const tableData = ref<tproductITableData>({
   'NetbootProduct': {
     type: 'NetbootProduct',
     pageNumber: 1,
-    perPage: 1000000,
+    perPage: 50,
     sortBy: tableSettings.productsSorting.column,
     sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     filterQuery: '',
@@ -183,7 +183,7 @@ const tableData = ref<tproductITableData>({
   'Product': {
     type: 'Product',
     pageNumber: 1,
-    perPage: 1000000,
+    perPage: 50,
     sortBy: tableSettings.productsSorting.column,
     sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     filterQuery: '',
