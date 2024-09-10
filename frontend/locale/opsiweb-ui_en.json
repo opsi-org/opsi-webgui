@@ -349,6 +349,7 @@
   "button.reload.app": "Click here to reload the application",
   "button.property.info": "Information about property",
   "button.event.modal.footer": "Execute '{event}' on this elements?",
+  "button.event.ondemand.notincluded": "Not included in on_demand:",
   "button.event.ondemand.tooltip": "run on_demand for selected clients",
   "button.event.reboot.tooltip": "Reboot client",
   "button.event.showpopup.tooltip": "Send message",
