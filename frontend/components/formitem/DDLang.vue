@@ -23,7 +23,7 @@
           :data-testid="`DropdownDDLang-Item-contribute`"
           :title="$t('button.contribute-transifex.tooltip')"
         >
-          <a href="https://app.transifex.com/opsi-org/opsiorg/opsiweb-uijson/" target="_blank" class="dropdown-item-link">
+          <a href="https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/" target="_blank" class="dropdown-item-link">
             {{ $t('button.contribute-transifex') }}
           </a>
         </el-dropdown-item>
