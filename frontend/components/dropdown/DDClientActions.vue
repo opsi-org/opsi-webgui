@@ -1,7 +1,7 @@
 <template>
   <el-dropdown trigger="click">
     <el-button class="ml-0">
-      <IconIIcon :icon="icon[props.icon]" :title="$t('button.tablerow.moreoptions')" />
+      <IconIIcon :icon="getIcon(props.icon)" :title="$t('button.tablerow.moreoptions')" />
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>
@@ -9,7 +9,7 @@
           <el-popover :width="mq.isMobile.value ? '100%' : '360px'" trigger="click" v-model="popoverVisible">
             <template #reference>
               <el-button size="small" class="w-full text-left" :data-testid="`popover-${action}-button`">
-                ><IconIIcon :icon="icon[action]" class="mr-1" />
+                ><IconIIcon :icon="getIcon(action)" class="mr-1" />
                 {{ $t('label.' + action) }}
               </el-button>
             </template>
@@ -49,6 +49,7 @@
 <script setup lang="ts">
   import { useIcons } from '@/composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
+import type { IObjectString2Function, IObjectString2String } from '~/types/tgeneral';
   const $t = useI18n().t
   const { notifyError } = useNotification()
   const icon = useIcons()
@@ -57,17 +58,17 @@
     clientIds: { type: Array, default: [] },
     icon: { type: String, default: 'menu' },
   })
-  const popoverVisible = ref(false)
-  const isLoading = ref(false)
-  const notifyText = ref('')
-  const clientActions = ref(['ondemand', 'notify', 'reboot', 'deployclientagent', 'delete'])
-  const opsiClientAgent = ref({
+  const popoverVisible = ref<boolean>(false)
+  const isLoading = ref<boolean>(false)
+  const notifyText = ref<string>('')
+  const clientActions = ref<Array<string>>(['ondemand', 'notify', 'reboot', 'deployclientagent', 'delete'])
+  const opsiClientAgent = ref<IObjectString2String>({
     username: '',
     password: '',
     type: 'windows',
   })
 
-  const actionMethods = {
+  const actionMethods:IObjectString2Function = {
     ondemand: () =>
       useApiPOST('/command/opsiclientd_rpc', {
         client_ids: props.clientIds,
@@ -89,7 +90,10 @@
     deployclientagent: () => useApiPOST('/command/deployclientagent', opsiClientAgent.value),
     delete: () => useApiDELETE(`/opsidata/clients/${props.clientIds}`),
   }
-
+  function getIcon(icon: string) {
+    // @ts-ignore
+    return icon[icon]
+  }
   async function executeClientAction(action: string) {
     isLoading.value = true
     if (actionMethods[action]) {

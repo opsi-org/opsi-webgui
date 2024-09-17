@@ -3,8 +3,10 @@
 import pkg from './package.json'
 
 const CONFD_PORT = process.env.OPSICONFD_PORT || 4447
+const ADDON_PATH = "/addons/webgui"
 console.log('---------------------------------------------------')
 console.log('OPSI CONFD PORT', CONFD_PORT)
+console.log('ADDON PATH', ADDON_PATH)
 console.log('---------------------------------------------------')
 
 export default defineNuxtConfig({
@@ -44,7 +46,7 @@ export default defineNuxtConfig({
     },
   },
   app: {
-    baseURL: '/addons/webgui/app',
+    baseURL: ADDON_PATH + '/app',
     head: {
       link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
     },
@@ -57,8 +59,8 @@ export default defineNuxtConfig({
       OPSICONFD_PORT: CONFD_PORT,
       BASE_PAGE: '/clients',
       packageVersion: pkg.version,
-      API_PATH: '/addons/webgui/api',
-      OWN_PATH: '/addons/webgui/app',
+      API_PATH: ADDON_PATH + '/api',
+      OWN_PATH: ADDON_PATH + '/app',
       NUXT_PUBLIC_API_BASE: process.env.NODE_ENV === 'production' ? '' : 'https://localhost:' + CONFD_PORT,
     },
   },

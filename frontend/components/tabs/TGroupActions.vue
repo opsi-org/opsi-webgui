@@ -7,6 +7,7 @@
 </template>
 
 <script setup lang="ts">
+const $t = useI18n().t
 const groupActions = reactive([
   {
     category: 'client-group',

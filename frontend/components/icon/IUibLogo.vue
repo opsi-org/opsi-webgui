@@ -22,9 +22,9 @@
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n()
+const $t = useI18n().t
 const config = useRuntimeConfig()
-const translatedLabel = ref(t('button.reload.app'))
+const translatedLabel = ref($t('button.reload.app'))
 
 const props = defineProps({
   short: { type: Boolean, default: true},

@@ -350,7 +350,7 @@ function changeRowLink(e:Event, cid: string, to='config') {
 // }
 
 function _objectWithoutProperties(obj: any, keys: string[]): any {
-  var target = {};
+  var target: any = {};
   for (var i in obj) {
     if (keys.indexOf(i) >= 0) continue;
     if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;

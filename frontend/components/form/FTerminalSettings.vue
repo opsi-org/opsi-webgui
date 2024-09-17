@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-
+const $t = useI18n().t
 const modelTerminalId = defineModel('terminalId', { required: true, type: String })
 const modelTerminalChannel = defineModel('terminalChannel', { required: true, type: String })
 const emit = defineEmits(['update:terminalId', 'update:terminalChannel', 'click-connect', 'click-disconnect'])
@@ -32,7 +32,8 @@ const props = defineProps({
 })
 
 const isMobile = ref(useMQ().isMobile)
-watch(()=>useMQ().isMobile, ()=>{
-  isMobile.value = useMQ().isMobile.value
-}, {deep: true})
+// TODO check if works correctly
+// watch(()=>useMQ().isMobile, ()=>{
+//   isMobile.value = useMQ().isMobile.value
+// }, {deep: true})
 </script>

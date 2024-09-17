@@ -20,7 +20,9 @@
 </template>
 
 <script setup lang="ts">
-  const { t, locale } = useI18n()
+  const locale = useI18n().locale
+  const $t = useI18n().t
+
   const props = defineProps({
     withIframe: { type: Boolean, default: true }
   })

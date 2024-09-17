@@ -3,7 +3,7 @@ git:
     pre-push: |
       exit 0
       bash /workspace/frontend/scripts/prehook.sh
-      # cd /workspace/opsiweb/
+      # cd /workspace/frontend/
       # file=".tmp_prepush_result_changed_files.log"
       # echo "> Test Changed files"
       # bash ./scripts/devhelper.sh all-changed .test.component.js test:all:components $file || exit_code=$?
@@ -27,8 +27,8 @@ package:
     mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons"
     cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui"
     mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data"
-    ls -la "${SRC}/opsiweb/dist/"
-    cp -a "${SRC}"/opsiweb/dist/* "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app"
+    ls -la "${SRC}/frontend/dist/"
+    cp -a "${SRC}"/frontend/dist/* "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app"
   type: binary
 project:
   allow_tag_delete: false
@@ -38,10 +38,10 @@ project:
     - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
   name: opsi-webgui
-  version: "4.3.35"
+  version: "4.4.0.0"
   version_files:
     opsi-dev-tool.yml: pull-binaries[0].version
-    opsiweb/package.json: "$.version"
+    frontend/package.json: "$.version"
 pull-binaries:
   - architecture: x64
     branch: development
@@ -61,10 +61,10 @@ pull-binaries:
       - exit 1
     server-type: binaryindex
     server-url: http://binaryindex.uib.gmbh
-    version: "4.3.35"
+    version: "4.4.0.0"
 transifex:
   download_translations:
-    - install_dir: opsiweb/uib-components/locale
+    - install_dir: frontend/locale
       languages:
         - de
         - fr
@@ -74,5 +74,5 @@ transifex:
   upload_resources:
     - organization: opsi-org
       project: opsiorg
-      resource_file: opsiweb/uib-components/locale/opsi-webgui_en.json
+      resource_file: frontend/locale/opsi-webgui_en.json
       resource_name: opsi-webgui.json

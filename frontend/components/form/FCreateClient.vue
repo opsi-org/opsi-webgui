@@ -61,6 +61,30 @@
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useDepot, useClient } from '~/composables/mixins/useGet'
   import type { T_ClientAttr, T_DepotIds, T_Product } from '~/types/APItypes'
+import type { IObjectString2Any } from '~/types/tgeneral';
+
+  interface IClientObject {
+    basics: {
+      hostId: string
+      description: string
+      inventoryNumber: string
+      hardwareAddress: string
+      ipAddress: string | null
+      notes: string
+    }
+    assignments: {
+      depot: string
+      group: string[]
+    }
+    initialSetup: {
+      netbootProduct: string[]
+      opsiClientAgent: IObjectString2Any
+    }
+    settings: {
+      uefi: boolean
+    }
+  }
+
   const mq = useMQ()
   const $t = useI18n().t
   const { notifySuccess, notifyError } = useNotification()
@@ -71,7 +95,9 @@
   const groupList = ref()
   const clientName = ref('')
   const domain = ref('')
-  const createClient = ref(getDefaultCreateClient())
+
+  const createClient = ref<IClientObject>(getDefaultCreateClient())
+
 
   onMounted(async () => {
     await fetchInitialData()
@@ -184,7 +210,8 @@
     createClient.value = getDefaultCreateClient()
   }
 
-  function getDefaultCreateClient() {
+
+  function getDefaultCreateClient(): IClientObject {
     return {
       basics: {
         hostId: '',
@@ -211,6 +238,6 @@
       settings: {
         uefi: false,
       },
-    }
+    } as IClientObject
   }
 </script>

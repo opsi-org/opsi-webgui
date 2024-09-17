@@ -11,6 +11,7 @@
 
 <script setup lang="ts">
 import { useIcons } from '../../composables/mixins/useIcons'
+const $t = useI18n().t
 const icon = useIcons()
 
 const props = defineProps({

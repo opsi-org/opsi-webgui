@@ -65,9 +65,11 @@ import type { FunctionalComponent } from 'vue'
 import type { TRowData } from '~/types/Datatypes'
 import type { ITableData } from '~/types/ttable';
 import type { CellRendererParams } from 'element-plus/es/components/table-v2/src/types.mjs'
+import type { IObjectString2Any } from '~/types/tgeneral'
 
-const selectionStore = storeSelections()
-const tableStore = storeTablesettings()
+// TODO: change type (dont use any..)
+const selectionStore: IObjectString2Any = storeSelections()
+const tableStore: IObjectString2Any = storeTablesettings()
 const icons = useIcons()
 
 const columnsModel = defineModel<ITableHeaderRow>('columns', { required:true})
@@ -235,8 +237,9 @@ function updateColumns() {
     .map(c => {
       if (c.cellRenderer === undefined)
         c.cellRenderer = ({rowData,cellData}: CellRendererParams<any>) => {
-          if (rowData)
-            return <el-text>a {rowData[c.dataKey || c.key]}</el-text>
+          if (rowData){
+            return <el-text>a {rowData[(c.dataKey || c.key) as string]}</el-text>
+          }
           return <el-text > XX </el-text>
       }
       else {

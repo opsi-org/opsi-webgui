@@ -109,6 +109,7 @@
 <script setup lang="ts">
 import { useIcons } from '~/composables/mixins/useIcons'
 import { useUtils } from '~/composables/mixins/useUtils';
+const $t = useI18n().t
 const icons = useIcons()
 
 const { changesProducts } = storeToRefs(storeChanges())

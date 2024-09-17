@@ -37,16 +37,22 @@
     </el-scrollbar>
 
     <div class="fixed bottom-0 flex justify-evenly">
-      <PopconfirmPLogout v-if="useMQ().isMobile.value" />
+      <PopconfirmPLogout v-if="mq.isMobile.value" />
       <FormitemDDTheme />
       <FormitemDDLang />
     </div>
+
+    <el-text>{{ $t('label.version') }}</el-text>
+    <el-text class="BAuthFooter-version">{{ $config.public.packageVersion }}</el-text>
   </div>
 </template>
 
 <script setup lang="ts">
   import { useIcons } from '../../composables/mixins/useIcons'
+  const $t = useI18n().t
+  const mq = useMQ()
   const icons = useIcons()
   const storeSelection = storeSelections()
   const changes = storeChanges()
+  const $config = useRuntimeConfig()
 </script>
