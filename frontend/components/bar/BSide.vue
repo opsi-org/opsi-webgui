@@ -49,6 +49,7 @@
     submenu?: Array<INavItem>
   }
 
+  const $t = useI18n().t
   const icons = useIcons()
   const router = useRouter()
   const mq = useMQ()

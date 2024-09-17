@@ -183,6 +183,7 @@ function connect () {
   // => After connecting with terminal a div apears with 50000 width. this causes scrollbar to appear. We hide the horizontal scrollbar here (hopefully temporary:
   const elHtml = document.getElementsByTagName('html')[0]
   if (elHtml) {
+    // @ts-ignore
     elHtml.style['overflow-x'] = 'hidden'
   }
 

@@ -26,7 +26,7 @@ const props = defineProps({
   dependencies: { type: Object as PropType<any>, required: true },
 })
 
-const types2text = {
+const types2text: any = {
   'null-setup': $t('table.fields.required'),
   'after-setup': $t('table.fields.post-required'),
   'before-setup': $t('table.fields.pre-required'),

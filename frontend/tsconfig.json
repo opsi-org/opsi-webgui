@@ -7,15 +7,16 @@
     "outDir": "./dist",
     "experimentalDecorators": true,
     "importHelpers": true,
+    // "noUnusedParameters": false,
     "strict": true,
     "allowImportingTsExtensions": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
-    "noEmit": true, // was true
+    // "noEmit": true, // was true
     "skipLibCheck": true,
     "resolveJsonModule": true, // locales
     "ignoreDeprecations": "5.0",
-    "suppressImplicitAnyIndexErrors": true,
+    // "suppressImplicitAnyIndexErrors": true,
     "types": [
       "@pinia/nuxt",
       "@nuxtjs/i18n",
@@ -23,7 +24,11 @@
       "element-plus/global",
       "@iconify/vue",
       "xterm", "xterm-addon-fit", "xterm-addon-search", "xterm-addon-web-links",
-    ]
+    ],
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    // "paths": {}
+    "jsx": "preserve",
 
   },
   // "include": [

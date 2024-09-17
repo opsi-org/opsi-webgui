@@ -398,9 +398,10 @@ import type { ITableData } from '~/types/ttable'
 // import ColumnGroup from 'primevue/columngroup'   // optional
 // import Row from 'primevue/row'                   // optional
 import { useUtilsData } from '~/composables/mixins/useUtilsData'
+import type { IObjectString2Any } from '~/types/tgeneral'
 // import TDefaultDesktopColumn from './TDefaultDesktopColumn'
 
-const CellRenderer = ({key, rowData, colData}: any) => {
+const CellRenderer:any = ({key, rowData, colData}: any) => {
   if (colData.cellRenderer)
     return colData.cellRenderer({rowData})
   return <el-text>{ key }</el-text>
@@ -412,7 +413,7 @@ const HeaderCellRenderer = ({colData}: any) => {
 }
 
 const settings = storeSettings()
-const selectionStore = storeSelections()
+const selectionStore: IObjectString2Any = storeSelections()
 const tableStore = storeTablesettings()
 const icons = useIcons()
 

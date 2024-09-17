@@ -1,93 +1,100 @@
+export interface PageSettings {
+  page0Condition: boolean
+  page1Condition: boolean
+  width: undefined|string
+}
 
 export const usePageHelper = () => {
   const path = computed(()=> useRoute().path.split('/').filter((p: string)=> p !== ''))
 
-  const serverSettings = {}
-  serverSettings['servers'] = {
-    page0Condition: true,
-    page1Condition: false,
-    width: '100%'
-  }
-  serverSettings['servers-config'] = {
-    page0Condition: false,
-    page1Condition: true,
-    width: '100%'
-  }
-  serverSettings['servers-config-id'] = {
-    page0Condition: false,
-    page1Condition: true,
-    width: '100%'
-  }
-  serverSettings['servers-server-pagetype-id'] = {
-    page0Condition: true,
-    page1Condition: true,
-    width: '50%'
-  }
-
-
-  const clientSettings = {}
-  clientSettings['clients'] = {
-    page0Condition: true,
-    page1Condition: false,
-    width: '100%'
-  }
-  clientSettings['clients-config'] = {
-    page0Condition: false,
-    page1Condition: true,
-    width: '100%'
-  }
-  clientSettings['clients-config-id'] = {
-    page0Condition: false,
-    page1Condition: true,
-    width: '100%'
-  }
-  clientSettings['clients-create'] = {
-    page0Condition: false,
-    page1Condition: true,
-    width: '100%'
-  }
-  clientSettings['clients-clone'] = {
-    page0Condition: false,
-    page1Condition: true,
-    width: '100%'
-  }
-  clientSettings['clients-logs-id'] = {
-    page0Condition: false,
-    page1Condition: true,
-    width: '100%'
-  }
-  clientSettings['clients-clone-id'] = {
-    page0Condition: false,
-    page1Condition: true,
-    width: '100%'
-  }
-  clientSettings['clients-client-pagetype-id'] = {
-    page0Condition: true,
-    page1Condition: true,
-    width: '50%'
-  }
-  clientSettings['clients-products-producttype'] = {
-    page0Condition: true,
-    page1Condition: true,
-    width: undefined
-  }
-  clientSettings['clients-products-producttype-pagetype-id'] = {
-    page0Condition: true,
-    page1Condition: true,
-    width: undefined
+  const serverSettings: Record<string, PageSettings> = {
+    servers: {
+      page0Condition: true,
+      page1Condition: false,
+      width: '100%'
+    },
+    'servers-config': {
+      page0Condition: false,
+      page1Condition: true,
+      width: '100%'
+    },
+    'servers-config-id': {
+      page0Condition: false,
+      page1Condition: true,
+      width: '100%'
+    },
+    'servers-server-pagetype-id': {
+      page0Condition: true,
+      page1Condition: true,
+      width: '50%'
+    }
   }
 
 
-  const productSettings = {}
-  productSettings['products-producttype'] = {
-    page0Condition: true,
-    page1Condition: false,
-    width: '100%'
+  const clientSettings: Record<string, PageSettings> = {
+    'clients': {
+      page0Condition: true,
+      page1Condition: false,
+      width: '100%'
+    }
+    , 'clients-config': {
+      page0Condition: false,
+      page1Condition: true,
+      width: '100%'
+    }
+    , 'clients-config-id': {
+      page0Condition: false,
+      page1Condition: true,
+      width: '100%'
+    }
+    , 'clients-create': {
+      page0Condition: false,
+      page1Condition: true,
+      width: '100%'
+    }
+    , 'clients-clone': {
+      page0Condition: false,
+      page1Condition: true,
+      width: '100%'
+    }
+    , 'clients-logs-id': {
+      page0Condition: false,
+      page1Condition: true,
+      width: '100%'
+    }
+    , 'clients-clone-id': {
+      page0Condition: false,
+      page1Condition: true,
+      width: '100%'
+    }
+    , 'clients-client-pagetype-id': {
+      page0Condition: true,
+      page1Condition: true,
+      width: '50%'
+    }
+    , 'clients-products-producttype': {
+      page0Condition: true,
+      page1Condition: true,
+      width: undefined
+    }
+    , 'clients-products-producttype-pagetype-id': {
+      page0Condition: true,
+      page1Condition: true,
+      width: undefined
+    }
   }
-  productSettings['products-producttype-pagetype-id'] = {
-    page0Condition: true,
-    page1Condition: true,
-    width: '50%'
+
+  const productSettings: Record<string, PageSettings> = {
+    'products-producttype': {
+      page0Condition: true,
+      page1Condition: false,
+      width: '100%'
+    }
+    ,'products-producttype-pagetype-id': {
+      page0Condition: true,
+      page1Condition: true,
+      width: '50%'
+    }
   }
   return { serverSettings, clientSettings, productSettings, path }
 }

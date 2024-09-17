@@ -43,9 +43,10 @@ const modelBool = computed({
 })
 
 const isMobile = ref(useMQ().isMobile)
-watch(()=>useMQ().isMobile, ()=>{
-  isMobile.value = useMQ().isMobile.value
-}, {deep: true})
+// TODO check if works correctly
+// watch(()=>useMQ().isMobile, ()=>{
+//   isMobile.value = useMQ().isMobile.value
+// }, {deep: true})
 // const itemValue = ref(props.value)
 
 // watch(()=>props.value, ()=>{

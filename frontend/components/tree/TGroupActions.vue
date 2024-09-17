@@ -40,7 +40,7 @@
           >
             <el-popover :placement="mq.isMobile.value ? 'auto': 'right'" :width="mq.isMobile.value ? '100%': '360px'" trigger="click" :ref="node.label+action">
               <template #reference>
-                <el-button size="small"> <IconIIcon v-for="subaction in action.split('-')" :icon="icons[subaction]" /> </el-button>
+                <el-button size="small"> <IconIIcon v-for="subaction in action.split('-')" :icon="getIcon(subaction)" /> </el-button>
               </template>
               <el-text tag="b">{{ $t('group.'+action) }}</el-text> - <el-text tag="i">{{ node.label }}</el-text>
               <el-form label-position="top" class="mt-3">
@@ -137,32 +137,37 @@ const { notifySuccess, notifyError } = useNotification()
 const icons = useIcons()
 const mq = useMQ()
 const $t = useI18n().t
-const storeSelection = storeSelections()
-const isLoading = ref(false)
+const storeSelection: any = storeSelections()
+const isLoading = ref<boolean>(false)
 const treeProps = {
   label: 'text',
   children: 'children'
 }
 const fetchedData = ref<any>({})
 const idList = ref<T_ProductIds|T_ClientIds>([])
-const selectedChildren = ref([])
-const selectedGroups = ref([])
-const createGroup = reactive({
+const selectedChildren = ref<Array<any>>([])
+const selectedGroups = ref<Array<any>>([])
+const createGroup = reactive<{[k: string]: string}>({
   parentGroupId: '',
   groupId: '',
   description: '',
   notes: ''
 })
-const editgroup = reactive({
+const editgroup = reactive<{[k: string]: string}>({
   parent: '',
   description: '',
   notes: ''
 })
 
+function getIcon(icon: string) {
+  // @ts-ignore
+  return icons[icon]
+}
 watch(()=>storeSelection.selectionDepots, async ()=>{
   await fetchClientGroups()
   await fetchClientList()
 })
+
 
 onMounted(async ()=> {
   isLoading.value = true

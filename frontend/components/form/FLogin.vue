@@ -20,6 +20,12 @@
           <el-button data-testid="btn-login" :disabled="!form.username || !form.password" class="mt-2 login w-100" @click="doLogin">
             {{ $t('button.login') }}
           </el-button>
+          saml:
+          <el-button data-testid="btn-login-saml" class="mt-2 login w-100">
+              <NuxtLink :to="urlSaml" class="w-100">
+              {{ $t('button.login.saml') }}
+            </NuxtLink>
+          </el-button>
         </el-form>
       </div>
     </el-card>
@@ -33,7 +39,6 @@ import { useConfigserver } from '@/composables/mixins/useGet'
 interface TResult {
   result: string
 }
-
 const $t = useI18n().t
 const { notifySuccess, notifyError } = useNotification()
 const config = useRuntimeConfig()
@@ -43,6 +48,7 @@ const isLoading = ref(false)
 const totp = ref('')
 const opsiconfigserver = ref('');
 
+const urlSaml = config.public.NUXT_PUBLIC_API_BASE + '/auth/saml/login'
 onMounted( async () => {
   isLoading.value = true
   const useServerGet = await useConfigserver(true, undefined, $t)
@@ -116,5 +122,31 @@ async function doLogin () {
   } finally {
     isLoading.value = false
   }
+}
+
+async function doLoginSaml() {
+  isLoading.value = true
+  // try {
+  //   // url: string, body:any=undefined, prePath: string|undefined = undefined,
+  //   // const { data, error } = await useApiPOST<TResult>('/auth/login/saml', undefined, '')
+  //   // const { data, error } = await useApiGET<TResult>('/auth/login/saml', '')
+  //   if (error) {
+  //     notifyError({ message: error?.response?.data?.message || $t('message.error.generic') })
+  //     return
+  //   }
+  //   if (data.value == undefined) {
+  //     notifyError({ message: $t('message.error.empty-response', { details: "Login" }) })
+  //     return
+  //   }
+  //   if (data.value.result !== 'Login success') {
+  //     notifyError({ message: $t('message.error.login-failed') })
+  //     return
+  //   }
+  //   handleSuccessfulLogin()
+  // } catch (error) {
+  //   notifyError({ message: $t('message.error.unexpected') })
+  // } finally {
+    isLoading.value = false
+  // }
 }
 </script>

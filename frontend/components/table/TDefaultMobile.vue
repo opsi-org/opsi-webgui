@@ -60,25 +60,29 @@
 
 
 <script lang="tsx" setup>
+// @ts-ignore
+
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 
 import {TableV2FixedDir, type CheckboxValueType, type Column } from 'element-plus'
-import type { ITableHeaderRow } from '~/types/ttableV3'
+import type { ITableHeaderCell, ITableHeaderRow } from '~/types/ttableV3'
 import type { ITableData } from '../../types/ttable'
 const tableStore = storeTablesettings()
 
 const collapseRowIdValue = ref<any>({})
-const CellRenderer = ({key, rowData, colData}: any) => {
+const CellRenderer = ({key, rowData, colData}: any): VNode => {
   if (colData.cellRenderer)
     return colData.cellRenderer({rowData})
   return <el-text>{ key }</el-text>
 }
-const Details = ({rowData, colData}: any) => {
+// @ts-ignore
+const Details = ({rowData, colData}: any): VNode => {
   const _width = {'width': '100%'}
   const data: Array<any> = []
   // const _fixedRightLast: Array<any> = []
-  Object.values(wrappedColumns.value).forEach((colInfo) =>{
-    const cId = colInfo.key
+  const values: Array<ITableHeaderCell> = Object.values(wrappedColumns.value)
+  values.forEach((colInfo: ITableHeaderCell) =>{
+    const cId:string = colInfo.key as string
     // const visible = tableStore.columns[props.id].includes(cId)
     // const visible = tableStore[props.id + 'Columns'].includes(cId)
     const visible = colInfo._majorKey === undefined && cId !== 'selected'
@@ -172,8 +176,8 @@ watch (()=>dataModel, ()=>{ wrappedColumns.value = updateColumns() }, {deep: tru
 watch (()=>columnsModel, ()=>{ wrappedColumns.value = updateColumns() }, {deep: true})
 // wrappedData.value = updateData()
 
+// @ts-ignore
 watch(()=>tableStore[props.id + 'Columns'], ()=>{
-// watch(()=>tableStore.columns[props.id], ()=>{
   const curRow = collapseRowIdValue.value
   collapseRowIdValue.value = undefined
   collapseRowIdValue.value = curRow

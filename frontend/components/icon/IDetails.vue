@@ -49,6 +49,7 @@ const props = defineProps({
   variant: { type: Object as PropType<ElTypeVariant>, default: 'warning' }
 })
 
+const $t = useI18n().t
 const icons = useIcons()
 const { t_fixed } = useStrings()
 /* import { Component, Prop, Vue } from 'nuxt-property-decorator'

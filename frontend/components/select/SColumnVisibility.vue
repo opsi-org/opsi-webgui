@@ -67,14 +67,14 @@ function handleItem (selections: Array<string>) {
   storeTable.setColumns(props.tableId, selections)
   for (const item of possibleColumnsList.value) {
     const key = item.dataKey || item.key
-    const isVisible = selections.includes(key)
-    const entry = possibleColumnsModel.value[key]
+    const isVisible = selections.includes(key as string)
+    const entry = possibleColumnsModel.value[key as string]
     if (!entry.isMajor) {
-      possibleColumnsModel.value[key].hidden = !isVisible
+      possibleColumnsModel.value[key as string].hidden = !isVisible
     } else {
       const children = Object.values(possibleColumnsModel.value).filter((c:ITableHeaderCell) => c._majorKey === key)
       for (const child of children) {
-        possibleColumnsModel.value[child.key].hidden = !isVisible
+        possibleColumnsModel.value[child.key as string].hidden = !isVisible
       }
     }
   }

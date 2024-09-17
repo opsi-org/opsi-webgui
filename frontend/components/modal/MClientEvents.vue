@@ -87,6 +87,7 @@
           {{ c }}
         </el-checkbox> -->
     </div>
+    // const cols:  = {}
 
     <div v-if="props.event=='reboot'">
       {{ id }} <br />
@@ -154,7 +155,7 @@ import { useIcons } from '~/composables/mixins/useIcons';
 import { useNotification } from '../../composables/mixins/useComponent';
 const { notifySuccess } = useNotification()
 const icon = useIcons()
-// const $t = useI18n().t
+const $t = useI18n().t
 
 const modelValue = defineModel<boolean>()
 const props = defineProps({
@@ -257,6 +258,9 @@ const confirmDisabled = computed(() => {
 const eventWrapper = computed(() => {
   if (props.event === 'ondemand-all')
     return events.value['ondemand']
+  if (!Object.keys(events.value).includes(props.event))
+    throw new Error('Invalid event: ' + props.event)
+  // @ts-ignore
   return events.value[props.event]
 })
 function updateModel(value: boolean) {

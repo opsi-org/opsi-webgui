@@ -20,6 +20,7 @@
 <script setup lang="ts">
 const tableSettings = storeTablesettings()
 const { configLastSelected } = storeToRefs(tableSettings)
+const $t = useI18n().t
 
 const currentId = ref<string|undefined>('')
 const props = defineProps({

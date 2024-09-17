@@ -1,17 +1,19 @@
 
 export const generateColumns = (length = 10, prefix = 'column-', props?: any) => {
-  const cols = {}
+  const cols: any = {}
   Array.from({ length }).map((_, columnIndex) => {
+    const _key: string = `${prefix}${columnIndex}`
+
     const c = {
       ...props,
-      key: `${prefix}${columnIndex}`,
-      id: `${prefix}${columnIndex}`,
+      key: _key,
+      id: _key,
       parentId: null,
-      dataKey: `${prefix}${columnIndex}`,
+      dataKey: _key,
       title: `Column ${columnIndex}`,
       width: 200
     }
-    cols[c.key] = c
+    cols[_key] = c
   })
   return cols
 }

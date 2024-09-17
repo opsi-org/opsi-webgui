@@ -81,6 +81,8 @@ export const useDeployClientAgent = (_t: any = undefined) => {
 
     clientagentAlert.value.alert(t('message.success.clientagent', { client: data.value.clientId[0] }), 'success')
     if (modal) {
+      // TODO: ts shows that usemodal does not exist
+      // @ts-ignore
       const { hide } = useModal('event-modal-deployCA-' + data.value.clientId[0] + '-context-menu-' + incontextmenu)
       hide ()
     }

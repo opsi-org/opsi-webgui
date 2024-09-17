@@ -33,10 +33,12 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '../../composables/mixins/useIcons'
+  import type { IObjectString2Any } from '~/types/tgeneral';
+import { useIcons } from '../../composables/mixins/useIcons'
+  const $t = useI18n().t
   const icons = useIcons()
-  const storeSelection = storeSelections()
-  const selectionDisplayList = ref<Array<any>>([
+  const storeSelection: IObjectString2Any = storeSelections()
+  const selectionDisplayList = ref<Array<string>>([
     'Depots',
     'Clients',
     'Products',
