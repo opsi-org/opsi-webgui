@@ -17,15 +17,18 @@
           <el-form-item>
             <el-input data-testid="login_otp" v-model="totp" :disabled="isLoading" :aria-label="$t('table.fields.oneTimePassword')" :placeholder="$t('table.fields.oneTimePassword')" show-password />
           </el-form-item>
-          <el-button data-testid="btn-login" :disabled="!form.username || !form.password" class="mt-2 login w-100" @click="doLogin">
+          <el-button data-testid="btn-login"
+            :title="$t('button.login.description')"
+            :disabled="!form.username || !form.password"
+            class="mt-2 login w-100"
+            @click="doLogin">
             {{ $t('button.login') }}
           </el-button>
-          saml:
-          <el-button data-testid="btn-login-saml" class="mt-2 login w-100">
-              <NuxtLink :to="urlSaml" class="w-100">
-              {{ $t('button.login.saml') }}
-            </NuxtLink>
-          </el-button>
+          <a data-testid="btn-login-saml"
+            class="el-button mt-2 login w-100"
+            :href="samlUrl"
+            :title="$t('button.login.saml.description')"
+          >{{ $t('button.login.saml') }}</a>
         </el-form>
       </div>
     </el-card>
@@ -48,7 +51,6 @@ const isLoading = ref(true)
 const totp = ref('')
 const opsiconfigserver = ref('');
 
-const urlSaml = config.public.NUXT_PUBLIC_API_BASE + '/auth/saml/login'
 onMounted( async () => {
   isLoading.value = true
   const useServerGet = await useConfigserver(true, undefined, $t)
@@ -60,6 +62,17 @@ onMounted( async () => {
     handleSuccessfulLogin()
   }
   isLoading.value = false
+})
+
+const samlUrl = computed(() => {
+  const webguisRedirect: string = useRoute().query?.redirect as string || ''
+  const ownpath:string = config.public.OWN_PATH
+  if (webguisRedirect && (webguisRedirect.startsWith(ownpath))) {
+    return `/auth/saml/login?redirect=${webguisRedirect}`
+  } else if (webguisRedirect) {
+    return `/auth/saml/login?redirect=${ownpath}${webguisRedirect}`
+  }
+  return `/auth/saml/login?redirect=${encodeURIComponent(window.location.href)}`
 })
 
 const validUsername = computed<boolean|null>(
@@ -78,22 +91,6 @@ function createUserFormData() {
   }
   User.append('password', newPassword)
   return User
-}
-
-function handleSuccessfulLogin() {
-  notifySuccess({ message: $t('message.page.redirect') })
-  storeAuth().setSession()
-  const route = useRoute()
-  const router = useRouter()
-  if (route.name === 'login') {
-    if (route.query?.redirect) {
-      router.push({ path: route.query.redirect.toString() })
-    } else {
-      router.push({ path: config.public.BASE_PAGE })
-    }
-  } else {
-    router.back()
-  }
 }
 
 async function doLogin () {
@@ -123,29 +120,19 @@ async function doLogin () {
   }
 }
 
-async function doLoginSaml() {
-  isLoading.value = true
-  // try {
-  //   // url: string, body:any=undefined, prePath: string|undefined = undefined,
-  //   // const { data, error } = await useApiPOST<TResult>('/auth/login/saml', undefined, '')
-  //   // const { data, error } = await useApiGET<TResult>('/auth/login/saml', '')
-  //   if (error) {
-  //     notifyError({ message: error?.response?.data?.message || $t('message.error.generic') })
-  //     return
-  //   }
-  //   if (data.value == undefined) {
-  //     notifyError({ message: $t('message.error.empty-response', { details: "Login" }) })
-  //     return
-  //   }
-  //   if (data.value.result !== 'Login success') {
-  //     notifyError({ message: $t('message.error.login-failed') })
-  //     return
-  //   }
-  //   handleSuccessfulLogin()
-  // } catch (error) {
-  //   notifyError({ message: $t('message.error.unexpected') })
-  // } finally {
-    isLoading.value = false
-  // }
+function handleSuccessfulLogin() {
+  notifySuccess({ message: $t('message.page.redirect') })
+  storeAuth().setSession()
+  const route = useRoute()
+  const router = useRouter()
+  if (route.name === 'login') {
+    if (route.query?.redirect) {
+      router.push({ path: route.query.redirect.toString() })
+    } else {
+      router.push({ path: config.public.BASE_PAGE })
+    }
+  } else {
+    router.back()
+  }
 }
 </script>

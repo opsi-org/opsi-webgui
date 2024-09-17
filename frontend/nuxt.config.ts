@@ -10,6 +10,7 @@ console.log('ADDON PATH', ADDON_PATH)
 console.log('---------------------------------------------------')
 
 export default defineNuxtConfig({
+  compatibilityDate: '2024-09-17',
   build: {
     analyze: true,
     hardSource: true,
