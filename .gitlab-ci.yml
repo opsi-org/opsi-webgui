@@ -229,6 +229,7 @@ init:npm:production:
     paths:
       - frontend/package.json
       - frontend/node_modules/
+      - frontend/.nuxt/
     expire_in: 1 day
 init:npm:
   stage: init
@@ -241,6 +242,7 @@ init:npm:
     paths:
       - frontend/package.json
       - frontend/node_modules/
+      - frontend/.nuxt/
     expire_in: 1 day
 init:transifex:
   # this step have to be done before building webgui
