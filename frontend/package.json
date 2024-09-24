@@ -12,7 +12,7 @@
     "generate-with-ssl": "NODE_OPTIONS=--openssl-legacy-provider nuxt generate ",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "lint": "eslint .",
+    "lint": "vue-tsc --version && eslint .",
     "lint:fix": "eslint . --fix",
     "////nuxt-monaco-editor": "^1.2.3",
     "//monaco-editor": "^0.43.0",
