@@ -290,6 +290,16 @@ test:lint:
     - *define_globals
   script:
     - npm run lint
+
+test:tsc:
+  stage: test
+  dependencies:
+    - init:npm
+  before_script:
+    - cd frontend
+    - *define_globals
+  script:
+    - npx nuxi typecheck
 # test:unit:
   #   stage: test
   #   dependencies:
