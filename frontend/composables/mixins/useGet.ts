@@ -39,7 +39,17 @@ export const useConfigserver = async (init: boolean = false, _store:any=undefine
     storeCache().setOpsiconfigserver(data.value.result)
     return storeCache().opsiconfigserver
   }
-  return { getOpsiConfigServer }
+  async function getOpsiConfigServerWithHeaders (alertRef: any = undefined) {
+    const { data, headers, error } = await useApiGET<T_Opsiserver>('/user/opsiserver')
+    if (error || !data?.value) {
+      const errordata = { response: { data: {class: '', details: '', message: $t('message.error.opsiconfd')}} }
+      notifyError({ title:$t('message.error.login'), message: notifyError({ message: error?.response?.data?.message }) })
+      return { data: '', headers: {} }
+    }
+    storeCache().setOpsiconfigserver(data.value.result)
+    return { data: data.value.result, headers }
+  }
+  return { getOpsiConfigServer, getOpsiConfigServerWithHeaders }
 }
 
 export const useDepot = (_t:any=undefined) => {

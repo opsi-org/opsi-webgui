@@ -2,6 +2,7 @@
 
 import { useRuntimeConfig, type UseFetchOptions } from "nuxt/app"
 import { use } from "~/tests-configs/playwright/config/playwright-config"
+import type { IObjectString2Any, IObjectString2String } from "~/types/tgeneral"
 
 const urlsWithoutAuthentication = [
   '/auth/logout',
@@ -18,7 +19,7 @@ interface terror {
   }
 }
 
-interface ApiResult<T> {readonly pending: Ref<boolean>, readonly data: Ref<T|undefined>, readonly error: terror|undefined, readonly headers: Headers, readonly status: number}
+interface ApiResult<T> {readonly pending: Ref<boolean>, readonly data: Ref<T|undefined>, readonly error: terror|undefined, readonly headers: IObjectString2Any, readonly status: number}
 
 
 async function useAPI2<T> (

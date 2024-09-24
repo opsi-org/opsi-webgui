@@ -17,14 +17,14 @@
           <el-form-item>
             <el-input data-testid="login_otp" v-model="totp" :disabled="isLoading" :aria-label="$t('table.fields.oneTimePassword')" :placeholder="$t('table.fields.oneTimePassword')" show-password />
           </el-form-item>
-          <el-button data-testid="btn-login"
+          <el-button v-if="authMethods.includes('password')" data-testid="btn-login"
             :title="$t('button.login.description')"
             :disabled="!form.username || !form.password"
             class="mt-2 login w-100"
             @click="doLogin">
             {{ $t('button.login') }}
           </el-button>
-          <a data-testid="btn-login-saml"
+          <a v-if="authMethods.includes('saml')"  data-testid="btn-login-saml"
             class="el-button mt-2 login w-100"
             :href="samlUrl"
             :title="$t('button.login.saml.description')"
@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { useNotification } from "../../composables/mixins/useComponent"
 import { useConfigserver } from '@/composables/mixins/useGet'
-
+// import { opsiheaders } from '@/utils/uconstants'
 interface TResult {
   result: string
 }
@@ -50,12 +50,14 @@ const form = ref({ username: '', password: '' })
 const isLoading = ref(true)
 const totp = ref('')
 const opsiconfigserver = ref('');
+const authMethods = ref('')
 
 onMounted( async () => {
   isLoading.value = true
   const useServerGet = await useConfigserver(true, undefined, $t)
-  const os = await useServerGet.getOpsiConfigServer()
-  opsiconfigserver.value = os || ''
+  const res = await useServerGet.getOpsiConfigServerWithHeaders()
+  opsiconfigserver.value = res.data || ''
+  authMethods.value = res.headers.get(opsiheaders.xopsiauthmethods) || ''
   const username = storeAuth().username
   if (username) {
     form.value.username = username
