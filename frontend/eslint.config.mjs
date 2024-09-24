@@ -1,0 +1,50 @@
+// @ts-check
+import withNuxt from './.nuxt/eslint.config.mjs'
+
+export default withNuxt({
+  // Your custom configs here
+  // https://eslint.nuxt.com/packages/module
+  rules: { // TODO: Fix the problems if following rules are enabled
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unsafe-function-type": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-wrapper-object-types": "off",
+    "vue/attributes-order": "off",
+    "vue/html-self-closing": "off",
+    "no-undef": "off",
+    "@typescript-eslint/no-empty-object-type": "off",
+    "vue/first-attribute-linebreak": "off",
+    "vue/no-multiple-template-root": "off",
+    "vue/no-dupe-v-else-if": "off",
+    "no-empty": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "vue/require-default-prop": "off",
+    "@typescript-eslint/consistent-type-imports": "off",
+    "no-var": "off",
+    "prefer-const": "off",
+    "import/first": "off",
+    "vue/no-unused-vars": "off",
+    "@typescript-eslint/no-unused-expressions": "off",
+    "vue/attribute-hyphenation": "off",
+    "vue/valid-v-for": "off",
+    "vue/no-deprecated-v-bind-sync": "off",
+    "vue/no-template-shadow": "off",
+    // @typescript-eslint/ban-ts-comment
+    "vue/require-v-for-key": "off",
+    "vue/no-side-effects-in-computed-properties": "off",
+    "vue/valid-v-else": "off",
+    "vue/no-ref-as-operand": "off",
+    "vue/v-slot-style": "off",
+    "import/no-duplicates": "off",
+    "no-extra-boolean-cast": "off",
+    // "vue/require-v-for-key": "off",
+    "vue/valid-template-root": "off",
+    "vue/require-valid-default-prop": "off",
+    "vue/no-mutating-props": "off",
+    "@typescript-eslint/no-dynamic-delete": "off",
+    "no-prototype-builtins": "off",
+    "vue/no-use-v-if-with-v-for": "off",
+    "vue/no-dupe-keys": "off",
+  },
+})

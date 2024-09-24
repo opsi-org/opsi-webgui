@@ -72,6 +72,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],
     '@pinia-plugin-persistedstate/nuxt',
+    '@nuxt/eslint',
   ],
   piniaPersistedState: {
     key: (id) => `opsiui-${id}`,
