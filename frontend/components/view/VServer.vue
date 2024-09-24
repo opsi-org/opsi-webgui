@@ -289,7 +289,7 @@ onMounted(async () => {
   // fetchedData.value = await _fetch()
   await tableHelper.fetch()
 
-  // totalItems.value = parseInt(headers['x-total-count'])
+  // totalItems.value = parseInt(headers[opsiheaders.xtotalcount])
   tableHelper.setTotalItemsAsPerPage(totalItems.value)
   // if (storeSelection.selectionDepots.length === 1) {
   //   navigation.toConfiguration(id, storeSelection.selectionDepots[0])
@@ -327,7 +327,7 @@ async function _fetch() {
     return []
   }
 
-  totalItems.value = parseInt(headers.get('x-total-count') || '0')
+  totalItems.value = parseInt(headers.get(opsiheaders.xtotalcount) || '0')
   const opsiconfigserver = storeCache().opsiconfigserver
   if (opsiconfigserver){
     storeSelection.pushToSelectionDepots(opsiconfigserver)
@@ -488,7 +488,7 @@ export default class VDepots extends Vue {
     }
     return await this.$axios.get('/api/opsidata/depots', { params })
       .then((response) => {
-        this.totalItems = response.headers['x-total-count']
+        this.totalItems = response.headers[opsiheaders.xtotalcount]
         this.totalpages = Math.ceil(this.totalItems / params.perPage)
         this.tableloaded = true
         if (response.data === null) {

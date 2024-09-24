@@ -18,6 +18,8 @@ export const apiMock = (page: Page, apiPath: string, response: any, additionalHe
         'x-date-unix-timestamp': Date.now().valueOf().toString(),
         'x-opsi-server-role': 'configserver',
         'x-opsi-worker-id': consigserverName + ":1",
+        'x-opsi-auth-methods': 'password',
+        'x-opsi-user-id': 'user:adminuser',
         ...additionalHeaders
         // 'set-cookie': (!withCookie) ? '' : 'opsiconfd-session=any-value; domain=localhost; path=/; sameSite=None; secure=true'
       },

@@ -691,7 +691,7 @@ async function _fetch() {
   if (headers === undefined) {
     return []
   }
-  totalItems.value = parseInt(headers.get('x-total-count') || '0')
+  totalItems.value = parseInt(headers.get(opsiheaders.xtotalcount) || '0')
   // tableHelper.setTotalItemsAsPerPage(totalItems.value)
   return data.value
 }
@@ -864,7 +864,7 @@ function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString
   //     const params = this.fetchProductsPrepareParams(thiss)
   //     const myitems = await thiss.$axios.get('/api/opsidata/products', { params })
   //       .then((response) => {
-  //         thiss.totalItems = response.headers['x-total-count'] || 0
+  //         thiss.totalItems = response.headers[opsiheaders.xtotalcount] || 0
   //         thiss.$emit('update:total' + thiss.id, thiss.totalItems)
   //         thiss.totalpages = Math.ceil(thiss.totalItems / params.perPage)
   //         thiss.items = response.data || []

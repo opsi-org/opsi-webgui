@@ -120,7 +120,7 @@ async function useAPI2<T> (
       callerror.value = { response: { data: { class: 'error', message: 'no response' } } }
     }
   }
-  var username = callheaders.get('x-opsi-user-id')
+  var username = callheaders.get(opsiheaders.xopsiuserid)
   if (username) {
     username = username.split('user:')[1]
     if (username) {

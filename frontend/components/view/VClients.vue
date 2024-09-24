@@ -371,7 +371,7 @@ async function _fetch() {
   }
     // return await this.$axios.get('/api/opsidata/clients', { params })
     //   .then((response) => {
-    //     this.totalItems = response.headers['x-total-count']
+    //     this.totalItems = response.headers[opsiheaders.xtotalcount']
     //     this.totalpages = Math.ceil(this.totalItems / params.perPage)
     //     this.isLoading = false
     //     this.tableloaded = true
@@ -392,7 +392,7 @@ async function _fetch() {
     return []
   }
 
-  totalItems.value = parseInt(headers.get('x-total-count') || '0')
+  totalItems.value = parseInt(headers.get(opsiheaders.xtotalcount) || '0')
   // tableHelper.setPerPage(headers)
   // this.totalpages = Math.ceil(this.totalItems / params.perPage)
   // this.isLoading = false
@@ -578,7 +578,7 @@ export default class VClients extends Vue {
     }
     return await this.$axios.get('/api/opsidata/clients', { params })
       .then((response) => {
-        this.totalItems = response.headers['x-total-count']
+        this.totalItems = response.headers[opsiheaders.xtotalcount]
         this.totalpages = Math.ceil(this.totalItems / params.perPage)
         this.isLoading = false
         this.tableloaded = true
