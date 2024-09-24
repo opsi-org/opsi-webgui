@@ -8,27 +8,35 @@
           <el-form-item class="mb-1">
             <el-input id="configserver" data-testid="login_configserver" v-model="opsiconfigserver" :aria-label="$t('title.configserver')" disabled readonly :placeholder="opsiconfigserver"/>
           </el-form-item>
-          <el-form-item class="mb-1">
+          <el-form-item class="mb-1" v-if="authMethods.includes(METHOD_PASSOWRD)">
             <el-input id="username" v-model="form.username" :disabled="isLoading" data-testid="login_username" :aria-label="$t('form.username')" :placeholder="$t('form.username')" :state="validUsername" class="username" />
           </el-form-item>
-          <el-form-item class="mb-1">
+          <el-form-item class="mb-1" v-if="authMethods.includes(METHOD_PASSOWRD)">
             <el-input id="password" v-model="form.password" :disabled="isLoading" data-testid="login_password" :aria-label="$t('form.password')" :placeholder="$t('form.password')" :state="validPassword" show-password class="password" />
           </el-form-item>
-          <el-form-item>
+          <el-form-item v-if="authMethods.includes(METHOD_PASSOWRD)">
             <el-input data-testid="login_otp" v-model="totp" :disabled="isLoading" :aria-label="$t('table.fields.oneTimePassword')" :placeholder="$t('table.fields.oneTimePassword')" show-password />
           </el-form-item>
-          <el-button v-if="authMethods.includes('password')" data-testid="btn-login"
+          <el-button v-if="authMethods.includes(METHOD_PASSOWRD)" data-testid="btn-login"
             :title="$t('button.login.description')"
             :disabled="!form.username || !form.password"
             class="mt-2 login w-100"
             @click="doLogin">
             {{ $t('button.login') }}
           </el-button>
-          <a v-if="authMethods.includes('saml')"  data-testid="btn-login-saml"
+          <a v-if="authMethods.includes(METHOD_SAML)"  data-testid="btn-login-saml"
             class="el-button mt-2 login w-100"
             :href="samlUrl"
             :title="$t('button.login.saml.description')"
           >{{ $t('button.login.saml') }}</a>
+          <el-alert v-if="authMethods === undefined || authMethods == ''"
+            type="warning"
+            :closable="false"
+            effect="dark"
+            show-icon
+            class="mt-4">
+            {{ $t('message.login.noauthenticationmethod') }}
+          </el-alert>
         </el-form>
       </div>
     </el-card>
@@ -38,7 +46,7 @@
 <script setup lang="ts">
 import { useNotification } from "../../composables/mixins/useComponent"
 import { useConfigserver } from '@/composables/mixins/useGet'
-// import { opsiheaders } from '@/utils/uconstants'
+
 interface TResult {
   result: string
 }
@@ -51,6 +59,9 @@ const isLoading = ref(true)
 const totp = ref('')
 const opsiconfigserver = ref('');
 const authMethods = ref('')
+
+const METHOD_PASSOWRD = 'password'
+const METHOD_SAML = 'saml'
 
 onMounted( async () => {
   isLoading.value = true
