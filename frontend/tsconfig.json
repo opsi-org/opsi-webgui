@@ -23,7 +23,7 @@
       "@nuxtjs/tailwindcss",
       "element-plus/global",
       "@iconify/vue",
-      "xterm", "xterm-addon-fit", "xterm-addon-search", "xterm-addon-web-links",
+      "@xterm/xterm", "@xterm/addon-fit", "@xterm/addon-search", "@xterm/addon-web-links",
     ],
     "isolatedModules": true,
     "verbatimModuleSyntax": true,

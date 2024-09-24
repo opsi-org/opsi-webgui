@@ -120,14 +120,23 @@ async function useAPI2<T> (
       callerror.value = { response: { data: { class: 'error', message: 'no response' } } }
     }
   }
-  var username = callheaders.get(opsiheaders.xopsiuserid)
-  if (username) {
-    username = username.split('user:')[1]
-    if (username) {
-      storeAuth().setUser(username)
-    }else { storeAuth().clearSession()}
-  }else { storeAuth().clearSession()}
-  return {pending:pendingState, data: callresponse, error: callerror.value, headers: callheaders, status }
+  if (!callheaders) {
+    console.warn('no headers in request response. url: ', fullURL)
+  } else {
+    var username = callheaders.get(opsiheaders.xopsiuserid)
+    if (!username) {
+      console.warn('No username in headers. Clearing session')
+      storeAuth().clearSession()
+    }else {
+      username = username.split('user:')[1]
+      if (username) {
+        storeAuth().setUser(username)
+      }else {
+        storeAuth().clearSession()
+      }
+    }
+  }
+  return {pending:pendingState, data: callresponse, error: callerror.value, headers: callheaders as IObjectString2Any, status }
 }
 
 const _getBodyParams = (params: any) => {
