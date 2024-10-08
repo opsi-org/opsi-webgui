@@ -21,7 +21,7 @@ This project espacially the devcontainer is not for production usage. To install
 * checkout https://YOUROPSISERVER:OPSICONFD_PORT/addons/webgui/app
 
 ### Installation using Zip
-* get zip from https://download.uib.de/opsi4.3/stable/opsiconfd-addons/
+* get zip from https://tools.43.opsi.org/stable/opsi-webgui.zip
 * upload zip through https://YOUROPSISERVER:OPSICONFD_PORT/admin/#addons
 * checkout https://YOUROPSISERVER:OPSICONFD_PORT/addons/webgui/app
 
