@@ -49,10 +49,10 @@
 <script setup lang="ts">
   import { useIcons } from '@/composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
-import type { IObjectString2Function, IObjectString2String } from '~/types/tgeneral';
+  import type { IObjectString2Function, IObjectString2String } from '~/types/tgeneral'
   const $t = useI18n().t
   const { notifyError } = useNotification()
-  const icon = useIcons()
+  const icon: Record<string, string> = useIcons()
   const mq = useMQ()
   const props = defineProps({
     clientIds: { type: Array, default: [] },
@@ -68,7 +68,7 @@ import type { IObjectString2Function, IObjectString2String } from '~/types/tgene
     type: 'windows',
   })
 
-  const actionMethods:IObjectString2Function = {
+  const actionMethods: IObjectString2Function = {
     ondemand: () =>
       useApiPOST('/command/opsiclientd_rpc', {
         client_ids: props.clientIds,
@@ -90,9 +90,8 @@ import type { IObjectString2Function, IObjectString2String } from '~/types/tgene
     deployclientagent: () => useApiPOST('/command/deployclientagent', opsiClientAgent.value),
     delete: () => useApiDELETE(`/opsidata/clients/${props.clientIds}`),
   }
-  function getIcon(icon: string) {
-    // @ts-ignore
-    return icon[icon]
+  function getIcon(iconName: keyof typeof icon) {
+    return icon[iconName]
   }
   async function executeClientAction(action: string) {
     isLoading.value = true
