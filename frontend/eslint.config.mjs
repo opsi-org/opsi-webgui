@@ -30,7 +30,7 @@ export default withNuxt(
     // "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unsafe-function-type": "off",
     "@typescript-eslint/no-wrapper-object-types": "off",
-    "@typescript-eslint/no-empty-object-type": "off",
+    // "@typescript-eslint/no-empty-object-type": "off",
     // "@typescript-eslint/no-dynamic-delete": "off",
     // "@typescript-eslint/ban-ts-comment": "off",
     // "@typescript-eslint/consistent-type-imports": "off",
