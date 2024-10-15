@@ -104,9 +104,7 @@ watch(() => selectedClients, () => {
   //   this.preRequest = this.request
   //   return this.currentReq
   // }
-
-const visibleRequest = computed({
-get: () =>{
+const get_vis_req = () => {
     currentReq.value = props.request
     if (props.rowitem === undefined) {
       return currentReq.value
@@ -117,7 +115,9 @@ get: () =>{
       }
     }
     return currentReq.value
-  },
+  }
+const visibleRequest = computed({
+get: get_vis_req,
 set: (val: string) => {
     currentReq.value = val
   }

@@ -53,7 +53,8 @@ const props = defineProps({
   replaceInId: { type: String, default: undefined },
 })
 const sortedItems = computed(() => {
-  return props.items.sort((a: any, b: any) => {
+  const _sorteditems = JSON.parse(JSON.stringify(props.items))
+  return _sorteditems.sort((a: any, b: any) => {
     return a[props.idKey].localeCompare(b[props.idKey])
   })
 })
