@@ -110,7 +110,9 @@ function createUserFormData() {
 }
 
 async function doLogin () {
-  if (!validUsername.value || !validPassword.value) return
+  if (validUsername.value === false || validPassword.value === false) {
+    useNotification().notifyError({ message: $t('message.error.invalid-username-password') })
+    return}
   isLoading.value = true
 
   try {
