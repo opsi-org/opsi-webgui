@@ -33,7 +33,7 @@ export default withNuxt(
     "@typescript-eslint/no-empty-object-type": "off",
     "@typescript-eslint/no-dynamic-delete": "off",
     // "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/consistent-type-imports": "off",
+    // "@typescript-eslint/consistent-type-imports": "off",
 
     // "vue/no-unused-vars": "off",
     // "vue/no-dupe-keys": "off",
