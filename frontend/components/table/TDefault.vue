@@ -4,6 +4,7 @@
       v-if="isMobileWrapper"
       v-model:columns="columns"
       v-model:data="dataModel"
+      v-model:tabledata="tableData"
       v-bind="propsMobile"
       @fetch="(v: any) => $emit('fetch', v)"
       @tabledata-changed="(v: any) => $emit('tabledata-changed', v)"
@@ -29,6 +30,7 @@
       v-else-if="!isMobileWrapper"
       v-model:columns="columns"
       v-model:data="dataModel"
+      v-model:tabledata="tableData"
       v-bind="propsDesktop"
       @fetch="(v: any) => $emit('fetch', v)"
       @tabledata-changed="(v: any) => $emit('tabledata-changed', v)"
@@ -61,10 +63,11 @@ import type { ITableHeaderRow } from '~/types/ttableV3';
 import type { ITableData } from '~/types/ttable';
 const columns = defineModel<ITableHeaderRow>('columns', { required:true})
 const dataModel = defineModel<Array<any>>('data', { required:true})
+const tableData = defineModel<ITableData>('tabledata', { required:true})
 const props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   // data: { type: Array<any>, required:true},
-  tableData: { type: Object as PropType<ITableData>, required:true },
+  // tableData: { type: Object as PropType<ITableData>, required:true },
   totalItems: { type: Number, required:true },
   id: { type: String, default: 'servers' },
   rowId: { type: String, default: 'depotId'},

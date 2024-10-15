@@ -38,7 +38,7 @@ export default withNuxt(
     // "vue/no-unused-vars": "off",
     // "vue/no-dupe-keys": "off",
     // "vue/no-mutating-props": "off",
-    "vue/no-deprecated-v-bind-sync": "off",
+    // "vue/no-deprecated-v-bind-sync": "off",
     "vue/no-template-shadow": "off", // warning
     // "vue/no-side-effects-in-computed-properties": "off",
     // "vue/no-ref-as-operand": "off",

@@ -17,7 +17,7 @@
       :id="id"
       v-model:columns="columns"
       v-model:data="fetchedData"
-      :table-data="tableData"
+      v-model:tabledata="tableData"
       :total-items="totalItems"
       :sort-by="tableData.sortBy"
       :is-mobile="props.isMobile"

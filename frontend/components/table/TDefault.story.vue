@@ -34,7 +34,7 @@ const MyTDefault = ({ isMobile }: any) => {
   return <TDefault
         id={'tableId-' + isMobile?'mobile':'desktop'}
         columns={columns}
-        tableData={tableData}
+        tabledata={tableData}
         totalItems={totalItems}
         data={data}
 

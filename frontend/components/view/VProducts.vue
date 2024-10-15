@@ -4,7 +4,7 @@
       :id="id"
       v-model:columns="columns"
       v-model:data="fetchedDataWrapper"
-      :table-data="tableDataWrapper"
+      v-model:tabledata="tableDataWrapper"
       :total-items="totalItems"
       :sort-by="tableDataWrapper.sortBy"
       :is-mobile="isMobile"

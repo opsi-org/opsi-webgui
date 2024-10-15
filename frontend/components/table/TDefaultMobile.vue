@@ -154,9 +154,11 @@ const Details = (params: any): VNode => {
 
 const columnsModel = defineModel<ITableHeaderRow>('columns', { required:true})
 const dataModel = defineModel<Array<any>>('data', { required:true})
+const tableData = defineModel<ITableData>('tabledata', { required:true})
+
 const props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
-  tableData: { type: Object as PropType<ITableData>, required:true },
+  // tableData: { type: Object as PropType<ITableData>, required:true },
   rowId: { type: String, default: 'depotId'},
   data: { type: Array<any>, required:true},
   id: { type: String, default: 'servers' },

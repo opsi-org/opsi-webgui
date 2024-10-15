@@ -4,7 +4,7 @@
     <div class="max-w-full" >
       <IconILoading v-if="dataModel.length <= 0" />
       <!-- HEADER -->
-      <!-- SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }} -->
+      <!-- SortBy: {{ tableData.value.sortBy }}, SortDesc: {{ tableData.value.sortDesc }} -->
       <div class="flex justify-content-between">
         <div>
           <slot name="header-title" />
@@ -50,7 +50,7 @@
                           'max-h-[50px]': true,
                           'cursor-pointer': colChild.sortable,
                         }"
-                        @click="(colChild.sortable) ? onSort({sortField: colChild.key, sortDescOld: props.tableData.sortDesc}) : undefined"
+                        @click="(colChild.sortable) ? onSort({sortField: colChild.key, sortDescOld: tableData.sortDesc}) : undefined"
                         >
                         <!-- @contextmenu="rowEventHandlers.onContextmenu()" -->
                         <el-badge v-if="colChild.headerCellRenderer" :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
@@ -65,7 +65,7 @@
                           </el-tooltip>
                         </el-badge>
                         <el-text v-else>{{ colChild.title || colChild.tooltip }}</el-text>
-                        <IconIIcon v-if="colChild.sortable" :icon="props.tableData.sortBy == colChild.key ? ( (props.tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort_not" class="inline ml-2"/>
+                        <IconIIcon v-if="colChild.sortable" :icon="tableData.sortBy == colChild.key ? ( (tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort_not" class="inline ml-2"/>
                       </th>
                     </template>
                     <th
@@ -74,13 +74,13 @@
                           'max-h-[50px]': true,
                           'cursor-pointer': col.sortable,
                         }"
-                      @click="(col.sortable) ? onSort({sortField: col.key, sortDescOld: props.tableData.sortDesc}) : undefined"
+                      @click="(col.sortable) ? onSort({sortField: col.key, sortDescOld: tableData.sortDesc}) : undefined"
                     >
                       <el-badge v-if="col.headerCellRenderer" :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
                         <HeaderCellRenderer :col-data="col" :key="col.title"/>
                       </el-badge>
                       <el-text v-else>{{ col.title }}</el-text>
-                      <IconIIcon v-if="col.sortable" :icon="props.tableData.sortBy == col.key ? ( (props.tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort_not" class="inline ml-2"/>
+                      <IconIIcon v-if="col.sortable" :icon="tableData.sortBy == col.key ? ( (tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort_not" class="inline ml-2"/>
                     </th>
 
                   </template>
@@ -188,7 +188,7 @@
         }}"
         :highlight-on-select="false"
         v-model:selection="selection" :metaKeySelection="false"
-        :sortField="props.tableData.sortBy" :sortOrder="props.tableData.sortDesc ? -1: 1"
+        :sortField="tableData.value.sortBy" :sortOrder="tableData.value.sortDesc ? -1: 1"
         :virtual-scroller-options="(dataModel.length = props.totalItems) ? { itemSize: 46, showLoader: true, showSpacer: true } : undefined"
         @update:sort-field="log().log_colored('orange', 'sortfield changed')"
         @update:sort-order="log().log_colored('orange', 'sortorder changed')"
@@ -389,7 +389,7 @@
       </PDataTable> -->
     </div>
 
-    <!-- :table-data="props.tableData" -->
+    <!-- :table-data="tableData" -->
     <LazyContextmenuCMTable
       ref="menu"
       :item="currentSelectedRow"
@@ -450,11 +450,13 @@ const icons = useIcons()
 
 const columnsModel = defineModel<ITableHeaderRow>('columns', { required:true})
 const dataModel = defineModel<Array<any>>('data', { required:true})
+const tableData = defineModel<ITableData>('tabledata', { required:true})
+
 const $emit = defineEmits(['fetch', 'selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed', 'update-input-filter'])
 const props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   // data: { type: Array<any>, required: true },
-  tableData: { type: Object as PropType<ITableData>, required: true },
+  // tableData: { type: Object as PropType<ITableData>, required: true },
   totalItems: { type: Number, required: true },
   id: { type: String, default: 'servers' },
   rowId: { type: String, default: 'depotId' },
@@ -472,8 +474,8 @@ const selectKey = ref<string>( props.id === 'servers' ? 'selectionDepots': (prop
 const wrappedColumns = ref<ITableHeaderRow>({})
 // const wrappedData = ref<Array<any>>([])
 
-const perPage = ref(props.tableData.perPage) // computed(()=> props.tableData.perPage)
-const pageNumber = ref(props.tableData.pageNumber) // computed(()=> props.tableData.pageNumber)
+const perPage = ref(tableData.value.perPage) // computed(()=> tableData.value.perPage)
+const pageNumber = ref(tableData.value.pageNumber) // computed(()=> tableData.value.pageNumber)
 const _pagesSizes = [10, 20, 50, 100]
 const pagesSizes = ref(_pagesSizes)
 updateMaxPerPage()
@@ -568,8 +570,8 @@ const numVisibleColumns = computed(()=> Object.values(visibleColumns.value).leng
 const numFixedColumns = computed(()=> Object.values(visibleColumns.value).filter((c:any) => Boolean(c.fixed) === true || Boolean(c._fixed) === true).length)
 const numVisibleColumnsDelta = ref(1)
 
-// watch(()=>props.tableData.pageNumber, (val)=>{ pageNumber.value = val })
-// watch(()=>props.tableData.perPage, (val)=>{ perPage.value = val })
+// watch(()=>tableData.value.pageNumber, (val)=>{ pageNumber.value = val })
+// watch(()=>tableData.value.perPage, (val)=>{ perPage.value = val })
 
 
 // watch(()=>tableStore[props.id + 'Columns'], ()=>{
@@ -658,11 +660,11 @@ watch (()=>dataModel, ()=>{ selection.value = getSelectedrowsFromStore() }, {dee
 
 // function updateCurrentPage(pageNo: number) {
 //   pageNumber.value = pageNo
-//   $emit('tabledata-changed', {...props.tableData, pageNumber: pageNo})
+//   $emit('tabledata-changed', {...tableData, pageNumber: pageNo})
 //   $emit('fetch')
 // }
 // function updatePerPage(perPage: number) {
-//   $emit('tabledata-changed', {...props.tableData, perPage, pageNumber: 1})
+//   $emit('tabledata-changed', {...tableData, perPage, pageNumber: 1})
 //   $emit('fetch')
 // }
 // function updateData() {
@@ -674,27 +676,27 @@ watch (()=>dataModel, ()=>{ selection.value = getSelectedrowsFromStore() }, {dee
 // const lastFetchedDirection = ref<'next'|'prev'>('next')
 // const middleOfTable = ref<number>(50 + 150)
 
-// watch(()=>props.tableData._lastScrollDirection, ()=> {
+// watch(()=>tableData.value._lastScrollDirection, ()=> {
 //   // scroll to element if lastScrollDirection is set to 'prev'
-//   if (props.tableData._lastScrollDirection === undefined) { return }
-//   else if (props.tableData._lastScrollDirection === '') { return }
-//   else if (props.tableData._lastScrollDirection === 'next') { return }
-//   else if (props.tableData._lastScrollDirection !== 'prev') {
-//     console.error('no such direction', props.tableData._lastScrollDirection)
+//   if (tableData.value._lastScrollDirection === undefined) { return }
+//   else if (tableData.value._lastScrollDirection === '') { return }
+//   else if (tableData.value._lastScrollDirection === 'next') { return }
+//   else if (tableData.value._lastScrollDirection !== 'prev') {
+//     console.error('no such direction', tableData.value._lastScrollDirection)
 //     return
 //   }
-//   props.tableData._lastScrollDirection = ''
+//   tableData.value._lastScrollDirection = ''
 //   const items = dataModel.value.filter(x => x.dummy !== true).length
 //   const visiblePages =  Math.ceil(items / perPage.value)
 
 //   if (visiblePages > 1) {
-//     scrollToRow(props.tableData.perPage)
+//     scrollToRow(tableData.value.perPage)
 //   }
 // })
 
 function _fetch() {
   $emit('fetch')
-  // if (props.tableData.pageNumber > 1) scrollToRow(1, 500)
+  // if (tableData.value.pageNumber > 1) scrollToRow(1, 500)
 }
 
 
@@ -748,15 +750,15 @@ function getSelectedrowIdsFromStore() {
 
 // async function onScroll(event: any) {
 
-//   const tData = JSON.parse(JSON.stringify(props.tableData))
+//   const tData = JSON.parse(JSON.stringify(tableData))
 //   if (event === 'next' && lastScrollDirection.value === 'prev') {
-//     tData.pageNumber = props.tableData.pageNumber + 2
+//     tData.pageNumber = tableData.value.pageNumber + 2
 //   }
 //   else if (event === 'prev' && lastScrollDirection.value === 'next') {
-//     tData.pageNumber = props.tableData.pageNumber - 2
+//     tData.pageNumber = tableData.value.pageNumber - 2
 //   }
 //   else {
-//     tData.pageNumber = props.tableData.pageNumber + ((event === 'next') ? 1 : -1)
+//     tData.pageNumber = tableData.value.pageNumber + ((event === 'next') ? 1 : -1)
 //   }
 
 //   pageNumber.value = tData.pageNumber
@@ -766,11 +768,11 @@ function getSelectedrowIdsFromStore() {
 // }
 
 // function onPerPageChange(event: any) {
-//   if (event === props.tableData.perPage) {
+//   if (event === tableData.value.perPage) {
 //     return
 //   }
 //   // loadCarsLazy(event)
-//   const tData = JSON.parse(JSON.stringify(props.tableData))
+//   const tData = JSON.parse(JSON.stringify(tableData))
 //   tData.perPage = event
 //   tData.pageNumber = 1
 //   lastScrollDirection.value = ''
@@ -779,7 +781,7 @@ function getSelectedrowIdsFromStore() {
 // }
 // function onPage(newPageNumber: any) {
 //   // loadCarsLazy(event)
-//   const tData = JSON.parse(JSON.stringify(props.tableData))
+//   const tData = JSON.parse(JSON.stringify(tableData))
 //   // tData.pageNumber = newPageNumber/tData.perPage + 1 // Paginator from primeVue
 //   tData.pageNumber = newPageNumber // paginator from element-plus
 //   lastScrollDirection.value = ''
@@ -788,7 +790,7 @@ function getSelectedrowIdsFromStore() {
 // }
 
 function onSort(event: any) {
-  const tData = JSON.parse(JSON.stringify(props.tableData))
+  const tData = JSON.parse(JSON.stringify(tableData))
   tData.sortBy = event.sortField
 
   // tData.sortDesc = event.sortDesc
@@ -819,7 +821,7 @@ function onSort(event: any) {
   //   lazyLoading.value = false;
   //   return
   // }
-  // const tData = JSON.parse(JSON.stringify(props.tableData))
+  // const tData = JSON.parse(JSON.stringify(tableData))
   // tData.pageNumber = pageNumber
   // $emit('tabledata-changed', tData)
   // $emit('fetch', 'next')
@@ -838,7 +840,7 @@ function onSort(event: any) {
 
 
 //   const pageNo = event.first / event.rows + 1
-//   const tData = JSON.parse(JSON.stringify(props.tableData))
+//   const tData = JSON.parse(JSON.stringify(tableData))
 //   tData.pageNumber = pageNo
 
 // // //     !lazyLoading.value && (lazyLoading.value = true);
@@ -846,7 +848,7 @@ function onSort(event: any) {
 //     // if (loadLazyTimeout.value) {
 //     //     clearTimeout(loadLazyTimeout.value);
 //     // }
-// // const tData = JSON.parse(JSON.stringify(props.tableData))
+// // const tData = JSON.parse(JSON.stringify(tableData))
 // //   if (event.sortField) {
 // //     tData.sortBy = event.sortField
 // //     tData.sortDesc = event.sortOrder === -1
@@ -855,14 +857,14 @@ function onSort(event: any) {
 // //   if (event.page) {
 // //     tData.perPage = event.rows
 // //     tData.pageNumber = event.page + 1
-// //     // props.tableData.
+// //     // tableData.value.
 // //   }
 // //   console.warn('loadCarsLazy1', tData)
 // //   $emit('tabledata-changed', tData)
 // //   console.warn('loadCarsLazy2', tData)
-// //   // props.tableData.pageNumber = event.page + 1
-// //   // props.tableData.sortBy = event.sortField ? event.sortField : props.tableData.sortBy
-// //   // props.tableData.sortDesc = event.sortOrder === -1
+// //   // tableData.value.pageNumber = event.page + 1
+// //   // tableData.value.sortBy = event.sortField ? event.sortField : tableData.value.sortBy
+// //   // tableData.value.sortDesc = event.sortOrder === -1
 //   await $emit('fetch');
 //   lazyLoading.value = false;
 // }, 1000);
