@@ -2,6 +2,7 @@
 
 import { useRuntimeConfig, type UseFetchOptions } from "nuxt/app"
 import { use } from "~/tests-configs/playwright/config/playwright-config"
+import type { IObjectString2Any, IObjectString2String } from "~/types/tgeneral"
 
 const urlsWithoutAuthentication = [
   '/auth/logout',
@@ -18,7 +19,7 @@ interface terror {
   }
 }
 
-interface ApiResult<T> {readonly pending: Ref<boolean>, readonly data: Ref<T|undefined>, readonly error: terror|undefined, readonly headers: Headers, readonly status: number}
+interface ApiResult<T> {readonly pending: Ref<boolean>, readonly data: Ref<T|undefined>, readonly error: terror|undefined, readonly headers: IObjectString2Any, readonly status: number}
 
 
 async function useAPI2<T> (
@@ -50,7 +51,7 @@ async function useAPI2<T> (
     baseURL: baseUrl,
     onRequest({ request, options }: any) {
       // Set the request headers
-      const headers = { ...opts?.headers }
+      const headers: any = { ...opts?.headers }
       if (!urlsWithoutAuthentication.includes(url)) {
         headers['X-opsi-session-lifetime'] = 3600  // TODO: get from store
       }
@@ -83,13 +84,6 @@ async function useAPI2<T> (
       // Process the response data
       callresponse.value = response.data || response._data || response.body || {}
       callheaders = response.headers
-      var username = callheaders.get('x-opsi-user-id')
-      if (username) {
-        username = username.split('user:')[1]
-        if (username) {
-          storeAuth().setUser(username)
-        }
-      }
       status = response.status
       pendingState.value = false
     },
@@ -126,7 +120,23 @@ async function useAPI2<T> (
       callerror.value = { response: { data: { class: 'error', message: 'no response' } } }
     }
   }
-  return {pending:pendingState, data: callresponse, error: callerror.value, headers: callheaders, status }
+  if (!callheaders) {
+    console.warn('no headers in request response. url: ', fullURL)
+  } else {
+    var username = callheaders.get(opsiheaders.xopsiuserid)
+    if (!username) {
+      console.warn('No username in headers. Clearing session')
+      storeAuth().clearSession()
+    }else {
+      username = username.split('user:')[1]
+      if (username) {
+        storeAuth().setUser(username)
+      }else {
+        storeAuth().clearSession()
+      }
+    }
+  }
+  return {pending:pendingState, data: callresponse, error: callerror.value, headers: callheaders as IObjectString2Any, status }
 }
 
 const _getBodyParams = (params: any) => {

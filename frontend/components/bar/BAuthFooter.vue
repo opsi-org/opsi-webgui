@@ -19,4 +19,5 @@
   const staticStrings = useStrings()
   const $config = useRuntimeConfig()
   const mq = useMQ()
+  const $t = useI18n().t
 </script>

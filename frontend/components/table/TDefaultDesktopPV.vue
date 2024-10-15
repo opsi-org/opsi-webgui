@@ -40,8 +40,8 @@
         v-model:selection="selection" :metaKeySelection="false"
         :sortField="props.tableData.sortBy" :sortOrder="props.tableData.sortDesc ? -1: 1"
         :virtual-scroller-options="(dataModel.length = props.totalItems) ? { itemSize: 46, showLoader: true, showSpacer: true } : undefined"
-        @update:sort-field="log().log_colored('orange', 'sortfield changed')"
-        @update:sort-order="log().log_colored('orange', 'sortorder changed')"
+        @update:sort-field="console.log('sortfield changed')"
+        @update:sort-order="console.log('sortorder changed')"
         @sort="onSort($event)"
         @row-click="rowEventHandlers.onClick"
         >
@@ -131,7 +131,7 @@
             <div v-else-if="(col as any).key.startsWith('_')">
               <div v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)">
               <PColumn
-                :key="colChild.key" :field="colChild.key"
+                :key="colChild.key" :field="colChild.key as string"
                 :sortable="colChild.sortable"
                 :header="colChild.title"
                   :class="{
@@ -170,7 +170,7 @@
                 </template>
 
                 <template v-if="!renderCells" #body="slotProps">
-                  <el-text>{{ slotProps.data[colChild.key] }}</el-text>
+                  <el-text>{{ slotProps.data[colChild.key as string] }}</el-text>
                 </template>
                 <template v-else-if="colChild.cellRenderer" #body="slotProps">
                   <!-- CELLS OF THIS (CHILD) COLUMN -->
@@ -286,6 +286,7 @@ import type { ITableData } from '~/types/ttable'
 // import ColumnGroup from 'primevue/columngroup'   // optional
 // import Row from 'primevue/row'                   // optional
 import { useUtilsData } from '~/composables/mixins/useUtilsData'
+import type { IObjectString2Any } from '~/types/tgeneral'
 // import TDefaultDesktopColumn from './TDefaultDesktopColumn'
 
 const CellRenderer = ({key, rowData, colData}: any) => {
@@ -298,9 +299,8 @@ const HeaderCellRenderer = ({colData}: any) => {
     return colData.headerCellRenderer()
   return <el-text>{ colData.title }</el-text>
 }
-
-const selectionStore = storeSelections()
-const tableStore = storeTablesettings()
+const selectionStore: IObjectString2Any = storeSelections()
+const tableStore: IObjectString2Any = storeTablesettings()
 const icons = useIcons()
 
 const columnsModel = defineModel<ITableHeaderRow>('columns', { required:true})

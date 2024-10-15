@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { usePageHelper } from '~/composables/mixins/usePageHelper';
+import { usePageHelper, type PageSettings } from '~/composables/mixins/usePageHelper';
 import { useMQ } from '../composables/useMQ';
 
 const mq = useMQ()
@@ -28,11 +28,18 @@ const {path, serverSettings } = usePageHelper()
 
 const maintableVisible = ref(true)
 
-const routeNameSettings =  computed(()=> {
-  const s = serverSettings[route.name as string || '']
-  if (s === undefined )
-    throw new Error('route name not found: ' + (route.name as string))
-  return s
+const routeNameSettings =  computed<PageSettings>(()=> {
+  if (route.name === undefined){
+    throw new Error('route name not found [0]: undefined')
+  }
+  const key = route.name as string
+  if (Object.keys(serverSettings).includes(key))  {
+    const s:PageSettings = serverSettings[key]
+    if (s === undefined )
+      throw new Error('route name not found [1]: ' + (key))
+    return s
+  }
+  throw new Error('route name not found [2]: ' + (key))
 })
 
 const width = computed(()=> {

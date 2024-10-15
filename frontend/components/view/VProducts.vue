@@ -119,7 +119,7 @@ import { useNavigate } from '~/composables/mixins/useNavigateTo';
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { ITableData, ITableRow } from '~/types/ttable';
 import type { IObjectString2ObjectString2String } from '~/types/tgeneral';
-import type { T_Client2Depot } from '~/types/APItypes';
+import type { T_Client2Depot, IProductTypes} from '~/types/APItypes';
 import { useTableHelper } from '~/composables/mixins/useTableHelper';
 import { useMBus } from '~/composables/mixins/useMessagebus';
 import { useSaveProductActionRequest } from '~/composables/mixins/useSave';
@@ -154,46 +154,43 @@ const clientSelection = ref(props.selectedClient ? [props.selectedClient] : sele
 
 const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
 const totalItems = ref<number>(0)
-interface tproductITableData {
-  LocalbootProduct: ITableData,
-  NetbootProduct: ITableData,
-  Product: ITableData
-}
-const tableData = ref<tproductITableData>({
-  'LocalbootProduct': {
+
+const tableData = ref ({
+// const tableData = ref<tproductITableData>({
+  ['LocalbootProduct' as IProductTypes]: {
     type: 'LocalbootProduct',
     pageNumber: 1,
-    perPage: 1000000,
+    perPage: 50,
     // sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
     sortBy: tableSettings.productsSorting.column,
     sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
     filterQuery: '',
     filterColumns: ['productId', 'description']
-  },
-  'NetbootProduct': {
+  } as ITableData,
+  ['NetbootProduct' as IProductTypes]: {
     type: 'NetbootProduct',
     pageNumber: 1,
-    perPage: 1000000,
+    perPage: 50,
     sortBy: tableSettings.productsSorting.column,
     sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     filterQuery: '',
     filterColumns: ['productId', 'description']
-  },
-  'Product': {
+  }as ITableData,
+  ['Product' as IProductTypes]: {
     type: 'Product',
     pageNumber: 1,
-    perPage: 1000000,
+    perPage: 50,
     sortBy: tableSettings.productsSorting.column,
     sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     filterQuery: '',
     filterColumns: ['productId', 'description']
-  }
+  }as ITableData
 })
 
 const fetchedData = ref({
-  LocalbootProduct: [] as Array<any>,
-  NetbootProduct: [] as Array<any>
+  ['LocalbootProduct' as IProductTypes]: [] as Array<any>,
+  ['NetbootProduct' as IProductTypes]: [] as Array<any>
 })
 const columns = reactive<ITableHeaderRow>({
   selected: { // eslint-disable-next-line object-property-newline
@@ -525,7 +522,7 @@ const columns = reactive<ITableHeaderRow>({
 const id = "products"
 
 // Computed
-const currentType = computed<string>(()=>{
+const currentType = computed<IProductTypes>(()=>{
   if (productsTypeChecked.value.LocalbootProduct) return 'LocalbootProduct'
   if (productsTypeChecked.value.NetbootProduct) return 'NetbootProduct'
   if (productsTypeChecked.value.Product) return 'Product'
@@ -566,7 +563,7 @@ const numberOtherNetboot = computed(()=>{
 
 onMounted(async ()=> {
   if (props.productType && props.productType !== currentType.value)
-    changeProductsType(props.productType)
+    changeProductsType(props.productType as IProductTypes)
   if (props.sortby) {
     tableData.value[currentType.value].sortBy = props.sortby
     tableData.value[currentType.value].sortDesc = true
@@ -595,8 +592,8 @@ watch (()=>props.sortby, async (v)=>{
 }, { deep: true })
 // watch(() => fetchedData[currentType.value])
 
-watch(()=>props.productType, (v)=>{
-  changeProductsType(v)
+watch(()=>props.productType, v=>{
+  changeProductsType(v as IProductTypes)
 })
 
 setColumnVisibilityDependOnClients()
@@ -647,14 +644,19 @@ async function wsBusMsgObjectChanged (msg: any = undefined) {
   }
 }
 
-function changeProductsType (type: string) {
+function changeProductsType (type: IProductTypes) {
   if (props.isChild) {
     router.push('/clients/products/' + type + '/')
   } else {
     router.push('/products/' + type + '/')
   }
-  Object.keys(productsTypeChecked.value).forEach(k => productsTypeChecked.value[k] = false)
-  productsTypeChecked.value[type] = true
+  const types: Array<IProductTypes> = Object.keys(productsTypeChecked.value) as Array<IProductTypes>
+  types.forEach(k => productsTypeChecked.value[k] = false)
+  if (Object.keys(productsTypeChecked.value).includes(type))
+    productsTypeChecked.value[type] = true
+  else
+    throw new Error("Unknown product type " + type);
+
 
 }
 
@@ -675,8 +677,8 @@ function setColumnVisibilityDependOnClients () {
 //   fetchedData.value[currentType.value] = await _fetch(currentType.value)
 // }
 
-async function _fetch(_type: string = "") {
-  const type = currentType.value
+async function _fetch() {
+  const type: IProductTypes = currentType.value
   const params = fetchProductsPrepareParams(type)
   const {data, error, headers} = await useApiGETBody('/opsidata/products', params)
   if (error) {
@@ -689,7 +691,7 @@ async function _fetch(_type: string = "") {
   if (headers === undefined) {
     return []
   }
-  totalItems.value = parseInt(headers.get('x-total-count') || '0')
+  totalItems.value = parseInt(headers.get(opsiheaders.xtotalcount) || '0')
   // tableHelper.setTotalItemsAsPerPage(totalItems.value)
   return data.value
 }
@@ -862,7 +864,7 @@ function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString
   //     const params = this.fetchProductsPrepareParams(thiss)
   //     const myitems = await thiss.$axios.get('/api/opsidata/products', { params })
   //       .then((response) => {
-  //         thiss.totalItems = response.headers['x-total-count'] || 0
+  //         thiss.totalItems = response.headers[opsiheaders.xtotalcount] || 0
   //         thiss.$emit('update:total' + thiss.id, thiss.totalItems)
   //         thiss.totalpages = Math.ceil(thiss.totalItems / params.perPage)
   //         thiss.items = response.data || []
@@ -883,8 +885,9 @@ function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString
   //   }
   // }
 
-function fetchProductsPrepareParams (type: string) {
-  const params = { ...tableData.value[type] }
+function fetchProductsPrepareParams (type: IProductTypes) {
+  // @ts-ignore
+  const params: ITableData = { ...tableData.value[type] }
   params.selectedDepots = JSON.stringify(selectionDepots.value)
   params.selectedClients = JSON.stringify(clientSelection.value)
   // if (props.selectedClient) {

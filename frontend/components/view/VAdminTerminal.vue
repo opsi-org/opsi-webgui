@@ -24,15 +24,15 @@
 </template>
 
 <script setup lang="ts">
-import 'xterm/css/xterm.css'
-import 'xterm/lib/xterm.js'
+import '@xterm/xterm/lib/xterm.js'
+import '@xterm/xterm/css/xterm.css'
+import { Terminal, type ITerminalOptions } from '@xterm/xterm'
+import { FitAddon } from '@xterm/addon-fit'
+import { SearchAddon } from '@xterm/addon-search'
+import { WebLinksAddon } from '@xterm/addon-web-links'
 import { useConfigserver } from '~/composables/mixins/useGet';
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useMBus } from '~/composables/mixins/useMessagebus';
-import { Terminal, type ITerminalOptions } from 'xterm'
-import { FitAddon } from 'xterm-addon-fit'
-import { SearchAddon } from 'xterm-addon-search'
-import { WebLinksAddon } from 'xterm-addon-web-links'
 import type { T_DisaledFeatures } from '~/types/APItypes';
 
 const $t = useI18n().t
@@ -183,6 +183,7 @@ function connect () {
   // => After connecting with terminal a div apears with 50000 width. this causes scrollbar to appear. We hide the horizontal scrollbar here (hopefully temporary:
   const elHtml = document.getElementsByTagName('html')[0]
   if (elHtml) {
+    // @ts-ignore
     elHtml.style['overflow-x'] = 'hidden'
   }
 

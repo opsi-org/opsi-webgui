@@ -19,6 +19,7 @@
 <script setup lang="ts">
   import { useIcons } from '~/composables/mixins/useIcons'
   const icons = useIcons()
+  const $t = useI18n().t
   const props = defineProps({
     label: { type: String, default: '' },
     showLabel: { type: Boolean, default: false },

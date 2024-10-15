@@ -5,6 +5,7 @@ import type { ITableData } from "~/types/ttable"
 export const useTableHelper = (
   tableId: string,
   tableData: Ref<ITableData> | Ref< { [key: string]: ITableData } >,
+  // fetchedData:Ref< { [key: string]: Array<any> } >,
   fetchedData:Ref<Array<any>>| Ref< { [key: string]: Array<any> } >,
   totalItems: Ref<number>,
   _fetch: Function,
@@ -18,7 +19,9 @@ export const useTableHelper = (
   const _firstDummyRow2 = {dummy:true, clientId: '', direction: undefined}
   const _lastDummyRow = {dummy:true, clientId: 'click to load more', direction: 'next'}
 
+  // @ts-ignore
   const fetchedDataWrapper = computed<any[]>(()=> { return (tableDataType !== undefined) ? fetchedData.value[tableDataType.value] : fetchedData.value })
+  // @ts-ignore
   const tableDataWrapper = computed(()=> (tableDataType !== undefined) ? tableData.value[tableDataType.value] : tableData.value)
 
   const maxPage = computed(()=> Math.ceil(totalItems.value/tableDataWrapper.value.perPage) || -1)
@@ -31,9 +34,11 @@ export const useTableHelper = (
 
   function resetFetchData(val: any[]|undefined = []) {
     if (tableDataType === undefined) {
+      // @ts-ignore
       fetchedData.value = val
       return
     }
+    // @ts-ignore
     fetchedData.value[tableDataType.value] = val
   }
   function setTotalItemsAsPerPage (count: number) {
@@ -41,7 +46,7 @@ export const useTableHelper = (
     if (totalItems.value === 0) {
       return []
     }
-    tableDataWrapper.value.perPage = totalItems.value
+    // tableDataWrapper.value.perPage = totalItems.value
     updateTableData(tableDataWrapper.value)
   }
   async function fetch (location: string|undefined = undefined) {

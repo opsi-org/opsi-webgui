@@ -130,7 +130,7 @@ stages:
   fi
 
 .get_changed_files: &get_changed_files |
-  cd uib-components
+  # cd uib-components
   changedFiles=$(git diff origin/main -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
   echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
@@ -141,14 +141,14 @@ stages:
   cd ..
 
 
-.compare_versions: &compare_versions |
-  VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
-  VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
-  VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
-  TAG=$$VERSION_YML
-  echo $VERSION_YML2
-  echo $VERSION_JSN
-  echo TAG
+# .compare_versions: &compare_versions |
+#   VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
+#   VERSION_YML2=$(grep opsi-dev-tool.yml -A 70 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
+#   VERSION_JSN=$(cat frontend/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
+#   TAG=$$VERSION_YML
+#   echo $VERSION_YML2
+#   echo $VERSION_JSN
+#   echo TAG
 
 
 # .prepare_tag: &prepare_tag |
@@ -193,20 +193,27 @@ check:versions:
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11 # cause smaller then node...
   script:
     - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
-    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
-    - VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
-    - TAG=$VERSION_YML
     - echo $VERSION_YML
-    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 20 -e pull-binaries | grep -m 1 "\"version:\"" | awk '{print $2}')
+    - echo "----------------------------------------------------------------"
+    # ---------------
+    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 100 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
+    # - VERSION_YML2=$(grep opsi-dev-tool.yml -A 100 -e pull-binaries | grep -m 1 "\"version:\"" | awk '{print $2}')
     - VERSION_YML2=${VERSION_YML2//,/}
     - echo $VERSION_YML2
-    - VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
+    - echo "----------------------------------------------------------------"
+    # ---------------
+    # - VERSION_JSN=$(cat frontend/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
+    - VERSION_JSN=$(cat frontend/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
     - VERSION_JSN=${VERSION_JSN//,/}
-    - TAG=$VERSION_YML
     - echo $VERSION_JSN
+    - echo "----------------------------------------------------------------"
+    # ---------------
+    - TAG=$VERSION_YML
     - echo $TAG
+    - echo "----------------------------------------------------------------"
+    # ---------------
     - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml doesnt match (project and pull-binaries section)"; exit 1; fi
-    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions are equal $VERSION_YML"; fi
+    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json"; exit 1; else echo "Versions are equal $VERSION_YML"; fi
 
 init:npm:production:
   stage: init
@@ -214,26 +221,28 @@ init:npm:production:
     - main
     - tags
   script:
-    - cd opsiweb
+    - cd frontend
     - *define_globals
     - npm --production --only=prod i # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
   artifacts:
     paths:
-      - opsiweb/package.json
-      - opsiweb/node_modules/
+      - frontend/package.json
+      - frontend/node_modules/
+      - frontend/.nuxt/
     expire_in: 1 day
 init:npm:
   stage: init
   script:
-    - cd opsiweb
+    - cd frontend
     - *define_globals
     - npm i
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
   artifacts:
     paths:
-      - opsiweb/package.json
-      - opsiweb/node_modules/
+      - frontend/package.json
+      - frontend/node_modules/
+      - frontend/.nuxt/
     expire_in: 1 day
 init:transifex:
   # this step have to be done before building webgui
@@ -242,16 +251,16 @@ init:transifex:
   script:
     - TRANSIFEX_MIN_TRANSLATION_RATE=0.0
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
-    - opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/opsi-webgui_en.json
-    - opsi-dev-cli -l debug transifex download-translations opsi-webgui.json opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de -l fr
-    - chmod 666 opsiweb/uib-components/locale/*
+    - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json
+    - opsi-dev-cli -l debug transifex download-translations opsi-webgui.json frontend/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de -l fr
+    - chmod 666 frontend/locale/*
   only:
     - tags
     - main
   artifacts:
     name: "opsi-webgui-locale"
     paths:
-      - opsiweb/uib-components/locale
+      - frontend/locale
     expire_in: 3 day
 init:changelogs:
   # this step have to be done before building webgui
@@ -279,16 +288,26 @@ test:lint:
     - init:npm
     - init:transifex
   before_script:
-    - cd opsiweb
+    - cd frontend
     - *define_globals
   script:
     - npm run lint
+
+test:tsc:
+  stage: test
+  dependencies:
+    - init:npm
+  before_script:
+    - cd frontend
+    - *define_globals
+  script:
+    - npx nuxi typecheck
 # test:unit:
   #   stage: test
   #   dependencies:
   #     - init:npm
   #   script:
-  #     - cd opsiweb
+  #     - cd frontend
   #     - *define_globals
   #     - npm run test:unit
   #   allow_failure: true
@@ -298,7 +317,7 @@ test:lint:
   #     reports:
   #       coverage_report:
   #         coverage_format: cobertura
-  #         path: opsiweb/coverage/clover.xmlci
+  #         path: frontend/coverage/clover.xmlci
 
 test:accessibility:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
@@ -306,7 +325,7 @@ test:accessibility:
   dependencies:
     - init:npm
   before_script:
-    - cd opsiweb
+    - cd frontend
     - *start_webgui
   script:
     - npm run test:all:accessibility || exit_code=$?
@@ -322,9 +341,9 @@ test:accessibility:
     when: on_failure
     paths:
       - ./**/*/test-results/
-      - opsiweb/.dev.log
+      - frontend/.dev.log
     reports:
-      junit: opsiweb/.config/test-result-pw-reporter-accessibility.xml
+      junit: frontend/.config/test-result-pw-reporter-accessibility.xml
     expire_in: 1 day
 test:usecase:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
@@ -332,7 +351,7 @@ test:usecase:
   dependencies:
     - init:npm
   before_script:
-    - cd opsiweb
+    - cd frontend
     - *define_globals
     - *install_playwright
     - *start_webgui
@@ -350,9 +369,9 @@ test:usecase:
     when: on_failure
     paths:
       - ./**/*/test-results/
-      - opsiweb/.dev.log
+      - frontend/.dev.log
     reports:
-      junit: opsiweb/.config/test-result-pw-reporter-usecase.xml
+      junit: frontend/.config/test-result-pw-reporter-usecase.xml
     expire_in: 1 day
 
 test:components:changes:
@@ -366,11 +385,11 @@ test:components:changes:
     - main # cause in main we test all files
   only:
     changes:
-      - opsiweb/pages/*
-      - opsiweb/components/*
-      - opsiweb/uib-components/*
+      - frontend/pages/*
+      - frontend/components/*
+      - frontend/*
   before_script:
-    - cd opsiweb
+    - cd frontend
     - *define_globals
     - *install_playwright
     - *get_changed_files
@@ -389,10 +408,10 @@ test:components:changes:
     when: on_failure
     paths:
       - ./**/*/test-results/
-      - opsiweb/.storybook.log
-      - opsiweb/.dev.log
+      - frontend/.storybook.log
+      - frontend/.dev.log
     reports:
-      junit: ./opsiweb/.config/test-result-pw-reporter-components.xml
+      junit: ./frontend/.config/test-result-pw-reporter-components.xml
     expire_in: 1 day
 test:components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -403,7 +422,7 @@ test:components:
     - main # cause in main we test all files, but only chromium browser
     - tags
   before_script:
-    - cd opsiweb
+    - cd frontend
     - *define_globals
     - *install_playwright
     - *start_storybook
@@ -414,7 +433,7 @@ test:components:
     - exit_code=${PIPESTATUS[0]}
     - exit $exit_code
   after_script:
-    - cd opsiweb
+    - cd frontend
     - scripts/playwright_coverage.sh .tmpRESULT
     - npm run test:all:delete-empty-results
   allow_failure: true
@@ -424,11 +443,11 @@ test:components:
     when: on_failure
     paths:
       - ./**/*/test-results/
-      - opsiweb/.storybook.log
-      - opsiweb/.dev.log
-      - opsiweb/.tmpRESULT
+      - frontend/.storybook.log
+      - frontend/.dev.log
+      - frontend/.tmpRESULT
     reports:
-      junit: ./opsiweb/test-result-pw-reporter-components.xml
+      junit: ./frontend/test-result-pw-reporter-components.xml
     expire_in: 3 day
 # test:test-components:all-variants:
   #   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -440,7 +459,7 @@ test:components:
   #   only:
   #     - tags # cause in tags we test each file and browser
   #   script:
-  #     - cd opsiweb
+  #     - cd frontend
   #     #- *define_globals
   #     - npm i -D @playwright/test
   #     - npx playwright install
@@ -457,10 +476,10 @@ test:components:
   #     when: on_failure
   #     paths:
   #       - ./**/*/test-results/
-  #       - opsiweb/.storybook.log
-  #       - opsiweb/.dev.log
+  #       - frontend/.storybook.log
+  #       - frontend/.dev.log
   #     reports:
-  #       junit: ./opsiweb/test-result-pw-reporter-components.xml
+  #       junit: ./frontend/test-result-pw-reporter-components.xml
   #     expire_in: 2 day
 
 test:backend-pytest:
@@ -498,7 +517,7 @@ build:screenshots:docs: # with transifex
     - main # cause in main we test all files, but only chromium browser
     - tags
   before_script:
-    - cd opsiweb
+    - cd frontend
     - *define_globals
     - *install_playwright
     - *start_storybook
@@ -513,10 +532,10 @@ build:screenshots:docs: # with transifex
     name: "opsi-webgui-screenshots-docs-result"
     when: always
     paths:
-      - opsiweb/screenshots4Docs/screenshots
+      - frontend/screenshots4Docs/screenshots
       - ./**/*/test-results/
-      - opsiweb/.storybook.log
-      - opsiweb/.dev.log
+      - frontend/.storybook.log
+      - frontend/.dev.log
     expire_in: 7 day
 
 build:static:app: # with transifex
@@ -526,13 +545,13 @@ build:static:app: # with transifex
     - init:transifex
     # - test:lint # todo activate again for main
   script:
-    - cd opsiweb
+    - cd frontend
     - npm i @nuxt/typescript-build
     - *define_globals
     - npm run generate-nossl
   artifacts:
     paths:
-      - opsiweb/dist # not used...?
+      - frontend/dist # not used...?
     expire_in: 3 day
   only:
     - main
@@ -547,21 +566,21 @@ build:addon: # with transifex
     # - build:static:app # already done in this job
   script:
     - *install_tools
-    - pwd && ls -la opsiweb
-    - cd opsiweb # generate dist
+    - pwd && ls -la frontend
+    - cd frontend # generate dist
     - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
     - cd ..
     - *define_globals
     # - npm run generate-nossl
-    - bash opsiweb/scripts/build_production_local.sh $(pwd)
+    - bash frontend/scripts/build_production_local.sh $(pwd)
     # - cd .. # copy to addon
     # - mkdir -p backend/addon/webgui/data
     # - mkdir -p backend/addon/webgui/data/app
-    # - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
+    # - cp -r frontend/dist/* backend/addon/webgui/data/app/
     # - mkdir webgui
     # - cp -r backend/addon/webgui/* webgui/
-    # path should be opsiweb/.. again
-    - mv opsiweb/webgui webgui
+    # path should be frontend/.. again
+    - mv frontend/webgui webgui
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
@@ -585,22 +604,22 @@ build:zip: # with transifex
     - init:changelogs
   script:
     - *install_tools
-    - pwd && ls -la opsiweb
-    - cd opsiweb # generate dist
-    - ls -lah uib-components/locale
+    - pwd && ls -la frontend
+    - cd frontend # generate dist
+    - ls -lah frontend/locale
     - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
     - *define_globals
     - npm run generate-nossl
     - cd .. # copy to addon
     - mkdir -p backend/addon/webgui/data
     - mkdir -p backend/addon/webgui/data/app
-    - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
+    - cp -r frontend/dist/* backend/addon/webgui/data/app/
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - ls -lah webgui/data # debug
-    - ls -lah opsiweb/uib-components/locale
+    - ls -lah frontend/locale
   only:
     - tags
     - main
@@ -725,7 +744,7 @@ publish:obs_ext:
     - build:static:app # todo which is really needed?
   script:
     - ls -la
-    - ls -la opsiweb
+    - ls -la frontend
     - ls -la webgui
     - ls -la output
     # - opsi-dev-cli -l 5 changelog from-git output
@@ -749,7 +768,7 @@ publish:binary-index:
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   script:
     - ls -la
-    - ls -la opsiweb
+    - ls -la frontend
     - ls -la webgui
     - ls -la output
     # - opsi-dev-cli -l 5 changelog from-git output # done during init

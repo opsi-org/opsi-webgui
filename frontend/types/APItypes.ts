@@ -16,6 +16,7 @@ export interface T_configuration {
   }
 }
 
+export type IProductTypes  = 'LocalbootProduct' | 'NetbootProduct' | 'Product'
 
 export interface T_Opsiserver {
   result: string

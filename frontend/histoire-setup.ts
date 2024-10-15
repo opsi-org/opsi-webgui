@@ -6,7 +6,7 @@ import { defineSetupVue3 } from '@histoire/plugin-vue';
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import WrapperGlobal from './histoire/histoire-wrapper-mobile.vue'
-import en from './locale/opsiweb-ui_en.json'
+import en from './locale/opsi-webgui_en.json'
 import { createI18n } from "vue-i18n";
 // function setupApp ({ app, story, variant }) {
 //   // Router mock

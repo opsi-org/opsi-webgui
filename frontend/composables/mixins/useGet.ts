@@ -1,4 +1,4 @@
-import type { IObjectString2String } from '@/types/tgeneral'
+import type { IObjectString2Any, IObjectString2String } from '@/types/tgeneral'
 import { useNotification } from './useComponent'
 import { storeCache } from '@/store/datacacheStore'
 import { _getI18nInComposable } from './helper-i18n'
@@ -18,7 +18,7 @@ export const useConfigserver = async (init: boolean = false, _store:any=undefine
 
   async function initServer() {
     if (storeSelection.selectionDepots.length === 0) {
-      const server = await getOpsiConfigServer()
+      const server = (await getOpsiConfigServerWithHeaders()).data
       if (server){
         if (_store) _store.selectedDepots = [server]
         else storeSelection.setSelectionDepots([server])
@@ -29,19 +29,17 @@ export const useConfigserver = async (init: boolean = false, _store:any=undefine
     }
   }
 
-  async function getOpsiConfigServer (alertRef: any = undefined) {
-    const { data, error } = await useApiGET<T_Opsiserver>('/user/opsiserver')
-    console.log('getOpsiConfigServer', data, error)
+  async function getOpsiConfigServerWithHeaders (alertRef: any = undefined) {
+    const { data, headers, error } = await useApiGET<T_Opsiserver>('/user/opsiserver')
     if (error || !data?.value) {
       const errordata = { response: { data: {class: '', details: '', message: $t('message.error.opsiconfd')}} }
       notifyError({ title:$t('message.error.login'), message: notifyError({ message: error?.response?.data?.message }) })
-      return
+      return { data: '', headers: {} as IObjectString2Any, error: errordata }
     }
     storeCache().setOpsiconfigserver(data.value.result)
-    return storeCache().opsiconfigserver
+    return { data: data.value.result, headers }
   }
-
-  return { getOpsiConfigServer }
+  return { getOpsiConfigServerWithHeaders }
 }
 
 export const useDepot = (_t:any=undefined) => {

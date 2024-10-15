@@ -35,7 +35,7 @@ export const useCookies = () => {
   }
 
   function getKeyCookie (key: string, keyitem:string, defaultResult = '') {
-    const v = useCookie(key).value
+    const v:any = useCookie(key).value
     if (v === undefined || v === null) { return defaultResult }
     return v[keyitem]
     // return JSON.parse(v as unknown as any)[keyitem]

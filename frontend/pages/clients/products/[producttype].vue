@@ -8,7 +8,7 @@
     classeachcol="m-0 p-0"
   >
     <template #default>
-      <el-button class="float-right" @click="useRouter().push('/clients/')">X</el-button>
+      <el-button class="float-right" @click="router.push('/clients/')">X</el-button>
       <ViewVProducts v-if="path[1] === 'products'"
         :product-type="path[2]" :is-child="true"
         v-bind="route.query"
@@ -22,6 +22,7 @@
 </template>
 <script setup lang="ts">
 const route = useRoute()
+const router = useRouter()
 const path = computed(()=> route.path.split('/').filter((p: string)=> p !== ''))
 
 const width = computed(()=> {

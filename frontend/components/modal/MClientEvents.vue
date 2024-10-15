@@ -46,6 +46,9 @@
       </el-card>
       <el-card :shadow="(events.ondemand.params.onlyIdFromParams == 2) ? 'always' : 'never'" body-class="p-0"
         :body-style="(events.ondemand.params.onlyIdFromParams != 2) ? 'color: var(--el-text-color-disabled)' : ''">
+        <p v-if="events.ondemand.params.onlyIdFromParams == 1">
+          {{$t('button.event.ondemand.notincluded')}}
+        </p>
       <ul>
         <li v-for="c in selection" :key="c" class="p-2 ">
           <el-button
@@ -84,6 +87,7 @@
           {{ c }}
         </el-checkbox> -->
     </div>
+    // const cols:  = {}
 
     <div v-if="props.event=='reboot'">
       {{ id }} <br />
@@ -151,7 +155,7 @@ import { useIcons } from '~/composables/mixins/useIcons';
 import { useNotification } from '../../composables/mixins/useComponent';
 const { notifySuccess } = useNotification()
 const icon = useIcons()
-// const $t = useI18n().t
+const $t = useI18n().t
 
 const modelValue = defineModel<boolean>()
 const props = defineProps({
@@ -254,6 +258,9 @@ const confirmDisabled = computed(() => {
 const eventWrapper = computed(() => {
   if (props.event === 'ondemand-all')
     return events.value['ondemand']
+  if (!Object.keys(events.value).includes(props.event))
+    throw new Error('Invalid event: ' + props.event)
+  // @ts-ignore
   return events.value[props.event]
 })
 function updateModel(value: boolean) {

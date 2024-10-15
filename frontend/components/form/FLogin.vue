@@ -8,18 +8,35 @@
           <el-form-item class="mb-1">
             <el-input id="configserver" data-testid="login_configserver" v-model="opsiconfigserver" :aria-label="$t('title.configserver')" disabled readonly :placeholder="opsiconfigserver"/>
           </el-form-item>
-          <el-form-item class="mb-1">
+          <el-form-item class="mb-1" v-if="authMethods.includes(METHOD_PASSOWRD)">
             <el-input id="username" v-model="form.username" :disabled="isLoading" data-testid="login_username" :aria-label="$t('form.username')" :placeholder="$t('form.username')" :state="validUsername" class="username" />
           </el-form-item>
-          <el-form-item class="mb-1">
+          <el-form-item class="mb-1" v-if="authMethods.includes(METHOD_PASSOWRD)">
             <el-input id="password" v-model="form.password" :disabled="isLoading" data-testid="login_password" :aria-label="$t('form.password')" :placeholder="$t('form.password')" :state="validPassword" show-password class="password" />
           </el-form-item>
-          <el-form-item>
+          <el-form-item v-if="authMethods.includes(METHOD_PASSOWRD)">
             <el-input data-testid="login_otp" v-model="totp" :disabled="isLoading" :aria-label="$t('table.fields.oneTimePassword')" :placeholder="$t('table.fields.oneTimePassword')" show-password />
           </el-form-item>
-          <el-button data-testid="btn-login" :disabled="!form.username || !form.password" class="mt-2 login w-100" @click="doLogin">
+          <el-button v-if="authMethods.includes(METHOD_PASSOWRD)" data-testid="btn-login"
+            :title="$t('button.login.description')"
+            :disabled="!form.username || !form.password"
+            class="mt-2 login w-100"
+            @click="doLogin">
             {{ $t('button.login') }}
           </el-button>
+          <a v-if="authMethods.includes(METHOD_SAML)"  data-testid="btn-login-saml"
+            class="el-button mt-2 login w-100"
+            :href="samlUrl"
+            :title="$t('button.login.saml.description')"
+          >{{ $t('button.login.saml') }}</a>
+          <el-alert v-if="authMethods === undefined || authMethods == ''"
+            type="warning"
+            :closable="false"
+            effect="dark"
+            show-icon
+            class="mt-4">
+            {{ $t('message.login.noauthenticationmethod') }}
+          </el-alert>
         </el-form>
       </div>
     </el-card>
@@ -33,27 +50,42 @@ import { useConfigserver } from '@/composables/mixins/useGet'
 interface TResult {
   result: string
 }
-
 const $t = useI18n().t
 const { notifySuccess, notifyError } = useNotification()
 const config = useRuntimeConfig()
 const $mq = useMQ().$mq
 const form = ref({ username: '', password: '' })
-const isLoading = ref(false)
+const isLoading = ref(true)
 const totp = ref('')
 const opsiconfigserver = ref('');
+const authMethods = ref('')
+
+const METHOD_PASSOWRD = 'password'
+const METHOD_SAML = 'saml'
 
 onMounted( async () => {
   isLoading.value = true
   const useServerGet = await useConfigserver(true, undefined, $t)
-  const os = await useServerGet.getOpsiConfigServer()
-  opsiconfigserver.value = os || ''
+  const res = await useServerGet.getOpsiConfigServerWithHeaders()
+  opsiconfigserver.value = res.data || ''
+  authMethods.value = res.headers.get(opsiheaders.xopsiauthmethods) || ''
   const username = storeAuth().username
   if (username) {
     form.value.username = username
     handleSuccessfulLogin()
   }
   isLoading.value = false
+})
+
+const samlUrl = computed(() => {
+  const webguisRedirect: string = useRoute().query?.redirect as string || ''
+  const ownpath:string = config.public.OWN_PATH
+  if (webguisRedirect && (webguisRedirect.startsWith(ownpath))) {
+    return `/auth/saml/login?redirect=${webguisRedirect}`
+  } else if (webguisRedirect) {
+    return `/auth/saml/login?redirect=${ownpath}${webguisRedirect}`
+  }
+  return `/auth/saml/login?redirect=${encodeURIComponent(window.location.href)}`
 })
 
 const validUsername = computed<boolean|null>(
@@ -72,23 +104,6 @@ function createUserFormData() {
   }
   User.append('password', newPassword)
   return User
-}
-
-function handleSuccessfulLogin() {
-  notifySuccess({ message: $t('message.page.redirect') })
-  storeAuth().login(form.value.username)
-  storeAuth().setSession()
-  const route = useRoute()
-  const router = useRouter()
-  if (route.name === 'login') {
-    if (route.query?.redirect) {
-      router.push({ path: route.query.redirect.toString() })
-    } else {
-      router.push({ path: config.public.BASE_PAGE })
-    }
-  } else {
-    router.back()
-  }
 }
 
 async function doLogin () {
@@ -115,6 +130,22 @@ async function doLogin () {
     notifyError({ message: $t('message.error.unexpected') })
   } finally {
     isLoading.value = false
+  }
+}
+
+function handleSuccessfulLogin() {
+  notifySuccess({ message: $t('message.page.redirect') })
+  storeAuth().setSession()
+  const route = useRoute()
+  const router = useRouter()
+  if (route.name === 'login') {
+    if (route.query?.redirect) {
+      router.push({ path: route.query.redirect.toString() })
+    } else {
+      router.push({ path: config.public.BASE_PAGE })
+    }
+  } else {
+    router.back()
   }
 }
 </script>
