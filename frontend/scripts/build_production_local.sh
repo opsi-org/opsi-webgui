@@ -102,7 +102,7 @@ fi
 # # replace the ADDON_ID and ADDON_NAME in const.py
 # sed -i "s/${ADDON_KEY_ID} = .*/${ADDON_KEY_ID} = \"${ADDON_ID_ORIGIN}\"/" ${PY_CONST_FILE}
 # sed -i "s/${ADDON_KEY_NAME} = .*/${ADDON_KEY_NAME} = \"${ADDON_NAME_ORIGIN}\"/" ${PY_CONST_FILE}
-sed -i "s|const ADDON_PATH = .*|const ADDON_PATH = \"$ADDON_PATH_ORIGIN\"|" "$TS_CONST_FILE"
+sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = \"$ADDON_PATH_ORIGIN\"|" "$TS_CONST_FILE"
 
 echo ""
 echo "IMPORTANT: Access your webgui at: https://....:${PORT_VALUE}${ADDON_PATH}/app"
