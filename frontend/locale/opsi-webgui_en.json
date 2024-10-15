@@ -335,6 +335,7 @@
   "button.reload": "Reload",
   "button.reload.tooltip.clients.removeselection": "Remove selection except one client (multiselection still enabled)",
   "button.deselect": "Deselect item",
+  "button.select": "Select item",
   "button.download": "Download",
   "button.reset": "Reset",
   "button.resetAll": "Reset all",
