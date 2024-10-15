@@ -70,8 +70,8 @@ export const useDeployClientAgent = (_t: any = undefined) => {
     t = useI18n().t
   }
   const clientagentAlert = ref<any>()
-  async function deployClientAgent (_data: any, modal:boolean, incontextmenu:boolean) {
-
+  async function deployClientAgent (_data: any, modal:boolean) {
+    throw new Error('Is this function in use?')
     // TODO: use correct type for data (param and response type)
     const { data, error } = await useApiPOST<any>('/api/opsidata/clients/deploy', _data)
     if (error) {

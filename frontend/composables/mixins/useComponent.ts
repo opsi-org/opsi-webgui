@@ -123,11 +123,13 @@ export const useHoverDropdown = () => {
   return { onOver, onLeave }
 }
 
-export const useScrollListener = (refComponent: Ref<HTMLElement | undefined>, handleScroll = (...args: any[]) => {}) => {
+export const useScrollListener = (refComponent: Ref<HTMLElement | undefined>, handleScroll = (...args: any[]) => {
+  console.warn('scroll listener not implemented', args)
+}) => {
   let resizeObserver: any = null
   onMounted(() => {
     if (refComponent.value == undefined) {
-      console.error('mount. component for scroll listener undefined')
+      console.error('mount. component for scroll listener undefined', handleScroll)
       return
     }
 
@@ -139,6 +141,7 @@ export const useScrollListener = (refComponent: Ref<HTMLElement | undefined>, ha
 
   function onResize() {
     const h = refComponent.value?.clientHeight + 'px'
+    console.warn('resize', h)
   }
   onUnmounted(() => {
     if (resizeObserver !== null) resizeObserver.unobserve(refComponent)
@@ -177,4 +180,5 @@ export const useSynchronization = () => {
     }
     // if (emitToSort) { this.$emit('update:sort', toSort) }
   }
+  return { syncSort }
 }

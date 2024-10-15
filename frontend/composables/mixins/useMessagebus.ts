@@ -25,9 +25,10 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
   })
   watch(()=> wsBusMsg.value, async ()=>{
     if (watchFn !== undefined) {
-      wsNotification('(info) received a message "' + wsBusMsg.value + '"', wsBusMsg.value)
       await watchFn(wsBusMsg.value)
+    } else {
 
+      wsNotification('(info) received unhandled message "' + JSON.stringify(wsBusMsg.value) + '"', wsBusMsg.value)
     }
     // await watchFn()
   }, { deep: true})
