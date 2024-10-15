@@ -1,8 +1,10 @@
 <template>
-  <el-text tag="b" class="text-capitalize"> {{ pagetype }}</el-text> - <el-text tag="i"> {{ id }} </el-text>
-  <el-button class="float-right" @click="router.push(`/${type}/`)">X</el-button>
-  <ViewVConfig v-if="pagetype === 'config'" :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
-  <div v-else> Page not found! </div>
+  <div>
+    <el-text tag="b" class="text-capitalize"> {{ pagetype }}</el-text> - <el-text tag="i"> {{ id }} </el-text>
+    <el-button class="float-right" @click="router.push(`/${type}/`)">X</el-button>
+    <ViewVConfig v-if="pagetype === 'config'" :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
+    <div v-else> Page not found! </div>
+  </div>
 </template>
 
 <script setup lang="ts">
