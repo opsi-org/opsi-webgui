@@ -220,7 +220,7 @@ function updateColumns() {
   return _columns
 }
 function updateData() {
-  if (dataModel === undefined) return []
+  if (dataModel.value === undefined) return []
   const _data = dataModel
   return _data
 }

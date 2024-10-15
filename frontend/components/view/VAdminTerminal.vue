@@ -138,7 +138,7 @@ function disconnect () {
 function connect () {
   waitForRefNot(isDisabled, undefined)
   if (isDisabled.value) { return }
-  if (mbTerminal && mbTerminal.value && mbTerminal.value) {
+  if (mbTerminal.value) {
     try {
       mbTerminal.value.dispose()
     } catch (e) {

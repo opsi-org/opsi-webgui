@@ -110,7 +110,7 @@ function createUserFormData() {
 }
 
 async function doLogin () {
-  if (!validUsername || !validPassword) return
+  if (!validUsername.value || !validPassword.value) return
   isLoading.value = true
 
   try {

@@ -263,7 +263,7 @@ function updateColumns() {
     // const containsChecked = _data.some((row: any) => row.selected)
     const clearSelection = (event:any) => {
       $emit('selection-clear')
-      dataModel.map((row:any) => {
+      dataModel.value.map((row:any) => {
         row.selected = false
         return row
       })
@@ -298,7 +298,7 @@ function updatePerPage(perPage: number) {
   }
 }
 function updateData() {
-  if (dataModel === undefined) return []
+  if (dataModel.value === undefined) return []
   const _data = dataModel
   return _data
 }
