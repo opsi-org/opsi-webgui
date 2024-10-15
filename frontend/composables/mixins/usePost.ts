@@ -81,10 +81,9 @@ export const useDeployClientAgent = (_t: any = undefined) => {
 
     clientagentAlert.value.alert(t('message.success.clientagent', { client: data.value.clientId[0] }), 'success')
     if (modal) {
-      // TODO: ts shows that usemodal does not exist
-      // @ts-ignore
-      const { hide } = useModal('event-modal-deployCA-' + data.value.clientId[0] + '-context-menu-' + incontextmenu)
-      hide ()
+      console.error("TODO: close modal ? ") // ts shows that usemodal does not exist
+      // const { hide } = useModal('event-modal-deployCA-' + data.value.clientId[0] + '-context-menu-' + incontextmenu)
+      // hide ()
     }
     throw new Error('TODO: check if this really works in mixin/composable. If so remove this line')
   }

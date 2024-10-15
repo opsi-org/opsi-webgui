@@ -11,7 +11,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 const { notifyError } = useNotification()
 const isLoading = ref(false)
-let fetchedData = ref<any>([])
+const fetchedData = ref<any>([])
 const $t = useI18n().t
 onMounted(async ()=> {
   await fetch()

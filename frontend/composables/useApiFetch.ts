@@ -1,8 +1,8 @@
+import { Head } from './../.nuxt/components.d';
 // import { useFetch } from "@vueuse/core"
 
 import { useRuntimeConfig, type UseFetchOptions } from "nuxt/app"
-import { use } from "~/tests-configs/playwright/config/playwright-config"
-import type { IObjectString2Any, IObjectString2String } from "~/types/tgeneral"
+import type { IObjectString2Any } from "~/types/tgeneral"
 
 const urlsWithoutAuthentication = [
   '/auth/logout',
@@ -26,7 +26,7 @@ async function useAPI2<T> (
     method: tmethod,
     url: string,
     body: FormData | Object | undefined = undefined,
-    opts: UseFetchOptions<any> = {},
+    opts: UseFetchOptions<T> = {},
     prePath: string | undefined = undefined,
     synced: boolean = true // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
 ): Promise<ApiResult<T>> {
@@ -38,7 +38,7 @@ async function useAPI2<T> (
   const callresponse = ref<T|undefined>();
   const callerror = ref<terror|undefined>(undefined);
   const pendingState = ref<boolean>(true);
-  let callheaders: any = {};
+  let callheaders: Headers | undefined = undefined
   let status: any = null;
 
   let fullBody = body
@@ -48,10 +48,13 @@ async function useAPI2<T> (
   }
 
   const fetch = useFetch<T>(fullURL, {
-    baseURL: baseUrl,
+  // const fetch = useFetch<T>({
+    // baseURL: baseUrl,
+    // baseURL: fullURL,
+
     onRequest({ request, options }: any) {
       // Set the request headers
-      const headers: any = { ...opts?.headers }
+      const headers: IObjectString2Any = { ...opts?.headers }
       if (!urlsWithoutAuthentication.includes(url)) {
         headers['X-opsi-session-lifetime'] = 3600  // TODO: get from store
       }
@@ -64,8 +67,6 @@ async function useAPI2<T> (
         fullBody = JSON.stringify(body)
       }
       if (method === 'GET' && body != undefined) {
-      //   // fullURL = fullURL +'?'+ _getBodyParams(body)
-      //   query = body
         fullBody = undefined
       }
 
@@ -75,27 +76,32 @@ async function useAPI2<T> (
       options.baseURL = baseUrl
       // options.query = query
       options.headers = headers
+      console.log('onRequest', request, options)
     },
     onRequestError({ request, options, error }: any) {
       // Handle the request errors
+      console.error('onRequestError', error)
       callerror.value = { response: { data: { class: "", message: String(error) } } }
     },
-    onResponse({ request, response, options }:any) {
+    onResponse({ request, response, options }) {
+      console.log('onResponse', response)
       // Process the response data
-      callresponse.value = response.data || response._data || response.body || {}
+      callresponse.value = response._data || response.body || {}
       callheaders = response.headers
       status = response.status
       pendingState.value = false
     },
-    onResponseError({ request, response, options }: any) {
+    // onResponseError(context) {
+    onResponseError({ request, response, options }) {
       // Handle the response errors
+      console.error('onResponseError', response)
       callerror.value = {
         response: {
           data: {
-            class: response?.data?.class || response?._data?.class,
-            message: response?.data?.message || response?._data?.message,
-            // message: response?.data?.message || response?._data?.message,
-            details: response?.data?.details || response?._data?.details
+            class: response?._data?.class,
+            message: response?._data?.message,
+            // message: response?._data?.message,
+            details: response?._data?.details
           }
         }
       }
@@ -108,34 +114,37 @@ async function useAPI2<T> (
         navigateTo('/login')
 
       }
-      console.log('onResponseError', callerror.value)
+      console.error('onResponseError', callerror.value)
     }
-  })
+  }
+  )
   if (synced) {
     await fetch
-  }
-  if (!synced) {
+  }else {
     pendingState.value = false
     if (callresponse.value === undefined) {
       callerror.value = { response: { data: { class: 'error', message: 'no response' } } }
     }
   }
-  if (!callheaders) {
-    console.warn('no headers in request response. url: ', fullURL)
+  if (callheaders === undefined) {
+    console.warn('no headers in request response. url: ', fullURL, callheaders, status)
   } else {
-    var username = callheaders.get(opsiheaders.xopsiuserid)
-    if (!username) {
+    callheaders = callheaders as Headers
+    const headerusername = callheaders.get(opsiheaders.xopsiuserid)
+    if (!headerusername) {
       console.warn('No username in headers. Clearing session')
       storeAuth().clearSession()
     }else {
-      username = username.split('user:')[1]
+      const username = headerusername.split('user:')[1]
       if (username) {
         storeAuth().setUser(username)
       }else {
         storeAuth().clearSession()
       }
     }
+    // const headerObj: IObjectString2Any = callheaders as IObjectString2Any
   }
+
   return {pending:pendingState, data: callresponse, error: callerror.value, headers: callheaders as IObjectString2Any, status }
 }
 

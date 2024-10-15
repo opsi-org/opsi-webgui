@@ -8,7 +8,8 @@
     >
     <!-- :classeachcol="isMobile ? 'm-1': 'm-1 h-full'" -->
     <template #default>
-      <ViewVProducts v-if="path[0] === 'products'"
+      <ViewVProducts
+        v-if="path[0] === 'products'"
         :product-type="(route.params.producttype as string)"
         :is-child="false"
         :is-mobile="mq.isMobile.value"

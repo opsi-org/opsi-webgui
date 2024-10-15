@@ -193,7 +193,7 @@ const fetchedData = ref({
   ['NetbootProduct' as IProductTypes]: [] as Array<any>
 })
 const columns = reactive<ITableHeaderRow>({
-  selected: { // eslint-disable-next-line object-property-newline
+  selected: {
       title: $t('table.fields.selection'),
       key: 'selected',
       dataKey: 'selected',
@@ -220,13 +220,13 @@ const columns = reactive<ITableHeaderRow>({
               <el-checkbox v-model={rowData.selected} class="selectionItem" />
             :
               <el-radio-group v-model={rowData.selected}>
-                <el-radio label={true} value={true} class="selectionItem hide_label" />
+                <el-radio value={true} class="selectionItem hide_label" />
               </el-radio-group>
           }
         </>)
       }
     },
-    installationStatus: { // eslint-disable-next-line object-property-newline
+    installationStatus: {
       tooltip: $t('table.fields.instStatus'),
       key: 'installationStatus',
       dataKey: 'installationStatus',
@@ -265,7 +265,7 @@ const columns = reactive<ITableHeaderRow>({
         )
       }
     },
-    actionResult: { // eslint-disable-next-line object-property-newline
+    actionResult: {
       tooltip: $t('table.fields.actionResult'),
       key: 'actionResult',
       dataKey: 'actionResult',
@@ -301,7 +301,7 @@ const columns = reactive<ITableHeaderRow>({
         )
       }
     },
-    productId: { // eslint-disable-next-line object-property-newline
+    productId: {
       title: $t('table.fields.productId'),
       fixed: true,
       key: 'productId',
@@ -321,7 +321,7 @@ const columns = reactive<ITableHeaderRow>({
         )
       }
     },
-    name: { // eslint-disable-next-line object-property-newline
+    name: {
       title: $t('table.fields.name'),
       key: 'name',
       dataKey: 'name',
@@ -332,7 +332,7 @@ const columns = reactive<ITableHeaderRow>({
       // visible: this.includesCookie(`column_${id}`, 'name', false)
       hidden: !tableSettings.productsColumns.includes('name')
     },
-    description: { // eslint-disable-next-line object-property-newline
+    description: {
       title: $t('table.fields.description'),
       key: 'description',
       dataKey: 'description',
@@ -344,7 +344,7 @@ const columns = reactive<ITableHeaderRow>({
       // visible: this.includesCookie(`column_${id}`, 'description', false)
       hidden: !tableSettings.productsColumns.includes('description')
     },
-    advice: { // eslint-disable-next-line object-property-newline
+    advice: {
       title: $t('table.fields.advice'),
       key: 'advice',
       dataKey: 'advice',
@@ -354,7 +354,7 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       hidden: !tableSettings.productsColumns.includes('advice')
     },
-    modificationTime: { // eslint-disable-next-line object-property-newline
+    modificationTime: {
       title: $t('table.fields.modificationTime'),
       key: 'modificationTime',
       dataKey: 'modificationTime',
@@ -365,7 +365,7 @@ const columns = reactive<ITableHeaderRow>({
       // visible: this.includesCookie(`column_${id}`, 'modificationTime', false)
       hidden: !tableSettings.productsColumns.includes('modificationTime')
     },
-    priority: { // eslint-disable-next-line object-property-newline
+    priority: {
       title: $t('table.fields.priority'),
       key: 'priority',
       dataKey: 'priority',
@@ -376,19 +376,19 @@ const columns = reactive<ITableHeaderRow>({
       // visible: this.includesCookie(`column_${id}`, 'priority', false)
       hidden: !tableSettings.productsColumns.includes('priority')
     },
-    // selectedDepots: { // eslint-disable-next-line object-property-newline
+    // selectedDepots: {
     //   title: $t('table.fields.depotIds') as string, key: 'selectedDepots', dise,
     //   title: $t('table.fields.depotIds') as string, dataKey: 'selectedDepots', dise,
     //   title: $t('table.fields.depotIds') as string, class: 'col-selectedDepots', dise,
     //   visible: this.includesCookie('column_' + id, 'selectedDepots', false)
     // },
-    // selectedClients: { // eslint-disable-next-line object-property-newline
+    // selectedClients: {
     //   title: $t('table.fields.clientsIds') as string, key: 'selectedClients', dise,
     //   title: $t('table.fields.clientsIds') as string, dataKey: 'selectedClients', dise,
     //   title: $t('table.fields.clientsIds') as string, class: 'col-selectedClients', dise,
     //   visible: this.includesCookie('column_' + id, 'selectedClients', false)
     // },
-    version: { // eslint-disable-next-line object-property-newline
+    version: {
       title: $t('table.fields.version'),
       key: 'version',
       dataKey: 'version',
@@ -430,7 +430,7 @@ const columns = reactive<ITableHeaderRow>({
         )
       }
     },
-    actionProgress: { // eslint-disable-next-line object-property-newline
+    actionProgress: {
       title: $t('table.fields.actionProgress'),
       key: 'actionProgress',
       dataKey: 'actionProgress',
@@ -442,7 +442,7 @@ const columns = reactive<ITableHeaderRow>({
       hidden: !tableSettings.productsColumns.includes('actionProgress'),
       disabled: clientSelection.value.length <= 0,
     },
-    actionRequest: { // eslint-disable-next-line object-property-newline
+    actionRequest: {
       title: $t('table.fields.actionRequest'),
       key: 'actionRequest',
       dataKey: 'actionRequest',
@@ -478,7 +478,7 @@ const columns = reactive<ITableHeaderRow>({
         // selectedClients={sel}
       }
     },
-    rowactions: { // eslint-disable-next-line object-property-newline
+    rowactions: {
       key: 'rowactions',
       dataKey: 'rowactions',
       class: 'col-rowactions',
@@ -623,7 +623,6 @@ async function wsBusMsgObjectChanged (msg: any = undefined) {
 
     if (!(lastChanges.value.clientIds.includes(msg.data.clientId) && lastChanges.value.productIds.includes(msg.data.productId))) {
       // check if we may cause the event...
-      console.log(`MBUS; ${msg.data.productType}`, msg)
       notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.poc_updated', { productId: msg.data.productId }),
           button: { label: $t('label.reloadPage'), onClick() {
             async () => {
@@ -886,7 +885,6 @@ function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString
   // }
 
 function fetchProductsPrepareParams (type: IProductTypes) {
-  // @ts-ignore
   const params: ITableData = { ...tableData.value[type] }
   params.selectedDepots = JSON.stringify(selectionDepots.value)
   params.selectedClients = JSON.stringify(clientSelection.value)

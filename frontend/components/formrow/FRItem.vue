@@ -18,8 +18,8 @@
 
         <template #content>
           <div class="min-w-48">
-            <b>{{props.item[props.idKey]}} <br /></b>
-            {{props.item.description}} <br /> <br />
+            <b>{{props.item[props.idKey]}} <br></b>
+            {{props.item.description}} <br> <br>
             <p v-if="props.item.value !== undefined"><b>Config Value/s:</b> <pre>{{ props.item.value }}</pre> </p>
             <p v-if="props.item.defaultValues !== undefined"><b>Default Value/s:</b>  <pre>{{ props.item.defaultValues }} </pre></p>
             <p v-if="props.item.objects !== undefined"><b>Object Value/s:</b> <pre>{{ props.item.objects }} </pre></p>
@@ -37,7 +37,7 @@
       <!-- <el-skeleton :rows="1" animated :loading="loading" >
 
         <template #default> -->
-          <el-checkbox v-if="props.item[props.boolTypeKey] === boolTypeValue" v-model="itemValue" :label="itemValue"/>
+          <el-checkbox v-if="props.item[props.boolTypeKey] === boolTypeValue" v-model="itemValue" :value="itemValue"/>
           <el-select
             v-else
             v-model="itemValue"
@@ -61,6 +61,7 @@
                 class="box-item"
                 effect="dark"
                 :content="pVal"
+                :key="pVal"
                 :show-after="1000"
                 placement="top-start"
               >
@@ -69,8 +70,7 @@
                   :key="pVal"
                   :label="pVal"
                   :value="pVal"
-                  >
-                </el-option>
+                />
               </el-tooltip>
             </template>
             <template #header v-if="props.item.editable">

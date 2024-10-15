@@ -29,7 +29,7 @@ const totalItems = data.length
         :table-data="tableData"
         :total-items="totalItems"
 
-        rowId="column-0"
+        row-id="column-0"
         :sort-by="undefined"
         @selection-changed="(id: any) => {}"
         @selection-clear="() => { }"
@@ -43,7 +43,7 @@ const totalItems = data.length
       :table-data="tableData"
       :total-items="totalItems"
 
-      rowId="column-0"
+      row-id="column-0"
       :sort-by="undefined"
       @selection-changed="(id: any) => {}"
       @selection-clear="() => { }"

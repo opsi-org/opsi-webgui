@@ -1,10 +1,15 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
 
 const loggedIn = ref(false)
 export async function logout()  {
   if (!loggedIn.value) return
   const { data, error } = await useApiPOST('/auth/logout')
   if (error?.response.data.message === 'Unauthorized') {
-
+    loggedIn.value = false
+    storeAuth().logout()
+    storeAuth().clearSession()
   } else if (error !== undefined && error !== null) {
     console.log("error", error.response.data.message)
   } else {

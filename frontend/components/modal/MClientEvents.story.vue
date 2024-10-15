@@ -15,7 +15,7 @@ const events = ref([
     >
     <!-- <Variant
       title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled> -->
-    <Variant v-for="event in events" :title="'desktop-' + event">
+    <Variant v-for="event in events" :key="event" :title="'desktop-' + event">
       <ModalMClientEvents
         v-if="showModal"
         v-model="showModal"

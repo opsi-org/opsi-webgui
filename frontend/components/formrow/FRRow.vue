@@ -5,14 +5,14 @@
     <template #label>
       <el-text class="truncate">
         {{props.label}}
-        <br />
+        <br >
       </el-text>
     </template>
 
     <template #default>
       <!-- {{ itemValue }} -->
       <slot name="value" >
-        <el-checkbox v-if="props.type === 'checkbox'" :disabled="disabled" v-model="modelBool" :label="modelBool || ''"/>
+        <el-checkbox v-if="props.type === 'checkbox'" :disabled="disabled" v-model="modelBool" :value="modelBool || ''"/>
         <el-input v-else-if="props.type === 'input'" :disabled="disabled" v-model="(modelValue as string)" @input="(x) => $emit('update:modelValue', x)"/>
         <el-button v-else-if="props.type === 'button'" :disabled="disabled" type="primary" @click="$emit('click')">{{props.text}}</el-button>
       </slot>

@@ -301,7 +301,7 @@ test:tsc:
     - cd frontend
     - *define_globals
   script:
-    - npx nuxi typecheck
+    - npm run tsc
 # test:unit:
   #   stage: test
   #   dependencies:

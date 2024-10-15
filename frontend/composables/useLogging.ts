@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 export const log = () => {
   function log (...msg: any) { console.log(...msg) }
   function debug (...msg: any) { console.debug(...msg) }

@@ -16,7 +16,7 @@
       @sort-changed="tableHelper.sortChanged"
       @update-input-filter="tableHelper.filterChanged"
     >
-      <template v-slot:header-post-filter>
+      <template #header-post-filter>
         <ButtonBTNRowLink
           :is-pressed="router.currentRoute.value.path.includes('/clients/products/')"
           :icon="icons.product"
@@ -67,7 +67,7 @@ const tableData = ref<ITableData>({
 
 const id = "clients"
 const columns = ref<ITableHeaderRow>({
-    selected: { // eslint-disable-next-line object-property-newline
+    selected: {
       title: $t('table.fields.selection'),
       key: 'selected',
       dataKey: 'selected',
@@ -80,7 +80,7 @@ const columns = ref<ITableHeaderRow>({
       // hidden: cookies.includesCookie('column_' + id, 'selected', true)
       headerCellRenderer: () => {
         return (
-          <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} />
+        <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} />
         )
       },
       cellRenderer: ({rowData}) => {
@@ -95,7 +95,7 @@ const columns = ref<ITableHeaderRow>({
               <el-checkbox v-model={rowData.selected} class="selectionItem" />
             :
               <el-radio-group v-model={rowData.selected}>
-                <el-radio label={true} value={true} class="selectionItem hide_label" />
+                <el-radio value={true} class="selectionItem hide_label" />
               </el-radio-group>
           }
         </>)
@@ -116,13 +116,11 @@ const columns = ref<ITableHeaderRow>({
       cellRenderer: ({rowData}) => {
         // { <el-tag>{fetchedData.value.findIndex((e: any) => e.clientId === rowData.clientId)}</el-tag> }
         return (
-          <>
           <el-text>{rowData.clientId}</el-text>
-          </>
         )
       }
     },
-    description: { // eslint-disable-next-line object-property-newline
+    description: {
       title: $t('table.fields.description'),
       key: 'description',
       dataKey: 'description',
@@ -131,7 +129,7 @@ const columns = ref<ITableHeaderRow>({
       width: 300,
       hidden: !storeTable.clientsColumns.includes('description')
     },
-    ipAddress: { // eslint-disable-next-line object-property-newline
+    ipAddress: {
       title: $t('table.fields.ip'),
       key: 'ipAddress',
       dataKey: 'ipAddress',
@@ -140,7 +138,7 @@ const columns = ref<ITableHeaderRow>({
       width: 100,
       hidden: !storeTable.clientsColumns.includes('ipAddress')
     },
-    macAddress: { // eslint-disable-next-line object-property-newline
+    macAddress: {
       title: $t('table.fields.mac'),
       key: 'macAddress',
       dataKey: 'macAddress',
@@ -149,7 +147,7 @@ const columns = ref<ITableHeaderRow>({
       width: 100,
       hidden: !storeTable.clientsColumns.includes('macAddress')
     },
-    lastSeen: { // eslint-disable-next-line object-property-newline
+    lastSeen: {
       title: $t('table.fields.lastSeen'),
       key: 'lastSeen',
       dataKey: 'lastSeen',
@@ -158,7 +156,7 @@ const columns = ref<ITableHeaderRow>({
       width: 100,
       hidden: !storeTable.clientsColumns.includes('lastSeen')
     },
-    uefi: { // eslint-disable-next-line object-property-newline
+    uefi: {
       title: $t('table.fields.uefi'),
       key: 'uefi',
       dataKey: 'uefi',
@@ -173,7 +171,7 @@ const columns = ref<ITableHeaderRow>({
           class="pr-3"
         />
     },
-    _majorStats: { // eslint-disable-next-line object-property-newline
+    _majorStats: {
       title: $t('table.fields.stats'),
       key: '_majorStats',
       dataKey: '_majorStats',
@@ -183,7 +181,7 @@ const columns = ref<ITableHeaderRow>({
       // hidden: true // this is a dummy column for grouping
       hidden: !storeTable.clientsColumns.includes('_majorStats')
     },
-    installationStatus_unknown: { // eslint-disable-next-line object-property-newline
+    installationStatus_unknown: {
       tooltip: $t('table.fields.installationStatusUnknown'),
       key: 'installationStatus_unknown',
       dataKey: 'installationStatus_unknown',
@@ -205,7 +203,7 @@ const columns = ref<ITableHeaderRow>({
       }
       // hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
     },
-    actionResult_failed: { // eslint-disable-next-line object-property-newline
+    actionResult_failed: {
       tooltip: $t('table.fields.actionResultFailed'),
       key: 'actionResult_failed',
       dataKey: 'actionResult_failed',
@@ -224,7 +222,7 @@ const columns = ref<ITableHeaderRow>({
       }
       // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
     },
-    version_outdated: { // eslint-disable-next-line object-property-newline
+    version_outdated: {
       tooltip: $t('table.fields.versionOutdatedGeneral'),
       key: 'version_outdated',
       dataKey: 'version_outdated',
@@ -243,7 +241,7 @@ const columns = ref<ITableHeaderRow>({
       }
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
-    version_outdated_netboot: { // eslint-disable-next-line object-property-newline
+    version_outdated_netboot: {
       tooltip: $t('table.fields.versionOutdatedNetboot'),
       key: 'version_outdated_netboot',
       dataKey: 'version_outdated_netboot',
@@ -264,7 +262,7 @@ const columns = ref<ITableHeaderRow>({
 
 
     // TODO: Sorting for reachable column
-    reachable: { // eslint-disable-next-line object-property-newline
+    reachable: {
       tooltip: $t('table.fields.reachable'),
       key: 'reachable',
       dataKey: 'reachable',
@@ -275,7 +273,7 @@ const columns = ref<ITableHeaderRow>({
       hidden: !storeTable.clientsColumns.includes('reachable')
       // hidden: !cookies.includesCookie('column_' + id, 'reachable', true)
     },
-    rowactions: { // eslint-disable-next-line object-property-newline
+    rowactions: {
       title: $t('table.fields.rowactions'),
       key: 'rowactions',
       dataKey: 'rowactions',
@@ -350,8 +348,8 @@ function changeRowLink(e:Event, cid: string, to='config') {
 // }
 
 function _objectWithoutProperties(obj: any, keys: string[]): any {
-  var target: any = {};
-  for (var i in obj) {
+  const target: any = {};
+  for (const i in obj) {
     if (keys.indexOf(i) >= 0) continue;
     if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
     target[i] = obj[i];
@@ -432,7 +430,6 @@ async function wsBusMsgObjectChanged(msg: any = undefined) {
            } } })
   }
   if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
-    // eslint-disable-next-line no-console
     console.warn('message bus: ', msg)
   }
 }

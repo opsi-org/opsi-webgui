@@ -4,10 +4,10 @@
       <el-row>
         <b>{{ $t('title.' + category) }} </b>
       </el-row>
-      <div v-for="(value, label) in options">
+      <div v-for="(value, label) in options" :key="label+value">
         <el-form-item :label="$t('table.fields.' + label)">
           <el-form v-if="label === 'opsiClientAgent'" :inline="true" label-position="top">
-            <div v-for="(value, label) in createClient.initialSetup.opsiClientAgent">
+            <div v-for="(value, label) in createClient.initialSetup.opsiClientAgent" :key="label+value">
               <el-checkbox v-if="typeof value == 'boolean'" v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
               <el-form-item
                 v-else
@@ -134,7 +134,7 @@ import type { IObjectString2Any } from '~/types/tgeneral';
   }
 
   async function fetchNetbootProducts() {
-    let depot = createClient.value.assignments.depot !== '' ? createClient.value.assignments.depot : storeCache().opsiconfigserver
+    const depot = createClient.value.assignments.depot !== '' ? createClient.value.assignments.depot : storeCache().opsiconfigserver
     await useApiGET(`/opsidata/depots/products?selectedDepots=[${depot}]`)
       .then((response) => {
         if (Array.isArray(response.data.value)) {

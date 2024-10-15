@@ -4,10 +4,11 @@ import _ from 'lodash'
 const { notifyInfo, notifySuccess, notifyWarning, notifyError } = useNotification()
 export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifications=false, _t: any=undefined, _channels: any = []) => {
   const $config = useRuntimeConfig()
+  let url_host = ""
   let $t = _t
   if (!$t) { $t = useI18n().t }
 
-  let channels: any = _channels || undefined// from importing component?
+  const channels: any = _channels || undefined// from importing component?
   const wsBus = ref<WebSocket|undefined>(storeMBus().bus)
   const wsBusMsg = ref(storeMBus().wsBusMsg)
   const setBus = (_bus: WebSocket|undefined)=> {
@@ -43,8 +44,7 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
       return crypto.randomUUID()
     }
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      // eslint-disable-next-line one-var, no-var, eqeqeq
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8)
+      const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8)
       return v.toString(16)
     })
   }
@@ -69,9 +69,9 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
 
     wsNotification('connecting')
     const host = window.location.hostname
-    const port = (process.env.NODE_ENV === 'production') ? window.location.port : (Number($config.public.OPSICONFD_PORT) || 4447)
-    const url = 'wss://' + host + ':' + port + '/messagebus/v1?'
-    const _bus = new WebSocket(url)
+    const port = (process.env.NODE_ENV === 'production') ? window.location.port : (Number(($config as any).public.OPSICONFD_PORT) || 4447)
+    url_host = 'wss://' + host + ':' + port + '/messagebus/v1?'
+    const _bus = new WebSocket(url_host)
 
     setBus(undefined)
     setBus(_bus)
@@ -129,7 +129,7 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
   }
 
   function wsSubscribeChannel (channels: Array<string>) {
-    wsNotification('subscribe: ', channels)
+    wsNotification(url_host + '  subscribe: ',  channels)
     const message = wsCreateMsgTemplate()
     message.type = 'channel_subscription_request'
     message.channel = 'service:messagebus'
@@ -215,6 +215,7 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
   }
 
   function wsNotification (text: any, data: any = '') {
+    // eslint-disable-next-line no-console
     console.debug('MessageBus:', text, data)
   }
 

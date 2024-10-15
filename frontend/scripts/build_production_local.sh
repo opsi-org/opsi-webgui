@@ -15,14 +15,11 @@ BACKEND_DIR=backend
 WEBGUI_DIR=webgui
 
 PY_CONST_FILE=${WORKING_DIR}/${BACKEND_DIR}/addon/${WEBGUI_DIR}/python/const.py
-# ADDON_ID=webgui
-# ADDON_NAME=Webgui
-
 ADDON_ID_ORIGIN=webgui
 ADDON_NAME_ORIGIN=Webgui
-
 ADDON_KEY_ID=ADDON_ID
 ADDON_KEY_NAME=ADDON_NAME
+
 
 TS_CONST_FILE=${WORKING_DIR}/${FRONTEND_DIR}/nuxt.config.ts
 ADDON_PATH=/addons/${ADDON_ID}
@@ -35,12 +32,15 @@ echo "PORT_VALUE: $PORT_VALUE"
 
 
 # replace the ADDON_ID and ADDON_NAME in const.py
+echo "> update ${PY_CONST_FILE}...."
 sed -i "s/${ADDON_KEY_ID} = .*/${ADDON_KEY_ID} = \"${ADDON_ID}\"/" ${PY_CONST_FILE}
 sed -i "s/${ADDON_KEY_NAME} = .*/${ADDON_KEY_NAME} = \"${ADDON_NAME}\"/" ${PY_CONST_FILE}
+# cat ${PY_CONST_FILE}
+
 # replace "const ADDON_PATH"  in TS_CONST_FILE
-sed -i "s|const ADDON_PATH = .*|const ADDON_PATH = \"$ADDON_PATH\"|" "$TS_CONST_FILE"
-
-
+echo "> update ${TS_CONST_FILE}...."
+sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = \"$ADDON_PATH\"|" "$TS_CONST_FILE"
+# cat ${TS_CONST_FILE} | grep ADDON_PATH
 
 cd ${WORKING_DIR}/${FRONTEND_DIR}/
 rm -rf ${WORKING_DIR}/${FRONTEND_DIR}/dist
@@ -48,8 +48,9 @@ echo "WORKING FRONTEND DIR: ${WORKING_DIR}/${FRONTEND_DIR}"
 echo "WORKING BACKEND DIR: ${WORKING_DIR}/${BACKEND_DIR}"
 
 echo "> npm generate..."
-# npm run generate-nossl
 npm run generate
+# npm run generate-nossl
+# npm run generate-with-ssl
 echo "> npm generate done"
 
 mkdir -p webgui
@@ -85,10 +86,14 @@ then
     mv -f ${ADDON_ID}/ /data/opsiconfd/addons/.
     git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md
     git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/python/const.py
-    git restore ${WORKING_DIR}/backend/addon/${ADDON_ID}/data/app/README.md
+    # git restore ${WORKING_DIR}/backend/addon/${ADDON_ID}/data/app/README.md
     echo "> local install done"
 
-    docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload
+    # docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload
+    CONTAINER=$(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
+    echo "> reload supervisorctl in container: $CONTAINER"
+    docker exec -u root ${CONTAINER} supervisorctl reload
+
 else
     echo "> local install skipped"
 fi

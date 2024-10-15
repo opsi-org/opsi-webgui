@@ -1,7 +1,7 @@
 <template>
   <el-button @click="clearSelection" size="small"> {{$t('table.selection.clear')}} </el-button>
   <el-checkbox-group v-model="selectedDepots" @change="handleDepotSelection">
-    <div v-for="item in depotIDList" :key="item"> <el-checkbox size="small" :label="item" /> </div>
+    <div v-for="item in depotIDList" :key="item"> <el-checkbox size="small" :value="item" /> </div>
   </el-checkbox-group>
 </template>
 

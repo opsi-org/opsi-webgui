@@ -46,20 +46,15 @@ export function mapValues2Objects (values: Array<string>, objects: Array<string>
   for (const o in objectsorigin) {
 
     const i = objects.indexOf(objectsorigin[o])
-    console.log(o, i, objects[i])
     if (i >= 0 && values.length === 1) {
-      console.log('0...', client2value[objects[i]])
       client2value[objects[i]] = values[0]
     } else
     if (i >= 0 && values) {
       client2value[objects[i]] = values[i]
-      console.log('1...', client2value[objects[i]])
     } else if (i >= 0) {
       client2value[objects[i]] = defaultValue
-      console.log('2...', client2value[objects[i]])
     } else {
       client2value[objectsorigin[o]] = defaultValue
-      console.log('3...',  client2value[objects[i]])
     }
   }
   return client2value

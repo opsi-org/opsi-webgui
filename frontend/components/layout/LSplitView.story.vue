@@ -80,8 +80,12 @@ const views = ref({
   <Story
     :layout="{ type: 'grid', width: '100%'}"
   >
-    <Variant v-for="v,k in views"
-      :title="v.title" :meta="{ wrapperMobile: v.props.isMobile }" responsive-disabled>
+    <Variant
+      v-for="v,k in views"
+      :key="k"
+      :title="v.title"
+      :meta="{ wrapperMobile: v.props.isMobile }"
+      responsive-disabled>
       <LayoutLSplitView
         :is-mobile="v.props.isMobile"
         :page0-condition="v.props.page0Condition || true"

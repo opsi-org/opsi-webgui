@@ -2,8 +2,8 @@
   <pre v-if="fetchError">Could not load data</pre>
   <p v-else-if="fetchResult === undefined">Fetching...</p>
   <div v-else>
-    Result-Type: {{ typeof fetchResult }} <br />
-    Result-Data: {{ fetchResult }} <br />
+    Result-Type: {{ typeof fetchResult }} <br >
+    Result-Data: {{ fetchResult }} <br >
   </div>
 </template>
 

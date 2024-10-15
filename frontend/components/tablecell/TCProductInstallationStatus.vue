@@ -23,7 +23,7 @@
       <span class="h6"> {{ props.text }} </span>
 
     </el-tag>
-    <div v-else>{{  props.text }}</div>
+    <!-- <div v-else>{{  props.text }}</div> -->
     <!-- <b-badge v-if="props.text=='mixed'" data-testid="TCInstallationStatusBadge" :variant="props.variant">
       <span class="h6"> {{ t_fixed('unequal') }} </span>
     </b-badge> -->

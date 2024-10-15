@@ -1,8 +1,15 @@
 <template>
   <div data-testid="FHostAttributes">
     <el-alert v-if="!props.id" type="warning">Please select an item</el-alert>
-    <el-form v-else label-width="200px" class="w-full">
-      <div v-if="hostAttributes.length && hostAttributes[0]" v-for="(value, label) in hostAttributes[0]" :key="label">
+    <!-- TODO: check the following two branches. -->
+    <el-form v-else-if="hostAttributes.length && hostAttributes[0] && hostAttributes[0].type !== 'OpsiDepotserver'"  label-width="200px" class="w-full">
+      <el-form-item>
+        <el-button @click="resetForm">{{ $t('button.reset') }}</el-button>
+        <el-button type="success" @click="saveHostAttributes">{{ $t('button.save') }}</el-button>
+      </el-form-item>
+    </el-form>
+    <el-form v-else-if="hostAttributes.length && hostAttributes[0]"  label-width="200px" class="w-full">
+      <div v-for="(value, label) in hostAttributes[0]" :key="label">
         <el-form-item :label="`${$t('table.fields.' + label)}`">
           <el-checkbox v-if="typeof value === 'boolean'" v-model="hostAttributes[0][label]" :value="value" />
           <el-input v-else-if="isInputPasswordLabel(label)" v-model="hostAttributes[0][label]" :value="value" show-password />
@@ -10,10 +17,6 @@
           <el-input v-else v-model="hostAttributes[0][label]" :value="value" />
         </el-form-item>
       </div>
-      <el-form-item v-if="hostAttributes.length && hostAttributes[0] && hostAttributes[0].type !== 'OpsiDepotserver'">
-        <el-button @click="resetForm">{{ $t('button.reset') }}</el-button>
-        <el-button type="success" @click="saveHostAttributes">{{ $t('button.save') }}</el-button>
-      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -23,6 +26,7 @@
   import { useSetUEFI } from '~/composables/mixins/usePost'
   import { useFormat } from '~/composables/mixins/useFormat'
   import type { T_ServerAttr, T_ClientAttr } from '~/types/APItypes'
+import type { IObjectString2Any } from '~/types/tgeneral';
 
   const $t = useI18n().t
 
@@ -64,9 +68,9 @@
   }
 
   async function saveHostAttributes() {
-    const hostAttr: { [key: string]: any } = { ...hostAttributes?.value[0], uefi: undefined }
+    const hostAttr: IObjectString2Any = { ...hostAttributes?.value[0], uefi: undefined }
 
-    if (props.type === 'clients' && hostAttr.hasOwnProperty('uefi')) {
+    if (props.type === 'clients' && Object.keys(hostAttr).includes('uefi')) {
       if (typeof hostAttr.uefi !== 'undefined') {
         await useSetUEFI($t).setUEFI(hostAttr.hostId, (hostAttr.uefi as string).toString())
       }

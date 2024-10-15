@@ -3,36 +3,36 @@
 
   <div v-if="Object.keys(columnsModel).length > 0">
     <div class="flex justify-content-between">
-      <slot name="header-title"></slot>
-      <slot name="header-pre-visibility"></slot>
-      <slot name="header-pre-filter"></slot>
+      <slot name="header-title" />
+      <slot name="header-pre-visibility" />
+      <slot name="header-pre-filter" />
       <InputIFilter
       :data="tableData"
       :filterable-columns="Object.values(wrappedColumns)"
       @update="($event: any) => $emit('update-input-filter', $event)"
       />
-      <slot name="header-post-filter"></slot>
+      <slot name="header-post-filter" />
     </div>
     <!-- <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columnsModel" :sort-by="sortBy" :multi="true" :incontextmenu="true" /> -->
     <el-collapse v-model="collapseRowIdValue" accordion>
-      <PVirtualScroller :items="dataModel" :itemSize="50" class="w-full h-[39rem] maxVisibleNoOverflow" >
+      <PVirtualScroller :items="dataModel" :item-size="50" class="w-full h-[39rem] maxVisibleNoOverflow" >
       <!-- style="width: 200px; height: 200px" -->
-        <template v-slot:item="{ item, options }">
+        <template #item="{ item, options }">
             <!-- <div :class="['flex align-items-center p-2', { 'surface-hover': options.odd }]" style="height: 50px">{{ item }}</div> -->
             <el-collapse-item :name="item[props.rowId]">
               <template #title>
                 <div class="min-w-fit">
-                  <CellRenderer v-if="wrappedColumns.selected" rowId="selected" :rowData="item" :colData="wrappedColumns['selected']" />
+                  <CellRenderer v-if="wrappedColumns.selected" row-id="selected" :row-data="item" :col-data="wrappedColumns['selected']" />
 
                   <el-text v-if="!wrappedColumns[props.rowId].cellRenderer"> {{item[props.rowId]}} </el-text>
-                  <CellRenderer v-else :rowId="props.rowId" :rowData="item" :colData="wrappedColumns[props.rowId]" />
+                  <CellRenderer v-else :row-id="props.rowId" :row-data="item" :col-data="wrappedColumns[props.rowId]" />
                 </div>
 
                 <div class="w-full flex flex-row-reverse">
-                  <CellRenderer v-if="wrappedColumns.rowactions" rowId="rowactions" :rowData="item" :colData="wrappedColumns.rowactions" />
+                  <CellRenderer v-if="wrappedColumns.rowactions" row-id="rowactions" :row-data="item" :col-data="wrappedColumns.rowactions" />
                 </div>
               </template>
-              <Details v-if="collapseRowIdValue && collapseRowIdValue === item[props.rowId]"  :rowData="item" :colData="wrappedColumns[props.rowId]" />
+              <Details v-if="collapseRowIdValue && collapseRowIdValue === item[props.rowId]"  :row-data="item" :col-data="wrappedColumns[props.rowId]" />
             </el-collapse-item>
         </template>
       </PVirtualScroller>
@@ -60,8 +60,6 @@
 
 
 <script lang="tsx" setup>
-// @ts-ignore
-
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 
 import {TableV2FixedDir, type CheckboxValueType, type Column } from 'element-plus'
@@ -70,13 +68,17 @@ import type { ITableData } from '../../types/ttable'
 const tableStore = storeTablesettings()
 
 const collapseRowIdValue = ref<any>({})
-const CellRenderer = ({key, rowData, colData}: any): VNode => {
+const CellRenderer = (params: any): VNode => {
+  const colData = params['colData'] || params['col-data']
+  const rowData = params['rowData'] || params['row-data']
+  const key = params.key
   if (colData.cellRenderer)
     return colData.cellRenderer({rowData})
   return <el-text>{ key }</el-text>
 }
-// @ts-ignore
-const Details = ({rowData, colData}: any): VNode => {
+const Details = (params: any): VNode => {
+  const rowData = params['rowData'] || params['row-data']
+  // const colData = params['colData'] || params['col-data']
   const _width = {'width': '100%'}
   const data: Array<any> = []
   // const _fixedRightLast: Array<any> = []
@@ -116,7 +118,7 @@ const Details = ({rowData, colData}: any): VNode => {
           {{
             default: (scope: any) => {
               const rowKey = scope.row.id
-              let rowObj = columnsModel.value[rowKey]
+              const rowObj = columnsModel.value[rowKey]
               if (rowKey == undefined || rowKey == 'rowactions' || rowKey == 'actionRequest') {
                 return <el-text>{ columnsModel.value[rowKey].title || columnsModel.value[rowKey].tooltip }</el-text>
               }
@@ -176,8 +178,7 @@ watch (()=>dataModel, ()=>{ wrappedColumns.value = updateColumns() }, {deep: tru
 watch (()=>columnsModel, ()=>{ wrappedColumns.value = updateColumns() }, {deep: true})
 // wrappedData.value = updateData()
 
-// @ts-ignore
-watch(()=>tableStore[props.id + 'Columns'], ()=>{
+watch(()=>tableStore[props.id + 'Columns' as keyof typeof tableStore], ()=>{
   const curRow = collapseRowIdValue.value
   collapseRowIdValue.value = undefined
   collapseRowIdValue.value = curRow
@@ -185,7 +186,7 @@ watch(()=>tableStore[props.id + 'Columns'], ()=>{
 function updateColumns() {
   if (columnsModel.value == undefined) return {}
 
-  let _columns: ITableHeaderRow = JSON.parse(JSON.stringify(columnsModel.value))
+  const _columns: ITableHeaderRow = JSON.parse(JSON.stringify(columnsModel.value))
   for (const [key, value] of Object.entries(columnsModel.value)) {
     if (value.cellRenderer !== undefined) {
       _columns[key].cellRenderer = value.cellRenderer

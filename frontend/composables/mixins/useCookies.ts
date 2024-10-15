@@ -10,39 +10,38 @@ export const useCookies = () => {
   // @changes.Mutation public delFromChangesProducts!: (s: object) => void
   // @errors.Mutation public pushToErrorsProducts!: (s: object) => void
   function existsCookie (key: string) {
-    return useCookie(key).value
+    return (useCookie(key) as Ref).value
   }
 
   function isCookie (key: string, value:any, defaultValue = undefined) {
-    let v = useCookie(key).value
+    let v = (useCookie(key) as Ref).value
     if (!v) { v = defaultValue }
     return v === value
   }
 
   function getCookie (key: string, defaultResult:any = '') {
-    const v = useCookie(key).value
+    const v = (useCookie(key) as Ref).value
     if (!v) { return defaultResult }
     return v as unknown as any
   }
 
   function getParsedCookie (key: string, defaultResult = ''):any {
-    const v = useCookie(key).value
+    const v = (useCookie(key) as Ref).value
     if (v === undefined) { return defaultResult }
-    console.log('found cookie', key, v)
     return v
     // const r = JSON.parse(v as unknown as any)
     // return r
   }
 
   function getKeyCookie (key: string, keyitem:string, defaultResult = '') {
-    const v:any = useCookie(key).value
+    const v:any = (useCookie(key) as Ref).value
     if (v === undefined || v === null) { return defaultResult }
     return v[keyitem]
     // return JSON.parse(v as unknown as any)[keyitem]
   }
 
   function includesCookie (key:string, value:string|number|boolean, defaultResult: boolean):any {
-    const v: Array<any> = useCookie(key).value as any
+    const v: Array<any> = (useCookie(key) as Ref).value
     if (v === undefined || v === null) { return defaultResult }
     return (v).includes(value)
     // return v ? JSON.parse(v as unknown as any).includes(value) : defaultResult
@@ -56,7 +55,7 @@ export const useCookies = () => {
       opt.maxAge = opt.expires
       opt.expires = undefined
     }
-    const keyCookie = useCookie(key, opt)
+    const keyCookie: Ref = useCookie(key, opt)
     if (value.value === undefined)
       keyCookie.value = value
     else

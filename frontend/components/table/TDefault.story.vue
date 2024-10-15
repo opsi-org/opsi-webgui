@@ -40,7 +40,7 @@ const MyTDefault = ({ isMobile }: any) => {
 
         sort-by={undefined}
         rowId="column-0"
-        isMobile={isMobile}
+        is-mobile={isMobile}
         onSelection-changed={(x:string)=>mylog('change ' + JSON.stringify(x))}
         onSelection-clear={()=>mylog('clear')}
     />
@@ -51,7 +51,7 @@ const MyTDefault = ({ isMobile }: any) => {
 <template>
   <Story :setup-app="loginlogout">
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <MyTDefault :isMobile="true"/>
+      <MyTDefault :is-mobile="true"/>
       <!-- <TableTDefault
         id="tableId"
         :columns="columns"
@@ -63,7 +63,7 @@ const MyTDefault = ({ isMobile }: any) => {
       /> -->
     </Variant>
     <Variant title="desktop" responsive-disabled>
-      <MyTDefault :isMobile="false"/>
+      <MyTDefault :is-mobile="false"/>
       <!-- <TableTDefault
         id="tableId"
         :columns="columns"

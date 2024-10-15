@@ -7,7 +7,7 @@
         class="w-full max-w-[700px]"
       />
       <h1 class="text-4xl m-auto">
-        {{ t_fixed("title.project") }} <br/>
+        {{ t_fixed("title.project") }} <br>
       </h1>
       <IconIUibLogo
         :short="false"
@@ -29,7 +29,7 @@ const { t_fixed } = useStrings()
 const msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 
 function wsBusMsgObjectChanged(msg) {
-  console.log('wsBusMsgObjectChanged', msg)
+  // console.log('wsBusMsgObjectChanged', msg)
 }
 </script>
 

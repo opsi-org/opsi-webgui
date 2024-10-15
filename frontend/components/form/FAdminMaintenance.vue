@@ -1,5 +1,5 @@
 <template>
-  <div v-for="(actions, section) in adminTasks">
+  <div v-for="(actions, section) in adminTasks" :key="section">
     <el-row class="mt-2 mb-2 text-small">
       <b :class="['title' + section]">{{ $t('title.' + section) }}</b>
     </el-row>

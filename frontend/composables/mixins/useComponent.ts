@@ -57,14 +57,16 @@ export function useNotification() {
         : formatMessage(message)
 
       const autoHideDuration = type === 'success' ? duration ?? 8000 : 0
-
+      if (type === 'error') {
+        console.error('NotificationError:', title, message)
+      }
       const notificationInstance = ElNotification[type]({
         title,
         message: customMessage,
         showClose,
         duration: autoHideDuration,
         onClose: () => {
-          notifications.value = notifications.value.filter((n) => n !== notificationInstance)
+          notifications.value = notifications.value.filter((n: any) => n !== notificationInstance)
           if (onClose) onClose()
           if (notifications.value.length <= 3 && clearAllNotification.value) {
             clearAllNotification.value.close()
@@ -121,9 +123,7 @@ export const useHoverDropdown = () => {
   return { onOver, onLeave }
 }
 
-import debounce from 'lodash/debounce'
 export const useScrollListener = (refComponent: Ref<HTMLElement | undefined>, handleScroll = (...args: any[]) => {}) => {
-  // const handleDebouncedScroll = debounce(handleScroll, 100)
   let resizeObserver: any = null
   onMounted(() => {
     if (refComponent.value == undefined) {

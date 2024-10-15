@@ -123,13 +123,13 @@ const getSelection = () => {
   else {
     getNodes = prodGroupRef.value!.getCheckedNodes(false, false)
   }
-  let ObjectToGroup = getNodes.filter(node=> node.type == 'ObjectToGroup').map(item => (item.text))
-  let uniqueSelection = [... new Set(ObjectToGroup)]
+  const ObjectToGroup = getNodes.filter(node=> node.type == 'ObjectToGroup').map(item => (item.text))
+  const uniqueSelection = [... new Set(ObjectToGroup)]
   return uniqueSelection
 }
 
 const handleSelection = () => {
-  let checkedNodes = getSelection()
+  const checkedNodes = getSelection()
   if(props.grouptype == 'client-group') {
     storeSelection.setSelectionClients(checkedNodes)
   }

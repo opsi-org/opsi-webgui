@@ -20,14 +20,17 @@
               <el-form-item v-if="action == 'notify'" :label="$t('button.event.showpopup.message')">
                 <el-input v-model="notifyText" class="w-100" />
               </el-form-item>
-              <div v-if="action == 'deployclientagent'" v-for="(value, label) in opsiClientAgent">
-                <el-form-item :label="$t('form.' + label)">
-                  <el-radio-group v-if="label === 'type'" v-model="opsiClientAgent[label.toString()]">
-                    <el-radio v-for="os in ['Windows', 'Linux', 'Mac']" :key="os" :value="os">{{ os }}</el-radio>
-                  </el-radio-group>
-                  <el-input v-else-if="label === 'password'" v-model="opsiClientAgent[label.toString()]" show-password />
-                  <el-input v-else v-model="opsiClientAgent[label.toString()]" />
-                </el-form-item>
+
+              <div v-if="action == 'deployclientagent'">
+                <div v-for="(value, label) in opsiClientAgent" :key="label">
+                  <el-form-item :label="$t('form.' + label)">
+                    <el-radio-group v-if="label === 'type'" v-model="opsiClientAgent[label.toString()]">
+                      <el-radio v-for="os in ['Windows', 'Linux', 'Mac']" :key="os" :value="os">{{ os }}</el-radio>
+                    </el-radio-group>
+                    <el-input v-else-if="label === 'password'" v-model="opsiClientAgent[label.toString()]" show-password />
+                    <el-input v-else v-model="opsiClientAgent[label.toString()]" />
+                  </el-form-item>
+                </div>
               </div>
               <el-button
                 class="float-right"
@@ -52,10 +55,10 @@
   import type { IObjectString2Function, IObjectString2String } from '~/types/tgeneral'
   const $t = useI18n().t
   const { notifyError } = useNotification()
-  const icon: Record<string, string> = useIcons()
+  const icons = useIcons()
   const mq = useMQ()
   const props = defineProps({
-    clientIds: { type: Array, default: [] },
+    clientIds: { type: Array, default: () => [] },
     icon: { type: String, default: 'menu' },
   })
   const popoverVisible = ref<boolean>(false)
@@ -90,8 +93,10 @@
     deployclientagent: () => useApiPOST('/command/deployclientagent', opsiClientAgent.value),
     delete: () => useApiDELETE(`/opsidata/clients/${props.clientIds}`),
   }
-  function getIcon(iconName: keyof typeof icon) {
-    return icon[iconName]
+  function getIcon(icon: string) {
+    if (Object.keys(icons).includes(icon))
+      return (icons as Record<string, string>)[icon]
+    throw new Error(`Icon ${icon} not found`)
   }
   async function executeClientAction(action: string) {
     isLoading.value = true

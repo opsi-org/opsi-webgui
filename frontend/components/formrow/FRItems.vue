@@ -9,6 +9,7 @@
   <div v-if="props.idKey === 'configId'">
     <FormrowFRItem
       v-for="(item, index) in sortedItems"
+      :key="item.configId"
       :item="item"
       :id-key="props.idKey"
       :bool-type-key="props.boolTypeKey"
@@ -22,6 +23,7 @@
     <!-- v-else-if="props.idKey === 'propertyId' && Object.values(props.items)?.[0]" -->
     <FormrowFRItemProperty
       v-for="(item, index) in sortedItems"
+      :key="item.configId"
       :item="item"
       :id-key="props.idKey"
       :bool-type-key="props.boolTypeKey"

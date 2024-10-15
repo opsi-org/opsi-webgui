@@ -50,7 +50,7 @@ const anyObjectDifferentFromDefault = computed(()=>{
     }
   })
 
-  let defVal = [...props.item[props.defaultKey]]
+  const defVal = [...props.item[props.defaultKey]]
   defVal.sort()
 
   if (

@@ -9,7 +9,8 @@
   >
     <template #default>
       <el-button class="float-right" @click="router.push('/clients/')">X</el-button>
-      <ViewVProducts v-if="path[1] === 'products'"
+      <ViewVProducts
+        v-if="path[1] === 'products'"
         :product-type="path[2]" :is-child="true"
         v-bind="route.query"
       />

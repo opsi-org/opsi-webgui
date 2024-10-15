@@ -1,7 +1,7 @@
 
 <template>
   <Story :layout="{ type: 'grid' }">
-    <Variant v-for="v,k in icons" :title="'' + k">
+    <Variant v-for="v,k in icons" :key="k" :title="'' + k">
       <IconIIcon :icon="v"/>
     </Variant>
   </Story>

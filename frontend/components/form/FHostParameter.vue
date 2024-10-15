@@ -1,14 +1,21 @@
 <template>
   <div data-testid="FHostParameter">
-    <br />
+    <br>
     <el-alert v-if="!(props.type ===  'servers' || props.id)" type="warning"> Please select item</el-alert>
     <IconILoading v-else-if="isLoading" />
-    <el-collapse v-else v-model="activeNames" @change="handleCollapseValueChange"
-      class="mr-3 ml-3">
+    <el-collapse
+      v-else
+      v-model="activeNames"
+      class="mr-3 ml-3"
+      @change="handleCollapseValueChange"
+    >
 
       <el-alert v-if="fetchedData && Object.keys(fetchedData).length === 0" type="warning"> No data found</el-alert>
-      <el-collapse-item v-else
-        v-for="(items, topic, index) in fetchedData" :title="topic.toString()"
+      <el-collapse-item
+        v-else
+        v-for="(items, topic, index) in fetchedData"
+        :key="topic.toString()"
+        :title="topic.toString()"
         :name="index.toString()"
       >
         <FormrowFRItems v-if="activeNames.includes(index.toString())" :items="items" :replace-in-id="topic + '.'" @change-item="changeItem"/>
@@ -61,9 +68,6 @@ watch(()=>props.id, async ()=>{
 const channels = ['event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted']
 const msgbus = useMBus(wsBusMsgObjectChanged, false, $t, channels)
 async function wsBusMsgObjectChanged(msg: any = undefined) {
-
-// @Watch('wsBusMsg', { deep: true }) async _wsBusMsgObjectChanged2 () {
-    // const msg = this.wsBusMsg
     if (msg && channels.includes(msg.channel)) {
       // console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
       if (!(lastSavedData.value.configIds.includes(msg.data.configId) && // configId matches
@@ -110,7 +114,6 @@ async function fetch () {
   } else if (props.type === 'servers') {
     endpoint = '/opsidata/config'
   } else {
-    // eslint-disable-next-line no-console
     console.error('not defined')
   }
   await fetchHostParameters(endpoint)
@@ -120,7 +123,7 @@ async function fetch () {
 
 async function fetchHostParameters (endpoint: string) {
   const {data, error} = await useApiGETBody<T_HostParameter>(endpoint)
-  console.debug('fetched', data, error)
+  // console.debug('fetched', data, error)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
@@ -166,7 +169,7 @@ async function handleSelection (change: any) {
   } else {
     console.error('not defined')
   }
-  console.log('handleSelection', url, request)
+  // console.log('handleSelection', url, request)
   await useSaveParameters($t).saveParameters(url, request, null, true)
   isLoading.value = false
     // } else {
