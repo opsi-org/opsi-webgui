@@ -4,10 +4,15 @@
     <el-form v-if="hostAttributes.length && hostAttributes[0]"  label-width="200px" class="w-full">
       <div v-for="(value, label) in hostAttributes[0]" :key="label">
         <el-form-item :label="`${$t('table.fields.' + label)}`">
-          <el-checkbox v-if="typeof value === 'boolean'" v-model="hostAttributes[0][label]" :value="value" />
-          <el-input v-else-if="isInputPasswordLabel(label)" v-model="hostAttributes[0][label]" :value="value" show-password />
+          <el-checkbox
+            v-if="typeof value === 'boolean'"
+            v-model="hostAttributes[0][label]"
+            :value="value"
+            :disabled="notEditable.includes(label)"
+          />
+          <el-input v-else-if="isInputPasswordLabel(label)" v-model="hostAttributes[0][label]" :value="value" show-password :disabled="notEditable.includes(label)"/>
           <el-input v-else-if="isInputDateLabel(label)" :value="useFormat().date(value)" disabled />
-          <el-input v-else v-model="hostAttributes[0][label]" :value="value" />
+          <el-input v-else v-model="hostAttributes[0][label]" :value="value" :disabled="notEditable.includes(label)" />
         </el-form-item>
       </div>
     </el-form>
@@ -36,6 +41,8 @@
   const { notifySuccess, notifyError } = useNotification()
   const hostAttributes = ref<Array<T_ServerAttr | T_ClientAttr>>([])
   const hostAttributesOriginal = ref<Array<T_ServerAttr | T_ClientAttr>>([])
+
+  const notEditable = ['type', 'created', 'lastSeen', 'systemUUID', 'uefi']
 
   const props = defineProps({
     id: { type: String, default: undefined },
@@ -81,8 +88,8 @@
       }
     }
 
-    const attrsToDelete = ['type', 'created', 'lastSeen', 'systemUUID', 'uefi']
-    attrsToDelete.forEach((attrKey) => delete hostAttr[attrKey])
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    notEditable.forEach((attrKey) => delete hostAttr[attrKey])
 
     try {
       const endPoint = `/api/opsidata/${props.type}/${hostAttr.hostId}`
