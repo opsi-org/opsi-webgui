@@ -17,7 +17,7 @@
     <el-collapse v-model="collapseRowIdValue" accordion>
       <PVirtualScroller :items="dataModel" :item-size="50" class="w-full h-[39rem] maxVisibleNoOverflow" >
       <!-- style="width: 200px; height: 200px" -->
-        <template #item="{ item, options }">
+        <template #item="{ item }">
             <!-- <div :class="['flex align-items-center p-2', { 'surface-hover': options.odd }]" style="height: 50px">{{ item }}</div> -->
             <el-collapse-item :name="item[props.rowId]">
               <template #title>

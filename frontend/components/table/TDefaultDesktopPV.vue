@@ -118,7 +118,7 @@
                 </div>
               </template>
 
-              <template #header="slotProps">
+              <template #header="">
                 <!-- <HeaderCellRenderer :col-data="col" :key="col.title"/> -->
                 <ButtonBTNClearSelection @clearselection="clearSelection"/>
               </template>
@@ -151,18 +151,18 @@
                   }"
               >
 
-                <template #loading>
+                <template #loading="">
                   <div class="flex align-items-center" :style="{ height: '17px', 'flex-grow': '1', overflow: 'hidden' }">
                       <PSkeleton width="60%" height="1rem" />
                   </div>
                 </template>
 
-                <template v-if="colChild.headerCellRenderer" #header="slotProps">
+                <template v-if="colChild.headerCellRenderer" #header="">
                   <el-badge :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
                     <HeaderCellRenderer :col-data="colChild" :key="colChild.title"/>
                   </el-badge>
                 </template>
-                <template v-else-if="colChild.icon || colChild.icons" #header>
+                <template v-else-if="colChild.icon || colChild.icons" #header="">
                   <el-badge :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
                     <el-tooltip
                       effect="dark"
@@ -211,13 +211,13 @@
               :style=" (col.minWidth !== undefined) ? 'min-width: ' + col.minWidth + 'px;' : ''"
               >
 
-              <template #loading>
+              <template #loading="">
                 <div class="flex align-items-center" :style="{ height: '17px', 'flex-grow': '1', overflow: 'hidden' }">
                     <PSkeleton width="60%" height="1rem" />
                 </div>
               </template>
 
-              <template v-if="col.headerCellRenderer" #header="slotProps">
+              <template v-if="col.headerCellRenderer" #header="">
                 <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
                   <HeaderCellRenderer :col-data="col" :key="col.title"/>
                 </el-badge>
@@ -246,12 +246,12 @@
                   </el-tooltip>
                 </el-badge>
               </template>
-              <template v-else-if="col.title" #header="slotProps">
+              <template v-else-if="col.title" #header="">
                 <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
                   <el-text>{{ col.title }}</el-text>
                 </el-badge>
               </template>
-              <template v-else #header="slotProps">
+              <template v-else #header="">
                 <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
                   <el-text>{{ col.key }}</el-text>
                 </el-badge>

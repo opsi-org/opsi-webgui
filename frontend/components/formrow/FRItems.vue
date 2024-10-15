@@ -22,7 +22,7 @@
   <div v-else>
     <!-- v-else-if="props.idKey === 'propertyId' && Object.values(props.items)?.[0]" -->
     <FormrowFRItemProperty
-      v-for="(item, index) in sortedItems"
+      v-for="(item) in sortedItems"
       :key="item.configId"
       :item="item"
       :id-key="props.idKey"

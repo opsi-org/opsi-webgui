@@ -7,11 +7,11 @@
     <el-form-item v-if="!isChild" :label="$t('table.fields.sourceClient')">
       <SelectSHosts type="clients" @change="setId" :id="sourceID" />
     </el-form-item>
-    <div v-for="(options, category, index) in cloneClient" :key="category">
+    <div v-for="(options, category) in cloneClient" :key="category">
       <el-row>
         <b>{{ $t('title.' + category) }} </b>
       </el-row>
-      <div v-for="(value, label, index) in options" :key="label + value">
+      <div v-for="(value, label) in options" :key="label + value">
         <el-form-item :label="$t('table.fields.' + label)">
           <el-input
             v-if="label === 'hostId'"
