@@ -27,7 +27,7 @@ export interface ITableRowItemProducts {
 
 export interface ITableRow {
   rowSelected: boolean
-  toggleDetails: Function,
+  toggleDetails: (rowitem: any) => void,
   item: ITableRowItemProducts|{
     ident: string
     productId?: string
@@ -112,7 +112,7 @@ export interface IProperty {
 
 export interface ITableRowProperty {
   rowSelected: boolean
-  toggleDetails: Function,
+  toggleDetails: (rowitem: any) => void,
   item: IProperty
 }
 export interface IProductDependency {

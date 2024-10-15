@@ -35,7 +35,12 @@ export const callHistoireStory = async (page: Page, folder: string, filename: st
 const _cssClassVariantName = '.histoire-story-viewer .htw-truncate'
 const _cssClassVariantContent = '.histoire-generic-render-story > div'
 export const simpleScreenshotTest = async (
-    page: Page, componentFolder: string, filename: string, screenshotPrefix: string, dataTestid: string|undefined = undefined, afterDatatestid: Function|undefined = undefined,
+    page: Page,
+    componentFolder: string,
+    filename: string,
+    screenshotPrefix: string,
+    dataTestid: string|undefined = undefined,
+    afterDatatestid: undefined | ((page: Page, element: any) => Promise<any>) = undefined,
     options: any = {
       cssClassVariantName:_cssClassVariantName,
       cssClassVariantContent:_cssClassVariantContent,

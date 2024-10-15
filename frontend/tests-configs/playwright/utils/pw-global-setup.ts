@@ -3,8 +3,8 @@ import { apiMock, cookieOpsiconfdSession } from "./pw-api-mock"
 
 export const pageLogin = async (page: Page,
     context: BrowserContext,
-    mockFn: Function|undefined = undefined,
-    checkFn:Function|undefined = undefined,
+    mockFn: (() => void) | undefined = undefined,
+    checkFn: ((page: Page) => Promise<void>) | undefined = undefined,
     username="adminuser", password="adminuser") => {
   await page.unroute('**/webgui/api/**')
   await apiMock(page, '**/webgui/api/**', {})

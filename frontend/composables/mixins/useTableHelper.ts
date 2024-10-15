@@ -1,14 +1,11 @@
-// import { id } from "element-plus/es/locales.mjs"
-import type { IObjectString2Function } from "~/types/tgeneral"
 import type { ITableData } from "~/types/ttable"
 
 export const useTableHelper = (
   tableId: string,
   tableData: Ref<ITableData> | Ref< { [key: string]: ITableData } >,
-  // fetchedData:Ref< { [key: string]: Array<any> } >,
   fetchedData:Ref<Array<any>>| Ref< { [key: string]: Array<any> } >,
   totalItems: Ref<number>,
-  _fetch: Function,
+  _fetch: () => Promise<Array<any>>,
   storeTable: any,
   tableDataType: Ref<string>|undefined = undefined,
 ) => {

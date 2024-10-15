@@ -679,7 +679,7 @@ function setColumnVisibilityDependOnClients () {
 async function _fetch() {
   const type: IProductTypes = currentType.value
   const params = fetchProductsPrepareParams(type)
-  const {data, error, headers} = await useApiGETBody('/opsidata/products', params)
+  const {data, error, headers} = await useApiGETBody<Array<any>>('/opsidata/products', params)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return []

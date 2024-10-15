@@ -1,8 +1,14 @@
 import { encode, decode } from '@msgpack/msgpack'
 import { useNotification } from './useComponent'
-import _ from 'lodash'
+
 const { notifyInfo, notifySuccess, notifyWarning, notifyError } = useNotification()
-export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifications=false, _t: any=undefined, _channels: any = []) => {
+
+export const useMBus = (
+  watchFn: ((msg: any) => Promise<void>) | undefined = undefined,
+  showStartNotifications=false,
+  _t: any=undefined,
+  _channels: any = []
+) => {
   const $config = useRuntimeConfig()
   let url_host = ""
   let $t = _t

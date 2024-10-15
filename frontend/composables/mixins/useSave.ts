@@ -106,7 +106,7 @@ export const useSaveProductActionRequest = (_t:any = undefined) => {
 }
 
 
-export const useSaveProductProperties = (refetch: Function = (b: any)=>{}, _t: any = undefined) => {
+export const useSaveProductProperties = (refetch: (b: boolean) => void = (b: any) => {}, _t: any = undefined) => {
   let t = _t
   if (!t){
     t = _getI18nInComposable()

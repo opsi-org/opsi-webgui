@@ -1,7 +1,7 @@
 <template>
   <div>
-    <!-- :class="{small: props.small !== false}" -->
     <div class="max-w-full" >
+    <!-- :class="{small: props.small !== false}" -->
       <IconILoading v-if="dataModel.length <= 0" />
       <!-- HEADER -->
       <!-- SortBy: {{ tableData.value.sortBy }}, SortDesc: {{ tableData.value.sortDesc }} -->
