@@ -164,12 +164,12 @@ async function changeProperty (item: any, values: any, originValue: any) {
   else if (values === '' && originValue === undefined) {
     return
   }
-  await useSaveProductProperties(undefined, $t).saveProdProperties(item.productId, data as Object, false, true)
+  await useSaveProductProperties(undefined, $t).saveProdProperties(item.productId, data as object, false, true)
 
 
 function handleTrackingChanges (productId:string, hosts:Array<string>, key:string, propertyId:string, value: any, orgValue: any) {
     for (const h in hosts) {
-      const changeObject: Object = {
+      const changeObject: Record<string, any> = {
         user: storeAuth().username,
         // user: localStorage.getItem('username'),
         [key]: hosts[h],

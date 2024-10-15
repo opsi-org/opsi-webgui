@@ -34,7 +34,7 @@ function define_vars<T>(prePath: string|undefined, url: string) {
 async function useAPI2<T> (
     method: tmethod,
     url: string,
-    body: FormData | Object | undefined = undefined,
+    body: FormData | object | undefined = undefined,
     opts: UseFetchOptions<T> = {},
     prePath: string | undefined = undefined,
     synced: boolean = true // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
@@ -43,7 +43,7 @@ async function useAPI2<T> (
   let fullURL = baseUrl + basePath + url
   let callheaders: Headers | undefined = undefined
   let status: any = null;
-  let fullBody = body
+  let fullBody: any = body
 
   if (method === 'GET' && body != undefined) {
     fullURL = fullURL +'?'+ _getBodyParams(body)

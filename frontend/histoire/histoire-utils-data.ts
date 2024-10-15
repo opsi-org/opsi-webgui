@@ -44,7 +44,7 @@ export  const generateData = (
   })
 
 export const generateNumbers = (length = 200) => {
-  const l2:Array<Number> = [];
+  const l2:Array<number> = [];
   Array.from({ length }).map((x,i) => l2.push(Math.floor(Math.random() * 101)));
   return l2
 }

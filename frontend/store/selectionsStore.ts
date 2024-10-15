@@ -115,17 +115,17 @@ export const storeSelections = defineStore('selections', {
         this._selectionProducts.splice(index, 1)
       }
     },
-    toggleSelectionDepots (item: string, checkMulti: Boolean = true) {
+    toggleSelectionDepots (item: string, checkMulti: boolean = true) {
       if (checkMulti)
       this.toggleSelectionValueAndCheck(this._selectionDepots, item)
       else this.toggleSelectionValue(this._selectionDepots, item)
     },
-    toggleSelectionClients (item: string, checkMulti: Boolean = true) {
+    toggleSelectionClients (item: string, checkMulti: boolean = true) {
       if (checkMulti)
       this.toggleSelectionValueAndCheck(this._selectionClients, item)
       else this.toggleSelectionValue(this._selectionClients, item)
     },
-    toggleSelectionProducts (item: string, checkMulti: Boolean = true) {
+    toggleSelectionProducts (item: string, checkMulti: boolean = true) {
       if (checkMulti)
       this.toggleSelectionValueAndCheck(this._selectionProducts, item)
       else this.toggleSelectionValue(this._selectionProducts, item)
