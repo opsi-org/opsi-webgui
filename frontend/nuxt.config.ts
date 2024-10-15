@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import pkg from './package.json'
 // import { defineNuxtConfig } from 'nuxt/config'
 // const defineNuxtConfig: DefineNuxtConfig(input: InputConfig<NuxtConfig, ConfigLayerMeta>) => InputConfig<NuxtConfig, ConfigLayerMeta>
 
-const CONFD_PORT: string = process.env.OPSICONFD_PORT || '4447'
+const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? '4447'
 // do not change following line, cause it is automatically patched by the build_production_local.sh script
 const ADDON_PATH: string = "/addons/webgui"
 
