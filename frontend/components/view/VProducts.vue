@@ -624,11 +624,13 @@ async function wsBusMsgObjectChanged (msg: any = undefined) {
     if (!(lastChanges.value.clientIds.includes(msg.data.clientId) && lastChanges.value.productIds.includes(msg.data.productId))) {
       // check if we may cause the event...
       notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.poc_updated', { productId: msg.data.productId }),
-          button: { label: $t('label.reloadPage'), onClick() {
-            async () => {
+          button: {
+            label: $t('label.reloadPage'),
+            onClick: async () => {
               await tableHelper.fetch()
             }
-           } } })
+          }
+      })
     }
     // if (this.quicksave) {
     //   this.$fetch()

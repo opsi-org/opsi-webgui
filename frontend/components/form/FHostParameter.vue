@@ -75,8 +75,10 @@ async function wsBusMsgObjectChanged(msg: any = undefined) {
               (lastSavedData.value.objectIds.length === 0 && msg.data.isDefault === true)
             )
       )) {
-        notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.config_updated', { configId: msg.data.configId }),
-          button: { label: $t('label.reloadPage'), onClick() { $fetch } } })
+        notifyInfo({
+          title: $t('message.info.event'),
+          message: $t('message.info.event.config_updated', { configId: msg.data.configId }),
+          button: { label: $t('label.reloadPage'), onClick: fetch } })
       }
     }
   }

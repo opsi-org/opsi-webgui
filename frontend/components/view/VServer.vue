@@ -118,7 +118,6 @@
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 
 import { useNotification } from '~/composables/mixins/useComponent';
-import { useCookies } from '~/composables/mixins/useCookies'
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
@@ -127,7 +126,6 @@ import type { T_ServerList } from '~/types/APItypes'
 import BTNRowLink from '~/components/button/BTNRowLink.vue';
 import type { ITableData } from '~/types/ttable';
 import { useTableHelper } from '~/composables/mixins/useTableHelper';
-import { he } from 'element-plus/es/locales.mjs';
 
 const storeSelection = storeSelections()
 const storeTable = storeTablesettings()
@@ -317,7 +315,6 @@ async function _fetch() {
     params.selected = JSON.stringify([])
   }
   const {data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
-  '/api/opsidata/depots'
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return []

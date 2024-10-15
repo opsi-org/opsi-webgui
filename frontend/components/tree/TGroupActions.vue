@@ -196,7 +196,11 @@ onMounted(async ()=> {
 })
 
 async function refetchGroup () {
-  props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
+  if (props.data.category == 'client-group') {
+    await fetchClientGroups()
+  } else {
+    await fetchProdGroups()
+  }
 }
 
 async function fetchClientGroups() {
