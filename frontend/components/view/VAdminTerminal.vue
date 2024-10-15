@@ -3,21 +3,23 @@
     <IconILoading v-if="isLoading === undefined" />
     <FormFTerminalSettings
       v-else
-      v-model:terminalId="terminalId"
-      v-model:terminalChannel="terminalChannel"
+      v-model:terminal-id="terminalId"
+      v-model:terminal-channel="terminalChannel"
       :disabled="isDisabled"
       @click-connect="connect"
       @click-disconnect="disconnect"
     />
 
   </div>
-    <el-alert v-if="isDisabled"
+    <el-alert
+      v-if="isDisabled"
       :title="$t('message.warning.terminal.disabled')"
       type="warning"
       class="m-2 min-h-10"
       show-icon
     />
-    <div v-else
+    <div
+      v-else
       ref="terminalcontainer"
       class="m-2 max-w-full min-h-1/2 maxheight-top"
     />
@@ -69,8 +71,9 @@ function _wsBusMsgObjectChangedTerminal () {
     }
   } else if (msg.type === 'terminal_data_read') {
     mbTerminal.value.write(msg.data)
-  } else if (msg.type === 'terminal_close_event') {
   }
+  // else if (msg.type === 'terminal_close_event') {
+  // }
 }
 
 async function _fetchIsDisabled () {
@@ -120,10 +123,8 @@ function updateTerminalSize () {
 }
 
 function disconnect () {
-  console.group('VAdminTerminal MessageBus try disconnect')
   if (mbTerminal.value === undefined) {
     console.warn('VAdminTerminal MessageBus: no terminal to disconnect')
-    console.groupEnd()
     return
   }
   ws.wsTerminalClose(mbTerminal.value)
@@ -132,7 +133,6 @@ function disconnect () {
   try { mbTerminal.value.dispose() } catch (e) { console.warn(e) }
   mbTerminal.value = undefined
   window.removeEventListener('resize', updateTerminalSize)
-  console.groupEnd()
 }
 
 function connect () {
@@ -183,11 +183,8 @@ function connect () {
   // => After connecting with terminal a div apears with 50000 width. this causes scrollbar to appear. We hide the horizontal scrollbar here (hopefully temporary:
   const elHtml = document.getElementsByTagName('html')[0]
   if (elHtml) {
-    // @ts-ignore
-    elHtml.style['overflow-x'] = 'hidden'
+    (elHtml.style as any)['overflow-x'] = 'hidden'
   }
-
-  console.groupEnd()
 }
 
 function waitForRefNot (el: any, valueNot: any) {

@@ -32,7 +32,9 @@
         />
       {{errorText.properties}}
       </el-tab-pane>
-    <el-tab-pane :label="$t('title.dependencies') + ' ' + (fetchedData.dependencies.dependencies?.length > 0 ? '': $t('title.dependenciesEmpty'))" name="dependencies"
+    <el-tab-pane
+      name="dependencies"
+      :label="$t('title.dependencies') + ' ' + (fetchedData.dependencies.dependencies?.length > 0 ? '': $t('title.dependenciesEmpty'))"
       :disabled="fetchedData.dependencies.dependencies?.length <= 0">
       <ViewVConfigProductDependencies :dependencies="fetchedData.dependencies" />
     {{ errorText.dependencies  }}

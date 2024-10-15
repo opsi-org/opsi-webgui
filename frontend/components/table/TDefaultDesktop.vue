@@ -58,8 +58,8 @@
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import { useIcons } from '~/composables/mixins/useIcons'
-import {TableV2SortOrder, type CheckboxValueType, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus'
-import type { RowClassNameGetter, SortBy, SortState } from 'element-plus'
+import {TableV2SortOrder, type CheckboxValueType, type RowEventHandlerParams, type RowEventHandlers, type  RowClassNameGetter, type SortBy, type SortState } from 'element-plus'
+// import  from 'element-plus'
 import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
 import type { FunctionalComponent } from 'vue'
 import type { TRowData } from '~/types/Datatypes'
@@ -309,6 +309,7 @@ async function onScroll(event: any) {
   // show marker in middle of table
   // middleOfTable.value = tableRef.value.$el.clientHeight / 2 + 50
   if (event.yAxisScrollDir === 'backward' && event.scrollTop === 0 && pageNumber.value > 1 ) {
+    // pass
   } else {
     // scroll to top. not at top
     return

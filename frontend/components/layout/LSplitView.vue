@@ -7,7 +7,8 @@
       // 'max-w-screen': isMobile
       }"
     >
-    <el-main v-if="page0Condition"
+    <el-main
+      v-if="page0Condition"
       class="mycol"
       :class="{
         [props.classfirstcol]: !isMobile,
@@ -17,7 +18,9 @@
       >
       <slot />
     </el-main>
-    <el-aside v-if="page1Condition" :width="width"
+    <el-aside
+      v-if="page1Condition"
+      :width="width"
       class="mycol"
       :class="{
         [props.classeachcol]: true,
@@ -26,7 +29,8 @@
       >
       <slot name="page1" />
     </el-aside>
-    <el-aside v-if="page2Condition"
+    <el-aside
+      v-if="page2Condition"
       :width="width"
       class="mycol"
       :class="{

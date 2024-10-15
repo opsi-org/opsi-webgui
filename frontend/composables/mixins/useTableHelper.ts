@@ -1,4 +1,4 @@
-import { id } from "element-plus/es/locales.mjs"
+// import { id } from "element-plus/es/locales.mjs"
 import type { IObjectString2Function } from "~/types/tgeneral"
 import type { ITableData } from "~/types/ttable"
 
@@ -19,10 +19,8 @@ export const useTableHelper = (
   const _firstDummyRow2 = {dummy:true, clientId: '', direction: undefined}
   const _lastDummyRow = {dummy:true, clientId: 'click to load more', direction: 'next'}
 
-  // @ts-ignore
-  const fetchedDataWrapper = computed<any[]>(()=> { return (tableDataType !== undefined) ? fetchedData.value[tableDataType.value] : fetchedData.value })
-  // @ts-ignore
-  const tableDataWrapper = computed(()=> (tableDataType !== undefined) ? tableData.value[tableDataType.value] : tableData.value)
+  const fetchedDataWrapper = computed<any[]>(()=> { return (tableDataType !== undefined) ? (fetchedData.value as any)[tableDataType.value] : fetchedData.value })
+  const tableDataWrapper = computed(()=> (tableDataType !== undefined) ? (tableData.value as any)[tableDataType.value] : tableData.value)
 
   const maxPage = computed(()=> Math.ceil(totalItems.value/tableDataWrapper.value.perPage) || -1)
 
@@ -34,12 +32,10 @@ export const useTableHelper = (
 
   function resetFetchData(val: any[]|undefined = []) {
     if (tableDataType === undefined) {
-      // @ts-ignore
       fetchedData.value = val
       return
     }
-    // @ts-ignore
-    fetchedData.value[tableDataType.value] = val
+    (fetchedData.value as any)[tableDataType.value] = val
   }
   function setTotalItemsAsPerPage (count: number) {
     totalItems.value = count
@@ -52,7 +48,7 @@ export const useTableHelper = (
   async function fetch (location: string|undefined = undefined) {
     isLoading.value = true
 
-    const visiblePages = Math.ceil(fetchedDataWrapper.value.filter(x=>x.dummy !== true).length / tableDataWrapper.value.perPage)
+    const visiblePages = Math.ceil(fetchedDataWrapper.value.filter((x: any)=>x.dummy !== true).length / tableDataWrapper.value.perPage)
     // console.warn('useTableHelper:  fetch clients. page', tableDataWrapper.value.pageNumber )
     let direction = location
     if (fetchedDataWrapper.value.length === 0) direction = undefined

@@ -2,7 +2,7 @@
   <div class="quickpanel" data-testid="BQuickPanel">
     <el-row>
       <el-text tag="b" size="small"> {{ $t('label.quickselect') }}</el-text
-      ><br />
+      ><br>
       <el-button size="small" class="border-0 ml-auto">
         <span class="sr-only">{{ $t('button.resetAll') }}</span>
         <IconIIcon :icon="icons.reset" @click="storeSelection.clearAllSelection" />
@@ -14,7 +14,7 @@
       <el-text tag="b" size="small"> {{ $t('label.quickaction') }}</el-text>
     </el-row>
     <div class="flex justify-evenly">
-      <DropdownDDClientActions :clientIds="storeSelection.selectionClients" icon="client" />
+      <DropdownDDClientActions :client-ids="storeSelection.selectionClients" icon="client" />
       <DialogDProductQuickActions />
     </div>
 

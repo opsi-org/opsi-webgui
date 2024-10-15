@@ -21,12 +21,13 @@
         lazy
         v-if="dataModel.length > 0"
         ref="tableRef"
-        scrollable scrollHeight="400px"
-        tableStyle="width: 100%" size="small"
+        scrollable
+        scroll-height="400px"
+        table-style="width: 100%" size="small"
         class="bg-transparent "
         style="width: calc(100% - 5px)"
-        resizableColumns
-        :dataKey="props.rowId"
+        resizable-columns
+        :data-key="props.rowId"
         :value="dataModel"
         :row-class="(d: any) => { return {
           '!w-full': true,
@@ -37,8 +38,8 @@
           // [(!d.dummy) ? '': (!d.direction) ? '' : 'min-h-48 h-48 ' + (d.direction == 'prev' ? 'align-bottom' : ' align-top')]: true
         }}"
         :highlight-on-select="false"
-        v-model:selection="selection" :metaKeySelection="false"
-        :sortField="props.tableData.sortBy" :sortOrder="props.tableData.sortDesc ? -1: 1"
+        v-model:selection="selection" :meta-key-selection="false"
+        :sort-field="props.tableData.sortBy" :sort-order="props.tableData.sortDesc ? -1: 1"
         :virtual-scroller-options="(dataModel.length = props.totalItems) ? { itemSize: 46, showLoader: true, showSpacer: true } : undefined"
         @update:sort-field="console.log('sortfield changed')"
         @update:sort-order="console.log('sortorder changed')"
@@ -59,7 +60,7 @@
               <h4>{{ props.id }}</h4>
             </div>
             <div class="flex">
-              <SelectSColumnVisibility :table-id="props.id" v-model:possibleColumns="columnsModel" />
+              <SelectSColumnVisibility :table-id="props.id" v-model:possible-columns="columnsModel" />
               <InputIFilter
                 :data="tableData"
                 :filterable-columns="Object.values(wrappedColumns)"
@@ -102,9 +103,13 @@
           </div>
         </template>
         <div>
-          <div v-for="col in (visibleColumns as any)" >
-            <PColumn v-if="(col as any).key === 'selected'"
-              :selectionMode="selectionStore.multiSelection === true ? 'multiple': 'single'"  headerStyle="width: 4rem"
+          <div
+            :key="col.key"
+            v-for="col in (visibleColumns as any)" >
+            <PColumn
+              v-if="(col as any).key === 'selected'"
+              header-style="width: 4rem"
+              :selection-mode="selectionStore.multiSelection === true ? 'multiple': 'single'"
               :class="col.class"
             >
               <template #loading>
@@ -114,22 +119,24 @@
               </template>
 
               <template #header="slotProps">
-                <!-- <HeaderCellRenderer :colData="col" :key="col.title"/> -->
+                <!-- <HeaderCellRenderer :col-data="col" :key="col.title"/> -->
                 <ButtonBTNClearSelection @clearselection="clearSelection"/>
               </template>
               <template #body="scope">
                 <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(scope.data[props.rowId])) ? scope.data.selected = true : scope.data.selected = false }}</div>
 
-                <div v-if="scope?.data?.dummy"></div>
+                <div v-if="scope?.data?.dummy" />
                 <el-checkbox v-else-if="selectionStore.multiSelection" v-model="scope.data.selected" class="selectionItem"/>
                 <el-radio-group v-else v-model="scope.data.selected">
-                  <el-radio :label="true" :value="true" class="selectionItem hide_label" />
+                  <el-radio :value="true" class="selectionItem hide_label" />
                 </el-radio-group>
               </template>
             </PColumn>
 
             <div v-else-if="(col as any).key.startsWith('_')">
-              <div v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)">
+              <div
+                :key="col.key + (colChild as any).key"
+                v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)">
               <PColumn
                 :key="colChild.key" :field="colChild.key as string"
                 :sortable="colChild.sortable"
@@ -152,7 +159,7 @@
 
                 <template v-if="colChild.headerCellRenderer" #header="slotProps">
                   <el-badge :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
-                    <HeaderCellRenderer :colData="colChild" :key="colChild.title"/>
+                    <HeaderCellRenderer :col-data="colChild" :key="colChild.title"/>
                   </el-badge>
                 </template>
                 <template v-else-if="colChild.icon || colChild.icons" #header>
@@ -163,7 +170,7 @@
                       >
                       <IconIIcon v-if="colChild.icon" :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
                       <div v-else-if="colChild.icons">
-                        <IconIIcon v-for="icon in colChild.icons" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                        <IconIIcon v-for="icon in colChild.icons" :key="icon" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
                       </div>
                     </el-tooltip>
                   </el-badge>
@@ -179,7 +186,7 @@
                   <!-- class="min-h-24" -->
                     {{ slotProps.data[props.rowId] }}
                   </el-text>
-                  <CellRenderer v-else-if="!slotProps.data.dummy" :colData="colChild" :key="colChild.key" :rowData="slotProps.data"/>
+                  <CellRenderer v-else-if="!slotProps.data.dummy" :col-data="colChild" :key="colChild.key" :row-data="slotProps.data"/>
                 </template>
               </PColumn>
               </div>
@@ -187,7 +194,8 @@
             <!-- <TableTDefaultDesktopColumn v-else
               :column="col" :rowId="props.rowId" :key="col.key"
             /> -->
-            <PColumn v-else
+            <PColumn
+              v-else
               :key="col.key" :field="col.key"
               :header="col.title"
               :sortable="col.sortable"
@@ -211,7 +219,7 @@
 
               <template v-if="col.headerCellRenderer" #header="slotProps">
                 <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
-                  <HeaderCellRenderer :colData="col" :key="col.title"/>
+                  <HeaderCellRenderer :col-data="col" :key="col.title"/>
                 </el-badge>
               </template>
               <template v-else-if="col.icon && col.tooltip" #header>
@@ -233,7 +241,7 @@
                     placement="bottom-end"
                   >
                     <el-text>
-                      <IconIIcon v-for="icon in col.icons" :icon="icon" :style="'color: var(' + col.iconColor + ')'" />
+                      <IconIIcon v-for="icon in col.icons" :key="icon" :icon="icon" :style="'color: var(' + col.iconColor + ')'" />
                     </el-text>
                   </el-tooltip>
                 </el-badge>
@@ -253,12 +261,13 @@
                   <el-text>{{ slotProps.data[col.key] }}</el-text>
               </template>
               <template v-else-if="col.cellRenderer" #body="slotProps">
-                <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && col.key==props.rowId"
+                <el-text
+                  v-if="slotProps.data[props.rowId] && slotProps.data.dummy && col.key==props.rowId"
                   class="min-h-24"
                 >
                   {{ slotProps.data[props.rowId] }}
                 </el-text>
-                <CellRenderer v-else-if="!slotProps.data.dummy" :colData="col" :key="col.key" :rowData="slotProps.data"/>
+                <CellRenderer v-else-if="!slotProps.data.dummy" :col-data="col" :key="col.key" :row-data="slotProps.data"/>
               </template>
               <template v-else #body="slotProps">
                 <!-- <pre>{{ slotProps }}</pre> -->
@@ -276,8 +285,8 @@
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import { useIcons } from '~/composables/mixins/useIcons'
-import {TableV2SortOrder, type RowEventHandlerParams, TableV2FixedDir } from 'element-plus'
-import type { SortState } from 'element-plus'
+import {TableV2SortOrder, type RowEventHandlerParams, TableV2FixedDir, type SortState } from 'element-plus'
+// import type { SortState } from 'element-plus'
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { TRowData } from '~/types/Datatypes'
 import type { ITableData } from '~/types/ttable'
@@ -344,7 +353,7 @@ const rowEventHandlers: any = {
 
     if (params && params.originalEvent
       && params.originalEvent.target.localName !== "td" // is not a tablecell (raw text)
-      && !Boolean(params?.originalEvent?.target?.__vueParentComponent?.attrs?.class?.includes('selectionItem')) // is not the selection cell
+      && !(params?.originalEvent?.target?.__vueParentComponent?.attrs?.class?.includes('selectionItem')) // is not the selection cell
     ) {
       return
     }

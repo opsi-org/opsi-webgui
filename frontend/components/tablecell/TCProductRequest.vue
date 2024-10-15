@@ -10,8 +10,7 @@
         :value="a"
         :data-testid="`DropdownDDProductRequest-Item-${a}`"
         @click="save(rowitem, a); visibleRequest=a"
-        >
-        </el-option>
+        />
     </el-select>
     <!-- <b-dropdown
       :id="(rowitem!=undefined) ? `DDProductRequest_actionRequest_hover_${rowitem.productId}`:''"

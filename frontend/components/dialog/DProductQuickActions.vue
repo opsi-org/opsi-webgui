@@ -11,7 +11,7 @@
         <el-row>
           <b>{{ $t('title.' + category) }} </b>
         </el-row>
-        <div v-for="(value, label) in options">
+        <div v-for="(value, label) in options" :key="label + value">
           <el-alert v-if="label == 'demoInfo'" :title="value" type="info" :closable="false" />
           <el-form-item v-else :label="$t('table.fields.' + label)">
             <el-checkbox v-if="typeof value == 'boolean'" v-model="productActions[category][label]" />

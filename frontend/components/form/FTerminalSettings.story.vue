@@ -16,8 +16,8 @@ function disconnect () {}
   <!-- <Story :setup-app="init"> -->
     <Variant title="mobile-enabled" :meta="{ wrapperMobile: true }" responsive-disabled>
       <FormFTerminalSettings
-        v-model:terminalId="terminalId"
-        v-model:terminalChannel="terminalChannel"
+        v-model:terminal-id="terminalId"
+        v-model:terminal-channel="terminalChannel"
         :disabled="false"
         @click-connect="connect"
         @click-disconnect="disconnect"
@@ -25,8 +25,8 @@ function disconnect () {}
     </Variant>
     <Variant title="mobile-disabled" :meta="{ wrapperMobile: true }" responsive-disabled>
       <FormFTerminalSettings
-        v-model:terminalId="terminalId"
-        v-model:terminalChannel="terminalChannel"
+        v-model:terminal-id="terminalId"
+        v-model:terminal-channel="terminalChannel"
         :disabled="true"
         @click-connect="connect"
         @click-disconnect="disconnect"
@@ -35,8 +35,8 @@ function disconnect () {}
 
     <Variant title="desktop-enabled">
       <FormFTerminalSettings
-        v-model:terminalId="terminalId"
-        v-model:terminalChannel="terminalChannel"
+        v-model:terminal-id="terminalId"
+        v-model:terminal-channel="terminalChannel"
         :disabled="false"
         @click-connect="connect"
         @click-disconnect="disconnect"
@@ -44,8 +44,8 @@ function disconnect () {}
     </Variant>
     <Variant title="desktop-disabled">
       <FormFTerminalSettings
-        v-model:terminalId="terminalId"
-        v-model:terminalChannel="terminalChannel"
+        v-model:terminal-id="terminalId"
+        v-model:terminal-channel="terminalChannel"
         :disabled="true"
         @click-connect="connect"
         @click-disconnect="disconnect"

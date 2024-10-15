@@ -3,8 +3,8 @@
     <FormrowFRItems
       :items="Object.values(props.properties.properties)"
       id-key="propertyId"
-      boolTypeKey="type"
-      boolTypeValue="BoolProductProperty"
+      bool-type-key="type"
+      bool-type-value="BoolProductProperty"
       all-values-key="allValues"
       @change-item="changeItem"
       />

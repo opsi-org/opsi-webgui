@@ -1,8 +1,7 @@
 // import { useFetch } from "@vueuse/core"
 
 import { useRuntimeConfig, type UseFetchOptions } from "nuxt/app"
-import { use } from "~/tests-configs/playwright/config/playwright-config"
-import type { IObjectString2Any, IObjectString2String } from "~/types/tgeneral"
+import type { IObjectString2Any } from "~/types/tgeneral"
 
 const urlsWithoutAuthentication = [
   '/auth/logout',
@@ -21,37 +20,40 @@ interface terror {
 
 interface ApiResult<T> {readonly pending: Ref<boolean>, readonly data: Ref<T|undefined>, readonly error: terror|undefined, readonly headers: IObjectString2Any, readonly status: number}
 
+function define_vars<T>(prePath: string|undefined, url: string) {
+  const config = useRuntimeConfig()
+  const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE
+  const basePath: string = prePath ?? config.public.API_PATH
+
+  const callresponse = ref<T|undefined>();
+  const callerror = ref<terror|undefined>(undefined);
+  const pendingState = ref<boolean>(true);
+  return { baseUrl, basePath, callresponse, callerror, pendingState }
+}
 
 async function useAPI2<T> (
     method: tmethod,
     url: string,
     body: FormData | Object | undefined = undefined,
-    opts: UseFetchOptions<any> = {},
+    opts: UseFetchOptions<T> = {},
     prePath: string | undefined = undefined,
     synced: boolean = true // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
 ): Promise<ApiResult<T>> {
-  const config = useRuntimeConfig()
-  const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE
-  const basePath: string = prePath ?? config.public.API_PATH
+  const { baseUrl, basePath, callresponse, callerror, pendingState } = define_vars<T>(prePath, url)
   let fullURL = baseUrl + basePath + url
-
-  const callresponse = ref<T|undefined>();
-  const callerror = ref<terror|undefined>(undefined);
-  const pendingState = ref<boolean>(true);
-  let callheaders: any = {};
+  let callheaders: Headers | undefined = undefined
   let status: any = null;
-
   let fullBody = body
+
   if (method === 'GET' && body != undefined) {
     fullURL = fullURL +'?'+ _getBodyParams(body)
     fullBody = undefined
   }
 
   const fetch = useFetch<T>(fullURL, {
-    baseURL: baseUrl,
-    onRequest({ request, options }: any) {
+    onRequest({ options }: any) {
       // Set the request headers
-      const headers: any = { ...opts?.headers }
+      const headers: IObjectString2Any = { ...opts?.headers }
       if (!urlsWithoutAuthentication.includes(url)) {
         headers['X-opsi-session-lifetime'] = 3600  // TODO: get from store
       }
@@ -64,8 +66,6 @@ async function useAPI2<T> (
         fullBody = JSON.stringify(body)
       }
       if (method === 'GET' && body != undefined) {
-      //   // fullURL = fullURL +'?'+ _getBodyParams(body)
-      //   query = body
         fullBody = undefined
       }
 
@@ -75,27 +75,32 @@ async function useAPI2<T> (
       options.baseURL = baseUrl
       // options.query = query
       options.headers = headers
+      // console.log('onRequest', request, options)
     },
-    onRequestError({ request, options, error }: any) {
+    onRequestError({ error }: any) {
       // Handle the request errors
+      // console.error('onRequestError', error)
       callerror.value = { response: { data: { class: "", message: String(error) } } }
     },
-    onResponse({ request, response, options }:any) {
+    onResponse({ response }) {
+      // console.log('onResponse', response)
       // Process the response data
-      callresponse.value = response.data || response._data || response.body || {}
+      callresponse.value = response._data || response.body || {}
       callheaders = response.headers
       status = response.status
       pendingState.value = false
     },
-    onResponseError({ request, response, options }: any) {
+    // onResponseError(context) {
+    onResponseError({ response }) {
       // Handle the response errors
+      console.error('onResponseError', response)
       callerror.value = {
         response: {
           data: {
-            class: response?.data?.class || response?._data?.class,
-            message: response?.data?.message || response?._data?.message,
-            // message: response?.data?.message || response?._data?.message,
-            details: response?.data?.details || response?._data?.details
+            class: response?._data?.class,
+            message: response?._data?.message,
+            // message: response?._data?.message,
+            details: response?._data?.details
           }
         }
       }
@@ -103,32 +108,30 @@ async function useAPI2<T> (
       status = response.status
       callheaders = response.headers
       // if status is 401
-      if (response.status === 401) {
-        storeAuth().logout()
-        navigateTo('/login')
-
-      }
-      console.log('onResponseError', callerror.value)
+      logout_on_specific_error(response.status)
+      console.error('onResponseError', callerror.value)
     }
-  })
+  }
+  )
   if (synced) {
     await fetch
-  }
-  if (!synced) {
+  } else {
     pendingState.value = false
     if (callresponse.value === undefined) {
       callerror.value = { response: { data: { class: 'error', message: 'no response' } } }
     }
   }
-  if (!callheaders) {
-    console.warn('no headers in request response. url: ', fullURL)
+
+  if (callheaders === undefined) {
+    console.warn('no headers in request response. url: ', fullURL, callheaders, status)
   } else {
-    var username = callheaders.get(opsiheaders.xopsiuserid)
-    if (!username) {
+    callheaders = callheaders as Headers
+    const headerusername = callheaders.get(opsiheaders.xopsiuserid)
+    if (!headerusername) {
       console.warn('No username in headers. Clearing session')
       storeAuth().clearSession()
     }else {
-      username = username.split('user:')[1]
+      const username = headerusername.split('user:')[1]
       if (username) {
         storeAuth().setUser(username)
       }else {
@@ -136,9 +139,15 @@ async function useAPI2<T> (
       }
     }
   }
+
   return {pending:pendingState, data: callresponse, error: callerror.value, headers: callheaders as IObjectString2Any, status }
 }
-
+const logout_on_specific_error = (status: number) => {
+  if (status === 401) {
+    storeAuth().logout()
+    navigateTo('/login')
+  }
+}
 const _getBodyParams = (params: any) => {
   return new URLSearchParams(params).toString();
 }

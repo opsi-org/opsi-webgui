@@ -2,7 +2,7 @@
 <template>
   <Story :layout="{ type: 'grid', width: '50%' }">
   <!-- <Story> -->
-    <Variant v-for="v,k in items" :title="'' + k" :meta="{ wrapperMobile: true }" responsive-disabled>
+    <Variant v-for="v,k in items" :key="k" :title="'' + k" :meta="{ wrapperMobile: true }" responsive-disabled>
       <IconIConfigState :item="v"/>
     </Variant>
   </Story>

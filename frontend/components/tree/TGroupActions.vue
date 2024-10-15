@@ -5,7 +5,8 @@
       <el-button size="small">{{ $t('label.create.prodgroup') }} </el-button>
     </template>
     <el-form label-position="top" class="mt-3">
-      <el-form-item v-for="label in Object.keys(createGroup)" :key="label" :label="$t('table.fields.'+label)"
+      <el-form-item
+        v-for="label in Object.keys(createGroup)" :key="label" :label="$t('table.fields.'+label)"
         :class="{ 'd-none': label.toString()=='parentGroupId' }">
           <el-input v-model="createGroup[label]" @keyup.enter="createGroup.groupId != '' && createSubGroup('')" />
       </el-form-item>
@@ -33,19 +34,30 @@
       <template #default="{ node, data }">
         <span>{{ node.label }}</span>
         <div class="ml-auto" v-if="node.label !== 'not_assigned'">
-          <span v-for="action in
-                (data.type == 'ObjectToGroup' ? props.data.actions.children
-                : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
-                )"
+          <span
+            :key="node.label+action"
+            v-for="action in
+            (data.type == 'ObjectToGroup' ? props.data.actions.children
+            : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
+            )"
           >
             <el-popover :placement="mq.isMobile.value ? 'auto': 'right'" :width="mq.isMobile.value ? '100%': '360px'" trigger="click" :ref="node.label+action">
               <template #reference>
-                <el-button size="small"> <IconIIcon v-for="subaction in action.split('-')" :icon="getIcon(subaction)" /> </el-button>
+                <el-button size="small">
+                  <IconIIcon
+                    v-for="subaction in action.split('-')"
+                    :key="subaction"
+                    :icon="getIcon(subaction)"
+                  />
+                </el-button>
               </template>
               <el-text tag="b">{{ $t('group.'+action) }}</el-text> - <el-text tag="i">{{ node.label }}</el-text>
               <el-form label-position="top" class="mt-3">
                 <template v-if="action == 'group-add'">
-                  <el-form-item v-for="label in Object.keys(createGroup)" :key="label" :label="$t('table.fields.'+label)"
+                  <el-form-item
+                    v-for="label in Object.keys(createGroup)"
+                    :key="label"
+                    :label="$t('table.fields.'+label)"
                     :class="{ 'd-none': label.toString()=='parentGroupId' }">
                       <el-input v-model="createGroup[label]" @keyup.enter="createGroup.groupId != '' && createSubGroup(node.label)" />
                   </el-form-item>
@@ -63,7 +75,7 @@
                   <el-form-item :label="$t('label.selectChildren')">
                     <el-scrollbar height="300px" class="border w-100 p-2">
                       <el-checkbox-group v-model="selectedChildren">
-                        <div v-for="item in idList" :key="item"> <el-checkbox size="small" :label="item" /> </div>
+                        <div v-for="item in idList" :key="item"> <el-checkbox size="small" :value="item" /> </div>
                       </el-checkbox-group>
                     </el-scrollbar>
                   </el-form-item>
@@ -103,7 +115,7 @@
                       <!-- TODO: Backend: return list of groups -->
                       <el-checkbox-group v-model="selectedGroups">
                         <div v-for="item in fetchedData.filter((item: any) => item.type !== 'ObjectToGroup').map((item: any) => item.text)" :key="item">
-                          <el-checkbox size="small" :label="item" />
+                          <el-checkbox size="small" :value="item" />
                         </div>
                       </el-checkbox-group>
                     </el-scrollbar>
@@ -160,8 +172,9 @@ const editgroup = reactive<{[k: string]: string}>({
 })
 
 function getIcon(icon: string) {
-  // @ts-ignore
-  return icons[icon]
+  if (Object.keys(icons).includes(icon))
+    return (icons as any)[icon]
+  throw new Error(`Icon ${icon} not found`)
 }
 watch(()=>storeSelection.selectionDepots, async ()=>{
   await fetchClientGroups()

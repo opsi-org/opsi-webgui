@@ -12,10 +12,10 @@ import {loginlogout} from '~/histoire/histoire-utils'
 <template>
   <Story :setup-app="loginlogout">
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <ViewVServer :isMobile="true"/>
+      <ViewVServer :is-mobile="true"/>
     </Variant>
     <Variant title="desktop" responsive-disabled>
-      <ViewVServer :isMobile="false"/>
+      <ViewVServer :is-mobile="false"/>
     </Variant>
   </Story>
 </template>

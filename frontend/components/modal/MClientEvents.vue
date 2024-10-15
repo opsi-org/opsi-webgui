@@ -26,26 +26,29 @@
         type="textarea"
         placeholder="Please input"
       />
-      {{ id }} <br/>
-      {{ $t('button.event.modal.footer', {event}) }} <br/>
+      {{ id }} <br>
+      {{ $t('button.event.modal.footer', {event}) }} <br>
     </div>
 
     <div v-if="props.event=='ondemand'">
       <el-radio-group v-model="events.ondemand.params.onlyIdFromParams">
-        <el-radio :label="1">Only passed id</el-radio>
-        <el-radio :label="2">All selected</el-radio>
+        <el-radio :value="1">Only passed id</el-radio>
+        <el-radio :value="2">All selected</el-radio>
       </el-radio-group>
-      <el-card :shadow="(events.ondemand.params.onlyIdFromParams == 1) ? 'always' : 'never'"
+      <el-card
         body-class="p-1 pt-3"
         :body-style="(events.ondemand.params.onlyIdFromParams != 1) ? 'color: var(--el-text-color-disabled)' : ''"
+        :shadow="(events.ondemand.params.onlyIdFromParams == 1) ? 'always' : 'never'"
          >
         <ul >
           <li>{{ id }}</li>
         </ul>
 
       </el-card>
-      <el-card :shadow="(events.ondemand.params.onlyIdFromParams == 2) ? 'always' : 'never'" body-class="p-0"
+      <el-card
+        body-class="p-0"
         :body-style="(events.ondemand.params.onlyIdFromParams != 2) ? 'color: var(--el-text-color-disabled)' : ''">
+        :shadow="(events.ondemand.params.onlyIdFromParams == 2) ? 'always' : 'never'"
         <p v-if="events.ondemand.params.onlyIdFromParams == 1">
           {{$t('button.event.ondemand.notincluded')}}
         </p>
@@ -63,7 +66,7 @@
         </li>
       </ul>
       </el-card>
-        {{ $t('button.event.modal.footer', {event}) }} <br/>
+        {{ $t('button.event.modal.footer', {event}) }} <br>
     </div>
     <div v-if="props.event=='ondemand-all'">
       <el-card shadow="always" body-class="p-0">
@@ -80,7 +83,7 @@
         </li>
       </ul>
       </el-card>
-        {{ $t('button.event.modal.footer', {event}) }} <br/>
+        {{ $t('button.event.modal.footer', {event}) }} <br>
       <!-- checkboy for only selected client, or all selected clients -->
       <!-- <el-checkbox-group v-model="eventWrapper.params?.params">
         <el-checkbox v-for="c in selection" :key="c" :label="c" class="modal-client-p text-small">
@@ -90,8 +93,8 @@
     // const cols:  = {}
 
     <div v-if="props.event=='reboot'">
-      {{ id }} <br />
-      {{ $t('button.event.modal.footer', {event}) }} <br/>
+      {{ id }} <br>
+      {{ $t('button.event.modal.footer', {event}) }} <br>
     </div>
 
     <div v-if="props.event=='deployclientagent'">
@@ -102,7 +105,7 @@
           <el-input class="border-0" v-model="events.deployclientagent.params.password" :type="(events.deployclientagent.params.passwordVisible) ? 'password' : ''" >
 
             <template #append>
-              <el-button @click="events.deployclientagent.params.passwordVisible = !events.deployclientagent.params.passwordVisible" class="text-on-primary"> <IconIIcon :icon="events.deployclientagent.params.passwordVisible ? icon.valueHide : icon.valueShow"></IconIIcon></el-button>
+              <el-button @click="events.deployclientagent.params.passwordVisible = !events.deployclientagent.params.passwordVisible" class="text-on-primary"> <IconIIcon :icon="events.deployclientagent.params.passwordVisible ? icon.valueHide : icon.valueShow"/></el-button>
             </template>
           </el-input>
         </el-form-item>
@@ -124,7 +127,7 @@
       </el-form>
     </div>
     <div v-if="props.event=='delete'">
-      {{ $t('message.confirm.deleteClient', {client: id}) }} <br/>
+      {{ $t('message.confirm.deleteClient', {client: id}) }} <br>
     </div>
     <!-- <MClientEventContentPopup v-if="props.event=='showpopup'" :id="props.id" v-model="events[]"/> -->
     <!-- :title="$t(eventWrapper.titlemodal)" -->
@@ -260,8 +263,7 @@ const eventWrapper = computed(() => {
     return events.value['ondemand']
   if (!Object.keys(events.value).includes(props.event))
     throw new Error('Invalid event: ' + props.event)
-  // @ts-ignore
-  return events.value[props.event]
+  return (events.value as any)[props.event]
 })
 function updateModel(value: boolean) {
   modelValue.value = value

@@ -45,8 +45,7 @@ import type { ElTypeVariant } from '~/types/LibComponentTypes'
 const props = defineProps({
   text: { type: String, default: '' },
   content: { type: String, default: '*' },
-  // variant: { type: String, default: 'warning' }
-  variant: { type: Object as PropType<ElTypeVariant>, default: 'warning' }
+  variant: { type: String as PropType<ElTypeVariant>, default: 'warning' }
 })
 
 const $t = useI18n().t

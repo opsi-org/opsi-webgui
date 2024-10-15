@@ -7,42 +7,44 @@
       <!-- SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }} -->
       <div class="flex justify-content-between">
         <div>
-          <slot name="header-title"></slot>
-
+          <slot name="header-title" />
           <!-- <h4>{{ props.id }}</h4> -->
         </div>
         <div class="flex">
-          <slot name="header-pre-visibility"></slot>
-          <SelectSColumnVisibility :table-id="props.id" v-model:possibleColumns="columnsModel" />
-          <slot name="header-pre-filter"></slot>
+          <slot name="header-pre-visibility"/>
+          <SelectSColumnVisibility :table-id="props.id" v-model:possible-columns="columnsModel" />
+          <slot name="header-pre-filter"/>
           <InputIFilter
             :data="tableData"
             :filterable-columns="Object.values(wrappedColumns)"
             @update="($event: any) => $emit('update-input-filter', $event)"
           />
 
-          <slot name="header-post-filter"></slot>
+          <slot name="header-post-filter"/>
         </div>
       </div>
         <!-- <PContextMenu ref="cmmenu" :model="cmmenuItems" @hide="currentSelectedRow.value = null" /> -->
         <PVirtualScroller
           :items="dataModel"
-          :itemSize="50"
-          showLoader
+          :item-size="50"
+          show-loader
           class=" min-h-192"
         >
           <template #content="{ items }">
             <table class="table-auto w-full min-h-96">
-              <thead class="sticky top-0 z-[999] !h-[50px] !max-h-[50px] bg-light"
-              :class="{
-                'bg-light': settings.colormode === undefined || settings.colormode === 'light',
-                'bg-dark': settings.colormode === 'dark',
-                // 'bg-dark': settings.colormode === 'dark'
-              }">
+              <thead
+                class="sticky top-0 z-[999] !h-[50px] !max-h-[50px] bg-light"
+                :class="{
+                  'bg-light': settings.colormode === undefined || settings.colormode === 'light',
+                  'bg-dark': settings.colormode === 'dark',
+                  // 'bg-dark': settings.colormode === 'dark'
+                }"
+              >
                 <tr class="h-[50px]">
                   <template v-for="col in (visibleColumns as any)" :key="col.key">
                     <template v-if="col.key.startsWith('_')" >
                       <th
+                        :key="col.key + (colChild.key as string)"
                         v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)"
                         :class="{
                           'max-h-[50px]': true,
@@ -52,13 +54,13 @@
                         >
                         <!-- @contextmenu="rowEventHandlers.onContextmenu()" -->
                         <el-badge v-if="colChild.headerCellRenderer" :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
-                          <HeaderCellRenderer :colData="colChild" :key="colChild.title"/>
+                          <HeaderCellRenderer :col-data="colChild" :key="colChild.title"/>
                         </el-badge>
                         <el-badge v-else-if="colChild.icon || colChild.icons" :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
                           <el-tooltip effect="dark" :content="colChild.tooltip">
                             <IconIIcon v-if="colChild.icon" :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
                             <div v-else-if="colChild.icons">
-                              <IconIIcon v-for="icon in colChild.icons" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                              <IconIIcon v-for="icon in colChild.icons" :key="icon" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
                             </div>
                           </el-tooltip>
                         </el-badge>
@@ -66,7 +68,8 @@
                         <IconIIcon v-if="colChild.sortable" :icon="props.tableData.sortBy == colChild.key ? ( (props.tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort_not" class="inline ml-2"/>
                       </th>
                     </template>
-                    <th v-else
+                    <th
+                      v-else
                       :class="{
                           'max-h-[50px]': true,
                           'cursor-pointer': col.sortable,
@@ -74,7 +77,7 @@
                       @click="(col.sortable) ? onSort({sortField: col.key, sortDescOld: props.tableData.sortDesc}) : undefined"
                     >
                       <el-badge v-if="col.headerCellRenderer" :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
-                        <HeaderCellRenderer :colData="col" :key="col.title"/>
+                        <HeaderCellRenderer :col-data="col" :key="col.title"/>
                       </el-badge>
                       <el-text v-else>{{ col.title }}</el-text>
                       <IconIIcon v-if="col.sortable" :icon="props.tableData.sortBy == col.key ? ( (props.tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort_not" class="inline ml-2"/>
@@ -84,7 +87,9 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in dataModel" :key="item[props.rowId]"
+                <tr
+                  v-for="item in dataModel"
+                  :key="item[props.rowId]"
                   :class="{
                     'h-[50px]': true,
                     'border-b border-slate-600/50': true
@@ -97,12 +102,14 @@
 
                     <td v-if="!renderCells"><el-text>{{ item[col.key] }}</el-text></td>
                     <template v-else-if="col.key.startsWith('_')">
-                      <td v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)">
-                        <CellRenderer :colData="colChild" :key="colChild.key" :rowData="item"/>
+                      <td
+                        :key="col.key + (colChild.key as string)"
+                        v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)">
+                        <CellRenderer :col-data="colChild" :key="colChild.key" :row-data="item"/>
                       </td>
                     </template>
                     <td v-else-if="col.cellRenderer">
-                      <CellRenderer :colData="col" :key="col.key" :rowData="item"/>
+                      <CellRenderer :col-data="col" :key="col.key" :row-data="item"/>
                     </td>
                     <td v-else><el-text>{{ item[col.key] }}</el-text></td>
 
@@ -117,18 +124,20 @@
             <table class="table-auto w-full border-1 min-h-96">
               <thead class="sticky top-0 bg-primary">
                 <tr class="border-1 h-[50px]">
-                  <template v-for="col in (visibleColumns as any)" :key="col.key">
+                  <template :key="col.key" v-for="col in (visibleColumns as any)">
                     <th v-if="!renderHeaderCell"><el-text>{{ col.title }}</el-text></th>
                     <template v-else-if="col.key.startsWith('_')">
-                      <th v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)" class="max-h-[50px]">
+                      <th
+                        :key="col.key + (colChild.key as string)"
+                       v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)" class="max-h-[50px]">
                         <el-badge v-if="colChild.headerCellRenderer" :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
-                          <HeaderCellRenderer :colData="colChild" :key="colChild.title"/>
+                          <HeaderCellRenderer :col-data="colChild" :key="colChild.title"/>
                         </el-badge>
                         <el-badge v-else-if="colChild.icon || colChild.icons" :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
                           <el-tooltip effect="dark" :content="colChild.tooltip">
                             <IconIIcon v-if="colChild.icon" :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
                             <div v-else-if="colChild.icons">
-                              <IconIIcon v-for="icon in colChild.icons" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                              <IconIIcon v-for="icon in colChild.icons" :key="icon" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
                             </div>
                           </el-tooltip>
                         </el-badge>
@@ -137,7 +146,7 @@
                     </template>
                     <th v-else-if="col.headerCellRenderer">
                       <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
-                        <HeaderCellRenderer :colData="col" :key="col.title"/>
+                        <HeaderCellRenderer :col-data="col" :key="col.title"/>
                       </el-badge>
                     </th>
                     <th v-else>
@@ -148,7 +157,8 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in dataModel" :key="item[props.rowId]" :class="{ 'h-[50px]': true }" >
+                <tr
+                  v-for="item in dataModel" :key="item[props.rowId]" :class="{ 'h-[50px]': true }" >
                   <template v-for="col in (visibleColumns as any)" :key="col.key">
                     <td><PSkeleton width="80%" height="1rem" /> </td>
                   </template>
@@ -272,7 +282,7 @@
 
                 <template v-if="colChild.headerCellRenderer" #header="slotProps">
                   <el-badge :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
-                    <HeaderCellRenderer :colData="colChild" :key="colChild.title"/>
+                    <HeaderCellRenderer :col-data="colChild" :key="colChild.title"/>
                   </el-badge>
                 </template>
                 <template v-else-if="colChild.icon || colChild.icons" #header>
@@ -296,7 +306,7 @@
                   <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && colChild.key==props.rowId">
                     {{ slotProps.data[props.rowId] }}
                   </el-text>
-                  <CellRenderer v-else-if="!slotProps.data.dummy" :colData="colChild" :key="colChild.key" :rowData="slotProps.data"/>
+                  <CellRenderer v-else-if="!slotProps.data.dummy" :col-data="colChild" :key="colChild.key" :row-data="slotProps.data"/>
                 </template>
               </PColumn>
               </div>
@@ -321,7 +331,7 @@
 
               <template v-if="col.headerCellRenderer" #header="slotProps">
                 <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
-                  <HeaderCellRenderer :colData="col" :key="col.title"/>
+                  <HeaderCellRenderer :col-data="col" :key="col.title"/>
                 </el-badge>
               </template>
               <template v-else-if="col.icon && col.tooltip" #header>
@@ -368,7 +378,7 @@
                 >
                   {{ slotProps.data[props.rowId] }}
                 </el-text>
-                <CellRenderer v-else-if="!slotProps.data.dummy" :colData="col" :key="col.key" :rowData="slotProps.data"/>
+                <CellRenderer v-else-if="!slotProps.data.dummy" :col-data="col" :key="col.key" :row-data="slotProps.data"/>
               </template>
               <template v-else #body="slotProps">
                 <el-text>{{ slotProps.data[col.key] }}</el-text>
@@ -380,17 +390,21 @@
     </div>
 
     <!-- :table-data="props.tableData" -->
-    <LazyContextmenuCMTable ref="menu"
+    <LazyContextmenuCMTable
+      ref="menu"
       :item="currentSelectedRow"
-      :row-id="props.rowId" :type="props.id" @refetch="$emit('fetch')"/>
+      :row-id="props.rowId"
+      :type="props.id"
+      @refetch="$emit('fetch')"
+    />
   </div>
 </template>
 
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import { useIcons } from '~/composables/mixins/useIcons'
-import {TableV2SortOrder, type RowEventHandlerParams, TableV2FixedDir } from 'element-plus'
-import type { SortState } from 'element-plus'
+// import type { SortState } from 'element-plus'
+import {TableV2SortOrder, type RowEventHandlerParams, TableV2FixedDir, type SortState } from 'element-plus'
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { TRowData } from '~/types/Datatypes'
 import type { ITableData } from '~/types/ttable'
@@ -401,14 +415,31 @@ import { useUtilsData } from '~/composables/mixins/useUtilsData'
 import type { IObjectString2Any } from '~/types/tgeneral'
 // import TDefaultDesktopColumn from './TDefaultDesktopColumn'
 
-const CellRenderer:any = ({key, rowData, colData}: any) => {
-  if (colData.cellRenderer)
+const CellRenderer = (attributes: any): VNode => {
+// const CellRenderer = ({key, 'row-data', colData}: any): VNode => {
+  const colData  = attributes['col-data'] || attributes.colData
+  const rowData = attributes['row-data'] || attributes.rowData
+
+  if (!colData) {
+    console.warn(`CellRenderer: col-data not found in: ${JSON.stringify(attributes)}`)
+    return <el-text>undefined</el-text>
+  }
+  if (colData.cellRenderer) {
     return colData.cellRenderer({rowData})
-  return <el-text>{ key }</el-text>
+  }
+  return <el-text>{ attributes.key }</el-text>
 }
-const HeaderCellRenderer = ({colData}: any) => {
-  if (colData.headerCellRenderer)
+
+const HeaderCellRenderer = (attributes: any): VNode => {
+  const colData  = attributes['col-data'] || attributes.colData
+  if (!colData) {
+    console.warn(`HeaderCellRenderer: col-data not found in: ${JSON.stringify(attributes)}`)
+    return <el-text>undefined</el-text>
+  }
+  if (colData.headerCellRenderer){
+    // console.warn('HeaderCellRenderer of obj.col-data: ', colData, colData.headerCellRenderer)
     return colData.headerCellRenderer()
+  }
   return <el-text>{ colData.title }</el-text>
 }
 
@@ -469,7 +500,7 @@ const rowEventHandlers: any = {
 
     if (params && params.originalEvent
       && params.originalEvent.target.localName !== "td" // is not a tablecell (raw text)
-      && !Boolean(params?.originalEvent?.target?.__vueParentComponent?.attrs?.class?.includes('selectionItem')) // is not the selection cell
+      && !(params?.originalEvent?.target?.__vueParentComponent?.attrs?.class?.includes('selectionItem')) // is not the selection cell
     ) {
       return
     }
@@ -762,7 +793,7 @@ function onSort(event: any) {
 
   // tData.sortDesc = event.sortDesc
   tData.sortDesc = !event.sortDescOld
-  console.log('sortBy', event.sortField, 'sortDescOld', event.sortDescOld, 'sortDesc', tData.sortDesc)
+  // console.log('sortBy', event.sortField, 'sortDescOld', event.sortDescOld, 'sortDesc', tData.sortDesc)
   tData.pageNumber = 1
   $emit('tabledata-changed', tData)
   // _fetch()

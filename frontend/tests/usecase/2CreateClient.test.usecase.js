@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { apiMock } from '../../tests-configs/playwright/utils/pw-api-mock'
-import { pageLogin, pageLogout } from '../../tests-configs/playwright/utils/pw-global-setup'
+import { pageLogin } from '../../tests-configs/playwright/utils/pw-global-setup'
 
 test.beforeEach(async ({ page, context }) => {
 
@@ -28,7 +28,7 @@ test.describe('usecase', () => {
   test('Create Client', async ({ page }) => {
     try {
       await page.getByTestId('menu_routes').click({ timeout: 3000 })
-    }catch (e) {
+    }catch {
       // console.log('menu_routes not found. (ok for desktop)')
     }
     await page.click('[data-testid="NSidebar-title.clients"]')

@@ -28,7 +28,7 @@
   const emit = defineEmits(['refetch'])
   // const itemModel = defineModel<TRowData>()
   const props = defineProps({
-    item: { type: Object as PropType<TRowData>, default: {} },
+    item: { type: Object as PropType<TRowData>, default: () => ({}) },
     rowId: { type: String, default: 'ident' },
     type: { type: String, default: 'servers' },
     // tableData: { type: Object as PropType<ITableData>, required: true }, // TODO: show/hide coluns, sort; BUT as defineModel

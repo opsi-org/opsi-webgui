@@ -23,10 +23,10 @@ const data = generateData(columns, 15, '', page.value)
     <Variant title="mobile" :meta="{ wrapperMobile: true }">
       <TableTDefaultMobile
         id="tableId"
+        row-id="column-0"
         v-model:columns="columns"
         v-model:data="data"
         :table-data="tableData"
-        rowId="column-0"
         :sort-by="undefined"
         :fetch="(page: any) => generateData(columns, 10, '', page.value)"
         @selection-changed="(id: string) => {}"

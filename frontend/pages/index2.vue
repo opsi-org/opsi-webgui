@@ -6,9 +6,9 @@
       {{ $t("button.login") }} <br>
     </h1>
     <TestEPButton />
-    <br />
+    <br>
     <FormitemDDTheme />
-    <br /> screen: {{  mq.$mq }}
+    <br> screen: {{  mq.$mq }}
     <TestI18n />
     <TestMixin />
     <IconILoading animation="cylon" />

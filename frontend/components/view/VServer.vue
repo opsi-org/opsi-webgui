@@ -149,7 +149,7 @@ const tableData = ref<ITableData>({
   filterColumns: ['depotId']
 })
 const columns = ref<ITableHeaderRow>({
-    selected: { // eslint-disable-next-line object-property-newline
+    selected: {
       title: $t('table.fields.selection'),
       key: 'selected',
       dataKey: 'selected',
@@ -172,14 +172,14 @@ const columns = ref<ITableHeaderRow>({
               <el-checkbox v-model={rowData.selected} class="selectionItem" />
             :
               <el-radio-group v-model={rowData.selected}>
-                <el-radio label={true} value={true} class="selectionItem hide_label" />
+                <el-radio value={true} class="selectionItem hide_label" />
               </el-radio-group>
           }
         </>)
       }
       // hidden: !cookies.includesCookie('column_' + id, 'selected', true)
     },
-    depotId: { // eslint-disable-next-line object-property-newline
+    depotId: {
       title: $t('table.fields.id'),
       key: 'depotId',
       dataKey: 'depotId',
@@ -188,7 +188,7 @@ const columns = ref<ITableHeaderRow>({
       fixed: true,
       hidden: false
     },
-    description: { // eslint-disable-next-line object-property-newline
+    description: {
       title: $t('table.fields.description'),
       key: 'description',
       dataKey: 'description',
@@ -199,7 +199,7 @@ const columns = ref<ITableHeaderRow>({
       hidden: !storeTable.serversColumns.includes('description')
       // hidden: !cookies.includesCookie('column_' + id, 'description', false)
     },
-    type: { // eslint-disable-next-line object-property-newline
+    type: {
       title: $t('table.fields.type'),
       key: 'type',
       dataKey: 'type',
@@ -209,7 +209,7 @@ const columns = ref<ITableHeaderRow>({
       hidden: !storeTable.serversColumns.includes('type')
       // hidden: !cookies.includesCookie('column_' + id, 'type', true)
     },
-    ip: { // eslint-disable-next-line object-property-newline
+    ip: {
       title: $t('table.fields.ip'),
       key: 'ip',
       dataKey: 'ip',
@@ -219,7 +219,7 @@ const columns = ref<ITableHeaderRow>({
       // hidden: !cookies.includesCookie('column_' + id, 'ip', false)
       hidden: !storeTable.serversColumns.includes('ip')
     },
-    rowactions: { // eslint-disable-next-line object-property-newline
+    rowactions: {
       key: 'rowactions',
       dataKey: 'rowactions',
       title: $t('table.fields.rowactions'),

@@ -17,19 +17,22 @@
           <el-form-item v-if="authMethods.includes(METHOD_PASSOWRD)">
             <el-input data-testid="login_otp" v-model="totp" :disabled="isLoading" :aria-label="$t('table.fields.oneTimePassword')" :placeholder="$t('table.fields.oneTimePassword')" show-password />
           </el-form-item>
-          <el-button v-if="authMethods.includes(METHOD_PASSOWRD)" data-testid="btn-login"
+          <el-button
+            v-if="authMethods.includes(METHOD_PASSOWRD)" data-testid="btn-login"
             :title="$t('button.login.description')"
             :disabled="!form.username || !form.password"
             class="mt-2 login w-100"
             @click="doLogin">
             {{ $t('button.login') }}
           </el-button>
-          <a v-if="authMethods.includes(METHOD_SAML)"  data-testid="btn-login-saml"
+          <a
+            v-if="authMethods.includes(METHOD_SAML)"  data-testid="btn-login-saml"
             class="el-button mt-2 login w-100"
             :href="samlUrl"
             :title="$t('button.login.saml.description')"
           >{{ $t('button.login.saml') }}</a>
-          <el-alert v-if="authMethods === undefined || authMethods == ''"
+          <el-alert
+            v-if="authMethods === undefined || authMethods == ''"
             type="warning"
             :closable="false"
             effect="dark"

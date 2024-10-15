@@ -1,5 +1,5 @@
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
 import type { BrowserContext, Expect, Page, Route } from '@playwright/test'
 import data from './pw-api-mock-data'

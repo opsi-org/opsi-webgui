@@ -8,9 +8,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
     return
   }
 
-  const config = useRuntimeConfig()
+  const config: any = useRuntimeConfig()
   if (to.params.id === '1') {
-    console.log('no idea what happend here', to.name, from.name)
+    console.error('no idea what happend here', to.name, from.name)
     return abortNavigation()
   }
   // const isA:Boolean = storeAuth().isAuthenticated // has old values in store...

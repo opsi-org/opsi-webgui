@@ -2,7 +2,12 @@
   <el-tabs class="quickselection" v-model="activeName">
     <el-tab-pane v-for="category in quickSelDisplayList" :key="category.name" :name="category.name">
       <template #label>
-        <IconIIcon v-for="icon in (category.name).split('-')" :icon="getIcon(icon)" :title="$t('title.'+category.name)" />
+        <IconIIcon
+          v-for="icon in (category.name).split('-')"
+          :key="icon"
+          :icon="getIcon(icon)"
+          :title="$t('title.'+category.name)"
+        />
         <el-text size="small" class="mt-2" v-if="category.store!= ''"> {{storeSelection[category.store].length}} </el-text>
       </template>
       <template v-if="category.name == 'infoselections'"> <FormFAllSelections /> </template>
@@ -25,8 +30,9 @@ const quickSelDisplayList = reactive([
 ])
 const activeName = ref<string>('infoselections')
 function getIcon(icon: string) {
-  // @ts-ignore
-  return icons[icon]
+  if (Object.keys(icons).includes(icon))
+    return (icons as any)[icon]
+  throw new Error(`Icon ${icon} not found`)
 }
 
 </script>

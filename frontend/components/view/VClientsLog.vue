@@ -42,10 +42,10 @@ const props = defineProps({
   isChild: { type: Boolean, default: false }
 })
 
-let fetchedData = ref<Array<string>>([])
-let filteredData = ref<Array<string>>([])
+const fetchedData = ref<Array<string>>([])
+const filteredData = ref<Array<string>>([])
 const isLoading = ref(false)
-let logrequest = { selectedClient: props.id, selectedLogType: 'instlog' }
+const logrequest = { selectedClient: props.id, selectedLogType: 'instlog' }
 const logTypes = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
 const loglevel = ref(5)
 const logtype = ref('instlog')

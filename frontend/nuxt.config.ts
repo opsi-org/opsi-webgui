@@ -1,9 +1,13 @@
-// @ts-nocheck
+/* eslint-disable no-console */
 
 import pkg from './package.json'
+// import { defineNuxtConfig } from 'nuxt/config'
+// const defineNuxtConfig: DefineNuxtConfig(input: InputConfig<NuxtConfig, ConfigLayerMeta>) => InputConfig<NuxtConfig, ConfigLayerMeta>
 
-const CONFD_PORT = process.env.OPSICONFD_PORT || 4447
-const ADDON_PATH = "/addons/webgui"
+const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? '4447'
+// do not change following line, cause it is automatically patched by the build_production_local.sh script
+const ADDON_PATH: string = "/addons/webgui"
+
 console.log('---------------------------------------------------')
 console.log('OPSI CONFD PORT', CONFD_PORT)
 console.log('ADDON PATH', ADDON_PATH)
@@ -13,16 +17,16 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-09-17',
   build: {
     analyze: true,
-    hardSource: true,
-    webpack: {
-      loaders: {
-        vue: {
-          hotReload: false,
-        },
+    // hardSource: true,
+  },
+  webpack: {
+    loaders: {
+      vue: {
+        hotReload: false,
       },
-      optimization: {
-        usedExports: true,
-      },
+    },
+    optimization: {
+      usedExports: true,
     },
   },
   ignore: [
@@ -52,9 +56,9 @@ export default defineNuxtConfig({
       link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
     },
   },
-  static: {
-    prefix: false,
-  },
+  // static: {
+  //   prefix: false,
+  // },
   runtimeConfig: {
     public: {
       OPSICONFD_PORT: CONFD_PORT,
@@ -71,11 +75,12 @@ export default defineNuxtConfig({
     '@element-plus/nuxt',
     '@nuxtjs/tailwindcss',
     ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],
-    '@pinia-plugin-persistedstate/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
     '@nuxt/eslint',
   ],
-  piniaPersistedState: {
-    key: (id) => `opsiui-${id}`,
+  piniaPluginPersistedstate: {
+    key: 'opsiui-%id',
+    // key: (id: string) => `opsiui-${id}`,
     storage: 'localStorage',
     debug: true,
   },
@@ -111,4 +116,6 @@ export default defineNuxtConfig({
   imports: {
     dirs: ['store'],
   },
-})
+// } as InputConfig<NuxtConfig, ConfigLayerMeta>
+}
+)

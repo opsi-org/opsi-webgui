@@ -20,7 +20,7 @@
       </div>
       <el-form :label-width="mq.isMobile.value ? '' : '230px'" :label-position="mq.isMobile.value ? 'top' : 'right'">
         <el-form-item v-for="(action, index) in actions" :key="index" :label="$t('label.' + section + '.' + action)">
-          <el-input-group :style="mq.isMobile.value ? '' : 'display: flex; align-items: center;'">
+          <div :style="mq.isMobile.value ? '' : 'display: flex; align-items: center;'">
             <el-select v-if="action === 'unlock' || action === 'unblock'" style="min-width: 200px" v-model="selected[section]">
               <el-option
                 v-for="item in section === 'clients'
@@ -46,7 +46,7 @@
             >
               {{ $t('label.' + action) }}
             </el-button>
-          </el-input-group>
+          </div>
         </el-form-item>
       </el-form>
     </div>

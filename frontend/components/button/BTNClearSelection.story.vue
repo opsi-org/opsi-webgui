@@ -4,10 +4,10 @@
       <ButtonBTNClearSelection />
     </Variant>
     <Variant title="long (default label)">
-      <ButtonBTNClearSelection :short="false" :showLabel="true" />
+      <ButtonBTNClearSelection :short="false" :show-label="true" />
     </Variant>
     <Variant title="long (custom label)">
-      <ButtonBTNClearSelection :short="false" :showLabel="true" label="custom label" />
+      <ButtonBTNClearSelection :short="false" :show-label="true" label="custom label" />
     </Variant>
   </Story>
 </template>

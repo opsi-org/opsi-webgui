@@ -8,11 +8,13 @@
   >
     <template #reference>
       <!-- bg-opsi-blue h-full max-h-full min-h-full border-0 rounded-none -->
-      <el-button :class="{
-        'min-h-full': true,
-        [btnClass]: true
-      }"
-      style="border: none">
+      <el-button
+        :class="{
+          'min-h-full': true,
+          [btnClass]: true
+        }"
+        style="border: none"
+      >
         <IconIIcon :icon="icon.logout" />
         <p v-if="isMobile" class="pt-3 ml-1">{{ $t('button.logout') }}</p>
       </el-button>
@@ -51,13 +53,11 @@ async function doLogout () {
     return
   }
 
-  console.log('Logged out')
   useMBus(undefined, false, $t).wsDisconnect()
   authStore.logout()
   authStore.clearSession()
 
   if (useRoute().name !== 'login') {
-    console.log('Redirecting to login page')
     reloadNuxtApp()
   }
   // TODO clearAllSelection()

@@ -12,16 +12,16 @@
       @update-input-filter="(v: any) => $emit('update-input-filter', v)"
       @sort-changed="(v: any) => $emit('sort-changed', v)"
     >
-      <template v-slot:header-title>
+      <template #header-title>
         <slot name="header-title" />
       </template>
-      <template v-slot:header-pre-visibility>
+      <template #header-pre-visibility>
         <slot name="header-pre-visibility" />
       </template>
-      <template v-slot:header-pre-filter>
+      <template #header-pre-filter>
         <slot name="header-pre-filter" />
       </template>
-      <template v-slot:header-post-filter>
+      <template #header-post-filter>
         <slot name="header-post-filter" />
       </template>
     </LazyTableTDefaultMobile>
@@ -37,16 +37,16 @@
       @update-input-filter="(v: any) => $emit('update-input-filter', v)"
       @sort-changed="(v: any) => $emit('sort-changed', v)"
     >
-    <template v-slot:header-title>
+    <template #header-title>
       <slot name="header-title" />
     </template>
-    <template v-slot:header-pre-visibility>
+    <template #header-pre-visibility>
       <slot name="header-pre-visibility" />
     </template>
-    <template v-slot:header-pre-filter>
+    <template #header-pre-filter>
       <slot name="header-pre-filter" />
     </template>
-    <template v-slot:header-post-filter>
+    <template #header-post-filter>
       <slot name="header-post-filter" />
     </template>
 

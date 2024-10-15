@@ -5,7 +5,7 @@
     </el-header>
     <el-tabs lazy>
       <el-tab-pane :label="$t('title.healthcheck')">
-        <TableTHealthCheck :data="fetchedData.health_check" />
+        <TableTHealthCheck v-if="fetchedData.health_check && fetchedData.health_check.length > 0" :data="fetchedData.health_check" />
       </el-tab-pane>
       <el-tab-pane :label="$t('title.diagnostics')">
         <FormFDiagnostics :data="{...fetchedData, health_check: void(0)}" />
@@ -21,7 +21,7 @@ const { notifyError } = useNotification()
 const $t = useI18n().t
 const icons = useIcons()
 const isLoading = ref(false)
-let fetchedData = ref<any>([])
+const fetchedData = ref<any>([])
 
 onMounted(async ()=> {
   await fetch()

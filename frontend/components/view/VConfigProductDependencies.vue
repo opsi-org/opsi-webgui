@@ -2,6 +2,7 @@
   <div>
     <el-form
       v-for="item in props.dependencies.dependencies"
+      :key="item.requiredProductId"
       label-width="50%"
       label-position="left"
     >
