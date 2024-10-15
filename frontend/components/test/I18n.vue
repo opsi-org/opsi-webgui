@@ -50,7 +50,7 @@ const icon = useIcons()
 // const languages = $i18n.availableLocales
 // const language = $i18n.locale
 
-const props = defineProps({
+const _props = defineProps({
   footer: { type: Boolean, default: false}
 })
 </script>

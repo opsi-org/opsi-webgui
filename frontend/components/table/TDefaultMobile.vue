@@ -62,7 +62,7 @@
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 
-import {TableV2FixedDir, type CheckboxValueType, type Column } from 'element-plus'
+import {TableV2FixedDir, type CheckboxValueType } from 'element-plus'
 import type { ITableHeaderCell, ITableHeaderRow } from '~/types/ttableV3'
 import type { ITableData } from '../../types/ttable'
 const tableStore = storeTablesettings()
@@ -221,11 +221,11 @@ function updateColumns() {
   }
   return _columns
 }
-function updateData() {
-  if (dataModel.value === undefined) return []
-  const _data = dataModel
-  return _data
-}
+// function updateData() {
+//   if (dataModel.value === undefined) return []
+//   const _data = dataModel
+//   return _data
+// }
 
 </script>
 

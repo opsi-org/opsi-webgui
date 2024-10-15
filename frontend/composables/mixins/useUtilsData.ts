@@ -39,9 +39,9 @@ export const useUtilsData = () => {
       )
   }
 
-  function getVisibleColumnIdsInTable (headers:Array<any>) {
-    return Object.values(getVisibleColumnsInTable(headers)).map((_v:any) => _v.dataKey)
-  }
+  // function getVisibleColumnIdsInTable (headers:Array<any>) {
+  //   return Object.values(getVisibleColumnsInTable(headers)).map((_v:any) => _v.dataKey)
+  // }
   function getVisibleColumnsInTable (headers:Array<any>) {
     // const _majorsVisible = _getMajorKeys(headers)
     const _defaults = _getEntries(headers)

@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ITableData, ITableInfo } from '~/types/ttable'
+import type { ITableData } from '~/types/ttable'
 import { useIcons } from '@/composables/mixins/useIcons'
 import { useUtilsEvents } from '@/composables/mixins/useUtils'
 import type { ITableHeaderRow } from '~/types/ttableV3';
@@ -123,11 +123,11 @@ watch(filterQueryValue, ()=>{
   // emits('update', {cols: filterValue, vals: filterQueryValue.value})
 })
 
-const filterableColumns = computed(()=> {
-  if (props.filterableColumns)
-    return props.filterableColumns
-  return []
-})
+// const filterableColumns = computed(()=> {
+//   if (props.filterableColumns)
+//     return props.filterableColumns
+//   return []
+// })
 function clearFilter () {
   filterQueryValue.value = ''
   debounceEvent()

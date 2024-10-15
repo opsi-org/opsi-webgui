@@ -20,7 +20,7 @@ export const storeSelections = defineStore('selections', {
   }),
   getters: {
     // multiSelection: (state: any) => state._multiSelection,
-    multiSelection: (state: any) => useCookie('MultiSelection', { default: () => false }).value,
+    multiSelection: () => useCookie('MultiSelection', { default: () => false }).value,
     selectionDepots: (state: any) => state._selectionDepots,
     selectionClients: (state: any) => state._selectionClients,
     selectionProducts: (state: any) => state._selectionProducts,
@@ -117,7 +117,7 @@ export const storeSelections = defineStore('selections', {
     },
     toggleSelectionDepots (item: string, checkMulti: boolean = true) {
       if (checkMulti)
-      this.toggleSelectionValueAndCheck(this._selectionDepots, item)
+        this.toggleSelectionValueAndCheck(this._selectionDepots, item)
       else this.toggleSelectionValue(this._selectionDepots, item)
     },
     toggleSelectionClients (item: string, checkMulti: boolean = true) {

@@ -1,5 +1,5 @@
 // const { test, expect } = require('@playwright/test')
-import { test, type Page } from '@playwright/test'
+import { test } from '@playwright/test'
 import { simpleScreenshotTest } from '../../tests-configs/playwright/utils/pw-story-call.ts'
 
 const folder = 'button'

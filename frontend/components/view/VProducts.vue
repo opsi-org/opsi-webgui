@@ -111,13 +111,13 @@ import TCProductVersionCell from '~/components/tablecell/TCProductVersionCell.vu
 import BTNRowLink from '~/components/button/BTNRowLink.vue';
 
 import { useNotification } from '~/composables/mixins/useComponent';
-import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
+import { TableV2FixedDir } from 'element-plus';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useClient } from '~/composables/mixins/useGet';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
 
 import type { ITableHeaderRow } from '~/types/ttableV3'
-import type { ITableData, ITableRow } from '~/types/ttable';
+import type { ITableData } from '~/types/ttable';
 import type { IObjectString2ObjectString2String } from '~/types/tgeneral';
 import type { T_Client2Depot, IProductTypes} from '~/types/APItypes';
 import { useTableHelper } from '~/composables/mixins/useTableHelper';
@@ -130,7 +130,7 @@ const icons = useIcons()
 // const route = useRoute()
 const router = useRouter()
 const navigation = useNavigate()
-const fetchClient = useClient($t)
+const fetchClient = useClient()
 const tableSettings = storeTablesettings()
 const storeSelection = storeSelections()
 const emit = defineEmits(['change'])
@@ -489,7 +489,7 @@ const columns = reactive<ITableHeaderRow>({
       // visible: this.includesCookie('column_' + id, 'rowactions', false),
       hidden: false,
       cellRenderer: ({rowData}) => {
-        const change = (e: Event)=>{
+        const change = ()=>{
           emit('change', rowData.productId)
           navigation.toConfiguration(id, rowData.productId, props.isChild, currentType.value)
           // Object.keys(navigation.rowactionConfigChecked.value).forEach(k => navigation.rowactionConfigChecked.value[k] = false)
@@ -534,15 +534,15 @@ const tableDataWrapper = computed(()=>tableData.value[currentType.value])
 
 const lastChanges = ref({ clientIds: [] as Array<string>, productIds: [] as Array<string> }) // used to check if we caused the last event
 const tableHelper = useTableHelper(id, tableData, fetchedData, totalItems, _fetch, tableSettings, currentType) // define watcher for tableData
-const numberOtherNetboot = computed(()=>{
-  // TODO: show number of netboot products with sortBy isnt empty/none/not_installed/..
+// const numberOtherNetboot = computed(()=>{
+//   // TODO: show number of netboot products with sortBy isnt empty/none/not_installed/..
 
-  // if (props.sortby) {
-  //   fetchedData.value.LocalbootProduct.every((v: any)=>v[props.sortby] === 'none')
-  // }
-  // if (fetchedData.value.NetbootProduct.length === 0) return 0
-  return 0
-})
+//   // if (props.sortby) {
+//   //   fetchedData.value.LocalbootProduct.every((v: any)=>v[props.sortby] === 'none')
+//   // }
+//   // if (fetchedData.value.NetbootProduct.length === 0) return 0
+//   return 0
+// })
 // const numberLocalbootsSortbyNotEmpty = computed(()=>{
 //   const emptys = [undefined, null, '', 'null', 'none', 'None', 'Null', 'not_installed']
 //   return fetchedData.value.LocalbootProduct.filter((v: any)=>emptys.includes(v[props.sortby])).length
@@ -610,7 +610,7 @@ watch(()=>clientSelection.value, async ()=> { await tableHelper.fetch() })
 watch(()=>props.sortby, async ()=> { await tableHelper.fetch() })
 
 
-const msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
+useMBus(wsBusMsgObjectChanged, false, $t)
 
 async function wsBusMsgObjectChanged (msg: any = undefined) {
 // async function _wsBusMsgObjectChanged (msg: any = undefined) {
@@ -759,6 +759,7 @@ async function saveActionRequest(rowitem: any, newrequest: string) {
 }
 
 function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString2String) {
+  console.warn("Details not implemented: ", row, tooltiptext)
     // (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
     // row.toggleDetails()
   }

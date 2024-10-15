@@ -33,21 +33,21 @@
 </template>
 <script setup lang="ts">
   import { useIcons } from '@/composables/mixins/useIcons'
-  import { useNotification } from '~/composables/mixins/useComponent'
-  const { notifySuccess, notifyError } = useNotification()
+  // import { useNotification } from '~/composables/mixins/useComponent'
+  // const { notifySuccess, notifyError } = useNotification()
   const $t = useI18n().t
   const icon = useIcons()
   const mq = useMQ()
   const popoverVisible = ref(false)
-  const productQuickAction = {
-    action: null,
-    outdated: false,
-    installation_status: null,
-    action_result: null,
-    selectedClients: null,
-    selectedDepots: null,
-    demoMode: true,
-  }
+  // const productQuickAction = {
+  //   action: null,
+  //   outdated: false,
+  //   installation_status: null,
+  //   action_result: null,
+  //   selectedClients: null,
+  //   selectedDepots: null,
+  //   demoMode: true,
+  // }
   const productActions = ref({
     conditions: {
       instStatus: ['not_installed', 'installed', 'unknown'],

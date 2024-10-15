@@ -26,7 +26,7 @@ const columns: any = {
 columns['column-0'].fixed = true
 columns['column-1'].hidden = true
 const data = generateData(columns, itemsLength)
-const mylog = (s:any)=> {}
+const mylog: (x: string) => void = (x: string) => console.warn(x)
 const tableData = generateTableData('column-0')
 const totalItems = data.length
 

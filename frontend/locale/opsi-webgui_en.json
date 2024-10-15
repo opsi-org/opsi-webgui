@@ -149,6 +149,7 @@
   "title.restrictions": "Restrictions",
   "title.demo": "Demo",
   "title.scope": "Scope",
+  "title.field.version": "Version {version}",
   "table.fields.terminalId": "Terminal ID",
   "table.fields.terminalChannel": "Channel",
   "button.reconnect": "Re-/connect",

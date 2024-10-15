@@ -120,7 +120,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
-import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
+import { TableV2FixedDir } from 'element-plus';
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { T_ServerList } from '~/types/APItypes'
 import BTNRowLink from '~/components/button/BTNRowLink.vue';
@@ -235,11 +235,11 @@ const columns = ref<ITableHeaderRow>({
         //   useRouter().push('/servers/server/config/' + rowData.depotId)
         // }
 
-        const classes = computed(()=> {
-          return {
-            'pressed': navigation.rowactionConfigChecked.value[rowData.clientId]
-          }
-        })
+        // const classes = computed(()=> {
+        //   return {
+        //     'pressed': navigation.rowactionConfigChecked.value[rowData.clientId]
+        //   }
+        // })
         return (
         <>
           <div class="flex flex-row">

@@ -76,7 +76,7 @@ const props = defineProps({
   isLoading: { type: Boolean, default: false, required:false },
 })
 const isMobileWrapper = ref<boolean>(props.isMobile)
-watch(()=>useMQ().isMobile, (val)=>{
+watch(()=>useMQ().isMobile, ()=>{
   isMobileWrapper.value = useMQ().isMobile.value
 }, {deep: true})
 const propsMobile = computed (()=>{

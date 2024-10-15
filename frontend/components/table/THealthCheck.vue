@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+const _props = defineProps({
   data: { type: Array, required: true }
 })
 const filterStatus = (value: string, row: any) => {

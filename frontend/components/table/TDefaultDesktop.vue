@@ -58,7 +58,7 @@
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import { useIcons } from '~/composables/mixins/useIcons'
-import {TableV2SortOrder, type CheckboxValueType, type RowEventHandlerParams, type RowEventHandlers, type  RowClassNameGetter, type SortBy, type SortState } from 'element-plus'
+import {TableV2SortOrder, type CheckboxValueType, type  RowClassNameGetter, type SortBy, type SortState } from 'element-plus'
 // import  from 'element-plus'
 import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
 import type { FunctionalComponent } from 'vue'
@@ -97,34 +97,34 @@ const wrappedColumns = ref<ITableHeaderRow>({})
 
 const perPage = ref(props.tableData.perPage) // computed(()=> props.tableData.perPage)
 const pageNumber = ref(props.tableData.pageNumber) // computed(()=> props.tableData.pageNumber)
-const lastSelectedItemForSingleselect = ref<any>(undefined)
+// const lastSelectedItemForSingleselect = ref<any>(undefined)
 
 const sortState = ref<SortState>({ [props.sortBy]: TableV2SortOrder.DESC })
 
-const rowEventHandlers: RowEventHandlers = {
-  onClick: (params: RowEventHandlerParams) => {
-    const rowData:TRowData  = params.rowData
-    if (selectionStore.multiSelection === false) {
-      if (lastSelectedItemForSingleselect.value !== undefined) {
-        lastSelectedItemForSingleselect.value.selected = false
-      }
-      lastSelectedItemForSingleselect.value = rowData
-      rowData.selected = true
-    }
-    else {
-      rowData.selected = rowData.selected === true ? false : true
-    }
-    $emit('selection-changed', rowData[props.rowId])
-  },
-  onDblclick: (params: RowEventHandlerParams) => {
-    // const rowData:TRowData  = params.rowData
-  },
-  onContextmenu: (params: RowEventHandlerParams) => {
-    const rowData:TRowData  = params.rowData
-    currentSelectedRow.value = rowData
-    menu.value.show(params.event)
-  },
-}
+// const rowEventHandlers: RowEventHandlers = {
+//   onClick: (params: RowEventHandlerParams) => {
+//     const rowData:TRowData  = params.rowData
+//     if (selectionStore.multiSelection === false) {
+//       if (lastSelectedItemForSingleselect.value !== undefined) {
+//         lastSelectedItemForSingleselect.value.selected = false
+//       }
+//       lastSelectedItemForSingleselect.value = rowData
+//       rowData.selected = true
+//     }
+//     else {
+//       rowData.selected = rowData.selected === true ? false : true
+//     }
+//     $emit('selection-changed', rowData[props.rowId])
+//   },
+//   onDblclick: (params: RowEventHandlerParams) => {
+//     // const rowData:TRowData  = params.rowData
+//   },
+//   onContextmenu: (params: RowEventHandlerParams) => {
+//     const rowData:TRowData  = params.rowData
+//     currentSelectedRow.value = rowData
+//     menu.value.show(params.event)
+//   },
+// }
 const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
   value,
   intermediate = false,
@@ -236,7 +236,7 @@ function updateColumns() {
   Object.values(_columns)
     .map(c => {
       if (c.cellRenderer === undefined)
-        c.cellRenderer = ({rowData,cellData}: CellRendererParams<any>) => {
+        c.cellRenderer = ({rowData}: CellRendererParams<any>) => {
           if (rowData){
             return <el-text>a {rowData[(c.dataKey || c.key) as string]}</el-text>
           }
@@ -261,7 +261,7 @@ function updateColumns() {
     const _data = unref(dataModel)
     // const allSelected = _data.every((row: any) => row.selected)
     // const containsChecked = _data.some((row: any) => row.selected)
-    const clearSelection = (event:any) => {
+    const clearSelection = () => {
       $emit('selection-clear')
       dataModel.value.map((row:any) => {
         row.selected = false
@@ -297,14 +297,14 @@ function updatePerPage(perPage: number) {
     $emit('fetch')
   }
 }
-function updateData() {
-  if (dataModel.value === undefined) return []
-  const _data = dataModel
-  return _data
-}
+// function updateData() {
+//   if (dataModel.value === undefined) return []
+//   const _data = dataModel
+//   return _data
+// }
 
 const lastFetchedDirection = ref<'next'|'prev'>('next')
-const middleOfTable = ref<number>(50 + 150)
+// const middleOfTable = ref<number>(50 + 150)
 async function onScroll(event: any) {
   // show marker in middle of table
   // middleOfTable.value = tableRef.value.$el.clientHeight / 2 + 50

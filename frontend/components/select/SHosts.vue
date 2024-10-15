@@ -27,7 +27,7 @@ onMounted(async ()=> {
   value.value = props.id
 })
 watch(()=>value.value, ()=>{
-  const pathArr = useRoute().path.split('/').filter(v => v !== '')
+  // const pathArr = useRoute().path.split('/').filter(v => v !== '')
   switch (useRoute().name) {
     case 'clients-config':
       useRouter().push({name: 'clients-config-id', params: {id: value.value as string}})
@@ -59,7 +59,7 @@ async function fetch() {
     const dataSorted = await useDepot($t).getDepotIdList()
     fetchedData.value = dataSorted
   } else if (props.type === 'clients') {
-    const dataSorted = await useClient($t).getClientIdList(storeSel.selectionDepots)
+    const dataSorted = await useClient().getClientIdList(storeSel.selectionDepots)
     fetchedData.value = dataSorted
   }
 }

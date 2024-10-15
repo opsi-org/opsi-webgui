@@ -81,7 +81,7 @@
     sourceID.value = id
   }
   async function fetch() {
-    clientIDList.value = await useClient($t).getClientIdList(
+    clientIDList.value = await useClient().getClientIdList(
       storeSelection.selectionDepots
     )
   }

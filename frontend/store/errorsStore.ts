@@ -1,6 +1,4 @@
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
-
 export const storeErrors = defineStore('errors', {
   persist: false,
   // persist: {

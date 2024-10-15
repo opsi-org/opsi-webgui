@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '../../composables/mixins/useIcons'
+  // import { useIcons } from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
   const { notifySuccess, notifyError } = useNotification()
 
@@ -106,7 +106,7 @@
       password: '',
     },
   })
-  const icon = useIcons()
+  // const icon = useIcons()
   const $t = useI18n().t
   const mq = useMQ()
   const currentAppState = ref('')

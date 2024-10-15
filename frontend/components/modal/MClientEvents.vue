@@ -280,7 +280,7 @@ function callEvent() {
   notifySuccess({ message: '[Dummy!] callEvent: ' + props.event })
   // TODO: call api
   // const {data, error} = await useApiGETBody<Array<T_ClientAttr>>(`/opsidata/hosts?hosts=${id}`)
-  // const {data, error} = await useClient($t).getClientIdList(storeSel.selectionDepots)
+  // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
   // if (error) {
   //   console.error(error)
   //   useNotification($t).error(error)

@@ -69,7 +69,7 @@ async function fetch() {
     fetchedData.value = data.value.result
     filteredData.value = fetchedData.value
   } catch (error) {
-    notifyError({ message: $t('message.error.unexpected') })
+    notifyError({ message: error || $t('message.error.unexpected') })
   } finally {
     isLoading.value = false
   }

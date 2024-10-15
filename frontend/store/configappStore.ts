@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
 // import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 import type { IObjectString2Boolean } from '@/types/tgeneral'
 

@@ -404,7 +404,7 @@
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import { useIcons } from '~/composables/mixins/useIcons'
 // import type { SortState } from 'element-plus'
-import {TableV2SortOrder, type RowEventHandlerParams, TableV2FixedDir, type SortState } from 'element-plus'
+import type { RowEventHandlerParams } from 'element-plus'
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { TRowData } from '~/types/Datatypes'
 import type { ITableData } from '~/types/ttable'
@@ -445,7 +445,7 @@ const HeaderCellRenderer = (attributes: any): VNode => {
 
 const settings = storeSettings()
 const selectionStore: IObjectString2Any = storeSelections()
-const tableStore = storeTablesettings()
+// const tableStore = storeTablesettings()
 const icons = useIcons()
 
 const columnsModel = defineModel<ITableHeaderRow>('columns', { required:true})
@@ -466,7 +466,7 @@ const props = defineProps({
 })
 const renderCells = ref(true)
 const renderHeaderCell = ref(true)
-const tableRef = ref()
+// const tableRef = ref()
 const menu = ref()
 const currentSelectedRow = ref<TRowData|undefined>()
 const selectKey = ref<string>( props.id === 'servers' ? 'selectionDepots': (props.id === 'clients' ? 'selectionClients' : 'selectionProducts'))
@@ -475,15 +475,15 @@ const wrappedColumns = ref<ITableHeaderRow>({})
 // const wrappedData = ref<Array<any>>([])
 
 const perPage = ref(tableData.value.perPage) // computed(()=> tableData.value.perPage)
-const pageNumber = ref(tableData.value.pageNumber) // computed(()=> tableData.value.pageNumber)
+// const pageNumber = ref(tableData.value.pageNumber) // computed(()=> tableData.value.pageNumber)
 const _pagesSizes = [10, 20, 50, 100]
 const pagesSizes = ref(_pagesSizes)
 updateMaxPerPage()
 const lastSelectedItemForSingleselect = ref<any>(undefined)
 
-const sortState = ref<SortState>({ [props.sortBy]: TableV2SortOrder.DESC })
+// const sortState = ref<SortState>({ [props.sortBy]: TableV2SortOrder.DESC })
 
-const lastScrollDirection = ref<'next'|'prev'|''>('')
+// const lastScrollDirection = ref<'next'|'prev'|''>('')
 
 // const cmmenu = ref()
 // const cmmenuItems = ref([
@@ -531,7 +531,7 @@ const rowEventHandlers: any = {
     alert('selection-changed: ' + rowData[props.rowId] + ' isAlreadyInStore: ' + isAlreadyInStore + ' isAlreadyInStore2: ' + isAlreadyInStore2)
 
   },
-  onDblclick: (params: RowEventHandlerParams) => {
+  onDblclick: () => {
     // const rowData:TRowData  = params.rowData
   },
   onContextmenu: (params: RowEventHandlerParams) => {
@@ -551,7 +551,7 @@ const rowEventHandlers: any = {
 }
 
 
-const lazyLoading = ref(true);
+// const lazyLoading = ref(true);
 // const loadLazyTimeout = ref();
 
 // const virtualScrollerOptions = ref({ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 500, showLoader: false, loading: lazyLoading, numToleratedItems: perPage.value / 2 })
@@ -566,9 +566,9 @@ const visibleColumns = computed(()=> useUtilsData().getVisibleColumnsInTable(col
 
 
 // numVisibleColumns.value < numFixedColumns.value + numVisibleColumnsDelta.value
-const numVisibleColumns = computed(()=> Object.values(visibleColumns.value).length)
-const numFixedColumns = computed(()=> Object.values(visibleColumns.value).filter((c:any) => Boolean(c.fixed) === true || Boolean(c._fixed) === true).length)
-const numVisibleColumnsDelta = ref(1)
+// const numVisibleColumns = computed(()=> Object.values(visibleColumns.value).length)
+// const numFixedColumns = computed(()=> Object.values(visibleColumns.value).filter((c:any) => Boolean(c.fixed) === true || Boolean(c._fixed) === true).length)
+// const numVisibleColumnsDelta = ref(1)
 
 // watch(()=>tableData.value.pageNumber, (val)=>{ pageNumber.value = val })
 // watch(()=>tableData.value.perPage, (val)=>{ perPage.value = val })
@@ -743,9 +743,9 @@ function getSelectedrowsFromStore() {
   }
   return _selection
 }
-function getSelectedrowIdsFromStore() {
-  return getSelectedrowsFromStore().map((r: any) => r && r[props.rowId])
-}
+// function getSelectedrowIdsFromStore() {
+//   return getSelectedrowsFromStore().map((r: any) => r && r[props.rowId])
+// }
 
 
 // async function onScroll(event: any) {
@@ -884,13 +884,13 @@ function onSort(event: any) {
 // // //     // }, Math.random() * 1000 + 250);
 // }
 
-function clearSelection (event:any) {
-  $emit('selection-clear')
-  dataModel.value.map((row:any) => {
-    row.selected = false
-    return row
-  })
-}
+// function clearSelection (event:any) {
+//   $emit('selection-clear')
+//   dataModel.value.map((row:any) => {
+//     row.selected = false
+//     return row
+//   })
+// }
 // function getColumnStyle(col: any) {
 //   if (col === undefined) return ''
 //   let style = ""

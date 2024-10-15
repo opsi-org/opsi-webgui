@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import type { T_ClientAttr, T_HostParameterEntry, T_ServerAttr } from '~/types/APItypes';
+import type { T_HostParameterEntry } from '~/types/APItypes';
 
 const $emit = defineEmits(['change-item', 'transform-id'])
 // const $emit = defineEmits({

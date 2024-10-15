@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+const _props = defineProps({
   data: { type: Object, required: true }
 })
 </script>

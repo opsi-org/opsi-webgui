@@ -23,7 +23,7 @@
   const locale = useI18n().locale
   const $t = useI18n().t
 
-  const props = defineProps({
+  defineProps({
     withIframe: { type: Boolean, default: true }
   })
 

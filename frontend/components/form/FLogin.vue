@@ -132,7 +132,7 @@ async function doLogin () {
     }
     handleSuccessfulLogin()
   } catch (error) {
-    notifyError({ message: $t('message.error.unexpected') })
+    notifyError({ message: error || $t('message.error.unexpected') })
   } finally {
     isLoading.value = false
   }

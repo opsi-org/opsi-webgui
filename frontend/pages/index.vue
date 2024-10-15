@@ -1,18 +1,21 @@
 <template>
-  <div class="max-w-[480px] m-auto shadow-lg rounded-lg">
+  <div class="max-w-[500px] m-auto shadow-lg rounded-lg">
     <div class="grid place-items-center">
+      <h1 class="text-4xl m-auto">
+        {{ t_fixed("title.project") }}
+      </h1>
+      <h4 class="text-4xl m-auto">
+        {{ $t('title.field.version', {'version': $config.public.packageVersion })}}
+      </h4>
       <IconIOpsiLogo
         :short="false"
         :light="storeSettings().isLight"
         class="w-full max-w-[700px]"
       />
-      <h1 class="text-4xl m-auto">
-        {{ t_fixed("title.project") }} <br>
-      </h1>
       <IconIUibLogo
         :short="false"
         :light="storeSettings().isLight"
-        class="mt-20 ml-auto h-10"
+        class="mt-10 ml-auto h-20 m-auto"
       />
     </div>
   </div>
@@ -21,15 +24,13 @@
 <script setup>
 import { useStrings } from '~/composables/mixins/useStrings';
 import { useMBus } from '~/composables/mixins/useMessagebus';
+
 const $config = useRuntimeConfig()
-const mq = useMQ()
 const $t = useI18n().t
 const { t_fixed } = useStrings()
 
-const msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
+useMBus(()=>{}, false, $t)
 
-function wsBusMsgObjectChanged(msg) {
-  // console.log('wsBusMsgObjectChanged', msg)
-}
+// TODO: close right menu on mount
 </script>
 

@@ -120,7 +120,7 @@ import type { IObjectString2Any } from '~/types/tgeneral';
 
   async function fetchDepotSpecificData() {
     depotIDList.value = await useDepot($t).getDepotIdList()
-    clientIDList.value = await useClient($t).getClientIdList([createClient.value.assignments.depot])
+    clientIDList.value = await useClient().getClientIdList([createClient.value.assignments.depot])
     await fetchNetbootProducts()
   }
 

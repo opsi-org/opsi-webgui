@@ -73,7 +73,7 @@ const leftSideVisible = ref<boolean>(!mq.isMobile.value)
 const rightSideVisible = ref<boolean>(!mq.isMobile.value)
 
 
-watch(()=> mq.$mq.value, (newVal, oldVal) => {
+watch(()=> mq.$mq.value, () => {
   settings.setIsMobile(mq.$mq.value === 'mobile')
   leftSideVisible.value = !mq.isMobile.value
   rightSideVisible.value = !mq.isMobile.value

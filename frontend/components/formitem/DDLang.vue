@@ -36,7 +36,7 @@
 import { useIcons } from "../../composables/mixins/useIcons"
 const icon = useIcons()
 
-const props = defineProps({
+const _props = defineProps({
   footer: { type: Boolean, default: false}
 })
 </script>

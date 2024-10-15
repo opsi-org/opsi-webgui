@@ -61,8 +61,8 @@
 </template>
 
 <script setup lang="ts">
-import { useIcons } from '~/composables/mixins/useIcons';
-const $t = useI18n().t
+// import { useIcons } from '~/composables/mixins/useIcons';
+// const $t = useI18n().t
 const settings = storeSettings()
 const changes = storeChanges()
 
@@ -108,10 +108,10 @@ const showModal = () => {
   // TODO
   alert('cbmultiselect cannot set Quicksave mode, cause there exists changes. showModal')
 }
-const hideModal = () => {
-  alert('cbmultiselect hideModal')
-  // TODO
-}
+// const hideModal = () => {
+//   alert('cbmultiselect hideModal')
+//   // TODO
+// }
 
 </script>
 

@@ -39,7 +39,7 @@ const possibleColumnsList = computed<Array<ITableHeaderCell>>(() => {
 
 // currently selected items (can include major, but not children)
 const selectedColumnsIds = ref(useUtilsData().getVisibleColumnIdsInSelect(possibleColumnsList.value))
-watch(()=>possibleColumnsModel, (v) => {
+watch(()=>possibleColumnsModel, () => {
   selectedColumnsIds.value = useUtilsData().getVisibleColumnIdsInSelect(possibleColumnsList.value)
 }, { deep: true})
 
@@ -53,7 +53,7 @@ const _options = computed<Array<ITableHeaderCell>>(() => {
 const optionsWrapper = computed<Array<any>>(() => {
   // need another format for el-select-v2
   return _options.value
-  .map((v,i) => ({
+  .map((v) => ({
     value: v.key,
     label: v.title || v.tooltip,
     disabled: Boolean(v.fixed) || Boolean(v._fixed) || Boolean(v.disabled),

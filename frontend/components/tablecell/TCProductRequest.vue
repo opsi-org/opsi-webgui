@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useStrings } from '~/composables/mixins/useStrings';
+// import { useStrings } from '~/composables/mixins/useStrings';
 import type { ITableRowItemProducts } from '~/types/ttable';
 
 // import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
@@ -59,12 +59,12 @@ import type { ITableRowItemProducts } from '~/types/ttable';
 // import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 // import { mapValues2Objects } from '../../.utils/utils/smappings'
 // import { Strings } from '../../mixins/strings'
-const t_fixed = useStrings().t_fixed
+// const t_fixed = useStrings().t_fixed
 
 const selectionStore = storeSelections()
 const {selectionClients} = storeToRefs(selectionStore)
-const configStore = storeConfigapp()
-const {config} = storeToRefs(configStore)
+// const configStore = storeConfigapp()
+// const {config} = storeToRefs(configStore)
 // const selections = namespace('selections')
 // const config = namespace('config-app')
 
@@ -81,19 +81,12 @@ const props = defineProps({
   // selectedClients: { type: Array as PropType<Array<string>>, default: () => { return selectionClients.value } }
 })
 const selectedClients = ref(selectionClients.value)
-  // @Prop({ }) rowitem!: ITableRowItemProducts|undefined
-  // @Prop({ }) rowIsSelected: boolean|undefined
-  // @Prop({ default: () => { return '---' } }) request!: string
-  // @Prop({ default: () => { return ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } }) requestoptions!: Array<string>
-  // @Prop({ default: () => { return () => { return {} } } }) save!: Function
 const preRequest = ref(props.request)
 const currentReq = ref(props.request)
 
-  // @config.Getter public config!: IObjectString2Boolean
-  // @selections.Getter public selectionClients!: Array<string>
-function updated () {
-    preRequest.value = visibleRequest.value
-  }
+// function updated () {
+//   preRequest.value = visibleRequest.value
+// }
 watch(() => selectedClients, () => {
     currentReq.value = props.request
     preRequest.value = props.request
@@ -130,15 +123,15 @@ const get_options = computed(() => {
   return options
 })
 
-const get_allRequests = computed(() => {
-  if (props.rowitem === undefined) {
-    return {}
-  }
-  if (props.rowitem.actionRequestDetails || selectedClients.value.length > 1) {
-    return mapValues2Objects(props.rowitem.actionRequestDetails ?? [props.rowitem.actionRequest], props.rowitem.selectedClients, selectedClients.value, 'none')
-  }
-  return {}
-})
+// const get_allRequests = computed(() => {
+//   if (props.rowitem === undefined) {
+//     return {}
+//   }
+//   if (props.rowitem.actionRequestDetails || selectedClients.value.length > 1) {
+//     return mapValues2Objects(props.rowitem.actionRequestDetails ?? [props.rowitem.actionRequest], props.rowitem.selectedClients, selectedClients.value, 'none')
+//   }
+//   return {}
+// })
 </script>
 
 <style>

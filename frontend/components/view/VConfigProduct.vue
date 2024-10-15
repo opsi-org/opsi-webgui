@@ -47,7 +47,7 @@ import { useNotification } from '~/composables/mixins/useComponent';
 import { useSaveProductProperties } from '~/composables/mixins/useSave';
 import { useUtils } from '~/composables/mixins/useUtils';
 import type { T_ProductPropertiesResult, T_ProductDependenciesResult, T_ProductPropertiesDependenciesResult } from '~/types/APItypes';
-import type { IErrorDepProp, IFetchedData } from '~/types/tobjects';
+import type { IErrorDepProp } from '~/types/tobjects';
 const { notifyError } = useNotification()
 const $t = useI18n().t
 const isLoading = ref(true)
@@ -65,7 +65,7 @@ const props = defineProps({
 const errorText = ref<IErrorDepProp>({ dependencies: '', properties: '' })
 const activeName = ref(props.isChild ? configLastSelected.value[props.type] || 'properties' : 'properties')
 
-watch(()=> activeName.value, (val)=>{
+watch(()=> activeName.value, ()=>{
   if (props.isChild){
     tableSettings.setConfigLastSelected(props.type, activeName.value)
   }
@@ -79,7 +79,7 @@ const fetchedData = ref<T_ProductPropertiesDependenciesResult>({
   })
 
 const dataSelection = storeSelections()
-const { selectionDepots, selectionClients, selectionProducts } = storeToRefs(dataSelection)
+const { selectionDepots, selectionClients } = storeToRefs(dataSelection)
 watch(()=>selectionDepots.value, async ()=>{
   await fetch()
 })
@@ -105,7 +105,7 @@ async function fetch(){
   await fetchDependencies()
   isLoading.value = false
 }
-async function fetchProperties (refetch: boolean = false) {
+async function fetchProperties () {
   const { data, error } = await useApiGETBody<T_ProductPropertiesResult>(`/opsidata/products/${props.id}/properties`, {
     selectedDepots: `[${selectionDepots.value.toString()}]`,
     selectedClients: `[${selectionClients.value.toString()}]`

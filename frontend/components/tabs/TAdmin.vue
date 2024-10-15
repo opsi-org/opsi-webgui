@@ -13,8 +13,8 @@
 const $t = useI18n().t
 
 
-const route = useRoute()
-const router = useRouter()
+// const route = useRoute()
+// const router = useRouter()
 
 const props = defineProps({
   type: { type: String, default: 'general' },

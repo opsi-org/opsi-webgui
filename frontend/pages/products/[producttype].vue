@@ -21,11 +21,11 @@
 const route = useRoute()
 const path = computed(()=> route.path.split('/').filter((p: string)=> p !== ''))
 
-const width = computed(()=> {
-  return '50%'
-})
+// const width = computed(()=> {
+//   return '50%'
+// })
 
-const isMobile = computed(()=> {
-  return useMQ().isMobile.value
-})
+// const isMobile = computed(()=> {
+//   return useMQ().isMobile.value
+// })
 </script>

@@ -45,7 +45,7 @@ const props = defineProps({
 async function doLogout () {
   if (props.abortClick) { return }
 
-  const { data, error } = await useApiPOST<T_Logout>('/auth/logout')
+  const { error } = await useApiPOST<T_Logout>('/auth/logout')
   if (error?.response.data.message === 'Unauthorized' /* xxx */ || error?.response.data.message === 'Method Not Allowed' /*405*/) {
     // pass, cause already logged out
   } else if (error) {

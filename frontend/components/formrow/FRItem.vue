@@ -124,7 +124,8 @@ const setInitialValue = () => {
     if (props.item.multiValue) {
       const objectValues: Array<Array<any>> = Object.values(props.item.objects)
 
-      objectValues.forEach((value: any, index: number, wholearray: any[])=> {
+      // objectValues.forEach((value: any, index: number, wholearray: any[])=> {
+      objectValues.forEach((value: any)=> {
         if (value.length > 0){
           const sorted = [...value]
           sorted.sort()

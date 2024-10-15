@@ -18,6 +18,6 @@
   import { useStrings } from '@/composables/mixins/useStrings'
   const staticStrings = useStrings()
   const $config = useRuntimeConfig()
-  const mq = useMQ()
   const $t = useI18n().t
+  useMQ()
 </script>

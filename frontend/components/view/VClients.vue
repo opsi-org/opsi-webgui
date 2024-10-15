@@ -35,20 +35,20 @@ import { useTableHelper } from '~/composables/mixins/useTableHelper';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useConfigserver } from '~/composables/mixins/useGet';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
-import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
+import { TableV2FixedDir } from 'element-plus';
 import type { T_ClientsList } from '~/types/APItypes';
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { ITableData } from '~/types/ttable';
 import { useMBus } from '~/composables/mixins/useMessagebus';
 
+const $t = useI18n().t
+const { notifyInfo, notifyError } = useNotification()
 const router = useRouter()
 const navigation = useNavigate()
-const $t = useI18n().t
 const icons = useIcons()
-const { notifyInfo, notifyError } = useNotification()
-const msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 const storeSelection = storeSelections()
 const storeTable = storeTablesettings()
+const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 // const datacache = storeCache()
 
 const fetchedData = ref<Array<any>>([])
@@ -314,7 +314,7 @@ const tableHelper = useTableHelper(id, tableData, fetchedData, totalItems, _fetc
 
 
 const emit = defineEmits(['change'])
-const props = defineProps({
+defineProps({
   isMobile: { type: Boolean, default: ()=> {return false}}
 })
 

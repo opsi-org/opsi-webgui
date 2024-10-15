@@ -29,7 +29,7 @@ export const useConfigserver = async (init: boolean = false, _store:any=undefine
     }
   }
 
-  async function getOpsiConfigServerWithHeaders (alertRef: any = undefined) {
+  async function getOpsiConfigServerWithHeaders () {
     const { data, headers, error } = await useApiGET<T_Opsiserver>('/user/opsiserver')
     if (error || !data?.value) {
       const errordata = { response: { data: {class: '', details: '', message: $t('message.error.opsiconfd')}} }
@@ -59,7 +59,7 @@ export const useDepot = (_t:any=undefined) => {
 
   return { getDepotIdList }
 }
-export const useClient = (t:any = undefined) => {
+export const useClient = () => {
   let fetchedDataClients2Depots: IObjectString2String = {}
 
   async function getClientIdList (selectedDepots: Array<string>): Promise<T_ClientIds> {

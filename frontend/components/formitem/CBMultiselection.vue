@@ -60,8 +60,8 @@
 </template>
 
 <script setup lang="ts">
-import { useIcons } from '~/composables/mixins/useIcons';
-const $t = useI18n().t
+// import { useIcons } from '~/composables/mixins/useIcons';
+// const $t = useI18n().t
 const selections = storeSelections()
 /*
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
@@ -165,23 +165,23 @@ const showModal = () => {
   // TODO
   alert('cbmultiselect showModal')
 }
-const hideModal = () => {
-  alert('cbmultiselect hideModal')
-  // TODO
-}
+// const hideModal = () => {
+//   alert('cbmultiselect hideModal')
+//   // TODO
+// }
 
-function cancelSelectionModeModal () {
-  selections.setMultiSelection(selections.multiSelection)
-}
+// function cancelSelectionModeModal () {
+//   selections.setMultiSelection(selections.multiSelection)
+// }
 
-function toggleSelectionMode () {
-  selections.setMultiSelection(!selections.multiSelection)
-}
+// function toggleSelectionMode () {
+//   selections.setMultiSelection(!selections.multiSelection)
+// }
 
-const helpModes = computed(()=> {
-    return [
-      { label: $t('label.on'), description: $t('description.multiselection.on') },
-      { label: $t('label.off'), description: $t('description.multiselection.off') }
-    ]
-})
+// const helpModes = computed(()=> {
+//     return [
+//       { label: $t('label.on'), description: $t('description.multiselection.on') },
+//       { label: $t('label.off'), description: $t('description.multiselection.off') }
+//     ]
+// })
 </script>

@@ -226,9 +226,9 @@ export const useMBus = (
     console.debug('MessageBus:', text, data)
   }
 
-  function wsNotificationInfo (text: any, data: any = '') {
-    notifyInfo({ title: $t('message.info.event'), message: text + ' ' + data})
-  }
+  // function wsNotificationInfo (text: any, data: any = '') {
+  //   notifyInfo({ title: $t('message.info.event'), message: text + ' ' + data})
+  // }
 
   function wsNotificationWarn (text: any, data: any = '') {
     notifyWarning({ message: text + ' ' + data})

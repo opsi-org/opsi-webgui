@@ -128,9 +128,7 @@
   ])
   const keyWrapper = ref(props.rowId)
 
-  watch(
-    () => props.item,
-    (newVal, oldVal) => {
+  watch(() => props.item, () => {
       items.value[0].label = $t('table.contextmenu.header-specific', {
         id: props.item[keyWrapper.value],
       })
