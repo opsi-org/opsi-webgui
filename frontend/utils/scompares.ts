@@ -1,3 +1,28 @@
+export function objectEqual (aOrig: any, bOrig: any):boolean {
+    if (aOrig === bOrig) {
+        return true;
+    }
+
+    const obj1 = (Object.hasOwn(aOrig, 'value')) ? aOrig.value : aOrig
+    const obj2 = (Object.hasOwn(bOrig, 'value')) ? bOrig.value : bOrig
+
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) {
+      console.warn('objectEqual: keys1.length !== keys2.length', keys1, keys2)
+        return false;
+    }
+    for (const key of keys1) {
+      if (!Object.hasOwn(obj2, key) || obj1[key] !== obj2[key]) {
+        console.warn('objectEqual: ', key ,'obj1[key] !== obj2[key]', obj1[key], obj2[key])
+        return false;
+      }
+    }
+    return true;
+    // return keys1.every(key =>
+    //     bOrig.hasOwnProperty(key) && aOrig[key] == bOrig[key]);
+}
 export function arrayEqual (aOrig: Array<any>, bOrig: Array<any>):boolean {
   // if (bOrig==undefined && aOrig==undefined) return true;
   // if (bOrig!=undefined && aOrig!=undefined){}
