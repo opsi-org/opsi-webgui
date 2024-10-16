@@ -1,11 +1,9 @@
 <template>
-  <Icon v-bind="$attrs as any" :class="props.class"/>
+  <Icon v-bind="($attrs as any)" :class="$attrs.class"/>
 </template>
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-const props = defineProps({
-  class: { type: String, default: '' }
-})
+
 </script>
 

@@ -49,6 +49,10 @@ export function arrayEqual (aOrig: Array<any>, bOrig: Array<any>):boolean {
   }
   return true
 }
+export function isObject (obj: any) {
+    return Object.prototype.toString.call(obj) === '[object Object]'
+}
 export default {
-  arrayEqual
+  arrayEqual,
+  objectEqual
 }

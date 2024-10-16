@@ -70,11 +70,11 @@ export const useMBus = (
 
   async function wsInit (reconnect: boolean = false) {
     if (!reconnect && wsIsConnected.value) {
-      wsNotification('already connecting/connected', wsBus.value)
+      // wsNotification('already connecting/connected', wsBus.value)
       return
     }
 
-    wsNotification('connecting')
+    // wsNotification('connecting')
     const host = window.location.hostname
     const port = (process.env.NODE_ENV === 'production') ? window.location.port : (Number(($config as any).public.OPSICONFD_PORT) || 4447)
     url_host = 'wss://' + host + ':' + port + '/messagebus/v1?'
@@ -136,7 +136,7 @@ export const useMBus = (
   }
 
   function wsSubscribeChannel (channels: Array<string>) {
-    wsNotification(url_host + '  subscribe: ',  channels)
+    // wsNotification(url_host + '  subscribe: ',  channels)
     const message = wsCreateMsgTemplate()
     message.type = 'channel_subscription_request'
     message.channel = 'service:messagebus'

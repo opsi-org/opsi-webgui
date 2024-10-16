@@ -1,4 +1,5 @@
 <template>
+  <div>
   <el-button plain @click="popoverVisible = true">
     <IconIIcon :icon="icon.product" />
   </el-button>
@@ -6,17 +7,50 @@
     <template #header>
       <h5>{{ $t('label.prodquickaction') }}</h5>
     </template>
-    <el-form :label-width="mq.isMobile.value ? '' : '300px'" :label-position="mq.isMobile.value ? 'top' : 'right'">
+    <IconILoading v-if="isLoadingMain" :is-loading="isLoadingMain" />
+    <el-form v-else :label-width="mq.isMobile.value ? '' : '300px'" :label-position="mq.isMobile.value ? 'top' : 'right'">
       <div v-for="(options, category, index) in productActions" :key="index">
         <el-row>
           <b>{{ $t('title.' + category) }} </b>
+          <ButtonBTNHelpTooltip v-if="$t('title.' + category+'.help.content') !== 'title.' + category+'.help.content'" :content="$t('title.' + category+'.help.content')" />
         </el-row>
         <div v-for="(value, label) in options" :key="label + value">
           <el-alert v-if="label == 'demoInfo'" :title="value" type="info" :closable="false" />
           <el-form-item v-else :label="$t('table.fields.' + label)">
-            <el-checkbox v-if="typeof value == 'boolean'" v-model="productActions[category][label]" />
-            <el-select v-else-if="Array.isArray(value)" v-model="productActions[category][label]" multiple>
-              <el-option v-for="item in value" :key="item" :label="item" :value="item" />
+
+            <div v-if="label == 'demoResult'" class="max-h-64 min-w-full overflow-y-auto">
+              <IconILoading v-if="isLoadingDemo" :is-loading="isLoadingDemo" inline/>
+              <div v-else-if="productActions.demo.demoResult == undefined" > -- </div>
+              <div v-else v-for="k in Object.keys(productActions.demo.demoResult).sort()" :key="k">
+                <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" size="sm" variant="outline-primary">
+                  <b>{{ k }}</b>
+                </b-button>
+                <b-collapse :id="k" :visible="false">
+                  <span v-for="item, iindex in (productActions.demo.demoResult as any)[k]" :key="item + iindex">
+                    <GridGFormItem
+                      value-more="true"
+                      :label="item.productId"
+                      :value="item.productType"
+                    />
+                  </span>
+                </b-collapse>
+              </div>
+            </div>
+
+            <el-checkbox
+              v-else-if="typeof value == 'boolean'"
+              v-model="productActions[category][label]"
+              @update:model-value="executeAction(true)"
+              />
+
+            <el-select
+              v-else-if="isObject(value)"
+              v-model="(productActions[category][label] as any).value"
+              :multiple="Array.isArray((productActions[category][label] as any).value)"
+              :disable="(productActions[category][label] as any).options.length <= 1"
+              @change="() => { executeAction(true) }"
+            >
+              <el-option v-for="item in (value as any).options.sort(mysort)" :key="item" :label="item ? item : NO_VALUE" :value="item" />
             </el-select>
             <div v-else>
               {{ value }}
@@ -24,298 +58,165 @@
           </el-form-item>
         </div>
       </div>
+
       <el-form-item>
         <el-button> {{ $t('button.reset') }}</el-button>
-        <el-button type="primary">{{ $t('button.apply') }}</el-button>
+        <el-button :disabled="productActions.demo.demoResult == undefined" type="primary" @click="executeAction(true)">{{ $t('button.apply') }}</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
+</div>
 </template>
+
+
 <script setup lang="ts">
   import { useIcons } from '@/composables/mixins/useIcons'
-  // import { useNotification } from '~/composables/mixins/useComponent'
-  // const { notifySuccess, notifyError } = useNotification()
+  import { isObject } from '@/utils/scompares'
+  import { useNotification } from '~/composables/mixins/useComponent';
+  const { notifySuccess, notifyError } = useNotification()
   const $t = useI18n().t
   const icon = useIcons()
   const mq = useMQ()
+  const storeSelection: any = storeSelections()
   const popoverVisible = ref(false)
-  // const productQuickAction = {
-  //   action: null,
-  //   outdated: false,
-  //   installation_status: null,
-  //   action_result: null,
-  //   selectedClients: null,
-  //   selectedDepots: null,
-  //   demoMode: true,
-  // }
+  const isLoadingMain = ref(true)
+  const isLoadingDemo = ref(false)
+  const NOT_APPLIED = $t('label.noselection')
+  const NO_VALUE = $t('label.novalue')
+
   const productActions = ref({
+    // to add a help button with tooltip after the category title, simply add translation key: title.<category>.help.content to the english translation file (example title.conditions.help.content)
     conditions: {
-      instStatus: ['not_installed', 'installed', 'unknown'],
-      actionResult: ['null', 'failed', 'successful', 'none'],
+      instStatus: {
+        value: NOT_APPLIED,
+        options: ['not_installed', 'installed', 'unknown'], // will be fetched from backend. its just the default values
+      },
+      actionResult: {
+        value: NOT_APPLIED,
+        options: [null, 'null', 'failed', 'successful', 'none'], // will be fetched from backend. its just the default values
+      },
       outdatedonclient: false,
     },
     possibleActions: {
-      rowactions: ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'],
+      rowactions: {
+        options: ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'],
+        value: NOT_APPLIED,
+      }
     },
     scope: {
-      apply: ['To both selected servers and clients', 'Only to selected servers', 'Only to selected clients'],
+      apply: {
+        options: [
+          // future: add server and both
+          // $t('label.quickaction.scope.options.both'),
+          // $t('label.quickaction.scope.options.server'),
+          $t('label.quickaction.scope.options.clients')
+        ],
+        value: $t('label.quickaction.scope.options.clients')
+      }
     },
     demo: {
-      demoInfo: 'Demo mode simulates product quick actions without making changes, showing expected results.',
-      demoMode: true,
-      demoResult: '--',
+      demoInfo: $t('label.quickaction.demo.info'),
+      demoResult: undefined,
     },
   })
-</script>
 
-<!-- <template>
-      <OverlayOLoading :is-loading="isLoading" />
-      <GridGFormItem variant="longlabel" :label="$t('table.fields.instStatus')">
-        <template #value>
-          <b-form-select v-model="quickaction.installation_status" size="sm" :options="conditn_InstStatus">
-            <template #first>
-              <b-form-select-option :value="null">
-                {{ $t('label.noselection') }}
-              </b-form-select-option>
-            </template>
-          </b-form-select>
-        </template>
-      </GridGFormItem>
-      <GridGFormItem variant="longlabel" :label="$t('table.fields.actionResult')">
-        <template #value>
-          <b-form-select v-model="quickaction.action_result" size="sm" :options="conditn_ActionResult">
-            <template #first>
-              <b-form-select-option :value="null">
-                {{ $t('label.noselection') }}
-              </b-form-select-option>
-            </template>
-          </b-form-select>
-        </template>
-      </GridGFormItem>
-      <GridGFormItem variant="longlabel" :label="$t('label.pv.outdatedonclient')">
-        <template #value>
-          <b-form-checkbox v-model="quickaction.outdated" size="sm" />
-        </template>
-      </GridGFormItem>
-      <b-row class="text-small mb-2">
-        <b>{{ $t('label.possibleactions') }} </b>
-      </b-row>
-      <GridGFormItem variant="longlabel" :label="$t('table.fields.rowactions')">
-        <template #value>
-          <b-form-select v-model="quickaction.action" size="sm" :options="actions">
-            <template #first>
-              <b-form-select-option :value="null">
-                {{ $t('label.noselection') }}
-              </b-form-select-option>
-            </template>
-          </b-form-select>
-        </template>
-      </GridGFormItem>
-      <b-row class="text-small mb-2">
-        <b>{{ $t('label.restrictions') }} </b>
-      </b-row>
-      <GridGFormItem variant="longlabel" :label="$t('form.productaction.radio.label')">
-        <template #value>
-          <b-form-group>
-            <b-form-radio
-              v-model="radioOption"
-              name="server-clients-radio"
-              value="both"
-              disabled
-            >
-              {{ $t('form.productaction.radio.both') }}
-            </b-form-radio>
-          </b-form-group>
-        </template>
-      </GridGFormItem>
-      <GridGFormItem variant="longlabel">
-        <template #value>
-          <div class="float-right mt-4">
-            <b-button id="resetButton" class="resetButton" variant="primary" size="sm" @click="resetForm()">
-              {{ $t('button.reset') }}
-            </b-button>
-            <b-button variant="success" :disabled="quickaction.action == null || (quickaction.installation_status === null && quickaction.action_result === null)" size="sm" @click="executeAction(false)">
-              {{ $t('button.apply') }}
-            </b-button>
-          </div>
-        </template>
-      </GridGFormItem>
-      <GridGFormItem variant="longlabel" :label="$t('form.productaction.demoResult')">
-        <template #value>
-          <div v-if="demoResult && demoResult != '--'" flush>
-            <div v-for="k in Object.keys(demoResult).sort()" :key="k">
-              <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" size="sm" variant="outline-primary">
-                <b>{{ k }}</b>
-              </b-button>
-              <b-collapse :id="k" :visible="false">
-                <span v-for="item, index in sort(demoResult[k])" :key="index">
-                  <GridGFormItem
-                    value-more="true"
-                    :label="item.productId"
-                    :value="item.productType"
-                  />
-                </span>
-              </b-collapse>
-            </div>
-          </div>
-        </template>
-      </GridGFormItem>
-</template> -->
+  await fetchActionResults()
+  await fetchInstallationStates()
+  isLoadingMain.value = false
 
-<!-- <script lang="ts">
-
-import { MBus } from '../../mixins/messagebus'
-
-  wsBusMsg: any // mixin // store
-
-  @selections.Getter public selectionClients!: Array<string>
-  @selections.Getter public selectionDepots!: Array<string>
-
-  demoResult: any = '--'
-  radioOption: string = 'both' // (this.selectionClients?.length <= 0) ? 'both' : 'clients'
-  isLoading: boolean = false
-  actions: Array<string> = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
-  conditn_InstStatus!: Array<string>
-  conditn_InstStatus_defaults: Array<string|null> = [null, 'installed', 'unknown']
-  conditn_ActionResult!: Array<string>
-  conditn_ActionResult_default: Array<string> = ['failed', 'successful']
-  quickaction: QuickAction = {
-    action: null,
-    outdated: false,
-    installation_status: null,
-    action_result: null,
-    selectedClients: null,
-    selectedDepots: null,
-    // selectedDepots: undefined,
-    demoMode: true
+  function mysort (a: string, b: string): number {
+    const aa = (a === null) ? NO_VALUE : a
+    const bb = (b === null) ? NO_VALUE : b
+    return aa.localeCompare(bb)
   }
 
-  @Watch('selectionClients', { deep: true }) clientsChanged () {
-    // this.radioOption = (this.selectionClients?.length <= 0) ? 'both' : 'clients'
-    this.executeAction(true)
-  }
-
-  @Watch('radioOption', { deep: true }) _radioOptionChanged () {
-    if (this.radioOption === 'both') {
-      this.quickaction.selectedClients = undefined
-      this.quickaction.selectedDepots = undefined
-    } else if (this.radioOption === 'server') {
-      this.quickaction.selectedDepots = this.selectionDepots
-      this.quickaction.selectedClients = undefined
-    } else if (this.radioOption === 'clients') {
-      this.quickaction.selectedClients = [...this.selectionClients]
-      this.quickaction.selectedDepots = undefined
-    }
-  }
-
-  @Watch('quickaction', { deep: true }) async _quickactionChanged () {
-    if (this.quickaction.action === this.$t('label.noselection')) { this.quickaction.action = null }
-    if (this.quickaction.action_result === this.$t('label.noselection')) { this.quickaction.action_result = null }
-    if (this.quickaction.installation_status === this.$t('label.noselection')) { this.quickaction.installation_status = null }
-    await this.executeAction(true)
-  }
-
-  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged () {
-    const msg = this.wsBusMsg // todo deepCopy
-    if (msg &&
-      ['event:productOnClient_created', 'event:productOnClient_updated'].includes(msg.channel)
-      // && msg.data.productType === 'LocalbootProduct'
-    ) {
-      this.$fetch()
-    }
-  }
-
-  _compareFn (a, b): number {
-    if (a.productType > b.productType) { return -1 }
-    if (a.productType < b.productType) { return 1 }
-    if (a.productId > b.productId) { return 1 }
-    if (a.productId < b.productId) { return -1 }
-    return 0
-  }
-
-  sort (listofobj: Array<any>) {
-    const poc = [...listofobj]
-    poc.sort(this._compareFn)
-    return poc
-  }
-
-  async fetch () {
-    this.isLoading = true
-    await this.fetchActionResults()
-    await this.fetchInstallationStates()
-    // this.radioOption = (this.selectionClients?.length <= 0) ? 'both' : 'clients'
-    this.isLoading = false
-  }
-
-  async fetchActionResults () {
-    await this.$axios.$get('/api/opsidata/products/action-result')
-      .then((result) => {
-        this.conditn_ActionResult = result
-      }).catch((error) => {
-        // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        // const ref = (this.$refs.prodQuickActionAlert as any)
-        // ref?.alert(this.$t('message.error.title'), 'danger', detailedError)
-        this.showToastError(error.response.data)
-        this.conditn_ActionResult = ['Successful', 'Failed']
-      })
-  }
-
-  async fetchInstallationStates () {
-    await this.$axios.$get('/api/opsidata/products/installation-status')
-      .then((result) => {
-        this.conditn_InstStatus = result
-      }).catch((error) => {
-        // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        // const ref = (this.$refs.prodQuickActionAlert as any)
-        // ref?.alert(this.$t('message.error.title'), 'danger', detailedError)
-        this.showToastError(error.response.data)
-        this.conditn_InstStatus = ['Installed', 'Unknown']
-      })
-  }
-
-  async executeAction (demo = true) {
-    const params = { ...this.quickaction, demoMode: demo }
-    const ref = (this.$refs.prodQuickActionAlert as any)
-    console.log(params)
-    if (this.quickaction.outdated === false && this.quickaction.installation_status === null && this.quickaction.action_result === null) {
-      ref?.alert(this.$t('message.error.condition'), 'danger')
-      this.demoResult = undefined
+  async function fetchActionResults () {
+    const {data, error } = await useApiGET<Array<string>>('/opsidata/products/action-result')
+    if (error) {
+      notifyError({ message: error?.response?.data?.message })
       return
-    } else if (this.quickaction.action === null && demo === false) {
-      ref?.alert(this.$t('message.error.productquickaction'), 'danger')
-    } else if (this.quickaction.action === null && demo === true) {
-      params.action = 'none'
-    } else {
-      ref?.hide()
     }
-    this.isLoading = true
-    if (this.radioOption === 'clients') {
-      params.selectedClients = this.selectionClients
+    if (data.value) {
+      productActions.value.conditions.actionResult.options = [...data.value, NOT_APPLIED]
+      productActions.value.conditions.actionResult.value = NOT_APPLIED
+      // productActions.value.conditions.actionResult.value = productActions.value.conditions.actionResult.value.filter(item => productActions.value.conditions.actionResult.options.includes(item))
+
     } else {
-      params.selectedClients = null
+      throw new Error('No action results found: ' + JSON.stringify(data.value))
     }
-    await this.$axios.$post('/api/opsidata/clients/action', params)
-      .then((result) => {
-        this.demoResult = result || ''
-        if (!demo) {
-          this.showToastSuccess(this.$t('message.success.save.productactions'))
-          this.executeAction(true) // do again to see new values as demo -> should be epty now
-        }
-        this.isLoading = false
-      }).catch((error) => {
-        this.demoResult = ''
-        this.showToastError(error)
-        this.isLoading = false
-      })
+  }
+  async function fetchInstallationStates () {
+    const {data, error } = await useApiGET<Array<string>>('/opsidata/products/installation-status')
+    if (error) {
+      notifyError({ message: error?.response?.data?.message })
+      return
+    }
+    if (data.value) {
+      productActions.value.conditions.instStatus.options = [...data.value, NOT_APPLIED]
+      productActions.value.conditions.instStatus.value = NOT_APPLIED
+      // productActions.value.conditions.instStatus.value = productActions.value.conditions.instStatus.value.filter(item => productActions.value.conditions.instStatus.options.includes(item))
+    } else {
+      throw new Error('No installation states found ' + JSON.stringify(data.value))
+    }
   }
 
-  resetForm () {
-    this.quickaction = {
-      action: null,
-      outdated: false,
-      installation_status: null,
-      action_result: null
-    } as QuickAction
+  function get_params (demoMode: boolean) {
+    const includeClients = [$t('label.quickaction.scope.options.both'), $t('label.quickaction.scope.options.clients')].includes(productActions.value.scope.apply.value)
+    const includeServer = [$t('label.quickaction.scope.options.both'), $t('label.quickaction.scope.options.server')].includes(productActions.value.scope.apply.value)
+    // const demoMode = demo //|| productActions.value.demo.demoMode
+    const params: Record<string, any> = {
+      action: productActions.value.possibleActions.rowactions.value || '',
+      outdated: productActions.value.conditions.outdatedonclient,
+      installation_status: productActions.value.conditions.instStatus.value,
+      action_result: productActions.value.conditions.actionResult.value,
+      demoMode: demoMode
+    }
+    if (includeClients) {
+      params.selectedClients = storeSelection.selectionClients
+    }
+    if (includeServer) {
+      params.selectedDepots = storeSelection.selectionDepots
+    }
+    //   const params = { ...this.quickaction, demoMode: demo }
+    //   const ref = (this.$refs.prodQuickActionAlert as any)
+    //   console.log(params)
+      if ((params.outdated === false && params.installation_status === null && params.action_result === null) ||
+          (params.outdated === false && params.installation_status === NOT_APPLIED && params.action_result === NOT_APPLIED)){
+        productActions.value.demo.demoResult = undefined
+        return
+      } else if (params.action === NOT_APPLIED && demoMode === false) {
+        notifyError({title: $t('message.error.productquickaction')})
+      } else if (params.action === NOT_APPLIED && demoMode === true) {
+        params.action = ''
+      }
+      if (params.installation_status === NOT_APPLIED) {
+        params.installation_status = null
+      }
+      if (params.action_result === NOT_APPLIED) {
+        params.action_result = null
+      }
+      return params
   }
-}
-</script> -->
+  async function executeAction(demo: boolean=true) {
+    isLoadingDemo.value = true
+    productActions.value.demo.demoResult = undefined
+    const params = get_params(demo)
+    if (!params) { return }
+
+    const  {data, error} = await useApiPOST('/opsidata/clients/action', params)
+    if (error) {
+      notifyError({ message: error?.response?.data?.message })
+      return
+    }
+    if (data.value) {
+      productActions.value.demo.demoResult = data.value as any
+      if (!demo) {
+        notifySuccess({ message: $t('message.success.save.productactions') })
+      }
+      isLoadingDemo.value = false
+    } else {
+      isLoadingDemo.value = false
+      throw new Error('No installation states found ' + JSON.stringify(data.value))
+    }
+  }
+</script>
