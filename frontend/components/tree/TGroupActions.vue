@@ -31,13 +31,13 @@
       :expand-on-click-node="false"
       highlight-current
     >
-      <template #default="{ node, data }">
+      <template #default="{ node, data: defdata }">
         <span>{{ node.label }}</span>
         <div class="ml-auto" v-if="node.label !== 'not_assigned'">
           <span
             :key="node.label+action"
             v-for="action in
-            (data.type == 'ObjectToGroup' ? props.data.actions.children
+            (defdata.type == 'ObjectToGroup' ? props.data.actions.children
             : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
             )"
           >
@@ -75,7 +75,9 @@
                   <el-form-item :label="$t('label.selectChildren')">
                     <el-scrollbar height="300px" class="border w-100 p-2">
                       <el-checkbox-group v-model="selectedChildren">
-                        <div v-for="item in idList" :key="item"> <el-checkbox size="small" :value="item" /> </div>
+                        <div v-for="item in idList" :key="item">
+                          <el-checkbox size="small" :value="item" />
+                        </div>
                       </el-checkbox-group>
                     </el-scrollbar>
                   </el-form-item>

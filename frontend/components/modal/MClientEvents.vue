@@ -1,12 +1,10 @@
 <template>
   <el-dialog
     v-model="modelValue"
-    style="
-      --el-color-info: var(--el-color-primary);
-    "
+    style="--bg-hover: var(--el-color-primary);"
     append-to-body
     v-bind="$props"
-    >
+  >
     <template #header>
       <div class="flex">
         <IconIIcon :icon="eventWrapper.icon" class="min-w-9 min-h-9"/>
@@ -16,85 +14,57 @@
       </div>
     </template>
 
-    <!-- Event: {{ event }} <br />
-    ID: {{ id }} <br /> -->
-    <div v-if="props.event=='showpopup'"
-    >
+    <div v-if="props.event=='showpopup'">
       <el-input
         v-model="events.showpopup.params.params[0]"
         :rows="2"
         type="textarea"
         placeholder="Please input"
       />
-      {{ id }} <br>
-      {{ $t('button.event.modal.footer', {event}) }} <br>
+      <br>{{ $t('button.event.modal.footer', {event}) }} <br>
+      <ModalMClientEventSpecificOnlySelected
+        :id="id"
+        :selection="selection"
+        simple
+      />
     </div>
 
     <div v-if="props.event=='ondemand'">
+      {{ $t('button.event.modal.footer', {event}) }} <br>
       <el-radio-group v-model="events.ondemand.params.onlyIdFromParams">
-        <el-radio :value="1">Only passed id</el-radio>
-        <el-radio :value="2">All selected</el-radio>
+        <el-radio :value="1">{{ $t('form.radio.ondemand.only-passed')}}</el-radio>
+        <el-radio :value="2">{{ $t('form.radio.ondemand.all')}}</el-radio>
       </el-radio-group>
-      <el-card
-        body-class="p-1 pt-3"
-        :body-style="(events.ondemand.params.onlyIdFromParams != 1) ? 'color: var(--el-text-color-disabled)' : ''"
-        :shadow="(events.ondemand.params.onlyIdFromParams == 1) ? 'always' : 'never'"
-         >
-        <ul >
-          <li>{{ id }}</li>
-        </ul>
 
-      </el-card>
-      <el-card
-        body-class="p-0"
-        :body-style="(events.ondemand.params.onlyIdFromParams != 2) ? 'color: var(--el-text-color-disabled)' : ''">
-        :shadow="(events.ondemand.params.onlyIdFromParams == 2) ? 'always' : 'never'"
-        <p v-if="events.ondemand.params.onlyIdFromParams == 1">
-          {{$t('button.event.ondemand.notincluded')}}
-        </p>
-      <ul>
-        <li v-for="c in selection" :key="c" class="p-2 ">
-          <el-button
-          :disabled="events.ondemand.params.onlyIdFromParams != 2"
-          class="text-small"
-          variant="outline-primary"
-          :title="$t('button.delete')"
-          size="small"
-          @click="selectionDelete(c)"
-          >x</el-button>
-          {{ c }}
-        </li>
-      </ul>
-      </el-card>
-        {{ $t('button.event.modal.footer', {event}) }} <br>
+      <ModalMClientEventSpecificOnlySelected
+        v-if="events.ondemand.params.onlyIdFromParams == 1"
+        with-all-selected-disabled
+        :id="id"
+        :selection="selection"
+      />
+      <ModalMClientEventSpecificAllSelected
+        v-if="events.ondemand.params.onlyIdFromParams == 2"
+        :id="id"
+        :selection="selection"
+        @selection-delete="selectionDelete"
+      />
     </div>
     <div v-if="props.event=='ondemand-all'">
-      <el-card shadow="always" body-class="p-0">
-      <ul>
-        <li v-for="c in selection" :key="c" class="p-2 ">
-          <el-button
-            class="text-small"
-            variant="outline-primary"
-            :title="$t('button.delete')"
-            size="small"
-            @click="selectionDelete(c)"
-          >x</el-button>
-          {{ c }}
-        </li>
-      </ul>
-      </el-card>
-        {{ $t('button.event.modal.footer', {event}) }} <br>
-      <!-- checkboy for only selected client, or all selected clients -->
-      <!-- <el-checkbox-group v-model="eventWrapper.params?.params">
-        <el-checkbox v-for="c in selection" :key="c" :label="c" class="modal-client-p text-small">
-          {{ c }}
-        </el-checkbox> -->
+      {{ $t('button.event.modal.footer', {event}) }} <br>
+      <ModalMClientEventSpecificAllSelected
+        :id="id"
+        :selection="selection"
+        @selection-delete="selectionDelete"
+      />
     </div>
-    // const cols:  = {}
 
     <div v-if="props.event=='reboot'">
-      {{ id }} <br>
       {{ $t('button.event.modal.footer', {event}) }} <br>
+      <ModalMClientEventSpecificOnlySelected
+        :id="id"
+        :selection="selection"
+        simple
+      />
     </div>
 
     <div v-if="props.event=='deployclientagent'">
@@ -178,7 +148,7 @@ const events = ref({
 
     params: {
       method: 'showPopup',
-      params: ['Dummy text']
+      params: [$t('form.event.message.text')],
     }
   },
   ondemand: {
@@ -207,7 +177,7 @@ const events = ref({
   },
   deployclientagent: {
     tooltip: 'button.event.deployclientagent.tooltip',
-    titlemodal: 'label.clientagent',
+    titlemodal: 'button.event.clientagent',
     icon: icon.deployclientagent,
     buttonConfirm: 'button.confirm',
     buttonConfirmVariant: 'primary',
@@ -226,7 +196,7 @@ const events = ref({
     tooltip: 'button.event.rename.tooltip',
     titlemodal: 'title.renameClient',
     icon: icon.edit,
-    buttonConfirm: 'label.rename',
+    buttonConfirm: 'button.event.rename',
     buttonConfirmVariant: 'primary',
     params: {
       method: 'rename',
@@ -240,7 +210,7 @@ const events = ref({
     tooltip: 'button.event.delete.tooltip',
     titlemodal: 'title.deleteClient',
     icon: icon.delete,
-    buttonConfirm: 'label.delete',
+    buttonConfirm: 'button.event.delete',
     buttonConfirmVariant: 'danger',
     params: {
       method: 'delete',

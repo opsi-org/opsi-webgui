@@ -5,7 +5,7 @@
     </el-form-item>
     <el-form-item :label="$t('form.logtype')">
       <el-select v-model="logtype" style="min-width: 200px">
-        <el-option v-for="logtype in logTypes" :key="logtype" :label="logtype" :value="logtype" />
+        <el-option v-for="lt in logTypes" :key="lt" :label="lt" :value="lt" />
       </el-select>
     </el-form-item>
     <template v-if="fetchedData.length > 1">

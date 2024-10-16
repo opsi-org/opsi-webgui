@@ -1,10 +1,10 @@
 <template>
-  <PContextMenu v-if="items" ref="cmmenu" :model="items" class="p-contextmenu">
-    <template #item="{ item, hasSubmenu }">
+  <PContextMenu v-if="items" ref="cmmenu" :model="items" class="p-contextmenu" style="--el-color-text-hover: blue">
+    <template #item="{ item: menuItem, hasSubmenu }">
       <el-text>
         <div class="inline">
-          <IconIIcon v-if="item.icon" :icon="item.icon" class="inline ml-2 mr-4" />
-          <span class="inline">{{ item.label }}</span>
+          <IconIIcon v-if="menuItem.icon" :icon="menuItem.icon" class="inline ml-2 mr-4" />
+          <span class="inline">{{ menuItem.label }}</span>
           <span v-if="hasSubmenu" class="inline float-right">
             <IconIIcon :icon="icons.arrowRight" />
           </span>
@@ -12,7 +12,7 @@
       </el-text>
     </template>
   </PContextMenu>
-  <ModalMClientEvents v-if="showModal" v-model="showModal" :event="selectedAction" :id="props.item[keyWrapper]" />
+  <ModalMClientEvents v-if="showModal" v-model="showModal" :event="selectedAction" :id="props.item[keyWrapper]" class="bold" />
 </template>
 
 <script setup lang="ts">
@@ -74,7 +74,7 @@
         },
         {
           id: 'action_clientagent',
-          label: $t('label.clientagent'),
+          label: $t('button.event.deployclientagent'),
           command: () => call_opsievent('deployclientagent'),
         },
         {
