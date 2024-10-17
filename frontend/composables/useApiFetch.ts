@@ -30,7 +30,6 @@ function define_vars<T>(prePath: string|undefined) {
   const pendingState = ref<boolean>(true);
   return { baseUrl, basePath, callresponse, callerror, pendingState }
 }
-
 async function useAPI2<T> (
     method: tmethod,
     url: string,
@@ -150,6 +149,9 @@ const logout_on_specific_error = (status: number) => {
 }
 const _getBodyParams = (params: any) => {
   return new URLSearchParams(params).toString();
+  // const res = new URLSearchParams(params).toString();
+  // if (res === "[object Object]") {
+  //   return new URLSearchParams(params)
 }
 
 
@@ -176,7 +178,14 @@ async function useApiPUT<ResultDataType> (url: string, body:any=undefined, prePa
   return useAPI2<ResultDataType>('DELETE', url, body, opts, prePath, synced)
 }
 
-export { useApiGET, useApiGETBody, useApiPOST, useApiDELETE, useApiPUT }
+function useFullUrlPath(path: string, prepath: string|undefined) {
+  const config = useRuntimeConfig()
+  const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE
+  const basePath: string = prepath ?? config.public.API_PATH
+  return baseUrl + basePath + path
+}
+
+export { useApiGET, useApiGETBody, useApiPOST, useApiDELETE, useApiPUT, useFullUrlPath }
 
 
 // export function useAPI<T> (url: string, opts: UseFetchOptions<T> = {}, prePath: string|undefined = undefined) {
