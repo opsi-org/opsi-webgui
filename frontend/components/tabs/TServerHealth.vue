@@ -1,15 +1,27 @@
 <template>
   <el-container v-loading="isLoading">
-    <el-header style="height: 32px">
-      <el-button class="float-right" @click="downloadHealthData"><IconIIcon :icon="icons.download" /> {{ $t('button.download') }}</el-button>
-    </el-header>
+    <el-header style="height: 1px" />
     <el-tabs lazy>
-      <el-tab-pane :label="$t('title.healthcheck')">
-        <TableTHealthCheck v-if="fetchedData.health_check && fetchedData.health_check.length > 0" :data="fetchedData.health_check" />
+      <el-tab-pane :label="$t('title.healthcheck')" >
+        <TableTHealthCheck v-if="fetchedData.health_check && fetchedData.health_check.length > 0" v-model="fetchedData.health_check" />
       </el-tab-pane>
-      <el-tab-pane :label="$t('title.diagnostics')">
+      <el-tab-pane>
+        <template #label>
+          <el-text class="mr-4"> {{$t('title.diagnostics')}}</el-text>
+          <el-button
+            class="float-right mt-0 ml-2 border-1 border-white"
+            type="primary"
+            circle
+            @click.stop="downloadHealthData"
+            :aria-label="$t('button.download')"
+            :title="$t('button.download')"
+          >
+            <IconIIcon :icon="icons.download" class="mr-1"/>
+          </el-button>
+        </template>
         <FormFDiagnostics :data="{...fetchedData, health_check: void(0)}" />
       </el-tab-pane>
+
     </el-tabs>
   </el-container>
 </template>

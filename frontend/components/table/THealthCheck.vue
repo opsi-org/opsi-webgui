@@ -1,29 +1,91 @@
 <template>
-  <el-table :data="data" row-key="check_id" :tree-props="{ children: 'partial_results' }" style="--el-color-info: var(--color);">
-    <el-table-column
-      prop="check_status"
-      label="Status"
-      width="150"
-      :filters="[
-      { text: 'Ok', value: 'ok' },
-      { text: 'Error', value: 'error' },
-      { text: 'Warning', value: 'warning' },
-    ]"
-    :filter-method="filterStatus"
+  <el-table
+    ref="healthtable"
+    lazy
+    row-key="name"
+    :data="data"
+    :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
   >
+    <el-table-column prop="expand" width="50" >
       <template #default="scope">
-        <el-button :type="getType(scope.row.check_status)" class="text-capitalize" size="small">{{ scope.row.check_status }}</el-button>
+        <a
+          v-if="scope.row.children"
+          :aria-expanded="false" aria-controls="details-row-1"
+          :aria-label="$t('button.expand.arialabel')"
+          :title="$t('button.expand.arialabel')"
+          @click="() => {
+            scope.row.expanded = !scope.row.expanded;
+            healthtable.toggleRowExpansion(scope.row, scope.row.expanded);
+            healthtable.doLayout();
+          }"
+        >
+          <IconIIcon v-if="scope.row.expanded" :icon="icons.arrowDown" />
+          <IconIIcon v-else :icon="icons.arrowRight" />
+        </a>
       </template>
     </el-table-column>
-    <el-table-column prop="check_name" label="Check Name" width="450" />
-    <el-table-column prop="message" label="Message" />
+
+    <el-table-column
+      prop="status"
+      :label="$t('label.healthcheck.status')"
+      width="150"
+      filter-icon="el-icon-filter"
+      :filters="[
+        { text: 'Ok', value: 'ok' },
+        { text: 'Error', value: 'error' },
+        { text: 'Warning', value: 'warning' },
+      ]"
+      :filter-method="filterStatus"
+    >
+      <template #default="scope">
+      <el-tag :type="getType(scope.row.status)" class="text-capitalize">{{ scope.row.status }}</el-tag>
+      </template>
+    </el-table-column>
+
+    <el-table-column prop="name" :label="$t('label.healthcheck.check_name')" width="450" >
+      <template #default="scope">
+        <el-text> {{ scope.row.name }}</el-text>
+      </template>
+    </el-table-column>
+
+    <el-table-column prop="message" :label="$t('label.healthcheck.check_message')" />
   </el-table>
 </template>
 
 <script setup lang="ts">
-const _props = defineProps({
-  data: { type: Array, required: true }
+import { useIcons } from '~/composables/mixins/useIcons';
+
+const icons = useIcons()
+const $t = useI18n().t
+const modelValue = defineModel<Array<any>>()
+  const _props = defineProps({
+    withColumnHeaders: { type: Boolean, default: true },
+  })
+const healthtable = ref()
+
+function transformThisLevel (arrdata: Array<any>): Array<any> {
+  return arrdata.map((item: any) => {
+    const {partial_results, ..._ } = item
+    const item2 = {
+      name: item.check.id,
+      status: item.check_status,
+      message: item.message,
+      details: item.details,
+      expanded: false
+    }
+    return (item.partial_results && item.partial_results.length > 0) ?
+      { ...item2, children: transformThisLevel(partial_results), hasChildren: true } :
+      item2
+  })
+}
+
+const data = computed(() => {
+  if (modelValue.value)
+    return transformThisLevel(modelValue.value)
+
+  return undefined
 })
+
 const filterStatus = (value: string, row: any) => {
   return row.check_status === value
 }
@@ -32,3 +94,9 @@ function getType (status: any) {
   if (status === 'error') { return 'danger' } else if (status === 'ok') { return 'success' } else if (status === 'warning') { return 'warning' } else { return 'primary' }
 }
 </script>
+
+<style scoped>
+:deep(.el-table__expand-icon) {
+  display: none !important;
+}
+</style>

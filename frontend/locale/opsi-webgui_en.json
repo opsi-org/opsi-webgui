@@ -319,6 +319,9 @@
   "label.novalue": "< null >",
 
   "label.possibleactions": "Possible Actions",
+  "label.healthcheck.status": "Status",
+  "label.healthcheck.check_name": "Name",
+  "label.healthcheck.check_message": "Message",
   "description.quicksave.on": "Changes will be saved immediately.",
   "description.quicksave.off": "Changes are not saved immediately. An overview lists all locally made changes. These can be viewed and changed before saving.",
   "button.tablerow.moreoptions": "More actions",
@@ -334,6 +337,7 @@
   "button.contribute-transifex.tooltip": "Contribute to translations with Transifex",
   "button.theme.tooltip": "Theme",
   "button.expand": "Expand",
+  "button.expand.arialabel": "Expand this to see more details",
   "button.collapse": "Collapse",
   "button.refresh": "Refresh {id}",
   "button.reload": "Reload",
