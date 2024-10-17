@@ -11,6 +11,7 @@
       <el-form-item v-for="(action, index) in actions" :key="index" :label="$t('label.' + section + '.' + action)">
         <template v-if="action === 'current'">
           <el-text :type="currentAppStateColor">{{ currentAppState }}</el-text>
+          <!-- Maybe add < br> < pre > { { currentAppStateObject } } /< pre >. -->
         </template>
         <template v-if="action === 'setup'">
           <el-form :label-width="mq.isMobile.value ? '' : '180px'" :label-position="mq.isMobile.value ? 'top' : 'left'" class="w-100">
@@ -95,7 +96,9 @@
 <script setup lang="ts">
   import type { UploadInstance, UploadProps, UploadUserFile } from 'element-plus'
   import { useNotification } from '~/composables/mixins/useComponent'
+import { useMBus } from '~/composables/mixins/useMessagebus';
   const { notifySuccess, notifyError } = useNotification()
+
 
   interface AppState {
     type: string
@@ -125,12 +128,14 @@
   const $t = useI18n().t
   const mq = useMQ()
   const currentAppState = ref('')
+  const currentAppStateObject = ref<any>()
   const isLoading = ref({ applicationState: false, createBackup: false, restoreBackup: false })
   const newAppState = ref<AppState>({ type: '', address_exceptions: [], retry_after: 0 })
   const uploadFileRef = ref<UploadInstance>()
   const files = ref<UploadUserFile[]>()
   const ERRORTEXT = $t('message.error.fetch')
   const UPLOADURL = useFullUrlPath('/file-transfer/multipart', '')
+  const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 
   onMounted(async () => {
     await fetchAppState()
@@ -145,6 +150,15 @@
     return 'danger'
   })
 
+
+  async function wsBusMsgObjectChanged(msg: any = undefined) {
+    if (msg && msg.channel === 'event:app_state_changed') {
+      console.warn('message bus: ', msg)
+      console.warn('message bus: ', msg.data.state)
+      currentAppState.value = msg.data.state.type
+      currentAppStateObject.value = msg.data.state
+    }
+  }
 
   const handleChangeFile: UploadProps['onChange'] = (uploadFile, uploadFiles) => {
     files.value = uploadFiles.slice(-1) // limit to one file
@@ -166,6 +180,7 @@
       return
     }
     currentAppState.value = data.value.type
+    currentAppStateObject.value = data.value
     isLoading.value.applicationState = false
   }
 
