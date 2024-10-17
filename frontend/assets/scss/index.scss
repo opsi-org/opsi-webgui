@@ -2,6 +2,9 @@
 @use './themes/light.scss' as light;
 @use './themes/dark.scss' as dark;
 
+/* Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+
 /* General Colors */
 $white: #ffffff;
 $black: #000000;
@@ -10,6 +13,8 @@ $black: #000000;
 html body {
   background-color: var(--color-background);
   color: var(--color-text);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
 
   /* Element Plus Variables */
   --el-text-color-regular: var(--color-text);
