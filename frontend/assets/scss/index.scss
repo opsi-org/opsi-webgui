@@ -1,6 +1,9 @@
-@import './opsi.scss';
-@import './themes/light.scss';
-@import './themes/dark.scss';
+@use './opsi.scss' as opsi;
+@use './themes/light.scss' as light;
+@use './themes/dark.scss' as dark;
+
+/* Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
 
 /* General Colors */
 $white: #ffffff;
@@ -10,6 +13,8 @@ $black: #000000;
 html body {
   background-color: var(--color-background);
   color: var(--color-text);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
 
   /* Element Plus Variables */
   --el-text-color-regular: var(--color-text);
@@ -18,7 +23,7 @@ html body {
   --el-border-color: var(--border);
   --el-border-color-light: var(--border);
   --el-border-color-lighter: var(--border);
-  --el-color-primary: #{$opsi-blue};
+  --el-color-primary: #{opsi.$opsi-blue};
   --el-bg-color: var(--color-background);
   --el-bg-color-overlay: var(--color-background);
   --el-fill-color-light: var(--hover);
@@ -43,19 +48,19 @@ html .text-white {
 
 .bg-opsi-blue {
   --el-color-primary: $white;
-  --el-border-color: #{$opsi-medium-gray};
-  --el-border-color-light: #{$opsi-gray};
-  --el-text-color-placeholder: #{$opsi-medium-gray};
-  --color-background: $opsi-blue;
+  --el-border-color: #{opsi.$opsi-medium-gray};
+  --el-border-color-light: #{opsi.$opsi-gray};
+  --el-text-color-placeholder: #{opsi.$opsi-medium-gray};
+  --color-background: opsi.$opsi-blue;
   --color-text: $white;
-  --el-disabled-bg-color: #{$opsi-blue};
-  --el-disabled-text-color: #{$opsi-medium-gray};
-  background-color: $opsi-blue;
+  --el-disabled-bg-color: #{opsi.$opsi-blue};
+  --el-disabled-text-color: #{opsi.$opsi-medium-gray};
+  background-color: opsi.$opsi-blue;
   color: $white;
 
   &.el-card {
-    --el-fill-color-blank: #{$opsi-blue};
-    --el-card-bg-color: #{$opsi-blue};
+    --el-fill-color-blank: #{opsi.$opsi-blue};
+    --el-card-bg-color: #{opsi.$opsi-blue};
     border: none;
   }
 
@@ -66,9 +71,9 @@ html .text-white {
   .el-menu-item:hover,
   &.el-menu--collapse .el-sub-menu.is-active .el-sub-menu__title,
   &.el-menu--collapse .el-sub-menu.is-active .el-sub-menu__title:hover {
-    --el-menu-bg-color: #{$opsi-blue};
+    --el-menu-bg-color: #{opsi.$opsi-blue};
     --el-menu-text-color: #{$white};
-    background-color: $opsi-blue;
+    background-color: opsi.$opsi-blue;
   }
 
   &.el-menu {
@@ -86,25 +91,25 @@ html .text-white {
   .el-sub-menu.is-active,
   .el-sub-menu__title.is-active,
   .el-sub-menu__title:hover {
-    background-color: $opsi-deep-blue;
+    background-color: opsi.$opsi-deep-blue;
     color: $white;
   }
 
   .el-checkbox-button__inner,
   .el-button {
-    background-color: $opsi-blue;
+    background-color: opsi.$opsi-blue;
     color: $white;
   }
 
   .el-button:hover {
-    background-color: $opsi-deep-blue;
+    background-color: opsi.$opsi-deep-blue;
     color: $white;
   }
 }
 
 /* Tabs */
 html .el-tabs__item.is-active {
-  background-color: $opsi-blue;
+  background-color: opsi.$opsi-blue;
   color: $white;
 }
 
@@ -115,7 +120,7 @@ html .el-tabs__item:hover {
 
 /* Buttons */
 html .el-button:hover {
-  background-color: $opsi-blue;
+  background-color: opsi.$opsi-blue;
   color: $white;
 }
 

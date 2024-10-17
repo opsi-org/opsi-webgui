@@ -69,17 +69,17 @@
 
     <div v-if="props.event=='deployclientagent'">
       <el-form label-width="120px">
-        <el-form-item :label="$t('form.clientId')" ><el-input class="border-0" disabled :placeholder="id"/></el-form-item>
-        <el-form-item :label="$t('form.username')" ><el-input class="border-0" v-model="events.deployclientagent.params.user" /></el-form-item>
+        <el-form-item :label="$t('form.clientId')" ><el-input  disabled :placeholder="id"/></el-form-item>
+        <el-form-item :label="$t('form.username')" ><el-input v-model="events.deployclientagent.params.user" /></el-form-item>
         <el-form-item :label="$t('form.password')" class="flex">
-          <el-input class="border-0" v-model="events.deployclientagent.params.password" :type="(events.deployclientagent.params.passwordVisible) ? 'password' : ''" >
+          <el-input v-model="events.deployclientagent.params.password" :type="(events.deployclientagent.params.passwordVisible) ? 'password' : ''" >
 
             <template #append>
               <el-button @click="events.deployclientagent.params.passwordVisible = !events.deployclientagent.params.passwordVisible" class="text-on-primary"> <IconIIcon :icon="events.deployclientagent.params.passwordVisible ? icon.valueHide : icon.valueShow"/></el-button>
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('form.type')" ><el-input class="border-0" v-model="events.deployclientagent.params.type" /></el-form-item>
+        <el-form-item :label="$t('form.type')" ><el-input v-model="events.deployclientagent.params.type" /></el-form-item>
       </el-form>
     </div>
 

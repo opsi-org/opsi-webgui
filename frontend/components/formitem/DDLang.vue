@@ -1,7 +1,7 @@
 <template>
   <el-dropdown
     id="quicksettingsDD"
-    :class="footer ? 'border-0' : 'border'"
+    :class="footer ? '!border-none' : 'border'"
     @command="$i18n.locale = $event"
   >
     <IconIIcon :icon="icon.language"/>

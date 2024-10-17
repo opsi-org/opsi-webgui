@@ -7,13 +7,12 @@
     data-testid="BTNLogout"
   >
     <template #reference>
-      <!-- bg-opsi-blue h-full max-h-full min-h-full border-0 rounded-none -->
       <el-button
+        class="!border-none"
         :class="{
           'min-h-full': true,
           [btnClass]: true
         }"
-        style="border: none"
       >
         <IconIIcon :icon="icon.logout" />
         <p v-if="isMobile" class="pt-3 ml-1">{{ $t('button.logout') }}</p>

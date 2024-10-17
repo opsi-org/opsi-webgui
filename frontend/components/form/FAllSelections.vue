@@ -6,7 +6,7 @@
         <b class="pr-2"> {{ $t('title.' + category.toLowerCase()) }} </b>
         <el-button
           size="small"
-          class="border-0 !p-1 m-auto !d-inline"
+          class="!border-none !p-1 m-auto !d-inline"
           :title="$t('tree.selection.clear.all')"
           :disable="storeSelection['selection' + category].length <= 0">
           <span class="sr-only">{{ $t('button.deselect') }}</span>
@@ -27,7 +27,7 @@
             <p class="pr-8">{{ item }}</p>
             <el-button
               size="small"
-              class="border-0 !p-1 absolute top-0 right-0"
+              class="!border-none !p-1 absolute top-0 right-0"
               :title="$t('tree.selection.clear.one', {id: item})"
               >
               <span class="sr-only">{{ $t('button.deselect') }}</span>

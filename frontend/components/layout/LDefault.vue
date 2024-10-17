@@ -48,7 +48,7 @@
         >
           <el-scrollbar
             :class="{
-              'w-full max-w-full right-0 opacity-100 justify-self-end border-0 p-2': true,
+              'w-full max-w-full right-0 opacity-100 justify-self-end !border-none p-2': true,
               'max-w-full z-30': mq.isMobile.value,
             }"
           >
