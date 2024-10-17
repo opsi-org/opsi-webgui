@@ -15,7 +15,7 @@
       data-testid="DropdownDDLang"
       :aria-label="$t('button.lang.tooltip')"
       :title="$t('button.lang.tooltip')"
-      :variant="footer? 'primary border-0' : 'outline-primary'"
+      :variant="footer? 'primary !border-none' : 'outline-primary'"
       size="sm"
       :dropup="footer"
     >

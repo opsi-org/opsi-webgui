@@ -3,7 +3,7 @@
     <section class="mb-4">
       <header class="flex justify-between items-center mb-2">
         <el-text tag="b" size="small">{{ $t('label.quickselect') }}</el-text>
-        <el-button size="small" class="border-0 p-1" @click="storeSelection.clearAllSelection">
+        <el-button size="small" class="!border-none p-1" @click="storeSelection.clearAllSelection">
           <IconIIcon :icon="icons.reset" />
           <span class="sr-only">{{ $t('button.resetAll') }}</span>
         </el-button>

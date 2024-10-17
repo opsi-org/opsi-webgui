@@ -20,7 +20,7 @@
       ref="sortdropdown"
       size="sm"
       data-testid="DropdownDDTableSorting"
-      class="DDTableSorting border-0"
+      class="DDTableSorting !border-none"
       :variant="incontextmenu !== false ? undefined : 'outline-primary'"
       :no-caret="incontextmenu === false"
       :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
