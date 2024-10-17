@@ -38,7 +38,7 @@
       :filter-method="filterStatus"
     >
       <template #default="scope">
-      <el-tag :type="getType(scope.row.status)" class="text-capitalize">{{ scope.row.status }}</el-tag>
+      <el-tag effect="dark" :type="getType(scope.row.status)" class="text-capitalize">{{ scope.row.status }}</el-tag>
       </template>
     </el-table-column>
 
