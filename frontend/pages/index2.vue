@@ -25,7 +25,7 @@ const { notifyError } = useNotification()
 const $t = useI18n().t
 const mq = useMQ()
 // user/configuration
-const authStore = storeAuth()
+// const authStore = storeAuth()
 const fetchResult = ref({});
 onMounted( async () => {
   // const { data, error } = await useAPI('/user/configuration').get().json()

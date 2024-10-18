@@ -1,4 +1,5 @@
 <template>
+  <div>
   <el-dropdown trigger="click">
     <el-button class="ml-0">
       <IconIIcon :icon="getIcon(props.icon)" :title="$t('button.tablerow.moreoptions')" />
@@ -6,16 +7,20 @@
     <template #dropdown>
       <el-dropdown-menu>
         <div v-for="action in clientActions" :key="action" :data-testid="`client-action-${action}`">
-          <el-popover :width="mq.isMobile.value ? '100%' : '360px'" trigger="click" v-model="popoverVisible">
+          <el-popover :width="mq.isMobile.value ? '100%' : '360px'" trigger="click" v-model="popoverVisible" placement="left">
             <template #reference>
-              <el-button size="small" class="w-full text-left" :data-testid="`popover-${action}-button`">
-                ><IconIIcon :icon="getIcon(action)" class="mr-1" />
-                {{ $t('label.' + action) }}
+              <el-button
+                class="w-full !text-left !inline !border-0"
+                :data-testid="`popover-${action}-button`"
+              >
+                <IconIIcon :icon="getIcon(action)" class="mr-1" />
+                {{ $t('button.event.' + action) }}
               </el-button>
             </template>
-            <el-text tag="b">{{ $t('label.' + action) }}</el-text> -
+            <el-text tag="b">{{ $t('button.event.' + action) }}</el-text> -
             <el-text tag="i">{{ props.clientIds[0] }}</el-text>
-            <el-text v-if="props.clientIds.length > 1">+{{ props.clientIds.length - 1 }}</el-text>
+            <el-text v-if="props.clientIds.length>1" > {{ ' ' + $t('button.event.items.other', { count: props.clientIds.length - 1 }) }}</el-text>
+
             <el-form label-position="top" class="mt-3" v-loading="isLoading">
               <el-form-item v-if="action == 'notify'" :label="$t('button.event.showpopup.message')">
                 <el-input v-model="notifyText" class="w-100" />
@@ -39,7 +44,7 @@
                 :data-testid="`popover-${action}`"
                 @click="executeClientAction(action)"
               >
-                {{ $t('label.' + action) }}
+                {{ $t('button.event.' + action) }}
               </el-button>
             </el-form>
           </el-popover>
@@ -47,6 +52,8 @@
       </el-dropdown-menu>
     </template>
   </el-dropdown>
+  </div>
+
 </template>
 
 <script setup lang="ts">

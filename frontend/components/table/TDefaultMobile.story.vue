@@ -26,7 +26,7 @@ const data = generateData(columns, 15, '', page.value)
         row-id="column-0"
         v-model:columns="columns"
         v-model:data="data"
-        :table-data="tableData"
+        v-model:tabledata="tableData"
         :sort-by="undefined"
         :fetch="(page: any) => generateData(columns, 10, '', page.value)"
         @selection-changed="(id: string) => {}"

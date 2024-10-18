@@ -110,7 +110,9 @@ function createUserFormData() {
 }
 
 async function doLogin () {
-  if (!validUsername || !validPassword) return
+  if (validUsername.value === false || validPassword.value === false) {
+    useNotification().notifyError({ message: $t('message.error.invalid-username-password') })
+    return}
   isLoading.value = true
 
   try {
@@ -130,7 +132,7 @@ async function doLogin () {
     }
     handleSuccessfulLogin()
   } catch (error) {
-    notifyError({ message: $t('message.error.unexpected') })
+    notifyError({ message: error || $t('message.error.unexpected') })
   } finally {
     isLoading.value = false
   }

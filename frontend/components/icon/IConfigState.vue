@@ -40,7 +40,8 @@ const anyObjectDifferentFromDefault = computed(()=>{
 
   const objectsValues:Array<Array<any>> = Object.values(props.item[props.objectKey])
   const objectsValuesStrings:Array<string> = []
-  objectsValues.forEach((value: any, index: number, wholearray: any[])=> {
+  objectsValues.forEach((value: any)=> {
+  // objectsValues.forEach((value: any, index: number, wholearray: any[])=> {
     if (value.length > 0){
       const sorted = [...value]
       sorted.sort()

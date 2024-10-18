@@ -1,6 +1,6 @@
 export interface IObjectString2Function {
-  // x = {'foo': () => { doSth() })}
-  [key: string]: Function
+  [key: string]: () => void
+  // [key: string]: Function
 }
 
 export interface IObjectString2Any {

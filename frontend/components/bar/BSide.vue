@@ -110,6 +110,6 @@
 
   watch(isCollapse, (val) => emit('changeSmall', val))
 
-  const isSelected = (item: INavItem) => item.route && router.currentRoute.value?.fullPath.includes(item.route)
+  // const isSelected = (item: INavItem) => item.route && router.currentRoute.value?.fullPath.includes(item.route)
   const showTitle = computed(() => mq.isMobile.value || !isCollapse.value)
 </script>

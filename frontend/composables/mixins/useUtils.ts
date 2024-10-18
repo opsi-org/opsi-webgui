@@ -21,7 +21,7 @@ export const useUtils = () => {
 }
 export const useUtilsEvents = () => {
 
-  function debounce(fn: Function, wait: number) {
+  function debounce(fn: (...args: any[]) => void, wait: number): (...args: any[]) => void {
   let timer: any;
    return function(...args: any[]){
      if(timer) {

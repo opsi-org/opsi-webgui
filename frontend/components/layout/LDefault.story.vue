@@ -1,10 +1,10 @@
 <script setup lang="ts">
 
-function initMobile(data: any) {
+function initMobile() {
   const settings = storeSettings()
   settings.setIsMobile(true)
 }
-function initDesktop(data: any) {
+function initDesktop() {
   const settings = storeSettings()
   settings.setIsMobile(false)
 }

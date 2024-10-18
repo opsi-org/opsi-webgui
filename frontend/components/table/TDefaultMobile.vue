@@ -17,7 +17,7 @@
     <el-collapse v-model="collapseRowIdValue" accordion>
       <PVirtualScroller :items="dataModel" :item-size="50" class="w-full h-[39rem] maxVisibleNoOverflow" >
       <!-- style="width: 200px; height: 200px" -->
-        <template #item="{ item, options }">
+        <template #item="{ item }">
             <!-- <div :class="['flex align-items-center p-2', { 'surface-hover': options.odd }]" style="height: 50px">{{ item }}</div> -->
             <el-collapse-item :name="item[props.rowId]">
               <template #title>
@@ -62,7 +62,7 @@
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 
-import {TableV2FixedDir, type CheckboxValueType, type Column } from 'element-plus'
+import {TableV2FixedDir, type CheckboxValueType } from 'element-plus'
 import type { ITableHeaderCell, ITableHeaderRow } from '~/types/ttableV3'
 import type { ITableData } from '../../types/ttable'
 const tableStore = storeTablesettings()
@@ -154,9 +154,11 @@ const Details = (params: any): VNode => {
 
 const columnsModel = defineModel<ITableHeaderRow>('columns', { required:true})
 const dataModel = defineModel<Array<any>>('data', { required:true})
+const tableData = defineModel<ITableData>('tabledata', { required:true})
+
 const props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
-  tableData: { type: Object as PropType<ITableData>, required:true },
+  // tableData: { type: Object as PropType<ITableData>, required:true },
   rowId: { type: String, default: 'depotId'},
   data: { type: Array<any>, required:true},
   id: { type: String, default: 'servers' },
@@ -219,11 +221,11 @@ function updateColumns() {
   }
   return _columns
 }
-function updateData() {
-  if (dataModel === undefined) return []
-  const _data = dataModel
-  return _data
-}
+// function updateData() {
+//   if (dataModel.value === undefined) return []
+//   const _data = dataModel
+//   return _data
+// }
 
 </script>
 

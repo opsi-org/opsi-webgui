@@ -1,8 +1,14 @@
 import { encode, decode } from '@msgpack/msgpack'
 import { useNotification } from './useComponent'
-import _ from 'lodash'
+
 const { notifyInfo, notifySuccess, notifyWarning, notifyError } = useNotification()
-export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifications=false, _t: any=undefined, _channels: any = []) => {
+
+export const useMBus = (
+  watchFn: ((msg: any) => Promise<void>) | undefined = undefined,
+  showStartNotifications=false,
+  _t: any=undefined,
+  _channels: any = []
+) => {
   const $config = useRuntimeConfig()
   let url_host = ""
   let $t = _t
@@ -64,11 +70,11 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
 
   async function wsInit (reconnect: boolean = false) {
     if (!reconnect && wsIsConnected.value) {
-      wsNotification('already connecting/connected', wsBus.value)
+      // wsNotification('already connecting/connected', wsBus.value)
       return
     }
 
-    wsNotification('connecting')
+    // wsNotification('connecting')
     const host = window.location.hostname
     const port = (process.env.NODE_ENV === 'production') ? window.location.port : (Number(($config as any).public.OPSICONFD_PORT) || 4447)
     url_host = 'wss://' + host + ':' + port + '/messagebus/v1?'
@@ -130,7 +136,7 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
   }
 
   function wsSubscribeChannel (channels: Array<string>) {
-    wsNotification(url_host + '  subscribe: ',  channels)
+    // wsNotification(url_host + '  subscribe: ',  channels)
     const message = wsCreateMsgTemplate()
     message.type = 'channel_subscription_request'
     message.channel = 'service:messagebus'
@@ -220,9 +226,9 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
     console.debug('MessageBus:', text, data)
   }
 
-  function wsNotificationInfo (text: any, data: any = '') {
-    notifyInfo({ title: $t('message.info.event'), message: text + ' ' + data})
-  }
+  // function wsNotificationInfo (text: any, data: any = '') {
+  //   notifyInfo({ title: $t('message.info.event'), message: text + ' ' + data})
+  // }
 
   function wsNotificationWarn (text: any, data: any = '') {
     notifyWarning({ message: text + ' ' + data})

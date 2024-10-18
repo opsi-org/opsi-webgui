@@ -2,6 +2,20 @@
 
 import type { CheckboxValueType, Column } from 'element-plus'
 
+// export type ITableHeaderCell = {
+//   label: string,
+//   key: string,
+//   visible: boolean,
+//   sortable?: boolean,
+//   _fixed?: boolean,
+//   _isMajor?: boolean,
+//   disabled?: boolean,
+//   _majorKey?: string,
+//   class?: string,
+//   variant?: string,
+//   stickyColumn?: boolean
+//   mergeOnMobile?: boolean
+// }
 export type ITableHeaderCell = Column<any>
 
 export interface ITableHeaderRow {

@@ -5,7 +5,7 @@
 const loggedIn = ref(false)
 export async function logout()  {
   if (!loggedIn.value) return
-  const { data, error } = await useApiPOST('/auth/logout')
+  const { error } = await useApiPOST('/auth/logout')
   if (error?.response.data.message === 'Unauthorized') {
     loggedIn.value = false
     storeAuth().logout()

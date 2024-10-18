@@ -18,7 +18,7 @@ export const useMQ = () => {
       if (!_isMediumScreen.value && !_isLargeScreen.value) { return 'mobile'}
       return 'nth'
     },
-    set: (x) => { console.error('Forbidden to set $mq.') }
+    set: () => { console.error('Forbidden to set $mq.') }
   });
   return { $mq, isPreferredDark, isMobile }
  }

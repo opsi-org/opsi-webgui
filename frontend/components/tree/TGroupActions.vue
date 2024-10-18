@@ -31,13 +31,13 @@
       :expand-on-click-node="false"
       highlight-current
     >
-      <template #default="{ node, data }">
+      <template #default="{ node, data: defdata }">
         <span>{{ node.label }}</span>
         <div class="ml-auto" v-if="node.label !== 'not_assigned'">
           <span
             :key="node.label+action"
             v-for="action in
-            (data.type == 'ObjectToGroup' ? props.data.actions.children
+            (defdata.type == 'ObjectToGroup' ? props.data.actions.children
             : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
             )"
           >
@@ -75,7 +75,9 @@
                   <el-form-item :label="$t('label.selectChildren')">
                     <el-scrollbar height="300px" class="border w-100 p-2">
                       <el-checkbox-group v-model="selectedChildren">
-                        <div v-for="item in idList" :key="item"> <el-checkbox size="small" :value="item" /> </div>
+                        <div v-for="item in idList" :key="item">
+                          <el-checkbox size="small" :value="item" />
+                        </div>
                       </el-checkbox-group>
                     </el-scrollbar>
                   </el-form-item>
@@ -196,7 +198,11 @@ onMounted(async ()=> {
 })
 
 async function refetchGroup () {
-  props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
+  if (props.data.category == 'client-group') {
+    await fetchClientGroups()
+  } else {
+    await fetchProdGroups()
+  }
 }
 
 async function fetchClientGroups() {
@@ -206,15 +212,19 @@ async function fetchClientGroups() {
     return
   }
     // TODO: Backend: change groups data structure
-  fetchedData.value = data.value  ?
-                              Object.entries(data.value).map(([label, obj] : any ) => ({ ...obj,
-                                children: Object.entries(obj.children || {}).map(([labelA, objA] : any ) =>
-                                ({ ...objA, children: Object.values(objA.children || {})}))}))
-                              : []
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  fetchedData.value = data.value  ? Object.entries(data.value).map(([label, obj] : any ) => (
+    { ...obj,
+      children: Object.entries(obj.children || {}).map(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ([labelA, objA] : any ) => ({ ...objA, children: Object.values(objA.children || {})})
+      )
+    }
+  )) : []
 }
 
 async function fetchClientList () {
-  idList.value = await useClient($t).getClientIdList(storeSelection.selectionDepots)
+  idList.value = await useClient().getClientIdList(storeSelection.selectionDepots)
 }
 
 async function fetchProdGroups() {
@@ -228,8 +238,9 @@ async function fetchProdGroups() {
   }
   // TODO: Backend: change groups data structure
   fetchedData.value = data.value.groups ?
-                        Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
-                        : []
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
+      : []
 }
 
 async function fetchProductList() {
@@ -247,7 +258,7 @@ async function fetchProductList() {
 async function createSubGroup (parent: string) {
   createGroup.parentGroupId = parent
   const url = props.data.category == 'client-group' ? '/opsidata/hosts/groups' : '/opsidata/products/groups'
-  const {data, error } = await useApiPOST(url, createGroup)
+  const {error } = await useApiPOST(url, createGroup)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
@@ -259,7 +270,7 @@ async function createSubGroup (parent: string) {
 
 async function addChildren (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}/clients` : `/opsidata/products/groups/${selectedGroup}/products`
-  const {data, error } = await useApiPOST(url, selectedChildren.value)
+  const {error } = await useApiPOST(url, selectedChildren.value)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
@@ -271,7 +282,7 @@ async function addChildren (selectedGroup: string) {
 
 async function deleteAllChildren (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}/clients` : `/opsidata/products/groups/${selectedGroup}/products`
-  const {data, error } = await useApiDELETE(url)
+  const {error } = await useApiDELETE(url)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
@@ -292,7 +303,7 @@ async function applyDelete (selectedNode: string, nodeType: string, parent: stri
 async function deleteGroup (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}` : `/opsidata/products/groups/${selectedGroup}`
   // TODO: Backend: change product group deletion to DELETE
-  const {data, error } = props.data.category == 'client-group' ? await useApiDELETE(url) : await useApiGET(url)
+  const {error } = props.data.category == 'client-group' ? await useApiDELETE(url) : await useApiGET(url)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
@@ -306,7 +317,7 @@ async function deleteObjectToGroup (selectedChild: string, parent: string) {
   // TODO: Backend: Change the client deletion URL in the same way as product deletion from group
   const url = props.data.category == 'client-group' ? `/opsidata/clients/${selectedChild}/groups` : `/opsidata/products/groups/${parent}/${selectedChild}`
   const body = props.data.category == 'client-group' ? [parent] : {}
-  const {data, error} = await useApiDELETE(url, body)
+  const {error} = await useApiDELETE(url, body)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
@@ -318,7 +329,7 @@ async function deleteObjectToGroup (selectedChild: string, parent: string) {
 
 async function editGroup (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}` : `/opsidata/products/groups/${selectedGroup}`
-  const {data, error } = await useApiPUT(url, editgroup)
+  const {error } = await useApiPUT(url, editgroup)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return

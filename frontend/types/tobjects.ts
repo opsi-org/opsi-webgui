@@ -69,11 +69,11 @@ export interface Group {
   hasAnySelection?: boolean
   children?: null | Array<any>
 }
-export interface StoreSelection {
-  selection: Array<string>
-  pushSelection: Function
-  delSelection: Function
-}
+// export interface StoreSelection {
+//   selection: Array<string>
+//   pushSelection: Function
+//   delSelection: Function
+// }
 
 export interface IMenuItem {
   title:string

@@ -1,15 +1,15 @@
-@import '../opsi.scss';
+@use '../opsi.scss' as opsi;
 
 html {
-  --color-background: #{$opsi-base-light-background};
-  --color-text: #{$opsi-base-light-text};
-  --hover: #{$opsi-light-gray};
-  --border: #{$opsi-medium-gray};
-  --placeholder: #{$opsi-gray};
+  --color-background: #{opsi.$opsi-base-light-background};
+  --color-text: #{opsi.$opsi-base-light-text};
+  --hover: #{opsi.$opsi-light-gray};
+  --border: #{opsi.$opsi-medium-gray};
+  --placeholder: #{opsi.$opsi-gray};
 }
 
 /* Switch */
 html .el-switch {
-  --el-switch-on-color: #{$opsi-blue};
-  --el-switch-off-color: #{$opsi-medium-gray};
+  --el-switch-on-color: #{opsi.$opsi-blue};
+  --el-switch-off-color: #{opsi.$opsi-medium-gray};
 }

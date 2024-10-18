@@ -1,6 +1,6 @@
 import { ElNotification } from 'element-plus'
 import { _getI18nInComposable } from './helper-i18n'
-import { h } from 'vue'
+import { h, type VNode } from 'vue'
 
 interface NotificationOptions {
   title?: string
@@ -10,6 +10,9 @@ interface NotificationOptions {
   onClose?: () => void
   button?: { label: string; onClick: () => void }
 }
+
+type ElNotificationType = 'success' | 'error' | 'warning' | 'info'
+type NotificationType = 'success' | 'error' | 'warning' | 'info' // | 'loading'
 
 export function useNotification() {
   const notifications = ref<any[]>([])
@@ -35,46 +38,65 @@ export function useNotification() {
     return message
   }
 
-  const createNotification = (type: 'success' | 'error' | 'warning' | 'info') => {
+  const _createNotificationContent = (type: NotificationType, button: any, message: any) => {
+    const itemsInNotification = [formatMessage(message),]
+    if (button) {
+      itemsInNotification.push(h('button',
+        {
+          onClick: button.onClick,
+          style: {
+            display: 'block',
+            width: '100%',
+            border: '1px solid #000',
+            cursor: 'pointer',
+          },
+        },
+        button.label
+      ))
+    }
+    const notificationViewItems = h('div', {}, itemsInNotification)
+    return notificationViewItems
+  }
+  const _createNotificationElInstance = (
+      instanceType: ElNotificationType,
+      useMsgAsHtml: boolean,
+      notificationViewItems: VNode,
+      autoHideDuration: number,
+      title: string,
+      showClose = true,
+      onClose: (() => void)| undefined
+  ) => {
+    const notificationInstance = ElNotification[instanceType]({
+      title,
+      dangerouslyUseHTMLString: useMsgAsHtml,
+      message: notificationViewItems,
+      showClose,
+      duration: autoHideDuration,
+      onClose: () => {
+        notifications.value = notifications.value.filter((n: any) => n !== notificationInstance)
+        if (onClose) onClose()
+        if (notifications.value.length <= 3 && clearAllNotification.value) {
+          clearAllNotification.value.close()
+          clearAllNotification.value = null
+        }
+      }
+    })
+    return notificationInstance
+  }
+  const createNotification = (type: NotificationType) => {
     return ({ title, message = '', showClose = true, duration, onClose, button }: NotificationOptions) => {
-      const customMessage = button
-        ? h('div', {}, [
-            formatMessage(message),
-            h(
-              'button',
-              {
-                onClick: button.onClick,
-                style: {
-                  display: 'block',
-                  width: '100%',
-                  border: '1px solid #000',
-                  cursor: 'pointer',
-                },
-              },
-              button.label
-            ),
-          ])
-        : formatMessage(message)
+      const notificationViewItems = _createNotificationContent(type, button, message)
 
       const autoHideDuration = type === 'success' ? duration ?? 8000 : 0
       if (type === 'error') {
         console.error('NotificationError:', title, message)
       }
-      const notificationInstance = ElNotification[type]({
-        title,
-        message: customMessage,
-        showClose,
-        duration: autoHideDuration,
-        onClose: () => {
-          notifications.value = notifications.value.filter((n: any) => n !== notificationInstance)
-          if (onClose) onClose()
-          if (notifications.value.length <= 3 && clearAllNotification.value) {
-            clearAllNotification.value.close()
-            clearAllNotification.value = null
-          }
-        },
-      })
-
+      // const instanceType = type === 'loading' ? 'info' : (type as ElNotificationType)
+      // const useMsgAsHtml = type === 'loading'
+      const notificationInstance = _createNotificationElInstance(
+        type, false, notificationViewItems,
+        autoHideDuration, title ?? type, showClose, onClose
+      )
       notifications.value.push(notificationInstance)
 
       if (notifications.value.length > 3 && !clearAllNotification.value) {
@@ -98,6 +120,7 @@ export function useNotification() {
           position: 'bottom-right',
         })
       }
+      return notificationInstance
     }
   }
 
@@ -106,6 +129,7 @@ export function useNotification() {
     notifyError: createNotification('error'),
     notifyWarning: createNotification('warning'),
     notifyInfo: createNotification('info'),
+    // notifyLoading: createNotification('loading'),
   }
 }
 

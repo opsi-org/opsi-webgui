@@ -2,7 +2,8 @@
   // import { useConfigserver } from '~/composables/mixins/useGet';
   // import { loginlogout } from '~/histoire/histoire-utils';
   // const store = ref<any>({ selectionDepots: [] })
-  async function init(data: any) {
+  async function init() {
+  // async function init(data: any) {
     // await loginlogout(data)
     // await useConfigserver(true, store)
   }

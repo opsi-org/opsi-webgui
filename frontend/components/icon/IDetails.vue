@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 // import type { BaseColorVariant } from 'bootstrap-vue-next/dist/src/types';
-import type { EpPropMergeType } from 'element-plus/es/utils';
+// import type { EpPropMergeType } from 'element-plus/es/utils';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useStrings } from '~/composables/mixins/useStrings';
 import type { ElTypeVariant } from '~/types/LibComponentTypes'

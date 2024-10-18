@@ -1,13 +1,4 @@
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
-import { useDark, useToggle } from '@vueuse/core'
-
-import type { ITheme } from '@/types/tsettings'
-import type { IObjectString2Boolean } from '@/types/tgeneral'
-import type { IColumnLayoutCollapsed } from '@/types/tobjects'
-import { useIcons } from '~/composables/mixins/useIcons'
-import _ from 'lodash'
-
 
 export const storeSettings = defineStore('settings', {
   // persist: false,
@@ -33,7 +24,7 @@ export const storeSettings = defineStore('settings', {
     // quickpanelOpened: (state: any) => state._quickpanelOpened,
     // menuCollapsed: (state: any) => state._menuCollapsed,
     // expiresInterval: (state: any) => state._expiresInterval,
-    colormodeCookie: (state: any) => useCookie('colormode').value,
+    colormodeCookie: () => useCookie('colormode').value,
     colormode: (getter: any) => {
       const _colormode = getter.colormodeCookie
       return _colormode as 'light'|'dark'

@@ -20,9 +20,15 @@
           <div class="min-w-48">
             <b>{{props.item[props.idKey]}} <br></b>
             {{props.item.description}} <br> <br>
-            <p v-if="props.item.value !== undefined"><b>Config Value/s:</b> <pre>{{ props.item.value }}</pre> </p>
-            <p v-if="props.item.defaultValues !== undefined"><b>Default Value/s:</b>  <pre>{{ props.item.defaultValues }} </pre></p>
-            <p v-if="props.item.objects !== undefined"><b>Object Value/s:</b> <pre>{{ props.item.objects }} </pre></p>
+            <div v-if="props.item.value !== undefined">
+              <b>{{$t('form.config.value')}}</b> <pre>{{ props.item.vae }}</pre>
+            </div>
+            <div v-if="props.item.defaultValues !== undefined">
+              <b>{{$t('form.config.defaultvalue')}}</b>  <pre>{{ props.item.defaultValues }} </pre>
+            </div>
+            <div v-if="props.item.objects !== undefined">
+              <b>{{$t('form.config.objectvalue')}}</b> <pre>{{ props.item.objects }} </pre>
+            </div>
 
             <!-- <pre>
               {{ props.item }}
@@ -80,7 +86,7 @@
               <el-tooltip
                 class="box-item"
                 effect="dark"
-                :content="'This config is editable. Press <Enter> or click on item to add and select'"
+                :content="$t('form.item.editable')"
                 placement="top-start"
               >
                 <el-text><IconIIcon :icon="icons.add" /></el-text>
@@ -124,7 +130,8 @@ const setInitialValue = () => {
     if (props.item.multiValue) {
       const objectValues: Array<Array<any>> = Object.values(props.item.objects)
 
-      objectValues.forEach((value: any, index: number, wholearray: any[])=> {
+      // objectValues.forEach((value: any, index: number, wholearray: any[])=> {
+      objectValues.forEach((value: any)=> {
         if (value.length > 0){
           const sorted = [...value]
           sorted.sort()

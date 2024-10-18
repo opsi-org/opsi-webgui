@@ -28,7 +28,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useMBus } from '~/composables/mixins/useMessagebus';
 import { useSaveParameters } from '~/composables/mixins/useSave';
-import type { T_ClientAttr, T_HostParameter, T_ServerAttr } from '~/types/APItypes'
+import type { T_HostParameter } from '~/types/APItypes'
 const { notifyError, notifyInfo } = useNotification()
 const $t = useI18n().t
 const isLoading = ref(true)
@@ -44,7 +44,7 @@ const props = defineProps({
 function handleCollapseValueChange (val: any) {
   activeNames.value = val
 }
-function changeItem (item: any, val: any, index: number) {
+function changeItem (item: any, val: any) {
   if (item == undefined) return
   if (val == undefined) return
 
@@ -66,7 +66,7 @@ watch(()=>props.id, async ()=>{
 })
 
 const channels = ['event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted']
-const msgbus = useMBus(wsBusMsgObjectChanged, false, $t, channels)
+const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t, channels)
 async function wsBusMsgObjectChanged(msg: any = undefined) {
     if (msg && channels.includes(msg.channel)) {
       // console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
@@ -75,8 +75,10 @@ async function wsBusMsgObjectChanged(msg: any = undefined) {
               (lastSavedData.value.objectIds.length === 0 && msg.data.isDefault === true)
             )
       )) {
-        notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.config_updated', { configId: msg.data.configId }),
-          button: { label: $t('label.reloadPage'), onClick() { $fetch } } })
+        notifyInfo({
+          title: $t('message.info.event'),
+          message: $t('message.info.event.config_updated', { configId: msg.data.configId }),
+          button: { label: $t('label.reloadPage'), onClick: fetch } })
       }
     }
   }
@@ -93,7 +95,7 @@ async function wsBusMsgObjectChanged(msg: any = undefined) {
 //   } else if (props.type === 'clients') {
 //     const {data, error} = await useApiGETBody(`/opsidata/hosts?hosts=${id}`)
 
-//     // const {data, error} = await useClient($t).getClientIdList(storeSel.selectionDepots)
+//     // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
 //     if (error) {
 //       console.error(error)
 //       useNotification($t).error(error)

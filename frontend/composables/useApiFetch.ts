@@ -20,7 +20,7 @@ interface terror {
 
 interface ApiResult<T> {readonly pending: Ref<boolean>, readonly data: Ref<T|undefined>, readonly error: terror|undefined, readonly headers: IObjectString2Any, readonly status: number}
 
-function define_vars<T>(prePath: string|undefined, url: string) {
+function define_vars<T>(prePath: string|undefined) {
   const config = useRuntimeConfig()
   const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE
   const basePath: string = prePath ?? config.public.API_PATH
@@ -30,20 +30,19 @@ function define_vars<T>(prePath: string|undefined, url: string) {
   const pendingState = ref<boolean>(true);
   return { baseUrl, basePath, callresponse, callerror, pendingState }
 }
-
 async function useAPI2<T> (
     method: tmethod,
     url: string,
-    body: FormData | Object | undefined = undefined,
+    body: FormData | object | undefined = undefined,
     opts: UseFetchOptions<T> = {},
     prePath: string | undefined = undefined,
     synced: boolean = true // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
 ): Promise<ApiResult<T>> {
-  const { baseUrl, basePath, callresponse, callerror, pendingState } = define_vars<T>(prePath, url)
+  const { baseUrl, basePath, callresponse, callerror, pendingState } = define_vars<T>(prePath)
   let fullURL = baseUrl + basePath + url
   let callheaders: Headers | undefined = undefined
   let status: any = null;
-  let fullBody = body
+  let fullBody: any = body
 
   if (method === 'GET' && body != undefined) {
     fullURL = fullURL +'?'+ _getBodyParams(body)
@@ -150,6 +149,9 @@ const logout_on_specific_error = (status: number) => {
 }
 const _getBodyParams = (params: any) => {
   return new URLSearchParams(params).toString();
+  // const res = new URLSearchParams(params).toString();
+  // if (res === "[object Object]") {
+  //   return new URLSearchParams(params)
 }
 
 
@@ -176,7 +178,14 @@ async function useApiPUT<ResultDataType> (url: string, body:any=undefined, prePa
   return useAPI2<ResultDataType>('DELETE', url, body, opts, prePath, synced)
 }
 
-export { useApiGET, useApiGETBody, useApiPOST, useApiDELETE, useApiPUT }
+function useFullUrlPath(path: string, prepath: string|undefined) {
+  const config = useRuntimeConfig()
+  const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE
+  const basePath: string = prepath ?? config.public.API_PATH
+  return baseUrl + basePath + path
+}
+
+export { useApiGET, useApiGETBody, useApiPOST, useApiDELETE, useApiPUT, useFullUrlPath }
 
 
 // export function useAPI<T> (url: string, opts: UseFetchOptions<T> = {}, prePath: string|undefined = undefined) {

@@ -21,8 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { useIcons } from '~/composables/mixins/useIcons'
-const icons = useIcons()
+// import { useIcons } from '~/composables/mixins/useIcons'
+// const icons = useIcons()
 
 // const model = defineModel({ required: true, type: String })
 const $emit = defineEmits(['update:modelValue', 'click'])
@@ -42,7 +42,7 @@ const modelBool = computed({
   },
 })
 
-const isMobile = ref(useMQ().isMobile)
+// const isMobile = ref(useMQ().isMobile)
 // TODO check if works correctly
 // watch(()=>useMQ().isMobile, ()=>{
 //   isMobile.value = useMQ().isMobile.value

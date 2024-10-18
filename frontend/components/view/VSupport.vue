@@ -1,7 +1,7 @@
 <template>
   <div data-testid="VSupport" class="w-100 min-w-1/1">
     <div class="grid grid-cols-2 content-stretch mb-2 items-stretch">
-      <div v-for="(item, i) in supportItems" :key="item.title" class="w-full">
+      <div v-for="(item) in supportItems" :key="item.title" class="w-full">
         <CardCSupport :item="item" />
       </div>
     </div>
@@ -23,7 +23,7 @@
   const locale = useI18n().locale
   const $t = useI18n().t
 
-  const props = defineProps({
+  defineProps({
     withIframe: { type: Boolean, default: true }
   })
 

@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
 
 export const storeChanges = defineStore('changes', {
   persist: {

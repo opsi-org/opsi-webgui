@@ -1,10 +1,10 @@
-import { expect, type BrowserContext, type Expect, type Page } from "@playwright/test"
+import { expect, type BrowserContext, type Page } from "@playwright/test"
 import { apiMock, cookieOpsiconfdSession } from "./pw-api-mock"
 
 export const pageLogin = async (page: Page,
     context: BrowserContext,
-    mockFn: Function|undefined = undefined,
-    checkFn:Function|undefined = undefined,
+    mockFn: (() => void) | undefined = undefined,
+    checkFn: ((page: Page) => Promise<void>) | undefined = undefined,
     username="adminuser", password="adminuser") => {
   await page.unroute('**/webgui/api/**')
   await apiMock(page, '**/webgui/api/**', {})
@@ -26,7 +26,7 @@ export const pageLogin = async (page: Page,
   else {
     const cookie = Object.freeze(cookieOpsiconfdSession)
     await context.addCookies(cookie)
-    const c = await context.cookies()
+    await context.cookies()
     await expect(page).toHaveURL('/addons/webgui/app/clients')
   }
   // await new Promise(resolve => setTimeout(resolve, 1000))

@@ -22,7 +22,7 @@
   <div v-else>
     <!-- v-else-if="props.idKey === 'propertyId' && Object.values(props.items)?.[0]" -->
     <FormrowFRItemProperty
-      v-for="(item, index) in sortedItems"
+      v-for="(item) in sortedItems"
       :key="item.configId"
       :item="item"
       :id-key="props.idKey"
@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import type { T_ClientAttr, T_HostParameterEntry, T_ServerAttr } from '~/types/APItypes';
+import type { T_HostParameterEntry } from '~/types/APItypes';
 
 const $emit = defineEmits(['change-item', 'transform-id'])
 // const $emit = defineEmits({
@@ -53,7 +53,8 @@ const props = defineProps({
   replaceInId: { type: String, default: undefined },
 })
 const sortedItems = computed(() => {
-  return props.items.sort((a: any, b: any) => {
+  const _sorteditems = JSON.parse(JSON.stringify(props.items))
+  return _sorteditems.sort((a: any, b: any) => {
     return a[props.idKey].localeCompare(b[props.idKey])
   })
 })

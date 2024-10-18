@@ -1,6 +1,6 @@
 export const _getI18nInComposable = () => {
   // only 'const {t} = useI18n()" not works for story
-  let t = (k: string, v:any = {}) => { return k}
+  let t = (k: string) => { return k}
   let _t = undefined
   try {
     const t = useI18n({ useScope: 'global'}).t

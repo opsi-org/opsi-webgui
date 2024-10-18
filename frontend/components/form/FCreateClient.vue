@@ -7,8 +7,8 @@
       <div v-for="(value, label) in options" :key="label+value">
         <el-form-item :label="$t('table.fields.' + label)">
           <el-form v-if="label === 'opsiClientAgent'" :inline="true" label-position="top">
-            <div v-for="(value, label) in createClient.initialSetup.opsiClientAgent" :key="label+value">
-              <el-checkbox v-if="typeof value == 'boolean'" v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
+            <div v-for="(value2, label2) in createClient.initialSetup.opsiClientAgent" :key="label2+value2">
+              <el-checkbox v-if="typeof value2 == 'boolean'" v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]" />
               <el-form-item
                 v-else
                 :label="$t('form.' + label)"
@@ -16,15 +16,15 @@
                   'd-none': !createClient.initialSetup.opsiClientAgent.setup,
                 }"
               >
-                <el-select v-if="label === 'type'" filterable v-model="createClient.initialSetup.opsiClientAgent[label.toString()]">
+                <el-select v-if="label2 === 'type'" filterable v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]">
                   <el-option v-for="item in ['windows', 'linux', 'mac']" :key="item" :label="item" :value="item" />
                 </el-select>
                 <el-input
-                  v-else-if="label === 'password'"
-                  v-model="createClient.initialSetup.opsiClientAgent[label.toString()]"
+                  v-else-if="label2 === 'password'"
+                  v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]"
                   show-password
                 />
-                <el-input v-else v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
+                <el-input v-else v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]" />
               </el-form-item>
             </div>
           </el-form>
@@ -120,7 +120,7 @@ import type { IObjectString2Any } from '~/types/tgeneral';
 
   async function fetchDepotSpecificData() {
     depotIDList.value = await useDepot($t).getDepotIdList()
-    clientIDList.value = await useClient($t).getClientIdList([createClient.value.assignments.depot])
+    clientIDList.value = await useClient().getClientIdList([createClient.value.assignments.depot])
     await fetchNetbootProducts()
   }
 

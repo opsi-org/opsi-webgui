@@ -56,10 +56,16 @@ async function fetchClientGroups() {
   }
     // TODO: Backend: change groups data structure
   fetchedData.value = data.value  ?
-                              Object.entries(data.value).map(([label, obj] : any ) => ({ ...obj,
-                                children: Object.entries(obj.children || {}).map(([labelA, objA] : any ) =>
-                                ({ ...objA, children: Object.values(objA.children || {})}))}))
-                              : []
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Object.entries(data.value).map(([label, obj] : any ) => (
+      { ...obj,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        children: Object.entries(obj.children || {}).map(([labelA, objA] : any ) => ({
+          ...objA, children: Object.values(objA.children || {})
+        }))
+      }
+    ))
+    : []
 }
 
 async function fetchProdGroups() {
@@ -72,8 +78,9 @@ async function fetchProdGroups() {
     return
   }
   fetchedData.value = data.value.groups ?
-                        Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
-                        : []
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
+  : []
 
   // TODO: Backend: change groups data structure
   // needed structure is [

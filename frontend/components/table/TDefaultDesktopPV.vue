@@ -39,13 +39,13 @@
         }}"
         :highlight-on-select="false"
         v-model:selection="selection" :meta-key-selection="false"
-        :sort-field="props.tableData.sortBy" :sort-order="props.tableData.sortDesc ? -1: 1"
+        :sort-field="props.tableData.sortBy" :sort-order="props.tableData.sortDesc ? -1 : 1"
         :virtual-scroller-options="(dataModel.length = props.totalItems) ? { itemSize: 46, showLoader: true, showSpacer: true } : undefined"
         @update:sort-field="console.log('sortfield changed')"
         @update:sort-order="console.log('sortorder changed')"
         @sort="onSort($event)"
         @row-click="rowEventHandlers.onClick"
-        >
+      >
         <!-- @row-contextmenu="rowEventHandlers.onContextmenu" -->
         <!-- :virtual-scroller-options="{ itemSize: 46, delay: 0, showLoader: true, numToleratedItems: 10 }" -->
         <!-- :virtual-scroller-options="{ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 1000, showLoader: false, loading: lazyLoading, numToleratedItems: perPage / 2 }" -->
@@ -118,7 +118,7 @@
                 </div>
               </template>
 
-              <template #header="slotProps">
+              <template #header="">
                 <!-- <HeaderCellRenderer :col-data="col" :key="col.title"/> -->
                 <ButtonBTNClearSelection @clearselection="clearSelection"/>
               </template>
@@ -138,7 +138,8 @@
                 :key="col.key + (colChild as any).key"
                 v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)">
               <PColumn
-                :key="colChild.key" :field="colChild.key as string"
+                :key="colChild.key"
+                :field="(colChild.key as string)"
                 :sortable="colChild.sortable"
                 :header="colChild.title"
                   :class="{
@@ -151,18 +152,18 @@
                   }"
               >
 
-                <template #loading>
+                <template #loading="">
                   <div class="flex align-items-center" :style="{ height: '17px', 'flex-grow': '1', overflow: 'hidden' }">
                       <PSkeleton width="60%" height="1rem" />
                   </div>
                 </template>
 
-                <template v-if="colChild.headerCellRenderer" #header="slotProps">
+                <template v-if="colChild.headerCellRenderer" #header="">
                   <el-badge :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
                     <HeaderCellRenderer :col-data="colChild" :key="colChild.title"/>
                   </el-badge>
                 </template>
-                <template v-else-if="colChild.icon || colChild.icons" #header>
+                <template v-else-if="colChild.icon || colChild.icons" #header="">
                   <el-badge :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
                     <el-tooltip
                       effect="dark"
@@ -181,9 +182,7 @@
                 </template>
                 <template v-else-if="colChild.cellRenderer" #body="slotProps">
                   <!-- CELLS OF THIS (CHILD) COLUMN -->
-                  <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && colChild.key==props.rowId"
-                  >
-                  <!-- class="min-h-24" -->
+                  <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && colChild.key==props.rowId">
                     {{ slotProps.data[props.rowId] }}
                   </el-text>
                   <CellRenderer v-else-if="!slotProps.data.dummy" :col-data="colChild" :key="colChild.key" :row-data="slotProps.data"/>
@@ -191,14 +190,12 @@
               </PColumn>
               </div>
             </div>
-            <!-- <TableTDefaultDesktopColumn v-else
-              :column="col" :rowId="props.rowId" :key="col.key"
-            /> -->
             <PColumn
               v-else
               :key="col.key" :field="col.key"
               :header="col.title"
               :sortable="col.sortable"
+              :style="(col.minWidth !== undefined) ? 'min-width: ' + col.minWidth + 'px;' : ''"
               :class="{
                 '!w-1/1': col.maxWidth === undefined,
                 // ['!w-' + col.minWidth]: col.minWidth !== undefined,
@@ -208,16 +205,15 @@
                 // []: Boolean(col._fixed) === false && Boolean(col.fixed) === false,
                 [col.class]: true,
               }"
-              :style=" (col.minWidth !== undefined) ? 'min-width: ' + col.minWidth + 'px;' : ''"
               >
 
-              <template #loading>
+              <template #loading="">
                 <div class="flex align-items-center" :style="{ height: '17px', 'flex-grow': '1', overflow: 'hidden' }">
                     <PSkeleton width="60%" height="1rem" />
                 </div>
               </template>
 
-              <template v-if="col.headerCellRenderer" #header="slotProps">
+              <template v-if="col.headerCellRenderer" #header="">
                 <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
                   <HeaderCellRenderer :col-data="col" :key="col.title"/>
                 </el-badge>
@@ -246,12 +242,12 @@
                   </el-tooltip>
                 </el-badge>
               </template>
-              <template v-else-if="col.title" #header="slotProps">
+              <template v-else-if="col.title" #header="">
                 <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
                   <el-text>{{ col.title }}</el-text>
                 </el-badge>
               </template>
-              <template v-else #header="slotProps">
+              <template v-else #header="">
                 <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
                   <el-text>{{ col.key }}</el-text>
                 </el-badge>
@@ -285,7 +281,7 @@
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import { useIcons } from '~/composables/mixins/useIcons'
-import {TableV2SortOrder, type RowEventHandlerParams, TableV2FixedDir, type SortState } from 'element-plus'
+import {type RowEventHandlerParams, TableV2FixedDir } from 'element-plus'
 // import type { SortState } from 'element-plus'
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { TRowData } from '~/types/Datatypes'
@@ -309,7 +305,7 @@ const HeaderCellRenderer = ({colData}: any) => {
   return <el-text>{ colData.title }</el-text>
 }
 const selectionStore: IObjectString2Any = storeSelections()
-const tableStore: IObjectString2Any = storeTablesettings()
+// const tableStore: IObjectString2Any = storeTablesettings()
 const icons = useIcons()
 
 const columnsModel = defineModel<ITableHeaderRow>('columns', { required:true})
@@ -342,7 +338,7 @@ const pagesSizes = ref(_pagesSizes)
 updateMaxPerPage()
 const lastSelectedItemForSingleselect = ref<any>(undefined)
 
-const sortState = ref<SortState>({ [props.sortBy]: TableV2SortOrder.DESC })
+// const sortState = ref<SortState>({ [props.sortBy]: TableV2SortOrder.DESC })
 
 const lastScrollDirection = ref<'next'|'prev'|''>('')
 
@@ -364,7 +360,7 @@ const rowEventHandlers: any = {
       // onScroll(rowData.direction)
       return
     }
-    const isAlreadyInStore = selectionStore['_'+selectKey.value].includes(rowData[props.rowId])
+    // const isAlreadyInStore = selectionStore['_'+selectKey.value].includes(rowData[props.rowId])
     if (selectionStore.multiSelection === false) {
       if (lastSelectedItemForSingleselect.value !== undefined) {
         lastSelectedItemForSingleselect.value.selected = false
@@ -377,9 +373,9 @@ const rowEventHandlers: any = {
     }
 
     $emit('selection-changed', rowData[props.rowId])
-    const isAlreadyInStore2 = selectionStore['_'+selectKey.value].includes(rowData[props.rowId])
+    // const isAlreadyInStore2 = selectionStore['_'+selectKey.value].includes(rowData[props.rowId])
   },
-  onDblclick: (params: RowEventHandlerParams) => {
+  onDblclick: () => {
     // const rowData:TRowData  = params.rowData
   },
   onContextmenu: (params: RowEventHandlerParams) => {
@@ -391,10 +387,10 @@ const rowEventHandlers: any = {
 }
 
 
-const lazyLoading = ref(true);
+// const lazyLoading = ref(true);
 // const loadLazyTimeout = ref();
 
-const virtualScrollerOptions = ref({ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 500, showLoader: false, loading: lazyLoading, numToleratedItems: perPage.value / 2 })
+// const virtualScrollerOptions = ref({ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 500, showLoader: false, loading: lazyLoading, numToleratedItems: perPage.value / 2 })
 
 
 const selection = ref<Array<string>>(getSelectedrowsFromStore())
@@ -406,9 +402,9 @@ const visibleColumns = computed(()=> useUtilsData().getVisibleColumnsInTable(col
 
 
 // numVisibleColumns.value < numFixedColumns.value + numVisibleColumnsDelta.value
-const numVisibleColumns = computed(()=> Object.values(visibleColumns.value).length)
-const numFixedColumns = computed(()=> Object.values(visibleColumns.value).filter((c:any) => Boolean(c.fixed) === true || Boolean(c._fixed) === true).length)
-const numVisibleColumnsDelta = ref(1)
+// const numVisibleColumns = computed(()=> Object.values(visibleColumns.value).length)
+// const numFixedColumns = computed(()=> Object.values(visibleColumns.value).filter((c:any) => Boolean(c.fixed) === true || Boolean(c._fixed) === true).length)
+// const numVisibleColumnsDelta = ref(1)
 
 // watch(()=>props.tableData.pageNumber, (val)=>{ pageNumber.value = val })
 // watch(()=>props.tableData.perPage, (val)=>{ perPage.value = val })
@@ -638,27 +634,27 @@ function onSort(event: any) {
   _fetch()
 }
 
-async function onVirtualScrollerLoad (event: any) {
-  lazyLoading.value = true;
-  // if (event.first === 0 && event.last === 0) {
-  //   lazyLoading.value = false;
-  //   return
-  // }
-  const items = dataModel.value.filter(x => x.dummy !== true).length
-  const pageNumber = Math.ceil((items===0)? 1 : items / perPage.value)
-  if (event.first === 0 && event.last === 0) {
-    lazyLoading.value = false;
-    return
-  }
-  if (items != 0 && event.first == 0) {
-    lazyLoading.value = false;
-    return
-  }
-  const tData = JSON.parse(JSON.stringify(props.tableData))
-  tData.pageNumber = pageNumber
-  $emit('tabledata-changed', tData)
-  $emit('fetch', 'next')
-}
+// async function onVirtualScrollerLoad (event: any) {
+//   lazyLoading.value = true;
+//   // if (event.first === 0 && event.last === 0) {
+//   //   lazyLoading.value = false;
+//   //   return
+//   // }
+//   const items = dataModel.value.filter(x => x.dummy !== true).length
+//   const pageNumber = Math.ceil((items===0)? 1 : items / perPage.value)
+//   if (event.first === 0 && event.last === 0) {
+//     lazyLoading.value = false;
+//     return
+//   }
+//   if (items != 0 && event.first == 0) {
+//     lazyLoading.value = false;
+//     return
+//   }
+//   const tData = JSON.parse(JSON.stringify(props.tableData))
+//   tData.pageNumber = pageNumber
+//   $emit('tabledata-changed', tData)
+//   $emit('fetch', 'next')
+// }
 //   if (event.last === 0 && event.first === 0) {
 //     lazyLoading.value = false;
 //     return
@@ -717,7 +713,7 @@ async function onVirtualScrollerLoad (event: any) {
 // // //     // }, Math.random() * 1000 + 250);
 // }
 
-function clearSelection (event:any) {
+function clearSelection () {
   $emit('selection-clear')
   dataModel.value.map((row:any) => {
     row.selected = false

@@ -1,6 +1,6 @@
 import { useCookie } from 'nuxt/app'
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
+
 const expirySec = 60 * 30 // Default=30min
 
 

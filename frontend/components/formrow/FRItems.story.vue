@@ -28,7 +28,7 @@ const changeValue = (item: any, v: any) => {
   item.value = v
   pushUnique(item.possibleValues, v)
 }
-const changeItem = (item: any, v: any, index: number) => {changeValue(item, v) }
+const changeItem = (item: any, v: any) => {changeValue(item, v) }
 </script>
 <template>
   <Story>

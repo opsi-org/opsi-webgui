@@ -39,8 +39,8 @@ watch(()=>props.id, ()=>{
     activeName.value = 'config'
   }
 })
-watch(()=> activeName.value, (val)=>{
-tableSettings.setConfigLastSelected(props.type, activeName.value)
+watch(()=> activeName.value, ()=>{
+  tableSettings.setConfigLastSelected(props.type, activeName.value)
   // if (props.isChild){
   //   // store last selected tab if used as child
   // }

@@ -48,7 +48,7 @@
         >
           <el-scrollbar
             :class="{
-              'w-full max-w-full right-0 opacity-100 justify-self-end border-0 p-2': true,
+              'w-full max-w-full right-0 opacity-100 justify-self-end !border-none p-2': true,
               'max-w-full z-30': mq.isMobile.value,
             }"
           >
@@ -73,7 +73,7 @@ const leftSideVisible = ref<boolean>(!mq.isMobile.value)
 const rightSideVisible = ref<boolean>(!mq.isMobile.value)
 
 
-watch(()=> mq.$mq.value, (newVal, oldVal) => {
+watch(()=> mq.$mq.value, () => {
   settings.setIsMobile(mq.$mq.value === 'mobile')
   leftSideVisible.value = !mq.isMobile.value
   rightSideVisible.value = !mq.isMobile.value
