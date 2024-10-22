@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="value" clearable :placeholder="$t('select.placeholder.'+type)" style="min-width: 200px">
+  <el-select v-model="value" clearable :placeholder="$t('formselect.select.'+type)" style="min-width: 200px">
     <el-option
       v-for="item in fetchedData"
       :key="item"
