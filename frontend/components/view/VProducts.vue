@@ -579,7 +579,7 @@ watch(()=>props.selectedClient, (v)=>{
   if (v) { clientSelection.value = [v] }
   else { clientSelection.value = selectionClients.value }
 })
-watch(()=>selectionClients.value, (v)=>{
+watch(()=>selectionClients.value, (v:any)=>{
   if (v) { clientSelection.value = [v] }
   else { clientSelection.value = selectionClients.value }
 })
@@ -705,26 +705,31 @@ async function saveActionRequests(rowItem: any, newrequest: string) {
   }
   lastChanges.value.clientIds = data.clientIds
   lastChanges.value.productIds = data.productIds
-  // if (!this.quicksave) {
-  //   for (const c in this.selectionClients) {
-  //     for (const p in this.selectionProducts) {
-  //       const d = {
-  //         user: localStorage.getItem('username'),
-  //         clientId: this.selectionClients[c],
-  //         productId: this.selectionProducts[p],
-  //         actionRequest: this.action
-  //       }
-  //       const objIndex = this.changesProducts.findIndex(item => item.clientId === this.selectionClients[c] && item.productId === this.selectionProducts[p])
-  //       if (objIndex > -1) {
-  //         this.delWithIndexChangesProducts(objIndex)
-  //       }
-  //       this.pushToChangesProducts(d)
-  //     }
-  //   }
-  // } else {
+  console.warn("saveActionRequests", storeSettings().quicksave)
+  if (storeSettings().quicksave) {
     await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
     await tableHelper.fetch()
-  // }
+  } else {
+    for (const c in selectionClients.value) {
+      for (const p in selectionProducts.value) {
+        const d = {
+          user: localStorage.getItem('username'),
+          clientId: c,
+          // clientId: selectionClients.value[c],
+          productId: p,
+          // productId: selectionProducts.value[p],
+          actionRequest: newrequest
+        }
+
+        const objIndex = storeChanges().changesProducts.findIndex(item => item.clientId === c && item.productId === p)
+        // const objIndex = storeChanges().changesProducts.findIndex(item => item.clientId === selectionClients.value[c] && item.productId === selectionProducts.value[p])
+        if (objIndex > -1) {
+          storeChanges().delWithIndexChangesProducts(objIndex)
+        }
+        storeChanges().pushToChangesProducts(d)
+      }
+    }
+  }
 }
 
 async function saveActionRequest(rowitem: any, newrequest: string) {
@@ -736,24 +741,30 @@ async function saveActionRequest(rowitem: any, newrequest: string) {
     productIds: [rowitem.productId],
     actionRequest: newrequest
   }
-    // this.lastChanges.clientIds = data.clientIds
-    // this.lastChanges.productIds = data.productIds
-    // if (!this.quicksave) {
-    //   for (const c in this.selectionClients) {
-    //     const d: Object = {
-    //       user: localStorage.getItem('username'),
-    //       clientId: this.selectionClients[c],
-    //       productId: rowitem.productId,
-    //       actionRequest: newrequest
-    //     }
-    //     const objIndex = this.changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
-    //     if (objIndex > -1) {
-    //       this.delWithIndexChangesProducts(objIndex)
-    //     }
-    //     this.pushToChangesProducts(d)
-    //   }
-    // } else {
+  console.warn("saveActionRequest", storeSettings().quicksave)
+  if (storeSettings().quicksave) {
+      lastChanges.value.clientIds = data.clientIds
+      lastChanges.value.productIds = data.productIds
       await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
+    } else {
+        for (const c in clientSelection.value) {
+          const d = {
+            user: localStorage.getItem('username'),
+            clientId: selectionClients.value[c],
+            productId: rowitem.productId,
+            actionRequest: newrequest
+          }
+          const objIndex = storeChanges().changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === selectionClients.value[c] && item.productId === rowitem.productId)
+          if (objIndex > -1) {
+            storeChanges().delWithIndexChangesProducts(objIndex)
+          }
+          storeChanges().pushToChangesProducts(d)
+        }
+
+    }
+
+    // if (!this.quicksave) {
+    // } else {
       // this.fetchOptions.fetchClients = true
     // }
 }
