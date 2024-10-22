@@ -8,6 +8,9 @@
 /* General Colors */
 $white: #ffffff;
 $black: #000000;
+html .is-not-mobile {
+  --above-main: 80px;
+}
 
 /* Global Variables */
 html body {
@@ -127,4 +130,12 @@ html .el-button:hover {
 /* Dropdowns */
 .el-dropdown__popper {
   --el-color-primary: var(--color-text);
+}
+
+.el-tabs--top > .el-tabs__header .el-tabs__item:nth-child(2),
+.el-tabs--top > .el-tabs__header .el-tabs__item,
+.el-tabs--top > .el-tabs__header .el-tabs__item:last-child {
+  // padding-left: 15px !important;
+  // padding-right: 15px !important;
+  padding: 0 15px !important;
 }
