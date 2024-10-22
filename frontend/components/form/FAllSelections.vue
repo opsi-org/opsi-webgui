@@ -1,5 +1,5 @@
 <template>
-  <el-form label-width="70px" label-position="top" size="small" data-testid="FAllSelections">
+  <el-form label-width="70px" label-position="top" size="small" data-testid="FAllSelections" class="rounded-lg shadow-md pb-1">
     <el-form-item v-for="category in selectionDisplayList" :key="category" class="flex items-stretch">
       <template #label>
         <div class="!d-inline">
@@ -19,10 +19,10 @@
         </el-button>
         </div>
       </template>
-      <el-scrollbar max-height="250px" class="w-full flex items-stretch ml-3">
+      <el-scrollbar max-height="200px" class="w-full flex items-stretch ml-3">
         <el-alert v-if="storeSelection['selection' + category].length <= 0" type="warning" :closable="false"
         >{{ $t('message.warning.noTypeSelected', {type: $t('message.warning.noTypeSelected.type.'+category)})}}</el-alert>
-        <ul direction="vertical">
+        <ul v-else direction="vertical">
           <li
             v-for="item in storeSelection['selection' + category]"
             :key="item"
