@@ -94,7 +94,7 @@
                     'h-[50px]': true,
                     'border-b border-slate-600/50': true
                   }"
-                  @click="rowEventHandlers.onClick(item)"
+                  @click.prevent="rowEventHandlers.onClick(item)"
                   @dblclick="rowEventHandlers.onDblclick(item)"
                   @contextmenu="rowEventHandlers.onContextmenu({rowData: item, event: $event})"
                 >
@@ -528,7 +528,7 @@ const rowEventHandlers: any = {
     $emit('selection-changed', rowData[props.rowId])
     const isAlreadyInStore2 = selectionStore['_'+selectKey.value].includes(rowData[props.rowId])
     // alert('selection-changed: ' + rowData[props.rowId])
-    alert('selection-changed: ' + rowData[props.rowId] + ' isAlreadyInStore: ' + isAlreadyInStore + ' isAlreadyInStore2: ' + isAlreadyInStore2)
+    console.log('selection-changed: ' + rowData[props.rowId] + ' isAlreadyInStore: ' + isAlreadyInStore + ' isAlreadyInStore2: ' + isAlreadyInStore2)
 
   },
   onDblclick: () => {
