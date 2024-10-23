@@ -1,12 +1,12 @@
 <template>
   <div class="max-w-[500px] m-auto shadow-lg rounded-lg">
     <div class="grid place-items-center">
-      <h1 class="text-4xl m-auto">
+      <h1>
         {{ t_fixed("title.project") }}
       </h1>
-      <h4 class="text-4xl m-auto">
+      <h2>
         {{ $t('title.field.version', {'version': $config.public.packageVersion })}}
-      </h4>
+      </h2>
       <IconIOpsiLogo
         :short="false"
         :light="storeSettings().isLight"

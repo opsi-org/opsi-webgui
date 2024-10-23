@@ -2,9 +2,6 @@
 @use './themes/light.scss' as light;
 @use './themes/dark.scss' as dark;
 
-/* Import Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
-
 /* General Colors */
 $white: #ffffff;
 $black: #000000;
@@ -13,11 +10,10 @@ html .is-not-mobile {
 }
 
 /* Global Variables */
+
 html body {
   background-color: var(--color-background);
   color: var(--color-text);
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
 
   /* Element Plus Variables */
   --el-text-color-regular: var(--color-text);
@@ -30,6 +26,7 @@ html body {
   --el-bg-color: var(--color-background);
   --el-bg-color-overlay: var(--color-background);
   --el-fill-color-light: var(--hover);
+  --el-menu-hover-bg-color: var(--hover);
   --el-color-primary-light-9: var(--hover);
   --el-text-color-placeholder: var(--placeholder);
   --el-color-info: var(--color-text);
