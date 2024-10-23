@@ -24,7 +24,7 @@
               </b-button>
               <b-form-input id="hostKey" v-model="hostAttr[label.toString()]" size="sm" :class="{'d-none' : !showValue, [label]: true}" />
             </b-input-group>
-            <b-form-checkbox v-else-if="typeof value == 'boolean'" v-model="hostAttr[label.toString()]" size="sm" />
+            <b-form-checkbox v-else-if="typeof value == 'boolean'" v-model="hostAttr[label.toString()]" :disabled="label.toString() === 'uefi'" size="sm" />
             <b-form-input
               v-else
               v-model="hostAttr[label.toString()]"
@@ -140,8 +140,8 @@ export default class GHostAttributes extends Vue {
     delete attr.lastSeen
     delete attr.systemUUID
     if (this.type === 'clients') {
-      this.setUEFI(this.hostAttr.hostId, attr.uefi.toString())
-      delete attr.uefi
+      // this.setUEFI(this.hostAttr.hostId, attr.uefi.toString())
+      // delete attr.uefi
       endPoint = `/api/opsidata/clients/${this.hostAttr.hostId}`
     } else {
       endPoint = `/api/opsidata/servers/${this.hostAttr.hostId}`
