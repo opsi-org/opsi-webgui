@@ -84,7 +84,7 @@ export default defineNuxtConfig({
     storage: 'localStorage',
     debug: true,
   },
-  css: ['~/assets/scss/index.scss', '~/assets/css/tailwind.css'],
+  css: ['~/assets/scss/index.scss', '~/assets/scss/tailwind.scss'],
   vite: {
     css: {
       preprocessorOptions: {

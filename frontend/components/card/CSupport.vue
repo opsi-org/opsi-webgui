@@ -1,11 +1,11 @@
 <template>
   <el-card shadow="hover">
     <template #header>
-      <el-text tag="b"> {{ $t(item.title) }}</el-text>
+      <h2> {{ $t(item.title) }}</h2>
     </template>
     <el-text> {{ $t(item.description) }}</el-text>
     <br>
-    <el-link :href="item.link" target="_blank" style="--el-link-hover-text-color: var(--opsi-general-red)">{{
+    <el-link :href="item.link" target="_blank" type="primary">{{
       $t(item.buttonname)
     }}</el-link>
   </el-card>

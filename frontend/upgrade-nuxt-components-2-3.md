@@ -456,7 +456,7 @@ https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs#installation-nuxt-j
 
 Add following to nuxt.config.ts
   * `modules:[..., '@bootstrap-vue-next/nuxt']`
-  * `css: ['bootstrap/dist/css/bootstrap.min.css']`
+  * `css: ['bootstrap/dist/scss/bootstrap.min.css']`
 
 ### icons are deprecated in bootstrap next
  // https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/icons
