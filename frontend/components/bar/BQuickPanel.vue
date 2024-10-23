@@ -35,12 +35,7 @@
       <header class="mb-2">
         <el-text tag="b" size="small">{{ $t('Tracked Changes') }}</el-text>
       </header>
-      <el-scrollbar v-if="changes.changesHostParam" class="max-h-48 overflow-scroll mb-2rounded-lg p-2 shadow-sm">
-        <pre class="m-0 text-sm">{{ changes.changesHostParam }}</pre>
-      </el-scrollbar>
-      <el-scrollbar v-if="changes.changesProducts" class="max-h-48 overflow-scroll rounded-lg p-2 shadow-sm">
-        <pre class="m-0 text-sm">{{ changes.changesProducts }}</pre>
-      </el-scrollbar>
+      <ModalMChanges v-model="changes" />
     </section>
     <footer class="p-4 mt-auto insert-x-0 bottom-0 ">
       <div class="flex justify-evenly items-center">
@@ -64,4 +59,5 @@ const icons = useIcons()
 const storeSelection = storeSelections()
 const changes = storeChanges()
 const $config = useRuntimeConfig()
+
 </script>

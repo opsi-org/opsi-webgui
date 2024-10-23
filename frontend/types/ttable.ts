@@ -21,6 +21,7 @@ export interface ITableRowItemProducts {
   installationStatus: Array<string>
   actionResult: Array<string>
   actionRequest: string,
+  actionRequestNew?: string,
   _rowVariant?: string
   tooltiptext?: IObjectString2ObjectString2String
 }

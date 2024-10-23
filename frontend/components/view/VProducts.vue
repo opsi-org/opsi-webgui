@@ -465,15 +465,13 @@ const columns = reactive<ITableHeaderRow>({
       cellRenderer: ({rowData}) => {
         // const sel = (props.selectedClient) ? [props.selectedClient]: clientSelection.value
         return (
-          <>
             <tablecellTCProductRequest
-              request={rowData.actionRequest || 'none'}
+              request={rowData.actionRequestNew || rowData.actionRequest || 'none'}
               requestoptions={[...rowData.actions]}
               rowitem={rowData}
               row-is-selected={selectionProducts.value.includes(rowData.productId)}
               save={saveActionRequest}
             />
-          </>
         )
         // selectedClients={sel}
       }
@@ -637,7 +635,8 @@ async function wsBusMsgObjectChanged (msg: any = undefined) {
     //   // if (ref) { ref.hide() }
     // } else { /* quicksave is false ... do sth .. show message or sth */
     //   const objIndex = this.changesProducts.findIndex(
-    //     item => item.user === localStorage.getItem('username') &&
+    //     item => item.user === storeAuth().username &&
+    // //     item => item.user === localStorage.getItem('username') &&
     //     item.clientId === msg.data.clientId &&
     //     item.productId === msg.data.productId)
     //   if (objIndex > -1) { /* show msg product updated */ }
@@ -713,7 +712,8 @@ async function saveActionRequests(rowItem: any, newrequest: string) {
     for (const c in selectionClients.value) {
       for (const p in selectionProducts.value) {
         const d = {
-          user: localStorage.getItem('username'),
+          // user: localStorage.getItem('username'),
+          user: storeAuth().username,
           clientId: c,
           // clientId: selectionClients.value[c],
           productId: p,
@@ -749,12 +749,14 @@ async function saveActionRequest(rowitem: any, newrequest: string) {
     } else {
         for (const c in clientSelection.value) {
           const d = {
-            user: localStorage.getItem('username'),
+            user: storeAuth().username,
+            // user: localStorage.getItem('username'),
             clientId: selectionClients.value[c],
             productId: rowitem.productId,
             actionRequest: newrequest
           }
-          const objIndex = storeChanges().changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === selectionClients.value[c] && item.productId === rowitem.productId)
+          const objIndex = storeChanges().changesProducts.findIndex(item => item.user === storeAuth().username && item.clientId === selectionClients.value[c] && item.productId === rowitem.productId)
+          // const objIndex = storeChanges().changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === selectionClients.value[c] && item.productId === rowitem.productId)
           if (objIndex > -1) {
             storeChanges().delWithIndexChangesProducts(objIndex)
           }
