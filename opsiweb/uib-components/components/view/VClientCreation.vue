@@ -115,14 +115,6 @@
         </b-form>
       </template>
     </GridGFormItem>
-    <b-row class="text-small mb-2">
-      <b class="settings">{{ $t('title.settings') }} </b>
-    </b-row>
-    <GridGFormItem :label="$t('table.fields.uefi')" variant="longvalue" labelclass="uefi">
-      <template #value>
-        <b-form-checkbox id="uefi" v-model="uefi" size="sm" :aria-label="$t('table.fields.uefi')" />
-      </template>
-    </GridGFormItem>
     <GridGFormItem variant="longvalue">
       <template #value>
         <div class="float-right mt-2">
@@ -158,14 +150,14 @@ import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest } from '../../mixins/save'
 import { Client, Configserver } from '../../mixins/get'
-import { Group, SetUEFI, DeployClientAgent } from '../../mixins/post'
+import { Group, DeployClientAgent } from '../../mixins/post'
 import { AlertToast } from '../../mixins/component'
 import { NewClient, FormClientAgent } from '../../.utils/types/tobjects'
 
 const cache = namespace('data-cache')
 const selections = namespace('selections')
 
-@Component({ mixins: [AlertToast, Icons, Configserver, Client, Group, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
+@Component({ mixins: [AlertToast, Icons, Configserver, Client, Group, DeployClientAgent, SaveProductActionRequest] })
 export default class VClientCreation extends Vue {
   showToastWarning:any // mixin
   showToastSuccess:any // mixin
@@ -177,7 +169,6 @@ export default class VClientCreation extends Vue {
   $fetch: any
   $mq: any
   $t: any
-  setUEFI:any
   deployClientAgent:any
   saveProdActionRequest:any
   clientIds: Array<string> = []
@@ -198,7 +189,6 @@ export default class VClientCreation extends Vue {
 
   form: FormClientAgent = { clients: [], username: '', password: '', type: 'windows' }
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
-  uefi: boolean = false
   clientagent: boolean = false
   netbootproduct: string = ''
   netbootproductslist: Array<string> = []
@@ -293,9 +283,6 @@ export default class VClientCreation extends Vue {
     await this.$axios.$post('/api/opsidata/clients', request)
       .then(async () => {
         this.showToastSuccess(this.$t('message.success.createClient', { client: this.newClient.hostId }))
-        if (this.uefi) {
-          this.setUEFI(this.newClient.hostId, this.uefi.toString())
-        }
         if (this.group) {
           await this.assignToGroup()
         }
