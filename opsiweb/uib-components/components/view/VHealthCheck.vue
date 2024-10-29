@@ -19,13 +19,13 @@
         v-for="health, i in healthcheckdata"
         :key="i"
         :class="{ 'd-none': !health.check_status.toLowerCase().includes(filter.toLowerCase())
-          && !health.check_name.toLowerCase().includes(filter.toLowerCase()) }"
+          && !health.check.name.toLowerCase().includes(filter.toLowerCase()) }"
       >
         <GridGFormItem value-more="true" :formclass="'mainitem ' + ((health.partial_results.length != 0)? 'collapsable' : '')" variant="shortlabel">
           <template #label>
             <div>
               <template v-if="health.partial_results.length != 0">
-                <b-button v-b-toggle="'collapse-'+health.check_id" class="border-0" size="sm" variant="transparent">
+                <b-button v-b-toggle="'collapse-'+health.check.id" class="border-0" size="sm" variant="transparent">
                   <small><IconIIcon :icon="expandHCD? icon.arrowUp : icon.arrowRight" /></small>
                 </b-button>
               </template>
@@ -40,13 +40,13 @@
             </div>
           </template>
           <template #value>
-            <span class="font-weight-bold">{{ health.check_name }}</span>
+            <span class="font-weight-bold">{{ health.check.name }}</span>
           </template>
           <template #valueMore>
             <span class="font-weight-bold">{{ health.message }}</span>
           </template>
         </GridGFormItem>
-        <b-collapse :id="'collapse-'+health.check_id" :visible="expandHCD || filter!==''">
+        <b-collapse :id="'collapse-'+health.check.id" :visible="expandHCD || filter!==''">
           <span v-for="(data, index) in health.partial_results" :key="index">
             <GridGFormItem value-more="true" formclass="none" :valuedetails="data.message" variant="shortlabel">
               <template #label>
@@ -58,8 +58,8 @@
                 </b-badge>
               </template>
               <template #value>
-                <b v-if="$mq === 'mobile'" class="text-sm-left text-small">{{ data.check_name }}</b>
-                <span v-else class="text-sm-left text-small">{{ data.check_name }}</span>
+                <b v-if="$mq === 'mobile'" class="text-sm-left text-small">{{ data.check.name }}</b>
+                <span v-else class="text-sm-left text-small">{{ data.check.name }}</span>
               </template>
             </GridGFormItem>
           </span>
