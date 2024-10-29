@@ -95,7 +95,7 @@ function expandRow (scope: any) {
 }
 
 function save (rowItem: ChangeObj, saveAll:boolean) {
-  console.log(rowItem)
+  console.warn(rowItem, "saveall ", saveAll)
     // const change = rowItem
     // let showalert: any = true
     // if (saveAll) {
