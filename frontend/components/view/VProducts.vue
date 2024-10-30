@@ -456,6 +456,7 @@ const columns = reactive<ITableHeaderRow>({
       headerCellRenderer: (useMQ().isMobile.value) ? undefined : () => {
         return ( <>
           <tablecellTCProductRequest
+            modelValue={{}}
             title={$t('form.tooltip.actionRequest')}
             save={saveActionRequests}
             selectedClients={clientSelection.value}
@@ -466,9 +467,9 @@ const columns = reactive<ITableHeaderRow>({
         // const sel = (props.selectedClient) ? [props.selectedClient]: clientSelection.value
         return (
             <tablecellTCProductRequest
-              request={rowData.actionRequest || 'none'}
-              requestoptions={[...rowData.actions]}
-              rowitem={rowData}
+              // request={rowData.actionRequest || 'none'}
+              // requestoptions={[...rowData.actions]}
+              modelValue={rowData}
               row-is-selected={selectionProducts.value.includes(rowData.productId)}
               save={saveActionRequest}
             />
@@ -744,13 +745,14 @@ async function saveActionRequest(rowitem: any, newrequest: string) {
     productIds: [rowitem.productId],
     actionRequest: newrequest
   }
-  console.warn("saveActionRequest", storeSettings().quicksave)
   if (storeSettings().quicksave) {
       lastChanges.value.clientIds = data.clientIds
       lastChanges.value.productIds = data.productIds
       const ok = await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
       if (ok) {
         rowitem.actionRequest = newrequest
+        rowitem.selectedClients = clientSelection.value
+        delete rowitem.actionRequestDetails
       }
     } else {
         for (const c in clientSelection.value) {

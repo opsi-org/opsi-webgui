@@ -13,6 +13,7 @@ export interface ITableRowItemProducts {
   selectedDepots: Array<string>
   selectedClients: Array<string>
   request: Array<string>
+  actions: Array<string>
   actionRequestDetails?: Array<string>
   depotVersions: Array<string>
   clientVersions: Array<string>
