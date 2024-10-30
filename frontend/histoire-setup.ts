@@ -1,5 +1,5 @@
 
-import './assets/css/tailwind.css'
+import './assets/scss/tailwind.css'
 import './assets/scss/index.scss'
 
 import { defineSetupVue3 } from '@histoire/plugin-vue';

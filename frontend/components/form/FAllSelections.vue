@@ -1,14 +1,16 @@
 <template>
-  <el-form label-width="70px" label-position="top" size="small">
+  <el-form label-width="70px" label-position="top" size="small" data-testid="FAllSelections" class="rounded-lg shadow-md pb-1">
     <el-form-item v-for="category in selectionDisplayList" :key="category" class="flex items-stretch">
       <template #label>
         <div class="!d-inline">
         <b class="pr-2"> {{ $t('title.' + category.toLowerCase()) }} </b>
         <el-button
+          v-if="storeSelection['selection' + category].length > 1"
           size="small"
           class="!border-none !p-1 m-auto !d-inline"
           :title="$t('tree.selection.clear.all')"
-          :disable="storeSelection['selection' + category].length <= 0">
+          :disable="storeSelection['selection' + category].length <= 0"
+        >
           <span class="sr-only">{{ $t('button.deselect') }}</span>
           <IconIIcon
             :icon="icons.x"
@@ -17,8 +19,10 @@
         </el-button>
         </div>
       </template>
-      <el-scrollbar max-height="250px" class="w-full flex items-stretch ml-3">
-        <ul direction="vertical">
+      <el-scrollbar max-height="200px" class="w-full flex items-stretch ml-3">
+        <el-alert v-if="storeSelection['selection' + category].length <= 0" type="warning" :closable="false"
+        >{{ $t('message.warning.noTypeSelected', {type: $t('message.warning.noTypeSelected.type.'+category)})}}</el-alert>
+        <ul v-else direction="vertical">
           <li
             v-for="item in storeSelection['selection' + category]"
             :key="item"

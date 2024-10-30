@@ -87,7 +87,7 @@ const page2Condition = computed(()=> {
 
 <style scoped>
 .pagecontent {
-  max-height: calc(100vh - 80px) !important;
+  max-height: calc(100vh - 90px) !important;
   max-width: calc(100vw - 90px) !important;
   max-width: 100% !important;
 }
@@ -99,7 +99,7 @@ const page2Condition = computed(()=> {
 }
 .el-main {
   padding: 0px !important;
-  --above-main: 90px;
+  --above-main: 120px;
   height: calc(100vh - var(--above-main)) !important;
   max-height: calc(100vh - var(--above-main)) !important;
 }

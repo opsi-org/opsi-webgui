@@ -1,3 +1,5 @@
+// const defaultTheme = require('tailwindcss/defaultTheme')
+// const
 export default {
   content: [
     './components/**/*.{vue,js,ts,tsx}',
@@ -8,6 +10,10 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        'opsi-blue': 'var(--color-opsi-blue)',
+        'opsi-red': 'var(--color-opsi-red)',
+      },
       width: {
         '1/1': '100%',
         '1/2': '50%',
@@ -35,6 +41,13 @@ export default {
       height: {
         '128': '32rem',
         '192': '48rem',
+      },
+      fontFamily: {
+        // usage by class 'font-logo' etc. or update tailwind.css to set font for specific tags
+        'logo': ['MontserratAlt1', 'sans-serif'],
+        'heading': ['Montserrat', 'sans-serif'],
+        'sans': ['OpenSans', 'sans-serif'],
+        'mono': ['DroidSansMono', 'monospace'],
       },
     },
   },

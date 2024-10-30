@@ -80,9 +80,9 @@ import type { IObjectString2Any } from '~/types/tgeneral';
       netbootProduct: string[]
       opsiClientAgent: IObjectString2Any
     }
-    settings: {
-      uefi: boolean
-    }
+    // settings: {
+    //   uefi: boolean
+    // }
   }
 
   const mq = useMQ()
@@ -172,12 +172,12 @@ import type { IObjectString2Any } from '~/types/tgeneral';
           client: createClient.value.basics.hostId,
         }),
       })
-      if (createClient.value.settings.uefi) {
-        await handleApiPost('/opsidata/clients/uefi', {
-          clientId: createClient.value.basics.hostId,
-          uefi: createClient.value.settings.uefi.toString(),
-        })
-      }
+      // if (createClient.value.settings.uefi) {
+      //   await handleApiPost('/opsidata/clients/uefi', {
+      //     clientId: createClient.value.basics.hostId,
+      //     uefi: createClient.value.settings.uefi.toString(),
+      //   })
+      // }
       if (createClient.value.assignments.group) {
         await handleApiPost('/opsidata/clients/groups', {
           clientId: createClient.value.basics.hostId,
@@ -235,9 +235,9 @@ import type { IObjectString2Any } from '~/types/tgeneral';
           type: 'windows',
         },
       },
-      settings: {
-        uefi: false,
-      },
+      // settings: {
+      //   uefi: false,
+      // },
     } as IClientObject
   }
 </script>

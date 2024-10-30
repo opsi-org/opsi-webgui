@@ -2,19 +2,18 @@
 @use './themes/light.scss' as light;
 @use './themes/dark.scss' as dark;
 
-/* Import Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
-
 /* General Colors */
 $white: #ffffff;
 $black: #000000;
+html .is-not-mobile {
+  --above-main: 80px;
+}
 
 /* Global Variables */
+
 html body {
   background-color: var(--color-background);
   color: var(--color-text);
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
 
   /* Element Plus Variables */
   --el-text-color-regular: var(--color-text);
@@ -27,6 +26,7 @@ html body {
   --el-bg-color: var(--color-background);
   --el-bg-color-overlay: var(--color-background);
   --el-fill-color-light: var(--hover);
+  --el-menu-hover-bg-color: var(--hover);
   --el-color-primary-light-9: var(--hover);
   --el-text-color-placeholder: var(--placeholder);
   --el-color-info: var(--color-text);
@@ -127,4 +127,10 @@ html .el-button:hover {
 /* Dropdowns */
 .el-dropdown__popper {
   --el-color-primary: var(--color-text);
+}
+
+.el-tabs--top > .el-tabs__header .el-tabs__item:nth-child(2),
+.el-tabs--top > .el-tabs__header .el-tabs__item,
+.el-tabs--top > .el-tabs__header .el-tabs__item:last-child {
+  padding: 0 17px !important;
 }

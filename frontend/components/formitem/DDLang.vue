@@ -4,8 +4,10 @@
     :class="footer ? '!border-none' : 'border'"
     @command="$i18n.locale = $event"
   >
-    <IconIIcon :icon="icon.language"/>
-    <el-text>{{ $i18n.locale.toUpperCase() }}</el-text>
+    <span class="el-dropdown-link">
+      <IconIIcon :icon="icon.language" class="inline mr-1"/>
+      <el-text>{{ $i18n.locale.toUpperCase() }}</el-text>
+    </span>
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item

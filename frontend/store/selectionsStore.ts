@@ -21,12 +21,12 @@ export const storeSelections = defineStore('selections', {
   getters: {
     // multiSelection: (state: any) => state._multiSelection,
     multiSelection: () => useCookie('MultiSelection', { default: () => false }).value,
-    selectionDepots: (state: any) => state._selectionDepots,
-    selectionClients: (state: any) => state._selectionClients,
-    selectionProducts: (state: any) => state._selectionProducts,
-    selectionLogClient: (state: any) => state._selectionLogClient,
-    selectionLogType: (state: any) => state._selectionLogType,
-    selectionLogLevel: (state: any) => state._selectionLogLevel
+    selectionDepots: (state: any):Array<string> => state._selectionDepots,
+    selectionClients: (state: any):Array<string> => state._selectionClients,
+    selectionProducts: (state: any):Array<string> => state._selectionProducts,
+    selectionLogClient: (state: any):string => state._selectionLogClient,
+    selectionLogType: (state: any):string => state._selectionLogType,
+    selectionLogLevel: (state: any):number => state._selectionLogLevel
   },
   actions: {
     setMultiSelection (isMultiSelection: boolean) {

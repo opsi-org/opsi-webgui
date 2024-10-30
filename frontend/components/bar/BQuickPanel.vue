@@ -1,5 +1,8 @@
 <template>
-  <div class="flex flex-col h-full p-4 rounded-lg shadow-md" data-testid="BQuickPanel">
+  <div
+    class="flex flex-col  p-2 rounded-lg shadow-md" data-testid="BQuickPanel"
+    style="height: calc(100vh - var(--above-main));"
+  >
     <section class="mb-4">
       <header class="flex justify-between items-center mb-2">
         <el-text tag="b" size="small">{{ $t('label.quickselect') }}</el-text>
@@ -39,7 +42,7 @@
         <pre class="m-0 text-sm">{{ changes.changesProducts }}</pre>
       </el-scrollbar>
     </section>
-    <footer class="p-4 mt-auto">
+    <footer class="p-4 mt-auto insert-x-0 bottom-0 ">
       <div class="flex justify-evenly items-center">
         <PopconfirmPLogout v-if="mq.isMobile.value" />
         <FormitemDDTheme />

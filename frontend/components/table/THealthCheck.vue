@@ -2,10 +2,12 @@
   <el-table
     ref="healthtable"
     lazy
+    class="maintable-healthcheck"
     row-key="name"
     :data="data"
     :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
   >
+    <!-- row-class-name="maintable__row" -->
     <el-table-column prop="expand" width="50" >
       <template #default="scope">
         <a
@@ -91,12 +93,26 @@ const filterStatus = (value: string, row: any) => {
 }
 
 function getType (status: any) {
-  if (status === 'error') { return 'danger' } else if (status === 'ok') { return 'success' } else if (status === 'warning') { return 'warning' } else { return 'primary' }
+  if (status === 'error') { return 'danger' }
+  else if (status === 'ok') { return 'success' }
+  else if (status === 'warning') { return 'warning' }
+  else { return 'primary' }
 }
 </script>
 
 <style scoped>
 :deep(.el-table__expand-icon) {
   display: none !important;
+}
+
+:deep(.el-table__row--level-1 > .el-table__cell) {
+  padding: 0 !important;
+}
+
+:deep(.el-table__row--level-1) {
+  .el-table__cell.el-table_1_column_2,
+  .el-table__cell.el-table_1_column_3 {
+    padding-left: 20px !important;
+  }
 }
 </style>

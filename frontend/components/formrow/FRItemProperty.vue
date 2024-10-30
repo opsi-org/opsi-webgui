@@ -28,10 +28,10 @@
           <div class="min-w-48">
             <b>{{props.item[props.idKey]}} <br ></b>
             {{props.item.description}} <br > <br >
-            <p v-if="props.item.value !== undefined"><b>Config Value/s:</b> <pre>{{ props.item.value }}</pre> </p>
-            <p v-if="props.item.defaultValues !== undefined"><b>Default Value/s:</b>  <pre>{{ props.item.defaultValues }} </pre></p>
-            <p v-if="props.item.objects !== undefined"><b>Object Value/s:</b> <pre>{{ props.item.objects }} </pre></p>
-            <p v-if="localPropertyChanges?.length && localPropertyChanges?.length > 0"><b>Local Changes</b> <pre>{{ localPropertyChanges }}</pre></p>
+            <div v-if="props.item.value !== undefined"><b>Config Value/s:</b> <pre>{{ props.item.value }}</pre> </div>
+            <div v-if="props.item.defaultValues !== undefined"><b>Default Value/s:</b>  <pre>{{ props.item.defaultValues }} </pre></div>
+            <div v-if="props.item.objects !== undefined"><b>Object Value/s:</b> <pre>{{ props.item.objects }} </pre></div>
+            <div v-if="localPropertyChanges?.length && localPropertyChanges?.length > 0"><b>Local Changes</b> <pre>{{ localPropertyChanges }}</pre></div>
             <pre>
               {{ props.item }}
             </pre>
