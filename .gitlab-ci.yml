@@ -190,7 +190,7 @@ stages:
 #########################################################################
 check:versions:
   stage: check
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11 # cause smaller then node...
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11 # cause smaller then node...
   script:
     - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
     - VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
@@ -233,7 +233,7 @@ init:npm:
 init:transifex:
   # this step have to be done before building webgui
   stage: init
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   script:
     - TRANSIFEX_MIN_TRANSLATION_RATE=0.0
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
@@ -251,7 +251,7 @@ init:transifex:
 init:changelogs:
   # this step have to be done before building webgui
   stage: init
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   script:
     - opsi-dev-cli -l 5 changelog from-git output
     # - cp -f output/changelog.md webgui/data/.
@@ -459,7 +459,7 @@ test:components:
   #     expire_in: 2 day
 
 test:backend-pytest:
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   services:
     - name: mysql:latest
       command:
@@ -612,7 +612,7 @@ build:zip: # with transifex
 #########################################################################
 
 # upload:gittag:
-#   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+#   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
 #   stage: upload
 #   script:
 #     - FILE=".tmp_changelog"
@@ -705,7 +705,7 @@ publish:obs_int:
   stage: publish
   dependencies:
     - build:static:app
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   script:
     - opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.3:development
   only:
@@ -713,7 +713,7 @@ publish:obs_int:
 
 publish:obs_ext:
   stage: publish
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   dependencies:
     - init:changelogs
     - build:addon # todo which is really needed?
@@ -741,7 +741,7 @@ publish:binary-index:
   dependencies:
     - build:addon
     - init:changelogs
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   script:
     - ls -la
     - ls -la opsiweb
