@@ -466,7 +466,7 @@ const columns = reactive<ITableHeaderRow>({
         // const sel = (props.selectedClient) ? [props.selectedClient]: clientSelection.value
         return (
             <tablecellTCProductRequest
-              request={rowData.actionRequestNew || rowData.actionRequest || 'none'}
+              request={rowData.actionRequest || 'none'}
               requestoptions={[...rowData.actions]}
               rowitem={rowData}
               row-is-selected={selectionProducts.value.includes(rowData.productId)}
@@ -710,13 +710,16 @@ async function saveActionRequests(rowItem: any, newrequest: string) {
     await tableHelper.fetch()
   } else {
     for (const c in selectionClients.value) {
+      const clientId = selectionClients.value[c]
       for (const p in selectionProducts.value) {
+        const productId = selectionProducts.value[p]
+
         const d = {
           // user: localStorage.getItem('username'),
           user: storeAuth().username,
-          clientId: c,
+          clientId: clientId,
+          productId: productId,
           // clientId: selectionClients.value[c],
-          productId: p,
           // productId: selectionProducts.value[p],
           actionRequest: newrequest
         }
@@ -745,30 +748,40 @@ async function saveActionRequest(rowitem: any, newrequest: string) {
   if (storeSettings().quicksave) {
       lastChanges.value.clientIds = data.clientIds
       lastChanges.value.productIds = data.productIds
-      await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
+      const ok = await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
+      if (ok) {
+        rowitem.actionRequest = newrequest
+      }
     } else {
         for (const c in clientSelection.value) {
+          const clientId = selectionClients.value[c]
           const d = {
             user: storeAuth().username,
-            // user: localStorage.getItem('username'),
-            clientId: selectionClients.value[c],
+            clientId: clientId,
             productId: rowitem.productId,
             actionRequest: newrequest
           }
-          const objIndex = storeChanges().changesProducts.findIndex(item => item.user === storeAuth().username && item.clientId === selectionClients.value[c] && item.productId === rowitem.productId)
-          // const objIndex = storeChanges().changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === selectionClients.value[c] && item.productId === rowitem.productId)
+          const objIndex = storeChanges().changesProducts.findIndex(item => item.user === storeAuth().username && item.clientId === clientId && item.productId === rowitem.productId)
           if (objIndex > -1) {
             storeChanges().delWithIndexChangesProducts(objIndex)
           }
-          storeChanges().pushToChangesProducts(d)
+          addToChangedIfNeeded(rowitem, clientId, newrequest, d)
         }
-
+      }
     }
+function addToChangedIfNeeded(rowitem: any, clientId:string, newrequest:string, changeObj: any) {
+  const ic = rowitem.selectedClients?.indexOf(clientId)
+  if (newrequest == 'mixed') { // nothing to do
+  } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] === newrequest) { // nothing to do
+  } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] !== newrequest) {
+    storeChanges().pushToChangesProducts(changeObj)
+    return true
+  } else if (rowitem.actionRequest !== newrequest) {
+    storeChanges().pushToChangesProducts(changeObj)
+    return true
+  }
+  return false
 
-    // if (!this.quicksave) {
-    // } else {
-      // this.fetchOptions.fetchClients = true
-    // }
 }
 
 function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString2String) {

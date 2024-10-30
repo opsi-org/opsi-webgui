@@ -3,6 +3,10 @@
     <el-select
       v-model="visibleRequest"
       :disabled="config.read_only"
+      class="min-w-[82px] w-[82px]"
+      :class="{
+        '!text-red-600': visibleRequest?.includes('*'),
+      }"
     >
       <el-option
         v-for="a in get_options"
@@ -13,8 +17,11 @@
         @click="save(rowitem, a); visibleRequest=a; "
       />
       <template #label="{label}">
-        <el-text :type="currentReq != preRequest ? 'danger': ''">
-          {{ label }} {{ (currentReq != preRequest)? t_fixed('notOrigin'): '' }}
+        <!-- <el-text :type="visibleRequest?.includes('*') || visibleRequest != preRequest ? 'danger': ''"> -->
+        <el-text :type="visibleRequest?.includes('*') ? 'danger': ''">
+        <!-- <el-text :type="visibleRequest != request ? 'danger': ''"> -->
+          {{ label }} ({{ request }})
+          <!-- {{ label }} {{ (currentReq != preRequest)? t_fixed('notOrigin'): '' }} ({{ request }}) -->
         </el-text>
       </template>
     </el-select>
@@ -78,34 +85,38 @@ const selectedClients = ref(selectionClients.value)
 const preRequest = ref(props.request)
 const currentReq = ref(props.request)
 
-const DEBUG = ref(props.rowitem?.productId === 'windomain')
+const DEBUG = ref(props.rowitem?.productId.startsWith('win'))
 
-const changesItem = computed(() => {
-  // find item with productId
-  // return (changes.value && changes.value[props.rowitem.productId]
-  // TODO: find item with productId
-})
 
+watch(() => props.rowitem, () => {
+  if (DEBUG.value)
+  console.warn('dummy. change. rowitem', props.rowitem?.productId, props.rowitem?.actionRequest, props.rowitem )
+}, { deep: true })
 watch(() => selectedClients, () => {
+  if (DEBUG.value)
+  console.warn('dummy. change. selectedClients', selectedClients.value)
     currentReq.value = props.request
     preRequest.value = props.request
 }, { deep: true })
 
-function xorLike<T>(values: T[], mixedValue: string = "mixed"): T | string {
+
+function xorLike<T>(values: T[], mixedValue: string = "mixed"): T | string| undefined {
     if (values.length === 0) {
-        return mixedValue; // Leere Liste, könnte auch undefined oder ein anderer Wert sein
+        return undefined; // Leere Liste, könnte auch undefined oder ein anderer Wert sein
     }
 
     // Überprüfen, ob alle Werte gleich sind
     const firstValue = values[0];
     const allEqual = values.every(value => value === firstValue);
-
+    // const allClients = selectedClients.value.length === values.length
+    
     // Wenn alle gleich sind, gib den gemeinsamen Wert zurück, sonst "mixed"
     return allEqual ? firstValue : mixedValue;
-  }
-
-
-// Funktion zur Ermittlung des sichtbaren Wertes und zum Vergleich der Änderungen
+}
+// Funktion zur Ermittlung des sichtbaren actionRequest-Werts
+// Abhängig von den ausgewählten Clients und den lokalen nicht gespeicherten Änderungen
+// Mögliche Werte <actionRequest (setup, uninstall,...)>, "mixed" oder "none"
+// Kann einen *-Stern enthalten, wenn sich der Wert geändert hat im vergleich zum backend Wert
 function getVisibleValue(
     currentStatus: IObjectString2String,
     desiredStatus: IObjectString2String,
@@ -115,89 +126,79 @@ function getVisibleValue(
     // Filtere nur die ausgewählten PCs und berücksichtige nur die PCs, die sowohl im aktuellen als auch im gewünschten Status vorhanden sind
     const currentValues = selectedPCs.map(pc => currentStatus[pc]).filter(Boolean);
     const desiredValues = selectedPCs.map(pc => desiredStatus[pc]).filter(Boolean);
-
     // Bestimme das Zwischenergebnis (aktueller Status)
-    const currentZE = xorLike(currentValues, mixedValue);
+    let currentZE = xorLike(currentValues, mixedValue);
+    if (currentZE === undefined) {
+      currentZE = 'none'
+    }
+    if (DEBUG.value) console.warn('dummy.        currentValues', currentValues, "->", currentZE)
     // Bestimme das neue Zwischenergebnis (gewünschter Status)
     const desiredZE = xorLike(desiredValues, mixedValue);
-
+    if (desiredZE === undefined) {
+      return currentZE
+    }
+    if (DEBUG.value) console.warn('dummy.        desiredValues', desiredValues, "->", desiredZE)
     // Vergleich: Hat sich das aggregierte Zwischenergebnis verändert?
     const zeHasChanged = currentZE !== desiredZE;
 
     // Überprüfe, ob sich einzelne Werte zwischen dem aktuellen und gewünschten Status geändert haben
-    const individualChangeExists = selectedPCs.some(pc => desiredStatus[pc] !== undefined && currentStatus[pc] !== desiredStatus[pc]);
+    const individualChangeExists: boolean = selectedPCs.some(pc => desiredStatus[pc] !== undefined && currentStatus[pc] !== desiredStatus[pc]);
+    const justNone: boolean = desiredZE === 'none' && currentZE === 'none'
 
     // Wenn sich das Zwischenergebnis oder einzelne Werte geändert haben, markiere es mit einem *
-    const result = zeHasChanged || individualChangeExists ? `${desiredZE}*` : `${desiredZE}`;
-
+    const result = zeHasChanged || (individualChangeExists && !justNone) ? `${desiredZE}*` : `${desiredZE}`;
+    if (DEBUG.value) console.warn('dummy.        zeHasChanged', zeHasChanged, 'individualChangeExists', individualChangeExists, '->', result)
     return result;
 }
-// const productId = computed(() => {
-//   return props.rowitem?.productId
-// })
-// const changedValuesForProductId = computed(() => {
-//   if (DEBUG.value) {
-//     console.log('changedValuesForProductId', changesProducts.value, productId.value)
-//   }
-//   // const vals = changes.value?.[productId.value]
-//   // return changes.value && changes.value[productId.value]
-//   return changesProducts.value?.filter((item: any) => item.productId === productId.value)
-// })
-// const valueFromChanges = computed(() => {
-//   // for selectedClients
-//     // if changedvalues equals to each other // return value
-//     // if changedvalues not equals to each other // return mixed / red
-//   if (selectedClients.value.length === 0) { return undefined }
-//   if (changedValuesForProductId.value?.length === 0) { return undefined }
 
-//   const clientId2valueChanges = changedValuesForProductId.value?.map((item: any) => {
-//     return { [item.clientId]: item.actionRequest }
-//   })
-
-//   const allEqual = (arr: any) => arr.every((v: any) => v === arr[0])
-//   const allChangedValuesEqual = allEqual(Object.values(clientId2valueChanges))
-//   if (allChangedValuesEqual) {
-//     const res = Object.values(clientId2valueChanges)[0]
-//     console.log('changedValuesForProductId ze', res)
-//     return res
-//   }
-
-//   // const value = ref<string|undefined>("XXX")
-//   // for (const clientId in selectedClients.value) {
-//   //   if (clientId2valueChanges[clientId] !== value) {
-//   //     value.value = clientId2valueChanges[clientId]
-//   //   }
-//   //   if (clientId2valueChanges[clientId] !== undefined) {
-//   //     return mixedValue
-//   //   }
-//   // }
-//   return "idk"
-//   // return changedValuesForProductId.value?.[0]?.actionRequest
-// })
-// if (DEBUG.value) {
-//   console.log('changedValuesForProductId res', changedValuesForProductId.value)
-//   console.log('changedValuesForProductId res2', valueFromChanges.value)
-// }
-const get_vis_req = () => {
-  // currentReq.value = getVisibleValue(props.rowitem, item[1], selectedClients.value)
-    currentReq.value = props.request
-    // if (changes.value && )
-    if (props.rowitem === undefined) {
-      return currentReq.value
-    }
-    if (props.rowitem.selectedClients && props.rowitem.selectedClients.length !== selectedClients.value.length) {
-      if (props.request !== 'none') {
-        currentReq.value = 'mixed'
-      }
-    }
-    return currentReq.value
-  }
 const visibleRequest = computed({
-  get: get_vis_req,
+  // get: get_vis_req,
+  get: () => {
+    if (props.rowitem === undefined) {
+      return undefined
+    }
+    if (DEBUG.value) console.warn('dummy. --------')
+    if (DEBUG.value) console.warn('dummy. props.rowitem', props.rowitem.productId, props.rowitem.actionRequest, props.rowitem )
+    // format origin backend values to { client: actionRequest}
+    // TODO check for multiselected clients
+    const originValues: IObjectString2String = {}
+    selectedClients.value.forEach((item: any) => {
+      const iitem = props.rowitem?.selectedClients?.indexOf(item)
+      if (iitem != undefined  && iitem >= 0) {
+        // index of item in props.rowitem?.selectedClients
+        originValues[item] = props.rowitem?.actionRequestDetails?.[iitem] || props.rowitem?.actionRequest || 'none'
+        if (DEBUG.value) console.warn('dummy.      iclient', iitem, 'aRDetails', props.rowitem?.actionRequestDetails?.[iitem], 'aR', props.rowitem?.actionRequest)
+      } else {
+        originValues[item] = 'none'
+        // originValues[item] = props.rowitem?.actionRequest || 'none'
+        if (DEBUG.value) console.warn('dummy.      iclient', iitem, props.rowitem?.actionRequest)
+      }
+      // originValues[item] = props.request != 'mixed' ? props.request : props.rowitem?.actionRequest || 'none'
+    })
+    // if (props.rowitem.selectedClients) {
+    //   props.rowitem?.selectedClients.forEach((item: any) => {
+    //     originValues[item] = props.request != 'mixed' ? props.request : props.rowitem?.actionRequest || 'none'
+    //   })
+    // }
+
+    // format changes to { client: actionRequest}
+    const changeValues: IObjectString2String = {}
+    changesProducts.value?.forEach((item: any) => {
+      if (item.productId === props.rowitem?.productId) {
+        changeValues[item.clientId] = item.actionRequest
+      }
+    })
+
+    const res = getVisibleValue(originValues, changeValues, selectedClients.value)
+    if (DEBUG.value) console.warn('dummy. originValues', originValues)
+    if (DEBUG.value) console.warn('dummy. changeValues', changeValues)
+    if (DEBUG.value) console.warn('dummy. res', res)
+    return res
+  },
   set: (val: string) => {
     currentReq.value = val
     if (props.rowitem && props.rowitem.actionRequest != val) {
-      props.rowitem.actionRequestNew = val;
+      // props.rowitem.actionRequestNew = val;
     }
   }
 })
@@ -209,40 +210,6 @@ const get_options = computed(() => {
   return options
 })
 
-if (DEBUG.value) {
-  console.log("dummy. Current product: ", props.rowitem?.productId)
-  console.log('dummy. Current request: ', props.request)
-  console.log('dummy. Current request: ', props.rowitem)
-  console.log("dummy. products clients:", props.rowitem?.selectedClients)
-  console.log("dummy. Selected clients:", selectedClients.value)
-  console.log('dummy. Visible Request: ', visibleRequest.value)
-}
-
-if (DEBUG.value) {
-  const serverValsAll =  [
-    { 'c1': '0', 'c2': '0', 'c3': '0' },
-    { 'c1': '0', 'c2': '1', 'c3': '0' },
-    { 'c1': '1', 'c2': '0', 'c3': '1' },
-    { 'c1': '1', 'c2': '1', 'c3': '1' },
-  ]
-  const changesValsAll =  [
-    { 'c1': '0', 'c2': '0' },
-    { 'c1': '0', 'c2': '1' },
-    { 'c1': '1', 'c2': '0' },
-    { 'c1': '1', 'c2': '1' },
-  ]
-  // const allVals = serverValsAll.concat(changesValsAll)
-  const allVals = serverValsAll.flatMap(item1 => changesValsAll.map(item2 => [item1, item2]));
-  // console.log("dummy", allVals)
-  const clients = ['c1', 'c2', 'c3'] // selectionClients.value
-  // console.log("dummy selectionClients.value", selectionClients.value)
-
-  for (const item of allVals) {
-    const vals = [Object.values(item[0]), Object.values(item[1])]
-    console.log("dummy ", item[0], item[1], xorLike(vals[0]), xorLike(vals[1]), getVisibleValue(item[0], item[1], clients))
-    // break
-  }
-}
 
 </script>
 
