@@ -103,7 +103,7 @@ class Webgui(Addon):
 				raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(err)) from err
 
 		if not connection.scope["session"].is_admin:
-			raise BackendAuthenticationError("Not an admin")
+			raise BackendPermissionDeniedError("Not an admin")
 
 		return False
 
