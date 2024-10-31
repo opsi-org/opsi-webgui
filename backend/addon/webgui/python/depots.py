@@ -29,7 +29,7 @@ from .utils import (
 	backend,
 	depot_access_configured,
 	filter_depot_access,
-	get_allowd_depots,
+	get_allowed_depots,
 	get_allowed_clients,
 	get_username,
 	host_group_access_configured,
