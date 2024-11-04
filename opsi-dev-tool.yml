@@ -20,14 +20,15 @@ package:
     - opsiconfd (>= 4.3.24.0)
   name: opsi-webgui
   postinst_script:
-    - echo "OPSI webgui folder '/var/lib/opsiconfd/addons/webgui'"
+    - echo "OPSI webgui folder '/usr/lib/opsiconfd/addons/webgui'"
+    - "[ -e /var/lib/opsiconfd/addons/webgui ] && rm -r /var/lib/opsiconfd/addons/webgui"
     - exit 0
   source_script: |
-    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons"
-    cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui"
-    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data"
+    mkdir -p "${DST}/rootfs/usr/lib/opsiconfd/addons"
+    cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui"
+    mkdir -p "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui/data"
     ls -la "${SRC}/opsiweb/dist/"
-    cp -a "${SRC}"/opsiweb/dist/* "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app"
+    cp -a "${SRC}"/opsiweb/dist/* "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui/data/app"
   type: binary
 project:
   allow_tag_delete: false
@@ -37,7 +38,7 @@ project:
     - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
   name: opsi-webgui
-  version: "4.3.37"
+  version: "4.3.39"
   version_files:
     opsi-dev-tool.yml: pull-binaries[0].version
     opsiweb/package.json: "$.version"
@@ -60,7 +61,7 @@ pull-binaries:
       - exit 1
     server-type: binaryindex
     server-url: http://binaryindex.uib.gmbh
-    version: "4.3.37"
+    version: "4.3.39"
 transifex:
   download_translations:
     - install_dir: opsiweb/uib-components/locale
