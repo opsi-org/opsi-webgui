@@ -36,8 +36,34 @@
             :sortable="column.sortable"
           >
             <template #default="scope" v-if="column.key === 'actions'">
-              <el-button type="text" @click="handleLogClick(scope.row)">Log</el-button>
-              <el-button type="text" @click="handleActionClick(scope.row)">Action</el-button>
+              <el-tooltip :content="$t('title.config')" placement="top">
+                <el-button
+                  type="text"
+                  @click="handleConfigClick(scope.row)"
+                  :class="{ 'is-active': activeButton === 'config-' + scope.row.clientId }"
+                >
+                  <IconIIcon :icon="icons.settings" />
+                </el-button>
+              </el-tooltip>
+              <el-tooltip :content="$t('title.log')" placement="top">
+                <el-button
+                  type="text"
+                  @click="handleLogClick(scope.row)"
+                  :class="{ 'is-active': activeButton === 'log-' + scope.row.clientId }"
+                >
+                  <IconIIcon :icon="icons.log" />
+                </el-button>
+              </el-tooltip>
+              <el-tooltip :content="$t('title.clone')" placement="top">
+                <el-button
+                  type="text"
+                  @click="handleCloneClick(scope.row)"
+                  :class="{ 'is-active': activeButton === 'clone-' + scope.row.clientId }"
+                >
+                  <IconIIcon :icon="icons.client" />
+                </el-button>
+              </el-tooltip>
+              <DropdownDDClientActions :client-ids="[scope.row.clientId]" />
             </template>
           </el-table-column>
         </template>
@@ -64,10 +90,12 @@ import { useNotification } from '~/composables/mixins/useComponent';
 import {useIcons} from '../../composables/mixins/useIcons'
 import { useRouter } from 'vue-router'
 const icons = useIcons()
+const router = useRouter()
 const { notifyError } = useNotification()
 const storeSelection = storeSelections()
 const $t = useI18n().t
 const fetchedData = ref()
+const activeButton = ref<string | null>(null)
 const totalItems = ref<number>(0)
 const currentPage = ref(1)
 const pageSize = ref(20)
@@ -76,26 +104,37 @@ const isFirstPage = ref(false)
 const isLastPage = ref(false)
 const infiniteScrollDiv = ref<HTMLElement | null>(null)
 const filterQuery = ref('')
-const sortBy = ref('ident')
 const filterBy = ref('ident')
+const sortBy = ref('clientId')
+const sortDesc = ref(true)
 const tableColumn = ref([
-  {title: 'selected', key: 'selected', sortable: false, type: 'selection', visible: true, alwaysVisible: true},
+  {title: 'selected', key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true},
   {title: 'clientId', key: 'clientId', sortable: true, visible: true, alwaysVisible: true, filter: true},
   {title: 'macAddress', key: 'macAddress', sortable: false, visible: false},
   {title: 'ipAddress', key: 'ipAddress', sortable: true, visible: false},
   {title: 'description', key: 'description', sortable: false, visible: false},
   {title: 'notes', key: 'notes', sortable: true, visible: false},
-  {title: 'lastSeen', key: 'lastSeen', sortable: false, visible: false},
+  {title: 'lastSeen', key: 'lastSeen', sortable: true, visible: false},
   {title: 'uefi', key: 'uefi', sortable: true, visible: false},
-  {title: 'version_outdated', key: 'version_outdated', sortable: false, visible: false},
-  {title: 'version_outdated_netboot', key: 'version_outdated_netboot', sortable: false, visible: false},
-  {title: 'installationStatus_unknown', key: 'installationStatus_unknown', sortable: false, visible: true},
-  {title: 'installationStatus_installed', key: 'installationStatus_installed', sortable: false, visible: true},
-  {title: 'actionResult_failed', key: 'actionResult_failed', sortable: false, visible: true},
-  {title: 'actionResult_successful', key: 'actionResult_successful', sortable: false, visible: true},
-  {title: 'reachable', key: 'reachable', sortable: false, visible: false},
+  {title: 'version_outdated_localboot', key: 'version_outdated', sortable: true, visible: true, alwaysVisible: true},
+  {title: 'version_outdated_netboot', key: 'version_outdated_netboot', sortable: true, visible: true, alwaysVisible: true},
+  {title: 'installationStatus_unknown', key: 'installationStatus_unknown', sortable: true, visible: true, alwaysVisible: true},
+  {title: 'installationStatus_installed', key: 'installationStatus_installed', sortable: true, visible: true, alwaysVisible: true},
+  {title: 'actionResult_failed', key: 'actionResult_failed', sortable: true, visible: true, alwaysVisible: true},
+  {title: 'actionResult_successful', key: 'actionResult_successful', sortable: true, visible: true, alwaysVisible: true},
+  {title: 'reachable', key: 'reachable', sortable: false, visible: true, alwaysVisible: true},
   {title: 'actions', key: 'actions', sortable: false, visible: true, alwaysVisible: true},
 ])
+
+
+
+// watch(
+//   [filterQuery, currentPage, pageSize, sortBy, sortDesc, storeSelection.selectionDepots],
+//   fetchClients,
+//   { immediate: true }
+// )
+
+// watch([()=>currentPage.value, ()=>filterQuery.value], fetchClients, { immediate: true })
 
 onMounted(() => {
   fetchClients()
@@ -149,8 +188,8 @@ async function fetchClients() {
     filterQuery: filterQuery.value,
     pageNumber: currentPage.value,
     perPage: pageSize.value,
-    sortBy:'clientId',
-    sortDesc:true,
+    sortBy: sortBy.value,
+    sortDesc: sortDesc.value,
     selected: JSON.stringify(storeSelection.selectionClients),
     selectedDepots: JSON.stringify(storeSelection.selectionDepots)
   }
@@ -171,7 +210,7 @@ async function fetchClients() {
       isLastPage.value = currentPage.value * pageSize.value >= parseInt(headers.get('x-total-count') || '0')
     }
   } catch (error) {
-    notifyError({ message: $t('message.error.unexpected') })
+    notifyError({ message: $t('message.error.unexpected') + error })
   } finally {
     isLoading.value = false
     scrollToTopOfTable()
@@ -182,25 +221,32 @@ function handlePagination(val: number) {
   currentPage.value = val
   fetchClients()
 }
-const router = useRouter()
 
-function handleActionClick(rowData: any) {
-  console.log('Action clicked for row:', rowData);
+
+function handleConfigClick(rowData: any) {
+  activeButton.value = 'config-' + rowData.clientId
+  router.push('/clients/client/config/' + rowData.ident)
 }
 
 function handleLogClick(rowData: any) {
+  activeButton.value = 'log-' + rowData.clientId
   router.push('/clients/client/logs/' + rowData.ident)
 }
 
+function handleCloneClick(rowData: any) {
+  activeButton.value = 'clone-' + rowData.clientId
+  router.push('/clients/client/clone/' + rowData.ident)
+}
 
 function applyFilter(columnKey: string) {
   filterBy.value = columnKey
-  // fetchClients()
+  fetchClients()
 }
 
 function applySort(columnKey: string) {
   sortBy.value = columnKey
-  // fetchClients()
+  console.error('Sort By', sortBy.value)
+  fetchClients()
 }
 </script>
 
@@ -212,3 +258,109 @@ function applySort(columnKey: string) {
   justify-content: center;
 }
 </style>
+
+
+<!-- <template>
+  <TableTData
+    :fetch-data="fetchClients"
+    :table-column="tableColumn"
+    :fetched-data="fetchedData"
+    :total-items="totalItems"
+    :current-page="currentPage"
+    :page-size="pageSize"
+    :is-loading="isLoading"
+    :is-first-page="isFirstPage"
+    :is-last-page="isLastPage"
+    :filter-query="filterQuery"
+    :sort-by="sortBy"
+    :filter-by="filterBy"
+    @handle-pagination="handlePagination"
+    @handle-action-click="handleActionClick"
+    @handle-log-click="handleLogClick"
+  />
+</template>
+
+<script setup lang="ts">
+import { useNotification } from '~/composables/mixins/useComponent'
+import { useRouter } from 'vue-router'
+
+const { notifyError } = useNotification()
+const router = useRouter()
+
+const fetchedData = ref([])
+const totalItems = ref<number>(0)
+const currentPage = ref(1)
+const pageSize = ref(20)
+const isLoading = ref(false)
+const isFirstPage = ref(false)
+const isLastPage = ref(false)
+const filterQuery = ref('')
+const sortBy = ref('ident')
+const filterBy = ref('ident')
+const tableColumn = ref([
+  { title: 'selected', key: 'selected', sortable: false, type: 'selection', visible: true, alwaysVisible: true },
+  { title: 'clientId', key: 'clientId', sortable: true, visible: true, alwaysVisible: true, filter: true },
+  { title: 'macAddress', key: 'macAddress', sortable: false, visible: false },
+  { title: 'ipAddress', key: 'ipAddress', sortable: true, visible: false },
+  { title: 'description', key: 'description', sortable: false, visible: false },
+  { title: 'notes', key: 'notes', sortable: true, visible: false },
+  { title: 'lastSeen', key: 'lastSeen', sortable: false, visible: false },
+  { title: 'uefi', key: 'uefi', sortable: true, visible: false },
+  { title: 'version_outdated', key: 'version_outdated', sortable: false, visible: false },
+  { title: 'version_outdated_netboot', key: 'version_outdated_netboot', sortable: false, visible: false },
+  { title: 'installationStatus_unknown', key: 'installationStatus_unknown', sortable: false, visible: true },
+  { title: 'installationStatus_installed', key: 'installationStatus_installed', sortable: false, visible: true },
+  { title: 'actionResult_failed', key: 'actionResult_failed', sortable: false, visible: true },
+  { title: 'actionResult_successful', key: 'actionResult_successful', sortable: false, visible: true },
+  { title: 'reachable', key: 'reachable', sortable: false, visible: false },
+  { title: 'actions', key: 'actions', sortable: false, visible: true, alwaysVisible: true },
+])
+
+async function fetchClients() {
+  isLoading.value = true
+  const params = {
+    filterQuery: filterQuery.value,
+    pageNumber: currentPage.value,
+    perPage: pageSize.value,
+    sortBy: 'clientId',
+    sortDesc: true,
+    selected: JSON.stringify(storeSelection.selectionClients),
+    selectedDepots: JSON.stringify(storeSelection.selectionDepots)
+  }
+  try {
+    const { data, error, headers } = await useApiGETBody('/opsidata/clients', params)
+    if (error) {
+      notifyError({ message: error?.response?.data?.message || $t('message.error.generic') })
+      return
+    }
+    if (data.value == undefined) {
+      notifyError({ message: $t('message.error.empty-response') })
+      return
+    }
+    fetchedData.value = data.value
+    totalItems.value = parseInt(headers.get('x-total-count') || '0')
+    if (headers.get('x-total-count')) {
+      isFirstPage.value = currentPage.value == 1
+      isLastPage.value = currentPage.value * pageSize.value >= parseInt(headers.get('x-total-count') || '0')
+    }
+  } catch (error) {
+    notifyError({ message: $t('message.error.unexpected') + error })
+  } finally {
+    isLoading.value = false
+    scrollToTopOfTable()
+  }
+}
+
+function handlePagination(val: number) {
+  currentPage.value = val
+  fetchClients()
+}
+
+function handleActionClick(rowData: any) {
+  console.log('Action clicked for row:', rowData)
+}
+
+function handleLogClick(rowData: any) {
+  router.push('/clients/client/logs/' + rowData.ident)
+}
+</script> -->
