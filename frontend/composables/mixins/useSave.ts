@@ -71,7 +71,7 @@ export const useSaveProductActionRequest = (_t:any = undefined) => {
         errorObj.error = error?.response?.data
         pushToErrorsProducts(errorObj)
       }
-      return
+      return false
     }
 
     if (deleteitem) {
@@ -81,7 +81,7 @@ export const useSaveProductActionRequest = (_t:any = undefined) => {
       // await $nuxt.refresh()
       // TODO how to refresh nuxt ??? https://stackoverflow.com/questions/77387776/nuxt-3-reload-refresh-the-page
     }
-
+    return true
   }
 
   //   await this.$axios.$post('/api/opsidata/clients/products', change)

@@ -1,144 +1,182 @@
 <template>
-  <div>
-    <!-- size="small"  -->
+  <el-tooltip
+    effect='light'
+    :disabled="visibleRequest!==MIXED_VALUE && !visibleRequest?.includes('*')"
+  >
+    <template #content> <ThisJSXTooltipContent /> </template>
+
     <el-select
-      v-model="visibleRequest">
+      v-model="visibleRequest"
+      :disabled="config.read_only"
+      class="min-w-[82px] w-[82px]"
+    >
       <el-option
         v-for="a in get_options"
         :key="a"
         :label="a"
         :value="a"
         :data-testid="`DropdownDDProductRequest-Item-${a}`"
-        @click="save(rowitem, a); visibleRequest=a"
-        />
-    </el-select>
-    <!-- <b-dropdown
-      :id="(rowitem!=undefined) ? `DDProductRequest_actionRequest_hover_${rowitem.productId}`:''"
-      data-testid="DropdownDDProductRequest"
-      v-bind="$props"
-      no-caret
-      lazy
-      dropdown
-      :disabled="config?.read_only"
-      variant="outline-primary"
-      size="sm"
-      alt="Show column"
-      class="DDProdRequest fixed_column_selection widthmax"
-      :class="rowIsSelected? 'selected' : ''"
-    >
-      <template #button-content>
-        <span :class="{'value-changed-not-saved' : currentReq != preRequest}">
-          {{ visibleRequest }} {{ (currentReq != preRequest)? t_fixed('notOrigin') : '' }}
-        </span>
+        @click="save(modelRowitem, a); visibleRequest=a; "
+      />
+      <template #label="{label}">
+        <el-text :type="visibleRequest?.includes('*') ? 'danger': VARIANTS[visibleRequest||'']">
+          {{ label }}
+        </el-text>
+        <el-text v-if="visibleRequest?.includes('*')">
+          ({{ modelRowitem?.actionRequest || '' }})
+        </el-text>
       </template>
-      <b-dropdown-item
-        v-for="a in get_options"
-        :key="a"
-        :data-testid="`DropdownDDProductRequest-Item-${a}`"
-        @click="$emit('update:action', a);save(rowitem, a); visibleRequest=a"
-      >
-        {{ a }}
-      </b-dropdown-item>
-    </b-dropdown> -->
-    <!-- <TooltipTTProductCell
-      v-if="(visibleRequest==='mixed') && rowitem"
-      type="actionRequest"
-      :target="`DDProductRequest_actionRequest_hover_${rowitem.productId}`"
-      :details="get_allRequests"
-    /> -->
-  </div>
+    </el-select>
+  </el-tooltip>
 </template>
 
-<script lang="ts" setup>
-// import { useStrings } from '~/composables/mixins/useStrings';
+<script lang="tsx" setup>
+import type { IObjectString2String } from '~/types/tgeneral';
 import type { ITableRowItemProducts } from '~/types/ttable';
 
-// import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
-// import { BDropdown } from 'bootstrap-vue'
-// import { ITableRowItemProducts } from '../../.utils/types/ttable'
-// import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
-// import { mapValues2Objects } from '../../.utils/utils/smappings'
-// import { Strings } from '../../mixins/strings'
-// const t_fixed = useStrings().t_fixed
+const config = storeConfigapp().config ?? { read_only: true }
+const { changesProducts } = storeToRefs(storeChanges())
+const {selectionClients} = storeToRefs(storeSelections())
 
-const selectionStore = storeSelections()
-const {selectionClients} = storeToRefs(selectionStore)
-// const configStore = storeConfigapp()
-// const {config} = storeToRefs(configStore)
-// const selections = namespace('selections')
-// const config = namespace('config-app')
+const MIXED_VALUE = "mixed"
+const DEFAULT_OPTIONS = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
+const VARIANTS: {[key: string]: "" | "danger" | "primary" | "warning" | "success" | "info"} = {
+  'always': 'danger',
+  'setup': 'danger',
+  'once': 'danger',
+  'custom': 'danger',
+  'uninstall': 'primary',
+  'foo': 'primary',
+  'none': '',
+  [MIXED_VALUE]: 'warning',
+  undefined: 'primary'
+}
 
-
-// @Component({ mixins: [Strings] })
-// export default class DDProductRequest extends BDropdown {
-//   t_fixed: any
-const props = defineProps({
-  rowitem: { type: Object as PropType<ITableRowItemProducts>, default: undefined },
-  rowIsSelected: { type: Boolean, default: undefined },
-  request: { type: String, default: '---' },
-  requestoptions: { type: Array as PropType<Array<string>>, default: () => { return ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } },
-  save: { type: Function, default: () => { return () => { return {} } } },
-  // selectedClients: { type: Array as PropType<Array<string>>, default: () => { return selectionClients.value } }
-})
 const selectedClients = ref(selectionClients.value)
-const preRequest = ref(props.request)
-const currentReq = ref(props.request)
+// modelValue not required, cause column header is not for specific row.
+const modelRowitem = defineModel<ITableRowItemProducts>()
 
-// function updated () {
-//   preRequest.value = visibleRequest.value
-// }
-watch(() => selectedClients, () => {
-    currentReq.value = props.request
-    preRequest.value = props.request
-  }, { deep: true })
-
-  // @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
-  //   this.currentReq = this.request
-  //   this.preRequest = this.request
-  //   return this.currentReq
-  // }
-const get_vis_req = () => {
-    currentReq.value = props.request
-    if (props.rowitem === undefined) {
-      return currentReq.value
-    }
-    if (props.rowitem.selectedClients && props.rowitem.selectedClients.length !== selectedClients.value.length) {
-      if (props.request !== 'none') {
-        currentReq.value = 'mixed'
-      }
-    }
-    return currentReq.value
-  }
-const visibleRequest = computed({
-get: get_vis_req,
-set: (val: string) => {
-    currentReq.value = val
-  }
+const _props = defineProps({
+  rowIsSelected: { type: Boolean, default: undefined },
+  save: { type: Function, default: () => { return () => { return {} } } },
 })
-const get_options = computed(() => {
-  const options = props.requestoptions
-  if (currentReq.value === 'mixed' && !options.includes('mixed')) {
-    options.push('mixed')
+
+const get_options = computed((): Array<string> => {
+  const options = [...modelRowitem.value?.actions || DEFAULT_OPTIONS]
+  if (originalCombinedValue.value === MIXED_VALUE && !options.includes(MIXED_VALUE)) {
+    options.push(MIXED_VALUE)
   }
   return options
 })
 
-// const get_allRequests = computed(() => {
-//   if (props.rowitem === undefined) {
-//     return {}
-//   }
-//   if (props.rowitem.actionRequestDetails || selectedClients.value.length > 1) {
-//     return mapValues2Objects(props.rowitem.actionRequestDetails ?? [props.rowitem.actionRequest], props.rowitem.selectedClients, selectedClients.value, 'none')
-//   }
-//   return {}
-// })
+const originalValues = computed((): IObjectString2String => { // clientId -> actionRequest
+  // format origin backend values to { client: actionRequest}
+  const _originalValues:IObjectString2String = {}
+  selectedClients.value.forEach((item: any) => {
+    const iitem = modelRowitem.value?.selectedClients?.indexOf(item)
+    if (iitem != undefined  && iitem >= 0) {
+      _originalValues[item] = modelRowitem.value?.actionRequestDetails?.[iitem] || modelRowitem.value?.actionRequest || 'none'
+    } else {
+      _originalValues[item] = 'none'
+    }
+  })
+  return _originalValues
+})
+const changedValues = computed((): IObjectString2String => { // clientId -> actionRequest (from changes)
+  // format changes to { client: actionRequest}
+  const _changedValues: IObjectString2String = {}
+  changesProducts.value?.forEach((item: any) => {
+    if (item.productId === modelRowitem.value?.productId) {
+      _changedValues[item.clientId] = item.actionRequest
+    }
+  })
+  return _changedValues
+})
+
+const originalCombinedValue = computed((): string => { // actionRequest or mixed only consider originalvalues
+  // Filtere nur die ausgewählten PCs und berücksichtige nur die PCs, die sowohl im aktuellen als auch im gewünschten Status vorhanden sind
+  const currentValues = selectedClients.value.map(pc => originalValues.value[pc]).filter(Boolean);
+  // Bestimme das Zwischenergebnis (aktueller Status)
+  let _originalCombinedValue = xorLike(currentValues);
+  if (_originalCombinedValue === undefined) {
+    _originalCombinedValue = 'none'
+  }
+  return _originalCombinedValue
+})
+const changedCombinedValue = computed((): string => { // actionRequest or mixed only consider changes
+  const desiredValues = selectedClients.value.map(pc => changedValues.value[pc]).filter(Boolean);
+  // Bestimme das neue Zwischenergebnis (gewünschter Status)
+  const changedCombinedValue = xorLike(desiredValues);
+  if (changedCombinedValue === undefined) {
+    return originalCombinedValue.value
+  }
+  return changedCombinedValue
+})
+
+
+const tooltipdata = computed(() => { // all selected clients and their original actionrequest
+  const clientValuesArr = []
+  for (const c in selectedClients.value.toSorted()) {
+    const clientId = selectedClients.value[c]
+    const val = { label: clientId, actionRequest: originalValues.value[clientId] }
+    clientValuesArr.push(val)
+  }
+  return clientValuesArr
+})
+
+const visibleRequest = computed( () => {
+  // Funktion zur Ermittlung des sichtbaren actionRequest-Werts
+  // Abhängig von den ausgewählten Clients und den lokalen nicht gespeicherten Änderungen
+  // Mögliche Werte <actionRequest (setup, uninstall,...)>, "mixed" oder "none"
+  // Kann einen *-Stern enthalten, wenn sich der Wert geändert hat im vergleich zum backend Wert
+
+  // Vergleich: Hat sich das aggregierte Zwischenergebnis verändert?
+  const visualValueHasChanged = originalCombinedValue.value !== changedCombinedValue.value;
+  // Überprüfe, ob sich einzelne Werte zwischen dem aktuellen und gewünschten Status geändert haben
+  const individualValueChanged: boolean = selectedClients.value.some(pc => changedValues.value[pc] !== undefined && originalValues.value[pc] !== changedValues.value[pc]);
+  const undefinedChangedToNone: boolean = changedCombinedValue.value === 'none' && originalCombinedValue.value === 'none'
+
+  // Wenn sich das Zwischenergebnis oder einzelne Werte geändert haben, markiere es mit einem *
+  const result = visualValueHasChanged || (individualValueChanged && !undefinedChangedToNone) ? `${changedCombinedValue.value}*` : `${changedCombinedValue.value}`;
+  return result;
+})
+
+function xorLike<T>(values: T[]): T | string| undefined {
+  if (values.length === 0) {
+    return undefined;
+  }
+  // Überprüfen, ob alle Werte gleich sind
+  const firstValue = values[0];
+  const allEqual = values.every(value => value === firstValue);
+
+  // Wenn alle gleich sind, gib den gemeinsamen Wert zurück, sonst "mixed"
+  return allEqual ? firstValue : MIXED_VALUE;
+}
+
+function ThisJSXTooltipContentRow () {
+  return {
+    'default': ({data}: any) => {
+      return  <span class="w-full !flex !justify-between !space-x-2">
+          <el-text>{data.label}</el-text>
+          <el-text type={VARIANTS[data.actionRequest] || 'info'}>{data.actionRequest}</el-text>
+        </span>
+      }
+  }
+}
+function ThisJSXTooltipContent () {
+  return <el-tree
+    class="!min-w-60"
+    data={tooltipdata}
+    effect="dark"
+    placement="left-start"
+    v-slots={ThisJSXTooltipContentRow()}
+  />
+
+}
 </script>
 
-<style>
-.widthmax {
-  width: 100%;
-}
-.DDProdRequest .dropdown-menu .dropdown-item {
-  font-weight: normal !important;
+<style scoped>
+:deep(.el-icon.el-tree-node__expand-icon) {
+  display: none !important;
 }
 </style>
