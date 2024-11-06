@@ -18,17 +18,18 @@ git:
 package:
   architecture: all
   depends:
-    - opsiconfd (>= 4.3.21.12)
+    - opsiconfd (>= 4.3.24.0)
   name: opsi-webgui
   postinst_script:
-    - echo "OPSI webgui folder '/var/lib/opsiconfd/addons/webgui'"
+    - echo "OPSI webgui folder '/usr/lib/opsiconfd/addons/webgui'"
+    - "[ -e /var/lib/opsiconfd/addons/webgui ] && rm -r /var/lib/opsiconfd/addons/webgui"
     - exit 0
   source_script: |
-    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons"
-    cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui"
-    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data"
-    ls -la "${SRC}/frontend/dist/"
-    cp -a "${SRC}"/frontend/dist/* "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app"
+    mkdir -p "${DST}/rootfs/usr/lib/opsiconfd/addons"
+    cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui"
+    mkdir -p "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui/data"
+    ls -la "${SRC}/opsiweb/dist/"
+    cp -a "${SRC}"/opsiweb/dist/* "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui/data/app"
   type: binary
 project:
   allow_tag_delete: false
