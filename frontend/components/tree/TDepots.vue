@@ -25,7 +25,6 @@ onMounted(async ()=> {
 
 async function fetch() {
   depotIDList.value = await useDepot($t).getDepotIdList()
-  console.warn('depotIDList', depotIDList.value)
 }
 
 const syncSelection = () => {

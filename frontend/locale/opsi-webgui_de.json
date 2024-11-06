@@ -302,6 +302,7 @@
   "label.redis_data": "Redis Data",
   "label.maintenance_mode": "Maintenance Mode",
   "label.server_id": "Server ID",
+  "label.selectChildren": "Select group children",
   "label.password": "Password",
   "label.create.prodgroup": "Create Product Group",
   "placeholder.fileupload": "Choose a file",

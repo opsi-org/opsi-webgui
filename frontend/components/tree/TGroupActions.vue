@@ -73,10 +73,10 @@
                 </template>
                 <template v-else-if="action == 'client-add' || action == 'product-add'">
                   <el-form-item :label="$t('label.selectChildren')">
-                    <el-scrollbar height="300px" class="border w-100 p-2">
-                      <el-checkbox-group v-model="selectedChildren">
+                    <el-scrollbar height="300px" class="border w-full p-2 min-w-[300px]">
+                      <el-checkbox-group v-model="selectedChildren" >
                         <div v-for="item in idList" :key="item">
-                          <el-checkbox size="small" :value="item" />
+                          <el-checkbox size="small" :value="item" :label="item" />
                         </div>
                       </el-checkbox-group>
                     </el-scrollbar>
@@ -157,7 +157,7 @@ const treeProps = {
   label: 'text',
   children: 'children'
 }
-const fetchedData = ref<any>({})
+const fetchedData = ref<Array<any>>([])
 const idList = ref<T_ProductIds|T_ClientIds>([])
 const selectedChildren = ref<Array<any>>([])
 const selectedGroups = ref<Array<any>>([])
