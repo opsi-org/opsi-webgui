@@ -5,6 +5,7 @@ FROM mcr.microsoft.com/playwright:v1.38.0-jammy
 RUN apt-get update \
 	&& apt-get --yes dist-upgrade \
 	&& apt-get --yes --allow-downgrades install \
+		docker.io \
 		cpio \
 		sudo \
 		wget \
