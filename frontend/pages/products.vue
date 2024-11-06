@@ -3,7 +3,7 @@
     :is-mobile="isMobile"
     :page0-condition="routeNameSettings?.page0Condition"
     :page1-condition="routeNameSettings?.page1Condition"
-    :width="routeNameSettings?.width"
+    :width="routeNameSettings?.width || '100%'"
     classeachcol=""
     >
     <!-- :classeachcol="isMobile ? 'm-1': 'm-1 h-full'" -->

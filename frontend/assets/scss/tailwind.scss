@@ -19,7 +19,10 @@
   @font-face {
     /* Text and sublines: Open Sans */
     font-family: "OpenSans";
-    src: url(../fonts/OpenSans/ttf/OpenSans-Regular.ttf) format("truetype");
+    src: url(../fonts/OpenSans/OpenSans-Regular.ttf) format("truetype");
+    // this does not work with firefox...
+    // https://stackoverflow.com/questions/35206815/font-loading-error-downloadable-font-kern-too-large-subtable-table-discarded
+    // src: url(../fonts/OpenSans/ttf/OpenSans-Regular.ttf) format("truetype");
   }
   @font-face {
     /* Monospace: Droid Sans Mono */

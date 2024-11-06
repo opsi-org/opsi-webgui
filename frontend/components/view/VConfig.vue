@@ -31,7 +31,8 @@ const props = defineProps({
 // console.debug('VConfig', props.id, props.type, props.isChild)
 
 currentId.value = props.id
-const activeName = ref(configLastSelected.value[props.type] || (props.isChild? 'config':'attr'))
+const activeName = ref(configLastSelected.value[props.type] || 'config')
+// const activeName = ref(configLastSelected.value[props.type] || (props.isChild? 'config':'attr'))
 
 watch(()=>props.id, ()=>{
   currentId.value = props.id

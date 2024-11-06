@@ -1,10 +1,11 @@
 <template>
-  <div data-testid="TCProductVersionCell" class="d-inline-block">
+  <div data-testid="TCProductVersionCell" class="d-inline-block" >
     <div
+      v-if="rowitem.dummy == undefined"
       :id="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
       class="TCProductVersionCell_hover text-small"
     >
-      <el-text>{{ (rowitem.depot_version_diff) ? '' : rowitem.depotVersions[0] }}</el-text>
+      <el-text>{{ (rowitem.depot_version_diff) ? ' ' : rowitem.depotVersions[0] }}</el-text>
       <IconIDetails
         v-if="rowitem.depot_version_diff"
         class="details depot-unequal"
@@ -13,12 +14,11 @@
         @click="$emit('details', row, tooltiptext)"
       />
       <IconIDetails
-        v-if="(rowitem.selectedDepots.length !== selectionDepots.length)"
-        :variant="(rowitem.selectedDepots.length !== selectionDepots.length) ? 'warning' : undefined"
+        v-if="(rowitem.selectedDepots?.length !== selectionDepots.length)"
+        :variant="(rowitem.selectedDepots?.length !== selectionDepots.length) ? 'warning' : undefined"
         class="details depot-wo-prod"
         content="depot-wo-prod"
       />
-
       <IconIDetails
         v-if="rowitem.client_version_outdated || false"
         :variant="(rowitem.client_version_outdated || false) ? 'danger' : undefined"
