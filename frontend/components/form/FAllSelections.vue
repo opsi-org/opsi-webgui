@@ -19,7 +19,7 @@
         </el-button>
         </div>
       </template>
-      <el-scrollbar max-height="200px" class="w-full flex items-stretch ml-3">
+      <el-scrollbar max-height="100px" class="w-full items-stretch flex border ml-3">
         <el-alert v-if="storeSelection['selection' + category].length <= 0" type="warning" :closable="false"
         >{{ $t('message.warning.noTypeSelected', {type: $t('message.warning.noTypeSelected.type.'+category)})}}</el-alert>
         <ul v-else direction="vertical">

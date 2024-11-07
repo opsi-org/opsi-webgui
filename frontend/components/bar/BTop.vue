@@ -11,11 +11,15 @@
 
     <div class="flex-grow" />
 
-    <el-menu-item index="2" type="text" @click="toggleRight" data-testid="menu-quickpanel" class="!bg-transparent">
+    <el-menu-item v-if="changesExists"  @click="() => {changesDialogVisible = !changesDialogVisible}" index="2" type="text" data-testid="menu-changes" class="!bg-transparent">
+      <ModalMChanges v-if="$mq!=='mobile'" v-model="changes" v-model:visible="changesDialogVisible" small transparent/>
+    </el-menu-item>
+
+    <el-menu-item index="3" type="text" @click="toggleRight" data-testid="menu-quickpanel" class="!bg-transparent">
       <IconIIcon :icon="icons.quickpanel" class="text-white" />
     </el-menu-item>
 
-    <PopconfirmPLogout v-if="!mq.isMobile.value" index="3" :is-menu-item="true" />
+    <PopconfirmPLogout v-if="!mq.isMobile.value" index="4" :is-menu-item="true" />
   </el-menu>
 </template>
 
@@ -24,13 +28,20 @@
   import { useRouter } from 'vue-router'
 
   const mq = useMQ()
+  const $mq = useMQ().$mq
   const emit = defineEmits(['toggleLeft', 'toggleRight'])
   const icons = useIcons()
   const router = useRouter()
-
+  const changesDialogVisible = ref(false)
   const toggleLeft = () => emit('toggleLeft')
   const toggleRight = () => emit('toggleRight')
   const navigateToClients = () => router.push('/clients/')
+
+  const changes = storeChanges()
+
+const changesExists = computed(() => {
+  return changes?.changesHostParam?.length > 0 || changes?.changesProducts?.length > 0
+})
 </script>
 
 <style scoped>

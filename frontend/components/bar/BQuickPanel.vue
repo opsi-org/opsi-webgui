@@ -1,9 +1,10 @@
 <template>
   <div
-    class="flex flex-col  p-2 rounded-lg shadow-md" data-testid="BQuickPanel"
+  class="flex flex-col items-stretch p-2 rounded-lg shadow-md"
+    data-testid="BQuickPanel"
     style="height: calc(100vh - var(--above-main));"
   >
-    <section class="mb-4">
+    <section class="mb-0 ">
       <header class="flex justify-between items-center mb-2">
         <el-text tag="b" size="small">{{ $t('label.quickselect') }}</el-text>
         <el-button size="small" class="!border-none p-1" @click="storeSelection.clearAllSelection">
@@ -13,31 +14,26 @@
       </header>
       <TabsTQuickSelections />
     </section>
-    <section class="mb-4">
-      <header class="mb-2">
-        <el-text tag="b" size="small">{{ $t('label.quickaction') }}</el-text>
-      </header>
-      <div class="flex justify-evenly">
-        <DropdownDDClientActions :client-ids="storeSelection.selectionClients" icon="client" />
-        <DialogDProductQuickActions />
-      </div>
-    </section>
-    <section class="mb-4">
-      <header class="mb-2">
-        <el-text tag="b" size="small">{{ $t('title.settings') }}</el-text>
-      </header>
-      <div class="flex justify-evenly">
-        <FormitemCBMultiselection />
-        <FormitemCBQuicksave />
-      </div>
-    </section>
-    <section class="mb-4">
-      <header class="mb-2">
-        <el-text tag="b" size="small">{{ $t('title.track.changes') }}</el-text>
-      </header>
-      <ModalMChanges v-model="changes" />
-    </section>
     <footer class="p-4 mt-auto insert-x-0 bottom-0 ">
+      <section class="mb-0">
+        <header class="mb-2">
+          <el-text tag="b" size="small">{{ $t('label.quickaction') }}</el-text>
+        </header>
+        <div class="flex justify-evenly">
+          <DropdownDDClientActions :client-ids="storeSelection.selectionClients" icon="client" />
+          <DialogDProductQuickActions />
+          <ModalMChanges v-if="$mq==='mobile'" v-model="changes" />
+        </div>
+      </section>
+      <section class="mb-0">
+        <header class="mb-2">
+          <el-text tag="b" size="small">{{ $t('title.settings') }}</el-text>
+        </header>
+        <div class="flex justify-evenly">
+          <FormitemCBMultiselection />
+          <FormitemCBQuicksave />
+        </div>
+      </section>
       <div class="flex justify-evenly items-center">
         <PopconfirmPLogout v-if="mq.isMobile.value" />
         <FormitemDDTheme />
@@ -55,6 +51,7 @@
 import { useIcons } from '../../composables/mixins/useIcons'
 const $t = useI18n().t
 const mq = useMQ()
+const $mq = useMQ().$mq
 const icons = useIcons()
 const storeSelection = storeSelections()
 const changes = storeChanges()

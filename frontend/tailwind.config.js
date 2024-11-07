@@ -13,6 +13,10 @@ export default {
       colors: {
         'opsi-blue': 'var(--color-opsi-blue)',
         'opsi-red': 'var(--color-opsi-red)',
+        'danger': 'var(--el-color-danger)',
+        'success': 'var(--el-color-success)',
+        'info': 'var(--el-color-info)',
+        'warning': 'var(--el-color-warning)',
       },
       width: {
         '1/1': '100%',
