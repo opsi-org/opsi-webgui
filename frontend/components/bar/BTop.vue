@@ -10,8 +10,7 @@
     </el-menu-item>
 
     <div class="flex-grow" />
-
-    <el-menu-item v-if="changesExists"  @click="() => {changesDialogVisible = !changesDialogVisible}" index="2" type="text" data-testid="menu-changes" class="!bg-transparent">
+    <el-menu-item v-if="changesExists"  @click="openDialog" index="2" type="text" data-testid="menu-changes" class="!bg-transparent">
       <ModalMChanges v-if="$mq!=='mobile'" v-model="changes" v-model:visible="changesDialogVisible" small transparent/>
     </el-menu-item>
 
@@ -32,16 +31,18 @@
   const emit = defineEmits(['toggleLeft', 'toggleRight'])
   const icons = useIcons()
   const router = useRouter()
+  const changes = storeChanges()
+
   const changesDialogVisible = ref(false)
+
   const toggleLeft = () => emit('toggleLeft')
   const toggleRight = () => emit('toggleRight')
   const navigateToClients = () => router.push('/clients/')
+  const openDialog = () => { changesDialogVisible.value = true }
 
-  const changes = storeChanges()
-
-const changesExists = computed(() => {
-  return changes?.changesHostParam?.length > 0 || changes?.changesProducts?.length > 0
-})
+  const changesExists = computed(() => {
+    return changes?.changesHostParam?.length > 0 || changes?.changesProducts?.length > 0
+  })
 </script>
 
 <style scoped>
