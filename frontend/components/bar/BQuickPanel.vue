@@ -40,7 +40,7 @@
         <FormitemDDLang />
       </div>
       <div class="text-center mt-2">
-        <el-text>{{ $t('label.version') }}</el-text>
+        <el-text class="!mr-1">{{ $t('label.version') }}</el-text>
         <el-text class="BAuthFooter-version">{{ $config.public.packageVersion }}</el-text>
       </div>
     </footer>
