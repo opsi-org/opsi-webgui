@@ -21,19 +21,23 @@
             <div v-if="label == 'demoResult'" class="max-h-64 min-w-full overflow-y-auto">
               <IconILoading v-if="isLoadingDemo" :is-loading="isLoadingDemo" inline/>
               <div v-else-if="productActions.demo.demoResult == undefined" > -- </div>
+              <div v-else-if="Object.keys(productActions.demo.demoResult).length == 0" > no results </div>
               <div v-else v-for="k in Object.keys(productActions.demo.demoResult).sort()" :key="k">
-                <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" size="sm" variant="outline-primary">
-                  <b>{{ k }}</b>
-                </b-button>
-                <b-collapse :id="k" :visible="false">
-                  <span v-for="item, iindex in (productActions.demo.demoResult as any)[k]" :key="item + iindex">
-                    <GridGFormItem
-                      value-more="true"
-                      :label="item.productId"
-                      :value="item.productType"
-                    />
-                  </span>
-                </b-collapse>
+                <el-collapse v-model="activeName" accordion>
+                  <el-collapse-item :title="k" :name="k">
+                    <span
+                      v-for="item, iindex in (productActions.demo.demoResult as any)[k]"
+                      :key="item + iindex"
+                      class="flex flex-row justify-between"
+                    >
+                      <p>{{ item.productId }}</p>
+                      <p>{{ item.productType }}</p>
+                      <p>{{ item.productVersion }}- {{ item.packageVersion }}</p>
+                      <p>{{ item.actionRequest }}</p>
+                      <p>{{ item.installationStatus }}</p>
+                    </span>
+                    </el-collapse-item>
+                </el-collapse>
               </div>
             </div>
 
@@ -50,7 +54,7 @@
               :disable="(productActions[category][label] as any).options.length <= 1"
               @change="() => { executeAction(true) }"
             >
-              <el-option v-for="item in (value as any).options.sort(mysort)" :key="item" :label="item ? item : NO_VALUE" :value="item" />
+              <el-option v-for="item in (value as any).options.sort(mysort)" :key="item || NO_VALUE" :label="item ? item : NO_VALUE" :value="item || NO_VALUE" />
             </el-select>
             <div v-else>
               {{ value }}
@@ -81,6 +85,7 @@
   const popoverVisible = ref(false)
   const isLoadingMain = ref(true)
   const isLoadingDemo = ref(false)
+  const activeName = ref("")
   const NOT_APPLIED = $t('label.noselection')
   const NO_VALUE = $t('label.novalue')
 
@@ -107,8 +112,8 @@
       apply: {
         options: [
           // future: add server and both
-          // $t('label.quickaction.scope.options.both'),
-          // $t('label.quickaction.scope.options.server'),
+          $t('label.quickaction.scope.options.both'),
+          $t('label.quickaction.scope.options.server'),
           $t('label.quickaction.scope.options.clients')
         ],
         value: $t('label.quickaction.scope.options.clients')
@@ -171,12 +176,16 @@
       action_result: productActions.value.conditions.actionResult.value,
       demoMode: demoMode
     }
-    if (includeClients) {
-      params.selectedClients = storeSelection.selectionClients
-    }
-    if (includeServer) {
-      params.selectedDepots = storeSelection.selectionDepots
-    }
+
+    params.selectedClients = (includeClients) ? storeSelection.selectionClients : null
+    params.selectedDepots = (includeServer) ? storeSelection.selectionDepots : null
+    // params.selectedClients = null
+    // params.selectedDepots = null
+    // if (includeClients) {
+    // }
+    // if (includeServer) {
+    //   params.selectedDepots = storeSelection.selectionDepots
+    // }
     //   const params = { ...this.quickaction, demoMode: demo }
     //   const ref = (this.$refs.prodQuickActionAlert as any)
     //   console.log(params)
@@ -201,11 +210,18 @@
     isLoadingDemo.value = true
     productActions.value.demo.demoResult = undefined
     const params = get_params(demo)
-    if (!params) { return }
+    if (!params) {
+      productActions.value.demo.demoResult = undefined
+      isLoadingDemo.value = false
+      return
+    }
+
 
     const  {data, error} = await useApiPOST('/opsidata/clients/action', params)
     if (error) {
       notifyError({ message: error?.response?.data?.message })
+      productActions.value.demo.demoResult = undefined
+      isLoadingDemo.value = false
       return
     }
     if (data.value) {

@@ -35,9 +35,9 @@
         <!-- MAIN CONTENT -->
         <el-main class="z-0 p-2">
           <BreadcrumbBPageNavigation />
-          <el-scrollbar class="!h-auto">
-            <slot />
-          </el-scrollbar>
+          <slot />
+          <!-- <el-scrollbar class="!h-auto">
+          </el-scrollbar> -->
         </el-main>
 
         <!-- RIGHT SIDE -->

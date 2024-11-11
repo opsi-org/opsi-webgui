@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: mobile first -->
   <el-table
     ref="healthtable"
     lazy
@@ -7,8 +8,7 @@
     :data="data"
     :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
   >
-    <!-- row-class-name="maintable__row" -->
-    <el-table-column prop="expand" width="50" >
+    <el-table-column prop="expand" width="25" >
       <template #default="scope">
         <a
           v-if="scope.row.children"
@@ -29,28 +29,33 @@
 
     <el-table-column
       prop="status"
+      width="100"
       :label="$t('label.healthcheck.status')"
-      width="150"
       filter-icon="el-icon-filter"
-      :filters="[
-        { text: 'Ok', value: 'ok' },
-        { text: 'Error', value: 'error' },
-        { text: 'Warning', value: 'warning' },
-      ]"
-      :filter-method="filterStatus"
     >
-      <template #default="scope">
+    <template #default="scope">
       <el-tag effect="dark" :type="getType(scope.row.status)" class="text-capitalize">{{ scope.row.status }}</el-tag>
       </template>
     </el-table-column>
 
-    <el-table-column prop="name" :label="$t('label.healthcheck.check_name')" width="450" >
+    <el-table-column prop="name" :label="$t('label.healthcheck.check_name')"  >
       <template #default="scope">
-        <el-text> {{ scope.row.name }}</el-text>
+        <el-text tag="b"> {{ scope.row.name }}</el-text>
+        <el-text
+          v-if="$mq === 'mobile'"
+        >
+          <br>
+          {{scope.row.message}}
+        </el-text>
       </template>
     </el-table-column>
 
-    <el-table-column prop="message" :label="$t('label.healthcheck.check_message')" />
+    <el-table-column
+      v-if="$mq !== 'mobile'"
+      min-width="200"
+      prop="message"
+      :label="$t('label.healthcheck.check_message')"
+    />
   </el-table>
 </template>
 
@@ -59,6 +64,7 @@ import { useIcons } from '~/composables/mixins/useIcons';
 
 const icons = useIcons()
 const $t = useI18n().t
+const $mq = useMQ().$mq
 const modelValue = defineModel<Array<any>>()
   const _props = defineProps({
     withColumnHeaders: { type: Boolean, default: true },
@@ -88,9 +94,9 @@ const data = computed(() => {
   return undefined
 })
 
-const filterStatus = (value: string, row: any) => {
-  return row.check_status === value
-}
+// const filterStatus = (value: string, row: any) => {
+//   return row.check_status === value
+// }
 
 function getType (status: any) {
   if (status === 'error') { return 'danger' }

@@ -59,7 +59,7 @@
     "@nuxtjs/storybook": "7.0.0",
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@pinia/nuxt": "^0.x.x",
-    "@playwright/test": "^1.47.1",
+    "@playwright/test": "^1.48.2",
     "@vitejs/plugin-vue": "^4.5.0",
     "@volar/typescript": "^2.3.4",
     "eslint": "^9.11.1",

@@ -33,7 +33,7 @@
     </section>
     <section class="mb-4">
       <header class="mb-2">
-        <el-text tag="b" size="small">{{ $t('Tracked Changes') }}</el-text>
+        <el-text tag="b" size="small">{{ $t('title.track.changes') }}</el-text>
       </header>
       <ModalMChanges v-model="changes" />
     </section>
