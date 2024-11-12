@@ -67,6 +67,28 @@
             </template>
           </el-table-column>
         </template>
+        <template #row="scope">
+          <el-dropdown trigger="contextmenu" @command="handleCommand(scope.row)">
+            <span class="el-dropdown-link">
+              <el-button type="text">
+                <IconIIcon :icon="icons.menu" />
+              </el-button>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="config">
+                  <IconIIcon :icon="icons.settings" /> {{ $t('title.config') }}
+                </el-dropdown-item>
+                <el-dropdown-item command="log">
+                  <IconIIcon :icon="icons.log" /> {{ $t('title.log') }}
+                </el-dropdown-item>
+                <el-dropdown-item command="clone">
+                  <IconIIcon :icon="icons.client" /> {{ $t('title.clone') }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
       </el-table>
       <div class="extra-column">
         <span v-if="!isLastPage && !isLoading" >Scroll down to load next page...</span>
@@ -214,6 +236,22 @@ async function fetchClients() {
   } finally {
     isLoading.value = false
     scrollToTopOfTable()
+  }
+}
+
+function handleCommand(rowData: any) {
+  return (command: string) => {
+    switch (command) {
+      case 'config':
+        handleConfigClick(rowData)
+        break
+      case 'log':
+        handleLogClick(rowData)
+        break
+      case 'clone':
+        handleCloneClick(rowData)
+        break
+    }
   }
 }
 
