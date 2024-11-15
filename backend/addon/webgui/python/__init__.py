@@ -75,32 +75,35 @@ class Webgui(Addon):
 		remove_route_path(app, self.router_prefix)
 
 	async def handle_request(self, connection: HTTPConnection, receive: Receive, send: Send) -> bool:  # pylint: disable=no-self-use,unused-argument
-		"""Called on every request where the path matches the addons router prefix.
-		Return true to skip further request processing."""
+		"""
+		Called on every request where the path matches the addons router prefix.
+		Return true to skip further request processing.
+		"""
 		connection.scope["required_access_role"] = ACCESS_ROLE_AUTHENTICATED
-		if (
-			connection.scope["path"].startswith(f"{self.router_prefix}/api/auth")
-			or connection.scope["path"].startswith(f"{self.router_prefix}/api/opsidata")
-			or connection.scope["path"].startswith(f"{self.router_prefix}/api/user/configuration")
-		) and connection.base_url.hostname in ("127.0.0.1", "::1", "0.0.0.0", "localhost"):
-			if connection.scope.get("method") == "OPTIONS":
-				connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
-		if connection.scope["path"].rstrip("/") == self.router_prefix or connection.scope["path"].startswith(
-			(f"{self.router_prefix}/app", f"{self.router_prefix}/api/user/opsiserver", f"{self.router_prefix}/api/opsidata/changelogs")
-		):
+		path = connection.scope.get("path", "").rstrip("/")
+
+		if not path.startswith(self.router_prefix):
+			return False
+
+		rel_path = "/" + path.removeprefix(self.router_prefix).lstrip("/")
+
+		if rel_path == "/" or rel_path.startswith(("/app", "/api/user/opsiserver", "/api/opsidata/changelogs")):
 			connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
-		elif connection.scope["path"] == f"{self.router_prefix}/api/auth/login":
+			return False
+
+		if rel_path == "/api/auth/login":
 			if connection.scope.get("method") == "OPTIONS":
 				connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
-			else:
-				try:
-					await authenticate(connection, receive)
-					if connection.scope["session"].is_admin:
-						connection.scope["session"].max_age = SESSION_LIFETIME
-					else:
-						raise BackendAuthenticationError("Not an admin")
-				except Exception as err:
-					raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(err)) from err
+				return False
+
+			try:
+				await authenticate(connection, receive)
+				connection.scope["session"].max_age = SESSION_LIFETIME
+			except Exception as err:
+				raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(err)) from err
+
+		if not connection.scope["session"].is_admin:
+			raise BackendPermissionDeniedError("Not an admin")
 
 		return False
 

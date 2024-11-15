@@ -190,7 +190,7 @@ def client_creation_allowed(user: str) -> bool:
 	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.createclient")
 
 
-def get_allowd_depots(user: str) -> list:
+def get_allowed_depots(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.host.depotaccess.depots'")
 		where = and_(where, text("cv.isDefault=1"))
