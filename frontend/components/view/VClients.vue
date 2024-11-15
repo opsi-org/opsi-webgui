@@ -25,7 +25,7 @@
       <div v-if="!isFirstPage" class="extra-column">
         <div v-if="!isLoading">Scroll up to load previous page...</div>
       </div>
-      <el-table :data="fetchedData" v-loading="isLoading">
+      <el-table :data="fetchedData" v-loading="isLoading" @row-contextmenu="showContextMenu">
         <template v-for="column in tableColumn">
           <el-table-column
             v-if="column.visible || column.alwaysVisible"
@@ -67,28 +67,6 @@
             </template>
           </el-table-column>
         </template>
-        <template #row="scope">
-          <el-dropdown trigger="contextmenu" @command="handleCommand(scope.row)">
-            <span class="el-dropdown-link">
-              <el-button type="text">
-                <IconIIcon :icon="icons.menu" />
-              </el-button>
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="config">
-                  <IconIIcon :icon="icons.settings" /> {{ $t('title.config') }}
-                </el-dropdown-item>
-                <el-dropdown-item command="log">
-                  <IconIIcon :icon="icons.log" /> {{ $t('title.log') }}
-                </el-dropdown-item>
-                <el-dropdown-item command="clone">
-                  <IconIIcon :icon="icons.client" /> {{ $t('title.clone') }}
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </template>
       </el-table>
       <div class="extra-column">
         <span v-if="!isLastPage && !isLoading" >Scroll down to load next page...</span>
@@ -102,6 +80,20 @@
         :page-size="pageSize"
         layout="total, prev, pager, next, jumper"
         :total="totalItems" />
+    </div>
+
+    <div v-if="contextMenuVisible" :style="contextMenuStyle" class="context-menu">
+      <ul>
+        <li @click="handleCommand(contextMenuRow, 'config')">
+          <IconIIcon :icon="icons.settings" /> {{ $t('title.config') }}
+        </li>
+        <li @click="handleCommand(contextMenuRow, 'log')">
+          <IconIIcon :icon="icons.log" /> {{ $t('title.log') }}
+        </li>
+        <li @click="handleCommand(contextMenuRow, 'clone')">
+          <IconIIcon :icon="icons.client" /> {{ $t('title.clone') }}
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -129,6 +121,10 @@ const filterQuery = ref('')
 const filterBy = ref('ident')
 const sortBy = ref('clientId')
 const sortDesc = ref(true)
+const contextMenuVisible = ref(false)
+const contextMenuStyle = ref({})
+const contextMenuRow = ref(null)
+
 const tableColumn = ref([
   {title: 'selected', key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true},
   {title: 'clientId', key: 'clientId', sortable: true, visible: true, alwaysVisible: true, filter: true},
@@ -239,19 +235,29 @@ async function fetchClients() {
   }
 }
 
-function handleCommand(rowData: any) {
-  return (command: string) => {
-    switch (command) {
-      case 'config':
-        handleConfigClick(rowData)
-        break
-      case 'log':
-        handleLogClick(rowData)
-        break
-      case 'clone':
-        handleCloneClick(rowData)
-        break
-    }
+function showContextMenu(event: MouseEvent, rowData: any) {
+  event.preventDefault()
+  contextMenuRow.value = rowData
+  contextMenuStyle.value = {
+    top: `${event.clientY}px`,
+    left: `${event.clientX}px`,
+    position: 'absolute',
+    zIndex: 1000,
+  }
+  contextMenuVisible.value = true
+}
+
+function handleCommand(rowData: any, command: string) {
+  switch (command) {
+    case 'config':
+      handleConfigClick(rowData)
+      break
+    case 'log':
+      handleLogClick(rowData)
+      break
+    case 'clone':
+      handleCloneClick(rowData)
+      break
   }
 }
 
@@ -295,110 +301,23 @@ function applySort(columnKey: string) {
   align-items: center;
   justify-content: center;
 }
+.context-menu {
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 4px;
+}
+.context-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.context-menu li {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.context-menu li:hover {
+  background-color: #f0f0f0;
+}
 </style>
-
-
-<!-- <template>
-  <TableTData
-    :fetch-data="fetchClients"
-    :table-column="tableColumn"
-    :fetched-data="fetchedData"
-    :total-items="totalItems"
-    :current-page="currentPage"
-    :page-size="pageSize"
-    :is-loading="isLoading"
-    :is-first-page="isFirstPage"
-    :is-last-page="isLastPage"
-    :filter-query="filterQuery"
-    :sort-by="sortBy"
-    :filter-by="filterBy"
-    @handle-pagination="handlePagination"
-    @handle-action-click="handleActionClick"
-    @handle-log-click="handleLogClick"
-  />
-</template>
-
-<script setup lang="ts">
-import { useNotification } from '~/composables/mixins/useComponent'
-import { useRouter } from 'vue-router'
-
-const { notifyError } = useNotification()
-const router = useRouter()
-
-const fetchedData = ref([])
-const totalItems = ref<number>(0)
-const currentPage = ref(1)
-const pageSize = ref(20)
-const isLoading = ref(false)
-const isFirstPage = ref(false)
-const isLastPage = ref(false)
-const filterQuery = ref('')
-const sortBy = ref('ident')
-const filterBy = ref('ident')
-const tableColumn = ref([
-  { title: 'selected', key: 'selected', sortable: false, type: 'selection', visible: true, alwaysVisible: true },
-  { title: 'clientId', key: 'clientId', sortable: true, visible: true, alwaysVisible: true, filter: true },
-  { title: 'macAddress', key: 'macAddress', sortable: false, visible: false },
-  { title: 'ipAddress', key: 'ipAddress', sortable: true, visible: false },
-  { title: 'description', key: 'description', sortable: false, visible: false },
-  { title: 'notes', key: 'notes', sortable: true, visible: false },
-  { title: 'lastSeen', key: 'lastSeen', sortable: false, visible: false },
-  { title: 'uefi', key: 'uefi', sortable: true, visible: false },
-  { title: 'version_outdated', key: 'version_outdated', sortable: false, visible: false },
-  { title: 'version_outdated_netboot', key: 'version_outdated_netboot', sortable: false, visible: false },
-  { title: 'installationStatus_unknown', key: 'installationStatus_unknown', sortable: false, visible: true },
-  { title: 'installationStatus_installed', key: 'installationStatus_installed', sortable: false, visible: true },
-  { title: 'actionResult_failed', key: 'actionResult_failed', sortable: false, visible: true },
-  { title: 'actionResult_successful', key: 'actionResult_successful', sortable: false, visible: true },
-  { title: 'reachable', key: 'reachable', sortable: false, visible: false },
-  { title: 'actions', key: 'actions', sortable: false, visible: true, alwaysVisible: true },
-])
-
-async function fetchClients() {
-  isLoading.value = true
-  const params = {
-    filterQuery: filterQuery.value,
-    pageNumber: currentPage.value,
-    perPage: pageSize.value,
-    sortBy: 'clientId',
-    sortDesc: true,
-    selected: JSON.stringify(storeSelection.selectionClients),
-    selectedDepots: JSON.stringify(storeSelection.selectionDepots)
-  }
-  try {
-    const { data, error, headers } = await useApiGETBody('/opsidata/clients', params)
-    if (error) {
-      notifyError({ message: error?.response?.data?.message || $t('message.error.generic') })
-      return
-    }
-    if (data.value == undefined) {
-      notifyError({ message: $t('message.error.empty-response') })
-      return
-    }
-    fetchedData.value = data.value
-    totalItems.value = parseInt(headers.get('x-total-count') || '0')
-    if (headers.get('x-total-count')) {
-      isFirstPage.value = currentPage.value == 1
-      isLastPage.value = currentPage.value * pageSize.value >= parseInt(headers.get('x-total-count') || '0')
-    }
-  } catch (error) {
-    notifyError({ message: $t('message.error.unexpected') + error })
-  } finally {
-    isLoading.value = false
-    scrollToTopOfTable()
-  }
-}
-
-function handlePagination(val: number) {
-  currentPage.value = val
-  fetchClients()
-}
-
-function handleActionClick(rowData: any) {
-  console.log('Action clicked for row:', rowData)
-}
-
-function handleLogClick(rowData: any) {
-  router.push('/clients/client/logs/' + rowData.ident)
-}
-</script> -->
