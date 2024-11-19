@@ -9,7 +9,8 @@ webgui
 """
 
 import os
-from typing import Annotated, Any, Optional
+from pathlib import Path
+from typing import Annotated, Optional
 
 from fastapi import APIRouter, Body, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
@@ -21,7 +22,6 @@ from opsiconfd.rest import RESTResponse, rest_api
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
-from . import Webgui
 from .utils import (
 	backend,
 	build_tree,
@@ -266,6 +266,6 @@ async def create_backup(
 
 @webgui_router.get("/api/opsidata/changelogs")
 def get_markdown() -> PlainTextResponse:
-	with open(os.path.join(Webgui().data_path, "changelog", "changelog.md"), "r", encoding="utf-8") as changelogs_file:
-		text = changelogs_file.read()
-	return PlainTextResponse(text)
+	from . import Webgui
+
+	return PlainTextResponse((Path(Webgui().data_path) / "changelog/changelog.md").read_text())
