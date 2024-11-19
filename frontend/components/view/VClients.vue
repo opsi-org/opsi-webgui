@@ -1,32 +1,32 @@
 <template>
   <div>
-    <el-dropdown trigger="click">
-      <el-button>
-        <IconIIcon :icon="icons.columns" />
-      </el-button>
-      <template #dropdown>
-        <div style="display: flex; font-weight: bold; padding: 10px;">
-          <div class="pr-10"><IconIIcon :icon="icons.filter" /></div>
-          <div class="pr-10">
-            <el-button type="text" @click="toggleSortOrder">
-              <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
-              {{ sortDesc ? 'Sort Descending' : 'Sort Ascending' }}
-            </el-button>
-            <!-- <el-button type="text" v-model=sortDesc><IconIIcon :icon="icons.sortDesc" />
-              Sort</el-button> -->
+    <div class="toolbar">
+      <el-dropdown trigger="click">
+        <el-button>
+          <IconIIcon :icon="icons.columns" />
+        </el-button>
+        <template #dropdown>
+          <div style="display: flex; font-weight: bold; padding: 10px;">
+            <div class="pr-10"><IconIIcon :icon="icons.filter" />Filter By</div>
+            <div class="pr-10">
+              <el-button type="text" @click="toggleSortOrder">
+                <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
+                {{ sortDesc ? 'Sort Descending' : 'Sort Ascending' }}
+              </el-button>
+            </div>
+            <div><IconIIcon :icon="icons.columns" />Column Selection</div>
           </div>
-          <div><IconIIcon :icon="icons.columns" /></div>
-        </div>
-        <template v-for="column in tableColumn" :key="column.key">
-          <el-dropdown-item>
-            <el-checkbox :disabled="!column.filter" v-model="filterBy" @change="applyFilter(column.key)" />
-            <el-radio :disabled="!column.sortable" v-model="sortBy" @change="applySort(column.key)" />
-            <el-checkbox v-model="column.visible" @click.stop :disabled="column.alwaysVisible">{{ column.title }}</el-checkbox>
-          </el-dropdown-item>
+          <template v-for="column in tableColumn" :key="column.key">
+            <el-dropdown-item>
+              <el-checkbox :disabled="!column.filter" v-model="column.filter" @change="applyFilter(column.key)"/>
+              <el-radio :disabled="!column.sortable" v-model="column.sortable" @change="applySort(column.key)" />
+              <el-checkbox v-model="column.visible" @click.stop :disabled="column.alwaysVisible">{{ column.title }}</el-checkbox>
+            </el-dropdown-item>
+          </template>
         </template>
-      </template>
-    </el-dropdown>
-    <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50" />
+      </el-dropdown>
+      <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50" />
+    </div>
 
     <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" @scroll="debouncedHandleScroll">
       <div v-if="!isFirstPage" class="extra-column">
@@ -132,7 +132,7 @@ const isFirstPage = ref(false)
 const isLastPage = ref(false)
 const infiniteScrollDiv = ref<HTMLElement | null>(null)
 const filterQuery = ref('')
-const filterBy = ref('ident')
+const filterBy = ref('clientId')
 const sortBy = ref('clientId')
 const sortDesc = ref(true)
 const contextMenuVisible = ref(false)
@@ -160,13 +160,7 @@ const tableColumn = ref([
 
 
 
-// watch(
-//   [filterQuery, currentPage, pageSize, sortBy, sortDesc, storeSelection.selectionDepots],
-//   fetchClients,
-//   { immediate: true }
-// )
-
-// watch([()=>currentPage.value, ()=>filterQuery.value], fetchClients, { immediate: true })
+watch([()=>filterQuery.value], fetchClients, { immediate: true })
 
 onMounted(() => {
   fetchClients()
@@ -328,9 +322,10 @@ function handleCloneClick(rowData: any) {
   router.push('/clients/client/clone/' + rowData.ident)
 }
 
+// TODO: Implement Filter by
 function applyFilter(columnKey: string) {
   filterBy.value = columnKey
-  fetchClients()
+  // fetchClients()
 }
 
 function applySort(columnKey: string) {
@@ -338,12 +333,6 @@ function applySort(columnKey: string) {
   console.error('Sort By', sortBy.value)
   fetchClients()
 }
-
-// function handleSortChange({ prop, order }: { prop: string, order: string }) {
-//   sortBy.value = prop
-//   sortDesc.value = order === 'descending'
-//   fetchClients()
-// }
 
 function handleSortChange({ prop }: { prop: string }) {
   sortBy.value = prop
@@ -362,6 +351,11 @@ function toggleSortOrder() {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust the gap between elements as needed */
 }
 .context-menu {
   background-color: white;
