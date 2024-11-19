@@ -5,27 +5,27 @@
         <IconIIcon :icon="icons.columns" />
       </el-button>
       <template #dropdown>
-          <div style="display: flex; font-weight: bold; padding: 10px;">
-            <div class="pr-10"><IconIIcon :icon="icons.filter" /></div>
-            <div class="pr-10"><el-button type="text"><IconIIcon :icon="icons.sortDesc" />Sort</el-button></div>
-            <div><IconIIcon :icon="icons.columns" /></div>
-          </div>
-          <template v-for="column in tableColumn" :key="column.key">
-            <el-dropdown-item>
-              <el-checkbox :disabled="!column.filter" v-model="filterBy" @change="applyFilter(column.key)"/>
-              <el-radio :disabled="!column.sortable" v-model="sortBy" @change="applySort(column.key)"/>
-              <el-checkbox v-model="column.visible" @click.stop :disabled="column.alwaysVisible">{{ column.title }}</el-checkbox>
-            </el-dropdown-item>
-          </template>
+        <div style="display: flex; font-weight: bold; padding: 10px;">
+          <div class="pr-10"><IconIIcon :icon="icons.filter" /></div>
+          <div class="pr-10"><el-button type="text"><IconIIcon :icon="icons.sortDesc" />Sort</el-button></div>
+          <div><IconIIcon :icon="icons.columns" /></div>
+        </div>
+        <template v-for="column in tableColumn" :key="column.key">
+          <el-dropdown-item>
+            <el-checkbox :disabled="!column.filter" v-model="filterBy" @change="applyFilter(column.key)" />
+            <el-radio :disabled="!column.sortable" v-model="sortBy" @change="applySort(column.key)" />
+            <el-checkbox v-model="column.visible" @click.stop :disabled="column.alwaysVisible">{{ column.title }}</el-checkbox>
+          </el-dropdown-item>
+        </template>
       </template>
     </el-dropdown>
-    <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50"/>
+    <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50" />
 
     <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" @scroll="debouncedHandleScroll">
       <div v-if="!isFirstPage" class="extra-column">
         <div v-if="!isLoading">Scroll up to load previous page...</div>
       </div>
-      <el-table :data="fetchedData" v-loading="isLoading" @row-contextmenu="showContextMenu">
+      <el-table :data="fetchedData" v-loading="isLoading">
         <template v-for="column in tableColumn">
           <el-table-column
             v-if="column.visible || column.alwaysVisible"
@@ -36,40 +36,42 @@
             :sortable="column.sortable"
           >
             <template #default="scope" v-if="column.key === 'actions'">
-              <el-tooltip :content="$t('title.config')" placement="top">
-                <el-button
-                  type="text"
-                  @click="handleConfigClick(scope.row)"
-                  :class="{ 'is-active': activeButton === 'config-' + scope.row.clientId }"
-                >
-                  <IconIIcon :icon="icons.settings" />
-                </el-button>
-              </el-tooltip>
-              <el-tooltip :content="$t('title.log')" placement="top">
-                <el-button
-                  type="text"
-                  @click="handleLogClick(scope.row)"
-                  :class="{ 'is-active': activeButton === 'log-' + scope.row.clientId }"
-                >
-                  <IconIIcon :icon="icons.log" />
-                </el-button>
-              </el-tooltip>
-              <el-tooltip :content="$t('title.clone')" placement="top">
-                <el-button
-                  type="text"
-                  @click="handleCloneClick(scope.row)"
-                  :class="{ 'is-active': activeButton === 'clone-' + scope.row.clientId }"
-                >
-                  <IconIIcon :icon="icons.client" />
-                </el-button>
-              </el-tooltip>
-              <DropdownDDClientActions :client-ids="[scope.row.clientId]" />
+              <div v-contextmenu="(event: MouseEvent) => showContextMenu(event, scope.row)">
+                <el-tooltip :content="$t('title.config')" placement="top">
+                  <el-button
+                    type="text"
+                    @click="handleConfigClick(scope.row)"
+                    :class="{ 'is-active': activeButton === 'config-' + scope.row.clientId }"
+                  >
+                    <IconIIcon :icon="icons.settings" />
+                  </el-button>
+                </el-tooltip>
+                <el-tooltip :content="$t('title.log')" placement="top">
+                  <el-button
+                    type="text"
+                    @click="handleLogClick(scope.row)"
+                    :class="{ 'is-active': activeButton === 'log-' + scope.row.clientId }"
+                  >
+                    <IconIIcon :icon="icons.log" />
+                  </el-button>
+                </el-tooltip>
+                <el-tooltip :content="$t('title.clone')" placement="top">
+                  <el-button
+                    type="text"
+                    @click="handleCloneClick(scope.row)"
+                    :class="{ 'is-active': activeButton === 'clone-' + scope.row.clientId }"
+                  >
+                    <IconIIcon :icon="icons.client" />
+                  </el-button>
+                </el-tooltip>
+                <DropdownDDClientActions :client-ids="[scope.row.clientId]" />
+              </div>
             </template>
           </el-table-column>
         </template>
       </el-table>
       <div class="extra-column">
-        <span v-if="!isLastPage && !isLoading" >Scroll down to load next page...</span>
+        <span v-if="!isLastPage && !isLoading">Scroll down to load next page...</span>
       </div>
     </div>
 
@@ -79,9 +81,11 @@
         :current-page="currentPage"
         :page-size="pageSize"
         layout="total, prev, pager, next, jumper"
-        :total="totalItems" />
+        :total="totalItems"
+      />
     </div>
 
+    <!-- Custom Context Menu -->
     <div v-if="contextMenuVisible" :style="contextMenuStyle" class="context-menu">
       <ul>
         <li @click="handleCommand(contextMenuRow, 'config')">
@@ -97,12 +101,15 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { debounce } from 'lodash'
 import type { T_ClientsList } from '~/types/APItypes';
 import { useNotification } from '~/composables/mixins/useComponent';
 import {useIcons} from '../../composables/mixins/useIcons'
 import { useRouter } from 'vue-router'
+import { vContextmenu } from '../../composables/mixins/v-contextmenu'
+
 const icons = useIcons()
 const router = useRouter()
 const { notifyError } = useNotification()
@@ -157,6 +164,19 @@ const tableColumn = ref([
 onMounted(() => {
   fetchClients()
 })
+
+function showContextMenu(event: MouseEvent, rowData: any) {
+  event.preventDefault()
+  contextMenuRow.value = rowData
+  contextMenuStyle.value = {
+    top: `${event.clientY}px`,
+    left: `${event.clientX}px`,
+    position: 'absolute',
+    zIndex: 1000,
+  }
+  contextMenuVisible.value = true
+
+}
 
 function handleScroll(event: Event) {
   const target = event.target as HTMLElement;
@@ -235,17 +255,6 @@ async function fetchClients() {
   }
 }
 
-function showContextMenu(event: MouseEvent, rowData: any) {
-  event.preventDefault()
-  contextMenuRow.value = rowData
-  contextMenuStyle.value = {
-    top: `${event.clientY}px`,
-    left: `${event.clientX}px`,
-    position: 'absolute',
-    zIndex: 1000,
-  }
-  contextMenuVisible.value = true
-}
 
 function handleCommand(rowData: any, command: string) {
   switch (command) {
