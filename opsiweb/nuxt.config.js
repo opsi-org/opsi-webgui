@@ -152,7 +152,8 @@ export default {
   // https://nuxtjs.org/guide/runtime-config
   publicRuntimeConfig: {
     packageVersion: pkg.version,
-    confdPort: CONFD_PORT
+    confdPort: CONFD_PORT,
+    OWN_PATH: ADDON_PATH + '/app'
     // local: 'https://localhost:' + CONFD_PORT + '/addons/webgui' // fallback
   },
   privateRuntimeConfig: {

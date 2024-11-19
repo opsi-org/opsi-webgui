@@ -21,6 +21,10 @@ export default function ({ app, $axios, redirect, store, route }) {
   $axios.onResponse((response) => {
     // eslint-disable-next-line no-console
     console.debug('axios response ', response.config.url)
+    if (response.config.url === '/api/user/opsiserver') {
+      store.commit('data-cache/setAuthmethods', response.headers['x-opsi-auth-methods'])
+    }
+    return response
   })
 
   $axios.onError((error) => {
