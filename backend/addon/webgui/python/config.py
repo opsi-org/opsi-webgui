@@ -15,24 +15,18 @@ from typing import List, Optional, Union
 from fastapi import APIRouter, Depends, Request, status
 from opsiconfd.backend import get_protected_backend
 from opsiconfd.logging import logger
-from opsiconfd.rest import (
-	RESTErrorResponse,
-	RESTResponse,
-	common_query_parameters,
-	order_by,
-	rest_api,
-)
+from opsiconfd.rest import RESTErrorResponse, RESTResponse, common_query_parameters, order_by, rest_api
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, column, select, table, text, update  # type: ignore[import]
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 
 from .utils import backend, bool_value, mysql, parse_client_list, read_only_check, unicode_value
 
-conifg_router = APIRouter()
+config_router = APIRouter()
 
 
-@conifg_router.get("/api/opsidata/config")
-@conifg_router.get("/api/opsidata/config/server")
+@config_router.get("/api/opsidata/config")
+@config_router.get("/api/opsidata/config/server")
 @rest_api
 def get_server_config(
 	commons: dict = Depends(common_query_parameters),
@@ -108,7 +102,7 @@ def get_server_config(
 		return RESTResponse(data=config_data)
 
 
-@conifg_router.get("/api/opsidata/config/objects/{object_id}")
+@config_router.get("/api/opsidata/config/objects/{object_id}")
 @rest_api
 def get_client_config(
 	object_id: str,
@@ -150,7 +144,7 @@ def get_client_config(
 	return RESTResponse(data=config_data)
 
 
-@conifg_router.get("/api/opsidata/config/clients")
+@config_router.get("/api/opsidata/config/clients")
 @rest_api
 def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
 	selectedClients: List[str] = Depends(parse_client_list),  # pylint: disable=invalid-name
@@ -309,7 +303,7 @@ class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
 	configs: List[Config]
 
 
-@conifg_router.post("/api/opsidata/config")
+@config_router.post("/api/opsidata/config")
 @rest_api
 @read_only_check
 def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
@@ -404,7 +398,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 	return RESTResponse(http_status=status.HTTP_200_OK, data=f"Values for {','.join(ids)} changed.")
 
 
-@conifg_router.post("/api/opsidata/config/objects")
+@config_router.post("/api/opsidata/config/objects")
 @rest_api
 @read_only_check
 def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument

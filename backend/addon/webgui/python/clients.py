@@ -21,15 +21,7 @@ from opsiconfd.application.admininterface import _unblock_all_clients, _unblock_
 from opsiconfd.config import config, get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.redis import ip_address_from_redis_key, redis_client
-from opsiconfd.rest import (
-	OpsiApiException,
-	RESTErrorResponse,
-	RESTResponse,
-	common_query_parameters,
-	order_by,
-	pagination,
-	rest_api,
-)
+from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, common_query_parameters, order_by, pagination, rest_api
 from packaging import version
 from packaging.version import InvalidVersion
 from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module

@@ -14,34 +14,25 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
 from fastapi.responses import JSONResponse
+from opsicommon.objects import ProductOnClient
+from opsiconfd.config import get_configserver_id
+from opsiconfd.logging import logger
+from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, common_query_parameters, order_by, pagination, rest_api
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import alias, and_, column, select, text  # type: ignore[import]
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
-from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
-from opsicommon.objects import ProductOnClient
-from opsiconfd.config import get_configserver_id
-
-from opsiconfd.logging import logger
-from opsiconfd.rest import (
-	OpsiApiException,
-	RESTErrorResponse,
-	RESTResponse,
-	common_query_parameters,
-	order_by,
-	pagination,
-	rest_api,
-)
+from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 
 from .depots import get_depots
 from .utils import (
-	get_groups_ids,
 	backend,
 	bool_value,
 	filter_depot_access,
 	get_allowd_product_groups,
 	get_allowed_products,
 	get_depot_of_client,
+	get_groups_ids,
 	get_sub_groups,
 	get_username,
 	merge_dicts,
@@ -1347,7 +1338,7 @@ def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
 				if "children" not in all_groups[row["group_id"]]:
 					all_groups[row["group_id"]]["children"] = {}
 				if row.group_id == row.parent_id:
-					if not row["object_id"] in all_groups:
+					if row["object_id"] not in all_groups:
 						all_groups[row["object_id"]] = {
 							"id": f'{row["object_id"]};{row["parent_id"]}',
 							"type": "ProductGroup",

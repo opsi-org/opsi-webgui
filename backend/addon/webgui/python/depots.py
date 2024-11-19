@@ -11,26 +11,18 @@ webgui depot methods
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Request, status
+from opsiconfd.config import get_configserver_id
+from opsiconfd.rest import RESTErrorResponse, RESTResponse, common_query_parameters, order_by, pagination, rest_api
+from opsiconfd.session import OPSISession
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, or_, select, table, text  # type: ignore[import]
-
-from opsiconfd.config import get_configserver_id
-from opsiconfd.rest import (
-	RESTErrorResponse,
-	RESTResponse,
-	common_query_parameters,
-	order_by,
-	pagination,
-	rest_api,
-)
-from opsiconfd.session import OPSISession
 
 from .utils import (
 	backend,
 	depot_access_configured,
 	filter_depot_access,
-	get_allowed_depots,
 	get_allowed_clients,
+	get_allowed_depots,
 	get_username,
 	host_group_access_configured,
 	mysql,
