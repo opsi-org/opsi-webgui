@@ -6,23 +6,47 @@
           <IconIIcon :icon="icons.columns" />
         </el-button>
         <template #dropdown>
-          <div style="display: flex; font-weight: bold; padding: 10px;">
-            <div class="pr-10"><IconIIcon :icon="icons.filter" />Filter By</div>
-            <div class="pr-10">
-              <el-button type="text" @click="toggleSortOrder">
-                <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
-                {{ sortDesc ? 'Sort Descending' : 'Sort Ascending' }}
-              </el-button>
+          <div class="dropdown-content">
+            <div class="dropdown-section">
+              <div class="dropdown-title">
+                <IconIIcon :icon="icons.filter" /> Filter By
+              </div>
+              <div class="dropdown-items">
+                <template v-for="column in tableColumn" :key="column.key">
+                  <el-dropdown-item>
+                    <el-checkbox :disabled="!column.filter" v-model="column.filter" @change="applyFilter(column.key)" />
+                  </el-dropdown-item>
+                </template>
+              </div>
             </div>
-            <div><IconIIcon :icon="icons.columns" />Column Selection</div>
+            <div class="dropdown-section">
+              <div class="dropdown-title">
+                <el-button type="text" @click="toggleSortOrder">
+                  <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
+                  {{ sortDesc ? 'Sort Descending' : 'Sort Ascending' }}
+                </el-button>
+              </div>
+              <div class="dropdown-items">
+                <template v-for="column in tableColumn" :key="column.key">
+                  <el-dropdown-item>
+                    <el-radio :disabled="!column.sortable" v-model="column.sortable" @change="applySort(column.key)" />
+                  </el-dropdown-item>
+                </template>
+              </div>
+            </div>
+            <div class="dropdown-section">
+              <div class="dropdown-title">
+                <IconIIcon :icon="icons.columns" /> Column Selection
+              </div>
+              <div class="dropdown-items">
+                <template v-for="column in tableColumn" :key="column.key">
+                  <el-dropdown-item>
+                    <el-checkbox v-model="column.visible" @click.stop :disabled="column.alwaysVisible">{{ column.title }}</el-checkbox>
+                  </el-dropdown-item>
+                </template>
+              </div>
+            </div>
           </div>
-          <template v-for="column in tableColumn" :key="column.key">
-            <el-dropdown-item>
-              <el-checkbox :disabled="!column.filter" v-model="column.filter" @change="applyFilter(column.key)"/>
-              <el-radio :disabled="!column.sortable" v-model="column.sortable" @change="applySort(column.key)" />
-              <el-checkbox v-model="column.visible" @click.stop :disabled="column.alwaysVisible">{{ column.title }}</el-checkbox>
-            </el-dropdown-item>
-          </template>
         </template>
       </el-dropdown>
       <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50" />
@@ -355,7 +379,30 @@ function toggleSortOrder() {
 .toolbar {
   display: flex;
   align-items: center;
-  gap: 10px; /* Adjust the gap between elements as needed */
+  gap: 10px;
+}
+
+.dropdown-content {
+  display: flex;
+  padding: 10px;
+}
+
+.dropdown-section {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.dropdown-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-items {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 .context-menu {
   background-color: white;
