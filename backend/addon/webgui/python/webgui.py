@@ -268,4 +268,4 @@ async def create_backup(
 def get_markdown() -> PlainTextResponse:
 	from . import Webgui
 
-	return PlainTextResponse((Path(Webgui().data_path) / "changelog/changelog.md").read_text())
+	return PlainTextResponse((Path(Webgui().data_path) / "changelog/changelog.md").read_text(encoding="utf-8"))
