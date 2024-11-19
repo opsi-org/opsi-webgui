@@ -50,7 +50,16 @@
             </div>
           </template>
         </el-dropdown>
-        <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50" />
+        <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50" >
+          <template #prepend>
+            <IconIIcon :icon="icons.filter" />
+          </template>
+          <template #append>
+            <el-button type="text" @click="filterQuery = ''" >
+              <IconIIcon :icon="icons.x" />
+            </el-button>
+          </template>
+        </el-input>
         <el-tooltip :content="$t('label.refresh')" placement="top">
           <el-button type="text" @click="refreshTable">
             <IconIIcon :icon="icons.refresh" />
