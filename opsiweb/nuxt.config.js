@@ -153,8 +153,8 @@ export default {
   publicRuntimeConfig: {
     packageVersion: pkg.version,
     confdPort: CONFD_PORT,
+    webguipath: ADDON_PATH,
     OWN_PATH: ADDON_PATH + '/app'
-    // local: 'https://localhost:' + CONFD_PORT + '/addons/webgui' // fallback
   },
   privateRuntimeConfig: {
   },

@@ -8,7 +8,7 @@
     <b-navbar-nav v-if="$mq === 'mobile'" small>
       <slot name="mobilemenu" />
     </b-navbar-nav>
-    <b-navbar-brand class="d-inline-flex ml-1" href="/addons/webgui/app/clients/">
+    <b-navbar-brand class="d-inline-flex ml-1" :href="$config.OWN_PATH + '/clients/'">
       <IconIOpsiLogo
         v-once
         short

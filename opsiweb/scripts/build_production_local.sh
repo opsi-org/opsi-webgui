@@ -25,6 +25,7 @@ TS_CONST_FILE=${WORKING_DIR}/${FRONTEND_DIR}/nuxt.config.js
 ADDON_PATH=/addons/${ADDON_ID}
 ADDON_PATH_ORIGIN=/addons/${ADDON_ID_ORIGIN}
 
+
 ENV_CONFD_PORT="OPSICONFD_PORT"
 DEFAULT_PORT=4447
 PORT_VALUE="${!ENV_CONFD_PORT:-$DEFAULT_PORT}"
@@ -32,15 +33,16 @@ echo "PORT_VALUE: $PORT_VALUE"
 
 
 # replace the ADDON_ID and ADDON_NAME in const.py
-echo "> update ${PY_CONST_FILE}...."
+echo "> update python config${PY_CONST_FILE}...."
 sed -i "s/${ADDON_KEY_ID} = .*/${ADDON_KEY_ID} = \"${ADDON_ID}\"/" ${PY_CONST_FILE}
 sed -i "s/${ADDON_KEY_NAME} = .*/${ADDON_KEY_NAME} = \"${ADDON_NAME}\"/" ${PY_CONST_FILE}
 # cat ${PY_CONST_FILE}
 
 # replace "const ADDON_PATH"  in TS_CONST_FILE
-echo "> update ${TS_CONST_FILE}...."
+echo "> update nuxt config ${TS_CONST_FILE}...."
 sed -i "s|const ADDON_PATH = .*|const ADDON_PATH = '$ADDON_PATH'|" "$TS_CONST_FILE"
-# cat ${TS_CONST_FILE} | grep ADDON_PATH
+cat ${TS_CONST_FILE} | grep ADDON_PATH
+
 
 cd ${WORKING_DIR}/${FRONTEND_DIR}/
 rm -rf ${WORKING_DIR}/${FRONTEND_DIR}/dist
