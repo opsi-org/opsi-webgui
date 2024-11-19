@@ -129,6 +129,7 @@ export default class FLogin extends Vue {
   showPassword : boolean = false
   totp: number | null = null
   showOTP: boolean = false
+  @auth.Getter public username!: string
   @cache.Getter public authmethods!: string
   @cache.Getter public opsiconfigserver!: string
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
@@ -141,6 +142,10 @@ export default class FLogin extends Vue {
   async fetch () {
     const alertRef = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
     await this.getOpsiConfigServer(alertRef)
+
+    if (this.username) {
+      this.$router.push({ path: '/clients/' })
+    }
   }
 
   get samlUrl () {

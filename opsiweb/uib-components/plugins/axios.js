@@ -23,6 +23,10 @@ export default function ({ app, $axios, redirect, store, route }) {
     console.debug('axios response ', response.config.url)
     if (response.config.url === '/api/user/opsiserver') {
       store.commit('data-cache/setAuthmethods', response.headers['x-opsi-auth-methods'])
+      const username = response.headers?.['x-opsi-user-id']?.split(':')?.[1] || undefined // user:sucher -> sucher
+      if (username) {
+        store.commit('auth/login', username)
+      }
     }
     return response
   })
