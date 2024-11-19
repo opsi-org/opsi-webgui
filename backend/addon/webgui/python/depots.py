@@ -57,7 +57,7 @@ def get_depots(username: str | None = None) -> List[str]:
 		result = [row[0] for row in result if row is not None]
 
 		if username and user_register() and depot_access_configured(username):
-			allowed_depots = get_allowd_depots(username)
+			allowed_depots = get_allowed_depots(username)
 			for depot in result.copy():
 				if depot not in allowed_depots:
 					result.remove(depot)
@@ -128,7 +128,7 @@ def depots(
 		# TODO Item "None" of "Optional[Any]" has no attribute "user_store"  [union-attr]mypy(error)
 		username = request.scope.get("session").username  # type: ignore
 		if user_register() and depot_access_configured(username):
-			allowed_depots = get_allowd_depots(username)
+			allowed_depots = get_allowed_depots(username)
 			for row in result:
 				if row is not None:
 					depot_data = dict(row)

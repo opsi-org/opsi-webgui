@@ -279,7 +279,7 @@ def filter_depot_access(func: Callable) -> Callable:
 		if user_register():
 			username = kwargs.get("request").scope.get("session").username
 			if depot_access_configured(username):
-				allowed_depots = get_allowd_depots(username)
+				allowed_depots = get_allowed_depots(username)
 				selected_depots = kwargs.get("selectedDepots")
 				for depot in selected_depots:
 					if depot not in allowed_depots:
