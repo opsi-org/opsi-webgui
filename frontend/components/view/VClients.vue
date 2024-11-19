@@ -7,7 +7,14 @@
       <template #dropdown>
         <div style="display: flex; font-weight: bold; padding: 10px;">
           <div class="pr-10"><IconIIcon :icon="icons.filter" /></div>
-          <div class="pr-10"><el-button type="text"><IconIIcon :icon="icons.sortDesc" />Sort</el-button></div>
+          <div class="pr-10">
+            <el-button type="text" @click="toggleSortOrder">
+              <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
+              {{ sortDesc ? 'Sort Descending' : 'Sort Ascending' }}
+            </el-button>
+            <!-- <el-button type="text" v-model=sortDesc><IconIIcon :icon="icons.sortDesc" />
+              Sort</el-button> -->
+          </div>
           <div><IconIIcon :icon="icons.columns" /></div>
         </div>
         <template v-for="column in tableColumn" :key="column.key">
@@ -25,7 +32,7 @@
       <div v-if="!isFirstPage" class="extra-column">
         <div v-if="!isLoading">Scroll up to load previous page...</div>
       </div>
-      <el-table :data="fetchedData" v-loading="isLoading">
+      <el-table :data="fetchedData" v-loading="isLoading" @sort-change="handleSortChange">
         <template v-for="column in tableColumn">
           <el-table-column
             v-if="column.visible || column.alwaysVisible"
@@ -170,17 +177,34 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 
+
 function showContextMenu(event: MouseEvent, rowData: any) {
   event.preventDefault()
   contextMenuRow.value = rowData
+
+  const menuWidth = 200;
+  const menuHeight = 350;
+  const pageWidth = window.innerWidth;
+  const pageHeight = window.innerHeight;
+
+  let left = event.clientX;
+  let top = event.clientY;
+
+  if (left + menuWidth > pageWidth) {
+    left = pageWidth - menuWidth;
+  }
+
+  if (top + menuHeight > pageHeight) {
+    top = pageHeight - menuHeight;
+  }
+
   contextMenuStyle.value = {
-    top: `${event.clientY}px`,
-    left: `${event.clientX}px`,
+    top: `${top}px`,
+    left: `${left}px`,
     position: 'absolute',
     zIndex: 1000,
   }
   contextMenuVisible.value = true
-
 }
 
 function handleClickOutside(event: MouseEvent) {
@@ -314,6 +338,22 @@ function applySort(columnKey: string) {
   console.error('Sort By', sortBy.value)
   fetchClients()
 }
+
+// function handleSortChange({ prop, order }: { prop: string, order: string }) {
+//   sortBy.value = prop
+//   sortDesc.value = order === 'descending'
+//   fetchClients()
+// }
+
+function handleSortChange({ prop }: { prop: string }) {
+  sortBy.value = prop
+  fetchClients()
+}
+
+function toggleSortOrder() {
+  sortDesc.value = !sortDesc.value
+  fetchClients()
+}
 </script>
 
 <style scoped>
@@ -329,6 +369,9 @@ function applySort(columnKey: string) {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 10px;
   border-radius: 4px;
+  width: 200px;
+  max-height: 350px;
+  overflow: auto;
 }
 .context-menu ul {
   list-style: none;
