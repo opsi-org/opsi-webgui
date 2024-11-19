@@ -28,7 +28,7 @@
               :placeholder="opsiconfigserver"
             />
           </b-input-group>
-          <b-input-group>
+          <b-input-group v-if="authmethods.includes(METHOD_PASSOWRD)">
             <b-form-input
               id="username"
               v-model="form.username"
@@ -39,7 +39,7 @@
               class="mb-2 username"
             />
           </b-input-group>
-          <b-input-group>
+          <b-input-group v-if="authmethods.includes(METHOD_PASSOWRD)">
             <b-form-input
               id="password"
               v-model="form.password"
@@ -55,7 +55,7 @@
               <IconIIcon :icon="showPassword ? icon.valueShow : icon.valueHide" />
             </b-button>
           </b-input-group>
-          <b-input-group>
+          <b-input-group v-if="authmethods.includes(METHOD_PASSOWRD)">
             <b-form-input
               id="totp"
               v-model="totp"
@@ -70,25 +70,26 @@
               <IconIIcon :icon="showOTP ? icon.valueShow : icon.valueHide" />
             </b-button>
           </b-input-group>
-
-          <b-button
-            v-if="authmethods.includes(METHOD_PASSOWRD)"
-            data-testid="btn-login"
-            variant="primary"
-            size="sm"
-            class="mt-1 border-light login text-light"
-            block
-            @click="doLogin"
-            >
-            {{ $t('button.login') }}
-          </b-button>
-          <a
-            v-if="authmethods.includes(METHOD_SAML)"
-            data-testid="btn-login-saml"
-            class="el-button mt-2 login w-100"
-            :href="samlUrl"
-            :title="$t('button.login.saml.description')"
-          >{{ $t('button.login.saml') }}</a>
+          <b-row>
+            <b-col v-if="authmethods.includes(METHOD_PASSOWRD)">
+              <b-button
+                data-testid="btn-login"
+                variant="primary"
+                size="sm"
+                block
+                class="mt-1 border-light login text-light inline"
+                @click="doLogin"
+              > {{ $t('button.login') }} </b-button>
+            </b-col>
+            <b-col v-if="authmethods.includes(METHOD_SAML)">
+              <a
+                data-testid="btn-login-saml"
+                class="btn mt-1 border-light login text-light btn-primary btn-sm inline btn-block"
+                :href="samlUrl"
+                :title="$t('button.login.saml.description')"
+              >{{ $t('button.login.saml') }}</a>
+            </b-col>
+          </b-row>
         </b-form>
       </div>
     </b-card>

@@ -12,14 +12,12 @@ const cache = namespace('data-cache')
   async getOpsiConfigServer (alertRef: any) {
     await this.$axios.$get('/api/user/opsiserver')
       .then((response) => {
-        console.log('getOpsiConfigServer response:', response)
         if (response.headers?.['x-opsi-auth-methods'] !== undefined) {
-          console.log('getOpsiConfigServer this.headers:', response.headers)
           this.setAuthmethods(response.headers['x-opsi-auth-methods'])
         }
         this.setOpsiconfigserver(response.result)
       }).catch((error) => {
-        this.showToastError(error)
+        this.showToastError(error, this.$t('message.error.fetch.opsiconfigserver'))
       })
   }
 }
