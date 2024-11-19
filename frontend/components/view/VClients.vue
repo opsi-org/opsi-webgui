@@ -1,55 +1,65 @@
 <template>
   <div>
     <div class="toolbar">
-      <el-dropdown trigger="click">
-        <el-button>
-          <IconIIcon :icon="icons.columns" />
-        </el-button>
-        <template #dropdown>
-          <div class="dropdown-content">
-            <div class="dropdown-section">
-              <div class="dropdown-title">
-                <IconIIcon :icon="icons.filter" /> Filter By
+      <div class="toolbar-left">
+        <el-dropdown trigger="click">
+          <el-button>
+            <IconIIcon :icon="icons.columns" />
+          </el-button>
+          <template #dropdown>
+            <div class="dropdown-content">
+              <div class="dropdown-section">
+                <div class="dropdown-title">
+                  <IconIIcon :icon="icons.filter" /> Filter By
+                </div>
+                <div class="dropdown-items">
+                  <template v-for="column in tableColumn" :key="column.key">
+                    <el-dropdown-item>
+                      <el-checkbox :disabled="!column.filter" v-model="column.filter" @change="applyFilter(column.key)" />
+                    </el-dropdown-item>
+                  </template>
+                </div>
               </div>
-              <div class="dropdown-items">
-                <template v-for="column in tableColumn" :key="column.key">
-                  <el-dropdown-item>
-                    <el-checkbox :disabled="!column.filter" v-model="column.filter" @change="applyFilter(column.key)" />
-                  </el-dropdown-item>
-                </template>
+              <div class="dropdown-section">
+                <div class="dropdown-title">
+                  <el-button type="text" @click="toggleSortOrder">
+                    <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
+                    {{ sortDesc ? 'Sort Descending' : 'Sort Ascending' }}
+                  </el-button>
+                </div>
+                <div class="dropdown-items">
+                  <template v-for="column in tableColumn" :key="column.key">
+                    <el-dropdown-item>
+                      <el-radio :disabled="!column.sortable" v-model="column.sortable" @change="applySort(column.key)" />
+                    </el-dropdown-item>
+                  </template>
+                </div>
+              </div>
+              <div class="dropdown-section">
+                <div class="dropdown-title">
+                  <IconIIcon :icon="icons.columns" /> Column Selection
+                </div>
+                <div class="dropdown-items">
+                  <template v-for="column in tableColumn" :key="column.key">
+                    <el-dropdown-item>
+                      <el-checkbox v-model="column.visible" @click.stop :disabled="column.alwaysVisible">{{ column.title }}</el-checkbox>
+                    </el-dropdown-item>
+                  </template>
+                </div>
               </div>
             </div>
-            <div class="dropdown-section">
-              <div class="dropdown-title">
-                <el-button type="text" @click="toggleSortOrder">
-                  <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
-                  {{ sortDesc ? 'Sort Descending' : 'Sort Ascending' }}
-                </el-button>
-              </div>
-              <div class="dropdown-items">
-                <template v-for="column in tableColumn" :key="column.key">
-                  <el-dropdown-item>
-                    <el-radio :disabled="!column.sortable" v-model="column.sortable" @change="applySort(column.key)" />
-                  </el-dropdown-item>
-                </template>
-              </div>
-            </div>
-            <div class="dropdown-section">
-              <div class="dropdown-title">
-                <IconIIcon :icon="icons.columns" /> Column Selection
-              </div>
-              <div class="dropdown-items">
-                <template v-for="column in tableColumn" :key="column.key">
-                  <el-dropdown-item>
-                    <el-checkbox v-model="column.visible" @click.stop :disabled="column.alwaysVisible">{{ column.title }}</el-checkbox>
-                  </el-dropdown-item>
-                </template>
-              </div>
-            </div>
-          </div>
-        </template>
-      </el-dropdown>
-      <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50" />
+          </template>
+        </el-dropdown>
+        <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50" />
+        <el-tooltip :content="$t('label.refresh')" placement="top">
+          <el-button type="text" @click="refreshTable">
+            <IconIIcon :icon="icons.refresh" />
+          </el-button>
+        </el-tooltip>
+      </div>
+      <div class="toolbar-right">
+        <el-button type="primary">New Button</el-button>
+      </div>
     </div>
 
     <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" @scroll="debouncedHandleScroll">
@@ -194,6 +204,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
+
+function refreshTable() {
+  fetchClients()
+}
 
 
 function showContextMenu(event: MouseEvent, rowData: any) {
@@ -378,10 +392,22 @@ function toggleSortOrder() {
 }
 .toolbar {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.toolbar-left {
+  display: flex;
   align-items: center;
   gap: 10px;
 }
 
+.toolbar-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
 .dropdown-content {
   display: flex;
   padding: 10px;
