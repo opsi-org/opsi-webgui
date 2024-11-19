@@ -30,6 +30,7 @@ services:
     # tty: true
     volumes: # /var/lib/opsiconfd/addons/ = /data/opsiconfd/addons/
       - opsi_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
       # - ../backend/addon:/data/opsiconfd/addons
       - ./files/docker-entrypoint.sh:/docker-entrypoint.sh
       - ..:/workspace

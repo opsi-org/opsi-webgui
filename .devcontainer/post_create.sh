@@ -19,8 +19,7 @@ rm -rf /data/opsiconfd/addons/webgui
 # chown pwuser:pwuser /data/opsiconfd/addons/webgui
 # ln -s $OPSI_ADDON_DIRS /data/opsiconfd/addons
 cp -r /workspace/backend/addon/webgui /data/opsiconfd/addons/.
-
-# alias opsiconfdrestart="docker exec -u root opsi-webgui-main_devcontainer-opsi-server-1 supervisorctl reload"
+# alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"  alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"
 # # Setup mariadb server
 # id
 # service mysql restart
