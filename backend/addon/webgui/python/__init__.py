@@ -14,36 +14,36 @@ from fastapi import APIRouter, FastAPI, HTTPException, Request, status
 from fastapi.requests import HTTPConnection
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
-from opsicommon.exceptions import (BackendAuthenticationError,
-                                   BackendPermissionDeniedError)
-from starlette.concurrency import run_in_threadpool
-from starlette.types import Receive, Send
-
+from opsicommon.exceptions import BackendAuthenticationError, BackendPermissionDeniedError
 from opsiconfd.addon import Addon
 from opsiconfd.logging import logger
 from opsiconfd.session import ACCESS_ROLE_AUTHENTICATED, ACCESS_ROLE_PUBLIC
 from opsiconfd.session import authenticate as opsiconfd_authenticate
+from opsiconfd.utils import Singleton
 from opsiconfd.utils.fastapi import remove_route_path
+from starlette.concurrency import run_in_threadpool
+from starlette.types import Receive, Send
 
 from .clients import client_router
-from .config import conifg_router
+from .config import config_router
 from .const import ADDON_ID, ADDON_NAME, ADDON_VERSION
 from .depots import depot_router
 from .hosts import host_router
 from .products import product_router
 from .server import server_router
 from .utils import mysql
-from .webgui import set_data_path_var, webgui_router
+from .webgui import webgui_router
 
 SESSION_LIFETIME = 60 * 30
 
 
-class Webgui(Addon):
+class Webgui(Addon, metaclass=Singleton):
 	id = ADDON_ID
 	name = ADDON_NAME
 	version = ADDON_VERSION
 
 	def setup(self, app: FastAPI) -> None:
+		logger.info("Webgui setup %r", self.data_path)
 		if not mysql:
 			logger.warning("No mysql backend found! Webgui only works with mysql backend.")
 			error_router = APIRouter()
@@ -60,11 +60,11 @@ class Webgui(Addon):
 		app.include_router(host_router, prefix=self.router_prefix)
 		app.include_router(client_router, prefix=self.router_prefix)
 		app.include_router(depot_router, prefix=self.router_prefix)
-		app.include_router(conifg_router, prefix=self.router_prefix)
+		app.include_router(config_router, prefix=self.router_prefix)
 		app.include_router(server_router, prefix=self.router_prefix)
 
 		app.mount(path=f"{self.router_prefix}/app", app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True), name="app")
-		set_data_path_var(self.data_path)
+
 
 	def on_load(self, app: FastAPI) -> None:  # pylint: disable=no-self-use
 		"""Called after loading the addon"""

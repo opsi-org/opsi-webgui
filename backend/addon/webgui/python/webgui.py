@@ -10,17 +10,18 @@ webgui
 
 import os
 from typing import Annotated, Any, Optional
-from pydantic import BaseModel
+
 from fastapi import APIRouter, Body, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
-
-from opsiconfd.logging import logger
 from opsiconfd import contextvar_client_session
 from opsiconfd.application import AppState
 from opsiconfd.config import get_configserver_id
+from opsiconfd.logging import logger
 from opsiconfd.rest import RESTResponse, rest_api
+from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
+from . import Webgui
 from .utils import (
 	backend,
 	build_tree,
@@ -35,7 +36,6 @@ from .utils import (
 	user_register,
 )
 
-DATA_PATH = "/var/lib/opsiconfd/addons/webgui/data"
 webgui_router = APIRouter()
 
 
@@ -168,7 +168,7 @@ async def home() -> JSONResponse:
 				""",
 				{"group_type": group_type},
 			).fetchall():
-				if not row["group_id"] in all_groups:
+				if row["group_id"] not in all_groups:
 					all_groups[row["group_id"]] = {
 						"id": row["group_id"],
 						"type": group_type,
@@ -266,11 +266,6 @@ async def create_backup(
 
 @webgui_router.get("/api/opsidata/changelogs")
 def get_markdown() -> PlainTextResponse:
-	with open(os.path.join(DATA_PATH, "changelog", "changelog.md"), "r", encoding="utf-8") as changelogs_file:
+	with open(os.path.join(Webgui().data_path, "changelog", "changelog.md"), "r", encoding="utf-8") as changelogs_file:
 		text = changelogs_file.read()
 	return PlainTextResponse(text)
-
-
-def set_data_path_var(path: str) -> None:
-	global DATA_PATH  # pylint: disable=global-statement
-	DATA_PATH = path

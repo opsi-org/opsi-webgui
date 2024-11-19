@@ -15,7 +15,6 @@ from operator import and_
 from typing import Callable, List, Optional, Union
 
 from fastapi import Query, status
-from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
 
 # from OPSI.Backend.MySQL import MySQL, MySQLBackend
 from opsiconfd import contextvar_client_session
@@ -24,7 +23,7 @@ from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
-
+from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
 
 backend = get_protected_backend()
 
