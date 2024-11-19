@@ -163,6 +163,11 @@ const tableColumn = ref([
 
 onMounted(() => {
   fetchClients()
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
 })
 
 function showContextMenu(event: MouseEvent, rowData: any) {
@@ -176,6 +181,13 @@ function showContextMenu(event: MouseEvent, rowData: any) {
   }
   contextMenuVisible.value = true
 
+}
+
+function handleClickOutside(event: MouseEvent) {
+  const contextMenu = document.querySelector('.context-menu')
+  if (contextMenu && !contextMenu.contains(event.target as Node)) {
+    contextMenuVisible.value = false
+  }
 }
 
 function handleScroll(event: Event) {
@@ -257,6 +269,7 @@ async function fetchClients() {
 
 
 function handleCommand(rowData: any, command: string) {
+  contextMenuVisible.value = false
   switch (command) {
     case 'config':
       handleConfigClick(rowData)
