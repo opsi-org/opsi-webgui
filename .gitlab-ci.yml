@@ -1,4 +1,5 @@
-image: node:current-slim
+#image: node:current-slim
+image: node:23.0.0-bookworm-slim
 
 stages:
   - check
