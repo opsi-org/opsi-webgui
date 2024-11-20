@@ -28,7 +28,7 @@
               :placeholder="opsiconfigserver"
             />
           </b-input-group>
-          <b-input-group>
+          <b-input-group v-if="authmethods.includes(METHOD_PASSOWRD)">
             <b-form-input
               id="username"
               v-model="form.username"
@@ -39,7 +39,7 @@
               class="mb-2 username"
             />
           </b-input-group>
-          <b-input-group>
+          <b-input-group v-if="authmethods.includes(METHOD_PASSOWRD)">
             <b-form-input
               id="password"
               v-model="form.password"
@@ -55,7 +55,7 @@
               <IconIIcon :icon="showPassword ? icon.valueShow : icon.valueHide" />
             </b-button>
           </b-input-group>
-          <b-input-group>
+          <b-input-group v-if="authmethods.includes(METHOD_PASSOWRD)">
             <b-form-input
               id="totp"
               v-model="totp"
@@ -70,16 +70,26 @@
               <IconIIcon :icon="showOTP ? icon.valueShow : icon.valueHide" />
             </b-button>
           </b-input-group>
-          <b-button
-            data-testid="btn-login"
-            variant="primary"
-            size="sm"
-            class="mt-1 border-light login text-light"
-            block
-            @click="doLogin"
-          >
-            {{ $t('button.login') }}
-          </b-button>
+          <b-row>
+            <b-col v-if="authmethods.includes(METHOD_PASSOWRD)">
+              <b-button
+                data-testid="btn-login"
+                variant="primary"
+                size="sm"
+                block
+                class="mt-1 border-light login text-light inline"
+                @click="doLogin"
+              > {{ $t('button.login') }} </b-button>
+            </b-col>
+            <b-col v-if="authmethods.includes(METHOD_SAML)">
+              <a
+                data-testid="btn-login-saml"
+                class="btn mt-1 border-light login text-light btn-primary btn-sm inline btn-block"
+                :href="samlUrl"
+                :title="$t('button.login.saml.description')"
+              >{{ $t('button.login.saml') }}</a>
+            </b-col>
+          </b-row>
         </b-form>
       </div>
     </b-card>
@@ -105,17 +115,22 @@ export default class FLogin extends Vue {
   icon: any
   $router:any
   $route:any
+  $config: any
   $axios:any
   $t: any
   $mq:any
   getOpsiConfigServer:any
+
+  METHOD_PASSOWRD = 'password'
+  METHOD_SAML = 'saml'
 
   form: FormUser = { username: '', password: '' }
   isLoading: boolean = false
   showPassword : boolean = false
   totp: number | null = null
   showOTP: boolean = false
-
+  @auth.Getter public username!: string
+  @cache.Getter public authmethods!: string
   @cache.Getter public opsiconfigserver!: string
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
   @auth.Mutation public login!: (username: string) => void
@@ -127,6 +142,21 @@ export default class FLogin extends Vue {
   async fetch () {
     const alertRef = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
     await this.getOpsiConfigServer(alertRef)
+
+    if (this.username) {
+      this.$router.push({ path: '/clients/' })
+    }
+  }
+
+  get samlUrl () {
+    const webguisRedirect: string = this.$route.query?.redirect as string || ''
+    const ownpath:string = this.$config.OWN_PATH
+    if (webguisRedirect && (webguisRedirect.startsWith(ownpath))) {
+      return `/auth/saml/login?redirect=${webguisRedirect}`
+    } else if (webguisRedirect) {
+      return `/auth/saml/login?redirect=${ownpath}${webguisRedirect}`
+    }
+    return `/auth/saml/login?redirect=${encodeURIComponent(window.location.href)}`
   }
 
   get validUsername () {

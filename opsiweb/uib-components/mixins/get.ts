@@ -7,13 +7,17 @@ const cache = namespace('data-cache')
 @Component({ mixins: [AlertToast] }) export class Configserver extends Vue {
   showToastError: any // from mixin AlertToast
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
+  @cache.Mutation public setAuthmethods!: (s: string) => void
 
   async getOpsiConfigServer (alertRef: any) {
     await this.$axios.$get('/api/user/opsiserver')
       .then((response) => {
+        if (response.headers?.['x-opsi-auth-methods'] !== undefined) {
+          this.setAuthmethods(response.headers['x-opsi-auth-methods'])
+        }
         this.setOpsiconfigserver(response.result)
       }).catch((error) => {
-        this.showToastError(error)
+        this.showToastError(error, this.$t('message.error.fetch.opsiconfigserver'))
       })
   }
 }
