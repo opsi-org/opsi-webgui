@@ -8,8 +8,16 @@
             :prop="column.key"
             :label="column.title"
             :type="column.type"
+            :width="column.width || ''"
             :sortable="column.sortable"
           >
+            <template #header>
+              <div class="table-header">
+                <el-text v-if="column.icon">
+                  <IconIIcon :icon="icons[column.icon]" /> </el-text>
+                <el-text v-else>{{ column.title }}</el-text>
+              </div>
+              </template>
             <template #default="scope" v-if="column.key === 'actions'">
               <div v-contextmenu="(event: MouseEvent) => $emit('showContextMenu',{event, row:scope.row})">
                 <el-tooltip :content="$t('title.config')" placement="top">

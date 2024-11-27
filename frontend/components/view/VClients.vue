@@ -158,14 +158,15 @@ const tableColumn = ref([
   {title: 'notes', key: 'notes', sortable: true, visible: false},
   {title: 'lastSeen', key: 'lastSeen', sortable: true, visible: false},
   {title: 'uefi', key: 'uefi', sortable: true, visible: false},
-  {title: 'version_outdated_localboot', key: 'version_outdated', sortable: true, visible: true, alwaysVisible: true},
-  {title: 'version_outdated_netboot', key: 'version_outdated_netboot', sortable: true, visible: true, alwaysVisible: true},
-  {title: 'installationStatus_unknown', key: 'installationStatus_unknown', sortable: true, visible: true, alwaysVisible: true},
-  {title: 'installationStatus_installed', key: 'installationStatus_installed', sortable: true, visible: true, alwaysVisible: true},
-  {title: 'actionResult_failed', key: 'actionResult_failed', sortable: true, visible: true, alwaysVisible: true},
-  {title: 'actionResult_successful', key: 'actionResult_successful', sortable: true, visible: true, alwaysVisible: true},
-  {title: 'reachable', key: 'reachable', sortable: false, visible: true, alwaysVisible: true},
-  {title: 'actions', key: 'actions', sortable: false, visible: true, alwaysVisible: true},
+
+  {title: 'version_outdated_localboot', key: 'version_outdated', sortable: true, visible: true, alwaysVisible: true, width:"50px", icon:"productsOutdated"},
+  {title: 'version_outdated_netboot', key: 'version_outdated_netboot', sortable: true, visible: true, alwaysVisible: true, width:"50px", icon:"productsOutdated"},
+  {title: 'installationStatus_unknown', key: 'installationStatus_unknown', sortable: true, visible: true, alwaysVisible: true, width:"50px", icon:"productInstallationStatusUnknown"},
+  {title: 'installationStatus_installed', key: 'installationStatus_installed', sortable: true, visible: true, alwaysVisible: true, width:"50px", icon:"product"},
+  {title: 'actionResult_failed', key: 'actionResult_failed', sortable: true, visible: true, alwaysVisible: true, width:"50px", icon:"productsFailedActionResult"},
+  {title: 'actionResult_successful', key: 'actionResult_successful', sortable: true, visible: true, alwaysVisible: true, width:"50px", icon:"productActionResultSuccessful"},
+  {title: 'reachable', key: 'reachable', sortable: false, visible: true, alwaysVisible: true, width:"50px"},
+  {title: 'actions', key: 'actions', sortable: false, visible: true, alwaysVisible: true, width:"150px"},
 ])
 
 
