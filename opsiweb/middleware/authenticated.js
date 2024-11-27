@@ -5,7 +5,9 @@ export default function ({
   redirect,
   route
 }) {
-  const isA = Boolean(Cookie.get('opsiconfd-session') && localStorage.getItem('username'))
+  const user = localStorage.getItem('username')
+  const isA = Boolean(Cookie.get('opsiconfd-session') && user && user !== '')
+  console.log('user:', user, 'isA:', isA)
   // const isA = store.getters['auth/isAuthenticated']
   // value is different from store.auth.isAuthenticated
   // seems to be a timing issue

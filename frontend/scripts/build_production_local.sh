@@ -7,7 +7,7 @@
 
 # IMPORTANT: NAME OF ADDON (default: webgui)
 ADDON_ID=webgui-dev
-ADDON_NAME=Webgui-Dev
+ADDON_NAME=Webgui-dev
 
 WORKING_DIR=$1
 FRONTEND_DIR=frontend

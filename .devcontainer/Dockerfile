@@ -1,6 +1,6 @@
 
 FROM mcr.microsoft.com/playwright:v1.38.0-jammy
-
+#FROM mcr.microsoft.com/playwright:v1.49.0-noble
 # System deps:
 RUN apt-get update \
 	&& apt-get --yes dist-upgrade \

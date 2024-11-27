@@ -27,9 +27,9 @@ cp -r /workspace/backend/addon/webgui /data/opsiconfd/addons/.
 # docker ps | grep uibmz/opsi-server
 #https://stackoverflow.com/questions/49544215/it-is-possible-to-run-a-command-inside-a-docker-container-from-another-container
 # alias opsiconfdrestart="docker exec -u root opsi-webgui-main_devcontainer-opsi-server-1 supervisorctl reload"
-alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"  alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"
+alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"
+alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"
 zsh
-
 # # Setup mariadb server
 # id
 # service mysql restart

@@ -12,31 +12,22 @@ import datetime
 from typing import Any, List, Optional
 
 from fastapi import APIRouter, Body, Depends, Request, status
+from opsicommon.exceptions import BackendBadValueError
+from opsiconfd.config import get_configserver_id
+from opsiconfd.logging import logger
+from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, common_query_parameters, order_by, pagination, rest_api
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 
-from opsicommon.exceptions import BackendBadValueError
-from opsiconfd.config import get_configserver_id
-from opsiconfd.logging import logger
-from opsiconfd.rest import (
-	OpsiApiException,
-	RESTErrorResponse,
-	RESTResponse,
-	common_query_parameters,
-	order_by,
-	pagination,
-	rest_api,
-)
-
 from .utils import (
-	get_groups_ids,
 	backend,
 	build_tree,
 	filter_depot_access,
 	get_allowd_host_groups,
 	get_allowed_clients,
 	get_allowed_objects,
+	get_groups_ids,
 	get_sub_groups,
 	get_username,
 	host_group_access_configured,
@@ -715,9 +706,9 @@ def read_groups(
 		selectedClients = []
 	all_groups = {}
 	for row in raw_groups:
-		if allowed and not row["group_id"] in allowed + ["clientdirectory"]:
+		if allowed and row["group_id"] not in allowed + ["clientdirectory"]:
 			continue
-		if not row["group_id"] in all_groups:
+		if row["group_id"] not in all_groups:
 			all_groups[row["group_id"]] = {
 				"id": row["group_id"],
 				"type": "HostGroup",
@@ -731,7 +722,7 @@ def read_groups(
 			if not all_groups[row["group_id"]].get("children"):
 				all_groups[row["group_id"]]["children"] = {}
 			if row.group_id == row.parent_id:
-				if not row["object_id"] in all_groups:
+				if row["object_id"] not in all_groups:
 					all_groups[row["object_id"]] = {
 						"id": row["object_id"],
 						"type": "ObjectToGroup",

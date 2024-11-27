@@ -62,7 +62,11 @@ pull-binaries:
       - exit 1
     server-type: binaryindex
     server-url: http://binaryindex.uib.gmbh
+<<<<<<< HEAD
     version: "4.4.0.0"
+=======
+    version: "4.3.42"
+>>>>>>> main
 transifex:
   download_translations:
     - install_dir: frontend/locale

@@ -11,26 +11,18 @@ webgui depot methods
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Request, status
+from opsiconfd.config import get_configserver_id
+from opsiconfd.rest import RESTErrorResponse, RESTResponse, common_query_parameters, order_by, pagination, rest_api
+from opsiconfd.session import OPSISession
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, or_, select, table, text  # type: ignore[import]
-
-from opsiconfd.config import get_configserver_id
-from opsiconfd.rest import (
-	RESTErrorResponse,
-	RESTResponse,
-	common_query_parameters,
-	order_by,
-	pagination,
-	rest_api,
-)
-from opsiconfd.session import OPSISession
 
 from .utils import (
 	backend,
 	depot_access_configured,
 	filter_depot_access,
-	get_allowd_depots,
 	get_allowed_clients,
+	get_allowed_depots,
 	get_username,
 	host_group_access_configured,
 	mysql,
@@ -57,7 +49,7 @@ def get_depots(username: str | None = None) -> List[str]:
 		result = [row[0] for row in result if row is not None]
 
 		if username and user_register() and depot_access_configured(username):
-			allowed_depots = get_allowd_depots(username)
+			allowed_depots = get_allowed_depots(username)
 			for depot in result.copy():
 				if depot not in allowed_depots:
 					result.remove(depot)
@@ -128,7 +120,7 @@ def depots(
 		# TODO Item "None" of "Optional[Any]" has no attribute "user_store"  [union-attr]mypy(error)
 		username = request.scope.get("session").username  # type: ignore
 		if user_register() and depot_access_configured(username):
-			allowed_depots = get_allowd_depots(username)
+			allowed_depots = get_allowed_depots(username)
 			for row in result:
 				if row is not None:
 					depot_data = dict(row)

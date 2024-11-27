@@ -130,6 +130,7 @@ async function useAPI2<T> (
       console.warn('No username in headers. Clearing session')
       storeAuth().clearSession()
     }else {
+      console.warn('username in headers: ', headerusername)
       const username = headerusername.split('user:')[1]
       if (username) {
         storeAuth().setUser(username)

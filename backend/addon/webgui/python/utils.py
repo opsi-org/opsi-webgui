@@ -15,7 +15,6 @@ from operator import and_
 from typing import Callable, List, Optional, Union
 
 from fastapi import Query, status
-from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
 
 # from OPSI.Backend.MySQL import MySQL, MySQLBackend
 from opsiconfd import contextvar_client_session
@@ -24,7 +23,7 @@ from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
-
+from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
 
 backend = get_protected_backend()
 
@@ -190,7 +189,7 @@ def client_creation_allowed(user: str) -> bool:
 	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.createclient")
 
 
-def get_allowd_depots(user: str) -> list:
+def get_allowed_depots(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.host.depotaccess.depots'")
 		where = and_(where, text("cv.isDefault=1"))
@@ -279,7 +278,7 @@ def filter_depot_access(func: Callable) -> Callable:
 		if user_register():
 			username = kwargs.get("request").scope.get("session").username
 			if depot_access_configured(username):
-				allowed_depots = get_allowd_depots(username)
+				allowed_depots = get_allowed_depots(username)
 				selected_depots = kwargs.get("selectedDepots")
 				for depot in selected_depots:
 					if depot not in allowed_depots:
