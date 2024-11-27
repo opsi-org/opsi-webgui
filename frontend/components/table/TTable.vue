@@ -1,6 +1,6 @@
 
 <template>
-  <el-table :data="fetchedData" v-loading="isLoading" @sort-change="$emit('handleSortChange')">
+  <el-table :data="fetchedData" v-loading="isLoading" @sort-change="(s:any) => $emit('handleSortChange', s)">
         <template v-for="column in tableColumn">
           <el-table-column
             v-if="column.visible || column.alwaysVisible"
@@ -12,9 +12,15 @@
             :sortable="column.sortable"
           >
             <template #header>
-                <el-text v-if="column.icon">
-                  <IconIIcon :icon="column.icon" /> </el-text>
-                <el-text v-else>{{ column.title }}</el-text>
+              <el-tooltip
+                v-if="column.icon"
+                class="box-item"
+                effect="dark"
+                :content="column.title"
+              >
+                <el-text><IconIIcon :icon="column.icon" /> </el-text>
+              </el-tooltip>
+              <el-text v-else>{{ column.title }}</el-text>
               </template>
             <template #default="scope" v-if="column.key === 'actions'">
               <div v-contextmenu="(event: MouseEvent) => $emit('showContextMenu',{event, row:scope.row})">

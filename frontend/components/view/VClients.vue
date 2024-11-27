@@ -76,6 +76,7 @@
         <div v-if="!isLoading">Scroll up to load previous page...</div>
       </div>
       <TableTTable
+        v-if="fetchedData"
         v-model:data="fetchedData"
         v-model:active-button="activeButton"
         :is-loading="isLoading"
@@ -350,8 +351,9 @@ function applySort(columnKey: string) {
   fetchClients()
 }
 
-function handleSortChange({ prop }: { prop: string }) {
+function handleSortChange({prop, order}: {column: any, prop: string, order: any }) {
   sortBy.value = prop
+  sortDesc.value = order === 'descending'
   fetchClients()
 }
 
