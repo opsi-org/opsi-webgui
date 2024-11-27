@@ -140,6 +140,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useClient } from '~/composables/mixins/useGet';
 import { useGroup } from '~/composables/mixins/usePost';
+import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper';
 import {useIcons} from '../../composables/mixins/useIcons'
 import { _getI18nInComposable } from '../../composables/mixins/helper-i18n';
 import type { T_ClientIds, T_Groups, T_ProductIds, T_Product } from '~/types/APItypes';
@@ -149,6 +150,7 @@ const props = defineProps({
 })
 const { notifySuccess, notifyError } = useNotification()
 const icons = useIcons()
+const groupsHelper = useGroupsHelper()
 const mq = useMQ()
 const $t = useI18n().t
 const storeSelection: any = storeSelections()
@@ -206,21 +208,26 @@ async function refetchGroup () {
 }
 
 async function fetchClientGroups() {
-  const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
+  const {data, error } = await useApiGETBody<Record<string, T_Groups>>(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
   }
     // TODO: Backend: change groups data structure
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  fetchedData.value = data.value  ? Object.entries(data.value).map(([label, obj] : any ) => (
-    { ...obj,
-      children: Object.entries(obj.children || {}).map(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ([labelA, objA] : any ) => ({ ...objA, children: Object.values(objA.children || {})})
-      )
-    }
-  )) : []
+  if (data.value == undefined) {
+    notifyError({ message: $t('message.error.empty-response', { details: "ClientGroupSelections" }) })
+    return
+  }
+  fetchedData.value = groupsHelper.transformToNestedArray(data.value);
+  //   ? Object.entries(data.value).map(([label, obj] : any ) => (
+  //   { ...obj,
+  //     children: Object.entries(obj.children || {}).map(
+  //       // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //       ([labelA, objA] : any ) => ({ ...objA, children: Object.values(objA.children || {})})
+  //     )
+  //   }
+  // )) : []
 }
 
 async function fetchClientList () {
@@ -228,7 +235,7 @@ async function fetchClientList () {
 }
 
 async function fetchProdGroups() {
-  const {data, error } = await useApiGETBody<T_Groups>(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
+  const {data, error } = await useApiGETBody<Record<string, Record<string, T_Groups>>>(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
@@ -236,11 +243,8 @@ async function fetchProdGroups() {
     notifyError({ message: $t('message.error.empty-response', { details: "GroupActions" }) })
     return
   }
-  // TODO: Backend: change groups data structure
-  fetchedData.value = data.value.groups ?
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
-      : []
+  const groups = data.value['groups']
+  fetchedData.value = groupsHelper.transformToNestedArray(groups);
 }
 
 async function fetchProductList() {
