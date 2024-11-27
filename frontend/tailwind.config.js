@@ -14,6 +14,12 @@ export default {
         'opsi-magenta': 'var(--color-opsi-magenta)',
         'opsi-deep-blue': 'var(--color-opsi-deep-blue)',
         'opsi-blue': 'var(--color-opsi-blue)',
+        'opsi-red': 'var(--color-opsi-red)',
+        'danger': 'var(--el-color-danger)',
+        'success': 'var(--el-color-success)',
+        'info': 'var(--el-color-info)',
+        'warning': 'var(--el-color-warning)',
+
         'opsi-deep-gray': 'var(--color-opsi-deep-gray)',
         'opsi-gray': 'var(--color-opsi-gray)',
         'opsi-medium-gray': 'var(--color-opsi-medium-gray)',

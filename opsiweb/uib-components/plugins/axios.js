@@ -2,7 +2,7 @@ export default function ({ app, $axios, redirect, store, route }) {
   if (process.client || process.static) {
     const host = window.location.hostname
     const port = (process.env.NODE_ENV === 'production') ? window.location.port : app.$config.confdPort || 4447
-    $axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
+    $axios.setBaseURL('https://' + host + ':' + port + app.$config.webguipath)
   }
 
   $axios.onRequest((config) => {
@@ -21,6 +21,14 @@ export default function ({ app, $axios, redirect, store, route }) {
   $axios.onResponse((response) => {
     // eslint-disable-next-line no-console
     console.debug('axios response ', response.config.url)
+    if (response.config.url === '/api/user/opsiserver') {
+      store.commit('data-cache/setAuthmethods', response.headers['x-opsi-auth-methods'])
+      const username = response.headers?.['x-opsi-user-id']?.split(':')?.[1] || undefined // user:sucher -> sucher
+      if (username) {
+        store.commit('auth/login', username)
+      }
+    }
+    return response
   })
 
   $axios.onError((error) => {

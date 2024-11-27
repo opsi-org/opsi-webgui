@@ -1,12 +1,26 @@
 <template>
 
+  <el-tooltip
+    v-if="transparent === true && changesExists"
+    class="box-item"
+    :content="$t('button.track.changes')"
+  >
+    <IconIIcon
+      :icon="icons.trackChanges"
+      :disabled="!changesExists"
+      :class="changesExists ? 'text-danger' : 'text-success'"
+      :title="$t('button.track.changes')"
+      @click="dialogVisible = true"
+      />
+  </el-tooltip>
   <el-button
+    v-else-if="transparent === false"
     :disabled="!changesExists"
     @click="dialogVisible = true"
     :type="changesExists ? 'danger' : 'success'"
   >
     <IconIIcon :icon="icons.trackChanges"/>
-    {{$t('button.track.changes')}}
+    <p v-if="small === undefined || small === false">{{$t('button.track.changes')}}</p>
   </el-button>
   <el-dialog
     data-testid="MTrackChangesModal"
@@ -16,7 +30,7 @@
       <div class="flex">
         <IconIIcon :icon="icons.info" class="min-w-5 min-h-5 mr-2"/>
         <h3>
-          {{$t('button.track.changes')}}
+          {{$t('title.track.changes')}}
         </h3>
       </div>
     </template>
@@ -44,8 +58,22 @@ const icons = useIcons()
 const $t = useI18n().t
 // const {username} = storeToRefs(storeAuth())
 const modelValue = defineModel<Record<string,any>>()
+const modelDialogVisible = defineModel<boolean>('visible', {type: Boolean, default: undefined})
 
-const dialogVisible = ref<boolean>(false)
+const dialogVisible = ref<boolean>(modelDialogVisible.value ? modelDialogVisible.value : false)
+
+const _props = defineProps({
+  small: { type: Boolean, default: ()=> {return false}},
+  transparent: { type: Boolean, default: ()=> {return false}}
+})
+// const dialogVisible = ref<boolean>(false)
+
+watch(()=> modelDialogVisible.value, () => {
+  dialogVisible.value = modelDialogVisible.value
+})
+watch(()=> dialogVisible.value, () => {
+  modelDialogVisible.value = dialogVisible.value
+})
 
 const changesExists = computed(() => {
   return modelValue.value?.changesHostParam?.length > 0 || modelValue.value?.changesProducts?.length > 0

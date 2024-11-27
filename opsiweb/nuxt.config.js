@@ -4,6 +4,7 @@ import fs from 'fs'
 import pkg from './package.json'
 
 const CONFD_PORT = process.env.OPSICONFD_PORT || 4447
+const ADDON_PATH = '/addons/webgui'
 
 const langs = {}
 
@@ -31,12 +32,12 @@ console.log('DEBUG: Reading locales done: ', Object.keys(langs))
 console.log('===================================================================')
 
 const env = {
-  APIPATH: '/addons/webgui'
+  APIPATH: ADDON_PATH
 }
 export default {
   srcDir: '.',
   env: {
-    APIPATH: '/addons/webgui'
+    APIPATH: ADDON_PATH
   },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -106,7 +107,7 @@ export default {
 
   router: {
     middleware: ['authenticated'],
-    base: '/addons/webgui/app/'
+    base: ADDON_PATH + '/app/'
   },
   watchers: {
     webpack: {
@@ -151,8 +152,9 @@ export default {
   // https://nuxtjs.org/guide/runtime-config
   publicRuntimeConfig: {
     packageVersion: pkg.version,
-    confdPort: CONFD_PORT
-    // local: 'https://localhost:' + CONFD_PORT + '/addons/webgui' // fallback
+    confdPort: CONFD_PORT,
+    webguipath: ADDON_PATH,
+    OWN_PATH: ADDON_PATH + '/app'
   },
   privateRuntimeConfig: {
   },

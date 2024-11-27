@@ -17,10 +17,12 @@
 import { ref } from 'vue'
 import { ElTree } from 'element-plus'
 import { useNotification } from '~/composables/mixins/useComponent';
-import type { T_PGroups } from '~/types/APItypes'
+import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper';
+import type { T_Groups } from '~/types/APItypes'
+
 const { notifyError } = useNotification()
 const $t = useI18n().t
-
+const groupsHelper = useGroupsHelper()
 const props = defineProps({
   grouptype: {type: String, required: true}
 })
@@ -46,7 +48,7 @@ onMounted(async ()=> {
 })
 
 async function fetchClientGroups() {
-  const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
+  const {data, error } = await useApiGETBody<Record<string, T_Groups>>(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
@@ -54,22 +56,12 @@ async function fetchClientGroups() {
     notifyError({ message: $t('message.error.empty-response', { details: "ClientGroupSelections" }) })
     return
   }
-    // TODO: Backend: change groups data structure
-  fetchedData.value = data.value  ?
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    Object.entries(data.value).map(([label, obj] : any ) => (
-      { ...obj,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        children: Object.entries(obj.children || {}).map(([labelA, objA] : any ) => ({
-          ...objA, children: Object.values(objA.children || {})
-        }))
-      }
-    ))
-    : []
+
+  fetchedData.value = groupsHelper.transformToNestedArray(data.value);
 }
 
 async function fetchProdGroups() {
-  const {data, error } = await useApiGETBody<T_PGroups>(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
+  const {data, error } = await useApiGETBody<Record<string, Record<string, T_Groups>>>(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
@@ -77,25 +69,9 @@ async function fetchProdGroups() {
     notifyError({ message: $t('message.error.empty-response', { details: "ProductGroupSelections" }) })
     return
   }
-  fetchedData.value = data.value.groups ?
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
-  : []
 
-  // TODO: Backend: change groups data structure
-  // needed structure is [
-  //   {
-  //     "id":"software-on-demand",
-  //     "type":"ProductGroup",
-  //     "text":"software-on-demand",
-  //     "parent":"root",
-  //     "children": [
-  //       {"id":"jedit;software-on-demand","type":"ObjectToGroup","text":"jedit","parent":"software-on-demand"},
-  //       {"id":"nextcloud;software-on-demand","type":"ObjectToGroup","text":"nextcloud","parent":"software-on-demand"},
-  //       {"id":"swaudit;software-on-demand","type":"ObjectToGroup","text":"swaudit","parent":"software-on-demand"}
-  //     ]
-  //   }
-  // ]
+  const groups = data.value['groups']
+  fetchedData.value = groupsHelper.transformToNestedArray(groups);
 }
 
 const clearSelection = () => {

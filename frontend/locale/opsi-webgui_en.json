@@ -390,7 +390,7 @@
   "button.sort.tablecolumns.sortDirection": "Sort descending",
   "button.change.usermode": "Change user mode to {mode}",
   "title.track.changes": "Tracked changes",
-  "button.track.changes": "Track changes",
+  "button.track.changes": "Unsaved Changes",
   "button.tsdefault.add": "Add entry",
   "button.tsdefault.add.tooltip": "Press enter or this button",
   "button.tryAgain": "Try Again",

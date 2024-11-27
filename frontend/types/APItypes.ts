@@ -99,15 +99,31 @@ export interface T_Logout {
 export interface T_PGroups {
   groups: T_Groups
 }
+// export interface T_Groups {
+//   [key: string]: T_Group
+// }
+// export interface T_Group {
+//   id: string
+//   text: string
+//   type?: string
+//   parent: string
+//   children: null | T_Groups
+// }
+
 export interface T_Groups {
-  [key: string]: T_Group
+  id: string;
+  type: string;
+  text: string;
+  parent: string | null;
+  children: { [key: string]: T_Groups } | null;
 }
-export interface T_Group {
-  id: string
-  text: string
-  type?: string
-  parent: string
-  children: null | T_Groups
+
+export interface T_GroupsTransformed {
+  id: string;
+  type: string;
+  text: string;
+  parent: string | null;
+  children: T_GroupsTransformed[] | null;
 }
 
 

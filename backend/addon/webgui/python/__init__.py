@@ -14,36 +14,36 @@ from fastapi import APIRouter, FastAPI, HTTPException, Request, status
 from fastapi.requests import HTTPConnection
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
-from opsicommon.exceptions import (BackendAuthenticationError,
-                                   BackendPermissionDeniedError)
-from starlette.concurrency import run_in_threadpool
-from starlette.types import Receive, Send
-
+from opsicommon.exceptions import BackendAuthenticationError, BackendPermissionDeniedError
 from opsiconfd.addon import Addon
 from opsiconfd.logging import logger
 from opsiconfd.session import ACCESS_ROLE_AUTHENTICATED, ACCESS_ROLE_PUBLIC
 from opsiconfd.session import authenticate as opsiconfd_authenticate
+from opsiconfd.utils import Singleton
 from opsiconfd.utils.fastapi import remove_route_path
+from starlette.concurrency import run_in_threadpool
+from starlette.types import Receive, Send
 
 from .clients import client_router
-from .config import conifg_router
+from .config import config_router
 from .const import ADDON_ID, ADDON_NAME, ADDON_VERSION
 from .depots import depot_router
 from .hosts import host_router
 from .products import product_router
 from .server import server_router
 from .utils import mysql
-from .webgui import set_data_path_var, webgui_router
+from .webgui import webgui_router
 
 SESSION_LIFETIME = 60 * 30
 
 
-class Webgui(Addon):
+class Webgui(Addon, metaclass=Singleton):
 	id = ADDON_ID
 	name = ADDON_NAME
 	version = ADDON_VERSION
 
 	def setup(self, app: FastAPI) -> None:
+		logger.info("Webgui setup %r", self.data_path)
 		if not mysql:
 			logger.warning("No mysql backend found! Webgui only works with mysql backend.")
 			error_router = APIRouter()
@@ -60,11 +60,11 @@ class Webgui(Addon):
 		app.include_router(host_router, prefix=self.router_prefix)
 		app.include_router(client_router, prefix=self.router_prefix)
 		app.include_router(depot_router, prefix=self.router_prefix)
-		app.include_router(conifg_router, prefix=self.router_prefix)
+		app.include_router(config_router, prefix=self.router_prefix)
 		app.include_router(server_router, prefix=self.router_prefix)
 
 		app.mount(path=f"{self.router_prefix}/app", app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True), name="app")
-		set_data_path_var(self.data_path)
+
 
 	def on_load(self, app: FastAPI) -> None:  # pylint: disable=no-self-use
 		"""Called after loading the addon"""
@@ -75,32 +75,35 @@ class Webgui(Addon):
 		remove_route_path(app, self.router_prefix)
 
 	async def handle_request(self, connection: HTTPConnection, receive: Receive, send: Send) -> bool:  # pylint: disable=no-self-use,unused-argument
-		"""Called on every request where the path matches the addons router prefix.
-		Return true to skip further request processing."""
+		"""
+		Called on every request where the path matches the addons router prefix.
+		Return true to skip further request processing.
+		"""
 		connection.scope["required_access_role"] = ACCESS_ROLE_AUTHENTICATED
-		if (
-			connection.scope["path"].startswith(f"{self.router_prefix}/api/auth")
-			or connection.scope["path"].startswith(f"{self.router_prefix}/api/opsidata")
-			or connection.scope["path"].startswith(f"{self.router_prefix}/api/user/configuration")
-		) and connection.base_url.hostname in ("127.0.0.1", "::1", "0.0.0.0", "localhost"):
-			if connection.scope.get("method") == "OPTIONS":
-				connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
-		if connection.scope["path"].rstrip("/") == self.router_prefix or connection.scope["path"].startswith(
-			(f"{self.router_prefix}/app", f"{self.router_prefix}/api/user/opsiserver", f"{self.router_prefix}/api/opsidata/changelogs")
-		):
+		path = connection.scope.get("path", "").rstrip("/")
+
+		if not path.startswith(self.router_prefix):
+			return False
+
+		rel_path = "/" + path.removeprefix(self.router_prefix).lstrip("/")
+
+		if rel_path == "/" or rel_path.startswith(("/app", "/api/user/opsiserver", "/api/opsidata/changelogs")):
 			connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
-		elif connection.scope["path"] == f"{self.router_prefix}/api/auth/login":
+			return False
+
+		if rel_path == "/api/auth/login":
 			if connection.scope.get("method") == "OPTIONS":
 				connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
-			else:
-				try:
-					await authenticate(connection, receive)
-					if connection.scope["session"].is_admin:
-						connection.scope["session"].max_age = SESSION_LIFETIME
-					else:
-						raise BackendAuthenticationError("Not an admin")
-				except Exception as err:
-					raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(err)) from err
+				return False
+
+			try:
+				await authenticate(connection, receive)
+				connection.scope["session"].max_age = SESSION_LIFETIME
+			except Exception as err:
+				raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(err)) from err
+
+		if not connection.scope["session"].is_admin:
+			raise BackendPermissionDeniedError("Not an admin")
 
 		return False
 
