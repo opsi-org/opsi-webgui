@@ -23,8 +23,8 @@
               <el-text v-else>{{ column.title }}</el-text>
               </template>
             <template #default="scope" v-if="column.key === 'actions'">
-              <div v-contextmenu="(event: MouseEvent) => $emit('showContextMenu',{event, row:scope.row})">
-                <el-tooltip :content="$t('title.config')" placement="top">
+              <div  v-if="thisinstance?.vnode?.props?.onShowContextMenu" v-contextmenu="(event: MouseEvent) =>  $emit('showContextMenu',{event, row:scope.row})">
+                <el-tooltip :content="$t('title.config')" placement="top" v-if="thisinstance?.vnode?.props?.onHandleConfigClick">
                   <el-button
                     type="text"
                     @click="$emit('handleConfigClick', scope.row)"
@@ -33,7 +33,7 @@
                     <IconIIcon :icon="icons.settings" />
                   </el-button>
                 </el-tooltip>
-                <el-tooltip :content="$t('title.log')" placement="top">
+                <el-tooltip :content="$t('title.log')" placement="top" v-if="thisinstance?.vnode?.props?.onHandleLogClick">
                   <el-button
                     type="text"
                     @click="$emit('handleLogClick', scope.row)"
@@ -42,7 +42,7 @@
                     <IconIIcon :icon="icons.log" />
                   </el-button>
                 </el-tooltip>
-                <el-tooltip :content="$t('title.clone')" placement="top">
+                <el-tooltip :content="$t('title.clone')" placement="top" v-if="thisinstance?.vnode?.props?.onHandleCloneClick">
                   <el-button
                     type="text"
                     @click="$emit('handleCloneClick', scope.row)"
@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 import {useIcons} from '../../composables/mixins/useIcons'
-
+const thisinstance = getCurrentInstance()
 const $t = useI18n().t
 const icons = useIcons()
 const fetchedData = defineModel<Array<any>>('data', { required:true})
