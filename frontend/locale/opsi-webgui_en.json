@@ -457,6 +457,7 @@
   "form.item.editable": "This config is editable. Press <Enter> or click on item to add and select",
   "formselect.select.servers": "-- Server selection --",
   "formselect.select.clients": "-- Client selection --",
+  "multiselection.unabletosingleselect": "Unable to change selctionmode. There are more than one element selected.",
   "form.multiselection": "Multi selection",
   "form.multiselection.enable": "Multi selection enabled",
   "form.multiselection.disabled": "Multi selection disabled",
