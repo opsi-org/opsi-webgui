@@ -129,6 +129,7 @@ import type { T_ClientsList } from '~/types/APItypes';
 import { useNotification } from '~/composables/mixins/useComponent';
 import {useIcons} from '../../composables/mixins/useIcons'
 import { useRouter } from 'vue-router'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { vContextmenu } from '../../composables/mixins/v-contextmenu'
 
 const icons = useIcons()
