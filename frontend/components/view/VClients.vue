@@ -22,14 +22,14 @@
               </div>
               <div class="dropdown-section">
                 <div class="dropdown-title">
-                  <el-button type="text" @click="toggleSortOrder">
+                  <el-button type="text" @click="toggleSortOrder" class="mt-[-8px]">
                     <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
                     {{ sortDesc ? 'Sort Descending' : 'Sort Ascending' }}
                   </el-button>
                 </div>
-                <div class="dropdown-items">
+                <div class="dropdown-items mt-[-3px]">
                   <template v-for="column in tableColumn" :key="column.key">
-                    <el-dropdown-item>
+                    <el-dropdown-item >
                       <el-radio :disabled="!column.sortable" v-model="column.sortable" @change="applySort(column.key)" />
                     </el-dropdown-item>
                   </template>
