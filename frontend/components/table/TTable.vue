@@ -261,6 +261,7 @@ async function fetchWrapper() {
   try {
     const res = await props.fetch(params)
     if (res.total) {
+      totalItems.value = res.total
       isFirstPage.value = currentPage.value == 1
       isLastPage.value = currentPage.value * pageSize.value >= res.total
       const pageNotExists = currentPage.value > Math.ceil(res.total / pageSize.value)
