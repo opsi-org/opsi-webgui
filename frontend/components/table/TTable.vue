@@ -4,7 +4,7 @@
     :data="fetchedData"
     v-loading="isLoading"
     @sort-change="(s:any) => $emit('handleSortChange', s)"
-    @row-click="($event: any) => $emit('selectionChanged', $event[rowId])"
+    @row-click="onRowClick"
     >
         <template v-for="column in tableColumn">
           <el-table-column
@@ -31,8 +31,10 @@
             <template #header v-else>
               <el-text>{{ column.title }}</el-text>
             </template>
+
+
             <template #default="scope" v-if="column.key === 'actions'">
-              <div v-contextmenu="thisinstance?.vnode?.props?.onShowContextMenu ? (event: MouseEvent) =>  $emit('showContextMenu',{event, row:scope.row}) : () =>{}">
+              <div v-contextmenu="thisinstance?.vnode?.props?.onShowContextMenu ? (e:any) => onContextMenu(e, scope) : () =>{}">
                 <el-tooltip :content="$t('title.config')" placement="top" v-if="thisinstance?.vnode?.props?.onHandleConfigClick">
                   <el-button
                     type="text"
@@ -73,6 +75,7 @@
 
 <script setup lang="tsx">
 import {useIcons} from '../../composables/mixins/useIcons'
+
 const thisinstance = getCurrentInstance()
 const $t = useI18n().t
 const icons = useIcons()
@@ -80,7 +83,7 @@ const fetchedData = defineModel<Array<any>>('data', { required:true})
 const activeButton = defineModel<string|null>('activeButton')
 // const isLoading = defineModel<string>('isLoading', { required:true})
 
-const _props = defineProps({
+const props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   rowId: { type: String, required: true },
   isLoading: { type: Boolean, required: true },
@@ -88,7 +91,18 @@ const _props = defineProps({
 })
 const $emit = defineEmits(['handleSortChange', 'handleCloneClick', 'handleLogClick', 'handleConfigClick', 'showContextMenu', 'selectionChanged'])
 
-
+function onRowClick(row: any, column: any, event: any) {
+  if (['svg', 'button', 'path', "span"].includes(event.target?.localName)) {
+    //console.warn("onRowClick: clicked on another item in row (not row itself)", event.target?.localName)
+    return
+  }else {
+    //console.log("onRowClick: clicked on row", event.target?.localName)
+  }
+  $emit('selectionChanged', row[props.rowId])
+}
+function onContextMenu(event: MouseEvent, scope: any) {
+   $emit('showContextMenu',{event, row:scope.row})
+}
 
 
 const CellRenderer = (attributes: any): VNode => {
