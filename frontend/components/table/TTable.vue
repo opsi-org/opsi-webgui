@@ -65,6 +65,7 @@
             <IconIIcon :icon="icons.refresh" />
           </el-button>
         </el-tooltip>
+        <ButtonBTNClearSelection @clearselection="$emit('clearSelection')" />
       </div>
       <div class="toolbar-right">
         <el-button type="primary">New Button</el-button>
@@ -87,14 +88,10 @@
                 :key="column.key"
                 :prop="column.key"
                 :label="column.title"
-                :type="column.type"
                 :width="column.width || ''"
                 :sortable="column.sortable"
-              >
-                <template #header v-if="column.headerCellRenderer">
-                  <HeaderCellRenderer :col-data="column"/>
-                </template>
-                <template #header v-else-if="column.icon">
+                >
+                <template #header v-if="column.icon">
                   <el-tooltip
                   class="box-item"
                   effect="dark"
@@ -104,7 +101,7 @@
                 </el-tooltip>
                 </template>
                 <template #header v-else>
-                  <el-text>{{ column.title }}</el-text>
+                  <HeaderCellRenderer :col-data="column"/>
                 </template>
 
 
@@ -210,7 +207,7 @@ const props = defineProps({
   hasClientActions: { type: Boolean, default: false, required: false },
 })
 
-const $emit = defineEmits(['selectionChanged'])
+const $emit = defineEmits(['selectionChanged', 'clearSelection'])
 
 const fetchedData = ref()
 const activeButton = ref<string | null>(null)

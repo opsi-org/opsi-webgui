@@ -5,6 +5,7 @@
     :fetch="fetchServer"
     action-config="/servers/server/config/"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionDepots(id)}"
+    @clear-selection="storeSelection.clearSelectionDepots"
   />
 </template>
 
@@ -27,8 +28,8 @@ const _props = defineProps({
 })
 const rowId = 'depotId'
 const tableColumn = ref([
-  {title: 'selected', key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
-    headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionDepots} /> },
+  {title: '', key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
+    // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
     cellRenderer: ({rowData}: any) => {
       rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
       return (<> { storeSelection.multiSelection ?
@@ -38,7 +39,7 @@ const tableColumn = ref([
           <el-radio value={true} class="selectionItem hide_label" />
         </el-radio-group>
       }</>)
-    }},
+    }, width:"90px"},
   {title: 'depotId', key: 'depotId', sortable: true, visible: true, alwaysVisible: true, filter: true,
   cellRenderer: ({rowData}: any) => {
     return <>{ rowData.type === 'OpsiConfigserver' ? <el-text> <b>{rowData.depotId}</b></el-text>

@@ -1,8 +1,9 @@
 <template>
+
+<el-tooltip :content="$t('table.selection.clear')">
   <el-button
     data-testid="BTNClearSelection"
     :aria-label="$t('table.selection.clear')"
-    :title="props.showLabel ? '' : $t('table.selection.clear')"
     type="primary"
     plain
     class="ml-0"
@@ -14,6 +15,7 @@
     <span v-if="props.showLabel == true">{{ props.label ? props.label : $t('table.selection.clear') }}</span>
     <span class="sr-only">{{ $t('table.selection.clear') }}</span>
   </el-button>
+  </el-tooltip>
 </template>
 
 <script setup lang="ts">

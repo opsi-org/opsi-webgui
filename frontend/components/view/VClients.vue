@@ -8,6 +8,7 @@
       :table-column="tableColumn"
       :fetch="fetchClients"
       @selection-changed="(id: string) => {storeSelection.toggleSelectionClients(id)}"
+      @clear-selection="storeSelection.clearSelectionClients"
     />
 </template>
 
@@ -27,8 +28,10 @@
 
   const rowId = 'clientId'
   const tableColumn = ref([
-    {title: 'selected', key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
-      headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} /> },
+    {title: '', key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
+
+    // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} /> },
+
       cellRenderer: ({rowData}: any) => {
         rowData.selected = storeSelection.selectionClients.includes(rowData.clientId)
         return (<> { storeSelection.multiSelection ?
