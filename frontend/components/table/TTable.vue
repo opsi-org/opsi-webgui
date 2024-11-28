@@ -1,5 +1,7 @@
 <template>
   <div>
+    <slot name="header" />
+
     <div class="toolbar">
       <div class="toolbar-left">
         <el-dropdown trigger="click">
@@ -72,7 +74,11 @@
       </div>
     </div>
 
-    <div ref="infiniteScrollDiv" style="height: 80vh; overflow-y: auto;" @scroll="debouncedHandleScroll">
+    <!-- <div ref="infiniteScrollDiv" :style="'height: calc(80vh - var(--)); overflow-y: auto;'" @scroll="debouncedHandleScroll"> -->
+    <div ref="infiniteScrollDiv"
+      class="overflow-y-auto h-"
+      :style="'height: ' + bodyHeight"
+      @scroll="debouncedHandleScroll">
       <div v-if="!isFirstPage" class="extra-column">
         <div v-if="!isLoading">Scroll up to load previous page...</div>
       </div>
@@ -201,6 +207,8 @@ const props = defineProps({
   // isLoading: { type: Boolean, required: true },
   tableColumn: { type: Array<any>, required: true },
   fetch: { type: Function, required: true },
+  bodyHeight: { type: String, default: '80vh', required: false },
+  sortBy: { type: String, default: undefined, required: false },
   actionClone: { type: String, default: undefined, required: false },
   actionLog: { type: String, default: undefined, required: false },
   actionConfig: { type: String, default: undefined, required: false },
@@ -220,13 +228,14 @@ const isLastPage = ref(false)
 const infiniteScrollDiv = ref<HTMLElement | null>(null)
 const filterQuery = ref('')
 const filterBy = ref(props.rowId)
-const sortBy = ref(props.rowId)
+const sortBy = ref(props.sortBy || props.rowId)
 const sortDesc = ref(true)
 const contextMenuVisible = ref(false)
 const contextMenuStyle = ref({})
 const contextMenuRow = ref(null)
 
 
+defineExpose({ refetch: fetchWrapper, fetchedData })
 
 
 watch([()=>filterQuery.value], fetchWrapper, { immediate: true })
@@ -248,11 +257,19 @@ async function fetchWrapper() {
     sortBy: sortBy.value,
     sortDesc: sortDesc.value,
   }
+  // fetchedData.value = undefined
   try {
     const res = await props.fetch(params)
     if (res.total) {
       isFirstPage.value = currentPage.value == 1
       isLastPage.value = currentPage.value * pageSize.value >= res.total
+      const pageNotExists = currentPage.value > Math.ceil(res.total / pageSize.value)
+      console.error('Page Not Exists', pageNotExists)
+      if (pageNotExists) {
+        console.error('setting current page to last page')
+        currentPage.value = Math.ceil(res.total / pageSize.value)
+      }
+
     }
     fetchedData.value = res.data
   } catch (error) {

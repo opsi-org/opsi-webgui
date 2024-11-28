@@ -4,30 +4,54 @@
     :row-id="rowId"
     :table-column="tableColumn"
     :fetch="fetchProducts"
+    :sort-by="props.sortby"
+    body-height="76vh"
     action-config="/servers/server/config/"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionDepots(id)}"
     @clear-selection="storeSelection.clearSelectionDepots"
-  />
+  >
+  <template #header>
+        <div>
+          <el-checkbox-button
+            v-model="productsTypeChecked.LocalbootProduct"
+            @change="changeProductsType('LocalbootProduct')"
+          >{{$t('title.localbootProducts')}}</el-checkbox-button>
+          <!-- <el-badge is-dot class="item"  :hidden="numberOtherNetboot <= 0" type="warning" > -->
+            <el-checkbox-button
+            v-model="productsTypeChecked.NetbootProduct"
+            @change="changeProductsType('NetbootProduct')"
+            >{{ $t('title.netbootProducts') }}</el-checkbox-button>
+          <!-- </el-badge> -->
+          <!--  el-checkbox-button
+            disabled
+            v-model="productsTypeChecked.Product"
+            @change="changeProductsType('Product')"
+          >Product< / > -->
+        </div>
+      </template>
+  </TableTTable>
 </template>
 
 
 <script setup lang="tsx">
-import type { T_Client2Depot } from '~/types/APItypes';
+import type { IProductTypes, T_Client2Depot } from '~/types/APItypes';
+import type { IObjectString2ObjectString2String } from '~/types/tgeneral';
 import { useIcons } from '../../composables/mixins/useIcons'
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
 import { useSaveProductActionRequest } from '~/composables/mixins/useSave';
+import { useClient } from '~/composables/mixins/useGet';
 // import { useMBus } from '~/composables/mixins/useMessagebus';
 import TCProductVersionCell from '~/components/tablecell/TCProductVersionCell.vue';
 import BTNRowLink from '~/components/button/BTNRowLink.vue';
-import type { IObjectString2ObjectString2String } from '~/types/tgeneral';
-;
+
 // const { notifyInfo, notifyError } = useNotification()
 const { notifyError } = useNotification()
 const $t = useI18n().t
 const navigation = useNavigate()
 const icons = useIcons()
-// const router = useRouter()
+const router = useRouter()
+const fetchClient = useClient()
 
 const storeSelection = storeSelections()
 
@@ -45,9 +69,16 @@ const rowId = 'productId'
 // Refs
 const productsRef = ref()
 const { selectionDepots, selectionClients, selectionProducts } = storeToRefs(storeSelection)
-const clientSelection = props.selectedClient ? ref([props.selectedClient]) : selectionClients
+const clientSelection: Ref<Array<string>> = props.selectedClient ? ref([props.selectedClient]) : selectionClients
 const fetchedDataClients2Depots = ref<T_Client2Depot>({})
 const lastChanges = ref({ clientIds: [] as Array<string>, productIds: [] as Array<string> }) // used to check if we caused the last event
+const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
+const currentType = computed<IProductTypes>(()=>{
+  if (productsTypeChecked.value.LocalbootProduct) return 'LocalbootProduct'
+  if (productsTypeChecked.value.NetbootProduct) return 'NetbootProduct'
+  if (productsTypeChecked.value.Product) return 'Product'
+  return 'LocalbootProduct'
+})
 
 const tableColumn = ref([
   {title: $t('table.fields.selection'), key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
@@ -159,7 +190,7 @@ const tableColumn = ref([
   {title: $t('table.fields.rowactions'), key: 'actions', sortable: false, visible: true, alwaysVisible: true, width:"150px", cellRenderer: ({rowData}: any) => {
         const change = ()=>{
           emit('change', rowData.productId)
-          navigation.toConfiguration(id, rowData.productId, props.isChild, props.productType)
+          navigation.toConfiguration(id, rowData.productId, props.isChild, currentType.value)
           // Object.keys(navigation.rowactionConfigChecked.value).forEach(k => navigation.rowactionConfigChecked.value[k] = false)
           // navigation.rowactionConfigChecked.value[rowData.productId] = true
           // if (props.isChild) {
@@ -182,6 +213,37 @@ const tableColumn = ref([
   ])
 
 
+onMounted(async ()=> {
+  if (props.productType && props.productType !== currentType.value)
+    changeProductsType(props.productType as IProductTypes)
+
+  fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
+  // fetchedData.value[currentType.value] = await _fetch(currentType.value)
+  // fetchedData.value[currentType.value] = []
+  productsRef.value?.refetch()
+  // await tableHelper.fetch()
+  // tableHelper.setTotalItemsAsPerPage(totalItems.value)
+})
+
+watch(()=>props.selectedClient, (v)=>{
+  if (v) { clientSelection.value = [v] }
+  else { clientSelection.value = selectionClients.value }
+})
+watch(()=>selectionClients.value, (v:any)=>{
+  if (v) { clientSelection.value = [v] }
+  else { clientSelection.value = selectionClients.value }
+})
+// watch (()=>props.sortby, async (v)=>{
+//   if (props.selectedClient) {
+//     tableData.value[currentType.value].sortBy = v
+//     tableData.value[currentType.value].sortDesc = true
+//     // sortDesc: tableSettings.productsSorting.isDesc,
+//   }
+// }, { deep: true })
+
+
+
+
   async function fetchProducts(_params: any) {
     const params = prepareParams(_params)
     const {data, error, headers} = await useApiGETBody<Array<any>>('/opsidata/products', params)
@@ -195,6 +257,7 @@ const tableColumn = ref([
   }
 
   function prepareParams (params: any) {
+    params.type = currentType.value
     params.selectedDepots = JSON.stringify(selectionDepots.value)
     params.selectedClients = JSON.stringify(clientSelection.value)
     if (params.sortBy === 'installationStatus') {
@@ -220,55 +283,55 @@ const tableColumn = ref([
   }
 
 
-async function saveActionRequests(rowItem: any, newrequest: string) {
-  const data = {
-    clientIds: clientSelection.value,
-    productIds: selectionProducts.value,
-    actionRequest: newrequest
-  }
-  lastChanges.value.clientIds = data.clientIds
-  lastChanges.value.productIds = data.productIds
-  console.warn("saveActionRequests", storeSettings().quicksave)
-  if (storeSettings().quicksave) {
-    await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
-    productsRef.value?.reload()
-  } else {
-    for (const c in selectionClients.value) {
-      const clientId = selectionClients.value[c]
-      for (const p in selectionProducts.value) {
-        const productId = selectionProducts.value[p]
+  async function saveActionRequests(rowItem: any, newrequest: string) {
+    const data = {
+      clientIds: clientSelection.value,
+      productIds: selectionProducts.value,
+      actionRequest: newrequest
+    }
+    lastChanges.value.clientIds = data.clientIds
+    lastChanges.value.productIds = data.productIds
+    console.warn("saveActionRequests", storeSettings().quicksave)
+    if (storeSettings().quicksave) {
+      await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
+      productsRef.value?.refetch()
+    } else {
+      for (const c in selectionClients.value) {
+        const clientId = selectionClients.value[c]
+        for (const p in selectionProducts.value) {
+          const productId = selectionProducts.value[p]
 
-        const d = {
-          // user: localStorage.getItem('username'),
-          user: storeAuth().username,
-          clientId: clientId,
-          productId: productId,
-          // clientId: selectionClients.value[c],
-          // productId: selectionProducts.value[p],
-          actionRequest: newrequest
-        }
+          const d = {
+            // user: localStorage.getItem('username'),
+            user: storeAuth().username,
+            clientId: clientId,
+            productId: productId,
+            // clientId: selectionClients.value[c],
+            // productId: selectionProducts.value[p],
+            actionRequest: newrequest
+          }
 
-        const objIndex = storeChanges().changesProducts.findIndex(item => item.clientId === c && item.productId === p)
-        // const objIndex = storeChanges().changesProducts.findIndex(item => item.clientId === selectionClients.value[c] && item.productId === selectionProducts.value[p])
-        if (objIndex > -1) {
-          storeChanges().delWithIndexChangesProducts(objIndex)
+          const objIndex = storeChanges().changesProducts.findIndex(item => item.clientId === c && item.productId === p)
+          // const objIndex = storeChanges().changesProducts.findIndex(item => item.clientId === selectionClients.value[c] && item.productId === selectionProducts.value[p])
+          if (objIndex > -1) {
+            storeChanges().delWithIndexChangesProducts(objIndex)
+          }
+          storeChanges().pushToChangesProducts(d)
         }
-        storeChanges().pushToChangesProducts(d)
       }
     }
   }
-}
 
-async function saveActionRequest(rowitem: any, newrequest: string) {
-  // alert (JSON.stringify(rowItem) + "----" + req)
-  // return
-  // const {data, error} = await useApiPOST('/opsidata/products', {action: action.value})
-  const data = {
-    clientIds: clientSelection.value,
-    productIds: [rowitem.productId],
-    actionRequest: newrequest
-  }
-  if (storeSettings().quicksave) {
+  async function saveActionRequest(rowitem: any, newrequest: string) {
+    // alert (JSON.stringify(rowItem) + "----" + req)
+    // return
+    // const {data, error} = await useApiPOST('/opsidata/products', {action: action.value})
+    const data = {
+      clientIds: clientSelection.value,
+      productIds: [rowitem.productId],
+      actionRequest: newrequest
+    }
+    if (storeSettings().quicksave) {
       lastChanges.value.clientIds = data.clientIds
       lastChanges.value.productIds = data.productIds
       const ok = await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
@@ -278,36 +341,54 @@ async function saveActionRequest(rowitem: any, newrequest: string) {
         delete rowitem.actionRequestDetails
       }
     } else {
-        for (const c in clientSelection.value) {
-          const clientId = selectionClients.value[c]
-          const d = {
-            user: storeAuth().username,
-            clientId: clientId,
-            productId: rowitem.productId,
-            actionRequest: newrequest
-          }
-          const objIndex = storeChanges().changesProducts.findIndex(item => item.user === storeAuth().username && item.clientId === clientId && item.productId === rowitem.productId)
-          if (objIndex > -1) {
-            storeChanges().delWithIndexChangesProducts(objIndex)
-          }
-          addToChangedIfNeeded(rowitem, clientId, newrequest, d)
+      for (const c in clientSelection.value) {
+        const clientId = selectionClients.value[c]
+        const d = {
+          user: storeAuth().username,
+          clientId: clientId,
+          productId: rowitem.productId,
+          actionRequest: newrequest
         }
+        const objIndex = storeChanges().changesProducts.findIndex(item => item.user === storeAuth().username && item.clientId === clientId && item.productId === rowitem.productId)
+        if (objIndex > -1) {
+          storeChanges().delWithIndexChangesProducts(objIndex)
+        }
+        addToChangedIfNeeded(rowitem, clientId, newrequest, d)
       }
     }
-function addToChangedIfNeeded(rowitem: any, clientId:string, newrequest:string, changeObj: any) {
-  const ic = rowitem.selectedClients?.indexOf(clientId)
-  if (newrequest == 'mixed') { // nothing to do
-  } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] === newrequest) { // nothing to do
-  } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] !== newrequest) {
-    storeChanges().pushToChangesProducts(changeObj)
-    return true
-  } else if (rowitem.actionRequest !== newrequest) {
-    storeChanges().pushToChangesProducts(changeObj)
-    return true
   }
-  return false
 
-}
+  function addToChangedIfNeeded(rowitem: any, clientId:string, newrequest:string, changeObj: any) {
+    const ic = rowitem.selectedClients?.indexOf(clientId)
+    if (newrequest == 'mixed') { // nothing to do
+    } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] === newrequest) { // nothing to do
+    } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] !== newrequest) {
+      storeChanges().pushToChangesProducts(changeObj)
+      return true
+    } else if (rowitem.actionRequest !== newrequest) {
+      storeChanges().pushToChangesProducts(changeObj)
+      return true
+    }
+    return false
+
+  }
+
+
+  function changeProductsType (type: IProductTypes) {
+    if (props.isChild) {
+      router.push('/clients/products/' + type + '/')
+    } else {
+      router.push('/products/' + type + '/')
+    }
+    const types: Array<IProductTypes> = Object.keys(productsTypeChecked.value) as Array<IProductTypes>
+    types.forEach(k => productsTypeChecked.value[k] = false)
+    if (Object.keys(productsTypeChecked.value).includes(type))
+      productsTypeChecked.value[type] = true
+    else
+      throw new Error("Unknown product type " + type);
+
+    productsRef.value?.refetch()
+  }
 
   function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString2String) {
     console.warn("Details not implemented: ", row, tooltiptext)
