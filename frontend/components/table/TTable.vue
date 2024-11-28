@@ -21,9 +21,9 @@
                 <el-text><IconIIcon :icon="column.icon" /> </el-text>
               </el-tooltip>
               <el-text v-else>{{ column.title }}</el-text>
-              </template>
+            </template>
             <template #default="scope" v-if="column.key === 'actions'">
-              <div  v-if="thisinstance?.vnode?.props?.onShowContextMenu" v-contextmenu="(event: MouseEvent) =>  $emit('showContextMenu',{event, row:scope.row})">
+              <div v-contextmenu="thisinstance?.vnode?.props?.onShowContextMenu ? (event: MouseEvent) =>  $emit('showContextMenu',{event, row:scope.row}) : () =>{}">
                 <el-tooltip :content="$t('title.config')" placement="top" v-if="thisinstance?.vnode?.props?.onHandleConfigClick">
                   <el-button
                     type="text"
@@ -54,12 +54,15 @@
                 <DropdownDDClientActions :client-ids="[scope.row.clientId]" />
               </div>
             </template>
+            <template #default="scope" v-else>
+              <CellRenderer :col-data="column" :row-data="scope.row"/>
+            </template>
           </el-table-column>
         </template>
       </el-table>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import {useIcons} from '../../composables/mixins/useIcons'
 const thisinstance = getCurrentInstance()
 const $t = useI18n().t
@@ -74,4 +77,35 @@ const _props = defineProps({
     tableColumn: { type: Array<any>, required: true },
 })
 const $emit = defineEmits(['handleSortChange', 'handleCloneClick', 'handleLogClick', 'handleConfigClick', 'showContextMenu'])
+
+
+
+
+const CellRenderer = (attributes: any): VNode => {
+// const CellRenderer = ({key, 'row-data', colData}: any): VNode => {
+  const colData  = attributes['col-data'] || attributes.colData
+  const rowData = attributes['row-data'] || attributes.rowData
+
+  if (!colData) {
+    console.error(`CellRenderer: col-data not found in: ${JSON.stringify(attributes)}`)
+    return <el-text>undefined</el-text>
+  }
+  if (colData.cellRenderer) {
+    return colData.cellRenderer({rowData})
+  }
+  return <el-text>{ rowData[colData.key] }</el-text>
+}
+
+const HeaderCellRenderer = (attributes: any): VNode => {
+  const colData  = attributes['col-data'] || attributes.colData
+  if (!colData) {
+    console.warn(`HeaderCellRenderer: col-data not found in: ${JSON.stringify(attributes)}`)
+    return <el-text>undefined</el-text>
+  }
+  if (colData.headerCellRenderer){
+    // console.warn('HeaderCellRenderer of obj.col-data: ', colData, colData.headerCellRenderer)
+    return colData.headerCellRenderer()
+  }
+  return <el-text>{ colData.title }</el-text>
+}
 </script>
