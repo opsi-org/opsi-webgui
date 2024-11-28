@@ -239,7 +239,10 @@ defineExpose({ refetch: fetchWrapper, fetchedData })
 
 
 watch([()=>filterQuery.value], fetchWrapper, { immediate: true })
-
+watch(()=>props.sortBy, () => {
+  sortBy.value = props.sortBy || props.rowId
+  fetchWrapper()
+})
 onMounted(() => {
   fetchWrapper()
   document.addEventListener('click', handleClickOutside)
@@ -264,11 +267,13 @@ async function fetchWrapper() {
       totalItems.value = res.total
       isFirstPage.value = currentPage.value == 1
       isLastPage.value = currentPage.value * pageSize.value >= res.total
-      const pageNotExists = currentPage.value > Math.ceil(res.total / pageSize.value)
-      console.error('Page Not Exists', pageNotExists)
-      if (pageNotExists) {
-        console.error('setting current page to last page')
-        currentPage.value = Math.ceil(res.total / pageSize.value)
+      if (res.total > 0) {
+        const pageExists = currentPage.value <= Math.ceil(res.total / pageSize.value)
+        console.error('Page Not Exists current page:', currentPage.value, 'total:', res.total, 'page size:', pageSize.value, 'page exists:', pageExists)
+        if (!pageExists) {
+          console.error('setting current page to last page')
+          currentPage.value = Math.ceil(res.total / pageSize.value)
+        }
       }
 
     }

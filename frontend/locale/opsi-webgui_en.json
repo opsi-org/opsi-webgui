@@ -269,6 +269,7 @@
   "label.reachable": "Reachability Status",
   "table.name.client": "Client name",
   "table.name.domain": "Domain name",
+  "table.info.productsOnClient": "Products on client {id}",
   "table.details.productproperty.defaults": "Product default",
   "table.details.productproperty.server": "Server default",
   "table.contextmenu.header-specific": "Options for '{id}':",

@@ -28,6 +28,8 @@
             @change="changeProductsType('Product')"
           >Product< / > -->
         </div>
+        <el-alert v-if="props.selectedClient" :title="$t('table.info.productsOnClient', {id: props.selectedClient})" type="warning" :closable="false" class="max-w-80"/>
+
       </template>
   </TableTTable>
 </template>
@@ -228,10 +230,7 @@ onMounted(async ()=> {
 watch(()=>props.selectedClient, (v)=>{
   if (v) { clientSelection.value = [v] }
   else { clientSelection.value = selectionClients.value }
-})
-watch(()=>selectionClients.value, (v:any)=>{
-  if (v) { clientSelection.value = [v] }
-  else { clientSelection.value = selectionClients.value }
+  productsRef.value?.refetch()
 })
 // watch (()=>props.sortby, async (v)=>{
 //   if (props.selectedClient) {
