@@ -77,6 +77,7 @@
       </div>
       <TableTTable
         v-if="fetchedData"
+        row-id="clientId"
         v-model:data="fetchedData"
         v-model:active-button="activeButton"
         :is-loading="isLoading"
@@ -86,6 +87,8 @@
         @handle-log-click="handleLogClick"
         @handle-config-click="handleConfigClick"
         @show-context-menu="showContextMenu"
+        @selection-changed="(id: string) => {storeSelection.toggleSelectionClients(id)}"
+
 
        />
       <div class="extra-column">
@@ -151,7 +154,23 @@ const contextMenuStyle = ref({})
 const contextMenuRow = ref(null)
 
 const tableColumn = ref([
-  {title: 'selected', key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true},
+  {title: 'selected', key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
+  headerCellRenderer: () => {
+    return  <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} />
+  },
+  cellRenderer: ({rowData}: any) => {
+    rowData.selected = storeSelection.selectionClients.includes(rowData.clientId)
+    return (<>
+      {rowData.dummy ? <div /> :
+        storeSelection.multiSelection ?
+          <el-checkbox v-model={rowData.selected} class="selectionItem" />
+        :
+          <el-radio-group v-model={rowData.selected}>
+            <el-radio value={true} class="selectionItem hide_label" />
+          </el-radio-group>
+      }
+    </>)
+  }},
   {title: 'clientId', key: 'clientId', sortable: true, visible: true, alwaysVisible: true, filter: true},
   {title: 'macAddress', key: 'macAddress', sortable: false, visible: false},
   {title: 'ipAddress', key: 'ipAddress', sortable: true, visible: false},

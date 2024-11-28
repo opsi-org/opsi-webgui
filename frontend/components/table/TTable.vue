@@ -1,6 +1,11 @@
 
 <template>
-  <el-table :data="fetchedData" v-loading="isLoading" @sort-change="(s:any) => $emit('handleSortChange', s)">
+  <el-table
+    :data="fetchedData"
+    v-loading="isLoading"
+    @sort-change="(s:any) => $emit('handleSortChange', s)"
+    @row-click="($event: any) => $emit('selectionChanged', $event[rowId])"
+    >
         <template v-for="column in tableColumn">
           <el-table-column
             v-if="column.visible || column.alwaysVisible"
@@ -11,16 +16,20 @@
             :width="column.width || ''"
             :sortable="column.sortable"
           >
-            <template #header>
+            <template #header v-if="column.headerCellRenderer">
+              <HeaderCellRenderer :col-data="column"/>
+            </template>
+            <template #header v-else-if="column.icon">
               <el-tooltip
-                v-if="column.icon"
-                class="box-item"
-                effect="dark"
-                :content="column.title"
+              class="box-item"
+              effect="dark"
+              :content="column.title"
               >
-                <el-text><IconIIcon :icon="column.icon" /> </el-text>
-              </el-tooltip>
-              <el-text v-else>{{ column.title }}</el-text>
+              <el-text><IconIIcon :icon="column.icon" /> </el-text>
+            </el-tooltip>
+            </template>
+            <template #header v-else>
+              <el-text>{{ column.title }}</el-text>
             </template>
             <template #default="scope" v-if="column.key === 'actions'">
               <div v-contextmenu="thisinstance?.vnode?.props?.onShowContextMenu ? (event: MouseEvent) =>  $emit('showContextMenu',{event, row:scope.row}) : () =>{}">
@@ -73,10 +82,11 @@ const activeButton = defineModel<string|null>('activeButton')
 
 const _props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
-    isLoading: { type: Boolean, required: true },
-    tableColumn: { type: Array<any>, required: true },
+  rowId: { type: String, required: true },
+  isLoading: { type: Boolean, required: true },
+  tableColumn: { type: Array<any>, required: true },
 })
-const $emit = defineEmits(['handleSortChange', 'handleCloneClick', 'handleLogClick', 'handleConfigClick', 'showContextMenu'])
+const $emit = defineEmits(['handleSortChange', 'handleCloneClick', 'handleLogClick', 'handleConfigClick', 'showContextMenu', 'selectionChanged'])
 
 
 
@@ -103,7 +113,6 @@ const HeaderCellRenderer = (attributes: any): VNode => {
     return <el-text>undefined</el-text>
   }
   if (colData.headerCellRenderer){
-    // console.warn('HeaderCellRenderer of obj.col-data: ', colData, colData.headerCellRenderer)
     return colData.headerCellRenderer()
   }
   return <el-text>{ colData.title }</el-text>
