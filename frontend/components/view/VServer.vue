@@ -28,7 +28,7 @@ const _props = defineProps({
 })
 const rowId = 'depotId'
 const tableColumn = ref([
-  {title: '', key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
+  {title: $t('table.fields.selection'), key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
     // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
     cellRenderer: ({rowData}: any) => {
       rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
@@ -40,20 +40,20 @@ const tableColumn = ref([
         </el-radio-group>
       }</>)
     }, width:"90px"},
-  {title: 'depotId', key: 'depotId', sortable: true, visible: true, alwaysVisible: true, filter: true,
+  {title: $t('table.fields.id'), key: 'depotId', sortable: true, visible: true, alwaysVisible: true, filter: true,
   cellRenderer: ({rowData}: any) => {
     return <>{ rowData.type === 'OpsiConfigserver' ? <el-text> <b>{rowData.depotId}</b></el-text>
     : <el-text>{rowData.depotId}</el-text>
     }</>
   }},
-  {title: 'description', key: 'description', sortable: false, visible: true},
-  {title: 'type', key: 'type', sortable: true, visible: true, cellRenderer: ({rowData}: any) => {
+  {title: $t('table.fields.description'), key: 'description', sortable: false, visible: true},
+  {title: $t('table.fields.type'), key: 'type', sortable: true, visible: true, cellRenderer: ({rowData}: any) => {
     return <>{ rowData.type === 'OpsiConfigserver' ? <el-text> <b>{rowData.type}</b></el-text>
     : <el-text>{rowData.type}</el-text>
     }</>
   }},
-  {title: 'ip', key: 'ip', sortable: true, visible: false},
-  {title: 'actions', key: 'actions', sortable: false, visible: true, alwaysVisible: true, width:"150px"},
+  {title:  $t('table.fields.ip'), key: 'ip', sortable: true, visible: false},
+  {title: $t('table.fields.rowactions'), key: 'actions', sortable: false, visible: true, alwaysVisible: true, width:"150px"},
   ])
 
 

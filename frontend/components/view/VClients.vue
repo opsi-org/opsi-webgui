@@ -28,7 +28,7 @@
 
   const rowId = 'clientId'
   const tableColumn = ref([
-    {title: '', key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
+    {title: $t('table.fields.selection'), key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
 
     // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} /> },
 
@@ -42,31 +42,30 @@
           </el-radio-group>
         }</>)
       }},
-    {title: 'clientId', key: 'clientId', sortable: true, visible: true, alwaysVisible: true, filter: true},
-    {title: 'macAddress', key: 'macAddress', sortable: false, visible: false},
-    {title: 'ipAddress', key: 'ipAddress', sortable: true, visible: false},
-    {title: 'description', key: 'description', sortable: false, visible: false},
+    {title: $t('table.fields.id'), key: 'clientId', sortable: true, visible: true, alwaysVisible: true, filter: true},
+    {title: $t('table.fields.mac'), key: 'macAddress', sortable: false, visible: false},
+    {title: $t('table.fields.ip'), key: 'ipAddress', sortable: true, visible: false},
+    {title: $t('table.fields.description'), key: 'description', sortable: false, visible: false},
     {title: 'notes', key: 'notes', sortable: true, visible: false},
-    {title: 'lastSeen', key: 'lastSeen', sortable: true, visible: false},
-    {title: 'uefi', key: 'uefi', sortable: true, visible: false},
+    {title: $t('table.fields.lastSeen'), key: 'lastSeen', sortable: true, visible: false},
+    {title: $t('table.fields.uefi'), key: 'uefi', sortable: true, visible: false},
 
-    {title: 'version_outdated_localboot', key: 'version_outdated', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productsOutdated, cellRenderer:
+    {title: $t('table.fields.versionOutdatedGeneral'), key: 'version_outdated', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productsOutdated, cellRenderer:
     getStatisticRenderer('/clients/products/LocalbootProduct?sortby=version&selectedClient=', 'version_outdated')
   },
-  {title: 'version_outdated_netboot', key: 'version_outdated_netboot', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productsOutdated, cellRenderer:
+  {title: $t('table.fields.versionOutdatedNetboot'), key: 'version_outdated_netboot', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productsOutdated, cellRenderer:
   getStatisticRenderer('/clients/products/NetbootProduct?sortby=version&selectedClient=', 'version_outdated')},
-  {title: 'installationStatus_unknown', key: 'installationStatus_unknown', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productInstallationStatusUnknown,
-  cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=', 'installationStatus_unknown')
-  },
-  {title: 'installationStatus_installed', key: 'installationStatus_installed', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.product,
+  {title: $t('table.fields.installationStatusUnknown'), key: 'installationStatus_unknown', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productInstallationStatusUnknown,
+  cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=', 'installationStatus_unknown') },
+  {title: $t('table.fields.installationStatus_installed'), key: 'installationStatus_installed', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.product,
   cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=', 'installationStatus_installed')
   },
-    {title: 'actionResult_failed', key: 'actionResult_failed', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productsFailedActionResult,
+  {title: $t('table.fields.actionResultFailed'), key: 'actionResult_failed', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productsFailedActionResult,
     cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=', 'actionResult_failed')},
-    {title: 'actionResult_successful', key: 'actionResult_successful', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productActionResultSuccessful,
-    cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=', 'actionResult_successful')},
-    {title: 'reachable', key: 'reachable', sortable: false, visible: true, alwaysVisible: true, width:"60px"},
-    {title: 'actions', key: 'actions', sortable: false, visible: true, alwaysVisible: true, width:"150px"},
+  {title: $t('table.fields.actionResult_successful'), key: 'actionResult_successful', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productActionResultSuccessful,
+  cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=', 'actionResult_successful')},
+  {title: $t('table.fields.reachable'), key: 'reachable', sortable: false, visible: true, alwaysVisible: true, width:"60px"},
+  {title: $t('table.fields.rowactions'), key: 'actions', sortable: false, visible: true, alwaysVisible: true, width:"150px"},
   ])
 
 
