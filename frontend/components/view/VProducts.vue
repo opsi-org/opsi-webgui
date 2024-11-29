@@ -86,7 +86,7 @@ const tableColumn = ref([
   {title: $t('table.fields.selection'), key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true, width: "60px",
     // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
     cellRenderer: ({rowData}: any) => {
-      rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
+      rowData.selected = storeSelection.selectionProducts.includes(rowData[rowId])
       return (<> { storeSelection.multiSelection ?
         <el-checkbox v-model={rowData.selected} class="selectionItem" />
       :
