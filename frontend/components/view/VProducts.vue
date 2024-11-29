@@ -98,7 +98,7 @@
       width: '60px',
       // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
       cellRenderer: ({ rowData }: any) => {
-        rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
+        rowData.selected = storeSelection.selectionProducts.includes(rowData[rowId])
         return (
           <>
             {' '}
