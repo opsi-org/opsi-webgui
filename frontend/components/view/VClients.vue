@@ -65,7 +65,7 @@
   {title: $t('table.fields.actionResult_successful'), key: 'actionResult_successful', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productActionResultSuccessful,
   cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=', 'actionResult_successful')},
   {title: $t('table.fields.reachable'), key: 'reachable', sortable: false, visible: true, alwaysVisible: true, width:"60px"},
-  {title: $t('table.fields.rowactions'), key: 'actions', sortable: false, visible: true, alwaysVisible: true, width:"150px"},
+  {title: $t('table.fields.rowactions'), key: 'actions', sortable: false, visible: true, alwaysVisible: true, width:"170px"},
   ])
 
 
