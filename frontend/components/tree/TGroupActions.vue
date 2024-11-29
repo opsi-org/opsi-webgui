@@ -213,8 +213,6 @@ async function fetchClientGroups() {
     notifyError({ message: error?.response?.data?.message })
     return
   }
-    // TODO: Backend: change groups data structure
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   if (data.value == undefined) {
     notifyError({ message: $t('message.error.empty-response', { details: "ClientGroupSelections" }) })
     return

@@ -1,523 +1,153 @@
 <template>
-  <div>
-    <!-- <el-text>{{ $t('title.depots') }}</el-text><br /> -->
-    <!-- <el-button :type="'danger'">Danger</el-button> -->
-    <!-- <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br /> -->
-    <!-- :filterable-columns="[columns['depotId']]" -->
-    <!-- <InputIFilter
-      :data="tableData"
-      :filterable-columns="Object.values(columns)"
-      @update="(v: any)=> {
-        tableData.filterColumns = v.cols
-        tableData.filterQuery = v.vals
-      }"
-    /> -->
-    <TableTDefault
-      row-id="depotId"
-      :id="id"
-      v-model:columns="columns"
-      v-model:data="fetchedData"
-      v-model:tabledata="tableData"
-      :total-items="totalItems"
-      :sort-by="tableData.sortBy"
-      :is-mobile="props.isMobile"
-      :is-loading="tableHelper.isLoading.value"
-      @fetch="tableHelper.fetch"
-      @selection-changed="(id: string) => {storeSelection.toggleSelectionDepots(id)}"
-      @selection-clear="storeSelection.clearSelectionDepots"
-      @tabledata-changed="tableHelper.updateTableData"
-      @sort-changed="tableHelper.sortChanged"
-      @update-input-filter="tableHelper.filterChanged"
-
-    >
-      <!-- @selection-changed="(id: string) => storeSelection.toggleSelectionDepots(id)"
-      @selection-clear="storeSelection.clearSelectionDepots"
-      @tabledata-changed="(v: any) => {updateTableData(v)}"
-      @sort-changed="(v: any ) => {
-        tableData.sortBy = v.key
-        tableData.sortDesc = v.isDesc
-        storeTable.setSortColumn(id, v.key, v.isDesc)
-      }"
-      @update-input-filter="(v: any)=> {
-        tableData.filterColumns = v.cols
-        tableData.filterQuery = v.vals
-      }" -->
-    </TableTDefault>
-<!-- <div data-testid="VDepots">
-  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
-    <template #parent>
-      <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.depots')" />
-      <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
-      <TableTInfiniteScrollSmooth
-        :id="id"
-        :ref="id"
-        :primary-key="id"
-        rowident="depotId"
-        :error="error"
-        :is-loading="isLoading"
-        :table-data="tableData"
-        :header-data="headerData"
-        :cache_pages="cache_pages"
-        :total-items="totalItems"
-        :totalpages="totalpages"
-        :selection="selectionDepots"
-        :setselection="setSelectionDepots"
-        :fetchitems="_fetch"
-        :items="items"
-      >
-        <template #contextcontent-specific-1="{itemkey}">
-          <ButtonBTNRowLinkTo
-            :title="$t('title.config')"
-            :label="$t('title.config')"
-            :icon="icon.settings"
-            to="/depots/config"
-            :ident="itemkey"
-            :pressed="isRouteActive"
-            :incontextmenu="true"
-            :click="routeRedirectWith"
-          />
-        </template>
-        <template #contextcontent-general-1>
-          <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
-          <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
-          <ButtonBTNRefetch
-            :is-loading="isLoading"
-            :tooltip="$t('button.refresh', {id: id})"
-            :label="$t('button.refresh', {id: ''})"
-            incontextmenu
-            :refetch="_fetch"
-          />
-        </template>
-        <template #cell(depotId)="row">
-          <small>
-            <b v-if="row.item.depotId==opsiconfigserver">{{ row.item.depotId }}</b>
-            {{ (row.item.depotId!=opsiconfigserver) ? row.item.depotId:'' }}
-          </small>
-        </template>
-        <template #rowactions="row">
-          <ButtonBTNRowLinkTo
-            :title="$t('title.config')"
-            :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile') ? $t('title.config') : ''"
-            :icon="icon.settings"
-            to="/depots/config"
-            :ident="row.item.ident"
-            :pressed="isRouteActive"
-            :click="routeRedirectWith"
-          />
-        </template>
-      </TableTInfiniteScrollSmooth>
-    </template>
-    <template #child>
-      <NuxtChild :id="rowId" :as-child="true" />
-    </template>
-  </GridGTwoColumnLayout>
-</div> -->
-  </div>
+  <TableTTable
+    :row-id="rowId"
+    :table-column="tableColumn"
+    :fetch="fetchServer"
+    action-config="/servers/server/config/"
+    @selection-changed="(id: string) => {storeSelection.toggleSelectionDepots(id)}"
+    @clear-selection="storeSelection.clearSelectionDepots"
+  />
 </template>
+
 <script setup lang="tsx">
-// tsx used to create components inside ts code (see columns[...].cellRenderer)
+  import type { T_ServerList } from '~/types/APItypes'
+  // import {useIcons} from '../../composables/mixins/useIcons'
+  import { useNotification } from '~/composables/mixins/useComponent'
 
-import { useNotification } from '~/composables/mixins/useComponent';
-import { useIcons } from '~/composables/mixins/useIcons';
-import { useNavigate } from '~/composables/mixins/useNavigateTo';
-import { TableV2FixedDir } from 'element-plus';
-import type { ITableHeaderRow } from '~/types/ttableV3'
-import type { T_ServerList } from '~/types/APItypes'
-import BTNRowLink from '~/components/button/BTNRowLink.vue';
-import type { ITableData } from '~/types/ttable';
-import { useTableHelper } from '~/composables/mixins/useTableHelper';
+  const { notifyError } = useNotification()
+  const $t = useI18n().t
+  // const icons = useIcons()
+  // const router = useRouter()
 
-const storeSelection = storeSelections()
-const storeTable = storeTablesettings()
-const navigation = useNavigate()
-const icons = useIcons()
-const $t = useI18n().t
+  const storeSelection = storeSelections()
 
-const { notifyError } = useNotification()
-const fetchedData = ref<T_ServerList>([])
-const totalItems = ref<number>(0)
-const tableData = ref<ITableData>({
-  pageNumber: 1,
-  perPage: 50,
-  // sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-  sortBy: storeTable.serversSorting.column,
-  // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
-  sortDesc: Boolean(storeTable.serversSorting.isDesc),
-  filterQuery: '',
-  filterColumns: ['depotId']
-})
-const columns = ref<ITableHeaderRow>({
-    selected: {
+  const emit = defineEmits(['change'])
+  const _props = defineProps({
+    isMobile: {
+      type: Boolean,
+      default: () => {
+        return useMQ().isMobile.value
+      },
+    },
+  })
+  const rowId = 'depotId'
+  const tableColumn = ref([
+    {
       title: $t('table.fields.selection'),
       key: 'selected',
-      dataKey: 'selected',
       sortable: true,
-      width: 50,
-      maxWidth: 50,
-      fixed: true,
-      hidden: false,
-      headerCellRenderer: () => {
+      type: 'selection',
+      visible: true,
+      alwaysVisible: true,
+      width: '60px',
+      // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
+      cellRenderer: ({ rowData }: any) => {
+        rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
         return (
-          <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionDepots} />
-        )
-      },
-      cellRenderer: ({rowData}) => {
-        // const selectedIds = computed(() => storeSelection._selectionProducts)
-        // <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(rowData[props.rowId])) ? rowData.selected = true : rowData.selected = false }}</div>
-        return (<>
-          {rowData.dummy ? <div /> :
-            storeSelection.multiSelection ?
+          <>
+            {' '}
+            {storeSelection.multiSelection ? (
               <el-checkbox v-model={rowData.selected} class="selectionItem" />
-            :
+            ) : (
               <el-radio-group v-model={rowData.selected}>
                 <el-radio value={true} class="selectionItem hide_label" />
               </el-radio-group>
-          }
-        </>)
-      }
-      // hidden: !cookies.includesCookie('column_' + id, 'selected', true)
+            )}
+          </>
+        )
+      },
     },
-    depotId: {
+    {
       title: $t('table.fields.id'),
       key: 'depotId',
-      dataKey: 'depotId',
       sortable: true,
-      width: 150,
-      fixed: true,
-      hidden: false
+      visible: true,
+      alwaysVisible: true,
+      filter: true,
+      cellRenderer: ({ rowData }: any) => {
+        return (
+          <>
+            {rowData.type === 'OpsiConfigserver' ? (
+              <el-text>
+                {' '}
+                <b>{rowData.depotId}</b>
+              </el-text>
+            ) : (
+              <el-text>{rowData.depotId}</el-text>
+            )}
+          </>
+        )
+      },
     },
-    description: {
-      title: $t('table.fields.description'),
-      key: 'description',
-      dataKey: 'description',
-      sortable: true,
-      width: 350,
-      // minWidth: 300,
-      class: "col-description",
-      hidden: !storeTable.serversColumns.includes('description')
-      // hidden: !cookies.includesCookie('column_' + id, 'description', false)
-    },
-    type: {
+    { title: $t('table.fields.description'), key: 'description', sortable: false, visible: true },
+    {
       title: $t('table.fields.type'),
       key: 'type',
-      dataKey: 'type',
       sortable: true,
-      width: 150,
-      // minWidth: 100,
-      hidden: !storeTable.serversColumns.includes('type')
-      // hidden: !cookies.includesCookie('column_' + id, 'type', true)
-    },
-    ip: {
-      title: $t('table.fields.ip'),
-      key: 'ip',
-      dataKey: 'ip',
-      sortable: true,
-      width: 150,
-      // minWidth: 100,
-      // hidden: !cookies.includesCookie('column_' + id, 'ip', false)
-      hidden: !storeTable.serversColumns.includes('ip')
-    },
-    rowactions: {
-      key: 'rowactions',
-      dataKey: 'rowactions',
-      title: $t('table.fields.rowactions'),
-      width: 50,
-      fixed: TableV2FixedDir.RIGHT,
-      hidden: false,
-      class: 'col-rowactions',
-      cellRenderer: ({rowData}) => {
-        // const change = (e: Event)=>{
-        //   e.stopPropagation()
-        //   emit('change', rowData.depotId)
-        //   Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
-        //   rowactionConfigChecked.value[rowData.depotId] = true
-        //   // useRouter().push('/servers/config/' + rowData.depotId)
-        //   useRouter().push('/servers/server/config/' + rowData.depotId)
-        // }
-
-        // const classes = computed(()=> {
-        //   return {
-        //     'pressed': navigation.rowactionConfigChecked.value[rowData.clientId]
-        //   }
-        // })
+      visible: true,
+      cellRenderer: ({ rowData }: any) => {
         return (
-        <>
-          <div class="flex flex-row">
-          <BTNRowLink
-            is-pressed={navigation.rowactionConfigChecked.value[rowData.depotId]}
-            icon={icons.settings}
-            onOnClick={(e: Event) => changeRowLink(e, rowData.depotId)}
-          />
-          </div>
-        </>
-      )},
-      // onClick={change}
-          // <el-checkbox-button
-          //   v-model={rowactionConfigChecked.value[rowData.depotId]}
-          //   onChange={change}
-          // ><iconIIcon icon={icons.settings} /></el-checkbox-button>
-          //<el-button size="small" onClick={change}>
-          //  <iconIIcon icon={icons.settings} />
-          //</el-button>
-      // <el-button size="small" type="danger">Delete</el-button>
-      // <ButtonBTNRowLinkTo
-      //       :title="$t('title.config')"
-      //       :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile') ? $t('title.config') : ''"
-      //       :icon="icon.settings"
-      //       to="/depots/config"
-      //       :ident="row.item.ident"
-      //       :pressed="isRouteActive"
-      //       :click="routeRedirectWith"
-      //     />
+          <>
+            {rowData.type === 'OpsiConfigserver' ? (
+              <el-text>
+                {' '}
+                <b>{rowData.type}</b>
+              </el-text>
+            ) : (
+              <el-text>{rowData.type}</el-text>
+            )}
+          </>
+        )
+      },
+    },
+    { title: $t('table.fields.ip'), key: 'ip', sortable: true, visible: false },
+    {
+      title: $t('table.fields.rowactions'),
+      key: 'actions',
+      sortable: false,
+      visible: true,
+      alwaysVisible: true,
+      width: '150px',
+    },
+  ])
+
+  async function fetchServer(_params: any) {
+    const params = { ..._params, selected: '' }
+    if (params.sortBy === '') {
+      params.sortBy = 'depotId'
     }
-})
-
-
-const id = "servers"
-
-
-const tableHelper = useTableHelper(id, tableData, fetchedData, totalItems, _fetch, storeTable) // define watcher for tableData
-
-const emit = defineEmits(['change'])
-const props = defineProps({
-  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
-})
-
-onMounted(async () => {
-  // fetchedData.value = await _fetch()
-  await tableHelper.fetch()
-
-  // totalItems.value = parseInt(headers[opsiheaders.xtotalcount])
-  tableHelper.setTotalItemsAsPerPage(totalItems.value)
-  // if (storeSelection.selectionDepots.length === 1) {
-  //   navigation.toConfiguration(id, storeSelection.selectionDepots[0])
-  // }
-})
-
-watch(()=> tableData.value.filterQuery, async ()=>{
-  fetchedData.value = []
-  fetchedData.value = await _fetch()
-}, { deep: true})
-
-function changeRowLink(e:Event, cid: string) {
-  emit('change', cid)
-  navigation.toConfiguration(id, cid)
-}
-// function updateTableData (v: typeof tableData.value) {
-//   tableData.value = reactive(v)
-// }
-async function _fetch() {
-  const params = { ...tableData.value, selected: '' }
-
-  if (params.sortBy === '') { params.sortBy = 'depotId' }
-  if (params.sortBy === 'selected') {
-    params.sortDesc = true
-    params.selected = JSON.stringify([])
-  }
-  const {data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
-  if (error) {
-    notifyError({ message: error?.response?.data?.message })
-    return []
-  }
-  if (data.value == undefined) {
-    notifyError({ message: $t('message.error.empty-response', { details: "Servers" }) })
-    return []
-  }
-
-  totalItems.value = parseInt(headers.get(opsiheaders.xtotalcount) || '0')
-  const opsiconfigserver = storeCache().opsiconfigserver
-  if (opsiconfigserver){
-    storeSelection.pushToSelectionDepots(opsiconfigserver)
-    emit('change', opsiconfigserver)
-  } else{
-    storeSelection.pushToSelectionDepots(data.value[0].depotId)
-    emit('change', data.value[0].depotId)
-  }
-  for (const dId of storeSelection.selectionDepots) {
-    data.value.filter((row:any) => {
-      return row.depotId === dId
-    }).forEach((row:any) => {
-      row.selected = true
-    })
-  }
-  return data.value;
-
-}
-/**
-import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
-import { IObjectString2String } from '../../.utils/types/tgeneral'
-import QueueNested from '../../.utils/utils/QueueNested'
-import { AlertToast, Synchronization } from '../../mixins/component'
-import { Icons } from '../../mixins/icons'
-import { Client } from '../../mixins/get'
-import { Cookies } from '../../mixins/cookies'
-import { T_ServerList } from '../../types/APItypes';
-const selections = namespace('selections')
-const cache = namespace('data-cache')
-
-@Component({ mixins: [Icons, Synchronization, Client, Cookies, AlertToast] })
-export default class VDepots extends Vue {
-  showToastError: any // mixin
-  icon: any
-  syncSort: any
-  includesCookie!: any // mixin cookies
-  getKeyCookie!: any
-  $axios: any
-  $fetch: any
-  $mq: any
-  $t!: any
-  $route: any
-  $router: any
-  getClientToDepot:any
-
-  id: string = 'Depots'
-  rowId: string = ''
-  isLoading: boolean = false
-  items: Array<any> = []
-  totalItems: number = 0
-  totalpages: number = 0
-  error: string = ''
-  tableloaded: boolean = false
-  fetchedDataClients2Depots: IObjectString2String = {}
-  headerData: ITableHeaders = {
-    selected: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'selected', true)
-    },
-    depotId: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.id') as string, key: 'depotId', _fixed: true, sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'depotId', true)
-    },
-    description: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'description', false)
-    },
-    type: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.type') as string, key: 'type', sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'type', true)
-    },
-    ip: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.ip') as string, key: 'ip', sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'ip', false)
-    },
-    rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-      visible: this.includesCookie('column_' + this.id, 'rowactions', false),
-      class: 'col-rowactions'
-    }
-  }
-
-  cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
-  cache_pages: QueueNested = new QueueNested(this.cache_pages_no)
-
-  tableData: ITableData = {
-    pageNumber: 1,
-    perPage: 20,
-    sortBy: this.getKeyCookie('sorting_' + this.id, 'sortBy', 'depotId'),
-    sortDesc: this.getKeyCookie('sorting_' + this.id, 'sortDesc', false),
-    filterQuery: ''
-  }
-
-  tableInfo: ITableInfo = { sortBy: this.tableData.sortBy || 'depotId', sortDesc: this.tableData.sortDesc || false, headerData: this.headerData, filterQuery: this.tableData.filterQuery }
-
-  @cache.Getter public opsiconfigserver!: string
-  @selections.Getter public selectionClients!: Array<string>
-  @selections.Getter public selectionDepots!: Array<string>
-  @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
-  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
-
-  @Watch('tableData.filterQuery', { deep: true }) tdFilterQueryChanged () {
-    this.tableData.pageNumber = 1
-  }
-
-  @Watch('tableData', { deep: true }) async tableDataChanged () {
-    await this.$fetch()
-  }
-
-  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
-  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
-  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false, this.id) }
-
-  @Watch('selectionDepots', { deep: true }) depotsChanged () {
-    const selectedClientsOnDepots = Object.fromEntries(Object.entries(this.fetchedDataClients2Depots).filter(
-      ([_, value]) => this.selectionDepots.includes(value)
-    ))
-    this.setSelectionClients(Object.keys(selectedClientsOnDepots))
-  }
-
-  async mounted () {
-    if (this.$mq !== 'mobile' && this.selectionDepots.length === 1 &&
-    this.selectionDepots[0] === this.opsiconfigserver &&
-    this.error !== '') {
-      this.routeRedirectWith('/depots/config', this.opsiconfigserver)
-    } else if (this.secondColumnOpened) {
-      this.$router.push('/depots/')
-    }
-
-    if (this.selectionClients.length > 0) {
-      await this.getClientToDepot(this.selectionClients)
-    }
-  }
-
-  async fetch () {
-    const items = await this._fetch()
-
-    Vue.nextTick(() => {
-      if (!this.cache_pages.scrollDirection || this.cache_pages.scrollDirection === 'none') {
-        this.cache_pages.set(this.tableData.pageNumber, items) // clear cache and set new page
-      } else {
-        this.cache_pages.setAuto(this.tableData.pageNumber, items) // try to append (start or beginning depend on pageNumber)
-      }
-      this.cache_pages.setTotalPages(this.totalpages)
-    })
-  }
-
-  async _fetch () {
-    this.isLoading = true
-
-    const params = { ...this.tableData }
-
-    if (params.sortBy === '') { params.sortBy = 'depotId' }
     if (params.sortBy === 'selected') {
       params.sortDesc = true
-      params.selected = JSON.stringify(this.selectionDepots)
+      params.selected = JSON.stringify([])
     }
-    return await this.$axios.get('/api/opsidata/depots', { params })
-      .then((response) => {
-        this.totalItems = response.headers[opsiheaders.xtotalcount]
-        this.totalpages = Math.ceil(this.totalItems / params.perPage)
-        this.tableloaded = true
-        if (response.data === null) {
-          this.isLoading = false
-          return []
-        } else {
-          this.isLoading = false
-          return response.data
-        }
-      }).catch((error) => {
-        this.showToastError(error)
-        this.isLoading = false
-      })
-  }
 
-  routeRedirectWith (to: string, rowIdent: string) {
-    if (this.isRouteActive(to, rowIdent)) {
-      const parent = to.substring(0, to.lastIndexOf('/'))
-      this.$router.push(parent)
+    const { data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
+    if (error) {
+      notifyError({ message: error?.response?.data?.message })
+      return
+    }
+    if (data.value == undefined) {
+      notifyError({ message: $t('message.error.empty-response', { details: 'Servers' }) })
+      return
+    }
+
+    const opsiconfigserver = storeCache().opsiconfigserver
+    if (opsiconfigserver) {
+      storeSelection.pushToSelectionDepots(opsiconfigserver)
+      emit('change', opsiconfigserver)
     } else {
-      this.rowId = rowIdent
-      this.$router.push(to)
+      storeSelection.pushToSelectionDepots(data.value[0].depotId)
+      emit('change', data.value[0].depotId)
     }
+    for (const dId of storeSelection.selectionDepots) {
+      data.value
+        .filter((row: any) => {
+          return row.depotId === dId
+        })
+        .forEach((row: any) => {
+          row.selected = true
+        })
+    }
+    return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
   }
-
-  isRouteActive (to: string, rowIdent: string) {
-    return this.$route.path.includes(to) && this.rowId === rowIdent
-  }
-
-  get secondColumnOpened () {
-    return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('healthcheck')
-  }
-}
-*/
 </script>
