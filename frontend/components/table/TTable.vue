@@ -260,11 +260,12 @@ async function fetchWrapper() {
     sortBy: sortBy.value,
     sortDesc: sortDesc.value,
   }
-  // fetchedData.value = undefined
   try {
     const res = await props.fetch(params)
     if (res == undefined) {
-      notifyError({ message: $t('message.error.empty-response') })
+      console.error('fetchWrapper: Empty response')
+      isLoading.value = false
+      return
     }else if (res.total) {
       totalItems.value = res.total
       isFirstPage.value = currentPage.value == 1

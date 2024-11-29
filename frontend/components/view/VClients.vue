@@ -10,6 +10,7 @@
       @selection-changed="(id: string) => {storeSelection.toggleSelectionClients(id)}"
       @clear-selection="storeSelection.clearSelectionClients"
     />
+    {{storeSelection.selectionClients}}
 </template>
 
 
@@ -80,7 +81,7 @@
       return
     }
     if (data.value == undefined) {
-      console.error("empty response. data.value undefined")
+      console.error("empty response. data.value undefined, data: ", data, headers, error)
       notifyError({ message: $t('message.error.empty-response') })
       return
     }
