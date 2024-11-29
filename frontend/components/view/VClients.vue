@@ -28,7 +28,7 @@
 
   const rowId = 'clientId'
   const tableColumn = ref([
-    {title: $t('table.fields.selection'), key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
+    {title: $t('table.fields.selection'), key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true, width:"60px",
 
     // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} /> },
 

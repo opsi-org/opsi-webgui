@@ -83,7 +83,7 @@ const currentType = computed<IProductTypes>(()=>{
 })
 
 const tableColumn = ref([
-  {title: $t('table.fields.selection'), key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
+  {title: $t('table.fields.selection'), key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true, width: "60px",
     // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
     cellRenderer: ({rowData}: any) => {
       rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
@@ -94,7 +94,7 @@ const tableColumn = ref([
           <el-radio value={true} class="selectionItem hide_label" />
         </el-radio-group>
       }</>)
-    }, width:"90px"},
+    }},
   {title: $t('table.fields.instStatus'), key: 'installationStatus', sortable: true, visible: clientSelection.value.length > 0, width: "80px", icon: icons.product, cellRenderer: ({rowData}: any) => {
         return (
           <>

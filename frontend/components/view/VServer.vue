@@ -28,7 +28,7 @@ const _props = defineProps({
 })
 const rowId = 'depotId'
 const tableColumn = ref([
-  {title: $t('table.fields.selection'), key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true,
+  {title: $t('table.fields.selection'), key: 'selected', sortable: true, type: 'selection', visible: true, alwaysVisible: true, width:"60px",
     // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
     cellRenderer: ({rowData}: any) => {
       rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
@@ -39,7 +39,7 @@ const tableColumn = ref([
           <el-radio value={true} class="selectionItem hide_label" />
         </el-radio-group>
       }</>)
-    }, width:"90px"},
+    }},
   {title: $t('table.fields.id'), key: 'depotId', sortable: true, visible: true, alwaysVisible: true, filter: true,
   cellRenderer: ({rowData}: any) => {
     return <>{ rowData.type === 'OpsiConfigserver' ? <el-text> <b>{rowData.depotId}</b></el-text>
