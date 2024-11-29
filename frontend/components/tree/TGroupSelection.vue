@@ -1,6 +1,5 @@
 <template>
   <IconILoading v-if="isLoading" />
-  <!-- <el-button @click="syncSelection" size="small"> {{ $t('button.syncSelect') }} </el-button> -->
   <el-button @click="clearSelection" size="small"> {{$t('table.selection.clear')}} </el-button>
   <el-tree
     :ref="props.grouptype == 'client-group'? 'clientGroupRef': 'prodGroupRef'"
@@ -10,16 +9,17 @@
     node-key="id"
     default-expand-all
     highlight-current
-    @check-change="handleSelection" />
+    @check="handleSelectOneNode"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ElTree } from 'element-plus'
-import { useNotification } from '~/composables/mixins/useComponent';
-import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper';
+import { useNotification } from '~/composables/mixins/useComponent'
+import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper'
 import type { T_Groups } from '~/types/APItypes'
-import { arrayEqual } from '../../utils/scompares';
+import type { TreeNodeData } from 'element-plus/lib/components/tree/src/tree.type.js'
 
 const { notifyError } = useNotification()
 const $t = useI18n().t
@@ -107,28 +107,22 @@ function syncSelection () {
   }
 }
 
-function getSelection () {
-  let getNodes = []
-  if(props.grouptype == 'client-group') {
-    getNodes = clientGroupRef.value!.getCheckedNodes(false, false)
+function handleSelectOneNode(node: TreeNodeData, obj: any) { // {checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys}
+  if(props.grouptype == "client-group") { selectNode(node, obj, selectionClients, storeSelection.setSelectionClients)
+  } else {
+    selectNode(node, obj,
+
+    selectionProducts, storeSelection.setSelectionProducts)
   }
-  else {
-    getNodes = prodGroupRef.value!.getCheckedNodes(false, false)
-  }
-  const ObjectToGroup = getNodes.filter(node=> node.type == 'ObjectToGroup').map(item => (item.text))
-  const uniqueSelection = [... new Set(ObjectToGroup)]
-  return uniqueSelection
 }
 
-function handleSelection() {
-  const checkedNodes = getSelection()
-  if(props.grouptype == 'client-group') {
-    if (arrayEqual(checkedNodes, selectionClients.value)) {
-      return }
-    storeSelection.setSelectionClients(checkedNodes)
-  }
-  else {
-    storeSelection.setSelectionProducts(checkedNodes)
+function selectNode(node: TreeNodeData, obj:any, selection: Ref<string[]>, setSelectionFunction: (selection: string[]) => void) {
+  if (node.type == 'ObjectToGroup') {
+    if (obj.checkedKeys.includes(node.id)) { selection.value.push(node.text) }
+    else { setSelectionFunction(selection.value.filter(item => item != node.text)) }
+  } else { // its a group
+    node.children?.forEach((child: TreeNodeData) => { selectNode(child, obj, selection, setSelectionFunction) })
   }
 }
+
 </script>
