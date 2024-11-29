@@ -68,28 +68,28 @@ const tableColumn = ref([
     const {data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
     if (error) {
       notifyError({ message: error?.response?.data?.message })
-      return []
+      return
     }
     if (data.value == undefined) {
       notifyError({ message: $t('message.error.empty-response', { details: "Servers" }) })
-      return []
+      return
     }
 
-  const opsiconfigserver = storeCache().opsiconfigserver
-  if (opsiconfigserver){
-    storeSelection.pushToSelectionDepots(opsiconfigserver)
-    emit('change', opsiconfigserver)
-  } else{
-    storeSelection.pushToSelectionDepots(data.value[0].depotId)
-    emit('change', data.value[0].depotId)
-  }
-  for (const dId of storeSelection.selectionDepots) {
-    data.value.filter((row:any) => {
-      return row.depotId === dId
-    }).forEach((row:any) => {
-      row.selected = true
-    })
-  }
+    const opsiconfigserver = storeCache().opsiconfigserver
+    if (opsiconfigserver){
+      storeSelection.pushToSelectionDepots(opsiconfigserver)
+      emit('change', opsiconfigserver)
+    } else{
+      storeSelection.pushToSelectionDepots(data.value[0].depotId)
+      emit('change', data.value[0].depotId)
+    }
+    for (const dId of storeSelection.selectionDepots) {
+      data.value.filter((row:any) => {
+        return row.depotId === dId
+      }).forEach((row:any) => {
+        row.selected = true
+      })
+    }
     return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
   }
 </script>

@@ -248,7 +248,7 @@ watch(()=>props.selectedClient, (v)=>{
     const {data, error, headers} = await useApiGETBody<Array<any>>('/opsidata/products', params)
     if (error) {
       notifyError({ message: error?.response?.data?.message })
-      return []
+      return
     }
     if (data.value === undefined ) { return [] }
     if (headers === undefined) { return [] }
