@@ -16,11 +16,11 @@
             v-model="productsTypeChecked.LocalbootProduct"
             @change="changeProductsType('LocalbootProduct')"
           >{{$t('title.localbootProducts')}}</el-checkbox-button>
-          <!-- <el-badge is-dot class="item"  :hidden="numberOtherNetboot <= 0" type="warning" > -->
             <el-checkbox-button
             v-model="productsTypeChecked.NetbootProduct"
             @change="changeProductsType('NetbootProduct')"
             >{{ $t('title.netbootProducts') }}</el-checkbox-button>
+            <el-alert v-if="props.selectedClient" :title="$t('table.info.productsOnClient', {id: props.selectedClient})" type="warning" :closable="false" class="max-w-80 !inline-flex !relative max-h-8" />
           <!-- </el-badge> -->
           <!--  el-checkbox-button
             disabled
@@ -28,7 +28,6 @@
             @change="changeProductsType('Product')"
           >Product< / > -->
         </div>
-        <el-alert v-if="props.selectedClient" :title="$t('table.info.productsOnClient', {id: props.selectedClient})" type="warning" :closable="false" class="max-w-80"/>
 
       </template>
   </TableTTable>
