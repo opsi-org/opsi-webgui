@@ -14,7 +14,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { ElTree } from 'element-plus'
 import { useNotification } from '~/composables/mixins/useComponent'
 import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper'
@@ -126,3 +125,10 @@ function selectNode(node: TreeNodeData, obj:any, selection: Ref<string[]>, setSe
 }
 
 </script>
+<style lang="css" scoped>
+
+:deep(.el-tree-node__label) {
+  margin-left: 5px;
+  font-size: var(--el-font-size-small);
+}
+</style>
