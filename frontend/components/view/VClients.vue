@@ -26,6 +26,9 @@
 
   const storeSelection = storeSelections()
 
+  const _props = defineProps({
+    isMobile: { type: Boolean, default: ()=> {return false}},
+  })
 
   const rowId = 'clientId'
   const tableColumn = ref([
