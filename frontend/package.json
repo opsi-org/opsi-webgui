@@ -73,8 +73,12 @@
     "pinia-plugin-persistedstate": "^4.1",
     "prettier": "^3.4",
     "sass": "^1.81",
-    "typescript": "^5.7",
+    "typescript": "5.6.2",
     "vue-tsc": "^2.1"
+  },
+
+  "dependenciesComments": {
+    "typescript": "version 5.7 is incompatible with vue-tsc 2.1.0. https://github.com/vuejs/language-tools/issues/5018"
   },
   "overrides": {
     "vue": "latest"
