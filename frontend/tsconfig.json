@@ -24,6 +24,7 @@
       "element-plus/global",
       "@iconify/vue",
       "@xterm/xterm", "@xterm/addon-fit", "@xterm/addon-search", "@xterm/addon-web-links",
+      "@intlify/unplugin-vue-i18n/messages",
     ],
     "isolatedModules": true,
     "verbatimModuleSyntax": true,

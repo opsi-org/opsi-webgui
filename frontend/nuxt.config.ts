@@ -1,20 +1,19 @@
 /* eslint-disable no-console */
 
-import pkg from './package.json'
-// import { defineNuxtConfig } from 'nuxt/config'
-// const defineNuxtConfig: DefineNuxtConfig(input: InputConfig<NuxtConfig, ConfigLayerMeta>) => InputConfig<NuxtConfig, ConfigLayerMeta>
+import pkg from "./package.json";
 
-const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? '4447'
+const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? "4447";
 // do not change following line, cause it is automatically patched by the build_production_local.sh script
-const ADDON_PATH: string = "/addons/webgui"
+const ADDON_PATH: string = "/addons/webgui";
 
-console.log('---------------------------------------------------')
-console.log('OPSI CONFD PORT', CONFD_PORT)
-console.log('ADDON PATH', ADDON_PATH)
-console.log('---------------------------------------------------')
+console.log("---------------------------------------------------");
+console.log("OPSI CONFD PORT", CONFD_PORT);
+console.log("ADDON PATH", ADDON_PATH);
+console.log("VERSION", pkg.version);
+console.log("---------------------------------------------------");
 
 export default defineNuxtConfig({
-  compatibilityDate: '2024-09-17',
+  compatibilityDate: "2024-09-17",
   build: {
     analyze: true,
     // hardSource: true,
@@ -30,11 +29,11 @@ export default defineNuxtConfig({
     },
   },
   ignore: [
-    '**/tests-configs/**',
-    '**/*.test.component.ts',
-    '**/*.test.accessibility.ts',
-    '**/*.test.usecase.ts',
-    '**/*.test.screenshot.ts',
+    "**/tests-configs/**",
+    "**/*.test.component.ts",
+    "**/*.test.accessibility.ts",
+    "**/*.test.usecase.ts",
+    "**/*.test.screenshot.ts",
   ],
   devtools: {
     enabled: false,
@@ -46,14 +45,14 @@ export default defineNuxtConfig({
   devServer: {
     port: 8888,
     https: {
-      key: '.config/https/server.key',
-      cert: '.config/https/server.crt',
+      key: ".config/https/server.key",
+      cert: ".config/https/server.crt",
     },
   },
   app: {
-    baseURL: ADDON_PATH + '/app',
+    baseURL: ADDON_PATH + "/app",
     head: {
-      link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
+      link: [{ rel: "icon", type: "image/x-icon", href: "favicon.ico" }],
     },
   },
   // static: {
@@ -62,29 +61,32 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       OPSICONFD_PORT: CONFD_PORT,
-      BASE_PAGE: '/clients',
+      BASE_PAGE: "/clients",
       packageVersion: pkg.version,
-      API_PATH: ADDON_PATH + '/api',
-      OWN_PATH: ADDON_PATH + '/app',
-      NUXT_PUBLIC_API_BASE: process.env.NODE_ENV === 'production' ? '' : 'https://localhost:' + CONFD_PORT,
+      API_PATH: ADDON_PATH + "/api",
+      OWN_PATH: ADDON_PATH + "/app",
+      NUXT_PUBLIC_API_BASE:
+        process.env.NODE_ENV === "production"
+          ? ""
+          : "https://localhost:" + CONFD_PORT,
     },
   },
   modules: [
-    '@nuxtjs/i18n',
-    'nuxt-primevue',
-    '@element-plus/nuxt',
-    '@nuxtjs/tailwindcss',
-    ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],
-    'pinia-plugin-persistedstate/nuxt',
-    '@nuxt/eslint',
+    "@nuxtjs/i18n",
+    "nuxt-primevue",
+    "@element-plus/nuxt",
+    "@nuxtjs/tailwindcss",
+    ["@pinia/nuxt", { autoImports: ["defineStore", "acceptHMRUpdate"] }],
+    "pinia-plugin-persistedstate/nuxt",
+    "@nuxt/eslint",
   ],
   piniaPluginPersistedstate: {
-    key: 'opsiui-%id',
+    key: "opsiui-%id",
     // key: (id: string) => `opsiui-${id}`,
-    storage: 'localStorage',
+    storage: "localStorage",
     debug: true,
   },
-  css: ['~/assets/scss/index.scss', '~/assets/scss/tailwind.scss'],
+  css: ["~/assets/scss/index.scss", "~/assets/scss/tailwind.scss"],
   vite: {
     css: {
       preprocessorOptions: {
@@ -99,7 +101,7 @@ export default defineNuxtConfig({
   },
   elementPlus: {
     icon: false,
-    defaultLocale: 'de',
+    defaultLocale: "de",
   },
   primevue: {
     usePrimeVue: true,
@@ -108,14 +110,23 @@ export default defineNuxtConfig({
       pt: {},
     },
     components: {
-      prefix: 'P',
-      include: ['ContextMenu', 'DataTable', 'Column', 'ColumnGroup', 'Row', 'Paginator', 'Dropdown', 'VirtualScroller', 'Skeleton'],
-      exclude: ['Toast'],
+      prefix: "P",
+      include: [
+        "ContextMenu",
+        "DataTable",
+        "Column",
+        "ColumnGroup",
+        "Row",
+        "Paginator",
+        "Dropdown",
+        "VirtualScroller",
+        "Skeleton",
+      ],
+      exclude: ["Toast"],
     },
   },
   imports: {
-    dirs: ['store'],
+    dirs: ["store"],
   },
-// } as InputConfig<NuxtConfig, ConfigLayerMeta>
-}
-)
+  // } as InputConfig<NuxtConfig, ConfigLayerMeta>
+});
