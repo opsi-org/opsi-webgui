@@ -194,24 +194,15 @@
 import { debounce } from 'lodash'
 import { useNotification } from '~/composables/mixins/useComponent'
 import { useIcons } from '../../composables/mixins/useIcons'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { vContextmenu } from '../../composables/mixins/v-contextmenu'
-
-// const fetchedData = defineModel<Array<any>>('data', { required:true})
-// const activeButton = defineModel<string|null>('activeButton')
-// const isLoading = defineModel<string>('isLoading', { required:true})
 
 const { notifyError } = useNotification()
 const $t = useI18n().t
 const router = useRouter()
 const icons = useIcons()
 
-// const storeSelection = storeSelections()
-
 const props = defineProps({
-  // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   rowId: { type: String, required: true },
-  // isLoading: { type: Boolean, required: true },
   tableColumn: { type: Array<any>, required: true },
   fetch: { type: Function, required: true },
   bodyHeight: { type: String, default: '80vh', required: false },
