@@ -374,11 +374,8 @@ watch(()=>props.selectedClient, (v)=>{
 
 
   function changeProductsType (type: IProductTypes) {
-    if (props.isChild) {
-      router.push('/clients/products/' + type + '/')
-    } else {
-      router.push('/products/' + type + '/')
-    }
+    const currentroute = router.currentRoute.value.fullPath
+    router.push(currentroute.replace(/\/products\/[a-zA-Z]+/, '/products/' + type))
     const types: Array<IProductTypes> = Object.keys(productsTypeChecked.value) as Array<IProductTypes>
     types.forEach(k => productsTypeChecked.value[k] = false)
     if (Object.keys(productsTypeChecked.value).includes(type))
