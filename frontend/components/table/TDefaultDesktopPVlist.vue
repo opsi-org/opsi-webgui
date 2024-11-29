@@ -65,7 +65,7 @@
                           </el-tooltip>
                         </el-badge>
                         <el-text v-else>{{ colChild.title || colChild.tooltip }}</el-text>
-                        <IconIIcon v-if="colChild.sortable" :icon="tableData.sortBy == colChild.key ? ( (tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort_not" class="inline ml-2"/>
+                        <IconIIcon v-if="colChild.sortable" :icon="tableData.sortBy == colChild.key ? ( (tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort" class="inline ml-2"/>
                       </th>
                     </template>
                     <th
@@ -80,7 +80,7 @@
                         <HeaderCellRenderer :col-data="col" :key="col.title"/>
                       </el-badge>
                       <el-text v-else>{{ col.title }}</el-text>
-                      <IconIIcon v-if="col.sortable" :icon="tableData.sortBy == col.key ? ( (tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort_not" class="inline ml-2"/>
+                      <IconIIcon v-if="col.sortable" :icon="tableData.sortBy == col.key ? ( (tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort" class="inline ml-2"/>
                     </th>
 
                   </template>

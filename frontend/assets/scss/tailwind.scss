@@ -3,45 +3,49 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   @font-face {
     /* LOGO: Montserrat alt1 */
-    font-family: "MontserratAlt1";
+    font-family: 'MontserratAlt1';
     text-transform: uppercase !important; /*  uppercase */
-    src: local("Montserrat"), url(../fonts/MontserratAlt1/ttf/MontserratAlt1-Regular.ttf) format("truetype");
+    src:
+      local('Montserrat'),
+      url(../fonts/MontserratAlt1/ttf/MontserratAlt1-Regular.ttf) format('truetype');
   }
   @font-face {
     /* Headers: Montserrat (uppercase) */
-    font-family: "Montserrat";
-    src: url(../fonts/Montserrat/ttf/Montserrat-Regular.ttf) format("truetype");
+    font-family: 'Montserrat';
+    src: url(../fonts/Montserrat/ttf/Montserrat-Regular.ttf) format('truetype');
   }
   @font-face {
     /* Text and sublines: Open Sans */
-    font-family: "OpenSans";
-    src: url(../fonts/OpenSans/OpenSans-Regular.ttf) format("truetype");
+    font-family: 'OpenSans';
+    src: url(../fonts/OpenSans/OpenSans-Regular.ttf) format('truetype');
     // this does not work with firefox...
     // https://stackoverflow.com/questions/35206815/font-loading-error-downloadable-font-kern-too-large-subtable-table-discarded
     // src: url(../fonts/OpenSans/ttf/OpenSans-Regular.ttf) format("truetype");
   }
   @font-face {
     /* Monospace: Droid Sans Mono */
-    font-family: "DroidSansMono";
+    font-family: 'DroidSansMono';
     font-weight: 50;
-    src: url(../fonts/DroidSansMono/DroidSansMono.ttf) format("truetype");
+    src: url(../fonts/DroidSansMono/DroidSansMono.ttf) format('truetype');
   }
 
   :root {
     @apply text-base;
     @apply font-sans;
-    --color-opsi-blue: #{opsi.$opsi-blue};
-    --color-opsi-red: #{opsi.$opsi-magenta};
-    --el-font-family: "OpenSans", sans-serif !important;
+    --el-font-family: 'OpenSans', sans-serif !important;
     --el-color-primary: #{opsi.$opsi-blue} !important;
     --el-font-size-base: 14px !important;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading;
     text-transform: uppercase !important; /*  uppercase */
     font-weight: 400;
@@ -49,9 +53,18 @@
     line-height: 1.3;
   }
 
-  h1 { @apply text-4xl; @apply text-opsi-red }
-  h2 { @apply text-2xl; @apply text-opsi-red }
-  h3 { @apply text-xl; }
-  a { @apply text-opsi-blue underline; }
-
+  h1 {
+    @apply text-4xl;
+    @apply text-opsi-magenta;
+  }
+  h2 {
+    @apply text-2xl;
+    @apply text-opsi-magenta;
+  }
+  h3 {
+    @apply text-xl;
+  }
+  a {
+    @apply text-opsi-blue underline;
+  }
 }

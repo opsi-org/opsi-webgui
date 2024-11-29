@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 // import { useIcons } from '~/composables/mixins/useIcons';
-// const $t = useI18n().t
+const $t = useI18n().t
 const selections = storeSelections()
 /*
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
@@ -163,7 +163,7 @@ watch(()=>selections.multiSelection, (val)=>{
 */
 const showModal = () => {
   // TODO
-  alert('cbmultiselect showModal')
+  alert($t('multiselection.unabletosingleselect'))
 }
 // const hideModal = () => {
 //   alert('cbmultiselect hideModal')
