@@ -22,7 +22,7 @@
                   </template>
                 </div>
               </div>
-              <div class="dropdown-section">
+              <!-- <div class="dropdown-section">
                 <div class="dropdown-title">
                   <el-button link @click="toggleSortOrder">
                     <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
@@ -36,7 +36,7 @@
                     </el-dropdown-item>
                   </template>
                 </div>
-              </div>
+              </div> -->
               <div class="dropdown-section">
                 <div class="dropdown-title">
                   <IconIIcon :icon="icons.columns" /> Column Selection
@@ -116,7 +116,7 @@
                   <!-- <div v-contextmenu="thisinstance?.vnode?.props?.onShowContextMenu ? (e:any) => onContextMenu(e, scope) : () =>{}"> -->
                     <el-tooltip :content="$t('title.config')" placement="top" v-if="actionConfig">
                       <el-button
-                        type="text"
+                        link
                         @click="handleConfigClick(scope.row)"
                         :class="{ 'is-active': activeButton === 'config-' + scope.row.clientId }"
                       >
@@ -125,7 +125,7 @@
                     </el-tooltip>
                     <el-tooltip :content="$t('title.log')" placement="top" v-if="actionLog">
                       <el-button
-                        type="text"
+                        link
                         @click="handleLogClick(scope.row)"
                         :class="{ 'is-active': activeButton === 'log-' + scope.row.clientId }"
                       >
@@ -134,7 +134,7 @@
                     </el-tooltip>
                     <el-tooltip :content="$t('title.clone')" placement="top" v-if="actionClone">
                       <el-button
-                        type="text"
+                        link
                         @click="handleCloneClick(scope.row)"
                         :class="{ 'is-active': activeButton === 'clone-' + scope.row.clientId }"
                       >
@@ -229,7 +229,7 @@ const infiniteScrollDiv = ref<HTMLElement | null>(null)
 const filterQuery = ref('')
 const filterBy = ref(props.rowId)
 const sortBy = ref(props.sortBy || props.rowId)
-const sortDesc = ref(true)
+const sortDesc = ref(false)
 const contextMenuVisible = ref(false)
 const contextMenuStyle = ref({})
 const contextMenuRow = ref(null)
@@ -263,21 +263,20 @@ async function fetchWrapper() {
   // fetchedData.value = undefined
   try {
     const res = await props.fetch(params)
-    if (res.total) {
+    if (res == undefined) {
+      notifyError({ message: $t('message.error.empty-response') })
+    }else if (res.total) {
       totalItems.value = res.total
       isFirstPage.value = currentPage.value == 1
       isLastPage.value = currentPage.value * pageSize.value >= res.total
       if (res.total > 0) {
         const pageExists = currentPage.value <= Math.ceil(res.total / pageSize.value)
-        console.error('Page Not Exists current page:', currentPage.value, 'total:', res.total, 'page size:', pageSize.value, 'page exists:', pageExists)
         if (!pageExists) {
-          console.error('setting current page to last page')
           currentPage.value = Math.ceil(res.total / pageSize.value)
         }
       }
-
+      fetchedData.value = res.data
     }
-    fetchedData.value = res.data
   } catch (error) {
     notifyError({ message: $t('message.error.unexpected') + error })
   } finally {

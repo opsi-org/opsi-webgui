@@ -75,13 +75,16 @@
 
     const {data, error, headers} = await useApiGETBody<T_ClientsList>('/opsidata/clients', params)
     if (error) {
+      console.error(error)
       notifyError({ message: error?.response?.data?.message || $t('message.error.generic') })
       return
     }
     if (data.value == undefined) {
+      console.error("empty response. data.value undefined")
       notifyError({ message: $t('message.error.empty-response') })
       return
     }
+    console.log("data fetched")
     return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
   }
 
