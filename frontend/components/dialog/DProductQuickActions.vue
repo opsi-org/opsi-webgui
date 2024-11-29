@@ -125,9 +125,14 @@
     },
   })
 
-  await fetchActionResults()
-  await fetchInstallationStates()
-  isLoadingMain.value = false
+  watch(() => popoverVisible.value, async (value) => {
+    if (value) {
+      await fetchActionResults()
+      await fetchInstallationStates()
+      isLoadingMain.value = false
+
+    }
+  })
 
   function mysort (a: string, b: string): number {
     const aa = (a === null) ? NO_VALUE : a
