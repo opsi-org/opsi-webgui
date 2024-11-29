@@ -84,7 +84,6 @@
       notifyError({ message: $t('message.error.empty-response') })
       return
     }
-    console.log("data fetched")
     return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
   }
 
