@@ -119,7 +119,7 @@ function handleSelectOneNode(node: TreeNodeData, obj: any) { // {checkedNodes, c
 function selectNode(node: TreeNodeData, obj:any, selection: Ref<string[]>, setSelectionFunction: (selection: string[]) => void) {
   if (node.type == 'ObjectToGroup') {
     if (obj.checkedKeys.includes(node.id)) { selection.value.push(node.text) }
-    else { setSelectionFunction(selection.value.filter(item => item != node.text)) }
+    else { setSelectionFunction(selection.value.filter((item: string) => item != node.text)) }
   } else { // its a group
     node.children?.forEach((child: TreeNodeData) => { selectNode(child, obj, selection, setSelectionFunction) })
   }
