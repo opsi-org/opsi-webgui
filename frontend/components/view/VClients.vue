@@ -55,19 +55,18 @@
     {title: $t('table.fields.uefi'), key: 'uefi', sortable: true, visible: false},
 
     {title: $t('table.fields.versionOutdatedGeneral'), key: 'version_outdated', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productsOutdated, cellRenderer:
-    getStatisticRenderer('/clients/products/LocalbootProduct?sortby=version&selectedClient=', 'version_outdated')
-  },
+    getStatisticRenderer('/clients/products/LocalbootProduct?sortby=version&selectedClient=', 'version_outdated', 'version', 'LocalbootProduct')},
   {title: $t('table.fields.versionOutdatedNetboot'), key: 'version_outdated_netboot', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productsOutdated, cellRenderer:
-  getStatisticRenderer('/clients/products/NetbootProduct?sortby=version&selectedClient=', 'version_outdated')},
+  getStatisticRenderer('/clients/products/NetbootProduct?sortby=version&selectedClient=', 'version_outdated', 'version', 'NetbootProduct')},
   {title: $t('table.fields.installationStatusUnknown'), key: 'installationStatus_unknown', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productInstallationStatusUnknown,
-  cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=', 'installationStatus_unknown') },
+  cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=', 'installationStatus_unknown', 'installationStatus') },
   {title: $t('table.fields.installationStatus_installed'), key: 'installationStatus_installed', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.product,
-  cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=', 'installationStatus_installed')
+  cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=', 'installationStatus_installed', 'installationStatus')
   },
   {title: $t('table.fields.actionResultFailed'), key: 'actionResult_failed', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productsFailedActionResult,
-    cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=', 'actionResult_failed')},
+    cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=', 'actionResult_failed', 'actionResult')},
   {title: $t('table.fields.actionResult_successful'), key: 'actionResult_successful', sortable: true, visible: true, alwaysVisible: true, width:"60px", icon:icons.productActionResultSuccessful,
-  cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=', 'actionResult_successful')},
+  cellRenderer: getStatisticRenderer('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=', 'actionResult_successful', 'actionResult')},
   {title: $t('table.fields.reachable'), key: 'reachable', sortable: false, visible: true, alwaysVisible: true, width:"60px"},
   {title: $t('table.fields.rowactions'), key: 'actions', sortable: false, visible: true, alwaysVisible: true, width:"170px"},
   ])
@@ -91,10 +90,21 @@
     return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
   }
 
-  function getStatisticRenderer(url: string, value: string): (rowData: any) => VNode {
+  function getStatisticRenderer(url: string, value: string, sortbyKey: string, type: undefined|string = undefined): (rowData: any) => VNode {
     return ({rowData}:any) => {
+      const classClicked = ' !bg-opsi-blue !text-white'
       const click = () => {router.push(url + rowData.clientId)}
-      return <el-tag class="cursor-pointer" onClick={click}> {rowData[value]} </el-tag>
+      const checkRoute = () => {
+        const currentRoute = router.currentRoute.value.fullPath
+        if (type) {
+          return currentRoute.includes('sortby='+sortbyKey) && currentRoute.includes('selectedClient=' + rowData.clientId) && currentRoute.includes('/' + type + '?') ? classClicked : ''
+        }
+        return currentRoute.includes('sortby='+sortbyKey) && currentRoute.includes('selectedClient=' + rowData.clientId) ? classClicked : ''
+      }
+
+      const isCurrentClass = ref(checkRoute())
+      watch(() => router.currentRoute.value.fullPath, checkRoute)
+      return <el-tag class={'cursor-pointer ' + isCurrentClass.value} onClick={click}> {rowData[value]} </el-tag>
     }
   }
 

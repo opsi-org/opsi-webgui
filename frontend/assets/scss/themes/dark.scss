@@ -16,3 +16,7 @@ html.dark .el-switch {
 html.dark .el-switch__core {
   border: 1px solid #{opsi.$opsi-medium-gray};
 }
+
+html.dark .el-tag.el-tag--primary {
+  --el-tag-text-color: var(--el-color-white);
+}
