@@ -17,7 +17,6 @@
       </el-button>
     </template>
   </TableTTable>
-  {{ storeSelection.selectionClients }}
 </template>
 
 

@@ -5,7 +5,7 @@
     :table-column="tableColumn"
     :fetch="fetchProducts"
     :sort-by="props.sortby"
-    body-height="76vh"
+    body-height="64vh"
     action-config="/servers/server/config/"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionProducts(id)}"
     @clear-selection="storeSelection.clearSelectionProducts"

@@ -86,7 +86,7 @@
     <div
       ref="infiniteScrollDiv"
       class="overflow-y-auto h-"
-      :style="'height: ' + bodyHeight"
+      :style="'height: ' + bodyHeight +  '!important'"
       @scroll="debouncedHandleScroll"
     >
       <div v-if="!isFirstPage" class="extra-column">
