@@ -7,8 +7,8 @@
     :sort-by="props.sortby"
     body-height="76vh"
     action-config="/servers/server/config/"
-    @selection-changed="(id: string) => {storeSelection.toggleSelectionDepots(id)}"
-    @clear-selection="storeSelection.clearSelectionDepots"
+    @selection-changed="(id: string) => {storeSelection.toggleSelectionProducts(id)}"
+    @clear-selection="storeSelection.clearSelectionProducts"
   >
   <template #header>
         <div>
