@@ -4,6 +4,15 @@
 
     <div class="toolbar">
       <div class="toolbar-left">
+        <el-button @click="$emit('clearSelection')">
+          <IconIIcon :icon="icons.clear" />
+        </el-button>
+        <el-input v-model="filterQuery" placeholder="Type to filter..." clearable>
+          <template #prefix>
+            <IconIIcon :icon="icons.filter" />
+          </template>
+        </el-input>
+
         <el-dropdown trigger="click">
           <el-button>
             <IconIIcon :icon="icons.columns" />
@@ -11,18 +20,20 @@
           <template #dropdown>
             <div class="dropdown-content">
               <div class="dropdown-section">
-                <div class="dropdown-title">
-                  <IconIIcon :icon="icons.filter" /> Filter By
-                </div>
+                <div class="dropdown-title"><IconIIcon :icon="icons.filter" /> Filter By</div>
                 <div class="dropdown-items">
                   <template v-for="column in tableColumn" :key="column.key">
                     <el-dropdown-item>
-                      <el-checkbox :disabled="!column.filter" v-model="column.filter" @change="applyFilter(column.key)" />
+                      <el-checkbox
+                        :disabled="!column.filter"
+                        v-model="column.filter"
+                        @change="applyFilter(column.key)"
+                      />
                     </el-dropdown-item>
                   </template>
                 </div>
               </div>
-              <!-- <div class="dropdown-section">
+              <div class="dropdown-section">
                 <div class="dropdown-title">
                   <el-button link @click="toggleSortOrder">
                     <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
@@ -31,12 +42,16 @@
                 </div>
                 <div class="dropdown-items">
                   <template v-for="column in tableColumn" :key="column.key">
-                    <el-dropdown-item >
-                      <el-radio :disabled="!column.sortable" v-model="column.sortable" @change="applySort(column.key)" />
+                    <el-dropdown-item>
+                      <el-radio
+                        :disabled="!column.sortable"
+                        v-model="column.sortable"
+                        @change="applySort(column.key)"
+                      />
                     </el-dropdown-item>
                   </template>
                 </div>
-              </div> -->
+              </div>
               <div class="dropdown-section">
                 <div class="dropdown-title">
                   <IconIIcon :icon="icons.columns" /> Column Selection
@@ -44,7 +59,12 @@
                 <div class="dropdown-items">
                   <template v-for="column in tableColumn" :key="column.key">
                     <el-dropdown-item>
-                      <el-checkbox v-model="column.visible" @click.stop :disabled="column.alwaysVisible">{{ column.title }}</el-checkbox>
+                      <el-checkbox
+                        v-model="column.visible"
+                        @click.stop
+                        :disabled="column.alwaysVisible"
+                        >{{ column.title }}</el-checkbox
+                      >
                     </el-dropdown-item>
                   </template>
                 </div>
@@ -52,33 +72,23 @@
             </div>
           </template>
         </el-dropdown>
-        <el-input v-model="filterQuery" placeholder="Type to filter..." class="w-50" >
-          <template #prepend>
-            <IconIIcon :icon="icons.filter" />
-          </template>
-          <template #append>
-            <el-button link @click="filterQuery = ''" >
-              <IconIIcon :icon="icons.x" />
-            </el-button>
-          </template>
-        </el-input>
         <el-tooltip :content="$t('label.refresh')" placement="top">
-          <el-button link @click="refreshTable">
+          <el-button @click="refreshTable">
             <IconIIcon :icon="icons.refresh" />
           </el-button>
         </el-tooltip>
-        <ButtonBTNClearSelection @clearselection="$emit('clearSelection')" />
       </div>
       <div class="toolbar-right">
-        <el-button type="primary">New Button</el-button>
+        <slot name="toolbar-right" />
       </div>
     </div>
 
-    <!-- <div ref="infiniteScrollDiv" :style="'height: calc(80vh - var(--)); overflow-y: auto;'" @scroll="debouncedHandleScroll"> -->
-    <div ref="infiniteScrollDiv"
+    <div
+      ref="infiniteScrollDiv"
       class="overflow-y-auto h-"
       :style="'height: ' + bodyHeight"
-      @scroll="debouncedHandleScroll">
+      @scroll="debouncedHandleScroll"
+    >
       <div v-if="!isFirstPage" class="extra-column">
         <div v-if="!isLoading">Scroll up to load previous page...</div>
       </div>
@@ -87,68 +97,66 @@
         v-loading="isLoading"
         @sort-change="handleSortChange"
         @row-click="onRowClick"
-        >
-            <template v-for="column in tableColumn">
-              <el-table-column
-                v-if="column.visible || column.alwaysVisible"
-                :key="column.key"
-                :prop="column.key"
-                :label="column.title"
-                :width="column.width || ''"
-                :sortable="column.sortable"
-                >
-                <template #header v-if="column.icon">
-                  <el-tooltip
-                  class="box-item"
-                  effect="dark"
-                  :content="column.title"
-                  >
-                  <el-text><IconIIcon :icon="column.icon" /> </el-text>
-                </el-tooltip>
-                </template>
-                <template #header v-else>
-                  <HeaderCellRenderer :col-data="column"/>
-                </template>
-
-
-                <template #default="scope" v-if="column.key === 'actions'">
-                  <div v-contextmenu="(e:any) => showContextMenu(e, scope)">
-                  <!-- <div v-contextmenu="thisinstance?.vnode?.props?.onShowContextMenu ? (e:any) => onContextMenu(e, scope) : () =>{}"> -->
-                    <el-tooltip :content="$t('title.config')" placement="top" v-if="actionConfig">
-                      <el-button
-                        link
-                        @click="handleConfigClick(scope.row)"
-                        :class="{ 'is-active': activeButton === 'config-' + scope.row.clientId }"
-                      >
-                        <IconIIcon :icon="icons.settings" />
-                      </el-button>
-                    </el-tooltip>
-                    <el-tooltip :content="$t('title.log')" placement="top" v-if="actionLog">
-                      <el-button
-                        link
-                        @click="handleLogClick(scope.row)"
-                        :class="{ 'is-active': activeButton === 'log-' + scope.row.clientId }"
-                      >
-                        <IconIIcon :icon="icons.log" />
-                      </el-button>
-                    </el-tooltip>
-                    <el-tooltip :content="$t('title.clone')" placement="top" v-if="actionClone">
-                      <el-button
-                        link
-                        @click="handleCloneClick(scope.row)"
-                        :class="{ 'is-active': activeButton === 'clone-' + scope.row.clientId }"
-                      >
-                        <IconIIcon :icon="icons.client" />
-                      </el-button>
-                    </el-tooltip>
-                    <DropdownDDClientActions v-if="hasClientActions" :client-ids="[scope.row.clientId]" />
-                  </div>
-                </template>
-                <template #default="scope" v-else>
-                  <CellRenderer :col-data="column" :row-data="scope.row"/>
-                </template>
-              </el-table-column>
+      >
+        <template v-for="column in tableColumn">
+          <el-table-column
+            v-if="column.visible || column.alwaysVisible"
+            :key="column.key"
+            :prop="column.key"
+            :label="column.title"
+            :width="column.width || ''"
+            :sortable="column.sortable"
+          >
+            <template #header v-if="column.icon">
+              <el-tooltip class="box-item" effect="dark" :content="column.title">
+                <el-text><IconIIcon :icon="column.icon" /> </el-text>
+              </el-tooltip>
             </template>
+            <template #header v-else>
+              <HeaderCellRenderer :col-data="column" />
+            </template>
+
+            <template #default="scope" v-if="column.key === 'actions'">
+              <div v-contextmenu="(e:any) => showContextMenu(e, scope)">
+                <!-- <div v-contextmenu="thisinstance?.vnode?.props?.onShowContextMenu ? (e:any) => onContextMenu(e, scope) : () =>{}"> -->
+                <el-tooltip :content="$t('title.config')" placement="top" v-if="actionConfig">
+                  <el-button
+                    link
+                    @click="handleConfigClick(scope.row)"
+                    :class="{ 'is-active': activeButton === 'config-' + scope.row.clientId }"
+                  >
+                    <IconIIcon :icon="icons.settings" />
+                  </el-button>
+                </el-tooltip>
+                <el-tooltip :content="$t('title.log')" placement="top" v-if="actionLog">
+                  <el-button
+                    link
+                    @click="handleLogClick(scope.row)"
+                    :class="{ 'is-active': activeButton === 'log-' + scope.row.clientId }"
+                  >
+                    <IconIIcon :icon="icons.log" />
+                  </el-button>
+                </el-tooltip>
+                <el-tooltip :content="$t('title.clone')" placement="top" v-if="actionClone">
+                  <el-button
+                    link
+                    @click="handleCloneClick(scope.row)"
+                    :class="{ 'is-active': activeButton === 'clone-' + scope.row.clientId }"
+                  >
+                    <IconIIcon :icon="icons.client" />
+                  </el-button>
+                </el-tooltip>
+                <DropdownDDClientActions
+                  v-if="hasClientActions"
+                  :client-ids="[scope.row.clientId]"
+                />
+              </div>
+            </template>
+            <template #default="scope" v-else>
+              <CellRenderer :col-data="column" :row-data="scope.row" />
+            </template>
+          </el-table-column>
+        </template>
       </el-table>
       <div class="extra-column">
         <span v-if="!isLastPage && !isLoading">Scroll down to load next page...</span>
@@ -184,9 +192,8 @@
 
 <script setup lang="tsx">
 import { debounce } from 'lodash'
-import { useNotification } from '~/composables/mixins/useComponent';
-import {useIcons} from '../../composables/mixins/useIcons'
-// import { useRouter } from 'vue-router'
+import { useNotification } from '~/composables/mixins/useComponent'
+import { useIcons } from '../../composables/mixins/useIcons'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { vContextmenu } from '../../composables/mixins/v-contextmenu'
 
@@ -234,15 +241,16 @@ const contextMenuVisible = ref(false)
 const contextMenuStyle = ref({})
 const contextMenuRow = ref(null)
 
-
 defineExpose({ refetch: fetchWrapper, fetchedData })
 
-
-watch([()=>filterQuery.value], fetchWrapper, { immediate: true })
-watch(()=>props.sortBy, () => {
-  sortBy.value = props.sortBy || props.rowId
-  fetchWrapper()
-})
+watch([() => filterQuery.value], fetchWrapper, { immediate: true })
+  watch(
+    () => props.sortBy,
+    () => {
+      sortBy.value = props.sortBy || props.rowId
+      fetchWrapper()
+    }
+  )
 onMounted(() => {
   fetchWrapper()
   document.addEventListener('click', handleClickOutside)
@@ -266,7 +274,7 @@ async function fetchWrapper() {
       console.error('fetchWrapper: Empty response')
       isLoading.value = false
       return
-    }else if (res.total) {
+    } else if (res.total) {
       totalItems.value = res.total
       isFirstPage.value = currentPage.value == 1
       isLastPage.value = currentPage.value * pageSize.value >= res.total
@@ -296,20 +304,20 @@ function showContextMenu(event: any, row: any) {
   event.preventDefault()
   contextMenuRow.value = row
 
-  const menuWidth = 200;
-  const menuHeight = 350;
-  const pageWidth = window.innerWidth;
-  const pageHeight = window.innerHeight;
+  const menuWidth = 200
+  const menuHeight = 350
+  const pageWidth = window.innerWidth
+  const pageHeight = window.innerHeight
 
-  let left = event.clientX;
-  let top = event.clientY;
+  let left = event.clientX
+  let top = event.clientY
 
   if (left + menuWidth > pageWidth) {
-    left = pageWidth - menuWidth;
+    left = pageWidth - menuWidth
   }
 
   if (top + menuHeight > pageHeight) {
-    top = pageHeight - menuHeight;
+    top = pageHeight - menuHeight
   }
 
   contextMenuStyle.value = {
@@ -329,12 +337,15 @@ function handleClickOutside(event: MouseEvent) {
 }
 
 function handleScroll(event: Event) {
-  const target = event.target as HTMLElement;
-  const dynamicScrollThreshold = target.clientHeight / fetchedData.value.length;
+  const target = event.target as HTMLElement
+  const dynamicScrollThreshold = target.clientHeight / fetchedData.value.length
   if (target.scrollTop <= dynamicScrollThreshold) {
-    scrollUp();
-  } else if (target.scrollHeight - target.scrollTop <= target.clientHeight + dynamicScrollThreshold) {
-    scrollDown();
+    scrollUp()
+  } else if (
+    target.scrollHeight - target.scrollTop <=
+    target.clientHeight + dynamicScrollThreshold
+  ) {
+    scrollDown()
   }
 }
 
@@ -360,13 +371,13 @@ function scrollToTopOfTable() {
       infiniteScrollDiv.value.scrollTo({
         top: 0,
         behavior: 'smooth'
-      });
+      })
       return
     }
     infiniteScrollDiv.value.scrollTo({
       top: 400,
       behavior: 'smooth'
-    });
+    })
   }
 }
 
@@ -390,7 +401,6 @@ function handlePagination(val: number) {
   currentPage.value = val
   fetchWrapper()
 }
-
 
 function handleConfigClick(rowData: any) {
   activeButton.value = 'config-' + rowData[props.rowId]
@@ -419,7 +429,7 @@ function applySort(columnKey: string) {
   fetchWrapper()
 }
 
-function handleSortChange({prop, order}: {column: any, prop: string, order: any }) {
+function handleSortChange({ prop, order }: { column: any, prop: string, order: any }) {
   sortBy.value = prop
   sortDesc.value = order === 'descending'
   fetchWrapper()
@@ -430,7 +440,7 @@ function toggleSortOrder() {
   fetchWrapper()
 }
 function onRowClick(row: any, column: any, event: any) {
-  if (['svg', 'button', 'path', "span"].includes(event.target?.localName)) {
+  if (['svg', 'button', 'path', 'span'].includes(event.target?.localName)) {
     return
   }
   $emit('selectionChanged', row[props.rowId])
@@ -439,7 +449,7 @@ function onRowClick(row: any, column: any, event: any) {
 
 const CellRenderer = (attributes: any): VNode => {
 // const CellRenderer = ({key, 'row-data', colData}: any): VNode => {
-  const colData  = attributes['col-data'] || attributes.colData
+  const colData = attributes['col-data'] || attributes.colData
   const rowData = attributes['row-data'] || attributes.rowData
 
   if (!colData) {
@@ -447,21 +457,21 @@ const CellRenderer = (attributes: any): VNode => {
     return <el-text>undefined</el-text>
   }
   if (colData.cellRenderer) {
-    return colData.cellRenderer({rowData})
+    return colData.cellRenderer({ rowData })
   }
-  return <el-text>{ rowData[colData.key] }</el-text>
+  return <el-text>{rowData[colData.key]}</el-text>
 }
 
 const HeaderCellRenderer = (attributes: any): VNode => {
-  const colData  = attributes['col-data'] || attributes.colData
+  const colData = attributes['col-data'] || attributes.colData
   if (!colData) {
     console.warn(`HeaderCellRenderer: col-data not found in: ${JSON.stringify(attributes)}`)
     return <el-text>undefined</el-text>
   }
-  if (colData.headerCellRenderer){
+  if (colData.headerCellRenderer) {
     return colData.headerCellRenderer()
   }
-  return <el-text>{ colData.title }</el-text>
+  return <el-text>{colData.title}</el-text>
 }
 </script>
 
