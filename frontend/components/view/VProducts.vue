@@ -44,6 +44,8 @@
   // import { useMBus } from '~/composables/mixins/useMessagebus';
   import TCProductVersionCell from '~/components/tablecell/TCProductVersionCell.vue'
   import BTNRowLink from '~/components/button/BTNRowLink.vue'
+import Checkbox from 'primevue/checkbox'
+import RadioButton from 'primevue/radiobutton'
 
   // const { notifyInfo, notifyError } = useNotification()
   const { notifyError } = useNotification()
@@ -96,21 +98,16 @@
       visible: true,
       alwaysVisible: true,
       width: '60px',
-      // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
+      // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.selectionProducts} /> },
       cellRenderer: ({ rowData }: any) => {
+        if (!rowData?.[rowId]) return
         rowData.selected = storeSelection.selectionProducts.includes(rowData[rowId])
-        return (
-          <>
-            {' '}
-            {storeSelection.multiSelection ? (
-              <el-checkbox v-model={rowData.selected} class="selectionItem" />
-            ) : (
-              <el-radio-group v-model={rowData.selected}>
-                <el-radio value={true} class="selectionItem hide_label" />
-              </el-radio-group>
-            )}
-          </>
-        )
+        watch(() => storeSelection.selectionProducts, () => {
+          rowData.selected = storeSelection.selectionProducts.includes(rowData[rowId])
+        })
+        return storeSelection.multiSelection ?
+          (<Checkbox model-value={rowData.selected} binary />) :
+          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary/>)
       },
     },
     {

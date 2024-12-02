@@ -4,7 +4,7 @@ import pkg from "./package.json";
 
 const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? "4447";
 // do not change following line, cause it is automatically patched by the build_production_local.sh script
-const ADDON_PATH: string = "/addons/webgui";
+const ADDON_PATH: string = "/addons/webgui"
 
 console.log("---------------------------------------------------");
 console.log("OPSI CONFD PORT", CONFD_PORT);
@@ -111,18 +111,20 @@ export default defineNuxtConfig({
     },
     components: {
       prefix: "P",
-      include: [
-        "ContextMenu",
-        "DataTable",
-        "Column",
-        "ColumnGroup",
-        "Row",
-        "Paginator",
-        "Dropdown",
-        "VirtualScroller",
-        "Skeleton",
-      ],
-      exclude: ["Toast"],
+      // include: [
+      //   "pac",
+      //   "DataTable",
+      //   "Checkbox",
+      //   "Column",
+      //   "ColumnGroup",
+      //   "Row",
+      //   "Paginator",
+      //   "RadioButton",
+      //   "Dropdown",
+      //   "VirtualScroller",
+      //   "Skeleton",
+      // ],
+      exclude: ["Toast", "Editor", "Chart"],
     },
   },
   imports: {

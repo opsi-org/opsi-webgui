@@ -13,6 +13,8 @@
   import type { T_ServerList } from '~/types/APItypes'
   // import {useIcons} from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
+  import Checkbox from 'primevue/checkbox'
+import RadioButton from 'primevue/radiobutton';
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
@@ -42,19 +44,14 @@
       width: '60px',
       // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
       cellRenderer: ({ rowData }: any) => {
+        if (!rowData?.[rowId]) return
         rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
-        return (
-          <>
-            {' '}
-            {storeSelection.multiSelection ? (
-              <el-checkbox v-model={rowData.selected} class="selectionItem" />
-            ) : (
-              <el-radio-group v-model={rowData.selected}>
-                <el-radio value={true} class="selectionItem hide_label" />
-              </el-radio-group>
-            )}
-          </>
-        )
+        watch(() => storeSelection.selectionDepots, () => {
+          rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
+        })
+        return storeSelection.multiSelection ?
+          (<Checkbox model-value={rowData.selected} binary />) :
+          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary/>)
       },
     },
     {
@@ -151,3 +148,8 @@
     return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
   }
 </script>
+<style>
+div.p-checkbox-box {
+  display: none !important;
+}
+</style>

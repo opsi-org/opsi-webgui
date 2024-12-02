@@ -30,6 +30,7 @@
     "verbatimModuleSyntax": true,
     // "paths": {}
     "jsx": "preserve",
+    "jsxImportSource": "vue",
 
   },
   // "include": [

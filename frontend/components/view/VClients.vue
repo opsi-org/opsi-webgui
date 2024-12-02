@@ -24,6 +24,8 @@
   import type { T_ClientsList } from '~/types/APItypes'
   import { useIcons } from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
+import Checkbox from 'primevue/checkbox';
+import RadioButton from 'primevue/radiobutton';
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
@@ -53,21 +55,15 @@
       width: '60px',
 
       // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} /> },
-
       cellRenderer: ({ rowData }: any) => {
-        rowData.selected = storeSelection.selectionClients.includes(rowData.clientId)
-        return (
-          <>
-            {' '}
-            {storeSelection.multiSelection ? (
-              <el-checkbox v-model={rowData.selected} class="selectionItem" />
-            ) : (
-              <el-radio-group v-model={rowData.selected}>
-                <el-radio value={true} class="selectionItem hide_label" />
-              </el-radio-group>
-            )}
-          </>
-        )
+        if (!rowData?.[rowId]) return
+        rowData.selected = storeSelection.selectionClients.includes(rowData[rowId])
+        watch(() => storeSelection.selectionClients, () => {
+          rowData.selected = storeSelection.selectionClients.includes(rowData[rowId])
+        })
+        return storeSelection.multiSelection ?
+          (<Checkbox model-value={rowData.selected} binary />) :
+          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary/>)
       },
     },
     {
