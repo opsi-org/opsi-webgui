@@ -1,30 +1,26 @@
 <template>
   <div>
-      <TableTTableMobile v-if="isMobile"
+    <TableTTableMobile
+      v-if="isMobile"
       ref="table"
       v-bind="props"
       :table-column="tableColumn"
       :fetch="fetch"
       @selection-changed="$emit('selectionChanged', $event)"
       @clear-selection="$emit('clearSelection')"
-
-      >
-
-      </TableTTableMobile>
-
+    />
     <TableTTableDesktop
-    v-else
-    ref="table"
-    v-bind="props"
-    :table-column="tableColumn"
-    :fetch="fetch"
-    @selection-changed="$emit('selectionChanged', $event)"
-    @clear-selection="$emit('clearSelection')"
-  >
-    <template #header> <slot name="header" /> </template>
-    <template #toolbar-right> <slot name="toolbar-right" /> </template>
-
-  </TableTTableDesktop>
+      v-else
+      ref="table"
+      v-bind="props"
+      :table-column="tableColumn"
+      :fetch="fetch"
+      @selection-changed="$emit('selectionChanged', $event)"
+      @clear-selection="$emit('clearSelection')"
+    >
+      <template #header> <slot name="header" /> </template>
+      <template #toolbar-right> <slot name="toolbar-right" /> </template>
+    </TableTTableDesktop>
   </div>
 </template>
 

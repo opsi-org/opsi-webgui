@@ -400,12 +400,12 @@ function toggleSortOrder() {
   sortDesc.value = !sortDesc.value
   fetchWrapper()
 }
-function onRowClick(row: any, column: any, event: any) {
-  if (['svg', 'button', 'path', 'span'].includes(event.target?.localName)) {
-    return
-  }
-  $emit('selectionChanged', row[props.rowId])
-}
+// function onRowClick(row: any, column: any, event: any) {
+//   if (['svg', 'button', 'path', 'span'].includes(event.target?.localName)) {
+//     return
+//   }
+//   $emit('selectionChanged', row[props.rowId])
+// }
 
 
 const CellRenderer = (attributes: any): VNode => {
