@@ -4,7 +4,7 @@ import MyPreset from "./assets/scss/primevue";
 
 const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? "4447";
 // do not change following line, cause it is automatically patched by the build_production_local.sh script
-const ADDON_PATH: string = "/addons/webgui";
+const ADDON_PATH: string = "/addons/webgui"
 
 console.log("---------------------------------------------------");
 console.log("OPSI CONFD PORT", CONFD_PORT);
