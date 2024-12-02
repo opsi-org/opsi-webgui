@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "clean": "rm -rf node_modules; rm -f package-lock.json; npx nuxt cleanup",
+    "clean": "rm -rf node_modules",
+    "clean-full": "rm -rf node_modules; rm -f package-lock.json;",
     "build": "nuxi build",
     "dev0": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxt dev",
     "dev": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxi dev",
