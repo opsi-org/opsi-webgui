@@ -99,10 +99,10 @@ const clearSelection = () => {
 function syncSelection () {
   if(props.grouptype == 'client-group') {
     const resNodes: any[] = groupsHelper.filterNodes(fetchedData.value, selectionClients.value, 'text', undefined)
-    clientGroupRef.value!.setCheckedNodes(resNodes, false)
+    clientGroupRef.value?.setCheckedNodes(resNodes, false)
   } else {
     const resNodes: any[] = groupsHelper.filterNodes(fetchedData.value, selectionProducts.value, 'text', undefined)
-    prodGroupRef.value!.setCheckedNodes(resNodes, false)
+    prodGroupRef.value?.setCheckedNodes(resNodes, false)
   }
 }
 
