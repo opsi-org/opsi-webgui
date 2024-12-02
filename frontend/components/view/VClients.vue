@@ -4,6 +4,7 @@
   <el-button type="primary">element</el-button> -->
   <TableTTable
     :row-id="rowId"
+    :is-mobile="isMobile"
     has-client-actions
     action-clone="/clients/client/clone/"
     action-log="/clients/client/logs/"
@@ -67,8 +68,8 @@
           rowData.selected = storeSelection.selectionClients.includes(rowData[rowId])
         })
         return storeSelection.multiSelection ?
-          (<Checkbox model-value={rowData.selected} binary readonly/>) :
-          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary readonly/>)
+          (<Checkbox model-value={rowData.selected} binary/>) :
+          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary />)
       },
     },
     {

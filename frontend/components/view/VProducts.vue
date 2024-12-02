@@ -1,6 +1,7 @@
 <template>
   <TableTTable
     ref="productsRef"
+    :is-mobile="isMobile"
     :row-id="rowId"
     :table-column="tableColumn"
     :fetch="fetchProducts"

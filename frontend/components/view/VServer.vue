@@ -1,6 +1,7 @@
 <template>
   <TableTTable
     :row-id="rowId"
+    :is-mobile="isMobile"
     :table-column="tableColumn"
     :fetch="fetchServer"
     action-config="/servers/server/config/"
