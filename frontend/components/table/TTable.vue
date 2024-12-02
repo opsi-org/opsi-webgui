@@ -2,7 +2,7 @@
   <div>
     <TableTTableMobile
       v-if="isMobile"
-      ref="table"
+      ref="tableMobile"
       v-bind="props"
       :table-column="tableColumn"
       :fetch="fetch"
@@ -11,7 +11,7 @@
     />
     <TableTTableDesktop
       v-else
-      ref="table"
+      ref="tableDesktop"
       v-bind="props"
       :table-column="tableColumn"
       :fetch="fetch"
@@ -43,14 +43,32 @@ const props = defineProps({
 })
 
 const $emit = defineEmits(['selectionChanged', 'clearSelection'])
-const table = ref<typeof TTableDesktop| typeof TTableMobile>()
-
-defineExpose({ refetch: table.value?.refetch, fetchedData: table.value?.fetchedData })
-
+const tableMobile = ref<typeof TTableMobile>()
+const tableDesktop = ref<typeof TTableDesktop>()
 
 const isMobileWrapper = ref<boolean>(props.isMobile)
 watch(()=>useMQ().isMobile, ()=>{
   isMobileWrapper.value = useMQ().isMobile.value
 }, {deep: true})
+
+defineExpose({ refetch: fetchWrapper, fetchedData: dataWrapper, })
+
+
+async function fetchWrapper() {
+  if (isMobileWrapper.value) {
+    await tableMobile.value?.refetch()
+  } else {
+    await tableDesktop.value?.refetch()
+  }
+}
+
+function dataWrapper() {
+  if (isMobileWrapper.value) {
+    return tableMobile.value?.fetchedData
+  } else {
+    return tableDesktop.value?.fetchedData
+  }
+}
+
 
 </script>

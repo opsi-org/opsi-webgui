@@ -479,11 +479,9 @@ import RadioButton from 'primevue/radiobutton'
   }
 
   function changeProductsType(type: IProductTypes) {
-    if (props.isChild) {
-      router.push('/clients/products/' + type + '/')
-    } else {
-      router.push('/products/' + type + '/')
-    }
+    const fullUrl = router.currentRoute.value.fullPath
+    router.push(fullUrl.replace('products/' + currentType.value + '', 'products/' + type + '/'))
+
     const types: Array<IProductTypes> = Object.keys(
       productsTypeChecked.value
     ) as Array<IProductTypes>
