@@ -15,6 +15,8 @@ export default {
         'opsi-deep-blue': 'var(--color-opsi-deep-blue)',
         'opsi-blue': 'var(--color-opsi-blue)',
         'opsi-red': 'var(--color-opsi-red)',
+        'primary': 'var(--color-opsi-blue)',
+        'secondary': 'var(--color-opsi-magenta)',
         'danger': 'var(--el-color-danger)',
         'success': 'var(--el-color-success)',
         'info': 'var(--el-color-info)',
@@ -91,5 +93,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-primeui')]
 }

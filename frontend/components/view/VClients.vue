@@ -1,10 +1,14 @@
 <template>
+  <!-- <PButton label="primevue" severity="primary" />
+  <button class="bg-primary">tailwind?</button>
+  <el-button type="primary">element</el-button> -->
   <TableTTable
     :row-id="rowId"
     has-client-actions
     action-clone="/clients/client/clone/"
     action-log="/clients/client/logs/"
     action-config="/clients/client/config/"
+    sort-by="installationStatus_installed"
     :table-column="tableColumn"
     :fetch="fetchClients"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionClients(id)}"
@@ -24,8 +28,9 @@
   import type { T_ClientsList } from '~/types/APItypes'
   import { useIcons } from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
-import Checkbox from 'primevue/checkbox';
-import RadioButton from 'primevue/radiobutton';
+  import Checkbox from 'primevue/checkbox';
+  import RadioButton from 'primevue/radiobutton'
+  import Button from 'primevue/button'
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
@@ -63,7 +68,7 @@ import RadioButton from 'primevue/radiobutton';
         })
         return storeSelection.multiSelection ?
           (<Checkbox model-value={rowData.selected} binary />) :
-          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary/>)
+          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary readonly/>)
       },
     },
     {
@@ -90,10 +95,13 @@ import RadioButton from 'primevue/radiobutton';
       width: '60px',
       icon: icons.productsOutdated,
       cellRenderer: getStatisticRenderer(
+        $t('table.fields.versionOutdatedGeneral'),
         '/clients/products/LocalbootProduct?sortby=version&selectedClient=',
         'version_outdated',
         'version',
-        'LocalbootProduct'
+        'LocalbootProduct',
+        Infinity,
+        1
       ),
     },
     {
@@ -105,10 +113,13 @@ import RadioButton from 'primevue/radiobutton';
       width: '60px',
       icon: icons.productsOutdated,
       cellRenderer: getStatisticRenderer(
+        $t('table.fields.versionOutdatedNetboot'),
         '/clients/products/NetbootProduct?sortby=version&selectedClient=',
         'version_outdated',
         'version',
-        'NetbootProduct'
+        'NetbootProduct',
+        Infinity,
+        1
       ),
     },
     {
@@ -120,9 +131,13 @@ import RadioButton from 'primevue/radiobutton';
       width: '60px',
       icon: icons.productInstallationStatusUnknown,
       cellRenderer: getStatisticRenderer(
+        $t('table.fields.installationStatusUnknown'),
         '/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=',
         'installationStatus_unknown',
         'installationStatus',
+        undefined, // type
+        Infinity, // errorValue
+        1 // warnValue
       ),
     },
     {
@@ -134,9 +149,10 @@ import RadioButton from 'primevue/radiobutton';
       width: '60px',
       icon: icons.product,
       cellRenderer: getStatisticRenderer(
+        $t('table.fields.installationStatus_installed'),
         '/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=',
         'installationStatus_installed',
-        'installationStatus',
+        'installationStatus'
       ),
     },
     {
@@ -148,9 +164,13 @@ import RadioButton from 'primevue/radiobutton';
       width: '60px',
       icon: icons.productsFailedActionResult,
       cellRenderer: getStatisticRenderer(
+        $t('table.fields.actionResultFailed'),
         '/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=',
         'actionResult_failed',
-        'actionResult'
+        'actionResult',
+        undefined, // type
+        1, // errorValue
+        Infinity // warnValue
       ),
     },
     {
@@ -162,9 +182,10 @@ import RadioButton from 'primevue/radiobutton';
       width: '60px',
       icon: icons.productActionResultSuccessful,
       cellRenderer: getStatisticRenderer(
+        $t('table.fields.actionResult_successful'),
         '/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=',
         'actionResult_successful',
-        'actionResult'
+        'actionResult',
       ),
     },
     {
@@ -203,21 +224,36 @@ import RadioButton from 'primevue/radiobutton';
     return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
   }
 
-  function getStatisticRenderer(url: string, value: string, sortbyKey: string, type: undefined|string = undefined): (rowData: any) => VNode {
+  function getStatisticRenderer(tootltip: string, url: string, value: string, sortbyKey: string, type: undefined|string = undefined, errorValue: number = Infinity, warnValue: number = Infinity): (rowData: any) => VNode {
     return ({rowData}:any) => {
-      const classClicked = ' !bg-opsi-blue !text-white'
-      const click = () => {router.push(url + rowData.clientId)}
-      const checkRoute = () => {
+      function click() { router.push(url + rowData.clientId) }
+
+      const checked = computed(() => {
         const currentRoute = router.currentRoute.value.fullPath
         if (type) {
-          return currentRoute.includes('sortby='+sortbyKey) && currentRoute.includes('selectedClient=' + rowData.clientId) && currentRoute.includes('/' + type + '?') ? classClicked : ''
+          return currentRoute.includes('sortby='+sortbyKey) && currentRoute.includes('selectedClient=' + rowData.clientId) && currentRoute.includes('/' + type + '?')
         }
-        return currentRoute.includes('sortby='+sortbyKey) && currentRoute.includes('selectedClient=' + rowData.clientId) ? classClicked : ''
-      }
+        return currentRoute.includes('sortby='+sortbyKey) && currentRoute.includes('selectedClient=' + rowData.clientId)
+      })
+      const severity = computed(() => {
+        if (checked.value) return 'primary';
+        if (rowData[value] >= errorValue) return 'danger';
+        if (rowData[value] >= warnValue) return 'warn';
+        return 'success';
+      });
 
-      const isCurrentClass = ref(checkRoute())
-      watch(() => router.currentRoute.value.fullPath, checkRoute)
-      return <el-tag class={'cursor-pointer ' + isCurrentClass.value} onClick={click}> {rowData[value]} </el-tag>
+      return <el-tooltip
+            class="box-item"
+            effect="dark"
+            placement="left-start"
+            v-slots={{ content: () => rowData[value] + ' ' + tootltip }}
+          >
+          <div>
+
+            <Button badge={(rowData[value] || 0) + ''} badgeSeverity={severity.value} onClick={click} class="!inline !bg-transparent !m-0 !p-0 !border-0"
+            />
+          </div>
+          </el-tooltip>
     }
   }
 

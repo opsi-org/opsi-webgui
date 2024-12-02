@@ -51,7 +51,7 @@ import RadioButton from 'primevue/radiobutton';
         })
         return storeSelection.multiSelection ?
           (<Checkbox model-value={rowData.selected} binary />) :
-          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary/>)
+          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary readonly/>)
       },
     },
     {
@@ -148,8 +148,3 @@ import RadioButton from 'primevue/radiobutton';
     return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
   }
 </script>
-<style>
-div.p-checkbox-box {
-  display: none !important;
-}
-</style>

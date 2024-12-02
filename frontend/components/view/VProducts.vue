@@ -107,7 +107,7 @@ import RadioButton from 'primevue/radiobutton'
         })
         return storeSelection.multiSelection ?
           (<Checkbox model-value={rowData.selected} binary />) :
-          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary/>)
+          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary readonly/>)
       },
     },
     {

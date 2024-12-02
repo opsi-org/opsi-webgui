@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-
 import pkg from "./package.json";
+import MyPreset from "./assets/scss/primevue";
 
 const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? "4447";
 // do not change following line, cause it is automatically patched by the build_production_local.sh script
-const ADDON_PATH: string = "/addons/webgui"
+const ADDON_PATH: string = "/addons/webgui";
 
 console.log("---------------------------------------------------");
 console.log("OPSI CONFD PORT", CONFD_PORT);
@@ -73,7 +73,8 @@ export default defineNuxtConfig({
   },
   modules: [
     "@nuxtjs/i18n",
-    "nuxt-primevue",
+    "@primevue/nuxt-module",
+    // "nuxt-primevue",
     "@element-plus/nuxt",
     "@nuxtjs/tailwindcss",
     ["@pinia/nuxt", { autoImports: ["defineStore", "acceptHMRUpdate"] }],
@@ -108,6 +109,21 @@ export default defineNuxtConfig({
     options: {
       ripple: false,
       pt: {},
+      // theme: { preset: Material },
+      theme: {
+        preset: MyPreset,
+
+        options: {
+          prefix: "p",
+          darkModeSelector: "system",
+          // cssLayer: false
+          // darkModeSelector: ".dark",
+          cssLayer: {
+            name: "primevue",
+            order: "tailwind-base, primevue, tailwind-utilities",
+          },
+        },
+      },
     },
     components: {
       prefix: "P",
