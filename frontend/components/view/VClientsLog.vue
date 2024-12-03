@@ -20,7 +20,7 @@
       </el-form-item>
     </template>
   </el-form>
-  <el-scrollbar height="79vh" v-if="fetchedData.length > 1">
+  <el-scrollbar  v-if="fetchedData.length > 1">
     <span
       v-for="log in filteredData"
       :key="log"
