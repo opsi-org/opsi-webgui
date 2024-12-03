@@ -1,7 +1,6 @@
 git:
   hooks:
     pre-push: |
-      exit 0
       bash /workspace/frontend/scripts/prehook.sh
       # cd /workspace/frontend/
       # file=".tmp_prepush_result_changed_files.log"
