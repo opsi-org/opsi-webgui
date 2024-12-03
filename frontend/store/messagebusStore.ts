@@ -8,8 +8,8 @@ export const storeMBus = defineStore('mbus', {
   //   // storage: sessionStorage,
   // },
   state: () => ({
-    _bus: undefined as WebSocket|undefined,
-    _busterminal: undefined as WebSocket|undefined,
+    _bus: undefined as WebSocket | undefined,
+    _busterminal: undefined as WebSocket | undefined,
     _bus_last_msg: undefined as any,
   }),
   getters: {
@@ -18,25 +18,25 @@ export const storeMBus = defineStore('mbus', {
     wsBusMsg: ({ _bus_last_msg }) => _bus_last_msg,
   },
   actions: {
-    $reset () {
+    $reset() {
       this._bus = undefined
       this._busterminal = undefined
       this._bus_last_msg = undefined
     },
-    setBus (bus: WebSocket|undefined) {
+    setBus(bus: WebSocket | undefined) {
       this._bus = bus
     },
-    setBusTerminal (bus: WebSocket|undefined) {
+    setBusTerminal(bus: WebSocket | undefined) {
       this._busterminal = bus
     },
-    setBusLastMsg (obj: any) {
+    setBusLastMsg(obj: any) {
       this._bus_last_msg = obj
     },
   },
 })
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeMBus, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(storeMBus, import.meta.hot))
 }
 
 // export const storeMBus = defineStore('mbus', () => {

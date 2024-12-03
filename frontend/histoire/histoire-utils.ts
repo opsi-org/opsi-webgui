@@ -3,7 +3,7 @@
 // @ts-ignore
 
 const loggedIn = ref(false)
-export async function logout()  {
+export async function logout() {
   if (!loggedIn.value) return
   const { error } = await useApiPOST('/auth/logout')
   if (error?.response.data.message === 'Unauthorized') {
@@ -11,7 +11,7 @@ export async function logout()  {
     storeAuth().logout()
     storeAuth().clearSession()
   } else if (error !== undefined && error !== null) {
-    console.log("error", error.response.data.message)
+    console.log('error', error.response.data.message)
   } else {
     loggedIn.value = false
     console.log('logged out')
@@ -39,12 +39,15 @@ export async function loginlogout({ app }: any) {
   const User = new FormData()
   User.append('username', 'adminuser')
   User.append('password', 'adminuser')
-  const { data, error } = await useApiPOST<{result: string}>('/auth/login', User)
+  const { data, error } = await useApiPOST<{ result: string }>(
+    '/auth/login',
+    User,
+  )
   if (error !== undefined && error !== null) {
     console.error('error', error)
   } else if (data?.value?.result == 'Login success') {
     loggedIn.value = true
-    console.log("login successful")
+    console.log('login successful')
     storeAuth().login('adminuser')
     storeAuth().setSession()
   }

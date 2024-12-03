@@ -1,4 +1,3 @@
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import generalconfig from './playwright/config/playwright-config'
@@ -12,14 +11,14 @@ const config = {
   fullyParallel: true,
   reporter: [
     ['list'],
-    ['junit', { outputFile: 'test-result-pw-reporter-component.xml' }]
+    ['junit', { outputFile: 'test-result-pw-reporter-component.xml' }],
   ],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
   expect: generalconfig.expect,
   use: generalconfig.use,
   projects: generalconfig.projects,
-  timeout: 5 * 60 * 1000
+  timeout: 5 * 60 * 1000,
 }
 
 // module.exports = config

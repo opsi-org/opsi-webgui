@@ -7,7 +7,15 @@ const _data_visibleColumns = {
   // clients: ['sel', 'clientId', 'description', '_majorStats', 'rowactions'],
   clients: ['sel', 'clientId', 'description', '_majorStats', 'rowactions'],
   // products: ['sel', 'productId', 'name', 'description', 'installationStatus', 'actionResult', 'modificationTime', 'priority', 'version', 'actionProgress', 'actionRequest', 'rowactions'], // all columns
-  products: ['sel', 'installationStatus', 'actionResult', 'productId',  'version', 'actionRequest', 'rowactions'],
+  products: [
+    'sel',
+    'installationStatus',
+    'actionResult',
+    'productId',
+    'version',
+    'actionRequest',
+    'rowactions',
+  ],
 }
 const _data_sortColumns = {
   servers: { column: 'depotId', isDesc: false },
@@ -15,7 +23,7 @@ const _data_sortColumns = {
   products: { column: 'productId', isDesc: false },
 }
 // const deepCp = (obj:any) => JSON.parse(JSON.stringify(obj))
-const deepCp = (obj:any) => obj
+const deepCp = (obj: any) => obj
 
 export const storeTablesettings = defineStore('tablesettings', {
   // persist: false,
@@ -24,11 +32,12 @@ export const storeTablesettings = defineStore('tablesettings', {
     storage: localStorage,
     // storage: sessionStorage,
   },
-  state: () => ({ // the state objects are stored in localStorage
+  state: () => ({
+    // the state objects are stored in localStorage
     _configLastSelected: deepCp(_data_configLastSelected),
     _visibleColumns: deepCp(_data_visibleColumns),
     _sortColumns: deepCp(_data_sortColumns),
-    secondColumnSelectedRowId: ''
+    secondColumnSelectedRowId: '',
   }),
   getters: {
     serversColumns: ({ _visibleColumns }) => _visibleColumns.servers,
@@ -42,29 +51,29 @@ export const storeTablesettings = defineStore('tablesettings', {
     configLastSelected: ({ _configLastSelected }) => _configLastSelected,
   },
   actions: {
-    $reset () {
+    $reset() {
       console.warn('resetting tablesettings')
       this._configLastSelected = deepCp(_data_configLastSelected)
       this._visibleColumns = deepCp(_data_visibleColumns)
       this._sortColumns = deepCp(_data_sortColumns)
     },
-    setSecondColumnSelectedRowId (id:string) {
+    setSecondColumnSelectedRowId(id: string) {
       this.secondColumnSelectedRowId = id
     },
-    setColumns (tabletype:string, value:Array<string>) {
+    setColumns(tabletype: string, value: Array<string>) {
       this._visibleColumns[tabletype] = value
     },
-    setSortColumn (tabletype:string, column:string, isDesc:boolean) {
+    setSortColumn(tabletype: string, column: string, isDesc: boolean) {
       this._sortColumns[tabletype] = { column, isDesc }
     },
-    setConfigLastSelected (tabletype:string, value:string) {
+    setConfigLastSelected(tabletype: string, value: string) {
       this._configLastSelected[tabletype] = value
     },
   },
 })
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeTablesettings, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(storeTablesettings, import.meta.hot))
 }
 
 // export const storeTablesettings = defineStore('tablesettings', () => {

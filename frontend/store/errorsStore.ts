@@ -15,24 +15,23 @@ export const storeErrors = defineStore('errors', {
     errorsHostParam: ({ _errorsHostParam }) => _errorsHostParam,
   },
   actions: {
-    pushToErrorsProducts (obj: object) {
+    pushToErrorsProducts(obj: object) {
       this._errorsProducts.push(obj)
     },
-    clearErrorsProducts () {
+    clearErrorsProducts() {
       this._errorsProducts = []
     },
-    pushToErrorsHostParam (obj: object) {
+    pushToErrorsHostParam(obj: object) {
       this._errorsHostParam.push(obj)
     },
-    clearErrorsHostParam () {
+    clearErrorsHostParam() {
       this._errorsHostParam = []
     },
   },
 })
 
-
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeErrors, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(storeErrors, import.meta.hot))
 }
 
 // export const storeErrors = defineStore('errors', () => {

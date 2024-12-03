@@ -1,22 +1,20 @@
-
-
 /** Types which came from backend and some additionally according to them */
 
 /** Type for Response of '/api/user/configuration'
  * @ see {@link https://localhost:4447/docs#/default/user_configuration_addons_webgui_api_user_configuration_get | API documentation}
  */
 export interface T_configuration {
-  user: string,
+  user: string
   configuration: {
-    read_only: boolean,
-    depot_access: boolean,
-    host_group_access: boolean,
-    product_group_access: boolean,
+    read_only: boolean
+    depot_access: boolean
+    host_group_access: boolean
+    product_group_access: boolean
     client_creation: boolean
   }
 }
 
-export type IProductTypes  = 'LocalbootProduct' | 'NetbootProduct' | 'Product'
+export type IProductTypes = 'LocalbootProduct' | 'NetbootProduct' | 'Product'
 
 export interface T_Opsiserver {
   result: string
@@ -84,13 +82,13 @@ export type tconfigtypes = 'BoolConfig' | 'UnicodeConfig' | 'Config'
 export interface T_HostParameterEntry {
   configId: string
   description: string
-  type:  tconfigtypes
+  type: tconfigtypes
   value: string | boolean | Array<string>
   possibleValues: Array<string | boolean | never>
   multiValue: boolean
   editable: boolean
   newValue?: string
-  newValues?: Array<string|never>
+  newValues?: Array<string | never>
 }
 export interface T_Logout {
   result: string
@@ -111,21 +109,20 @@ export interface T_PGroups {
 // }
 
 export interface T_Groups {
-  id: string;
-  type: string;
-  text: string;
-  parent: string | null;
-  children: { [key: string]: T_Groups } | null;
+  id: string
+  type: string
+  text: string
+  parent: string | null
+  children: { [key: string]: T_Groups } | null
 }
 
 export interface T_GroupsTransformed {
-  id: string;
-  type: string;
-  text: string;
-  parent: string | null;
-  children: T_GroupsTransformed[] | null;
+  id: string
+  type: string
+  text: string
+  parent: string | null
+  children: T_GroupsTransformed[] | null
 }
-
 
 export type T_ServerList = Array<T_Server>
 export interface T_Server {
@@ -159,10 +156,7 @@ export interface T_Client {
   actionResult_successful: number
   selected: boolean | number
   reachable: boolean | undefined
-
 }
-
-
 
 // export interface T_Products {
 //   [key: string]: T_Product
@@ -180,7 +174,7 @@ export interface T_Product {
 }
 
 interface propdepres {
-  productVersions: {[key: string]: string|undefined}
+  productVersions: { [key: string]: string | undefined }
   productDescription: string
   productDescriptionDetails: { [key: string]: string }
   productAdvice: string
@@ -198,7 +192,9 @@ export interface T_ProductPropertiesResult extends propdepres {
 export interface T_ProductProperties {
   [key: string]: T_ProductProperty
 }
-export type tproductpropertytypes = 'UnicodeProductProperty' | 'BoolProductProperty'
+export type tproductpropertytypes =
+  | 'UnicodeProductProperty'
+  | 'BoolProductProperty'
 type propvalue = string | boolean
 export interface T_ProductProperty {
   productId: string
@@ -228,29 +224,26 @@ export interface T_ProductProperty {
   _showDetails?: boolean
   newValue?: string // empty string if editable==true
   newValues?: Array<string> // empty list if editable==true
-
 }
-
 
 export interface T_ProductDependenciesResult extends propdepres {
   dependencies: Array<T_ProductDependencies>
 }
 export interface T_ProductDependencies {
-//   productId	"l-desktop"
-// productAction	"setup"
-// version	"4.2.0.4-1"
-// requiredProductId	"l-system-update"
-// requiredVersion	null
-// requiredAction	"setup"
-// requiredInstallationStatus	null
-// requirementType	"before"
+  //   productId	"l-desktop"
+  // productAction	"setup"
+  // version	"4.2.0.4-1"
+  // requiredProductId	"l-system-update"
+  // requiredVersion	null
+  // requiredAction	"setup"
+  // requiredInstallationStatus	null
+  // requirementType	"before"
   productId: string
-  productAction: string|null
+  productAction: string | null
   version: string
   requiredProductId: string
   requiredVersion: string | null
   requiredAction: string | null
   requiredInstallationStatus: string | null
-  requirementType: string|null
-
+  requirementType: string | null
 }

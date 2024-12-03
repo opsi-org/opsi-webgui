@@ -1,15 +1,15 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 
-export const storeSettings = defineStore("settings", {
+export const storeSettings = defineStore('settings', {
   // persist: false,
   persist: {
-    key: "opsi-auth",
+    key: 'opsi-auth',
     storage: localStorage,
     // storage: sessionStorage,
   },
   state: () => ({
     isMobile: useMQ().isMobile.value as boolean,
-    language: "en",
+    language: 'en',
     quicksave: false,
     quickpanelOpened: true as boolean,
     msgbusAutoRefresh: true as boolean,
@@ -25,61 +25,61 @@ export const storeSettings = defineStore("settings", {
     // quickpanelOpened: (state: any) => state._quickpanelOpened,
     // menuCollapsed: (state: any) => state._menuCollapsed,
     // expiresInterval: (state: any) => state._expiresInterval,
-    colormodeCookie: () => useCookie("colormode").value,
+    colormodeCookie: () => useCookie('colormode').value,
     colormode: (getter: any) => {
-      const _colormode = getter.colormodeCookie;
-      return _colormode as "light" | "dark";
+      const _colormode = getter.colormodeCookie
+      return _colormode as 'light' | 'dark'
     },
     isLight: (getter: any) => {
-      const _colormode = getter.colormodeCookie;
-      return _colormode === "light";
+      const _colormode = getter.colormodeCookie
+      return _colormode === 'light'
     },
   },
   actions: {
     setExpiresInterval(int: NodeJS.Timeout | undefined) {
       if ((int === null || int === undefined) && this.expiresInterval) {
-        clearInterval(this.expiresInterval);
+        clearInterval(this.expiresInterval)
       }
-      this.expiresInterval = int;
+      this.expiresInterval = int
     },
     setLanguage(lang: string) {
-      this.language = lang;
-      useCookie("Language").value = this.language;
+      this.language = lang
+      useCookie('Language').value = this.language
     },
     setQuicksave(isQuickSave: boolean) {
-      this.quicksave = isQuickSave;
-      useCookie("Quicksave").value = isQuickSave ? "true" : "false";
+      this.quicksave = isQuickSave
+      useCookie('Quicksave').value = isQuickSave ? 'true' : 'false'
     },
     setQuickpanelOpened(isQuickpanelOpened: boolean) {
-      this.quickpanelOpened = isQuickpanelOpened;
-      useCookie("QuickpanelOpened").value = isQuickpanelOpened
-        ? "true"
-        : "false";
+      this.quickpanelOpened = isQuickpanelOpened
+      useCookie('QuickpanelOpened').value = isQuickpanelOpened
+        ? 'true'
+        : 'false'
     },
     setMenuCollapsed(isMenuCollapsed: boolean) {
-      this.menuCollapsed = isMenuCollapsed;
-      useCookie("MenuCollapsed").value = isMenuCollapsed ? "true" : "false";
+      this.menuCollapsed = isMenuCollapsed
+      useCookie('MenuCollapsed').value = isMenuCollapsed ? 'true' : 'false'
     },
     setIsMobile(isMobile: boolean) {
       // only for testing purpose
-      this.isMobile = isMobile;
+      this.isMobile = isMobile
     },
     initColormode() {
-      const colormode = this.colormode;
-      this.setColormode(colormode, false);
+      const colormode = this.colormode
+      this.setColormode(colormode, false)
     },
-    setColormode(colormode: "light" | "dark", saveCookie = true) {
+    setColormode(colormode: 'light' | 'dark', saveCookie = true) {
       if (saveCookie) {
-        useCookie("colormode").value = colormode;
+        useCookie('colormode').value = colormode
       }
-      const isDark = colormode === "dark";
-      document.documentElement.classList.toggle("dark", isDark);
+      const isDark = colormode === 'dark'
+      document.documentElement.classList.toggle('dark', isDark)
     },
   },
-});
+})
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeSettings, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(storeSettings, import.meta.hot))
 }
 
 // export const storeSettings = defineStore('settings', () => {

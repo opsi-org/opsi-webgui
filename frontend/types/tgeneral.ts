@@ -10,7 +10,7 @@ export interface IObjectString2String {
   [key: string]: string
 }
 export interface IObjectString2StringOrUndefined {
-  [key: string]: string|undefined
+  [key: string]: string | undefined
 }
 
 export interface IObjectString2Boolean {
@@ -18,6 +18,6 @@ export interface IObjectString2Boolean {
 }
 export interface IObjectString2ObjectString2String {
   [key: string]: {
-      [key: string]: string
+    [key: string]: string
   }
 }

@@ -9,14 +9,14 @@ const config = {
 
   reporter: [
     ['list'],
-    ['junit', { outputFile: 'test-result-pw-reporter-usecase.xml' }]
+    ['junit', { outputFile: 'test-result-pw-reporter-usecase.xml' }],
   ],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
   expect: generalconfig.expect,
   use: generalconfig.use,
-  projects: generalconfig.projects
+  projects: generalconfig.projects,
 }
 
 // module.exports = config
-export default {config}
+export default { config }

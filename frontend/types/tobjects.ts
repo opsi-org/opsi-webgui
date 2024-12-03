@@ -1,62 +1,61 @@
-import type { IDepend, IProp } from "./ttable"
+import type { IDepend, IProp } from './ttable'
 
 export interface NewClient {
-  hostId: string,
-  description: string,
-  inventoryNumber: string,
-  hardwareAddress: string,
-  ipAddress: any,
+  hostId: string
+  description: string
+  inventoryNumber: string
+  hardwareAddress: string
+  ipAddress: any
   notes: string
 }
 
 export interface FormClientAgent {
-    clients: Array<string>,
-    username: string,
-    password: string,
-    type: string
+  clients: Array<string>
+  username: string
+  password: string
+  type: string
 }
-
 
 export interface IErrorDepProp {
   dependencies: string
   properties: string
 }
 export interface IFetchedData {
-  dependencies:IDepend,
-  properties:IProp
+  dependencies: IDepend
+  properties: IProp
 }
 
 export interface FormUser {
-    username: string,
-    password: string
+  username: string
+  password: string
 }
 
 export interface SideBarAttr {
-    visible: boolean,
-    expanded: boolean
+  visible: boolean
+  expanded: boolean
 }
 
 export interface IFetchOptions {
-  fetchClients:boolean,
-  fetchClients2Depots:boolean,
+  fetchClients: boolean
+  fetchClients2Depots: boolean
 }
 
 export interface AppState {
   type: string
-  address_exceptions: Array<string>,
+  address_exceptions: Array<string>
   retry_after: number
 }
 export interface CreateBackup {
-  config_files: boolean,
-  redis_data:boolean,
-  maintenance_mode: boolean,
+  config_files: boolean
+  redis_data: boolean
+  maintenance_mode: boolean
   password: string
 }
 export interface RestoreBackup {
-  file_id: string,
-  config_files: boolean,
-  redis_data:boolean,
-  server_id: string,
+  file_id: string
+  config_files: boolean
+  redis_data: boolean
+  server_id: string
   password: string
 }
 
@@ -76,7 +75,7 @@ export interface Group {
 // }
 
 export interface IMenuItem {
-  title:string
+  title: string
   route?: string
   icon?: string
   disabled?: boolean
@@ -85,22 +84,22 @@ export interface IMenuItem {
 }
 
 export interface LogRequest {
-  selectedClient: string,
+  selectedClient: string
   selectedLogType: string
 }
 export interface FormClientAgent {
-  clients: Array<string>,
-  username: string,
-  password: string,
+  clients: Array<string>
+  username: string
+  password: string
   type: string
 }
 
 export interface QuickAction {
-  action: any,
-  outdated: boolean,
-  installation_status: any,
-  action_result: any,
-  selectedClients: undefined | Array<string>,
+  action: any
+  outdated: boolean
+  installation_status: any
+  action_result: any
+  selectedClients: undefined | Array<string>
   // selectedDepots: undefined | Array<string>,
   demoMode: boolean
 }
@@ -110,6 +109,6 @@ export interface DeleteClient {
 }
 
 export interface IColumnLayoutCollapsed {
-  parentId: string,
+  parentId: string
   value: boolean
 }

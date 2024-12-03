@@ -15,51 +15,86 @@ export const storeChanges = defineStore('changes', {
     changesHostParam: ({ _changesHostParam }) => _changesHostParam,
   },
   actions: {
-    pushToChangesProducts (obj: object) {
+    pushToChangesProducts(obj: object) {
       this._changesProducts.push(obj)
     },
-    delWithIndexChangesProducts (index: number) {
+    delWithIndexChangesProducts(index: number) {
       this._changesProducts.splice(index, 1)
     },
-    delFromChangesProducts (obj: object) {
+    delFromChangesProducts(obj: object) {
       this._changesProducts.splice(this._changesProducts.indexOf(obj), 1)
     },
-    deleteFromProdChangesWhere (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) {
-      let removeItems = this._changesProducts.filter(item => item.user === localStorage.getItem('username'))
+    deleteFromProdChangesWhere(
+      hostKV: Array<any>,
+      objectKV: Array<any>,
+      additionalKV: Array<any>,
+    ) {
+      let removeItems = this._changesProducts.filter(
+        (item) => item.user === localStorage.getItem('username'),
+      )
       // filter by hosts
-      removeItems = removeItems.filter(item => hostKV[1].includes(item[hostKV[0]]))
+      removeItems = removeItems.filter((item) =>
+        hostKV[1].includes(item[hostKV[0]]),
+      )
       // filter by e.g. productId
-      if (objectKV) { removeItems = removeItems.filter(item => item[objectKV[0]] === hostKV[1]) }
+      if (objectKV) {
+        removeItems = removeItems.filter(
+          (item) => item[objectKV[0]] === hostKV[1],
+        )
+      }
       // filter by e.g. propertyId
-      if (additionalKV) { removeItems = removeItems.filter(item => item[additionalKV[0]] === additionalKV[1]) }
+      if (additionalKV) {
+        removeItems = removeItems.filter(
+          (item) => item[additionalKV[0]] === additionalKV[1],
+        )
+      }
 
       // remove filtered elements
-      removeItems.forEach(f => this._changesProducts.splice(this._changesProducts.findIndex(item => item === f), 1))
+      removeItems.forEach((f) =>
+        this._changesProducts.splice(
+          this._changesProducts.findIndex((item) => item === f),
+          1,
+        ),
+      )
     },
-    deleteAllProductChanges () {
+    deleteAllProductChanges() {
       // this._changesProducts.splice(0, this._changesProducts.length)
-      const removeItems = this._changesProducts.filter(item => item.user === localStorage.getItem('username'))
-      removeItems.forEach(f => this._changesProducts.splice(this._changesProducts.findIndex(item => item.user === f.user), 1))
+      const removeItems = this._changesProducts.filter(
+        (item) => item.user === localStorage.getItem('username'),
+      )
+      removeItems.forEach((f) =>
+        this._changesProducts.splice(
+          this._changesProducts.findIndex((item) => item.user === f.user),
+          1,
+        ),
+      )
     },
-    pushToChangesHostParam (obj: object) {
+    pushToChangesHostParam(obj: object) {
       this._changesHostParam.push(obj)
     },
-    delWithIndexChangesHostParam (index: number) {
+    delWithIndexChangesHostParam(index: number) {
       this._changesHostParam.splice(index, 1)
     },
-    delFromChangesHostParam (obj: object) {
+    delFromChangesHostParam(obj: object) {
       this._changesHostParam.splice(this._changesHostParam.indexOf(obj), 1)
     },
-    deleteAllChangesHostParam () {
+    deleteAllChangesHostParam() {
       // this._changesProducts.splice(0, this._changesProducts.length)
-      const removeItems = this._changesHostParam.filter(item => item.user === localStorage.getItem('username'))
-      removeItems.forEach(f => this._changesHostParam.splice(this._changesHostParam.findIndex(item => item.user === f.user), 1))
+      const removeItems = this._changesHostParam.filter(
+        (item) => item.user === localStorage.getItem('username'),
+      )
+      removeItems.forEach((f) =>
+        this._changesHostParam.splice(
+          this._changesHostParam.findIndex((item) => item.user === f.user),
+          1,
+        ),
+      )
     },
   },
 })
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeChanges, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(storeChanges, import.meta.hot))
 }
 
 // export const storeChanges = defineStore('changes', () => {

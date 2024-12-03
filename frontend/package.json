@@ -17,7 +17,7 @@
     "lint:fix": "eslint . --fix",
     "tsc": "npx nuxi typecheck",
     "lint:all": "npx nuxi typecheck && eslint .",
-    "format": "prettier --write \"{components,pages,plugins,middleware,layouts,composables,assets}/**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
+    "format": "prettier --write \"./**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
     "////nuxt-monaco-editor": "^1.2.3",
     "//monaco-editor": "^0.43.0",
     "//@vue/compat": "^3.3.4",

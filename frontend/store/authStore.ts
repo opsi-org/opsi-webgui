@@ -3,16 +3,15 @@ import { defineStore } from 'pinia'
 
 const expirySec = 60 * 30 // Default=30min
 
-
-
 export const storeAuth = defineStore('auth', {
   persist: {
     key: 'opsi-auth',
     storage: localStorage,
     // storage: sessionStorage,
   },
-  state: () => ({ // the state objects are stored in localStorage
-    username: "",
+  state: () => ({
+    // the state objects are stored in localStorage
+    username: '',
     sessionExpiry: expirySec, // sec
     sessionEndTime: '',
   }),
@@ -20,18 +19,19 @@ export const storeAuth = defineStore('auth', {
     // sessionEndTime: ({ _sessionendTime }) => _sessionendTime,
     // sessionExpiry: ({ _sessionexpiry }) => _sessionexpiry,
     // username: ({ _username }) => _username,
-    isAuthenticated: ({ username }) => Boolean(useCookie('opsiconfd-session') && username),
+    isAuthenticated: ({ username }) =>
+      Boolean(useCookie('opsiconfd-session') && username),
   },
   actions: {
-    $reset () {
+    $reset() {
       this.username = ''
       this.sessionEndTime = ''
     },
-    login (_username: string) {
+    login(_username: string) {
       this.username = _username
       // localStorage.setItem('_username', _username)
     },
-    logout () {
+    logout() {
       this.$reset()
       storeMBus().$reset()
       storeTablesettings().$reset()
@@ -42,30 +42,33 @@ export const storeAuth = defineStore('auth', {
       // storeTablesettings().$hydrate()
       this.username = ''
     },
-    setUser (username: string) {
+    setUser(username: string) {
       this.username = username
     },
-    setExpiredMin (m: number) {
+    setExpiredMin(m: number) {
       this.sessionExpiry = m
     },
-    setSession () {
+    setSession() {
       let expiryInSec = this.sessionExpiry
-      if (!expiryInSec) { expiryInSec = this.sessionExpiry }
-      if (!expiryInSec) { expiryInSec = expirySec }
+      if (!expiryInSec) {
+        expiryInSec = this.sessionExpiry
+      }
+      if (!expiryInSec) {
+        expiryInSec = expirySec
+      }
 
-      const expiryTime = new Date(new Date().getTime() + (expiryInSec * 1000))
+      const expiryTime = new Date(new Date().getTime() + expiryInSec * 1000)
       this.sessionEndTime = expiryTime as unknown as string
     },
-    clearSession () {
+    clearSession() {
       this.sessionEndTime = ''
       this.username = ''
     },
   },
 })
 
-
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeAuth, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(storeAuth, import.meta.hot))
 }
 // export const storeAuth = defineStore('auth', () => {
 //   // need to return the states / getters/ actions in the end of the setup

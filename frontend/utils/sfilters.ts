@@ -11,7 +11,12 @@
  * @param key
  * @param resultArray
  */
- export function filterObject (elements: Array<any>, matchingValue: string, key: string, resultArray:Array<string>) {
+export function filterObject(
+  elements: Array<any>,
+  matchingValue: string,
+  key: string,
+  resultArray: Array<string>,
+) {
   for (const elementKey in elements) {
     const element = elements[elementKey]
     if (element[key] === matchingValue) {
@@ -31,7 +36,12 @@
  * @param key
  * @param resultArray
  */
- export function filterObjectByValues (elements: Array<any>, matchingValues: Array<string>, key: string, resultArray:Array<string>) {
+export function filterObjectByValues(
+  elements: Array<any>,
+  matchingValues: Array<string>,
+  key: string,
+  resultArray: Array<string>,
+) {
   for (const elementKey in elements) {
     const element = elements[elementKey]
     if (matchingValues.includes(element[key])) {
@@ -52,17 +62,28 @@
  * @param mapKey
  * @param resultArray
  */
-export function filterObjectLabel (elements:Array<any>, matchingValue: string, compareKey:string, mapKey:string, resultArray:Array<string>) {
+export function filterObjectLabel(
+  elements: Array<any>,
+  matchingValue: string,
+  compareKey: string,
+  mapKey: string,
+  resultArray: Array<string>,
+) {
   for (const elementKey in elements) {
     const element = elements[elementKey]
     if (element[compareKey] === matchingValue) {
       resultArray.push(element[mapKey])
     } else if (element.children != null) {
-      filterObjectLabel(element.children, matchingValue, compareKey, mapKey, resultArray)
+      filterObjectLabel(
+        element.children,
+        matchingValue,
+        compareKey,
+        mapKey,
+        resultArray,
+      )
     }
   }
 }
-
 
 /**
  * Recursivly filter the elements.
@@ -74,13 +95,25 @@ export function filterObjectLabel (elements:Array<any>, matchingValue: string, c
  * @param mapKey
  * @param resultArray
  */
- export function filterObjectLabels (elements:Array<any>, matchingValues: Array<string>, compareKey:string, mapKey:string, resultArray:Array<string>) {
+export function filterObjectLabels(
+  elements: Array<any>,
+  matchingValues: Array<string>,
+  compareKey: string,
+  mapKey: string,
+  resultArray: Array<string>,
+) {
   for (const elementKey in elements) {
     const element = elements[elementKey]
     if (matchingValues.includes(element[compareKey])) {
       resultArray.push(element[mapKey])
     } else if (element.children != null) {
-      filterObjectLabels(element.children, matchingValues, compareKey, mapKey, resultArray)
+      filterObjectLabels(
+        element.children,
+        matchingValues,
+        compareKey,
+        mapKey,
+        resultArray,
+      )
     }
   }
 }
@@ -88,5 +121,5 @@ export function filterObjectLabel (elements:Array<any>, matchingValue: string, c
 export default {
   filterObject,
   filterObjectLabel,
-  filterObjectLabels
+  filterObjectLabels,
 }

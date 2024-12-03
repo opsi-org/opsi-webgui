@@ -5,23 +5,23 @@ export default class QueueNested {
   last_page_number: number = 0
   totalPages: number = -1
   title: string = 'DefaultQueue'
-  scrollDirection: 'none'|'up'|'down' = 'none'
+  scrollDirection: 'none' | 'up' | 'down' = 'none'
 
-  constructor(max:number, title='DefaultQueue') {
+  constructor(max: number, title = 'DefaultQueue') {
     // console.log(this.title, 'Queue constructor')
     this.elements = []
     this.max_elements = max
     this.title = title
     if (this.max_elements <= 0) {
-      throw new Error('Queue max_elements must be > 0)');
+      throw new Error('Queue max_elements must be > 0)')
     }
   }
 
-  enqueueHead(pnr:number, element: Array<any>) {
+  enqueueHead(pnr: number, element: Array<any>) {
     this.first_page_number = pnr
     // let elements = [...this.elements]
-    this.elements.unshift(element); // add new page to front
-    if (this.elements.length > this.max_elements){
+    this.elements.unshift(element) // add new page to front
+    if (this.elements.length > this.max_elements) {
       this.elements.length = this.max_elements // cut tail if more pages as capacity
       this.last_page_number = this.last_page_number - 1
     }
@@ -48,7 +48,7 @@ export default class QueueNested {
     // console.debug(this.title, 'Queue enqueueTail page_numbers', this.first_page_number, this.last_page_number)
   }
 
-  set(pnr:number, element: Array<any>) {
+  set(pnr: number, element: Array<any>) {
     if (!element) return
     this.first_page_number = pnr
     this.last_page_number = pnr
@@ -76,11 +76,11 @@ export default class QueueNested {
   //     // console.debug(this.title, 'Queue setAuto page_numbers', this.first_page_number, this.last_page_number)
   //   }
   // }
-  setAuto (pnr:number, element: Array<any>) {
+  setAuto(pnr: number, element: Array<any>) {
     if (!element) return
-    if (pnr == this.first_page_number-1) {
+    if (pnr == this.first_page_number - 1) {
       this.enqueueHead(pnr, element)
-    } else if (pnr == this.last_page_number+1) {
+    } else if (pnr == this.last_page_number + 1) {
       this.enqueueTail(pnr, element)
     } else {
       this.first_page_number = pnr
@@ -92,35 +92,33 @@ export default class QueueNested {
   }
 
   flat() {
-    this.elements.filter(e => e)
-    return this.elements.flat();
+    this.elements.filter((e) => e)
+    return this.elements.flat()
   }
-  valuesOfKey(key:string) {
-    const l:Array<string> = []
-    this.elements.flat().forEach(e => {
+  valuesOfKey(key: string) {
+    const l: Array<string> = []
+    this.elements.flat().forEach((e) => {
       l.push(e[key])
     })
     return l
   }
-  setTotalPages (totalPages:number) {
+  setTotalPages(totalPages: number) {
     this.totalPages = totalPages
   }
   get length() {
-    return this.elements.length;
+    return this.elements.length
   }
   get elementLength() {
     let l = 0
     for (let i = 0; i < this.elements.length; i++) {
-      l += this.elements[i].length;
+      l += this.elements[i].length
     }
-    return l;
+    return l
   }
   get isEmpty() {
-    return this.elements.length === 0;
+    return this.elements.length === 0
   }
-
 }
-
 
 // export default {
 //   Queue

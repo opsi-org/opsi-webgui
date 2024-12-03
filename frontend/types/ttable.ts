@@ -1,4 +1,8 @@
-import type { IObjectString2ObjectString2String, IObjectString2String, IObjectString2StringOrUndefined } from './tgeneral'
+import type {
+  IObjectString2ObjectString2String,
+  IObjectString2String,
+  IObjectString2StringOrUndefined,
+} from './tgeneral'
 
 export interface ITableDataItem {
   ident: string
@@ -21,53 +25,55 @@ export interface ITableRowItemProducts {
   depot_version_diff: boolean
   installationStatus: Array<string>
   actionResult: Array<string>
-  actionRequest: string,
-  actionRequestNew?: string,
+  actionRequest: string
+  actionRequestNew?: string
   _rowVariant?: string
   tooltiptext?: IObjectString2ObjectString2String
 }
 
 export interface ITableRow {
   rowSelected: boolean
-  toggleDetails: (rowitem: any) => void,
-  item: ITableRowItemProducts|{
-    ident: string
-    productId?: string
-    depotId?: string
-    clientId?: string
-    _rowVariant?: string
-    // depot_version_diff?: boolean
-    // client_version_outdated?: boolean
-    // depotVersions?: any //list?
-    // selectedDepots?: any // list?
-  };
+  toggleDetails: (rowitem: any) => void
+  item:
+    | ITableRowItemProducts
+    | {
+        ident: string
+        productId?: string
+        depotId?: string
+        clientId?: string
+        _rowVariant?: string
+        // depot_version_diff?: boolean
+        // client_version_outdated?: boolean
+        // depotVersions?: any //list?
+        // selectedDepots?: any // list?
+      }
 }
 
 export interface ITableData {
-  pageNumber: number,
-  perPage: number,
-  sortBy: any,
-  sortDesc: any,
-  filterQuery: string,
-  filterColumns?: Array<string>,
-  type?: string,
-  _lastScrollDirection?: string,
-  selected?: string,
-  selectedDepots?: string,
+  pageNumber: number
+  perPage: number
+  sortBy: any
+  sortDesc: any
+  filterQuery: string
+  filterColumns?: Array<string>
+  type?: string
+  _lastScrollDirection?: string
+  selected?: string
+  selectedDepots?: string
   selectedClients?: string
 }
 
 export interface ITableHeader {
-  label: string,
-  key: string,
-  visible: boolean,
-  sortable?: boolean,
-  _fixed?: boolean,
-  _isMajor?: boolean,
-  disabled?: boolean,
-  _majorKey?: string,
-  class?: string,
-  variant?: string,
+  label: string
+  key: string
+  visible: boolean
+  sortable?: boolean
+  _fixed?: boolean
+  _isMajor?: boolean
+  disabled?: boolean
+  _majorKey?: string
+  class?: string
+  variant?: string
   stickyColumn?: boolean
   mergeOnMobile?: boolean
 }
@@ -76,9 +82,9 @@ export interface ITableHeaders {
 }
 
 export interface ITableInfo {
-  sortBy: string,
-  sortDesc: boolean,
-  filterQuery?: string,
+  sortBy: string
+  sortDesc: boolean
+  filterQuery?: string
   headerData?: ITableHeaders
 }
 
@@ -86,20 +92,20 @@ export interface IProperty {
   _showDetails?: boolean // from bootstrap-table
   productId?: string
   propertyId: string
-  type: 'UnicodeProductProperty'|'BoolProductProperty'
+  type: 'UnicodeProductProperty' | 'BoolProductProperty'
   version?: string
   description: string
-  multiValue: boolean|string
-  editable: boolean|string
-  default: Array<string|boolean> // combined: product-packageVersion
-  allValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
+  multiValue: boolean | string
+  editable: boolean | string
+  default: Array<string | boolean> // combined: product-packageVersion
+  allValues: Array<string | boolean> // (all possibleValues concatinated without duplicates)
   details: string
 
-  versionDetails?: { [key:string]: string}
-  descriptionDetails?: { [key:string]: string}
-  defaultDetails?: { [key:string]: Array<boolean|string>}
-  multiValueDetails?: { [key:string]: boolean}
-  editableDetails?: { [key:string]: boolean}
+  versionDetails?: { [key: string]: string }
+  descriptionDetails?: { [key: string]: string }
+  defaultDetails?: { [key: string]: Array<boolean | string> }
+  multiValueDetails?: { [key: string]: boolean }
+  editableDetails?: { [key: string]: boolean }
 
   newValue?: string // empty string if editable==true
   newValues?: Array<string> // empty list if editable==true
@@ -108,24 +114,24 @@ export interface IProperty {
   anyDepotDifferentFromDefault?: boolean
   anyClientDifferentFromDepot?: boolean
 
-  depots:{ [key: string]: Array<string|boolean> }
-  clients:{ [key: string]: Array<string|boolean> }
+  depots: { [key: string]: Array<string | boolean> }
+  clients: { [key: string]: Array<string | boolean> }
 }
 
 export interface ITableRowProperty {
   rowSelected: boolean
-  toggleDetails: (rowitem: any) => void,
+  toggleDetails: (rowitem: any) => void
   item: IProperty
 }
 export interface IProductDependency {
   productId: string
-  productAction: string|null
+  productAction: string | null
   version: string
   requiredProductId: string
-  requiredVersion: string|null
-  requiredAction: string|null
-  requiredInstallationStatus: string|null
-  requirementType: string|null
+  requiredVersion: string | null
+  requiredAction: string | null
+  requiredInstallationStatus: string | null
+  requirementType: string | null
 }
 
 export interface IProperties {
@@ -157,7 +163,7 @@ export interface IProp {
   properties: IProperties
   productVersions: IObjectString2StringOrUndefined
   productDescription: string
-  productDescriptionDetails: IObjectString2String,
+  productDescriptionDetails: IObjectString2String
   productAdvice: string
   productAdviceDetails: IObjectString2String
 }

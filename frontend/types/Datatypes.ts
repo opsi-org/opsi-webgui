@@ -1,3 +1,3 @@
-import type { T_Client, T_Server } from "./APItypes";
+import type { T_Client, T_Server } from './APItypes'
 
-export type TRowData = T_Server|T_Client|any
+export type TRowData = T_Server | T_Client | any

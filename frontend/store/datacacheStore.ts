@@ -8,16 +8,16 @@ export const storeCache = defineStore('data-cache', {
     myopsiconfigserver: '',
   }),
   getters: {
-    opsiconfigserver: ({ myopsiconfigserver }) => myopsiconfigserver
+    opsiconfigserver: ({ myopsiconfigserver }) => myopsiconfigserver,
   },
   actions: {
-    setOpsiconfigserver(s: string) { // `this` is the store instance
+    setOpsiconfigserver(s: string) {
+      // `this` is the store instance
       this.myopsiconfigserver = s
     },
   },
 })
 
-
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeCache, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(storeCache, import.meta.hot))
 }

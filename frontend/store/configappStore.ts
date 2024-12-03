@@ -9,21 +9,20 @@ export const storeConfigapp = defineStore('config-app', {
     // storage: sessionStorage,
   },
   state: () => ({
-    _config: undefined as IObjectString2Boolean|undefined
+    _config: undefined as IObjectString2Boolean | undefined,
   }),
   getters: {
-    config: ({ _config }) => _config
+    config: ({ _config }) => _config,
   },
   actions: {
-    setConfig (obj: IObjectString2Boolean) {
+    setConfig(obj: IObjectString2Boolean) {
       this._config = obj
     },
   },
 })
 
-
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeConfigapp, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(storeConfigapp, import.meta.hot))
 }
 
 // export const storeConfigapp = defineStore('config-app', () => {

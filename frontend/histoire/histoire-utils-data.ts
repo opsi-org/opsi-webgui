@@ -1,5 +1,8 @@
-
-export const generateColumns = (length = 10, prefix = 'column-', props?: any) => {
+export const generateColumns = (
+  length = 10,
+  prefix = 'column-',
+  props?: any,
+) => {
   const cols: any = {}
   Array.from({ length }).map((_, columnIndex) => {
     const _key: string = `${prefix}${columnIndex}`
@@ -11,19 +14,18 @@ export const generateColumns = (length = 10, prefix = 'column-', props?: any) =>
       parentId: null,
       dataKey: _key,
       title: `Column ${columnIndex}`,
-      width: 200
+      width: 200,
     }
     cols[_key] = c
   })
   return cols
 }
 
-
-export  const generateData = (
+export const generateData = (
   columns: ReturnType<typeof generateColumns>,
   length = 200,
   prefix = 'row-',
-  startIndex = 0
+  startIndex = 0,
 ) =>
   Array.from({ length }).map((_, rowIndex) => {
     return Object.values(columns).reduce(
@@ -33,19 +35,20 @@ export  const generateData = (
         } else if (column.itemOf !== undefined) {
           rowData[column.dataKey] = column.itemOf[rowIndex]
         } else
-          rowData[column.dataKey] = `Row ${startIndex}${rowIndex} - Col ${columnIndex}`
+          rowData[column.dataKey] =
+            `Row ${startIndex}${rowIndex} - Col ${columnIndex}`
         return rowData
       },
       {
         id: `${prefix}${startIndex}${rowIndex}`,
         parentId: null,
-      }
+      },
     )
   })
 
 export const generateNumbers = (length = 200) => {
-  const l2:Array<number> = [];
-  Array.from({ length }).map(() => l2.push(Math.floor(Math.random() * 101)));
+  const l2: Array<number> = []
+  Array.from({ length }).map(() => l2.push(Math.floor(Math.random() * 101)))
   return l2
 }
 
@@ -57,6 +60,6 @@ export const generateTableData = (rowKey: string) => {
     sortBy: rowKey, // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
     sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
     filterQuery: '',
-    filterColumns: [rowKey]
+    filterColumns: [rowKey],
   }
 }

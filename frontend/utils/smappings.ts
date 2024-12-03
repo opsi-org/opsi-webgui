@@ -1,7 +1,12 @@
 // import { IObjectString2String } from '../types/tgeneral'
 import type { IObjectString2String } from '~/types/tgeneral'
 
-export function mapValues2Value (values: Array<string>, objects: Array<string>, objectsorigin?: Array<string>, defaultvalue?: string) {
+export function mapValues2Value(
+  values: Array<string>,
+  objects: Array<string>,
+  objectsorigin?: Array<string>,
+  defaultvalue?: string,
+) {
   let defvalue = 'none'
   if (defaultvalue) {
     defvalue = defaultvalue
@@ -21,35 +26,37 @@ export function mapValues2Value (values: Array<string>, objects: Array<string>, 
     }
     if (objectsorigin.length > 1 && values.length === 1) {
       if (objects.length !== objectsorigin.length) {
-        return (values[0] === defvalue) ? defvalue : 'mixed'
+        return values[0] === defvalue ? defvalue : 'mixed'
       }
       return values[0]
     }
     if (objectsorigin.length === objects.length) {
-      if (values.every(val => val === values[0])) {
+      if (values.every((val) => val === values[0])) {
         return values[0]
       }
     }
-
   }
-  if (values.every(val => val === defvalue)) {
+  if (values.every((val) => val === defvalue)) {
     return defvalue
   }
 
   return 'mixed'
 }
-export function mapValues2Objects (values: Array<string>, objects: Array<string>, objectsorigin: Array<string>, defaultValue: string) {
+export function mapValues2Objects(
+  values: Array<string>,
+  objects: Array<string>,
+  objectsorigin: Array<string>,
+  defaultValue: string,
+) {
   if (objects === undefined || objects === null) {
     return {}
   }
   const client2value: IObjectString2String = {}
   for (const o in objectsorigin) {
-
     const i = objects.indexOf(objectsorigin[o])
     if (i >= 0 && values.length === 1) {
       client2value[objects[i]] = values[0]
-    } else
-    if (i >= 0 && values) {
+    } else if (i >= 0 && values) {
       client2value[objects[i]] = values[i]
     } else if (i >= 0) {
       client2value[objects[i]] = defaultValue
@@ -60,8 +67,7 @@ export function mapValues2Objects (values: Array<string>, objects: Array<string>
   return client2value
 }
 
-
 export default {
   mapValues2Value,
-  mapValues2Objects
+  mapValues2Objects,
 }

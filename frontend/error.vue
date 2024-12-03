@@ -8,14 +8,13 @@
 </template>
 
 <script setup lang="ts">
-import type { NuxtError } from '#app'
-const $t = useI18n().t
-// const props =
-defineProps({
-  error: {
-    type: Object as () => NuxtError,
-    default: () => ({ statusCode: 500, statusMessage: 'Unknown error' })
-  }
-})
-
+  import type { NuxtError } from '#app'
+  const $t = useI18n().t
+  // const props =
+  defineProps({
+    error: {
+      type: Object as () => NuxtError,
+      default: () => ({ statusCode: 500, statusMessage: 'Unknown error' }),
+    },
+  })
 </script>

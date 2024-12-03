@@ -11,33 +11,44 @@ export const storeSelections = defineStore('selections', {
   state: () => ({
     // _multiSelection: useCookie('MultiSelection', { default: () => false }),
     // _multiSelection: (useCookie('MultiSelection').value === 'true' || (useCookie('MultiSelection').value === undefined) || true) as boolean,
-    _selectionDepots: reactive( (localStorage.getItem('selectionDepots') ? JSON.parse(localStorage.getItem('selectionDepots') as string) : []) as Array<string>),
+    _selectionDepots: reactive(
+      (localStorage.getItem('selectionDepots')
+        ? JSON.parse(localStorage.getItem('selectionDepots') as string)
+        : []) as Array<string>,
+    ),
     _selectionClients: reactive([] as Array<string>),
     _selectionProducts: reactive([] as Array<string>),
     _selectionLogClient: '',
     _selectionLogType: 'instlog',
-    _selectionLogLevel: 5
+    _selectionLogLevel: 5,
   }),
   getters: {
     // multiSelection: (state: any) => state._multiSelection,
-    multiSelection: () => useCookie('MultiSelection', { default: () => false }).value,
-    selectionDepots: (state: any):Array<string> => state._selectionDepots,
-    selectionClients: (state: any):Array<string> => state._selectionClients,
-    selectionProducts: (state: any):Array<string> => state._selectionProducts,
-    selectionLogClient: (state: any):string => state._selectionLogClient,
-    selectionLogType: (state: any):string => state._selectionLogType,
-    selectionLogLevel: (state: any):number => state._selectionLogLevel
+    multiSelection: () =>
+      useCookie('MultiSelection', { default: () => false }).value,
+    selectionDepots: (state: any): Array<string> => state._selectionDepots,
+    selectionClients: (state: any): Array<string> => state._selectionClients,
+    selectionProducts: (state: any): Array<string> => state._selectionProducts,
+    selectionLogClient: (state: any): string => state._selectionLogClient,
+    selectionLogType: (state: any): string => state._selectionLogType,
+    selectionLogLevel: (state: any): number => state._selectionLogLevel,
   },
   actions: {
-    setMultiSelection (isMultiSelection: boolean) {
+    setMultiSelection(isMultiSelection: boolean) {
       // this._multiSelection = isMultiSelection
       // Cookies.options.methods.setCookie('MultiSelection', (isMultiSelection) ? 'true' : 'false')
-      useCookie('MultiSelection').value = (isMultiSelection) ? 'true' : 'false'
+      useCookie('MultiSelection').value = isMultiSelection ? 'true' : 'false'
     },
-    XsetSelectionLogClient (s: string) { this._selectionLogClient = s },
-    XsetSelectionLogType (s: string) { this._selectionLogType = s },
-    XsetSelectionLogLevel (s: number) { this._selectionLogLevel = s },
-    setSelectionDepots (s: Array<string>) {
+    XsetSelectionLogClient(s: string) {
+      this._selectionLogClient = s
+    },
+    XsetSelectionLogType(s: string) {
+      this._selectionLogType = s
+    },
+    XsetSelectionLogLevel(s: number) {
+      this._selectionLogLevel = s
+    },
+    setSelectionDepots(s: Array<string>) {
       if (this.multiSelection === false && s.length > 1) {
         this._selectionDepots = reactive([s[s.length - 1]])
       } else {
@@ -45,7 +56,7 @@ export const storeSelections = defineStore('selections', {
       }
     },
 
-    pushToSelectionDepots (s: string) {
+    pushToSelectionDepots(s: string) {
       const index = this._selectionDepots.indexOf(s)
       if (index === -1) {
         if (this.multiSelection === false) {
@@ -56,14 +67,14 @@ export const storeSelections = defineStore('selections', {
       }
     },
 
-    delFromSelectionDepots (s: string) {
+    delFromSelectionDepots(s: string) {
       const index = this._selectionDepots.indexOf(s)
       if (index !== -1) {
         this._selectionDepots.splice(index, 1)
       }
     },
 
-    setSelectionClients (s: Array<string>) {
+    setSelectionClients(s: Array<string>) {
       if (this.multiSelection === false && s.length > 1) {
         this._selectionClients = [s[s.length - 1]]
       } else {
@@ -71,7 +82,7 @@ export const storeSelections = defineStore('selections', {
       }
     },
 
-    pushToSelectionClients (s: string) {
+    pushToSelectionClients(s: string) {
       const index = this._selectionClients.indexOf(s)
       if (index === -1) {
         // _selectionClients.push(s)
@@ -83,14 +94,14 @@ export const storeSelections = defineStore('selections', {
       }
     },
 
-    delFromSelectionClients (s: string) {
+    delFromSelectionClients(s: string) {
       const index = this._selectionClients.indexOf(s)
       if (index !== -1) {
         this._selectionClients.splice(index, 1)
       }
     },
 
-    setSelectionProducts (s: Array<string>) {
+    setSelectionProducts(s: Array<string>) {
       if (this.multiSelection === false && s.length > 1) {
         this._selectionProducts = [s[s.length - 1]]
       } else {
@@ -98,7 +109,7 @@ export const storeSelections = defineStore('selections', {
       }
     },
 
-    pushToSelectionProducts (s: string) {
+    pushToSelectionProducts(s: string) {
       const index = this._selectionProducts.indexOf(s)
       if (index === -1) {
         if (this.multiSelection === false) {
@@ -109,63 +120,62 @@ export const storeSelections = defineStore('selections', {
       }
     },
 
-    delFromSelectionProducts (s: string) {
+    delFromSelectionProducts(s: string) {
       const index = this._selectionProducts.indexOf(s)
       if (index !== -1) {
         this._selectionProducts.splice(index, 1)
       }
     },
-    toggleSelectionDepots (item: string, checkMulti: boolean = true) {
+    toggleSelectionDepots(item: string, checkMulti: boolean = true) {
       if (checkMulti)
         this.toggleSelectionValueAndCheck(this._selectionDepots, item)
       else this.toggleSelectionValue(this._selectionDepots, item)
     },
-    toggleSelectionClients (item: string, checkMulti: boolean = true) {
+    toggleSelectionClients(item: string, checkMulti: boolean = true) {
       if (checkMulti)
-      this.toggleSelectionValueAndCheck(this._selectionClients, item)
+        this.toggleSelectionValueAndCheck(this._selectionClients, item)
       else this.toggleSelectionValue(this._selectionClients, item)
     },
-    toggleSelectionProducts (item: string, checkMulti: boolean = true) {
+    toggleSelectionProducts(item: string, checkMulti: boolean = true) {
       if (checkMulti)
-      this.toggleSelectionValueAndCheck(this._selectionProducts, item)
+        this.toggleSelectionValueAndCheck(this._selectionProducts, item)
       else this.toggleSelectionValue(this._selectionProducts, item)
     },
-    toggleSelectionValue (selection: Array<string>, item: string){
-      if(!selection.includes(item)){
-        selection.push(item);
-      }else{
-        selection.splice(selection.indexOf(item), 1);  //deleting
+    toggleSelectionValue(selection: Array<string>, item: string) {
+      if (!selection.includes(item)) {
+        selection.push(item)
+      } else {
+        selection.splice(selection.indexOf(item), 1) //deleting
       }
     },
     toggleSelectionValueAndCheck(selection: Array<string>, item: string) {
-      if(!selection.includes(item)){
+      if (!selection.includes(item)) {
         if (!this.multiSelection) selection.length = 0
-        selection.push(item);
+        selection.push(item)
       } else {
         if (!this.multiSelection) selection.length = 0
-        selection.splice(selection.indexOf(item), 1);  //deleting
+        selection.splice(selection.indexOf(item), 1) //deleting
       }
     },
-    clearSelectionDepots () {
+    clearSelectionDepots() {
       this._selectionDepots.length = 0
     },
-    clearSelectionClients () {
+    clearSelectionClients() {
       this._selectionClients.length = 0
     },
-    clearSelectionProducts () {
+    clearSelectionProducts() {
       this._selectionProducts.length = 0
     },
-    clearAllSelection () {
+    clearAllSelection() {
       this.clearSelectionDepots()
       this.clearSelectionClients()
       this.clearSelectionProducts()
-    }
+    },
   },
 })
 
-
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeSelections, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(storeSelections, import.meta.hot))
 }
 
 // export const storeSelections = defineStore('selections', () => {
