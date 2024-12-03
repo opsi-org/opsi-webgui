@@ -1,7 +1,6 @@
 import type { T_Groups, T_GroupsTransformed } from "~/types/APItypes";
 
 export const useGroupsHelper = () => {
-
   function transformNode(node: T_Groups): T_GroupsTransformed {
     return {
       ...node, // Kopiert alle bekannten und unbekannten Eigenschaften von `node`
@@ -10,16 +9,21 @@ export const useGroupsHelper = () => {
         : [],
     };
   }
-  function transformToNestedArray(data: Record<string, T_Groups>): T_GroupsTransformed[] {
+  function transformToNestedArray(
+    data: Record<string, T_Groups>
+  ): T_GroupsTransformed[] {
     return Object.values(data).map((node) => transformNode(node));
   }
 
-
-  function filterNodes(nodes: T_GroupsTransformed[], searchFor: any[], key: string|undefined, returnKey: string|undefined): any[] {
+  function filterNodes(
+    nodes: T_GroupsTransformed[],
+    searchFor: any[],
+    key: string | undefined,
+    returnKey: string | undefined
+  ): any[] {
     return nodes.reduce((acc: any[], node: any) => {
       if (key && searchFor.includes(node[key])) {
-        if (node != undefined)
-          acc.push(returnKey? node[returnKey]: node);
+        if (node != undefined) acc.push(returnKey ? node[returnKey] : node);
       }
       if (node.children) {
         const children = filterNodes(node.children, searchFor, key, returnKey);
@@ -34,4 +38,4 @@ export const useGroupsHelper = () => {
     }, []);
   }
   return { transformToNestedArray, filterNodes };
-}
+};
