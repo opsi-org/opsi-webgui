@@ -28,14 +28,14 @@
               </el-form-item>
             </div>
           </el-form>
-          <el-select v-else-if="label === 'depot'" filterable v-model="createClient.assignments.depot">
+          <el-select v-else-if="label === 'depot'" filterable v-model="createClient.assignments.depot" clearable>
             <el-option v-for="item in depotIDList" :key="item" :label="item" :value="item" />
           </el-select>
-          <el-select v-else-if="label === 'group'" filterable v-model="createClient.assignments.group">
+          <el-select v-else-if="label === 'group'" filterable v-model="createClient.assignments.group" clearable>
             <el-option v-for="item in groupList" :key="item" :label="item" :value="item" />
           </el-select>
 
-          <el-select v-else-if="label === 'netbootProduct'" filterable v-model="createClient.initialSetup.netbootProduct">
+          <el-select v-else-if="label === 'netbootProduct'" filterable v-model="createClient.initialSetup.netbootProduct" clearable>
             <el-option v-for="item in netbootProductList" :key="item" :label="item" :value="item" />
           </el-select>
           <el-input v-else-if="label === 'hostId'" v-model="clientName">
@@ -178,17 +178,15 @@ import type { IObjectString2Any } from '~/types/tgeneral';
       //     uefi: createClient.value.settings.uefi.toString(),
       //   })
       // }
-      if (createClient.value.assignments.group) {
-        await handleApiPost('/opsidata/clients/groups', {
-          clientId: createClient.value.basics.hostId,
-          group: createClient.value.assignments.group,
-        })
+
+      if (createClient.value.assignments.group?.length > 0) {
+        await handleApiPost(`/opsidata/clients/${createClient.value.basics.hostId}/groups`, [createClient.value.assignments.group])
       }
       if (createClient.value.initialSetup.opsiClientAgent.setup) {
         await handleApiPost('/opsidata/clients/agent', createClient.value.initialSetup.opsiClientAgent)
       }
-      if (createClient.value.initialSetup.netbootProduct) {
-        await handleApiPost('/opsidata/clients/netboot', {
+      if (createClient.value.initialSetup.netbootProduct?.length > 0) {
+        await handleApiPost('/opsidata/clients/products', {
           clientIds: [createClient.value.basics.hostId],
           productIds: [createClient.value.initialSetup.netbootProduct],
           actionRequest: 'setup',
