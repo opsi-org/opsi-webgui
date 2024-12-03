@@ -17,8 +17,10 @@
         :value="a"
         :data-testid="`DropdownDDProductRequest-Item-${a}`"
         @click="
-          save(modelRowitem, a)
-          visibleRequest = a
+          () => {
+            save(modelRowitem, a)
+            visibleRequest = a
+          }
         "
       />
       <template #label="{ label }">
