@@ -164,5 +164,12 @@
   "playwrightrunner.playwrightCommand": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.component.js test:all:components /",
   "playwrightrunner.playwrightConfigPath": "../opsiweb/.config/playwright-all-components.config.js",
   "explorer.sortOrder": "type",
+  "[yml]": {
+    // "editor.insertSpaces": true,
+    // "editor.tabSize": 2,
+    "prettier.singleQuote": false
+    // "editor.autoIndent": "advanced",
+    // "diffEditor.ignoreTrimWhitespace": false
+  },
   "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
