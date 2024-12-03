@@ -22,7 +22,7 @@ package:
   name: opsi-webgui
   postinst_script:
     - echo "OPSI webgui folder '/usr/lib/opsiconfd/addons/webgui'"
-    - "[ -e /var/lib/opsiconfd/addons/webgui ] && rm -r /var/lib/opsiconfd/addons/webgui"
+    - '[ -e /var/lib/opsiconfd/addons/webgui ] && rm -r /var/lib/opsiconfd/addons/webgui'
     - exit 0
   source_script: |
     mkdir -p "${DST}/rootfs/usr/lib/opsiconfd/addons"
@@ -39,14 +39,14 @@ project:
     - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
   name: opsi-webgui
-  version: "4.4.0.0"
+  version: '4.4.0.0'
   version_files:
     opsi-dev-tool.yml: pull-binaries[0].version
-    frontend/package.json: "$.version"
+    frontend/package.json: '$.version'
 pull-binaries:
   - architecture: x64
     branch: development
-    destination: "."
+    destination: '.'
     extract: true
     name: opsi-webgui
     os: linux
@@ -62,7 +62,7 @@ pull-binaries:
       - exit 1
     server-type: binaryindex
     server-url: http://binaryindex.uib.gmbh
-    version: "4.4.0.0"
+    version: '4.4.0.0'
 transifex:
   download_translations:
     - install_dir: frontend/locale
