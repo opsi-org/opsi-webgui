@@ -1,5 +1,8 @@
 <template>
   <el-form :inline="true" label-position="top" class="mt-2" v-loading="isLoading">
+    <!-- <el-button @click="fetch" type="primary" icon="el-icon-refresh" :loading="isLoading" :disabled="isLoading" :class="{ 'd-none': props.isChild }">
+      {{ $t('label.reloadPage') }}
+    </el-button> -->
     <el-form-item :label="$t('form.clientId')" v-if="!props.isChild">
       <SelectSHosts :type="type" @change="setId" :id="logrequest.selectedClient" />
     </el-form-item>
@@ -22,7 +25,7 @@
       v-for="log in filteredData"
       :key="log"
       :style="{ color: getColorBasedOnLoglevel(log) }"
-      :class="{ 'd-none': !isLoglevelSmaller(log, loglevel) }"
+      :class="{ 'hidden': !isLoglevelSmaller(log) }"
     >
     {{ log }} <br>
     </span>
@@ -50,8 +53,8 @@ const logTypes = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlog
 const loglevel = ref(5)
 const logtype = ref('instlog')
 const filterQuery = ref('')
-// TODO: messagebus event:log_updated
-watch([()=>props.id, ()=>logtype.value], fetch, { immediate: true })
+
+watch([()=>props.id, ()=>logtype.value, loglevel.value], fetch, { immediate: true })
 
 async function fetch() {
   isLoading.value = true
@@ -79,8 +82,8 @@ function filterLogByQuery() {
   filteredData.value = fetchedData.value.filter(log => log.includes(filterQuery.value))
 }
 
-function isLoglevelSmaller (logrow:string, loglevel:number) {
-  const rxSelf2 = new RegExp('^((\\[[0-' + loglevel + ']\\])|[^\\[0-9\\]])', 'g')
+function isLoglevelSmaller (logrow:string) {
+  const rxSelf2 = new RegExp('^((\\[[0-' + loglevel.value + ']\\])|[^\\[0-9\\]])', 'g')
   const result = RegExp(rxSelf2).exec(logrow)
   return !!result
 }
