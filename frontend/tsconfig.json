@@ -2,7 +2,6 @@
   // https://nuxt.com/docs/guide/concepts/typescript
   "extends": "./.nuxt/tsconfig.json",
 
-
   "compilerOptions": {
     "outDir": "./dist",
     "experimentalDecorators": true,
@@ -23,16 +22,18 @@
       "@nuxtjs/tailwindcss",
       "element-plus/global",
       "@iconify/vue",
-      "@xterm/xterm", "@xterm/addon-fit", "@xterm/addon-search", "@xterm/addon-web-links",
-      "@intlify/unplugin-vue-i18n/messages",
+      "@xterm/xterm",
+      "@xterm/addon-fit",
+      "@xterm/addon-search",
+      "@xterm/addon-web-links",
+      "@intlify/unplugin-vue-i18n/messages"
     ],
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     // "paths": {}
     "jsx": "preserve",
-    "jsxImportSource": "vue",
-
-  },
+    "jsxImportSource": "vue"
+  }
   // "include": [
   //   "env.d.ts",
   //   "src/**/*",
