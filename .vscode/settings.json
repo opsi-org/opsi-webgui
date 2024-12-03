@@ -149,7 +149,7 @@
                 "tooltip": "Build productive",
                 "color": "white",
                 "singleInstance": true,
-                "command": "bash /workspace/opsiweb/scripts/build_production_local.sh \"$(pwd)/..\" install" // This is executed in the terminal.
+                "command": "bash /workspace/opsiweb/scripts/build_production_local.sh webgui Webgui \"$(pwd)/..\" install" // This is executed in the terminal.
             },
             { // take screenshots for Documentation
                 "cwd": "/workspace/opsiweb/screenshots4Docs",

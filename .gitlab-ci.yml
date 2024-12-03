@@ -548,7 +548,7 @@ build:addon: # with transifex
     - cd ..
     - *define_globals
     # - npm run generate-nossl
-    - bash opsiweb/scripts/build_production_local.sh $(pwd)
+    - bash opsiweb/scripts/build_production_local.sh webgui Webgui $(pwd)
     # - cd .. # copy to addon
     # - mkdir -p backend/addon/webgui/data
     # - mkdir -p backend/addon/webgui/data/app
