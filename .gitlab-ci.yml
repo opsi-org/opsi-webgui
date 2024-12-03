@@ -187,7 +187,7 @@ check:versions:
   stage: check
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11 # cause smaller then node...
   script:
-    - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/\'//g")
+    - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\'//g" | sed "s/\"//g")
     - echo $VERSION_YML
     - echo "----------------------------------------------------------------"
     # ---------------
