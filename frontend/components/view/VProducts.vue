@@ -22,12 +22,6 @@
           @change="changeProductsType('NetbootProduct')"
           >{{ $t('title.netbootProducts') }}</el-checkbox-button>
         <el-alert v-if="props.selectedClient" :title="$t('table.info.productsOnClient', {id: props.selectedClient})" type="warning" :closable="false" class="max-w-80 !inline-flex !relative max-h-8" />
-        <!-- </el-badge> -->
-        <!--  el-checkbox-button
-          disabled
-          v-model="productsTypeChecked.Product"
-          @change="changeProductsType('Product')"
-        >Product< / > -->
       </div>
     </template>
   </TableTTable>
@@ -42,19 +36,21 @@
   import { useNavigate } from '~/composables/mixins/useNavigateTo'
   import { useSaveProductActionRequest } from '~/composables/mixins/useSave'
   import { useClient } from '~/composables/mixins/useGet'
-  // import { useMBus } from '~/composables/mixins/useMessagebus';
+  import { useMBus } from '~/composables/mixins/useMessagebus'
   import TCProductVersionCell from '~/components/tablecell/TCProductVersionCell.vue'
   import BTNRowLink from '~/components/button/BTNRowLink.vue'
-import Checkbox from 'primevue/checkbox'
-import RadioButton from 'primevue/radiobutton'
+  import Checkbox from 'primevue/checkbox'
+  import RadioButton from 'primevue/radiobutton'
 
-  // const { notifyInfo, notifyError } = useNotification()
-  const { notifyError } = useNotification()
+  const { notifyInfo, notifyError } = useNotification()
+  // const { notifyError } = useNotification()
   const $t = useI18n().t
   const navigation = useNavigate()
   const icons = useIcons()
   const router = useRouter()
   const fetchClient = useClient()
+  useMBus(wsBusMsgObjectChanged, false, $t)
+
 
   const storeSelection = storeSelections()
 
@@ -348,6 +344,41 @@ import RadioButton from 'primevue/radiobutton'
     return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
   }
 
+
+  async function wsBusMsgObjectChanged (msg: any = undefined) {
+    if (msg &&
+      ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'].includes(msg.channel) &&
+      msg.data.productType === currentType.value &&
+      // this.visibleProductIds.includes(msg.data.productId) &&
+      clientSelection.value.includes(msg.data.clientId)
+    ) {
+      if (!(lastChanges.value.clientIds.includes(msg.data.clientId) && lastChanges.value.productIds.includes(msg.data.productId))) {
+        // check if we may cause the event...
+        notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.poc_updated', { productId: msg.data.productId }),
+            button: {
+              label: $t('label.reloadPage'),
+              onClick: async () => {
+                // await tableHelper.fetch()
+                productsRef.value?.refetch()
+              }
+            }
+        })
+      }
+      // if (this.quicksave) {
+      //   this.$fetch()
+      //   // if (ref) { ref.hide() }
+      // } else { /* quicksave is false ... do sth .. show message or sth */
+      //   const objIndex = this.changesProducts.findIndex(
+      //     item => item.user === storeAuth().username &&
+      // //     item => item.user === localStorage.getItem('username') &&
+      //     item.clientId === msg.data.clientId &&
+      //     item.productId === msg.data.productId)
+      //   if (objIndex > -1) { /* show msg product updated */ }
+      // }
+    }
+  }
+
+
   function prepareParams(params: any) {
     params.type = currentType.value
     params.selectedDepots = JSON.stringify(selectionDepots.value)
@@ -498,31 +529,6 @@ import RadioButton from 'primevue/radiobutton'
     // (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
     // row.toggleDetails()
   }
-
-  // useMBus(wsBusMsgObjectChanged, false, $t)
-
-  // async function wsBusMsgObjectChanged (msg: any = undefined) {
-  // // async function _wsBusMsgObjectChanged (msg: any = undefined) {
-  //   if (msg &&
-  //     ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'].includes(msg.channel) &&
-  //     msg.data.productType === currentType.value &&
-  //     // this.visibleProductIds.includes(msg.data.productId) &&
-  //     clientSelection.value.includes(msg.data.clientId)
-  //   ) {
-
-  //     if (!(lastChanges.value.clientIds.includes(msg.data.clientId) && lastChanges.value.productIds.includes(msg.data.productId))) {
-  //       // check if we may cause the event...
-  //       notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.poc_updated', { productId: msg.data.productId }),
-  //           button: {
-  //             label: $t('label.reloadPage'),
-  //             onClick: async () => {
-  //               await tableHelper.fetch()
-  //             }
-  //           }
-  //       })
-  //     }
-  //   }
-  // }
 </script>
 
 

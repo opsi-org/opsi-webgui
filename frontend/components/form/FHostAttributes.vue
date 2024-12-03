@@ -29,24 +29,26 @@
 </template>
 
 <script setup lang="ts">
+  import type { T_ServerAttr, T_ClientAttr } from '~/types/APItypes'
+  import type { IObjectString2Any } from '~/types/tgeneral'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useSetUEFI } from '~/composables/mixins/usePost'
   import { useFormat } from '~/composables/mixins/useFormat'
-  import type { T_ServerAttr, T_ClientAttr } from '~/types/APItypes'
-  import type { IObjectString2Any } from '~/types/tgeneral';
-  import { objectEqual } from '~/utils/scompares';
+  import { useMBus } from '~/composables/mixins/useMessagebus'
+  import { objectEqual } from '~/utils/scompares'
+import type { PropTypeServerClient } from '~/types/tproptypes'
 
   const $t = useI18n().t
 
-  const { notifySuccess, notifyError } = useNotification()
+  const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
+  const { notifySuccess, notifyError, notifyInfo } = useNotification()
   const hostAttributes = ref<Array<T_ServerAttr | T_ClientAttr>>([])
   const hostAttributesOriginal = ref<Array<T_ServerAttr | T_ClientAttr>>([])
 
   const notEditable = ['type', 'created', 'lastSeen', 'systemUUID', 'uefi']
-
   const props = defineProps({
     id: { type: String, default: undefined },
-    type: { type: String, default: 'servers' },
+    type: { type: String as PropType<PropTypeServerClient>, default: 'servers' },
     isChild: { type: Boolean, default: false },
   })
 
@@ -81,24 +83,44 @@
 
   async function saveHostAttributes() {
     const hostAttr: IObjectString2Any = { ...hostAttributes?.value[0], uefi: undefined }
-
     if (props.type === 'clients' && Object.keys(hostAttr).includes('uefi')) {
       if (typeof hostAttr.uefi !== 'undefined') {
         await useSetUEFI($t).setUEFI(hostAttr.hostId, (hostAttr.uefi as string).toString())
       }
     }
-
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     notEditable.forEach((attrKey) => delete hostAttr[attrKey])
 
+    // return
     try {
-      const endPoint = `/api/opsidata/${props.type}/${hostAttr.hostId}`
-      const { error } = await useApiPUT(endPoint, hostAttr)
+      // api/opsidata/clients/huhnix.mz.uib.gmbh
+      const { error } = await useApiPUT(`/opsidata/${props.type}/${hostAttr.hostId}`, hostAttr)
       if (error) throw new Error(error.response?.data?.message || $t('message.error.generic'))
       notifySuccess({ message: $t('message.success.save.hostattributes', { host: hostAttr.hostId }) })
-      fetchData()
+      // fetchData()
     } catch (error) {
       notifyError({ message: error || $t('message.error.unexpected') })
     }
   }
+
+  async function wsBusMsgObjectChanged(msg: any = undefined) {
+    if (msg && msg.channel === 'event:host_updated') {
+      if (msg.data.id === props.id) {
+        notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.client_updated', { clientId: msg.data.id }),
+          button: {
+            label: $t('label.reloadPage'),
+            onClick: async () => {
+              // await tableHelper.fetch()
+              // clientsRef.value?.refetch()
+              fetchData()
+            }
+          }
+        })
+      }
+    }
+    if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
+      console.warn('message bus: ', msg)
+    }
+  }
+
 </script>

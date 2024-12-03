@@ -18,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+import type { PropTypeServerClient } from '~/types/tproptypes';
+
 const tableSettings = storeTablesettings()
 const { configLastSelected } = storeToRefs(tableSettings)
 const $t = useI18n().t
@@ -25,7 +27,7 @@ const $t = useI18n().t
 const currentId = ref<string|undefined>('')
 const props = defineProps({
   id: { type: String, default: undefined },
-  type: { type: String, default: 'servers' },
+  type: { type: String as PropType<PropTypeServerClient>, default: 'servers' },
   isChild: { type: Boolean, default: false }
 })
 // console.debug('VConfig', props.id, props.type, props.isChild)

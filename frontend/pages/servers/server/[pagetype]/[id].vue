@@ -9,9 +9,10 @@
 
 <script setup lang="ts">
 import { usePageHelper } from '~/composables/mixins/usePageHelper'
+import type { PropTypeServerClient } from '~/types/tproptypes';
 const route = useRoute()
 const router = useRouter()
-const type = computed<string>(()=> usePageHelper().path.value[0])
+const type = computed<PropTypeServerClient>(()=> usePageHelper().path.value[0] as PropTypeServerClient)
 const id = computed<string>(()=>route.params.id as string)
 const pagetype = computed<string>(()=>route.params.pagetype as string)
 

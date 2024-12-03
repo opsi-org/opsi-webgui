@@ -1,15 +1,13 @@
 <template>
-  <!-- <PButton label="primevue" severity="primary" />
-  <button class="bg-primary">tailwind?</button>
-  <el-button type="primary">element</el-button> -->
   <TableTTable
+    ref="clientsRef"
     :row-id="rowId"
     :is-mobile="isMobile"
     has-client-actions
     :action-clone="(rowData: any) => `/clients/client/clone/${rowData[rowId]}`"
     :action-log="(rowData: any) => `/clients/client/logs/${rowData[rowId]}`"
     :action-config="(rowData: any) => `/clients/client/config/${rowData[rowId]}`"
-    sort-by="installationStatus_installed"
+    :sort-by="rowId"
     :table-column="tableColumn"
     :fetch="fetchClients"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionClients(id)}"
@@ -29,16 +27,20 @@
   import type { T_ClientsList } from '~/types/APItypes'
   import { useIcons } from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
+  import { useMBus } from '~/composables/mixins/useMessagebus'
+
   import Checkbox from 'primevue/checkbox';
   import RadioButton from 'primevue/radiobutton'
   import Button from 'primevue/button'
 
-  const { notifyError } = useNotification()
+  const { notifyError, notifyInfo } = useNotification()
   const $t = useI18n().t
   const icons = useIcons()
   const router = useRouter()
+  const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 
   const storeSelection = storeSelections()
+
 
   const _props = defineProps({
     isMobile: {
@@ -50,6 +52,7 @@
   })
 
   const rowId = 'clientId'
+  const clientsRef = ref()
   const tableColumn = ref([
     {
       title: $t('table.fields.selection'),
@@ -224,6 +227,24 @@
     }
     return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
   }
+
+  async function wsBusMsgObjectChanged(msg: any = undefined) {
+    if (msg && msg.channel === 'event:host_created') {
+      // clientsRef.value?.refetch()
+      notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.client_updated', { clientId: msg.data.id }),
+        button: {
+          label: $t('label.reloadPage'),
+          onClick: async () => {
+            // await tableHelper.fetch()
+          }
+        }
+      })
+    }
+    if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
+      console.warn('message bus: ', msg)
+    }
+  }
+
 
   function getStatisticRenderer(tootltip: string, url: string, value: string, sortbyKey: string, type: undefined|string = undefined, errorValue: number = Infinity, warnValue: number = Infinity): (rowData: any) => VNode {
     return ({rowData}:any) => {

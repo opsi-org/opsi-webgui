@@ -29,6 +29,7 @@ import { useNotification } from '~/composables/mixins/useComponent';
 import { useMBus } from '~/composables/mixins/useMessagebus';
 import { useSaveParameters } from '~/composables/mixins/useSave';
 import type { T_HostParameter } from '~/types/APItypes'
+import type { PropTypeServerClient } from '~/types/tproptypes';
 const { notifyError, notifyInfo } = useNotification()
 const $t = useI18n().t
 const isLoading = ref(true)
@@ -37,7 +38,7 @@ const activeNames = ref<string[]>([])
 const lastSavedData = ref({ objectIds: [] as Array<string>, configIds: [] as Array<string> })
 const props = defineProps({
   id: { type: String, default: undefined },
-  type: { type: String, default: 'servers' },
+  type: { type: String as PropType<PropTypeServerClient>, default: 'servers' },
   isChild: {type: Boolean, default: false}
 })
 

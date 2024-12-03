@@ -1,70 +1,77 @@
-import { ElNotification } from 'element-plus'
-import { _getI18nInComposable } from './helper-i18n'
-import { h, type VNode } from 'vue'
+import { ElNotification } from "element-plus";
+import { _getI18nInComposable } from "./helper-i18n";
+import { h, type VNode } from "vue";
 
 interface NotificationOptions {
-  title?: string
-  message?: any
-  showClose?: boolean
-  duration?: number
-  onClose?: () => void
-  button?: { label: string; onClick: () => void }
+  title?: string;
+  message?: any;
+  showClose?: boolean;
+  duration?: number;
+  onClose?: () => void;
+  button?: { label: string; onClick: () => void };
 }
 
-type ElNotificationType = 'success' | 'error' | 'warning' | 'info'
-type NotificationType = 'success' | 'error' | 'warning' | 'info' // | 'loading'
+type ElNotificationType = "success" | "error" | "warning" | "info";
+type NotificationType = "success" | "error" | "warning" | "info"; // | 'loading'
 
 export function useNotification() {
-  const notifications = ref<any[]>([])
-  const clearAllNotification = ref<any>(null)
+  const notifications = ref<any[]>([]);
+  const clearAllNotification = ref<any>(null);
 
   const formatMessage = (message: any) => {
-    if (typeof message === 'object' && message !== null) {
-      return h('pre', {
+    if (typeof message === "object" && message !== null) {
+      return h("pre", {
         innerHTML: Object.entries(message)
           .map(([key, value]) => {
-            if (typeof value === 'object' && value !== null) {
+            if (typeof value === "object" && value !== null) {
               value = Object.entries(value)
-                .map(([k, v]) => (v !== null ? `${k}: ${v}` : ''))
+                .map(([k, v]) => (v !== null ? `${k}: ${v}` : ""))
                 .filter(Boolean)
-                .join('\n')
+                .join("\n");
             }
-            return `<b>${key}</b>:\n${value}\n`
+            return `<b>${key}</b>:\n${value}\n`;
           })
-          .join('\n'),
-        style: { 'white-space': 'pre-wrap' },
-      })
+          .join("\n"),
+        style: { "white-space": "pre-wrap" },
+      });
     }
-    return message
-  }
+    return message;
+  };
 
-  const _createNotificationContent = (type: NotificationType, button: any, message: any) => {
-    const itemsInNotification = [formatMessage(message),]
+  const _createNotificationContent = (
+    type: NotificationType,
+    button: any,
+    message: any
+  ) => {
+    const itemsInNotification = [formatMessage(message)];
     if (button) {
-      itemsInNotification.push(h('button',
-        {
-          onClick: button.onClick,
-          style: {
-            display: 'block',
-            width: '100%',
-            border: '1px solid #000',
-            cursor: 'pointer',
+      itemsInNotification.push(
+        h(
+          "button",
+          {
+            onClick: button.onClick,
+            style: {
+              display: "block",
+              width: "100%",
+              border: "1px solid #000",
+              cursor: "pointer",
+            },
           },
-        },
-        button.label
-      ))
+          button.label
+        )
+      );
     }
-    const notificationViewItems = h('div', {}, itemsInNotification)
-    return notificationViewItems
-  }
+    const notificationViewItems = h("div", {}, itemsInNotification);
+    return notificationViewItems;
+  };
   const _createNotificationElInstance = (
-      instanceType: ElNotificationType,
-      useMsgAsHtml: boolean,
-      notificationViewItems: VNode,
-      autoHideDuration: number,
-      title: string,
-      showClose = true,
-      onClose: (() => void)| undefined
+    instanceType: ElNotificationType,
+    useMsgAsHtml: boolean,
+    notificationViewItems: VNode,
+    autoHideDuration: number,
+    title: string,
+    showClose = true,
+    onClose: (() => void) | undefined
   ) => {
     const notificationInstance = ElNotification[instanceType]({
       title,
@@ -73,102 +80,137 @@ export function useNotification() {
       showClose,
       duration: autoHideDuration,
       onClose: () => {
-        notifications.value = notifications.value.filter((n: any) => n !== notificationInstance)
-        if (onClose) onClose()
+        notifications.value = notifications.value.filter(
+          (n: any) => n !== notificationInstance
+        );
+        if (onClose) onClose();
         if (notifications.value.length <= 3 && clearAllNotification.value) {
-          clearAllNotification.value.close()
-          clearAllNotification.value = null
+          clearAllNotification.value.close();
+          clearAllNotification.value = null;
         }
-      }
-    })
-    return notificationInstance
-  }
+      },
+    });
+    return notificationInstance;
+  };
   const createNotification = (type: NotificationType) => {
-    return ({ title, message = '', showClose = true, duration, onClose, button }: NotificationOptions) => {
-      const notificationViewItems = _createNotificationContent(type, button, message)
-
-      const autoHideDuration = type === 'success' ? duration ?? 8000 : 0
-      if (type === 'error') {
-        console.error('NotificationError:', title, message)
+    return ({
+      title,
+      message = "",
+      showClose = true,
+      duration,
+      onClose,
+      button,
+    }: NotificationOptions) => {
+      const notificationInstance = ref<any>();
+      const buttonObject = { ...button };
+      if (buttonObject?.onClick) {
+        buttonObject.onClick = () => {
+          button?.onClick();
+          notificationInstance.value?.close();
+        };
       }
-      // const instanceType = type === 'loading' ? 'info' : (type as ElNotificationType)
-      // const useMsgAsHtml = type === 'loading'
-      const notificationInstance = _createNotificationElInstance(
-        type, false, notificationViewItems,
-        autoHideDuration, title ?? type, showClose, onClose
-      )
-      notifications.value.push(notificationInstance)
+
+      const notificationViewItems = _createNotificationContent(
+        type,
+        buttonObject,
+        message
+      );
+
+      const autoHideDuration = ["success", "info"].includes(type)
+        ? (duration ?? 8000)
+        : 0;
+      if (type === "error") {
+        console.error("NotificationError:", title, message);
+      }
+
+      notificationInstance.value = _createNotificationElInstance(
+        type,
+        false,
+        notificationViewItems,
+        autoHideDuration,
+        title ?? type,
+        showClose,
+        onClose
+      );
+
+      notifications.value.push(notificationInstance.value);
 
       if (notifications.value.length > 3 && !clearAllNotification.value) {
         clearAllNotification.value = ElNotification({
           message: h(
-            'button',
+            "button",
             {
               onClick: () => {
-                notifications.value.forEach((n) => n.close())
-                notifications.value = []
+                notifications.value.forEach((n) => n.close());
+                notifications.value = [];
                 if (clearAllNotification.value) {
-                  clearAllNotification.value.close()
-                  clearAllNotification.value = null
+                  clearAllNotification.value.close();
+                  clearAllNotification.value = null;
                 }
               },
             },
-            'Clear All Notifications'
+            "Clear All Notifications"
           ),
           duration: 0,
           showClose: true,
-          position: 'bottom-right',
-        })
+          position: "bottom-right",
+        });
       }
-      return notificationInstance
-    }
-  }
+      return notificationInstance.value;
+    };
+  };
 
   return {
-    notifySuccess: createNotification('success'),
-    notifyError: createNotification('error'),
-    notifyWarning: createNotification('warning'),
-    notifyInfo: createNotification('info'),
+    notifySuccess: createNotification("success"),
+    notifyError: createNotification("error"),
+    notifyWarning: createNotification("warning"),
+    notifyInfo: createNotification("info"),
     // notifyLoading: createNotification('loading'),
-  }
+  };
 }
 
 export const useHoverDropdown = () => {
   function onOver(ref: any) {
     if (ref) {
-      ref.visible = true
+      ref.visible = true;
     }
   }
   function onLeave(ref: any) {
     if (ref) {
-      ref.visible = false
+      ref.visible = false;
     }
   }
-  return { onOver, onLeave }
-}
+  return { onOver, onLeave };
+};
 
-export const useScrollListener = (refComponent: Ref<HTMLElement | undefined>, handleScroll = (...args: any[]) => {
-  console.warn('scroll listener not implemented', args)
-}) => {
-  let resizeObserver: any = null
+export const useScrollListener = (
+  refComponent: Ref<HTMLElement | undefined>,
+  handleScroll = (...args: any[]) => {
+    console.warn("scroll listener not implemented", args);
+  }
+) => {
+  let resizeObserver: any = null;
   onMounted(() => {
     if (refComponent.value == undefined) {
-      console.error('mount. component for scroll listener undefined', handleScroll)
-      return
+      console.error(
+        "mount. component for scroll listener undefined",
+        handleScroll
+      );
+      return;
     }
 
-    resizeObserver = new ResizeObserver(onResize)
-    resizeObserver.observe(refComponent.value)
+    resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(refComponent.value);
     // // handleDebouncedScroll = debounce(handleScroll, 100);
     // refComponent.value.addEventListener('scroll', handleDebouncedScroll);
-  })
+  });
 
   function onResize() {
-    const h = refComponent.value?.clientHeight + 'px'
-    console.warn('resize', h)
+    const h = refComponent.value?.clientHeight + "px";
+    console.warn("resize", h);
   }
   onUnmounted(() => {
-    if (resizeObserver !== null) resizeObserver.unobserve(refComponent)
+    if (resizeObserver !== null) resizeObserver.unobserve(refComponent);
     // if (refComponent.value == undefined) {
     //   console.error('unmount. component for scroll listener undefined')
     //   return
@@ -176,33 +218,42 @@ export const useScrollListener = (refComponent: Ref<HTMLElement | undefined>, ha
     // // I switched the example from `destroyed` to `beforeDestroy`
     // // to exercise your mind a bit. This lifecycle method works too.
     // refComponent.value.removeEventListener('scroll', handleDebouncedScroll);
-  })
+  });
   // return {handleDebouncedScroll}
-}
+};
 
 export const useSynchronization = () => {
   // TODO check if useCookies is needed instead of useCookie
   // setCookie: any
   function syncSort(fromSort: any, toSort: any, emitToSort: any, id: any) {
-    const sortingCookie = useCookie('sorting_' + id)
+    const sortingCookie = useCookie("sorting_" + id);
 
     if (fromSort.filterQuery && toSort.filterQuery !== fromSort.filterQuery) {
-      toSort.filterQuery = fromSort.filterQuery
+      toSort.filterQuery = fromSort.filterQuery;
     }
     if (fromSort.sortBy && toSort.sortBy !== fromSort.sortBy) {
-      toSort.sortBy = fromSort.sortBy
-      sortingCookie.value = JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc })
+      toSort.sortBy = fromSort.sortBy;
+      sortingCookie.value = JSON.stringify({
+        sortBy: toSort.sortBy,
+        sortDesc: toSort.sortDesc,
+      });
       // this.setCookie('sorting_' + id, JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc }), { expires: 365 })
     }
-    if (fromSort.sortDesc !== undefined && toSort.sortDesc !== fromSort.sortDesc) {
-      toSort.sortDesc = fromSort.sortDesc
-      sortingCookie.value = JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc })
+    if (
+      fromSort.sortDesc !== undefined &&
+      toSort.sortDesc !== fromSort.sortDesc
+    ) {
+      toSort.sortDesc = fromSort.sortDesc;
+      sortingCookie.value = JSON.stringify({
+        sortBy: toSort.sortBy,
+        sortDesc: toSort.sortDesc,
+      });
       // this.setCookie('sorting_' + id, JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc }), { expires: 365 })
     }
     if (emitToSort) {
-      emitToSort('update:sort', toSort)
+      emitToSort("update:sort", toSort);
     }
     // if (emitToSort) { this.$emit('update:sort', toSort) }
   }
-  return { syncSort }
-}
+  return { syncSort };
+};
