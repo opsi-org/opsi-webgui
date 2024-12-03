@@ -13,6 +13,13 @@ test.describe('snapshot', () => {
         if (version) version.innerHTML = 'x.x.x'
       })
     }
-    await simpleScreenshotTest(page, folder, filename.toLocaleLowerCase() + '-story-vue', filename,filename, afterDataTestidFound)
+    await simpleScreenshotTest(
+      page,
+      folder,
+      filename.toLocaleLowerCase() + '-story-vue',
+      filename,
+      filename,
+      afterDataTestidFound,
+    )
   })
 })

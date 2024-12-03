@@ -1,30 +1,49 @@
 <script setup lang="ts">
-
-function initMobile() {
-  const settings = storeSettings()
-  settings.setIsMobile(true)
-}
-function initDesktop() {
-  const settings = storeSettings()
-  settings.setIsMobile(false)
-}
-const getTheme = () => {
-  const settings = storeSettings()
-  // return settings.colortheme
-  return settings.colormode
-}
-const getThemeDoc = () => {
-  return document.querySelector('html')?.classList.contains('dark') ? 'dark' : document.querySelector('html')?.classList.contains('htw-dark') ? 'dark' : 'light'
-}
+  function initMobile() {
+    const settings = storeSettings()
+    settings.setIsMobile(true)
+  }
+  function initDesktop() {
+    const settings = storeSettings()
+    settings.setIsMobile(false)
+  }
+  const getTheme = () => {
+    const settings = storeSettings()
+    // return settings.colortheme
+    return settings.colormode
+  }
+  const getThemeDoc = () => {
+    return document.querySelector('html')?.classList.contains('dark')
+      ? 'dark'
+      : document.querySelector('html')?.classList.contains('htw-dark')
+        ? 'dark'
+        : 'light'
+  }
 </script>
 
 <template>
-
-  <Story >
-    <Variant title="mobile" :meta="{ wrapperMobile: true }" :setup-app="initMobile" responsive-disabled>
+  <Story>
+    <Variant
+      title="mobile"
+      :meta="{ wrapperMobile: true }"
+      :setup-app="initMobile"
+      responsive-disabled
+    >
       <LayoutLDefault>
         <el-text>
-          Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content </el-text>
+          Some content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content
+        </el-text>
         <el-text> Store: {{ getTheme() }} </el-text>
         <el-text> Doc: {{ getThemeDoc() }} </el-text>
       </LayoutLDefault>
@@ -32,7 +51,18 @@ const getThemeDoc = () => {
     <Variant title="desktop" responsive-disabled :setup-app="initDesktop">
       <LayoutLDefault>
         <el-text>
-          Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content Some content Some content Some
+          content Some content Some content
         </el-text>
       </LayoutLDefault>
     </Variant>

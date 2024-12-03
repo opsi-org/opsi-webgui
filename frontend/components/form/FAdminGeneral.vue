@@ -18,30 +18,54 @@
           :closable="false"
         />
       </div>
-      <el-form :label-width="mq.isMobile.value ? '' : '230px'" :label-position="mq.isMobile.value ? 'top' : 'right'">
-        <el-form-item v-for="(action, index) in actions" :key="index" :label="$t('label.' + section + '.' + action)">
-          <div :style="mq.isMobile.value ? '' : 'display: flex; align-items: center;'">
-            <el-select v-if="action === 'unlock' || action === 'unblock'" style="min-width: 200px" v-model="selected[section]">
+      <el-form
+        :label-width="mq.isMobile.value ? '' : '230px'"
+        :label-position="mq.isMobile.value ? 'top' : 'right'"
+      >
+        <el-form-item
+          v-for="(action, index) in actions"
+          :key="index"
+          :label="$t('label.' + section + '.' + action)"
+        >
+          <div
+            :style="
+              mq.isMobile.value ? '' : 'display: flex; align-items: center;'
+            "
+          >
+            <el-select
+              v-if="action === 'unlock' || action === 'unblock'"
+              style="min-width: 200px"
+              v-model="selected[section]"
+            >
               <el-option
                 v-for="item in section === 'clients'
                   ? blockedClients
                     ? Object.keys(blockedClients)
                     : []
                   : lockedProducts
-                  ? Object.keys(lockedProducts)
-                  : []"
+                    ? Object.keys(lockedProducts)
+                    : []"
                 :key="item"
                 :label="
                   item +
                   ' : ' +
-                  (section === 'clients' ? (blockedClients ? blockedClients[item] : '') : lockedProducts ? lockedProducts[item] : '')
+                  (section === 'clients'
+                    ? blockedClients
+                      ? blockedClients[item]
+                      : ''
+                    : lockedProducts
+                      ? lockedProducts[item]
+                      : '')
                 "
                 :value="item"
               />
             </el-select>
             <el-button
               type="primary"
-              :disabled="(action === 'unblock' || action === 'unlock') && selected[section] == ''"
+              :disabled="
+                (action === 'unblock' || action === 'unlock') &&
+                selected[section] == ''
+              "
               @click="applyAction(action)"
             >
               {{ $t('label.' + action) }}

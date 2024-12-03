@@ -1,4 +1,3 @@
 <template>
   <TabsTServerHealth />
 </template>
-

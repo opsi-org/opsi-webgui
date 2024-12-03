@@ -1,39 +1,57 @@
 <template>
-  <el-form label-width="70px" label-position="top" size="small" data-testid="FAllSelections" class="rounded-lg shadow-md pb-1">
-    <el-form-item v-for="category in selectionDisplayList" :key="category" class="flex items-stretch">
+  <el-form
+    label-width="70px"
+    label-position="top"
+    size="small"
+    data-testid="FAllSelections"
+    class="rounded-lg shadow-md pb-1"
+  >
+    <el-form-item
+      v-for="category in selectionDisplayList"
+      :key="category"
+      class="flex items-stretch"
+    >
       <template #label>
         <div class="!d-inline">
-        <b class="pr-2"> {{ $t('title.' + category.toLowerCase()) }} </b>
-        <el-button
-          v-if="storeSelection['selection' + category].length > 1"
-          size="small"
-          class="!border-none !p-1 m-auto !d-inline"
-          :title="$t('tree.selection.clear.all')"
-          :disable="storeSelection['selection' + category].length <= 0"
-        >
-          <span class="sr-only">{{ $t('button.deselect') }}</span>
-          <IconIIcon
-            :icon="icons.x"
-            @click="storeSelection['clearSelection' + category]"
-          />
-        </el-button>
+          <b class="pr-2"> {{ $t('title.' + category.toLowerCase()) }} </b>
+          <el-button
+            v-if="storeSelection['selection' + category].length > 1"
+            size="small"
+            class="!border-none !p-1 m-auto !d-inline"
+            :title="$t('tree.selection.clear.all')"
+            :disable="storeSelection['selection' + category].length <= 0"
+          >
+            <span class="sr-only">{{ $t('button.deselect') }}</span>
+            <IconIIcon
+              :icon="icons.x"
+              @click="storeSelection['clearSelection' + category]"
+            />
+          </el-button>
         </div>
       </template>
       <el-scrollbar max-height="200px" class="w-full items-stretch flex ml-3">
-        <el-alert v-if="storeSelection['selection' + category].length <= 0" type="warning" :closable="false"
-        >{{ $t('message.warning.noTypeSelected', {type: $t('message.warning.noTypeSelected.type.'+category)})}}</el-alert>
+        <el-alert
+          v-if="storeSelection['selection' + category].length <= 0"
+          type="warning"
+          :closable="false"
+          >{{
+            $t('message.warning.noTypeSelected', {
+              type: $t('message.warning.noTypeSelected.type.' + category),
+            })
+          }}</el-alert
+        >
         <ul v-else direction="vertical">
           <li
             v-for="item in storeSelection['selection' + category]"
             :key="item"
-            class="relative flex items-stretch "
+            class="relative flex items-stretch"
           >
             <p class="pr-8">{{ item }}</p>
             <el-button
               size="small"
               class="!border-none !p-1 absolute top-0 right-0"
-              :title="$t('tree.selection.clear.one', {id: item})"
-              >
+              :title="$t('tree.selection.clear.one', { id: item })"
+            >
               <span class="sr-only">{{ $t('button.deselect') }}</span>
               <IconIIcon
                 :icon="icons.x"
@@ -48,8 +66,8 @@
 </template>
 
 <script setup lang="ts">
-  import type { IObjectString2Any } from '~/types/tgeneral';
-import { useIcons } from '../../composables/mixins/useIcons'
+  import type { IObjectString2Any } from '~/types/tgeneral'
+  import { useIcons } from '../../composables/mixins/useIcons'
   const $t = useI18n().t
   const icons = useIcons()
   const storeSelection: IObjectString2Any = storeSelections()

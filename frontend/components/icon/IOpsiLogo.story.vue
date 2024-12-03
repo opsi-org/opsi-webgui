@@ -1,7 +1,5 @@
 <template>
-  <Story
-    :layout="{ type: 'grid' }"
-  >
+  <Story :layout="{ type: 'grid' }">
     <Variant title="OpsiLogo-default">
       <IconIOpsiLogo />
     </Variant>

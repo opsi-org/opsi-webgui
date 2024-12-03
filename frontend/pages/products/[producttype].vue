@@ -1,7 +1,6 @@
 <template>
   <div>
-
-    <NuxtPage v-if="path[2] === 'config'"/>
+    <NuxtPage v-if="path[2] === 'config'" />
     <!-- <LayoutLSplitView
     :is-mobile="isMobile"
     :page0-condition="path[2] === 'config'"
@@ -18,14 +17,16 @@
   </div>
 </template>
 <script setup lang="ts">
-const route = useRoute()
-const path = computed(()=> route.path.split('/').filter((p: string)=> p !== ''))
+  const route = useRoute()
+  const path = computed(() =>
+    route.path.split('/').filter((p: string) => p !== ''),
+  )
 
-// const width = computed(()=> {
-//   return '50%'
-// })
+  // const width = computed(()=> {
+  //   return '50%'
+  // })
 
-// const isMobile = computed(()=> {
-//   return useMQ().isMobile.value
-// })
+  // const isMobile = computed(()=> {
+  //   return useMQ().isMobile.value
+  // })
 </script>

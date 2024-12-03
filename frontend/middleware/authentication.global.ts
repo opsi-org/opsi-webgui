@@ -1,6 +1,10 @@
-import { abortNavigation, defineNuxtRouteMiddleware, navigateTo, useCookie } from "nuxt/app"
+import {
+  abortNavigation,
+  defineNuxtRouteMiddleware,
+  navigateTo,
+  useCookie,
+} from 'nuxt/app'
 // import { storeAuth } from "../store/authsstore"
-
 
 export default defineNuxtRouteMiddleware((to, from) => {
   if (window.location.port === '6006' || window.location.port === '3000') {

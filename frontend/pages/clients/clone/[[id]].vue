@@ -3,6 +3,5 @@
 </template>
 
 <script setup lang="ts">
-
-const id = computed(()=>useRoute().params.id as string || undefined)
+  const id = computed(() => (useRoute().params.id as string) || undefined)
 </script>

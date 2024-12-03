@@ -2,38 +2,38 @@
 
 export const log = () => {
   function log(...msg: any) {
-    console.log(...msg);
+    console.log(...msg)
   }
   function debug(...msg: any) {
-    console.debug(...msg);
+    console.debug(...msg)
   }
   function info(...msg: any) {
-    console.info(...msg);
+    console.info(...msg)
   }
   function warn(...msg: any) {
-    console.warn(...msg);
+    console.warn(...msg)
   }
   function error(...msg: any) {
-    console.error(...msg);
+    console.error(...msg)
   }
 
   function log_colored(color: string, ...msg: any) {
     // const [first, ...rest] = msg
-    const s = "" + msg.map((v: any) => v).join(" ");
-    console.log("%c" + s, "color:" + color + ";font-weight:bold;");
+    const s = '' + msg.map((v: any) => v).join(' ')
+    console.log('%c' + s, 'color:' + color + ';font-weight:bold;')
   }
   function log_colored_group(color: string, ...msg: any) {
     const s =
-      "" +
+      '' +
       msg
         .map((v: string) => {
-          return v;
+          return v
         })
-        .join(" ");
-    console.group("%c" + s, "color:" + color + ";font-weight:bold;");
+        .join(' ')
+    console.group('%c' + s, 'color:' + color + ';font-weight:bold;')
   }
   function log_colored_group_end() {
-    console.groupEnd();
+    console.groupEnd()
   }
 
   // colorTrace("Test Me", "red");
@@ -46,5 +46,5 @@ export const log = () => {
     log_colored,
     log_colored_group,
     log_colored_group_end,
-  };
-};
+  }
+}

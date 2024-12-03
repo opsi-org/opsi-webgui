@@ -1,6 +1,5 @@
 <div id="top"></div>
 
-
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -34,8 +33,6 @@
   
 </div>
 
-
-
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
@@ -50,9 +47,8 @@
   </ol>
 </details>
 
-
-
 <!-- ABOUT THE PROJECT -->
+
 ## About The Project
 
 [![Montserrat-Alt1][product-screenshot]](https://user-images.githubusercontent.com/66045103/190619819-6aed41f6-58e7-420a-97d2-ed3eb6d27a01.png)
@@ -63,8 +59,8 @@ Thanks for checking out my repo! Be sure to share with friends.
 
 <p align="right"><a href="#top">back to top</a></p>
 
-
 <!-- Installation For PC -->
+
 ## Installation - PC
 
 1. Download the latest `Montserrat-Alt1-<Version Number>.zip`
@@ -74,37 +70,45 @@ Thanks for checking out my repo! Be sure to share with friends.
 5. Depending on your system, a dialog should appear showing a preview of the font
 6. Click the `INSTALL` button
 7. If the font is already installed a dialog will appear asking if you want to replace it
-8. Click `YES`  
+8. Click `YES`
 9. Once the installation is finished, you can close the font preview
 
 <br />
 
-* #### [Download here](https://github.com/Differentunic/Montserrat-Alt1/releases/latest) 
+- #### [Download here](https://github.com/Differentunic/Montserrat-Alt1/releases/latest)
 
 <p align="right"><a href="#top">back to top</a></p>
 
-
 <!-- Installation For Web -->
+
 ## Installation - Web
 
 <br />
 
 ### CSS
+
 You can import the file into your stylesheet as follows:
 
 <ins>NOTE:</ins> The directory where the stylesheet is placed.
+
 ```css
-@import url("static/fonts/Montserrat/fonts/webfonts/Montserrat-Alt1.css");
+@import url('static/fonts/Montserrat/fonts/webfonts/Montserrat-Alt1.css');
 ```
 
 <br />
 
 ### HTML
+
 Similarly, you could link to the same asset as you would any other CSS filter, in the \<head> of the HTML document rather than in the CSS:
 
 <ins>NOTE:</ins> The directory where the stylesheet is placed.
+
 ```html
-<link rel="stylesheet" type="text/css" href="static/fonts/Montserrat/fonts/webfonts/Montserrat-Alt1.css">
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="static/fonts/Montserrat/fonts/webfonts/Montserrat-Alt1.css"
+/>
 ```
 
 <ins>NOTE:</ins> If you are using a framework such as vue.js, paste the `<link>` tag in the index.html file of your project.
@@ -114,23 +118,20 @@ Similarly, you could link to the same asset as you would any other CSS filter, i
 ### How To Use It
 
 After importing the font into your `CSS` or `HTML` file, can use it to style elements:
+
 ```css
 body {
   font-family: 'Montserrat-Alt1', sans-serif;
   font-weight: 400;
 }
-``` 
+```
 
 <br />
 
-
-
-
 <p align="right"><a href="#top">back to top</a></p>
 
-
-
 <!-- ROADMAP -->
+
 ## Roadmap
 
 - [x] Create Release
@@ -143,9 +144,8 @@ See the [open issues](https://github.com/Differentunic/Montserrat-Alt1/issues) f
 
 <p align="right"><a href="#top">back to top</a></p>
 
-
-
 <!-- CONTRIBUTING -->
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
@@ -161,28 +161,25 @@ Don't forget to give the project a star! Thanks again!
 
 <p align="right"><a href="#top">back to top</a></p>
 
-
-
 <!-- LICENSE -->
+
 ## License
 
 Distributed under the OFL License. See `LICENSE` for more information.
 
 <p align="right"><a href="#top">back to top</a></p>
 
-
-
 <!-- ACKNOWLEDGMENTS -->
+
 ## Acknowledgments
 
-* [Julieta Ulanovsky - Montserrat](https://github.com/JulietaUla/Montserrat)
+- [Julieta Ulanovsky - Montserrat](https://github.com/JulietaUla/Montserrat)
 
 <p align="right"><a href="#top">back to top</a></p>
 
-
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/Differentunic/Montserrat-Alt1.svg?style=for-the-badge
 [contributors-url]: https://github.com/Differentunic/Montserrat-Alt1/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/Differentunic/Montserrat-Alt1.svg?style=for-the-badge

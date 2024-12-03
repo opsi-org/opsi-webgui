@@ -1,9 +1,19 @@
 <template>
-  <PContextMenu v-if="items" ref="cmmenu" :model="items" class="p-contextmenu" style="--el-color-text-hover: blue">
+  <PContextMenu
+    v-if="items"
+    ref="cmmenu"
+    :model="items"
+    class="p-contextmenu"
+    style="--el-color-text-hover: blue"
+  >
     <template #item="{ item: menuItem, hasSubmenu }">
       <el-text>
         <div class="inline">
-          <IconIIcon v-if="menuItem.icon" :icon="menuItem.icon" class="inline ml-2 mr-4" />
+          <IconIIcon
+            v-if="menuItem.icon"
+            :icon="menuItem.icon"
+            class="inline ml-2 mr-4"
+          />
           <span class="inline">{{ menuItem.label }}</span>
           <span v-if="hasSubmenu" class="inline float-right">
             <IconIIcon :icon="icons.arrowRight" />
@@ -12,7 +22,13 @@
       </el-text>
     </template>
   </PContextMenu>
-  <ModalMClientEvents v-if="showModal" v-model="showModal" :event="selectedAction" :id="props.item[keyWrapper]" class="bold" />
+  <ModalMClientEvents
+    v-if="showModal"
+    v-model="showModal"
+    :event="selectedAction"
+    :id="props.item[keyWrapper]"
+    class="bold"
+  />
 </template>
 
 <script setup lang="ts">
@@ -128,14 +144,17 @@
   ])
   const keyWrapper = ref(props.rowId)
 
-  watch(() => props.item, () => {
+  watch(
+    () => props.item,
+    () => {
       items.value[0].label = $t('table.contextmenu.header-specific', {
         id: props.item[keyWrapper.value],
       })
-    }
+    },
   )
   function show(e: Event) {
-    if (props.item === undefined || props.item[keyWrapper.value] === '') throw new Error('itemModel is undefined [1]')
+    if (props.item === undefined || props.item[keyWrapper.value] === '')
+      throw new Error('itemModel is undefined [1]')
     if (e === undefined) throw new Error('event is undefined')
     cmmenu.value.show(e)
     // cmmenu.value.show()
@@ -155,7 +174,12 @@
     if (props.type === 'products') {
       const currProdType = 'LocalbootProduct'
       const idChildOfClients = false
-      navigation.toConfiguration(props.type, props.item[keyWrapper.value], idChildOfClients, currProdType)
+      navigation.toConfiguration(
+        props.type,
+        props.item[keyWrapper.value],
+        idChildOfClients,
+        currProdType,
+      )
     } else {
       navigation.toType(props.type, props.item[keyWrapper.value], pagetype)
     }

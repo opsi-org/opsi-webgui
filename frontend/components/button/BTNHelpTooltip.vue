@@ -3,20 +3,15 @@
     :placement="placement"
     :title="title"
     :width="width"
-    :trigger="(trigger as any)"
+    :trigger="trigger as any"
     :content="content"
   >
     <template #reference>
-      <el-button
-      size="small"
-      circle text
-      :class="$attrs.class"
-    >
+      <el-button size="small" circle text :class="$attrs.class">
         <IconIIcon :icon="icons.help" />
       </el-button>
     </template>
   </el-popover>
-
 </template>
 
 <script setup lang="ts">

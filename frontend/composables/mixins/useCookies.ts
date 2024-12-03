@@ -10,70 +10,70 @@ export const useCookies = () => {
   // @changes.Mutation public delFromChangesProducts!: (s: object) => void
   // @errors.Mutation public pushToErrorsProducts!: (s: object) => void
   function existsCookie(key: string) {
-    return (useCookie(key) as Ref).value;
+    return (useCookie(key) as Ref).value
   }
 
   function isCookie(key: string, value: any, defaultValue = undefined) {
-    let v = (useCookie(key) as Ref).value;
+    let v = (useCookie(key) as Ref).value
     if (!v) {
-      v = defaultValue;
+      v = defaultValue
     }
-    return v === value;
+    return v === value
   }
 
-  function getCookie(key: string, defaultResult: any = "") {
-    const v = (useCookie(key) as Ref).value;
+  function getCookie(key: string, defaultResult: any = '') {
+    const v = (useCookie(key) as Ref).value
     if (!v) {
-      return defaultResult;
+      return defaultResult
     }
-    return v as unknown as any;
+    return v as unknown as any
   }
 
-  function getParsedCookie(key: string, defaultResult = ""): any {
-    const v = (useCookie(key) as Ref).value;
+  function getParsedCookie(key: string, defaultResult = ''): any {
+    const v = (useCookie(key) as Ref).value
     if (v === undefined) {
-      return defaultResult;
+      return defaultResult
     }
-    return v;
+    return v
     // const r = JSON.parse(v as unknown as any)
     // return r
   }
 
-  function getKeyCookie(key: string, keyitem: string, defaultResult = "") {
-    const v: any = (useCookie(key) as Ref).value;
+  function getKeyCookie(key: string, keyitem: string, defaultResult = '') {
+    const v: any = (useCookie(key) as Ref).value
     if (v === undefined || v === null) {
-      return defaultResult;
+      return defaultResult
     }
-    return v[keyitem];
+    return v[keyitem]
     // return JSON.parse(v as unknown as any)[keyitem]
   }
 
   function includesCookie(
     key: string,
     value: string | number | boolean,
-    defaultResult: boolean
+    defaultResult: boolean,
   ): any {
-    const v: Array<any> = (useCookie(key) as Ref).value;
+    const v: Array<any> = (useCookie(key) as Ref).value
     if (v === undefined || v === null) {
-      return defaultResult;
+      return defaultResult
     }
-    return v.includes(value);
+    return v.includes(value)
     // return v ? JSON.parse(v as unknown as any).includes(value) : defaultResult
   }
 
   function setCookie(key: string, value: any, options: any = undefined) {
-    let opt: any = options;
+    let opt: any = options
     // https://nuxt.com/docs/api/composables/use-cookie#options
     if (opt === undefined) {
-      opt = { maxAge: 365 };
+      opt = { maxAge: 365 }
     }
     if (opt.expires !== undefined) {
-      opt.maxAge = opt.expires;
-      opt.expires = undefined;
+      opt.maxAge = opt.expires
+      opt.expires = undefined
     }
-    const keyCookie: Ref = useCookie(key, opt);
-    if (value.value === undefined) keyCookie.value = value;
-    else keyCookie.value = value.value;
+    const keyCookie: Ref = useCookie(key, opt)
+    if (value.value === undefined) keyCookie.value = value
+    else keyCookie.value = value.value
     // const _keyCookie = useCookie(key, opt)
   }
   return {
@@ -84,5 +84,5 @@ export const useCookies = () => {
     getKeyCookie,
     includesCookie,
     setCookie,
-  };
-};
+  }
+}

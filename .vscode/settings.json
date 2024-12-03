@@ -2,10 +2,6 @@
   "python.pythonPath": "/usr/bin/python3",
   // // "files.associations": { "**/../.data/*.conf*": "python"}, // Does not work through .vscode/settings.json - only ~user/.config/Code/settings.json. See https://github.com/microsoft/vscode/issues/89179
   "code-eol.highlightExtraWhitespace": true,
-  // "editor.formatOnSave": false,
-  // "editor.codeActionsOnSave": {
-  //   "source.fixAll.eslint": false
-  // },
   "betterTypeScriptErrors.prettify": true,
   "trailing-spaces.trimOnSave": true,
   "js/ts.implicitProjectConfig.experimentalDecorators": true,
@@ -38,43 +34,11 @@
   "typescript.tsdk": "./frontend/node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "volar.codeLens.pugTools": true,
-  // "volar.completion.autoImportComponent": false,
   "volar-document.trace.server": "messages",
-  // "volar.preview.backgroundColor": "#ccc",
   "playwright.cliPath": "/workspace/opsiweb/node_modules/@playwright/test/lib/cli.js",
   "playwright.configs": [
     "/workspace/opsiweb/.config/playwright-all-usecases.config.js",
     "/workspace/opsiweb/.config/playwright-all-components.config.js"
-  ],
-  "runOnSave.statusMessageTimeout": 5000,
-  "runOnSave.commands": [
-    // { "match": ".*", "isAsync": true, "cmd": "echo 'I run for all files.'" },
-    // {
-    //     "match": "\\.vue$",
-    //     "runIn": "terminal",
-    //     "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
-    // },
-    // {
-    //     "match": "\\.(jsonc|json)$",
-    //     "runIn": "terminal",
-    //     "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .json lint-script '**/'"
-    // },
-    // {
-    //     "match": "\\.test.unit.js$",
-    //     "runIn": "terminal",
-    //     "command": "cd /workspace/opsiweb/ && npm run test:unit:current '${fileBasename}' && cd -"
-    // }
-    // {
-    //   "match": "\\.stories.js$",
-    //   "runIn": "terminal",
-    //   "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
-    // },
-    // {
-    //   "match": "\\.test.component.js$",
-    //   "runIn": "terminal",
-    //   "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
-    // },
-    // { "match": ".*", "cmd": "echo 'I am ${env.USERNAME}.'" }
   ],
   "actionButtons": {
     "defaultColor": "orange", // Can also use string color names.
@@ -179,34 +143,6 @@
       // }
     ]
   },
-  "[vue]": {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2
-  },
-  "[css]": {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2
-  },
-  "[html]": {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2
-  },
-  "[javascript]": {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2
-  },
-  "[typescript]": {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2
-  },
-  "[yaml]": {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2
-  },
-  "[json]": {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2
-  },
   "workspace.isHidden": false,
   "files.exclude": {
     ".env": false,
@@ -279,4 +215,9 @@
   "playwrightrunner.playwrightConfigPath": "../opsiweb/.config/playwright-all-components.config.js",
   "explorer.sortOrder": "mixed",
   "editor.defaultFormatter": "esbenp.prettier-vscode"
+  //   "editor.formatOnSave": true,
+  // "prettier.enable": true,
+  // "prettier.requireConfig": true,
+  // "prettier.configPath": "../frontend/.prettierrc",
+  // "prettier.enableDebugLogs": true
 }

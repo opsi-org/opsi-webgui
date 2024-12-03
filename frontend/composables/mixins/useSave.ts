@@ -1,36 +1,36 @@
-import { useNotification } from "./useComponent";
-import { _getI18nInComposable } from "./helper-i18n";
-const { notifySuccess, notifyError } = useNotification();
+import { useNotification } from './useComponent'
+import { _getI18nInComposable } from './helper-i18n'
+const { notifySuccess, notifyError } = useNotification()
 export const useSaveParameters = (_t: any = undefined) => {
-  let t = _t;
+  let t = _t
   if (!t) {
-    t = _getI18nInComposable();
+    t = _getI18nInComposable()
   }
-  const delFromChangesHostParam = storeChanges().delFromChangesHostParam;
-  const pushToErrorsHostParam = storeErrors().pushToErrorsHostParam;
+  const delFromChangesHostParam = storeChanges().delFromChangesHostParam
+  const pushToErrorsHostParam = storeErrors().pushToErrorsHostParam
 
   async function saveParameters(
     url: string,
     request: any,
     deleteitem: any,
-    showalert: boolean
+    showalert: boolean,
   ) {
-    const { error } = await useApiPOST(url, request);
+    const { error } = await useApiPOST(url, request)
     if (error) {
       if (showalert) {
-        notifyError({ message: error?.response?.data?.message });
+        notifyError({ message: error?.response?.data?.message })
       } else {
-        const errorObj = deleteitem;
-        errorObj.error = error?.response?.data;
-        pushToErrorsHostParam(errorObj);
+        const errorObj = deleteitem
+        errorObj.error = error?.response?.data
+        pushToErrorsHostParam(errorObj)
       }
-      return;
+      return
     }
 
     if (deleteitem) {
-      delFromChangesHostParam(deleteitem);
+      delFromChangesHostParam(deleteitem)
     } else {
-      notifySuccess({ message: t("message.success.save.parameters") });
+      notifySuccess({ message: t('message.success.save.parameters') })
     }
     // await this.$axios.$post(url, request)
     //   .then(() => {
@@ -53,43 +53,43 @@ export const useSaveParameters = (_t: any = undefined) => {
     delFromChangesHostParam,
     pushToErrorsHostParam,
     saveParameters,
-  };
-};
+  }
+}
 
 export const useSaveProductActionRequest = (_t: any = undefined) => {
-  let t = _t;
+  let t = _t
   if (!t) {
-    t = _getI18nInComposable();
+    t = _getI18nInComposable()
   }
 
-  const delFromChangesProducts = storeChanges().delFromChangesProducts;
-  const pushToErrorsProducts = storeErrors().pushToErrorsProducts;
+  const delFromChangesProducts = storeChanges().delFromChangesProducts
+  const pushToErrorsProducts = storeErrors().pushToErrorsProducts
 
   async function saveProdActionRequest(
     change: object,
     deleteitem: any,
-    showalert: boolean
+    showalert: boolean,
   ) {
-    const { error } = await useApiPOST("/opsidata/clients/products", change);
+    const { error } = await useApiPOST('/opsidata/clients/products', change)
     if (error) {
       if (showalert) {
-        notifyError({ message: error?.response?.data?.message });
+        notifyError({ message: error?.response?.data?.message })
       } else {
-        const errorObj = deleteitem;
-        errorObj.error = error?.response?.data;
-        pushToErrorsProducts(errorObj);
+        const errorObj = deleteitem
+        errorObj.error = error?.response?.data
+        pushToErrorsProducts(errorObj)
       }
-      return false;
+      return false
     }
 
     if (deleteitem) {
-      delFromChangesProducts(deleteitem);
+      delFromChangesProducts(deleteitem)
     } else {
-      notifySuccess({ message: t("message.success.save.prodActionRequest") });
+      notifySuccess({ message: t('message.success.save.prodActionRequest') })
       // await $nuxt.refresh()
       // TODO how to refresh nuxt ??? https://stackoverflow.com/questions/77387776/nuxt-3-reload-refresh-the-page
     }
-    return true;
+    return true
   }
 
   //   await this.$axios.$post('/api/opsidata/clients/products', change)
@@ -114,52 +114,52 @@ export const useSaveProductActionRequest = (_t: any = undefined) => {
     delFromChangesProducts,
     pushToErrorsProducts,
     saveProdActionRequest,
-  };
-};
+  }
+}
 
 export const useSaveProductProperties = (
   refetch: undefined | ((b: boolean) => void) = undefined,
-  _t: any = undefined
+  _t: any = undefined,
 ) => {
-  let t = _t;
+  let t = _t
   if (!t) {
-    t = _getI18nInComposable();
+    t = _getI18nInComposable()
   }
 
-  const delFromChangesProducts = storeChanges().delFromChangesProducts;
-  const pushToErrorsProducts = storeErrors().pushToErrorsProducts;
+  const delFromChangesProducts = storeChanges().delFromChangesProducts
+  const pushToErrorsProducts = storeErrors().pushToErrorsProducts
   // const $emit = defineEmits(['refetch'])
   async function saveProdProperties(
     id: string,
     change: any,
     deleteitem: any,
-    showalert: boolean
+    showalert: boolean,
   ) {
     const { error } = await useApiPOST(
       `/opsidata/products/${id}/properties`,
-      change
-    );
+      change,
+    )
     if (error) {
       if (showalert) {
-        notifyError({ message: error?.response?.data?.message });
+        notifyError({ message: error?.response?.data?.message })
       } else {
-        const errorObj = deleteitem;
-        errorObj.error = error?.response?.data;
-        pushToErrorsProducts(errorObj);
+        const errorObj = deleteitem
+        errorObj.error = error?.response?.data
+        pushToErrorsProducts(errorObj)
       }
-      return;
+      return
     }
 
     if (deleteitem) {
-      delFromChangesProducts(deleteitem);
+      delFromChangesProducts(deleteitem)
     } else {
       // $emit('refetch', true)
-      if (refetch) refetch(true);
+      if (refetch) refetch(true)
       notifySuccess({
-        message: t("message.success.save.productproperty", {
+        message: t('message.success.save.productproperty', {
           id: Object.keys(change.properties),
         }),
-      });
+      })
     }
 
     // await this.$axios.$post(`/api/opsidata/products/${id}/properties`, change)
@@ -180,5 +180,5 @@ export const useSaveProductProperties = (
     //     }
     //   })
   }
-  return { delFromChangesProducts, pushToErrorsProducts, saveProdProperties };
-};
+  return { delFromChangesProducts, pushToErrorsProducts, saveProdProperties }
+}

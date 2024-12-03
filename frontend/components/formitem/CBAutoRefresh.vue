@@ -5,7 +5,7 @@
       placement="top"
     >
       <el-switch
-        v-if="props.type==='checkbox'"
+        v-if="props.type === 'checkbox'"
         v-model="msgbusAutoRefresh"
         inline-prompt
         :active-text="$t('form.autorefresh.cbvalue.on')"
@@ -18,11 +18,11 @@
 </template>
 
 <script setup lang="ts">
-const $t = useI18n().t
+  const $t = useI18n().t
 
-const { msgbusAutoRefresh } = storeToRefs(storeSettings())
+  const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
-const props = defineProps({
-  type: { type: String, default: 'checkbox' }
-})
+  const props = defineProps({
+    type: { type: String, default: 'checkbox' },
+  })
 </script>

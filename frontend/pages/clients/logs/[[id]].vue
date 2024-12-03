@@ -1,7 +1,7 @@
 <template>
-   <ViewVClientsLog type="clients" :is-child="false" :id="id"/>
+  <ViewVClientsLog type="clients" :is-child="false" :id="id" />
 </template>
 
 <script setup lang="ts">
-const id = computed(()=>useRoute().params.id as string || undefined)
+  const id = computed(() => (useRoute().params.id as string) || undefined)
 </script>

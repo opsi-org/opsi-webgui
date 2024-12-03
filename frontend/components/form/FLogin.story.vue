@@ -1,6 +1,5 @@
-
 <template>
   <Story>
-    <FormFLogin/>
+    <FormFLogin />
   </Story>
 </template>

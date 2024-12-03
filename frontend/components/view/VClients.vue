@@ -14,7 +14,10 @@
     @clear-selection="storeSelection.clearSelectionClients"
   >
     <template #toolbar-right>
-      <el-button type="primary" @click="router.push('/clients/products/LocalbootProduct')">
+      <el-button
+        type="primary"
+        @click="router.push('/clients/products/LocalbootProduct')"
+      >
         <IconIIcon :icon="icons.product" />
         {{ $t('table.fields.products') }}
       </el-button>
@@ -22,14 +25,13 @@
   </TableTTable>
 </template>
 
-
 <script setup lang="tsx">
   import type { T_ClientsList } from '~/types/APItypes'
   import { useIcons } from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useMBus } from '~/composables/mixins/useMessagebus'
 
-  import Checkbox from 'primevue/checkbox';
+  import Checkbox from 'primevue/checkbox'
   import RadioButton from 'primevue/radiobutton'
   import Button from 'primevue/button'
 
@@ -42,14 +44,13 @@
   const storeSelection = storeSelections()
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
-
   const _props = defineProps({
     isMobile: {
       type: Boolean,
       default: () => {
         return false
       },
-    }
+    },
   })
 
   const rowId = 'clientId'
@@ -67,13 +68,28 @@
       // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} /> },
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
-        rowData.selected = storeSelection.selectionClients.includes(rowData[rowId])
-        watch(() => storeSelection.selectionClients, () => {
-          rowData.selected = storeSelection.selectionClients.includes(rowData[rowId])
-        })
-        return storeSelection.multiSelection ?
-          (<Checkbox model-value={rowData.selected} binary/>) :
-          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary />)
+        rowData.selected = storeSelection.selectionClients.includes(
+          rowData[rowId],
+        )
+        watch(
+          () => storeSelection.selectionClients,
+          () => {
+            rowData.selected = storeSelection.selectionClients.includes(
+              rowData[rowId],
+            )
+          },
+        )
+        return storeSelection.multiSelection ? (
+          <Checkbox model-value={rowData.selected} binary />
+        ) : (
+          <RadioButton
+            model-value={rowData.selected}
+            inputId={rowId + 'Selection-' + rowData[rowId]}
+            name={rowId + 'selection'}
+            value=""
+            binary
+          />
+        )
       },
     },
     {
@@ -84,12 +100,37 @@
       alwaysVisible: true,
       filter: true,
     },
-    { title: $t('table.fields.mac'), key: 'macAddress', sortable: false, visible: false },
-    { title: $t('table.fields.ip'), key: 'ipAddress', sortable: true, visible: false },
-    { title: $t('table.fields.description'), key: 'description', sortable: false, visible: false },
+    {
+      title: $t('table.fields.mac'),
+      key: 'macAddress',
+      sortable: false,
+      visible: false,
+    },
+    {
+      title: $t('table.fields.ip'),
+      key: 'ipAddress',
+      sortable: true,
+      visible: false,
+    },
+    {
+      title: $t('table.fields.description'),
+      key: 'description',
+      sortable: false,
+      visible: false,
+    },
     { title: 'notes', key: 'notes', sortable: true, visible: false },
-    { title: $t('table.fields.lastSeen'), key: 'lastSeen', sortable: true, visible: false },
-    { title: $t('table.fields.uefi'), key: 'uefi', sortable: true, visible: false },
+    {
+      title: $t('table.fields.lastSeen'),
+      key: 'lastSeen',
+      sortable: true,
+      visible: false,
+    },
+    {
+      title: $t('table.fields.uefi'),
+      key: 'uefi',
+      sortable: true,
+      visible: false,
+    },
 
     {
       title: $t('table.fields.versionOutdatedGeneral'),
@@ -106,7 +147,7 @@
         'version',
         'LocalbootProduct',
         Infinity,
-        1
+        1,
       ),
     },
     {
@@ -124,7 +165,7 @@
         'version',
         'NetbootProduct',
         Infinity,
-        1
+        1,
       ),
     },
     {
@@ -142,7 +183,7 @@
         'installationStatus',
         undefined, // type
         Infinity, // errorValue
-        1 // warnValue
+        1, // warnValue
       ),
     },
     {
@@ -157,7 +198,7 @@
         $t('table.fields.installationStatus_installed'),
         '/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=',
         'installationStatus_installed',
-        'installationStatus'
+        'installationStatus',
       ),
     },
     {
@@ -175,7 +216,7 @@
         'actionResult',
         undefined, // type
         1, // errorValue
-        Infinity // warnValue
+        Infinity, // warnValue
       ),
     },
     {
@@ -215,18 +256,31 @@
     params.selected = JSON.stringify(storeSelection.selectionClients)
     params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)
 
-    const {data, error, headers} = await useApiGETBody<T_ClientsList>('/opsidata/clients', params)
+    const { data, error, headers } = await useApiGETBody<T_ClientsList>(
+      '/opsidata/clients',
+      params,
+    )
     if (error) {
       console.error(error)
-      notifyError({ message: error?.response?.data?.message || $t('message.error.generic') })
+      notifyError({
+        message: error?.response?.data?.message || $t('message.error.generic'),
+      })
       return
     }
     if (data.value == undefined) {
-      console.error("empty response. data.value undefined, data: ", data, headers, error)
+      console.error(
+        'empty response. data.value undefined, data: ',
+        data,
+        headers,
+        error,
+      )
       notifyError({ message: $t('message.error.empty-response') })
       return
     }
-    return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
+    return {
+      data: data.value,
+      total: parseInt(headers.get('x-total-count') || '0'),
+    }
   }
 
   async function wsBusMsgObjectChanged(msg: any = undefined) {
@@ -235,11 +289,15 @@
         clientsRef.value?.refetch()
         return
       }
-      notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.client_updated', { clientId: msg.data.id }),
+      notifyInfo({
+        title: $t('message.info.event'),
+        message: $t('message.info.event.client_updated', {
+          clientId: msg.data.id,
+        }),
         button: {
           label: $t('label.reloadPage'),
-          onClick: clientsRef.value?.refetch
-        }
+          onClick: clientsRef.value?.refetch,
+        },
       })
     }
     if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
@@ -248,39 +306,58 @@
     }
   }
 
-
-  function getStatisticRenderer(tootltip: string, url: string, value: string, sortbyKey: string, type: undefined|string = undefined, errorValue: number = Infinity, warnValue: number = Infinity): (rowData: any) => VNode {
-    return ({rowData}:any) => {
-      function click() { router.push(url + rowData.clientId) }
+  function getStatisticRenderer(
+    tootltip: string,
+    url: string,
+    value: string,
+    sortbyKey: string,
+    type: undefined | string = undefined,
+    errorValue: number = Infinity,
+    warnValue: number = Infinity,
+  ): (rowData: any) => VNode {
+    return ({ rowData }: any) => {
+      function click() {
+        router.push(url + rowData.clientId)
+      }
 
       const checked = computed(() => {
         const currentRoute = router.currentRoute.value.fullPath
         if (type) {
-          return currentRoute.includes('sortby='+sortbyKey) && currentRoute.includes('selectedClient=' + rowData.clientId) && currentRoute.includes('/' + type + '?')
+          return (
+            currentRoute.includes('sortby=' + sortbyKey) &&
+            currentRoute.includes('selectedClient=' + rowData.clientId) &&
+            currentRoute.includes('/' + type + '?')
+          )
         }
-        return currentRoute.includes('sortby='+sortbyKey) && currentRoute.includes('selectedClient=' + rowData.clientId)
+        return (
+          currentRoute.includes('sortby=' + sortbyKey) &&
+          currentRoute.includes('selectedClient=' + rowData.clientId)
+        )
       })
       const severity = computed(() => {
-        if (checked.value) return 'primary';
-        if (rowData[value] >= errorValue) return 'danger';
-        if (rowData[value] >= warnValue) return 'warn';
-        return 'success';
-      });
+        if (checked.value) return 'primary'
+        if (rowData[value] >= errorValue) return 'danger'
+        if (rowData[value] >= warnValue) return 'warn'
+        return 'success'
+      })
 
-      return <el-tooltip
-            class="box-item"
-            effect="dark"
-            placement="left-start"
-            v-slots={{ content: () => rowData[value] + ' ' + tootltip }}
-          >
+      return (
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          placement="left-start"
+          v-slots={{ content: () => rowData[value] + ' ' + tootltip }}
+        >
           <div>
-
-            <Button badge={(rowData[value] || 0) + ''} badgeSeverity={severity.value} onClick={click} class="!inline !bg-transparent !m-0 !p-0 !border-0"
+            <Button
+              badge={(rowData[value] || 0) + ''}
+              badgeSeverity={severity.value}
+              onClick={click}
+              class="!inline !bg-transparent !m-0 !p-0 !border-0"
             />
           </div>
-          </el-tooltip>
+        </el-tooltip>
+      )
     }
   }
-
 </script>
-

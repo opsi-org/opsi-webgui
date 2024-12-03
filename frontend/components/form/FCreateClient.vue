@@ -1,14 +1,31 @@
 <template>
-  <el-form :label-width="mq.isMobile.value ? '' : '230px'" :label-position="mq.isMobile.value ? 'top' : 'right'" v-loading="isLoading">
+  <el-form
+    :label-width="mq.isMobile.value ? '' : '230px'"
+    :label-position="mq.isMobile.value ? 'top' : 'right'"
+    v-loading="isLoading"
+  >
     <div v-for="(options, category, index) in createClient" :key="index">
       <el-row>
         <b>{{ $t('title.' + category) }} </b>
       </el-row>
-      <div v-for="(value, label) in options" :key="label+value">
+      <div v-for="(value, label) in options" :key="label + value">
         <el-form-item :label="$t('table.fields.' + label)">
-          <el-form v-if="label === 'opsiClientAgent'" :inline="true" label-position="top">
-            <div v-for="(value2, label2) in createClient.initialSetup.opsiClientAgent" :key="label2+value2">
-              <el-checkbox v-if="typeof value2 == 'boolean'" v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]" />
+          <el-form
+            v-if="label === 'opsiClientAgent'"
+            :inline="true"
+            label-position="top"
+          >
+            <div
+              v-for="(value2, label2) in createClient.initialSetup
+                .opsiClientAgent"
+              :key="label2 + value2"
+            >
+              <el-checkbox
+                v-if="typeof value2 == 'boolean'"
+                v-model="
+                  createClient.initialSetup.opsiClientAgent[label2.toString()]
+                "
+              />
               <el-form-item
                 v-else
                 :label="$t('form.' + label)"
@@ -16,43 +33,102 @@
                   'd-none': !createClient.initialSetup.opsiClientAgent.setup,
                 }"
               >
-                <el-select v-if="label2 === 'type'" filterable v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]">
-                  <el-option v-for="item in ['windows', 'linux', 'mac']" :key="item" :label="item" :value="item" />
+                <el-select
+                  v-if="label2 === 'type'"
+                  filterable
+                  v-model="
+                    createClient.initialSetup.opsiClientAgent[label2.toString()]
+                  "
+                >
+                  <el-option
+                    v-for="item in ['windows', 'linux', 'mac']"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
                 </el-select>
                 <el-input
                   v-else-if="label2 === 'password'"
-                  v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]"
+                  v-model="
+                    createClient.initialSetup.opsiClientAgent[label2.toString()]
+                  "
                   show-password
                 />
-                <el-input v-else v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]" />
+                <el-input
+                  v-else
+                  v-model="
+                    createClient.initialSetup.opsiClientAgent[label2.toString()]
+                  "
+                />
               </el-form-item>
             </div>
           </el-form>
-          <el-select v-else-if="label === 'depot'" filterable v-model="createClient.assignments.depot" clearable>
-            <el-option v-for="item in depotIDList" :key="item" :label="item" :value="item" />
+          <el-select
+            v-else-if="label === 'depot'"
+            filterable
+            v-model="createClient.assignments.depot"
+            clearable
+          >
+            <el-option
+              v-for="item in depotIDList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
-          <el-select v-else-if="label === 'group'" filterable v-model="createClient.assignments.group" clearable>
-            <el-option v-for="item in groupList" :key="item" :label="item" :value="item" />
+          <el-select
+            v-else-if="label === 'group'"
+            filterable
+            v-model="createClient.assignments.group"
+            clearable
+          >
+            <el-option
+              v-for="item in groupList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
 
-          <el-select v-else-if="label === 'netbootProduct'" filterable v-model="createClient.initialSetup.netbootProduct" clearable>
-            <el-option v-for="item in netbootProductList" :key="item" :label="item" :value="item" />
+          <el-select
+            v-else-if="label === 'netbootProduct'"
+            filterable
+            v-model="createClient.initialSetup.netbootProduct"
+            clearable
+          >
+            <el-option
+              v-for="item in netbootProductList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
           <el-input v-else-if="label === 'hostId'" v-model="clientName">
             <template #append>
               <el-input v-model="domain" class="border-none" />
             </template>
           </el-input>
-          <el-checkbox v-else-if="typeof value == 'boolean'" v-model="createClient[category][label]" />
-          <el-input v-else v-model="createClient[category][label]" :data-testid="label" />
+          <el-checkbox
+            v-else-if="typeof value == 'boolean'"
+            v-model="createClient[category][label]"
+          />
+          <el-input
+            v-else
+            v-model="createClient[category][label]"
+            :data-testid="label"
+          />
         </el-form-item>
       </div>
     </div>
     <el-form-item>
       <el-button @click="resetForm()"> {{ $t('button.reset') }}</el-button>
-      <el-button data-testid="clientCreate_addButton" type="primary" :disabled="!clientName" @click="createOpsiClient">{{
-        $t('button.create')
-      }}</el-button>
+      <el-button
+        data-testid="clientCreate_addButton"
+        type="primary"
+        :disabled="!clientName"
+        @click="createOpsiClient"
+        >{{ $t('button.create') }}</el-button
+      >
     </el-form-item>
   </el-form>
 </template>
@@ -61,7 +137,7 @@
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useDepot, useClient } from '~/composables/mixins/useGet'
   import type { T_ClientAttr, T_DepotIds, T_Product } from '~/types/APItypes'
-import type { IObjectString2Any } from '~/types/tgeneral';
+  import type { IObjectString2Any } from '~/types/tgeneral'
 
   interface IClientObject {
     basics: {
@@ -98,7 +174,6 @@ import type { IObjectString2Any } from '~/types/tgeneral';
 
   const createClient = ref<IClientObject>(getDefaultCreateClient())
 
-
   onMounted(async () => {
     await fetchInitialData()
   })
@@ -107,7 +182,7 @@ import type { IObjectString2Any } from '~/types/tgeneral';
     () => createClient.value.assignments.depot,
     async () => {
       await fetchDepotSpecificData()
-    }
+    },
   )
 
   async function fetchInitialData() {
@@ -120,7 +195,9 @@ import type { IObjectString2Any } from '~/types/tgeneral';
 
   async function fetchDepotSpecificData() {
     depotIDList.value = await useDepot($t).getDepotIdList()
-    clientIDList.value = await useClient().getClientIdList([createClient.value.assignments.depot])
+    clientIDList.value = await useClient().getClientIdList([
+      createClient.value.assignments.depot,
+    ])
     await fetchNetbootProducts()
   }
 
@@ -134,11 +211,16 @@ import type { IObjectString2Any } from '~/types/tgeneral';
   }
 
   async function fetchNetbootProducts() {
-    const depot = createClient.value.assignments.depot !== '' ? createClient.value.assignments.depot : storeCache().opsiconfigserver
+    const depot =
+      createClient.value.assignments.depot !== ''
+        ? createClient.value.assignments.depot
+        : storeCache().opsiconfigserver
     await useApiGET(`/opsidata/depots/products?selectedDepots=[${depot}]`)
       .then((response) => {
         if (Array.isArray(response.data.value)) {
-          netbootProductList.value = response.data.value.map((item: T_Product) => item.productId)
+          netbootProductList.value = response.data.value.map(
+            (item: T_Product) => item.productId,
+          )
         }
       })
       .catch((error) => {
@@ -161,7 +243,10 @@ import type { IObjectString2Any } from '~/types/tgeneral';
       client: createClient.value.basics,
       depot: createClient.value.assignments.depot,
     }
-    const { error } = await useApiPOST<T_ClientAttr>('/opsidata/clients', request)
+    const { error } = await useApiPOST<T_ClientAttr>(
+      '/opsidata/clients',
+      request,
+    )
 
     if (error) {
       notifyError({ message: error?.response?.data?.message })
@@ -180,10 +265,16 @@ import type { IObjectString2Any } from '~/types/tgeneral';
       // }
 
       if (createClient.value.assignments.group?.length > 0) {
-        await handleApiPost(`/opsidata/clients/${createClient.value.basics.hostId}/groups`, [createClient.value.assignments.group])
+        await handleApiPost(
+          `/opsidata/clients/${createClient.value.basics.hostId}/groups`,
+          [createClient.value.assignments.group],
+        )
       }
       if (createClient.value.initialSetup.opsiClientAgent.setup) {
-        await handleApiPost('/opsidata/clients/agent', createClient.value.initialSetup.opsiClientAgent)
+        await handleApiPost(
+          '/opsidata/clients/agent',
+          createClient.value.initialSetup.opsiClientAgent,
+        )
       }
       if (createClient.value.initialSetup.netbootProduct?.length > 0) {
         await handleApiPost('/opsidata/clients/products', {
@@ -207,7 +298,6 @@ import type { IObjectString2Any } from '~/types/tgeneral';
   function resetForm() {
     createClient.value = getDefaultCreateClient()
   }
-
 
   function getDefaultCreateClient(): IClientObject {
     return {

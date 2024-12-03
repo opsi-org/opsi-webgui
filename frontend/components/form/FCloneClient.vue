@@ -75,14 +75,14 @@
     () => sourceID.value,
     async () => {
       domain.value = sourceID.value.substring(sourceID.value.indexOf('.'))
-    }
+    },
   )
   function setId(id: string) {
     sourceID.value = id
   }
   async function fetch() {
     clientIDList.value = await useClient().getClientIdList(
-      storeSelection.selectionDepots
+      storeSelection.selectionDepots,
     )
   }
 
@@ -102,7 +102,7 @@
     try {
       await useApiPOST(
         `/opsidata/clients/${sourceID.value}/clone`,
-        cloneClientCopy
+        cloneClientCopy,
       )
       notifySuccess({ message: $t('message.success.clone') })
     } catch (error) {

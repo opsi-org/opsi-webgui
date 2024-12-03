@@ -1,37 +1,37 @@
 export const useUtils = () => {
-  const addOrRemoveListItem = (arr: any[], upload: any, by = "ident") => {
+  const addOrRemoveListItem = (arr: any[], upload: any, by = 'ident') => {
     const index = arr.findIndex(function (element) {
-      return element[by] === upload[by];
-    });
+      return element[by] === upload[by]
+    })
     if (index > -1) {
-      arr.splice(index, 1);
+      arr.splice(index, 1)
     } else {
-      arr.push(upload);
+      arr.push(upload)
     }
-    return arr;
-  };
+    return arr
+  }
   const isEqual = (arr: any[]) => {
-    if (arr.length === 0) return true;
-    return arr.every((v) => v === arr[0]);
-  };
+    if (arr.length === 0) return true
+    return arr.every((v) => v === arr[0])
+  }
 
-  return { addOrRemoveListItem, isEqual };
-};
+  return { addOrRemoveListItem, isEqual }
+}
 export const useUtilsEvents = () => {
   function debounce(
     fn: (...args: any[]) => void,
-    wait: number
+    wait: number,
   ): (...args: any[]) => void {
-    let timer: any;
+    let timer: any
     return function (...args: any[]) {
       if (timer) {
-        clearTimeout(timer); // clear any pre-existing timer
+        clearTimeout(timer) // clear any pre-existing timer
       }
-      const context = getCurrentInstance()?.appContext; // get the current context
+      const context = getCurrentInstance()?.appContext // get the current context
       timer = setTimeout(() => {
-        fn.apply(context, args); // call the function if time expires
-      }, wait);
-    };
+        fn.apply(context, args) // call the function if time expires
+      }, wait)
+    }
   }
   // function delay(fn:Function, ms:number) {
   //   let timer:any = 0
@@ -43,5 +43,5 @@ export const useUtilsEvents = () => {
   //   }
   // }
 
-  return { debounce };
-};
+  return { debounce }
+}

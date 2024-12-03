@@ -15,7 +15,7 @@
   // import {useIcons} from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
   import Checkbox from 'primevue/checkbox'
-import RadioButton from 'primevue/radiobutton';
+  import RadioButton from 'primevue/radiobutton'
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
@@ -46,13 +46,29 @@ import RadioButton from 'primevue/radiobutton';
       // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
-        rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
-        watch(() => storeSelection.selectionDepots, () => {
-          rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
-        })
-        return storeSelection.multiSelection ?
-          (<Checkbox model-value={rowData.selected} binary readonly/>) :
-          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary readonly/>)
+        rowData.selected = storeSelection.selectionDepots.includes(
+          rowData[rowId],
+        )
+        watch(
+          () => storeSelection.selectionDepots,
+          () => {
+            rowData.selected = storeSelection.selectionDepots.includes(
+              rowData[rowId],
+            )
+          },
+        )
+        return storeSelection.multiSelection ? (
+          <Checkbox model-value={rowData.selected} binary readonly />
+        ) : (
+          <RadioButton
+            model-value={rowData.selected}
+            inputId={rowId + 'Selection-' + rowData[rowId]}
+            name={rowId + 'selection'}
+            value=""
+            binary
+            readonly
+          />
+        )
       },
     },
     {
@@ -77,7 +93,12 @@ import RadioButton from 'primevue/radiobutton';
         )
       },
     },
-    { title: $t('table.fields.description'), key: 'description', sortable: false, visible: true },
+    {
+      title: $t('table.fields.description'),
+      key: 'description',
+      sortable: false,
+      visible: true,
+    },
     {
       title: $t('table.fields.type'),
       key: 'type',
@@ -119,13 +140,18 @@ import RadioButton from 'primevue/radiobutton';
       params.selected = JSON.stringify([])
     }
 
-    const { data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
+    const { data, error, headers } = await useApiGETBody<T_ServerList>(
+      '/opsidata/depots',
+      params,
+    )
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       return
     }
     if (data.value == undefined) {
-      notifyError({ message: $t('message.error.empty-response', { details: 'Servers' }) })
+      notifyError({
+        message: $t('message.error.empty-response', { details: 'Servers' }),
+      })
       return
     }
 
@@ -146,6 +172,9 @@ import RadioButton from 'primevue/radiobutton';
           row.selected = true
         })
     }
-    return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
+    return {
+      data: data.value,
+      total: parseInt(headers.get('x-total-count') || '0'),
+    }
   }
 </script>

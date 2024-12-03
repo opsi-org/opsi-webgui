@@ -13,7 +13,12 @@ test.describe('snapshot', () => {
     //     // if (servername) servername. = 'testconfigserver'
     //   // })
     // }
-    await simpleScreenshotTest(page, folder, filename.toLocaleLowerCase() + '-story-vue', filename, filename,
+    await simpleScreenshotTest(
+      page,
+      folder,
+      filename.toLocaleLowerCase() + '-story-vue',
+      filename,
+      filename,
       // afterDataTestidFound
     )
   })

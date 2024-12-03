@@ -9,12 +9,12 @@
 </template>
 
 <script setup lang="ts">
-const settings = storeSettings()
+  const settings = storeSettings()
 
-const isDarkMode = computed({
-  get: () => settings.colormode === 'dark',
-  set: (value: boolean) => {
-    settings.setColormode(value ? 'dark' : 'light');
-  }
-});
+  const isDarkMode = computed({
+    get: () => settings.colormode === 'dark',
+    set: (value: boolean) => {
+      settings.setColormode(value ? 'dark' : 'light')
+    },
+  })
 </script>

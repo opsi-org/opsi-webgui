@@ -1,10 +1,10 @@
 <template>
   <el-card shadow="hover">
     <template #header>
-      <h2> {{ $t(item.title) }}</h2>
+      <h2>{{ $t(item.title) }}</h2>
     </template>
     <el-text> {{ $t(item.description) }}</el-text>
-    <br>
+    <br />
     <el-link :href="item.link" target="_blank" type="primary">{{
       $t(item.buttonname)
     }}</el-link>

@@ -12,7 +12,8 @@
       <template #default="scope">
         <a
           v-if="scope.row.children"
-          :aria-expanded="false" aria-controls="details-row-1"
+          :aria-expanded="false"
+          aria-controls="details-row-1"
           :aria-label="$t('button.expand.arialabel')"
           :title="$t('button.expand.arialabel')"
           @click="expandRow"
@@ -25,24 +26,25 @@
     <el-table-column prop="productId" />
     <el-table-column prop="clientId" />
     <el-table-column prop="actionRequest" />
-    <el-table-column prop="save" >
-    <template #default="scope">
-      <div v-if="!scope.row.children">
-        <el-button
-          @click="save(scope.row, false)"
-          class="border-0"
-          variant="outline-primary"
-          size="small"
-          :title="$t('button.save')"
-        >
-          <span class="sr-only">{{ $t('button.save') }}s</span>
-          <IconIIcon :icon="icons.check" />
-        </el-button>
-        <ButtonBTNDeleteObj
-          v-if="!scope.row.children && modelValue"
-          :item="scope.row"
-          from="products" />
-      </div>
+    <el-table-column prop="save">
+      <template #default="scope">
+        <div v-if="!scope.row.children">
+          <el-button
+            @click="save(scope.row, false)"
+            class="border-0"
+            variant="outline-primary"
+            size="small"
+            :title="$t('button.save')"
+          >
+            <span class="sr-only">{{ $t('button.save') }}s</span>
+            <IconIIcon :icon="icons.check" />
+          </el-button>
+          <ButtonBTNDeleteObj
+            v-if="!scope.row.children && modelValue"
+            :item="scope.row"
+            from="products"
+          />
+        </div>
       </template>
     </el-table-column>
     <!-- <el-table-column prop="remove" >
@@ -57,45 +59,43 @@
 </template>
 
 <script setup lang="ts">
-// import { useNotification } from '~/composables/mixins/useComponent';
-import type { IObjectString2Any } from '~/types/tgeneral';
-import { useI18n } from 'vue-i18n';
-import { useIcons } from '~/composables/mixins/useIcons';
-import type { ChangeObj } from '~/types/tchanges';
-// const { notifyError } = useNotification();
-const icons = useIcons();
-const { t: $t } = useI18n();
-// const store = useStore();
-const changestable = ref();
+  import type { IObjectString2Any } from '~/types/tgeneral'
+  import { useI18n } from 'vue-i18n'
+  import { useIcons } from '~/composables/mixins/useIcons'
+  import type { ChangeObj } from '~/types/tchanges'
+  // const { notifyError } = useNotification();
+  const icons = useIcons()
+  const { t: $t } = useI18n()
+  // const store = useStore();
+  const changestable = ref()
 
-const modelValue = defineModel<Array<Record<string,any>>>()
+  const modelValue = defineModel<Array<Record<string, any>>>()
 
-const modelTransformed = computed(() => {
-  if (!modelValue.value) return []
-  const key = "productId"
-  const groupedMap: IObjectString2Any = {};
+  const modelTransformed = computed(() => {
+    if (!modelValue.value) return []
+    const key = 'productId'
+    const groupedMap: IObjectString2Any = {}
 
-  modelValue.value.forEach(item => {
-    const keyValue = item[key];
-    if (!groupedMap[keyValue]) {
-        groupedMap[keyValue] = { [key]: keyValue, children: [] };
-    }
-    groupedMap[keyValue].children.push(item);
-  });
-  return Object.values(groupedMap);
-})
+    modelValue.value.forEach((item) => {
+      const keyValue = item[key]
+      if (!groupedMap[keyValue]) {
+        groupedMap[keyValue] = { [key]: keyValue, children: [] }
+      }
+      groupedMap[keyValue].children.push(item)
+    })
+    return Object.values(groupedMap)
+  })
 
+  function expandRow(scope: any) {
+    const row = Object.hasOwn(scope, 'row') ? scope.row : scope
 
-function expandRow (scope: any) {
-  const row = (Object.hasOwn(scope, 'row'))? scope.row: scope
+    row.expanded = !row.expanded
+    changestable.value.toggleRowExpansion(row, row.expanded)
+    changestable.value.doLayout()
+  }
 
-  row.expanded = !row.expanded;
-  changestable.value.toggleRowExpansion(row, row.expanded);
-  changestable.value.doLayout();
-}
-
-function save (rowItem: ChangeObj, saveAll:boolean) {
-  console.warn(rowItem, "saveall ", saveAll)
+  function save(rowItem: ChangeObj, saveAll: boolean) {
+    console.warn(rowItem, 'saveall ', saveAll)
     // const change = rowItem
     // let showalert: any = true
     // if (saveAll) {
@@ -127,25 +127,24 @@ function save (rowItem: ChangeObj, saveAll:boolean) {
     // }
   }
 
-//   async saveAll () {
-//     const ref = (this.$refs.changesProductsAlert as any)
-//     const changelist = this.changesProducts.filter(o => o.user === this.username)
-//     const saveAll = true
-//     for (const p in changelist) {
-//       const change = changelist[p]
-//       await this.save(change, saveAll)
-//     }
-//     if (this.errorsProducts.length !== 0) {
-//       ref.alert(this.$t('message.error.title'), 'danger', this.errorsProducts)
-//       this.clearErrorsProducts()
-//     }
-//   }
-// }
+  //   async saveAll () {
+  //     const ref = (this.$refs.changesProductsAlert as any)
+  //     const changelist = this.changesProducts.filter(o => o.user === this.username)
+  //     const saveAll = true
+  //     for (const p in changelist) {
+  //       const change = changelist[p]
+  //       await this.save(change, saveAll)
+  //     }
+  //     if (this.errorsProducts.length !== 0) {
+  //       ref.alert(this.$t('message.error.title'), 'danger', this.errorsProducts)
+  //       this.clearErrorsProducts()
+  //     }
+  //   }
+  // }
 </script>
 
-
 <style scoped>
-:deep(.el-table__expand-icon) {
-  display: none !important;
-}
+  :deep(.el-table__expand-icon) {
+    display: none !important;
+  }
 </style>

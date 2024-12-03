@@ -13,25 +13,25 @@
 </template>
 
 <script lang="ts" setup>
-import { useIcons } from '~/composables/mixins/useIcons';
+  import { useIcons } from '~/composables/mixins/useIcons'
 
-const $t = useI18n().t
-const icons = useIcons()
-const changes = storeChanges()
+  const $t = useI18n().t
+  const icons = useIcons()
+  const changes = storeChanges()
 
-const props = defineProps({
-  item: { type: Object, required: true },
-  from: { type: String, required: true }
-})
+  const props = defineProps({
+    item: { type: Object, required: true },
+    from: { type: String, required: true },
+  })
 
-function deleteChanges () {
-  if (!props.item) return
+  function deleteChanges() {
+    if (!props.item) return
 
-  if (props.from === 'products') {
-    changes.delFromChangesProducts(props.item)
+    if (props.from === 'products') {
+      changes.delFromChangesProducts(props.item)
+    }
+    if (props.from === 'hostparam') {
+      changes.delFromChangesHostParam(props.item)
+    }
   }
-  if (props.from === 'hostparam') {
-    changes.delFromChangesHostParam(props.item)
-  }
-}
 </script>

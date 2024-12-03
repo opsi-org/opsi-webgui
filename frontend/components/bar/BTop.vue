@@ -1,24 +1,62 @@
 <template>
-  <el-menu mode="horizontal" :ellipsis="false" class="bg-opsi-blue" data-testid="BTop">
-    <el-menu-item v-if="mq.isMobile.value" index="0" @click="toggleLeft" data-testid="menu_routes" class="min-w-14 w-14">
+  <el-menu
+    mode="horizontal"
+    :ellipsis="false"
+    class="bg-opsi-blue"
+    data-testid="BTop"
+  >
+    <el-menu-item
+      v-if="mq.isMobile.value"
+      index="0"
+      @click="toggleLeft"
+      data-testid="menu_routes"
+      class="min-w-14 w-14"
+    >
       <IconIIcon :icon="icons.navmenu" />
     </el-menu-item>
 
     <div v-if="mq.isMobile.value" class="flex-grow" />
-    <el-menu-item index="1" @click="navigateToClients" class="!bg-transparent !hover:!bg-transparent">
+    <el-menu-item
+      index="1"
+      @click="navigateToClients"
+      class="!bg-transparent !hover:!bg-transparent"
+    >
       <IconIOpsiLogo class="opsi-logo" />
     </el-menu-item>
 
     <div class="flex-grow" />
-    <el-menu-item v-if="changesExists"  @click="openDialog" index="2" type="text" data-testid="menu-changes" class="!bg-transparent">
-      <ModalMChanges v-if="$mq!=='mobile'" v-model="changes" v-model:visible="changesDialogVisible" small transparent/>
+    <el-menu-item
+      v-if="changesExists"
+      @click="openDialog"
+      index="2"
+      type="text"
+      data-testid="menu-changes"
+      class="!bg-transparent"
+    >
+      <ModalMChanges
+        v-if="$mq !== 'mobile'"
+        v-model="changes"
+        v-model:visible="changesDialogVisible"
+        small
+        transparent
+      />
     </el-menu-item>
 
-    <el-menu-item index="3" type="text" @click="toggleRight" data-testid="menu-quickpanel" class="!bg-transparent">
+    <el-menu-item
+      index="3"
+      type="text"
+      @click="toggleRight"
+      data-testid="menu-quickpanel"
+      class="!bg-transparent"
+    >
       <IconIIcon :icon="icons.quickpanel" class="text-white" />
     </el-menu-item>
 
-    <PopconfirmPLogout v-if="!mq.isMobile.value" index="4" :is-menu-item="true" />
+    <PopconfirmPLogout
+      v-if="!mq.isMobile.value"
+      index="4"
+      :is-menu-item="true"
+    />
   </el-menu>
 </template>
 
@@ -38,10 +76,15 @@
   const toggleLeft = () => emit('toggleLeft')
   const toggleRight = () => emit('toggleRight')
   const navigateToClients = () => router.push('/clients/')
-  const openDialog = () => { changesDialogVisible.value = true }
+  const openDialog = () => {
+    changesDialogVisible.value = true
+  }
 
   const changesExists = computed(() => {
-    return changes?.changesHostParam?.length > 0 || changes?.changesProducts?.length > 0
+    return (
+      changes?.changesHostParam?.length > 0 ||
+      changes?.changesProducts?.length > 0
+    )
   })
 </script>
 

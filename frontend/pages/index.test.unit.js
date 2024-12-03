@@ -21,8 +21,8 @@ describe('PIndex', () => {
         // $i18n: { locale: '', messages: { de: {}, en: {} } },
         // $config: { packageVersion: '0' },
         // $mq: 'desktop',
-        $t: () => 'some specific text'
-      }
+        $t: () => 'some specific text',
+      },
       // propsData: {
       //   attributes: { visible: true, expanded: false }
       // }

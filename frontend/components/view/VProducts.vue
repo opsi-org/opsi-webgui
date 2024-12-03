@@ -16,17 +16,26 @@
         <el-checkbox-button
           v-model="productsTypeChecked.LocalbootProduct"
           @change="changeProductsType('LocalbootProduct')"
-        >{{$t('title.localbootProducts')}}</el-checkbox-button>
+          >{{ $t('title.localbootProducts') }}</el-checkbox-button
+        >
         <el-checkbox-button
           v-model="productsTypeChecked.NetbootProduct"
           @change="changeProductsType('NetbootProduct')"
-          >{{ $t('title.netbootProducts') }}</el-checkbox-button>
-        <el-alert v-if="props.selectedClient" :title="$t('table.info.productsOnClient', {id: props.selectedClient})" type="warning" :closable="false" class="max-w-80 !inline-flex !relative max-h-8" />
+          >{{ $t('title.netbootProducts') }}</el-checkbox-button
+        >
+        <el-alert
+          v-if="props.selectedClient"
+          :title="
+            $t('table.info.productsOnClient', { id: props.selectedClient })
+          "
+          type="warning"
+          :closable="false"
+          class="max-w-80 !inline-flex !relative max-h-8"
+        />
       </div>
     </template>
   </TableTTable>
 </template>
-
 
 <script setup lang="tsx">
   import type { IProductTypes, T_Client2Depot } from '~/types/APItypes'
@@ -72,13 +81,21 @@
   const rowId = 'productId'
   // Refs
   const productsRef = ref()
-  const { selectionDepots, selectionClients, selectionProducts } = storeToRefs(storeSelection)
+  const { selectionDepots, selectionClients, selectionProducts } =
+    storeToRefs(storeSelection)
   const clientSelection: Ref<Array<string>> = props.selectedClient
     ? ref([props.selectedClient])
     : selectionClients
   const fetchedDataClients2Depots = ref<T_Client2Depot>({})
-  const lastChanges = ref({ clientIds: [] as Array<string>, productIds: [] as Array<string> }) // used to check if we caused the last event
-  const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
+  const lastChanges = ref({
+    clientIds: [] as Array<string>,
+    productIds: [] as Array<string>,
+  }) // used to check if we caused the last event
+  const productsTypeChecked = ref({
+    LocalbootProduct: true,
+    NetbootProduct: false,
+    Product: false,
+  })
   const currentType = computed<IProductTypes>(() => {
     if (productsTypeChecked.value.LocalbootProduct) return 'LocalbootProduct'
     if (productsTypeChecked.value.NetbootProduct) return 'NetbootProduct'
@@ -98,13 +115,29 @@
       // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.selectionProducts} /> },
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
-        rowData.selected = storeSelection.selectionProducts.includes(rowData[rowId])
-        watch(() => storeSelection.selectionProducts, () => {
-          rowData.selected = storeSelection.selectionProducts.includes(rowData[rowId])
-        })
-        return storeSelection.multiSelection ?
-          (<Checkbox model-value={rowData.selected} binary readonly/>) :
-          (<RadioButton model-value={rowData.selected} inputId={rowId+'Selection-'+rowData[rowId]} name={rowId + 'selection'} value="" binary readonly/>)
+        rowData.selected = storeSelection.selectionProducts.includes(
+          rowData[rowId],
+        )
+        watch(
+          () => storeSelection.selectionProducts,
+          () => {
+            rowData.selected = storeSelection.selectionProducts.includes(
+              rowData[rowId],
+            )
+          },
+        )
+        return storeSelection.multiSelection ? (
+          <Checkbox model-value={rowData.selected} binary readonly />
+        ) : (
+          <RadioButton
+            model-value={rowData.selected}
+            inputId={rowId + 'Selection-' + rowData[rowId]}
+            name={rowId + 'selection'}
+            value=""
+            binary
+            readonly
+          />
+        )
       },
     },
     {
@@ -121,7 +154,12 @@
               <tablecellTCBadgeCompares
                 type="installationStatus"
                 rowid={rowData.productId}
-                values={rowData.installationStatusDetails || [rowData.installationStatus] || []}
+                values={
+                  rowData.installationStatusDetails || [
+                    rowData.installationStatus,
+                  ] ||
+                  []
+                }
                 objects={rowData.selectedClients || []}
                 objectsorigin={clientSelection.value || []}
               />
@@ -148,7 +186,9 @@
               <tablecellTCBadgeCompares
                 type="actionResult"
                 rowid={rowData.productId}
-                values={rowData.actionResultDetails || [rowData.actionResult] || []}
+                values={
+                  rowData.actionResultDetails || [rowData.actionResult] || []
+                }
                 objects={rowData.selectedClients || []}
                 objectsorigin={clientSelection.value || []}
               />
@@ -169,15 +209,30 @@
       visible: true,
       filter: true,
     },
-    { title: $t('table.fields.description'), key: 'description', sortable: true, visible: false },
-    { title: $t('table.fields.advice'), key: 'advice', sortable: true, visible: false },
+    {
+      title: $t('table.fields.description'),
+      key: 'description',
+      sortable: true,
+      visible: false,
+    },
+    {
+      title: $t('table.fields.advice'),
+      key: 'advice',
+      sortable: true,
+      visible: false,
+    },
     {
       title: $t('table.fields.modificationTime'),
       key: 'modificationTime',
       sortable: true,
       visible: false,
     },
-    { title: $t('table.fields.priority'), key: 'priority', sortable: true, visible: false },
+    {
+      title: $t('table.fields.priority'),
+      key: 'priority',
+      sortable: true,
+      visible: false,
+    },
     {
       title: $t('table.fields.version'),
       key: 'version',
@@ -188,11 +243,15 @@
           <ul>
             <li>
               {$t('table.fields.version.tooltip.serverversions')}{' '}
-              {rowData.depotVersions ? Object.values(rowData.depotVersions).join(', ') : ''}
+              {rowData.depotVersions
+                ? Object.values(rowData.depotVersions).join(', ')
+                : ''}
             </li>
             <li>
               {$t('table.fields.version.tooltip.clientversions')}{' '}
-              {rowData.clientVersions ? Object.values(rowData.clientVersions).join(', ') : ''}
+              {rowData.clientVersions
+                ? Object.values(rowData.clientVersions).join(', ')
+                : ''}
             </li>
             <li>
               {$t('table.fields.version.tooltip.depot_version_diff')}{' '}
@@ -241,12 +300,12 @@
         ? undefined
         : () => {
             return (
-                <tablecellTCProductRequest
-                  modelValue={{}}
-                  title={$t('form.tooltip.actionRequest')}
-                  save={saveActionRequests}
-                  selectedClients={clientSelection.value}
-                />
+              <tablecellTCProductRequest
+                modelValue={{}}
+                title={$t('form.tooltip.actionRequest')}
+                save={saveActionRequests}
+                selectedClients={clientSelection.value}
+              />
             )
           },
       cellRenderer: ({ rowData }: any) => {
@@ -256,7 +315,9 @@
             // request={rowData.actionRequest || 'none'}
             // requestoptions={[...rowData.actions]}
             modelValue={rowData}
-            row-is-selected={selectionProducts.value.includes(rowData.productId)}
+            row-is-selected={selectionProducts.value.includes(
+              rowData.productId,
+            )}
             save={saveActionRequest}
           />
         )
@@ -273,7 +334,12 @@
       cellRenderer: ({ rowData }: any) => {
         const change = () => {
           emit('change', rowData.productId)
-          navigation.toConfiguration(id, rowData.productId, props.isChild, currentType.value)
+          navigation.toConfiguration(
+            id,
+            rowData.productId,
+            props.isChild,
+            currentType.value,
+          )
           // Object.keys(navigation.rowactionConfigChecked.value).forEach(k => navigation.rowactionConfigChecked.value[k] = false)
           // navigation.rowactionConfigChecked.value[rowData.productId] = true
           // if (props.isChild) {
@@ -286,7 +352,9 @@
           <>
             <div class="flex flex-row">
               <BTNRowLink
-                is-pressed={navigation.rowactionConfigChecked.value[rowData.productId]}
+                is-pressed={
+                  navigation.rowactionConfigChecked.value[rowData.productId]
+                }
                 icon={icons.settings}
                 onOnClick={change}
               />
@@ -301,7 +369,9 @@
     if (props.productType && props.productType !== currentType.value)
       changeProductsType(props.productType as IProductTypes)
 
-    fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
+    fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(
+      clientSelection.value,
+    )
     // fetchedData.value[currentType.value] = await _fetch(currentType.value)
     // fetchedData.value[currentType.value] = []
     productsRef.value?.refetch()
@@ -318,7 +388,7 @@
         clientSelection.value = selectionClients.value
       }
       productsRef.value?.refetch()
-    }
+    },
   )
   // watch (()=>props.sortby, async (v)=>{
   //   if (props.selectedClient) {
@@ -330,7 +400,10 @@
 
   async function fetchProducts(_params: any) {
     const params = prepareParams(_params)
-    const { data, error, headers } = await useApiGETBody<Array<any>>('/opsidata/products', params)
+    const { data, error, headers } = await useApiGETBody<Array<any>>(
+      '/opsidata/products',
+      params,
+    )
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       return
@@ -341,29 +414,45 @@
     if (headers === undefined) {
       return []
     }
-    return { data: data.value, total: parseInt(headers.get('x-total-count') || '0') }
+    return {
+      data: data.value,
+      total: parseInt(headers.get('x-total-count') || '0'),
+    }
   }
 
-
-  async function wsBusMsgObjectChanged (msg: any = undefined) {
-    if (msg &&
-      ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'].includes(msg.channel) &&
+  async function wsBusMsgObjectChanged(msg: any = undefined) {
+    if (
+      msg &&
+      [
+        'event:productOnClient_created',
+        'event:productOnClient_updated',
+        'event:productOnClient_deleted',
+      ].includes(msg.channel) &&
       msg.data.productType === currentType.value &&
       // this.visibleProductIds.includes(msg.data.productId) &&
       clientSelection.value.includes(msg.data.clientId)
     ) {
-      if (!(lastChanges.value.clientIds.includes(msg.data.clientId) && lastChanges.value.productIds.includes(msg.data.productId))) {
+      if (
+        !(
+          lastChanges.value.clientIds.includes(msg.data.clientId) &&
+          lastChanges.value.productIds.includes(msg.data.productId)
+        )
+      ) {
         if (msgbusAutoRefresh.value) {
           productsRef.value?.refetch()
           return
         }
 
         // check if we may cause the event...
-        notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.poc_updated', { productId: msg.data.productId }),
-            button: {
-              label: $t('label.reloadPage'),
-              onClick: productsRef.value?.refetch
-            }
+        notifyInfo({
+          title: $t('message.info.event'),
+          message: $t('message.info.event.poc_updated', {
+            productId: msg.data.productId,
+          }),
+          button: {
+            label: $t('label.reloadPage'),
+            onClick: productsRef.value?.refetch,
+          },
         })
       }
       // if (this.quicksave) {
@@ -379,7 +468,6 @@
       // }
     }
   }
-
 
   function prepareParams(params: any) {
     params.type = currentType.value
@@ -418,7 +506,11 @@
     lastChanges.value.productIds = data.productIds
     console.warn('saveActionRequests', storeSettings().quicksave)
     if (storeSettings().quicksave) {
-      await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
+      await useSaveProductActionRequest($t).saveProdActionRequest(
+        data,
+        null,
+        true,
+      )
       productsRef.value?.refetch()
     } else {
       for (const c in selectionClients.value) {
@@ -437,7 +529,7 @@
           }
 
           const objIndex = storeChanges().changesProducts.findIndex(
-            (item) => item.clientId === c && item.productId === p
+            (item) => item.clientId === c && item.productId === p,
           )
           // const objIndex = storeChanges().changesProducts.findIndex(item => item.clientId === selectionClients.value[c] && item.productId === selectionProducts.value[p])
           if (objIndex > -1) {
@@ -461,7 +553,11 @@
     if (storeSettings().quicksave) {
       lastChanges.value.clientIds = data.clientIds
       lastChanges.value.productIds = data.productIds
-      const ok = await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
+      const ok = await useSaveProductActionRequest($t).saveProdActionRequest(
+        data,
+        null,
+        true,
+      )
       if (ok) {
         rowitem.actionRequest = newrequest
         rowitem.selectedClients = clientSelection.value
@@ -480,7 +576,7 @@
           (item) =>
             item.user === storeAuth().username &&
             item.clientId === clientId &&
-            item.productId === rowitem.productId
+            item.productId === rowitem.productId,
         )
         if (objIndex > -1) {
           storeChanges().delWithIndexChangesProducts(objIndex)
@@ -494,7 +590,7 @@
     rowitem: any,
     clientId: string,
     newrequest: string,
-    changeObj: any
+    changeObj: any,
   ) {
     const ic = rowitem.selectedClients?.indexOf(clientId)
     if (newrequest == 'mixed') {
@@ -513,10 +609,15 @@
 
   function changeProductsType(type: IProductTypes) {
     const fullUrl = router.currentRoute.value.fullPath
-    router.push(fullUrl.replace('products/' + currentType.value + '', 'products/' + type + '/'))
+    router.push(
+      fullUrl.replace(
+        'products/' + currentType.value + '',
+        'products/' + type + '/',
+      ),
+    )
 
     const types: Array<IProductTypes> = Object.keys(
-      productsTypeChecked.value
+      productsTypeChecked.value,
     ) as Array<IProductTypes>
     types.forEach((k) => (productsTypeChecked.value[k] = false))
     if (Object.keys(productsTypeChecked.value).includes(type))
@@ -526,11 +627,12 @@
     productsRef.value?.refetch()
   }
 
-  function toggleDetailsTooltip(row: any, tooltiptext: IObjectString2ObjectString2String) {
+  function toggleDetailsTooltip(
+    row: any,
+    tooltiptext: IObjectString2ObjectString2String,
+  ) {
     console.warn('Details not implemented: ', row, tooltiptext)
     // (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
     // row.toggleDetails()
   }
 </script>
-
-

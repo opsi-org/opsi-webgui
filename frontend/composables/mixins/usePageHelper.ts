@@ -1,103 +1,103 @@
 export interface PageSettings {
-  page0Condition: boolean;
-  page1Condition: boolean;
-  width: undefined | string;
+  page0Condition: boolean
+  page1Condition: boolean
+  width: undefined | string
 }
 
 export const usePageHelper = () => {
   const path = computed(() =>
     useRoute()
-      .path.split("/")
-      .filter((p: string) => p !== "")
-  );
+      .path.split('/')
+      .filter((p: string) => p !== ''),
+  )
 
   const serverSettings: Record<string, PageSettings> = {
     servers: {
       page0Condition: true,
       page1Condition: false,
-      width: "100%",
+      width: '100%',
     },
-    "servers-config": {
+    'servers-config': {
       page0Condition: false,
       page1Condition: true,
-      width: "100%",
+      width: '100%',
     },
-    "servers-config-id": {
+    'servers-config-id': {
       page0Condition: false,
       page1Condition: true,
-      width: "100%",
+      width: '100%',
     },
-    "servers-server-pagetype-id": {
+    'servers-server-pagetype-id': {
       page0Condition: true,
       page1Condition: true,
-      width: "50%",
+      width: '50%',
     },
-  };
+  }
 
   const clientSettings: Record<string, PageSettings> = {
     clients: {
       page0Condition: true,
       page1Condition: false,
-      width: "100%",
+      width: '100%',
     },
-    "clients-config": {
+    'clients-config': {
       page0Condition: false,
       page1Condition: true,
-      width: "100%",
+      width: '100%',
     },
-    "clients-config-id": {
+    'clients-config-id': {
       page0Condition: false,
       page1Condition: true,
-      width: "100%",
+      width: '100%',
     },
-    "clients-create": {
+    'clients-create': {
       page0Condition: false,
       page1Condition: true,
-      width: "100%",
+      width: '100%',
     },
-    "clients-clone": {
+    'clients-clone': {
       page0Condition: false,
       page1Condition: true,
-      width: "100%",
+      width: '100%',
     },
-    "clients-logs-id": {
+    'clients-logs-id': {
       page0Condition: false,
       page1Condition: true,
-      width: "100%",
+      width: '100%',
     },
-    "clients-clone-id": {
+    'clients-clone-id': {
       page0Condition: false,
       page1Condition: true,
-      width: "100%",
+      width: '100%',
     },
-    "clients-client-pagetype-id": {
+    'clients-client-pagetype-id': {
       page0Condition: true,
       page1Condition: true,
-      width: "50%",
+      width: '50%',
     },
-    "clients-products-producttype": {
-      page0Condition: true,
-      page1Condition: true,
-      width: undefined,
-    },
-    "clients-products-producttype-pagetype-id": {
+    'clients-products-producttype': {
       page0Condition: true,
       page1Condition: true,
       width: undefined,
     },
-  };
+    'clients-products-producttype-pagetype-id': {
+      page0Condition: true,
+      page1Condition: true,
+      width: undefined,
+    },
+  }
 
   const productSettings: Record<string, PageSettings> = {
-    "products-producttype": {
+    'products-producttype': {
       page0Condition: true,
       page1Condition: false,
-      width: "100%",
+      width: '100%',
     },
-    "products-producttype-pagetype-id": {
+    'products-producttype-pagetype-id': {
       page0Condition: true,
       page1Condition: true,
-      width: "50%",
+      width: '50%',
     },
-  };
-  return { serverSettings, clientSettings, productSettings, path };
-};
+  }
+  return { serverSettings, clientSettings, productSettings, path }
+}

@@ -1,18 +1,10 @@
 <script setup lang="ts">
-const showModal= ref(true)
-const events = ref([
-  'showpopup',
-  'ondemand',
-  'reboot',
-  'rename',
-  'delete'
-])
+  const showModal = ref(true)
+  const events = ref(['showpopup', 'ondemand', 'reboot', 'rename', 'delete'])
 </script>
 
 <template>
-  <Story
-    :layout="{ type: 'grid', width: '50%' }"
-    >
+  <Story :layout="{ type: 'grid', width: '50%' }">
     <!-- <Variant
       title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled> -->
     <Variant v-for="event in events" :key="event" :title="'desktop-' + event">

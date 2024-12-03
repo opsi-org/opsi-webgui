@@ -5,7 +5,7 @@
     @command="$i18n.locale = $event"
   >
     <span class="el-dropdown-link">
-      <IconIIcon :icon="icon.language" class="inline mr-1"/>
+      <IconIIcon :icon="icon.language" class="inline mr-1" />
       <el-text>{{ $i18n.locale.toUpperCase() }}</el-text>
     </span>
     <template #dropdown>
@@ -17,15 +17,23 @@
           :class="{ 'is-active': lang === $i18n.locale }"
           :data-testid="`DropdownDDLang-Item-${lang}`"
         >
-          <span style="text-transform:uppercase;">{{ lang }}</span>
-          <span>{{ ['en', 'de', 'fr'].includes(lang) ? '' : $t('button.lang.community-created') }}</span>
+          <span style="text-transform: uppercase">{{ lang }}</span>
+          <span>{{
+            ['en', 'de', 'fr'].includes(lang)
+              ? ''
+              : $t('button.lang.community-created')
+          }}</span>
         </el-dropdown-item>
         <el-dropdown-item
           divided
           :data-testid="`DropdownDDLang-Item-contribute`"
           :title="$t('button.contribute-transifex.tooltip')"
         >
-          <a href="https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/" target="_blank" class="dropdown-item-link">
+          <a
+            href="https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/"
+            target="_blank"
+            class="dropdown-item-link"
+          >
             {{ $t('button.contribute-transifex') }}
           </a>
         </el-dropdown-item>
@@ -35,10 +43,10 @@
 </template>
 
 <script setup>
-import { useIcons } from "../../composables/mixins/useIcons"
-const icon = useIcons()
+  import { useIcons } from '../../composables/mixins/useIcons'
+  const icon = useIcons()
 
-const _props = defineProps({
-  footer: { type: Boolean, default: false}
-})
+  const _props = defineProps({
+    footer: { type: Boolean, default: false },
+  })
 </script>

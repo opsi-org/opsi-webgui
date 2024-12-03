@@ -7,7 +7,7 @@ export default defineNuxtPlugin(({ vueApp }) => {
     legacy: false,
     globalInjection: true,
     locale: 'de',
-    messages: { en, de }
+    messages: { en, de },
   })
   vueApp.use(i18n)
 })
@@ -23,4 +23,3 @@ export default defineNuxtPlugin(({ vueApp }) => {
 //     }
 //   }
 // })
-

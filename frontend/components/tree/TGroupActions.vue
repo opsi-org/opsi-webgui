@@ -1,5 +1,7 @@
 <template>
-  <el-button @click="refetchGroup" size="small"> {{ $t('label.refresh') }}</el-button>
+  <el-button @click="refetchGroup" size="small">
+    {{ $t('label.refresh') }}</el-button
+  >
   <el-popover
     v-if="props.data.category == 'product-group'"
     :placement="mq.isMobile.value ? 'auto' : 'right'"
@@ -80,7 +82,9 @@
                   >
                     <el-input
                       v-model="createGroup[label]"
-                      @keyup.enter="createGroup.groupId != '' && createSubGroup(node.label)"
+                      @keyup.enter="
+                        createGroup.groupId != '' && createSubGroup(node.label)
+                      "
                     />
                   </el-form-item>
                   <el-button
@@ -93,12 +97,21 @@
                     {{ $t('button.create') }}
                   </el-button>
                 </template>
-                <template v-else-if="action == 'client-add' || action == 'product-add'">
+                <template
+                  v-else-if="action == 'client-add' || action == 'product-add'"
+                >
                   <el-form-item :label="$t('label.selectChildren')">
-                    <el-scrollbar height="300px" class="border w-full p-2 min-w-[300px]">
+                    <el-scrollbar
+                      height="300px"
+                      class="border w-full p-2 min-w-[300px]"
+                    >
                       <el-checkbox-group v-model="selectedChildren">
                         <div v-for="item in idList" :key="item">
-                          <el-checkbox size="small" :value="item" :label="item" />
+                          <el-checkbox
+                            size="small"
+                            :value="item"
+                            :label="item"
+                          />
                         </div>
                       </el-checkbox-group>
                     </el-scrollbar>
@@ -112,7 +125,11 @@
                     {{ $t('button.add') }}
                   </el-button>
                 </template>
-                <template v-else-if="action == 'client-delete' || action == 'product-delete'">
+                <template
+                  v-else-if="
+                    action == 'client-delete' || action == 'product-delete'
+                  "
+                >
                   <el-text> {{ $t('group.confirm.' + action) }} </el-text>
                   <el-button
                     class="float-right"
@@ -140,7 +157,10 @@
                     :label="$t('table.fields.' + label)"
                   >
                     <!-- TODO: Backend: return list of groups -->
-                    <el-select v-if="label.toString() == 'parent'" v-model="editgroup[label]">
+                    <el-select
+                      v-if="label.toString() == 'parent'"
+                      v-model="editgroup[label]"
+                    >
                       <el-option
                         v-for="item in fetchedData
                           .filter((item: any) => item.type !== 'ObjectToGroup')
@@ -168,7 +188,9 @@
                       <el-checkbox-group v-model="selectedGroups">
                         <div
                           v-for="item in fetchedData
-                            .filter((item: any) => item.type !== 'ObjectToGroup')
+                            .filter(
+                              (item: any) => item.type !== 'ObjectToGroup',
+                            )
                             .map((item: any) => item.text)"
                           :key="item"
                         >
@@ -177,7 +199,11 @@
                       </el-checkbox-group>
                     </el-scrollbar>
                   </el-form-item>
-                  <el-button type="success" class="float-right" @click="copyClient(node.label)">
+                  <el-button
+                    type="success"
+                    class="float-right"
+                    @click="copyClient(node.label)"
+                  >
                     {{ $t('button.copy') }}
                   </el-button>
                 </template>
@@ -197,7 +223,12 @@
   import { useGroup } from '~/composables/mixins/usePost'
   import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper'
   import { useIcons } from '../../composables/mixins/useIcons'
-  import type { T_ClientIds, T_Groups, T_ProductIds, T_Product } from '~/types/APItypes'
+  import type {
+    T_ClientIds,
+    T_Groups,
+    T_ProductIds,
+    T_Product,
+  } from '~/types/APItypes'
   import { debounce } from 'lodash'
 
   const props = defineProps({
@@ -245,7 +276,7 @@
         await debouncedFetchClientGroups()
         await fetchClientList()
       }
-    }
+    },
   )
 
   onMounted(async () => {
@@ -271,13 +302,17 @@
   async function fetchClientGroups() {
     try {
       const { data, error } = await useApiGETBody<Record<string, T_Groups>>(
-        `/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`
+        `/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`,
       )
       if (error) {
         throw new Error(error?.response?.data?.message || 'Unknown error')
       }
       if (!data.value) {
-        throw new Error($t('message.error.empty-response', { details: 'ClientGroupSelections' }))
+        throw new Error(
+          $t('message.error.empty-response', {
+            details: 'ClientGroupSelections',
+          }),
+        )
       }
       fetchedData.value = groupsHelper.transformToNestedArray(data.value)
     } catch (err) {
@@ -286,19 +321,25 @@
   }
 
   async function fetchClientList() {
-    idList.value = await useClient().getClientIdList(storeSelection.selectionDepots)
+    idList.value = await useClient().getClientIdList(
+      storeSelection.selectionDepots,
+    )
   }
 
   async function fetchProdGroups() {
     try {
-      const { data, error } = await useApiGETBody<Record<string, Record<string, T_Groups>>>(
-        `/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`
+      const { data, error } = await useApiGETBody<
+        Record<string, Record<string, T_Groups>>
+      >(
+        `/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`,
       )
       if (error) {
         throw new Error(error?.response?.data?.message || 'Unknown error')
       }
       if (!data.value) {
-        throw new Error($t('message.error.empty-response', { details: 'GroupActions' }))
+        throw new Error(
+          $t('message.error.empty-response', { details: 'GroupActions' }),
+        )
       }
       const groups = data.value['groups']
       fetchedData.value = groupsHelper.transformToNestedArray(groups)
@@ -310,15 +351,19 @@
   async function fetchProductList() {
     try {
       const { data, error } = await useApiGETBody<Array<T_Product>>(
-        `/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=[${storeSelection.selectionDepots}]`
+        `/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=[${storeSelection.selectionDepots}]`,
       )
       if (error) {
         throw new Error(error?.response?.data?.message || 'Unknown error')
       }
       if (!data.value) {
-        throw new Error($t('message.error.empty-response', { details: 'GroupActions' }))
+        throw new Error(
+          $t('message.error.empty-response', { details: 'GroupActions' }),
+        )
       }
-      idList.value = data.value.map((item: { productId: any }) => item.productId)
+      idList.value = data.value.map(
+        (item: { productId: any }) => item.productId,
+      )
     } catch (err) {
       notifyError({ message: err })
     }
@@ -337,7 +382,9 @@
         throw new Error(error?.response?.data?.message || 'Unknown error')
       }
       notifySuccess({
-        message: $t('message.success.save.create.group', { group: createGroup.groupId }),
+        message: $t('message.success.save.create.group', {
+          group: createGroup.groupId,
+        }),
       })
       await refetchGroup()
     } catch (err) {
@@ -357,7 +404,9 @@
         throw new Error(error?.response?.data?.message || 'Unknown error')
       }
       notifySuccess({
-        message: $t('message.success.save.add.clientfromgroups', { group: selectedGroup }),
+        message: $t('message.success.save.add.clientfromgroups', {
+          group: selectedGroup,
+        }),
       })
       await refetchGroup()
     } catch (err) {
@@ -377,7 +426,9 @@
         throw new Error(error?.response?.data?.message || 'Unknown error')
       }
       notifySuccess({
-        message: $t('message.success.save.delete.clientfromgroups', { group: selectedGroup }),
+        message: $t('message.success.save.delete.clientfromgroups', {
+          group: selectedGroup,
+        }),
       })
       await refetchGroup()
     } catch (err) {
@@ -385,7 +436,11 @@
     }
   }
 
-  async function applyDelete(selectedNode: string, nodeType: string, parent: string) {
+  async function applyDelete(
+    selectedNode: string,
+    nodeType: string,
+    parent: string,
+  ) {
     if (nodeType == 'ObjectToGroup') {
       deleteObjectToGroup(selectedNode, parent)
     } else {
@@ -402,14 +457,18 @@
     try {
       // TODO: Backend: change product group deletion to DELETE
       const { error } =
-        props.data.category === 'client-group' ? await useApiDELETE(url) : await useApiGET(url)
+        props.data.category === 'client-group'
+          ? await useApiDELETE(url)
+          : await useApiGET(url)
 
       if (error) {
         throw new Error(error?.response?.data?.message || 'Unknown error')
       }
 
       notifySuccess({
-        message: $t('message.success.save.delete.group', { group: selectedGroup }),
+        message: $t('message.success.save.delete.group', {
+          group: selectedGroup,
+        }),
       })
       await refetchGroup()
     } catch (err) {
@@ -431,7 +490,9 @@
         throw new Error(error?.response?.data?.message || 'Unknown error')
       }
       notifySuccess({
-        message: $t('message.success.save.delete.clientfromgroups', { client: selectedChild }),
+        message: $t('message.success.save.delete.clientfromgroups', {
+          client: selectedChild,
+        }),
       })
       await refetchGroup()
     } catch (err) {
@@ -451,7 +512,9 @@
         throw new Error(error?.response?.data?.message || 'Unknown error')
       }
       notifySuccess({
-        message: $t('message.success.save.update.group', { group: selectedGroup }),
+        message: $t('message.success.save.update.group', {
+          group: selectedGroup,
+        }),
       })
       await refetchGroup()
     } catch (err) {
@@ -460,7 +523,10 @@
   }
 
   async function copyClient(selectedClient: string) {
-    await useGroup($t).addClientToListOfGroups(selectedClient, selectedGroups.value)
+    await useGroup($t).addClientToListOfGroups(
+      selectedClient,
+      selectedGroups.value,
+    )
     await refetchGroup()
   }
 </script>

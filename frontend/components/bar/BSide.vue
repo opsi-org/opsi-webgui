@@ -8,7 +8,12 @@
       class="h-[90vh] bg-opsi-blue"
     >
       <template v-for="item in navItems" :key="item.title">
-        <el-sub-menu v-if="item.submenu" :index="item.route" :route="item.route" :data-testid="'NSidebar-' + item.title">
+        <el-sub-menu
+          v-if="item.submenu"
+          :index="item.route"
+          :route="item.route"
+          :data-testid="'NSidebar-' + item.title"
+        >
           <template #title>
             <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-2" />
             <span v-if="showTitle">{{ $t(item.title) }}</span>
@@ -24,7 +29,12 @@
             <span>{{ $t(sub.title) }}</span>
           </el-menu-item>
         </el-sub-menu>
-        <el-menu-item v-else :index="item.route" :route="item.route" :data-testid="'NSidebar-' + item.title">
+        <el-menu-item
+          v-else
+          :index="item.route"
+          :route="item.route"
+          :data-testid="'NSidebar-' + item.title"
+        >
           <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-2" />
           <span v-if="showTitle">{{ $t(item.title) }}</span>
         </el-menu-item>
@@ -92,7 +102,10 @@
     { title: 'title.groups', icon: icons.group, route: '/groups/' },
     {
       title: 'title.administration',
-      route: config.value?.['terminal.forbidden'] === true ? '/admin/' : '/admin/terminal',
+      route:
+        config.value?.['terminal.forbidden'] === true
+          ? '/admin/'
+          : '/admin/terminal',
       icon: icons.admin,
       submenu: [
         {
