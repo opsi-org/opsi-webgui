@@ -215,9 +215,4 @@
   "playwrightrunner.playwrightConfigPath": "../opsiweb/.config/playwright-all-components.config.js",
   "explorer.sortOrder": "mixed",
   "editor.defaultFormatter": "esbenp.prettier-vscode"
-  //   "editor.formatOnSave": true,
-  // "prettier.enable": true,
-  // "prettier.requireConfig": true,
-  // "prettier.configPath": "../frontend/.prettierrc",
-  // "prettier.enableDebugLogs": true
 }
