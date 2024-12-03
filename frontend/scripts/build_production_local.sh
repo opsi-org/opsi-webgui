@@ -6,10 +6,10 @@
 # tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
 # IMPORTANT: NAME OF ADDON (default: webgui)
-ADDON_ID=webgui-dev
-ADDON_NAME=Webgui-dev
+ADDON_ID=$1
+ADDON_NAME=$2
 
-WORKING_DIR=$1
+WORKING_DIR=$3
 FRONTEND_DIR=frontend
 BACKEND_DIR=backend
 WEBGUI_DIR=webgui
@@ -77,7 +77,7 @@ chown 1000:1000 opsi-${ADDON_ID}.zip
 echo "> packaging done"
 
 echo "> check if also install locally"
-if [[ $2 != 0 ]] # flag to install addon locally
+if [[ $4 != 0 ]] # flag to install addon locally
 then
     echo ".....install locally"
     # rm -rf /var/lib/opsiconfd/addons/webgui
