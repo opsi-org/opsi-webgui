@@ -24,9 +24,9 @@
     <span
       v-for="log in filteredData"
       :key="log"
-      :style="{ color: getColorBasedOnLoglevel(log) }"
-      :class="{ 'hidden': !isLoglevelSmaller(log) }"
-    >
+      :class="{ 'hidden': !isLoglevelSmaller(log), [getColorBasedOnLoglevel(log)]: true }"
+      >
+      <!-- :style="{ color: getColorBasedOnLoglevel(log) }" -->
     {{ log }} <br>
     </span>
   </el-scrollbar>
@@ -38,6 +38,7 @@ import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_ClientLog } from '~/types/APItypes';
 const { notifyError } = useNotification()
 const $t = useI18n().t
+const settings = storeSettings()
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -54,7 +55,18 @@ const loglevel = ref(5)
 const logtype = ref('instlog')
 const filterQuery = ref('')
 
+const COLORS_LIGHT = ['text-opsi-log-light-essential', 'text-opsi-log-light-critical', 'text-opsi-log-light-error', 'text-opsi-log-light-warning', 'text-opsi-log-light-notice', 'text-opsi-log-light-info', 'text-opsi-log-light-debug', 'text-opsi-log-light-trace', 'text-opsi-log-light-secret'];
+const COLORS_DARK = ['text-opsi-log-dark-essential', 'text-opsi-log-dark-critical', 'text-opsi-log-dark-error', 'text-opsi-log-dark-warning', 'text-opsi-log-dark-notice', 'text-opsi-log-dark-info', 'text-opsi-log-dark-debug', 'text-opsi-log-dark-trace', 'text-opsi-log-dark-secret'];
+
 watch([()=>props.id, ()=>logtype.value, loglevel.value], fetch, { immediate: true })
+
+
+const isDarkMode = computed({
+  get: () => settings.colormode === 'dark',
+  set: (value: boolean) => {
+    settings.setColormode(value ? 'dark' : 'light');
+  }
+});
 
 async function fetch() {
   isLoading.value = true
@@ -90,8 +102,7 @@ function isLoglevelSmaller (logrow:string) {
 
 function getColorBasedOnLoglevel(log:string) {
   const logLevel = parseInt(log.charAt(1), 10);
-  const colors = ['var(--opsi-log-essential)', 'var(--opsi-log-critical)', 'var(--opsi-log-error)', 'var(--opsi-log-warning)', 'var(--opsi-log-notice)', 'var(--opsi-log-info)', 'var(--opsi-log-debug)', 'var(--opsi-log-trace)', 'var(--opsi-log-secret)'];
-  return colors[logLevel] || 'var(--color)';
+  return (isDarkMode.value ? COLORS_DARK[logLevel] : COLORS_LIGHT[logLevel]) || 'text-inherit';
 }
 
 function setId(id:string) {
