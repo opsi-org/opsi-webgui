@@ -6,9 +6,9 @@
     :row-id="rowId"
     :is-mobile="isMobile"
     has-client-actions
-    action-clone="/clients/client/clone/"
-    action-log="/clients/client/logs/"
-    action-config="/clients/client/config/"
+    :action-clone="(rowData: any) => `/clients/client/clone/${rowData[rowId]}`"
+    :action-log="(rowData: any) => `/clients/client/logs/${rowData[rowId]}`"
+    :action-config="(rowData: any) => `/clients/client/config/${rowData[rowId]}`"
     sort-by="installationStatus_installed"
     :table-column="tableColumn"
     :fetch="fetchClients"

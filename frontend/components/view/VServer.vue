@@ -4,7 +4,7 @@
     :is-mobile="isMobile"
     :table-column="tableColumn"
     :fetch="fetchServer"
-    action-config="/servers/server/config/"
+    :action-config="(rowData: any) => `/servers/server/config/${rowData[rowId]}`"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionDepots(id)}"
     @clear-selection="storeSelection.clearSelectionDepots"
   />

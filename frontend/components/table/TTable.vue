@@ -36,9 +36,9 @@ const props = defineProps({
   fetch: { type: Function, required: true },
   bodyHeight: { type: String, default: '80vh', required: false },
   sortBy: { type: String, default: undefined, required: false },
-  actionClone: { type: String, default: undefined, required: false },
-  actionLog: { type: String, default: undefined, required: false },
-  actionConfig: { type: String, default: undefined, required: false },
+  actionClone: { type: Function, default: undefined, required: false },
+  actionLog: { type: Function, default: undefined, required: false },
+  actionConfig: { type: Function, default: undefined, required: false },
   hasClientActions: { type: Boolean, default: false, required: false },
 })
 

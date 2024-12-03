@@ -207,9 +207,9 @@ const props = defineProps({
   fetch: { type: Function, required: true },
   bodyHeight: { type: String, default: '80vh', required: false },
   sortBy: { type: String, default: undefined, required: false },
-  actionClone: { type: String, default: undefined, required: false },
-  actionLog: { type: String, default: undefined, required: false },
-  actionConfig: { type: String, default: undefined, required: false },
+  actionClone: { type: Function, default: undefined, required: false },
+  actionLog: { type: Function, default: undefined, required: false },
+  actionConfig: { type: Function, default: undefined, required: false },
   hasClientActions: { type: Boolean, default: false, required: false },
 })
 
@@ -394,18 +394,23 @@ function handlePagination(val: number) {
 }
 
 function handleConfigClick(rowData: any) {
+  if (!props.actionConfig) { return }
   activeButton.value = 'config-' + rowData[props.rowId]
-  router.push(props.actionConfig + rowData.ident)
+  router.push(props.actionConfig(rowData))
 }
 
 function handleLogClick(rowData: any) {
+  if (!props.actionLog) { return }
   activeButton.value = 'log-' + rowData[props.rowId]
-  router.push(props.actionLog + rowData.ident)
+  // router.push(props.actionLog + rowData.ident)
+  router.push(props.actionLog(rowData))
 }
 
 function handleCloneClick(rowData: any) {
+  if (!props.actionClone) { return }
   activeButton.value = 'clone-' + rowData[props.rowId]
-  router.push(props.actionClone + rowData.ident)
+  // router.push(props.actionClone + rowData.ident)
+  router.push(props.actionClone(rowData))
 }
 
 // TODO: Implement Filter by

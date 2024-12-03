@@ -7,7 +7,7 @@
     :fetch="fetchProducts"
     :sort-by="props.sortby"
     body-height="64vh"
-    action-config="/products/product/config/"
+    :action-config="(rowData: any) => `/products/${currentType}/config/${rowData[rowId]}`"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionProducts(id)}"
     @clear-selection="storeSelection.clearSelectionProducts"
   >
