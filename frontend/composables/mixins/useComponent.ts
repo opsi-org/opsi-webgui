@@ -2,13 +2,15 @@ import { ElNotification } from "element-plus";
 import { _getI18nInComposable } from "./helper-i18n";
 import { h, type VNode } from "vue";
 
+type PropTypeFunctionOptionalAsync = (() => Promise<void>) | (() => void);
+
 interface NotificationOptions {
   title?: string;
   message?: any;
   showClose?: boolean;
   duration?: number;
   onClose?: () => void;
-  button?: { label: string; onClick: () => void };
+  button?: { label: string; onClick: PropTypeFunctionOptionalAsync };
 }
 
 type ElNotificationType = "success" | "error" | "warning" | "info";

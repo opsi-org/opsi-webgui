@@ -51,8 +51,8 @@
   const fetchClient = useClient()
   useMBus(wsBusMsgObjectChanged, false, $t)
 
-
   const storeSelection = storeSelections()
+  const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
   const emit = defineEmits(['change'])
   const props = defineProps({
@@ -353,14 +353,16 @@
       clientSelection.value.includes(msg.data.clientId)
     ) {
       if (!(lastChanges.value.clientIds.includes(msg.data.clientId) && lastChanges.value.productIds.includes(msg.data.productId))) {
+        if (msgbusAutoRefresh.value) {
+          productsRef.value?.refetch()
+          return
+        }
+
         // check if we may cause the event...
         notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.poc_updated', { productId: msg.data.productId }),
             button: {
               label: $t('label.reloadPage'),
-              onClick: async () => {
-                // await tableHelper.fetch()
-                productsRef.value?.refetch()
-              }
+              onClick: productsRef.value?.refetch
             }
         })
       }

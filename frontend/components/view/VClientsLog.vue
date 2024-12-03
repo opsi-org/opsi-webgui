@@ -137,9 +137,7 @@ function setId(id:string) {
       notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.log_updated'),
         button: {
           label: $t('label.reloadPage'),
-          onClick: async () => {
-            fetch()
-          }
+          onClick: fetch
         }
       })
     }

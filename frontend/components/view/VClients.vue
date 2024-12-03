@@ -40,6 +40,7 @@
   const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 
   const storeSelection = storeSelections()
+  const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
 
   const _props = defineProps({
@@ -230,13 +231,14 @@
 
   async function wsBusMsgObjectChanged(msg: any = undefined) {
     if (msg && msg.channel === 'event:host_created') {
-      // clientsRef.value?.refetch()
+      if (msgbusAutoRefresh.value) {
+        clientsRef.value?.refetch()
+        return
+      }
       notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.client_updated', { clientId: msg.data.id }),
         button: {
           label: $t('label.reloadPage'),
-          onClick: async () => {
-            // await tableHelper.fetch()
-          }
+          onClick: clientsRef.value?.refetch
         }
       })
     }
