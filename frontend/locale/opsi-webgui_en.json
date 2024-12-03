@@ -431,6 +431,8 @@
   "form.client": "Select a client",
   "form.logtype": "Log Type",
   "form.loglevel": "Log Level",
+  "form.autofetch": "Auto refresh",
+  "form.autoscroll": "Auto scroll",
   "form.clientGroups": "Client groups",
   "form.productGroups": "Product groups",
   "form.tooltip.actionRequest": "Set actionRequest for all selected products",
