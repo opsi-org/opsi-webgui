@@ -244,6 +244,7 @@
     }
     if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
       console.warn('message bus: ', msg)
+      // TODO: implement
     }
   }
 

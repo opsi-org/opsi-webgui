@@ -8,7 +8,7 @@
       all-values-key="allValues"
       @change-item="changeItem"
       />
-    <pre>{{ Object.values(props.properties.properties) }}</pre>
+    <!-- <pre>{{ Object.values(props.properties.properties) }}</pre> -->
   </div>
 </template>
 

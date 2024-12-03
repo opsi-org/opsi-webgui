@@ -32,6 +32,7 @@
         <div class="flex justify-evenly">
           <FormitemCBMultiselection />
           <FormitemCBQuicksave />
+          <FormitemCBAutoRefresh />
         </div>
       </section>
       <div class="flex justify-evenly items-center">

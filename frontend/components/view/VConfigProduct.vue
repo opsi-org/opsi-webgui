@@ -1,5 +1,5 @@
 <template>
-  <el-form label-position="left" label-width="180px">
+  <el-form label-position="left" label-width="130px" class="mt-0">
     <el-form-item :label="$t('table.fields.version')">
       {{ getVersion(fetchedData.properties, fetchedData.properties.productVersions || fetchedData.dependencies.productVersions) }}
     </el-form-item>
@@ -25,7 +25,6 @@
       name="properties"
       active
     >
-
       <ViewVConfigProductProperty
         :properties="fetchedData.properties"
         @change-property="changeProperty"
@@ -43,11 +42,12 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/mixins/useComponent';
-import { useSaveProductProperties } from '~/composables/mixins/useSave';
-import { useUtils } from '~/composables/mixins/useUtils';
-import type { T_ProductPropertiesResult, T_ProductDependenciesResult, T_ProductPropertiesDependenciesResult } from '~/types/APItypes';
-import type { IErrorDepProp } from '~/types/tobjects';
+import { useNotification } from '~/composables/mixins/useComponent'
+import { useSaveProductProperties } from '~/composables/mixins/useSave'
+import { useUtils } from '~/composables/mixins/useUtils'
+import type { T_ProductPropertiesResult, T_ProductDependenciesResult, T_ProductPropertiesDependenciesResult } from '~/types/APItypes'
+import type { IErrorDepProp } from '~/types/tobjects'
+
 const { notifyError } = useNotification()
 const $t = useI18n().t
 const isLoading = ref(true)
@@ -200,4 +200,12 @@ function getVersion (item: any, versions: any) {
   }
   return 'undefined'
 }
+
 </script>
+
+<style scoped>
+:deep(.el-form-item) {
+  margin-right: 10px !important;
+  margin-bottom: 0px !important;
+}
+</style>
