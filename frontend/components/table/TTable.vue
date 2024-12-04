@@ -1,7 +1,7 @@
 <template>
   <div>
     <TableTTableMobile
-      v-if="isMobile"
+      v-if="isMobileWrapper"
       ref="tableMobile"
       v-bind="props"
       :table-column="tableColumn"
