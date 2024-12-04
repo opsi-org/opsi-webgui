@@ -96,7 +96,7 @@
     {
       title: $t('table.fields.description'),
       key: 'description',
-      sortable: false,
+      sortable: true,
       visible: true,
     },
     {

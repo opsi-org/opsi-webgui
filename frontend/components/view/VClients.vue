@@ -103,7 +103,7 @@
     {
       title: $t('table.fields.mac'),
       key: 'macAddress',
-      sortable: false,
+      sortable: true,
       visible: false,
     },
     {
@@ -115,7 +115,7 @@
     {
       title: $t('table.fields.description'),
       key: 'description',
-      sortable: false,
+      sortable: true,
       visible: false,
     },
     { title: 'notes', key: 'notes', sortable: true, visible: false },
@@ -237,7 +237,7 @@
     {
       title: $t('table.fields.reachable'),
       key: 'reachable',
-      sortable: false,
+      sortable: true,
       visible: true,
       alwaysVisible: true,
       width: '60px',
