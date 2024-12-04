@@ -107,7 +107,7 @@
     margin-right: 1rem !important;
   }
 
-  main.el-main.col-clients-false {
+  main.el-main.col-main-visible-false {
     max-width: min-content;
   }
 </style>

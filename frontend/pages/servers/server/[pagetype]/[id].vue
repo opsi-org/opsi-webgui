@@ -2,7 +2,14 @@
   <div>
     <el-text tag="b" class="text-capitalize"> {{ pagetype }}</el-text> -
     <el-text tag="i"> {{ id }} </el-text>
-    <el-button class="float-right" @click="router.push(`/${type}/`)"
+    <el-button
+      class="float-right"
+      @click="
+        () => {
+          splitviewVisibilityServertable = true
+          router.push(`/${type}/`)
+        }
+      "
       ><IconIIcon :icon="icons.x"
     /></el-button>
     <ViewVConfig
@@ -22,6 +29,9 @@
   const route = useRoute()
   const router = useRouter()
   const icons = useIcons()
+  const { splitviewVisibilityServertable } = storeToRefs(
+    storeInternalSettings(),
+  )
   const type = computed<PropTypeServerClient>(
     () => usePageHelper().path.value[0] as PropTypeServerClient,
   )

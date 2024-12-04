@@ -30,7 +30,7 @@ export const usePageHelper = () => {
     'servers-server-pagetype-id': {
       page0Condition: true,
       page1Condition: true,
-      width: '50%',
+      width: undefined,
     },
   }
 

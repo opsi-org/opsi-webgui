@@ -5,7 +5,7 @@
     :page1-condition="routeNameSettings?.page1Condition"
     :width="routeNameSettings?.width || width"
     classeachcol=""
-    :classfirstcol="'col-clients-' + splitviewVisibilityClienttable"
+    :classfirstcol="'col-main-visible-' + splitviewVisibilityClienttable"
   >
     <template #default>
       <el-tooltip :content="$t('button.showhide.clienttable')" placement="top">

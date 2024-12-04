@@ -5,17 +5,24 @@
     :page1-condition="routeNameSettings?.page1Condition"
     :width="routeNameSettings?.width || width"
     classeachcol=""
+    :classfirstcol="'col-main-visible-' + splitviewVisibilityServertable"
   >
-    <!-- :classeachcol="isMobile ? 'm-1': 'm-1 h-full'" -->
-    <!-- classlastcol="mt-0 mb-0" -->
     <template #default>
-      <!-- <el-button
+      <el-button
         class="float-right"
         v-if="routeNameSettings?.page1Condition"
-        @click="toggleClientstableVisibility"
-        >{{ 'v' }}</el-button
-      > -->
-      <ViewVServer v-if="maintableVisible" />
+        @click="
+          splitviewVisibilityServertable = !splitviewVisibilityServertable
+        "
+        ><IconIIcon
+          :icon="
+            splitviewVisibilityServertable
+              ? icons.toggleVisibilityLeft
+              : icons.toggleVisibilityRight
+          "
+        />
+      </el-button>
+      <ViewVServer :class="{ hidden: !splitviewVisibilityServertable }" />
     </template>
     <template #page1>
       <NuxtPage />
@@ -29,12 +36,17 @@
     type PageSettings,
   } from '~/composables/mixins/usePageHelper'
   import { useMQ } from '../composables/useMQ'
+  import { useIcons } from '~/composables/mixins/useIcons'
 
   const mq = useMQ()
   const route = useRoute()
-  const { path, serverSettings } = usePageHelper()
+  const icons = useIcons()
+  const { serverSettings } = usePageHelper()
 
-  const maintableVisible = ref(true)
+  const { splitviewVisibilityServertable } = storeToRefs(
+    storeInternalSettings(),
+  )
+  splitviewVisibilityServertable.value = true // default: every time this page is loaded, the servertable is visible
 
   const routeNameSettings = computed<PageSettings>(() => {
     if (route.name === undefined) {
@@ -50,9 +62,8 @@
   })
 
   const width = computed(() => {
-    if (maintableVisible.value) {
-      if (path.value.length === 3) return '50%' // only clients and products are visible (products have 50%)
-      return '66%' // properties are open. prods and props have together 66%
+    if (splitviewVisibilityServertable.value) {
+      return '50%' // only server and config is visible (each has 50%)
     } else {
       return '90%' // prods (and props) have 90%
     }
@@ -61,10 +72,6 @@
   const isMobile = computed(() => {
     return mq.isMobile.value
   })
-
-  function toggleClientstableVisibility() {
-    maintableVisible.value = !maintableVisible.value
-  }
 </script>
 
 <!-- <template>
