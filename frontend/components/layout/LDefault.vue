@@ -112,7 +112,9 @@
 
   function setLeftCollapse(v: boolean) {
     leftSideIsSmall.value = v
-    settings.setMenuCollapsed(v)
+    if (!mq.isMobile.value) {
+      settings.setMenuCollapsed(v)
+    }
   }
 
   function toggleSide(side: 'left' | 'right') {
