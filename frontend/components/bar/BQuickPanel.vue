@@ -1,6 +1,11 @@
 <template>
   <div
-    class="flex flex-col items-stretch p-2 rounded-lg shadow-md"
+    :class="[
+      'flex flex-col items-stretch p-2 rounded-lg shadow-md',
+      isDarkMode
+        ? 'bg-opsi-base-dark-background'
+        : 'bg-opsi-base-light-background',
+    ]"
     data-testid="BQuickPanel"
     style="height: calc(100vh - var(--above-main))"
   >
@@ -64,6 +69,14 @@
   const $mq = useMQ().$mq
   const icons = useIcons()
   const storeSelection = storeSelections()
+  const settings = storeSettings()
   const changes = storeChanges()
   const $config = useRuntimeConfig()
+
+  const isDarkMode = computed({
+    get: () => settings.colormode === 'dark',
+    set: (value: boolean) => {
+      settings.setColormode(value ? 'dark' : 'light')
+    },
+  })
 </script>

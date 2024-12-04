@@ -24,16 +24,24 @@
         <!-- LEFT SIDE -->
         <el-aside
           v-if="!mq.isMobile.value || leftSideVisible"
+          @click="
+            (e: any) =>
+              e.target === e.currentTarget ? toggleSide('left') : null
+          "
           :class="[
-            'el-aside-left bg-opsi-blue',
-            { 'absolute z-20 grid w-screen': mq.isMobile.value },
+            mq.isMobile.value
+              ? 'absolute z-40 grid !h-[calc(100vh-3rem)] !min-w-screen opacity-96'
+              : 'el-aside-left bg-opsi-blue',
+
+            mq.isMobile.value && isDarkMode
+              ? 'bg-opsi-gray'
+              : 'bg-opsi-base-light-background',
           ]"
         >
           <el-scrollbar
             :class="{
               'max-w-full': true,
-              'w-16': !mq.isMobile.value && leftSideIsSmall,
-              'z-40 opacity-100': mq.isMobile.value,
+              'el-aside el-aside-left z-20 !opacity-100': mq.isMobile.value,
             }"
           >
             <BarBSide @change-small="setLeftCollapse" />
@@ -44,8 +52,6 @@
         <el-main class="z-0 p-2">
           <BreadcrumbBPageNavigation />
           <slot />
-          <!-- <el-scrollbar class="!h-auto">
-          </el-scrollbar> -->
         </el-main>
 
         <!-- RIGHT SIDE -->
@@ -53,18 +59,25 @@
           v-if="rightSideVisible"
           style="box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1)"
           :class="[
-            'el-aside-right p-1',
-            {
-              'fixed right-0 bg-general z-50 overflow-y-auto backdrop-blur-lg':
-                mq.isMobile.value,
-            },
+            '',
+            mq.isMobile.value
+              ? 'fixed right-0 bg-general z-50 overflow-y-auto backdrop-blur-lg min-h-[calc(100vh-3rem)] !opacity-96 '
+              : 'el-side-right max-w-80',
+            // mq.isMobile.value && isDarkMode
+            isDarkMode
+              ? mq.isMobile.value
+                ? 'bg-opsi-gray'
+                : 'bg-opsi-base-dark-background'
+              : 'bg-opsi-base-light-background',
           ]"
         >
           <el-scrollbar
-            :class="{
-              'w-full max-w-full right-0 opacity-100 justify-self-end !border-none p-2': true,
-              'max-w-full z-30': mq.isMobile.value,
-            }"
+            :class="[
+              'w-full max-w-full right-0 justify-self-end !border-none p-2 ',
+              mq.isMobile.value
+                ? '!max-w-[80vw] z-30 min-h-[calc(100vh-3rem)]'
+                : '',
+            ]"
           >
             <BarBQuickPanel />
           </el-scrollbar>
@@ -108,6 +121,13 @@
     if (mq.isMobile.value && leftSideVisible.value) {
       toggleSide('left')
     }
+  })
+
+  const isDarkMode = computed({
+    get: () => settings.colormode === 'dark',
+    set: (value: boolean) => {
+      settings.setColormode(value ? 'dark' : 'light')
+    },
   })
 
   function setLeftCollapse(v: boolean) {
@@ -189,7 +209,7 @@
   }
 
   .is-mobile .el-aside {
-    --minus-height: 10%;
+    --minus-height: 0%;
   }
 
   .is-mobile .el-aside-left {
