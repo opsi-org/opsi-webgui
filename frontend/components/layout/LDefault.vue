@@ -86,12 +86,18 @@
   const leftSideVisible = ref<boolean>(!mq.isMobile.value)
   const rightSideVisible = ref<boolean>(!mq.isMobile.value)
 
+  // init
+  await checkConfig()
+  settings.initColormode()
+  leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
+  rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
+
   watch(
     () => mq.$mq.value,
     () => {
       settings.setIsMobile(mq.$mq.value === 'mobile')
-      leftSideVisible.value = !mq.isMobile.value
-      rightSideVisible.value = !mq.isMobile.value
+      leftSideVisible.value = settings.menuCollapsed && !mq.isMobile.value
+      rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
     },
   )
 
@@ -100,13 +106,6 @@
       toggleSide('left')
     }
   })
-
-  // onMounted(async ()=>{
-  await checkConfig()
-  settings.initColormode()
-  leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
-  rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
-  // })
 
   function setLeftCollapse(v: boolean) {
     leftSideIsSmall.value = v
