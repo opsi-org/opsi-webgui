@@ -5,18 +5,32 @@
     :page1-condition="routeNameSettings?.page1Condition"
     :width="routeNameSettings?.width || width"
     classeachcol=""
+    :classfirstcol="'col-clients-' + clientstableVisible"
   >
     <template #default>
-      <el-button
-        class="float-right"
-        v-if="
-          routeName.startsWith('clients-products') &&
-          routeNameSettings?.page1Condition
-        "
-        @click="toggleClientstableVisibility"
-        >{{ 'v' }}</el-button
-      >
-      <ViewVClients v-if="clientstableVisible" :is-mobile="mq.isMobile.value" />
+      <el-tooltip :content="$t('button.showhide.clienttable')" placement="top">
+        <el-button
+          class="float-right"
+          v-if="
+            routeName.startsWith('clients-products') &&
+            routeNameSettings?.page1Condition
+          "
+          @click="toggleClientstableVisibility"
+        >
+          <IconIIcon
+            :icon="
+              clientstableVisible
+                ? icons.toggleVisibilityLeft
+                : icons.toggleVisibilityRight
+            "
+          />
+        </el-button>
+      </el-tooltip>
+      <!-- using if-statement (v-if=clientstableVisible) would rerender clients again.. class simply toggle visibility of html part -->
+      <ViewVClients
+        :class="{ hidden: !clientstableVisible }"
+        :is-mobile="mq.isMobile.value"
+      />
     </template>
     <template #page1>
       <NuxtPage />
@@ -27,7 +41,9 @@
 <script setup lang="ts">
   import { usePageHelper } from '~/composables/mixins/usePageHelper'
   import { useMQ } from '../composables/useMQ'
+  import { useIcons } from '~/composables/mixins/useIcons'
 
+  const icons = useIcons()
   const mq = useMQ()
   const route = useRoute()
   const { path, clientSettings } = usePageHelper()

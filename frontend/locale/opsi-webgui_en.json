@@ -335,6 +335,7 @@
   "description.quicksave.on": "Changes will be saved immediately.",
   "description.quicksave.off": "Changes are not saved immediately. An overview lists all locally made changes. These can be viewed and changed before saving.",
   "button.tablerow.moreoptions": "More actions",
+  "button.showhide.clienttable": "Toggle visibility of client table",
   "button.login": "Login",
   "button.login.description": "Login",
   "button.login.saml": "SAML Login",

@@ -14,6 +14,8 @@ export const useIcons = () => {
     themelight: 'bi:sun',
     themedark: 'bi:moon',
     trackChanges: 'bi:card-checklist',
+    toggleVisibilityLeft: 'bi:chevron-bar-left',
+    toggleVisibilityRight: 'bi:chevron-bar-right',
     tree: 'bi:list-nested',
     table: 'bi:table',
     navmenu: 'bi:list',

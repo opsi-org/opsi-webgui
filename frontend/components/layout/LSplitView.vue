@@ -2,6 +2,7 @@
   <div>
     <el-container
       :class="{
+        mycontainer: true,
         [classcontainer]: true,
         // 'border-red-500 border-1': true
         // 'max-w-screen': isMobile
@@ -56,12 +57,9 @@
     page1Condition: { type: Boolean, default: false },
     page2Condition: { type: Boolean, default: false },
     width: { type: String, default: '0%' },
-    // classeachcol: { type: String, default: 'mt-1' },
     classeachcol: { type: String, default: '' },
     classfirstcol: { type: String, default: '' },
-    // classfirstcol: { type: String, default: 'ml-5 mr-5' },
     classlastcol: { type: String, default: '' },
-    // classlastcol: { type: String, default: 'mr-5' },
     classcontainer: { type: String, default: 'pagecontent' },
     classmaincol: { type: String, default: '' },
   })
@@ -103,5 +101,13 @@
     --above-main: 120px;
     height: calc(100vh - var(--above-main)) !important;
     max-height: calc(100vh - var(--above-main)) !important;
+  }
+
+  .mycontainer .mycol:not(:last-child) {
+    margin-right: 1rem !important;
+  }
+
+  main.el-main.col-clients-false {
+    max-width: min-content;
   }
 </style>
