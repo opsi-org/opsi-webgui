@@ -112,7 +112,7 @@
 
   function setLeftCollapse(v: boolean) {
     leftSideIsSmall.value = v
-    if (!mq.isMobile.value) {
+    if (!mq.isMobile.value && leftSideVisible.value) {
       settings.setMenuCollapsed(v)
     }
   }
