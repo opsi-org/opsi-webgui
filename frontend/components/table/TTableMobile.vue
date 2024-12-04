@@ -110,27 +110,37 @@
 
             <el-collapse-item
               :name="item[props.rowId]"
-              class="!inline-block"
-              style="max-width: calc(100% - 30px); width: calc(100% - 180px)"
+              :class="[
+                '!inline-block',
+                hasClientActions && actionConfig && actionLog && actionClone
+                  ? 'w-[calc(100%-180px)]' // clients or
+                  : 'w-[calc(100%-70px)]', // servers/products
+                // update style if more actions are available or styling of rowaction changed
+              ]"
             >
+              <!-- style="max-width: calc(100% - 30px); width: calc(100% - 180px)" -->
               <template #title>
-                <div class="min-w-fit">
-                  <CellRenderer
-                    :row-id="props.rowId"
-                    :row-data="item"
-                    :col-data="
-                      tableColumn.find((col) => col.key === props.rowId)
-                    "
-                  />
-                </div>
+                <div class="!contents">
+                  <div class="min-w-fit">
+                    <!-- CELL ID/ROWID/IDENT/.. -->
+                    <CellRenderer
+                      :row-id="props.rowId"
+                      :row-data="item"
+                      :col-data="
+                        tableColumn.find((col) => col.key === props.rowId)
+                      "
+                    />
+                  </div>
 
-                <div class="w-full flex flex-row-reverse">
-                  <CellRenderer
-                    v-if="tableColumn[-1]"
-                    row-id="rowactions"
-                    :row-data="item"
-                    :col-data="tableColumn.find((col) => col.key === 'actions')"
-                  />
+                  <div class="w-full flex flex-row-reverse mr-2 max-w-40">
+                    <!-- sorted column -->
+                    <CellRenderer
+                      v-if="!['selection', rowId, 'actions'].includes(sortBy)"
+                      :row-id="sortBy"
+                      :row-data="item"
+                      :col-data="tableColumn.find((col) => col.key === sortBy)"
+                    />
+                  </div>
                 </div>
               </template>
 
@@ -143,6 +153,7 @@
               />
             </el-collapse-item>
 
+            <!-- ROWACTIONS -->
             <div class="!inline-block align-top mt-2 ml-3">
               <el-tooltip
                 :content="$t('title.config')"
@@ -317,71 +328,12 @@
     fetchWrapper()
   }
 
-  // function showContextMenu(event: any, row: any) {
-  // // function showContextMenu(event: MouseEvent, rowData: any) {
-  //   event.preventDefault()
-  //   contextMenuRow.value = row
-
-  //   const menuWidth = 200
-  //   const menuHeight = 350
-  //   const pageWidth = window.innerWidth
-  //   const pageHeight = window.innerHeight
-
-  //   let left = event.clientX
-  //   let top = event.clientY
-
-  //   if (left + menuWidth > pageWidth) {
-  //     left = pageWidth - menuWidth
-  //   }
-
-  //   if (top + menuHeight > pageHeight) {
-  //     top = pageHeight - menuHeight
-  //   }
-
-  //   contextMenuStyle.value = {
-  //     top: `${top}px`,
-  //     left: `${left}px`,
-  //     position: 'absolute',
-  //     zIndex: 1000,
-  //   }
-  //   contextMenuVisible.value = true
-  // }
-
   function handleClickOutside(event: MouseEvent) {
     const contextMenu = document.querySelector('.context-menu')
     if (contextMenu && !contextMenu.contains(event.target as Node)) {
       contextMenuVisible.value = false
     }
   }
-
-  // function handleScroll(event: Event) {
-  //   const target = event.target as HTMLElement
-  //   const dynamicScrollThreshold = target.clientHeight / fetchedData.value.length
-  //   if (target.scrollTop <= dynamicScrollThreshold) {
-  //     scrollUp()
-  //   } else if (
-  //     target.scrollHeight - target.scrollTop <=
-  //     target.clientHeight + dynamicScrollThreshold
-  //   ) {
-  //     scrollDown()
-  //   }
-  // }
-
-  // const debouncedHandleScroll = debounce(handleScroll, 200)
-
-  // async function scrollUp() {
-  //   if (!isLoading.value && !isFirstPage.value) {
-  //     currentPage.value--
-  //     await fetchWrapper()
-  //   }
-  // }
-
-  // async function scrollDown() {
-  //   if (!isLoading.value && !isLastPage.value) {
-  //     currentPage.value++
-  //     await fetchWrapper()
-  //   }
-  // }
 
   function scrollToTopOfTable() {
     if (infiniteScrollDiv.value) {
@@ -398,26 +350,6 @@
       })
     }
   }
-
-  // function handleCommand(rowData: any, command: string) {
-  //   contextMenuVisible.value = false
-  //   switch (command) {
-  //     case 'config':
-  //       handleConfigClick(rowData)
-  //       break
-  //     case 'log':
-  //       handleLogClick(rowData)
-  //       break
-  //     case 'clone':
-  //       handleCloneClick(rowData)
-  //       break
-  //   }
-  // }
-
-  // function handlePagination(val: number) {
-  //   currentPage.value = val
-  //   fetchWrapper()
-  // }
 
   function handleConfigClick(rowData: any) {
     if (!props.actionConfig) {
@@ -458,25 +390,12 @@
     fetchWrapper()
   }
 
-  // function handleSortChange({ prop, order }: { column: any, prop: string, order: any }) {
-  //   sortBy.value = prop
-  //   sortDesc.value = order === 'descending'
-  //   fetchWrapper()
-  // }
-
   function toggleSortOrder() {
     sortDesc.value = !sortDesc.value
     fetchWrapper()
   }
-  // function onRowClick(row: any, column: any, event: any) {
-  //   if (['svg', 'button', 'path', 'span'].includes(event.target?.localName)) {
-  //     return
-  //   }
-  //   $emit('selectionChanged', row[props.rowId])
-  // }
 
   const CellRenderer = (attributes: any): VNode => {
-    // const CellRenderer = ({key, 'row-data', colData}: any): VNode => {
     const colData = attributes['col-data'] || attributes.colData
     const rowData = attributes['row-data'] || attributes.rowData
 
@@ -492,26 +411,6 @@
     return <el-text>{rowData[colData.key]}</el-text>
   }
 
-  // const HeaderCellRenderer = (attributes: any): VNode => {
-  //   const colData = attributes['col-data'] || attributes.colData
-  //   if (!colData) {st HeaderCellRenderer = (attributes: any): VNode => {
-  //   const colData = attributes['col-data'] || attributes.colData
-  //   if (!colData) {
-  //     console.warn(`HeaderCellRenderer: col-data not found in: ${JSON.stringify(attributes)}`)
-  //     return <el-text>undefined</el-text>
-  //   }
-  //   if (colData.headerCellRenderer) {
-  //     return colData.headerCellRenderer()
-  //   }
-  //   return <el-text>{colData.title}</el-text>
-  // }
-
-  //   if (colData.headerCellRenderer) {
-  //     return colData.headerCellRenderer()
-  //   }
-  //   return <el-text>{colData.title}</el-text>
-  // }
-
   const Details = (params: any): VNode => {
     const rowData = params['rowData'] || params['row-data']
     // const colData = params['colData'] || params['col-data']
@@ -520,8 +419,6 @@
     // const _fixedRightLast: Array<any> = []
     props.tableColumn.forEach((colInfo: any) => {
       const cId: string = colInfo.key as string
-      // const visible = tableStore.columns[props.id].includes(cId)
-      // const visible = tableStore[props.id + 'Columns'].includes(cId)
       const visible = colInfo._majorKey === undefined && cId !== 'selected'
       if (!visible) {
         return
