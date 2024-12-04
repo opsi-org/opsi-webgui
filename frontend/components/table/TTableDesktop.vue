@@ -49,15 +49,17 @@
                   </el-button>
                 </div>
                 <div class="dropdown-items">
-                  <template v-for="column in tableColumn" :key="column.key">
-                    <el-dropdown-item>
-                      <el-radio
-                        :disabled="!column.sortable"
-                        v-model="column.sortable"
-                        @change="applySort(column.key)"
-                      />
-                    </el-dropdown-item>
-                  </template>
+                  <el-radio-group v-model="sortBy" class="!contents">
+                    <template v-for="column in tableColumn" :key="column.key">
+                      <el-dropdown-item>
+                        <el-radio
+                          :disabled="!column.sortable"
+                          :value="column.key"
+                          @change="applySort(column.key)"
+                        />
+                      </el-dropdown-item>
+                    </template>
+                  </el-radio-group>
                 </div>
               </div>
               <div class="dropdown-section">
