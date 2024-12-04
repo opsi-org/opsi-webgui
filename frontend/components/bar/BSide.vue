@@ -58,16 +58,19 @@
     disabled?: boolean
     submenu?: Array<INavItem>
   }
+  const emit = defineEmits(['changeSmall'])
 
   const $t = useI18n().t
   const icons = useIcons()
   const router = useRouter()
   const mq = useMQ()
+
   const settings = storeSettings()
   const { menuCollapsed } = storeToRefs(settings)
   const { config } = storeToRefs(storeConfigapp())
-  const isCollapse = ref(menuCollapsed.value)
-  const emit = defineEmits(['changeSmall'])
+
+  const isCollapse = ref(menuCollapsed.value && !mq.isMobile.value)
+
   const navItems = computed<Array<INavItem>>(() => [
     {
       title: 'title.depots',
@@ -121,8 +124,20 @@
     { title: 'title.support', icon: icons.support, route: '/support' },
   ])
 
-  watch(isCollapse, (val) => emit('changeSmall', val))
+  watch(
+    () => mq.$mq.value,
+    () => {
+      settings.setIsMobile(mq.$mq.value === 'mobile')
+      isCollapse.value = menuCollapsed.value && !mq.isMobile.value
+    },
+  )
 
-  // const isSelected = (item: INavItem) => item.route && router.currentRoute.value?.fullPath.includes(item.route)
+  watch(
+    () => isCollapse.value,
+    (val) => {
+      emit('changeSmall', val)
+    },
+  )
+
   const showTitle = computed(() => mq.isMobile.value || !isCollapse.value)
 </script>

@@ -77,11 +77,14 @@
 <script setup lang="ts">
   import { useNotification } from '~/composables/mixins/useComponent'
   import type { T_DisaledFeatures, T_configuration } from '~/types/APItypes'
+
   const { notifyError } = useNotification()
   const $t = useI18n().t
   const mq = useMQ()
+
   const settings = storeSettings()
   const configapp = storeConfigapp()
+
   const leftSideIsSmall = ref<boolean>(false)
   const leftSideVisible = ref<boolean>(!mq.isMobile.value)
   const rightSideVisible = ref<boolean>(!mq.isMobile.value)

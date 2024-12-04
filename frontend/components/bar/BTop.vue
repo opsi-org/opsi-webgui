@@ -8,11 +8,13 @@
     <el-menu-item
       v-if="mq.isMobile.value"
       index="0"
+      type="text"
       @click="toggleLeft"
       data-testid="menu_routes"
       class="min-w-14 w-14"
+      style="--el-menu-hover-bg-color: var(--color-opsi-deep-blue)"
     >
-      <IconIIcon :icon="icons.navmenu" />
+      <IconIIcon :icon="icons.navmenu" class="text-white" />
     </el-menu-item>
 
     <div v-if="mq.isMobile.value" class="flex-grow" />
@@ -47,7 +49,8 @@
       type="text"
       @click="toggleRight"
       data-testid="menu-quickpanel"
-      class="!bg-transparent"
+      class="bg-transparent"
+      style="--el-menu-hover-bg-color: var(--color-opsi-deep-blue)"
     >
       <IconIIcon :icon="icons.quickpanel" class="text-white" />
     </el-menu-item>
