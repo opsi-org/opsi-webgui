@@ -105,7 +105,7 @@
   )
 
   watch(useRouter().currentRoute, () => {
-    if (mq.isMobile.value) {
+    if (mq.isMobile.value && leftSideVisible.value) {
       toggleSide('left')
     }
   })
