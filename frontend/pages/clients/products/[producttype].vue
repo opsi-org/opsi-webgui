@@ -8,9 +8,17 @@
       classeachcol="m-0 p-0"
     >
       <template #default>
-        <el-button class="float-right" @click="router.push('/clients/')"
-          >X</el-button
+        <el-button
+          class="float-right"
+          @click="
+            () => {
+              splitviewVisibilityClienttable = true
+              router.push('/clients/')
+            }
+          "
         >
+          <IconIIcon :icon="icons.x" />
+        </el-button>
         <ViewVProducts
           v-if="path[1] === 'products'"
           :product-type="path[2]"
@@ -25,8 +33,16 @@
   </div>
 </template>
 <script setup lang="ts">
+  import { useIcons } from '~/composables/mixins/useIcons'
+
   const route = useRoute()
   const router = useRouter()
+  const icons = useIcons()
+
+  const { splitviewVisibilityClienttable } = storeToRefs(
+    storeInternalSettings(),
+  )
+
   const path = computed(() =>
     route.path.split('/').filter((p: string) => p !== ''),
   )

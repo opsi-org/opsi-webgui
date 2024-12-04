@@ -5,7 +5,7 @@
     :page1-condition="routeNameSettings?.page1Condition"
     :width="routeNameSettings?.width || width"
     classeachcol=""
-    :classfirstcol="'col-clients-' + clientstableVisible"
+    :classfirstcol="'col-clients-' + splitviewVisibilityClienttable"
   >
     <template #default>
       <el-tooltip :content="$t('button.showhide.clienttable')" placement="top">
@@ -19,16 +19,16 @@
         >
           <IconIIcon
             :icon="
-              clientstableVisible
+              splitviewVisibilityClienttable
                 ? icons.toggleVisibilityLeft
                 : icons.toggleVisibilityRight
             "
           />
         </el-button>
       </el-tooltip>
-      <!-- using if-statement (v-if=clientstableVisible) would rerender clients again.. class simply toggle visibility of html part -->
+      <!-- using if-statement (v-if=splitviewVisibilityClienttable) would rerender clients again.. class simply toggle visibility of html part -->
       <ViewVClients
-        :class="{ hidden: !clientstableVisible }"
+        :class="{ hidden: !splitviewVisibilityClienttable }"
         :is-mobile="mq.isMobile.value"
       />
     </template>
@@ -48,7 +48,10 @@
   const route = useRoute()
   const { path, clientSettings } = usePageHelper()
 
-  const clientstableVisible = ref(true)
+  const { splitviewVisibilityClienttable } = storeToRefs(
+    storeInternalSettings(),
+  )
+  splitviewVisibilityClienttable.value = true // default: every time this page is loaded, the clienttable is visible
 
   const routeName = computed(() => (route.name as string) || '')
   const routeNameSettings = computed(() => {
@@ -57,12 +60,9 @@
       throw new Error('route name not found: ' + (route.name as string))
     return s
   })
-  const toggleClientstableVisibility = () => {
-    clientstableVisible.value = !clientstableVisible.value
-  }
 
   const width = computed(() => {
-    if (clientstableVisible.value) {
+    if (splitviewVisibilityClienttable.value) {
       if (path.value.length === 3) return '50%' // only clients and products are visible (products have 50%)
       return '66%' // properties are open. prods and props have together 66%
     } else {
@@ -73,4 +73,8 @@
   const isMobile = computed(() => {
     return mq.isMobile.value
   })
+
+  function toggleClientstableVisibility() {
+    splitviewVisibilityClienttable.value = !splitviewVisibilityClienttable.value
+  }
 </script>

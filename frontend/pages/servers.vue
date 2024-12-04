@@ -9,12 +9,12 @@
     <!-- :classeachcol="isMobile ? 'm-1': 'm-1 h-full'" -->
     <!-- classlastcol="mt-0 mb-0" -->
     <template #default>
-      <el-button
+      <!-- <el-button
         class="float-right"
         v-if="routeNameSettings?.page1Condition"
         @click="toggleClientstableVisibility"
         >{{ 'v' }}</el-button
-      >
+      > -->
       <ViewVServer v-if="maintableVisible" />
     </template>
     <template #page1>
