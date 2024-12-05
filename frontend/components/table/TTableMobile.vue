@@ -23,6 +23,7 @@
           </el-button>
           <template #dropdown>
             <div class="dropdown-content">
+              <!-- TODO: filter by always (at least for now) ID (and sometimes description) -->
               <div class="dropdown-section">
                 <div class="dropdown-title">
                   <IconIIcon :icon="icons.filter" /> Filter By
@@ -39,6 +40,7 @@
                   </template>
                 </div>
               </div>
+              <!-- Sorting by column -->
               <div class="dropdown-section">
                 <div class="dropdown-title">
                   <el-button link @click="toggleSortOrder">
@@ -56,29 +58,14 @@
                           :disabled="!column.sortable"
                           :value="column.key"
                           @change="applySort(column.key)"
-                        />
+                          >{{ column.title }}</el-radio
+                        >
                       </el-dropdown-item>
                     </template>
                   </el-radio-group>
                 </div>
               </div>
-              <div class="dropdown-section">
-                <div class="dropdown-title">
-                  <IconIIcon :icon="icons.columns" /> Column Selection
-                </div>
-                <div class="dropdown-items">
-                  <template v-for="column in tableColumn" :key="column.key">
-                    <el-dropdown-item>
-                      <el-checkbox
-                        v-model="column.visible"
-                        @click.stop
-                        :disabled="column.alwaysVisible"
-                        >{{ column.title }}</el-checkbox
-                      >
-                    </el-dropdown-item>
-                  </template>
-                </div>
-              </div>
+              <!-- No need for column selection in mobile view -->
             </div>
           </template>
         </el-dropdown>
