@@ -120,8 +120,17 @@
             >
               <!-- style="max-width: calc(100% - 30px); width: calc(100% - 180px)" -->
               <template #title>
-                <div class="!contents">
-                  <div class="min-w-fit">
+                <div
+                  class="flex flex-wrap items-center !justify-between w-full border-1 border-red-500 leading-normal"
+                >
+                  <div
+                    class="flex-1 min-w-min w-min h-[24px] sm:h-[48px] flex items-center justify-start text-left"
+                    :class="{
+                      'font-bold': !['selection', rowId, 'actions'].includes(
+                        sortBy,
+                      ),
+                    }"
+                  >
                     <!-- CELL ID/ROWID/IDENT/.. -->
                     <CellRenderer
                       :row-id="props.rowId"
@@ -131,14 +140,16 @@
                       "
                     />
                   </div>
-
-                  <div class="w-full flex flex-row-reverse mr-2 max-w-40">
+                  <div
+                    class="flex-1 min-w-[130px] w-[130px] h-[24px] sm:h-[48px] flex items-center justify-start text-ellipsis whitespace-nowrap overflow-hidden"
+                  >
                     <!-- sorted column -->
                     <CellRenderer
                       v-if="!['selection', rowId, 'actions'].includes(sortBy)"
                       :row-id="sortBy"
                       :row-data="item"
                       :col-data="tableColumn.find((col) => col.key === sortBy)"
+                      class="min-w-0 whitespace-nowrap overflow-hidden text-ellipsis"
                     />
                   </div>
                 </div>
@@ -398,17 +409,17 @@
   const CellRenderer = (attributes: any): VNode => {
     const colData = attributes['col-data'] || attributes.colData
     const rowData = attributes['row-data'] || attributes.rowData
-
+    const htmlclass = attributes['class'] || attributes.class
     if (!colData) {
       console.error(
         `CellRenderer: col-data not found in: ${JSON.stringify(attributes)}`,
       )
-      return <el-text>undefined</el-text>
+      return <el-text class={htmlclass}>undefined</el-text>
     }
     if (colData.cellRenderer) {
       return colData.cellRenderer({ rowData })
     }
-    return <el-text>{rowData[colData.key]}</el-text>
+    return <el-text class={htmlclass}>{rowData[colData.key]}</el-text>
   }
 
   const Details = (params: any): VNode => {
