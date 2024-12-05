@@ -64,3 +64,7 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
   alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"
   ```
 - Accept certificate of opsiconfd: `https://localhost:4447/admin`
+
+### Contributing
+
+For information on how to contribute to this project, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
