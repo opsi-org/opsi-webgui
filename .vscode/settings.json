@@ -171,5 +171,7 @@
     // "editor.autoIndent": "advanced",
     // "diffEditor.ignoreTrimWhitespace": false
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.configPath": "/workspace/frontend/.prettierrc",
+  "prettier.requireConfig": false
 }
