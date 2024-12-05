@@ -188,6 +188,23 @@ Example: `feat/user-authentication`, `fix/file-upload-bug`
    merge request.
 7. Once the changes are approved, they will be merged into the `main` branch.
 
+## Release (WIP: section is not tested yet)
+
+When preparing for a release, follow these steps:
+
+1. Do a final check of the codebase to ensure that all changes are complete
+   and tested. Please build the opsi-webgui.zip locally (in vs-code bottom button "buildDist") and upload it to out main test system to check if everything is working as expected.
+2. Make sure since the last release there was a commit message with the prefix `[pub]`, this will be used to generate the changelog.
+3. Use opsi-cli to create a git tag and start the release process for this version.
+
+```bash
+# cd /workspace                          # directory where opsi-dev-tool.yml is located
+# git tag -d $(git tag -l) && git fetch  # (OPTIONAL) removes all local tags and fetches all from origin. Only neccassary if you overwrite a (locally) existing tag
+opsi-dev-cli git-tag                     # will overwrite opsi-dev-tool.yml and frontend/package.json (defined in opsi-dev-tool.yml)
+```
+
+This will ask you for the new version. Use semantic versioning (e.g., 1.2.3) and press enter. The opsi-dev-cli will create a new git tag and update the version in the neccassary files. 4. After tag is build successfully its possible to use the release-tui to move the tag to a release branch.
+
 ## Discussion and Communication
 
 All discussions and communication related to the project should be conducted

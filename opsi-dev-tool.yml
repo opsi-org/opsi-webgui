@@ -40,6 +40,7 @@ project:
   name: opsi-webgui
   version: '4.4.0.0'
   version_files:
+    # backend/addon/webgui/python/const.py: 'ADDON_VERSION'
     opsi-dev-tool.yml: pull-binaries[0].version
     frontend/package.json: '$.version'
 pull-binaries:
