@@ -166,17 +166,22 @@
       collectResult($t('button.event.reboot'), data.value, error)
     },
     deployclientagent: async () => {
-      const { data, error } = await useApiPOST<TClientdRPC>(
+      const { error } = await useApiPOST<TClientdRPC>(
         '/opsidata/clients/deploy',
         { ...opsiClientAgent.value, clients: props.clientIds },
       )
-      // collectResult($t('button.event.deployclientagent'), data.value, error)
-
       if (error) {
         notifyError({
           message: error?.response?.data?.message || 'No data received',
         })
+        return
       }
+      notifySuccess({
+        title: $t('message.success.title') + ': ',
+        message: $t('message.success.clientagents', {
+          count: props.clientIds.length,
+        }),
+      })
     },
     delete: async () => {
       const deletedIds: Array<string> = []
@@ -185,7 +190,9 @@
           `/opsidata/clients/${clientId}`,
         )
         if (error) {
-          notifyError({ message: error || 'No data received' })
+          notifyError({
+            message: error?.response?.data?.message || 'No data received',
+          })
           return
         }
         deletedIds.push(clientId)

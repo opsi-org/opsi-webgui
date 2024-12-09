@@ -33,6 +33,7 @@
   "message.success.save.delete.clientsfromgroup": "Succesfully deleted clients from group \"{group}\"",
   "message.success.trackChanges.saveAll": "Changes saved.",
   "message.success.clientagent": "OPSI Client Agent on {client} has been deployed successfully.",
+  "message.success.clientagents": "OPSI Client Agent on {count} has been deployed successfully.",
   "message.confirm.deleteClient": "Are you sure you want to delete the client \"{client}\" ?",
   "message.confirm.logout": "Log out of opsi-webgui?",
   "message.warning.title": "Warning",
