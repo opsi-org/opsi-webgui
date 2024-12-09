@@ -52,11 +52,10 @@ export const useMBus = (
   )
 
   function wsDisconnect() {
-    const _ws: WebSocket = wsBus.value as WebSocket
-    if (_ws === undefined) {
+    if (wsBus.value === undefined) {
       return
     }
-    _ws.close()
+    wsBus.value.close()
     setBus(undefined)
   }
 
@@ -146,13 +145,16 @@ export const useMBus = (
   function wsSend(msg: any) {
     // obj == function with param 'message'
     if (!wsBus.value) {
+      console.error('wsBus is undefined')
       return
     }
     if (!wsIsConnected.value) {
+      console.error('webBus is not connected')
       return
     }
     _waitForSocketConnection(wsBus.value, () => {
       if (wsBus.value === undefined) {
+        console.error('msgBus is undefined (2)')
         return
       }
       wsBus.value.send(encode(msg))
@@ -258,7 +260,7 @@ export const useMBus = (
 
   function wsNotification(text: any, data: any = '') {
     // eslint-disable-next-line no-console
-    console.debug('MessageBus:', text, data)
+    // console.debug('MessageBus:', text, data)
   }
 
   // function wsNotificationInfo (text: any, data: any = '') {
