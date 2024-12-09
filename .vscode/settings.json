@@ -127,7 +127,7 @@
         "tooltip": "Build productive",
         "color": "white",
         // "singleInstance": true,
-        "command": "bash /workspace/opsiweb/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)/..\" install" // This is executed in the terminal.
+        "command": "bash /workspace/frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)/..\" install" // This is executed in the terminal.
       }
       // { // take screenshots for Documentation
       //     "cwd": "/workspace/opsiweb/screenshots4Docs",
