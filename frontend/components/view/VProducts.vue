@@ -105,7 +105,7 @@
 
   const tableColumn = ref([
     {
-      title: $t('table.fields.selection'),
+      title: '',
       key: 'selected',
       sortable: true,
       type: 'selection',
