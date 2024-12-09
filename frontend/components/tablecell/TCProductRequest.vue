@@ -92,7 +92,7 @@
   const modelRowitem = defineModel<ITableRowItemProducts>({ required: false })
 
   const _props = defineProps({
-    title: { type: String, required: false },
+    title: { type: String, required: false, default: '' },
     rowIsSelected: { type: Boolean, default: undefined },
     save: {
       type: Function,
