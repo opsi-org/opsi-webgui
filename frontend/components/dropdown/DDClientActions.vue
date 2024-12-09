@@ -270,7 +270,7 @@
       title: notificationTitle,
       messages: resultRows.value,
       wrapperClass: 'grid',
-      duration: 4000,
+      duration: 0,
     })
   }
 </script>
