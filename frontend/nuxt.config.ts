@@ -142,6 +142,10 @@ export default defineNuxtConfig({
       // ],
       exclude: ['Toast', 'Editor', 'Chart'],
     },
+    directives: {
+      prefix: 'P',
+      include: ['Tooltip'],
+    },
   },
   imports: {
     dirs: ['store'],

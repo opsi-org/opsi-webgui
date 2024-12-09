@@ -50,6 +50,8 @@
   import BTNRowLink from '~/components/button/BTNRowLink.vue'
   import Checkbox from 'primevue/checkbox'
   import RadioButton from 'primevue/radiobutton'
+  import TCBadgeCompares from '../tablecell/TCBadgeCompares.vue'
+  import TTooltip from '../tooltip/TTooltip.vue'
 
   const { notifyInfo, notifyError } = useNotification()
   // const { notifyError } = useNotification()
@@ -151,7 +153,7 @@
         return (
           <>
             {clientSelection.value.length > 0 ? (
-              <tablecellTCBadgeCompares
+              <TCBadgeCompares
                 type="installationStatus"
                 rowid={rowData.productId}
                 values={
@@ -183,7 +185,7 @@
           <>
             {/* v-if={clientSelection.value.length > 0} */}
             {clientSelection.value.length > 0 ? (
-              <tablecellTCBadgeCompares
+              <TCBadgeCompares
                 type="actionResult"
                 rowid={rowData.productId}
                 values={
@@ -237,7 +239,7 @@
       title: $t('table.fields.version'),
       key: 'version',
       sortable: true,
-      visible: false,
+      visible: true,
       cellRenderer: ({ rowData }: any) => {
         const tt = (
           <ul>
@@ -268,20 +270,21 @@
           </ul>
         )
         return (
-          <el-tooltip
-            class="box-item"
-            effect="dark"
-            placement="left-start"
-            v-slots={{ content: () => tt }}
-          >
-            {/* TODO: check if this works for different versions of server/clients */}
-            <TCProductVersionCell
-              type="depotVersions"
-              row={rowData}
-              clients2depots={fetchedDataClients2Depots.value}
-              onDetails={toggleDetailsTooltip}
-            />
-          </el-tooltip>
+          <TTooltip
+            v-slots={{
+              default: () => (
+                //* TODO: check if this works for different versions of server/clients */
+                <TCProductVersionCell
+                  type="depotVersions"
+                  row={rowData}
+                  clients2depots={fetchedDataClients2Depots.value}
+                />
+              ),
+              tooltip: () => tt,
+            }}
+          />
+          // {/* onDetails={toggleDetailsTooltip} */}
+          // tooltip: () => tt,
         )
       },
     },
@@ -289,7 +292,7 @@
       title: $t('table.fields.actionProgress'),
       key: 'actionProgress',
       sortable: true,
-      visible: clientSelection.value.length > 0,
+      visible: false, //clientSelection.value.length > 0,
     },
     {
       title: $t('table.fields.actionRequest'),

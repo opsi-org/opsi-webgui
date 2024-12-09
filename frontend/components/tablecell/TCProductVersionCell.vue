@@ -6,7 +6,7 @@
       class="TCProductVersionCell_hover text-small"
     >
       <el-text>{{
-        rowitem.depot_version_diff ? ' ' : rowitem.depotVersions[0]
+        rowitem.depot_version_diff ? ' ' : rowitem.depotVersions?.[0]
       }}</el-text>
       <IconIDetails
         v-if="rowitem.depot_version_diff"
@@ -96,45 +96,6 @@
     }
     return tt
   })
-  /*
-import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { IObjectString2String, IObjectString2ObjectString2String } from '../../../.utils/types/tgeneral'
-import { ITableRow, ITableRowItemProducts } from '../../../.utils/types/ttable'
-import { mapValues2Objects } from '../../../.utils/utils/smappings'
-const selections = namespace('selections')
-
-@Component
-export default class TCProductVersionCell extends Vue {
-  @Prop({ }) row!: ITableRow
-  @Prop({ }) type!: string
-  @Prop({ }) clients2depots!: IObjectString2String
-
-  @selections.Getter public selectionDepots!: Array<string>
-  @selections.Getter public selectionClients!: Array<string>
-
-  get rowitem (): ITableRowItemProducts { return this.row.item as ITableRowItemProducts }
-  get tooltiptext () {
-    // console.debug('key length: ', Object.keys(this.clients2depots).length)
-    const depots: IObjectString2String = mapValues2Objects((this.row.item as ITableRowItemProducts).depotVersions, (this.row.item as ITableRowItemProducts).selectedDepots, this.selectionDepots, '--')
-    const tt:IObjectString2ObjectString2String = {}
-    for (const d in depots) {
-      tt[d] = {
-        [d]: depots[d]
-      }
-    }
-    if (Object.keys(this.clients2depots).length <= 0 || Object.keys(this.clients2depots).length !== this.selectionClients.length) {
-      return tt
-    }
-    const clients: IObjectString2String = mapValues2Objects(
-      (this.row.item as ITableRowItemProducts).clientVersions,
-      (this.row.item as ITableRowItemProducts).selectedClients,
-      this.selectionClients, '--')
-    for (const c in clients) {
-      tt[this.clients2depots[c]][c] = clients[c]
-    }
-    return tt
-  }
-} */
 </script>
 
 <style scoped>
