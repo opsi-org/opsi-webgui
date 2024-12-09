@@ -284,7 +284,9 @@
   }
 
   async function wsBusMsgObjectChanged(msg: any = undefined) {
-    if (msg && msg.channel === 'event:host_created') {
+    if (msg == undefined) return
+
+    if (['event:host_created', 'event:host_deleted'].includes(msg.channel)) {
       if (msgbusAutoRefresh.value) {
         clientsRef.value?.refetch()
         return
@@ -300,7 +302,7 @@
         },
       })
     }
-    if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
+    if (['host_connected', 'host_disconnected'].includes(msg.event)) {
       console.warn('message bus: ', msg)
       // TODO: implement
     }
