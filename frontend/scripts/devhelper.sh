@@ -65,7 +65,7 @@ if [[ ${file} == "all-changed" ]]; then
     changedFiles=$(echo $changedFiles | tr ' ' '\n' | awk -F "-snapshots/" '{print $1}' || exit_code=$?)
 
     if [[ "$changedFiles" == "" ]]; then
-        echo "> no changed vue/test files found"
+        echo "> no changed test files found"
         exit 0;
     fi
     # get filenames of testfiles
