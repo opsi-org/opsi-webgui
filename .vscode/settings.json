@@ -9,7 +9,8 @@
   "i18n-ally.localesPaths": ["frontend/locale/"],
   // "i18n-ally.pathMatcher": "frontend/locale/opsi-webgui_{locale}.json",
   "i18n-ally.keystyle": "flat",
-  "i18n-ally.sourceLanguage": "en",
+  "i18n-ally.sourceLanguage": "opsi-webgui_en",
+  "i18n-ally.displayLanguage": "opsi-webgui_en",
   "i18n-ally.enabledParsers": ["json"],
 
   "eslint.onIgnoredFiles": "warn",
