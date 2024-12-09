@@ -21,6 +21,7 @@ export default {
         success: 'var(--el-color-success)',
         info: 'var(--el-color-info)',
         warning: 'var(--el-color-warning)',
+        warn: 'var(--el-color-warning)',
 
         'opsi-deep-gray': 'var(--color-opsi-deep-gray)',
         'opsi-gray': 'var(--color-opsi-gray)',

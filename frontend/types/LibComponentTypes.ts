@@ -10,6 +10,7 @@ export type ElTypeVariant =
   | undefined
 
 export type PSeverity =
+  | 'primary'
   | 'secondary'
   | 'info'
   | 'success'

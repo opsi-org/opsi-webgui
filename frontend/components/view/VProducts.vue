@@ -39,7 +39,6 @@
 
 <script setup lang="tsx">
   import type { IProductTypes, T_Client2Depot } from '~/types/APItypes'
-  import type { IObjectString2ObjectString2String } from '~/types/tgeneral'
   import { useIcons } from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useNavigate } from '~/composables/mixins/useNavigateTo'
@@ -52,6 +51,7 @@
   import RadioButton from 'primevue/radiobutton'
   import TCBadgeCompares from '../tablecell/TCBadgeCompares.vue'
   import TTooltip from '../tooltip/TTooltip.vue'
+  import TCProductRequest from '../tablecell/TCProductRequest.vue'
 
   const { notifyInfo, notifyError } = useNotification()
   // const { notifyError } = useNotification()
@@ -303,18 +303,17 @@
         ? undefined
         : () => {
             return (
-              <tablecellTCProductRequest
-                modelValue={{}}
+              <TCProductRequest
                 title={$t('form.tooltip.actionRequest')}
                 save={saveActionRequests}
-                selectedClients={clientSelection.value}
               />
             )
+            // {/* selectedClients={clientSelection.value} */}
           },
       cellRenderer: ({ rowData }: any) => {
         // const sel = (props.selectedClient) ? [props.selectedClient]: clientSelection.value
         return (
-          <tablecellTCProductRequest
+          <TCProductRequest
             // request={rowData.actionRequest || 'none'}
             // requestoptions={[...rowData.actions]}
             modelValue={rowData}
@@ -352,17 +351,15 @@
           // }
         }
         return (
-          <>
-            <div class="flex flex-row">
-              <BTNRowLink
-                is-pressed={
-                  navigation.rowactionConfigChecked.value[rowData.productId]
-                }
-                icon={icons.settings}
-                onOnClick={change}
-              />
-            </div>
-          </>
+          <div class="flex flex-row">
+            <BTNRowLink
+              is-pressed={
+                navigation.rowactionConfigChecked.value[rowData.productId]
+              }
+              icon={icons.settings}
+              onOnClick={change}
+            />
+          </div>
         )
       },
     },
@@ -628,14 +625,5 @@
     else throw new Error('Unknown product type ' + type)
 
     productsRef.value?.refetch()
-  }
-
-  function toggleDetailsTooltip(
-    row: any,
-    tooltiptext: IObjectString2ObjectString2String,
-  ) {
-    console.warn('Details not implemented: ', row, tooltiptext)
-    // (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
-    // row.toggleDetails()
   }
 </script>

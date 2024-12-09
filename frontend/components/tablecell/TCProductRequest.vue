@@ -1,47 +1,60 @@
 <template>
-  <el-tooltip
-    effect="light"
+  <TooltipTTooltip
     :disabled="visibleRequest !== MIXED_VALUE && !visibleRequest?.includes('*')"
   >
-    <template #content> <ThisJSXTooltipContent /> </template>
-
-    <el-select
-      v-model="visibleRequest"
-      :disabled="config.read_only"
-      class="min-w-[82px] w-[82px]"
-    >
-      <el-option
-        v-for="a in get_options"
-        :key="a"
-        :label="a"
-        :value="a"
-        :data-testid="`DropdownDDProductRequest-Item-${a}`"
-        @click="
-          () => {
-            save(modelRowitem, a)
-            visibleRequest = a
+    <template #tooltip>
+      <span
+        v-for="data in tooltipdata"
+        :key="data.label"
+        class="w-full !flex !justify-between"
+      >
+        <p>{{ data.label }}</p>
+        <p-tag
+          :severity="VARIANTS[data.actionRequest] || 'info'"
+          pt:root:class="m-0 p-0 min-w-28"
+        >
+          {{ data.actionRequest }}
+        </p-tag>
+      </span>
+    </template>
+    <template #default>
+      <p-select
+        v-model="visibleRequest"
+        :disabled="config.read_only"
+        class="min-w-[82px] w-full"
+        :placeholder="title"
+        :options="get_options"
+        size="small"
+        fluid
+        @change="
+          (e: any) => {
+            save(modelRowitem, e.value)
+            visibleRequest = e.value
           }
         "
-      />
-      <template #label="{ label }">
-        <el-text
-          :type="
-            visibleRequest?.includes('*')
-              ? 'danger'
-              : VARIANTS[visibleRequest || '']
-          "
-        >
-          {{ label }}
-        </el-text>
-        <el-text v-if="visibleRequest?.includes('*')">
-          ({{ modelRowitem?.actionRequest || '' }})
-        </el-text>
-      </template>
-    </el-select>
-  </el-tooltip>
+      >
+        <template #value="slotProps">
+          <p
+            :class="
+              '!inline ' +
+              (visibleRequest?.includes('*')
+                ? 'text-danger'
+                : 'text-' + VARIANTS[visibleRequest || ''])
+            "
+          >
+            {{ slotProps.value }}
+          </p>
+          <p v-if="visibleRequest?.includes('*')" class="inline">
+            ({{ modelRowitem?.actionRequest || '' }})
+          </p>
+        </template>
+      </p-select>
+    </template>
+  </TooltipTTooltip>
 </template>
 
 <script lang="tsx" setup>
+  import type { PSeverity } from '~/types/LibComponentTypes'
   import type { IObjectString2String } from '~/types/tgeneral'
   import type { ITableRowItemProducts } from '~/types/ttable'
 
@@ -60,7 +73,8 @@
     'custom',
   ]
   const VARIANTS: {
-    [key: string]: '' | 'danger' | 'primary' | 'warning' | 'success' | 'info'
+    [key: string]: PSeverity
+    // [key: string]: '' | 'danger' | 'primary' | 'warning' | 'success' | 'info'
   } = {
     always: 'danger',
     setup: 'danger',
@@ -68,16 +82,17 @@
     custom: 'danger',
     uninstall: 'primary',
     foo: 'primary',
-    none: '',
-    [MIXED_VALUE]: 'warning',
+    none: 'secondary',
+    [MIXED_VALUE]: 'warn',
     undefined: 'primary',
   }
 
-  const selectedClients = ref(selectionClients.value)
+  const selectedClients = ref<string[]>(selectionClients.value)
   // modelValue not required, cause column header is not for specific row.
-  const modelRowitem = defineModel<ITableRowItemProducts>()
+  const modelRowitem = defineModel<ITableRowItemProducts>({ required: false })
 
   const _props = defineProps({
+    title: { type: String, required: false },
     rowIsSelected: { type: Boolean, default: undefined },
     save: {
       type: Function,
@@ -100,7 +115,7 @@
     return options
   })
 
-  const originalValues = computed((): IObjectString2String => {
+  const originalValues = computed<IObjectString2String>(() => {
     // clientId -> actionRequest
     // format origin backend values to { client: actionRequest}
     const _originalValues: IObjectString2String = {}
@@ -169,6 +184,21 @@
     return clientValuesArr
   })
 
+  // const tooltipdataTree = computed(() => {
+  //   // all selected clients and their original actionrequest
+  //   const clientValuesArr = []
+  //   for (const c in selectedClients.value.toSorted()) {
+  //     const clientId = selectedClients.value[c]
+  //     const val = {
+  //       key: clientId,
+  //       label: clientId,
+  //       actionRequest: originalValues.value[clientId],
+  //     }
+  //     clientValuesArr.push(val)
+  //   }
+  //   return clientValuesArr
+  // })
+
   const visibleRequest = computed(() => {
     // Funktion zur Ermittlung des sichtbaren actionRequest-Werts
     // Abhängig von den ausgewählten Clients und den lokalen nicht gespeicherten Änderungen
@@ -209,31 +239,31 @@
     return allEqual ? firstValue : MIXED_VALUE
   }
 
-  function ThisJSXTooltipContentRow() {
-    return {
-      default: ({ data }: any) => {
-        return (
-          <span class="w-full !flex !justify-between !space-x-2">
-            <el-text>{data.label}</el-text>
-            <el-text type={VARIANTS[data.actionRequest] || 'info'}>
-              {data.actionRequest}
-            </el-text>
-          </span>
-        )
-      },
-    }
-  }
-  function ThisJSXTooltipContent() {
-    return (
-      <el-tree
-        class="!min-w-60"
-        data={tooltipdata}
-        effect="dark"
-        placement="left-start"
-        v-slots={ThisJSXTooltipContentRow()}
-      />
-    )
-  }
+  // function ThisJSXTooltipContentRow() {
+  //   return {
+  //     default: ({ data }: any) => {
+  //       return (
+  //         <span class="w-full !flex !justify-between !space-x-2">
+  //           <el-text>{data.label}</el-text>
+  //           <el-text type={VARIANTS[data.actionRequest] || 'info'}>
+  //             {data.actionRequest}
+  //           </el-text>
+  //         </span>
+  //       )
+  //     },
+  //   }
+  // }
+  // function ThisJSXTooltipContent() {
+  //   return (
+  //     <el-tree
+  //       class="!min-w-60"
+  //       data={tooltipdata}
+  //       effect="dark"
+  //       placement="left-start"
+  //       v-slots={ThisJSXTooltipContentRow()}
+  //     />
+  //   )
+  // }
 </script>
 
 <style scoped>
