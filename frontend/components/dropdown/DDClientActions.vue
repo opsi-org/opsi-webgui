@@ -1,9 +1,15 @@
 <template>
   <el-dropdown trigger="click">
-    <el-button class="ml-1">
+    <el-button class="ml-1" :disabled="isLoading">
       <IconIIcon
         :icon="getIcon(props.icon)"
         :title="$t('button.tablerow.moreoptions')"
+      />
+      <IconILoading
+        v-if="isLoading"
+        class="ml-1"
+        small
+        :title="$t('message.loading')"
       />
     </el-button>
     <template #dropdown>
@@ -77,6 +83,7 @@
                 class="float-right"
                 :type="action == 'delete' ? 'danger' : 'success'"
                 size="small"
+                :disabled="isLoading"
                 :data-testid="`popover-${action}`"
                 @click="executeClientAction(action)"
               >
