@@ -260,7 +260,7 @@ export const useMBus = (
 
   function wsNotification(text: any, data: any = '') {
     // eslint-disable-next-line no-console
-    // console.debug('MessageBus:', text, data)
+    console.debug('MessageBus:', text, data)
   }
 
   // function wsNotificationInfo (text: any, data: any = '') {

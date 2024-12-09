@@ -32,13 +32,6 @@ interface terror {
     }
   }
 }
-// interface terrorDeployClientAgent {
-//   message: string
-//   status: number
-//   class?: string
-//   details?: string
-//   code?: number
-// }
 
 interface ApiResult<T> {
   readonly pending: Ref<boolean>
@@ -108,9 +101,6 @@ async function useAPI2<T>(
     onRequestError({ error }: any) {
       // Handle the request errors
       // console.error('onRequestError', error)
-      // if error is type of terrorDeployClientAgent format it to terror
-      console.log('onRequestError', error)
-
       callerror.value = {
         response: { data: { class: '', message: String(error) } },
       }
