@@ -181,6 +181,8 @@ const logout_on_specific_error = (status: number) => {
   if (status === 401) {
     storeAuth().logout()
     navigateTo('/login')
+  } else if (status === 403) {
+    console.error('403 forbidden. You may want to reload the page')
   }
 }
 const _getBodyParams = (params: any) => {
