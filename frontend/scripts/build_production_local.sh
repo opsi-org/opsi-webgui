@@ -39,7 +39,7 @@ sed -i "s/${ADDON_KEY_NAME} = .*/${ADDON_KEY_NAME} = \"${ADDON_NAME}\"/" ${PY_CO
 
 # replace "const ADDON_PATH"  in TS_CONST_FILE
 echo "> update ${TS_CONST_FILE}...."
-sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = \"$ADDON_PATH\"|" "$TS_CONST_FILE"
+sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = '$ADDON_PATH'|" "$TS_CONST_FILE"
 # cat ${TS_CONST_FILE} | grep ADDON_PATH
 
 cd ${WORKING_DIR}/${FRONTEND_DIR}/
