@@ -12,6 +12,16 @@ Further links:
 * LinkedIn: uib GmbH
 * Twitter/X: @opsi_org @uibDE
 
+
+## Translations
+The opsi-webgui as well as the opsi system in general is available in multiple languages. 
+The translations are managed via Transifex. If you want to help with the translations, please visit the following link:
+
+https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/
+
+If the translation is 100% complete, the language will be added automatically in the next release of the opsi-webgui.
+
+
 ## Quick installation guide (Production)
 This project espacially the devcontainer is not for production usage. To install the webgui from official sources see this chapter.
 ### Installation from sources
@@ -53,5 +63,3 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
   * webgui: `cd /workspace/opsiweb/ && npm run dev`
 * Accept certificate of opsiconfd: `https://localhost:4447/admin`
 * Open: `https://localhost:8888/` for webgui
-
-
