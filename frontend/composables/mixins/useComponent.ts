@@ -162,12 +162,70 @@ export function useNotification() {
     }
   }
 
+  interface NotificationOptionsDetailedRow {
+    title?: string
+    msg: string
+    class?: string
+    retryButton?: { label: string; onClick: PropTypeFunctionOptionalAsync }
+    tag?: string // default is div
+    tagTitle?: string
+  }
+  interface NotificationOptionsDetailed {
+    title: string
+    messages: Array<NotificationOptionsDetailedRow>
+    wrapperClass?: string
+    showClose?: boolean
+    duration?: number
+    onClose?: () => void
+  }
+  const createDetailedNotification = () => {
+    return ({
+      title,
+      messages = [], // msg, class, retryButton
+      wrapperClass = '', // class for the div holding the messages
+      showClose = true,
+      duration = 0, // 0 means no auto hide
+      onClose,
+    }: NotificationOptionsDetailed) => {
+      const notificationInstance = ref<any>()
+
+      const notificationMessageItems = ref<Array<any>>([])
+      for (const messageRow of messages) {
+        notificationMessageItems.value.push(
+          h('div', [
+            h(messageRow.tagTitle || 'div', {}, messageRow.title),
+            h(
+              messageRow.tag || 'div',
+              { class: messageRow.class },
+              messageRow.msg,
+            ),
+          ]),
+        )
+      }
+
+      notificationInstance.value = ElNotification({
+        title,
+        message: h(
+          'div',
+          { class: wrapperClass },
+          notificationMessageItems.value,
+        ),
+        showClose: showClose,
+        duration: duration || 0,
+        onClose: onClose,
+      })
+
+      return notificationInstance.value
+    }
+  }
+
   return {
     notifySuccess: createNotification('success'),
     notifyError: createNotification('error'),
     notifyWarning: createNotification('warning'),
     notifyInfo: createNotification('info'),
     // notifyLoading: createNotification('loading'),
+    notifyDetailed: createDetailedNotification(),
   }
 }
 

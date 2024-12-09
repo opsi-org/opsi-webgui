@@ -97,14 +97,17 @@
     IObjectString2Function,
     IObjectString2String,
   } from '~/types/tgeneral'
+
   const $t = useI18n().t
-  const { notifyError } = useNotification()
+  const { notifySuccess, notifyError, notifyDetailed } = useNotification()
   const icons = useIcons()
   const mq = useMQ()
   const props = defineProps({
-    clientIds: { type: Array, default: () => [] },
+    clientIds: { type: Array<string>, default: () => [] },
     icon: { type: String, default: 'menu' },
   })
+
+  const { selectionClients } = storeToRefs(storeSelections())
   const popoverVisible = ref<boolean>(false)
   const isLoading = ref<boolean>(false)
   const notifyText = ref<string>('')
@@ -121,29 +124,90 @@
     type: 'windows',
   })
 
-  const actionMethods: IObjectString2Function = {
-    ondemand: () =>
-      useApiPOST('/command/opsiclientd_rpc', {
-        client_ids: props.clientIds,
-        method: 'fireEvent',
-        params: ['on_demand'],
-      }),
-    notify: () =>
-      useApiPOST('/command/opsiclientd_rpc', {
-        client_ids: props.clientIds,
-        method: 'showPopup',
-        params: [notifyText.value],
-      }),
-    reboot: () =>
-      useApiPOST('/command/opsiclientd_rpc', {
-        client_ids: props.clientIds,
-        method: 'reboot',
-        params: [''],
-      }),
-    deployclientagent: () =>
-      useApiPOST('/command/deployclientagent', opsiClientAgent.value),
-    delete: () => useApiDELETE(`/opsidata/clients/${props.clientIds}`),
+  interface TClientdRPC {
+    [key: string]: {
+      error?: string | null
+      result?: string | null
+    }
   }
+
+  const actionMethods: IObjectString2Function = {
+    ondemand: async () => {
+      const { data, error } = await useApiPOST<TClientdRPC>(
+        '/command/opsiclientd_rpc',
+        {
+          client_ids: props.clientIds,
+          method: 'fireEvent',
+          params: ['on_demand'],
+        },
+      )
+      collectResult($t('button.event.ondemand'), data.value, error)
+    },
+    notify: async () => {
+      const { data, error } = await useApiPOST<TClientdRPC>(
+        '/command/opsiclientd_rpc',
+        {
+          client_ids: props.clientIds,
+          method: 'showPopup',
+          params: [notifyText.value],
+        },
+      )
+      collectResult($t('button.event.notify'), data.value, error)
+    },
+    reboot: async () => {
+      const { data, error } = await useApiPOST<TClientdRPC>(
+        '/command/opsiclientd_rpc',
+        {
+          client_ids: props.clientIds,
+          method: 'reboot',
+          params: [''],
+        },
+      )
+      collectResult($t('button.event.reboot'), data.value, error)
+    },
+    deployclientagent: async () => {
+      const { data, error } = await useApiPOST<TClientdRPC>(
+        '/opsidata/clients/deploy',
+        { ...opsiClientAgent.value, clients: props.clientIds },
+      )
+      // collectResult($t('button.event.deployclientagent'), data.value, error)
+
+      if (error) {
+        notifyError({
+          message: error?.response?.data?.message || 'No data received',
+        })
+      }
+    },
+    delete: async () => {
+      const deletedIds: Array<string> = []
+      for (const clientId of props.clientIds) {
+        const { error } = await useApiDELETE<TClientdRPC>(
+          `/opsidata/clients/${clientId}`,
+        )
+        if (error) {
+          notifyError({ message: error || 'No data received' })
+          return
+        }
+        deletedIds.push(clientId)
+      }
+      for (const clientId of deletedIds) {
+        if (selectionClients.value.includes(clientId)) {
+          storeSelections().delFromSelectionClients(clientId)
+        }
+      }
+      notifySuccess({
+        title: $t('message.success.title') + ': ',
+        message: $t('message.success.deleteClients', {
+          count: deletedIds.length,
+        }),
+        // button: { // done automatically by messagebus event host_deleted
+        //   label: $t('label.reloadPage'),
+        //   onClick: () => window.location.reload(),
+        // },
+      })
+    },
+  }
+
   function getIcon(icon: string) {
     if (Object.keys(icons).includes(icon))
       return (icons as Record<string, string>)[icon]
@@ -161,5 +225,52 @@
         isLoading.value = false
       }
     }
+  }
+
+  function collectResult(
+    notificationTitle: string,
+    data: TClientdRPC | undefined,
+    error: any,
+  ) {
+    if (error || data == undefined) {
+      notifyError({
+        message: error?.response?.data?.message || 'No data received (1)',
+      })
+      return
+    }
+
+    const resultRows = ref<Array<any>>([])
+    const resultRowOk = ref({
+      msg: '', // TBA
+      title: $t('message.success.title') + ': ',
+      tagTitle: 'strong',
+      class: '!text-success',
+      tag: 'span',
+    })
+    for (const [key, value] of Object.entries(data)) {
+      if (value.result) {
+        // result is given. success
+        resultRowOk.value.msg = resultRowOk.value.msg + key + ', '
+        continue
+      }
+      // error
+      resultRows.value.push({
+        tag: 'span',
+        tagTitle: 'strong',
+        title: key + ': ',
+        msg: value.error || value.result,
+        class: '!text-danger mb-2 ',
+      })
+    }
+    if (resultRowOk.value.msg && resultRowOk.value.msg.length > 0) {
+      resultRowOk.value.msg = resultRowOk.value.msg.slice(0, -2)
+      resultRows.value.push(resultRowOk.value)
+    }
+    notifyDetailed({
+      title: notificationTitle,
+      messages: resultRows.value,
+      wrapperClass: 'grid',
+      duration: 4000,
+    })
   }
 </script>
