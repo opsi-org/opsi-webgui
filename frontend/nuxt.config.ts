@@ -18,10 +18,11 @@ export default defineNuxtConfig({
     analyze: true,
     // hardSource: true,
   },
+  sourcemap: false,
   webpack: {
     loaders: {
       vue: {
-        hotReload: false,
+        hotReload: true,
       },
     },
     optimization: {
