@@ -92,7 +92,7 @@
     cloneClientCopy.target.hostId += domain.value
     if (clientIDList.value.includes(cloneClientCopy.target.hostId)) {
       notifyError({
-        message: $t('message.error.clientExists', {
+        message: $t('message.warning.clientExists', {
           client: cloneClientCopy.target.hostId,
         }),
       })

@@ -234,7 +234,7 @@
     files.value = uploadFiles.slice(-1) // limit to one file
 
     if (!uploadFileRef.value || !(uploadFileRef.value as any)[0]) {
-      notifyError({ message: $t('error.file.upload') })
+      notifyError({ message: $t('message.error.file.upload') })
       return
     }
     ;(uploadFileRef.value as any)[0].submit()
@@ -302,7 +302,7 @@
       !files.value[0].raw ||
       !files.value[0].response
     ) {
-      notifyError({ message: $t('error.file.required') })
+      notifyError({ message: $t('message.error.file.required') })
       isLoading.value.restoreBackup = false
       return
     }

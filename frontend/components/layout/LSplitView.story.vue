@@ -77,6 +77,7 @@
 </script>
 
 <template>
+  <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
   <Story :layout="{ type: 'grid', width: '100%' }">
     <Variant
       v-for="(v, k) in views"

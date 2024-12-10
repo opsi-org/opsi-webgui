@@ -9,13 +9,11 @@
     <template #placeholder>
       <div class="image-slot">
         {{ $t('loading.image.opsilogo') }}
-        <span class="dot">...</span>
       </div>
     </template>
     <template #error>
       <div class="image-slot">
         {{ $t('loading.image.error') }}
-        <span class="dot">...</span>
         {{ translatedLabel }}
       </div>
     </template>

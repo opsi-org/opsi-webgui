@@ -70,7 +70,9 @@
                   />
                 </el-button>
               </template>
-              <el-text tag="b">{{ $t('group.' + action) }}</el-text> -
+              <el-text tag="b" class="after:content-['-']">
+                {{ $t('group.' + action) }}</el-text
+              >
               <el-text tag="i">{{ node.label }}</el-text>
               <el-form label-position="top" class="mt-3">
                 <template v-if="action == 'group-add'">
@@ -207,7 +209,7 @@
                     {{ $t('button.copy') }}
                   </el-button>
                 </template>
-                <template v-else> No action available </template>
+                <template v-else> {{ $t('group.noactions') }} </template>
               </el-form>
             </el-popover>
           </span>

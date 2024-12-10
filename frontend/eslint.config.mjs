@@ -1,5 +1,7 @@
 // @ts-check
 import withNuxt from './.nuxt/eslint.config.mjs'
+
+// @ts-ignore
 import vueI18n from '@intlify/eslint-plugin-vue-i18n'
 
 export default withNuxt(

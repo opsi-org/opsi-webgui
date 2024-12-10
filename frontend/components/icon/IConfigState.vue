@@ -1,7 +1,7 @@
 <template>
   <el-text v-if="anyObjectDifferentFromDefault"
-    ><i><slot name="default" />*</i></el-text
-  >
+    ><i class="after:content-['*']"><slot name="default" /></i
+  ></el-text>
   <el-text v-else> <slot name="default" /></el-text>
 
   <el-text
@@ -10,7 +10,7 @@
       props.item.anyObjDiff !== anyObjectDifferentFromDefault
     "
   >
-    ERROR
+    {{ $t('message.error.title') }}
     <pre>
       {{ props.item }}
     </pre>

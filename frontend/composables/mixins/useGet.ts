@@ -32,7 +32,7 @@ export const useConfigserver = async (
         else storeSelection.setSelectionDepots([server])
       } else {
         console.error('no server selected')
-        notifyError({ message: 'No server selected' }) // TODO: i18n
+        notifyError({ message: $t('message.error.noselection.server') })
       }
     }
   }
@@ -51,7 +51,7 @@ export const useConfigserver = async (
         },
       }
       notifyError({
-        title: $t('message.error.login'),
+        title: $t('message.error.title'),
         message: notifyError({ message: error?.response?.data?.message }),
       })
       return { data: '', headers: {} as IObjectString2Any, error: errordata }
@@ -104,7 +104,6 @@ export const useClient = () => {
     if (error || !data?.value) {
       notifyError({ message: error?.response?.data?.message })
       throw new Error(JSON.stringify(error))
-      return {}
     }
     fetchedDataClients2Depots = data.value
     return data.value

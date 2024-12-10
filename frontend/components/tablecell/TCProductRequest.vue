@@ -45,7 +45,11 @@
             {{ slotProps.value }}
           </p>
           <p v-if="visibleRequest?.includes('*')" class="inline">
-            ({{ modelRowitem?.actionRequest || '' }})
+            {{
+              $t('label.actionRequest.in_bracets', {
+                actionRequest: modelRowitem?.actionRequest || '',
+              })
+            }}
           </p>
         </template>
       </p-select>

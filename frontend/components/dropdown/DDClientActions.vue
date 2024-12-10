@@ -3,7 +3,7 @@
     <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoading">
       <IconIIcon
         :icon="getIcon(props.icon)"
-        :title="$t('button.tablerow.moreoptions')"
+        :title="$t('label.clientaction')"
       />
       <IconILoading
         v-if="isLoading"
@@ -34,11 +34,12 @@
                 {{ $t('button.event.' + action) }}
               </el-button>
             </template>
-            <el-text tag="b">{{ $t('button.event.' + action) }}</el-text> -
+            <el-text tag="b" class="after:content-['-']">{{
+              $t('button.event.' + action)
+            }}</el-text>
             <el-text tag="i">{{ props.clientIds[0] }}</el-text>
-            <el-text v-if="props.clientIds.length > 1">
+            <el-text v-if="props.clientIds.length > 1" class="pl-2">
               {{
-                ' ' +
                 $t('button.event.items.other', {
                   count: props.clientIds.length - 1,
                 })

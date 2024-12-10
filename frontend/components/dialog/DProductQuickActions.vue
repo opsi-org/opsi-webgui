@@ -44,14 +44,14 @@
                   inline
                 />
                 <div v-else-if="productActions.demo.demoResult == undefined">
-                  --
+                  {{ EMPTY }}
                 </div>
                 <div
                   v-else-if="
                     Object.keys(productActions.demo.demoResult).length == 0
                   "
                 >
-                  no results
+                  {{ $t('message.warning.nodata') }}
                 </div>
                 <div
                   v-else
@@ -72,7 +72,9 @@
                         <p>{{ item.productId }}</p>
                         <p>{{ item.productType }}</p>
                         <p>
-                          {{ item.productVersion }}- {{ item.packageVersion }}
+                          {{ item.productVersion }}
+                          <span class="after:content-['-']" />
+                          {{ item.packageVersion }}
                         </p>
                         <p>{{ item.actionRequest }}</p>
                         <p>{{ item.installationStatus }}</p>
@@ -146,6 +148,7 @@
   const activeName = ref('')
   const NOT_APPLIED = $t('label.noselection')
   const NO_VALUE = $t('label.novalue')
+  const EMPTY = '--'
 
   const productActions = ref({
     // to add a help button with tooltip after the category title, simply add translation key: title.<category>.help.content to the english translation file (example title.conditions.help.content)

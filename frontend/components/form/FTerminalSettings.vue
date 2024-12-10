@@ -29,7 +29,7 @@
           type="primary"
           @click="emit('click-disconnect')"
         >
-          $t('button.disconnect')</el-button
+          {{ $t('button.disconnect') }}</el-button
         >
       </template>
     </FormrowFRRow>

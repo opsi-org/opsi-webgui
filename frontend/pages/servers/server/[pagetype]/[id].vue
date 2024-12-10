@@ -1,6 +1,8 @@
 <template>
   <div>
-    <el-text tag="b" class="text-capitalize"> {{ pagetype }}</el-text> -
+    <el-text tag="b" class="text-capitalize after:content-['-']">
+      {{ pagetype }}</el-text
+    >
     <el-text tag="i"> {{ id }} </el-text>
     <el-button
       class="float-right"
@@ -18,7 +20,7 @@
       :id="id"
       :is-child="id !== undefined && id !== ''"
     />
-    <div v-else>Page not found!</div>
+    <div v-else>{{ $t('message.error.404') }}</div>
   </div>
 </template>
 

@@ -97,7 +97,7 @@
       @scroll="debouncedHandleScroll"
     >
       <div v-if="!isFirstPage" class="extra-column">
-        <div v-if="!isLoading">Scroll up to load previous page...</div>
+        <div v-if="!isLoading">{{ $t('table.infinit.scrollup') }}</div>
       </div>
       <el-table
         :data="fetchedData"
@@ -189,9 +189,9 @@
         </template>
       </el-table>
       <div class="extra-column">
-        <span v-if="!isLastPage && !isLoading"
-          >Scroll down to load next page...</span
-        >
+        <span v-if="!isLastPage && !isLoading">{{
+          $t('table.infinit.scrolldown')
+        }}</span>
       </div>
     </div>
 
@@ -498,7 +498,7 @@
       console.error(
         `CellRenderer: col-data not found in: ${JSON.stringify(attributes)}`,
       )
-      return <el-text>undefined</el-text>
+      return <el-text>{$t('label.undefined')}</el-text>
     }
     if (colData.cellRenderer) {
       return colData.cellRenderer({ rowData })
@@ -512,7 +512,7 @@
       console.warn(
         `HeaderCellRenderer: col-data not found in: ${JSON.stringify(attributes)}`,
       )
-      return <el-text>undefined</el-text>
+      return <el-text>{$t('label.undefined')}</el-text>
     }
     if (colData.headerCellRenderer) {
       return colData.headerCellRenderer()

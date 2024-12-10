@@ -13,7 +13,6 @@
       />
     </div>
     <div v-else>
-      disabled
       {{ $t('supportPage.support.opsi-doc-disabled') }}
     </div>
   </div>

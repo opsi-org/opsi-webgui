@@ -1,11 +1,11 @@
 <template>
   <div>
-    <!-- <pre>{{ route.params }}</pre> -->
     <el-button
       class="float-right"
       @click="router.push(`/clients/products/${route.params.producttype}`)"
-      >X</el-button
     >
+      <IconIIcon :icon="icons.x" />
+    </el-button>
     <ViewVConfigProduct
       type="product"
       :id="route.params.id as string"
@@ -14,6 +14,9 @@
   </div>
 </template>
 <script setup lang="ts">
+  import { useIcons } from '~/composables/mixins/useIcons'
+
   const route = useRoute()
   const router = useRouter()
+  const icons = useIcons()
 </script>

@@ -36,7 +36,7 @@
             size="small"
             :title="$t('button.save')"
           >
-            <span class="sr-only">{{ $t('button.save') }}s</span>
+            <span class="sr-only">{{ $t('button.save') }}</span>
             <IconIIcon :icon="icons.check" />
           </el-button>
           <ButtonBTNDeleteObj

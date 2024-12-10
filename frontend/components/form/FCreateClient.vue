@@ -229,7 +229,7 @@
     createClient.value.basics.hostId = `${clientName.value}${domain.value}`
     if (clientIDList.value.includes(createClient.value.basics.hostId)) {
       notifyError({
-        message: $t('message.error.clientExists', {
+        message: $t('message.warning.clientExists', {
           client: createClient.value.basics.hostId,
         }),
       })

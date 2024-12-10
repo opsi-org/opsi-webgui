@@ -1,9 +1,9 @@
 <template>
   <div>
-    <el-text tag="b" class="text-capitalize">
+    <el-text tag="b" class="text-capitalize after:content-['-']">
       {{ $t('title.properties') }}
     </el-text>
-    - <el-text tag="i"> {{ route.params.id }} </el-text>
+    <el-text tag="i"> {{ route.params.id }} </el-text>
     <el-button
       class="float-right"
       @click="router.push(`/products/${route.params.producttype}`)"

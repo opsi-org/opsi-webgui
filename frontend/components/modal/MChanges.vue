@@ -40,7 +40,7 @@
         >
           <pre class="m-0 text-sm">{{ modelValue.changesHostParam }}</pre>
         </el-scrollbar>
-        <span v-else>{{ $t('empty') }}</span>
+        <span v-else>{{ $t('label.empty') }}</span>
       </el-tab-pane>
       <el-tab-pane
         :label="$t('title.prodactionsprops')"

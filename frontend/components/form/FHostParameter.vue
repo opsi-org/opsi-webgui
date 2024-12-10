@@ -2,7 +2,7 @@
   <div data-testid="FHostParameter">
     <br />
     <el-alert v-if="!(props.type === 'servers' || props.id)" type="warning">
-      Please select item</el-alert
+      {{ $t('alert.select') }}</el-alert
     >
     <IconILoading v-else-if="isLoading" />
     <el-collapse
@@ -14,8 +14,7 @@
       <el-alert
         v-if="fetchedData && Object.keys(fetchedData).length === 0"
         type="warning"
-      >
-        No data found</el-alert
+        >{{ $t('message.warning.nodata') }}</el-alert
       >
       <el-collapse-item
         v-else

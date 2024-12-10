@@ -29,15 +29,15 @@
             {{ props.item.description }} <br />
             <br />
             <div v-if="props.item.value !== undefined">
-              <b>Config Value/s:</b>
+              <b>{{ $t('label.property.config') }}</b>
               <pre>{{ props.item.value }}</pre>
             </div>
             <div v-if="props.item.defaultValues !== undefined">
-              <b>Default Value/s:</b>
+              <b>{{ $t('label.property.default') }}</b>
               <pre>{{ props.item.defaultValues }} </pre>
             </div>
             <div v-if="props.item.objects !== undefined">
-              <b>Object Value/s:</b>
+              <b>{{ $t('label.property.object') }}</b>
               <pre>{{ props.item.objects }} </pre>
             </div>
             <div
@@ -45,7 +45,7 @@
                 localPropertyChanges?.length && localPropertyChanges?.length > 0
               "
             >
-              <b>Local Changes</b>
+              <b>{{ $t('label.property.localchanges') }}</b>
               <pre>{{ localPropertyChanges }}</pre>
             </div>
             <pre>
@@ -118,12 +118,11 @@
           <el-alert
             type="warning"
             :closable="false"
-            class="min-w-4 max-w-4 p-0 inline"
-            >*</el-alert
-          >
+            class="min-w-4 max-w-4 p-0 inline after:content-['*']"
+          />
 
           <template #content>
-            There exists local and unsaved changes:
+            {{ $t('message.warning.unsavedChanges') }}
             <pre>{{ localPropertyChanges }}</pre>
           </template>
         </el-tooltip>

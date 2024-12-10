@@ -42,7 +42,12 @@
     </el-menu>
     <div v-if="!mq.isMobile.value" class="text-center">
       <el-checkbox-button v-model="isCollapse">
-        {{ isCollapse ? '>>' : 'Collapse' }}
+        <span v-if="isCollapse">
+          <IconIIcon :icon="icons.arrowDoubleRight" />
+        </span>
+        <span v-else>
+          {{ $t('button.collapse') }}
+        </span>
       </el-checkbox-button>
     </div>
   </div>

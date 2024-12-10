@@ -350,7 +350,6 @@
     router.push(props.actionClone(rowData))
   }
 
-  // TODO: Implement Filter by
   function applyFilter(columnKey: string) {
     filterBy.value = columnKey
   }
@@ -374,7 +373,7 @@
       console.error(
         `CellRenderer: col-data not found in: ${JSON.stringify(attributes)}`,
       )
-      return <el-text class={htmlclass}>undefined</el-text>
+      return <el-text class={htmlclass}>{$t('label.undefined')}</el-text>
     }
     if (colData.cellRenderer) {
       return colData.cellRenderer({ rowData })

@@ -21,6 +21,7 @@
 </script>
 
 <template>
+  <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
   <Story>
     <Variant
       title="mobile"
