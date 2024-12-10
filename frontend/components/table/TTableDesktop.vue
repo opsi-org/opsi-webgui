@@ -129,7 +129,6 @@
 
             <template #default="scope" v-if="column.key === 'actions'">
               <div v-contextmenu="(e:any) => showContextMenu(e, scope)">
-                <!-- <div v-contextmenu="thisinstance?.vnode?.props?.onShowContextMenu ? (e:any) => onContextMenu(e, scope) : () =>{}"> -->
                 <el-tooltip
                   :content="$t('title.config')"
                   placement="top"
@@ -328,7 +327,6 @@
   }
 
   function showContextMenu(event: any, row: any) {
-    // function showContextMenu(event: MouseEvent, rowData: any) {
     event.preventDefault()
     contextMenuRow.value = row
 
@@ -443,7 +441,6 @@
       return
     }
     activeButton.value = 'log-' + rowData[props.rowId]
-    // router.push(props.actionLog + rowData.ident)
     router.push(props.actionLog(rowData))
   }
 
@@ -452,14 +449,12 @@
       return
     }
     activeButton.value = 'clone-' + rowData[props.rowId]
-    // router.push(props.actionClone + rowData.ident)
     router.push(props.actionClone(rowData))
   }
 
   // TODO: Implement Filter by
   function applyFilter(columnKey: string) {
     filterBy.value = columnKey
-    // fetchWrapper()
   }
 
   function applySort(columnKey: string) {
@@ -493,7 +488,6 @@
   }
 
   const CellRenderer = (attributes: any): VNode => {
-    // const CellRenderer = ({key, 'row-data', colData}: any): VNode => {
     const colData = attributes['col-data'] || attributes.colData
     const rowData = attributes['row-data'] || attributes.rowData
 

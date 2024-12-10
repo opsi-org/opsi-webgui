@@ -319,7 +319,6 @@
         if (objIndex > -1) {
           changes.delWithIndexChangesProducts(objIndex)
         }
-        // if (!arrayEqual(value, orgValues)) {
         if (value !== orgValue) {
           changes.pushToChangesProducts(changeObject)
         }

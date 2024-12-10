@@ -12,7 +12,6 @@
       :value="item"
     />
   </el-select>
-  <!-- {{ useRoute().name }} -->
 </template>
 
 <script setup lang="tsx">
@@ -28,13 +27,11 @@
   const emit = defineEmits(['update:value'])
   onMounted(async () => {
     await fetch()
-    // if (props.id)
     value.value = props.id
   })
   watch(
     () => value.value,
     () => {
-      // const pathArr = useRoute().path.split('/').filter(v => v !== '')
       switch (useRoute().name) {
         case 'clients-config':
           useRouter().push({

@@ -9,7 +9,6 @@
   }
   const getTheme = () => {
     const settings = storeSettings()
-    // return settings.colortheme
     return settings.colormode
   }
   const getThemeDoc = () => {

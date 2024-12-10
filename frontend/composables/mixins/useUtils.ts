@@ -33,15 +33,5 @@ export const useUtilsEvents = () => {
       }, wait)
     }
   }
-  // function delay(fn:Function, ms:number) {
-  //   let timer:any = 0
-  //   return function(...args: any[]) {
-  //     clearTimeout(timer)
-  //     const context = getCurrentInstance()?.appContext
-  //     timer = setTimeout(fn.bind(context, ...args), ms || 0)
-  //     // timer = setTimeout(fn.bind((this as any), ...args), ms || 0)
-  //   }
-  // }
-
   return { debounce }
 }

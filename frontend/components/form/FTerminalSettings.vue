@@ -93,7 +93,4 @@
 
   const isMobile = ref(useMQ().isMobile)
   // TODO check if works correctly
-  // watch(()=>useMQ().isMobile, ()=>{
-  //   isMobile.value = useMQ().isMobile.value
-  // }, {deep: true})
 </script>

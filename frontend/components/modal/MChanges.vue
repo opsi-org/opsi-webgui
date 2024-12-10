@@ -32,7 +32,6 @@
         </h3>
       </div>
     </template>
-    <!-- {{  modelValue }} -->
     <el-tabs v-model="activeName" lazy>
       <el-tab-pane :label="$t('title.hostparameters')" name="1">
         <el-scrollbar
@@ -58,13 +57,10 @@
 </template>
 
 <script setup lang="ts">
-  // import { useNotification } from '~/composables/mixins/useComponent';
   import { useIcons } from '~/composables/mixins/useIcons'
-
-  // const { notifyError } = useNotification()
   const icons = useIcons()
   const $t = useI18n().t
-  // const {username} = storeToRefs(storeAuth())
+
   const modelValue = defineModel<Record<string, any>>()
   const modelDialogVisible = defineModel<boolean>('visible', {
     type: Boolean,
@@ -89,7 +85,6 @@
       },
     },
   })
-  // const dialogVisible = ref<boolean>(false)
 
   watch(
     () => modelDialogVisible.value,

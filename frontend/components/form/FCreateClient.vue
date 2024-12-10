@@ -156,9 +156,6 @@
       netbootProduct: string[]
       opsiClientAgent: IObjectString2Any
     }
-    // settings: {
-    //   uefi: boolean
-    // }
   }
 
   const mq = useMQ()
@@ -257,12 +254,6 @@
           client: createClient.value.basics.hostId,
         }),
       })
-      // if (createClient.value.settings.uefi) {
-      //   await handleApiPost('/opsidata/clients/uefi', {
-      //     clientId: createClient.value.basics.hostId,
-      //     uefi: createClient.value.settings.uefi.toString(),
-      //   })
-      // }
 
       if (createClient.value.assignments.group?.length > 0) {
         await handleApiPost(
@@ -317,15 +308,11 @@
         netbootProduct: [],
         opsiClientAgent: {
           setup: false,
-          // clients: [],
           username: '',
           password: '',
           type: 'windows',
         },
       },
-      // settings: {
-      //   uefi: false,
-      // },
     } as IClientObject
   }
 </script>

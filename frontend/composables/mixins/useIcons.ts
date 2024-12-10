@@ -68,15 +68,8 @@ export const useIcons = () => {
     filter: 'bi:funnel',
     clear: 'bi:brush',
     refresh: 'bi:arrow-repeat',
-    // // stackedIcons used??
     readonly: 'material-symbols-light:edit-off-outline',
     unequal: 'mdi:not-equal-variant',
-    // _stackedIcons: {
-    //   readonly: [
-    //     { icon: 'bi:pencil', scale: '0.55' },
-    //     { icon: 'bi:slash-circle', attr: { 'flip-h': true, variant: 'danger' } }
-    //   ]
-    // }
   }
   return { ...icon }
 }

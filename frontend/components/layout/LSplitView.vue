@@ -4,8 +4,6 @@
       :class="{
         mycontainer: true,
         [classcontainer]: true,
-        // 'border-red-500 border-1': true
-        // 'max-w-screen': isMobile
       }"
     >
       <el-main

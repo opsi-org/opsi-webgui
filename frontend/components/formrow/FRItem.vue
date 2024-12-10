@@ -32,19 +32,11 @@
               <b>{{ $t('form.config.objectvalue') }}</b>
               <pre>{{ props.item.objects }} </pre>
             </div>
-
-            <!-- <pre>
-              {{ props.item }}
-            </pre> -->
           </div>
         </template>
       </el-tooltip>
     </template>
-    <!-- <el-text>{{ props.item[props.idKey] }}</el-text> -->
     <template #default>
-      <!-- <el-skeleton :rows="1" animated :loading="loading" >
-
-        <template #default> -->
       <el-checkbox
         v-if="props.item[props.boolTypeKey] === boolTypeValue"
         v-model="itemValue"
@@ -65,8 +57,6 @@
         class="w-full"
         :tag-type="undefined"
       >
-        <!-- suffix-icon="el-icon-arrow-down" -->
-        <!-- style="width: 240px" -->
         <template #default>
           <el-tooltip
             v-for="pVal in props.item[props.allValuesKey]"
@@ -99,8 +89,6 @@
           </el-tooltip>
         </template>
       </el-select>
-      <!-- </template>
-      </el-skeleton> -->
     </template>
   </el-form-item>
 </template>
@@ -142,7 +130,6 @@
           props.item.objects,
         )
 
-        // objectValues.forEach((value: any, index: number, wholearray: any[])=> {
         objectValues.forEach((value: any) => {
           if (value.length > 0) {
             const sorted = [...value]

@@ -1,14 +1,4 @@
-// import Cookie from 'js-cookie'
-// import { Component, Vue } from 'nuxt-property-decorator'
-
-// const changes = namespace('changes')
-// const errors = namespace('errors')
-
-// @Component export class Cookies extends Vue {
 export const useCookies = () => {
-  // let options: any
-  // @changes.Mutation public delFromChangesProducts!: (s: object) => void
-  // @errors.Mutation public pushToErrorsProducts!: (s: object) => void
   function existsCookie(key: string) {
     return (useCookie(key) as Ref).value
   }
@@ -35,8 +25,6 @@ export const useCookies = () => {
       return defaultResult
     }
     return v
-    // const r = JSON.parse(v as unknown as any)
-    // return r
   }
 
   function getKeyCookie(key: string, keyitem: string, defaultResult = '') {
@@ -45,7 +33,6 @@ export const useCookies = () => {
       return defaultResult
     }
     return v[keyitem]
-    // return JSON.parse(v as unknown as any)[keyitem]
   }
 
   function includesCookie(
@@ -58,7 +45,6 @@ export const useCookies = () => {
       return defaultResult
     }
     return v.includes(value)
-    // return v ? JSON.parse(v as unknown as any).includes(value) : defaultResult
   }
 
   function setCookie(key: string, value: any, options: any = undefined) {
@@ -74,7 +60,6 @@ export const useCookies = () => {
     const keyCookie: Ref = useCookie(key, opt)
     if (value.value === undefined) keyCookie.value = value
     else keyCookie.value = value.value
-    // const _keyCookie = useCookie(key, opt)
   }
   return {
     existsCookie,

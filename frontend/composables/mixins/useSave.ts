@@ -32,22 +32,6 @@ export const useSaveParameters = (_t: any = undefined) => {
     } else {
       notifySuccess({ message: t('message.success.save.parameters') })
     }
-    // await this.$axios.$post(url, request)
-    //   .then(() => {
-    //     if (deleteitem) {
-    //       this.delFromChangesHostParam(deleteitem)
-    //     } else {
-    //       this.showToastSuccess(this.$t('message.success.save.parameters'))
-    //     }
-    //   }).catch((error) => {
-    //     if (showalert) {
-    //       this.showToastError(error)
-    //     } else {
-    //       const errorObj = deleteitem
-    //       errorObj.error = error?.response?.data
-    //       this.pushToErrorsHostParam(errorObj)
-    //     }
-    //   })
   }
   return {
     delFromChangesHostParam,
@@ -91,25 +75,6 @@ export const useSaveProductActionRequest = (_t: any = undefined) => {
     }
     return true
   }
-
-  //   await this.$axios.$post('/api/opsidata/clients/products', change)
-  //     .then(async () => {
-  //       if (deleteitem) {
-  //         this.delFromChangesProducts(deleteitem)
-  //       } else {
-  //         this.showToastSuccess(this.$t('message.success.save.prodActionRequest'))
-  //         await this.$nuxt.refresh()
-  //       }
-  //     }).catch((error) => {
-  //       if (showalert) {
-  //         this.showToastError(error)
-  //       } else {
-  //         const errorObj = deleteitem
-  //         errorObj.error = error?.response?.data
-  //         this.pushToErrorsProducts(errorObj)
-  //       }
-  //     })
-  // }
   return {
     delFromChangesProducts,
     pushToErrorsProducts,
@@ -128,7 +93,6 @@ export const useSaveProductProperties = (
 
   const delFromChangesProducts = storeChanges().delFromChangesProducts
   const pushToErrorsProducts = storeErrors().pushToErrorsProducts
-  // const $emit = defineEmits(['refetch'])
   async function saveProdProperties(
     id: string,
     change: any,
@@ -161,24 +125,6 @@ export const useSaveProductProperties = (
         }),
       })
     }
-
-    // await this.$axios.$post(`/api/opsidata/products/${id}/properties`, change)
-    //   .then(() => {
-    //     if (deleteitem) {
-    //       this.delFromChangesProducts(deleteitem)
-    //     } else {
-    //       this.$emit('refetch', true)
-    //       this.showToastSuccess(this.$t('message.success.save.productproperty', { id: Object.keys(change.properties) }))
-    //     }
-    //   }).catch((error) => {
-    //     if (showalert) {
-    //       this.showToastError(error)
-    //     } else {
-    //       const errorObj = deleteitem
-    //       errorObj.error = error?.response?.data
-    //       this.pushToErrorsProducts(errorObj)
-    //     }
-    //   })
   }
   return { delFromChangesProducts, pushToErrorsProducts, saveProdProperties }
 }

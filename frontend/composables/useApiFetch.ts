@@ -1,5 +1,3 @@
-// import { useFetch } from "@vueuse/core"
-
 import { useRuntimeConfig, type UseFetchOptions } from 'nuxt/app'
 import type { IObjectString2Any } from '~/types/tgeneral'
 
@@ -187,9 +185,6 @@ const logout_on_specific_error = (status: number) => {
 }
 const _getBodyParams = (params: any) => {
   return new URLSearchParams(params).toString()
-  // const res = new URLSearchParams(params).toString();
-  // if (res === "[object Object]") {
-  //   return new URLSearchParams(params)
 }
 
 async function useApiGET<ResultDataType>(

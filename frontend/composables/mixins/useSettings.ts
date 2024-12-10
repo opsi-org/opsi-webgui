@@ -5,7 +5,6 @@ export const useSettingsLanguage = () => {
 
   onBeforeMount(() => {
     if (language) {
-      // $i18n.locale = language
       const { locale } = useI18n()
       locale.value = language
     }

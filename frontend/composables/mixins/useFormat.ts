@@ -1,5 +1,4 @@
 export const useFormat = () => {
-  // @Component export class Format extends Vue {
   function date(value: any) {
     if (typeof value === 'object') {
       return value

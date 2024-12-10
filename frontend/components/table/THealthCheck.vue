@@ -103,10 +103,6 @@
     return undefined
   })
 
-  // const filterStatus = (value: string, row: any) => {
-  //   return row.check_status === value
-  // }
-
   function getType(status: any) {
     if (status === 'error') {
       return 'danger'

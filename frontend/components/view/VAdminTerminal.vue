@@ -42,7 +42,6 @@
   await useConfigserver(true, undefined, $t) // init with configserver if empty selectiondepots
   const ws = useMBus(undefined, false, $t)
   const terminalcontainer = ref()
-  // const terminal = ref()
   const mbTerminal = ref<any>(undefined)
   const terminalIdDefault = 'f40dbaa4-dc9f-46c0-9dc5-186a87a3eee5'
   const terminalId = ref<string>(terminalIdDefault)

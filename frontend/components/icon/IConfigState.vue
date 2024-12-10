@@ -18,10 +18,8 @@
 </template>
 
 <script setup lang="ts">
-  // import { Icon } from '@iconify/vue';
   const props = defineProps({
     item: { type: Object, required: true },
-
     defaultKey: { type: String, default: 'defaultValues' },
     currentKey: { type: String, default: 'value' },
     objectKey: { type: String, default: 'objects' },
@@ -32,10 +30,8 @@
   const anyObjectDifferentFromDefault = computed(() => {
     if (!props.item[props.objectKey]) return false
 
-    // if (!props.item[props.multiKey] && props.item[]) {
     if (props.item[props.typeKey] === props.boolTypeValue) {
       const defVal = props.item[props.defaultKey][0] // false
-
       const objsVals: Array<any> = Object.values(props.item.objects)
       const objVal: boolean | string | number | undefined = objsVals[0]
       if (objVal === defVal) {
@@ -49,7 +45,6 @@
     )
     const objectsValuesStrings: Array<string> = []
     objectsValues.forEach((value: any) => {
-      // objectsValues.forEach((value: any, index: number, wholearray: any[])=> {
       if (value.length > 0) {
         const sorted = [...value]
         sorted.sort()

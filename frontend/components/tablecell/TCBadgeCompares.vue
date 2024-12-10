@@ -32,11 +32,6 @@
       <el-tag v-else>
         <el-text>{{ gettext }}</el-text>
       </el-tag>
-      <!-- <TooltipTTProductCell
-        :target="`TCBadgeCompares_${type}_hover_${rowid}`"
-        :details="tooltiptext"
-        :type="type"
-      /> -->
     </div>
   </el-tooltip>
 </template>
@@ -45,12 +40,6 @@
   import type { ElTypeVariant } from '~/types/LibComponentTypes'
   import type { IObjectString2String } from '~/types/tgeneral'
 
-  // import { Component, Prop, Vue } from 'nuxt-property-decorator'
-  // import { IObjectString2String } from '../../../.utils/types/tgeneral'
-  // import { mapValues2Value, mapValues2Objects } from '../../../.utils/utils/smappings'
-
-  // @Component
-  // export default class TCBadgeCompares extends Vue {
   const props = defineProps({
     rowid: { type: String, default: '' },
     type: { type: String, default: '' },
@@ -58,12 +47,6 @@
     objects: { type: Array<string>, default: () => [] },
     objectsorigin: { type: Array<string>, default: () => [] },
   })
-  // @Prop({ }) rowid!: string
-  // @Prop({ }) type!: string
-  // @Prop({ }) values!: Array<string>
-  // @Prop({ }) objects!: Array<string>
-  // @Prop({ }) objectsorigin!: Array<string>
-
   const defaults: IObjectString2String = {
     actionResult: 'none',
     installationStatus: 'not_installed',
@@ -105,9 +88,6 @@
       defaults[props.type],
     )
   })
-  // const gettooltiptext = computed(() => {
-  //   return JSON.stringify(gettooltipobj.value)
-  // })
 
   function _getVariantInTooltip(v: string): ElTypeVariant {
     if (v === 'failed') {

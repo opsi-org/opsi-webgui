@@ -105,11 +105,6 @@
         </template>
       </LayoutLSplitView>
     </Variant>
-    <!-- <Variant title="mobile-default" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <LayoutLSplitView :is-mobile="true">
-        <el-text> Some content </el-text>
-      </LayoutLSplitView>
-    </Variant> -->
   </Story>
 </template>
 <style scoped>

@@ -9,7 +9,6 @@
     </template>
 
     <template #default>
-      <!-- {{ itemValue }} -->
       <slot name="value">
         <el-checkbox
           v-if="props.type === 'checkbox'"
@@ -36,10 +35,6 @@
 </template>
 
 <script setup lang="ts">
-  // import { useIcons } from '~/composables/mixins/useIcons'
-  // const icons = useIcons()
-
-  // const model = defineModel({ required: true, type: String })
   const $emit = defineEmits(['update:modelValue', 'click'])
   const props = defineProps({
     label: { type: String, default: undefined },
@@ -52,7 +47,6 @@
   const modelBool = computed({
     get: () => props.modelValue === 'true',
     set: (v) => {
-      // props.modelValue = v ? 'true' : 'false'
       $emit('update:modelValue', v)
     },
   })
@@ -85,17 +79,4 @@
   .block {
     display: block !important;
   }
-  /*
-:deep(.el-input__prefix) {
-  color: #000;
-  right: 0;
-  position: absolute;
-  margin-right: 20px;
-}
-:deep(.el-form-item__label) {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}*/
 </style>

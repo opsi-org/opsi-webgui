@@ -5,7 +5,6 @@
     class="bg-transparent mr-3 ml-3"
     label-suffix=""
   >
-    <!-- :key="index" -->
     <div v-if="props.idKey === 'configId'">
       <FormrowFRItem
         v-for="(item, index) in sortedItems"
@@ -24,7 +23,6 @@
       />
     </div>
     <div v-else>
-      <!-- v-else-if="props.idKey === 'propertyId' && Object.values(props.items)?.[0]" -->
       <FormrowFRItemProperty
         v-for="item in sortedItems"
         :key="item.configId"
@@ -48,10 +46,6 @@
   import type { T_HostParameterEntry } from '~/types/APItypes'
 
   const $emit = defineEmits(['change-item', 'transform-id'])
-  // const $emit = defineEmits({
-  //   changeItem: ()=>{}, // if we want an event without validation
-  //   transformId: (id: string) => { return id },
-  // })
   const props = defineProps({
     items: { type: Array<T_HostParameterEntry>, required: true },
     idKey: { type: String, default: 'configId' },
