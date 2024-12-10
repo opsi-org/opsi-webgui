@@ -8,7 +8,6 @@
     </div>
     <div class="flex justify-center items-center space-x-2">
       <DropdownDDLang :footer="true" />
-      <SwitchSTheme />
     </div>
     <div class="flex justify-end space-x-1">
       <el-text>{{ $t('label.version') }}</el-text>

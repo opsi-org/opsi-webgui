@@ -1,13 +1,10 @@
 <template>
-  <el-dropdown
-    id="quicksettingsDD"
-    :class="footer ? '!border-none' : 'border'"
-    @command="$i18n.locale = $event"
-  >
-    <span class="el-dropdown-link">
+  <el-dropdown id="quicksettingsDD" @command="$i18n.locale = $event">
+    <el-button link>
       <IconIIcon :icon="icon.language" class="inline mr-1" />
       <el-text>{{ $i18n.locale.toUpperCase() }}</el-text>
-    </span>
+      <i class="el-icon-arrow-down el-icon--right"></i>
+    </el-button>
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item
