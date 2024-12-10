@@ -20,11 +20,3 @@
     placeholder: string
   }>()
 </script>
-<!-- <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
-
-@Component
-export default class IFilterTChanges extends Vue {
-  @Prop({ }) placeholder!: string
-  filter: string = ''
-} -->

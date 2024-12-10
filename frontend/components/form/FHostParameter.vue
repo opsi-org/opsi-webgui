@@ -95,7 +95,6 @@
   const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t, channels)
   async function wsBusMsgObjectChanged(msg: any = undefined) {
     if (msg && channels.includes(msg.channel)) {
-      // console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
       if (
         !(
           lastSavedData.value.configIds.includes(msg.data.configId) && // configId matches
@@ -115,33 +114,10 @@
     }
   }
 
-  // async function fetch(id:string) {
-  //   if (props.type === 'depots' && id){
-  //     const {data, error} = await useApiGETBody(`/opsidata/servers?servers=[${id}]`)
-  //     if (error) {
-  //       console.error(error)
-  //       useNotification($t).error(error)
-  //       return
-  //     }
-  //     fetchedData.value = data.value
-  //   } else if (props.type === 'clients') {
-  //     const {data, error} = await useApiGETBody(`/opsidata/hosts?hosts=${id}`)
-
-  //     // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
-  //     if (error) {
-  //       console.error(error)
-  //       useNotification($t).error(error)
-  //       return
-  //     }
-  //     fetchedData.value = data.value
-  //   }
-  // }
-
   async function fetch() {
     isLoading.value = true
     let endpoint: any = ''
     if (props.type === 'clients') {
-      // endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
       endpoint = `/opsidata/config/objects/${props.id}`
     } else if (props.type === 'servers' && props.id) {
       endpoint = `/opsidata/config/objects/${props.id}`
@@ -157,30 +133,23 @@
 
   async function fetchHostParameters(endpoint: string) {
     const { data, error } = await useApiGETBody<T_HostParameter>(endpoint)
-    // console.debug('fetched', data, error)
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       return
     }
     fetchedData.value = data.value
-    // await this.$axios.$get(endpoint)
-    //   .then((response) => {
-    //     this.hostParam = { id: this.id, value: response }
   }
 
   async function handleSelection(change: any) {
-    // if (this.quicksave) {
     isLoading.value = true
     let url: string = ''
     let request: any = []
     if (props.type === 'servers' && !props.id) {
       // changing default configs
       url = '/opsidata/config'
-      // request = [change]
       request = [
         {
           configId: change.configId,
-          // value: change.value
           value: String(change.value),
         },
       ]
@@ -205,11 +174,7 @@
     } else {
       console.error('not defined')
     }
-    // console.log('handleSelection', url, request)
     await useSaveParameters($t).saveParameters(url, request, null, true)
     isLoading.value = false
-    // } else {
-    //   this.trackHostParameters(change)
-    // }
   }
 </script>

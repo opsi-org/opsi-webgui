@@ -261,8 +261,6 @@ export const useScrollListener = (
 
     resizeObserver = new ResizeObserver(onResize)
     resizeObserver.observe(refComponent.value)
-    // // handleDebouncedScroll = debounce(handleScroll, 100);
-    // refComponent.value.addEventListener('scroll', handleDebouncedScroll);
   })
 
   function onResize() {
@@ -271,15 +269,7 @@ export const useScrollListener = (
   }
   onUnmounted(() => {
     if (resizeObserver !== null) resizeObserver.unobserve(refComponent)
-    // if (refComponent.value == undefined) {
-    //   console.error('unmount. component for scroll listener undefined')
-    //   return
-    // }
-    // // I switched the example from `destroyed` to `beforeDestroy`
-    // // to exercise your mind a bit. This lifecycle method works too.
-    // refComponent.value.removeEventListener('scroll', handleDebouncedScroll);
   })
-  // return {handleDebouncedScroll}
 }
 
 export const useSynchronization = () => {

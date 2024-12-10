@@ -62,7 +62,6 @@
           v-model="itemValue"
           :value="itemValue"
         />
-        <!-- <div v-else> {{ itemValue }}</div> -->
         <el-select
           v-else
           v-model="itemValue"
@@ -199,7 +198,6 @@
       return 'mixed'
     }
 
-    // const hasDefaultValue = Object.keys(item.defaultValues).length > 0
     if (item.multiValue) return Object.values(item.default)
     return Object.values(item.default)[0]
   }

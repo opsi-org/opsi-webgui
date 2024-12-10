@@ -104,12 +104,6 @@
     }
   }
 
-  // NOTE: Sync feature
-  // Synchronize from tree to table: Always
-  // Synchronize from table to tree: Only on button click.
-  // Since tree elements are a subset of table elements,
-  // And if there is no table element in the tree structure, the selection will be deselected during synchronization.
-
   function syncSelection() {
     if (props.grouptype == 'client-group') {
       const resNodes: any[] = groupsHelper.filterNodes(
@@ -131,7 +125,6 @@
   }
 
   function handleSelectOneNode(node: TreeNodeData, obj: any) {
-    // {checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys}
     if (props.grouptype == 'client-group') {
       selectNode(
         node,

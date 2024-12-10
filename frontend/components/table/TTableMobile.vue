@@ -101,7 +101,6 @@
                 // update style if more actions are available or styling of rowaction changed
               ]"
             >
-              <!-- style="max-width: calc(100% - 30px); width: calc(100% - 180px)" -->
               <template #title>
                 <div
                   class="flex flex-wrap items-center !justify-between w-full border-1 border-red-500 leading-normal"
@@ -203,26 +202,10 @@
         </template>
       </PVirtualScroller>
     </el-collapse>
-
-    <!-- Custom Context Menu -->
-    <!-- <div v-if="contextMenuVisible" :style="contextMenuStyle" class="context-menu">
-      <ul>
-        <li @click="handleCommand(contextMenuRow, 'config')">
-          <IconIIcon :icon="icons.settings" /> {{ $t('title.config') }}
-        </li>
-        <li @click="handleCommand(contextMenuRow, 'log')">
-          <IconIIcon :icon="icons.log" /> {{ $t('title.log') }}
-        </li>
-        <li @click="handleCommand(contextMenuRow, 'clone')">
-          <IconIIcon :icon="icons.client" /> {{ $t('title.clone') }}
-        </li>
-      </ul>
-    </div> -->
   </div>
 </template>
 
 <script setup lang="tsx">
-  // import { debounce } from 'lodash'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useIcons } from '../../composables/mixins/useIcons'
 
@@ -261,8 +244,6 @@
   const sortBy = ref(props.sortBy || props.rowId)
   const sortDesc = ref(false)
   const contextMenuVisible = ref(false)
-  // const contextMenuStyle = ref({})
-  // const contextMenuRow = ref(null)
 
   defineExpose({ refetch: fetchWrapper, fetchedData })
 
@@ -350,7 +331,6 @@
       return
     }
     activeButton.value = 'config-' + rowData[props.rowId]
-    // router.push(props.actionConfig + rowData.ident)
     router.push(props.actionConfig(rowData))
   }
 
@@ -359,7 +339,6 @@
       return
     }
     activeButton.value = 'log-' + rowData[props.rowId]
-    // router.push(props.actionLog + rowData.ident)
     router.push(props.actionLog(rowData))
   }
 
@@ -368,14 +347,12 @@
       return
     }
     activeButton.value = 'clone-' + rowData[props.rowId]
-    // router.push(props.actionClone + rowData.ident)
     router.push(props.actionClone(rowData))
   }
 
   // TODO: Implement Filter by
   function applyFilter(columnKey: string) {
     filterBy.value = columnKey
-    // fetchWrapper()
   }
 
   function applySort(columnKey: string) {
@@ -407,10 +384,8 @@
 
   const Details = (params: any): VNode => {
     const rowData = params['rowData'] || params['row-data']
-    // const colData = params['colData'] || params['col-data']
     const _width = { width: '100%' }
     const data: Array<any> = []
-    // const _fixedRightLast: Array<any> = []
     props.tableColumn.forEach((colInfo: any) => {
       const cId: string = colInfo.key as string
       const visible = colInfo._majorKey === undefined && cId !== 'selected'

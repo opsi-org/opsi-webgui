@@ -49,7 +49,6 @@
     objects: { type: Array<string>, default: () => [] },
     objectsorigin: { type: Array<string>, default: () => [] },
   })
-
   const defaults: IObjectString2String = {
     actionResult: 'none',
     installationStatus: 'not_installed',
@@ -91,9 +90,6 @@
       defaults[props.type],
     )
   })
-  // const gettooltiptext = computed(() => {
-  //   return JSON.stringify(gettooltipobj.value)
-  // })
 
   function _getVariantInTooltip(v: string): PSeverity {
     if (v === 'failed') {

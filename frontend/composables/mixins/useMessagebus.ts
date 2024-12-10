@@ -86,11 +86,9 @@ export const useMBus = (
 
   async function wsInit(reconnect: boolean = false) {
     if (!reconnect && wsIsConnected.value) {
-      // wsNotification('already connecting/connected', wsBus.value)
       return
     }
 
-    // wsNotification('connecting')
     const host = window.location.hostname
     const port =
       process.env.NODE_ENV === 'production'
@@ -263,10 +261,6 @@ export const useMBus = (
     console.debug('MessageBus:', text, data)
   }
 
-  // function wsNotificationInfo (text: any, data: any = '') {
-  //   notifyInfo({ title: $t('message.info.event'), message: text + ' ' + data})
-  // }
-
   function wsNotificationWarn(text: any, data: any = '') {
     notifyWarning({ message: text + ' ' + data })
     console.warn('MessageBus:', text, data)
@@ -319,19 +313,10 @@ export const useMBus = (
     wsBus,
     wsBusMsg,
     setBus,
-    // wsInit,
-    // wsWait,
-    // wsSend,
     wsTerminalResize,
     wsTerminalSend,
     wsTerminalClose,
     wsTerminalOpen,
-    // wsSubscribeChannel,
     wsDisconnect,
-
-    // wsNotification,
-    // wsNotificationWarn,
-    // wsNotificationInfo,
-    // wsCreateMsgTemplate,
   }
 }

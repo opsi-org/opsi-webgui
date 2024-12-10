@@ -12,15 +12,12 @@
 
 <script setup lang="tsx">
   import type { T_ServerList } from '~/types/APItypes'
-  // import {useIcons} from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
   import Checkbox from 'primevue/checkbox'
   import RadioButton from 'primevue/radiobutton'
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
-  // const icons = useIcons()
-  // const router = useRouter()
 
   const storeSelection = storeSelections()
 

@@ -145,9 +145,7 @@
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     notEditable.forEach((attrKey) => delete hostAttr[attrKey])
 
-    // return
     try {
-      // api/opsidata/clients/huhnix.mz.uib.gmbh
       const { error } = await useApiPUT(
         `/opsidata/${props.type}/${hostAttr.hostId}`,
         hostAttr,
@@ -161,7 +159,6 @@
           host: hostAttr.hostId,
         }),
       })
-      // fetchData()
     } catch (error) {
       notifyError({ message: error || $t('message.error.unexpected') })
     }

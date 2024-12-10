@@ -57,7 +57,6 @@
 
   currentId.value = props.id
   const activeName = ref(configLastSelected.value[props.type] || 'config')
-  // const activeName = ref(configLastSelected.value[props.type] || (props.isChild? 'config':'attr'))
 
   watch(
     () => props.id,
@@ -72,9 +71,6 @@
     () => activeName.value,
     () => {
       tableSettings.setConfigLastSelected(props.type, activeName.value)
-      // if (props.isChild){
-      //   // store last selected tab if used as child
-      // }
     },
   )
 

@@ -52,7 +52,6 @@
     IObjectString2ObjectString2String,
   } from '~/types/tgeneral'
   import { mapValues2Objects } from '~/utils/smappings'
-  // const selStore = storeSelections()
   const { selectionDepots, selectionClients } = storeToRefs(storeSelections())
 
   const $emit = defineEmits(['details'])
@@ -66,7 +65,6 @@
   })
   const rowitem = computed(() => props.row)
   const tooltiptext = computed(() => {
-    // console.debug('key length: ', Object.keys(props.clients2depots).length)
     const depots: IObjectString2String = mapValues2Objects(
       rowitem.value.depotVersions,
       rowitem.value.selectedDepots,
@@ -97,21 +95,3 @@
     return tt
   })
 </script>
-
-<style scoped>
-  /* .version_outdated {
-  color:red
-}
-.TCProductVersionCell_hover {
-  width: auto;
-  height: auto;
-  display: flow-root;
-}
-.TCProductVersionCell_hover > .details{
-  display: flex;
-  float: left;
-}
-.TCProductVersionCell_hover > .details.client-outdated{
-  float: right;
-} */
-</style>

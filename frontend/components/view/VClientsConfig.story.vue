@@ -17,16 +17,6 @@
 </script>
 <template>
   <Story :setup-app="init">
-    <!-- <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <LayoutLPageContent>
-        <slot name="default">
-          <ViewVClients :is-mobile="true"/>
-        </slot>
-        <slot name="default">
-          <ViewVConfig :is-mobile="true"/>
-        </slot>
-      </LayoutLPageContent>
-    </Variant> -->
     <Variant title="desktop" responsive-disabled>
       <LayoutLPageContent>
         <template #default>

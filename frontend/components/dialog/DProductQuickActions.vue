@@ -220,7 +220,6 @@
         NOT_APPLIED,
       ]
       productActions.value.conditions.actionResult.value = NOT_APPLIED
-      // productActions.value.conditions.actionResult.value = productActions.value.conditions.actionResult.value.filter(item => productActions.value.conditions.actionResult.options.includes(item))
     } else {
       throw new Error('No action results found: ' + JSON.stringify(data.value))
     }
@@ -239,7 +238,6 @@
         NOT_APPLIED,
       ]
       productActions.value.conditions.instStatus.value = NOT_APPLIED
-      // productActions.value.conditions.instStatus.value = productActions.value.conditions.instStatus.value.filter(item => productActions.value.conditions.instStatus.options.includes(item))
     } else {
       throw new Error(
         'No installation states found ' + JSON.stringify(data.value),
@@ -256,7 +254,7 @@
       $t('label.quickaction.scope.options.both'),
       $t('label.quickaction.scope.options.server'),
     ].includes(productActions.value.scope.apply.value)
-    // const demoMode = demo //|| productActions.value.demo.demoMode
+
     const params: Record<string, any> = {
       action: productActions.value.possibleActions.rowactions.value || '',
       outdated: productActions.value.conditions.outdatedonclient,
@@ -271,16 +269,7 @@
     params.selectedDepots = includeServer
       ? storeSelection.selectionDepots
       : null
-    // params.selectedClients = null
-    // params.selectedDepots = null
-    // if (includeClients) {
-    // }
-    // if (includeServer) {
-    //   params.selectedDepots = storeSelection.selectionDepots
-    // }
-    //   const params = { ...this.quickaction, demoMode: demo }
-    //   const ref = (this.$refs.prodQuickActionAlert as any)
-    //   console.log(params)
+
     if (
       (params.outdated === false &&
         params.installation_status === null &&

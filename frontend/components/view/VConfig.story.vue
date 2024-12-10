@@ -13,8 +13,5 @@
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
       <ViewVConfig type="servers" :id="store.selectionDepots[0]" />
     </Variant>
-    <!-- <Variant title="desktop" responsive-disabled>
-      <ViewVConfig :isMobile="false"/>
-    </Variant> -->
   </Story>
 </template>

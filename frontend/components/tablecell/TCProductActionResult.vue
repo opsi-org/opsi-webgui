@@ -5,7 +5,6 @@
       data-testid="TCActionResultBadge"
       :severity="props.variant"
     >
-      <!-- <span class="h6"> {{ t_fixed('unequal') }} </span> -->
       <IconIIcon :icon="icon.unequal" alt="mixed" :title="props.text" />
     </p-tag>
     <p-tag
