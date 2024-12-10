@@ -253,7 +253,7 @@ init:transifex:
     - tags
     - main
   artifacts:
-    name: "opsi-webgui-locale"
+    name: 'opsi-webgui-locale'
     paths:
       - frontend/locale
     expire_in: 3 day
@@ -269,7 +269,7 @@ init:changelogs:
     - tags
     - main
   artifacts:
-    name: "opsi-webgui-changelogs"
+    name: 'opsi-webgui-changelogs'
     paths:
       - output
     expire_in: 1 day
@@ -332,7 +332,7 @@ test:accessibility:
     - main
     - tags
   artifacts:
-    name: "opsi-webgui-test-result-accessibility"
+    name: 'opsi-webgui-test-result-accessibility'
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -360,7 +360,7 @@ test:usecase:
     - main
     - tags
   artifacts:
-    name: "opsi-webgui-test-result-usecase"
+    name: 'opsi-webgui-test-result-usecase'
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -399,7 +399,7 @@ test:components:changes:
     - npm run test:all:delete-empty-results
   allow_failure: true
   artifacts:
-    name: "opsi-webgui-test-result-components"
+    name: 'opsi-webgui-test-result-components'
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -434,7 +434,7 @@ test:components:
   allow_failure: true
   coverage: /TESTED FILES\s*:\s*([^%]+)/
   artifacts:
-    name: "opsi-webgui-test-result-components"
+    name: 'opsi-webgui-test-result-components'
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -487,10 +487,10 @@ test:backend-pytest:
     - name: redislabs/redistimeseries:latest
       alias: redis
   variables:
-    MYSQL_ROOT_PASSWORD: "opsi"
-    MYSQL_DATABASE: "opsitest"
-    MYSQL_USER: "opsi"
-    MYSQL_PASSWORD: "opsi"
+    MYSQL_ROOT_PASSWORD: 'opsi'
+    MYSQL_DATABASE: 'opsitest'
+    MYSQL_USER: 'opsi'
+    MYSQL_PASSWORD: 'opsi'
   script:
     - *prepare_backend_tests
     - echo "##########################################"
@@ -524,7 +524,7 @@ build:screenshots:docs: # with transifex
     - exit $exit_code
   allow_failure: true
   artifacts:
-    name: "opsi-webgui-screenshots-docs-result"
+    name: 'opsi-webgui-screenshots-docs-result'
     when: always
     paths:
       - frontend/screenshots4Docs/screenshots
@@ -583,7 +583,7 @@ build:addon: # with transifex
     - tags
     - main
   artifacts:
-    name: "opsi-webgui-with-zip"
+    name: 'opsi-webgui-with-zip'
     paths:
       - webgui
       - opsi-webgui.zip
@@ -619,7 +619,7 @@ build:zip: # with transifex
     - tags
     - main
   artifacts:
-    name: "opsi-webgui"
+    name: 'opsi-webgui'
     paths:
       - webgui
     expire_in: 7 day
@@ -747,7 +747,7 @@ publish:obs_ext:
   only:
     - tags
   artifacts:
-    name: "opsi-webgui-changelogs"
+    name: 'opsi-webgui-changelogs'
     paths:
       - output
     expire_in: 1 day

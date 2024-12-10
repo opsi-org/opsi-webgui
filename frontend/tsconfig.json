@@ -1,20 +1,20 @@
 {
-  // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json",
-
   "compilerOptions": {
-    "outDir": "./dist",
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    // "noUnusedParameters": false,
-    "strict": true,
     "allowImportingTsExtensions": true,
-    "noImplicitThis": true,
+    "experimentalDecorators": true,
+    "ignoreDeprecations": "5.0",
+    "importHelpers": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
     "noImplicitAny": true,
+    "noImplicitThis": true,
+    "outDir": "./dist",
+    "resolveJsonModule": true, // locales
     // "noEmit": true, // was true
     "skipLibCheck": true,
-    "resolveJsonModule": true, // locales
-    "ignoreDeprecations": "5.0",
+    // "noUnusedParameters": false,
+    "strict": true,
     // "suppressImplicitAnyIndexErrors": true,
     "types": [
       "@pinia/nuxt",
@@ -28,20 +28,8 @@
       "@xterm/addon-web-links",
       "@intlify/unplugin-vue-i18n/messages"
     ],
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-    // "paths": {}
-    "jsx": "preserve",
-    "jsxImportSource": "vue"
-  }
-  // "include": [
-  //   "env.d.ts",
-  //   "src/**/*",
-  //   "src/**/*.vue",
-  //   ".nuxt/",
-  //   "components/**/*.vue",
-  //   "composables/**/*.vue",
-  //   "layouts/**/*.vue",
-  //   "plugins/**/*.vue",
-  // ]
+    "verbatimModuleSyntax": true
+  },
+  // https://nuxt.com/docs/guide/concepts/typescript
+  "extends": "./.nuxt/tsconfig.json"
 }

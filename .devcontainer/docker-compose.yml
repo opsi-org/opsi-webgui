@@ -20,7 +20,6 @@ services:
         DEV_GIT_EMAIL: ${DEV_GIT_EMAIL}
         DEV_GIT_NAME: ${DEV_GIT_NAME}
       dockerfile: .devcontainer/Dockerfile
-      # no_cache: true
     depends_on: # created in include part
       - opsi-server
     ports:
@@ -28,11 +27,10 @@ services:
       - 6006:6006
     hostname: ${HOSTNAME}
     domainname: ${DOMAINNAME}
-    # tty: true
-    volumes: # /var/lib/opsiconfd/addons/ = /data/opsiconfd/addons/
+    volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - opsi_data:/data
       - ./files/docker-entrypoint.sh:/docker-entrypoint.sh
       - ..:/workspace
     working_dir: /workspace
-    entrypoint: ["/docker-entrypoint.sh"]
+    entrypoint: ['/docker-entrypoint.sh']

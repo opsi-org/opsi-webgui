@@ -1,47 +1,33 @@
 {
-	"name": "opsiweb",
-	"dockerComposeFile": ["./docker-compose.yml"],
-	"service": "opsiweb_dev",
-	"runServices": ["opsiweb_dev", "opsi-server", "mysql", "redis", "grafana"],
-	"workspaceFolder": "/workspace",
-	"postCreateCommand": "/workspace/.devcontainer/post_create.sh",
-	// "initializeCommand": "docker volume rm opsiweb-ui_devcontainer_opsi_data",
-	// "forwardPorts": [
-	// 	"opsiweb_dev:8888",
-	// 	"opsi-server:4447",
-	// 	// "opsiweb_dev:${localEnv:WEBGUI_DEV_PORT}",
-	// 	// "opsi-server:${env:OPSICONFD_PORT}",
-	// ],
-	// "portsAttributes": {
-	// 	// "opsiweb_dev:${env:WEBGUI_DEV_PORT}": {
-	// 	"opsiweb_dev:8888": { "label": "webgui" },
-	// 	"opsi-server:4447": { "label": "opsiserver" }
-	// },
-	// "otherPortsAttributes": { "onAutoForward" : "notify" },
-	"customizations": {
-		"vscode": {
-			"settings": {
-				"terminal.integrated.shell.linux": "/usr/bin/zsh"
-			},
-			// cleaning up. only install the ones which are really needed/useful
-			"extensions": [
-				"Vue.volar",
-				"wejectchan.vue3-snippets-for-vscode",
-				"lokalise.i18n-ally",
-				"bradlc.vscode-tailwindcss",
-				"antfu.iconify",
-				"fooxly.workspace",
-				"philfontaine.autolaunch",
-				"gruntfuggly.todo-tree",
-				"esbenp.prettier-vscode",
-				"shardulm94.trailing-spaces",
-				"seunlanlege.action-buttons",
-				"anseki.vscode-color",
-				"ms-azuretools.vscode-docker",
-				"SonarSource.sonarlint-vscode",
-				"dbaeumer.vscode-eslint",
-				"richie5um2.vscode-sort-json"
-			]
-		}
-	}
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Vue.volar",
+        "wejectchan.vue3-snippets-for-vscode",
+        "lokalise.i18n-ally",
+        "bradlc.vscode-tailwindcss",
+        "antfu.iconify",
+        "fooxly.workspace",
+        "philfontaine.autolaunch",
+        "gruntfuggly.todo-tree",
+        "esbenp.prettier-vscode",
+        "shardulm94.trailing-spaces",
+        "seunlanlege.action-buttons",
+        "anseki.vscode-color",
+        "ms-azuretools.vscode-docker",
+        "SonarSource.sonarlint-vscode",
+        "dbaeumer.vscode-eslint",
+        "richie5um2.vscode-sort-json"
+      ],
+      "settings": {
+        "terminal.integrated.shell.linux": "/usr/bin/zsh"
+      }
+    }
+  },
+  "dockerComposeFile": ["./docker-compose.yml"],
+  "name": "opsiweb",
+  "postCreateCommand": "/workspace/.devcontainer/post_create.sh",
+  "runServices": ["opsiweb_dev", "opsi-server", "mysql", "redis", "grafana"],
+  "service": "opsiweb_dev",
+  "workspaceFolder": "/workspace"
 }
