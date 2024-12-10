@@ -1,44 +1,4 @@
 {
-  "name": "opsi-webgui",
-  "version": "4.4.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "clean": "rm -rf node_modules",
-    "clean-full": "rm -rf node_modules; rm -f package-lock.json;",
-    "build": "nuxi build",
-    "dev0": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxt dev",
-    "dev": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxi dev",
-    "generate": "nuxi generate",
-    "generate-with-ssl": "NODE_OPTIONS=--openssl-legacy-provider nuxt generate ",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "tsc": "npx nuxi typecheck",
-    "lint:all": "npx nuxi typecheck && eslint .",
-    "format": "prettier --write \"./**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
-    "////nuxt-monaco-editor": "^1.2.3",
-    "//monaco-editor": "^0.43.0",
-    "//@vue/compat": "^3.3.4",
-    "//@element-plus/icons-vue": "^2.1.0",
-    "//@iconify/json": "^2.2.132",
-    "//unplugin-icons": "^0.17.1",
-    "//xterm": "^5.x.x",
-    "//xterm-addon-fit": "^0.x.x",
-    "//xterm-addon-search": "^0.x.x",
-    "//xterm-addon-web-links": "^0.x.x",
-    "story:dev": "NODE_ENV=development histoire dev",
-    "story:build": "NODE_ENV=development histoire build",
-    "story:preview": "NODE_ENV=development histoire preview",
-    "pwtest:usecase": "playwright test -c tests-configs/playwright-all-usecases.config.ts",
-    "pwtest:access": "playwright test -c tests-configs/playwright-all-accessibility.config.ts",
-    "pwtest:components": "playwright test -c tests-configs/playwright-all-components.config.ts",
-    "pwtest:components:update": "playwright test -c tests-configs/playwright-all-components.config.ts --update-snapshots",
-    "bash:delete-empty-test-results": "find test-results -empty -delete",
-    "//@pinia-plugin-persistedstate/nuxt": "^1.1.2",
-    "//@sidebase/nuxt-auth": "^0.9.2"
-  },
   "dependencies": {
     "@msgpack/msgpack": "^3.0.0-beta2",
     "@primevue/themes": "^4.2.4",
@@ -51,6 +11,9 @@
     "primevue": "^4.2.x",
     "tailwindcss-primeui": "^0.3.4",
     "vue3-markdown-it": "^1.0.10"
+  },
+  "dependenciesComments": {
+    "typescript": "version 5.7 is incompatible with vue-tsc 2.1.0. https://github.com/vuejs/language-tools/issues/5018"
   },
   "devDependencies": {
     "@element-plus/nuxt": "^1.1",
@@ -80,10 +43,47 @@
     "typescript": "5.6.2",
     "vue-tsc": "^2.1"
   },
-  "dependenciesComments": {
-    "typescript": "version 5.7 is incompatible with vue-tsc 2.1.0. https://github.com/vuejs/language-tools/issues/5018"
-  },
+  "name": "opsi-webgui",
   "overrides": {
     "vue": "latest"
-  }
+  },
+  "private": true,
+  "scripts": {
+    "////nuxt-monaco-editor": "^1.2.3",
+    "//@element-plus/icons-vue": "^2.1.0",
+    "//@iconify/json": "^2.2.132",
+    "//@pinia-plugin-persistedstate/nuxt": "^1.1.2",
+    "//@sidebase/nuxt-auth": "^0.9.2",
+    "//@vue/compat": "^3.3.4",
+    "//monaco-editor": "^0.43.0",
+    "//unplugin-icons": "^0.17.1",
+    "//xterm": "^5.x.x",
+    "//xterm-addon-fit": "^0.x.x",
+    "//xterm-addon-search": "^0.x.x",
+    "//xterm-addon-web-links": "^0.x.x",
+    "bash:delete-empty-test-results": "find test-results -empty -delete",
+    "build": "nuxi build",
+    "clean": "rm -rf node_modules",
+    "clean-full": "rm -rf node_modules; rm -f package-lock.json;",
+    "dev": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxi dev",
+    "dev0": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxt dev",
+    "format": "prettier --write \"./**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
+    "generate": "nuxi generate",
+    "generate-with-ssl": "NODE_OPTIONS=--openssl-legacy-provider nuxt generate ",
+    "lint": "eslint .",
+    "lint:all": "npx nuxi typecheck && eslint .",
+    "lint:fix": "eslint . --fix",
+    "postinstall": "nuxt prepare",
+    "preview": "nuxt preview",
+    "pwtest:access": "playwright test -c tests-configs/playwright-all-accessibility.config.ts",
+    "pwtest:components": "playwright test -c tests-configs/playwright-all-components.config.ts",
+    "pwtest:components:update": "playwright test -c tests-configs/playwright-all-components.config.ts --update-snapshots",
+    "pwtest:usecase": "playwright test -c tests-configs/playwright-all-usecases.config.ts",
+    "story:build": "NODE_ENV=development histoire build",
+    "story:dev": "NODE_ENV=development histoire dev",
+    "story:preview": "NODE_ENV=development histoire preview",
+    "tsc": "npx nuxi typecheck"
+  },
+  "type": "module",
+  "version": "4.4.0.0"
 }
