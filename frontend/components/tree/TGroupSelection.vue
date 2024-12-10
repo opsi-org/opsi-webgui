@@ -96,10 +96,10 @@
 
   const clearSelection = () => {
     if (props.grouptype == 'client-group') {
-      clientGroupRef.value!.setCheckedKeys([], false)
+      clientGroupRef.value?.setCheckedKeys([], false)
       storeSelection.clearSelectionClients()
     } else {
-      prodGroupRef.value!.setCheckedKeys([], false)
+      prodGroupRef.value?.setCheckedKeys([], false)
       storeSelection.clearSelectionProducts()
     }
   }
