@@ -58,7 +58,7 @@
         "tooltip": "Clean rebuild and install",
         "color": "white",
         "singleInstance": true,
-        "command": "npm run clean && npm i"
+        "command": "npm run clean && npm i --verbose"
       },
       // // { // test opened file (if .vue/.stories.js/.test.component.js )
       // //   "name": "$(testing-run-icon) lint",
