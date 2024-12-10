@@ -31,6 +31,7 @@
         <DropdownDDClientActions
           :client-ids="storeSelection.selectionClients"
           icon="client"
+          :link="false"
         />
         <DialogDProductQuickActions />
         <ModalMChanges v-if="$mq === 'mobile'" v-model="changes" />

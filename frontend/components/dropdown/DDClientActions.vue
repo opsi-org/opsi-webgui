@@ -1,6 +1,6 @@
 <template>
   <el-dropdown trigger="click">
-    <el-button class="ml-1 mt-1" link :disabled="isLoading">
+    <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoading">
       <IconIIcon
         :icon="getIcon(props.icon)"
         :title="$t('button.tablerow.moreoptions')"
@@ -112,6 +112,7 @@
   const props = defineProps({
     clientIds: { type: Array<string>, default: () => [] },
     icon: { type: String, default: 'menu' },
+    link: { type: Boolean, default: true },
   })
 
   const { selectionClients } = storeToRefs(storeSelections())
