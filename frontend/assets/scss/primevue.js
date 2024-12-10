@@ -27,6 +27,38 @@ const MyPreset = definePreset(Aura, {
       800: '#650f2f',
       900: '#400a20',
     },
+    colorScheme: {
+      light: {
+        // surface: {
+        //   50: '#fdfdfd',
+        //   100: '#fbfbfb',
+        //   200: '#f7f7f7',
+        //   300: '#f2f2f2',
+        //   400: '#ebebeb',
+        //   500: '#e2e2e2',
+        //   600: '#d6d6d6',
+        //   700: '#c2c2c2',
+        //   800: '#a1a1a1',
+        //   900: '#757575',
+        //   950: '#595959',
+        // },
+      },
+      dark: {
+        surface: {
+          50: '#e4e4e4', // Sehr helles Grau
+          100: '#cccccc', // Helleres Grau
+          200: '#a9a9a7', // Weiches Grau
+          300: '#8e8e8d', // Mittelgrau
+          400: '#757574', // Dunkleres Grau
+          500: '#606060', // Basis-Grau
+          600: '#565656', // Anpassung: Der definierte Wert // border
+          700: '#4c4c4c', // Stärker dunkler werdend
+          800: '#454545', // Tieferes Grau
+          900: '#404040', // Kurz vor der Basisfarbe
+          950: '#3f3f3e', // Basis: Dunkle Hintergrundfarbe // background
+        },
+      },
+    },
   },
 })
 

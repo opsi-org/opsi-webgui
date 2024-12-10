@@ -1,18 +1,34 @@
 <template>
-  <div>
-    <el-tooltip :content="$t('form.quicksave.cbvalue.tooltip')" placement="top">
-      <el-switch
-        v-if="props.type === 'checkbox'"
-        v-model="cbValue"
-        inline-prompt
-        :active-text="$t('form.quicksave.cbvalue.on')"
-        :inactive-text="$t('form.quicksave.cbvalue.off')"
-        size="large"
-        v-bind="$props"
-        @change="changeSelectionMode"
-      />
-    </el-tooltip>
-  </div>
+  <TooltipTTooltip>
+    <template #tooltip>
+      {{ $t('form.quicksave.cbvalue.tooltip') }}
+    </template>
+    <template #default>
+      <PFloatLabel v-if="props.type === 'checkbox'" variant="in">
+        <PToggleSwitch
+          v-model="cbValue"
+          id="cbQuicksave"
+          name="quicksave"
+          :aria-label="
+            'Switch quicksave mode. Currently is ' + (cbValue ? 'on' : 'off')
+          "
+          style="--p-toggleswitch-width: 5rem"
+          v-bind="$props"
+          @change="changeSelectionMode"
+        />
+        <label
+          for="cbQuicksave"
+          class="text-xs text-white !pb-1"
+          :class="cbValue ? '' : 'pl-4'"
+          >{{
+            cbValue
+              ? $t('form.quicksave.cbvalue.on')
+              : $t('form.quicksave.cbvalue.off')
+          }}</label
+        >
+      </PFloatLabel>
+    </template>
+  </TooltipTTooltip>
 </template>
 
 <script setup lang="ts">
