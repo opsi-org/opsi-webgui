@@ -141,6 +141,10 @@
     return tt
   })
 
+  if (Object.keys(tooltiptext.value).length == 1) {
+    openedTTServer.value = [0]
+  }
+
   function toggleTTRow(
     index: number,
     host: string | number,
