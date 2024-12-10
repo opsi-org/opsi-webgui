@@ -22,53 +22,49 @@
             <IconIIcon :icon="icons.columns" />
           </el-button>
           <template #dropdown>
-            <div class="dropdown-content">
-              <!-- TODO: filter by always (at least for now) ID (and sometimes description) -->
-              <div class="dropdown-section">
-                <div class="dropdown-title">
-                  <IconIIcon :icon="icons.filter" /> Filter By
-                </div>
-                <div class="dropdown-items">
-                  <template v-for="column in tableColumn" :key="column.key">
-                    <el-dropdown-item>
-                      <el-checkbox
-                        :disabled="!column.filter"
-                        v-model="column.filter"
-                        @change="applyFilter(column.key)"
+            <el-table :data="tableColumn" style="width: 100%">
+              <el-table-column prop="title" label="Column" min-width="150px" />
+              <el-table-column label="Sort">
+                <template #header>
+                  <el-tooltip
+                    :content="sortDesc ? 'Sort Descending' : 'Sort Ascending'"
+                  >
+                    <el-button @click="toggleSortOrder">
+                      <IconIIcon
+                        :icon="sortDesc ? icons.sortDesc : icons.sortAsc"
                       />
-                    </el-dropdown-item>
-                  </template>
-                </div>
-              </div>
-              <!-- Sorting by column -->
-              <div class="dropdown-section">
-                <div class="dropdown-title">
-                  <el-button link @click="toggleSortOrder">
-                    <IconIIcon
-                      :icon="sortDesc ? icons.sortDesc : icons.sortAsc"
-                    />
-                    {{ sortDesc ? 'Sort Descending' : 'Sort Ascending' }}
-                  </el-button>
-                </div>
-                <div class="dropdown-items">
-                  <el-radio-group v-model="sortBy" class="!contents">
-                    <template v-for="column in tableColumn" :key="column.key">
-                      <el-dropdown-item>
-                        <el-radio
-                          :disabled="!column.sortable"
-                          :value="column.key"
-                          @change="applySort(column.key)"
-                          >{{ column.title }}</el-radio
-                        >
-                      </el-dropdown-item>
-                    </template>
-                  </el-radio-group>
-                </div>
-              </div>
-              <!-- No need for column selection in mobile view -->
-            </div>
+                    </el-button>
+                  </el-tooltip>
+                </template>
+                <template #default="scope">
+                  <el-radio
+                    v-if="scope.row.sortable"
+                    :disabled="!scope.row.sortable"
+                    :value="scope.row.key"
+                    v-model="sortBy"
+                    @change="applySort(scope.row.key)"
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column label="Filter">
+                <template #header>
+                  <el-tooltip content="Filter">
+                    <IconIIcon :icon="icons.filter" />
+                  </el-tooltip>
+                </template>
+                <template #default="scope">
+                  <el-checkbox
+                    v-if="scope.row.filter"
+                    disabled
+                    v-model="scope.row.filter"
+                    @change="applyFilter(scope.row.key)"
+                  />
+                </template>
+              </el-table-column>
+            </el-table>
           </template>
         </el-dropdown>
+
         <el-tooltip :content="$t('label.refresh')" placement="top">
           <el-button @click="refreshTable">
             <IconIIcon :icon="icons.refresh" />

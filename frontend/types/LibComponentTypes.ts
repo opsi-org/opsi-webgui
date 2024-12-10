@@ -8,3 +8,12 @@ export type ElTypeVariant =
       unknown
     >
   | undefined
+
+export type PSeverity =
+  | 'primary'
+  | 'secondary'
+  | 'info'
+  | 'success'
+  | 'warn'
+  | 'danger'
+  | 'contrast'

@@ -1,6 +1,6 @@
 <template>
   <el-dropdown trigger="click">
-    <el-button class="ml-1" :disabled="isLoading">
+    <el-button class="ml-1 mt-1" link :disabled="isLoading">
       <IconIIcon
         :icon="getIcon(props.icon)"
         :title="$t('button.tablerow.moreoptions')"

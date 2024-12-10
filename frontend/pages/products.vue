@@ -6,7 +6,6 @@
     :width="routeNameSettings?.width || '100%'"
     classeachcol=""
   >
-    <!-- :classeachcol="isMobile ? 'm-1': 'm-1 h-full'" -->
     <template #default>
       <ViewVProducts
         v-if="path[0] === 'products'"

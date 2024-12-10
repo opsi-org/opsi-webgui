@@ -34,6 +34,8 @@
   import Checkbox from 'primevue/checkbox'
   import RadioButton from 'primevue/radiobutton'
   import Button from 'primevue/button'
+  import TTooltip from '../tooltip/TTooltip.vue'
+  // import { Popover } from 'primevue'
 
   const { notifyError, notifyInfo } = useNotification()
   const $t = useI18n().t
@@ -65,7 +67,6 @@
       alwaysVisible: true,
       width: '60px',
 
-      // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} /> },
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
         rowData.selected = storeSelection.selectionClients.includes(
@@ -318,6 +319,7 @@
     warnValue: number = Infinity,
   ): (rowData: any) => VNode {
     return ({ rowData }: any) => {
+      // const op = ref<any>()
       function click() {
         router.push(url + rowData.clientId)
       }
@@ -342,24 +344,22 @@
         if (rowData[value] >= warnValue) return 'warn'
         return 'success'
       })
-
       return (
-        <el-tooltip
-          class="box-item"
-          effect="dark"
-          placement="left-start"
-          v-slots={{ content: () => rowData[value] + ' ' + tootltip }}
-        >
-          <div>
-            <Button
-              badge={(rowData[value] || 0) + ''}
-              badgeSeverity={severity.value}
-              onClick={click}
-              class="!inline !bg-transparent !m-0 !p-0 !border-0"
-            />
-          </div>
-        </el-tooltip>
+        <TTooltip
+          v-slots={{
+            default: () => (
+              <Button
+                badge={(rowData[value] || 0) + ''}
+                badgeSeverity={severity.value}
+                onClick={click}
+                class="!inline !bg-transparent !m-0 !p-0 !border-0"
+              />
+            ),
+            tooltip: () => rowData[value] + ' ' + tootltip,
+          }}
+        />
       )
     }
+    // </el-tooltip>
   }
 </script>

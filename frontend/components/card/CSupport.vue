@@ -15,7 +15,5 @@
   const _props = defineProps({
     item: { type: Object, required: true },
   })
-  // const $mq = useMQ().$mq
   const $t = useI18n().t
-  // const textClass = computed(() => ($mq.value === 'mobile' ? 'smallText' : 'normalText'))
 </script>

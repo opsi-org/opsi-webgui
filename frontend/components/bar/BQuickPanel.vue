@@ -42,15 +42,15 @@
           <el-text tag="b" size="small">{{ $t('title.settings') }}</el-text>
         </header>
         <div class="flex justify-evenly">
-          <FormitemCBMultiselection />
-          <FormitemCBQuicksave />
-          <FormitemCBAutoRefresh />
+          <SwitchSMultiselection />
+          <SwitchSQuicksave />
+          <SwitchSAutoRefresh />
         </div>
       </section>
       <div class="flex justify-evenly items-center">
         <PopconfirmPLogout v-if="mq.isMobile.value" />
-        <FormitemDDTheme />
-        <FormitemDDLang />
+        <SwitchSTheme />
+        <DropdownDDLang />
       </div>
       <div class="text-center mt-2">
         <el-text class="!mr-1">{{ $t('label.version') }}</el-text>
