@@ -4,20 +4,6 @@
       <el-row class="mt-2 mb-2 text-small">
         <b :class="['title' + section]">{{ $t('title.' + section) }}</b>
       </el-row>
-      <div style="max-width: 600px">
-        <el-alert
-          v-if="section === 'clients' && !hasBlockedClients"
-          :title="$t('message.warning.noBlockedClients')"
-          type="warning"
-          :closable="false"
-        />
-        <el-alert
-          v-if="section === 'products' && !hasLockedProducts"
-          :title="$t('message.warning.noLockedProducts')"
-          type="warning"
-          :closable="false"
-        />
-      </div>
       <el-form
         :label-width="mq.isMobile.value ? '' : '230px'"
         :label-position="mq.isMobile.value ? 'top' : 'right'"
@@ -34,8 +20,14 @@
           >
             <el-select
               v-if="action === 'unlock' || action === 'unblock'"
-              style="min-width: 200px"
+              style="min-width: 250px"
               v-model="selected[section]"
+              :disabled="
+                section == 'clients' ? !hasBlockedClients : !hasLockedProducts
+              "
+              :placeholder="
+                section === 'clients' ? placeholderClients : placeholderProducts
+              "
             >
               <el-option
                 v-for="item in section === 'clients'
@@ -63,8 +55,11 @@
             <el-button
               type="primary"
               :disabled="
-                (action === 'unblock' || action === 'unlock') &&
-                selected[section] == ''
+                ((action === 'unblock' || action === 'unlock') &&
+                  selected[section] == '') ||
+                section == 'clients'
+                  ? !hasBlockedClients
+                  : !hasLockedProducts
               "
               @click="applyAction(action)"
             >
@@ -79,7 +74,11 @@
 
 <script setup lang="ts">
   import { useNotification } from '~/composables/mixins/useComponent'
+  interface TData {
+    [key: string]: string[]
+  }
   const { notifyError } = useNotification()
+
   const $t = useI18n().t
   const adminTasks = reactive({
     clients: ['unblock', 'unblockAll'],
@@ -90,9 +89,16 @@
     clients: '',
     products: '',
   })
-  const blockedClients = ref()
-  const lockedProducts = ref()
+  const blockedClients = ref<TData>({})
+  const lockedProducts = ref<TData>({})
   const isLoading = ref(false)
+
+  onMounted(async () => {
+    isLoading.value = true
+    await fetchBlockedClients()
+    await fetchLockedProducts()
+    isLoading.value = false
+  })
 
   const hasBlockedClients = computed(() => {
     return blockedClients.value && Object.keys(blockedClients.value).length > 0
@@ -102,49 +108,82 @@
     return lockedProducts.value && Object.keys(lockedProducts.value).length > 0
   })
 
-  onMounted(async () => {
-    isLoading.value = true
-    await fetchBlockedClients()
-    await fetchLockedProducts()
-    isLoading.value = false
+  const placeholderClients = computed(() => {
+    const count = Object.keys(blockedClients.value || {}).length
+    if (count > 0) {
+      return $t('label.clients.placeholder', { count })
+    }
+    return $t('message.warning.noBlockedClients')
+  })
+  const placeholderProducts = computed(() => {
+    const count = Object.keys(lockedProducts.value || {}).length
+    if (count > 0) {
+      return $t('label.products.placeholder', { count })
+    }
+    return $t('message.warning.noLockedProducts')
   })
 
   async function fetchBlockedClients() {
-    const { data, error } = await useApiGET('/opsidata/blocked-clients')
-    if (error) {
-      notifyError({ message: error?.response?.data?.message })
+    const { data, error } = await useApiGET<TData>('/opsidata/blocked-clients')
+    if (error || !data.value) {
+      notifyError({
+        message:
+          error?.response?.data?.message || 'No blocked clients received',
+      })
       return
     }
     blockedClients.value = data.value
   }
 
   async function fetchLockedProducts() {
-    const { data, error } = await useApiGET('/opsidata/locked-products')
-    if (error) {
-      notifyError({ message: error?.response?.data?.message })
+    const { data, error } = await useApiGET<TData>('/opsidata/locked-products')
+    if (error || !data.value) {
+      notifyError({
+        message:
+          error?.response?.data?.message || 'No locked products received',
+      })
       return
     }
     lockedProducts.value = data.value
   }
 
   async function applyAction(action: string) {
+    isLoading.value = true
     try {
+      const wasError = ref(false)
       if (action === 'unblock') {
-        await useApiPOST(`/opsidata/clients/${selected.value.clients}/unblock`)
-        await fetchBlockedClients()
+        const { error } = await useApiPOST(
+          `/opsidata/clients/${selected.value.clients}/unblock`,
+        )
+        if (error) {
+          wasError.value = true
+          notifyError({ message: error?.response?.data?.message })
+        } else await fetchBlockedClients()
       } else if (action === 'unblockAll') {
-        await useApiPOST('/opsidata/clients/unblock')
-        await fetchBlockedClients()
+        const { error } = await useApiPOST('/opsidata/clients/unblock')
+        if (error) {
+          wasError.value = true
+          notifyError({ message: error?.response?.data?.message })
+        } else await fetchBlockedClients()
       } else if (action === 'unlock') {
-        await useApiPOST(`/opsidata/products/${selected.value.products}/unlock`)
-        await fetchLockedProducts()
+        const { error } = await useApiPOST(
+          `/opsidata/products/${selected.value.products}/unlock`,
+        )
+        if (error) {
+          wasError.value = true
+          notifyError({ message: error?.response?.data?.message })
+        } else await fetchLockedProducts()
       } else if (action === 'unlockAll') {
-        await useApiPOST('/opsidata/products/unlock')
-        await fetchLockedProducts()
+        const { error } = await useApiPOST('/opsidata/products/unlock')
+        if (error) {
+          wasError.value = true
+          notifyError({ message: error?.response?.data?.message })
+        } else await fetchLockedProducts()
       }
-      selected.value = { clients: '', products: '' }
+      if (!wasError.value) selected.value = { clients: '', products: '' }
     } catch (error) {
       notifyError({ message: error })
     }
+    isLoading.value = false
   }
 </script>

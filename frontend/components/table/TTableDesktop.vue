@@ -286,15 +286,18 @@
   onBeforeUnmount(() => {
     document.removeEventListener('click', handleClickOutside)
   })
+  function prepareParams() {
+    const params: any = {}
+    if (sortBy.value) params.sortBy = sortBy.value
+    if (filterQuery.value) params.filterQuery = filterQuery.value
+    if (currentPage.value) params.pageNumber = currentPage.value
+    if (pageSize.value) params.perPage = pageSize.value
+    if (sortDesc.value) params.sortDesc = sortDesc.value
+    return params
+  }
   async function fetchWrapper() {
     isLoading.value = true
-    const params = {
-      filterQuery: filterQuery.value,
-      pageNumber: currentPage.value,
-      perPage: pageSize.value,
-      sortBy: sortBy.value,
-      sortDesc: sortDesc.value,
-    }
+    const params = prepareParams()
     try {
       const res = await props.fetch(params)
       if (res == undefined) {

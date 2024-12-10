@@ -1,20 +1,34 @@
 <template>
-  <div>
-    <el-tooltip
-      :content="$t('form.autorefresh.cbvalue.tooltip')"
-      placement="top"
-    >
-      <el-switch
-        v-if="props.type === 'checkbox'"
-        v-model="msgbusAutoRefresh"
-        inline-prompt
-        :active-text="$t('form.autorefresh.cbvalue.on')"
-        :inactive-text="$t('form.autorefresh.cbvalue.off')"
-        size="large"
-        v-bind="$props"
-      />
-    </el-tooltip>
-  </div>
+  <TooltipTTooltip>
+    <template #tooltip>
+      {{ $t('form.autorefresh.cbvalue.tooltip') }}
+    </template>
+    <template #default>
+      <PFloatLabel v-if="props.type === 'checkbox'" variant="in">
+        <PToggleSwitch
+          v-model="msgbusAutoRefresh"
+          id="cbAutorefresh"
+          name="autorefresh"
+          :aria-label="
+            'Switch auto-refresh mode. Currently is ' +
+            (msgbusAutoRefresh ? 'on' : 'off')
+          "
+          style="--p-toggleswitch-width: 5rem"
+          v-bind="$props"
+        />
+        <label
+          for="cbAutorefresh"
+          class="text-xs text-white !pb-1"
+          :class="msgbusAutoRefresh ? '' : 'pl-4'"
+          >{{
+            msgbusAutoRefresh
+              ? $t('form.autorefresh.cbvalue.on')
+              : $t('form.autorefresh.cbvalue.off')
+          }}</label
+        >
+      </PFloatLabel>
+    </template>
+  </TooltipTTooltip>
 </template>
 
 <script setup lang="ts">

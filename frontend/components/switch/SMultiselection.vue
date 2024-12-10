@@ -1,21 +1,40 @@
 <template>
-  <div>
-    <el-tooltip
-      :content="$t('form.multiselection.cbvalue.tooltip')"
-      placement="top"
-    >
-      <el-switch
+  <TooltipTTooltip>
+    <template #tooltip>
+      {{ $t('form.multiselection.cbvalue.tooltip') }}
+    </template>
+
+    <template #default>
+      <PFloatLabel
         v-if="props.type === 'checkbox'"
-        v-model="cbValue"
-        inline-prompt
-        :active-text="$t('form.multiselection.cbvalue.on')"
-        :inactive-text="$t('form.multiselection.cbvalue.off')"
-        size="large"
-        v-bind="$props"
-        @change="changeSelectionMode"
-      />
-    </el-tooltip>
-  </div>
+        variant="in"
+        class="min-w-full border-1 border-red-500"
+      >
+        <PToggleSwitch
+          v-model="cbValue"
+          id="cbMultiSelection"
+          name="multiselection"
+          :aria-label="
+            'Switch multiselection mode. Currently is ' +
+            (cbValue ? 'on' : 'off')
+          "
+          style="--p-toggleswitch-width: 5rem"
+          v-bind="$props"
+          @change="changeSelectionMode"
+        />
+        <label
+          for="cbMultiSelection"
+          class="text-xs text-white !pb-1"
+          :class="cbValue ? '' : 'pl-4'"
+          >{{
+            cbValue
+              ? $t('form.multiselection.cbvalue.on')
+              : $t('form.multiselection.cbvalue.off')
+          }}</label
+        >
+      </PFloatLabel>
+    </template>
+  </TooltipTTooltip>
 </template>
 
 <script setup lang="ts">

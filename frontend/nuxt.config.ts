@@ -115,9 +115,7 @@ export default defineNuxtConfig({
 
         options: {
           prefix: 'p',
-          darkModeSelector: 'system',
-          // cssLayer: false
-          // darkModeSelector: ".dark",
+          darkModeSelector: '.dark',
           cssLayer: {
             name: 'primevue',
             order: 'tailwind-base, primevue, tailwind-utilities',
@@ -127,19 +125,6 @@ export default defineNuxtConfig({
     },
     components: {
       prefix: 'P',
-      // include: [
-      //   "pac",
-      //   "DataTable",
-      //   "Checkbox",
-      //   "Column",
-      //   "ColumnGroup",
-      //   "Row",
-      //   "Paginator",
-      //   "RadioButton",
-      //   "Dropdown",
-      //   "VirtualScroller",
-      //   "Skeleton",
-      // ],
       exclude: ['Toast', 'Editor', 'Chart'],
     },
     directives: {
