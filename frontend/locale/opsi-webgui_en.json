@@ -390,7 +390,7 @@
   "button.event.showpopup": "Send message",
   "button.event.showpopup.tooltip": "Send message",
   "button.event.showpopup.message": "Enter notification text",
-  "button.event.items.other": "and {count} other items",
+  "button.event.items.other": "and {count} other selected items",
   "button.show.products": "Show products",
   "button.sort.tablecolumns.title": "Sort by",
   "button.sort.tablecolumns": "Sort table by",
