@@ -24,6 +24,9 @@
       class="!bg-transparent !hover:!bg-transparent"
     >
       <IconIOpsiLogo class="opsi-logo" />
+      <span class="text-xs ml-1 mb-4">
+        {{ $config.public.packageVersion }}
+      </span>
     </el-menu-item>
 
     <div class="flex-grow" />
@@ -54,12 +57,6 @@
     >
       <IconIIcon :icon="icons.quickpanel" class="text-white" />
     </el-menu-item>
-
-    <PopconfirmPLogout
-      v-if="!mq.isMobile.value"
-      index="4"
-      :is-menu-item="true"
-    />
   </el-menu>
 </template>
 
@@ -69,6 +66,7 @@
 
   const mq = useMQ()
   const $mq = useMQ().$mq
+  const $config = useRuntimeConfig()
   const emit = defineEmits(['toggleLeft', 'toggleRight'])
   const icons = useIcons()
   const router = useRouter()

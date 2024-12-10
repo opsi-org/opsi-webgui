@@ -49,8 +49,7 @@
 
 <style>
   .quickselection .el-tabs__content {
-    min-height: 30vh !important;
-    max-height: 50vh !important;
+    height: 50vh !important;
     overflow-y: auto;
   }
 </style>
