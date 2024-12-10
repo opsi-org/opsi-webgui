@@ -43,7 +43,6 @@
       visible: true,
       alwaysVisible: true,
       width: '60px',
-      // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselectionStopPrevent={storeSelection.clearSelectionDepots} /> },
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
         rowData.selected = storeSelection.selectionDepots.includes(

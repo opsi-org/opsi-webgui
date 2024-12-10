@@ -65,7 +65,6 @@
       alwaysVisible: true,
       width: '60px',
 
-      // headerCellRenderer: () => { return  <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} /> },
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
         rowData.selected = storeSelection.selectionClients.includes(

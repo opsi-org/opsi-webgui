@@ -1,5 +1,5 @@
 <template>
   <Story>
-    <FormitemDDLang />
+    <DropdownDDLang />
   </Story>
 </template>

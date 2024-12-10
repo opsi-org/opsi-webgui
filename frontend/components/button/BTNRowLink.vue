@@ -13,7 +13,6 @@
 
 <script setup lang="ts">
   import { useIcons } from '@/composables/mixins/useIcons'
-  // const icons = useIcons()
 
   const emit = defineEmits(['onClick'])
   const props = defineProps({
