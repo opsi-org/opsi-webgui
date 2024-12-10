@@ -276,6 +276,8 @@
   "table.contextmenu.header-specific": "Options for '{id}':",
   "table.contextmenu.header-general": "Options for tabelle:",
   "label.clients.unblock": "Select a blocked Client",
+  "label.clients.placeholder": "{count} blocked clients",
+  "label.products.placeholder": "{count} locked products",
   "label.products.unlock": "Select a locked Product",
   "label.clients.unblockAll": "Blocked Clients",
   "label.products.unlockAll": "Locked Products",
