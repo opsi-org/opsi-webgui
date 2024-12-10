@@ -39,7 +39,8 @@
 				"anseki.vscode-color",
 				"ms-azuretools.vscode-docker",
 				"SonarSource.sonarlint-vscode",
-				"dbaeumer.vscode-eslint"
+				"dbaeumer.vscode-eslint",
+				"richie5um2.vscode-sort-json"
 			]
 		}
 	}
