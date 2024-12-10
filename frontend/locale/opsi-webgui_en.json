@@ -323,6 +323,7 @@
   "labelaria.sidemenu": "Sidemenu",
   "label.readonly": "Read-only mode activ",
   "label.quickaction": "Quick Actions",
+  "label.clientaction": "Client Actions",
   "label.prodquickaction": "Product Quick Actions",
   "label.quickaction.scope.options.both": "To both selected servers and clients",
   "label.quickaction.scope.options.server": "Only to selected servers",

@@ -1,17 +1,19 @@
 <template>
   <el-dropdown trigger="click">
-    <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoading">
-      <IconIIcon
-        :icon="getIcon(props.icon)"
-        :title="$t('button.tablerow.moreoptions')"
-      />
-      <IconILoading
-        v-if="isLoading"
-        class="ml-1"
-        small
-        :title="$t('message.loading')"
-      />
-    </el-button>
+    <el-tooltip :content="$t('label.clientaction')" placement="top">
+      <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoading">
+        <IconIIcon
+          :icon="getIcon(props.icon)"
+          :title="$t('button.tablerow.moreoptions')"
+        />
+        <IconILoading
+          v-if="isLoading"
+          class="ml-1"
+          small
+          :title="$t('message.loading')"
+        />
+      </el-button>
+    </el-tooltip>
     <template #dropdown>
       <el-dropdown-menu>
         <div
