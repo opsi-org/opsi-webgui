@@ -27,6 +27,7 @@
         (ev: any) => (props.method == 'hover' ? popoverRef?.hide() : null)
       "
     >
+      <el-text v-if="props.content">{{ props.content }}</el-text>
       <slot name="tooltip" />
     </PPopover>
   </div>
@@ -38,5 +39,6 @@
   const props = defineProps({
     disabled: { type: Boolean, default: false },
     method: { type: String as PropType<TMethod>, default: 'hover' },
+    content: { type: String, default: '', required: false },
   })
 </script>

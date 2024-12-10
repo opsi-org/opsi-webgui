@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-tooltip :content="$t('label.prodquickaction')" placement="top">
+    <TooltipTTooltip :content="$t('label.prodquickaction')">
       <el-button plain @click="popoverVisible = true">
         <IconIIcon :icon="icon.product" />
       </el-button>
-    </el-tooltip>
+    </TooltipTTooltip>
     <el-dialog v-model="popoverVisible">
       <template #header>
         <h5>{{ $t('label.prodquickaction') }}</h5>

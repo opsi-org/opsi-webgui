@@ -1,5 +1,5 @@
 <template>
-  <el-tooltip
+  <TooltipTTooltip
     v-if="transparent === true && changesExists"
     class="box-item"
     :content="$t('button.track.changes')"
@@ -11,7 +11,7 @@
       :title="$t('button.track.changes')"
       @click="dialogVisible = true"
     />
-  </el-tooltip>
+  </TooltipTTooltip>
   <el-button
     v-else-if="transparent === false"
     :disabled="!changesExists"

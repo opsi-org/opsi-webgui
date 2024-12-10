@@ -292,7 +292,7 @@
     if (filterQuery.value) params.filterQuery = filterQuery.value
     if (currentPage.value) params.pageNumber = currentPage.value
     if (pageSize.value) params.perPage = pageSize.value
-    if (sortDesc.value) params.sortDesc = sortDesc.value
+    params.sortDesc = sortDesc.value ? 'true' : 'false'
     return params
   }
   async function fetchWrapper() {

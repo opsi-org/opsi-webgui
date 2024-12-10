@@ -1,6 +1,6 @@
 <template>
   <el-dropdown trigger="click">
-    <el-tooltip :content="$t('label.clientaction')" placement="top">
+    <TooltipTTooltip :content="$t('label.clientaction')" placement="top">
       <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoading">
         <IconIIcon
           :icon="getIcon(props.icon)"
@@ -13,7 +13,7 @@
           :title="$t('message.loading')"
         />
       </el-button>
-    </el-tooltip>
+    </TooltipTTooltip>
     <template #dropdown>
       <el-dropdown-menu>
         <div
