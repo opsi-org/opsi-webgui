@@ -1,11 +1,11 @@
 <template>
-  <el-tooltip :type="type" placement="bottom-end">
-    <template #content> <TooltipCell /> </template>
-
+  <div>
     <div
       :id="`TCBadgeCompares_${type}_hover_${rowid}`"
       class="TCBadgeCompares"
       data-testid="TCBadgeCompares"
+      @mouseenter="op.toggle"
+      @mouseleave="op.toggle"
     >
       <TablecellTCProductInstallationStatus
         v-if="type == 'installationStatus' && gettext == 'mixed'"
@@ -32,25 +32,16 @@
       <el-tag v-else>
         <el-text>{{ gettext }}</el-text>
       </el-tag>
-      <!-- <TooltipTTProductCell
-        :target="`TCBadgeCompares_${type}_hover_${rowid}`"
-        :details="tooltiptext"
-        :type="type"
-      /> -->
     </div>
-  </el-tooltip>
+    <PPopover ref="op"> <TooltipCell /> </PPopover>
+  </div>
 </template>
 
 <script lang="tsx" setup>
-  import type { ElTypeVariant } from '~/types/LibComponentTypes'
+  import type { PSeverity } from '~/types/LibComponentTypes'
   import type { IObjectString2String } from '~/types/tgeneral'
 
-  // import { Component, Prop, Vue } from 'nuxt-property-decorator'
-  // import { IObjectString2String } from '../../../.utils/types/tgeneral'
-  // import { mapValues2Value, mapValues2Objects } from '../../../.utils/utils/smappings'
-
-  // @Component
-  // export default class TCBadgeCompares extends Vue {
+  const op = ref()
   const props = defineProps({
     rowid: { type: String, default: '' },
     type: { type: String, default: '' },
@@ -58,17 +49,12 @@
     objects: { type: Array<string>, default: () => [] },
     objectsorigin: { type: Array<string>, default: () => [] },
   })
-  // @Prop({ }) rowid!: string
-  // @Prop({ }) type!: string
-  // @Prop({ }) values!: Array<string>
-  // @Prop({ }) objects!: Array<string>
-  // @Prop({ }) objectsorigin!: Array<string>
 
   const defaults: IObjectString2String = {
     actionResult: 'none',
     installationStatus: 'not_installed',
   }
-  const getvariant = computed<ElTypeVariant>(() => {
+  const getvariant = computed<PSeverity>(() => {
     if (props.values?.includes('failed')) {
       return 'danger'
     }
@@ -85,7 +71,7 @@
     ) {
       return 'success'
     }
-    return 'warning'
+    return 'warn'
   })
 
   const gettext = computed<string>(() => {
@@ -109,43 +95,36 @@
   //   return JSON.stringify(gettooltipobj.value)
   // })
 
-  function _getVariantInTooltip(v: string): ElTypeVariant {
+  function _getVariantInTooltip(v: string): PSeverity {
     if (v === 'failed') {
       return 'danger'
     }
     if (v === '' || v === 'None' || v === 'none' || v === 'not_installed')
-      return undefined
+      return 'secondary' // gray
 
     if (v === 'successful' || v === 'installed') {
       return 'success'
     }
-    return 'warning'
+    return 'warn'
   }
   const TooltipCell = () => {
     const items: any[] = []
     for (const [key, value] of Object.entries(gettooltipobj.value)) {
       items.push(
-        <>
-          <tr>
-            <td>{key}</td>
-            <td>
-              <el-tag type={_getVariantInTooltip(value)} effect="dark">
-                {value}
-              </el-tag>
-              {/* ({v}) */}
-            </td>
-          </tr>
-        </>,
+        <tr>
+          <td>{key}</td>
+          <td>
+            <p-tag severity={_getVariantInTooltip(value)}>{value}</p-tag>
+          </td>
+        </tr>,
       )
     }
     return (
-      // <li v-for={{i in selectedItems}}>
       <>
         <h6>{props.type}</h6>
         <table class="auto-table">
           <tbody> {items} </tbody>
         </table>
-        {/* <pre>{JSON.stringify(rowData)}</pre> */}
       </>
     )
   }

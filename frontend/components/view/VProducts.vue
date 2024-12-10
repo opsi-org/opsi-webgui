@@ -39,7 +39,6 @@
 
 <script setup lang="tsx">
   import type { IProductTypes, T_Client2Depot } from '~/types/APItypes'
-  import type { IObjectString2ObjectString2String } from '~/types/tgeneral'
   import { useIcons } from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useNavigate } from '~/composables/mixins/useNavigateTo'
@@ -50,6 +49,9 @@
   import BTNRowLink from '~/components/button/BTNRowLink.vue'
   import Checkbox from 'primevue/checkbox'
   import RadioButton from 'primevue/radiobutton'
+  import TCBadgeCompares from '../tablecell/TCBadgeCompares.vue'
+  import TTooltip from '../tooltip/TTooltip.vue'
+  import TCProductRequest from '../tablecell/TCProductRequest.vue'
 
   const { notifyInfo, notifyError } = useNotification()
   // const { notifyError } = useNotification()
@@ -150,7 +152,7 @@
         return (
           <>
             {clientSelection.value.length > 0 ? (
-              <tablecellTCBadgeCompares
+              <TCBadgeCompares
                 type="installationStatus"
                 rowid={rowData.productId}
                 values={
@@ -182,7 +184,7 @@
           <>
             {/* v-if={clientSelection.value.length > 0} */}
             {clientSelection.value.length > 0 ? (
-              <tablecellTCBadgeCompares
+              <TCBadgeCompares
                 type="actionResult"
                 rowid={rowData.productId}
                 values={
@@ -236,7 +238,7 @@
       title: $t('table.fields.version'),
       key: 'version',
       sortable: true,
-      visible: false,
+      visible: true,
       cellRenderer: ({ rowData }: any) => {
         const tt = (
           <ul>
@@ -267,20 +269,21 @@
           </ul>
         )
         return (
-          <el-tooltip
-            class="box-item"
-            effect="dark"
-            placement="left-start"
-            v-slots={{ content: () => tt }}
-          >
-            {/* TODO: check if this works for different versions of server/clients */}
-            <TCProductVersionCell
-              type="depotVersions"
-              row={rowData}
-              clients2depots={fetchedDataClients2Depots.value}
-              onDetails={toggleDetailsTooltip}
-            />
-          </el-tooltip>
+          <TTooltip
+            v-slots={{
+              default: () => (
+                //* TODO: check if this works for different versions of server/clients */
+                <TCProductVersionCell
+                  type="depotVersions"
+                  row={rowData}
+                  clients2depots={fetchedDataClients2Depots.value}
+                />
+              ),
+              tooltip: () => tt,
+            }}
+          />
+          // {/* onDetails={toggleDetailsTooltip} */}
+          // tooltip: () => tt,
         )
       },
     },
@@ -288,7 +291,7 @@
       title: $t('table.fields.actionProgress'),
       key: 'actionProgress',
       sortable: true,
-      visible: clientSelection.value.length > 0,
+      visible: false, //clientSelection.value.length > 0,
     },
     {
       title: $t('table.fields.actionRequest'),
@@ -299,18 +302,17 @@
         ? undefined
         : () => {
             return (
-              <tablecellTCProductRequest
-                modelValue={{}}
+              <TCProductRequest
                 title={$t('form.tooltip.actionRequest')}
                 save={saveActionRequests}
-                selectedClients={clientSelection.value}
               />
             )
+            // {/* selectedClients={clientSelection.value} */}
           },
       cellRenderer: ({ rowData }: any) => {
         // const sel = (props.selectedClient) ? [props.selectedClient]: clientSelection.value
         return (
-          <tablecellTCProductRequest
+          <TCProductRequest
             // request={rowData.actionRequest || 'none'}
             // requestoptions={[...rowData.actions]}
             modelValue={rowData}
@@ -348,17 +350,15 @@
           // }
         }
         return (
-          <>
-            <div class="flex flex-row">
-              <BTNRowLink
-                is-pressed={
-                  navigation.rowactionConfigChecked.value[rowData.productId]
-                }
-                icon={icons.settings}
-                onOnClick={change}
-              />
-            </div>
-          </>
+          <div class="flex flex-row">
+            <BTNRowLink
+              is-pressed={
+                navigation.rowactionConfigChecked.value[rowData.productId]
+              }
+              icon={icons.settings}
+              onOnClick={change}
+            />
+          </div>
         )
       },
     },
@@ -624,14 +624,5 @@
     else throw new Error('Unknown product type ' + type)
 
     productsRef.value?.refetch()
-  }
-
-  function toggleDetailsTooltip(
-    row: any,
-    tooltiptext: IObjectString2ObjectString2String,
-  ) {
-    console.warn('Details not implemented: ', row, tooltiptext)
-    // (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
-    // row.toggleDetails()
   }
 </script>
