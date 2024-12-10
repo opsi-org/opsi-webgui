@@ -7,8 +7,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    PAccordion: typeof import('primevue/accordion')['default']
-    PAccordionPanel: typeof import('primevue/accordionpanel')['default']
     PFloatLabel: typeof import('primevue/floatlabel')['default']
     PPopover: typeof import('primevue/popover')['default']
     PSelect: typeof import('primevue/select')['default']
