@@ -50,7 +50,6 @@
   import Checkbox from 'primevue/checkbox'
   import RadioButton from 'primevue/radiobutton'
   import TCBadgeCompares from '../tablecell/TCBadgeCompares.vue'
-  import TTooltip from '../tooltip/TTooltip.vue'
   import TCProductRequest from '../tablecell/TCProductRequest.vue'
 
   const { notifyInfo, notifyError } = useNotification()
@@ -239,47 +238,11 @@
       sortable: true,
       visible: true,
       cellRenderer: ({ rowData }: any) => {
-        const tt = (
-          <ul>
-            <li>
-              {$t('table.fields.version.tooltip.serverversions')}{' '}
-              {rowData.depotVersions
-                ? Object.values(rowData.depotVersions).join(', ')
-                : ''}
-            </li>
-            <li>
-              {$t('table.fields.version.tooltip.clientversions')}{' '}
-              {rowData.clientVersions
-                ? Object.values(rowData.clientVersions).join(', ')
-                : ''}
-            </li>
-            <li>
-              {$t('table.fields.version.tooltip.depot_version_diff')}{' '}
-              {rowData.depot_version_diff ? $t('yes') : $t('no')}
-            </li>
-            <li>
-              {$t('table.fields.version.tooltip.client_version_diff')}{' '}
-              {rowData.client_version_outdated ? $t('yes') : $t('no')}
-            </li>
-            <li>
-              {$t('table.fields.version.tooltip.not_on_all_depots')}{' '}
-              {rowData.not_on_all_depots ? $t('yes') : $t('no')}
-            </li>
-          </ul>
-        )
         return (
-          <TTooltip
-            v-slots={{
-              default: () => (
-                //* TODO: check if this works for different versions of server/clients */
-                <TCProductVersionCell
-                  type="depotVersions"
-                  row={rowData}
-                  clients2depots={fetchedDataClients2Depots.value}
-                />
-              ),
-              tooltip: () => tt,
-            }}
+          <TCProductVersionCell
+            type="depotVersions"
+            row={rowData}
+            clients2depots={fetchedDataClients2Depots.value}
           />
           // {/* onDetails={toggleDetailsTooltip} */}
           // tooltip: () => tt,

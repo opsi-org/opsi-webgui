@@ -1,12 +1,7 @@
 <template>
   <el-form-item>
     <template #label>
-      <el-tooltip
-        class="box-item"
-        effect="dark"
-        :show-after="1000"
-        placement="top-start"
-      >
+      <TooltipTTooltip class="box-item">
         <template #default>
           <el-text class="truncate">
             <IconIConfigState :item="props.item">
@@ -15,7 +10,7 @@
           </el-text>
         </template>
 
-        <template #content>
+        <template #tooltip>
           <div class="min-w-48">
             <b>{{ props.item[props.idKey] }} <br /></b>
             {{ props.item.description }} <br />
@@ -34,7 +29,7 @@
             </div>
           </div>
         </template>
-      </el-tooltip>
+      </TooltipTTooltip>
     </template>
     <template #default>
       <el-checkbox
@@ -58,14 +53,11 @@
         :tag-type="undefined"
       >
         <template #default>
-          <el-tooltip
+          <TooltipTTooltip
             v-for="pVal in props.item[props.allValuesKey]"
             class="box-item"
-            effect="dark"
             :content="pVal"
             :key="pVal"
-            :show-after="1000"
-            placement="top-start"
           >
             <el-option
               class="max-w-96"
@@ -73,20 +65,15 @@
               :label="pVal"
               :value="pVal"
             />
-          </el-tooltip>
+          </TooltipTTooltip>
         </template>
         <template #header v-if="props.item.editable">
           <el-text> {{ $t('treeselect.searchOrAdd') }} </el-text>
         </template>
         <template #prefix v-if="props.item.editable">
-          <el-tooltip
-            class="box-item"
-            effect="dark"
-            :content="$t('form.item.editable')"
-            placement="top-start"
-          >
+          <TooltipTTooltip :content="$t('form.item.editable')">
             <el-text><IconIIcon :icon="icons.add" /></el-text>
-          </el-tooltip>
+          </TooltipTTooltip>
         </template>
       </el-select>
     </template>

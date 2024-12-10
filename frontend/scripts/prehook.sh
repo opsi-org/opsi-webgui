@@ -4,9 +4,9 @@ echo "====================================================== Check test files"
 # bash ./scripts/playwright_coverage_by_files.sh
 # rm $file
 
-npm run lint
+npm run lint || exit_code=$?
 
-npm run tsc
+npm run tsc || exit_code=$?
 
 echo "======================================================"
 cd -

@@ -3,7 +3,7 @@
     <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoading">
       <IconIIcon
         :icon="getIcon(props.icon)"
-        :title="$t('label.clientaction')"
+        :title="$t('button.tablerow.moreoptions')"
       />
       <IconILoading
         v-if="isLoading"
