@@ -9,15 +9,14 @@ export default withNuxt(
     ignores: [
       'node_modules/',
       'dist/*',
-      './package-dry.json',
-      './package.json',
       'package.json',
-      './locale/*.json',
+      'package.json',
+      // 'locale/*.json',
       '.vscode/*.json',
       '**/*/tsconfig.json',
       'vuex-persist.js',
       'tests/',
-      'pages/*.test.unit.js',
+      '**/*.test.unit.js',
     ],
   },
   {
