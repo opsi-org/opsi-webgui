@@ -1,11 +1,11 @@
 <template>
-  <el-tooltip :type="type" placement="bottom-end">
-    <template #content> <TooltipCell /> </template>
-
+  <div>
     <div
       :id="`TCBadgeCompares_${type}_hover_${rowid}`"
       class="TCBadgeCompares"
       data-testid="TCBadgeCompares"
+      @mouseenter="op.toggle"
+      @mouseleave="op.toggle"
     >
       <TablecellTCProductInstallationStatus
         v-if="type == 'installationStatus' && gettext == 'mixed'"
@@ -33,13 +33,15 @@
         <el-text>{{ gettext }}</el-text>
       </el-tag>
     </div>
-  </el-tooltip>
+    <PPopover ref="op"> <TooltipCell /> </PPopover>
+  </div>
 </template>
 
 <script lang="tsx" setup>
-  import type { ElTypeVariant } from '~/types/LibComponentTypes'
+  import type { PSeverity } from '~/types/LibComponentTypes'
   import type { IObjectString2String } from '~/types/tgeneral'
 
+  const op = ref()
   const props = defineProps({
     rowid: { type: String, default: '' },
     type: { type: String, default: '' },
@@ -51,7 +53,7 @@
     actionResult: 'none',
     installationStatus: 'not_installed',
   }
-  const getvariant = computed<ElTypeVariant>(() => {
+  const getvariant = computed<PSeverity>(() => {
     if (props.values?.includes('failed')) {
       return 'danger'
     }
@@ -68,7 +70,7 @@
     ) {
       return 'success'
     }
-    return 'warning'
+    return 'warn'
   })
 
   const gettext = computed<string>(() => {
@@ -89,43 +91,36 @@
     )
   })
 
-  function _getVariantInTooltip(v: string): ElTypeVariant {
+  function _getVariantInTooltip(v: string): PSeverity {
     if (v === 'failed') {
       return 'danger'
     }
     if (v === '' || v === 'None' || v === 'none' || v === 'not_installed')
-      return undefined
+      return 'secondary' // gray
 
     if (v === 'successful' || v === 'installed') {
       return 'success'
     }
-    return 'warning'
+    return 'warn'
   }
   const TooltipCell = () => {
     const items: any[] = []
     for (const [key, value] of Object.entries(gettooltipobj.value)) {
       items.push(
-        <>
-          <tr>
-            <td>{key}</td>
-            <td>
-              <el-tag type={_getVariantInTooltip(value)} effect="dark">
-                {value}
-              </el-tag>
-              {/* ({v}) */}
-            </td>
-          </tr>
-        </>,
+        <tr>
+          <td>{key}</td>
+          <td>
+            <p-tag severity={_getVariantInTooltip(value)}>{value}</p-tag>
+          </td>
+        </tr>,
       )
     }
     return (
-      // <li v-for={{i in selectedItems}}>
       <>
         <h6>{props.type}</h6>
         <table class="auto-table">
           <tbody> {items} </tbody>
         </table>
-        {/* <pre>{JSON.stringify(rowData)}</pre> */}
       </>
     )
   }

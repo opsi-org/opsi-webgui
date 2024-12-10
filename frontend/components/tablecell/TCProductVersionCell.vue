@@ -6,7 +6,7 @@
       class="TCProductVersionCell_hover text-small"
     >
       <el-text>{{
-        rowitem.depot_version_diff ? ' ' : rowitem.depotVersions[0]
+        rowitem.depot_version_diff ? ' ' : rowitem.depotVersions?.[0]
       }}</el-text>
       <IconIDetails
         v-if="rowitem.depot_version_diff"
