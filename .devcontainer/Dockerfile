@@ -37,7 +37,12 @@ RUN echo 'alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.N
 RUN echo 'alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"'  >> /root/.zshrc
 
 RUN npm install -g n
-RUN n lts
+# node versio
+RUN n 23.4.0
+# npm version
+RUN npm install -g npm@10.9.2
+RUN export NODE_OPTIONS='--disable-warning=ExperimentalWarning'
+
 
 WORKDIR /workspace/
 # USER ${DEV_USER}

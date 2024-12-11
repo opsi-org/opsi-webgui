@@ -13,12 +13,15 @@
   "[yml]": {
     "prettier.singleQuote": false
   },
+  "[python]": {
+    "diffEditor.ignoreTrimWhitespace": false
+  },
   "actionButtons": {
     "commands": [
       {
         // BUILD WEBGUI
         "color": "white",
-        "command": "npm run clean && npm i --verbose",
+        "command": "npm run clean-full",
         "cwd": "/workspace/frontend",
         "name": "$(timeline-refresh)3",
         "singleInstance": true,
