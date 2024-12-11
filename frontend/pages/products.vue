@@ -9,7 +9,7 @@
     <template #default>
       <ViewVProducts
         v-if="path[0] === 'products'"
-        :product-type="route.params.producttype as string"
+        :product-type="productType"
         :is-child="false"
         :is-mobile="mq.isMobile.value"
         v-bind="route.query"
@@ -34,6 +34,9 @@
     return s
   })
 
+  const productType = computed(() => {
+    return route.params.producttype as string
+  })
   const isMobile = computed(() => {
     return mq.isMobile.value
   })

@@ -14,7 +14,7 @@
   const $t = useI18n().t
   const groupActions = reactive([
     {
-      category: 'client-group',
+      category: 'client-group', // for translation key search: $t('title.client-group')
       actions: {
         maingroups: ['group-add'],
         parent: ['edit', 'delete', 'client-delete', 'client-add', 'group-add'],
@@ -23,7 +23,7 @@
     },
     // TODO: Add 'group-add' and 'edit' to the list prodGroups.actions.parent
     {
-      category: 'product-group',
+      category: 'product-group', // for translation key search: $t('title.product-group')
       actions: {
         parent: ['delete', 'product-delete', 'product-add'],
         children: ['delete'],

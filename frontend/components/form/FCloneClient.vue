@@ -120,15 +120,17 @@
   function getDefaultCloneClient() {
     return {
       target: {
-        hostId: '',
-        ipAddress: '',
-        hardwareAddress: '',
-        systemUUID: '',
+        // for translation key search $t('title.target')
+        hostId: '', // $t('table.fields.hostId')
+        ipAddress: '', // $t('table.fields.ipAddress')
+        hardwareAddress: '', // $t('table.fields.hardwareAddress')
+        systemUUID: '', // $t('table.fields.systemUUID')
       },
       options: {
-        configs: false,
-        products: false,
-        productProperties: false,
+        // $t('title.options')
+        configs: false, // $t('table.fields.configs')
+        products: false, // $t('table.fields.products')
+        productProperties: false, // $t('table.fields.productProperties')
       },
     }
   }

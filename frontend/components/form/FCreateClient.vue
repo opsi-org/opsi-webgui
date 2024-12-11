@@ -293,20 +293,24 @@
   function getDefaultCreateClient(): IClientObject {
     return {
       basics: {
-        hostId: '',
-        description: '',
-        inventoryNumber: '',
-        hardwareAddress: '',
-        ipAddress: null,
-        notes: '',
+        // for translation key search $t('title.basics')
+        hostId: '', // $t('table.fields.hostId')
+        description: '', // $t('table.fields.description')
+        inventoryNumber: '', // $t('table.fields.inventoryNumber')
+        hardwareAddress: '', // $t('table.fields.hardwareAddress')
+        ipAddress: null, // $t('table.fields.ipAddress')
+        notes: '', // $t('table.fields.notes')
       },
       assignments: {
-        depot: '',
-        group: [],
+        // $t('title.assignments')
+        depot: '', // $t('table.fields.depot')
+        group: [], // $t('table.fields.group')
       },
       initialSetup: {
-        netbootProduct: [],
+        // $t('title.initialSetup')
+        netbootProduct: [], // $t('table.fields.netbootProduct')
         opsiClientAgent: {
+          // $t('table.fields.opsiClientAgent')
           setup: false,
           username: '',
           password: '',

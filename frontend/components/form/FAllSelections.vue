@@ -72,8 +72,8 @@
   const icons = useIcons()
   const storeSelection: IObjectString2Any = storeSelections()
   const selectionDisplayList = ref<Array<string>>([
-    'Depots',
-    'Clients',
-    'Products',
+    'Depots', // for translation key search $t('title.depots')
+    'Clients', // $t('title.clients')
+    'Products', // $t('title.products')
   ])
 </script>

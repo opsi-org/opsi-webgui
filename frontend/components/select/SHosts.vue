@@ -5,6 +5,7 @@
     :placeholder="$t('formselect.select.' + type)"
     style="min-width: 200px"
   >
+    <!-- for translation key search $t('formselect.select.clients'), $t('formselect.select.servers') -->
     <el-option
       v-for="item in fetchedData"
       :key="item"
@@ -15,6 +16,7 @@
 </template>
 
 <script setup lang="tsx">
+  import type { PropTypeServerClient } from '~/types/tproptypes'
   import { useClient, useDepot } from '~/composables/mixins/useGet'
   const $t = useI18n().t
   const storeSel = storeSelections()
@@ -22,7 +24,10 @@
   const value = ref<string | undefined>()
   const props = defineProps({
     id: { type: String, default: undefined },
-    type: { type: String, default: 'servers' },
+    type: {
+      type: String as PropType<PropTypeServerClient>,
+      default: 'servers',
+    },
   })
   const emit = defineEmits(['update:value'])
   onMounted(async () => {

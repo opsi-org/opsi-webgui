@@ -25,6 +25,7 @@ export default withNuxt(
     // Your custom configs here
     // https://eslint.nuxt.com/packages/module
     rules: {
+      'example/enforce-foo-bar': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
       'vue/attributes-order': 'off',
       'vue/html-self-closing': 'off',

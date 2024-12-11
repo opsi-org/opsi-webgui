@@ -15,5 +15,4 @@
   const _props = defineProps({
     item: { type: Object, required: true },
   })
-  const $t = useI18n().t
 </script>

@@ -153,6 +153,7 @@
   const productActions = ref({
     // to add a help button with tooltip after the category title, simply add translation key: title.<category>.help.content to the english translation file (example title.conditions.help.content)
     conditions: {
+      // for translation kex search: $t('title.conditions') // $t('title.conditions.help.content')
       instStatus: {
         value: NOT_APPLIED,
         options: ['not_installed', 'installed', 'unknown'], // will be fetched from backend. its just the default values
@@ -164,6 +165,7 @@
       outdatedonclient: false,
     },
     possibleActions: {
+      // for translation kex search: $t('title.possibleActions')
       rowactions: {
         options: [
           'none',
@@ -189,6 +191,7 @@
       },
     },
     demo: {
+      // for translation kex search: $t('title.demo')
       demoInfo: $t('label.quickaction.demo.info'),
       demoResult: undefined,
     },
