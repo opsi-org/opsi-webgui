@@ -2,6 +2,7 @@ import os
 import argparse
 import subprocess
 import json
+import sys
 import urllib.request
 from datetime import datetime
 
@@ -71,7 +72,7 @@ class VersionShower:
 
     @staticmethod
     def print_table(results, width, sort_by):
-
+        packagejson = json.loads(open('package.json').read())
         header =  f"{'name':<{width['package']}}"
         header += f"{'current':<{width['version']}}"
         header += f"{'latest':<{width['latest']}} "
@@ -80,15 +81,20 @@ class VersionShower:
         print(f"{header}\n{'-' * len(header)}")
         results.sort(key=lambda x: str(x[sort_by]) or '')
         for result in results:
-            time_diff_latest = str(result['time_diff_latest']) + " days ago" if result['time_diff_latest'] > -1 else ''
+            time_diff_latest = (str(result['time_diff_latest'] if result['time_diff_latest'] > -1 else result['time_diff_current']))  + " days ago"
+            time_diff_num = width['time_diff_latest'] if result['time_diff_latest'] > result['time_diff_current'] else width['time_diff_current']
 
             row_current = f"{result['package']:<{width['package']}}"
             row_current += f"{result['version']:<{width['version']}}"
 
             row_latest = f" {result['latest']:<{width['latest']}} "
-            row_latest += f"{time_diff_latest: >{width['time_diff_latest'] + 9}}"
-
-            print(f"{result['color']}{row_current}{bcolors.OKGREEN}{row_latest}{bcolors.ENDC} {result['comment']}")
+            row_latest += f"{time_diff_latest: >{time_diff_num + 9}}"
+            if not result['is_outdated']:
+                print(f"{result['color']}{row_current}{row_latest} {result['comment']}")
+            else:
+                print(f"{result['color']}{row_current}{bcolors.OKGREEN}{row_latest}{bcolors.ENDC} {result['comment']}")
+            if packagejson.get('dependenciesComments', {}).get(result['_package'], '') != '':
+                print(f"  -> {packagejson['dependenciesComments'][result['_package']]}")
 
     @staticmethod
     def add_package_info(package_name, version, packages_outdated, results, only_outdated=False, warn_days=7, error_days=30):
@@ -102,6 +108,7 @@ class VersionShower:
         time_diff_current = VersionShower.format_time_difference(publish_current)
         time_diff_latest = time_diff_latest if time_diff_latest != '' and time_diff_latest != 'unknown' and time_diff_latest != time_diff_current else -1
         results.append({
+            "_package": package_name,
             "package": package_name,
             "version": version,
             "wanted": packages_outdated.get(package_name, {}).get('wanted', ''),

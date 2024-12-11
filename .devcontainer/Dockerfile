@@ -35,16 +35,20 @@ RUN git config --global user.email "${DEV_GIT_EMAIL}"
 
 RUN echo 'alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"' >> /root/.zshrc
 RUN echo 'alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"'  >> /root/.zshrc
+WORKDIR /workspace/frontend
+RUN npm completion >> ~/.zshrc
+# WORKDIR /workspace/
 
 RUN npm install -g n
-# node versio
-RUN n 23.4.0
+# node version
+RUN n lts
+# RUN n 23.0.0
 # npm version
-RUN npm install -g npm@10.9.2
+# RUN npm install -g npm@10.9.2
+
 RUN export NODE_OPTIONS='--disable-warning=ExperimentalWarning'
 
 
-WORKDIR /workspace/
 # USER ${DEV_USER}
 USER root
 CMD ["/usr/bin/zsh"]
