@@ -57,12 +57,7 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
 
 - opsiconfd will be available at `https://localhost:4447` and webgui at `https://localhost:8888`
 - **Starting webgui**: `cd /workspace/frontend/ && npm run dev` or Start 'webgui' in 'Run and Debug' section (same as F5)
-- **Restarting opsiconfd**: `opsiconfdrestart` or `opsiconfdcontainer supervisorctl reload` for updating e.g. `opsiconfdcontainer apt update -y`
-  if this command does not exists, run following and try again:
-  ```
-  alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"
-  alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"
-  ```
+- **Restarting opsiconfd**: `opsiconfdrestart` or `opsiconfdcontainer supervisorctl reload` for updating use e.g. `opsiconfdcontainer apt update -y`
 - Accept certificate of opsiconfd: `https://localhost:4447/admin`
 
 ### Contributing
