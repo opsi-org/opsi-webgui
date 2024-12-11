@@ -64,6 +64,7 @@
     "lint": "eslint .",
     "lint:all": "npx nuxi typecheck && eslint .",
     "lint:fix": "eslint . --fix",
+    "lint:missing-i18n": "python3 scripts/compare_translation_keys.py -s",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "pwtest:access": "playwright test -c tests-configs/playwright-all-accessibility.config.ts",
