@@ -28,7 +28,14 @@ export default withNuxt(
       '@typescript-eslint/no-explicit-any': 'off',
       'vue/attributes-order': 'off',
       'vue/html-self-closing': 'off',
-
+      // '@intlify/vue-i18n/no-unused-keys': [
+      //   'warn',
+      //   {
+      //     extensions: ['.vue', '.ts', '.js'],
+      //     enableFix: false,
+      //     ignores: ['**/*.test.*', '**/*.story.*'],
+      //   },
+      // ],
       // console error and warn are allowed
       'no-console': [
         'error',
