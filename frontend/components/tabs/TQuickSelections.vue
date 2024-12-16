@@ -35,10 +35,10 @@
   const $t = useI18n().t
   const storeSelection: any = storeSelections()
   const quickSelDisplayList = reactive([
-    { name: 'infoselections', store: '' },
-    { name: 'depots', store: 'selectionDepots' },
-    { name: 'client-group', store: 'selectionClients' },
-    { name: 'product-group', store: 'selectionProducts' },
+    { name: 'infoselections', store: '' }, // for translation key search: $t('title.infoselections')
+    { name: 'depots', store: 'selectionDepots' }, // for translation key search: $t('title.depots')
+    { name: 'client-group', store: 'selectionClients' }, // for translation key search: $t('title.client-group')
+    { name: 'product-group', store: 'selectionProducts' }, // for translation key search: $t('title.product-group')
   ])
   const activeName = ref<string>('infoselections')
   function getIcon(icon: string) {

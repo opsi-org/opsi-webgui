@@ -85,5 +85,6 @@
 
   const showModal = () => {
     alert($t('form.multiselection.cbvalue.error'))
+    // alert($t('form.multiselection.cbValue.content')) # TODO: Button to select all
   }
 </script>

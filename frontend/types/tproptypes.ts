@@ -1,4 +1,2 @@
-// type TTypeServerClient = 'servers' | 'clients';
 export type PropTypeServerClient = 'servers' | 'clients'
-
-// export type PropType<T> = T;
+// for translation key search $t('formselect.select.clients'), $t('formselect.select.servers') -->

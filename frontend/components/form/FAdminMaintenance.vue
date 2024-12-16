@@ -97,6 +97,7 @@
               :key="item"
               >{{ $t('label.' + item) }}</el-radio
             >
+            <!-- for transation keys: $t('label.backup'), $t('label.local'), $t('label.new') -->
           </el-radio-group>
           <el-input
             class="ml-2"
@@ -167,19 +168,21 @@
     file_id: string
   }
   const adminTasks = reactive({
-    applicationState: ['current', 'setup'],
+    applicationState: ['current', 'setup'], // for translation key search: $t('title.applicationState'), $t('label.applicationState.current'), $t('label.applicationState.setup')
     createBackup: {
-      config_files: true,
-      redis_data: false,
-      maintenance_mode: false,
-      password: '',
+      // for translation key search: $t('title.createBackup')
+      config_files: true, // for translation key search: $t('label.config_files')
+      redis_data: false, // for translation key search: $t('label.redis_data')
+      maintenance_mode: false, // for translation key search: $t('label.maintenance_mode')
+      password: '', // for translation key search: $t('label.password')
     },
     restoreBackup: {
-      file_id: '',
-      config_files: false,
-      redis_data: false,
-      server_id: 'backup',
-      password: '',
+      // for translation key search: $t('title.restoreBackup')
+      file_id: '', // for translation key search: $t('label.file_id')
+      config_files: false, // for translation key search: $t('label.config_files')
+      redis_data: false, // for translation key search: $t('label.redis_data')
+      server_id: 'backup', // for translation key search: $t('label.server_id')
+      password: '', // for translation key search: $t('label.password')
     },
   })
   const $t = useI18n().t

@@ -69,6 +69,7 @@
 </template>
 
 <script setup lang="ts">
+  import type { PropTypeServerClient } from '~/types/tproptypes'
   import type { T_ClientLog } from '~/types/APItypes'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useMBus } from '~/composables/mixins/useMessagebus'
@@ -83,7 +84,10 @@
 
   const props = defineProps({
     id: { type: String, default: '' },
-    type: { type: String, default: 'clients' },
+    type: {
+      type: String as PropType<PropTypeServerClient>,
+      default: 'clients',
+    },
     isChild: { type: Boolean, default: false },
   })
 

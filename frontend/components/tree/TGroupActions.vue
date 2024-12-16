@@ -256,16 +256,16 @@
   }
 
   const createGroup = reactive<{ [k: string]: string }>({
-    parentGroupId: '',
-    groupId: '',
-    description: '',
-    notes: '',
+    parentGroupId: '', // for translation key search: $t('table.fields.parentGroupId')
+    groupId: '', // for translation key search: $t('table.fields.groupId')
+    description: '', // for translation key search: $t('table.fields.description')
+    notes: '', // for translation key search: $t('table.fields.notes')
   })
 
   const editgroup = reactive<{ [k: string]: string }>({
-    parent: '',
-    description: '',
-    notes: '',
+    parent: '', // for translation key search: $t('table.fields.parent')
+    description: '', // for translation key search: $t('table.fields.description')
+    notes: '', // for translation key search: $t('table.fields.notes')
   })
 
   const debouncedFetchClientGroups = debounce(fetchClientGroups, 300)

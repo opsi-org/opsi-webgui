@@ -81,8 +81,8 @@
 
   const $t = useI18n().t
   const adminTasks = reactive({
-    clients: ['unblock', 'unblockAll'],
-    products: ['unlock', 'unlockAll'],
+    clients: ['unblock', 'unblockAll'], // for translation key search: $('title.clients'), $('label.clients.unblock'), $('label.clients.unblockAll')
+    products: ['unlock', 'unlockAll'], // for translation key search: $('title.products') $('label.products.unlock'), $('label.products.unlockAll')
   })
   const mq = useMQ()
   const selected = ref({

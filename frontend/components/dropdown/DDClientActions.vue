@@ -121,11 +121,11 @@
   const isLoading = ref<boolean>(false)
   const notifyText = ref<string>('')
   const clientActions = ref<Array<string>>([
-    'ondemand',
-    'notify',
-    'reboot',
-    'deployclientagent',
-    'delete',
+    'ondemand', // for translation key search: $t('button.event.ondemand')
+    'notify', // for translation key search: $t('button.event.notify')
+    'reboot', // for translation key search: $t('button.event.reboot')
+    'deployclientagent', // for translation key search: $t('button.event.deployclientagent')
+    'delete', // for translation key search: $t('button.event.delete')
   ])
   const opsiClientAgent = ref<IObjectString2String>({
     username: '',

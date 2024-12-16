@@ -6,6 +6,8 @@ echo "====================================================== Check test files"
 
 npm run lint || exit_code=$?
 
+npm run lint:missing-i18n || exit_code=$?
+
 npm run tsc || exit_code=$?
 
 echo "======================================================"
