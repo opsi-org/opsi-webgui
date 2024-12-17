@@ -318,7 +318,7 @@
       }
       fetchedData.value = groupsHelper.transformToNestedArray(data.value)
     } catch (err) {
-      notifyError({ message: err })
+      notifyError({ message: (err as Error).message })
     }
   }
 
@@ -346,7 +346,7 @@
       const groups = data.value['groups']
       fetchedData.value = groupsHelper.transformToNestedArray(groups)
     } catch (err) {
-      notifyError({ message: err })
+      notifyError({ message: (err as Error).message })
     }
   }
 
@@ -367,7 +367,7 @@
         (item: { productId: any }) => item.productId,
       )
     } catch (err) {
-      notifyError({ message: err })
+      notifyError({ message: (err as Error).message })
     }
   }
 
@@ -390,7 +390,7 @@
       })
       await refetchGroup()
     } catch (err) {
-      notifyError({ message: err })
+      notifyError({ message: (err as Error).message })
     }
   }
 
@@ -412,7 +412,7 @@
       })
       await refetchGroup()
     } catch (err) {
-      notifyError({ message: err })
+      notifyError({ message: (err as Error).message })
     }
   }
 
@@ -434,7 +434,7 @@
       })
       await refetchGroup()
     } catch (err) {
-      notifyError({ message: err })
+      notifyError({ message: (err as Error).message })
     }
   }
 
@@ -474,7 +474,7 @@
       })
       await refetchGroup()
     } catch (err) {
-      notifyError({ message: err })
+      notifyError({ message: (err as Error).message })
     }
   }
 
@@ -498,7 +498,7 @@
       })
       await refetchGroup()
     } catch (err) {
-      notifyError({ message: err })
+      notifyError({ message: (err as Error).message })
     }
   }
 
@@ -520,7 +520,7 @@
       })
       await refetchGroup()
     } catch (err) {
-      notifyError({ message: err })
+      notifyError({ message: (err as Error).message })
     }
   }
 
