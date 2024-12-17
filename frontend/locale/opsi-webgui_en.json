@@ -311,5 +311,6 @@
   "treeselect.noResultTextEditable": "Not such item found",
   "treeselect.nooption": "No options available.",
   "treeselect.search": "Search",
-  "treeselect.searchOrAdd": "Search or add item"
+  "treeselect.searchOrAdd": "Search or add item",
+  "message.warning.unsaved_changes": "You have unsaved changes. Are you sure you want to leave this page without saving?"
 }
