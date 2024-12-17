@@ -1,5 +1,5 @@
 <template>
-  <ViewVConfig type="clients" :is-child="false" :id="id" />
+  <ViewVHostConfig type="clients" :is-child="false" :id="id" />
 </template>
 
 <script setup lang="ts">

@@ -23,7 +23,7 @@
           <ViewVClients :is-mobile="false" @change="changeId" />
         </template>
         <template #page1>
-          <ViewVConfig
+          <ViewVHostConfig
             :is-child="true"
             :id="store.selectionClients[0]"
             type="clients"

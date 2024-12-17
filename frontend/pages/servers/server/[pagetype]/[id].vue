@@ -14,7 +14,7 @@
       "
       ><IconIIcon :icon="icons.x"
     /></el-button>
-    <ViewVConfig
+    <ViewVHostConfig
       v-if="pagetype === 'config'"
       :type="type"
       :id="id"
