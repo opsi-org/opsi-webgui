@@ -7,54 +7,46 @@
       v-if="hostAttributes.length && hostAttributes[0]"
       label-width="200px"
       class="w-full"
+      v-loading="isLoading"
     >
-      <div v-for="(value, label) in hostAttributes[0]" :key="label">
-        <el-form-item :label="`${$t('table.fields.' + label)}`">
-          <el-checkbox
-            v-if="typeof value === 'boolean'"
-            v-model="hostAttributes[0][label]"
-            :value="value"
-            :disabled="notEditable.includes(label)"
-          />
-          <el-input
-            v-else-if="isInputPasswordLabel(label)"
-            v-model="hostAttributes[0][label]"
-            :value="value"
-            show-password
-            :disabled="notEditable.includes(label)"
-          />
-          <el-input
-            v-else-if="isInputDateLabel(label)"
-            :value="useFormat().date(value)"
-            disabled
-          />
-          <el-input
-            v-else
-            v-model="hostAttributes[0][label]"
-            :value="value"
-            :disabled="notEditable.includes(label)"
-          />
-        </el-form-item>
+      <div class="h-[70vh] overflow-y-auto">
+        <div v-for="(value, label) in hostAttributes[0]" :key="label">
+          <el-form-item :label="`${$t('table.fields.' + label)}`">
+            <el-checkbox
+              v-if="typeof value === 'boolean'"
+              v-model="hostAttributes[0][label]"
+              :value="value"
+              :disabled="notEditable.includes(label)"
+              @change="setUnsavedChanges"
+            />
+            <el-input
+              v-else-if="isInputPasswordLabel(label)"
+              v-model="hostAttributes[0][label]"
+              :value="value"
+              show-password
+              :disabled="notEditable.includes(label)"
+              @input="setUnsavedChanges"
+            />
+            <el-input
+              v-else-if="isInputDateLabel(label)"
+              :value="useFormat().date(value)"
+              disabled
+            />
+            <el-input
+              v-else
+              v-model="hostAttributes[0][label]"
+              :value="value"
+              :disabled="notEditable.includes(label)"
+              @input="setUnsavedChanges"
+            />
+          </el-form-item>
+        </div>
       </div>
-    </el-form>
-    <el-form
-      v-if="
-        hostAttributes.length &&
-        hostAttributes[0] &&
-        hostAttributes[0].type !== 'OpsiDepotserver'
-      "
-      label-width="200px"
-      class="w-full"
-    >
-      <el-form-item>
+      <el-form-item v-if="hostAttributes[0].type !== 'OpsiDepotserver'">
         <el-button @click="resetForm">{{ $t('button.reset') }}</el-button>
         <el-button
-          :type="
-            objectEqual(hostAttributes[0], hostAttributesOriginal[0])
-              ? 'success'
-              : 'danger'
-          "
-          :disabled="objectEqual(hostAttributes[0], hostAttributesOriginal[0])"
+          :type="hasUnsavedChanges ? 'success' : ''"
+          :disabled="!hasUnsavedChanges"
           @click="saveHostAttributes"
           >{{ $t('button.save') }}</el-button
         >
@@ -72,6 +64,7 @@
   import { useMBus } from '~/composables/mixins/useMessagebus'
   import { objectEqual } from '~/utils/scompares'
   import type { PropTypeServerClient } from '~/types/tproptypes'
+  import { onBeforeRouteLeave } from 'vue-router'
 
   const $t = useI18n().t
 
@@ -79,6 +72,8 @@
   const { notifySuccess, notifyError, notifyInfo } = useNotification()
   const hostAttributes = ref<Array<T_ServerAttr | T_ClientAttr>>([])
   const hostAttributesOriginal = ref<Array<T_ServerAttr | T_ClientAttr>>([])
+  const hasUnsavedChanges = ref(false)
+  const isLoading = ref(true)
 
   const notEditable = ['type', 'created', 'lastSeen', 'systemUUID', 'uefi']
   const props = defineProps({
@@ -103,6 +98,7 @@
   }
 
   async function fetchData() {
+    isLoading.value = true
     const url =
       props.type === 'servers'
         ? `/opsidata/servers?servers=[${props.id}]`
@@ -120,9 +116,18 @@
         )
       hostAttributes.value = data.value
       hostAttributesOriginal.value = JSON.parse(JSON.stringify(data.value))
+      hasUnsavedChanges.value = false
     } catch (error) {
       notifyError({ message: error || $t('message.error.unexpected') })
     }
+    isLoading.value = false
+  }
+
+  function setUnsavedChanges() {
+    hasUnsavedChanges.value = !objectEqual(
+      hostAttributes.value[0],
+      hostAttributesOriginal.value[0],
+    )
   }
 
   async function resetForm() {
@@ -159,6 +164,10 @@
           host: hostAttr.hostId,
         }),
       })
+      hostAttributesOriginal.value = JSON.parse(
+        JSON.stringify(hostAttributes.value),
+      )
+      hasUnsavedChanges.value = false
     } catch (error) {
       notifyError({ message: error || $t('message.error.unexpected') })
     }
@@ -183,4 +192,17 @@
       console.warn('message bus: ', msg)
     }
   }
+
+  onBeforeRouteLeave((to, from, next) => {
+    if (hasUnsavedChanges.value) {
+      const answer = window.confirm($t('message.warning.unsaved_changes'))
+      if (answer) {
+        next()
+      } else {
+        next(false)
+      }
+    } else {
+      next()
+    }
+  })
 </script>

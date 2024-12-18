@@ -1,6 +1,6 @@
 <template>
   <SelectSHosts
-    v-if="props.isChild === false"
+    v-if="!props.isChild"
     :id="currentId"
     :type="type"
     @change="setId"
@@ -11,8 +11,7 @@
         currentId ? $t('title.hostparam') : $t('title.hostparam.defaults')
       "
       name="config"
-      active
-      :disabled="!(type == 'clients' || type == 'servers')"
+      :disabled="!(type === 'clients' || type === 'servers')"
     >
       <FormFHostParameter
         v-if="activeName === 'config'"
@@ -26,13 +25,11 @@
       name="attr"
       :disabled="isIdEmpty"
     >
-      <el-scrollbar>
-        <FormFHostAttributes
-          :id="currentId"
-          :type="type"
-          :is-child="props.isChild"
-        />
-      </el-scrollbar>
+      <FormFHostAttributes
+        :id="currentId"
+        :type="type"
+        :is-child="props.isChild"
+      />
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -44,7 +41,6 @@
   const { configLastSelected } = storeToRefs(tableSettings)
   const $t = useI18n().t
 
-  const currentId = ref<string | undefined>('')
   const props = defineProps({
     id: { type: String, default: undefined },
     type: {
@@ -53,30 +49,29 @@
     },
     isChild: { type: Boolean, default: false },
   })
-  // console.debug('VConfig', props.id, props.type, props.isChild)
 
-  currentId.value = props.id
+  const currentId = ref<string | undefined>(props.id)
   const activeName = ref(configLastSelected.value[props.type] || 'config')
 
   watch(
     () => props.id,
-    () => {
-      currentId.value = props.id
+    (newId) => {
+      currentId.value = newId
       if (isIdEmpty.value && activeName.value !== 'config') {
         activeName.value = 'config'
       }
     },
   )
+
   watch(
     () => activeName.value,
-    () => {
-      tableSettings.setConfigLastSelected(props.type, activeName.value)
+    (newActiveName) => {
+      tableSettings.setConfigLastSelected(props.type, newActiveName)
     },
   )
 
-  const isIdEmpty = computed(() => {
-    return currentId.value === ''
-  })
+  const isIdEmpty = computed(() => !currentId.value)
+
   function setId(id: string) {
     currentId.value = id
   }

@@ -1,36 +1,67 @@
 <template>
   <div data-testid="FHostParameter">
     <br />
-    <el-alert v-if="!(props.type === 'servers' || props.id)" type="warning">
-      {{ $t('alert.select') }}</el-alert
-    >
-    <IconILoading v-else-if="isLoading" />
-    <el-collapse
-      v-else
-      v-model="activeNames"
-      class="mr-3 ml-3"
-      @change="handleCollapseValueChange"
-    >
-      <el-alert
-        v-if="fetchedData && Object.keys(fetchedData).length === 0"
-        type="warning"
-        >{{ $t('message.warning.nodata') }}</el-alert
+    <el-alert v-if="showWarning" type="warning">
+      {{ $t('alert.select') }}
+    </el-alert>
+    <div class="h-[70vh] overflow-y-auto">
+      <el-collapse accordion v-loading="isLoading">
+        <el-collapse-item
+          v-for="(items, category) in fetchedData"
+          :key="category"
+        >
+          <template #title>
+            <strong>{{ String(category) }}</strong>
+          </template>
+          <el-form label-width="auto" class="w-full">
+            <div v-for="item in items" :key="item.configId" class="form-item">
+              <el-form-item :label="item.configId">
+                <template v-if="item.type === 'BoolConfig'">
+                  <el-checkbox
+                    v-model="itemValues[item.configId]"
+                    :disabled="config.read_only"
+                    @change="handleSelection(item, itemValues[item.configId])"
+                  ></el-checkbox>
+                </template>
+                <template v-else-if="item.type === 'UnicodeConfig'">
+                  <el-select
+                    v-model="itemValues[item.configId]"
+                    filterable
+                    :allow-create="item.editable"
+                    :multiple="item.multiValue"
+                    collapse-tags
+                    :disabled="config.read_only"
+                    @change="handleSelection(item, itemValues[item.configId])"
+                  >
+                    <template #header v-if="item.editable">
+                      <el-text type="info">
+                        Add a new option by typing in the input box and pressing
+                        Enter.
+                      </el-text>
+                    </template>
+                    <el-option
+                      v-for="value in item.possibleValues"
+                      :key="String(value)"
+                      :label="String(value)"
+                      :value="String(value)"
+                    ></el-option>
+                  </el-select>
+                </template>
+              </el-form-item>
+            </div>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+    </div>
+    <el-form-item>
+      <el-button @click="fetchFormData">{{ $t('button.reset') }}</el-button>
+      <el-button
+        :type="hasUnsavedChanges ? 'success' : ''"
+        :disabled="!hasUnsavedChanges"
+        @click="saveHostParameters"
+        >{{ $t('button.save') }}</el-button
       >
-      <el-collapse-item
-        v-else
-        v-for="(items, topic, index) in fetchedData"
-        :key="topic.toString()"
-        :title="topic.toString()"
-        :name="index.toString()"
-      >
-        <FormrowFRItems
-          v-if="activeNames.includes(index.toString())"
-          :items="items"
-          :replace-in-id="topic + '.'"
-          @change-item="changeItem"
-        />
-      </el-collapse-item>
-    </el-collapse>
+    </el-form-item>
   </div>
 </template>
 
@@ -40,15 +71,17 @@
   import { useSaveParameters } from '~/composables/mixins/useSave'
   import type { T_HostParameter } from '~/types/APItypes'
   import type { PropTypeServerClient } from '~/types/tproptypes'
+  import { onBeforeRouteLeave } from 'vue-router'
+
   const { notifyError, notifyInfo } = useNotification()
   const $t = useI18n().t
+  const config = storeConfigapp().config ?? { read_only: true }
   const isLoading = ref(true)
   const fetchedData = ref<T_HostParameter | undefined>()
-  const activeNames = ref<string[]>([])
-  const lastSavedData = ref({
-    objectIds: [] as Array<string>,
-    configIds: [] as Array<string>,
-  })
+  const itemValues = ref<{ [key: string]: any }>({})
+  const initialValues = ref<{ [key: string]: any }>({})
+  const hasUnsavedChanges = ref(false)
+  const changeBuffer = ref<{ [key: string]: any }>({})
   const props = defineProps({
     id: { type: String, default: undefined },
     type: {
@@ -58,30 +91,47 @@
     isChild: { type: Boolean, default: false },
   })
 
-  function handleCollapseValueChange(val: any) {
-    activeNames.value = val
-  }
-  function changeItem(item: any, val: any) {
-    if (item == undefined) return
-    if (val == undefined) return
+  const showWarning = computed(() => !(props.type === 'servers' || props.id))
 
-    item.value = val
-    if (!item.possibleValues.includes(val)) {
-      item.possibleValues.push(val)
+  function getInitialValue(item: {
+    value?: any
+    objects?: Record<string, any>
+    multiValue?: boolean
+  }): any {
+    if (item.value !== undefined) return item.value
+    if (item.objects && Object.keys(item.objects).length > 0) {
+      const objectValues = Object.values(item.objects)
+      if (item.multiValue) {
+        const sortedValues = objectValues.map((value: any) =>
+          JSON.stringify([...value].sort()),
+        )
+        if (sortedValues.every((v: string) => v === sortedValues[0]))
+          return objectValues[0]
+        return 'mixed'
+      }
+      if (objectValues.every((v: any) => v === objectValues[0]))
+        return objectValues[0]
     }
-
-    handleSelection(item)
+    throw new Error('Initial value is undefined and no valid objects found')
   }
 
-  onMounted(async () => {
+  async function fetchFormData() {
     if (props.type === 'servers' || props.id) await fetch()
-  })
-  watch(
-    () => props.id,
-    async () => {
-      if (props.type === 'servers' || props.id) await fetch()
-    },
-  )
+    if (fetchedData.value) {
+      for (const category in fetchedData.value) {
+        fetchedData.value[category].forEach((item: any) => {
+          const initialValue = getInitialValue(item)
+          itemValues.value[item.configId] = initialValue
+          initialValues.value[item.configId] = initialValue
+        })
+      }
+    }
+    hasUnsavedChanges.value = false
+  }
+
+  onMounted(fetchFormData)
+
+  watch(() => props.id, fetchFormData)
 
   const channels = [
     'event:config_created',
@@ -92,33 +142,23 @@
     'event:configState_deleted',
   ]
   const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t, channels)
+
   async function wsBusMsgObjectChanged(msg: any = undefined) {
     if (msg && channels.includes(msg.channel)) {
-      if (
-        !(
-          lastSavedData.value.configIds.includes(msg.data.configId) && // configId matches
-          (lastSavedData.value.objectIds.includes(msg.data.objectId) || // objectId matches
-            (lastSavedData.value.objectIds.length === 0 &&
-              msg.data.isDefault === true))
-        )
-      ) {
-        notifyInfo({
-          title: $t('message.info.event'),
-          message: $t('message.info.event.config_updated', {
-            configId: msg.data.configId,
-          }),
-          button: { label: $t('label.reloadPage'), onClick: fetch },
-        })
-      }
+      notifyInfo({
+        title: $t('message.info.event'),
+        message: $t('message.info.event.config_updated', {
+          configId: msg.data.configId,
+        }),
+        button: { label: $t('label.reloadPage'), onClick: fetch },
+      })
     }
   }
 
   async function fetch() {
     isLoading.value = true
-    let endpoint: any = ''
-    if (props.type === 'clients') {
-      endpoint = `/opsidata/config/objects/${props.id}`
-    } else if (props.type === 'servers' && props.id) {
+    let endpoint = ''
+    if (props.type === 'clients' || (props.type === 'servers' && props.id)) {
       endpoint = `/opsidata/config/objects/${props.id}`
     } else if (props.type === 'servers') {
       endpoint = '/opsidata/config'
@@ -126,7 +166,6 @@
       console.error('not defined')
     }
     await fetchHostParameters(endpoint)
-
     isLoading.value = false
   }
 
@@ -139,41 +178,60 @@
     fetchedData.value = data.value
   }
 
-  async function handleSelection(change: any) {
+  function handleSelection(item: any, value: any) {
+    itemValues.value[item.configId] = value
+    changeBuffer.value[item.configId] = value
+    checkUnsavedChanges()
+  }
+
+  function checkUnsavedChanges() {
+    hasUnsavedChanges.value = Object.keys(itemValues.value).some(
+      (key) => itemValues.value[key] !== initialValues.value[key],
+    )
+  }
+
+  async function saveHostParameters() {
     isLoading.value = true
-    let url: string = ''
+    let url = ''
     let request: any = []
+
     if (props.type === 'servers' && !props.id) {
-      // changing default configs
       url = '/opsidata/config'
-      request = [
-        {
-          configId: change.configId,
-          value: String(change.value),
-        },
-      ]
-      lastSavedData.value.objectIds = []
-      lastSavedData.value.configIds = request.map((k: any) => k.configId)
+      request = Object.keys(changeBuffer.value).map((configId) => ({
+        configId,
+        value: String(changeBuffer.value[configId]),
+      }))
     } else if (props.type === 'clients' || props.type === 'servers') {
-      // changing clients or depots configs
       url = '/opsidata/config/objects'
       request = {
-        objectIds: [props.id],
-        configs: [
-          {
-            configId: change.configId,
-            value: String(change.value),
-          },
-        ],
+        objectIds: [props.id as string],
+        configs: Object.keys(changeBuffer.value).map((configId) => ({
+          configId,
+          value: String(changeBuffer.value[configId]),
+        })),
       }
-      lastSavedData.value.objectIds = request.objectIds || []
-      lastSavedData.value.configIds = request.configs?.map(
-        (k: any) => k.configId,
-      )
     } else {
       console.error('not defined')
     }
+
     await useSaveParameters($t).saveParameters(url, request, null, true)
+
     isLoading.value = false
+    hasUnsavedChanges.value = false
+    changeBuffer.value = {}
+    initialValues.value = { ...itemValues.value }
   }
+
+  onBeforeRouteLeave((to, from, next) => {
+    if (hasUnsavedChanges.value) {
+      const answer = window.confirm($t('message.warning.unsaved_changes'))
+      if (answer) {
+        next()
+      } else {
+        next(false)
+      }
+    } else {
+      next()
+    }
+  })
 </script>

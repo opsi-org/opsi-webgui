@@ -11,7 +11,7 @@
 <template>
   <Story :setup-app="init">
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <ViewVConfig type="servers" :id="store.selectionDepots[0]" />
+      <ViewVHostConfig type="servers" :id="store.selectionDepots[0]" />
     </Variant>
   </Story>
 </template>
