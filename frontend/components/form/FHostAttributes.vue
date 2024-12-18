@@ -7,6 +7,7 @@
       v-if="hostAttributes.length && hostAttributes[0]"
       label-width="200px"
       class="w-full"
+      v-loading="isLoading"
     >
       <div class="h-[70vh] overflow-y-auto">
         <div v-for="(value, label) in hostAttributes[0]" :key="label">
@@ -72,6 +73,7 @@
   const hostAttributes = ref<Array<T_ServerAttr | T_ClientAttr>>([])
   const hostAttributesOriginal = ref<Array<T_ServerAttr | T_ClientAttr>>([])
   const hasUnsavedChanges = ref(false)
+  const isLoading = ref(true)
 
   const notEditable = ['type', 'created', 'lastSeen', 'systemUUID', 'uefi']
   const props = defineProps({
@@ -96,6 +98,7 @@
   }
 
   async function fetchData() {
+    isLoading.value = true
     const url =
       props.type === 'servers'
         ? `/opsidata/servers?servers=[${props.id}]`
@@ -117,6 +120,7 @@
     } catch (error) {
       notifyError({ message: error || $t('message.error.unexpected') })
     }
+    isLoading.value = false
   }
 
   function setUnsavedChanges() {
