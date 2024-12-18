@@ -17,7 +17,7 @@
           class="!border-none p-1"
           @click="storeSelection.clearAllSelection"
         >
-          <IconIIcon :icon="icons.reset" />
+          <IconIIcon :icon="icons.clear" />
           <span class="sr-only">{{ $t('button.resetAll') }}</span>
         </el-button>
       </header>

@@ -26,6 +26,7 @@
       :disabled="isIdEmpty"
     >
       <FormFHostAttributes
+        v-if="activeName === 'attr'"
         :id="currentId"
         :type="type"
         :is-child="props.isChild"
