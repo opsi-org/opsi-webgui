@@ -34,7 +34,7 @@
           :link="false"
         />
         <DialogDProductQuickActions />
-        <ModalMChanges v-if="$mq === 'mobile'" v-model="changes" />
+        <!-- <ModalMChanges v-if="$mq === 'mobile'" v-model="changes" /> -->
       </div>
     </section>
     <section class="mb-0">
@@ -43,7 +43,7 @@
       </header>
       <div class="flex justify-evenly">
         <SwitchSMultiselection />
-        <SwitchSQuicksave />
+        <!-- <SwitchSQuicksave /> -->
         <SwitchSAutoRefresh />
       </div>
     </section>

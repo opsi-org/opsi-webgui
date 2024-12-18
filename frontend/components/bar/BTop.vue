@@ -30,7 +30,7 @@
     </el-menu-item>
 
     <div class="flex-grow" />
-    <el-menu-item
+    <!-- <el-menu-item
       v-if="changesExists"
       @click="openDialog"
       index="2"
@@ -45,7 +45,7 @@
         small
         transparent
       />
-    </el-menu-item>
+    </el-menu-item> -->
 
     <el-menu-item
       index="3"
