@@ -1,6 +1,7 @@
 <template>
   <el-row v-loading="isLoading">
-    <b>{{ $t('form.modules.available') }}</b>
+    <!-- <b>{{ $t('form.modules.available') }}</b> -->
+    <h2>{{ $t('form.modules.available') }}</h2>
   </el-row>
   <div v-for="(module, index) in fetchedData.result" :key="index" class="ml-5">
     <el-text> {{ module }} </el-text>

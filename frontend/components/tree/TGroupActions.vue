@@ -71,7 +71,7 @@
                 </el-button>
               </template>
               <template v-if="isActionPopoverLoaded[node.label + action]">
-                <el-text tag="b" class="after:content-['-']">{{
+                <el-text tag="b" class="text-capitalize after:content-['-']">{{
                   $t('group.' + action)
                 }}</el-text>
                 <el-text tag="i">{{ node.label }}</el-text>

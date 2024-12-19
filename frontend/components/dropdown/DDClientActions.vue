@@ -34,12 +34,12 @@
                 {{ $t('button.event.' + action) }}
               </el-button>
             </template>
-            <el-text tag="b" class="after:content-['-']">{{
+            <el-text tag="b" class="text-capitalize after:content-['-']">{{
               $t('button.event.' + action)
             }}</el-text>
             <el-text tag="i">{{ props.clientIds[0] }}</el-text>
             <el-text v-if="props.clientIds.length > 1" class="pl-2">
-              {{ `(+${props.clientIds.length - 1} ${$t('info.more')})` }}
+              {{ ` (+${props.clientIds.length - 1} ${$t('info.more')})` }}
             </el-text>
             <el-form label-position="top" class="mt-3" v-loading="isLoading">
               <el-form-item
