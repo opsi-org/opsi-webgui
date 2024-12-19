@@ -125,16 +125,21 @@
 
   onMounted(async () => {
     isLoading.value = true
-    const useServerGet = await useConfigserver(true, undefined, $t)
-    const res = await useServerGet.getOpsiConfigServerWithHeaders()
-    opsiconfigserver.value = res.data || ''
-    authMethods.value = res.headers.get(opsiheaders.xopsiauthmethods) || ''
-    const username = storeAuth().username
-    if (username) {
-      form.value.username = username
-      handleSuccessfulLogin()
+    try {
+      const useServerGet = await useConfigserver(true, undefined, $t)
+      const res = await useServerGet.getOpsiConfigServerWithHeaders()
+      opsiconfigserver.value = res.data || ''
+      authMethods.value = res.headers.get(opsiheaders.xopsiauthmethods) || ''
+      const username = storeAuth().username
+      if (username) {
+        form.value.username = username
+        handleSuccessfulLogin()
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      isLoading.value = false
     }
-    isLoading.value = false
   })
 
   const samlUrl = computed(() => {
