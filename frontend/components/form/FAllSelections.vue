@@ -1,7 +1,6 @@
 <template>
   <el-form
-    label-width="50%"
-    :label-position="mq.isMobile.value ? 'top' : 'left'"
+    label-position="top"
     size="small"
     data-testid="FAllSelections"
     class="rounded-lg shadow-md pb-1"

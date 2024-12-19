@@ -40,7 +40,7 @@
     >
       <el-button @click="resetForm"> {{ $t('button.reset') }}</el-button>
       <el-button
-        data-testid="cloneButton"s
+        data-testid="cloneButton"
         :type="sourceID && cloneClient.target.hostId ? 'success' : ''"
         @click="applyCloneClient"
         :disabled="!sourceID || !cloneClient.target.hostId"
