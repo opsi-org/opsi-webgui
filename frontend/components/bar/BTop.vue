@@ -65,28 +65,28 @@
   import { useRouter } from 'vue-router'
 
   const mq = useMQ()
-  const $mq = useMQ().$mq
+  // const $mq = useMQ().$mq
   const $config = useRuntimeConfig()
   const emit = defineEmits(['toggleLeft', 'toggleRight'])
   const icons = useIcons()
   const router = useRouter()
-  const changes = storeChanges()
+  // const changes = storeChanges()
 
-  const changesDialogVisible = ref(false)
+  // const changesDialogVisible = ref(false)
 
   const toggleLeft = () => emit('toggleLeft')
   const toggleRight = () => emit('toggleRight')
   const navigateToClients = () => router.push('/clients/')
-  const openDialog = () => {
-    changesDialogVisible.value = true
-  }
+  // const openDialog = () => {
+  //   changesDialogVisible.value = true
+  // }
 
-  const changesExists = computed(() => {
-    return (
-      changes?.changesHostParam?.length > 0 ||
-      changes?.changesProducts?.length > 0
-    )
-  })
+  // const changesExists = computed(() => {
+  //   return (
+  //     changes?.changesHostParam?.length > 0 ||
+  //     changes?.changesProducts?.length > 0
+  //   )
+  // })
 </script>
 
 <style scoped>

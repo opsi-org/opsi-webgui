@@ -60,11 +60,11 @@
 <script setup lang="ts">
   import { useIcons } from '../../composables/mixins/useIcons'
   const $t = useI18n().t
-  const $mq = useMQ().$mq
+  // const $mq = useMQ().$mq
   const icons = useIcons()
   const storeSelection = storeSelections()
   const settings = storeSettings()
-  const changes = storeChanges()
+  // const changes = storeChanges()
 
   const isDarkMode = computed({
     get: () => settings.colormode === 'dark',
