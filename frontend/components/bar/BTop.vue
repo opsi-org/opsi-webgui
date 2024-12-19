@@ -25,6 +25,7 @@
     >
       <IconIOpsiLogo class="opsi-logo" />
       <span class="text-xs ml-1 mb-4">
+        {{ t_fixed('title.project.webgui') }}
         {{ $config.public.packageVersion }}
       </span>
     </el-menu-item>
@@ -61,6 +62,7 @@
 </template>
 
 <script setup lang="ts">
+  import { useStrings } from '~/composables/mixins/useStrings'
   import { useIcons } from '~/composables/mixins/useIcons'
   import { useRouter } from 'vue-router'
 
@@ -70,6 +72,7 @@
   const emit = defineEmits(['toggleLeft', 'toggleRight'])
   const icons = useIcons()
   const router = useRouter()
+  const { t_fixed } = useStrings()
   // const changes = storeChanges()
 
   // const changesDialogVisible = ref(false)

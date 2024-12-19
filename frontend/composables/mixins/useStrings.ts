@@ -7,6 +7,7 @@ export const useStrings = () => {
     'keep-english.empty': '--',
     'keep-english.title.delimiter': ' - ',
     'title.project': 'opsi-webgui',
+    'title.project.webgui': ' WebGUI',
     uib: 'uib GmbH',
     unequal: '≠',
     notOrigin: '*',

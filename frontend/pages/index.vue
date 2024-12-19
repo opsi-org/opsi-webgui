@@ -1,23 +1,18 @@
 <template>
-  <div class="max-w-[500px] m-auto shadow-lg rounded-lg">
-    <div class="grid place-items-center">
-      <h1>
-        {{ t_fixed('title.project') }}
-      </h1>
-      <h2>
-        {{
-          $t('title.field.version', { version: $config.public.packageVersion })
-        }}
-      </h2>
+  <div class="max-w-[500px] m-auto shadow-lg rounded-lg p-4">
+    <div class="grid place-items-center gap-4">
       <IconIOpsiLogo
         :short="false"
         :light="storeSettings().isLight"
-        class="w-full max-w-[700px]"
+        class="h-50 max-w-[700px]"
       />
+      <h2 class="text-center font-semibold">
+        {{ t_fixed('title.project') }} {{ $config.public.packageVersion }}
+      </h2>
       <IconIUibLogo
         :short="false"
         :light="storeSettings().isLight"
-        class="mt-10 ml-auto h-20 m-auto"
+        class="mt-10 h-10"
       />
     </div>
   </div>
