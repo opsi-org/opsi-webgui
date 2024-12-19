@@ -110,11 +110,13 @@
   })
 
   const showWarning = computed(() => {
-    const showWarn = !(props.type === 'servers' || props.id)
-    if (showWarn) {
+    return !(props.type === 'servers' || props.id)
+  })
+
+  watch(showWarning, (newVal) => {
+    if (newVal) {
       isLoading.value = false
     }
-    return showWarn
   })
 
   function handleCollapseChange(activeNames: CollapseModelValue) {
