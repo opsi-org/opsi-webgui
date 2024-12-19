@@ -4,10 +4,10 @@
     :label-position="mq.isMobile.value ? 'top' : 'left'"
   >
     <el-form-item :label="$t('table.fields.terminalId')">
-      <el-input v-model="modelTerminalId" />
+      <el-input :disabled="disabled" v-model="modelTerminalId" />
     </el-form-item>
     <el-form-item :label="$t('table.fields.terminalChannel')">
-      <el-input v-model="modelTerminalChannel" />
+      <el-input :disabled="disabled" v-model="modelTerminalChannel" />
     </el-form-item>
     <div
       class="button-container"
@@ -28,76 +28,6 @@
       >
     </div>
   </el-form>
-
-  <!-- <div v-if="isMobile" class="m-2" data-testid="FTerminalSettings">
-    <FormrowFRRow
-      :disabled="disabled"
-      class="block"
-      :label="$t('table.fields.terminalId')"
-      type="input"
-      data-type="string"
-      v-model="modelTerminalId"
-    />
-    <FormrowFRRow
-      :disabled="disabled"
-      class="block"
-      :label="$t('table.fields.terminalChannel')"
-      type="input"
-      data-type="string"
-      v-model="modelTerminalChannel"
-    />
-    <FormrowFRRow>
-      <template #value>
-        <el-button
-          :disabled="disabled"
-          type="primary"
-          @click="emit('click-connect')"
-          >{{ $t('button.reconnect') }}</el-button
-        >
-        <el-button
-          :disabled="disabled"
-          type="primary"
-          @click="emit('click-disconnect')"
-        >
-          {{ $t('button.disconnect') }}</el-button
-        >
-      </template>
-    </FormrowFRRow>
-  </div>
-  <el-form v-else class="p-2" data-testid="FTerminalSettings">
-    <FormrowFRRow
-      :disabled="disabled"
-      label-width="200px"
-      :label="$t('table.fields.terminalId')"
-      type="input"
-      data-type="string"
-      v-model="modelTerminalId"
-    />
-    <FormrowFRRow
-      :disabled="disabled"
-      label-width="200px"
-      :label="$t('table.fields.terminalChannel')"
-      type="input"
-      data-type="string"
-      v-model="modelTerminalChannel"
-    />
-    <FormrowFRRow label-width="200px">
-      <template #value>
-        <el-button
-          :disabled="disabled"
-          type="primary"
-          @click="emit('click-connect')"
-          >{{ $t('button.reconnect') }}</el-button
-        >
-        <el-button
-          :disabled="disabled"
-          type="primary"
-          @click="emit('click-disconnect')"
-          >{{ $t('button.disconnect') }}</el-button
-        >
-      </template>
-    </FormrowFRRow>
-  </el-form> -->
 </template>
 
 <script setup lang="ts">
@@ -121,7 +51,4 @@
   const _props = defineProps({
     disabled: { type: Boolean, default: false },
   })
-
-  const isMobile = ref(useMQ().isMobile)
-  // TODO check if works correctly
 </script>

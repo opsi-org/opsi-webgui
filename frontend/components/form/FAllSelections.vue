@@ -68,7 +68,6 @@
   import type { IObjectString2Any } from '~/types/tgeneral'
   import { useIcons } from '../../composables/mixins/useIcons'
   const $t = useI18n().t
-  const mq = useMQ()
   const icons = useIcons()
   const storeSelection: IObjectString2Any = storeSelections()
   const selectionDisplayList = ref<Array<string>>([
