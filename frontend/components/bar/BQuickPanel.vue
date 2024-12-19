@@ -34,7 +34,7 @@
           :link="false"
         />
         <DialogDProductQuickActions />
-        <ModalMChanges v-if="$mq === 'mobile'" v-model="changes" />
+        <!-- <ModalMChanges v-if="$mq === 'mobile'" v-model="changes" /> -->
       </div>
     </section>
     <section class="mb-0">
@@ -43,7 +43,7 @@
       </header>
       <div class="flex justify-evenly">
         <SwitchSMultiselection />
-        <SwitchSQuicksave />
+        <!-- <SwitchSQuicksave /> -->
         <SwitchSAutoRefresh />
       </div>
     </section>
@@ -60,11 +60,11 @@
 <script setup lang="ts">
   import { useIcons } from '../../composables/mixins/useIcons'
   const $t = useI18n().t
-  const $mq = useMQ().$mq
+  // const $mq = useMQ().$mq
   const icons = useIcons()
   const storeSelection = storeSelections()
   const settings = storeSettings()
-  const changes = storeChanges()
+  // const changes = storeChanges()
 
   const isDarkMode = computed({
     get: () => settings.colormode === 'dark',
