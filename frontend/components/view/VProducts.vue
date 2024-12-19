@@ -11,6 +11,15 @@
     @selection-changed="(id: string) => {storeSelection.toggleSelectionProducts(id)}"
     @clear-selection="storeSelection.clearSelectionProducts"
   >
+    <template #toolbar-right>
+      <el-button
+        :type="hasUnsavedChanges ? 'success' : ''"
+        :disabled="!hasUnsavedChanges"
+        @click="saveBufferedChanges"
+      >
+        {{ $t('button.save') }}
+      </el-button>
+    </template>
     <template #header>
       <div>
         <el-checkbox-button
@@ -244,8 +253,6 @@
             row={rowData}
             clients2depots={fetchedDataClients2Depots.value}
           />
-          // {/* onDetails={toggleDetailsTooltip} */}
-          // tooltip: () => tt,
         )
       },
     },
@@ -269,14 +276,10 @@
                 save={saveActionRequests}
               />
             )
-            // {/* selectedClients={clientSelection.value} */}
           },
       cellRenderer: ({ rowData }: any) => {
-        // const sel = (props.selectedClient) ? [props.selectedClient]: clientSelection.value
         return (
           <TCProductRequest
-            // request={rowData.actionRequest || 'none'}
-            // requestoptions={[...rowData.actions]}
             modelValue={rowData}
             row-is-selected={selectionProducts.value.includes(
               rowData.productId,
@@ -284,7 +287,6 @@
             save={saveActionRequest}
           />
         )
-        // selectedClients={sel}
       },
     },
     {
@@ -303,13 +305,6 @@
             props.isChild,
             currentType.value,
           )
-          // Object.keys(navigation.rowactionConfigChecked.value).forEach(k => navigation.rowactionConfigChecked.value[k] = false)
-          // navigation.rowactionConfigChecked.value[rowData.productId] = true
-          // if (props.isChild) {
-          //   useRouter().push(`/clients/products/${currentType.value}/config/${rowData.productId}`)
-          // } else {
-          //   useRouter().push(`/products/${currentType.value}/config/${rowData.productId}`)
-          // }
         }
         return (
           <div class="flex flex-row">
@@ -326,6 +321,11 @@
     },
   ])
 
+  const bufferedChanges = ref<object>({})
+  const hasUnsavedChanges = computed(
+    () => Object.keys(bufferedChanges.value).length > 0,
+  )
+
   onMounted(async () => {
     if (props.productType && props.productType !== currentType.value)
       changeProductsType(props.productType as IProductTypes)
@@ -333,11 +333,7 @@
     fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(
       clientSelection.value,
     )
-    // fetchedData.value[currentType.value] = await _fetch(currentType.value)
-    // fetchedData.value[currentType.value] = []
     productsRef.value?.refetch()
-    // await tableHelper.fetch()
-    // tableHelper.setTotalItemsAsPerPage(totalItems.value)
   })
 
   watch(
@@ -351,13 +347,6 @@
       productsRef.value?.refetch()
     },
   )
-  // watch (()=>props.sortby, async (v)=>{
-  //   if (props.selectedClient) {
-  //     tableData.value[currentType.value].sortBy = v
-  //     tableData.value[currentType.value].sortDesc = true
-  //     // sortDesc: tableSettings.productsSorting.isDesc,
-  //   }
-  // }, { deep: true })
 
   async function fetchProducts(_params: any) {
     const params = prepareParams(_params)
@@ -390,7 +379,6 @@
         'event:productOnClient_deleted',
       ].includes(msg.channel) &&
       msg.data.productType === currentType.value &&
-      // this.visibleProductIds.includes(msg.data.productId) &&
       clientSelection.value.includes(msg.data.clientId)
     ) {
       if (
@@ -416,17 +404,6 @@
           },
         })
       }
-      // if (this.quicksave) {
-      //   this.$fetch()
-      //   // if (ref) { ref.hide() }
-      // } else { /* quicksave is false ... do sth .. show message or sth */
-      //   const objIndex = this.changesProducts.findIndex(
-      //     item => item.user === storeAuth().username &&
-      // //     item => item.user === localStorage.getItem('username') &&
-      //     item.clientId === msg.data.clientId &&
-      //     item.productId === msg.data.productId)
-      //   if (objIndex > -1) { /* show msg product updated */ }
-      // }
     }
   }
 
@@ -452,10 +429,92 @@
     } else if (params.sortBy === 'selected') {
       params.sortDesc = true
       params.selected = JSON.stringify(selectionProducts)
-      // params.sortBy = '["selected", "productId"]'
     }
     return params
   }
+
+  // async function saveActionRequests(rowItem: any, newrequest: string) {
+  //   const data = {
+  //     clientIds: clientSelection.value,
+  //     productIds: selectionProducts.value,
+  //     actionRequest: newrequest,
+  //   }
+  //   lastChanges.value.clientIds = data.clientIds
+  //   lastChanges.value.productIds = data.productIds
+  //   console.warn('saveActionRequests', storeSettings().quicksave)
+  //   if (storeSettings().quicksave) {
+  //     await useSaveProductActionRequest($t).saveProdActionRequest(
+  //       data,
+  //       null,
+  //       true,
+  //     )
+  //     productsRef.value?.refetch()
+  //   } else {
+  //     for (const c in selectionClients.value) {
+  //       const clientId = selectionClients.value[c]
+  //       for (const p in selectionProducts.value) {
+  //         const productId = selectionProducts.value[p]
+
+  //         const d = {
+  //           user: storeAuth().username,
+  //           clientId: clientId,
+  //           productId: productId,
+  //           actionRequest: newrequest,
+  //         }
+
+  //         const objIndex = storeChanges().changesProducts.findIndex(
+  //           (item) => item.clientId === c && item.productId === p,
+  //         )
+  //         if (objIndex > -1) {
+  //           storeChanges().delWithIndexChangesProducts(objIndex)
+  //         }
+  //         storeChanges().pushToChangesProducts(d)
+  //       }
+  //     }
+  //   }
+  // }
+
+  // async function saveActionRequest(rowitem: any, newrequest: string) {
+  //   const data = {
+  //     clientIds: clientSelection.value,
+  //     productIds: [rowitem.productId],
+  //     actionRequest: newrequest,
+  //   }
+  //   if (storeSettings().quicksave) {
+  //     lastChanges.value.clientIds = data.clientIds
+  //     lastChanges.value.productIds = data.productIds
+  //     const ok = await useSaveProductActionRequest($t).saveProdActionRequest(
+  //       data,
+  //       null,
+  //       true,
+  //     )
+  //     if (ok) {
+  //       rowitem.actionRequest = newrequest
+  //       rowitem.selectedClients = clientSelection.value
+  //       delete rowitem.actionRequestDetails
+  //     }
+  //   } else {
+  //     for (const c in clientSelection.value) {
+  //       const clientId = selectionClients.value[c]
+  //       const d = {
+  //         user: storeAuth().username,
+  //         clientId: clientId,
+  //         productId: rowitem.productId,
+  //         actionRequest: newrequest,
+  //       }
+  //       const objIndex = storeChanges().changesProducts.findIndex(
+  //         (item) =>
+  //           item.user === storeAuth().username &&
+  //           item.clientId === clientId &&
+  //           item.productId === rowitem.productId,
+  //       )
+  //       if (objIndex > -1) {
+  //         storeChanges().delWithIndexChangesProducts(objIndex)
+  //       }
+  //       addToChangedIfNeeded(rowitem, clientId, newrequest, d)
+  //     }
+  //   }
+  // }
 
   async function saveActionRequests(rowItem: any, newrequest: string) {
     const data = {
@@ -465,108 +524,53 @@
     }
     lastChanges.value.clientIds = data.clientIds
     lastChanges.value.productIds = data.productIds
-    console.warn('saveActionRequests', storeSettings().quicksave)
-    if (storeSettings().quicksave) {
-      await useSaveProductActionRequest($t).saveProdActionRequest(
-        data,
-        null,
-        true,
-      )
-      productsRef.value?.refetch()
-    } else {
-      for (const c in selectionClients.value) {
-        const clientId = selectionClients.value[c]
-        for (const p in selectionProducts.value) {
-          const productId = selectionProducts.value[p]
 
-          const d = {
-            // user: localStorage.getItem('username'),
-            user: storeAuth().username,
-            clientId: clientId,
-            productId: productId,
-            // clientId: selectionClients.value[c],
-            // productId: selectionProducts.value[p],
-            actionRequest: newrequest,
-          }
-
-          const objIndex = storeChanges().changesProducts.findIndex(
-            (item) => item.clientId === c && item.productId === p,
-          )
-          // const objIndex = storeChanges().changesProducts.findIndex(item => item.clientId === selectionClients.value[c] && item.productId === selectionProducts.value[p])
-          if (objIndex > -1) {
-            storeChanges().delWithIndexChangesProducts(objIndex)
-          }
-          storeChanges().pushToChangesProducts(d)
-        }
-      }
-    }
+    bufferedChanges.value = data
   }
 
   async function saveActionRequest(rowitem: any, newrequest: string) {
-    // alert (JSON.stringify(rowItem) + "----" + req)
-    // return
-    // const {data, error} = await useApiPOST('/opsidata/products', {action: action.value})
     const data = {
-      clientIds: clientSelection.value,
+      clientIds: selectionClients.value,
       productIds: [rowitem.productId],
       actionRequest: newrequest,
     }
-    if (storeSettings().quicksave) {
-      lastChanges.value.clientIds = data.clientIds
-      lastChanges.value.productIds = data.productIds
-      const ok = await useSaveProductActionRequest($t).saveProdActionRequest(
-        data,
-        null,
-        true,
-      )
-      if (ok) {
-        rowitem.actionRequest = newrequest
-        rowitem.selectedClients = clientSelection.value
-        delete rowitem.actionRequestDetails
-      }
-    } else {
-      for (const c in clientSelection.value) {
-        const clientId = selectionClients.value[c]
-        const d = {
-          user: storeAuth().username,
-          clientId: clientId,
-          productId: rowitem.productId,
-          actionRequest: newrequest,
-        }
-        const objIndex = storeChanges().changesProducts.findIndex(
-          (item) =>
-            item.user === storeAuth().username &&
-            item.clientId === clientId &&
-            item.productId === rowitem.productId,
-        )
-        if (objIndex > -1) {
-          storeChanges().delWithIndexChangesProducts(objIndex)
-        }
-        addToChangedIfNeeded(rowitem, clientId, newrequest, d)
-      }
-    }
+    lastChanges.value.clientIds = data.clientIds
+    lastChanges.value.productIds = data.productIds
+
+    bufferedChanges.value = data
   }
 
-  function addToChangedIfNeeded(
-    rowitem: any,
-    clientId: string,
-    newrequest: string,
-    changeObj: any,
-  ) {
-    const ic = rowitem.selectedClients?.indexOf(clientId)
-    if (newrequest == 'mixed') {
-      // nothing to do
-    } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] === newrequest) {
-      // nothing to do
-    } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] !== newrequest) {
-      storeChanges().pushToChangesProducts(changeObj)
-      return true
-    } else if (rowitem.actionRequest !== newrequest) {
-      storeChanges().pushToChangesProducts(changeObj)
-      return true
-    }
-    return false
+  async function saveBufferedChanges() {
+    await useSaveProductActionRequest($t).saveProdActionRequest(
+      bufferedChanges.value,
+      null,
+      true,
+    )
+
+    bufferedChanges.value = {}
+    productsRef.value?.refetch()
   }
+
+  // function addToChangedIfNeeded(
+  //   rowitem: any,
+  //   clientId: string,
+  //   newrequest: string,
+  //   changeObj: any,
+  // ) {
+  //   const ic = rowitem.selectedClients?.indexOf(clientId)
+  //   if (newrequest == 'mixed') {
+  //     // nothing to do
+  //   } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] === newrequest) {
+  //     // nothing to do
+  //   } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] !== newrequest) {
+  //     storeChanges().pushToChangesProducts(changeObj)
+  //     return true
+  //   } else if (rowitem.actionRequest !== newrequest) {
+  //     storeChanges().pushToChangesProducts(changeObj)
+  //     return true
+  //   }
+  //   return false
+  // }
 
   function changeProductsType(type: IProductTypes) {
     const fullUrl = router.currentRoute.value.fullPath
@@ -587,4 +591,17 @@
 
     productsRef.value?.refetch()
   }
+
+  onBeforeRouteLeave((to, from, next) => {
+    if (hasUnsavedChanges.value) {
+      const answer = window.confirm($t('message.warning.unsaved_changes'))
+      if (answer) {
+        next()
+      } else {
+        next(false)
+      }
+    } else {
+      next()
+    }
+  })
 </script>
