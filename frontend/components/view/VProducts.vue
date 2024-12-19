@@ -38,6 +38,7 @@
             $t('table.info.productsOnClient', { id: props.selectedClient })
           "
           type="warning"
+          show-icon
           :closable="false"
           class="max-w-80 !inline-flex !relative max-h-8"
         />

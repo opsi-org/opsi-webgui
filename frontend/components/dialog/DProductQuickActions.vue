@@ -30,6 +30,7 @@
               v-if="label == 'demoInfo'"
               :title="value"
               type="info"
+              show-icon
               :closable="false"
             />
             <el-form-item v-else :label="$t('table.fields.' + label)">

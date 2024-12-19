@@ -1,7 +1,7 @@
 <template>
   <div data-testid="FHostParameter">
     <br />
-    <el-alert v-if="showWarning" type="warning">
+    <el-alert v-if="showWarning" type="warning" show-icon>
       {{ $t('alert.select') }}
     </el-alert>
     <div class="h-[70vh] overflow-y-auto">

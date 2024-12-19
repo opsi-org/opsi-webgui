@@ -1,5 +1,6 @@
 <template>
   <el-form
+    class="h-[70vh] overflow-y-auto"
     label-width="50%"
     :label-position="mq.isMobile.value ? 'top' : 'left'"
   >

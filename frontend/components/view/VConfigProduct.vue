@@ -32,6 +32,7 @@
     v-if="selectionClients.length <= 0"
     :title="$t('message.warning.noClientsSelectedShowDepot')"
     type="warning"
+    show-icon
   />
   <el-alert
     v-if="productVersionsCount !== selectionDepots.length"
@@ -42,11 +43,13 @@
       })
     "
     type="warning"
+    show-icon
   />
   <el-alert
     v-if="hasDifferentProductVersions"
     :title="$t('message.warning.differentProductVersions')"
     type="warning"
+    show-icon
   />
   <el-tabs v-else v-model="activeName" class="demo-tabs" v-loading="isLoading">
     <el-tab-pane

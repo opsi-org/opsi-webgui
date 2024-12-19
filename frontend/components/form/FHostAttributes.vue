@@ -1,8 +1,8 @@
 <template>
   <div data-testid="FHostAttributes">
-    <el-alert v-if="!props.id" type="warning">{{
-      $t('button.select')
-    }}</el-alert>
+    <el-alert v-if="!props.id" type="warning" show-icon>
+      {{ $t('alert.select') }}</el-alert
+    >
     <el-form
       v-if="hostAttributes.length && hostAttributes[0]"
       label-width="50%"

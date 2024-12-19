@@ -31,13 +31,11 @@
       <el-scrollbar max-height="200px" class="w-full items-stretch flex ml-3">
         <el-alert
           v-if="storeSelection['selection' + category].length <= 0"
-          type="warning"
+          type="info"
+          size="small"
+          show-icon
           :closable="false"
-          >{{
-            $t('message.warning.noTypeSelected', {
-              type: $t('message.warning.noTypeSelected.type.' + category),
-            })
-          }}</el-alert
+          >{{ $t('info.noselection') }}</el-alert
         >
         <ul v-else direction="vertical">
           <li
