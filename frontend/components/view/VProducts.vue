@@ -321,7 +321,7 @@
     },
   ])
 
-  const bufferedChanges = ref<Object>({})
+  const bufferedChanges = ref<object>({})
   const hasUnsavedChanges = computed(
     () => Object.keys(bufferedChanges.value).length > 0,
   )
