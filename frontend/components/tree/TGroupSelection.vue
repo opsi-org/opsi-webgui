@@ -1,10 +1,10 @@
 <template>
-  <IconILoading v-if="isLoading" />
   <el-button @click="clearSelection" size="small">
     {{ $t('table.selection.clear') }}
   </el-button>
   <el-tree
     :ref="props.grouptype == 'client-group' ? 'clientGroupRef' : 'prodGroupRef'"
+    v-loading="isLoading"
     :data="fetchedData"
     :props="defaultProps"
     show-checkbox

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <IconILoading v-if="isLoading === undefined" />
+    <IconILoading v-if="isLoading" />
     <FormFTerminalSettings
       v-else
       v-model:terminal-id="terminalId"

@@ -10,7 +10,7 @@
         <h5>{{ $t('label.prodquickaction') }}</h5>
       </template>
       <el-form
-        v-loading="isLoadingMain"
+        v-loading="isLoadingMain || isLoadingDemo"
         label-width="50%"
         :label-position="mq.isMobile.value ? 'top' : 'left'"
       >
@@ -38,12 +38,7 @@
                 v-if="label == 'demoResult'"
                 class="max-h-64 min-w-full overflow-y-auto"
               >
-                <IconILoading
-                  v-if="isLoadingDemo"
-                  :is-loading="isLoadingDemo"
-                  inline
-                />
-                <div v-else-if="productActions.demo.demoResult == undefined">
+                <div v-if="productActions.demo.demoResult == undefined">
                   {{ EMPTY }}
                 </div>
                 <div
