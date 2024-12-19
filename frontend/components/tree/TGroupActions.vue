@@ -7,32 +7,35 @@
     :placement="popoverPlacement"
     trigger="click"
     :width="popoverWidth"
+    @show="loadCreateGroupPopover"
   >
     <template #reference>
       <el-button size="small">{{ $t('label.create.prodgroup') }}</el-button>
     </template>
-    <el-form label-position="top" class="mt-3">
-      <el-text tag="b">{{ $t('label.create.prodgroup') }}</el-text>
-      <el-form-item
-        v-for="label in Object.keys(createGroup)"
-        :key="label"
-        :label="$t('table.fields.' + label)"
-        v-show="label !== 'parentGroupId'"
-      >
-        <el-input
-          v-model="createGroup[label]"
-          @keyup.enter="createSubGroup('')"
-        />
-      </el-form-item>
-      <el-button
-        class="float-right"
-        type="success"
-        data-testid="createSubGroup"
-        @click="createSubGroup('')"
-        :disabled="!createGroup.groupId"
-        >{{ $t('button.create') }}</el-button
-      >
-    </el-form>
+    <template v-if="isCreateGroupPopoverLoaded">
+      <el-form label-position="top" class="mt-3">
+        <el-text tag="b">{{ $t('label.create.prodgroup') }}</el-text>
+        <el-form-item
+          v-for="label in Object.keys(createGroup)"
+          :key="label"
+          :label="$t('table.fields.' + label)"
+          v-show="label !== 'parentGroupId'"
+        >
+          <el-input
+            v-model="createGroup[label]"
+            @keyup.enter="createSubGroup('')"
+          />
+        </el-form-item>
+        <el-button
+          class="float-right"
+          type="success"
+          data-testid="createSubGroup"
+          @click="createSubGroup('')"
+          :disabled="!createGroup.groupId"
+          >{{ $t('button.create') }}</el-button
+        >
+      </el-form>
+    </template>
   </el-popover>
   <el-container v-loading="isLoading">
     <el-tree
@@ -56,6 +59,7 @@
               :width="popoverWidth"
               trigger="click"
               :ref="node.label + action"
+              @show="loadActionPopover(node.label + action)"
             >
               <template #reference>
                 <el-button size="small">
@@ -66,132 +70,134 @@
                   />
                 </el-button>
               </template>
-              <el-text tag="b" class="after:content-['-']">{{
-                $t('group.' + action)
-              }}</el-text>
-              <el-text tag="i">{{ node.label }}</el-text>
-              <el-form label-position="top" class="mt-3">
-                <template v-if="action === 'group-add'">
-                  <el-form-item
-                    v-for="label in Object.keys(createGroup)"
-                    :key="label"
-                    :label="$t('table.fields.' + label)"
-                    v-show="label !== 'parentGroupId'"
-                  >
-                    <el-input
-                      v-model="createGroup[label]"
-                      @keyup.enter="createSubGroup(node.label)"
-                    />
-                  </el-form-item>
-                  <el-button
-                    class="float-right"
-                    type="success"
-                    data-testid="createSubGroup"
-                    @click="createSubGroup(node.label)"
-                    :disabled="!createGroup.groupId"
-                    >{{ $t('button.create') }}</el-button
-                  >
-                </template>
-                <template
-                  v-else-if="['client-add', 'product-add'].includes(action)"
-                >
-                  <el-form-item :label="$t('label.selectChildren')">
-                    <el-scrollbar
-                      height="300px"
-                      class="border w-full p-2 min-w-[300px]"
+              <template v-if="isActionPopoverLoaded[node.label + action]">
+                <el-text tag="b" class="after:content-['-']">{{
+                  $t('group.' + action)
+                }}</el-text>
+                <el-text tag="i">{{ node.label }}</el-text>
+                <el-form label-position="top" class="mt-3">
+                  <template v-if="action === 'group-add'">
+                    <el-form-item
+                      v-for="label in Object.keys(createGroup)"
+                      :key="label"
+                      :label="$t('table.fields.' + label)"
+                      v-show="label !== 'parentGroupId'"
                     >
-                      <el-checkbox-group v-model="selectedChildren">
-                        <div v-for="item in idList" :key="item">
-                          <el-checkbox
-                            size="small"
-                            :value="item"
-                            :label="item"
-                          />
-                        </div>
-                      </el-checkbox-group>
-                    </el-scrollbar>
-                  </el-form-item>
-                  <el-button
-                    class="float-right"
-                    type="success"
-                    data-testid="addChildren"
-                    @click="addChildren(node.label)"
-                    >{{ $t('button.add') }}</el-button
-                  >
-                </template>
-                <template
-                  v-else-if="
-                    ['client-delete', 'product-delete'].includes(action)
-                  "
-                >
-                  <el-text>{{ $t('group.confirm.' + action) }}</el-text>
-                  <el-button
-                    class="float-right"
-                    type="danger"
-                    data-testid="removeAssignments"
-                    @click="deleteAllChildren(node.label)"
-                    >{{ $t('button.delete') }}</el-button
-                  >
-                </template>
-                <template v-else-if="action === 'delete'">
-                  <el-text>{{ $t('group.confirm.' + action) }}</el-text>
-                  <el-button
-                    type="danger"
-                    class="float-right"
-                    @click="applyDelete(node.label, data.type, data.parent)"
-                    >{{ $t('button.delete') }}</el-button
-                  >
-                </template>
-                <template v-else-if="action === 'edit'">
-                  <el-form-item
-                    v-for="label in Object.keys(editgroup)"
-                    :key="label"
-                    :label="$t('table.fields.' + label)"
-                  >
-                    <el-select
-                      v-if="label === 'parent'"
-                      v-model="editgroup[label]"
-                    >
-                      <el-option
-                        v-for="item in filteredGroupNames"
-                        :key="item"
-                        :label="item"
-                        :value="item"
+                      <el-input
+                        v-model="createGroup[label]"
+                        @keyup.enter="createSubGroup(node.label)"
                       />
-                    </el-select>
-                    <el-input v-else v-model="editgroup[label]" />
-                  </el-form-item>
-                  <el-button
-                    class="float-right"
-                    type="success"
-                    data-testid="editGroup"
-                    @click="editGroup(node.label)"
-                    >{{ $t('button.update') }}</el-button
+                    </el-form-item>
+                    <el-button
+                      class="float-right"
+                      type="success"
+                      data-testid="createSubGroup"
+                      @click="createSubGroup(node.label)"
+                      :disabled="!createGroup.groupId"
+                      >{{ $t('button.create') }}</el-button
+                    >
+                  </template>
+                  <template
+                    v-else-if="['client-add', 'product-add'].includes(action)"
                   >
-                </template>
-                <template v-else-if="action === 'copy'">
-                  <el-form-item :label="$t('group.copyClient.selectgroup')">
-                    <el-scrollbar height="200px" class="w-100">
-                      <el-checkbox-group v-model="selectedGroups">
-                        <div v-for="item in filteredGroupNames" :key="item">
-                          <el-checkbox
-                            size="small"
-                            :label="item"
-                            :value="item"
-                          />
-                        </div>
-                      </el-checkbox-group>
-                    </el-scrollbar>
-                  </el-form-item>
-                  <el-button
-                    type="success"
-                    class="float-right"
-                    @click="copyClient(node.label)"
-                    >{{ $t('button.copy') }}</el-button
+                    <el-form-item :label="$t('label.selectChildren')">
+                      <el-scrollbar
+                        height="300px"
+                        class="border w-full p-2 min-w-[300px]"
+                      >
+                        <el-checkbox-group v-model="selectedChildren">
+                          <div v-for="item in idList" :key="item">
+                            <el-checkbox
+                              size="small"
+                              :value="item"
+                              :label="item"
+                            />
+                          </div>
+                        </el-checkbox-group>
+                      </el-scrollbar>
+                    </el-form-item>
+                    <el-button
+                      class="float-right"
+                      type="success"
+                      data-testid="addChildren"
+                      @click="addChildren(node.label)"
+                      >{{ $t('button.add') }}</el-button
+                    >
+                  </template>
+                  <template
+                    v-else-if="
+                      ['client-delete', 'product-delete'].includes(action)
+                    "
                   >
-                </template>
-                <template v-else>{{ $t('group.noactions') }}</template>
-              </el-form>
+                    <el-text>{{ $t('group.confirm.' + action) }}</el-text>
+                    <el-button
+                      class="float-right"
+                      type="danger"
+                      data-testid="removeAssignments"
+                      @click="deleteAllChildren(node.label)"
+                      >{{ $t('button.delete') }}</el-button
+                    >
+                  </template>
+                  <template v-else-if="action === 'delete'">
+                    <el-text>{{ $t('group.confirm.' + action) }}</el-text>
+                    <el-button
+                      type="danger"
+                      class="float-right"
+                      @click="applyDelete(node.label, data.type, data.parent)"
+                      >{{ $t('button.delete') }}</el-button
+                    >
+                  </template>
+                  <template v-else-if="action === 'edit'">
+                    <el-form-item
+                      v-for="label in Object.keys(editgroup)"
+                      :key="label"
+                      :label="$t('table.fields.' + label)"
+                    >
+                      <el-select
+                        v-if="label === 'parent'"
+                        v-model="editgroup[label]"
+                      >
+                        <el-option
+                          v-for="item in filteredGroupNames"
+                          :key="item"
+                          :label="item"
+                          :value="item"
+                        />
+                      </el-select>
+                      <el-input v-else v-model="editgroup[label]" />
+                    </el-form-item>
+                    <el-button
+                      class="float-right"
+                      type="success"
+                      data-testid="editGroup"
+                      @click="editGroup(node.label)"
+                      >{{ $t('button.update') }}</el-button
+                    >
+                  </template>
+                  <template v-else-if="action === 'copy'">
+                    <el-form-item :label="$t('group.copyClient.selectgroup')">
+                      <el-scrollbar height="200px" class="w-100">
+                        <el-checkbox-group v-model="selectedGroups">
+                          <div v-for="item in filteredGroupNames" :key="item">
+                            <el-checkbox
+                              size="small"
+                              :label="item"
+                              :value="item"
+                            />
+                          </div>
+                        </el-checkbox-group>
+                      </el-scrollbar>
+                    </el-form-item>
+                    <el-button
+                      type="success"
+                      class="float-right"
+                      @click="copyClient(node.label)"
+                      >{{ $t('button.copy') }}</el-button
+                    >
+                  </template>
+                  <template v-else>{{ $t('group.noactions') }}</template>
+                </el-form>
+              </template>
             </el-popover>
           </span>
         </div>
@@ -244,6 +250,9 @@
   const debouncedFetchClientGroups = debounce(fetchClientGroups, 300)
   const debouncedFetchProdGroups = debounce(fetchProdGroups, 300)
 
+  const isCreateGroupPopoverLoaded = ref(false)
+  const isActionPopoverLoaded = reactive<{ [key: string]: boolean }>({})
+
   watch(
     () => storeSelection.selectionDepots,
     async (newVal, oldVal) => {
@@ -277,6 +286,14 @@
       .filter((item: any) => item.type !== 'ObjectToGroup')
       .map((item: any) => item.text)
   })
+
+  function loadCreateGroupPopover() {
+    isCreateGroupPopoverLoaded.value = true
+  }
+
+  function loadActionPopover(actionKey: string) {
+    isActionPopoverLoaded[actionKey] = true
+  }
 
   async function refetchGroup() {
     if (props.data.category === 'client-group') {
