@@ -109,7 +109,13 @@
     isChild: { type: Boolean, default: false },
   })
 
-  const showWarning = computed(() => !(props.type === 'servers' || props.id))
+  const showWarning = computed(() => {
+    const showWarn = !(props.type === 'servers' || props.id)
+    if (showWarn) {
+      isLoading.value = false
+    }
+    return showWarn
+  })
 
   function handleCollapseChange(activeNames: CollapseModelValue) {
     activeItem.value = Array.isArray(activeNames)
