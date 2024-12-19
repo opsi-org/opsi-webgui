@@ -35,8 +35,7 @@
                   >
                     <template #header v-if="item.editable">
                       <el-text type="info">
-                        Add a new option by typing in the input box and pressing
-                        Enter.
+                        {{ $t('form.config.add_option') }}
                       </el-text>
                     </template>
                     <el-option
@@ -53,7 +52,7 @@
         </el-collapse-item>
       </el-collapse>
     </div>
-    <el-form-item>
+    <el-form-item v-if="fetchedData && Object.keys(fetchedData).length > 0">
       <el-button @click="fetchFormData">{{ $t('button.reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
