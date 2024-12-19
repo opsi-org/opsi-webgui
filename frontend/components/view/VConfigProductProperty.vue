@@ -1,44 +1,45 @@
 <template>
-  <el-form
-    class="h-[70vh] overflow-y-auto"
-    label-width="50%"
-    :label-position="mq.isMobile.value ? 'top' : 'left'"
-  >
-    <el-form-item
-      v-for="item in Object.values(props.properties)"
-      :key="item.propertyId"
-      :label="item.propertyId"
+  <div class="h-[50vh] overflow-y-auto">
+    <el-form
+      label-width="50%"
+      :label-position="mq.isMobile.value ? 'top' : 'left'"
     >
-      <el-checkbox
-        v-if="item.type === 'BoolProductProperty'"
-        v-model="itemValues[item.propertyId]"
-        :disabled="config.read_only"
-        @change="handleSelection(item, itemValues[item.propertyId])"
-      />
-      <el-select
-        v-else
-        v-model="itemValues[item.propertyId]"
-        filterable
-        :allow-create="item.editable"
-        :multiple="item.multiValue"
-        collapse-tags
-        :disabled="config.read_only"
-        @change="handleSelection(item, itemValues[item.propertyId])"
+      <el-form-item
+        v-for="item in Object.values(props.properties)"
+        :key="item.propertyId"
+        :label="item.propertyId"
       >
-        <template #header v-if="item.editable">
-          <el-text type="info">
-            {{ $t('form.config.add_option') }}
-          </el-text>
-        </template>
-        <el-option
-          v-for="value in item.allValues"
-          :key="String(value)"
-          :label="String(value)"
-          :value="value"
+        <el-checkbox
+          v-if="item.type === 'BoolProductProperty'"
+          v-model="itemValues[item.propertyId]"
+          :disabled="config.read_only"
+          @change="handleSelection(item, itemValues[item.propertyId])"
         />
-      </el-select>
-    </el-form-item>
-  </el-form>
+        <el-select
+          v-else
+          v-model="itemValues[item.propertyId]"
+          filterable
+          :allow-create="item.editable"
+          :multiple="item.multiValue"
+          collapse-tags
+          :disabled="config.read_only"
+          @change="handleSelection(item, itemValues[item.propertyId])"
+        >
+          <template #header v-if="item.editable">
+            <el-text type="info">
+              {{ $t('form.config.add_option') }}
+            </el-text>
+          </template>
+          <el-option
+            v-for="value in item.allValues"
+            :key="String(value)"
+            :label="String(value)"
+            :value="value"
+          />
+        </el-select>
+      </el-form-item>
+    </el-form>
+  </div>
 
   <div
     class="button-container"
