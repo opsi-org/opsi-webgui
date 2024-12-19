@@ -160,6 +160,10 @@
   })
 
   async function fetch() {
+    if (!logrequest.selectedClient) {
+      isLoading.value = false
+      return
+    }
     isLoading.value = true
     logrequest.selectedLogType = logtype.value
     try {
