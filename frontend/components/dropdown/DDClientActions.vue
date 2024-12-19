@@ -39,13 +39,8 @@
             }}</el-text>
             <el-text tag="i">{{ props.clientIds[0] }}</el-text>
             <el-text v-if="props.clientIds.length > 1" class="pl-2">
-              {{
-                $t('button.event.items.other', {
-                  count: props.clientIds.length - 1,
-                })
-              }}</el-text
-            >
-
+              {{ `(+${props.clientIds.length - 1} ${$t('info.more')})` }}
+            </el-text>
             <el-form label-position="top" class="mt-3" v-loading="isLoading">
               <el-form-item
                 v-if="action == 'notify'"

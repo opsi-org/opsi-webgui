@@ -333,5 +333,6 @@
   "treeselect.searchOrAdd": "Search or add item",
   "message.warning.unsaved_changes": "You have unsaved changes. Are you sure you want to leave this page without saving?",
   "form.config.add_option": "Add a new option by typing in the input box and pressing Enter.",
-  "info.noselection": "No Selection."
+  "info.noselection": "No Selection.",
+  "info.more": "more"
 }
