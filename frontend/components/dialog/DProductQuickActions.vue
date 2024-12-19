@@ -9,9 +9,8 @@
       <template #header>
         <h5>{{ $t('label.prodquickaction') }}</h5>
       </template>
-      <IconILoading v-if="isLoadingMain" :is-loading="isLoadingMain" />
       <el-form
-        v-else
+        v-loading="isLoadingMain"
         label-width="50%"
         :label-position="mq.isMobile.value ? 'top' : 'left'"
       >
@@ -119,15 +118,18 @@
           </div>
         </div>
 
-        <el-form-item>
+        <div
+          class="button-container"
+          style="display: flex; justify-content: flex-end"
+        >
           <el-button> {{ $t('button.reset') }}</el-button>
           <el-button
             :disabled="productActions.demo.demoResult == undefined"
-            type="primary"
+            :type="productActions.demo.demoResult == undefined ? '' : 'success'"
             @click="executeAction(true)"
             >{{ $t('button.apply') }}</el-button
           >
-        </el-form-item>
+        </div>
       </el-form>
     </el-dialog>
   </div>

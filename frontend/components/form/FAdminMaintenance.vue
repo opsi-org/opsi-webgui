@@ -4,9 +4,10 @@
     :key="section"
     v-loading="isLoading[section]"
   >
-    <el-row class="mt-2 mb-2 text-small">
-      <b :class="['title' + section]">{{ $t('title.' + section) }}</b>
-    </el-row>
+    <h3 class="font-semibold">
+      {{ $t('title.' + section) }}
+    </h3>
+
     <el-form
       v-if="section === 'applicationState'"
       label-width="50%"
@@ -57,19 +58,28 @@
                 <el-input v-model="newAppState.retry_after" />
               </el-form-item>
             </template>
-            <template v-if="newAppState.type">
-              <el-button type="primary" @click="resetForm(section)">
+
+            <div
+              v-if="newAppState.type"
+              class="button-container"
+              style="display: flex; justify-content: flex-end"
+            >
+              <el-button @click="resetForm(section)">
                 {{ $t('button.reset') }}
               </el-button>
               <el-button type="success" @click="setAppState">
                 {{ $t('button.apply') }}
               </el-button>
-            </template>
+            </div>
           </el-form>
         </template>
       </el-form-item>
     </el-form>
-    <el-form v-else label-position="left" label-width="auto">
+    <el-form
+      v-else
+      label-width="50%"
+      :label-position="mq.isMobile.value ? 'top' : 'left'"
+    >
       <el-form-item
         v-for="(value, key) in actions"
         :key="key"
@@ -108,15 +118,16 @@
             :auto-upload="false"
             :on-change="handleChangeFile"
           >
-            <el-button type="primary">{{
-              $t('placeholder.fileupload')
-            }}</el-button>
+            <el-button>{{ $t('placeholder.fileupload') }}</el-button>
           </el-upload>
         </el-input-group>
         <el-input v-else v-model="actions[key]" />
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="resetForm(section)">
+      <div
+        class="button-container"
+        style="display: flex; justify-content: flex-end"
+      >
+        <el-button @click="resetForm(section)">
           {{ $t('button.reset') }}
         </el-button>
         <el-button
@@ -135,7 +146,7 @@
               : $t('button.restore')
           }}
         </el-button>
-      </el-form-item>
+      </div>
     </el-form>
   </div>
 </template>

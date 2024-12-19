@@ -1,9 +1,9 @@
 <template>
   <div v-loading="isLoading">
     <div v-for="(actions, section) in adminTasks" :key="section">
-      <el-row class="mt-2 mb-2 text-small">
-        <b :class="['title' + section]">{{ $t('title.' + section) }}</b>
-      </el-row>
+      <h3 class="font-semibold">
+        {{ $t('title.' + section) }}
+      </h3>
       <el-form
         label-width="50%"
         :label-position="mq.isMobile.value ? 'top' : 'left'"
@@ -53,7 +53,6 @@
               />
             </el-select>
             <el-button
-              type="primary"
               :disabled="
                 ((action === 'unblock' || action === 'unlock') &&
                   selected[section] == '') ||

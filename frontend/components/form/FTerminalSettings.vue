@@ -1,5 +1,35 @@
 <template>
-  <div v-if="isMobile" class="m-2" data-testid="FTerminalSettings">
+  <el-form
+    label-width="50%"
+    :label-position="mq.isMobile.value ? 'top' : 'left'"
+  >
+    <el-form-item :label="$t('table.fields.terminalId')">
+      <el-input v-model="modelTerminalId" />
+    </el-form-item>
+    <el-form-item :label="$t('table.fields.terminalChannel')">
+      <el-input v-model="modelTerminalChannel" />
+    </el-form-item>
+    <div
+      class="button-container"
+      style="display: flex; justify-content: flex-end"
+    >
+      <el-button
+        :disabled="disabled"
+        type="primary"
+        @click="emit('click-connect')"
+        >{{ $t('button.reconnect') }}</el-button
+      >
+      <el-button
+        :disabled="disabled"
+        type="primary"
+        @click="emit('click-disconnect')"
+      >
+        {{ $t('button.disconnect') }}</el-button
+      >
+    </div>
+  </el-form>
+
+  <!-- <div v-if="isMobile" class="m-2" data-testid="FTerminalSettings">
     <FormrowFRRow
       :disabled="disabled"
       class="block"
@@ -67,11 +97,12 @@
         >
       </template>
     </FormrowFRRow>
-  </el-form>
+  </el-form> -->
 </template>
 
 <script setup lang="ts">
   const $t = useI18n().t
+  const mq = useMQ()
   const modelTerminalId = defineModel('terminalId', {
     required: true,
     type: String,
