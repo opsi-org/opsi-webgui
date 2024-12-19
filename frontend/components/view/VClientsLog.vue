@@ -164,8 +164,7 @@
     logrequest.selectedLogType = logtype.value
     try {
       const { data, error } = await useApiGETBody<T_ClientLog>(
-        '/opsidata/log',
-        logrequest,
+        `/opsidata/log?selectedClient=${logrequest.selectedClient}&selectedLogType=${logrequest.selectedLogType}`,
       )
       if (error) {
         notifyError({
