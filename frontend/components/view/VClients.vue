@@ -344,7 +344,7 @@
         if (rowData[value] >= warnValue) return 'warn'
         return 'success'
       })
-      return (
+      return rowData[value] ? (
         <TTooltip
           v-slots={{
             default: () => (
@@ -358,6 +358,8 @@
             tooltip: () => rowData[value] + ' ' + tootltip,
           }}
         />
+      ) : (
+        ''
       )
     }
   }
