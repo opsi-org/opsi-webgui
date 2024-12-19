@@ -72,6 +72,7 @@
   "form.theme.cbvalue.on": "dark",
   "form.tooltip.actionRequest": "Set actionRequest for all selected products",
   "form.username": "Username",
+  "form.type": "Type",
   "formselect.select.clients": "-- Client selection --",
   "formselect.select.servers": "-- Server selection --",
   "group.copy": "Copy",

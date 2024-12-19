@@ -1,11 +1,26 @@
 <template>
-  <el-row v-loading="isLoading">
-    <!-- <b>{{ $t('form.modules.available') }}</b> -->
-    <h2>{{ $t('form.modules.available') }}</h2>
-  </el-row>
-  <div v-for="(module, index) in fetchedData.result" :key="index" class="ml-5">
-    <el-text> {{ module }} </el-text>
-  </div>
+  <el-form
+    label-width="50%"
+    :label-position="mq.isMobile.value ? 'top' : 'left'"
+    v-loading="isLoading"
+  >
+    <el-form-item>
+      <template #label
+        ><h3 class="text-lg font-semibold">
+          {{ $t('form.modules.available') }}
+        </h3></template
+      >
+      <ul>
+        <li
+          v-for="(module, index) in fetchedData.result"
+          :key="index"
+          class="mb-2"
+        >
+          <el-tag type="info" class="w-32 text-center">{{ module }}</el-tag>
+        </li>
+      </ul>
+    </el-form-item>
+  </el-form>
 </template>
 
 <script setup lang="ts">
@@ -14,6 +29,7 @@
   const isLoading = ref(false)
   const fetchedData = ref<any>([])
   const $t = useI18n().t
+  const mq = useMQ()
   onMounted(async () => {
     await fetch()
   })

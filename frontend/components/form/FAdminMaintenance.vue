@@ -4,7 +4,7 @@
     :key="section"
     v-loading="isLoading[section]"
   >
-    <h3 class="font-semibold">
+    <h3 class="mt-4 text-lg font-semibold">
       {{ $t('title.' + section) }}
     </h3>
 

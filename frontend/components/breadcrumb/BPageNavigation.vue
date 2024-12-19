@@ -1,5 +1,5 @@
 <template>
-  <el-breadcrumb class="breadcrumb mb-2" :separator-icon="ArrowRight">
+  <el-breadcrumb class="breadcrumb mb-4" :separator-icon="ArrowRight">
     <el-breadcrumb-item
       v-for="(item, index) in pathSegments"
       :key="index"

@@ -1,7 +1,7 @@
 <template>
   <div v-loading="isLoading">
     <div v-for="(actions, section) in adminTasks" :key="section">
-      <h3 class="font-semibold">
+      <h3 class="mt-4 text-lg font-semibold">
         {{ $t('title.' + section) }}
       </h3>
       <el-form

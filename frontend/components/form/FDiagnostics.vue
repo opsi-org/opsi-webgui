@@ -8,7 +8,7 @@
   >
     <div v-for="(values, category) in data" :key="category">
       <template v-if="values && Object.keys(values).length !== 0">
-        <h3 class="mt-4">{{ category }}</h3>
+        <h3 class="mt-4 text-lg font-semibold">{{ category }}</h3>
         <el-form-item v-for="(v, k) in values" :label="k.toString()" :key="k">
           <template v-if="typeof v == 'object'">
             <div class="scrollValue">

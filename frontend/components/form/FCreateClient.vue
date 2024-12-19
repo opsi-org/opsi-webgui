@@ -5,9 +5,9 @@
     v-loading="isLoading"
   >
     <div v-for="(options, category, index) in createClient" :key="index">
-      <el-row>
-        <b>{{ $t('title.' + category) }} </b>
-      </el-row>
+      <h3 class="mt-4 text-lg font-semibold">
+        {{ $t('title.' + category) }}
+      </h3>
       <div v-for="(value, label) in options" :key="label + value">
         <el-form-item :label="$t('table.fields.' + label)">
           <el-form
@@ -28,7 +28,7 @@
               />
               <el-form-item
                 v-else
-                :label="$t('form.' + label)"
+                :label="$t('form.' + label2)"
                 :class="{
                   'd-none': !createClient.initialSetup.opsiClientAgent.setup,
                 }"

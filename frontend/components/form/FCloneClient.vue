@@ -8,9 +8,9 @@
       <SelectSHosts type="clients" @change="setId" :id="sourceID" />
     </el-form-item>
     <div v-for="(options, category) in cloneClient" :key="category">
-      <el-row>
-        <b>{{ $t('title.' + category) }} </b>
-      </el-row>
+      <h3 class="mt-4 text-lg font-semibold">
+        {{ $t('title.' + category) }}
+      </h3>
       <div v-for="(value, label) in options" :key="label + value">
         <el-form-item :label="$t('table.fields.' + label)">
           <el-input

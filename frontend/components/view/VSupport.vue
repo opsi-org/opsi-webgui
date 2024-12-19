@@ -8,7 +8,7 @@
       >
         <div class="flex items-center">
           <div class="ml-4">
-            <h3 class="text-lg font-semibold">{{ $t(item.title) }}</h3>
+            <h3 class="mt-4 text-lg font-semibold">{{ $t(item.title) }}</h3>
             <p>{{ $t(item.description) }}</p>
           </div>
         </div>
