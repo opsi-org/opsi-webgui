@@ -9,8 +9,8 @@
     </el-row>
     <el-form
       v-if="section === 'applicationState'"
-      :label-width="mq.isMobile.value ? '' : '230px'"
-      :label-position="mq.isMobile.value ? 'top' : 'right'"
+      label-width="50%"
+      :label-position="mq.isMobile.value ? 'top' : 'left'"
     >
       <el-form-item
         v-for="(action, index) in actions"
@@ -22,11 +22,7 @@
           <!-- Maybe add < br> < pre > { { currentAppStateObject } } /< pre >. -->
         </template>
         <template v-if="action === 'setup'">
-          <el-form
-            :label-width="mq.isMobile.value ? '' : '180px'"
-            :label-position="mq.isMobile.value ? 'top' : 'left'"
-            class="w-100"
-          >
+          <el-form label-position="left" label-width="auto">
             <el-form-item label="">
               <el-radio-group v-model="newAppState.type">
                 <el-radio
@@ -73,11 +69,7 @@
         </template>
       </el-form-item>
     </el-form>
-    <el-form
-      v-else
-      :label-width="mq.isMobile.value ? '' : '230px'"
-      :label-position="mq.isMobile.value ? 'top' : 'right'"
-    >
+    <el-form v-else label-position="left" label-width="auto">
       <el-form-item
         v-for="(value, key) in actions"
         :key="key"

@@ -1,5 +1,8 @@
 <template>
-  <el-form label-position="left" label-width="auto">
+  <el-form
+    label-width="50%"
+    :label-position="mq.isMobile.value ? 'top' : 'left'"
+  >
     <el-form-item :label="$t('table.fields.version')">
       {{
         getVersion(
@@ -92,6 +95,7 @@
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
+  const mq = useMQ()
   const isLoading = ref(true)
   const tableSettings = storeTablesettings()
   const { configLastSelected } = storeToRefs(tableSettings)

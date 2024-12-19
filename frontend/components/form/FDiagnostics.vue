@@ -1,7 +1,8 @@
 <template>
   <!-- TODO: mobile first (use row layout not columns) -->
   <el-form
-    :label-width="$mq !== 'mobile' ? '300px' : '250px'"
+    label-width="50%"
+    :label-position="mq.isMobile.value ? 'top' : 'left'"
     class="diagnostics-form"
     v-if="Object.keys(data).length > 0"
   >
@@ -26,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-  const $mq = useMQ().$mq
+  const mq = useMQ()
   const _props = defineProps({
     data: { type: Object, required: true },
   })

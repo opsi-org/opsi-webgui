@@ -1,7 +1,7 @@
 <template>
   <el-form
-    label-width="70px"
-    label-position="top"
+    label-width="50%"
+    :label-position="mq.isMobile.value ? 'top' : 'left'"
     size="small"
     data-testid="FAllSelections"
     class="rounded-lg shadow-md pb-1"
@@ -69,6 +69,7 @@
   import type { IObjectString2Any } from '~/types/tgeneral'
   import { useIcons } from '../../composables/mixins/useIcons'
   const $t = useI18n().t
+  const mq = useMQ()
   const icons = useIcons()
   const storeSelection: IObjectString2Any = storeSelections()
   const selectionDisplayList = ref<Array<string>>([

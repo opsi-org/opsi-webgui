@@ -13,7 +13,11 @@
           <template #title>
             <strong>{{ String(category) }}</strong>
           </template>
-          <el-form label-width="auto" class="w-full">
+          <el-form
+            label-width="50%"
+            :label-position="mq.isMobile.value ? 'top' : 'left'"
+            class="w-full"
+          >
             <div v-for="item in items" :key="item.configId" class="form-item">
               <el-form-item :label="item.configId">
                 <template v-if="item.type === 'BoolConfig'">
@@ -52,7 +56,11 @@
         </el-collapse-item>
       </el-collapse>
     </div>
-    <el-form-item v-if="fetchedData && Object.keys(fetchedData).length > 0">
+    <div
+      v-if="fetchedData && Object.keys(fetchedData).length > 0"
+      class="button-container"
+      style="display: flex; justify-content: flex-end"
+    >
       <el-button @click="fetchFormData">{{ $t('button.reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
@@ -60,7 +68,7 @@
         @click="saveHostParameters"
         >{{ $t('button.save') }}</el-button
       >
-    </el-form-item>
+    </div>
   </div>
 </template>
 
@@ -74,6 +82,7 @@
 
   const { notifyError, notifyInfo } = useNotification()
   const $t = useI18n().t
+  const mq = useMQ()
   const config = storeConfigapp().config ?? { read_only: true }
   const isLoading = ref(true)
   const fetchedData = ref<T_HostParameter | undefined>()

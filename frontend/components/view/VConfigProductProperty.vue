@@ -1,5 +1,8 @@
 <template>
-  <el-form label-width="auto" class="h-[50vh] overflow-y-auto w-full">
+  <el-form
+    label-width="50%"
+    :label-position="mq.isMobile.value ? 'top' : 'left'"
+  >
     <el-form-item
       v-for="item in Object.values(props.properties)"
       :key="item.propertyId"
@@ -36,15 +39,19 @@
     </el-form-item>
   </el-form>
 
-  <el-form-item v-if="Object.keys(props.properties).length > 0">
+  <div
+    class="button-container"
+    style="display: flex; justify-content: flex-end"
+  >
     <el-button
+      v-if="Object.keys(props.properties).length > 0"
       :type="hasUnsavedChanges ? 'success' : ''"
       :disabled="!hasUnsavedChanges"
       @click="saveProductProperties"
     >
       {{ $t('button.save') }}
     </el-button>
-  </el-form-item>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -55,6 +62,7 @@
 
   const config = storeConfigapp().config ?? { read_only: true }
   const $t = useI18n().t
+  const mq = useMQ()
   const dataSelection = storeSelections()
   const { selectionDepots, selectionClients } = storeToRefs(dataSelection)
 

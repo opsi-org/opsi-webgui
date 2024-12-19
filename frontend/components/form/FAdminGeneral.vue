@@ -5,8 +5,8 @@
         <b :class="['title' + section]">{{ $t('title.' + section) }}</b>
       </el-row>
       <el-form
-        :label-width="mq.isMobile.value ? '' : '230px'"
-        :label-position="mq.isMobile.value ? 'top' : 'right'"
+        label-width="50%"
+        :label-position="mq.isMobile.value ? 'top' : 'left'"
       >
         <el-form-item
           v-for="(action, index) in actions"

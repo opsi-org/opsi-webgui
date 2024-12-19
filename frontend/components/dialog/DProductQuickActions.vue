@@ -12,8 +12,8 @@
       <IconILoading v-if="isLoadingMain" :is-loading="isLoadingMain" />
       <el-form
         v-else
-        :label-width="mq.isMobile.value ? '' : '300px'"
-        :label-position="mq.isMobile.value ? 'top' : 'right'"
+        label-width="50%"
+        :label-position="mq.isMobile.value ? 'top' : 'left'"
       >
         <div v-for="(options, category, index) in productActions" :key="index">
           <el-row>

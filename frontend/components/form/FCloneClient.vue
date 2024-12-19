@@ -1,7 +1,7 @@
 <template>
   <el-form
-    :label-width="mq.isMobile.value ? '' : '230px'"
-    :label-position="mq.isMobile.value ? 'top' : 'right'"
+    label-width="50%"
+    :label-position="mq.isMobile.value ? 'top' : 'left'"
     v-loading="isLoading"
   >
     <el-form-item v-if="!isChild" :label="$t('table.fields.sourceClient')">
@@ -33,16 +33,20 @@
         </el-form-item>
       </div>
     </div>
-    <el-form-item>
+
+    <div
+      class="button-container"
+      style="display: flex; justify-content: flex-end"
+    >
       <el-button @click="resetForm"> {{ $t('button.reset') }}</el-button>
       <el-button
-        data-testid="cloneButton"
-        type="primary"
+        data-testid="cloneButton"s
+        :type="sourceID && cloneClient.target.hostId ? 'success' : ''"
         @click="applyCloneClient"
         :disabled="!sourceID || !cloneClient.target.hostId"
         >{{ $t('title.clone') }}</el-button
       >
-    </el-form-item>
+    </div>
   </el-form>
 </template>
 

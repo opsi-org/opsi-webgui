@@ -5,8 +5,8 @@
     }}</el-alert>
     <el-form
       v-if="hostAttributes.length && hostAttributes[0]"
-      label-width="200px"
-      class="w-full"
+      label-width="50%"
+      :label-position="mq.isMobile.value ? 'top' : 'left'"
       v-loading="isLoading"
     >
       <div class="h-[70vh] overflow-y-auto">
@@ -42,7 +42,12 @@
           </el-form-item>
         </div>
       </div>
-      <el-form-item v-if="hostAttributes[0].type !== 'OpsiDepotserver'">
+
+      <div
+        v-if="hostAttributes[0].type !== 'OpsiDepotserver'"
+        class="button-container"
+        style="display: flex; justify-content: flex-end"
+      >
         <el-button @click="resetForm">{{ $t('button.reset') }}</el-button>
         <el-button
           :type="hasUnsavedChanges ? 'success' : ''"
@@ -50,7 +55,7 @@
           @click="saveHostAttributes"
           >{{ $t('button.save') }}</el-button
         >
-      </el-form-item>
+      </div>
     </el-form>
   </div>
 </template>
@@ -67,6 +72,7 @@
   import { onBeforeRouteLeave } from 'vue-router'
 
   const $t = useI18n().t
+  const mq = useMQ()
 
   const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
   const { notifySuccess, notifyError, notifyInfo } = useNotification()
