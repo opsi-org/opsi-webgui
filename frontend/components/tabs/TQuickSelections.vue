@@ -16,13 +16,19 @@
           {{ storeSelection[category.store].length }}
         </el-text>
       </template>
-      <template v-if="category.name == 'infoselections'">
+      <template
+        v-if="
+          activeName === 'infoselections' && category.name === 'infoselections'
+        "
+      >
         <FormFAllSelections />
       </template>
-      <template v-else-if="category.name == 'depots'">
+      <template
+        v-else-if="activeName === 'depots' && category.name === 'depots'"
+      >
         <TreeTDepots />
       </template>
-      <template v-else>
+      <template v-else-if="activeName === category.name">
         <TreeTGroupSelection :grouptype="category.name" />
       </template>
     </el-tab-pane>
