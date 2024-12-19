@@ -1,8 +1,24 @@
 <template>
   <div data-testid="VSupport" class="w-100 min-w-1/1">
-    <div class="grid grid-cols-2 content-stretch mb-2 items-stretch">
-      <div v-for="item in supportItems" :key="item.title" class="w-full">
-        <CardCSupport :item="item" />
+    <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div
+        v-for="item in supportItems"
+        :key="item.title"
+        class="p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+      >
+        <div class="flex items-center">
+          <div class="ml-4">
+            <h3 class="text-lg font-semibold">{{ $t(item.title) }}</h3>
+            <p>{{ $t(item.description) }}</p>
+          </div>
+        </div>
+        <a
+          :href="item.link"
+          target="_blank"
+          class="inline-block mt-1 px-4 py-2 rounded transition-colors duration-300"
+        >
+          {{ $t(item.buttonname) }}
+        </a>
       </div>
     </div>
     <div v-if="withIframe">
