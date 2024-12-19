@@ -5,54 +5,61 @@
       {{ $t('alert.select') }}
     </el-alert>
     <div class="h-[70vh] overflow-y-auto">
-      <el-collapse accordion v-loading="isLoading">
+      <el-collapse
+        accordion
+        v-loading="isLoading"
+        @change="handleCollapseChange"
+      >
         <el-collapse-item
           v-for="(items, category) in fetchedData"
           :key="category"
+          :name="category"
         >
           <template #title>
             <strong>{{ String(category) }}</strong>
           </template>
-          <el-form
-            label-width="50%"
-            :label-position="mq.isMobile.value ? 'top' : 'left'"
-            class="w-full"
-          >
-            <div v-for="item in items" :key="item.configId" class="form-item">
-              <el-form-item :label="item.configId">
-                <template v-if="item.type === 'BoolConfig'">
-                  <el-checkbox
-                    v-model="itemValues[item.configId]"
-                    :disabled="config.read_only"
-                    @change="handleSelection(item, itemValues[item.configId])"
-                  ></el-checkbox>
-                </template>
-                <template v-else-if="item.type === 'UnicodeConfig'">
-                  <el-select
-                    v-model="itemValues[item.configId]"
-                    filterable
-                    :allow-create="item.editable"
-                    :multiple="item.multiValue"
-                    collapse-tags
-                    :disabled="config.read_only"
-                    @change="handleSelection(item, itemValues[item.configId])"
-                  >
-                    <template #header v-if="item.editable">
-                      <el-text type="info">
-                        {{ $t('form.config.add_option') }}
-                      </el-text>
-                    </template>
-                    <el-option
-                      v-for="value in item.possibleValues"
-                      :key="String(value)"
-                      :label="String(value)"
-                      :value="String(value)"
-                    ></el-option>
-                  </el-select>
-                </template>
-              </el-form-item>
-            </div>
-          </el-form>
+          <template v-if="activeItem === category">
+            <el-form
+              label-width="50%"
+              :label-position="mq.isMobile.value ? 'top' : 'left'"
+              class="w-full"
+            >
+              <div v-for="item in items" :key="item.configId" class="form-item">
+                <el-form-item :label="item.configId">
+                  <template v-if="item.type === 'BoolConfig'">
+                    <el-checkbox
+                      v-model="itemValues[item.configId]"
+                      :disabled="config.read_only"
+                      @change="handleSelection(item, itemValues[item.configId])"
+                    ></el-checkbox>
+                  </template>
+                  <template v-else-if="item.type === 'UnicodeConfig'">
+                    <el-select
+                      v-model="itemValues[item.configId]"
+                      filterable
+                      :allow-create="item.editable"
+                      :multiple="item.multiValue"
+                      collapse-tags
+                      :disabled="config.read_only"
+                      @change="handleSelection(item, itemValues[item.configId])"
+                    >
+                      <template #header v-if="item.editable">
+                        <el-text type="info">
+                          {{ $t('form.config.add_option') }}
+                        </el-text>
+                      </template>
+                      <el-option
+                        v-for="value in item.possibleValues"
+                        :key="String(value)"
+                        :label="String(value)"
+                        :value="String(value)"
+                      ></el-option>
+                    </el-select>
+                  </template>
+                </el-form-item>
+              </div>
+            </el-form>
+          </template>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -79,6 +86,7 @@
   import type { T_HostParameter } from '~/types/APItypes'
   import type { PropTypeServerClient } from '~/types/tproptypes'
   import { onBeforeRouteLeave } from 'vue-router'
+  import type { CollapseModelValue } from 'element-plus'
 
   const { notifyError, notifyInfo } = useNotification()
   const $t = useI18n().t
@@ -90,6 +98,8 @@
   const initialValues = ref<{ [key: string]: any }>({})
   const hasUnsavedChanges = ref(false)
   const changeBuffer = ref<{ [key: string]: any }>({})
+  const activeItem = ref<string | null>(null)
+
   const props = defineProps({
     id: { type: String, default: undefined },
     type: {
@@ -100,6 +110,12 @@
   })
 
   const showWarning = computed(() => !(props.type === 'servers' || props.id))
+
+  function handleCollapseChange(activeNames: CollapseModelValue) {
+    activeItem.value = Array.isArray(activeNames)
+      ? String(activeNames[0])
+      : String(activeNames)
+  }
 
   function getInitialValue(item: {
     value?: any
