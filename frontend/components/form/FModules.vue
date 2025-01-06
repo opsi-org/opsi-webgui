@@ -11,11 +11,7 @@
         </h3></template
       >
       <ul>
-        <li
-          v-for="(module, index) in fetchedData.result"
-          :key="index"
-          class="mb-2"
-        >
+        <li v-for="(module, index) in fetchedData" :key="index" class="mb-2">
           <el-tag type="info" class="w-32 text-center">{{ module }}</el-tag>
         </li>
       </ul>
@@ -27,22 +23,37 @@
   import { useNotification } from '~/composables/mixins/useComponent'
   const { notifyError } = useNotification()
   const isLoading = ref(false)
-  const fetchedData = ref<any>([])
+  const fetchedData = ref<string[]>([])
   const $t = useI18n().t
   const mq = useMQ()
   onMounted(async () => {
     await fetch()
   })
 
+  interface TData {
+    result: string[]
+  }
+
   async function fetch() {
     isLoading.value = true
-    const { data, error } = await useApiGETBody('/opsidata/modulesContent')
+
+    const { data, error } = await useApiGETBody<TData>(
+      '/opsidata/modulesContent',
+    )
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
       return
     }
-    fetchedData.value = data?.value
+    if (!data.value) {
+      notifyError({
+        message: $t('message.error.empty-response', { details: 'no modules' }),
+      })
+      isLoading.value = false
+      return
+    }
+    fetchedData.value = data.value.result.sort()
+
     isLoading.value = false
   }
 </script>
