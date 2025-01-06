@@ -201,7 +201,7 @@
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsaved_changes'))
+      const answer = window.confirm($t('message.warning.unsavedChanges'))
       if (answer) {
         next()
       } else {

@@ -39,7 +39,8 @@
             }}</el-text>
             <el-text tag="i">{{ props.clientIds[0] }}</el-text>
             <el-text v-if="props.clientIds.length > 1" class="pl-2">
-              {{ ` (+${props.clientIds.length - 1} ${$t('info.more')})` }}
+              <!-- {{ ` (+${props.clientIds.length - 1} ${$t('info.more')})` }} -->
+              {{ $t('info.more', { clients: props.clientIds.length }) }}
             </el-text>
             <el-form label-position="top" class="mt-3" v-loading="isLoading">
               <el-form-item
