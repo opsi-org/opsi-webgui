@@ -28,7 +28,7 @@
               <el-radio-group v-model="newAppState.type">
                 <el-radio
                   :label="item"
-                  v-for="item in ['normal', 'maintenance']"
+                  v-for="item in applicationStateValues"
                   :disabled="storeConfigapp().config?.read_only || true"
                   :key="item"
                   >{{ $t('label.' + item) }}</el-radio
@@ -199,6 +199,7 @@
   interface TFileId {
     file_id: string
   }
+  const applicationStateValues = ['normal', 'maintenance'] // for translation key search: $t('label.normal'), $t('label.maintenance')
   const adminTasks = reactive({
     applicationState: ['current', 'setup'], // for translation key search: $t('title.applicationState'), $t('label.applicationState.current'), $t('label.applicationState.setup')
     createBackup: {
