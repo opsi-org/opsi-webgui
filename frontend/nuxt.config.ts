@@ -125,11 +125,11 @@ export default defineNuxtConfig({
       },
     },
     components: {
-      prefix: 'P',
+      prefix: 'P', // usage: <p-button>  or <PButton />
       exclude: ['Toast', 'Editor', 'Chart'],
     },
     directives: {
-      prefix: 'P',
+      prefix: 'P', // usage: v-p-tooltip
       include: ['Tooltip'],
     },
   },

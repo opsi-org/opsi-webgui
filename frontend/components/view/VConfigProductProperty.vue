@@ -8,6 +8,7 @@
         v-for="item in Object.values(props.properties)"
         :key="item.propertyId"
         :label="item.propertyId"
+        :class="{ 'cursor-not-allowed': config.read_only }"
       >
         <el-checkbox
           v-if="item.type === 'BoolProductProperty'"

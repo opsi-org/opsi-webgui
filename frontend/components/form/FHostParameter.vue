@@ -64,7 +64,9 @@
       </el-collapse>
     </div>
     <div
-      v-if="fetchedData && Object.keys(fetchedData).length > 0"
+      v-if="
+        fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only
+      "
       class="button-container"
       style="display: flex; justify-content: flex-end"
     >

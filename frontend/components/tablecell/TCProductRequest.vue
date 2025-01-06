@@ -1,6 +1,7 @@
 <template>
   <TooltipTTooltip
     :disabled="visibleRequest !== MIXED_VALUE && !visibleRequest?.includes('*')"
+    :class="{ 'cursor-not-allowed': config.read_only }"
   >
     <template #tooltip>
       <span

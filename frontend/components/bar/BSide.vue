@@ -3,9 +3,9 @@
     <el-menu
       router
       unique-opened
+      class="h-[90vh] bg-opsi-blue"
       :default-active="router.currentRoute.value?.fullPath"
       :collapse="isCollapse"
-      class="h-[90vh] bg-opsi-blue"
     >
       <template v-for="item in navItems" :key="item.title">
         <el-sub-menu

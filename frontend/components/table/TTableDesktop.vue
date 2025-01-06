@@ -161,12 +161,13 @@
                   </el-button>
                 </el-tooltip>
                 <el-tooltip
+                  v-if="actionClone"
                   :content="$t('title.clone')"
                   placement="top"
-                  v-if="actionClone"
                 >
                   <el-button
                     link
+                    :disabled="storeConfigapp().config?.read_only || true"
                     @click="handleCloneClick(scope.row)"
                     :class="{
                       'is-active':
@@ -178,6 +179,7 @@
                 </el-tooltip>
                 <DropdownDDClientActions
                   v-if="hasClientActions"
+                  :disabled="storeConfigapp().config?.read_only || true"
                   :client-ids="[scope.row.clientId]"
                 />
               </div>
