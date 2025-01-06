@@ -49,6 +49,7 @@
     </el-menu-item> -->
 
     <el-menu-item
+      v-if="storeConfigapp().config?.read_only"
       disbled
       index="3"
       type="text"

@@ -29,7 +29,7 @@
                 <el-radio
                   :label="item"
                   v-for="item in applicationStateValues"
-                  :disabled="storeConfigapp().config?.read_only || true"
+                  :disabled="storeConfigapp().config?.read_only"
                   :key="item"
                   >{{ $t('label.' + item) }}</el-radio
                 >
@@ -58,7 +58,7 @@
               <el-form-item :label="$t('label.retryaftersec')">
                 <el-input
                   v-model="newAppState.retry_after"
-                  :disabled="storeConfigapp().config?.read_only || true"
+                  :disabled="storeConfigapp().config?.read_only"
                 >
                 </el-input>
               </el-form-item>
@@ -71,14 +71,14 @@
             >
               <el-button
                 @click="resetForm(section)"
-                :disabled="storeConfigapp().config?.read_only || true"
+                :disabled="storeConfigapp().config?.read_only"
               >
                 {{ $t('button.reset') }}
               </el-button>
               <el-button
                 type="success"
                 @click="setAppState"
-                :disabled="storeConfigapp().config?.read_only || true"
+                :disabled="storeConfigapp().config?.read_only"
               >
                 {{ $t('button.apply') }}
               </el-button>
@@ -100,25 +100,25 @@
         <el-checkbox
           v-if="typeof value == 'boolean'"
           v-model="actions[key]"
-          :disabled="storeConfigapp().config?.read_only || true"
+          :disabled="storeConfigapp().config?.read_only"
         />
         <el-input
           v-else-if="key === 'password'"
           v-model="actions[key]"
-          :disabled="storeConfigapp().config?.read_only || true"
+          :disabled="storeConfigapp().config?.read_only"
           show-password
         />
         <el-input-group v-else-if="key === 'server_id'" class="w-100 flex">
           <el-radio-group
             class="flex-shrink-0"
             v-model="actions[key]"
-            :disabled="storeConfigapp().config?.read_only || true"
+            :disabled="storeConfigapp().config?.read_only"
           >
             <el-radio
               v-for="item in serverIDValues"
               :label="item"
               :key="item"
-              :disabled="storeConfigapp().config?.read_only || true"
+              :disabled="storeConfigapp().config?.read_only"
               >{{ $t('label.' + item) }}</el-radio
             >
             <!-- for transation keys: $t('label.backup'), $t('label.local'), $t('label.new') -->
@@ -139,9 +139,9 @@
             :limit="2"
             :auto-upload="false"
             :on-change="handleChangeFile"
-            :disabled="storeConfigapp().config?.read_only || true"
+            :disabled="storeConfigapp().config?.read_only"
           >
-            <el-button :disabled="storeConfigapp().config?.read_only || true">{{
+            <el-button :disabled="storeConfigapp().config?.read_only">{{
               $t('placeholder.fileupload')
             }}</el-button>
           </el-upload>
@@ -154,13 +154,13 @@
       >
         <el-button
           @click="resetForm(section)"
-          :disabled="storeConfigapp().config?.read_only || true"
+          :disabled="storeConfigapp().config?.read_only"
         >
           {{ $t('button.reset') }}
         </el-button>
         <el-button
           type="success"
-          :disabled="storeConfigapp().config?.read_only || true"
+          :disabled="storeConfigapp().config?.read_only"
           @click="
             () => {
               section === 'createBackup'

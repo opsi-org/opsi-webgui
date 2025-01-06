@@ -94,9 +94,7 @@
     }
     isLoading.value = false
     return (
-      data?.value?.includes('terminal') ||
-      storeConfigapp().config?.read_only ||
-      true
+      data?.value?.includes('terminal') || storeConfigapp().config?.read_only
     )
   }
   onMounted(async () => {
