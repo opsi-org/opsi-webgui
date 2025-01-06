@@ -7,6 +7,16 @@ import sys
 
 VERSION = '0.2.0'
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 def argparser():
     parser = argparse.ArgumentParser(description='Run npm commands')
@@ -18,10 +28,10 @@ def argparser():
 
     parser.add_argument('-s', '--search-missing', action='store_true', help='Search for keys missing translation keys in files')
     # parser.add_argument('-r', '--regex-files', type=str, help='Files to search in', default='scripts/compare_translation_keys.*')
-    parser.add_argument('-i','--include', action='append', help='Files to search in (can be regex)', default=['*.vue', '*.js', '*.ts'])
+    parser.add_argument('-i','--include', action='append', help='Files to search in (can be regex)', default=['*.vue', '*.js', '*.ts', '*.tsx', '*.jsx'])
     parser.add_argument('-e','--exclude', action='append', help='Files to exclude from search', default=[
         '*.story.vue',
-        'node_modules/', 'build/', 'dist/', 'coverage/', 'public/', 'assets/', 'locale/', '.nuxt/', 'tests/', '.config/', 'histoire/', 'test-results/', 'test-configs', 'pluigns',
+        'node_modules/', 'build/', 'dist/', 'coverage/', 'public/', 'assets/', 'locale/', '.nuxt/', 'tests/', '.config/', 'histoire/', 'test-results/', 'test-configs', 'plugins',
         # 'components', 'composables', 'pages', 'plugins', 'store', 'layouts', 'middleware', 'static', 'assets', 'api', 'utils', 'services', 'filters', 'directives', 'mixins', 'hooks', 'layouts', 'assets', 'styles'
     ])
 
@@ -107,10 +117,10 @@ def search_translation_keys_in_files(translation_file, includes, excludes):
 
     if len(keys_not_found) > 0:
         print(f"Keys not found in files:\n\t{str_keys_not_found}\n")
-        print('Number of keys not found:', len(keys_not_found))
+        print(bcolors.FAIL, 'Number of keys not found:', len(keys_not_found), bcolors.ENDC)
         sys.exit(1)
 
-    print('All keys found in files')
+    print(bcolors.OKGREEN, 'All keys found in files', bcolors.ENDC)
 
 
 def main():
