@@ -10,7 +10,9 @@
     @show="loadCreateGroupPopover"
   >
     <template #reference>
-      <el-button size="small">{{ $t('label.create.prodgroup') }}</el-button>
+      <el-button size="small" :disabled="config.read_only">{{
+        $t('label.create.prodgroup')
+      }}</el-button>
     </template>
     <template v-if="isCreateGroupPopoverLoaded">
       <el-form label-position="top" class="mt-3">
