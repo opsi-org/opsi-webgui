@@ -112,7 +112,7 @@
       title: 'title.administration',
       route:
         config.value?.['terminal.forbidden'] === true
-          ? '/admin/'
+          ? '/admin/general'
           : '/admin/terminal',
       icon: icons.admin,
       submenu: [
@@ -122,7 +122,7 @@
           disabled: config.value?.['terminal.forbidden'] === true,
         },
         { title: 'title.healthcheck', route: '/admin/healthcheck' },
-        { title: 'title.admin', route: '/admin/' },
+        { title: 'title.admin', route: '/admin/general' },
         { title: 'form.modules', route: '/admin/modules' },
       ],
     },
