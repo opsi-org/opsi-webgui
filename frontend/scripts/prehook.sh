@@ -8,7 +8,7 @@ npm run lint || exit_code=$?
 
 npm run lint:missing-i18n || exit_code=$?
 
-npm run tsc || exit_code=$?
+npm run tscs || exit_code=$?
 
 echo "======================================================"
 cd -
