@@ -13,6 +13,30 @@
   >
     <template #toolbar-right>
       <el-button
+        v-if="hasUnsavedChanges"
+        plain
+        @click="openBufferedChangesModal = true"
+      >
+        <IconIIcon :icon="icons.warning" />
+      </el-button>
+      <el-dialog
+        v-model="openBufferedChangesModal"
+        title="Unsaved changes"
+        align-center
+      >
+        {{ bufferedChanges }}
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="openBufferedChangesModal = false"
+              >Cancel</el-button
+            >
+            <el-button type="primary" @click="openBufferedChangesModal = false">
+              Confirm
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
+      <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
         :disabled="!hasUnsavedChanges"
         @click="saveBufferedChanges"
@@ -118,6 +142,7 @@
     if (productsTypeChecked.value.Product) return 'Product'
     return 'LocalbootProduct'
   })
+  const openBufferedChangesModal = ref(false)
 
   const tableColumn = ref([
     {
