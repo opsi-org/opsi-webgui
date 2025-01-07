@@ -7,7 +7,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    PButton: typeof import('primevue/button')['default']
+    PDialog: typeof import('primevue/dialog')['default']
     PFloatLabel: typeof import('primevue/floatlabel')['default']
+    PInputText: typeof import('primevue/inputtext')['default']
+    PMultiSelect: typeof import('primevue/multiselect')['default']
     PPopover: typeof import('primevue/popover')['default']
     PSelect: typeof import('primevue/select')['default']
     PTag: typeof import('primevue/tag')['default']

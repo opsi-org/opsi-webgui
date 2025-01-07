@@ -245,7 +245,9 @@
   const sortDesc = ref(false)
   const contextMenuVisible = ref(false)
 
-  defineExpose({ refetch: fetchWrapper, fetchedData })
+  const hasRowsWrapper = computed(() => fetchedData.value?.length > 0)
+
+  defineExpose({ refetch: fetchWrapper, fetchedData, hasRows: hasRowsWrapper })
 
   watch([() => filterQuery.value], fetchWrapper, { immediate: true })
   watch(

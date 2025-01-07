@@ -54,8 +54,6 @@
     { deep: true },
   )
 
-  defineExpose({ refetch: fetchWrapper, fetchedData: dataWrapper })
-
   async function fetchWrapper() {
     if (isMobileWrapper.value) {
       await tableMobile.value?.refetch()
@@ -63,6 +61,13 @@
       await tableDesktop.value?.refetch()
     }
   }
+  const hasRowsWrapper = computed(() => {
+    if (isMobileWrapper.value) {
+      return tableMobile.value?.hasRows
+    } else {
+      return tableDesktop.value?.hasRows
+    }
+  })
 
   function dataWrapper() {
     if (isMobileWrapper.value) {
@@ -71,4 +76,10 @@
       return tableDesktop.value?.fetchedData
     }
   }
+
+  defineExpose({
+    refetch: fetchWrapper,
+    fetchedData: dataWrapper,
+    hasRows: hasRowsWrapper,
+  })
 </script>

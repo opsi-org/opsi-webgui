@@ -22,6 +22,7 @@
   const storeSel = storeSelections()
   const fetchedData = ref<Array<any>>([])
   const value = ref<string | undefined>()
+
   const props = defineProps({
     id: { type: String, default: undefined },
     type: {

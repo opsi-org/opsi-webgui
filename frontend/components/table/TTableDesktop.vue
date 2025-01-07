@@ -22,7 +22,7 @@
             <IconIIcon :icon="icons.columns" />
           </el-button>
           <template #dropdown>
-            <el-table :data="tableColumn" style="width: 100%">
+            <el-table ref="table" :data="tableColumn" style="width: 100%">
               <el-table-column prop="title" label="Column" min-width="150px" />
               <el-table-column label="Column Selection">
                 <template #header>
@@ -253,6 +253,7 @@
 
   const $emit = defineEmits(['selectionChanged', 'clearSelection'])
 
+  const table = ref()
   const fetchedData = ref()
   const activeButton = ref<string | null>(null)
   const totalItems = ref<number>(0)
@@ -270,7 +271,9 @@
   const contextMenuStyle = ref({})
   const contextMenuRow = ref(null)
 
-  defineExpose({ refetch: fetchWrapper, fetchedData })
+  const hasRowsWrapper = computed(() => totalItems.value > 0)
+
+  defineExpose({ refetch: fetchWrapper, fetchedData, hasRows: hasRowsWrapper })
 
   watch([() => filterQuery.value], fetchWrapper, { immediate: true })
   watch(

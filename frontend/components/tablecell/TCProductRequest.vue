@@ -269,6 +269,19 @@
   //     />
   //   )
   // }
+
+  // onBeforeRouteLeave((to, from, next) => {
+  //   if (hasUnsavedChanges.value) {
+  //     const answer = window.confirm($t('message.warning.unsavedChanges'))
+  //     if (answer) {
+  //       next()
+  //     } else {
+  //       next(false)
+  //     }
+  //   } else {
+  //     next()
+  //   }
+  // })
 </script>
 
 <style scoped>

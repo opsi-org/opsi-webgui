@@ -19,6 +19,12 @@
       >
         {{ $t('button.save') }}
       </el-button>
+
+      <ModalMServerSelection
+        v-if="storeSelection.selectionDepots.length <= 0"
+        @refetch="refetch"
+        :refetch-on-cancel="hasRowsWrapper"
+      />
     </template>
     <template #header>
       <div>
@@ -324,8 +330,9 @@
 
   const bufferedChanges = ref<object>({})
   const hasUnsavedChanges = computed(
-    () => Object.keys(bufferedChanges.value).length > 0,
+    () => Object.keys(bufferedChanges.value)?.length > 0,
   )
+  const hasRowsWrapper = computed(() => productsRef.value?.hasRows.value)
 
   onMounted(async () => {
     if (props.productType && props.productType !== currentType.value)
@@ -348,6 +355,10 @@
       productsRef.value?.refetch()
     },
   )
+
+  function refetch() {
+    productsRef.value?.refetch()
+  }
 
   async function fetchProducts(_params: any) {
     const params = prepareParams(_params)
