@@ -13,7 +13,7 @@
       <span
         :class="{
           '!font-bold':
-            (Array.isArray(markedOptions) && markedOptions?.includes(option)) ||
+            (isArray(markedOptions) && markedOptions?.includes(option)) ||
             markedOptions == option,
         }"
         >{{ option }}</span
@@ -50,7 +50,7 @@
       <span
         :class="{
           '!font-bold':
-            (Array.isArray(markedOptions) && markedOptions?.includes(option)) ||
+            (isArray(markedOptions) && markedOptions?.includes(option)) ||
             markedOptions == option,
         }"
         >{{ option }}</span
@@ -114,8 +114,8 @@
       }) => {
         return (
           selectedOptions === undefined ||
-          (multiSelection && Array.isArray(selectedOptions)) ||
-          (!multiSelection && !Array.isArray(selectedOptions))
+          (multiSelection && isArray(selectedOptions)) ||
+          (!multiSelection && !isArray(selectedOptions))
         )
       },
     },
@@ -131,8 +131,8 @@
       }) => {
         return (
           markedOptions === undefined ||
-          (multiSelection && Array.isArray(markedOptions)) ||
-          (!multiSelection && !Array.isArray(markedOptions))
+          (multiSelection && isArray(markedOptions)) ||
+          (!multiSelection && !isArray(markedOptions))
         )
       },
     },
@@ -147,8 +147,8 @@
     assert(data.value !== undefined, 'Data is undefined')
     assert(
       localSelectedItems.value === undefined ||
-        (Array.isArray(localSelectedItems.value) && props.multiSelection) ||
-        (!Array.isArray(localSelectedItems.value) && !props.multiSelection),
+        (isArray(localSelectedItems.value) && props.multiSelection) ||
+        (!isArray(localSelectedItems.value) && !props.multiSelection),
       'Selection should be array if multiSelection is true',
     )
 
@@ -164,17 +164,20 @@
 
     if (props.selectedOptions === undefined) {
       return
-    } else if (Array.isArray(props.selectedOptions)) {
-      localSelectedItems.value = [...props.selectedOptions]
+    } else if (isArray(props.selectedOptions)) {
+      localSelectedItems.value = props.selectedOptions
+      // localSelectedItems.value = [...props.selectedOptions]
     } else {
       localSelectedItems.value = props.selectedOptions as T
     }
   })
+
   watch(
-    () => localSelectedItems.value,
+    localSelectedItems,
     () => {
       $emit('change')
     },
+    { deep: true },
   )
   function addItemToOptions(item: string) {
     if (!(data.value as string[]).includes(item)) {
@@ -182,7 +185,7 @@
     }
 
     selectOptionIfNotAlready(item)
-    $emit('change')
+    // $emit('change')
   }
 
   function selectOptionIfNotAlready(item: string) {
@@ -192,7 +195,7 @@
     }
     // select if not already
     if (
-      Array.isArray(localSelectedItems.value) &&
+      isArray(localSelectedItems.value) &&
       !localSelectedItems.value.includes(item as T)
     ) {
       localSelectedItems.value.push(item as T)

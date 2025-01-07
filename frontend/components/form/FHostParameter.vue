@@ -49,13 +49,18 @@
                       :multi-selection="item.multiValue"
                       :selected-options="itemValues[item.configId]"
                       :marked-options="initialValues[item.configId]"
-                      @change="handleSelection(item, itemValues[item.configId])"
+                      @change="
+                        () => handleSelection(item, itemValues[item.configId])
+                      "
                     />
 
                     <p-tag
                       v-if="
-                        itemValues[item.configId] !==
-                        initialValues[item.configId]
+                        itemValues[item.configId] !== undefined &&
+                        !arrayEqual(
+                          itemValues[item.configId],
+                          initialValues[item.configId],
+                        )
                       "
                       severity="danger"
                       :value="t_fixed('notOrigin')"
@@ -220,13 +225,27 @@
   }
 
   function handleSelection(item: any, value: any) {
-    itemValues.value[item.configId] = JSON.parse(JSON.stringify(value))
+    assert(value !== undefined, 'values should not be undefined')
+    assert(
+      itemValues.value[item.configId] !== undefined,
+      'itemValues should not be undefined',
+    )
+    assert(
+      initialValues.value[item.configId] !== undefined,
+      'initialValues should not be undefined',
+    )
     changeBuffer.value[item.configId] = JSON.parse(JSON.stringify(value))
     checkUnsavedChanges()
   }
 
   function checkUnsavedChanges() {
     hasUnsavedChanges.value = Object.keys(itemValues.value).some((key) => {
+      if (itemValues.value[key] === undefined) return false
+      if (isArray(itemValues.value[key]) && isArray(initialValues.value[key])) {
+        if (initialValues.value[key] === itemValues.value[key]) return false
+        // check arrays deeply (e.g. they have just another value order)
+        return !arrayEqual(initialValues.value[key], itemValues.value[key])
+      }
       return itemValues.value[key] !== initialValues.value[key]
     })
   }
