@@ -89,7 +89,7 @@
   import { useIcons } from '~/composables/mixins/useIcons'
   import { useStrings } from '~/composables/mixins/useStrings'
   import { mapValues2Objects } from '~/utils/smappings'
-  import type { T_Client2Depot } from '~/types/APItypes'
+  import type { T_Client2Depot, T_ProductRow } from '~/types/APItypes'
   import type {
     IObjectString2String,
     IObjectString2ObjectString2String,
@@ -101,7 +101,7 @@
   const { selectionDepots, selectionClients } = storeToRefs(storeSelections())
 
   const props = defineProps({
-    row: { type: Object as PropType<any>, required: true },
+    row: { type: Object as PropType<T_ProductRow>, required: true },
     type: { type: String, required: true },
     clients2depots: {
       type: Object as PropType<T_Client2Depot>,
@@ -110,17 +110,23 @@
   })
   const openedTTServer = ref<number[]>([])
   const rowitem = computed(() => props.row)
+
   const tooltiptext = computed(() => {
-    const depots: IObjectString2String = mapValues2Objects(
-      rowitem.value.depotVersions,
-      rowitem.value.selectedDepots,
-      selectionDepots.value,
-      NOVERSION,
-    )
+    if (Object.keys(rowitem.value).length <= 0) return {}
+
     const tt: IObjectString2ObjectString2String = {}
-    for (const d in depots) {
-      tt[d] = {
-        [d]: depots[d],
+
+    if (rowitem.value.depotVersions) {
+      const depots: IObjectString2String = mapValues2Objects(
+        rowitem.value.depotVersions,
+        rowitem.value.selectedDepots,
+        selectionDepots.value,
+        NOVERSION,
+      )
+      for (const d in depots) {
+        tt[d] = {
+          [d]: depots[d],
+        }
       }
     }
     if (
@@ -129,14 +135,16 @@
     ) {
       return tt
     }
-    const clients: IObjectString2String = mapValues2Objects(
-      rowitem.value.clientVersions,
-      rowitem.value.selectedClients,
-      selectionClients.value,
-      NOVERSION,
-    )
-    for (const c in clients) {
-      tt[props.clients2depots[c]][c] = clients[c]
+    if (rowitem.value.clientVersions) {
+      const clients: IObjectString2String = mapValues2Objects(
+        rowitem.value.clientVersions,
+        rowitem.value.selectedClients,
+        selectionClients.value,
+        NOVERSION,
+      )
+      for (const c in clients) {
+        tt[props.clients2depots[c]][c] = clients[c]
+      }
     }
     return tt
   })
