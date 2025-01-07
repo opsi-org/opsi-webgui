@@ -31,30 +31,35 @@
                       v-model="itemValues[item.configId]"
                       :disabled="config.read_only"
                       @change="handleSelection(item, itemValues[item.configId])"
-                    ></el-checkbox>
+                    />
+                    <p-tag
+                      v-if="
+                        itemValues[item.configId] !==
+                        initialValues[item.configId]
+                      "
+                      severity="danger"
+                      :value="t_fixed('notOrigin')"
+                    />
                   </template>
                   <template v-else-if="item.type === 'UnicodeConfig'">
-                    <el-select
-                      v-model="itemValues[item.configId]"
-                      filterable
-                      :allow-create="item.editable"
-                      :multiple="item.multiValue"
-                      collapse-tags
-                      :disabled="config.read_only"
+                    <SelectSSelect
+                      v-model:selection="itemValues[item.configId]"
+                      v-model:data="item.possibleValues"
+                      :editable="item.editable"
+                      :multi-selection="item.multiValue"
+                      :selected-options="itemValues[item.configId]"
+                      :marked-options="initialValues[item.configId]"
                       @change="handleSelection(item, itemValues[item.configId])"
-                    >
-                      <template #header v-if="item.editable">
-                        <el-text type="info">
-                          {{ $t('form.config.add_option') }}
-                        </el-text>
-                      </template>
-                      <el-option
-                        v-for="value in item.possibleValues"
-                        :key="String(value)"
-                        :label="String(value)"
-                        :value="String(value)"
-                      ></el-option>
-                    </el-select>
+                    />
+
+                    <p-tag
+                      v-if="
+                        itemValues[item.configId] !==
+                        initialValues[item.configId]
+                      "
+                      severity="danger"
+                      :value="t_fixed('notOrigin')"
+                    />
                   </template>
                 </el-form-item>
               </div>
@@ -89,8 +94,10 @@
   import type { PropTypeServerClient } from '~/types/tproptypes'
   import { onBeforeRouteLeave } from 'vue-router'
   import type { CollapseModelValue } from 'element-plus'
+  import { useStrings } from '~/composables/mixins/useStrings'
 
   const { notifyError, notifyInfo } = useNotification()
+  const t_fixed = useStrings().t_fixed
   const $t = useI18n().t
   const mq = useMQ()
   const config = storeConfigapp().config ?? { read_only: true }
@@ -213,15 +220,15 @@
   }
 
   function handleSelection(item: any, value: any) {
-    itemValues.value[item.configId] = value
-    changeBuffer.value[item.configId] = value
+    itemValues.value[item.configId] = JSON.parse(JSON.stringify(value))
+    changeBuffer.value[item.configId] = JSON.parse(JSON.stringify(value))
     checkUnsavedChanges()
   }
 
   function checkUnsavedChanges() {
-    hasUnsavedChanges.value = Object.keys(itemValues.value).some(
-      (key) => itemValues.value[key] !== initialValues.value[key],
-    )
+    hasUnsavedChanges.value = Object.keys(itemValues.value).some((key) => {
+      return itemValues.value[key] !== initialValues.value[key]
+    })
   }
 
   async function saveHostParameters() {

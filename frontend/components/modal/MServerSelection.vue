@@ -13,11 +13,15 @@
         {{ $t('message.info.clients.noServerSelection') }}</span
       >
       <SelectSSelect
-        v-model="localSelectedServers"
-        :data="dataSorted"
+        v-model:selection="localSelectedServers"
+        v-model:data="dataSorted"
         :multi-selection="selectionStore.multiSelection"
-        :selected-option="configserver"
-        :marked-option="configserver"
+        :selected-options="
+          selectionStore.multiSelection ? [configserver] : configserver
+        "
+        :marked-options="
+          selectionStore.multiSelection ? [configserver] : configserver
+        "
       />
       <div class="flex justify-end gap-2">
         <el-button @click="cancel">{{ $t('label.cancel') }}</el-button>
@@ -46,10 +50,23 @@
   const dataSorted = await useDepot($t).getDepotIdList()
   const configserver = (await useCServer.getOpsiConfigServerWithHeaders(false))
     .data
-  const localSelectedServers = ref<string[]>(configserver ? [configserver] : [])
+  const localSelectedServers = ref<string | string[]>(
+    selectionStore.multiSelection ? [] : '',
+  )
+  if (configserver) {
+    localSelectedServers.value = selectionStore.multiSelection
+      ? [configserver]
+      : configserver
+  }
+  // const localSelectedServers = ref<string|string[]>(configserver ? [configserver] : [])
 
   function save() {
-    selectionStore.setSelectionDepots(localSelectedServers.value)
+    if (Array.isArray(localSelectedServers.value)) {
+      selectionStore.setSelectionDepots(localSelectedServers.value)
+    } else {
+      selectionStore.setSelectionDepots([localSelectedServers.value])
+    }
+    // selectionStore.setSelectionDepots(localSelectedServers.value)
     $emit('refetch')
     visible.value = false
   }

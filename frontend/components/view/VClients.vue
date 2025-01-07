@@ -260,6 +260,13 @@
     clientsRef.value?.refetch()
   }
   async function fetchClients(params: any) {
+    if (storeSelection.selectionDepots.length <= 0) {
+      console.warn('no server selected')
+      return {
+        data: [],
+        total: 0,
+      }
+    }
     params.selected = JSON.stringify(storeSelection.selectionClients)
     params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)
 

@@ -1,39 +1,99 @@
 <template>
   <PMultiSelect
     v-if="multiSelection"
-    v-model="localSelectedServers"
+    v-model="localSelectedItems"
     :options="data"
     :max-selected-labels="1"
     class="w-full justify-stretch"
     show-clear
     display="chip"
   >
+    <!-- @change="() => $emit('change', localSelectedItems)" -->
     <template #option="{ option }">
-      <span :class="{ '!font-bold': markedOption === option }">{{
-        option
-      }}</span>
+      <span
+        :class="{
+          '!font-bold':
+            (Array.isArray(markedOptions) && markedOptions?.includes(option)) ||
+            markedOptions == option,
+        }"
+        >{{ option }}</span
+      >
+    </template>
+
+    <template v-if="props.editable" #footer>
+      <div class="p-3 flex justify-between">
+        <PInputText
+          v-model="localAddOption"
+          class="w-full"
+          :placeholder="$t('label.add_new')"
+          @keyup.enter="addItemToOptions(localAddOption)"
+        />
+        <PButton
+          :label="$t('button.add')"
+          severity="secondary"
+          text
+          size="small"
+          icon="pi pi-plus"
+          @click="addItemToOptions(localAddOption)"
+        />
+      </div>
     </template>
   </PMultiSelect>
   <PSelect
     v-else
-    v-model="localSelectedServer"
+    v-model="localSelectedItems"
     :options="data"
     class="w-full justify-stretch"
   >
+    <!-- editable -->
     <template #option="{ option }">
-      <span :class="{ '!font-bold': markedOption === option }">{{
-        option
-      }}</span>
+      <span
+        :class="{
+          '!font-bold':
+            (Array.isArray(markedOptions) && markedOptions?.includes(option)) ||
+            markedOptions == option,
+        }"
+        >{{ option }}</span
+      >
+    </template>
+    <template v-if="props.editable" #footer>
+      <div class="p-3 flex justify-between">
+        <PInputText
+          v-model="localAddOption"
+          class="w-full"
+          :placeholder="$t('label.add_new')"
+          @keyup.enter="addItemToOptions(localAddOption)"
+        />
+        <PButton
+          :label="$t('button.add')"
+          severity="secondary"
+          text
+          size="small"
+          icon="pi pi-plus"
+          @click="addItemToOptions(localAddOption)"
+        />
+      </div>
     </template>
   </PSelect>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends string | boolean">
+  // const props = withDefaults(
+  //   defineProps<{
+  //     // data: T[]
+  //     selectedOptions?: T | T[]
+  //     markedOptions?: T | T[]
+  //     multiSelection?: boolean
+  //     editable?: boolean
+  //   }>(),
+  //   {
+  //     selectedOptions: undefined,
+  //     markedOptions: undefined,
+  //     multiSelection: false,
+  //     editable: false,
+  //   },
+  // )
   const props = defineProps({
-    data: {
-      type: Array as PropType<Array<string>>,
-      required: true,
-    },
     multiSelection: {
       type: Boolean,
       default: false,
@@ -42,48 +102,102 @@
       type: Boolean,
       default: false,
     },
-    selectedOption: {
-      type: Object as PropType<string | Array<string>>,
+    selectedOptions: {
+      type: [String, Array] as PropType<T | T[]>,
       default: undefined,
+      validator: ({
+        multiSelection,
+        selectedOptions,
+      }: {
+        multiSelection: boolean
+        selectedOptions: T | T[]
+      }) => {
+        return (
+          selectedOptions === undefined ||
+          (multiSelection && Array.isArray(selectedOptions)) ||
+          (!multiSelection && !Array.isArray(selectedOptions))
+        )
+      },
     },
-    markedOption: {
-      type: String,
+    markedOptions: {
+      type: [String, Array] as PropType<T | T[]>,
       default: undefined,
+      validator: ({
+        multiSelection,
+        markedOptions,
+      }: {
+        multiSelection: boolean
+        markedOptions: T | T[]
+      }) => {
+        return (
+          markedOptions === undefined ||
+          (multiSelection && Array.isArray(markedOptions)) ||
+          (!multiSelection && !Array.isArray(markedOptions))
+        )
+      },
     },
-  })
-  const localSelectedServers = defineModel<Array<string>>()
-  const localSelectedServer = ref<string>()
-  onMounted(() => {
-    if (props.selectedOption === undefined) {
-      return
-    }
-    if (!props.multiSelection && !Array.isArray(props.selectedOption)) {
-      localSelectedServer.value = props.selectedOption
-      localSelectedServers.value = [props.selectedOption]
-      return
-    }
-    if (props.multiSelection && Array.isArray(props.selectedOption)) {
-      localSelectedServers.value = props.selectedOption
-      return
-    }
-    if (props.multiSelection && !Array.isArray(props.selectedOption)) {
-      localSelectedServers.value = [props.selectedOption]
-      return
-    }
-    throw new Error(
-      'Selected option is an array ' +
-        Array.isArray(props.selectedOption) +
-        ' but multiSelection is ' +
-        props.multiSelection,
-    )
   })
 
+  const $emit = defineEmits(['change'])
+  const data = defineModel<T[]>('data')
+  const localAddOption = ref<string>('')
+  const localSelectedItems = defineModel<T | T[]>('selection')
+
+  onMounted(() => {
+    assert(data.value !== undefined, 'Data is undefined')
+    assert(
+      localSelectedItems.value === undefined ||
+        (Array.isArray(localSelectedItems.value) && props.multiSelection) ||
+        (!Array.isArray(localSelectedItems.value) && !props.multiSelection),
+      'Selection should be array if multiSelection is true',
+    )
+
+    data.value?.sort((a: any, b: any) =>
+      // cannot be undefined because of assert
+      a.localeCompare(b, undefined, { numeric: true }),
+    )
+
+    if (localSelectedItems.value === undefined) {
+      // init
+      localSelectedItems.value = (props.multiSelection ? [] : '') as T | T[]
+    }
+
+    if (props.selectedOptions === undefined) {
+      return
+    } else if (Array.isArray(props.selectedOptions)) {
+      localSelectedItems.value = [...props.selectedOptions]
+    } else {
+      localSelectedItems.value = props.selectedOptions as T
+    }
+  })
   watch(
-    () => localSelectedServer.value,
-    (val) => {
-      if (val) {
-        localSelectedServers.value = [val]
-      }
+    () => localSelectedItems.value,
+    () => {
+      $emit('change')
     },
   )
+  function addItemToOptions(item: string) {
+    if (!(data.value as string[]).includes(item)) {
+      ;(data.value as string[]).push(item)
+    }
+
+    selectOptionIfNotAlready(item)
+    $emit('change')
+  }
+
+  function selectOptionIfNotAlready(item: string) {
+    // init if not already
+    if (localSelectedItems.value === undefined) {
+      localSelectedItems.value = props.multiSelection ? [] : ('' as T)
+    }
+    // select if not already
+    if (
+      Array.isArray(localSelectedItems.value) &&
+      !localSelectedItems.value.includes(item as T)
+    ) {
+      localSelectedItems.value.push(item as T)
+    } else if (!props.multiSelection) {
+      localSelectedItems.value = item as T
+    }
+  }
 </script>
