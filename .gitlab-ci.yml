@@ -208,8 +208,8 @@ check:versions:
     - echo "----------------------------------------------------------------"
     # ---------------
     - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml doesnt match (project and pull-binaries section.. $VERSION_YML - $VERSION_YML2)"; exit 1; fi
-    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN") "; exit 1; else echo "Versions are equal $VERSION_YML"; fi
-    - if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/addon/webgui/python/const.py ($VERSION_YML - $VERSION_PY")"; exit 1; else echo "Versions are equal"; fi
+    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN) "; exit 1; else echo "Versions are equal $VERSION_YML"; fi
+    - if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/addon/webgui/python/const.py ($VERSION_YML - $VERSION_PY)"; exit 1; else echo "Versions are equal"; fi
 
 init:npm:production:
   stage: init
