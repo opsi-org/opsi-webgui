@@ -231,7 +231,7 @@ init:transifex:
   script:
     - TRANSIFEX_MIN_TRANSLATION_RATE=0.0
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
-    - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json --resource_name opsi-webgui.json
+    - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json --resource-name opsi-webgui.json
     - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json opsiweb/uib-components/locale/ --min-translation-rate 1
     - rm opsiweb/uib-components/locale/opsi-webgui_de.json
     - rm opsiweb/uib-components/locale/opsi-webgui_fr.json
