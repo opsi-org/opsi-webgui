@@ -1,6 +1,10 @@
 <template>
   <el-dropdown>
-    <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoading">
+    <el-button
+      class="ml-1 mt-1"
+      :link="props.link"
+      :disabled="isLoading || disabled"
+    >
       <IconIIcon
         :icon="getIcon(props.icon)"
         :title="$t('label.clientaction')"
@@ -29,6 +33,7 @@
               <el-button
                 class="w-full !text-left !inline !border-0"
                 :data-testid="`popover-${action}-button`"
+                :disabled="disabled"
               >
                 <IconIIcon :icon="getIcon(action)" class="mr-1" />
                 {{ $t('button.event.' + action) }}
@@ -39,7 +44,8 @@
             }}</el-text>
             <el-text tag="i">{{ props.clientIds[0] }}</el-text>
             <el-text v-if="props.clientIds.length > 1" class="pl-2">
-              {{ ` (+${props.clientIds.length - 1} ${$t('info.more')})` }}
+              <!-- {{ ` (+${props.clientIds.length - 1} ${$t('info.more')})` }} -->
+              {{ $t('info.more', { clients: props.clientIds.length }) }}
             </el-text>
             <el-form label-position="top" class="mt-3" v-loading="isLoading">
               <el-form-item
@@ -50,11 +56,11 @@
               </el-form-item>
 
               <div v-if="action == 'deployclientagent'">
-                <div v-for="(value, label) in opsiClientAgent" :key="label">
-                  <el-form-item :label="$t('form.' + label)">
+                <div v-for="key in Object.keys(opsiClientAgent)" :key="key">
+                  <el-form-item :label="$t('form.' + key)">
                     <el-radio-group
-                      v-if="label === 'type'"
-                      v-model="opsiClientAgent[label.toString()]"
+                      v-if="key === 'type'"
+                      v-model="opsiClientAgent[key]"
                     >
                       <el-radio
                         v-for="os in ['Windows', 'Linux', 'Mac']"
@@ -64,13 +70,13 @@
                       >
                     </el-radio-group>
                     <el-input
-                      v-else-if="label === 'password'"
-                      v-model="opsiClientAgent[label.toString()]"
+                      v-else-if="key === 'password'"
+                      v-model="opsiClientAgent[key.toString()]"
                       show-password
                     />
                     <el-input
                       v-else
-                      v-model="opsiClientAgent[label.toString()]"
+                      v-model="opsiClientAgent[key.toString()]"
                     />
                   </el-form-item>
                 </div>
@@ -109,6 +115,7 @@
     clientIds: { type: Array<string>, default: () => [] },
     icon: { type: String, default: 'menu' },
     link: { type: Boolean, default: true },
+    disabled: { type: Boolean, default: false },
   })
 
   const { selectionClients } = storeToRefs(storeSelections())

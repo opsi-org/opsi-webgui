@@ -173,6 +173,70 @@ export interface T_Product {
   ident: string
 }
 
+export interface T_ProductRow {
+  productId: string
+  productType: tproducttypes
+  depotId: string
+  ident: string
+  selected: boolean
+  name: string
+  description: string
+  advice: string
+  modificationTime: string
+  installationStatusErrorLevel: number
+  installationStatus: string
+  actionRequest: string
+  actionProgress: string
+  actionResultErrorLevel: number
+  actionResult: string
+  client_version_outdated: boolean
+  depot_version_diff: boolean
+  not_on_all_depots: boolean
+  numDepots: number
+  actions: Array<string>
+  selectedDepots: Array<string>
+  selectedClients: Array<string>
+  clientVersions: Array<string> | undefined
+  depotVersions: Array<string> | undefined
+}
+//   {
+//     "productId": "7-zip",
+//     "name": "7-Zip",
+//     "priority": 0,
+//     "description": "7zip Kompression",
+//     "advice": "Um Zip Archive zu erstellen",
+//     "selectedDepots": [
+//         "ast14.uib.local"
+//     ],
+//     "selectedClients": [
+//         "nb-00023.acme.corp"
+//     ],
+//     "installationStatusErrorLevel": 2,
+//     "installationStatus": "not_installed",
+//     "actionRequest": "uninstall",
+//     "actionProgress": "",
+//     "actionResultErrorLevel": 2,
+//     "actionResult": "none",
+//     "modificationTime": "2024-12-09T18:41:51Z",
+//     "clientVersions": [
+//         "23.01-2"
+//     ],
+//     "client_version_outdated": false,
+//     "actions": [
+//         "setup",
+//         "uninstall",
+//         "none"
+//     ],
+//     "depot_version_diff": false,
+//     "not_on_all_depots": false,
+//     "numDepots": 1,
+//     "depotVersions": [
+//         "23.01-2"
+//     ],
+//     "productType": "LocalbootProduct",
+//     "selected": true
+// }
+
 interface propdepres {
   productVersions: { [key: string]: string | undefined }
   productDescription: string

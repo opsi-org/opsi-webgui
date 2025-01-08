@@ -93,7 +93,9 @@
       return false
     }
     isLoading.value = false
-    return data?.value?.includes('terminal')
+    return (
+      data?.value?.includes('terminal') || storeConfigapp().config?.read_only
+    )
   }
   onMounted(async () => {
     while (ws.wsBus.value === undefined) {

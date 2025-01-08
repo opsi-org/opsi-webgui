@@ -16,4 +16,10 @@
     type: { type: String, default: 'general' },
   })
   const activeName = ref(props.type)
+  watch(
+    () => activeName.value,
+    () => {
+      useRouter().push({ path: `/admin/${activeName.value}` })
+    },
+  )
 </script>

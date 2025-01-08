@@ -10,7 +10,9 @@
     @show="loadCreateGroupPopover"
   >
     <template #reference>
-      <el-button size="small">{{ $t('label.create.prodgroup') }}</el-button>
+      <el-button size="small" :disabled="config.read_only">{{
+        $t('label.create.prodgroup')
+      }}</el-button>
     </template>
     <template v-if="isCreateGroupPopoverLoaded">
       <el-form label-position="top" class="mt-3">
@@ -62,7 +64,7 @@
               @show="loadActionPopover(node.label + action)"
             >
               <template #reference>
-                <el-button size="small">
+                <el-button size="small" :disabled="config.read_only">
                   <IconIIcon
                     v-for="subaction in action.split('-')"
                     :key="subaction"
@@ -93,7 +95,7 @@
                       type="success"
                       data-testid="createSubGroup"
                       @click="createSubGroup(node.label)"
-                      :disabled="!createGroup.groupId"
+                      :disabled="!createGroup.groupId || config.read_only"
                       >{{ $t('button.create') }}</el-button
                     >
                   </template>
@@ -120,6 +122,7 @@
                       class="float-right"
                       type="success"
                       data-testid="addChildren"
+                      :disabled="config.read_only"
                       @click="addChildren(node.label)"
                       >{{ $t('button.add') }}</el-button
                     >
@@ -133,6 +136,7 @@
                     <el-button
                       class="float-right"
                       type="danger"
+                      :disabled="config.read_only"
                       data-testid="removeAssignments"
                       @click="deleteAllChildren(node.label)"
                       >{{ $t('button.delete') }}</el-button
@@ -143,6 +147,7 @@
                     <el-button
                       type="danger"
                       class="float-right"
+                      :disabled="config.read_only"
                       @click="applyDelete(node.label, data.type, data.parent)"
                       >{{ $t('button.delete') }}</el-button
                     >
@@ -170,6 +175,7 @@
                       class="float-right"
                       type="success"
                       data-testid="editGroup"
+                      :disabled="config.read_only"
                       @click="editGroup(node.label)"
                       >{{ $t('button.update') }}</el-button
                     >
@@ -191,6 +197,7 @@
                     <el-button
                       type="success"
                       class="float-right"
+                      :disabled="config.read_only"
                       @click="copyClient(node.label)"
                       >{{ $t('button.copy') }}</el-button
                     >
@@ -220,6 +227,7 @@
     T_Product,
   } from '~/types/APItypes'
 
+  const config = storeConfigapp().config ?? { read_only: true }
   const props = defineProps({ data: { type: Object, required: true } })
   const { notifySuccess, notifyError } = useNotification()
   const icons = useIcons()

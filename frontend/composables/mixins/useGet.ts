@@ -37,7 +37,7 @@ export const useConfigserver = async (
     }
   }
 
-  async function getOpsiConfigServerWithHeaders() {
+  async function getOpsiConfigServerWithHeaders(setServer: boolean = true) {
     const { data, headers, error } =
       await useApiGET<T_Opsiserver>('/user/opsiserver')
     if (error || !data?.value) {
@@ -56,7 +56,9 @@ export const useConfigserver = async (
       })
       return { data: '', headers: {} as IObjectString2Any, error: errordata }
     }
-    storeCache().setOpsiconfigserver(data.value.result)
+    if (setServer) {
+      storeCache().setOpsiconfigserver(data.value.result)
+    }
     return { data: data.value.result, headers }
   }
   return { getOpsiConfigServerWithHeaders }

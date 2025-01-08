@@ -8,6 +8,7 @@
         v-for="item in Object.values(props.properties)"
         :key="item.propertyId"
         :label="item.propertyId"
+        :class="{ 'cursor-not-allowed': config.read_only }"
       >
         <el-checkbox
           v-if="item.type === 'BoolProductProperty'"
@@ -152,7 +153,7 @@
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsaved_changes'))
+      const answer = window.confirm($t('message.warning.unsavedChanges'))
       if (answer) {
         next()
       } else {

@@ -75,6 +75,7 @@
     "story:dev": "NODE_ENV=development histoire dev",
     "story:preview": "NODE_ENV=development histoire preview",
     "tsc": "npx nuxi typecheck",
+    "tscs": "npx nuxi typecheck --logLevel=silent",
     "versions": "python3 scripts/npm-helper.py --versions --versions-sort is_outdated"
   },
   "type": "module",

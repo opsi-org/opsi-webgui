@@ -31,30 +31,40 @@
                       v-model="itemValues[item.configId]"
                       :disabled="config.read_only"
                       @change="handleSelection(item, itemValues[item.configId])"
-                    ></el-checkbox>
+                    />
+                    <p-tag
+                      v-if="
+                        itemValues[item.configId] !==
+                        initialValues[item.configId]
+                      "
+                      severity="danger"
+                      :value="t_fixed('notOrigin')"
+                    />
                   </template>
                   <template v-else-if="item.type === 'UnicodeConfig'">
-                    <el-select
-                      v-model="itemValues[item.configId]"
-                      filterable
-                      :allow-create="item.editable"
-                      :multiple="item.multiValue"
-                      collapse-tags
-                      :disabled="config.read_only"
-                      @change="handleSelection(item, itemValues[item.configId])"
-                    >
-                      <template #header v-if="item.editable">
-                        <el-text type="info">
-                          {{ $t('form.config.add_option') }}
-                        </el-text>
-                      </template>
-                      <el-option
-                        v-for="value in item.possibleValues"
-                        :key="String(value)"
-                        :label="String(value)"
-                        :value="String(value)"
-                      ></el-option>
-                    </el-select>
+                    <SelectSSelect
+                      v-model:selection="itemValues[item.configId]"
+                      v-model:data="item.possibleValues"
+                      :editable="item.editable"
+                      :multi-selection="item.multiValue"
+                      :selected-options="itemValues[item.configId]"
+                      :marked-options="initialValues[item.configId]"
+                      @change="
+                        () => handleSelection(item, itemValues[item.configId])
+                      "
+                    />
+
+                    <p-tag
+                      v-if="
+                        itemValues[item.configId] !== undefined &&
+                        !arrayEqual(
+                          itemValues[item.configId],
+                          initialValues[item.configId],
+                        )
+                      "
+                      severity="danger"
+                      :value="t_fixed('notOrigin')"
+                    />
                   </template>
                 </el-form-item>
               </div>
@@ -64,7 +74,9 @@
       </el-collapse>
     </div>
     <div
-      v-if="fetchedData && Object.keys(fetchedData).length > 0"
+      v-if="
+        fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only
+      "
       class="button-container"
       style="display: flex; justify-content: flex-end"
     >
@@ -87,8 +99,10 @@
   import type { PropTypeServerClient } from '~/types/tproptypes'
   import { onBeforeRouteLeave } from 'vue-router'
   import type { CollapseModelValue } from 'element-plus'
+  import { useStrings } from '~/composables/mixins/useStrings'
 
   const { notifyError, notifyInfo } = useNotification()
+  const t_fixed = useStrings().t_fixed
   const $t = useI18n().t
   const mq = useMQ()
   const config = storeConfigapp().config ?? { read_only: true }
@@ -211,15 +225,29 @@
   }
 
   function handleSelection(item: any, value: any) {
-    itemValues.value[item.configId] = value
-    changeBuffer.value[item.configId] = value
+    assert(value !== undefined, 'values should not be undefined')
+    assert(
+      itemValues.value[item.configId] !== undefined,
+      'itemValues should not be undefined',
+    )
+    assert(
+      initialValues.value[item.configId] !== undefined,
+      'initialValues should not be undefined',
+    )
+    changeBuffer.value[item.configId] = JSON.parse(JSON.stringify(value))
     checkUnsavedChanges()
   }
 
   function checkUnsavedChanges() {
-    hasUnsavedChanges.value = Object.keys(itemValues.value).some(
-      (key) => itemValues.value[key] !== initialValues.value[key],
-    )
+    hasUnsavedChanges.value = Object.keys(itemValues.value).some((key) => {
+      if (itemValues.value[key] === undefined) return false
+      if (isArray(itemValues.value[key]) && isArray(initialValues.value[key])) {
+        if (initialValues.value[key] === itemValues.value[key]) return false
+        // check arrays deeply (e.g. they have just another value order)
+        return !arrayEqual(initialValues.value[key], itemValues.value[key])
+      }
+      return itemValues.value[key] !== initialValues.value[key]
+    })
   }
 
   async function saveHostParameters() {
@@ -256,7 +284,7 @@
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsaved_changes'))
+      const answer = window.confirm($t('message.warning.unsavedChanges'))
       if (answer) {
         next()
       } else {

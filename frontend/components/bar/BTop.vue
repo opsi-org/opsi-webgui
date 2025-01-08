@@ -49,7 +49,21 @@
     </el-menu-item> -->
 
     <el-menu-item
+      v-if="storeConfigapp().config?.read_only"
+      disbled
       index="3"
+      type="text"
+      style="--el-menu-hover-bg-color: var(--color-opsi-deep-blue)"
+    >
+      <TooltipTTooltip>
+        <template #tooltip>
+          <p>{{ $t('info.readonly.active') }}</p>
+        </template>
+        <IconIIcon :icon="icons.readonly" class="text-red-500" height="20" />
+      </TooltipTTooltip>
+    </el-menu-item>
+    <el-menu-item
+      index="4"
       type="text"
       @click="toggleRight"
       data-testid="menu-quickpanel"
@@ -67,29 +81,15 @@
   import { useRouter } from 'vue-router'
 
   const mq = useMQ()
-  // const $mq = useMQ().$mq
   const $config = useRuntimeConfig()
   const emit = defineEmits(['toggleLeft', 'toggleRight'])
   const icons = useIcons()
   const router = useRouter()
   const { t_fixed } = useStrings()
-  // const changes = storeChanges()
-
-  // const changesDialogVisible = ref(false)
 
   const toggleLeft = () => emit('toggleLeft')
   const toggleRight = () => emit('toggleRight')
   const navigateToClients = () => router.push('/clients/')
-  // const openDialog = () => {
-  //   changesDialogVisible.value = true
-  // }
-
-  // const changesExists = computed(() => {
-  //   return (
-  //     changes?.changesHostParam?.length > 0 ||
-  //     changes?.changesProducts?.length > 0
-  //   )
-  // })
 </script>
 
 <style scoped>

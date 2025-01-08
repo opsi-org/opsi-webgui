@@ -48,14 +48,19 @@ export function arrayEqual(aOrig: Array<any>, bOrig: Array<any>): boolean {
   if (a.length !== b.length) {
     return false
   }
-  a.sort()
-  b.sort()
+
+  if (isArray(a) && isArray(b)) {
+    a.sort()
+    b.sort()
+  } else if (isArray(a) || isArray(b)) {
+    throw new Error('arrayEqual: isArray(a) || isArray(b)' + a + b)
+  }
 
   for (let i = 0; i < a.length; ++i) {
     // !!!! error: Empty block statement (no-empty) !!!!
     // if (a[i] == b[i]) {
     // } else return false;
-    if (a[i] !== b[i]) {
+    if (a[i] != b[i]) {
       return false
     }
   }
@@ -63,6 +68,9 @@ export function arrayEqual(aOrig: Array<any>, bOrig: Array<any>): boolean {
 }
 export function isObject(obj: any) {
   return Object.prototype.toString.call(obj) === '[object Object]'
+}
+export function isArray(obj: any) {
+  return Array.isArray(obj)
 }
 export default {
   arrayEqual,

@@ -16,7 +16,7 @@
               v-if="typeof value === 'boolean'"
               v-model="hostAttributes[0][label]"
               :value="value"
-              :disabled="notEditable.includes(label)"
+              :disabled="notEditable.includes(label) || config.read_only"
               @change="setUnsavedChanges"
             />
             <el-input
@@ -24,19 +24,19 @@
               v-model="hostAttributes[0][label]"
               :value="value"
               show-password
-              :disabled="notEditable.includes(label)"
+              :disabled="notEditable.includes(label) || config.read_only"
               @input="setUnsavedChanges"
             />
             <el-input
               v-else-if="isInputDateLabel(label)"
               :value="useFormat().date(value)"
-              disabled
+              :disabled="true || config.read_only"
             />
             <el-input
               v-else
               v-model="hostAttributes[0][label]"
               :value="value"
-              :disabled="notEditable.includes(label)"
+              :disabled="notEditable.includes(label) || config.read_only"
               @input="setUnsavedChanges"
             />
           </el-form-item>
@@ -44,7 +44,7 @@
       </div>
 
       <div
-        v-if="hostAttributes[0].type !== 'OpsiDepotserver'"
+        v-if="hostAttributes[0].type !== 'OpsiDepotserver' && !config.read_only"
         class="button-container"
         style="display: flex; justify-content: flex-end"
       >
@@ -73,6 +73,7 @@
 
   const $t = useI18n().t
   const mq = useMQ()
+  const config = storeConfigapp().config ?? { read_only: true }
 
   const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
   const { notifySuccess, notifyError, notifyInfo } = useNotification()
@@ -201,7 +202,7 @@
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsaved_changes'))
+      const answer = window.confirm($t('message.warning.unsavedChanges'))
       if (answer) {
         next()
       } else {

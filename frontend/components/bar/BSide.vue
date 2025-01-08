@@ -3,9 +3,9 @@
     <el-menu
       router
       unique-opened
+      class="h-[90vh] bg-opsi-blue"
       :default-active="router.currentRoute.value?.fullPath"
       :collapse="isCollapse"
-      class="h-[90vh] bg-opsi-blue"
     >
       <template v-for="item in navItems" :key="item.title">
         <el-sub-menu
@@ -112,7 +112,7 @@
       title: 'title.administration',
       route:
         config.value?.['terminal.forbidden'] === true
-          ? '/admin/'
+          ? '/admin/general'
           : '/admin/terminal',
       icon: icons.admin,
       submenu: [
@@ -122,7 +122,7 @@
           disabled: config.value?.['terminal.forbidden'] === true,
         },
         { title: 'title.healthcheck', route: '/admin/healthcheck' },
-        { title: 'title.admin', route: '/admin/' },
+        { title: 'title.admin', route: '/admin/general' },
         { title: 'form.modules', route: '/admin/modules' },
       ],
     },

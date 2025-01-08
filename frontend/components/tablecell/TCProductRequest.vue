@@ -1,6 +1,7 @@
 <template>
   <TooltipTTooltip
     :disabled="visibleRequest !== MIXED_VALUE && !visibleRequest?.includes('*')"
+    :class="{ 'cursor-not-allowed': config.read_only }"
   >
     <template #tooltip>
       <span
@@ -268,6 +269,19 @@
   //     />
   //   )
   // }
+
+  // onBeforeRouteLeave((to, from, next) => {
+  //   if (hasUnsavedChanges.value) {
+  //     const answer = window.confirm($t('message.warning.unsavedChanges'))
+  //     if (answer) {
+  //       next()
+  //     } else {
+  //       next(false)
+  //     }
+  //   } else {
+  //     next()
+  //   }
+  // })
 </script>
 
 <style scoped>
