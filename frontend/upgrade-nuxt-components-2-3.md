@@ -86,7 +86,8 @@ import { icons } from '../../mixins/icons'
   <div>vue3
 (works only if `lang='js'`)
 ```js
-import { useIcons } from '~/composables/mixins/useIcons'
+//import { useIcons } from '~/composables/mixins/useIcons'
+// import not needed anymore , use directly: const icons = useIcons()
 ```
   </div>
 </div>

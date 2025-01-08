@@ -40,7 +40,6 @@
 </template>
 
 <script setup>
-  import { useIcons } from '../../composables/mixins/useIcons'
   const icon = useIcons()
 
   const _props = defineProps({

@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '~/composables/mixins/useIcons'
   const icons = useIcons()
   const modelFilter = defineModel<string>()
   const _props = defineProps<{

@@ -58,7 +58,6 @@
 
 <script lang="ts" setup>
   import { useStrings } from '~/composables/mixins/useStrings'
-  import { useIcons } from '../../composables/mixins/useIcons'
   import type { PSeverity } from '~/types/LibComponentTypes'
 
   const icon = useIcons()

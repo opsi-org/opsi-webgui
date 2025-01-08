@@ -33,9 +33,10 @@
           severity="secondary"
           text
           size="small"
-          icon="pi pi-plus"
           @click="addItemToOptions(localAddOption)"
-        />
+        >
+          <IconIIcon :icon="icons.add" />
+        </PButton>
       </div>
     </template>
   </PMultiSelect>
@@ -78,6 +79,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends string | boolean">
+  const icons = useIcons()
   // const props = withDefaults(
   //   defineProps<{
   //     // data: T[]

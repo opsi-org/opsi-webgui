@@ -61,7 +61,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '../../composables/mixins/useIcons'
   const $t = useI18n().t
   // const $mq = useMQ().$mq
   const icons = useIcons()

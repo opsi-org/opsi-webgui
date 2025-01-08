@@ -36,7 +36,6 @@
     type PageSettings,
   } from '~/composables/mixins/usePageHelper'
   import { useMQ } from '../composables/useMQ'
-  import { useIcons } from '~/composables/mixins/useIcons'
 
   const mq = useMQ()
   const route = useRoute()
@@ -73,5 +72,3 @@
     return mq.isMobile.value
   })
 </script>
-
-

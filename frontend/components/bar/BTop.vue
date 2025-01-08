@@ -77,7 +77,6 @@
 
 <script setup lang="ts">
   import { useStrings } from '~/composables/mixins/useStrings'
-  import { useIcons } from '~/composables/mixins/useIcons'
   import { useRouter } from 'vue-router'
 
   const mq = useMQ()

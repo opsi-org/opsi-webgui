@@ -55,7 +55,6 @@
 
 <script setup lang="tsx">
   import type { IProductTypes, T_Client2Depot } from '~/types/APItypes'
-  import { useIcons } from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useNavigate } from '~/composables/mixins/useNavigateTo'
   import { useSaveProductActionRequest } from '~/composables/mixins/useSave'

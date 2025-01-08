@@ -54,8 +54,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '../../composables/mixins/useIcons'
-
   interface INavItem {
     title: string
     route: string

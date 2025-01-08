@@ -14,8 +14,6 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { useIcons } from '~/composables/mixins/useIcons'
-
   const route = useRoute()
   const router = useRouter()
   const icons = useIcons()

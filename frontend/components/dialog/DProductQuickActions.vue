@@ -132,7 +132,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '@/composables/mixins/useIcons'
   import { isObject } from '@/utils/scompares'
   import { useNotification } from '~/composables/mixins/useComponent'
   const { notifySuccess, notifyError } = useNotification()

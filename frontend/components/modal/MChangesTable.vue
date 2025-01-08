@@ -61,7 +61,6 @@
 <script setup lang="ts">
   import type { IObjectString2Any } from '~/types/tgeneral'
   import { useI18n } from 'vue-i18n'
-  import { useIcons } from '~/composables/mixins/useIcons'
   import type { ChangeObj } from '~/types/tchanges'
   // const { notifyError } = useNotification();
   const icons = useIcons()

@@ -64,7 +64,6 @@
 
 <script setup lang="ts">
   import type { IObjectString2Any } from '~/types/tgeneral'
-  import { useIcons } from '../../composables/mixins/useIcons'
   const $t = useI18n().t
   const icons = useIcons()
   const storeSelection: IObjectString2Any = storeSelections()

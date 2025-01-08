@@ -100,7 +100,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '@/composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
   import type {
     IObjectString2Function,

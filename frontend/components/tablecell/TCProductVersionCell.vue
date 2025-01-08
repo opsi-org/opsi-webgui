@@ -86,7 +86,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '~/composables/mixins/useIcons'
   import { useStrings } from '~/composables/mixins/useStrings'
   import { mapValues2Objects } from '~/utils/smappings'
   import type { T_Client2Depot, T_ProductRow } from '~/types/APItypes'

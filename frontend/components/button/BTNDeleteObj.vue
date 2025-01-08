@@ -13,8 +13,6 @@
 </template>
 
 <script lang="ts" setup>
-  import { useIcons } from '~/composables/mixins/useIcons'
-
   const $t = useI18n().t
   const icons = useIcons()
   const changes = storeChanges()

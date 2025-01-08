@@ -207,7 +207,6 @@
 
 <script setup lang="tsx">
   import { useNotification } from '~/composables/mixins/useComponent'
-  import { useIcons } from '../../composables/mixins/useIcons'
 
   const { notifyError } = useNotification()
   const $t = useI18n().t

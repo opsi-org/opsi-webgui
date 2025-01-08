@@ -22,7 +22,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '@/composables/mixins/useIcons'
   import { useNotification } from '../../composables/mixins/useComponent'
   import { useMBus } from '~/composables/mixins/useMessagebus'
   import type { T_Logout } from '~/types/APItypes'

@@ -31,7 +31,6 @@
 
 <script setup lang="tsx">
   import type { T_ClientsList } from '~/types/APItypes'
-  import { useIcons } from '../../composables/mixins/useIcons'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useMBus } from '~/composables/mixins/useMessagebus'
 

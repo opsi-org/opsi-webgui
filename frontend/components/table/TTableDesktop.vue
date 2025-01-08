@@ -231,7 +231,6 @@
 <script setup lang="tsx">
   import { debounce } from 'lodash'
   import { useNotification } from '~/composables/mixins/useComponent'
-  import { useIcons } from '../../composables/mixins/useIcons'
   import { vContextmenu } from '../../composables/mixins/v-contextmenu'
 
   const { notifyError } = useNotification()

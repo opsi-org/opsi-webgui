@@ -218,7 +218,6 @@
   import { useClient } from '~/composables/mixins/useGet'
   import { useGroup } from '~/composables/mixins/usePost'
   import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper'
-  import { useIcons } from '../../composables/mixins/useIcons'
   import { debounce } from 'lodash'
   import type {
     T_ClientIds,

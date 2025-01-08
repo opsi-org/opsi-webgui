@@ -67,7 +67,6 @@
 </template>
 
 <script lang="ts" setup>
-  import { useIcons } from '~/composables/mixins/useIcons'
   import { useStrings } from '~/composables/mixins/useStrings'
   import type { PSeverity } from '~/types/LibComponentTypes'
 

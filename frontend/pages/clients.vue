@@ -41,7 +41,6 @@
 <script setup lang="ts">
   import { usePageHelper } from '~/composables/mixins/usePageHelper'
   import { useMQ } from '../composables/useMQ'
-  import { useIcons } from '~/composables/mixins/useIcons'
 
   const icons = useIcons()
   const mq = useMQ()

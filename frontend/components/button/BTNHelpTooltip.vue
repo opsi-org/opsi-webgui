@@ -15,7 +15,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '~/composables/mixins/useIcons'
   const icons = useIcons()
 
   const _props = defineProps({

@@ -29,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useIcons } from '~/composables/mixins/useIcons'
   import { usePageHelper } from '~/composables/mixins/usePageHelper'
   import type { PropTypeServerClient } from '~/types/tproptypes'
   const route = useRoute()
