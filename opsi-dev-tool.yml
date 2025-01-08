@@ -50,7 +50,7 @@ pull-binaries:
     name: opsi-webgui
     os: linux
     post-script:
-      - WEBGUI_VERSION=$(grep $FILE -A 20 -e project | grep -m 1 "version" )
+      - WEBGUI_VERSION=$(grep $FILE -A 41 -e project | grep -m 1 "version" )
       - echo "webgui-version row $WEBGUI_VERSION"
       - WEBGUI_VERSION=$(echo $WEBGUI_VERSION | awk '{print $2}')
       - echo "webgui-version row-value $WEBGUI_VERSION"
