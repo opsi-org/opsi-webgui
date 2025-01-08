@@ -71,6 +71,8 @@ transifex:
       organization: opsi-org
       project: opsiorg
       resource_name: opsi-webgui-old.json
+      min_review_rate: 1.0
+
   upload_resources:
     - organization: opsi-org
       project: opsiorg

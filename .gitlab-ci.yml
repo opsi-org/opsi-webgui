@@ -9,7 +9,6 @@ stages:
   - publish
   - release
 
-
 .define_globals: &define_globals |
   shopt -s expand_aliases
 
@@ -32,8 +31,6 @@ stages:
   curl -o opsi-dev-tools.tar.gz "$OPSIDEVTOOLS_URL_LINUX_X64"
   tar -xvf opsi-dev-tools.tar.gz
   cp opsi-dev-tool opsi-dev-cli
-
-
 
 .prepare_backend_tests: &prepare_backend_tests |
   apt update
@@ -140,7 +137,6 @@ stages:
   echo "$testfilesUnique"
   cd ..
 
-
 .compare_versions: &compare_versions |
   VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
   VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
@@ -149,7 +145,6 @@ stages:
   echo $VERSION_YML2
   echo $VERSION_JSN
   echo TAG
-
 
 # .prepare_tag: &prepare_tag |
 #   # "prepare tag"
@@ -239,6 +234,7 @@ init:transifex:
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
     - opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/opsi-webgui_en.json
     - opsi-dev-cli -l debug transifex download-translations opsi-webgui.json opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de -l fr
+    # - opsi-dev-cli -l debug transifex download-translations opsi-webgui.json opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de -l fr
     - chmod 666 opsiweb/uib-components/locale/*
   only:
     - tags
@@ -279,21 +275,21 @@ test:lint:
   script:
     - npm run lint
 # test:unit:
-  #   stage: test
-  #   dependencies:
-  #     - init:npm
-  #   script:
-  #     - cd opsiweb
-  #     - *define_globals
-  #     - npm run test:unit
-  #   allow_failure: true
-  #   coverage: /All files\s*\|\s*([\d\.]+)/
-  #   artifacts:
-  #     expire_in: 1 day
-  #     reports:
-  #       coverage_report:
-  #         coverage_format: cobertura
-  #         path: opsiweb/coverage/clover.xmlci
+#   stage: test
+#   dependencies:
+#     - init:npm
+#   script:
+#     - cd opsiweb
+#     - *define_globals
+#     - npm run test:unit
+#   allow_failure: true
+#   coverage: /All files\s*\|\s*([\d\.]+)/
+#   artifacts:
+#     expire_in: 1 day
+#     reports:
+#       coverage_report:
+#         coverage_format: cobertura
+#         path: opsiweb/coverage/clover.xmlci
 
 test:accessibility:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
@@ -426,37 +422,37 @@ test:components:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 3 day
 # test:test-components:all-variants:
-  #   image: mcr.microsoft.com/playwright:v1.15.2-focal
-  #   stage: test
-  #   dependencies:
-  #     - init:npm
-  #   except:
-  #     - cicd
-  #   only:
-  #     - tags # cause in tags we test each file and browser
-  #   script:
-  #     - cd opsiweb
-  #     #- *define_globals
-  #     - npm i -D @playwright/test
-  #     - npx playwright install
-  #     - npx playwright install-deps
-  #     - PORT=3003 nohup npm run dev > .dev.log &
-  #     - PORT=3003 nohup npm run story > .storybook.log &
-  #     - sleep 60
-  #     - npm run test:all:components-devices || exit_code=$?
-  #     - npm run test:all:delete-empty-results
-  #     - exit $exit_code
-  #   # allow_failure: true
-  #   artifacts:
-  #     name: "opsi-webgui-test-result-components"
-  #     when: on_failure
-  #     paths:
-  #       - ./**/*/test-results/
-  #       - opsiweb/.storybook.log
-  #       - opsiweb/.dev.log
-  #     reports:
-  #       junit: ./opsiweb/test-result-pw-reporter-components.xml
-  #     expire_in: 2 day
+#   image: mcr.microsoft.com/playwright:v1.15.2-focal
+#   stage: test
+#   dependencies:
+#     - init:npm
+#   except:
+#     - cicd
+#   only:
+#     - tags # cause in tags we test each file and browser
+#   script:
+#     - cd opsiweb
+#     #- *define_globals
+#     - npm i -D @playwright/test
+#     - npx playwright install
+#     - npx playwright install-deps
+#     - PORT=3003 nohup npm run dev > .dev.log &
+#     - PORT=3003 nohup npm run story > .storybook.log &
+#     - sleep 60
+#     - npm run test:all:components-devices || exit_code=$?
+#     - npm run test:all:delete-empty-results
+#     - exit $exit_code
+#   # allow_failure: true
+#   artifacts:
+#     name: "opsi-webgui-test-result-components"
+#     when: on_failure
+#     paths:
+#       - ./**/*/test-results/
+#       - opsiweb/.storybook.log
+#       - opsiweb/.dev.log
+#     reports:
+#       junit: ./opsiweb/test-result-pw-reporter-components.xml
+#     expire_in: 2 day
 
 test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
@@ -544,7 +540,7 @@ build:addon: # with transifex
     - *install_tools
     - pwd && ls -la opsiweb
     - cd opsiweb # generate dist
-    - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
+    - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
     - cd ..
     - *define_globals
     # - npm run generate-nossl
@@ -583,7 +579,7 @@ build:zip: # with transifex
     - pwd && ls -la opsiweb
     - cd opsiweb # generate dist
     - ls -lah uib-components/locale
-    - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
+    - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
     - *define_globals
     - npm run generate-nossl
     - cd .. # copy to addon
@@ -604,8 +600,6 @@ build:zip: # with transifex
     paths:
       - webgui
     expire_in: 7 day
-
-
 
 #########################################################################
 ######################################################################### create tag
@@ -661,45 +655,45 @@ build:zip: # with transifex
 #########################################################################
 
 # .push_release: &push_release |
-  #   # post release
-  #   echo "ProjectURL: $CI_API_V4_URL"
-  #   echo "ProjectID: $CI_PROJECT_ID"
-  #   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
-  #   echo "ProjectTAG: $TAG"
-  #   printf "ProjectMSG: \n$(cat $FILE)\n"
-  #   http_response=$(curl --request POST \
-  #     -o response.txt \
-  #     --fail-with-body \
-  #     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-  #     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main" \
-  #     --data-urlencode "message=$(cat $FILE)" )
+#   # post release
+#   echo "ProjectURL: $CI_API_V4_URL"
+#   echo "ProjectID: $CI_PROJECT_ID"
+#   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+#   echo "ProjectTAG: $TAG"
+#   printf "ProjectMSG: \n$(cat $FILE)\n"
+#   http_response=$(curl --request POST \
+#     -o response.txt \
+#     --fail-with-body \
+#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main" \
+#     --data-urlencode "message=$(cat $FILE)" )
 
-  #   echo "$http_response: $(cat response.txt)"
-  #   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
-  #   echo ""
+#   echo "$http_response: $(cat response.txt)"
+#   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+#   echo ""
 
 # upload:git:
-  #   stage: upload
-  #   image: registry.gitlab.com/gitlab-org/release-cli:latest
-  #   needs:
-  #     - job: build:zip
-  #       artifacts: true
-  #   rules:
-  #     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
-  #   script:
-  #     - echo "Create Release $TAG, $CI_COMMIT_TAG, $JOB_ID"
-  #   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
-  #     tag_name: '$CI_COMMIT_TAG'
-  #     description: '$CI_COMMIT_TAG'
-  #   release:
-  #     name: 'Release $CI_COMMIT_TAG'
-  #     tag_name: '$CI_COMMIT_TAG'
-  #     ref: '$CI_COMMIT_TAG'
-  #     description: 'Release $CI_COMMIT_TAG'
-  #     assets:
-  #       links:
-  #         - name: "opsi-webgui"
-  #           url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
+#   stage: upload
+#   image: registry.gitlab.com/gitlab-org/release-cli:latest
+#   needs:
+#     - job: build:zip
+#       artifacts: true
+#   rules:
+#     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
+#   script:
+#     - echo "Create Release $TAG, $CI_COMMIT_TAG, $JOB_ID"
+#   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+#     tag_name: '$CI_COMMIT_TAG'
+#     description: '$CI_COMMIT_TAG'
+#   release:
+#     name: 'Release $CI_COMMIT_TAG'
+#     tag_name: '$CI_COMMIT_TAG'
+#     ref: '$CI_COMMIT_TAG'
+#     description: 'Release $CI_COMMIT_TAG'
+#     assets:
+#       links:
+#         - name: "opsi-webgui"
+#           url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
 
 publish:obs_int:
   stage: publish
@@ -749,27 +743,26 @@ publish:binary-index:
     - ls -la output
     # - opsi-dev-cli -l 5 changelog from-git output # done during init
     - cat output/changelog.md
-    - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip  # pushing as opsi-webgui.zip now
+    - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip # pushing as opsi-webgui.zip now
     - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip
   only:
     - tags
-
 # release:experimental:
-  #   stage: release
-  #   when: manual
-  #   before_script:
-  #     - "which ssh-agent || (apt update && apt -y install openssh-client)"
-  #     - mkdir -p ~/.ssh
-  #     - eval $(ssh-agent -s)
-  #     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
-  #   dependencies:
-  #     - publish:obs_ext
-  #     - publish:binary-index
-  #   script:
-  #     - *install_tools
-  #     - ./opsi-dev-tool -l debug --binary-pull
-  #     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
-  #     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
-  #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
-  #   only:
-  #     - tags
+#   stage: release
+#   when: manual
+#   before_script:
+#     - "which ssh-agent || (apt update && apt -y install openssh-client)"
+#     - mkdir -p ~/.ssh
+#     - eval $(ssh-agent -s)
+#     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
+#   dependencies:
+#     - publish:obs_ext
+#     - publish:binary-index
+#   script:
+#     - *install_tools
+#     - ./opsi-dev-tool -l debug --binary-pull
+#     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+#     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
+#     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
+#   only:
+#     - tags
