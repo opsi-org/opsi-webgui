@@ -254,7 +254,6 @@ init:transifex:
   only:
     - tags
     - main
-    - v4.4
   artifacts:
     name: 'opsi-webgui-locale'
     paths:
