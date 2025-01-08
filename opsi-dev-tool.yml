@@ -70,9 +70,9 @@ transifex:
         - fr
       organization: opsi-org
       project: opsiorg
-      resource_name: opsi-webgui.json
+      resource_name: opsi-webgui-old.json
   upload_resources:
     - organization: opsi-org
       project: opsiorg
       resource_file: opsiweb/uib-components/locale/opsi-webgui_en.json
-      resource_name: opsi-webgui.json
+      resource_name: opsi-webgui-old.json
