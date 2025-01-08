@@ -198,8 +198,11 @@ When preparing for a release, follow these steps:
 3. Use opsi-cli to create a git tag and start the release process for this version.
 
 ```bash
-# cd /workspace                          # directory where opsi-dev-tool.yml is located
-# git tag -d $(git tag -l) && git fetch  # (OPTIONAL) removes all local tags and fetches all from origin. Only neccassary if you overwrite a (locally) existing tag
+cd /workspace                          # directory where opsi-dev-tool.yml is located
+# if overwriting a tag, delete it in gitlab ui and run:
+  # git tag -d 4.3.9.9 && git fetch       # (OPTIONAL) removes the tag
+  # ATTENTION: removing tags only works if package `opsi-webgui` is not published yet i.e. did not successfully finished publish jobs
+
 opsi-dev-cli git-tag                     # will overwrite opsi-dev-tool.yml and frontend/package.json (defined in opsi-dev-tool.yml)
 ```
 
