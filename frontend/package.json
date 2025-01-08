@@ -79,5 +79,5 @@
     "versions": "python3 scripts/npm-helper.py --versions --versions-sort is_outdated"
   },
   "type": "module",
-  "version": "4.4.0.0"
+  "version": "4.3.99.1"
 }

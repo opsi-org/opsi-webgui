@@ -35,8 +35,8 @@ export default defineConfig({
         400: '#C0C0C0', // dark control / tabs text
       },
     },
-    favicon:
-      './public/images/UIB_1704_2023_OPSI_Logo_Bildmarke_nur_Biene_quer.png',
+    favicon: './public/favicon-bee.ico',
+    // './public/images/UIB_1704_2023_OPSI_Logo_Bildmarke_nur_Biene_quer.png',
     // defaultColorScheme: 'dark',
     // darkClass: 'webgui-theme-dark dark', // not whitespaces allowed
     darkClass: 'dark',
