@@ -125,8 +125,7 @@ stages:
   fi
 
 .get_changed_files: &get_changed_files |
-  # cd uib-components
-  changedFiles=$(git diff origin/main -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
+  changedFiles=$(git diff origin/v4.4 -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
   echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
   echo "$basenames"
@@ -201,18 +200,23 @@ check:versions:
     - echo $VERSION_JSN
     - echo "----------------------------------------------------------------"
     # ---------------
+    - VERSION_PY=$(cat backend/addon/webgui/python/const.py | grep "ADDON_VERSION =" | awk '{print $3}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
+    - echo $VERSION_PY
+    # ---------------
     - TAG=$VERSION_YML
     - echo $TAG
     - echo "----------------------------------------------------------------"
     # ---------------
-    - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml doesnt match (project and pull-binaries section)"; exit 1; fi
-    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json"; exit 1; else echo "Versions are equal $VERSION_YML"; fi
+    - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml doesnt match (project and pull-binaries section.. $VERSION_YML - $VERSION_YML2)"; exit 1; fi
+    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN") "; exit 1; else echo "Versions are equal $VERSION_YML"; fi
+    - if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/addon/webgui/python/const.py ($VERSION_YML - $VERSION_PY")"; exit 1; else echo "Versions are equal"; fi
 
 init:npm:production:
   stage: init
   only:
     - main
     - tags
+    - v4.4
   script:
     - cd frontend
     - *define_globals
@@ -250,6 +254,7 @@ init:transifex:
   only:
     - tags
     - main
+    - v4.4
   artifacts:
     name: 'opsi-webgui-locale'
     paths:
@@ -266,6 +271,7 @@ init:changelogs:
   only:
     - tags
     - main
+    - v4.4
   artifacts:
     name: 'opsi-webgui-changelogs'
     paths:
@@ -285,6 +291,16 @@ test:lint:
     - *define_globals
   script:
     - npm run lint
+
+test:i18n-additional:
+  stage: test
+  dependencies:
+    - init:npm
+  before_script:
+    - cd frontend
+    - *define_globals
+  script:
+    - npm run lint:missing-i18n
 
 test:tsc:
   stage: test
@@ -321,10 +337,10 @@ test:accessibility:
     - cd frontend
     - *start_webgui
   script:
-    - npm run test:all:accessibility || exit_code=$?
+    - npm run pwtest:access || exit_code=$?
     - exit $exit_code
   after_script:
-    - npm run test:all:delete-empty-results
+    - npm run bash:delete-empty-test-results
   allow_failure: true
   only:
     - main
@@ -349,10 +365,10 @@ test:usecase:
     - *install_playwright
     - *start_webgui
   script:
-    - npm run test:all:usecase || exit_code=$?
+    - npm run pwtest:usecase || exit_code=$?
     - exit $exit_code
   after_script:
-    - npm run test:all:delete-empty-results
+    - npm run bash:delete-empty-test-results
   allow_failure: true
   only:
     - main
@@ -367,113 +383,82 @@ test:usecase:
       junit: frontend/.config/test-result-pw-reporter-usecase.xml
     expire_in: 1 day
 
-test:components:changes:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: test
-  dependencies:
-    - init:npm
-  except:
-    - cicd
-    - tags # cause in tags we test all browsers (and all files)
-    - main # cause in main we test all files
-  only:
-    changes:
-      - frontend/pages/*
-      - frontend/components/*
-      - frontend/*
-  before_script:
-    - cd frontend
-    - *define_globals
-    - *install_playwright
-    - *get_changed_files
-    - echo "$testfilesUnique"
-    - *start_storybook
-    - *start_webgui
-    - sleep 120
-  script:
-    - npm run test:all:components $testfilesUnique || exit_code=$?
-    - exit $exit_code
-  after_script:
-    - npm run test:all:delete-empty-results
-  allow_failure: true
-  artifacts:
-    name: 'opsi-webgui-test-result-components'
-    when: on_failure
-    paths:
-      - ./**/*/test-results/
-      - frontend/.storybook.log
-      - frontend/.dev.log
-    reports:
-      junit: ./frontend/.config/test-result-pw-reporter-components.xml
-    expire_in: 1 day
-test:components:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: test
-  dependencies:
-    - init:npm
-  only:
-    - main # cause in main we test all files, but only chromium browser
-    - tags
-  before_script:
-    - cd frontend
-    - *define_globals
-    - *install_playwright
-    - *start_storybook
-    - *start_webgui
-    - sleep 60
-  script:
-    - npm run test:all:components | tee .tmpRESULT
-    - exit_code=${PIPESTATUS[0]}
-    - exit $exit_code
-  after_script:
-    - cd frontend
-    - scripts/playwright_coverage.sh .tmpRESULT
-    - npm run test:all:delete-empty-results
-  allow_failure: true
-  coverage: /TESTED FILES\s*:\s*([^%]+)/
-  artifacts:
-    name: 'opsi-webgui-test-result-components'
-    when: on_failure
-    paths:
-      - ./**/*/test-results/
-      - frontend/.storybook.log
-      - frontend/.dev.log
-      - frontend/.tmpRESULT
-    reports:
-      junit: ./frontend/test-result-pw-reporter-components.xml
-    expire_in: 3 day
-# test:test-components:all-variants:
+# test:components:changes:
 #   image: mcr.microsoft.com/playwright:v1.15.2-focal
 #   stage: test
 #   dependencies:
 #     - init:npm
 #   except:
 #     - cicd
+#     - tags # cause in tags we test all browsers (and all files)
+#     - main # cause in main we test all files
+#     - v4.4 # cause in v4.4 we test all files
 #   only:
-#     - tags # cause in tags we test each file and browser
-#   script:
+#     changes:
+#       - frontend/pages/*
+#       - frontend/components/*
+#       - frontend/*
+#   before_script:
 #     - cd frontend
-#     #- *define_globals
-#     - npm i -D @playwright/test
-#     - npx playwright install
-#     - npx playwright install-deps
-#     - PORT=3003 nohup npm run dev > .dev.log &
-#     - PORT=3003 nohup npm run story > .storybook.log &
-#     - sleep 60
-#     - npm run test:all:components-devices || exit_code=$?
-#     - npm run test:all:delete-empty-results
+#     - *define_globals
+#     - *install_playwright
+#     - *get_changed_files
+#     - echo "$testfilesUnique"
+#     - *start_storybook
+#     - *start_webgui
+#     - sleep 120
+#   script:
+#     - npm run pwtest:components $testfilesUnique || exit_code=$?
 #     - exit $exit_code
-#   # allow_failure: true
+#   after_script:
+#     - npm run bash:delete-empty-test-results
+#   allow_failure: true
 #   artifacts:
-#     name: "opsi-webgui-test-result-components"
+#     name: 'opsi-webgui-test-result-components'
 #     when: on_failure
 #     paths:
 #       - ./**/*/test-results/
 #       - frontend/.storybook.log
 #       - frontend/.dev.log
 #     reports:
+#       junit: ./frontend/.config/test-result-pw-reporter-components.xml
+#     expire_in: 1 day
+# test:components:
+#   image: mcr.microsoft.com/playwright:v1.15.2-focal
+#   stage: test
+#   dependencies:
+#     - init:npm
+#   only:
+#     - main # cause in main we test all files, but only chromium browser
+#     - tags
+#   before_script:
+#     - cd frontend
+#     - *define_globals
+#     - *install_playwright
+#     - *start_storybook
+#     - *start_webgui
+#     - sleep 60
+#   script:
+#     - npm run test:all:components | tee .tmpRESULT
+#     - exit_code=${PIPESTATUS[0]}
+#     - exit $exit_code
+#   after_script:
+#     - cd frontend
+#     - scripts/playwright_coverage.sh .tmpRESULT
+#     - npm run bash:delete-empty-test-results
+#   allow_failure: true
+#   coverage: /TESTED FILES\s*:\s*([^%]+)/
+#   artifacts:
+#     name: 'opsi-webgui-test-result-components'
+#     when: on_failure
+#     paths:
+#       - ./**/*/test-results/
+#       - frontend/.storybook.log
+#       - frontend/.dev.log
+#       - frontend/.tmpRESULT
+#     reports:
 #       junit: ./frontend/test-result-pw-reporter-components.xml
-#     expire_in: 2 day
+#     expire_in: 3 day
 
 test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
@@ -500,36 +485,36 @@ test:backend-pytest:
 #########################################################################
 ######################################################################### build
 #########################################################################
-build:screenshots:docs: # with transifex
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: build
-  dependencies:
-    - init:npm
-    - init:transifex
-  only:
-    - main # cause in main we test all files, but only chromium browser
-    - tags
-  before_script:
-    - cd frontend
-    - *define_globals
-    - *install_playwright
-    - *start_storybook
-    - *start_webgui
-  script:
-    - cd screenshots4Docs
-    - npx playwright test -c playwright-screenshots.config.js take_screenshots/  || exit_code=$?
-  after_script:
-    - exit $exit_code
-  allow_failure: true
-  artifacts:
-    name: 'opsi-webgui-screenshots-docs-result'
-    when: always
-    paths:
-      - frontend/screenshots4Docs/screenshots
-      - ./**/*/test-results/
-      - frontend/.storybook.log
-      - frontend/.dev.log
-    expire_in: 7 day
+# build:screenshots:docs: # with transifex
+#   image: mcr.microsoft.com/playwright:v1.15.2-focal
+#   stage: build
+#   dependencies:
+#     - init:npm
+#     - init:transifex
+#   only:
+#     - main # cause in main we test all files, but only chromium browser
+#     - tags
+#   before_script:
+#     - cd frontend
+#     - *define_globals
+#     - *install_playwright
+#     - *start_storybook
+#     - *start_webgui
+#   script:
+#     - cd screenshots4Docs
+#     - npx playwright test -c playwright-screenshots.config.js take_screenshots/  || exit_code=$?
+#   after_script:
+#     - exit $exit_code
+#   allow_failure: true
+#   artifacts:
+#     name: 'opsi-webgui-screenshots-docs-result'
+#     when: always
+#     paths:
+#       - frontend/screenshots4Docs/screenshots
+#       - ./**/*/test-results/
+#       - frontend/.storybook.log
+#       - frontend/.dev.log
+#     expire_in: 7 day
 
 build:static:app: # with transifex
   stage: build
@@ -541,7 +526,7 @@ build:static:app: # with transifex
     - cd frontend
     - npm i @nuxt/typescript-build
     - *define_globals
-    - npm run generate-nossl
+    - npm run generate
   artifacts:
     paths:
       - frontend/dist # not used...?
@@ -561,7 +546,7 @@ build:addon: # with transifex
     - *install_tools
     - pwd && ls -la frontend
     - cd frontend # generate dist
-    - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
+    #- npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
     - cd ..
     - *define_globals
     # - npm run generate-nossl
@@ -588,7 +573,7 @@ build:addon: # with transifex
     expire_in: 3 day
 
 build:zip: # with transifex
-  image: node:current-slim
+  # image: node:current-slim
   stage: build
   dependencies:
     - init:npm:production # doesnt download artifacts from static-app
@@ -602,7 +587,7 @@ build:zip: # with transifex
     - ls -lah frontend/locale
     - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
     - *define_globals
-    - npm run generate-nossl
+    - npm run generate
     - cd .. # copy to addon
     - mkdir -p backend/addon/webgui/data
     - mkdir -p backend/addon/webgui/data/app
