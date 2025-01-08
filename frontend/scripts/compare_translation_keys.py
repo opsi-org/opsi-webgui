@@ -127,7 +127,10 @@ def main():
     args = argparser().parse_args()
 
     current_path = os.getcwd()
-    if current_path != '/workspace/frontend':
+    path, frontenddir = os.path.split(current_path)
+
+    if frontenddir != 'frontend':
+        print('Current directory is not frontend: ', path + ' --> ' + frontenddir + "... try change dir to /workspace/frontend")
         os.chdir('/workspace/frontend')
 
     if args.v:
