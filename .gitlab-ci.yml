@@ -293,6 +293,7 @@ test:lint:
 
 test:i18n-additional:
   stage: test
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   dependencies:
     - init:npm
   before_script:
