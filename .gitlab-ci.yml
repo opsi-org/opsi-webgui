@@ -300,7 +300,8 @@ test:i18n-additional:
     - cd frontend
     - *define_globals
   script:
-    - npm run lint:missing-i18n
+    # - npm run lint:missing-i18n
+    - python scripts/compare_translation_keys.py -s
 
 test:tsc:
   stage: test
