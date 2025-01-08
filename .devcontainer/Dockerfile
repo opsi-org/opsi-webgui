@@ -41,10 +41,13 @@ RUN npm completion >> ~/.zshrc
 
 RUN npm install -g n
 # node version
-RUN n lts
-# RUN n 23.0.0
-# npm version
+# RUN n lts
+# RUN n 22.12.0
+RUN n 23.5.0
+
+# RUN npm install -g npm # latest
 # RUN npm install -g npm@10.9.2
+RUN npm install -g npm@11.0.0
 
 RUN export NODE_OPTIONS='--disable-warning=ExperimentalWarning'
 

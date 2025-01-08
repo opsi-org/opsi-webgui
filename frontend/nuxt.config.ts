@@ -13,7 +13,7 @@ console.log('VERSION', pkg.version)
 console.log('---------------------------------------------------')
 
 export default defineNuxtConfig({
-  compatibilityDate: '2024-09-17',
+  compatibilityDate: '2025-01-08',
   build: {
     analyze: true,
     // hardSource: true,
@@ -82,8 +82,12 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
     '@nuxt/eslint',
   ],
+  i18n: {
+    vueI18n: './i18n.config.js', // custom path example
+    //legacy: false,
+  },
   piniaPluginPersistedstate: {
-    key: 'opsiui-%id',
+    key: 'opsiwui-%id',
     // key: (id: string) => `opsiui-${id}`,
     storage: 'localStorage',
     debug: true,

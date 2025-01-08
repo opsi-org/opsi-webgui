@@ -29,8 +29,8 @@ def argparser():
     parser.add_argument('--versions-outdated', action='store_true', help='List only outdated packages')
     # outdated-warn-days
     # outdated-error-days
-    parser.add_argument('--versions-outdated-warn', action='store', help='Warn if package is outdated for x days', default=7)
-    parser.add_argument('--versions-outdated-error', action='store', help='Error if package is outdated for x days', default=30)
+    parser.add_argument('--versions-outdated-warn', action='store', help='Warn if package is outdated for x days', default=30)
+    parser.add_argument('--versions-outdated-error', action='store', help='Error if package is outdated for x days', default=90)
     parser.add_argument('--update-npm', action='store_true', help='Update npm')
     parser.add_argument('--install-clean', action='store_true', help='Install packages clean')
     return parser
@@ -152,7 +152,7 @@ class VersionShower:
         """Ruft die Liste der veralteten npm-Pakete und ihre Versionen ab."""
         def _json_and_format(data):
             packages = json.loads(data)
-            pkgs = {name: { 'current': data['current'], 'wanted': data['wanted'], 'latest': data['latest'] } for name, data in packages.items()}
+            pkgs = {name: { 'current': data.get('current', ""), 'wanted': data.get('wanted', ""), 'latest': data.get('latest', "") } for name, data in packages.items()}
             # special cases for npm and node:
             _npm_current = subprocess.run(['npm', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True).stdout.strip()
             _npm_latest = subprocess.run(['npm', 'view', 'npm', 'dist-tags.latest'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True).stdout.strip()

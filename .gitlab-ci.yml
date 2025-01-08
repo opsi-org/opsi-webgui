@@ -211,36 +211,19 @@ check:versions:
     - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN) "; exit 1; else echo "Versions are equal $VERSION_YML"; fi
     - if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/addon/webgui/python/const.py ($VERSION_YML - $VERSION_PY)"; exit 1; else echo "Versions are equal"; fi
 
-init:npm:production:
-  stage: init
-  only:
-    - main
-    - tags
-    - v4.4
-  script:
-    - cd frontend
-    - *define_globals
-    - npm --production --only=prod i # Todo: whats the difference between --production and --only=prod
-    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
-  artifacts:
-    paths:
-      - frontend/package.json
-      - frontend/node_modules/
-      - frontend/.nuxt/
-    expire_in: 1 day
 init:npm:
   stage: init
   script:
     - cd frontend
     - *define_globals
     - npm i
-    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
   artifacts:
     paths:
       - frontend/package.json
       - frontend/node_modules/
       - frontend/.nuxt/
     expire_in: 1 day
+
 init:transifex:
   # this step have to be done before building webgui
   stage: init
@@ -249,6 +232,9 @@ init:transifex:
     - TRANSIFEX_MIN_TRANSLATION_RATE=0.0
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
     - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json --resource_name opsi-webgui.json
+    - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json opsiweb/uib-components/locale/ --min-translation-rate 1
+    - rm opsiweb/uib-components/locale/opsi-webgui_de.json
+    - rm opsiweb/uib-components/locale/opsi-webgui_fr.json
     - opsi-dev-cli -l debug transifex download-translations opsi-webgui.json frontend/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de -l fr
     - chmod 666 frontend/locale/*
   only:
@@ -521,8 +507,8 @@ test:backend-pytest:
 build:static:app: # with transifex
   stage: build
   dependencies:
-    - init:npm:production
-    # - init:transifex
+    - init:npm
+    - init:transifex
     # - test:lint # todo activate again for main
   script:
     - cd frontend
@@ -541,8 +527,8 @@ build:static:app: # with transifex
 build:addon: # with transifex
   stage: build
   dependencies:
-    - init:npm:production # doesnt download artifacts from static-app
-    # - init:transifex
+    - init:npm
+    - init:transifex
     - init:changelogs
     # - build:static:app # already done in this job
   script:
@@ -580,9 +566,9 @@ build:zip: # with transifex
   # image: node:current-slim
   stage: build
   dependencies:
-    - init:npm:production # doesnt download artifacts from static-app
+    - init:npm
     - build:static:app
-    # - init:transifex
+    - init:transifex
     - init:changelogs
   script:
     - *install_tools
