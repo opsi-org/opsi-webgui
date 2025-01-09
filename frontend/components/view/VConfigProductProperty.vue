@@ -10,56 +10,62 @@
         :label="item.propertyId"
         :class="{ 'cursor-not-allowed': config.read_only }"
       >
-        <el-checkbox
+        <div
           v-if="item.type === 'BoolProductProperty'"
-          v-model="itemValues[item.propertyId]"
-          :disabled="config.read_only"
-          @change="handleSelection(item, itemValues[item.propertyId])"
-        />
+          class="w-full justify-stretch"
+        >
+          <el-checkbox
+            v-model="itemValues[item.propertyId]"
+            :disabled="config.read_only"
+            @change="handleSelection(item, itemValues[item.propertyId])"
+          />
 
-        <SelectSSelect
-          v-else
-          v-model:selection="itemValues[item.propertyId]"
-          v-model:data="item.allValues"
-          :editable="item.editable"
-          :multi-selection="item.multiValue"
-          :selected-options="itemValues[item.propertyId]"
-          :marked-options="initialValues[item.propertyId]"
-          @change="() => handleSelection(item, itemValues[item.propertyId])"
-        />
-        <p-tag
-          v-if="
-            itemValues[item.propertyId] !== undefined &&
-            !arrayEqual(
-              itemValues[item.propertyId],
-              initialValues[item.propertyId],
+          <p-tag
+            v-if="
+              itemValues[item.propertyId] !== initialValues[item.propertyId]
+            "
+            severity="danger"
+            :value="t_fixed('notOrigin')"
+          />
+        </div>
+        <div
+          v-else-if="
+            ['password', 'secret'].some((marker) =>
+              item.propertyId.includes(marker),
             )
           "
-          severity="danger"
-          :value="t_fixed('notOrigin')"
-        />
-        <!-- <el-select
-          v-else
-          v-model="itemValues[item.propertyId]"
-          filterable
-          :allow-create="item.editable"
-          :multiple="item.multiValue"
-          collapse-tags
-          :disabled="config.read_only"
-          @change="handleSelection(item, itemValues[item.propertyId])"
+          class="w-full justify-stretch"
         >
-          <template #header v-if="item.editable">
-            <el-text type="info">
-              {{ $t('form.config.add_option') }}
-            </el-text>
-          </template>
-          <el-option
-            v-for="value in item.allValues"
-            :key="String(value)"
-            :label="String(value)"
-            :value="value"
+          <el-input
+            v-model="itemValues[item.propertyId]"
+            :value="itemValues[item.propertyId]"
+            show-password
+            :disabled="config.read_only"
+            @input="() => handleSelection(item, itemValues[item.propertyId])"
           />
-        </el-select> -->
+        </div>
+        <div v-else class="w-full justify-stretch">
+          <SelectSSelect
+            v-model:selection="itemValues[item.propertyId]"
+            v-model:data="item.allValues"
+            :editable="item.editable"
+            :multi-selection="item.multiValue"
+            :selected-options="itemValues[item.propertyId]"
+            :marked-options="initialValues[item.propertyId]"
+            @change="() => handleSelection(item, itemValues[item.propertyId])"
+          />
+          <p-tag
+            v-if="
+              itemValues[item.propertyId] !== undefined &&
+              !arrayEqual(
+                itemValues[item.propertyId],
+                initialValues[item.propertyId],
+              )
+            "
+            severity="danger"
+            :value="t_fixed('notOrigin')"
+          />
+        </div>
       </el-form-item>
     </el-form>
   </div>
@@ -80,12 +86,18 @@
 </template>
 
 <script setup lang="ts">
-  import type { T_ProductProperty } from '~/types/APItypes'
+  import type {
+    T_ProductProperty,
+    T_Product,
+    tproducttypes,
+  } from '~/types/APItypes'
+  import { useNotification } from '~/composables/mixins/useComponent'
   import { useSaveProductProperties } from '~/composables/mixins/useSave'
   import { useStrings } from '~/composables/mixins/useStrings'
   import { onBeforeRouteLeave } from 'vue-router'
   import { isEqual } from 'lodash'
 
+  const { notifyError } = useNotification()
   const config = storeConfigapp().config ?? { read_only: true }
   const $t = useI18n().t
   const mq = useMQ()
@@ -105,6 +117,27 @@
   const hasUnsavedChanges = ref(false)
   const changeBuffer = ref<{ [key: string]: any }>({})
 
+  const propertiesWithProducts = ['setup_after_install']
+
+  async function fetchProducts(type: tproducttypes) {
+    // const { data, error } = await useApiGET<T_Product[]>(
+    //   `/opsidata/depots/products?selectedDepots=[${selectionDepots.value}]`,
+    // )
+    // if (error || !data.value) {
+    //   notifyError({ message: error?.response?.data?.message })
+    //   return
+    // }
+    // const netbootProductIds = data.value.map((item) => item.productId)
+
+    const { data, error } = await useApiGET<T_Product[]>(
+      `/opsidata/depots/products?selectedDepots=[${selectionDepots.value}]&productType=${type}`,
+    )
+    if (error || !data.value) {
+      notifyError({ message: error?.response?.data?.message })
+      return
+    }
+    return data.value.map((item) => item.productId)
+  }
   function getInitialValue(item: any): any {
     if (item.clients && Object.keys(item.clients).length > 0) {
       const v = Object.values(item.clients as Record<string, any[]>)[0]
@@ -147,8 +180,14 @@
     setUnsavedChanges()
   }
 
-  function initFormData() {
+  async function initFormData() {
     for (const item of Object.values(props.properties)) {
+      if (propertiesWithProducts.includes(item.propertyId)) {
+        const productIdsL = (await fetchProducts('LocalbootProduct')) || []
+        // If needed add Netboots const productIdsN = (await fetchProducts('NetbootProduct')) || []
+        // item.allValues = productIdsN.concat(productIdsL).sort()
+        item.allValues = productIdsL.sort()
+      }
       const initialValue = getInitialValue(item)
       itemValues.value[item.propertyId] = initialValue
       initialValues.value[item.propertyId] = initialValue
