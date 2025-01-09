@@ -44,7 +44,6 @@
   "form.autoscroll": "Auto scroll",
   "form.client": "Select a client",
   "form.clientId": "Client ID",
-  "form.config.add_option": "Add option",
   "form.config.defaultvalue": "Default value/s:",
   "form.config.objectvalue": "Object value/s:",
   "form.config.value": "Config value/s:",
