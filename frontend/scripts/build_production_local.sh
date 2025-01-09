@@ -88,7 +88,7 @@ chown 1000:1000 opsi-${ADDON_ID}.zip || exit 52
 echo "> packaging done"
 
 echo "> check if also install locally"
-if [[ $4 != 0 ]] # flag to install addon locally
+if [ $4 -eq 0 ]
 then
     echo ".....install locally"
     # rm -rf /var/lib/opsiconfd/addons/webgui
