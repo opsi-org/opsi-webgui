@@ -11,7 +11,13 @@
         )
       }}
     </el-form-item>
-    <el-form-item :label="$t('table.fields.description')">
+    <el-form-item
+      v-if="
+        fetchedData.properties.productDescription ||
+        fetchedData.dependencies.productDescription
+      "
+      :label="$t('table.fields.description')"
+    >
       <Markdown>
         {{
           fetchedData.properties.productDescription ||
@@ -19,7 +25,13 @@
         }}
       </Markdown>
     </el-form-item>
-    <el-form-item :label="$t('table.fields.advice')">
+    <el-form-item
+      v-if="
+        fetchedData.properties.productAdvice ||
+        fetchedData.dependencies.productAdvice
+      "
+      :label="$t('table.fields.advice')"
+    >
       <Markdown>
         {{
           fetchedData.properties.productAdvice ||
