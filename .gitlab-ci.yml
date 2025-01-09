@@ -287,7 +287,7 @@ test:lint:
   stage: test
   dependencies:
     - init:npm
-    # - init:transifex
+    # - init:transifex-down
   before_script:
     - cd frontend
     - *define_globals
@@ -494,7 +494,7 @@ test:backend-pytest:
 #   stage: build
 #   dependencies:
 #     - init:npm
-#     - init:transifex
+#     - preinit:transifex-down
 #   only:
 #     - main # cause in main we test all files, but only chromium browser
 #     - tags
@@ -524,7 +524,7 @@ build:static:app: # with transifex
   stage: build
   dependencies:
     - init:npm
-    - init:transifex
+    - preinit:transifex-down
     # - test:lint # todo activate again for main
   script:
     - cd frontend
@@ -544,7 +544,7 @@ build:addon: # with transifex
   stage: build
   dependencies:
     - init:npm
-    - init:transifex
+    - preinit:transifex-down
     - init:changelogs
     # - build:static:app # already done in this job
   script:
@@ -584,7 +584,7 @@ build:zip: # with transifex
   dependencies:
     - init:npm
     - build:static:app
-    - init:transifex
+    - preinit:transifex-down
     - init:changelogs
   script:
     - *install_tools
