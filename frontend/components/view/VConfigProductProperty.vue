@@ -151,52 +151,38 @@
   function getVisibleValue(
     property: Record<string, any[]>,
     selection: string[],
-    item: any,
-    logthis = false,
-
+    item: any
   ) {
     // values: {"nb-00013.acme.corp": [ false ], "nb-00023.acme.corp": [ true  ] }
     const objectValues = Object.values(property)
     if (property && objectValues.length > 0) {
-
-      if (logthis) console.log('        objectValues', objectValues)
       if (objectValues.length !== selection.length) {
-        if (logthis) console.log('        return MIXED')
         if (!item.allValues.includes(MIXED)) item.allValues.push(MIXED)
         return [MIXED]
     }
 
-    const val = objectValues.some((v) => !isEqual(v, objectValues[0]))
-    ? // return objectValues.some((v) => v !== objectValues[0])
-    [MIXED]
-    : objectValues[0] // first client/depot, cause they are equal.
+    const val = objectValues.some((v) => !isEqual(v, objectValues[0])) ? [MIXED] : objectValues[0]
     if (val[0] == MIXED) {
-        if (!item.allValues.includes(MIXED)) item.allValues.push(MIXED)
-      }
-      if (logthis) console.log('        return val', val)
+      if (!item.allValues.includes(MIXED)) item.allValues.push(MIXED)
+    }
       return val
     }
-    if (logthis) console.log('        return []')
     return []
   }
   function getInitialValue(item: any): any {
-    const logthis = item.propertyId === 'allow_useractivity_publishing'
-    if (logthis) console.log('check property', item.propertyId, item)
     if (item.clients && Object.keys(item.clients).length > 0) {
-      if (logthis) console.log('    clients', item.clients)
       // const v = Object.values(item.clients as Record<string, any[]>)[0]
       if (item.multiValue) {
-        return getVisibleValue(item.clients, selectionClients.value, item, logthis)
+        return getVisibleValue(item.clients, selectionClients.value, item)
       }
-      return getVisibleValue(item.clients, selectionClients.value, item, logthis)[0]
+      return getVisibleValue(item.clients, selectionClients.value, item)[0]
     }
     if (item.depots && Object.keys(item.depots).length > 0) {
-      if (logthis) console.log('    depots', item.depots)
       // const v = Object.values(item.depots as Record<string, any[]>)[0]
       if (item.multiValue) {
-        return getVisibleValue(item.depots, selectionDepots.value, item, logthis)
+        return getVisibleValue(item.depots, selectionDepots.value, item)
       }
-      return getVisibleValue(item.depots, selectionDepots.value, item, logthis)[0]
+      return getVisibleValue(item.depots, selectionDepots.value, item)[0]
     }
     // if (item.depots && Object.keys(item.depots).length > 0) {
     //   const v = Object.values(item.depots as Record<string, any[]>)[0]
