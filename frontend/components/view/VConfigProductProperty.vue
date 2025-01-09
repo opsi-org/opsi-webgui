@@ -16,7 +16,29 @@
           :disabled="config.read_only"
           @change="handleSelection(item, itemValues[item.propertyId])"
         />
-        <el-select
+
+        <SelectSSelect
+          v-else
+          v-model:selection="itemValues[item.propertyId]"
+          v-model:data="item.allValues"
+          :editable="item.editable"
+          :multi-selection="item.multiValue"
+          :selected-options="itemValues[item.propertyId]"
+          :marked-options="initialValues[item.propertyId]"
+          @change="() => handleSelection(item, itemValues[item.propertyId])"
+        />
+        <p-tag
+          v-if="
+            itemValues[item.propertyId] !== undefined &&
+            !arrayEqual(
+              itemValues[item.propertyId],
+              initialValues[item.propertyId],
+            )
+          "
+          severity="danger"
+          :value="t_fixed('notOrigin')"
+        />
+        <!-- <el-select
           v-else
           v-model="itemValues[item.propertyId]"
           filterable
@@ -37,7 +59,7 @@
             :label="String(value)"
             :value="value"
           />
-        </el-select>
+        </el-select> -->
       </el-form-item>
     </el-form>
   </div>
@@ -58,14 +80,16 @@
 </template>
 
 <script setup lang="ts">
-  import { useSaveProductProperties } from '~/composables/mixins/useSave'
   import type { T_ProductProperty } from '~/types/APItypes'
+  import { useSaveProductProperties } from '~/composables/mixins/useSave'
+  import { useStrings } from '~/composables/mixins/useStrings'
   import { onBeforeRouteLeave } from 'vue-router'
   import { isEqual } from 'lodash'
 
   const config = storeConfigapp().config ?? { read_only: true }
   const $t = useI18n().t
   const mq = useMQ()
+  const t_fixed = useStrings().t_fixed
   const dataSelection = storeSelections()
   const { selectionDepots, selectionClients } = storeToRefs(dataSelection)
 
@@ -83,10 +107,18 @@
 
   function getInitialValue(item: any): any {
     if (item.clients && Object.keys(item.clients).length > 0) {
-      return Object.values(item.clients as Record<string, any[]>)[0][0]
+      const v = Object.values(item.clients as Record<string, any[]>)[0]
+      if (item.multiValue) {
+        return v
+      }
+      return v[0]
     }
     if (item.depots && Object.keys(item.depots).length > 0) {
-      return Object.values(item.depots as Record<string, any[]>)[0][0]
+      const v = Object.values(item.depots as Record<string, any[]>)[0]
+      if (item.multiValue) {
+        return v
+      }
+      return v[0]
     }
     if (item.value !== undefined) return item.value
     throw new Error(
@@ -95,9 +127,18 @@
   }
 
   function setUnsavedChanges() {
-    hasUnsavedChanges.value = Object.keys(itemValues.value).some(
-      (key) => !isEqual(itemValues.value[key], initialValues.value[key]),
-    )
+    // hasUnsavedChanges.value = Object.keys(itemValues.value).some(
+    //   (key) => !isEqual(itemValues.value[key], initialValues.value[key]),
+    // )
+    hasUnsavedChanges.value = Object.keys(itemValues.value).some((key) => {
+      if (itemValues.value[key] === undefined) return false
+      if (isArray(itemValues.value[key]) && isArray(initialValues.value[key])) {
+        if (initialValues.value[key] === itemValues.value[key]) return false
+        // check arrays deeply (e.g. they have just another value order)
+        return !arrayEqual(initialValues.value[key], itemValues.value[key])
+      }
+      return itemValues.value[key] !== initialValues.value[key]
+    })
   }
 
   function handleSelection(item: any, value: any) {
