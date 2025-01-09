@@ -4,69 +4,88 @@
       label-width="50%"
       :label-position="mq.isMobile.value ? 'top' : 'left'"
     >
-      <el-form-item
-        v-for="item in Object.values(props.properties)"
-        :key="item.propertyId"
-        :label="item.propertyId"
-        :class="{ 'cursor-not-allowed': config.read_only }"
-      >
-        <div
-          v-if="item.type === 'BoolProductProperty'"
-          class="w-full justify-stretch"
+        <el-form-item
+          v-for="item in Object.values(props.properties)"
+          :key="item.propertyId"
+          :class="{ 'cursor-not-allowed': config.read_only }"
         >
-          <el-checkbox
-            v-model="itemValues[item.propertyId]"
-            :disabled="config.read_only"
-            @change="handleSelection(item, itemValues[item.propertyId])"
-          />
+          <template #label>
+            <TooltipTTooltip>
+              <template #tooltip>
+                <div class="max-w-md">
+                  <b>{{ item.description }}</b>
+                  <p>{{ $t('form.config.defaultvalue') }} {{ item.default }}</p>
+                  <p v-if="item.depots">
+                    {{ $t('form.config.objectvalue') }} <pre class="text-xs">{{ item.depots }}</pre>
+                  </p>
+                  <p v-if="item.clients">
+                    {{ $t('form.config.objectvalue') }} <pre class="text-xs">{{ item.clients }}</pre>
+                  </p>
+                </div>
+              </template>
+              <span>{{ item.propertyId }}</span>
+            </TooltipTTooltip>
+          </template>
 
-          <p-tag
-            v-if="
-              itemValues[item.propertyId] !== initialValues[item.propertyId]
-            "
-            severity="danger"
-            :value="t_fixed('notOrigin')"
-          />
-        </div>
-        <div
-          v-else-if="
-            ['password', 'secret'].some((marker) =>
-              item.propertyId.includes(marker),
-            )
-          "
-          class="w-full justify-stretch"
-        >
-          <el-input
-            v-model="itemValues[item.propertyId]"
-            :value="itemValues[item.propertyId]"
-            show-password
-            :disabled="config.read_only"
-            @input="() => handleSelection(item, itemValues[item.propertyId])"
-          />
-        </div>
-        <div v-else class="w-full justify-stretch">
-          <SelectSSelect
-            v-model:selection="itemValues[item.propertyId]"
-            v-model:data="item.allValues"
-            :editable="item.editable"
-            :multi-selection="item.multiValue"
-            :selected-options="itemValues[item.propertyId]"
-            :marked-options="initialValues[item.propertyId]"
-            @change="() => handleSelection(item, itemValues[item.propertyId])"
-          />
-          <p-tag
-            v-if="
-              itemValues[item.propertyId] !== undefined &&
-              !arrayEqual(
-                itemValues[item.propertyId],
-                initialValues[item.propertyId],
+          <div
+            v-if="item.type === 'BoolProductProperty'"
+            class="w-full justify-stretch"
+          >
+            <el-checkbox
+              v-model="itemValues[item.propertyId]"
+              :disabled="config.read_only"
+              :indeterminate="itemValues[item.propertyId] === MIXED"
+              @change="handleSelection(item, itemValues[item.propertyId])"
+            />
+            {{ (itemValues[item.propertyId] == MIXED) ? itemValues[item.propertyId]:'' }}
+
+            <p-tag
+              v-if="
+                itemValues[item.propertyId] !== initialValues[item.propertyId]
+              "
+              severity="danger"
+              :value="t_fixed('notOrigin')"
+            />
+          </div>
+          <div
+            v-else-if="
+              ['password', 'secret'].some((marker) =>
+                item.propertyId.includes(marker),
               )
             "
-            severity="danger"
-            :value="t_fixed('notOrigin')"
-          />
-        </div>
-      </el-form-item>
+            class="w-full justify-stretch"
+          >
+            <el-input
+              v-model="itemValues[item.propertyId]"
+              :value="itemValues[item.propertyId]"
+              show-password
+              :disabled="config.read_only"
+              @input="() => handleSelection(item, itemValues[item.propertyId])"
+            />
+          </div>
+          <div v-else class="w-full justify-stretch">
+            <SelectSSelect
+              v-model:selection="itemValues[item.propertyId]"
+              v-model:data="item.allValues"
+              :editable="item.editable"
+              :multi-selection="item.multiValue"
+              :selected-options="itemValues[item.propertyId]"
+              :marked-options="initialValues[item.propertyId]"
+              @change="() => handleSelection(item, itemValues[item.propertyId])"
+            />
+            <p-tag
+              v-if="
+                itemValues[item.propertyId] !== undefined &&
+                !arrayEqual(
+                  itemValues[item.propertyId],
+                  initialValues[item.propertyId],
+                )
+              "
+              severity="danger"
+              :value="t_fixed('notOrigin')"
+            />
+          </div>
+        </el-form-item>
     </el-form>
   </div>
 
@@ -104,7 +123,7 @@
   const t_fixed = useStrings().t_fixed
   const dataSelection = storeSelections()
   const { selectionDepots, selectionClients } = storeToRefs(dataSelection)
-
+  const MIXED = '<mixed>'
   const props = defineProps({
     properties: {
       type: Object as PropType<Record<string, T_ProductProperty>>,
@@ -120,15 +139,6 @@
   const propertiesWithProducts = ['setup_after_install']
 
   async function fetchProducts(type: tproducttypes) {
-    // const { data, error } = await useApiGET<T_Product[]>(
-    //   `/opsidata/depots/products?selectedDepots=[${selectionDepots.value}]`,
-    // )
-    // if (error || !data.value) {
-    //   notifyError({ message: error?.response?.data?.message })
-    //   return
-    // }
-    // const netbootProductIds = data.value.map((item) => item.productId)
-
     const { data, error } = await useApiGET<T_Product[]>(
       `/opsidata/depots/products?selectedDepots=[${selectionDepots.value}]&productType=${type}`,
     )
@@ -138,21 +148,63 @@
     }
     return data.value.map((item) => item.productId)
   }
-  function getInitialValue(item: any): any {
-    if (item.clients && Object.keys(item.clients).length > 0) {
-      const v = Object.values(item.clients as Record<string, any[]>)[0]
-      if (item.multiValue) {
-        return v
+  function getVisibleValue(
+    property: Record<string, any[]>,
+    selection: string[],
+    item: any,
+    logthis = false,
+
+  ) {
+    // values: {"nb-00013.acme.corp": [ false ], "nb-00023.acme.corp": [ true  ] }
+    const objectValues = Object.values(property)
+    if (property && objectValues.length > 0) {
+
+      if (logthis) console.log('        objectValues', objectValues)
+      if (objectValues.length !== selection.length) {
+        if (logthis) console.log('        return MIXED')
+        if (!item.allValues.includes(MIXED)) item.allValues.push(MIXED)
+        return [MIXED]
+    }
+
+    const val = objectValues.some((v) => !isEqual(v, objectValues[0]))
+    ? // return objectValues.some((v) => v !== objectValues[0])
+    [MIXED]
+    : objectValues[0] // first client/depot, cause they are equal.
+    if (val[0] == MIXED) {
+        if (!item.allValues.includes(MIXED)) item.allValues.push(MIXED)
       }
-      return v[0]
+      if (logthis) console.log('        return val', val)
+      return val
+    }
+    if (logthis) console.log('        return []')
+    return []
+  }
+  function getInitialValue(item: any): any {
+    const logthis = item.propertyId === 'allow_useractivity_publishing'
+    if (logthis) console.log('check property', item.propertyId, item)
+    if (item.clients && Object.keys(item.clients).length > 0) {
+      if (logthis) console.log('    clients', item.clients)
+      // const v = Object.values(item.clients as Record<string, any[]>)[0]
+      if (item.multiValue) {
+        return getVisibleValue(item.clients, selectionClients.value, item, logthis)
+      }
+      return getVisibleValue(item.clients, selectionClients.value, item, logthis)[0]
     }
     if (item.depots && Object.keys(item.depots).length > 0) {
-      const v = Object.values(item.depots as Record<string, any[]>)[0]
+      if (logthis) console.log('    depots', item.depots)
+      // const v = Object.values(item.depots as Record<string, any[]>)[0]
       if (item.multiValue) {
-        return v
+        return getVisibleValue(item.depots, selectionDepots.value, item, logthis)
       }
-      return v[0]
+      return getVisibleValue(item.depots, selectionDepots.value, item, logthis)[0]
     }
+    // if (item.depots && Object.keys(item.depots).length > 0) {
+    //   const v = Object.values(item.depots as Record<string, any[]>)[0]
+    //   if (item.multiValue) {
+    //     return v
+    //   }
+    //   return v[0]
+    // }
     if (item.value !== undefined) return item.value
     throw new Error(
       'Initial value is undefined and no valid clients or depots found',

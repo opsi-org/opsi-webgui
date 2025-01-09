@@ -104,7 +104,7 @@
   const { configLastSelected } = storeToRefs(tableSettings)
 
   const props = defineProps({
-    id: { type: String, default: undefined },
+    id: { type: String, default: undefined }, // productId
     type: { type: String, default: 'product' },
     isChild: { type: Boolean, default: true },
   })
@@ -147,7 +147,9 @@
   const dataSelection = storeSelections()
   const { selectionDepots, selectionClients } = storeToRefs(dataSelection)
 
-  watch([selectionDepots, selectionClients, () => props.id], fetch)
+  watch([selectionDepots, selectionClients, () => props.id], fetch, {
+    deep: true,
+  })
 
   onMounted(fetch)
 
