@@ -72,7 +72,9 @@
           size="small"
           icon="pi pi-plus"
           @click="addItemToOptions(localAddOption)"
-        />
+        >
+          <IconIIcon :icon="icons.add" />
+        </PButton>
       </div>
     </template>
   </PSelect>
