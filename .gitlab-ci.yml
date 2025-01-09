@@ -1,7 +1,7 @@
 image: node:23.0.0-bookworm-slim
 
 stages:
-  - check
+  - preinit
   - init
   - test
   - build
@@ -180,8 +180,8 @@ stages:
 #########################################################################
 ######################################################################### init
 #########################################################################
-check:versions:
-  stage: check
+preinit:versions:
+  stage: preinit
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11 # cause smaller then node...
   script:
     - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
@@ -211,6 +211,22 @@ check:versions:
     - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN) "; exit 1; else echo "Versions are equal $VERSION_YML"; fi
     - if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/addon/webgui/python/const.py ($VERSION_YML - $VERSION_PY)"; exit 1; else echo "Versions are equal"; fi
 
+preinit:transifex-up:
+  # this step have to be done before building webgui
+  stage: preinit
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
+  script:
+    - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json --resource-name opsi-webgui.json
+  only:
+    - tags
+    - main
+    - v4.4
+  artifacts:
+    name: 'opsi-webgui-locale'
+    paths:
+      - frontend/locale
+    expire_in: 3 day
+
 init:npm:
   stage: init
   script:
@@ -224,17 +240,17 @@ init:npm:
       - frontend/.nuxt/
     expire_in: 1 day
 
-init:transifex:
+init:transifex-down:
   # this step have to be done before building webgui
   stage: init
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   script:
     - TRANSIFEX_MIN_TRANSLATION_RATE=0.0
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
-    - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json --resource-name opsi-webgui.json
-    - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json opsiweb/uib-components/locale/ --min-translation-rate 1
-    - rm -f opsiweb/uib-components/locale/opsi-webgui_de.json
-    - rm -f opsiweb/uib-components/locale/opsi-webgui_fr.json
+    # - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json --resource-name opsi-webgui.json
+    # - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json opsiweb/uib-components/locale/ --min-translation-rate 1
+    - rm -f frontend/locale/opsi-webgui_de.json
+    - rm -f frontend/locale/opsi-webgui_fr.json
     - opsi-dev-cli -l debug transifex download-translations opsi-webgui.json frontend/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de -l fr
     - chmod 666 frontend/locale/*
   only:
@@ -539,7 +555,7 @@ build:addon: # with transifex
     - cd ..
     - *define_globals
     # - npm run generate-nossl
-    - bash opsiweb/scripts/build_production_local.sh webgui Webgui $(pwd)
+    - bash frontend/scripts/build_production_local.sh webgui Webgui $(pwd)
     # - cd .. # copy to addon
     # - mkdir -p backend/addon/webgui/data
     # - mkdir -p backend/addon/webgui/data/app
