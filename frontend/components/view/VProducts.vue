@@ -354,6 +354,7 @@
       productsRef.value?.refetch()
     },
   )
+  watch(() => selectionDepots.value, refetch)
 
   function refetch() {
     productsRef.value?.refetch()

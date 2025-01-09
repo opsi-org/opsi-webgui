@@ -96,7 +96,7 @@
       :style="'height: ' + bodyHeight + '!important'"
       @scroll="debouncedHandleScroll"
     >
-      <div v-if="!isFirstPage" class="extra-column">
+      <div v-if="totalItems > 0 && !isFirstPage" class="extra-column">
         <div v-if="!isLoading">{{ $t('table.infinit.scrollup') }}</div>
       </div>
       <el-table
@@ -191,7 +191,7 @@
         </template>
       </el-table>
       <div class="extra-column">
-        <span v-if="!isLastPage && !isLoading">{{
+        <span v-if="totalItems > 0 && !isLastPage && !isLoading">{{
           $t('table.infinit.scrolldown')
         }}</span>
       </div>
@@ -301,6 +301,8 @@
   }
   async function fetchWrapper() {
     isLoading.value = true
+    totalItems.value = 0
+    fetchedData.value = []
     const params = prepareParams()
     try {
       const res = await props.fetch(params)
