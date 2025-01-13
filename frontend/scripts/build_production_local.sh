@@ -31,10 +31,11 @@ DEFAULT_PORT=4447
 PORT_VALUE="${!ENV_CONFD_PORT:-$DEFAULT_PORT}"
 echo "PORT_VALUE: $PORT_VALUE"
 
-
 cleanup() {
     echo 'Undo changes and exiting'
-    git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/python/const.py || exit 70
+    if command -v git 2>&1 >/dev/null; then
+        git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/python/const.py || exit 70
+    fi
     sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = '$ADDON_PATH_ORIGIN'|" "$TS_CONST_FILE" || exit 13
 }
 
