@@ -288,7 +288,7 @@ test:languages:
     - *define_globals
   script:
     - ls -lah
-    - ls -lah frontend/locale
+    - ls -lah locale
   artifacts:
     paths:
       - frontend/locale
