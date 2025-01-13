@@ -585,7 +585,7 @@ build:zip: # with transifex
     - *install_tools
     - pwd && ls -la frontend
     - cd frontend # generate dist
-    - ls -lah frontend/locale
+    - ls -lah locale
     - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
     - *define_globals
     - npm run generate
