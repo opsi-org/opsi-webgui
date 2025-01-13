@@ -221,11 +221,6 @@ preinit:transifex-up:
     - tags
     - main
     - v4.4
-  artifacts:
-    name: 'opsi-webgui-locale'
-    paths:
-      - frontend/locale
-    expire_in: 3 day
 
 init:npm:
   stage: init
