@@ -4,88 +4,98 @@
       label-width="50%"
       :label-position="mq.isMobile.value ? 'top' : 'left'"
     >
-        <el-form-item
-          v-for="item in Object.values(props.properties)"
-          :key="item.propertyId"
-          :class="{ 'cursor-not-allowed': config.read_only }"
-        >
-          <template #label>
-            <TooltipTTooltip>
-              <template #tooltip>
-                <div class="max-w-md">
-                  <b>{{ item.description }}</b>
-                  <p>{{ $t('form.config.defaultvalue') }} {{ item.default }}</p>
+      <el-form-item
+        v-for="item in Object.values(props.properties)"
+        :key="item.propertyId"
+        :class="{ 'cursor-not-allowed': config.read_only }"
+      >
+        <template #label>
+          <TooltipTTooltip>
+            <template #tooltip>
+              <div class="max-w-md">
+                <b>{{ item.description }}</b>
+                <p>{{ $t('form.config.defaultvalue') }} {{ item.default }}</p>
+                <div class="max-h-42 overflow-auto">
                   <p v-if="item.depots">
-                    {{ $t('form.config.objectvalue') }} <pre class="text-xs">{{ item.depots }}</pre>
+                    {{ $t('form.config.objectvalue') }}
                   </p>
-                  <p v-if="item.clients">
-                    {{ $t('form.config.objectvalue') }} <pre class="text-xs">{{ item.clients }}</pre>
-                  </p>
+                  <pre class="text-xs">{{ item.depots }}</pre>
                 </div>
-              </template>
-              <span>{{ item.propertyId }}</span>
-            </TooltipTTooltip>
-          </template>
+                <div class="max-h-40 overflow-auto">
+                  <p v-if="item.clients">
+                    {{ $t('form.config.objectvalue') }}
+                  </p>
+                  <pre class="text-xs">{{ item.clients }}</pre>
+                </div>
+              </div>
+            </template>
+            <span>{{ item.propertyId }}</span>
+          </TooltipTTooltip>
+        </template>
 
-          <div
-            v-if="item.type === 'BoolProductProperty'"
-            class="w-full justify-stretch"
-          >
-            <el-checkbox
-              v-model="itemValues[item.propertyId]"
-              :disabled="config.read_only"
-              :indeterminate="itemValues[item.propertyId] === MIXED"
-              @change="handleSelection(item, itemValues[item.propertyId])"
-            />
-            {{ (itemValues[item.propertyId] == MIXED) ? itemValues[item.propertyId]:'' }}
+        <div
+          v-if="item.type === 'BoolProductProperty'"
+          class="w-full justify-stretch"
+        >
+          <el-checkbox
+            v-model="itemValues[item.propertyId]"
+            :disabled="config.read_only"
+            :indeterminate="itemValues[item.propertyId] === MIXED"
+            @change="handleSelection(item, itemValues[item.propertyId])"
+          />
+          {{
+            itemValues[item.propertyId] == MIXED
+              ? itemValues[item.propertyId]
+              : ''
+          }}
 
-            <p-tag
-              v-if="
-                itemValues[item.propertyId] !== initialValues[item.propertyId]
-              "
-              severity="danger"
-              :value="t_fixed('notOrigin')"
-            />
-          </div>
-          <div
-            v-else-if="
-              ['password', 'secret'].some((marker) =>
-                item.propertyId.includes(marker),
+          <p-tag
+            v-if="
+              itemValues[item.propertyId] !== initialValues[item.propertyId]
+            "
+            severity="danger"
+            :value="t_fixed('notOrigin')"
+          />
+        </div>
+        <div
+          v-else-if="
+            ['password', 'secret'].some((marker) =>
+              item.propertyId.includes(marker),
+            )
+          "
+          class="w-full justify-stretch"
+        >
+          <el-input
+            v-model="itemValues[item.propertyId]"
+            :value="itemValues[item.propertyId]"
+            show-password
+            :disabled="config.read_only"
+            @input="() => handleSelection(item, itemValues[item.propertyId])"
+          />
+        </div>
+        <div v-else class="w-full justify-stretch">
+          <SelectSSelect
+            v-model:selection="itemValues[item.propertyId]"
+            v-model:data="item.allValues"
+            :editable="item.editable"
+            :multi-selection="item.multiValue"
+            :selected-options="itemValues[item.propertyId]"
+            :marked-options="initialValues[item.propertyId]"
+            @change="() => handleSelection(item, itemValues[item.propertyId])"
+          />
+          <p-tag
+            v-if="
+              itemValues[item.propertyId] !== undefined &&
+              !arrayEqual(
+                itemValues[item.propertyId],
+                initialValues[item.propertyId],
               )
             "
-            class="w-full justify-stretch"
-          >
-            <el-input
-              v-model="itemValues[item.propertyId]"
-              :value="itemValues[item.propertyId]"
-              show-password
-              :disabled="config.read_only"
-              @input="() => handleSelection(item, itemValues[item.propertyId])"
-            />
-          </div>
-          <div v-else class="w-full justify-stretch">
-            <SelectSSelect
-              v-model:selection="itemValues[item.propertyId]"
-              v-model:data="item.allValues"
-              :editable="item.editable"
-              :multi-selection="item.multiValue"
-              :selected-options="itemValues[item.propertyId]"
-              :marked-options="initialValues[item.propertyId]"
-              @change="() => handleSelection(item, itemValues[item.propertyId])"
-            />
-            <p-tag
-              v-if="
-                itemValues[item.propertyId] !== undefined &&
-                !arrayEqual(
-                  itemValues[item.propertyId],
-                  initialValues[item.propertyId],
-                )
-              "
-              severity="danger"
-              :value="t_fixed('notOrigin')"
-            />
-          </div>
-        </el-form-item>
+            severity="danger"
+            :value="t_fixed('notOrigin')"
+          />
+        </div>
+      </el-form-item>
     </el-form>
   </div>
 
@@ -151,7 +161,7 @@
   function getVisibleValue(
     property: Record<string, any[]>,
     selection: string[],
-    item: any
+    item: any,
   ) {
     // values: {"nb-00013.acme.corp": [ false ], "nb-00023.acme.corp": [ true  ] }
     const objectValues = Object.values(property)
@@ -159,12 +169,14 @@
       if (objectValues.length !== selection.length) {
         if (!item.allValues.includes(MIXED)) item.allValues.push(MIXED)
         return [MIXED]
-    }
+      }
 
-    const val = objectValues.some((v) => !isEqual(v, objectValues[0])) ? [MIXED] : objectValues[0]
-    if (val[0] == MIXED) {
-      if (!item.allValues.includes(MIXED)) item.allValues.push(MIXED)
-    }
+      const val = objectValues.some((v) => !isEqual(v, objectValues[0]))
+        ? [MIXED]
+        : objectValues[0]
+      if (val[0] == MIXED) {
+        if (!item.allValues.includes(MIXED)) item.allValues.push(MIXED)
+      }
       return val
     }
     return []
