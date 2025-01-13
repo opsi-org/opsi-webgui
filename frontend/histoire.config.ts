@@ -2,6 +2,10 @@ import { defineConfig } from 'histoire'
 import { HstVue } from '@histoire/plugin-vue'
 import { HstNuxt } from '@histoire/plugin-nuxt'
 // import './assets/scss/bv-colors.scss'
+
+const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? '4447'
+console.log('OPSI CONFD PORT IN HISTOIRE', CONFD_PORT)
+
 export default defineConfig({
   plugins: [HstVue(), HstNuxt()],
   // autoApplyContrastColor: true,
@@ -67,7 +71,7 @@ export default defineConfig({
       },
       proxy: {
         '/addons/webgui/api': {
-          target: 'https://localhost:4447/',
+          target: 'https://localhost:' + CONFD_PORT + '/',
           // changeOrigin: true,
           // rewrite: (path) => path.replace(/^\/api/, ""),
         },
