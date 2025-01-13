@@ -253,10 +253,10 @@ init:transifex-down:
     - main
     - v4.4
   artifacts:
-    name: 'opsi-webgui-locale'
     paths:
       - frontend/locale
     expire_in: 3 day
+
 init:changelogs:
   # this step have to be done before building webgui
   stage: init
@@ -278,6 +278,18 @@ init:changelogs:
 #########################################################################
 ######################################################################### test
 #########################################################################
+test:languages:
+  stage: test
+  dependencies:
+    - init:npm
+    - init:transifex-down
+  before_script:
+    - cd frontend
+    - *define_globals
+  script:
+    - ls -lah
+    - ls -lah frontend/locale
+
 test:lint:
   stage: test
   dependencies:
@@ -606,6 +618,7 @@ build:zip: # with transifex
   artifacts:
     name: 'opsi-webgui'
     paths:
+      - frontend/locale
       - webgui
     expire_in: 7 day
 
@@ -732,7 +745,6 @@ publish:obs_ext:
   only:
     - tags
   artifacts:
-    name: 'opsi-webgui-changelogs'
     paths:
       - output
     expire_in: 1 day
