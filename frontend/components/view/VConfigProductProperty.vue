@@ -16,20 +16,37 @@
                 <b>{{ item.description }}</b>
                 <p>{{ $t('form.config.defaultvalue') }} {{ item.default }}</p>
                 <div class="max-h-42 overflow-auto">
-                  <p v-if="item.depots">
+                  <p
+                    v-if="item.depots"
+                    :class="{
+                      // italic: item.anyClientDifferentFromDepot,
+                      bold: item.anyDepotDifferentFromDefault,
+                    }"
+                  >
                     {{ $t('form.config.objectvalue') }}
                   </p>
                   <pre class="text-xs">{{ item.depots }}</pre>
                 </div>
                 <div class="max-h-40 overflow-auto">
-                  <p v-if="item.clients">
+                  <p
+                    v-if="item.clients"
+                    :class="{
+                      italic: item.anyClientDifferentFromDepot,
+                    }"
+                  >
                     {{ $t('form.config.objectvalue') }}
                   </p>
                   <pre class="text-xs">{{ item.clients }}</pre>
                 </div>
               </div>
             </template>
-            <span>{{ item.propertyId }}</span>
+            <span
+              :class="{
+                italic: item.anyClientDifferentFromDepot,
+                bold: item.anyDepotDifferentFromDefault,
+              }"
+              >{{ item.propertyId }}</span
+            >
           </TooltipTTooltip>
         </template>
 
