@@ -289,7 +289,10 @@ test:languages:
   script:
     - ls -lah
     - ls -lah frontend/locale
-
+  artifacts:
+    paths:
+      - frontend/locale
+      
 test:lint:
   stage: test
   dependencies:
