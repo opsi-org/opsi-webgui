@@ -4,7 +4,7 @@ import { HstNuxt } from '@histoire/plugin-nuxt'
 // import './assets/scss/bv-colors.scss'
 
 const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? '4447'
-console.log('OPSI CONFD PORT IN HISTOIRE', CONFD_PORT)
+// console.log('OPSI CONFD PORT IN HISTOIRE', CONFD_PORT)
 
 export default defineConfig({
   plugins: [HstVue(), HstNuxt()],
