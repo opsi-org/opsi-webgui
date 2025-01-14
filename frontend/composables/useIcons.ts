@@ -1,5 +1,3 @@
-import { warn } from 'vue'
-
 export const useIcons = () => {
   // All available icons: https://icon-sets.iconify.design
   // prefered urrently: bootstrap icons
