@@ -219,7 +219,7 @@ preinit:transifex-up:
     - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json --resource-name opsi-webgui.json
   only:
     - tags
-    - main
+      - v4.4
     - v4.4
 
 init:npm:
@@ -250,7 +250,7 @@ init:transifex-down:
     - chmod 666 frontend/locale/*
   only:
     - tags
-    - main
+      - v4.4
     - v4.4
   artifacts:
     paths:
@@ -267,7 +267,7 @@ init:changelogs:
     - chmod 666 output/*
   only:
     - tags
-    - main
+      - v4.4
     - v4.4
   artifacts:
     name: 'opsi-webgui-changelogs'
@@ -357,7 +357,7 @@ test:accessibility:
     - npm run bash:delete-empty-test-results
   allow_failure: true
   only:
-    - main
+    - v4.4
     - tags
   artifacts:
     name: 'opsi-webgui-test-result-accessibility'
@@ -385,7 +385,7 @@ test:usecase:
     - npm run bash:delete-empty-test-results
   allow_failure: true
   only:
-    - main
+    - v4.4
     - tags
   artifacts:
     name: 'opsi-webgui-test-result-usecase'
@@ -546,7 +546,6 @@ build:static:app: # with transifex
       - frontend/dist # not used...?
     expire_in: 3 day
   only:
-    - main
     - tags
     - v4.4
 
@@ -579,7 +578,6 @@ build:addon: # with transifex
     - zip -r -q opsi-webgui.zip webgui
   only:
     - tags
-    - main
     - v4.4
   artifacts:
     name: 'opsi-webgui-with-zip'
@@ -616,7 +614,6 @@ build:zip: # with transifex
     - ls -lah frontend/locale
   only:
     - tags
-    - main
     - v4.4
   artifacts:
     name: 'opsi-webgui'
