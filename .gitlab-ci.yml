@@ -128,7 +128,7 @@ stages:
 
 .get_changed_files: &get_changed_files |
   cd uib-components
-  changedFiles=$(git diff origin/main -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
+  changedFiles=$(git diff origin/v4.3 -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
   echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
   echo "$basenames"
@@ -160,7 +160,7 @@ stages:
 #   echo "ProjectID: $CI_PROJECT_ID"
 #   echo "ProjectTAG: $TAG"
 #   printf "ProjectMSG: \n$(cat $FILE)\n"
-#   printf "ProjectURL: $CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main\n"
+#   printf "ProjectURL: $CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=v4.3\n"
 #   # if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
 #   # echo ""
 
@@ -201,7 +201,7 @@ check:versions:
 init:npm:production:
   stage: init
   only:
-    - main
+    - v4.3
     - tags
   script:
     - cd opsiweb
@@ -237,7 +237,7 @@ init:transifex:
     - chmod 666 opsiweb/uib-components/locale/*
   only:
     - tags
-    - main
+    - v4.3
   artifacts:
     name: "opsi-webgui-locale"
     paths:
@@ -253,7 +253,7 @@ init:changelogs:
     - chmod 666 output/*
   only:
     - tags
-    - main
+    - v4.3
   artifacts:
     name: "opsi-webgui-changelogs"
     paths:
@@ -305,7 +305,7 @@ test:accessibility:
     - npm run test:all:delete-empty-results
   allow_failure: true
   only:
-    - main
+    - v4.3
     - tags
   artifacts:
     name: "opsi-webgui-test-result-accessibility"
@@ -333,7 +333,7 @@ test:usecase:
     - npm run test:all:delete-empty-results
   allow_failure: true
   only:
-    - main
+    - v4.3
     - tags
   artifacts:
     name: "opsi-webgui-test-result-usecase"
@@ -353,7 +353,7 @@ test:components:changes:
   except:
     - cicd
     - tags # cause in tags we test all browsers (and all files)
-    - main # cause in main we test all files
+    - v4.3 # cause in main we test all files
   only:
     changes:
       - opsiweb/pages/*
@@ -390,7 +390,7 @@ test:components:
   dependencies:
     - init:npm
   only:
-    - main # cause in main we test all files, but only chromium browser
+    - v4.3 # cause in main we test all files, but only chromium browser
     - tags
   before_script:
     - cd opsiweb
@@ -485,7 +485,7 @@ build:screenshots:docs: # with transifex
     - init:npm
     - init:transifex
   only:
-    - main # cause in main we test all files, but only chromium browser
+    - v4.3 # cause in main we test all files, but only chromium browser
     - tags
   before_script:
     - cd opsiweb
@@ -525,7 +525,7 @@ build:static:app: # with transifex
       - opsiweb/dist # not used...?
     expire_in: 3 day
   only:
-    - main
+    - v4.3
     - tags
 
 build:addon: # with transifex
@@ -557,7 +557,7 @@ build:addon: # with transifex
     - zip -r -q opsi-webgui.zip webgui
   only:
     - tags
-    - main
+    - v4.3
   artifacts:
     name: "opsi-webgui-with-zip"
     paths:
@@ -593,7 +593,7 @@ build:zip: # with transifex
     - ls -lah opsiweb/uib-components/locale
   only:
     - tags
-    - main
+    - v4.3
   artifacts:
     name: "opsi-webgui"
     paths:
