@@ -15,10 +15,40 @@
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
         :disabled="!hasUnsavedChanges"
-        @click="saveBufferedChanges"
+        @click="openBufferedChangesModal = true"
       >
         {{ $t('button.save') }}
       </el-button>
+      <el-dialog
+        v-model="openBufferedChangesModal"
+        title="Unsaved changes"
+        align-center
+      >
+        <el-table :data="bufferedChanges">
+          <el-table-column prop="productIds" label="Selected Product IDs">
+            <template #default="scope">
+              <ul>
+                <li v-for="product in scope.row.productIds" :key="product">{{ product }}</li>
+              </ul>
+            </template>
+          </el-table-column>
+          <el-table-column prop="actionRequest" label="Action Request"></el-table-column>
+          <el-table-column prop="oldActionRequest" label="Old Action Request"></el-table-column>
+        </el-table>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button type="danger" @click="discardAllChanges">{{ $t('label.discardAll') }}</el-button>
+
+            <el-button
+              :type="hasUnsavedChanges ? 'success' : ''"
+              :disabled="!hasUnsavedChanges"
+              @click="saveBufferedChanges"
+            >
+              {{ $t('button.save') }}
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
 
       <ModalMServerSelection
         v-if="storeSelection.selectionDepots.length <= 0"
@@ -117,6 +147,7 @@
     if (productsTypeChecked.value.Product) return 'Product'
     return 'LocalbootProduct'
   })
+  const openBufferedChangesModal = ref(false)
 
   const tableColumn = ref([
     {
@@ -327,9 +358,11 @@
     },
   ])
 
-  const bufferedChanges = ref<object>({})
+
+  const bufferedChanges = ref<Array<any>>([])
+
   const hasUnsavedChanges = computed(
-    () => Object.keys(bufferedChanges.value)?.length > 0,
+    () => bufferedChanges.value?.length > 0,
   )
   const hasRowsWrapper = computed(() => productsRef.value?.hasRows.value)
 
@@ -358,6 +391,11 @@
 
   function refetch() {
     productsRef.value?.refetch()
+  }
+
+  function discardAllChanges() {
+    bufferedChanges.value = []
+    openBufferedChangesModal.value = false
   }
 
   async function fetchProducts(_params: any) {
@@ -445,99 +483,17 @@
     return params
   }
 
-  // async function saveActionRequests(rowItem: any, newrequest: string) {
-  //   const data = {
-  //     clientIds: clientSelection.value,
-  //     productIds: selectionProducts.value,
-  //     actionRequest: newrequest,
-  //   }
-  //   lastChanges.value.clientIds = data.clientIds
-  //   lastChanges.value.productIds = data.productIds
-  //   console.warn('saveActionRequests', storeSettings().quicksave)
-  //   if (storeSettings().quicksave) {
-  //     await useSaveProductActionRequest($t).saveProdActionRequest(
-  //       data,
-  //       null,
-  //       true,
-  //     )
-  //     productsRef.value?.refetch()
-  //   } else {
-  //     for (const c in selectionClients.value) {
-  //       const clientId = selectionClients.value[c]
-  //       for (const p in selectionProducts.value) {
-  //         const productId = selectionProducts.value[p]
-
-  //         const d = {
-  //           user: storeAuth().username,
-  //           clientId: clientId,
-  //           productId: productId,
-  //           actionRequest: newrequest,
-  //         }
-
-  //         const objIndex = storeChanges().changesProducts.findIndex(
-  //           (item) => item.clientId === c && item.productId === p,
-  //         )
-  //         if (objIndex > -1) {
-  //           storeChanges().delWithIndexChangesProducts(objIndex)
-  //         }
-  //         storeChanges().pushToChangesProducts(d)
-  //       }
-  //     }
-  //   }
-  // }
-
-  // async function saveActionRequest(rowitem: any, newrequest: string) {
-  //   const data = {
-  //     clientIds: clientSelection.value,
-  //     productIds: [rowitem.productId],
-  //     actionRequest: newrequest,
-  //   }
-  //   if (storeSettings().quicksave) {
-  //     lastChanges.value.clientIds = data.clientIds
-  //     lastChanges.value.productIds = data.productIds
-  //     const ok = await useSaveProductActionRequest($t).saveProdActionRequest(
-  //       data,
-  //       null,
-  //       true,
-  //     )
-  //     if (ok) {
-  //       rowitem.actionRequest = newrequest
-  //       rowitem.selectedClients = clientSelection.value
-  //       delete rowitem.actionRequestDetails
-  //     }
-  //   } else {
-  //     for (const c in clientSelection.value) {
-  //       const clientId = selectionClients.value[c]
-  //       const d = {
-  //         user: storeAuth().username,
-  //         clientId: clientId,
-  //         productId: rowitem.productId,
-  //         actionRequest: newrequest,
-  //       }
-  //       const objIndex = storeChanges().changesProducts.findIndex(
-  //         (item) =>
-  //           item.user === storeAuth().username &&
-  //           item.clientId === clientId &&
-  //           item.productId === rowitem.productId,
-  //       )
-  //       if (objIndex > -1) {
-  //         storeChanges().delWithIndexChangesProducts(objIndex)
-  //       }
-  //       addToChangedIfNeeded(rowitem, clientId, newrequest, d)
-  //     }
-  //   }
-  // }
-
   async function saveActionRequests(rowItem: any, newrequest: string) {
     const data = {
       clientIds: clientSelection.value,
       productIds: selectionProducts.value,
       actionRequest: newrequest,
+      oldActionRequest: rowItem.actionRequest,
     }
     lastChanges.value.clientIds = data.clientIds
     lastChanges.value.productIds = data.productIds
 
-    bufferedChanges.value = data
+    bufferedChanges.value.push(data)
   }
 
   async function saveActionRequest(rowitem: any, newrequest: string) {
@@ -545,44 +501,28 @@
       clientIds: selectionClients.value,
       productIds: [rowitem.productId],
       actionRequest: newrequest,
+      oldActionRequest: rowitem.actionRequest,
     }
     lastChanges.value.clientIds = data.clientIds
     lastChanges.value.productIds = data.productIds
 
-    bufferedChanges.value = data
+    bufferedChanges.value.push(data)
   }
 
   async function saveBufferedChanges() {
-    await useSaveProductActionRequest($t).saveProdActionRequest(
-      bufferedChanges.value,
-      null,
-      true,
-    )
+    for (const change of bufferedChanges.value) {
+      const { oldActionRequest, ...data } = change
+      await useSaveProductActionRequest($t).saveProdActionRequest(
+        data,
+        null,
+        true,
+      )
+    }
 
-    bufferedChanges.value = {}
+    bufferedChanges.value = []
     productsRef.value?.refetch()
+    openBufferedChangesModal.value = false
   }
-
-  // function addToChangedIfNeeded(
-  //   rowitem: any,
-  //   clientId: string,
-  //   newrequest: string,
-  //   changeObj: any,
-  // ) {
-  //   const ic = rowitem.selectedClients?.indexOf(clientId)
-  //   if (newrequest == 'mixed') {
-  //     // nothing to do
-  //   } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] === newrequest) {
-  //     // nothing to do
-  //   } else if (ic >= 0 && rowitem.actionRequestDetails?.[ic] !== newrequest) {
-  //     storeChanges().pushToChangesProducts(changeObj)
-  //     return true
-  //   } else if (rowitem.actionRequest !== newrequest) {
-  //     storeChanges().pushToChangesProducts(changeObj)
-  //     return true
-  //   }
-  //   return false
-  // }
 
   function changeProductsType(type: IProductTypes) {
     const fullUrl = router.currentRoute.value.fullPath

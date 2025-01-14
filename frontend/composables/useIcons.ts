@@ -1,3 +1,5 @@
+import { warn } from 'vue'
+
 export const useIcons = () => {
   // All available icons: https://icon-sets.iconify.design
   // prefered urrently: bootstrap icons
@@ -27,6 +29,7 @@ export const useIcons = () => {
     rename: 'bi:pencil-square',
     reset: 'bi:arrow-counterclockwise',
     exclamation: 'bi:exclamation',
+    warning: 'bi:exclamation-triangle',
     copy: 'bi:copy',
     edit: 'bi:pencil',
     x: 'bi:x',
