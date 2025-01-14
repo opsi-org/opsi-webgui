@@ -13,25 +13,18 @@
   >
     <template #toolbar-right>
       <el-button
-        v-if="hasUnsavedChanges"
-        plain
+        :type="hasUnsavedChanges ? 'success' : ''"
+        :disabled="!hasUnsavedChanges"
         @click="openBufferedChangesModal = true"
       >
-        <IconIIcon :icon="icons.warning" />
+        {{ $t('button.save') }}
       </el-button>
       <el-dialog
         v-model="openBufferedChangesModal"
         title="Unsaved changes"
         align-center
       >
-        <el-table :data="[bufferedChanges]">
-          <el-table-column prop="clientIds" label="Selected Clients">
-            <template #default="scope">
-              <ul>
-                <li v-for="client in scope.row.clientIds" :key="client">{{ client }}</li>
-              </ul>
-            </template>
-          </el-table-column>
+        <el-table :data="bufferedChanges">
           <el-table-column prop="productIds" label="Selected Product IDs">
             <template #default="scope">
               <ul>
@@ -45,19 +38,17 @@
         <template #footer>
           <div class="dialog-footer">
             <el-button type="danger" @click="discardAllChanges">{{ $t('label.discardAll') }}</el-button>
-            <el-button type="primary" @click="openBufferedChangesModal = false">
-              {{ $t('button.confirm')}}
+
+            <el-button
+              :type="hasUnsavedChanges ? 'success' : ''"
+              :disabled="!hasUnsavedChanges"
+              @click="saveBufferedChanges"
+            >
+              {{ $t('button.save') }}
             </el-button>
           </div>
         </template>
       </el-dialog>
-      <el-button
-        :type="hasUnsavedChanges ? 'success' : ''"
-        :disabled="!hasUnsavedChanges"
-        @click="saveBufferedChanges"
-      >
-        {{ $t('button.save') }}
-      </el-button>
 
       <ModalMServerSelection
         v-if="storeSelection.selectionDepots.length <= 0"
@@ -368,12 +359,11 @@
     },
   ])
 
-  const bufferedChanges = ref<{
-    oldActionRequest?: string
-    [key: string]: any
-  }>({})
+
+  const bufferedChanges = ref<Array<any>>([])
+
   const hasUnsavedChanges = computed(
-    () => Object.keys(bufferedChanges.value)?.length > 0,
+    () => bufferedChanges.value?.length > 0,
   )
   const hasRowsWrapper = computed(() => productsRef.value?.hasRows.value)
 
@@ -404,7 +394,7 @@
   }
 
   function discardAllChanges() {
-    bufferedChanges.value = {}
+    bufferedChanges.value = []
     openBufferedChangesModal.value = false
   }
 
@@ -503,7 +493,7 @@
     lastChanges.value.clientIds = data.clientIds
     lastChanges.value.productIds = data.productIds
 
-    bufferedChanges.value = data
+    bufferedChanges.value.push(data)
   }
 
   async function saveActionRequest(rowitem: any, newrequest: string) {
@@ -516,19 +506,22 @@
     lastChanges.value.clientIds = data.clientIds
     lastChanges.value.productIds = data.productIds
 
-    bufferedChanges.value = data
+    bufferedChanges.value.push(data)
   }
 
   async function saveBufferedChanges() {
-    const { oldActionRequest, ...changesToSave } = bufferedChanges.value
-    await useSaveProductActionRequest($t).saveProdActionRequest(
-      changesToSave,
-      null,
-      true,
-    )
+    for (const change of bufferedChanges.value) {
+      const { oldActionRequest, ...data } = change
+      await useSaveProductActionRequest($t).saveProdActionRequest(
+        data,
+        null,
+        true,
+      )
+    }
 
-    bufferedChanges.value = {}
+    bufferedChanges.value = []
     productsRef.value?.refetch()
+    openBufferedChangesModal.value = false
   }
 
   function changeProductsType(type: IProductTypes) {
