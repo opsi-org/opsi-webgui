@@ -24,14 +24,29 @@
         title="Unsaved changes"
         align-center
       >
-        {{ bufferedChanges }}
+        <el-table :data="[bufferedChanges]">
+          <el-table-column prop="clientIds" label="Selected Clients">
+            <template #default="scope">
+              <ul>
+                <li v-for="client in scope.row.clientIds" :key="client">{{ client }}</li>
+              </ul>
+            </template>
+          </el-table-column>
+          <el-table-column prop="productIds" label="Selected Product IDs">
+            <template #default="scope">
+              <ul>
+                <li v-for="product in scope.row.productIds" :key="product">{{ product }}</li>
+              </ul>
+            </template>
+          </el-table-column>
+          <el-table-column prop="actionRequest" label="Action Request"></el-table-column>
+          <el-table-column prop="oldActionRequest" label="Old Action Request"></el-table-column>
+        </el-table>
         <template #footer>
           <div class="dialog-footer">
-            <el-button @click="openBufferedChangesModal = false"
-              >Cancel</el-button
-            >
+            <el-button type="danger" @click="discardAllChanges">{{ $t('label.discardAll') }}</el-button>
             <el-button type="primary" @click="openBufferedChangesModal = false">
-              Confirm
+              {{ $t('button.confirm')}}
             </el-button>
           </div>
         </template>
@@ -386,6 +401,11 @@
 
   function refetch() {
     productsRef.value?.refetch()
+  }
+
+  function discardAllChanges() {
+    bufferedChanges.value = {}
+    openBufferedChangesModal.value = false
   }
 
   async function fetchProducts(_params: any) {

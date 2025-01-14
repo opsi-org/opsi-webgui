@@ -312,5 +312,7 @@
   "treeselect.noResultTextEditable": "Not such item found",
   "treeselect.nooption": "No options available.",
   "treeselect.search": "Search",
-  "treeselect.searchOrAdd": "Search or add item"
+  "treeselect.searchOrAdd": "Search or add item",
+  "label.discard": "Discard",
+  "label.discardAll": "Discard All"
 }
