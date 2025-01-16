@@ -278,6 +278,17 @@ init:changelogs:
 #########################################################################
 ######################################################################### test
 #########################################################################
+test:build:
+  stage: test
+  dependencies:
+    - init:npm
+    # - init:transifex-down
+  before_script:
+    - cd frontend
+    - *define_globals
+  script:
+    - npm run generate
+
 test:languages:
   stage: test
   dependencies:
