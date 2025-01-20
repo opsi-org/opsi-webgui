@@ -9,8 +9,12 @@ export default withNuxt(
   {
     // https://github.com/nuxt/eslint/discussions/413
     ignores: [
-      'node_modules/',
+      'node_modules/*',
       'dist/*',
+      '.nuxt/*',
+      'output/*',
+      'webgui/*',
+      'webgui-dev/*',
       'package.json',
       'package.json',
       // 'locale/*.json',
