@@ -296,6 +296,7 @@ test:npm-versions:
     - cd frontend
     - *define_globals
   script:
+    - apt -y install python3
     - npm run versions
 
 test:languages:
