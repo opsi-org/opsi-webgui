@@ -159,7 +159,8 @@ class VersionShower:
             pkgs['npm'] = { 'current': _npm_current, 'latest': _npm_latest if _npm_latest != _npm_current else ''}
 
             _node_current = subprocess.run(['node', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True).stdout.strip().replace('v', '')
-            _node_latest = subprocess.run(['npm', 'view', 'node', 'dist-tags.latest'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True).stdout.strip()
+            # _node_latest = subprocess.run(['npm', 'view', 'node', 'dist-tags.latest'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True).stdout.strip()
+            _node_latest = json.loads(subprocess.run(['npm', 'view', 'node', 'versions'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True).stdout.strip().replace('\'', '"'))[-1]
             pkgs['node'] = { 'current': _node_current, 'latest': _node_latest if _node_latest != _node_current else ''}
 
             return pkgs

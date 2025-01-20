@@ -7,15 +7,15 @@
     "@xterm/addon-web-links": "~0.11.0",
     "@xterm/xterm": "~5.5.0",
     "element-plus": "~2.x.x",
-    "nuxt": "^3.15.1",
+    "nuxt": "3.15.1",
     "primevue": "~4.2.x",
     "tailwindcss-primeui": "~0.3.4",
     "vue3-markdown-it": "~1.0.10"
   },
   "dependenciesComments": {
     "#node": "version > 23.0.0 seems to have issues",
-    "#npm": "version > 10.9.0 currently broken",
-    "@nuxtjs/i18n": "Using 8.5.6, cause 9.1.1 throws error in browser terminal."
+    "@nuxtjs/i18n": "Using 8.5.6, cause 9.1.1 throws error in browser terminal.",
+    "npm": "version > 10.9.2 currently broken ('js heap out of space' on npm run and build)"
   },
   "devDependencies": {
     "@element-plus/nuxt": "~1.1.0",
