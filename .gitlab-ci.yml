@@ -283,12 +283,19 @@ test:build:
   stage: test
   dependencies:
     - init:npm
-    # - init:transifex-down
   before_script:
     - cd frontend
     - *define_globals
   script:
     - npm run generate
+test:npm-versions:
+  stage: test
+  dependencies:
+    - init:npm
+  before_script:
+    - cd frontend
+    - *define_globals
+  script:
     - npm run versions
 
 test:languages:
@@ -305,7 +312,7 @@ test:languages:
   artifacts:
     paths:
       - frontend/locale
-      
+
 test:lint:
   stage: test
   dependencies:

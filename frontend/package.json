@@ -55,7 +55,7 @@
     "bash:delete-empty-test-results": "find test-results -empty -delete",
     "build": "nuxi build",
     "clean": "rm -rf node_modules",
-    "clean-full": "(python || python3) scripts/npm-helper.py --install-clean",
+    "clean-full": "./scripts/py-helper.sh scripts/npm-helper.py --install-clean",
     "dev": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxi dev",
     "dev0": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxt dev",
     "format": "prettier --write \"./**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
@@ -64,7 +64,7 @@
     "lint": "eslint .",
     "lint:all": "npx nuxi typecheck && eslint .",
     "lint:fix": "eslint . --fix",
-    "lint:missing-i18n": "(python || python3) scripts/compare_translation_keys.py -s",
+    "lint:missing-i18n": "./scripts/py-helper.sh scripts/compare_translation_keys.py -s",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "pwtest:access": "playwright test -c tests-configs/playwright-all-accessibility.config.ts",
@@ -77,7 +77,7 @@
     "sysinfo": "npx envinfo --system --npmPackages '{histoire,@histoire/*,vite,@vitejs/*}' --binaries --browsers",
     "tsc": "npx nuxi typecheck",
     "tscs": "npx nuxi typecheck --logLevel=silent",
-    "versions": "(python || python3) scripts/npm-helper.py --versions --versions-sort is_outdated"
+    "versions": "./scripts/py-helper.sh scripts/npm-helper.py --versions --versions-sort is_outdated"
   },
   "type": "module",
   "version": "4.3.99.1"
