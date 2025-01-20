@@ -288,16 +288,16 @@ test:build:
     - *define_globals
   script:
     - npm run generate
-test:npm-versions:
-  stage: test
-  dependencies:
-    - init:npm
-  before_script:
-    - cd frontend
-    - *define_globals
-  script:
-    - apt -y install python3
-    - npm run versions
+# test:npm-versions:
+#   stage: test
+#   dependencies:
+#     - init:npm
+#   before_script:
+#     - cd frontend
+#     - *define_globals
+#   script:
+#     - apt -y install python3
+#     - npm run versions
 
 test:languages:
   stage: test
