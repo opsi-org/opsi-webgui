@@ -279,15 +279,6 @@ init:changelogs:
 ######################################################################### test
 #########################################################################
 
-test:npm-versions:
-  stage: test
-  dependencies:
-    - init:npm
-  script:
-    - cd frontend
-    - *define_globals
-    - npm run versions
-    
 test:build:
   stage: test
   dependencies:
@@ -298,6 +289,7 @@ test:build:
     - *define_globals
   script:
     - npm run generate
+    - npm run versions
 
 test:languages:
   stage: test
