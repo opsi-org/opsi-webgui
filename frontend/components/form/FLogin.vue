@@ -30,7 +30,7 @@
           </el-form-item>
           <el-form-item
             class="mb-1"
-            v-if="authMethods.includes(METHOD_PASSOWRD)"
+            v-if="authMethods.includes(METHOD_PASSWORD)"
           >
             <el-input
               id="username"
@@ -45,7 +45,7 @@
           </el-form-item>
           <el-form-item
             class="mb-1"
-            v-if="authMethods.includes(METHOD_PASSOWRD)"
+            v-if="authMethods.includes(METHOD_PASSWORD)"
           >
             <el-input
               id="password"
@@ -59,7 +59,7 @@
               class="password"
             />
           </el-form-item>
-          <el-form-item v-if="authMethods.includes(METHOD_PASSOWRD)">
+          <el-form-item v-if="authMethods.includes(METHOD_PASSWORD)">
             <el-input
               data-testid="login_otp"
               v-model="totp"
@@ -70,7 +70,7 @@
             />
           </el-form-item>
           <el-button
-            v-if="authMethods.includes(METHOD_PASSOWRD)"
+            v-if="authMethods.includes(METHOD_PASSWORD)"
             data-testid="btn-login"
             :title="$t('button.login.description')"
             :disabled="!form.username || !form.password"
@@ -120,7 +120,7 @@
   const opsiconfigserver = ref('')
   const authMethods = ref('')
 
-  const METHOD_PASSOWRD = 'password'
+  const METHOD_PASSWORD = 'password'
   const METHOD_SAML = 'saml'
 
   onMounted(async () => {
@@ -129,7 +129,8 @@
       const useServerGet = await useConfigserver(true, undefined, $t)
       const res = await useServerGet.getOpsiConfigServerWithHeaders()
       opsiconfigserver.value = res.data || ''
-      authMethods.value = res.headers.get(opsiheaders.xopsiauthmethods) || ''
+      authMethods.value =
+        res.headers.get(opsiheaders.xopsiauthmethods) || METHOD_PASSWORD
       const username = storeAuth().username
       if (username) {
         form.value.username = username
