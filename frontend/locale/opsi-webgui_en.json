@@ -91,6 +91,8 @@
   "label.clients.unblockAll": "Blocked Clients",
   "label.config_files": "Config files",
   "label.create.prodgroup": "Create Product Group",
+  "label.discard": "Discard",
+  "label.discardAll": "Discard All",
   "label.empty": "empty",
   "label.file_id": "Upload Backup File",
   "label.healthcheck.check_message": "Message",
@@ -277,6 +279,7 @@
   "title.config": "Configuration",
   "title.configserver": "Configserver",
   "title.createBackup": "Create Backup",
+  "title.creation.config": "Create Config",
   "title.demo": "Demo",
   "title.dependencies": "Dependencies",
   "title.dependenciesEmpty": "(empty)",
@@ -303,6 +306,7 @@
   "title.products": "Products",
   "title.properties": "Property-Configuration",
   "title.restoreBackup": "Restore Backup",
+  "title.selection.server": "Server selection",
   "title.settings": "Settings",
   "title.support": "Support",
   "title.target": "Target",
@@ -312,7 +316,5 @@
   "treeselect.noResultTextEditable": "Not such item found",
   "treeselect.nooption": "No options available.",
   "treeselect.search": "Search",
-  "treeselect.searchOrAdd": "Search or add item",
-  "label.discard": "Discard",
-  "label.discardAll": "Discard All"
+  "treeselect.searchOrAdd": "Search or add item"
 }

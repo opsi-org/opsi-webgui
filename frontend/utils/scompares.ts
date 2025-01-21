@@ -30,8 +30,9 @@ export function objectEqual(aOrig: any, bOrig: any): boolean {
   //     bOrig.hasOwnProperty(key) && aOrig[key] == bOrig[key]);
 }
 export function arrayEqual(aOrig: Array<any>, bOrig: Array<any>): boolean {
-  // if (bOrig==undefined && aOrig==undefined) return true;
-  // if (bOrig!=undefined && aOrig!=undefined){}
+  if (bOrig == undefined && aOrig == undefined) return true
+  if (bOrig == undefined || aOrig == undefined) return false
+
   if (aOrig.length === bOrig.length && aOrig.length === 0) {
     return true
   } else if (aOrig.length !== bOrig.length) {

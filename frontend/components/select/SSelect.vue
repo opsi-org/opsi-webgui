@@ -98,6 +98,11 @@
   //   },
   // )
   const props = defineProps({
+    infoId: {
+      type: String,
+      required: false,
+      default: '',
+    },
     multiSelection: {
       type: Boolean,
       default: false,
@@ -149,11 +154,18 @@
 
   onMounted(() => {
     assert(data.value !== undefined, 'Data is undefined')
+    console.warn(
+      props.infoId +
+        ' type of localSelectedItems ' +
+        typeof localSelectedItems.value,
+    )
     assert(
       localSelectedItems.value === undefined ||
-        (isArray(localSelectedItems.value) && props.multiSelection) ||
-        (!isArray(localSelectedItems.value) && !props.multiSelection),
-      'Selection should be array if multiSelection is true',
+        (isArray(localSelectedItems.value) && props.multiSelection == true) ||
+        (!isArray(localSelectedItems.value) && props.multiSelection == false),
+      `Selection should be array if multiSelection is true (${props.infoId}, mv ${props.multiSelection} [${typeof localSelectedItems.value[0]}], si ${localSelectedItems.value} [${typeof localSelectedItems.value}, instanceOf Array ${localSelectedItems.value instanceof Array}, isArray ${isArray(
+        localSelectedItems.value,
+      )}])`,
     )
 
     data.value?.sort((a: any, b: any) =>

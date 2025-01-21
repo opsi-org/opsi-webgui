@@ -3,7 +3,7 @@
     <PDialog
       v-model:visible="visible"
       modal
-      header="Server selection"
+      :header="$t('title.selection.server')"
       :style="{ width: '25rem' }"
     >
       <span

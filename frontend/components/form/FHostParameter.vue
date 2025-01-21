@@ -49,6 +49,7 @@
                       :multi-selection="item.multiValue"
                       :selected-options="itemValues[item.configId]"
                       :marked-options="initialValues[item.configId]"
+                      :info-id="item.configId"
                       @change="
                         () => handleSelection(item, itemValues[item.configId])
                       "
@@ -80,6 +81,9 @@
       class="button-container"
       style="display: flex; justify-content: flex-end"
     >
+      <!-- <el-button @click="createConfigVisible = !createConfigVisible">{{
+        $t('button.create.config')
+      }}</el-button> -->
       <el-button @click="fetchFormData">{{ $t('button.reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
@@ -88,6 +92,7 @@
         >{{ $t('button.save') }}</el-button
       >
     </div>
+    <ModalMConfigCreation v-if="createConfigVisible" @refetch="() => {}" />
   </div>
 </template>
 
@@ -113,6 +118,7 @@
   const hasUnsavedChanges = ref(false)
   const changeBuffer = ref<{ [key: string]: any }>({})
   const activeItem = ref<string | null>(null)
+  const createConfigVisible = ref(false)
 
   const props = defineProps({
     id: { type: String, default: undefined },
@@ -138,25 +144,66 @@
       ? String(activeNames[0])
       : String(activeNames)
   }
-
+  function print(item: any) {
+    console.log(
+      item.configId,
+      'type',
+      'BoolConfig',
+      'multiValue',
+      item.multiValue,
+      'objectValues',
+      item.objects,
+      Object.values(item.objects),
+    )
+  }
+  const debug_id = 'opsiconfd.transfer.slots_opsiclientd_product_sync'
   function getInitialValue(item: {
     value?: any
     objects?: Record<string, any>
     multiValue?: boolean
   }): any {
     if (item.value !== undefined) return item.value
+
     if (item.objects && Object.keys(item.objects).length > 0) {
-      const objectValues = Object.values(item.objects)
+      const objectValues = Object.values(item.objects) // e.g. [true, true, true] or with multiValue [[true], [true], [true]]
+
+      if (item.configId === debug_id) print(item)
       if (item.multiValue) {
+        // erstmal egal
+        if (item.configId === debug_id)
+          console.log(`${item.configId} is multiValue`)
         const sortedValues = objectValues.map((value: any) =>
           JSON.stringify([...value].sort()),
         )
-        if (sortedValues.every((v: string) => v === sortedValues[0]))
+        if (sortedValues.every((v: string) => v === sortedValues[0])) {
           return objectValues[0]
+        }
         return 'mixed'
       }
-      if (objectValues.every((v: any) => v === objectValues[0]))
-        return objectValues[0]
+      if (item.configId === debug_id)
+        console.log(`${item.configId} is not multiValue`)
+      // not multi!
+      if (objectValues.every((v: any) => v === objectValues[0])) {
+        // all values are the same
+        if (item.type == 'BoolConfig' && objectValues[0] !== undefined) {
+          if (item.configId === debug_id)
+            console.log(`${item.configId} is BoolConfig`)
+          // value is given
+          return objectValues[0]
+        } else if (item.type == 'UnicodeConfig') {
+          if (item.configId === debug_id)
+            console.log(`${item.configId} is UnicodeConfig`)
+          if (objectValues[0] === undefined) {
+          } else if (isArray(objectValues[0])) return objectValues[0][0]
+          return objectValues[0]
+        }
+        if (item.configId === debug_id)
+          console.log(`${item.configId} is default`)
+        // value not given
+        if (item.type === 'BoolConfig') return undefined
+        else if (item.multiValue) return []
+        else return ''
+      }
     }
     throw new Error('Initial value is undefined and no valid objects found')
   }
@@ -225,14 +272,17 @@
   }
 
   function handleSelection(item: any, value: any) {
-    assert(value !== undefined, 'values should not be undefined')
+    assert(
+      value !== undefined,
+      `values should not be undefined (${item.configId}, ${value})`,
+    )
     assert(
       itemValues.value[item.configId] !== undefined,
-      'itemValues should not be undefined',
+      `itemValues should not be undefined (${item.configId}, ${value})`,
     )
     assert(
       initialValues.value[item.configId] !== undefined,
-      'initialValues should not be undefined',
+      `initialValues should not be undefined (${item.configId}, ${value})`,
     )
     changeBuffer.value[item.configId] = JSON.parse(JSON.stringify(value))
     checkUnsavedChanges()
