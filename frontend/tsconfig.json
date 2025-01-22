@@ -32,7 +32,8 @@
     "verbatimModuleSyntax": true
   },
   "exclude": [
-    // "node_modules/", ".nuxt/",
+    "node_modules/",
+    // ".nuxt/",
     "dist/",
     "webgui/",
     "webgui-dev/"
