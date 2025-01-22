@@ -105,26 +105,7 @@
   const props = defineProps({
     refetchOnCancel: { type: Boolean, default: false },
   })
-  const error = ref<Record<string, string>>({})
-  const dataValid = computed(() => {
-    if (data.value.name.value === '') {
-      return false
-    }
-    return true
-  })
-  const standardValueSWrapper = computed({
-    get: () =>
-      data.value.multiValue.value
-        ? data.value.standardValues.values
-        : data.value.standardValues.value,
-    set: (value: string | string[]) => {
-      if (data.value.multiValue.value) {
-        data.value.standardValues.values = value as string[]
-      } else {
-        data.value.standardValues.value = value as string
-      }
-    },
-  })
+
   const data = ref({
     name: {
       label: $t('form.config.name'),
@@ -161,6 +142,26 @@
       value: '',
       values: [],
       type: 'stringOrString[]',
+    },
+  })
+
+  const dataValid = computed(() => {
+    if (data.value.name.value === '') {
+      return false
+    }
+    return true
+  })
+  const standardValueSWrapper = computed({
+    get: () =>
+      data.value.multiValue.value
+        ? data.value.standardValues.values
+        : data.value.standardValues.value,
+    set: (value: string | string[]) => {
+      if (data.value.multiValue.value) {
+        data.value.standardValues.values = value as string[]
+      } else {
+        data.value.standardValues.value = value as string
+      }
     },
   })
 

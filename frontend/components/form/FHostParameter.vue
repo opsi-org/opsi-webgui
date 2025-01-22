@@ -82,9 +82,11 @@
       style="display: flex; justify-content: flex-end"
     >
       <!-- TODO: enable if save if method is implemented (#763) -->
-      <!-- <el-button @click="createConfigVisible = !createConfigVisible">{{
-        $t('button.create.config')
-      }}</el-button> -->
+      <el-button
+        @click="createConfigVisible = !createConfigVisible"
+        class="!hidden"
+        >{{ $t('button.create.config') }}</el-button
+      >
       <el-button @click="fetchFormData">{{ $t('button.reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
@@ -93,8 +95,11 @@
         >{{ $t('button.save') }}</el-button
       >
     </div>
-    <!-- TODO: enable if save if method is implemented (#763) -->
-    <!-- <ModalMConfigCreation v-if="createConfigVisible" @refetch="() => {}" /> -->
+    <ModalMConfigCreation
+      v-if="createConfigVisible"
+      class="!hidden"
+      @refetch="() => {}"
+    />
   </div>
 </template>
 
@@ -146,20 +151,10 @@
       ? String(activeNames[0])
       : String(activeNames)
   }
-  function print(item: any) {
-    console.log(
-      item.configId,
-      'type',
-      'BoolConfig',
-      'multiValue',
-      item.multiValue,
-      'objectValues',
-      item.objects,
-      Object.values(item.objects),
-    )
-  }
   const debug_id = 'opsiconfd.transfer.slots_opsiclientd_product_sync'
   function getInitialValue(item: {
+    configId: string
+    type: 'BoolConfig' | 'UnicodeConfig'
     value?: any
     objects?: Record<string, any>
     multiValue?: boolean
@@ -169,11 +164,8 @@
     if (item.objects && Object.keys(item.objects).length > 0) {
       const objectValues = Object.values(item.objects) // e.g. [true, true, true] or with multiValue [[true], [true], [true]]
 
-      if (item.configId === debug_id) print(item)
       if (item.multiValue) {
         // erstmal egal
-        if (item.configId === debug_id)
-          console.log(`${item.configId} is multiValue`)
         const sortedValues = objectValues.map((value: any) =>
           JSON.stringify([...value].sort()),
         )
@@ -183,29 +175,21 @@
         return 'mixed'
       }
       if (item.configId === debug_id)
-        console.log(`${item.configId} is not multiValue`)
-      // not multi!
-      if (objectValues.every((v: any) => v === objectValues[0])) {
-        // all values are the same
-        if (item.type == 'BoolConfig' && objectValues[0] !== undefined) {
-          if (item.configId === debug_id)
-            console.log(`${item.configId} is BoolConfig`)
-          // value is given
-          return objectValues[0]
-        } else if (item.type == 'UnicodeConfig') {
-          if (item.configId === debug_id)
-            console.log(`${item.configId} is UnicodeConfig`)
-          if (objectValues[0] === undefined) {
-          } else if (isArray(objectValues[0])) return objectValues[0][0]
-          return objectValues[0]
+        if (objectValues.every((v: any) => v === objectValues[0])) {
+          // not multi!
+          // all values are the same
+          if (item.type == 'BoolConfig' && objectValues[0] !== undefined) {
+            // value is given
+            return objectValues[0]
+          } else if (item.type == 'UnicodeConfig') {
+            if (isArray(objectValues[0])) return objectValues[0][0]
+            return objectValues[0]
+          }
+          // value not given
+          if (item.type === 'BoolConfig') return undefined
+          else if (item.multiValue) return []
+          else return ''
         }
-        if (item.configId === debug_id)
-          console.log(`${item.configId} is default`)
-        // value not given
-        if (item.type === 'BoolConfig') return undefined
-        else if (item.multiValue) return []
-        else return ''
-      }
     }
     throw new Error('Initial value is undefined and no valid objects found')
   }
