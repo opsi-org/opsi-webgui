@@ -6,6 +6,8 @@ opsi-webgui.zip
 .nitro
 .cache
 dist
+webgui/
+webgui-dev/
 
 # Node dependencies
 node_modules
