@@ -158,7 +158,7 @@
 
   watch(
     () => props.multiSelection,
-    (newValue) => {
+    (newValue: boolean) => {
       if (newValue == false) {
         if (
           localSelectedItems.value !== undefined &&
@@ -192,7 +192,7 @@
       localSelectedItems.value === undefined ||
         (isArray(localSelectedItems.value) && props.multiSelection == true) ||
         (!isArray(localSelectedItems.value) && props.multiSelection == false),
-      `Selection should be array if multiSelection is true (${props.infoId}, mv ${props.multiSelection} [${typeof localSelectedItems.value[0]}], si ${localSelectedItems.value} [${typeof localSelectedItems.value}, instanceOf Array ${localSelectedItems.value instanceof Array}, isArray ${isArray(
+      `Selection should be array if multiSelection is true (${props.infoId}, multiValue ${props.multiSelection}, selected ${localSelectedItems.value} [${typeof localSelectedItems.value}, isArray ${isArray(
         localSelectedItems.value,
       )}])`,
     )
