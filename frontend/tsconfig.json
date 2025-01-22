@@ -1,7 +1,5 @@
-// prettier-ignore
 {
   // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "experimentalDecorators": true,
@@ -35,6 +33,9 @@
   },
   "exclude": [
     // "node_modules/", ".nuxt/",
-    "dist/", "webgui/", "webgui-dev/"
+    "dist/",
+    "webgui/",
+    "webgui-dev/"
   ],
+  "extends": "./.nuxt/tsconfig.json"
 }
