@@ -30,6 +30,7 @@
     ],
     "verbatimModuleSyntax": true
   },
+  "exclude": ["node_modules/", ".nuxt/", "dist/", "webgui/", "webgui-dev/"],
   // https://nuxt.com/docs/guide/concepts/typescript
   "extends": "./.nuxt/tsconfig.json"
 }
