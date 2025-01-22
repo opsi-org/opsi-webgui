@@ -4,7 +4,7 @@
     <el-alert v-if="showWarning" type="warning" show-icon>
       {{ $t('alert.select') }}
     </el-alert>
-    <div class="h-[70vh] overflow-y-auto">
+    <div class="h-[65vh] overflow-y-auto">
       <el-collapse
         accordion
         v-loading="isLoading"
@@ -81,6 +81,7 @@
       class="button-container"
       style="display: flex; justify-content: flex-end"
     >
+      <!-- TODO: enable if save if method is implemented (#763) -->
       <!-- <el-button @click="createConfigVisible = !createConfigVisible">{{
         $t('button.create.config')
       }}</el-button> -->
@@ -92,7 +93,8 @@
         >{{ $t('button.save') }}</el-button
       >
     </div>
-    <ModalMConfigCreation v-if="createConfigVisible" @refetch="() => {}" />
+    <!-- TODO: enable if save if method is implemented (#763) -->
+    <!-- <ModalMConfigCreation v-if="createConfigVisible" @refetch="() => {}" /> -->
   </div>
 </template>
 

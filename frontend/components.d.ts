@@ -8,8 +8,11 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     PButton: typeof import('primevue/button')['default']
+    PCheckbox: typeof import('primevue/checkbox')['default']
     PDialog: typeof import('primevue/dialog')['default']
     PFloatLabel: typeof import('primevue/floatlabel')['default']
+    PForm: typeof import('@primevue/forms/form')['default']
+    PFormField: typeof import('@primevue/forms/formfield')['default']
     PInputText: typeof import('primevue/inputtext')['default']
     PMessage: typeof import('primevue/message')['default']
     PMultiSelect: typeof import('primevue/multiselect')['default']

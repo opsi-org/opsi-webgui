@@ -145,6 +145,10 @@
         )
       },
     },
+    allowEmpty: {
+      type: Boolean,
+      default: false,
+    },
   })
 
   const $emit = defineEmits(['change'])
@@ -152,13 +156,34 @@
   const localAddOption = ref<string>('')
   const localSelectedItems = defineModel<T | T[]>('selection')
 
+  watch(
+    () => props.multiSelection,
+    (newValue) => {
+      if (newValue == false) {
+        if (localSelectedItems.value.length > 0) {
+          localSelectedItems.value = localSelectedItems.value[0] as T
+        }
+      } else {
+        localSelectedItems.value = [localSelectedItems.value as T]
+      }
+    },
+    { deep: true },
+  )
+
   onMounted(() => {
-    assert(data.value !== undefined, 'Data is undefined')
+    if (!props.allowEmpty) {
+      assert(data.value !== undefined, 'Data is undefined')
+    } else {
+      data.value = data.value ?? []
+    }
     console.warn(
-      props.infoId +
-        ' type of localSelectedItems ' +
-        typeof localSelectedItems.value,
+      props.infoId,
+      localSelectedItems.value,
+      ' type of localSelectedItems ' + typeof localSelectedItems.value,
+      ' data ' + data.value,
     )
+    ///// TODO: Uncaught (in promise) TypeError: Cannot read properties of undefined (reading '0') at ￼SSelect.vue?t=1737468168440:80:141
+
     assert(
       localSelectedItems.value === undefined ||
         (isArray(localSelectedItems.value) && props.multiSelection == true) ||
@@ -168,10 +193,14 @@
       )}])`,
     )
 
-    data.value?.sort((a: any, b: any) =>
-      // cannot be undefined because of assert
-      a.localeCompare(b, undefined, { numeric: true }),
-    )
+    console.warn('Sorting data0: ' + data.value)
+    if (data.value !== undefined) {
+      console.warn('Sorting data1: ' + data.value)
+      data.value?.sort((a: any, b: any) =>
+        // cannot be undefined because of assert
+        a.localeCompare(b, undefined, { numeric: true }),
+      )
+    }
 
     if (localSelectedItems.value === undefined) {
       // init

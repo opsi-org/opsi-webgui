@@ -6,62 +6,90 @@
       :header="$t('title.creation.config')"
       :style="{ width: '25rem' }"
     >
-      <!-- form > -->
-
-      <Form
-        v-slot="$form"
-        :initial-values
-        :resolver="resolver"
-        @submit="onFormSubmit"
-        class="flex flex-col gap-4 w-full sm:w-56"
-      >
-        <!-- Name -->
-        <div class="flex flex-col gap-1">
+      <!-- Name -->
+      <div class="flex flex-col gap-1 pb-2">
+        <!-- <div v-for="(v, k) in data" :key="k" class="flex flex-col gap-1 pb-2"> -->
+        <div class=".k-name">
+          <label for="name">{{ data.name.label }}</label>
           <PInputText
-            name="username"
+            v-if="data.name.type === 'text'"
+            id="name"
             type="text"
-            :placeholder="$t('table.fields.name')"
+            v-model="data.name.value"
             fluid
+            class="border-[1px]"
           />
-          <PMessage
-            v-if="$form.name?.invalid"
-            severity="error"
-            size="small"
-            variant="simple"
-          >
-            {{ $form.name.error.message }}
-          </PMessage>
         </div>
-        <div class="flex flex-col gap-1">
+        <div class=".k-desc">
+          <label :for="'description'">{{ data.description.label }}</label>
           <PInputText
-            name="description"
+            v-if="data.description.type === 'text'"
+            id="description"
             type="text"
-            :placeholder="$t('table.fields.description')"
+            v-model="data.description.value"
             fluid
+            class="border-[1px]"
           />
-          <PMessage
-            v-if="$form.name?.invalid"
-            severity="error"
-            size="small"
-            variant="simple"
-          >
-            {{ $form.name.error.message }}
-          </PMessage>
         </div>
-        <!-- description -->
-        <!-- is boolean -->
-        <!-- Details: -->
-        <!-- editable -->
-        <!-- multiValue -->
-        <!-- standardwert/e -->
-        <!-- possible values -->
-
-        <Button type="submit" severity="secondary" label="Submit" />
-      </Form>
+        <div class=".k-boolValue flex justify-between">
+          <label for="boolValue">{{ data.boolValue.label }}</label>
+          <PCheckbox
+            id="boolValue"
+            binary
+            v-model="data.boolValue.value"
+            class="border-[1px]"
+          />
+        </div>
+        <div
+          class=".k-editable flex justify-between"
+          v-if="data.boolValue.value == false"
+        >
+          <label for="editable">{{ data.editable.label }}</label>
+          <PCheckbox
+            id="editable"
+            binary
+            v-model="data.editable.value"
+            class="border-[1px]"
+          />
+        </div>
+        <div
+          class=".k-multiValue flex justify-between"
+          v-if="data.boolValue.value == false"
+        >
+          <label for="multiValue">{{ data.multiValue.label }}</label>
+          <PCheckbox
+            id="multiValue"
+            binary
+            v-model="data.multiValue.value"
+            class="border-[1px]"
+          />
+        </div>
+        <div class=".k-standardValues" v-if="data.boolValue.value == false">
+          <label for="standardValues">{{ data.standardValues.label }}</label>
+          <SelectSSelect
+            :allow-empty="true"
+            info-id="standardValues"
+            :editable="true"
+            v-model:selection="standardValueSWrapper"
+            :multi-selection="data.multiValue.value"
+          />
+        </div>
+        <div class=".k-possibleValues" v-if="data.boolValue.value == false">
+          <label for="possibleValues">{{ data.possibleValues.label }}</label>
+          <SelectSSelect
+            :allow-empty="true"
+            info-id="possibleValues"
+            :editable="true"
+            v-model:selection="data.possibleValues.values"
+            :multi-selection="true"
+          />
+        </div>
+      </div>
+      <!-- <pre>{{ data }} </pre> -->
 
       <div class="flex justify-end gap-2">
         <el-button @click="cancel">{{ $t('label.cancel') }}</el-button>
-        <el-button type="primary" @click="save">
+        <el-button type="primary" @click="save" :disabled="dataValid">
           {{ $t('label.select') }}
         </el-button>
       </div>
@@ -77,39 +105,67 @@
   const props = defineProps({
     refetchOnCancel: { type: Boolean, default: false },
   })
-
-  const initialValues = ref({
-    name: '',
-    description: '',
-    editable: true,
-    multiValue: false,
-    possibleValues: undefined as string | boolean | string[],
-    standardValue: undefined as string | boolean | string[],
+  const error = ref<Record<string, string>>({})
+  const dataValid = computed(() => {
+    if (data.value.name.value === '') {
+      return false
+    }
+    return true
   })
-  const resolver = ({ values }) => {
-    const errors = {}
+  const standardValueSWrapper = computed({
+    get: () =>
+      data.value.multiValue.value
+        ? data.value.standardValues.values
+        : data.value.standardValues.value,
+    set: (value: string | string[]) => {
+      if (data.value.multiValue.value) {
+        data.value.standardValues.values = value as string[]
+      } else {
+        data.value.standardValues.value = value as string
+      }
+    },
+  })
+  const data = ref({
+    name: {
+      label: $t('form.config.name'),
+      value: '',
+      type: 'text',
+    },
+    description: {
+      label: $t('form.config.description'),
+      value: '',
+      type: 'text',
+    },
+    boolValue: {
+      label: $t('form.config.boolValue'),
+      value: true,
+      type: 'boolean',
+    },
+    editable: {
+      label: $t('form.config.editable'),
+      value: true,
+      type: 'boolean',
+    },
+    multiValue: {
+      label: $t('form.config.multiValue'),
+      value: false,
+      type: 'boolean',
+    },
+    possibleValues: {
+      label: $t('form.config.possibleValues'),
+      values: [],
+      type: 'string[]',
+    },
+    standardValues: {
+      label: $t('form.config.standardValue'),
+      value: '',
+      values: [],
+      type: 'stringOrString[]',
+    },
+  })
 
-    if (!values.username) {
-      errors.name = [{ message: 'Name is required.' }]
-    }
-
-    return {
-      errors,
-    }
-  }
-
-  const onFormSubmit = ({ valid }) => {
-    if (valid) {
-      console.log('success')
-    }
-  }
   function save() {
-    // if (Array.isArray(localSelectedServers.value)) {
-    //   selectionStore.setSelectionDepots(localSelectedServers.value)
-    // } else {
-    //   selectionStore.setSelectionDepots([localSelectedServers.value])
-    // }
-    // // selectionStore.setSelectionDepots(localSelectedServers.value)
+    // TODO: save if method is implemented (#763)
     $emit('refetch')
     visible.value = false
   }

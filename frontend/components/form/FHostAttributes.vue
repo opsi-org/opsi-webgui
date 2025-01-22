@@ -9,7 +9,7 @@
       :label-position="mq.isMobile.value ? 'top' : 'left'"
       v-loading="isLoading"
     >
-      <div class="h-[70vh] overflow-y-auto">
+      <div class="h-[67vh] overflow-y-auto">
         <div v-for="(value, label) in hostAttributes[0]" :key="label">
           <el-form-item :label="`${$t('table.fields.' + label)}`">
             <el-checkbox
