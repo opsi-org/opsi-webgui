@@ -1,5 +1,6 @@
+# FROM mcr.microsoft.com/playwright:v1.38.0-jammy
+FROM node:23.0.0-bookworm-slim
 
-FROM mcr.microsoft.com/playwright:v1.38.0-jammy
 
 # System deps:
 RUN apt-get update \
@@ -7,6 +8,7 @@ RUN apt-get update \
 	&& apt-get --yes --allow-downgrades install \
 		docker.io \
 		cpio \
+		htop \
 		sudo \
 		wget \
 		zsh \
@@ -36,17 +38,21 @@ RUN git config --global user.email "${DEV_GIT_EMAIL}"
 RUN echo 'alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"' >> /root/.zshrc
 RUN echo 'alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"'  >> /root/.zshrc
 WORKDIR /workspace/frontend
+
 RUN npm completion >> ~/.zshrc
+
+RUN npx -y playwright@1.49.1 install --with-deps
 # WORKDIR /workspace/
 
 RUN npm install -g n
 # node version
 # RUN n lts
-# RUN n 22.12.0
-RUN n 23.6.0
+#RUN n 22.12.0
+# RUN n 23.0.0
 
 # RUN npm install -g npm # latest
-RUN npm install -g npm@10.9.2
+# RUN npm install -g npm@10.9.0 # node 23.0.0
+# RUN npm install -g npm@10.9.2
 # RUN npm install -g npm@11.0.0
 
 RUN export NODE_OPTIONS='--disable-warning=ExperimentalWarning'
