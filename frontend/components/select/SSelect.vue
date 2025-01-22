@@ -160,7 +160,11 @@
     () => props.multiSelection,
     (newValue) => {
       if (newValue == false) {
-        if (localSelectedItems.value.length > 0) {
+        if (
+          localSelectedItems.value !== undefined &&
+          isArray(localSelectedItems.value) &&
+          localSelectedItems.value.length > 0
+        ) {
           localSelectedItems.value = localSelectedItems.value[0] as T
         }
       } else {
