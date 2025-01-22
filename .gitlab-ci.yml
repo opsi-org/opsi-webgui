@@ -345,7 +345,7 @@ test:tsc:
     - cd frontend
     - *define_globals
   script:
-    - npm run tsc
+    - npm run tsc || exit 1
 # test:unit:
 #   stage: test
 #   dependencies:
