@@ -134,13 +134,13 @@
     },
     possibleValues: {
       label: $t('form.config.possibleValues'),
-      values: [],
+      values: [] as string[],
       type: 'string[]',
     },
     standardValues: {
       label: $t('form.config.standardValue'),
-      value: '',
-      values: [],
+      value: '' as string,
+      values: [] as string[],
       type: 'stringOrString[]',
     },
   })
