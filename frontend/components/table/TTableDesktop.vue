@@ -301,12 +301,12 @@
   }
   async function fetchWrapper() {
     isLoading.value = true
-    totalItems.value = 0
-    fetchedData.value = []
     const params = prepareParams()
     try {
       const res = await props.fetch(params)
       if (res == undefined) {
+        totalItems.value = 0
+        fetchedData.value = []
         console.error('fetchWrapper: Empty response')
         isLoading.value = false
         return
@@ -324,6 +324,8 @@
         fetchedData.value = res.data
       }
     } catch (error) {
+      totalItems.value = 0
+      fetchedData.value = []
       notifyError({ message: $t('message.error.unexpected') + error })
     } finally {
       isLoading.value = false

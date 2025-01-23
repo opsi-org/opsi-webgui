@@ -13,7 +13,8 @@ console.log('VERSION', pkg.version)
 console.log('---------------------------------------------------')
 
 export default defineNuxtConfig({
-  compatibilityDate: '2025-01-08',
+  compatibilityDate: '2025-01-23',
+  experimental: { appManifest: false },
   build: {
     analyze: true,
     // hardSource: true,
