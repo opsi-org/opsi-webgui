@@ -10,44 +10,59 @@
         :class="{ 'cursor-not-allowed': config.read_only }"
       >
         <template #label>
-          <TooltipTTooltip>
-            <template #tooltip>
-              <div class="max-w-md">
-                <b>{{ item.description }}</b>
-                <p>{{ $t('form.config.defaultvalue') }} {{ item.default }}</p>
-                <div class="max-h-42 overflow-auto">
-                  <p
-                    v-if="item.depots"
-                    :class="{
-                      // italic: item.anyClientDifferentFromDepot,
-                      bold: item.anyDepotDifferentFromDefault,
-                    }"
-                  >
-                    {{ $t('form.config.objectvalue') }}
-                  </p>
-                  <pre class="text-xs">{{ item.depots }}</pre>
+          <div class="flex w-full h-full justify-between items-center">
+            <TooltipTTooltip>
+              <template #tooltip>
+                <div class="max-w-md">
+                  <b>{{ item.description }}</b>
+                  <p>{{ $t('form.config.defaultvalue') }} {{ item.default }}</p>
+                  <div class="max-h-42 overflow-auto">
+                    <p
+                      v-if="item.depots"
+                      :class="{
+                        // italic: item.anyClientDifferentFromDepot,
+                        bold: item.anyDepotDifferentFromDefault,
+                      }"
+                    >
+                      {{ $t('form.config.objectvalue') }}
+                    </p>
+                    <pre class="text-xs">{{ item.depots }}</pre>
+                  </div>
+                  <div class="max-h-40 overflow-auto">
+                    <p
+                      v-if="item.clients"
+                      :class="{
+                        italic: item.anyClientDifferentFromDepot,
+                      }"
+                    >
+                      {{ $t('form.config.objectvalue') }}
+                    </p>
+                    <pre class="text-xs">{{ item.clients }}</pre>
+                  </div>
                 </div>
-                <div class="max-h-40 overflow-auto">
-                  <p
-                    v-if="item.clients"
-                    :class="{
-                      italic: item.anyClientDifferentFromDepot,
-                    }"
-                  >
-                    {{ $t('form.config.objectvalue') }}
-                  </p>
-                  <pre class="text-xs">{{ item.clients }}</pre>
-                </div>
-              </div>
-            </template>
-            <span
-              :class="{
-                italic: item.anyClientDifferentFromDepot,
-                bold: item.anyDepotDifferentFromDefault,
-              }"
-              >{{ item.propertyId }}</span
-            >
-          </TooltipTTooltip>
+              </template>
+              <span
+                :class="{
+                  italic: item.anyClientDifferentFromDepot,
+                  bold: item.anyDepotDifferentFromDefault,
+                }"
+              >
+                {{ item.propertyId }}
+              </span>
+            </TooltipTTooltip>
+            <p-badge
+              v-if="
+                itemValues[item.propertyId] !== undefined &&
+                !arrayEqual(
+                  itemValues[item.propertyId],
+                  initialValues[item.propertyId],
+                )
+              "
+              :title="$t('message.warning.unsavedChange')"
+              severity="warn"
+              :value="t_fixed('notOrigin')"
+            />
+          </div>
         </template>
 
         <div
@@ -66,13 +81,13 @@
               : ''
           }}
 
-          <p-badge
+          <!-- <p-badge
             v-if="
               itemValues[item.propertyId] !== initialValues[item.propertyId]
             "
             severity="warning"
             :value="t_fixed('notOrigin')"
-          />
+          /> -->
         </div>
         <div
           v-else-if="
@@ -100,7 +115,7 @@
             :marked-options="initialValues[item.propertyId]"
             @change="() => handleSelection(item, itemValues[item.propertyId])"
           />
-          <p-tag
+          <!-- <p-tag
             v-if="
               itemValues[item.propertyId] !== undefined &&
               !arrayEqual(
@@ -110,7 +125,7 @@
             "
             severity="danger"
             :value="t_fixed('notOrigin')"
-          />
+          /> -->
         </div>
       </el-form-item>
     </el-form>
@@ -311,3 +326,9 @@
     }
   })
 </script>
+
+<style scoped lang="css">
+  :deep(.el-form-item__label) {
+    height: auto !important;
+  }
+</style>
