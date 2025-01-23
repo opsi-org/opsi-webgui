@@ -25,47 +25,46 @@
               class="w-full"
             >
               <div v-for="item in items" :key="item.configId" class="form-item">
-                <el-form-item :label="item.configId">
+                <el-form-item>
+                  <!-- <el-form-item :label="item.configId"> -->
+                  <template #label>
+                    <div
+                      class="flex w-full h-full justify-between items-center"
+                    >
+                      <span>{{ item.configId }}</span>
+                      <p-badge
+                        v-if="
+                          itemValues[item.configId] !==
+                          initialValues[item.configId]
+                        "
+                        :title="$t('message.warning.unsavedChange')"
+                        severity="warn"
+                        :value="t_fixed('notOrigin')"
+                      />
+                    </div>
+                  </template>
                   <template v-if="item.type === 'BoolConfig'">
                     <el-checkbox
                       v-model="itemValues[item.configId]"
                       :disabled="config.read_only"
                       @change="handleSelection(item, itemValues[item.configId])"
                     />
-                    <p-tag
-                      v-if="
-                        itemValues[item.configId] !==
-                        initialValues[item.configId]
-                      "
-                      severity="danger"
-                      :value="t_fixed('notOrigin')"
-                    />
                   </template>
                   <template v-else-if="item.type === 'UnicodeConfig'">
-                    <SelectSSelect
-                      v-model:selection="itemValues[item.configId]"
-                      v-model:data="item.possibleValues"
-                      :editable="item.editable"
-                      :multi-selection="item.multiValue"
-                      :selected-options="itemValues[item.configId]"
-                      :marked-options="initialValues[item.configId]"
-                      :info-id="item.configId"
-                      @change="
-                        () => handleSelection(item, itemValues[item.configId])
-                      "
-                    />
-
-                    <p-tag
-                      v-if="
-                        itemValues[item.configId] !== undefined &&
-                        !arrayEqual(
-                          itemValues[item.configId],
-                          initialValues[item.configId],
-                        )
-                      "
-                      severity="danger"
-                      :value="t_fixed('notOrigin')"
-                    />
+                    <div class="flex w-full">
+                      <SelectSSelect
+                        v-model:selection="itemValues[item.configId]"
+                        v-model:data="item.possibleValues"
+                        :editable="item.editable"
+                        :multi-selection="item.multiValue"
+                        :selected-options="itemValues[item.configId]"
+                        :marked-options="initialValues[item.configId]"
+                        :info-id="item.configId"
+                        @change="
+                          () => handleSelection(item, itemValues[item.configId])
+                        "
+                      />
+                    </div>
                   </template>
                 </el-form-item>
               </div>
@@ -331,3 +330,9 @@
     }
   })
 </script>
+
+<style scoped lang="css">
+  :deep(.el-form-item__label) {
+    height: auto !important;
+  }
+</style>

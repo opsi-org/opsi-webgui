@@ -66,11 +66,11 @@
               : ''
           }}
 
-          <p-tag
+          <p-badge
             v-if="
               itemValues[item.propertyId] !== initialValues[item.propertyId]
             "
-            severity="danger"
+            severity="warning"
             :value="t_fixed('notOrigin')"
           />
         </div>

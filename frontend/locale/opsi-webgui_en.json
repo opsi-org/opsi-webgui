@@ -194,6 +194,7 @@
   "message.warning.notOnEachDepot": "This product is only installed on {count}/{countall} of the currently selected servers",
   "message.warning.terminal.disabled": "Terminal is disabled.",
   "message.warning.unsavedChanges": "There exists local and unsaved changes",
+  "message.warning.unsavedChange": "This item is only local and not saved",
   "no": "No",
   "placeholder.enterNewID": "Enter new ID",
   "placeholder.fileupload": "Choose a file",

@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    PBadge: typeof import('primevue/badge')['default']
     PButton: typeof import('primevue/button')['default']
     PCheckbox: typeof import('primevue/checkbox')['default']
     PDialog: typeof import('primevue/dialog')['default']
