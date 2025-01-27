@@ -8,6 +8,8 @@ else
     PYTHON=python
 fi
 
-MYVAR=$($PYTHON $@)
+MYVAR=$($PYTHON $@ || exit_code=$?)
 
 echo "$MYVAR"
+
+exit $exit_code
