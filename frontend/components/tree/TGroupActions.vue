@@ -48,6 +48,7 @@
       node-key="id"
       :expand-on-click-node="false"
       highlight-current
+      :default-expanded-keys="!isProductGroup ? firstlevelkeys : undefined"
     >
       <template #default="{ node, data: defdata }">
         <span>{{ node.label }}</span>
@@ -148,7 +149,9 @@
                       type="danger"
                       class="float-right"
                       :disabled="config.read_only"
-                      @click="applyDelete(node.label, data.type, data.parent)"
+                      @click="
+                        applyDelete(node.label, defdata.type, defdata.parent)
+                      "
                       >{{ $t('button.delete') }}</el-button
                     >
                   </template>
@@ -240,7 +243,7 @@
   const idList = ref<T_ProductIds | T_ClientIds>([])
   const selectedChildren = ref<Array<any>>([])
   const selectedGroups = ref<Array<any>>([])
-
+  const firstlevelkeys = ref<string[]>([])
   const treeProps = { label: 'text', children: 'children' }
   const createGroup = reactive<{ [k: string]: string }>({
     parentGroupId: '', // for i18n check: $t('table.fields.parentGroupId')
@@ -288,11 +291,48 @@
   )
   const popoverWidth = computed(() => (mq.isMobile.value ? '100%' : '360px'))
   const treeClass = computed(() => (mq.isMobile.value ? 'w-100' : 'w-50'))
+
   const filteredGroupNames = computed(() => {
-    return fetchedData.value
-      .filter((item: any) => item.type !== 'ObjectToGroup')
-      .map((item: any) => item.text)
+    // search nested for all group names
+    const groupNames: string[] = []
+    searchForAttribute(
+      fetchedData.value,
+      'type',
+      'HostGroup',
+      'text',
+      groupNames,
+    )
+    searchForAttribute(
+      fetchedData.value,
+      'type',
+      'ProductGroup',
+      'text',
+      groupNames,
+    )
+    return groupNames
   })
+  function searchForAttribute(
+    data: Array<any>,
+    attribute: string,
+    value: any,
+    returnAttribute: string,
+    result: Array<string>,
+  ) {
+    for (const item of data) {
+      if (item[attribute] === value) {
+        result.push(item[returnAttribute])
+      }
+      if (item.children) {
+        searchForAttribute(
+          item.children,
+          attribute,
+          value,
+          returnAttribute,
+          result,
+        )
+      }
+    }
+  }
 
   function loadCreateGroupPopover() {
     isCreateGroupPopoverLoaded.value = true
@@ -324,6 +364,7 @@
           }),
         )
       fetchedData.value = groupsHelper.transformToNestedArray(data.value)
+      firstlevelkeys.value = Object.values(data.value).map((item) => item.id)
     } catch (err) {
       notifyError({ message: (err as Error).message })
     }
