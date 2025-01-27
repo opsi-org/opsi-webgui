@@ -222,6 +222,7 @@
   import { useGroup } from '~/composables/mixins/usePost'
   import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper'
   import { debounce } from 'lodash'
+  import type { TreeNodeData } from 'element-plus/lib/components/tree/src/tree.type.js'
   import type {
     T_ClientIds,
     T_Groups,
@@ -244,7 +245,11 @@
   const selectedChildren = ref<Array<any>>([])
   const selectedGroups = ref<Array<any>>([])
   const firstlevelkeys = ref<string[]>([])
-  const treeProps = { label: 'text', children: 'children' }
+  const treeProps = {
+    label: 'text',
+    children: 'children',
+    class: customNodeClass,
+  }
   const createGroup = reactive<{ [k: string]: string }>({
     parentGroupId: '', // for i18n check: $t('table.fields.parentGroupId')
     groupId: '', // for i18n check: $t('table.fields.groupId')
@@ -334,6 +339,13 @@
     }
   }
 
+  function customNodeClass({ children, type }: TreeNodeData) {
+    const isGroup = type != 'ObjectToGroup'
+    let cclass = ''
+    cclass += isGroup ? ' isGroup ' : ' isLeaf '
+    cclass += !isGroup || children?.length > 0 ? ' ' : ' isEmpty '
+    return cclass
+  }
   function loadCreateGroupPopover() {
     isCreateGroupPopoverLoaded.value = true
   }
@@ -567,3 +579,8 @@
     }
   }
 </script>
+<style scoped lang="css">
+  :deep(.el-tree-node.isEmpty) {
+    color: var(--color-opsi-medium-gray) !important;
+  }
+</style>

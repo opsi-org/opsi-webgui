@@ -81,9 +81,11 @@
 
   watch(() => selectionClients.value, syncSelection, { deep: true })
   watch(() => selectionProducts.value, syncSelection, { deep: true })
-  function customNodeClass({ type }: TreeNodeData) {
+  function customNodeClass({ children, type }: TreeNodeData) {
+    const isGroup = type != 'ObjectToGroup'
     let cclass = ''
-    cclass += type == 'ObjectToGroup' ? ' isLeaf' : ' isGroup'
+    cclass += isGroup ? ' isGroup ' : ' isLeaf '
+    cclass += !isGroup || children?.length > 0 ? ' ' : ' isEmpty '
     return cclass
   }
 
@@ -240,6 +242,9 @@
   :deep(.el-tree-node__label) {
     margin-left: 5px;
     font-size: var(--el-font-size-small);
+  }
+  :deep(.el-tree-node.isEmpty) {
+    color: var(--color-opsi-medium-gray) !important;
   }
   :deep(.el-tree-node.isLeaf .el-tree-node__expand-icon.is-leaf) {
     display: none !important;
