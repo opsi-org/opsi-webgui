@@ -36,8 +36,9 @@
     {
       category: 'product-group', // for i18n-check: $t('title.product-group')
       actions: {
-        parent: ['delete', 'product-delete', 'product-add'], // for i18n-check: $t('product.delete'), $t('product.product-delete'), $t('product.product-add')
-        children: ['delete'], // for i18n-check: $t('product.delete')
+        // parent: [ 'edit', 'delete', 'product-delete', 'product-add', 'group-add' ] // TODO: enable if #767 is solved
+        parent: ['delete', 'product-delete', 'product-add'], // for i18n-check: $t('group.delete'), $t('group.product-delete'), $t('group.product-add')
+        children: ['delete'], // for i18n-check: $t('group.delete')
       },
     },
   ])
