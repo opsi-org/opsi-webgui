@@ -69,7 +69,8 @@ async function useAPI2<T>(
     fullBody = undefined
   }
 
-  const fetch = $fetch<T>(fullURL, {
+  // const fetch = $fetch<T>(fullURL, {  // does not work (now) if session expired
+  const fetch = useFetch<T>(fullURL, {
     onRequest({ options }: any) {
       // Set the request headers
       const headers: IObjectString2Any = { ...opts?.headers }
@@ -177,10 +178,14 @@ async function useAPI2<T>(
 }
 const logout_on_specific_error = (status: number) => {
   if (status === 401) {
+    // 401 unauthorized
     storeAuth().logout()
     navigateTo('/login')
   } else if (status === 403) {
+    // 403 forbidden
     console.error('403 forbidden. You may want to reload the page')
+    navigateTo('/login')
+    // useRouter().push({ path: '/login' })
   }
 }
 const _getBodyParams = (params: any) => {
