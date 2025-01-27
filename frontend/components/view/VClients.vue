@@ -57,6 +57,12 @@
       },
     },
   })
+  watch(
+    () => storeSelection.selectionDepots,
+    () => {
+      refetch()
+    },
+  )
 
   const rowId = 'clientId'
   const clientsRef = ref()
