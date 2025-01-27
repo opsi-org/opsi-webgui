@@ -69,7 +69,7 @@ async function useAPI2<T>(
     fullBody = undefined
   }
 
-  const fetch = useFetch<T>(fullURL, {
+  const fetch = $fetch<T>(fullURL, {
     onRequest({ options }: any) {
       // Set the request headers
       const headers: IObjectString2Any = { ...opts?.headers }
