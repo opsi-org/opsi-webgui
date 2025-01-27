@@ -310,7 +310,7 @@
         console.error('fetchWrapper: Empty response')
         isLoading.value = false
         return
-      } else if (res.total) {
+      } else if (res.total >= 0) {
         totalItems.value = res.total
         isFirstPage.value = currentPage.value == 1
         isLastPage.value = currentPage.value * pageSize.value >= res.total
