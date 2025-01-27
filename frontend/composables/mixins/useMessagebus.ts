@@ -147,7 +147,8 @@ export const useMBus = (
       return
     }
     if (!wsIsConnected.value) {
-      console.error('webBus is not connected')
+      console.error('wsBus is not connected')
+      wsInit(true)
       return
     }
     _waitForSocketConnection(wsBus.value, () => {
