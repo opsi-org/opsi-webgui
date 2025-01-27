@@ -28,16 +28,26 @@
           <el-table-column prop="productIds" label="Selected Product IDs">
             <template #default="scope">
               <ul>
-                <li v-for="product in scope.row.productIds" :key="product">{{ product }}</li>
+                <li v-for="product in scope.row.productIds" :key="product">
+                  {{ product }}
+                </li>
               </ul>
             </template>
           </el-table-column>
-          <el-table-column prop="actionRequest" label="Action Request"></el-table-column>
-          <el-table-column prop="oldActionRequest" label="Old Action Request"></el-table-column>
+          <el-table-column
+            prop="actionRequest"
+            label="Action Request"
+          ></el-table-column>
+          <el-table-column
+            prop="oldActionRequest"
+            label="Old Action Request"
+          ></el-table-column>
         </el-table>
         <template #footer>
           <div class="dialog-footer">
-            <el-button type="danger" @click="discardAllChanges">{{ $t('label.discardAll') }}</el-button>
+            <el-button type="danger" @click="discardAllChanges">{{
+              $t('label.discardAll')
+            }}</el-button>
 
             <el-button
               :type="hasUnsavedChanges ? 'success' : ''"
@@ -73,10 +83,10 @@
           :title="
             $t('table.info.productsOnClient', { id: props.selectedClient })
           "
-          type="warning"
+          type="info"
           show-icon
           :closable="false"
-          class="max-w-80 !inline-flex !relative max-h-8"
+          class="!inline-flex !relative max-h-8"
         />
       </div>
     </template>
@@ -358,12 +368,9 @@
     },
   ])
 
-
   const bufferedChanges = ref<Array<any>>([])
 
-  const hasUnsavedChanges = computed(
-    () => bufferedChanges.value?.length > 0,
-  )
+  const hasUnsavedChanges = computed(() => bufferedChanges.value?.length > 0)
   const hasRowsWrapper = computed(() => productsRef.value?.hasRows.value)
 
   onMounted(async () => {
