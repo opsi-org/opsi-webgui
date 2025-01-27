@@ -95,7 +95,6 @@
   "group.noactions": "No actions available",
   "group.product-add": "Add Products",
   "group.product-delete": "Delete Products",
-  "group.selectClients": "Select Clients",
   "info.more": "(+{clients} more)",
   "info.noselection": "No selection",
   "info.readonly.active": "Read only mode active. You are not allowed to change data.",
