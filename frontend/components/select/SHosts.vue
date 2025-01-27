@@ -33,7 +33,7 @@
   const emit = defineEmits(['update:value'])
   onMounted(async () => {
     await fetch()
-    value.value = props.id
+    value.value = props.id || undefined
   })
   watch(
     () => value.value,

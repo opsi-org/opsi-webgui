@@ -117,7 +117,7 @@
   const $t = useI18n().t
   const mq = useMQ()
   const config = storeConfigapp().config ?? { read_only: true }
-  const isLoading = ref(true)
+  const isLoading = ref(false)
   const fetchedData = ref<T_HostParameter | undefined>()
   const itemValues = ref<{ [key: string]: any }>({})
   const initialValues = ref<{ [key: string]: any }>({})
@@ -139,18 +139,11 @@
     return !(props.type === 'servers' || props.id)
   })
 
-  watch(showWarning, (newVal) => {
-    if (newVal) {
-      isLoading.value = false
-    }
-  })
-
   function handleCollapseChange(activeNames: CollapseModelValue) {
     activeItem.value = Array.isArray(activeNames)
       ? String(activeNames[0])
       : String(activeNames)
   }
-  const debug_id = 'opsiconfd.transfer.slots_opsiclientd_product_sync'
   function getInitialValue(item: {
     configId: string
     type: 'BoolConfig' | 'UnicodeConfig'
@@ -173,22 +166,21 @@
         }
         return 'mixed'
       }
-      if (item.configId === debug_id)
-        if (objectValues.every((v: any) => v === objectValues[0])) {
-          // not multi!
-          // all values are the same
-          if (item.type == 'BoolConfig' && objectValues[0] !== undefined) {
-            // value is given
-            return objectValues[0]
-          } else if (item.type == 'UnicodeConfig') {
-            if (isArray(objectValues[0])) return objectValues[0][0]
-            return objectValues[0]
-          }
-          // value not given
-          if (item.type === 'BoolConfig') return undefined
-          else if (item.multiValue) return []
-          else return ''
+      if (objectValues.every((v: any) => v === objectValues[0])) {
+        // not multi!
+        // all values are the same
+        if (item.type == 'BoolConfig' && objectValues[0] !== undefined) {
+          // value is given
+          return objectValues[0]
+        } else if (item.type == 'UnicodeConfig') {
+          if (isArray(objectValues[0])) return objectValues[0][0]
+          return objectValues[0]
         }
+        // value not given
+        if (item.type === 'BoolConfig') return undefined
+        else if (item.multiValue) return []
+        else return ''
+      }
     }
     throw new Error('Initial value is undefined and no valid objects found')
   }
