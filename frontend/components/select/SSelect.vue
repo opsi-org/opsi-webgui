@@ -180,12 +180,6 @@
     } else {
       data.value = data.value ?? []
     }
-    console.warn(
-      props.infoId,
-      localSelectedItems.value,
-      ' type of localSelectedItems ' + typeof localSelectedItems.value,
-      ' data ' + data.value,
-    )
     ///// TODO: Uncaught (in promise) TypeError: Cannot read properties of undefined (reading '0') at ￼SSelect.vue?t=1737468168440:80:141
 
     assert(
@@ -197,9 +191,7 @@
       )}])`,
     )
 
-    console.warn('Sorting data0: ' + data.value)
     if (data.value !== undefined) {
-      console.warn('Sorting data1: ' + data.value)
       data.value?.sort((a: any, b: any) =>
         // cannot be undefined because of assert
         a.localeCompare(b, undefined, { numeric: true }),
