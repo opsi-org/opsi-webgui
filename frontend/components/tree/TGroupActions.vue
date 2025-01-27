@@ -243,15 +243,15 @@
 
   const treeProps = { label: 'text', children: 'children' }
   const createGroup = reactive<{ [k: string]: string }>({
-    parentGroupId: '',
-    groupId: '',
-    description: '',
-    notes: '',
+    parentGroupId: '', // for i18n check: $t('table.fields.parentGroupId')
+    groupId: '', // for i18n check: $t('table.fields.groupId')
+    description: '', // for i18n check: $t('table.fields.description')
+    notes: '', // for i18n check: $t('table.fields.notes')
   })
   const editgroup = reactive<{ [k: string]: string }>({
-    parent: '',
-    description: '',
-    notes: '',
+    parent: '', // for i18n check: $t('table.fields.parent')
+    description: '', // for i18n check: $t('table.fields.description')
+    notes: '', // for i18n check: $t('table.fields.notes')
   })
 
   const debouncedFetchClientGroups = debounce(fetchClientGroups, 300)

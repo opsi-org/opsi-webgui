@@ -26,18 +26,18 @@
 
   const groupActions = reactive([
     {
-      category: 'client-group',
+      category: 'client-group', // for i18n-check: $t('title.client-group')
       actions: {
-        maingroups: ['group-add'],
-        parent: ['edit', 'delete', 'client-delete', 'client-add', 'group-add'],
-        children: ['delete', 'copy'],
+        maingroups: ['group-add'], // for i18n-check: $t('group.group-add')
+        parent: ['edit', 'delete', 'client-delete', 'client-add', 'group-add'], // for i18n-check: $t('group.edit'), $t('group.delete'), $t('group.client-delete'), $t('group.client-add'), $t('group.group-add')
+        children: ['delete', 'copy'], // for i18n-check: $t('group.delete'), $t('group.copy')
       },
     },
     {
-      category: 'product-group',
+      category: 'product-group', // for i18n-check: $t('title.product-group')
       actions: {
-        parent: ['delete', 'product-delete', 'product-add'],
-        children: ['delete'],
+        parent: ['delete', 'product-delete', 'product-add'], // for i18n-check: $t('product.delete'), $t('product.product-delete'), $t('product.product-add')
+        children: ['delete'], // for i18n-check: $t('product.delete')
       },
     },
   ])
