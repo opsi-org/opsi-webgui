@@ -16,12 +16,15 @@
     :props="defaultProps"
     :class="multiSelection ? 'isMultiSelect' : 'isSingleSelect'"
     node-key="id"
+    :default-expanded-keys="
+      props.grouptype == GroupTree_CLIENTGROUP ? firstlevelkeys : undefined
+    "
     show-checkbox
-    default-expand-all
     highlight-current
     @check="handleClickCheckbox"
     @node-click="handleClickText"
   >
+    <!-- default-expand-all -->
   </el-tree>
 </template>
 
@@ -48,12 +51,8 @@
   const isLoadingSelection = ref(false)
   const clientGroupRef = ref<InstanceType<typeof ElTree>>()
   const prodGroupRef = ref<InstanceType<typeof ElTree>>()
+  const firstlevelkeys = ref<string[]>([])
 
-  const customNodeClass = ({ type }: TreeNodeData) => {
-    let cclass = ''
-    cclass += type == 'ObjectToGroup' ? ' isLeaf' : ' isGroup'
-    return cclass
-  }
   const defaultProps = {
     label: 'text',
     children: 'children',
@@ -82,6 +81,11 @@
 
   watch(() => selectionClients.value, syncSelection, { deep: true })
   watch(() => selectionProducts.value, syncSelection, { deep: true })
+  function customNodeClass({ type }: TreeNodeData) {
+    let cclass = ''
+    cclass += type == 'ObjectToGroup' ? ' isLeaf' : ' isGroup'
+    return cclass
+  }
 
   async function fetchClientGroups() {
     const { data, error } = await useApiGETBody<Record<string, T_Groups>>(
@@ -100,6 +104,11 @@
     }
 
     fetchedData.value = groupsHelper.transformToNestedArray(data.value)
+    // set expanded only for first level of clientgroups
+    firstlevelkeys.value.length = 0
+    for (const key in data.value) {
+      firstlevelkeys.value.push(data.value[key].id)
+    }
   }
 
   async function fetchProdGroups() {
