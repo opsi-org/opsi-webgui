@@ -1,18 +1,28 @@
 <template>
-  <el-button @click="clearSelection" size="small">
-    {{ $t('table.selection.clear') }}
-  </el-button>
+  <div class="flex justify-between items-center">
+    <el-button @click="clearSelection" size="small">
+      {{ $t('table.selection.clear') }}
+    </el-button>
+    <IconILoading v-if="isLoadingSelection" small />
+  </div>
   <el-tree
-    :ref="props.grouptype == 'client-group' ? 'clientGroupRef' : 'prodGroupRef'"
+    :ref="
+      props.grouptype == GroupTree_CLIENTGROUP
+        ? 'clientGroupRef'
+        : 'prodGroupRef'
+    "
     v-loading="isLoading"
     :data="fetchedData"
     :props="defaultProps"
-    show-checkbox
+    :class="multiSelection ? 'isMultiSelect' : 'isSingleSelect'"
     node-key="id"
+    show-checkbox
     default-expand-all
     highlight-current
-    @check="handleSelectOneNode"
-  />
+    @check="handleClickCheckbox"
+    @node-click="handleClickText"
+  >
+  </el-tree>
 </template>
 
 <script setup lang="ts">
@@ -21,29 +31,47 @@
   import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper'
   import type { T_Groups } from '~/types/APItypes'
   import type { TreeNodeData } from 'element-plus/lib/components/tree/src/tree.type.js'
+  import {
+    GroupTree_CLIENTGROUP,
+    type PropTypeGroupTree,
+  } from '~/types/tproptypes'
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
   const groupsHelper = useGroupsHelper()
+
   const props = defineProps({
-    grouptype: { type: String, required: true },
+    grouptype: { type: String as PropType<PropTypeGroupTree>, required: true },
   })
+
   const isLoading = ref(false)
+  const isLoadingSelection = ref(false)
   const clientGroupRef = ref<InstanceType<typeof ElTree>>()
   const prodGroupRef = ref<InstanceType<typeof ElTree>>()
+
+  const customNodeClass = ({ type }: TreeNodeData) => {
+    let cclass = ''
+    cclass += type == 'ObjectToGroup' ? ' isLeaf' : ' isGroup'
+    return cclass
+  }
   const defaultProps = {
     label: 'text',
     children: 'children',
+    class: customNodeClass,
   }
   const fetchedData = ref<any>([])
   const storeSelection = storeSelections()
 
-  const { selectionDepots, selectionClients, selectionProducts } =
-    storeToRefs(storeSelection)
+  const {
+    selectionDepots,
+    selectionClients,
+    selectionProducts,
+    multiSelection,
+  } = storeToRefs(storeSelection)
 
   onMounted(async () => {
     isLoading.value = true
-    if (props.grouptype == 'client-group') {
+    if (props.grouptype == GroupTree_CLIENTGROUP) {
       await fetchClientGroups()
     } else {
       await fetchProdGroups()
@@ -95,17 +123,19 @@
   }
 
   const clearSelection = () => {
-    if (props.grouptype == 'client-group') {
+    isLoadingSelection.value = true
+    if (props.grouptype == GroupTree_CLIENTGROUP) {
       clientGroupRef.value?.setCheckedKeys([], false)
       storeSelection.clearSelectionClients()
     } else {
       prodGroupRef.value?.setCheckedKeys([], false)
       storeSelection.clearSelectionProducts()
     }
+    isLoadingSelection.value = false
   }
 
   function syncSelection() {
-    if (props.grouptype == 'client-group') {
+    if (props.grouptype == GroupTree_CLIENTGROUP) {
       const resNodes: any[] = groupsHelper.filterNodes(
         fetchedData.value,
         selectionClients.value,
@@ -123,24 +153,29 @@
       prodGroupRef.value?.setCheckedNodes(resNodes, false)
     }
   }
-
-  function handleSelectOneNode(node: TreeNodeData, obj: any) {
-    if (props.grouptype == 'client-group') {
-      selectNode(
-        node,
-        obj,
-        selectionClients,
-        storeSelection.setSelectionClients,
-      )
-    } else {
-      selectNode(
-        node,
-        obj,
-
-        selectionProducts,
-        storeSelection.setSelectionProducts,
-      )
+  function handleClickText(node: TreeNodeData, obj: any) {
+    if (node.type !== 'ObjectToGroup') {
+      return
     }
+    handleClickCheckbox(node, obj)
+    // _getSelectionFunction()(_getSelection().value)
+  }
+  function handleClickCheckbox(node: TreeNodeData, obj: any) {
+    if (node.type == 'ObjectToGroup') {
+      // select only
+      isLoadingSelection.value = true
+      handleSelection(node, obj, multiSelection.value)
+      isLoadingSelection.value = false
+    } else if (multiSelection.value) {
+      // its a group
+      isLoadingSelection.value = true
+      handleSelection(node, obj, multiSelection.value)
+      isLoadingSelection.value = false
+    }
+    // _getSelectionFunction()(_getSelection().value)
+  }
+  function handleSelection(node: TreeNodeData, obj: any, multiSelect: boolean) {
+    selectNode(node, obj, _getSelection(), _getSelectionFunction(), multiSelect)
   }
 
   function selectNode(
@@ -148,26 +183,61 @@
     obj: any,
     selection: Ref<string[]>,
     setSelectionFunction: (selection: string[]) => void,
+    isMultiSelect: boolean = true,
   ) {
     if (node.type == 'ObjectToGroup') {
-      if (obj.checkedKeys.includes(node.id)) {
+      if (!isMultiSelect) {
+        if (!selection.value?.includes(node.text)) {
+          setSelectionFunction([node.text])
+        } else {
+          setSelectionFunction([])
+        }
+      } else if (obj.checkedKeys?.includes(node.id)) {
         selection.value.push(node.text)
+        setSelectionFunction([...new Set(selection.value)]) // unique values
+      } else if (!selection.value?.includes(node.text)) {
+        selection.value.push(node.text)
+        setSelectionFunction([...new Set(selection.value)]) // unique values
       } else {
-        setSelectionFunction(
-          selection.value.filter((item: string) => item != node.text),
+        // remove from selection and checkedKeys
+        selection.value?.splice(selection.value.indexOf(node.text), 1)
+        const ids = obj.checkedKeys?.filter((id: string) =>
+          id.startsWith(`${node.text};`),
         )
+        for (const id of ids) {
+          obj.checkedKeys?.splice(obj.checkedKeys.indexOf(id), 1)
+        }
       }
-    } else {
+    } else if (isMultiSelect) {
       // its a group
       node.children?.forEach((child: TreeNodeData) => {
         selectNode(child, obj, selection, setSelectionFunction)
       })
+      // setSelectionFunction(selection.value)
     }
+  }
+  function _getSelectionFunction() {
+    return props.grouptype == GroupTree_CLIENTGROUP
+      ? storeSelection.setSelectionClients
+      : storeSelection.setSelectionProducts
+  }
+  function _getSelection() {
+    return props.grouptype == GroupTree_CLIENTGROUP
+      ? selectionClients
+      : selectionProducts
   }
 </script>
 <style lang="css" scoped>
   :deep(.el-tree-node__label) {
     margin-left: 5px;
     font-size: var(--el-font-size-small);
+  }
+  :deep(.el-tree-node.isLeaf .el-tree-node__expand-icon.is-leaf) {
+    display: none !important;
+  }
+
+  .isSingleSelect
+    :deep(.el-tree-node.isGroup > .el-tree-node__content > .el-checkbox) {
+    display: none !important;
   }
 </style>

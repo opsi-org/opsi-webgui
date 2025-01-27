@@ -15,6 +15,7 @@
         <el-button
           size="small"
           class="!border-none p-1"
+          :title="$t('button.selection.clear.all')"
           @click="storeSelection.clearAllSelection"
         >
           <IconIIcon :icon="icons.clear" />

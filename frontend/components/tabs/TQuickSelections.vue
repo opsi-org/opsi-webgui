@@ -36,16 +36,17 @@
 </template>
 
 <script setup lang="ts">
+  import type { PropTypeGroupTree } from '~/types/tproptypes'
   const icons = useIcons()
   const $t = useI18n().t
   const storeSelection: any = storeSelections()
   const quickSelDisplayList = reactive([
-    { name: 'infoselections', store: '' }, // for translation key search: $t('title.infoselections')
-    { name: 'depots', store: 'selectionDepots' }, // for translation key search: $t('title.depots')
-    { name: 'client-group', store: 'selectionClients' }, // for translation key search: $t('title.client-group')
-    { name: 'product-group', store: 'selectionProducts' }, // for translation key search: $t('title.product-group')
+    { name: 'infoselections' as PropTypeGroupTree, store: '' }, // for translation key search: $t('title.infoselections')
+    { name: 'depots' as PropTypeGroupTree, store: 'selectionDepots' }, // for translation key search: $t('title.depots')
+    { name: 'client-group' as PropTypeGroupTree, store: 'selectionClients' }, // for translation key search: $t('title.client-group')
+    { name: 'product-group' as PropTypeGroupTree, store: 'selectionProducts' }, // for translation key search: $t('title.product-group')
   ])
-  const activeName = ref<string>('infoselections')
+  const activeName = ref<PropTypeGroupTree>('infoselections')
   function getIcon(icon: string) {
     if (Object.keys(icons).includes(icon)) return (icons as any)[icon]
     throw new Error(`Icon ${icon} not found`)

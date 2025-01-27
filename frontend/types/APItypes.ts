@@ -121,7 +121,7 @@ export interface T_GroupsTransformed {
   type: string
   text: string
   parent: string | null
-  children: T_GroupsTransformed[] | null
+  children?: T_GroupsTransformed[] | null
 }
 
 export type T_ServerList = Array<T_Server>

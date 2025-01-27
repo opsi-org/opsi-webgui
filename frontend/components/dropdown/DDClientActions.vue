@@ -129,9 +129,9 @@
     'delete', // for translation key search: $t('button.event.delete')
   ])
   const opsiClientAgent = ref<IObjectString2String>({
-    username: '',
-    password: '',
-    type: 'windows',
+    username: '', // for translation key search: $t('form.username')
+    password: '', // for translation key search: $t('form.password')
+    type: 'windows', // for translation key search: $t('form.type')
   })
 
   interface TClientdRPC {

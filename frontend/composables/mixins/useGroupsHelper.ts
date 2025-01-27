@@ -2,12 +2,26 @@ import type { T_Groups, T_GroupsTransformed } from '~/types/APItypes'
 
 export const useGroupsHelper = () => {
   function transformNode(node: T_Groups): T_GroupsTransformed {
-    return {
-      ...node, // Kopiert alle bekannten und unbekannten Eigenschaften von `node`
-      children: node.children
-        ? Object.values(node.children).map((child) => transformNode(child))
-        : [],
+    const nodeIsLeaf = !node.children || Object.keys(node.children).length === 0
+    const newNode: T_GroupsTransformed = {
+      id: node.id,
+      type: node.type,
+      text: node.text,
+      parent: node.parent,
     }
+
+    // const newNode: T_Groups = { ...node }
+    if (!nodeIsLeaf) {
+      if (node.children) {
+        newNode.children = Object.values(node.children).map((child) =>
+          transformNode(child),
+        )
+      } else {
+        newNode.children = []
+      }
+    }
+    // console.log('node.id', node.id, node, newNode)
+    return newNode
   }
   function transformToNestedArray(
     data: Record<string, T_Groups>,
