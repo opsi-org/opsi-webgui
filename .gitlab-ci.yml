@@ -138,13 +138,21 @@ stages:
   cd ..
 
 .compare_versions: &compare_versions |
-  VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
-  VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
+  # VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
+  # VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
+  # VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
+  VERSION_YML=$(grep opsi-dev-tool.yml -A 40 -e "project\":" | grep -m 1 "version\":" | awk '{print $2}' | sed -e "s/,//g")
+  VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version\":" | awk '{print $2}' | sed -e "s/,//g")
   VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
-  TAG=$$VERSION_YML
+  VERSION_PY=$(cat backend/addon/webgui/python/const.py | grep "ADDON_VERSION =" | awk '{print $3}' | sed -e "s/,//g")
+
   echo $VERSION_YML2
   echo $VERSION_JSN
-  echo TAG
+  echo $VERSION_PY
+
+  if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml doesnt match (project and pull-binaries section.. $VERSION_YML - $VERSION_YML2)"; exit 1; fi
+  if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN) "; exit 1; else echo "Versions are equal $VERSION_YML"; fi
+  if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/addon/webgui/python/const.py ($VERSION_YML - $VERSION_PY)"; exit 1; else echo "Versions are equal"; fi
 
 # .prepare_tag: &prepare_tag |
 #   # "prepare tag"
