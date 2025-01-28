@@ -185,7 +185,7 @@ check:versions:
     - VERSION_YML=$(grep opsi-dev-tool.yml -A 40 -e project | grep -m 1 -E "version:|version\":" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_YML
     - echo "----------------------------------------------------------------"
-    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version:|version\":" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
+    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 -E "version:|version\":" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - VERSION_YML2=${VERSION_YML2//,/}
     - echo $VERSION_YML2
     - echo "----------------------------------------------------------------"
