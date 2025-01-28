@@ -23,8 +23,6 @@
       @new-node="addNewValue"
       @input="selectValue"
     />
-    {{ localval }}
-
   </div>
 </template>
 
