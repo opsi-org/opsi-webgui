@@ -51,6 +51,7 @@
     <footer class="p-4 mt-auto insert-x-0 bottom-0 grid">
       <small class="justify-self-stretch text-center">
         {{ $t('message.login.currentUser', { user: storeAuth().username }) }}
+        (<LabelLCounter />)
       </small>
       <div class="flex justify-evenly items-center">
         <SwitchSTheme />

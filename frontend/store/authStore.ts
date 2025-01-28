@@ -1,14 +1,14 @@
 import { useCookie } from 'nuxt/app'
 import { defineStore } from 'pinia'
 
-const expirySec = 60 * 30 // Default=30min
+const expirySec = 60 * 30 // Default=30min; 60*30 = 1800sec = 30min
 
 export const storeAuth = defineStore('auth', {
-  persist: {
-    key: 'opsi-auth',
-    storage: localStorage,
-    // storage: sessionStorage,
-  },
+  // persist: {
+  //   key: 'opsi-auth',
+  //   storage: localStorage,
+  //   // storage: sessionStorage,
+  // },
   state: () => ({
     // the state objects are stored in localStorage
     username: '',

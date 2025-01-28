@@ -69,6 +69,10 @@
               show-password
             />
           </el-form-item>
+          <el-form-item>
+            Automatic logout after {{ storeAuth().sessionExpiry / 30 }} minutes
+            (without interaction)
+          </el-form-item>
           <el-button
             v-if="authMethods.includes(METHOD_PASSWORD)"
             data-testid="btn-login"

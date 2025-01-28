@@ -74,8 +74,18 @@ async function useAPI2<T>(
     onRequest({ options }: any) {
       // Set the request headers
       const headers: IObjectString2Any = { ...opts?.headers }
+      // if (!urlsWithoutAuthentication.includes(url)) {
+      //   headers['X-opsi-session-lifetime'] = 3600 // TODO: get from store
+      // }
+
       if (!urlsWithoutAuthentication.includes(url)) {
-        headers['X-opsi-session-lifetime'] = 3600 // TODO: get from store
+        // const settings = storeSettings()
+        const authStore = storeAuth()
+        console.error('set session lifetime', authStore.sessionExpiry)
+        headers['X-opsi-session-lifetime'] = authStore.sessionExpiry
+        // headers['X-opsi-session-lifetime'] = 3600 // TODO: get from store
+        // store.commit('auth/setSession', expiry)
+        authStore.setSession()
       }
       if (method !== 'GET' && body != undefined && url !== '/auth/login') {
         if (headers['Content-Type'] === undefined)
