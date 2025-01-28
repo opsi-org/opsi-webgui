@@ -182,10 +182,10 @@ check:versions:
     #   VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version\":" | awk '{print $2}' | sed -e "s/,//g")
     #   VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
     #   VERSION_PY=$(cat backend/addon/webgui/python/const.py | grep "ADDON_VERSION =" | awk '{print $3}' | sed -e "s/,//g")
-    - VERSION_YML=$(grep opsi-dev-tool.yml -A 40 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
+    - VERSION_YML=$(grep opsi-dev-tool.yml -A 40 -e project | grep -m 1 "version\":" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_YML
     - echo "----------------------------------------------------------------"
-    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
+    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "version\":" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     # - VERSION_YML2=$(grep opsi-dev-tool.yml -A 30 -e pull-binaries | grep -m 1 "\"version:\"" | awk '{print $2}')
     - VERSION_YML2=${VERSION_YML2//,/}
     - echo $VERSION_YML2
