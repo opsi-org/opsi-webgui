@@ -134,49 +134,6 @@ stages:
   echo "$testfilesUnique"
   cd ..
 
-# .compare_versions: &compare_versions |
-#   VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
-#   VERSION_YML2=$(grep opsi-dev-tool.yml -A 70 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g")
-#   VERSION_JSN=$(cat frontend/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
-#   TAG=$$VERSION_YML
-#   echo $VERSION_YML2
-#   echo $VERSION_JSN
-#   echo TAG
-
-# .prepare_tag: &prepare_tag |
-#   # "prepare tag"
-#   if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
-#   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
-#   # LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
-#   LTAG=$(git tag --sort=taggerdate | tail -1)
-#   echo "Latest tag... '$LTAG'"
-
-# .push_tag: &push_tag |
-#   # post tag
-#   echo "ProjectURL: $CI_API_V4_URL"
-#   echo "ProjectID: $CI_PROJECT_ID"
-#   echo "ProjectTAG: $TAG"
-#   printf "ProjectMSG: \n$(cat $FILE)\n"
-#   printf "ProjectURL: $CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main\n"
-#   # if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
-#   # echo ""
-
-# .delete_tag: &delete_tag |
-#   # delete tag
-#   curl --request DELETE \
-#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
-#   echo ""
-#   git tag -d $TAG || exit_code_del=$?
-#   echo ""
-
-# .prepare_git: &prepare_git |
-#   # "prepare git"
-#   git config --global user.name "${GITLAB_USER_NAME}"
-#   git config --global user.email "${GITLAB_USER_EMAIL}"
-#   git config --global http.postBuffer 52428800
-#   git fetch
-
 #########################################################################
 ######################################################################### init
 #########################################################################
@@ -184,31 +141,22 @@ preinit:versions:
   stage: preinit
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11 # cause smaller then node...
   script:
-    - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
+    - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 -E "version:|version\":" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_YML
     - echo "----------------------------------------------------------------"
-    # ---------------
-    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 100 -e pull-binaries | grep -m 1 "version:" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
-    # - VERSION_YML2=$(grep opsi-dev-tool.yml -A 100 -e pull-binaries | grep -m 1 "\"version:\"" | awk '{print $2}')
+    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 100 -e pull-binaries | grep -m 1 -E "version:|version\":" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - VERSION_YML2=${VERSION_YML2//,/}
     - echo $VERSION_YML2
     - echo "----------------------------------------------------------------"
-    # ---------------
-    # - VERSION_JSN=$(cat frontend/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
     - VERSION_JSN=$(cat frontend/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - VERSION_JSN=${VERSION_JSN//,/}
     - echo $VERSION_JSN
     - echo "----------------------------------------------------------------"
-    # ---------------
     - VERSION_PY=$(cat backend/addon/webgui/python/const.py | grep "ADDON_VERSION =" | awk '{print $3}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_PY
-    # ---------------
-    - TAG=$VERSION_YML
-    - echo $TAG
     - echo "----------------------------------------------------------------"
-    # ---------------
     - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml doesnt match (project and pull-binaries section.. $VERSION_YML - $VERSION_YML2)"; exit 1; fi
-    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN) "; exit 1; else echo "Versions are equal $VERSION_YML"; fi
+    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN) "; exit 1; else echo "Versions are equal"; fi
     - if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/addon/webgui/python/const.py ($VERSION_YML - $VERSION_PY)"; exit 1; else echo "Versions are equal"; fi
 
 preinit:transifex-up:
