@@ -74,9 +74,6 @@ async function useAPI2<T>(
     onRequest({ options }: any) {
       // Set the request headers
       const headers: IObjectString2Any = { ...opts?.headers }
-      // if (!urlsWithoutAuthentication.includes(url)) {
-      //   headers['X-opsi-session-lifetime'] = 3600 // TODO: get from store
-      // }
 
       if (!urlsWithoutAuthentication.includes(url)) {
         const authStore = storeAuth()
