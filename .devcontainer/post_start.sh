@@ -24,9 +24,9 @@ rm -f opsi-dev-tool
 # pwd
 # # pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
 # cd /workspace
-# opsi-dev-cli self upgrade --system
+opsi-dev-cli self upgrade
 # # opsi-dev-tool --self-install
-# opsi-dev-tool git-hooks --install
+opsi-dev-tool git-hooks --install
 # echo "=========================================="
 # # ./opsi-dev-tools git-hooks --install
 
