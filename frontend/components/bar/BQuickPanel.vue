@@ -51,7 +51,7 @@
     <footer class="p-4 mt-auto insert-x-0 bottom-0 grid">
       <small class="justify-self-stretch text-center">
         {{ $t('message.login.currentUser', { user: username }) }}
-        ({{ getText(sessionExpiresIn) }})
+        {{ $t('label.in_bracets', { value: getText(sessionExpiresIn) }) }}
       </small>
       <div class="flex justify-evenly items-center">
         <SwitchSTheme />

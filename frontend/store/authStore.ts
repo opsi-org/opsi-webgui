@@ -1,19 +1,21 @@
 import { useCookie } from 'nuxt/app'
 import { defineStore } from 'pinia'
+import type { TTimeDiff } from '~/types/Datatypes'
 
-const expirySec = 60 * 6 // Default=30min; 60*30 = 1800sec = 30min
+const expirySec = 60 * 30 // Default=30min=60s*30
 
 export const storeAuth = defineStore('auth', {
-  // persist: {
-  //   key: 'opsi-auth',
-  //   storage: localStorage,
-  //   // storage: sessionStorage,
-  // },
+  // persist keeps username in localStorage.. even if logged out. No need for that here
   state: () => ({
-    // the state objects are stored in localStorage
     username: '',
     sessionExpiry: expirySec, // sec
-    sessionExpiresIn: { diff: 0, days: 0, hours: 0, minutes: 0, seconds: 0 }, // will be updated by interval/counter
+    sessionExpiresIn: {
+      diff: 0,
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    } as TTimeDiff, // will be updated by interval/counter
     sessionEndTime: '',
   }),
   getters: {
@@ -48,6 +50,9 @@ export const storeAuth = defineStore('auth', {
     },
     setExpiredMin(m: number) {
       this.sessionExpiry = m
+    },
+    setExpiresIn(t: TTimeDiff) {
+      this.sessionExpiresIn = t
     },
     setSession() {
       let expiryInSec = this.sessionExpiry

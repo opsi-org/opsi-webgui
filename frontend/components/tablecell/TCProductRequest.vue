@@ -47,8 +47,8 @@
           </p>
           <p v-if="visibleRequest?.includes('*')" class="inline">
             {{
-              $t('label.actionRequest.in_bracets', {
-                actionRequest: modelRowitem?.actionRequest || '',
+              $t('label.in_bracets', {
+                value: modelRowitem?.actionRequest || '',
               })
             }}
           </p>

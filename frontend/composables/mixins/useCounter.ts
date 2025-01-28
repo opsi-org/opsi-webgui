@@ -1,6 +1,7 @@
 import { useNotification } from '~/composables/mixins/useComponent'
 import { useConfigserver } from '~/composables/mixins/useGet'
 import { useCallLogout } from '~/composables/mixins/usePost'
+import type { TTimeDiff } from '~/types/Datatypes'
 
 export const useTimer = (init: boolean = false) => {
   const authStore = storeAuth()
@@ -34,7 +35,7 @@ export const useTimer = (init: boolean = false) => {
   }
 
   function calcTimeout() {
-    const t = getRemainingTime()
+    const t: TTimeDiff = getRemainingTime()
     countdowntimer.value = getText(t)
     // const time = { min: t.minutes, s: t.seconds }
     if (t.diff <= notifyInMilliSec.value && !first_notification_showed.value) {
@@ -81,9 +82,7 @@ export const useTimer = (init: boolean = false) => {
       // clearInterval(intervalId.value)
     }
   }
-  //   function getTeyt(s: number) {
-  //   }
-  function getText(t: any, small: boolean = true) {
+  function getText(t: TTimeDiff, small: boolean = true) {
     if (t.days > 0) {
       if (small === true) {
         return ` ${t.days}d ${t.hours}h ${t.minutes}m ${t.seconds}s`
@@ -114,7 +113,7 @@ export const useTimer = (init: boolean = false) => {
     }) as string
   }
 
-  function getRemainingTime() {
+  function getRemainingTime(): TTimeDiff {
     const endtime = authStore.sessionEndTime
     if (!endtime) {
       authStore.setSession()
@@ -126,7 +125,7 @@ export const useTimer = (init: boolean = false) => {
     const minutes = Math.floor((diff / 1000 / 60) % 60)
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    authStore.sessionExpiresIn = { diff, days, hours, minutes, seconds }
+    authStore.setExpiresIn({ diff, days, hours, minutes, seconds })
     return authStore.sessionExpiresIn
   }
 
