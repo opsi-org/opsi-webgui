@@ -262,5 +262,9 @@
     "gitlens.heatmap.toggleMode": "file",
     "playwrightrunner.playwrightCommand": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.component.js test:all:components /",
     "playwrightrunner.playwrightConfigPath": "../opsiweb/.config/playwright-all-components.config.js",
-    "explorer.sortOrder": "mixed"
+    "explorer.sortOrder": "mixed",
+    "sonarlint.connectedMode.project": {
+        "connectionId": "https-sonarqube-uib-gmbh",
+        "projectKey": "opsi-webgui"
+    }
 }
