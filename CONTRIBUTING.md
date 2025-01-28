@@ -188,19 +188,19 @@ Example: `feat/user-authentication`, `fix/file-upload-bug`
    merge request.
 7. Once the changes are approved, they will be merged into the `main` branch.
 
-## Release (WIP: section is not tested yet)
+## Release
 
 When preparing for a release, follow these steps:
 
 1. Do a final check of the codebase to ensure that all changes are complete
-   and tested. Please build the opsi-webgui.zip locally (in vs-code bottom button "buildDist") and upload it to out main test system to check if everything is working as expected.
-2. Make sure since the last release there was a commit message with the prefix `[pub]`, this will be used to generate the changelog.
-3. Use opsi-cli to create a git tag and start the release process for this version.
+   and tested. Please build the opsi-webgui.zip locally (in vs-code bottom button "buildDist") (optionally upload it to the main test system) and check if everything is working as expected (using it with production port e.g. 4447)
+2. Make sure since the last release there was a commit message with the prefix `[pub]` (e.g. `[fix,pub]`), this will be used to generate the changelog.
+3. Use opsi-dev-cli to create a git tag and start the release process for this version.
 
 ```bash
 cd /workspace                          # directory where opsi-dev-tool.yml is located
 # if overwriting a tag, delete it in gitlab ui and run:
-  # git tag -d 4.3.9.9 && git fetch       # (OPTIONAL) removes the tag
+  # git tag -d <TAG> && git fetch       # (OPTIONAL) removes the tag <TAG>
   # ATTENTION: removing tags only works if package `opsi-webgui` is not published yet i.e. did not successfully finished publish jobs
 
 opsi-dev-cli git-tag                     # will overwrite opsi-dev-tool.yml and frontend/package.json (defined in opsi-dev-tool.yml)
