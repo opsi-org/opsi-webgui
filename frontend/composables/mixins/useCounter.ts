@@ -1,50 +1,36 @@
-<template>
-  <div data-testid="DivDCounttimer" class="DCountdowntimer text-center inline">
-    <span class="timer text-small"> {{ countdowntimer }} </span>
-  </div>
-</template>
+import { useNotification } from '~/composables/mixins/useComponent'
+import { useConfigserver } from '~/composables/mixins/useGet'
+import { useCallLogout } from '~/composables/mixins/usePost'
 
-<script setup lang="ts">
-  import { useCallLogout } from '~/composables/mixins/usePost'
-
+export const useTimer = (init: boolean = false) => {
   const authStore = storeAuth()
   const settingsStore = storeSettings()
 
-  const props = defineProps({
-    small: {
-      type: Boolean,
-      default: false,
-    },
-  })
-
+  const { notifyInfo } = useNotification()
   const router = useRouter()
   const $t = useI18n().t
 
-  //   const refAlert = ref<any>()
-  const notifyInMilliSec = ref<number>(0)
+  const notifyInMilliSec = ref<number>(1)
   const countdowntimer = ref<string>('')
   const first_notification_showed = ref<boolean>(false)
+  const notification = ref<any>()
+  const intervalId = ref<NodeJS.Timer>()
 
-  watch(
-    () => settingsStore.expiresInterval,
-    (newVal) => {
-      clearInterval(newVal)
-    },
-  )
   onMounted(() => {
-    first_notification_showed.value = false
-    //   refAlert = (this.$root.$children[1]?.$refs?.expiringAlert as any) || (this.$root.$children[2]?.$refs?.expiringAlert as any)
+    notifyInMilliSec.value = (authStore.isAuthenticated ? 5 : -1) * 60000 //  // 5 min
+    if (init) initCountdownTimer()
+  })
 
-    notifyInMilliSec.value = (authStore.isAuthenticated ? 5 : -1) * 60000
-    if (!authStore.sessionEndTime) {
-      authStore.setSession()
-    }
-    initCountdownTimer()
+  onBeforeUnmount(() => {
+    if (init) clearInterval(intervalId.value)
   })
 
   function initCountdownTimer() {
-    calcTimeout()
-    settingsStore.setExpiresInterval(setInterval(calcTimeout, 1000))
+    try {
+      intervalId.value = setInterval(() => calcTimeout(), 1000)
+    } catch (e) {
+      console.error('Error in setInterval', e)
+    }
   }
 
   function calcTimeout() {
@@ -53,7 +39,21 @@
     // const time = { min: t.minutes, s: t.seconds }
     if (t.diff <= notifyInMilliSec.value && !first_notification_showed.value) {
       first_notification_showed.value = true
-      // initRef(time)
+      notification.value = notifyInfo({
+        title: $t('message.session.info'),
+        message: $t('message.session.expiresInHours', {
+          h: t.hours,
+          min: t.minutes,
+          s: t.seconds,
+        }),
+        button: {
+          label: $t('label.extend'),
+          onClick: async () =>
+            await (
+              await useConfigserver(false, undefined, $t)
+            ).getOpsiConfigServerWithHeaders(),
+        },
+      })
     } else if (
       t.diff <= notifyInMilliSec.value &&
       first_notification_showed.value
@@ -63,10 +63,11 @@
       // }
     } else {
       first_notification_showed.value = false
-      // this.refAlert?.hide()
+      notification.value?.close()
     }
-    if (isNaN(t.diff) || t.diff === 0 || notifyInMilliSec.value <= 0) {
+    if (isNaN(t.diff) || t.diff <= 0 || notifyInMilliSec.value <= 0) {
       countdowntimer.value = $t('message.session.expired') as string
+      console.error('Session expired')
       try {
         useCallLogout().callLogout()
       } catch (e) {
@@ -76,17 +77,15 @@
         router.push('/login')
         throw new Error('Cannot find logout btn, error: ' + e)
       }
-      clearInterval(settingsStore.expiresInterval)
+      settingsStore.setExpiresInterval(undefined)
+      // clearInterval(intervalId.value)
     }
   }
-
-  //   function initRef(time: any) {
-  //   this.refAlert?.alert($t('message.session.expiresInMinutesDetails', time), 'warning')
+  //   function getTeyt(s: number) {
   //   }
-
-  function getText(t: any) {
+  function getText(t: any, small: boolean = true) {
     if (t.days > 0) {
-      if (props.small === true) {
+      if (small === true) {
         return ` ${t.days}d ${t.hours}h ${t.minutes}m ${t.seconds}s`
       } else {
         return $t('message.session.expiresInDays', {
@@ -97,7 +96,7 @@
         }) as string
       }
     } else if (t.hours > 0) {
-      if (props.small === true) {
+      if (small === true) {
         return ` ${t.hours}h ${t.minutes}m ${t.seconds}s`
       } else {
         return $t('message.session.expiresInHours', {
@@ -106,8 +105,8 @@
           s: t.seconds,
         }) as string
       }
-    } else if (props.small === true) {
-      return ` ${t.minutes}m ${t.seconds}s`
+    } else if (small === true) {
+      return `${t.minutes}m ${t.seconds}s`
     }
     return $t('message.session.expiresInMinutes', {
       min: t.minutes,
@@ -127,7 +126,11 @@
     const minutes = Math.floor((diff / 1000 / 60) % 60)
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    return { diff, days, hours, minutes, seconds }
+    authStore.sessionExpiresIn = { diff, days, hours, minutes, seconds }
+    return authStore.sessionExpiresIn
   }
-  //   }
-</script>
+
+  return {
+    getText,
+  }
+}

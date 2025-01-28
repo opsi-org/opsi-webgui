@@ -89,8 +89,10 @@
 
 <script setup lang="ts">
   import { useNotification } from '~/composables/mixins/useComponent'
+  import { useTimer } from '~/composables/mixins/useCounter'
   import type { T_DisaledFeatures, T_configuration } from '~/types/APItypes'
 
+  useTimer(true) // timer for session expiry (showed in quickpanel, but initialized here)
   const { notifyError } = useNotification()
   const $t = useI18n().t
   const mq = useMQ()

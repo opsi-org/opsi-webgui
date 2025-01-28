@@ -1,7 +1,7 @@
 import { useCookie } from 'nuxt/app'
 import { defineStore } from 'pinia'
 
-const expirySec = 60 * 30 // Default=30min; 60*30 = 1800sec = 30min
+const expirySec = 60 * 6 // Default=30min; 60*30 = 1800sec = 30min
 
 export const storeAuth = defineStore('auth', {
   // persist: {
@@ -13,6 +13,7 @@ export const storeAuth = defineStore('auth', {
     // the state objects are stored in localStorage
     username: '',
     sessionExpiry: expirySec, // sec
+    sessionExpiresIn: { diff: 0, days: 0, hours: 0, minutes: 0, seconds: 0 }, // will be updated by interval/counter
     sessionEndTime: '',
   }),
   getters: {

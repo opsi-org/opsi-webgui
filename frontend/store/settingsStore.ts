@@ -15,7 +15,7 @@ export const storeSettings = defineStore('settings', {
     msgbusAutoRefresh: true as boolean,
     menuCollapsed: false as boolean,
     twoColumnLayoutCollapsed: { tabledepots: false, tableclients: false },
-    expiresInterval: undefined as NodeJS.Timeout | undefined,
+    expiresInterval: undefined as NodeJS.Timer | undefined,
   }),
   getters: {
     // twoColumnLayoutCollapsed: (state: any) => state._twoColumnLayoutCollapsed,
@@ -36,9 +36,10 @@ export const storeSettings = defineStore('settings', {
     },
   },
   actions: {
-    setExpiresInterval(int: NodeJS.Timeout | undefined) {
+    setExpiresInterval(int: NodeJS.Timer | undefined) {
       if ((int === null || int === undefined) && this.expiresInterval) {
         clearInterval(this.expiresInterval)
+        window.clearInterval(this.expiresInterval)
       }
       this.expiresInterval = int
     },

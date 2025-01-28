@@ -79,12 +79,8 @@ async function useAPI2<T>(
       // }
 
       if (!urlsWithoutAuthentication.includes(url)) {
-        // const settings = storeSettings()
         const authStore = storeAuth()
-        console.error('set session lifetime', authStore.sessionExpiry)
         headers['X-opsi-session-lifetime'] = authStore.sessionExpiry
-        // headers['X-opsi-session-lifetime'] = 3600 // TODO: get from store
-        // store.commit('auth/setSession', expiry)
         authStore.setSession()
       }
       if (method !== 'GET' && body != undefined && url !== '/auth/login') {
