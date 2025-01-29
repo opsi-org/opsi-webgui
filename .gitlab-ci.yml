@@ -152,7 +152,7 @@ preinit:versions:
     - echo $VERSION_YML2
 
     - echo "----------------------------------------------------------------"
-    - VERSION_JSN=$(yq '.version' opsiweb/package.json | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
+    - VERSION_JSN=$(yq '.version' frontend/package.json | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_JSN
 
     - echo "----------------------------------------------------------------"
@@ -194,12 +194,17 @@ init:transifex-down:
   script:
     - TRANSIFEX_MIN_REVIEW_RATE=0.0
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_REVIEW_RATE=1.0'
-    # - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json --resource-name opsi-webgui.json
-    # - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json opsiweb/uib-components/locale/ --min-translation-rate 1
+    # download all 100% translated files
+    - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json frontend/locale/ --min-translation-rate 1
     - rm -f frontend/locale/opsi-webgui_de.json
     - rm -f frontend/locale/opsi-webgui_fr.json
+    # download 100 reviewed files (de, fr)
     - opsi-dev-cli -l debug transifex download-translations opsi-webgui.json frontend/locale/ --min-review-rate $TRANSIFEX_MIN_REVIEW_RATE -l de -l fr
     - chmod 666 frontend/locale/*
+    # at least en,de,fr have to exist
+    - test -f frontend/locale/opsi-webgui_en.json && echo "Translation en exists."
+    - test -f frontend/locale/opsi-webgui_de.json && echo "Translation de exists."
+    - test -f frontend/locale/opsi-webgui_fr.json && echo "Translation fr exists."
   only:
     - tags
     - v5
