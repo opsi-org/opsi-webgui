@@ -34,6 +34,7 @@
           >
             <el-input
               id="username"
+              ref="inputUsername"
               v-model="form.username"
               :disabled="isLoading"
               data-testid="login_username"
@@ -126,12 +127,13 @@
   const totp = ref('')
   const opsiconfigserver = ref('')
   const authMethods = ref('')
-
+  const inputUsername = ref()
   const METHOD_PASSWORD = 'password'
   const METHOD_SAML = 'saml'
 
   onMounted(async () => {
     isLoading.value = true
+    inputUsername.value?.focus()
     try {
       const useServerGet = await useConfigserver(true, undefined, $t)
       const res = await useServerGet.getOpsiConfigServerWithHeaders()

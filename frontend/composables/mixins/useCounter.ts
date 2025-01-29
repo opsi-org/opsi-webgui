@@ -17,10 +17,10 @@ export const useTimer = (init: boolean = false) => {
   const notification = ref<any>()
   const intervalId = ref<NodeJS.Timer>()
 
-  onMounted(() => {
-    notifyInMilliSec.value = (authStore.isAuthenticated ? 5 : -1) * 60000 //  // 5 min
-    if (init) initCountdownTimer()
-  })
+  notifyInMilliSec.value = (authStore.isAuthenticated ? 5 : -1) * 60000 //  // 5 min
+  if (init) initCountdownTimer()
+  // onMounted(() => {
+  // })
 
   onBeforeUnmount(() => {
     if (init) clearInterval(intervalId.value)
@@ -40,25 +40,19 @@ export const useTimer = (init: boolean = false) => {
     // const time = { min: t.minutes, s: t.seconds }
     if (t.diff <= notifyInMilliSec.value && !first_notification_showed.value) {
       first_notification_showed.value = true
-      notification.value = notifyInfo({
-        title: $t('message.session.info'),
-        message: $t('message.session.expiresInHours', {
-          h: t.hours,
-          min: t.minutes,
-          s: t.seconds,
-        }),
-        button: {
-          label: $t('label.extend'),
-          onClick: async () =>
-            await (
-              await useConfigserver(false, undefined, $t)
-            ).getOpsiConfigServerWithHeaders(),
-        },
-      })
+      _createNotification(t)
     } else if (
       t.diff <= notifyInMilliSec.value &&
       first_notification_showed.value
     ) {
+      const timerTextElement = document.getElementById('timerText')
+      if (timerTextElement) {
+        timerTextElement.innerHTML = _getNotificationText(t)
+      } else {
+        _createNotification(t)
+      }
+      // notification.value?.
+      // TODO: update text every second
       // if (this.refAlert?.showAlert === true) {
       //   this.initRef(time)
       // }
@@ -70,21 +64,44 @@ export const useTimer = (init: boolean = false) => {
       countdowntimer.value = $t('message.session.expired') as string
       console.error('Session expired')
       try {
-        useCallLogout().callLogout()
+        useCallLogout($t).callLogout()
       } catch (e) {
         authStore.logout()
         authStore.clearSession()
         settingsStore.setExpiresInterval(undefined)
         router.push('/login')
-        throw new Error('Cannot find logout btn, error: ' + e)
+        throw new Error(`${e}`)
       }
       settingsStore.setExpiresInterval(undefined)
       // clearInterval(intervalId.value)
     }
   }
+  function _createNotification(t: TTimeDiff) {
+    if (notification.value) notification.value?.close()
+    notification.value = notifyInfo({
+      title: $t('message.session.info'),
+      messageRef: 'timerText',
+      message: _getNotificationText(t),
+      duration: 0,
+      button: {
+        label: $t('label.extend'),
+        onClick: async () =>
+          await (
+            await useConfigserver(false, undefined, $t)
+          ).getOpsiConfigServerWithHeaders(),
+      },
+    })
+  }
+  function _getNotificationText(t: TTimeDiff) {
+    return $t('message.session.expiresInHours', {
+      h: t.hours,
+      min: t.minutes,
+      s: t.seconds,
+    })
+  }
   function getText(t: TTimeDiff, small: boolean = true) {
     if (t.days > 0) {
-      if (small === true) {
+      if (small) {
         return ` ${t.days}d ${t.hours}h ${t.minutes}m ${t.seconds}s`
       } else {
         return $t('message.session.expiresInDays', {

@@ -2,6 +2,11 @@ import { useMBus } from './useMessagebus'
 import { useNotification } from './useComponent'
 const { notifySuccess, notifyError } = useNotification()
 export const useCallLogout = (t: any = undefined) => {
+  if (t === undefined) {
+    // try to get t from i18n, better would be to pass it as parameter
+    console.warn('useCallLogout: t is undefined')
+    t = useI18n().t
+  }
   const wsDisconnect = useMBus(undefined, false, t).wsDisconnect // mixin
 
   const logout = storeAuth().logout
@@ -13,13 +18,17 @@ export const useCallLogout = (t: any = undefined) => {
     const { error } = await useApiPOST('/auth/logout')
     if (error) {
       notifyError({ message: error?.response?.data?.message })
+      console.error('error on logout', error)
       return
     }
-
-    wsDisconnect()
-    logout()
-    clearSession()
-    setExpiresInterval(undefined)
+    try {
+      wsDisconnect()
+      logout()
+      clearSession()
+      setExpiresInterval(undefined)
+    } catch (e) {
+      console.error('error on logout', e)
+    }
     if (useRoute().name !== 'login') {
       await useRouter().push({ path: '/login' })
     }

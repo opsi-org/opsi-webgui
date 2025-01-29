@@ -10,6 +10,7 @@ interface NotificationOptions {
   showClose?: boolean
   duration?: number
   onClose?: () => void
+  messageRef?: string
   button?: { label: string; onClick: PropTypeFunctionOptionalAsync }
 }
 
@@ -20,9 +21,13 @@ export function useNotification() {
   const notifications = ref<any[]>([])
   const clearAllNotification = ref<any>(null)
 
-  const formatMessage = (message: any) => {
+  const formatMessage = (
+    message: any,
+    messageRef: string | undefined = undefined,
+  ) => {
     if (typeof message === 'object' && message !== null) {
       return h('pre', {
+        ref: messageRef,
         innerHTML: Object.entries(message)
           .map(([key, value]) => {
             if (typeof value === 'object' && value !== null) {
@@ -37,15 +42,16 @@ export function useNotification() {
         style: { 'white-space': 'pre-wrap' },
       })
     }
-    return message
+    return h('p', { ref: messageRef, id: messageRef }, message) // simple
   }
 
   const _createNotificationContent = (
     type: NotificationType,
     button: any,
     message: any,
+    messageRef: string | undefined,
   ) => {
-    const itemsInNotification = [formatMessage(message)]
+    const itemsInNotification = [formatMessage(message, messageRef)]
     if (button) {
       itemsInNotification.push(
         h(
@@ -102,6 +108,7 @@ export function useNotification() {
       duration,
       onClose,
       button,
+      messageRef = undefined,
     }: NotificationOptions) => {
       const notificationInstance = ref<any>()
       const buttonObject = { ...button }
@@ -116,6 +123,7 @@ export function useNotification() {
         type,
         buttonObject,
         message,
+        messageRef,
       )
 
       const autoHideDuration = ['success', 'info'].includes(type)
