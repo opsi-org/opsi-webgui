@@ -31,7 +31,7 @@
       "type": "binary",
     },
   "project": { "allow_tag_delete": false, "description": "opsi\
-        \ webgui", "homepage": "http://www.opsi.org", "licenses": ["license": "AGPL-3.0"], "maintainer": "uib GmbH <info@uib.de>", "name": "opsi-webgui", "version": "4.3.46", "version_files": { "opsi-dev-tool.yml": "pull-binaries[0].version", "opsiweb/package.json": "$.version" } },
+        \ webgui", "homepage": "http://www.opsi.org", "licenses": ["license": "AGPL-3.0"], "maintainer": "uib GmbH <info@uib.de>", "name": "opsi-webgui", "version": "4.3.46", "version_files": { "opsi-dev-tool.yml": "pull-binaries[0].version", "opsiweb/package.json": "$.version", "backend/addon/webgui/python/const.py": "ADDON_VERSION" } },
   "pull-binaries":
     [
       {
