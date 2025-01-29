@@ -141,21 +141,26 @@ preinit:versions:
   stage: preinit
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11 # cause smaller then node...
   script:
-    - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 -E "version:|version\":" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
+    # download yq (yml parser) https://github.com/mikefarah/yq?tab=readme-ov-file
+    - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - echo "----------------------------------------------------------------"
+    - VERSION_YML=$(yq '.project.version' opsi-dev-tool.yml | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_YML
+
     - echo "----------------------------------------------------------------"
-    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 100 -e pull-binaries | grep -m 1 -E "version:|version\":" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
-    - VERSION_YML2=${VERSION_YML2//,/}
+    - VERSION_YML2=$(yq '.pull-binaries[0].version' opsi-dev-tool.yml | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_YML2
+
     - echo "----------------------------------------------------------------"
-    - VERSION_JSN=$(cat frontend/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
-    - VERSION_JSN=${VERSION_JSN//,/}
+    - VERSION_JSN=$(yq '.version' opsiweb/package.json | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_JSN
+
     - echo "----------------------------------------------------------------"
     - VERSION_PY=$(cat backend/addon/webgui/python/const.py | grep "ADDON_VERSION =" | awk '{print $3}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_PY
+
     - echo "----------------------------------------------------------------"
-    - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml doesnt match (project and pull-binaries section.. $VERSION_YML - $VERSION_YML2)"; exit 1; fi
+    - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml are uneuqal (project.version and pull-binaries[0].version].. $VERSION_YML - $VERSION_YML2)"; exit 1; fi
     - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN) "; exit 1; else echo "Versions are equal"; fi
     - if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/addon/webgui/python/const.py ($VERSION_YML - $VERSION_PY)"; exit 1; else echo "Versions are equal"; fi
 
