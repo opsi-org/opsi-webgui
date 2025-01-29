@@ -242,7 +242,7 @@ init:transifex:
     - chmod 666 opsiweb/uib-components/locale/*
     - echo "> rename files
     - cd opsiweb/uib-components/locale/
-    - for file in *.json; do mv -f \"$file\" \"${file/opsi-webgui-old/opsi-webgui}\"; done
+    - find . -depth -name "opsi-webgui-old*" -exec bash -c 'mv -- "$0" "${0//-old/}"' {} \;
     - ls -lah
     - cat opsi-webgui_de.json # has to exist
     - cd -
