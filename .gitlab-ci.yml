@@ -240,6 +240,8 @@ init:transifex:
     - opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/opsi-webgui_en.json --resource-name opsi-webgui-old.json
     - opsi-dev-cli -l debug transifex download-translations opsi-webgui-old.json opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de -l fr
     - chmod 666 opsiweb/uib-components/locale/*
+    - echo "> rename files"
+    - for file in *.json; do mv -f "$file" "${file/opsi-webgui-old/opsi-webgui}"; done
   only:
     - tags
     - v4.3
