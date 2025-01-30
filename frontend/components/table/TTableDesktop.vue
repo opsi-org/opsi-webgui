@@ -38,7 +38,7 @@
                 <template #default="scope">
                   <el-checkbox
                     v-model="scope.row.visible"
-                    @click.stop
+                    @click.capture.stop
                     :disabled="scope.row.alwaysVisible"
                   />
                 </template>
@@ -475,7 +475,7 @@
 
   function applySort(columnKey: string) {
     sortBy.value = columnKey
-    console.error('Sort By', sortBy.value)
+    // console.error('Sort By', sortBy.value)
     fetchWrapper()
   }
 
