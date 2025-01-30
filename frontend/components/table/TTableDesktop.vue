@@ -22,7 +22,12 @@
             <IconIIcon :icon="icons.columns" />
           </el-button>
           <template #dropdown>
-            <el-table ref="table" :data="tableColumn" style="width: 100%">
+            <el-table
+              ref="table"
+              :data="tableColumn"
+              style="width: 100%"
+              height="500"
+            >
               <el-table-column prop="title" label="Column" min-width="150px" />
               <el-table-column label="Column Selection">
                 <template #header>
