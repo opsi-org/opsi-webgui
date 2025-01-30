@@ -147,7 +147,6 @@
       key: 'version_outdated',
       sortable: true,
       visible: true,
-      alwaysVisible: true,
       width: '60px',
       icon: icons.productsOutdated,
       cellRenderer: getStatisticRenderer(
@@ -165,7 +164,6 @@
       key: 'version_outdated_netboot',
       sortable: true,
       visible: true,
-      alwaysVisible: true,
       width: '60px',
       icon: icons.productsOutdated,
       cellRenderer: getStatisticRenderer(
@@ -183,7 +181,6 @@
       key: 'installationStatus_unknown',
       sortable: true,
       visible: true,
-      alwaysVisible: true,
       width: '60px',
       icon: icons.productInstallationStatusUnknown,
       cellRenderer: getStatisticRenderer(
@@ -201,7 +198,6 @@
       key: 'installationStatus_installed',
       sortable: true,
       visible: true,
-      alwaysVisible: true,
       width: '60px',
       icon: icons.product,
       cellRenderer: getStatisticRenderer(
@@ -216,7 +212,6 @@
       key: 'actionResult_failed',
       sortable: true,
       visible: true,
-      alwaysVisible: true,
       width: '60px',
       icon: icons.productsFailedActionResult,
       cellRenderer: getStatisticRenderer(
@@ -234,7 +229,6 @@
       key: 'actionResult_successful',
       sortable: true,
       visible: true,
-      alwaysVisible: true,
       width: '60px',
       icon: icons.productActionResultSuccessful,
       cellRenderer: getStatisticRenderer(
@@ -249,7 +243,6 @@
       key: 'reachable',
       sortable: true,
       visible: true,
-      alwaysVisible: true,
       width: '60px',
     },
     {
