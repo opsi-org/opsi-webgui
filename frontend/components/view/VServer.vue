@@ -35,7 +35,7 @@
     {
       title: '',
       key: 'selected',
-      sortable: true,
+      sortable: 'custom',
       type: 'selection',
       visible: true,
       alwaysVisible: true,
@@ -70,7 +70,7 @@
     {
       title: $t('table.fields.id'),
       key: 'depotId',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
       alwaysVisible: true,
       filter: true,
@@ -92,13 +92,13 @@
     {
       title: $t('table.fields.description'),
       key: 'description',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
     },
     {
       title: $t('table.fields.type'),
       key: 'type',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
       cellRenderer: ({ rowData }: any) => {
         return (
@@ -115,7 +115,12 @@
         )
       },
     },
-    { title: $t('table.fields.ip'), key: 'ip', sortable: true, visible: false },
+    {
+      title: $t('table.fields.ip'),
+      key: 'ip',
+      sortable: 'custom',
+      visible: false,
+    },
     {
       title: $t('table.fields.rowactions'),
       key: 'actions',

@@ -163,7 +163,7 @@
     {
       title: '',
       key: 'selected',
-      sortable: true,
+      sortable: 'custom',
       type: 'selection',
       visible: true,
       alwaysVisible: true,
@@ -198,7 +198,7 @@
     {
       title: $t('table.fields.instStatus'),
       key: 'installationStatus',
-      sortable: true,
+      sortable: 'custom',
       visible: clientSelection.value.length > 0,
       width: '80px',
       icon: icons.product,
@@ -229,7 +229,7 @@
     {
       title: $t('table.fields.actionResult'),
       key: 'actionResult',
-      sortable: true,
+      sortable: 'custom',
       visible: clientSelection.value.length > 0,
       width: '80px',
       icon: icons.productActionResult,
@@ -259,7 +259,7 @@
     {
       title: $t('table.fields.productId'),
       key: 'productId',
-      sortable: true,
+      sortable: 'custom',
       alwaysVisible: true,
       visible: true,
       filter: true,
@@ -267,31 +267,31 @@
     {
       title: $t('table.fields.description'),
       key: 'description',
-      sortable: true,
+      sortable: 'custom',
       visible: false,
     },
     {
       title: $t('table.fields.advice'),
       key: 'advice',
-      sortable: true,
+      sortable: 'custom',
       visible: false,
     },
     {
       title: $t('table.fields.modificationTime'),
       key: 'modificationTime',
-      sortable: true,
+      sortable: 'custom',
       visible: false,
     },
     {
       title: $t('table.fields.priority'),
       key: 'priority',
-      sortable: true,
+      sortable: 'custom',
       visible: false,
     },
     {
       title: $t('table.fields.version'),
       key: 'version',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
       cellRenderer: ({ rowData }: any) => {
         return (
@@ -306,13 +306,13 @@
     {
       title: $t('table.fields.actionProgress'),
       key: 'actionProgress',
-      sortable: true,
+      sortable: 'custom',
       visible: false, //clientSelection.value.length > 0,
     },
     {
       title: $t('table.fields.actionRequest'),
       key: 'actionRequest',
-      sortable: true,
+      sortable: 'custom',
       visible: clientSelection.value.length > 0,
       headerCellRenderer: useMQ().isMobile.value
         ? undefined

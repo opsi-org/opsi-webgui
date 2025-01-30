@@ -73,7 +73,7 @@
     {
       title: '',
       key: 'selected',
-      sortable: true,
+      sortable: 'custom',
       type: 'selection',
       visible: true,
       alwaysVisible: true,
@@ -108,7 +108,7 @@
     {
       title: $t('table.fields.id'),
       key: 'clientId',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
       alwaysVisible: true,
       filter: true,
@@ -116,39 +116,39 @@
     {
       title: $t('table.fields.mac'),
       key: 'macAddress',
-      sortable: true,
+      sortable: 'custom',
       visible: false,
     },
     {
       title: $t('table.fields.ip'),
       key: 'ipAddress',
-      sortable: true,
+      sortable: 'custom',
       visible: false,
     },
     {
       title: $t('table.fields.description'),
       key: 'description',
-      sortable: true,
+      sortable: 'custom',
       visible: false,
     },
-    { title: 'notes', key: 'notes', sortable: true, visible: false },
+    { title: 'notes', key: 'notes', sortable: 'custom', visible: false },
     {
       title: $t('table.fields.lastSeen'),
       key: 'lastSeen',
-      sortable: true,
+      sortable: 'custom',
       visible: false,
     },
     {
       title: $t('table.fields.uefi'),
       key: 'uefi',
-      sortable: true,
+      sortable: 'custom',
       visible: false,
     },
 
     {
       title: $t('table.fields.versionOutdatedLocalboot'),
       key: 'version_outdated',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
       width: '60px',
       icon: icons.productsOutdated,
@@ -165,7 +165,7 @@
     {
       title: $t('table.fields.versionOutdatedNetboot'),
       key: 'version_outdated_netboot',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
       width: '60px',
       icon: icons.productsOutdated,
@@ -182,7 +182,7 @@
     {
       title: $t('table.fields.installationStatusUnknown'),
       key: 'installationStatus_unknown',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
       width: '60px',
       icon: icons.productInstallationStatusUnknown,
@@ -199,7 +199,7 @@
     {
       title: $t('table.fields.installationStatus_installed'),
       key: 'installationStatus_installed',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
       width: '60px',
       icon: icons.product,
@@ -213,7 +213,7 @@
     {
       title: $t('table.fields.actionResultFailed'),
       key: 'actionResult_failed',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
       width: '60px',
       icon: icons.productsFailedActionResult,
@@ -230,7 +230,7 @@
     {
       title: $t('table.fields.actionResult_successful'),
       key: 'actionResult_successful',
-      sortable: true,
+      sortable: 'custom',
       visible: true,
       width: '60px',
       icon: icons.productActionResultSuccessful,
