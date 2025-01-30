@@ -42,6 +42,7 @@
                 </div>
               </template>
               <span
+                class="text-xs"
                 :class="{
                   italic: item.anyClientDifferentFromDepot,
                   bold: item.anyDepotDifferentFromDefault,

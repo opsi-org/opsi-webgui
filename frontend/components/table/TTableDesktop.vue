@@ -249,6 +249,7 @@
     fetch: { type: Function, required: true },
     bodyHeight: { type: String, default: '80vh', required: false },
     sortBy: { type: String, default: undefined, required: false },
+    sortDesc: { type: Boolean, default: false, required: false },
     actionClone: { type: Function, default: undefined, required: false },
     actionLog: { type: Function, default: undefined, required: false },
     actionConfig: { type: Function, default: undefined, required: false },
@@ -270,7 +271,7 @@
   const filterQuery = ref('')
   const filterBy = ref(props.rowId)
   const sortBy = ref(props.sortBy || props.rowId)
-  const sortDesc = ref(false)
+  const sortDesc = ref(props.sortDesc || false)
   const contextMenuVisible = ref(false)
   const contextMenuStyle = ref({})
   const contextMenuRow = ref(null)
@@ -284,6 +285,13 @@
     () => props.sortBy,
     () => {
       sortBy.value = props.sortBy || props.rowId
+      fetchWrapper()
+    },
+  )
+  watch(
+    () => props.sortDesc,
+    () => {
+      sortDesc.value = props.sortDesc || false
       fetchWrapper()
     },
   )

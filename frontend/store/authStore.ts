@@ -5,6 +5,11 @@ import type { TTimeDiff } from '~/types/Datatypes'
 const expirySec = 60 * 30 // Default=30min=60s*30
 
 export const storeAuth = defineStore('auth', {
+  // persist: {
+  //   key: 'opsi-localchanges',
+  //   storage: localStorage,
+  //   // storage: sessionStorage,
+  // },
   // persist keeps username in localStorage.. even if logged out. No need for that here
   state: () => ({
     username: '',

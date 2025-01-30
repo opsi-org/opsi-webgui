@@ -158,12 +158,12 @@
     server: string | number,
     hosts: any,
   ) {
-    if (host != server || Object.keys(hosts).length <= 1) return
+    if (host != server || Object.keys(hosts || [])?.length <= 1) return
 
-    if (openedTTServer.value.includes(index)) {
+    if (openedTTServer.value?.includes(index)) {
       openedTTServer.value = openedTTServer.value.filter((i) => i !== index)
     } else {
-      openedTTServer.value = [...openedTTServer.value, index]
+      openedTTServer.value = [...(openedTTServer.value || []), index]
     }
   }
 </script>

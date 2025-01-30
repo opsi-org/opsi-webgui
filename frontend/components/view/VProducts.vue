@@ -5,13 +5,15 @@
     :row-id="rowId"
     :table-column="tableColumn"
     :fetch="fetchProducts"
-    :sort-by="props.sortby"
+    :sort-by="props.sortBy"
+    :sort-desc="props.sortDesc"
     body-height="64vh"
     :action-config="(rowData: any) => `/products/${currentType}/config/${rowData[rowId]}`"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionProducts(id)}"
     @clear-selection="storeSelection.clearSelectionProducts"
   >
     <template #toolbar-right>
+      {{ props.sortBy }}, {{ props.sortDesc }}
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
         :disabled="!hasUnsavedChanges"
@@ -128,7 +130,8 @@
     },
     productType: { type: String, default: 'LocalbootProduct' },
     isChild: { type: Boolean, default: false },
-    sortby: { type: String, default: 'productId' },
+    sortBy: { type: String, default: 'productId' },
+    sortDesc: { type: Boolean, default: false },
     selectedClient: { type: String, default: undefined },
   })
 

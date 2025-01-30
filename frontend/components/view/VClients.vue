@@ -154,7 +154,7 @@
       icon: icons.productsOutdated,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.versionOutdatedLocalboot'),
-        '/clients/products/LocalbootProduct?sortby=version&selectedClient=',
+        '/clients/products/LocalbootProduct?sortBy=version&sortDesc=true&selectedClient=',
         'version_outdated',
         'version',
         'LocalbootProduct',
@@ -171,7 +171,7 @@
       icon: icons.productsOutdated,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.versionOutdatedNetboot'),
-        '/clients/products/NetbootProduct?sortby=version&selectedClient=',
+        '/clients/products/NetbootProduct?sortBy=version&sortDesc=true&selectedClient=',
         'version_outdated_netboot',
         'version',
         'NetbootProduct',
@@ -188,7 +188,7 @@
       icon: icons.productInstallationStatusUnknown,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.installationStatusUnknown'),
-        '/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=',
+        '/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=',
         'installationStatus_unknown',
         'installationStatus',
         undefined, // type
@@ -205,7 +205,7 @@
       icon: icons.product,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.installationStatus_installed'),
-        '/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=',
+        '/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=',
         'installationStatus_installed',
         'installationStatus',
       ),
@@ -219,7 +219,7 @@
       icon: icons.productsFailedActionResult,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.actionResultFailed'),
-        '/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=',
+        '/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=',
         'actionResult_failed',
         'actionResult',
         undefined, // type
@@ -236,7 +236,7 @@
       icon: icons.productActionResultSuccessful,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.actionResult_successful'),
-        '/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=',
+        '/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=',
         'actionResult_successful',
         'actionResult',
       ),
@@ -405,7 +405,7 @@
     tootltip: string,
     url: string,
     value: string,
-    sortbyKey: string,
+    sortByKey: string,
     type: undefined | string = undefined,
     errorValue: number = Infinity,
     warnValue: number = Infinity,
@@ -420,13 +420,13 @@
         const currentRoute = router.currentRoute.value.fullPath
         if (type) {
           return (
-            currentRoute.includes('sortby=' + sortbyKey) &&
+            currentRoute.includes('sortBy=' + sortByKey) &&
             currentRoute.includes('selectedClient=' + rowData.clientId) &&
             currentRoute.includes('/' + type + '?')
           )
         }
         return (
-          currentRoute.includes('sortby=' + sortbyKey) &&
+          currentRoute.includes('sortBy=' + sortByKey) &&
           currentRoute.includes('selectedClient=' + rowData.clientId)
         )
       })
