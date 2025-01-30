@@ -4,13 +4,17 @@
     v-model="localSelectedItems"
     :options="data"
     :max-selected-labels="1"
-    class="w-full justify-stretch"
+    class="w-full justify-stretch text-xs"
     show-clear
+    size="small"
+    overlay-class="sselect-overlay"
+    data-testId="sselect"
     display="chip"
   >
     <!-- @change="() => $emit('change', localSelectedItems)" -->
     <template #option="{ option }">
       <span
+        class="text-xs"
         :class="{
           '!font-bold':
             (isArray(markedOptions) && markedOptions?.includes(option)) ||
@@ -21,7 +25,7 @@
     </template>
 
     <template v-if="props.editable" #footer>
-      <div class="p-3 flex justify-between">
+      <div class="p-3 flex justify-between text-xs">
         <PInputText
           v-model="localAddOption"
           class="w-full"
@@ -42,15 +46,19 @@
   </PMultiSelect>
   <PSelect
     v-else
+    data-testId="sselect"
     v-model="localSelectedItems"
     :options="data"
-    class="w-full justify-stretch"
+    size="small"
+    overlay-class="sselect-overlay"
+    class="w-full justify-stretch text-xs"
   >
     <!-- editable -->
     <template #option="{ option }">
       <span
+        class="text-xs"
         :class="{
-          '!font-bold':
+          '!font-extrabold':
             (isArray(markedOptions) && markedOptions?.includes(option)) ||
             markedOptions == option,
         }"
@@ -58,7 +66,7 @@
       >
     </template>
     <template v-if="props.editable" #footer>
-      <div class="p-3 flex justify-between">
+      <div class="p-3 flex justify-between text-xs">
         <PInputText
           v-model="localAddOption"
           class="w-full"
