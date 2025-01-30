@@ -13,7 +13,6 @@
     @clear-selection="storeSelection.clearSelectionProducts"
   >
     <template #toolbar-right>
-      {{ props.sortBy }}, {{ props.sortDesc }}
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
         :disabled="!hasUnsavedChanges"
