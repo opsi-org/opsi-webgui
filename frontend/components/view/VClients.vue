@@ -146,7 +146,7 @@
     },
 
     {
-      title: $t('table.fields.versionOutdatedGeneral'),
+      title: $t('table.fields.versionOutdatedLocalboot'),
       key: 'version_outdated',
       sortable: true,
       visible: true,
