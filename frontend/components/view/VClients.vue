@@ -43,6 +43,9 @@
   // import { Popover } from 'primevue'
 
   type TClientReach = Record<string, boolean | undefined>
+  interface t_param_reachable {
+    selectedClients?: string[]
+  }
 
   const { notifyError, notifyInfo } = useNotification()
   const $t = useI18n().t
@@ -341,7 +344,7 @@
   }
 
   async function handleClickReachable(clientIds: string[]) {
-    const params = {}
+    const params: t_param_reachable = {}
     if (clientIds?.length > 0) {
       params.selectedClients = clientIds
       for (const clientId of clientIds) {
