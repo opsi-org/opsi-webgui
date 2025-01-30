@@ -285,7 +285,7 @@
   "table.fields.uefi": "UEFI",
   "table.fields.unknown": "unknown",
   "table.fields.version": "(Server) Version",
-  "table.fields.versionOutdatedGeneral": "All outdated products",
+  "table.fields.versionOutdatedLocalboot": "Outdated localboot products",
   "table.fields.versionOutdatedNetboot": "Outdated netboot products",
   "table.fields.workbenchLocalUrl": "Workbench Local Url",
   "table.fields.workbenchRemoteUrl": "Workbench Remote Url",

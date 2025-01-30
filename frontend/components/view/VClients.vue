@@ -153,7 +153,7 @@
       width: '60px',
       icon: icons.productsOutdated,
       cellRenderer: getStatisticRenderer(
-        $t('table.fields.versionOutdatedGeneral'),
+        $t('table.fields.versionOutdatedLocalboot'),
         '/clients/products/LocalbootProduct?sortby=version&selectedClient=',
         'version_outdated',
         'version',
@@ -172,7 +172,7 @@
       cellRenderer: getStatisticRenderer(
         $t('table.fields.versionOutdatedNetboot'),
         '/clients/products/NetbootProduct?sortby=version&selectedClient=',
-        'version_outdated',
+        'version_outdated_netboot',
         'version',
         'NetbootProduct',
         Infinity,
@@ -436,12 +436,19 @@
         if (rowData[value] >= warnValue) return 'warn'
         return 'success'
       })
+      const val = computed<string>(() => {
+        let _val = rowData[value] || 0
+        if (value == 'version_outdated' && type == 'LocalbootProduct') {
+          _val = rowData[value] - rowData.version_outdated_netboot || 0
+        }
+        return _val
+      })
       return rowData[value] ? (
         <TTooltip
           v-slots={{
             default: () => (
               <Button
-                badge={(rowData[value] || 0) + ''}
+                badge={val.value}
                 badgeSeverity={severity.value}
                 onClick={click}
                 class="!inline !bg-transparent !m-0 !p-0 !border-0"
