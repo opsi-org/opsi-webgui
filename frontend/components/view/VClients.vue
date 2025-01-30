@@ -38,7 +38,11 @@
   import RadioButton from 'primevue/radiobutton'
   import Button from 'primevue/button'
   import TTooltip from '../tooltip/TTooltip.vue'
+  import IIcon from '../icon/IIcon.vue'
+  import ILoading from '../icon/ILoading.vue'
   // import { Popover } from 'primevue'
+
+  type TClientReach = Record<string, boolean | undefined>
 
   const { notifyError, notifyInfo } = useNotification()
   const $t = useI18n().t
@@ -57,13 +61,9 @@
       },
     },
   })
-  watch(
-    () => storeSelection.selectionDepots,
-    () => {
-      refetch()
-    },
-  )
-
+  const reachableClients = ref<TClientReach>({})
+  const reachableClientsIsLoading = ref<TClientReach>({})
+  const reachableClientsIsLoadingHeader = ref<boolean>(false)
   const rowId = 'clientId'
   const clientsRef = ref()
   const tableColumn = ref([
@@ -241,9 +241,46 @@
     {
       title: $t('table.fields.reachable'),
       key: 'reachable',
-      sortable: true,
+      sortable: false,
       visible: true,
       width: '60px',
+      headerCellRenderer: () => {
+        return reachableClientsIsLoadingHeader.value ? (
+          <ILoading small />
+        ) : (
+          <el-button
+            v-else
+            link
+            disabled={storeConfigapp().config?.read_only}
+            onClick={handleClickReachable}
+          >
+            <IIcon icon={icons.clientReachable} />
+          </el-button>
+        )
+      },
+      cellRenderer: ({ rowData }: any) => {
+        const reachable =
+          rowData.reachable || reachableClients.value[rowData.clientId]
+        switch (reachable) {
+          case true:
+            return <IIcon icon={icons.check} />
+          case false:
+            return <IIcon icon={icons.x} />
+          default:
+            return reachableClientsIsLoading.value[rowData.clientId] ||
+              reachableClientsIsLoadingHeader.value ? (
+              <ILoading small />
+            ) : (
+              <el-button
+                link
+                disabled={storeConfigapp().config?.read_only}
+                onClick={() => handleClickReachable([rowData.clientId])}
+              >
+                <IIcon icon={icons.clientReachable} />
+              </el-button>
+            )
+        }
+      },
     },
     {
       title: $t('table.fields.rowactions'),
@@ -254,6 +291,14 @@
       width: '170px',
     },
   ])
+
+  watch(
+    () => storeSelection.selectionDepots,
+    () => {
+      refetch()
+    },
+  )
+
   function refetch() {
     clientsRef.value?.refetch()
   }
@@ -293,6 +338,39 @@
       data: data.value,
       total: parseInt(headers.get('x-total-count') || '0'),
     }
+  }
+
+  async function handleClickReachable(clientIds: string[]) {
+    const params = {}
+    if (clientIds?.length > 0) {
+      params.selectedClients = clientIds
+      for (const clientId of clientIds) {
+        reachableClientsIsLoading.value[clientId] = true
+      }
+    } else {
+      reachableClientsIsLoadingHeader.value = true
+    }
+    const { data, error } = await useApiGETBody<TClientReach>(
+      '/opsidata/clients/reachable',
+      params,
+    )
+    if (error) {
+      console.error(error)
+      notifyError({
+        message: error?.response?.data?.message || $t('message.error.generic'),
+      })
+      return
+    }
+    for (const key in data.value) {
+      const val = data.value[key]
+      reachableClients.value[key] = val
+    }
+    if (clientIds?.length > 0) {
+      for (const clientId of clientIds) {
+        reachableClientsIsLoading.value[clientId] = false
+      }
+    }
+    reachableClientsIsLoadingHeader.value = false
   }
 
   async function wsBusMsgObjectChanged(msg: any = undefined) {
