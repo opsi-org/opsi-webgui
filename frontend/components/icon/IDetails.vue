@@ -1,3 +1,10 @@
+<!--
+This file is part of opsi-webgui application.
+opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+Copyright (c) uib GmbH <info@uib.de> 2025
+All rights reserved.
+License: AGPL-3.0
+-->
 <template>
   <div data-testid="IDetails" :class="'IDetails ' + content" class="inline">
     <p-tag :severity="props.variant" size="small" class="pt-0 pb-0">

@@ -3,6 +3,8 @@ import withNuxt from './.nuxt/eslint.config.mjs'
 
 // @ts-ignore
 import vueI18n from '@intlify/eslint-plugin-vue-i18n'
+// import header from 'eslint-plugin-header'
+// header.rules.header.meta.schema = false
 
 export default withNuxt(
   ...vueI18n.configs['flat/recommended'],
@@ -26,6 +28,8 @@ export default withNuxt(
     ],
   },
   {
+    // plugins: ['eslint-plugin-header'],
+    // plugins: { header },
     // Your custom configs here
     // https://eslint.nuxt.com/packages/module
     rules: {
@@ -33,14 +37,6 @@ export default withNuxt(
       'vue/attributes-order': 'off',
       'vue/html-self-closing': 'off',
       '@intlify/vue-i18n/no-missing-keys': ['error'],
-      // '@intlify/vue-i18n/no-unused-keys': [
-      //   'warn',
-      //   {
-      //     extensions: ['.vue', '.ts', '.js'],
-      //     enableFix: false,
-      //     ignores: ['**/*.test.*', '**/*.story.*'],
-      //   },
-      // ],
       // console error and warn are allowed
       'no-console': [
         'error',
