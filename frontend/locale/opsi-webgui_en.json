@@ -178,7 +178,7 @@
   "message.info.nologs": "No log data.",
   "message.loading": "Loading",
   "message.login.currentUser": "Logged in as \"{user}\"",
-  "message.login.noauthenticationmethod": "No authentication method available. Please contact your administrator.",
+  "message.login.noauthenticationmethod": "No authentication method available. This can also happen if the configserver is not reachable.You may want to cantact your administrator.",
   "message.page.redirect": "Redirecting...",
   "message.session.expired": "Session expired.",
   "message.session.expiresInDays": "Automatically log out in {d} d {h} h, {min} min and {s} s.",
