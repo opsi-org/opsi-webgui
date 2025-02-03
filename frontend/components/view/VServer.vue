@@ -7,11 +7,14 @@ License: AGPL-3.0
 -->
 <template>
   <TableTTable
+    ref="tableRef"
     :row-id="rowId"
     :is-mobile="isMobile"
     :table-column="tableColumn"
     :fetch="fetchServer"
     :action-config="(rowData: any) => `/servers/server/config/${rowData[rowId]}`"
+    :sort-by="storeCookie.serversSorting.column"
+    :sort-desc="storeCookie.serversSorting.isDesc"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionDepots(id)}"
     @clear-selection="storeSelection.clearSelectionDepots"
   />
@@ -27,6 +30,7 @@ License: AGPL-3.0
   const $t = useI18n().t
 
   const storeSelection = storeSelections()
+  const storeCookie = storeTablesettings()
 
   const emit = defineEmits(['change'])
   const _props = defineProps({
@@ -37,14 +41,16 @@ License: AGPL-3.0
       },
     },
   })
+
   const rowId = 'depotId'
+  const tableRef = ref()
   const tableColumn = ref([
     {
       title: '',
       key: 'selected',
       sortable: 'custom',
       type: 'selection',
-      visible: true,
+      visible: storeCookie.serversColumns.includes('selected'),
       alwaysVisible: true,
       width: '60px',
       cellRenderer: ({ rowData }: any) => {
@@ -78,7 +84,7 @@ License: AGPL-3.0
       title: $t('table.fields.id'),
       key: 'depotId',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.serversColumns.includes('depotId'),
       alwaysVisible: true,
       filter: true,
       cellRenderer: ({ rowData }: any) => {
@@ -100,13 +106,13 @@ License: AGPL-3.0
       title: $t('table.fields.description'),
       key: 'description',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.serversColumns.includes('description'),
     },
     {
       title: $t('table.fields.type'),
       key: 'type',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.serversColumns.includes('type'),
       cellRenderer: ({ rowData }: any) => {
         return (
           <>
@@ -126,26 +132,34 @@ License: AGPL-3.0
       title: $t('table.fields.ip'),
       key: 'ip',
       sortable: 'custom',
-      visible: false,
+      visible: storeCookie.serversColumns.includes('ip'),
     },
     {
       title: $t('table.fields.rowactions'),
       key: 'actions',
       sortable: false,
-      visible: true,
+      visible: storeCookie.serversColumns.includes('actions'),
       alwaysVisible: true,
       width: '150px',
     },
   ])
 
-  async function fetchServer(_params: any) {
-    const params = { ..._params, selected: '' }
+  watch(
+    () => storeCookie.serversSorting,
+    () => {
+      refetch()
+    },
+    { deep: true },
+  )
+
+  function refetch() {
+    tableRef.value?.refetch()
+  }
+  async function fetchServer(params: any) {
     if (params.sortBy === '') {
       params.sortBy = 'depotId'
-    }
-    if (params.sortBy === 'selected') {
-      params.sortDesc = true
-      params.selected = JSON.stringify([])
+    } else if (params.sortBy === 'selected') {
+      params.selected = JSON.stringify(storeSelection.selectionDepots)
     }
 
     const { data, error, headers } = await useApiGETBody<T_ServerList>(
@@ -162,14 +176,15 @@ License: AGPL-3.0
       })
       return
     }
-
-    const opsiconfigserver = storeCache().opsiconfigserver
-    if (opsiconfigserver) {
-      storeSelection.pushToSelectionDepots(opsiconfigserver)
-      emit('change', opsiconfigserver)
-    } else {
-      storeSelection.pushToSelectionDepots(data.value[0].depotId)
-      emit('change', data.value[0].depotId)
+    if (params.sortBy !== 'selected') {
+      const opsiconfigserver = storeCache().opsiconfigserver
+      if (opsiconfigserver) {
+        storeSelection.pushToSelectionDepots(opsiconfigserver)
+        emit('change', opsiconfigserver)
+      } else {
+        storeSelection.pushToSelectionDepots(data.value[0].depotId)
+        emit('change', data.value[0].depotId)
+      }
     }
     for (const dId of storeSelection.selectionDepots) {
       data.value

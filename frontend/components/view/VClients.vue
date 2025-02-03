@@ -14,7 +14,8 @@ License: AGPL-3.0
     :action-clone="(rowData: any) => `/clients/client/clone/${rowData[rowId]}`"
     :action-log="(rowData: any) => `/clients/client/logs/${rowData[rowId]}`"
     :action-config="(rowData: any) => `/clients/client/config/${rowData[rowId]}`"
-    :sort-by="rowId"
+    :sort-by="storeCookie.clientsSorting.column"
+    :sort-desc="storeCookie.clientsSorting.isDesc"
     :table-column="tableColumn"
     :fetch="fetchClients"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionClients(id)}"
@@ -61,6 +62,7 @@ License: AGPL-3.0
   const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 
   const storeSelection = storeSelections()
+  const storeCookie = storeTablesettings()
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
   const _props = defineProps({
@@ -82,7 +84,7 @@ License: AGPL-3.0
       key: 'selected',
       sortable: 'custom',
       type: 'selection',
-      visible: true,
+      visible: storeCookie.clientsColumns.includes('selected'),
       alwaysVisible: true,
       width: '60px',
 
@@ -116,7 +118,7 @@ License: AGPL-3.0
       title: $t('table.fields.id'),
       key: 'clientId',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.clientsColumns.includes('clientId'),
       alwaysVisible: true,
       filter: true,
     },
@@ -124,39 +126,41 @@ License: AGPL-3.0
       title: $t('table.fields.mac'),
       key: 'macAddress',
       sortable: 'custom',
-      visible: false,
+      visible: storeCookie.clientsColumns.includes('macAddress'),
     },
     {
       title: $t('table.fields.ip'),
       key: 'ipAddress',
       sortable: 'custom',
-      visible: false,
+      visible: storeCookie.clientsColumns.includes('ipAddress'),
     },
     {
       title: $t('table.fields.description'),
       key: 'description',
       sortable: 'custom',
-      visible: false,
+      visible: storeCookie.clientsColumns.includes('description'),
     },
     { title: 'notes', key: 'notes', sortable: 'custom', visible: false },
     {
       title: $t('table.fields.lastSeen'),
       key: 'lastSeen',
       sortable: 'custom',
-      visible: false,
+      visible: storeCookie.clientsColumns.includes('lastSeen'),
     },
     {
       title: $t('table.fields.uefi'),
       key: 'uefi',
       sortable: 'custom',
-      visible: false,
+      visible: storeCookie.clientsColumns.includes('uefi'),
     },
 
     {
       title: $t('table.fields.versionOutdatedLocalboot'),
       key: 'version_outdated',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.clientsColumns.includes(
+        'version_outdated_localboot',
+      ),
       width: '60px',
       icon: icons.productsOutdated,
       cellRenderer: getStatisticRenderer(
@@ -173,7 +177,7 @@ License: AGPL-3.0
       title: $t('table.fields.versionOutdatedNetboot'),
       key: 'version_outdated_netboot',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.clientsColumns.includes('version_outdated_netboot'),
       width: '60px',
       icon: icons.productsOutdated,
       cellRenderer: getStatisticRenderer(
@@ -190,7 +194,9 @@ License: AGPL-3.0
       title: $t('table.fields.installationStatusUnknown'),
       key: 'installationStatus_unknown',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.clientsColumns.includes(
+        'installationStatus_unknown',
+      ),
       width: '60px',
       icon: icons.productInstallationStatusUnknown,
       cellRenderer: getStatisticRenderer(
@@ -207,7 +213,9 @@ License: AGPL-3.0
       title: $t('table.fields.installationStatus_installed'),
       key: 'installationStatus_installed',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.clientsColumns.includes(
+        'installationStatus_installed',
+      ),
       width: '60px',
       icon: icons.product,
       cellRenderer: getStatisticRenderer(
@@ -221,7 +229,7 @@ License: AGPL-3.0
       title: $t('table.fields.actionResultFailed'),
       key: 'actionResult_failed',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.clientsColumns.includes('actionResult_failed'),
       width: '60px',
       icon: icons.productsFailedActionResult,
       cellRenderer: getStatisticRenderer(
@@ -238,7 +246,7 @@ License: AGPL-3.0
       title: $t('table.fields.actionResult_successful'),
       key: 'actionResult_successful',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.clientsColumns.includes('actionResult_successful'),
       width: '60px',
       icon: icons.productActionResultSuccessful,
       cellRenderer: getStatisticRenderer(
@@ -252,7 +260,7 @@ License: AGPL-3.0
       title: $t('table.fields.reachable'),
       key: 'reachable',
       sortable: false,
-      visible: true,
+      visible: storeCookie.clientsColumns.includes('reachable'),
       width: '60px',
       headerCellRenderer: () => {
         return reachableClientsIsLoadingHeader.value ? (
@@ -296,12 +304,19 @@ License: AGPL-3.0
       title: $t('table.fields.rowactions'),
       key: 'actions',
       sortable: false,
-      visible: true,
+      visible: storeCookie.clientsColumns.includes('actions'),
       alwaysVisible: true,
       width: '170px',
     },
   ])
 
+  watch(
+    () => storeCookie.clientsSorting,
+    () => {
+      refetch()
+    },
+    { deep: true },
+  )
   watch(
     () => storeSelection.selectionDepots,
     () => {

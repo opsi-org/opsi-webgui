@@ -6,14 +6,15 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
+  {{ props.sortBy }}; {{ storeCookie.productsSorting.column }} => {{ sortBy }}
   <TableTTable
     ref="productsRef"
     :is-mobile="isMobile"
     :row-id="rowId"
     :table-column="tableColumn"
     :fetch="fetchProducts"
-    :sort-by="props.sortBy"
-    :sort-desc="props.sortDesc"
+    :sort-by="sortBy"
+    :sort-desc="sortDesc"
     body-height="64vh"
     :action-config="(rowData: any) => `/products/${currentType}/config/${rowData[rowId]}`"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionProducts(id)}"
@@ -124,6 +125,7 @@ License: AGPL-3.0
   useMBus(wsBusMsgObjectChanged, false, $t)
 
   const storeSelection = storeSelections()
+  const storeCookie = storeTablesettings()
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
   const emit = defineEmits(['change'])
@@ -140,6 +142,8 @@ License: AGPL-3.0
     sortDesc: { type: Boolean, default: false },
     selectedClient: { type: String, default: undefined },
   })
+  const sortBy = ref(props.sortBy)
+  const sortDesc = ref(props.sortDesc)
 
   const id = 'products'
   const rowId = 'productId'
@@ -166,7 +170,6 @@ License: AGPL-3.0
     if (productsTypeChecked.value.Product) return 'Product'
     return 'LocalbootProduct'
   })
-  const openBufferedChangesModal = ref(false)
 
   const tableColumn = ref([
     {
@@ -174,7 +177,7 @@ License: AGPL-3.0
       key: 'selected',
       sortable: 'custom',
       type: 'selection',
-      visible: true,
+      visible: storeCookie.productsColumns.includes('selected'),
       alwaysVisible: true,
       width: '60px',
       cellRenderer: ({ rowData }: any) => {
@@ -208,7 +211,9 @@ License: AGPL-3.0
       title: $t('table.fields.instStatus'),
       key: 'installationStatus',
       sortable: 'custom',
-      visible: clientSelection.value.length > 0,
+      visible:
+        clientSelection.value.length > 0 &&
+        storeCookie.productsColumns.includes('installationStatus'),
       width: '80px',
       icon: icons.product,
       cellRenderer: ({ rowData }: any) => {
@@ -239,7 +244,9 @@ License: AGPL-3.0
       title: $t('table.fields.actionResult'),
       key: 'actionResult',
       sortable: 'custom',
-      visible: clientSelection.value.length > 0,
+      visible:
+        clientSelection.value.length > 0 &&
+        storeCookie.productsColumns.includes('actionResult'),
       width: '80px',
       icon: icons.productActionResult,
       cellRenderer: ({ rowData }: any) => {
@@ -270,38 +277,38 @@ License: AGPL-3.0
       key: 'productId',
       sortable: 'custom',
       alwaysVisible: true,
-      visible: true,
+      visible: storeCookie.productsColumns.includes('productId'),
       filter: true,
     },
     {
       title: $t('table.fields.description'),
       key: 'description',
       sortable: 'custom',
-      visible: false,
+      visible: storeCookie.productsColumns.includes('description'),
     },
     {
       title: $t('table.fields.advice'),
       key: 'advice',
       sortable: 'custom',
-      visible: false,
+      visible: storeCookie.productsColumns.includes('advice'),
     },
     {
       title: $t('table.fields.modificationTime'),
       key: 'modificationTime',
       sortable: 'custom',
-      visible: false,
+      visible: storeCookie.productsColumns.includes('modificationTime'),
     },
     {
       title: $t('table.fields.priority'),
       key: 'priority',
       sortable: 'custom',
-      visible: false,
+      visible: storeCookie.productsColumns.includes('priority'),
     },
     {
       title: $t('table.fields.version'),
       key: 'version',
       sortable: 'custom',
-      visible: true,
+      visible: storeCookie.productsColumns.includes('version'),
       cellRenderer: ({ rowData }: any) => {
         return (
           <TCProductVersionCell
@@ -316,13 +323,17 @@ License: AGPL-3.0
       title: $t('table.fields.actionProgress'),
       key: 'actionProgress',
       sortable: 'custom',
-      visible: false, //clientSelection.value.length > 0,
+      visible:
+        selectionClients.value.length > 0 &&
+        storeCookie.productsColumns.includes('actionProgress'),
     },
     {
       title: $t('table.fields.actionRequest'),
       key: 'actionRequest',
       sortable: 'custom',
-      visible: clientSelection.value.length > 0,
+      visible:
+        clientSelection.value.length > 0 &&
+        storeCookie.productsColumns.includes('actionRequest'),
       headerCellRenderer: useMQ().isMobile.value
         ? undefined
         : () => {
@@ -349,7 +360,7 @@ License: AGPL-3.0
       title: $t('table.fields.rowactions'),
       key: 'actions',
       sortable: false,
-      visible: true,
+      visible: storeCookie.productsColumns.includes('actions'),
       alwaysVisible: true,
       width: '150px',
       cellRenderer: ({ rowData }: any) => {
@@ -377,6 +388,7 @@ License: AGPL-3.0
     },
   ])
 
+  const openBufferedChangesModal = ref(false)
   const bufferedChanges = ref<Array<any>>([])
 
   const hasUnsavedChanges = computed(() => bufferedChanges.value?.length > 0)
@@ -392,6 +404,30 @@ License: AGPL-3.0
     productsRef.value?.refetch()
   })
 
+  storeCookie.setSortColumn('products', sortBy.value, sortDesc.value)
+  watch(
+    () => props.sortBy,
+    () => {
+      sortBy.value = props.sortBy
+      storeCookie.setSortColumn('products', sortBy.value, sortDesc.value)
+    },
+  )
+  watch(
+    () => props.sortDesc,
+    () => {
+      sortDesc.value = props.sortDesc
+      storeCookie.setSortColumn('products', sortBy.value, sortDesc.value)
+    },
+  )
+  watch(
+    () => storeCookie.productsSorting,
+    () => {
+      // refetch()
+      sortBy.value = storeCookie.productsSorting.column
+      sortDesc.value = storeCookie.productsSorting.isDesc
+    },
+    { deep: true },
+  )
   watch(
     () => props.selectedClient,
     (v) => {
@@ -493,8 +529,12 @@ License: AGPL-3.0
       params.sortBy =
         '["client_version_outdated", "depot_version_diff", "not_on_all_depots", "clientVersions", "depotVersions"]'
     } else if (params.sortBy === 'selected') {
-      params.sortDesc = true
-      params.selected = JSON.stringify(selectionProducts)
+      if (selectionProducts.value.length > 0) {
+        params.sortDesc = true
+        params.selected = JSON.stringify(selectionProducts.value)
+      } else {
+        params.sortBy = 'productId'
+      }
     }
     return params
   }

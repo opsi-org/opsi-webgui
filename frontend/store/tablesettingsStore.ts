@@ -6,25 +6,51 @@ All rights reserved.
 License: AGPL-3.0
 */
 import { defineStore } from 'pinia'
+type tTableType = 'servers' | 'clients' | 'products'
+interface tVisible {
+  servers: Array<string>
+  clients: Array<string>
+  products: Array<string>
+}
+interface tSortItem {
+  column: string
+  isDesc: boolean
+}
+interface tSort {
+  servers: tSortItem
+  clients: tSortItem
+  products: tSortItem
+}
 const _data_configLastSelected = { clients: '', servers: '', products: '' }
-const _data_visibleColumns = {
-  // servers: ['sel', 'depotId', 'description', 'type', 'ip', 'rowactions'], // all columns
-  servers: ['sel', 'depotId', 'description', 'type', 'rowactions'],
-  // clients: ['sel', 'clientId', 'description', 'ipAddress', 'macAddress', 'lastSeen', 'uefi', '_majorStats', 'reachable', 'rowactions'], // all columns
-  // clients: ['sel', 'clientId', 'description', '_majorStats', 'rowactions'],
-  clients: ['sel', 'clientId', 'description', '_majorStats', 'rowactions'],
-  // products: ['sel', 'productId', 'name', 'description', 'installationStatus', 'actionResult', 'modificationTime', 'priority', 'version', 'actionProgress', 'actionRequest', 'rowactions'], // all columns
+const _data_visibleColumns: tVisible = {
+  // servers: ['selected', 'depotId', 'description', 'type', 'ip', 'actions'], // all columns
+  servers: ['selected', 'depotId', 'description', 'type', 'actions'],
+  // clients: [selected, clientId, description, ipAddress, macAddress, lastSeen, uefi, version_outdated_localboot, version_outdated_netboot,installationStatus_unknown, installationStatus_installed, actionResult_failed, actionResult_successful
+  //  reachable, actions], // all columns
+  // clients: ['selected, 'clientId, 'description, '_majorStats, 'actions'],
+  clients: [
+    'selected',
+    'clientId',
+    'version_outdated_localboot',
+    'version_outdated_netboot',
+    'installationStatus_unknown',
+    'installationStatus_installed',
+    'actionResult_failed',
+    'actionResult_successful',
+    'actions',
+  ],
+  // products: ['selected', 'productId', 'name', 'description', 'installationStatus', 'actionResult', 'modificationTime', 'priority', 'version', 'actionProgress', 'actionRequest', 'actions'], // all columns
   products: [
-    'sel',
+    'selected',
     'installationStatus',
     'actionResult',
     'productId',
     'version',
     'actionRequest',
-    'rowactions',
+    'actions',
   ],
 }
-const _data_sortColumns = {
+const _data_sortColumns: tSort = {
   servers: { column: 'depotId', isDesc: false },
   clients: { column: 'clientId', isDesc: false },
   products: { column: 'productId', isDesc: false },
@@ -42,8 +68,8 @@ export const storeTablesettings = defineStore('tablesettings', {
   state: () => ({
     // the state objects are stored in localStorage
     _configLastSelected: deepCp(_data_configLastSelected),
-    _visibleColumns: deepCp(_data_visibleColumns),
-    _sortColumns: deepCp(_data_sortColumns),
+    _visibleColumns: deepCp(_data_visibleColumns) as tVisible,
+    _sortColumns: deepCp(_data_sortColumns) as tSort,
     secondColumnSelectedRowId: '',
   }),
   getters: {
@@ -67,11 +93,11 @@ export const storeTablesettings = defineStore('tablesettings', {
     setSecondColumnSelectedRowId(id: string) {
       this.secondColumnSelectedRowId = id
     },
-    setColumns(tabletype: string, value: Array<string>) {
+    setColumns(tabletype: tTableType, value: Array<string>) {
       this._visibleColumns[tabletype] = value
     },
-    setSortColumn(tabletype: string, column: string, isDesc: boolean) {
-      this._sortColumns[tabletype] = { column, isDesc }
+    setSortColumn(tabletype: tTableType, column: string, isDesc: boolean) {
+      this._sortColumns[tabletype] = { column, isDesc } as tSortItem
     },
     setConfigLastSelected(tabletype: string, value: string) {
       this._configLastSelected[tabletype] = value

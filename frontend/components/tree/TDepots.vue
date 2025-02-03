@@ -22,6 +22,7 @@ License: AGPL-3.0
   const $t = useI18n().t
 
   const storeSelection = storeSelections()
+  const useCookie = storeTablesettings()
   const depotIDList = ref<T_DepotIds>([])
   const selectedDepots = ref<T_DepotIds>([])
 
@@ -51,5 +52,6 @@ License: AGPL-3.0
 
   const handleDepotSelection = () => {
     storeSelection.setSelectionDepots(selectedDepots.value)
+    useCookie.setSortColumn('servers', 'selected', true)
   }
 </script>

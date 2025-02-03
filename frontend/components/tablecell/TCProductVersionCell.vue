@@ -47,7 +47,7 @@ License: AGPL-3.0
           :class="[
             host == server ? '' : 'pl-4',
             host !== server && !openedTTServer.includes(index) ? '!hidden' : '',
-            Object.keys(hosts).length > 1 ? '' : '',
+            Object.keys(hosts || {}).length > 1 ? '' : '',
           ]"
           @click="toggleTTRow(index, host, server, hosts)"
         >
@@ -165,7 +165,8 @@ License: AGPL-3.0
     server: string | number,
     hosts: any,
   ) {
-    if (host != server || Object.keys(hosts || [])?.length <= 1) return
+    if (hosts == undefined) return
+    if (host != server || Object.keys(hosts || {})?.length <= 1) return
 
     if (openedTTServer.value?.includes(index)) {
       openedTTServer.value = openedTTServer.value.filter((i) => i !== index)

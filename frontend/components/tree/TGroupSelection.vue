@@ -49,7 +49,7 @@ License: AGPL-3.0
   const { notifyError } = useNotification()
   const $t = useI18n().t
   const groupsHelper = useGroupsHelper()
-
+  const useCookie = storeTablesettings()
   const props = defineProps({
     grouptype: { type: String as PropType<PropTypeGroupTree>, required: true },
   })
@@ -190,6 +190,11 @@ License: AGPL-3.0
       handleSelection(node, obj, multiSelection.value)
       isLoadingSelection.value = false
     }
+    // setSortColumn(tabletype: string, column: string, isDesc: boolean) {
+    if (props.grouptype == GroupTree_CLIENTGROUP)
+      useCookie.setSortColumn('clients', 'selected', true)
+    else useCookie.setSortColumn('products', 'selected', true)
+
     // _getSelectionFunction()(_getSelection().value)
   }
   function handleSelection(node: TreeNodeData, obj: any, multiSelect: boolean) {
