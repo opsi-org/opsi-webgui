@@ -11,6 +11,8 @@ ADDON_ID=$1
 ADDON_NAME=$2
 
 WORKING_DIR=$3
+INSTALL=$4
+SHOULD_INSTALL=install
 FRONTEND_DIR=frontend
 BACKEND_DIR=backend
 WEBGUI_DIR=webgui
@@ -90,7 +92,9 @@ echo "> packaging done"
 
 echo "> check if also install locally"
 # if [ $4 -eq 0 ]; then
-if [ $4 "$variable" ]; then
+# if [ $4 "$variable" ]; then
+# if [ -n "$4" ]; then
+if [ "$INSTALL" = "$SHOULD_INSTALL" ]; then
     echo ".....install locally"
     # rm -rf /var/lib/opsiconfd/addons/webgui
     # mv -f webgui/ /var/lib/opsiconfd/addons/.
