@@ -16,7 +16,7 @@ License: AGPL-3.0
         </el-button>
         <el-input
           v-model="filterQuery"
-          placeholder="Type to filter..."
+          :placeholder="$t('label.filter.placeholder')"
           clearable
         >
           <template #prefix>
@@ -35,10 +35,18 @@ License: AGPL-3.0
               style="width: 100%"
               height="500"
             >
-              <el-table-column prop="title" label="Column" min-width="150px" />
-              <el-table-column label="Column Selection">
+              <el-table-column :label="$t('label.column')" min-width="150px">
+                <!-- prop="title" -->
+                <template #default="scope">
+                  <el-text v-if="scope.row.title">{{
+                    scope.row.title
+                  }}</el-text>
+                  <el-text v-else>{{ $t('label.selection') }}</el-text>
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('label.column.selection')">
                 <template #header>
-                  <el-tooltip content="Column Selection">
+                  <el-tooltip :content="$t('label.column.selection')">
                     <IconIIcon :icon="icons.columns" />
                   </el-tooltip>
                 </template>
@@ -50,10 +58,14 @@ License: AGPL-3.0
                   />
                 </template>
               </el-table-column>
-              <el-table-column label="Sort">
+              <el-table-column :label="$t('label.sort')">
                 <template #header>
                   <el-tooltip
-                    :content="sortDesc ? 'Sort Descending' : 'Sort Ascending'"
+                    :content="
+                      sortDesc
+                        ? $t('label.sort.descending')
+                        : $t('label.sort.ascending')
+                    "
                   >
                     <el-button @click="toggleSortOrder">
                       <IconIIcon
@@ -72,9 +84,9 @@ License: AGPL-3.0
                   />
                 </template>
               </el-table-column>
-              <el-table-column label="Filter">
+              <el-table-column :label="$t('label.filter')">
                 <template #header>
-                  <el-tooltip content="Filter">
+                  <el-tooltip :content="$t('label.filter')">
                     <IconIIcon :icon="icons.filter" />
                   </el-tooltip>
                 </template>
