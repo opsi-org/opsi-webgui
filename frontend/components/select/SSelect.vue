@@ -6,6 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
+  <IconILoading v-if="isLoadingData || isLoading" />
   <PMultiSelect
     v-if="multiSelection"
     v-model="localSelectedItems"
@@ -97,22 +98,11 @@ License: AGPL-3.0
 
 <script setup lang="ts" generic="T extends string | boolean">
   const icons = useIcons()
-  // const props = withDefaults(
-  //   defineProps<{
-  //     // data: T[]
-  //     selectedOptions?: T | T[]
-  //     markedOptions?: T | T[]
-  //     multiSelection?: boolean
-  //     editable?: boolean
-  //   }>(),
-  //   {
-  //     selectedOptions: undefined,
-  //     markedOptions: undefined,
-  //     multiSelection: false,
-  //     editable: false,
-  //   },
-  // )
   const props = defineProps({
+    isLoadingData: {
+      type: Boolean,
+      default: false,
+    },
     infoId: {
       type: String,
       required: false,
@@ -168,9 +158,9 @@ License: AGPL-3.0
 
   const $emit = defineEmits(['change'])
   const data = defineModel<T[]>('data')
-  const localAddOption = ref<string>('')
   const localSelectedItems = defineModel<T | T[]>('selection')
-
+  const localAddOption = ref<string>('')
+  const isLoading = ref(false)
   watch(
     () => props.multiSelection,
     (newValue: boolean) => {
@@ -190,6 +180,7 @@ License: AGPL-3.0
   )
 
   onMounted(() => {
+    isLoading.value = true
     if (!props.allowEmpty) {
       assert(data.value !== undefined, 'Data is undefined')
     } else {
@@ -219,6 +210,7 @@ License: AGPL-3.0
     }
 
     if (props.selectedOptions === undefined) {
+      isLoading.value = false
       return
     } else if (isArray(props.selectedOptions)) {
       localSelectedItems.value = props.selectedOptions
@@ -226,6 +218,7 @@ License: AGPL-3.0
     } else {
       localSelectedItems.value = props.selectedOptions as T
     }
+    isLoading.value = false
   })
 
   watch(

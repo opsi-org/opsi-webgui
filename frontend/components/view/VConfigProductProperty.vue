@@ -115,6 +115,7 @@ License: AGPL-3.0
         </div>
         <div v-else class="w-full justify-stretch">
           <SelectSSelect
+            :is-loading-data="isLoadingConfig[item.propertyId]"
             v-model:selection="itemValues[item.propertyId]"
             v-model:data="item.allValues"
             :editable="item.editable"
@@ -186,7 +187,8 @@ License: AGPL-3.0
   const hasUnsavedChanges = ref(false)
   const changeBuffer = ref<{ [key: string]: any }>({})
 
-  const propertiesWithProducts = ['setup_after_install']
+  const propertiesWithProducts = ['setup_after_install', 'additional_packages']
+  const isLoadingConfig = ref<{ [key: string]: boolean }>({})
 
   async function fetchProducts(type: tproducttypes) {
     const { data, error } = await useApiGET<T_Product[]>(
@@ -273,10 +275,12 @@ License: AGPL-3.0
   async function initFormData() {
     for (const item of Object.values(props.properties)) {
       if (propertiesWithProducts.includes(item.propertyId)) {
+        isLoadingConfig.value[item.propertyId] = true
         const productIdsL = (await fetchProducts('LocalbootProduct')) || []
         // If needed add Netboots const productIdsN = (await fetchProducts('NetbootProduct')) || []
         // item.allValues = productIdsN.concat(productIdsL).sort()
         item.allValues = productIdsL.sort()
+        isLoadingConfig.value[item.propertyId] = false
       }
       const initialValue = getInitialValue(item)
       itemValues.value[item.propertyId] = initialValue
