@@ -6,7 +6,6 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  {{ props.sortBy }}; {{ storeCookie.productsSorting.column }} => {{ sortBy }}
   <TableTTable
     ref="productsRef"
     :is-mobile="isMobile"
