@@ -6,6 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
+  {{ props.selectedClient }}
   <TableTTable
     ref="productsRef"
     :is-mobile="isMobile"
@@ -313,6 +314,7 @@ License: AGPL-3.0
           <TCProductVersionCell
             type="depotVersions"
             row={rowData}
+            selectedClients={clientSelection.value}
             clients2depots={fetchedDataClients2Depots.value}
           />
         )
@@ -396,7 +398,6 @@ License: AGPL-3.0
   onMounted(async () => {
     if (props.productType && props.productType !== currentType.value)
       changeProductsType(props.productType as IProductTypes)
-
     fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(
       clientSelection.value,
     )
@@ -429,12 +430,16 @@ License: AGPL-3.0
   )
   watch(
     () => props.selectedClient,
-    (v) => {
+    async (v) => {
       if (v) {
         clientSelection.value = [v]
       } else {
         clientSelection.value = selectionClients.value
       }
+
+      fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(
+        clientSelection.value,
+      )
       productsRef.value?.refetch()
     },
   )

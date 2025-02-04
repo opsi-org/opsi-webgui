@@ -104,11 +104,13 @@ License: AGPL-3.0
   const NOVERSION = '--'
   const icons = useIcons()
   const { t_fixed } = useStrings()
-  const { selectionDepots, selectionClients } = storeToRefs(storeSelections())
+  const { selectionDepots } = storeToRefs(storeSelections())
+  // const { selectionDepots, selectionClients } = storeToRefs(storeSelections())
 
   const props = defineProps({
     row: { type: Object as PropType<T_ProductRow>, required: true },
     type: { type: String, required: true },
+    selectedClients: { type: Array as PropType<string[]>, required: true },
     clients2depots: {
       type: Object as PropType<T_Client2Depot>,
       required: true,
@@ -118,7 +120,10 @@ License: AGPL-3.0
   const rowitem = computed(() => props.row)
 
   const tooltiptext = computed(() => {
-    if (Object.keys(rowitem.value).length <= 0) return {}
+    if (Object.keys(rowitem.value || {}).length <= 0) {
+      console.error('rowitem is empty')
+      return {}
+    }
 
     const tt: IObjectString2ObjectString2String = {}
 
@@ -129,6 +134,7 @@ License: AGPL-3.0
         selectionDepots.value,
         NOVERSION,
       )
+
       for (const d in depots) {
         tt[d] = {
           [d]: depots[d],
@@ -137,22 +143,31 @@ License: AGPL-3.0
     }
     if (
       Object.keys(props.clients2depots).length <= 0 ||
-      Object.keys(props.clients2depots).length !== selectionClients.value.length
+      Object.keys(props.clients2depots).length !== props.selectedClients.length
+      // Object.keys(props.clients2depots).length !== selectionClients.value.length
     ) {
       return tt
     }
+
     if (rowitem.value.clientVersions) {
       const clients: IObjectString2String = mapValues2Objects(
         rowitem.value.clientVersions,
         rowitem.value.selectedClients,
-        selectionClients.value,
+        props.selectedClients,
         NOVERSION,
       )
+
       for (const c in clients) {
-        tt[props.clients2depots[c]][c] = clients[c]
+        const client = clients[c]
+
+        const client2depot = props.clients2depots[c]
+
+        tt[client2depot][c] = client
       }
     }
+
     return tt
+    // return 'tt'
   })
 
   if (Object.keys(tooltiptext.value).length == 1) {
