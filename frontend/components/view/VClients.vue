@@ -337,7 +337,10 @@ License: AGPL-3.0
     }
     params.selected = JSON.stringify(storeSelection.selectionClients)
     params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)
-
+    if (params.sortBy) {
+      storeCookie.clientsSorting.column = params.sortBy
+      storeCookie.clientsSorting.isDesc = params.sortDesc
+    }
     const { data, error, headers } = await useApiGETBody<T_ClientsList>(
       '/opsidata/clients',
       params,

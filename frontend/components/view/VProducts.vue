@@ -451,6 +451,11 @@ License: AGPL-3.0
 
   async function fetchProducts(_params: any) {
     const params = prepareParams(_params)
+
+    if (params.sortBy) {
+      storeCookie.productsSorting.column = params.sortBy
+      storeCookie.productsSorting.isDesc = params.sortDesc
+    }
     const { data, error, headers } = await useApiGETBody<Array<any>>(
       '/opsidata/products',
       params,
