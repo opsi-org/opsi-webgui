@@ -162,11 +162,17 @@ License: AGPL-3.0
       params.selected = JSON.stringify(storeSelection.selectionDepots)
     }
 
-    if (params.sortBy) {
-      storeCookie.serversSorting.column = params.sortBy
-      storeCookie.serversSorting.isDesc = params.sortDesc
+    if (
+      (params.sortBy && storeCookie.serversSorting.column != params.sortBy) ||
+      params.sortDesc != (storeCookie.serversSorting.isDesc as boolean)
+    ) {
+      storeCookie.setSortColumn(
+        'servers',
+        params.sortBy,
+        params.sortDesc as boolean,
+      )
     }
-
+    storeCookie.serversSorting.isDesc = params.sortDesc as boolean
     const { data, error, headers } = await useApiGETBody<T_ServerList>(
       '/opsidata/depots',
       params,

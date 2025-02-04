@@ -8,7 +8,6 @@ License: AGPL-3.0
 <template>
   <div>
     <slot name="header" />
-
     <div class="toolbar">
       <div class="toolbar-left">
         <el-button @click="$emit('clearSelection')">
@@ -328,7 +327,7 @@ License: AGPL-3.0
     if (filterQuery.value) params.filterQuery = filterQuery.value
     if (currentPage.value) params.pageNumber = currentPage.value
     if (pageSize.value) params.perPage = pageSize.value
-    params.sortDesc = sortDesc.value ? 'true' : 'false'
+    params.sortDesc = sortDesc.value ? true : false
     return params
   }
   async function fetchWrapper() {
