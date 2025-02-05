@@ -8,6 +8,7 @@ License: AGPL-3.0
 <template>
   <TableTTable
     ref="clientsRef"
+    table-id="clients"
     :row-id="rowId"
     :is-mobile="isMobile"
     has-client-actions

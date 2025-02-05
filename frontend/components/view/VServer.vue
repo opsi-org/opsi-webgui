@@ -8,6 +8,7 @@ License: AGPL-3.0
 <template>
   <TableTTable
     ref="tableRef"
+    table-id="servers"
     :row-id="rowId"
     :is-mobile="isMobile"
     :table-column="tableColumn"

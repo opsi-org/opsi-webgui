@@ -38,6 +38,7 @@ License: AGPL-3.0
   const props = defineProps({
     isMobile: { type: Boolean, default: false, required: false },
     rowId: { type: String, required: true },
+    tableId: { type: String, required: true },
     tableColumn: { type: Array<any>, required: true },
     fetch: { type: Function, required: true },
     bodyHeight: { type: String, default: '80vh', required: false },

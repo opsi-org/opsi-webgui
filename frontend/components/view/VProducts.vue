@@ -9,13 +9,13 @@ License: AGPL-3.0
   {{ props.selectedClient }}
   <TableTTable
     ref="productsRef"
+    table-id="products"
     :is-mobile="isMobile"
     :row-id="rowId"
     :table-column="tableColumn"
     :fetch="fetchProducts"
     :sort-by="sortBy"
     :sort-desc="sortDesc"
-    body-height="64vh"
     :action-config="(rowData: any) => `/products/${currentType}/config/${rowData[rowId]}`"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionProducts(id)}"
     @clear-selection="storeSelection.clearSelectionProducts"

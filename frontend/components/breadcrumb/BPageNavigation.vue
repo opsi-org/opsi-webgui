@@ -6,7 +6,11 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-breadcrumb class="breadcrumb mb-4" :separator-icon="ArrowRight">
+  <el-breadcrumb
+    id="globalBreadcrumb"
+    class="breadcrumb mb-4"
+    :separator-icon="ArrowRight"
+  >
     <el-breadcrumb-item
       v-for="(item, index) in pathSegments"
       :key="index"
