@@ -86,7 +86,7 @@ License: AGPL-3.0
     return arrdata.map((item: any) => {
       const { partial_results, ..._ } = item
       const item2 = {
-        name: item.check.id,
+        name: item.check_id,
         status: item.check_status,
         message: item.message,
         details: item.details,
