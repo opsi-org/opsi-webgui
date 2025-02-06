@@ -10,7 +10,7 @@ License: AGPL-3.0
     <!-- TABLE HEADER -->
     <div :id="'tableHeader-' + tableId">
       <slot name="header" />
-      <div class="toolbar">
+      <div class="toolbar pb-2">
         <div class="toolbar-left">
           <el-button @click="$emit('clearSelection')">
             <IconIIcon :icon="icons.clear" />
@@ -120,9 +120,11 @@ License: AGPL-3.0
     <div
       ref="infiniteScrollDiv"
       class="overflow-y-auto"
-      :style="`height: ${visibleTableHeight || availableTableHeight}px !important;`"
+      :style="`height: ${visibleTableHeight || availableTableHeight}px !important;
+      `"
       @scroll="debouncedHandleScroll"
     >
+      <!-- class="overflow-y-auto !min-h-[700px] border-sky-500 border-2" -->
       <div
         v-if="totalItems > 0 && !isFirstPage"
         class="extra-column"
@@ -134,103 +136,112 @@ License: AGPL-3.0
       <el-table
         v-loading="isLoading"
         :data="fetchedData"
-        :height="tableHeight || availableTableHeight"
         @sort-change="handleSortChange"
         @row-click="onRowClick"
         class="!overflow-hidden"
+        :class="`!min-h-[${tableHeightMin}px]`"
+        :height="tableHeight || availableTableHeight"
       >
+        <!-- :style="`min-height: ${tableHeightMin}px;`" -->
+        <!-- :class="`!min-h-[900px] `" -->
+        <!-- selection -->
+        <el-table-column
+          :key="'selected'"
+          :prop="tableColumnObj['selected'].key"
+          :label="tableColumnObj['selected'].title"
+          :width="tableColumnObj['selected'].width || ''"
+          :sortable="tableColumnObj['selected'].sortable"
+        >
+          <template #default="scope">
+            <CellRenderer
+              v-if="tableColumnObj['selected']"
+              row-id="selected"
+              :row-data="scope.row"
+              :col-data="tableColumnObj['selected']"
+              :class="`!inline-block my-[2px]`"
+            />
+          </template>
+        </el-table-column>
+
         <!--  row index -->
-        <el-table-column width="50" label="#">
+        <!-- <el-table-column width="50" label="#">
           <template #default="{ $index }">
             <span>{{ $index + 1 + (currentPage - 1) * pageSize }}</span>
           </template>
-        </el-table-column>
-        <!-- columns -->
-        <template v-for="column in tableColumn">
-          <el-table-column
-            v-if="column.visible || column.alwaysVisible"
-            :key="column.key"
-            :prop="column.key"
-            :label="column.title"
-            :width="column.width || ''"
-            :sortable="column.sortable"
-          >
-            <template #header v-if="column.icon">
-              <el-tooltip
-                class="box-item"
-                effect="dark"
-                :content="column.title"
-              >
-                <el-text><IconIIcon :icon="column.icon" /> </el-text>
-              </el-tooltip>
-            </template>
-            <template #header v-else>
-              <HeaderCellRenderer :col-data="column" />
-            </template>
+        </el-table-column> -->
 
-            <template #default="scope" v-if="column.key === 'actions'">
-              <div v-contextmenu="(e:any) => showContextMenu(e, scope)">
-                <ActionsRenderer :row-data="scope.row" />
-                <!-- <el-tooltip
-                  :content="$t('title.config')"
-                  placement="top"
-                  v-if="actionConfig"
-                >
-                  <el-button
-                    link
-                    @click="handleConfigClick(scope.row)"
-                    :class="{
-                      'is-active':
-                        activeButton === 'config-' + scope.row.clientId,
-                    }"
-                  >
-                    <IconIIcon :icon="icons.settings" />
-                  </el-button>
-                </el-tooltip>
-                <el-tooltip
-                  :content="$t('title.log')"
-                  placement="top"
-                  v-if="actionLog"
-                >
-                  <el-button
-                    link
-                    @click="handleLogClick(scope.row)"
-                    :class="{
-                      'is-active': activeButton === 'log-' + scope.row.clientId,
-                    }"
-                  >
-                    <IconIIcon :icon="icons.log" />
-                  </el-button>
-                </el-tooltip>
-                <el-tooltip
-                  v-if="actionClone"
-                  :content="$t('title.clone')"
-                  placement="top"
-                >
-                  <el-button
-                    link
-                    :disabled="storeConfigapp().config?.read_only"
-                    @click="handleCloneClick(scope.row)"
-                    :class="{
-                      'is-active':
-                        activeButton === 'clone-' + scope.row.clientId,
-                    }"
-                  >
-                    <IconIIcon :icon="icons.client" />
-                  </el-button>
-                </el-tooltip>
-                <DropdownDDClientActions
-                  v-if="hasClientActions"
-                  :disabled="storeConfigapp().config?.read_only"
-                  :client-ids="[scope.row.clientId]"
-                /> -->
-              </div>
-            </template>
-            <template #default="scope" v-else>
-              <CellRenderer :col-data="column" :row-data="scope.row" />
-            </template>
-          </el-table-column>
-        </template>
+        <!-- rowId -->
+        <el-table-column
+          :key="props.rowId"
+          :prop="tableColumnObj[props.rowId].key"
+          :label="tableColumnObj[props.rowId].title"
+          :width="tableColumnObj[props.rowId].width || ''"
+          :sortable="tableColumnObj[props.rowId].sortable"
+        >
+          <template #default="scope">
+            <CellRenderer
+              :col-data="tableColumnObj[props.rowId]"
+              :row-data="scope.row"
+            />
+          </template>
+        </el-table-column>
+
+        <!-- sorted column -->
+        <el-table-column
+          v-if="!['selected', rowId, 'actions'].includes(sortBy)"
+          :key="tableColumnObj[sortBy].key"
+          :prop="tableColumnObj[sortBy].key"
+          :label="tableColumnObj[sortBy].title"
+          :width="tableColumnObj[sortBy].width || ''"
+        >
+          <template #header v-if="tableColumnObj[sortBy].icon">
+            <el-tooltip
+              class="box-item"
+              effect="dark"
+              :content="tableColumnObj[sortBy].title"
+            >
+              <el-text
+                ><IconIIcon :icon="tableColumnObj[sortBy].icon" />
+              </el-text>
+            </el-tooltip>
+          </template>
+          <template #header v-else>
+            <HeaderCellRenderer :col-data="tableColumnObj[sortBy]" />
+          </template>
+          <template #default="scope">
+            <CellRenderer
+              :row-id="sortBy"
+              :row-data="scope.row"
+              :col-data="tableColumnObj[sortBy]"
+              class="min-w-0 whitespace-nowrap overflow-hidden text-ellipsis"
+            />
+          </template>
+        </el-table-column>
+
+        <!-- actions -->
+        <el-table-column
+          v-else-if="tableColumnObj['actions']"
+          key="actions"
+          :prop="tableColumnObj['actions'].key"
+          :label="tableColumnObj['actions'].title"
+          :width="tableColumnObj['actions'].width || ''"
+          :sortable="tableColumnObj['actions'].sortable"
+        >
+          <template #default="scope">
+            <ActionsRenderer :row-data="scope.row" />
+          </template>
+        </el-table-column>
+
+        <!-- expand content -->
+        <el-table-column type="expand">
+          <template #default="scope">
+            <Details
+              class="mb-3"
+              :row-data="scope.row"
+              :col-data="tableColumnObj[props.rowId]"
+            />
+          </template>
+        </el-table-column>
       </el-table>
 
       <div class="extra-column" :style="`height: ${scrollDivHeight}px;`">
@@ -241,26 +252,23 @@ License: AGPL-3.0
     </div>
 
     <!-- TABLE FOOTER -->
-    <div class="flex justify-end" :id="'tableFooter-' + tableId">
-      <el-pagination
-        @current-change="handlePagination"
-        @size-change="
-          (v) => {
-            // if (v && pageSize !== v) {
-            //   pageSize = v
-            //   refreshTable()
-            // }
-          }
-        "
-        :current-page="currentPage"
-        :page-size="pageSize"
-        :page-sizes="[pageSize]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="totalItems"
-      />
-      <!-- :page-sizes="[
-          ...new Set([pageSize, 20, 50, 100].sort((a, b) => a - b)),
-        ]" -->
+    <div class="flex justify-end mt-2" :id="'tableFooter-' + tableId">
+      <div class="">
+        <!-- <br /> -->
+        <el-pagination
+          @current-change="handlePagination"
+          @size-change="() => {}"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :page-sizes="[pageSize]"
+          :total="totalItems"
+          layout="total, sizes, prev, pager, next, jumper"
+          size="small"
+        />
+        <!-- <el-text class="text-right">{{
+          $t('label.total', { count: totalItems })
+        }}</el-text> -->
+      </div>
     </div>
 
     <!-- Custom Context Menu -->
@@ -285,10 +293,9 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="tsx">
-  import { vContextmenu } from '../../composables/mixins/v-contextmenu'
+  //   import { vContextmenu } from '../../composables/mixins/v-contextmenu'
   import { useDynamicHeight } from '~/composables/mixins/useDynamicHeight'
   import { useTableHelper } from '~/composables/mixins/useTableHelper'
-  // import { useZoomLevel } from '@vueuse/electron'
 
   const $t = useI18n().t
   const icons = useIcons()
@@ -315,6 +322,13 @@ License: AGPL-3.0
   const totalItems = ref<number>(0)
   const currentPage = ref(1)
   const actualDataSize = computed(() => fetchedData.value?.length || 0)
+  const tableColumnObj = computed(() => {
+    const obj: any = {}
+    props.tableColumn.forEach((col: any) => {
+      obj[col.key] = col
+    })
+    return obj
+  })
 
   const {
     pageSize,
@@ -324,6 +338,8 @@ License: AGPL-3.0
     scrollDivHeight,
     isFirstPage,
     isLastPage,
+    notTableHeight,
+    tableHeightMin,
     updateWindowValues,
     setElHeights,
   } = useDynamicHeight(
@@ -336,7 +352,7 @@ License: AGPL-3.0
 
   const infiniteScrollDiv = ref<HTMLElement | null>(null)
   const {
-    // we reuse this functions and refs also in TTableDesktopMobile
+    // we reuse this functions and refs also in TTableDesktop
     isLoading,
     filterQuery,
     // filterBy,
@@ -347,7 +363,7 @@ License: AGPL-3.0
     contextMenuRow,
 
     debouncedHandleScroll,
-    showContextMenu,
+    // showContextMenu,
     handleCommand,
     toggleSortOrder,
     applySort,
@@ -364,6 +380,7 @@ License: AGPL-3.0
 
     CellRenderer,
     HeaderCellRenderer,
+    Details,
     ActionsRenderer,
   } = useTableHelper(
     props,
@@ -475,5 +492,23 @@ License: AGPL-3.0
   }
   .context-menu li:hover {
     background-color: #f0f0f0;
+  }
+
+  :deep(.el-table__expand-column .cell),
+  :deep(.el-table__expand-column .el-table__expand-icon) {
+    padding: 0px !important;
+    margin: 0px !important;
+    width: fit-content !important;
+  }
+  :deep(.el-table__expand-column) {
+    width: fit-content !important;
+    justify-items: center;
+    margin: 0px !important;
+    padding: 0px 2px !important;
+  }
+  :deep(.el-pagination__sizes),
+  :deep(.btn-prev),
+  :deep(.el-pagination__jump) {
+    --el-pagination-item-gap: 5px;
   }
 </style>

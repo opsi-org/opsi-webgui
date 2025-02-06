@@ -97,13 +97,14 @@ License: AGPL-3.0
   }
   .is-mobile .pagecontent,
   .is-mobile .pagecontent .mycol {
-    --above-main: 180px;
+    --above-main: 120px;
     height: calc(100vh - var(--above-main)) !important;
     max-height: calc(100vh - var(--above-main)) !important;
   }
   .el-main {
     padding: 0px !important;
     --above-main: 120px;
+    --el-main-padding: 10px;
     height: calc(100vh - var(--above-main)) !important;
     max-height: calc(100vh - var(--above-main)) !important;
   }

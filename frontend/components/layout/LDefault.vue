@@ -13,7 +13,7 @@ License: AGPL-3.0
     }"
   >
     <el-container class="h-screen w-screen">
-      <el-header class="max-h-12 min-w-screen bg-opsi-blue">
+      <el-header id="btop-header" class="max-h-12 min-w-screen bg-opsi-blue">
         <BarBTop
           class="max-h-full max-w-full"
           @toggle-left="() => toggleSide('left')"
@@ -203,7 +203,9 @@ License: AGPL-3.0
   :root {
     --minus-height: 1px;
   }
-
+  .el-main {
+    --el-main-padding: 7px;
+  }
   .el-aside {
     width: calc(var(--width, 100%) - var(--minus-width, 0px));
     height: calc(100% - var(--minus-height));

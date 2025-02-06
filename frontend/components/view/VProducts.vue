@@ -6,7 +6,6 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  {{ props.selectedClient }}
   <TableTTable
     ref="productsRef"
     table-id="products"

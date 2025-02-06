@@ -6,7 +6,18 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <Icon :icon="icon" v-bind="$attrs" :class="$attrs.class" />
+  <Icon
+    v-if="title === undefined"
+    :icon="icon"
+    v-bind="$attrs"
+    :class="$attrs.class"
+  />
+  <TooltipTTooltip v-else>
+    <template #tooltip>
+      <span>{{ title }}</span>
+    </template>
+    <Icon :icon="icon" v-bind="$attrs" :class="$attrs.class" />
+  </TooltipTTooltip>
 </template>
 
 <script setup lang="ts">
@@ -15,6 +26,11 @@ License: AGPL-3.0
     icon: {
       type: String,
       required: true,
+    },
+    title: {
+      type: String,
+      required: false,
+      default: undefined,
     },
   })
 </script>

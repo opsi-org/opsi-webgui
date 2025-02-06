@@ -10,7 +10,7 @@ License: AGPL-3.0
     ref="clientsRef"
     table-id="clients"
     :row-id="rowId"
-    :is-mobile="isMobile"
+    :is-mobile="props.isMobile"
     has-client-actions
     :action-clone="(rowData: any) => `/clients/client/clone/${rowData[rowId]}`"
     :action-log="(rowData: any) => `/clients/client/logs/${rowData[rowId]}`"
@@ -66,7 +66,7 @@ License: AGPL-3.0
   const storeCookie = storeTablesettings()
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
-  const _props = defineProps({
+  const props = defineProps({
     isMobile: {
       type: Boolean,
       default: () => {
@@ -87,7 +87,7 @@ License: AGPL-3.0
       type: 'selection',
       visible: storeCookie.clientsColumns.includes('selected'),
       alwaysVisible: true,
-      width: '60px',
+      width: props.isMobile ? '35px' : '60px',
 
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
@@ -267,14 +267,20 @@ License: AGPL-3.0
         return reachableClientsIsLoadingHeader.value ? (
           <ILoading small />
         ) : (
-          <el-button
-            v-else
-            link
-            disabled={storeConfigapp().config?.read_only}
-            onClick={handleClickReachable}
-          >
-            <IIcon icon={icons.clientReachable} />
-          </el-button>
+          <div>
+            <el-text v-if={props.isMobile}>
+              {$t('table.fields.reachable')}
+            </el-text>
+            <el-button
+              v-else
+              link
+              title={$t('button.reachables.title')}
+              disabled={storeConfigapp().config?.read_only}
+              onClick={handleClickReachable}
+            >
+              <IIcon icon={icons.clientReachable} />
+            </el-button>
+          </div>
         )
       },
       cellRenderer: ({ rowData }: any) => {
@@ -282,9 +288,11 @@ License: AGPL-3.0
           rowData.reachable || reachableClients.value[rowData.clientId]
         switch (reachable) {
           case true:
-            return <IIcon icon={icons.check} />
+            return (
+              <IIcon icon={icons.check} title={$t('label.reachable.true')} />
+            )
           case false:
-            return <IIcon icon={icons.x} />
+            return <IIcon icon={icons.x} title={$t('label.reachable.false')} />
           default:
             return reachableClientsIsLoading.value[rowData.clientId] ||
               reachableClientsIsLoadingHeader.value ? (
@@ -292,6 +300,8 @@ License: AGPL-3.0
             ) : (
               <el-button
                 link
+                class="text-right"
+                title={$t('button.reachable.title')}
                 disabled={storeConfigapp().config?.read_only}
                 onClick={() => handleClickReachable([rowData.clientId])}
               >
@@ -307,7 +317,7 @@ License: AGPL-3.0
       sortable: false,
       visible: storeCookie.clientsColumns.includes('actions'),
       alwaysVisible: true,
-      width: '170px',
+      width: '140px',
     },
   ])
 

@@ -7,12 +7,10 @@ License: AGPL-3.0
 -->
 <template>
   <div>
-    <TableTTableMobile
+    <TableTTableDesktopMobile
       v-if="isMobileWrapper"
       ref="tableMobile"
       v-bind="props"
-      :table-column="tableColumn"
-      :fetch="fetch"
       @selection-changed="$emit('selectionChanged', $event)"
       @clear-selection="$emit('clearSelection')"
     />
@@ -20,8 +18,6 @@ License: AGPL-3.0
       v-else
       ref="tableDesktop"
       v-bind="props"
-      :table-column="tableColumn"
-      :fetch="fetch"
       @selection-changed="$emit('selectionChanged', $event)"
       @clear-selection="$emit('clearSelection')"
     >
@@ -33,7 +29,7 @@ License: AGPL-3.0
 
 <script setup lang="tsx">
   import type TTableDesktop from './TTableDesktop.vue'
-  import type TTableMobile from './TTableMobile.vue'
+  import type TTableDesktopMobile from './TTableDesktopMobile.vue'
 
   const props = defineProps({
     isMobile: { type: Boolean, default: false, required: false },
@@ -51,7 +47,7 @@ License: AGPL-3.0
   })
 
   const $emit = defineEmits(['selectionChanged', 'clearSelection'])
-  const tableMobile = ref<typeof TTableMobile>()
+  const tableMobile = ref<typeof TTableDesktopMobile>()
   const tableDesktop = ref<typeof TTableDesktop>()
 
   const isMobileWrapper = ref<boolean>(props.isMobile)
