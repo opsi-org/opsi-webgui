@@ -338,7 +338,6 @@ License: AGPL-3.0
     scrollDivHeight,
     isFirstPage,
     isLastPage,
-    notTableHeight,
     tableHeightMin,
     updateWindowValues,
     setElHeights,
