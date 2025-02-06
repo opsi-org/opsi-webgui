@@ -16,7 +16,10 @@ License: AGPL-3.0
       :label-position="mq.isMobile.value ? 'top' : 'left'"
       v-loading="isLoading"
     >
-      <div class="h-[67vh] overflow-y-auto">
+      <div
+        class="overflow-y-auto"
+        :style="{ maxHeight: maxVisibleHeight + 'px' }"
+      >
         <div v-for="(value, label) in hostAttributes[0]" :key="label">
           <el-form-item :label="`${$t('table.fields.' + label)}`">
             <el-checkbox
@@ -77,6 +80,7 @@ License: AGPL-3.0
   import { objectEqual } from '~/utils/scompares'
   import type { PropTypeServerClient } from '~/types/tproptypes'
   import { onBeforeRouteLeave } from 'vue-router'
+  import { useDynamicHeight } from '~/composables/mixins/useDynamicHeightWindow'
 
   const $t = useI18n().t
   const mq = useMQ()
@@ -98,6 +102,17 @@ License: AGPL-3.0
     },
     isChild: { type: Boolean, default: false },
   })
+
+  const { maxVisibleHeight } = useDynamicHeight(
+    [
+      'btop-header',
+      'globalBreadcrumb',
+      'config-pre-tabs',
+      // 'tableHeader-'+props.tableId
+      // 'tableFooter-'+props.tableId
+    ],
+    50,
+  )
 
   watchEffect(() => {
     if (props.id) fetchData()

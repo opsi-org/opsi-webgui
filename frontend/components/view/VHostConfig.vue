@@ -6,12 +6,15 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <SelectSHosts
-    v-if="!props.isChild"
-    :id="currentId"
-    :type="type"
-    @change="setId"
-  />
+  <!-- :id="'sselect-' + currentId" -->
+  <div id="config-pre-tabs">
+    <SelectSHosts
+      v-if="!props.isChild"
+      :id="currentId"
+      :type="type"
+      @change="setId"
+    />
+  </div>
   <el-tabs v-model="activeName">
     <el-tab-pane
       :label="

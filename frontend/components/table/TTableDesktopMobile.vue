@@ -115,7 +115,6 @@ License: AGPL-3.0
         </div>
       </div>
     </div>
-
     <!-- SCROLL AND TABLE -->
     <div
       ref="infiniteScrollDiv"
@@ -294,7 +293,7 @@ License: AGPL-3.0
 
 <script setup lang="tsx">
   //   import { vContextmenu } from '../../composables/mixins/v-contextmenu'
-  import { useDynamicHeight } from '~/composables/mixins/useDynamicHeight'
+  import { useDynamicHeightTable } from '~/composables/mixins/useDynamicHeightTable'
   import { useTableHelper } from '~/composables/mixins/useTableHelper'
 
   const $t = useI18n().t
@@ -341,7 +340,7 @@ License: AGPL-3.0
     tableHeightMin,
     updateWindowValues,
     setElHeights,
-  } = useDynamicHeight(
+  } = useDynamicHeightTable(
     actualDataSize,
     currentPage,
     totalItems,

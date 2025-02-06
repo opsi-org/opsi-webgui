@@ -6,12 +6,11 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <div data-testid="FHostParameter">
-    <br />
+  <div data-testid="FHostParameter" class="">
     <el-alert v-if="showWarning" type="warning" show-icon>
       {{ $t('alert.select') }}
     </el-alert>
-    <div class="h-[65vh] overflow-y-auto">
+    <div class="overflow-y-auto" :style="`max-height: ${maxVisibleHeight}px;`">
       <el-collapse
         accordion
         v-loading="isLoading"
@@ -118,6 +117,7 @@ License: AGPL-3.0
   import { onBeforeRouteLeave } from 'vue-router'
   import type { CollapseModelValue } from 'element-plus'
   import { useStrings } from '~/composables/mixins/useStrings'
+  import { useDynamicHeight } from '~/composables/mixins/useDynamicHeightWindow'
 
   const { notifyError, notifyInfo } = useNotification()
   const t_fixed = useStrings().t_fixed
@@ -141,6 +141,16 @@ License: AGPL-3.0
     },
     isChild: { type: Boolean, default: false },
   })
+  const { maxVisibleHeight } = useDynamicHeight(
+    [
+      'btop-header',
+      'globalBreadcrumb',
+      'config-pre-tabs',
+      // 'tableHeader-'+props.tableId
+      // 'tableFooter-'+props.tableId
+    ],
+    50,
+  )
 
   const showWarning = computed(() => {
     return !(props.type === 'servers' || props.id)

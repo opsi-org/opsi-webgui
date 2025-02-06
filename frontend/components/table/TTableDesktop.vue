@@ -286,7 +286,7 @@ License: AGPL-3.0
 
 <script setup lang="tsx">
   import { vContextmenu } from '../../composables/mixins/v-contextmenu'
-  import { useDynamicHeight } from '~/composables/mixins/useDynamicHeight'
+  import { useDynamicHeightTable } from '~/composables/mixins/useDynamicHeightTable'
   import { useTableHelper } from '~/composables/mixins/useTableHelper'
   // import { useZoomLevel } from '@vueuse/electron'
 
@@ -326,7 +326,7 @@ License: AGPL-3.0
     isLastPage,
     updateWindowValues,
     setElHeights,
-  } = useDynamicHeight(
+  } = useDynamicHeightTable(
     actualDataSize,
     currentPage,
     totalItems,
