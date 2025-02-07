@@ -17,7 +17,7 @@ cd -
 echo ""
 echo "exitcodes $exit_code_1 , $exit_code_2 , $exit_code_3"
 exit_code=0
-# if [ $exit_code_1 -ne 0 ] || [ $exit_code_2 -ne 0 ] || [ $exit_code_3 -ne 0 ];then
-if
+if [ $exit_code_1 -ne 0 ] || [ $exit_code_2 -ne 0 ] || [ $exit_code_3 -ne 0 ];then
     exit 1
 fi
+exit 2
