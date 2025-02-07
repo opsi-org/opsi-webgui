@@ -133,7 +133,6 @@
   "label.noselection": "- not applied -",
   "label.novalue": "- null -",
   "label.password": "Password",
-  "label.perPage": "{count} per page",
   "label.prodquickaction": "Product Quick Actions",
   "label.products.placeholder": "{count} locked products",
   "label.products.unlock": "Select a locked Product",
