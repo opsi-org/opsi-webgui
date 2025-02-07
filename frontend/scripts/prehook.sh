@@ -4,14 +4,17 @@ echo "====================================================== Check test files"
 # bash ./scripts/playwright_coverage_by_files.sh
 # rm $file
 
-npm run lint || exit_code=$?
+npm run lint || exit_code_1=$?
 
-npm run lint:missing-i18n || exit_code=$?
+npm run lint:missing-i18n || exit_code_2=$?
 
-npm run tscs || exit_code=$?
+npm run tscs || exit_code_2=$?
 
 echo "======================================================"
 cd -
 echo ""
-echo "exitcode $exit_code"
-exit $exit_code
+echo "exitcodes $exit_code_1 , $exit_code_2 , $exit_code_3"
+exit_code=0
+if [ $exit_code_1 -ne 0 ] || [ $exit_code_2 -ne 0 ] || [ $exit_code_3 -ne 0 ]; then
+    exit 1
+fi
