@@ -74,7 +74,7 @@ License: AGPL-3.0
             isDarkMode
               ? mq.isMobile.value
                 ? 'bg-opsi-gray'
-                : 'bg-opsi-base-dark-background'
+                : 'bg-transparent'
               : 'bg-opsi-base-light-background',
           ]"
         >
@@ -104,8 +104,9 @@ License: AGPL-3.0
   const $t = useI18n().t
   const mq = useMQ()
 
-  const settings = storeSettings()
   const configapp = storeConfigapp()
+  const settings = storeSettings()
+  const { isLight } = storeToRefs(settings)
 
   const leftSideIsSmall = ref<boolean>(false)
   const leftSideVisible = ref<boolean>(!mq.isMobile.value)
@@ -131,9 +132,16 @@ License: AGPL-3.0
       toggleSide('left')
     }
   })
-
+  // const bgQuickPanel = computed(() => {
+  //   return isDarkMode.value
+  //     ? mq.isMobile.value
+  //       ? 'bg-opsi-gray'
+  //       : 'bg-opsi-base-dark-background'
+  //     : 'bg-opsi-base-light-background'
+  // })
   const isDarkMode = computed({
-    get: () => settings.colormode === 'dark',
+    get: () => !isLight.value,
+    // get: () => settings.colormode === 'dark',
     set: (value: boolean) => {
       settings.setColormode(value ? 'dark' : 'light')
     },

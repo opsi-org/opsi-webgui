@@ -34,12 +34,10 @@ export const storeSettings = defineStore('settings', {
     // expiresInterval: (state: any) => state._expiresInterval,
     colormodeCookie: () => useCookie('colormode').value,
     colormode: (getter: any) => {
-      const _colormode = getter.colormodeCookie
-      return _colormode as 'light' | 'dark'
+      return getter.colormodeCookie as 'light' | 'dark'
     },
     isLight: (getter: any) => {
-      const _colormode = getter.colormodeCookie
-      return _colormode === 'light'
+      return getter.colormodeCookie === 'light'
     },
   },
   actions: {

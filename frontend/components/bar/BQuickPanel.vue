@@ -7,12 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <div
-    :class="[
-      'flex flex-col items-stretch p-2 rounded-lg shadow-md',
-      isDarkMode
-        ? 'bg-opsi-base-dark-background'
-        : 'bg-opsi-base-light-background',
-    ]"
+    :class="['flex flex-col items-stretch p-2 rounded-lg shadow-md']"
     data-testid="BQuickPanel"
     style="height: calc(100vh - var(--above-main))"
   >
@@ -79,13 +74,4 @@ License: AGPL-3.0
   // const $mq = useMQ().$mq
   const icons = useIcons()
   const storeSelection = storeSelections()
-  const settings = storeSettings()
-  // const changes = storeChanges()
-
-  const isDarkMode = computed({
-    get: () => settings.colormode === 'dark',
-    set: (value: boolean) => {
-      settings.setColormode(value ? 'dark' : 'light')
-    },
-  })
 </script>
