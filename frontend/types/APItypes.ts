@@ -96,6 +96,13 @@ export interface T_HostParameterEntry {
   editable: boolean
   newValue?: string
   newValues?: Array<string | never>
+  [key: string]:
+    | string
+    | boolean
+    | Array<string>
+    | Array<string | boolean | never>
+    | boolean
+    | undefined
 }
 export interface T_Logout {
   result: string

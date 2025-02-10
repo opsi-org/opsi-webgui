@@ -22,21 +22,15 @@ License: AGPL-3.0
           :name="category"
         >
           <template #title>
-            <strong>{{
-              category == 'general' ? `<${category}>` : category
-            }}</strong>
+            <strong>{{ String(category) }}</strong>
           </template>
           <template v-if="activeItem === category">
             <el-form
-              label-width="40%"
+              label-width="50%"
               :label-position="mq.isMobile.value ? 'top' : 'left'"
               class="w-full"
             >
-              <div
-                v-for="item in items"
-                :key="item.configId"
-                class="form-item ml-3"
-              >
+              <div v-for="item in items" :key="item.configId" class="form-item">
                 <el-form-item>
                   <!-- <el-form-item :label="item.configId"> -->
                   <template #label>
@@ -44,13 +38,10 @@ License: AGPL-3.0
                       class="flex w-full h-full justify-between items-center"
                     >
                       <span>{{
-                        item.configId.startsWith(`${category}`)
-                          ? item.configId
-                              .replace(`${category}`, '.')
-                              .replace('..', '.')
+                        item.configId.startsWith(`${category}.`)
+                          ? item.configId.replace(`${category}.`, '')
                           : item.configId
                       }}</span>
-
                       <p-badge
                         v-if="
                           !arrayEqual(
@@ -74,10 +65,7 @@ License: AGPL-3.0
                     <el-checkbox
                       v-model="itemValues[item.configId]"
                       :disabled="config.read_only"
-                      class="ml-2 w-full"
-                      :class="
-                        mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''
-                      "
+                      class="ml-2"
                       @change="handleSelection(item, itemValues[item.configId])"
                     />
                   </template>
@@ -143,7 +131,6 @@ License: AGPL-3.0
   import type { CollapseModelValue } from 'element-plus'
   import { useStrings } from '~/composables/mixins/useStrings'
   import { useDynamicHeight } from '~/composables/mixins/useDynamicHeightWindow'
-  import { useBuildingConfigTree } from '~/composables/useBuildingConfigTree'
 
   const { notifyError, notifyInfo } = useNotification()
   const t_fixed = useStrings().t_fixed
@@ -242,37 +229,6 @@ License: AGPL-3.0
     hasUnsavedChanges.value = false
   }
 
-  // function transformData(input: T_HostParameter): T_HostParameter {
-  //   const result: T_HostParameter = {}
-
-  //   for (const key in input) {
-  //     const grouped: { [prefix: string]: T_HostParameterEntry[] } = {}
-
-  //     input[key].forEach((item) => {
-  //       const segments = item.configId.split('.')
-  //       const prefix = segments.slice(0, 3).join('.')
-
-  //       if (!grouped[prefix]) {
-  //         grouped[prefix] = []
-  //       }
-  //       grouped[prefix].push(item)
-  //     })
-
-  //     for (const prefix in grouped) {
-  //       if (grouped[prefix].length >= 3) {
-  //         result[prefix] = grouped[prefix]
-  //       } else {
-  //         if (!result[key]) {
-  //           result[key] = []
-  //         }
-  //         result[key].push(...grouped[prefix])
-  //       }
-  //     }
-  //   }
-
-  //   return result
-  // }
-
   onMounted(fetchFormData)
 
   watch(() => props.id, fetchFormData)
@@ -319,9 +275,7 @@ License: AGPL-3.0
       notifyError({ message: error?.response?.data?.message })
       return
     }
-    if (data.value) {
-      fetchedData.value = useBuildingConfigTree().restructureData(data.value)
-    } else fetchedData.value = {}
+    fetchedData.value = data.value
   }
 
   function handleSelection(item: any, value: any) {
