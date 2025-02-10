@@ -7,10 +7,16 @@ License: AGPL-3.0
 -->
 <template>
   <IconILoading v-if="isLoadingData || isLoading" />
-  <PMultiSelect
+  <el-text> </el-text>
+  <p-multi-select
     v-if="multiSelection"
     v-model="localSelectedItems"
-    :options="data"
+    :options="
+      //
+      localAddOption
+        ? data?.filter((item) => (item as string).includes(localAddOption))
+        : data
+    "
     :max-selected-labels="1"
     class="w-full justify-stretch text-xs"
     show-clear
@@ -19,40 +25,82 @@ License: AGPL-3.0
     data-testId="sselect"
     display="chip"
   >
-    <!-- @change="() => $emit('change', localSelectedItems)" -->
+    <!-- @filter="() => $emit('change')" -->
     <template #option="{ option }">
       <span
-        class="text-xs"
+        class="text-xs flex"
         :class="{
           '!font-bold':
             (isArray(markedOptions) && markedOptions?.includes(option)) ||
             markedOptions == option,
         }"
-        >{{ option }}</span
       >
+        <p-button
+          v-if="
+            props.editable &&
+            localAddOption.length > 0 &&
+            localAddOption == option
+          "
+          :label="$t('button.reset')"
+          severity="primary"
+          text
+          size="small"
+          @click.stop="localAddOption = ''"
+        >
+          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+        </p-button>
+        <p-button
+          v-else-if="props.editable"
+          :label="$t('button.copy')"
+          severity="primary"
+          text
+          size="small"
+          @click.stop="copyItemToInput(option)"
+        >
+          <IconIIcon
+            :title="$t('button.copy')"
+            :icon="icons.copy"
+            class="m-1"
+          />
+        </p-button>
+        <span class="m-auto">
+          {{ option }}
+        </span>
+      </span>
     </template>
 
+    <!-- <template #header> <div>hello</div></template> -->
     <template v-if="props.editable" #footer>
       <div class="p-3 flex justify-between text-xs">
-        <PInputText
+        <p-input-text
           v-model="localAddOption"
           class="w-full"
           :placeholder="$t('label.add_new')"
           @keyup.enter="addItemToOptions(localAddOption)"
         />
-        <PButton
+
+        <p-button
+          v-if="props.editable"
+          :label="$t('button.reset')"
+          severity="secondary"
+          text
+          @click.stop="localAddOption = ''"
+        >
+          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+        </p-button>
+        <p-button
           :label="$t('button.add')"
           severity="secondary"
           text
-          size="small"
+          :disabled="data?.includes(localAddOption as T)"
           @click="addItemToOptions(localAddOption)"
         >
-          <IconIIcon :icon="icons.add" />
-        </PButton>
+          <IconIIcon :title="$t('button.add')" :icon="icons.add" class="m-1" />
+        </p-button>
       </div>
     </template>
-  </PMultiSelect>
-  <PSelect
+  </p-multi-select>
+  <p-select
     v-else
     data-testId="sselect"
     v-model="localSelectedItems"
@@ -64,36 +112,73 @@ License: AGPL-3.0
     <!-- editable -->
     <template #option="{ option }">
       <span
-        class="text-xs"
+        class="text-xs max-w-[500px] !flow"
         :class="{
           '!font-extrabold':
             (isArray(markedOptions) && markedOptions?.includes(option)) ||
             markedOptions == option,
         }"
-        >{{ option }}</span
       >
+        <p-button
+          v-if="
+            props.editable &&
+            localAddOption.length > 0 &&
+            localAddOption == option
+          "
+          :label="$t('button.reset')"
+          severity="secondary"
+          text
+          size="small"
+          @click.stop="localAddOption = ''"
+        >
+          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+        </p-button>
+        <p-button
+          v-else-if="props.editable"
+          :label="$t('button.copy')"
+          severity="secondary"
+          text
+          size="small"
+          @click.stop="copyItemToInput(option)"
+        >
+          <IconIIcon
+            :title="$t('button.copy')"
+            :icon="icons.copy"
+            class="m-1"
+          />
+        </p-button>
+        <el-text class="m-auto"> {{ option }} </el-text>
+      </span>
     </template>
     <template v-if="props.editable" #footer>
       <div class="p-3 flex justify-between text-xs">
-        <PInputText
+        <p-input-text
           v-model="localAddOption"
           class="w-full"
           :placeholder="$t('label.add_new')"
           @keyup.enter="addItemToOptions(localAddOption)"
         />
-        <PButton
-          :label="$t('button.add')"
+        <p-button
+          v-if="props.editable"
+          :label="$t('button.reset')"
           severity="secondary"
           text
-          size="small"
-          icon="pi pi-plus"
+          @click.stop="localAddOption = ''"
+        >
+          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+        </p-button>
+        <p-button
+          :label="$t('button.add')"
+          severity="success"
+          text
+          :disabled="data?.includes(localAddOption as T)"
           @click="addItemToOptions(localAddOption)"
         >
-          <IconIIcon :icon="icons.add" />
-        </PButton>
+          <IconIIcon :title="$t('button.add')" :icon="icons.add" class="m-1" />
+        </p-button>
       </div>
     </template>
-  </PSelect>
+  </p-select>
 </template>
 
 <script setup lang="ts" generic="T extends string | boolean">
@@ -228,6 +313,9 @@ License: AGPL-3.0
     },
     { deep: true },
   )
+  function copyItemToInput(item: string) {
+    localAddOption.value = item
+  }
   function addItemToOptions(item: string) {
     if (!(data.value as string[]).includes(item)) {
       ;(data.value as string[]).push(item)
@@ -242,13 +330,17 @@ License: AGPL-3.0
     if (localSelectedItems.value === undefined) {
       localSelectedItems.value = props.multiSelection ? [] : ('' as T)
     }
-    // select if not already
-    if (
-      isArray(localSelectedItems.value) &&
-      !localSelectedItems.value.includes(item as T)
-    ) {
-      localSelectedItems.value.push(item as T)
-    } else if (!props.multiSelection) {
+
+    // bug (reproduction: page=server-configs; config=clientconfig.configserver.url; value=<click directly on button 'add' to add empty icon> ===> this will update markedOptions and itemValues/initialValues in fhostparameter... this should not happen
+    // // select if not already
+    // if (
+    //   isArray(localSelectedItems.value) &&
+    //   !localSelectedItems.value.includes(item as T)
+    // ) {
+    //   localSelectedItems.value.push(item as T)
+    //   // remove
+    // } else
+    if (!props.multiSelection) {
       localSelectedItems.value = item as T
     }
   }

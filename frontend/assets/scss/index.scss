@@ -140,3 +140,16 @@ html .el-button:hover {
   --p-checkbox-width: 15px !important;
   --p-checkbox-height: 15px !important;
 }
+.sselect-overlay .p-multiselect-header,
+.sselect-overlay .p-multiselect-header .p-checkbox {
+  display: none !important;
+  height: 0 !important;
+}
+.sselect-overlay .p-select-option {
+  min-height: 1rem;
+  max-height: fit-content;
+  height: fit-content;
+  max-width: 500px;
+  word-wrap: normal;
+  overflow: auto;
+}

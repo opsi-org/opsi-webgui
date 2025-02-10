@@ -37,13 +37,25 @@ License: AGPL-3.0
                     <div
                       class="flex w-full h-full justify-between items-center"
                     >
-                      <span>{{ item.configId }}</span>
+                      <span>{{
+                        item.configId.startsWith(`${category}.`)
+                          ? item.configId.replace(`${category}.`, '')
+                          : item.configId
+                      }}</span>
                       <p-badge
                         v-if="
-                          itemValues[item.configId] !==
-                          initialValues[item.configId]
+                          !arrayEqual(
+                            itemValues[item.configId],
+                            initialValues[item.configId],
+                          )
+                          // itemValues[item.configId] !=
+                          // initialValues[item.configId]
                         "
-                        :title="$t('message.warning.unsavedChange')"
+                        :title="
+                          $t('message.warning.unsavedChange') +
+                          ` <br> initial: ${initialValues[item.configId]}
+                            <br> current: ${itemValues[item.configId]}`
+                        "
                         severity="warn"
                         :value="t_fixed('notOrigin')"
                       />
@@ -53,6 +65,7 @@ License: AGPL-3.0
                     <el-checkbox
                       v-model="itemValues[item.configId]"
                       :disabled="config.read_only"
+                      class="ml-2"
                       @change="handleSelection(item, itemValues[item.configId])"
                     />
                   </template>
