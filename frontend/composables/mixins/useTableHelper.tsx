@@ -320,59 +320,59 @@ export const useTableHelper = (
     // const colData = attributes['col-data'] || attributes.colData
     return (
       <div>
-        <el-tooltip
-          content={$t('title.config')}
-          placement="top"
-          v-if={props.actionConfig}
-        >
-          <el-button
-            link
-            onClick={() => handleConfigClick(rowData)}
-            class={
-              activeButton.value === 'config-' + rowData.clientId
-                ? 'is-active'
-                : ''
-            }
-          >
-            <IIcon icon={icons.settings} />
-          </el-button>
-        </el-tooltip>
-        <el-tooltip content={$t('title.log')} placement="top" v-if="actionLog">
-          <el-button
-            link
-            onClick={() => handleLogClick(rowData)}
-            class={
-              activeButton.value === 'log-' + rowData.clientId
-                ? 'is-active'
-                : ''
-            }
-          >
-            <IIcon icon={icons.log} />
-          </el-button>
-        </el-tooltip>
-        <el-tooltip
-          v-if="actionClone"
-          content={$t('title.clone')}
-          placement="top"
-        >
-          <el-button
-            link
+        {props.actionConfig ? (
+          <el-tooltip content={$t('title.config')} placement="top">
+            <el-button
+              link
+              onClick={() => handleConfigClick(rowData)}
+              class={
+                activeButton.value === 'config-' + rowData.clientId
+                  ? 'is-active'
+                  : ''
+              }
+            >
+              <IIcon icon={icons.settings} />
+            </el-button>
+          </el-tooltip>
+        ) : null}
+        {props.actionLog ? (
+          <el-tooltip content={$t('title.log')} placement="top">
+            <el-button
+              link
+              onClick={() => handleLogClick(rowData)}
+              class={
+                activeButton.value === 'log-' + rowData.clientId
+                  ? 'is-active'
+                  : ''
+              }
+            >
+              <IIcon icon={icons.log} />
+            </el-button>
+          </el-tooltip>
+        ) : null}
+        {props.actionClone ? (
+          <el-tooltip content={$t('title.clone')} placement="top">
+            <el-button
+              link
+              disabled={storeConfigapp().config?.read_only}
+              onClick={() => handleCloneClick(rowData)}
+              class={
+                activeButton.value === 'clone-' + rowData.clientId
+                  ? 'is-active'
+                  : ''
+              }
+            >
+              <IIcon icon={icons.client} />
+            </el-button>
+          </el-tooltip>
+        ) : null}
+
+        {props.hasClientActions ? (
+          <DDClientActions
             disabled={storeConfigapp().config?.read_only}
-            onClick={() => handleCloneClick(rowData)}
-            class={
-              activeButton.value === 'clone-' + rowData.clientId
-                ? 'is-active'
-                : ''
-            }
-          >
-            <IIcon icon={icons.client} />
-          </el-button>
-        </el-tooltip>
-        <DDClientActions
-          v-if="hasClientActions"
-          disabled={storeConfigapp().config?.read_only}
-          client-ids={[rowData.clientId]}
-        />
+            client-ids={[rowData.clientId]}
+          />
+        ) : null}
       </div>
     )
   }
