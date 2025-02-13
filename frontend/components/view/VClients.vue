@@ -46,7 +46,8 @@ License: AGPL-3.0
   import Checkbox from 'primevue/checkbox'
   import RadioButton from 'primevue/radiobutton'
   import Button from 'primevue/button'
-  import TTooltip from '../tooltip/TTooltip.vue'
+  import Badge from 'primevue/badge'
+  // import TTooltip from '../tooltip/TTooltip.vue'
   import IIcon from '../icon/IIcon.vue'
   import ILoading from '../icon/ILoading.vue'
   // import { Popover } from 'primevue'
@@ -79,12 +80,15 @@ License: AGPL-3.0
   const reachableClientsIsLoadingHeader = ref<boolean>(false)
   const rowId = 'clientId'
   const clientsRef = ref()
+  const statisticsWidth = '60px'
   const tableColumn = ref([
     {
       title: '',
       key: 'selected',
       sortable: 'custom',
       type: 'selection',
+      fixed: 'true',
+      // icon: icons.checkBox,
       visible: storeCookie.clientsColumns.includes('selected'),
       alwaysVisible: true,
       width: props.isMobile ? '35px' : '60px',
@@ -121,7 +125,9 @@ License: AGPL-3.0
       sortable: 'custom',
       visible: storeCookie.clientsColumns.includes('clientId'),
       alwaysVisible: true,
+      fixed: 'true',
       filter: true,
+      minWidth: '100px',
     },
     {
       title: $t('table.fields.mac'),
@@ -162,10 +168,12 @@ License: AGPL-3.0
       visible: storeCookie.clientsColumns.includes(
         'version_outdated_localboot',
       ),
-      width: '60px',
-      icon: icons.productsOutdated,
+      className: 'parent-statistics',
+      minWidth: statisticsWidth,
+      icon: icons.productsOutdatedLocal,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.versionOutdatedLocalboot'),
+        icons.productsOutdatedLocal,
         '/clients/products/LocalbootProduct?sortBy=version&sortDesc=true&selectedClient=',
         'version_outdated',
         'version',
@@ -179,10 +187,12 @@ License: AGPL-3.0
       key: 'version_outdated_netboot',
       sortable: 'custom',
       visible: storeCookie.clientsColumns.includes('version_outdated_netboot'),
-      width: '60px',
-      icon: icons.productsOutdated,
+      minWidth: statisticsWidth,
+      className: 'parent-statistics',
+      icon: icons.productsOutdatedNet,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.versionOutdatedNetboot'),
+        icons.productsOutdatedNet,
         '/clients/products/NetbootProduct?sortBy=version&sortDesc=true&selectedClient=',
         'version_outdated_netboot',
         'version',
@@ -198,10 +208,12 @@ License: AGPL-3.0
       visible: storeCookie.clientsColumns.includes(
         'installationStatus_unknown',
       ),
-      width: '60px',
+      minWidth: statisticsWidth,
+      className: 'parent-statistics',
       icon: icons.productInstallationStatusUnknown,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.installationStatusUnknown'),
+        icons.productInstallationStatusUnknown,
         '/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=',
         'installationStatus_unknown',
         'installationStatus',
@@ -217,30 +229,15 @@ License: AGPL-3.0
       visible: storeCookie.clientsColumns.includes(
         'installationStatus_installed',
       ),
-      width: '60px',
-      icon: icons.product,
+      minWidth: statisticsWidth,
+      className: 'parent-statistics',
+      icon: icons.productInstallationStatusInstalled,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.installationStatus_installed'),
+        icons.productInstallationStatusInstalled,
         '/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=',
         'installationStatus_installed',
         'installationStatus',
-      ),
-    },
-    {
-      title: $t('table.fields.actionResultFailed'),
-      key: 'actionResult_failed',
-      sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes('actionResult_failed'),
-      width: '60px',
-      icon: icons.productsFailedActionResult,
-      cellRenderer: getStatisticRenderer(
-        $t('table.fields.actionResultFailed'),
-        '/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=',
-        'actionResult_failed',
-        'actionResult',
-        undefined, // type
-        1, // errorValue
-        Infinity, // warnValue
       ),
     },
     {
@@ -248,13 +245,34 @@ License: AGPL-3.0
       key: 'actionResult_successful',
       sortable: 'custom',
       visible: storeCookie.clientsColumns.includes('actionResult_successful'),
-      width: '60px',
+      minWidth: statisticsWidth,
+      className: 'parent-statistics',
       icon: icons.productActionResultSuccessful,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.actionResult_successful'),
+        icons.productActionResultSuccessful,
         '/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=',
         'actionResult_successful',
         'actionResult',
+      ),
+    },
+    {
+      title: $t('table.fields.actionResultFailed'),
+      key: 'actionResult_failed',
+      sortable: 'custom',
+      visible: storeCookie.clientsColumns.includes('actionResult_failed'),
+      className: 'parent-statistics',
+      minWidth: statisticsWidth,
+      icon: icons.productsFailedActionResult,
+      cellRenderer: getStatisticRenderer(
+        $t('table.fields.actionResultFailed'),
+        icons.productsFailedActionResult,
+        '/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=',
+        'actionResult_failed',
+        'actionResult',
+        undefined, // type
+        1, // errorValue
+        Infinity, // warnValue
       ),
     },
     {
@@ -439,6 +457,7 @@ License: AGPL-3.0
 
   function getStatisticRenderer(
     tootltip: string,
+    icon: string,
     url: string,
     value: string,
     sortByKey: string,
@@ -483,22 +502,30 @@ License: AGPL-3.0
         return _val
       })
       return rowData[value] ? (
-        <TTooltip
-          v-slots={{
-            default: () => (
-              <Button
-                badge={val.value}
-                badgeSeverity={severity.value}
-                onClick={click}
-                class="!inline !bg-transparent !m-0 !p-0 !border-0"
-              />
-            ),
-            tooltip: () => rowData[value] + ' ' + tootltip,
-          }}
-        />
+        <Button
+          onClick={click}
+          class="!m-0 !p-0"
+          title={rowData[value] + ' ' + tootltip}
+        >
+          <IIcon icon={icon} class="min-w-5 min-h-5 mr-0 pr-0" />
+          <Badge
+            value={val.value}
+            severity={severity.value}
+            class="!m-0 !p-0 !border-0"
+            size="small"
+          />
+        </Button>
       ) : (
         <span />
       )
     }
   }
 </script>
+<style scoped>
+  /* :deep(.parent-statistics) {
+    border-left: 2px solid var(--el-border-color) !important;
+  }
+  :deep(.parent-statistics:not(:has(~ .parent-statistics))) {
+    border-right: 2px solid var(--el-border-color) !important;
+  } */
+</style>

@@ -14,6 +14,7 @@ declare module 'vue' {
     PFloatLabel: typeof import('primevue/floatlabel')['default']
     PInputText: typeof import('primevue/inputtext')['default']
     PMultiSelect: typeof import('primevue/multiselect')['default']
+    POverlayBadge: typeof import('primevue/overlaybadge')['default']
     PPopover: typeof import('primevue/popover')['default']
     PSelect: typeof import('primevue/select')['default']
     PTag: typeof import('primevue/tag')['default']

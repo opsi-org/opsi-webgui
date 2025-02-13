@@ -138,11 +138,14 @@ License: AGPL-3.0
         @sort-change="handleSortChange"
         @row-click="onRowClick"
         class="!overflow-hidden"
+        table-layout="auto"
       >
         <!--  row index -->
         <el-table-column width="50" label="#">
           <template #default="{ $index }">
-            <span>{{ $index + 1 + (currentPage - 1) * pageSize }}</span>
+            <span class="!text-xs">{{
+              $index + 1 + (currentPage - 1) * pageSize
+            }}</span>
           </template>
         </el-table-column>
         <!-- columns -->
@@ -152,16 +155,23 @@ License: AGPL-3.0
             :key="column.key"
             :prop="column.key"
             :label="column.title"
+            :class="column.class"
+            :class-name="`column-${column.key} ${column.className}`"
+            :label-class-name="column.headerClassName"
             :width="column.width || ''"
             :sortable="column.sortable"
           >
             <template #header v-if="column.icon">
               <el-tooltip
-                class="box-item"
+                class="box-item !inline-block"
+                :class="column.headerClassName"
                 effect="dark"
                 :content="column.title"
               >
-                <el-text><IconIIcon :icon="column.icon" /> </el-text>
+                <el-text class="!inline-block">
+                  <!-- {{ column.title }} -->
+                  <IconIIcon :icon="column.icon" class="min-w-6 min-h-6" />
+                </el-text>
               </el-tooltip>
             </template>
             <template #header v-else>
@@ -244,23 +254,13 @@ License: AGPL-3.0
     <div class="flex justify-end" :id="'tableFooter-' + tableId">
       <el-pagination
         @current-change="handlePagination"
-        @size-change="
-          (v) => {
-            // if (v && pageSize !== v) {
-            //   pageSize = v
-            //   refreshTable()
-            // }
-          }
-        "
+        @size-change="(v) => {}"
         :current-page="currentPage"
         :page-size="pageSize"
         :page-sizes="[pageSize]"
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalItems"
       />
-      <!-- :page-sizes="[
-          ...new Set([pageSize, 20, 50, 100].sort((a, b) => a - b)),
-        ]" -->
     </div>
 
     <!-- Custom Context Menu -->
