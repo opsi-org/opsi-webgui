@@ -55,6 +55,12 @@ const _data_sortColumns: tSort = {
   clients: { column: 'clientId', isDesc: false },
   products: { column: 'productId', isDesc: false },
 }
+const _data_settings = {
+  // e.g. for border changing
+  servers: {} as Record<string, any>,
+  clients: { statisticIcons: true } as Record<string, any>,
+  products: {} as Record<string, any>,
+}
 // const deepCp = (obj:any) => JSON.parse(JSON.stringify(obj))
 const deepCp = (obj: any) => obj
 
@@ -70,6 +76,7 @@ export const storeTablesettings = defineStore('tablesettings', {
     _configLastSelected: deepCp(_data_configLastSelected),
     _visibleColumns: deepCp(_data_visibleColumns) as tVisible,
     _sortColumns: deepCp(_data_sortColumns) as tSort,
+    _settings: deepCp(_data_settings),
     secondColumnSelectedRowId: '',
   }),
   getters: {
@@ -80,6 +87,8 @@ export const storeTablesettings = defineStore('tablesettings', {
     serversSorting: ({ _sortColumns }) => _sortColumns.servers,
     clientsSorting: ({ _sortColumns }) => _sortColumns.clients,
     productsSorting: ({ _sortColumns }) => _sortColumns.products,
+
+    otherSettings: ({ _settings }) => _settings,
 
     configLastSelected: ({ _configLastSelected }) => _configLastSelected,
   },

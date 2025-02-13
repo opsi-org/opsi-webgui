@@ -30,11 +30,36 @@ License: AGPL-3.0
               <IconIIcon :icon="icons.columns" />
             </el-button>
             <template #dropdown>
+              <div>
+                <el-checkbox
+                  v-model="storeTSettings.otherSettings[props.tableId].border"
+                  :label="$t('table.settings.border')"
+                />
+
+                <el-checkbox
+                  v-model="storeTSettings.otherSettings[props.tableId].stripe"
+                  :label="$t('table.settings.stripe')"
+                />
+                <el-checkbox
+                  v-if="
+                    storeTSettings.otherSettings[props.tableId]
+                      .statisticIcons != undefined
+                  "
+                  v-model="
+                    storeTSettings.otherSettings[props.tableId].statisticIcons
+                  "
+                  :label="$t('table.settings.statisticIcons')"
+                />
+              </div>
               <el-table
                 ref="table"
                 :data="tableColumn"
                 style="width: 100%"
-                :height="tableHeight <= 600 ? tableHeight : 'auto'"
+                :height="
+                  availableTableHeight <= 700
+                    ? availableTableHeight - 100
+                    : availableTableHeight
+                "
               >
                 <el-table-column :label="$t('label.column')" min-width="150px">
                   <!-- prop="title" -->
@@ -139,11 +164,13 @@ License: AGPL-3.0
         @row-click="onRowClick"
         class="!overflow-hidden"
         table-layout="auto"
+        :border="storeTSettings.otherSettings[props.tableId].border"
+        :stripe="storeTSettings.otherSettings[props.tableId].stripe"
       >
         <!--  row index -->
-        <el-table-column width="50" label="#">
+        <el-table-column label="#" align="right" class-name="!min-w-5">
           <template #default="{ $index }">
-            <span class="!text-xs">{{
+            <span class="!text-xs !p-[2px]">{{
               $index + 1 + (currentPage - 1) * pageSize
             }}</span>
           </template>
@@ -156,10 +183,11 @@ License: AGPL-3.0
             :prop="column.key"
             :label="column.title"
             :class="column.class"
-            :class-name="`column-${column.key} ${column.className}`"
+            :class-name="`column-${column.key} ${column.className} ${column.classNameDyn}`"
             :label-class-name="column.headerClassName"
             :width="column.width || ''"
             :sortable="column.sortable"
+            :align="column.align"
           >
             <template #header v-if="column.icon">
               <el-tooltip
@@ -315,6 +343,7 @@ License: AGPL-3.0
   const totalItems = ref<number>(0)
   const currentPage = ref(1)
   const actualDataSize = computed(() => fetchedData.value?.length || 0)
+  const storeTSettings = storeTablesettings()
 
   const {
     pageSize,
@@ -475,5 +504,9 @@ License: AGPL-3.0
   }
   .context-menu li:hover {
     background-color: #f0f0f0;
+  }
+
+  :deep(td .cell) {
+    padding: 0 !important;
   }
 </style>

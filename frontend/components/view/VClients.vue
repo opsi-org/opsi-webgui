@@ -79,7 +79,12 @@ License: AGPL-3.0
   const reachableClientsIsLoadingHeader = ref<boolean>(false)
   const rowId = 'clientId'
   const clientsRef = ref()
-  const statisticsWidth = '60px'
+  const statisticsWidth = '30px'
+  const statisticsWidthDyn = computed(() => {
+    return storeTSettings.otherSettings['clients'].statisticIcons
+      ? 'max-w-14'
+      : 'max-w-8'
+  })
   const tableColumn = ref([
     {
       title: '',
@@ -88,10 +93,11 @@ License: AGPL-3.0
       type: 'selection',
       fixed: 'true',
       // icon: icons.checkBox,
-      visible: storeTSettings.clientsColumns.includes('selected'),
+      visible: true, // storeTSettings.clientsColumns.includes('selected'),
       alwaysVisible: true,
-      width: props.isMobile ? '35px' : '60px',
-
+      className: props.isMobile ? 'max-w-10' : '!max-w-7',
+      // maxWidth: props.isMobile ? '35px' : '60px',
+      align: 'center',
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
         rowData.selected = storeSelection.selectionClients.includes(
@@ -122,8 +128,10 @@ License: AGPL-3.0
       title: $t('table.fields.id'),
       key: 'clientId',
       sortable: 'custom',
-      visible: storeTSettings.clientsColumns.includes('clientId'),
+      visible: true, //storeTSettings.clientsColumns.includes('clientId'),
       alwaysVisible: true,
+      className: '!px-2',
+      class: '',
       fixed: 'true',
       filter: true,
       minWidth: '100px',
@@ -146,7 +154,12 @@ License: AGPL-3.0
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('description'),
     },
-    { title: 'notes', key: 'notes', sortable: 'custom', visible: false },
+    {
+      title: 'notes',
+      key: 'notes',
+      sortable: 'custom',
+      visible: storeTSettings.clientsColumns.includes('notes'),
+    },
     {
       title: $t('table.fields.lastSeen'),
       key: 'lastSeen',
@@ -164,11 +177,10 @@ License: AGPL-3.0
       title: $t('table.fields.versionOutdatedLocalboot'),
       key: 'version_outdated',
       sortable: 'custom',
-      visible: storeTSettings.clientsColumns.includes(
-        'version_outdated_localboot',
-      ),
-      className: 'parent-statistics',
+      visible: storeTSettings.clientsColumns.includes('version_outdated'),
       minWidth: statisticsWidth,
+      className: 'parent-statistics ',
+      classNameDyn: statisticsWidthDyn.value,
       icon: icons.productsOutdatedLocal,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.versionOutdatedLocalboot'),
@@ -188,8 +200,10 @@ License: AGPL-3.0
       visible: storeTSettings.clientsColumns.includes(
         'version_outdated_netboot',
       ),
+
       minWidth: statisticsWidth,
-      className: 'parent-statistics',
+      className: 'parent-statistics ',
+      classNameDyn: statisticsWidthDyn.value,
       icon: icons.productsOutdatedNet,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.versionOutdatedNetboot'),
@@ -209,8 +223,10 @@ License: AGPL-3.0
       visible: storeTSettings.clientsColumns.includes(
         'installationStatus_unknown',
       ),
+
       minWidth: statisticsWidth,
-      className: 'parent-statistics',
+      className: 'parent-statistics ',
+      classNameDyn: statisticsWidthDyn.value,
       icon: icons.productInstallationStatusUnknown,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.installationStatusUnknown'),
@@ -230,8 +246,10 @@ License: AGPL-3.0
       visible: storeTSettings.clientsColumns.includes(
         'installationStatus_installed',
       ),
+
       minWidth: statisticsWidth,
-      className: 'parent-statistics',
+      className: 'parent-statistics ',
+      classNameDyn: statisticsWidthDyn.value,
       icon: icons.productInstallationStatusInstalled,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.installationStatus_installed'),
@@ -249,7 +267,9 @@ License: AGPL-3.0
         'actionResult_successful',
       ),
       minWidth: statisticsWidth,
-      className: 'parent-statistics',
+      className: 'parent-statistics ',
+      classNameDyn: statisticsWidthDyn.value,
+
       icon: icons.productActionResultSuccessful,
       cellRenderer: getStatisticRenderer(
         $t('table.fields.actionResult_successful'),
@@ -264,7 +284,9 @@ License: AGPL-3.0
       key: 'actionResult_failed',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('actionResult_failed'),
-      className: 'parent-statistics',
+      className: 'parent-statistics ',
+      classNameDyn: statisticsWidthDyn.value,
+
       minWidth: statisticsWidth,
       icon: icons.productsFailedActionResult,
       cellRenderer: getStatisticRenderer(
@@ -341,6 +363,18 @@ License: AGPL-3.0
       width: '140px',
     },
   ])
+
+  watch(
+    () => storeTSettings.otherSettings['clients'].statisticIcons,
+    () => {
+      // clientsRef.value?.refetch()
+      for (const column of tableColumn.value) {
+        if (column.classNameDyn !== undefined) {
+          column.classNameDyn = statisticsWidthDyn.value
+        }
+      }
+    },
+  )
 
   watch(
     () => storeTSettings.clientsSorting,
@@ -507,10 +541,12 @@ License: AGPL-3.0
       return rowData[value] ? (
         <Button
           onClick={click}
-          class="!m-0 !p-0"
+          class="flex m-auto p-auto"
           title={rowData[value] + ' ' + tootltip}
         >
-          <IIcon icon={icon} class="min-w-5 min-h-5 mr-0 pr-0" />
+          {storeTSettings.otherSettings['clients'].statisticIcons ? (
+            <IIcon icon={icon} class="min-w-5 min-h-5 mr-0 pr-0" />
+          ) : null}
           <Badge
             value={val.value}
             severity={severity.value}
