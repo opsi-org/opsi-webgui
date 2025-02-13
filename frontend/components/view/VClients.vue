@@ -15,8 +15,8 @@ License: AGPL-3.0
     :action-clone="(rowData: any) => `/clients/client/clone/${rowData[rowId]}`"
     :action-log="(rowData: any) => `/clients/client/logs/${rowData[rowId]}`"
     :action-config="(rowData: any) => `/clients/client/config/${rowData[rowId]}`"
-    :sort-by="storeCookie.clientsSorting.column"
-    :sort-desc="storeCookie.clientsSorting.isDesc"
+    :sort-by="storeTSettings.clientsSorting.column"
+    :sort-desc="storeTSettings.clientsSorting.isDesc"
     :table-column="tableColumn"
     :fetch="fetchClients"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionClients(id)}"
@@ -62,9 +62,8 @@ License: AGPL-3.0
   const icons = useIcons()
   const router = useRouter()
   const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
-
   const storeSelection = storeSelections()
-  const storeCookie = storeTablesettings()
+  const storeTSettings = storeTablesettings()
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
   const props = defineProps({
@@ -89,7 +88,7 @@ License: AGPL-3.0
       type: 'selection',
       fixed: 'true',
       // icon: icons.checkBox,
-      visible: storeCookie.clientsColumns.includes('selected'),
+      visible: storeTSettings.clientsColumns.includes('selected'),
       alwaysVisible: true,
       width: props.isMobile ? '35px' : '60px',
 
@@ -123,7 +122,7 @@ License: AGPL-3.0
       title: $t('table.fields.id'),
       key: 'clientId',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes('clientId'),
+      visible: storeTSettings.clientsColumns.includes('clientId'),
       alwaysVisible: true,
       fixed: 'true',
       filter: true,
@@ -133,39 +132,39 @@ License: AGPL-3.0
       title: $t('table.fields.mac'),
       key: 'macAddress',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes('macAddress'),
+      visible: storeTSettings.clientsColumns.includes('macAddress'),
     },
     {
       title: $t('table.fields.ip'),
       key: 'ipAddress',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes('ipAddress'),
+      visible: storeTSettings.clientsColumns.includes('ipAddress'),
     },
     {
       title: $t('table.fields.description'),
       key: 'description',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes('description'),
+      visible: storeTSettings.clientsColumns.includes('description'),
     },
     { title: 'notes', key: 'notes', sortable: 'custom', visible: false },
     {
       title: $t('table.fields.lastSeen'),
       key: 'lastSeen',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes('lastSeen'),
+      visible: storeTSettings.clientsColumns.includes('lastSeen'),
     },
     {
       title: $t('table.fields.uefi'),
       key: 'uefi',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes('uefi'),
+      visible: storeTSettings.clientsColumns.includes('uefi'),
     },
 
     {
       title: $t('table.fields.versionOutdatedLocalboot'),
       key: 'version_outdated',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes(
+      visible: storeTSettings.clientsColumns.includes(
         'version_outdated_localboot',
       ),
       className: 'parent-statistics',
@@ -186,7 +185,9 @@ License: AGPL-3.0
       title: $t('table.fields.versionOutdatedNetboot'),
       key: 'version_outdated_netboot',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes('version_outdated_netboot'),
+      visible: storeTSettings.clientsColumns.includes(
+        'version_outdated_netboot',
+      ),
       minWidth: statisticsWidth,
       className: 'parent-statistics',
       icon: icons.productsOutdatedNet,
@@ -205,7 +206,7 @@ License: AGPL-3.0
       title: $t('table.fields.installationStatusUnknown'),
       key: 'installationStatus_unknown',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes(
+      visible: storeTSettings.clientsColumns.includes(
         'installationStatus_unknown',
       ),
       minWidth: statisticsWidth,
@@ -226,7 +227,7 @@ License: AGPL-3.0
       title: $t('table.fields.installationStatus_installed'),
       key: 'installationStatus_installed',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes(
+      visible: storeTSettings.clientsColumns.includes(
         'installationStatus_installed',
       ),
       minWidth: statisticsWidth,
@@ -244,7 +245,9 @@ License: AGPL-3.0
       title: $t('table.fields.actionResult_successful'),
       key: 'actionResult_successful',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes('actionResult_successful'),
+      visible: storeTSettings.clientsColumns.includes(
+        'actionResult_successful',
+      ),
       minWidth: statisticsWidth,
       className: 'parent-statistics',
       icon: icons.productActionResultSuccessful,
@@ -260,7 +263,7 @@ License: AGPL-3.0
       title: $t('table.fields.actionResultFailed'),
       key: 'actionResult_failed',
       sortable: 'custom',
-      visible: storeCookie.clientsColumns.includes('actionResult_failed'),
+      visible: storeTSettings.clientsColumns.includes('actionResult_failed'),
       className: 'parent-statistics',
       minWidth: statisticsWidth,
       icon: icons.productsFailedActionResult,
@@ -279,7 +282,7 @@ License: AGPL-3.0
       title: $t('table.fields.reachable'),
       key: 'reachable',
       sortable: false,
-      visible: storeCookie.clientsColumns.includes('reachable'),
+      visible: storeTSettings.clientsColumns.includes('reachable'),
       width: '60px',
       headerCellRenderer: () => {
         return reachableClientsIsLoadingHeader.value ? (
@@ -333,14 +336,14 @@ License: AGPL-3.0
       title: $t('table.fields.rowactions'),
       key: 'actions',
       sortable: false,
-      visible: storeCookie.clientsColumns.includes('actions'),
+      visible: storeTSettings.clientsColumns.includes('actions'),
       alwaysVisible: true,
       width: '140px',
     },
   ])
 
   watch(
-    () => storeCookie.clientsSorting,
+    () => storeTSettings.clientsSorting,
     () => {
       refetch()
     },
@@ -367,8 +370,8 @@ License: AGPL-3.0
     params.selected = JSON.stringify(storeSelection.selectionClients)
     params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)
     if (params.sortBy) {
-      storeCookie.clientsSorting.column = params.sortBy
-      storeCookie.clientsSorting.isDesc = params.sortDesc
+      storeTSettings.clientsSorting.column = params.sortBy
+      storeTSettings.clientsSorting.isDesc = params.sortDesc
     }
     const { data, error, headers } = await useApiGETBody<T_ClientsList>(
       '/opsidata/clients',

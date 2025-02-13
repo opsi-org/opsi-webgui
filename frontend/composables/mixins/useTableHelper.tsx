@@ -29,6 +29,7 @@ export const useTableHelper = (
   const router = useRouter()
   const icons = useIcons()
   const { notifyError } = useNotification()
+  const storeTSettings = storeTablesettings()
 
   const isLoading = ref(false)
   const filterQuery = ref('')
@@ -38,7 +39,24 @@ export const useTableHelper = (
   const contextMenuVisible = ref(false)
   const contextMenuStyle = ref({})
   const contextMenuRow = ref(null)
+  const visibleColumns = computed<Record<string, boolean>>(() => {
+    const visibleColumns: Record<string, boolean> = {}
+    props.tableColumn.forEach((col: any) => {
+      visibleColumns[col.key] = col.visible
+    })
+    return visibleColumns
+  })
 
+  watch(
+    () => visibleColumns.value,
+    () => {
+      const visibleColumnIds = Object.keys(visibleColumns.value).filter(
+        (key) => visibleColumns.value[key],
+      )
+      storeTSettings.setColumns(props.tableId, visibleColumnIds)
+    },
+    { deep: true },
+  )
   watch(
     [() => filterQuery.value],
     () => {
