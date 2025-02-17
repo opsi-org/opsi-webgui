@@ -210,6 +210,7 @@ License: AGPL-3.0
 <style scoped>
   :root {
     --minus-height: 1px;
+    --width: 0px;
   }
   .el-main {
     --el-main-padding: 7px;

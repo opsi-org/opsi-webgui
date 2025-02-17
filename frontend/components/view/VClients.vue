@@ -81,9 +81,10 @@ License: AGPL-3.0
   const clientsRef = ref()
   const statisticsWidth = '30px'
   const statisticsWidthDyn = computed(() => {
-    return storeTSettings.otherSettings['clients'].statisticIcons
-      ? 'max-w-14'
-      : 'max-w-8'
+    return ''
+    // return storeTSettings.otherSettings['clients'].statisticIcons
+    //   ? 'max-w-14'
+    //   : 'max-w-9'
   })
   const tableColumn = ref([
     {
@@ -165,6 +166,13 @@ License: AGPL-3.0
       key: 'lastSeen',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('lastSeen'),
+      cellRenderer: ({ rowData }: any) => {
+        return rowData.lastSeen ? (
+          <span>{new Date(rowData.lastSeen).toLocaleString()}</span>
+        ) : (
+          <span />
+        )
+      },
     },
     {
       title: $t('table.fields.uefi'),
@@ -179,7 +187,7 @@ License: AGPL-3.0
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('version_outdated'),
       minWidth: statisticsWidth,
-      className: 'parent-statistics ',
+      className: 'parent-statistics !min-w-min !w-fit !max-w-max !px-1 !py-0',
       classNameDyn: statisticsWidthDyn.value,
       icon: icons.productsOutdatedLocal,
       cellRenderer: getStatisticRenderer(
@@ -202,7 +210,7 @@ License: AGPL-3.0
       ),
 
       minWidth: statisticsWidth,
-      className: 'parent-statistics ',
+      className: 'parent-statistics !min-w-min !w-fit !max-w-max !px-1 !py-0',
       classNameDyn: statisticsWidthDyn.value,
       icon: icons.productsOutdatedNet,
       cellRenderer: getStatisticRenderer(
@@ -225,7 +233,7 @@ License: AGPL-3.0
       ),
 
       minWidth: statisticsWidth,
-      className: 'parent-statistics ',
+      className: 'parent-statistics !min-w-min !w-fit !max-w-max !px-1 !py-0 ',
       classNameDyn: statisticsWidthDyn.value,
       icon: icons.productInstallationStatusUnknown,
       cellRenderer: getStatisticRenderer(
@@ -248,7 +256,7 @@ License: AGPL-3.0
       ),
 
       minWidth: statisticsWidth,
-      className: 'parent-statistics ',
+      className: 'parent-statistics !min-w-min !w-fit !max-w-max !px-1 !py-0 ',
       classNameDyn: statisticsWidthDyn.value,
       icon: icons.productInstallationStatusInstalled,
       cellRenderer: getStatisticRenderer(
@@ -267,7 +275,7 @@ License: AGPL-3.0
         'actionResult_successful',
       ),
       minWidth: statisticsWidth,
-      className: 'parent-statistics ',
+      className: 'parent-statistics !min-w-min !w-fit !max-w-max !px-1 !py-0 ',
       classNameDyn: statisticsWidthDyn.value,
 
       icon: icons.productActionResultSuccessful,
@@ -284,7 +292,7 @@ License: AGPL-3.0
       key: 'actionResult_failed',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('actionResult_failed'),
-      className: 'parent-statistics ',
+      className: 'parent-statistics !min-w-min !w-fit !max-w-max !px-1 !py-0 ',
       classNameDyn: statisticsWidthDyn.value,
 
       minWidth: statisticsWidth,
@@ -306,14 +314,13 @@ License: AGPL-3.0
       sortable: false,
       visible: storeTSettings.clientsColumns.includes('reachable'),
       width: '60px',
+      // {$t('table.fields.reachable')}
       headerCellRenderer: () => {
         return reachableClientsIsLoadingHeader.value ? (
           <ILoading small />
         ) : (
           <div>
-            <el-text v-if={props.isMobile}>
-              {$t('table.fields.reachable')}
-            </el-text>
+            <el-text v-if={props.isMobile}></el-text>
             <el-button
               v-else
               link
@@ -360,7 +367,7 @@ License: AGPL-3.0
       sortable: false,
       visible: storeTSettings.clientsColumns.includes('actions'),
       alwaysVisible: true,
-      width: '140px',
+      className: '!max-w-max !min-w-min',
     },
   ])
 
@@ -566,5 +573,15 @@ License: AGPL-3.0
   }
   :deep(.parent-statistics:not(:has(~ .parent-statistics))) {
     border-right: 2px solid var(--el-border-color) !important;
+  } */
+
+  /* :deep(td .cell),
+  :deep(th .cell) {
+    min-width: min-content;
+    max-width: max-content;
+    padding: 1px;
+  } */
+  /* :deep(.parent-statistics),
+  :deep(.parent-statistics .cell) {
   } */
 </style>

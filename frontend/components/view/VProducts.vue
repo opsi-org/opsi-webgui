@@ -178,7 +178,8 @@ License: AGPL-3.0
       type: 'selection',
       visible: storeCookie.productsColumns.includes('selected'),
       alwaysVisible: true,
-      width: '60px',
+      className: props.isMobile ? 'max-w-10' : '!max-w-7',
+      align: 'center',
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
         rowData.selected = storeSelection.selectionProducts.includes(
@@ -213,7 +214,7 @@ License: AGPL-3.0
       visible:
         clientSelection.value.length > 0 &&
         storeCookie.productsColumns.includes('installationStatus'),
-      width: '80px',
+      className: 'max-w-8 min-w-min max-w-max',
       icon: icons.product,
       cellRenderer: ({ rowData }: any) => {
         return (
@@ -246,7 +247,7 @@ License: AGPL-3.0
       visible:
         clientSelection.value.length > 0 &&
         storeCookie.productsColumns.includes('actionResult'),
-      width: '80px',
+      className: 'max-w-8  min-w-min max-w-max',
       icon: icons.productActionResult,
       cellRenderer: ({ rowData }: any) => {
         return (
@@ -334,6 +335,7 @@ License: AGPL-3.0
       visible:
         clientSelection.value.length > 0 &&
         storeCookie.productsColumns.includes('actionRequest'),
+      className: 'max-w-28',
       headerCellRenderer: useMQ().isMobile.value
         ? undefined
         : () => {
@@ -362,7 +364,7 @@ License: AGPL-3.0
       sortable: false,
       visible: storeCookie.productsColumns.includes('actions'),
       alwaysVisible: true,
-      width: '150px',
+      className: 'max-w-40 w-11',
       cellRenderer: ({ rowData }: any) => {
         const change = () => {
           emit('change', rowData.productId)
@@ -621,3 +623,13 @@ License: AGPL-3.0
     }
   })
 </script>
+<style scoped>
+  :deep(.column-installationStatus),
+  :deep(.column-installationStatus .cell),
+  :deep(.column-actionResult),
+  :deep(.column-actionResult .cell) {
+    min-width: min-content;
+    max-width: max-content;
+    padding: 1px;
+  }
+</style>

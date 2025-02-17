@@ -168,13 +168,13 @@ License: AGPL-3.0
         :stripe="storeTSettings.otherSettings[props.tableId].stripe"
       >
         <!--  row index -->
-        <el-table-column label="#" align="right" class-name="!min-w-5">
+        <!-- <el-table-column label="#" align="right" class-name="column-index">
           <template #default="{ $index }">
             <span class="!text-xs !p-[2px]">{{
               $index + 1 + (currentPage - 1) * pageSize
             }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <!-- columns -->
         <template v-for="column in tableColumn">
           <el-table-column
@@ -198,7 +198,10 @@ License: AGPL-3.0
               >
                 <el-text class="!inline-block">
                   <!-- {{ column.title }} -->
-                  <IconIIcon :icon="column.icon" class="min-w-6 min-h-6" />
+                  <IconIIcon
+                    :icon="column.icon"
+                    class="min-w-4 min-h-4 max-w-6 max-h-6"
+                  />
                 </el-text>
               </el-tooltip>
             </template>
@@ -506,7 +509,17 @@ License: AGPL-3.0
     background-color: #f0f0f0;
   }
 
-  :deep(td .cell) {
-    padding: 0 !important;
+  :deep(td .cell),
+  :deep(th .cell) {
+    min-width: min-content;
+    max-width: max-content;
+    padding: 1px;
+  }
+  :deep(.column-selected),
+  :deep(.column-index),
+  :deep(.column-selected .cell),
+  :deep(.column-index .cell) {
+    min-width: auto;
+    padding: 2px;
   }
 </style>
