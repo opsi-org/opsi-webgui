@@ -12,7 +12,7 @@ License: AGPL-3.0
       data-testid="TCActionResultBadge"
       :severity="props.variant"
     >
-      <IconIIcon :icon="icon.unequal" alt="mixed" :title="props.text" />
+      <IconIIcon :icon="icon.unequal" alt="mixed" />
     </p-tag>
     <p-tag
       v-else-if="props.text == 'successful'"
