@@ -17,7 +17,6 @@ License: AGPL-3.0
         content="depot-unequal"
         :variant="rowitem.depot_version_diff || false ? 'warn' : undefined"
       />
-      <!-- @click="$emit('details', row, tooltiptext)" -->
       <IconIDetails
         v-if="rowitem.selectedDepots?.length !== selectionDepots.length"
         :variant="

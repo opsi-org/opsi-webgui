@@ -150,9 +150,10 @@ License: AGPL-3.0
   const productsRef = ref()
   const { selectionDepots, selectionClients, selectionProducts } =
     storeToRefs(storeSelection)
-  const clientSelection: Ref<Array<string>> = props.selectedClient
-    ? ref([props.selectedClient])
-    : selectionClients
+  const clientSelection: Ref<Array<string>> =
+    props.selectedClient !== undefined
+      ? ref([props.selectedClient])
+      : ref(selectionClients.value)
   const fetchedDataClients2Depots = ref<T_Client2Depot>({})
   const lastChanges = ref({
     clientIds: [] as Array<string>,
@@ -430,9 +431,23 @@ License: AGPL-3.0
     { deep: true },
   )
   watch(
+    () => selectionClients.value,
+    async () => {
+      if (props.selectedClient === undefined) {
+        clientSelection.value = selectionClients.value
+
+        fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(
+          clientSelection.value,
+        )
+        productsRef.value?.refetch()
+      }
+    },
+    { deep: true },
+  )
+  watch(
     () => props.selectedClient,
     async (v) => {
-      if (v) {
+      if (v !== undefined) {
         clientSelection.value = [v]
       } else {
         clientSelection.value = selectionClients.value
