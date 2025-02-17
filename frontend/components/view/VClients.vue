@@ -96,7 +96,7 @@ License: AGPL-3.0
       // icon: icons.checkBox,
       visible: true, // storeTSettings.clientsColumns.includes('selected'),
       alwaysVisible: true,
-      className: props.isMobile ? 'max-w-10' : '!max-w-7',
+      className: props.isMobile ? 'max-w-10' : '!max-w-7 !min-w-7 !w-7',
       // maxWidth: props.isMobile ? '35px' : '60px',
       align: 'center',
       cellRenderer: ({ rowData }: any) => {
