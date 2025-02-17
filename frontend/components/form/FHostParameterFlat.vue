@@ -143,7 +143,7 @@ License: AGPL-3.0
   import type { CollapseModelValue } from 'element-plus'
   import { useStrings } from '~/composables/mixins/useStrings'
   import { useDynamicHeight } from '~/composables/mixins/useDynamicHeightWindow'
-  import { useBuildingConfigTree } from '~/composables/useBuildingConfigTree'
+  import { useBuildingConfigTree } from '~/composables/useBuildingConfigTreeFlat'
 
   const { notifyError, notifyInfo } = useNotification()
   const t_fixed = useStrings().t_fixed

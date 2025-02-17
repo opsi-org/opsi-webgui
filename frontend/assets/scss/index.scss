@@ -145,11 +145,19 @@ html .el-button:hover {
   display: none !important;
   height: 0 !important;
 }
-.sselect-overlay .p-select-option {
+.desktop .sselect-overlay .p-select-option {
   min-height: 1rem;
   max-height: fit-content;
   height: fit-content;
   max-width: 500px;
+  word-wrap: normal;
+  overflow: auto;
+}
+.mobile .sselect-overlay .p-select-option {
+  min-height: 1rem;
+  max-height: fit-content;
+  height: fit-content;
+  max-width: 260px !important;
   word-wrap: normal;
   overflow: auto;
 }
