@@ -364,7 +364,7 @@ License: AGPL-3.0
       sortable: false,
       visible: storeCookie.productsColumns.includes('actions'),
       alwaysVisible: true,
-      className: 'max-w-40 w-11',
+      className: '!max-w-42 !w-12',
       cellRenderer: ({ rowData }: any) => {
         const change = () => {
           emit('change', rowData.productId)

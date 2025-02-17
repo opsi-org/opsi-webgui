@@ -12,7 +12,7 @@ License: AGPL-3.0
       data-testid="TCInstallationStatusBadge"
       :severity="props.variant"
     >
-      <IconIIcon :icon="icons.unequal" alt="mixed" :title="props.text" />
+      <IconIIcon :icon="icons.unequal" alt="mixed" />
     </p-tag>
     <p-tag
       v-else-if="props.text == 'installed'"
@@ -20,7 +20,7 @@ License: AGPL-3.0
       severity="success"
     >
       <span class="h6">
-        <IconIIcon :icon="icons.client" alt="installed" :title="props.text" />
+        <IconIIcon :icon="icons.client" alt="installed" />
       </span>
     </p-tag>
     <p-tag
