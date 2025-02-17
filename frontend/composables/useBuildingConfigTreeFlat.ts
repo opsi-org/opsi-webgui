@@ -8,7 +8,7 @@ License: AGPL-3.0
 
 import type { T_HostParameter, T_HostParameterEntry } from '~/types/APItypes'
 
-export const useBuildingConfigTree = () => {
+export const useBuildingConfigTreeFlat = () => {
   type TreeNode = {
     children: Map<string, TreeNode>
     entries: T_HostParameterEntry[]
