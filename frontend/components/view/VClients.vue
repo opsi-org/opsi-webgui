@@ -12,9 +12,9 @@ License: AGPL-3.0
     :row-id="rowId"
     :is-mobile="props.isMobile"
     has-client-actions
-    :action-clone="(rowData: any) => `/clients/client/clone/${rowData[rowId]}`"
-    :action-log="(rowData: any) => `/clients/client/logs/${rowData[rowId]}`"
-    :action-config="(rowData: any) => `/clients/client/config/${rowData[rowId]}`"
+    :action-clone="(rowData: any) => `/clients/${rowData[rowId]}/clone`"
+    :action-log="(rowData: any) => `/clients/${rowData[rowId]}/logs`"
+    :action-config="(rowData: any) => `/clients/${rowData[rowId]}/config`"
     :sort-by="storeTSettings.clientsSorting.column"
     :sort-desc="storeTSettings.clientsSorting.isDesc"
     :table-column="tableColumn"

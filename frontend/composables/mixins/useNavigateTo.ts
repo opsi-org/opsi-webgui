@@ -42,7 +42,7 @@ export const useNavigate = () => {
   ) {
     if (type === 'clients') {
       storeTS.setSecondColumnSelectedRowId(id)
-      useRouter().push('/clients/client/config/' + id)
+      useRouter().push(`/clients/${id}/config/`)
     } else if (type === 'servers') {
       storeTS.setSecondColumnSelectedRowId(id)
       useRouter().push('/servers/server/config/' + id)
@@ -58,7 +58,7 @@ export const useNavigate = () => {
   function toType(type: string, id: string, pagetype: string = 'config') {
     if (type === 'clients') {
       storeTS.setSecondColumnSelectedRowId(id)
-      useRouter().push('/clients/client/' + pagetype + '/' + id)
+      useRouter().push(`/clients/${id}/${pagetype}/`)
     } else if (type === 'servers') {
       storeTS.setSecondColumnSelectedRowId(id)
       useRouter().push('/servers/server/' + pagetype + '/' + id)
