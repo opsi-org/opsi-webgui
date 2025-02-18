@@ -60,6 +60,9 @@ export default {
         'opsi-warning-dark': 'var(--color-opsi-warning-dark)',
         'opsi-error': 'var(--color-opsi-error)',
         'opsi-error-dark': 'var(--color-opsi-error-dark)',
+        border: 'var(--hover)',
+        // 'border-2': 'var(--el-border-color-light)',
+        // 'border-3': 'var(--el-table-border)',
       },
 
       width: {
