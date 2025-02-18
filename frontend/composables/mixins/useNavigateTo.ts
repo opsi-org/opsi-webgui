@@ -45,7 +45,7 @@ export const useNavigate = () => {
       useRouter().push(`/clients/${id}/config/`)
     } else if (type === 'servers') {
       storeTS.setSecondColumnSelectedRowId(id)
-      useRouter().push('/servers/server/config/' + id)
+      useRouter().push(`/servers/${id}/config/`)
     } else if (type === 'products') {
       storeTS.setSecondColumnSelectedRowId(id)
       if (isChild) {
@@ -61,7 +61,7 @@ export const useNavigate = () => {
       useRouter().push(`/clients/${id}/${pagetype}/`)
     } else if (type === 'servers') {
       storeTS.setSecondColumnSelectedRowId(id)
-      useRouter().push('/servers/server/' + pagetype + '/' + id)
+      useRouter().push(`/servers/${id}/${pagetype}/`)
     }
   }
   return {
