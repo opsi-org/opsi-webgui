@@ -87,8 +87,8 @@ License: AGPL-3.0
 
   const $t = useI18n().t
   const adminTasks = reactive({
-    clients: ['unblock', 'unblockAll'], // for translation key search: $('title.clients'), $('label.clients.unblock'), $('label.clients.unblockAll')
-    products: ['unlock', 'unlockAll'], // for translation key search: $('title.products') $('label.products.unlock'), $('label.products.unlockAll')
+    clients: ['unblock', 'unblockAll'], // for translation key search: $('title.clients'), $('label.clients.unblock'), $('label.clients.unblockAll'), $('label.unblock'), $('label.unblockAll')
+    products: ['unlock', 'unlockAll'], // for translation key search: $('title.products') $('label.products.unlock'), $('label.products.unlockAll'), $('label.unlock'), $('label.unlockAll')
   })
   const mq = useMQ()
   const selected = ref({
