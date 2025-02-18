@@ -15,13 +15,11 @@ declare module 'vue' {
     PFloatLabel: typeof import('primevue/floatlabel')['default']
     PInputText: typeof import('primevue/inputtext')['default']
     PMultiSelect: typeof import('primevue/multiselect')['default']
-    POverlayBadge: typeof import('primevue/overlaybadge')['default']
     PPopover: typeof import('primevue/popover')['default']
     PSelect: typeof import('primevue/select')['default']
     PTag: typeof import('primevue/tag')['default']
     PToggleSwitch: typeof import('primevue/toggleswitch')['default']
     PTreeTable: typeof import('primevue/treetable')['default']
-    PVirtualScroller: typeof import('primevue/virtualscroller')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
