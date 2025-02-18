@@ -31,10 +31,11 @@ License: AGPL-3.0
 <script setup lang="ts">
   const settings = storeSettings()
 
+  const { isLight } = storeToRefs(storeSettings())
   const isDarkMode = computed({
-    get: () => settings.colormode === 'dark',
+    get: () => !isLight.value,
     set: (value: boolean) => {
-      settings.setColormode(value ? 'dark' : 'light')
+      settings.setDark(value)
     },
   })
 </script>
