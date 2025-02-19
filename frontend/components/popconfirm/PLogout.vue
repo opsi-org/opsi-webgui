@@ -69,10 +69,6 @@ License: AGPL-3.0
     useMBus(undefined, false, $t).wsDisconnect()
     authStore.logout()
     authStore.clearSession()
-
-    if (useRoute().name !== 'login') {
-      reloadNuxtApp()
-    }
     // TODO clearAllSelection()
   }
 </script>
