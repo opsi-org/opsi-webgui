@@ -291,7 +291,7 @@ License: AGPL-3.0
       // 'tableHeader-'+props.tableId
       // 'tableFooter-'+props.tableId
     ],
-    50,
+    props.isChild ? 100 : 50,
   )
 
   const showWarning = computed(() => {
