@@ -67,7 +67,6 @@
   "form.modules.available": "Available modules",
   "form.multiselection": "Multi selection",
   "form.multiselection.cbValue.content": "There are more than one element selected (in servers, clients or products). Press 'OK' to remove selection (only the first selected item wil be kept), abort  otherwise and unselect items manually.",
-  "form.multiselection.cbvalue.error": "Unable to change selctionmode. There are more than one element selected.",
   "form.multiselection.cbvalue.off": "single",
   "form.multiselection.cbvalue.on": "multi",
   "form.multiselection.cbvalue.tooltip": "If enabled, you can select multiple elements (servers, clients, products), instead of only one at a time.",
