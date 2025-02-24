@@ -7,9 +7,18 @@ License: AGPL-3.0
 -->
 <template>
   <div class="flex justify-between items-center">
-    <el-button @click="clearSelection" size="small">
-      {{ $t('table.selection.clear') }}
-    </el-button>
+    <p-button
+      :disabled="
+        props.grouptype == GroupTree_CLIENTGROUP
+          ? selectionClients.length <= 0
+          : selectionProducts.length <= 0
+      "
+      @click="clearSelection"
+      size="small"
+      severity="primary"
+      variant="outlined"
+      :label="$t('table.selection.clear')"
+    />
     <IconILoading v-if="isLoadingSelection" small />
   </div>
   <el-tree
@@ -109,7 +118,7 @@ License: AGPL-3.0
     isLoading.value = false
   })
   watch(
-    () => multiSelection,
+    () => multiSelection.value,
     () => {
       // go through all groups and reset disabled
       const recursive = (data: any) => {
