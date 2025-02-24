@@ -32,7 +32,7 @@ export const storeSelections = defineStore('selections', {
   getters: {
     // multiSelection: (state: any) => state._multiSelection,
     multiSelection: () =>
-      useCookie('MultiSelection', { default: () => false }).value,
+      useCookie('MultiSelection', { default: () => true }).value,
     selectionDepots: (state: any): Array<string> => state._selectionDepots,
     selectionClients: (state: any): Array<string> => state._selectionClients,
     selectionProducts: (state: any): Array<string> => state._selectionProducts,
