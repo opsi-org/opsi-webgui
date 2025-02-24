@@ -21,7 +21,7 @@ License: AGPL-3.0
         'max-width: 80px; width: 80px; min-width: 80px': $mq === 'mobile',
         'max-width: 140px; width: 140px; min-width: 140px': $mq !== 'mobile',
       }"
-      class="border-y-[1px] !border-border align-text-top"
+      class="border-y align-text-top my-0 py-1"
     >
       <template #body="slotProps">
         <el-tag
@@ -36,7 +36,7 @@ License: AGPL-3.0
     <p-column
       field="name"
       :header="$t('label.healthcheck.check_name')"
-      class="border-y-[1px] !border-border align-text-top"
+      class="border-y align-text-top my-0 py-1"
     >
       <template #body="scope">
         <div class="block">
@@ -71,7 +71,7 @@ License: AGPL-3.0
       min-width="200"
       field="message"
       :header="$t('label.healthcheck.check_message')"
-      class="border-y-[1px] !border-border align-text-top"
+      class="border-y align-text-top my-0 py-1"
     />
   </p-tree-table>
 </template>
