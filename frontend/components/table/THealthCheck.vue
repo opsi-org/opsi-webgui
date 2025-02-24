@@ -13,19 +13,6 @@ License: AGPL-3.0
     :filters="filters"
     filter-mode="strict"
   >
-    <template #header>
-      <div class="flex justify-start">
-        <p-input-group class="min-w-fit border">
-          <p-input-group-addon>
-            <IconIIcon :icon="useIcons().filter" class="my-auto" />
-          </p-input-group-addon>
-          <p-input-text
-            v-model="filters['global']"
-            :placeholder="$t('label.search')"
-          />
-        </p-input-group>
-      </div>
-    </template>
     <p-column
       expander
       field="status"
@@ -97,9 +84,14 @@ License: AGPL-3.0
   const modelValue = defineModel<Array<any>>()
   const _props = defineProps({
     withColumnHeaders: { type: Boolean, default: true },
+    filter: { type: String, default: '' },
   })
   const healthtable = ref()
-  const filters = ref<Record<string, any>>({})
+  const filters = ref<Record<string, any>>({ global: _props.filter })
+  watch(
+    () => _props.filter,
+    (newVal) => (filters.value.global = newVal),
+  )
 
   function transformThisLevel(arrdata: Array<any>): Array<any> {
     return (arrdata || []).map((item: any) => {
@@ -107,8 +99,6 @@ License: AGPL-3.0
         console.warn('item is empty')
         return
       }
-      // const { partial_results, ..._ } = item
-      // const cid = item.check_id || item.check?.id
       const item2 = {
         status: item.check?.status || item.check_status || '?',
         key: item.check?.id || item.check_id || '',

@@ -126,7 +126,7 @@ License: AGPL-3.0
           route: '/admin/terminal',
           disabled: config.value?.['terminal.forbidden'] === true,
         },
-        { title: 'title.healthcheck', route: '/admin/healthcheck' },
+        { title: 'title.healthcheck', route: '/admin/diagnostics?id=health' },
         { title: 'title.admin', route: '/admin/general' },
         { title: 'form.modules', route: '/admin/modules' },
       ],
