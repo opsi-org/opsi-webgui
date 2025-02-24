@@ -152,6 +152,7 @@
   "label.refresh": "Refresh",
   "label.reloadPage": "Reload Page",
   "label.retryaftersec": "Retry-After (in seconds)",
+  "label.search": "Search",
   "label.select": "Select",
   "label.selectChildren": "Select group children",
   "label.selection": "Selection",
@@ -365,6 +366,5 @@
   "tree.selection.clear.one": "Unselect item '{id}'",
   "treeselect.noResultTextEditable": "Not such item found",
   "treeselect.nooption": "No options available.",
-  "treeselect.search": "Search",
   "treeselect.searchOrAdd": "Search or add item"
 }

@@ -6,7 +6,26 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <p-tree-table ref="healthtable" class="maintable-healthcheck" :value="data">
+  <p-tree-table
+    ref="healthtable"
+    class="maintable-healthcheck"
+    :value="data"
+    :filters="filters"
+    filter-mode="strict"
+  >
+    <template #header>
+      <div class="flex justify-start">
+        <p-input-group class="min-w-fit border">
+          <p-input-group-addon>
+            <IconIIcon :icon="useIcons().filter" class="my-auto" />
+          </p-input-group-addon>
+          <p-input-text
+            v-model="filters['global']"
+            :placeholder="$t('label.search')"
+          />
+        </p-input-group>
+      </div>
+    </template>
     <p-column
       expander
       field="status"
@@ -21,7 +40,7 @@ License: AGPL-3.0
         <el-tag
           effect="dark"
           :type="getType(slotProps.node.data.status)"
-          class="text-capitalize"
+          class="text-capitalize mx-2"
           >{{ slotProps.node.data.status }}</el-tag
         >
       </template>
@@ -80,6 +99,7 @@ License: AGPL-3.0
     withColumnHeaders: { type: Boolean, default: true },
   })
   const healthtable = ref()
+  const filters = ref<Record<string, any>>({})
 
   function transformThisLevel(arrdata: Array<any>): Array<any> {
     return (arrdata || []).map((item: any) => {
