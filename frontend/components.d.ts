@@ -20,6 +20,7 @@ declare module 'vue' {
     PSelect: typeof import('primevue/select')['default']
     PTag: typeof import('primevue/tag')['default']
     PToggleSwitch: typeof import('primevue/toggleswitch')['default']
+    PTree: typeof import('primevue/tree')['default']
     PTreeTable: typeof import('primevue/treetable')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

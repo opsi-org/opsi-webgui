@@ -23,15 +23,32 @@ License: AGPL-3.0
     :props="defaultProps"
     :class="multiSelection ? 'isMultiSelect' : 'isSingleSelect'"
     node-key="id"
+    show-checkbox
     :default-expanded-keys="
       props.grouptype == GroupTree_CLIENTGROUP ? firstlevelkeys : undefined
     "
-    show-checkbox
     highlight-current
     @check="handleClickCheckbox"
     @node-click="handleClickText"
   >
+    <!-- :class="multiSelection ? 'isMultiSelect' : 'isSingleSelect'" -->
+    <!-- :show-checkbox="selectionStore.multiSelection" -->
     <!-- default-expand-all -->
+    <template #default="{ data }">
+      <p-radio-button
+        v-if="!multiSelection && data.type == 'ObjectToGroup'"
+        :label="data.text"
+        :value="data.text"
+        size="small"
+        class="mb-1 mr-1"
+        name="rb-tree-item"
+        :input-id="'rb-item-' + data.id"
+        v-model="selectedItem"
+      />
+      <!--
+        @change="handleClickCheckbox(data, $event)" -->
+      <span :for="'rb-item-' + data.id" class="ml-1"> {{ data.text }} </span>
+    </template>
   </el-tree>
 </template>
 
@@ -66,14 +83,20 @@ License: AGPL-3.0
     class: customNodeClass,
   }
   const fetchedData = ref<any>([])
-  const storeSelection = storeSelections()
-
+  const selectionStore = storeSelections()
   const {
     selectionDepots,
     selectionClients,
     selectionProducts,
     multiSelection,
-  } = storeToRefs(storeSelection)
+  } = storeToRefs(selectionStore)
+  const selectedItem = ref<string>(
+    multiSelection.value
+      ? ''
+      : props.grouptype == GroupTree_CLIENTGROUP
+        ? selectionClients.value[0]
+        : selectionProducts.value[0],
+  )
 
   onMounted(async () => {
     isLoading.value = true
@@ -85,7 +108,35 @@ License: AGPL-3.0
     syncSelection()
     isLoading.value = false
   })
-
+  watch(
+    () => multiSelection,
+    () => {
+      // go through all groups and reset disabled
+      const recursive = (data: any) => {
+        data.forEach((node: any) => {
+          const nodeIsLeaf = node.type === 'ObjectToGroup'
+          // !node.children || Object.keys(node.children).length === 0
+          if (!nodeIsLeaf) {
+            node.disabled = !multiSelection.value
+            recursive(node.children)
+          }
+        })
+      }
+      recursive(fetchedData.value)
+    },
+  )
+  watch(
+    () => selectedItem.value,
+    (val) => {
+      if (val) {
+        if (props.grouptype == GroupTree_CLIENTGROUP) {
+          selectionStore.setSelectionClients([val])
+        } else {
+          selectionStore.setSelectionProducts([val])
+        }
+      }
+    },
+  )
   watch(() => selectionClients.value, syncSelection, { deep: true })
   watch(() => selectionProducts.value, syncSelection, { deep: true })
   function customNodeClass({ children, type }: TreeNodeData) {
@@ -144,11 +195,12 @@ License: AGPL-3.0
     isLoadingSelection.value = true
     if (props.grouptype == GroupTree_CLIENTGROUP) {
       clientGroupRef.value?.setCheckedKeys([], false)
-      storeSelection.clearSelectionClients()
+      selectionStore.clearSelectionClients()
     } else {
       prodGroupRef.value?.setCheckedKeys([], false)
-      storeSelection.clearSelectionProducts()
+      selectionStore.clearSelectionProducts()
     }
+    selectedItem.value = ''
     isLoadingSelection.value = false
   }
 
@@ -169,6 +221,12 @@ License: AGPL-3.0
         undefined,
       )
       prodGroupRef.value?.setCheckedNodes(resNodes, false)
+    }
+    if (!multiSelection.value) {
+      selectedItem.value =
+        props.grouptype == GroupTree_CLIENTGROUP
+          ? selectionClients.value[0]
+          : selectionProducts.value[0]
     }
   }
   function handleClickText(node: TreeNodeData, obj: any) {
@@ -241,8 +299,8 @@ License: AGPL-3.0
   }
   function _getSelectionFunction() {
     return props.grouptype == GroupTree_CLIENTGROUP
-      ? storeSelection.setSelectionClients
-      : storeSelection.setSelectionProducts
+      ? selectionStore.setSelectionClients
+      : selectionStore.setSelectionProducts
   }
   function _getSelection() {
     return props.grouptype == GroupTree_CLIENTGROUP
@@ -262,8 +320,13 @@ License: AGPL-3.0
     display: none !important;
   }
 
-  .isSingleSelect
+  /* .isSingleSelect
     :deep(.el-tree-node.isGroup > .el-tree-node__content > .el-checkbox) {
+    display: none !important;
+  } */
+
+  .isSingleSelect
+    :deep(.el-tree-node.isLeaf > .el-tree-node__content > .el-checkbox) {
     display: none !important;
   }
 </style>
