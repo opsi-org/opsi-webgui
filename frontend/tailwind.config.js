@@ -65,6 +65,9 @@ export default {
         // 'border-3': 'var(--el-table-border)',
       },
 
+      borderWidth: {
+        1: '1px',
+      },
       width: {
         '1/1': '100%',
         '1/2': '50%',
