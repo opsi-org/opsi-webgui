@@ -68,6 +68,7 @@ export const useTimer = (init: boolean = false) => {
       notification.value?.close()
     }
     if (isNaN(t.diff) || t.diff <= 0 || notifyInMilliSec.value <= 0) {
+      if (notification.value) notification.value?.close()
       countdowntimer.value = $t('message.session.expired') as string
       console.error('Session expired')
       try {
@@ -77,7 +78,7 @@ export const useTimer = (init: boolean = false) => {
         authStore.clearSession()
         settingsStore.setExpiresInterval(undefined)
         router.push('/login')
-        throw new Error(`${e}`)
+        console.warn('Logout failed, cause already logged out', e)
       }
       settingsStore.setExpiresInterval(undefined)
       // clearInterval(intervalId.value)
