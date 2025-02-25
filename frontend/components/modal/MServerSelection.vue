@@ -97,7 +97,6 @@ License: AGPL-3.0
   // const localSelectedServers = ref<string|string[]>(configserver ? [configserver] : [])
 
   function save() {
-    console.log('localSelectedServers', localSelectedServers.value)
     if (Array.isArray(localSelectedServers.value)) {
       selectionStore.setSelectionDepots(localSelectedServers.value)
     } else {
@@ -105,10 +104,6 @@ License: AGPL-3.0
     }
     // updateStorage() // currently disabled
     $emit('refetch')
-    console.log(
-      'selectionStore.selectionDepots',
-      selectionStore.selectionDepots,
-    )
     visible.value = false
   }
   /*
