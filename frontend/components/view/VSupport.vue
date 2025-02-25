@@ -7,7 +7,10 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="VSupport" class="w-100 min-w-1/1">
-    <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div
+      class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"
+      id="support-boxes"
+    >
       <div
         v-for="item in supportItems"
         :key="item.title"
@@ -30,7 +33,12 @@ License: AGPL-3.0
     </div>
     <div v-if="withIframe">
       <iframe
-        class="opsidoc-frame w-100 min-w-1/1 border"
+        class="opsidoc-frame w-100 min-w-1/1 border border-red-500"
+        :style="
+          `max-height: ${maxVisibleHeight}px;` +
+          `height: ${maxVisibleHeight}px;` +
+          `min-height: ${maxVisibleHeight}px;`
+        "
         :src="documentationUrl"
         :title="$t('supportPage.documentation.title')"
       />
@@ -42,6 +50,8 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
+  import { useDynamicHeight } from '~/composables/mixins/useDynamicHeightWindow'
+
   const locale = useI18n().locale
   const $t = useI18n().t
 
@@ -66,6 +76,10 @@ License: AGPL-3.0
           : 'https://www.uib.de/de/support-schulung/support',
     },
   ])
+  const { maxVisibleHeight } = useDynamicHeight(
+    ['btop-header', 'globalBreadcrumb', 'support-boxes'],
+    0,
+  )
 
   const documentationUrl = computed(() =>
     locale.value === 'de'
