@@ -18,6 +18,7 @@ export const storeSelections = defineStore('selections', {
   state: () => ({
     // _multiSelection: useCookie('MultiSelection', { default: () => false }),
     // _multiSelection: (useCookie('MultiSelection').value === 'true' || (useCookie('MultiSelection').value === undefined) || true) as boolean,
+    _selectionDepotsDefault: ['<configserver>'],
     _selectionDepots: reactive(
       (localStorage.getItem('selectionDepots')
         ? JSON.parse(localStorage.getItem('selectionDepots') as string)
@@ -33,6 +34,8 @@ export const storeSelections = defineStore('selections', {
     // multiSelection: (state: any) => state._multiSelection,
     multiSelection: () =>
       useCookie('MultiSelection', { default: () => true }).value,
+    selectionDefaultDepots: (state: any): Array<string> =>
+      state._selectionDepotsDefault, // default depots for depotSelection modal
     selectionDepots: (state: any): Array<string> => state._selectionDepots,
     selectionClients: (state: any): Array<string> => state._selectionClients,
     selectionProducts: (state: any): Array<string> => state._selectionProducts,
@@ -54,6 +57,9 @@ export const storeSelections = defineStore('selections', {
     },
     XsetSelectionLogLevel(s: number) {
       this._selectionLogLevel = s
+    },
+    setSelectionDepotsDefault(s: Array<string>) {
+      this._selectionDepotsDefault = s
     },
     setSelectionDepots(s: Array<string>) {
       if (this.multiSelection === false && s.length > 1) {
