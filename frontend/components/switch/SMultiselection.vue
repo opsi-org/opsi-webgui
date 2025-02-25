@@ -15,7 +15,7 @@ License: AGPL-3.0
       <p-float-label
         v-if="props.type === 'checkbox'"
         variant="in"
-        class="min-w-full border-1 border-red-500"
+        class="min-w-full"
       >
         <p-toggle-switch
           :key="componentKeyForceUpdate"

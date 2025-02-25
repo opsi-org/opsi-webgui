@@ -7,17 +7,18 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="BSide" class="bg-opsi-blue">
+    <!-- :default-active="router.currentRoute.value?.fullPath" -->
     <el-menu
       router
       unique-opened
       class="h-[90vh] bg-opsi-blue"
-      :default-active="router.currentRoute.value?.fullPath"
+      :default-active="router.currentRoute.value?.path"
       :collapse="isCollapse"
     >
       <template v-for="item in navItems" :key="item.title">
         <el-sub-menu
           v-if="item.submenu"
-          :index="item.route"
+          :index="item.route.split('?')[0]"
           :route="item.route"
           :data-testid="'NSidebar-' + item.title"
         >
@@ -29,7 +30,7 @@ License: AGPL-3.0
             v-for="sub in item.submenu"
             :key="sub.title"
             :disabled="sub.disabled"
-            :index="sub.route"
+            :index="sub.route.split('?')[0]"
             :route="sub.route"
             :data-testid="'NICollapsible-submenu-' + sub.title"
           >
@@ -38,7 +39,7 @@ License: AGPL-3.0
         </el-sub-menu>
         <el-menu-item
           v-else
-          :index="item.route"
+          :index="item.route.split('?')[0]"
           :route="item.route"
           :data-testid="'NSidebar-' + item.title"
         >
