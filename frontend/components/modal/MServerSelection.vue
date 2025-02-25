@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <div>
-    <PDialog
+    <p-dialog
       v-model:visible="visible"
       modal
       :header="$t('title.selection.server')"
@@ -17,8 +17,8 @@ License: AGPL-3.0
         v-if="selectionDepots.length <= 0"
         class="text-surface-500 dark:text-surface-400 block mb-8"
       >
-        {{ $t('message.info.clients.noServerSelection') }}</span
-      >
+        {{ $t('message.info.clients.noServerSelection') }}
+      </span>
       <SelectSSelect
         v-model:selection="localSelectedServers"
         v-model:data="dataSorted"
@@ -32,11 +32,11 @@ License: AGPL-3.0
       />
       <div class="flex justify-end gap-2">
         <el-button @click="cancel">{{ $t('label.cancel') }}</el-button>
-        <el-button type="primary" @click="save">
+        <el-button variant="primary" @click="save">
           {{ $t('label.select') }}
         </el-button>
       </div>
-    </PDialog>
+    </p-dialog>
   </div>
 </template>
 
@@ -53,17 +53,46 @@ License: AGPL-3.0
     refetchOnCancel: { type: Boolean, default: false },
   })
 
-  const { selectionDepots } = storeToRefs(selectionStore)
+  const { selectionDepots, selectionDefaultDepots } =
+    storeToRefs(selectionStore)
+  const configserver = ref<string>('')
   const dataSorted = await useDepot($t).getDepotIdList()
-  const configserver = (await useCServer.getOpsiConfigServerWithHeaders(false))
-    .data
   const localSelectedServers = ref<string | string[]>(
-    selectionStore.multiSelection ? [] : '',
+    selectionStore.multiSelection
+      ? selectionDefaultDepots.value
+      : selectionDefaultDepots.value?.[0],
   )
-  if (configserver) {
+  // const focusedElement = ref<HTMLElement | null>(null)
+  onMounted(async () => {
+    await initSelect()
+  })
+
+  async function initSelect() {
+    // default is first item of data
     localSelectedServers.value = selectionStore.multiSelection
-      ? [configserver]
-      : configserver
+      ? [dataSorted?.[0]]
+      : dataSorted?.[0]
+
+    // if configserver is found, use it
+    configserver.value = (
+      await useCServer.getOpsiConfigServerWithHeaders(false)
+    ).data
+    if (
+      configserver.value ||
+      selectionDefaultDepots.value?.[0] == '<configserver>'
+    ) {
+      if (configserver.value == undefined)
+        throw new Error('Configserver not found')
+      localSelectedServers.value = selectionStore.multiSelection
+        ? [configserver.value]
+        : configserver.value
+    }
+
+    if (localSelectedServers.value?.[0] !== '<configserver>') {
+      localSelectedServers.value = selectionStore.multiSelection
+        ? selectionDefaultDepots.value
+        : selectionDefaultDepots.value?.[0]
+    }
   }
   // const localSelectedServers = ref<string|string[]>(configserver ? [configserver] : [])
 
@@ -73,10 +102,34 @@ License: AGPL-3.0
     } else {
       selectionStore.setSelectionDepots([localSelectedServers.value])
     }
-    // selectionStore.setSelectionDepots(localSelectedServers.value)
+    // updateStorage() // currently disabled
     $emit('refetch')
     visible.value = false
   }
+  /*
+  function updateStorage() {
+    // change the default selected server in this modal in storage
+    // multi selection
+    if (
+      Array.isArray(localSelectedServers.value) &&
+      localSelectedServers.value.length == 1 &&
+      configserver.value === localSelectedServers.value[0]
+    ) {
+      selectionStore.setSelectionDepotsDefault(['<configserver>'])
+    } else if (Array.isArray(localSelectedServers.value)) {
+      selectionStore.setSelectionDepotsDefault(localSelectedServers.value)
+    }
+    // is single selection
+    else if (
+      !Array.isArray(localSelectedServers.value) &&
+      localSelectedServers.value.length == 1 &&
+      configserver.value === localSelectedServers.value[0]
+    ) {
+      selectionStore.setSelectionDepotsDefault(['<configserver>'])
+    } else if (!Array.isArray(localSelectedServers.value))
+      selectionStore.setSelectionDepotsDefault([localSelectedServers.value])
+  }*/
+
   function cancel() {
     if (props.refetchOnCancel) {
       $emit('refetch')
@@ -84,3 +137,8 @@ License: AGPL-3.0
     visible.value = false
   }
 </script>
+<style lang="css" scoped>
+  :deep(.p-dialog-close-button .p-button-label) {
+    margin: 0px;
+  }
+</style>

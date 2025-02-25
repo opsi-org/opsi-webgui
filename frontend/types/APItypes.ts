@@ -135,6 +135,7 @@ export interface T_GroupsTransformed {
   type: string
   text: string
   parent: string | null
+  disabled?: boolean
   children?: T_GroupsTransformed[] | null
 }
 

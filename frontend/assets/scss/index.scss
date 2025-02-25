@@ -124,6 +124,18 @@ html .el-button:hover {
   background-color: opsi.$opsi-blue;
   color: $white;
 }
+html .p-button-outlined {
+  border-width: 1px;
+  border-color: var(--border);
+  border-radius: 3px;
+}
+html .p-button-outlined > span,
+html .p-button > span {
+  margin: 0rem 8px;
+}
+html .p-button.p-button-sm {
+  font-size: small;
+}
 
 /* Dropdowns */
 .el-dropdown__popper {

@@ -30,7 +30,7 @@ License: AGPL-3.0
               <IconIIcon :icon="icons.columns" />
             </el-button>
             <template #dropdown>
-              <div>
+              <div class="table-caption">
                 <el-checkbox
                   v-model="storeTSettings.otherSettings[props.tableId].border"
                   :label="$t('table.settings.border')"
@@ -49,6 +49,17 @@ License: AGPL-3.0
                     storeTSettings.otherSettings[props.tableId].statisticIcons
                   "
                   :label="$t('table.settings.statisticIcons')"
+                />
+                <el-checkbox
+                  v-if="
+                    storeTSettings.otherSettings[props.tableId]
+                      .reachableAllClients != undefined
+                  "
+                  v-model="
+                    storeTSettings.otherSettings[props.tableId]
+                      .reachableAllClients
+                  "
+                  :label="$t('table.settings.reachableAllClients')"
                 />
               </div>
               <el-table
@@ -212,59 +223,6 @@ License: AGPL-3.0
             <template #default="scope" v-if="column.key === 'actions'">
               <div v-contextmenu="(e:any) => showContextMenu(e, scope)">
                 <ActionsRenderer :row-data="scope.row" />
-                <!-- <el-tooltip
-                  :content="$t('title.config')"
-                  placement="top"
-                  v-if="actionConfig"
-                >
-                  <el-button
-                    link
-                    @click="handleConfigClick(scope.row)"
-                    :class="{
-                      'is-active':
-                        activeButton === 'config-' + scope.row.clientId,
-                    }"
-                  >
-                    <IconIIcon :icon="icons.settings" />
-                  </el-button>
-                </el-tooltip>
-                <el-tooltip
-                  :content="$t('title.log')"
-                  placement="top"
-                  v-if="actionLog"
-                >
-                  <el-button
-                    link
-                    @click="handleLogClick(scope.row)"
-                    :class="{
-                      'is-active': activeButton === 'log-' + scope.row.clientId,
-                    }"
-                  >
-                    <IconIIcon :icon="icons.log" />
-                  </el-button>
-                </el-tooltip>
-                <el-tooltip
-                  v-if="actionClone"
-                  :content="$t('title.clone')"
-                  placement="top"
-                >
-                  <el-button
-                    link
-                    :disabled="storeConfigapp().config?.read_only"
-                    @click="handleCloneClick(scope.row)"
-                    :class="{
-                      'is-active':
-                        activeButton === 'clone-' + scope.row.clientId,
-                    }"
-                  >
-                    <IconIIcon :icon="icons.client" />
-                  </el-button>
-                </el-tooltip>
-                <DropdownDDClientActions
-                  v-if="hasClientActions"
-                  :disabled="storeConfigapp().config?.read_only"
-                  :client-ids="[scope.row.clientId]"
-                /> -->
               </div>
             </template>
             <template #default="scope" v-else>

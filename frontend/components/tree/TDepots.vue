@@ -6,14 +6,42 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-button @click="clearSelection" size="small">
-    {{ $t('table.selection.clear') }}
-  </el-button>
-  <el-checkbox-group v-model="selectedDepots" @change="handleDepotSelection">
-    <div v-for="item in depotIDList" :key="item">
-      <el-checkbox size="small" :label="item" :value="item" />
-    </div>
-  </el-checkbox-group>
+  <p-button
+    :disabled="selectedDepots.length <= 0"
+    @click="
+      () => {
+        clearSelection()
+        selectedDepot = ''
+      }
+    "
+    size="small"
+    severity="primary"
+    variant="outlined"
+    :label="$t('table.selection.clear')"
+  />
+  <div class="flex items-center gap-2" v-for="item in depotIDList" :key="item">
+    <p-checkbox
+      v-if="storeSelection.multiSelection"
+      name="cb-server"
+      size="small"
+      v-model="selectedDepots"
+      :label="item"
+      :value="item"
+      :input-id="'cb-item-' + item"
+      @change="handleDepotSelection"
+    />
+    <p-radio-button
+      v-else
+      v-model="selectedDepot"
+      name="cb-server"
+      size="small"
+      :label="item"
+      :value="item"
+      :input-id="'cb-item-' + item"
+      @change="handleDepotSelection"
+    />
+    <label :for="'cb-item-' + item"> {{ item }} </label>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -25,12 +53,14 @@ License: AGPL-3.0
   const useCookie = storeTablesettings()
   const depotIDList = ref<T_DepotIds>([])
   const selectedDepots = ref<T_DepotIds>([])
+  const selectedDepot = ref<string>(storeSelection.selectionDepots[0])
 
   watch(
     () => storeSelection.selectionDepots,
     async () => {
       syncSelection()
     },
+    { deep: true },
   )
 
   onMounted(async () => {
@@ -44,6 +74,8 @@ License: AGPL-3.0
 
   const syncSelection = () => {
     selectedDepots.value = storeSelection.selectionDepots
+    if (selectedDepots.value.length >= 1)
+      selectedDepot.value = storeSelection.selectionDepots[0]
   }
 
   const clearSelection = () => {
@@ -51,7 +83,11 @@ License: AGPL-3.0
   }
 
   const handleDepotSelection = () => {
-    storeSelection.setSelectionDepots(selectedDepots.value)
+    if (storeSelection.multiSelection) {
+      storeSelection.setSelectionDepots(selectedDepots.value)
+    } else {
+      storeSelection.setSelectionDepots([selectedDepot.value])
+    }
     useCookie.setSortColumn('servers', 'selected', true)
   }
 </script>

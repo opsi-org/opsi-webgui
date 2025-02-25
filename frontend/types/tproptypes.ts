@@ -15,3 +15,5 @@ export type PropTypeGroupTree =
   | typeof GroupTree_PRODGROUP
   | 'infoselections'
   | 'depots'
+
+export type T_health = 'healthcheck' | 'all'

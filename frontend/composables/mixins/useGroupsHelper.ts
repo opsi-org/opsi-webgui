@@ -8,8 +8,10 @@ License: AGPL-3.0
 import type { T_Groups, T_GroupsTransformed } from '~/types/APItypes'
 
 export const useGroupsHelper = () => {
+  const { multiSelection } = storeToRefs(storeSelections())
   function transformNode(node: T_Groups): T_GroupsTransformed {
-    const nodeIsLeaf = !node.children || Object.keys(node.children).length === 0
+    // const nodeIsLeaf = !node.children || Object.keys(node.children).length === 0
+    const nodeIsLeaf = node.type === 'ObjectToGroup'
     const newNode: T_GroupsTransformed = {
       id: node.id,
       type: node.type,
@@ -19,6 +21,7 @@ export const useGroupsHelper = () => {
 
     // const newNode: T_Groups = { ...node }
     if (!nodeIsLeaf) {
+      newNode.disabled = !multiSelection.value
       if (node.children) {
         newNode.children = Object.values(node.children).map((child) =>
           transformNode(child),

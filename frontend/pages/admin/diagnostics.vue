@@ -6,5 +6,11 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <TabsTServerHealth />
+  <TabsTServerHealth :id="id" />
 </template>
+
+<script setup lang="ts">
+  import type { T_health } from '~/types/tproptypes'
+
+  const id = computed(() => (useRoute().query.id as T_health) || undefined)
+</script>

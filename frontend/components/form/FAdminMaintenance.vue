@@ -118,7 +118,7 @@ License: AGPL-3.0
         <el-input-group v-else-if="key === 'server_id'" class="w-100 flex">
           <el-radio-group
             class="flex-shrink-0"
-            v-model="actions[key]"
+            v-model="serverIDValue"
             :disabled="storeConfigapp().config?.read_only"
           >
             <el-radio
@@ -132,10 +132,10 @@ License: AGPL-3.0
           </el-radio-group>
           <el-input
             class="ml-2"
-            v-if="actions[key] === 'new'"
+            v-if="actions[key] !== 'backup' && actions[key] !== 'local'"
             :placeholder="$t('placeholder.enterNewID')"
             required
-            v-model="actions[key]"
+            v-model="serverIDValueNew"
           />
         </el-input-group>
         <el-input-group v-else-if="key === 'file_id'" class="w-100 flex">
@@ -207,7 +207,10 @@ License: AGPL-3.0
     file_id: string
   }
   const serverIDValues = ['backup', 'local', 'new'] // for translation key search: $t('label.backup'), $t('label.local'), $t('label.new')
+  const serverIDValue = ref('backup')
+  const serverIDValueNew = ref('')
   const applicationStateValues = ['normal', 'maintenance'] // for translation key search: $t('label.normal'), $t('label.maintenance')
+
   const adminTasks = reactive({
     applicationState: ['current', 'setup'], // for translation key search: $t('title.applicationState'), $t('label.applicationState.current'), $t('label.applicationState.setup')
     createBackup: {
@@ -222,10 +225,22 @@ License: AGPL-3.0
       file_id: '', // for translation key search: $t('label.file_id')
       config_files: false, // for translation key search: $t('label.config_files')
       redis_data: false, // for translation key search: $t('label.redis_data')
-      server_id: 'backup', // for translation key search: $t('label.server_id')
+      server_id: serverIDValue.value, // for translation key search: $t('label.server_id')
       password: '', // for translation key search: $t('label.password')
     },
   })
+  watch(
+    () => serverIDValue.value,
+    (newVal) => {
+      adminTasks.restoreBackup.server_id = newVal
+    },
+  )
+  watch(
+    () => serverIDValueNew.value,
+    (newVal) => {
+      adminTasks.restoreBackup.server_id = newVal
+    },
+  )
   const $t = useI18n().t
   const mq = useMQ()
   const currentAppState = ref('')

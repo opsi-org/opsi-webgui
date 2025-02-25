@@ -12,22 +12,21 @@ License: AGPL-3.0
     </template>
 
     <template #default>
-      <PFloatLabel
+      <p-float-label
         v-if="props.type === 'checkbox'"
         variant="in"
-        class="min-w-full border-1 border-red-500"
+        class="min-w-full"
       >
-        <PToggleSwitch
+        <p-toggle-switch
+          :key="componentKeyForceUpdate"
           v-model="cbValue"
+          ref="cbMultiSelection"
           id="cbMultiSelection"
           name="multiselection"
-          :aria-label="
-            'Switch multiselection mode. Currently is ' +
-            (cbValue ? 'on' : 'off')
-          "
+          aria-label="Multiselection mode"
           style="--p-toggleswitch-width: 5rem"
           v-bind="$props"
-          @change="changeSelectionMode"
+          @change="() => changeSelectionMode(true)"
         />
         <label
           for="cbMultiSelection"
@@ -39,7 +38,7 @@ License: AGPL-3.0
               : $t('form.multiselection.cbvalue.off')
           }}</label
         >
-      </PFloatLabel>
+      </p-float-label>
     </template>
   </TooltipTTooltip>
 </template>
@@ -48,14 +47,18 @@ License: AGPL-3.0
   const $t = useI18n().t
   const selections = storeSelections()
 
+  const componentKeyForceUpdate = ref(0)
   const emit = defineEmits(['action'])
   const props = defineProps({
     type: { type: String, default: 'checkbox' },
   })
-
+  const cbMultiSelection = ref()
   const cbValue = computed({
     get: () => selections.multiSelection,
-    set: () => {},
+    set: (val) => {
+      if (val) selections.setMultiSelection(val)
+      else selections.setMultiSelection(!selections.multiSelection)
+    },
   })
 
   watch(
@@ -75,23 +78,27 @@ License: AGPL-3.0
     },
   )
 
-  const changeSelectionMode = () => {
-    if (selections.multiSelection === true) {
-      if (
-        selections.selectionDepots.length > 1 ||
+  const changeSelectionMode = (showModalVal = true) => {
+    if (
+      showModalVal &&
+      selections.multiSelection === true &&
+      (selections.selectionDepots.length > 1 ||
         selections.selectionClients.length > 1 ||
-        selections.selectionProducts.length > 1
-      ) {
-        showModal()
-        return
-      }
+        selections.selectionProducts.length > 1)
+    ) {
+      showModal()
+      return
     }
     selections.setMultiSelection(!selections.multiSelection)
     emit('action')
   }
 
-  const showModal = () => {
-    alert($t('form.multiselection.cbvalue.error'))
-    // alert($t('form.multiselection.cbValue.content')) # TODO: Button to select all
+  const showModal = async () => {
+    if (confirm($t('form.multiselection.cbValue.content'))) {
+      selections.setMultiSelection(false)
+    } else {
+      selections.setMultiSelection(true)
+      componentKeyForceUpdate.value += 1
+    }
   }
 </script>

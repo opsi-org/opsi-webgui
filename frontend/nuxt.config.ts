@@ -13,30 +13,21 @@ const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? '4447'
 // do not change following line, cause it is automatically patched by the build_production_local.sh script
 const ADDON_PATH: string = '/addons/webgui'
 
-console.log('---------------------------------------------------')
-console.log('OPSI CONFD PORT', CONFD_PORT)
-console.log('ADDON PATH', ADDON_PATH)
-console.log('VERSION', pkg.version)
-console.log('---------------------------------------------------')
+if (process.env.NODE_ENV === 'development') {
+  console.log('---------------------------------------------------')
+  console.log('OPSICONFD PORT', CONFD_PORT)
+  console.log('ADDON PATH', ADDON_PATH)
+  console.log('VERSION', pkg.version)
+  console.log('---------------------------------------------------')
+}
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-01-23',
   experimental: { appManifest: false },
   build: {
-    analyze: true,
-    // hardSource: true,
+    analyze: false,
   },
   sourcemap: false,
-  webpack: {
-    loaders: {
-      vue: {
-        hotReload: true,
-      },
-    },
-    optimization: {
-      usedExports: true,
-    },
-  },
   ignore: [
     '**/tests-configs/**',
     '**/*.test.component.ts',
@@ -49,6 +40,12 @@ export default defineNuxtConfig({
   },
   typescript: {
     typeCheck: true,
+    tsConfig: {
+      compilerOptions: {
+        skipLibCheck: true,
+        noEmit: true,
+      },
+    },
   },
   ssr: false,
   devServer: {
@@ -64,9 +61,6 @@ export default defineNuxtConfig({
       link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
     },
   },
-  // static: {
-  //   prefix: false,
-  // },
   runtimeConfig: {
     public: {
       OPSICONFD_PORT: CONFD_PORT,
@@ -83,7 +77,6 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/i18n',
     '@primevue/nuxt-module',
-    // "nuxt-primevue",
     '@element-plus/nuxt',
     '@nuxtjs/tailwindcss',
     ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],
@@ -92,22 +85,45 @@ export default defineNuxtConfig({
   ],
   i18n: {
     vueI18n: './i18n.config.js', // custom path example
-    //legacy: false,
   },
   piniaPluginPersistedstate: {
     key: 'opsiwui-%id',
-    // key: (id: string) => `opsiui-${id}`,
     storage: 'localStorage',
     debug: true,
   },
   css: ['~/assets/scss/index.scss', '~/assets/scss/tailwind.scss'],
   vite: {
+    optimizeDeps: {
+      include: ['vue', 'vue-router', '@vueuse/core'],
+      esbuildOptions: {
+        target: 'esnext',
+      },
+    },
+    cacheDir: 'node_modules/.vite_cache',
     css: {
       preprocessorOptions: {
         scss: {
           additionalData: `@use "@/assets/scss/opsi.scss" as *;`,
         },
       },
+    },
+    server: {
+      watch: {
+        ignored: [
+          '**/node_modules/**',
+          '**/test-results/**',
+          '**/tests/**',
+          '**/tests-configs/**',
+          '**/tests-screenshots/**',
+        ],
+      },
+      hmr: {
+        protocol: 'ws',
+        host: 'localhost',
+      },
+    },
+    esbuild: {
+      target: 'esnext',
     },
   },
   tailwindcss: {
@@ -122,10 +138,8 @@ export default defineNuxtConfig({
     options: {
       ripple: false,
       pt: {},
-      // theme: { preset: Material },
       theme: {
         preset: MyPreset,
-
         options: {
           prefix: 'p',
           darkModeSelector: '.dark',
@@ -148,5 +162,4 @@ export default defineNuxtConfig({
   imports: {
     dirs: ['store'],
   },
-  // } as InputConfig<NuxtConfig, ConfigLayerMeta>
 })

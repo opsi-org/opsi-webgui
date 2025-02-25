@@ -26,18 +26,26 @@ License: AGPL-3.0
               v-for="(value2, label2) in createClient.initialSetup
                 .opsiClientAgent"
               :key="label2 + value2"
+              :class="{
+                'w-full': label2 === 'setup',
+                'w-1/2': label2 !== 'setup',
+              }"
             >
-              <el-checkbox
-                v-if="typeof value2 == 'boolean'"
-                v-model="
-                  createClient.initialSetup.opsiClientAgent[label2.toString()]
-                "
-              />
+              <div v-if="label2 == 'setup'">
+                <el-checkbox
+                  v-model="
+                    createClient.initialSetup.opsiClientAgent[label2.toString()]
+                  "
+                  class="w-full"
+                >
+                  {{ label2 }}
+                </el-checkbox>
+              </div>
               <el-form-item
                 v-else
                 :label="$t('form.' + label2)"
                 :class="{
-                  'd-none': !createClient.initialSetup.opsiClientAgent.setup,
+                  '!hidden': !createClient.initialSetup.opsiClientAgent.setup,
                 }"
               >
                 <el-select

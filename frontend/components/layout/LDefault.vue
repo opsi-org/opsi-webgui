@@ -106,7 +106,7 @@ License: AGPL-3.0
 
   const configapp = storeConfigapp()
   const settings = storeSettings()
-  const { isLight } = storeToRefs(settings)
+  const { isLight } = storeToRefs(storeSettings())
 
   const leftSideIsSmall = ref<boolean>(false)
   const leftSideVisible = ref<boolean>(!mq.isMobile.value)
