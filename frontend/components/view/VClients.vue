@@ -316,6 +316,10 @@ License: AGPL-3.0
       width: '60px',
       // {$t('table.fields.reachable')}
       headerCellRenderer: () => {
+        const reachableMode = storeTSettings.otherSettings.clients
+          .reachableAllClients
+          ? $t('button.reachables.all')
+          : $t('button.reachables.selected')
         return reachableClientsIsLoadingHeader.value ? (
           <ILoading small />
         ) : (
@@ -324,9 +328,9 @@ License: AGPL-3.0
             <el-button
               v-else
               link
-              title={$t('button.reachables.title')}
+              title={$t('button.reachables.title') + ' ' + reachableMode}
               disabled={storeConfigapp().config?.read_only}
-              onClick={handleClickReachable}
+              onClick={() => handleClickReachable()}
             >
               <IIcon icon={icons.clientReachable} />
             </el-button>
@@ -441,19 +445,32 @@ License: AGPL-3.0
     }
   }
 
-  async function handleClickReachable(clientIds: string[]) {
+  async function handleClickReachable(
+    clientIds: string[] | undefined = undefined,
+  ) {
     const params: t_param_reachable = {}
-    if (clientIds?.length > 0) {
-      params.selectedClients = clientIds
-      for (const clientId of clientIds) {
-        reachableClientsIsLoading.value[clientId] = true
+    if (clientIds == undefined || clientIds?.length <= 0) {
+      if (storeTSettings.otherSettings.clients.reachableAllClients) {
+        // check reachability for all clients
+        reachableClientsIsLoadingHeader.value = true
+      } else {
+        // only for selected clients
+        params.selectedClients = storeSelection.selectionClients
+        for (const clientId of params.selectedClients) {
+          reachableClientsIsLoading.value[clientId] = true
+        }
       }
     } else {
-      reachableClientsIsLoadingHeader.value = true
+      // only given client/s (maybe not selected)
+      params.selectedClients = clientIds
+      for (const clientId of params.selectedClients) {
+        reachableClientsIsLoading.value[clientId] = true
+      }
     }
     const { data, error } = await useApiGETBody<TClientReach>(
-      '/opsidata/clients/reachable',
-      params,
+      params.selectedClients == undefined
+        ? '/opsidata/clients/reachable'
+        : `/opsidata/clients/reachable?selectedClients=[${params.selectedClients}]`,
     )
     if (error) {
       console.error(error)
@@ -466,8 +483,8 @@ License: AGPL-3.0
       const val = data.value[key]
       reachableClients.value[key] = val
     }
-    if (clientIds?.length > 0) {
-      for (const clientId of clientIds) {
+    if (params.selectedClients && params.selectedClients?.length > 0) {
+      for (const clientId of params.selectedClients) {
         reachableClientsIsLoading.value[clientId] = false
       }
     }
@@ -551,7 +568,7 @@ License: AGPL-3.0
           class="flex m-auto p-auto"
           title={rowData[value] + ' ' + tootltip}
         >
-          {storeTSettings.otherSettings['clients'].statisticIcons ? (
+          {storeTSettings.otherSettings.clients.statisticIcons ? (
             <IIcon icon={icon} class="min-w-5 min-h-5 mr-0 pr-0" />
           ) : null}
           <Badge

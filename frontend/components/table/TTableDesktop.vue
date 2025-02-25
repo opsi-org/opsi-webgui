@@ -30,7 +30,7 @@ License: AGPL-3.0
               <IconIIcon :icon="icons.columns" />
             </el-button>
             <template #dropdown>
-              <div>
+              <div class="table-caption">
                 <el-checkbox
                   v-model="storeTSettings.otherSettings[props.tableId].border"
                   :label="$t('table.settings.border')"
@@ -49,6 +49,17 @@ License: AGPL-3.0
                     storeTSettings.otherSettings[props.tableId].statisticIcons
                   "
                   :label="$t('table.settings.statisticIcons')"
+                />
+                <el-checkbox
+                  v-if="
+                    storeTSettings.otherSettings[props.tableId]
+                      .reachableAllClients != undefined
+                  "
+                  v-model="
+                    storeTSettings.otherSettings[props.tableId]
+                      .reachableAllClients
+                  "
+                  :label="$t('table.settings.reachableAllClients')"
                 />
               </div>
               <el-table
