@@ -14,16 +14,18 @@ and consistency in our commit messages. The convention is as follows:
 ```
 
 ### Prefixes
-
-Prefixes are used to categorize commits based on the type of change they
+* Prefixes are used to categorize commits based on the type of change they
 represent. The following prefixes are used in our project:
-
-- **new**: A new feature implementation
-- **chg**: Implementation changes
-- **dep**: Changes related to deprecated code or functionality
-- **rem**: Removal or deletion of code or files
-- **fix**: A bug fix
-- **sec**: Security-related changes or fixes
+  - **new**: A new feature implementation
+  - **chg**: Implementation changes
+  - **dep**: Changes related to deprecated code or functionality
+  - **rem**: Removal or deletion of code or files
+  - **fix**: A bug fix
+  - **sec**: Security-related changes or fixes
+* Optional additional prefix:
+  - **pub**: is used for commits that are related to the publication of a new version of the software. This message will be added to the changelog of this project. It cannot be used alone. Usage examples:
+    `[fix,pub] Fix issue with login page`
+    `[new,pub] Add new feature for user authentication`
 
 ## Commit Message Guidelines
 
@@ -113,6 +115,14 @@ description of the changes made, along with any relevant information or
 context. This helps reviewers understand the purpose and impact of the changes
 and enables a smooth review process.
 
+After finishing your work, create a merge request and assign it to the relevant team members for review. Be prepared to address any feedback or suggestions provided during the review process. Once the changes are approved, they will approved and the request is ready to merge. Follwing important steps should be taken care of:
+* Ensure that the merge request has no conflicts with the `main` branch.
+* Ensure that the code has been reviewed and approved by at least one team member.
+* (Ensure that the code passes all tests and quality checks.)
+* Ensure that the code has been tested locally and on the test system.
+
+Make sure you have at least one `[pub,..]` commit message in your merge request. This will be used to generate the changelog.
+
 ### Issues
 
 Issues are used to track and discuss specific tasks, enhancements, or bugs
@@ -184,9 +194,12 @@ Example: `feat/user-authentication`, `fix/file-upload-bug`
    relevant issues.
 4. Push your branch to the remote repository.
 5. Create a merge request to propose your changes for review.
-6. Discuss and iterate on your code changes through comments on the
-   merge request.
-7. Once the changes are approved, they will be merged into the `main` branch.
+6. Discuss and iterate on your code changes through comments on the merge request.
+7. Make sure at least one commit message has the `[pub]` prefix to be used in the changelog.
+8. Once the changes are approved,
+   a. use buildDist in vscode-bottom-bar to build the opsi-webgui.zip. Use it for the main test system to check if everything is working as expected. Notify colleagues to check the changes.
+   b. they will be merged into the `main` branch
+9.  Optionally, recommended: create a release / tag using opsi-dev-tools/opsi-dev-cli (This will create a new tag and update the version in the necessary files)
 
 ## Release
 
