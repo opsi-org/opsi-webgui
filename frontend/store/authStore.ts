@@ -7,8 +7,6 @@ License: AGPL-3.0
 */
 import { useCookie } from 'nuxt/app'
 import { defineStore } from 'pinia'
-import { _getI18nInComposable } from '~/composables/mixins/helper-i18n'
-import { useNotification } from '~/composables/mixins/useComponent'
 import type { TTimeDiff } from '~/types/Datatypes'
 
 const expirySec = 60 * 30 // Default=30min=60s*30

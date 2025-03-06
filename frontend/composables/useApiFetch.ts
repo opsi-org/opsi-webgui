@@ -206,18 +206,11 @@ const _logout_on_specific_error = (url: string, status: number) => {
     let loginQuery = ''
     if (!url.includes('/auth/login')) {
       loginQuery = '?expired=true'
-      // const $t = _getI18nInComposable()
-      // useNotification().notifyWarning({
-      //   title: $t('message.session.expired'),
-      //   message: $t('message.session.expired.message'),
-      //   duration: 5000,
-      // })
       authStore.setErrorLoggedOutShown(true)
     }
     console.error('403 forbidden. You may want to reload the page')
     authStore.setUser('')
     navigateTo('/login' + loginQuery)
-    // useRouter().push({ path: '/login' })
   } else {
     authStore.setErrorLoggedOutShown(false)
   }
