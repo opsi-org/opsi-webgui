@@ -7,13 +7,23 @@ License: AGPL-3.0
 */
 import { useCookie } from 'nuxt/app'
 import { defineStore } from 'pinia'
+import { _getI18nInComposable } from '~/composables/mixins/helper-i18n'
+import { useNotification } from '~/composables/mixins/useComponent'
 import type { TTimeDiff } from '~/types/Datatypes'
 
 const expirySec = 60 * 30 // Default=30min=60s*30
 
 export const storeAuth = defineStore('auth', {
+  persist: {
+    key: 'opsi-localchanges',
+    storage: localStorage,
+    // storage: sessionStorage,
+  },
+  // persist keeps username in localStorage.. even if logged out. No need for that here
   state: () => ({
-    username: '',
+    _username: '',
+    _usernameUpdated: null as Date | null,
+    errorLoggedOutShown: false,
     sessionExpiry: expirySec, // sec
     sessionExpiresIn: {
       diff: 0,
@@ -25,25 +35,62 @@ export const storeAuth = defineStore('auth', {
     sessionEndTime: '',
   }),
   getters: {
-    isAuthenticated: ({ username }) =>
-      Boolean(useCookie('opsiconfd-session') && username),
+    username(): string {
+      return this._username
+    },
+    // https://github.com/vuejs/pinia/discussions/1151
+    isUsernameOutdated({ _usernameUpdated }): boolean {
+      if (_usernameUpdated == undefined || _usernameUpdated == null) {
+        return true
+      }
+      // if username is older than expiredTime, it is outdated (e.g. if user didnt logout successfully)
+      const now = new Date()
+      console.warn(
+        'isUsernameOutdated now',
+        now.valueOf(),
+        'usernameUpdated',
+        _usernameUpdated.valueOf(),
+      )
+      const __expired =
+        now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
+      if (__expired) {
+        console.warn('isUsernameOutdated expired')
+      }
+      return __expired
+      // return now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
+    },
+    isAuthenticated({ _username }): boolean {
+      return Boolean(
+        useCookie('opsiconfd-session') && _username && !this.isUsernameOutdated,
+      )
+    },
   },
   actions: {
+    clearSession() {
+      this.$reset()
+    },
     $reset() {
-      this.username = ''
       this.sessionEndTime = ''
+      this.setUser('')
+      // this.errorLoggedOutShown = false
     },
     login(_username: string) {
-      this.username = _username
+      this.errorLoggedOutShown = false
+      this.setUser(_username)
+      // localStorage.setItem('_username', _username)
     },
     logout() {
       this.$reset()
       storeMBus().$reset()
       storeTablesettings().$reset()
-      this.username = ''
     },
     setUser(username: string) {
-      this.username = username
+      this._username = username
+      if (username && username.length > 0) {
+        this._usernameUpdated = new Date()
+      } else {
+        this._usernameUpdated = null
+      }
     },
     setExpiredMin(m: number) {
       this.sessionExpiry = m
@@ -63,9 +110,8 @@ export const storeAuth = defineStore('auth', {
       const expiryTime = new Date(new Date().getTime() + expiryInSec * 1000)
       this.sessionEndTime = expiryTime as unknown as string
     },
-    clearSession() {
-      this.sessionEndTime = ''
-      this.username = ''
+    setErrorLoggedOutShown(val: boolean) {
+      this.errorLoggedOutShown = val
     },
   },
 })

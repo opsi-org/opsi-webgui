@@ -27,7 +27,7 @@ type NotificationType = 'success' | 'error' | 'warning' | 'info' // | 'loading'
 export function useNotification() {
   const notifications = ref<any[]>([])
   const clearAllNotification = ref<any>(null)
-
+  let authStore: any = null
   const formatMessage = (
     message: any,
     messageRef: string | undefined = undefined,
@@ -107,6 +107,17 @@ export function useNotification() {
     })
     return notificationInstance
   }
+  const _checkAuth = () => {
+    authStore = null
+    try {
+      authStore = storeAuth()
+    } catch {
+      console.error('useNotification: storeAuth not available')
+      return true
+    }
+
+    return authStore == null || storeAuth().errorLoggedOutShown
+  }
   const createNotification = (type: NotificationType) => {
     return ({
       title,
@@ -118,6 +129,15 @@ export function useNotification() {
       messageRef = undefined,
     }: NotificationOptions) => {
       const notificationInstance = ref<any>()
+
+      console.warn('createNotification', type, ' checkAuth', _checkAuth())
+      if (_checkAuth()) {
+        console.warn('Notify: ', title, message)
+        return notificationInstance
+        // return (args: NotificationOptions) => {
+        // }
+      }
+
       const buttonObject = { ...button }
       if (buttonObject?.onClick) {
         buttonObject.onClick = () => {
@@ -133,9 +153,10 @@ export function useNotification() {
         messageRef,
       )
 
-      const autoHideDuration = ['success', 'info'].includes(type)
+      const autoHideDuration = ['success', 'info', 'warning'].includes(type)
         ? (duration ?? 8000)
         : 0
+
       if (type === 'error') {
         console.error('NotificationError:', title, message)
       }
@@ -173,6 +194,7 @@ export function useNotification() {
           position: 'bottom-right',
         })
       }
+
       return notificationInstance.value
     }
   }
@@ -233,7 +255,15 @@ export function useNotification() {
       return notificationInstance.value
     }
   }
-
+  const closeAll = () => {
+    // do not work.....
+    notifications.value.forEach((n) => n.close())
+    notifications.value = []
+    if (clearAllNotification.value) {
+      clearAllNotification.value.close()
+      clearAllNotification.value = null
+    }
+  }
   return {
     notifySuccess: createNotification('success'),
     notifyError: createNotification('error'),
@@ -241,6 +271,7 @@ export function useNotification() {
     notifyInfo: createNotification('info'),
     // notifyLoading: createNotification('loading'),
     notifyDetailed: createDetailedNotification(),
+    closeAll,
   }
 }
 

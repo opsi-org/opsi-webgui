@@ -6,9 +6,28 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <FormFLogin />
+  <div>
+    <FormFLogin />
+  </div>
 </template>
 
 <script setup>
+  import { useNotification } from '~/composables/mixins/useComponent'
+
   definePageMeta({ layout: 'auth' })
+
+  const $t = useI18n().t
+  const query = computed(() => useRoute().query || undefined)
+
+  onMounted(() => {
+    if (query.value?.expired === 'true') {
+      storeAuth().setErrorLoggedOutShown(false)
+      useNotification().notifyWarning({
+        title: $t('message.session.expired'),
+        message: $t('message.session.expired.message'),
+        duration: 5000,
+      })
+      useRouter().replace({ query: { ...query.value, expired: undefined } })
+    }
+  })
 </script>
