@@ -9,4 +9,9 @@ License: AGPL-3.0
   <LayoutLDefault><slot /> </LayoutLDefault>
 </template>
 
-<script setup></script>
+<script setup>
+  definePageMeta({
+    middleware: ['authentication'],
+    // or middleware: 'auth'
+  })
+</script>

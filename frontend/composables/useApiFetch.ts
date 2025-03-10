@@ -66,7 +66,6 @@ async function useAPI2<T>(
   prePath: string | undefined = undefined,
   synced: boolean = true, // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
 ): Promise<ApiResult<T>> {
-  const authStore = storeAuth()
   const { baseUrl, basePath, callresponse, callerror, pendingState } =
     define_vars<T>(prePath)
   let fullURL = baseUrl + basePath + url
@@ -87,8 +86,8 @@ async function useAPI2<T>(
 
       if (!urlsWithoutAuthentication.includes(url)) {
         // const authStore = storeAuth()
-        headers['X-opsi-session-lifetime'] = authStore.sessionExpiry
-        authStore.setSession()
+        headers['X-opsi-session-lifetime'] = storeAuth().sessionExpiry
+        storeAuth().setSession()
       }
       if (method !== 'GET' && body != undefined && url !== '/auth/login') {
         if (headers['Content-Type'] === undefined)
@@ -110,12 +109,14 @@ async function useAPI2<T>(
       options.headers = headers
       // console.log('onRequest', request, options)
     },
-    onRequestError({ error }: any) {
+    onRequestError({ response, error }: any) {
       // Handle the request errors
       // console.error('onRequestError', error)
       callerror.value = {
         response: { data: { class: '', message: String(error) } },
       }
+
+      callheaders = _checkUsername(response.headers, fullURL, response.status)
     },
     onResponse({ response }) {
       // console.log('onResponse', response)
@@ -123,6 +124,8 @@ async function useAPI2<T>(
       callresponse.value = response._data || response.body || {}
       callheaders = response.headers
       status = response.status
+
+      callheaders = _checkUsername(callheaders, fullURL, status)
       pendingState.value = false
     },
     // onResponseError(context) {
@@ -158,28 +161,7 @@ async function useAPI2<T>(
     }
   }
 
-  if (callheaders === undefined) {
-    console.warn(
-      'no headers in request response. url: ',
-      fullURL,
-      callheaders,
-      status,
-    )
-  } else {
-    callheaders = callheaders as Headers
-    const headerusername = callheaders.get(opsiheaders.xopsiuserid)
-    if (!headerusername) {
-      console.warn('No username in headers. Clearing session')
-      authStore.clearSession()
-    } else {
-      const username = headerusername.split('user:')[1]
-      if (username) {
-        authStore.setUser(username)
-      } else {
-        authStore.clearSession()
-      }
-    }
-  }
+  callheaders = _checkUsername(callheaders, fullURL, status)
 
   return {
     pending: pendingState,
@@ -189,10 +171,42 @@ async function useAPI2<T>(
     status,
   }
 }
+
+function _checkUsername(
+  headers: Headers | undefined,
+  fullURL: string,
+  status: number,
+) {
+  console.log('useAPI2 checkForUsernameInHeaders')
+  const callheaders = headers as Headers
+  if (headers === undefined) {
+    console.warn(
+      'no headers in request response. url: ',
+      fullURL,
+      headers,
+      status,
+    )
+  } else {
+    const headerusername = headers.get(opsiheaders.xopsiuserid)
+    if (!headerusername) {
+      console.warn('No username in headers. Clearing session')
+      storeAuth().clearSession()
+    } else {
+      const username = headerusername.split('user:')[1]
+      if (username) {
+        storeAuth().setUser(username)
+      } else {
+        storeAuth().clearSession()
+      }
+    }
+  }
+  return callheaders
+}
 const _logout_on_specific_error = (url: string, status: number) => {
   const authStore = storeAuth()
   useNotification().closeAll()
   if (status === 401) {
+    console.error(`401 unauthorized. url ${url}`)
     // 401 unauthorized
     let loginQuery = ''
     if (!url.includes('/auth/login')) {
@@ -204,11 +218,11 @@ const _logout_on_specific_error = (url: string, status: number) => {
   } else if (status === 403) {
     // 403 forbidden
     let loginQuery = ''
+    console.error(`403 forbidden. url ${url}`)
     if (!url.includes('/auth/login')) {
       loginQuery = '?expired=true'
       authStore.setErrorLoggedOutShown(true)
     }
-    console.error('403 forbidden. You may want to reload the page')
     authStore.setUser('')
     navigateTo('/login' + loginQuery)
   } else {

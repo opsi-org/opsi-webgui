@@ -8,3 +8,9 @@ License: AGPL-3.0
 <template>
   <LayoutLAuth><slot /> </LayoutLAuth>
 </template>
+<script setup>
+  definePageMeta({
+    middleware: ['authentication'],
+    // or middleware: 'auth'
+  })
+</script>
