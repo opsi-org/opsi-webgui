@@ -31,7 +31,7 @@ License: AGPL-3.0
       class="!bg-transparent !hover:!bg-transparent"
     >
       <IconIOpsiLogo class="opsi-logo" />
-      <span class="text-xs ml-1 mb-4">
+      <span class="text-xs ml-1 mb-4 text-white">
         {{ t_fixed('title.project.webgui') }}
         {{ $config.public.packageVersion }}
       </span>
