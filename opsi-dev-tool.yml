@@ -39,7 +39,7 @@ project:
     - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
   name: opsi-webgui
-  version: '4.3.99.1'
+  version: '4.3.99.2'
   version_files:
     opsi-dev-tool.yml: pull-binaries[0].version
     frontend/package.json: '$.version'
@@ -61,7 +61,7 @@ pull-binaries:
       - ls -lah
     server-type: binaryindex
     server-url: http://binaryindex.uib.gmbh
-    version: '4.3.99.1'
+    version: '4.3.99.2'
 transifex:
   download_translations:
     - install_dir: frontend/locale

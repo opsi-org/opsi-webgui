@@ -13,7 +13,7 @@ const expirySec = 60 * 30 // Default=30min=60s*30
 
 export const storeAuth = defineStore('auth', {
   persist: {
-    key: 'opsi-localchanges',
+    key: 'opsi-auth',
     storage: localStorage,
     // storage: sessionStorage,
   },

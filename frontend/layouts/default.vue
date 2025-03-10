@@ -8,5 +8,3 @@ License: AGPL-3.0
 <template>
   <LayoutLDefault><slot /> </LayoutLDefault>
 </template>
-
-<script setup></script>
