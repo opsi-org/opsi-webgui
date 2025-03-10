@@ -189,6 +189,7 @@ License: AGPL-3.0
   }
 
   async function doLogin() {
+    storeAuth().setErrorLoggedOutShown(false)
     if (validUsername.value === false || validPassword.value === false) {
       useNotification().notifyError({
         message: $t('message.error.invalid.credentials'),
@@ -226,16 +227,15 @@ License: AGPL-3.0
   }
 
   function handleSuccessfulLogin() {
+    storeAuth().setErrorLoggedOutShown(false)
     notifySuccess({ message: $t('message.page.redirect') })
     storeAuth().setSession()
     const route = useRoute()
     const router = useRouter()
     if (route.name === 'login') {
-      if (route.query?.redirect) {
-        router.push({ path: route.query.redirect.toString() })
-      } else {
-        router.push({ path: config.public.BASE_PAGE })
-      }
+      const redirectPath =
+        route.query?.redirect?.toString() || config.public.BASE_PAGE
+      router.push(redirectPath)
     } else {
       router.back()
     }

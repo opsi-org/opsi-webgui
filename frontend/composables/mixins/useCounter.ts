@@ -86,7 +86,7 @@ export const useTimer = (init: boolean = false) => {
   }
   function _createNotification(t: TTimeDiff) {
     if (notification.value) notification.value?.close()
-    notification.value = notifyInfo({
+    const _notification: any = notifyInfo!({
       title: $t('message.session.info'),
       messageRef: 'timerText',
       message: _getNotificationText(t),
@@ -99,6 +99,8 @@ export const useTimer = (init: boolean = false) => {
           ).getOpsiConfigServerWithHeaders(),
       },
     })
+    if (_notification) notification.value = _notification
+    else console.error('Notification not created: ', $t('message.session.info'))
   }
   function _getNotificationText(t: TTimeDiff) {
     return $t('message.session.expiresInHours', {

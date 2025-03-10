@@ -13,7 +13,7 @@ License: AGPL-3.0
     :is-mobile="isMobile"
     :table-column="tableColumn"
     :fetch="fetchServer"
-    :action-config="(rowData: any) => `/servers/server/config/${rowData[rowId]}`"
+    :action-config="(rowData: any) => `/servers/${rowData[rowId]}/config/`"
     :sort-by="storeCookie.serversSorting.column"
     :sort-desc="storeCookie.serversSorting.isDesc"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionDepots(id)}"

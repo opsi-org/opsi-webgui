@@ -34,7 +34,7 @@ export const usePageHelper = () => {
       page1Condition: true,
       width: '100%',
     },
-    'servers-server-pagetype-id': {
+    'servers-id-pagetype': {
       page0Condition: true,
       page1Condition: true,
       width: undefined,
@@ -77,7 +77,7 @@ export const usePageHelper = () => {
       page1Condition: true,
       width: '100%',
     },
-    'clients-client-pagetype-id': {
+    'clients-id-pagetype': {
       page0Condition: true,
       page1Condition: true,
       width: '50%',

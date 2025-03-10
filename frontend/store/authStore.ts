@@ -12,14 +12,16 @@ import type { TTimeDiff } from '~/types/Datatypes'
 const expirySec = 60 * 30 // Default=30min=60s*30
 
 export const storeAuth = defineStore('auth', {
-  // persist: {
-  //   key: 'opsi-localchanges',
-  //   storage: localStorage,
-  //   // storage: sessionStorage,
-  // },
+  persist: {
+    key: 'opsi-localchanges',
+    storage: localStorage,
+    // storage: sessionStorage,
+  },
   // persist keeps username in localStorage.. even if logged out. No need for that here
   state: () => ({
-    username: '',
+    _username: '',
+    _usernameUpdated: null as Date | null,
+    errorLoggedOutShown: false,
     sessionExpiry: expirySec, // sec
     sessionExpiresIn: {
       diff: 0,
@@ -31,34 +33,62 @@ export const storeAuth = defineStore('auth', {
     sessionEndTime: '',
   }),
   getters: {
-    // sessionEndTime: ({ _sessionendTime }) => _sessionendTime,
-    // sessionExpiry: ({ _sessionexpiry }) => _sessionexpiry,
-    // username: ({ _username }) => _username,
-    isAuthenticated: ({ username }) =>
-      Boolean(useCookie('opsiconfd-session') && username),
+    username(): string {
+      return this._username
+    },
+    // https://github.com/vuejs/pinia/discussions/1151
+    isUsernameOutdated({ _usernameUpdated }): boolean {
+      if (_usernameUpdated == undefined || _usernameUpdated == null) {
+        return true
+      }
+      // if username is older than expiredTime, it is outdated (e.g. if user didnt logout successfully)
+      const now = new Date()
+      console.warn(
+        'isUsernameOutdated now',
+        now.valueOf(),
+        'usernameUpdated',
+        _usernameUpdated.valueOf(),
+      )
+      const __expired =
+        now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
+      if (__expired) {
+        console.warn('isUsernameOutdated expired')
+      }
+      return __expired
+      // return now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
+    },
+    isAuthenticated({ _username }): boolean {
+      return Boolean(
+        useCookie('opsiconfd-session') && _username && !this.isUsernameOutdated,
+      )
+    },
   },
   actions: {
+    clearSession() {
+      this.$reset()
+    },
     $reset() {
-      this.username = ''
       this.sessionEndTime = ''
+      this.setUser('')
+      // this.errorLoggedOutShown = false
     },
     login(_username: string) {
-      this.username = _username
+      this.errorLoggedOutShown = false
+      this.setUser(_username)
       // localStorage.setItem('_username', _username)
     },
     logout() {
       this.$reset()
       storeMBus().$reset()
       storeTablesettings().$reset()
-
-      // localStorage.removeItem('_username')
-      // localStorage.removeItem('tablesettings')
-      // localStorage.removeItem('data-cache')
-      // storeTablesettings().$hydrate()
-      this.username = ''
     },
     setUser(username: string) {
-      this.username = username
+      this._username = username
+      if (username && username.length > 0) {
+        this._usernameUpdated = new Date()
+      } else {
+        this._usernameUpdated = null
+      }
     },
     setExpiredMin(m: number) {
       this.sessionExpiry = m
@@ -78,9 +108,8 @@ export const storeAuth = defineStore('auth', {
       const expiryTime = new Date(new Date().getTime() + expiryInSec * 1000)
       this.sessionEndTime = expiryTime as unknown as string
     },
-    clearSession() {
-      this.sessionEndTime = ''
-      this.username = ''
+    setErrorLoggedOutShown(val: boolean) {
+      this.errorLoggedOutShown = val
     },
   },
 })
@@ -88,49 +117,3 @@ export const storeAuth = defineStore('auth', {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(storeAuth, import.meta.hot))
 }
-// export const storeAuth = defineStore('auth', () => {
-//   // need to return the states / getters/ actions in the end of the setup
-//   // states
-//   let _username: string = localStorage.getItem('_username') as string
-//   let _sessionexpiry: number = expirySec // sec
-//   let _sessionendTime: string = ''
-
-//   // getter
-//   const sessionEndTime = computed(() => _sessionendTime)
-//   const sessionExpiry = computed(() => { return _sessionexpiry })
-//   const _username = computed(() => { return _username })
-//   const isAuthenticated = computed(() => { return Boolean(useCookie('opsiconfd-session') && localStorage.getItem('_username')) })
-
-//   // actions
-//   function login (_username: string) {
-//     _username = _username
-//     localStorage.setItem('_username', _username)
-//   }
-//   function logout () {
-//     localStorage.removeItem('_username')
-//     _username = ''
-//   }
-
-//   function setExpiredMin (m: number) {
-//     _sessionexpiry = m
-//   }
-
-//   function setSession () {
-//     let expiryInSec = _sessionexpiry
-//     if (!expiryInSec) { expiryInSec = sessionExpiry.value }
-//     if (!expiryInSec) { expiryInSec = expirySec }
-
-//     const expiryTime = new Date(new Date().getTime() + (expiryInSec * 1000))
-//     _sessionendTime = expiryTime as unknown as string
-//   }
-
-//   function clearSession () {
-//     _sessionendTime = ''
-//   }
-
-//   return {
-//     /* states */
-//     /* getters */ sessionEndTime, sessionExpiry, _username, isAuthenticated
-//     /* actions */, login, logout, setExpiredMin, setSession, clearSession
-//   }
-// }, { persist: true } as any)

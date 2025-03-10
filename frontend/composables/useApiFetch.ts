@@ -7,6 +7,8 @@ License: AGPL-3.0
 */
 import { useRuntimeConfig, type UseFetchOptions } from 'nuxt/app'
 import type { IObjectString2Any } from '~/types/tgeneral'
+import { useNotification } from './mixins/useComponent'
+import { _getI18nInComposable } from './mixins/helper-i18n'
 
 const urlsWithoutAuthentication = ['/auth/logout', '/user/configuration']
 type tmethod =
@@ -64,6 +66,7 @@ async function useAPI2<T>(
   prePath: string | undefined = undefined,
   synced: boolean = true, // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
 ): Promise<ApiResult<T>> {
+  const authStore = storeAuth()
   const { baseUrl, basePath, callresponse, callerror, pendingState } =
     define_vars<T>(prePath)
   let fullURL = baseUrl + basePath + url
@@ -83,7 +86,7 @@ async function useAPI2<T>(
       const headers: IObjectString2Any = { ...opts?.headers }
 
       if (!urlsWithoutAuthentication.includes(url)) {
-        const authStore = storeAuth()
+        // const authStore = storeAuth()
         headers['X-opsi-session-lifetime'] = authStore.sessionExpiry
         authStore.setSession()
       }
@@ -140,7 +143,7 @@ async function useAPI2<T>(
       status = response.status
       callheaders = response.headers
       // if status is 401
-      logout_on_specific_error(response.status)
+      _logout_on_specific_error(fullURL, status)
       console.error('onResponseError callerror', callerror.value)
     },
   })
@@ -167,13 +170,13 @@ async function useAPI2<T>(
     const headerusername = callheaders.get(opsiheaders.xopsiuserid)
     if (!headerusername) {
       console.warn('No username in headers. Clearing session')
-      storeAuth().clearSession()
+      authStore.clearSession()
     } else {
       const username = headerusername.split('user:')[1]
       if (username) {
-        storeAuth().setUser(username)
+        authStore.setUser(username)
       } else {
-        storeAuth().clearSession()
+        authStore.clearSession()
       }
     }
   }
@@ -186,16 +189,30 @@ async function useAPI2<T>(
     status,
   }
 }
-const logout_on_specific_error = (status: number) => {
+const _logout_on_specific_error = (url: string, status: number) => {
+  const authStore = storeAuth()
+  useNotification().closeAll()
   if (status === 401) {
     // 401 unauthorized
-    storeAuth().logout()
-    navigateTo('/login')
+    let loginQuery = ''
+    if (!url.includes('/auth/login')) {
+      loginQuery = '?expired=true'
+      authStore.setErrorLoggedOutShown(true)
+    }
+    authStore.logout()
+    navigateTo('/login' + loginQuery)
   } else if (status === 403) {
     // 403 forbidden
+    let loginQuery = ''
+    if (!url.includes('/auth/login')) {
+      loginQuery = '?expired=true'
+      authStore.setErrorLoggedOutShown(true)
+    }
     console.error('403 forbidden. You may want to reload the page')
-    navigateTo('/login')
-    // useRouter().push({ path: '/login' })
+    authStore.setUser('')
+    navigateTo('/login' + loginQuery)
+  } else {
+    authStore.setErrorLoggedOutShown(false)
   }
 }
 const _getBodyParams = (params: any) => {
