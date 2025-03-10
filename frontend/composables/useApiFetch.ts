@@ -107,6 +107,7 @@ async function useAPI2<T>(
       options.baseURL = baseUrl
       // options.query = query
       options.headers = headers
+      options.key = Date.now()
       // console.log('onRequest', request, options)
     },
     onRequestError({ response, error }: any) {
@@ -177,7 +178,6 @@ function _checkUsername(
   fullURL: string,
   status: number,
 ) {
-  console.log('useAPI2 checkForUsernameInHeaders')
   const callheaders = headers as Headers
   if (headers === undefined) {
     console.warn(

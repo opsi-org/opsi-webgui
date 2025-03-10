@@ -58,7 +58,14 @@ export default defineNuxtConfig({
   app: {
     baseURL: ADDON_PATH + '/app',
     head: {
-      link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/x-icon',
+          href: ADDON_PATH + '/app/favicon.ico',
+        },
+      ],
+      // link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
     },
   },
   runtimeConfig: {
