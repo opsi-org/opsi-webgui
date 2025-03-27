@@ -16,7 +16,10 @@ License: AGPL-3.0
         {{ $t('title.' + category) }}
       </h3>
       <div v-for="(value, label) in options" :key="label + value">
-        <el-form-item :label="$t('table.fields.' + label)">
+        <el-form-item
+          :label="$t('table.fields.' + label)"
+          :error="label === 'hostId' ? clientNameError : ''"
+        >
           <el-form
             v-if="label === 'opsiClientAgent'"
             :inline="true"
@@ -186,6 +189,8 @@ License: AGPL-3.0
   const groupList = ref()
   const clientName = ref('')
   const domain = ref('')
+  const clientNameError = ref('')
+  const clientExists = ref(false)
 
   const createClient = ref<IClientObject>(getDefaultCreateClient())
 
@@ -199,6 +204,25 @@ License: AGPL-3.0
       await fetchDepotSpecificData()
     },
   )
+
+  watch(clientName, async (newClientName) => {
+    if (!newClientName) {
+      clientExists.value = false
+      clientNameError.value = ''
+      return
+    }
+
+    const fullHostId = `${newClientName}${domain.value}`
+    if (clientIDList.value.includes(fullHostId)) {
+      clientExists.value = true
+      clientNameError.value = $t('message.warning.clientExists', {
+        client: fullHostId,
+      })
+    } else {
+      clientExists.value = false
+      clientNameError.value = ''
+    }
+  })
 
   async function fetchInitialData() {
     const opsiconfigserver = storeCache().opsiconfigserver
