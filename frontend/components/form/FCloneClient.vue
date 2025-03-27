@@ -139,9 +139,9 @@ License: AGPL-3.0
       },
       options: {
         // $t('title.options')
-        configs: false, // $t('table.fields.configs')
-        products: false, // $t('table.fields.products')
-        productProperties: false, // $t('table.fields.productProperties')
+        configs: true, // $t('table.fields.configs')
+        products: true, // $t('table.fields.products')
+        productProperties: true, // $t('table.fields.productProperties')
       },
     }
   }
