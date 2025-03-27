@@ -18,7 +18,7 @@ License: AGPL-3.0
       <h3 class="mt-4 text-lg font-semibold">
         {{ $t('title.' + category) }}
       </h3>
-      <div v-for="(value, label) in options" :key="label + value">
+      <div v-for="(value, label) in options" :key="category + '-' + label">
         <el-form-item :label="$t('table.fields.' + label)">
           <el-input
             v-if="label === 'hostId'"
