@@ -146,7 +146,7 @@ License: AGPL-3.0
       <el-button
         data-testid="clientCreate_addButton"
         :type="clientName ? 'success' : ''"
-        :disabled="!clientName"
+        :disabled="!clientName || clientExists"
         @click="createOpsiClient"
         >{{ $t('button.create') }}</el-button
       >
@@ -269,14 +269,6 @@ License: AGPL-3.0
 
   async function createOpsiClient() {
     createClient.value.basics.hostId = `${clientName.value}${domain.value}`
-    if (clientIDList.value.includes(createClient.value.basics.hostId)) {
-      notifyError({
-        message: $t('message.warning.clientExists', {
-          client: createClient.value.basics.hostId,
-        }),
-      })
-      return
-    }
     isLoading.value = true
     const request = {
       client: createClient.value.basics,
