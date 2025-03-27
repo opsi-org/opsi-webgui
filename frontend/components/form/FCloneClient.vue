@@ -135,7 +135,7 @@ License: AGPL-3.0
         hostId: '', // $t('table.fields.hostId')
         ipAddress: '', // $t('table.fields.ipAddress')
         hardwareAddress: '', // $t('table.fields.hardwareAddress')
-        systemUUID: '', // $t('table.fields.systemUUID')
+        // systemUUID: '', // $t('table.fields.systemUUID')
       },
       options: {
         // $t('title.options')
