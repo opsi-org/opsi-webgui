@@ -17,6 +17,7 @@ License: AGPL-3.0
       <SelectSHosts
         :type="type"
         @change="setId"
+        :special-ids="selectionClients"
         :id="logrequest.selectedClient"
       />
     </el-form-item>

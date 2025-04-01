@@ -15,6 +15,7 @@ License: AGPL-3.0
     <!-- for translation key search $t('formselect.select.clients'), $t('formselect.select.servers') -->
     <el-option
       v-for="item in fetchedData"
+      :class="{ 'font-bold': specialIds.includes(item) }"
       :key="item"
       :label="item"
       :value="item"
@@ -36,6 +37,7 @@ License: AGPL-3.0
       type: String as PropType<PropTypeServerClient>,
       default: 'servers',
     },
+    specialIds: { type: Array<string>, default: [] },
   })
   const emit = defineEmits(['update:value'])
   onMounted(async () => {
