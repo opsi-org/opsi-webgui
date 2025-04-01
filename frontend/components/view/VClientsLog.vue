@@ -84,7 +84,7 @@ License: AGPL-3.0
   const { notifyError, notifyInfo } = useNotification()
   const $t = useI18n().t
   const settings = storeSettings()
-
+  const { selectionClients } = storeToRefs(storeSelections())
   const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t, [
     'event:log_updated',
   ])
@@ -101,7 +101,15 @@ License: AGPL-3.0
   const fetchedData = ref<Array<string>>([])
   const filteredData = ref<Array<string>>([])
   const isLoading = ref(false)
-  const logrequest = { selectedClient: props.id, selectedLogType: 'instlog' }
+  const logrequest = {
+    selectedClient:
+      props.id?.length > 0
+        ? props.id
+        : selectionClients.value.length == 1
+          ? selectionClients.value[0]
+          : '',
+    selectedLogType: 'instlog',
+  }
   const logTypes = [
     'bootimage',
     'clientconnect',
