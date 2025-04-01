@@ -108,7 +108,7 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
-  import Markdown from 'vue3-markdown-it' // this module exists and needs to be imported
+  import Markdown from 'vue3-markdown-it' // this module exists and needs to be imported // no need to import as Module/Plugin
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useUtils } from '~/composables/mixins/useUtils'
   import type {
