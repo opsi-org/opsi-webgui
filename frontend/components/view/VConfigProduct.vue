@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <el-form
-    label-width="50%"
+    label-width="auto"
     :label-position="mq.isMobile.value ? 'top' : 'left'"
   >
     <el-form-item :label="$t('table.fields.version')">
@@ -25,11 +25,12 @@ License: AGPL-3.0
       "
       :label="$t('table.fields.description')"
     >
-      <Markdown>
-        {{
+      <Markdown
+        :source="
           fetchedData.properties.productDescription ||
           fetchedData.dependencies.productDescription
-        }}
+        "
+      >
       </Markdown>
     </el-form-item>
     <el-form-item
@@ -39,11 +40,12 @@ License: AGPL-3.0
       "
       :label="$t('table.fields.advice')"
     >
-      <Markdown>
-        {{
+      <Markdown
+        :source="
           fetchedData.properties.productAdvice ||
           fetchedData.dependencies.productAdvice
-        }}
+        "
+      >
       </Markdown>
     </el-form-item>
   </el-form>
@@ -106,6 +108,7 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
+  import Markdown from 'vue3-markdown-it' // this module exists and needs to be imported
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useUtils } from '~/composables/mixins/useUtils'
   import type {
