@@ -13,7 +13,6 @@
   "button.deselect": "Deselect item",
   "button.disconnect": "Disconnect",
   "button.download": "Download",
-  "button.download.all": "Download all as zip",
   "button.download.current": "Download current",
   "button.event.delete": "Delete",
   "button.event.deployclientagent": "Deploy Client Agent",
