@@ -83,6 +83,7 @@ export const useIcons = () => {
     refresh: 'bi:arrow-repeat',
     readonly: 'material-symbols-light:edit-off-outline',
     unequal: 'mdi:not-equal-variant',
+    bookmark: 'bi:bookmark-fill',
   }
   return { ...icon }
 }

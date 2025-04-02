@@ -38,6 +38,7 @@ License: AGPL-3.0
       default: 'servers',
     },
     specialIds: { type: Array<string>, default: [] },
+    sync: { type: Boolean, default: false },
   })
   const emit = defineEmits(['update:value'])
   onMounted(async () => {
@@ -45,9 +46,18 @@ License: AGPL-3.0
     value.value = props.id || undefined
   })
   watch(
+    () => props.id,
+    () => {
+      if (props.sync) {
+        value.value = props.id
+      }
+    },
+  )
+  watch(
     () => value.value,
     () => {
       switch (useRoute().name) {
+        // TODO: not push, replace.... otherwise logtype got lost
         case 'clients-config':
           useRouter().push({
             name: 'clients-config-id',
