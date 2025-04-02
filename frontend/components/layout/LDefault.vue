@@ -112,7 +112,9 @@ License: AGPL-3.0
     settings.menuCollapsed && !mq.isMobile.value,
   )
   const leftSideVisible = ref<boolean>(!mq.isMobile.value)
-  const rightSideVisible = ref<boolean>(!mq.isMobile.value)
+  const rightSideVisible = ref<boolean>(
+    settings.quickpanelOpened && !mq.isMobile.value,
+  )
 
   // init
   onMounted(async () => {
