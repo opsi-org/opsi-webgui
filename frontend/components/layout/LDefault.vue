@@ -126,7 +126,8 @@ License: AGPL-3.0
     () => mq.$mq.value,
     () => {
       settings.setIsMobile(mq.$mq.value === 'mobile')
-      leftSideVisible.value = settings.menuCollapsed && !mq.isMobile.value
+      leftSideVisible.value = !mq.isMobile.value
+      leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
       rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
     },
   )
