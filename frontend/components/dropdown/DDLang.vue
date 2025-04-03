@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-dropdown id="quicksettingsDD" @command="$i18n.locale = $event">
+  <el-dropdown data-testid="language-dropdown" @command="$i18n.locale = $event">
     <el-button link>
       <IconIIcon :icon="icon.language" class="inline mr-1" />
       <el-text>{{ $i18n.locale.toUpperCase() }}</el-text>
@@ -19,7 +19,7 @@ License: AGPL-3.0
           :key="i"
           :command="lang"
           :class="{ 'is-active': lang === $i18n.locale }"
-          :data-testid="`DropdownDDLang-Item-${lang}`"
+          :data-testid="`language-dropdown-item-${lang}`"
         >
           <span style="text-transform: uppercase">{{ lang }}</span>
           <span>{{

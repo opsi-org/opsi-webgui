@@ -84,14 +84,15 @@ export const toggleTheme = async (
   page: Page,
   targetTheme: 'light' | 'dark',
 ) => {
-  const isLightTheme =
-    (await page.getByTestId('theme-switch').getAttribute('aria-checked')) ===
-    'false'
+  const themeToggle = page.getByTestId('theme-toggle')
+  await themeToggle.waitFor({ state: 'visible' })
+  const ariaLabel = await themeToggle.getAttribute('aria-label')
+  const isDarkMode = ariaLabel?.includes('on')
   if (
-    (targetTheme === 'dark' && isLightTheme) ||
-    (targetTheme === 'light' && !isLightTheme)
+    (targetTheme === 'dark' && !isDarkMode) ||
+    (targetTheme === 'light' && isDarkMode)
   ) {
-    await page.getByTestId('theme-toggle').click()
+    await themeToggle.click()
   }
 }
 
@@ -99,12 +100,15 @@ export const selectLanguage = async (
   page: Page,
   targetLanguage: 'en' | 'de',
 ) => {
-  const currentLanguage = await page
-    .getByTestId('language-dropdown')
-    .getAttribute('aria-label')
+  const languageDropdown = page.getByTestId('language-dropdown')
+  const currentLanguage = await languageDropdown.getAttribute('aria-label')
+
   if (currentLanguage !== targetLanguage) {
-    await page.getByTestId('language-dropdown').click()
-    await page.getByText(targetLanguage).click()
+    await languageDropdown.click()
+    const languageOption = page.getByTestId(
+      `language-dropdown-item-${targetLanguage}`,
+    )
+    await languageOption.click()
   }
 }
 
