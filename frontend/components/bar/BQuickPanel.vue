@@ -58,7 +58,7 @@ License: AGPL-3.0
       <div class="flex justify-evenly items-center">
         <SwitchSTheme />
         <DropdownDDLang />
-        <PopconfirmPLogout />
+        <!-- <PopconfirmPLogout /> -->
       </div>
     </footer>
   </div>

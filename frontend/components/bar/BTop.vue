@@ -79,6 +79,7 @@ License: AGPL-3.0
     >
       <IconIIcon :icon="icons.quickpanel" class="text-white" />
     </el-menu-item>
+    <PopconfirmPLogout />
   </el-menu>
 </template>
 
