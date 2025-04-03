@@ -15,6 +15,7 @@ License: AGPL-3.0
     <!-- for translation key search $t('formselect.select.clients'), $t('formselect.select.servers') -->
     <el-option
       v-for="item in fetchedData"
+      :class="{ 'font-bold': specialIds.includes(item) }"
       :key="item"
       :label="item"
       :value="item"
@@ -36,6 +37,8 @@ License: AGPL-3.0
       type: String as PropType<PropTypeServerClient>,
       default: 'servers',
     },
+    specialIds: { type: Array<string>, default: [] },
+    sync: { type: Boolean, default: false },
   })
   const emit = defineEmits(['update:value'])
   onMounted(async () => {
@@ -43,9 +46,18 @@ License: AGPL-3.0
     value.value = props.id || undefined
   })
   watch(
+    () => props.id,
+    () => {
+      if (props.sync) {
+        value.value = props.id
+      }
+    },
+  )
+  watch(
     () => value.value,
     () => {
       switch (useRoute().name) {
+        // TODO: not push, replace.... otherwise logtype got lost
         case 'clients-config':
           useRouter().push({
             name: 'clients-config-id',

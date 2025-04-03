@@ -13,7 +13,7 @@ type t_theme = 'light' | 'dark'
 export const storeSettings = defineStore('settings', {
   // persist: false,
   persist: {
-    key: 'opsi-auth',
+    key: 'opsi-settings',
     storage: localStorage,
     // storage: sessionStorage,
   },
@@ -62,7 +62,7 @@ export const storeSettings = defineStore('settings', {
     },
     setMenuCollapsed(isMenuCollapsed: boolean) {
       this.menuCollapsed = isMenuCollapsed
-      useCookie('MenuCollapsed').value = isMenuCollapsed ? 'true' : 'false'
+      // useCookie('MenuCollapsed').value = isMenuCollapsed ? 'true' : 'false'
     },
     setIsMobile(isMobile: boolean) {
       // only for testing purpose

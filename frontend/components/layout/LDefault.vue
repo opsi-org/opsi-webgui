@@ -23,9 +23,9 @@ License: AGPL-3.0
       <el-container
         class="h-screen max-h-screen overflow-hidden"
         :class="{
-          'left-collapsed': !mq.isMobile.value && leftSideIsSmall,
-          'left-opened': !mq.isMobile.value && !leftSideIsSmall,
-          'right-opened': !mq.isMobile.value && rightSideVisible,
+          'left-collapsed': leftSideIsSmall,
+          'left-opened': !leftSideIsSmall,
+          'right-opened': rightSideVisible,
         }"
       >
         <!-- LEFT SIDE -->
@@ -108,21 +108,28 @@ License: AGPL-3.0
   const settings = storeSettings()
   const { isLight } = storeToRefs(storeSettings())
 
-  const leftSideIsSmall = ref<boolean>(false)
+  const leftSideIsSmall = ref<boolean>(
+    settings.menuCollapsed && !mq.isMobile.value,
+  )
   const leftSideVisible = ref<boolean>(!mq.isMobile.value)
-  const rightSideVisible = ref<boolean>(!mq.isMobile.value)
+  const rightSideVisible = ref<boolean>(
+    settings.quickpanelOpened && !mq.isMobile.value,
+  )
 
   // init
-  await checkConfig()
-  settings.initColormode()
-  leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
-  rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
-
+  onMounted(async () => {
+    // check if user is logged in
+    await checkConfig()
+    settings.initColormode()
+    leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
+    rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
+  })
   watch(
     () => mq.$mq.value,
     () => {
       settings.setIsMobile(mq.$mq.value === 'mobile')
-      leftSideVisible.value = settings.menuCollapsed && !mq.isMobile.value
+      leftSideVisible.value = !mq.isMobile.value
+      leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
       rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
     },
   )
