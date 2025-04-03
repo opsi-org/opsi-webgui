@@ -14,6 +14,7 @@ License: AGPL-3.0
       <el-text>{{ staticStrings.t_fixed('uib') }}</el-text>
     </div>
     <div class="flex justify-center items-center space-x-2">
+      <SwitchSTheme class="mt-1" />
       <DropdownDDLang :footer="true" />
     </div>
     <div class="flex justify-end space-x-1">
