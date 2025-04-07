@@ -43,3 +43,29 @@ export interface Client {
   version_outdated: number
   version_outdated_netboot: number
 }
+
+export interface Product {
+  productId: string
+  name: string
+  priority: number
+  description: string
+  advice: string
+  selectedDepots: string[]
+  selectedClients: string[] | null
+  installationStatusErrorLevel: number
+  installationStatus: string
+  actionRequest: string
+  actionProgress: string
+  actionResultErrorLevel: number
+  actionResult: string
+  modificationTime: string | null
+  clientVersions: string | null
+  client_version_outdated: boolean
+  actions: string[]
+  depot_version_diff: boolean
+  not_on_all_depots: boolean
+  numDepots: number
+  depotVersions: string[]
+  productType: string
+  selected: number
+}

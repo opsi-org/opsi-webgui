@@ -11,14 +11,17 @@ import {
   defaultResponseHeaders,
   opsiconfdSessionCookie,
 } from '../shared/constants'
-import {
-  fetchMockData,
-  mockData,
+import { fetchMockData, getMockData } from './mock/mocks'
+
+const {
   serverId,
   userId,
+  userConfig,
   serverObjectList,
   clientObjectList,
-} from './mocks'
+  clientList,
+  productObjectList,
+} = getMockData()
 
 export const setupMockRoutes = async (
   page: Page,
@@ -36,7 +39,7 @@ export const setupMockRoutes = async (
           { url: '**/api/auth/login', response: { result: 'Login success' } },
           {
             url: '**/api/user/configuration',
-            response: { user: userId, configuration: mockData.config_files },
+            response: userConfig,
           },
           { url: '**/api/opsidata/server/disabled-features', response: [] },
           {
@@ -46,6 +49,14 @@ export const setupMockRoutes = async (
           {
             url: '**/addons/webgui/api/opsidata/clients?**',
             response: clientObjectList,
+          },
+          {
+            url: '**/addons/webgui/api/opsidata/depots/clients?**',
+            response: clientList,
+          },
+          {
+            url: '**/addons/webgui/api/opsidata/products?**',
+            response: productObjectList,
           },
         ]
       : []),

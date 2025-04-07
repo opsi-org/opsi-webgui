@@ -6,15 +6,18 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-import { MOCK_DATA_URL } from './constants'
+import { MOCK_DATA_URL } from '../constants'
 import type { Depot, Client } from './types'
-import { getDepots, getClients } from './helpers'
+import { getDepots, getClients, getClientsList, getProducts } from './helpers'
 
 let mockData: any
 let serverId: string = ''
 let userId: string = ''
+let userConfig: any = {}
 let serverObjectList: Depot[] = []
 let clientObjectList: Client[] = []
+let clientList: string[] = []
+let productObjectList: any = []
 
 export const fetchMockData = async (): Promise<void> => {
   if (mockData) return
@@ -28,12 +31,24 @@ export const fetchMockData = async (): Promise<void> => {
     mockData = await response.json()
     serverId = mockData.meta.server_id
     userId = mockData.objects.User[0].id
+    userConfig = { user: userId, configuration: mockData.config_files }
     serverObjectList = getDepots(mockData.objects.Host)
     clientObjectList = getClients(mockData.objects.Host)
+    clientList = getClientsList(mockData.objects.Host)
+    productObjectList = getProducts(mockData.objects.Product)
   } catch (error) {
     console.error('Error fetching mock data:', error)
     throw error
   }
 }
 
-export { mockData, serverId, userId, serverObjectList, clientObjectList }
+export const getMockData = () => ({
+  mockData,
+  serverId,
+  userId,
+  userConfig,
+  serverObjectList,
+  clientObjectList,
+  clientList,
+  productObjectList,
+})
