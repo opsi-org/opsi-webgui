@@ -21,6 +21,7 @@ const {
   clientObjectList,
   clientList,
   productObjectList,
+  hostGroups,
 } = getMockData()
 
 export const setupMockRoutes = async (
@@ -57,6 +58,10 @@ export const setupMockRoutes = async (
           {
             url: '**/addons/webgui/api/opsidata/products?**',
             response: productObjectList,
+          },
+          {
+            url: '**/addons/webgui/api/opsidata/hosts/groups?**',
+            response: hostGroups,
           },
         ]
       : []),

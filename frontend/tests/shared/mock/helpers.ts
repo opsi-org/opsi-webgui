@@ -80,3 +80,28 @@ export const getProducts = (products: any[]): Product[] => {
     selected: product.selected || 0,
   }))
 }
+
+export const getHostGroups = (groups: any[]): any => {
+  const groupMap: Record<string, any> = {}
+  groups.forEach((group) => {
+    groupMap[group.id] = {
+      id: `${group.id};${group.parentGroupId || 'groups'}`,
+      type: 'HostGroup',
+      text: group.id,
+      parent: group.parentGroupId || 'groups',
+      children: {},
+    }
+  })
+  groups.forEach((group) => {
+    if (group.parentGroupId) {
+      if (!groupMap[group.parentGroupId].children) {
+        groupMap[group.parentGroupId].children = {}
+      }
+      groupMap[group.parentGroupId].children[group.id] = groupMap[group.id]
+    }
+  })
+  const rootGroups = Object.values(groupMap).filter(
+    (group) => group.parent === 'groups',
+  )
+  return rootGroups
+}

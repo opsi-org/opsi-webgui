@@ -8,7 +8,13 @@ License: AGPL-3.0
 
 import { MOCK_DATA_URL } from '../constants'
 import type { Depot, Client } from './types'
-import { getDepots, getClients, getClientsList, getProducts } from './helpers'
+import {
+  getDepots,
+  getClients,
+  getClientsList,
+  getProducts,
+  getHostGroups,
+} from './helpers'
 
 let mockData: any
 let serverId: string = ''
@@ -18,6 +24,7 @@ let serverObjectList: Depot[] = []
 let clientObjectList: Client[] = []
 let clientList: string[] = []
 let productObjectList: any = []
+let hostGroups: any = []
 
 export const fetchMockData = async (): Promise<void> => {
   if (mockData) return
@@ -36,6 +43,7 @@ export const fetchMockData = async (): Promise<void> => {
     clientObjectList = getClients(mockData.objects.Host)
     clientList = getClientsList(mockData.objects.Host)
     productObjectList = getProducts(mockData.objects.Product)
+    hostGroups = getHostGroups(mockData.objects.Group)
   } catch (error) {
     console.error('Error fetching mock data:', error)
     throw error
@@ -51,4 +59,5 @@ export const getMockData = () => ({
   clientObjectList,
   clientList,
   productObjectList,
+  hostGroups,
 })
