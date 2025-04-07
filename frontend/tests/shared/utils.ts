@@ -6,8 +6,11 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-import type { Browser, BrowserContext, Page, Route } from '@playwright/test'
-import { defaultResponseHeaders } from '../shared/constants'
+import type { BrowserContext, Page, Route } from '@playwright/test'
+import {
+  defaultResponseHeaders,
+  opsiconfdSessionCookie,
+} from '../shared/constants'
 import {
   fetchMockData,
   mockData,
@@ -17,36 +20,11 @@ import {
   clientObjectList,
 } from './mocks'
 
-export const getFreshBrowserState = async (
-  browser: Browser,
-): Promise<{ context: BrowserContext; page: Page }> => {
-  const context = await browser.newContext()
-  const page = await context.newPage()
-  return { context, page }
-}
-
-export const addMockRoute = async (
-  page: Page,
-  url: string,
-  response: any,
-  headers: Record<string, string> = defaultResponseHeaders,
-) => {
-  await page.route(url, (route: Route) => {
-    route.fulfill({
-      status: 200,
-      headers,
-      contentType: 'application/json',
-      body: JSON.stringify(response),
-    })
-  })
-}
-
 export const setupMockRoutes = async (
-  browser: Browser, // Accept the browser object
+  page: Page,
   isLoggedIn: boolean = false,
   customRoutes: Array<{ url: string; response: any }> = [],
-): Promise<{ context: BrowserContext; page: Page }> => {
-  const { context, page } = await getFreshBrowserState(browser)
+) => {
   await fetchMockData()
   await page.unroute('**/api/**')
 
@@ -75,9 +53,25 @@ export const setupMockRoutes = async (
 
   const routesToMock = customRoutes.length > 0 ? customRoutes : defaultRoutes
   for (const { url, response } of routesToMock) {
-    await addMockRoute(page, url, response)
+    await page.route(url, (route: Route) => {
+      route.fulfill({
+        status: 200,
+        headers: {
+          ...defaultResponseHeaders,
+          'x-opsi-worker-id': `${serverId}:1`,
+          'x-opsi-user-id': `user:${userId}`,
+        },
+        contentType: 'application/json',
+        body: JSON.stringify(response),
+      })
+    })
   }
-  return { context, page }
+}
+
+export const login = async (context: BrowserContext, page: Page) => {
+  await context.addCookies(opsiconfdSessionCookie)
+  await context.cookies()
+  await page.waitForURL('**/app/**', { timeout: 60000 })
 }
 
 export const toggleTheme = async (
