@@ -1,3 +1,11 @@
+/**
+This file is part of opsi-webgui application.
+opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+Copyright (c) uib GmbH <info@uib.de> 2025
+All rights reserved.
+License: AGPL-3.0
+*/
+
 import { test } from '@playwright/test'
 import {
   setupMockRoutes,
@@ -25,9 +33,39 @@ test.describe('Main Pages', () => {
         await page.waitForTimeout(1000)
         await login(context, page)
 
+        if (page.url() !== '/clients/') {
+          await page.goto('/clients/', {
+            waitUntil: 'networkidle',
+            timeout: 60000,
+          })
+        }
         await takeFullPageScreenshot(
           page,
           `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients.png`,
+        )
+        await page.goto('clients/create', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-create.png`,
+        )
+        await page.goto('clients/clone', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-clone.png`,
+        )
+        await page.goto('clients/config', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-config.png`,
         )
         await page.goto('/servers/', {
           waitUntil: 'networkidle',
@@ -36,6 +74,30 @@ test.describe('Main Pages', () => {
         await takeFullPageScreenshot(
           page,
           `screenshots/opsidoc/${theme}/${language}/opsi-webgui-servers.png`,
+        )
+        await page.goto('/servers/config', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-servers-config.png`,
+        )
+        await page.goto('/products/', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-products.png`,
+        )
+        await page.goto('/groups/', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-groups.png`,
         )
       })
     }
