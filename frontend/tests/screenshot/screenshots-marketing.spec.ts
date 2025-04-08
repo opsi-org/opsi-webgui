@@ -39,7 +39,11 @@ test.describe('Clients Page with Products', () => {
             timeout: 60000,
           })
         }
+        await page.waitForSelector('[data-testid="clients-products-button"]', {
+          state: 'visible',
+        })
         await page.click('[data-testid="clients-products-button"]')
+        await page.waitForURL('**/clients/products/**', { timeout: 60000 })
         await takeFullPageScreenshot(
           page,
           `screenshots/marketing/${theme}/${language}/opsi-webgui-clients-with-products.png`,
