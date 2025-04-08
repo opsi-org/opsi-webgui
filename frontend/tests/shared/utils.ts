@@ -5,7 +5,7 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
-
+import { test } from '@playwright/test'
 import type { BrowserContext, Page, Route } from '@playwright/test'
 import {
   defaultResponseHeaders,
@@ -117,9 +117,11 @@ export const selectLanguage = async (
     return
   }
   await languageDropdown.click()
+  await page.waitForTimeout(500)
   const languageOption = page.getByTestId(
     `language-dropdown-item-${targetLanguage}`,
   )
+  await languageOption.scrollIntoViewIfNeeded()
   await languageOption.waitFor({ state: 'visible' })
   await languageOption.click()
   await page.waitForTimeout(500)
@@ -130,5 +132,12 @@ export const selectLanguage = async (
 }
 
 export const takeFullPageScreenshot = async (page: Page, path: string) => {
-  await page.screenshot({ path })
+  await page.screenshot({ path, fullPage: true })
+}
+
+export const useHighResolutionViewport = () => {
+  test.use({
+    viewport: { width: 1920, height: 1080 },
+    deviceScaleFactor: 3,
+  })
 }

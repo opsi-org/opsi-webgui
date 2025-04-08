@@ -8,15 +8,17 @@ License: AGPL-3.0
 
 import { test } from '@playwright/test'
 import {
-  setupMockRoutes,
+  useHighResolutionViewport,
   toggleTheme,
   selectLanguage,
-  takeFullPageScreenshot,
+  setupMockRoutes,
   login,
+  takeFullPageScreenshot,
 } from '../shared/utils'
 import { themes, languages } from '../shared/constants'
 
 test.describe('Clients Page with Products', () => {
+  useHighResolutionViewport()
   for (const theme of themes) {
     for (const language of languages) {
       test(`${theme.charAt(0).toUpperCase() + theme.slice(1)} - ${language.toUpperCase()}`, async ({
@@ -29,8 +31,8 @@ test.describe('Clients Page with Products', () => {
           timeout: 60000,
         })
         await toggleTheme(page, theme)
-        // await selectLanguage(page, language)
-        await page.waitForTimeout(1000)
+        await selectLanguage(page, language)
+
         await login(context, page)
 
         if (page.url() !== '/clients/') {
@@ -43,7 +45,11 @@ test.describe('Clients Page with Products', () => {
           state: 'visible',
         })
         await page.click('[data-testid="clients-products-button"]')
-        await page.waitForURL('**/clients/products/**', { timeout: 60000 })
+        await page.waitForURL('**/clients/products/**', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await page.waitForTimeout(10000)
         await takeFullPageScreenshot(
           page,
           `screenshots/marketing/${theme}/${language}/opsi-webgui-clients-with-products.png`,
