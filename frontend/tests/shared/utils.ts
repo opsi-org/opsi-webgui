@@ -6,82 +6,8 @@ All rights reserved.
 License: AGPL-3.0
 */
 import { test } from '@playwright/test'
-import type { BrowserContext, Page, Route } from '@playwright/test'
-import {
-  defaultResponseHeaders,
-  opsiconfdSessionCookie,
-} from '../shared/constants'
-import {
-  fetchMockData,
-  serverId,
-  userId,
-  userConfig,
-  serverObjectList,
-  clientObjectList,
-  clientList,
-  productObjectList,
-  hostGroups,
-} from './mock/mocks'
-
-export const setupMockRoutes = async (
-  page: Page,
-  isLoggedIn: boolean = false,
-  customRoutes: Array<{ url: string; response: any }> = [],
-) => {
-  await fetchMockData()
-  await page.unroute('**/api/**')
-
-  const defaultRoutes = [
-    { url: '**/webgui/api/**', response: {} },
-    { url: '**/api/user/opsiserver', response: { result: serverId } },
-    ...(isLoggedIn
-      ? [
-          { url: '**/api/auth/login', response: { result: 'Login success' } },
-          {
-            url: '**/api/user/configuration',
-            response: userConfig,
-          },
-          { url: '**/api/opsidata/server/disabled-features', response: [] },
-          {
-            url: '**/addons/webgui/api/opsidata/depots?**',
-            response: serverObjectList,
-          },
-          {
-            url: '**/addons/webgui/api/opsidata/clients?**',
-            response: clientObjectList,
-          },
-          {
-            url: '**/addons/webgui/api/opsidata/depots/clients?**',
-            response: clientList,
-          },
-          {
-            url: '**/addons/webgui/api/opsidata/products?**',
-            response: productObjectList,
-          },
-          {
-            url: '**/addons/webgui/api/opsidata/hosts/groups?**',
-            response: hostGroups,
-          },
-        ]
-      : []),
-  ]
-
-  const routesToMock = customRoutes.length > 0 ? customRoutes : defaultRoutes
-  for (const { url, response } of routesToMock) {
-    await page.route(url, (route: Route) => {
-      route.fulfill({
-        status: 200,
-        headers: {
-          ...defaultResponseHeaders,
-          'x-opsi-worker-id': `${serverId}:1`,
-          'x-opsi-user-id': `user:${userId}`,
-        },
-        contentType: 'application/json',
-        body: JSON.stringify(response),
-      })
-    })
-  }
-}
+import type { BrowserContext, Page } from '@playwright/test'
+import { opsiconfdSessionCookie } from '../shared/constants'
 
 export const login = async (context: BrowserContext, page: Page) => {
   await context.addCookies(opsiconfdSessionCookie)

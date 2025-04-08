@@ -11,10 +11,10 @@ import {
   useHighResolutionViewport,
   toggleTheme,
   selectLanguage,
-  setupMockRoutes,
   login,
   takeFullPageScreenshot,
 } from '../shared/utils'
+import { setupMockRoutes } from '../shared/mock/mocks'
 import { themes, languages } from '../shared/constants'
 
 test.describe('Clients Page with Products', () => {
