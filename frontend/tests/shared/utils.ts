@@ -47,7 +47,6 @@ export const selectLanguage = async (
   const languageOption = page.getByTestId(
     `language-dropdown-item-${targetLanguage}`,
   )
-  await languageOption.scrollIntoViewIfNeeded()
   await languageOption.waitFor({ state: 'visible' })
   await languageOption.click()
   await page.waitForTimeout(500)

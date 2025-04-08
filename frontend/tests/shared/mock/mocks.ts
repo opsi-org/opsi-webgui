@@ -51,6 +51,22 @@ export const fetchMockData = async (): Promise<void> => {
   }
 }
 
+export const addMockRoute = async (page: Page, url: string, response: any) => {
+  await page.unroute(url)
+  await page.route(url, (route: Route) => {
+    route.fulfill({
+      status: 200,
+      headers: {
+        ...defaultResponseHeaders,
+        'x-opsi-worker-id': `${serverId}:1`,
+        'x-opsi-user-id': `user:${userId}`,
+      },
+      contentType: 'application/json',
+      body: JSON.stringify(response),
+    })
+  })
+}
+
 export const setupMockRoutes = async (
   page: Page,
   isLoggedIn: boolean = false,
@@ -110,3 +126,5 @@ export const setupMockRoutes = async (
     })
   }
 }
+
+export { serverId }
