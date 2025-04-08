@@ -11,9 +11,8 @@ import {
   defaultResponseHeaders,
   opsiconfdSessionCookie,
 } from '../shared/constants'
-import { fetchMockData, getMockData } from './mock/mocks'
-
-const {
+import {
+  fetchMockData,
   serverId,
   userId,
   userConfig,
@@ -22,7 +21,7 @@ const {
   clientList,
   productObjectList,
   hostGroups,
-} = getMockData()
+} from './mock/mocks'
 
 export const setupMockRoutes = async (
   page: Page,
@@ -104,6 +103,7 @@ export const toggleTheme = async (
   ) {
     await themeToggle.click()
   }
+  await page.waitForTimeout(1000)
 }
 
 export const selectLanguage = async (
@@ -111,14 +111,21 @@ export const selectLanguage = async (
   targetLanguage: 'en' | 'de',
 ) => {
   const languageDropdown = page.getByTestId('language-dropdown')
-  const currentLanguage = await languageDropdown.getAttribute('aria-label')
-
-  if (currentLanguage !== targetLanguage) {
-    await languageDropdown.click()
-    const languageOption = page.getByTestId(
-      `language-dropdown-item-${targetLanguage}`,
-    )
-    await languageOption.click()
+  await languageDropdown.waitFor({ state: 'visible' })
+  const activeLanguage = await languageDropdown.textContent()
+  if (activeLanguage?.trim().toLowerCase() === targetLanguage) {
+    return
+  }
+  await languageDropdown.click()
+  const languageOption = page.getByTestId(
+    `language-dropdown-item-${targetLanguage}`,
+  )
+  await languageOption.waitFor({ state: 'visible' })
+  await languageOption.click()
+  await page.waitForTimeout(500)
+  const updatedLanguage = await languageDropdown.textContent()
+  if (!updatedLanguage?.includes(targetLanguage.toUpperCase())) {
+    throw new Error(`Failed to select language: ${targetLanguage}`)
   }
 }
 
