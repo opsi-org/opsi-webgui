@@ -50,7 +50,7 @@ export const fetchMockData = async (): Promise<void> => {
   }
 }
 
-export const getMockData = () => ({
+export {
   mockData,
   serverId,
   userId,
@@ -60,4 +60,4 @@ export const getMockData = () => ({
   clientList,
   productObjectList,
   hostGroups,
-})
+}

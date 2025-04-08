@@ -10,10 +10,7 @@ export const MOCK_DATA_URL =
   'https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json'
 
 export const themes = ['light', 'dark'] as const
-// export const languages = ['en', 'de'] as const
-
-// export const themes = ['light'] as const
-export const languages = ['en'] as const
+export const languages = ['en', 'de'] as const
 
 export const opsiconfdSessionCookie = [
   {
