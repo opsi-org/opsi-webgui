@@ -44,6 +44,20 @@ test.describe('Main Pages', () => {
           `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients.png`,
         )
 
+        await page.waitForSelector('[data-testid="clients-products-button"]', {
+          state: 'visible',
+        })
+        await page.click('[data-testid="clients-products-button"]')
+        await page.waitForURL('**/clients/products/**', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await page.waitForTimeout(10000)
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-main-layout.png`,
+        )
+
         await page.goto('/servers/', {
           waitUntil: 'networkidle',
           timeout: 60000,
@@ -82,6 +96,10 @@ test.describe('Main Pages', () => {
           timeout: 60000,
         })
         await selectHost(page)
+        const pageNavBreadcrumb = page.getByTestId('page-nav-breadcrumb')
+        await pageNavBreadcrumb.screenshot({
+          path: `screenshots/opsidoc/${theme}/${language}/opsi-webgui-breadcrumb.png`,
+        })
         await takeFullPageScreenshot(
           page,
           `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-config.png`,
