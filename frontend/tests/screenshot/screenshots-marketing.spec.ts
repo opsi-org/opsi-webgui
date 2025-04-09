@@ -33,7 +33,7 @@ test.describe('Clients Page with Products', () => {
         await toggleTheme(page, theme)
         await selectLanguage(page, language)
         await login(context, page)
-        if (page.url() !== '/clients/') {
+        if (page.url() !== '/clients') {
           await page.goto('/clients/', {
             waitUntil: 'networkidle',
             timeout: 60000,

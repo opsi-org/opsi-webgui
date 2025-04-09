@@ -8,6 +8,7 @@ License: AGPL-3.0
 <template>
   <el-select
     v-model="value"
+    data-testid="host-select"
     clearable
     :placeholder="$t('formselect.select.' + type)"
     style="min-width: 200px"

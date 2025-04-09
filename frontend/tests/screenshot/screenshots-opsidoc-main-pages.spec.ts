@@ -8,12 +8,13 @@ License: AGPL-3.0
 
 import { test } from '@playwright/test'
 import {
-  setupMockRoutes,
   toggleTheme,
   selectLanguage,
   takeFullPageScreenshot,
   login,
+  selectHost,
 } from '../shared/utils'
+import { setupMockRoutes } from '../shared/mock/mocks'
 import { themes, languages } from '../shared/constants'
 
 test.describe('Main Pages', () => {
@@ -29,11 +30,10 @@ test.describe('Main Pages', () => {
           timeout: 60000,
         })
         await toggleTheme(page, theme)
-        // await selectLanguage(page, language)
-        await page.waitForTimeout(1000)
+        await selectLanguage(page, language)
         await login(context, page)
 
-        if (page.url() !== '/clients/') {
+        if (page.url() !== '/clients') {
           await page.goto('/clients/', {
             waitUntil: 'networkidle',
             timeout: 60000,
@@ -43,30 +43,7 @@ test.describe('Main Pages', () => {
           page,
           `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients.png`,
         )
-        await page.goto('clients/create', {
-          waitUntil: 'networkidle',
-          timeout: 60000,
-        })
-        await takeFullPageScreenshot(
-          page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-create.png`,
-        )
-        await page.goto('clients/clone', {
-          waitUntil: 'networkidle',
-          timeout: 60000,
-        })
-        await takeFullPageScreenshot(
-          page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-clone.png`,
-        )
-        await page.goto('clients/config', {
-          waitUntil: 'networkidle',
-          timeout: 60000,
-        })
-        await takeFullPageScreenshot(
-          page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-config.png`,
-        )
+
         await page.goto('/servers/', {
           waitUntil: 'networkidle',
           timeout: 60000,
@@ -79,14 +56,42 @@ test.describe('Main Pages', () => {
           waitUntil: 'networkidle',
           timeout: 60000,
         })
+        await selectHost(page)
         await takeFullPageScreenshot(
           page,
           `screenshots/opsidoc/${theme}/${language}/opsi-webgui-servers-config.png`,
         )
-        await page.goto('/products/', {
+        await page.goto('/clients/create', {
           waitUntil: 'networkidle',
           timeout: 60000,
         })
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-create.png`,
+        )
+        await page.goto('/clients/clone', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-clone.png`,
+        )
+        await page.goto('/clients/config', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await selectHost(page)
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-config.png`,
+        )
+
+        await page.goto('/products/LocalbootProduct', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await page.waitForTimeout(10000)
         await takeFullPageScreenshot(
           page,
           `screenshots/opsidoc/${theme}/${language}/opsi-webgui-products.png`,
