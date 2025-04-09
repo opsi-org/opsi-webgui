@@ -11,8 +11,10 @@ import type { Depot, Client } from './types'
 import type { Page, Route } from '@playwright/test'
 import {
   getDepots,
+  getDepotList,
   getClients,
   getClientsList,
+  getHostParam,
   getProducts,
   getHostGroups,
 } from './helpers'
@@ -22,8 +24,10 @@ let serverId: string = ''
 let userId: string = ''
 let userConfig: any = {}
 let serverObjectList: Depot[] = []
+let serverList: string[] = []
 let clientObjectList: Client[] = []
 let clientList: string[] = []
+let hostParameters: any = []
 let productObjectList: any = []
 let hostGroups: any = []
 
@@ -41,8 +45,10 @@ export const fetchMockData = async (): Promise<void> => {
     userId = mockData.objects.User[0].id
     userConfig = { user: userId, configuration: mockData.config_files }
     serverObjectList = getDepots(mockData.objects.Host)
+    serverList = getDepotList(mockData.objects.Host)
     clientObjectList = getClients(mockData.objects.Host)
     clientList = getClientsList(mockData.objects.Host)
+    hostParameters = getHostParam(mockData.objects.Config)
     productObjectList = getProducts(mockData.objects.Product)
     hostGroups = getHostGroups(mockData.objects.Group)
   } catch (error) {
@@ -91,12 +97,20 @@ export const setupMockRoutes = async (
             response: serverObjectList,
           },
           {
+            url: '**/addons/webgui/api/opsidata/depot_ids',
+            response: serverList,
+          },
+          {
             url: '**/addons/webgui/api/opsidata/clients?**',
             response: clientObjectList,
           },
           {
             url: '**/addons/webgui/api/opsidata/depots/clients?**',
             response: clientList,
+          },
+          {
+            url: '**/addons/webgui/api/opsidata/config/objects/**',
+            response: hostParameters,
           },
           {
             url: '**/addons/webgui/api/opsidata/products?**',

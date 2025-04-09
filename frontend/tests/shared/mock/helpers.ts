@@ -23,6 +23,15 @@ export const getDepots = (hosts: Host[]): Depot[] => {
     }))
 }
 
+export const getDepotList = (hosts: Host[]): string[] => {
+  return hosts
+    .filter(
+      (host) =>
+        host.type === 'OpsiDepotserver' || host.type === 'OpsiConfigserver',
+    )
+    .map((depot) => depot.id)
+}
+
 export const getClients = (hosts: Host[]): Client[] => {
   return hosts
     .filter((host) => host.type === 'OpsiClient')
@@ -51,6 +60,24 @@ export const getClientsList = (hosts: Host[]): string[] => {
   return hosts
     .filter((host) => host.type === 'OpsiClient')
     .map((client) => client.id)
+}
+
+export const getHostParam = (configs: any[]): any => {
+  return {
+    general: configs.map((config) => ({
+      description: config.description || '',
+      possibleValues: config.possibleValues || [],
+      defaultValues: config.defaultValues || [],
+      editable: config.editable || false,
+      multiValue: config.multiValue || false,
+      id: config.id || '',
+      type: config.type || '',
+      objects: config.objects || {},
+      configId: config.id || '',
+      newValue: '',
+      newValues: [],
+    })),
+  }
 }
 
 export const getProducts = (products: any[]): Product[] => {

@@ -56,6 +56,16 @@ export const selectLanguage = async (
   }
 }
 
+export const selectHost = async (page: Page) => {
+  const hostSelect = page.getByTestId('host-select')
+  await hostSelect.waitFor({ state: 'visible' })
+  await hostSelect.click()
+  await page.waitForSelector('.el-select-dropdown__item', { state: 'visible' })
+  const firstOption = page.locator('.el-select-dropdown__item').first()
+  await firstOption.click()
+  await page.waitForTimeout(1000)
+}
+
 export const takeFullPageScreenshot = async (page: Page, path: string) => {
   await page.screenshot({ path, fullPage: true })
 }
