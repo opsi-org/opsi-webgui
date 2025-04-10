@@ -18,8 +18,8 @@ License: AGPL-3.0
       <h3 class="mt-4 text-lg font-semibold">
         {{ $t('title.' + category) }}
       </h3>
-      <div v-for="(value, label) in options" :key="label + value">
-        <el-form-item :label="$t('table.fields.' + label)">
+      <div v-for="(value, label) in options" :key="category + '-' + label">
+        <el-form-item :label="$t('table.fields.' + label)" :error="label === 'hostId' ? clientNameError : ''">
           <el-input
             v-if="label === 'hostId'"
             v-model="cloneClient[category][label]"
@@ -50,7 +50,7 @@ License: AGPL-3.0
         data-testid="cloneButton"
         :type="sourceID && cloneClient.target.hostId ? 'success' : ''"
         @click="applyCloneClient"
-        :disabled="!sourceID || !cloneClient.target.hostId"
+        :disabled="!sourceID || !cloneClient.target.hostId || clientExists"
         >{{ $t('title.clone') }}</el-button
       >
     </div>
@@ -75,19 +75,42 @@ License: AGPL-3.0
   const sourceID = ref('')
   const clientIDList = ref()
   const cloneClient = ref(getDefaultCloneClient())
+  const clientNameError = ref('')
+  const clientExists = ref(false)
   onMounted(async () => {
     await fetch()
     if (props.id != '') {
       sourceID.value = props.id
     }
     domain.value = sourceID.value.substring(sourceID.value.indexOf('.'))
+    cloneClient.value.target.hostId = sourceID.value.split('.')[0]
   })
   watch(
     () => sourceID.value,
     async () => {
       domain.value = sourceID.value.substring(sourceID.value.indexOf('.'))
+      cloneClient.value.target.hostId = sourceID.value.split('.')[0]
     },
   )
+  watch(() => cloneClient.value.target.hostId, async (newClientName) => {
+    if (!newClientName) {
+      clientExists.value = false
+      clientNameError.value = ''
+      return
+    }
+
+    const fullHostId = `${newClientName}${domain.value}`
+    if (clientIDList.value.includes(fullHostId)) {
+      clientExists.value = true
+      clientNameError.value = $t('message.warning.clientExists', {
+        client: fullHostId,
+      })
+    } else {
+      clientExists.value = false
+      clientNameError.value = ''
+    }
+  })
+
   function setId(id: string) {
     sourceID.value = id
   }
@@ -135,13 +158,13 @@ License: AGPL-3.0
         hostId: '', // $t('table.fields.hostId')
         ipAddress: '', // $t('table.fields.ipAddress')
         hardwareAddress: '', // $t('table.fields.hardwareAddress')
-        systemUUID: '', // $t('table.fields.systemUUID')
+        // systemUUID: '', // $t('table.fields.systemUUID')
       },
       options: {
         // $t('title.options')
-        configs: false, // $t('table.fields.configs')
-        products: false, // $t('table.fields.products')
-        productProperties: false, // $t('table.fields.productProperties')
+        configs: true, // $t('table.fields.configs')
+        products: true, // $t('table.fields.products')
+        productProperties: true, // $t('table.fields.productProperties')
       },
     }
   }
