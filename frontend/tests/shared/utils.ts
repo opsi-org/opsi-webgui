@@ -66,6 +66,13 @@ export const selectHost = async (page: Page) => {
   await page.waitForTimeout(1000)
 }
 
+export const connectTerminal = async (page: Page) => {
+  const terminalButton = page.getByTestId('terminal-connect-button')
+  await terminalButton.waitFor({ state: 'visible' })
+  await terminalButton.click()
+  await page.waitForTimeout(10000)
+}
+
 export const takeFullPageScreenshot = async (page: Page, path: string) => {
   await page.screenshot({ path, fullPage: true })
 }

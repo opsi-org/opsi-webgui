@@ -19,6 +19,8 @@ import {
   getHostGroups,
 } from './helpers'
 
+import { serverDiagnostic } from './data'
+
 let mockData: any
 let serverId: string = ''
 let userId: string = ''
@@ -119,6 +121,10 @@ export const setupMockRoutes = async (
           {
             url: '**/addons/webgui/api/opsidata/hosts/groups?**',
             response: hostGroups,
+          },
+          {
+            url: '**/addons/webgui/api/opsidata/server/diagnostic',
+            response: serverDiagnostic,
           },
         ]
       : []),
