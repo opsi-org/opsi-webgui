@@ -83,11 +83,13 @@ License: AGPL-3.0
       sourceID.value = props.id
     }
     domain.value = sourceID.value.substring(sourceID.value.indexOf('.'))
+    cloneClient.value.target.hostId = sourceID.value.split('.')[0]
   })
   watch(
     () => sourceID.value,
     async () => {
       domain.value = sourceID.value.substring(sourceID.value.indexOf('.'))
+      cloneClient.value.target.hostId = sourceID.value.split('.')[0]
     },
   )
   watch(() => cloneClient.value.target.hostId, async (newClientName) => {
