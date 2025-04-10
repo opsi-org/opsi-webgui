@@ -13,6 +13,7 @@ import {
   takeFullPageScreenshot,
   login,
   selectHost,
+  connectTerminal,
 } from '../shared/utils'
 import { setupMockRoutes } from '../shared/mock/mocks'
 import { themes, languages } from '../shared/constants'
@@ -121,6 +122,33 @@ test.describe('Main Pages', () => {
         await takeFullPageScreenshot(
           page,
           `screenshots/opsidoc/${theme}/${language}/opsi-webgui-groups.png`,
+        )
+
+        await page.goto('/admin/diagnostics?id=health', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-admin-health-check.png`,
+        )
+        await page.goto('/admin/diagnostics?id=all', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await page.waitForTimeout(10000)
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-admin-diagnostics.png`,
+        )
+        await page.goto('/admin/terminal', {
+          waitUntil: 'networkidle',
+          timeout: 60000,
+        })
+        await connectTerminal(page)
+        await takeFullPageScreenshot(
+          page,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-admin-terminal.png`,
         )
       })
     }

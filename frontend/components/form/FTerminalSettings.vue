@@ -22,6 +22,7 @@ License: AGPL-3.0
     >
       <el-button
         :disabled="disabled"
+        data-testid="terminal-connect-button"
         type="primary"
         @click="emit('click-connect')"
         >{{ $t('button.reconnect') }}</el-button
