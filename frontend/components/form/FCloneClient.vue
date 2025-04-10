@@ -19,7 +19,7 @@ License: AGPL-3.0
         {{ $t('title.' + category) }}
       </h3>
       <div v-for="(value, label) in options" :key="category + '-' + label">
-        <el-form-item :label="$t('table.fields.' + label)">
+        <el-form-item :label="$t('table.fields.' + label)" :error="label === 'hostId' ? clientNameError : ''">
           <el-input
             v-if="label === 'hostId'"
             v-model="cloneClient[category][label]"
@@ -50,7 +50,7 @@ License: AGPL-3.0
         data-testid="cloneButton"
         :type="sourceID && cloneClient.target.hostId ? 'success' : ''"
         @click="applyCloneClient"
-        :disabled="!sourceID || !cloneClient.target.hostId"
+        :disabled="!sourceID || !cloneClient.target.hostId || clientExists"
         >{{ $t('title.clone') }}</el-button
       >
     </div>
@@ -75,6 +75,8 @@ License: AGPL-3.0
   const sourceID = ref('')
   const clientIDList = ref()
   const cloneClient = ref(getDefaultCloneClient())
+  const clientNameError = ref('')
+  const clientExists = ref(false)
   onMounted(async () => {
     await fetch()
     if (props.id != '') {
@@ -88,6 +90,25 @@ License: AGPL-3.0
       domain.value = sourceID.value.substring(sourceID.value.indexOf('.'))
     },
   )
+  watch(() => cloneClient.value.target.hostId, async (newClientName) => {
+    if (!newClientName) {
+      clientExists.value = false
+      clientNameError.value = ''
+      return
+    }
+
+    const fullHostId = `${newClientName}${domain.value}`
+    if (clientIDList.value.includes(fullHostId)) {
+      clientExists.value = true
+      clientNameError.value = $t('message.warning.clientExists', {
+        client: fullHostId,
+      })
+    } else {
+      clientExists.value = false
+      clientNameError.value = ''
+    }
+  })
+
   function setId(id: string) {
     sourceID.value = id
   }
