@@ -99,7 +99,7 @@ stages:
   # redis-server /etc/redis/redis.conf &
   sleep 20
 
-  .prepare_backend: &prepare_backend |
+.prepare_backend: &prepare_backend |
   apt update
   echo "install stuff"
   apt -y install git
