@@ -558,9 +558,8 @@ build:screenshot:
     paths:
       - frontend/screenshots/
     expire_in: 7 days
-  # only:
-  #   - merge_requests
-  #   - v5
+  only:
+    - tags
 
 build:static:app: # with transifex
   stage: build
