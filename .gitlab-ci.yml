@@ -525,16 +525,12 @@ build:screenshot:
     MYSQL_USER: 'opsi'
     MYSQL_PASSWORD: 'opsi'
   before_script:
+    - *prepare_backend_tests
     - cd frontend
     - npm ci
     - npx playwright install-deps
     - npm run dev &
-    - cd ../backend
-    - poetry install
-    - poetry run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup & # Start the backend in the background
-    - sleep 30
   script:
-    - cd ../frontend
     - npx playwright test tests/screenshot/
   artifacts:
     paths:
