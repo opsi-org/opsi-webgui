@@ -506,6 +506,44 @@ test:backend-pytest:
 #       - frontend/.dev.log
 #     expire_in: 7 day
 
+build:screenshot:
+  stage: build
+  image: mcr.microsoft.com/playwright:v1.38.0-focal
+  dependencies:
+    - init:npm
+    - init:transifex-down
+  services:
+    - name: mysql:latest
+      command:
+        - --max_connections=1000
+        - --default-authentication-plugin=mysql_native_password
+    - name: redislabs/redistimeseries:latest
+      alias: redis
+  variables:
+    MYSQL_ROOT_PASSWORD: 'opsi'
+    MYSQL_DATABASE: 'opsitest'
+    MYSQL_USER: 'opsi'
+    MYSQL_PASSWORD: 'opsi'
+  before_script:
+    - cd frontend
+    - npm ci
+    - npx playwright install-deps
+    - npm run dev &
+    - cd ../backend
+    - poetry install
+    - poetry run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup & # Start the backend in the background
+    - sleep 30
+  script:
+    - cd ../frontend
+    - npx playwright test tests/screenshot/
+  artifacts:
+    paths:
+      - frontend/screenshots/
+    expire_in: 7 days
+  # only:
+  #   - merge_requests
+  #   - v5
+
 build:static:app: # with transifex
   stage: build
   dependencies:
