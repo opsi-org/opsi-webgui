@@ -17,7 +17,8 @@
         "ms-azuretools.vscode-docker",
         "SonarSource.sonarlint-vscode",
         "dbaeumer.vscode-eslint",
-        "richie5um2.vscode-sort-json"
+        "richie5um2.vscode-sort-json",
+        "ms-playwright.playwright"
       ],
       "settings": {
         "terminal.integrated.shell.linux": "/usr/bin/zsh"

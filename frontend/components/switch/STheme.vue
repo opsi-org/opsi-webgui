@@ -16,6 +16,7 @@ License: AGPL-3.0
       "
       style="--p-toggleswitch-width: 5rem"
       v-bind="$props"
+      data-testid="theme-toggle"
     />
     <label
       for="cbAutorefresh"

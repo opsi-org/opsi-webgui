@@ -26,6 +26,7 @@ License: AGPL-3.0
       <el-button
         type="primary"
         @click="router.push('/clients/products/LocalbootProduct')"
+        data-testid="clients-products-button"
       >
         <IconIIcon :icon="icons.product" />
         {{ $t('table.fields.products') }}

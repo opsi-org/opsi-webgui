@@ -8,6 +8,7 @@ License: AGPL-3.0
 <template>
   <el-breadcrumb
     id="globalBreadcrumb"
+    data-testid="page-nav-breadcrumb"
     class="breadcrumb mb-4"
     :separator-icon="ArrowRight"
   >

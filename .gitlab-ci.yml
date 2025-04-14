@@ -99,6 +99,28 @@ stages:
   # redis-server /etc/redis/redis.conf &
   sleep 20
 
+.prepare_backend_minimal: &prepare_backend_minimal |
+  apt update
+  apt -y install git wget python3-pip python3-dev mariadb-client
+  git clone -b v4.3 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git
+  cd opsiconfd
+
+  # Configure database access
+  mysql --host=mysql --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
+
+  # Install dependencies
+  pip3 install poetry
+  poetry install
+
+  # Configure opsiconfd
+  mkdir -p /etc/opsi /var/lib/opsi/repository /var/lib/opsi/depot
+  echo "redis-internal-url = redis://redis" >> tests/data/default-opsiconfd.conf
+  echo "log-file = /tmp/opsiconfd.log" >> tests/data/default-opsiconfd.conf
+
+  # Start opsiconfd
+  poetry run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup &
+  sleep 30
+
 .pytest: &pytest |
 
   [ -e /tmp/opsiconfd.log ] && rm /tmp/opsiconfd.log
@@ -505,6 +527,39 @@ test:backend-pytest:
 #       - frontend/.storybook.log
 #       - frontend/.dev.log
 #     expire_in: 7 day
+
+build:screenshot:
+  stage: build
+  image: mcr.microsoft.com/playwright:v1.38.0-focal
+  dependencies:
+    - init:npm
+    - init:transifex-down
+  services:
+    - name: mysql:latest
+      command:
+        - --max_connections=1000
+        - --default-authentication-plugin=mysql_native_password
+    - name: redislabs/redistimeseries:latest
+      alias: redis
+  variables:
+    MYSQL_ROOT_PASSWORD: 'opsi'
+    MYSQL_DATABASE: 'opsitest'
+    MYSQL_USER: 'opsi'
+    MYSQL_PASSWORD: 'opsi'
+  before_script:
+    - *prepare_backend_minimal
+    - cd frontend
+    - npm ci
+    - npx playwright install-deps
+    - npm run dev &
+  script:
+    - npx playwright test tests/screenshot/
+  artifacts:
+    paths:
+      - frontend/screenshots/
+    expire_in: 7 days
+  only:
+    - tags
 
 build:static:app: # with transifex
   stage: build
