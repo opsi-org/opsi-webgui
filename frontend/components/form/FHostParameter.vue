@@ -10,7 +10,10 @@ License: AGPL-3.0
     <el-alert v-if="showWarning" type="warning" show-icon>
       {{ $t('alert.select') }}
     </el-alert>
-    <div class="overflow-y-auto" :style="`max-height: ${maxVisibleHeight}px;`">
+    <div
+      class="overflow-y-auto tree-table-container"
+      :style="`max-height: ${maxVisibleHeight}px;`"
+    >
       <p-tree-table
         ref="configTree"
         :value="fetchedData"
@@ -19,9 +22,6 @@ License: AGPL-3.0
         column-resize-mode="fit"
         :class="mq.isMobile.value ? 'text-xs' : ''"
       >
-        <!-- :resizable-columns="true"
-        :show-gridlines="true" -->
-        <!-- Column key/label -->
         <p-column
           field="key"
           header=""
@@ -40,7 +40,6 @@ License: AGPL-3.0
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
                   <span>{{ slotProps.node.key }}</span>
-                  <!-- <span>{{ slotProps.index }}</span> -->
                 </template>
               </TooltipTTooltip>
 
@@ -141,28 +140,6 @@ License: AGPL-3.0
             </div>
           </template>
         </p-column>
-        <!-- <div
-              v-if="
-                slotProps.node.children == undefined ||
-                slotProps.node.children.length == 0
-              "
-            >
-              <p-badge
-                v-if="
-                  !arrayEqual(
-                    itemValues[slotProps.node.data.configId],
-                    initialValues[slotProps.node.data.configId],
-                  )
-                "
-                :title="
-                  $t('message.warning.unsavedChange') +
-                  ` <br> initial: ${initialValues[slotProps.node.data.configId]}
-                            <br> current: ${itemValues[slotProps.node.data.configId]}`
-                "
-                severity="warn"
-                :value="t_fixed('notOrigin')"
-              />
-            </div> -->
         <!-- Column value -->
         <p-column
           v-if="!mq.isMobile.value"
@@ -195,9 +172,6 @@ License: AGPL-3.0
                 class="flex w-full"
                 v-else-if="slotProps.node.data.type === 'UnicodeConfig'"
               >
-                <!-- {{ slotProps.node.data }} <br /> -->
-                <!-- item: {{ itemValues[slotProps.node.data.configId] }} <br /> -->
-                <!-- init: {{ initialValues[slotProps.node.data.configId] }} -->
                 <SelectSSelect
                   v-model:selection="itemValues[slotProps.node.data.configId]"
                   v-model:data="slotProps.node.data.possibleValues"
@@ -284,13 +258,7 @@ License: AGPL-3.0
     isChild: { type: Boolean, default: false },
   })
   const { maxVisibleHeight } = useDynamicHeight(
-    [
-      'btop-header',
-      'globalBreadcrumb',
-      'config-pre-tabs',
-      // 'tableHeader-'+props.tableId
-      // 'tableFooter-'+props.tableId
-    ],
+    ['btop-header', 'globalBreadcrumb', 'config-pre-tabs'],
     props.isChild ? 100 : 50,
   )
 
@@ -367,47 +335,9 @@ License: AGPL-3.0
       for (const category in fetchedData.value) {
         initInitialValues(fetchedData.value[category])
       }
-      // for (const category in fetchedData.value) {
-      //   fetchedData.value[category].forEach((item: any) => {
-      //     const initialValue = getInitialValue(item)
-      //     itemValues.value[item.configId] = initialValue
-      //     initialValues.value[item.configId] = initialValue
-      //   })
-      // }
     }
     hasUnsavedChanges.value = false
   }
-
-  // function transformData(input: T_HostParameter): T_HostParameter {
-  //   const result: T_HostParameter = {}
-
-  //   for (const key in input) {
-  //     const grouped: { [prefix: string]: T_HostParameterEntry[] } = {}
-
-  //     input[key].forEach((item) => {
-  //       const segments = item.configId.split('.')
-  //       const prefix = segments.slice(0, 3).join('.')
-
-  //       if (!grouped[prefix]) {
-  //         grouped[prefix] = []
-  //       }
-  //       grouped[prefix].push(item)
-  //     })
-
-  //     for (const prefix in grouped) {
-  //       if (grouped[prefix].length >= 3) {
-  //         result[prefix] = grouped[prefix]
-  //       } else {
-  //         if (!result[key]) {
-  //           result[key] = []
-  //         }
-  //         result[key].push(...grouped[prefix])
-  //       }
-  //     }
-  //   }
-
-  //   return result
-  // }
 
   onMounted(fetchFormData)
 
@@ -538,5 +468,23 @@ License: AGPL-3.0
 <style scoped lang="css">
   :deep(.el-form-item__label) {
     height: auto !important;
+  }
+  .tree-table-container {
+    padding-left: 16px;
+  }
+  :deep(.p-treetable .p-treetable-toggler) {
+    margin-left: 8px;
+  }
+  :deep(.p-treetable .p-treetable-indent) {
+    width: 1.5em;
+    display: inline-block;
+  }
+  :deep(.p-treetable),
+  :deep(.p-treetable .p-treetable-thead > tr > th),
+  :deep(.p-treetable .p-treetable-tbody > tr > td),
+  :deep(.p-treetable .p-treetable-tbody > tr),
+  :deep(.p-treetable .p-treetable-thead > tr) {
+    border: none !important;
+    box-shadow: none !important;
   }
 </style>

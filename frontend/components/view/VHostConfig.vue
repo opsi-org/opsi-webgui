@@ -23,7 +23,7 @@ License: AGPL-3.0
       name="config"
       :disabled="!(type === 'clients' || type === 'servers')"
     >
-      <FormFHostParameterHierarchical
+      <FormFHostParameter
         v-if="activeName === 'config'"
         :id="currentId"
         :type="type"
