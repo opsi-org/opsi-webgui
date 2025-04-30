@@ -31,7 +31,6 @@ DOCKERDIR=/workspace/docker/backend/opsiconfd
 if cd $DOCKERDIR; then git pull; else git clone git@gitlab.uib.gmbh:uib/opsiconfd.git $DOCKERDIR; fi
 
 echo "* Setup poetry venv"
-cd opsiconfd
 #poetry lock --no-update
 #poetry install --no-interaction --no-ansi
 uv sync --frozen

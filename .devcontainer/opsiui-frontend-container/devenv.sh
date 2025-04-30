@@ -59,9 +59,19 @@ echo WEBGUI_DEV_PORT=8888 >> $ENVFILE
 echo "################# env for opsi-server" >> $ENVFILE
 echo DOCKER_IMAGE_OPSI_SERVER=uibmz/opsi-server:4.3-development >> $ENVFILE
 echo RESTART_POLICY=no >> $ENVFILE
+# TODO: check hostname
+# - check if .env-file contains your fqdn (like 'HOST.YOUR.DOMAIN')
+# - if it only contains 'HOST': edit your local /etc/hosts file to contain `127.0.0.1       host.your.domain host localhost` and run devenv.sh again
+defHostname=$(hostname -f)
+read -p "Enter your hostname (default: '$defHostname'): " GITEMAIL
+HOSTNAME="${HOSTNAME:=$defHostname}"
+echo HOSTNAME=$HOSTNAME >> $ENVFILE
 
-echo HOSTNAME=$(hostname -f) >> $ENVFILE
-echo DOMAINNAME=$(hostname -d) >> $ENVFILE
+defDomainname=$(hostname -f)
+read -p "Enter your domain (default: '$defDomainname'): " GITEMAIL
+DOMAINNAME="${DOMAINNAME:=$defDomainname}"
+echo DOMAINNAME=$DOMAINNAME >> $ENVFILE
+
 echo OPSICONFD_GRAFANA_EXTERNAL_URL=http://$(hostname -f):3000 >> $ENVFILE
 echo OPSICONFD_PORT=44471 >> $ENVFILE
 echo OPSICONFD_PORT_UDP=691 >> $ENVFILE

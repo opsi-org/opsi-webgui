@@ -31,8 +31,8 @@ This project espacially the devcontainer is not for production usage. To install
 - upload zip through https://YOUROPSISERVER:OPSICONFD_PORT/admin/#addons
 - checkout https://YOUROPSISERVER:OPSICONFD_PORT/addons/webgui/app
 
-## Development
 
+## Development
 The development with this project includes a complete dev environment. The built container includes a opsiconfd and the webgui.
 The opsiconfd will be available at the address https://localhost:4447 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser` (changeable through `.devcontainer/.env` file)
 
@@ -43,22 +43,23 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
 ### Build devcontainer
 
 - **Clone project and open** it in VSCode with `git clone https://github.com/opsi-org/opsi-webgui.git`
-- **Checkout submodule ** (try making it optional, if directory `.devcontainer/../opsi-docker` not exists execute following)
-  - GitHub: `cd opsi-webgui && git clone https://github.com/opsi-org/opsi-docker.git .devcontainer/opsi-docker`
-  - GitLab: `cd opsi-webgui && git clone git@gitlab.uib.gmbh:uib/opsi-docker.git .devcontainer/opsi-docker`
 - **run `.devcontainer/devenv.sh`** in terminal (from Workspace-folder!)
-  - check if .env-file contains your fqdn (like 'HOST.YOUR.DOMAIN')
-  - if it only contains 'HOST': edit your local /etc/hosts file to contain `127.0.0.1       host.your.domain host localhost` and run devenv.sh again
+  
 - **Reopen** the project in remote-container (as vscode suggests)
   (Hint: Strg + Shift + P opens command palette; search for: `(rebuild and) reopen in container` )
-  > the container starts automaticly the complete develepment enviroment including webgui(nuxt), opsiconfd, storybook/histoire and playwright
+  * You will be asked which container you want to open (backend/frontend)
+  * the container starts which creating an environment file `dockter/(backend|frontend)/.env` \
+    this script may ask you questions (e.g. git username/email, hostname, etc)
+  * after this you will be able to start the applications
 
 ### Start applications
-
-- opsiconfd will be available at `https://localhost:4447` and webgui at `https://localhost:8888`
+#### for frontend container
+- opsiconfd will be available at `https://localhost:44471` and webgui at `https://localhost:8888`
 - **Starting webgui**: `cd /workspace/frontend/ && npm run dev` or Start 'webgui' in 'Run and Debug' section (same as F5)
 - **Restarting opsiconfd**: `opsiconfdrestart` or `opsiconfdcontainer supervisorctl reload` for updating use e.g. `opsiconfdcontainer apt update -y`
-- Accept certificate of opsiconfd: `https://localhost:4447/admin`
+- Accept certificate of opsiconfd: `https://localhost:44471/admin`
+##### for backend container
+- opsiconfd will be available at `https://localhost:4447` and can be (re-)started with F5 / vscode debugging feature
 
 ### Contributing
 
