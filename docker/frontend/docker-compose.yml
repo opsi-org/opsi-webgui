@@ -6,10 +6,10 @@ include:
       # - .devcontainer/opsi-docker/opsi-server/opsi-server.env
       # - .devcontainer/.env
       - .env
-      - opsi-docker/opsi-server/opsi-server.env
+      - ./opsi-docker/opsi-server/opsi-server.env
 
 services:
-  opsiweb_dev:
+  opsiui-frontend-dev:
     env_file:
       - .env # needs to be in same directory !
     # environment:
@@ -20,13 +20,13 @@ services:
     #       memory: 4g
     # cpus: '1.0'
     build:
-      context: ..
+      context: ../..
       args:
         HOSTNAME: ${HOSTNAME}
         DEV_USER: ${DEV_USER}
         DEV_GIT_EMAIL: ${DEV_GIT_EMAIL}
         DEV_GIT_NAME: ${DEV_GIT_NAME}
-      dockerfile: .devcontainer/Dockerfile
+      dockerfile:  ./docker/frontend/Dockerfile
     depends_on: # created in include part
       - opsi-server
     ports:
@@ -38,6 +38,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - opsi_data:/data
       - ./files/docker-entrypoint.sh:/docker-entrypoint.sh
-      - ..:/workspace
-    working_dir: /workspace
+      - ../../:/workspace
+    working_dir: /workspace/frontend
     entrypoint: ['/docker-entrypoint.sh']

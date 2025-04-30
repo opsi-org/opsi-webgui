@@ -43,7 +43,7 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
 ### Build devcontainer
 
 - **Clone project and open** it in VSCode with `git clone https://github.com/opsi-org/opsi-webgui.git`
-- **Checkout submodule**
+- **Checkout submodule ** (try making it optional, if directory `.devcontainer/../opsi-docker` not exists execute following)
   - GitHub: `cd opsi-webgui && git clone https://github.com/opsi-org/opsi-docker.git .devcontainer/opsi-docker`
   - GitLab: `cd opsi-webgui && git clone git@gitlab.uib.gmbh:uib/opsi-docker.git .devcontainer/opsi-docker`
 - **run `.devcontainer/devenv.sh`** in terminal (from Workspace-folder!)

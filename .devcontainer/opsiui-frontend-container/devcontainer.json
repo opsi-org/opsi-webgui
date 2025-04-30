@@ -25,10 +25,12 @@
       }
     }
   },
-  "dockerComposeFile": ["./docker-compose.yml"],
-  "name": "opsiweb",
-  "postCreateCommand": "/workspace/.devcontainer/post_create.sh",
-  "runServices": ["opsiweb_dev", "opsi-server", "mysql", "redis", "grafana"],
-  "service": "opsiweb_dev",
-  "workspaceFolder": "/workspace"
+  //"dockerComposeFile": ["./docker-compose.yml"],
+	"dockerComposeFile": "../../docker/frontend/docker-compose.yml",
+  "name": "opsiui-frontend",
+  "initializeCommand": [".devcontainer/opsiui-frontend-container/devenv.sh"],
+  "runServices": ["opsiui-frontend-dev", "opsi-server", "mysql", "redis", "grafana"],
+  "service": "opsiui-frontend-dev",
+  "postCreateCommand": "/workspace/.devcontainer/opsiui-frontend-container/post_create.sh",
+  "workspaceFolder": "/workspace/frontend"
 }

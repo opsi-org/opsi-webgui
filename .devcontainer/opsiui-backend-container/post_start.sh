@@ -1,6 +1,6 @@
 echo "* Running as $(whoami)"
 
-/workspace/scripts/setup-hosts.sh
+/workspace/backend/scripts/setup-hosts.sh
 
 echo "* Fetch a test license"
 sudo mkdir -p /etc/opsi/licenses
@@ -23,11 +23,16 @@ git clone https://oauth2:UqZXUJsgG4dBGLBbTjDM@gitlab.uib.gmbh/uib/opsi-git-hooks
 cd /workspace
 opsi-dev-tool git-hooks --install
 
+
 echo "* clone opsiconfd"
-git clone git@gitlab.uib.gmbh:uib/opsiconfd.git
+
+
+DOCKERDIR=/workspace/docker/backend/opsiconfd
+if cd $DOCKERDIR; then git pull; else git clone git@gitlab.uib.gmbh:uib/opsiconfd.git $DOCKERDIR; fi
 
 echo "* Setup poetry venv"
-cd /workspace/opsiconfd
-poetry lock --no-update
-poetry install --no-interaction --no-ansi
+cd opsiconfd
+#poetry lock --no-update
+#poetry install --no-interaction --no-ansi
+uv sync --frozen
 

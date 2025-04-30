@@ -16,6 +16,7 @@ RUN apt-get update \
 		git \
 		vim \
 		nano \
+		python3 \
 	&& apt-get clean
 
 ARG HOSTNAME

@@ -4,6 +4,8 @@
 *_tmp*
 .env
 *backup*
+docker/backend/opsiconfd
+docker/frontend/opsi-docker
 backend/opsibackup
 backend/addon/webgui/data
 backend/.vscode/settings.json

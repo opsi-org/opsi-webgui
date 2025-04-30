@@ -1,4 +1,5 @@
 #!/bin/bash
+#SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 # echo 'Setup /etc/hosts' 1>&2
 # echo "127.0.0.1       $HOSTNAME $(hostname) mysql redis grafana localhost" > /tmp/hosts
@@ -6,22 +7,6 @@
 # cp /tmp/hosts /etc/hosts
 # rm /tmp/hosts
 
-set -e
-
-DEV_TOOLS_URL="http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.27.0.tar.gz"
-DEV_TOOLS_ARCHIVE="opsi-dev-tools_linux_x64_1.27.0.tar.gz"
-DEV_TOOLS_BINARY="opsi-dev-tool"
-WEBGUI_BACKEND_PATH="/workspace/backend/addon/webgui"
-WEBGUI_INSTALL_PATH="/data/opsiconfd/addons/webgui"
-
-echo -e "\n==========================================\nInstalling dev-tools\n===================================================="
-wget $DEV_TOOLS_URL
-tar -xf $DEV_TOOLS_ARCHIVE
-./$DEV_TOOLS_BINARY --self-install
-$DEV_TOOLS_BINARY --self-upgrade
-$DEV_TOOLS_BINARY git-hooks --install
-rm -f $DEV_TOOLS_ARCHIVE ${DEV_TOOLS_ARCHIVE}.1
-rm -f $DEV_TOOLS_BINARY
 
 echo -e "\n==========================================\nInstalling webgui dependencies\n==========================================="
 cd /workspace/frontend/

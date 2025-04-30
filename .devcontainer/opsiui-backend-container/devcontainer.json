@@ -1,12 +1,13 @@
 {
 	"name": "opsiui-backend",
-	"dockerComposeFile": "../docker/dev-opsiconfd-compose.yml",
+	"dockerComposeFile": "../../docker/backend/dev-opsiconfd-compose.yml",
 	"service": "opsiui-backend-dev",
-	"workspaceFolder": "/workspace",
-	"postCreateCommand": ".devcontainer/post_create.sh",
-	"postStartCommand": ".devcontainer/post_start.sh",
+	"initializeCommand": ".devcontainer/opsiui-backend-container/initialize.sh",
+	"postCreateCommand": "../.devcontainer/opsiui-backend-container/post_create.sh",
+	"postStartCommand": "../.devcontainer/opsiui-backend-container/post_start.sh",
+  	"workspaceFolder": "/workspace/backend",
 	"remoteEnv": {
-		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+		//"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
 		"DEV_USER": "${localEnv:USER}",
 		"DEV_UID": "${localEnv:UID}"
 	},

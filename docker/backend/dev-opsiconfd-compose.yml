@@ -4,18 +4,19 @@ services:
   opsiui-backend-dev:
     hostname: ${OPSI_HOSTNAME}
     env_file:
-      ../.env
+      .env
     privileged: true
     cap_add:
       - SYS_PTRACE
     build:
-      context: ..
-      dockerfile: docker/Dockerfile.dev
+      context: ../..
+      # context folder is opsiwebgui/docker
+      dockerfile: ./docker/backend/Dockerfile.dev
       args:
         - USER
         - UID
     volumes:
-      - ..:/workspace:cached
+      - ../../:/workspace:cached
     ports:
       - 4447:4447
       - 3000:3000

@@ -1,3 +1,0 @@
-[submodule ".devcontainer/opsi-docker"]
-	path = .devcontainer/opsi-docker
-	url = git@gitlab.uib.gmbh:uib/opsi-docker.git
