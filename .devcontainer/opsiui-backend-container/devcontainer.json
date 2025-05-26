@@ -5,7 +5,7 @@
 	"initializeCommand": ".devcontainer/opsiui-backend-container/initialize.sh",
 	"postCreateCommand": "../.devcontainer/opsiui-backend-container/post_create.sh",
 	"postStartCommand": "../.devcontainer/opsiui-backend-container/post_start.sh",
-  	"workspaceFolder": "/workspace/backend",
+	"workspaceFolder": "/workspace/backend",
 	"remoteEnv": {
 		//"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
 		"DEV_USER": "${localEnv:USER}",
@@ -58,7 +58,8 @@
 				"ms-python.mypy-type-checker",
 				"charliermarsh.ruff",
 				"cweijan.dbclient-jdbc",
-				"cweijan.vscode-database-client2"
+				"cweijan.vscode-database-client2",
+				"Postman.postman-for-vscode"
 			]
 		}
 	},

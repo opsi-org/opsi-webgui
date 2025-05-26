@@ -96,9 +96,10 @@ def get_server_config(
 
 				if row_dict.get("type") == "BoolConfig":
 					row_dict["value"] = bool_value(row_dict.get("value", ""))
-					row_dict["possibleValues"] = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
+					pvallist = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
 				else:
 					row_dict["possibleValues"] = row_dict.get("possibleValues", "").split("|")
+				row_dict["possibleValues"] = list(set(pvallist))  # remove duplicates
 
 				if row_dict.get("editable", False):
 					row_dict["newValue"] = ""
