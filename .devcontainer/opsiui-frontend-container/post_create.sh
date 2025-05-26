@@ -30,6 +30,7 @@ cp -r /workspace/backend/addon/webgui /data/opsiconfd/addons/.
 
 # use license if available
 if [ -f /workspace/docker/test.opsilic ]; then
+    mkdir -p /data/etc/opsi/licenses
     sudo cp /workspace/docker/test.opsilic /data/etc/opsi/licenses/test.opsilic
 fi
 
