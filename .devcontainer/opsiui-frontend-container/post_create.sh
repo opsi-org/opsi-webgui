@@ -27,4 +27,11 @@ echo "========================================== Link webgui backend"
 rm -rf /data/opsiconfd/addons/webgui
 cp -r /workspace/backend/addon/webgui /data/opsiconfd/addons/.
 
+
+# use license if available
+if [ -f /workspace/docker/test.opsilic ]; then
+    sudo cp /workspace/docker/test.opsilic /etc/opsi/licenses/test.opsilic
+fi
+
+
 zsh
