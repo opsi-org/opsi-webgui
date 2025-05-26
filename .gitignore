@@ -6,6 +6,7 @@
 *backup*
 docker/backend/opsiconfd
 docker/frontend/opsi-docker
+*.opsilic
 backend/opsibackup
 backend/addon/webgui/data
 backend/.vscode/settings.json

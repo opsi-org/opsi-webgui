@@ -56,7 +56,9 @@
 				"ms-python.vscode-pylance",
 				"ryanluker.vscode-coverage-gutters",
 				"ms-python.mypy-type-checker",
-				"charliermarsh.ruff"
+				"charliermarsh.ruff",
+				"cweijan.dbclient-jdbc",
+				"cweijan.vscode-database-client2"
 			]
 		}
 	},

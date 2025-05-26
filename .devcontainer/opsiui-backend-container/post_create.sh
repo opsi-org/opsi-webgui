@@ -38,3 +38,11 @@ sudo chown -R $DEV_USER /workspace
 /workspace/backend/scripts/setup-grafana.sh
 /workspace/backend/scripts/setup-mysql.sh
 /workspace/backend/scripts/setup-redis.sh
+
+
+# use license if available
+if [ -f /workspace/docker/test.opsilic ]; then
+    sudo cp /workspace/docker/test.opsilic /etc/opsi/licenses/test.opsilic
+fi
+
+
