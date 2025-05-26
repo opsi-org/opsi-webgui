@@ -42,6 +42,7 @@ sudo chown -R $DEV_USER /workspace
 
 # use license if available
 if [ -f /workspace/docker/test.opsilic ]; then
+    sudo mkdir -p /etc/opsi/licenses
     sudo cp /workspace/docker/test.opsilic /etc/opsi/licenses/test.opsilic
 fi
 

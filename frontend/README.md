@@ -1,75 +1,11 @@
-# Nuxt 3 Minimal Starter
+# opsi-webgui frontend
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
-
-## Setup
-
-Make sure to install the dependencies:
-
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## installation for development
+* run devenv.sh `./scripts/devenv.sh`
+* (optional) put a opsi lisence into `<project>/docker/.` (it will be copied to correct place)
+* start container
+* (optional) update environment file
+* Start webgui:
+    * use `npm run dev` to use backend started with this container with opsi-docker (opsiconfd port 44471 per default). This opsiconfd is automatically started.
+    * use `npm run dev-backend` to use backend from the backend container (opsiconfd port 4447 per default). In this case its neccessay to also run the webgui-backend container in parallel.
+    * does not work not: use F5 to (re)start tasks

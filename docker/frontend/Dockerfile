@@ -7,6 +7,7 @@ RUN apt-get update \
 	&& apt-get --yes dist-upgrade \
 	&& apt-get --yes --allow-downgrades install \
 		docker.io \
+		curl \
 		cpio \
 		htop \
 		sudo \
