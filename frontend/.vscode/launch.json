@@ -2,15 +2,24 @@
     "configurations": [
       {
         // webgui v4.4
+        "name": "webgui backend-docker",
         "cwd": "${workspaceFolder}",
-        // Webgui
-        "name": "webgui",
+        "outputCapture": "std",
+        "request": "launch",
+        "runtimeArgs": ["run", "dev"],
+        "runtimeExecutable": "npm",
+        "type": "node"
+      },
+      {
+        // webgui v4.4
+        "name": "webgui backend-custom",
+        "cwd": "${workspaceFolder}",
         "outputCapture": "std",
         "request": "launch",
         // "--dry-save-package-json-to package-merged.json",
-        "runtimeArgs": ["run-script", "dev", "--trace-warnings"],
-        "runtimeExecutable": "npm",
+        "runtimeArgs": ["run", "dev-backend"],
         "skipFiles": ["<node_internals>/**"],
+        "runtimeExecutable": "npm",
         "type": "node"
       },
       {
