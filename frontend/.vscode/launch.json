@@ -1,0 +1,30 @@
+{
+    "configurations": [
+      {
+        // webgui v4.4
+        "cwd": "${workspaceFolder}",
+        // Webgui
+        "name": "webgui",
+        "outputCapture": "std",
+        "request": "launch",
+        // "--dry-save-package-json-to package-merged.json",
+        "runtimeArgs": ["run-script", "dev", "--trace-warnings"],
+        "runtimeExecutable": "npm",
+        "skipFiles": ["<node_internals>/**"],
+        "type": "node"
+      },
+      {
+        // Webgui-Storybook
+        "cwd": "${workspaceFolder}",
+        "name": "webgui-story",
+        "outputCapture": "std",
+        "request": "launch",
+        "runtimeArgs": ["run-script", "story:dev"],
+        "runtimeExecutable": "npm",
+        "skipFiles": ["<node_internals>/**"],
+        "type": "node"
+      }
+    ],
+    "version": "0.2.0"
+  }
+  
