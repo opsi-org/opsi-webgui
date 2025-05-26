@@ -1,34 +1,19 @@
 {
 	"version": "0.2.0",
 	"configurations": [
-		{
+		{ // to restart sometimes needs to be run twice (script tries to kill opsiconfd processes)
 			"name": "opsiconfd uv",
 			"outputCapture": "std",
 			"request": "launch",
-			// "--dry-save-package-json-to package-merged.json",
 			"runtimeArgs": [
 				"-E",
-				"/root/.local/bin/uv",
-				"run",
-				"-m",
-				"opsiconfd",
-				"--workers=1",
-				"--log-mode=redis",
-				"--log-level-stderr=5",
-				"--addon-dirs=/workspace/backend/addon",
-				"--static-dir=/workspace/docker/backend/opsiconfd/opsiconfd_data/static"
+				"/workspace/backend/scripts/start_opsiconfd.sh"
 			],
 			"runtimeExecutable": "sudo",
 			"type": "node",
 			"cwd": "${workspaceFolder}/../docker/backend/opsiconfd",
-		},
-		{
-			"name": "Python: Attach",
-			"type": "python",
-			"request": "attach",
-			"connect": {
-				"host": "localhost",
-				"port": 5678
+			"env": {
+				"PYTHONPATH": "/workspace/backend"
 			}
 		}
 	],
