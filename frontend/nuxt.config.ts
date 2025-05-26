@@ -10,14 +10,15 @@ import pkg from './package.json'
 import MyPreset from './assets/scss/primevue'
 
 const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? '4447'
-const WEBUI_PORT: string = process.env.PORT ?? '8888'
+const WEBUI_PORT_STR: string = process.env.PORT ?? '8888'
+const WEBUI_PORT: number = parseInt(WEBUI_PORT_STR)
 // do not change following line, cause it is automatically patched by the build_production_local.sh script
 const ADDON_PATH: string = '/addons/webgui'
 
 if (process.env.NODE_ENV === 'development') {
   console.log('---------------------------------------------------')
   console.log('OPSICONFD PORT', CONFD_PORT)
-  console.log('WEBGUI PORT', WEBUI_PORT)
+  console.log('WEBGUI PORT', WEBUI_PORT_STR, WEBUI_PORT)
   console.log('ADDON PATH', ADDON_PATH)
   console.log('VERSION', pkg.version)
   console.log('---------------------------------------------------')
@@ -51,7 +52,7 @@ export default defineNuxtConfig({
   },
   ssr: false,
   devServer: {
-    port: parseInt(WEBUI_PORT),
+    port: WEBUI_PORT,
     https: {
       key: '.config/https/server.key',
       cert: '.config/https/server.crt',
