@@ -30,7 +30,6 @@ from .utils import (
 	backend,
 	bool_value,
 	filter_depot_access,
-	is_configured_groups,
 	get_allowed_product_groups,
 	get_allowed_products,
 	get_depot_of_client,
@@ -1301,7 +1300,7 @@ def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
 	"""
 
 	username = get_username()
-	configured = is_configured_groups(username, gtype="product")
+	configured = product_group_access_configured(username)
 	allowed = None if not configured else get_allowed_product_groups(username)
 
 	params: dict = {}

@@ -25,7 +25,6 @@ from .utils import (
 	build_tree,
 	filter_depot_access,
 	get_allowed_host_groups,
-	is_configured_groups,
 	get_allowed_clients,
 	get_allowed_objects,
 	get_groups_ids,
@@ -325,7 +324,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	Get host groups as tree.
 	"""
 	username = get_username()
-	configured = is_configured_groups(username, gtype="host")
+	configured = host_group_access_configured(username)
 	allowed = None if not configured else get_allowed_host_groups(username)
 
 	params = {"parent": "", "depots": []}
