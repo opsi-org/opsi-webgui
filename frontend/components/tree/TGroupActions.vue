@@ -408,7 +408,7 @@ License: AGPL-3.0
         throw new Error(
           $t('message.error.empty-response', { details: 'GroupActions' }),
         )
-      fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups)
+      fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups.children)
     } catch (err) {
       notifyError({ message: (err as Error).message })
     }
@@ -427,6 +427,7 @@ License: AGPL-3.0
         )
       idList.value = data.value.map((item) => item.productId)
     } catch (err) {
+      console.error('Error fetching product list:', err)
       notifyError({ message: (err as Error).message })
     }
   }

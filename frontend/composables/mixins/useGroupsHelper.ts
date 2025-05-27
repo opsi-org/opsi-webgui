@@ -11,10 +11,14 @@ export const useGroupsHelper = () => {
   const { multiSelection } = storeToRefs(storeSelections())
   function transformNode(node: T_Groups): T_GroupsTransformed {
     // const nodeIsLeaf = !node.children || Object.keys(node.children).length === 0
+    if (!node) {
+      console.warn('Node is undefined or null:', node)
+      return {} as T_GroupsTransformed
+    }
     const nodeIsLeaf = node.type === 'ObjectToGroup'
     const newNode: T_GroupsTransformed = {
       id: node.id,
-      type: node.type,
+      type: node.type || 'Group',
       text: node.text,
       parent: node.parent,
     }
@@ -34,7 +38,7 @@ export const useGroupsHelper = () => {
     return newNode
   }
   function transformToNestedArray(
-    data: Record<string, T_Groups>,
+    data: T_Groups | Record<string, T_Groups>,
   ): T_GroupsTransformed[] {
     return Object.values(data).map((node) => transformNode(node))
   }

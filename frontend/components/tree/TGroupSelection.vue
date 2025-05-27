@@ -40,9 +40,6 @@ License: AGPL-3.0
     @check="handleClickCheckbox"
     @node-click="handleClickText"
   >
-    <!-- :class="multiSelection ? 'isMultiSelect' : 'isSingleSelect'" -->
-    <!-- :show-checkbox="selectionStore.multiSelection" -->
-    <!-- default-expand-all -->
     <template #default="{ data }">
       <p-radio-button
         v-if="!multiSelection && data.type == 'ObjectToGroup'"
@@ -54,8 +51,6 @@ License: AGPL-3.0
         :input-id="'rb-item-' + data.id"
         v-model="selectedItem"
       />
-      <!--
-        @change="handleClickCheckbox(data, $event)" -->
       <span :for="'rb-item-' + data.id" class="ml-1"> {{ data.text }} </span>
     </template>
   </el-tree>
@@ -99,13 +94,15 @@ License: AGPL-3.0
     selectionProducts,
     multiSelection,
   } = storeToRefs(selectionStore)
-  const selectedItem = ref<string>(
-    multiSelection.value
-      ? ''
-      : props.grouptype == GroupTree_CLIENTGROUP
-        ? selectionClients.value[0]
-        : selectionProducts.value[0],
-  )
+
+  const getInitialSelection = () => {
+    if (multiSelection.value) return ''
+    return props.grouptype == GroupTree_CLIENTGROUP
+      ? selectionClients.value[0]
+      : selectionProducts.value[0]
+  }
+
+  const selectedItem = ref<string>(getInitialSelection())
 
   onMounted(async () => {
     isLoading.value = true
@@ -195,9 +192,7 @@ License: AGPL-3.0
       })
       return
     }
-
-    const groups = data.value['groups']
-    fetchedData.value = groupsHelper.transformToNestedArray(groups)
+    fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups.children)
   }
 
   const clearSelection = () => {
@@ -243,52 +238,35 @@ License: AGPL-3.0
       return
     }
     handleClickCheckbox(node, obj)
-    // _getSelectionFunction()(_getSelection().value)
   }
   function handleClickCheckbox(node: TreeNodeData, obj: any) {
-    if (node.type == 'ObjectToGroup') {
-      // select only
-      isLoadingSelection.value = true
-      handleSelection(node, obj, multiSelection.value)
-      isLoadingSelection.value = false
-    } else if (multiSelection.value) {
-      // its a group
-      isLoadingSelection.value = true
-      handleSelection(node, obj, multiSelection.value)
-      isLoadingSelection.value = false
-    }
-    // setSortColumn(tabletype: string, column: string, isDesc: boolean) {
+    isLoadingSelection.value = true
+    handleSelection(node, obj, multiSelection.value)
+    isLoadingSelection.value = false
+
     if (props.grouptype == GroupTree_CLIENTGROUP)
       useCookie.setSortColumn('clients', 'selected', true)
     else useCookie.setSortColumn('products', 'selected', true)
-
-    // _getSelectionFunction()(_getSelection().value)
   }
   function handleSelection(node: TreeNodeData, obj: any, multiSelect: boolean) {
-    selectNode(node, obj, _getSelection(), _getSelectionFunction(), multiSelect)
+    toggleNodeSelection(node, obj, _getSelection(), _getSelectionFunction(), multiSelect)
   }
 
-  function selectNode(
+  function toggleNodeSelection(
     node: TreeNodeData,
     obj: any,
     selection: Ref<string[]>,
     setSelectionFunction: (selection: string[]) => void,
     isMultiSelect: boolean = true,
   ) {
+    const is_selected_before_click: boolean = _getSelection().value.includes(node.text)
     if (node.type == 'ObjectToGroup') {
       if (!isMultiSelect) {
-        if (!selection.value?.includes(node.text)) {
-          setSelectionFunction([node.text])
-        } else {
-          setSelectionFunction([])
-        }
-      } else if (obj.checkedKeys?.includes(node.id)) {
+        setSelectionFunction(is_selected_before_click ? [] : [node.text])
+      } else if (obj.checkedKeys?.includes(node.id) || !is_selected_before_click) {
         selection.value.push(node.text)
         setSelectionFunction([...new Set(selection.value)]) // unique values
-      } else if (!selection.value?.includes(node.text)) {
-        selection.value.push(node.text)
-        setSelectionFunction([...new Set(selection.value)]) // unique values
-      } else {
+      } else if (is_selected_before_click) {
         // remove from selection and checkedKeys
         selection.value?.splice(selection.value.indexOf(node.text), 1)
         const ids = obj.checkedKeys?.filter((id: string) =>
@@ -298,13 +276,12 @@ License: AGPL-3.0
           obj.checkedKeys?.splice(obj.checkedKeys.indexOf(id), 1)
         }
       }
-    } else if (isMultiSelect) {
-      // its a group
+    } else if (isMultiSelect) { // its also a group
       node.children?.forEach((child: TreeNodeData) => {
-        selectNode(child, obj, selection, setSelectionFunction)
+        toggleNodeSelection(child, obj, selection, setSelectionFunction)
       })
-      // setSelectionFunction(selection.value)
     }
+    setSelectionFunction(is_selected_before_click ? [] : [node.text])
   }
   function _getSelectionFunction() {
     return props.grouptype == GroupTree_CLIENTGROUP
@@ -325,17 +302,19 @@ License: AGPL-3.0
   :deep(.el-tree-node.isEmpty) {
     color: var(--color-opsi-medium-gray) !important;
   }
-  :deep(.el-tree-node.isLeaf .el-tree-node__expand-icon.is-leaf) {
+  :deep(.el-tree-node.isLeaf .el-tree-node__expand-icon.is-leaf ) {
     display: none !important;
   }
-
-  /* .isSingleSelect
-    :deep(.el-tree-node.isGroup > .el-tree-node__content > .el-checkbox) {
-    display: none !important;
-  } */
+  :deep(.el-tree-node.isLeaf > .el-tree-node__content > .el-checkbox > span) {
+    padding-left: 15px !important;
+  }
 
   .isSingleSelect
-    :deep(.el-tree-node.isLeaf > .el-tree-node__content > .el-checkbox) {
+    :deep(.el-tree-node > .el-tree-node__content > .el-checkbox > span) {
     display: none !important;
+  }
+  .isSingleSelect
+    :deep(.el-tree-node.isGroup > .el-tree-node__content > span) {
+    padding-left: 5px !important;
   }
 </style>
