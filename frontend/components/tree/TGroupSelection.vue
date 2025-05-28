@@ -22,20 +22,14 @@ License: AGPL-3.0
     <IconILoading v-if="isLoadingSelection" small />
   </div>
   <el-tree
-    :ref="
-      props.grouptype == GroupTree_CLIENTGROUP
-        ? 'clientGroupRef'
-        : 'prodGroupRef'
-    "
+    :ref="props.grouptype == GroupTree_CLIENTGROUP ? 'clientGroupRef' : 'prodGroupRef'"
     v-loading="isLoading"
     :data="fetchedData"
     :props="defaultProps"
     :class="multiSelection ? 'isMultiSelect' : 'isSingleSelect'"
     node-key="id"
     show-checkbox
-    :default-expanded-keys="
-      props.grouptype == GroupTree_CLIENTGROUP ? firstlevelkeys : undefined
-    "
+    :default-expanded-keys="props.grouptype == GroupTree_CLIENTGROUP ? firstlevelkeys : undefined"
     highlight-current
     @check="handleClickCheckbox"
     @node-click="handleClickText"
@@ -67,10 +61,7 @@ License: AGPL-3.0
   import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper'
   import type { T_Groups } from '~/types/APItypes'
   import type { TreeNodeData } from 'element-plus/lib/components/tree/src/tree.type.js'
-  import {
-    GroupTree_CLIENTGROUP,
-    type PropTypeGroupTree,
-  } from '~/types/tproptypes'
+  import { GroupTree_CLIENTGROUP, type PropTypeGroupTree } from '~/types/tproptypes'
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
@@ -93,18 +84,14 @@ License: AGPL-3.0
   }
   const fetchedData = ref<any>([])
   const selectionStore = storeSelections()
-  const {
-    selectionDepots,
-    selectionClients,
-    selectionProducts,
-    multiSelection,
-  } = storeToRefs(selectionStore)
+  const { selectionDepots, selectionClients, selectionProducts, multiSelection } =
+    storeToRefs(selectionStore)
   const selectedItem = ref<string>(
     multiSelection.value
       ? ''
       : props.grouptype == GroupTree_CLIENTGROUP
         ? selectionClients.value[0]
-        : selectionProducts.value[0],
+        : selectionProducts.value[0]
   )
 
   onMounted(async () => {
@@ -132,7 +119,7 @@ License: AGPL-3.0
         })
       }
       recursive(fetchedData.value)
-    },
+    }
   )
   watch(
     () => selectedItem.value,
@@ -144,7 +131,7 @@ License: AGPL-3.0
           selectionStore.setSelectionProducts([val])
         }
       }
-    },
+    }
   )
   watch(() => selectionClients.value, syncSelection, { deep: true })
   watch(() => selectionProducts.value, syncSelection, { deep: true })
@@ -158,7 +145,7 @@ License: AGPL-3.0
 
   async function fetchClientGroups() {
     const { data, error } = await useApiGETBody<Record<string, T_Groups>>(
-      `/opsidata/hosts/groups?selectedDepots=${selectionDepots.value}`,
+      `/opsidata/hosts/groups?selectedDepots=${selectionDepots.value}`
     )
     if (error) {
       notifyError({ message: error?.response?.data?.message })
@@ -181,9 +168,9 @@ License: AGPL-3.0
   }
 
   async function fetchProdGroups() {
-    const { data, error } = await useApiGETBody<
-      Record<string, Record<string, T_Groups>>
-    >(`/opsidata/products/groups?selectedProducts=${selectionProducts.value}`)
+    const { data, error } = await useApiGETBody<Record<string, Record<string, T_Groups>>>(
+      `/opsidata/products/groups?selectedProducts=${selectionProducts.value}`
+    )
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       return
@@ -219,7 +206,7 @@ License: AGPL-3.0
         fetchedData.value,
         selectionClients.value,
         'text',
-        undefined,
+        undefined
       )
       clientGroupRef.value?.setCheckedNodes(resNodes, false)
     } else {
@@ -227,7 +214,7 @@ License: AGPL-3.0
         fetchedData.value,
         selectionProducts.value,
         'text',
-        undefined,
+        undefined
       )
       prodGroupRef.value?.setCheckedNodes(resNodes, false)
     }
@@ -273,7 +260,7 @@ License: AGPL-3.0
     obj: any,
     selection: Ref<string[]>,
     setSelectionFunction: (selection: string[]) => void,
-    isMultiSelect: boolean = true,
+    isMultiSelect: boolean = true
   ) {
     if (node.type == 'ObjectToGroup') {
       if (!isMultiSelect) {
@@ -291,9 +278,7 @@ License: AGPL-3.0
       } else {
         // remove from selection and checkedKeys
         selection.value?.splice(selection.value.indexOf(node.text), 1)
-        const ids = obj.checkedKeys?.filter((id: string) =>
-          id.startsWith(`${node.text};`),
-        )
+        const ids = obj.checkedKeys?.filter((id: string) => id.startsWith(`${node.text};`))
         for (const id of ids) {
           obj.checkedKeys?.splice(obj.checkedKeys.indexOf(id), 1)
         }
@@ -312,9 +297,7 @@ License: AGPL-3.0
       : selectionStore.setSelectionProducts
   }
   function _getSelection() {
-    return props.grouptype == GroupTree_CLIENTGROUP
-      ? selectionClients
-      : selectionProducts
+    return props.grouptype == GroupTree_CLIENTGROUP ? selectionClients : selectionProducts
   }
 </script>
 <style lang="css" scoped>
@@ -334,8 +317,7 @@ License: AGPL-3.0
     display: none !important;
   } */
 
-  .isSingleSelect
-    :deep(.el-tree-node.isLeaf > .el-tree-node__content > .el-checkbox) {
+  .isSingleSelect :deep(.el-tree-node.isLeaf > .el-tree-node__content > .el-checkbox) {
     display: none !important;
   }
 </style>

@@ -6,9 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-button @click="refetchGroup" size="small">{{
-    $t('label.refresh')
-  }}</el-button>
+  <el-button @click="refetchGroup" size="small">{{ $t('label.refresh') }}</el-button>
   <el-popover
     v-if="isProductGroup"
     :placement="popoverPlacement"
@@ -30,10 +28,7 @@ License: AGPL-3.0
           :label="$t('table.fields.' + label)"
           v-show="label !== 'parentGroupId'"
         >
-          <el-input
-            v-model="createGroup[label]"
-            @keyup.enter="createSubGroup('')"
-          />
+          <el-input v-model="createGroup[label]" @keyup.enter="createSubGroup('')" />
         </el-form-item>
         <el-button
           class="float-right"
@@ -60,10 +55,7 @@ License: AGPL-3.0
       <template #default="{ node, data: defdata }">
         <span>{{ node.label }}</span>
         <div class="ml-auto" v-if="node.label !== 'not_assigned'">
-          <span
-            :key="node.label + action"
-            v-for="action in getActions(defdata, node)"
-          >
+          <span :key="node.label + action" v-for="action in getActions(defdata, node)">
             <el-popover
               :placement="popoverPlacement"
               :width="popoverWidth"
@@ -107,21 +99,12 @@ License: AGPL-3.0
                       >{{ $t('button.create') }}</el-button
                     >
                   </template>
-                  <template
-                    v-else-if="['client-add', 'product-add'].includes(action)"
-                  >
+                  <template v-else-if="['client-add', 'product-add'].includes(action)">
                     <el-form-item :label="$t('label.selectChildren')">
-                      <el-scrollbar
-                        height="300px"
-                        class="border w-full p-2 min-w-[300px]"
-                      >
+                      <el-scrollbar height="300px" class="border w-full p-2 min-w-[300px]">
                         <el-checkbox-group v-model="selectedChildren">
                           <div v-for="item in idList" :key="item">
-                            <el-checkbox
-                              size="small"
-                              :value="item"
-                              :label="item"
-                            />
+                            <el-checkbox size="small" :value="item" :label="item" />
                           </div>
                         </el-checkbox-group>
                       </el-scrollbar>
@@ -135,11 +118,7 @@ License: AGPL-3.0
                       >{{ $t('button.add') }}</el-button
                     >
                   </template>
-                  <template
-                    v-else-if="
-                      ['client-delete', 'product-delete'].includes(action)
-                    "
-                  >
+                  <template v-else-if="['client-delete', 'product-delete'].includes(action)">
                     <el-text>{{ $t('group.confirm.' + action) }}</el-text>
                     <el-button
                       class="float-right"
@@ -156,9 +135,7 @@ License: AGPL-3.0
                       type="danger"
                       class="float-right"
                       :disabled="config.read_only"
-                      @click="
-                        applyDelete(node.label, defdata.type, defdata.parent)
-                      "
+                      @click="applyDelete(node.label, defdata.type, defdata.parent)"
                       >{{ $t('button.delete') }}</el-button
                     >
                   </template>
@@ -168,10 +145,7 @@ License: AGPL-3.0
                       :key="label"
                       :label="$t('table.fields.' + label)"
                     >
-                      <el-select
-                        v-if="label === 'parent'"
-                        v-model="editgroup[label]"
-                      >
+                      <el-select v-if="label === 'parent'" v-model="editgroup[label]">
                         <el-option
                           v-for="item in filteredGroupNames"
                           :key="item"
@@ -195,11 +169,7 @@ License: AGPL-3.0
                       <el-scrollbar height="200px" class="w-100">
                         <el-checkbox-group v-model="selectedGroups">
                           <div v-for="item in filteredGroupNames" :key="item">
-                            <el-checkbox
-                              size="small"
-                              :label="item"
-                              :value="item"
-                            />
+                            <el-checkbox size="small" :label="item" :value="item" />
                           </div>
                         </el-checkbox-group>
                       </el-scrollbar>
@@ -230,12 +200,7 @@ License: AGPL-3.0
   import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper'
   import { debounce } from 'lodash'
   import type { TreeNodeData } from 'element-plus/lib/components/tree/src/tree.type.js'
-  import type {
-    T_ClientIds,
-    T_Groups,
-    T_ProductIds,
-    T_Product,
-  } from '~/types/APItypes'
+  import type { T_ClientIds, T_Groups, T_ProductIds, T_Product } from '~/types/APItypes'
 
   const config = storeConfigapp().config ?? { read_only: true }
   const props = defineProps({ data: { type: Object, required: true } })
@@ -282,7 +247,7 @@ License: AGPL-3.0
         await debouncedFetchClientGroups()
         await fetchClientList()
       }
-    },
+    }
   )
 
   onMounted(async () => {
@@ -298,29 +263,15 @@ License: AGPL-3.0
   })
 
   const isProductGroup = computed(() => props.data.category === 'product-group')
-  const popoverPlacement = computed(() =>
-    mq.isMobile.value ? 'auto' : 'right',
-  )
+  const popoverPlacement = computed(() => (mq.isMobile.value ? 'auto' : 'right'))
   const popoverWidth = computed(() => (mq.isMobile.value ? '100%' : '360px'))
   const treeClass = computed(() => (mq.isMobile.value ? 'w-100' : 'w-50'))
 
   const filteredGroupNames = computed(() => {
     // search nested for all group names
     const groupNames: string[] = []
-    searchForAttribute(
-      fetchedData.value,
-      'type',
-      'HostGroup',
-      'text',
-      groupNames,
-    )
-    searchForAttribute(
-      fetchedData.value,
-      'type',
-      'ProductGroup',
-      'text',
-      groupNames,
-    )
+    searchForAttribute(fetchedData.value, 'type', 'HostGroup', 'text', groupNames)
+    searchForAttribute(fetchedData.value, 'type', 'ProductGroup', 'text', groupNames)
     return groupNames
   })
   function searchForAttribute(
@@ -328,20 +279,14 @@ License: AGPL-3.0
     attribute: string,
     value: any,
     returnAttribute: string,
-    result: Array<string>,
+    result: Array<string>
   ) {
     for (const item of data) {
       if (item[attribute] === value) {
         result.push(item[returnAttribute])
       }
       if (item.children) {
-        searchForAttribute(
-          item.children,
-          attribute,
-          value,
-          returnAttribute,
-          result,
-        )
+        searchForAttribute(item.children, attribute, value, returnAttribute, result)
       }
     }
   }
@@ -372,15 +317,14 @@ License: AGPL-3.0
   async function fetchClientGroups() {
     try {
       const { data, error } = await useApiGETBody<Record<string, T_Groups>>(
-        `/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`,
+        `/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`
       )
-      if (error)
-        throw new Error(error?.response?.data?.message || 'Unknown error')
+      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       if (!data.value)
         throw new Error(
           $t('message.error.empty-response', {
             details: 'ClientGroupSelections',
-          }),
+          })
         )
       fetchedData.value = groupsHelper.transformToNestedArray(data.value)
       firstlevelkeys.value = Object.values(data.value).map((item) => item.id)
@@ -390,24 +334,17 @@ License: AGPL-3.0
   }
 
   async function fetchClientList() {
-    idList.value = await useClient().getClientIdList(
-      storeSelection.selectionDepots,
-    )
+    idList.value = await useClient().getClientIdList(storeSelection.selectionDepots)
   }
 
   async function fetchProdGroups() {
     try {
-      const { data, error } = await useApiGETBody<
-        Record<string, Record<string, T_Groups>>
-      >(
-        `/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`,
+      const { data, error } = await useApiGETBody<Record<string, Record<string, T_Groups>>>(
+        `/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`
       )
-      if (error)
-        throw new Error(error?.response?.data?.message || 'Unknown error')
+      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       if (!data.value)
-        throw new Error(
-          $t('message.error.empty-response', { details: 'GroupActions' }),
-        )
+        throw new Error($t('message.error.empty-response', { details: 'GroupActions' }))
       fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups)
     } catch (err) {
       notifyError({ message: (err as Error).message })
@@ -417,14 +354,11 @@ License: AGPL-3.0
   async function fetchProductList() {
     try {
       const { data, error } = await useApiGETBody<Array<T_Product>>(
-        `/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=[${storeSelection.selectionDepots}]`,
+        `/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=[${storeSelection.selectionDepots}]`
       )
-      if (error)
-        throw new Error(error?.response?.data?.message || 'Unknown error')
+      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       if (!data.value)
-        throw new Error(
-          $t('message.error.empty-response', { details: 'GroupActions' }),
-        )
+        throw new Error($t('message.error.empty-response', { details: 'GroupActions' }))
       idList.value = data.value.map((item) => item.productId)
     } catch (err) {
       notifyError({ message: (err as Error).message })
@@ -439,8 +373,7 @@ License: AGPL-3.0
         : '/opsidata/products/groups'
     try {
       const { error } = await useApiPOST(url, createGroup)
-      if (error)
-        throw new Error(error?.response?.data?.message || 'Unknown error')
+      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.success.save.create.group', {
           group: createGroup.groupId,
@@ -459,8 +392,7 @@ License: AGPL-3.0
         : `/opsidata/products/groups/${selectedGroup}/products`
     try {
       const { error } = await useApiPOST(url, selectedChildren.value)
-      if (error)
-        throw new Error(error?.response?.data?.message || 'Unknown error')
+      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.success.save.add.clientfromgroups', {
           group: selectedGroup,
@@ -479,8 +411,7 @@ License: AGPL-3.0
         : `/opsidata/products/groups/${selectedGroup}/products`
     try {
       const { error } = await useApiDELETE(url)
-      if (error)
-        throw new Error(error?.response?.data?.message || 'Unknown error')
+      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.success.save.delete.clientfromgroups', {
           group: selectedGroup,
@@ -492,11 +423,7 @@ License: AGPL-3.0
     }
   }
 
-  async function applyDelete(
-    selectedNode: string,
-    nodeType: string,
-    parent: string,
-  ) {
+  async function applyDelete(selectedNode: string, nodeType: string, parent: string) {
     if (nodeType === 'ObjectToGroup') {
       await deleteObjectToGroup(selectedNode, parent)
     } else {
@@ -511,11 +438,8 @@ License: AGPL-3.0
         : `/opsidata/products/groups/${selectedGroup}`
     try {
       const { error } =
-        props.data.category === 'client-group'
-          ? await useApiDELETE(url)
-          : await useApiGET(url)
-      if (error)
-        throw new Error(error?.response?.data?.message || 'Unknown error')
+        props.data.category === 'client-group' ? await useApiDELETE(url) : await useApiGET(url)
+      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.success.save.delete.group', {
           group: selectedGroup,
@@ -535,8 +459,7 @@ License: AGPL-3.0
     const body = props.data.category === 'client-group' ? [parent] : {}
     try {
       const { error } = await useApiDELETE(url, body)
-      if (error)
-        throw new Error(error?.response?.data?.message || 'Unknown error')
+      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.success.save.delete.clientfromgroups', {
           client: selectedChild,
@@ -555,8 +478,7 @@ License: AGPL-3.0
         : `/opsidata/products/groups/${selectedGroup}`
     try {
       const { error } = await useApiPUT(url, editgroup)
-      if (error)
-        throw new Error(error?.response?.data?.message || 'Unknown error')
+      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.success.save.update.group', {
           group: selectedGroup,
@@ -569,10 +491,7 @@ License: AGPL-3.0
   }
 
   async function copyClient(selectedClient: string) {
-    await useGroup($t).addClientToListOfGroups(
-      selectedClient,
-      selectedGroups.value,
-    )
+    await useGroup($t).addClientToListOfGroups(selectedClient, selectedGroups.value)
     await refetchGroup()
   }
 

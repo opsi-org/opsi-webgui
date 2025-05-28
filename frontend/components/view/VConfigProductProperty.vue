@@ -7,10 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <div class="h-[50vh] overflow-y-auto">
-    <el-form
-      label-width="50%"
-      :label-position="mq.isMobile.value ? 'top' : 'left'"
-    >
+    <el-form label-width="50%" :label-position="mq.isMobile.value ? 'top' : 'left'">
       <el-form-item
         v-for="item in Object.values(props.properties)"
         :key="item.propertyId"
@@ -61,10 +58,7 @@ License: AGPL-3.0
             <p-badge
               v-if="
                 itemValues[item.propertyId] !== undefined &&
-                !arrayEqual(
-                  itemValues[item.propertyId],
-                  initialValues[item.propertyId],
-                )
+                !arrayEqual(itemValues[item.propertyId], initialValues[item.propertyId])
               "
               :title="$t('message.warning.unsavedChange')"
               severity="warn"
@@ -73,21 +67,14 @@ License: AGPL-3.0
           </div>
         </template>
 
-        <div
-          v-if="item.type === 'BoolProductProperty'"
-          class="w-full justify-stretch"
-        >
+        <div v-if="item.type === 'BoolProductProperty'" class="w-full justify-stretch">
           <el-checkbox
             v-model="itemValues[item.propertyId]"
             :disabled="config.read_only"
             :indeterminate="itemValues[item.propertyId] === MIXED"
             @change="handleSelection(item, itemValues[item.propertyId])"
           />
-          {{
-            itemValues[item.propertyId] == MIXED
-              ? itemValues[item.propertyId]
-              : ''
-          }}
+          {{ itemValues[item.propertyId] == MIXED ? itemValues[item.propertyId] : '' }}
 
           <!-- <p-badge
             v-if="
@@ -98,11 +85,7 @@ License: AGPL-3.0
           /> -->
         </div>
         <div
-          v-else-if="
-            ['password', 'secret'].some((marker) =>
-              item.propertyId.includes(marker),
-            )
-          "
+          v-else-if="['password', 'secret'].some((marker) => item.propertyId.includes(marker))"
           class="w-full justify-stretch"
         >
           <el-input
@@ -140,10 +123,7 @@ License: AGPL-3.0
     </el-form>
   </div>
 
-  <div
-    class="button-container"
-    style="display: flex; justify-content: flex-end"
-  >
+  <div class="button-container" style="display: flex; justify-content: flex-end">
     <el-button
       v-if="Object.keys(props.properties).length > 0"
       :type="hasUnsavedChanges ? 'success' : ''"
@@ -156,11 +136,7 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
-  import type {
-    T_ProductProperty,
-    T_Product,
-    tproducttypes,
-  } from '~/types/APItypes'
+  import type { T_ProductProperty, T_Product, tproducttypes } from '~/types/APItypes'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useSaveProductProperties } from '~/composables/mixins/useSave'
   import { useStrings } from '~/composables/mixins/useStrings'
@@ -192,7 +168,7 @@ License: AGPL-3.0
 
   async function fetchProducts(type: tproducttypes) {
     const { data, error } = await useApiGET<T_Product[]>(
-      `/opsidata/depots/products?selectedDepots=[${selectionDepots.value}]&productType=${type}`,
+      `/opsidata/depots/products?selectedDepots=[${selectionDepots.value}]&productType=${type}`
     )
     if (error || !data.value) {
       notifyError({ message: error?.response?.data?.message })
@@ -200,11 +176,7 @@ License: AGPL-3.0
     }
     return data.value.map((item) => item.productId)
   }
-  function getVisibleValue(
-    property: Record<string, any[]>,
-    selection: string[],
-    item: any,
-  ) {
+  function getVisibleValue(property: Record<string, any[]>, selection: string[], item: any) {
     // values: {"nb-00013.acme.corp": [ false ], "nb-00023.acme.corp": [ true  ] }
     const objectValues = Object.values(property)
     if (property && objectValues.length > 0) {
@@ -213,9 +185,7 @@ License: AGPL-3.0
         return [MIXED]
       }
 
-      const val = objectValues.some((v) => !isEqual(v, objectValues[0]))
-        ? [MIXED]
-        : objectValues[0]
+      const val = objectValues.some((v) => !isEqual(v, objectValues[0])) ? [MIXED] : objectValues[0]
       if (val[0] == MIXED) {
         if (!item.allValues.includes(MIXED)) item.allValues.push(MIXED)
       }
@@ -246,9 +216,7 @@ License: AGPL-3.0
     //   return v[0]
     // }
     if (item.value !== undefined) return item.value
-    throw new Error(
-      'Initial value is undefined and no valid clients or depots found',
-    )
+    throw new Error('Initial value is undefined and no valid clients or depots found')
   }
 
   function setUnsavedChanges() {
@@ -303,10 +271,7 @@ License: AGPL-3.0
         data.depotIds = [...selectionDepots.value]
       }
 
-      if (
-        isEqual(originValue, values) ||
-        (values === '' && originValue === undefined)
-      ) {
+      if (isEqual(originValue, values) || (values === '' && originValue === undefined)) {
         continue
       }
 
@@ -314,7 +279,7 @@ License: AGPL-3.0
         item.productId,
         data as object,
         false,
-        true,
+        true
       )
     }
 

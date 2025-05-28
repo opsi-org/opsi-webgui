@@ -40,10 +40,7 @@ License: AGPL-3.0
             <IconIIcon :icon="icons.download" class="mr-1" />
           </el-button>
         </template>
-        <FormFDiagnostics
-          :data="{ ...fetchedData, health_check: void 0 }"
-          :filter="filter"
-        />
+        <FormFDiagnostics :data="{ ...fetchedData, health_check: void 0 }" :filter="filter" />
       </el-tab-pane>
     </el-tabs>
   </el-container>
@@ -88,17 +85,14 @@ License: AGPL-3.0
       if (newId !== props.id) {
         useRouter().replace({ query: { id: newId } })
       }
-    },
+    }
   )
 
   function downloadHealthData() {
     const text = JSON.stringify(fetchedData.value, null, 2)
     const filename = 'server_diagnostics.json'
     const element = document.createElement('a')
-    element.setAttribute(
-      'href',
-      'data:application/json;charset=utf-8,' + encodeURIComponent(text),
-    )
+    element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text))
     element.setAttribute('download', filename)
     element.style.display = 'none'
     document.body.appendChild(element)

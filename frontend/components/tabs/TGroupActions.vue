@@ -13,10 +13,7 @@ License: AGPL-3.0
       :label="$t('title.' + category.category)"
       :name="category.category"
     >
-      <TreeTGroupActions
-        v-if="category.category === currentType"
-        :data="category"
-      />
+      <TreeTGroupActions v-if="category.category === currentType" :data="category" />
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -67,7 +64,7 @@ License: AGPL-3.0
           router.push({ path: `/groups/${newType}` })
         }
       }
-    },
+    }
   )
 
   onMounted(() => {

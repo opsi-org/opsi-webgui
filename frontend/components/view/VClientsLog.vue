@@ -26,12 +26,7 @@ License: AGPL-3.0
       </el-form-item>
       <el-form-item :label="$t('form.logtype')">
         <el-select v-model="logtype" style="min-width: 200px">
-          <el-option
-            v-for="lt in LOG_TYPES"
-            :key="lt"
-            :label="lt"
-            :value="lt"
-          />
+          <el-option v-for="lt in LOG_TYPES" :key="lt" :label="lt" :value="lt" />
         </el-select>
       </el-form-item>
       <template v-if="fetchedData.length > 1">
@@ -45,12 +40,7 @@ License: AGPL-3.0
         </el-form-item>
         <br />
         <el-form-item :label="$t('form.loglevel')">
-          <el-slider
-            v-model="loglevel"
-            show-stops
-            :max="8"
-            style="min-width: 200px"
-          />
+          <el-slider v-model="loglevel" show-stops :max="8" style="min-width: 200px" />
         </el-form-item>
         <el-form-item :label="$t('form.autofetch')" class="!inline">
           <el-switch v-model="autofetch" class="!inline" />
@@ -82,12 +72,7 @@ License: AGPL-3.0
             <IconIIcon :icon="useIcons().bookmark" @click="scrollToMarker" />
           </el-button>
           <el-button
-            @click="
-              logConfig.setLogmarker(
-                logConfig.logmarkerNr,
-                logrequest.selectedClient,
-              )
-            "
+            @click="logConfig.setLogmarker(logConfig.logmarkerNr, logrequest.selectedClient)"
             size="small"
             type="primary"
             class="!m-0"
@@ -131,15 +116,8 @@ License: AGPL-3.0
       :class="`overflow-scroll`"
       :style="`height: ${maxVisibleHeight}px; max-height: ${maxVisibleHeight}px`"
     >
-      <div
-        v-if="fetchedData.length > 1"
-        class="whitespace-nowrap border-1 border-green-500"
-      >
-        <div
-          v-for="(log, i) in filteredDataByQuery"
-          :key="log"
-          :id="'logrow-' + i"
-        >
+      <div v-if="fetchedData.length > 1" class="whitespace-nowrap border-1 border-green-500">
+        <div v-for="(log, i) in filteredDataByQuery" :key="log" :id="'logrow-' + i">
           <div
             :class="{
               logrow: true,
@@ -155,10 +133,7 @@ License: AGPL-3.0
                 v-if="logConfig.logmarkerNr == i && logMarkerForThisSetting"
               />
             </span>
-            <code
-              class="!min-w-16 !w-16 sticky left-0 flex-none"
-              @click="setMarker(i)"
-            >
+            <code class="!min-w-16 !w-16 sticky left-0 flex-none" @click="setMarker(i)">
               {{ $t('label.in_bracets', { value: i }) }}
             </code>
             <code @click="setMarker(i)">
@@ -168,13 +143,7 @@ License: AGPL-3.0
           </div>
         </div>
       </div>
-      <el-alert
-        v-else
-        :title="$t('message.info.nologs')"
-        type="info"
-        show-icon
-        :closable="false"
-      />
+      <el-alert v-else :title="$t('message.info.nologs')" type="info" show-icon :closable="false" />
     </div>
   </div>
 </template>
@@ -188,14 +157,11 @@ License: AGPL-3.0
 
   const $t = useI18n().t
   const { notifyError, notifyInfo } = useNotification()
-  const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t, [
-    'event:log_updated',
-  ])
+  const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t, ['event:log_updated'])
 
   const settings = storeSettings()
   const logConfig = storeLogs()
-  const { loglevel, logtype, autofetch, autoscroll, syncSelection } =
-    storeToRefs(logConfig)
+  const { loglevel, logtype, autofetch, autoscroll, syncSelection } = storeToRefs(logConfig)
   const { selectionClients } = storeToRefs(storeSelections())
 
   const props = defineProps({
@@ -209,7 +175,7 @@ License: AGPL-3.0
   // does not have any effect. height restriction cames from upper components LDefault or LSplitView
   const { maxVisibleHeight } = useDynamicHeight(
     ['btop-header', 'globalBreadcrumb', 'log-header-options'],
-    props.isChild ? 100 : 50,
+    props.isChild ? 100 : 50
   )
 
   const fetchedData = ref<Array<string>>([])
@@ -226,13 +192,7 @@ License: AGPL-3.0
   }
   const filterQuery = ref('')
 
-  const LOG_TYPES = [
-    'bootimage',
-    'clientconnect',
-    'instlog',
-    'opsiconfd',
-    'userlogin',
-  ]
+  const LOG_TYPES = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
   const COLORS_LIGHT = [
     '', // starts with 0, loglevel 1 is essential
     'text-opsi-log-light-essential',
@@ -289,15 +249,13 @@ License: AGPL-3.0
     [() => selectionClients.value],
     () => {
       if (syncSelection.value) {
-        setId(
-          selectionClients.value.length >= 1 ? selectionClients.value[0] : '',
-        )
+        setId(selectionClients.value.length >= 1 ? selectionClients.value[0] : '')
       }
     },
     {
       immediate: true,
       deep: true,
-    },
+    }
   )
   watch(
     () => fetchedData.value,
@@ -316,7 +274,7 @@ License: AGPL-3.0
           block: 'end',
         })
       }
-    },
+    }
   )
   async function reload() {
     await fetch()
@@ -331,12 +289,11 @@ License: AGPL-3.0
     logrequest.selectedLogType = logtype.value
     try {
       const { data, error } = await useApiGETBody<T_ClientLog>(
-        `/opsidata/log?selectedClient=${logrequest.selectedClient}&selectedLogType=${logrequest.selectedLogType}`,
+        `/opsidata/log?selectedClient=${logrequest.selectedClient}&selectedLogType=${logrequest.selectedLogType}`
       )
       if (error) {
         notifyError({
-          message:
-            error?.response?.data?.message || $t('message.error.generic'),
+          message: error?.response?.data?.message || $t('message.error.generic'),
         })
         return
       }
@@ -366,26 +323,18 @@ License: AGPL-3.0
   }
 
   function filterLogByQuery() {
-    filteredDataByQuery.value = fetchedData.value.filter((log) =>
-      log.includes(filterQuery.value),
-    )
+    filteredDataByQuery.value = fetchedData.value.filter((log) => log.includes(filterQuery.value))
   }
 
   function isLoglevelSmaller(logrow: string) {
-    const rxSelf2 = new RegExp(
-      '^((\\[[0-' + loglevel.value + ']\\])|[^\\[0-9\\]])',
-      'g',
-    )
+    const rxSelf2 = new RegExp('^((\\[[0-' + loglevel.value + ']\\])|[^\\[0-9\\]])', 'g')
     const result = RegExp(rxSelf2).exec(logrow)
     return !!result
   }
 
   function getColorBasedOnLoglevel(log: string) {
     const logLevel = parseInt(log.charAt(1), 10)
-    return (
-      (isDarkMode.value ? COLORS_DARK[logLevel] : COLORS_LIGHT[logLevel]) ||
-      'text-inherit'
-    )
+    return (isDarkMode.value ? COLORS_DARK[logLevel] : COLORS_LIGHT[logLevel]) || 'text-inherit'
   }
 
   function setId(id: string) {
@@ -421,9 +370,7 @@ License: AGPL-3.0
   }
   function downloadCurrent() {
     const fileName = `${logrequest.selectedClient}_${logtype.value}.log`
-    const filteredByLoglevel = fetchedData.value.filter((log) =>
-      isLoglevelSmaller(log),
-    )
+    const filteredByLoglevel = fetchedData.value.filter((log) => isLoglevelSmaller(log))
 
     const blob = new Blob([filteredByLoglevel.join('\n')], { type: 'text/txt' })
     const fileURL = window.URL.createObjectURL(blob)

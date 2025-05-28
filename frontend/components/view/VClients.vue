@@ -31,10 +31,7 @@ License: AGPL-3.0
         <IconIIcon :icon="icons.product" />
         {{ $t('table.fields.products') }}
       </el-button>
-      <ModalMServerSelection
-        v-if="storeSelection.selectionDepots.length <= 0"
-        @refetch="refetch"
-      />
+      <ModalMServerSelection v-if="storeSelection.selectionDepots.length <= 0" @refetch="refetch" />
     </template>
   </TableTTable>
 </template>
@@ -102,16 +99,12 @@ License: AGPL-3.0
       align: 'center',
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
-        rowData.selected = storeSelection.selectionClients.includes(
-          rowData[rowId],
-        )
+        rowData.selected = storeSelection.selectionClients.includes(rowData[rowId])
         watch(
           () => storeSelection.selectionClients,
           () => {
-            rowData.selected = storeSelection.selectionClients.includes(
-              rowData[rowId],
-            )
-          },
+            rowData.selected = storeSelection.selectionClients.includes(rowData[rowId])
+          }
         )
         return storeSelection.multiSelection ? (
           <Checkbox model-value={rowData.selected} binary />
@@ -199,16 +192,14 @@ License: AGPL-3.0
         'version',
         'LocalbootProduct',
         Infinity,
-        1,
+        1
       ),
     },
     {
       title: $t('table.fields.versionOutdatedNetboot'),
       key: 'version_outdated_netboot',
       sortable: 'custom',
-      visible: storeTSettings.clientsColumns.includes(
-        'version_outdated_netboot',
-      ),
+      visible: storeTSettings.clientsColumns.includes('version_outdated_netboot'),
 
       minWidth: statisticsWidth,
       className: 'parent-statistics !min-w-min !w-fit !max-w-max !px-1 !py-0',
@@ -222,16 +213,14 @@ License: AGPL-3.0
         'version',
         'NetbootProduct',
         Infinity,
-        1,
+        1
       ),
     },
     {
       title: $t('table.fields.installationStatusUnknown'),
       key: 'installationStatus_unknown',
       sortable: 'custom',
-      visible: storeTSettings.clientsColumns.includes(
-        'installationStatus_unknown',
-      ),
+      visible: storeTSettings.clientsColumns.includes('installationStatus_unknown'),
 
       minWidth: statisticsWidth,
       className: 'parent-statistics !min-w-min !w-fit !max-w-max !px-1 !py-0 ',
@@ -245,16 +234,14 @@ License: AGPL-3.0
         'installationStatus',
         undefined, // type
         Infinity, // errorValue
-        1, // warnValue
+        1 // warnValue
       ),
     },
     {
       title: $t('table.fields.installationStatus_installed'),
       key: 'installationStatus_installed',
       sortable: 'custom',
-      visible: storeTSettings.clientsColumns.includes(
-        'installationStatus_installed',
-      ),
+      visible: storeTSettings.clientsColumns.includes('installationStatus_installed'),
 
       minWidth: statisticsWidth,
       className: 'parent-statistics !min-w-min !w-fit !max-w-max !px-1 !py-0 ',
@@ -265,16 +252,14 @@ License: AGPL-3.0
         icons.productInstallationStatusInstalled,
         '/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=',
         'installationStatus_installed',
-        'installationStatus',
+        'installationStatus'
       ),
     },
     {
       title: $t('table.fields.actionResult_successful'),
       key: 'actionResult_successful',
       sortable: 'custom',
-      visible: storeTSettings.clientsColumns.includes(
-        'actionResult_successful',
-      ),
+      visible: storeTSettings.clientsColumns.includes('actionResult_successful'),
       minWidth: statisticsWidth,
       className: 'parent-statistics !min-w-min !w-fit !max-w-max !px-1 !py-0 ',
       classNameDyn: statisticsWidthDyn.value,
@@ -285,7 +270,7 @@ License: AGPL-3.0
         icons.productActionResultSuccessful,
         '/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=',
         'actionResult_successful',
-        'actionResult',
+        'actionResult'
       ),
     },
     {
@@ -306,7 +291,7 @@ License: AGPL-3.0
         'actionResult',
         undefined, // type
         1, // errorValue
-        Infinity, // warnValue
+        Infinity // warnValue
       ),
     },
     {
@@ -317,8 +302,7 @@ License: AGPL-3.0
       width: '60px',
       // {$t('table.fields.reachable')}
       headerCellRenderer: () => {
-        const reachableMode = storeTSettings.otherSettings.clients
-          .reachableAllClients
+        const reachableMode = storeTSettings.otherSettings.clients.reachableAllClients
           ? $t('button.reachables.all')
           : $t('button.reachables.selected')
         return reachableClientsIsLoadingHeader.value ? (
@@ -339,13 +323,10 @@ License: AGPL-3.0
         )
       },
       cellRenderer: ({ rowData }: any) => {
-        const reachable =
-          rowData.reachable || reachableClients.value[rowData.clientId]
+        const reachable = rowData.reachable || reachableClients.value[rowData.clientId]
         switch (reachable) {
           case true:
-            return (
-              <IIcon icon={icons.check} title={$t('label.reachable.true')} />
-            )
+            return <IIcon icon={icons.check} title={$t('label.reachable.true')} />
           case false:
             return <IIcon icon={icons.x} title={$t('label.reachable.false')} />
           default:
@@ -385,7 +366,7 @@ License: AGPL-3.0
           column.classNameDyn = statisticsWidthDyn.value
         }
       }
-    },
+    }
   )
 
   watch(
@@ -393,13 +374,13 @@ License: AGPL-3.0
     () => {
       refetch()
     },
-    { deep: true },
+    { deep: true }
   )
   watch(
     () => storeSelection.selectionDepots,
     () => {
       refetch()
-    },
+    }
   )
 
   function refetch() {
@@ -419,10 +400,7 @@ License: AGPL-3.0
       storeTSettings.clientsSorting.column = params.sortBy
       storeTSettings.clientsSorting.isDesc = params.sortDesc
     }
-    const { data, error, headers } = await useApiGETBody<T_ClientsList>(
-      '/opsidata/clients',
-      params,
-    )
+    const { data, error, headers } = await useApiGETBody<T_ClientsList>('/opsidata/clients', params)
     if (error) {
       console.error(error)
       notifyError({
@@ -431,12 +409,7 @@ License: AGPL-3.0
       return
     }
     if (data.value == undefined) {
-      console.error(
-        'empty response. data.value undefined, data: ',
-        data,
-        headers,
-        error,
-      )
+      console.error('empty response. data.value undefined, data: ', data, headers, error)
       notifyError({ message: $t('message.error.empty-response') })
       return
     }
@@ -446,9 +419,7 @@ License: AGPL-3.0
     }
   }
 
-  async function handleClickReachable(
-    clientIds: string[] | undefined = undefined,
-  ) {
+  async function handleClickReachable(clientIds: string[] | undefined = undefined) {
     const params: t_param_reachable = {}
     if (clientIds == undefined || clientIds?.length <= 0) {
       if (storeTSettings.otherSettings.clients.reachableAllClients) {
@@ -471,7 +442,7 @@ License: AGPL-3.0
     const { data, error } = await useApiGETBody<TClientReach>(
       params.selectedClients == undefined
         ? '/opsidata/clients/reachable'
-        : `/opsidata/clients/reachable?selectedClients=[${params.selectedClients}]`,
+        : `/opsidata/clients/reachable?selectedClients=[${params.selectedClients}]`
     )
     if (error) {
       console.error(error)
@@ -525,7 +496,7 @@ License: AGPL-3.0
     sortByKey: string,
     type: undefined | string = undefined,
     errorValue: number = Infinity,
-    warnValue: number = Infinity,
+    warnValue: number = Infinity
   ): (rowData: any) => VNode {
     return ({ rowData }: any) => {
       // const op = ref<any>()
@@ -556,19 +527,12 @@ License: AGPL-3.0
       const val = computed<string>(() => {
         let _val = rowData[value] || 0
         if (value == 'version_outdated' && type == 'LocalbootProduct') {
-          _val = Math.max(
-            rowData[value] - rowData.version_outdated_netboot || 0,
-            0,
-          )
+          _val = Math.max(rowData[value] - rowData.version_outdated_netboot || 0, 0)
         }
         return _val
       })
       return rowData[value] ? (
-        <Button
-          onClick={click}
-          class="flex m-auto p-auto"
-          title={rowData[value] + ' ' + tootltip}
-        >
+        <Button onClick={click} class="flex m-auto p-auto" title={rowData[value] + ' ' + tootltip}>
           {storeTSettings.otherSettings.clients.statisticIcons ? (
             <IIcon icon={icon} class="min-w-5 min-h-5 mr-0 pr-0" />
           ) : null}

@@ -24,11 +24,7 @@ License: AGPL-3.0
     class="m-2 min-h-10"
     show-icon
   />
-  <div
-    v-else
-    ref="terminalcontainer"
-    class="m-2 max-w-full min-h-1/2 maxheight-top"
-  />
+  <div v-else ref="terminalcontainer" class="m-2 max-w-full min-h-1/2 maxheight-top" />
 </template>
 
 <script setup lang="ts">
@@ -68,18 +64,12 @@ License: AGPL-3.0
       return
     }
 
-    if (
-      msg.type === 'terminal_open_event' ||
-      msg.type === 'terminal_resize_event'
-    ) {
+    if (msg.type === 'terminal_open_event' || msg.type === 'terminal_resize_event') {
       if (msg.type === 'terminal_open_event') {
         terminalChannel.value = msg.back_channel
         mbTerminal.value.terminalChannel = terminalChannel.value
       }
-      if (
-        mbTerminal.value.cols !== msg.cols ||
-        mbTerminal.value.rows !== msg.rows
-      ) {
+      if (mbTerminal.value.cols !== msg.cols || mbTerminal.value.rows !== msg.rows) {
         mbTerminal.value.fitAddon.fit()
       }
     } else if (msg.type === 'terminal_data_read') {
@@ -91,18 +81,14 @@ License: AGPL-3.0
 
   async function _fetchIsDisabled() {
     isLoading.value = true
-    const { data, error } = await useApiGET<T_DisaledFeatures>(
-      '/opsidata/server/disabled-features',
-    )
+    const { data, error } = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
       return false
     }
     isLoading.value = false
-    return (
-      data?.value?.includes('terminal') || storeConfigapp().config?.read_only
-    )
+    return data?.value?.includes('terminal') || storeConfigapp().config?.read_only
   }
   onMounted(async () => {
     while (ws.wsBus.value === undefined) {
