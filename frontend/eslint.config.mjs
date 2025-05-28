@@ -53,5 +53,5 @@ export default withNuxt(
         messageSyntaxVersion: '^9.0.0',
       },
     },
-  },
+  }
 )

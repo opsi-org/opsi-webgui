@@ -76,9 +76,7 @@ export default defineNuxtConfig({
       API_PATH: ADDON_PATH + '/api',
       OWN_PATH: ADDON_PATH + '/app',
       NUXT_PUBLIC_API_BASE:
-        process.env.NODE_ENV === 'production'
-          ? ''
-          : 'https://localhost:' + CONFD_PORT,
+        process.env.NODE_ENV === 'production' ? '' : 'https://localhost:' + CONFD_PORT,
     },
   },
   modules: [

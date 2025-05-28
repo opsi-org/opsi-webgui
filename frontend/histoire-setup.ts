@@ -52,6 +52,6 @@ export const setupVue3 = defineSetupVue3(({ app, addWrapper }) => {
     createI18n({
       legacy: false,
       messages: { en },
-    }),
+    })
   )
 })
