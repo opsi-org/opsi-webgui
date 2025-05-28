@@ -1,4 +1,3 @@
-# FROM mcr.microsoft.com/playwright:v1.38.0-jammy
 FROM node:23.0.0-bookworm-slim
 
 
@@ -29,7 +28,6 @@ RUN sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/t
 	&& usermod -s /usr/bin/zsh root
 
 
-# RUN useradd --create-home -s /usr/bin/zsh ${DEV_USER}
 RUN git config --global --add safe.directory /workspace
 RUN git config --global user.name "${DEV_GIT_NAME}"
 RUN git config --global user.email "${DEV_GIT_EMAIL}"
@@ -42,22 +40,11 @@ WORKDIR /workspace/frontend
 RUN npm completion >> ~/.zshrc
 
 RUN npx -y playwright@1.49.1 install --with-deps
-# WORKDIR /workspace/
+
 
 RUN npm install -g n
-# node version
-# RUN n lts
-#RUN n 22.12.0
-# RUN n 23.0.0
-
-# RUN npm install -g npm # latest
-# RUN npm install -g npm@10.9.0 # node 23.0.0
-# RUN npm install -g npm@10.9.2
-# RUN npm install -g npm@11.0.0
 
 RUN export NODE_OPTIONS='--disable-warning=ExperimentalWarning'
 
-
-# USER ${DEV_USER}
 USER root
 CMD ["/usr/bin/zsh"]

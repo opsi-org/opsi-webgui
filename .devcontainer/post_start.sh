@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# echo 'Setup /etc/hosts' 1>&2
-# echo "127.0.0.1       $HOSTNAME $(hostname) mysql redis grafana localhost" > /tmp/hosts
-# grep -v "127.0.0.1" /etc/hosts | grep -v $HOSTNAME >> /tmp/hosts
-# cp /tmp/hosts /etc/hosts
-# rm /tmp/hosts
-
 set -e
 
 DEV_TOOLS_URL="http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.27.0.tar.gz"

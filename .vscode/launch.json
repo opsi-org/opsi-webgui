@@ -1,13 +1,11 @@
 {
   "configurations": [
     {
-      // webgui v4.4
-      "cwd": "${workspaceFolder}/frontend",
       // Webgui
+      "cwd": "${workspaceFolder}/frontend",
       "name": "webgui",
       "outputCapture": "std",
       "request": "launch",
-      // "--dry-save-package-json-to package-merged.json",
       "runtimeArgs": ["run-script", "dev", "--trace-warnings"],
       "runtimeExecutable": "npm",
       "skipFiles": ["<node_internals>/**"],
@@ -16,7 +14,7 @@
     {
       // Webgui-Storybook
       "cwd": "${workspaceFolder}/frontend",
-      "name": "webgui-story",
+      "name": "webgui-storybook",
       "outputCapture": "std",
       "request": "launch",
       "runtimeArgs": ["run-script", "story:dev"],
