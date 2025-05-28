@@ -13,19 +13,12 @@ const filename = 'BQuickPanel'
 
 test.describe('snapshot', () => {
   test(folder + '/' + filename + '', async ({ page }) => {
-    // const afterDataTestidFound = async (p: Page, el: any) => {
-    //   await el.evaluate(() => {
-    //     const version = document.querySelector('.BAuthFooter-version')
-    //     if (version) version.innerHTML = 'x.x.x'
-    //   })
-    // }
     await simpleScreenshotTest(
       page,
       folder,
       filename.toLocaleLowerCase() + '-story-vue',
       filename,
-      filename,
-      // afterDataTestidFound
+      filename
     )
   })
 })

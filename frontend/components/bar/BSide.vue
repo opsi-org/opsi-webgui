@@ -116,10 +116,7 @@ License: AGPL-3.0
     { title: 'title.groups', icon: icons.group, route: '/groups/' },
     {
       title: 'title.administration',
-      route:
-        config.value?.['terminal.forbidden'] === true
-          ? '/admin/general'
-          : '/admin/terminal',
+      route: config.value?.['terminal.forbidden'] === true ? '/admin/general' : '/admin/terminal',
       icon: icons.admin,
       submenu: [
         {
@@ -140,14 +137,14 @@ License: AGPL-3.0
     () => {
       settings.setIsMobile(mq.$mq.value === 'mobile')
       isCollapse.value = menuCollapsed.value && !mq.isMobile.value
-    },
+    }
   )
 
   watch(
     () => isCollapse.value,
     (val) => {
       emit('changeSmall', val)
-    },
+    }
   )
 
   const showTitle = computed(() => mq.isMobile.value || !isCollapse.value)

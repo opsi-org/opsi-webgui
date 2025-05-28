@@ -26,7 +26,7 @@ test.describe('snapshot', () => {
       filename.toLocaleLowerCase() + '-story-vue',
       filename,
       filename,
-      afterDataTestidFound,
+      afterDataTestidFound
     )
   })
 })
