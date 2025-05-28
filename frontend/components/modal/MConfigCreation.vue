@@ -40,36 +40,15 @@ License: AGPL-3.0
         </div>
         <div class=".k-boolValue flex justify-between">
           <label for="boolValue">{{ data.boolValue.label }}</label>
-          <PCheckbox
-            id="boolValue"
-            binary
-            v-model="data.boolValue.value"
-            class="border-[1px]"
-          />
+          <PCheckbox id="boolValue" binary v-model="data.boolValue.value" class="border-[1px]" />
         </div>
-        <div
-          class=".k-editable flex justify-between"
-          v-if="data.boolValue.value == false"
-        >
+        <div class=".k-editable flex justify-between" v-if="data.boolValue.value == false">
           <label for="editable">{{ data.editable.label }}</label>
-          <PCheckbox
-            id="editable"
-            binary
-            v-model="data.editable.value"
-            class="border-[1px]"
-          />
+          <PCheckbox id="editable" binary v-model="data.editable.value" class="border-[1px]" />
         </div>
-        <div
-          class=".k-multiValue flex justify-between"
-          v-if="data.boolValue.value == false"
-        >
+        <div class=".k-multiValue flex justify-between" v-if="data.boolValue.value == false">
           <label for="multiValue">{{ data.multiValue.label }}</label>
-          <PCheckbox
-            id="multiValue"
-            binary
-            v-model="data.multiValue.value"
-            class="border-[1px]"
-          />
+          <PCheckbox id="multiValue" binary v-model="data.multiValue.value" class="border-[1px]" />
         </div>
         <div class=".k-standardValues" v-if="data.boolValue.value == false">
           <label for="standardValues">{{ data.standardValues.label }}</label>

@@ -15,11 +15,7 @@ License: AGPL-3.0
           <el-button @click="$emit('clearSelection')">
             <IconIIcon :icon="icons.clear" />
           </el-button>
-          <el-input
-            v-model="filterQuery"
-            :placeholder="$t('label.filter.placeholder')"
-            clearable
-          >
+          <el-input v-model="filterQuery" :placeholder="$t('label.filter.placeholder')" clearable>
             <template #prefix>
               <IconIIcon :icon="icons.filter" />
             </template>
@@ -41,24 +37,15 @@ License: AGPL-3.0
                   :label="$t('table.settings.stripe')"
                 />
                 <el-checkbox
-                  v-if="
-                    storeTSettings.otherSettings[props.tableId]
-                      .statisticIcons != undefined
-                  "
-                  v-model="
-                    storeTSettings.otherSettings[props.tableId].statisticIcons
-                  "
+                  v-if="storeTSettings.otherSettings[props.tableId].statisticIcons != undefined"
+                  v-model="storeTSettings.otherSettings[props.tableId].statisticIcons"
                   :label="$t('table.settings.statisticIcons')"
                 />
                 <el-checkbox
                   v-if="
-                    storeTSettings.otherSettings[props.tableId]
-                      .reachableAllClients != undefined
+                    storeTSettings.otherSettings[props.tableId].reachableAllClients != undefined
                   "
-                  v-model="
-                    storeTSettings.otherSettings[props.tableId]
-                      .reachableAllClients
-                  "
+                  v-model="storeTSettings.otherSettings[props.tableId].reachableAllClients"
                   :label="$t('table.settings.reachableAllClients')"
                 />
               </div>
@@ -67,17 +54,13 @@ License: AGPL-3.0
                 :data="tableColumn"
                 style="width: 100%"
                 :height="
-                  availableTableHeight <= 700
-                    ? availableTableHeight - 100
-                    : availableTableHeight
+                  availableTableHeight <= 700 ? availableTableHeight - 100 : availableTableHeight
                 "
               >
                 <el-table-column :label="$t('label.column')" min-width="150px">
                   <!-- prop="title" -->
                   <template #default="scope">
-                    <el-text v-if="scope.row.title">{{
-                      scope.row.title
-                    }}</el-text>
+                    <el-text v-if="scope.row.title">{{ scope.row.title }}</el-text>
                     <el-text v-else>{{ $t('label.selection') }}</el-text>
                   </template>
                 </el-table-column>
@@ -98,16 +81,10 @@ License: AGPL-3.0
                 <el-table-column :label="$t('label.sort')">
                   <template #header>
                     <el-tooltip
-                      :content="
-                        sortDesc
-                          ? $t('label.sort.descending')
-                          : $t('label.sort.ascending')
-                      "
+                      :content="sortDesc ? $t('label.sort.descending') : $t('label.sort.ascending')"
                     >
                       <el-button @click="toggleSortOrder">
-                        <IconIIcon
-                          :icon="sortDesc ? icons.sortDesc : icons.sortAsc"
-                        />
+                        <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
                       </el-button>
                     </el-tooltip>
                   </template>
@@ -209,10 +186,7 @@ License: AGPL-3.0
               >
                 <el-text class="!inline-block">
                   <!-- {{ column.title }} -->
-                  <IconIIcon
-                    :icon="column.icon"
-                    class="min-w-4 min-h-4 max-w-6 max-h-6"
-                  />
+                  <IconIIcon :icon="column.icon" class="min-w-4 min-h-4 max-w-6 max-h-6" />
                 </el-text>
               </el-tooltip>
             </template>
@@ -253,11 +227,7 @@ License: AGPL-3.0
     </div>
 
     <!-- Custom Context Menu -->
-    <div
-      v-if="contextMenuVisible"
-      :style="contextMenuStyle"
-      class="context-menu"
-    >
+    <div v-if="contextMenuVisible" :style="contextMenuStyle" class="context-menu">
       <ul>
         <li @click="handleCommand(contextMenuRow, 'config')">
           <IconIIcon :icon="icons.settings" /> {{ $t('title.config') }}
@@ -316,13 +286,7 @@ License: AGPL-3.0
     isLastPage,
     updateWindowValues,
     setElHeights,
-  } = useDynamicHeightTable(
-    actualDataSize,
-    currentPage,
-    totalItems,
-    props.tableId,
-    fetchWrapper,
-  )
+  } = useDynamicHeightTable(actualDataSize, currentPage, totalItems, props.tableId, fetchWrapper)
 
   const infiniteScrollDiv = ref<HTMLElement | null>(null)
   const {
@@ -366,7 +330,7 @@ License: AGPL-3.0
     isLastPage,
     infiniteScrollDiv,
     activeButton,
-    scrollDivHeight,
+    scrollDivHeight
   )
 
   const hasRowsWrapper = computed(() => totalItems.value > 0)

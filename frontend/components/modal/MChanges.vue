@@ -54,10 +54,7 @@ License: AGPL-3.0
         name="2"
         v-if="modelValue?.changesProducts.length > 0"
       >
-        <ModalMChangesTable
-          v-if="modelValue"
-          v-model="modelValue.changesProducts"
-        />
+        <ModalMChangesTable v-if="modelValue" v-model="modelValue.changesProducts" />
       </el-tab-pane>
     </el-tabs>
   </el-dialog>
@@ -73,9 +70,7 @@ License: AGPL-3.0
     default: undefined,
   })
 
-  const dialogVisible = ref<boolean>(
-    modelDialogVisible.value ? modelDialogVisible.value : false,
-  )
+  const dialogVisible = ref<boolean>(modelDialogVisible.value ? modelDialogVisible.value : false)
 
   const _props = defineProps({
     small: {
@@ -96,13 +91,13 @@ License: AGPL-3.0
     () => modelDialogVisible.value,
     () => {
       dialogVisible.value = modelDialogVisible.value
-    },
+    }
   )
   watch(
     () => dialogVisible.value,
     () => {
       modelDialogVisible.value = dialogVisible.value
-    },
+    }
   )
 
   const changesExists = computed(() => {
@@ -111,7 +106,5 @@ License: AGPL-3.0
       modelValue.value?.changesProducts?.length > 0
     )
   })
-  const activeName = ref(
-    modelValue.value?.changesHostParam?.length > 0 ? '1' : '2',
-  )
+  const activeName = ref(modelValue.value?.changesHostParam?.length > 0 ? '1' : '2')
 </script>

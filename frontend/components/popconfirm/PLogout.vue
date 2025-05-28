@@ -37,7 +37,7 @@ License: AGPL-3.0
     () => useMQ().isMobile,
     () => {
       isMobile.value = useMQ().isMobile.value
-    },
+    }
   )
   const icon = useIcons()
   const $t = useI18n().t

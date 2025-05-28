@@ -16,23 +16,14 @@ License: AGPL-3.0
           v-model="cbValue"
           id="cbQuicksave"
           name="quicksave"
-          :aria-label="
-            'Switch quicksave mode. Currently is ' + (cbValue ? 'on' : 'off')
-          "
+          :aria-label="'Switch quicksave mode. Currently is ' + (cbValue ? 'on' : 'off')"
           style="--p-toggleswitch-width: 5rem"
           v-bind="$props"
           @change="changeSelectionMode"
         />
-        <label
-          for="cbQuicksave"
-          class="text-xs text-white !pb-1"
-          :class="cbValue ? '' : 'pl-4'"
-          >{{
-            cbValue
-              ? $t('form.quicksave.cbvalue.on')
-              : $t('form.quicksave.cbvalue.off')
-          }}</label
-        >
+        <label for="cbQuicksave" class="text-xs text-white !pb-1" :class="cbValue ? '' : 'pl-4'">{{
+          cbValue ? $t('form.quicksave.cbvalue.on') : $t('form.quicksave.cbvalue.off')
+        }}</label>
       </PFloatLabel>
     </template>
   </TooltipTTooltip>
@@ -56,10 +47,7 @@ License: AGPL-3.0
 
   const changeSelectionMode = () => {
     if (settings.quicksave === false) {
-      if (
-        changes.changesHostParam.length > 1 ||
-        changes.changesProducts.length
-      ) {
+      if (changes.changesHostParam.length > 1 || changes.changesProducts.length) {
         showModal()
         return
       }

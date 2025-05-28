@@ -13,9 +13,7 @@ License: AGPL-3.0
     v-model="localSelectedItems"
     :options="
       //
-      localAddOption
-        ? data?.filter((item) => (item as string).includes(localAddOption))
-        : data
+      localAddOption ? data?.filter((item) => (item as string).includes(localAddOption)) : data
     "
     :max-selected-labels="1"
     class="w-full justify-stretch text-xs"
@@ -31,16 +29,11 @@ License: AGPL-3.0
         class="text-xs flex"
         :class="{
           '!font-bold':
-            (isArray(markedOptions) && markedOptions?.includes(option)) ||
-            markedOptions == option,
+            (isArray(markedOptions) && markedOptions?.includes(option)) || markedOptions == option,
         }"
       >
         <p-button
-          v-if="
-            props.editable &&
-            localAddOption.length > 0 &&
-            localAddOption == option
-          "
+          v-if="props.editable && localAddOption.length > 0 && localAddOption == option"
           :label="$t('button.reset')"
           severity="primary"
           text
@@ -57,11 +50,7 @@ License: AGPL-3.0
           size="small"
           @click.stop="copyItemToInput(option)"
         >
-          <IconIIcon
-            :title="$t('button.copy')"
-            :icon="icons.copy"
-            class="m-1"
-          />
+          <IconIIcon :title="$t('button.copy')" :icon="icons.copy" class="m-1" />
         </p-button>
         <span class="m-auto">
           {{ option }}
@@ -115,16 +104,11 @@ License: AGPL-3.0
         class="text-xs max-w-[500px] !flow"
         :class="{
           '!font-extrabold':
-            (isArray(markedOptions) && markedOptions?.includes(option)) ||
-            markedOptions == option,
+            (isArray(markedOptions) && markedOptions?.includes(option)) || markedOptions == option,
         }"
       >
         <p-button
-          v-if="
-            props.editable &&
-            localAddOption.length > 0 &&
-            localAddOption == option
-          "
+          v-if="props.editable && localAddOption.length > 0 && localAddOption == option"
           :label="$t('button.reset')"
           severity="secondary"
           text
@@ -141,11 +125,7 @@ License: AGPL-3.0
           size="small"
           @click.stop="copyItemToInput(option)"
         >
-          <IconIIcon
-            :title="$t('button.copy')"
-            :icon="icons.copy"
-            class="m-1"
-          />
+          <IconIIcon :title="$t('button.copy')" :icon="icons.copy" class="m-1" />
         </p-button>
         <el-text class="m-auto"> {{ option }} </el-text>
       </span>
@@ -261,7 +241,7 @@ License: AGPL-3.0
         localSelectedItems.value = [localSelectedItems.value as T]
       }
     },
-    { deep: true },
+    { deep: true }
   )
 
   onMounted(() => {
@@ -278,14 +258,14 @@ License: AGPL-3.0
         (isArray(localSelectedItems.value) && props.multiSelection == true) ||
         (!isArray(localSelectedItems.value) && props.multiSelection == false),
       `Selection should be array if multiSelection is true (${props.infoId}, multiValue ${props.multiSelection}, selected ${localSelectedItems.value} [${typeof localSelectedItems.value}, isArray ${isArray(
-        localSelectedItems.value,
-      )}])`,
+        localSelectedItems.value
+      )}])`
     )
 
     if (data.value !== undefined) {
       data.value?.sort((a: any, b: any) =>
         // cannot be undefined because of assert
-        a.localeCompare(b, undefined, { numeric: true }),
+        a.localeCompare(b, undefined, { numeric: true })
       )
     }
 
@@ -311,7 +291,7 @@ License: AGPL-3.0
     () => {
       $emit('change')
     },
-    { deep: true },
+    { deep: true }
   )
   function copyItemToInput(item: string) {
     localAddOption.value = item

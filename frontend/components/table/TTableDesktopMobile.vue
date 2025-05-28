@@ -15,11 +15,7 @@ License: AGPL-3.0
           <el-button @click="$emit('clearSelection')">
             <IconIIcon :icon="icons.clear" />
           </el-button>
-          <el-input
-            v-model="filterQuery"
-            :placeholder="$t('label.filter.placeholder')"
-            clearable
-          >
+          <el-input v-model="filterQuery" :placeholder="$t('label.filter.placeholder')" clearable>
             <template #prefix>
               <IconIIcon :icon="icons.filter" />
             </template>
@@ -39,9 +35,7 @@ License: AGPL-3.0
                 <el-table-column :label="$t('label.column')" min-width="150px">
                   <!-- prop="title" -->
                   <template #default="scope">
-                    <el-text v-if="scope.row.title">{{
-                      scope.row.title
-                    }}</el-text>
+                    <el-text v-if="scope.row.title">{{ scope.row.title }}</el-text>
                     <el-text v-else>{{ $t('label.selection') }}</el-text>
                   </template>
                 </el-table-column>
@@ -62,16 +56,10 @@ License: AGPL-3.0
                 <el-table-column :label="$t('label.sort')">
                   <template #header>
                     <el-tooltip
-                      :content="
-                        sortDesc
-                          ? $t('label.sort.descending')
-                          : $t('label.sort.ascending')
-                      "
+                      :content="sortDesc ? $t('label.sort.descending') : $t('label.sort.ascending')"
                     >
                       <el-button @click="toggleSortOrder">
-                        <IconIIcon
-                          :icon="sortDesc ? icons.sortDesc : icons.sortAsc"
-                        />
+                        <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
                       </el-button>
                     </el-tooltip>
                   </template>
@@ -178,10 +166,7 @@ License: AGPL-3.0
           :sortable="tableColumnObj[props.rowId].sortable"
         >
           <template #default="scope">
-            <CellRenderer
-              :col-data="tableColumnObj[props.rowId]"
-              :row-data="scope.row"
-            />
+            <CellRenderer :col-data="tableColumnObj[props.rowId]" :row-data="scope.row" />
           </template>
         </el-table-column>
 
@@ -194,14 +179,8 @@ License: AGPL-3.0
           :width="tableColumnObj[sortBy].width || ''"
         >
           <template #header v-if="tableColumnObj[sortBy].icon">
-            <el-tooltip
-              class="box-item"
-              effect="dark"
-              :content="tableColumnObj[sortBy].title"
-            >
-              <el-text
-                ><IconIIcon :icon="tableColumnObj[sortBy].icon" />
-              </el-text>
+            <el-tooltip class="box-item" effect="dark" :content="tableColumnObj[sortBy].title">
+              <el-text><IconIIcon :icon="tableColumnObj[sortBy].icon" /> </el-text>
             </el-tooltip>
           </template>
           <template #header v-else>
@@ -234,11 +213,7 @@ License: AGPL-3.0
         <!-- expand content -->
         <el-table-column type="expand">
           <template #default="scope">
-            <Details
-              class="mb-3"
-              :row-data="scope.row"
-              :col-data="tableColumnObj[props.rowId]"
-            />
+            <Details class="mb-3" :row-data="scope.row" :col-data="tableColumnObj[props.rowId]" />
           </template>
         </el-table-column>
       </el-table>
@@ -271,11 +246,7 @@ License: AGPL-3.0
     </div>
 
     <!-- Custom Context Menu -->
-    <div
-      v-if="contextMenuVisible"
-      :style="contextMenuStyle"
-      class="context-menu"
-    >
+    <div v-if="contextMenuVisible" :style="contextMenuStyle" class="context-menu">
       <ul>
         <li @click="handleCommand(contextMenuRow, 'config')">
           <IconIIcon :icon="icons.settings" /> {{ $t('title.config') }}
@@ -340,13 +311,7 @@ License: AGPL-3.0
     tableHeightMin,
     updateWindowValues,
     setElHeights,
-  } = useDynamicHeightTable(
-    actualDataSize,
-    currentPage,
-    totalItems,
-    props.tableId,
-    fetchWrapper,
-  )
+  } = useDynamicHeightTable(actualDataSize, currentPage, totalItems, props.tableId, fetchWrapper)
 
   const infiniteScrollDiv = ref<HTMLElement | null>(null)
   const {
@@ -391,7 +356,7 @@ License: AGPL-3.0
     isLastPage,
     infiniteScrollDiv,
     activeButton,
-    scrollDivHeight,
+    scrollDivHeight
   )
 
   const hasRowsWrapper = computed(() => totalItems.value > 0)
