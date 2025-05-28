@@ -1,10 +1,9 @@
 version: '3.3'
 
 services:
-  opsiui-backend-dev:
+  opsi-webgui-backend-dev:
     hostname: ${OPSI_HOSTNAME}
-    env_file:
-      .env
+    env_file: .env
     privileged: true
     cap_add:
       - SYS_PTRACE
@@ -16,6 +15,7 @@ services:
         - USER
         - UID
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - ../../:/workspace:cached
     ports:
       - 4447:4447
@@ -34,4 +34,4 @@ services:
       OPSICONFD_STATIC_DIR: /workspace/opsiconfd_data/static
       # OPSICONFD_GRAFANA_INTERNAL_URL: http://adminuser:adminuser@localhost:3000
       # OPSICONFD_GRAFANA_EXTERNAL_URL: "http://localhost:3000"
-    entrypoint: ["/docker-entrypoint.sh"]
+    entrypoint: [ "/docker-entrypoint.sh" ]

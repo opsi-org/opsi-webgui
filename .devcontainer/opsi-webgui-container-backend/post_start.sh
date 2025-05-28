@@ -35,3 +35,24 @@ echo "* Setup poetry venv"
 #poetry install --no-interaction --no-ansi
 uv sync --frozen
 
+
+
+echo -e "\n==========================================\nStarting opsiconfd container\n===================================================="
+CONTAINER_NAME_DOCKER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
+echo "alias opsiconfd-docker-restart=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER supervisorctl reload\"" >> ~/.bashrc
+echo "alias opsiconfd-docker-container=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER\"" >> ~/.bashrc
+
+#echo -e "\n==========================================\nStarting opsiconfd container\n===================================================="
+CONTAINER_NAME_FRONTEND=$(sudo docker ps --format "{{.Names}}" | grep webgui | grep frontend | grep opsi)
+echo "alias opsi-webgui-frontend-container=\"sudo docker exec -u root -it $CONTAINER_NAME_FRONTEND\"" >>~/.bashrc
+
+NPM_RUN_DEV="npm run dev" # needs to be in a variable!
+echo "alias npm-run-dev=\"sudo docker exec -u root -it ${CONTAINER_NAME_FRONTEND} sh -c '$NPM_RUN_DEV'\"" >>~/.bashrc
+
+NPM_RUN_DEV_BACKEND="npm run dev-backend" # needs to be in a variable!
+echo "alias npm-run-dev-backend=\"sudo docker exec -u root -it $CONTAINER_NAME_FRONTEND sh -c '$NPM_RUN_DEV_BACKEND'\"" >>~/.bashrc
+
+
+
+
+

@@ -1,25 +1,19 @@
 echo "* Running as $(whoami)"
 
-# install_jemalloc() {
-# 	echo "* Installing jemalloc"
-# 	cd /tmp
-# 	wget https://github.com/jemalloc/jemalloc/releases/download/$JEMALLOC_VERSION/jemalloc-$JEMALLOC_VERSION.tar.bz2
-# 	tar xvjf jemalloc-$JEMALLOC_VERSION.tar.bz2
-# 	cd jemalloc-$JEMALLOC_VERSION
-# 	./configure
-# 	make
-# 	sudo make install
-# }
-
 # install uv
 #wget -qO- https://astral.sh/uv/install.sh | sh # user context
 curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sudo sh # root context
 uv self update
-sudo echo 'eval "$(uv generate-shell-completion zsh)"' >> /root/.bashrc
-sudo echo 'eval "$(uvx --generate-shell-completion zsh)"' >> /root/.bashrc
 
-echo 'eval "$(uv generate-shell-completion zsh)"' >> ~/.bashrc
-echo 'eval "$(uvx --generate-shell-completion zsh)"' >> ~/.bashrc
+
+
+echo "\n" >> ~/.zshrc
+echo 'eval "$(uv generate-shell-completion zsh)"' >> ~/.zshrc
+echo 'eval "$(uvx --generate-shell-completion zsh)"' >> ~/.zshrc
+
+echo "\n" >> ~/.bashrc
+echo 'eval "$(uv generate-shell-completion bash)"' >> ~/.bashrc
+echo 'eval "$(uvx --generate-shell-completion bash)"' >> ~/.bashrc
 
 
 

@@ -1,6 +1,36 @@
 {
 	"version": "0.2.0",
 	"configurations": [
+		{
+			"name": "opsiconfd default",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "opsiconfd",
+			"args": [
+				"--workers=1",
+				"--log-level=5",
+				"--log-level-stderr=5",
+				"--log-mode=redis",
+				"--addon-dirs=/workspace/backend/addon",
+				"--static-dir=/workspace/docker/backend/opsiconfd/opsiconfd_data/static",
+			],
+			"sudo": true,
+			"justMyCode": false
+		},
+		{
+			"name": "opsiconfd",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "opsiconfd",
+			"args": [
+				"--workers=${input:worker}",
+				"--log-level-stderr=${input:loglevel}",
+				"--log-level-file=${input:loglevelfile}",
+				"--addon-dirs=/workspace/backend/addon",
+				"--static-dir=/workspace/docker/backend/opsiconfd/opsiconfd_data/static"
+			],
+			"sudo": true,
+		},
 		{ // to restart sometimes needs to be run twice (script tries to kill opsiconfd processes)
 			"name": "opsiconfd uv",
 			"outputCapture": "std",
