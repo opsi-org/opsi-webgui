@@ -26,8 +26,7 @@ License: AGPL-3.0
             <b>{{ $t('title.' + category) }} </b>
             <ButtonBTNHelpTooltip
               v-if="
-                $t('title.' + category + '.help.content') !==
-                'title.' + category + '.help.content'
+                $t('title.' + category + '.help.content') !== 'title.' + category + '.help.content'
               "
               :content="$t('title.' + category + '.help.content')"
             />
@@ -41,33 +40,22 @@ License: AGPL-3.0
               :closable="false"
             />
             <el-form-item v-else :label="$t('table.fields.' + label)">
-              <div
-                v-if="label == 'demoResult'"
-                class="max-h-64 min-w-full overflow-y-auto"
-              >
+              <div v-if="label == 'demoResult'" class="max-h-64 min-w-full overflow-y-auto">
                 <div v-if="productActions.demo.demoResult == undefined">
                   {{ EMPTY }}
                 </div>
-                <div
-                  v-else-if="
-                    Object.keys(productActions.demo.demoResult).length == 0
-                  "
-                >
+                <div v-else-if="Object.keys(productActions.demo.demoResult).length == 0">
                   {{ $t('message.warning.nodata') }}
                 </div>
                 <div
                   v-else
-                  v-for="k in Object.keys(
-                    productActions.demo.demoResult,
-                  ).sort()"
+                  v-for="k in Object.keys(productActions.demo.demoResult).sort()"
                   :key="k"
                 >
                   <el-collapse v-model="activeName" accordion>
                     <el-collapse-item :title="k" :name="k">
                       <span
-                        v-for="(item, iindex) in (
-                          productActions.demo.demoResult as any
-                        )[k]"
+                        v-for="(item, iindex) in (productActions.demo.demoResult as any)[k]"
                         :key="item + iindex"
                         class="flex flex-row justify-between"
                       >
@@ -95,12 +83,8 @@ License: AGPL-3.0
               <el-select
                 v-else-if="isObject(value)"
                 v-model="(productActions[category][label] as any).value"
-                :multiple="
-                  Array.isArray((productActions[category][label] as any).value)
-                "
-                :disable="
-                  (productActions[category][label] as any).options.length <= 1
-                "
+                :multiple="Array.isArray((productActions[category][label] as any).value)"
+                :disable="(productActions[category][label] as any).options.length <= 1"
                 @change="
                   () => {
                     executeAction(true)
@@ -121,10 +105,7 @@ License: AGPL-3.0
           </div>
         </div>
 
-        <div
-          class="button-container"
-          style="display: flex; justify-content: flex-end"
-        >
+        <div class="button-container" style="display: flex; justify-content: flex-end">
           <el-button> {{ $t('button.reset') }}</el-button>
           <el-button
             :disabled="productActions.demo.demoResult == undefined"
@@ -171,15 +152,7 @@ License: AGPL-3.0
     possibleActions: {
       // for translation kex search: $t('title.possibleActions')
       rowactions: {
-        options: [
-          'none',
-          'setup',
-          'uninstall',
-          'update',
-          'once',
-          'always',
-          'custom',
-        ],
+        options: ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'],
         value: NOT_APPLIED,
       },
     },
@@ -209,7 +182,7 @@ License: AGPL-3.0
         await fetchInstallationStates()
         isLoadingMain.value = false
       }
-    },
+    }
   )
 
   function mysort(a: string, b: string): number {
@@ -219,41 +192,29 @@ License: AGPL-3.0
   }
 
   async function fetchActionResults() {
-    const { data, error } = await useApiGET<Array<string>>(
-      '/opsidata/products/action-result',
-    )
+    const { data, error } = await useApiGET<Array<string>>('/opsidata/products/action-result')
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       return
     }
     if (data.value) {
-      productActions.value.conditions.actionResult.options = [
-        ...data.value,
-        NOT_APPLIED,
-      ]
+      productActions.value.conditions.actionResult.options = [...data.value, NOT_APPLIED]
       productActions.value.conditions.actionResult.value = NOT_APPLIED
     } else {
       throw new Error('No action results found: ' + JSON.stringify(data.value))
     }
   }
   async function fetchInstallationStates() {
-    const { data, error } = await useApiGET<Array<string>>(
-      '/opsidata/products/installation-status',
-    )
+    const { data, error } = await useApiGET<Array<string>>('/opsidata/products/installation-status')
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       return
     }
     if (data.value) {
-      productActions.value.conditions.instStatus.options = [
-        ...data.value,
-        NOT_APPLIED,
-      ]
+      productActions.value.conditions.instStatus.options = [...data.value, NOT_APPLIED]
       productActions.value.conditions.instStatus.value = NOT_APPLIED
     } else {
-      throw new Error(
-        'No installation states found ' + JSON.stringify(data.value),
-      )
+      throw new Error('No installation states found ' + JSON.stringify(data.value))
     }
   }
 
@@ -275,12 +236,8 @@ License: AGPL-3.0
       demoMode: demoMode,
     }
 
-    params.selectedClients = includeClients
-      ? storeSelection.selectionClients
-      : null
-    params.selectedDepots = includeServer
-      ? storeSelection.selectionDepots
-      : null
+    params.selectedClients = includeClients ? storeSelection.selectionClients : null
+    params.selectedDepots = includeServer ? storeSelection.selectionDepots : null
 
     if (
       (params.outdated === false &&
@@ -330,9 +287,7 @@ License: AGPL-3.0
       isLoadingDemo.value = false
     } else {
       isLoadingDemo.value = false
-      throw new Error(
-        'No installation states found ' + JSON.stringify(data.value),
-      )
+      throw new Error('No installation states found ' + JSON.stringify(data.value))
     }
   }
 </script>

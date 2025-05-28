@@ -76,8 +76,7 @@ License: AGPL-3.0
     return props.width
   })
   const page0Condition = computed(() => {
-    if (props.isMobile && (page1Condition.value || page2Condition.value))
-      return false
+    if (props.isMobile && (page1Condition.value || page2Condition.value)) return false
     return props.page0Condition
   })
   const page1Condition = computed(() => {

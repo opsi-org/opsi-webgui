@@ -44,9 +44,7 @@ License: AGPL-3.0
   async function fetch() {
     isLoading.value = true
 
-    const { data, error } = await useApiGETBody<TData>(
-      '/opsidata/modulesContent',
-    )
+    const { data, error } = await useApiGETBody<TData>('/opsidata/modulesContent')
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       isLoading.value = false

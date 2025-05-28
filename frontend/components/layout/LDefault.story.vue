@@ -38,18 +38,15 @@ License: AGPL-3.0
     >
       <LayoutLDefault>
         <el-text>
-          Some content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content
         </el-text>
         <el-text> Store: {{ getTheme() }} </el-text>
         <el-text> Doc: {{ getThemeDoc() }} </el-text>
@@ -58,18 +55,15 @@ License: AGPL-3.0
     <Variant title="desktop" responsive-disabled :setup-app="initDesktop">
       <LayoutLDefault>
         <el-text>
-          Some content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content Some content Some content Some
-          content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content Some content Some content Some content Some content Some content
+          Some content Some content
         </el-text>
       </LayoutLDefault>
     </Variant>

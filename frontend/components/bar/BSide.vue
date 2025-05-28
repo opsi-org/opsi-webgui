@@ -7,7 +7,6 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="BSide" class="bg-opsi-blue">
-    <!-- :default-active="router.currentRoute.value?.fullPath" -->
     <el-menu
       router
       unique-opened

@@ -21,11 +21,7 @@ License: AGPL-3.0
 <template>
   <Story>
     <!-- <Story :setup-app="init"> -->
-    <Variant
-      title="mobile-enabled"
-      :meta="{ wrapperMobile: true }"
-      responsive-disabled
-    >
+    <Variant title="mobile-enabled" :meta="{ wrapperMobile: true }" responsive-disabled>
       <FormFTerminalSettings
         v-model:terminal-id="terminalId"
         v-model:terminal-channel="terminalChannel"
@@ -34,11 +30,7 @@ License: AGPL-3.0
         @click-disconnect="disconnect"
       />
     </Variant>
-    <Variant
-      title="mobile-disabled"
-      :meta="{ wrapperMobile: true }"
-      responsive-disabled
-    >
+    <Variant title="mobile-disabled" :meta="{ wrapperMobile: true }" responsive-disabled>
       <FormFTerminalSettings
         v-model:terminal-id="terminalId"
         v-model:terminal-channel="terminalChannel"

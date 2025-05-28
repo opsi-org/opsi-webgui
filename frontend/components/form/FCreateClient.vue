@@ -20,14 +20,9 @@ License: AGPL-3.0
           :label="$t('table.fields.' + label)"
           :error="label === 'hostId' ? clientNameError : ''"
         >
-          <el-form
-            v-if="label === 'opsiClientAgent'"
-            :inline="true"
-            label-position="top"
-          >
+          <el-form v-if="label === 'opsiClientAgent'" :inline="true" label-position="top">
             <div
-              v-for="(value2, label2) in createClient.initialSetup
-                .opsiClientAgent"
+              v-for="(value2, label2) in createClient.initialSetup.opsiClientAgent"
               :key="label2 + value2"
               :class="{
                 'w-full': label2 === 'setup',
@@ -36,9 +31,7 @@ License: AGPL-3.0
             >
               <div v-if="label2 == 'setup'">
                 <el-checkbox
-                  v-model="
-                    createClient.initialSetup.opsiClientAgent[label2.toString()]
-                  "
+                  v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]"
                   class="w-full"
                 >
                   {{ label2 }}
@@ -54,9 +47,7 @@ License: AGPL-3.0
                 <el-select
                   v-if="label2 === 'type'"
                   filterable
-                  v-model="
-                    createClient.initialSetup.opsiClientAgent[label2.toString()]
-                  "
+                  v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]"
                 >
                   <el-option
                     v-for="item in ['windows', 'linux', 'mac']"
@@ -67,16 +58,12 @@ License: AGPL-3.0
                 </el-select>
                 <el-input
                   v-else-if="label2 === 'password'"
-                  v-model="
-                    createClient.initialSetup.opsiClientAgent[label2.toString()]
-                  "
+                  v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]"
                   show-password
                 />
                 <el-input
                   v-else
-                  v-model="
-                    createClient.initialSetup.opsiClientAgent[label2.toString()]
-                  "
+                  v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]"
                 />
               </el-form-item>
             </div>
@@ -87,12 +74,7 @@ License: AGPL-3.0
             v-model="createClient.assignments.depot"
             clearable
           >
-            <el-option
-              v-for="item in depotIDList"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+            <el-option v-for="item in depotIDList" :key="item" :label="item" :value="item" />
           </el-select>
           <el-select
             v-else-if="label === 'group'"
@@ -100,12 +82,7 @@ License: AGPL-3.0
             v-model="createClient.assignments.group"
             clearable
           >
-            <el-option
-              v-for="item in groupList"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+            <el-option v-for="item in groupList" :key="item" :label="item" :value="item" />
           </el-select>
 
           <el-select
@@ -114,12 +91,7 @@ License: AGPL-3.0
             v-model="createClient.initialSetup.netbootProduct"
             clearable
           >
-            <el-option
-              v-for="item in netbootProductList"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+            <el-option v-for="item in netbootProductList" :key="item" :label="item" :value="item" />
           </el-select>
           <el-input v-else-if="label === 'hostId'" v-model="clientName">
             <template #append>
@@ -130,18 +102,11 @@ License: AGPL-3.0
             v-else-if="typeof value == 'boolean'"
             v-model="createClient[category][label]"
           />
-          <el-input
-            v-else
-            v-model="createClient[category][label]"
-            :data-testid="label"
-          />
+          <el-input v-else v-model="createClient[category][label]" :data-testid="label" />
         </el-form-item>
       </div>
     </div>
-    <div
-      class="button-container"
-      style="display: flex; justify-content: flex-end"
-    >
+    <div class="button-container" style="display: flex; justify-content: flex-end">
       <el-button @click="resetForm()"> {{ $t('button.reset') }}</el-button>
       <el-button
         data-testid="clientCreate_addButton"
@@ -202,7 +167,7 @@ License: AGPL-3.0
     () => createClient.value.assignments.depot,
     async () => {
       await fetchDepotSpecificData()
-    },
+    }
   )
 
   watch(clientName, async (newClientName) => {
@@ -234,9 +199,7 @@ License: AGPL-3.0
 
   async function fetchDepotSpecificData() {
     depotIDList.value = await useDepot($t).getDepotIdList()
-    clientIDList.value = await useClient().getClientIdList([
-      createClient.value.assignments.depot,
-    ])
+    clientIDList.value = await useClient().getClientIdList([createClient.value.assignments.depot])
     await fetchNetbootProducts()
   }
 
@@ -257,9 +220,7 @@ License: AGPL-3.0
     await useApiGET(`/opsidata/depots/products?selectedDepots=[${depot}]`)
       .then((response) => {
         if (Array.isArray(response.data.value)) {
-          netbootProductList.value = response.data.value.map(
-            (item: T_Product) => item.productId,
-          )
+          netbootProductList.value = response.data.value.map((item: T_Product) => item.productId)
         }
       })
       .catch((error) => {
@@ -274,10 +235,7 @@ License: AGPL-3.0
       client: createClient.value.basics,
       depot: createClient.value.assignments.depot,
     }
-    const { error } = await useApiPOST<T_ClientAttr>(
-      '/opsidata/clients',
-      request,
-    )
+    const { error } = await useApiPOST<T_ClientAttr>('/opsidata/clients', request)
 
     if (error) {
       notifyError({ message: error?.response?.data?.message })
@@ -290,15 +248,14 @@ License: AGPL-3.0
       })
 
       if (createClient.value.assignments.group?.length > 0) {
-        await handleApiPost(
-          `/opsidata/clients/${createClient.value.basics.hostId}/groups`,
-          [createClient.value.assignments.group],
-        )
+        await handleApiPost(`/opsidata/clients/${createClient.value.basics.hostId}/groups`, [
+          createClient.value.assignments.group,
+        ])
       }
       if (createClient.value.initialSetup.opsiClientAgent.setup) {
         await handleApiPost(
           '/opsidata/clients/agent',
-          createClient.value.initialSetup.opsiClientAgent,
+          createClient.value.initialSetup.opsiClientAgent
         )
       }
       if (createClient.value.initialSetup.netbootProduct?.length > 0) {
