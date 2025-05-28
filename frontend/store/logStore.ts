@@ -24,19 +24,13 @@ export const storeLogs = defineStore('logs', {
   }),
   getters: {
     logmarkerNr: (state: any): number => {
-      return state._logmarker.split(';')[0]
-        ? parseInt(state._logmarker.split(';')[0])
-        : -1
+      return state._logmarker.split(';')[0] ? parseInt(state._logmarker.split(';')[0]) : -1
     },
     logmarkerId: (state: any): string => {
-      return state._logmarker.split(';')[1]
-        ? state._logmarker.split(';')[1]
-        : ''
+      return state._logmarker.split(';')[1] ? state._logmarker.split(';')[1] : ''
     },
     logmarkerType: (state: any): string => {
-      return state._logmarker.split(';')[2]
-        ? state._logmarker.split(';')[2]
-        : ''
+      return state._logmarker.split(';')[2] ? state._logmarker.split(';')[2] : ''
     },
   },
   actions: {

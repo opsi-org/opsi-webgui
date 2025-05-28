@@ -47,10 +47,9 @@ export const storeAuth = defineStore('auth', {
         'isUsernameOutdated now',
         now.valueOf(),
         'usernameUpdated',
-        _usernameUpdated.valueOf(),
+        _usernameUpdated.valueOf()
       )
-      const __expired =
-        now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
+      const __expired = now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
       if (__expired) {
         console.warn('isUsernameOutdated expired')
       }
@@ -58,9 +57,7 @@ export const storeAuth = defineStore('auth', {
       // return now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
     },
     isAuthenticated({ _username }): boolean {
-      return Boolean(
-        useCookie('opsiconfd-session') && _username && !this.isUsernameOutdated,
-      )
+      return Boolean(useCookie('opsiconfd-session') && _username && !this.isUsernameOutdated)
     },
   },
   actions: {

@@ -16,7 +16,7 @@ export const apiMock = (
   apiPath: string,
   response: any,
   additionalHeaders = {},
-  consigserverName = 'testconfigserver',
+  consigserverName = 'testconfigserver'
 ) => {
   return page.route(apiPath, (route: Route) => {
     // console.log('MYROUTE: \t', route._parent._initializer.url)
@@ -92,11 +92,7 @@ export const mockEveryThing = (test: any, expect: any) => {
         client_creation: true,
       },
     })
-    apiMock(page, '**/api/opsidata/hosts/groups/id', [
-      'clientdirectory',
-      'testgroup',
-      'test',
-    ])
+    apiMock(page, '**/api/opsidata/hosts/groups/id', ['clientdirectory', 'testgroup', 'test'])
 
     apiMock(page, '**/api/opsidata/hosts?**', data.hostObjAttributes)
     apiMock(page, '**/api/opsidata/hosts/groups?**', {
@@ -109,10 +105,8 @@ export const mockEveryThing = (test: any, expect: any) => {
     apiMock(page, '**/api/opsidata/depots/clients?**', data.clientIds)
     apiMock(
       page,
-      '**/api/opsidata/depots/clients?selectedDepots=[' +
-        data.selectedClientDepot +
-        ']',
-      data.clientIds,
+      '**/api/opsidata/depots/clients?selectedDepots=[' + data.selectedClientDepot + ']',
+      data.clientIds
     )
     apiMock(page, '**/api/opsidata/depots?**', data.depotObjs)
     apiMock(page, '**/api/opsidata/servers?**', data.serverAttribute)
@@ -124,11 +118,7 @@ export const mockEveryThing = (test: any, expect: any) => {
       'failed',
       'unknown',
     ])
-    apiMock(page, '**/api/opsidata/products/action-result', [
-      null,
-      'failed',
-      'successful',
-    ])
+    apiMock(page, '**/api/opsidata/products/action-result', [null, 'failed', 'successful'])
 
     apiMock(page, '**/api/opsidata/clientsdepots?**', {
       selectedClient: data.selectedClientDepot,

@@ -16,7 +16,7 @@ export function makeToast(
           variant: string
           autoHideDelay: number
           appendToast: boolean
-        },
+        }
       ) => void
     }
   },
@@ -24,7 +24,7 @@ export function makeToast(
   title: string = '',
   variant: string = 'primary',
   autoHideDelay: number = 6000,
-  append = false,
+  append = false
 ): void {
   vm.$bvToast.toast(message, {
     // id: 'MakeToast', // MakeToast__toast_outer

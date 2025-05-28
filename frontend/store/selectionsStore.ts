@@ -22,7 +22,7 @@ export const storeSelections = defineStore('selections', {
     _selectionDepots: reactive(
       (localStorage.getItem('selectionDepots')
         ? JSON.parse(localStorage.getItem('selectionDepots') as string)
-        : []) as Array<string>,
+        : []) as Array<string>
     ),
     _selectionClients: reactive([] as Array<string>),
     _selectionProducts: reactive([] as Array<string>),
@@ -32,10 +32,8 @@ export const storeSelections = defineStore('selections', {
   }),
   getters: {
     // multiSelection: (state: any) => state._multiSelection,
-    multiSelection: () =>
-      useCookie('MultiSelection', { default: () => true }).value,
-    selectionDefaultDepots: (state: any): Array<string> =>
-      state._selectionDepotsDefault, // default depots for depotSelection modal
+    multiSelection: () => useCookie('MultiSelection', { default: () => true }).value,
+    selectionDefaultDepots: (state: any): Array<string> => state._selectionDepotsDefault, // default depots for depotSelection modal
     selectionDepots: (state: any): Array<string> => state._selectionDepots,
     selectionClients: (state: any): Array<string> => state._selectionClients,
     selectionProducts: (state: any): Array<string> => state._selectionProducts,
@@ -140,18 +138,15 @@ export const storeSelections = defineStore('selections', {
       }
     },
     toggleSelectionDepots(item: string, checkMulti: boolean = true) {
-      if (checkMulti)
-        this.toggleSelectionValueAndCheck(this._selectionDepots, item)
+      if (checkMulti) this.toggleSelectionValueAndCheck(this._selectionDepots, item)
       else this.toggleSelectionValue(this._selectionDepots, item)
     },
     toggleSelectionClients(item: string, checkMulti: boolean = true) {
-      if (checkMulti)
-        this.toggleSelectionValueAndCheck(this._selectionClients, item)
+      if (checkMulti) this.toggleSelectionValueAndCheck(this._selectionClients, item)
       else this.toggleSelectionValue(this._selectionClients, item)
     },
     toggleSelectionProducts(item: string, checkMulti: boolean = true) {
-      if (checkMulti)
-        this.toggleSelectionValueAndCheck(this._selectionProducts, item)
+      if (checkMulti) this.toggleSelectionValueAndCheck(this._selectionProducts, item)
       else this.toggleSelectionValue(this._selectionProducts, item)
     },
     toggleSelectionValue(selection: Array<string>, item: string) {

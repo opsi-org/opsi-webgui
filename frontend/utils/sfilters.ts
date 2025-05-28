@@ -22,7 +22,7 @@ export function filterObject(
   elements: Array<any>,
   matchingValue: string,
   key: string,
-  resultArray: Array<string>,
+  resultArray: Array<string>
 ) {
   for (const elementKey in elements) {
     const element = elements[elementKey]
@@ -47,7 +47,7 @@ export function filterObjectByValues(
   elements: Array<any>,
   matchingValues: Array<string>,
   key: string,
-  resultArray: Array<string>,
+  resultArray: Array<string>
 ) {
   for (const elementKey in elements) {
     const element = elements[elementKey]
@@ -74,20 +74,14 @@ export function filterObjectLabel(
   matchingValue: string,
   compareKey: string,
   mapKey: string,
-  resultArray: Array<string>,
+  resultArray: Array<string>
 ) {
   for (const elementKey in elements) {
     const element = elements[elementKey]
     if (element[compareKey] === matchingValue) {
       resultArray.push(element[mapKey])
     } else if (element.children != null) {
-      filterObjectLabel(
-        element.children,
-        matchingValue,
-        compareKey,
-        mapKey,
-        resultArray,
-      )
+      filterObjectLabel(element.children, matchingValue, compareKey, mapKey, resultArray)
     }
   }
 }
@@ -107,20 +101,14 @@ export function filterObjectLabels(
   matchingValues: Array<string>,
   compareKey: string,
   mapKey: string,
-  resultArray: Array<string>,
+  resultArray: Array<string>
 ) {
   for (const elementKey in elements) {
     const element = elements[elementKey]
     if (matchingValues.includes(element[compareKey])) {
       resultArray.push(element[mapKey])
     } else if (element.children != null) {
-      filterObjectLabels(
-        element.children,
-        matchingValues,
-        compareKey,
-        mapKey,
-        resultArray,
-      )
+      filterObjectLabels(element.children, matchingValues, compareKey, mapKey, resultArray)
     }
   }
 }

@@ -26,9 +26,7 @@ export const storeSettings = defineStore('settings', {
     menuCollapsed: false as boolean,
     twoColumnLayoutCollapsed: { tabledepots: false, tableclients: false },
     expiresInterval: undefined as NodeJS.Timer | undefined,
-    _colormodeCookie: (useColorMode().value == 'auto'
-      ? 'light'
-      : useColorMode().value) as t_theme,
+    _colormodeCookie: (useColorMode().value == 'auto' ? 'light' : useColorMode().value) as t_theme,
   }),
   getters: {
     colormode: (state: any): t_theme => {
@@ -56,9 +54,7 @@ export const storeSettings = defineStore('settings', {
     },
     setQuickpanelOpened(isQuickpanelOpened: boolean) {
       this.quickpanelOpened = isQuickpanelOpened
-      useCookie('QuickpanelOpened').value = isQuickpanelOpened
-        ? 'true'
-        : 'false'
+      useCookie('QuickpanelOpened').value = isQuickpanelOpened ? 'true' : 'false'
     },
     setMenuCollapsed(isMenuCollapsed: boolean) {
       this.menuCollapsed = isMenuCollapsed

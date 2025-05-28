@@ -26,7 +26,7 @@ export const useNavigate = () => {
     }
 
     Object.keys(rowactionConfigChecked.value).forEach(
-      (k) => (rowactionConfigChecked.value[k] = false),
+      (k) => (rowactionConfigChecked.value[k] = false)
     )
     rowactionConfigChecked.value[id] = true
   }
@@ -38,7 +38,7 @@ export const useNavigate = () => {
     type: string,
     id: string,
     isChild: boolean = false,
-    productType = 'LocalbootProduct',
+    productType = 'LocalbootProduct'
   ) {
     if (type === 'clients') {
       storeTS.setSecondColumnSelectedRowId(id)

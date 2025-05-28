@@ -78,7 +78,7 @@ export const addMockRoute = async (page: Page, url: string, response: any) => {
 export const setupMockRoutes = async (
   page: Page,
   isLoggedIn: boolean = false,
-  customRoutes: Array<{ url: string; response: any }> = [],
+  customRoutes: Array<{ url: string; response: any }> = []
 ) => {
   await fetchMockData()
   await page.unroute('**/api/**')

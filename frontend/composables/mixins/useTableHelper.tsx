@@ -23,7 +23,7 @@ export const useTableHelper = (
   isLastPage: Ref,
   infiniteScrollDiv: Ref,
   activeButton: Ref,
-  scrollDivHeight: Ref,
+  scrollDivHeight: Ref
 ) => {
   const $t = useI18n().t
   const router = useRouter()
@@ -51,18 +51,18 @@ export const useTableHelper = (
     () => visibleColumns.value,
     () => {
       const visibleColumnIds = Object.keys(visibleColumns.value).filter(
-        (key) => visibleColumns.value[key],
+        (key) => visibleColumns.value[key]
       )
       storeTSettings.setColumns(props.tableId, visibleColumnIds)
     },
-    { deep: true },
+    { deep: true }
   )
   watch(
     [() => filterQuery.value],
     () => {
       fetchDataWrapper()
     },
-    { immediate: true },
+    { immediate: true }
   )
   watch(
     () => props.sortBy,
@@ -71,7 +71,7 @@ export const useTableHelper = (
         sortBy.value = props.sortBy || props.rowId
         fetchDataWrapper()
       }
-    },
+    }
   )
   watch(
     () => props.sortDesc,
@@ -80,7 +80,7 @@ export const useTableHelper = (
         sortDesc.value = props.sortDesc || false
         fetchDataWrapper()
       }
-    },
+    }
   )
 
   function prepareParams() {
@@ -109,8 +109,7 @@ export const useTableHelper = (
         // isFirstPage.value = currentPage.value == 1
         // isLastPage.value = currentPage.value * pageSize.value >= res.total
         if (res.total > 0) {
-          const pageExists =
-            currentPage.value <= Math.ceil(res.total / pageSize.value)
+          const pageExists = currentPage.value <= Math.ceil(res.total / pageSize.value)
           if (!pageExists) {
             currentPage.value = Math.ceil(res.total / pageSize.value)
           }
@@ -170,8 +169,7 @@ export const useTableHelper = (
 
   function handleScroll(event: Event) {
     const target = event.target as HTMLElement
-    const dynamicScrollThreshold =
-      Math.max(target.clientHeight, 100) / (pageSize.value || 0)
+    const dynamicScrollThreshold = Math.max(target.clientHeight, 100) / (pageSize.value || 0)
 
     if (target.scrollTop <= dynamicScrollThreshold) {
       _scrollUp()
@@ -278,14 +276,7 @@ export const useTableHelper = (
     fetchDataWrapper()
   }
 
-  function handleSortChange({
-    prop,
-    order,
-  }: {
-    column: any
-    prop: string
-    order: any
-  }) {
+  function handleSortChange({ prop, order }: { column: any; prop: string; order: any }) {
     sortBy.value = prop
     sortDesc.value = order === 'descending'
 
@@ -309,9 +300,7 @@ export const useTableHelper = (
     const rowData = attributes['row-data'] || attributes.rowData
 
     if (!colData) {
-      console.error(
-        `CellRenderer: col-data not found in: ${JSON.stringify(attributes)}`,
-      )
+      console.error(`CellRenderer: col-data not found in: ${JSON.stringify(attributes)}`)
       return <el-text>{$t('label.undefined')}</el-text>
     }
     if (colData.cellRenderer) {
@@ -323,9 +312,7 @@ export const useTableHelper = (
   const HeaderCellRenderer = (attributes: any): VNode => {
     const colData = attributes['col-data'] || attributes.colData
     if (!colData) {
-      console.warn(
-        `HeaderCellRenderer: col-data not found in: ${JSON.stringify(attributes)}`,
-      )
+      console.warn(`HeaderCellRenderer: col-data not found in: ${JSON.stringify(attributes)}`)
       return <el-text>{$t('label.undefined')}</el-text>
     }
     if (colData.headerCellRenderer) {
@@ -343,11 +330,7 @@ export const useTableHelper = (
             <el-button
               link
               onClick={() => handleConfigClick(rowData)}
-              class={
-                activeButton.value === 'config-' + rowData.clientId
-                  ? 'is-active'
-                  : ''
-              }
+              class={activeButton.value === 'config-' + rowData.clientId ? 'is-active' : ''}
             >
               <IIcon icon={icons.settings} />
             </el-button>
@@ -358,11 +341,7 @@ export const useTableHelper = (
             <el-button
               link
               onClick={() => handleLogClick(rowData)}
-              class={
-                activeButton.value === 'log-' + rowData.clientId
-                  ? 'is-active'
-                  : ''
-              }
+              class={activeButton.value === 'log-' + rowData.clientId ? 'is-active' : ''}
             >
               <IIcon icon={icons.log} />
             </el-button>
@@ -374,11 +353,7 @@ export const useTableHelper = (
               link
               disabled={storeConfigapp().config?.read_only}
               onClick={() => handleCloneClick(rowData)}
-              class={
-                activeButton.value === 'clone-' + rowData.clientId
-                  ? 'is-active'
-                  : ''
-              }
+              class={activeButton.value === 'clone-' + rowData.clientId ? 'is-active' : ''}
             >
               <IIcon icon={icons.client} />
             </el-button>
@@ -434,15 +409,9 @@ export const useTableHelper = (
             {{
               default: (scope: any) => {
                 const rowKey = scope.row.id
-                const colObj = props.tableColumn.find(
-                  (col: any) => col.key === rowKey,
-                )
+                const colObj = props.tableColumn.find((col: any) => col.key === rowKey)
 
-                if (
-                  rowKey == undefined ||
-                  rowKey == 'rowactions' ||
-                  rowKey == 'actionRequest'
-                ) {
+                if (rowKey == undefined || rowKey == 'rowactions' || rowKey == 'actionRequest') {
                   return <el-text>{colObj.title || colObj.tooltip}</el-text>
                 }
                 if (colObj.headerCellRenderer !== undefined) {
@@ -456,21 +425,14 @@ export const useTableHelper = (
             {{
               default: (scope: any) => {
                 const rowKey = scope.row.id
-                const colObj = props.tableColumn.find(
-                  (col: any) => col.key === rowKey,
-                )
+                const colObj = props.tableColumn.find((col: any) => col.key === rowKey)
                 if (rowKey.startsWith('_')) {
                   return
                 }
                 const rowValue = scope.row.value
                 const renderer = colObj.cellRenderer
                 if (colObj.key == 'actions') {
-                  return (
-                    <ActionsRenderer
-                      rowData={rowData}
-                      colData={colObj}
-                    ></ActionsRenderer>
-                  )
+                  return <ActionsRenderer rowData={rowData} colData={colObj}></ActionsRenderer>
                 }
                 if (renderer !== undefined) {
                   return renderer({ rowData } as any)

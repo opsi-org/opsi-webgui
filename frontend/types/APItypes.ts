@@ -271,9 +271,7 @@ export interface T_ProductPropertiesResult extends propdepres {
 export interface T_ProductProperties {
   [key: string]: T_ProductProperty
 }
-export type tproductpropertytypes =
-  | 'UnicodeProductProperty'
-  | 'BoolProductProperty'
+export type tproductpropertytypes = 'UnicodeProductProperty' | 'BoolProductProperty'
 type propvalue = string | boolean
 export interface T_ProductProperty {
   productId: string

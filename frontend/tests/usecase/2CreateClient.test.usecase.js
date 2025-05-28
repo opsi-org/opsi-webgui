@@ -25,7 +25,7 @@ test.beforeEach(async ({ page, context }) => {
         'client3.uib.local',
         'client4.uib.local',
         'client5.uib.local',
-      ],
+      ]
     )
     await apiMock(page, '**/api/opsidata/depot_ids', [
       'testconfigserver.uib.local',
@@ -65,9 +65,7 @@ test.describe('usecase', () => {
     await page.getByTestId('clientCreate_addButton').click()
 
     await new Promise((resolve) => setTimeout(resolve, 200))
-    await expect(page.locator('.el-notification')).toContainText(
-      'has been added succesfully.',
-    )
+    await expect(page.locator('.el-notification')).toContainText('has been added succesfully.')
 
     await page.locator('.el-notification__closeBtn').click()
     await new Promise((resolve) => setTimeout(resolve, 200))

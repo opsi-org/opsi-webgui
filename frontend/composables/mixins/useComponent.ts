@@ -28,10 +28,7 @@ export function useNotification() {
   const notifications = ref<any[]>([])
   const clearAllNotification = ref<any>(null)
   let authStore: any = null
-  const formatMessage = (
-    message: any,
-    messageRef: string | undefined = undefined,
-  ) => {
+  const formatMessage = (message: any, messageRef: string | undefined = undefined) => {
     if (typeof message === 'object' && message !== null) {
       return h('pre', {
         ref: messageRef,
@@ -56,7 +53,7 @@ export function useNotification() {
     type: NotificationType,
     button: any,
     message: any,
-    messageRef: string | undefined,
+    messageRef: string | undefined
   ) => {
     const itemsInNotification = [formatMessage(message, messageRef)]
     if (button) {
@@ -72,8 +69,8 @@ export function useNotification() {
               cursor: 'pointer',
             },
           },
-          button.label,
-        ),
+          button.label
+        )
       )
     }
     const notificationViewItems = h('div', {}, itemsInNotification)
@@ -86,7 +83,7 @@ export function useNotification() {
     autoHideDuration: number,
     title: string,
     showClose = true,
-    onClose: (() => void) | undefined,
+    onClose: (() => void) | undefined
   ) => {
     const notificationInstance = ElNotification[instanceType]({
       title,
@@ -95,9 +92,7 @@ export function useNotification() {
       showClose,
       duration: autoHideDuration,
       onClose: () => {
-        notifications.value = notifications.value.filter(
-          (n: any) => n !== notificationInstance,
-        )
+        notifications.value = notifications.value.filter((n: any) => n !== notificationInstance)
         if (onClose) onClose()
         if (notifications.value.length <= 3 && clearAllNotification.value) {
           clearAllNotification.value.close()
@@ -150,7 +145,7 @@ export function useNotification() {
         type,
         buttonObject,
         message,
-        messageRef,
+        messageRef
       )
 
       const autoHideDuration = ['success', 'info', 'warning'].includes(type)
@@ -168,7 +163,7 @@ export function useNotification() {
         autoHideDuration,
         title ?? type,
         showClose,
-        onClose,
+        onClose
       )
 
       notifications.value.push(notificationInstance.value)
@@ -187,7 +182,7 @@ export function useNotification() {
                 }
               },
             },
-            'Clear All Notifications',
+            'Clear All Notifications'
           ),
           duration: 0,
           showClose: true,
@@ -231,22 +226,14 @@ export function useNotification() {
         notificationMessageItems.value.push(
           h('div', [
             h(messageRow.tagTitle || 'div', {}, messageRow.title),
-            h(
-              messageRow.tag || 'div',
-              { class: messageRow.class },
-              messageRow.msg,
-            ),
-          ]),
+            h(messageRow.tag || 'div', { class: messageRow.class }, messageRow.msg),
+          ])
         )
       }
 
       notificationInstance.value = ElNotification({
         title,
-        message: h(
-          'div',
-          { class: wrapperClass },
-          notificationMessageItems.value,
-        ),
+        message: h('div', { class: wrapperClass }, notificationMessageItems.value),
         showClose: showClose,
         duration: duration || 0,
         onClose: onClose,
@@ -293,15 +280,12 @@ export const useScrollListener = (
   refComponent: Ref<HTMLElement | undefined>,
   handleScroll = (...args: any[]) => {
     console.warn('scroll listener not implemented', args)
-  },
+  }
 ) => {
   let resizeObserver: any = null
   onMounted(() => {
     if (refComponent.value == undefined) {
-      console.error(
-        'mount. component for scroll listener undefined',
-        handleScroll,
-      )
+      console.error('mount. component for scroll listener undefined', handleScroll)
       return
     }
 
@@ -335,10 +319,7 @@ export const useSynchronization = () => {
       })
       // this.setCookie('sorting_' + id, JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc }), { expires: 365 })
     }
-    if (
-      fromSort.sortDesc !== undefined &&
-      toSort.sortDesc !== fromSort.sortDesc
-    ) {
+    if (fromSort.sortDesc !== undefined && toSort.sortDesc !== fromSort.sortDesc) {
       toSort.sortDesc = fromSort.sortDesc
       sortingCookie.value = JSON.stringify({
         sortBy: toSort.sortBy,

@@ -25,9 +25,7 @@ License: AGPL-3.0
 </template>
 <script setup lang="ts">
   const route = useRoute()
-  const path = computed(() =>
-    route.path.split('/').filter((p: string) => p !== ''),
-  )
+  const path = computed(() => route.path.split('/').filter((p: string) => p !== ''))
 
   // const width = computed(()=> {
   //   return '50%'

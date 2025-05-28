@@ -25,10 +25,7 @@ export const useUtils = () => {
   return { addOrRemoveListItem, isEqual }
 }
 export const useUtilsEvents = () => {
-  function debounce(
-    fn: (...args: any[]) => void,
-    wait: number,
-  ): (...args: any[]) => void {
+  function debounce(fn: (...args: any[]) => void, wait: number): (...args: any[]) => void {
     let timer: any
     return function (...args: any[]) {
       if (timer) {

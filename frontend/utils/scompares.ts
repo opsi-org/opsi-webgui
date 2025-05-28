@@ -22,13 +22,7 @@ export function objectEqual(aOrig: any, bOrig: any): boolean {
   }
   for (const key of keys1) {
     if (!Object.hasOwn(obj2, key) || obj1[key] !== obj2[key]) {
-      console.warn(
-        'objectEqual: ',
-        key,
-        'obj1[key] !== obj2[key]',
-        obj1[key],
-        obj2[key],
-      )
+      console.warn('objectEqual: ', key, 'obj1[key] !== obj2[key]', obj1[key], obj2[key])
       return false
     }
   }

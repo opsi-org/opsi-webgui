@@ -45,7 +45,7 @@ export const useCookies = () => {
   function includesCookie(
     key: string,
     value: string | number | boolean,
-    defaultResult: boolean,
+    defaultResult: boolean
   ): any {
     const v: Array<any> = (useCookie(key) as Ref).value
     if (v === undefined || v === null) {

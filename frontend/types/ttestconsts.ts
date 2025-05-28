@@ -23,14 +23,7 @@ export const argTypeBoolFalse = {
   defaultValue: false,
   control: { type: 'boolean' },
 }
-export const variants = [
-  'primary',
-  'secondary',
-  'danger',
-  'warning',
-  'success',
-  'transparent',
-]
+export const variants = ['primary', 'secondary', 'danger', 'warning', 'success', 'transparent']
 export const argTypeVariants = {
   defaultValue: 'primary',
   control: {

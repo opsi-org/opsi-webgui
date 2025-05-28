@@ -16,7 +16,7 @@ export const useBuildingConfigTreeFlat = () => {
 
   function buildTree(
     input: T_HostParameter,
-    maxDepth: number = Infinity,
+    maxDepth: number = Infinity
   ): { root: TreeNode; general: T_HostParameterEntry[] } {
     const root: TreeNode = { children: new Map(), entries: [] }
     const general: T_HostParameterEntry[] = input['general'] || []
@@ -44,7 +44,7 @@ export const useBuildingConfigTreeFlat = () => {
     prefix: string = '',
     minEntries: number = 2,
     output: T_HostParameter = {},
-    parentEntries: T_HostParameterEntry[] = [],
+    parentEntries: T_HostParameterEntry[] = []
   ): void {
     const currentEntries = [...node.entries]
 
@@ -65,32 +65,24 @@ export const useBuildingConfigTreeFlat = () => {
       for (let i = 0; i < possiblePrefixes0.length; i++) {
         // testPrefix is this item + all previous
         const testPrefix = possiblePrefixes0.slice(0, i + 1).join('.')
-        if (
-          currentEntries.every((entry) => entry.configId.startsWith(testPrefix))
-        ) {
+        if (currentEntries.every((entry) => entry.configId.startsWith(testPrefix))) {
           lastWorkedPrefix = testPrefix
         } else {
           break
         }
       }
       const currentPrefix = lastWorkedPrefix
-      output[currentPrefix] = currentEntries.sort((a, b) =>
-        a.configId.localeCompare(b.configId),
-      )
+      output[currentPrefix] = currentEntries.sort((a, b) => a.configId.localeCompare(b.configId))
     } else {
       if (currentEntries.length > 0)
-        parentEntries.push(
-          ...currentEntries.sort((a, b) =>
-            a.configId.localeCompare(b.configId),
-          ),
-        )
+        parentEntries.push(...currentEntries.sort((a, b) => a.configId.localeCompare(b.configId)))
     }
   }
 
   function restructureData(
     input: T_HostParameter,
     minEntries: number = 3,
-    maxDepth: number = 2, // 2 is the default, so user.{adminuser}. is grouped and not splitted
+    maxDepth: number = 2 // 2 is the default, so user.{adminuser}. is grouped and not splitted
   ): T_HostParameter {
     const { root, general } = buildTree(input, maxDepth)
     const output: T_HostParameter = {}
@@ -103,9 +95,7 @@ export const useBuildingConfigTreeFlat = () => {
     }
 
     const entries = Object.entries(output)
-    entries.sort((a, b) =>
-      a[0] == 'general' || b[0] == 'general' ? -1 : a[0].localeCompare(b[0]),
-    )
+    entries.sort((a, b) => (a[0] == 'general' || b[0] == 'general' ? -1 : a[0].localeCompare(b[0])))
     const sortedoutput = Object.fromEntries(entries)
     return sortedoutput
   }

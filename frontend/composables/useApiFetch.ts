@@ -64,10 +64,9 @@ async function useAPI2<T>(
   body: FormData | object | undefined = undefined,
   opts: UseFetchOptions<T> = {},
   prePath: string | undefined = undefined,
-  synced: boolean = true, // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
+  synced: boolean = true // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
 ): Promise<ApiResult<T>> {
-  const { baseUrl, basePath, callresponse, callerror, pendingState } =
-    define_vars<T>(prePath)
+  const { baseUrl, basePath, callresponse, callerror, pendingState } = define_vars<T>(prePath)
   let fullURL = baseUrl + basePath + url
   let callheaders: Headers | undefined = undefined
   let status: any = null
@@ -90,10 +89,8 @@ async function useAPI2<T>(
         storeAuth().setSession()
       }
       if (method !== 'GET' && body != undefined && url !== '/auth/login') {
-        if (headers['Content-Type'] === undefined)
-          headers['Content-Type'] = 'application/json'
-        if (headers['Accept'] === undefined)
-          headers['Accept'] = 'application/json, text/plain, */*'
+        if (headers['Content-Type'] === undefined) headers['Content-Type'] = 'application/json'
+        if (headers['Accept'] === undefined) headers['Accept'] = 'application/json, text/plain, */*'
 
         fullBody = JSON.stringify(body)
       }
@@ -173,19 +170,10 @@ async function useAPI2<T>(
   }
 }
 
-function _checkUsername(
-  headers: Headers | undefined,
-  fullURL: string,
-  status: number,
-) {
+function _checkUsername(headers: Headers | undefined, fullURL: string, status: number) {
   const callheaders = headers as Headers
   if (headers === undefined) {
-    console.warn(
-      'no headers in request response. url: ',
-      fullURL,
-      headers,
-      status,
-    )
+    console.warn('no headers in request response. url: ', fullURL, headers, status)
   } else {
     const headerusername = headers.get(opsiheaders.xopsiuserid)
     if (!headerusername) {
@@ -237,7 +225,7 @@ async function useApiGET<ResultDataType>(
   url: string,
   prePath: string | undefined = undefined,
   opts: UseFetchOptions<any> = {},
-  synced: boolean = true,
+  synced: boolean = true
 ) {
   return useAPI2<ResultDataType>('GET', url, undefined, opts, prePath, synced)
 }
@@ -247,7 +235,7 @@ async function useApiGETBody<ResultDataType>(
   params: any = undefined,
   prePath: string | undefined = undefined,
   opts: UseFetchOptions<any> = {},
-  synced: boolean = true,
+  synced: boolean = true
 ) {
   return useAPI2<ResultDataType>('GET', url, params, opts, prePath, synced)
 }
@@ -256,7 +244,7 @@ async function useApiPOST<ResultDataType>(
   body: any = undefined,
   prePath: string | undefined = undefined,
   opts: UseFetchOptions<any> = {},
-  synced: boolean = true,
+  synced: boolean = true
 ) {
   return useAPI2<ResultDataType>('POST', url, body, opts, prePath, synced)
 }
@@ -270,7 +258,7 @@ async function useApiDELETE<ResultDataType>(
   body: any = undefined,
   prePath: string | undefined = undefined,
   opts: UseFetchOptions<any> = {},
-  synced: boolean = true,
+  synced: boolean = true
 ) {
   return useAPI2<ResultDataType>('DELETE', url, body, opts, prePath, synced)
 }
@@ -280,7 +268,7 @@ async function useApiPUT<ResultDataType>(
   body: any = undefined,
   prePath: string | undefined = undefined,
   opts: UseFetchOptions<any> = {},
-  synced: boolean = true,
+  synced: boolean = true
 ) {
   return useAPI2<ResultDataType>('PUT', url, body, opts, prePath, synced)
 }
@@ -292,14 +280,7 @@ function useFullUrlPath(path: string, prepath: string | undefined) {
   return baseUrl + basePath + path
 }
 
-export {
-  useApiGET,
-  useApiGETBody,
-  useApiPOST,
-  useApiDELETE,
-  useApiPUT,
-  useFullUrlPath,
-}
+export { useApiGET, useApiGETBody, useApiPOST, useApiDELETE, useApiPUT, useFullUrlPath }
 
 // export function useAPI<T> (url: string, opts: UseFetchOptions<T> = {}, prePath: string|undefined = undefined) {
 //   const config = useRuntimeConfig()

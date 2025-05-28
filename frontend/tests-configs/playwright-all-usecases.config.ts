@@ -14,10 +14,7 @@ const config = {
   testDir: '../tests/usecase/', // /workspace/opsiweb
   // testDir: '../../../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.*(usecase).js',
-  reporter: [
-    ['list'],
-    ['junit', { outputFile: 'test-result-pw-reporter-usecase.xml' }],
-  ],
+  reporter: [['list'], ['junit', { outputFile: 'test-result-pw-reporter-usecase.xml' }]],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
   expect: generalconfig.expect,

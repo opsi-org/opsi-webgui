@@ -58,10 +58,7 @@ const _data_sortColumns: tSort = {
 const _data_settings = {
   // e.g. for border changing
   servers: {} as Record<string, any>,
-  clients: { statisticIcons: true, reachableAllClients: false } as Record<
-    string,
-    any
-  >,
+  clients: { statisticIcons: true, reachableAllClients: false } as Record<string, any>,
   products: {} as Record<string, any>,
 }
 // const deepCp = (obj:any) => JSON.parse(JSON.stringify(obj))

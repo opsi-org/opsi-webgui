@@ -14,10 +14,7 @@ const config = {
   testDir: '../../components/',
   testMatch: '*.test.component.js',
   fullyParallel: true,
-  reporter: [
-    ['list'],
-    ['junit', { outputFile: 'test-result-pw-reporter-component.xml' }],
-  ],
+  reporter: [['list'], ['junit', { outputFile: 'test-result-pw-reporter-component.xml' }]],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
   expect: generalconfig.expect,

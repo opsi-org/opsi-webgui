@@ -15,10 +15,7 @@ const config: any = {
   // testDir: '../../../', // /workspace/opsiweb/uib-components
   testMatch: '*',
   // testMatch: '*.test.accessibility.js',
-  reporter: [
-    ['list'],
-    ['junit', { outputFile: 'test-result-pw-reporter-accessibility.xml' }],
-  ],
+  reporter: [['list'], ['junit', { outputFile: 'test-result-pw-reporter-accessibility.xml' }]],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
   expect: generalconfig.expect,

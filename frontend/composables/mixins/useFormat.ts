@@ -36,19 +36,14 @@ export const useFormat = () => {
         date.getDate(),
         time.split(':')[0],
         time.split(':')[1],
-        time.split(':')[2],
+        time.split(':')[2]
       )
       const month = d.getMonth() + 1
       const day = d.getDate()
       const hour = d.getHours()
       const minute = d.getMinutes()
       const second = d.getSeconds()
-      let datestring =
-        d.getFullYear() +
-        '-' +
-        ('0' + month).slice(-2) +
-        '-' +
-        ('0' + day).slice(-2)
+      let datestring = d.getFullYear() + '-' + ('0' + month).slice(-2) + '-' + ('0' + day).slice(-2)
       datestring +=
         ' ' +
         ('0' + hour).slice(-2) +

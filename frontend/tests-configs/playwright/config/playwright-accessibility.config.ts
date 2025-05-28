@@ -14,10 +14,7 @@ const config = {
   testDir: '../../tests/accessibility/',
   testMatch: '*.test.*(accessibility).js',
 
-  reporter: [
-    ['list'],
-    ['junit', { outputFile: 'test-result-pw-reporter-accessibility.xml' }],
-  ],
+  reporter: [['list'], ['junit', { outputFile: 'test-result-pw-reporter-accessibility.xml' }]],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
   expect: generalconfig.expect,

@@ -12,7 +12,7 @@ export function mapValues2Value(
   values: Array<string>,
   objects: Array<string>,
   objectsorigin?: Array<string>,
-  defaultvalue?: string,
+  defaultvalue?: string
 ) {
   let defvalue = 'none'
   if (defaultvalue) {
@@ -53,7 +53,7 @@ export function mapValues2Objects(
   values: Array<string>,
   objects: Array<string>,
   objectsorigin: Array<string>,
-  defaultValue: string,
+  defaultValue: string
 ) {
   if (objects === undefined || objects === null) {
     return {}

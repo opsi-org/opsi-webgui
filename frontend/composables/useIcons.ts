@@ -65,14 +65,12 @@ export const useIcons = () => {
     deployclientagent: 'material-symbols-light:real-estate-agent-outline-sharp',
     notify: 'bi:envelope',
     reboot: 'bi:bootstrap-reboot',
-    productInstallationStatusInstalled:
-      'material-symbols-light:install-desktop-rounded',
+    productInstallationStatusInstalled: 'material-symbols-light:install-desktop-rounded',
     productInstallationStatusUnknown: 'bi:question',
     productActionResult: 'bi:hourglass-bottom',
     productsFailedActionResult: 'bi:exclamation',
     productActionResultSuccessful: 'bi:check',
-    productsOutdatedLocal:
-      'material-symbols-light:deployed-code-history-outline-rounded',
+    productsOutdatedLocal: 'material-symbols-light:deployed-code-history-outline-rounded',
     productsOutdatedNet: 'material-symbols-light:deployed-code-history-rounded',
     sort: 'bi:arrows-vertical',
     sortAsc: 'bi:sort-up',

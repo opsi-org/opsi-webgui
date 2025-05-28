@@ -14,7 +14,7 @@ export const pageLogin = async (
   mockFn: (() => void) | undefined = undefined,
   checkFn: ((page: Page) => Promise<void>) | undefined = undefined,
   username = 'adminuser',
-  password = 'adminuser',
+  password = 'adminuser'
 ) => {
   await page.unroute('**/webgui/api/**')
   await apiMock(page, '**/webgui/api/**', {})
@@ -23,18 +23,14 @@ export const pageLogin = async (
     result: 'testconfigserver.uib.local',
   })
   await apiMock(page, '**/api/auth/login', { result: 'Login success' })
-  await apiMock(
-    page,
-    '**/api/auth/logout',
-    { result: 'logout success' },
-    'POST',
-  )
+  await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
   await page.goto('./login')
   if (mockFn) mockFn()
 
-  await expect(
-    page.locator('[data-testid="login_configserver"]'),
-  ).toHaveAttribute('placeholder', 'testconfigserver.uib.local')
+  await expect(page.locator('[data-testid="login_configserver"]')).toHaveAttribute(
+    'placeholder',
+    'testconfigserver.uib.local'
+  )
   await page.fill('[data-testid="login_username"]', username)
   await page.press('[data-testid="login_username"]', 'Tab')
   await page.fill('[data-testid="login_password"]', password)

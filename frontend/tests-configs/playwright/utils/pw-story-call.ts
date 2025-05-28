@@ -23,7 +23,7 @@ export const apiMock = (page: Page, apiPath: string, response: any) =>
       },
       contentType: 'application/json',
       body: JSON.stringify(response),
-    }),
+    })
   )
 
 // export const callStoryIdMock = async (page: Page, fullId: string, id: string, path: string, result: any) => {
@@ -35,7 +35,7 @@ export const callHistoreVariantById = async (
   page: Page,
   folder: string,
   filename: string,
-  variantId: number | string,
+  variantId: number | string
 ) => {
   const x = `https://localhost:6006/__sandbox.html?storyId=components-${folder}-${filename}&variantId=components-${folder}-${filename}-${variantId}`
   await page.goto(x)
@@ -44,19 +44,13 @@ export const callHistoreVariantByName = async (
   page: Page,
   folder: string,
   filename: string,
-  variantName: string = 'default',
+  variantName: string = 'default'
 ) => {
   const x = `https://localhost:6006/__sandbox.html?storyId=components-${folder}-${filename}&variantId=_${variantName}`
   await page.goto(x)
 }
-export const callHistoireStory = async (
-  page: Page,
-  folder: string,
-  filename: string,
-) =>
-  await page.goto(
-    `https://localhost:6006/story/components-${folder}-${filename}`,
-  )
+export const callHistoireStory = async (page: Page, folder: string, filename: string) =>
+  await page.goto(`https://localhost:6006/story/components-${folder}-${filename}`)
 
 const _cssClassVariantName = '.histoire-story-viewer .htw-truncate'
 const _cssClassVariantContent = '.histoire-generic-render-story > div'
@@ -66,19 +60,15 @@ export const simpleScreenshotTest = async (
   filename: string,
   screenshotPrefix: string,
   dataTestid: string | undefined = undefined,
-  afterDatatestid:
-    | undefined
-    | ((page: Page, element: any) => Promise<any>) = undefined,
+  afterDatatestid: undefined | ((page: Page, element: any) => Promise<any>) = undefined,
   options: any = {
     cssClassVariantName: _cssClassVariantName,
     cssClassVariantContent: _cssClassVariantContent,
-  },
+  }
 ) => {
   // First we find out how many and which variants are available
   await callHistoireStory(page, componentFolder, filename)
-  await page.waitForSelector(
-    options.cssClassVariantName || _cssClassVariantName,
-  )
+  await page.waitForSelector(options.cssClassVariantName || _cssClassVariantName)
   const variantNames = await page
     .locator(options.cssClassVariantName || _cssClassVariantName)
     .allInnerTexts()
@@ -94,19 +84,13 @@ export const simpleScreenshotTest = async (
 
       // open the variant in new tab (full paged)
       if (variantName === 'default') {
-        await callHistoreVariantByName(
-          page,
-          componentFolder,
-          filename,
-          variantName,
-        )
+        await callHistoreVariantByName(page, componentFolder, filename, variantName)
       } else {
         await callHistoreVariantById(page, componentFolder, filename, i)
       }
 
       // Find the main content of the variant
-      const storySelector =
-        options.cssClassVariantContent || _cssClassVariantContent
+      const storySelector = options.cssClassVariantContent || _cssClassVariantContent
       await new Promise((resolve) => setTimeout(resolve, 2000))
       await page.waitForSelector(storySelector)
       let element = await page.locator(storySelector)
@@ -123,7 +107,7 @@ export const simpleScreenshotTest = async (
 
       // Take the screenshot
       await expect(await element.screenshot()).toMatchSnapshot(
-        screenshotPrefix + '-' + variantName + '-' + theme + '.png',
+        screenshotPrefix + '-' + variantName + '-' + theme + '.png'
       )
     }
   }

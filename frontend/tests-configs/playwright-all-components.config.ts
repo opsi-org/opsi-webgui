@@ -16,10 +16,7 @@ const config = {
   testDir: '../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.component.*(js|ts)',
   fullyParallel: true,
-  reporter: [
-    ['list'],
-    ['junit', { outputFile: 'test-result-pw-reporter-component.xml' }],
-  ],
+  reporter: [['list'], ['junit', { outputFile: 'test-result-pw-reporter-component.xml' }]],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
   expect: generalconfig.expect,
