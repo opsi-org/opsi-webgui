@@ -6,7 +6,6 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <!-- :id="'sselect-' + currentId" -->
   <div id="config-pre-tabs">
     <SelectSHosts v-if="!props.isChild" :id="currentId" :type="type" @change="setId" />
   </div>
