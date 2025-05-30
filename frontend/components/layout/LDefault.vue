@@ -128,13 +128,7 @@ License: AGPL-3.0
       toggleSide('left')
     }
   })
-  // const bgQuickPanel = computed(() => {
-  //   return isDarkMode.value
-  //     ? mq.isMobile.value
-  //       ? 'bg-opsi-gray'
-  //       : 'bg-opsi-base-dark-background'
-  //     : 'bg-opsi-base-light-background'
-  // })
+
   const isDarkMode = computed({
     get: () => !isLight.value,
     // get: () => settings.colormode === 'dark',

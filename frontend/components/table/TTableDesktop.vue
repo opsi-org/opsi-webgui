@@ -155,15 +155,6 @@ License: AGPL-3.0
         :border="storeTSettings.otherSettings[props.tableId].border"
         :stripe="storeTSettings.otherSettings[props.tableId].stripe"
       >
-        <!--  row index -->
-        <!-- <el-table-column label="#" align="right" class-name="column-index">
-          <template #default="{ $index }">
-            <span class="!text-xs !p-[2px]">{{
-              $index + 1 + (currentPage - 1) * pageSize
-            }}</span>
-          </template>
-        </el-table-column> -->
-        <!-- columns -->
         <template v-for="column in tableColumn">
           <el-table-column
             v-if="column.visible || column.alwaysVisible"
@@ -247,7 +238,6 @@ License: AGPL-3.0
   import { vContextmenu } from '../../composables/mixins/v-contextmenu'
   import { useDynamicHeightTable } from '~/composables/mixins/useDynamicHeightTable'
   import { useTableHelper } from '~/composables/mixins/useTableHelper'
-  // import { useZoomLevel } from '@vueuse/electron'
 
   const $t = useI18n().t
   const icons = useIcons()
@@ -257,7 +247,6 @@ License: AGPL-3.0
     tableId: { type: String, required: true },
     tableColumn: { type: Array<any>, required: true },
     fetch: { type: Function, required: true },
-    // height: { type: String, default: '80vh', required: false },
     sortBy: { type: String, default: undefined, required: false },
     sortDesc: { type: Boolean, default: false, required: false },
     actionClone: { type: Function, default: undefined, required: false },
@@ -310,9 +299,6 @@ License: AGPL-3.0
     handleSortChange,
     handlePagination,
     onRowClick,
-    // handleConfigClick,
-    // handleLogClick,
-    // handleCloneClick,
     handleClickOutside,
     fetchDataWrapper,
 

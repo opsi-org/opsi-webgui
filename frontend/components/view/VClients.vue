@@ -45,10 +45,8 @@ License: AGPL-3.0
   import RadioButton from 'primevue/radiobutton'
   import Button from 'primevue/button'
   import Badge from 'primevue/badge'
-  // import TTooltip from '../tooltip/TTooltip.vue'
   import IIcon from '../icon/IIcon.vue'
   import ILoading from '../icon/ILoading.vue'
-  // import { Popover } from 'primevue'
 
   type TClientReach = Record<string, boolean | undefined>
   interface t_param_reachable {
@@ -80,9 +78,6 @@ License: AGPL-3.0
   const statisticsWidth = '30px'
   const statisticsWidthDyn = computed(() => {
     return ''
-    // return storeTSettings.otherSettings['clients'].statisticIcons
-    //   ? 'max-w-14'
-    //   : 'max-w-9'
   })
   const tableColumn = ref([
     {
@@ -91,11 +86,9 @@ License: AGPL-3.0
       sortable: 'custom',
       type: 'selection',
       fixed: 'true',
-      // icon: icons.checkBox,
       visible: true, // storeTSettings.clientsColumns.includes('selected'),
       alwaysVisible: true,
       className: props.isMobile ? 'max-w-10' : '!max-w-7 !min-w-7 !w-7',
-      // maxWidth: props.isMobile ? '35px' : '60px',
       align: 'center',
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
@@ -300,7 +293,6 @@ License: AGPL-3.0
       sortable: false,
       visible: storeTSettings.clientsColumns.includes('reachable'),
       width: '60px',
-      // {$t('table.fields.reachable')}
       headerCellRenderer: () => {
         const reachableMode = storeTSettings.otherSettings.clients.reachableAllClients
           ? $t('button.reachables.all')
@@ -360,7 +352,6 @@ License: AGPL-3.0
   watch(
     () => storeTSettings.otherSettings['clients'].statisticIcons,
     () => {
-      // clientsRef.value?.refetch()
       for (const column of tableColumn.value) {
         if (column.classNameDyn !== undefined) {
           column.classNameDyn = statisticsWidthDyn.value
@@ -549,21 +540,3 @@ License: AGPL-3.0
     }
   }
 </script>
-<style scoped>
-  /* :deep(.parent-statistics) {
-    border-left: 2px solid var(--el-border-color) !important;
-  }
-  :deep(.parent-statistics:not(:has(~ .parent-statistics))) {
-    border-right: 2px solid var(--el-border-color) !important;
-  } */
-
-  /* :deep(td .cell),
-  :deep(th .cell) {
-    min-width: min-content;
-    max-width: max-content;
-    padding: 1px;
-  } */
-  /* :deep(.parent-statistics),
-  :deep(.parent-statistics .cell) {
-  } */
-</style>

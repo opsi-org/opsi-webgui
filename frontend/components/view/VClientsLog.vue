@@ -110,8 +110,6 @@ License: AGPL-3.0
       </el-form-item>
     </el-form>
 
-    <!-- PScrollPanel also allows to scroll horizontally, but is very slow...-->
-    <!-- <p-scroll-panel :style="`width: 100%; height: ${maxVisibleHeight}px`"> -->
     <div
       :class="`overflow-scroll`"
       :style="`height: ${maxVisibleHeight}px; max-height: ${maxVisibleHeight}px`"
@@ -123,7 +121,6 @@ License: AGPL-3.0
               logrow: true,
               hidden: !isLoglevelSmaller(log),
               [getColorBasedOnLoglevel(log)]: true,
-              // 'overflow-x-auto': 'auto',
               'flex max-w-fit text-sm w-full ': true,
             }"
           >
@@ -262,12 +259,7 @@ License: AGPL-3.0
     async () => {
       // wait 1 sec for rendering
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      if (
-        autoscroll.value &&
-        logConfig.logmarkerNr === -1
-        // (logConfig.logmarkerNr === -1 || !logMarkerForThisSetting.value)
-      ) {
-        // scrollToLastItem()
+      if (autoscroll.value && logConfig.logmarkerNr === -1) {
         const items = document.querySelectorAll('.logrow:not(.hidden)')
         items[items.length - 1]?.scrollIntoView({
           behavior: 'smooth',
@@ -346,7 +338,6 @@ License: AGPL-3.0
       return
     }
     logConfig.setLogmarker(i, logrequest.selectedClient)
-    // scrollToAndHighlightRow(i, 1000)
   }
   function scrollToMarker() {
     if (logConfig.logmarkerNr === -1) {
@@ -417,8 +408,6 @@ License: AGPL-3.0
 
   .highlight {
     background-color: var(--el-color-primary); /* Hervorhebungsfarbe */
-    /* background-color: none; Hervorhebungsfarbe */
-    /*transition: background-color 0.2s linear; /* Weicher Übergang */
     -webkit-transition: background-color 1000ms ease-in;
     -moz-transition: background-color 1000ms ease-in;
     -o-transition: background-color 1000ms ease-in;

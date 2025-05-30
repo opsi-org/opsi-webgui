@@ -34,8 +34,6 @@ License: AGPL-3.0
     @check="handleClickCheckbox"
     @node-click="handleClickText"
   >
-    <!-- :class="multiSelection ? 'isMultiSelect' : 'isSingleSelect'" -->
-    <!-- :show-checkbox="selectionStore.multiSelection" -->
     <!-- default-expand-all -->
     <template #default="{ data }">
       <p-radio-button
@@ -48,8 +46,6 @@ License: AGPL-3.0
         :input-id="'rb-item-' + data.id"
         v-model="selectedItem"
       />
-      <!--
-        @change="handleClickCheckbox(data, $event)" -->
       <span :for="'rb-item-' + data.id" class="ml-1"> {{ data.text }} </span>
     </template>
   </el-tree>
@@ -230,7 +226,6 @@ License: AGPL-3.0
       return
     }
     handleClickCheckbox(node, obj)
-    // _getSelectionFunction()(_getSelection().value)
   }
   function handleClickCheckbox(node: TreeNodeData, obj: any) {
     if (node.type == 'ObjectToGroup') {
@@ -244,12 +239,9 @@ License: AGPL-3.0
       handleSelection(node, obj, multiSelection.value)
       isLoadingSelection.value = false
     }
-    // setSortColumn(tabletype: string, column: string, isDesc: boolean) {
     if (props.grouptype == GroupTree_CLIENTGROUP)
       useCookie.setSortColumn('clients', 'selected', true)
     else useCookie.setSortColumn('products', 'selected', true)
-
-    // _getSelectionFunction()(_getSelection().value)
   }
   function handleSelection(node: TreeNodeData, obj: any, multiSelect: boolean) {
     selectNode(node, obj, _getSelection(), _getSelectionFunction(), multiSelect)
@@ -288,7 +280,6 @@ License: AGPL-3.0
       node.children?.forEach((child: TreeNodeData) => {
         selectNode(child, obj, selection, setSelectionFunction)
       })
-      // setSelectionFunction(selection.value)
     }
   }
   function _getSelectionFunction() {
@@ -300,6 +291,7 @@ License: AGPL-3.0
     return props.grouptype == GroupTree_CLIENTGROUP ? selectionClients : selectionProducts
   }
 </script>
+
 <style lang="css" scoped>
   :deep(.el-tree-node__label) {
     margin-left: 5px;
@@ -311,12 +303,6 @@ License: AGPL-3.0
   :deep(.el-tree-node.isLeaf .el-tree-node__expand-icon.is-leaf) {
     display: none !important;
   }
-
-  /* .isSingleSelect
-    :deep(.el-tree-node.isGroup > .el-tree-node__content > .el-checkbox) {
-    display: none !important;
-  } */
-
   .isSingleSelect :deep(.el-tree-node.isLeaf > .el-tree-node__content > .el-checkbox) {
     display: none !important;
   }

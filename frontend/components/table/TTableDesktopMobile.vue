@@ -111,7 +111,6 @@ License: AGPL-3.0
       `"
       @scroll="debouncedHandleScroll"
     >
-      <!-- class="overflow-y-auto !min-h-[700px] border-sky-500 border-2" -->
       <div
         v-if="totalItems > 0 && !isFirstPage"
         class="extra-column"
@@ -129,8 +128,6 @@ License: AGPL-3.0
         :class="`!min-h-[${tableHeightMin}px]`"
         :height="tableHeight || availableTableHeight"
       >
-        <!-- :style="`min-height: ${tableHeightMin}px;`" -->
-        <!-- :class="`!min-h-[900px] `" -->
         <!-- selection -->
         <el-table-column
           :key="'selected'"
@@ -149,13 +146,6 @@ License: AGPL-3.0
             />
           </template>
         </el-table-column>
-
-        <!--  row index -->
-        <!-- <el-table-column width="50" label="#">
-          <template #default="{ $index }">
-            <span>{{ $index + 1 + (currentPage - 1) * pageSize }}</span>
-          </template>
-        </el-table-column> -->
 
         <!-- rowId -->
         <el-table-column
@@ -228,7 +218,6 @@ License: AGPL-3.0
     <!-- TABLE FOOTER -->
     <div class="flex justify-end mt-2" :id="'tableFooter-' + tableId">
       <div class="">
-        <!-- <br /> -->
         <el-pagination
           @current-change="handlePagination"
           @size-change="() => {}"
@@ -239,9 +228,6 @@ License: AGPL-3.0
           layout="total, sizes, prev, pager, next, jumper"
           size="small"
         />
-        <!-- <el-text class="text-right">{{
-          $t('label.total', { count: totalItems })
-        }}</el-text> -->
       </div>
     </div>
 
@@ -263,7 +249,6 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="tsx">
-  //   import { vContextmenu } from '../../composables/mixins/v-contextmenu'
   import { useDynamicHeightTable } from '~/composables/mixins/useDynamicHeightTable'
   import { useTableHelper } from '~/composables/mixins/useTableHelper'
 
@@ -275,7 +260,6 @@ License: AGPL-3.0
     tableId: { type: String, required: true },
     tableColumn: { type: Array<any>, required: true },
     fetch: { type: Function, required: true },
-    // height: { type: String, default: '80vh', required: false },
     sortBy: { type: String, default: undefined, required: false },
     sortDesc: { type: Boolean, default: false, required: false },
     actionClone: { type: Function, default: undefined, required: false },
@@ -318,15 +302,12 @@ License: AGPL-3.0
     // we reuse this functions and refs also in TTableDesktop
     isLoading,
     filterQuery,
-    // filterBy,
     sortBy,
     sortDesc,
     contextMenuVisible,
     contextMenuStyle,
     contextMenuRow,
-
     debouncedHandleScroll,
-    // showContextMenu,
     handleCommand,
     toggleSortOrder,
     applySort,
@@ -335,9 +316,6 @@ License: AGPL-3.0
     handleSortChange,
     handlePagination,
     onRowClick,
-    // handleConfigClick,
-    // handleLogClick,
-    // handleCloneClick,
     handleClickOutside,
     fetchDataWrapper,
 

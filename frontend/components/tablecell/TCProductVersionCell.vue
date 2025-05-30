@@ -27,7 +27,6 @@ License: AGPL-3.0
         class="details client-outdated"
         content="client-outdated"
       />
-      <!-- @click="$emit('details', row, tooltiptext)" -->
     </template>
     <template #tooltip>
       <div v-for="(hosts, server, index) in tooltiptext" :key="server">
@@ -85,7 +84,6 @@ License: AGPL-3.0
   const icons = useIcons()
   const { t_fixed } = useStrings()
   const { selectionDepots } = storeToRefs(storeSelections())
-  // const { selectionDepots, selectionClients } = storeToRefs(storeSelections())
 
   const props = defineProps({
     row: { type: Object as PropType<T_ProductRow>, required: true },
@@ -124,7 +122,6 @@ License: AGPL-3.0
     if (
       Object.keys(props.clients2depots).length <= 0 ||
       Object.keys(props.clients2depots).length !== props.selectedClients.length
-      // Object.keys(props.clients2depots).length !== selectionClients.value.length
     ) {
       return tt
     }
@@ -147,7 +144,6 @@ License: AGPL-3.0
     }
 
     return tt
-    // return 'tt'
   })
 
   if (Object.keys(tooltiptext.value).length == 1) {

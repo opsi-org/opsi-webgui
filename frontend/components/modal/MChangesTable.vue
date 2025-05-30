@@ -54,10 +54,6 @@ License: AGPL-3.0
         </div>
       </template>
     </el-table-column>
-    <!-- <el-table-column prop="remove" >
-      <template #default="scope">
-      </template>
-    </el-table-column> -->
   </el-table>
 
   <el-scrollbar class="max-h-96 overflow-scroll rounded-lg p-2 shadow-sm">
@@ -69,10 +65,8 @@ License: AGPL-3.0
   import type { IObjectString2Any } from '~/types/tgeneral'
   import { useI18n } from 'vue-i18n'
   import type { ChangeObj } from '~/types/tchanges'
-  // const { notifyError } = useNotification();
   const icons = useIcons()
   const { t: $t } = useI18n()
-  // const store = useStore();
   const changestable = ref()
 
   const modelValue = defineModel<Array<Record<string, any>>>()
@@ -102,51 +96,7 @@ License: AGPL-3.0
 
   function save(rowItem: ChangeObj, saveAll: boolean) {
     console.warn(rowItem, 'saveall ', saveAll)
-    // const change = rowItem
-    // let showalert: any = true
-    // if (saveAll) {
-    //   showalert = false
-    // }
-    // if (change.actionRequest) {
-    //   const data = {
-    //     clientIds: [change.clientId],
-    //     productIds: [change.productId],
-    //     actionRequest: change.actionRequest
-    //   }
-    //   await this.saveProdActionRequest(data, change, showalert)
-    // } else if (change.property) {
-    //   const propObj: any = {}
-    //   propObj[change.property] = change.propertyValue
-    //   let propertychanges = {}
-    //   if (change.clientId !== '') {
-    //     propertychanges = {
-    //       clientIds: [change.clientId],
-    //       properties: propObj
-    //     }
-    //   } else {
-    //     propertychanges = {
-    //       depotIds: [change.depotId],
-    //       properties: propObj
-    //     }
-    //   }
-    //   await this.saveProdProperties(change.productId, propertychanges, change, showalert)
-    // }
   }
-
-  //   async saveAll () {
-  //     const ref = (this.$refs.changesProductsAlert as any)
-  //     const changelist = this.changesProducts.filter(o => o.user === this.username)
-  //     const saveAll = true
-  //     for (const p in changelist) {
-  //       const change = changelist[p]
-  //       await this.save(change, saveAll)
-  //     }
-  //     if (this.errorsProducts.length !== 0) {
-  //       ref.alert(this.$t('message.error.title'), 'danger', this.errorsProducts)
-  //       this.clearErrorsProducts()
-  //     }
-  //   }
-  // }
 </script>
 
 <style scoped>
