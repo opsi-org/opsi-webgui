@@ -15,5 +15,4 @@ License: AGPL-3.0
 
   const type = computed(() => usePageHelper().path.value[0] as PropTypeServerClient)
   const id = computed(() => (useRoute().params.id as string) || undefined)
-  // const pagetype = computed(()=>useRoute().params.pagetype)
 </script>

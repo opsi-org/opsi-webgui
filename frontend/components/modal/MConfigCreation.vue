@@ -15,7 +15,6 @@ License: AGPL-3.0
     >
       <!-- Name -->
       <div class="flex flex-col gap-1 pb-2">
-        <!-- <div v-for="(v, k) in data" :key="k" class="flex flex-col gap-1 pb-2"> -->
         <div class=".k-name">
           <label for="name">{{ data.name.label }}</label>
           <PInputText
@@ -71,7 +70,6 @@ License: AGPL-3.0
           />
         </div>
       </div>
-      <!-- <pre>{{ data }} </pre> -->
 
       <div class="flex justify-end gap-2">
         <el-button @click="cancel">{{ $t('label.cancel') }}</el-button>

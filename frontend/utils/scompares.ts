@@ -5,6 +5,7 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
+
 export function objectEqual(aOrig: any, bOrig: any): boolean {
   if (aOrig === bOrig) {
     return true
@@ -27,9 +28,8 @@ export function objectEqual(aOrig: any, bOrig: any): boolean {
     }
   }
   return true
-  // return keys1.every(key =>
-  //     bOrig.hasOwnProperty(key) && aOrig[key] == bOrig[key]);
 }
+
 export function arrayEqual(aOrig: Array<any>, bOrig: Array<any>): boolean {
   if (bOrig == undefined && aOrig == undefined) return true
   if (bOrig == undefined || aOrig == undefined) return false
@@ -59,21 +59,21 @@ export function arrayEqual(aOrig: Array<any>, bOrig: Array<any>): boolean {
   }
 
   for (let i = 0; i < a.length; ++i) {
-    // !!!! error: Empty block statement (no-empty) !!!!
-    // if (a[i] == b[i]) {
-    // } else return false;
     if (a[i] != b[i]) {
       return false
     }
   }
   return true
 }
+
 export function isObject(obj: any) {
   return Object.prototype.toString.call(obj) === '[object Object]'
 }
+
 export function isArray(obj: any) {
   return Array.isArray(obj)
 }
+
 export default {
   arrayEqual,
   objectEqual,

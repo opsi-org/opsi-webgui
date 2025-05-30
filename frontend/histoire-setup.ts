@@ -15,15 +15,6 @@ import PrimeVue from 'primevue/config'
 import WrapperGlobal from './histoire/histoire-wrapper-mobile.vue'
 import en from './locale/opsi-webgui_en.json'
 import { createI18n } from 'vue-i18n'
-// function setupApp ({ app, story, variant }) {
-//   // Router mock
-//   app.use(createRouter({
-//     history: createMemoryHistory(),
-//     routes: [
-//       { path: '/', name: 'home', component: { render: () => null } },
-//     ],
-//   }))
-// }
 
 // https://github.com/histoire-dev/histoire/issues/721#issuecomment-2408077600
 // history and primevue css layer does not work correctly. currently the issue is opened, but has following worksaround

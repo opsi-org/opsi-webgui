@@ -5,32 +5,9 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
-// const wait = function (ms, s) {
-//   return new Promise(resolve => setTimeout(resolve, ms));
-// }
 
 import { expect, type Page } from '@playwright/test'
 
-export const apiMock = (page: Page, apiPath: string, response: any) =>
-  page.route(apiPath, (route) =>
-    route.fulfill({
-      status: 200,
-      headers: {
-        'access-control-allow-origin': 'https://localhost:8888',
-        'access-control-allow-credentials': 'true',
-        'access-control-allow-headers': '*',
-        'access-control-allow-methods': '*',
-      },
-      contentType: 'application/json',
-      body: JSON.stringify(response),
-    })
-  )
-
-// export const callStoryIdMock = async (page: Page, fullId: string, id: string, path: string, result: any) => {
-//   await this.callStoryId(page, fullId, id, path, result)
-//   await page.unroute(path)
-//   await apiMock(page, path, result)
-// }
 export const callHistoreVariantById = async (
   page: Page,
   folder: string,
@@ -40,6 +17,7 @@ export const callHistoreVariantById = async (
   const x = `https://localhost:6006/__sandbox.html?storyId=components-${folder}-${filename}&variantId=components-${folder}-${filename}-${variantId}`
   await page.goto(x)
 }
+
 export const callHistoreVariantByName = async (
   page: Page,
   folder: string,
@@ -49,11 +27,13 @@ export const callHistoreVariantByName = async (
   const x = `https://localhost:6006/__sandbox.html?storyId=components-${folder}-${filename}&variantId=_${variantName}`
   await page.goto(x)
 }
+
 export const callHistoireStory = async (page: Page, folder: string, filename: string) =>
   await page.goto(`https://localhost:6006/story/components-${folder}-${filename}`)
 
 const _cssClassVariantName = '.histoire-story-viewer .htw-truncate'
 const _cssClassVariantContent = '.histoire-generic-render-story > div'
+
 export const simpleScreenshotTest = async (
   page: Page,
   componentFolder: string,
@@ -113,14 +93,6 @@ export const simpleScreenshotTest = async (
   }
 }
 
-// export const callStory = (page: Page, path: string) => page.goto(`http://localhost:3003/?path=${path}`)
-
 export default {
-  apiMock,
-  // callHistoreVariantById,
-  // callHistoreVariantByName,
-  // callHistoireStory,
   simpleScreenshotTest,
-  // callStoryIdMock,
-  // callStory
 }

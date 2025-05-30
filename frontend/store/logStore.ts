@@ -8,7 +8,6 @@ License: AGPL-3.0
 import { defineStore } from 'pinia'
 
 export const storeLogs = defineStore('logs', {
-  // persist: false,
   persist: {
     key: 'opsi-logs',
     storage: localStorage,
@@ -37,13 +36,6 @@ export const storeLogs = defineStore('logs', {
     setLogmarker(nr: number, id: string) {
       this._logmarker = `${nr};${id};${this.logtype}`
     },
-    // setExpiresInterval(int: NodeJS.Timer | undefined) {
-    //   if ((int === null || int === undefined) && this.expiresInterval) {
-    //     clearInterval(this.expiresInterval)
-    //     window.clearInterval(this.expiresInterval)
-    //   }
-    //   this.expiresInterval = int
-    // },
   },
 })
 

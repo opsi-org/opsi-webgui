@@ -75,8 +75,6 @@ License: AGPL-3.0
     } else if (msg.type === 'terminal_data_read') {
       mbTerminal.value.write(msg.data)
     }
-    // else if (msg.type === 'terminal_close_event') {
-    // }
   }
 
   async function _fetchIsDisabled() {

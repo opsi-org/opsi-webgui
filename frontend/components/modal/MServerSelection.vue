@@ -55,7 +55,6 @@ License: AGPL-3.0
   const localSelectedServers = ref<string | string[]>(
     selectionStore.multiSelection ? selectionDefaultDepots.value : selectionDefaultDepots.value?.[0]
   )
-  // const focusedElement = ref<HTMLElement | null>(null)
   onMounted(async () => {
     await initSelect()
   })
@@ -91,30 +90,6 @@ License: AGPL-3.0
     $emit('refetch')
     visible.value = false
   }
-  /*
-  function updateStorage() {
-    // change the default selected server in this modal in storage
-    // multi selection
-    if (
-      Array.isArray(localSelectedServers.value) &&
-      localSelectedServers.value.length == 1 &&
-      configserver.value === localSelectedServers.value[0]
-    ) {
-      selectionStore.setSelectionDepotsDefault(['<configserver>'])
-    } else if (Array.isArray(localSelectedServers.value)) {
-      selectionStore.setSelectionDepotsDefault(localSelectedServers.value)
-    }
-    // is single selection
-    else if (
-      !Array.isArray(localSelectedServers.value) &&
-      localSelectedServers.value.length == 1 &&
-      configserver.value === localSelectedServers.value[0]
-    ) {
-      selectionStore.setSelectionDepotsDefault(['<configserver>'])
-    } else if (!Array.isArray(localSelectedServers.value))
-      selectionStore.setSelectionDepotsDefault([localSelectedServers.value])
-  }*/
-
   function cancel() {
     if (props.refetchOnCancel) {
       $emit('refetch')

@@ -24,18 +24,3 @@ export const useUtils = () => {
 
   return { addOrRemoveListItem, isEqual }
 }
-export const useUtilsEvents = () => {
-  function debounce(fn: (...args: any[]) => void, wait: number): (...args: any[]) => void {
-    let timer: any
-    return function (...args: any[]) {
-      if (timer) {
-        clearTimeout(timer) // clear any pre-existing timer
-      }
-      const context = getCurrentInstance()?.appContext // get the current context
-      timer = setTimeout(() => {
-        fn.apply(context, args) // call the function if time expires
-      }, wait)
-    }
-  }
-  return { debounce }
-}

@@ -23,7 +23,6 @@ License: AGPL-3.0
     data-testId="sselect"
     display="chip"
   >
-    <!-- @filter="() => $emit('change')" -->
     <template #option="{ option }">
       <span
         class="text-xs flex"
@@ -58,7 +57,6 @@ License: AGPL-3.0
       </span>
     </template>
 
-    <!-- <template #header> <div>hello</div></template> -->
     <template v-if="props.editable" #footer>
       <div class="p-3 flex justify-between text-xs">
         <p-input-text
@@ -279,7 +277,6 @@ License: AGPL-3.0
       return
     } else if (isArray(props.selectedOptions)) {
       localSelectedItems.value = props.selectedOptions
-      // localSelectedItems.value = [...props.selectedOptions]
     } else {
       localSelectedItems.value = props.selectedOptions as T
     }

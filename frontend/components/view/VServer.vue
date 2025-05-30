@@ -29,7 +29,6 @@ License: AGPL-3.0
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
-  // const icons = useIcons()
 
   const storeSelection = storeSelections()
   const storeCookie = storeTablesettings()
@@ -54,7 +53,6 @@ License: AGPL-3.0
       type: 'selection',
       visible: storeCookie.serversColumns.includes('selected'),
       alwaysVisible: true,
-      // icon: icons.checkBox,
       width: '60px',
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return

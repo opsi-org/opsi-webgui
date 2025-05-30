@@ -7,7 +7,6 @@ License: AGPL-3.0
 */
 export interface IObjectString2Function {
   [key: string]: () => void
-  // [key: string]: Function
 }
 
 export interface IObjectString2Any {
