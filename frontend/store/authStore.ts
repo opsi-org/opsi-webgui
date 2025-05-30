@@ -35,26 +35,6 @@ export const storeAuth = defineStore('auth', {
     username(): string {
       return this._username
     },
-    // https://github.com/vuejs/pinia/discussions/1151
-    isUsernameOutdated({ _usernameUpdated }): boolean {
-      if (_usernameUpdated == undefined || _usernameUpdated == null) {
-        return true
-      }
-      // if username is older than expiredTime, it is outdated (e.g. if user didnt logout successfully)
-      const now = new Date()
-      console.warn(
-        'isUsernameOutdated now',
-        now.valueOf(),
-        'usernameUpdated',
-        _usernameUpdated.valueOf()
-      )
-      const __expired = now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
-      if (__expired) {
-        console.warn('isUsernameOutdated expired')
-      }
-      return __expired
-      // return now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
-    },
     isAuthenticated({ _username }): boolean {
       return Boolean(useCookie('opsiconfd-session') && _username && !this.isUsernameOutdated)
     },
@@ -66,12 +46,10 @@ export const storeAuth = defineStore('auth', {
     $reset() {
       this.sessionEndTime = ''
       this.setUser('')
-      // this.errorLoggedOutShown = false
     },
     login(_username: string) {
       this.errorLoggedOutShown = false
       this.setUser(_username)
-      // localStorage.setItem('_username', _username)
     },
     logout() {
       this.$reset()
@@ -85,9 +63,6 @@ export const storeAuth = defineStore('auth', {
       } else {
         this._usernameUpdated = null
       }
-    },
-    setExpiredMin(m: number) {
-      this.sessionExpiry = m
     },
     setExpiresIn(t: TTimeDiff) {
       this.sessionExpiresIn = t
