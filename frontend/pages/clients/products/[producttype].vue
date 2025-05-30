@@ -49,8 +49,6 @@ License: AGPL-3.0
   const path = computed(() => route.path.split('/').filter((p: string) => p !== ''))
 
   const width = computed(() => {
-    // const routeLength = filteredPath.value.length || 1
-    // return (100/routeLength)  + '%'
     return '50%'
   })
 

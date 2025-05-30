@@ -8,5 +8,3 @@ License: AGPL-3.0
 <template>
   <TabsTGroupActions />
 </template>
-
-<script setup lang="ts"></script>

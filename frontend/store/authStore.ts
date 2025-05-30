@@ -15,7 +15,6 @@ export const storeAuth = defineStore('auth', {
   persist: {
     key: 'opsi-auth',
     storage: localStorage,
-    // storage: sessionStorage,
   },
   // persist keeps username in localStorage.. even if logged out. No need for that here
   state: () => ({
