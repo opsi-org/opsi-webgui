@@ -35,6 +35,24 @@ export const storeAuth = defineStore('auth', {
     username(): string {
       return this._username
     },
+    isUsernameOutdated({ _usernameUpdated }): boolean {
+      if (_usernameUpdated == undefined || _usernameUpdated == null) {
+        return true
+      }
+      // if username is older than expiredTime, it is outdated (e.g. if user didnt logout successfully)
+      const now = new Date()
+      console.warn(
+        'isUsernameOutdated now',
+        now.valueOf(),
+        'usernameUpdated',
+        _usernameUpdated.valueOf()
+      )
+      const __expired = now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
+      if (__expired) {
+        console.warn('isUsernameOutdated expired')
+      }
+      return __expired
+    },
     isAuthenticated({ _username }): boolean {
       return Boolean(useCookie('opsiconfd-session') && _username && !this.isUsernameOutdated)
     },
