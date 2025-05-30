@@ -10,7 +10,6 @@ import type { T_Groups, T_GroupsTransformed } from '~/types/APItypes'
 export const useGroupsHelper = () => {
   const { multiSelection } = storeToRefs(storeSelections())
   function transformNode(node: T_Groups): T_GroupsTransformed {
-    // const nodeIsLeaf = !node.children || Object.keys(node.children).length === 0
     const nodeIsLeaf = node.type === 'ObjectToGroup'
     const newNode: T_GroupsTransformed = {
       id: node.id,
