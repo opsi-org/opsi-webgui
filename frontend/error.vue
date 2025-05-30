@@ -17,7 +17,6 @@ License: AGPL-3.0
 <script setup lang="ts">
   import type { NuxtError } from '#app'
   const $t = useI18n().t
-  // const props =
   defineProps({
     error: {
       type: Object as () => NuxtError,
