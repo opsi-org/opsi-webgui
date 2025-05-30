@@ -1,4 +1,24 @@
 {
+  "name": "opsi-webgui",
+  "version": "4.3.99.2",
+  "private": true,
+  "license": "AGPL-3.0",
+  "type": "module",
+  "scripts": {
+    "bash:delete-empty-test-results": "find test-results -empty -delete",
+    "clean": "rm -rf node_modules",
+    "clean-full": "./scripts/py-helper.sh scripts/npm-helper.py --install-clean",
+    "dev": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxi dev",
+    "generate": "nuxi generate",
+    "lint": "eslint .",
+    "lint:missing-i18n": "./scripts/py-helper.sh scripts/compare_translation_keys.py -s",
+    "story:build": "NODE_ENV=development histoire build",
+    "story:dev": "NODE_ENV=development histoire dev",
+    "story:preview": "NODE_ENV=development histoire preview",
+    "sysinfo": "npx envinfo --system --npmPackages '{histoire,@histoire/*,vite,@vitejs/*}' --binaries --browsers",
+    "tsc": "npx nuxi typecheck",
+    "tscs": "npx nuxi typecheck --logLevel=silent"
+  },
   "dependencies": {
     "@msgpack/msgpack": "~3.0.0-beta2",
     "@primevue/themes": "4.2.5",
@@ -11,11 +31,6 @@
     "primevue": "4.2.5",
     "tailwindcss-primeui": "0.3.4",
     "vue3-markdown-it": "1.0.10"
-  },
-  "dependenciesComments": {
-    "#node": "version > 23.0.0 seems to have issues",
-    "@nuxtjs/i18n": "Using 8.5.6, cause 9.1.1 throws error in browser terminal.",
-    "npm": "version > 10.9.2 currently broken ('js heap out of space' on npm run and build)"
   },
   "devDependencies": {
     "@element-plus/nuxt": "1.1.1",
@@ -46,40 +61,12 @@
     "typescript": "5.7.3",
     "vue-tsc": "2.2.0"
   },
-  "license": "AGPL-3.0",
-  "name": "opsi-webgui",
+  "dependenciesComments": {
+    "#node": "version > 23.0.0 seems to have issues",
+    "@nuxtjs/i18n": "Using 8.5.6, cause 9.1.1 throws error in browser terminal.",
+    "npm": "version > 10.9.2 currently broken ('js heap out of space' on npm run and build)"
+  },
   "overrides": {
     "vue": "latest"
-  },
-  "private": true,
-  "scripts": {
-    "bash:delete-empty-test-results": "find test-results -empty -delete",
-    "build": "nuxi build",
-    "clean": "rm -rf node_modules",
-    "clean-full": "./scripts/py-helper.sh scripts/npm-helper.py --install-clean",
-    "dev": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxi dev",
-    "dev0": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxt dev",
-    "format": "prettier --write \"./**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
-    "generate": "nuxi generate",
-    "generate-with-ssl": "NODE_OPTIONS=--openssl-legacy-provider nuxt generate ",
-    "lint": "eslint .",
-    "lint:all": "npx nuxi typecheck && eslint .",
-    "lint:fix": "eslint . --fix",
-    "lint:missing-i18n": "./scripts/py-helper.sh scripts/compare_translation_keys.py -s",
-    "postinstall": "nuxt prepare",
-    "preview": "nuxt preview",
-    "pwtest:access": "playwright test -c tests-configs/playwright-all-accessibility.config.ts",
-    "pwtest:components": "playwright test -c tests-configs/playwright-all-components.config.ts",
-    "pwtest:components:update": "playwright test -c tests-configs/playwright-all-components.config.ts --update-snapshots",
-    "pwtest:usecase": "playwright test -c tests-configs/playwright-all-usecases.config.ts",
-    "story:build": "NODE_ENV=development histoire build",
-    "story:dev": "NODE_ENV=development histoire dev",
-    "story:preview": "NODE_ENV=development histoire preview",
-    "sysinfo": "npx envinfo --system --npmPackages '{histoire,@histoire/*,vite,@vitejs/*}' --binaries --browsers",
-    "tsc": "npx nuxi typecheck",
-    "tscs": "npx nuxi typecheck --logLevel=silent",
-    "versions": "./scripts/py-helper.sh scripts/npm-helper.py --versions --versions-sort is_outdated"
-  },
-  "type": "module",
-  "version": "4.3.99.2"
+  }
 }
