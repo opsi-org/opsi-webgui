@@ -65,7 +65,6 @@ export default defineNuxtConfig({
           href: ADDON_PATH + '/app/favicon.ico',
         },
       ],
-      // link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
     },
   },
   runtimeConfig: {
@@ -89,7 +88,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
   ],
   i18n: {
-    vueI18n: './i18n.config.js', // custom path example
+    vueI18n: './i18n.config.js',
   },
   piniaPluginPersistedstate: {
     key: 'opsiwui-%id',
