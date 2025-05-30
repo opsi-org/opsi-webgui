@@ -37,14 +37,3 @@ export const useMQ = () => {
   })
   return { $mq, isPreferredDark, isMobile }
 }
-
-//  ['nuxt-mq', {
-//   // Default breakpoint for SSR
-//   // defaultBreakpoint: 'mobile',
-//   breakpoints: {
-//     // mobile: 850, // should also be updated in Bar/BTop.vue on change!
-//     mobile: 767.98, // then compatible with bootstrap breakpoint 'md'
-//     tablet: 1000,
-//     desktop: Infinity
-//   }
-// }]
