@@ -5,9 +5,6 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
-import type { T_Client, T_Server } from './APItypes'
-
-export type TRowData = T_Server | T_Client | any
 
 export interface TTimeDiff {
   diff: number

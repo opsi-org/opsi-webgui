@@ -5,15 +5,6 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
-import type { EpPropMergeType } from 'element-plus/lib/utils/index.js'
-
-export type ElTypeVariant =
-  | EpPropMergeType<
-      StringConstructor,
-      'success' | 'warning' | 'info' | 'primary' | 'danger',
-      unknown
-    >
-  | undefined
 
 export type PSeverity =
   | 'primary'

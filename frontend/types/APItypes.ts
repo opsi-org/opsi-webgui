@@ -102,9 +102,6 @@ export interface T_Logout {
   result: string
 }
 
-export interface T_PGroups {
-  groups: T_Groups
-}
 export interface T_Groups {
   id: string
   type: string
