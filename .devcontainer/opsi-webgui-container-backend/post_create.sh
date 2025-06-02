@@ -1,5 +1,9 @@
 echo "* Running as $(whoami)"
 
+
+rm -rf /workspace/.vscode
+ln -s /workspace/backend/.vscode /workspace/.vscode
+
 # install uv
 #wget -qO- https://astral.sh/uv/install.sh | sh # user context
 curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sudo sh # root context

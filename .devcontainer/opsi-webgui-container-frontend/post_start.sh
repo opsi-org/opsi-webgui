@@ -16,8 +16,13 @@ npx nuxi clean
 echo -e "\n==========================================\nInstalling Playwright\n===================================================="
 npx playwright install-deps
 
-echo -e "\n==========================================\nStarting opsiconfd container\n===================================================="
-echo 'alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"' >>/etc/bash.bashrc
-echo 'alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)" >>/etc/bash.bashrc'
+echo -e "\n==========================================\nStarting opsiconfd-docker container\n===================================================="
+
+CONTAINER_NAME_DOCKER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
+echo "alias opsiconfd-docker-restart=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER supervisorctl reload\"" >> ~/.bashrc
+echo "alias opsiconfd-docker-container=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER\"" >> ~/.bashrc
+
+#echo 'alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"' >>/etc/bash.bashrc
+#echo 'alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)" >>/etc/bash.bashrc'
 
 exec zsh

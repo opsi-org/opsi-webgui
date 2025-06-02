@@ -17,30 +17,30 @@ ENV DOCKER_ENV=${DOCKER_ENV} \
 	PIP_DISABLE_PIP_VERSION_CHECK=on \
 	PIP_DEFAULT_TIMEOUT=100
 
-	# System deps:
+# System deps:
 
 RUN mkdir -p /usr/local/share/keyrings \
-&& REPO_KEY=/usr/local/share/keyrings/opsi-obs.gpg \
-&& curl -fsSL $OPSI_REPO/Release.key | gpg --dearmor | tee $REPO_KEY > /dev/null\
-&& echo "deb [signed-by=$REPO_KEY] $OPSI_REPO/ /" | tee /etc/apt/sources.list.d/opsi.list \
-&& apt-get update \
+	&& REPO_KEY=/usr/local/share/keyrings/opsi-obs.gpg \
+	&& curl -fsSL $OPSI_REPO/Release.key | gpg --dearmor | tee $REPO_KEY > /dev/null\
+	&& echo "deb [signed-by=$REPO_KEY] $OPSI_REPO/ /" | tee /etc/apt/sources.list.d/opsi.list \
+	&& apt-get update \
 	&& apt-get --yes dist-upgrade \
 	&& apt-get --yes --allow-downgrades install \
-		docker.io \
-		cpio \
-		vim \
-		wget \
-		gettext \
-		mariadb-client \
-		libmariadb-dev \
-		psmisc \
-		librsync1 \
-		sudo \
-		git \
-		#bash-completion \
-		nano \
-		netcat \
-		supervisor \
+	docker.io \
+	cpio \
+	vim \
+	wget \
+	gettext \
+	mariadb-client \
+	libmariadb-dev \
+	psmisc \
+	librsync1 \
+	sudo \
+	git \
+	#bash-completion \
+	nano \
+	netcat \
+	supervisor \
 	#&& mkdir -p /usr/local/share/keyrings \
 	&& wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor > /usr/local/share/keyrings/grafana.gpg \
 	&& echo "deb [signed-by=/usr/local/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" > /etc/apt/sources.list.d/grafana.list \
@@ -49,20 +49,20 @@ RUN mkdir -p /usr/local/share/keyrings \
 	&& apt-get update \
 	&& apt-get update \
 	&& apt-get --yes install \
-		apt-transport-https \
-		software-properties-common \
-		grafana \
-		mariadb-server \
-		redis-tools \
-		redis-server \
-		redis-timeseries \
-		opsi-utils \
+	apt-transport-https \
+	software-properties-common \
+	grafana \
+	mariadb-server \
+	redis-tools \
+	redis-server \
+	redis-timeseries \
+	opsi-utils \
 	&& apt-get clean
 
 COPY docker/backend/files/ /
 
 # Setup poetry
-#WORKDIR /workspace/backend
+
 
 RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& (getent group opsifileadmins || groupadd opsifileadmins) \
@@ -87,3 +87,4 @@ RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& mkdir tftpboot \
 	&& chown -R $DEV_USER /workspace
 
+WORKDIR /workspace/

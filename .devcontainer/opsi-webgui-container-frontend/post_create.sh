@@ -1,6 +1,11 @@
 #!/bin/bash
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
+
+rm -rf /workspace/.vscode
+ln -s /workspace/frontend/.vscode /workspace/.vscode
+
+
 sh $SCRIPT_DIR/install_dev_cli.sh
 
 # no need to install it twice....

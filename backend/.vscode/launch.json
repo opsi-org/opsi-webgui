@@ -2,34 +2,18 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "opsiconfd default",
+			"name": "opyiconfd py",
 			"type": "debugpy",
 			"request": "launch",
-			"module": "opsiconfd",
-			"args": [
-				"--workers=1",
-				"--log-level=5",
-				"--log-level-stderr=5",
-				"--log-mode=redis",
-				"--addon-dirs=/workspace/backend/addon",
-				"--static-dir=/workspace/docker/backend/opsiconfd/opsiconfd_data/static",
-			],
+			"program": "/workspace/docker/backend/start_opsiconfd.py",
 			"sudo": true,
-			"justMyCode": false
-		},
-		{
-			"name": "opsiconfd",
-			"type": "debugpy",
-			"request": "launch",
-			"module": "opsiconfd",
-			"args": [
-				"--workers=${input:worker}",
-				"--log-level-stderr=${input:loglevel}",
-				"--log-level-file=${input:loglevelfile}",
-				"--addon-dirs=/workspace/backend/addon",
-				"--static-dir=/workspace/docker/backend/opsiconfd/opsiconfd_data/static"
-			],
-			"sudo": true,
+			"justMyCode": false,
+			"envFile": "${workspaceFolder}/.env",
+			"env": {
+				"PYDEVD_DISABLE_FILE_VALIDATION": "1",
+			},
+			"subProcess": true,
+			//"console": "integratedTerminal"
 		},
 		{ // to restart sometimes needs to be run twice (script tries to kill opsiconfd processes)
 			"name": "opsiconfd uv",
@@ -37,15 +21,29 @@
 			"request": "launch",
 			"runtimeArgs": [
 				"-E",
-				"/workspace/backend/scripts/start_opsiconfd.sh"
+				"/workspace/docker/backend/start_opsiconfd.sh"
 			],
+			"killBehavior": "forceful",
+			"showAsyncStacks": true,
+			"console": "integratedTerminal",
 			"runtimeExecutable": "sudo",
 			"type": "node",
-			"cwd": "${workspaceFolder}/../docker/backend/opsiconfd",
-			"env": {
-				"PYTHONPATH": "/workspace/backend"
-			}
-		}
+			"cwd": "${workspaceFolder}/docker/backend/opsiconfd",
+		},
+		{
+			"name": "webgui this backend",
+			"outputCapture": "std",
+			"request": "launch",
+			"preLaunchTask": "webgui-frontend-this-backend",
+			"type": "node"
+		},
+		/*{
+			"name": "webgui docker",
+			"outputCapture": "std",
+			"request": "launch",
+			"preLaunchTask": "webgui-frontend-docker",
+			"type": "node"
+		},*/
 	],
 	"inputs": [
 		{

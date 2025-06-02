@@ -41,5 +41,5 @@ services:
       - opsi_data:/data
       - ./files/docker-entrypoint.sh:/docker-entrypoint.sh
       - ../../:/workspace
-    working_dir: /workspace/frontend
+    working_dir: /workspace
     entrypoint: [ '/docker-entrypoint.sh' ]

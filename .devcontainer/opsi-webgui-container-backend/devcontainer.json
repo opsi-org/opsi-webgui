@@ -10,9 +10,9 @@
 		"grafana"
 	],
 	"initializeCommand": ".devcontainer/opsi-webgui-container-backend/initialize.sh",
-	"postCreateCommand": "../.devcontainer/opsi-webgui-container-backend/post_create.sh",
-	"postStartCommand": "../.devcontainer/opsi-webgui-container-backend/post_start.sh",
-	"workspaceFolder": "/workspace/backend",
+	"postCreateCommand": ".devcontainer/opsi-webgui-container-backend/post_create.sh",
+	"postStartCommand": ".devcontainer/opsi-webgui-container-backend/post_start.sh",
+	"workspaceFolder": "/workspace",
 	"remoteEnv": {
 		//"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
 		"DEV_USER": "${localEnv:USER}",
@@ -20,6 +20,9 @@
 	},
 	"customizations": {
 		"vscode": {
+			"tasks": {
+				"default": "choose-main-service"
+			},
 			"settings": {
 				"workbench.colorCustomizations": {
 					"activityBar.background": "#000000",
@@ -67,7 +70,8 @@
 				"cweijan.dbclient-jdbc",
 				"cweijan.vscode-database-client2",
 				"ms-azuretools.vscode-docker",
-				"docker.docker"
+				"docker.docker",
+				"seunlanlege.action-buttons"
 			]
 		}
 	},
