@@ -37,8 +37,8 @@ RUN git config --global user.name "${DEV_GIT_NAME}"
 RUN git config --global user.email "${DEV_GIT_EMAIL}"
 
 
-RUN echo 'alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"' >> /root/.zshrc
-RUN echo 'alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"'  >> /root/.zshrc
+#RUN echo 'alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"' >> /root/.zshrc
+#RUN echo 'alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"'  >> /root/.zshrc
 WORKDIR /workspace/frontend
 
 RUN npm completion >> ~/.zshrc

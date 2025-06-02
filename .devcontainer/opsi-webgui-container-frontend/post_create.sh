@@ -1,11 +1,6 @@
 #!/bin/bash
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
-
-rm -rf /workspace/.vscode
-ln -s /workspace/frontend/.vscode /workspace/.vscode
-
-
 sh $SCRIPT_DIR/install_dev_cli.sh
 
 # no need to install it twice....
@@ -38,6 +33,3 @@ if [ -f /workspace/docker/test.opsilic ]; then
     sudo mkdir -p /data/etc/opsi/licenses
     sudo cp /workspace/docker/test.opsilic /data/etc/opsi/licenses/test.opsilic
 fi
-
-
-zsh

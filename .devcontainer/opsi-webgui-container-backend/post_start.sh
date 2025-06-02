@@ -51,8 +51,3 @@ echo "alias npm-run-dev=\"sudo docker exec -u root -it ${CONTAINER_NAME_FRONTEND
 
 NPM_RUN_DEV_BACKEND="cd /workspace/frontend &&  npm run dev-backend" # needs to be in a variable!
 echo "alias npm-run-dev-backend=\"sudo docker exec -u root -it $CONTAINER_NAME_FRONTEND sh -c '$NPM_RUN_DEV_BACKEND'\"" >>~/.bashrc
-
-
-
-
-

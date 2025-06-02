@@ -1,4 +1,13 @@
 {
+  "terminal.integrated.profiles.osx": { "zsh": { "path": "/bin/zsh", "args": ["-l", "-i"] } },
+  "terminal.integrated.shell.linux": "zsh",
+  "terminal.integrated.profiles.linux": {
+    "zsh": {
+      "path": "/usr/bin/zsh",
+      "args": ["-l", "-i"],
+    }
+  },
+  "terminal.integrated.defaultProfile.linux": "zsh",
     "[json]": {
       "diffEditor.ignoreTrimWhitespace": false,
       "editor.autoIndent": "advanced",
@@ -172,4 +181,3 @@
     "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
     "workspace.isHidden": true
   }
-  

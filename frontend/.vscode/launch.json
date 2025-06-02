@@ -2,17 +2,7 @@
     "configurations": [
       {
         // webgui v4.4
-        "name": "webgui backend-docker",
-        "cwd": "${workspaceFolder}",
-        "outputCapture": "std",
-        "request": "launch",
-        "runtimeArgs": ["run", "dev"],
-        "runtimeExecutable": "npm",
-        "type": "node"
-      },
-      {
-        // webgui v4.4
-        "name": "webgui backend-custom",
+        "name": "webgui this",
         "cwd": "${workspaceFolder}",
         "outputCapture": "std",
         "request": "launch",
@@ -22,6 +12,31 @@
         "runtimeExecutable": "npm",
         "type": "node"
       },
+      {
+        // webgui v4.4
+        "name": "webgui docker",
+        "cwd": "${workspaceFolder}",
+        "outputCapture": "std",
+        "request": "launch",
+        "runtimeArgs": ["run", "dev"],
+        "runtimeExecutable": "npm",
+        "type": "node"
+      },
+
+		{
+			"name": "backend this start",
+			"outputCapture": "std",
+			"request": "launch",
+			"command": "opsiconfd-backend-start",
+			"type": "node-terminal",
+		},
+		{
+			"name": "backend docker restart",
+			"outputCapture": "std",
+			"request": "launch",
+			"command": "opsiconfd-docker-restart && exit",
+			"type": "node-terminal",
+		},
       {
         // Webgui-Storybook
         "cwd": "${workspaceFolder}",
@@ -36,4 +51,3 @@
     ],
     "version": "0.2.0"
   }
-  

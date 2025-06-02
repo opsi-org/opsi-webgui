@@ -4,7 +4,9 @@
 echo "Initializing environment..."
 
 rm -rf ../../.vscode
-ln -s ../../backend/.vscode ../../.vscode
+ln -s ../../frontend/.vscode ../../.vscode
+SCRIPTDIR=$(dirname $(readlink -f $0))
+${SCRIPTDIR}/devenv.sh
 
 base_dir=$(dirname $(dirname $(readlink -f $0)))
-${base_dir}/../backend/scripts/devenv.sh
+#${base_dir}/../backend/scripts/devenv.sh
