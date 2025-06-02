@@ -1,5 +1,10 @@
 {
   "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "/workspace/.vscode/launch.json",
+      ]
+    },
     "vscode": {
       "extensions": [
         "Vue.volar",

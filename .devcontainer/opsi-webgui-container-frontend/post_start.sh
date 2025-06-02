@@ -1,4 +1,9 @@
 #!/bin/bash
+
+echo "\n================================ configure .vscode for frontend container =====================================\n"
+rm -rf /workspace/.vscode
+ln -s /workspace/frontend/.vscode /workspace/.vscode
+
 #SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 # echo 'Setup /etc/hosts' 1>&2

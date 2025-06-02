@@ -9,3 +9,6 @@
 * You can start the webgui-app (frontend) connected to following backends through with VSCodes' Run and Debug section or through commands:
     * connect to this backend using `npm-run-dev-backend`
     * connect the opsi-docker backend using `npm-run-dev`
+
+## known bugs:
+* if you switched containers and the section "Run and Debug" show the old launch configuration, just open "launch.json" once. after that vscode updates the cache and should show the new configuration.

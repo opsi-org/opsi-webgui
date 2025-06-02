@@ -19,6 +19,11 @@
 		"DEV_UID": "${localEnv:UID}"
 	},
 	"customizations": {
+		"codespaces": {
+			"openFiles": [
+				"/workspace/.vscode/launch.json",
+			]
+		},
 		"vscode": {
 			"tasks": {
 				"default": "choose-main-service"

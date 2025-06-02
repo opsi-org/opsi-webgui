@@ -1,5 +1,9 @@
 echo "* Running as $(whoami)"
 
+echo "\n================================ configure .vscode for backend container =====================================\n"
+rm -rf /worksapce/.vscode
+ln -s /worksapce/backend/.vscode /worksapce/.vscode
+
 /workspace/backend/scripts/setup-hosts.sh
 
 echo "* Fetch a test license"
