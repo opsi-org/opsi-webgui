@@ -39,3 +39,5 @@ opsiweb/package-merged.json
 
 # python
 __pycache__
+
+.vscode
