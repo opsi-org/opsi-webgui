@@ -19,11 +19,11 @@ License: AGPL-3.0
         {{ $t('title.' + category) }}
       </h3>
       <div v-for="(value, label) in options" :key="category + '-' + label">
-        <el-form-item :label="$t('table.fields.' + label)" :error="label === 'hostId' ? clientNameError : ''">
-          <el-input
-            v-if="label === 'hostId'"
-            v-model="cloneClient[category][label]"
-          >
+        <el-form-item
+          :label="$t('table.fields.' + label)"
+          :error="label === 'hostId' ? clientNameError : ''"
+        >
+          <el-input v-if="label === 'hostId'" v-model="cloneClient[category][label]">
             <template #append>
               <el-input v-model="domain" class="border-none" />
             </template>
@@ -32,19 +32,12 @@ License: AGPL-3.0
             v-else-if="typeof value == 'boolean'"
             v-model="cloneClient[category][label]"
           />
-          <el-input
-            v-else
-            v-model="cloneClient[category][label]"
-            :data-testid="label"
-          />
+          <el-input v-else v-model="cloneClient[category][label]" :data-testid="label" />
         </el-form-item>
       </div>
     </div>
 
-    <div
-      class="button-container"
-      style="display: flex; justify-content: flex-end"
-    >
+    <div class="button-container" style="display: flex; justify-content: flex-end">
       <el-button @click="resetForm"> {{ $t('button.reset') }}</el-button>
       <el-button
         data-testid="cloneButton"
@@ -90,34 +83,35 @@ License: AGPL-3.0
     async () => {
       domain.value = sourceID.value.substring(sourceID.value.indexOf('.'))
       cloneClient.value.target.hostId = sourceID.value.split('.')[0]
-    },
+    }
   )
-  watch(() => cloneClient.value.target.hostId, async (newClientName) => {
-    if (!newClientName) {
-      clientExists.value = false
-      clientNameError.value = ''
-      return
-    }
+  watch(
+    () => cloneClient.value.target.hostId,
+    async (newClientName) => {
+      if (!newClientName) {
+        clientExists.value = false
+        clientNameError.value = ''
+        return
+      }
 
-    const fullHostId = `${newClientName}${domain.value}`
-    if (clientIDList.value.includes(fullHostId)) {
-      clientExists.value = true
-      clientNameError.value = $t('message.warning.clientExists', {
-        client: fullHostId,
-      })
-    } else {
-      clientExists.value = false
-      clientNameError.value = ''
+      const fullHostId = `${newClientName}${domain.value}`
+      if (clientIDList.value.includes(fullHostId)) {
+        clientExists.value = true
+        clientNameError.value = $t('message.warning.clientExists', {
+          client: fullHostId,
+        })
+      } else {
+        clientExists.value = false
+        clientNameError.value = ''
+      }
     }
-  })
+  )
 
   function setId(id: string) {
     sourceID.value = id
   }
   async function fetch() {
-    clientIDList.value = await useClient().getClientIdList(
-      storeSelection.selectionDepots,
-    )
+    clientIDList.value = await useClient().getClientIdList(storeSelection.selectionDepots)
   }
 
   async function applyCloneClient() {
@@ -134,10 +128,7 @@ License: AGPL-3.0
       return
     }
     try {
-      await useApiPOST(
-        `/opsidata/clients/${sourceID.value}/clone`,
-        cloneClientCopy,
-      )
+      await useApiPOST(`/opsidata/clients/${sourceID.value}/clone`, cloneClientCopy)
       notifySuccess({ message: $t('message.success.clone') })
     } catch (error) {
       notifyError({ message: error })

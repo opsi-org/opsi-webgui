@@ -6,35 +6,23 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <!-- :id="'sselect-' + currentId" -->
   <div id="config-pre-tabs">
-    <SelectSHosts
-      v-if="!props.isChild"
-      :id="currentId"
-      :type="type"
-      @change="setId"
-    />
+    <SelectSHosts v-if="!props.isChild" :id="currentId" :type="type" @change="setId" />
   </div>
   <el-tabs v-model="activeName">
     <el-tab-pane
-      :label="
-        currentId ? $t('title.hostparam') : $t('title.hostparam.defaults')
-      "
+      :label="currentId ? $t('title.hostparam') : $t('title.hostparam.defaults')"
       name="config"
       :disabled="!(type === 'clients' || type === 'servers')"
     >
-      <FormFHostParameterHierarchical
+      <FormFHostParameter
         v-if="activeName === 'config'"
         :id="currentId"
         :type="type"
         :is-child="props.isChild"
       />
     </el-tab-pane>
-    <el-tab-pane
-      :label="$t('title.hostattr')"
-      name="attr"
-      :disabled="isIdEmpty"
-    >
+    <el-tab-pane :label="$t('title.hostattr')" name="attr" :disabled="isIdEmpty">
       <FormFHostAttributes
         v-if="activeName === 'attr'"
         :id="currentId"
@@ -71,14 +59,14 @@ License: AGPL-3.0
       if (isIdEmpty.value && activeName.value !== 'config') {
         activeName.value = 'config'
       }
-    },
+    }
   )
 
   watch(
     () => activeName.value,
     (newActiveName) => {
       tableSettings.setConfigLastSelected(props.type, newActiveName)
-    },
+    }
   )
 
   const isIdEmpty = computed(() => !currentId.value)

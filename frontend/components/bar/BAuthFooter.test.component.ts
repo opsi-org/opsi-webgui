@@ -5,9 +5,9 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
-// const { test, expect } = require('@playwright/test')
+
 import { test, type Page } from '@playwright/test'
-import { simpleScreenshotTest } from '../../tests-configs/playwright/utils/pw-story-call.ts'
+import { simpleScreenshotTest } from '../../tests/shared/pw-story-call.ts'
 
 const folder = 'bar'
 const filename = 'BAuthFooter'
@@ -26,7 +26,7 @@ test.describe('snapshot', () => {
       filename.toLocaleLowerCase() + '-story-vue',
       filename,
       filename,
-      afterDataTestidFound,
+      afterDataTestidFound
     )
   })
 })

@@ -11,16 +11,9 @@ License: AGPL-3.0
     :class="{ 'cursor-not-allowed': config.read_only }"
   >
     <template #tooltip>
-      <span
-        v-for="data in tooltipdata"
-        :key="data.label"
-        class="w-full !flex !justify-between"
-      >
+      <span v-for="data in tooltipdata" :key="data.label" class="w-full !flex !justify-between">
         <p>{{ data.label }}</p>
-        <p-tag
-          :severity="VARIANTS[data.actionRequest] || 'info'"
-          pt:root:class="m-0 p-0 min-w-28"
-        >
+        <p-tag :severity="VARIANTS[data.actionRequest] || 'info'" pt:root:class="m-0 p-0 min-w-28">
           {{ data.actionRequest }}
         </p-tag>
       </span>
@@ -75,18 +68,9 @@ License: AGPL-3.0
   const { selectionClients } = storeToRefs(storeSelections())
 
   const MIXED_VALUE = 'mixed'
-  const DEFAULT_OPTIONS = [
-    'none',
-    'setup',
-    'uninstall',
-    'update',
-    'once',
-    'always',
-    'custom',
-  ]
+  const DEFAULT_OPTIONS = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
   const VARIANTS: {
     [key: string]: PSeverity
-    // [key: string]: '' | 'danger' | 'primary' | 'warning' | 'success' | 'info'
   } = {
     always: 'danger',
     setup: 'danger',
@@ -118,10 +102,7 @@ License: AGPL-3.0
 
   const get_options = computed((): Array<string> => {
     const options = [...(modelRowitem.value?.actions || DEFAULT_OPTIONS)]
-    if (
-      originalCombinedValue.value === MIXED_VALUE &&
-      !options.includes(MIXED_VALUE)
-    ) {
+    if (originalCombinedValue.value === MIXED_VALUE && !options.includes(MIXED_VALUE)) {
       options.push(MIXED_VALUE)
     }
     return options
@@ -171,9 +152,7 @@ License: AGPL-3.0
   })
   const changedCombinedValue = computed((): string => {
     // actionRequest or mixed only consider changes
-    const desiredValues = selectedClients.value
-      .map((pc) => changedValues.value[pc])
-      .filter(Boolean)
+    const desiredValues = selectedClients.value.map((pc) => changedValues.value[pc]).filter(Boolean)
     // Bestimme das neue Zwischenergebnis (gewünschter Status)
     const changedCombinedValue = xorLike(desiredValues)
     if (changedCombinedValue === undefined) {
@@ -196,21 +175,6 @@ License: AGPL-3.0
     return clientValuesArr
   })
 
-  // const tooltipdataTree = computed(() => {
-  //   // all selected clients and their original actionrequest
-  //   const clientValuesArr = []
-  //   for (const c in selectedClients.value.toSorted()) {
-  //     const clientId = selectedClients.value[c]
-  //     const val = {
-  //       key: clientId,
-  //       label: clientId,
-  //       actionRequest: originalValues.value[clientId],
-  //     }
-  //     clientValuesArr.push(val)
-  //   }
-  //   return clientValuesArr
-  // })
-
   const visibleRequest = computed(() => {
     // Funktion zur Ermittlung des sichtbaren actionRequest-Werts
     // Abhängig von den ausgewählten Clients und den lokalen nicht gespeicherten Änderungen
@@ -218,22 +182,19 @@ License: AGPL-3.0
     // Kann einen *-Stern enthalten, wenn sich der Wert geändert hat im vergleich zum backend Wert
 
     // Vergleich: Hat sich das aggregierte Zwischenergebnis verändert?
-    const visualValueHasChanged =
-      originalCombinedValue.value !== changedCombinedValue.value
+    const visualValueHasChanged = originalCombinedValue.value !== changedCombinedValue.value
     // Überprüfe, ob sich einzelne Werte zwischen dem aktuellen und gewünschten Status geändert haben
     const individualValueChanged: boolean = selectedClients.value.some(
       (pc) =>
         changedValues.value[pc] !== undefined &&
-        originalValues.value[pc] !== changedValues.value[pc],
+        originalValues.value[pc] !== changedValues.value[pc]
     )
     const undefinedChangedToNone: boolean =
-      changedCombinedValue.value === 'none' &&
-      originalCombinedValue.value === 'none'
+      changedCombinedValue.value === 'none' && originalCombinedValue.value === 'none'
 
     // Wenn sich das Zwischenergebnis oder einzelne Werte geändert haben, markiere es mit einem *
     const result =
-      visualValueHasChanged ||
-      (individualValueChanged && !undefinedChangedToNone)
+      visualValueHasChanged || (individualValueChanged && !undefinedChangedToNone)
         ? `${changedCombinedValue.value}*`
         : `${changedCombinedValue.value}`
     return result
@@ -250,45 +211,6 @@ License: AGPL-3.0
     // Wenn alle gleich sind, gib den gemeinsamen Wert zurück, sonst "mixed"
     return allEqual ? firstValue : MIXED_VALUE
   }
-
-  // function ThisJSXTooltipContentRow() {
-  //   return {
-  //     default: ({ data }: any) => {
-  //       return (
-  //         <span class="w-full !flex !justify-between !space-x-2">
-  //           <el-text>{data.label}</el-text>
-  //           <el-text type={VARIANTS[data.actionRequest] || 'info'}>
-  //             {data.actionRequest}
-  //           </el-text>
-  //         </span>
-  //       )
-  //     },
-  //   }
-  // }
-  // function ThisJSXTooltipContent() {
-  //   return (
-  //     <el-tree
-  //       class="!min-w-60"
-  //       data={tooltipdata}
-  //       effect="dark"
-  //       placement="left-start"
-  //       v-slots={ThisJSXTooltipContentRow()}
-  //     />
-  //   )
-  // }
-
-  // onBeforeRouteLeave((to, from, next) => {
-  //   if (hasUnsavedChanges.value) {
-  //     const answer = window.confirm($t('message.warning.unsavedChanges'))
-  //     if (answer) {
-  //       next()
-  //     } else {
-  //       next(false)
-  //     }
-  //   } else {
-  //     next()
-  //   }
-  // })
 </script>
 
 <style scoped>

@@ -1,10 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { apiMock } from '../../tests-configs/playwright/utils/pw-api-mock'
 // import { apiMock, cookieOpsiconfdSession } from '../../tests-configs/playwright/utils/pw-api-mock'
-import {
-  pageLogin,
-  pageLogout,
-} from '../../tests-configs/playwright/utils/pw-global-setup'
+import { pageLogin, pageLogout } from '../../tests-configs/playwright/utils/pw-global-setup'
 // const cookie = Object.freeze(cookieOpsiconfdSession)
 
 // test.beforeEach(async ({ page }) => {
@@ -59,12 +56,5 @@ test('Login with incorrect credentials', async ({ page }) => {
     await expect(page.locator('.el-notification')).toContainText('Forbidden')
   }
 
-  await pageLogin(
-    page,
-    null,
-    preRoute,
-    postLoginClick,
-    'adminuser',
-    'adminuser-wrong',
-  )
+  await pageLogin(page, null, preRoute, postLoginClick, 'adminuser', 'adminuser-wrong')
 })

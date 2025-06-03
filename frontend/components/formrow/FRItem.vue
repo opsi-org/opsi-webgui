@@ -66,12 +66,7 @@ License: AGPL-3.0
             :content="pVal"
             :key="pVal"
           >
-            <el-option
-              class="max-w-96"
-              :key="pVal"
-              :label="pVal"
-              :value="pVal"
-            />
+            <el-option class="max-w-96" :key="pVal" :label="pVal" :value="pVal" />
           </TooltipTTooltip>
         </template>
         <template #header v-if="props.item.editable">
@@ -119,9 +114,7 @@ License: AGPL-3.0
     ) {
       const objectValueStrings: Array<string> = []
       if (props.item.multiValue) {
-        const objectValues: Array<Array<any>> = Object.values(
-          props.item.objects,
-        )
+        const objectValues: Array<Array<any>> = Object.values(props.item.objects)
 
         objectValues.forEach((value: any) => {
           if (value.length > 0) {
@@ -133,11 +126,7 @@ License: AGPL-3.0
           }
         })
 
-        if (
-          objectValueStrings.every(
-            (v: string, i: number, a: string[]) => v === a[0],
-          )
-        ) {
+        if (objectValueStrings.every((v: string, i: number, a: string[]) => v === a[0])) {
           itemValue.value = Object.values(props.item.objects)[0]
           loading.value = false
           return
@@ -149,7 +138,7 @@ License: AGPL-3.0
       }
 
       const allEqual = Object.values(props.item.objects)?.every(
-        (v: any, index: number, a: any[]) => v === a[0],
+        (v: any, index: number, a: any[]) => v === a[0]
       )
       if (allEqual) {
         // all objects same value (usually only one object allowed)
@@ -169,14 +158,14 @@ License: AGPL-3.0
     () => props.item.value,
     () => {
       itemValue.value = props.item.value
-    },
+    }
   )
 
   watch(
     () => itemValue.value,
     () => {
       $emit('change', itemValue.value)
-    },
+    }
   )
 
   const transformId = (id: string) => {

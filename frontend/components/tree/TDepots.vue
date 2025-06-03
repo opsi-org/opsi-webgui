@@ -60,7 +60,7 @@ License: AGPL-3.0
     async () => {
       syncSelection()
     },
-    { deep: true },
+    { deep: true }
   )
 
   onMounted(async () => {
@@ -74,8 +74,7 @@ License: AGPL-3.0
 
   const syncSelection = () => {
     selectedDepots.value = storeSelection.selectionDepots
-    if (selectedDepots.value.length >= 1)
-      selectedDepot.value = storeSelection.selectionDepots[0]
+    if (selectedDepots.value.length >= 1) selectedDepot.value = storeSelection.selectionDepots[0]
   }
 
   const clearSelection = () => {

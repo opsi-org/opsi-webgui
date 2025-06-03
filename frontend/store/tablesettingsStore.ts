@@ -23,11 +23,7 @@ interface tSort {
 }
 const _data_configLastSelected = { clients: '', servers: '', products: '' }
 const _data_visibleColumns: tVisible = {
-  // servers: ['selected', 'depotId', 'description', 'type', 'ip', 'actions'], // all columns
   servers: ['selected', 'depotId', 'description', 'type', 'actions'],
-  // clients: [selected, clientId, description, ipAddress, macAddress, lastSeen, uefi, version_outdated_localboot, version_outdated_netboot,installationStatus_unknown, installationStatus_installed, actionResult_failed, actionResult_successful
-  //  reachable, actions], // all columns
-  // clients: ['selected, 'clientId, 'description, '_majorStats, 'actions'],
   clients: [
     'selected',
     'clientId',
@@ -39,7 +35,6 @@ const _data_visibleColumns: tVisible = {
     'actionResult_successful',
     'actions',
   ],
-  // products: ['selected', 'productId', 'name', 'description', 'installationStatus', 'actionResult', 'modificationTime', 'priority', 'version', 'actionProgress', 'actionRequest', 'actions'], // all columns
   products: [
     'selected',
     'installationStatus',
@@ -58,21 +53,15 @@ const _data_sortColumns: tSort = {
 const _data_settings = {
   // e.g. for border changing
   servers: {} as Record<string, any>,
-  clients: { statisticIcons: true, reachableAllClients: false } as Record<
-    string,
-    any
-  >,
+  clients: { statisticIcons: true, reachableAllClients: false } as Record<string, any>,
   products: {} as Record<string, any>,
 }
-// const deepCp = (obj:any) => JSON.parse(JSON.stringify(obj))
 const deepCp = (obj: any) => obj
 
 export const storeTablesettings = defineStore('tablesettings', {
-  // persist: false,
   persist: {
     key: 'opsi-tables',
     storage: localStorage,
-    // storage: sessionStorage,
   },
   state: () => ({
     // the state objects are stored in localStorage
@@ -120,31 +109,3 @@ export const storeTablesettings = defineStore('tablesettings', {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(storeTablesettings, import.meta.hot))
 }
-
-// export const storeTablesettings = defineStore('tablesettings', () => {
-//   // let _multiSelection: boolean = useCookie('MultiSelection').value === 'true' || (useCookie('MultiSelection').value === undefined) || true
-//   const _columns: Columns = reactive({
-//     clients: [],
-//     depots: [],
-//     products: [],
-//   })
-
-//   // getter
-//   const columns = computed(() => _columns)
-//   // actions
-
-//   // function setMultiSelection (isMultiSelection: boolean) {
-//   //   _multiSelection = isMultiSelection
-//   //   // Cookies.options.methods.setCookie('MultiSelection', (isMultiSelection) ? 'true' : 'false')
-//   //   useCookie('MultiSelection').value = (isMultiSelection) ? 'true' : 'false'
-//   // }
-
-//   function setColumns (tabletype:string, value:Array<string>) {
-//     _columns[tabletype] = value
-//   }
-//   return {
-//     /* states */
-//     /* getters */ columns
-//     /* actions */ , setColumns,
-//   }
-// }, { persist: true } as any)

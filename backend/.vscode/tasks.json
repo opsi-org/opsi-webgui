@@ -4,6 +4,39 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "kill-opsiconfd-processes",
+            "type": "shell",
+            "command": "pkill -f 'opsiconfd' && ps -af | grep 'opsiconfd'",
+        },
+        {
+            "label": "webgui-frontend-this-backend",
+            "command": "npm-run-dev-backend",
+            "type": "shell",
+            "linux": {
+                "options": {
+                    "shell": {
+                        "args": [
+                            "-ci"
+                        ]
+                    }
+                }
+            },
+        },
+        {
+            "label": "webgui-frontend-docker",
+            "command": "npm-run-dev",
+            "type": "shell",
+            "linux": {
+                "options": {
+                    "shell": {
+                        "args": [
+                            "-ci"
+                        ]
+                    }
+                }
+            },
+        },
+        {
             "label": "DB load sql file",
             "type": "shell",
             "command": "cat ${input:sql-file} | sed 's/${input:sql-old-hostname}/'$OPSI_HOSTNAME'/g'  | mariadb -h localhost -u $MYSQL_USER --password=$MYSQL_PASSWORD $MYSQL_DATABASE",

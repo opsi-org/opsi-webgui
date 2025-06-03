@@ -3,4 +3,4 @@ version: '3'
 
 include:
   - path: ./docker/frontend/docker-compose.yml
-  - path: ./docker/backend/dev-opsiconfd-compose.yml
+  - path: ./docker/backend/docker-compose.yml

@@ -17,8 +17,7 @@ License: AGPL-3.0
           id="cbAutorefresh"
           name="autorefresh"
           :aria-label="
-            'Switch auto-refresh mode. Currently is ' +
-            (msgbusAutoRefresh ? 'on' : 'off')
+            'Switch auto-refresh mode. Currently is ' + (msgbusAutoRefresh ? 'on' : 'off')
           "
           style="--p-toggleswitch-width: 5rem"
           v-bind="$props"

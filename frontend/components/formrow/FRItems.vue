@@ -6,12 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-form
-    label-width="50%"
-    label-position="left"
-    class="bg-transparent mr-3 ml-3"
-    label-suffix=""
-  >
+  <el-form label-width="50%" label-position="left" class="bg-transparent mr-3 ml-3" label-suffix="">
     <div v-if="props.idKey === 'configId'">
       <FormrowFRItem
         v-for="(item, index) in sortedItems"

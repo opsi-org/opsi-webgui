@@ -27,11 +27,7 @@ License: AGPL-3.0
       >
         {{ $t('button.save') }}
       </el-button>
-      <el-dialog
-        v-model="openBufferedChangesModal"
-        title="Unsaved changes"
-        align-center
-      >
+      <el-dialog v-model="openBufferedChangesModal" title="Unsaved changes" align-center>
         <el-table :data="bufferedChanges">
           <el-table-column prop="productIds" label="Selected Product IDs">
             <template #default="scope">
@@ -42,14 +38,8 @@ License: AGPL-3.0
               </ul>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="actionRequest"
-            label="Action Request"
-          ></el-table-column>
-          <el-table-column
-            prop="oldActionRequest"
-            label="Old Action Request"
-          ></el-table-column>
+          <el-table-column prop="actionRequest" label="Action Request"></el-table-column>
+          <el-table-column prop="oldActionRequest" label="Old Action Request"></el-table-column>
         </el-table>
         <template #footer>
           <div class="dialog-footer">
@@ -88,9 +78,7 @@ License: AGPL-3.0
         >
         <el-alert
           v-if="props.selectedClient"
-          :title="
-            $t('table.info.productsOnClient', { id: props.selectedClient })
-          "
+          :title="$t('table.info.productsOnClient', { id: props.selectedClient })"
           type="info"
           show-icon
           :closable="false"
@@ -148,12 +136,9 @@ License: AGPL-3.0
   const rowId = 'productId'
   // Refs
   const productsRef = ref()
-  const { selectionDepots, selectionClients, selectionProducts } =
-    storeToRefs(storeSelection)
+  const { selectionDepots, selectionClients, selectionProducts } = storeToRefs(storeSelection)
   const clientSelection: Ref<Array<string>> =
-    props.selectedClient !== undefined
-      ? ref([props.selectedClient])
-      : ref(selectionClients.value)
+    props.selectedClient !== undefined ? ref([props.selectedClient]) : ref(selectionClients.value)
   const fetchedDataClients2Depots = ref<T_Client2Depot>({})
   const lastChanges = ref({
     clientIds: [] as Array<string>,
@@ -183,16 +168,12 @@ License: AGPL-3.0
       align: 'center',
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
-        rowData.selected = storeSelection.selectionProducts.includes(
-          rowData[rowId],
-        )
+        rowData.selected = storeSelection.selectionProducts.includes(rowData[rowId])
         watch(
           () => storeSelection.selectionProducts,
           () => {
-            rowData.selected = storeSelection.selectionProducts.includes(
-              rowData[rowId],
-            )
-          },
+            rowData.selected = storeSelection.selectionProducts.includes(rowData[rowId])
+          }
         )
         return storeSelection.multiSelection ? (
           <Checkbox model-value={rowData.selected} binary readonly />
@@ -224,12 +205,7 @@ License: AGPL-3.0
               <TCBadgeCompares
                 type="installationStatus"
                 rowid={rowData.productId}
-                values={
-                  rowData.installationStatusDetails || [
-                    rowData.installationStatus,
-                  ] ||
-                  []
-                }
+                values={rowData.installationStatusDetails || [rowData.installationStatus] || []}
                 objects={rowData.selectedClients || []}
                 objectsorigin={clientSelection.value || []}
               />
@@ -246,8 +222,7 @@ License: AGPL-3.0
       key: 'actionResult',
       sortable: 'custom',
       visible:
-        clientSelection.value.length > 0 &&
-        storeCookie.productsColumns.includes('actionResult'),
+        clientSelection.value.length > 0 && storeCookie.productsColumns.includes('actionResult'),
       className: 'max-w-8  min-w-min max-w-max',
       icon: icons.productActionResult,
       cellRenderer: ({ rowData }: any) => {
@@ -258,9 +233,7 @@ License: AGPL-3.0
               <TCBadgeCompares
                 type="actionResult"
                 rowid={rowData.productId}
-                values={
-                  rowData.actionResultDetails || [rowData.actionResult] || []
-                }
+                values={rowData.actionResultDetails || [rowData.actionResult] || []}
                 objects={rowData.selectedClients || []}
                 objectsorigin={clientSelection.value || []}
               />
@@ -326,16 +299,14 @@ License: AGPL-3.0
       key: 'actionProgress',
       sortable: 'custom',
       visible:
-        selectionClients.value.length > 0 &&
-        storeCookie.productsColumns.includes('actionProgress'),
+        selectionClients.value.length > 0 && storeCookie.productsColumns.includes('actionProgress'),
     },
     {
       title: $t('table.fields.actionRequest'),
       key: 'actionRequest',
       sortable: 'custom',
       visible:
-        clientSelection.value.length > 0 &&
-        storeCookie.productsColumns.includes('actionRequest'),
+        clientSelection.value.length > 0 && storeCookie.productsColumns.includes('actionRequest'),
       className: 'max-w-28',
       headerCellRenderer: useMQ().isMobile.value
         ? undefined
@@ -351,9 +322,7 @@ License: AGPL-3.0
         return (
           <TCProductRequest
             modelValue={rowData}
-            row-is-selected={selectionProducts.value.includes(
-              rowData.productId,
-            )}
+            row-is-selected={selectionProducts.value.includes(rowData.productId)}
             save={saveActionRequest}
           />
         )
@@ -369,19 +338,12 @@ License: AGPL-3.0
       cellRenderer: ({ rowData }: any) => {
         const change = () => {
           emit('change', rowData.productId)
-          navigation.toConfiguration(
-            id,
-            rowData.productId,
-            props.isChild,
-            currentType.value,
-          )
+          navigation.toConfiguration(id, rowData.productId, props.isChild, currentType.value)
         }
         return (
           <div class="flex flex-row">
             <BTNRowLink
-              is-pressed={
-                navigation.rowactionConfigChecked.value[rowData.productId]
-              }
+              is-pressed={navigation.rowactionConfigChecked.value[rowData.productId]}
               icon={icons.settings}
               onOnClick={change}
             />
@@ -400,9 +362,7 @@ License: AGPL-3.0
   onMounted(async () => {
     if (props.productType && props.productType !== currentType.value)
       changeProductsType(props.productType as IProductTypes)
-    fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(
-      clientSelection.value,
-    )
+    fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
     productsRef.value?.refetch()
   })
 
@@ -412,14 +372,14 @@ License: AGPL-3.0
     () => {
       sortBy.value = props.sortBy
       storeCookie.setSortColumn('products', sortBy.value, sortDesc.value)
-    },
+    }
   )
   watch(
     () => props.sortDesc,
     () => {
       sortDesc.value = props.sortDesc
       storeCookie.setSortColumn('products', sortBy.value, sortDesc.value)
-    },
+    }
   )
   watch(
     () => storeCookie.productsSorting,
@@ -428,7 +388,7 @@ License: AGPL-3.0
       sortBy.value = storeCookie.productsSorting.column
       sortDesc.value = storeCookie.productsSorting.isDesc
     },
-    { deep: true },
+    { deep: true }
   )
   watch(
     () => selectionClients.value,
@@ -436,13 +396,11 @@ License: AGPL-3.0
       if (props.selectedClient === undefined) {
         clientSelection.value = selectionClients.value
 
-        fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(
-          clientSelection.value,
-        )
+        fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
         productsRef.value?.refetch()
       }
     },
-    { deep: true },
+    { deep: true }
   )
   watch(
     () => props.selectedClient,
@@ -453,11 +411,9 @@ License: AGPL-3.0
         clientSelection.value = selectionClients.value
       }
 
-      fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(
-        clientSelection.value,
-      )
+      fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
       productsRef.value?.refetch()
-    },
+    }
   )
   watch(() => selectionDepots.value, refetch)
 
@@ -477,10 +433,7 @@ License: AGPL-3.0
       storeCookie.productsSorting.column = params.sortBy
       storeCookie.productsSorting.isDesc = params.sortDesc
     }
-    const { data, error, headers } = await useApiGETBody<Array<any>>(
-      '/opsidata/products',
-      params,
-    )
+    const { data, error, headers } = await useApiGETBody<Array<any>>('/opsidata/products', params)
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       return
@@ -593,11 +546,7 @@ License: AGPL-3.0
   async function saveBufferedChanges() {
     for (const change of bufferedChanges.value) {
       const { oldActionRequest, ...data } = change
-      await useSaveProductActionRequest($t).saveProdActionRequest(
-        data,
-        null,
-        true,
-      )
+      await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
     }
 
     bufferedChanges.value = []
@@ -607,15 +556,10 @@ License: AGPL-3.0
 
   function changeProductsType(type: IProductTypes) {
     const fullUrl = router.currentRoute.value.fullPath
-    router.push(
-      fullUrl.replace(
-        'products/' + currentType.value + '',
-        'products/' + type + '/',
-      ),
-    )
+    router.push(fullUrl.replace('products/' + currentType.value + '', 'products/' + type + '/'))
 
     const types: Array<IProductTypes> = Object.keys(
-      productsTypeChecked.value,
+      productsTypeChecked.value
     ) as Array<IProductTypes>
     types.forEach((k) => (productsTypeChecked.value[k] = false))
     if (Object.keys(productsTypeChecked.value).includes(type))

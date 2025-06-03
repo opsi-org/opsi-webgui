@@ -63,8 +63,6 @@ echo "WORKING BACKEND DIR: ${WORKING_DIR}/${BACKEND_DIR}"
 
 echo "> npm generate..."
 npm run generate || exit 1
-# npm run generate-nossl
-# npm run generate-with-ssl
 echo "> npm generate done"
 
 mkdir -p webgui  || exit 30

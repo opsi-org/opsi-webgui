@@ -10,10 +10,7 @@ import type { Host, Depot, Client, Product } from './types'
 
 export const getDepots = (hosts: Host[]): Depot[] => {
   return hosts
-    .filter(
-      (host) =>
-        host.type === 'OpsiDepotserver' || host.type === 'OpsiConfigserver',
-    )
+    .filter((host) => host.type === 'OpsiDepotserver' || host.type === 'OpsiConfigserver')
     .map((depot) => ({
       depotId: depot.id,
       type: depot.type,
@@ -25,10 +22,7 @@ export const getDepots = (hosts: Host[]): Depot[] => {
 
 export const getDepotList = (hosts: Host[]): string[] => {
   return hosts
-    .filter(
-      (host) =>
-        host.type === 'OpsiDepotserver' || host.type === 'OpsiConfigserver',
-    )
+    .filter((host) => host.type === 'OpsiDepotserver' || host.type === 'OpsiConfigserver')
     .map((depot) => depot.id)
 }
 
@@ -57,9 +51,7 @@ export const getClients = (hosts: Host[]): Client[] => {
 }
 
 export const getClientsList = (hosts: Host[]): string[] => {
-  return hosts
-    .filter((host) => host.type === 'OpsiClient')
-    .map((client) => client.id)
+  return hosts.filter((host) => host.type === 'OpsiClient').map((client) => client.id)
 }
 
 export const getHostParam = (configs: any[]): any => {
@@ -127,8 +119,6 @@ export const getHostGroups = (groups: any[]): any => {
       groupMap[group.parentGroupId].children[group.id] = groupMap[group.id]
     }
   })
-  const rootGroups = Object.values(groupMap).filter(
-    (group) => group.parent === 'groups',
-  )
+  const rootGroups = Object.values(groupMap).filter((group) => group.parent === 'groups')
   return rootGroups
 }

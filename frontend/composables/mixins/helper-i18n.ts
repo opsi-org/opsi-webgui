@@ -6,7 +6,6 @@ All rights reserved.
 License: AGPL-3.0
 */
 export const _getI18nInComposable = () => {
-  // only 'const {t} = useI18n()" not works for story
   let t = (k: string) => {
     return k
   }

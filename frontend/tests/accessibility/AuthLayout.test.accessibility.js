@@ -1,8 +1,6 @@
 const { test, expect } = require('@playwright/test')
 const AxeBuilder = require('@axe-core/playwright').default
-const {
-  apiMock,
-} = require('../../uib-components/.utils/playwright/pw-api-mock')
+const { apiMock } = require('../../uib-components/.utils/playwright/pw-api-mock')
 
 test.describe('accessibility', () => {
   test('login page', async ({ page }) => {

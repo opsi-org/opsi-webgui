@@ -48,10 +48,7 @@ export const useTimer = (init: boolean = false) => {
     if (t.diff <= notifyInMilliSec.value && !first_notification_showed.value) {
       first_notification_showed.value = true
       _createNotification(t)
-    } else if (
-      t.diff <= notifyInMilliSec.value &&
-      first_notification_showed.value
-    ) {
+    } else if (t.diff <= notifyInMilliSec.value && first_notification_showed.value) {
       const timerTextElement = document.getElementById('timerText')
       if (timerTextElement) {
         timerTextElement.innerHTML = _getNotificationText(t)
@@ -94,9 +91,7 @@ export const useTimer = (init: boolean = false) => {
       button: {
         label: $t('label.extend'),
         onClick: async () =>
-          await (
-            await useConfigserver(false, undefined, $t)
-          ).getOpsiConfigServerWithHeaders(),
+          await (await useConfigserver(false, undefined, $t)).getOpsiConfigServerWithHeaders(),
       },
     })
     if (_notification) notification.value = _notification
@@ -146,8 +141,7 @@ export const useTimer = (init: boolean = false) => {
       authStore.setSession()
     }
     const diff =
-      Date.parse(endtime as unknown as string) -
-      Date.parse(new Date() as unknown as string)
+      Date.parse(endtime as unknown as string) - Date.parse(new Date() as unknown as string)
     const seconds = Math.floor((diff / 1000) % 60)
     const minutes = Math.floor((diff / 1000 / 60) % 60)
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)

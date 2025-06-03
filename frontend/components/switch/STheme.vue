@@ -11,21 +11,14 @@ License: AGPL-3.0
       v-model="isDarkMode"
       id="cbAutorefresh"
       name="autorefresh"
-      :aria-label="
-        'Switch dark mode. Currently is ' + (isDarkMode ? 'on' : 'off')
-      "
+      :aria-label="'Switch dark mode. Currently is ' + (isDarkMode ? 'on' : 'off')"
       style="--p-toggleswitch-width: 5rem"
       v-bind="$props"
       data-testid="theme-toggle"
     />
-    <label
-      for="cbAutorefresh"
-      class="text-xs text-white !pb-1"
-      :class="isDarkMode ? '' : 'pl-4'"
-      >{{
-        isDarkMode ? $t('form.theme.cbvalue.on') : $t('form.theme.cbvalue.off')
-      }}</label
-    >
+    <label for="cbAutorefresh" class="text-xs text-white !pb-1" :class="isDarkMode ? '' : 'pl-4'">{{
+      isDarkMode ? $t('form.theme.cbvalue.on') : $t('form.theme.cbvalue.off')
+    }}</label>
   </PFloatLabel>
 </template>
 

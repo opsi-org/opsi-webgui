@@ -13,11 +13,7 @@ License: AGPL-3.0
     >
       <IconIIcon :icon="icons.x" />
     </el-button>
-    <ViewVConfigProduct
-      type="product"
-      :id="route.params.id as string"
-      :is-child="true"
-    />
+    <ViewVConfigProduct type="product" :id="route.params.id as string" :is-child="true" />
   </div>
 </template>
 <script setup lang="ts">

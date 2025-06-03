@@ -23,12 +23,8 @@ License: AGPL-3.0
         v-model:selection="localSelectedServers"
         v-model:data="dataSorted"
         :multi-selection="selectionStore.multiSelection"
-        :selected-options="
-          selectionStore.multiSelection ? [configserver] : configserver
-        "
-        :marked-options="
-          selectionStore.multiSelection ? [configserver] : configserver
-        "
+        :selected-options="selectionStore.multiSelection ? [configserver] : configserver"
+        :marked-options="selectionStore.multiSelection ? [configserver] : configserver"
       />
       <div class="flex justify-end gap-2">
         <el-button @click="cancel">{{ $t('label.cancel') }}</el-button>
@@ -53,36 +49,24 @@ License: AGPL-3.0
     refetchOnCancel: { type: Boolean, default: false },
   })
 
-  const { selectionDepots, selectionDefaultDepots } =
-    storeToRefs(selectionStore)
+  const { selectionDepots, selectionDefaultDepots } = storeToRefs(selectionStore)
   const configserver = ref<string>('')
   const dataSorted = await useDepot($t).getDepotIdList()
   const localSelectedServers = ref<string | string[]>(
-    selectionStore.multiSelection
-      ? selectionDefaultDepots.value
-      : selectionDefaultDepots.value?.[0],
+    selectionStore.multiSelection ? selectionDefaultDepots.value : selectionDefaultDepots.value?.[0]
   )
-  // const focusedElement = ref<HTMLElement | null>(null)
   onMounted(async () => {
     await initSelect()
   })
 
   async function initSelect() {
     // default is first item of data
-    localSelectedServers.value = selectionStore.multiSelection
-      ? [dataSorted?.[0]]
-      : dataSorted?.[0]
+    localSelectedServers.value = selectionStore.multiSelection ? [dataSorted?.[0]] : dataSorted?.[0]
 
     // if configserver is found, use it
-    configserver.value = (
-      await useCServer.getOpsiConfigServerWithHeaders(false)
-    ).data
-    if (
-      configserver.value ||
-      selectionDefaultDepots.value?.[0] == '<configserver>'
-    ) {
-      if (configserver.value == undefined)
-        throw new Error('Configserver not found')
+    configserver.value = (await useCServer.getOpsiConfigServerWithHeaders(false)).data
+    if (configserver.value || selectionDefaultDepots.value?.[0] == '<configserver>') {
+      if (configserver.value == undefined) throw new Error('Configserver not found')
       localSelectedServers.value = selectionStore.multiSelection
         ? [configserver.value]
         : configserver.value
@@ -106,30 +90,6 @@ License: AGPL-3.0
     $emit('refetch')
     visible.value = false
   }
-  /*
-  function updateStorage() {
-    // change the default selected server in this modal in storage
-    // multi selection
-    if (
-      Array.isArray(localSelectedServers.value) &&
-      localSelectedServers.value.length == 1 &&
-      configserver.value === localSelectedServers.value[0]
-    ) {
-      selectionStore.setSelectionDepotsDefault(['<configserver>'])
-    } else if (Array.isArray(localSelectedServers.value)) {
-      selectionStore.setSelectionDepotsDefault(localSelectedServers.value)
-    }
-    // is single selection
-    else if (
-      !Array.isArray(localSelectedServers.value) &&
-      localSelectedServers.value.length == 1 &&
-      configserver.value === localSelectedServers.value[0]
-    ) {
-      selectionStore.setSelectionDepotsDefault(['<configserver>'])
-    } else if (!Array.isArray(localSelectedServers.value))
-      selectionStore.setSelectionDepotsDefault([localSelectedServers.value])
-  }*/
-
   function cancel() {
     if (props.refetchOnCancel) {
       $emit('refetch')

@@ -1,21 +1,34 @@
 {
 	"version": "0.2.0",
 	"configurations": [
-		{ // to restart sometimes needs to be run twice (script tries to kill opsiconfd processes)
-			"name": "opsiconfd uv",
+		{
+			"name": "opyiconfd py",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "/workspace/docker/backend/start_opsiconfd.py",
+			"sudo": true,
+			"justMyCode": false,
+			"envFile": "${workspaceFolder}/.env",
+			"env": {
+				"PYDEVD_DISABLE_FILE_VALIDATION": "1",
+			},
+			"subProcess": true,
+			//"console": "integratedTerminal"
+		},
+		{
+			"name": "webgui this backend",
 			"outputCapture": "std",
 			"request": "launch",
-			"runtimeArgs": [
-				"-E",
-				"/workspace/backend/scripts/start_opsiconfd.sh"
-			],
-			"runtimeExecutable": "sudo",
-			"type": "node",
-			"cwd": "${workspaceFolder}/../docker/backend/opsiconfd",
-			"env": {
-				"PYTHONPATH": "/workspace/backend"
-			}
-		}
+			"preLaunchTask": "webgui-frontend-this-backend",
+			"type": "node"
+		},
+		{
+			"name": "webgui docker",
+			"outputCapture": "std",
+			"request": "launch",
+			"preLaunchTask": "webgui-frontend-docker",
+			"type": "node"
+		},
 	],
 	"inputs": [
 		{

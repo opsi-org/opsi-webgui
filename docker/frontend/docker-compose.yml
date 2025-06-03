@@ -9,16 +9,9 @@ include:
       - ./opsi-docker/opsi-server/opsi-server.env
 
 services:
-  opsiui-frontend-dev:
+  opsi-webgui-frontend-dev:
     env_file:
       - .env # needs to be in same directory !
-    # environment:
-    #   NODE_OPTIONS: '--max-old-space-size=4096'
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 4g
-    # cpus: '1.0'
     build:
       context: ../..
       args:
@@ -26,8 +19,9 @@ services:
         DEV_USER: ${DEV_USER}
         DEV_GIT_EMAIL: ${DEV_GIT_EMAIL}
         DEV_GIT_NAME: ${DEV_GIT_NAME}
-      dockerfile:  ./docker/frontend/Dockerfile
-    depends_on: # created in include part
+      dockerfile: ./docker/frontend/Dockerfile
+    depends_on:
+      # created in include part
       - opsi-server
     ports:
       - ${WEBGUI_DEV_PORT}:8888
@@ -40,5 +34,5 @@ services:
       - opsi_data:/data
       - ./files/docker-entrypoint.sh:/docker-entrypoint.sh
       - ../../:/workspace
-    working_dir: /workspace/frontend
-    entrypoint: ['/docker-entrypoint.sh']
+    working_dir: /workspace
+    entrypoint: [ '/docker-entrypoint.sh' ]

@@ -19,9 +19,7 @@ License: AGPL-3.0
     </div>
     <div class="flex justify-end space-x-1">
       <el-text>{{ $t('label.version') }}</el-text>
-      <el-text class="BAuthFooter-version">{{
-        $config.public.packageVersion
-      }}</el-text>
+      <el-text class="BAuthFooter-version">{{ $config.public.packageVersion }}</el-text>
     </div>
   </el-footer>
 </template>

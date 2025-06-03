@@ -10,7 +10,6 @@ import type { T_Groups, T_GroupsTransformed } from '~/types/APItypes'
 export const useGroupsHelper = () => {
   const { multiSelection } = storeToRefs(storeSelections())
   function transformNode(node: T_Groups): T_GroupsTransformed {
-    // const nodeIsLeaf = !node.children || Object.keys(node.children).length === 0
     const nodeIsLeaf = node.type === 'ObjectToGroup'
     const newNode: T_GroupsTransformed = {
       id: node.id,
@@ -23,9 +22,7 @@ export const useGroupsHelper = () => {
     if (!nodeIsLeaf) {
       newNode.disabled = !multiSelection.value
       if (node.children) {
-        newNode.children = Object.values(node.children).map((child) =>
-          transformNode(child),
-        )
+        newNode.children = Object.values(node.children).map((child) => transformNode(child))
       } else {
         newNode.children = []
       }
@@ -33,9 +30,7 @@ export const useGroupsHelper = () => {
     // console.log('node.id', node.id, node, newNode)
     return newNode
   }
-  function transformToNestedArray(
-    data: Record<string, T_Groups>,
-  ): T_GroupsTransformed[] {
+  function transformToNestedArray(data: Record<string, T_Groups>): T_GroupsTransformed[] {
     return Object.values(data).map((node) => transformNode(node))
   }
 
@@ -43,7 +38,7 @@ export const useGroupsHelper = () => {
     nodes: T_GroupsTransformed[],
     searchFor: any[],
     key: string | undefined,
-    returnKey: string | undefined,
+    returnKey: string | undefined
   ): any[] {
     return nodes.reduce((acc: any[], node: any) => {
       if (key && searchFor.includes(node[key])) {

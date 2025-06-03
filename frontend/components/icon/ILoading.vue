@@ -12,11 +12,7 @@ License: AGPL-3.0
     :style="'color:(--color, ' + props.color + ') !important;'"
     :class="{ inline: props.inline }"
   >
-    <span
-      v-if="!props.small"
-      class="text-small"
-      :class="{ inline: props.inline }"
-    >
+    <span v-if="!props.small" class="text-small" :class="{ inline: props.inline }">
       {{ $t('message.loading') }}
     </span>
     <IconIIcon

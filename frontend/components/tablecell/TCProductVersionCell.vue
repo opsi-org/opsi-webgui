@@ -8,9 +8,7 @@ License: AGPL-3.0
 <template>
   <TooltipTTooltip data-testid="TCProductVersionCell">
     <template #default>
-      <el-text>{{
-        rowitem.depot_version_diff ? ' ' : rowitem.depotVersions?.[0]
-      }}</el-text>
+      <el-text>{{ rowitem.depot_version_diff ? ' ' : rowitem.depotVersions?.[0] }}</el-text>
       <IconIDetails
         v-if="rowitem.depot_version_diff"
         class="details depot-unequal"
@@ -19,23 +17,16 @@ License: AGPL-3.0
       />
       <IconIDetails
         v-if="rowitem.selectedDepots?.length !== selectionDepots.length"
-        :variant="
-          rowitem.selectedDepots?.length !== selectionDepots.length
-            ? 'warn'
-            : undefined
-        "
+        :variant="rowitem.selectedDepots?.length !== selectionDepots.length ? 'warn' : undefined"
         class="details depot-wo-prod"
         content="depot-wo-prod"
       />
       <IconIDetails
         v-if="rowitem.client_version_outdated || false"
-        :variant="
-          rowitem.client_version_outdated || false ? 'danger' : undefined
-        "
+        :variant="rowitem.client_version_outdated || false ? 'danger' : undefined"
         class="details client-outdated"
         content="client-outdated"
       />
-      <!-- @click="$emit('details', row, tooltiptext)" -->
     </template>
     <template #tooltip>
       <div v-for="(hosts, server, index) in tooltiptext" :key="server">
@@ -54,20 +45,14 @@ License: AGPL-3.0
           <IconIIcon
             v-if="host === server && Object.keys(hosts).length > 1"
             class="mr-1 mt-1"
-            :icon="
-              openedTTServer.includes(index)
-                ? icons.arrowRight
-                : icons.arrowDown
-            "
+            :icon="openedTTServer.includes(index) ? icons.arrowRight : icons.arrowDown"
           />
           <p class="text-left w-full">{{ host }}</p>
           <!-- if any child of the server is outdated, we show an unequal sign -->
           <p
             v-if="
               host == server &&
-              Object.values(hosts).some(
-                (v) => v !== NOVERSION && v != tooltiptext[server][server],
-              )
+              Object.values(hosts).some((v) => v !== NOVERSION && v != tooltiptext[server][server])
             "
             class="text-left mr-2 text-danger"
           >
@@ -78,9 +63,7 @@ License: AGPL-3.0
           <p-tag
             :pt:root:class="[
               'm-0 p-0 min-w-28',
-              version !== NOVERSION && version !== tooltiptext[server][server]
-                ? 'bg-danger'
-                : '',
+              version !== NOVERSION && version !== tooltiptext[server][server] ? 'bg-danger' : '',
             ]"
           >
             {{ version }}
@@ -95,16 +78,12 @@ License: AGPL-3.0
   import { useStrings } from '~/composables/mixins/useStrings'
   import { mapValues2Objects } from '~/utils/smappings'
   import type { T_Client2Depot, T_ProductRow } from '~/types/APItypes'
-  import type {
-    IObjectString2String,
-    IObjectString2ObjectString2String,
-  } from '~/types/tgeneral'
+  import type { IObjectString2String, IObjectString2ObjectString2String } from '~/types/tgeneral'
 
   const NOVERSION = '--'
   const icons = useIcons()
   const { t_fixed } = useStrings()
   const { selectionDepots } = storeToRefs(storeSelections())
-  // const { selectionDepots, selectionClients } = storeToRefs(storeSelections())
 
   const props = defineProps({
     row: { type: Object as PropType<T_ProductRow>, required: true },
@@ -131,7 +110,7 @@ License: AGPL-3.0
         rowitem.value.depotVersions,
         rowitem.value.selectedDepots,
         selectionDepots.value,
-        NOVERSION,
+        NOVERSION
       )
 
       for (const d in depots) {
@@ -143,7 +122,6 @@ License: AGPL-3.0
     if (
       Object.keys(props.clients2depots).length <= 0 ||
       Object.keys(props.clients2depots).length !== props.selectedClients.length
-      // Object.keys(props.clients2depots).length !== selectionClients.value.length
     ) {
       return tt
     }
@@ -153,7 +131,7 @@ License: AGPL-3.0
         rowitem.value.clientVersions,
         rowitem.value.selectedClients,
         props.selectedClients,
-        NOVERSION,
+        NOVERSION
       )
 
       for (const c in clients) {
@@ -166,19 +144,13 @@ License: AGPL-3.0
     }
 
     return tt
-    // return 'tt'
   })
 
   if (Object.keys(tooltiptext.value).length == 1) {
     openedTTServer.value = [0]
   }
 
-  function toggleTTRow(
-    index: number,
-    host: string | number,
-    server: string | number,
-    hosts: any,
-  ) {
+  function toggleTTRow(index: number, host: string | number, server: string | number, hosts: any) {
     if (hosts == undefined) return
     if (host != server || Object.keys(hosts || {})?.length <= 1) return
 

@@ -8,19 +8,11 @@ License: AGPL-3.0
 <template>
   <div class="max-w-[500px] m-auto shadow-lg rounded-lg p-4">
     <div class="grid place-items-center gap-4">
-      <IconIOpsiLogo
-        :short="false"
-        :light="storeSettings().isLight"
-        class="h-50 max-w-[700px]"
-      />
+      <IconIOpsiLogo :short="false" :light="storeSettings().isLight" class="h-50 max-w-[700px]" />
       <h2 class="text-center font-semibold">
         {{ t_fixed('title.project') }} {{ $config.public.packageVersion }}
       </h2>
-      <IconIUibLogo
-        :short="false"
-        :light="storeSettings().isLight"
-        class="mt-10 h-10"
-      />
+      <IconIUibLogo :short="false" :light="storeSettings().isLight" class="mt-10 h-10" />
     </div>
   </div>
 </template>

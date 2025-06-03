@@ -12,11 +12,7 @@ License: AGPL-3.0
     </template>
 
     <template #default>
-      <p-float-label
-        v-if="props.type === 'checkbox'"
-        variant="in"
-        class="min-w-full"
-      >
+      <p-float-label v-if="props.type === 'checkbox'" variant="in" class="min-w-full">
         <p-toggle-switch
           :key="componentKeyForceUpdate"
           v-model="cbValue"
@@ -33,9 +29,7 @@ License: AGPL-3.0
           class="text-xs text-white !pb-1"
           :class="cbValue ? '' : 'pl-4'"
           >{{
-            cbValue
-              ? $t('form.multiselection.cbvalue.on')
-              : $t('form.multiselection.cbvalue.off')
+            cbValue ? $t('form.multiselection.cbvalue.on') : $t('form.multiselection.cbvalue.off')
           }}</label
         >
       </p-float-label>
@@ -75,7 +69,7 @@ License: AGPL-3.0
           selections.setSelectionProducts([selections.selectionProducts[0]])
         }
       }
-    },
+    }
   )
 
   const changeSelectionMode = (showModalVal = true) => {

@@ -7,11 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="IChangesTableFilter">
-    <el-input
-      v-model="modelFilter"
-      :aria-label="placeholder"
-      :placeholder="placeholder"
-    >
+    <el-input v-model="modelFilter" :aria-label="placeholder" :placeholder="placeholder">
       <template #prefix>
         <IconIIcon :icon="icons.filter" />
       </template>

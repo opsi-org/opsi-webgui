@@ -28,10 +28,7 @@ License: AGPL-3.0
             :disable="storeSelection['selection' + category].length <= 0"
           >
             <span class="sr-only">{{ $t('button.deselect') }}</span>
-            <IconIIcon
-              :icon="icons.x"
-              @click="storeSelection['clearSelection' + category]"
-            />
+            <IconIIcon :icon="icons.x" @click="storeSelection['clearSelection' + category]" />
           </el-button>
         </div>
       </template>

@@ -31,18 +31,13 @@ License: AGPL-3.0
         <!-- LEFT SIDE -->
         <el-aside
           v-if="!mq.isMobile.value || leftSideVisible"
-          @click="
-            (e: any) =>
-              e.target === e.currentTarget ? toggleSide('left') : null
-          "
+          @click="(e: any) => (e.target === e.currentTarget ? toggleSide('left') : null)"
           :class="[
             mq.isMobile.value
               ? 'absolute z-40 grid !h-[calc(100vh-3rem)] !min-w-screen opacity-96'
               : 'el-aside-left bg-opsi-blue',
 
-            mq.isMobile.value && isDarkMode
-              ? 'bg-opsi-gray'
-              : 'bg-opsi-base-light-background',
+            mq.isMobile.value && isDarkMode ? 'bg-opsi-gray' : 'bg-opsi-base-light-background',
           ]"
         >
           <el-scrollbar
@@ -81,9 +76,7 @@ License: AGPL-3.0
           <el-scrollbar
             :class="[
               'w-full max-w-full right-0 justify-self-end !border-none p-2 ',
-              mq.isMobile.value
-                ? '!max-w-[80vw] z-30 min-h-[calc(100vh-3rem)]'
-                : '',
+              mq.isMobile.value ? '!max-w-[80vw] z-30 min-h-[calc(100vh-3rem)]' : '',
             ]"
           >
             <BarBQuickPanel />
@@ -108,13 +101,9 @@ License: AGPL-3.0
   const settings = storeSettings()
   const { isLight } = storeToRefs(storeSettings())
 
-  const leftSideIsSmall = ref<boolean>(
-    settings.menuCollapsed && !mq.isMobile.value,
-  )
+  const leftSideIsSmall = ref<boolean>(settings.menuCollapsed && !mq.isMobile.value)
   const leftSideVisible = ref<boolean>(!mq.isMobile.value)
-  const rightSideVisible = ref<boolean>(
-    settings.quickpanelOpened && !mq.isMobile.value,
-  )
+  const rightSideVisible = ref<boolean>(settings.quickpanelOpened && !mq.isMobile.value)
 
   // init
   onMounted(async () => {
@@ -131,7 +120,7 @@ License: AGPL-3.0
       leftSideVisible.value = !mq.isMobile.value
       leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
       rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
-    },
+    }
   )
 
   watch(useRouter().currentRoute, () => {
@@ -139,13 +128,7 @@ License: AGPL-3.0
       toggleSide('left')
     }
   })
-  // const bgQuickPanel = computed(() => {
-  //   return isDarkMode.value
-  //     ? mq.isMobile.value
-  //       ? 'bg-opsi-gray'
-  //       : 'bg-opsi-base-dark-background'
-  //     : 'bg-opsi-base-light-background'
-  // })
+
   const isDarkMode = computed({
     get: () => !isLight.value,
     // get: () => settings.colormode === 'dark',
@@ -185,9 +168,7 @@ License: AGPL-3.0
       })
       return
     }
-    const forbidden = await useApiGET<T_DisaledFeatures>(
-      '/opsidata/server/disabled-features',
-    )
+    const forbidden = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
     if (forbidden.error) {
       console.error(forbidden.error)
       notifyError({
