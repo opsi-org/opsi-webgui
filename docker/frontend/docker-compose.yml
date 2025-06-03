@@ -12,13 +12,6 @@ services:
   opsi-webgui-frontend-dev:
     env_file:
       - .env # needs to be in same directory !
-    # environment:
-    #   NODE_OPTIONS: '--max-old-space-size=4096'
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 4g
-    # cpus: '1.0'
     build:
       context: ../..
       args:

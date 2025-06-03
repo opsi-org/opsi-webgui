@@ -30,23 +30,18 @@ DOCKERDIR=/workspace/docker/backend/opsiconfd
 if cd $DOCKERDIR; then git pull; else git clone git@gitlab.uib.gmbh:uib/opsiconfd.git $DOCKERDIR; fi
 
 echo "* Setup poetry venv"
-#poetry lock --no-update
-#poetry install --no-interaction --no-ansi
 uv sync --frozen
 
-
-
-echo -e "\n==========================================\nConfigure opsiconfd-docker container commands\n===================================================="
+echo -e "===========Configure opsiconfd-docker container commands==========="
 CONTAINER_NAME_DOCKER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
 echo "alias opsiconfd-docker-restart=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER supervisorctl reload\"" >> ~/.bashrc
 echo "alias opsiconfd-docker-container=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER\"" >> ~/.bashrc
 
-echo -e "\n==========================================\nConfigure frontend container commands\n===================================================="
+echo -e "===========Configure frontend container commands==========="
 CONTAINER_NAME_FRONTEND=$(sudo docker ps --format "{{.Names}}" | grep webgui | grep frontend | grep opsi)
 echo "alias opsi-webgui-frontend-container=\"sudo docker exec -u root -it $CONTAINER_NAME_FRONTEND\"" >>~/.bashrc
 
 NPM_RUN_DEV="cd /workspace/frontend && npm run dev" # needs to be in a variable!
 echo "alias npm-run-dev=\"sudo docker exec -u root -it ${CONTAINER_NAME_FRONTEND} sh -c '$NPM_RUN_DEV'\"" >>~/.bashrc
-
 NPM_RUN_DEV_BACKEND="cd /workspace/frontend &&  npm run dev-backend" # needs to be in a variable!
 echo "alias npm-run-dev-backend=\"sudo docker exec -u root -it $CONTAINER_NAME_FRONTEND sh -c '$NPM_RUN_DEV_BACKEND'\"" >>~/.bashrc

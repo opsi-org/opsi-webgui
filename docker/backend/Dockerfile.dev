@@ -25,37 +25,33 @@ RUN mkdir -p /usr/local/share/keyrings \
 	&& apt-get update \
 	&& apt-get --yes dist-upgrade \
 	&& apt-get --yes --allow-downgrades install \
-		docker.io \
-		cpio \
-		vim \
-		wget \
-		gettext \
-		mariadb-client \
-		libmariadb-dev \
-		psmisc \
-		librsync1 \
-		sudo \
-		git \
-		#bash-completion \
-		nano \
-		netcat \
-		supervisor \
-	#&& mkdir -p /usr/local/share/keyrings \
+	docker.io \
+	cpio \
+	vim \
+	wget \
+	gettext \
+	mariadb-client \
+	libmariadb-dev \
+	psmisc \
+	librsync1 \
+	sudo \
+	git \
+	nano \
+	netcat \
+	supervisor \
 	&& wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor > /usr/local/share/keyrings/grafana.gpg \
 	&& echo "deb [signed-by=/usr/local/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" > /etc/apt/sources.list.d/grafana.list \
-	#&& wget -q -O - ${OPSI_REPO}Release.key | gpg --dearmor > /usr/local/share/keyrings/opsi.gpg \
-	#&& echo "deb [signed-by=/usr/local/share/keyrings/opsi.gpg] ${OPSI_REPO} /" > /etc/apt/sources.list.d/opsi.list \
 	&& apt-get update \
 	&& apt-get update \
 	&& apt-get --yes install \
-		apt-transport-https \
-		software-properties-common \
-		grafana \
-		mariadb-server \
-		redis-tools \
-		redis-server \
-		redis-timeseries \
-		opsi-utils \
+	apt-transport-https \
+	software-properties-common \
+	grafana \
+	mariadb-server \
+	redis-tools \
+	redis-server \
+	redis-timeseries \
+	opsi-utils \
 	&& apt-get clean
 
 COPY docker/backend/files/ /

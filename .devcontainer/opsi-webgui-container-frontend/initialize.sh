@@ -8,6 +8,3 @@ ln -s frontend/.vscode .vscode
 
 SCRIPTDIR=$(dirname $(readlink -f $0))
 ${SCRIPTDIR}/devenv.sh
-
-base_dir=$(dirname $(dirname $(readlink -f $0)))
-#${base_dir}/../backend/scripts/devenv.sh

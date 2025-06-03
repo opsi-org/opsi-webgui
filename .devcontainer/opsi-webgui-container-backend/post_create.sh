@@ -1,9 +1,5 @@
 echo "* Running as $(whoami)"
 
-
-#rm -rf /workspace/.vscode
-#ln -s /workspace/backend/.vscode /workspace/.vscode
-
 # install uv
 #wget -qO- https://astral.sh/uv/install.sh | sh # user context
 curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sudo sh # root context
@@ -18,8 +14,6 @@ echo 'eval "$(uvx --generate-shell-completion zsh)"' >> ~/.zshrc
 echo "\n" >> ~/.bashrc
 echo 'eval "$(uv generate-shell-completion bash)"' >> ~/.bashrc
 echo 'eval "$(uvx --generate-shell-completion bash)"' >> ~/.bashrc
-
-
 
 sudo mkdir -p /var/log/opsi
 sudo mkdir -p /var/lib/opsi/depot
