@@ -8,8 +8,13 @@ DEV_TOOLS_URL=https://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/
 DEV_TOOLS_BINARY="opsi-dev-tool"
 
 echo -e "\n==========================================\nInstalling dev-tools\n===================================================="
+echo "who am i: $(whoami)"
+
+rm -f "./${SCRIPT_NAME}"
 wget $DEV_TOOLS_URL
+ls -lah
 chmod 750 $SCRIPT_NAME
 ./${SCRIPT_NAME}
-rm -f $SCRIPT_NAME
+rm -f "./${SCRIPT_NAME}"
+rm -f "./${SCRIPT_NAME}*"
 cd -

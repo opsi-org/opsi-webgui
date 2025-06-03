@@ -7,8 +7,6 @@ SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 DOCKERDIR0=$WORKSPACE_DIR/docker/frontend/
 
 ENVFILE=$DOCKERDIR0/.env
-#ENVFILE=$SCRIPT_DIR/.env
-#DOCKERDIR=$SCRIPT_DIR/opsi-docker
 DOCKERDIR=$DOCKERDIR0/opsi-docker
 
 #echo "################# pparsing arguments"

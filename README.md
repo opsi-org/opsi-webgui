@@ -4,7 +4,7 @@ This is the source of the official opsi-webgui for the open source client manage
 
 The opsi-webgui is a web-based graphical user interface for managing the opsi system. It simplifies the deployment and management tasks, without installing an application on your device. With opsi-webgui, you can configure the opsi-servers, set up new opsi-clients, deploy products, inspect logs from any device with a web browser and more.
 
-For further information about the webgui technology, installation or the usage checkout opsi docs https://docs.opsi.org/opsi-docs-en/4.3/gui/webgui.html
+For further information about the webgui technology, installation or the usage checkout opsi docs [en](https://docs.opsi.org/opsi-docs-en/4.3/gui/webgui.html)/[de](https://docs.opsi.org/opsi-docs-de/4.3/gui/webgui.html)
 
 Further links:
 
@@ -33,20 +33,40 @@ This project espacially the devcontainer is not for production usage. To install
 
 
 ## Development
-The development with this project includes a complete dev environment. The built container includes a opsiconfd and the webgui.
-The opsiconfd will be available at the address https://localhost:4447 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser` (changeable through `.devcontainer/.env` file)
 
 ### Environment
-
 - Requirements: Docker, VisualStudioCode with 'Remote - Container' extension
+### Structure
+This project includes a development setup using multiple DevContainers (Docker containers). Only one container can serve as the primary container, while the others run in the background and can be controlled via specific commands when needed.
+Container Configuration Overview
+
+If the frontend is set as the primary container, you can choose between two backend options:
+* **opsi-docker as the backend (recommended):**
+  Ideal if you're primarily working on the frontend and don't need detailed backend output or logging.
+  * Default port: 44471
+  * Start the web GUI with: `npm run dev` (`https://localhost:8888`)
+
+  * **opsiconfd from Git:**
+    Use this if you need a live version of opsiconfd from the repository.
+    * Default port: 4447
+    * Start opsiconfd manually using `opsiconfd-frontend-start` or via "Run and Debug" `https://localhost:8889`
+    * Then launch the webgui with: npm run dev-backend
+
+    Note: This setup offers minimal advantages for typical frontend development.
+
+If you're mainly working on the backend, it should be run as the primary container. In this case, opsi-docker is not required.
+  * Start opsiconfd in debug mode via "Run and Debug"
+  * Launch the webgui with: `npm-run-dev-backend` or through "Run and Debug"
+
+For more detailed setup and usage instructions, please refer to the respective README.md files in the `frontend` and `backend` directories.
+
+The opsiconfd will be available at the address https://localhost:4447 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser` (changeable through `.devcontainer/.env` file)
+
 
 ### Build devcontainer
-
 - **Clone project and open** it in VSCode with `git clone https://github.com/opsi-org/opsi-webgui.git`
-- **run `.devcontainer/devenv.sh`** in terminal (from Workspace-folder!)
-  
-- **Reopen** the project in remote-container (as vscode suggests)
-  (Hint: Strg + Shift + P opens command palette; search for: `(rebuild and) reopen in container` )
+- **Reopen** the project in remote-container (as vscode suggests) and select your primary container
+  (Hint: `Strg + Shift + P` opens command palette; search for: `(rebuild and) reopen in container` )
   * You will be asked which container you want to open (backend/frontend)
   * the container starts which creating an environment file `dockter/(backend|frontend)/.env` \
     this script may ask you questions (e.g. git username/email, hostname, etc)
@@ -54,12 +74,18 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
 
 ### Start applications
 #### for frontend container
-- opsiconfd will be available at `https://localhost:44471` and webgui at `https://localhost:8888`
+- opsiconfd will be available at `https://localhost:44471` (automatically started), `htpps://localhost:4447` (needs manual start) and webgui at `https://localhost:8888` / `https://localhost:8889`
 - **Starting webgui**: `cd /workspace/frontend/ && npm run dev` or Start 'webgui' in 'Run and Debug' section (same as F5)
-- **Restarting opsiconfd**: `opsiconfdrestart` or `opsiconfdcontainer supervisorctl reload` for updating use e.g. `opsiconfdcontainer apt update -y`
-- Accept certificate of opsiconfd: `https://localhost:44471/admin`
-##### for backend container
-- opsiconfd will be available at `https://localhost:4447` and can be (re-)started with F5 / vscode debugging feature
+- **opsiconfd from opsi-docker (44471)**:
+  * server data at folder/volume `/data`
+  * Accept certificate of opsiconfd: `https://localhost:44471/admin`
+  * Restarting from webgui-container: `opsiconfd-docker-restart` or `opsiconfdcontainer supervisorctl reload`
+  * Updating from webgui-container: `opsiconfd-docker-container apt update -y`
+* **opsiconfd from git (4447)**:
+  * server data at folder `/etc/opsi/...`
+  * Accept certificate of opsiconfd: `https://localhost:4447/admin`
+  * Restarting: Stop opsiconfd via "Run and Debug" or cancel the command
+  * Updating: `cd /workspace/docker/backend/opsiconfd && git pull` (not tested yet)
 
 ### Contributing
 
