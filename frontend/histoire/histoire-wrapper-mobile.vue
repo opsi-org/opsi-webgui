@@ -32,10 +32,7 @@ License: AGPL-3.0
 </script>
 
 <template>
-  <div
-    class="global-wrapper"
-    :class="hasWrapper ? 'mobile-wrapper' : 'no-mobile-wrapper'"
-  >
+  <div class="global-wrapper" :class="hasWrapper ? 'mobile-wrapper' : 'no-mobile-wrapper'">
     <slot />
   </div>
 </template>

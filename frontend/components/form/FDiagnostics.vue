@@ -25,11 +25,9 @@ License: AGPL-3.0
           <div :class="mq.isMobile.value ? 'ml-4' : ''">
             <template v-if="typeof v == 'object'">
               <div class="scrollValue">
-                <pre
-                  class=""
-                  :class="mq.isMobile.value ? 'w-screen' : 'min-w-[250px]'"
-                  >{{ JSON.stringify(v, null, 2) }}</pre
-                >
+                <pre class="" :class="mq.isMobile.value ? 'w-screen' : 'min-w-[250px]'">{{
+                  JSON.stringify(v, null, 2)
+                }}</pre>
               </div>
             </template>
             <template v-else>
@@ -57,16 +55,12 @@ License: AGPL-3.0
   watch(
     () => [_props.filter, _props.data],
     () => debounceFilterData(),
-    { deep: true },
+    { deep: true }
   )
 
   const debounceFilterData = debounce(filterData, 600)
   function filterData() {
-    if (
-      _props.data == undefined ||
-      _props.filter == undefined ||
-      _props.filter.length <= 0
-    ) {
+    if (_props.data == undefined || _props.filter == undefined || _props.filter.length <= 0) {
       dataCopy.value = _props.data
     }
     dataCopy.value = {}
@@ -76,9 +70,7 @@ License: AGPL-3.0
       const filteredValues: Record<string, any> = {}
       for (const [key, value] of Object.entries(values)) {
         const keyvalue = key.toString() + JSON.stringify(value)
-        const includes = keyvalue
-          .toLowerCase()
-          .includes(_props.filter.toLowerCase())
+        const includes = keyvalue.toLowerCase().includes(_props.filter.toLowerCase())
         if (includes) {
           filteredValues[key] = value
         }

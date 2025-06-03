@@ -43,23 +43,13 @@ License: AGPL-3.0
   const imageUrl = computed<string>({
     get: () => {
       if (props.short && props.light)
-        return (
-          config.public.OWN_PATH +
-          '/images/UIB_1704_2023_UIB_Schriftzug_quer.png'
-        )
+        return config.public.OWN_PATH + '/images/UIB_1704_2023_UIB_Schriftzug_quer.png'
       if (props.short && !props.light)
-        return (
-          config.public.OWN_PATH +
-          '/images/UIB_1704_2023_UIB_Schriftzug_quer_neg.png'
-        )
+        return config.public.OWN_PATH + '/images/UIB_1704_2023_UIB_Schriftzug_quer_neg.png'
       if (!props.short && props.light)
-        return (
-          config.public.OWN_PATH + '/images/UIB_1704_2023_UIB_Logo_quer.png'
-        )
+        return config.public.OWN_PATH + '/images/UIB_1704_2023_UIB_Logo_quer.png'
       if (!props.short && !props.light)
-        return (
-          config.public.OWN_PATH + '/images/UIB_1704_2023_UIB_Logo_quer_neg.png'
-        )
+        return config.public.OWN_PATH + '/images/UIB_1704_2023_UIB_Logo_quer_neg.png'
       return ''
     },
     set: (_v) => {},

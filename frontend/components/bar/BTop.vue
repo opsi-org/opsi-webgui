@@ -6,12 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-menu
-    mode="horizontal"
-    :ellipsis="false"
-    class="bg-opsi-blue"
-    data-testid="BTop"
-  >
+  <el-menu mode="horizontal" :ellipsis="false" class="bg-opsi-blue" data-testid="BTop">
     <el-menu-item
       v-if="mq.isMobile.value"
       index="0"
@@ -38,22 +33,6 @@ License: AGPL-3.0
     </el-menu-item>
 
     <div class="flex-grow" />
-    <!-- <el-menu-item
-      v-if="changesExists"
-      @click="openDialog"
-      index="2"
-      type="text"
-      data-testid="menu-changes"
-      class="!bg-transparent"
-    >
-      <ModalMChanges
-        v-if="$mq !== 'mobile'"
-        v-model="changes"
-        v-model:visible="changesDialogVisible"
-        small
-        transparent
-      />
-    </el-menu-item> -->
 
     <el-menu-item
       v-if="storeConfigapp().config?.read_only"

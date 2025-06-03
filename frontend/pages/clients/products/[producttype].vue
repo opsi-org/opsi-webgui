@@ -44,17 +44,11 @@ License: AGPL-3.0
   const router = useRouter()
   const icons = useIcons()
 
-  const { splitviewVisibilityClienttable } = storeToRefs(
-    storeInternalSettings(),
-  )
+  const { splitviewVisibilityClienttable } = storeToRefs(storeInternalSettings())
 
-  const path = computed(() =>
-    route.path.split('/').filter((p: string) => p !== ''),
-  )
+  const path = computed(() => route.path.split('/').filter((p: string) => p !== ''))
 
   const width = computed(() => {
-    // const routeLength = filteredPath.value.length || 1
-    // return (100/routeLength)  + '%'
     return '50%'
   })
 

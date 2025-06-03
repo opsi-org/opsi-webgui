@@ -18,9 +18,7 @@ License: AGPL-3.0
       <el-button
         class="float-right"
         v-if="routeNameSettings?.page1Condition"
-        @click="
-          splitviewVisibilityServertable = !splitviewVisibilityServertable
-        "
+        @click="splitviewVisibilityServertable = !splitviewVisibilityServertable"
         ><IconIIcon
           :icon="
             splitviewVisibilityServertable
@@ -38,10 +36,7 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
-  import {
-    usePageHelper,
-    type PageSettings,
-  } from '~/composables/mixins/usePageHelper'
+  import { usePageHelper, type PageSettings } from '~/composables/mixins/usePageHelper'
   import { useMQ } from '../composables/useMQ'
 
   const mq = useMQ()
@@ -49,9 +44,7 @@ License: AGPL-3.0
   const icons = useIcons()
   const { serverSettings } = usePageHelper()
 
-  const { splitviewVisibilityServertable } = storeToRefs(
-    storeInternalSettings(),
-  )
+  const { splitviewVisibilityServertable } = storeToRefs(storeInternalSettings())
   splitviewVisibilityServertable.value = true // default: every time this page is loaded, the servertable is visible
 
   const routeNameSettings = computed<PageSettings>(() => {

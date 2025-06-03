@@ -47,11 +47,7 @@ License: AGPL-3.0
               <b>{{ $t('label.property.object') }}</b>
               <pre>{{ props.item.objects }} </pre>
             </div>
-            <div
-              v-if="
-                localPropertyChanges?.length && localPropertyChanges?.length > 0
-              "
-            >
+            <div v-if="localPropertyChanges?.length && localPropertyChanges?.length > 0">
               <b>{{ $t('label.property.localchanges') }}</b>
               <pre>{{ localPropertyChanges }}</pre>
             </div>
@@ -94,12 +90,7 @@ License: AGPL-3.0
               :show-after="1000"
               placement="top-start"
             >
-              <el-option
-                class="max-w-96"
-                :key="pVal"
-                :label="pVal"
-                :value="pVal"
-              />
+              <el-option class="max-w-96" :key="pVal" :label="pVal" :value="pVal" />
             </el-tooltip>
           </template>
           <template #header v-if="props.item.editable">
@@ -162,14 +153,14 @@ License: AGPL-3.0
     () => props.item.value,
     () => {
       itemValue.value = props.item.value
-    },
+    }
   )
 
   watch(
     () => itemValue.value,
     () => {
       $emit('change', itemValue.value, getVisibleValue(props.item))
-    },
+    }
   )
   const localPropertyChanges = ref<Array<any>>()
   getChanges()

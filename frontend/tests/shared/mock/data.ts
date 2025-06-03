@@ -48,8 +48,7 @@ export const serverDiagnostic = {
           check_name: "OPSI license for module 'directory-connector'",
           check_description: '',
           check_status: 'ok',
-          message:
-            "License for module 'directory-connector' is below the limit of 0.",
+          message: "License for module 'directory-connector' is below the limit of 0.",
         },
       ],
     },

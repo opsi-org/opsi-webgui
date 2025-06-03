@@ -72,7 +72,7 @@ License: AGPL-3.0
           v === 'none' ||
           v === 'not_installed' ||
           v === 'successful' ||
-          v === 'installed',
+          v === 'installed'
       )
     ) {
       return 'success'
@@ -81,29 +81,18 @@ License: AGPL-3.0
   })
 
   const gettext = computed<string>(() => {
-    return mapValues2Value(
-      props.values,
-      props.objects,
-      props.objectsorigin,
-      defaults[props.type],
-    )
+    return mapValues2Value(props.values, props.objects, props.objectsorigin, defaults[props.type])
   })
 
   const gettooltipobj = computed(() => {
-    return mapValues2Objects(
-      props.values,
-      props.objects,
-      props.objectsorigin,
-      defaults[props.type],
-    )
+    return mapValues2Objects(props.values, props.objects, props.objectsorigin, defaults[props.type])
   })
 
   function _getVariantInTooltip(v: string): PSeverity {
     if (v === 'failed') {
       return 'danger'
     }
-    if (v === '' || v === 'None' || v === 'none' || v === 'not_installed')
-      return 'secondary' // gray
+    if (v === '' || v === 'None' || v === 'none' || v === 'not_installed') return 'secondary' // gray
 
     if (v === 'successful' || v === 'installed') {
       return 'success'
@@ -119,7 +108,7 @@ License: AGPL-3.0
           <td>
             <p-tag severity={_getVariantInTooltip(value)}>{value}</p-tag>
           </td>
-        </tr>,
+        </tr>
       )
     }
     return (

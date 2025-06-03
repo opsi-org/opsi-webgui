@@ -8,5 +8,3 @@ License: AGPL-3.0
 <template>
   <FormFCreateClient />
 </template>
-
-<script setup></script>

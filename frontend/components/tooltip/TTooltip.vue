@@ -8,12 +8,8 @@ License: AGPL-3.0
 <template>
   <div
     data-testid="TTooltip"
-    @mouseenter="
-      (ev: any) => (props.method == 'hover' ? popoverRef?.show(ev) : null)
-    "
-    @click="
-      (ev: any) => (props.method == 'click' ? popoverRef?.toggle(ev) : null)
-    "
+    @mouseenter="(ev: any) => (props.method == 'hover' ? popoverRef?.show(ev) : null)"
+    @click="(ev: any) => (props.method == 'click' ? popoverRef?.toggle(ev) : null)"
     @mouseleave="
       (ev: any) =>
         props.method == 'hover' &&
@@ -30,9 +26,7 @@ License: AGPL-3.0
       ref="popoverRef"
       id="popover"
       class="mt-[-1px]"
-      @mouseleave="
-        (ev: any) => (props.method == 'hover' ? popoverRef?.hide() : null)
-      "
+      @mouseleave="(ev: any) => (props.method == 'hover' ? popoverRef?.hide() : null)"
     >
       <el-text v-if="props.content">{{ props.content }}</el-text>
       <slot name="tooltip" />

@@ -1,9 +1,7 @@
 const { test, expect } = require('@playwright/test')
 const AxeBuilder = require('@axe-core/playwright').default
 
-const {
-  mockEveryThing,
-} = require('../../uib-components/.utils/playwright/pw-api-mock')
+const { mockEveryThing } = require('../../uib-components/.utils/playwright/pw-api-mock')
 mockEveryThing(test, expect)
 // const { apiMock, cookieOpsiconfdSession } = require('../../uib-components/.utils/playwright/pw-api-mock')
 // test.beforeEach(async ({ page, context }) => {
@@ -63,9 +61,7 @@ test.describe('accessibility', () => {
   })
   test('clients - creation', async ({ page }) => {
     await page.click('[data-testid="NICollapsible-title.clients"]')
-    await page.click(
-      '[data-testid="NICollapsible-submenu-title.clientstitle.addNew"]',
-    )
+    await page.click('[data-testid="NICollapsible-submenu-title.clientstitle.addNew"]')
     await new Promise((resolve) => setTimeout(resolve, 4000))
     await expect(page).toHaveURL('/addons/webgui/app/clients/creation')
     const accessibilityScanResults = await new AxeBuilder({ page })
@@ -76,9 +72,7 @@ test.describe('accessibility', () => {
   })
   test('clients - config with active Atrributes tab', async ({ page }) => {
     await page.click('[data-testid="NICollapsible-title.clients"]')
-    await page.click(
-      '[data-testid="NICollapsible-submenu-title.clientstitle.config"]',
-    )
+    await page.click('[data-testid="NICollapsible-submenu-title.clientstitle.config"]')
     await new Promise((resolve) => setTimeout(resolve, 4000))
     await expect(page).toHaveURL('/addons/webgui/app/clients/config')
     const accessibilityScanResults = await new AxeBuilder({ page })
@@ -89,9 +83,7 @@ test.describe('accessibility', () => {
   })
   test('clients - parameters', async ({ page }) => {
     await page.click('[data-testid="NICollapsible-title.clients"]')
-    await page.click(
-      '[data-testid="NICollapsible-submenu-title.clientstitle.config"]',
-    )
+    await page.click('[data-testid="NICollapsible-submenu-title.clientstitle.config"]')
     await expect(page).toHaveURL('/addons/webgui/app/clients/config')
     await new Promise((resolve) => setTimeout(resolve, 4000))
     await page.click('[data-testid="Parameters"]')
@@ -116,9 +108,7 @@ test.describe('accessibility', () => {
   })
   test('products', async ({ page }) => {
     await page.click('[data-testid="NIItem-title.products"]')
-    await expect(page).toHaveURL(
-      '/addons/webgui/app/products/LocalbootProducts',
-    )
+    await expect(page).toHaveURL('/addons/webgui/app/products/LocalbootProducts')
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .include('[data-testid="VProducts"]')

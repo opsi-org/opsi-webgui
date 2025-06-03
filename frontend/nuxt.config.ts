@@ -68,7 +68,6 @@ export default defineNuxtConfig({
           href: ADDON_PATH + '/app/favicon.ico',
         },
       ],
-      // link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
     },
   },
   runtimeConfig: {
@@ -79,9 +78,7 @@ export default defineNuxtConfig({
       API_PATH: ADDON_PATH + '/api',
       OWN_PATH: ADDON_PATH + '/app',
       NUXT_PUBLIC_API_BASE:
-        process.env.NODE_ENV === 'production'
-          ? ''
-          : 'https://localhost:' + CONFD_PORT,
+        process.env.NODE_ENV === 'production' ? '' : 'https://localhost:' + CONFD_PORT,
     },
   },
   modules: [
@@ -94,7 +91,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
   ],
   i18n: {
-    vueI18n: './i18n.config.js', // custom path example
+    vueI18n: './i18n.config.js',
   },
   piniaPluginPersistedstate: {
     key: 'opsiwui-%id',

@@ -15,7 +15,7 @@ export const usePageHelper = () => {
   const path = computed(() =>
     useRoute()
       .path.split('/')
-      .filter((p: string) => p !== ''),
+      .filter((p: string) => p !== '')
   )
 
   const serverSettings: Record<string, PageSettings> = {

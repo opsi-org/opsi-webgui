@@ -52,7 +52,7 @@ License: AGPL-3.0
       if (props.sync) {
         value.value = props.id
       }
-    },
+    }
   )
   watch(
     () => value.value,
@@ -101,16 +101,14 @@ License: AGPL-3.0
       }
 
       emit('update:value', value.value)
-    },
+    }
   )
   async function fetch() {
     if (props.type === 'servers') {
       const dataSorted = await useDepot($t).getDepotIdList()
       fetchedData.value = dataSorted
     } else if (props.type === 'clients') {
-      const dataSorted = await useClient().getClientIdList(
-        storeSel.selectionDepots,
-      )
+      const dataSorted = await useClient().getClientIdList(storeSel.selectionDepots)
       fetchedData.value = dataSorted
     }
   }

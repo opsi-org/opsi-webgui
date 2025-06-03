@@ -38,8 +38,7 @@ License: AGPL-3.0
 
     'unicode-single-edit': {
       configId: 'licensing.client_limit_warning_absolute',
-      description:
-        'Warn when the number of available licenses reaches this value.',
+      description: 'Warn when the number of available licenses reaches this value.',
       type: 'UnicodeConfig',
       value: '5',
       possibleValues: ['5', '6', '7'],
@@ -145,11 +144,7 @@ License: AGPL-3.0
   <Story :layout="{ type: 'grid', width: '50%' }">
     <!-- <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled :meta="{ wrapperMobile: true }" responsive-disabled>
     </Variant> -->
-    <Variant
-      title="Config-Server-bool-false"
-      :meta="{ wrapperMobile: true }"
-      responsive-disabled
-    >
+    <Variant title="Config-Server-bool-false" :meta="{ wrapperMobile: true }" responsive-disabled>
       <FormrowFRItem
         :item="items['bool-false']"
         @change="
@@ -159,11 +154,7 @@ License: AGPL-3.0
         "
       />
     </Variant>
-    <Variant
-      title="Config-Server-bool-true"
-      :meta="{ wrapperMobile: true }"
-      responsive-disabled
-    >
+    <Variant title="Config-Server-bool-true" :meta="{ wrapperMobile: true }" responsive-disabled>
       <FormrowFRItem
         :item="items['bool-true']"
         @change="

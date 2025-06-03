@@ -18,10 +18,7 @@ License: AGPL-3.0
       <el-tooltip :content="$t('button.showhide.clienttable')" placement="top">
         <el-button
           class="float-right"
-          v-if="
-            routeName.startsWith('clients-products') &&
-            routeNameSettings?.page1Condition
-          "
+          v-if="routeName.startsWith('clients-products') && routeNameSettings?.page1Condition"
           @click="toggleClientstableVisibility"
         >
           <IconIIcon
@@ -54,16 +51,13 @@ License: AGPL-3.0
   const route = useRoute()
   const { path, clientSettings } = usePageHelper()
 
-  const { splitviewVisibilityClienttable } = storeToRefs(
-    storeInternalSettings(),
-  )
+  const { splitviewVisibilityClienttable } = storeToRefs(storeInternalSettings())
   splitviewVisibilityClienttable.value = true // default: every time this page is loaded, the clienttable is visible
 
   const routeName = computed(() => (route.name as string) || '')
   const routeNameSettings = computed(() => {
     const s = clientSettings[routeName.value]
-    if (s === undefined)
-      throw new Error('route name not found: ' + (route.name as string))
+    if (s === undefined) throw new Error('route name not found: ' + (route.name as string))
     return s
   })
 

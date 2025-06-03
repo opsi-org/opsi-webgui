@@ -78,12 +78,6 @@ export interface T_ServerAttr {
 
 export interface T_HostParameter {
   [key: string]: Array<T_HostParameterEntry>
-  // general: Array<T_HostParameterEntry>
-  // clientconfig: Array<T_HostParameterEntry>
-  // opsiclientd: Array<T_HostParameterEntry>
-  // softwareondemand: Array<T_HostParameterEntry>
-  // licensing: Array<T_HostParameterEntry>
-  // opsi_script: Array<T_HostParameterEntry>
 }
 export type tconfigtypes = 'BoolConfig' | 'UnicodeConfig' | 'Config'
 export interface T_HostParameterEntry {
@@ -107,20 +101,6 @@ export interface T_HostParameterEntry {
 export interface T_Logout {
   result: string
 }
-
-export interface T_PGroups {
-  groups: T_Groups
-}
-// export interface T_Groups {
-//   [key: string]: T_Group
-// }
-// export interface T_Group {
-//   id: string
-//   text: string
-//   type?: string
-//   parent: string
-//   children: null | T_Groups
-// }
 
 export interface T_Groups {
   id: string
@@ -173,9 +153,6 @@ export interface T_Client {
   reachable: boolean | undefined
 }
 
-// export interface T_Products {
-//   [key: string]: T_Product
-// }
 export type tproducttypes = 'LocalbootProduct' | 'NetbootProduct'
 export interface T_Product {
   locked: boolean
@@ -214,43 +191,6 @@ export interface T_ProductRow {
   clientVersions: Array<string> | undefined
   depotVersions: Array<string> | undefined
 }
-//   {
-//     "productId": "7-zip",
-//     "name": "7-Zip",
-//     "priority": 0,
-//     "description": "7zip Kompression",
-//     "advice": "Um Zip Archive zu erstellen",
-//     "selectedDepots": [
-//         "ast14.uib.local"
-//     ],
-//     "selectedClients": [
-//         "nb-00023.acme.corp"
-//     ],
-//     "installationStatusErrorLevel": 2,
-//     "installationStatus": "not_installed",
-//     "actionRequest": "uninstall",
-//     "actionProgress": "",
-//     "actionResultErrorLevel": 2,
-//     "actionResult": "none",
-//     "modificationTime": "2024-12-09T18:41:51Z",
-//     "clientVersions": [
-//         "23.01-2"
-//     ],
-//     "client_version_outdated": false,
-//     "actions": [
-//         "setup",
-//         "uninstall",
-//         "none"
-//     ],
-//     "depot_version_diff": false,
-//     "not_on_all_depots": false,
-//     "numDepots": 1,
-//     "depotVersions": [
-//         "23.01-2"
-//     ],
-//     "productType": "LocalbootProduct",
-//     "selected": true
-// }
 
 interface propdepres {
   productVersions: { [key: string]: string | undefined }
@@ -271,9 +211,7 @@ export interface T_ProductPropertiesResult extends propdepres {
 export interface T_ProductProperties {
   [key: string]: T_ProductProperty
 }
-export type tproductpropertytypes =
-  | 'UnicodeProductProperty'
-  | 'BoolProductProperty'
+export type tproductpropertytypes = 'UnicodeProductProperty' | 'BoolProductProperty'
 type propvalue = string | boolean
 export interface T_ProductProperty {
   productId: string
@@ -309,14 +247,6 @@ export interface T_ProductDependenciesResult extends propdepres {
   dependencies: Array<T_ProductDependencies>
 }
 export interface T_ProductDependencies {
-  //   productId	"l-desktop"
-  // productAction	"setup"
-  // version	"4.2.0.4-1"
-  // requiredProductId	"l-system-update"
-  // requiredVersion	null
-  // requiredAction	"setup"
-  // requiredInstallationStatus	null
-  // requirementType	"before"
   productId: string
   productAction: string | null
   version: string

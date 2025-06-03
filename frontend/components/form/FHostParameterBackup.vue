@@ -11,16 +11,8 @@ License: AGPL-3.0
       {{ $t('alert.select') }}
     </el-alert>
     <div class="overflow-y-auto" :style="`max-height: ${maxVisibleHeight}px;`">
-      <el-collapse
-        accordion
-        v-loading="isLoading"
-        @change="handleCollapseChange"
-      >
-        <el-collapse-item
-          v-for="(items, category) in fetchedData"
-          :key="category"
-          :name="category"
-        >
+      <el-collapse accordion v-loading="isLoading" @change="handleCollapseChange">
+        <el-collapse-item v-for="(items, category) in fetchedData" :key="category" :name="category">
           <template #title>
             <strong>{{ String(category) }}</strong>
           </template>
@@ -34,9 +26,7 @@ License: AGPL-3.0
                 <el-form-item>
                   <!-- <el-form-item :label="item.configId"> -->
                   <template #label>
-                    <div
-                      class="flex w-full h-full justify-between items-center"
-                    >
+                    <div class="flex w-full h-full justify-between items-center">
                       <span>{{
                         item.configId.startsWith(`${category}.`)
                           ? item.configId.replace(`${category}.`, '')
@@ -44,10 +34,7 @@ License: AGPL-3.0
                       }}</span>
                       <p-badge
                         v-if="
-                          !arrayEqual(
-                            itemValues[item.configId],
-                            initialValues[item.configId],
-                          )
+                          !arrayEqual(itemValues[item.configId], initialValues[item.configId])
                           // itemValues[item.configId] !=
                           // initialValues[item.configId]
                         "
@@ -79,9 +66,7 @@ License: AGPL-3.0
                         :selected-options="itemValues[item.configId]"
                         :marked-options="initialValues[item.configId]"
                         :info-id="item.configId"
-                        @change="
-                          () => handleSelection(item, itemValues[item.configId])
-                        "
+                        @change="() => handleSelection(item, itemValues[item.configId])"
                       />
                     </div>
                   </template>
@@ -93,18 +78,14 @@ License: AGPL-3.0
       </el-collapse>
     </div>
     <div
-      v-if="
-        fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only
-      "
+      v-if="fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only"
       class="button-container"
       style="display: flex; justify-content: flex-end"
     >
       <!-- TODO: enable if save if method is implemented (#763) -->
-      <el-button
-        @click="createConfigVisible = !createConfigVisible"
-        class="!hidden"
-        >{{ $t('button.create.config') }}</el-button
-      >
+      <el-button @click="createConfigVisible = !createConfigVisible" class="!hidden">{{
+        $t('button.create.config')
+      }}</el-button>
       <el-button @click="fetchFormData">{{ $t('button.reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
@@ -113,11 +94,7 @@ License: AGPL-3.0
         >{{ $t('button.save') }}</el-button
       >
     </div>
-    <ModalMConfigCreation
-      v-if="createConfigVisible"
-      class="!hidden"
-      @refetch="() => {}"
-    />
+    <ModalMConfigCreation v-if="createConfigVisible" class="!hidden" @refetch="() => {}" />
   </div>
 </template>
 
@@ -162,7 +139,7 @@ License: AGPL-3.0
       // 'tableHeader-'+props.tableId
       // 'tableFooter-'+props.tableId
     ],
-    50,
+    50
   )
 
   const showWarning = computed(() => {
@@ -170,9 +147,7 @@ License: AGPL-3.0
   })
 
   function handleCollapseChange(activeNames: CollapseModelValue) {
-    activeItem.value = Array.isArray(activeNames)
-      ? String(activeNames[0])
-      : String(activeNames)
+    activeItem.value = Array.isArray(activeNames) ? String(activeNames[0]) : String(activeNames)
   }
   function getInitialValue(item: {
     configId: string
@@ -188,9 +163,7 @@ License: AGPL-3.0
 
       if (item.multiValue) {
         // erstmal egal
-        const sortedValues = objectValues.map((value: any) =>
-          JSON.stringify([...value].sort()),
-        )
+        const sortedValues = objectValues.map((value: any) => JSON.stringify([...value].sort()))
         if (sortedValues.every((v: string) => v === sortedValues[0])) {
           return objectValues[0]
         }
@@ -279,17 +252,14 @@ License: AGPL-3.0
   }
 
   function handleSelection(item: any, value: any) {
-    assert(
-      value !== undefined,
-      `values should not be undefined (${item.configId}, ${value})`,
-    )
+    assert(value !== undefined, `values should not be undefined (${item.configId}, ${value})`)
     assert(
       itemValues.value[item.configId] !== undefined,
-      `itemValues should not be undefined (${item.configId}, ${value})`,
+      `itemValues should not be undefined (${item.configId}, ${value})`
     )
     assert(
       initialValues.value[item.configId] !== undefined,
-      `initialValues should not be undefined (${item.configId}, ${value})`,
+      `initialValues should not be undefined (${item.configId}, ${value})`
     )
     changeBuffer.value[item.configId] = JSON.parse(JSON.stringify(value))
     checkUnsavedChanges()

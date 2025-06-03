@@ -2,8 +2,8 @@
     "configurations": [
       {
         // webgui v4.4
-        "name": "webgui backend-docker",
-        "cwd": "${workspaceFolder}",
+        "name": "webgui docker",
+        "cwd": "${workspaceFolder}/frontend",
         "outputCapture": "std",
         "request": "launch",
         "runtimeArgs": ["run", "dev"],
@@ -12,8 +12,8 @@
       },
       {
         // webgui v4.4
-        "name": "webgui backend-custom",
-        "cwd": "${workspaceFolder}",
+        "name": "webgui local opsiconfd",
+        "cwd": "${workspaceFolder}/frontend",
         "outputCapture": "std",
         "request": "launch",
         // "--dry-save-package-json-to package-merged.json",
@@ -22,6 +22,21 @@
         "runtimeExecutable": "npm",
         "type": "node"
       },
+
+		{
+			"name": "backend this start",
+			"outputCapture": "std",
+			"request": "launch",
+			"command": "opsiconfd-backend-start",
+			"type": "node-terminal",
+		},
+		{
+			"name": "backend docker restart",
+			"outputCapture": "std",
+			"request": "launch",
+			"command": "opsiconfd-docker-restart && exit",
+			"type": "node-terminal",
+		},
       {
         // Webgui-Storybook
         "cwd": "${workspaceFolder}",
@@ -36,4 +51,3 @@
     ],
     "version": "0.2.0"
   }
-  

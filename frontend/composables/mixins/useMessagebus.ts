@@ -8,14 +8,13 @@ License: AGPL-3.0
 import { encode, decode } from '@msgpack/msgpack'
 import { useNotification } from './useComponent'
 
-const { notifyInfo, notifySuccess, notifyWarning, notifyError } =
-  useNotification()
+const { notifyInfo, notifySuccess, notifyWarning, notifyError } = useNotification()
 
 export const useMBus = (
   watchFn: ((msg: any) => Promise<void>) | undefined = undefined,
   showStartNotifications = false,
   _t: any = undefined,
-  _channels: any = [],
+  _channels: any = []
 ) => {
   const $config = useRuntimeConfig()
   let url_host = ''
@@ -47,15 +46,13 @@ export const useMBus = (
         await watchFn(wsBusMsg.value)
       } else {
         wsNotification(
-          '(info) received unhandled message "' +
-            JSON.stringify(wsBusMsg.value) +
-            '"',
-          wsBusMsg.value,
+          '(info) received unhandled message "' + JSON.stringify(wsBusMsg.value) + '"',
+          wsBusMsg.value
         )
       }
       // await watchFn()
     },
-    { deep: true },
+    { deep: true }
   )
 
   function wsDisconnect() {
@@ -70,14 +67,11 @@ export const useMBus = (
     if (typeof crypto.randomUUID === 'function') {
       return crypto.randomUUID()
     }
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
-      /[xy]/g,
-      function (c) {
-        const r = (Math.random() * 16) | 0,
-          v = c == 'x' ? r : (r & 0x3) | 0x8
-        return v.toString(16)
-      },
-    )
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0,
+        v = c == 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    })
   }
 
   onMounted(async () => {
@@ -136,8 +130,7 @@ export const useMBus = (
     _setBusMethods(wsBus.value, setBusLastMsg)
     await wsWait(1000)
     if (wsIsConnected.value) {
-      if (showStartNotifications)
-        notifySuccess({ message: 'MessageBus: connected' })
+      if (showStartNotifications) notifySuccess({ message: 'MessageBus: connected' })
     }
   }
 
@@ -276,15 +269,11 @@ export const useMBus = (
 
   function _setBusMethods(_bus: WebSocket, setBusLastMsgMethod: any) {
     _bus.onclose = () => {
-      if (showStartNotifications)
-        notifyInfo({ message: 'MessageBus: Connection closed.' })
+      if (showStartNotifications) notifyInfo({ message: 'MessageBus: Connection closed.' })
       setBus(undefined)
     }
     _bus.onerror = (err: any) => {
-      wsNotificationWarn(
-        'Websocket:',
-        'Connection error: ' + JSON.stringify(err),
-      )
+      wsNotificationWarn('Websocket:', 'Connection error: ' + JSON.stringify(err))
 
       if (showStartNotifications)
         notifyError({

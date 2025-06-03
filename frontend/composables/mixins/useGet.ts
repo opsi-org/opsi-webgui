@@ -9,19 +9,14 @@ import type { IObjectString2Any, IObjectString2String } from '@/types/tgeneral'
 import { useNotification } from './useComponent'
 import { storeCache } from '@/store/datacacheStore'
 import { _getI18nInComposable } from './helper-i18n'
-import type {
-  T_Client2Depot,
-  T_ClientIds,
-  T_DepotIds,
-  T_Opsiserver,
-} from '~/types/APItypes'
+import type { T_Client2Depot, T_ClientIds, T_DepotIds, T_Opsiserver } from '~/types/APItypes'
 
 const { notifyError } = useNotification()
 
 export const useConfigserver = async (
   init: boolean = false,
   _store: any = undefined,
-  _t: any = undefined,
+  _t: any = undefined
 ) => {
   let $t = _t
   if (!$t) {
@@ -45,8 +40,7 @@ export const useConfigserver = async (
   }
 
   async function getOpsiConfigServerWithHeaders(setServer: boolean = true) {
-    const { data, headers, error } =
-      await useApiGET<T_Opsiserver>('/user/opsiserver')
+    const { data, headers, error } = await useApiGET<T_Opsiserver>('/user/opsiserver')
     if (error || !data?.value) {
       const errordata = {
         response: {
@@ -93,11 +87,9 @@ export const useDepot = (_t: any = undefined) => {
 export const useClient = () => {
   let fetchedDataClients2Depots: IObjectString2String = {}
 
-  async function getClientIdList(
-    selectedDepots: Array<string>,
-  ): Promise<T_ClientIds> {
+  async function getClientIdList(selectedDepots: Array<string>): Promise<T_ClientIds> {
     const { data, error } = await useApiGET<T_ClientIds>(
-      `/opsidata/depots/clients?selectedDepots=[${selectedDepots}]`,
+      `/opsidata/depots/clients?selectedDepots=[${selectedDepots}]`
     )
     if (error || !data?.value) {
       notifyError({ message: error?.response?.data?.message })
@@ -108,7 +100,7 @@ export const useClient = () => {
 
   async function getClientToDepot(selectedClients: Array<string>) {
     const { data, error } = await useApiGET<T_Client2Depot>(
-      `/opsidata/clientsdepots?selectedClients=[${selectedClients}]`,
+      `/opsidata/clientsdepots?selectedClients=[${selectedClients}]`
     )
     if (error || !data?.value) {
       notifyError({ message: error?.response?.data?.message })

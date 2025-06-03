@@ -27,9 +27,7 @@ export const useGroupsHelper = () => {
     if (!nodeIsLeaf) {
       newNode.disabled = !multiSelection.value
       if (node.children) {
-        newNode.children = Object.values(node.children).map((child) =>
-          transformNode(child),
-        )
+        newNode.children = Object.values(node.children).map((child) => transformNode(child))
       } else {
         newNode.children = []
       }
@@ -47,7 +45,7 @@ export const useGroupsHelper = () => {
     nodes: T_GroupsTransformed[],
     searchFor: any[],
     key: string | undefined,
-    returnKey: string | undefined,
+    returnKey: string | undefined
   ): any[] {
     return nodes.reduce((acc: any[], node: any) => {
       if (key && searchFor.includes(node[key])) {
