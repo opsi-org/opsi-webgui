@@ -30,7 +30,7 @@ sudo mkdir -p /var/lib/opsiconfd
 sudo mkdir -p /tftpboot
 sudo ln -s /workspace/backend/addons /var/lib/opsiconfd/addons
 
-sudo chown -R $DEV_USER /workspace
+sudo chown -R $DEV_USER:$DEV_USER /workspace
 
 /workspace/backend/scripts/setup-hosts.sh
 /workspace/backend/scripts/setup-grafana.sh

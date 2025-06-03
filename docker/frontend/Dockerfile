@@ -1,50 +1,75 @@
-# FROM mcr.microsoft.com/playwright:v1.38.0-jammy
 FROM node:23.0.0-bookworm-slim
 
-
-# System deps:
-RUN apt-get update \
-	&& apt-get --yes dist-upgrade \
-	&& apt-get --yes --allow-downgrades install \
-		docker.io \
-		curl \
-		cpio \
-		htop \
-		sudo \
-		wget \
-		zsh \
-		bash-completion \
-		git \
-		vim \
-		nano \
-		python3 \
-	&& apt-get clean
 
 ARG HOSTNAME
 ARG DEV_USER
 ARG DEV_GIT_EMAIL
 ARG DEV_GIT_NAME
 
+ENV DOCKER_ENV=${DOCKER_ENV} \
+	DEV_USER=${DEV_USER}\
+	PATH=/home/${DEV_USER}/.local/bin:/home/${DEV_USER}/bin:$PATH
 
-RUN sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
-	&& sed -i '1i export TERM=xterm-256color' /root/.zshrc \
-	&& usermod -s /usr/bin/zsh root
+# https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#non-root-user
+# rename node user to dev_user
+#RUN usermod -d /home/${DEV_USER} -l ${DEV_USER} node  \
+#	&& groupmod --new-name ${DEV_USER} node
+# delete user node and create new user with the same uid
+RUN userdel -r node \
+	&& useradd --create-home -s /bin/bash -u 1000 ${DEV_USER}
+
+# System deps:
+RUN apt-get update \
+	&& apt-get --yes dist-upgrade \
+	&& apt-get --yes --allow-downgrades install \
+	docker.io \
+	curl \
+	cpio \
+	htop \
+	sudo \
+	wget \
+	zsh \
+	bash-completion \
+	git \
+	vim \
+	nano \
+	python3 \
+	&& apt-get clean
 
 
-# RUN useradd --create-home -s /usr/bin/zsh ${DEV_USER}
+# give correct user permissions
+RUN	adduser ${DEV_USER} sudo \
+	&& chown -R ${DEV_USER}:${DEV_USER} /home/${DEV_USER}/ \
+	&& echo "${DEV_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+	&& cp -r /root/.bash* /home/${DEV_USER}/
+# renaming node user to the dev user
+# this is needed to avoid conflicts with the dev user
+#RUN usermod -m -d /home/${DEV_USER} -l $DEV_USER ${NODE_USER} \
+#	&& groupmod --new-name ${DEV_USER} ${NODE_USER} \
+	#&& usermod -d /my/new/home -m username \
+	#&& mkdir /home/${NODE_USER} \
+	#&& mkhomedir_helper ${NODE_USER} \
+	#usermod -d /newhome/username username
+
+# create node user (with another uid)
+#RUN useradd -s /bin/bash -u 1001 ${NODE_USER} \
+#	&& usermod -aG sudo ${NODE_USER} \
+#	&& chown -R ${NODE_USER}:${NODE_USER} /home/${NODE_USER}/ \
+#	&& adduser ${DEV_USER} ${NODE_USER} \
+#	&& echo "${NODE_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+#RUN useradd --create-home -s /bin/bash ${DEV_USER} \
+#	&&
+
 RUN git config --global --add safe.directory /workspace
 RUN git config --global user.name "${DEV_GIT_NAME}"
 RUN git config --global user.email "${DEV_GIT_EMAIL}"
 
-
-#RUN echo 'alias opsiconfdrestart="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi) supervisorctl reload"' >> /root/.zshrc
-#RUN echo 'alias opsiconfdcontainer="docker exec -u root $(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)"'  >> /root/.zshrc
 WORKDIR /workspace/frontend
 
-RUN npm completion >> ~/.zshrc
+RUN chown -R ${DEV_USER} /workspace
 
 RUN npx -y playwright@1.49.1 install --with-deps
-# WORKDIR /workspace/
 
 RUN npm install -g n
 # node version
@@ -60,6 +85,10 @@ RUN npm install -g n
 RUN export NODE_OPTIONS='--disable-warning=ExperimentalWarning'
 
 
-# USER ${DEV_USER}
-USER root
+# the user we're applying this too (otherwise it most likely install for root)
+USER $DEV_USER
+RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh \
+	&& rm -f install.sh
+RUN npm completion >> /home/${DEV_USER}/.zshrc
+
 CMD ["/usr/bin/zsh"]

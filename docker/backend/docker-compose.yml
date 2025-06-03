@@ -1,6 +1,7 @@
 version: '3.3'
 
 services:
+  # context is /workspace/docker/backend
   opsi-webgui-backend-dev:
     hostname: ${OPSI_HOSTNAME}
     env_file: .env
@@ -9,7 +10,6 @@ services:
       - SYS_PTRACE
     build:
       context: ../..
-      # context folder is opsiwebgui/docker
       dockerfile: ./docker/backend/Dockerfile.dev
       args:
         - USER

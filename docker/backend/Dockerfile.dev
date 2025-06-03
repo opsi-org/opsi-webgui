@@ -18,7 +18,6 @@ ENV DOCKER_ENV=${DOCKER_ENV} \
 	PIP_DEFAULT_TIMEOUT=100
 
 # System deps:
-
 RUN mkdir -p /usr/local/share/keyrings \
 	&& REPO_KEY=/usr/local/share/keyrings/opsi-obs.gpg \
 	&& curl -fsSL $OPSI_REPO/Release.key | gpg --dearmor | tee $REPO_KEY > /dev/null\
@@ -26,21 +25,21 @@ RUN mkdir -p /usr/local/share/keyrings \
 	&& apt-get update \
 	&& apt-get --yes dist-upgrade \
 	&& apt-get --yes --allow-downgrades install \
-	docker.io \
-	cpio \
-	vim \
-	wget \
-	gettext \
-	mariadb-client \
-	libmariadb-dev \
-	psmisc \
-	librsync1 \
-	sudo \
-	git \
-	#bash-completion \
-	nano \
-	netcat \
-	supervisor \
+		docker.io \
+		cpio \
+		vim \
+		wget \
+		gettext \
+		mariadb-client \
+		libmariadb-dev \
+		psmisc \
+		librsync1 \
+		sudo \
+		git \
+		#bash-completion \
+		nano \
+		netcat \
+		supervisor \
 	#&& mkdir -p /usr/local/share/keyrings \
 	&& wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor > /usr/local/share/keyrings/grafana.gpg \
 	&& echo "deb [signed-by=/usr/local/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" > /etc/apt/sources.list.d/grafana.list \
@@ -49,21 +48,19 @@ RUN mkdir -p /usr/local/share/keyrings \
 	&& apt-get update \
 	&& apt-get update \
 	&& apt-get --yes install \
-	apt-transport-https \
-	software-properties-common \
-	grafana \
-	mariadb-server \
-	redis-tools \
-	redis-server \
-	redis-timeseries \
-	opsi-utils \
+		apt-transport-https \
+		software-properties-common \
+		grafana \
+		mariadb-server \
+		redis-tools \
+		redis-server \
+		redis-timeseries \
+		opsi-utils \
 	&& apt-get clean
 
 COPY docker/backend/files/ /
 
 # Setup poetry
-
-
 RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& (getent group opsifileadmins || groupadd opsifileadmins) \
 	&& (getent group opsiadmin || groupadd opsiadmin) \
@@ -75,7 +72,6 @@ RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& echo "${DEV_USER}:adminuser" | chpasswd \
 	&& adduser ${DEV_USER} opsifileadmins \
 	&& adduser ${DEV_USER} opsiadmin \
-
 	&& adduser ${DEV_USER} sudo \
 	&& adduser ${DEV_USER} shadow \
 	&& chown -R ${DEV_USER}:${DEV_USER} /home/${DEV_USER}/ \
@@ -85,6 +81,6 @@ RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& chmod g+rw -R . \
 	&& chmod +x /*entrypoint.sh \
 	&& mkdir tftpboot \
-	&& chown -R $DEV_USER /workspace
+	&& chown -R $DEV_USER:$DEV_USER /workspace
 
-WORKDIR /workspace/
+WORKDIR /workspace
