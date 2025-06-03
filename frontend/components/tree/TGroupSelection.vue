@@ -26,6 +26,7 @@ License: AGPL-3.0
     v-loading="isLoading"
     :data="fetchedData"
     :props="defaultProps"
+    class="position-relative"
     :class="multiSelection ? 'isMultiSelect' : 'isSingleSelect'"
     node-key="id"
     show-checkbox
@@ -284,6 +285,9 @@ License: AGPL-3.0
 </script>
 
 <style lang="css" scoped>
+  :deep(.el-tree__empty-text) {
+    position: relative !important;
+  }
   :deep(.el-tree-node__label) {
     margin-left: 5px;
     font-size: var(--el-font-size-small);
