@@ -42,7 +42,7 @@ test.describe('Main Pages', () => {
         }
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients.png`
         )
 
         await page.waitForSelector('[data-testid="clients-products-button"]', {
@@ -56,7 +56,7 @@ test.describe('Main Pages', () => {
         await page.waitForTimeout(10000)
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-main-layout.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-main-layout.png`
         )
 
         await page.goto('/servers/', {
@@ -65,7 +65,7 @@ test.describe('Main Pages', () => {
         })
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-servers.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-servers.png`
         )
         await page.goto('/servers/config', {
           waitUntil: 'networkidle',
@@ -74,7 +74,7 @@ test.describe('Main Pages', () => {
         await selectHost(page)
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-servers-config.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-servers-config.png`
         )
         await page.goto('/clients/create', {
           waitUntil: 'networkidle',
@@ -82,7 +82,7 @@ test.describe('Main Pages', () => {
         })
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-create.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-create.png`
         )
         await page.goto('/clients/clone', {
           waitUntil: 'networkidle',
@@ -90,7 +90,7 @@ test.describe('Main Pages', () => {
         })
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-clone.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-clone.png`
         )
         await page.goto('/clients/config', {
           waitUntil: 'networkidle',
@@ -103,7 +103,7 @@ test.describe('Main Pages', () => {
         })
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-config.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-clients-config.png`
         )
 
         await page.goto('/products/LocalbootProduct', {
@@ -113,7 +113,7 @@ test.describe('Main Pages', () => {
         await page.waitForTimeout(10000)
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-products.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-products.png`
         )
         await page.goto('/groups/', {
           waitUntil: 'networkidle',
@@ -121,7 +121,7 @@ test.describe('Main Pages', () => {
         })
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-groups.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-groups.png`
         )
 
         await page.goto('/admin/diagnostics?id=health', {
@@ -130,7 +130,7 @@ test.describe('Main Pages', () => {
         })
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-admin-health-check.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-admin-health-check.png`
         )
         await page.goto('/admin/diagnostics?id=all', {
           waitUntil: 'networkidle',
@@ -139,7 +139,7 @@ test.describe('Main Pages', () => {
         await page.waitForTimeout(10000)
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-admin-diagnostics.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-admin-diagnostics.png`
         )
         await page.goto('/admin/terminal', {
           waitUntil: 'networkidle',
@@ -148,7 +148,7 @@ test.describe('Main Pages', () => {
         await connectTerminal(page)
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-admin-terminal.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-admin-terminal.png`
         )
       })
     }

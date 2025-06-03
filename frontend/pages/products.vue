@@ -36,8 +36,7 @@ License: AGPL-3.0
   const { path, productSettings } = usePageHelper()
   const routeNameSettings = computed(() => {
     const s = productSettings[(route.name as string) || '']
-    if (s === undefined)
-      throw new Error('route name not found: ' + (route.name as string))
+    if (s === undefined) throw new Error('route name not found: ' + (route.name as string))
     return s
   })
 

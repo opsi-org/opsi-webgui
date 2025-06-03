@@ -15,27 +15,18 @@ export const login = async (context: BrowserContext, page: Page) => {
   await page.waitForURL('**/app/**', { timeout: 60000 })
 }
 
-export const toggleTheme = async (
-  page: Page,
-  targetTheme: 'light' | 'dark',
-) => {
+export const toggleTheme = async (page: Page, targetTheme: 'light' | 'dark') => {
   const themeToggle = page.getByTestId('theme-toggle')
   await themeToggle.waitFor({ state: 'visible' })
   const ariaLabel = await themeToggle.getAttribute('aria-label')
   const isDarkMode = ariaLabel?.includes('on')
-  if (
-    (targetTheme === 'dark' && !isDarkMode) ||
-    (targetTheme === 'light' && isDarkMode)
-  ) {
+  if ((targetTheme === 'dark' && !isDarkMode) || (targetTheme === 'light' && isDarkMode)) {
     await themeToggle.click()
   }
   await page.waitForTimeout(1000)
 }
 
-export const selectLanguage = async (
-  page: Page,
-  targetLanguage: 'en' | 'de',
-) => {
+export const selectLanguage = async (page: Page, targetLanguage: 'en' | 'de') => {
   const languageDropdown = page.getByTestId('language-dropdown')
   await languageDropdown.waitFor({ state: 'visible' })
   const activeLanguage = await languageDropdown.textContent()
@@ -44,9 +35,7 @@ export const selectLanguage = async (
   }
   await languageDropdown.click()
   await page.waitForTimeout(500)
-  const languageOption = page.getByTestId(
-    `language-dropdown-item-${targetLanguage}`,
-  )
+  const languageOption = page.getByTestId(`language-dropdown-item-${targetLanguage}`)
   await languageOption.waitFor({ state: 'visible' })
   await languageOption.click()
   await page.waitForTimeout(500)

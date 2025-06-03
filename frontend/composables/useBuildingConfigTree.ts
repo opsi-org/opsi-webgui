@@ -9,18 +9,11 @@ import type { T_HostParameter, T_HostParameterEntry } from '~/types/APItypes'
 import type { TreeNode } from 'primevue/treenode'
 
 export const useBuildingConfigTree = () => {
-  function buildTree(
-    data: T_HostParameter,
-    maxDepth: number = 2,
-    minEntries: number = 2,
-  ) {
+  function buildTree(data: T_HostParameter, maxDepth: number = 2, minEntries: number = 2) {
     const tree: TreeNode[] = []
 
     // Hilfsfunktion: Gehe durch die Baumknoten (bzw. lege sie an), basierend auf den übergebenen Segmenten.
-    function traverseAndCreate(
-      nodes: TreeNode[],
-      segments: string[],
-    ): TreeNode {
+    function traverseAndCreate(nodes: TreeNode[], segments: string[]): TreeNode {
       const currentPath: string[] = []
       let currentNodes = nodes
       let node: TreeNode | undefined
@@ -59,9 +52,7 @@ export const useBuildingConfigTree = () => {
               label: segments[segments.length - 1],
               data: entry,
             })
-            node.children.sort((a: any, b: any) =>
-              a.label.localeCompare(b.label),
-            )
+            node.children.sort((a: any, b: any) => a.label.localeCompare(b.label))
           }
         } else {
           // Der Eintrag geht über die erlaubte Tiefe hinaus:
@@ -76,9 +67,7 @@ export const useBuildingConfigTree = () => {
             label: remainder.join('.'),
             data: entry,
           })
-          branchNode.children.sort((a: any, b: any) =>
-            a.label.localeCompare(b.label),
-          )
+          branchNode.children.sort((a: any, b: any) => a.label.localeCompare(b.label))
         }
       })
     }
@@ -159,7 +148,7 @@ export const useBuildingConfigTree = () => {
   function restructureData(
     input: T_HostParameter,
     maxDepth: number = 4,
-    minGroupSize: number = 3,
+    minGroupSize: number = 3
   ): TreeNode[] {
     const data = buildTree(input, maxDepth, minGroupSize)
     return data

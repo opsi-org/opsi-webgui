@@ -10,7 +10,7 @@ import _, { debounce } from 'lodash'
 export const useDynamicHeight = (
   reduceIds: string[],
   correctionFactor: number = 0,
-  refetchData: () => void = () => {},
+  refetchData: () => void = () => {}
 ) => {
   const debouncedRefetchData = debounce(refetchData, 200)
   const _windowHeight = ref(window.innerHeight)

@@ -7,19 +7,14 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="FHostAttributes">
-    <el-alert v-if="!props.id" type="warning" show-icon>
-      {{ $t('alert.select') }}</el-alert
-    >
+    <el-alert v-if="!props.id" type="warning" show-icon> {{ $t('alert.select') }}</el-alert>
     <el-form
       v-if="hostAttributes.length && hostAttributes[0]"
       label-width="50%"
       :label-position="mq.isMobile.value ? 'top' : 'left'"
       v-loading="isLoading"
     >
-      <div
-        class="overflow-y-auto"
-        :style="{ maxHeight: maxVisibleHeight + 'px' }"
-      >
+      <div class="overflow-y-auto" :style="{ maxHeight: maxVisibleHeight + 'px' }">
         <div v-for="(value, label) in hostAttributes[0]" :key="label">
           <el-form-item :label="`${$t('table.fields.' + label)}`">
             <el-checkbox
@@ -104,14 +99,8 @@ License: AGPL-3.0
   })
 
   const { maxVisibleHeight } = useDynamicHeight(
-    [
-      'btop-header',
-      'globalBreadcrumb',
-      'config-pre-tabs',
-      // 'tableHeader-'+props.tableId
-      // 'tableFooter-'+props.tableId
-    ],
-    50,
+    ['btop-header', 'globalBreadcrumb', 'config-pre-tabs'],
+    50
   )
 
   watchEffect(() => {
@@ -133,16 +122,10 @@ License: AGPL-3.0
         ? `/opsidata/servers?servers=[${props.id}]`
         : `/opsidata/hosts?hosts=${props.id}`
     try {
-      const { data, error } =
-        await useApiGETBody<Array<T_ServerAttr | T_ClientAttr>>(url)
-      if (error)
-        throw new Error(
-          error.response?.data?.message || $t('message.error.generic'),
-        )
+      const { data, error } = await useApiGETBody<Array<T_ServerAttr | T_ClientAttr>>(url)
+      if (error) throw new Error(error.response?.data?.message || $t('message.error.generic'))
       if (!data.value)
-        throw new Error(
-          $t('message.error.empty-response', { details: 'HostAttributes' }),
-        )
+        throw new Error($t('message.error.empty-response', { details: 'HostAttributes' }))
       hostAttributes.value = data.value
       hostAttributesOriginal.value = JSON.parse(JSON.stringify(data.value))
       hasUnsavedChanges.value = false
@@ -153,10 +136,7 @@ License: AGPL-3.0
   }
 
   function setUnsavedChanges() {
-    hasUnsavedChanges.value = !objectEqual(
-      hostAttributes.value[0],
-      hostAttributesOriginal.value[0],
-    )
+    hasUnsavedChanges.value = !objectEqual(hostAttributes.value[0], hostAttributesOriginal.value[0])
   }
 
   async function resetForm() {
@@ -170,32 +150,21 @@ License: AGPL-3.0
     }
     if (props.type === 'clients' && Object.keys(hostAttr).includes('uefi')) {
       if (typeof hostAttr.uefi !== 'undefined') {
-        await useSetUEFI($t).setUEFI(
-          hostAttr.hostId,
-          (hostAttr.uefi as string).toString(),
-        )
+        await useSetUEFI($t).setUEFI(hostAttr.hostId, (hostAttr.uefi as string).toString())
       }
     }
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     notEditable.forEach((attrKey) => delete hostAttr[attrKey])
 
     try {
-      const { error } = await useApiPUT(
-        `/opsidata/${props.type}/${hostAttr.hostId}`,
-        hostAttr,
-      )
-      if (error)
-        throw new Error(
-          error.response?.data?.message || $t('message.error.generic'),
-        )
+      const { error } = await useApiPUT(`/opsidata/${props.type}/${hostAttr.hostId}`, hostAttr)
+      if (error) throw new Error(error.response?.data?.message || $t('message.error.generic'))
       notifySuccess({
         message: $t('message.success.save.hostattributes', {
           host: hostAttr.hostId,
         }),
       })
-      hostAttributesOriginal.value = JSON.parse(
-        JSON.stringify(hostAttributes.value),
-      )
+      hostAttributesOriginal.value = JSON.parse(JSON.stringify(hostAttributes.value))
       hasUnsavedChanges.value = false
     } catch (error) {
       notifyError({ message: error || $t('message.error.unexpected') })

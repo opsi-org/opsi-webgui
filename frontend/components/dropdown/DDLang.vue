@@ -23,9 +23,7 @@ License: AGPL-3.0
         >
           <span style="text-transform: uppercase">{{ lang }}</span>
           <span>{{
-            ['en', 'de', 'fr'].includes(lang)
-              ? ''
-              : $t('button.lang.community-created')
+            ['en', 'de', 'fr'].includes(lang) ? '' : $t('button.lang.community-created')
           }}</span>
         </el-dropdown-item>
         <el-dropdown-item

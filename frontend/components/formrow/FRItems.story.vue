@@ -41,8 +41,7 @@ import { tconfigtypes } from '../../types/APItypes';
 
     'unicode-single-edit': {
       configId: 'licensing.client_limit_warning_absolute',
-      description:
-        'Warn when the number of available licenses reaches this value.',
+      description: 'Warn when the number of available licenses reaches this value.',
       type: 'UnicodeConfig' as tconfigtypes,
       value: '5',
       possibleValues: ['5', '6', '7'],

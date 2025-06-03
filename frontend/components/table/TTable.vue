@@ -56,7 +56,7 @@ License: AGPL-3.0
     () => {
       isMobileWrapper.value = useMQ().isMobile.value
     },
-    { deep: true },
+    { deep: true }
   )
 
   async function fetchWrapper() {

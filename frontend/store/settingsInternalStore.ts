@@ -12,15 +12,6 @@ export const storeInternalSettings = defineStore('settingsInternal', {
     splitviewVisibilityClienttable: true,
     splitviewVisibilityServertable: true,
   }),
-  getters: {
-    // quicksave: (state: any) => state._quicksave,
-  },
-  actions: {
-    // setQuicksave(isQuickSave: boolean) {
-    //   this.quicksave = isQuickSave
-    //   useCookie('Quicksave').value = isQuickSave ? 'true' : 'false'
-    // },
-  },
 })
 
 if (import.meta.hot) {

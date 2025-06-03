@@ -6,11 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <div
-    v-for="(actions, section) in adminTasks"
-    :key="section"
-    v-loading="isLoading[section]"
-  >
+  <div v-for="(actions, section) in adminTasks" :key="section" v-loading="isLoading[section]">
     <h3 class="mt-4 text-lg font-semibold">
       {{ $t('title.' + section) }}
     </h3>
@@ -76,10 +72,7 @@ License: AGPL-3.0
               class="button-container"
               style="display: flex; justify-content: flex-end"
             >
-              <el-button
-                @click="resetForm(section)"
-                :disabled="storeConfigapp().config?.read_only"
-              >
+              <el-button @click="resetForm(section)" :disabled="storeConfigapp().config?.read_only">
                 {{ $t('button.reset') }}
               </el-button>
               <el-button
@@ -94,16 +87,8 @@ License: AGPL-3.0
         </template>
       </el-form-item>
     </el-form>
-    <el-form
-      v-else
-      label-width="50%"
-      :label-position="mq.isMobile.value ? 'top' : 'left'"
-    >
-      <el-form-item
-        v-for="(value, key) in actions"
-        :key="key"
-        :label="$t('label.' + key)"
-      >
+    <el-form v-else label-width="50%" :label-position="mq.isMobile.value ? 'top' : 'left'">
+      <el-form-item v-for="(value, key) in actions" :key="key" :label="$t('label.' + key)">
         <el-checkbox
           v-if="typeof value == 'boolean'"
           v-model="actions[key]"
@@ -155,14 +140,8 @@ License: AGPL-3.0
         </el-input-group>
         <el-input v-else v-model="actions[key]" />
       </el-form-item>
-      <div
-        class="button-container"
-        style="display: flex; justify-content: flex-end"
-      >
-        <el-button
-          @click="resetForm(section)"
-          :disabled="storeConfigapp().config?.read_only"
-        >
+      <div class="button-container" style="display: flex; justify-content: flex-end">
+        <el-button @click="resetForm(section)" :disabled="storeConfigapp().config?.read_only">
           {{ $t('button.reset') }}
         </el-button>
         <el-button
@@ -170,17 +149,11 @@ License: AGPL-3.0
           :disabled="storeConfigapp().config?.read_only"
           @click="
             () => {
-              section === 'createBackup'
-                ? executeCreateBackup()
-                : executeRestoreBackup()
+              section === 'createBackup' ? executeCreateBackup() : executeRestoreBackup()
             }
           "
         >
-          {{
-            section === 'createBackup'
-              ? $t('button.create')
-              : $t('button.restore')
-          }}
+          {{ section === 'createBackup' ? $t('button.create') : $t('button.restore') }}
         </el-button>
       </div>
     </el-form>
@@ -188,11 +161,7 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
-  import type {
-    UploadInstance,
-    UploadProps,
-    UploadUserFile,
-  } from 'element-plus'
+  import type { UploadInstance, UploadProps, UploadUserFile } from 'element-plus'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useMBus } from '~/composables/mixins/useMessagebus'
   const { notifySuccess, notifyError } = useNotification()
@@ -233,13 +202,13 @@ License: AGPL-3.0
     () => serverIDValue.value,
     (newVal) => {
       adminTasks.restoreBackup.server_id = newVal
-    },
+    }
   )
   watch(
     () => serverIDValueNew.value,
     (newVal) => {
       adminTasks.restoreBackup.server_id = newVal
-    },
+    }
   )
   const $t = useI18n().t
   const mq = useMQ()
@@ -268,7 +237,7 @@ License: AGPL-3.0
     () => files.value,
     () => {
       console.warn('new files', files.value)
-    },
+    }
   )
 
   const currentAppStateColor = computed(() => {
@@ -286,10 +255,7 @@ License: AGPL-3.0
     }
   }
 
-  const handleChangeFile: UploadProps['onChange'] = (
-    uploadFile,
-    uploadFiles,
-  ) => {
+  const handleChangeFile: UploadProps['onChange'] = (uploadFile, uploadFiles) => {
     files.value = uploadFiles.slice(-1) // limit to one file
 
     if (!uploadFileRef.value || !(uploadFileRef.value as any)[0]) {
@@ -328,10 +294,7 @@ License: AGPL-3.0
   async function executeCreateBackup() {
     isLoading.value.createBackup = true
 
-    const { data, error } = await useApiPOST<string>(
-      '/backup/create',
-      adminTasks.createBackup,
-    )
+    const { data, error } = await useApiPOST<string>('/backup/create', adminTasks.createBackup)
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       return
@@ -339,10 +302,7 @@ License: AGPL-3.0
     if (data.value) {
       console.warn('response', data.value)
       const downloadLink = document.createElement('a')
-      downloadLink.setAttribute(
-        'href',
-        `/file-transfer/${data.value}?delete=true`,
-      )
+      downloadLink.setAttribute('href', `/file-transfer/${data.value}?delete=true`)
       downloadLink.style.display = 'none'
       document.body.appendChild(downloadLink)
       downloadLink.click()
@@ -355,12 +315,7 @@ License: AGPL-3.0
   async function executeRestoreBackup() {
     isLoading.value.restoreBackup = true
     // getting file_id from (already uploaded) file
-    if (
-      !files.value ||
-      !files.value[0] ||
-      !files.value[0].raw ||
-      !files.value[0].response
-    ) {
+    if (!files.value || !files.value[0] || !files.value[0].raw || !files.value[0].response) {
       notifyError({ message: $t('message.error.file.required') })
       isLoading.value.restoreBackup = false
       return
@@ -373,10 +328,7 @@ License: AGPL-3.0
   }
 
   async function requestRestore() {
-    const { error } = await useApiPOST(
-      '/backup/restore',
-      adminTasks.restoreBackup,
-    )
+    const { error } = await useApiPOST('/backup/restore', adminTasks.restoreBackup)
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       return

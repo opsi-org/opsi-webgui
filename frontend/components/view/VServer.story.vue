@@ -9,12 +9,6 @@ License: AGPL-3.0
   import { loginlogout } from '~/histoire/histoire-utils'
 </script>
 
-<!-- <template>
-  <Story :setup-app="loginlogout">
-    <ViewVServer />
-  </Story>
-</template> -->
-
 <template>
   <Story :setup-app="loginlogout">
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>

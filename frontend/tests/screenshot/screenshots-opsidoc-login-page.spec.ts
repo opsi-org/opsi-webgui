@@ -7,11 +7,7 @@ License: AGPL-3.0
 */
 
 import { test } from '@playwright/test'
-import {
-  toggleTheme,
-  selectLanguage,
-  takeFullPageScreenshot,
-} from '../shared/utils'
+import { toggleTheme, selectLanguage, takeFullPageScreenshot } from '../shared/utils'
 import { addMockRoute, serverId } from '../shared/mock/mocks'
 import { themes, languages } from '../shared/constants'
 
@@ -31,7 +27,7 @@ test.describe('Login Page', () => {
         await selectLanguage(page, language)
         await takeFullPageScreenshot(
           page,
-          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-login.png`,
+          `screenshots/opsidoc/${theme}/${language}/opsi-webgui-login.png`
         )
         const themeToggle = page.getByTestId('theme-toggle')
         await page.waitForTimeout(500)

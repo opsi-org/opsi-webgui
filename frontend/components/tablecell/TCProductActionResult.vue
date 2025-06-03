@@ -7,11 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="TCActionResult">
-    <p-tag
-      v-if="props.text == 'mixed'"
-      data-testid="TCActionResultBadge"
-      :severity="props.variant"
-    >
+    <p-tag v-if="props.text == 'mixed'" data-testid="TCActionResultBadge" :severity="props.variant">
       <IconIIcon :icon="icon.unequal" alt="mixed" />
     </p-tag>
     <p-tag
@@ -20,25 +16,16 @@ License: AGPL-3.0
       severity="success"
     >
       <span class="h6">
-        <IconIIcon
-          :icon="icon.productActionResultSuccessful"
-          alt="successful"
-        />
+        <IconIIcon :icon="icon.productActionResultSuccessful" alt="successful" />
       </span>
     </p-tag>
-    <p-tag
-      v-else-if="props.text == 'failed'"
-      data-testid="TCActionResultBadge"
-      severity="danger"
-    >
+    <p-tag v-else-if="props.text == 'failed'" data-testid="TCActionResultBadge" severity="danger">
       <span class="h6"> <IconIIcon :icon="icon.x" alt="failed" /> </span>
     </p-tag>
     <div
       v-else-if="
         $mq == 'mobile' &&
-        (props.text == 'not_installed' ||
-          props.text == '' ||
-          props.text == 'none')
+        (props.text == 'not_installed' || props.text == '' || props.text == 'none')
       "
       data-testid="TCActionResultBadge"
       severity="secondary"
@@ -50,9 +37,7 @@ License: AGPL-3.0
     <div
       v-else-if="
         $mq != 'mobile' &&
-        (props.text == 'not_installed' ||
-          props.text == '' ||
-          props.text == 'none')
+        (props.text == 'not_installed' || props.text == '' || props.text == 'none')
       "
       data-testid="TCActionResultBadge"
       severity="secondary"

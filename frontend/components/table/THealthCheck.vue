@@ -44,9 +44,7 @@ License: AGPL-3.0
             {{ scope.node.data.name }}</el-text
           >
           <TooltipTTooltip v-else>
-            <el-text tag="b" class="w-full">
-              {{ scope.node.data.name }}</el-text
-            >
+            <el-text tag="b" class="w-full"> {{ scope.node.data.name }}</el-text>
             <template #tooltip>
               <el-text>
                 {{ scope.node.data.description }}
@@ -90,7 +88,7 @@ License: AGPL-3.0
   const filters = ref<Record<string, any>>({ global: _props.filter })
   watch(
     () => _props.filter,
-    (newVal) => (filters.value.global = newVal),
+    (newVal) => (filters.value.global = newVal)
   )
 
   function transformThisLevel(arrdata: Array<any>): Array<any> {

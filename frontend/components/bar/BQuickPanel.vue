@@ -37,7 +37,6 @@ License: AGPL-3.0
           :link="false"
         />
         <DialogDProductQuickActions />
-        <!-- <ModalMChanges v-if="$mq === 'mobile'" v-model="changes" /> -->
       </div>
     </section>
     <section class="mb-0">
@@ -46,7 +45,6 @@ License: AGPL-3.0
       </header>
       <div class="flex justify-evenly">
         <SwitchSMultiselection />
-        <!-- <SwitchSQuicksave /> -->
         <SwitchSAutoRefresh />
       </div>
     </section>
@@ -58,7 +56,6 @@ License: AGPL-3.0
       <div class="flex justify-evenly items-center">
         <SwitchSTheme />
         <DropdownDDLang />
-        <!-- <PopconfirmPLogout /> -->
       </div>
     </footer>
   </div>
@@ -71,7 +68,6 @@ License: AGPL-3.0
   const getText = useTimer(false).getText
 
   const $t = useI18n().t
-  // const $mq = useMQ().$mq
   const icons = useIcons()
   const storeSelection = storeSelections()
 </script>

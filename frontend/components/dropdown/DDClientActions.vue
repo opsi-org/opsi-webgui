@@ -7,29 +7,13 @@ License: AGPL-3.0
 -->
 <template>
   <el-dropdown>
-    <el-button
-      class="ml-1 mt-1"
-      :link="props.link"
-      :disabled="isLoading || disabled"
-    >
-      <IconIIcon
-        :icon="getIcon(props.icon)"
-        :title="$t('label.clientaction')"
-      />
-      <IconILoading
-        v-if="isLoading"
-        class="ml-1"
-        small
-        :title="$t('message.loading')"
-      />
+    <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoading || disabled">
+      <IconIIcon :icon="getIcon(props.icon)" :title="$t('label.clientaction')" />
+      <IconILoading v-if="isLoading" class="ml-1" small :title="$t('message.loading')" />
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>
-        <div
-          v-for="action in clientActions"
-          :key="action"
-          :data-testid="`client-action-${action}`"
-        >
+        <div v-for="action in clientActions" :key="action" :data-testid="`client-action-${action}`">
           <el-popover
             :width="mq.isMobile.value ? '100%' : '360px'"
             trigger="click"
@@ -55,36 +39,24 @@ License: AGPL-3.0
               {{ $t('info.more', { clients: props.clientIds.length }) }}
             </el-text>
             <el-form label-position="top" class="mt-3" v-loading="isLoading">
-              <el-form-item
-                v-if="action == 'notify'"
-                :label="$t('button.event.showpopup.message')"
-              >
+              <el-form-item v-if="action == 'notify'" :label="$t('button.event.showpopup.message')">
                 <el-input v-model="notifyText" class="w-100" />
               </el-form-item>
 
               <div v-if="action == 'deployclientagent'">
                 <div v-for="key in Object.keys(opsiClientAgent)" :key="key">
                   <el-form-item :label="$t('form.' + key)">
-                    <el-radio-group
-                      v-if="key === 'type'"
-                      v-model="opsiClientAgent[key]"
-                    >
-                      <el-radio
-                        v-for="os in ['Windows', 'Linux', 'Mac']"
-                        :key="os"
-                        :value="os"
-                        >{{ os }}</el-radio
-                      >
+                    <el-radio-group v-if="key === 'type'" v-model="opsiClientAgent[key]">
+                      <el-radio v-for="os in ['Windows', 'Linux', 'Mac']" :key="os" :value="os">{{
+                        os
+                      }}</el-radio>
                     </el-radio-group>
                     <el-input
                       v-else-if="key === 'password'"
                       v-model="opsiClientAgent[key.toString()]"
                       show-password
                     />
-                    <el-input
-                      v-else
-                      v-model="opsiClientAgent[key.toString()]"
-                    />
+                    <el-input v-else v-model="opsiClientAgent[key.toString()]" />
                   </el-form-item>
                 </div>
               </div>
@@ -108,10 +80,7 @@ License: AGPL-3.0
 
 <script setup lang="ts">
   import { useNotification } from '~/composables/mixins/useComponent'
-  import type {
-    IObjectString2Function,
-    IObjectString2String,
-  } from '~/types/tgeneral'
+  import type { IObjectString2Function, IObjectString2String } from '~/types/tgeneral'
 
   const $t = useI18n().t
   const { notifySuccess, notifyError, notifyDetailed } = useNotification()
@@ -150,43 +119,34 @@ License: AGPL-3.0
 
   const actionMethods: IObjectString2Function = {
     ondemand: async () => {
-      const { data, error } = await useApiPOST<TClientdRPC>(
-        '/command/opsiclientd_rpc',
-        {
-          client_ids: props.clientIds,
-          method: 'fireEvent',
-          params: ['on_demand'],
-        },
-      )
+      const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
+        client_ids: props.clientIds,
+        method: 'fireEvent',
+        params: ['on_demand'],
+      })
       collectResult($t('button.event.ondemand'), data.value, error)
     },
     notify: async () => {
-      const { data, error } = await useApiPOST<TClientdRPC>(
-        '/command/opsiclientd_rpc',
-        {
-          client_ids: props.clientIds,
-          method: 'showPopup',
-          params: [notifyText.value],
-        },
-      )
+      const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
+        client_ids: props.clientIds,
+        method: 'showPopup',
+        params: [notifyText.value],
+      })
       collectResult($t('button.event.notify'), data.value, error)
     },
     reboot: async () => {
-      const { data, error } = await useApiPOST<TClientdRPC>(
-        '/command/opsiclientd_rpc',
-        {
-          client_ids: props.clientIds,
-          method: 'reboot',
-          params: [''],
-        },
-      )
+      const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
+        client_ids: props.clientIds,
+        method: 'reboot',
+        params: [''],
+      })
       collectResult($t('button.event.reboot'), data.value, error)
     },
     deployclientagent: async () => {
-      const { error } = await useApiPOST<TClientdRPC>(
-        '/opsidata/clients/deploy',
-        { ...opsiClientAgent.value, clients: props.clientIds },
-      )
+      const { error } = await useApiPOST<TClientdRPC>('/opsidata/clients/deploy', {
+        ...opsiClientAgent.value,
+        clients: props.clientIds,
+      })
       if (error) {
         notifyError({
           message: error?.response?.data?.message || 'No data received',
@@ -203,9 +163,7 @@ License: AGPL-3.0
     delete: async () => {
       const deletedIds: Array<string> = []
       for (const clientId of props.clientIds) {
-        const { error } = await useApiDELETE<TClientdRPC>(
-          `/opsidata/clients/${clientId}`,
-        )
+        const { error } = await useApiDELETE<TClientdRPC>(`/opsidata/clients/${clientId}`)
         if (error) {
           notifyError({
             message: error?.response?.data?.message || 'No data received',
@@ -224,17 +182,12 @@ License: AGPL-3.0
         message: $t('message.success.deleteClients', {
           count: deletedIds.length,
         }),
-        // button: { // done automatically by messagebus event host_deleted
-        //   label: $t('label.reloadPage'),
-        //   onClick: () => window.location.reload(),
-        // },
       })
     },
   }
 
   function getIcon(icon: string) {
-    if (Object.keys(icons).includes(icon))
-      return (icons as Record<string, string>)[icon]
+    if (Object.keys(icons).includes(icon)) return (icons as Record<string, string>)[icon]
     throw new Error(`Icon ${icon} not found`)
   }
   async function executeClientAction(action: string) {
@@ -251,11 +204,7 @@ License: AGPL-3.0
     }
   }
 
-  function collectResult(
-    notificationTitle: string,
-    data: TClientdRPC | undefined,
-    error: any,
-  ) {
+  function collectResult(notificationTitle: string, data: TClientdRPC | undefined, error: any) {
     if (error || data == undefined) {
       notifyError({
         message: error?.response?.data?.message || 'No data received (1)',

@@ -29,7 +29,6 @@ License: AGPL-3.0
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
-  // const icons = useIcons()
 
   const storeSelection = storeSelections()
   const storeCookie = storeTablesettings()
@@ -54,20 +53,15 @@ License: AGPL-3.0
       type: 'selection',
       visible: storeCookie.serversColumns.includes('selected'),
       alwaysVisible: true,
-      // icon: icons.checkBox,
       width: '60px',
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
-        rowData.selected = storeSelection.selectionDepots.includes(
-          rowData[rowId],
-        )
+        rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
         watch(
           () => storeSelection.selectionDepots,
           () => {
-            rowData.selected = storeSelection.selectionDepots.includes(
-              rowData[rowId],
-            )
-          },
+            rowData.selected = storeSelection.selectionDepots.includes(rowData[rowId])
+          }
         )
         return storeSelection.multiSelection ? (
           <Checkbox model-value={rowData.selected} binary readonly />
@@ -152,7 +146,7 @@ License: AGPL-3.0
     () => {
       refetch()
     },
-    { deep: true },
+    { deep: true }
   )
 
   function refetch() {
@@ -169,17 +163,10 @@ License: AGPL-3.0
       (params.sortBy && storeCookie.serversSorting.column != params.sortBy) ||
       params.sortDesc != (storeCookie.serversSorting.isDesc as boolean)
     ) {
-      storeCookie.setSortColumn(
-        'servers',
-        params.sortBy,
-        params.sortDesc as boolean,
-      )
+      storeCookie.setSortColumn('servers', params.sortBy, params.sortDesc as boolean)
     }
     storeCookie.serversSorting.isDesc = params.sortDesc as boolean
-    const { data, error, headers } = await useApiGETBody<T_ServerList>(
-      '/opsidata/depots',
-      params,
-    )
+    const { data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       return

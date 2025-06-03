@@ -27,6 +27,6 @@ License: AGPL-3.0
     () => activeName.value,
     () => {
       useRouter().push({ path: `/admin/${activeName.value}` })
-    },
+    }
   )
 </script>

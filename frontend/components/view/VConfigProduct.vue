@@ -6,45 +6,33 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-form
-    label-width="auto"
-    :label-position="mq.isMobile.value ? 'top' : 'left'"
-  >
+  <el-form label-width="auto" :label-position="mq.isMobile.value ? 'top' : 'left'">
     <el-form-item :label="$t('table.fields.version')">
       {{
         getVersion(
-          fetchedData.properties.productVersions ||
-            fetchedData.dependencies.productVersions,
+          fetchedData.properties.productVersions || fetchedData.dependencies.productVersions
         )
       }}
     </el-form-item>
     <el-form-item
       v-if="
-        fetchedData.properties.productDescription ||
-        fetchedData.dependencies.productDescription
+        fetchedData.properties.productDescription || fetchedData.dependencies.productDescription
       "
       :label="$t('table.fields.description')"
     >
       <Markdown
         :source="
-          fetchedData.properties.productDescription ||
-          fetchedData.dependencies.productDescription
+          fetchedData.properties.productDescription || fetchedData.dependencies.productDescription
         "
       >
       </Markdown>
     </el-form-item>
     <el-form-item
-      v-if="
-        fetchedData.properties.productAdvice ||
-        fetchedData.dependencies.productAdvice
-      "
+      v-if="fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice"
       :label="$t('table.fields.advice')"
     >
       <Markdown
-        :source="
-          fetchedData.properties.productAdvice ||
-          fetchedData.dependencies.productAdvice
-        "
+        :source="fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice"
       >
       </Markdown>
     </el-form-item>
@@ -85,23 +73,17 @@ License: AGPL-3.0
       :disabled="Object.keys(fetchedData.properties.properties).length === 0"
       active
     >
-      <ViewVConfigProductProperty
-        :properties="fetchedData.properties.properties"
-      />
+      <ViewVConfigProductProperty :properties="fetchedData.properties.properties" />
       {{ errorText.properties }}
     </el-tab-pane>
     <el-tab-pane
       name="dependencies"
       :label="
-        $t('title.dependencies') +
-        ' ' +
-        (hasDependencies ? '' : $t('title.dependenciesEmpty'))
+        $t('title.dependencies') + ' ' + (hasDependencies ? '' : $t('title.dependenciesEmpty'))
       "
       :disabled="!hasDependencies"
     >
-      <ViewVConfigProductDependencies
-        :dependencies="fetchedData.dependencies"
-      />
+      <ViewVConfigProductDependencies :dependencies="fetchedData.dependencies" />
       {{ errorText.dependencies }}
     </el-tab-pane>
   </el-tabs>
@@ -133,9 +115,7 @@ License: AGPL-3.0
 
   const errorText = ref<IErrorDepProp>({ dependencies: '', properties: '' })
   const activeName = ref(
-    props.isChild
-      ? configLastSelected.value[props.type] || 'properties'
-      : 'properties',
+    props.isChild ? configLastSelected.value[props.type] || 'properties' : 'properties'
   )
 
   watch(
@@ -144,7 +124,7 @@ License: AGPL-3.0
       if (props.isChild) {
         tableSettings.setConfigLastSelected(props.type, activeName.value)
       }
-    },
+    }
   )
 
   const fetchedData = ref<T_ProductPropertiesDependenciesResult>({
@@ -189,7 +169,7 @@ License: AGPL-3.0
       {
         selectedDepots: `[${selectionDepots.value.toString()}]`,
         selectedClients: `[${selectionClients.value.toString()}]`,
-      },
+      }
     )
 
     if (error) {
@@ -215,7 +195,7 @@ License: AGPL-3.0
       {
         selectedDepots: `[${selectionDepots.value.toString()}]`,
         selectedClients: `[${selectionClients.value.toString()}]`,
-      },
+      }
     )
 
     if (error) {
@@ -250,17 +230,12 @@ License: AGPL-3.0
   }
 
   const productVersionsCount = computed(
-    () =>
-      Object.values(fetchedData.value.properties.productVersions).filter(
-        Boolean,
-      ).length,
+    () => Object.values(fetchedData.value.properties.productVersions).filter(Boolean).length
   )
   const hasDifferentProductVersions = computed(() =>
     Object.values(fetchedData.value.properties.productVersions)
       .filter(Boolean)
-      .some((v, _, arr) => v !== arr[0]),
+      .some((v, _, arr) => v !== arr[0])
   )
-  const hasDependencies = computed(
-    () => fetchedData.value.dependencies.dependencies?.length > 0,
-  )
+  const hasDependencies = computed(() => fetchedData.value.dependencies.dependencies?.length > 0)
 </script>

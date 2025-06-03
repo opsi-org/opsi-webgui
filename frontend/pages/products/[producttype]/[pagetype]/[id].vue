@@ -11,16 +11,10 @@ License: AGPL-3.0
       {{ $t('title.properties') }}
     </el-text>
     <el-text tag="i"> {{ route.params.id }} </el-text>
-    <el-button
-      class="float-right"
-      @click="router.push(`/products/${route.params.producttype}`)"
+    <el-button class="float-right" @click="router.push(`/products/${route.params.producttype}`)"
       ><IconIIcon :icon="icons.x"
     /></el-button>
-    <ViewVConfigProduct
-      type="product"
-      :id="route.params.id as string"
-      :is-child="true"
-    />
+    <ViewVConfigProduct type="product" :id="route.params.id as string" :is-child="true" />
   </div>
 </template>
 <script setup lang="ts">

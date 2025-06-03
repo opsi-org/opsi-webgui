@@ -50,7 +50,7 @@ test.describe('Clients Page with Products', () => {
         await page.waitForTimeout(10000)
         await takeFullPageScreenshot(
           page,
-          `screenshots/marketing/${theme}/${language}/opsi-webgui-clients-with-products.png`,
+          `screenshots/marketing/${theme}/${language}/opsi-webgui-clients-with-products.png`
         )
       })
     }

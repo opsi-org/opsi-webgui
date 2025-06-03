@@ -11,12 +11,7 @@ License: AGPL-3.0
   ></el-text>
   <el-text v-else> <slot name="default" /></el-text>
 
-  <el-text
-    v-if="
-      props.item.anyObjDiff &&
-      props.item.anyObjDiff !== anyObjectDifferentFromDefault
-    "
-  >
+  <el-text v-if="props.item.anyObjDiff && props.item.anyObjDiff !== anyObjectDifferentFromDefault">
     {{ $t('message.error.title') }}
     <pre>
       {{ props.item }}
@@ -47,9 +42,7 @@ License: AGPL-3.0
       return true
     }
 
-    const objectsValues: Array<Array<any>> = Object.values(
-      props.item[props.objectKey],
-    )
+    const objectsValues: Array<Array<any>> = Object.values(props.item[props.objectKey])
     const objectsValuesStrings: Array<string> = []
     objectsValues.forEach((value: any) => {
       if (value.length > 0) {
@@ -65,9 +58,7 @@ License: AGPL-3.0
     defVal.sort()
 
     if (
-      objectsValuesStrings.every(
-        (v: string, i: number, a: string[]) => v === a[0],
-      ) && // allequal
+      objectsValuesStrings.every((v: string, i: number, a: string[]) => v === a[0]) && // allequal
       objectsValuesStrings[0] === JSON.stringify(defVal)
     ) {
       // same as defaultValue

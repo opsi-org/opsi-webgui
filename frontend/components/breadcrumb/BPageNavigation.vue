@@ -25,9 +25,7 @@ License: AGPL-3.0
 <script setup lang="ts">
   import { ArrowRight } from '@element-plus/icons-vue'
   const route = useRoute()
-  const pathSegments = computed(() =>
-    route.path.split('/').filter((segment: string) => segment),
-  )
+  const pathSegments = computed(() => route.path.split('/').filter((segment: string) => segment))
 </script>
 <style scoped>
   .breadcrumb {

@@ -7,11 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <el-tabs class="quickselection" v-model="activeName">
-    <el-tab-pane
-      v-for="category in quickSelDisplayList"
-      :key="category.name"
-      :name="category.name"
-    >
+    <el-tab-pane v-for="category in quickSelDisplayList" :key="category.name" :name="category.name">
       <template #label>
         <IconIIcon
           v-for="icon in category.name.split('-')"
@@ -23,16 +19,10 @@ License: AGPL-3.0
           {{ storeSelection[category.store].length }}
         </el-text>
       </template>
-      <template
-        v-if="
-          activeName === 'infoselections' && category.name === 'infoselections'
-        "
-      >
+      <template v-if="activeName === 'infoselections' && category.name === 'infoselections'">
         <FormFAllSelections />
       </template>
-      <template
-        v-else-if="activeName === 'depots' && category.name === 'depots'"
-      >
+      <template v-else-if="activeName === 'depots' && category.name === 'depots'">
         <TreeTDepots />
       </template>
       <template v-else-if="activeName === category.name">

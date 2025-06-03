@@ -29,18 +29,13 @@ License: AGPL-3.0
       severity="warn"
     >
       <span class="h6">
-        <IconIIcon
-          :icon="icons.productInstallationStatusUnknown"
-          :alt="props.text"
-        />
+        <IconIIcon :icon="icons.productInstallationStatusUnknown" :alt="props.text" />
       </span>
     </p-tag>
     <p-tag
       v-else-if="
         $mq == 'mobile' &&
-        (props.text == 'not_installed' ||
-          props.text == '' ||
-          props.text == 'none')
+        (props.text == 'not_installed' || props.text == '' || props.text == 'none')
       "
       data-testid="TCInstallationStatusBadge"
       severity="secondary"
@@ -53,20 +48,14 @@ License: AGPL-3.0
     <div
       v-else-if="
         $mq != 'mobile' &&
-        (props.text == 'not_installed' ||
-          props.text == '' ||
-          props.text == 'none')
+        (props.text == 'not_installed' || props.text == '' || props.text == 'none')
       "
       data-testid="TCInstallationStatusBadge"
       severity="secondary"
     >
       <!-- transparent -->
     </div>
-    <p-tag
-      v-else
-      data-testid="TCInstallationStatusBadge"
-      :severity="props.variant"
-    >
+    <p-tag v-else data-testid="TCInstallationStatusBadge" :severity="props.variant">
       <!-- mixed -->
       <span class="h6"> {{ props.text }} </span>
     </p-tag>

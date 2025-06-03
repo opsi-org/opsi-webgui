@@ -15,7 +15,6 @@ export const storeAuth = defineStore('auth', {
   persist: {
     key: 'opsi-auth',
     storage: localStorage,
-    // storage: sessionStorage,
   },
   // persist keeps username in localStorage.. even if logged out. No need for that here
   state: () => ({
@@ -36,7 +35,6 @@ export const storeAuth = defineStore('auth', {
     username(): string {
       return this._username
     },
-    // https://github.com/vuejs/pinia/discussions/1151
     isUsernameOutdated({ _usernameUpdated }): boolean {
       if (_usernameUpdated == undefined || _usernameUpdated == null) {
         return true
@@ -47,20 +45,16 @@ export const storeAuth = defineStore('auth', {
         'isUsernameOutdated now',
         now.valueOf(),
         'usernameUpdated',
-        _usernameUpdated.valueOf(),
+        _usernameUpdated.valueOf()
       )
-      const __expired =
-        now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
+      const __expired = now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
       if (__expired) {
         console.warn('isUsernameOutdated expired')
       }
       return __expired
-      // return now.valueOf() - _usernameUpdated.valueOf() > 1000 * expirySec
     },
     isAuthenticated({ _username }): boolean {
-      return Boolean(
-        useCookie('opsiconfd-session') && _username && !this.isUsernameOutdated,
-      )
+      return Boolean(useCookie('opsiconfd-session') && _username && !this.isUsernameOutdated)
     },
   },
   actions: {
@@ -70,12 +64,10 @@ export const storeAuth = defineStore('auth', {
     $reset() {
       this.sessionEndTime = ''
       this.setUser('')
-      // this.errorLoggedOutShown = false
     },
     login(_username: string) {
       this.errorLoggedOutShown = false
       this.setUser(_username)
-      // localStorage.setItem('_username', _username)
     },
     logout() {
       this.$reset()
@@ -89,9 +81,6 @@ export const storeAuth = defineStore('auth', {
       } else {
         this._usernameUpdated = null
       }
-    },
-    setExpiredMin(m: number) {
-      this.sessionExpiry = m
     },
     setExpiresIn(t: TTimeDiff) {
       this.sessionExpiresIn = t

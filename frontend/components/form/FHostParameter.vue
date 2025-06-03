@@ -10,7 +10,7 @@ License: AGPL-3.0
     <el-alert v-if="showWarning" type="warning" show-icon>
       {{ $t('alert.select') }}
     </el-alert>
-    <div class="overflow-y-auto" :style="`max-height: ${maxVisibleHeight}px;`">
+    <div class="overflow-y-auto tree-table-container" :style="`max-height: ${maxVisibleHeight}px;`">
       <p-tree-table
         ref="configTree"
         :value="fetchedData"
@@ -19,9 +19,6 @@ License: AGPL-3.0
         column-resize-mode="fit"
         :class="mq.isMobile.value ? 'text-xs' : ''"
       >
-        <!-- :resizable-columns="true"
-        :show-gridlines="true" -->
-        <!-- Column key/label -->
         <p-column
           field="key"
           header=""
@@ -31,38 +28,29 @@ License: AGPL-3.0
         >
           <template #body="slotProps">
             <div class="block">
-              <span
-                v-if="slotProps.node.label == slotProps.node.key"
-                class="w-full"
-                >{{ slotProps.node.label.replaceAll('.', ' / ') }}</span
-              >
+              <span v-if="slotProps.node.label == slotProps.node.key" class="w-full">{{
+                slotProps.node.label.replaceAll('.', ' / ')
+              }}</span>
               <TooltipTTooltip v-else>
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
                   <span>{{ slotProps.node.key }}</span>
-                  <!-- <span>{{ slotProps.index }}</span> -->
                 </template>
               </TooltipTTooltip>
 
               <div
-                v-if="
-                  mq.isMobile.value && slotProps.node.data?.type !== undefined
-                "
-                style="
-                  max-width: calc(100vw - 110px);
-                  width: calc(100vw - 110px);
-                "
+                v-if="mq.isMobile.value && slotProps.node.data?.type !== undefined"
+                style="max-width: calc(100vw - 110px); width: calc(100vw - 110px)"
               >
                 <p-badge
                   v-if="
                     (slotProps.node.data?.type == 'UnicodeConfig' &&
                       !arrayEqual(
                         itemValues[slotProps.node.key],
-                        initialValues[slotProps.node.key],
+                        initialValues[slotProps.node.key]
                       )) ||
                     (slotProps.node.data?.type == 'BoolConfig' &&
-                      itemValues[slotProps.node.key] !=
-                        initialValues[slotProps.node.key])
+                      itemValues[slotProps.node.key] != initialValues[slotProps.node.key])
                   "
                   :title="
                     $t('message.warning.unsavedChange') +
@@ -79,10 +67,7 @@ License: AGPL-3.0
                   class="ml-2 w-full"
                   :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
                   @change="
-                    handleSelection(
-                      slotProps.node.data,
-                      itemValues[slotProps.node.data.configId],
-                    )
+                    handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
                   "
                 />
                 <!-- UNICODE CONFIG -->
@@ -93,15 +78,13 @@ License: AGPL-3.0
                     :editable="slotProps.node.data.editable"
                     :multi-selection="slotProps.node.data.multiValue"
                     :selected-options="itemValues[slotProps.node.data.configId]"
-                    :marked-options="
-                      initialValues[slotProps.node.data.configId]
-                    "
+                    :marked-options="initialValues[slotProps.node.data.configId]"
                     :info-id="slotProps.node.data.configId"
                     @change="
                       () =>
                         handleSelection(
                           slotProps.node.data,
-                          itemValues[slotProps.node.data.configId],
+                          itemValues[slotProps.node.data.configId]
                         )
                     "
                   />
@@ -125,11 +108,10 @@ License: AGPL-3.0
                   (slotProps.node.data?.type == 'UnicodeConfig' &&
                     !arrayEqual(
                       itemValues[slotProps.node.key],
-                      initialValues[slotProps.node.key],
+                      initialValues[slotProps.node.key]
                     )) ||
                   (slotProps.node.data?.type == 'BoolConfig' &&
-                    itemValues[slotProps.node.key] !=
-                      initialValues[slotProps.node.key])
+                    itemValues[slotProps.node.key] != initialValues[slotProps.node.key])
                 "
                 :title="
                   $t('message.warning.unsavedChange') +
@@ -141,28 +123,6 @@ License: AGPL-3.0
             </div>
           </template>
         </p-column>
-        <!-- <div
-              v-if="
-                slotProps.node.children == undefined ||
-                slotProps.node.children.length == 0
-              "
-            >
-              <p-badge
-                v-if="
-                  !arrayEqual(
-                    itemValues[slotProps.node.data.configId],
-                    initialValues[slotProps.node.data.configId],
-                  )
-                "
-                :title="
-                  $t('message.warning.unsavedChange') +
-                  ` <br> initial: ${initialValues[slotProps.node.data.configId]}
-                            <br> current: ${itemValues[slotProps.node.data.configId]}`
-                "
-                severity="warn"
-                :value="t_fixed('notOrigin')"
-              />
-            </div> -->
         <!-- Column value -->
         <p-column
           v-if="!mq.isMobile.value"
@@ -172,10 +132,7 @@ License: AGPL-3.0
           style="border-color: var(--el-border-color-light)"
         >
           <template #body="slotProps">
-            <div
-              v-if="slotProps.node.data?.type !== undefined"
-              class="w-full min-w-full flex"
-            >
+            <div v-if="slotProps.node.data?.type !== undefined" class="w-full min-w-full flex">
               <!-- BOOL CONFIG -->
               <el-checkbox
                 v-if="slotProps.node.data.type === 'BoolConfig'"
@@ -184,20 +141,11 @@ License: AGPL-3.0
                 class="ml-2 w-full"
                 :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
                 @change="
-                  handleSelection(
-                    slotProps.node.data,
-                    itemValues[slotProps.node.data.configId],
-                  )
+                  handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
                 "
               />
               <!-- UNICODE CONFIG -->
-              <div
-                class="flex w-full"
-                v-else-if="slotProps.node.data.type === 'UnicodeConfig'"
-              >
-                <!-- {{ slotProps.node.data }} <br /> -->
-                <!-- item: {{ itemValues[slotProps.node.data.configId] }} <br /> -->
-                <!-- init: {{ initialValues[slotProps.node.data.configId] }} -->
+              <div class="flex w-full" v-else-if="slotProps.node.data.type === 'UnicodeConfig'">
                 <SelectSSelect
                   v-model:selection="itemValues[slotProps.node.data.configId]"
                   v-model:data="slotProps.node.data.possibleValues"
@@ -208,10 +156,7 @@ License: AGPL-3.0
                   :info-id="slotProps.node.data.configId"
                   @change="
                     () =>
-                      handleSelection(
-                        slotProps.node.data,
-                        itemValues[slotProps.node.data.configId],
-                      )
+                      handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
                   "
                 />
               </div>
@@ -221,18 +166,14 @@ License: AGPL-3.0
       </p-tree-table>
     </div>
     <div
-      v-if="
-        fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only
-      "
+      v-if="fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only"
       class="button-container"
       style="display: flex; justify-content: flex-end"
     >
       <!-- TODO: enable if save if method is implemented (#763) -->
-      <el-button
-        class="!hidden"
-        @click="createConfigVisible = !createConfigVisible"
-        >{{ $t('button.create.config') }}</el-button
-      >
+      <el-button class="!hidden" @click="createConfigVisible = !createConfigVisible">{{
+        $t('button.create.config')
+      }}</el-button>
       <el-button @click="fetchFormData">{{ $t('button.reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
@@ -241,11 +182,7 @@ License: AGPL-3.0
         >{{ $t('button.save') }}</el-button
       >
     </div>
-    <ModalMConfigCreation
-      v-if="createConfigVisible"
-      class="!hidden"
-      @refetch="() => {}"
-    />
+    <ModalMConfigCreation v-if="createConfigVisible" class="!hidden" @refetch="() => {}" />
   </div>
 </template>
 
@@ -284,14 +221,8 @@ License: AGPL-3.0
     isChild: { type: Boolean, default: false },
   })
   const { maxVisibleHeight } = useDynamicHeight(
-    [
-      'btop-header',
-      'globalBreadcrumb',
-      'config-pre-tabs',
-      // 'tableHeader-'+props.tableId
-      // 'tableFooter-'+props.tableId
-    ],
-    props.isChild ? 100 : 50,
+    ['btop-header', 'globalBreadcrumb', 'config-pre-tabs'],
+    props.isChild ? 100 : 50
   )
 
   const showWarning = computed(() => {
@@ -312,9 +243,7 @@ License: AGPL-3.0
 
       if (item.multiValue) {
         // erstmal egal
-        const sortedValues = objectValues.map((value: any) =>
-          JSON.stringify([...value].sort()),
-        )
+        const sortedValues = objectValues.map((value: any) => JSON.stringify([...value].sort()))
         if (sortedValues.every((v: string) => v === sortedValues[0])) {
           return objectValues[0]
         }
@@ -367,47 +296,9 @@ License: AGPL-3.0
       for (const category in fetchedData.value) {
         initInitialValues(fetchedData.value[category])
       }
-      // for (const category in fetchedData.value) {
-      //   fetchedData.value[category].forEach((item: any) => {
-      //     const initialValue = getInitialValue(item)
-      //     itemValues.value[item.configId] = initialValue
-      //     initialValues.value[item.configId] = initialValue
-      //   })
-      // }
     }
     hasUnsavedChanges.value = false
   }
-
-  // function transformData(input: T_HostParameter): T_HostParameter {
-  //   const result: T_HostParameter = {}
-
-  //   for (const key in input) {
-  //     const grouped: { [prefix: string]: T_HostParameterEntry[] } = {}
-
-  //     input[key].forEach((item) => {
-  //       const segments = item.configId.split('.')
-  //       const prefix = segments.slice(0, 3).join('.')
-
-  //       if (!grouped[prefix]) {
-  //         grouped[prefix] = []
-  //       }
-  //       grouped[prefix].push(item)
-  //     })
-
-  //     for (const prefix in grouped) {
-  //       if (grouped[prefix].length >= 3) {
-  //         result[prefix] = grouped[prefix]
-  //       } else {
-  //         if (!result[key]) {
-  //           result[key] = []
-  //         }
-  //         result[key].push(...grouped[prefix])
-  //       }
-  //     }
-  //   }
-
-  //   return result
-  // }
 
   onMounted(fetchFormData)
 
@@ -461,17 +352,14 @@ License: AGPL-3.0
   }
 
   function handleSelection(item: any, value: any) {
-    assert(
-      value !== undefined,
-      `values should not be undefined (${item.configId}, ${value})`,
-    )
+    assert(value !== undefined, `values should not be undefined (${item.configId}, ${value})`)
     assert(
       itemValues.value[item.configId] !== undefined,
-      `itemValues should not be undefined (${item.configId}, ${value})`,
+      `itemValues should not be undefined (${item.configId}, ${value})`
     )
     assert(
       initialValues.value[item.configId] !== undefined,
-      `initialValues should not be undefined (${item.configId}, ${value})`,
+      `initialValues should not be undefined (${item.configId}, ${value})`
     )
     changeBuffer.value[item.configId] = JSON.parse(JSON.stringify(value))
     checkUnsavedChanges()
@@ -538,5 +426,23 @@ License: AGPL-3.0
 <style scoped lang="css">
   :deep(.el-form-item__label) {
     height: auto !important;
+  }
+  .tree-table-container {
+    padding-left: 16px;
+  }
+  :deep(.p-treetable .p-treetable-toggler) {
+    margin-left: 8px;
+  }
+  :deep(.p-treetable .p-treetable-indent) {
+    width: 1.5em;
+    display: inline-block;
+  }
+  :deep(.p-treetable),
+  :deep(.p-treetable .p-treetable-thead > tr > th),
+  :deep(.p-treetable .p-treetable-tbody > tr > td),
+  :deep(.p-treetable .p-treetable-tbody > tr),
+  :deep(.p-treetable .p-treetable-thead > tr) {
+    border: none !important;
+    box-shadow: none !important;
   }
 </style>

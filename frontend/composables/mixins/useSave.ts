@@ -16,12 +16,7 @@ export const useSaveParameters = (_t: any = undefined) => {
   const delFromChangesHostParam = storeChanges().delFromChangesHostParam
   const pushToErrorsHostParam = storeErrors().pushToErrorsHostParam
 
-  async function saveParameters(
-    url: string,
-    request: any,
-    deleteitem: any,
-    showalert: boolean,
-  ) {
+  async function saveParameters(url: string, request: any, deleteitem: any, showalert: boolean) {
     const { error } = await useApiPOST(url, request)
     if (error) {
       if (showalert) {
@@ -56,11 +51,7 @@ export const useSaveProductActionRequest = (_t: any = undefined) => {
   const delFromChangesProducts = storeChanges().delFromChangesProducts
   const pushToErrorsProducts = storeErrors().pushToErrorsProducts
 
-  async function saveProdActionRequest(
-    change: object,
-    deleteitem: any,
-    showalert: boolean,
-  ) {
+  async function saveProdActionRequest(change: object, deleteitem: any, showalert: boolean) {
     const { error } = await useApiPOST('/opsidata/clients/products', change)
     if (error) {
       if (showalert) {
@@ -91,7 +82,7 @@ export const useSaveProductActionRequest = (_t: any = undefined) => {
 
 export const useSaveProductProperties = (
   refetch: undefined | ((b: boolean) => void) = undefined,
-  _t: any = undefined,
+  _t: any = undefined
 ) => {
   let t = _t
   if (!t) {
@@ -100,16 +91,8 @@ export const useSaveProductProperties = (
 
   const delFromChangesProducts = storeChanges().delFromChangesProducts
   const pushToErrorsProducts = storeErrors().pushToErrorsProducts
-  async function saveProdProperties(
-    id: string,
-    change: any,
-    deleteitem: any,
-    showalert: boolean,
-  ) {
-    const { error } = await useApiPOST(
-      `/opsidata/products/${id}/properties`,
-      change,
-    )
+  async function saveProdProperties(id: string, change: any, deleteitem: any, showalert: boolean) {
+    const { error } = await useApiPOST(`/opsidata/products/${id}/properties`, change)
     if (error) {
       if (showalert) {
         notifyError({ message: error?.response?.data?.message })

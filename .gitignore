@@ -13,19 +13,12 @@ backend/.vscode/settings.json
 .nuxt/
 .nuxt-storybook/
 *node_modules*
-# opsiweb/.nuxt/
-# opsiweb/.nuxt-storybook/
 opsiweb/test/README.md
 opsiweb/test-results/
-# opsiweb/uib-components/
-# opsiweb/package.json
 opsiweb/opsi-webgui.zip
 opsiweb/
 opsi-webgui*.zip
 opsiweb/package-merged.json
-# package-dry.json
-# package-lock.json
-# opsi.bak
 **/test-result-pw-reporter-component.xml
 
 **/test-result-pw-reporter-component.xml

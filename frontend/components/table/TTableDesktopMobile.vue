@@ -15,11 +15,7 @@ License: AGPL-3.0
           <el-button @click="$emit('clearSelection')">
             <IconIIcon :icon="icons.clear" />
           </el-button>
-          <el-input
-            v-model="filterQuery"
-            :placeholder="$t('label.filter.placeholder')"
-            clearable
-          >
+          <el-input v-model="filterQuery" :placeholder="$t('label.filter.placeholder')" clearable>
             <template #prefix>
               <IconIIcon :icon="icons.filter" />
             </template>
@@ -39,9 +35,7 @@ License: AGPL-3.0
                 <el-table-column :label="$t('label.column')" min-width="150px">
                   <!-- prop="title" -->
                   <template #default="scope">
-                    <el-text v-if="scope.row.title">{{
-                      scope.row.title
-                    }}</el-text>
+                    <el-text v-if="scope.row.title">{{ scope.row.title }}</el-text>
                     <el-text v-else>{{ $t('label.selection') }}</el-text>
                   </template>
                 </el-table-column>
@@ -62,16 +56,10 @@ License: AGPL-3.0
                 <el-table-column :label="$t('label.sort')">
                   <template #header>
                     <el-tooltip
-                      :content="
-                        sortDesc
-                          ? $t('label.sort.descending')
-                          : $t('label.sort.ascending')
-                      "
+                      :content="sortDesc ? $t('label.sort.descending') : $t('label.sort.ascending')"
                     >
                       <el-button @click="toggleSortOrder">
-                        <IconIIcon
-                          :icon="sortDesc ? icons.sortDesc : icons.sortAsc"
-                        />
+                        <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
                       </el-button>
                     </el-tooltip>
                   </template>
@@ -123,7 +111,6 @@ License: AGPL-3.0
       `"
       @scroll="debouncedHandleScroll"
     >
-      <!-- class="overflow-y-auto !min-h-[700px] border-sky-500 border-2" -->
       <div
         v-if="totalItems > 0 && !isFirstPage"
         class="extra-column"
@@ -141,8 +128,6 @@ License: AGPL-3.0
         :class="`!min-h-[${tableHeightMin}px]`"
         :height="tableHeight || availableTableHeight"
       >
-        <!-- :style="`min-height: ${tableHeightMin}px;`" -->
-        <!-- :class="`!min-h-[900px] `" -->
         <!-- selection -->
         <el-table-column
           :key="'selected'"
@@ -162,13 +147,6 @@ License: AGPL-3.0
           </template>
         </el-table-column>
 
-        <!--  row index -->
-        <!-- <el-table-column width="50" label="#">
-          <template #default="{ $index }">
-            <span>{{ $index + 1 + (currentPage - 1) * pageSize }}</span>
-          </template>
-        </el-table-column> -->
-
         <!-- rowId -->
         <el-table-column
           :key="props.rowId"
@@ -178,10 +156,7 @@ License: AGPL-3.0
           :sortable="tableColumnObj[props.rowId].sortable"
         >
           <template #default="scope">
-            <CellRenderer
-              :col-data="tableColumnObj[props.rowId]"
-              :row-data="scope.row"
-            />
+            <CellRenderer :col-data="tableColumnObj[props.rowId]" :row-data="scope.row" />
           </template>
         </el-table-column>
 
@@ -194,14 +169,8 @@ License: AGPL-3.0
           :width="tableColumnObj[sortBy].width || ''"
         >
           <template #header v-if="tableColumnObj[sortBy].icon">
-            <el-tooltip
-              class="box-item"
-              effect="dark"
-              :content="tableColumnObj[sortBy].title"
-            >
-              <el-text
-                ><IconIIcon :icon="tableColumnObj[sortBy].icon" />
-              </el-text>
+            <el-tooltip class="box-item" effect="dark" :content="tableColumnObj[sortBy].title">
+              <el-text><IconIIcon :icon="tableColumnObj[sortBy].icon" /> </el-text>
             </el-tooltip>
           </template>
           <template #header v-else>
@@ -234,11 +203,7 @@ License: AGPL-3.0
         <!-- expand content -->
         <el-table-column type="expand">
           <template #default="scope">
-            <Details
-              class="mb-3"
-              :row-data="scope.row"
-              :col-data="tableColumnObj[props.rowId]"
-            />
+            <Details class="mb-3" :row-data="scope.row" :col-data="tableColumnObj[props.rowId]" />
           </template>
         </el-table-column>
       </el-table>
@@ -253,7 +218,6 @@ License: AGPL-3.0
     <!-- TABLE FOOTER -->
     <div class="flex justify-end mt-2" :id="'tableFooter-' + tableId">
       <div class="">
-        <!-- <br /> -->
         <el-pagination
           @current-change="handlePagination"
           @size-change="() => {}"
@@ -264,18 +228,11 @@ License: AGPL-3.0
           layout="total, sizes, prev, pager, next, jumper"
           size="small"
         />
-        <!-- <el-text class="text-right">{{
-          $t('label.total', { count: totalItems })
-        }}</el-text> -->
       </div>
     </div>
 
     <!-- Custom Context Menu -->
-    <div
-      v-if="contextMenuVisible"
-      :style="contextMenuStyle"
-      class="context-menu"
-    >
+    <div v-if="contextMenuVisible" :style="contextMenuStyle" class="context-menu">
       <ul>
         <li @click="handleCommand(contextMenuRow, 'config')">
           <IconIIcon :icon="icons.settings" /> {{ $t('title.config') }}
@@ -292,7 +249,6 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="tsx">
-  //   import { vContextmenu } from '../../composables/mixins/v-contextmenu'
   import { useDynamicHeightTable } from '~/composables/mixins/useDynamicHeightTable'
   import { useTableHelper } from '~/composables/mixins/useTableHelper'
 
@@ -304,7 +260,6 @@ License: AGPL-3.0
     tableId: { type: String, required: true },
     tableColumn: { type: Array<any>, required: true },
     fetch: { type: Function, required: true },
-    // height: { type: String, default: '80vh', required: false },
     sortBy: { type: String, default: undefined, required: false },
     sortDesc: { type: Boolean, default: false, required: false },
     actionClone: { type: Function, default: undefined, required: false },
@@ -340,28 +295,19 @@ License: AGPL-3.0
     tableHeightMin,
     updateWindowValues,
     setElHeights,
-  } = useDynamicHeightTable(
-    actualDataSize,
-    currentPage,
-    totalItems,
-    props.tableId,
-    fetchWrapper,
-  )
+  } = useDynamicHeightTable(actualDataSize, currentPage, totalItems, props.tableId, fetchWrapper)
 
   const infiniteScrollDiv = ref<HTMLElement | null>(null)
   const {
     // we reuse this functions and refs also in TTableDesktop
     isLoading,
     filterQuery,
-    // filterBy,
     sortBy,
     sortDesc,
     contextMenuVisible,
     contextMenuStyle,
     contextMenuRow,
-
     debouncedHandleScroll,
-    // showContextMenu,
     handleCommand,
     toggleSortOrder,
     applySort,
@@ -370,9 +316,6 @@ License: AGPL-3.0
     handleSortChange,
     handlePagination,
     onRowClick,
-    // handleConfigClick,
-    // handleLogClick,
-    // handleCloneClick,
     handleClickOutside,
     fetchDataWrapper,
 
@@ -391,7 +334,7 @@ License: AGPL-3.0
     isLastPage,
     infiniteScrollDiv,
     activeButton,
-    scrollDivHeight,
+    scrollDivHeight
   )
 
   const hasRowsWrapper = computed(() => totalItems.value > 0)

@@ -6,22 +6,13 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <main
-    data-testid="FLogin"
-    :class="$mq === 'mobile' ? 'px-[4%]' : ''"
-    v-loading="isLoading"
-  >
+  <main data-testid="FLogin" :class="$mq === 'mobile' ? 'px-[4%]' : ''" v-loading="isLoading">
     <h1 class="sr-only">{{ $t('button.login') }}</h1>
     <el-card
       class="text-center bg-opsi-blue text-white mx-auto"
       :class="$mq === 'mobile' ? 'w-full' : 'w-1/2; max-w-md'"
     >
-      <IconIOpsiLogo
-        :light="false"
-        :short="false"
-        class="mb-2"
-        classes="w-full"
-      />
+      <IconIOpsiLogo :light="false" :short="false" class="mb-2" classes="w-full" />
       <div @keyup.enter="doLogin">
         <el-form class="mt-1">
           <el-form-item class="mb-1">
@@ -35,10 +26,7 @@ License: AGPL-3.0
               :placeholder="opsiconfigserver"
             />
           </el-form-item>
-          <el-form-item
-            class="mb-1"
-            v-if="authMethods.includes(METHOD_PASSWORD)"
-          >
+          <el-form-item class="mb-1" v-if="authMethods.includes(METHOD_PASSWORD)">
             <el-input
               id="username"
               ref="inputUsername"
@@ -51,10 +39,7 @@ License: AGPL-3.0
               class="username"
             />
           </el-form-item>
-          <el-form-item
-            class="mb-1"
-            v-if="authMethods.includes(METHOD_PASSWORD)"
-          >
+          <el-form-item class="mb-1" v-if="authMethods.includes(METHOD_PASSWORD)">
             <el-input
               id="password"
               v-model="form.password"
@@ -77,13 +62,6 @@ License: AGPL-3.0
               show-password
             />
           </el-form-item>
-          <!-- el-form-item
-            {{
-              $t('message.session.expiresInfo', {
-                min: storeAuth().sessionExpiry / 60,
-              })
-            }}
-          el-form-item -->
           <el-button
             v-if="authMethods.includes(METHOD_PASSWORD)"
             data-testid="btn-login"
@@ -145,8 +123,7 @@ License: AGPL-3.0
       const useServerGet = await useConfigserver(true, undefined, $t)
       const res = await useServerGet.getOpsiConfigServerWithHeaders()
       opsiconfigserver.value = res.data || ''
-      authMethods.value =
-        res.headers.get(opsiheaders.xopsiauthmethods) || METHOD_PASSWORD
+      authMethods.value = res.headers.get(opsiheaders.xopsiauthmethods) || METHOD_PASSWORD
       const username = storeAuth().username
       if (username) {
         form.value.username = username
@@ -170,12 +147,8 @@ License: AGPL-3.0
     return `/auth/saml/login?redirect=${encodeURIComponent(window.location.href)}`
   })
 
-  const validUsername = computed<boolean | null>(() =>
-    form.value.username !== '' ? null : false,
-  )
-  const validPassword = computed(() =>
-    form.value.password !== '' ? null : false,
-  )
+  const validUsername = computed<boolean | null>(() => (form.value.username !== '' ? null : false))
+  const validPassword = computed(() => (form.value.password !== '' ? null : false))
 
   function createUserFormData() {
     const User = new FormData()
@@ -203,8 +176,7 @@ License: AGPL-3.0
       const { data, error } = await useApiPOST<TResult>('/auth/login', User)
       if (error) {
         notifyError({
-          message:
-            error?.response?.data?.message || $t('message.error.generic'),
+          message: error?.response?.data?.message || $t('message.error.generic'),
         })
         return
       }
@@ -233,8 +205,7 @@ License: AGPL-3.0
     const route = useRoute()
     const router = useRouter()
     if (route.name === 'login') {
-      const redirectPath =
-        route.query?.redirect?.toString() || config.public.BASE_PAGE
+      const redirectPath = route.query?.redirect?.toString() || config.public.BASE_PAGE
       router.push(redirectPath)
     } else {
       router.back()

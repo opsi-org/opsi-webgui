@@ -9,7 +9,6 @@ export const storeCache = defineStore('data-cache', {
   persist: {
     key: 'opsi-data',
     storage: localStorage,
-    // storage: sessionStorage,
   },
   state: () => ({
     myopsiconfigserver: '',
@@ -19,7 +18,6 @@ export const storeCache = defineStore('data-cache', {
   },
   actions: {
     setOpsiconfigserver(s: string) {
-      // `this` is the store instance
       this.myopsiconfigserver = s
     },
   },
