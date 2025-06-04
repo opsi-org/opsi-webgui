@@ -8,7 +8,6 @@
 webgui config methods
 """
 
-
 import json
 from typing import List, Optional, Union
 
@@ -36,7 +35,7 @@ def get_server_config(
 	"""
 
 	params: dict = {}
-	where = text("cv.isDefault=1")
+	where = text("")
 	if commons.get("filterQuery"):
 		where = and_(where, text("(c.configId LIKE :search)"))
 		params["search"] = f"%{commons['filterQuery']}%"
@@ -81,18 +80,26 @@ def get_server_config(
 		for row in result:
 			if row is not None:
 				row_dict = dict(row)
+
 				id_prefix = row_dict.get("configId", "").split(".")[0]
 				row_dict["multiValue"] = bool(row_dict.get("multiValue", False))
 				row_dict["editable"] = bool(row_dict.get("editable", False))
+
 				if id_prefix not in config_data:
 					id_prefix = "general"
 				if row_dict.get("multiValue"):
-					row_dict["value"] = row_dict.get("value", "").split("|")
+					val = row_dict.get("value", "")
+					if val:
+						row_dict["value"] = row_dict.get("value", "").split("|")
+					else:
+						row_dict["value"] = []
+
 				if row_dict.get("type") == "BoolConfig":
 					row_dict["value"] = bool_value(row_dict.get("value", ""))
-					row_dict["possibleValues"] = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
+					pvallist = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
 				else:
 					row_dict["possibleValues"] = row_dict.get("possibleValues", "").split("|")
+				row_dict["possibleValues"] = list(set(pvallist))  # remove duplicates
 
 				if row_dict.get("editable", False):
 					row_dict["newValue"] = ""
