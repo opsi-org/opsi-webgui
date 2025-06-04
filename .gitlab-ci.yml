@@ -45,8 +45,9 @@ stages:
   apt -y install debhelper osc
   apt -y install python3-dev
   apt -y install mariadb-client bc
-  pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
-  pip3 install poetry
+  pip3 install --upgrade pip
+  #pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
+  #pip3 install poetry
 
 
   # Grant full database access to opsi user
@@ -487,6 +488,7 @@ test:backend-pytest:
     MYSQL_USER: 'opsi'
     MYSQL_PASSWORD: 'opsi'
   script:
+    - *install_tools
     - *prepare_backend_tests
     - echo "##########################################"
     - echo "##################pytest##################"
