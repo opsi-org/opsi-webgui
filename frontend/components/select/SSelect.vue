@@ -263,7 +263,7 @@ License: AGPL-3.0
     if (data.value !== undefined) {
       data.value?.sort((a: any, b: any) =>
         // cannot be undefined because of assert
-        a.localeCompare(b, undefined, { numeric: true })
+        a.toString().localeCompare(b, undefined, { numeric: true })
       )
     }
 

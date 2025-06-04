@@ -188,7 +188,7 @@ License: AGPL-3.0
   function mysort(a: string, b: string): number {
     const aa = a === null ? NO_VALUE : a
     const bb = b === null ? NO_VALUE : b
-    return aa.localeCompare(bb)
+    return aa.toString().localeCompare(bb)
   }
 
   async function fetchActionResults() {

@@ -14,8 +14,8 @@ OPSICONFD_ARGS = [
     "opsiconfd",
     "--workers=1",
     "--log-mode=redis",
-    "--log-level-stderr=6",
-    "--log-level-file=6",
+    "--log-level-stderr=5",
+    "--log-level-file=7",
     "--addon-dirs=/workspace/backend/addon",
     "--static-dir=/workspace/docker/backend/opsiconfd/opsiconfd_data/static",
 ]

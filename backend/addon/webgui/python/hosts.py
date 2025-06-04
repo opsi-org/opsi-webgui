@@ -19,13 +19,14 @@ from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, co
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
-from .groups import read_groups, build_nested_group  # pylint: disable=import-error
+
+from .groups import build_nested_group, read_groups  # pylint: disable=import-error
 from .utils import (
 	backend,
 	build_tree,
 	filter_depot_access,
-	get_allowed_host_groups,
 	get_allowed_clients,
+	get_allowed_host_groups,
 	get_allowed_objects,
 	get_groups_ids,
 	get_sub_groups,
@@ -97,6 +98,7 @@ def get_host_data(
 		params["type"] = host_type
 		where = and_(where, text("h.type = :type"))  # type: ignore
 
+	allowed_clients = get_allowed_clients(get_username())
 	# IF ( "efi" IN
 	# 				,
 	# 				TRUE,
@@ -145,6 +147,8 @@ def get_host_data(
 		for row in result:
 			if row is not None:
 				row_dict = dict(row)
+				if row_dict.get("hostId") not in allowed_clients:
+					continue
 				for key in row_dict.keys():
 					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
 						row_dict[key] = row_dict.get(key, datetime.datetime(2000, 1, 1, 0, 0)).isoformat()
@@ -186,9 +190,7 @@ def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 	with mysql.session() as session:
 		try:
 			query = insert(
-				table(
-					"GROUP", column("type"), *[column(key) for key in vars(group).keys()]
-				)  # pylint: disable=consider-iterating-dictionary
+				table("GROUP", column("type"), *[column(key) for key in vars(group).keys()])  # pylint: disable=consider-iterating-dictionary
 			).values(values)
 			session.execute(query)
 
@@ -253,7 +255,8 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 @rest_api
 @read_only_check
 def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str  # pylint: disable=unused-argument
+	request: Request,
+	group: str,  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Remove clients from host group
@@ -272,7 +275,8 @@ def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals
 @rest_api
 @read_only_check
 def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str  # pylint: disable=unused-argument
+	request: Request,
+	group: str,  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Delete host group
@@ -357,10 +361,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 				)
 			)
 			.select_from(table("GROUP").alias("g"))
-
-			.join(table("OBJECT_TO_GROUP").alias("og"),
-		 		text("g.`type` = og.groupType AND g.groupId = og.groupId"),
-				isouter=True)
+			.join(table("OBJECT_TO_GROUP").alias("og"), text("g.`type` = og.groupType AND g.groupId = og.groupId"), isouter=True)
 			.join(
 				table("CONFIG_STATE").alias("cs"),
 				and_(
@@ -423,7 +424,7 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 	Get host groups as tree.
 	If a parent group (parentGroup) is given only child groups will be returned.
 	"""
-	allowed =  get_allowed_host_groups(get_username())
+	allowed = get_allowed_host_groups(get_username())
 
 	params = {"parent": "", "depots": []}
 	if selectedDepots == [] or selectedDepots is None:
@@ -673,6 +674,7 @@ def find_parent(group: str) -> str | None:
 		if parent_id:
 			return parent_id["parent_id"]
 		return None
+
 
 @host_router.get("/api/opsidata/servers", response_model=List[Server])
 @rest_api
