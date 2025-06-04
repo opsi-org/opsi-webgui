@@ -53,7 +53,7 @@ License: AGPL-3.0
       :default-expanded-keys="!isProductGroup ? firstlevelkeys : undefined"
     >
       <template #default="{ node, data: defdata }">
-        <span>{{ node.label }}</span>
+        <span class="mr-10">{{ node.label }}</span>
         <div class="ml-auto" v-if="node.label !== 'not_assigned'">
           <span :key="node.label + action" v-for="action in getActions(defdata, node)">
             <el-popover
@@ -145,12 +145,21 @@ License: AGPL-3.0
                       :key="label"
                       :label="$t('table.fields.' + label)"
                     >
-                      <el-select v-if="label === 'parent'" v-model="editgroup[label]">
+                      <el-select
+                        v-if="label === 'parent'"
+                        v-model="editgroup[label]"
+                        :teleported="false"
+                      >
+                      <!-- if item is (nested) child of node. Do not allow -->
                         <el-option
-                          v-for="item in filteredGroupNames"
+                          v-for="item in filteredGroupNames.filter(name => {
+                            return name !== node.label && name !== NOT_ASSIGNED
+                                  && !getChildNodes(node).includes(name)
+                          })"
                           :key="item"
                           :label="item"
                           :value="item"
+                          :disabled="node.data.parent == item"
                         />
                       </el-select>
                       <el-input v-else v-model="editgroup[label]" />
@@ -160,7 +169,7 @@ License: AGPL-3.0
                       type="success"
                       data-testid="editGroup"
                       :disabled="config.read_only"
-                      @click="editGroup(node.label)"
+                      @click="updateGroup(node.label)"
                       >{{ $t('button.update') }}</el-button
                     >
                   </template>
@@ -210,6 +219,9 @@ License: AGPL-3.0
   const mq = useMQ()
   const $t = useI18n().t
   const storeSelection = storeSelections()
+  const NOT_ASSIGNED = "not_assigned" // for i18n check: $t('')
+  const cacheChildNode = ref<string>('')
+  const cacheChildNodes = ref<string[]|undefined>(undefined) // undefined means not yet fetched
 
   const isLoading = ref<boolean>(false)
   const fetchedData = ref<Array<any>>([])
@@ -290,6 +302,14 @@ License: AGPL-3.0
       }
     }
   }
+  function getChildNodes(node: any): string[] {
+    if (cacheChildNode.value === node.label && cacheChildNodes.value !== undefined) {
+      return cacheChildNodes.value
+    }
+    cacheChildNode.value = node.label
+    cacheChildNodes.value = groupsHelper.getChildrenLabels(node)
+    return cacheChildNodes.value
+  }
 
   function customNodeClass({ children, type }: TreeNodeData) {
     const isGroup = type != 'ObjectToGroup'
@@ -312,6 +332,8 @@ License: AGPL-3.0
     } else {
       await fetchProdGroups()
     }
+    cacheChildNode.value = ''
+    cacheChildNodes.value = undefined
   }
 
   async function fetchClientGroups() {
@@ -344,8 +366,10 @@ License: AGPL-3.0
       )
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       if (!data.value)
-        throw new Error($t('message.error.empty-response', { details: 'GroupActions' }))
-      fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups)
+        throw new Error(
+          $t('message.error.empty-response', { details: 'GroupActions' }),
+        )
+      fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups.children)
     } catch (err) {
       notifyError({ message: (err as Error).message })
     }
@@ -361,6 +385,7 @@ License: AGPL-3.0
         throw new Error($t('message.error.empty-response', { details: 'GroupActions' }))
       idList.value = data.value.map((item) => item.productId)
     } catch (err) {
+      console.error('Error fetching product list:', err)
       notifyError({ message: (err as Error).message })
     }
   }
@@ -471,7 +496,7 @@ License: AGPL-3.0
     }
   }
 
-  async function editGroup(selectedGroup: string) {
+  async function updateGroup(selectedGroup: string) {
     const url =
       props.data.category === 'client-group'
         ? `/opsidata/hosts/groups/${selectedGroup}`
@@ -484,6 +509,7 @@ License: AGPL-3.0
           group: selectedGroup,
         }),
       })
+
       await refetchGroup()
     } catch (err) {
       notifyError({ message: (err as Error).message })
@@ -506,6 +532,9 @@ License: AGPL-3.0
   }
 </script>
 <style scoped lang="css">
+  :deep(.el-tree__empty-text) {
+    position: relative !important;
+  }
   :deep(.el-tree-node.isEmpty) {
     color: var(--color-opsi-medium-gray) !important;
   }

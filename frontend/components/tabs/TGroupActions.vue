@@ -40,8 +40,7 @@ License: AGPL-3.0
     {
       category: 'product-group', // for i18n-check: $t('title.product-group')
       actions: {
-        // parent: [ 'edit', 'delete', 'product-delete', 'product-add', 'group-add' ] // TODO: enable if #767 is solved, for i18n-check: $t('group.edit'), $t('group.delete'), $t('group.product-delete'), $t('group.product-add'), $t('group.group-add'), $('group.confirm.delete'), $('group.confirm.product-delete')
-        parent: ['delete', 'product-delete', 'product-add'], // for i18n-check: $t('group.delete'), $t('group.product-delete'), $t('group.product-add')
+        parent: [ 'edit', 'delete', 'product-delete', 'product-add', 'group-add' ], // TODO: enable if #767 is solved, for i18n-check: $t('group.edit'), $t('group.delete'), $t('group.product-delete'), $t('group.product-add'), $t('group.group-add'), $('group.confirm.delete'), $('group.confirm.product-delete')
         children: ['delete'], // for i18n-check: $t('group.delete')
       },
     },

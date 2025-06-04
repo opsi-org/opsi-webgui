@@ -12,7 +12,7 @@ import asyncio
 from functools import wraps
 from json import loads  # pylint: disable=no-name-in-module
 from operator import and_
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, Union, Literal
 
 from fastapi import Query, status
 
@@ -82,9 +82,9 @@ def get_allowed_objects() -> dict:
 	# 	allowed["product_groups"] = privileges.get("product.groupaccess.productgroups", [])
 	username = get_username()
 	if product_group_access_configured(username):
-		allowed["product_groups"] = get_allowd_product_groups(username)  # type: ignore[assignment]
+		allowed["product_groups"] = get_allowed_product_groups(username)  # type: ignore[assignment]
 	if host_group_access_configured(username):
-		allowed["host_groups"] = get_allowd_host_groups(username)  # type: ignore[assignment]
+		allowed["host_groups"] = get_allowed_host_groups(username)  # type: ignore[assignment]
 	return allowed
 
 
@@ -154,15 +154,15 @@ def merge_dicts(dict_a: dict, dict_b: dict, path: Optional[List] = None) -> dict
 def _get_bool_config_value(config_id: str) -> bool:
 	with mysql.session() as session:
 		where = text(f"cv.configId='{config_id}'")
-		query = select(text("cv.value, cv.isDefault")).select_from(text("CONFIG_VALUE AS cv")).where(where)
+		query = select(text("cv.value, cv.isDefault")).select_from(text("CONFIG_VALUE AS cv")).where(where).order_by(text("isDefault DESC")).limit(1)
 		result = session.execute(query)
 		result = result.fetchall()
-	if result:
-		for row in result:
-			row_dict = dict(row)
-			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
-				return True
-	return False
+
+
+		if not result or not dict(result[0]).get("value", None):
+			logger.debug("No value found for config %s", config_id)
+			return False
+		return bool_value(dict(result[0]).get("value"))
 
 
 def user_register() -> bool:
@@ -202,7 +202,7 @@ def get_allowed_depots(user: str) -> list:
 	return depots
 
 
-def get_allowd_product_groups(user: str) -> list:
+def get_allowed_product_groups(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.product.groupaccess.productgroups'")
 		where = and_(where, text("cv.isDefault=1"))
@@ -215,7 +215,7 @@ def get_allowd_product_groups(user: str) -> list:
 	return groups
 
 
-def get_allowd_host_groups(user: str) -> list:
+def get_allowed_host_groups(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.host.groupaccess.hostgroups'")
 		where = and_(where, text("cv.isDefault=1"))
@@ -229,7 +229,7 @@ def get_allowd_host_groups(user: str) -> list:
 
 
 def get_allowed_clients(user: str) -> list:
-	allowed_groups = get_allowd_host_groups(user)
+	allowed_groups = get_allowed_host_groups(user)
 	allowed_clients = []
 	with mysql.session() as session:
 		for group in allowed_groups:
@@ -243,7 +243,7 @@ def get_allowed_clients(user: str) -> list:
 
 
 def get_allowed_products(user: str) -> list:
-	allowed_groups = get_allowd_product_groups(user)
+	allowed_groups = get_allowed_product_groups(user)
 	allowed_products = []
 	with mysql.session() as session:
 		for group in allowed_groups:

@@ -19,12 +19,12 @@ from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, co
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
-
+from .groups import read_groups, build_nested_group  # pylint: disable=import-error
 from .utils import (
 	backend,
 	build_tree,
 	filter_depot_access,
-	get_allowd_host_groups,
+	get_allowed_host_groups,
 	get_allowed_clients,
 	get_allowed_objects,
 	get_groups_ids,
@@ -323,8 +323,9 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	"""
 	Get host groups as tree.
 	"""
-
-	allowed =  get_allowd_host_groups(get_username())
+	username = get_username()
+	configured = host_group_access_configured(username)
+	allowed = None if not configured else get_allowed_host_groups(username)
 
 	params = {"parent": "", "depots": []}
 	if selectedDepots == [] or selectedDepots is None:
@@ -348,15 +349,18 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 			select(  # type: ignore[arg-type,attr-defined]
 				text(  # type: ignore[arg-type]
 					"""
-			g.parentGroupId AS parent_id,
 			g.groupId AS group_id,
+			g.parentGroupId AS parent_id,
 			og.objectId AS object_id,
 			TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) AS depot_id
 		"""
 				)
 			)
 			.select_from(table("GROUP").alias("g"))
-			.join(table("OBJECT_TO_GROUP").alias("og"), text("og.groupType = g.`type` AND og.groupId = g.groupId"), isouter=True)
+
+			.join(table("OBJECT_TO_GROUP").alias("og"),
+		 		text("g.`type` = og.groupType AND g.groupId = og.groupId"),
+				isouter=True)
 			.join(
 				table("CONFIG_STATE").alias("cs"),
 				and_(
@@ -368,16 +372,13 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 			)
 			.where(where)
 		)
-
 		result = session.execute(query, params)
 		result = result.fetchall()
-
 	all_groups: dict = {}
-	processed: list[str] = []
 	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
-	all_groups = read_groups(result, root_group, [], allowed, True)
+	all_groups = read_groups(result, root_group, selected_object_ids=[], allowed=allowed, withClients=True, gtype="HostGroup")
 
-	host_groups = build_group_tree(root_group, list(all_groups.values()), processed)
+	host_groups = build_nested_group(root_group, all_groups)
 
 	clientdirectory = host_groups["children"]["clientdirectory"]
 	clientdirectory["parent"] = None
@@ -410,31 +411,6 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	return RESTResponse(data={"groups": host_groups, "clientdirectory": clientdirectory})
 
 
-def build_group_tree(current_group: dict, groups: list[dict], processed: list) -> dict:
-	if not processed:
-		processed = []
-	processed.append(current_group["id"])
-
-	children = {}
-	for group in groups:
-		if group["parent"] == current_group["id"]:  # or (group["parent"] is None and current_group["id"] == "groups"):
-			if group["id"] in processed:
-				logger.error("Loop: %s %s", group["id"], processed)
-			else:
-				children[group["id"]] = build_group_tree(group, groups, processed)
-	if children:
-		if not current_group.get("children"):
-			current_group["children"] = {}
-		current_group["children"].update(children)
-
-	if current_group.get("children"):
-		for child in current_group["children"].values():
-			# Correct id for webgui
-			child["id"] = f'{child["id"]};{current_group["id"]}'
-
-	return current_group
-
-
 @host_router.get("/api/opsidata/hosts/groups-dynamic")
 @rest_api
 def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -447,7 +423,7 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 	Get host groups as tree.
 	If a parent group (parentGroup) is given only child groups will be returned.
 	"""
-	allowed =  get_allowd_host_groups(get_username())
+	allowed =  get_allowed_host_groups(get_username())
 
 	params = {"parent": "", "depots": []}
 	if selectedDepots == [] or selectedDepots is None:
@@ -697,48 +673,6 @@ def find_parent(group: str) -> str | None:
 		if parent_id:
 			return parent_id["parent_id"]
 		return None
-
-
-def read_groups(
-	raw_groups: List, root_group: dict, selectedClients: List,  allowed: List[str], withClients: bool = True  # pylint: disable=invalid-name
-) -> dict:
-	if not isinstance(selectedClients, list) and withClients:
-		selectedClients = []
-	all_groups = {}
-	for row in raw_groups:
-		if allowed and row["group_id"] not in allowed + ["clientdirectory"]:
-			continue
-		if row["group_id"] not in all_groups:
-			all_groups[row["group_id"]] = {
-				"id": row["group_id"],
-				"type": "HostGroup",
-				"text": row["group_id"],
-				"parent": row["parent_id"] or root_group["id"],
-				"children": None,
-			}
-		if row["object_id"] and withClients:
-			if row["object_id"] in selectedClients:
-				all_groups[row["group_id"]]["hasAnySelection"] = True
-			if not all_groups[row["group_id"]].get("children"):
-				all_groups[row["group_id"]]["children"] = {}
-			if row.group_id == row.parent_id:
-				if row["object_id"] not in all_groups:
-					all_groups[row["object_id"]] = {
-						"id": row["object_id"],
-						"type": "ObjectToGroup",
-						"text": row["object_id"],
-						"parent": row["parent_id"] or root_group["id"],
-					}
-			else:
-				all_groups[row["group_id"]]["children"][row["object_id"]] = {
-					"id": row["object_id"],
-					"type": "ObjectToGroup",
-					"text": row["object_id"],
-					"parent": row["group_id"],
-				}
-
-	return all_groups
-
 
 @host_router.get("/api/opsidata/servers", response_model=List[Server])
 @rest_api
