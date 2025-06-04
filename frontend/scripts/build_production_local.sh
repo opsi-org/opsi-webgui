@@ -120,5 +120,6 @@ fi
 
 echo ""
 echo "IMPORTANT: Access your webgui at: https://....:${PORT_VALUE}${ADDON_PATH}/app"
+echo "IMPORTANT: ZIP file created: $(pwd)/opsi-${ADDON_ID}.zip"
 echo ""
 cd -
