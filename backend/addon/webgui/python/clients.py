@@ -94,10 +94,10 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 
 	allowed_clients = None
 	username = get_username()
-	if user_register() and host_group_access_configured(username):
+	configured = host_group_access_configured(username)
+
+	if user_register() and configured:
 		allowed_clients = get_allowed_clients(username)
-	logger.warning("Allowed clients length is %s", len(allowed_clients) if allowed_clients else "None")
-	print("Allowed clients length is", len(allowed_clients) if allowed_clients else "None")
 
 	with mysql.session() as session:
 		where = and_(text("h.type = 'OpsiClient'"))

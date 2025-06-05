@@ -136,7 +136,8 @@ def depots(
 @rest_api
 @filter_depot_access
 def clients_on_depots(
-	request: Request, selectedDepots: List[str] = Depends(parse_depot_list)  # pylint: disable=invalid-name
+	request: Request,
+	selectedDepots: List[str] = Depends(parse_depot_list),  # pylint: disable=invalid-name
 ) -> RESTResponse:
 	"""
 	Get all client ids on selected depots.

@@ -1,6 +1,9 @@
-from typing import List, Any, Optional
+from typing import Any, List, Optional
 
 from opsiconfd.logging import logger
+
+from .utils import get_all_children_groupid
+
 
 def _get_all_parents_groupids(raw_groups: List, group_id: str) -> set[str]:
 	"""
@@ -19,22 +22,8 @@ def _get_all_parents_groupids(raw_groups: List, group_id: str) -> set[str]:
 
 	return all_parents
 
-def _get_all_children_groupids(raw_groups: List, group_id: str) -> set[str]:
-	"""
-	Returns all child group IDs for a given group ID.
-	"""
-	if not raw_groups:
-		return set()
 
-	all_children = set()
-	for row in raw_groups:
-		if row["parent_id"] == group_id:
-			all_children.add(row["group_id"].lower())
-			all_children.update(_get_all_children_groupids(raw_groups, row["group_id"]))
-
-	return all_children
-
-def _is_allowed(group_id: str, allowed: set[str]|None) -> bool:
+def _is_allowed(group_id: str, allowed: set[str] | None) -> bool:
 	"""
 	Checks if a group ID is in the allowed list.
 	"""
@@ -46,7 +35,8 @@ def _is_allowed(group_id: str, allowed: set[str]|None) -> bool:
 		return True
 	return False
 
-def _next_allowed_parent(parent_id: str, raw_groups: List, allowed: set[str]|None) -> str:
+
+def _next_allowed_parent(parent_id: str, raw_groups: List, allowed: set[str] | None) -> str:
 	"""
 	Finds the next allowed parent group ID.
 	"""
@@ -64,8 +54,14 @@ def _next_allowed_parent(parent_id: str, raw_groups: List, allowed: set[str]|Non
 			return _next_allowed_parent(row.parent_id, raw_groups, allowed)
 	return None
 
+
 def read_groups(
-	raw_groups: List, root_group: dict, selected_object_ids: List|None, allowed: List[str]|None, withClients: bool = True, gtype: str = "HostGroup"  # pylint: disable=invalid-name
+	raw_groups: List,
+	root_group: dict,
+	selected_object_ids: List | None,
+	allowed: List[str] | None,
+	withClients: bool = True,
+	gtype: str = "HostGroup",  # pylint: disable=invalid-name
 ) -> dict:
 	updated_allowed = None
 	if allowed:
@@ -75,8 +71,8 @@ def read_groups(
 				continue
 			updated_allowed.add(group_id)
 			# currently in configed the behavior is to allow all children of the group, but not the parents (user roles)
-			#updated_allowed.update(_get_all_parents_groupids(raw_groups, group_id))
-			updated_allowed.update(_get_all_children_groupids(raw_groups, group_id))
+			# updated_allowed.update(_get_all_parents_groupids(raw_groups, group_id))
+			updated_allowed.update(get_all_children_groupid(raw_groups, group_id))
 
 	if not isinstance(selected_object_ids, list) and withClients:
 		selected_object_ids = []
@@ -127,37 +123,34 @@ def read_groups(
 				}
 			# fixing group_id for children to ensure uniqueness
 			for child in all_groups[row["group_id"]]["children"].values():
-				if not ";" in child["id"] and child["parent"]:
-					child["id"] = f'{child["id"]};{child["parent"].lower()}'
-
+				if ";" not in child["id"] and child["parent"]:
+					child["id"] = f"{child['id']};{child['parent'].lower()}"
 
 	return all_groups
-
 
 
 def build_nested_group(
 	current_group: dict[str, Any],
 	groups: dict[str, dict[str, Any]],
 	processed: Optional[dict[str, bool]] = None,
-	empty_parent_group_id: str = "groups"
+	empty_parent_group_id: str = "groups",
 ) -> dict[str, Any]:
 	if processed is None:
 		processed = {}
 	processed[current_group["id"]] = True
 	for group_id, group in groups.items():
 		if group_id in processed:
-			continue # Skip already processed groups
+			continue  # Skip already processed groups
 
 		if group.get("parent") is not None and group_id != "clientdirectory":
 			# Ensure the group ID is unique and formatted correctly
-			if not ";" in group["id"]:
-				group["id"] = f'{group["id"]};{group.get("parent").lower()}'
+			if ";" not in group["id"]:
+				group["id"] = f"{group['id']};{group.get('parent').lower()}"
 
 		parent_id: Optional[str] = group.get("parent")
 		if parent_id is None and group_id != "clientdirectory":
 			parent_id = empty_parent_group_id
 			group["parent"] = empty_parent_group_id
-
 
 		if parent_id and parent_id.lower() == current_group.get("text", "").lower():
 			if current_group.get("children") is None:

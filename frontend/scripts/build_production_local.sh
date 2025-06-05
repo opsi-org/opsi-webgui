@@ -12,7 +12,10 @@ ADDON_NAME=$2
 
 WORKING_DIR=$3
 INSTALL=$4
-SHOULD_INSTALL=install
+SHOULD_INSTALL_DATA=install
+SHOULD_INSTALL_USR=installusr
+PATH_DATA="/data/opsiconfd/addons"
+PATH_USR="/workspace/backend/addon"
 FRONTEND_DIR=frontend
 BACKEND_DIR=backend
 WEBGUI_DIR=webgui
@@ -28,10 +31,10 @@ TS_CONST_FILE=${WORKING_DIR}/${FRONTEND_DIR}/nuxt.config.ts
 ADDON_PATH=/addons/${ADDON_ID}
 ADDON_PATH_ORIGIN=/addons/${ADDON_ID_ORIGIN}
 
-ENV_CONFD_PORT="OPSICONFD_PORT"
-DEFAULT_PORT=4447
-PORT_VALUE="${!ENV_CONFD_PORT:-$DEFAULT_PORT}"
-echo "PORT_VALUE: $PORT_VALUE"
+#ENV_CONFD_PORT="OPSICONFD_PORT"
+#DEFAULT_PORT=4447
+#PORT_VALUE="${!ENV_CONFD_PORT:-$DEFAULT_PORT}"
+#echo "PORT_VALUE: $PORT_VALUE"
 
 cleanup() {
     echo 'Undo changes and exiting'
@@ -86,18 +89,20 @@ chown 1000:1000 -R ${ADDON_ID}/*  || exit 51
 apt install -y zip  || exit 60
 zip -r -q opsi-${ADDON_ID}.zip ${ADDON_ID}  || exit 61
 chown 1000:1000 opsi-${ADDON_ID}.zip || exit 52
-echo "> packaging done"
+echo "> packaging done: $(pwd)/opsi-${ADDON_ID}.zip"
 
-echo "> check if also install locally"
+echo "> check if also install locally: ${INSTALL}"
 # if [ $4 -eq 0 ]; then
 # if [ $4 "$variable" ]; then
 # if [ -n "$4" ]; then
-if [ "$INSTALL" = "$SHOULD_INSTALL" ]; then
-    echo ".....install locally"
+port=0000
+if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
+    port=44471
+    echo ".....install locally to ${PATH_DATA}"
     # rm -rf /var/lib/opsiconfd/addons/webgui
     # mv -f webgui/ /var/lib/opsiconfd/addons/.
-    rm -rf /data/opsiconfd/addons/${ADDON_ID} || exit 22
-    mv -f ${ADDON_ID}/ /data/opsiconfd/addons/. || exit 34
+    rm -rf ${PATH_DATA}"/${ADDON_ID} || exit 22
+    mv -f ${ADDON_ID}/ ${PATH_DATA}"/. || exit 34
     git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
     # git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/python/const.py
     # git restore ${WORKING_DIR}/backend/addon/${ADDON_ID}/data/app/README.md
@@ -107,9 +112,21 @@ if [ "$INSTALL" = "$SHOULD_INSTALL" ]; then
     CONTAINER=$(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
     echo "> reload supervisorctl in container: $CONTAINER"
     docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
-
+#elif [ "$INSTALL" = "$SHOULD_INSTALL_USR" ]; then
+#    port=4447
+#    echo ".....install locally in ${PATH_USR}/${ADDON_ID}"
+#    rm -rf ${PATH_USR}"/${ADDON_ID} || exit 23
+#    mv -f ${ADDON_ID}/ ${PATH_USR}"/. || exit 35
+#    git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 72
+#    echo "> local install done in ${PATH_USR}"
+#
+#    # docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload
+#    #CONTAINER=$(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
+#    echo "> IMPORTANT: please restart opsiconfd"
+#    #docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
 else
-    echo "> local install skipped"
+    port="-1"
+    echo "> local install skipped. Please upload the ZIP file to your opsi server and install it manually."
 fi
 
 
@@ -119,7 +136,7 @@ fi
 # sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = '$ADDON_PATH_ORIGIN'|" "$TS_CONST_FILE"
 
 echo ""
-echo "IMPORTANT: Access your webgui at: https://....:${PORT_VALUE}${ADDON_PATH}/app"
+echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
 echo "IMPORTANT: ZIP file created: $(pwd)/opsi-${ADDON_ID}.zip"
 echo ""
 cd -
