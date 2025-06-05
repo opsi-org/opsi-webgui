@@ -27,7 +27,7 @@
     "@xterm/addon-web-links": "0.11.0",
     "@xterm/xterm": "5.5.0",
     "element-plus": "2.9.3",
-    "nuxt": "3.15.1",
+    "nuxt": "^3.17.5",
     "primevue": "4.2.5",
     "tailwindcss-primeui": "0.3.4",
     "vue3-markdown-it": "1.0.10"
@@ -38,20 +38,20 @@
     "@histoire/plugin-vue": "0.17.17",
     "@iconify/vue": "4.2.0",
     "@intlify/eslint-plugin-vue-i18n": "3.2.0",
-    "@nuxt/eslint": "0.7.5",
+    "@nuxt/eslint": "^0.7.6",
     "@nuxt/types": "2.18.1",
     "@nuxtjs/i18n": "8.5.6",
-    "@nuxtjs/storybook": "8.3.3",
+    "@nuxtjs/storybook": "^8.3.5",
     "@nuxtjs/tailwindcss": "6.12.2",
     "@pinia/nuxt": "0.9.0",
     "@playwright/test": "1.49.1",
     "@primevue/nuxt-module": "4.2.5",
     "@vitejs/plugin-vue": "5.2.1",
     "@volar/typescript": "2.4.11",
-    "eslint": "9.18.0",
+    "eslint": "^9.28.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.2.3",
-    "histoire": "~0.17.17",
+    "histoire": "^0.0.0",
     "license-checker": "25.0.1",
     "npm-check-updates": "~17.1.14",
     "pinia": "2.3.1",
@@ -67,6 +67,6 @@
     "npm": "version > 10.9.2 currently broken ('js heap out of space' on npm run and build)"
   },
   "overrides": {
-    "vue": "latest"
+    "vue": "^3.2.47"
   }
 }
