@@ -7,4 +7,4 @@ rm -rf .vscode
 ln -s backend/.vscode .vscode
 
 base_dir=$(dirname $(dirname $(readlink -f $0)))
-${base_dir}/../backend/scripts/devenv.sh
+${base_dir}/../backend/scripts/devenv.sh --yes

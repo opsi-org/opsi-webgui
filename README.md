@@ -48,7 +48,7 @@ If the frontend is set as the primary container, you can choose between two back
 
   * **opsiconfd from Git:**
     Use this if you need a live version of opsiconfd from the repository.
-    * Default port: 4447
+    * Default port: 44472
     * Start opsiconfd manually using `opsiconfd-frontend-start` or via "Run and Debug" `https://localhost:8889`
     * Then launch the webgui with: npm run dev-backend
 
@@ -60,7 +60,7 @@ If you're mainly working on the backend, it should be run as the primary contain
 
 For more detailed setup and usage instructions, please refer to the respective README.md files in the `frontend` and `backend` directories.
 
-The opsiconfd will be available at the address https://localhost:4447 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser` (changeable through `.devcontainer/.env` file)
+The opsiconfd will be available at the address https://localhost:44472 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser` (changeable through `.devcontainer/.env` file)
 
 
 ### Build devcontainer
@@ -74,7 +74,7 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
 
 ### Start applications
 #### for frontend container
-- opsiconfd will be available at `https://localhost:44471` (automatically started), `htpps://localhost:4447` (needs manual start) and webgui at `https://localhost:8888` / `https://localhost:8889`
+- opsiconfd will be available at `https://localhost:44471` (automatically started), `htpps://localhost:44472` (needs manual start) and webgui at `https://localhost:8888` / `https://localhost:8889`
 - **Starting webgui**: `cd /workspace/frontend/ && npm run dev` or Start 'webgui' in 'Run and Debug' section (same as F5)
 - **opsiconfd from opsi-docker (44471)**:
   * server data at folder/volume `/data`
@@ -83,7 +83,7 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
   * Updating from webgui-container: `opsiconfd-docker-container apt update -y`
 * **opsiconfd from git (4447)**:
   * server data at folder `/etc/opsi/...`
-  * Accept certificate of opsiconfd: `https://localhost:4447/admin`
+  * Accept certificate of opsiconfd: `https://localhost:44472/admin`
   * Restarting: Stop opsiconfd via "Run and Debug" or cancel the command
   * Updating: `cd /workspace/docker/backend/opsiconfd && git pull` (not tested yet)
 

@@ -33,9 +33,11 @@
   "service": "opsi-webgui-frontend-dev",
   "postCreateCommand": "/workspace/.devcontainer/opsi-webgui-container-frontend/post_create.sh",
   "postStartCommand": "/workspace/.devcontainer/opsi-webgui-container-frontend/post_start.sh",
-  "remoteEnv": {
+  "containerEnv": {
     "DEV_USER": "${localEnv:USER}",
-    "DEV_UID": "${localEnv:UID}"
+    "DEV_UID": "${localEnv:UID}",
+    "OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
+    "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
   },
   "workspaceFolder": "/workspace"
 }
