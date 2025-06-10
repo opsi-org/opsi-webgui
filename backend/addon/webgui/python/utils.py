@@ -156,20 +156,15 @@ def merge_dicts(dict_a: dict, dict_b: dict, path: Optional[List] = None) -> dict
 def _get_bool_config_value(config_id: str) -> bool:
 	with mysql.session() as session:
 		where = text(f"cv.configId='{config_id}'")
-		query = (
-			select(text("cv.value, cv.isDefault"))
-			.select_from(text("CONFIG_VALUE AS cv"))
-			.where(where)
-			.order_by(text("isDefault DESC"))
-			.limit(1)
-		)
+		query = select(text("cv.configId, cv.value, cv.isDefault")).select_from(text("CONFIG_VALUE AS cv")).where(where)
 		result = session.execute(query)
 		result = result.fetchall()
-
-		if not result or not dict(result[0]).get("value", None):
-			logger.debug("No value found for config %s", config_id)
-			return False
-		return bool_value(dict(result[0]).get("value"))
+	if result:
+		for row in result:
+			row_dict = dict(row)
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") in ["1", "true", "True", True]:
+				return True
+	return False
 
 
 def user_register() -> bool:
