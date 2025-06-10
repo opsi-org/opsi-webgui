@@ -296,6 +296,27 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
 	return RESTResponse(data=configs)
 
 
+@config_router.get("/api/opsidata/config/exists/{configid}")
+@rest_api
+def exists_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
+	request: Request, configid: str
+) -> RESTResponse:
+	"""
+	Check if a config exists
+	"""
+	logger.warning("Checking if config %s exists", configid)
+	try:
+		config_ids = backend.config_getIdents()
+		return RESTResponse(data=configid in config_ids)
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not check if config object exists, error: %s", err)
+		raise OpsiApiException(
+			message="Could not check if config object exists.",
+			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			error=err,
+		) from err
+
+
 ConfigType = Literal["UnicodeConfig", "BoolConfig"]
 
 
@@ -367,14 +388,14 @@ def create_config(  # pylint: disable=invalid-name, too-many-locals, too-many-st
 		if config.configId in config_ids:
 			logger.error("Could not create config object.")
 			raise OpsiApiException(
-				message=f"Could not create config object. Config '{config.configId}' already exists",
+				message=f"Config '{config.configId}' already exists",
 				http_status=status.HTTP_409_CONFLICT,
 			)
 
 		if config.type not in ("UnicodeConfig", "BoolConfig"):
 			logger.error("Could not create config object.")
 			raise OpsiApiException(
-				message=f"Could not create config object. Config type '{config.type}' is not supported",
+				message=f"Config type '{config.type}' is not supported",
 				http_status=status.HTTP_400_BAD_REQUEST,
 			)
 		elif config.type == "BoolConfig":
@@ -401,8 +422,7 @@ def create_config(  # pylint: disable=invalid-name, too-many-locals, too-many-st
 		return RESTResponse(data=config.model_dump(mode="json"), http_status=status.HTTP_201_CREATED, headers=headers)
 
 	except IntegrityError as err:
-		logger.error("Could not create config object. Already exists.")
-		logger.error(err)
+		logger.error("Could not create config object. Already exists. Error: %s", err)
 		return RESTErrorResponse(
 			message=f"Could not create config object. config '{config.configId}' already exists",
 			http_status=status.HTTP_409_CONFLICT,
@@ -411,7 +431,6 @@ def create_config(  # pylint: disable=invalid-name, too-many-locals, too-many-st
 
 	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Could not create config object, error: %s", err)
-		logger.error(err)
 		raise OpsiApiException(
 			message="Could not create config object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
 		) from err

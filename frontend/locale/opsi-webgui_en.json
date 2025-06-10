@@ -230,6 +230,7 @@
   "message.success.save.update.group": "Succesfully updated group \"{group}\".",
   "message.success.title": "Success",
   "message.warning.clientExists": "{client} already exists.",
+  "message.warning.configExists": "Config with id already exists.",
   "message.warning.differentProductVersions": "Different versions exists for this product.",
   "message.warning.noBlockedClients": "There are no blocked clients.",
   "message.warning.noClientsSelectedShowDepot": "No clients are selected, the changes will be applied to the server.",
