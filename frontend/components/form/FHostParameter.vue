@@ -116,8 +116,8 @@ License: AGPL-3.0
     <div v-if="fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only" class="button-container"
       style="display: flex; justify-content: flex-end">
       <!-- TODO: enable if save if method is implemented (#763) -->
-      <el-button class="" @click="() => openCreationModal()" :aria-controls="createConfigVisible ? 'dlg' : null"
-        :aria-expanded="createConfigVisible ? true : false">{{
+      <el-button v-if="isGeneralDefault" @click="() => openCreationModal()"
+        :aria-controls="createConfigVisible ? 'dlg' : null" :aria-expanded="createConfigVisible ? true : false">{{
           $t('button.create.config')
         }}</el-button>
 
@@ -129,7 +129,7 @@ License: AGPL-3.0
     <ModalMConfigCreation v-if="createConfigVisible" v-model:visible="createConfigVisible" :default-item="lastCMItem"
       class="!hidden" @refetch="fetchFormData" />
 
-    <PContextMenu ref="routemenu" :model="items">
+    <p-context-menu ref="routemenu" :model="items" v-if="isGeneralDefault">
       <template #item="{ item, props }">
         <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
           <a v-ripple :href="href" v-bind="props.action" @click="navigate">
@@ -142,7 +142,9 @@ License: AGPL-3.0
           <span class="ml-2">{{ item.label }}</span>
         </a>
       </template>
-    </PContextMenu>
+    </p-context-menu>
+    <p-confirm-dialog />
+
   </div>
 </template>
 
@@ -157,7 +159,9 @@ import { useStrings } from '~/composables/mixins/useStrings'
 import { useDynamicHeight } from '~/composables/mixins/useDynamicHeightWindow'
 import { useBuildingConfigTree } from '~/composables/useBuildingConfigTree'
 import type { TreeNode } from 'primevue/treenode'
+import { useConfirm } from "primevue/useconfirm";
 
+const confirm = useConfirm();
 const { notifyError, notifyInfo } = useNotification()
 const t_fixed = useStrings().t_fixed
 const icons = useIcons()
@@ -188,10 +192,33 @@ const items = ref([
     label: "Delete config",
     icon: icons.delete,
     command: () => {
-      deleteConfig(lastCMItem.value)
+      confirm2();
     }
   }
 ]);
+const confirm2 = () => {
+  confirm.require({
+    message: $t('config.confirm.config-delete', { id: lastCMItem.value?.configId }),
+    header: $t('cornfirm.delete.header'),
+    icon: useIcons().delete,
+    rejectLabel: $t('label.cancel'),
+    rejectProps: {
+      label: $t('label.cancel'),
+      severity: 'secondary',
+      outlined: true
+    },
+    acceptProps: {
+      label: $t('button.delete'),
+      severity: 'danger'
+    },
+    accept: () => {
+      deleteConfig(lastCMItem.value)
+    },
+    reject: () => {
+      lastCMItem.value = undefined
+    }
+  });
+};
 const props = defineProps({
   id: { type: String, default: undefined },
   type: {
@@ -218,8 +245,11 @@ const showWarning = computed(() => {
 
 
 const onRightClick = (event: any, node: any) => {
-  lastCMItem.value = node
-  routemenu.value.show(event);
+  if (isGeneralDefault.value) {
+    lastCMItem.value = node
+    routemenu.value.show(event);
+  }
+
 };
 
 function setExpandedRow(node: any) {
@@ -327,11 +357,13 @@ async function wsBusMsgObjectChanged(msg: any = undefined) {
     })
   }
 }
-
+const isGeneralDefault = computed(() => {
+  return props.type === 'servers' && !props.id
+})
 async function fetch() {
   isLoading.value = true
   let endpoint = ''
-  if (props.type === 'clients' || (props.type === 'servers' && props.id)) {
+  if (!isGeneralDefault.value) {
     endpoint = `/opsidata/config/objects/${props.id}`
   } else if (props.type === 'servers') {
     endpoint = '/opsidata/config'
