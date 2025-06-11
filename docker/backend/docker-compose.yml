@@ -18,7 +18,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ../../:/workspace:cached
     ports:
-      - ${OPSICONFD_PORT}:4447
+      - ${OPSICONFD_PORT}:${OPSICONFD_PORT}
       - 3002:3000
     environment:
       GF_INSTALL_PLUGINS: grafana-simple-json-datasource
