@@ -60,7 +60,7 @@ If you're mainly working on the backend, it should be run as the primary contain
 
 For more detailed setup and usage instructions, please refer to the respective README.md files in the `frontend` and `backend` directories.
 
-The opsiconfd will be available at the address https://localhost:44472 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser` (changeable through `.devcontainer/.env` file)
+The opsiconfd will be available at the address https://localhost:44472 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser` (changeable through `docker/<frontend|backend>/.env` file)
 
 
 ### Build devcontainer
@@ -73,14 +73,14 @@ The opsiconfd will be available at the address https://localhost:44472 and the w
   * after this you will be able to start the applications
 
 ### Start applications
-#### for frontend container
 - opsiconfd will be available at `https://localhost:44471` (automatically started), `htpps://localhost:44472` (needs manual start) and webgui at `https://localhost:8888` / `https://localhost:8889`
-- **Starting webgui**: `cd /workspace/frontend/ && npm run dev` or Start 'webgui' in 'Run and Debug' section (same as F5)
+- **Re-starting webgui**: `cd /workspace/frontend/ && npm run dev` or Start 'webgui' in 'Run and Debug' section (same as F5)
+  * Re-starting from backend container: `npm-run-dev` (for webgui 8888 accessing opsi-docker 44471) and `npm-run-dev-backend` (for webgui 8889 accessing local opsiconfd 44472)
 - **opsiconfd from opsi-docker (44471)**:
   * server data at folder/volume `/data`
   * Accept certificate of opsiconfd: `https://localhost:44471/admin`
-  * Restarting from webgui-container: `opsiconfd-docker-restart` or `opsiconfdcontainer supervisorctl reload`
-  * Updating from webgui-container: `opsiconfd-docker-container apt update -y`
+  * Restarting from both containers: `opsiconfd-docker-restart` or `opsiconfdcontainer supervisorctl reload`
+  * Updating from both containers: `opsiconfd-docker-container apt update -y`
 * **opsiconfd from git (4447)**:
   * server data at folder `/etc/opsi/...`
   * Accept certificate of opsiconfd: `https://localhost:44472/admin`
