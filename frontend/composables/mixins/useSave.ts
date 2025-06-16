@@ -32,7 +32,7 @@ export const useSaveParameters = (_t: any = undefined) => {
     if (deleteitem) {
       delFromChangesHostParam(deleteitem)
     } else {
-      notifySuccess({ message: t('message.success.save.parameters') })
+      notifySuccess({ message: t('message.successfullySavedHostParameters') })
     }
   }
   return {
@@ -67,7 +67,7 @@ export const useSaveProductActionRequest = (_t: any = undefined) => {
     if (deleteitem) {
       delFromChangesProducts(deleteitem)
     } else {
-      notifySuccess({ message: t('message.success.save.prodActionRequest') })
+      notifySuccess({ message: t('message.successfullySavedProductActionRequest') })
       // await $nuxt.refresh()
       // TODO how to refresh nuxt ??? https://stackoverflow.com/questions/77387776/nuxt-3-reload-refresh-the-page
     }
@@ -110,8 +110,8 @@ export const useSaveProductProperties = (
       // $emit('refetch', true)
       if (refetch) refetch(true)
       notifySuccess({
-        message: t('message.success.save.productproperty', {
-          id: Object.keys(change.properties),
+        message: t('message.propertyChanged', {
+          property: Object.keys(change.properties),
         }),
       })
     }

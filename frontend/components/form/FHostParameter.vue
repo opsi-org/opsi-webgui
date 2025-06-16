@@ -8,7 +8,7 @@ License: AGPL-3.0
 <template>
   <div data-testid="FHostParameter" class="">
     <el-alert v-if="showWarning" type="warning" show-icon>
-      {{ $t('alert.select') }}
+      {{ $t('message.selectItem') }}
     </el-alert>
     <div class="overflow-y-auto tree-table-container" :style="`max-height: ${maxVisibleHeight}px;`">
       <p-tree-table
@@ -53,7 +53,7 @@ License: AGPL-3.0
                       itemValues[slotProps.node.key] != initialValues[slotProps.node.key])
                   "
                   :title="
-                    $t('message.warning.unsavedChange') +
+                    $t('message.unsavedChangesWithValueinBold') +
                     `\n initial: ${initialValues[slotProps.node.key]} \n current: ${itemValues[slotProps.node.key]}`
                   "
                   severity="warn"
@@ -114,7 +114,7 @@ License: AGPL-3.0
                     itemValues[slotProps.node.key] != initialValues[slotProps.node.key])
                 "
                 :title="
-                  $t('message.warning.unsavedChange') +
+                  $t('message.unsavedChangesWithValueinBold') +
                   `\n initial: ${initialValues[slotProps.node.key]} \n current: ${itemValues[slotProps.node.key]}`
                 "
                 severity="warn"
@@ -172,14 +172,14 @@ License: AGPL-3.0
     >
       <!-- TODO: enable if save if method is implemented (#763) -->
       <el-button class="!hidden" @click="createConfigVisible = !createConfigVisible">{{
-        $t('button.create.config')
+        $t('addNew')
       }}</el-button>
-      <el-button @click="fetchFormData">{{ $t('button.reset') }}</el-button>
+      <el-button @click="fetchFormData">{{ $t('reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
         :disabled="!hasUnsavedChanges"
         @click="saveHostParameters"
-        >{{ $t('button.save') }}</el-button
+        >{{ $t('save') }}</el-button
       >
     </div>
     <ModalMConfigCreation v-if="createConfigVisible" class="!hidden" @refetch="() => {}" />
@@ -317,11 +317,11 @@ License: AGPL-3.0
   async function wsBusMsgObjectChanged(msg: any = undefined) {
     if (msg && channels.includes(msg.channel)) {
       notifyInfo({
-        title: $t('message.info.event'),
-        message: $t('message.info.event.config_updated', {
+        title: $t('opsiMessageBus'),
+        message: $t('opsiMessageBus.config_updated', {
           configId: msg.data.configId,
         }),
-        button: { label: $t('label.reloadPage'), onClick: fetch },
+        button: { label: $t('reloadPage'), onClick: fetch },
       })
     }
   }
@@ -334,7 +334,7 @@ License: AGPL-3.0
     } else if (props.type === 'servers') {
       endpoint = '/opsidata/config'
     } else {
-      console.error('not defined')
+      console.error('Invalid props.type or missing id')
     }
     await fetchHostParameters(endpoint)
     isLoading.value = false
@@ -411,7 +411,7 @@ License: AGPL-3.0
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsavedChanges'))
+      const answer = window.confirm($t('message.unsavedChanges'))
       if (answer) {
         next()
       } else {

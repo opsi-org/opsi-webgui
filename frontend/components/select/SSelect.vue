@@ -33,23 +33,23 @@ License: AGPL-3.0
       >
         <p-button
           v-if="props.editable && localAddOption.length > 0 && localAddOption == option"
-          :label="$t('button.reset')"
+          :label="$t('reset')"
           severity="primary"
           text
           size="small"
           @click.stop="localAddOption = ''"
         >
-          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+          <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
         <p-button
           v-else-if="props.editable"
-          :label="$t('button.copy')"
+          :label="$t('copy')"
           severity="primary"
           text
           size="small"
           @click.stop="copyItemToInput(option)"
         >
-          <IconIIcon :title="$t('button.copy')" :icon="icons.copy" class="m-1" />
+          <IconIIcon :title="$t('copy')" :icon="icons.copy" class="m-1" />
         </p-button>
         <span class="m-auto">
           {{ option }}
@@ -62,27 +62,27 @@ License: AGPL-3.0
         <p-input-text
           v-model="localAddOption"
           class="w-full"
-          :placeholder="$t('label.add_new')"
+          :placeholder="$t('newItem')"
           @keyup.enter="addItemToOptions(localAddOption)"
         />
 
         <p-button
           v-if="props.editable"
-          :label="$t('button.reset')"
+          :label="$t('reset')"
           severity="secondary"
           text
           @click.stop="localAddOption = ''"
         >
-          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+          <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
         <p-button
-          :label="$t('button.add')"
+          :label="$t('add')"
           severity="secondary"
           text
           :disabled="data?.includes(localAddOption as T)"
           @click="addItemToOptions(localAddOption)"
         >
-          <IconIIcon :title="$t('button.add')" :icon="icons.add" class="m-1" />
+          <IconIIcon :title="$t('add')" :icon="icons.add" class="m-1" />
         </p-button>
       </div>
     </template>
@@ -107,23 +107,23 @@ License: AGPL-3.0
       >
         <p-button
           v-if="props.editable && localAddOption.length > 0 && localAddOption == option"
-          :label="$t('button.reset')"
+          :label="$t('reset')"
           severity="secondary"
           text
           size="small"
           @click.stop="localAddOption = ''"
         >
-          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+          <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
         <p-button
           v-else-if="props.editable"
-          :label="$t('button.copy')"
+          :label="$t('copy')"
           severity="secondary"
           text
           size="small"
           @click.stop="copyItemToInput(option)"
         >
-          <IconIIcon :title="$t('button.copy')" :icon="icons.copy" class="m-1" />
+          <IconIIcon :title="$t('copy')" :icon="icons.copy" class="m-1" />
         </p-button>
         <el-text class="m-auto"> {{ option }} </el-text>
       </span>
@@ -133,26 +133,26 @@ License: AGPL-3.0
         <p-input-text
           v-model="localAddOption"
           class="w-full"
-          :placeholder="$t('label.add_new')"
+          :placeholder="$t('newItem')"
           @keyup.enter="addItemToOptions(localAddOption)"
         />
         <p-button
           v-if="props.editable"
-          :label="$t('button.reset')"
+          :label="$t('reset')"
           severity="secondary"
           text
           @click.stop="localAddOption = ''"
         >
-          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+          <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
         <p-button
-          :label="$t('button.add')"
+          :label="$t('add')"
           severity="success"
           text
           :disabled="data?.includes(localAddOption as T)"
           @click="addItemToOptions(localAddOption)"
         >
-          <IconIIcon :title="$t('button.add')" :icon="icons.add" class="m-1" />
+          <IconIIcon :title="$t('add')" :icon="icons.add" class="m-1" />
         </p-button>
       </div>
     </template>

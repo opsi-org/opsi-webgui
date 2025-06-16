@@ -15,7 +15,7 @@ License: AGPL-3.0
       v-loading="isLoading"
       size="small"
     >
-      <el-form-item :label="$t('form.clientId')" v-if="!props.isChild">
+      <el-form-item :label="$t('clientId')" v-if="!props.isChild">
         <SelectSHosts
           :type="type"
           @change="setId"
@@ -24,13 +24,13 @@ License: AGPL-3.0
           :sync="syncSelection"
         />
       </el-form-item>
-      <el-form-item :label="$t('form.logtype')">
+      <el-form-item :label="$t('logType')">
         <el-select v-model="logtype" style="min-width: 200px">
           <el-option v-for="lt in LOG_TYPES" :key="lt" :label="lt" :value="lt" />
         </el-select>
       </el-form-item>
       <template v-if="fetchedData.length > 1">
-        <el-form-item :label="$t('form.filter.logs')">
+        <el-form-item :label="$t('filter')">
           <el-input
             v-model="filterQuery"
             clearable
@@ -39,13 +39,13 @@ License: AGPL-3.0
           />
         </el-form-item>
         <br />
-        <el-form-item :label="$t('form.loglevel')">
+        <el-form-item :label="$t('logLevel')">
           <el-slider v-model="loglevel" show-stops :max="8" style="min-width: 200px" />
         </el-form-item>
-        <el-form-item :label="$t('form.autofetch')" class="!inline">
+        <el-form-item :label="$t('autoFetch')" class="!inline">
           <el-switch v-model="autofetch" class="!inline" />
         </el-form-item>
-        <el-form-item :label="$t('form.autoscroll')" class="!inline">
+        <el-form-item :label="$t('autoScroll')" class="!inline">
           <el-switch
             v-model="autoscroll"
             class="!inline"
@@ -53,15 +53,15 @@ License: AGPL-3.0
           />
         </el-form-item>
         <el-form-item
-          :label="$t('form.scrollMarker')"
+          :label="$t('rowMarker')"
           class="!inline !mb-0 !pb-0"
           :class="{
             '!hidden': logConfig.logmarkerNr <= -1 || !logMarkerForThisSetting,
           }"
         >
           <el-button
-            :aria-label="$t('form.scrollMarker.scroll')"
-            :title="$t('form.scrollMarker.scroll')"
+            :aria-label="$t('scrollToRowMarker')"
+            :title="$t('scrollToRowMarker')"
             size="small"
             bg
             text
@@ -78,8 +78,8 @@ License: AGPL-3.0
             class="!m-0"
             text
             bg
-            :aria-label="$t('form.scrollMarker.remove')"
-            :title="$t('form.scrollMarker.remove')"
+            :aria-label="$t('removeRowMarker')"
+            :title="$t('removeRowMarker')"
           >
             <IconIIcon
               :icon="useIcons().x"
@@ -88,24 +88,24 @@ License: AGPL-3.0
           </el-button>
         </el-form-item>
 
-        <el-form-item :label="$t('table.fields.rowactions')" class="!inline">
+        <el-form-item :label="$t('actions')" class="!inline">
           <el-button @click="downloadCurrent" size="small" text bg>
             <IconIIcon
               :icon="useIcons().download"
-              :aria-label="$t('button.download.current')"
-              :title="$t('button.download.current')"
+              :aria-label="$t('downloadCurrent')"
+              :title="$t('downloadCurrent')"
             />
           </el-button>
           <el-button @click="reload" size="small" text bg>
             <IconIIcon
               :icon="useIcons().refetch"
-              :aria-label="$t('button.reload')"
-              :title="$t('button.reload')"
+              :aria-label="$t('reload')"
+              :title="$t('reload')"
             />
           </el-button>
         </el-form-item>
       </template>
-      <el-form-item :label="$t('form.syncSelection')" class="!inline">
+      <el-form-item :label="$t('globalSelection')" class="!inline">
         <el-switch v-model="syncSelection" class="!inline" />
       </el-form-item>
     </el-form>
@@ -131,7 +131,7 @@ License: AGPL-3.0
               />
             </span>
             <code class="!min-w-16 !w-16 sticky left-0 flex-none" @click="setMarker(i)">
-              {{ $t('label.in_bracets', { value: i }) }}
+              {{ $t('textInBrackets', { value: i }) }}
             </code>
             <code @click="setMarker(i)">
               {{ log }}
@@ -140,7 +140,7 @@ License: AGPL-3.0
           </div>
         </div>
       </div>
-      <el-alert v-else :title="$t('message.info.nologs')" type="info" show-icon :closable="false" />
+      <el-alert v-else :title="$t('message.noLogsFound')" type="info" show-icon :closable="false" />
     </div>
   </div>
 </template>
@@ -285,13 +285,13 @@ License: AGPL-3.0
       )
       if (error) {
         notifyError({
-          message: error?.response?.data?.message || $t('message.error.generic'),
+          message: error?.response?.data?.message || $t('message.error.general'),
         })
         return
       }
       if (data.value == undefined) {
         notifyError({
-          message: $t('message.error.empty-response', {
+          message: $t('message.error.emptyResponse', {
             details: 'ClientsLog',
           }),
         })
@@ -300,7 +300,7 @@ License: AGPL-3.0
       fetchedData.value = data.value.result
       if (!fetchedData.value) {
         notifyError({
-          message: $t('message.error.empty-response', {
+          message: $t('message.error.emptyResponse', {
             details: 'ClientsLog',
           }),
         })
@@ -308,7 +308,7 @@ License: AGPL-3.0
       }
       filteredDataByQuery.value = fetchedData.value
     } catch (error) {
-      notifyError({ message: error || $t('message.error.unexpected') })
+      notifyError({ message: error || $t('message.error.general') })
     } finally {
       isLoading.value = false
     }
@@ -386,10 +386,10 @@ License: AGPL-3.0
         return
       }
       notifyInfo({
-        title: $t('message.info.event'),
-        message: $t('message.info.event.log_updated'),
+        title: $t('opsiMessageBus'),
+        message: $t('opsiMessageBus.log_updated'),
         button: {
-          label: $t('label.reloadPage'),
+          label: $t('reloadPage'),
           onClick: fetch,
         },
       })

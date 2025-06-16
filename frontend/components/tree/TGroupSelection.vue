@@ -17,7 +17,7 @@ License: AGPL-3.0
       size="small"
       severity="primary"
       variant="outlined"
-      :label="$t('table.selection.clear')"
+      :label="$t('clearAllSelections')"
     />
     <IconILoading v-if="isLoadingSelection" small />
   </div>
@@ -148,7 +148,7 @@ License: AGPL-3.0
       return
     } else if (data.value == undefined) {
       notifyError({
-        message: $t('message.error.empty-response', {
+        message: $t('message.error.emptyResponse', {
           details: 'ClientGroupSelections',
         }),
       })
@@ -172,7 +172,7 @@ License: AGPL-3.0
       return
     } else if (data.value == undefined) {
       notifyError({
-        message: $t('message.error.empty-response', {
+        message: $t('message.error.emptyResponse', {
           details: 'ProductGroupSelections',
         }),
       })

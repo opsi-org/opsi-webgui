@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-button @click="refetchGroup" size="small">{{ $t('label.refresh') }}</el-button>
+  <el-button @click="refetchGroup" size="small">{{ $t('refresh') }}</el-button>
   <el-popover
     v-if="isProductGroup"
     :placement="popoverPlacement"
@@ -16,16 +16,16 @@ License: AGPL-3.0
   >
     <template #reference>
       <el-button size="small" :disabled="config.read_only">{{
-        $t('label.create.prodgroup')
+        $t('createProductGroup')
       }}</el-button>
     </template>
     <template v-if="isCreateGroupPopoverLoaded">
       <el-form label-position="top" class="mt-3">
-        <el-text tag="b">{{ $t('label.create.prodgroup') }}</el-text>
+        <el-text tag="b">{{ $t('createProductGroup') }}</el-text>
         <el-form-item
           v-for="label in Object.keys(createGroup)"
           :key="label"
-          :label="$t('table.fields.' + label)"
+          :label="$t(label)"
           v-show="label !== 'parentGroupId'"
         >
           <el-input v-model="createGroup[label]" @keyup.enter="createSubGroup('')" />
@@ -36,7 +36,7 @@ License: AGPL-3.0
           data-testid="createSubGroup"
           @click="createSubGroup('')"
           :disabled="!createGroup.groupId"
-          >{{ $t('button.create') }}</el-button
+          >{{ $t('create') }}</el-button
         >
       </el-form>
     </template>
@@ -74,7 +74,7 @@ License: AGPL-3.0
               </template>
               <template v-if="isActionPopoverLoaded[node.label + action]">
                 <el-text tag="b" class="text-capitalize after:content-['-']">{{
-                  $t('group.' + action)
+                  $t(action)
                 }}</el-text>
                 <el-text tag="i">{{ node.label }}</el-text>
                 <el-form label-position="top" class="mt-3">
@@ -82,7 +82,7 @@ License: AGPL-3.0
                     <el-form-item
                       v-for="label in Object.keys(createGroup)"
                       :key="label"
-                      :label="$t('table.fields.' + label)"
+                      :label="$t(label)"
                       v-show="label !== 'parentGroupId'"
                     >
                       <el-input
@@ -96,11 +96,11 @@ License: AGPL-3.0
                       data-testid="createSubGroup"
                       @click="createSubGroup(node.label)"
                       :disabled="!createGroup.groupId || config.read_only"
-                      >{{ $t('button.create') }}</el-button
+                      >{{ $t('create') }}</el-button
                     >
                   </template>
                   <template v-else-if="['client-add', 'product-add'].includes(action)">
-                    <el-form-item :label="$t('label.selectChildren')">
+                    <el-form-item :label="$t('selectChildren')">
                       <el-scrollbar height="300px" class="border w-full p-2 min-w-[300px]">
                         <el-checkbox-group v-model="selectedChildren">
                           <div v-for="item in idList" :key="item">
@@ -115,35 +115,35 @@ License: AGPL-3.0
                       data-testid="addChildren"
                       :disabled="config.read_only"
                       @click="addChildren(node.label)"
-                      >{{ $t('button.add') }}</el-button
+                      >{{ $t('add') }}</el-button
                     >
                   </template>
                   <template v-else-if="['client-delete', 'product-delete'].includes(action)">
-                    <el-text>{{ $t('group.confirm.' + action) }}</el-text>
+                    <el-text>{{ $t(action + '.confirm') }}</el-text>
                     <el-button
                       class="float-right"
                       type="danger"
                       :disabled="config.read_only"
                       data-testid="removeAssignments"
                       @click="deleteAllChildren(node.label)"
-                      >{{ $t('button.delete') }}</el-button
+                      >{{ $t('delete') }}</el-button
                     >
                   </template>
                   <template v-else-if="action === 'delete'">
-                    <el-text>{{ $t('group.confirm.' + action) }}</el-text>
+                    <el-text>{{ $t(action + '.confirm') }}</el-text>
                     <el-button
                       type="danger"
                       class="float-right"
                       :disabled="config.read_only"
                       @click="applyDelete(node.label, defdata.type, defdata.parent)"
-                      >{{ $t('button.delete') }}</el-button
+                      >{{ $t('delete') }}</el-button
                     >
                   </template>
                   <template v-else-if="action === 'edit'">
                     <el-form-item
                       v-for="label in Object.keys(editgroup)"
                       :key="label"
-                      :label="$t('table.fields.' + label)"
+                      :label="$t(label)"
                     >
                       <el-select v-if="label === 'parent'" v-model="editgroup[label]">
                         <el-option
@@ -161,11 +161,11 @@ License: AGPL-3.0
                       data-testid="editGroup"
                       :disabled="config.read_only"
                       @click="editGroup(node.label)"
-                      >{{ $t('button.update') }}</el-button
+                      >{{ $t('update') }}</el-button
                     >
                   </template>
                   <template v-else-if="action === 'copy'">
-                    <el-form-item :label="$t('group.copyClient.selectgroup')">
+                    <el-form-item :label="$t('selectGroupsToCopyClients')">
                       <el-scrollbar height="200px" class="w-100">
                         <el-checkbox-group v-model="selectedGroups">
                           <div v-for="item in filteredGroupNames" :key="item">
@@ -179,10 +179,10 @@ License: AGPL-3.0
                       class="float-right"
                       :disabled="config.read_only"
                       @click="copyClient(node.label)"
-                      >{{ $t('button.copy') }}</el-button
+                      >{{ $t('copy') }}</el-button
                     >
                   </template>
-                  <template v-else>{{ $t('group.noactions') }}</template>
+                  <template v-else>{{ $t('message.noAvailableActions') }}</template>
                 </el-form>
               </template>
             </el-popover>
@@ -322,7 +322,7 @@ License: AGPL-3.0
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       if (!data.value)
         throw new Error(
-          $t('message.error.empty-response', {
+          $t('message.error.emptyResponse', {
             details: 'ClientGroupSelections',
           })
         )
@@ -344,7 +344,7 @@ License: AGPL-3.0
       )
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       if (!data.value)
-        throw new Error($t('message.error.empty-response', { details: 'GroupActions' }))
+        throw new Error($t('message.error.emptyResponse', { details: 'GroupActions' }))
       fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups)
     } catch (err) {
       notifyError({ message: (err as Error).message })
@@ -358,7 +358,7 @@ License: AGPL-3.0
       )
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       if (!data.value)
-        throw new Error($t('message.error.empty-response', { details: 'GroupActions' }))
+        throw new Error($t('message.error.emptyResponse', { details: 'GroupActions' }))
       idList.value = data.value.map((item) => item.productId)
     } catch (err) {
       notifyError({ message: (err as Error).message })
@@ -375,7 +375,7 @@ License: AGPL-3.0
       const { error } = await useApiPOST(url, createGroup)
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
-        message: $t('message.success.save.create.group', {
+        message: $t('message.successfullyCreatedGroup', {
           group: createGroup.groupId,
         }),
       })
@@ -394,7 +394,7 @@ License: AGPL-3.0
       const { error } = await useApiPOST(url, selectedChildren.value)
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
-        message: $t('message.success.save.add.clientfromgroups', {
+        message: $t('message.successfullyAddedClientsToGroup', {
           group: selectedGroup,
         }),
       })
@@ -413,7 +413,7 @@ License: AGPL-3.0
       const { error } = await useApiDELETE(url)
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
-        message: $t('message.success.save.delete.clientfromgroups', {
+        message: $t('message.successfullyDeletedClientFromGroup', {
           group: selectedGroup,
         }),
       })
@@ -441,7 +441,7 @@ License: AGPL-3.0
         props.data.category === 'client-group' ? await useApiDELETE(url) : await useApiGET(url)
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
-        message: $t('message.success.save.delete.group', {
+        message: $t('message.successfullyDeletedGroup', {
           group: selectedGroup,
         }),
       })
@@ -461,7 +461,7 @@ License: AGPL-3.0
       const { error } = await useApiDELETE(url, body)
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
-        message: $t('message.success.save.delete.clientfromgroups', {
+        message: $t('message.successfullyDeletedClientFromGroup', {
           client: selectedChild,
         }),
       })
@@ -480,7 +480,7 @@ License: AGPL-3.0
       const { error } = await useApiPUT(url, editgroup)
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
-        message: $t('message.success.save.update.group', {
+        message: $t('message.successfullyUpdatedGroup', {
           group: selectedGroup,
         }),
       })

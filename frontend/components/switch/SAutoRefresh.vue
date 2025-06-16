@@ -8,7 +8,7 @@ License: AGPL-3.0
 <template>
   <TooltipTTooltip>
     <template #tooltip>
-      {{ $t('form.autorefresh.cbvalue.tooltip') }}
+      {{ $t('message.autoRefresh') }}
     </template>
     <template #default>
       <PFloatLabel v-if="props.type === 'checkbox'" variant="in">
@@ -26,11 +26,7 @@ License: AGPL-3.0
           for="cbAutorefresh"
           class="text-xs text-white !pb-1"
           :class="msgbusAutoRefresh ? '' : 'pl-4'"
-          >{{
-            msgbusAutoRefresh
-              ? $t('form.autorefresh.cbvalue.on')
-              : $t('form.autorefresh.cbvalue.off')
-          }}</label
+          >{{ msgbusAutoRefresh ? $t('autoRefresh') : $t('ask') }}</label
         >
       </PFloatLabel>
     </template>

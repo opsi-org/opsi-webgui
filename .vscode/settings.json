@@ -36,15 +36,7 @@
   "editor.formatOnSave": true,
   "editor.insertSpaces": true,
   "editor.tabSize": 2,
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-    "vue",
-    "html",
-    "json",
-    "jsonc",
-    "yaml"
-  ],
+  "eslint.validate": ["javascript", "typescript", "vue", "html", "json", "jsonc", "yaml"],
   "files.exclude": {
     "**/node_modules": true,
     "**/dist": true,
@@ -56,9 +48,9 @@
   },
   "gitlens.blame.toggleMode": "file",
   "gitlens.currentLine.format": "${author, }${agoOrDate}${ • message|50?}",
-  "i18n-ally.displayLanguage": "opsi-webgui_en",
+  "i18n-ally.displayLanguage": "opsi-webgui-en",
   "i18n-ally.localesPaths": ["frontend/locale/"],
-  "i18n-ally.sourceLanguage": "opsi-webgui_en",
+  "i18n-ally.sourceLanguage": "opsi-webgui-en",
   "prettier.configPath": "/workspace/frontend/.prettierrc",
   "prettier.requireConfig": true,
   "typescript.tsdk": "./frontend/node_modules/typescript/lib",

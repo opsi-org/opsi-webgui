@@ -43,7 +43,7 @@ License: AGPL-3.0
     >
       <TooltipTTooltip>
         <template #tooltip>
-          <p>{{ $t('info.readonly.active') }}</p>
+          <p>{{ $t('message.readOnlyActive') }}</p>
         </template>
         <IconIIcon :icon="icons.readonly" class="text-red-500" height="20" />
       </TooltipTTooltip>

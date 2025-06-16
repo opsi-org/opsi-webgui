@@ -8,7 +8,7 @@ License: AGPL-3.0
 <template>
   <div data-testid="FHostParameter" class="">
     <el-alert v-if="showWarning" type="warning" show-icon>
-      {{ $t('alert.select') }}
+      {{ $t('message.selectItem') }}
     </el-alert>
     <div class="overflow-y-auto" :style="`max-height: ${maxVisibleHeight}px;`">
       <el-collapse accordion v-loading="isLoading" @change="handleCollapseChange">
@@ -39,7 +39,7 @@ License: AGPL-3.0
                           // initialValues[item.configId]
                         "
                         :title="
-                          $t('message.warning.unsavedChange') +
+                          $t('message.unsavedChangesWithValueinBold') +
                           ` <br> initial: ${initialValues[item.configId]}
                             <br> current: ${itemValues[item.configId]}`
                         "
@@ -84,14 +84,14 @@ License: AGPL-3.0
     >
       <!-- TODO: enable if save if method is implemented (#763) -->
       <el-button @click="createConfigVisible = !createConfigVisible" class="!hidden">{{
-        $t('button.create.config')
+        $t('addNew')
       }}</el-button>
-      <el-button @click="fetchFormData">{{ $t('button.reset') }}</el-button>
+      <el-button @click="fetchFormData">{{ $t('reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
         :disabled="!hasUnsavedChanges"
         @click="saveHostParameters"
-        >{{ $t('button.save') }}</el-button
+        >{{ $t('save') }}</el-button
       >
     </div>
     <ModalMConfigCreation v-if="createConfigVisible" class="!hidden" @refetch="() => {}" />
@@ -132,13 +132,7 @@ License: AGPL-3.0
     isChild: { type: Boolean, default: false },
   })
   const { maxVisibleHeight } = useDynamicHeight(
-    [
-      'btop-header',
-      'globalBreadcrumb',
-      'config-pre-tabs',
-      // 'tableHeader-'+props.tableId
-      // 'tableFooter-'+props.tableId
-    ],
+    ['btop-header', 'globalBreadcrumb', 'config-pre-tabs'],
     50
   )
 
@@ -219,11 +213,11 @@ License: AGPL-3.0
   async function wsBusMsgObjectChanged(msg: any = undefined) {
     if (msg && channels.includes(msg.channel)) {
       notifyInfo({
-        title: $t('message.info.event'),
-        message: $t('message.info.event.config_updated', {
+        title: $t('opsiMessageBus'),
+        message: $t('opsiMessageBus.config_updated', {
           configId: msg.data.configId,
         }),
-        button: { label: $t('label.reloadPage'), onClick: fetch },
+        button: { label: $t('reloadPage'), onClick: fetch },
       })
     }
   }
@@ -311,7 +305,7 @@ License: AGPL-3.0
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsavedChanges'))
+      const answer = window.confirm($t('message.unsavedChanges'))
       if (answer) {
         next()
       } else {

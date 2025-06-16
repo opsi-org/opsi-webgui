@@ -191,7 +191,7 @@ preinit:transifex-up:
   stage: preinit
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   script:
-    - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json --resource-name opsi-webgui.json
+    - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui-en.json --resource-name opsi-webgui.json
   only:
     - tags
     - v5
@@ -218,15 +218,15 @@ init:transifex-down:
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_REVIEW_RATE=1.0'
     # download all 100% translated files
     - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json frontend/locale/ --min-translation-rate 1
-    - rm -f frontend/locale/opsi-webgui_de.json
-    - rm -f frontend/locale/opsi-webgui_fr.json
+    - rm -f frontend/locale/opsi-webgui-de.json
+    - rm -f frontend/locale/opsi-webgui-fr.json
     # download 100 reviewed files (de, fr)
     - opsi-dev-cli -l debug transifex download-translations opsi-webgui.json frontend/locale/ --min-review-rate $TRANSIFEX_MIN_REVIEW_RATE -l de -l fr
     - chmod 666 frontend/locale/*
     # at least en,de,fr have to exist
-    - test -f frontend/locale/opsi-webgui_en.json && echo "Translation en exists."
-    - test -f frontend/locale/opsi-webgui_de.json && echo "Translation de exists."
-    - test -f frontend/locale/opsi-webgui_fr.json && echo "Translation fr exists."
+    - test -f frontend/locale/opsi-webgui-en.json && echo "Translation en exists."
+    - test -f frontend/locale/opsi-webgui-de.json && echo "Translation de exists."
+    - test -f frontend/locale/opsi-webgui-fr.json && echo "Translation fr exists."
   only:
     - tags
     - v5
@@ -814,7 +814,7 @@ publish:binary-index:
 #   script:
 #     - *install_tools
 #     - ./opsi-dev-tool -l debug --binary-pull
-#     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+#     - scp -o StrictHostKeyChecking=no -r opsi-webgui-${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
 #     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
 #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.4:development opsi-webgui home:uibmz:opsi:4.4:experimental
 #   only:

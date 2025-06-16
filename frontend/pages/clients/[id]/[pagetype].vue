@@ -29,7 +29,7 @@ License: AGPL-3.0
       :id="id"
       :is-child="id !== undefined && id !== ''"
     />
-    <div v-else>{{ $t('message.error.404') }}</div>
+    <div v-else>{{ $t('message.pageNotFound') }}</div>
   </div>
 </template>
 

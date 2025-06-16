@@ -10,7 +10,7 @@ License: AGPL-3.0
     <el-tab-pane
       v-for="category in groupActions"
       :key="category.category"
-      :label="$t('title.' + category.category)"
+      :label="$t(category.category)"
       :name="category.category"
     >
       <TreeTGroupActions v-if="category.category === currentType" :data="category" />
@@ -30,19 +30,19 @@ License: AGPL-3.0
 
   const groupActions = reactive([
     {
-      category: 'client-group', // for i18n-check: $t('title.client-group')
+      category: 'client-group',
       actions: {
-        maingroups: ['group-add'], // for i18n-check: $t('group.group-add')
-        parent: ['edit', 'delete', 'client-delete', 'client-add', 'group-add'], // for i18n-check: $t('group.edit'), $t('group.delete'), $t('group.client-delete'), $t('group.client-add'), $t('group.group-add'), $t('group.confirm.client-delete'), $t('group.confirm.delete')
-        children: ['delete', 'copy'], // for i18n-check: $t('group.delete'), $t('group.copy')
+        maingroups: ['group-add'],
+        parent: ['edit', 'delete', 'client-delete', 'client-add', 'group-add'], // $t('client-delete.confirm'), $t('delete.confirm')
+        children: ['delete', 'copy'],
       },
     },
     {
-      category: 'product-group', // for i18n-check: $t('title.product-group')
+      category: 'product-group',
       actions: {
-        // parent: [ 'edit', 'delete', 'product-delete', 'product-add', 'group-add' ] // TODO: enable if #767 is solved, for i18n-check: $t('group.edit'), $t('group.delete'), $t('group.product-delete'), $t('group.product-add'), $t('group.group-add'), $('group.confirm.delete'), $('group.confirm.product-delete')
-        parent: ['delete', 'product-delete', 'product-add'], // for i18n-check: $t('group.delete'), $t('group.product-delete'), $t('group.product-add')
-        children: ['delete'], // for i18n-check: $t('group.delete')
+        // parent: [ 'edit', 'delete', 'product-delete', 'product-add', 'group-add' ] // TODO: enable if #767 is solved
+        parent: ['delete', 'product-delete', 'product-add'], // $t('product-delete.confirm')
+        children: ['delete'],
       },
     },
   ])
