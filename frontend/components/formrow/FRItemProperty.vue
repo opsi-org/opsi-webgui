@@ -36,19 +36,19 @@ License: AGPL-3.0
             {{ props.item.description }} <br />
             <br />
             <div v-if="props.item.value !== undefined">
-              <b>{{ $t('label.property.config') }}</b>
+              <b>{{ $t('configValues') }}</b>
               <pre>{{ props.item.value }}</pre>
             </div>
             <div v-if="props.item.defaultValues !== undefined">
-              <b>{{ $t('label.property.default') }}</b>
+              <b>{{ $t('defaultValues') }}</b>
               <pre>{{ props.item.defaultValues }} </pre>
             </div>
             <div v-if="props.item.objects !== undefined">
-              <b>{{ $t('label.property.object') }}</b>
+              <b>{{ $t('objectValues') }}</b>
               <pre>{{ props.item.objects }} </pre>
             </div>
             <div v-if="localPropertyChanges?.length && localPropertyChanges?.length > 0">
-              <b>{{ $t('label.property.localchanges') }}</b>
+              <b>{{ $t('localChanges') }}</b>
               <pre>{{ localPropertyChanges }}</pre>
             </div>
             <pre>
@@ -74,8 +74,8 @@ License: AGPL-3.0
           default-first-option
           collapse-tags
           collapse-tags-tooltip
-          :no-data-text="$t('treeselect.nooption')"
-          :no-match-text="$t('treeselect.noResultTextEditable')"
+          :no-data-text="$t('message.noAvailableOptions')"
+          :no-match-text="$t('message.notFound')"
           placeholder=""
           class=""
           :tag-type="undefined"
@@ -94,13 +94,13 @@ License: AGPL-3.0
             </el-tooltip>
           </template>
           <template #header v-if="props.item.editable">
-            <el-text> {{ $t('treeselect.searchOrAdd') }} </el-text>
+            <el-text> {{ $t('searchOrAdd') }} </el-text>
           </template>
           <template #prefix v-if="props.item.editable">
             <el-tooltip
               class="box-item"
               effect="dark"
-              :content="'This config is editable. Press <Enter> or click on item to add and select'"
+              :content="$t('message.pressEnterToAddOrSelect')"
               placement="top-start"
             >
               <el-text><IconIIcon :icon="icons.add" /></el-text>
@@ -120,7 +120,7 @@ License: AGPL-3.0
           />
 
           <template #content>
-            {{ $t('message.warning.unsavedChanges') }}
+            {{ $t('message.unsavedChanges') }}
             <pre>{{ localPropertyChanges }}</pre>
           </template>
         </el-tooltip>

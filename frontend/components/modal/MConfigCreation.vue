@@ -10,7 +10,7 @@ License: AGPL-3.0
     <PDialog
       v-model:visible="visible"
       modal
-      :header="$t('title.creation.config')"
+      :header="$t('createConfig')"
       :style="{ width: '25rem' }"
     >
       <!-- Name -->
@@ -72,9 +72,9 @@ License: AGPL-3.0
       </div>
 
       <div class="flex justify-end gap-2">
-        <el-button @click="cancel">{{ $t('label.cancel') }}</el-button>
+        <el-button @click="cancel">{{ $t('cancel') }}</el-button>
         <el-button type="primary" @click="save" :disabled="dataValid">
-          {{ $t('label.select') }}
+          {{ $t('select') }}
         </el-button>
       </div>
     </PDialog>
@@ -92,37 +92,37 @@ License: AGPL-3.0
 
   const data = ref({
     name: {
-      label: $t('form.config.name'),
+      label: $t('name'),
       value: '',
       type: 'text',
     },
     description: {
-      label: $t('form.config.description'),
+      label: $t('description'),
       value: '',
       type: 'text',
     },
     boolValue: {
-      label: $t('form.config.boolValue'),
+      label: $t('boolValue'),
       value: true,
       type: 'boolean',
     },
     editable: {
-      label: $t('form.config.editable'),
+      label: $t('editable'),
       value: true,
       type: 'boolean',
     },
     multiValue: {
-      label: $t('form.config.multiValue'),
+      label: $t('multiValue'),
       value: false,
       type: 'boolean',
     },
     possibleValues: {
-      label: $t('form.config.possibleValues'),
+      label: $t('possibleValues'),
       values: [] as string[],
       type: 'string[]',
     },
     standardValues: {
-      label: $t('form.config.standardValue'),
+      label: $t('standardValues'),
       value: '' as string,
       values: [] as string[],
       type: 'stringOrString[]',

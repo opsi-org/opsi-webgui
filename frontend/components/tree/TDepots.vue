@@ -17,7 +17,7 @@ License: AGPL-3.0
     size="small"
     severity="primary"
     variant="outlined"
-    :label="$t('table.selection.clear')"
+    :label="$t('clearAllSelections')"
   />
   <div class="flex items-center gap-2" v-for="item in depotIDList" :key="item">
     <p-checkbox

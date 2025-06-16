@@ -23,20 +23,20 @@ License: AGPL-3.0
         >
           <span style="text-transform: uppercase">{{ lang }}</span>
           <span>{{
-            ['en', 'de', 'fr'].includes(lang) ? '' : $t('button.lang.community-created')
+            ['en', 'de', 'fr'].includes(lang) ? '' : $t('maintainedByOPSICommunity')
           }}</span>
         </el-dropdown-item>
         <el-dropdown-item
           divided
           :data-testid="`DropdownDDLang-Item-contribute`"
-          :title="$t('button.contribute-transifex.tooltip')"
+          :title="$t('message.contributeTranslations')"
         >
           <a
             href="https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/"
             target="_blank"
             class="dropdown-item-link"
           >
-            {{ $t('button.contribute-transifex') }}
+            {{ $t('message.translationMissing') }}
           </a>
         </el-dropdown-item>
       </el-dropdown-menu>

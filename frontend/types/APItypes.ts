@@ -38,42 +38,41 @@ export interface T_Client2Depot {
 }
 
 export interface T_ClientAttr {
-  // {"hostId":"nb-00013.acme.corp","type":"OpsiClient","description":"Snow White","notes":"","hardwareAddress":"5f:67:b9:28:8a:f6","ipAddress":"10.1.3.116","inventoryNumber":"0115nb00012","systemUUID":null,"created":"2023-11-24T11:27:16","lastSeen":"2023-11-24T11:27:16","opsiHostKey":"b9b520f0992b6b8d0819caf69393d116","oneTimePassword":null,"uefi":false}
-  hostId: string // for translation key search $t('table.fields.hostId')
-  type: string // $t('table.fields.type')
-  description: string // $t('table.fields.description')
-  notes: string // $t('table.fields.notes')
-  hardwareAddress: string | undefined // $t('table.fields.hardwareAddress')
-  ipAddress: string | undefined // $t('table.fields.ipAddress')
-  inventoryNumber: string // $t('table.fields.inventoryNumber')
-  systemUUID: string | undefined // $t('table.fields.systemUUID')
-  created: string // $t('table.fields.created')
-  lastSeen: string // $t('table.fields.lastSeen')
-  opsiHostKey: string // $t('table.fields.opsiHostKey')
-  oneTimePassword: string | undefined // $t('table.fields.oneTimePassword')
-  uefi: boolean // $t('table.fields.uefi')
+  hostId: string
+  type: string
+  description: string
+  notes: string
+  hardwareAddress: string | undefined
+  ipAddress: string | undefined
+  inventoryNumber: string
+  systemUUID: string | undefined
+  created: string
+  lastSeen: string
+  opsiHostKey: string
+  oneTimePassword: string | undefined
+  uefi: boolean
 }
 export interface T_ServerAttr {
-  hostId: string // for translation key search $t('table.fields.hostId')
-  type: string // $t('table.fields.type')
-  description: string // $t('table.fields.description')
-  notes: string // $t('table.fields.notes')
-  hardwareAddress: string | undefined // $t('table.fields.hardwareAddress')
-  ipAddress: string // $t('table.fields.ipAddress')
-  inventoryNumber: string // $t('table.fields.inventoryNumber')
-  systemUUID: string // $t('table.fields.systemUUID')
-  opsiHostKey: string // $t('table.fields.opsiHostKey')
-  depotLocalUrl: string // $t('table.fields.depotLocalUrl')
-  depotRemoteUrl: string // $t('table.fields.depotRemoteUrl')
-  depotWebdavUrl: string // $t('table.fields.depotWebdavUrl')
-  repositoryLocalUrl: string // $t('table.fields.repositoryLocalUrl')
-  repositoryRemoteUrl: string // $t('table.fields.repositoryRemoteUrl')
-  workbenchLocalUrl: string // $t('table.fields.workbenchLocalUrl')
-  workbenchRemoteUrl: string // $t('table.fields.workbenchRemoteUrl')
-  networkAddress: string // $t('table.fields.networkAddress')
-  maxBandwidth: number // $t('table.fields.maxBandwidth')
-  isMasterDepot: boolean // $t('table.fields.isMasterDepot')
-  masterDepotId: string | undefined // $t('table.fields.masterDepotId')
+  hostId: string
+  type: string
+  description: string
+  notes: string
+  hardwareAddress: string | undefined
+  ipAddress: string
+  inventoryNumber: string
+  systemUUID: string
+  opsiHostKey: string
+  depotLocalUrl: string
+  depotRemoteUrl: string
+  depotWebdavUrl: string
+  repositoryLocalUrl: string
+  repositoryRemoteUrl: string
+  workbenchLocalUrl: string
+  workbenchRemoteUrl: string
+  networkAddress: string
+  maxBandwidth: number
+  isMasterDepot: boolean
+  masterDepotId: string | undefined
 }
 
 export interface T_HostParameter {

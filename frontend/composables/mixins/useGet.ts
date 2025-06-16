@@ -34,7 +34,7 @@ export const useConfigserver = async (
         else storeSelection.setSelectionDepots([server])
       } else {
         console.error('no server selected')
-        notifyError({ message: $t('message.error.noselection.server') })
+        notifyError({ message: $t('message.noServerSelected') })
       }
     }
   }
@@ -47,12 +47,12 @@ export const useConfigserver = async (
           data: {
             class: '',
             details: '',
-            message: $t('message.error.opsiconfd'),
+            message: $t('message.opsiconfdNotAvailable'),
           },
         },
       }
       notifyError({
-        title: $t('message.error.title'),
+        title: $t('error'),
         message: notifyError({ message: error?.response?.data?.message }),
       })
       return { data: '', headers: {} as IObjectString2Any, error: errordata }
@@ -74,7 +74,7 @@ export const useDepot = (_t: any = undefined) => {
     const { data, error } = await useApiGET<T_DepotIds>('/opsidata/depot_ids')
     if (error || !data?.value) {
       notifyError({
-        title: $t('message.error.fetch') + 'Server List',
+        title: $t('message.noResponse') + 'Server List',
         message: error?.response?.data?.message,
       })
       return []
