@@ -210,11 +210,15 @@ export default class GCProductPropertyValue extends Vue {
   async resetDefault (id: string) {
     this.loading = true
 
-    const data = {
-      clientIds: this.selectionClients,
-      // depotIds: this.selectionDepots,
+    const data: any = {
       properties: [this.rowItem.propertyId]
     }
+    if (this.selectionClients.length > 0) {
+      data.clientIds = this.selectionClients
+    } else {
+      data.depotIds = this.selectionDepots
+    }
+
     await this.$axios.$delete(`/api/opsidata/products/${this.rowItem.productId}/properties`, { data })
       .then((response) => {
         console.log('reset default for product property value', response)
