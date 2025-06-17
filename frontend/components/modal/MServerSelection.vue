@@ -10,14 +10,14 @@ License: AGPL-3.0
     <p-dialog
       v-model:visible="visible"
       modal
-      :header="$t('title.selection.server')"
+      :header="$t('selectServer')"
       :style="{ width: '25rem' }"
     >
       <span
         v-if="selectionDepots.length <= 0"
         class="text-surface-500 dark:text-surface-400 block mb-8"
       >
-        {{ $t('message.info.clients.noServerSelection') }}
+        {{ $t('message.noServerSelected') }}
       </span>
       <SelectSSelect
         v-model:selection="localSelectedServers"
@@ -27,9 +27,9 @@ License: AGPL-3.0
         :marked-options="selectionStore.multiSelection ? [configserver] : configserver"
       />
       <div class="flex justify-end gap-2">
-        <el-button @click="cancel">{{ $t('label.cancel') }}</el-button>
+        <el-button @click="cancel">{{ $t('cancel') }}</el-button>
         <el-button variant="primary" @click="save">
-          {{ $t('label.select') }}
+          {{ $t('select') }}
         </el-button>
       </div>
     </p-dialog>

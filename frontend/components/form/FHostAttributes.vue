@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="FHostAttributes">
-    <el-alert v-if="!props.id" type="warning" show-icon> {{ $t('alert.select') }}</el-alert>
+    <el-alert v-if="!props.id" type="warning" show-icon> {{ $t('message.selectItem') }}</el-alert>
     <el-form
       v-if="hostAttributes.length && hostAttributes[0]"
       label-width="50%"
@@ -16,7 +16,7 @@ License: AGPL-3.0
     >
       <div class="overflow-y-auto" :style="{ maxHeight: maxVisibleHeight + 'px' }">
         <div v-for="(value, label) in hostAttributes[0]" :key="label">
-          <el-form-item :label="`${$t('table.fields.' + label)}`">
+          <el-form-item :label="`${$t(label)}`">
             <el-checkbox
               v-if="typeof value === 'boolean'"
               v-model="hostAttributes[0][label]"
@@ -53,12 +53,12 @@ License: AGPL-3.0
         class="button-container"
         style="display: flex; justify-content: flex-end"
       >
-        <el-button @click="resetForm">{{ $t('button.reset') }}</el-button>
+        <el-button @click="resetForm">{{ $t('reset') }}</el-button>
         <el-button
           :type="hasUnsavedChanges ? 'success' : ''"
           :disabled="!hasUnsavedChanges"
           @click="saveHostAttributes"
-          >{{ $t('button.save') }}</el-button
+          >{{ $t('save') }}</el-button
         >
       </div>
     </el-form>
@@ -123,14 +123,14 @@ License: AGPL-3.0
         : `/opsidata/hosts?hosts=${props.id}`
     try {
       const { data, error } = await useApiGETBody<Array<T_ServerAttr | T_ClientAttr>>(url)
-      if (error) throw new Error(error.response?.data?.message || $t('message.error.generic'))
+      if (error) throw new Error(error.response?.data?.message || $t('message.error.general'))
       if (!data.value)
-        throw new Error($t('message.error.empty-response', { details: 'HostAttributes' }))
+        throw new Error($t('message.error.emptyResponse', { details: 'HostAttributes' }))
       hostAttributes.value = data.value
       hostAttributesOriginal.value = JSON.parse(JSON.stringify(data.value))
       hasUnsavedChanges.value = false
     } catch (error) {
-      notifyError({ message: error || $t('message.error.unexpected') })
+      notifyError({ message: error || $t('message.error.general') })
     }
     isLoading.value = false
   }
@@ -158,16 +158,16 @@ License: AGPL-3.0
 
     try {
       const { error } = await useApiPUT(`/opsidata/${props.type}/${hostAttr.hostId}`, hostAttr)
-      if (error) throw new Error(error.response?.data?.message || $t('message.error.generic'))
+      if (error) throw new Error(error.response?.data?.message || $t('message.error.general'))
       notifySuccess({
-        message: $t('message.success.save.hostattributes', {
+        message: $t('message.hostAttributesSaved', {
           host: hostAttr.hostId,
         }),
       })
       hostAttributesOriginal.value = JSON.parse(JSON.stringify(hostAttributes.value))
       hasUnsavedChanges.value = false
     } catch (error) {
-      notifyError({ message: error || $t('message.error.unexpected') })
+      notifyError({ message: error || $t('message.error.general') })
     }
   }
 
@@ -175,25 +175,25 @@ License: AGPL-3.0
     if (msg && msg.channel === 'event:host_updated') {
       if (msg.data.id === props.id) {
         notifyInfo({
-          title: $t('message.info.event'),
-          message: $t('message.info.event.client_updated', {
+          title: $t('opsiMessageBus'),
+          message: $t('opsiMessageBus.client_updated', {
             clientId: msg.data.id,
           }),
           button: {
-            label: $t('label.reloadPage'),
+            label: $t('reloadPage'),
             onClick: fetchData,
           },
         })
       }
     }
     if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
-      console.warn('message bus: ', msg)
+      console.warn($t('opsiMessageBus'), msg)
     }
   }
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsavedChanges'))
+      const answer = window.confirm($t('message.unsavedChanges'))
       if (answer) {
         next()
       } else {

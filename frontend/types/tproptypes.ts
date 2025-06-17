@@ -6,7 +6,6 @@ All rights reserved.
 License: AGPL-3.0
 */
 export type PropTypeServerClient = 'servers' | 'clients'
-// for translation key search $t('formselect.select.clients'), $t('formselect.select.servers') -->
 
 export const GroupTree_CLIENTGROUP = 'client-group'
 export const GroupTree_PRODGROUP = 'product-group'

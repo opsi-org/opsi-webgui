@@ -15,7 +15,7 @@ License: AGPL-3.0
     :classfirstcol="'col-main-visible-' + splitviewVisibilityClienttable"
   >
     <template #default>
-      <el-tooltip :content="$t('button.showhide.clienttable')" placement="top">
+      <el-tooltip :content="$t('showOrHideClientTable')" placement="top">
         <el-button
           class="float-right"
           v-if="routeName.startsWith('clients-products') && routeNameSettings?.page1Condition"

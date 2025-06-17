@@ -19,15 +19,15 @@ License: AGPL-3.0
     >
       <template #label>
         <div class="!d-inline">
-          <b class="pr-2"> {{ $t('title.' + category.toLowerCase()) }} </b>
+          <b class="pr-2"> {{ $t(category.toLowerCase()) }} </b>
           <el-button
             v-if="storeSelection['selection' + category].length > 1"
             size="small"
             class="!border-none !p-1 m-auto !d-inline"
-            :title="$t('tree.selection.clear.all')"
+            :title="$t('clearAllSelections')"
             :disable="storeSelection['selection' + category].length <= 0"
           >
-            <span class="sr-only">{{ $t('button.deselect') }}</span>
+            <span class="sr-only">{{ $t('deselect') }}</span>
             <IconIIcon :icon="icons.x" @click="storeSelection['clearSelection' + category]" />
           </el-button>
         </div>
@@ -39,7 +39,7 @@ License: AGPL-3.0
           size="small"
           show-icon
           :closable="false"
-          >{{ $t('info.noselection') }}</el-alert
+          >{{ $t('message.noItemsSelected') }}</el-alert
         >
         <ul v-else direction="vertical">
           <li
@@ -51,9 +51,9 @@ License: AGPL-3.0
             <el-button
               size="small"
               class="!border-none !p-1 absolute top-0 right-0"
-              :title="$t('tree.selection.clear.one', { id: item })"
+              :title="$t('deselectItem', { item: item })"
             >
-              <span class="sr-only">{{ $t('button.deselect') }}</span>
+              <span class="sr-only">{{ $t('deselect') }}</span>
               <IconIIcon
                 :icon="icons.x"
                 @click="storeSelection['delFromSelection' + category](item)"
@@ -71,9 +71,5 @@ License: AGPL-3.0
   const $t = useI18n().t
   const icons = useIcons()
   const storeSelection: IObjectString2Any = storeSelections()
-  const selectionDisplayList = ref<Array<string>>([
-    'Depots', // for translation key search $t('title.depots')
-    'Clients', // $t('title.clients')
-    'Products', // $t('title.products')
-  ])
+  const selectionDisplayList = ref<Array<string>>(['Depots', 'Clients', 'Products'])
 </script>

@@ -10,10 +10,9 @@ License: AGPL-3.0
     v-model="value"
     data-testid="host-select"
     clearable
-    :placeholder="$t('formselect.select.' + type)"
+    :placeholder="$t('--select--')"
     style="min-width: 200px"
   >
-    <!-- for translation key search $t('formselect.select.clients'), $t('formselect.select.servers') -->
     <el-option
       v-for="item in fetchedData"
       :class="{ 'font-bold': specialIds.includes(item) }"

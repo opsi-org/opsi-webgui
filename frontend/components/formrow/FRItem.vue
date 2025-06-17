@@ -23,15 +23,15 @@ License: AGPL-3.0
             {{ props.item.description }} <br />
             <br />
             <div v-if="props.item.value !== undefined">
-              <b>{{ $t('form.config.value') }}</b>
-              <pre>{{ props.item.vae }}</pre>
+              <b>{{ $t('configValues') }}</b>
+              <pre>{{ props.item.value }}</pre>
             </div>
             <div v-if="props.item.defaultValues !== undefined">
-              <b>{{ $t('form.config.defaultvalue') }}</b>
+              <b>{{ $t('defaultValues') }}</b>
               <pre>{{ props.item.defaultValues }} </pre>
             </div>
             <div v-if="props.item.objects !== undefined">
-              <b>{{ $t('form.config.objectvalue') }}</b>
+              <b>{{ $t('objectValues') }}</b>
               <pre>{{ props.item.objects }} </pre>
             </div>
           </div>
@@ -53,8 +53,8 @@ License: AGPL-3.0
         default-first-option
         collapse-tags
         collapse-tags-tooltip
-        :no-data-text="$t('treeselect.nooption')"
-        :no-match-text="$t('treeselect.noResultTextEditable')"
+        :no-data-text="$t('message.noAvailableOptions')"
+        :no-match-text="$t('message.notFound')"
         placeholder=""
         class="w-full"
         :tag-type="undefined"
@@ -70,10 +70,10 @@ License: AGPL-3.0
           </TooltipTTooltip>
         </template>
         <template #header v-if="props.item.editable">
-          <el-text> {{ $t('treeselect.searchOrAdd') }} </el-text>
+          <el-text> {{ $t('searchOrAdd') }} </el-text>
         </template>
         <template #prefix v-if="props.item.editable">
-          <TooltipTTooltip :content="$t('form.item.editable')">
+          <TooltipTTooltip :content="$t('message.pressEnterToAddOrSelect')">
             <el-text><IconIIcon :icon="icons.add" /></el-text>
           </TooltipTTooltip>
         </template>

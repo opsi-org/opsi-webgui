@@ -18,7 +18,6 @@ export const storeSettings = defineStore('settings', {
   state: () => ({
     isMobile: useMQ().isMobile.value as boolean,
     language: 'en',
-    quicksave: false,
     quickpanelOpened: true as boolean,
     msgbusAutoRefresh: true as boolean,
     menuCollapsed: false as boolean,
@@ -45,10 +44,6 @@ export const storeSettings = defineStore('settings', {
     setLanguage(lang: string) {
       this.language = lang
       useCookie('Language').value = this.language
-    },
-    setQuicksave(isQuickSave: boolean) {
-      this.quicksave = isQuickSave
-      useCookie('Quicksave').value = isQuickSave ? 'true' : 'false'
     },
     setQuickpanelOpened(isQuickpanelOpened: boolean) {
       this.quickpanelOpened = isQuickpanelOpened

@@ -11,7 +11,7 @@ License: AGPL-3.0
   </div>
   <el-tabs v-model="activeName">
     <el-tab-pane
-      :label="currentId ? $t('title.hostparam') : $t('title.hostparam.defaults')"
+      :label="currentId ? $t('parameters') : $t('parameters(default)')"
       name="config"
       :disabled="!(type === 'clients' || type === 'servers')"
     >
@@ -22,7 +22,7 @@ License: AGPL-3.0
         :is-child="props.isChild"
       />
     </el-tab-pane>
-    <el-tab-pane :label="$t('title.hostattr')" name="attr" :disabled="isIdEmpty">
+    <el-tab-pane :label="$t('attributes')" name="attr" :disabled="isIdEmpty">
       <FormFHostAttributes
         v-if="activeName === 'attr'"
         :id="currentId"

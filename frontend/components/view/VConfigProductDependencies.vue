@@ -36,10 +36,10 @@ License: AGPL-3.0
   })
 
   const types2text: any = {
-    'null-setup': $t('table.fields.required'),
-    'after-setup': $t('table.fields.post-required'),
-    'before-setup': $t('table.fields.pre-required'),
-    'before-uninstall': $t('table.fields.on-deinstall') + '(not possible)',
+    'null-setup': $t('(required)'),
+    'after-setup': $t('(post-required)'),
+    'before-setup': $t('(pre-required)'),
+    'before-uninstall': $t('(on-uninstall)') + $t('(not-supported)'),
   }
 
   const getValue = (rowItem: IProductDependency) => {
@@ -50,6 +50,6 @@ License: AGPL-3.0
   }
 
   const getType = (type: string | null, productAction: string | null) => {
-    return types2text[`${type}-${productAction}`] || $t('table.fields.unknown')
+    return types2text[`${type}-${productAction}`] || $t('unknown')
   }
 </script>

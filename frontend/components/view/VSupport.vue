@@ -37,11 +37,11 @@ License: AGPL-3.0
           `min-height: ${maxVisibleHeight}px;`
         "
         :src="documentationUrl"
-        :title="$t('supportPage.documentation.title')"
+        :title="$t('documentation')"
       />
     </div>
     <div v-else>
-      {{ $t('supportPage.support.opsi-doc-disabled') }}
+      {{ $t('message.opsidocDisabled') }}
     </div>
   </div>
 </template>
@@ -58,15 +58,15 @@ License: AGPL-3.0
 
   const supportItems = computed(() => [
     {
-      title: 'supportPage.forum.title',
-      description: 'supportPage.forum.description',
-      buttonname: 'supportPage.forum.button',
+      title: 'forum',
+      description: 'message.forum',
+      buttonname: 'visitOPSIForum',
       link: 'https://forum.opsi.org/index.php',
     },
     {
-      title: 'title.support',
-      description: 'supportPage.support.description',
-      buttonname: 'supportPage.support.button',
+      title: 'support',
+      description: 'message.contactSupport',
+      buttonname: 'learnMore',
       link:
         locale.value === 'en'
           ? 'https://www.uib.de/en/support-training/support'

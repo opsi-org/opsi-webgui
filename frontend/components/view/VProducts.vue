@@ -25,7 +25,7 @@ License: AGPL-3.0
         :disabled="!hasUnsavedChanges"
         @click="openBufferedChangesModal = true"
       >
-        {{ $t('button.save') }}
+        {{ $t('save') }}
       </el-button>
       <el-dialog v-model="openBufferedChangesModal" title="Unsaved changes" align-center>
         <el-table :data="bufferedChanges">
@@ -43,16 +43,14 @@ License: AGPL-3.0
         </el-table>
         <template #footer>
           <div class="dialog-footer">
-            <el-button type="danger" @click="discardAllChanges">{{
-              $t('label.discardAll')
-            }}</el-button>
+            <el-button type="danger" @click="discardAllChanges">{{ $t('discardAll') }}</el-button>
 
             <el-button
               :type="hasUnsavedChanges ? 'success' : ''"
               :disabled="!hasUnsavedChanges"
               @click="saveBufferedChanges"
             >
-              {{ $t('button.save') }}
+              {{ $t('save') }}
             </el-button>
           </div>
         </template>
@@ -69,16 +67,16 @@ License: AGPL-3.0
         <el-checkbox-button
           v-model="productsTypeChecked.LocalbootProduct"
           @change="changeProductsType('LocalbootProduct')"
-          >{{ $t('title.localbootProducts') }}</el-checkbox-button
+          >{{ $t('localbootProducts') }}</el-checkbox-button
         >
         <el-checkbox-button
           v-model="productsTypeChecked.NetbootProduct"
           @change="changeProductsType('NetbootProduct')"
-          >{{ $t('title.netbootProducts') }}</el-checkbox-button
+          >{{ $t('netbootProducts') }}</el-checkbox-button
         >
         <el-alert
           v-if="props.selectedClient"
-          :title="$t('table.info.productsOnClient', { id: props.selectedClient })"
+          :title="$t('message.productsOnClient', { id: props.selectedClient })"
           type="info"
           show-icon
           :closable="false"
@@ -190,7 +188,7 @@ License: AGPL-3.0
       },
     },
     {
-      title: $t('table.fields.instStatus'),
+      title: $t('installationStatus'),
       key: 'installationStatus',
       sortable: 'custom',
       visible:
@@ -218,7 +216,7 @@ License: AGPL-3.0
       },
     },
     {
-      title: $t('table.fields.actionResult'),
+      title: $t('actionResult'),
       key: 'actionResult',
       sortable: 'custom',
       visible:
@@ -247,7 +245,7 @@ License: AGPL-3.0
     },
 
     {
-      title: $t('table.fields.productId'),
+      title: $t('productId'),
       key: 'productId',
       sortable: 'custom',
       alwaysVisible: true,
@@ -255,31 +253,31 @@ License: AGPL-3.0
       filter: true,
     },
     {
-      title: $t('table.fields.description'),
+      title: $t('description'),
       key: 'description',
       sortable: 'custom',
       visible: storeCookie.productsColumns.includes('description'),
     },
     {
-      title: $t('table.fields.advice'),
+      title: $t('advice'),
       key: 'advice',
       sortable: 'custom',
       visible: storeCookie.productsColumns.includes('advice'),
     },
     {
-      title: $t('table.fields.modificationTime'),
+      title: $t('modificationTime'),
       key: 'modificationTime',
       sortable: 'custom',
       visible: storeCookie.productsColumns.includes('modificationTime'),
     },
     {
-      title: $t('table.fields.priority'),
+      title: $t('priority'),
       key: 'priority',
       sortable: 'custom',
       visible: storeCookie.productsColumns.includes('priority'),
     },
     {
-      title: $t('table.fields.version'),
+      title: $t('version'),
       key: 'version',
       sortable: 'custom',
       visible: storeCookie.productsColumns.includes('version'),
@@ -295,14 +293,14 @@ License: AGPL-3.0
       },
     },
     {
-      title: $t('table.fields.actionProgress'),
+      title: $t('actionProgress'),
       key: 'actionProgress',
       sortable: 'custom',
       visible:
         selectionClients.value.length > 0 && storeCookie.productsColumns.includes('actionProgress'),
     },
     {
-      title: $t('table.fields.actionRequest'),
+      title: $t('actionRequest'),
       key: 'actionRequest',
       sortable: 'custom',
       visible:
@@ -313,7 +311,7 @@ License: AGPL-3.0
         : () => {
             return (
               <TCProductRequest
-                title={$t('form.tooltip.actionRequest')}
+                title={$t('message.setActionRequestForSelectedProducts')}
                 save={saveActionRequests}
               />
             )
@@ -329,7 +327,7 @@ License: AGPL-3.0
       },
     },
     {
-      title: $t('table.fields.rowactions'),
+      title: $t('actions'),
       key: 'actions',
       sortable: false,
       visible: storeCookie.productsColumns.includes('actions'),
@@ -474,12 +472,12 @@ License: AGPL-3.0
 
         // check if we may cause the event...
         notifyInfo({
-          title: $t('message.info.event'),
-          message: $t('message.info.event.poc_updated', {
+          title: $t('opsiMessageBus'),
+          message: $t('opsiMessageBus.poc_updated', {
             productId: msg.data.productId,
           }),
           button: {
-            label: $t('label.reloadPage'),
+            label: $t('reloadPage'),
             onClick: productsRef.value?.refetch,
           },
         })
@@ -571,7 +569,7 @@ License: AGPL-3.0
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsavedChanges'))
+      const answer = window.confirm($t('message.unsavedChanges'))
       if (answer) {
         next()
       } else {
