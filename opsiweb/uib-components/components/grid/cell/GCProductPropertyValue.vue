@@ -207,28 +207,26 @@ export default class GCProductPropertyValue extends Vue {
       })
   }
 
-  async resetDefault(id: string) {
+  async resetDefault (id: string) {
     this.loading = true
 
     const data = {
-      "clientIds": this.selectionClients,
-      //"depotIds": this.selectionDepots,
-      "properties": [this.rowItem.propertyId],
+      clientIds: this.selectionClients,
+      // depotIds: this.selectionDepots,
+      properties: [this.rowItem.propertyId]
     }
-    // TODO: implement reset default for product property value
-    await this.$axios.$delete(`/api/opsidata/products/${this.rowItem.productId}/properties`, {data})
+    await this.$axios.$delete(`/api/opsidata/products/${this.rowItem.productId}/properties`, { data })
       .then((response) => {
         console.log('reset default for product property value', response)
-        if (response && response.status === 200 && response.data
-        && Object.keys(response.data.errors).length === 0 && Object.keys(response.data.not_found).length === 0) {
+        if (response && response.status === 200 && response.data &&
+            Object.keys(response.data.errors).length === 0 && Object.keys(response.data.not_found).length === 0) {
           console.log('reset default for product property value', response)
         } else if (Object.keys(response.deleted[this.rowItem.propertyId]).length > 0) {
-          // this.selectionChanged([], true)
+          this.loading = false
         } else {
           this.showToastError(this.$t('message.error.resetDefault', { property: this.rowItem.propertyId, product: this.rowItem.productId }))
         }
         this.loading = false
-        // await this.fetchProducts()
         this.$emit('refetch')
       }).catch((error) => {
         this.loading = false

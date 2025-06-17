@@ -189,12 +189,20 @@ export default class TSDefault extends Vue {
   }
 
   get clearableWrapper () {
-    if (this.clearable != undefined) { return this.clearable }
+    if (this.clearable !== undefined) { return this.clearable }
     // return this.multi || this.editable
     return false
   }
+
+  get emptyAllowed () {
+    const newVal = ''
+    return this.editable || this.optionsInclude(newVal, 'text')
+  }
+
   get selection () { return this.model[(this.nested) ? 'nested' : 'default'] }
   set selection (s) { this.model[(this.nested) ? 'nested' : 'default'] = s }
+
+  get selectionWrapper () { return this.selection }
   set selectionWrapper (s) {
     if (Array.isArray(s)) {
       this.selection = s
@@ -203,7 +211,6 @@ export default class TSDefault extends Vue {
     }
   }
 
-  get selectionWrapper () { return this.selection }
   get placeholderWrapper () {
     if (this.multi && !this.text) { return '' }
     let txt = this.text ? this.text : '' + this.selectionWrapper
@@ -231,14 +238,14 @@ export default class TSDefault extends Vue {
   }
 
   selectWrapper (s:any) {
-
     this.$fetchState.pending = true
 
-    const isSelectedNow = this.selectionWrapper.includes(s.text) && this.selectWrapper.length == 1
+    const isSelectedNow = this.selectionWrapper.includes(s.text) && this.selectWrapper.length === 1
+    if (isSelectedNow) {
+      return
+    }
 
-    console.log("selected", this.selectionWrapper,  "deselect ", s.text, " isSelectedNow", isSelectedNow)
-    if (isSelectedNow) {}
-    else if (this.selectFunction) { // e.g. from TSDefaultGroups
+    if (this.selectFunction) { // e.g. from TSDefaultGroups
       this.selectFunction(s, this)
       this.syncWrapper()
     } else { this.selectDefault(s) }
@@ -248,11 +255,7 @@ export default class TSDefault extends Vue {
   deselectWrapper (s:any) {
     if (!this.editable && !this.multi) { return }
     this.$fetchState.pending = true
-    //const isSelectedNow = this.selectionWrapper.includes(s.text) && this.selectWrapper.length == 1
 
-    //console.log("DEselected", this.selectionWrapper,  "deselect ", s.text, " isSelectedNow", isSelectedNow)
-    //if (isSelectedNow) {}
-    //else
     if (this.deselectFunction) { // e.g. from TSDefaultGroups
       this.deselectFunction(s, this)
       this.syncWrapper()
@@ -353,7 +356,8 @@ export default class TSDefault extends Vue {
       this.$fetchState.pending = false
     }
   }
-  optionsInclude(val:string, key='id') {
+
+  optionsInclude (val: string, key: string = 'id') {
     if (!this.options || !Array.isArray(this.options)) { return false }
     if (this.options.length <= 0) { return false }
 
@@ -364,20 +368,17 @@ export default class TSDefault extends Vue {
     }
     return false
   }
-  get emptyAllowed () {
-    const newVal = ""
-    return this.editable || this.optionsInclude(newVal, 'text')
-  }
+
   clickSetEmpty () {
-    const newVal = ""
+    const newVal = ''
     if (!this.emptyAllowed) {
       console.warn('TSDefault: cannot set empty value, because it is not allowed')
       return
     }
 
     this.$emit('change', [newVal])
-    //this.$emit('set-empty', true) // to parent
   }
+
   clickUseDefault () {
     this.$emit('delete', this.id)
   }
