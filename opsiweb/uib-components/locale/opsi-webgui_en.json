@@ -189,6 +189,10 @@
   "table.name.domain": "Domain name",
   "table.details.productproperty.defaults":"Product default",
   "table.details.productproperty.server":"Server default",
+  "table.details.productproperty.value.delete.tooltip.title": "Attention!",
+  "table.details.productproperty.value.delete.tooltip.body": "You are about to delete the value of this property. Do you want to use the default value, or do you want to set it to empty (if possible)?",
+  "table.details.productproperty.value.delete.tooltip.button.empty": "Set to empty",
+  "table.details.productproperty.value.delete.tooltip.button.default": "Use default value",
   "table.contextmenu.header-specific":"Options for '{id}':",
   "table.contextmenu.header-general":"Options for tabelle:",
   "label.reachable": "Reachability Status",
@@ -216,6 +220,7 @@
   "label.addressexcept": "Address Exceptions",
   "placeholder.netwrkadr": "Enter Network Address",
   "label.exceptionslist": "Exceptions List:",
+
   "label.maintenancemode": "Maintenance Mode",
   "label.configfiles": "Config files",
   "label.redis_data": "Redis Data",

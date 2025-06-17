@@ -84,6 +84,7 @@
             :row-item="item"
             :is-loading="isLoading"
             @change="handleChange"
+            @refetch="$emit('refetch')"
           />
         </template>
       </GridGFormItem>

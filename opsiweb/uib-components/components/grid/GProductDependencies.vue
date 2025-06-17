@@ -17,7 +17,7 @@ import { IObjectString2String } from '../../.utils/types/tgeneral'
 import { IDepend, IProductDependency } from '../../.utils/types/ttable'
 
 @Component
-export default class GProductProperties extends Vue {
+export default class GProductDependencies extends Vue {
   $t: any
   @Prop({ }) id!: string
   @Prop({ }) dependencies!: IDepend

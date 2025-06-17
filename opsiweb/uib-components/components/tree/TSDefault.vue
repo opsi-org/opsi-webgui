@@ -1,5 +1,6 @@
 <template>
   <b-input-group data-testid="TSDefault" size="sm" class="TreeWrapper border">
+
     <LazyTreeTSDefaultWithAdding
       v-if="options"
       :id="`treeselect-${id}`"
@@ -13,7 +14,7 @@
       :searchable="!lazyLoad"
       :editable="editable"
       :loading-text="$t('message.loading')"
-      :clearable="clearable"
+      :clearable="clearableWrapper"
       :delete-removes="false"
       :backspace-removes="false"
       :multiple="multi"
@@ -28,7 +29,7 @@
       :no-options-text="$t('treeselect.nooption')"
       :no-results-text="(textNoResult? textNoResult : $t('treeselect.noresult'))"
       :limit="limitVisibleSelection"
-      :limit-text="(limitVisibleSelection<=0)? ()=>'' : (count) => $t('treeselect.limitText', { count })"
+      :limit-text="limitVisibleSelection<=0 ? () => '' : count => $t('treeselect.limitText', { count })"
       :value-format="valueFormat"
       :value-consists-of="valueConsistsOf"
       @search-not-empty="treeselectSearchQueryChanged"
@@ -76,23 +77,42 @@
         slot-scope="{ node }"
         :class="{
           'test':true,
-          'form-control is-invalid': (validate && node.label ? !validate(node.label) : false),
+          'form-control is-invalid': (validate && node.label ? !validate(node.label) : false)
         }"
       >
         <div :ref="'tree-item-'+node.id">
           <IconIIcon v-if="node.isBranch||false" :icon="icon.group" :class="(node.raw.hasAnySelection)? 'hasSelection':''" />
-          <IconIIcon v-else :icon="(type === 'products') ? icon.product: (type=='clients') ? icon.client: (type==='depots') ? icon.server:''" />
+          <IconIIcon v-else :icon="type === 'products' ? icon.product: type=='clients' ? icon.client: type==='depots' ? icon.server:''" />
           <template v-if="type=='depots' && node.label===opsiconfigserver">
             <b> {{ node.label }} </b>
           </template>
           <template v-else>
             {{ node.label }}
-            <!-- label need to be set! otherwise search and other functionalities are broken -->
-            <!-- {{ node.label ? node.label : node.id }} -->
           </template>
         </div>
       </div>
     </LazyTreeTSDefaultWithAdding>
+    <div>
+      <b-button :id="'popover-tsdefault-' + id" variant="outline-primary">
+        <IconIIcon :icon="icon.x" />
+      </b-button>
+      <b-popover :target="'popover-tsdefault-' + id" triggers="hover focus">
+        <template #title>{{$t('table.details.productproperty.value.delete.tooltip.title')}}</template>
+        <template #default>
+          <b>{{ id.split("-")[1] }}</b> <br />
+          {{$t('table.details.productproperty.value.delete.tooltip.body')}}
+          <br />
+          <b-button variant="primary" @click="clickUseDefault">
+            {{$t('table.details.productproperty.value.delete.tooltip.button.default')}}
+          </b-button>
+          <b-button variant="primary" :disabled="!emptyAllowed" @click="clickSetEmpty">
+            {{$t('table.details.productproperty.value.delete.tooltip.button.empty')}}
+          </b-button>
+
+        </template>
+
+      </b-popover>
+    </div>
   </b-input-group>
 </template>
 
@@ -126,7 +146,7 @@ export default class TSDefault extends Vue {
   @Prop({ default: true }) showSelectionCount!: boolean
   @Prop({ default: false }) disabled!: boolean
   @Prop({ default: false }) alwaysOpen!: boolean
-  @Prop({ default: false }) clearable!: boolean
+  @Prop({ default: undefined }) clearable!: boolean | undefined
   @Prop({ default: true }) isOrigin!: boolean
   @Prop({ default: false }) multi!: boolean
   @Prop({ default: undefined }) showAsMulti!: boolean
@@ -141,6 +161,7 @@ export default class TSDefault extends Vue {
   @Prop({ default: () => { return [] } }) fetchChildren!: Function
   @Prop({}) selectFunction?: Function
   @Prop({}) deselectFunction?: Function
+  @Prop({}) deleteFunction?: Function
   @Prop({}) syncFunction?: Function
 
   model: object = { default: [], nested: [] }
@@ -167,6 +188,11 @@ export default class TSDefault extends Vue {
     await this._fetch() // Workaround... cause $fetch sometimes not executed....
   }
 
+  get clearableWrapper () {
+    if (this.clearable != undefined) { return this.clearable }
+    // return this.multi || this.editable
+    return false
+  }
   get selection () { return this.model[(this.nested) ? 'nested' : 'default'] }
   set selection (s) { this.model[(this.nested) ? 'nested' : 'default'] = s }
   set selectionWrapper (s) {
@@ -205,8 +231,14 @@ export default class TSDefault extends Vue {
   }
 
   selectWrapper (s:any) {
+
     this.$fetchState.pending = true
-    if (this.selectFunction) { // e.g. from TSDefaultGroups
+
+    const isSelectedNow = this.selectionWrapper.includes(s.text) && this.selectWrapper.length == 1
+
+    console.log("selected", this.selectionWrapper,  "deselect ", s.text, " isSelectedNow", isSelectedNow)
+    if (isSelectedNow) {}
+    else if (this.selectFunction) { // e.g. from TSDefaultGroups
       this.selectFunction(s, this)
       this.syncWrapper()
     } else { this.selectDefault(s) }
@@ -216,7 +248,11 @@ export default class TSDefault extends Vue {
   deselectWrapper (s:any) {
     if (!this.editable && !this.multi) { return }
     this.$fetchState.pending = true
+    //const isSelectedNow = this.selectionWrapper.includes(s.text) && this.selectWrapper.length == 1
 
+    //console.log("DEselected", this.selectionWrapper,  "deselect ", s.text, " isSelectedNow", isSelectedNow)
+    //if (isSelectedNow) {}
+    //else
     if (this.deselectFunction) { // e.g. from TSDefaultGroups
       this.deselectFunction(s, this)
       this.syncWrapper()
@@ -316,6 +352,34 @@ export default class TSDefault extends Vue {
       callback()
       this.$fetchState.pending = false
     }
+  }
+  optionsInclude(val:string, key='id') {
+    if (!this.options || !Array.isArray(this.options)) { return false }
+    if (this.options.length <= 0) { return false }
+
+    if (typeof val === 'string') {
+      return this.options.map((e:any) => e[key]).includes(val)
+    } else if (typeof val === 'object' && val) {
+      return this.options.map((e:any) => e[key]).includes(val)
+    }
+    return false
+  }
+  get emptyAllowed () {
+    const newVal = ""
+    return this.editable || this.optionsInclude(newVal, 'text')
+  }
+  clickSetEmpty () {
+    const newVal = ""
+    if (!this.emptyAllowed) {
+      console.warn('TSDefault: cannot set empty value, because it is not allowed')
+      return
+    }
+
+    this.$emit('change', [newVal])
+    //this.$emit('set-empty', true) // to parent
+  }
+  clickUseDefault () {
+    this.$emit('delete', this.id)
   }
 
   selectDefault (s: any) {

@@ -4324,7 +4324,9 @@ a.close.disabled{
 }
 .popover-body{
   padding:0.5rem 0.75rem;
-  color:var(--fg-popup_body)
+  color:var(--opsi-base-foreground);
+  background-color:var(--opsi-base-background);
+
 }
 .carousel{
   position:relative

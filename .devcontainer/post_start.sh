@@ -31,3 +31,16 @@ opsi-dev-tool git-hooks --install
 # # ./opsi-dev-tools git-hooks --install
 
 # # su - node <<SHT
+
+echo -e "======Configure opsiconfd-docker container commands======"
+CONTAINER_NAME_DOCKER=$(sudo docker ps --format "{{.Names}}" | grep gui_ | grep server | grep opsi)
+CMD_RESTART="supervisorctl reload"
+echo "alias opsiconfd-docker-restart=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER $CMD_RESTART\"" >> ~/.zshrc
+echo "alias opsiconfd-docker-container=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER\"" >> ~/.zshrc
+
+CMD_CP_PY="cp -rf /workspace/backend/addon/webgui/python/ /data/opsiconfd/addons/webgui/python/"
+                  #/workspace/backend/addon/webgui/python/
+echo "alias cp-backend=\"$CMD_CP_PY\"" >> ~/.zshrc
+echo "alias opsiconfd-docker-update-py=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER sh -c '$CMD_CP_PY'\"" >> ~/.zshrc
+
+echo "alias opsiconfd-update-webgui-backend=\"$CMD_CP_PY && opsiconfd-docker-restart\"" >> ~/.zshrc

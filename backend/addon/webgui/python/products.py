@@ -975,6 +975,61 @@ class ProductProperty(BaseModel):  # pylint: disable=too-few-public-methods
 	clientIds: Optional[List[str]] = []
 	depotIds: Optional[List[str]] = []
 	properties: dict
+class ProductPropertyIds(BaseModel):  # pylint: disable=too-few-public-methods
+	clientIds: Optional[List[str]] = []
+	depotIds: Optional[List[str]] = []
+	properties: list
+
+
+@product_router.delete("/api/opsidata/products/{productId}/properties")
+@rest_api
+@read_only_check
+def save_poduct_property(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
+	request: Request, productId: str, data: ProductPropertyIds
+) -> RESTResponse:
+	assert data.clientIds or data.depotIds, "No clients or depots set."
+	assert not (data.clientIds and data.depotIds), "Clients and depots set. Only one is allowed."
+	get_product_properties.cache_clear()
+	depot_get_product_version.cache_clear()
+	objects: List = data.clientIds or data.depotIds
+
+	logger.info("Deleting properties %s for product %s on %s", data.properties, productId, objects)
+	result_data: dict = {
+		"deleted": {},
+		"errors": {},
+		"not_found": {}
+	}
+
+	with mysql.session() as session:
+		# get productPropertyStates for all objects
+		for object_id in objects:
+			for property_id in data.properties:
+				try:
+
+					pps = get_product_product_property_state(object_id, productId, property_id)
+					if pps:
+						# delete
+						backend.productPropertyState_delete(productId=productId, objectId=object_id, propertyId=property_id)
+						if property_id not in result_data["deleted"]:
+							result_data["deleted"][property_id] = []
+						result_data["deleted"][property_id].append(object_id)
+					else:
+						if property_id not in result_data["not_found"]:
+							result_data["not_found"][property_id] = []
+						result_data["not_found"][property_id].append(object_id)
+						logger.warning("Property %s for product %s on %s not found.", property_id, productId, object_id)
+
+						# session.execute(stmt, values)
+				except Exception as err:  # pylint: disable=broad-except
+					if isinstance(err, OpsiApiException):
+						raise err
+					logger.error("Could not delete product property state: %s", err)
+					session.rollback()
+					if property_id not in result_data["errors"]:
+						result_data["errors"][property_id] = []
+					result_data["errors"][property_id].append(object_id)
+
+	return RESTResponse(http_status=status.HTTP_200_OK, data=result_data)
 
 
 @product_router.post("/api/opsidata/products/{productId}/properties")
