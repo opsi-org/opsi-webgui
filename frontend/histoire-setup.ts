@@ -13,7 +13,7 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import PrimeVue from 'primevue/config'
 import WrapperGlobal from './histoire/histoire-wrapper-mobile.vue'
-import en from './locale/opsi-webgui-en.json'
+import en from './locale/opsi-webgui_en.json'
 import { createI18n } from 'vue-i18n'
 
 // https://github.com/histoire-dev/histoire/issues/721#issuecomment-2408077600

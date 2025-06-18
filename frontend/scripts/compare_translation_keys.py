@@ -23,8 +23,8 @@ def argparser():
     # call function to list all versions of a package
     parser.add_argument('-v', action='store_true', help='Print current version')
     parser.add_argument('-c', '--compare', action='store_true', help='Compare keys in two JSON files')
-    parser.add_argument('-f1', '--file1', type=str, help='Path to first JSON file', default='locale/opsi-webgui-en.json')
-    parser.add_argument('-f2', '--file2', type=str, help='Path to second JSON file', default='locale/opsi-webgui-de.json')
+    parser.add_argument('-f1', '--file1', type=str, help='Path to first JSON file', default='locale/opsi-webgui_en.json')
+    parser.add_argument('-f2', '--file2', type=str, help='Path to second JSON file', default='locale/opsi-webgui_de.json')
 
     parser.add_argument('-s', '--search-missing', action='store_true', help='Search for keys missing translation keys in files')
     # parser.add_argument('-r', '--regex-files', type=str, help='Files to search in', default='scripts/compare_translation_keys.*')

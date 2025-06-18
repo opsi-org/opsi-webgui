@@ -74,5 +74,5 @@ transifex:
   upload_resources:
     - organization: opsi-org
       project: opsiorg
-      resource_file: frontend/locale/opsi-webgui-en.json
+      resource_file: frontend/locale/opsi-webgui_en.json
       resource_name: opsi-webgui.json
