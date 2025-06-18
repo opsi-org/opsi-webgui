@@ -46,7 +46,7 @@ export default {
   // mode: 'spa',
   server: {
     // host: 'localhost', // default: localhost
-    // port: 8888, // default: 3000
+    // port: 8880, // default: 3000
     https: {
       key: fs.readFileSync(path.resolve(__dirname, '.config/https/server.key')),
       cert: fs.readFileSync(path.resolve(__dirname, '.config/https/server.crt'))

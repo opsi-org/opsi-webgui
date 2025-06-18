@@ -24,7 +24,7 @@ services:
     depends_on: # created in include part
       - opsi-server
     ports:
-      - "${WEBGUI_DEV_PORT}:8888"
+      - "${WEBGUI_DEV_PORT}:8880"
     hostname: ${HOSTNAME}
     domainname: ${DOMAINNAME}
     # tty: true

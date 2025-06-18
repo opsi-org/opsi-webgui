@@ -13,7 +13,7 @@ const config = {
     timeout: 10 * 1000
   },
   use: {
-    baseURL: 'https://localhost:8888/addons/webgui/app/',
+    baseURL: 'https://localhost:8880/addons/webgui/app/',
     viewport: { width: 900, height: 500 },
     headless: true,
     ignoreHTTPSErrors: true,

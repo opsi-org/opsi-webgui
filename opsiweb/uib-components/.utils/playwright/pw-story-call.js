@@ -5,7 +5,7 @@
 const apiMock = (page, apiPath, response) => page.route(apiPath, route => route.fulfill({
   status: 200,
   headers: {
-    'access-control-allow-origin': 'https://localhost:8888',
+    'access-control-allow-origin': 'https://localhost:8880',
     'access-control-allow-credentials': true,
     'access-control-allow-headers': '*',
     'access-control-allow-methods': '*'

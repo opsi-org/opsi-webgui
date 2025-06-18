@@ -154,7 +154,7 @@ test:components:changed:
     - npx playwright install
     - npx playwright install-deps
 
-    - PORT=8888 nohup npm run libdev > .dev.log &
+    - PORT=8880 nohup npm run libdev > .dev.log &
     - PORT=3003 nohup npm run libstory > .storybook.log &
     - sleep 60
     - npm run libtest:component '$testfilesUnique' || exit_code=$?
@@ -185,7 +185,7 @@ test:components:all:
     - npx playwright install
     - npx playwright install-deps
 
-    - PORT=8888 nohup npm run libdev > .dev.log &
+    - PORT=8880 nohup npm run libdev > .dev.log &
     - PORT=3003 nohup npm run libstory > .storybook.log &
     - sleep 60
     - npm run libtest:component || exit_code=$?
@@ -210,7 +210,7 @@ test:components:all:
 #     - init:npm
 #   script:
 #     - npx playwright install
-#     - PORT=8888 nohup npm run libdev &
+#     - PORT=8880 nohup npm run libdev &
 #     - sleep 20
 #     - echo $PLAYWRIGHT_BROWSERS_PATH
 #     - npm run libtest:usecase

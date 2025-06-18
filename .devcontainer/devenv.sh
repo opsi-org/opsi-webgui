@@ -14,7 +14,7 @@ echo DEV_GIT_NAME=$GITUSER >> $ENVFILE
 read -p "Enter git email (example: 'a.sucher@uib.de'): " GITEMAIL
 echo DEV_GIT_EMAIL=$GITEMAIL >> $ENVFILE
 
-echo WEBGUI_DEV_PORT=8888 >> $ENVFILE
+echo WEBGUI_DEV_PORT=8880 >> $ENVFILE
 
 echo "################# env for opsi-server" >> $ENVFILE
 echo DOCKER_IMAGE_OPSI_SERVER=uibmz/opsi-server:4.3-development >> $ENVFILE

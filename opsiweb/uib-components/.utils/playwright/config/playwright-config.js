@@ -2,7 +2,7 @@ const { devices } = require('@playwright/test')
 
 module.exports.use = {
   // browserName: 'chromium',
-  baseURL: 'https://localhost:8888/addons/webgui/app/',
+  baseURL: 'https://localhost:8880/addons/webgui/app/',
   // headless: false,
   viewport: { width: 1280, height: 720 },
   headless: true,
@@ -24,7 +24,7 @@ module.exports.projects = [
 
 module.exports.testIgnore = '@/**/*.test.unit.js'
 module.exports.workers = 4 // cause for me locally it exists 8 cpu cores (recommendation is to use the half of it)
-module.exports.expect = { 
+module.exports.expect = {
   toMatchSnapshot: { threshold: 0.2 },
   timeout: 10 * 1000
 }

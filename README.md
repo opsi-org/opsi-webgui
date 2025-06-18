@@ -14,7 +14,7 @@ Further links:
 
 
 ## Translations
-The opsi-webgui as well as the opsi system in general is available in multiple languages. 
+The opsi-webgui as well as the opsi system in general is available in multiple languages.
 The translations are managed via Transifex. If you want to help with the translations, please visit the following link:
 
 https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/
@@ -38,7 +38,7 @@ This project espacially the devcontainer is not for production usage. To install
 
 ## Development
 The development with this project includes a complete dev environment. The built container includes a opsiconfd and the webgui.
-The opsiconfd will be available at the address https://localhost:4447 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser`
+The opsiconfd will be available at the address https://localhost:4447 and the webgui at https://localhost:8880 with the username `adminuser` and password `adminuser`
 
 ### Environment
 * Requirements: Docker, VisualStudioCode with 'Remote - Container' extension
@@ -62,4 +62,4 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
   * opsiconfd: `opsiconfd l5`
   * webgui: `cd /workspace/opsiweb/ && npm run dev`
 * Accept certificate of opsiconfd: `https://localhost:4447/admin`
-* Open: `https://localhost:8888/` for webgui
+* Open: `https://localhost:8880/` for webgui
