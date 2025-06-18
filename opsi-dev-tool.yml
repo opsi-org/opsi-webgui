@@ -22,7 +22,7 @@ project:
     - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
   name: opsi-webgui
-  version: '4.3.47'
+  version: "4.3.47"
   version_files:
     opsi-dev-tool.yml: pull-binaries[0].version
     opsiweb/package.json: "$.version"
@@ -44,7 +44,7 @@ pull-binaries:
       - ls -lah
     server-type: binaryindex
     server-url: http://binaryindex.uib.gmbh
-    version: '4.3.47'
+    version: "4.3.47"
 transifex:
   download_translations:
     - install_dir: opsiweb/uib-components/locale
@@ -59,3 +59,5 @@ transifex:
       project: opsiorg
       resource_file: opsiweb/uib-components/locale/opsi-webgui_en.json
       resource_name: opsi-webgui-old.json
+
+Fixed: disable deselection of propertyvalue (use reset default or set to empty instead)
