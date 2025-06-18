@@ -13,10 +13,11 @@
 	"postCreateCommand": ".devcontainer/opsi-webgui-container-backend/post_create.sh",
 	"postStartCommand": ".devcontainer/opsi-webgui-container-backend/post_start.sh",
 	"workspaceFolder": "/workspace",
-	"remoteEnv": {
-		//"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+	"containerEnv": {
 		"DEV_USER": "${localEnv:USER}",
-		"DEV_UID": "${localEnv:UID}"
+		"DEV_UID": "${localEnv:UID}",
+		"OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
+		"OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
 	},
 	"customizations": {
 		"vscode": {

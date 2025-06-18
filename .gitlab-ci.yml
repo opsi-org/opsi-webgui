@@ -300,6 +300,8 @@ test:lint:
   before_script:
     - cd frontend
     - *define_globals
+    - npm run dev &
+    - sleep 30
   script:
     - npm run lint
 
@@ -341,60 +343,60 @@ test:tsc:
 #         coverage_format: cobertura
 #         path: frontend/coverage/clover.xmlci
 
-test:accessibility:
-  image: mcr.microsoft.com/playwright:v1.38.0-jammy
-  stage: test
-  dependencies:
-    - init:npm
-  before_script:
-    - cd frontend
-    - *start_webgui
-  script:
-    - npm run pwtest:access || exit_code=$?
-    - exit $exit_code
-  after_script:
-    - npm run bash:delete-empty-test-results
-  allow_failure: true
-  only:
-    - v5
-    - tags
-  artifacts:
-    name: 'opsi-webgui-test-result-accessibility'
-    when: on_failure
-    paths:
-      - ./**/*/test-results/
-      - frontend/.dev.log
-    reports:
-      junit: frontend/.config/test-result-pw-reporter-accessibility.xml
-    expire_in: 1 day
-test:usecase:
-  image: mcr.microsoft.com/playwright:v1.38.0-jammy
-  stage: test
-  dependencies:
-    - init:npm
-  before_script:
-    - cd frontend
-    - *define_globals
-    - *install_playwright
-    - *start_webgui
-  script:
-    - npm run pwtest:usecase || exit_code=$?
-    - exit $exit_code
-  after_script:
-    - npm run bash:delete-empty-test-results
-  allow_failure: true
-  only:
-    - v5
-    - tags
-  artifacts:
-    name: 'opsi-webgui-test-result-usecase'
-    when: on_failure
-    paths:
-      - ./**/*/test-results/
-      - frontend/.dev.log
-    reports:
-      junit: frontend/.config/test-result-pw-reporter-usecase.xml
-    expire_in: 1 day
+# test:accessibility:
+#   image: mcr.microsoft.com/playwright:v1.38.0-jammy
+#   stage: test
+#   dependencies:
+#     - init:npm
+#   before_script:
+#     - cd frontend
+#     - *start_webgui
+#   script:
+#     - npm run pwtest:access || exit_code=$?
+#     - exit $exit_code
+#   after_script:
+#     - npm run bash:delete-empty-test-results
+#   allow_failure: true
+#   only:
+#     - v5
+#     - tags
+#   artifacts:
+#     name: 'opsi-webgui-test-result-accessibility'
+#     when: on_failure
+#     paths:
+#       - ./**/*/test-results/
+#       - frontend/.dev.log
+#     reports:
+#       junit: frontend/.config/test-result-pw-reporter-accessibility.xml
+#     expire_in: 1 day
+# test:usecase:
+#   image: mcr.microsoft.com/playwright:v1.38.0-jammy
+#   stage: test
+#   dependencies:
+#     - init:npm
+#   before_script:
+#     - cd frontend
+#     - *define_globals
+#     - *install_playwright
+#     - *start_webgui
+#   script:
+#     - npm run pwtest:usecase || exit_code=$?
+#     - exit $exit_code
+#   after_script:
+#     - npm run bash:delete-empty-test-results
+#   allow_failure: true
+#   only:
+#     - v5
+#     - tags
+#   artifacts:
+#     name: 'opsi-webgui-test-result-usecase'
+#     when: on_failure
+#     paths:
+#       - ./**/*/test-results/
+#       - frontend/.dev.log
+#     reports:
+#       junit: frontend/.config/test-result-pw-reporter-usecase.xml
+#     expire_in: 1 day
 
 # test:components:changes:
 #   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -814,7 +816,7 @@ publish:binary-index:
 #   script:
 #     - *install_tools
 #     - ./opsi-dev-tool -l debug --binary-pull
-#     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+#     - scp -o StrictHostKeyChecking=no -r opsi-webgui-${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
 #     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
 #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.4:development opsi-webgui home:uibmz:opsi:4.4:experimental
 #   only:

@@ -7,10 +7,10 @@ License: AGPL-3.0
 -->
 <template>
   <el-tabs v-model="activeName" lazy>
-    <el-tab-pane :label="$t('form.general')" name="general">
+    <el-tab-pane :label="$t('general')" name="general">
       <FormFAdminGeneral v-if="activeName == 'general'" />
     </el-tab-pane>
-    <el-tab-pane :label="$t('label.maintenance')" name="maintenance">
+    <el-tab-pane :label="$t('maintenance')" name="maintenance">
       <FormFAdminMaintenance v-if="activeName == 'maintenance'" />
     </el-tab-pane>
   </el-tabs>
