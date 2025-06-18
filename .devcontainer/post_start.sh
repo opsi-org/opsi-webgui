@@ -33,7 +33,7 @@ opsi-dev-tool git-hooks --install
 # # su - node <<SHT
 
 echo -e "======Configure opsiconfd-docker container commands======"
-CONTAINER_NAME_DOCKER=$(sudo docker ps --format "{{.Names}}" | grep gui_ | grep server | grep opsi)
+CONTAINER_NAME_DOCKER=$(sudo docker ps --format "{{.Names}}" | grep gui-43 | grep server | grep opsi)
 CMD_RESTART="supervisorctl reload"
 echo "alias opsiconfd-docker-restart=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER $CMD_RESTART\"" >> ~/.zshrc
 echo "alias opsiconfd-docker-container=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER\"" >> ~/.zshrc
