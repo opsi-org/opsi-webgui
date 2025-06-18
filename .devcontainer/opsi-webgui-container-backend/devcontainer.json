@@ -1,17 +1,29 @@
 {
-	"name": "opsiui-backend",
-	"dockerComposeFile": "../docker/dev-opsiconfd-compose.yml",
-	"service": "opsiui-backend-dev",
+	"name": "opsi-webgui-backend-dev",
+	"dockerComposeFile": "../../docker-compose.yml",
+	"service": "opsi-webgui-backend-dev",
+	"runServices": [
+		"opsi-webgui-frontend-dev",
+		"opsi-server",
+		"mysql",
+		"redis",
+		"grafana"
+	],
+	"initializeCommand": ".devcontainer/opsi-webgui-container-backend/initialize.sh",
+	"postCreateCommand": ".devcontainer/opsi-webgui-container-backend/post_create.sh",
+	"postStartCommand": ".devcontainer/opsi-webgui-container-backend/post_start.sh",
 	"workspaceFolder": "/workspace",
-	"postCreateCommand": ".devcontainer/post_create.sh",
-	"postStartCommand": ".devcontainer/post_start.sh",
-	"remoteEnv": {
-		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+	"containerEnv": {
 		"DEV_USER": "${localEnv:USER}",
-		"DEV_UID": "${localEnv:UID}"
+		"DEV_UID": "${localEnv:UID}",
+		"OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
+		"OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
 	},
 	"customizations": {
 		"vscode": {
+			"tasks": {
+				"default": "choose-main-service"
+			},
 			"settings": {
 				"workbench.colorCustomizations": {
 					"activityBar.background": "#000000",
@@ -55,7 +67,12 @@
 				"ms-python.vscode-pylance",
 				"ryanluker.vscode-coverage-gutters",
 				"ms-python.mypy-type-checker",
-				"charliermarsh.ruff"
+				"charliermarsh.ruff",
+				"cweijan.dbclient-jdbc",
+				"cweijan.vscode-database-client2",
+				"ms-azuretools.vscode-docker",
+				"docker.docker",
+				"seunlanlege.action-buttons"
 			]
 		}
 	},

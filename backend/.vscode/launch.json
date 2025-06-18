@@ -2,30 +2,33 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "opsiconfd default",
-			"type": "python",
+			"name": "opyiconfd py",
+			"type": "debugpy",
 			"request": "launch",
-			"module": "opsiconfd",
-			"args": [
-				"--workers=1",
-				"--log-mode=redis",
-				"--log-level-stderr=5",
-				"--addon-dirs=/workspace/addon",
-				"--static-dir=${workspaceFolder}/opsiconfd/opsiconfd_data/static"
-			],
+			"program": "/workspace/docker/backend/start_opsiconfd.py",
 			"sudo": true,
 			"justMyCode": false,
-			"cwd": "${workspaceFolder}/opsiconfd"
+			"envFile": "${workspaceFolder}/.env",
+			"env": {
+				"PYDEVD_DISABLE_FILE_VALIDATION": "1",
+			},
+			"subProcess": true,
+			//"console": "integratedTerminal"
 		},
 		{
-			"name": "Python: Attach",
-			"type": "python",
-			"request": "attach",
-			"connect": {
-				"host": "localhost",
-				"port": 5678
-			}
-		}
+			"name": "webgui this backend",
+			"outputCapture": "std",
+			"request": "launch",
+			"preLaunchTask": "webgui-frontend-this-backend",
+			"type": "node"
+		},
+		{
+			"name": "webgui docker",
+			"outputCapture": "std",
+			"request": "launch",
+			"preLaunchTask": "webgui-frontend-docker",
+			"type": "node"
+		},
 	],
 	"inputs": [
 		{

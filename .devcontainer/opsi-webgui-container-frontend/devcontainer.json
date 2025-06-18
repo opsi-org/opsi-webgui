@@ -1,0 +1,52 @@
+{
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Vue.volar",
+        "wejectchan.vue3-snippets-for-vscode",
+        "lokalise.i18n-ally",
+        "bradlc.vscode-tailwindcss",
+        "antfu.iconify",
+        "fooxly.workspace",
+        "philfontaine.autolaunch",
+        "gruntfuggly.todo-tree",
+        "esbenp.prettier-vscode",
+        "shardulm94.trailing-spaces",
+        "seunlanlege.action-buttons",
+        "anseki.vscode-color",
+        "ms-azuretools.vscode-docker",
+        "SonarSource.sonarlint-vscode",
+        "dbaeumer.vscode-eslint",
+        "richie5um2.vscode-sort-json",
+        "ms-playwright.playwright"
+      ],
+      "settings": {
+        "terminal.integrated.shell.linux": "/usr/bin/zsh"
+      }
+    }
+  },
+  //"dockerComposeFile": ["./docker-compose.yml"],
+  "dockerComposeFile": "../../docker-compose.yml",
+  "name": "opsi-webgui-frontend-dev",
+  "initializeCommand": [
+    ".devcontainer/opsi-webgui-container-frontend/initialize.sh"
+  ],
+  "runServices": [
+    "opsi-webgui-frontend-dev",
+    "opsi-webgui-backend-dev",
+    "opsi-server",
+    "mysql",
+    "redis",
+    "grafana"
+  ],
+  "service": "opsi-webgui-frontend-dev",
+  "postCreateCommand": "/workspace/.devcontainer/opsi-webgui-container-frontend/post_create.sh",
+  "postStartCommand": "/workspace/.devcontainer/opsi-webgui-container-frontend/post_start.sh",
+  "containerEnv": {
+    "DEV_USER": "${localEnv:USER}",
+    "DEV_UID": "${localEnv:UID}",
+    "OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
+    "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
+  },
+  "workspaceFolder": "/workspace"
+}

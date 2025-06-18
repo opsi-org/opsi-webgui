@@ -1,75 +1,13 @@
-# Nuxt 3 Minimal Starter
+# opsi-webgui frontend
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## installation for development
+* run devenv.sh `./scripts/devenv.sh`
+* (optional) update environment file
+* (optional) put a opsi lisence into `<project>/docker/.` (it will be copied to correct place)
+* start container
+* Start webgui using following commands or through VSCode Run and Debug (F5)
+    * use `npm run dev` to use backend started with this container with opsi-docker (opsiconfd port 44471 per default;  To restart it use `opsiconfd-docker-restart`)
+    * use `npm run dev-backend` to use backend from the backend container (opsiconfd port 4447 per default;  Need to be started manually: `opsiconfd-backend-start`)
 
-## Setup
-
-Make sure to install the dependencies:
-
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## known bugs:
+* if you switched containers and the section "Run and Debug" show the old launch configuration, just open "launch.json" once. after that vscode updates the cache and should show the new configuration.

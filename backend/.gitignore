@@ -1,5 +1,6 @@
-# python 
+# python
 __pycache__
 .hypothesis
 *.sql
 opsiconfd/
+docker/opsiconfd/

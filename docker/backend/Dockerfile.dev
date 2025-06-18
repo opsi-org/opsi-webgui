@@ -1,4 +1,4 @@
-FROM docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11 as opsiconfd_development_build_43
+FROM docker.uib.gmbh/opsi/dev/pybuilder:deb10-py3.13 AS opsi_webgui_backend_build_43
 
 ARG DOCKER_ENV
 ARG USER
@@ -7,7 +7,7 @@ ARG UID
 ENV DOCKER_ENV=${DOCKER_ENV} \
 	DEV_USER=${USER} \
 	DEV_UID=${UID} \
-	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.3:/development/Debian_9.0/ \
+	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.3:/development/Debian_10/ \
 	# python:
 	PYTHONFAULTHANDLER=1 \
 	PYTHONUNBUFFERED=1 \
@@ -18,46 +18,45 @@ ENV DOCKER_ENV=${DOCKER_ENV} \
 	PIP_DEFAULT_TIMEOUT=100
 
 # System deps:
-RUN apt-get update \
+RUN mkdir -p /usr/local/share/keyrings \
+	&& REPO_KEY=/usr/local/share/keyrings/opsi-obs.gpg \
+	&& curl -fsSL $OPSI_REPO/Release.key | gpg --dearmor | tee $REPO_KEY > /dev/null\
+	&& echo "deb [signed-by=$REPO_KEY] $OPSI_REPO/ /" | tee /etc/apt/sources.list.d/opsi.list \
+	&& apt-get update \
 	&& apt-get --yes dist-upgrade \
 	&& apt-get --yes --allow-downgrades install \
-		cpio \
-		vim \
-		wget \
-		gettext \
-		mariadb-client \
-		libmariadb-dev \
-		psmisc \
-		librsync1 \
-		libsqlite3-0=3.16.2-5+deb9u1 \
-		sudo \
-		git \
-		bash-completion \
-		nano \
-		netcat \
-		supervisor \
-	&& mkdir -p /usr/local/share/keyrings \
+	docker.io \
+	cpio \
+	vim \
+	wget \
+	gettext \
+	mariadb-client \
+	libmariadb-dev \
+	psmisc \
+	librsync1 \
+	sudo \
+	git \
+	nano \
+	netcat \
+	supervisor \
 	&& wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor > /usr/local/share/keyrings/grafana.gpg \
 	&& echo "deb [signed-by=/usr/local/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" > /etc/apt/sources.list.d/grafana.list \
-	&& wget -q -O - ${OPSI_REPO}Release.key | gpg --dearmor > /usr/local/share/keyrings/opsi.gpg \
-	&& echo "deb [signed-by=/usr/local/share/keyrings/opsi.gpg] ${OPSI_REPO} /" > /etc/apt/sources.list.d/opsi.list \
+	&& apt-get update \
 	&& apt-get update \
 	&& apt-get --yes install \
-		apt-transport-https \
-		software-properties-common \
-		grafana \
-		mariadb-server \
-		redis-tools \
-		redis-server \
-		redis-timeseries \
-		opsi-utils \
+	apt-transport-https \
+	software-properties-common \
+	grafana \
+	mariadb-server \
+	redis-tools \
+	redis-server \
+	redis-timeseries \
+	opsi-utils \
 	&& apt-get clean
 
-COPY docker/files/ /
+COPY docker/backend/files/ /
 
 # Setup poetry
-WORKDIR /workspace
-
 RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& (getent group opsifileadmins || groupadd opsifileadmins) \
 	&& (getent group opsiadmin || groupadd opsiadmin) \
@@ -78,4 +77,6 @@ RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& chmod g+rw -R . \
 	&& chmod +x /*entrypoint.sh \
 	&& mkdir tftpboot \
-	&& chown -R $DEV_USER /workspace
+	&& chown -R $DEV_USER:$DEV_USER /workspace
+
+WORKDIR /workspace
