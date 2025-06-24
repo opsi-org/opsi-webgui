@@ -47,7 +47,7 @@ License: AGPL-3.0
           </p>
           <p v-if="visibleRequest?.includes('*')" class="inline">
             {{
-              $t('label.in_bracets', {
+              $t('textInBrackets', {
                 value: modelRowitem?.actionRequest || '',
               })
             }}

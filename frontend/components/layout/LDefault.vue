@@ -158,13 +158,13 @@ License: AGPL-3.0
     const result = await useApiGET<T_configuration>('/user/configuration')
     if (result.error) {
       console.error(result.error)
-      notifyError({ title: $t('message.error.fetch'), message: result.error })
+      notifyError({ title: $t('message.fetchingFailed'), message: result.error })
       return
     } else if (!result.data.value) {
       console.error('No data in response')
       notifyError({
-        title: $t('message.error.fetch'),
-        message: 'No data in response',
+        title: $t('message.fetchingFailed'),
+        message: $t('message.noResponse'),
       })
       return
     }
@@ -172,15 +172,15 @@ License: AGPL-3.0
     if (forbidden.error) {
       console.error(forbidden.error)
       notifyError({
-        title: $t('message.error.fetch'),
+        title: $t('message.fetchingFailed'),
         message: forbidden.error,
       })
       return
     } else if (!forbidden.data.value) {
       console.error('No data in response')
       notifyError({
-        title: $t('message.error.fetch'),
-        message: 'No data in response',
+        title: $t('message.fetchingFailed'),
+        message: $t('message.noResponse'),
       })
       return
     }

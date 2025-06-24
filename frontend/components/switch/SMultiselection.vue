@@ -8,7 +8,7 @@ License: AGPL-3.0
 <template>
   <TooltipTTooltip>
     <template #tooltip>
-      {{ $t('form.multiselection.cbvalue.tooltip') }}
+      {{ $t('selectionMode') }}
     </template>
 
     <template #default>
@@ -28,9 +28,7 @@ License: AGPL-3.0
           for="cbMultiSelection"
           class="text-xs text-white !pb-1"
           :class="cbValue ? '' : 'pl-4'"
-          >{{
-            cbValue ? $t('form.multiselection.cbvalue.on') : $t('form.multiselection.cbvalue.off')
-          }}</label
+          >{{ cbValue ? $t('multi') : $t('single') }}</label
         >
       </p-float-label>
     </template>
@@ -88,7 +86,7 @@ License: AGPL-3.0
   }
 
   const showModal = async () => {
-    if (confirm($t('form.multiselection.cbValue.content'))) {
+    if (confirm($t('message.multipleItemsSelected'))) {
       selections.setMultiSelection(false)
     } else {
       selections.setMultiSelection(true)

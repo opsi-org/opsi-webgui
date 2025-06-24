@@ -7,9 +7,9 @@ License: AGPL-3.0
 -->
 <template>
   <el-popconfirm
-    :title="$t('message.confirm.logout')"
-    :confirm-button-text="$t('button.confirm')"
-    :cancel-button-text="$t('label.cancel')"
+    :title="$t('message.logoutConfirmation')"
+    :confirm-button-text="$t('confirm')"
+    :cancel-button-text="$t('cancel')"
     @confirm="doLogout"
     data-testid="BTNLogout"
   >
@@ -22,7 +22,7 @@ License: AGPL-3.0
         }"
       >
         <IconIIcon :icon="icon.logout" />
-        <p v-if="isMobile" class="pt-3 ml-1">{{ $t('button.logout') }}</p>
+        <p v-if="isMobile" class="pt-3 ml-1">{{ $t('logout') }}</p>
       </el-button>
     </template>
   </el-popconfirm>

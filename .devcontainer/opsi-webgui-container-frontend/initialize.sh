@@ -7,4 +7,4 @@ rm -rf .vscode
 ln -s frontend/.vscode .vscode
 
 SCRIPTDIR=$(dirname $(readlink -f $0))
-${SCRIPTDIR}/devenv.sh
+${SCRIPTDIR}/devenv.sh --yes

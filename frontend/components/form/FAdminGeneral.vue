@@ -9,14 +9,10 @@ License: AGPL-3.0
   <div v-loading="isLoading">
     <div v-for="(actions, section) in adminTasks" :key="section">
       <h3 class="mt-4 text-lg font-semibold">
-        {{ $t('title.' + section) }}
+        {{ $t(section) }}
       </h3>
       <el-form label-width="50%" :label-position="mq.isMobile.value ? 'top' : 'left'">
-        <el-form-item
-          v-for="(action, index) in actions"
-          :key="index"
-          :label="$t('label.' + section + '.' + action)"
-        >
+        <el-form-item v-for="(action, index) in actions" :key="index" :label="$t(action)">
           <div :style="mq.isMobile.value ? '' : 'display: flex; align-items: center;'">
             <el-select
               v-if="action === 'unlock' || action === 'unblock'"
@@ -57,7 +53,7 @@ License: AGPL-3.0
               "
               @click="applyAction(action)"
             >
-              {{ $t('label.' + action) }}
+              {{ $t(action) }}
             </el-button>
           </div>
         </el-form-item>
@@ -75,8 +71,8 @@ License: AGPL-3.0
 
   const $t = useI18n().t
   const adminTasks = reactive({
-    clients: ['unblock', 'unblockAll'], // for translation key search: $('title.clients'), $('label.clients.unblock'), $('label.clients.unblockAll'), $('label.unblock'), $('label.unblockAll')
-    products: ['unlock', 'unlockAll'], // for translation key search: $('title.products') $('label.products.unlock'), $('label.products.unlockAll'), $('label.unlock'), $('label.unlockAll')
+    clients: ['unblock', 'unblockAll'],
+    products: ['unlock', 'unlockAll'],
   })
   const mq = useMQ()
   const selected = ref({
@@ -105,23 +101,23 @@ License: AGPL-3.0
   const placeholderClients = computed(() => {
     const count = Object.keys(blockedClients.value || {}).length
     if (count > 0) {
-      return $t('label.clients.placeholder', { count })
+      return $t('message.blockedClientsCount', { count })
     }
-    return $t('message.warning.noBlockedClients')
+    return $t('message.noBlockedClients')
   })
   const placeholderProducts = computed(() => {
     const count = Object.keys(lockedProducts.value || {}).length
     if (count > 0) {
-      return $t('label.products.placeholder', { count })
+      return $t('message.lockedProductsCount', { count })
     }
-    return $t('message.warning.noLockedProducts')
+    return $t('message.noLockedProducts')
   })
 
   async function fetchBlockedClients() {
     const { data, error } = await useApiGET<TData>('/opsidata/blocked-clients')
     if (error || !data.value) {
       notifyError({
-        message: error?.response?.data?.message || 'No blocked clients received',
+        message: error?.response?.data?.message || $t('message.noResponse'),
       })
       return
     }
@@ -132,7 +128,7 @@ License: AGPL-3.0
     const { data, error } = await useApiGET<TData>('/opsidata/locked-products')
     if (error || !data.value) {
       notifyError({
-        message: error?.response?.data?.message || 'No locked products received',
+        message: error?.response?.data?.message || $t('message.noResponse'),
       })
       return
     }

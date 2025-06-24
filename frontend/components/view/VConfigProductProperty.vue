@@ -19,7 +19,7 @@ License: AGPL-3.0
               <template #tooltip>
                 <div class="max-w-md">
                   <b>{{ item.description }}</b>
-                  <p>{{ $t('form.config.defaultvalue') }} {{ item.default }}</p>
+                  <p>{{ $t('defaultValues') }} {{ item.default }}</p>
                   <div class="max-h-42 overflow-auto">
                     <p
                       v-if="item.depots"
@@ -28,7 +28,7 @@ License: AGPL-3.0
                         bold: item.anyDepotDifferentFromDefault,
                       }"
                     >
-                      {{ $t('form.config.objectvalue') }}
+                      {{ $t('objectValues') }}
                     </p>
                     <pre class="text-xs">{{ item.depots }}</pre>
                   </div>
@@ -39,7 +39,7 @@ License: AGPL-3.0
                         italic: item.anyClientDifferentFromDepot,
                       }"
                     >
-                      {{ $t('form.config.objectvalue') }}
+                      {{ $t('objectValues') }}
                     </p>
                     <pre class="text-xs">{{ item.clients }}</pre>
                   </div>
@@ -60,7 +60,7 @@ License: AGPL-3.0
                 itemValues[item.propertyId] !== undefined &&
                 !arrayEqual(itemValues[item.propertyId], initialValues[item.propertyId])
               "
-              :title="$t('message.warning.unsavedChange')"
+              :title="$t('message.unsavedChanges')"
               severity="warn"
               :value="t_fixed('notOrigin')"
             />
@@ -111,7 +111,7 @@ License: AGPL-3.0
       :disabled="!hasUnsavedChanges"
       @click="saveProductProperties"
     >
-      {{ $t('button.save') }}
+      {{ $t('save') }}
     </el-button>
   </div>
 </template>
@@ -260,7 +260,7 @@ License: AGPL-3.0
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsavedChanges'))
+      const answer = window.confirm($t('message.unsavedChanges'))
       if (answer) {
         next()
       } else {

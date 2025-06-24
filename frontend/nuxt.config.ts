@@ -17,7 +17,7 @@ const ADDON_PATH: string = '/addons/webgui'
 
 if (process.env.NODE_ENV === 'development') {
   console.log('---------------------------------------------------')
-  console.log('OPSICONFD PORT', CONFD_PORT)
+  console.log('OPSICONFD PORT', CONFD_PORT, ', env: ', process.env.OPSICONFD_PORT)
   console.log('WEBGUI PORT', WEBUI_PORT_STR, WEBUI_PORT)
   console.log('ADDON PATH', ADDON_PATH)
   console.log('VERSION', pkg.version)

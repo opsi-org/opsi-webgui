@@ -23,8 +23,8 @@ License: AGPL-3.0
     if (query.value?.expired === 'true') {
       storeAuth().setErrorLoggedOutShown(false)
       useNotification().notifyWarning({
-        title: $t('message.session.expired'),
-        message: $t('message.session.expired.message'),
+        title: $t('message.sessionExpired'),
+        message: $t('message.youHaveBeenLoggedOut'),
         duration: 5000,
       })
       useRouter().replace({ query: { ...query.value, expired: undefined } })

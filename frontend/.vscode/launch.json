@@ -1,53 +1,54 @@
 {
-    "configurations": [
-      {
-        // webgui v4.4
-        "name": "webgui docker",
-        "cwd": "${workspaceFolder}/frontend",
-        "outputCapture": "std",
-        "request": "launch",
-        "runtimeArgs": ["run", "dev"],
-        "runtimeExecutable": "npm",
-        "type": "node"
-      },
-      {
-        // webgui v4.4
-        "name": "webgui local opsiconfd",
-        "cwd": "${workspaceFolder}/frontend",
-        "outputCapture": "std",
-        "request": "launch",
-        // "--dry-save-package-json-to package-merged.json",
-        "runtimeArgs": ["run", "dev-backend"],
-        "skipFiles": ["<node_internals>/**"],
-        "runtimeExecutable": "npm",
-        "type": "node"
-      },
+  "configurations": [
+    {
+      // webgui v4.4
+      "name": "frontend (opsi-docker/44471)",
+      "cwd": "${workspaceFolder}/frontend",
+      "outputCapture": "std",
+      "request": "launch",
+      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "npm",
+      "type": "node"
+    },
+    {
+      // webgui v4.4
+      "name": "frontend (local-opsiconfd/44472)",
+      "cwd": "${workspaceFolder}/frontend",
+      "outputCapture": "std",
+      "request": "launch",
+      // "--dry-save-package-json-to package-merged.json",
+      "runtimeArgs": ["run", "dev-backend"],
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeExecutable": "npm",
+      "type": "node"
+    },
 
-		{
-			"name": "backend this start",
-			"outputCapture": "std",
-			"request": "launch",
-			"command": "opsiconfd-backend-start",
-			"type": "node-terminal",
-		},
-		{
-			"name": "backend docker restart",
-			"outputCapture": "std",
-			"request": "launch",
-			"command": "opsiconfd-docker-restart && exit",
-			"type": "node-terminal",
-		},
-      {
-        // Webgui-Storybook
-        "cwd": "${workspaceFolder}",
-        "name": "webgui-story",
-        "outputCapture": "std",
-        "request": "launch",
-        "runtimeArgs": ["run-script", "story:dev"],
-        "runtimeExecutable": "npm",
-        "skipFiles": ["<node_internals>/**"],
-        "type": "node"
-      }
-    ],
-    "version": "0.2.0"
-  }
+    {
+      "name": "backend (local/44472)",
+      "outputCapture": "std",
+      "request": "launch",
+      "command": "opsiconfd-backend-start",
+      "envFile": "/workspace/docker/backend/.env",
+      "type": "node-terminal"
+    },
+    {
+      "name": "backend restart (opsi-docker/44471)",
+      "outputCapture": "std",
+      "request": "launch",
+      "command": "opsiconfd-docker-restart && exit",
+      "type": "node-terminal"
+    },
+    {
+      // Webgui-Storybook
+      "cwd": "${workspaceFolder}",
+      "name": "webgui-story",
+      "outputCapture": "std",
+      "request": "launch",
+      "runtimeArgs": ["run-script", "story:dev"],
+      "runtimeExecutable": "npm",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    }
+  ],
+  "version": "0.2.0"
+}

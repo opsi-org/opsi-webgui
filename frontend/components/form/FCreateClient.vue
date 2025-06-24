@@ -13,7 +13,7 @@ License: AGPL-3.0
   >
     <div v-for="(options, category, index) in createClient" :key="index">
       <h3 class="mt-4 text-lg font-semibold">
-        {{ $t('title.' + category) }}
+        {{ $t(category) }}
       </h3>
       <div v-for="(value, label) in options" :key="label + '-' + value">
         <el-form-item
@@ -77,18 +77,18 @@ License: AGPL-3.0
             <el-option v-for="item in depotIDList" :key="item" :label="item" :value="item" />
           </el-select>
           <el-select
-            v-else-if="label === 'group'"
+            v-else-if="label === 'groups'"
             filterable
-            v-model="createClient.assignments.group"
+            v-model="createClient.assignments.groups"
             clearable
           >
             <el-option v-for="item in groupList" :key="item" :label="item" :value="item" />
           </el-select>
 
           <el-select
-            v-else-if="label === 'netbootProduct'"
+            v-else-if="label === 'netbootProducts'"
             filterable
-            v-model="createClient.initialSetup.netbootProduct"
+            v-model="createClient.initialSetup.netbootProducts"
             clearable
           >
             <el-option v-for="item in netbootProductList" :key="item" :label="item" :value="item" />
@@ -107,13 +107,13 @@ License: AGPL-3.0
       </div>
     </div>
     <div class="button-container" style="display: flex; justify-content: flex-end">
-      <el-button @click="resetForm()"> {{ $t('button.reset') }}</el-button>
+      <el-button @click="resetForm()"> {{ $t('reset') }}</el-button>
       <el-button
         data-testid="clientCreate_addButton"
         :type="clientName ? 'success' : ''"
         :disabled="!clientName || clientExists"
         @click="createOpsiClient"
-        >{{ $t('button.create') }}</el-button
+        >{{ $t('create') }}</el-button
       >
     </div>
   </el-form>
@@ -136,10 +136,10 @@ License: AGPL-3.0
     }
     assignments: {
       depot: string
-      group: string[]
+      groups: string[]
     }
     initialSetup: {
-      netbootProduct: string[]
+      netbootProducts: string[]
       opsiClientAgent: IObjectString2Any
     }
   }
@@ -180,8 +180,8 @@ License: AGPL-3.0
     const fullHostId = `${newClientName}${domain.value}`
     if (clientIDList.value.includes(fullHostId)) {
       clientExists.value = true
-      clientNameError.value = $t('message.warning.clientExists', {
-        client: fullHostId,
+      clientNameError.value = $t('message.alreadyExists', {
+        item: fullHostId,
       })
     } else {
       clientExists.value = false
@@ -242,14 +242,14 @@ License: AGPL-3.0
       return
     } else {
       notifySuccess({
-        message: $t('message.success.createClient', {
-          client: createClient.value.basics.hostId,
+        message: $t('message.addedSuccessfully', {
+          item: createClient.value.basics.hostId,
         }),
       })
 
-      if (createClient.value.assignments.group?.length > 0) {
+      if (createClient.value.assignments.groups?.length > 0) {
         await handleApiPost(`/opsidata/clients/${createClient.value.basics.hostId}/groups`, [
-          createClient.value.assignments.group,
+          createClient.value.assignments.groups,
         ])
       }
       if (createClient.value.initialSetup.opsiClientAgent.setup) {
@@ -258,10 +258,10 @@ License: AGPL-3.0
           createClient.value.initialSetup.opsiClientAgent
         )
       }
-      if (createClient.value.initialSetup.netbootProduct?.length > 0) {
+      if (createClient.value.initialSetup.netbootProducts?.length > 0) {
         await handleApiPost('/opsidata/clients/products', {
           clientIds: [createClient.value.basics.hostId],
-          productIds: [createClient.value.initialSetup.netbootProduct],
+          productIds: [createClient.value.initialSetup.netbootProducts],
           actionRequest: 'setup',
         })
       }
@@ -284,24 +284,20 @@ License: AGPL-3.0
   function getDefaultCreateClient(): IClientObject {
     return {
       basics: {
-        // for translation key search $t('title.basics')
-        hostId: '', // $t('table.fields.hostId')
-        description: '', // $t('table.fields.description')
-        inventoryNumber: '', // $t('table.fields.inventoryNumber')
-        hardwareAddress: '', // $t('table.fields.hardwareAddress')
-        ipAddress: null, // $t('table.fields.ipAddress')
-        notes: '', // $t('table.fields.notes')
+        hostId: '',
+        description: '',
+        inventoryNumber: '',
+        hardwareAddress: '',
+        ipAddress: null,
+        notes: '',
       },
       assignments: {
-        // $t('title.assignments')
-        depot: '', // $t('table.fields.depot')
-        group: [], // $t('table.fields.group')
+        depot: '',
+        groups: [],
       },
       initialSetup: {
-        // $t('title.initialSetup')
-        netbootProduct: [], // $t('table.fields.netbootProduct')
+        netbootProducts: [],
         opsiClientAgent: {
-          // $t('table.fields.opsiClientAgent')
           setup: false,
           username: '',
           password: '',

@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <main data-testid="FLogin" :class="$mq === 'mobile' ? 'px-[4%]' : ''" v-loading="isLoading">
-    <h1 class="sr-only">{{ $t('button.login') }}</h1>
+    <h1 class="sr-only">{{ $t('login') }}</h1>
     <el-card
       class="text-center bg-opsi-blue text-white mx-auto"
       :class="$mq === 'mobile' ? 'w-full' : 'w-1/2; max-w-md'"
@@ -20,7 +20,7 @@ License: AGPL-3.0
               id="configserver"
               data-testid="login_configserver"
               v-model="opsiconfigserver"
-              :aria-label="$t('title.configserver')"
+              :aria-label="$t('configserver')"
               disabled
               readonly
               :placeholder="opsiconfigserver"
@@ -33,8 +33,8 @@ License: AGPL-3.0
               v-model="form.username"
               :disabled="isLoading"
               data-testid="login-username-input"
-              :aria-label="$t('form.username')"
-              :placeholder="$t('form.username')"
+              :aria-label="$t('username')"
+              :placeholder="$t('username')"
               :state="validUsername"
               class="username"
             />
@@ -45,8 +45,8 @@ License: AGPL-3.0
               v-model="form.password"
               :disabled="isLoading"
               data-testid="login-password-input"
-              :aria-label="$t('form.password')"
-              :placeholder="$t('form.password')"
+              :aria-label="$t('password')"
+              :placeholder="$t('password')"
               :state="validPassword"
               show-password
               class="password"
@@ -57,28 +57,28 @@ License: AGPL-3.0
               data-testid="login_otp"
               v-model="totp"
               :disabled="isLoading"
-              :aria-label="$t('table.fields.oneTimePassword')"
-              :placeholder="$t('table.fields.oneTimePassword')"
+              :aria-label="$t('oneTimePassword')"
+              :placeholder="$t('oneTimePassword')"
               show-password
             />
           </el-form-item>
           <el-button
             v-if="authMethods.includes(METHOD_PASSWORD)"
             data-testid="btn-login"
-            :title="$t('button.login.description')"
+            :title="$t('login')"
             :disabled="!form.username || !form.password"
             class="mt-2 login w-100"
             @click="doLogin"
           >
-            {{ $t('button.login') }}
+            {{ $t('login') }}
           </el-button>
           <a
             v-if="authMethods.includes(METHOD_SAML)"
             data-testid="btn-login-saml"
             class="el-button mt-2 login w-100"
             :href="samlUrl"
-            :title="$t('button.login.saml.description')"
-            >{{ $t('button.login.saml') }}</a
+            :title="$t('loginWithSAML')"
+            >{{ $t('loginWithSAML') }}</a
           >
           <el-alert
             v-if="authMethods === undefined || authMethods == ''"
@@ -88,7 +88,7 @@ License: AGPL-3.0
             show-icon
             class="mt-4"
           >
-            {{ $t('message.login.noauthenticationmethod') }}
+            {{ $t('message.login.noAuthMethod') }}
           </el-alert>
         </el-form>
       </div>
@@ -165,7 +165,7 @@ License: AGPL-3.0
     storeAuth().setErrorLoggedOutShown(false)
     if (validUsername.value === false || validPassword.value === false) {
       useNotification().notifyError({
-        message: $t('message.error.invalid.credentials'),
+        message: $t('message.login.invalidCredentials'),
       })
       return
     }
@@ -176,23 +176,23 @@ License: AGPL-3.0
       const { data, error } = await useApiPOST<TResult>('/auth/login', User)
       if (error) {
         notifyError({
-          message: error?.response?.data?.message || $t('message.error.generic'),
+          message: error?.response?.data?.message || $t('message.error.general'),
         })
         return
       }
       if (data.value == undefined) {
         notifyError({
-          message: $t('message.error.empty-response', { details: 'Login' }),
+          message: $t('message.error.emptyResponse', { details: 'Login' }),
         })
         return
       }
       if (data.value.result !== 'Login success') {
-        notifyError({ message: $t('message.error.login-failed') })
+        notifyError({ message: $t('message.login.failed') })
         return
       }
       handleSuccessfulLogin()
     } catch (error) {
-      notifyError({ message: error || $t('message.error.unexpected') })
+      notifyError({ message: error || $t('message.error.general') })
     } finally {
       isLoading.value = false
     }

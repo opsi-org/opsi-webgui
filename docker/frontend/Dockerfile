@@ -32,10 +32,12 @@ RUN apt-get update \
 	python3 \
 	&& apt-get clean
 
+WORKDIR /workspace/frontend
 
 # give correct user permissions to DEV_USER
 RUN	adduser ${DEV_USER} sudo \
 	&& chown -R ${DEV_USER}:${DEV_USER} /home/${DEV_USER}/ \
+	&& chown -R ${DEV_USER}:${DEV_USER} /workspace \
 	&& echo "${DEV_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
 	&& cp -r /root/.bash* /home/${DEV_USER}/
 
@@ -43,7 +45,6 @@ RUN git config --global --add safe.directory /workspace
 RUN git config --global user.name "${DEV_GIT_NAME}"
 RUN git config --global user.email "${DEV_GIT_EMAIL}"
 
-WORKDIR /workspace/frontend
 
 RUN chown -R ${DEV_USER} /workspace
 

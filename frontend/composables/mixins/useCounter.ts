@@ -66,7 +66,7 @@ export const useTimer = (init: boolean = false) => {
     }
     if (isNaN(t.diff) || t.diff <= 0 || notifyInMilliSec.value <= 0) {
       if (notification.value) notification.value?.close()
-      countdowntimer.value = $t('message.session.expired') as string
+      countdowntimer.value = $t('message.sessionExpired') as string
       console.error('Session expired')
       try {
         useCallLogout($t).callLogout()
@@ -84,21 +84,21 @@ export const useTimer = (init: boolean = false) => {
   function _createNotification(t: TTimeDiff) {
     if (notification.value) notification.value?.close()
     const _notification: any = notifyInfo!({
-      title: $t('message.session.info'),
+      title: $t('message.sessionExpiring'),
       messageRef: 'timerText',
       message: _getNotificationText(t),
       duration: 0,
       button: {
-        label: $t('label.extend'),
+        label: $t('extend'),
         onClick: async () =>
           await (await useConfigserver(false, undefined, $t)).getOpsiConfigServerWithHeaders(),
       },
     })
     if (_notification) notification.value = _notification
-    else console.error('Notification not created: ', $t('message.session.info'))
+    else console.error('Notification not created: ', $t('message.sessionExpiring'))
   }
   function _getNotificationText(t: TTimeDiff) {
-    return $t('message.session.expiresInHours', {
+    return $t('message.autoLogoutInHMS', {
       h: t.hours,
       min: t.minutes,
       s: t.seconds,
@@ -109,7 +109,7 @@ export const useTimer = (init: boolean = false) => {
       if (small) {
         return ` ${t.days}d ${t.hours}h ${t.minutes}m ${t.seconds}s`
       } else {
-        return $t('message.session.expiresInDays', {
+        return $t('message.autoLogoutInDHMS', {
           d: t.days,
           h: t.hours,
           min: t.minutes,
@@ -120,7 +120,7 @@ export const useTimer = (init: boolean = false) => {
       if (small === true) {
         return ` ${t.hours}h ${t.minutes}m ${t.seconds}s`
       } else {
-        return $t('message.session.expiresInHours', {
+        return $t('message.autoLogoutInHMS', {
           h: t.hours,
           min: t.minutes,
           s: t.seconds,
@@ -129,7 +129,7 @@ export const useTimer = (init: boolean = false) => {
     } else if (small === true) {
       return `${t.minutes}m ${t.seconds}s`
     }
-    return $t('message.session.expiresInMinutes', {
+    return $t('message.autoLogoutInMS', {
       min: t.minutes,
       s: t.seconds,
     }) as string
