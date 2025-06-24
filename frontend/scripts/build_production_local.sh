@@ -39,6 +39,7 @@ cleanup() {
         git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/python/const.py || exit 70
     fi
     sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = '$ADDON_PATH_ORIGIN'|" "$TS_CONST_FILE" || exit 13
+    sudo chown 1000:1000 -R ${WORKING_DIR} || exit 90
 }
 
 trap cleanup EXIT
@@ -57,7 +58,7 @@ sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = '$ADDON_PATH'
 # cat ${TS_CONST_FILE} | grep ADDON_PATH
 
 cd ${WORKING_DIR}/${FRONTEND_DIR}/
-rm -rf ${WORKING_DIR}/${FRONTEND_DIR}/dist || exit 20
+sudo rm -rf ${WORKING_DIR}/${FRONTEND_DIR}/dist || exit 20
 echo "WORKING FRONTEND DIR: ${WORKING_DIR}/${FRONTEND_DIR}"
 echo "WORKING BACKEND DIR: ${WORKING_DIR}/${BACKEND_DIR}"
 
@@ -66,7 +67,7 @@ npm run generate || exit 1
 echo "> npm generate done"
 
 mkdir -p webgui  || exit 30
-rm -rf opsi-${ADDON_ID}.zip  || exit 21
+sudo rm -rf opsi-${ADDON_ID}.zip  || exit 21
 
 # chmod 770 ${WORKING_DIR}/${BACKEND_DIR}/addon/changelogs.md
 # chown 998:1000 ${WORKING_DIR}/${BACKEND_DIR}/addon/changelogs.md
@@ -83,30 +84,22 @@ mkdir -p ${ADDON_ID}  || exit 7
 cp -r ${WORKING_DIR}/${BACKEND_DIR}/addon/${WEBGUI_DIR}/* ${ADDON_ID}/  || exit 33
 chown 1000:1000 -R ${ADDON_ID}  || exit 50
 chown 1000:1000 -R ${ADDON_ID}/*  || exit 51
-apt install -y zip  || exit 60
+sudo apt install -y zip  || exit 60
 zip -r -q opsi-${ADDON_ID}.zip ${ADDON_ID}  || exit 61
-chown 1000:1000 opsi-${ADDON_ID}.zip || exit 52
+sudo chown 1000:1000 opsi-${ADDON_ID}.zip || exit 52
 echo "> packaging done"
 
 echo "> check if also install locally"
-# if [ $4 -eq 0 ]; then
-# if [ $4 "$variable" ]; then
-# if [ -n "$4" ]; then
 if [ "$INSTALL" = "$SHOULD_INSTALL" ]; then
     echo ".....install locally"
-    # rm -rf /var/lib/opsiconfd/addons/webgui
-    # mv -f webgui/ /var/lib/opsiconfd/addons/.
-    rm -rf /data/opsiconfd/addons/${ADDON_ID} || exit 22
-    mv -f ${ADDON_ID}/ /data/opsiconfd/addons/. || exit 34
+    sudo rm -rf /data/opsiconfd/addons/${ADDON_ID} || exit 22
+    sudo mv -f ${ADDON_ID}/ /data/opsiconfd/addons/. || exit 34
     git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
-    # git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/python/const.py
-    # git restore ${WORKING_DIR}/backend/addon/${ADDON_ID}/data/app/README.md
     echo "> local install done"
 
-    # docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload
-    CONTAINER=$(docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
+    CONTAINER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
     echo "> reload supervisorctl in container: $CONTAINER"
-    docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
+    sudo docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
 
 else
     echo "> local install skipped"
@@ -114,10 +107,6 @@ fi
 
 
 # # replace the ADDON_ID and ADDON_NAME in const.py
-# sed -i "s/${ADDON_KEY_ID} = .*/${ADDON_KEY_ID} = \"${ADDON_ID_ORIGIN}\"/" ${PY_CONST_FILE}
-# sed -i "s/${ADDON_KEY_NAME} = .*/${ADDON_KEY_NAME} = \"${ADDON_NAME_ORIGIN}\"/" ${PY_CONST_FILE}
-# sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = '$ADDON_PATH_ORIGIN'|" "$TS_CONST_FILE"
-
 echo ""
 echo "IMPORTANT: Access your webgui at: https://....:${PORT_VALUE}${ADDON_PATH}/app"
 echo ""
