@@ -91,17 +91,11 @@ def get_server_config(
 					id_prefix = "general"
 				if row_dict.get("multiValue"):
 					val = row_dict.get("value", "")
-<<<<<<< HEAD
 					if val:
 						row_dict["value"] = row_dict.get("value", "").split("|")
 					else:
 						row_dict["value"] = []
 
-=======
-					if not val:
-						val = ""
-					row_dict["value"] = val.split("|")
->>>>>>> v5
 				if row_dict.get("type") == "BoolConfig":
 					row_dict["value"] = bool_value(row_dict.get("value", ""))
 					pvallist = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
