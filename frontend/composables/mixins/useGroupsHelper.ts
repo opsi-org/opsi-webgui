@@ -36,7 +36,7 @@ export const useGroupsHelper = () => {
     return newNode
   }
   function transformToNestedArray(
-    data: T_Groups | Record<string, T_Groups> | undefined,
+    data: T_Groups | Record<string, T_Groups> | undefined
   ): T_GroupsTransformed[] {
     if (data == undefined) {
       console.warn('Data is undefined or null:', data)
@@ -44,13 +44,11 @@ export const useGroupsHelper = () => {
     }
     return Object.values(data).map((node) => transformNode(node))
   }
-  function _getChildrenLabelsLevel(nodeChilds: any, childKey: string="childNodes"): string[] {
+  function _getChildrenLabelsLevel(nodeChilds: any, childKey: string = 'childNodes'): string[] {
     if (!nodeChilds || !Array.isArray(nodeChilds) || nodeChilds.length === 0) {
       console.warn('Node children is undefined or not an array', nodeChilds)
       return []
     }
-
-    console.log('getChildrenLabels', nodeChilds)
 
     const labels = []
     for (const child of nodeChilds) {
