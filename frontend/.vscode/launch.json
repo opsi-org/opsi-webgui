@@ -28,10 +28,11 @@
       "outputCapture": "std",
       "request": "launch",
       "command": "opsiconfd-backend-start",
+      "envFile": "/workspace/docker/backend/.env",
       "type": "node-terminal"
     },
     {
-      "name": "backend restart (opsi-docker/44472)",
+      "name": "backend restart (opsi-docker/44471)",
       "outputCapture": "std",
       "request": "launch",
       "command": "opsiconfd-docker-restart && exit",

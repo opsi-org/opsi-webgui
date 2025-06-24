@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 
 services:
   # context is /workspace/docker/backend
@@ -14,9 +14,9 @@ services:
       args:
         - USER
         - UID
-    volumes:
+    volumes: # pwd is main directory
+      - ${PWD}/:/workspace
       - /var/run/docker.sock:/var/run/docker.sock
-      - ../../:/workspace:cached
     ports:
       - ${OPSICONFD_PORT}:${OPSICONFD_PORT}
       - 3002:3000

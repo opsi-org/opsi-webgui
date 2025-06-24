@@ -35,6 +35,9 @@ do
     esac
 done
 
+echo "################# frontend: setup opsi-docker"
+mkdir -p $DOCKERDIR0
+if cd $DOCKERDIR; then git pull; else git clone git@gitlab.uib.gmbh:uib/opsi-docker.git $DOCKERDIR; fi
 
 echo "################# frontend: setup backend if needed" # (IGNORE_OTHER_ENV is set to false)
 DEVENVSCRIPT=$WORKSPACE_DIR/backend/scripts/devenv.sh
@@ -43,15 +46,12 @@ ENVFILE_BACKEND=$DOCKERDIR1/docker/backend/.env
 if [ "$IGNORE_OTHER_ENV" = "true" ]; then
     echo "Skipping backend setup because --ignore-other-envs is set."
 elif [ "$FORCE" = "true" ]; then
-    bash $DEVENVSCRIPT --force --ignore-other-envs --yes        
+    bash $DEVENVSCRIPT --force --ignore-other-envs --yes
 else
     bash $DEVENVSCRIPT --ignore-other-envs --yes
 fi
 
 
-echo "################# frontend: setup opsi-docker"
-mkdir -p $DOCKERDIR0
-if cd $DOCKERDIR; then git pull; else git clone git@gitlab.uib.gmbh:uib/opsi-docker.git $DOCKERDIR; fi
 
 echo "################# frontend: setup environment"
 
@@ -61,7 +61,7 @@ if [ -e "$ENVFILE" ] && [ "$FORCE" = "false" ]; then
     exit 0
 fi
 
-echo "################# frontend: env for webgui" > $ENVFILE
+#echo "################# frontend: env for webgui" > $ENVFILE
 username=""
 if [ -z ${USER+x} ]; then
 	echo DEV_USER=$DEV_USER >> $ENVFILE
@@ -74,7 +74,7 @@ fi
 echo "> setup git config (read data from git)"
 defGitUser=$(git config user.name)
 if [ "$ASK_FOR_CONFIRMATION" = "true" ]; then
-  read -p "Enter git username (default: '$defGitUser'): " GITUSER  
+  read -p "Enter git username (default: '$defGitUser'): " GITUSER
 fi
 GITUSER="${GITUSER:=$defGitUser}"
 echo DEV_GIT_NAME=$GITUSER >> $ENVFILE
@@ -88,7 +88,7 @@ echo DEV_GIT_EMAIL=$GITEMAIL >> $ENVFILE
 
 echo WEBGUI_DEV_PORT=8888 >> $ENVFILE
 
-echo "################# frontend: env for opsi-server" >> $ENVFILE
+#echo "################# frontend: env for opsi-server" >> $ENVFILE
 echo DOCKER_IMAGE_OPSI_SERVER=uibmz/opsi-server:4.3-development >> $ENVFILE
 echo RESTART_POLICY=no >> $ENVFILE
 # TODO: check hostname

@@ -33,6 +33,10 @@ echo "* Setup poetry venv"
 uv sync --frozen
 
 echo -e "===========Configure opsiconfd-docker container commands==========="
+
+ENV_FILE_DIR=/workspace/docker/backend/.env
+echo "export \$(cat ${ENV_FILE_DIR} | xargs)" >> ~/.bashrc
+
 CONTAINER_NAME_DOCKER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
 echo "alias opsiconfd-docker-restart=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER supervisorctl reload\"" >> ~/.bashrc
 echo "alias opsiconfd-docker-container=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER\"" >> ~/.bashrc
