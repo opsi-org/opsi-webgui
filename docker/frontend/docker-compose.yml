@@ -10,8 +10,7 @@ include:
 
 services:
   opsi-webgui-frontend-dev:
-    env_file:
-      - .env # needs to be in same directory !
+    env_file: .env # same directory as this file
     build:
       context: ../..
       args:
@@ -29,10 +28,10 @@ services:
       - 6006:6006
     hostname: ${HOSTNAME}
     domainname: ${DOMAINNAME}
-    volumes:
+    volumes: # pwd is main directory
+      - ${PWD}/:/workspace
       - /var/run/docker.sock:/var/run/docker.sock
       - opsi_data:/data
       - ./files/docker-entrypoint.sh:/docker-entrypoint.sh
-      - ../../:/workspace
     working_dir: /workspace
     entrypoint: [ '/docker-entrypoint.sh' ]

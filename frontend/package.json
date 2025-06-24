@@ -1,26 +1,4 @@
 {
-  "name": "opsi-webgui",
-  "version": "4.3.99.2",
-  "private": true,
-  "license": "AGPL-3.0",
-  "type": "module",
-  "scripts": {
-    "bash:delete-empty-test-results": "find test-results -empty -delete",
-    "clean": "rm -rf node_modules",
-    "clean-full": "./scripts/py-helper.sh scripts/npm-helper.py --install-clean",
-    "dev": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxi dev --host --trace-warnings",
-    "dev-backend": "OPSICONFD_PORT=4447 WEBGUI_DEV_PORT=8889 npm run dev",
-    "generate": "nuxi generate",
-    "lint": "eslint .",
-    "lint:missing-i18n": "./scripts/py-helper.sh scripts/compare_translation_keys.py -s",
-    "story:build": "NODE_ENV=development histoire build",
-    "story:dev": "NODE_ENV=development histoire dev",
-    "story:preview": "NODE_ENV=development histoire preview",
-    "sysinfo": "npx envinfo --system --npmPackages '{histoire,@histoire/*,vite,@vitejs/*}' --binaries --browsers",
-    "tsc": "npx nuxi typecheck",
-    "tscs": "npx nuxi typecheck --logLevel=silent",
-    "versions": "./scripts/py-helper.sh scripts/npm-helper.py --versions --versions-sort is_outdated"
-  },
   "dependencies": {
     "@msgpack/msgpack": "~3.0.0-beta2",
     "@primevue/themes": "4.2.5",
@@ -34,13 +12,18 @@
     "tailwindcss-primeui": "0.3.4",
     "vue3-markdown-it": "1.0.10"
   },
+  "dependenciesComments": {
+    "#node": "version > 23.0.0 seems to have issues",
+    "@nuxtjs/i18n": "Using 8.5.6, cause 9.1.1 throws error in browser terminal.",
+    "npm": "version > 10.9.2 currently broken ('js heap out of space' on npm run and build)"
+  },
   "devDependencies": {
     "@element-plus/nuxt": "1.1.1",
     "@histoire/plugin-nuxt": "0.17.17",
     "@histoire/plugin-vue": "0.17.17",
     "@iconify/vue": "4.2.0",
     "@intlify/eslint-plugin-vue-i18n": "3.2.0",
-    "@nuxt/eslint": "0.7.5",
+    "@nuxt/eslint": "1.4.1",
     "@nuxt/types": "2.18.1",
     "@nuxtjs/i18n": "8.5.6",
     "@nuxtjs/storybook": "8.3.3",
@@ -63,12 +46,29 @@
     "typescript": "5.7.3",
     "vue-tsc": "2.2.0"
   },
-  "dependenciesComments": {
-    "#node": "version > 23.0.0 seems to have issues",
-    "@nuxtjs/i18n": "Using 8.5.6, cause 9.1.1 throws error in browser terminal.",
-    "npm": "version > 10.9.2 currently broken ('js heap out of space' on npm run and build)"
-  },
+  "license": "AGPL-3.0",
+  "name": "opsi-webgui",
   "overrides": {
     "vue": "latest"
-  }
+  },
+  "private": true,
+  "scripts": {
+    "bash:delete-empty-test-results": "find test-results -empty -delete",
+    "clean": "rm -rf node_modules",
+    "clean-full": "./scripts/py-helper.sh scripts/npm-helper.py --install-clean",
+    "dev": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxi dev --host --trace-warnings",
+    "dev-backend": "OPSICONFD_PORT=44472 WEBGUI_DEV_PORT=8889 npm run dev",
+    "generate": "nuxi generate",
+    "lint": "eslint .",
+    "lint:missing-i18n": "./scripts/py-helper.sh scripts/compare_translation_keys.py -s",
+    "story:build": "NODE_ENV=development histoire build",
+    "story:dev": "NODE_ENV=development histoire dev",
+    "story:preview": "NODE_ENV=development histoire preview",
+    "sysinfo": "npx envinfo --system --npmPackages '{histoire,@histoire/*,vite,@vitejs/*}' --binaries --browsers",
+    "tsc": "npx nuxi typecheck",
+    "tscs": "npx nuxi typecheck --logLevel=silent",
+    "versions": "./scripts/py-helper.sh scripts/npm-helper.py --versions --versions-sort is_outdated"
+  },
+  "type": "module",
+  "version": "4.3.99.2"
 }

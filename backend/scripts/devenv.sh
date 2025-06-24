@@ -38,6 +38,11 @@ do
 done
 
 
+echo "################# backend: setup opsiconfd"
+DOCKERDIR=$DOCKERDIR0/opsiconfd
+if cd $DOCKERDIR; then git pull; else git clone git@gitlab.uib.gmbh:uib/opsiconfd.git $DOCKERDIR; fi
+# evtl muss hier noch ein uv sync o.ä. passieren
+
 echo "################# backend: setup backend if needed" # (IGNORE_OTHER_ENV is set to false)
 ENVFILE_FRONTEND=$WORKSPACE_DIR/docker/frontend/.env
 DEVENVSCRIPT=$WORKSPACE_DIR/.devcontainer/opsi-webgui-container-frontend/devenv.sh
@@ -45,7 +50,7 @@ DEVENVSCRIPT=$WORKSPACE_DIR/.devcontainer/opsi-webgui-container-frontend/devenv.
 if [ "$IGNORE_OTHER_ENV" = "true" ]; then
     echo "Skipping backend setup because --ignore-other-envs is set."
 elif [ "$FORCE" = "true" ]; then
-    bash $DEVENVSCRIPT --force --ignore-other-envs --yes        
+    bash $DEVENVSCRIPT --force --ignore-other-envs --yes
 else
     bash $DEVENVSCRIPT --ignore-other-envs --yes
 fi
@@ -58,9 +63,6 @@ if [ -e "$ENVFILE" ] && [ "$FORCE" = "false" ]; then
     exit 0
 fi
 
-echo "################# backend: setup opsiconfd"
-DOCKERDIR=$DOCKERDIR0/opsiconfd
-if cd $DOCKERDIR; then git pull; else git clone git@gitlab.uib.gmbh:uib/opsiconfd.git $DOCKERDIR; fi
 
 
 echo "################# backend: env for backend"

@@ -20,7 +20,7 @@ License: AGPL-3.0
 
 <script setup lang="ts">
   const props = defineProps({
-    type: { type: String, required: true, default: 'client-group' },
+    type: { type: String, required: false, default: 'client-group' },
   })
 
   const $t = useI18n().t

@@ -6,8 +6,11 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <div id="config-pre-tabs">
-    <SelectSHosts v-if="!props.isChild" :id="currentId" :type="type" @change="setId" />
+  <div id="config-pre-tabs" class="flex">
+    <SelectSHosts v-if="!props.isChild" :id="currentId" :type="type" @change="setId" class="flex-1"/>
+    <el-button @click="refetch" :title="$t('reload')" class="flex-none">
+      <IconIIcon :icon="useIcons().refetch" />
+    </el-button>
   </div>
   <el-tabs v-model="activeName">
     <el-tab-pane
@@ -16,6 +19,7 @@ License: AGPL-3.0
       :disabled="!(type === 'clients' || type === 'servers')"
     >
       <FormFHostParameter
+        ref="refHostParam"
         v-if="activeName === 'config'"
         :id="currentId"
         :type="type"
@@ -24,6 +28,7 @@ License: AGPL-3.0
     </el-tab-pane>
     <el-tab-pane :label="$t('attributes')" name="attr" :disabled="isIdEmpty">
       <FormFHostAttributes
+        ref="refHostAttr"
         v-if="activeName === 'attr'"
         :id="currentId"
         :type="type"
@@ -39,6 +44,8 @@ License: AGPL-3.0
   const tableSettings = storeTablesettings()
   const { configLastSelected } = storeToRefs(tableSettings)
   const $t = useI18n().t
+  const refHostParam = ref<any>(null)
+  const refHostAttr = ref<any>(null)
 
   const props = defineProps({
     id: { type: String, default: undefined },
@@ -70,6 +77,14 @@ License: AGPL-3.0
   )
 
   const isIdEmpty = computed(() => !currentId.value)
+
+  function refetch() {
+    if (activeName.value === 'config') {
+      refHostParam?.value?.refetch()
+    } else if (activeName.value === 'attr') {
+      refHostAttr?.value?.refetch()
+    }
+  }
 
   function setId(id: string) {
     currentId.value = id

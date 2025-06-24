@@ -96,7 +96,7 @@
   "files.exclude": {
     "**/node_modules": true,
     "**/dist": true,
-    "**/.nuxt": true,
+    "**/.nuxt": false,
     "**/.output": true,
     "**/.config": true,
     "**/shims-vue.d.ts": true,

@@ -103,6 +103,10 @@ License: AGPL-3.0
     50
   )
 
+  defineExpose({
+    refetch: resetForm,
+  })
+
   watchEffect(() => {
     if (props.id) fetchData()
   })
@@ -113,6 +117,14 @@ License: AGPL-3.0
 
   const isInputDateLabel = (label: string) => {
     return ['created', 'lastSeen'].includes(label)
+  }
+
+  function setUnsavedChanges() {
+    hasUnsavedChanges.value = !objectEqual(hostAttributes.value[0], hostAttributesOriginal.value[0])
+  }
+
+  async function resetForm() {
+    if (props.id) fetchData()
   }
 
   async function fetchData() {
@@ -133,14 +145,6 @@ License: AGPL-3.0
       notifyError({ message: error || $t('message.error.general') })
     }
     isLoading.value = false
-  }
-
-  function setUnsavedChanges() {
-    hasUnsavedChanges.value = !objectEqual(hostAttributes.value[0], hostAttributesOriginal.value[0])
-  }
-
-  async function resetForm() {
-    if (props.id) fetchData()
   }
 
   async function saveHostAttributes() {
