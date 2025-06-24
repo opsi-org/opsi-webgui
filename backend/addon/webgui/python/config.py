@@ -89,7 +89,6 @@ def get_server_config(
 				if id_prefix not in config_data:
 					id_prefix = "general"
 
-
 				val = row_dict.get("value", "")
 				if row_dict.get("type") == "BoolConfig":
 					pos_val_list = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
