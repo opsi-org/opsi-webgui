@@ -172,11 +172,7 @@ License: AGPL-3.0
                       type="success"
                       data-testid="editGroup"
                       :disabled="config.read_only"
-<<<<<<< HEAD
                       @click="updateGroup(node.label)"
-=======
-                      @click="editGroup(node.label)"
->>>>>>> v5
                       >{{ $t('update') }}</el-button
                     >
                   </template>
