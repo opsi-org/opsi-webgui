@@ -70,6 +70,7 @@
 				"charliermarsh.ruff",
 				"cweijan.dbclient-jdbc",
 				"cweijan.vscode-database-client2",
+				"Postman.postman-for-vscode",
 				"ms-azuretools.vscode-docker",
 				"docker.docker",
 				"seunlanlege.action-buttons"
