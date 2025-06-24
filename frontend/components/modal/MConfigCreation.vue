@@ -132,6 +132,7 @@ License: AGPL-3.0
     defaultItem: {
       type: Object,
       required: false,
+      default: () => undefined,
     },
   })
 
@@ -295,7 +296,6 @@ License: AGPL-3.0
       configdata.value.defaultValues.values = selection
     }
   }
-  
 
   function cancel() {
     if (props.refetchOnCancel) {

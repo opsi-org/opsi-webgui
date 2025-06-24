@@ -11,16 +11,32 @@ License: AGPL-3.0
       {{ $t('message.selectItem') }}
     </el-alert>
     <div class="overflow-y-auto tree-table-container" :style="`max-height: ${maxVisibleHeight}px;`">
-      <p-tree-table ref="configTree" :value="fetchedData" size="small" :auto-layout="true" column-resize-mode="fit"
-        :class="mq.isMobile.value ? 'text-xs' : ''" :expanded-keys="expandedKeys">
-        <p-column field="key" header="" expander class="!max-w-min !w-max border-y-[1px]"
-          style="border-color: var(--el-border-color-light)">
+      <p-tree-table
+        ref="configTree"
+        :value="fetchedData"
+        size="small"
+        :auto-layout="true"
+        column-resize-mode="fit"
+        :class="mq.isMobile.value ? 'text-xs' : ''"
+        :expanded-keys="expandedKeys"
+      >
+        <p-column
+          field="key"
+          header=""
+          expander
+          class="!max-w-min !w-max border-y-[1px]"
+          style="border-color: var(--el-border-color-light)"
+        >
           <template #body="slotProps">
-            <div class="block" @click="() => setExpandedRow(slotProps.node)"
-              @contextmenu="(e) => onRightClick(e, slotProps.node?.data || {})" aria-haspopup="true">
+            <div
+              class="block"
+              @click="() => setExpandedRow(slotProps.node)"
+              @contextmenu="(e) => onRightClick(e, slotProps.node?.data || {})"
+              aria-haspopup="true"
+            >
               <span v-if="slotProps.node.label == slotProps.node.key" class="w-full">{{
                 slotProps.node.label.replaceAll('.', ' / ')
-                }}</span>
+              }}</span>
               <TooltipTTooltip v-else>
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
@@ -29,9 +45,12 @@ License: AGPL-3.0
                 </template>
               </TooltipTTooltip>
 
-              <div v-if="mq.isMobile.value && slotProps.node.data?.type !== undefined"
-                style="max-width: calc(100vw - 110px); width: calc(100vw - 110px)">
-                <p-badge v-if="
+              <div
+                v-if="mq.isMobile.value && slotProps.node.data?.type !== undefined"
+                style="max-width: calc(100vw - 110px); width: calc(100vw - 110px)"
+              >
+                <p-badge
+                  v-if="
                     (slotProps.node.data?.type == 'UnicodeConfig' &&
                       !arrayEqual(
                         itemValues[slotProps.node.key],
@@ -39,40 +58,60 @@ License: AGPL-3.0
                       )) ||
                     (slotProps.node.data?.type == 'BoolConfig' &&
                       itemValues[slotProps.node.key] != initialValues[slotProps.node.key])
-                  " :title="
+                  "
+                  :title="
                     $t('message.unsavedChangesWithValueinBold') +
                     `\n initial: ${initialValues[slotProps.node.key]} \n current: ${itemValues[slotProps.node.key]}`
-                  " severity="warn" :value="t_fixed('notOrigin')" />
+                  "
+                  severity="warn"
+                  :value="t_fixed('notOrigin')"
+                />
                 <!-- BOOL CONFIG -->
-                <el-checkbox v-if="slotProps.node.data.type === 'BoolConfig'"
-                  v-model="itemValues[slotProps.node.data.configId]" :disabled="config.read_only" class="ml-2 w-full"
-                  :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''" @change="
+                <el-checkbox
+                  v-if="slotProps.node.data.type === 'BoolConfig'"
+                  v-model="itemValues[slotProps.node.data.configId]"
+                  :disabled="config.read_only"
+                  class="ml-2 w-full"
+                  :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
+                  @change="
                     handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
-                  " />
+                  "
+                />
                 <!-- UNICODE CONFIG -->
                 <div v-else-if="slotProps.node.data.type === 'UnicodeConfig'">
-                  <SelectSSelect :info-id="slotProps.node.data.configId" :editable="slotProps.node.data.editable"
-                    :multi-selection="slotProps.node.data.multiValue" v-model:data="slotProps.node.data.possibleValues"
+                  <SelectSSelect
+                    :info-id="slotProps.node.data.configId"
+                    :editable="slotProps.node.data.editable"
+                    :multi-selection="slotProps.node.data.multiValue"
+                    v-model:data="slotProps.node.data.possibleValues"
                     v-model:selection="itemValues[slotProps.node.data.configId]"
                     :selected-options="itemValues[slotProps.node.data.configId]"
-                    :marked-options="initialValues[slotProps.node.data.configId]" @change="
+                    :marked-options="initialValues[slotProps.node.data.configId]"
+                    @change="
                       () =>
                         handleSelection(
                           slotProps.node.data,
                           itemValues[slotProps.node.data.configId]
                         )
-                    " />
+                    "
+                  />
                 </div>
               </div>
             </div>
           </template>
         </p-column>
         <!-- column has changes -->
-        <p-column v-if="!mq.isMobile.value" field="data" header="" class="!max-w-5 !w-5 border-y-[1px]"
-          style="border-color: var(--el-border-color-light)">
+        <p-column
+          v-if="!mq.isMobile.value"
+          field="data"
+          header=""
+          class="!max-w-5 !w-5 border-y-[1px]"
+          style="border-color: var(--el-border-color-light)"
+        >
           <template #body="slotProps">
             <div v-if="slotProps.node.data?.type !== undefined">
-              <p-badge v-if="
+              <p-badge
+                v-if="
                   (slotProps.node.data?.type == 'UnicodeConfig' &&
                     !arrayEqual(
                       itemValues[slotProps.node.key],
@@ -80,65 +119,110 @@ License: AGPL-3.0
                     )) ||
                   (slotProps.node.data?.type == 'BoolConfig' &&
                     itemValues[slotProps.node.key] != initialValues[slotProps.node.key])
-                " :title="
+                "
+                :title="
                   $t('message.unsavedChanges') +
                   `\n initial: ${initialValues[slotProps.node.key]} \n current: ${itemValues[slotProps.node.key]}`
-                " severity="warn" :value="t_fixed('notOrigin')" />
+                "
+                severity="warn"
+                :value="t_fixed('notOrigin')"
+              />
             </div>
           </template>
         </p-column>
         <!-- Column value -->
-        <p-column v-if="!mq.isMobile.value" field="label" header=""
-          class="!min-w-1/2 !w-1/2 !max-w-[40vw] border-y-[1px]" style="border-color: var(--el-border-color-light)">
+        <p-column
+          v-if="!mq.isMobile.value"
+          field="label"
+          header=""
+          class="!min-w-1/2 !w-1/2 !max-w-[40vw] border-y-[1px]"
+          style="border-color: var(--el-border-color-light)"
+        >
           <template #body="slotProps">
             <div v-if="slotProps.node.data?.type !== undefined" class="w-full min-w-full flex">
               <!-- BOOL CONFIG -->
-              <el-checkbox v-if="slotProps.node.data.type === 'BoolConfig'"
-                v-model="itemValues[slotProps.node.data.configId]" :disabled="config.read_only" class="ml-2 w-full"
-                :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''" @change="
+              <el-checkbox
+                v-if="slotProps.node.data.type === 'BoolConfig'"
+                v-model="itemValues[slotProps.node.data.configId]"
+                :disabled="config.read_only"
+                class="ml-2 w-full"
+                :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
+                @change="
                   handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
-                " />
+                "
+              />
               <!-- UNICODE CONFIG -->
               <div class="flex w-full" v-else-if="slotProps.node.data.type === 'UnicodeConfig'">
-                <SelectSSelect v-model:selection="itemValues[slotProps.node.data.configId]"
-                  v-model:data="slotProps.node.data.possibleValues" :editable="slotProps.node.data.editable"
+                <SelectSSelect
+                  v-model:selection="itemValues[slotProps.node.data.configId]"
+                  v-model:data="slotProps.node.data.possibleValues"
+                  :editable="slotProps.node.data.editable"
                   :multi-selection="slotProps.node.data.multiValue"
                   :selected-options="itemValues[slotProps.node.data.configId]"
-                  :marked-options="initialValues[slotProps.node.data.configId]" :info-id="slotProps.node.data.configId"
+                  :marked-options="initialValues[slotProps.node.data.configId]"
+                  :info-id="slotProps.node.data.configId"
                   @change="
                     () =>
                       handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
-                  " />
+                  "
+                />
               </div>
             </div>
           </template>
         </p-column>
       </p-tree-table>
     </div>
-    <div v-if="fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only" class="button-container"
-      style="display: flex; justify-content: flex-end">
+    <div
+      v-if="fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only"
+      class="button-container"
+      style="display: flex; justify-content: flex-end"
+    >
       <!-- TODO: enable if save if method is implemented (#763) -->
-      <el-button v-if="isGeneralDefault" @click="() => openCreationModal()"
-        :aria-controls="createConfigVisible ? 'dlg' : null" :aria-expanded="createConfigVisible ? true : false">{{
-        $t('addNew') }}</el-button>
+      <el-button
+        v-if="isGeneralDefault"
+        @click="() => openCreationModal()"
+        :aria-controls="createConfigVisible ? 'dlg' : null"
+        :aria-expanded="createConfigVisible ? true : false"
+        >{{ $t('addNew') }}</el-button
+      >
 
       <el-button @click="fetchFormData">{{ $t('reset') }}</el-button>
-      <el-button :type="hasUnsavedChanges ? 'success' : ''" :disabled="!hasUnsavedChanges"
-        @click="saveHostParameters">{{ $t('save') }}</el-button>
+      <el-button
+        :type="hasUnsavedChanges ? 'success' : ''"
+        :disabled="!hasUnsavedChanges"
+        @click="saveHostParameters"
+        >{{ $t('save') }}</el-button
+      >
     </div>
-    <ModalMConfigCreation v-if="createConfigVisible" v-model:visible="createConfigVisible" :default-item="lastCMItem"
-      class="!hidden" @refetch="fetchFormData" />
+    <ModalMConfigCreation
+      v-if="createConfigVisible"
+      v-model:visible="createConfigVisible"
+      :default-item="lastCMItem"
+      class="!hidden"
+      @refetch="fetchFormData"
+    />
 
     <p-context-menu ref="routemenu" :model="items" v-if="isGeneralDefault">
       <!--<template #item="{ item, props }">-->
       <template #item="cdata">
-        <router-link v-if="cdata.item.route" v-slot="{ href, navigate }" :to="cdata.item.route" custom>
+        <router-link
+          v-if="cdata.item.route"
+          v-slot="{ href, navigate }"
+          :to="cdata.item.route"
+          custom
+        >
           <a v-ripple :href="href" v-bind="cdata.props.action" @click="navigate">
             <span :class="cdata.item.icon" />
             <span class="ml-2">{{ cdata.item.label }}</span>
           </a>
         </router-link>
-        <a v-else v-ripple :href="cdata.item.url" :target="cdata.item.target" v-bind="cdata.props.action">
+        <a
+          v-else
+          v-ripple
+          :href="cdata.item.url"
+          :target="cdata.item.target"
+          v-bind="cdata.props.action"
+        >
           <span :class="cdata.item.icon" />
           <span class="ml-2">{{ cdata.item.label }}</span>
         </a>
@@ -350,7 +434,7 @@ License: AGPL-3.0
         message: $t('opsiMessageBus.config_updated', {
           configId: msg.data.configId,
         }),
-        button: { label: $t('label.reloadPage'), onClick: fetch },
+        button: { label: $t('reloadPage'), onClick: fetch },
       })
     }
   }
@@ -381,7 +465,7 @@ License: AGPL-3.0
       message: $t('opsiMessageBus.config_deleted', {
         configId: node.configId,
       }),
-      button: { label: $t('label.reloadPage'), onClick: fetch },
+      button: { label: $t('reloadPage'), onClick: fetch },
     })
     fetchFormData()
   }
