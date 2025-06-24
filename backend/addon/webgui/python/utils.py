@@ -12,7 +12,7 @@ import asyncio
 from functools import wraps
 from json import loads  # pylint: disable=no-name-in-module
 from operator import and_
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Literal, Optional, Union
 
 from fastapi import Query, status
 
@@ -24,6 +24,8 @@ from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
+
+# from .groups import get_all_children_groupids
 
 backend = get_protected_backend()
 
@@ -82,9 +84,9 @@ def get_allowed_objects() -> dict:
 	# 	allowed["product_groups"] = privileges.get("product.groupaccess.productgroups", [])
 	username = get_username()
 	if product_group_access_configured(username):
-		allowed["product_groups"] = get_allowd_product_groups(username)  # type: ignore[assignment]
+		allowed["product_groups"] = get_allowed_product_groups(username)  # type: ignore[assignment]
 	if host_group_access_configured(username):
-		allowed["host_groups"] = get_allowd_host_groups(username)  # type: ignore[assignment]
+		allowed["host_groups"] = get_allowed_host_groups(username)  # type: ignore[assignment]
 	return allowed
 
 
@@ -151,13 +153,13 @@ def merge_dicts(dict_a: dict, dict_b: dict, path: Optional[List] = None) -> dict
 def _get_bool_config_value(config_id: str) -> bool:
 	with mysql.session() as session:
 		where = text(f"cv.configId='{config_id}'")
-		query = select(text("cv.value, cv.isDefault")).select_from(text("CONFIG_VALUE AS cv")).where(where)
+		query = select(text("cv.configId, cv.value, cv.isDefault")).select_from(text("CONFIG_VALUE AS cv")).where(where)
 		result = session.execute(query)
 		result = result.fetchall()
 	if result:
 		for row in result:
 			row_dict = dict(row)
-			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") in ["1", "true", "True", True]:
 				return True
 	return False
 
@@ -203,7 +205,7 @@ def get_allowed_depots(user: str) -> list:
 	return depots
 
 
-def get_allowd_product_groups(user: str) -> list:
+def get_allowed_product_groups(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.product.groupaccess.productgroups'")
 		where = and_(where, text("cv.isDefault=1"))
@@ -216,7 +218,35 @@ def get_allowd_product_groups(user: str) -> list:
 	return groups
 
 
-def get_allowd_host_groups(user: str) -> list:
+def _get_groups(gtype: str) -> list:
+	"""
+	Helper function to get all groups of a specific type.
+	"""
+
+	with mysql.session() as session:
+		query = (
+			select(  # type: ignore[arg-type,attr-defined]
+				text(  # type: ignore[arg-type]
+					"""
+					g.groupId AS group_id,
+					g.parentGroupId AS parent_id,
+					g.type AS type
+				"""
+				)
+			)
+			.where(text("g.type = :type"))
+			.select_from(table("GROUP").alias("g"))
+		)
+		result = session.execute(query, params={"type": gtype})
+		result = result.fetchall()
+		groups = []
+		for row in result:
+			if row:
+				groups.append(dict(row))
+		return groups
+
+
+def get_allowed_host_groups(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.host.groupaccess.hostgroups'")
 		where = and_(where, text("cv.isDefault=1"))
@@ -230,10 +260,12 @@ def get_allowd_host_groups(user: str) -> list:
 
 
 def get_allowed_clients(user: str) -> list:
-	allowed_groups = get_allowd_host_groups(user)
+	all_groups = _get_groups("HostGroup")
+	allowed_groups = get_allowed_host_groups(user)
+	allowed_groups_with_childs = get_all_children_groupids(all_groups, allowed_groups)
 	allowed_clients = []
 	with mysql.session() as session:
-		for group in allowed_groups:
+		for group in allowed_groups_with_childs:
 			query = select(text("otg.objectId AS client")).select_from(text("OBJECT_TO_GROUP AS otg")).where(text(f"otg.groupId='{group}'"))
 			otg_result = session.execute(query)
 			otg_result = otg_result.fetchall()
@@ -244,7 +276,7 @@ def get_allowed_clients(user: str) -> list:
 
 
 def get_allowed_products(user: str) -> list:
-	allowed_groups = get_allowd_product_groups(user)
+	allowed_groups = get_allowed_product_groups(user)
 	allowed_products = []
 	with mysql.session() as session:
 		for group in allowed_groups:
@@ -365,3 +397,34 @@ def get_groups_ids(type: str) -> list[str]:
 			if row:
 				groups.append(dict(row).get("group_id", ""))
 		return groups
+
+
+def get_all_children_groupids(raw_groups: List, group_id: List[str]) -> set[str]:
+	"""
+	Returns all child group IDs for a list of group IDs.
+	"""
+	if not raw_groups or not group_id:
+		return set()
+
+	all_children = set()
+	for gid in group_id:
+		all_children.add(gid)
+		all_children.update(get_all_children_groupid(raw_groups, gid))
+
+	return all_children
+
+
+def get_all_children_groupid(raw_groups: List[str], group_id: str) -> set[str]:
+	"""
+	Returns all child group IDs for a given group ID.
+	"""
+	if not raw_groups:
+		return set()
+
+	all_children = set()
+	for row in raw_groups:
+		if row["parent_id"] == group_id:
+			all_children.add(row["group_id"].lower())
+			all_children.update(get_all_children_groupid(raw_groups, row["group_id"]))
+
+	return all_children

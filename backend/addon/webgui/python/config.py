@@ -36,7 +36,8 @@ def get_server_config(
 	"""
 
 	params: dict = {}
-	where = text("cv.isDefault=1")
+	#where = text("cv.isDefault=1")
+	where = text("")
 	if commons.get("filterQuery"):
 		where = and_(where, text("(c.configId LIKE :search)"))
 		params["search"] = f"%{commons['filterQuery']}%"
@@ -78,9 +79,15 @@ def get_server_config(
 			"software-on-demand": [],
 			"user": [],
 		}
+
+		def _log_if_configId(rowDict: dict, logtext: any, match: str = "user.{adminuser}.privilege.host.groupaccess.hostgroups") -> None:
+			if rowDict.get("configId").startswith(match):
+				logger.debug("Found config with configId %s: %s", rowDict.get("configId"), logtext)
+
 		for row in result:
 			if row is not None:
 				row_dict = dict(row)
+				_log_if_configId(row_dict, "Found config %s", str(row_dict))
 
 				id_prefix = row_dict.get("configId", "").split(".")[0]
 				row_dict["multiValue"] = bool(row_dict.get("multiValue", False))
@@ -104,6 +111,7 @@ def get_server_config(
 					row_dict["newValues"] = []
 
 				config_data[id_prefix].append(row_dict)
+				_log_if_configId(row_dict, "Added to config_data %s", str(row_dict))
 		return RESTResponse(data=config_data)
 
 
@@ -446,6 +454,12 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 	"""
 	save config value
 	"""
+
+	def convert_bool_value(config_type, value):
+		# Convert boolean values to integers if the config type is BoolConfig
+		_isTrue = value in ("true", True, 1, "1", "True", "TRUE")
+		return int(_isTrue) if config_type and config_type == "BoolConfig" else value
+
 	errors = []
 	ids = []
 	for config in data:
@@ -453,7 +467,28 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 
 		with mysql.session() as session:
 			try:
-				values = {"configId": config.configId, "value": config.value, "isDefault": True}
+				# first check if the config exists and get its type to convert bool to tinyint
+				query = (
+					select(
+						text(  # type: ignore
+							"""
+								c.configId AS configId,
+								c.type AS type
+							"""
+						)
+					)
+					.select_from(table("CONFIG").alias("c"))
+					.where(text(f"configId = '{config.configId}'"))
+				)  # pylint: disable=redefined-outer-name
+				result = session.execute(query)
+				result = result.fetchall()
+				config_type = dict(result[0]).get("type", None) if result and len(result) > 0 else None
+				if not config_type:
+					logger.warning("Config %s does not exist. sql result: %s", config.configId, result)
+
+				config_value = convert_bool_value(config_type, config.value)
+
+				values = {"configId": config.configId, "value": config_value, "isDefault": True}
 				stmt = (
 					update(table("CONFIG_VALUE", column("isDefault")))  # pylint: disable=consider-iterating-dictionary
 					.where(text(f"configId = '{config.configId}' AND isDefault = 1"))
@@ -462,8 +497,9 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 				session.execute(stmt)
 				if isinstance(config.value, list):
 					for value in config.value:
-						values = {"configId": config.configId, "value": value, "isDefault": True}
-						if get_config_value(config.configId, value):
+						config_value = convert_bool_value(config_type, config.value)
+						values = {"configId": config.configId, "value": config_value, "isDefault": True}
+						if get_config_value(config.configId, config_value):
 							stmt = (
 								update(
 									table(
@@ -471,7 +507,7 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 										*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
 									)
 								)
-								.where(text(f"configId = '{config.configId}' AND value = '{value}'"))
+								.where(text(f"configId = '{config.configId}' AND value = '{config_value}'"))
 								.values(**values)
 							)
 						else:
@@ -487,7 +523,7 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 							)
 						session.execute(stmt)
 				else:
-					value: Union[str, bool, None] = config.value  # type: ignore[no-redef]
+					value: Union[str, bool, None] = config_value  # type: ignore[no-redef]
 					values = {"configId": config.configId, "value": value, "isDefault": True}
 					if get_config_value(config.configId, value):
 						stmt = (
@@ -513,7 +549,6 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 							.on_duplicate_key_update(**values)
 						)
 						backend._send_messagebus_event("config_created", data=values)  # pylint: disable=protected-access
-					logger.devel(stmt)
 					session.execute(stmt)
 
 				logger.debug("Config %s saved.", config.configId)
@@ -525,6 +560,7 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 		message = "Failed to save: "
 		ids = []
 		for config_error in errors:
+			logger.error("Error saving config %s: %s", config_error.get("id", ""), config_error.get("error", ""))
 			message += config_error.get("id", "") + "\n"
 			ids.append(config_error.get("id", ""))
 		return RESTErrorResponse(message=message, http_status=status.HTTP_400_BAD_REQUEST, details=errors)

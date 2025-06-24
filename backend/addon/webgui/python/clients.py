@@ -92,10 +92,16 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 	if selectedDepots == []:
 		return RESTResponse(data=[], total=0)
 
-	username = get_username()
 	allowed_clients = None
-	if user_register() and host_group_access_configured(username):
+	username = get_username()
+	configured = host_group_access_configured(username)
+
+	if user_register() and configured:
 		allowed_clients = get_allowed_clients(username)
+		if not allowed_clients:
+			logger.warning("No clients found for user '%s'.", username)
+			return RESTResponse(data=[], total=0)
+
 	with mysql.session() as session:
 		where = and_(text("h.type = 'OpsiClient'"))
 		params: Dict[str, Union[List[Any], str]] = {"depot_ids": [], "search": []}
