@@ -270,17 +270,17 @@ License: AGPL-3.0
   ])
   const confirm2 = () => {
     confirm.require({
-      message: $t('config.confirm.config-delete', { id: lastCMItem.value?.configId }),
-      header: $t('cornfirm.delete.header'),
+      message: $t('delete.confirmItem', { item: lastCMItem.value?.configId }),
+      header: $t('delete'),
       icon: useIcons().delete,
-      rejectLabel: $t('label.cancel'),
+      rejectLabel: $t('cancel'),
       rejectProps: {
-        label: $t('label.cancel'),
+        label: $t('cancel'),
         severity: 'secondary',
         outlined: true,
       },
       acceptProps: {
-        label: $t('button.delete'),
+        label: $t('delete'),
         severity: 'danger',
       },
       accept: () => {

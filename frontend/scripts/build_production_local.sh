@@ -104,7 +104,7 @@ if [ "$INSTALL" = "$SHOULD_INSTALL" ]; then
     echo "> local install done"
 
     # docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload
-    CONTAINER=$(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
+    CONTAINER=$(docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
     echo "> reload supervisorctl in container: $CONTAINER"
     docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
 

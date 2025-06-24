@@ -6,10 +6,9 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <div id="config-pre-tabs">
-    <SelectSHosts v-if="!props.isChild" :id="currentId" :type="type" @change="setId" />
-    <!-- reload data -->
-    <el-button @click="refetch" :title="$t('reload')">
+  <div id="config-pre-tabs" class="flex">
+    <SelectSHosts v-if="!props.isChild" :id="currentId" :type="type" @change="setId" class="flex-1"/>
+    <el-button @click="refetch" :title="$t('reload')" class="flex-none">
       <IconIIcon :icon="useIcons().refetch" />
     </el-button>
   </div>

@@ -10,7 +10,7 @@ npx playwright install-deps
 
 echo -e "==========================================Starting opsiconfd-docker container===================================================="
 echo -e "======Configure opsiconfd-docker container commands======"
-CONTAINER_NAME_DOCKER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
+CONTAINER_NAME_DOCKER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
 echo "alias opsiconfd-docker-restart=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER supervisorctl reload\"" >> ~/.zshrc
 echo "alias opsiconfd-docker-container=\"sudo docker exec -u root -it $CONTAINER_NAME_DOCKER\"" >> ~/.zshrc
 

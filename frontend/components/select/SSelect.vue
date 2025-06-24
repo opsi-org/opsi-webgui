@@ -215,8 +215,6 @@ License: AGPL-3.0
     },
   })
 
-  console.debug('SSelect props', props)
-
   const $emit = defineEmits(['change'])
   const data = defineModel<T[]>('data')
   const dataCopy = ref<T[]>([...(data.value ?? [])])
@@ -227,6 +225,8 @@ License: AGPL-3.0
 
   onMounted(() => {
     isLoading.value = true
+    dataCopy.value = [...(data.value ?? [])]
+
     if (!props.allowEmpty) {
       assert(data.value !== undefined, 'Data is undefined')
     }
@@ -257,8 +257,9 @@ License: AGPL-3.0
 
     isLoading.value = false
   })
+
   watch(
-    localAddOption,
+    () => localAddOption.value,
     () => {
       if (localAddOption.value !== undefined && localAddOption.value.length > 0) {
         // filter dataCopy to only include items that match the localAddOption
@@ -273,11 +274,14 @@ License: AGPL-3.0
     { deep: true }
   )
 
+  watch(() => localSelectedItems.value, () => {
+    $emit('change', localSelectedItems.value)
+  }, { deep: true })
+
   watch(
-    () => localSelectedItems.value,
+    () => data.value,
     () => {
-      console.debug('SSelect localSelectedItems changed', localSelectedItems.value)
-      $emit('change', localSelectedItems.value)
+      initDataCopy()
     }
   )
 
@@ -332,7 +336,9 @@ License: AGPL-3.0
     }
 
     selectOptionIfNotAlready(item)
+    localAddOption.value = ''
     // $emit('change')
+    $emit('change', localSelectedItems.value)
   }
 
   function selectOptionIfNotAlready(item: string) {
@@ -363,6 +369,6 @@ License: AGPL-3.0
     if (!props.multiSelection) {
       localSelectedItems.value = item as T
     }
-    //$emit('change', localSelectedItems.value)
+    $emit('change', localSelectedItems.value)
   }
 </script>

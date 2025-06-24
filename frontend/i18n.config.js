@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-import en from './locale/opsi-webgui_.json'
+import en from './locale/opsi-webgui_en.json'
 import de from './locale/opsi-webgui_de.json'
 
 export default defineI18nConfig(() => {

@@ -103,9 +103,8 @@ License: AGPL-3.0
     50
   )
 
-
   defineExpose({
-    refetch: resetForm
+    refetch: resetForm,
   })
 
   watchEffect(() => {
@@ -120,26 +119,6 @@ License: AGPL-3.0
     return ['created', 'lastSeen'].includes(label)
   }
 
-  async function fetchData() {
-    isLoading.value = true
-    const url =
-      props.type === 'servers'
-        ? `/opsidata/servers?servers=[${props.id}]`
-        : `/opsidata/hosts?hosts=${props.id}`
-    try {
-      const { data, error } = await useApiGETBody<Array<T_ServerAttr | T_ClientAttr>>(url)
-      if (error) throw new Error(error.response?.data?.message || $t('message.error.generic'))
-      if (!data.value)
-        throw new Error($t('message.error.empty-response', { details: 'HostAttributes' }))
-      hostAttributes.value = data.value
-      hostAttributesOriginal.value = JSON.parse(JSON.stringify(data.value))
-      hasUnsavedChanges.value = false
-    } catch (error) {
-      notifyError({ message: error || $t('message.error.unexpected') })
-    }
-    isLoading.value = false
-  }
-
   function setUnsavedChanges() {
     hasUnsavedChanges.value = !objectEqual(hostAttributes.value[0], hostAttributesOriginal.value[0])
   }
@@ -148,28 +127,34 @@ License: AGPL-3.0
     if (props.id) fetchData()
   }
 
+  async function fetchData() {
+    isLoading.value = true
+    const url =
+      props.type === 'servers'
+        ? `/opsidata/servers?servers=[${props.id}]`
+        : `/opsidata/hosts?hosts=${props.id}`
+    try {
+      const { data, error } = await useApiGETBody<Array<T_ServerAttr | T_ClientAttr>>(url)
+      if (error) throw new Error(error.response?.data?.message || $t('message.error.general'))
+      if (!data.value)
+        throw new Error($t('message.error.emptyResponse', { details: 'HostAttributes' }))
+      hostAttributes.value = data.value
+      hostAttributesOriginal.value = JSON.parse(JSON.stringify(data.value))
+      hasUnsavedChanges.value = false
+    } catch (error) {
+      notifyError({ message: error || $t('message.error.general') })
+    }
+    isLoading.value = false
+  }
+
   async function saveHostAttributes() {
     const hostAttr: IObjectString2Any = {
       ...hostAttributes?.value[0],
       uefi: undefined,
     }
-
-    async function fetchData() {
-      isLoading.value = true
-      const url =
-        props.type === 'servers'
-          ? `/opsidata/servers?servers=[${props.id}]`
-          : `/opsidata/hosts?hosts=${props.id}`
-      try {
-        const { data, error } = await useApiGETBody<Array<T_ServerAttr | T_ClientAttr>>(url)
-        if (error) throw new Error(error.response?.data?.message || $t('message.error.general'))
-        if (!data.value)
-          throw new Error($t('message.error.emptyResponse', { details: 'HostAttributes' }))
-        hostAttributes.value = data.value
-        hostAttributesOriginal.value = JSON.parse(JSON.stringify(data.value))
-        hasUnsavedChanges.value = false
-      } catch (error) {
-        notifyError({ message: error || $t('message.error.general') })
+    if (props.type === 'clients' && Object.keys(hostAttr).includes('uefi')) {
+      if (typeof hostAttr.uefi !== 'undefined') {
+        await useSetUEFI($t).setUEFI(hostAttr.hostId, (hostAttr.uefi as string).toString())
       }
     }
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
@@ -177,85 +162,43 @@ License: AGPL-3.0
 
     try {
       const { error } = await useApiPUT(`/opsidata/${props.type}/${hostAttr.hostId}`, hostAttr)
-      if (error) throw new Error(error.response?.data?.message || $t('message.error.generic'))
+      if (error) throw new Error(error.response?.data?.message || $t('message.error.general'))
       notifySuccess({
-        message: $t('message.success.save.hostattributes', {
+        message: $t('message.hostAttributesSaved', {
           host: hostAttr.hostId,
         }),
       })
       hostAttributesOriginal.value = JSON.parse(JSON.stringify(hostAttributes.value))
       hasUnsavedChanges.value = false
     } catch (error) {
-      notifyError({ message: error || $t('message.error.unexpected') })
+      notifyError({ message: error || $t('message.error.general') })
     }
   }
 
-    async function resetForm() {
-      if (props.id) fetchData()
-    }
-
-    async function saveHostAttributes() {
-      const hostAttr: IObjectString2Any = {
-        ...hostAttributes?.value[0],
-        uefi: undefined,
-      }
-      if (props.type === 'clients' && Object.keys(hostAttr).includes('uefi')) {
-        if (typeof hostAttr.uefi !== 'undefined') {
-          await useSetUEFI($t).setUEFI(hostAttr.hostId, (hostAttr.uefi as string).toString())
-        }
-      }
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      notEditable.forEach((attrKey) => delete hostAttr[attrKey])
-
-      try {
-        const { error } = await useApiPUT(`/opsidata/${props.type}/${hostAttr.hostId}`, hostAttr)
-        if (error) throw new Error(error.response?.data?.message || $t('message.error.general'))
-        notifySuccess({
-          message: $t('message.hostAttributesSaved', {
-            host: hostAttr.hostId,
+  async function wsBusMsgObjectChanged(msg: any = undefined) {
+    if (msg && msg.channel === 'event:host_updated') {
+      if (msg.data.id === props.id) {
+        notifyInfo({
+          title: $t('opsiMessageBus'),
+          message: $t('opsiMessageBus.client_updated', {
+            clientId: msg.data.id,
           }),
           button: {
-            label: $t('label.reloadPage'),
+            label: $t('reloadPage'),
             onClick: fetchData,
           },
         })
-        hostAttributesOriginal.value = JSON.parse(JSON.stringify(hostAttributes.value))
-        hasUnsavedChanges.value = false
-      } catch (error) {
-        notifyError({ message: error || $t('message.error.general') })
       }
     }
-
-    async function wsBusMsgObjectChanged(msg: any = undefined) {
-      if (msg && msg.channel === 'event:host_updated') {
-        if (msg.data.id === props.id) {
-          notifyInfo({
-            title: $t('opsiMessageBus'),
-            message: $t('opsiMessageBus.client_updated', {
-              clientId: msg.data.id,
-            }),
-            button: {
-              label: $t('reloadPage'),
-              onClick: fetchData,
-            },
-          })
-        }
-      }
-      if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
-        console.warn($t('opsiMessageBus'), msg)
-      }
+    if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
+      console.warn($t('opsiMessageBus'), msg)
     }
   }
 
-    onBeforeRouteLeave((to, from, next) => {
-      if (hasUnsavedChanges.value) {
-        const answer = window.confirm($t('message.unsavedChanges'))
-        if (answer) {
-          next()
-        } else {
-          next(false)
-        }
-      } else {
+  onBeforeRouteLeave((to, from, next) => {
+    if (hasUnsavedChanges.value) {
+      const answer = window.confirm($t('message.unsavedChanges'))
+      if (answer) {
         next()
       } else {
         next(false)

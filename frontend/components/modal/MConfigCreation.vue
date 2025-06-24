@@ -91,15 +91,7 @@ License: AGPL-3.0
                 ? configdata.defaultValues.values
                 : configdata.defaultValues.value
             "
-            @change="
-              (selection) => {
-                if (!configdata.multiValue.value) {
-                  configdata.defaultValues.value = selection
-                } else {
-                  configdata.defaultValues.values = selection
-                }
-              }
-            "
+            @change="changedDefaultValue"
           />
         </div>
       </div>
@@ -161,7 +153,7 @@ License: AGPL-3.0
     },
     editable: {
       label: $t('editable'),
-      value: props.defaultItem?.editable || true,
+      value: props.defaultItem?.editable || false,
       type: 'boolean',
     },
     multiValue: {
@@ -182,7 +174,7 @@ License: AGPL-3.0
     },
   })
 
-  const dataValid = computed(async () => {
+  const dataValid = computed(() => {
     if (configdata.value.name.value === '') {
       return false
     }
@@ -195,7 +187,7 @@ License: AGPL-3.0
       configdata.value.multiValue.value
         ? configdata.value.defaultValues.values.filter((n: string) => n)
         : [configdata.value.defaultValues.value || ''],
-    set: (value: string | string[]) => {},
+    set: (_: string | string[]) => {},
   })
 
   const possibleValuesWrapper = computed({
@@ -241,7 +233,7 @@ License: AGPL-3.0
   async function checkValid() {
     isLoadingNameExists.value = true
     if (configdata.value.name.value === '') {
-      notifyInfo({ message: $t('message.form.invalid') })
+      notifyInfo({ message: $t('message.configInvalid') })
       isLoadingNameExists.value = false
       return false
     }
@@ -264,7 +256,7 @@ License: AGPL-3.0
     // TODO: save if method is implemented (#763)
     isLoading.value = true
     if (!dataValid.value) {
-      notifyError({ message: $t('message.form.invalid') })
+      notifyError({ message: $t('message.configInvalid') })
       isLoading.value = false
       return
     }
@@ -295,6 +287,15 @@ License: AGPL-3.0
     $emit('refetch')
     visible.value = false
   }
+
+  function changedDefaultValue(selection: any) {
+    if (!configdata.value.multiValue.value) {
+      configdata.value.defaultValues.value = selection
+    } else {
+      configdata.value.defaultValues.values = selection
+    }
+  }
+  
 
   function cancel() {
     if (props.refetchOnCancel) {

@@ -36,6 +36,7 @@ RUN apt-get update \
 # give correct user permissions to DEV_USER
 RUN	adduser ${DEV_USER} sudo \
 	&& chown -R ${DEV_USER}:${DEV_USER} /home/${DEV_USER}/ \
+	&& chown -R ${DEV_USER}:${DEV_USER} /workspace \
 	&& echo "${DEV_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
 	&& cp -r /root/.bash* /home/${DEV_USER}/
 
