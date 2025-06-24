@@ -11,7 +11,7 @@ License: AGPL-3.0
     v-if="multiSelection"
     v-model="localSelectedItems"
     :max-selected-labels="1"
-    v-bind:options="dataCopy"
+    :options="dataCopy"
     class="w-full justify-stretch text-xs"
     show-clear
     size="small"
