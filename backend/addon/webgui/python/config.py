@@ -20,7 +20,7 @@ from sqlalchemy import and_, column, select, table, text, update  # type: ignore
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 
-from .utils import backend, bool_value, mysql, parse_client_list, read_only_check, unicode_value
+from .utils import backend, bool_value, mysql, parse_client_list, read_only_check, unicode_value, unicode_config
 
 config_router = APIRouter()
 
@@ -37,7 +37,6 @@ def get_server_config(
 
 	params: dict = {}
 	where = text("cv.isDefault=1")
-	where = text("")
 	if commons.get("filterQuery"):
 		where = and_(where, text("(c.configId LIKE :search)"))
 		params["search"] = f"%{commons['filterQuery']}%"
@@ -89,19 +88,17 @@ def get_server_config(
 
 				if id_prefix not in config_data:
 					id_prefix = "general"
-				if row_dict.get("multiValue"):
-					val = row_dict.get("value", "")
-					if val:
-						row_dict["value"] = row_dict.get("value", "").split("|")
-					else:
-						row_dict["value"] = []
 
+
+				val = row_dict.get("value", "")
 				if row_dict.get("type") == "BoolConfig":
-					row_dict["value"] = bool_value(row_dict.get("value", ""))
-					pvallist = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
+					pos_val_list = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
+					row_dict["value"] = bool_value(val)
 				else:
-					pvallist = row_dict.get("possibleValues", "").split("|")
-				row_dict["possibleValues"] = list(set(pvallist))  # remove duplicates
+					pos_val_list = row_dict.get("possibleValues", "").split("|")
+					row_dict["value"] = unicode_config(val, multi_value=row_dict.get("multiValue", False), delimiter="|")
+
+				row_dict["possibleValues"] = list(set(pos_val_list))  # remove duplicates
 
 				if row_dict.get("editable", False):
 					row_dict["newValue"] = ""
