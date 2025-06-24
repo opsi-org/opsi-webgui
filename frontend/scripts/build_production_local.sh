@@ -114,6 +114,11 @@ else
     echo "> local install skipped. Please upload the ZIP file to your opsi server and install it manually."
 fi
 
+<<<<<<< HEAD
+=======
+
+# # replace the ADDON_ID and ADDON_NAME in const.py
+>>>>>>> v5
 echo ""
 echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
 echo "IMPORTANT: ZIP file created: $(pwd)/opsi-${ADDON_ID}.zip"
