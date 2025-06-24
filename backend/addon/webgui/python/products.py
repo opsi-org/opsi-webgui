@@ -240,6 +240,9 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 
 	if user_register() and product_group_access_configured(username):
 		allowed_products = get_allowed_products(username)
+		if not allowed_products:
+			logger.warning("No products found for user '%s'.", username)
+			return RESTResponse(data=[], total=0)
 
 	with mysql.session() as session:
 		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")

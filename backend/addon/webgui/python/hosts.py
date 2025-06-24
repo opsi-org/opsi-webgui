@@ -86,6 +86,16 @@ def get_host_data(
 	"""
 	Get host data.
 	"""
+	allowed_clients = None
+	username = get_username()
+	configured = host_group_access_configured(username)
+
+	if user_register() and configured:
+		allowed_clients = get_allowed_clients(username)
+		if not allowed_clients:
+			logger.warning("No clients found for user '%s'.", username)
+			return RESTResponse(data=[], total=0)
+
 	params = {"hosts": [], "search": "", "type": ""}
 	where = text("")
 	if commons.get("filterQuery"):
@@ -98,7 +108,7 @@ def get_host_data(
 		params["type"] = host_type
 		where = and_(where, text("h.type = :type"))  # type: ignore
 
-	allowed_clients = get_allowed_clients(get_username())
+
 	# IF ( "efi" IN
 	# 				,
 	# 				TRUE,

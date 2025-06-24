@@ -98,6 +98,9 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 
 	if user_register() and configured:
 		allowed_clients = get_allowed_clients(username)
+		if not allowed_clients:
+			logger.warning("No clients found for user '%s'.", username)
+			return RESTResponse(data=[], total=0)
 
 	with mysql.session() as session:
 		where = and_(text("h.type = 'OpsiClient'"))
