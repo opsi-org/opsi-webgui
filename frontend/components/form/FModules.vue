@@ -14,7 +14,7 @@ License: AGPL-3.0
     <el-form-item>
       <template #label
         ><h3 class="text-lg font-semibold">
-          {{ $t('form.modules.available') }}
+          {{ $t('availableModules') }}
         </h3></template
       >
       <ul>
@@ -52,7 +52,7 @@ License: AGPL-3.0
     }
     if (!data.value) {
       notifyError({
-        message: $t('message.error.empty-response', { details: 'no modules' }),
+        message: $t('message.error.emptyResponse', { details: 'no modules' }),
       })
       isLoading.value = false
       return

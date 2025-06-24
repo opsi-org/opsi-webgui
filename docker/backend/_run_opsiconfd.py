@@ -6,9 +6,13 @@ import subprocess
 import sys
 import time
 
+port = os.environ.get('OPSICONFD_PORT', 44472)
+print("OPSICONFD_PORT", port)
+
 WAIT_TIME_CLEANUP = 10
 TIMEOUT = 3
-OPSICONFD_CMD = "/workspace/docker/backend/opsiconfd/.venv/bin/python"
+WORKDIR = "/workspace/docker/backend/opsiconfd"
+OPSICONFD_CMD = f"{WORKDIR}/.venv/bin/python"
 OPSICONFD_ARGS = [
     "-m",
     "opsiconfd",
@@ -19,7 +23,6 @@ OPSICONFD_ARGS = [
     "--addon-dirs=/workspace/backend/addon",
     "--static-dir=/workspace/docker/backend/opsiconfd/opsiconfd_data/static",
 ]
-WORKDIR = "/workspace/docker/backend/opsiconfd"
 
 
 def is_root():
@@ -62,7 +65,7 @@ def cleanup():
 def main():
     if not is_root():
         print(
-            "Need to run as root. Eg. `sudo python start_opsiconfd.py`", file=sys.stderr
+            "Need to run as root. Eg. `sudo bash run_opsiconfd.sh`", file=sys.stderr
         )
         sys.exit(1)
 

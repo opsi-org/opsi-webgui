@@ -1,5 +1,13 @@
-version: '3'
+version: '3.8'
 
+
+#include:
+#  - path: ./docker/frontend/docker-compose.yml
+#    project_directory: docker/frontend/
+#    #env_file: docker/frontend/.env
+#  - path: ./docker/backend/docker-compose.yml
+#    project_directory: docker/backend/
+#    #env_file: docker/backend/.env
 
 include:
   - path: ./docker/frontend/docker-compose.yml

@@ -9,6 +9,7 @@ admininterface tests
 """
 
 import json
+import os
 import socket
 import sys
 from datetime import datetime, timedelta
@@ -70,7 +71,7 @@ def create_depot_rpc(opsi_url: str, host_id: str, host_key: str = None):
 		"smb://172.17.0.101/opsi_depot",
 		None,
 		"file:///var/lib/opsi/repository",
-		"webdavs://172.17.0.101:4447/repository",
+		f"webdavs://172.17.0.101:{os.getenv('OPSICONFD_PORT', 4447)}/repository",
 	]
 	rpc_request_data = json.dumps({"id": 1, "method": "host_createOpsiDepotserver", "params": params})
 	res = requests.post(f"{opsi_url}/rpc", auth=(ADMIN_USER, ADMIN_PASS), data=rpc_request_data, verify=False)
@@ -150,9 +151,9 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 	# Host
 	cursor.execute(
 		"INSERT INTO HOST (hostId, type, created, lastSeen) VALUES "
-		f'("pytest-lost-client.uib.local", "OpsiClient", "{now}", "{now-timedelta(days=MONITORING_CHECK_DAYS)}"),'
-		f'("pytest-lost-client-fp.uib.local", "OpsiClient", "{now}", "{now-timedelta(days=MONITORING_CHECK_DAYS)}"),'
-		f'("pytest-lost-client-fp2.uib.local", "OpsiClient", "{now}", "{now-timedelta(days=MONITORING_CHECK_DAYS)}");'
+		f'("pytest-lost-client.uib.local", "OpsiClient", "{now}", "{now - timedelta(days=MONITORING_CHECK_DAYS)}"),'
+		f'("pytest-lost-client-fp.uib.local", "OpsiClient", "{now}", "{now - timedelta(days=MONITORING_CHECK_DAYS)}"),'
+		f'("pytest-lost-client-fp2.uib.local", "OpsiClient", "{now}", "{now - timedelta(days=MONITORING_CHECK_DAYS)}");'
 	)
 
 	create_depot_rpc(config.internal_url, "pytest-test-depot.uib.gmbh")
@@ -188,9 +189,7 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 	)
 
 	# Product Group
-	cursor.execute(
-		"INSERT INTO `GROUP` (type, groupId) VALUES " '("ProductGroup", "pytest-group-1"),' '("ProductGroup", "pytest-group-2");'
-	)
+	cursor.execute('INSERT INTO `GROUP` (type, groupId) VALUES ("ProductGroup", "pytest-group-1"),("ProductGroup", "pytest-group-2");')
 	cursor.execute(
 		"INSERT INTO OBJECT_TO_GROUP (groupType, groupId, objectId) VALUES "
 		'("ProductGroup", "pytest-group-1", "pytest-prod-0"),'

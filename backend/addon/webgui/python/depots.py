@@ -63,7 +63,8 @@ def depot_ids(request: Request) -> RESTResponse:
 	Get all depotIds.
 	"""
 	# TODO Item "None" of "Optional[Any]" has no attribute "user_store"  [union-attr]mypy(error)
-	username = request.scope.get("session", OPSISession("0.0.0.0", 4447)).username
+	# username = request.scope.get("session", OPSISession("0.0.0.0", 4447)).username
+	username = get_username()
 	depot_list = get_depots(username)
 
 	return RESTResponse(data=depot_list)

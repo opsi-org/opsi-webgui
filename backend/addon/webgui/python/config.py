@@ -9,17 +9,18 @@ webgui config methods
 """
 
 import json
-from typing import List, Optional, Union
+from typing import List, Literal, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, status
 from opsiconfd.backend import get_protected_backend
 from opsiconfd.logging import logger
-from opsiconfd.rest import RESTErrorResponse, RESTResponse, common_query_parameters, order_by, rest_api
+from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, common_query_parameters, order_by, rest_api
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, column, select, table, text, update  # type: ignore[import]
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
+from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 
-from .utils import backend, bool_value, mysql, parse_client_list, read_only_check, unicode_value
+from .utils import backend, bool_value, mysql, parse_client_list, read_only_check, unicode_value, unicode_config
 
 config_router = APIRouter()
 
@@ -35,7 +36,8 @@ def get_server_config(
 	"""
 
 	params: dict = {}
-	where = text("isDefault=1")
+	#where = text("cv.isDefault=1")
+	where = text("")
 	if commons.get("filterQuery"):
 		where = and_(where, text("(c.configId LIKE :search)"))
 		params["search"] = f"%{commons['filterQuery']}%"
@@ -93,19 +95,16 @@ def get_server_config(
 
 				if id_prefix not in config_data:
 					id_prefix = "general"
-				if row_dict.get("multiValue"):
-					val = row_dict.get("value", "")
-					if val:
-						row_dict["value"] = row_dict.get("value", "").split("|")
-					else:
-						row_dict["value"] = []
 
+				val = row_dict.get("value", "")
 				if row_dict.get("type") == "BoolConfig":
-					row_dict["value"] = bool_value(row_dict.get("value", ""))
-					pvallist = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
+					pos_val_list = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
+					row_dict["value"] = bool_value(val)
 				else:
-					pvallist = row_dict.get("possibleValues", "").split("|")
-				row_dict["possibleValues"] = list(set(pvallist))  # remove duplicates
+					pos_val_list = row_dict.get("possibleValues", "").split("|")
+					row_dict["value"] = unicode_config(val, multi_value=row_dict.get("multiValue", False), delimiter="|")
+
+				row_dict["possibleValues"] = list(set(pos_val_list))  # remove duplicates
 
 				if row_dict.get("editable", False):
 					row_dict["newValue"] = ""
@@ -306,6 +305,40 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
 	return RESTResponse(data=configs)
 
 
+@config_router.get("/api/opsidata/config/exists/{configid}")
+@rest_api
+def exists_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
+	request: Request, configid: str
+) -> RESTResponse:
+	"""
+	Check if a config exists
+	"""
+	logger.warning("Checking if config %s exists", configid)
+	try:
+		config_ids = backend.config_getIdents()
+		return RESTResponse(data=configid in config_ids)
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not check if config object exists, error: %s", err)
+		raise OpsiApiException(
+			message="Could not check if config object exists.",
+			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			error=err,
+		) from err
+
+
+ConfigType = Literal["UnicodeConfig", "BoolConfig"]
+
+
+class ConfigComplete(BaseModel):  # pylint: disable=too-few-public-methods
+	configId: str
+	editable: bool = False
+	multiValue: bool = False
+	description: Optional[str] = None
+	possibleValues: Optional[List[str]] = None
+	defaultValues: Optional[List[str]] = None
+	type: ConfigType = "UnicodeConfig"
+
+
 class Config(BaseModel):  # pylint: disable=too-few-public-methods
 	configId: str
 	description: str | None = None
@@ -317,10 +350,105 @@ class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
 	configs: List[Config]
 
 
+@config_router.delete("/api/opsidata/config/delete/{configid}")
+@rest_api
+@read_only_check
+def delete_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
+	request: Request, configid: str
+) -> RESTResponse:
+	"""
+	Delete a config
+	"""
+	logger.warning("Deleting config %s", configid)
+	try:
+		# with mysql.session() as session:
+		config_ids = backend.config_getIdents()
+		if configid not in config_ids:
+			logger.error("Could not delete config object.")
+			raise OpsiApiException(
+				message=f"Could not delete config object. Config '{configid}' does not exist",
+				http_status=status.HTTP_404_NOT_FOUND,
+			)
+
+		backend.config_delete(id=configid)
+
+		return RESTResponse()
+	except Exception as err:
+		logger.error("Could not delete config object, error: %s", err)
+		logger.error(err)
+		raise OpsiApiException(
+			message="Could not delete config object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+		) from err
+
+
 @config_router.post("/api/opsidata/config")
 @rest_api
 @read_only_check
-def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
+def create_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
+	request: Request, config: ConfigComplete
+) -> RESTResponse:
+	"""
+	Create a new config
+	"""
+	logger.warning("Creating config %s", config)
+	try:
+		# with mysql.session() as session:
+		config_ids = backend.config_getIdents()
+		if config.configId in config_ids:
+			logger.error("Could not create config object.")
+			raise OpsiApiException(
+				message=f"Config '{config.configId}' already exists",
+				http_status=status.HTTP_409_CONFLICT,
+			)
+
+		if config.type not in ("UnicodeConfig", "BoolConfig"):
+			logger.error("Could not create config object.")
+			raise OpsiApiException(
+				message=f"Config type '{config.type}' is not supported",
+				http_status=status.HTTP_400_BAD_REQUEST,
+			)
+		elif config.type == "BoolConfig":
+			if not config.defaultValues:
+				defaultValue = False
+			elif isinstance(config.defaultValues, list):
+				defaultValue = config.defaultValues[0] if config.defaultValues and len(config.defaultValues) > 0 else False
+			elif isinstance(config.defaultValues, bool):
+				defaultValue = config.defaultValues
+			backend.config_createBool(id=config.configId, description=config.description, defaultValues=[defaultValue])
+		elif config.type == "UnicodeConfig":
+			defaultValues = config.defaultValues if config.defaultValues else []
+			backend.config_createUnicode(
+				id=config.configId,
+				description=config.description,
+				possibleValues=config.possibleValues,
+				defaultValues=defaultValues,
+				multiValue=config.multiValue,
+				editable=config.editable,
+			)
+
+		headers = {"Location": f"{request.url}/{config.configId}"}
+		logger.warning("Config %s created.", backend.config_getObjects(configId=config.configId)[0])
+		return RESTResponse(data=config.model_dump(mode="json"), http_status=status.HTTP_201_CREATED, headers=headers)
+
+	except IntegrityError as err:
+		logger.error("Could not create config object. Already exists. Error: %s", err)
+		return RESTErrorResponse(
+			message=f"Could not create config object. config '{config.configId}' already exists",
+			http_status=status.HTTP_409_CONFLICT,
+			details=err,
+		)
+
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not create config object, error: %s", err)
+		raise OpsiApiException(
+			message="Could not create config object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+		) from err
+
+
+@config_router.post("/api/opsidata/config/values")
+@rest_api
+@read_only_check
+def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
 	request: Request, data: List[Config]
 ) -> RESTResponse:
 	"""
@@ -440,7 +568,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 	return RESTResponse(http_status=status.HTTP_200_OK, data=f"Values for {','.join(ids)} changed.")
 
 
-@config_router.post("/api/opsidata/config/objects")
+@config_router.post("/api/opsidata/config/values/objects")
 @rest_api
 @read_only_check
 def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument

@@ -118,9 +118,6 @@ def build_tree(  # pylint: disable=too-many-branches
 		if "children" not in group:
 			group["children"] = {}
 		group["children"].update(children)
-	# else:
-	# 	if group["type"] == "HostGroup":
-	# 		group["children"] = None
 
 	if not is_root_group and group.get("children"):
 		for child in group["children"].values():
@@ -169,6 +166,10 @@ def _get_bool_config_value(config_id: str) -> bool:
 
 def user_register() -> bool:
 	return _get_bool_config_value("user.{}.register")
+
+
+def host_opsiserver_write_allowed(user: str) -> bool:
+	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.opsiserver.write")
 
 
 def host_group_access_configured(user: str) -> bool:
@@ -298,6 +299,9 @@ def read_only_check(func: Callable) -> Callable:
 			if read_only_user(username):
 				logger.error("User %s is a read only user.", username)
 				raise OpsiApiException(message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN)
+			if not host_opsiserver_write_allowed(username):
+				logger.error("User %s is not allowed to write to server.", username)
+				raise OpsiApiException(message=f"User {username} is not allowed to write to server.", http_status=status.HTTP_403_FORBIDDEN)
 		return func(*args, **kwargs)
 
 	return check_user

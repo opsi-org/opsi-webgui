@@ -4,180 +4,102 @@
   "terminal.integrated.profiles.linux": {
     "zsh": {
       "path": "/usr/bin/zsh",
-      "args": ["-l", "-i"],
+      "args": ["-l", "-i"]
     }
   },
   "terminal.integrated.defaultProfile.linux": "zsh",
-    "[json]": {
-      "diffEditor.ignoreTrimWhitespace": false,
-      "editor.autoIndent": "advanced",
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
-      "editor.formatOnPaste": true,
-      "editor.formatOnSave": true,
-      "editor.formatOnType": true,
-      "editor.insertSpaces": true,
-      "editor.tabSize": 2,
-      "prettier.singleQuote": false
-    },
-    "[yml]": {
-      "prettier.singleQuote": false
-    },
-    "[python]": {
-      "diffEditor.ignoreTrimWhitespace": false
-    },
-    "actionButtons": {
-      "commands": [
-        {
-          // BUILD WEBGUI
-          "color": "white",
-          "command": "npm run clean-full",
-          "cwd": "/workspace/frontend",
-          "name": "$(timeline-refresh)3",
-          "singleInstance": true,
-          "tooltip": "Clean rebuild and install"
-        },
-        // // { // test opened file (if .vue/.stories.js/.test.component.js )
-        // //   "name": "$(testing-run-icon) lint",
-        // //   "tooltip": "Run Lint on opened file",
-        // //   "singleInstance": true,
-        // //   "color": "defaultColor",
-        // //   "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
-        // //   "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'", // This is executed in the terminal.
-        // // },
-        // { // test opened file (if .vue/.stories.js/.test.component.js )
-        //     "name": "$(testing-run-icon) current",
-        //     "tooltip": "Run UI Test on opened file",
-        //     "singleInstance": true,
-        //     "color": "defaultColor",
-        //     "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-        //     "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .test.component.js test:all:components-devices /" // This is executed in the terminal.
-        // },
-        {
-          // update snapshots for opened file (if .vue/.stories.js/.test.component.js )
-          "color": "white",
-          "command": "bash /workspace/frontend/scripts/devhelper.sh ${fileBasename} .test.component.ts pwtest:components:update /", // This is executed in the terminal.
-          "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-          "name": "$(device-camera) current",
-          "singleInstance": true,
-          "tooltip": "Update UI Snapshot"
-        },
-        {
-          // update snapshots for opened file (if .vue/.stories.js/.test.component.js )
-          "color": "white",
-          "command": "bash /workspace/frontend/scripts/devhelper.sh ${fileBasename} .test.component.ts pwtest:components /", // This is executed in the terminal.
-          "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-          "name": "$(testing-run-icon) current",
-          "singleInstance": true,
-          "tooltip": "Update UI Snapshot"
-        },
-        // { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.component.js ) //
-        //     // may not work if currently in develop
-        //     "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-        //     "name": "$(testing-run-all-icon) changed",
-        //     "tooltip": "Run test for changed files",
-        //     "color": "white",
-        //     "singleInstance": true,
-        //     "command": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.component.js test:all:components /" // This is executed in the terminal.
-        // },
-        {
-          // run tests for all files
-          "color": "white",
-          "command": "bash /workspace/frontend/scripts/devhelper.sh all .test.component.ts pwtest:components /", // This is executed in the terminal.
-          "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-          "name": "$(testing-run-all-icon) all",
-          "singleInstance": true,
-          "tooltip": "Run test for all files"
-        },
-        {
-          // run tests accessibility for all files
-          "color": "white",
-          "command": "npm run pwtest:access", // This is executed in the terminal.
-          "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-          "name": "$(testing-run-all-icon) allaccess",
-          "singleInstance": true,
-          "tooltip": "Run test for all files"
-        },
-        {
-          // build dist directory (used in production)
-          "color": "white",
-          "command": "bash /workspace/frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)/..\" install", // This is executed in the terminal.
-          "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-          "name": "$(package) buildDist",
-          "tooltip": "Build productive"
-        }
-        // { // take screenshots for Documentation
-        //     "cwd": "/workspace/opsiweb/screenshots4Docs",
-        //     "name": "$(device-camera) screenshots4Docs",
-        //     "tooltip": "Take screenshots for documentation",
-        //     "color": "white",
-        //     "singleInstance": true,
-        //     "command": "npx playwright test -c playwright-screenshots.config.js take_screenshots/"
-        // }
-      ],
-      "defaultColor": "orange", // Can also use string color names.
-      "loadNpmCommands": false, // Disables automatic generation of actions for npm commands.
-      "reloadButton": "↻" // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
-    },
-    "betterTypeScriptErrors.prettify": true,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.sortJSON": "explicit"
-    },
+  "[json]": {
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.autoIndent": "advanced",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "eslint.onIgnoredFiles": "warn",
-    "eslint.validate": [
-      "javascript",
-      "typescript",
-      "vue",
-      "html",
-      "json",
-      "jsonc"
-    ],
-    "explorer.sortOrder": "type",
-    "files.exclude": {
-      "LICENSE": false,
-      "README.md": false,
-      "/workspace/backend": false,
-      "/workspace/frontend/.config": false,
-      "/workspace/frontend/.nuxt": false,
-      "/workspace/frontend/.output": false,
-      "/workspace/frontend/components.d.ts": false,
-      "/workspace/frontend/dist": false,
-      "/workspace/frontend/node_modules": false,
-      "/workspace/frontend/shims-vue.d.ts": false
-    },
-    "gitlens.blame.toggleMode": "file",
-    "gitlens.changes.locations": ["gutter", "overview"],
-    "gitlens.changes.toggleMode": "window",
-    "gitlens.currentLine.format": "${author, }${agoOrDate}${' via 'pullRequest}${ • message|50?}",
-    "gitlens.heatmap.toggleMode": "file",
-    "i18n-ally.displayLanguage": "opsi-webgui_en",
-    "i18n-ally.enabledFrameworks": ["vue"],
-    "i18n-ally.enabledParsers": ["json"],
-    // "i18n-ally.pathMatcher": "/workspace/frontend/locale/opsi-webgui_{locale}.json",
-    "i18n-ally.keystyle": "flat",
-    "i18n-ally.localesPaths": ["/workspace/frontend/locale/"],
-    "i18n-ally.sourceLanguage": "opsi-webgui_en",
-    "js/ts.implicitProjectConfig.experimentalDecorators": true,
-    //"playwright.cliPath": "/workspace/opsiweb/node_modules/@playwright/test/lib/cli.js",
-    //"playwright.configs": [
-    //  "/workspace/opsiweb/.config/playwright-all-usecases.config.js",
-    //  "/workspace/opsiweb/.config/playwright-all-components.config.js"
-    //],
-    //"playwrightrunner.playwrightCommand": "bash /workspace/frontend/scripts/devhelper.sh all-changed .test.component.js test:all:components /",
-    //"playwrightrunner.playwrightConfigPath": "/workspace/frontend/.config/playwright-all-components.config.js",
-    "prettier.configPath": "/workspace/frontend/.prettierrc",
-    "prettier.requireConfig": false,
-    "python.pythonPath": "/usr/bin/python3",
-    "trailing-spaces.trimOnSave": true,
-    "typescript.enablePromptUseWorkspaceTsdk": true,
-    "typescript.tsdk": "/workspace/frontend/node_modules/typescript/lib",
-    "volar-document.trace.server": "messages",
-    "volar.codeLens.pugTools": true,
-    // // We use Volar instead of Vetur because it's faster, cleaner, and simpler
-    "volar.icon.finder": true,
-    "volar.icon.preview": true,
-    "volar.tsPlugin": true,
-    "volar.tsPluginStatus": true,
-    "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
-    "workspace.isHidden": true
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "prettier.singleQuote": false
+  },
+  "[yml]": {
+    "prettier.singleQuote": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[python]": {
+    "diffEditor.ignoreTrimWhitespace": false
+  },
+  "betterTypeScriptErrors.prettify": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.sortJSON": "explicit"
+  },
+  "eslint.onIgnoredFiles": "warn",
+  "explorer.sortOrder": "type",
+  "gitlens.blame.toggleMode": "file",
+  "gitlens.changes.locations": ["gutter", "overview"],
+  "gitlens.changes.toggleMode": "window",
+  "gitlens.currentLine.format": "${author, }${agoOrDate}${' via 'pullRequest}${ • message|50?}",
+  "gitlens.heatmap.toggleMode": "file",
+  "i18n-ally.displayLanguage": "opsi-webgui_en",
+  "i18n-ally.enabledFrameworks": ["vue"],
+  "i18n-ally.enabledParsers": ["json"],
+  // "i18n-ally.pathMatcher": "/workspace/frontend/locale/opsi-webgui_{locale}.json",
+  "i18n-ally.keystyle": "flat",
+  "i18n-ally.localesPaths": ["/workspace/frontend/locale/"],
+  "i18n-ally.sourceLanguage": "opsi-webgui_en",
+  "js/ts.implicitProjectConfig.experimentalDecorators": true,
+  //"playwright.cliPath": "/workspace/opsiweb/node_modules/@playwright/test/lib/cli.js",
+  //"playwright.configs": [
+  //  "/workspace/opsiweb/.config/playwright-all-usecases.config.js",
+  //  "/workspace/opsiweb/.config/playwright-all-components.config.js"
+  //],
+  //"playwrightrunner.playwrightCommand": "bash /workspace/frontend/scripts/devhelper.sh all-changed .test.component.js test:all:components /",
+  //"playwrightrunner.playwrightConfigPath": "/workspace/frontend/.config/playwright-all-components.config.js",
+  "prettier.configPath": "/workspace/frontend/.prettierrc",
+  "prettier.requireConfig": true,
+  "python.pythonPath": "/usr/bin/python3",
+  "trailing-spaces.trimOnSave": true,
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "/workspace/frontend/node_modules/typescript/lib",
+  "volar-document.trace.server": "messages",
+  "volar.codeLens.pugTools": true,
+  // // We use Volar instead of Vetur because it's faster, cleaner, and simpler
+  "volar.icon.finder": true,
+  "volar.icon.preview": true,
+  "volar.tsPlugin": true,
+  "volar.tsPluginStatus": true,
+  "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
+  "workspace.isHidden": true,
+  "actionButtons": {
+    "defaultColor": "orange", // Can also use string color names.
+    "loadNpmCommands": false, // Disables automatic generation of actions for npm commands.
+    "reloadButton": "↻",
+    "commands": [
+      {
+        // BUILD WEBGUI
+        "command": "npm run clean-full",
+        "cwd": "/workspace/frontend",
+        "name": "$(timeline-refresh)3",
+        "singleInstance": true,
+        "tooltip": "Clean rebuild and install"
+      },
+      {
+        // build dist directory (used in production)
+        "command": "bash /workspace/frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)/..\" install", // This is executed in the terminal.
+        "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
+        "name": "$(package) buildDist",
+        "tooltip": "Build productive"
+      }
+    ]
+  },
+  "editor.autoIndent": "advanced",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "eslint.validate": ["javascript", "typescript", "vue", "html", "json", "jsonc", "yaml"],
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.nuxt": false,
+    "**/.output": true,
+    "**/.config": true,
+    "**/shims-vue.d.ts": true,
+    "**/components.d.ts": true
   }
+}
