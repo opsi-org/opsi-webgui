@@ -6,7 +6,6 @@ All rights reserved.
 License: AGPL-3.0
 */
 import { defineStore } from 'pinia'
-import type { IObjectString2Boolean } from '@/types/tgeneral'
 import type { T_DisaledFeatures, T_configuration, T_configurationResult } from '@/types/APItypes'
 import { useNotification } from '~/composables/mixins/useComponent'
 
