@@ -7,16 +7,27 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="FHostParameter" class="">
-    <el-alert v-if="showWarning" type="warning" show-icon>
+    <el-alert v-if="showWarning" type="warning" show-icon id="hostparam-alert-unselected">
       {{ $t('message.selectItem') }}
+    </el-alert>
+    <el-alert v-if="config.read_only" type="warning" show-icon id="hostparam-alert-readonly">
+      {{ $t('message.readOnlyActive') }}
+    </el-alert>
+    <el-alert
+      v-if="!config.server_write_access"
+      type="warning"
+      show-icon
+      id="hostparam-alert-userrole-write"
+    >
+      {{ $t('message.serverWriteAccessDisabled') }}
     </el-alert>
     <div class="overflow-y-auto tree-table-container" :style="`max-height: ${maxVisibleHeight}px;`">
       <p-tree-table
         ref="configTree"
-        :value="fetchedData"
-        size="small"
-        :auto-layout="true"
         column-resize-mode="fit"
+        size="small"
+        :value="fetchedData"
+        :auto-layout="true"
         :class="mq.isMobile.value ? 'text-xs' : ''"
         :expanded-keys="expandedKeys"
       >
@@ -24,7 +35,7 @@ License: AGPL-3.0
           field="key"
           header=""
           expander
-          class="!max-w-min !w-max border-y-[1px]"
+          class="!max-w-full !w-full border-y-[1px]"
           style="border-color: var(--el-border-color-light)"
         >
           <template #body="slotProps">
@@ -34,20 +45,24 @@ License: AGPL-3.0
               @contextmenu="(e) => onRightClick(e, slotProps.node?.data || {})"
               aria-haspopup="true"
             >
-              <span v-if="slotProps.node.label == slotProps.node.key" class="w-full">{{
-                slotProps.node.label.replaceAll('.', ' / ')
-              }}</span>
+              <span
+                v-if="slotProps.node.label == slotProps.node.key"
+                :class="mq.isMobile.value ? 'flex flex-row-reverse' : 'w-full'"
+                >{{ slotProps.node.label.replaceAll('.', ' / ') }}</span
+              >
               <TooltipTTooltip v-else>
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
                   <span>{{ slotProps.node.key }}</span> <br />
-                  <!--<pre> {{ slotProps.node }}</pre>-->
+                  <pre v-if="!slotProps.node?.children || slotProps.node?.children.length <= 0">
+ {{ slotProps.node }}</pre
+                  >
                 </template>
               </TooltipTTooltip>
 
               <div
                 v-if="mq.isMobile.value && slotProps.node.data?.type !== undefined"
-                style="max-width: calc(100vw - 110px); width: calc(100vw - 110px)"
+                style="max-width: calc(100vw - 160px); width: calc(100vw - 160px)"
               >
                 <p-badge
                   v-if="
@@ -67,20 +82,26 @@ License: AGPL-3.0
                   :value="t_fixed('notOrigin')"
                 />
                 <!-- BOOL CONFIG -->
-                <el-checkbox
+                <p-checkbox
                   v-if="slotProps.node.data.type === 'BoolConfig'"
                   v-model="itemValues[slotProps.node.data.configId]"
-                  :disabled="config.read_only"
-                  class="ml-2 w-full"
-                  :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
+                  binary
+                  class="ml-2"
+                  :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : 'w-full'"
+                  :disabled="config.read_only || !config.server_write_access"
                   @change="
-                    handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
+                    () =>
+                      handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
                   "
                 />
+                <!--
+
+                    -->
                 <!-- UNICODE CONFIG -->
                 <div v-else-if="slotProps.node.data.type === 'UnicodeConfig'">
                   <SelectSSelect
                     :info-id="slotProps.node.data.configId"
+                    :disabled="config.read_only || !config.server_write_access"
                     :editable="slotProps.node.data.editable"
                     :multi-selection="slotProps.node.data.multiValue"
                     v-model:data="slotProps.node.data.possibleValues"
@@ -141,14 +162,17 @@ License: AGPL-3.0
           <template #body="slotProps">
             <div v-if="slotProps.node.data?.type !== undefined" class="w-full min-w-full flex">
               <!-- BOOL CONFIG -->
-              <el-checkbox
+              <p-checkbox
                 v-if="slotProps.node.data.type === 'BoolConfig'"
                 v-model="itemValues[slotProps.node.data.configId]"
-                :disabled="config.read_only"
+                binary
                 class="ml-2 w-full"
                 :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
+                :disabled="config.read_only || !config.server_write_access"
                 @change="
-                  handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
+                  () => {
+                    handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
+                  }
                 "
               />
               <!-- UNICODE CONFIG -->
@@ -161,6 +185,7 @@ License: AGPL-3.0
                   :selected-options="itemValues[slotProps.node.data.configId]"
                   :marked-options="initialValues[slotProps.node.data.configId]"
                   :info-id="slotProps.node.data.configId"
+                  :disabled="config.read_only || !config.server_write_access"
                   @change="
                     () =>
                       handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
@@ -175,6 +200,7 @@ License: AGPL-3.0
     <div
       v-if="fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only"
       class="button-container"
+      id="hostparam-button-container"
       style="display: flex; justify-content: flex-end"
     >
       <!-- TODO: enable if save if method is implemented (#763) -->
@@ -253,7 +279,7 @@ License: AGPL-3.0
   const mq = useMQ()
   const routemenu = ref()
 
-  const config = storeConfigapp().config ?? { read_only: true }
+  const config = storeConfigapp().config ?? { read_only: true, server_write_access: false }
   const lastCMItem = ref<any>()
   const isLoading = ref(false)
   const fetchedData = ref<TreeNode[] | undefined>()
@@ -312,7 +338,15 @@ License: AGPL-3.0
     isChild: { type: Boolean, default: false },
   })
   const { maxVisibleHeight } = useDynamicHeight(
-    ['btop-header', 'globalBreadcrumb', 'config-pre-tabs'],
+    [
+      'btop-header',
+      'globalBreadcrumb',
+      'config-pre-tabs',
+      'hostparam-button-container',
+      'hostparam-alert-userrole-write',
+      'hostparam-alert-readonly',
+      'hostparam-alert-unselected',
+    ],
     props.isChild ? 100 : 50
   )
 

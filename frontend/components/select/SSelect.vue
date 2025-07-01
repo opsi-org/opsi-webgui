@@ -12,6 +12,7 @@ License: AGPL-3.0
     v-model="localSelectedItems"
     :max-selected-labels="1"
     :options="dataCopy"
+    :disabled="disabled"
     class="w-full justify-stretch text-xs"
     show-clear
     size="small"
@@ -88,6 +89,7 @@ License: AGPL-3.0
     data-testId="sselect"
     v-model="localSelectedItems"
     :options="dataCopy"
+    :disabled="disabled"
     size="small"
     overlay-class="sselect-overlay"
     class="w-full justify-stretch text-xs"
@@ -159,6 +161,10 @@ License: AGPL-3.0
   const icons = useIcons()
   const props = defineProps({
     isLoadingData: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
@@ -274,9 +280,13 @@ License: AGPL-3.0
     { deep: true }
   )
 
-  watch(() => localSelectedItems.value, () => {
-    $emit('change', localSelectedItems.value)
-  }, { deep: true })
+  watch(
+    () => localSelectedItems.value,
+    () => {
+      $emit('change', localSelectedItems.value)
+    },
+    { deep: true }
+  )
 
   watch(
     () => data.value,

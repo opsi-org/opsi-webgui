@@ -20,7 +20,7 @@ from sqlalchemy import and_, column, select, table, text, update  # type: ignore
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 
-from .utils import backend, bool_value, mysql, parse_client_list, read_only_check, unicode_value, unicode_config
+from .utils import backend, bool_value, mysql, opsi_server_write_check, parse_client_list, read_only_check, unicode_config, unicode_value
 
 config_router = APIRouter()
 
@@ -36,7 +36,7 @@ def get_server_config(
 	"""
 
 	params: dict = {}
-	#where = text("cv.isDefault=1")
+	# where = text("cv.isDefault=1")
 	where = text("")
 	if commons.get("filterQuery"):
 		where = and_(where, text("(c.configId LIKE :search)"))
@@ -353,6 +353,7 @@ class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
 @config_router.delete("/api/opsidata/config/delete/{configid}")
 @rest_api
 @read_only_check
+@opsi_server_write_check
 def delete_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
 	request: Request, configid: str
 ) -> RESTResponse:
@@ -384,6 +385,7 @@ def delete_config(  # pylint: disable=invalid-name, too-many-locals, too-many-st
 @config_router.post("/api/opsidata/config")
 @rest_api
 @read_only_check
+@opsi_server_write_check
 def create_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
 	request: Request, config: ConfigComplete
 ) -> RESTResponse:
@@ -448,6 +450,7 @@ def create_config(  # pylint: disable=invalid-name, too-many-locals, too-many-st
 @config_router.post("/api/opsidata/config/values")
 @rest_api
 @read_only_check
+@opsi_server_write_check
 def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
 	request: Request, data: List[Config]
 ) -> RESTResponse:
@@ -571,11 +574,12 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 @config_router.post("/api/opsidata/config/values/objects")
 @rest_api
 @read_only_check
+# @opsi_server_write_check
 def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
 	request: Request, data: ConfigStates
 ) -> RESTResponse:
 	"""
-	Save config State
+	Save config State for clients
 	"""
 	changes = []
 
