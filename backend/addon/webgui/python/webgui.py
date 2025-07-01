@@ -9,6 +9,7 @@ webgui
 """
 
 import os
+from collections import Counter
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -92,9 +93,25 @@ async def user_opsiserver() -> JSONResponse:
 	return JSONResponse({"result": get_configserver_id()})
 
 
+
+
 @webgui_router.get("/api/user/configuration")
 def user_configuration() -> JSONResponse:
 	username = get_username()
+	status_counts = {}
+	worst_case_health = "ok"
+
+	healthchecks = list(backend.service_healthCheck(clear_cache=False))
+	if healthchecks:
+		status_order = {"ok": 0, "warning": 1, "error": 2}
+
+		statuses = [check.check_status for check in healthchecks]
+		status_counts = Counter(statuses)
+		worst_case_health = max(
+				(check.check_status for check in healthchecks),
+				key=lambda status: status_order[status],
+				default="ok"
+		)
 	if user_register():
 		return JSONResponse(
 			{
@@ -106,6 +123,10 @@ def user_configuration() -> JSONResponse:
 					"host_group_access": host_group_access_configured(username),
 					"product_group_access": product_group_access_configured(username),
 					"client_creation": client_creation_allowed(username),
+					"health": {
+						"counts": status_counts,
+						"worst_case": worst_case_health
+					}
 				},
 			}
 		)
@@ -119,6 +140,10 @@ def user_configuration() -> JSONResponse:
 				"host_group_access": False,
 				"product_group_access": False,
 				"client_creation": True,
+				"health": {
+					"counts": status_counts,
+					"worst_case": worst_case_health
+				}
 			},
 		}
 	)
