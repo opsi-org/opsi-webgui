@@ -260,10 +260,14 @@ def get_allowed_host_groups(user: str) -> list:
 
 
 def get_allowed_clients(user: str) -> list:
+	#allowed_groups = get_allowed_host_groups(user)
+	all_groups = _get_groups("HostGroup")
 	allowed_groups = get_allowed_host_groups(user)
+	allowed_groups_with_childs = get_all_children_groupids(all_groups, allowed_groups)
+
 	allowed_clients = []
 	with mysql.session() as session:
-		for group in allowed_groups:
+		for group in allowed_groups_with_childs:
 			query = select(text("otg.objectId AS client")).select_from(text("OBJECT_TO_GROUP AS otg")).where(text(f"otg.groupId='{group}'"))
 			otg_result = session.execute(query)
 			otg_result = otg_result.fetchall()
