@@ -7,21 +7,22 @@ License: AGPL-3.0
 */
 import { defineStore } from 'pinia'
 import type { IObjectString2Boolean } from '@/types/tgeneral'
-import type { T_DisaledFeatures, T_configuration } from '@/types/APItypes'
+import type { T_DisaledFeatures, T_configuration, T_configurationResult } from '@/types/APItypes'
 import { useNotification } from '~/composables/mixins/useComponent'
+
 export const storeConfigapp = defineStore('config-app', {
   persist: {
     key: 'opsi-configs',
     storage: localStorage,
   },
   state: () => ({
-    _config: undefined as IObjectString2Boolean | undefined,
+    _config: undefined as T_configurationResult | undefined,
   }),
   getters: {
     config: ({ _config }) => _config,
   },
   actions: {
-    setConfig(obj: IObjectString2Boolean) {
+    setConfig(obj: T_configurationResult) {
       this._config = obj
     },
 
@@ -59,7 +60,7 @@ export const storeConfigapp = defineStore('config-app', {
         return
       }
 
-      const _config: { [key: string]: boolean } = {
+      const _config: T_configurationResult = {
         ...result.data.value.configuration,
       }
       forbidden.data.value.forEach((forbElem: string) => {
