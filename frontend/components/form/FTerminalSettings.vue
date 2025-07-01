@@ -7,10 +7,10 @@ License: AGPL-3.0
 -->
 <template>
   <el-form label-width="50%" :label-position="mq.isMobile.value ? 'top' : 'left'">
-    <el-form-item :label="$t('table.fields.terminalId')">
+    <el-form-item :label="$t('terminalID')">
       <el-input :disabled="disabled" v-model="modelTerminalId" />
     </el-form-item>
-    <el-form-item :label="$t('table.fields.terminalChannel')">
+    <el-form-item :label="$t('terminalChannel')">
       <el-input :disabled="disabled" v-model="modelTerminalChannel" />
     </el-form-item>
     <div class="button-container" style="display: flex; justify-content: flex-end">
@@ -19,10 +19,10 @@ License: AGPL-3.0
         data-testid="terminal-connect-button"
         type="primary"
         @click="emit('click-connect')"
-        >{{ $t('button.reconnect') }}</el-button
+        >{{ $t('connectOrReconnect') }}</el-button
       >
       <el-button :disabled="disabled" type="primary" @click="emit('click-disconnect')">
-        {{ $t('button.disconnect') }}</el-button
+        {{ $t('disconnect') }}</el-button
       >
     </div>
   </el-form>

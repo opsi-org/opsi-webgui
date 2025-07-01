@@ -24,12 +24,13 @@ from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 
+from .groups import read_groups, build_nested_group  # pylint: disable=import-error
 from .depots import get_depots
 from .utils import (
 	backend,
 	bool_value,
 	filter_depot_access,
-	get_allowd_product_groups,
+	get_allowed_product_groups,
 	get_allowed_products,
 	get_depot_of_client,
 	get_groups_ids,
@@ -239,6 +240,9 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 
 	if user_register() and product_group_access_configured(username):
 		allowed_products = get_allowed_products(username)
+		if not allowed_products:
+			logger.warning("No products found for user '%s'.", username)
+			return RESTResponse(data=[], total=0)
 
 	with mysql.session() as session:
 		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
@@ -1298,7 +1302,9 @@ def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
 	Get all product groups as a tree of groups.
 	"""
 
-	allowed = get_allowd_product_groups(get_username())
+	username = get_username()
+	configured = product_group_access_configured(username)
+	allowed = None if not configured else get_allowed_product_groups(username)
 
 	params: dict = {}
 	where = text("g.`type` = 'ProductGroup'")
@@ -1321,39 +1327,13 @@ def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
 
 		result = session.execute(query, params)
 		result = result.fetchall()
-		root_group = {"id": "root", "type": "ProductGroup", "text": "root", "parent": None}
-		all_groups = {}
-		for row in result:
-			if user_register() and product_group_access_configured(get_username()):
-				if row["group_id"] not in allowed:
-					continue
-			if row["group_id"] not in all_groups:
-				all_groups[row["group_id"]] = {
-					"id": row["group_id"],
-					"type": "ProductGroup",
-					"text": row["group_id"],
-					"parent": row["parent_id"] or root_group["id"],
-				}
-			if row["object_id"]:
-				if "children" not in all_groups[row["group_id"]]:
-					all_groups[row["group_id"]]["children"] = {}
-				if row.group_id == row.parent_id:
-					if row["object_id"] not in all_groups:
-						all_groups[row["object_id"]] = {
-							"id": f'{row["object_id"]};{row["parent_id"]}',
-							"type": "ProductGroup",
-							"text": row["object_id"],
-							"parent": row["parent_id"] or root_group["id"],
-						}
-				else:
-					all_groups[row["group_id"]]["children"][row["object_id"]] = {
-						"id": f'{row["object_id"]};{row["group_id"]}',
-						"type": "ObjectToGroup",
-						"text": row["object_id"],
-						"parent": row["group_id"],
-					}
 
-		return RESTResponse(data={"groups": all_groups})
+		all_groups: dict = {}
+		root_group = {"id": "groups", "type": "ProductGroup", "text": "groups", "parent": None}
+		all_groups = read_groups(result, root_group, selected_object_ids=[], allowed=allowed, withClients=True, gtype="ProductGroup")
+
+		product_groups = build_nested_group(root_group, all_groups)
+		return RESTResponse(data={"groups": product_groups})
 
 
 @product_router.get("/api/opsidata/products/groups/{group}")

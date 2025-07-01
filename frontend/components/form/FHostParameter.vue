@@ -7,40 +7,62 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="FHostParameter" class="">
-    <el-alert v-if="showWarning" type="warning" show-icon>
-      {{ $t('alert.select') }}
+    <el-alert v-if="showWarning" type="warning" show-icon id="hostparam-alert-unselected">
+      {{ $t('message.selectItem') }}
+    </el-alert>
+    <el-alert v-if="config.read_only" type="warning" show-icon id="hostparam-alert-readonly">
+      {{ $t('message.readOnlyActive') }}
+    </el-alert>
+    <el-alert
+      v-if="!config.server_write_access"
+      type="warning"
+      show-icon
+      id="hostparam-alert-userrole-write"
+    >
+      {{ $t('message.serverWriteAccessDisabled') }}
     </el-alert>
     <div class="overflow-y-auto tree-table-container" :style="`max-height: ${maxVisibleHeight}px;`">
       <p-tree-table
         ref="configTree"
-        :value="fetchedData"
-        size="small"
-        :auto-layout="true"
         column-resize-mode="fit"
+        size="small"
+        :value="fetchedData"
+        :auto-layout="true"
         :class="mq.isMobile.value ? 'text-xs' : ''"
+        :expanded-keys="expandedKeys"
       >
         <p-column
           field="key"
           header=""
           expander
-          class="!max-w-min !w-max border-y-[1px]"
+          class="!max-w-full !w-full border-y-[1px]"
           style="border-color: var(--el-border-color-light)"
         >
           <template #body="slotProps">
-            <div class="block">
-              <span v-if="slotProps.node.label == slotProps.node.key" class="w-full">{{
-                slotProps.node.label.replaceAll('.', ' / ')
-              }}</span>
+            <div
+              class="block"
+              @click="() => setExpandedRow(slotProps.node)"
+              @contextmenu="(e) => onRightClick(e, slotProps.node?.data || {})"
+              aria-haspopup="true"
+            >
+              <span
+                v-if="slotProps.node.label == slotProps.node.key"
+                :class="mq.isMobile.value ? 'flex flex-row-reverse' : 'w-full'"
+                >{{ slotProps.node.label.replaceAll('.', ' / ') }}</span
+              >
               <TooltipTTooltip v-else>
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
-                  <span>{{ slotProps.node.key }}</span>
+                  <span>{{ slotProps.node.key }}</span> <br />
+                  <pre v-if="!slotProps.node?.children || slotProps.node?.children.length <= 0">
+ {{ slotProps.node }}</pre
+                  >
                 </template>
               </TooltipTTooltip>
 
               <div
                 v-if="mq.isMobile.value && slotProps.node.data?.type !== undefined"
-                style="max-width: calc(100vw - 110px); width: calc(100vw - 110px)"
+                style="max-width: calc(100vw - 160px); width: calc(100vw - 160px)"
               >
                 <p-badge
                   v-if="
@@ -53,33 +75,39 @@ License: AGPL-3.0
                       itemValues[slotProps.node.key] != initialValues[slotProps.node.key])
                   "
                   :title="
-                    $t('message.warning.unsavedChange') +
+                    $t('message.unsavedChangesWithValueinBold') +
                     `\n initial: ${initialValues[slotProps.node.key]} \n current: ${itemValues[slotProps.node.key]}`
                   "
                   severity="warn"
                   :value="t_fixed('notOrigin')"
                 />
                 <!-- BOOL CONFIG -->
-                <el-checkbox
+                <p-checkbox
                   v-if="slotProps.node.data.type === 'BoolConfig'"
                   v-model="itemValues[slotProps.node.data.configId]"
-                  :disabled="config.read_only"
-                  class="ml-2 w-full"
-                  :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
+                  binary
+                  class="ml-2"
+                  :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : 'w-full'"
+                  :disabled="config.read_only || !config.server_write_access"
                   @change="
-                    handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
+                    () =>
+                      handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
                   "
                 />
+                <!--
+
+                    -->
                 <!-- UNICODE CONFIG -->
                 <div v-else-if="slotProps.node.data.type === 'UnicodeConfig'">
                   <SelectSSelect
-                    v-model:selection="itemValues[slotProps.node.data.configId]"
-                    v-model:data="slotProps.node.data.possibleValues"
+                    :info-id="slotProps.node.data.configId"
+                    :disabled="config.read_only || !config.server_write_access"
                     :editable="slotProps.node.data.editable"
                     :multi-selection="slotProps.node.data.multiValue"
+                    v-model:data="slotProps.node.data.possibleValues"
+                    v-model:selection="itemValues[slotProps.node.data.configId]"
                     :selected-options="itemValues[slotProps.node.data.configId]"
                     :marked-options="initialValues[slotProps.node.data.configId]"
-                    :info-id="slotProps.node.data.configId"
                     @change="
                       () =>
                         handleSelection(
@@ -114,7 +142,7 @@ License: AGPL-3.0
                     itemValues[slotProps.node.key] != initialValues[slotProps.node.key])
                 "
                 :title="
-                  $t('message.warning.unsavedChange') +
+                  $t('message.unsavedChanges') +
                   `\n initial: ${initialValues[slotProps.node.key]} \n current: ${itemValues[slotProps.node.key]}`
                 "
                 severity="warn"
@@ -134,14 +162,17 @@ License: AGPL-3.0
           <template #body="slotProps">
             <div v-if="slotProps.node.data?.type !== undefined" class="w-full min-w-full flex">
               <!-- BOOL CONFIG -->
-              <el-checkbox
+              <p-checkbox
                 v-if="slotProps.node.data.type === 'BoolConfig'"
                 v-model="itemValues[slotProps.node.data.configId]"
-                :disabled="config.read_only"
+                binary
                 class="ml-2 w-full"
                 :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
+                :disabled="config.read_only || !config.server_write_access"
                 @change="
-                  handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
+                  () => {
+                    handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
+                  }
                 "
               />
               <!-- UNICODE CONFIG -->
@@ -154,6 +185,7 @@ License: AGPL-3.0
                   :selected-options="itemValues[slotProps.node.data.configId]"
                   :marked-options="initialValues[slotProps.node.data.configId]"
                   :info-id="slotProps.node.data.configId"
+                  :disabled="config.read_only || !config.server_write_access"
                   @change="
                     () =>
                       handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
@@ -168,21 +200,61 @@ License: AGPL-3.0
     <div
       v-if="fetchedData && Object.keys(fetchedData).length > 0 && !config.read_only"
       class="button-container"
+      id="hostparam-button-container"
       style="display: flex; justify-content: flex-end"
     >
       <!-- TODO: enable if save if method is implemented (#763) -->
-      <el-button class="!hidden" @click="createConfigVisible = !createConfigVisible">{{
-        $t('button.create.config')
-      }}</el-button>
-      <el-button @click="fetchFormData">{{ $t('button.reset') }}</el-button>
+      <el-button
+        v-if="isGeneralDefault"
+        @click="() => openCreationModal()"
+        :aria-controls="createConfigVisible ? 'dlg' : null"
+        :aria-expanded="createConfigVisible ? true : false"
+        >{{ $t('addNew') }}</el-button
+      >
+
+      <el-button @click="fetchFormData">{{ $t('reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
         :disabled="!hasUnsavedChanges"
         @click="saveHostParameters"
-        >{{ $t('button.save') }}</el-button
+        >{{ $t('save') }}</el-button
       >
     </div>
-    <ModalMConfigCreation v-if="createConfigVisible" class="!hidden" @refetch="() => {}" />
+    <ModalMConfigCreation
+      v-if="createConfigVisible"
+      v-model:visible="createConfigVisible"
+      :default-item="lastCMItem"
+      class="!hidden"
+      @refetch="fetchFormData"
+    />
+
+    <p-context-menu ref="routemenu" :model="items" v-if="isGeneralDefault">
+      <!--<template #item="{ item, props }">-->
+      <template #item="cdata">
+        <router-link
+          v-if="cdata.item.route"
+          v-slot="{ href, navigate }"
+          :to="cdata.item.route"
+          custom
+        >
+          <a v-ripple :href="href" v-bind="cdata.props.action" @click="navigate">
+            <span :class="cdata.item.icon" />
+            <span class="ml-2">{{ cdata.item.label }}</span>
+          </a>
+        </router-link>
+        <a
+          v-else
+          v-ripple
+          :href="cdata.item.url"
+          :target="cdata.item.target"
+          v-bind="cdata.props.action"
+        >
+          <span :class="cdata.item.icon" />
+          <span class="ml-2">{{ cdata.item.label }}</span>
+        </a>
+      </template>
+    </p-context-menu>
+    <p-confirm-dialog />
   </div>
 </template>
 
@@ -197,12 +269,18 @@ License: AGPL-3.0
   import { useDynamicHeight } from '~/composables/mixins/useDynamicHeightWindow'
   import { useBuildingConfigTree } from '~/composables/useBuildingConfigTree'
   import type { TreeNode } from 'primevue/treenode'
+  import { useConfirm } from 'primevue/useconfirm'
 
+  const confirm = useConfirm()
   const { notifyError, notifyInfo } = useNotification()
   const t_fixed = useStrings().t_fixed
+  const icons = useIcons()
   const $t = useI18n().t
   const mq = useMQ()
-  const config = storeConfigapp().config ?? { read_only: true }
+  const routemenu = ref()
+
+  const config = storeConfigapp().config ?? { read_only: true, server_write_access: false }
+  const lastCMItem = ref<any>()
   const isLoading = ref(false)
   const fetchedData = ref<TreeNode[] | undefined>()
   const itemValues = ref<{ [key: string]: any }>({})
@@ -211,7 +289,46 @@ License: AGPL-3.0
   const changeBuffer = ref<{ [key: string]: any }>({})
   const createConfigVisible = ref(false)
   const configTree = ref<any>(null)
-
+  const expandedKeys = ref<{ [key: string]: boolean }>({})
+  const items = ref([
+    {
+      label: 'Create Config',
+      icon: icons.add,
+      command: () => {
+        createConfigVisible.value = !createConfigVisible.value
+      },
+    },
+    {
+      label: 'Delete config',
+      icon: icons.delete,
+      command: () => {
+        confirm2()
+      },
+    },
+  ])
+  const confirm2 = () => {
+    confirm.require({
+      message: $t('delete.confirmItem', { item: lastCMItem.value?.configId }),
+      header: $t('delete'),
+      icon: useIcons().delete,
+      rejectLabel: $t('cancel'),
+      rejectProps: {
+        label: $t('cancel'),
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptProps: {
+        label: $t('delete'),
+        severity: 'danger',
+      },
+      accept: () => {
+        deleteConfig(lastCMItem.value)
+      },
+      reject: () => {
+        lastCMItem.value = undefined
+      },
+    })
+  }
   const props = defineProps({
     id: { type: String, default: undefined },
     type: {
@@ -221,13 +338,43 @@ License: AGPL-3.0
     isChild: { type: Boolean, default: false },
   })
   const { maxVisibleHeight } = useDynamicHeight(
-    ['btop-header', 'globalBreadcrumb', 'config-pre-tabs'],
+    [
+      'btop-header',
+      'globalBreadcrumb',
+      'config-pre-tabs',
+      'hostparam-button-container',
+      'hostparam-alert-userrole-write',
+      'hostparam-alert-readonly',
+      'hostparam-alert-unselected',
+    ],
     props.isChild ? 100 : 50
   )
+
+  defineExpose({
+    refetch: () => {
+      fetchFormData()
+    },
+  })
 
   const showWarning = computed(() => {
     return !(props.type === 'servers' || props.id)
   })
+
+  const onRightClick = (event: any, node: any) => {
+    if (isGeneralDefault.value) {
+      lastCMItem.value = node
+      routemenu.value.show(event)
+    }
+  }
+
+  function setExpandedRow(node: any) {
+    expandedKeys.value[node.key] = !expandedKeys.value[node.key]
+  }
+
+  function openCreationModal() {
+    lastCMItem.value = undefined
+    createConfigVisible.value = !createConfigVisible.value
+  }
 
   function getInitialValue(item: {
     configId: string
@@ -317,19 +464,21 @@ License: AGPL-3.0
   async function wsBusMsgObjectChanged(msg: any = undefined) {
     if (msg && channels.includes(msg.channel)) {
       notifyInfo({
-        title: $t('message.info.event'),
-        message: $t('message.info.event.config_updated', {
+        title: $t('opsiMessageBus'),
+        message: $t('opsiMessageBus.config_updated', {
           configId: msg.data.configId,
         }),
-        button: { label: $t('label.reloadPage'), onClick: fetch },
+        button: { label: $t('reloadPage'), onClick: fetch },
       })
     }
   }
-
+  const isGeneralDefault = computed(() => {
+    return props.type === 'servers' && !props.id
+  })
   async function fetch() {
     isLoading.value = true
     let endpoint = ''
-    if (props.type === 'clients' || (props.type === 'servers' && props.id)) {
+    if (!isGeneralDefault.value) {
       endpoint = `/opsidata/config/objects/${props.id}`
     } else if (props.type === 'servers') {
       endpoint = '/opsidata/config'
@@ -339,7 +488,21 @@ License: AGPL-3.0
     await fetchHostParameters(endpoint)
     isLoading.value = false
   }
-
+  async function deleteConfig(node: any) {
+    const { error } = await useApiDELETE(`/opsidata/config/delete/${node.configId}`)
+    if (error) {
+      notifyError({ message: error?.response?.data?.message })
+      return
+    }
+    notifyInfo({
+      title: $t('opsiMessageBus'),
+      message: $t('opsiMessageBus.config_deleted', {
+        configId: node.configId,
+      }),
+      button: { label: $t('reloadPage'), onClick: fetch },
+    })
+    fetchFormData()
+  }
   async function fetchHostParameters(endpoint: string) {
     const { data, error } = await useApiGETBody<T_HostParameter>(endpoint)
     if (error) {
@@ -383,13 +546,13 @@ License: AGPL-3.0
     let request: any = []
 
     if (props.type === 'servers' && !props.id) {
-      url = '/opsidata/config'
+      url = '/opsidata/config/values'
       request = Object.keys(changeBuffer.value).map((configId) => ({
         configId,
         value: String(changeBuffer.value[configId]),
       }))
     } else if (props.type === 'clients' || props.type === 'servers') {
-      url = '/opsidata/config/objects'
+      url = '/opsidata/config/values/objects'
       request = {
         objectIds: [props.id as string],
         configs: Object.keys(changeBuffer.value).map((configId) => ({
@@ -411,7 +574,7 @@ License: AGPL-3.0
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsavedChanges'))
+      const answer = window.confirm($t('message.unsavedChanges'))
       if (answer) {
         next()
       } else {
@@ -427,16 +590,20 @@ License: AGPL-3.0
   :deep(.el-form-item__label) {
     height: auto !important;
   }
+
   .tree-table-container {
     padding-left: 16px;
   }
+
   :deep(.p-treetable .p-treetable-toggler) {
     margin-left: 8px;
   }
+
   :deep(.p-treetable .p-treetable-indent) {
     width: 1.5em;
     display: inline-block;
   }
+
   :deep(.p-treetable),
   :deep(.p-treetable .p-treetable-thead > tr > th),
   :deep(.p-treetable .p-treetable-tbody > tr > td),

@@ -119,7 +119,7 @@ export const useTableHelper = (
     } catch (error) {
       totalItems.value = 0
       fetchedData.value = []
-      notifyError({ message: $t('message.error.unexpected') + error })
+      notifyError({ message: $t('message.error.general') + error })
       isLoading.value = false
     } finally {
       isLoading.value = false
@@ -301,7 +301,7 @@ export const useTableHelper = (
 
     if (!colData) {
       console.error(`CellRenderer: col-data not found in: ${JSON.stringify(attributes)}`)
-      return <el-text>{$t('label.undefined')}</el-text>
+      return <el-text>{$t('undefined')}</el-text>
     }
     if (colData.cellRenderer) {
       return colData.cellRenderer({ rowData })
@@ -313,7 +313,7 @@ export const useTableHelper = (
     const colData = attributes['col-data'] || attributes.colData
     if (!colData) {
       console.warn(`HeaderCellRenderer: col-data not found in: ${JSON.stringify(attributes)}`)
-      return <el-text>{$t('label.undefined')}</el-text>
+      return <el-text>{$t('undefined')}</el-text>
     }
     if (colData.headerCellRenderer) {
       return colData.headerCellRenderer()
@@ -326,7 +326,7 @@ export const useTableHelper = (
     return (
       <div>
         {props.actionConfig ? (
-          <el-tooltip content={$t('title.config')} placement="top">
+          <el-tooltip content={$t('configuration')} placement="top">
             <el-button
               link
               onClick={() => handleConfigClick(rowData)}
@@ -337,7 +337,7 @@ export const useTableHelper = (
           </el-tooltip>
         ) : null}
         {props.actionLog ? (
-          <el-tooltip content={$t('title.log')} placement="top">
+          <el-tooltip content={$t('logs')} placement="top">
             <el-button
               link
               onClick={() => handleLogClick(rowData)}
@@ -348,7 +348,7 @@ export const useTableHelper = (
           </el-tooltip>
         ) : null}
         {props.actionClone ? (
-          <el-tooltip content={$t('title.clone')} placement="top">
+          <el-tooltip content={$t('clone')} placement="top">
             <el-button
               link
               disabled={storeConfigapp().config?.read_only}

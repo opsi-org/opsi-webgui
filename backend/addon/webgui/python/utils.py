@@ -82,9 +82,9 @@ def get_allowed_objects() -> dict:
 	# 	allowed["product_groups"] = privileges.get("product.groupaccess.productgroups", [])
 	username = get_username()
 	if product_group_access_configured(username):
-		allowed["product_groups"] = get_allowd_product_groups(username)  # type: ignore[assignment]
+		allowed["product_groups"] = get_allowed_product_groups(username)  # type: ignore[assignment]
 	if host_group_access_configured(username):
-		allowed["host_groups"] = get_allowd_host_groups(username)  # type: ignore[assignment]
+		allowed["host_groups"] = get_allowed_host_groups(username)  # type: ignore[assignment]
 	return allowed
 
 
@@ -123,7 +123,7 @@ def build_tree(  # pylint: disable=too-many-branches
 	if not is_root_group and group.get("children"):
 		for child in group["children"].values():
 			# Correct id for webgui
-			child["id"] = f'{child["id"]};{group["id"]}'
+			child["id"] = f"{child['id']};{group['id']}"
 			if child.get("allowed"):
 				# Allow parent if child is allowed
 				group["allowed"] = True
@@ -145,7 +145,7 @@ def merge_dicts(dict_a: dict, dict_b: dict, path: Optional[List] = None) -> dict
 			elif dict_a[key] == dict_b[key]:
 				pass
 			else:
-				raise Exception(f"Conflict at { '.'.join(path + [str(key)])}")
+				raise Exception(f"Conflict at {'.'.join(path + [str(key)])}")
 		else:
 			dict_a[key] = dict_b[key]
 	return dict_a
@@ -154,13 +154,14 @@ def merge_dicts(dict_a: dict, dict_b: dict, path: Optional[List] = None) -> dict
 def _get_bool_config_value(config_id: str) -> bool:
 	with mysql.session() as session:
 		where = text(f"cv.configId='{config_id}'")
-		query = select(text("cv.value, cv.isDefault")).select_from(text("CONFIG_VALUE AS cv")).where(where)
+		query = select(text("cv.configId, cv.value, cv.isDefault")).select_from(text("CONFIG_VALUE AS cv")).where(where)
 		result = session.execute(query)
 		result = result.fetchall()
 	if result:
 		for row in result:
 			row_dict = dict(row)
-			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") in ["1", "true", "True", True]:
+
 				return True
 	return False
 
@@ -185,6 +186,10 @@ def read_only_user(user: str) -> bool:
 	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.all.registered_readonly")
 
 
+def is_opsiserver_write_permitted(user: str) -> bool:
+	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.opsiserver.write")
+
+
 def client_creation_allowed(user: str) -> bool:
 	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.createclient")
 
@@ -201,8 +206,7 @@ def get_allowed_depots(user: str) -> list:
 			depots.append(dict(row).get("value"))
 	return depots
 
-
-def get_allowd_product_groups(user: str) -> list:
+def get_allowed_product_groups(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.product.groupaccess.productgroups'")
 		where = and_(where, text("cv.isDefault=1"))
@@ -214,8 +218,35 @@ def get_allowd_product_groups(user: str) -> list:
 			groups.append(dict(row).get("value"))
 	return groups
 
+def _get_groups(gtype: str) -> list:
+	"""
+	Helper function to get all groups of a specific type.
+	"""
 
-def get_allowd_host_groups(user: str) -> list:
+	with mysql.session() as session:
+		query = (
+			select(  # type: ignore[arg-type,attr-defined]
+				text(  # type: ignore[arg-type]
+					"""
+					g.groupId AS group_id,
+					g.parentGroupId AS parent_id,
+					g.type AS type
+				"""
+				)
+			)
+			.where(text("g.type = :type"))
+			.select_from(table("GROUP").alias("g"))
+		)
+		result = session.execute(query, params={"type": gtype})
+		result = result.fetchall()
+		groups = []
+		for row in result:
+			if row:
+				groups.append(dict(row))
+		return groups
+
+
+def get_allowed_host_groups(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.host.groupaccess.hostgroups'")
 		where = and_(where, text("cv.isDefault=1"))
@@ -229,10 +260,14 @@ def get_allowd_host_groups(user: str) -> list:
 
 
 def get_allowed_clients(user: str) -> list:
-	allowed_groups = get_allowd_host_groups(user)
+	#allowed_groups = get_allowed_host_groups(user)
+	all_groups = _get_groups("HostGroup")
+	allowed_groups = get_allowed_host_groups(user)
+	allowed_groups_with_childs = get_all_children_groupids(all_groups, allowed_groups)
+
 	allowed_clients = []
 	with mysql.session() as session:
-		for group in allowed_groups:
+		for group in allowed_groups_with_childs:
 			query = select(text("otg.objectId AS client")).select_from(text("OBJECT_TO_GROUP AS otg")).where(text(f"otg.groupId='{group}'"))
 			otg_result = session.execute(query)
 			otg_result = otg_result.fetchall()
@@ -243,7 +278,7 @@ def get_allowed_clients(user: str) -> list:
 
 
 def get_allowed_products(user: str) -> list:
-	allowed_groups = get_allowd_product_groups(user)
+	allowed_groups = get_allowed_product_groups(user)
 	allowed_products = []
 	with mysql.session() as session:
 		for group in allowed_groups:
@@ -266,6 +301,19 @@ def read_only_check(func: Callable) -> Callable:
 			if read_only_user(username):
 				logger.error("User %s is a read only user.", username)
 				raise OpsiApiException(message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN)
+		return func(*args, **kwargs)
+
+	return check_user
+
+
+def opsi_server_write_check(func: Callable) -> Callable:
+	@wraps(func)
+	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
+		if user_register():
+			username = kwargs.get("request").scope.get("session").username
+			if not is_opsiserver_write_permitted(username):
+				logger.error("User %s is has no write access.", username)
+				raise OpsiApiException(message=f"User {username} has no write access.", http_status=status.HTTP_403_FORBIDDEN)
 		return func(*args, **kwargs)
 
 	return check_user
@@ -361,3 +409,34 @@ def get_groups_ids(type: str) -> list[str]:
 			if row:
 				groups.append(dict(row).get("group_id", ""))
 		return groups
+
+
+def get_all_children_groupids(raw_groups: List, group_id: List[str]) -> set[str]:
+	"""
+	Returns all child group IDs for a list of group IDs.
+	"""
+	if not raw_groups or not group_id:
+		return set()
+
+	all_children = set()
+	for gid in group_id:
+		all_children.add(gid)
+		all_children.update(get_all_children_groupid(raw_groups, gid))
+
+	return all_children
+
+
+def get_all_children_groupid(raw_groups: List[str], group_id: str) -> set[str]:
+	"""
+	Returns all child group IDs for a given group ID.
+	"""
+	if not raw_groups:
+		return set()
+
+	all_children = set()
+	for row in raw_groups:
+		if row["parent_id"] == group_id:
+			all_children.add(row["group_id"].lower())
+			all_children.update(get_all_children_groupid(raw_groups, row["group_id"]))
+
+	return all_children

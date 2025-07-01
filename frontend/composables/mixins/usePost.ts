@@ -58,7 +58,7 @@ export const useGroup = (_t: any = undefined) => {
       return
     }
     notifySuccess({
-      message: t('message.success.save.clienttogroups', { client }),
+      message: t('message.successfullyAddedClientToGroups', { client }),
     })
   }
   return { addClientToListOfGroups }
@@ -74,7 +74,7 @@ export const useSetUEFI = (_t: any = undefined) => {
     const { error } = await useApiPOST(`api/opsidata/clients/${clientId}/uefi`, uefi)
     if (error) {
       notifyError({
-        title: t('message.error.uefi'),
+        title: t('message.failedToSetUEFI'),
         message: error?.response?.data?.message,
       })
       return

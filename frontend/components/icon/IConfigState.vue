@@ -12,7 +12,7 @@ License: AGPL-3.0
   <el-text v-else> <slot name="default" /></el-text>
 
   <el-text v-if="props.item.anyObjDiff && props.item.anyObjDiff !== anyObjectDifferentFromDefault">
-    {{ $t('message.error.title') }}
+    {{ $t('error') }}
     <pre>
       {{ props.item }}
     </pre>

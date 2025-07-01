@@ -13,22 +13,22 @@ License: AGPL-3.0
   >
     <section class="mb-0">
       <header class="flex justify-between items-center mb-2">
-        <el-text tag="b" size="small">{{ $t('label.quickselect') }}</el-text>
+        <el-text tag="b" size="small">{{ $t('quickSelect') }}</el-text>
         <el-button
           size="small"
           class="!border-none p-1"
-          :title="$t('button.selection.clear.all')"
+          :title="$t('clearAllSelections')"
           @click="storeSelection.clearAllSelection"
         >
           <IconIIcon :icon="icons.clear" />
-          <span class="sr-only">{{ $t('button.resetAll') }}</span>
+          <span class="sr-only">{{ $t('resetAll') }}</span>
         </el-button>
       </header>
       <TabsTQuickSelections />
     </section>
     <section class="mt-4 mb-0">
       <header class="mb-2">
-        <el-text tag="b" size="small">{{ $t('label.quickaction') }}</el-text>
+        <el-text tag="b" size="small">{{ $t('quickActions') }}</el-text>
       </header>
       <div class="flex justify-evenly">
         <DropdownDDClientActions
@@ -41,7 +41,7 @@ License: AGPL-3.0
     </section>
     <section class="mb-0">
       <header class="mb-2">
-        <el-text tag="b" size="small">{{ $t('title.settings') }}</el-text>
+        <el-text tag="b" size="small">{{ $t('settings') }}</el-text>
       </header>
       <div class="flex justify-evenly">
         <SwitchSMultiselection />
@@ -51,7 +51,7 @@ License: AGPL-3.0
     <footer class="p-4 mt-auto insert-x-0 bottom-0 grid">
       <small class="justify-self-stretch text-center">
         {{ $t('message.login.currentUser', { user: username }) }}
-        {{ $t('label.in_bracets', { value: getText(sessionExpiresIn) }) }}
+        {{ $t('textInBrackets', { value: getText(sessionExpiresIn) }) }}
       </small>
       <div class="flex justify-evenly items-center">
         <SwitchSTheme />

@@ -7,14 +7,14 @@ License: AGPL-3.0
 -->
 <template>
   <div>
-    <TooltipTTooltip :content="$t('label.prodquickaction')">
+    <TooltipTTooltip :content="$t('productQuickActions')">
       <el-button plain @click="popoverVisible = true">
         <IconIIcon :icon="icon.product" />
       </el-button>
     </TooltipTTooltip>
     <el-dialog v-model="popoverVisible">
       <template #header>
-        <h5>{{ $t('label.prodquickaction') }}</h5>
+        <h5>{{ $t('productQuickActions') }}</h5>
       </template>
       <el-form
         v-loading="isLoadingMain || isLoadingDemo"
@@ -23,29 +23,27 @@ License: AGPL-3.0
       >
         <div v-for="(options, category, index) in productActions" :key="index">
           <el-row>
-            <b>{{ $t('title.' + category) }} </b>
+            <b>{{ $t(category) }} </b>
             <ButtonBTNHelpTooltip
-              v-if="
-                $t('title.' + category + '.help.content') !== 'title.' + category + '.help.content'
-              "
-              :content="$t('title.' + category + '.help.content')"
+              v-if="$t(category + '.help') !== category + '.help'"
+              :content="$t(category + '.help')"
             />
           </el-row>
           <div v-for="(value, label) in options" :key="label + value">
             <el-alert
-              v-if="label == 'demoInfo'"
+              v-if="label == 'demoHelp'"
               :title="value"
               type="info"
               show-icon
               :closable="false"
             />
-            <el-form-item v-else :label="$t('table.fields.' + label)">
+            <el-form-item v-else :label="$t(label)">
               <div v-if="label == 'demoResult'" class="max-h-64 min-w-full overflow-y-auto">
                 <div v-if="productActions.demo.demoResult == undefined">
                   {{ EMPTY }}
                 </div>
                 <div v-else-if="Object.keys(productActions.demo.demoResult).length == 0">
-                  {{ $t('message.warning.nodata') }}
+                  {{ $t('message.noResponse') }}
                 </div>
                 <div
                   v-else
@@ -106,12 +104,12 @@ License: AGPL-3.0
         </div>
 
         <div class="button-container" style="display: flex; justify-content: flex-end">
-          <el-button> {{ $t('button.reset') }}</el-button>
+          <el-button> {{ $t('reset') }}</el-button>
           <el-button
             :disabled="productActions.demo.demoResult == undefined"
             :type="productActions.demo.demoResult == undefined ? '' : 'success'"
             @click="executeAction(true)"
-            >{{ $t('button.apply') }}</el-button
+            >{{ $t('apply') }}</el-button
           >
         </div>
       </el-form>
@@ -131,26 +129,24 @@ License: AGPL-3.0
   const isLoadingMain = ref(true)
   const isLoadingDemo = ref(false)
   const activeName = ref('')
-  const NOT_APPLIED = $t('label.noselection')
-  const NO_VALUE = $t('label.novalue')
+  const NOT_APPLIED = $t('notApplied')
+  const NO_VALUE = $t('nullValue')
   const EMPTY = '--'
 
   const productActions = ref({
-    // to add a help button with tooltip after the category title, simply add translation key: title.<category>.help.content to the english translation file (example title.conditions.help.content)
     conditions: {
-      // for translation kex search: $t('title.conditions') // $t('title.conditions.help.content')
+      // $t('conditions.help')
       instStatus: {
-        value: NOT_APPLIED,
         options: ['not_installed', 'installed', 'unknown'], // will be fetched from backend. its just the default values
+        value: NOT_APPLIED,
       },
       actionResult: {
-        value: NOT_APPLIED,
         options: [null, 'null', 'failed', 'successful', 'none'], // will be fetched from backend. its just the default values
+        value: NOT_APPLIED,
       },
-      outdatedonclient: false,
+      outdatedOnClient: false,
     },
     possibleActions: {
-      // for translation kex search: $t('title.possibleActions')
       rowactions: {
         options: ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'],
         value: NOT_APPLIED,
@@ -159,17 +155,15 @@ License: AGPL-3.0
     scope: {
       apply: {
         options: [
-          // future: add server and both
-          $t('label.quickaction.scope.options.both'),
-          $t('label.quickaction.scope.options.server'),
-          $t('label.quickaction.scope.options.clients'),
+          $t('toBothSelectedServersAndClients'),
+          $t('toSelectedServers'),
+          $t('toSelectedClients'),
         ],
-        value: $t('label.quickaction.scope.options.clients'),
+        value: $t('toSelectedClients'),
       },
     },
     demo: {
-      // for translation kex search: $t('title.demo')
-      demoInfo: $t('label.quickaction.demo.info'),
+      demoHelp: $t('demoHelp'),
       demoResult: undefined,
     },
   })
@@ -188,7 +182,7 @@ License: AGPL-3.0
   function mysort(a: string, b: string): number {
     const aa = a === null ? NO_VALUE : a
     const bb = b === null ? NO_VALUE : b
-    return aa.localeCompare(bb)
+    return aa.toString().localeCompare(bb)
   }
 
   async function fetchActionResults() {
@@ -201,7 +195,7 @@ License: AGPL-3.0
       productActions.value.conditions.actionResult.options = [...data.value, NOT_APPLIED]
       productActions.value.conditions.actionResult.value = NOT_APPLIED
     } else {
-      throw new Error('No action results found: ' + JSON.stringify(data.value))
+      throw new Error($t('message.noActionResults') + JSON.stringify(data.value))
     }
   }
   async function fetchInstallationStates() {
@@ -214,23 +208,22 @@ License: AGPL-3.0
       productActions.value.conditions.instStatus.options = [...data.value, NOT_APPLIED]
       productActions.value.conditions.instStatus.value = NOT_APPLIED
     } else {
-      throw new Error('No installation states found ' + JSON.stringify(data.value))
+      throw new Error($t('message.noInstallationStatuses') + JSON.stringify(data.value))
     }
   }
 
   function get_params(demoMode: boolean) {
     const includeClients = [
-      $t('label.quickaction.scope.options.both'),
-      $t('label.quickaction.scope.options.clients'),
+      $t('toBothSelectedServersAndClients'),
+      $t('toSelectedClients'),
     ].includes(productActions.value.scope.apply.value)
-    const includeServer = [
-      $t('label.quickaction.scope.options.both'),
-      $t('label.quickaction.scope.options.server'),
-    ].includes(productActions.value.scope.apply.value)
+    const includeServer = [$t('toBothSelectedServersAndClients'), $t('toSelectedServers')].includes(
+      productActions.value.scope.apply.value
+    )
 
     const params: Record<string, any> = {
       action: productActions.value.possibleActions.rowactions.value || '',
-      outdated: productActions.value.conditions.outdatedonclient,
+      outdated: productActions.value.conditions.outdatedOnClient,
       installation_status: productActions.value.conditions.instStatus.value,
       action_result: productActions.value.conditions.actionResult.value,
       demoMode: demoMode,
@@ -250,7 +243,7 @@ License: AGPL-3.0
       productActions.value.demo.demoResult = undefined
       return
     } else if (params.action === NOT_APPLIED && demoMode === false) {
-      notifyError({ title: $t('message.error.productquickaction') })
+      notifyError({ title: $t('message.chooseAction') })
     } else if (params.action === NOT_APPLIED && demoMode === true) {
       params.action = ''
     }
@@ -282,12 +275,12 @@ License: AGPL-3.0
     if (data.value) {
       productActions.value.demo.demoResult = data.value as any
       if (!demo) {
-        notifySuccess({ message: $t('message.success.save.productactions') })
+        notifySuccess({ message: $t('message.actionApplied') })
       }
       isLoadingDemo.value = false
     } else {
       isLoadingDemo.value = false
-      throw new Error('No installation states found ' + JSON.stringify(data.value))
+      throw new Error($t('message.installationStatusNotFound') + ': ' + JSON.stringify(data.value))
     }
   }
 </script>

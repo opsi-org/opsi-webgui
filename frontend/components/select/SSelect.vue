@@ -7,15 +7,12 @@ License: AGPL-3.0
 -->
 <template>
   <IconILoading v-if="isLoadingData || isLoading" />
-  <el-text> </el-text>
   <p-multi-select
     v-if="multiSelection"
     v-model="localSelectedItems"
-    :options="
-      //
-      localAddOption ? data?.filter((item) => (item as string).includes(localAddOption)) : data
-    "
     :max-selected-labels="1"
+    :options="dataCopy"
+    :disabled="disabled"
     class="w-full justify-stretch text-xs"
     show-clear
     size="small"
@@ -33,23 +30,23 @@ License: AGPL-3.0
       >
         <p-button
           v-if="props.editable && localAddOption.length > 0 && localAddOption == option"
-          :label="$t('button.reset')"
+          :label="$t('reset')"
           severity="primary"
           text
           size="small"
           @click.stop="localAddOption = ''"
         >
-          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+          <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
         <p-button
           v-else-if="props.editable"
-          :label="$t('button.copy')"
+          :label="$t('copy')"
           severity="primary"
           text
           size="small"
           @click.stop="copyItemToInput(option)"
         >
-          <IconIIcon :title="$t('button.copy')" :icon="icons.copy" class="m-1" />
+          <IconIIcon :title="$t('copy')" :icon="icons.copy" class="m-1" />
         </p-button>
         <span class="m-auto">
           {{ option }}
@@ -62,27 +59,27 @@ License: AGPL-3.0
         <p-input-text
           v-model="localAddOption"
           class="w-full"
-          :placeholder="$t('label.add_new')"
+          :placeholder="$t('addNew')"
           @keyup.enter="addItemToOptions(localAddOption)"
         />
 
         <p-button
           v-if="props.editable"
-          :label="$t('button.reset')"
+          :label="$t('reset')"
           severity="secondary"
           text
           @click.stop="localAddOption = ''"
         >
-          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+          <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
         <p-button
-          :label="$t('button.add')"
+          :label="$t('add')"
           severity="secondary"
           text
-          :disabled="data?.includes(localAddOption as T)"
+          :disabled="dataIncludesLocalAddOption()"
           @click="addItemToOptions(localAddOption)"
         >
-          <IconIIcon :title="$t('button.add')" :icon="icons.add" class="m-1" />
+          <IconIIcon :title="$t('add')" :icon="icons.add" class="m-1" />
         </p-button>
       </div>
     </template>
@@ -91,7 +88,8 @@ License: AGPL-3.0
     v-else
     data-testId="sselect"
     v-model="localSelectedItems"
-    :options="data"
+    :options="dataCopy"
+    :disabled="disabled"
     size="small"
     overlay-class="sselect-overlay"
     class="w-full justify-stretch text-xs"
@@ -107,23 +105,23 @@ License: AGPL-3.0
       >
         <p-button
           v-if="props.editable && localAddOption.length > 0 && localAddOption == option"
-          :label="$t('button.reset')"
+          :label="$t('reset')"
           severity="secondary"
           text
           size="small"
           @click.stop="localAddOption = ''"
         >
-          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+          <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
         <p-button
           v-else-if="props.editable"
-          :label="$t('button.copy')"
+          :label="$t('copy')"
           severity="secondary"
           text
           size="small"
           @click.stop="copyItemToInput(option)"
         >
-          <IconIIcon :title="$t('button.copy')" :icon="icons.copy" class="m-1" />
+          <IconIIcon :title="$t('copy')" :icon="icons.copy" class="m-1" />
         </p-button>
         <el-text class="m-auto"> {{ option }} </el-text>
       </span>
@@ -133,26 +131,26 @@ License: AGPL-3.0
         <p-input-text
           v-model="localAddOption"
           class="w-full"
-          :placeholder="$t('label.add_new')"
+          :placeholder="$t('addNew')"
           @keyup.enter="addItemToOptions(localAddOption)"
         />
         <p-button
           v-if="props.editable"
-          :label="$t('button.reset')"
+          :label="$t('reset')"
           severity="secondary"
           text
           @click.stop="localAddOption = ''"
         >
-          <IconIIcon :title="$t('button.reset')" :icon="icons.x" class="m-1" />
+          <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
         <p-button
-          :label="$t('button.add')"
+          :label="$t('add')"
           severity="success"
           text
-          :disabled="data?.includes(localAddOption as T)"
+          :disabled="dataIncludesLocalAddOption()"
           @click="addItemToOptions(localAddOption)"
         >
-          <IconIIcon :title="$t('button.add')" :icon="icons.add" class="m-1" />
+          <IconIIcon :title="$t('add')" :icon="icons.add" class="m-1" />
         </p-button>
       </div>
     </template>
@@ -163,6 +161,10 @@ License: AGPL-3.0
   const icons = useIcons()
   const props = defineProps({
     isLoadingData: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
@@ -221,9 +223,78 @@ License: AGPL-3.0
 
   const $emit = defineEmits(['change'])
   const data = defineModel<T[]>('data')
+  const dataCopy = ref<T[]>([...(data.value ?? [])])
+
   const localSelectedItems = defineModel<T | T[]>('selection')
   const localAddOption = ref<string>('')
   const isLoading = ref(false)
+
+  onMounted(() => {
+    isLoading.value = true
+    dataCopy.value = [...(data.value ?? [])]
+
+    if (!props.allowEmpty) {
+      assert(data.value !== undefined, 'Data is undefined')
+    }
+    ///// TODO: Uncaught (in promise) TypeError: Cannot read properties of undefined (reading '0') at ￼SSelect.vue?t=1737468168440:80:141
+    assert(
+      localSelectedItems.value === undefined ||
+        (isArray(localSelectedItems.value) && props.multiSelection == true) ||
+        (!isArray(localSelectedItems.value) && props.multiSelection == false),
+      `Selection should be array if multiSelection is true (${props.infoId}, multiValue ${props.multiSelection}, selected ${localSelectedItems.value} [${typeof localSelectedItems.value}, isArray ${isArray(
+        localSelectedItems.value
+      )}])`
+    )
+
+    if (localSelectedItems.value === undefined) {
+      // init
+      localSelectedItems.value = (props.multiSelection ? [] : '') as T | T[]
+    }
+
+    if (props.selectedOptions === undefined) {
+      isLoading.value = false
+      return
+    } else if (isArray(props.selectedOptions)) {
+      localSelectedItems.value = props.selectedOptions
+    } else {
+      localSelectedItems.value = props.selectedOptions as T
+    }
+    initDataCopy()
+
+    isLoading.value = false
+  })
+
+  watch(
+    () => localAddOption.value,
+    () => {
+      if (localAddOption.value !== undefined && localAddOption.value.length > 0) {
+        // filter dataCopy to only include items that match the localAddOption
+        dataCopy.value = (data.value ?? []).filter((item) =>
+          item.toString().includes(localAddOption.value)
+        )
+      } else {
+        // reset to full dataCopy
+        dataCopy.value = [...new Set(data.value ?? [])]
+      }
+    },
+    { deep: true }
+  )
+
+  watch(
+    () => localSelectedItems.value,
+    () => {
+      $emit('change', localSelectedItems.value)
+    },
+    { deep: true }
+  )
+
+  watch(
+    () => data.value,
+    () => {
+      initDataCopy()
+    }
+  )
+
   watch(
     () => props.multiSelection,
     (newValue: boolean) => {
@@ -242,64 +313,42 @@ License: AGPL-3.0
     { deep: true }
   )
 
-  onMounted(() => {
-    isLoading.value = true
-    if (!props.allowEmpty) {
-      assert(data.value !== undefined, 'Data is undefined')
-    } else {
-      data.value = data.value ?? []
-    }
-    ///// TODO: Uncaught (in promise) TypeError: Cannot read properties of undefined (reading '0') at ￼SSelect.vue?t=1737468168440:80:141
+  function initDataCopy() {
+    if (props.multiSelection)
+      dataCopy.value = [...new Set([...(data.value as T[]), ...(localSelectedItems.value as T[])])]
+    else dataCopy.value = [...new Set([...(data.value as T[]), localSelectedItems.value as T])]
 
-    assert(
-      localSelectedItems.value === undefined ||
-        (isArray(localSelectedItems.value) && props.multiSelection == true) ||
-        (!isArray(localSelectedItems.value) && props.multiSelection == false),
-      `Selection should be array if multiSelection is true (${props.infoId}, multiValue ${props.multiSelection}, selected ${localSelectedItems.value} [${typeof localSelectedItems.value}, isArray ${isArray(
-        localSelectedItems.value
-      )}])`
-    )
-
-    if (data.value !== undefined) {
-      data.value?.sort((a: any, b: any) =>
+    if (dataCopy.value !== undefined) {
+      dataCopy.value?.sort((a: any, b: any) =>
         // cannot be undefined because of assert
-        a.localeCompare(b, undefined, { numeric: true })
+        a.toString().localeCompare(b, undefined, { numeric: true })
       )
     }
+  }
 
-    if (localSelectedItems.value === undefined) {
-      // init
-      localSelectedItems.value = (props.multiSelection ? [] : '') as T | T[]
-    }
-
-    if (props.selectedOptions === undefined) {
-      isLoading.value = false
-      return
-    } else if (isArray(props.selectedOptions)) {
-      localSelectedItems.value = props.selectedOptions
-    } else {
-      localSelectedItems.value = props.selectedOptions as T
-    }
-    isLoading.value = false
-  })
-
-  watch(
-    localSelectedItems,
-    () => {
-      $emit('change')
-    },
-    { deep: true }
-  )
+  function dataIncludesLocalAddOption() {
+    return (
+      localAddOption.value !== undefined && (data.value as string[]).includes(localAddOption.value)
+    )
+  }
   function copyItemToInput(item: string) {
     localAddOption.value = item
   }
   function addItemToOptions(item: string) {
-    if (!(data.value as string[]).includes(item)) {
+    if (!(dataCopy.value as string[]).includes(item)) {
       ;(data.value as string[]).push(item)
+      ;(dataCopy.value as string[]).push(item)
+      data.value = [...new Set(data.value)]
+      dataCopy.value = [...new Set(dataCopy.value)]
+      dataCopy.value.sort((a: any, b: any) =>
+        a.toString().localeCompare(b, undefined, { numeric: true })
+      )
     }
 
     selectOptionIfNotAlready(item)
+    localAddOption.value = ''
     // $emit('change')
+    $emit('change', localSelectedItems.value)
   }
 
   function selectOptionIfNotAlready(item: string) {
@@ -308,7 +357,10 @@ License: AGPL-3.0
       localSelectedItems.value = props.multiSelection ? [] : ('' as T)
     }
 
-    // bug (reproduction: page=server-configs; config=clientconfig.configserver.url; value=<click directly on button 'add' to add empty icon> ===> this will update markedOptions and itemValues/initialValues in fhostparameter... this should not happen
+    // bug (reproduction: page=server-configs; config=clientconfig.configserver.url;
+    // value=<click directly on button 'add' to add empty icon> ===> this will update
+    // markedOptions and itemValues/initialValues in fhostparameter... this should not happen
+
     // // select if not already
     // if (
     //   isArray(localSelectedItems.value) &&
@@ -319,6 +371,14 @@ License: AGPL-3.0
     // } else
     if (!props.multiSelection) {
       localSelectedItems.value = item as T
+      data.value?.push(item as T)
+    } else if (isArray(localSelectedItems.value) && !localSelectedItems.value.includes(item as T)) {
+      localSelectedItems.value.push(item as T)
+      data.value?.push(item as T)
     }
+    if (!props.multiSelection) {
+      localSelectedItems.value = item as T
+    }
+    $emit('change', localSelectedItems.value)
   }
 </script>

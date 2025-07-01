@@ -30,6 +30,7 @@ from .utils import (
 	get_allowed_objects,
 	get_username,
 	host_group_access_configured,
+	is_opsiserver_write_permitted,
 	mysql,
 	product_group_access_configured,
 	read_only_user,
@@ -100,6 +101,7 @@ def user_configuration() -> JSONResponse:
 				"user": username,
 				"configuration": {
 					"read_only": read_only_user(username),
+					"server_write_access": is_opsiserver_write_permitted(username),
 					"depot_access": depot_access_configured(username),
 					"host_group_access": host_group_access_configured(username),
 					"product_group_access": product_group_access_configured(username),
@@ -112,6 +114,7 @@ def user_configuration() -> JSONResponse:
 			"user": username,
 			"configuration": {
 				"read_only": False,
+				"server_write_access": True,
 				"depot_access": False,
 				"host_group_access": False,
 				"product_group_access": False,
