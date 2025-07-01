@@ -7,12 +7,18 @@ License: AGPL-3.0
 -->
 <template>
   <div id="config-pre-tabs" class="flex">
-    <SelectSHosts v-if="!props.isChild" :id="currentId" :type="type" @change="setId" class="flex-1"/>
+    <SelectSHosts
+      v-if="!props.isChild"
+      :id="currentId"
+      :type="type"
+      @change="setId"
+      class="flex-1"
+    />
     <el-button @click="refetch" :title="$t('reload')" class="flex-none">
       <IconIIcon :icon="useIcons().refetch" />
     </el-button>
   </div>
-  <el-tabs v-model="activeName">
+  <el-tabs v-model="activeName" id="config-tabs">
     <el-tab-pane
       :label="currentId ? $t('parameters') : $t('parameters(default)')"
       name="config"

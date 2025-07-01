@@ -8,7 +8,7 @@
     "@xterm/xterm": "5.5.0",
     "element-plus": "2.9.3",
     "nuxt": "3.15.1",
-    "primevue": "4.2.5",
+    "primevue": "4.3.5",
     "tailwindcss-primeui": "0.3.4",
     "vue3-markdown-it": "1.0.10"
   },
