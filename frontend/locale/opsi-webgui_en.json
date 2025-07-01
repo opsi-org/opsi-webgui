@@ -268,6 +268,7 @@
   "redis_data": "Redis Data",
   "refresh": "Refresh",
   "reload": "Reload",
+  "reloadCache": "Reset cache and reload (This can take while)",
   "reloadOPSIWebGUI": "Reload OPSI WebGUI",
   "reloadPage": "Reload Page",
   "removeRowMarker": "Remove Row Marker",
