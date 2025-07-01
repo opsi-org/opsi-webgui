@@ -10,6 +10,12 @@ License: AGPL-3.0
     <el-alert v-if="showWarning" type="warning" show-icon>
       {{ $t('message.selectItem') }}
     </el-alert>
+    <el-alert v-if="config.read_only" type="warning" show-icon>
+      {{ $t('message.readOnlyActive') }}
+    </el-alert>
+    <el-alert v-if="!config.server_write_access" type="warning" show-icon>
+      {{ $t('message.serverWriteAccessDisabled') }}
+    </el-alert>
     <div class="overflow-y-auto tree-table-container" :style="`max-height: ${maxVisibleHeight}px;`">
       <p-tree-table
         ref="configTree"
@@ -67,12 +73,12 @@ License: AGPL-3.0
                   :value="t_fixed('notOrigin')"
                 />
                 <!-- BOOL CONFIG -->
-                <el-checkbox
+                <p-checkbox
                   v-if="slotProps.node.data.type === 'BoolConfig'"
                   v-model="itemValues[slotProps.node.data.configId]"
-                  :disabled="config.read_only"
                   class="ml-2 w-full"
                   :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
+                  :disabled="config.read_only || !config.server_write_access"
                   @change="
                     handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
                   "
@@ -81,6 +87,7 @@ License: AGPL-3.0
                 <div v-else-if="slotProps.node.data.type === 'UnicodeConfig'">
                   <SelectSSelect
                     :info-id="slotProps.node.data.configId"
+                    :disabled="config.read_only || !config.server_write_access"
                     :editable="slotProps.node.data.editable"
                     :multi-selection="slotProps.node.data.multiValue"
                     v-model:data="slotProps.node.data.possibleValues"
@@ -141,10 +148,10 @@ License: AGPL-3.0
           <template #body="slotProps">
             <div v-if="slotProps.node.data?.type !== undefined" class="w-full min-w-full flex">
               <!-- BOOL CONFIG -->
-              <el-checkbox
+              <p-checkbox
                 v-if="slotProps.node.data.type === 'BoolConfig'"
                 v-model="itemValues[slotProps.node.data.configId]"
-                :disabled="config.read_only"
+                :disabled="config.read_only || !config.server_write_access"
                 class="ml-2 w-full"
                 :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
                 @change="
@@ -161,6 +168,7 @@ License: AGPL-3.0
                   :selected-options="itemValues[slotProps.node.data.configId]"
                   :marked-options="initialValues[slotProps.node.data.configId]"
                   :info-id="slotProps.node.data.configId"
+                  :disabled="config.read_only || !config.server_write_access"
                   @change="
                     () =>
                       handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
@@ -253,7 +261,7 @@ License: AGPL-3.0
   const mq = useMQ()
   const routemenu = ref()
 
-  const config = storeConfigapp().config ?? { read_only: true }
+  const config = storeConfigapp().config ?? { read_only: true, server_write_access: false }
   const lastCMItem = ref<any>()
   const isLoading = ref(false)
   const fetchedData = ref<TreeNode[] | undefined>()
