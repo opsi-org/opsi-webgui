@@ -12,13 +12,20 @@ License: AGPL-3.0
  */
 export interface T_configuration {
   user: string
-  configuration: {
-    read_only: boolean
-    depot_access: boolean
-    host_group_access: boolean
-    product_group_access: boolean
-    client_creation: boolean
+  configuration: T_configurationResult
+}
+export interface T_configurationResult {
+  read_only: boolean
+  depot_access: boolean
+  host_group_access: boolean
+  product_group_access: boolean
+  client_creation: boolean
+  server_write_access: boolean
+  health: {
+    worst_case: 'ok' | 'warning' | 'error'
+    counts: { ok: number; warning: number; error: number }
   }
+  [key: string]: any // disabled features
 }
 
 export type IProductTypes = 'LocalbootProduct' | 'NetbootProduct' | 'Product'

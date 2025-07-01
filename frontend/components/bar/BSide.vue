@@ -23,7 +23,24 @@ License: AGPL-3.0
         >
           <template #title>
             <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-2" />
-            <span v-if="showTitle">{{ $t(item.title) }}</span>
+            <p-overlay-badge
+              v-if="
+                item.title === 'administration' &&
+                !menuOpened('administration') &&
+                config?.health?.worst_case
+              "
+              class="text-xs"
+              :severity="
+                config?.health?.worst_case == 'error'
+                  ? 'danger'
+                  : config?.health?.worst_case == 'warning'
+                    ? 'warning'
+                    : 'success'
+              "
+            >
+              <span v-if="showTitle" class="pr-3">{{ $t(item.title) }}</span>
+            </p-overlay-badge>
+            <span v-else-if="showTitle">{{ $t(item.title) }}</span>
           </template>
           <el-menu-item
             v-for="sub in item.submenu"
@@ -33,7 +50,22 @@ License: AGPL-3.0
             :route="sub.route"
             :data-testid="'NICollapsible-submenu-' + sub.title"
           >
-            <span>{{ $t(sub.title) }}</span>
+            <p-overlay-badge
+              v-if="sub.title === 'healthCheck' && config?.health?.worst_case"
+              class="overlay-badge-value"
+              size="small"
+              :value="config?.health?.counts?.[config?.health?.worst_case] || 5"
+              :severity="
+                config?.health?.worst_case == 'error'
+                  ? 'danger'
+                  : config?.health?.worst_case == 'warning'
+                    ? 'warning'
+                    : 'success'
+              "
+            >
+              <span class="pr-3">{{ $t(sub.title) }}</span>
+            </p-overlay-badge>
+            <span v-else>{{ $t(sub.title) }}</span>
           </el-menu-item>
         </el-sub-menu>
         <el-menu-item
@@ -136,15 +168,26 @@ License: AGPL-3.0
     () => {
       settings.setIsMobile(mq.$mq.value === 'mobile')
       isCollapse.value = menuCollapsed.value && !mq.isMobile.value
-    },
+    }
   )
 
   watch(
     () => isCollapse.value,
     (val) => {
       emit('changeSmall', val)
-    },
+    }
   )
 
   const showTitle = computed(() => mq.isMobile.value || !isCollapse.value)
+
+  function menuOpened(title: string) {
+    const currentRoute = router.currentRoute.value
+    return currentRoute.path.startsWith(title) || currentRoute.path === title
+  }
 </script>
+
+<style lang="css" scoped>
+  :deep(.overlay-badge-value > .p-badge) {
+    transform: translate(50%, 0%) !important;
+  }
+</style>

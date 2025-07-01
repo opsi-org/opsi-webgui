@@ -17,6 +17,15 @@ License: AGPL-3.0
         </p-input-group-addon>
         <p-input-text v-model="filter" :placeholder="$t('search')" />
       </p-input-group>
+      <p-button
+        class="ml-2"
+        :icon="useIcons().refresh"
+        @click="fetch_check(true)"
+        :aria-label="$t('reloadCache')"
+        :title="$t('reloadCache')"
+      >
+        <IconIIcon :icon="useIcons().refresh" />
+      </p-button>
     </div>
     <el-tabs lazy v-model="activeName">
       <el-tab-pane :label="$t('healthCheck')" name="health">
@@ -58,7 +67,7 @@ License: AGPL-3.0
   const fetchedData = ref<any>([])
   const filter = ref('')
   onMounted(async () => {
-    await fetch()
+    await fetch_diagnostics()
   })
   const props = defineProps({
     id: {
@@ -68,7 +77,27 @@ License: AGPL-3.0
   })
   const activeName = ref(props.id || 'health')
   useRouter().replace({ query: { id: activeName.value } })
-  async function fetch() {
+
+  async function fetch_check(clear_cache = false) {
+    isLoading.value = true
+    const { data, error } = await useApiGETBody<any>('/opsidata/server/health', {
+      clear_cache: clear_cache,
+    })
+    if (error) {
+      notifyError({ message: error?.response?.data?.message })
+      isLoading.value = false
+      return
+    }
+    //fetchedData.value = data?.value
+    if (fetchedData.value.health_check) {
+      fetchedData.value.health_check = data?.value || []
+    } else {
+      fetchedData.value = data?.value || {}
+    }
+    isLoading.value = false
+  }
+
+  async function fetch_diagnostics() {
     isLoading.value = true
     const { data, error } = await useApiGETBody('/opsidata/server/diagnostic')
     if (error) {
@@ -79,6 +108,7 @@ License: AGPL-3.0
     fetchedData.value = data?.value
     isLoading.value = false
   }
+
   watch(
     () => activeName.value,
     (newId) => {
