@@ -20,13 +20,13 @@ server_router = APIRouter()
 
 @server_router.get("/api/opsidata/server/health")
 @rest_api
-def get_health_check(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
+def get_health_check(request: Request, clear_cache: bool=False) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	get server health
 	"""
 
 	try:
-		server_health = backend.service_healthCheck()
+		server_health = backend.service_healthCheck(clear_cache=bool(clear_cache))
 
 	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Could not get health check.")
