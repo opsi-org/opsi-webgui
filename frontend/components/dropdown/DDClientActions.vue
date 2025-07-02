@@ -37,7 +37,11 @@ License: AGPL-3.0
             </el-text>
             <el-form label-position="top" class="mt-3" v-loading="isLoading">
               <el-form-item v-if="action == 'notify'" :label="$t('enterNotificationText')">
-                <el-input v-model="notifyText" class="w-100" />
+                <el-input
+                  v-model="notifyText"
+                  class="w-100"
+                  @keydown.enter.prevent="executeClientAction('notify')"
+                />
               </el-form-item>
 
               <div v-if="action == 'deployClientAgent'">
