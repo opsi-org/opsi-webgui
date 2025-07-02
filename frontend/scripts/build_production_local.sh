@@ -43,6 +43,8 @@ cleanup() {
 trap cleanup EXIT
 trap cleanup ERR
 
+#### change owner of working directory
+sudo chown 1000:1000 -R ${WORKING_DIR} || exit 90
 
 # replace the ADDON_ID and ADDON_NAME in const.py
 echo "> update ${PY_CONST_FILE}...."

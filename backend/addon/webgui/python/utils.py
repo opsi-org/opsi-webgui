@@ -12,7 +12,7 @@ import asyncio
 from functools import wraps
 from json import loads  # pylint: disable=no-name-in-module
 from operator import and_
-from typing import Callable, List, Literal, Optional, Union
+from typing import Callable, List, Optional, Union
 
 from fastapi import Query, status
 
@@ -24,8 +24,6 @@ from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
-
-# from .groups import get_all_children_groupids
 
 backend = get_protected_backend()
 
@@ -118,6 +116,9 @@ def build_tree(  # pylint: disable=too-many-branches
 		if "children" not in group:
 			group["children"] = {}
 		group["children"].update(children)
+	# else:
+	# 	if group["type"] == "HostGroup":
+	# 		group["children"] = None
 
 	if not is_root_group and group.get("children"):
 		for child in group["children"].values():
@@ -160,16 +161,13 @@ def _get_bool_config_value(config_id: str) -> bool:
 		for row in result:
 			row_dict = dict(row)
 			if row_dict.get("isDefault") == 1 and row_dict.get("value") in ["1", "true", "True", True]:
+
 				return True
 	return False
 
 
 def user_register() -> bool:
 	return _get_bool_config_value("user.{}.register")
-
-
-def host_opsiserver_write_allowed(user: str) -> bool:
-	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.opsiserver.write")
 
 
 def host_group_access_configured(user: str) -> bool:
@@ -188,6 +186,10 @@ def read_only_user(user: str) -> bool:
 	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.all.registered_readonly")
 
 
+def is_opsiserver_write_permitted(user: str) -> bool:
+	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.opsiserver.write")
+
+
 def client_creation_allowed(user: str) -> bool:
 	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.createclient")
 
@@ -204,7 +206,6 @@ def get_allowed_depots(user: str) -> list:
 			depots.append(dict(row).get("value"))
 	return depots
 
-
 def get_allowed_product_groups(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.product.groupaccess.productgroups'")
@@ -216,7 +217,6 @@ def get_allowed_product_groups(user: str) -> list:
 		for row in result:
 			groups.append(dict(row).get("value"))
 	return groups
-
 
 def _get_groups(gtype: str) -> list:
 	"""
@@ -260,9 +260,11 @@ def get_allowed_host_groups(user: str) -> list:
 
 
 def get_allowed_clients(user: str) -> list:
+	#allowed_groups = get_allowed_host_groups(user)
 	all_groups = _get_groups("HostGroup")
 	allowed_groups = get_allowed_host_groups(user)
 	allowed_groups_with_childs = get_all_children_groupids(all_groups, allowed_groups)
+
 	allowed_clients = []
 	with mysql.session() as session:
 		for group in allowed_groups_with_childs:
@@ -299,9 +301,19 @@ def read_only_check(func: Callable) -> Callable:
 			if read_only_user(username):
 				logger.error("User %s is a read only user.", username)
 				raise OpsiApiException(message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN)
-			if not host_opsiserver_write_allowed(username):
-				logger.error("User %s is not allowed to write to server.", username)
-				raise OpsiApiException(message=f"User {username} is not allowed to write to server.", http_status=status.HTTP_403_FORBIDDEN)
+		return func(*args, **kwargs)
+
+	return check_user
+
+
+def opsi_server_write_check(func: Callable) -> Callable:
+	@wraps(func)
+	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
+		if user_register():
+			username = kwargs.get("request").scope.get("session").username
+			if not is_opsiserver_write_permitted(username):
+				logger.error("User %s is has no write access.", username)
+				raise OpsiApiException(message=f"User {username} has no write access.", http_status=status.HTTP_403_FORBIDDEN)
 		return func(*args, **kwargs)
 
 	return check_user

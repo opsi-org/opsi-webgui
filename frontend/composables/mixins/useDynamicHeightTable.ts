@@ -8,7 +8,14 @@ License: AGPL-3.0
 // import _, { debounce } from 'lodash'
 
 import { useDynamicHeight } from './useDynamicHeightWindow'
-
+/** * Composable to calculate dynamic height of a table based on the available space in the window.
+ * @param actualDataSize
+ * @param currentPage
+ * @param totalItems
+ * @param tableId
+ * @param refetchData
+ * @returns
+ */
 export const useDynamicHeightTable = (
   actualDataSize: Ref,
   currentPage: Ref,
