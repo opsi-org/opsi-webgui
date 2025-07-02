@@ -553,8 +553,7 @@ License: AGPL-3.0
   }
 
   function changeProductsType(type: IProductTypes) {
-    const fullUrl = router.currentRoute.value.fullPath
-    router.push(fullUrl.replace('products/' + currentType.value + '', 'products/' + type + '/'))
+    router.push(`/products/${type}`)
 
     const types: Array<IProductTypes> = Object.keys(
       productsTypeChecked.value
