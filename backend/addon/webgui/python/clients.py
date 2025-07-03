@@ -187,7 +187,6 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 			.subquery(),
 			name="hd",
 		)
-		# print("subquery", client_with_depot)
 		client_select = select(
 			text(  # type: ignore
 				f"""
@@ -257,28 +256,17 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		query = pagination(query, commons)
 
 		result = session.execute(query, params)
-
 		result = result.fetchall()
 
 		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]  # type: ignore
 
 		data = []
-		logger.warning("Total clients found: %s", total)
-		logger.warning("Clients found: %s", result)
-		print("Total clients found:", total)
-		print("Clients found:", result)
 		for row in result:
 			if row is not None:
 				client: dict[str, Any] = dict(row)
 				client["uefi"] = bool(client["uefi"])
 				client["reachable"] = bool(client["reachable"]) if client["reachable"] is not None else None
 				client["selected"] = bool(client["selected"]) if client["selected"] is not None else None
-				# if backend._host_control_use_messagebus is not True:
-				# client["reachable"] = None
-				# elif reachable_clients.get(client["clientId"], False):
-				# client["reachable"] = True
-				# else:
-				# client["reachable"] = False
 				data.append(client)
 
 		return RESTResponse(data=data, total=total)
