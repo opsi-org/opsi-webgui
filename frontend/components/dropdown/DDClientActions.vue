@@ -36,6 +36,10 @@ License: AGPL-3.0
               {{ $t('countMore', { clients: props.clientIds.length }) }}
             </el-text>
             <el-form label-position="top" class="mt-3" v-loading="isLoading">
+              <div v-if="action == 'onDemand'">
+                {{ $t('onDemand.help') }}
+              </div>
+
               <el-form-item v-if="action == 'notify'" :label="$t('enterNotificationText')">
                 <el-input
                   v-model="notifyText"

@@ -233,6 +233,7 @@
   "nullValue": "- null -",
   "objectValues": "Object Values",
   "onDemand": "On-Demand",
+  "onDemand.help": "This will immediately execute all saved product actions on the selected clients.",
   "oneTimePassword": "One-Time Password",
   "opsiClientAgent": "OPSI Client Agent",
   "opsiHostKey": "OPSI Host Key",
