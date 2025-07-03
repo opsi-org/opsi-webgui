@@ -18,7 +18,7 @@ License: AGPL-3.0
           </template>
           <template v-if="activeItem === category">
             <el-form
-              label-width="50%"
+              label-width="30%"
               :label-position="mq.isMobile.value ? 'top' : 'left'"
               class="w-full"
             >

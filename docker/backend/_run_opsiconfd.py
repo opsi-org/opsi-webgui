@@ -13,6 +13,7 @@ WAIT_TIME_CLEANUP = 10
 TIMEOUT = 3
 WORKDIR = "/workspace/docker/backend/opsiconfd"
 OPSICONFD_CMD = f"{WORKDIR}/.venv/bin/python"
+OPSICONFD_ARGS_SETUP = ["-m", "opsiconfd", "setup"]
 OPSICONFD_ARGS = [
     "-m",
     "opsiconfd",
@@ -76,6 +77,7 @@ def main():
     os.chdir(WORKDIR)
 
     try:
+        # subprocess.run([OPSICONFD_CMD] + OPSICONFD_ARGS_SETUP, check=True)
         subprocess.run([OPSICONFD_CMD] + OPSICONFD_ARGS, check=True)
     except subprocess.CalledProcessError as e:
         print(f"error starting opsiconfd: {e}", file=sys.stderr)

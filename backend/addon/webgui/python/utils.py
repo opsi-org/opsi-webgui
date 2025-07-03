@@ -24,6 +24,7 @@ from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
+from sqlalchemy.util import b
 
 backend = get_protected_backend()
 
@@ -161,7 +162,6 @@ def _get_bool_config_value(config_id: str) -> bool:
 		for row in result:
 			row_dict = dict(row)
 			if row_dict.get("isDefault") == 1 and row_dict.get("value") in ["1", "true", "True", True]:
-
 				return True
 	return False
 
@@ -183,7 +183,9 @@ def product_group_access_configured(user: str) -> bool:
 
 
 def read_only_user(user: str) -> bool:
-	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.all.registered_readonly")
+	bak = backend.accessControl_userIsReadOnlyUser()  # if user is in readonly group in /etc/opsi/opsi.conf
+	ur = _get_bool_config_value(f"user.{{{user}}}.privilege.host.all.registered_readonly")  # if user roles read_only
+	return bak or ur
 
 
 def is_opsiserver_write_permitted(user: str) -> bool:
@@ -206,6 +208,7 @@ def get_allowed_depots(user: str) -> list:
 			depots.append(dict(row).get("value"))
 	return depots
 
+
 def get_allowed_product_groups(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.product.groupaccess.productgroups'")
@@ -217,6 +220,7 @@ def get_allowed_product_groups(user: str) -> list:
 		for row in result:
 			groups.append(dict(row).get("value"))
 	return groups
+
 
 def _get_groups(gtype: str) -> list:
 	"""
@@ -260,7 +264,6 @@ def get_allowed_host_groups(user: str) -> list:
 
 
 def get_allowed_clients(user: str) -> list:
-	#allowed_groups = get_allowed_host_groups(user)
 	all_groups = _get_groups("HostGroup")
 	allowed_groups = get_allowed_host_groups(user)
 	allowed_groups_with_childs = get_all_children_groupids(all_groups, allowed_groups)
@@ -296,11 +299,16 @@ def get_allowed_products(user: str) -> list:
 def read_only_check(func: Callable) -> Callable:
 	@wraps(func)
 	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
+		username = kwargs.get("request").scope.get("session").username
 		if user_register():
-			username = kwargs.get("request").scope.get("session").username
 			if read_only_user(username):
-				logger.error("User %s is a read only user.", username)
+				logger.error("User %s is a read only user by user role.", username)
 				raise OpsiApiException(message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN)
+
+		back_read_only = backend.accessControl_userIsReadOnlyUser()
+		if back_read_only:
+			logger.error("User %s is a read only user.", username)
+			raise OpsiApiException(message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN)
 		return func(*args, **kwargs)
 
 	return check_user

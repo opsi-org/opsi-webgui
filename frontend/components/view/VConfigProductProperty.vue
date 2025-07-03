@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <div class="h-[50vh] overflow-y-auto">
-    <el-form label-width="50%" :label-position="mq.isMobile.value ? 'top' : 'left'">
+    <el-form label-width="30%" :label-position="mq.isMobile.value ? 'top' : 'left'">
       <el-form-item
         v-for="item in Object.values(props.properties)"
         :key="item.propertyId"

@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <el-form
-    label-width="50%"
+    label-width="30%"
     :label-position="mq.isMobile.value ? 'top' : 'left'"
     v-loading="isLoading"
   >
