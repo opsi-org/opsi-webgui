@@ -23,8 +23,8 @@ License: AGPL-3.0
         v-model:selection="localSelectedServers"
         v-model:data="dataSorted"
         :multi-selection="selectionStore.multiSelection"
-        :selected-options="selectionStore.multiSelection ? [configserver] : configserver"
-        :marked-options="selectionStore.multiSelection ? [configserver] : configserver"
+        :selected-options="configserverTyped"
+        :marked-options="configserverTyped"
       />
       <div class="flex justify-end gap-2">
         <el-button @click="cancel">{{ $t('cancel') }}</el-button>
@@ -40,6 +40,7 @@ License: AGPL-3.0
   import { useDepot, useConfigserver } from '~/composables/mixins/useGet'
 
   const $t = useI18n().t
+  const configserverTemplate = ref<string>($t('configserverTemplate', { id: 'not found' }))
   const selectionStore = storeSelections()
   const useCServer = await useConfigserver(false, undefined, $t)
 
@@ -50,43 +51,54 @@ License: AGPL-3.0
   })
 
   const { selectionDepots, selectionDefaultDepots } = storeToRefs(selectionStore)
-  const configserver = ref<string>('')
-  const dataSorted = await useDepot($t).getDepotIdList()
+  const configserver = ref<string>((await useCServer.getOpsiConfigServerWithHeaders(false)).data)
+  const dataSorted = ref<string[]>([])
   const localSelectedServers = ref<string | string[]>(
     selectionStore.multiSelection ? selectionDefaultDepots.value : selectionDefaultDepots.value?.[0]
   )
   onMounted(async () => {
-    await initSelect()
+    await initOptions()
   })
 
-  async function initSelect() {
-    // default is first item of data
-    localSelectedServers.value = selectionStore.multiSelection ? [dataSorted?.[0]] : dataSorted?.[0]
-
-    // if configserver is found, use it
-    configserver.value = (await useCServer.getOpsiConfigServerWithHeaders(false)).data
-    if (configserver.value || selectionDefaultDepots.value?.[0] == '<configserver>') {
-      if (configserver.value == undefined) throw new Error('Configserver not found')
-      localSelectedServers.value = selectionStore.multiSelection
-        ? [configserver.value]
-        : configserver.value
+  const configserverTyped = computed(() => {
+    return selectionStore.multiSelection
+      ? [(configserverTemplate.value = $t('configserverTemplate', { id: configserver.value }))]
+      : (configserverTemplate.value = $t('configserverTemplate', { id: configserver.value }))
+  })
+  async function initOptions() {
+    configserverTemplate.value = $t('configserverTemplate', { id: configserver.value })
+    dataSorted.value = [...(await useDepot($t).getDepotIdList()), configserverTemplate.value]
+    if (
+      // replace configserver with configserverTemplate
+      dataSorted.value.includes(configserver.value) &&
+      dataSorted.value.includes(configserverTemplate.value)
+    ) {
+      dataSorted.value = dataSorted.value.filter((item) => item !== configserver.value)
     }
-
-    if (localSelectedServers.value?.[0] !== '<configserver>') {
-      localSelectedServers.value = selectionStore.multiSelection
-        ? selectionDefaultDepots.value
-        : selectionDefaultDepots.value?.[0]
-    }
+    dataSorted.value.sort((a, b) => {
+      // sort so that configserverTemplate is always at the beginning, and the rest is alphabetically sorted
+      if (a === configserverTemplate.value) return -1
+      if (b === configserverTemplate.value) return 1
+      return a.localeCompare(b)
+    })
   }
-  // const localSelectedServers = ref<string|string[]>(configserver ? [configserver] : [])
-
-  function save() {
+  async function save() {
     if (Array.isArray(localSelectedServers.value)) {
+      // replace configserverTemplate with configserver
+      if (localSelectedServers.value.includes(configserverTemplate.value)) {
+        localSelectedServers.value = localSelectedServers.value.filter(
+          (item) => item !== configserverTemplate.value
+        )
+        localSelectedServers.value.push(configserver.value)
+      }
       selectionStore.setSelectionDepots(localSelectedServers.value)
     } else {
+      // replace configserverTemplate with configserver
+      if (localSelectedServers.value == configserverTemplate.value) {
+        localSelectedServers.value = configserver.value
+      }
       selectionStore.setSelectionDepots([localSelectedServers.value])
     }
-    // updateStorage() // currently disabled
     $emit('refetch')
     visible.value = false
   }

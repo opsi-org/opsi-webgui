@@ -55,6 +55,7 @@
   "config_files": "Config Files",
   "configs": "Configs",
   "configserver": "Config Server",
+  "configserverTemplate": "{id} (configserver)",
   "configuration": "Configuration",
   "confirm": "Confirm",
   "connectOrReconnect": "Connect / Reconnect",
