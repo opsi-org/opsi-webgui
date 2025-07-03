@@ -11,7 +11,7 @@ License: AGPL-3.0
       <h3 class="mt-4 text-lg font-semibold">
         {{ $t(section) }}
       </h3>
-      <el-form label-width="50%" :label-position="mq.isMobile.value ? 'top' : 'left'">
+      <el-form label-width="30%" :label-position="mq.isMobile.value ? 'top' : 'left'">
         <el-form-item v-for="(action, index) in actions" :key="index" :label="$t(action)">
           <div :style="mq.isMobile.value ? '' : 'display: flex; align-items: center;'">
             <el-select
