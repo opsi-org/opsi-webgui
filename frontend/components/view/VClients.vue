@@ -100,7 +100,7 @@ License: AGPL-3.0
           }
         )
         return storeSelection.multiSelection ? (
-          <Checkbox model-value={rowData.selected} binary />
+          <Checkbox model-value={rowData.selected} binary readonly />
         ) : (
           <RadioButton
             model-value={rowData.selected}
@@ -316,8 +316,7 @@ License: AGPL-3.0
       },
       cellRenderer: ({ rowData }: any) => {
         let reachable: boolean | undefined = rowData.reachable
-        if (rowData.reachable == undefined)
-          reachable = reachableClients.value[rowData.clientId]
+        if (rowData.reachable == undefined) reachable = reachableClients.value[rowData.clientId]
         switch (reachable) {
           case true:
             return <IIcon icon={icons.check} title={$t('message.clientIsReachable')} />

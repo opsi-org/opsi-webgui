@@ -81,12 +81,8 @@ License: AGPL-3.0
   }
   const fetchedData = ref<any>([])
   const selectionStore = storeSelections()
-  const {
-    selectionDepots,
-    selectionClients,
-    selectionProducts,
-    multiSelection,
-  } = storeToRefs(selectionStore)
+  const { selectionDepots, selectionClients, selectionProducts, multiSelection } =
+    storeToRefs(selectionStore)
 
   const getInitialSelection = () => {
     if (multiSelection.value) return ''
@@ -255,8 +251,9 @@ License: AGPL-3.0
     const is_selected_before_click: boolean = _getSelection().value.includes(node.text)
     if (node.type == 'ObjectToGroup') {
       if (!isMultiSelect) {
+        // isSingleSelect
         setSelectionFunction(is_selected_before_click ? [] : [node.text])
-      } else if (obj.checkedKeys?.includes(node.id) || !is_selected_before_click) {
+      } else if (obj.checkedKeys?.includes(node.text) || !is_selected_before_click) {
         selection.value.push(node.text)
         setSelectionFunction([...new Set(selection.value)]) // unique values
       } else if (is_selected_before_click) {
@@ -267,12 +264,12 @@ License: AGPL-3.0
           obj.checkedKeys?.splice(obj.checkedKeys.indexOf(id), 1)
         }
       }
-    } else if (isMultiSelect) { // its also a group
+    } else if (isMultiSelect) {
+      // its also a group
       node.children?.forEach((child: TreeNodeData) => {
         toggleNodeSelection(child, obj, selection, setSelectionFunction)
       })
     }
-    setSelectionFunction(is_selected_before_click ? [] : [node.text])
   }
   function _getSelectionFunction() {
     return props.grouptype == GroupTree_CLIENTGROUP
@@ -295,19 +292,17 @@ License: AGPL-3.0
   :deep(.el-tree-node.isEmpty) {
     color: var(--color-opsi-medium-gray) !important;
   }
-  :deep(.el-tree-node.isLeaf .el-tree-node__expand-icon.is-leaf ) {
+  :deep(.el-tree-node.isLeaf .el-tree-node__expand-icon.is-leaf) {
     display: none !important;
   }
   :deep(.el-tree-node.isLeaf > .el-tree-node__content > .el-checkbox > span) {
     padding-left: 15px !important;
   }
 
-  .isSingleSelect
-    :deep(.el-tree-node > .el-tree-node__content > .el-checkbox > span) {
+  .isSingleSelect :deep(.el-tree-node > .el-tree-node__content > .el-checkbox > span) {
     display: none !important;
   }
-  .isSingleSelect
-    :deep(.el-tree-node.isGroup > .el-tree-node__content > span) {
+  .isSingleSelect :deep(.el-tree-node.isGroup > .el-tree-node__content > span) {
     padding-left: 5px !important;
   }
 </style>
