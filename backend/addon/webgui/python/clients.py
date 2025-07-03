@@ -686,7 +686,6 @@ def unblock_client(request: Request, client: str) -> RESTResponse:  # pylint: di
 
 @client_router.get("/api/opsidata/blocked-clients")
 @rest_api
-@read_only_check
 def blocked_clients(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	blocked clients
