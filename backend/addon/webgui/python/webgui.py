@@ -93,8 +93,6 @@ async def user_opsiserver() -> JSONResponse:
 	return JSONResponse({"result": get_configserver_id()})
 
 
-
-
 @webgui_router.get("/api/user/configuration")
 def user_configuration() -> JSONResponse:
 	username = get_username()
@@ -107,11 +105,8 @@ def user_configuration() -> JSONResponse:
 
 		statuses = [check.check_status for check in healthchecks]
 		status_counts = Counter(statuses)
-		worst_case_health = max(
-				(check.check_status for check in healthchecks),
-				key=lambda status: status_order[status],
-				default="ok"
-		)
+		worst_case_health = max((check.check_status for check in healthchecks), key=lambda status: status_order[status], default="ok")
+
 	if user_register():
 		return JSONResponse(
 			{
@@ -123,10 +118,7 @@ def user_configuration() -> JSONResponse:
 					"host_group_access": host_group_access_configured(username),
 					"product_group_access": product_group_access_configured(username),
 					"client_creation": client_creation_allowed(username),
-					"health": {
-						"counts": status_counts,
-						"worst_case": worst_case_health
-					}
+					"health": {"counts": status_counts, "worst_case": worst_case_health},
 				},
 			}
 		)
@@ -134,16 +126,13 @@ def user_configuration() -> JSONResponse:
 		{
 			"user": username,
 			"configuration": {
-				"read_only": False,
+				"read_only": read_only_user(username),
 				"server_write_access": True,
 				"depot_access": False,
 				"host_group_access": False,
 				"product_group_access": False,
 				"client_creation": True,
-				"health": {
-					"counts": status_counts,
-					"worst_case": worst_case_health
-				}
+				"health": {"counts": status_counts, "worst_case": worst_case_health},
 			},
 		}
 	)
