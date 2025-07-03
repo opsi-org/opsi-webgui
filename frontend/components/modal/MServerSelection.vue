@@ -62,8 +62,8 @@ License: AGPL-3.0
 
   const configserverTyped = computed(() => {
     return selectionStore.multiSelection
-      ? [(configserverTemplate.value = $t('configserverTemplate', { id: configserver.value }))]
-      : (configserverTemplate.value = $t('configserverTemplate', { id: configserver.value }))
+      ? [$t('configserverTemplate', { id: configserver.value })]
+      : $t('configserverTemplate', { id: configserver.value })
   })
   async function initOptions() {
     configserverTemplate.value = $t('configserverTemplate', { id: configserver.value })
