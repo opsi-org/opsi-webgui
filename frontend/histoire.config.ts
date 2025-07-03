@@ -8,16 +8,12 @@ License: AGPL-3.0
 import { defineConfig } from 'histoire'
 import { HstVue } from '@histoire/plugin-vue'
 import { HstNuxt } from '@histoire/plugin-nuxt'
-// import './assets/scss/bv-colors.scss'
 
 const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? '4447'
-// console.log('OPSI CONFD PORT IN HISTOIRE', CONFD_PORT)
 
 export default defineConfig({
   plugins: [HstVue(), HstNuxt()],
-  // autoApplyContrastColor: true,
   collectMaxThreads: 4, // 8 threads takes longer..
-  // setupFile: './histoire/histoire-setup.ts',
   setupFile: 'histoire-setup.ts',
   tree: {
     file: (file) => [...file.path.split('/').slice(1, -1), file.title],
@@ -32,7 +28,6 @@ export default defineConfig({
     },
 
     colors: {
-      // primary: defaultColors.red,
       primary: {
         100: '#8B8B8B', // light menu hovered
         200: '#C0C0C0', // light variant title text
@@ -47,26 +42,8 @@ export default defineConfig({
       },
     },
     favicon: './public/favicon-bee.ico',
-    // './public/images/UIB_1704_2023_OPSI_Logo_Bildmarke_nur_Biene_quer.png',
-    // defaultColorScheme: 'dark',
-    // darkClass: 'webgui-theme-dark dark', // not whitespaces allowed
     darkClass: 'dark',
-    // storeColorScheme: true
-    // colors: {
-    //   gray: defaultColors.zinc,
-    //   primary: defaultColors.cyan
-    // }
   },
-  // defaultStoryProps: {
-  //   // icon: 'carbon:assembly-reference',
-  //   // iconColor: '#00c5a5',
-  //   // layout: {
-  //   //   type: 'grid',
-  //   //   width: 300,
-  //   // },
-  //   // responsiveDisabled: true,
-  //   // autoPropsDisabled: true,
-  // },
   vite: {
     server: {
       host: '0.0.0.0', // of histoire
@@ -79,15 +56,12 @@ export default defineConfig({
       proxy: {
         '/addons/webgui/api': {
           target: 'https://localhost:' + CONFD_PORT + '/',
-          // changeOrigin: true,
-          // rewrite: (path) => path.replace(/^\/api/, ""),
         },
       },
     },
     css: {
       preprocessorOptions: {
         scss: {
-          // additionalData: `@use "@/assets/scss/element/index.scss" as element;`,
           additionalData: `@use "@/assets/scss/opsi.scss" as *;`,
         },
       },

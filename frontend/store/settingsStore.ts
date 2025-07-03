@@ -11,16 +11,13 @@ import { useColorMode } from '@vueuse/core'
 type t_theme = 'light' | 'dark'
 
 export const storeSettings = defineStore('settings', {
-  // persist: false,
   persist: {
     key: 'opsi-settings',
     storage: localStorage,
-    // storage: sessionStorage,
   },
   state: () => ({
     isMobile: useMQ().isMobile.value as boolean,
     language: 'en',
-    quicksave: false,
     quickpanelOpened: true as boolean,
     msgbusAutoRefresh: true as boolean,
     menuCollapsed: false as boolean,
@@ -48,17 +45,12 @@ export const storeSettings = defineStore('settings', {
       this.language = lang
       useCookie('Language').value = this.language
     },
-    setQuicksave(isQuickSave: boolean) {
-      this.quicksave = isQuickSave
-      useCookie('Quicksave').value = isQuickSave ? 'true' : 'false'
-    },
     setQuickpanelOpened(isQuickpanelOpened: boolean) {
       this.quickpanelOpened = isQuickpanelOpened
       useCookie('QuickpanelOpened').value = isQuickpanelOpened ? 'true' : 'false'
     },
     setMenuCollapsed(isMenuCollapsed: boolean) {
       this.menuCollapsed = isMenuCollapsed
-      // useCookie('MenuCollapsed').value = isMenuCollapsed ? 'true' : 'false'
     },
     setIsMobile(isMobile: boolean) {
       // only for testing purpose

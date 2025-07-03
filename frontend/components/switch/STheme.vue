@@ -17,7 +17,7 @@ License: AGPL-3.0
       data-testid="theme-toggle"
     />
     <label for="cbAutorefresh" class="text-xs text-white !pb-1" :class="isDarkMode ? '' : 'pl-4'">{{
-      isDarkMode ? $t('form.theme.cbvalue.on') : $t('form.theme.cbvalue.off')
+      isDarkMode ? $t('dark') : $t('light')
     }}</label>
   </PFloatLabel>
 </template>

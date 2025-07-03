@@ -88,13 +88,9 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
-  import { useNotification } from '~/composables/mixins/useComponent'
   import { useTimer } from '~/composables/mixins/useCounter'
-  import type { T_DisaledFeatures, T_configuration } from '~/types/APItypes'
 
   useTimer(true) // timer for session expiry (showed in quickpanel, but initialized here)
-  const { notifyError } = useNotification()
-  const $t = useI18n().t
   const mq = useMQ()
 
   const configapp = storeConfigapp()
@@ -108,11 +104,12 @@ License: AGPL-3.0
   // init
   onMounted(async () => {
     // check if user is logged in
-    await checkConfig()
+    await configapp.initConfig()
     settings.initColormode()
     leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
     rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
   })
+
   watch(
     () => mq.$mq.value,
     () => {
@@ -128,13 +125,7 @@ License: AGPL-3.0
       toggleSide('left')
     }
   })
-  // const bgQuickPanel = computed(() => {
-  //   return isDarkMode.value
-  //     ? mq.isMobile.value
-  //       ? 'bg-opsi-gray'
-  //       : 'bg-opsi-base-dark-background'
-  //     : 'bg-opsi-base-light-background'
-  // })
+
   const isDarkMode = computed({
     get: () => !isLight.value,
     // get: () => settings.colormode === 'dark',
@@ -158,46 +149,6 @@ License: AGPL-3.0
     if (!isLeft) {
       settings.setQuickpanelOpened(rightSideVisible.value)
     }
-  }
-
-  async function checkConfig() {
-    const result = await useApiGET<T_configuration>('/user/configuration')
-    if (result.error) {
-      console.error(result.error)
-      notifyError({ title: $t('message.error.fetch'), message: result.error })
-      return
-    } else if (!result.data.value) {
-      console.error('No data in response')
-      notifyError({
-        title: $t('message.error.fetch'),
-        message: 'No data in response',
-      })
-      return
-    }
-    const forbidden = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
-    if (forbidden.error) {
-      console.error(forbidden.error)
-      notifyError({
-        title: $t('message.error.fetch'),
-        message: forbidden.error,
-      })
-      return
-    } else if (!forbidden.data.value) {
-      console.error('No data in response')
-      notifyError({
-        title: $t('message.error.fetch'),
-        message: 'No data in response',
-      })
-      return
-    }
-
-    const _config: { [key: string]: boolean } = {
-      ...result.data.value.configuration,
-    }
-    forbidden.data.value.forEach((forbElem: string) => {
-      _config[forbElem + '.forbidden'] = true
-    })
-    configapp.setConfig(_config)
   }
 </script>
 

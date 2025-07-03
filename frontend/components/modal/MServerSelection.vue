@@ -10,14 +10,14 @@ License: AGPL-3.0
     <p-dialog
       v-model:visible="visible"
       modal
-      :header="$t('title.selection.server')"
+      :header="$t('selectServer')"
       :style="{ width: '25rem' }"
     >
       <span
         v-if="selectionDepots.length <= 0"
         class="text-surface-500 dark:text-surface-400 block mb-8"
       >
-        {{ $t('message.info.clients.noServerSelection') }}
+        {{ $t('message.noServerSelected') }}
       </span>
       <SelectSSelect
         v-model:selection="localSelectedServers"
@@ -27,9 +27,9 @@ License: AGPL-3.0
         :marked-options="selectionStore.multiSelection ? [configserver] : configserver"
       />
       <div class="flex justify-end gap-2">
-        <el-button @click="cancel">{{ $t('label.cancel') }}</el-button>
+        <el-button @click="cancel">{{ $t('cancel') }}</el-button>
         <el-button variant="primary" @click="save">
-          {{ $t('label.select') }}
+          {{ $t('select') }}
         </el-button>
       </div>
     </p-dialog>
@@ -55,7 +55,6 @@ License: AGPL-3.0
   const localSelectedServers = ref<string | string[]>(
     selectionStore.multiSelection ? selectionDefaultDepots.value : selectionDefaultDepots.value?.[0]
   )
-  // const focusedElement = ref<HTMLElement | null>(null)
   onMounted(async () => {
     await initSelect()
   })
@@ -91,30 +90,6 @@ License: AGPL-3.0
     $emit('refetch')
     visible.value = false
   }
-  /*
-  function updateStorage() {
-    // change the default selected server in this modal in storage
-    // multi selection
-    if (
-      Array.isArray(localSelectedServers.value) &&
-      localSelectedServers.value.length == 1 &&
-      configserver.value === localSelectedServers.value[0]
-    ) {
-      selectionStore.setSelectionDepotsDefault(['<configserver>'])
-    } else if (Array.isArray(localSelectedServers.value)) {
-      selectionStore.setSelectionDepotsDefault(localSelectedServers.value)
-    }
-    // is single selection
-    else if (
-      !Array.isArray(localSelectedServers.value) &&
-      localSelectedServers.value.length == 1 &&
-      configserver.value === localSelectedServers.value[0]
-    ) {
-      selectionStore.setSelectionDepotsDefault(['<configserver>'])
-    } else if (!Array.isArray(localSelectedServers.value))
-      selectionStore.setSelectionDepotsDefault([localSelectedServers.value])
-  }*/
-
   function cancel() {
     if (props.refetchOnCancel) {
       $emit('refetch')

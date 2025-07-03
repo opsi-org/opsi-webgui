@@ -23,7 +23,24 @@ License: AGPL-3.0
         >
           <template #title>
             <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-2" />
-            <span v-if="showTitle">{{ $t(item.title) }}</span>
+            <p-overlay-badge
+              v-if="
+                item.title === 'administration' &&
+                !menuOpened('administration') &&
+                config?.health?.worst_case
+              "
+              class="text-xs"
+              :severity="
+                config?.health?.worst_case == 'error'
+                  ? 'danger'
+                  : config?.health?.worst_case == 'warning'
+                    ? 'warning'
+                    : 'success'
+              "
+            >
+              <span v-if="showTitle" class="pr-3">{{ $t(item.title) }}</span>
+            </p-overlay-badge>
+            <span v-else-if="showTitle">{{ $t(item.title) }}</span>
           </template>
           <el-menu-item
             v-for="sub in item.submenu"
@@ -33,7 +50,22 @@ License: AGPL-3.0
             :route="sub.route"
             :data-testid="'NICollapsible-submenu-' + sub.title"
           >
-            <span>{{ $t(sub.title) }}</span>
+            <p-overlay-badge
+              v-if="sub.title === 'healthCheck' && config?.health?.worst_case"
+              class="overlay-badge-value"
+              size="small"
+              :value="config?.health?.counts?.[config?.health?.worst_case] || 5"
+              :severity="
+                config?.health?.worst_case == 'error'
+                  ? 'danger'
+                  : config?.health?.worst_case == 'warning'
+                    ? 'warning'
+                    : 'success'
+              "
+            >
+              <span class="pr-3">{{ $t(sub.title) }}</span>
+            </p-overlay-badge>
+            <span v-else>{{ $t(sub.title) }}</span>
           </el-menu-item>
         </el-sub-menu>
         <el-menu-item
@@ -53,7 +85,7 @@ License: AGPL-3.0
           <IconIIcon :icon="icons.arrowDoubleRight" />
         </span>
         <span v-else>
-          {{ $t('button.collapse') }}
+          {{ $t('collapse') }}
         </span>
       </el-checkbox-button>
     </div>
@@ -83,52 +115,52 @@ License: AGPL-3.0
 
   const navItems = computed<Array<INavItem>>(() => [
     {
-      title: 'title.depots',
+      title: 'depots',
       route: '/servers/',
       icon: icons.depots,
       submenu: [
-        { title: 'title.allDepots', route: '/servers/' },
-        { title: 'title.config', route: '/servers/config' },
+        { title: 'allDepots', route: '/servers/' },
+        { title: 'configuration', route: '/servers/config' },
       ],
     },
     {
-      title: 'title.clients',
+      title: 'clients',
       route: '/clients/',
       icon: icons.client,
       submenu: [
-        { title: 'title.allClients', route: '/clients/' },
+        { title: 'allClients', route: '/clients/' },
         {
-          title: 'title.addNew',
+          title: 'addNew',
           route: '/clients/create',
           disabled: !config.value?.client_creation,
         },
-        { title: 'title.clone', route: '/clients/clone' },
-        { title: 'title.config', route: '/clients/config' },
-        { title: 'title.log', route: '/clients/logs' },
+        { title: 'clone', route: '/clients/clone' },
+        { title: 'configuration', route: '/clients/config' },
+        { title: 'logs', route: '/clients/logs' },
       ],
     },
     {
-      title: 'title.products',
+      title: 'products',
       icon: icons.product,
       route: '/products/LocalbootProduct',
     },
-    { title: 'title.groups', icon: icons.group, route: '/groups/' },
+    { title: 'groups', icon: icons.group, route: '/groups/' },
     {
-      title: 'title.administration',
+      title: 'administration',
       route: config.value?.['terminal.forbidden'] === true ? '/admin/general' : '/admin/terminal',
       icon: icons.admin,
       submenu: [
         {
-          title: 'title.adminterminal',
+          title: 'terminal',
           route: '/admin/terminal',
           disabled: config.value?.['terminal.forbidden'] === true,
         },
-        { title: 'title.healthcheck', route: '/admin/diagnostics?id=health' },
-        { title: 'title.admin', route: '/admin/general' },
-        { title: 'form.modules', route: '/admin/modules' },
+        { title: 'healthCheck', route: '/admin/diagnostics?id=health' },
+        { title: 'general', route: '/admin/general' },
+        { title: 'modules', route: '/admin/modules' },
       ],
     },
-    { title: 'title.support', icon: icons.support, route: '/support' },
+    { title: 'support', icon: icons.support, route: '/support' },
   ])
 
   watch(
@@ -147,4 +179,15 @@ License: AGPL-3.0
   )
 
   const showTitle = computed(() => mq.isMobile.value || !isCollapse.value)
+
+  function menuOpened(title: string) {
+    const currentRoute = router.currentRoute.value
+    return currentRoute.path.startsWith(title) || currentRoute.path === title
+  }
 </script>
+
+<style lang="css" scoped>
+  :deep(.overlay-badge-value > .p-badge) {
+    transform: translate(50%, 0%) !important;
+  }
+</style>

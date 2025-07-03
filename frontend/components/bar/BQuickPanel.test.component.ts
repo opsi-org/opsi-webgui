@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 */
 import { test } from '@playwright/test'
-import { simpleScreenshotTest } from '../../tests-configs/playwright/utils/pw-story-call.ts'
+import { simpleScreenshotTest } from '../../tests/shared/pw-story-call.ts'
 
 const folder = 'bar'
 const filename = 'BQuickPanel'

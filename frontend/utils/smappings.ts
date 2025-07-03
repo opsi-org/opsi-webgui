@@ -5,7 +5,7 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
-// import { IObjectString2String } from '../types/tgeneral'
+
 import type { IObjectString2String } from '~/types/tgeneral'
 
 export function mapValues2Value(
@@ -49,6 +49,7 @@ export function mapValues2Value(
 
   return 'mixed'
 }
+
 export function mapValues2Objects(
   values: Array<string>,
   objects: Array<string>,

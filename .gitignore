@@ -4,18 +4,17 @@
 *_tmp*
 .env
 *backup*
+docker/backend/opsiconfd
+docker/frontend/opsi-docker
+*.opsilic
 backend/opsibackup
 backend/addon/webgui/data
+backend/addon/webgui-*
 backend/.vscode/settings.json
 .nuxt/
 .nuxt-storybook/
 *node_modules*
-opsiweb/test/README.md
-opsiweb/test-results/
-opsiweb/opsi-webgui.zip
-opsiweb/
 opsi-webgui*.zip
-opsiweb/package-merged.json
 **/test-result-pw-reporter-component.xml
 
 **/test-result-pw-reporter-component.xml
@@ -29,3 +28,5 @@ opsiweb/package-merged.json
 
 # python
 __pycache__
+
+.vscode

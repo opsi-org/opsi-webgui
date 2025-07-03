@@ -7,6 +7,14 @@ License: AGPL-3.0
 */
 import _, { debounce } from 'lodash'
 
+/**
+ * Composable to calculate dynamic height of a window based on the available space in the window.
+ * It calculates the height of all elements above and below the table to reduce the available space for the table.
+ * @param reduceIds
+ * @param correctionFactor
+ * @param refetchData
+ * @returns
+ */
 export const useDynamicHeight = (
   reduceIds: string[],
   correctionFactor: number = 0,

@@ -59,7 +59,7 @@ License: AGPL-3.0
   const sortedItems = computed(() => {
     const _sorteditems = JSON.parse(JSON.stringify(props.items))
     return _sorteditems.sort((a: any, b: any) => {
-      return a[props.idKey].localeCompare(b[props.idKey])
+      return a[props.idKey].toString().localeCompare(b[props.idKey])
     })
   })
   function change(item: any, v: any, index: number) {

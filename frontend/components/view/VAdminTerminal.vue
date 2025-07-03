@@ -19,7 +19,7 @@ License: AGPL-3.0
   </div>
   <el-alert
     v-if="isDisabled"
-    :title="$t('message.warning.terminal.disabled')"
+    :title="$t('message.terminalDisabled')"
     type="warning"
     class="m-2 min-h-10"
     show-icon
@@ -75,8 +75,6 @@ License: AGPL-3.0
     } else if (msg.type === 'terminal_data_read') {
       mbTerminal.value.write(msg.data)
     }
-    // else if (msg.type === 'terminal_close_event') {
-    // }
   }
 
   async function _fetchIsDisabled() {

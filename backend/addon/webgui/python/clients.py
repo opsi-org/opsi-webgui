@@ -25,7 +25,7 @@ from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, co
 from packaging import version
 from packaging.version import InvalidVersion
 from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
-from sqlalchemy import alias, and_, column, delete, select, text, update  # type: ignore[import]
+from sqlalchemy import alias, and_, case, column, delete, literal, select, text, update  # type: ignore[import]
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table  # type: ignore[import]
@@ -92,10 +92,16 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 	if selectedDepots == []:
 		return RESTResponse(data=[], total=0)
 
-	username = get_username()
 	allowed_clients = None
-	if user_register() and host_group_access_configured(username):
+	username = get_username()
+	configured = host_group_access_configured(username)
+
+	if user_register() and configured:
 		allowed_clients = get_allowed_clients(username)
+		if not allowed_clients:
+			logger.warning("No clients found for user '%s'.", username)
+			return RESTResponse(data=[], total=0)
+
 	with mysql.session() as session:
 		where = and_(text("h.type = 'OpsiClient'"))
 		params: Dict[str, Union[List[Any], str]] = {"depot_ids": [], "search": []}
@@ -125,6 +131,22 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 			params["selected"] = selected
 		else:
 			params["selected"] = [""]
+
+		reachable_clients: list[str] | None = None
+		# is required used if only showing reachable if sortBy is "reachable. but if we sort by sth else, reachable disappear..."
+		# is_reachable_required = backend._host_control_use_messagebus is not False and (
+		# commons.get("sortBy", None) == "reachable" or "reachable" in commons.get("sortBy", [])
+		# )
+		if backend._host_control_use_messagebus is True or backend._host_control_use_messagebus == "hybrid":
+			result: dict[str, bool] = await backend.hostControl_reachable([], 20)  # pylint: disable=protected-access
+			reachable_clients = [cid for cid, reachable in result.items() if reachable]
+
+		if reachable_clients is None:
+			is_reachable_sql = "NULL AS reachable"
+		elif reachable_clients == []:
+			is_reachable_sql = "FALSE AS reachable"
+		else:
+			is_reachable_sql = f"IF(hd.clientId IN {tuple(reachable_clients)}, TRUE, FALSE) AS reachable"
 
 		client_with_depot = alias(
 			select(  # type: ignore
@@ -167,7 +189,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		)
 		client_select = select(
 			text(  # type: ignore
-				"""
+				f"""
 			hd.clientId,
 			hd.ident,
 			hd.macAddress,
@@ -177,6 +199,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 			DATE_FORMAT(hd.lastSeen, '%Y-%m-%dT%TZ') AS lastSeen,
 			hd.uefi,
 			hd.uefi_value,
+			{is_reachable_sql},
 			(
 				SELECT
 					COUNT(*)
@@ -229,7 +252,6 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		"""
 			)
 		).select_from(client_with_depot)
-
 		query = order_by(client_select, commons)  # type: ignore
 		query = pagination(query, commons)
 
@@ -237,19 +259,14 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		result = result.fetchall()
 
 		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]  # type: ignore
-		if backend._host_control_use_messagebus is True:
-			reachable_clients = await backend.hostControl_reachable([], 20)  # pylint: disable=protected-access
+
 		data = []
 		for row in result:
 			if row is not None:
-				client = dict(row)
+				client: dict[str, Any] = dict(row)
 				client["uefi"] = bool(client["uefi"])
-				if backend._host_control_use_messagebus is not True:
-					client["reachable"] = None
-				elif reachable_clients.get(client["clientId"], False):
-					client["reachable"] = True
-				else:
-					client["reachable"] = False
+				client["reachable"] = bool(client["reachable"]) if client["reachable"] is not None else None
+				client["selected"] = bool(client["selected"]) if client["selected"] is not None else None
 				data.append(client)
 
 		return RESTResponse(data=data, total=total)
@@ -691,7 +708,6 @@ def unblock_client(request: Request, client: str) -> RESTResponse:  # pylint: di
 
 @client_router.get("/api/opsidata/blocked-clients")
 @rest_api
-@read_only_check
 def blocked_clients(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	blocked clients

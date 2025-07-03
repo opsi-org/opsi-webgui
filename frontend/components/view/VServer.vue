@@ -29,7 +29,6 @@ License: AGPL-3.0
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
-  // const icons = useIcons()
 
   const storeSelection = storeSelections()
   const storeCookie = storeTablesettings()
@@ -54,7 +53,6 @@ License: AGPL-3.0
       type: 'selection',
       visible: storeCookie.serversColumns.includes('selected'),
       alwaysVisible: true,
-      // icon: icons.checkBox,
       width: '60px',
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
@@ -80,7 +78,7 @@ License: AGPL-3.0
       },
     },
     {
-      title: $t('table.fields.id'),
+      title: $t('depotId'),
       key: 'depotId',
       sortable: 'custom',
       visible: storeCookie.serversColumns.includes('depotId'),
@@ -102,13 +100,13 @@ License: AGPL-3.0
       },
     },
     {
-      title: $t('table.fields.description'),
+      title: $t('description'),
       key: 'description',
       sortable: 'custom',
       visible: storeCookie.serversColumns.includes('description'),
     },
     {
-      title: $t('table.fields.type'),
+      title: $t('type'),
       key: 'type',
       sortable: 'custom',
       visible: storeCookie.serversColumns.includes('type'),
@@ -128,13 +126,13 @@ License: AGPL-3.0
       },
     },
     {
-      title: $t('table.fields.ip'),
+      title: $t('ip'),
       key: 'ip',
       sortable: 'custom',
       visible: storeCookie.serversColumns.includes('ip'),
     },
     {
-      title: $t('table.fields.rowactions'),
+      title: $t('actions'),
       key: 'actions',
       sortable: false,
       visible: storeCookie.serversColumns.includes('actions'),
@@ -175,7 +173,7 @@ License: AGPL-3.0
     }
     if (data.value == undefined) {
       notifyError({
-        message: $t('message.error.empty-response', { details: 'Servers' }),
+        message: $t('message.error.emptyResponse', { details: 'Servers' }),
       })
       return
     }

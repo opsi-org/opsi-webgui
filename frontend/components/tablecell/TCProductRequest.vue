@@ -47,7 +47,7 @@ License: AGPL-3.0
           </p>
           <p v-if="visibleRequest?.includes('*')" class="inline">
             {{
-              $t('label.in_bracets', {
+              $t('textInBrackets', {
                 value: modelRowitem?.actionRequest || '',
               })
             }}
@@ -71,7 +71,6 @@ License: AGPL-3.0
   const DEFAULT_OPTIONS = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
   const VARIANTS: {
     [key: string]: PSeverity
-    // [key: string]: '' | 'danger' | 'primary' | 'warning' | 'success' | 'info'
   } = {
     always: 'danger',
     setup: 'danger',
@@ -176,21 +175,6 @@ License: AGPL-3.0
     return clientValuesArr
   })
 
-  // const tooltipdataTree = computed(() => {
-  //   // all selected clients and their original actionrequest
-  //   const clientValuesArr = []
-  //   for (const c in selectedClients.value.toSorted()) {
-  //     const clientId = selectedClients.value[c]
-  //     const val = {
-  //       key: clientId,
-  //       label: clientId,
-  //       actionRequest: originalValues.value[clientId],
-  //     }
-  //     clientValuesArr.push(val)
-  //   }
-  //   return clientValuesArr
-  // })
-
   const visibleRequest = computed(() => {
     // Funktion zur Ermittlung des sichtbaren actionRequest-Werts
     // Abhängig von den ausgewählten Clients und den lokalen nicht gespeicherten Änderungen
@@ -227,45 +211,6 @@ License: AGPL-3.0
     // Wenn alle gleich sind, gib den gemeinsamen Wert zurück, sonst "mixed"
     return allEqual ? firstValue : MIXED_VALUE
   }
-
-  // function ThisJSXTooltipContentRow() {
-  //   return {
-  //     default: ({ data }: any) => {
-  //       return (
-  //         <span class="w-full !flex !justify-between !space-x-2">
-  //           <el-text>{data.label}</el-text>
-  //           <el-text type={VARIANTS[data.actionRequest] || 'info'}>
-  //             {data.actionRequest}
-  //           </el-text>
-  //         </span>
-  //       )
-  //     },
-  //   }
-  // }
-  // function ThisJSXTooltipContent() {
-  //   return (
-  //     <el-tree
-  //       class="!min-w-60"
-  //       data={tooltipdata}
-  //       effect="dark"
-  //       placement="left-start"
-  //       v-slots={ThisJSXTooltipContentRow()}
-  //     />
-  //   )
-  // }
-
-  // onBeforeRouteLeave((to, from, next) => {
-  //   if (hasUnsavedChanges.value) {
-  //     const answer = window.confirm($t('message.warning.unsavedChanges'))
-  //     if (answer) {
-  //       next()
-  //     } else {
-  //       next(false)
-  //     }
-  //   } else {
-  //     next()
-  //   }
-  // })
 </script>
 
 <style scoped>

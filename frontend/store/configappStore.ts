@@ -6,24 +6,66 @@ All rights reserved.
 License: AGPL-3.0
 */
 import { defineStore } from 'pinia'
-// import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
-import type { IObjectString2Boolean } from '@/types/tgeneral'
+import type { T_DisaledFeatures, T_configuration, T_configurationResult } from '@/types/APItypes'
+import { useNotification } from '~/composables/mixins/useComponent'
 
 export const storeConfigapp = defineStore('config-app', {
   persist: {
     key: 'opsi-configs',
     storage: localStorage,
-    // storage: sessionStorage,
   },
   state: () => ({
-    _config: undefined as IObjectString2Boolean | undefined,
+    _config: undefined as T_configurationResult | undefined,
   }),
   getters: {
     config: ({ _config }) => _config,
   },
   actions: {
-    setConfig(obj: IObjectString2Boolean) {
+    setConfig(obj: T_configurationResult) {
       this._config = obj
+    },
+
+    async initConfig() {
+      const { notifyError } = useNotification()
+      const $t = useI18n().t
+
+      const result = await useApiGET<T_configuration>('/user/configuration')
+      if (result.error) {
+        console.error(result.error)
+        notifyError({ title: $t('message.fetchingFailed'), message: result.error })
+        return
+      } else if (!result.data.value) {
+        console.error('No data in response')
+        notifyError({
+          title: $t('message.fetchingFailed'),
+          message: $t('message.noResponse'),
+        })
+        return
+      }
+      const forbidden = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
+      if (forbidden.error) {
+        console.error(forbidden.error)
+        notifyError({
+          title: $t('message.fetchingFailed'),
+          message: forbidden.error,
+        })
+        return
+      } else if (!forbidden.data.value) {
+        console.error('No data in response')
+        notifyError({
+          title: $t('message.fetchingFailed'),
+          message: $t('message.noResponse'),
+        })
+        return
+      }
+
+      const _config: T_configurationResult = {
+        ...result.data.value.configuration,
+      }
+      forbidden.data.value.forEach((forbElem: string) => {
+        _config[forbElem + '.forbidden'] = true
+      })
+      this.setConfig(_config)
     },
   },
 })
@@ -31,23 +73,3 @@ export const storeConfigapp = defineStore('config-app', {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(storeConfigapp, import.meta.hot))
 }
-
-// export const storeConfigapp = defineStore('config-app', () => {
-//   // need to return the states / getters/ actions in the end of the setup
-//   // states
-//   let _config: IObjectString2Boolean|undefined = undefined
-
-//   // getter
-//   const config = computed(() => _config)
-
-//   // actions
-//   function setConfig (obj: IObjectString2Boolean) {
-//     _config = obj
-//   }
-
-//   return {
-//     /* states */
-//     /* getters */ config
-//     /* actions */, setConfig
-//   }
-// }, { persist: true } as any)

@@ -10,12 +10,15 @@ import pkg from './package.json'
 import MyPreset from './assets/scss/primevue'
 
 const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? '4447'
+const WEBUI_PORT_STR: string = process.env.PORT ?? '8888'
+const WEBUI_PORT: number = parseInt(WEBUI_PORT_STR)
 // do not change following line, cause it is automatically patched by the build_production_local.sh script
 const ADDON_PATH: string = '/addons/webgui'
 
 if (process.env.NODE_ENV === 'development') {
   console.log('---------------------------------------------------')
-  console.log('OPSICONFD PORT', CONFD_PORT)
+  console.log('OPSICONFD PORT', CONFD_PORT, ', env: ', process.env.OPSICONFD_PORT)
+  console.log('WEBGUI PORT', WEBUI_PORT_STR, WEBUI_PORT)
   console.log('ADDON PATH', ADDON_PATH)
   console.log('VERSION', pkg.version)
   console.log('---------------------------------------------------')
@@ -49,7 +52,7 @@ export default defineNuxtConfig({
   },
   ssr: false,
   devServer: {
-    port: 8888,
+    port: WEBUI_PORT,
     https: {
       key: '.config/https/server.key',
       cert: '.config/https/server.crt',
@@ -65,7 +68,6 @@ export default defineNuxtConfig({
           href: ADDON_PATH + '/app/favicon.ico',
         },
       ],
-      // link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
     },
   },
   runtimeConfig: {
@@ -89,7 +91,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
   ],
   i18n: {
-    vueI18n: './i18n.config.js', // custom path example
+    vueI18n: './i18n.config.js',
   },
   piniaPluginPersistedstate: {
     key: 'opsiwui-%id',

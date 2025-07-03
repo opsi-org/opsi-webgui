@@ -19,7 +19,7 @@ License: AGPL-3.0
               <template #tooltip>
                 <div class="max-w-md">
                   <b>{{ item.description }}</b>
-                  <p>{{ $t('form.config.defaultvalue') }} {{ item.default }}</p>
+                  <p>{{ $t('defaultValues') }} {{ item.default }}</p>
                   <div class="max-h-42 overflow-auto">
                     <p
                       v-if="item.depots"
@@ -28,7 +28,7 @@ License: AGPL-3.0
                         bold: item.anyDepotDifferentFromDefault,
                       }"
                     >
-                      {{ $t('form.config.objectvalue') }}
+                      {{ $t('objectValues') }}
                     </p>
                     <pre class="text-xs">{{ item.depots }}</pre>
                   </div>
@@ -39,7 +39,7 @@ License: AGPL-3.0
                         italic: item.anyClientDifferentFromDepot,
                       }"
                     >
-                      {{ $t('form.config.objectvalue') }}
+                      {{ $t('objectValues') }}
                     </p>
                     <pre class="text-xs">{{ item.clients }}</pre>
                   </div>
@@ -60,7 +60,7 @@ License: AGPL-3.0
                 itemValues[item.propertyId] !== undefined &&
                 !arrayEqual(itemValues[item.propertyId], initialValues[item.propertyId])
               "
-              :title="$t('message.warning.unsavedChange')"
+              :title="$t('message.unsavedChanges')"
               severity="warn"
               :value="t_fixed('notOrigin')"
             />
@@ -75,14 +75,6 @@ License: AGPL-3.0
             @change="handleSelection(item, itemValues[item.propertyId])"
           />
           {{ itemValues[item.propertyId] == MIXED ? itemValues[item.propertyId] : '' }}
-
-          <!-- <p-badge
-            v-if="
-              itemValues[item.propertyId] !== initialValues[item.propertyId]
-            "
-            severity="warning"
-            :value="t_fixed('notOrigin')"
-          /> -->
         </div>
         <div
           v-else-if="['password', 'secret'].some((marker) => item.propertyId.includes(marker))"
@@ -107,17 +99,6 @@ License: AGPL-3.0
             :marked-options="initialValues[item.propertyId]"
             @change="() => handleSelection(item, itemValues[item.propertyId])"
           />
-          <!-- <p-tag
-            v-if="
-              itemValues[item.propertyId] !== undefined &&
-              !arrayEqual(
-                itemValues[item.propertyId],
-                initialValues[item.propertyId],
-              )
-            "
-            severity="danger"
-            :value="t_fixed('notOrigin')"
-          /> -->
         </div>
       </el-form-item>
     </el-form>
@@ -130,7 +111,7 @@ License: AGPL-3.0
       :disabled="!hasUnsavedChanges"
       @click="saveProductProperties"
     >
-      {{ $t('button.save') }}
+      {{ $t('save') }}
     </el-button>
   </div>
 </template>
@@ -177,7 +158,6 @@ License: AGPL-3.0
     return data.value.map((item) => item.productId)
   }
   function getVisibleValue(property: Record<string, any[]>, selection: string[], item: any) {
-    // values: {"nb-00013.acme.corp": [ false ], "nb-00023.acme.corp": [ true  ] }
     const objectValues = Object.values(property)
     if (property && objectValues.length > 0) {
       if (objectValues.length !== selection.length) {
@@ -195,34 +175,22 @@ License: AGPL-3.0
   }
   function getInitialValue(item: any): any {
     if (item.clients && Object.keys(item.clients).length > 0) {
-      // const v = Object.values(item.clients as Record<string, any[]>)[0]
       if (item.multiValue) {
         return getVisibleValue(item.clients, selectionClients.value, item)
       }
       return getVisibleValue(item.clients, selectionClients.value, item)[0]
     }
     if (item.depots && Object.keys(item.depots).length > 0) {
-      // const v = Object.values(item.depots as Record<string, any[]>)[0]
       if (item.multiValue) {
         return getVisibleValue(item.depots, selectionDepots.value, item)
       }
       return getVisibleValue(item.depots, selectionDepots.value, item)[0]
     }
-    // if (item.depots && Object.keys(item.depots).length > 0) {
-    //   const v = Object.values(item.depots as Record<string, any[]>)[0]
-    //   if (item.multiValue) {
-    //     return v
-    //   }
-    //   return v[0]
-    // }
     if (item.value !== undefined) return item.value
     throw new Error('Initial value is undefined and no valid clients or depots found')
   }
 
   function setUnsavedChanges() {
-    // hasUnsavedChanges.value = Object.keys(itemValues.value).some(
-    //   (key) => !isEqual(itemValues.value[key], initialValues.value[key]),
-    // )
     hasUnsavedChanges.value = Object.keys(itemValues.value).some((key) => {
       if (itemValues.value[key] === undefined) return false
       if (isArray(itemValues.value[key]) && isArray(initialValues.value[key])) {
@@ -292,7 +260,7 @@ License: AGPL-3.0
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
-      const answer = window.confirm($t('message.warning.unsavedChanges'))
+      const answer = window.confirm($t('message.unsavedChanges'))
       if (answer) {
         next()
       } else {

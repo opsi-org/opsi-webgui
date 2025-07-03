@@ -11,10 +11,14 @@ export const useGroupsHelper = () => {
   const { multiSelection } = storeToRefs(storeSelections())
   function transformNode(node: T_Groups): T_GroupsTransformed {
     // const nodeIsLeaf = !node.children || Object.keys(node.children).length === 0
+    if (!node) {
+      console.warn('Node is undefined or null:', node)
+      return {} as T_GroupsTransformed
+    }
     const nodeIsLeaf = node.type === 'ObjectToGroup'
     const newNode: T_GroupsTransformed = {
       id: node.id,
-      type: node.type,
+      type: node.type || 'Group',
       text: node.text,
       parent: node.parent,
     }
@@ -31,10 +35,36 @@ export const useGroupsHelper = () => {
     // console.log('node.id', node.id, node, newNode)
     return newNode
   }
-  function transformToNestedArray(data: Record<string, T_Groups>): T_GroupsTransformed[] {
+  function transformToNestedArray(
+    data: T_Groups | Record<string, T_Groups> | undefined
+  ): T_GroupsTransformed[] {
+    if (data == undefined) {
+      console.warn('Data is undefined or null:', data)
+      return []
+    }
     return Object.values(data).map((node) => transformNode(node))
   }
+  function _getChildrenLabelsLevel(nodeChilds: any, childKey: string = 'childNodes'): string[] {
+    if (!nodeChilds || !Array.isArray(nodeChilds) || nodeChilds.length === 0) {
+      console.warn('Node children is undefined or not an array', nodeChilds)
+      return []
+    }
 
+    const labels = []
+    for (const child of nodeChilds) {
+      if (child && child.data && child.data.text) {
+        labels.push(child.data.text)
+      }
+      if (child[childKey] && child[childKey].length > 0) {
+        labels.push(..._getChildrenLabelsLevel(child[childKey]))
+      }
+    }
+    return labels
+  }
+  function getChildrenLabels(node: any): string[] {
+    const labels = _getChildrenLabelsLevel(node.childNodes)
+    return labels
+  }
   function filterNodes(
     nodes: T_GroupsTransformed[],
     searchFor: any[],
@@ -57,5 +87,5 @@ export const useGroupsHelper = () => {
       return acc
     }, [])
   }
-  return { transformToNestedArray, filterNodes }
+  return { transformToNestedArray, filterNodes, getChildrenLabels }
 }

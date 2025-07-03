@@ -8,7 +8,7 @@ License: AGPL-3.0
 <template>
   <div v-for="(actions, section) in adminTasks" :key="section" v-loading="isLoading[section]">
     <h3 class="mt-4 text-lg font-semibold">
-      {{ $t('title.' + section) }}
+      {{ $t(section) }}
     </h3>
 
     <el-form
@@ -16,11 +16,7 @@ License: AGPL-3.0
       label-width="50%"
       :label-position="mq.isMobile.value ? 'top' : 'left'"
     >
-      <el-form-item
-        v-for="(action, index) in actions"
-        :key="index"
-        :label="$t('label.' + section + '.' + action)"
-      >
+      <el-form-item v-for="(action, index) in actions" :key="index" :label="$t(action)">
         <template v-if="action === 'current'">
           <el-text :type="currentAppStateColor">{{ currentAppState }}</el-text>
           <!-- Maybe add < br> < pre > { { currentAppStateObject } } /< pre >. -->
@@ -34,12 +30,12 @@ License: AGPL-3.0
                   v-for="item in applicationStateValues"
                   :disabled="storeConfigapp().config?.read_only"
                   :key="item"
-                  >{{ $t('label.' + item) }}</el-radio
+                  >{{ $t(item) }}</el-radio
                 >
               </el-radio-group>
             </el-form-item>
             <template v-if="newAppState.type === 'maintenance'">
-              <el-form-item :label="$t('label.addressexcept')">
+              <el-form-item :label="$t('addressExceptions')">
                 <el-select
                   v-model="newAppState.address_exceptions"
                   multiple
@@ -48,7 +44,7 @@ License: AGPL-3.0
                   allow-create
                   default-first-option
                   :reserve-keyword="false"
-                  :placeholder="$t('placeholder.netwrkadr')"
+                  :placeholder="$t('enterNetworkAddress')"
                 >
                   <el-option
                     v-for="item in newAppState.address_exceptions"
@@ -58,7 +54,7 @@ License: AGPL-3.0
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item :label="$t('label.retryaftersec')">
+              <el-form-item :label="$t('retryAfterInSeconds')">
                 <el-input
                   v-model="newAppState.retry_after"
                   :disabled="storeConfigapp().config?.read_only"
@@ -73,14 +69,14 @@ License: AGPL-3.0
               style="display: flex; justify-content: flex-end"
             >
               <el-button @click="resetForm(section)" :disabled="storeConfigapp().config?.read_only">
-                {{ $t('button.reset') }}
+                {{ $t('reset') }}
               </el-button>
               <el-button
                 type="success"
                 @click="setAppState"
                 :disabled="storeConfigapp().config?.read_only"
               >
-                {{ $t('button.apply') }}
+                {{ $t('apply') }}
               </el-button>
             </div>
           </el-form>
@@ -88,7 +84,7 @@ License: AGPL-3.0
       </el-form-item>
     </el-form>
     <el-form v-else label-width="50%" :label-position="mq.isMobile.value ? 'top' : 'left'">
-      <el-form-item v-for="(value, key) in actions" :key="key" :label="$t('label.' + key)">
+      <el-form-item v-for="(value, key) in actions" :key="key" :label="$t(key)">
         <el-checkbox
           v-if="typeof value == 'boolean'"
           v-model="actions[key]"
@@ -111,14 +107,13 @@ License: AGPL-3.0
               :label="item"
               :key="item"
               :disabled="storeConfigapp().config?.read_only"
-              >{{ $t('label.' + item) }}</el-radio
+              >{{ $t(item) }}</el-radio
             >
-            <!-- for transation keys: $t('label.backup'), $t('label.local'), $t('label.new') -->
           </el-radio-group>
           <el-input
             class="ml-2"
             v-if="actions[key] !== 'backup' && actions[key] !== 'local'"
-            :placeholder="$t('placeholder.enterNewID')"
+            :placeholder="$t('enterNewID')"
             required
             v-model="serverIDValueNew"
           />
@@ -134,7 +129,7 @@ License: AGPL-3.0
             :disabled="storeConfigapp().config?.read_only"
           >
             <el-button :disabled="storeConfigapp().config?.read_only">{{
-              $t('placeholder.fileupload')
+              $t('chooseFile')
             }}</el-button>
           </el-upload>
         </el-input-group>
@@ -142,7 +137,7 @@ License: AGPL-3.0
       </el-form-item>
       <div class="button-container" style="display: flex; justify-content: flex-end">
         <el-button @click="resetForm(section)" :disabled="storeConfigapp().config?.read_only">
-          {{ $t('button.reset') }}
+          {{ $t('reset') }}
         </el-button>
         <el-button
           type="success"
@@ -153,7 +148,7 @@ License: AGPL-3.0
             }
           "
         >
-          {{ section === 'createBackup' ? $t('button.create') : $t('button.restore') }}
+          {{ section === 'createBackup' ? $t('create') : $t('restore') }}
         </el-button>
       </div>
     </el-form>
@@ -175,27 +170,25 @@ License: AGPL-3.0
   interface TFileId {
     file_id: string
   }
-  const serverIDValues = ['backup', 'local', 'new'] // for translation key search: $t('label.backup'), $t('label.local'), $t('label.new')
+  const serverIDValues = ['backup', 'local', 'new']
   const serverIDValue = ref('backup')
   const serverIDValueNew = ref('')
-  const applicationStateValues = ['normal', 'maintenance'] // for translation key search: $t('label.normal'), $t('label.maintenance')
+  const applicationStateValues = ['normal', 'maintenance']
 
   const adminTasks = reactive({
-    applicationState: ['current', 'setup'], // for translation key search: $t('title.applicationState'), $t('label.applicationState.current'), $t('label.applicationState.setup')
+    applicationState: ['current', 'setup'],
     createBackup: {
-      // for translation key search: $t('title.createBackup')
-      config_files: true, // for translation key search: $t('label.config_files')
-      redis_data: false, // for translation key search: $t('label.redis_data')
-      maintenance_mode: false, // for translation key search: $t('label.maintenance_mode')
-      password: '', // for translation key search: $t('label.password')
+      config_files: true,
+      redis_data: false,
+      maintenance_mode: false,
+      password: '',
     },
     restoreBackup: {
-      // for translation key search: $t('title.restoreBackup')
-      file_id: '', // for translation key search: $t('label.file_id')
-      config_files: false, // for translation key search: $t('label.config_files')
-      redis_data: false, // for translation key search: $t('label.redis_data')
-      server_id: serverIDValue.value, // for translation key search: $t('label.server_id')
-      password: '', // for translation key search: $t('label.password')
+      file_id: '',
+      config_files: false,
+      redis_data: false,
+      server_id: serverIDValue.value,
+      password: '',
     },
   })
   watch(
@@ -226,7 +219,7 @@ License: AGPL-3.0
   })
   const uploadFileRef = ref<UploadInstance>()
   const files = ref<UploadUserFile[]>()
-  const ERRORTEXT = $t('message.error.fetch')
+  const ERRORTEXT = $t('message.noResponse')
   const UPLOADURL = useFullUrlPath('/file-transfer/multipart', '')
   const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 
@@ -259,7 +252,7 @@ License: AGPL-3.0
     files.value = uploadFiles.slice(-1) // limit to one file
 
     if (!uploadFileRef.value || !(uploadFileRef.value as any)[0]) {
-      notifyError({ message: $t('message.error.file.upload') })
+      notifyError({ message: $t('message.fileUploadFailed') })
       return
     }
     ;(uploadFileRef.value as any)[0].submit()
@@ -307,7 +300,7 @@ License: AGPL-3.0
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
-      notifySuccess({ message: $t('success.backup.created') })
+      notifySuccess({ message: $t('message.backupCreated') })
     }
     isLoading.value.createBackup = false
   }
@@ -316,7 +309,7 @@ License: AGPL-3.0
     isLoading.value.restoreBackup = true
     // getting file_id from (already uploaded) file
     if (!files.value || !files.value[0] || !files.value[0].raw || !files.value[0].response) {
-      notifyError({ message: $t('message.error.file.required') })
+      notifyError({ message: $t('message.fileRequired') })
       isLoading.value.restoreBackup = false
       return
     }
@@ -333,7 +326,7 @@ License: AGPL-3.0
       notifyError({ message: error?.response?.data?.message })
       return
     }
-    notifySuccess({ message: $t('success.backup.restored') })
+    notifySuccess({ message: $t('message.backupRestored') })
   }
 
   function resetForm(section: string) {

@@ -15,7 +15,7 @@ License: AGPL-3.0
           <el-button @click="$emit('clearSelection')">
             <IconIIcon :icon="icons.clear" />
           </el-button>
-          <el-input v-model="filterQuery" :placeholder="$t('label.filter.placeholder')" clearable>
+          <el-input v-model="filterQuery" :placeholder="$t('typeToFilter')" clearable>
             <template #prefix>
               <IconIIcon :icon="icons.filter" />
             </template>
@@ -32,16 +32,16 @@ License: AGPL-3.0
                 style="width: 100%"
                 :height="tableHeight <= 600 ? tableHeight : 'auto'"
               >
-                <el-table-column :label="$t('label.column')" min-width="150px">
+                <el-table-column :label="$t('column')" min-width="150px">
                   <!-- prop="title" -->
                   <template #default="scope">
                     <el-text v-if="scope.row.title">{{ scope.row.title }}</el-text>
-                    <el-text v-else>{{ $t('label.selection') }}</el-text>
+                    <el-text v-else>{{ $t('selection') }}</el-text>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('label.column.selection')">
+                <el-table-column :label="$t('columnSelection')">
                   <template #header>
-                    <el-tooltip :content="$t('label.column.selection')">
+                    <el-tooltip :content="$t('columnSelection')">
                       <IconIIcon :icon="icons.columns" />
                     </el-tooltip>
                   </template>
@@ -53,11 +53,9 @@ License: AGPL-3.0
                     />
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('label.sort')">
+                <el-table-column :label="$t('sort')">
                   <template #header>
-                    <el-tooltip
-                      :content="sortDesc ? $t('label.sort.descending') : $t('label.sort.ascending')"
-                    >
+                    <el-tooltip :content="sortDesc ? $t('sortDescending') : $t('sortAscending')">
                       <el-button @click="toggleSortOrder">
                         <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
                       </el-button>
@@ -73,9 +71,9 @@ License: AGPL-3.0
                     />
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('label.filter')">
+                <el-table-column :label="$t('filter')">
                   <template #header>
-                    <el-tooltip :content="$t('label.filter')">
+                    <el-tooltip :content="$t('filter')">
                       <IconIIcon :icon="icons.filter" />
                     </el-tooltip>
                   </template>
@@ -92,7 +90,7 @@ License: AGPL-3.0
             </template>
           </el-dropdown>
 
-          <el-tooltip :content="$t('label.refresh')" placement="top">
+          <el-tooltip :content="$t('refresh')" placement="top">
             <el-button @click="refreshTable">
               <IconIIcon :icon="icons.refresh" />
             </el-button>
@@ -111,13 +109,12 @@ License: AGPL-3.0
       `"
       @scroll="debouncedHandleScroll"
     >
-      <!-- class="overflow-y-auto !min-h-[700px] border-sky-500 border-2" -->
       <div
         v-if="totalItems > 0 && !isFirstPage"
         class="extra-column"
         :style="`height: ${scrollDivHeight}px;`"
       >
-        <div v-if="!isLoading">{{ $t('table.infinit.scrollup') }}</div>
+        <div v-if="!isLoading">{{ $t('scrollUpToLoadPreviousPage') }}</div>
       </div>
       <!-- TABLE -->
       <el-table
@@ -129,8 +126,6 @@ License: AGPL-3.0
         :class="`!min-h-[${tableHeightMin}px]`"
         :height="tableHeight || availableTableHeight"
       >
-        <!-- :style="`min-height: ${tableHeightMin}px;`" -->
-        <!-- :class="`!min-h-[900px] `" -->
         <!-- selection -->
         <el-table-column
           :key="'selected'"
@@ -149,13 +144,6 @@ License: AGPL-3.0
             />
           </template>
         </el-table-column>
-
-        <!--  row index -->
-        <!-- <el-table-column width="50" label="#">
-          <template #default="{ $index }">
-            <span>{{ $index + 1 + (currentPage - 1) * pageSize }}</span>
-          </template>
-        </el-table-column> -->
 
         <!-- rowId -->
         <el-table-column
@@ -220,7 +208,7 @@ License: AGPL-3.0
 
       <div class="extra-column" :style="`height: ${scrollDivHeight}px;`">
         <span v-if="totalItems > 0 && !isLastPage && !isLoading">{{
-          $t('table.infinit.scrolldown')
+          $t('scrollDownToLoadNextPage')
         }}</span>
       </div>
     </div>
@@ -228,7 +216,6 @@ License: AGPL-3.0
     <!-- TABLE FOOTER -->
     <div class="flex justify-end mt-2" :id="'tableFooter-' + tableId">
       <div class="">
-        <!-- <br /> -->
         <el-pagination
           @current-change="handlePagination"
           @size-change="() => {}"
@@ -239,9 +226,6 @@ License: AGPL-3.0
           layout="total, sizes, prev, pager, next, jumper"
           size="small"
         />
-        <!-- <el-text class="text-right">{{
-          $t('label.total', { count: totalItems })
-        }}</el-text> -->
       </div>
     </div>
 
@@ -249,13 +233,13 @@ License: AGPL-3.0
     <div v-if="contextMenuVisible" :style="contextMenuStyle" class="context-menu">
       <ul>
         <li @click="handleCommand(contextMenuRow, 'config')">
-          <IconIIcon :icon="icons.settings" /> {{ $t('title.config') }}
+          <IconIIcon :icon="icons.settings" /> {{ $t('configuration') }}
         </li>
         <li @click="handleCommand(contextMenuRow, 'log')">
-          <IconIIcon :icon="icons.log" /> {{ $t('title.log') }}
+          <IconIIcon :icon="icons.log" /> {{ $t('logs') }}
         </li>
         <li @click="handleCommand(contextMenuRow, 'clone')">
-          <IconIIcon :icon="icons.client" /> {{ $t('title.clone') }}
+          <IconIIcon :icon="icons.client" /> {{ $t('clone') }}
         </li>
       </ul>
     </div>
@@ -263,7 +247,6 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="tsx">
-  //   import { vContextmenu } from '../../composables/mixins/v-contextmenu'
   import { useDynamicHeightTable } from '~/composables/mixins/useDynamicHeightTable'
   import { useTableHelper } from '~/composables/mixins/useTableHelper'
 
@@ -275,7 +258,6 @@ License: AGPL-3.0
     tableId: { type: String, required: true },
     tableColumn: { type: Array<any>, required: true },
     fetch: { type: Function, required: true },
-    // height: { type: String, default: '80vh', required: false },
     sortBy: { type: String, default: undefined, required: false },
     sortDesc: { type: Boolean, default: false, required: false },
     actionClone: { type: Function, default: undefined, required: false },
@@ -318,15 +300,12 @@ License: AGPL-3.0
     // we reuse this functions and refs also in TTableDesktop
     isLoading,
     filterQuery,
-    // filterBy,
     sortBy,
     sortDesc,
     contextMenuVisible,
     contextMenuStyle,
     contextMenuRow,
-
     debouncedHandleScroll,
-    // showContextMenu,
     handleCommand,
     toggleSortOrder,
     applySort,
@@ -335,9 +314,6 @@ License: AGPL-3.0
     handleSortChange,
     handlePagination,
     onRowClick,
-    // handleConfigClick,
-    // handleLogClick,
-    // handleCloneClick,
     handleClickOutside,
     fetchDataWrapper,
 

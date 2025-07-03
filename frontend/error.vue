@@ -8,8 +8,8 @@ License: AGPL-3.0
 <template>
   <NuxtLayout :error="true">
     <div>
-      <h1>{{ error?.statusCode }} {{ error?.statusMessage }}</h1>
-      <NuxtLink to="/">{{ $t('message.error.back_to_home') }}</NuxtLink>
+      <h1>{{ error?.statusCode }} {{ $t('message.error.general') }}</h1>
+      <NuxtLink to="/">{{ $t('message.page.backToHome') }}</NuxtLink>
     </div>
   </NuxtLayout>
 </template>
@@ -17,7 +17,6 @@ License: AGPL-3.0
 <script setup lang="ts">
   import type { NuxtError } from '#app'
   const $t = useI18n().t
-  // const props =
   defineProps({
     error: {
       type: Object as () => NuxtError,

@@ -15,12 +15,12 @@ License: AGPL-3.0
   >
     <template #placeholder>
       <div class="image-slot">
-        {{ $t('loading.image.opsilogo') }}
+        {{ $t('OPSILogo') }}
       </div>
     </template>
     <template #error>
       <div class="image-slot">
-        {{ $t('loading.image.error') }}
+        {{ $t('message.loadingFailed') }}
         {{ translatedLabel }}
       </div>
     </template>
@@ -30,7 +30,7 @@ License: AGPL-3.0
 <script setup lang="ts">
   const $t = useI18n().t
   const config = useRuntimeConfig()
-  const translatedLabel = ref($t('button.reload.app'))
+  const translatedLabel = ref($t('reloadOPSIWebGUI'))
 
   const props = defineProps({
     short: { type: Boolean, default: true },

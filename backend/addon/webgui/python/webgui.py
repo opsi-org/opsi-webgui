@@ -9,6 +9,7 @@ webgui
 """
 
 import os
+from collections import Counter
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -30,6 +31,7 @@ from .utils import (
 	get_allowed_objects,
 	get_username,
 	host_group_access_configured,
+	is_opsiserver_write_permitted,
 	mysql,
 	product_group_access_configured,
 	read_only_user,
@@ -91,19 +93,40 @@ async def user_opsiserver() -> JSONResponse:
 	return JSONResponse({"result": get_configserver_id()})
 
 
+
+
 @webgui_router.get("/api/user/configuration")
 def user_configuration() -> JSONResponse:
 	username = get_username()
+	status_counts = {}
+	worst_case_health = "ok"
+
+	healthchecks = list(backend.service_healthCheck(clear_cache=False))
+	if healthchecks:
+		status_order = {"ok": 0, "warning": 1, "error": 2}
+
+		statuses = [check.check_status for check in healthchecks]
+		status_counts = Counter(statuses)
+		worst_case_health = max(
+				(check.check_status for check in healthchecks),
+				key=lambda status: status_order[status],
+				default="ok"
+		)
 	if user_register():
 		return JSONResponse(
 			{
 				"user": username,
 				"configuration": {
 					"read_only": read_only_user(username),
+					"server_write_access": is_opsiserver_write_permitted(username),
 					"depot_access": depot_access_configured(username),
 					"host_group_access": host_group_access_configured(username),
 					"product_group_access": product_group_access_configured(username),
 					"client_creation": client_creation_allowed(username),
+					"health": {
+						"counts": status_counts,
+						"worst_case": worst_case_health
+					}
 				},
 			}
 		)
@@ -112,10 +135,15 @@ def user_configuration() -> JSONResponse:
 			"user": username,
 			"configuration": {
 				"read_only": False,
+				"server_write_access": True,
 				"depot_access": False,
 				"host_group_access": False,
 				"product_group_access": False,
 				"client_creation": True,
+				"health": {
+					"counts": status_counts,
+					"worst_case": worst_case_health
+				}
 			},
 		}
 	)

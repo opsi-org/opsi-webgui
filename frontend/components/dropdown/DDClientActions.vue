@@ -8,7 +8,7 @@ License: AGPL-3.0
 <template>
   <el-dropdown>
     <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoading || disabled">
-      <IconIIcon :icon="getIcon(props.icon)" :title="$t('label.clientaction')" />
+      <IconIIcon :icon="getIcon(props.icon)" :title="$t('clientActions')" />
       <IconILoading v-if="isLoading" class="ml-1" small :title="$t('message.loading')" />
     </el-button>
     <template #dropdown>
@@ -27,25 +27,26 @@ License: AGPL-3.0
                 :disabled="disabled"
               >
                 <IconIIcon :icon="getIcon(action)" class="mr-1" />
-                {{ $t('button.event.' + action) }}
+                {{ $t(action) }}
               </el-button>
             </template>
-            <el-text tag="b" class="text-capitalize after:content-['-']">{{
-              $t('button.event.' + action)
-            }}</el-text>
+            <el-text tag="b" class="text-capitalize after:content-['-']">{{ $t(action) }}</el-text>
             <el-text tag="i">{{ props.clientIds[0] }}</el-text>
             <el-text v-if="props.clientIds.length > 1" class="pl-2">
-              <!-- {{ ` (+${props.clientIds.length - 1} ${$t('info.more')})` }} -->
-              {{ $t('info.more', { clients: props.clientIds.length }) }}
+              {{ $t('countMore', { clients: props.clientIds.length }) }}
             </el-text>
             <el-form label-position="top" class="mt-3" v-loading="isLoading">
-              <el-form-item v-if="action == 'notify'" :label="$t('button.event.showpopup.message')">
-                <el-input v-model="notifyText" class="w-100" />
+              <el-form-item v-if="action == 'notify'" :label="$t('enterNotificationText')">
+                <el-input
+                  v-model="notifyText"
+                  class="w-100"
+                  @keydown.enter.prevent="executeClientAction('notify')"
+                />
               </el-form-item>
 
-              <div v-if="action == 'deployclientagent'">
+              <div v-if="action == 'deployClientAgent'">
                 <div v-for="key in Object.keys(opsiClientAgent)" :key="key">
-                  <el-form-item :label="$t('form.' + key)">
+                  <el-form-item :label="$t(key)">
                     <el-radio-group v-if="key === 'type'" v-model="opsiClientAgent[key]">
                       <el-radio v-for="os in ['Windows', 'Linux', 'Mac']" :key="os" :value="os">{{
                         os
@@ -68,7 +69,7 @@ License: AGPL-3.0
                 :data-testid="`popover-${action}`"
                 @click="executeClientAction(action)"
               >
-                {{ $t('button.event.' + action) }}
+                {{ $t(action) }}
               </el-button>
             </el-form>
           </el-popover>
@@ -98,16 +99,16 @@ License: AGPL-3.0
   const isLoading = ref<boolean>(false)
   const notifyText = ref<string>('')
   const clientActions = ref<Array<string>>([
-    'ondemand', // for translation key search: $t('button.event.ondemand')
-    'notify', // for translation key search: $t('button.event.notify')
-    'reboot', // for translation key search: $t('button.event.reboot')
-    'deployclientagent', // for translation key search: $t('button.event.deployclientagent')
-    'delete', // for translation key search: $t('button.event.delete')
+    'onDemand',
+    'notify',
+    'reboot',
+    'deployClientAgent',
+    'delete',
   ])
   const opsiClientAgent = ref<IObjectString2String>({
-    username: '', // for translation key search: $t('form.username')
-    password: '', // for translation key search: $t('form.password')
-    type: 'windows', // for translation key search: $t('form.type')
+    username: '',
+    password: '',
+    type: 'windows',
   })
 
   interface TClientdRPC {
@@ -118,13 +119,13 @@ License: AGPL-3.0
   }
 
   const actionMethods: IObjectString2Function = {
-    ondemand: async () => {
+    onDemand: async () => {
       const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
         client_ids: props.clientIds,
         method: 'fireEvent',
         params: ['on_demand'],
       })
-      collectResult($t('button.event.ondemand'), data.value, error)
+      collectResult($t('onDemand'), data.value, error)
     },
     notify: async () => {
       const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
@@ -132,7 +133,7 @@ License: AGPL-3.0
         method: 'showPopup',
         params: [notifyText.value],
       })
-      collectResult($t('button.event.notify'), data.value, error)
+      collectResult($t('notify'), data.value, error)
     },
     reboot: async () => {
       const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
@@ -140,22 +141,22 @@ License: AGPL-3.0
         method: 'reboot',
         params: [''],
       })
-      collectResult($t('button.event.reboot'), data.value, error)
+      collectResult($t('reboot'), data.value, error)
     },
-    deployclientagent: async () => {
+    deployClientAgent: async () => {
       const { error } = await useApiPOST<TClientdRPC>('/opsidata/clients/deploy', {
         ...opsiClientAgent.value,
         clients: props.clientIds,
       })
       if (error) {
         notifyError({
-          message: error?.response?.data?.message || 'No data received',
+          message: error?.response?.data?.message || $t('message.noResponse'),
         })
         return
       }
       notifySuccess({
-        title: $t('message.success.title') + ': ',
-        message: $t('message.success.clientagents', {
+        title: $t('message.success') + ': ',
+        message: $t('message.success.clientAgentDeployed', {
           count: props.clientIds.length,
         }),
       })
@@ -178,8 +179,8 @@ License: AGPL-3.0
         }
       }
       notifySuccess({
-        title: $t('message.success.title') + ': ',
-        message: $t('message.success.deleteClients', {
+        title: $t('message.success') + ': ',
+        message: $t('message.success.clientsDeleted', {
           count: deletedIds.length,
         }),
       })
@@ -215,7 +216,7 @@ License: AGPL-3.0
     const resultRows = ref<Array<any>>([])
     const resultRowOk = ref({
       msg: '', // TBA
-      title: $t('message.success.title') + ': ',
+      title: $t('message.success') + ': ',
       tagTitle: 'strong',
       class: '!text-success',
       tag: 'span',

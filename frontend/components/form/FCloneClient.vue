@@ -11,18 +11,15 @@ License: AGPL-3.0
     :label-position="mq.isMobile.value ? 'top' : 'left'"
     v-loading="isLoading"
   >
-    <el-form-item v-if="!isChild" :label="$t('table.fields.sourceClient')">
+    <el-form-item v-if="!isChild" :label="$t('sourceClient')">
       <SelectSHosts type="clients" @change="setId" :id="sourceID" />
     </el-form-item>
     <div v-for="(options, category) in cloneClient" :key="category">
       <h3 class="mt-4 text-lg font-semibold">
-        {{ $t('title.' + category) }}
+        {{ $t(category) }}
       </h3>
       <div v-for="(value, label) in options" :key="category + '-' + label">
-        <el-form-item
-          :label="$t('table.fields.' + label)"
-          :error="label === 'hostId' ? clientNameError : ''"
-        >
+        <el-form-item :label="$t(label)" :error="label === 'hostId' ? clientNameError : ''">
           <el-input v-if="label === 'hostId'" v-model="cloneClient[category][label]">
             <template #append>
               <el-input v-model="domain" class="border-none" />
@@ -38,13 +35,13 @@ License: AGPL-3.0
     </div>
 
     <div class="button-container" style="display: flex; justify-content: flex-end">
-      <el-button @click="resetForm"> {{ $t('button.reset') }}</el-button>
+      <el-button @click="resetForm"> {{ $t('reset') }}</el-button>
       <el-button
         data-testid="cloneButton"
         :type="sourceID && cloneClient.target.hostId ? 'success' : ''"
         @click="applyCloneClient"
         :disabled="!sourceID || !cloneClient.target.hostId || clientExists"
-        >{{ $t('title.clone') }}</el-button
+        >{{ $t('clone') }}</el-button
       >
     </div>
   </el-form>
@@ -97,8 +94,8 @@ License: AGPL-3.0
       const fullHostId = `${newClientName}${domain.value}`
       if (clientIDList.value.includes(fullHostId)) {
         clientExists.value = true
-        clientNameError.value = $t('message.warning.clientExists', {
-          client: fullHostId,
+        clientNameError.value = $t('message.alreadyExists', {
+          item: fullHostId,
         })
       } else {
         clientExists.value = false
@@ -120,8 +117,8 @@ License: AGPL-3.0
     cloneClientCopy.target.hostId += domain.value
     if (clientIDList.value.includes(cloneClientCopy.target.hostId)) {
       notifyError({
-        message: $t('message.warning.clientExists', {
-          client: cloneClientCopy.target.hostId,
+        message: $t('message.alreadyExists', {
+          item: cloneClientCopy.target.hostId,
         }),
       })
       isLoading.value = false
@@ -129,7 +126,7 @@ License: AGPL-3.0
     }
     try {
       await useApiPOST(`/opsidata/clients/${sourceID.value}/clone`, cloneClientCopy)
-      notifySuccess({ message: $t('message.success.clone') })
+      notifySuccess({ message: $t('message.clientCloned') })
     } catch (error) {
       notifyError({ message: error })
     } finally {
@@ -145,17 +142,15 @@ License: AGPL-3.0
   function getDefaultCloneClient() {
     return {
       target: {
-        // for translation key search $t('title.target')
-        hostId: '', // $t('table.fields.hostId')
-        ipAddress: '', // $t('table.fields.ipAddress')
-        hardwareAddress: '', // $t('table.fields.hardwareAddress')
-        // systemUUID: '', // $t('table.fields.systemUUID')
+        hostId: '',
+        ipAddress: '',
+        hardwareAddress: '',
+        // systemUUID: '',
       },
       options: {
-        // $t('title.options')
-        configs: true, // $t('table.fields.configs')
-        products: true, // $t('table.fields.products')
-        productProperties: true, // $t('table.fields.productProperties')
+        configs: true,
+        products: true,
+        productProperties: true,
       },
     }
   }

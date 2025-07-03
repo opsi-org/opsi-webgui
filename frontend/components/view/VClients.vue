@@ -29,7 +29,7 @@ License: AGPL-3.0
         data-testid="clients-products-button"
       >
         <IconIIcon :icon="icons.product" />
-        {{ $t('table.fields.products') }}
+        {{ $t('products') }}
       </el-button>
       <ModalMServerSelection v-if="storeSelection.selectionDepots.length <= 0" @refetch="refetch" />
     </template>
@@ -45,10 +45,8 @@ License: AGPL-3.0
   import RadioButton from 'primevue/radiobutton'
   import Button from 'primevue/button'
   import Badge from 'primevue/badge'
-  // import TTooltip from '../tooltip/TTooltip.vue'
   import IIcon from '../icon/IIcon.vue'
   import ILoading from '../icon/ILoading.vue'
-  // import { Popover } from 'primevue'
 
   type TClientReach = Record<string, boolean | undefined>
   interface t_param_reachable {
@@ -80,9 +78,6 @@ License: AGPL-3.0
   const statisticsWidth = '30px'
   const statisticsWidthDyn = computed(() => {
     return ''
-    // return storeTSettings.otherSettings['clients'].statisticIcons
-    //   ? 'max-w-14'
-    //   : 'max-w-9'
   })
   const tableColumn = ref([
     {
@@ -91,11 +86,9 @@ License: AGPL-3.0
       sortable: 'custom',
       type: 'selection',
       fixed: 'true',
-      // icon: icons.checkBox,
       visible: true, // storeTSettings.clientsColumns.includes('selected'),
       alwaysVisible: true,
       className: props.isMobile ? 'max-w-10' : '!max-w-7 !min-w-7 !w-7',
-      // maxWidth: props.isMobile ? '35px' : '60px',
       align: 'center',
       cellRenderer: ({ rowData }: any) => {
         if (!rowData?.[rowId]) return
@@ -120,7 +113,7 @@ License: AGPL-3.0
       },
     },
     {
-      title: $t('table.fields.id'),
+      title: $t('clientId'),
       key: 'clientId',
       sortable: 'custom',
       visible: true, //storeTSettings.clientsColumns.includes('clientId'),
@@ -132,31 +125,31 @@ License: AGPL-3.0
       minWidth: '100px',
     },
     {
-      title: $t('table.fields.mac'),
+      title: $t('macAddress'),
       key: 'macAddress',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('macAddress'),
     },
     {
-      title: $t('table.fields.ip'),
+      title: $t('ipAddress'),
       key: 'ipAddress',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('ipAddress'),
     },
     {
-      title: $t('table.fields.description'),
+      title: $t('description'),
       key: 'description',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('description'),
     },
     {
-      title: 'notes',
+      title: $t('notes'),
       key: 'notes',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('notes'),
     },
     {
-      title: $t('table.fields.lastSeen'),
+      title: $t('lastSeen'),
       key: 'lastSeen',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('lastSeen'),
@@ -169,14 +162,14 @@ License: AGPL-3.0
       },
     },
     {
-      title: $t('table.fields.uefi'),
+      title: $t('uefi'),
       key: 'uefi',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('uefi'),
     },
 
     {
-      title: $t('table.fields.versionOutdatedLocalboot'),
+      title: $t('version_outdated_localboot'),
       key: 'version_outdated',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('version_outdated'),
@@ -185,7 +178,7 @@ License: AGPL-3.0
       classNameDyn: statisticsWidthDyn.value,
       icon: icons.productsOutdatedLocal,
       cellRenderer: getStatisticRenderer(
-        $t('table.fields.versionOutdatedLocalboot'),
+        $t('version_outdated_localboot'),
         icons.productsOutdatedLocal,
         '/clients/products/LocalbootProduct?sortBy=version&sortDesc=true&selectedClient=',
         'version_outdated',
@@ -196,7 +189,7 @@ License: AGPL-3.0
       ),
     },
     {
-      title: $t('table.fields.versionOutdatedNetboot'),
+      title: $t('version_outdated_netboot'),
       key: 'version_outdated_netboot',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('version_outdated_netboot'),
@@ -206,7 +199,7 @@ License: AGPL-3.0
       classNameDyn: statisticsWidthDyn.value,
       icon: icons.productsOutdatedNet,
       cellRenderer: getStatisticRenderer(
-        $t('table.fields.versionOutdatedNetboot'),
+        $t('version_outdated_netboot'),
         icons.productsOutdatedNet,
         '/clients/products/NetbootProduct?sortBy=version&sortDesc=true&selectedClient=',
         'version_outdated_netboot',
@@ -217,7 +210,7 @@ License: AGPL-3.0
       ),
     },
     {
-      title: $t('table.fields.installationStatusUnknown'),
+      title: $t('installationStatus_unknown'),
       key: 'installationStatus_unknown',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('installationStatus_unknown'),
@@ -227,7 +220,7 @@ License: AGPL-3.0
       classNameDyn: statisticsWidthDyn.value,
       icon: icons.productInstallationStatusUnknown,
       cellRenderer: getStatisticRenderer(
-        $t('table.fields.installationStatusUnknown'),
+        $t('installationStatus_unknown'),
         icons.productInstallationStatusUnknown,
         '/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=',
         'installationStatus_unknown',
@@ -238,7 +231,7 @@ License: AGPL-3.0
       ),
     },
     {
-      title: $t('table.fields.installationStatus_installed'),
+      title: $t('installationStatus_installed'),
       key: 'installationStatus_installed',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('installationStatus_installed'),
@@ -248,7 +241,7 @@ License: AGPL-3.0
       classNameDyn: statisticsWidthDyn.value,
       icon: icons.productInstallationStatusInstalled,
       cellRenderer: getStatisticRenderer(
-        $t('table.fields.installationStatus_installed'),
+        $t('installationStatus_installed'),
         icons.productInstallationStatusInstalled,
         '/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=',
         'installationStatus_installed',
@@ -256,7 +249,7 @@ License: AGPL-3.0
       ),
     },
     {
-      title: $t('table.fields.actionResult_successful'),
+      title: $t('actionResult_successful'),
       key: 'actionResult_successful',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('actionResult_successful'),
@@ -266,7 +259,7 @@ License: AGPL-3.0
 
       icon: icons.productActionResultSuccessful,
       cellRenderer: getStatisticRenderer(
-        $t('table.fields.actionResult_successful'),
+        $t('actionResult_successful'),
         icons.productActionResultSuccessful,
         '/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=',
         'actionResult_successful',
@@ -274,7 +267,7 @@ License: AGPL-3.0
       ),
     },
     {
-      title: $t('table.fields.actionResultFailed'),
+      title: $t('actionResult_failed'),
       key: 'actionResult_failed',
       sortable: 'custom',
       visible: storeTSettings.clientsColumns.includes('actionResult_failed'),
@@ -284,7 +277,7 @@ License: AGPL-3.0
       minWidth: statisticsWidth,
       icon: icons.productsFailedActionResult,
       cellRenderer: getStatisticRenderer(
-        $t('table.fields.actionResultFailed'),
+        $t('actionResult_failed'),
         icons.productsFailedActionResult,
         '/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=',
         'actionResult_failed',
@@ -295,16 +288,15 @@ License: AGPL-3.0
       ),
     },
     {
-      title: $t('table.fields.reachable'),
+      title: $t('reachable'),
       key: 'reachable',
-      sortable: false,
+      sortable: true,
       visible: storeTSettings.clientsColumns.includes('reachable'),
       width: '60px',
-      // {$t('table.fields.reachable')}
       headerCellRenderer: () => {
         const reachableMode = storeTSettings.otherSettings.clients.reachableAllClients
-          ? $t('button.reachables.all')
-          : $t('button.reachables.selected')
+          ? $t('(allClients)')
+          : $t('(selectedClients)')
         return reachableClientsIsLoadingHeader.value ? (
           <ILoading small />
         ) : (
@@ -313,7 +305,7 @@ License: AGPL-3.0
             <el-button
               v-else
               link
-              title={$t('button.reachables.title') + ' ' + reachableMode}
+              title={$t('checkClientReachability') + ' ' + reachableMode}
               disabled={storeConfigapp().config?.read_only}
               onClick={() => handleClickReachable()}
             >
@@ -323,12 +315,14 @@ License: AGPL-3.0
         )
       },
       cellRenderer: ({ rowData }: any) => {
-        const reachable = rowData.reachable || reachableClients.value[rowData.clientId]
+        let reachable: boolean | undefined = rowData.reachable
+        if (rowData.reachable == undefined)
+          reachable = reachableClients.value[rowData.clientId]
         switch (reachable) {
           case true:
-            return <IIcon icon={icons.check} title={$t('label.reachable.true')} />
+            return <IIcon icon={icons.check} title={$t('message.clientIsReachable')} />
           case false:
-            return <IIcon icon={icons.x} title={$t('label.reachable.false')} />
+            return <IIcon icon={icons.x} title={$t('message.clientIsNotReachable')} />
           default:
             return reachableClientsIsLoading.value[rowData.clientId] ||
               reachableClientsIsLoadingHeader.value ? (
@@ -337,7 +331,7 @@ License: AGPL-3.0
               <el-button
                 link
                 class="text-right"
-                title={$t('button.reachable.title')}
+                title={$t('checkClientReachability')}
                 disabled={storeConfigapp().config?.read_only}
                 onClick={() => handleClickReachable([rowData.clientId])}
               >
@@ -348,7 +342,7 @@ License: AGPL-3.0
       },
     },
     {
-      title: $t('table.fields.rowactions'),
+      title: $t('actions'),
       key: 'actions',
       sortable: false,
       visible: storeTSettings.clientsColumns.includes('actions'),
@@ -360,7 +354,6 @@ License: AGPL-3.0
   watch(
     () => storeTSettings.otherSettings['clients'].statisticIcons,
     () => {
-      // clientsRef.value?.refetch()
       for (const column of tableColumn.value) {
         if (column.classNameDyn !== undefined) {
           column.classNameDyn = statisticsWidthDyn.value
@@ -404,13 +397,13 @@ License: AGPL-3.0
     if (error) {
       console.error(error)
       notifyError({
-        message: error?.response?.data?.message || $t('message.error.generic'),
+        message: error?.response?.data?.message || $t('message.error.general'),
       })
       return
     }
     if (data.value == undefined) {
       console.error('empty response. data.value undefined, data: ', data, headers, error)
-      notifyError({ message: $t('message.error.empty-response') })
+      notifyError({ message: $t('message.error.emptyResponse') })
       return
     }
     return {
@@ -447,7 +440,7 @@ License: AGPL-3.0
     if (error) {
       console.error(error)
       notifyError({
-        message: error?.response?.data?.message || $t('message.error.generic'),
+        message: error?.response?.data?.message || $t('message.error.general'),
       })
       return
     }
@@ -472,12 +465,12 @@ License: AGPL-3.0
         return
       }
       notifyInfo({
-        title: $t('message.info.event'),
-        message: $t('message.info.event.client_updated', {
+        title: $t('opsiMessageBus'),
+        message: $t('opsiMessageBus.client_updated', {
           clientId: msg.data.id,
         }),
         button: {
-          label: $t('label.reloadPage'),
+          label: $t('reloadPage'),
           onClick: clientsRef.value?.refetch,
         },
       })
@@ -549,21 +542,3 @@ License: AGPL-3.0
     }
   }
 </script>
-<style scoped>
-  /* :deep(.parent-statistics) {
-    border-left: 2px solid var(--el-border-color) !important;
-  }
-  :deep(.parent-statistics:not(:has(~ .parent-statistics))) {
-    border-right: 2px solid var(--el-border-color) !important;
-  } */
-
-  /* :deep(td .cell),
-  :deep(th .cell) {
-    min-width: min-content;
-    max-width: max-content;
-    padding: 1px;
-  } */
-  /* :deep(.parent-statistics),
-  :deep(.parent-statistics .cell) {
-  } */
-</style>

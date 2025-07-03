@@ -13,7 +13,7 @@ License: AGPL-3.0
           v-for="icon in category.name.split('-')"
           :key="icon"
           :icon="getIcon(icon)"
-          :title="$t('title.' + category.name)"
+          :title="$t(category.name)"
         />
         <el-text size="small" class="mt-2" v-if="category.store != ''">
           {{ storeSelection[category.store].length }}
@@ -38,10 +38,10 @@ License: AGPL-3.0
   const $t = useI18n().t
   const storeSelection: any = storeSelections()
   const quickSelDisplayList = reactive([
-    { name: 'infoselections' as PropTypeGroupTree, store: '' }, // for translation key search: $t('title.infoselections')
-    { name: 'depots' as PropTypeGroupTree, store: 'selectionDepots' }, // for translation key search: $t('title.depots')
-    { name: 'client-group' as PropTypeGroupTree, store: 'selectionClients' }, // for translation key search: $t('title.client-group')
-    { name: 'product-group' as PropTypeGroupTree, store: 'selectionProducts' }, // for translation key search: $t('title.product-group')
+    { name: 'infoselections' as PropTypeGroupTree, store: '' },
+    { name: 'depots' as PropTypeGroupTree, store: 'selectionDepots' },
+    { name: 'client-group' as PropTypeGroupTree, store: 'selectionClients' },
+    { name: 'product-group' as PropTypeGroupTree, store: 'selectionProducts' },
   ])
   const activeName = ref<PropTypeGroupTree>('infoselections')
   function getIcon(icon: string) {

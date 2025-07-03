@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <el-form label-width="auto" :label-position="mq.isMobile.value ? 'top' : 'left'">
-    <el-form-item :label="$t('table.fields.version')">
+    <el-form-item :label="$t('version')">
       {{
         getVersion(
           fetchedData.properties.productVersions || fetchedData.dependencies.productVersions
@@ -18,7 +18,7 @@ License: AGPL-3.0
       v-if="
         fetchedData.properties.productDescription || fetchedData.dependencies.productDescription
       "
-      :label="$t('table.fields.description')"
+      :label="$t('description')"
     >
       <Markdown
         :source="
@@ -29,7 +29,7 @@ License: AGPL-3.0
     </el-form-item>
     <el-form-item
       v-if="fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice"
-      :label="$t('table.fields.advice')"
+      :label="$t('advice')"
     >
       <Markdown
         :source="fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice"
@@ -39,14 +39,14 @@ License: AGPL-3.0
   </el-form>
   <el-alert
     v-if="selectionClients.length <= 0"
-    :title="$t('message.warning.noClientsSelectedShowDepot')"
+    :title="$t('message.noClientsSelected')"
     type="warning"
     show-icon
   />
   <el-alert
     v-if="productVersionsCount !== selectionDepots.length"
     :title="
-      $t('message.warning.notOnEachDepot', {
+      $t('message.productInstalledOnSelectedServers', {
         count: productVersionsCount,
         countall: selectionDepots.length,
       })
@@ -56,7 +56,7 @@ License: AGPL-3.0
   />
   <el-alert
     v-if="hasDifferentProductVersions"
-    :title="$t('message.warning.differentProductVersions')"
+    :title="$t('message.differentVersionsExists')"
     type="warning"
     show-icon
   />
@@ -64,11 +64,11 @@ License: AGPL-3.0
     <el-tab-pane
       name="properties"
       :label="
-        $t('title.prodproperties') +
+        $t('properties') +
         ' ' +
         (Object.keys(fetchedData.properties.properties).length !== 0
           ? ''
-          : $t('title.dependenciesEmpty'))
+          : $t('dependencies(empty)'))
       "
       :disabled="Object.keys(fetchedData.properties.properties).length === 0"
       active
@@ -78,9 +78,7 @@ License: AGPL-3.0
     </el-tab-pane>
     <el-tab-pane
       name="dependencies"
-      :label="
-        $t('title.dependencies') + ' ' + (hasDependencies ? '' : $t('title.dependenciesEmpty'))
-      "
+      :label="$t('dependencies') + ' ' + (hasDependencies ? '' : $t('dependencies(empty)'))"
       :disabled="!hasDependencies"
     >
       <ViewVConfigProductDependencies :dependencies="fetchedData.dependencies" />
@@ -179,7 +177,7 @@ License: AGPL-3.0
 
     if (!data.value) {
       notifyError({
-        message: $t('message.error.empty-response', {
+        message: $t('message.error.emptyResponse', {
           details: 'ConfigProductProperties',
         }),
       })
@@ -205,7 +203,7 @@ License: AGPL-3.0
 
     if (!data.value) {
       notifyError({
-        message: $t('message.error.empty-response', {
+        message: $t('message.error.emptyResponse', {
           details: 'ConfigProductDependencies',
         }),
       })
