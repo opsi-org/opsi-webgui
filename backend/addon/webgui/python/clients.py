@@ -519,7 +519,7 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -
 class ProcessActionRPC(BaseModel):  # pylint: disable=too-few-public-methods
 	client_ids: List[str]
 	product_ids: Optional[List[str]] = None
-	visibility: Literal["", "visible", "hidden"] = ""
+	visibility: Optional[Literal["", "visible", "hidden"]] = ""
 
 
 @client_router.post("/api/command/process_action", response_model=Dict[str, Dict[str, Any]])
@@ -530,7 +530,7 @@ async def host_control_process_action(request: Request, data: ProcessActionRPC) 
 	"""
 	try:
 		result = backend.hostControl_processActionRequests(
-			hostIds=data.client_ids, productIds=data.product_ids or [], visibility=data.visibility
+			hostIds=data.client_ids, productIds=data.product_ids or [], visibility=data.visibility or ""
 		)
 	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Failed to execute process actions: %s", err)
