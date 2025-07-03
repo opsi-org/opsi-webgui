@@ -25,7 +25,7 @@ from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, co
 from packaging import version
 from packaging.version import InvalidVersion
 from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
-from sqlalchemy import alias, and_, column, delete, select, text, update  # type: ignore[import]
+from sqlalchemy import alias, and_, case, column, delete, literal, select, text, update  # type: ignore[import]
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table  # type: ignore[import]
@@ -132,6 +132,22 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		else:
 			params["selected"] = [""]
 
+		reachable_clients: list[str] | None = None
+		# is required used if only showing reachable if sortBy is "reachable. but if we sort by sth else, reachable disappear..."
+		# is_reachable_required = backend._host_control_use_messagebus is not False and (
+		# commons.get("sortBy", None) == "reachable" or "reachable" in commons.get("sortBy", [])
+		# )
+		if backend._host_control_use_messagebus is True or backend._host_control_use_messagebus == "hybrid":
+			result: dict[str, bool] = await backend.hostControl_reachable([], 20)  # pylint: disable=protected-access
+			reachable_clients = [cid for cid, reachable in result.items() if reachable]
+
+		if reachable_clients is None:
+			is_reachable_sql = "NULL AS reachable"
+		elif reachable_clients == []:
+			is_reachable_sql = "FALSE AS reachable"
+		else:
+			is_reachable_sql = f"IF(hd.clientId IN {tuple(reachable_clients)}, TRUE, FALSE) AS reachable"
+
 		client_with_depot = alias(
 			select(  # type: ignore
 				text(  # type: ignore
@@ -171,9 +187,10 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 			.subquery(),
 			name="hd",
 		)
+		# print("subquery", client_with_depot)
 		client_select = select(
 			text(  # type: ignore
-				"""
+				f"""
 			hd.clientId,
 			hd.ident,
 			hd.macAddress,
@@ -183,6 +200,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 			DATE_FORMAT(hd.lastSeen, '%Y-%m-%dT%TZ') AS lastSeen,
 			hd.uefi,
 			hd.uefi_value,
+			{is_reachable_sql},
 			(
 				SELECT
 					COUNT(*)
@@ -235,27 +253,32 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		"""
 			)
 		).select_from(client_with_depot)
-
 		query = order_by(client_select, commons)  # type: ignore
 		query = pagination(query, commons)
 
 		result = session.execute(query, params)
+
 		result = result.fetchall()
 
 		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]  # type: ignore
-		if backend._host_control_use_messagebus is True:
-			reachable_clients = await backend.hostControl_reachable([], 20)  # pylint: disable=protected-access
+
 		data = []
+		logger.warning("Total clients found: %s", total)
+		logger.warning("Clients found: %s", result)
+		print("Total clients found:", total)
+		print("Clients found:", result)
 		for row in result:
 			if row is not None:
-				client = dict(row)
+				client: dict[str, Any] = dict(row)
 				client["uefi"] = bool(client["uefi"])
-				if backend._host_control_use_messagebus is not True:
-					client["reachable"] = None
-				elif reachable_clients.get(client["clientId"], False):
-					client["reachable"] = True
-				else:
-					client["reachable"] = False
+				client["reachable"] = bool(client["reachable"]) if client["reachable"] is not None else None
+				client["selected"] = bool(client["selected"]) if client["selected"] is not None else None
+				# if backend._host_control_use_messagebus is not True:
+				# client["reachable"] = None
+				# elif reachable_clients.get(client["clientId"], False):
+				# client["reachable"] = True
+				# else:
+				# client["reachable"] = False
 				data.append(client)
 
 		return RESTResponse(data=data, total=total)

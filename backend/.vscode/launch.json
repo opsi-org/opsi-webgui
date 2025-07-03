@@ -5,7 +5,7 @@
 			"name": "opyiconfd py",
 			"type": "debugpy",
 			"request": "launch",
-			"program": "/workspace/docker/backend/start_opsiconfd.py",
+			"program": "/workspace/docker/backend/_run_opsiconfd.py",
 			"sudo": true,
 			"justMyCode": false,
 			"envFile": "${workspaceFolder}/.env",

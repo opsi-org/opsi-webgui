@@ -290,7 +290,7 @@ License: AGPL-3.0
     {
       title: $t('reachable'),
       key: 'reachable',
-      sortable: false,
+      sortable: true,
       visible: storeTSettings.clientsColumns.includes('reachable'),
       width: '60px',
       headerCellRenderer: () => {
@@ -315,7 +315,9 @@ License: AGPL-3.0
         )
       },
       cellRenderer: ({ rowData }: any) => {
-        const reachable = rowData.reachable || reachableClients.value[rowData.clientId]
+        var reachable: boolean | undefined = rowData.reachable
+        if (rowData.reachable == undefined)
+         reachable = reachableClients.value[rowData.clientId]
         switch (reachable) {
           case true:
             return <IIcon icon={icons.check} title={$t('message.clientIsReachable')} />

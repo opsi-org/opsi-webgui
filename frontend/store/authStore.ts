@@ -70,9 +70,9 @@ export const storeAuth = defineStore('auth', {
       this.setUser(_username)
     },
     logout() {
-      this.$reset()
-      storeMBus().$reset()
       storeTablesettings().$reset()
+      storeMBus().$reset()
+      this.$reset()
     },
     setUser(username: string) {
       this._username = username

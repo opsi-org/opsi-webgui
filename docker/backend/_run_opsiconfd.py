@@ -6,7 +6,7 @@ import subprocess
 import sys
 import time
 
-port = os.environ.get('OPSICONFD_PORT', 44472)
+port = os.environ.get("OPSICONFD_PORT", 44472)
 print("OPSICONFD_PORT", port)
 
 WAIT_TIME_CLEANUP = 10
@@ -64,9 +64,7 @@ def cleanup():
 
 def main():
     if not is_root():
-        print(
-            "Need to run as root. Eg. `sudo bash run_opsiconfd.sh`", file=sys.stderr
-        )
+        print("Need to run as root. Eg. `sudo bash run_opsiconfd.sh`", file=sys.stderr)
         sys.exit(1)
 
     atexit.register(cleanup)
