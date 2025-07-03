@@ -516,6 +516,28 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -
 	return RESTResponse(http_status=200, data={"configId": "clientconfig.dhcpd.filename", "objectId": clientid, "values": config_value})
 
 
+class ProcessActionRPC(BaseModel):  # pylint: disable=too-few-public-methods
+	client_ids: List[str]
+	product_ids: Optional[List[str]] = None
+	visibility: Literal["", "visible", "hidden"] = ""
+
+
+@client_router.post("/api/command/process_action", response_model=Dict[str, Dict[str, Any]])
+@rest_api
+async def host_control_process_action(request: Request, data: ProcessActionRPC) -> RESTResponse:  # pylint: disable=unused-argument
+	"""
+	Run process action on clients
+	"""
+	try:
+		result = backend.hostControl_processActionRequests(
+			hostIds=data.client_ids, productIds=data.product_ids or [], visibility=data.visibility
+		)
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Failed to execute process actions: %s", err)
+		raise OpsiApiException(message="Failed to execute process actions.", http_status=status.HTTP_400_BAD_REQUEST, error=err) from err
+	return RESTResponse(http_status=status.HTTP_200_OK, data=result)
+
+
 class OpsiclientdRPC(BaseModel):  # pylint: disable=too-few-public-methods
 	client_ids: List[str]
 	method: str
