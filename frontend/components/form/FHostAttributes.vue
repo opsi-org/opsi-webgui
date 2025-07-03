@@ -10,7 +10,7 @@ License: AGPL-3.0
     <el-alert v-if="!props.id" type="warning" show-icon> {{ $t('message.selectItem') }}</el-alert>
     <el-form
       v-if="hostAttributes.length && hostAttributes[0]"
-      label-width="50%"
+      label-width="30%"
       :label-position="mq.isMobile.value ? 'top' : 'left'"
       v-loading="isLoading"
     >

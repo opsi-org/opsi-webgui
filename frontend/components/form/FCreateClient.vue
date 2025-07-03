@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <el-form
-    label-width="50%"
+    label-width="30%"
     :label-position="mq.isMobile.value ? 'top' : 'left'"
     v-loading="isLoading"
   >
@@ -16,30 +16,21 @@ License: AGPL-3.0
         {{ $t(category) }}
       </h3>
       <div v-for="(value, label) in options" :key="label + '-' + value">
-        <el-form-item
-          :label="$t('table.fields.' + label)"
-          :error="label === 'hostId' ? clientNameError : ''"
-        >
+        <el-form-item :label="$t(label)" :error="label === 'hostId' ? clientNameError : ''">
           <el-form v-if="label === 'opsiClientAgent'" :inline="true" label-position="top">
             <div
               v-for="(value2, label2) in createClient.initialSetup.opsiClientAgent"
               :key="label2 + value2"
-              :class="{
-                'w-full': label2 === 'setup',
-                'w-1/2': label2 !== 'setup',
-              }"
             >
               <div v-if="label2 == 'setup'">
                 <el-checkbox
                   v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]"
                   class="w-full"
-                >
-                  {{ label2 }}
-                </el-checkbox>
+                />
               </div>
               <el-form-item
                 v-else
-                :label="$t('form.' + label2)"
+                :label="$t(label2)"
                 :class="{
                   '!hidden': !createClient.initialSetup.opsiClientAgent.setup,
                 }"

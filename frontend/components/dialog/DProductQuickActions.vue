@@ -18,7 +18,7 @@ License: AGPL-3.0
       </template>
       <el-form
         v-loading="isLoadingMain || isLoadingDemo"
-        label-width="50%"
+        label-width="30%"
         :label-position="mq.isMobile.value ? 'top' : 'left'"
       >
         <div v-for="(options, category, index) in productActions" :key="index">

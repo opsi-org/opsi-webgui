@@ -242,7 +242,7 @@ License: AGPL-3.0
       :meta="{ wrapperMobile: true }"
       responsive-disabled
     >
-      <el-form label-width="50%">
+      <el-form label-width="30%">
         <FormrowFRItem
           :item="items['bool-true']"
           @change="
