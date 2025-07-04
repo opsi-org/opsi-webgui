@@ -55,6 +55,30 @@ License: AGPL-3.0
           </div>
         </template>
       </el-dialog>
+      <el-button @click="openProcessActionsModal = true">
+        {{ $t('processActions') }}
+      </el-button>
+      <el-dialog v-model="openProcessActionsModal" :title="$t('processActions')" align-center>
+        {{ $t('processActions.help') }}
+        <el-form label-width="30%" :label-position="mq.isMobile.value ? 'top' : 'left'">
+          <el-form-item :label="$t('products')">
+            <el-radio-group>
+              <el-radio value="All">{{ $t('allProducts') }}</el-radio>
+              <el-radio value="Selected">{{ $t('selectedProducts') }}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item :label="$t('visibilityOnClients')">
+            <el-checkbox></el-checkbox>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button>
+              {{ $t('execute') }}
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
 
       <ModalMServerSelection
         v-if="storeSelection.selectionDepots.length <= 0"
@@ -108,6 +132,7 @@ License: AGPL-3.0
   const router = useRouter()
   const fetchClient = useClient()
   useMBus(wsBusMsgObjectChanged, false, $t)
+  const mq = useMQ()
 
   const storeSelection = storeSelections()
   const storeCookie = storeTablesettings()
@@ -352,6 +377,7 @@ License: AGPL-3.0
   ])
 
   const openBufferedChangesModal = ref(false)
+  const openProcessActionsModal = ref(false)
   const bufferedChanges = ref<Array<any>>([])
 
   const hasUnsavedChanges = computed(() => bufferedChanges.value?.length > 0)
