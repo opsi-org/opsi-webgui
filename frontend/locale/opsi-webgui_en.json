@@ -254,6 +254,8 @@
   "possibleActions": "Possible Actions",
   "possibleValues": "Possible Values",
   "priority": "Priority",
+  "processActions": "Process Actions",
+  "processActions.help": "This will execute saved product actions on the selected clients.",
   "product-add": "Add Products",
   "product-delete": "Delete Products",
   "product-delete.confirm": "Are you sure you want to delete the selected group's product assignments?",

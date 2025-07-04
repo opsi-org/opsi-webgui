@@ -250,6 +250,8 @@
   "possibleActions": "Mögliche Aktionen",
   "possibleValues": "Mögliche Werte",
   "priority": "Priorität",
+  "processActions": "Prozessaktionen",
+  "processActions.help": "Dies führt gespeicherte Produktaktionen auf den ausgewählten Clients aus.",
   "product-add": "Produkte hinzufügen",
   "product-delete": "Produkte löschen",
   "product-delete.confirm": "Möchten Sie die Produktzuweisungen der ausgewählten Gruppe wirklich löschen?",
