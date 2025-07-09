@@ -4,7 +4,7 @@ include:
   - path: ./opsi-docker/opsi-server/docker-compose-env.yml
     env_file:
       # - .devcontainer/opsi-docker/opsi-server/opsi-server.env
-      # - .devcontainer/.env
+      # - docker/frontend/.env
       - .env
       - ./opsi-docker/opsi-server/opsi-server.env
 
@@ -34,4 +34,4 @@ services:
       - opsi_data:/data
       - ./files/docker-entrypoint.sh:/docker-entrypoint.sh
     working_dir: /workspace
-    entrypoint: [ '/docker-entrypoint.sh' ]
+    entrypoint: ['/docker-entrypoint.sh']
