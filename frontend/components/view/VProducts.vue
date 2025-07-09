@@ -58,8 +58,7 @@ License: AGPL-3.0
       <el-button @click="openProcessActionsModal = true">
         {{ $t('processActions') }}
       </el-button>
-      <el-dialog v-model="openProcessActionsModal" :title="$t('processActions')" align-center>
-        {{ $t('processActions.help') }}
+      <el-dialog v-model="openProcessActionsModal" :title="$t('processActions.help')" align-center>
         <el-form label-width="30%" :label-position="mq.isMobile.value ? 'top' : 'left'">
           <el-form-item :label="$t('products')">
             <el-radio-group>
@@ -67,8 +66,21 @@ License: AGPL-3.0
               <el-radio value="Selected">{{ $t('onlySelectedProducts') }}</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item :label="$t('visibleOnClients')">
-            <el-checkbox></el-checkbox>
+          <el-form-item :label="$t('visiblilityOnClients')">
+            <el-checkbox
+              :indeterminate="visibilityState === undefined"
+              :checked="visibilityState === true"
+              :unchecked="visibilityState === false"
+              @change="toggleVisibility"
+            >
+              {{
+                visibilityState === true
+                  ? $t('visible')
+                  : visibilityState === false
+                    ? $t('hidden')
+                    : $t('clientDefault')
+              }}
+            </el-checkbox>
           </el-form-item>
         </el-form>
         <template #footer>
@@ -383,6 +395,8 @@ License: AGPL-3.0
   const hasUnsavedChanges = computed(() => bufferedChanges.value?.length > 0)
   const hasRowsWrapper = computed(() => productsRef.value?.hasRows.value)
 
+  const visibilityState = ref<true | false | undefined>(undefined) // Can be true, false, or undefined
+
   onMounted(async () => {
     if (props.productType && props.productType !== currentType.value)
       changeProductsType(props.productType as IProductTypes)
@@ -443,6 +457,16 @@ License: AGPL-3.0
 
   function refetch() {
     productsRef.value?.refetch()
+  }
+
+  function toggleVisibility() {
+    if (visibilityState.value === undefined) {
+      visibilityState.value = true
+    } else if (visibilityState.value === true) {
+      visibilityState.value = false
+    } else {
+      visibilityState.value = undefined
+    }
   }
 
   function discardAllChanges() {
