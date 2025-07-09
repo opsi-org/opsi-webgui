@@ -64,10 +64,10 @@ License: AGPL-3.0
           <el-form-item :label="$t('products')">
             <el-radio-group>
               <el-radio value="All">{{ $t('allProducts') }}</el-radio>
-              <el-radio value="Selected">{{ $t('selectedProducts') }}</el-radio>
+              <el-radio value="Selected">{{ $t('onlySelectedProducts') }}</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item :label="$t('visibilityOnClients')">
+          <el-form-item :label="$t('visibleOnClients')">
             <el-checkbox></el-checkbox>
           </el-form-item>
         </el-form>
