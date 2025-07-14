@@ -37,7 +37,7 @@ License: AGPL-3.0
   import { useConfigserver } from '~/composables/mixins/useGet'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useMBus } from '~/composables/mixins/useMessagebus'
-  import type { T_DisaledFeatures } from '~/types/APItypes'
+  import type { T_DisabledFeatures } from '~/types/APItypes'
 
   const $t = useI18n().t
   const { notifyWarning, notifyError } = useNotification()
@@ -79,7 +79,9 @@ License: AGPL-3.0
 
   async function _fetchIsDisabled() {
     isLoading.value = true
-    const { data, error } = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
+    const { data, error } = await useApiGET<T_DisabledFeatures>(
+      '/opsidata/server/disabled-features'
+    )
     if (error) {
       notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
