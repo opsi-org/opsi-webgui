@@ -229,6 +229,7 @@ init:transifex-down:
     - test -f frontend/locale/opsi-webgui_de.json && echo "Translation de exists."
     - test -f frontend/locale/opsi-webgui_fr.json && echo "Translation fr exists."
   only:
+    - fix/cicd
     - tags
     - v5
   artifacts:
@@ -245,6 +246,7 @@ init:changelogs:
     # - cp -f output/changelog.md webgui/data/.
     - chmod 666 output/*
   only:
+    - fix/cicd
     - tags
     - v5
   artifacts:
@@ -592,6 +594,7 @@ build:addon: # with transifex
     - init:changelogs
     # - build:static:app # already done in this job
   script:
+    - set -ex
     - *install_tools
     - pwd && ls -la frontend
     - cd frontend # generate dist
@@ -612,6 +615,7 @@ build:addon: # with transifex
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
   only:
+    - fix/cicd
     - tags
     - v5
   artifacts:
@@ -648,6 +652,7 @@ build:zip: # with transifex
     - ls -lah webgui/data # debug
     - ls -lah frontend/locale
   only:
+    - fix/cicd
     - tags
     - v5
   artifacts:
