@@ -22,7 +22,12 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[python]": {
-    "diffEditor.ignoreTrimWhitespace": false
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": "charliermarsh.ruff"
   },
   "betterTypeScriptErrors.prettify": true,
   "editor.codeActionsOnSave": {
@@ -52,7 +57,6 @@
   //"playwrightrunner.playwrightConfigPath": "/workspace/frontend/.config/playwright-all-components.config.js",
   "prettier.configPath": "/workspace/frontend/.prettierrc",
   "prettier.requireConfig": true,
-  "python.pythonPath": "/usr/bin/python3",
   "trailing-spaces.trimOnSave": true,
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsdk": "/workspace/frontend/node_modules/typescript/lib",
@@ -83,14 +87,14 @@
         "command": "bash /workspace/frontend/scripts/link_backend_opsidocker.sh && opsiconfd-docker-restart",
         "name": "$(link) copyBackendFiles",
         "tooltip": "Copy local backend files to opsi-docker (`localhost:44471/../webgui/..` )"
-      }
+      },
       {
         // build dist directory (used in production)
         "command": "bash /workspace/frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)/..\" install", // This is executed in the terminal.
         "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
         "name": "$(package) buildDist",
         "tooltip": "Build productive"
-      },
+      }
     ]
   },
   "editor.autoIndent": "advanced",
@@ -107,5 +111,37 @@
     "**/.config": true,
     "**/shims-vue.d.ts": true,
     "**/components.d.ts": true
-  }
+  },
+  "cSpell.dictionaries": [
+    "webgui",
+    "opsiconfd",
+    "opsi-webgui",
+    "opsi-webgui-dev",
+    "opsi-webgui-test",
+    "opsi-webgui-prod"
+  ],
+  // backend
+
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#000000",
+    "activityBar.foreground": "#ff276f",
+    "activityBar.inactiveForeground": "#e4e4e3"
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.autoSave": "off",
+  "editor.formatOnType": true,
+  "editor.formatOnPaste": true,
+  "python.pythonPath": "./docker/backend/.venv/bin/python",
+  "python.languageServer": "None",
+  "python.terminal.activateEnvironment": false,
+  "python.testing.unittestEnabled": false,
+  "python.testing.nosetestsEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestPath": "./docker/backend/.venv/bin/pytest",
+  "python.testing.pytestArgs": ["backend/tests"],
+  "pylint.severity": {
+    "refactor": "Information"
+  },
+  "mypy-type-checker.path": [".venv/bin/mypy"],
+  "mypy-type-checker.args": ["--show-error-codes"]
 }

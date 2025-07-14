@@ -8,17 +8,23 @@
         "bradlc.vscode-tailwindcss",
         "antfu.iconify",
         "fooxly.workspace",
-        "philfontaine.autolaunch",
         "gruntfuggly.todo-tree",
         "esbenp.prettier-vscode",
         "shardulm94.trailing-spaces",
         "seunlanlege.action-buttons",
         "anseki.vscode-color",
-        "ms-azuretools.vscode-docker",
-        "SonarSource.sonarlint-vscode",
         "dbaeumer.vscode-eslint",
         "richie5um2.vscode-sort-json",
-        "ms-playwright.playwright"
+        "ms-playwright.playwright",
+        // from backend:
+        "streetsidesoftware.code-spell-checker",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ryanluker.vscode-coverage-gutters",
+        "ms-python.mypy-type-checker",
+        "charliermarsh.ruff",
+        "ms-azuretools.vscode-docker",
+        "docker.docker"
       ],
       "settings": {
         "terminal.integrated.shell.linux": "/usr/bin/zsh"
@@ -28,9 +34,7 @@
   //"dockerComposeFile": ["./docker-compose.yml"],
   "dockerComposeFile": "../../docker-compose.yml",
   "name": "opsi-webgui-frontend-dev",
-  "initializeCommand": [
-    ".devcontainer/opsi-webgui-container-frontend/initialize.sh"
-  ],
+  "initializeCommand": [".devcontainer/opsi-webgui-container-frontend/initialize.sh"],
   "runServices": [
     "opsi-webgui-frontend-dev",
     "opsi-webgui-backend-dev",
@@ -46,7 +50,7 @@
     "DEV_USER": "${localEnv:USER}",
     "DEV_UID": "${localEnv:UID}",
     "OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
-    "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
+    "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}"
   },
   "workspaceFolder": "/workspace"
 }
