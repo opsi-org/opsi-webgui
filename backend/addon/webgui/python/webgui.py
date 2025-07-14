@@ -94,6 +94,7 @@ async def user_opsiserver() -> JSONResponse:
 
 
 @webgui_router.get("/api/user/configuration")
+@webgui_router.post("/api/user/configuration")
 def user_configuration() -> JSONResponse:
 	username = get_username()
 	status_counts = {}
