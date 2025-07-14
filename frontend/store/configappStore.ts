@@ -29,7 +29,7 @@ export const storeConfigapp = defineStore('config-app', {
       const { notifyError } = useNotification()
       const $t = useI18n().t
 
-      const result = await useApiGET<T_configuration>('/user/configuration')
+      const result = await useApiPOST<T_configuration>('/user/configuration')
       if (result.error) {
         console.error(result.error)
         notifyError({ title: $t('message.fetchingFailed'), message: result.error })
