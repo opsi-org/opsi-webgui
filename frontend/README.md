@@ -26,12 +26,13 @@
 - use frontend container
 - run `npm run dev` in frontend folder (usually has hot reload)
 - backend:
-  - after making changes in backend files: use 'copyBackendFiles' bottom button (copes backend files to opsi-docker `44471/addons/webgui/...` and restarts opsiconfd)
+  - after making changes in backend files: use 'copyBackendFiles' bottom button (copes backend files to opsi-docker `44471/addons/webgui/...` and restarts opsiconfd) \
+    important: command `opsiconfd-docker-restart` must be available in terminal (check known bugs for details)
   - log files: `tail -f /data/log/opsiconfd/<hostname>.log` (keep loglevel in mind)
   - opsiconfd config: `/data/etc/opsiconfd.conf` (after change restart opsiconfd)
 
 ## known bugs:
 
 - rebuilding container sometimes shows a message "...cannot connect..." Simply click on "reload" button
-- command aliase not found (e.g. opsiconfd-docker-restart). run `zsh` and try again
+- command aliase not found (e.g. opsiconfd-docker-restart). run `zsh` and try again. Otherwise check `~/.zshrc`)
 - if you switched containers and the section "Run and Debug" show the old launch configuration, just open "launch.json" once. after that vscode updates the cache and should show the new configuration.
