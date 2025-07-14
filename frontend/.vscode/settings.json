@@ -79,12 +79,18 @@
         "tooltip": "Clean rebuild and install"
       },
       {
+        // copyBackend2opsidocker
+        "command": "bash /workspace/frontend/scripts/link_backend_opsidocker.sh && opsiconfd-docker-restart",
+        "name": "$(link) copyBackendFiles",
+        "tooltip": "Copy local backend files to opsi-docker (`localhost:44471/../webgui/..` )"
+      }
+      {
         // build dist directory (used in production)
         "command": "bash /workspace/frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)/..\" install", // This is executed in the terminal.
         "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
         "name": "$(package) buildDist",
         "tooltip": "Build productive"
-      }
+      },
     ]
   },
   "editor.autoIndent": "advanced",
