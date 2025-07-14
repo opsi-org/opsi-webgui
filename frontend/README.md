@@ -32,5 +32,6 @@
 
 ## known bugs:
 
+- rebuilding container sometimes shows a message "...cannot connect..." Simply click on "reload" button
 - command aliase not found (e.g. opsiconfd-docker-restart). run `zsh` and try again
 - if you switched containers and the section "Run and Debug" show the old launch configuration, just open "launch.json" once. after that vscode updates the cache and should show the new configuration.
