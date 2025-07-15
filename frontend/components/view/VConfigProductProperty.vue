@@ -123,7 +123,9 @@ License: AGPL-3.0
   import { useStrings } from '~/composables/mixins/useStrings'
   import { onBeforeRouteLeave } from 'vue-router'
   import { isEqual } from 'lodash'
+  //import { useMBus } from '~/composables/mixins/useMessagebus'
 
+  //const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
   const { notifyError } = useNotification()
   const config = storeConfigapp().config ?? { read_only: true }
   const $t = useI18n().t
@@ -138,7 +140,7 @@ License: AGPL-3.0
       required: true,
     },
   })
-
+  const productIds = ref<string[]>([])
   const itemValues = ref<{ [key: string]: any }>({})
   const initialValues = ref<{ [key: string]: any }>({})
   const hasUnsavedChanges = ref(false)
@@ -146,6 +148,12 @@ License: AGPL-3.0
 
   const propertiesWithProducts = ['setup_after_install', 'additional_packages']
   const isLoadingConfig = ref<{ [key: string]: boolean }>({})
+
+  watch(() => props.properties, initFormData, { immediate: true })
+
+  onMounted(async () => {
+    productIds.value = (await fetchProducts('LocalbootProduct')) || []
+  })
 
   async function fetchProducts(type: tproducttypes) {
     const { data, error } = await useApiGET<T_Product[]>(
@@ -212,10 +220,9 @@ License: AGPL-3.0
     for (const item of Object.values(props.properties)) {
       if (propertiesWithProducts.includes(item.propertyId)) {
         isLoadingConfig.value[item.propertyId] = true
-        const productIdsL = (await fetchProducts('LocalbootProduct')) || []
         // If needed add Netboots const productIdsN = (await fetchProducts('NetbootProduct')) || []
         // item.allValues = productIdsN.concat(productIdsL).sort()
-        item.allValues = productIdsL.sort()
+        item.allValues = productIds.value.sort()
         isLoadingConfig.value[item.propertyId] = false
       }
       const initialValue = getInitialValue(item)
@@ -255,8 +262,6 @@ License: AGPL-3.0
     changeBuffer.value = {}
     initialValues.value = { ...itemValues.value }
   }
-
-  watch(() => props.properties, initFormData, { immediate: true })
 
   onBeforeRouteLeave((to, from, next) => {
     if (hasUnsavedChanges.value) {
