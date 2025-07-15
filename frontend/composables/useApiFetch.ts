@@ -116,9 +116,10 @@ async function useAPI2<T>(
       }
       if (showError) {
         const { notifyError } = useNotification()
+        let { class: _, ...rest } = callerror.value.response.data
         notifyError({
-          message: callerror.value?.response?.data?.message,
-          title: 'MY REQUEST ERROR',
+          title: callerror.value?.response?.data?.class,
+          message: rest,
         })
       }
 
@@ -155,9 +156,8 @@ async function useAPI2<T>(
       if (showError) {
         const { notifyError } = useNotification()
         notifyError({
-          title: 'MY RESPONSE ERROR',
-          //title: callerror.value.response?.data?.class || undefined,
-          message: callerror.value.response?.data?.message,
+          title: callerror.value.response?.data?.class,
+          message: callerror.value.response?.data,
           //details: callerror.value.response?.data?.details,
         })
       }
