@@ -55,42 +55,7 @@ License: AGPL-3.0
           </div>
         </template>
       </el-dialog>
-      <el-button @click="openProcessActionsModal = true">
-        {{ $t('processActions') }}
-      </el-button>
-      <el-dialog v-model="openProcessActionsModal" :title="$t('processActions.help')" align-center>
-        <el-form label-width="30%" :label-position="mq.isMobile.value ? 'top' : 'left'">
-          <el-form-item :label="$t('products')">
-            <el-radio-group>
-              <el-radio value="All">{{ $t('allProducts') }}</el-radio>
-              <el-radio value="Selected">{{ $t('onlySelectedProducts') }}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item :label="$t('visiblilityOnClients')">
-            <el-checkbox
-              :indeterminate="visibilityState === undefined"
-              :checked="visibilityState === true"
-              :unchecked="visibilityState === false"
-              @change="toggleVisibility"
-            >
-              {{
-                visibilityState === true
-                  ? $t('visible')
-                  : visibilityState === false
-                    ? $t('hidden')
-                    : $t('clientDefault')
-              }}
-            </el-checkbox>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button>
-              {{ $t('execute') }}
-            </el-button>
-          </div>
-        </template>
-      </el-dialog>
+      <DialogDProcessActions />
 
       <ModalMServerSelection
         v-if="storeSelection.selectionDepots.length <= 0"
@@ -144,7 +109,6 @@ License: AGPL-3.0
   const router = useRouter()
   const fetchClient = useClient()
   useMBus(wsBusMsgObjectChanged, false, $t)
-  const mq = useMQ()
 
   const storeSelection = storeSelections()
   const storeCookie = storeTablesettings()
@@ -389,13 +353,9 @@ License: AGPL-3.0
   ])
 
   const openBufferedChangesModal = ref(false)
-  const openProcessActionsModal = ref(false)
   const bufferedChanges = ref<Array<any>>([])
-
   const hasUnsavedChanges = computed(() => bufferedChanges.value?.length > 0)
   const hasRowsWrapper = computed(() => productsRef.value?.hasRows.value)
-
-  const visibilityState = ref<true | false | undefined>(undefined) // Can be true, false, or undefined
 
   onMounted(async () => {
     if (props.productType && props.productType !== currentType.value)
@@ -457,16 +417,6 @@ License: AGPL-3.0
 
   function refetch() {
     productsRef.value?.refetch()
-  }
-
-  function toggleVisibility() {
-    if (visibilityState.value === undefined) {
-      visibilityState.value = true
-    } else if (visibilityState.value === true) {
-      visibilityState.value = false
-    } else {
-      visibilityState.value = undefined
-    }
   }
 
   function discardAllChanges() {
