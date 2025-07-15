@@ -21,15 +21,43 @@ License: AGPL-3.0
   >
     <template #toolbar-right>
       <el-button
-        :type="hasUnsavedChanges ? 'success' : ''"
-        :disabled="!hasUnsavedChanges"
+        :type="hasUnsavedChanges && storeSelection.selectionClients.length > 0 ? 'success' : ''"
+        :disabled="!hasUnsavedChanges || storeSelection.selectionClients.length <= 0"
         @click="openBufferedChangesModal = true"
       >
         {{ $t('save') }}
       </el-button>
       <el-dialog v-model="openBufferedChangesModal" title="Unsaved changes" align-center>
-        <el-table :data="bufferedChanges">
-          <el-table-column prop="productIds" label="Selected Product IDs">
+        <el-table :data="bufferedChanges" :span-method="spanClients">
+          <el-table-column :label="$t('clients')" prop="client">
+            <template #default="scope">
+              <div v-if="scope.$index === 0">
+                <el-scrollbar max-height="70vh" class="w-full items-stretch flex ml-3">
+                  <ul direction="vertical">
+                    <li
+                      v-for="client in storeSelection.selectionClients"
+                      :key="client"
+                      class="relative flex items-stretch"
+                    >
+                      <p class="pr-8">{{ client }}</p>
+                      <el-button
+                        size="small"
+                        class="!border-none !p-1 absolute top-0 right-0"
+                        :title="$t('deselectItem', { item: client })"
+                      >
+                        <span class="sr-only">{{ $t('deselect') }}</span>
+                        <IconIIcon
+                          :icon="icons.x"
+                          @click="storeSelection['delFromSelectionClients'](client)"
+                        />
+                      </el-button>
+                    </li>
+                  </ul>
+                </el-scrollbar>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="productIds" :label="$t('products')">
             <template #default="scope">
               <ul>
                 <li v-for="product in scope.row.productIds" :key="product">
@@ -38,8 +66,11 @@ License: AGPL-3.0
               </ul>
             </template>
           </el-table-column>
-          <el-table-column prop="actionRequest" label="Action Request"></el-table-column>
-          <el-table-column prop="oldActionRequest" label="Old Action Request"></el-table-column>
+          <el-table-column prop="actionRequest" :label="$t('actionRequest')"></el-table-column>
+          <el-table-column
+            prop="oldActionRequest"
+            :label="$t('old') + ' ' + $t('actionRequest')"
+          ></el-table-column>
         </el-table>
         <template #footer>
           <div class="dialog-footer">
@@ -419,6 +450,17 @@ License: AGPL-3.0
     productsRef.value?.refetch()
   }
 
+  function spanClients({ rowIndex, columnIndex }: { rowIndex: number; columnIndex: number }) {
+    // Merge the first column (Clients) vertically for all rows
+    if (columnIndex === 0) {
+      if (rowIndex === 0) {
+        return [bufferedChanges.value.length, 1]
+      } else {
+        return [0, 0]
+      }
+    }
+  }
+
   function discardAllChanges() {
     bufferedChanges.value = []
     openBufferedChangesModal.value = false
@@ -522,6 +564,7 @@ License: AGPL-3.0
       actionRequest: newrequest,
       oldActionRequest: rowItem.actionRequest,
     }
+
     lastChanges.value.clientIds = data.clientIds
     lastChanges.value.productIds = data.productIds
 
@@ -529,14 +572,29 @@ License: AGPL-3.0
   }
 
   async function saveActionRequest(rowitem: any, newrequest: string) {
+    const idx = bufferedChanges.value.findIndex(
+      (c) => c.productIds.length === 1 && c.productIds[0] === rowitem.productId
+    )
+    if (newrequest === rowitem.actionRequest) {
+      if (idx !== -1) {
+        bufferedChanges.value.splice(idx, 1)
+      }
+      return
+    }
+
     const data = {
       clientIds: selectionClients.value,
       productIds: [rowitem.productId],
       actionRequest: newrequest,
       oldActionRequest: rowitem.actionRequest,
     }
+
     lastChanges.value.clientIds = data.clientIds
     lastChanges.value.productIds = data.productIds
+
+    if (idx !== -1) {
+      bufferedChanges.value.splice(idx, 1)
+    }
 
     bufferedChanges.value.push(data)
   }
