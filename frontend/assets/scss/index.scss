@@ -147,11 +147,11 @@ html .p-button.p-button-sm {
 .el-tabs--top > .el-tabs__header .el-tabs__item:last-child {
   padding: 0 17px !important;
 }
-
 .sselect-overlay {
   /* checkbox width/height in sselect component. needs to be global, cause its an overlay */
-  --p-checkbox-width: 15px !important;
-  --p-checkbox-height: 15px !important;
+  --p-checkbox-width: 20px !important;
+  --p-checkbox-height: 20px !important;
+  margin-right: 35px !important;
 }
 .sselect-overlay .p-multiselect-header,
 .sselect-overlay .p-multiselect-header .p-checkbox {
