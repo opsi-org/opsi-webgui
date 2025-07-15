@@ -230,6 +230,7 @@
   "notify": "Benachrichtigen",
   "nullValue": "- null -",
   "objectValues": "Objektwerte",
+  "old": "Alt",
   "onDemand": "Auf Anfrage",
   "oneTimePassword": "Einmalpasswort",
   "opsiClientAgent": "OPSI-Client-Agent",
