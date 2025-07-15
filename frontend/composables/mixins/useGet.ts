@@ -10,6 +10,7 @@ import { useNotification } from './useComponent'
 import { storeCache } from '@/store/datacacheStore'
 import { _getI18nInComposable } from './helper-i18n'
 import type { T_Client2Depot, T_ClientIds, T_DepotIds, T_Opsiserver } from '~/types/APItypes'
+import { $t } from '@primevue/themes'
 
 const { notifyError } = useNotification()
 
@@ -41,7 +42,8 @@ export const useConfigserver = async (
 
   async function getOpsiConfigServerWithHeaders(setServer: boolean = true) {
     const { data, headers, error } = await useApiGET<T_Opsiserver>('/user/opsiserver')
-    if (error || !data?.value) {
+    if (error) return { data: '', headers: {} as IObjectString2Any, error }
+    if (!data?.value) {
       const errordata = {
         response: {
           data: {
@@ -53,7 +55,7 @@ export const useConfigserver = async (
       }
       notifyError({
         title: $t('error'),
-        message: notifyError({ message: error?.response?.data?.message }),
+        message: notifyError({ message: errordata?.response?.data?.message }),
       })
       return { data: '', headers: {} as IObjectString2Any, error: errordata }
     }
@@ -72,10 +74,10 @@ export const useDepot = (_t: any = undefined) => {
   }
   async function getDepotIdList() {
     const { data, error } = await useApiGET<T_DepotIds>('/opsidata/depot_ids')
-    if (error || !data?.value) {
+    if (error) return []
+    if (!data?.value) {
       notifyError({
         title: $t('message.noResponse') + 'Server List',
-        message: error?.response?.data?.message,
       })
       return []
     }
@@ -91,8 +93,11 @@ export const useClient = () => {
     const { data, error } = await useApiGET<T_ClientIds>(
       `/opsidata/depots/clients?selectedDepots=[${selectedDepots}]`
     )
-    if (error || !data?.value) {
-      notifyError({ message: error?.response?.data?.message })
+    if (error) return []
+    if (!data?.value) {
+      notifyError({
+        message: $t('message.noResponse') + 'Client List',
+      })
       return []
     }
     return data.value.sort()
@@ -103,7 +108,11 @@ export const useClient = () => {
       `/opsidata/clientsdepots?selectedClients=[${selectedClients}]`
     )
     if (error || !data?.value) {
-      notifyError({ message: error?.response?.data?.message })
+      if (error == undefined) {
+        notifyError({
+          title: $t('message.noResponse') + 'Client to Depot List',
+        })
+      }
       throw new Error(JSON.stringify(error))
     }
     fetchedDataClients2Depots = data.value

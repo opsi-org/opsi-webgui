@@ -83,7 +83,6 @@ License: AGPL-3.0
       '/opsidata/server/disabled-features'
     )
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
       return false
     }

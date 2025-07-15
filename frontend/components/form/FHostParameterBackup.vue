@@ -109,7 +109,7 @@ License: AGPL-3.0
   import { useStrings } from '~/composables/mixins/useStrings'
   import { useDynamicHeight } from '~/composables/mixins/useDynamicHeightWindow'
 
-  const { notifyError, notifyInfo } = useNotification()
+  const { notifyInfo } = useNotification()
   const t_fixed = useStrings().t_fixed
   const $t = useI18n().t
   const mq = useMQ()
@@ -239,7 +239,6 @@ License: AGPL-3.0
   async function fetchHostParameters(endpoint: string) {
     const { data, error } = await useApiGETBody<T_HostParameter>(endpoint)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     }
     fetchedData.value = data.value

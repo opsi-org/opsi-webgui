@@ -242,7 +242,6 @@ License: AGPL-3.0
     const url = `/opsidata/config/exists/${configdata.value.name.value}`
     const { data, error } = await useApiGET(url)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       isLoadingNameExists.value = false
       return false
     }
@@ -279,7 +278,6 @@ License: AGPL-3.0
     }
     const { error } = await useApiPOST(url, request)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
       return
     }

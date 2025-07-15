@@ -479,7 +479,6 @@ License: AGPL-3.0
     }
     const { data, error, headers } = await useApiGETBody<Array<any>>('/opsidata/products', params)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     }
     if (data.value === undefined) {

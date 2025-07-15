@@ -64,7 +64,8 @@ async function useAPI2<T>(
   body: FormData | object | undefined = undefined,
   opts: UseFetchOptions<T> = {},
   prePath: string | undefined = undefined,
-  synced: boolean = true // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
+  synced: boolean = true, // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
+  showError: boolean = true
 ): Promise<ApiResult<T>> {
   const { baseUrl, basePath, callresponse, callerror, pendingState } = define_vars<T>(prePath)
   let fullURL = baseUrl + basePath + url
@@ -113,6 +114,13 @@ async function useAPI2<T>(
       callerror.value = {
         response: { data: { class: '', message: String(error) } },
       }
+      if (showError) {
+        const { notifyError } = useNotification()
+        notifyError({
+          message: callerror.value?.response?.data?.message,
+          title: 'MY REQUEST ERROR',
+        })
+      }
 
       callheaders = _checkUsername(response.headers, fullURL, response.status)
     },
@@ -143,6 +151,16 @@ async function useAPI2<T>(
       pendingState.value = false
       status = response.status
       callheaders = response.headers
+
+      if (showError) {
+        const { notifyError } = useNotification()
+        notifyError({
+          title: 'MY RESPONSE ERROR',
+          //title: callerror.value.response?.data?.class || undefined,
+          message: callerror.value.response?.data?.message,
+          //details: callerror.value.response?.data?.details,
+        })
+      }
       // if status is 401
       _logout_on_specific_error(fullURL, status)
       console.error('onResponseError callerror', callerror.value)
@@ -225,9 +243,61 @@ async function useApiGET<ResultDataType>(
   url: string,
   prePath: string | undefined = undefined,
   opts: UseFetchOptions<any> = {},
-  synced: boolean = true
+  synced: boolean = true,
+  showError: boolean = true
 ) {
-  return useAPI2<ResultDataType>('GET', url, undefined, opts, prePath, synced)
+  return useAPI2<ResultDataType>('GET', url, undefined, opts, prePath, synced, showError)
+}
+
+interface T_KWARGS {
+  prePath?: string
+  params?: any
+  opts?: UseFetchOptions<any>
+  synced?: boolean
+  showError?: boolean
+  body?: any // for POST, PUT, DELETE
+}
+const KWARGS = {
+  prePath: undefined as string | undefined,
+  params: undefined as any,
+  body: undefined as any,
+  opts: {} as UseFetchOptions<any>,
+  synced: true as boolean,
+  showError: false as boolean,
+}
+function valueOrDefault(value: any, defaultValue: any): T_KWARGS {
+  const result: T_KWARGS = { ...defaultValue }
+  if (value.prePath !== undefined) {
+    result.prePath = value.prePath
+  }
+  if (value.params !== undefined) {
+    result.params = value.params
+  }
+  if (value.body !== undefined) {
+    result.body = value.body
+  }
+  if (value.opts !== undefined) {
+    result.opts = value.opts
+  }
+  if (value.synced !== undefined) {
+    result.synced = value.synced
+  }
+  if (value.showError !== undefined) {
+    result.showError = value.showError
+  }
+  return result
+}
+async function useApiGETkwargs<ResultDataType>(url: string, options: T_KWARGS = KWARGS) {
+  const kwargs = valueOrDefault(options, KWARGS)
+  return useAPI2<ResultDataType>(
+    'GET',
+    url,
+    undefined,
+    kwargs.opts,
+    kwargs.prePath,
+    kwargs.synced,
+    kwargs.showError
+  )
 }
 
 async function useApiGETBody<ResultDataType>(
@@ -235,18 +305,46 @@ async function useApiGETBody<ResultDataType>(
   params: any = undefined,
   prePath: string | undefined = undefined,
   opts: UseFetchOptions<any> = {},
-  synced: boolean = true
+  synced: boolean = true,
+  showError: boolean = true
 ) {
-  return useAPI2<ResultDataType>('GET', url, params, opts, prePath, synced)
+  return useAPI2<ResultDataType>('GET', url, params, opts, prePath, synced, showError)
+}
+
+async function useApiGETBodykwargs<ResultDataType>(url: string, options: T_KWARGS = KWARGS) {
+  const kwargs = valueOrDefault(options, KWARGS)
+  return useAPI2<ResultDataType>(
+    'GET',
+    url,
+    kwargs.params,
+    kwargs.opts,
+    kwargs.prePath,
+    kwargs.synced,
+    kwargs.showError
+  )
 }
 async function useApiPOST<ResultDataType>(
   url: string,
   body: any = undefined,
   prePath: string | undefined = undefined,
   opts: UseFetchOptions<any> = {},
-  synced: boolean = true
+  synced: boolean = true,
+  showError: boolean = true
 ) {
-  return useAPI2<ResultDataType>('POST', url, body, opts, prePath, synced)
+  return useAPI2<ResultDataType>('POST', url, body, opts, prePath, synced, showError)
+}
+
+async function useApiPOSTkwargs<ResultDataType>(url: string, options: T_KWARGS = KWARGS) {
+  const kwargs = valueOrDefault(options, KWARGS)
+  return useAPI2<ResultDataType>(
+    'POST',
+    url,
+    kwargs.body,
+    kwargs.opts,
+    kwargs.prePath,
+    kwargs.synced,
+    kwargs.showError
+  )
 }
 
 // For following need to add types: (like useApiGET)
@@ -258,9 +356,23 @@ async function useApiDELETE<ResultDataType>(
   body: any = undefined,
   prePath: string | undefined = undefined,
   opts: UseFetchOptions<any> = {},
-  synced: boolean = true
+  synced: boolean = true,
+  showError: boolean = true
 ) {
-  return useAPI2<ResultDataType>('DELETE', url, body, opts, prePath, synced)
+  return useAPI2<ResultDataType>('DELETE', url, body, opts, prePath, synced, showError)
+}
+
+async function useApiDELETEkwargs<ResultDataType>(url: string, options: T_KWARGS = KWARGS) {
+  const kwargs = valueOrDefault(options, KWARGS)
+  return useAPI2<ResultDataType>(
+    'DELETE',
+    url,
+    kwargs.body,
+    kwargs.opts,
+    kwargs.prePath,
+    kwargs.synced,
+    kwargs.showError
+  )
 }
 
 async function useApiPUT<ResultDataType>(
@@ -268,9 +380,23 @@ async function useApiPUT<ResultDataType>(
   body: any = undefined,
   prePath: string | undefined = undefined,
   opts: UseFetchOptions<any> = {},
-  synced: boolean = true
+  synced: boolean = true,
+  showError: boolean = true
 ) {
-  return useAPI2<ResultDataType>('PUT', url, body, opts, prePath, synced)
+  return useAPI2<ResultDataType>('PUT', url, body, opts, prePath, synced, showError)
+}
+
+async function useApiPUTkwargs<ResultDataType>(url: string, options: T_KWARGS = KWARGS) {
+  const kwargs = valueOrDefault(options, KWARGS)
+  return useAPI2<ResultDataType>(
+    'PUT',
+    url,
+    kwargs.body,
+    kwargs.opts,
+    kwargs.prePath,
+    kwargs.synced,
+    kwargs.showError
+  )
 }
 
 function useFullUrlPath(path: string, prepath: string | undefined) {
@@ -280,4 +406,16 @@ function useFullUrlPath(path: string, prepath: string | undefined) {
   return baseUrl + basePath + path
 }
 
-export { useApiGET, useApiGETBody, useApiPOST, useApiDELETE, useApiPUT, useFullUrlPath }
+export {
+  useApiGET,
+  useApiGETBody,
+  useApiPOST,
+  useApiDELETE,
+  useApiPUT,
+  useFullUrlPath,
+  useApiGETkwargs,
+  useApiGETBodykwargs,
+  useApiPOSTkwargs,
+  useApiDELETEkwargs,
+  useApiPUTkwargs,
+}

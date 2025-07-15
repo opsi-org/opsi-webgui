@@ -197,10 +197,9 @@ License: AGPL-3.0
   async function fetchGroups() {
     const { data, error } = await useApiGET('/opsidata/hosts/groups/id')
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
-    } else {
-      groupList.value = data.value
+      return
     }
+    groupList.value = data.value
   }
 
   async function fetchNetbootProducts() {
@@ -215,7 +214,7 @@ License: AGPL-3.0
         }
       })
       .catch((error) => {
-        notifyError({ message: error?.response?.data?.message })
+        //notifyError({ message: error?.response?.data?.message })
       })
   }
 

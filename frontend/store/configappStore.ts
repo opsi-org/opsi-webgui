@@ -29,11 +29,11 @@ export const storeConfigapp = defineStore('config-app', {
       const { notifyError } = useNotification()
       const $t = useI18n().t
 
-      const result = await useApiPOST<T_configuration>('/user/configuration')
+      const result = await useApiPOSTkwargs<T_configuration>('/user/configuration', {
+        showError: true,
+      })
 
       if (result.error) {
-        console.error(result.error)
-        notifyError({ title: $t('message.fetchingFailed'), message: result.error })
         return
       } else if (!result.data.value) {
         console.error('No data in response')
@@ -46,10 +46,6 @@ export const storeConfigapp = defineStore('config-app', {
       const forbidden = await useApiGET<T_DisabledFeatures>('/opsidata/server/disabled-features')
       if (forbidden.error) {
         console.error(forbidden.error)
-        notifyError({
-          title: $t('message.fetchingFailed'),
-          message: forbidden.error,
-        })
         return
       } else if (!forbidden.data.value) {
         console.error('No data in response')

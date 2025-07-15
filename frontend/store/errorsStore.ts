@@ -9,6 +9,8 @@ import { defineStore } from 'pinia'
 export const storeErrors = defineStore('errors', {
   persist: false,
   state: () => ({
+    _error_log: [] as Array<any>,
+    // { type: 'products', error: {}, timestamp: 1234567890, showed: false }
     _errorsProducts: [] as Array<any>,
     _errorsHostParam: [] as Array<any>,
   }),
