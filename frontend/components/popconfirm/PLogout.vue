@@ -15,6 +15,7 @@ License: AGPL-3.0
   >
     <template #reference>
       <el-button
+        :title="$t('logout')"
         class="!border-none"
         :class="{
           'min-h-full': true,
@@ -22,7 +23,6 @@ License: AGPL-3.0
         }"
       >
         <IconIIcon :icon="icon.logout" />
-        <p v-if="isMobile" class="pt-3 ml-1">{{ $t('logout') }}</p>
       </el-button>
     </template>
   </el-popconfirm>

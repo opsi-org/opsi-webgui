@@ -79,11 +79,11 @@ echo "> copy frontend to backend done"
 echo "> packaging..."
 mkdir -p ${ADDON_ID}  || exit 7
 cp -r ${WORKING_DIR}/${BACKEND_DIR}/addon/${WEBGUI_DIR}/* ${ADDON_ID}/  || exit 33
-chown 1000:1000 -R ${ADDON_ID}  || exit 50
-chown 1000:1000 -R ${ADDON_ID}/*  || exit 51
+chown $(whoami):$(whoami) -R ${ADDON_ID}  || exit 50
+chown $(whoami):$(whoami) -R ${ADDON_ID}/*  || exit 51
 sudo apt install -y zip  || exit 60
 zip -r -q opsi-${ADDON_ID}.zip ${ADDON_ID}  || exit 61
-sudo chown 1000:1000 opsi-${ADDON_ID}.zip || exit 52
+sudo chown $(whoami):$(whoami) opsi-${ADDON_ID}.zip || exit 52
 echo "> packaging done: $(pwd)/opsi-${ADDON_ID}.zip"
 
 echo "> check if also install locally: ${INSTALL}"

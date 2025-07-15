@@ -5,10 +5,8 @@ cd /workspace/frontend/
 npm install
 npx nuxi cleanup
 
-echo -e "==========================================Installing Playwright===================================================="
-npx playwright install-deps
-
-
+# echo -e "==========================================Installing Playwright===================================================="
+# npx playwright install-deps
 
 echo -e "==========================================Starting opsiconfd-docker container===================================================="
 ENV_FILE_DIR=/workspace/docker/frontend/.env

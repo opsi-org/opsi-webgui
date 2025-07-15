@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 */
 import { defineStore } from 'pinia'
-import type { T_DisaledFeatures, T_configuration, T_configurationResult } from '@/types/APItypes'
+import type { T_DisabledFeatures, T_configuration, T_configurationResult } from '@/types/APItypes'
 import { useNotification } from '~/composables/mixins/useComponent'
 
 export const storeConfigapp = defineStore('config-app', {
@@ -29,7 +29,8 @@ export const storeConfigapp = defineStore('config-app', {
       const { notifyError } = useNotification()
       const $t = useI18n().t
 
-      const result = await useApiGET<T_configuration>('/user/configuration')
+      const result = await useApiPOST<T_configuration>('/user/configuration')
+
       if (result.error) {
         console.error(result.error)
         notifyError({ title: $t('message.fetchingFailed'), message: result.error })
@@ -42,7 +43,7 @@ export const storeConfigapp = defineStore('config-app', {
         })
         return
       }
-      const forbidden = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
+      const forbidden = await useApiGET<T_DisabledFeatures>('/opsidata/server/disabled-features')
       if (forbidden.error) {
         console.error(forbidden.error)
         notifyError({

@@ -36,7 +36,7 @@ export interface T_Opsiserver {
 export interface T_ClientLog {
   result: Array<string>
 }
-export type T_DisaledFeatures = Array<string>
+export type T_DisabledFeatures = Array<string>
 export type T_DepotIds = Array<string>
 export type T_ClientIds = Array<string>
 export type T_ProductIds = Array<string>
