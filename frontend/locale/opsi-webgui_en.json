@@ -233,6 +233,7 @@
   "notify": "Notify",
   "nullValue": "- null -",
   "objectValues": "Object Values",
+  "old": "Old",
   "onDemand": "On-Demand",
   "oneTimePassword": "One-Time Password",
   "opsiClientAgent": "OPSI Client Agent",
