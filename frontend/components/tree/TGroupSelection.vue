@@ -233,9 +233,9 @@ License: AGPL-3.0
     handleSelection(node, obj, multiSelection.value)
     isLoadingSelection.value = false
 
-    if (props.grouptype == GroupTree_CLIENTGROUP)
-      useCookie.setSortColumn('clients', 'selected', true)
-    else useCookie.setSortColumn('products', 'selected', true)
+    //if (props.grouptype == GroupTree_CLIENTGROUP)
+    //  useCookie.setSortColumn('clients', 'selected', true)
+    //else useCookie.setSortColumn('products', 'selected', true)
   }
   function handleSelection(node: TreeNodeData, obj: any, multiSelect: boolean) {
     toggleNodeSelection(node, obj, _getSelection(), _getSelectionFunction(), multiSelect)
