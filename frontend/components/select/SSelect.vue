@@ -49,7 +49,7 @@ License: AGPL-3.0
         >
           <IconIIcon :title="$t('copy')" :icon="icons.copy" class="m-1" />
         </p-button>
-        <span>{{ option }}</span>
+        <span class="mt-2">{{ option }}</span>
       </span>
     </template>
 
