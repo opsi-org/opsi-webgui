@@ -8,8 +8,6 @@ License: AGPL-3.0
 import { ElNotification } from 'element-plus'
 import { _getI18nInComposable } from './helper-i18n'
 import { h, type VNode } from 'vue'
-import { $t } from '@primevue/themes'
-import { useUtils } from './useUtils'
 
 type PropTypeFunctionOptionalAsync = (() => Promise<void>) | (() => void)
 

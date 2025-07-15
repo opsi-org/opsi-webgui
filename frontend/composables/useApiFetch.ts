@@ -116,7 +116,7 @@ async function useAPI2<T>(
       }
       if (showError) {
         const { notifyError } = useNotification()
-        let { class: _, ...rest } = callerror.value.response.data
+        const { class: _, ...rest } = callerror.value.response.data
         notifyError({
           title: callerror.value?.response?.data?.class,
           message: rest,

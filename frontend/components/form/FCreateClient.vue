@@ -207,15 +207,11 @@ License: AGPL-3.0
       createClient.value.assignments.depot !== ''
         ? createClient.value.assignments.depot
         : storeCache().opsiconfigserver
-    await useApiGET(`/opsidata/depots/products?selectedDepots=[${depot}]`)
-      .then((response) => {
-        if (Array.isArray(response.data.value)) {
-          netbootProductList.value = response.data.value.map((item: T_Product) => item.productId)
-        }
-      })
-      .catch((error) => {
-        //notifyError({ message: error?.response?.data?.message })
-      })
+    await useApiGET(`/opsidata/depots/products?selectedDepots=[${depot}]`).then((response) => {
+      if (Array.isArray(response.data.value)) {
+        netbootProductList.value = response.data.value.map((item: T_Product) => item.productId)
+      }
+    })
   }
 
   async function createOpsiClient() {

@@ -6,11 +6,21 @@ All rights reserved.
 License: AGPL-3.0
 */
 import { defineStore } from 'pinia'
+import type { IObjectString2Any, IObjectString2ArrayAny } from '~/types/tgeneral'
 export const storeErrors = defineStore('errors', {
   persist: false,
   state: () => ({
-    _error_log: [] as Array<any>,
-    // { type: 'products', error: {}, timestamp: 1234567890, showed: false }
+    _time_combine_notifications_ms: 6 * 1000, // 3 seconds
+    _combine_notifications: {
+      error: true, // combine errors
+      warning: true, // combine warnings
+      warn: false, // combine warnings
+      info: false, // combine info
+      debug: false, // combine debug messages
+    },
+    _last_error: {} as IObjectString2Any,
+    _error_log: {} as IObjectString2ArrayAny, // { type: 'products', error: {}, timestamp: 1234567890, showed: false, notificationInstance: null }
+
     _errorsProducts: [] as Array<any>,
     _errorsHostParam: [] as Array<any>,
   }),

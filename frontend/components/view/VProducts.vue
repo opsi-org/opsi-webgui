@@ -136,7 +136,7 @@ License: AGPL-3.0
   import TCBadgeCompares from '../tablecell/TCBadgeCompares.vue'
   import TCProductRequest from '../tablecell/TCProductRequest.vue'
 
-  const { notifyInfo, notifyError } = useNotification()
+  const { notifyInfo } = useNotification()
   const $t = useI18n().t
   const navigation = useNavigate()
   const icons = useIcons()
