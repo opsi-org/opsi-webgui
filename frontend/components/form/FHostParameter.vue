@@ -28,19 +28,22 @@ License: AGPL-3.0
         size="small"
         :value="fetchedData"
         :auto-layout="true"
-        :class="mq.isMobile.value ? 'text-xs' : ''"
+        :class="mq.isMobile.value || props.isChild ? 'text-xs' : ''"
         :expanded-keys="expandedKeys"
       >
         <p-column
           field="key"
           header=""
           expander
-          :class="mq.isMobile.value ? '!max-w-full !w-full border-y-[1px]' : ''"
+          :class="{
+            'text-xs': props.isChild,
+            '!max-w-full !w-full border-y-[1px]': mq.isMobile.value,
+          }"
           style="border-color: var(--el-border-color-light)"
         >
           <template #body="slotProps">
             <div
-              class="block"
+              class="block w-full"
               @click="() => setExpandedRow(slotProps.node)"
               @contextmenu="(e) => onRightClick(e, slotProps.node?.data || {})"
               aria-haspopup="true"
@@ -62,8 +65,10 @@ License: AGPL-3.0
               </TooltipTTooltip>
 
               <div
-                v-if="mq.isMobile.value && slotProps.node.data?.type !== undefined"
-                style="max-width: calc(100vw - 160px); width: calc(100vw - 160px)"
+                v-if="
+                  (mq.isMobile.value || props.isChild) && slotProps.node.data?.type !== undefined
+                "
+                class="w-full"
               >
                 <p-badge
                   v-if="
@@ -88,7 +93,6 @@ License: AGPL-3.0
                   v-if="slotProps.node.data.type === 'BoolConfig'"
                   v-model="itemValues[slotProps.node.data.configId]"
                   binary
-                  class="ml-2"
                   :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : 'w-full'"
                   :disabled="config.read_only || !config.server_write_access"
                   @change="
@@ -122,7 +126,7 @@ License: AGPL-3.0
         </p-column>
         <!-- column has changes (not mobile)-->
         <p-column
-          v-if="!mq.isMobile.value"
+          v-if="!(mq.isMobile.value || props.isChild)"
           field="data"
           header=""
           class="!max-w-5 !w-5 border-y-[1px]"
@@ -152,10 +156,10 @@ License: AGPL-3.0
         </p-column>
         <!-- Column value (not mobile)-->
         <p-column
-          v-if="!mq.isMobile.value"
+          v-if="!(mq.isMobile.value || props.isChild)"
           field="label"
           header=""
-          class="!min-w-1/2 !w-1/2 !max-w-[40vw] border-y-[1px]"
+          class="!min-w-1/2 !w-1/2 !max-w-[40vw] border-y-[1px] mr-4"
           style="border-color: var(--el-border-color-light)"
         >
           <template #body="slotProps">
@@ -165,7 +169,7 @@ License: AGPL-3.0
                 v-if="slotProps.node.data.type === 'BoolConfig'"
                 v-model="itemValues[slotProps.node.data.configId]"
                 binary
-                class="ml-2 w-full"
+                class="w-full"
                 :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
                 :disabled="config.read_only || !config.server_write_access"
                 @change="
