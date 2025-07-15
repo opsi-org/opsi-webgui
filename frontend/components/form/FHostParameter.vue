@@ -57,8 +57,9 @@ License: AGPL-3.0
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
                   <span>{{ slotProps.node.key }}</span> <br />
-                  <span>DefaultValues {{ slotProps.node?.data.defaultValues }}</span>
+                  <!--<span>DefaultValues {{ slotProps.node?.data.defaultValues }}</span>
                   <span>Values: {{ slotProps.node?.data.objects }}</span>
+                  -->
                   <!--<pre v-if="!slotProps.node?.children || slotProps.node?.children.length <= 0">
  {{ slotProps.node }}</pre>-->
                 </template>

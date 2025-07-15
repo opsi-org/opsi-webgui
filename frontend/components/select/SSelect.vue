@@ -160,7 +160,6 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts" generic="T extends string | boolean">
-  const mq = useMQ()
   const icons = useIcons()
   const props = defineProps({
     isLoadingData: {
