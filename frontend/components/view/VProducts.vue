@@ -15,7 +15,11 @@ License: AGPL-3.0
     :fetch="fetchProducts"
     :sort-by="sortBy"
     :sort-desc="sortDesc"
-    :action-config="(rowData: any) => `/products/${currentType}/config/${rowData[rowId]}`"
+    :action-config="(rowData: any) => {
+      return !props.isChild ?
+        `/products/${currentType}/config/${rowData[rowId]}`
+        : `/clients/products/${currentType}/config/${rowData[rowId]}`
+    }"
     @selection-changed="(id: string) => {storeSelection.toggleSelectionProducts(id)}"
     @clear-selection="storeSelection.clearSelectionProducts"
   >
@@ -611,7 +615,7 @@ License: AGPL-3.0
   }
 
   function changeProductsType(type: IProductTypes) {
-    router.push(`/products/${type}`)
+    router.push(!props.isChild ? `/products/${type}` : `/clients/products/${type}`)
 
     const types: Array<IProductTypes> = Object.keys(
       productsTypeChecked.value
