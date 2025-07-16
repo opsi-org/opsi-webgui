@@ -117,6 +117,7 @@ async function useAPI2<T>(
       if (showError) {
         const { notifyError } = useNotification()
         const { class: _, ...rest } = callerror.value.response.data
+        rest.message = rest.message + ` (${basePath + url})`
         notifyError({
           title: callerror.value?.response?.data?.class,
           message: rest,
@@ -152,12 +153,14 @@ async function useAPI2<T>(
       pendingState.value = false
       status = response.status
       callheaders = response.headers
+      const { class: _, ...rest } = callerror.value.response.data
+      rest.message = rest.message + ` (${basePath + url})`
 
       if (showError) {
         const { notifyError } = useNotification()
         notifyError({
           title: callerror.value.response?.data?.class,
-          message: callerror.value.response?.data,
+          message: rest,
           //details: callerror.value.response?.data?.details,
         })
       }

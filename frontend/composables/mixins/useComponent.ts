@@ -294,8 +294,9 @@ export function useNotification() {
 
       errorsStore._last_error[type]?.close()
       lastError.notificationInstance?.close()
-      const globalTitle = type + ' (combined)'
+      const globalTitle = type
       lastError.notificationInstance = ElNotification[type]({
+        customClass: 'notification-combined',
         title: globalTitle,
         message: listContent,
         showClose: showClose,
