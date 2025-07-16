@@ -470,7 +470,6 @@ License: AGPL-3.0
 
   async function wsBusMsgObjectChanged(msg: any = undefined) {
     if (msg && channels.includes(msg.channel)) {
-      console.log('wsBusMsgObjectChanged', msg, msg.data)
       notifyInfo({
         title: $t('opsiMessageBus'),
         message: $t('opsiMessageBus.config_updated', {

@@ -45,7 +45,6 @@ License: AGPL-3.0
 </template>
 
 <script lang="tsx" setup>
-  import { mix } from '@primevue/themes'
   import type { PSeverity } from '~/types/LibComponentTypes'
   import type { IObjectString2String } from '~/types/tgeneral'
   const $t = useI18n().t

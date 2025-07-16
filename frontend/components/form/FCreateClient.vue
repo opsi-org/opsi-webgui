@@ -137,7 +137,7 @@ License: AGPL-3.0
 
   const mq = useMQ()
   const $t = useI18n().t
-  const { notifySuccess, notifyError } = useNotification()
+  const { notifySuccess } = useNotification()
   const isLoading = ref(false)
   const depotIDList = ref<T_DepotIds>([])
   const clientIDList = ref()

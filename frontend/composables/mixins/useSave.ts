@@ -7,7 +7,7 @@ License: AGPL-3.0
 */
 import { useNotification } from './useComponent'
 import { _getI18nInComposable } from './helper-i18n'
-const { notifySuccess, notifyError } = useNotification()
+const { notifySuccess } = useNotification()
 export const useSaveParameters = (_t: any = undefined) => {
   let t = _t
   if (!t) {
