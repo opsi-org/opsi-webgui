@@ -112,6 +112,12 @@ html .text-white {
   max-height: 400px;
   overflow-y: auto;
 }
+.p-popover {
+  max-height: 50vh !important;
+  max-width: 50vw !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
 
 /* Tabs */
 html .el-tabs__item.is-active {
