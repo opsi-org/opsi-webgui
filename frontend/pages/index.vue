@@ -22,7 +22,6 @@ License: AGPL-3.0
   import { useMBus } from '~/composables/mixins/useMessagebus'
   import { useNotification } from '~/composables/mixins/useComponent'
 
-  const { notifyError } = useNotification()
   const $config = useRuntimeConfig()
   const $t = useI18n().t
   const { t_fixed } = useStrings()
