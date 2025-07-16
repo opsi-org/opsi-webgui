@@ -12,9 +12,10 @@ export function mapValues2Value(
   values: Array<string>,
   objects: Array<string>,
   objectsorigin?: Array<string>,
-  defaultvalue?: string
+  defaultvalue?: string,
+  names: any = undefined
 ) {
-  let defvalue = 'none'
+  let defvalue = names.none || 'none'
   if (defaultvalue) {
     defvalue = defaultvalue
   }
@@ -33,7 +34,7 @@ export function mapValues2Value(
     }
     if (objectsorigin.length > 1 && values.length === 1) {
       if (objects.length !== objectsorigin.length) {
-        return values[0] === defvalue ? defvalue : 'mixed'
+        return values[0] === defvalue ? defvalue : names.mixed || 'mixed'
       }
       return values[0]
     }
@@ -47,7 +48,7 @@ export function mapValues2Value(
     return defvalue
   }
 
-  return 'mixed'
+  return names.mixed || 'mixed'
 }
 
 export function mapValues2Objects(

@@ -122,6 +122,7 @@ License: AGPL-3.0
   const changeBuffer = ref<{ [key: string]: any }>({})
   const activeItem = ref<string | null>(null)
   const createConfigVisible = ref(false)
+  const MIXED = $t('mixed')
 
   const props = defineProps({
     id: { type: String, default: undefined },
@@ -161,7 +162,7 @@ License: AGPL-3.0
         if (sortedValues.every((v: string) => v === sortedValues[0])) {
           return objectValues[0]
         }
-        return 'mixed'
+        return MIXED
       }
       if (objectValues.every((v: any) => v === objectValues[0])) {
         // not multi!

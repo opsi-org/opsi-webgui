@@ -15,7 +15,7 @@ License: AGPL-3.0
       @mouseleave="op.toggle"
     >
       <TablecellTCProductInstallationStatus
-        v-if="type == 'installationStatus' && gettext == 'mixed'"
+        v-if="type == 'installationStatus' && gettext == MIXED"
         :text="gettext"
         :variant="getvariant"
       />
@@ -26,7 +26,7 @@ License: AGPL-3.0
       />
 
       <TablecellTCProductActionResult
-        v-else-if="type == 'actionResult' && gettext == 'mixed'"
+        v-else-if="type == 'actionResult' && gettext == MIXED"
         :text="gettext"
         :variant="getvariant"
       />
@@ -45,10 +45,14 @@ License: AGPL-3.0
 </template>
 
 <script lang="tsx" setup>
+  import { mix } from '@primevue/themes'
   import type { PSeverity } from '~/types/LibComponentTypes'
   import type { IObjectString2String } from '~/types/tgeneral'
+  const $t = useI18n().t
 
+  const MIXED = $t('mixed')
   const op = ref()
+
   const props = defineProps({
     rowid: { type: String, default: '' },
     type: { type: String, default: '' },
@@ -81,7 +85,10 @@ License: AGPL-3.0
   })
 
   const gettext = computed<string>(() => {
-    return mapValues2Value(props.values, props.objects, props.objectsorigin, defaults[props.type])
+    return mapValues2Value(props.values, props.objects, props.objectsorigin, defaults[props.type], {
+      none: 'none',
+      mixed: MIXED,
+    })
   })
 
   const gettooltipobj = computed(() => {

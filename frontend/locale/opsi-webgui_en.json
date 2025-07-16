@@ -219,6 +219,7 @@
   "message.unsavedChanges": "There are local changes that have not been saved.",
   "message.unsavedChangesWithValueinBold": "This item has unsaved changes. The original value is shown in bold.",
   "message.youHaveBeenLoggedOut": "You've been logged out. Please log in again.",
+  "mixed": "mixed",
   "modificationTime": "Modification Time",
   "modules": "Modules",
   "multi": "Multi",

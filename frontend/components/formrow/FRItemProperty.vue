@@ -137,6 +137,7 @@ License: AGPL-3.0
   const { changesProducts } = storeToRefs(storeChanges())
   const { selectionDepots, selectionClients } = storeToRefs(storeSelections())
   const $emit = defineEmits(['change'])
+  const MIXED = $t('mixed')
 
   const props = defineProps({
     item: { type: Object, required: true },
@@ -182,7 +183,7 @@ License: AGPL-3.0
       if (item.multiValue) return Object.values(item.clients)[0]
       return (Object.values(item.clients)[0] as Array<any>)[0]
     } else if (hasClientValue) {
-      return 'mixed'
+      return MIXED
     }
 
     const hasDepotValue = Object.keys(item.depots).length > 0
@@ -191,7 +192,7 @@ License: AGPL-3.0
       if (item.multiValue) return Object.values(item.depots)[0]
       return (Object.values(item.depots)[0] as Array<any>)[0]
     } else if (hasClientValue) {
-      return 'mixed'
+      return MIXED
     }
 
     if (item.multiValue) return Object.values(item.default)

@@ -281,6 +281,7 @@ License: AGPL-3.0
   const icons = useIcons()
   const $t = useI18n().t
   const mq = useMQ()
+  const MIXED = $t('mixed')
   const routemenu = ref()
 
   const config = storeConfigapp().config ?? { read_only: true, server_write_access: false }
@@ -400,7 +401,7 @@ License: AGPL-3.0
         if (sortedValues.every((v: string) => v === sortedValues[0])) {
           return objectValues[0]
         }
-        return 'mixed'
+        return MIXED
       }
       if (objectValues.every((v: any) => v === objectValues[0])) {
         // not multi!

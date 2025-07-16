@@ -133,7 +133,7 @@ License: AGPL-3.0
   const t_fixed = useStrings().t_fixed
   const dataSelection = storeSelections()
   const { selectionDepots, selectionClients } = storeToRefs(dataSelection)
-  const MIXED = '<mixed>'
+  const MIXED = $t('mixed')
   const props = defineProps({
     properties: {
       type: Object as PropType<Record<string, T_ProductProperty>>,

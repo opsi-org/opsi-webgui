@@ -215,6 +215,7 @@
   "message.unsavedChanges": "Es gibt lokale Änderungen, die nicht gespeichert wurden.",
   "message.unsavedChangesWithValueinBold": "Dieses Element hat ungespeicherte Änderungen. Der ursprüngliche Wert ist fett dargestellt.",
   "message.youHaveBeenLoggedOut": "Sie wurden abgemeldet. Bitte melden Sie sich erneut an.",
+  "mixed": "mixed",
   "modificationTime": "Änderungszeit",
   "modules": "Module",
   "multi": "Mehrfach",
