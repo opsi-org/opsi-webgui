@@ -368,18 +368,11 @@ License: AGPL-3.0
   }
 
   async function fetchProdGroups() {
-    try {
-      const { data, error } = await useApiGETBodykwargs<Record<string, Record<string, T_Groups>>>(
-        `/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`,
-        { showError: false }
-      )
-      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
-      if (!data.value)
-        throw new Error($t('message.error.emptyResponse', { details: 'GroupActions' }))
-      fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups.children)
-    } catch (err) {
-      notifyError({ message: (err as Error).message })
-    }
+    const { data, error } = await useApiGETBody<Record<string, Record<string, T_Groups>>>(
+      `/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`
+    )
+    if (error || !data.value) return
+    fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups)
   }
 
   async function fetchProductList() {
