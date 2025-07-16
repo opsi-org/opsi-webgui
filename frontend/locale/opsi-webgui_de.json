@@ -157,7 +157,6 @@
   "message.differentVersionsExists": "Für dieses Produkt existieren verschiedene Versionen.",
   "message.error.emptyResponse": "Keine Antwort vom Server. [{details}]",
   "message.error.general": "Ein Fehler ist aufgetreten.",
-  "message.failedToSetUEFI": "Fehler beim Setzen von UEFI-Einstellungen",
   "message.fetchingFailed": "Datenabruf fehlgeschlagen.",
   "message.fileRequired": "Eine Datei ist erforderlich.",
   "message.fileUploadFailed": "Datei-Upload fehlgeschlagen.",

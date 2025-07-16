@@ -56,6 +56,12 @@ export const storeSettings = defineStore('settings', {
       // only for testing purpose
       this.isMobile = isMobile
     },
+    initLanguage() {
+      // Set initial locale if not already set
+      if (this.language && useI18n().availableLocales.includes(this.language)) {
+        useI18n().setLocale(this.language)
+      }
+    },
     initColormode() {
       const colormode = this.colormode
       this.setColormode(colormode, false)

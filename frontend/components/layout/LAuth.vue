@@ -19,4 +19,5 @@ License: AGPL-3.0
 <script setup lang="ts">
   const settings = storeSettings()
   settings.initColormode()
+  settings.initLanguage()
 </script>

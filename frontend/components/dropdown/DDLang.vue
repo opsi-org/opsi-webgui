@@ -6,19 +6,19 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-dropdown data-testid="language-dropdown" @command="$i18n.locale = $event">
+  <el-dropdown data-testid="language-dropdown" @command="change">
     <el-button link>
-      <IconIIcon :icon="icon.language" class="inline mr-1" />
-      <el-text>{{ $i18n.locale.toUpperCase() }}</el-text>
+      <IconIIcon :icon="icons.language" class="inline mr-1" />
+      <el-text>{{ locale.toUpperCase() }}</el-text>
       <i class="el-icon-arrow-down el-icon--right"></i>
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item
-          v-for="(lang, i) in $i18n.availableLocales"
+          v-for="(lang, i) in availableLocales"
           :key="i"
           :command="lang"
-          :class="{ 'is-active': lang === $i18n.locale }"
+          :class="{ 'is-active': lang === locale }"
           :data-testid="`language-dropdown-item-${lang}`"
         >
           <span style="text-transform: uppercase">{{ lang }}</span>
@@ -44,10 +44,17 @@ License: AGPL-3.0
   </el-dropdown>
 </template>
 
-<script setup>
-  const icon = useIcons()
+<script setup lang="ts">
+  const { availableLocales, locale, setLocale } = useI18n()
+  const $t = useI18n().t
+  const icons = useIcons()
 
   const _props = defineProps({
     footer: { type: Boolean, default: false },
   })
+
+  function change(event: any) {
+    setLocale(event)
+    storeSettings().setLanguage(event)
+  }
 </script>
