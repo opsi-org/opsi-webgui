@@ -24,7 +24,6 @@ export const useCallLogout = (t: any = undefined) => {
   async function callLogout() {
     const { error } = await useApiPOST('/auth/logout')
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       console.error('error on logout', error)
       return
     }
@@ -54,7 +53,6 @@ export const useGroup = (_t: any = undefined) => {
   async function addClientToListOfGroups(client: string, groupsList: Array<string>) {
     const { error } = await useApiPOST(`/opsidata/clients/${client}/groups`, groupsList)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     }
     notifySuccess({
@@ -73,10 +71,6 @@ export const useSetUEFI = (_t: any = undefined) => {
   async function setUEFI(clientId: string, uefi: string) {
     const { error } = await useApiPOST(`api/opsidata/clients/${clientId}/uefi`, uefi)
     if (error) {
-      notifyError({
-        title: t('message.failedToSetUEFI'),
-        message: error?.response?.data?.message,
-      })
       return
     }
   }

@@ -265,7 +265,6 @@ License: AGPL-3.0
 
     const { data, error } = await useApiPOST('/opsidata/clients/action', params)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       productActions.value.demo.demoResult = undefined
       isLoadingDemo.value = false
       return

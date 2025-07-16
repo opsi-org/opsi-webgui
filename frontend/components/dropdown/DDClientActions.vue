@@ -148,12 +148,7 @@ License: AGPL-3.0
         ...opsiClientAgent.value,
         clients: props.clientIds,
       })
-      if (error) {
-        notifyError({
-          message: error?.response?.data?.message || $t('message.noResponse'),
-        })
-        return
-      }
+      if (error) return
       notifySuccess({
         title: $t('message.success') + ': ',
         message: $t('message.success.clientAgentDeployed', {
@@ -165,12 +160,7 @@ License: AGPL-3.0
       const deletedIds: Array<string> = []
       for (const clientId of props.clientIds) {
         const { error } = await useApiDELETE<TClientdRPC>(`/opsidata/clients/${clientId}`)
-        if (error) {
-          notifyError({
-            message: error?.response?.data?.message || 'No data received',
-          })
-          return
-        }
+        if (error) return
         deletedIds.push(clientId)
       }
       for (const clientId of deletedIds) {
@@ -206,7 +196,8 @@ License: AGPL-3.0
   }
 
   function collectResult(notificationTitle: string, data: TClientdRPC | undefined, error: any) {
-    if (error || data == undefined) {
+    if (error) return
+    if (data == undefined) {
       notifyError({
         message: error?.response?.data?.message || 'No data received (1)',
       })

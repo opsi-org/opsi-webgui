@@ -175,9 +175,6 @@ License: AGPL-3.0
       const User = createUserFormData()
       const { data, error } = await useApiPOST<TResult>('/auth/login', User)
       if (error) {
-        notifyError({
-          message: error?.response?.data?.message || $t('message.error.general'),
-        })
         return
       }
       if (data.value == undefined) {

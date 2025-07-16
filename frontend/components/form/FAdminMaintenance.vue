@@ -275,7 +275,6 @@ License: AGPL-3.0
     isLoading.value.applicationState = true
     const { data, error } = await useApiPOST('/app-state', newAppState.value)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       isLoading.value.applicationState = false
       return
     }
@@ -288,7 +287,6 @@ License: AGPL-3.0
 
     const { data, error } = await useApiPOST<string>('/backup/create', adminTasks.createBackup)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     }
     if (data.value) {
@@ -322,7 +320,6 @@ License: AGPL-3.0
   async function requestRestore() {
     const { error } = await useApiPOST('/backup/restore', adminTasks.restoreBackup)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     }
     notifySuccess({ message: $t('message.backupRestored') })

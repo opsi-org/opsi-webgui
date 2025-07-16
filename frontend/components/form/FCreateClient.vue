@@ -224,7 +224,6 @@ License: AGPL-3.0
     const { error } = await useApiPOST<T_ClientAttr>('/opsidata/clients', request)
 
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     } else {
       notifySuccess({
@@ -257,10 +256,7 @@ License: AGPL-3.0
   }
 
   async function handleApiPost(url: string, data: any) {
-    const { error } = await useApiPOST(url, data)
-    if (error) {
-      notifyError({ message: error?.response?.data?.message })
-    }
+    await useApiPOST(url, data) // notification error handles in useApiPOST
   }
 
   function resetForm() {
