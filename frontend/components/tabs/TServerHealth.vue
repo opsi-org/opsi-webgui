@@ -56,11 +56,9 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
-  import { useNotification } from '~/composables/mixins/useComponent'
   import type { T_health } from '~/types/tproptypes'
   import type { PropType } from 'vue'
 
-  const { notifyError } = useNotification()
   const $t = useI18n().t
   const icons = useIcons()
   const isLoading = ref(false)
@@ -84,7 +82,6 @@ License: AGPL-3.0
       clear_cache: clear_cache,
     })
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
       return
     }
@@ -101,7 +98,6 @@ License: AGPL-3.0
     isLoading.value = true
     const { data, error } = await useApiGETBody('/opsidata/server/diagnostic')
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
       return
     }

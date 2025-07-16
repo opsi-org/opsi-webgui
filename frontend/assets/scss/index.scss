@@ -107,6 +107,11 @@ html .text-white {
     color: $white;
   }
 }
+/* Notifications */
+.notification-combined .el-notification__content {
+  max-height: 400px;
+  overflow-y: auto;
+}
 
 /* Tabs */
 html .el-tabs__item.is-active {

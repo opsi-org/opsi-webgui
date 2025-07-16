@@ -135,7 +135,7 @@ License: AGPL-3.0
         : `/opsidata/hosts?hosts=${props.id}`
     try {
       const { data, error } = await useApiGETBody<Array<T_ServerAttr | T_ClientAttr>>(url)
-      if (error) throw new Error(error.response?.data?.message || $t('message.error.general'))
+      if (error) return
       if (!data.value)
         throw new Error($t('message.error.emptyResponse', { details: 'HostAttributes' }))
       hostAttributes.value = data.value

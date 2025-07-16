@@ -168,7 +168,6 @@ License: AGPL-3.0
     storeCookie.serversSorting.isDesc = params.sortDesc as boolean
     const { data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     }
     if (data.value == undefined) {

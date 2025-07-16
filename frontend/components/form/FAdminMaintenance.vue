@@ -262,7 +262,6 @@ License: AGPL-3.0
     isLoading.value.applicationState = true
     const { data, error } = await useApiGET<AppState>('/app-state')
     if (error || !data.value) {
-      notifyError({ message: error?.response?.data?.message })
       currentAppState.value = ERRORTEXT
       isLoading.value.applicationState = false
       return

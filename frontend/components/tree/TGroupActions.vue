@@ -345,8 +345,9 @@ License: AGPL-3.0
 
   async function fetchClientGroups() {
     try {
-      const { data, error } = await useApiGETBody<Record<string, T_Groups>>(
-        `/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`
+      const { data, error } = await useApiGETBodykwargs<Record<string, T_Groups>>(
+        `/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`,
+        { showError: false }
       )
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       if (!data.value)
@@ -368,8 +369,9 @@ License: AGPL-3.0
 
   async function fetchProdGroups() {
     try {
-      const { data, error } = await useApiGETBody<Record<string, Record<string, T_Groups>>>(
-        `/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`
+      const { data, error } = await useApiGETBodykwargs<Record<string, Record<string, T_Groups>>>(
+        `/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`,
+        { showError: false }
       )
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       if (!data.value)
@@ -382,8 +384,9 @@ License: AGPL-3.0
 
   async function fetchProductList() {
     try {
-      const { data, error } = await useApiGETBody<Array<T_Product>>(
-        `/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=[${storeSelection.selectionDepots}]`
+      const { data, error } = await useApiGETBodykwargs<Array<T_Product>>(
+        `/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=[${storeSelection.selectionDepots}]`,
+        { showError: false }
       )
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       if (!data.value)
@@ -402,7 +405,7 @@ License: AGPL-3.0
         ? '/opsidata/hosts/groups'
         : '/opsidata/products/groups'
     try {
-      const { error } = await useApiPOST(url, createGroup)
+      const { error } = await useApiPOSTkwargs(url, { showError: false, body: createGroup })
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.successfullyCreatedGroup', {
@@ -421,7 +424,10 @@ License: AGPL-3.0
         ? `/opsidata/hosts/groups/${selectedGroup}/clients`
         : `/opsidata/products/groups/${selectedGroup}/products`
     try {
-      const { error } = await useApiPOST(url, selectedChildren.value)
+      const { error } = await useApiPOSTkwargs(url, {
+        showError: false,
+        body: selectedChildren.value,
+      })
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.successfullyAddedClientsToGroup', {
@@ -440,7 +446,7 @@ License: AGPL-3.0
         ? `/opsidata/hosts/groups/${selectedGroup}/clients`
         : `/opsidata/products/groups/${selectedGroup}/products`
     try {
-      const { error } = await useApiDELETE(url)
+      const { error } = await useApiDELETEkwargs(url, { showError: false })
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.successfullyDeletedClientFromGroup', {
@@ -468,7 +474,9 @@ License: AGPL-3.0
         : `/opsidata/products/groups/${selectedGroup}`
     try {
       const { error } =
-        props.data.category === 'client-group' ? await useApiDELETE(url) : await useApiGET(url)
+        props.data.category === 'client-group'
+          ? await useApiDELETEkwargs(url, { showError: false })
+          : await useApiGETkwargs(url, { showError: false })
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.successfullyDeletedGroup', {
@@ -488,7 +496,7 @@ License: AGPL-3.0
         : `/opsidata/products/groups/${parent}/${selectedChild}`
     const body = props.data.category === 'client-group' ? [parent] : {}
     try {
-      const { error } = await useApiDELETE(url, body)
+      const { error } = await useApiDELETEkwargs(url, { body: body, showError: false })
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.successfullyDeletedClientFromGroup', {
@@ -507,7 +515,7 @@ License: AGPL-3.0
         ? `/opsidata/hosts/groups/${selectedGroup}`
         : `/opsidata/products/groups/${selectedGroup}`
     try {
-      const { error } = await useApiPUT(url, editgroup)
+      const { error } = await useApiPUTkwargs(url, { body: editgroup, showError: false })
       if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
       notifySuccess({
         message: $t('message.successfullyUpdatedGroup', {

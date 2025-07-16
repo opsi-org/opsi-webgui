@@ -284,9 +284,6 @@ License: AGPL-3.0
         `/opsidata/log?selectedClient=${logrequest.selectedClient}&selectedLogType=${logrequest.selectedLogType}`
       )
       if (error) {
-        notifyError({
-          message: error?.response?.data?.message || $t('message.error.general'),
-        })
         return
       }
       if (data.value == undefined) {

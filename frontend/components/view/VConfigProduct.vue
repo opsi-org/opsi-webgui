@@ -215,7 +215,6 @@ License: AGPL-3.0
 
   function handleError(error: any, type: 'properties' | 'dependencies') {
     console.error(error)
-    notifyError({ message: error?.response?.data?.message })
     errorText.value[type] = error.response.data.message
   }
 

@@ -55,7 +55,9 @@ License: AGPL-3.0
       return
     }
 
-    const { error } = await useApiPOST<T_Logout>('/auth/logout')
+    const { error } = await useApiPOSTkwargs<T_Logout>('/auth/logout', {
+      showError: false,
+    })
     if (
       error?.response.data.message === 'Unauthorized' /* xxx */ ||
       error?.response.data.message === 'Method Not Allowed' /*405*/

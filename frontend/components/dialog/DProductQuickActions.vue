@@ -188,7 +188,6 @@ License: AGPL-3.0
   async function fetchActionResults() {
     const { data, error } = await useApiGET<Array<string>>('/opsidata/products/action-result')
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     }
     if (data.value) {
@@ -201,7 +200,6 @@ License: AGPL-3.0
   async function fetchInstallationStates() {
     const { data, error } = await useApiGET<Array<string>>('/opsidata/products/installation-status')
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     }
     if (data.value) {

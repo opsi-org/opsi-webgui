@@ -20,10 +20,15 @@ License: AGPL-3.0
 <script setup>
   import { useStrings } from '~/composables/mixins/useStrings'
   import { useMBus } from '~/composables/mixins/useMessagebus'
+  import { useNotification } from '~/composables/mixins/useComponent'
 
+  const { notifyError } = useNotification()
   const $config = useRuntimeConfig()
   const $t = useI18n().t
   const { t_fixed } = useStrings()
+  notifyError({ message: 'First' })
+  notifyError({ message: 'Second' })
+  notifyError({ message: 'Third' })
 
   useMBus(() => {}, false, $t)
 

@@ -58,6 +58,7 @@
     "clean-full": "./scripts/py-helper.sh scripts/npm-helper.py --install-clean",
     "dev": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxi dev --host --trace-warnings",
     "dev-backend": "OPSICONFD_PORT=44472 WEBGUI_DEV_PORT=8889 npm run dev",
+    "dev-kill": "kill $(lsof -t -i:$WEBGUI_DEV_PORT)",
     "generate": "nuxi generate",
     "lint": "eslint .",
     "lint:missing-i18n": "./scripts/py-helper.sh scripts/compare_translation_keys.py -s",
