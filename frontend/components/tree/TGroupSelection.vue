@@ -146,7 +146,6 @@ License: AGPL-3.0
       `/opsidata/hosts/groups?selectedDepots=${selectionDepots.value}`
     )
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     } else if (data.value == undefined) {
       notifyError({
@@ -170,7 +169,6 @@ License: AGPL-3.0
       `/opsidata/products/groups?selectedProducts=${selectionProducts.value}`
     )
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     } else if (data.value == undefined) {
       notifyError({

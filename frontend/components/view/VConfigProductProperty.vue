@@ -159,8 +159,13 @@ License: AGPL-3.0
     const { data, error } = await useApiGET<T_Product[]>(
       `/opsidata/depots/products?selectedDepots=[${selectionDepots.value}]&productType=${type}`
     )
-    if (error || !data.value) {
-      notifyError({ message: error?.response?.data?.message })
+    if (error) return
+    if (!data.value) {
+      notifyError({
+        message: $t('message.error.emptyResponse', {
+          details: 'ProductProperties',
+        }),
+      })
       return
     }
     return data.value.map((item) => item.productId)

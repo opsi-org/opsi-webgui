@@ -276,7 +276,7 @@ License: AGPL-3.0
   import { useConfirm } from 'primevue/useconfirm'
 
   const confirm = useConfirm()
-  const { notifyError, notifyInfo } = useNotification()
+  const { notifyInfo } = useNotification()
   const t_fixed = useStrings().t_fixed
   const icons = useIcons()
   const $t = useI18n().t
@@ -497,10 +497,7 @@ License: AGPL-3.0
   }
   async function deleteConfig(node: any) {
     const { error } = await useApiDELETE(`/opsidata/config/delete/${node.configId}`)
-    if (error) {
-      notifyError({ message: error?.response?.data?.message })
-      return
-    }
+    if (error) return
     notifyInfo({
       title: $t('opsiMessageBus'),
       message: $t('opsiMessageBus.config_deleted', {
@@ -513,7 +510,6 @@ License: AGPL-3.0
   async function fetchHostParameters(endpoint: string) {
     const { data, error } = await useApiGETBody<T_HostParameter>(endpoint)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     }
     if (data.value) {

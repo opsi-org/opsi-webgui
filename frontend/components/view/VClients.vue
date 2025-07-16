@@ -395,9 +395,6 @@ License: AGPL-3.0
     const { data, error, headers } = await useApiGETBody<T_ClientsList>('/opsidata/clients', params)
     if (error) {
       console.error(error)
-      notifyError({
-        message: error?.response?.data?.message || $t('message.error.general'),
-      })
       return
     }
     if (data.value == undefined) {
@@ -438,9 +435,6 @@ License: AGPL-3.0
     )
     if (error) {
       console.error(error)
-      notifyError({
-        message: error?.response?.data?.message || $t('message.error.general'),
-      })
       return
     }
     for (const key in data.value) {

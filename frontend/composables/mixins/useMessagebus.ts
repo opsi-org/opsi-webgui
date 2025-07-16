@@ -264,7 +264,6 @@ export const useMBus = (
 
   function wsNotificationWarn(text: any, data: any = '') {
     notifyWarning({ message: text + ' ' + data })
-    console.warn('MessageBus:', text, data)
   }
 
   function _setBusMethods(_bus: WebSocket, setBusLastMsgMethod: any) {

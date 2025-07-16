@@ -115,9 +115,10 @@ License: AGPL-3.0
 
   async function fetchBlockedClients() {
     const { data, error } = await useApiGET<TData>('/opsidata/blocked-clients')
-    if (error || !data.value) {
+    if (error) return
+    if (!data.value) {
       notifyError({
-        message: error?.response?.data?.message || $t('message.noResponse'),
+        message: $t('message.noResponse'),
       })
       return
     }
@@ -126,9 +127,10 @@ License: AGPL-3.0
 
   async function fetchLockedProducts() {
     const { data, error } = await useApiGET<TData>('/opsidata/locked-products')
-    if (error || !data.value) {
+    if (error) return
+    if (!data.value) {
       notifyError({
-        message: error?.response?.data?.message || $t('message.noResponse'),
+        message: $t('message.noResponse'),
       })
       return
     }
@@ -143,25 +145,21 @@ License: AGPL-3.0
         const { error } = await useApiPOST(`/opsidata/clients/${selected.value.clients}/unblock`)
         if (error) {
           wasError.value = true
-          notifyError({ message: error?.response?.data?.message })
         } else await fetchBlockedClients()
       } else if (action === 'unblockAll') {
         const { error } = await useApiPOST('/opsidata/clients/unblock')
         if (error) {
           wasError.value = true
-          notifyError({ message: error?.response?.data?.message })
         } else await fetchBlockedClients()
       } else if (action === 'unlock') {
         const { error } = await useApiPOST(`/opsidata/products/${selected.value.products}/unlock`)
         if (error) {
           wasError.value = true
-          notifyError({ message: error?.response?.data?.message })
         } else await fetchLockedProducts()
       } else if (action === 'unlockAll') {
         const { error } = await useApiPOST('/opsidata/products/unlock')
         if (error) {
           wasError.value = true
-          notifyError({ message: error?.response?.data?.message })
         } else await fetchLockedProducts()
       }
       if (!wasError.value) selected.value = { clients: '', products: '' }
