@@ -473,7 +473,7 @@ License: AGPL-3.0
       notifyInfo({
         title: $t('opsiMessageBus'),
         message: $t('opsiMessageBus.config_updated', {
-          configId: msg.data.configId,
+          configId: msg.data.id,
         }),
         button: { label: $t('reloadPage'), onClick: fetch },
       })

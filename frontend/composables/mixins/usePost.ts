@@ -7,7 +7,7 @@ License: AGPL-3.0
 */
 import { useMBus } from './useMessagebus'
 import { useNotification } from './useComponent'
-const { notifySuccess, notifyError } = useNotification()
+const { notifySuccess } = useNotification()
 export const useCallLogout = (t: any = undefined) => {
   if (t === undefined) {
     // try to get t from i18n, better would be to pass it as parameter

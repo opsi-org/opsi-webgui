@@ -160,7 +160,6 @@
   "message.differentVersionsExists": "Different versions exist for this product.",
   "message.error.emptyResponse": "No response from server. [{details}]",
   "message.error.general": "An error occurred.",
-  "message.failedToSetUEFI": "Failed to set UEFI.",
   "message.fetchingFailed": "Fetching data failed.",
   "message.fileRequired": "A file is required.",
   "message.fileUploadFailed": "File upload failed.",
