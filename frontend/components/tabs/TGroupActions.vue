@@ -49,10 +49,8 @@ License: AGPL-3.0
 
   const handleTabClick = (pane: { props: { name?: string | number } }) => {
     const selectedCategory = pane.props.name
-    if (currentType.value !== selectedCategory) {
-      currentType.value = selectedCategory as string
-      router.push({ path: `/groups/${selectedCategory}` })
-    }
+    currentType.value = selectedCategory as string
+    router.push({ path: `/groups/${selectedCategory}` })
   }
 
   watch(
