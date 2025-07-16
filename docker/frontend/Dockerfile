@@ -24,6 +24,7 @@ RUN apt-get update \
 	htop \
 	sudo \
 	wget \
+	lsof \
 	zsh \
 	bash-completion \
 	git \
