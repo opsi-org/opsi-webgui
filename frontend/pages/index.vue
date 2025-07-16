@@ -20,7 +20,6 @@ License: AGPL-3.0
 <script setup>
   import { useStrings } from '~/composables/mixins/useStrings'
   import { useMBus } from '~/composables/mixins/useMessagebus'
-  import { useNotification } from '~/composables/mixins/useComponent'
 
   const $config = useRuntimeConfig()
   const $t = useI18n().t
