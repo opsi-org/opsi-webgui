@@ -14,8 +14,8 @@ export const storeErrors = defineStore('errors', {
     _combine_notifications: {
       error: true, // combine errors
       warning: true, // combine warnings
-      warn: false, // combine warnings
-      info: false, // combine info
+      warn: true, // combine warnings
+      info: true, // combine info
       debug: false, // combine debug messages
     },
     _last_error: {} as IObjectString2Any,
