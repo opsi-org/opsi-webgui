@@ -62,6 +62,10 @@ RUN npm install -g n
 
 RUN export NODE_OPTIONS='--disable-warning=ExperimentalWarning'
 
+# change uid& gid to 1000 (sometimes its 1001)
+RUN groupmod --gid 1000 ${DEV_USER}
+RUN usermod  --uid 1000 ${DEV_USER}
+RUN chown -R ${DEV_USER}:${DEV_USER} /workspace
 
 USER $DEV_USER
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh \
