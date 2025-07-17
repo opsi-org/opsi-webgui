@@ -210,6 +210,7 @@
   "message.successfullyCreatedGroup": "Gruppe \"{group}\" erfolgreich erstellt.",
   "message.successfullyDeletedClientFromGroup": "Client \"{client}\" erfolgreich aus der Gruppe gelöscht.",
   "message.successfullyDeletedGroup": "Gruppe \"{group}\" erfolgreich gelöscht.",
+  "message.successfullyExecutedProcessActions": "Prozessaktionen erfolgreich ausgeführt.",
   "message.successfullySavedHostParameters": "Host-Parameter erfolgreich gespeichert.",
   "message.successfullySavedProductActionRequest": "Produkt-Aktionsanfrage erfolgreich gespeichert.",
   "message.successfullyUpdatedGroup": "Gruppe \"{group}\" erfolgreich aktualisiert.",

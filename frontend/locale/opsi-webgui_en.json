@@ -214,6 +214,7 @@
   "message.successfullyCreatedGroup": "Successfully created group \"{group}\".",
   "message.successfullyDeletedClientFromGroup": "Successfully deleted client \"{client}\" from group.",
   "message.successfullyDeletedGroup": "Successfully deleted group \"{group}\".",
+  "message.successfullyExecutedProcessActions": "Successfully executed process actions.",
   "message.successfullySavedHostParameters": "Successfully saved host parameters.",
   "message.successfullySavedProductActionRequest": "Successfully saved product action request.",
   "message.successfullyUpdatedGroup": "Successfully updated group \"{group}\".",
