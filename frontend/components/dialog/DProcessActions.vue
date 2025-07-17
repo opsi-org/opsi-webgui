@@ -3,24 +3,28 @@
     {{ $t('processActions') }}
   </el-button>
   <el-dialog v-model="openProcessActionsModal" :title="$t('processActions.help')" align-center>
-    <el-form label-width="30%" :label-position="mq.isMobile.value ? 'top' : 'left'">
+    <el-form
+      :label-position="mq.isMobile.value ? 'top' : 'left'"
+      label-width="30%"
+      v-loading="isLoading"
+    >
       <el-form-item :label="$t('products')">
-        <el-radio-group>
+        <el-radio-group v-model="selectedProductMode">
           <el-radio value="All">{{ $t('allProducts') }}</el-radio>
           <el-radio value="Selected">{{ $t('onlySelectedProducts') }}</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item :label="$t('visiblilityOnClients')">
         <el-checkbox
-          :indeterminate="visibilityState === undefined"
-          :checked="visibilityState === true"
-          :unchecked="visibilityState === false"
+          :indeterminate="processActions.visibility === undefined"
+          :checked="processActions.visibility === true"
+          :unchecked="processActions.visibility === false"
           @change="toggleVisibility"
         >
           {{
-            visibilityState === true
+            processActions.visibility === true
               ? $t('visible')
-              : visibilityState === false
+              : processActions.visibility === false
                 ? $t('hidden')
                 : $t('clientDefault')
           }}
@@ -29,7 +33,7 @@
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button>
+        <el-button :loading="isLoading" @click="executeProcessActions">
           {{ $t('execute') }}
         </el-button>
       </div>
@@ -37,17 +41,54 @@
   </el-dialog>
 </template>
 
-<script setup lang="tsx">
+<script setup lang="ts">
+  import { useNotification } from '~/composables/mixins/useComponent'
+
+  const { notifySuccess } = useNotification()
   const mq = useMQ()
+  const $t = useI18n().t
+  const storeSelection = storeSelections()
+
   const openProcessActionsModal = ref(false)
-  const visibilityState = ref<true | false | undefined>(undefined) // Can be true, false, or undefined
+  const isLoading = ref(false)
+  const selectedProductMode = ref('All')
+  const processActions = ref({
+    client_ids: storeSelection.selectionClients,
+    product_ids: [] as string[],
+    visibility: undefined as true | false | undefined,
+  })
+
   function toggleVisibility() {
-    if (visibilityState.value === undefined) {
-      visibilityState.value = true
-    } else if (visibilityState.value === true) {
-      visibilityState.value = false
+    if (processActions.value.visibility === undefined) {
+      processActions.value.visibility = true
+    } else if (processActions.value.visibility === true) {
+      processActions.value.visibility = false
     } else {
-      visibilityState.value = undefined
+      processActions.value.visibility = undefined
     }
+  }
+
+  async function executeProcessActions() {
+    isLoading.value = true
+    let visibility = ''
+    if (processActions.value.visibility === true) {
+      visibility = 'visible'
+    } else if (processActions.value.visibility === false) {
+      visibility = 'hidden'
+    }
+    const payload: Record<string, any> = {
+      client_ids: storeSelection.selectionClients,
+      visibility: visibility,
+    }
+
+    if (selectedProductMode.value === 'Selected') {
+      payload.product_ids = storeSelection.selectionProducts
+    }
+    const { error } = await useApiPOST('/command/process_action', payload)
+    openProcessActionsModal.value = false
+    if (!error) {
+      notifySuccess({ message: $t('message.successfullyExecutedProcessActions') })
+    }
+    isLoading.value = false
   }
 </script>
