@@ -13,7 +13,10 @@ License: AGPL-3.0
       v-bind="props"
       @selection-changed="$emit('selectionChanged', $event)"
       @clear-selection="$emit('clearSelection')"
-    />
+    >
+      <template #header> <slot name="header" /> </template>
+      <template #toolbar-right> <slot name="toolbar-right" /> </template>
+    </TableTTableDesktopMobile>
     <TableTTableDesktop
       v-else
       ref="tableDesktop"

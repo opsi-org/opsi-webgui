@@ -203,6 +203,8 @@ init:npm:
     - cd frontend
     - *define_globals
     - npm i
+    - npm run dev &
+    - sleep 30
   artifacts:
     paths:
       - frontend/package.json
@@ -300,8 +302,6 @@ test:lint:
   before_script:
     - cd frontend
     - *define_globals
-    - npm run dev &
-    - sleep 30
   script:
     - npm run lint
 

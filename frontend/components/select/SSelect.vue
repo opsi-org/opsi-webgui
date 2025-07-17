@@ -19,6 +19,7 @@ License: AGPL-3.0
     overlay-class="sselect-overlay"
     data-testId="sselect"
     display="chip"
+    v-p-tooltip="{ value: localSelectedItems?.toString(), autoHide: false }"
   >
     <template #option="{ option }">
       <span
@@ -48,9 +49,7 @@ License: AGPL-3.0
         >
           <IconIIcon :title="$t('copy')" :icon="icons.copy" class="m-1" />
         </p-button>
-        <span class="m-auto">
-          {{ option }}
-        </span>
+        <span class="mt-2">{{ option }}</span>
       </span>
     </template>
 
@@ -88,6 +87,7 @@ License: AGPL-3.0
     v-else
     data-testId="sselect"
     v-model="localSelectedItems"
+    v-p-tooltip="{ value: localSelectedItems?.toString(), autoHide: false }"
     :options="dataCopy"
     :disabled="disabled"
     size="small"
@@ -109,7 +109,8 @@ License: AGPL-3.0
           severity="secondary"
           text
           size="small"
-          @click.stop="localAddOption = ''"
+          @mousedown.stop
+          @click.stop.prevent="localAddOption = ''"
         >
           <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
@@ -119,11 +120,12 @@ License: AGPL-3.0
           severity="secondary"
           text
           size="small"
-          @click.stop="copyItemToInput(option)"
+          @mousedown.stop
+          @click.stop.prevent="copyItemToInput(option)"
         >
           <IconIIcon :title="$t('copy')" :icon="icons.copy" class="m-1" />
         </p-button>
-        <el-text class="m-auto"> {{ option }} </el-text>
+        <el-text class="m-auto" :title="option"> {{ option }} </el-text>
       </span>
     </template>
     <template v-if="props.editable" #footer>

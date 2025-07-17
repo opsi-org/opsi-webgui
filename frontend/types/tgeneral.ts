@@ -9,6 +9,10 @@ export interface IObjectString2Function {
   [key: string]: () => void
 }
 
+export interface IObjectString2ArrayAny {
+  [key: string]: Array<any>
+}
+
 export interface IObjectString2Any {
   [key: string]: any
 }

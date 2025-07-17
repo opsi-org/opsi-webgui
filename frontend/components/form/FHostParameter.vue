@@ -28,19 +28,22 @@ License: AGPL-3.0
         size="small"
         :value="fetchedData"
         :auto-layout="true"
-        :class="mq.isMobile.value ? 'text-xs' : ''"
+        :class="mq.isMobile.value || props.isChild ? 'text-xs' : ''"
         :expanded-keys="expandedKeys"
       >
         <p-column
           field="key"
           header=""
           expander
-          class="!max-w-full !w-full border-y-[1px]"
+          :class="{
+            'text-xs': props.isChild,
+            '!max-w-full !w-full border-y-[1px]': mq.isMobile.value,
+          }"
           style="border-color: var(--el-border-color-light)"
         >
           <template #body="slotProps">
             <div
-              class="block"
+              class="block w-full"
               @click="() => setExpandedRow(slotProps.node)"
               @contextmenu="(e) => onRightClick(e, slotProps.node?.data || {})"
               aria-haspopup="true"
@@ -54,15 +57,19 @@ License: AGPL-3.0
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
                   <span>{{ slotProps.node.key }}</span> <br />
-                  <pre v-if="!slotProps.node?.children || slotProps.node?.children.length <= 0">
- {{ slotProps.node }}</pre
-                  >
+                  <!--<span>DefaultValues {{ slotProps.node?.data.defaultValues }}</span>
+                  <span>Values: {{ slotProps.node?.data.objects }}</span>
+                  -->
+                  <!--<pre v-if="!slotProps.node?.children || slotProps.node?.children.length <= 0">
+ {{ slotProps.node }}</pre>-->
                 </template>
               </TooltipTTooltip>
 
               <div
-                v-if="mq.isMobile.value && slotProps.node.data?.type !== undefined"
-                style="max-width: calc(100vw - 160px); width: calc(100vw - 160px)"
+                v-if="
+                  (mq.isMobile.value || props.isChild) && slotProps.node.data?.type !== undefined
+                "
+                class="w-full"
               >
                 <p-badge
                   v-if="
@@ -74,6 +81,7 @@ License: AGPL-3.0
                     (slotProps.node.data?.type == 'BoolConfig' &&
                       itemValues[slotProps.node.key] != initialValues[slotProps.node.key])
                   "
+                  id="badge-change"
                   :title="
                     $t('message.unsavedChangesWithValueinBold') +
                     `\n initial: ${initialValues[slotProps.node.key]} \n current: ${itemValues[slotProps.node.key]}`
@@ -81,12 +89,11 @@ License: AGPL-3.0
                   severity="warn"
                   :value="t_fixed('notOrigin')"
                 />
-                <!-- BOOL CONFIG -->
+                <!-- BOOL CONFIG  (mobile)-->
                 <p-checkbox
                   v-if="slotProps.node.data.type === 'BoolConfig'"
                   v-model="itemValues[slotProps.node.data.configId]"
                   binary
-                  class="ml-2"
                   :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : 'w-full'"
                   :disabled="config.read_only || !config.server_write_access"
                   @change="
@@ -94,10 +101,7 @@ License: AGPL-3.0
                       handleSelection(slotProps.node.data, itemValues[slotProps.node.data.configId])
                   "
                 />
-                <!--
-
-                    -->
-                <!-- UNICODE CONFIG -->
+                <!-- UNICODE CONFIG (mobile)-->
                 <div v-else-if="slotProps.node.data.type === 'UnicodeConfig'">
                   <SelectSSelect
                     :info-id="slotProps.node.data.configId"
@@ -121,16 +125,16 @@ License: AGPL-3.0
             </div>
           </template>
         </p-column>
-        <!-- column has changes -->
+        <!-- column has changes (not mobile)-->
         <p-column
-          v-if="!mq.isMobile.value"
+          v-if="!(mq.isMobile.value || props.isChild)"
           field="data"
           header=""
           class="!max-w-5 !w-5 border-y-[1px]"
-          style="border-color: var(--el-border-color-light)"
+          style="border-color: var(--el-border-color-light); border: 1px solid green"
         >
           <template #body="slotProps">
-            <div v-if="slotProps.node.data?.type !== undefined">
+            <div v-if="slotProps.node.data?.type !== undefined" id="badge-change">
               <p-badge
                 v-if="
                   (slotProps.node.data?.type == 'UnicodeConfig' &&
@@ -151,12 +155,12 @@ License: AGPL-3.0
             </div>
           </template>
         </p-column>
-        <!-- Column value -->
+        <!-- Column value (not mobile)-->
         <p-column
-          v-if="!mq.isMobile.value"
+          v-if="!(mq.isMobile.value || props.isChild)"
           field="label"
           header=""
-          class="!min-w-1/2 !w-1/2 !max-w-[40vw] border-y-[1px]"
+          class="!min-w-1/2 !w-1/2 !max-w-[40vw] border-y-[1px] mr-4"
           style="border-color: var(--el-border-color-light)"
         >
           <template #body="slotProps">
@@ -166,7 +170,7 @@ License: AGPL-3.0
                 v-if="slotProps.node.data.type === 'BoolConfig'"
                 v-model="itemValues[slotProps.node.data.configId]"
                 binary
-                class="ml-2 w-full"
+                class="w-full"
                 :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
                 :disabled="config.read_only || !config.server_write_access"
                 @change="
@@ -272,11 +276,12 @@ License: AGPL-3.0
   import { useConfirm } from 'primevue/useconfirm'
 
   const confirm = useConfirm()
-  const { notifyError, notifyInfo } = useNotification()
+  const { notifyInfo } = useNotification()
   const t_fixed = useStrings().t_fixed
   const icons = useIcons()
   const $t = useI18n().t
   const mq = useMQ()
+  const MIXED = $t('mixed')
   const routemenu = ref()
 
   const config = storeConfigapp().config ?? { read_only: true, server_write_access: false }
@@ -346,8 +351,10 @@ License: AGPL-3.0
       'hostparam-alert-userrole-write',
       'hostparam-alert-readonly',
       'hostparam-alert-unselected',
+      'badge-change',
     ],
-    props.isChild ? 100 : 50
+    //props.isChild ? 100 : 70
+    mq.isMobile.value ? 100 : props.isChild ? 100 : 70
   )
 
   defineExpose({
@@ -394,7 +401,7 @@ License: AGPL-3.0
         if (sortedValues.every((v: string) => v === sortedValues[0])) {
           return objectValues[0]
         }
-        return 'mixed'
+        return MIXED
       }
       if (objectValues.every((v: any) => v === objectValues[0])) {
         // not multi!
@@ -466,7 +473,7 @@ License: AGPL-3.0
       notifyInfo({
         title: $t('opsiMessageBus'),
         message: $t('opsiMessageBus.config_updated', {
-          configId: msg.data.configId,
+          configId: msg.data.id,
         }),
         button: { label: $t('reloadPage'), onClick: fetch },
       })
@@ -490,10 +497,7 @@ License: AGPL-3.0
   }
   async function deleteConfig(node: any) {
     const { error } = await useApiDELETE(`/opsidata/config/delete/${node.configId}`)
-    if (error) {
-      notifyError({ message: error?.response?.data?.message })
-      return
-    }
+    if (error) return
     notifyInfo({
       title: $t('opsiMessageBus'),
       message: $t('opsiMessageBus.config_deleted', {
@@ -506,7 +510,6 @@ License: AGPL-3.0
   async function fetchHostParameters(endpoint: string) {
     const { data, error } = await useApiGETBody<T_HostParameter>(endpoint)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     }
     if (data.value) {
@@ -549,7 +552,7 @@ License: AGPL-3.0
       url = '/opsidata/config/values'
       request = Object.keys(changeBuffer.value).map((configId) => ({
         configId,
-        value: String(changeBuffer.value[configId]),
+        value: changeBuffer.value[configId] || '',
       }))
     } else if (props.type === 'clients' || props.type === 'servers') {
       url = '/opsidata/config/values/objects'
@@ -557,7 +560,7 @@ License: AGPL-3.0
         objectIds: [props.id as string],
         configs: Object.keys(changeBuffer.value).map((configId) => ({
           configId,
-          value: String(changeBuffer.value[configId]),
+          value: changeBuffer.value[configId] || '',
         })),
       }
     } else {
@@ -611,5 +614,13 @@ License: AGPL-3.0
   :deep(.p-treetable .p-treetable-thead > tr) {
     border: none !important;
     box-shadow: none !important;
+  }
+  :deep(.p-select),
+  :deep(.p-checkbox-box),
+  :deep(.p-multiselect) {
+    border-width: 1px !important;
+    border-color: var(--hover) !important;
+    border-style: solid !important;
+    min-width: 20px !important;
   }
 </style>

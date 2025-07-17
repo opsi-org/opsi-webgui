@@ -137,7 +137,7 @@ License: AGPL-3.0
 
   const mq = useMQ()
   const $t = useI18n().t
-  const { notifySuccess, notifyError } = useNotification()
+  const { notifySuccess } = useNotification()
   const isLoading = ref(false)
   const depotIDList = ref<T_DepotIds>([])
   const clientIDList = ref()
@@ -197,10 +197,9 @@ License: AGPL-3.0
   async function fetchGroups() {
     const { data, error } = await useApiGET('/opsidata/hosts/groups/id')
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
-    } else {
-      groupList.value = data.value
+      return
     }
+    groupList.value = data.value
   }
 
   async function fetchNetbootProducts() {
@@ -208,15 +207,11 @@ License: AGPL-3.0
       createClient.value.assignments.depot !== ''
         ? createClient.value.assignments.depot
         : storeCache().opsiconfigserver
-    await useApiGET(`/opsidata/depots/products?selectedDepots=[${depot}]`)
-      .then((response) => {
-        if (Array.isArray(response.data.value)) {
-          netbootProductList.value = response.data.value.map((item: T_Product) => item.productId)
-        }
-      })
-      .catch((error) => {
-        notifyError({ message: error?.response?.data?.message })
-      })
+    await useApiGET(`/opsidata/depots/products?selectedDepots=[${depot}]`).then((response) => {
+      if (Array.isArray(response.data.value)) {
+        netbootProductList.value = response.data.value.map((item: T_Product) => item.productId)
+      }
+    })
   }
 
   async function createOpsiClient() {
@@ -229,7 +224,6 @@ License: AGPL-3.0
     const { error } = await useApiPOST<T_ClientAttr>('/opsidata/clients', request)
 
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     } else {
       notifySuccess({
@@ -262,10 +256,7 @@ License: AGPL-3.0
   }
 
   async function handleApiPost(url: string, data: any) {
-    const { error } = await useApiPOST(url, data)
-    if (error) {
-      notifyError({ message: error?.response?.data?.message })
-    }
+    await useApiPOST(url, data) // notification error handles in useApiPOST
   }
 
   function resetForm() {

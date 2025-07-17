@@ -8,7 +8,7 @@ License: AGPL-3.0
 <template>
   <div data-testid="TCInstallationStatus">
     <p-tag
-      v-if="props.text == 'mixed'"
+      v-if="props.text == MIXED"
       data-testid="TCInstallationStatusBadge"
       :severity="props.variant"
     >
@@ -69,6 +69,9 @@ License: AGPL-3.0
   const icons = useIcons()
   const { t_fixed } = useStrings()
   const $mq = useMQ().$mq
+  const $t = useI18n().t
+
+  const MIXED = $t('mixed')
 
   const props = defineProps({
     text: { type: String, default: '' },

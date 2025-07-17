@@ -63,7 +63,6 @@ License: AGPL-3.0
   const { notifyError } = useNotification()
   const $t = useI18n().t
   const groupsHelper = useGroupsHelper()
-  const useCookie = storeTablesettings()
   const props = defineProps({
     grouptype: { type: String as PropType<PropTypeGroupTree>, required: true },
   })
@@ -147,7 +146,6 @@ License: AGPL-3.0
       `/opsidata/hosts/groups?selectedDepots=${selectionDepots.value}`
     )
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     } else if (data.value == undefined) {
       notifyError({
@@ -171,7 +169,6 @@ License: AGPL-3.0
       `/opsidata/products/groups?selectedProducts=${selectionProducts.value}`
     )
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       return
     } else if (data.value == undefined) {
       notifyError({
@@ -232,10 +229,6 @@ License: AGPL-3.0
     isLoadingSelection.value = true
     handleSelection(node, obj, multiSelection.value)
     isLoadingSelection.value = false
-
-    if (props.grouptype == GroupTree_CLIENTGROUP)
-      useCookie.setSortColumn('clients', 'selected', true)
-    else useCookie.setSortColumn('products', 'selected', true)
   }
   function handleSelection(node: TreeNodeData, obj: any, multiSelect: boolean) {
     toggleNodeSelection(node, obj, _getSelection(), _getSelectionFunction(), multiSelect)

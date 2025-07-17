@@ -63,11 +63,12 @@ License: AGPL-3.0
   import type { IObjectString2String } from '~/types/tgeneral'
   import type { ITableRowItemProducts } from '~/types/ttable'
 
+  const $t = useI18n().t
   const config = storeConfigapp().config ?? { read_only: true }
   const { changesProducts } = storeToRefs(storeChanges())
   const { selectionClients } = storeToRefs(storeSelections())
 
-  const MIXED_VALUE = 'mixed'
+  const MIXED_VALUE = $t('mixed')
   const DEFAULT_OPTIONS = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
   const VARIANTS: {
     [key: string]: PSeverity

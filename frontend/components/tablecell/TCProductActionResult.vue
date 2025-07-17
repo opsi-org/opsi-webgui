@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="TCActionResult">
-    <p-tag v-if="props.text == 'mixed'" data-testid="TCActionResultBadge" :severity="props.variant">
+    <p-tag v-if="props.text == MIXED" data-testid="TCActionResultBadge" :severity="props.variant">
       <IconIIcon :icon="icon.unequal" alt="mixed" />
     </p-tag>
     <p-tag
@@ -55,6 +55,9 @@ License: AGPL-3.0
   const icon = useIcons()
   const t_fixed = useStrings().t_fixed
   const $mq = useMQ().$mq
+  const $t = useI18n().t
+  const MIXED = $t('mixed')
+
   const props = defineProps({
     text: { type: String, default: '' },
     variant: { type: String as PropType<PSeverity>, default: 'warn' },

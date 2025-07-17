@@ -104,6 +104,7 @@ License: AGPL-3.0
   const isLoading = ref(true)
   const tableSettings = storeTablesettings()
   const { configLastSelected } = storeToRefs(tableSettings)
+  const MIXED = $t('mixed')
 
   const props = defineProps({
     id: { type: String, default: undefined }, // productId
@@ -215,14 +216,13 @@ License: AGPL-3.0
 
   function handleError(error: any, type: 'properties' | 'dependencies') {
     console.error(error)
-    notifyError({ message: error?.response?.data?.message })
     errorText.value[type] = error.response.data.message
   }
 
   function getVersion(versions: any) {
     const versionValues = Object.values(versions)
     if (versionValues.length > 0) {
-      return useUtils().isEqual(versionValues) ? versionValues[0] : 'mixed'
+      return useUtils().isEqual(versionValues) ? versionValues[0] : MIXED
     }
     return 'undefined'
   }

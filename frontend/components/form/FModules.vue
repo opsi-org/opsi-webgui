@@ -46,7 +46,6 @@ License: AGPL-3.0
 
     const { data, error } = await useApiGETBody<TData>('/opsidata/modulesContent')
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
       return
     }

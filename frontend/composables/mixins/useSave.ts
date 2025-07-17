@@ -7,7 +7,7 @@ License: AGPL-3.0
 */
 import { useNotification } from './useComponent'
 import { _getI18nInComposable } from './helper-i18n'
-const { notifySuccess, notifyError } = useNotification()
+const { notifySuccess } = useNotification()
 export const useSaveParameters = (_t: any = undefined) => {
   let t = _t
   if (!t) {
@@ -17,11 +17,9 @@ export const useSaveParameters = (_t: any = undefined) => {
   const pushToErrorsHostParam = storeErrors().pushToErrorsHostParam
 
   async function saveParameters(url: string, request: any, deleteitem: any, showalert: boolean) {
-    const { error } = await useApiPOST(url, request)
+    const { error } = await useApiPOSTkwargs(url, { body: request, showError: showalert })
     if (error) {
-      if (showalert) {
-        notifyError({ message: error?.response?.data?.message })
-      } else {
+      if (!showalert) {
         const errorObj = deleteitem
         errorObj.error = error?.response?.data
         pushToErrorsHostParam(errorObj)
@@ -52,11 +50,12 @@ export const useSaveProductActionRequest = (_t: any = undefined) => {
   const pushToErrorsProducts = storeErrors().pushToErrorsProducts
 
   async function saveProdActionRequest(change: object, deleteitem: any, showalert: boolean) {
-    const { error } = await useApiPOST('/opsidata/clients/products', change)
+    const { error } = await useApiPOSTkwargs('/opsidata/clients/products', {
+      body: change,
+      showError: showalert,
+    })
     if (error) {
-      if (showalert) {
-        notifyError({ message: error?.response?.data?.message })
-      } else {
+      if (!showalert) {
         const errorObj = deleteitem
         errorObj.error = error?.response?.data
         pushToErrorsProducts(errorObj)
@@ -92,11 +91,12 @@ export const useSaveProductProperties = (
   const delFromChangesProducts = storeChanges().delFromChangesProducts
   const pushToErrorsProducts = storeErrors().pushToErrorsProducts
   async function saveProdProperties(id: string, change: any, deleteitem: any, showalert: boolean) {
-    const { error } = await useApiPOST(`/opsidata/products/${id}/properties`, change)
+    const { error } = await useApiPOSTkwargs(`/opsidata/products/${id}/properties`, {
+      body: change,
+      showError: showalert,
+    })
     if (error) {
-      if (showalert) {
-        notifyError({ message: error?.response?.data?.message })
-      } else {
+      if (!showalert) {
         const errorObj = deleteitem
         errorObj.error = error?.response?.data
         pushToErrorsProducts(errorObj)

@@ -103,9 +103,10 @@ License: AGPL-3.0
 
   // init
   onMounted(async () => {
+    settings.initColormode()
+    settings.initLanguage()
     // check if user is logged in
     await configapp.initConfig()
-    settings.initColormode()
     leftSideIsSmall.value = settings.menuCollapsed && !mq.isMobile.value
     rightSideVisible.value = settings.quickpanelOpened && !mq.isMobile.value
   })

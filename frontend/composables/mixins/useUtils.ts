@@ -6,6 +6,11 @@ All rights reserved.
 License: AGPL-3.0
 */
 export const useUtils = () => {
+  function delay(ms: number) {
+    // return new Promise((resolve) => setTimeout(resolve, ms))
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
+  }
+
   const addOrRemoveListItem = (arr: any[], upload: any, by = 'ident') => {
     const index = arr.findIndex(function (element) {
       return element[by] === upload[by]
@@ -22,5 +27,5 @@ export const useUtils = () => {
     return arr.every((v) => v === arr[0])
   }
 
-  return { addOrRemoveListItem, isEqual }
+  return { addOrRemoveListItem, isEqual, delay }
 }

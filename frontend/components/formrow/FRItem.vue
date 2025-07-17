@@ -94,6 +94,7 @@ License: AGPL-3.0
     allValuesKey: { type: String, default: 'possibleValues' },
     replaceInId: { type: String, default: undefined },
   })
+  const MIXED = $t('mixed')
   const loading = ref(true)
   const itemValue = ref(props.item.value)
   const setInitialValue = () => {
@@ -131,7 +132,7 @@ License: AGPL-3.0
           loading.value = false
           return
         }
-        itemValue.value = 'mixed'
+        itemValue.value = MIXED
         loading.value = false
         return // mixed
         // multiValue end

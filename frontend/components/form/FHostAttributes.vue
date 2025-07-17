@@ -133,9 +133,11 @@ License: AGPL-3.0
       props.type === 'servers'
         ? `/opsidata/servers?servers=[${props.id}]`
         : `/opsidata/hosts?hosts=${props.id}`
+
+    const { data, error } = await useApiGETBody<Array<T_ServerAttr | T_ClientAttr>>(url)
+    if (error) return
+
     try {
-      const { data, error } = await useApiGETBody<Array<T_ServerAttr | T_ClientAttr>>(url)
-      if (error) throw new Error(error.response?.data?.message || $t('message.error.general'))
       if (!data.value)
         throw new Error($t('message.error.emptyResponse', { details: 'HostAttributes' }))
       hostAttributes.value = data.value
@@ -160,14 +162,15 @@ License: AGPL-3.0
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     notEditable.forEach((attrKey) => delete hostAttr[attrKey])
 
+    const { error } = await useApiPUT(`/opsidata/${props.type}/${hostAttr.hostId}`, hostAttr)
+    if (error) return
+    notifySuccess({
+      message: $t('message.hostAttributesSaved', {
+        host: hostAttr.hostId,
+      }),
+    })
+
     try {
-      const { error } = await useApiPUT(`/opsidata/${props.type}/${hostAttr.hostId}`, hostAttr)
-      if (error) throw new Error(error.response?.data?.message || $t('message.error.general'))
-      notifySuccess({
-        message: $t('message.hostAttributesSaved', {
-          host: hostAttr.hostId,
-        }),
-      })
       hostAttributesOriginal.value = JSON.parse(JSON.stringify(hostAttributes.value))
       hasUnsavedChanges.value = false
     } catch (error) {

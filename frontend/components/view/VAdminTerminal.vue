@@ -40,7 +40,7 @@ License: AGPL-3.0
   import type { T_DisabledFeatures } from '~/types/APItypes'
 
   const $t = useI18n().t
-  const { notifyWarning, notifyError } = useNotification()
+  const { notifyWarning } = useNotification()
 
   await useConfigserver(true, undefined, $t) // init with configserver if empty selectiondepots
   const ws = useMBus(undefined, false, $t)
@@ -83,7 +83,6 @@ License: AGPL-3.0
       '/opsidata/server/disabled-features'
     )
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
       return false
     }
