@@ -19,7 +19,7 @@ License: AGPL-3.0
       "
       ><IconIIcon :icon="icons.x"
     /></el-button>
-    <ViewVHostConfig
+    <ViewVConfigHost
       v-if="pagetype === 'config'"
       :type="type"
       :id="id"

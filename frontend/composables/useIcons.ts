@@ -29,8 +29,6 @@ export const useIcons = () => {
     menu: 'bi:three-dots-vertical',
     quickpanel: 'bi:grid',
     loading: 'eos-icons:three-dots-loading',
-    // loading: 'bi:three-dots',
-    refetch: 'bi:arrow-clockwise',
     rename: 'bi:pencil-square',
     reset: 'bi:arrow-counterclockwise',
     exclamation: 'bi:exclamation',

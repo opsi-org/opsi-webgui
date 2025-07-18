@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <ViewVHostConfig :type="type" :is-child="false" :id="id" />
+  <ViewVConfigHost :type="type" :is-child="false" :id="id" />
 </template>
 
 <script setup lang="ts">

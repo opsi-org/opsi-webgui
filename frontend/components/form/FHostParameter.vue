@@ -215,8 +215,6 @@ License: AGPL-3.0
         :aria-expanded="createConfigVisible ? true : false"
         >{{ $t('addNew') }}</el-button
       >
-
-      <el-button @click="fetchFormData">{{ $t('reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
         :disabled="!hasUnsavedChanges"

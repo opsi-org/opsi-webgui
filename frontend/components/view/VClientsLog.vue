@@ -98,9 +98,9 @@ License: AGPL-3.0
           </el-button>
           <el-button @click="reload" size="small" text bg>
             <IconIIcon
-              :icon="useIcons().refetch"
-              :aria-label="$t('reload')"
-              :title="$t('reload')"
+              :icon="useIcons().refresh"
+              :aria-label="$t('refresh')"
+              :title="$t('refresh')"
             />
           </el-button>
         </el-form-item>

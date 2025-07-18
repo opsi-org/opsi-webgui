@@ -14,8 +14,8 @@ License: AGPL-3.0
       @change="setId"
       class="flex-1"
     />
-    <el-button @click="refetch" :title="$t('reload')" class="flex-none">
-      <IconIIcon :icon="useIcons().refetch" />
+    <el-button @click="refetch" :title="$t('refresh')" class="flex-none">
+      <IconIIcon :icon="useIcons().refresh" />
     </el-button>
   </div>
   <el-tabs v-model="activeName" id="config-tabs">
