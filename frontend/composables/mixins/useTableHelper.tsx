@@ -59,7 +59,8 @@ export const useTableHelper = (
   )
   watch(
     [() => filterQuery.value],
-    () => {
+    (after, before) => {
+      if (before.length <= 0 && after.length > 0 && after[0] === '') return
       fetchDataWrapper()
     },
     { immediate: true }
