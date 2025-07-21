@@ -119,7 +119,6 @@ License: AGPL-3.0
   const $t = useI18n().t
 
   const isLoading = ref(false)
-  //const visible = ref(true)
   const visible = defineModel('visible', {
     type: Boolean,
     default: true,
@@ -184,7 +183,6 @@ License: AGPL-3.0
 
   const defaultValuesWrapper4PossValue = computed({
     get: () =>
-      //configdata.value.multiValue.value ? configdata.value.defaultValues.values : [configdata.value.defaultValues.value],
       configdata.value.multiValue.value
         ? configdata.value.defaultValues.values.filter((n: string) => n)
         : [configdata.value.defaultValues.value || ''],
@@ -238,7 +236,6 @@ License: AGPL-3.0
       isLoadingNameExists.value = false
       return false
     }
-    // /api/opsidata/config/exists/{configid}
     const url = `/opsidata/config/exists/${configdata.value.name.value}`
     const { data, error } = await useApiGET(url)
     if (error) {

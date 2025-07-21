@@ -85,7 +85,6 @@ License: AGPL-3.0
       isLoading.value = false
       return
     }
-    //fetchedData.value = data?.value
     if (fetchedData.value.health_check) {
       fetchedData.value.health_check = data?.value || []
     } else {

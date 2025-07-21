@@ -7,7 +7,6 @@ License: AGPL-3.0
 */
 export const useUtils = () => {
   function delay(ms: number) {
-    // return new Promise((resolve) => setTimeout(resolve, ms))
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
   }
 

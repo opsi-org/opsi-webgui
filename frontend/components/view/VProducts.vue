@@ -417,7 +417,6 @@ License: AGPL-3.0
   watch(
     () => storeCookie.productsSorting,
     () => {
-      // refetch()
       sortBy.value = storeCookie.productsSorting.column
       sortDesc.value = storeCookie.productsSorting.isDesc
     },

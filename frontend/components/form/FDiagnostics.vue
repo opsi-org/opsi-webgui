@@ -31,7 +31,6 @@ License: AGPL-3.0
               </div>
             </template>
             <template v-else>
-              <!-- code will allow automatically add linebreak if needed -->
               <code>{{ v }}</code>
             </template>
           </div>

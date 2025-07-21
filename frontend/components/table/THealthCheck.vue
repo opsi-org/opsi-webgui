@@ -98,7 +98,6 @@ License: AGPL-3.0
         key: item.check?.id || item.check_id || '',
         name: item.check?.name || item.check_name || '',
         description: item.check?.description || item.check_description || '',
-        // (parent.length > 0 ? cid.replace(`${parent}`, '') : cid),
         message: item.message,
         details: item.details,
       }
