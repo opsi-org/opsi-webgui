@@ -50,7 +50,7 @@ License: AGPL-3.0
             >
               <span
                 v-if="slotProps.node.label == slotProps.node.key"
-                :class="mq.isMobile.value ? 'flex flex-row-reverse' : 'w-full'"
+                :class="mq.isMobile.value ? 'flex ' : 'w-full'"
                 >{{ slotProps.node.label.replaceAll('.', ' / ') }}</span
               >
               <TooltipTTooltip v-else>
@@ -94,7 +94,7 @@ License: AGPL-3.0
                   v-if="slotProps.node.data.type === 'BoolConfig'"
                   v-model="itemValues[slotProps.node.data.configId]"
                   binary
-                  :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : 'w-full'"
+                  :class="mq.isMobile.value ? 'flex  pr-3' : 'w-full'"
                   :disabled="config.read_only || !config.server_write_access"
                   @change="
                     () =>
@@ -171,7 +171,7 @@ License: AGPL-3.0
                 v-model="itemValues[slotProps.node.data.configId]"
                 binary
                 class="w-full"
-                :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
+                :class="mq.isMobile.value ? 'flex  pr-3' : ''"
                 :disabled="config.read_only || !config.server_write_access"
                 @change="
                   () => {
@@ -565,12 +565,13 @@ License: AGPL-3.0
       console.error('not defined')
     }
 
-    await useSaveParameters($t).saveParameters(url, request, null, true)
+    if (await useSaveParameters($t).saveParameters(url, request, null, true)) {
+      hasUnsavedChanges.value = false
+      changeBuffer.value = {}
+      initialValues.value = { ...itemValues.value }
+    }
 
     isLoading.value = false
-    hasUnsavedChanges.value = false
-    changeBuffer.value = {}
-    initialValues.value = { ...itemValues.value }
   }
 
   onBeforeRouteLeave((to, from, next) => {
