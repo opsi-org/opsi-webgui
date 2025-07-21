@@ -313,7 +313,7 @@ def exists_config(  # pylint: disable=invalid-name, too-many-locals, too-many-st
 	"""
 	Check if a config exists
 	"""
-	logger.warning("Checking if config %s exists", configid)
+	logger.deubg("Checking if config %s exists", configid)
 	try:
 		config_ids = backend.config_getIdents()
 		return RESTResponse(data=configid in config_ids)
@@ -484,7 +484,7 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 			logger.warning("Config %s does not exist. sql result: %s", config.configId, result)
 		return config_result
 
-	def _get_values(session, config: dict) -> List[dict]:
+	def _get_values(session, config: dict[str, Any], type: str) -> List[dict]:
 		# Get all values for a config
 		query = (
 			select(
@@ -504,7 +504,8 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 		config_values = []
 		for row in result:
 			if row is not None:
-				config_values.append(dict(row)["value"])
+				val = convert_bool_value(type, dict(row)["value"])
+				config_values.append(val)
 		return config_values
 
 	def _insert_or_update(
@@ -546,22 +547,20 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 
 		with mysql.session() as session:
 			config_original = _get_config(session, config)
-			values_original = _get_values(session, config)
 			if not config_original:
 				logger.warning("Config %s does not exist. Skipping.", config.configId)
 				continue
+			values_original = _get_values(session, config, type=config_original.get("type", None))  # type: ignore[assignment]
 
 			_type = config_original.get("type", None)
 			_values: Any = convert_bool_value(_type, config.value) if config.value is not None else []
 			values: list = _values if isinstance(_values, list) else [_values]
+			logger.debug("Values: %s", values)
 
 			for value in values + values_original:
-				if not value:
-					logger.warning("Value for config %s is empty. Skipping.", config.configId)
-					continue
-
 				try:
 					dbitem = {"configId": config.configId, "value": value, "isDefault": int(value in values)}
+					logger.debug("dbitem: %s", dbitem)
 					val_exists = get_config_value(config.configId, value)
 					method_name = "config_created" if not val_exists else "config_updated"
 					stmt, params = _insert_or_update(
@@ -572,6 +571,7 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 						update_ids=["isDefault"],
 						exists=bool(val_exists),
 					)
+					logger.debug("stmt: %s", stmt)
 					session.execute(stmt, params)
 					backend._send_messagebus_event(method_name, data=dbitem)  # pylint: disable=protected-access
 					logger.debug("Config %s saved.", config.configId)
