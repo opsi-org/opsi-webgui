@@ -26,6 +26,7 @@ from .utils import (
 	build_tree,
 	filter_depot_access,
 	get_allowed_clients,
+	get_allowed_clients_sql,
 	get_allowed_host_groups,
 	get_allowed_objects,
 	get_groups_ids,
@@ -107,7 +108,6 @@ def get_host_data(
 	if host_type:
 		params["type"] = host_type
 		where = and_(where, text("h.type = :type"))  # type: ignore
-
 
 	# IF ( "efi" IN
 	# 				,
@@ -623,6 +623,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 		allowed_clients = None
 		if user_register() and host_group_access_configured(username):
 			allowed_clients = get_allowed_clients(username)
+			# allowed_clients = get_allowed_clients_sql(username)
 		where = and_(text("h.type = 'OpsiClient'"))
 		params: dict = {"depot_ids": []}
 		if allowed_clients:

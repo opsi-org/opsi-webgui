@@ -24,12 +24,13 @@ from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 
-from .groups import read_groups, build_nested_group  # pylint: disable=import-error
 from .depots import get_depots
+from .groups import build_nested_group, read_groups  # pylint: disable=import-error
 from .utils import (
 	backend,
 	bool_value,
 	filter_depot_access,
+	get_allowed_group_objects,
 	get_allowed_product_groups,
 	get_allowed_products,
 	get_depot_of_client,
@@ -239,7 +240,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 	params["num_depots"] = len(selectedDepots)
 
 	if user_register() and product_group_access_configured(username):
-		allowed_products = get_allowed_products(username)
+		allowed_products = get_allowed_group_objects(username, "ProductGroup")
 		if not allowed_products:
 			logger.warning("No products found for user '%s'.", username)
 			return RESTResponse(data=[], total=0)
@@ -500,9 +501,8 @@ def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, to
 		params["depots"] = selectedDepots
 
 	allowed_products = None
-
 	if user_register() and product_group_access_configured(username):
-		allowed_products = get_allowed_products(username)
+		allowed_products = get_allowed_group_objects(username, "ProductGroup")
 
 	with mysql.session() as session:
 		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
@@ -577,7 +577,8 @@ class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
 @rest_api
 @read_only_check
 def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statements, too-many-branches, unused-argument
-	request: Request, data: PocItem  # pylint: disable=unused-argument
+	request: Request,
+	data: PocItem,  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Save a Product On Client object.
@@ -662,15 +663,15 @@ class Property(BaseModel):  # pylint: disable=too-few-public-methods
 	propertyId: str
 	type: Optional[str] = "UnicodeProductProperty"
 	version: Optional[str] = None
-	versionDetails: Optional[dict]  = None
+	versionDetails: Optional[dict] = None
 	allValues: Optional[List[str]] = ["value1"]
 	possibleValues: Optional[List[str]] = ["value1"]
 	editable: Optional[bool] = True
 	editableDetails: Optional[dict] = {}
-	multiValue: Optional[bool]  = None
-	multiValueDetails: Optional[dict]  = None
-	description: Optional[str]  = None
-	descriptionDetails: Optional[dict]  = None
+	multiValue: Optional[bool] = None
+	multiValueDetails: Optional[dict] = None
+	description: Optional[str] = None
+	descriptionDetails: Optional[dict] = None
 	default: Optional[List[str]] = ["value1"]
 	depots: Optional[dict] = {"depot1": ["value1"]}
 	clients: Optional[dict] = {"client1": ["value1"]}
@@ -783,7 +784,6 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 					property["editableDetails"] = {}
 					property["defaultDetails"] = {}
 					property["possibleValues"] = {}
-
 
 					for depot in _depots:
 						property["versionDetails"][depot] = property["version"]
@@ -1047,9 +1047,7 @@ def save_poduct_property(  # pylint: disable=invalid-name, too-many-locals, too-
 					if get_product_product_property_state(object_id, productId, property_id):
 						stmt = (
 							update(
-								table(
-									"PRODUCT_PROPERTY_STATE", *[column(name) for name in values.keys()]
-								)  # pylint: disable=consider-iterating-dictionary
+								table("PRODUCT_PROPERTY_STATE", *[column(name) for name in values.keys()])  # pylint: disable=consider-iterating-dictionary
 							)
 							.where(text(f"productId = '{productId}' AND objectId = '{object_id}' AND propertyId = '{property_id}'"))
 							.values(**values)
@@ -1058,9 +1056,7 @@ def save_poduct_property(  # pylint: disable=invalid-name, too-many-locals, too-
 					else:
 						stmt = (
 							insert(
-								table(
-									"PRODUCT_PROPERTY_STATE", *[column(name) for name in values.keys()]
-								)  # pylint: disable=consider-iterating-dictionary
+								table("PRODUCT_PROPERTY_STATE", *[column(name) for name in values.keys()])  # pylint: disable=consider-iterating-dictionary
 							)
 							.values(**values)
 							.on_duplicate_key_update(**values)
@@ -1340,7 +1336,8 @@ def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
 @rest_api
 @read_only_check
 def delete_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str  # pylint: disable=unused-argument
+	request: Request,
+	group: str,  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Delete product group
@@ -1387,7 +1384,8 @@ def update_product_group(  # pylint: disable=invalid-name, too-many-locals, too-
 @rest_api
 @read_only_check
 def rm_product_from_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str  # pylint: disable=unused-argument
+	request: Request,
+	group: str,  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Remove products from product group
@@ -1406,7 +1404,9 @@ def rm_product_from_product_group(  # pylint: disable=invalid-name, too-many-loc
 @rest_api
 @read_only_check
 def rm_product_from_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str, product: str  # pylint: disable=unused-argument
+	request: Request,
+	group: str,
+	product: str,  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Remove product from product group
@@ -1488,9 +1488,7 @@ def create_product_group(  # pylint: disable=invalid-name, too-many-locals, too-
 	with mysql.session() as session:
 		try:
 			query = insert(
-				table(
-					"GROUP", column("type"), *[column(key) for key in vars(group).keys()]
-				)  # pylint: disable=consider-iterating-dictionary
+				table("GROUP", column("type"), *[column(key) for key in vars(group).keys()])  # pylint: disable=consider-iterating-dictionary
 			).values(values)
 			session.execute(query)
 

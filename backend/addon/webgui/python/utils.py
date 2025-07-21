@@ -12,7 +12,7 @@ import asyncio
 from functools import wraps
 from json import loads  # pylint: disable=no-name-in-module
 from operator import and_
-from typing import Callable, List, Optional, Union
+from typing import Any, Callable, List, Optional, Union
 
 from fastapi import Query, status
 
@@ -263,6 +263,63 @@ def get_allowed_host_groups(user: str) -> list:
 	return groups
 
 
+def get_allowed_group_objects(user: str, gtype: str = "HostGroup") -> list | None:
+	allowed_objectIds: list | None = None
+	try:
+		allowed_objectIds = get_allowed_sql(user, gtype)
+	except:
+		logger.info(f"Could not use db method to build {gtype} tree")
+		if gtype == "HostGroup":
+			allowed_objectIds = get_allowed_clients(user)
+		elif gtype == "ProductGroup":
+			allowed_objectIds = get_allowed_products(user)
+		else:
+			raise ValueError(f"Unsupported group type: {gtype}")
+	return allowed_objectIds
+
+
+def get_allowed_sql(user: str, gtype: str = "HostGroup") -> list:
+	allowed_group_ids: list = []
+	if gtype == "HostGroup":
+		allowed_group_ids = get_allowed_host_groups(user)
+	elif gtype == "ProductGroup":
+		allowed_group_ids = get_allowed_product_groups(user)
+	else:
+		raise ValueError(f"Unsupported group type: {gtype}")
+
+	placeholders = ", ".join([f":p{i}" for i in range(len(allowed_group_ids))])
+	params = {f"p{i}": gid for i, gid in enumerate(allowed_group_ids)}
+	logger.warning("Allowed group ids: %s", allowed_group_ids)
+	sql = f"""
+			WITH RECURSIVE group_tree AS (
+					SELECT groupId
+					FROM `GROUP`
+					WHERE groupId IN ({placeholders})  AND type = '{gtype}'
+					UNION ALL
+					SELECT g.groupId
+					FROM `GROUP` g
+					JOIN group_tree gt ON g.parentGroupId = gt.groupId
+					WHERE g.type = '{gtype}'
+			)
+			SELECT objectId
+			FROM OBJECT_TO_GROUP
+			WHERE groupId IN (SELECT groupId FROM group_tree)
+	"""
+
+	allowed_objects = []
+	with mysql.session() as session:
+		result = session.execute(text(sql), params)
+		# return [row[0] for row in result.fetchall()]
+
+		otg_result = result.fetchall()
+		for otg_row in otg_result:
+			if otg_row is not None:
+				allowed_objects.append(dict(otg_row).get("objectId"))
+
+	logger.warning("Allowed objects of %s: %s", gtype, allowed_objects)
+	return allowed_objects
+
+
 def get_allowed_clients(user: str) -> list:
 	all_groups = _get_groups("HostGroup")
 	allowed_groups = get_allowed_host_groups(user)
@@ -396,7 +453,7 @@ def unicode_config(value: str, multi_value: bool = False, delimiter: str = ";") 
 	return ""
 
 
-def get_sub_groups(group: str) -> list:
+def get_sub_groups(group: str) -> Any:
 	result = set()
 	groups = [g.id for g in backend.group_getObjects(parentGroupId=group)]
 	result.update(groups)
@@ -419,22 +476,56 @@ def get_groups_ids(type: str) -> list[str]:
 		return groups
 
 
-def get_all_children_groupids(raw_groups: List, group_id: List[str]) -> set[str]:
+def get_group_tree(type: str) -> list[str]:
+	groups = []
+	with mysql.session() as session:
+		query = select(text("g.groupId AS group_id")).select_from(table("GROUP").alias("g")).where(text("g.type = :type"))  # type: ignore[arg-type,attr-defined]
+		result = session.execute(query, params={"type": type})
+		result = result.fetchall()
+		return groups
+
+
+def get_all_children_groupids(raw_groups: list[dict], group_ids: list[str]) -> set[str]:
 	"""
 	Returns all child group IDs for a list of group IDs.
 	"""
-	if not raw_groups or not group_id:
+	if not raw_groups or not group_ids:
 		return set()
 
+	# Build a parent_id -> [child_id, ...] mapping
+	parent_map = {}
+	for row in raw_groups:
+		parent = row["parent_id"]
+		child = row["group_id"].lower()
+		parent_map.setdefault(parent, []).append(child)
+
 	all_children = set()
-	for gid in group_id:
-		all_children.add(gid)
-		all_children.update(get_all_children_groupid(raw_groups, gid))
+	stack = list(group_ids)
+	while stack:
+		gid = stack.pop()
+		if gid not in all_children:
+			all_children.add(gid)
+			stack.extend(parent_map.get(gid, []))
 
 	return all_children
 
 
-def get_all_children_groupid(raw_groups: List[str], group_id: str) -> set[str]:
+# def get_all_children_groupids(raw_groups: List, group_id: List[str]) -> set[str]:
+# """
+# Returns all child group IDs for a list of group IDs.
+# """
+# if not raw_groups or not group_id:
+# return set()
+
+# all_children = set()
+# for gid in group_id:
+# all_children.add(gid)
+# all_children.update(get_all_children_groupid(raw_groups, gid))
+
+# return all_children
+
+
+def get_all_children_groupid(raw_groups: List[dict], group_id: str) -> set[str]:
 	"""
 	Returns all child group IDs for a given group ID.
 	"""

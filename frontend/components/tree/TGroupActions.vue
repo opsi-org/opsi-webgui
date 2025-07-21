@@ -372,7 +372,7 @@ License: AGPL-3.0
       `/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`
     )
     if (error || !data.value) return
-    fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups)
+    fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups.children) // oder doch ohne children?
   }
 
   async function fetchProductList() {

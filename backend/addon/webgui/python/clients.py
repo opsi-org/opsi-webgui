@@ -36,6 +36,7 @@ from .utils import (
 	check_client_creation_rights,
 	filter_depot_access,
 	get_allowed_clients,
+	get_allowed_group_objects,
 	get_username,
 	host_group_access_configured,
 	mysql,
@@ -97,7 +98,8 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 	configured = host_group_access_configured(username)
 
 	if user_register() and configured:
-		allowed_clients = get_allowed_clients(username)
+		allowed_clients = get_allowed_group_objects(username, "HostGroup")
+
 		if not allowed_clients:
 			logger.warning("No clients found for user '%s'.", username)
 			return RESTResponse(data=[], total=0)
@@ -137,8 +139,10 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		# is_reachable_required = backend._host_control_use_messagebus is not False and (
 		# commons.get("sortBy", None) == "reachable" or "reachable" in commons.get("sortBy", [])
 		# )
-		if backend._host_control_use_messagebus is True or backend._host_control_use_messagebus == "hybrid":
-			result: dict[str, bool] = await backend.hostControl_reachable([], 20)  # pylint: disable=protected-access
+		if backend._host_control_use_messagebus is True or (
+			backend._host_control_use_messagebus == "hybrid" and "reachable" in commons.get("sortBy", [])
+		):
+			result: dict[str, bool] = await backend.hostControl_reachable(allowed_clients or [], 20)  # pylint: disable=protected-access
 			reachable_clients = [cid for cid, reachable in result.items() if reachable]
 
 		if reachable_clients is None:
@@ -254,12 +258,10 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		).select_from(client_with_depot)
 		query = order_by(client_select, commons)  # type: ignore
 		query = pagination(query, commons)
-
 		result = session.execute(query, params)
 		result = result.fetchall()
 
 		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]  # type: ignore
-
 		data = []
 		for row in result:
 			if row is not None:
@@ -268,7 +270,6 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 				client["reachable"] = bool(client["reachable"]) if client["reachable"] is not None else None
 				client["selected"] = bool(client["selected"]) if client["selected"] is not None else None
 				data.append(client)
-
 		return RESTResponse(data=data, total=total)
 
 
