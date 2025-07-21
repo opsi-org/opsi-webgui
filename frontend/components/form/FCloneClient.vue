@@ -145,7 +145,6 @@ License: AGPL-3.0
         hostId: '',
         ipAddress: '',
         hardwareAddress: '',
-        // systemUUID: '',
       },
       options: {
         configs: true,

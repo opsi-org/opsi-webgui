@@ -399,7 +399,6 @@ export function useNotification() {
     notifyError: createNotification('error'),
     notifyWarning: createNotification('warning'),
     notifyInfo: createNotification('info'),
-    // notifyLoading: createNotification('loading'),
     notifyDetailed: createDetailedNotification(),
     closeAll,
   }

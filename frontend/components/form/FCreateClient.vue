@@ -256,7 +256,7 @@ License: AGPL-3.0
   }
 
   async function handleApiPost(url: string, data: any) {
-    await useApiPOST(url, data) // notification error handles in useApiPOST
+    await useApiPOST(url, data)
   }
 
   function resetForm() {

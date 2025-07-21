@@ -24,7 +24,6 @@ License: AGPL-3.0
                     <p
                       v-if="item.depots"
                       :class="{
-                        // italic: item.anyClientDifferentFromDepot,
                         bold: item.anyDepotDifferentFromDefault,
                       }"
                     >
@@ -123,9 +122,7 @@ License: AGPL-3.0
   import { useStrings } from '~/composables/mixins/useStrings'
   import { onBeforeRouteLeave } from 'vue-router'
   import { isEqual } from 'lodash'
-  //import { useMBus } from '~/composables/mixins/useMessagebus'
 
-  //const _msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
   const { notifyError } = useNotification()
   const config = storeConfigapp().config ?? { read_only: true }
   const $t = useI18n().t

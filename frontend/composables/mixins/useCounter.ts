@@ -26,8 +26,6 @@ export const useTimer = (init: boolean = false) => {
 
   notifyInMilliSec.value = (authStore.isAuthenticated ? 5 : -1) * 60000 //  // 5 min
   if (init) initCountdownTimer()
-  // onMounted(() => {
-  // })
 
   onBeforeUnmount(() => {
     if (init) clearInterval(intervalId.value)
@@ -44,7 +42,6 @@ export const useTimer = (init: boolean = false) => {
   function calcTimeout() {
     const t: TTimeDiff = getRemainingTime()
     countdowntimer.value = getText(t)
-    // const time = { min: t.minutes, s: t.seconds }
     if (t.diff <= notifyInMilliSec.value && !first_notification_showed.value) {
       first_notification_showed.value = true
       _createNotification(t)
@@ -78,7 +75,6 @@ export const useTimer = (init: boolean = false) => {
         console.warn('Logout failed, cause already logged out', e)
       }
       settingsStore.setExpiresInterval(undefined)
-      // clearInterval(intervalId.value)
     }
   }
   function _createNotification(t: TTimeDiff) {

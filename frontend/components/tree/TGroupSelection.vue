@@ -109,7 +109,6 @@ License: AGPL-3.0
       const recursive = (data: any) => {
         data.forEach((node: any) => {
           const nodeIsLeaf = node.type === 'ObjectToGroup'
-          // !node.children || Object.keys(node.children).length === 0
           if (!nodeIsLeaf) {
             node.disabled = !multiSelection.value
             recursive(node.children)
