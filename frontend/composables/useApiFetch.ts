@@ -146,7 +146,7 @@ async function useAPI2<T>(
             class: response?._data?.class,
             message: response?._data?.message,
             // message: response?._data?.message,
-            details: response?._data?.details,
+            details: JSON.stringify(response?._data?.details),
           },
         },
       }
