@@ -106,8 +106,6 @@ export const useTableHelper = (
         return
       } else if (res.total >= 0) {
         totalItems.value = res.total
-        // isFirstPage.value = currentPage.value == 1
-        // isLastPage.value = currentPage.value * pageSize.value >= res.total
         if (res.total > 0) {
           const pageExists = currentPage.value <= Math.ceil(res.total / pageSize.value)
           if (!pageExists) {
@@ -322,7 +320,6 @@ export const useTableHelper = (
   }
   const ActionsRenderer = (attributes: any): VNode => {
     const rowData = attributes['row-data'] || attributes.rowData
-    // const colData = attributes['col-data'] || attributes.colData
     return (
       <div>
         {props.actionConfig ? (
@@ -449,7 +446,6 @@ export const useTableHelper = (
   return {
     isLoading,
     filterQuery,
-    // filterBy,
     sortBy,
     sortDesc,
     contextMenuVisible,
@@ -461,9 +457,6 @@ export const useTableHelper = (
     showContextMenu,
     handleClickOutside,
     debouncedHandleScroll,
-    // _scrollUp,
-    // _scrollDown,
-    // handleScroll,
     scrollToTopOfTable,
     handleCommand,
     handlePagination,
@@ -475,7 +468,6 @@ export const useTableHelper = (
     handleSortChange,
     toggleSortOrder,
     onRowClick,
-
     CellRenderer,
     HeaderCellRenderer,
     Details,

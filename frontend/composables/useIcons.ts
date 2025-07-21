@@ -7,7 +7,7 @@ License: AGPL-3.0
 */
 export const useIcons = () => {
   // All available icons: https://icon-sets.iconify.design
-  // prefered urrently: bootstrap icons
+  // prefered currently: bootstrap icons
   const icon = {
     depots: 'bi:server',
     client: 'bi:laptop',

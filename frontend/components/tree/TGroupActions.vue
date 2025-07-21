@@ -238,15 +238,15 @@ License: AGPL-3.0
     class: customNodeClass,
   }
   const createGroup = reactive<{ [k: string]: string }>({
-    parentGroupId: '', // for i18n check: $t('table.fields.parentGroupId')
-    groupId: '', // for i18n check: $t('table.fields.groupId')
-    description: '', // for i18n check: $t('table.fields.description')
-    notes: '', // for i18n check: $t('table.fields.notes')
+    parentGroupId: '',
+    groupId: '',
+    description: '',
+    notes: '',
   })
   const editgroup = reactive<{ [k: string]: string }>({
-    parent: '', // for i18n check: $t('table.fields.parent')
-    description: '', // for i18n check: $t('table.fields.description')
-    notes: '', // for i18n check: $t('table.fields.notes')
+    parent: '',
+    description: '',
+    notes: '',
   })
 
   const debouncedFetchClientGroups = debounce(fetchClientGroups, 300)

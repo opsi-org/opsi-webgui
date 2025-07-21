@@ -57,11 +57,6 @@ License: AGPL-3.0
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
                   <span>{{ slotProps.node.key }}</span> <br />
-                  <!--<span>DefaultValues {{ slotProps.node?.data.defaultValues }}</span>
-                  <span>Values: {{ slotProps.node?.data.objects }}</span>
-                  -->
-                  <!--<pre v-if="!slotProps.node?.children || slotProps.node?.children.length <= 0">
- {{ slotProps.node }}</pre>-->
                 </template>
               </TooltipTTooltip>
 
@@ -231,7 +226,6 @@ License: AGPL-3.0
     />
 
     <p-context-menu ref="routemenu" :model="items" v-if="isGeneralDefault">
-      <!--<template #item="{ item, props }">-->
       <template #item="cdata">
         <router-link
           v-if="cdata.item.route"
@@ -351,7 +345,6 @@ License: AGPL-3.0
       'hostparam-alert-unselected',
       'badge-change',
     ],
-    //props.isChild ? 100 : 70
     mq.isMobile.value ? 100 : props.isChild ? 100 : 70
   )
 

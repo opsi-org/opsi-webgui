@@ -50,7 +50,6 @@ export const useMBus = (
           wsBusMsg.value
         )
       }
-      // await watchFn()
     },
     { deep: true }
   )
@@ -161,7 +160,6 @@ export const useMBus = (
   }
 
   function wsSubscribeChannel(channels: Array<string>) {
-    // wsNotification(url_host + '  subscribe: ',  channels)
     const message = wsCreateMsgTemplate()
     message.type = 'channel_subscription_request'
     message.channel = 'service:messagebus'
