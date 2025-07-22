@@ -110,7 +110,7 @@ License: AGPL-3.0
                               :value="item"
                               :label="
                                 item +
-                                ((selectedChildren + unselectedChildren).includes(item)
+                                ([...selectedChildren, ...unselectedChildren].includes(item)
                                   ? ' * '
                                   : '')
                               "
