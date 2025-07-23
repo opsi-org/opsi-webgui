@@ -6,33 +6,27 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <TooltipTTooltip>
-    <template #tooltip>
-      {{ $t('selectionMode') }}
-    </template>
-
-    <template #default>
-      <p-float-label v-if="props.type === 'checkbox'" variant="in" class="min-w-full">
-        <p-toggle-switch
-          :key="componentKeyForceUpdate"
-          v-model="cbValue"
-          ref="cbMultiSelection"
-          id="cbMultiSelection"
-          name="multiselection"
-          aria-label="Multiselection mode"
-          style="--p-toggleswitch-width: 5rem"
-          v-bind="$props"
-          @change="() => changeSelectionMode(true)"
-        />
-        <label
-          for="cbMultiSelection"
-          class="text-xs text-white !pb-1"
-          :class="cbValue ? '' : 'pl-4'"
-          >{{ cbValue ? $t('multi') : $t('single') }}</label
-        >
-      </p-float-label>
-    </template>
-  </TooltipTTooltip>
+  <p-float-label
+    v-if="props.type === 'checkbox'"
+    variant="in"
+    class="min-w-full"
+    :title="$t('selectionMode')"
+  >
+    <p-toggle-switch
+      :key="componentKeyForceUpdate"
+      v-model="cbValue"
+      ref="cbMultiSelection"
+      id="cbMultiSelection"
+      name="multiselection"
+      aria-label="Multiselection mode"
+      style="--p-toggleswitch-width: 5rem"
+      v-bind="$props"
+      @change="() => changeSelectionMode(true)"
+    />
+    <label for="cbMultiSelection" class="text-xs text-white !pb-1" :class="cbValue ? '' : 'pl-4'">{{
+      cbValue ? $t('multi') : $t('single')
+    }}</label>
+  </p-float-label>
 </template>
 
 <script setup lang="ts">

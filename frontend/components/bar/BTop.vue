@@ -41,12 +41,12 @@ License: AGPL-3.0
       type="text"
       style="--el-menu-hover-bg-color: var(--color-opsi-deep-blue)"
     >
-      <TooltipTTooltip>
-        <template #tooltip>
-          <p>{{ $t('message.readOnlyActive') }}</p>
-        </template>
-        <IconIIcon :icon="icons.readonly" class="text-red-500" height="20" />
-      </TooltipTTooltip>
+      <IconIIcon
+        :icon="icons.readonly"
+        class="text-red-500"
+        height="20"
+        :title="$t('message.readOnlyActive')"
+      />
     </el-menu-item>
     <el-menu-item
       index="4"

@@ -21,7 +21,6 @@ declare module 'vue' {
     PMessage: typeof import('primevue/message')['default']
     PMultiSelect: typeof import('primevue/multiselect')['default']
     POverlayBadge: typeof import('primevue/overlaybadge')['default']
-    PPopover: typeof import('primevue/popover')['default']
     PRadioButton: typeof import('primevue/radiobutton')['default']
     PSelect: typeof import('primevue/select')['default']
     PTag: typeof import('primevue/tag')['default']

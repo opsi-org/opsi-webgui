@@ -41,9 +41,7 @@ License: AGPL-3.0
                 </el-table-column>
                 <el-table-column :label="$t('columnSelection')">
                   <template #header>
-                    <el-tooltip :content="$t('columnSelection')">
-                      <IconIIcon :icon="icons.columns" />
-                    </el-tooltip>
+                    <IconIIcon :icon="icons.columns" :title="$t('columnSelection')" />
                   </template>
                   <template #default="scope">
                     <el-checkbox
@@ -55,11 +53,12 @@ License: AGPL-3.0
                 </el-table-column>
                 <el-table-column :label="$t('sort')">
                   <template #header>
-                    <el-tooltip :content="sortDesc ? $t('sortDescending') : $t('sortAscending')">
-                      <el-button @click="toggleSortOrder">
-                        <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
-                      </el-button>
-                    </el-tooltip>
+                    <el-button
+                      @click="toggleSortOrder"
+                      :title="sortDesc ? $t('sortDescending') : $t('sortAscending')"
+                    >
+                      <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
+                    </el-button>
                   </template>
                   <template #default="scope">
                     <el-radio
@@ -73,9 +72,7 @@ License: AGPL-3.0
                 </el-table-column>
                 <el-table-column :label="$t('filter')">
                   <template #header>
-                    <el-tooltip :content="$t('filter')">
-                      <IconIIcon :icon="icons.filter" />
-                    </el-tooltip>
+                    <IconIIcon :icon="icons.filter" :title="$t('filter')" />
                   </template>
                   <template #default="scope">
                     <el-checkbox
@@ -90,11 +87,9 @@ License: AGPL-3.0
             </template>
           </el-dropdown>
 
-          <el-tooltip :content="$t('refresh')" placement="top">
-            <el-button @click="refreshTable">
-              <IconIIcon :icon="icons.refresh" />
-            </el-button>
-          </el-tooltip>
+          <el-button @click="refreshTable" :title="$t('refresh')">
+            <IconIIcon :icon="icons.refresh" />
+          </el-button>
         </div>
         <div class="toolbar-right">
           <slot name="toolbar-right" />
@@ -167,9 +162,12 @@ License: AGPL-3.0
           :width="tableColumnObj[sortBy].width || ''"
         >
           <template #header v-if="tableColumnObj[sortBy].icon">
-            <el-tooltip class="box-item" effect="dark" :content="tableColumnObj[sortBy].title">
-              <el-text><IconIIcon :icon="tableColumnObj[sortBy].icon" /> </el-text>
-            </el-tooltip>
+            <el-text
+              ><IconIIcon
+                :icon="tableColumnObj[sortBy].icon"
+                :title="tableColumnObj[sortBy].title"
+              />
+            </el-text>
           </template>
           <template #header v-else>
             <HeaderCellRenderer :col-data="tableColumnObj[sortBy]" />
@@ -201,7 +199,11 @@ License: AGPL-3.0
         <!-- expand content -->
         <el-table-column type="expand">
           <template #default="scope">
-            <Details class="mb-3" :row-data="scope.row" :col-data="tableColumnObj[props.rowId]" />
+            <Details
+              class="mb-3 px-2"
+              :row-data="scope.row"
+              :col-data="tableColumnObj[props.rowId]"
+            />
           </template>
         </el-table-column>
       </el-table>

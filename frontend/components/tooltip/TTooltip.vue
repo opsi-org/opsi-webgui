@@ -6,40 +6,39 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <div
+  <el-tooltip
+    v-if="!props.disabled"
     data-testid="TTooltip"
-    @mouseenter="(ev: any) => (props.method == 'hover' ? popoverRef?.show(ev) : null)"
-    @click="(ev: any) => (props.method == 'click' ? popoverRef?.toggle(ev) : null)"
-    @mouseleave="
-      (ev: any) =>
-        props.method == 'hover' &&
-        /* overwise the popover will be closed if mouse is over the popover (leaves this div) */
-        ev.relatedTarget.className !== 'p-popover-content'
-          ? popoverRef?.hide()
-          : null
-    "
+    ref="popoverRef"
+    id="popover"
+    raw-content
+    :effect="colormode !== 'dark' ? 'dark' : 'light'"
+    :trigger="props.method"
+    :show-after="props.delay"
   >
     <slot name="default" />
-
-    <PPopover
-      v-if="!disabled"
-      ref="popoverRef"
-      id="popover"
-      class="mt-[-1px]"
-      @mouseleave="(ev: any) => (props.method == 'hover' ? popoverRef?.hide() : null)"
-    >
+    <template #content>
       <el-text v-if="props.content">{{ props.content }}</el-text>
       <slot name="tooltip" />
-    </PPopover>
-  </div>
+    </template>
+  </el-tooltip>
 </template>
 
 <script lang="ts" setup>
-  const popoverRef = useTemplateRef<any>('popoverRef')
+  /**
+   * Using element plus tooltip component, cause
+   * * primevue tooltip is a directive and does not support raw content / html content
+   * * primevue popover does not support a delay (even with debounce/delay workaround)
+   */
+  import { delay, debounce } from 'lodash'
+
   type TMethod = 'hover' | 'click'
+  const { colormode } = storeToRefs(storeSettings())
+
   const props = defineProps({
     disabled: { type: Boolean, default: false },
     method: { type: String as PropType<TMethod>, default: 'hover' },
     content: { type: String, default: '', required: false },
+    delay: { type: Number, default: 1000 },
   })
 </script>

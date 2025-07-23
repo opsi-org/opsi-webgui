@@ -54,6 +54,7 @@ License: AGPL-3.0
                 >{{ slotProps.node.label.replaceAll('.', ' / ') }}</span
               >
               <TooltipTTooltip v-else>
+                <!-- the content of this tooltip can be copied (":title" cannot)-->
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
                   <span>{{ slotProps.node.key }}</span> <br />

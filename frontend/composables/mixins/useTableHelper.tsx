@@ -324,38 +324,35 @@ export const useTableHelper = (
     return (
       <div>
         {props.actionConfig ? (
-          <el-tooltip content={$t('configuration')} placement="top">
-            <el-button
-              link
-              onClick={() => handleConfigClick(rowData)}
-              class={activeButton.value === 'config-' + rowData.clientId ? 'is-active' : ''}
-            >
-              <IIcon icon={icons.settings} />
-            </el-button>
-          </el-tooltip>
+          <el-button
+            link
+            title={$t('configuration')}
+            onClick={() => handleConfigClick(rowData)}
+            class={activeButton.value === 'config-' + rowData.clientId ? 'is-active' : ''}
+          >
+            <IIcon icon={icons.settings} />
+          </el-button>
         ) : null}
         {props.actionLog ? (
-          <el-tooltip content={$t('logs')} placement="top">
-            <el-button
-              link
-              onClick={() => handleLogClick(rowData)}
-              class={activeButton.value === 'log-' + rowData.clientId ? 'is-active' : ''}
-            >
-              <IIcon icon={icons.log} />
-            </el-button>
-          </el-tooltip>
+          <el-button
+            link
+            title={$t('logs')}
+            onClick={() => handleLogClick(rowData)}
+            class={activeButton.value === 'log-' + rowData.clientId ? 'is-active' : ''}
+          >
+            <IIcon icon={icons.log} />
+          </el-button>
         ) : null}
         {props.actionClone ? (
-          <el-tooltip content={$t('clone')} placement="top">
-            <el-button
-              link
-              disabled={storeConfigapp().config?.read_only}
-              onClick={() => handleCloneClick(rowData)}
-              class={activeButton.value === 'clone-' + rowData.clientId ? 'is-active' : ''}
-            >
-              <IIcon icon={icons.client} />
-            </el-button>
-          </el-tooltip>
+          <el-button
+            link
+            title={$t('clone')}
+            disabled={storeConfigapp().config?.read_only}
+            onClick={() => handleCloneClick(rowData)}
+            class={activeButton.value === 'clone-' + rowData.clientId ? 'is-active' : ''}
+          >
+            <IIcon icon={icons.client} />
+          </el-button>
         ) : null}
 
         {props.hasClientActions ? (
