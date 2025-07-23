@@ -30,7 +30,6 @@ License: AGPL-3.0
    * * primevue tooltip is a directive and does not support raw content / html content
    * * primevue popover does not support a delay (even with debounce/delay workaround)
    */
-  import { delay, debounce } from 'lodash'
 
   type TMethod = 'hover' | 'click'
   const { colormode } = storeToRefs(storeSettings())

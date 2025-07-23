@@ -52,7 +52,6 @@ License: AGPL-3.0
   const $t = useI18n().t
 
   const MIXED = $t('mixed')
-  const op = ref()
 
   const props = defineProps({
     rowid: { type: String, default: '' },
