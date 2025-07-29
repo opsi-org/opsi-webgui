@@ -623,7 +623,11 @@ License: AGPL-3.0
   }
 
   function changeProductsType(type: IProductTypes) {
-    router.push(!props.isChild ? `/products/${type}` : `/clients/products/${type}`)
+    const currentFullUrl = router.currentRoute.value.fullPath
+    const newFullUrl = !props.isChild // keeping url params
+      ? currentFullUrl.replace(/\/products\/\w+/, `/products/${type}`)
+      : currentFullUrl.replace(/\/clients\/products\/\w+/, `/clients/products/${type}`)
+    router.push(newFullUrl)
 
     const types: Array<IProductTypes> = Object.keys(
       productsTypeChecked.value

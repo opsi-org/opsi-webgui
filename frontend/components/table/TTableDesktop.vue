@@ -80,9 +80,9 @@ License: AGPL-3.0
                   <template #header>
                     <el-button
                       @click="toggleSortOrder"
-                      :title="sortDesc ? $t('sortDescending') : $t('sortAscending')"
+                      :title="sortDescWrapper ? $t('sortDescending') : $t('sortAscending')"
                     >
-                      <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
+                      <IconIIcon :icon="sortDescWrapper ? icons.sortDesc : icons.sortAsc" />
                     </el-button>
                   </template>
                   <template #default="scope">
@@ -90,7 +90,7 @@ License: AGPL-3.0
                       v-if="scope.row.sortable"
                       :disabled="!scope.row.sortable"
                       :value="scope.row.key"
-                      v-model="sortBy"
+                      v-model="sortByWrapper"
                       @change="applySort(scope.row.key)"
                     />
                   </template>
@@ -233,7 +233,7 @@ License: AGPL-3.0
     tableId: { type: String, required: true },
     tableColumn: { type: Array<any>, required: true },
     fetch: { type: Function, required: true },
-    sortBy: { type: String, default: undefined, required: false },
+    sortBy: { type: [String, Array], default: undefined, required: false },
     sortDesc: { type: Boolean, default: false, required: false },
     actionClone: { type: Function, default: undefined, required: false },
     actionLog: { type: Function, default: undefined, required: false },
@@ -269,8 +269,8 @@ License: AGPL-3.0
     isLoading,
     filterQuery,
     // filterBy,
-    sortBy,
-    sortDesc,
+    sortByWrapper,
+    sortDescWrapper,
     contextMenuVisible,
     contextMenuStyle,
     contextMenuRow,

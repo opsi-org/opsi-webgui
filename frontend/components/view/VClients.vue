@@ -301,16 +301,18 @@ License: AGPL-3.0
           <ILoading small />
         ) : (
           <div>
-            <el-text v-if={props.isMobile}></el-text>
-            <el-button
-              v-else
-              link
-              title={$t('checkClientReachability') + ' ' + reachableMode}
-              disabled={storeConfigapp().config?.read_only}
-              onClick={() => handleClickReachable()}
-            >
-              <IIcon icon={icons.clientReachable} />
-            </el-button>
+            {props.isMobile ? (
+              <el-text></el-text>
+            ) : (
+              <el-button
+                link
+                title={$t('checkClientReachability') + ' ' + reachableMode}
+                disabled={storeConfigapp().config?.read_only}
+                onClick={() => handleClickReachable()}
+              >
+                <IIcon icon={icons.clientReachable} />
+              </el-button>
+            )}
           </div>
         )
       },

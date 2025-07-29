@@ -34,8 +34,9 @@ export const useTableHelper = (
   const isLoading = ref(false)
   const filterQuery = ref('')
   const filterBy = ref(props.rowId)
-  const sortBy = ref(props.sortBy || props.rowId)
-  const sortDesc = ref(props.sortDesc || false)
+  const sortByWrapper = ref<String | Array<String>>(props.sortBy || props.rowId)
+  const sortDescWrapper = ref<boolean>(JSON.parse(String(props.sortDesc).toLowerCase()) || false)
+
   const contextMenuVisible = ref(false)
   const contextMenuStyle = ref({})
   const contextMenuRow = ref(null)
@@ -68,8 +69,8 @@ export const useTableHelper = (
   watch(
     () => props.sortBy,
     () => {
-      if (props.sortBy !== sortBy.value) {
-        sortBy.value = props.sortBy || props.rowId
+      if (props.sortBy !== sortByWrapper.value) {
+        sortByWrapper.value = props.sortBy || props.rowId
         fetchDataWrapper()
       }
     }
@@ -77,8 +78,8 @@ export const useTableHelper = (
   watch(
     () => props.sortDesc,
     () => {
-      if (props.sortDesc !== sortDesc.value) {
-        sortDesc.value = props.sortDesc || false
+      if (props.sortDesc !== sortDescWrapper.value) {
+        sortDescWrapper.value = props.sortDesc || false
         fetchDataWrapper()
       }
     }
@@ -86,11 +87,11 @@ export const useTableHelper = (
 
   function prepareParams() {
     const params: any = {}
-    if (sortBy.value) params.sortBy = sortBy.value
+    if (sortByWrapper.value) params.sortBy = sortByWrapper.value
     if (filterQuery.value) params.filterQuery = filterQuery.value
     if (currentPage.value) params.pageNumber = currentPage.value
     if (pageSize.value) params.perPage = pageSize.value
-    params.sortDesc = sortDesc.value ? true : false
+    params.sortDesc = sortDescWrapper.value ? true : false
     return params
   }
   async function fetchDataWrapper() {
@@ -269,21 +270,19 @@ export const useTableHelper = (
   }
 
   function applySort(columnKey: string) {
-    sortBy.value = columnKey
-    // console.error('Sort By', sortBy.value)
-
+    sortByWrapper.value = columnKey
     fetchDataWrapper()
   }
 
   function handleSortChange({ prop, order }: { column: any; prop: string; order: any }) {
-    sortBy.value = prop
-    sortDesc.value = order === 'descending'
+    sortByWrapper.value = prop
+    sortDescWrapper.value = order === 'descending'
 
     fetchDataWrapper()
   }
 
   function toggleSortOrder() {
-    sortDesc.value = !sortDesc.value
+    sortDescWrapper.value = !sortDescWrapper.value
 
     fetchDataWrapper()
   }
@@ -444,8 +443,8 @@ export const useTableHelper = (
   return {
     isLoading,
     filterQuery,
-    sortBy,
-    sortDesc,
+    sortByWrapper,
+    sortDescWrapper,
     contextMenuVisible,
     contextMenuStyle,
     contextMenuRow,

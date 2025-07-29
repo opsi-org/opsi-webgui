@@ -55,9 +55,9 @@ License: AGPL-3.0
                   <template #header>
                     <el-button
                       @click="toggleSortOrder"
-                      :title="_sortDesc ? $t('sortDescending') : $t('sortAscending')"
+                      :title="sortDescWrapper ? $t('sortDescending') : $t('sortAscending')"
                     >
-                      <IconIIcon :icon="_sortDesc ? icons.sortDesc : icons.sortAsc" />
+                      <IconIIcon :icon="sortDescWrapper ? icons.sortDesc : icons.sortAsc" />
                     </el-button>
                   </template>
                   <template #default="scope">
@@ -65,7 +65,7 @@ License: AGPL-3.0
                       v-if="scope.row.sortable"
                       :disabled="!scope.row.sortable"
                       :value="scope.row.key"
-                      v-model="_sortBy"
+                      v-model="sortByWrapper"
                       @change="applySort(scope.row.key)"
                     />
                   </template>
@@ -155,28 +155,28 @@ License: AGPL-3.0
 
         <!-- sorted column -->
         <el-table-column
-          v-if="!['selected', rowId, 'actions'].includes(_sortBy)"
-          :key="tableColumnObj[_sortBy].key"
-          :prop="tableColumnObj[_sortBy].key"
-          :label="tableColumnObj[_sortBy].title"
-          :width="tableColumnObj[_sortBy].width || ''"
+          v-if="!['selected', rowId, 'actions'].includes(sortByFirstItem)"
+          :key="tableColumnObj[sortByFirstItem].key"
+          :prop="tableColumnObj[sortByFirstItem].key"
+          :label="tableColumnObj[sortByFirstItem].title"
+          :width="tableColumnObj[sortByFirstItem].width || ''"
         >
-          <template #header v-if="tableColumnObj[_sortBy].icon">
+          <template #header v-if="tableColumnObj[sortByFirstItem].icon">
             <el-text>
               <IconIIcon
-                :icon="tableColumnObj?.[_sortBy].icon"
-                :title="tableColumnObj?.[_sortBy].title"
+                :icon="tableColumnObj?.[sortByFirstItem].icon"
+                :title="tableColumnObj?.[sortByFirstItem].title"
               />
             </el-text>
           </template>
           <template #header v-else>
-            <HeaderCellRenderer :col-data="tableColumnObj[_sortBy]" />
+            <HeaderCellRenderer :col-data="tableColumnObj[sortByFirstItem]" />
           </template>
           <template #default="scope">
             <CellRenderer
-              :row-id="_sortBy"
+              :row-id="sortByFirstItem"
               :row-data="scope.row"
-              :col-data="tableColumnObj[_sortBy]"
+              :col-data="tableColumnObj[sortByFirstItem]"
               class="min-w-0 whitespace-nowrap overflow-hidden text-ellipsis"
             />
           </template>
@@ -268,11 +268,6 @@ License: AGPL-3.0
     hasClientActions: { type: Boolean, default: false, required: false },
   })
 
-  const _sortBy = ref<string>(
-    Array.isArray(props.sortBy) ? String(props.sortBy[0]) : props.sortBy || ''
-  )
-  const _sortDesc = ref(JSON.parse(String(props.sortDesc).toLowerCase()))
-
   const $emit = defineEmits(['selectionChanged', 'clearSelection'])
 
   const table = ref()
@@ -307,6 +302,8 @@ License: AGPL-3.0
     // we reuse this functions and refs also in TTableDesktop
     isLoading,
     filterQuery,
+    sortByWrapper,
+    sortDescWrapper,
     contextMenuVisible,
     contextMenuStyle,
     contextMenuRow,
@@ -341,6 +338,11 @@ License: AGPL-3.0
   )
 
   const hasRowsWrapper = computed(() => totalItems.value > 0)
+  const sortByFirstItem = computed(() => {
+    return Array.isArray(sortByWrapper)
+      ? (sortByWrapper[0] ?? props.rowId)
+      : (sortByWrapper ?? props.rowId)
+  })
 
   defineExpose({
     refetch: () => {
