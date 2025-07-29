@@ -16,7 +16,9 @@ License: AGPL-3.0
     :trigger="props.method"
     :show-after="props.delay"
   >
-    <slot name="default" />
+    <div>
+      <slot name="default" />
+    </div>
     <template #content>
       <el-text v-if="props.content">{{ props.content }}</el-text>
       <slot name="tooltip" />
