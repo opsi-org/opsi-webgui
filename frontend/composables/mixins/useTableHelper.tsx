@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-import { after, debounce } from 'lodash'
+import { debounce } from 'lodash'
 import { useNotification } from '~/composables/mixins/useComponent'
 
 import DDClientActions from '~/components/dropdown/DDClientActions.vue'
