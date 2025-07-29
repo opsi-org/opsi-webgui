@@ -7,7 +7,6 @@ License: AGPL-3.0
 -->
 <template>
   <div>
-    {{ props.sortBy }}; {{ sortByWrapper }}
     <!-- TABLE HEADER -->
     <div :id="'tableHeader-' + tableId">
       <slot name="header" />
