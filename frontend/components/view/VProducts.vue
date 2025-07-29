@@ -146,7 +146,7 @@ License: AGPL-3.0
   useMBus(wsBusMsgObjectChanged, false, $t)
 
   const storeSelection = storeSelections()
-  const storeCookie = storeTablesettings()
+  const storeTSettings = storeTablesettings()
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
   const emit = defineEmits(['change'])
@@ -204,7 +204,7 @@ License: AGPL-3.0
       key: 'selected',
       sortable: 'custom',
       type: 'selection',
-      visible: storeCookie.productsColumns.includes('selected'),
+      visible: storeTSettings.productsColumns.includes('selected'),
       alwaysVisible: true,
       className: props.isMobile ? 'max-w-10' : '!max-w-7',
       align: 'center',
@@ -237,7 +237,7 @@ License: AGPL-3.0
       sortable: 'custom',
       visible:
         clientSelection.value.length > 0 &&
-        storeCookie.productsColumns.includes('installationStatus'),
+        storeTSettings.productsColumns.includes('installationStatus'),
       className: 'max-w-8 min-w-min max-w-max',
       icon: icons.product,
       cellRenderer: ({ rowData }: any) => {
@@ -264,7 +264,7 @@ License: AGPL-3.0
       key: 'actionResult',
       sortable: 'custom',
       visible:
-        clientSelection.value.length > 0 && storeCookie.productsColumns.includes('actionResult'),
+        clientSelection.value.length > 0 && storeTSettings.productsColumns.includes('actionResult'),
       className: 'max-w-8  min-w-min max-w-max',
       icon: icons.productActionResult,
       cellRenderer: ({ rowData }: any) => {
@@ -293,38 +293,38 @@ License: AGPL-3.0
       key: 'productId',
       sortable: 'custom',
       alwaysVisible: true,
-      visible: storeCookie.productsColumns.includes('productId'),
+      visible: storeTSettings.productsColumns.includes('productId'),
       filter: true,
     },
     {
       title: $t('description'),
       key: 'description',
       sortable: 'custom',
-      visible: storeCookie.productsColumns.includes('description'),
+      visible: storeTSettings.productsColumns.includes('description'),
     },
     {
       title: $t('advice'),
       key: 'advice',
       sortable: 'custom',
-      visible: storeCookie.productsColumns.includes('advice'),
+      visible: storeTSettings.productsColumns.includes('advice'),
     },
     {
       title: $t('modificationTime'),
       key: 'modificationTime',
       sortable: 'custom',
-      visible: storeCookie.productsColumns.includes('modificationTime'),
+      visible: storeTSettings.productsColumns.includes('modificationTime'),
     },
     {
       title: $t('priority'),
       key: 'priority',
       sortable: 'custom',
-      visible: storeCookie.productsColumns.includes('priority'),
+      visible: storeTSettings.productsColumns.includes('priority'),
     },
     {
       title: $t('version'),
       key: 'version',
       sortable: 'custom',
-      visible: storeCookie.productsColumns.includes('version'),
+      visible: storeTSettings.productsColumns.includes('version'),
       cellRenderer: ({ rowData }: any) => {
         return (
           <TCProductVersionCell
@@ -341,14 +341,16 @@ License: AGPL-3.0
       key: 'actionProgress',
       sortable: 'custom',
       visible:
-        selectionClients.value.length > 0 && storeCookie.productsColumns.includes('actionProgress'),
+        selectionClients.value.length > 0 &&
+        storeTSettings.productsColumns.includes('actionProgress'),
     },
     {
       title: $t('actionRequest'),
       key: 'actionRequest',
       sortable: 'custom',
       visible:
-        clientSelection.value.length > 0 && storeCookie.productsColumns.includes('actionRequest'),
+        clientSelection.value.length > 0 &&
+        storeTSettings.productsColumns.includes('actionRequest'),
       className: 'max-w-28',
       headerCellRenderer: mq.isMobile.value
         ? undefined
@@ -374,7 +376,7 @@ License: AGPL-3.0
       title: $t('actions'),
       key: 'actions',
       sortable: false,
-      visible: storeCookie.productsColumns.includes('actions'),
+      visible: storeTSettings.productsColumns.includes('actions'),
       alwaysVisible: true,
       className: '!max-w-42 !w-12',
       cellRenderer: ({ rowData }: any) => {
@@ -459,8 +461,8 @@ License: AGPL-3.0
     const params = prepareParams(_params)
 
     if (_params.sortBy) {
-      storeCookie.productsSorting.column = _params.sortBy
-      storeCookie.productsSorting.isDesc = _params.sortDesc
+      storeTSettings.productsSorting.column = _params.sortBy
+      storeTSettings.productsSorting.isDesc = _params.sortDesc
     }
     const { data, error, headers } = await useApiGETBody<Array<any>>('/opsidata/products', params)
 
@@ -601,7 +603,7 @@ License: AGPL-3.0
 
   function changeProductsType(type: IProductTypes) {
     const currentFullUrl = router.currentRoute.value.fullPath
-    let urlChanged = false
+    //let urlChanged = false
     if (!currentFullUrl.includes(`/products/${type}`)) {
       let newFullUrl
       if (!props.isChild) {
@@ -609,7 +611,7 @@ License: AGPL-3.0
       } else {
         newFullUrl = currentFullUrl.replace(/\/clients\/products\/\w+/, `/clients/products/${type}`)
       }
-      urlChanged = true
+      //urlChanged = true
       router.push(newFullUrl)
     }
     const types: Array<IProductTypes> = Object.keys(
@@ -619,10 +621,10 @@ License: AGPL-3.0
     if (Object.keys(productsTypeChecked.value).includes(type))
       productsTypeChecked.value[type] = true
     else throw new Error('Unknown product type ' + type)
-    if (!router.currentRoute.value.query.sortBy && urlChanged) {
-      // if it is in query, the sortBy will trigger a refetch
-      productsRef.value?.refetch()
-    }
+    //if (!router.currentRoute.value.query.sortBy && urlChanged) {
+    // if it is in query, the sortBy will trigger a refetch
+    productsRef.value?.refetch()
+    //}
   }
 
   onBeforeRouteLeave((to, from, next) => {

@@ -114,14 +114,14 @@ export const useTableHelper = (
       }
     }
   )
-  watch(
+  /*watch(
     () => storeTSettings.productsSorting,
     () => {
       sortByWrapper.value = storeTSettings.productsSorting.column
       sortDescWrapper.value = storeTSettings.productsSorting.isDesc
     },
     { deep: true }
-  )
+  )*/
 
   function prepareParams() {
     const params: any = {}
@@ -333,21 +333,28 @@ export const useTableHelper = (
 
   function applySort(columnKey: string) {
     sortByWrapper.value = columnKey
-    updateRoute('sortBy', columnKey)
+    if (props.tableId == 'products') {
+      updateRoute('sortBy', columnKey)
+    }
     fetchDataWrapper()
   }
 
   function handleSortChange({ prop, order }: { column: any; prop: string; order: any }) {
     sortByWrapper.value = prop
     sortDescWrapper.value = order === 'descending'
-    const url = updateRoute('sortBy', prop, true)
-    updateRoute('sortDesc', sortDescWrapper.value, false, url)
+    if (props.tableId == 'products') {
+      const url = updateRoute('sortBy', prop, true)
+      updateRoute('sortDesc', sortDescWrapper.value, false, url)
+    }
     fetchDataWrapper()
   }
 
   function toggleSortOrder() {
     sortDescWrapper.value = !sortDescWrapper.value
-    updateRoute('sortDesc', sortDescWrapper.value)
+
+    if (props.tableId == 'products') {
+      updateRoute('sortDesc', sortDescWrapper.value)
+    }
     fetchDataWrapper()
   }
   function onRowClick(row: any, column: any, event: any) {
