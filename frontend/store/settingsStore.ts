@@ -9,6 +9,7 @@ import { defineStore } from 'pinia'
 import { useColorMode } from '@vueuse/core'
 
 type t_theme = 'light' | 'dark'
+const mq = useMQ()
 
 export const storeSettings = defineStore('settings', {
   persist: {
@@ -16,7 +17,7 @@ export const storeSettings = defineStore('settings', {
     storage: localStorage,
   },
   state: () => ({
-    isMobile: useMQ().isMobile.value as boolean,
+    isMobile: mq.isMobile.value as boolean,
     language: 'en',
     quickpanelOpened: true as boolean,
     msgbusAutoRefresh: true as boolean,

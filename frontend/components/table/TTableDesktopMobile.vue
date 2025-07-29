@@ -55,9 +55,9 @@ License: AGPL-3.0
                   <template #header>
                     <el-button
                       @click="toggleSortOrder"
-                      :title="sortDesc ? $t('sortDescending') : $t('sortAscending')"
+                      :title="_sortDesc ? $t('sortDescending') : $t('sortAscending')"
                     >
-                      <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
+                      <IconIIcon :icon="_sortDesc ? icons.sortDesc : icons.sortAsc" />
                     </el-button>
                   </template>
                   <template #default="scope">
@@ -65,7 +65,7 @@ License: AGPL-3.0
                       v-if="scope.row.sortable"
                       :disabled="!scope.row.sortable"
                       :value="scope.row.key"
-                      v-model="sortBy"
+                      v-model="_sortBy"
                       @change="applySort(scope.row.key)"
                     />
                   </template>
@@ -155,28 +155,28 @@ License: AGPL-3.0
 
         <!-- sorted column -->
         <el-table-column
-          v-if="!['selected', rowId, 'actions'].includes(sortBy)"
-          :key="tableColumnObj[sortBy].key"
-          :prop="tableColumnObj[sortBy].key"
-          :label="tableColumnObj[sortBy].title"
-          :width="tableColumnObj[sortBy].width || ''"
+          v-if="!['selected', rowId, 'actions'].includes(_sortBy)"
+          :key="tableColumnObj[_sortBy].key"
+          :prop="tableColumnObj[_sortBy].key"
+          :label="tableColumnObj[_sortBy].title"
+          :width="tableColumnObj[_sortBy].width || ''"
         >
-          <template #header v-if="tableColumnObj[sortBy].icon">
-            <el-text
-              ><IconIIcon
-                :icon="tableColumnObj[sortBy].icon"
-                :title="tableColumnObj[sortBy].title"
+          <template #header v-if="tableColumnObj[_sortBy].icon">
+            <el-text>
+              <IconIIcon
+                :icon="tableColumnObj?.[_sortBy].icon"
+                :title="tableColumnObj?.[_sortBy].title"
               />
             </el-text>
           </template>
           <template #header v-else>
-            <HeaderCellRenderer :col-data="tableColumnObj[sortBy]" />
+            <HeaderCellRenderer :col-data="tableColumnObj[_sortBy]" />
           </template>
           <template #default="scope">
             <CellRenderer
-              :row-id="sortBy"
+              :row-id="_sortBy"
               :row-data="scope.row"
-              :col-data="tableColumnObj[sortBy]"
+              :col-data="tableColumnObj[_sortBy]"
               class="min-w-0 whitespace-nowrap overflow-hidden text-ellipsis"
             />
           </template>
@@ -260,13 +260,18 @@ License: AGPL-3.0
     tableId: { type: String, required: true },
     tableColumn: { type: Array<any>, required: true },
     fetch: { type: Function, required: true },
-    sortBy: { type: String, default: undefined, required: false },
+    sortBy: { type: [String, Array], default: undefined, required: false },
     sortDesc: { type: Boolean, default: false, required: false },
     actionClone: { type: Function, default: undefined, required: false },
     actionLog: { type: Function, default: undefined, required: false },
     actionConfig: { type: Function, default: undefined, required: false },
     hasClientActions: { type: Boolean, default: false, required: false },
   })
+
+  const _sortBy = ref<string>(
+    Array.isArray(props.sortBy) ? String(props.sortBy[0]) : props.sortBy || ''
+  )
+  const _sortDesc = ref(JSON.parse(String(props.sortDesc).toLowerCase()))
 
   const $emit = defineEmits(['selectionChanged', 'clearSelection'])
 
@@ -302,8 +307,6 @@ License: AGPL-3.0
     // we reuse this functions and refs also in TTableDesktop
     isLoading,
     filterQuery,
-    sortBy,
-    sortDesc,
     contextMenuVisible,
     contextMenuStyle,
     contextMenuRow,

@@ -13,8 +13,8 @@ License: AGPL-3.0
     :row-id="rowId"
     :table-column="tableColumn"
     :fetch="fetchProducts"
-    :sort-by="sortBy"
-    :sort-desc="sortDesc"
+    :sort-by="_sortBy"
+    :sort-desc="_sortDesc"
     :action-config="(rowData: any) => {
       return !props.isChild ?
         `/products/${currentType}/config/${rowData[rowId]}`
@@ -138,6 +138,7 @@ License: AGPL-3.0
 
   const { notifyInfo } = useNotification()
   const $t = useI18n().t
+  const mq = useMQ()
   const navigation = useNavigate()
   const icons = useIcons()
   const router = useRouter()
@@ -159,12 +160,21 @@ License: AGPL-3.0
     productType: { type: String, default: 'LocalbootProduct' },
     isChild: { type: Boolean, default: false },
     sortBy: { type: String, default: 'productId' },
-    sortDesc: { type: Boolean, default: false },
+    sortDesc: {
+      type: [Boolean, String],
+      default: false,
+      validator: (value: boolean | string) => {
+        if (typeof value === 'boolean') return true
+        if (typeof value === 'string') {
+          return ['true', 'false'].includes(value.toLowerCase())
+        }
+        return false
+      },
+    },
     selectedClient: { type: String, default: undefined },
   })
-  const sortBy = ref(props.sortBy)
-  const sortDesc = ref(props.sortDesc)
-
+  const _sortBy = ref(props.sortBy)
+  const _sortDesc = ref(JSON.parse(String(props.sortDesc).toLowerCase()))
   const id = 'products'
   const rowId = 'productId'
   // Refs
@@ -341,7 +351,7 @@ License: AGPL-3.0
       visible:
         clientSelection.value.length > 0 && storeCookie.productsColumns.includes('actionRequest'),
       className: 'max-w-28',
-      headerCellRenderer: useMQ().isMobile.value
+      headerCellRenderer: mq.isMobile.value
         ? undefined
         : () => {
             return (
@@ -399,26 +409,26 @@ License: AGPL-3.0
     productsRef.value?.refetch()
   })
 
-  storeCookie.setSortColumn('products', sortBy.value, sortDesc.value)
+  storeCookie.setSortColumn('products', _sortBy.value, _sortDesc.value)
   watch(
     () => props.sortBy,
     () => {
-      sortBy.value = props.sortBy
-      storeCookie.setSortColumn('products', sortBy.value, sortDesc.value)
+      _sortBy.value = props.sortBy
+      storeCookie.setSortColumn('products', _sortBy.value, _sortDesc.value)
     }
   )
   watch(
     () => props.sortDesc,
     () => {
-      sortDesc.value = props.sortDesc
-      storeCookie.setSortColumn('products', sortBy.value, sortDesc.value)
+      _sortDesc.value = JSON.parse(String(props.sortDesc).toLowerCase())
+      storeCookie.setSortColumn('products', _sortBy.value, _sortDesc.value)
     }
   )
   watch(
     () => storeCookie.productsSorting,
     () => {
-      sortBy.value = storeCookie.productsSorting.column
-      sortDesc.value = storeCookie.productsSorting.isDesc
+      _sortBy.value = storeCookie.productsSorting.column
+      _sortDesc.value = storeCookie.productsSorting.isDesc
     },
     { deep: true }
   )

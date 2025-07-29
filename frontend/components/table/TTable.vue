@@ -34,6 +34,7 @@ License: AGPL-3.0
   import type TTableDesktop from './TTableDesktop.vue'
   import type TTableDesktopMobile from './TTableDesktopMobile.vue'
 
+  const mq = useMQ()
   const props = defineProps({
     isMobile: { type: Boolean, default: false, required: false },
     rowId: { type: String, required: true },
@@ -55,9 +56,9 @@ License: AGPL-3.0
 
   const isMobileWrapper = ref<boolean>(props.isMobile)
   watch(
-    () => useMQ().isMobile,
+    () => mq.isMobile,
     () => {
-      isMobileWrapper.value = useMQ().isMobile.value
+      isMobileWrapper.value = mq.isMobile.value
     },
     { deep: true }
   )

@@ -72,13 +72,14 @@ export const useMBus = (
       return v.toString(16)
     })
   }
-
-  onMounted(async () => {
+  async function mount() {
+    //onMounted(async () => {
     await wsInit()
     if (channels) {
       wsSubscribeChannel(channels)
     }
-  })
+    //})
+  }
 
   onUnmounted(() => {
     wsDisconnect()
@@ -303,6 +304,7 @@ export const useMBus = (
   }
 
   return {
+    mount,
     channels,
     wsBus,
     wsBusMsg,

@@ -32,11 +32,12 @@ License: AGPL-3.0
   import { useNotification } from '../../composables/mixins/useComponent'
   import { useMBus } from '~/composables/mixins/useMessagebus'
   import type { T_Logout } from '~/types/APItypes'
-  const isMobile = ref(useMQ().isMobile.value)
+  const mq = useMQ()
+  const isMobile = ref(mq.isMobile.value)
   watch(
-    () => useMQ().isMobile,
+    () => mq.isMobile,
     () => {
-      isMobile.value = useMQ().isMobile.value
+      isMobile.value = mq.isMobile.value
     }
   )
   const icon = useIcons()

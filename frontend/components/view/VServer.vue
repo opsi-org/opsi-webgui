@@ -29,6 +29,7 @@ License: AGPL-3.0
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
+  const mq = useMQ()
 
   const storeSelection = storeSelections()
   const storeCookie = storeTablesettings()
