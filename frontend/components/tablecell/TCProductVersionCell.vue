@@ -22,10 +22,7 @@ License: AGPL-3.0
         content="depot-wo-prod"
       />
       <IconIDetails
-        v-if="
-          rowitem.installationStatus !== 'not_installed' &&
-          (rowitem.client_version_outdated || false)
-        "
+        v-if="rowitem.client_version_outdated || false"
         :variant="rowitem.client_version_outdated || false ? 'danger' : undefined"
         class="details client-outdated"
         content="client-outdated"
