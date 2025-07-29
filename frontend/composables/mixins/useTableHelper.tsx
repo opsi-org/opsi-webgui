@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-import { debounce } from 'lodash'
+import { after, debounce } from 'lodash'
 import { useNotification } from '~/composables/mixins/useComponent'
 
 import DDClientActions from '~/components/dropdown/DDClientActions.vue'
@@ -34,7 +34,24 @@ export const useTableHelper = (
   const isLoading = ref(false)
   const filterQuery = ref('')
   const filterBy = ref(props.rowId)
-  const sortByWrapper = ref<String | Array<String>>(props.sortBy || props.rowId)
+  function isArrayNormalized(object: string | string[]): boolean {
+    if (Array.isArray(object)) return true
+    try {
+      // Wenn es ein "string" ist – z.B. '["foo", "bar"]' oder "foo,bar"
+      const parsed = JSON.parse(object)
+      return Array.isArray(parsed) && parsed.every((item) => typeof item === 'string')
+    } catch {
+      // kein JSON – ignorieren
+    }
+    // Wenn Komma-separierter String: "foo,bar" => ["foo", "bar"]
+    if (typeof object === 'string' && object.includes(',')) {
+      return object.split(',').every((s) => typeof s.trim() === 'string')
+    }
+    // Single-String fallback
+    return typeof object === 'string' && object.length > 0
+  }
+
+  const sortByWrapper = ref<string>(props.sortBy || props.rowId)
   const sortDescWrapper = ref<boolean>(JSON.parse(String(props.sortDesc).toLowerCase()) || false)
 
   const contextMenuVisible = ref(false)
@@ -64,13 +81,25 @@ export const useTableHelper = (
       if (before.length <= 0 && after.length > 0 && after[0] === '') return
       fetchDataWrapper()
     },
-    { immediate: true }
+    {
+      immediate: true,
+    }
   )
   watch(
     () => props.sortBy,
     () => {
       if (props.sortBy !== sortByWrapper.value) {
         sortByWrapper.value = props.sortBy || props.rowId
+        // if is not array, and does not have "," or "[", "]" store
+        if (!isArrayNormalized(props.sortBy)) {
+          storeTablesettings().setSortColumn(
+            props.tableId,
+            props.sortBy || props.rowId,
+            props.sortDesc || false
+          )
+        }
+
+        //storeT.setSortColumn(props.tableId, sortBy.value, sortDesc.value)
         fetchDataWrapper()
       }
     }
@@ -78,11 +107,20 @@ export const useTableHelper = (
   watch(
     () => props.sortDesc,
     () => {
-      if (props.sortDesc !== sortDescWrapper.value) {
-        sortDescWrapper.value = props.sortDesc || false
+      const propSortDesc = JSON.parse(String(props.sortDesc).toLowerCase()) || false
+      if (propSortDesc !== sortDescWrapper.value) {
+        sortDescWrapper.value = propSortDesc || false
         fetchDataWrapper()
       }
     }
+  )
+  watch(
+    () => storeTSettings.productsSorting,
+    () => {
+      sortByWrapper.value = storeTSettings.productsSorting.column
+      sortDescWrapper.value = storeTSettings.productsSorting.isDesc
+    },
+    { deep: true }
   )
 
   function prepareParams() {
@@ -268,22 +306,48 @@ export const useTableHelper = (
   function applyFilter(columnKey: string) {
     filterBy.value = columnKey
   }
+  function updateRoute(
+    paramKey: string,
+    paramValue: any,
+    return_new_url: boolean = false,
+    url: string | undefined = undefined
+  ): string | undefined {
+    let fullRoute = router.currentRoute.value.fullPath
+    if (url) {
+      fullRoute = url
+    }
+    if (fullRoute.includes(paramKey)) {
+      //const newFullUrl = fullRoute.replace(/sortBy=[^&]+/, `sortBy=${columnKey}`)
+      const newFullUrl = fullRoute.replace(
+        new RegExp(`${paramKey}=[^&]*`),
+        `${paramKey}=${paramValue}`
+      )
+      if (return_new_url) {
+        return newFullUrl
+      }
+      router.push(newFullUrl)
+      return 'ok'
+    }
+    return undefined
+  }
 
   function applySort(columnKey: string) {
     sortByWrapper.value = columnKey
+    updateRoute('sortBy', columnKey)
     fetchDataWrapper()
   }
 
   function handleSortChange({ prop, order }: { column: any; prop: string; order: any }) {
     sortByWrapper.value = prop
     sortDescWrapper.value = order === 'descending'
-
+    const url = updateRoute('sortBy', prop, true)
+    updateRoute('sortDesc', sortDescWrapper.value, false, url)
     fetchDataWrapper()
   }
 
   function toggleSortOrder() {
     sortDescWrapper.value = !sortDescWrapper.value
-
+    updateRoute('sortDesc', sortDescWrapper.value)
     fetchDataWrapper()
   }
   function onRowClick(row: any, column: any, event: any) {

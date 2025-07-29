@@ -155,28 +155,28 @@ License: AGPL-3.0
 
         <!-- sorted column -->
         <el-table-column
-          v-if="!['selected', rowId, 'actions'].includes(sortByFirstItem)"
-          :key="tableColumnObj[sortByFirstItem].key"
-          :prop="tableColumnObj[sortByFirstItem].key"
-          :label="tableColumnObj[sortByFirstItem].title"
-          :width="tableColumnObj[sortByFirstItem].width || ''"
+          v-if="!['selected', rowId, 'actions'].includes(sortByWrapper)"
+          :key="tableColumnObj[sortByWrapper].key"
+          :prop="tableColumnObj[sortByWrapper].key"
+          :label="tableColumnObj[sortByWrapper].title"
+          :width="tableColumnObj[sortByWrapper].width || ''"
         >
-          <template #header v-if="tableColumnObj[sortByFirstItem].icon">
+          <template #header v-if="tableColumnObj[sortByWrapper].icon">
             <el-text>
               <IconIIcon
-                :icon="tableColumnObj?.[sortByFirstItem].icon"
-                :title="tableColumnObj?.[sortByFirstItem].title"
+                :icon="tableColumnObj?.[sortByWrapper].icon"
+                :title="tableColumnObj?.[sortByWrapper].title"
               />
             </el-text>
           </template>
           <template #header v-else>
-            <HeaderCellRenderer :col-data="tableColumnObj[sortByFirstItem]" />
+            <HeaderCellRenderer :col-data="tableColumnObj[sortByWrapper]" />
           </template>
           <template #default="scope">
             <CellRenderer
-              :row-id="sortByFirstItem"
+              :row-id="sortByWrapper"
               :row-data="scope.row"
-              :col-data="tableColumnObj[sortByFirstItem]"
+              :col-data="tableColumnObj[sortByWrapper]"
               class="min-w-0 whitespace-nowrap overflow-hidden text-ellipsis"
             />
           </template>
@@ -338,12 +338,6 @@ License: AGPL-3.0
   )
 
   const hasRowsWrapper = computed(() => totalItems.value > 0)
-  const sortByFirstItem = computed(() => {
-    return Array.isArray(sortByWrapper)
-      ? (sortByWrapper[0] ?? props.rowId)
-      : (sortByWrapper ?? props.rowId)
-  })
-
   defineExpose({
     refetch: () => {
       fetchWrapper()

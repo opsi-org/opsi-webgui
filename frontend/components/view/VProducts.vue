@@ -13,8 +13,8 @@ License: AGPL-3.0
     :row-id="rowId"
     :table-column="tableColumn"
     :fetch="fetchProducts"
-    :sort-by="_sortBy"
-    :sort-desc="_sortDesc"
+    :sort-by="sortBy"
+    :sort-desc="sortDesc"
     :action-config="(rowData: any) => {
       return !props.isChild ?
         `/products/${currentType}/config/${rowData[rowId]}`
@@ -173,8 +173,7 @@ License: AGPL-3.0
     },
     selectedClient: { type: String, default: undefined },
   })
-  const _sortBy = ref(props.sortBy)
-  const _sortDesc = ref(JSON.parse(String(props.sortDesc).toLowerCase()))
+
   const id = 'products'
   const rowId = 'productId'
   // Refs
@@ -406,32 +405,9 @@ License: AGPL-3.0
     if (props.productType && props.productType !== currentType.value)
       changeProductsType(props.productType as IProductTypes)
     fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
-    productsRef.value?.refetch()
+    //refetch() // triggered by watchers
   })
 
-  storeCookie.setSortColumn('products', _sortBy.value, _sortDesc.value)
-  watch(
-    () => props.sortBy,
-    () => {
-      _sortBy.value = props.sortBy
-      storeCookie.setSortColumn('products', _sortBy.value, _sortDesc.value)
-    }
-  )
-  watch(
-    () => props.sortDesc,
-    () => {
-      _sortDesc.value = JSON.parse(String(props.sortDesc).toLowerCase())
-      storeCookie.setSortColumn('products', _sortBy.value, _sortDesc.value)
-    }
-  )
-  watch(
-    () => storeCookie.productsSorting,
-    () => {
-      _sortBy.value = storeCookie.productsSorting.column
-      _sortDesc.value = storeCookie.productsSorting.isDesc
-    },
-    { deep: true }
-  )
   watch(
     () => selectionClients.value,
     async () => {
@@ -482,11 +458,12 @@ License: AGPL-3.0
   async function fetchProducts(_params: any) {
     const params = prepareParams(_params)
 
-    if (params.sortBy) {
-      storeCookie.productsSorting.column = params.sortBy
-      storeCookie.productsSorting.isDesc = params.sortDesc
+    if (_params.sortBy) {
+      storeCookie.productsSorting.column = _params.sortBy
+      storeCookie.productsSorting.isDesc = _params.sortDesc
     }
     const { data, error, headers } = await useApiGETBody<Array<any>>('/opsidata/products', params)
+
     if (error) {
       return
     }
@@ -624,11 +601,17 @@ License: AGPL-3.0
 
   function changeProductsType(type: IProductTypes) {
     const currentFullUrl = router.currentRoute.value.fullPath
-    const newFullUrl = !props.isChild // keeping url params
-      ? currentFullUrl.replace(/\/products\/\w+/, `/products/${type}`)
-      : currentFullUrl.replace(/\/clients\/products\/\w+/, `/clients/products/${type}`)
-    router.push(newFullUrl)
-
+    let urlChanged = false
+    if (!currentFullUrl.includes(`/products/${type}`)) {
+      let newFullUrl
+      if (!props.isChild) {
+        newFullUrl = currentFullUrl.replace(/\/products\/\w+/, `/products/${type}`)
+      } else {
+        newFullUrl = currentFullUrl.replace(/\/clients\/products\/\w+/, `/clients/products/${type}`)
+      }
+      urlChanged = true
+      router.push(newFullUrl)
+    }
     const types: Array<IProductTypes> = Object.keys(
       productsTypeChecked.value
     ) as Array<IProductTypes>
@@ -636,8 +619,10 @@ License: AGPL-3.0
     if (Object.keys(productsTypeChecked.value).includes(type))
       productsTypeChecked.value[type] = true
     else throw new Error('Unknown product type ' + type)
-
-    productsRef.value?.refetch()
+    if (!router.currentRoute.value.query.sortBy && urlChanged) {
+      // if it is in query, the sortBy will trigger a refetch
+      productsRef.value?.refetch()
+    }
   }
 
   onBeforeRouteLeave((to, from, next) => {

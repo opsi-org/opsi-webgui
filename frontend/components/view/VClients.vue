@@ -487,9 +487,21 @@ License: AGPL-3.0
     warnValue: number = Infinity
   ): (rowData: any) => VNode {
     return ({ rowData }: any) => {
-      // const op = ref<any>()
       function click() {
-        router.push(url + rowData.clientId)
+        const full_url = url + rowData.clientId
+        const short_url = full_url.split('?')[0]
+        const params_from_url = Object.fromEntries(
+          new URLSearchParams(full_url.split('?')[1] || '')
+        )
+        for (const key in params_from_url) {
+          try {
+            params_from_url[key] = JSON.parse(params_from_url[key])
+          } catch {
+            // ignore if not JSON parsable
+          }
+        }
+        // they are not passed as real types (i.e. vproducts needs the sortDesc param to be also a string..)
+        router.push({ path: short_url, query: params_from_url })
       }
 
       const checked = computed(() => {

@@ -43,7 +43,7 @@ License: AGPL-3.0
     fetch: { type: Function, required: true },
     bodyHeight: { type: String, default: '80vh', required: false },
     sortBy: { type: String, default: undefined, required: false },
-    sortDesc: { type: Boolean, default: false },
+    sortDesc: { type: [Boolean, String], default: false },
     actionClone: { type: Function, default: undefined, required: false },
     actionLog: { type: Function, default: undefined, required: false },
     actionConfig: { type: Function, default: undefined, required: false },
