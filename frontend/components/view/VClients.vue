@@ -525,10 +525,10 @@ License: AGPL-3.0
         return 'success'
       })
       const val = computed<string>(() => {
-        let _val = rowData[value] || 0
-        if (value == 'version_outdated' && type == 'LocalbootProduct') {
-          _val = Math.max(rowData[value] - rowData.version_outdated_netboot || 0, 0)
-        }
+        const _val = rowData[value] || 0
+        //if (value == 'version_outdated' && type == 'LocalbootProduct') {
+        //_val = Math.max(rowData[value] - rowData.version_outdated_netboot || 0, 0)
+        //}
         return _val
       })
       return rowData[value] ? (

@@ -216,7 +216,8 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 				WHERE
 					poc.clientId = hd.clientId AND
 					pod.depotId = hd.depotId AND
-					pod.productType = 'LocalbootProduct'
+					pod.productType = 'LocalbootProduct' AND
+					NOT poc.installationStatus = 'not_installed'
 			) AS version_outdated,
 			(
 				SELECT
@@ -230,7 +231,8 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 				WHERE
 					poc.clientId = hd.clientId AND
 					pod.depotId = hd.depotId AND
-					pod.productType = 'NetbootProduct'
+					pod.productType = 'NetbootProduct' AND
+					NOT poc.installationStatus = 'not_installed'
 			) AS version_outdated_netboot,
 			(
 				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
