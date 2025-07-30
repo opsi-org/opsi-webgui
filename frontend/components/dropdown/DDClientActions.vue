@@ -120,26 +120,40 @@ License: AGPL-3.0
 
   const actionMethods: IObjectString2Function = {
     onDemand: async () => {
-      const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
+      const { data, error } = await useApiPOSTkwargs<TClientdRPC>('/command/opsiclientd_rpc', {
+        showError: false,
+        body: {
+          client_ids: props.clientIds,
+          method: 'fireEvent',
+          params: ['on_demand'],
+        },
+      })
+      /*const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
         client_ids: props.clientIds,
         method: 'fireEvent',
         params: ['on_demand'],
-      })
+      })*/
       collectResult($t('onDemand'), data.value, error)
     },
     notify: async () => {
-      const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
-        client_ids: props.clientIds,
-        method: 'showPopup',
-        params: [notifyText.value],
+      const { data, error } = await useApiPOSTkwargs<TClientdRPC>('/command/opsiclientd_rpc', {
+        showError: false,
+        body: {
+          client_ids: props.clientIds,
+          method: 'showPopup',
+          params: [notifyText.value],
+        },
       })
       collectResult($t('notify'), data.value, error)
     },
     reboot: async () => {
-      const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
-        client_ids: props.clientIds,
-        method: 'reboot',
-        params: [''],
+      const { data, error } = await useApiPOSTkwargs<TClientdRPC>('/command/opsiclientd_rpc', {
+        showError: false,
+        body: {
+          client_ids: props.clientIds,
+          method: 'reboot',
+          params: [''],
+        },
       })
       collectResult($t('reboot'), data.value, error)
     },
@@ -215,19 +229,19 @@ License: AGPL-3.0
       tag: 'span',
     }
     for (const [key, value] of Object.entries(data)) {
-      if (value.result) {
+      if (value.result || value.error === null) {
         // result is given. success
         resultRowOk.msg = resultRowOk.msg + key + ', '
         continue
+      } else if (value.error) {
+        // error
+        resultRows.push({
+          tag: 'span',
+          tagTitle: 'strong',
+          title: key + ': ' + value.error || value.result || $t('ok'),
+          class: '!text-danger mb-2 ',
+        })
       }
-      // error
-      resultRows.push({
-        tag: 'span',
-        tagTitle: 'strong',
-        title: key + ': ',
-        msg: value.error || value.result,
-        class: '!text-danger mb-2 ',
-      })
     }
     if (resultRowOk.msg && resultRowOk.msg.length > 0) {
       resultRowOk.msg = resultRowOk.msg.slice(0, -2)
