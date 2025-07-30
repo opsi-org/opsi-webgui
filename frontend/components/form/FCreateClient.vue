@@ -15,7 +15,7 @@ License: AGPL-3.0
       <h3 class="mt-4 text-lg font-semibold">
         {{ $t(category) }}
       </h3>
-      <div v-for="(value, label) in options" :key="label + '-' + value">
+      <div v-for="(value, label) in options" :key="label">
         <el-form-item :label="$t(label)" :error="label === 'hostId' ? clientNameError : ''">
           <el-form v-if="label === 'opsiClientAgent'" :inline="true" label-position="top">
             <div
@@ -52,9 +52,12 @@ License: AGPL-3.0
                   v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]"
                   show-password
                 />
-                <el-input
+                <p-input-text
                   v-else
+                  type="text"
+                  class="w-full"
                   v-model="createClient.initialSetup.opsiClientAgent[label2.toString()]"
+                  :data-testid="label"
                 />
               </el-form-item>
             </div>
@@ -84,16 +87,36 @@ License: AGPL-3.0
           >
             <el-option v-for="item in netbootProductList" :key="item" :label="item" :value="item" />
           </el-select>
-          <el-input v-else-if="label === 'hostId'" v-model="clientName">
-            <template #append>
-              <el-input v-model="domain" class="border-none" />
-            </template>
-          </el-input>
+
+          <p-input-group v-else-if="label === 'hostId'">
+            <p-input-text v-model="clientName" type="text" class="w-1/2" :data-testid="label" />
+            <p-input-text v-model="domain" type="text" class="w-1/2" :data-testid="label" />
+          </p-input-group>
+          <p-input-mask
+            v-else-if="label === 'hardwareAddress'"
+            id="basic"
+            v-model="createClient[category][label]"
+            mask="**:**:**:**:**:**"
+            slot-char=" "
+            placeholder=""
+            class="w-full"
+            :class="{
+              '!border-danger': String(createClient[category][label])
+                .split('')
+                .some((char) => (char > 'F' && char < 'a') || char > 'f'),
+            }"
+          />
           <el-checkbox
             v-else-if="typeof value == 'boolean'"
             v-model="createClient[category][label]"
           />
-          <el-input v-else v-model="createClient[category][label]" :data-testid="label" />
+          <p-input-text
+            v-else
+            type="text"
+            class="w-full"
+            v-model="createClient[category][label]"
+            :data-testid="label"
+          />
         </el-form-item>
       </div>
     </div>

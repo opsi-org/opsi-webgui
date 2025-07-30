@@ -185,3 +185,17 @@ html .p-button.p-button-sm {
   word-wrap: normal;
   overflow: auto;
 }
+
+.el-select__wrapper,
+.el-checkbox__inner,
+.p-inputtext,
+.p-select,
+.p-checkbox-box,
+.p-multiselect {
+  border-width: 1px !important;
+  border-color: var(--hover) !important;
+  border-style: solid !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  box-shadow: none !important;
+}

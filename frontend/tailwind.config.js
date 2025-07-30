@@ -68,6 +68,11 @@ export default {
       borderWidth: {
         1: '1px',
       },
+      borderColor: {
+        danger: 'var(--el-color-danger)',
+        success: 'var(--el-color-success)',
+        info: 'var(--el-color-info)',
+      },
       width: {
         '1/1': '100%',
         '1/2': '50%',

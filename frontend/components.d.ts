@@ -17,6 +17,7 @@ declare module 'vue' {
     PFloatLabel: typeof import('primevue/floatlabel')['default']
     PInputGroup: typeof import('primevue/inputgroup')['default']
     PInputGroupAddon: typeof import('primevue/inputgroupaddon')['default']
+    PInputMask: typeof import('primevue/inputmask')['default']
     PInputText: typeof import('primevue/inputtext')['default']
     PMessage: typeof import('primevue/message')['default']
     PMultiSelect: typeof import('primevue/multiselect')['default']

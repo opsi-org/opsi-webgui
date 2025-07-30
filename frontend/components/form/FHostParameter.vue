@@ -608,12 +608,4 @@ License: AGPL-3.0
     border: none !important;
     box-shadow: none !important;
   }
-  :deep(.p-select),
-  :deep(.p-checkbox-box),
-  :deep(.p-multiselect) {
-    border-width: 1px !important;
-    border-color: var(--hover) !important;
-    border-style: solid !important;
-    min-width: 20px !important;
-  }
 </style>
