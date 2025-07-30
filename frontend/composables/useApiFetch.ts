@@ -142,9 +142,11 @@ async function useAPI2<T>(
             class: response?._data?.class,
             message: response?._data?.message,
             // message: response?._data?.message,
-            details: JSON.stringify(response?._data?.details),
           },
         },
+      }
+      if (response?._data?.details) {
+        callerror.value.response.data.details = response._data.details
       }
       pendingState.value = false
       status = response.status
