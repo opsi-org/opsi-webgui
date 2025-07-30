@@ -154,7 +154,7 @@ def get_host_data(
 		for row in result:
 			if row is not None:
 				row_dict = dict(row)
-				if row_dict.get("hostId") not in allowed_clients:
+				if allowed_clients and row_dict.get("hostId") not in allowed_clients:
 					continue
 				for key in row_dict.keys():
 					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
