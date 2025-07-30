@@ -7,7 +7,6 @@ License: AGPL-3.0
 -->
 <template>
   <el-tooltip
-    v-if="!props.disabled"
     data-testid="TTooltip"
     ref="popoverRef"
     id="popover"
@@ -15,6 +14,7 @@ License: AGPL-3.0
     :effect="colormode !== 'dark' ? 'dark' : 'light'"
     :trigger="props.method"
     :show-after="props.delay"
+    :disabled="props.disabled"
   >
     <div>
       <slot name="default" />

@@ -361,6 +361,12 @@ export const useTableHelper = (
     if (['svg', 'button', 'path', 'span'].includes(event.target?.localName)) {
       return
     }
+    if (
+      event.target?.offsetParent?.classList !== undefined &&
+      Array.from(event.target?.offsetParent?.classList).includes('p-select')
+    ) {
+      return
+    }
     $emit('selectionChanged', row[props.rowId])
   }
 
