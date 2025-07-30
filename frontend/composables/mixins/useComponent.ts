@@ -362,11 +362,9 @@ export function useNotification() {
       duration = 0, // 0 means no auto hide
       onClose,
     }: NotificationOptionsDetailed) => {
-      const notificationInstance = ref<any>()
-
-      const notificationMessageItems = ref<Array<any>>([])
+      const notificationMessageItems: Array<any> = []
       for (const messageRow of messages) {
-        notificationMessageItems.value.push(
+        notificationMessageItems.push(
           h('div', [
             h(messageRow.tagTitle || 'div', {}, messageRow.title),
             h(messageRow.tag || 'div', { class: messageRow.class }, messageRow.msg),
@@ -374,15 +372,13 @@ export function useNotification() {
         )
       }
 
-      notificationInstance.value = ElNotification({
+      return ElNotification({
         title,
-        message: h('div', { class: wrapperClass }, notificationMessageItems.value),
+        message: h('div', { class: wrapperClass }, notificationMessageItems),
         showClose: showClose,
         duration: duration || 0,
         onClose: onClose,
       })
-
-      return notificationInstance.value
     }
   }
   const closeAll = () => {

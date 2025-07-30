@@ -182,6 +182,8 @@ License: AGPL-3.0
     throw new Error(`Icon ${icon} not found`)
   }
   async function executeClientAction(action: string) {
+    if (isLoading.value) return
+
     isLoading.value = true
     if (actionMethods[action]) {
       try {
@@ -204,22 +206,22 @@ License: AGPL-3.0
       return
     }
 
-    const resultRows = ref<Array<any>>([])
-    const resultRowOk = ref({
+    const resultRows: Array<any> = []
+    const resultRowOk = {
       msg: '', // TBA
       title: $t('message.success') + ': ',
       tagTitle: 'strong',
       class: '!text-success',
       tag: 'span',
-    })
+    }
     for (const [key, value] of Object.entries(data)) {
       if (value.result) {
         // result is given. success
-        resultRowOk.value.msg = resultRowOk.value.msg + key + ', '
+        resultRowOk.msg = resultRowOk.msg + key + ', '
         continue
       }
       // error
-      resultRows.value.push({
+      resultRows.push({
         tag: 'span',
         tagTitle: 'strong',
         title: key + ': ',
@@ -227,13 +229,13 @@ License: AGPL-3.0
         class: '!text-danger mb-2 ',
       })
     }
-    if (resultRowOk.value.msg && resultRowOk.value.msg.length > 0) {
-      resultRowOk.value.msg = resultRowOk.value.msg.slice(0, -2)
-      resultRows.value.push(resultRowOk.value)
+    if (resultRowOk.msg && resultRowOk.msg.length > 0) {
+      resultRowOk.msg = resultRowOk.msg.slice(0, -2)
+      resultRows.push(resultRowOk)
     }
     notifyDetailed({
       title: notificationTitle,
-      messages: resultRows.value,
+      messages: resultRows,
       wrapperClass: 'grid',
       duration: 0,
     })
