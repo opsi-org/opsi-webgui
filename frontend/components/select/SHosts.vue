@@ -10,6 +10,7 @@ License: AGPL-3.0
     v-model="value"
     data-testid="host-select"
     clearable
+    :filterable="filterable"
     :placeholder="$t('--select--')"
     style="min-width: 200px"
   >
@@ -39,6 +40,7 @@ License: AGPL-3.0
     },
     specialIds: { type: Array<string>, default: [] },
     sync: { type: Boolean, default: false },
+    filterable: { type: Boolean, default: false },
   })
   const emit = defineEmits(['update:value'])
   onMounted(async () => {
