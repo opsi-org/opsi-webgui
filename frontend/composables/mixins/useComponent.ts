@@ -341,6 +341,9 @@ export function useNotification() {
     title?: string
     msg: string
     class?: string
+    style?: object
+    tagClass?: string // class for the title div
+    tagStyle?: object // style for the title div
     retryButton?: { label: string; onClick: PropTypeFunctionOptionalAsync }
     tag?: string // default is div
     tagTitle?: string
@@ -366,8 +369,16 @@ export function useNotification() {
       for (const messageRow of messages) {
         notificationMessageItems.push(
           h('div', [
-            h(messageRow.tagTitle || 'div', {}, messageRow.title),
-            h(messageRow.tag || 'div', { class: messageRow.class }, messageRow.msg),
+            h(
+              messageRow.tagTitle || 'div',
+              { class: messageRow.tagClass, style: messageRow.tagStyle },
+              messageRow.title
+            ),
+            h(
+              messageRow.tag || 'div',
+              { class: messageRow.class, style: messageRow.style },
+              messageRow.msg
+            ),
           ])
         )
       }

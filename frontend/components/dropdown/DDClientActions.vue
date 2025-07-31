@@ -7,9 +7,9 @@ License: AGPL-3.0
 -->
 <template>
   <el-dropdown>
-    <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoading || disabled">
+    <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoadingCurrent || disabled">
       <IconIIcon :icon="getIcon(props.icon)" :title="$t('clientActions')" />
-      <IconILoading v-if="isLoading" class="ml-1" small :title="$t('message.loading')" />
+      <IconILoading v-if="isLoadingCurrent" class="ml-1" small :title="$t('message.loading')" />
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>
@@ -17,25 +17,31 @@ License: AGPL-3.0
           <el-popover
             :width="mq.isMobile.value ? '100%' : '360px'"
             trigger="click"
-            v-model="popoverVisible"
+            :visible="popoverVisible[action]"
             placement="left"
           >
             <template #reference>
               <el-button
                 class="w-full !text-left !inline !border-0"
                 :data-testid="`popover-${action}-button`"
-                :disabled="disabled"
+                :disabled="disabled || isLoadingCurrent"
+                @click="
+                  () => {
+                    popoverVisible[action] = !popoverVisible[action]
+                  }
+                "
               >
                 <IconIIcon :icon="getIcon(action)" class="mr-1" />
                 {{ $t(action) }}
               </el-button>
             </template>
+            <!-- Popover Confirmation of action: -->
             <el-text tag="b" class="text-capitalize after:content-['-']">{{ $t(action) }}</el-text>
             <el-text tag="i">{{ props.clientIds[0] }}</el-text>
             <el-text v-if="props.clientIds.length > 1" class="pl-2">
               {{ $t('countMore', { clients: props.clientIds.length }) }}
             </el-text>
-            <el-form label-position="top" class="mt-3" v-loading="isLoading">
+            <el-form label-position="top" class="mt-3" v-loading="isLoadingCurrent">
               <el-form-item v-if="action == 'notify'" :label="$t('enterNotificationText')">
                 <el-input
                   v-model="notifyText"
@@ -65,7 +71,7 @@ License: AGPL-3.0
                 class="float-right"
                 :type="action == 'delete' ? 'danger' : 'success'"
                 size="small"
-                :disabled="isLoading"
+                :disabled="isLoadingCurrent"
                 :data-testid="`popover-${action}`"
                 @click="executeClientAction(action)"
               >
@@ -85,6 +91,9 @@ License: AGPL-3.0
 
   const $t = useI18n().t
   const { notifySuccess, notifyError, notifyDetailed } = useNotification()
+  const loadingStore = storeLoading()
+  //const { actions } = storeToRefs(loadingStore)
+
   const icons = useIcons()
   const mq = useMQ()
   const props = defineProps({
@@ -95,7 +104,10 @@ License: AGPL-3.0
   })
 
   const { selectionClients } = storeToRefs(storeSelections())
-  const popoverVisible = ref<boolean>(false)
+  interface tvisibility {
+    [key: string]: boolean
+  }
+  const popoverVisible = ref<tvisibility>({})
   const isLoading = ref<boolean>(false)
   const notifyText = ref<string>('')
   const clientActions = ref<Array<string>>([
@@ -128,12 +140,7 @@ License: AGPL-3.0
           params: ['on_demand'],
         },
       })
-      /*const { data, error } = await useApiPOST<TClientdRPC>('/command/opsiclientd_rpc', {
-        client_ids: props.clientIds,
-        method: 'fireEvent',
-        params: ['on_demand'],
-      })*/
-      collectResult($t('onDemand'), data.value, error)
+      collectResult('onDemand', $t('onDemand'), data.value, error)
     },
     notify: async () => {
       const { data, error } = await useApiPOSTkwargs<TClientdRPC>('/command/opsiclientd_rpc', {
@@ -144,7 +151,7 @@ License: AGPL-3.0
           params: [notifyText.value],
         },
       })
-      collectResult($t('notify'), data.value, error)
+      collectResult('notify', $t('notify'), data.value, error)
     },
     reboot: async () => {
       const { data, error } = await useApiPOSTkwargs<TClientdRPC>('/command/opsiclientd_rpc', {
@@ -155,7 +162,7 @@ License: AGPL-3.0
           params: [''],
         },
       })
-      collectResult($t('reboot'), data.value, error)
+      collectResult('reboot', $t('reboot'), data.value, error)
     },
     deployClientAgent: async () => {
       const { error } = await useApiPOST<TClientdRPC>('/opsidata/clients/deploy', {
@@ -191,27 +198,41 @@ License: AGPL-3.0
     },
   }
 
+  const isLoadingCurrent = computed(() => {
+    if (!props.clientIds || props.clientIds.length === 0) return false
+    if (props.clientIds.length > 1) {
+      // If multiple clientIds are given, we check if any of them is loading
+      return loadingStore.anyActionIsLoading
+    }
+    const clientId = props.clientIds[0]
+    for (const action of Object.keys(actionMethods)) {
+      if (loadingStore.actions?.[action]?.[clientId]) {
+        return loadingStore.actions[action][clientId]
+      }
+    }
+    return false
+  })
+
   function getIcon(icon: string) {
     if (Object.keys(icons).includes(icon)) return (icons as Record<string, string>)[icon]
     throw new Error(`Icon ${icon} not found`)
   }
   async function executeClientAction(action: string) {
     if (isLoading.value) return
+    if (!actionMethods[action]) throw new Error(`Action method for ${action} not found`)
 
+    popoverVisible.value[action] = false
     isLoading.value = true
-    if (actionMethods[action]) {
-      try {
-        await actionMethods[action]()
-        popoverVisible.value = false
-      } catch (error) {
-        notifyError({ message: error })
-      } finally {
-        isLoading.value = false
-      }
-    }
+    loadingStore.setIsLoadingClients(action, props.clientIds, true)
+    await actionMethods[action]()
   }
 
-  function collectResult(notificationTitle: string, data: TClientdRPC | undefined, error: any) {
+  function collectResult(
+    action: string,
+    notificationTitle: string,
+    data: TClientdRPC | undefined,
+    error: any
+  ) {
     if (error) return
     if (data == undefined) {
       notifyError({
@@ -219,6 +240,7 @@ License: AGPL-3.0
       })
       return
     }
+    let anyFailed = false
 
     const resultRows: Array<any> = []
     const resultRowOk = {
@@ -226,20 +248,26 @@ License: AGPL-3.0
       title: $t('message.success') + ': ',
       tagTitle: 'strong',
       class: '!text-success',
+      style: { 'word-break': 'break-word' },
       tag: 'span',
     }
+
     for (const [key, value] of Object.entries(data)) {
+      loadingStore.setIsLoadingClient(action, key, false)
       if (value.result || value.error === null) {
         // result is given. success
         resultRowOk.msg = resultRowOk.msg + key + ', '
         continue
       } else if (value.error) {
         // error
+        anyFailed = true
         resultRows.push({
           tag: 'span',
           tagTitle: 'strong',
-          title: key + ': ' + value.error || value.result || $t('ok'),
-          class: '!text-danger mb-2 ',
+          title: key + ': ',
+          class: '!text-danger mb-2',
+          style: { 'word-break': 'break-word' },
+          msg: value.error || value.result,
         })
       }
     }
@@ -251,7 +279,7 @@ License: AGPL-3.0
       title: notificationTitle,
       messages: resultRows,
       wrapperClass: 'grid',
-      duration: 0,
+      duration: anyFailed ? 0 : 5000,
     })
   }
 </script>
