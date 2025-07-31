@@ -9,7 +9,7 @@ License: AGPL-3.0
   <p-float-label
     v-if="props.type === 'checkbox'"
     variant="in"
-    class="min-w-full"
+    class=""
     :title="$t('selectionMode')"
   >
     <p-toggle-switch
