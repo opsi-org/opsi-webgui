@@ -50,18 +50,14 @@ License: AGPL-3.0
             >
               <span
                 v-if="slotProps.node.label == slotProps.node.key"
-                :class="mq.isMobile.value ? 'flex flex-row-reverse' : 'w-full'"
+                :class="mq.isMobile.value ? 'flex ' : 'w-full'"
                 >{{ slotProps.node.label.replaceAll('.', ' / ') }}</span
               >
               <TooltipTTooltip v-else>
+                <!-- the content of this tooltip can be copied (":title" cannot)-->
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
                   <span>{{ slotProps.node.key }}</span> <br />
-                  <!--<span>DefaultValues {{ slotProps.node?.data.defaultValues }}</span>
-                  <span>Values: {{ slotProps.node?.data.objects }}</span>
-                  -->
-                  <!--<pre v-if="!slotProps.node?.children || slotProps.node?.children.length <= 0">
- {{ slotProps.node }}</pre>-->
                 </template>
               </TooltipTTooltip>
 
@@ -94,7 +90,7 @@ License: AGPL-3.0
                   v-if="slotProps.node.data.type === 'BoolConfig'"
                   v-model="itemValues[slotProps.node.data.configId]"
                   binary
-                  :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : 'w-full'"
+                  :class="mq.isMobile.value ? 'flex  pr-3' : 'w-full'"
                   :disabled="config.read_only || !config.server_write_access"
                   @change="
                     () =>
@@ -171,7 +167,7 @@ License: AGPL-3.0
                 v-model="itemValues[slotProps.node.data.configId]"
                 binary
                 class="w-full"
-                :class="mq.isMobile.value ? 'flex flex-row-reverse pr-3' : ''"
+                :class="mq.isMobile.value ? 'flex  pr-3' : ''"
                 :disabled="config.read_only || !config.server_write_access"
                 @change="
                   () => {
@@ -215,8 +211,6 @@ License: AGPL-3.0
         :aria-expanded="createConfigVisible ? true : false"
         >{{ $t('addNew') }}</el-button
       >
-
-      <el-button @click="fetchFormData">{{ $t('reset') }}</el-button>
       <el-button
         :type="hasUnsavedChanges ? 'success' : ''"
         :disabled="!hasUnsavedChanges"
@@ -233,7 +227,6 @@ License: AGPL-3.0
     />
 
     <p-context-menu ref="routemenu" :model="items" v-if="isGeneralDefault">
-      <!--<template #item="{ item, props }">-->
       <template #item="cdata">
         <router-link
           v-if="cdata.item.route"
@@ -353,7 +346,6 @@ License: AGPL-3.0
       'hostparam-alert-unselected',
       'badge-change',
     ],
-    //props.isChild ? 100 : 70
     mq.isMobile.value ? 100 : props.isChild ? 100 : 70
   )
 
@@ -567,12 +559,13 @@ License: AGPL-3.0
       console.error('not defined')
     }
 
-    await useSaveParameters($t).saveParameters(url, request, null, true)
+    if (await useSaveParameters($t).saveParameters(url, request, null, true)) {
+      hasUnsavedChanges.value = false
+      changeBuffer.value = {}
+      initialValues.value = { ...itemValues.value }
+    }
 
     isLoading.value = false
-    hasUnsavedChanges.value = false
-    changeBuffer.value = {}
-    initialValues.value = { ...itemValues.value }
   }
 
   onBeforeRouteLeave((to, from, next) => {
@@ -614,13 +607,5 @@ License: AGPL-3.0
   :deep(.p-treetable .p-treetable-thead > tr) {
     border: none !important;
     box-shadow: none !important;
-  }
-  :deep(.p-select),
-  :deep(.p-checkbox-box),
-  :deep(.p-multiselect) {
-    border-width: 1px !important;
-    border-color: var(--hover) !important;
-    border-style: solid !important;
-    min-width: 20px !important;
   }
 </style>

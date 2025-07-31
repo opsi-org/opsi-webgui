@@ -10,7 +10,6 @@ import type { T_Groups, T_GroupsTransformed } from '~/types/APItypes'
 export const useGroupsHelper = () => {
   const { multiSelection } = storeToRefs(storeSelections())
   function transformNode(node: T_Groups): T_GroupsTransformed {
-    // const nodeIsLeaf = !node.children || Object.keys(node.children).length === 0
     if (!node) {
       console.warn('Node is undefined or null:', node)
       return {} as T_GroupsTransformed
@@ -23,7 +22,6 @@ export const useGroupsHelper = () => {
       parent: node.parent,
     }
 
-    // const newNode: T_Groups = { ...node }
     if (!nodeIsLeaf) {
       newNode.disabled = !multiSelection.value
       if (node.children) {
@@ -32,7 +30,6 @@ export const useGroupsHelper = () => {
         newNode.children = []
       }
     }
-    // console.log('node.id', node.id, node, newNode)
     return newNode
   }
   function transformToNestedArray(

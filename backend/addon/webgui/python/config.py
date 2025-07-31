@@ -9,7 +9,7 @@ webgui config methods
 """
 
 import json
-from typing import List, Literal, Optional, Union
+from typing import Any, List, Literal, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, status
 from opsiconfd.backend import get_protected_backend
@@ -313,7 +313,7 @@ def exists_config(  # pylint: disable=invalid-name, too-many-locals, too-many-st
 	"""
 	Check if a config exists
 	"""
-	logger.warning("Checking if config %s exists", configid)
+	logger.deubg("Checking if config %s exists", configid)
 	try:
 		config_ids = backend.config_getIdents()
 		return RESTResponse(data=configid in config_ids)
@@ -458,10 +458,87 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 	save config value
 	"""
 
-	def convert_bool_value(config_type, value):
+	def convert_bool_value(config_type: str | None, value: Any) -> int | Any:
 		# Convert boolean values to integers if the config type is BoolConfig
 		_isTrue = value in ("true", True, 1, "1", "True", "TRUE")
-		return int(_isTrue) if config_type and config_type == "BoolConfig" else value
+		return int(_isTrue) if config_type and config_type == "BoolConfig" else json.loads(json.dumps(value))
+
+	def _get_config(session, config: dict):
+		# first check if the config exists and get its type to convert bool to tinyint
+		query = (
+			select(
+				text(  # type: ignore
+					"""
+							c.configId AS configId,
+							c.type AS type
+						"""
+				)
+			)
+			.select_from(table("CONFIG").alias("c"))
+			.where(text(f"configId = '{config.configId}'"))
+		)  # pylint: disable=redefined-outer-name
+		result = session.execute(query)
+		result = result.fetchall()
+		config_result = dict(result[0]) if result and len(result) > 0 else None
+		if not config_result:
+			logger.warning("Config %s does not exist. sql result: %s", config.configId, result)
+		return config_result
+
+	def _get_values(session, config: dict[str, Any], type: str) -> List[dict]:
+		# Get all values for a config
+		query = (
+			select(
+				text(  # type: ignore
+					"""
+						cv.configId AS configId,
+						cv.value AS value,
+						cv.isDefault AS isDefault
+					"""
+				)
+			)
+			.select_from(table("CONFIG_VALUE").alias("cv"))
+			.where(text(f"cv.configId = '{config.configId}'"))
+		)
+		result = session.execute(query)
+		result = result.fetchall()
+		config_values = []
+		for row in result:
+			if row is not None:
+				val = convert_bool_value(type, dict(row)["value"])
+				config_values.append(val)
+		return config_values
+
+	def _insert_or_update(
+		session, column_name: str, dbitem: Any, identifier_ids: list[str], update_ids: list[str], exists: bool = False
+	) -> Any:
+		if not dbitem:
+			logger.error("dbitem is empty. Cannot insert or update.")
+			return None
+		if not exists:
+			stmt = insert(
+				table(
+					column_name,
+					*[column(name) for name in dbitem.keys()],
+				)
+			).values(**dbitem)
+			params = None
+		else:
+			stmt = (
+				update(
+					table(
+						column_name,
+						*[column(name) for name in dbitem.keys()],  # pylint: disable=consider-iterating-dictionary
+					)
+				)
+				.where(
+					text(" AND ".join([f"{col} = :w_{col}" for col in identifier_ids]))  # needs params
+				)
+				.values(
+					**{col: dbitem[col] for col in set(update_ids)}  # only update the specified columns
+				)
+			)
+			params = {f"w_{col}": dbitem[col] for col in identifier_ids}
+		return stmt, params
 
 	errors = []
 	ids = []
@@ -469,96 +546,40 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 		ids.append(config.configId)
 
 		with mysql.session() as session:
-			try:
-				# first check if the config exists and get its type to convert bool to tinyint
-				query = (
-					select(
-						text(  # type: ignore
-							"""
-								c.configId AS configId,
-								c.type AS type
-							"""
-						)
+			config_original = _get_config(session, config)
+			if not config_original:
+				logger.warning("Config %s does not exist. Skipping.", config.configId)
+				continue
+			values_original = _get_values(session, config, type=config_original.get("type", None))  # type: ignore[assignment]
+
+			_type = config_original.get("type", None)
+			_values: Any = convert_bool_value(_type, config.value) if config.value is not None else []
+			values: list = _values if isinstance(_values, list) else [_values]
+			logger.debug("Values: %s", values)
+
+			for value in values + values_original:
+				try:
+					dbitem = {"configId": config.configId, "value": value, "isDefault": int(value in values)}
+					logger.debug("dbitem: %s", dbitem)
+					val_exists = get_config_value(config.configId, value)
+					method_name = "config_created" if not val_exists else "config_updated"
+					stmt, params = _insert_or_update(
+						session,
+						column_name="CONFIG_VALUE",
+						dbitem=dbitem,
+						identifier_ids=["configId", "value"],
+						update_ids=["isDefault"],
+						exists=bool(val_exists),
 					)
-					.select_from(table("CONFIG").alias("c"))
-					.where(text(f"configId = '{config.configId}'"))
-				)  # pylint: disable=redefined-outer-name
-				result = session.execute(query)
-				result = result.fetchall()
-				config_type = dict(result[0]).get("type", None) if result and len(result) > 0 else None
-				if not config_type:
-					logger.warning("Config %s does not exist. sql result: %s", config.configId, result)
-
-				config_value = convert_bool_value(config_type, config.value)
-
-				values = {"configId": config.configId, "value": config_value, "isDefault": True}
-				stmt = (
-					update(table("CONFIG_VALUE", column("isDefault")))  # pylint: disable=consider-iterating-dictionary
-					.where(text(f"configId = '{config.configId}' AND isDefault = 1"))
-					.values(**{"isDefault": False})
-				)
-				session.execute(stmt)
-				if isinstance(config.value, list):
-					for value in config.value:
-						config_value = convert_bool_value(config_type, config.value)
-						values = {"configId": config.configId, "value": config_value, "isDefault": True}
-						if get_config_value(config.configId, config_value):
-							stmt = (
-								update(
-									table(
-										"CONFIG_VALUE",
-										*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
-									)
-								)
-								.where(text(f"configId = '{config.configId}' AND value = '{config_value}'"))
-								.values(**values)
-							)
-						else:
-							stmt = (
-								insert(
-									table(
-										"CONFIG_VALUE",
-										*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
-									)
-								)
-								.values(**values)
-								.on_duplicate_key_update(**values)
-							)
-						session.execute(stmt)
-				else:
-					value: Union[str, bool, None] = config_value  # type: ignore[no-redef]
-					values = {"configId": config.configId, "value": value, "isDefault": True}
-					if get_config_value(config.configId, value):
-						stmt = (
-							update(
-								table(
-									"CONFIG_VALUE",
-									*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
-								)
-							)
-							.where(text(f"configId = '{config.configId}' AND value = '{value}'"))
-							.values(**values)
-						)
-						backend._send_messagebus_event("config_updated", data=values)  # pylint: disable=protected-access
-					else:
-						stmt = (
-							insert(
-								table(
-									"CONFIG_VALUE",
-									*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
-								)
-							)
-							.values(**values)
-							.on_duplicate_key_update(**values)
-						)
-						backend._send_messagebus_event("config_created", data=values)  # pylint: disable=protected-access
-					session.execute(stmt)
-
-				logger.debug("Config %s saved.", config.configId)
-			except Exception as err:  # pylint: disable=broad-except
-				logger.error("Could not save config: %s", err)
-				session.rollback()
-				errors.append({"id": config.configId, "error": str(err)})
+					logger.debug("stmt: %s", stmt)
+					session.execute(stmt, params)
+					backend._send_messagebus_event(method_name, data=dbitem)  # pylint: disable=protected-access
+					logger.debug("Config %s saved.", config.configId)
+				except Exception as err:  # pylint: disable=broad-except
+					logger.error("Could not save config: %s", err)
+					logger.error("Config item: %s", dbitem)
+					session.rollback()
+					errors.append({"id": config.configId, "error": str(err)})
 	if errors:
 		message = "Failed to save: "
 		ids = []
@@ -652,7 +673,7 @@ def get_config_state(object_id: str, config_id: str) -> Union[str, None]:
 		return res[0]
 
 
-def get_config_value(config_id: str, value: Union[str, List[str], bool]) -> List:
+def get_config_value(config_id: str, value: Any) -> List:
 	with mysql.session() as session:
 		query = (
 			select(

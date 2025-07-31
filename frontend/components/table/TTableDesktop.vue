@@ -66,9 +66,7 @@ License: AGPL-3.0
                 </el-table-column>
                 <el-table-column :label="$t('columnSelection')">
                   <template #header>
-                    <el-tooltip :content="$t('columnSelection')">
-                      <IconIIcon :icon="icons.columns" />
-                    </el-tooltip>
+                    <IconIIcon :icon="icons.columns" :title="$t('columnSelection')" />
                   </template>
                   <template #default="scope">
                     <el-checkbox
@@ -80,27 +78,26 @@ License: AGPL-3.0
                 </el-table-column>
                 <el-table-column :label="$t('sort')">
                   <template #header>
-                    <el-tooltip :content="sortDesc ? $t('sortDescending') : $t('sortAscending')">
-                      <el-button @click="toggleSortOrder">
-                        <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
-                      </el-button>
-                    </el-tooltip>
+                    <el-button
+                      @click="toggleSortOrder"
+                      :title="sortDescWrapper ? $t('sortDescending') : $t('sortAscending')"
+                    >
+                      <IconIIcon :icon="sortDescWrapper ? icons.sortDesc : icons.sortAsc" />
+                    </el-button>
                   </template>
                   <template #default="scope">
                     <el-radio
                       v-if="scope.row.sortable"
                       :disabled="!scope.row.sortable"
                       :value="scope.row.key"
-                      v-model="sortBy"
+                      v-model="sortByWrapper"
                       @change="applySort(scope.row.key)"
                     />
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('filter')">
                   <template #header>
-                    <el-tooltip :content="$t('filter')">
-                      <IconIIcon :icon="icons.filter" />
-                    </el-tooltip>
+                    <IconIIcon :icon="icons.filter" :title="$t('filter')" />
                   </template>
                   <template #default="scope">
                     <el-checkbox
@@ -115,11 +112,9 @@ License: AGPL-3.0
             </template>
           </el-dropdown>
 
-          <el-tooltip :content="$t('refresh')" placement="top">
-            <el-button @click="refreshTable">
-              <IconIIcon :icon="icons.refresh" />
-            </el-button>
-          </el-tooltip>
+          <el-button @click="refreshTable" :title="$t('refresh')">
+            <IconIIcon :icon="icons.refresh" />
+          </el-button>
         </div>
         <div class="toolbar-right">
           <slot name="toolbar-right" />
@@ -167,17 +162,10 @@ License: AGPL-3.0
             :align="column.align"
           >
             <template #header v-if="column.icon">
-              <el-tooltip
-                class="box-item !inline-block"
-                :class="column.headerClassName"
-                effect="dark"
-                :content="column.title"
-              >
-                <el-text class="!inline-block">
-                  <!-- {{ column.title }} -->
-                  <IconIIcon :icon="column.icon" class="min-w-4 min-h-4 max-w-6 max-h-6" />
-                </el-text>
-              </el-tooltip>
+              <el-text class="!inline-block" :title="column.title">
+                <!-- {{ column.title }} -->
+                <IconIIcon :icon="column.icon" class="min-w-4 min-h-4 max-w-6 max-h-6" />
+              </el-text>
             </template>
             <template #header v-else>
               <HeaderCellRenderer :col-data="column" />
@@ -246,7 +234,7 @@ License: AGPL-3.0
     tableColumn: { type: Array<any>, required: true },
     fetch: { type: Function, required: true },
     sortBy: { type: String, default: undefined, required: false },
-    sortDesc: { type: Boolean, default: false, required: false },
+    sortDesc: { type: [Boolean, String], default: false, required: false },
     actionClone: { type: Function, default: undefined, required: false },
     actionLog: { type: Function, default: undefined, required: false },
     actionConfig: { type: Function, default: undefined, required: false },
@@ -281,8 +269,8 @@ License: AGPL-3.0
     isLoading,
     filterQuery,
     // filterBy,
-    sortBy,
-    sortDesc,
+    sortByWrapper,
+    sortDescWrapper,
     contextMenuVisible,
     contextMenuStyle,
     contextMenuRow,

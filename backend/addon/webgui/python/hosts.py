@@ -24,10 +24,8 @@ from .groups import build_nested_group, read_groups  # pylint: disable=import-er
 from .utils import (
 	backend,
 	build_tree,
-	filter_depot_access,
-	get_allowed_clients,
 	get_allowed_host_groups,
-	get_allowed_objects,
+	get_allowed_sql,
 	get_groups_ids,
 	get_sub_groups,
 	get_username,
@@ -91,7 +89,7 @@ def get_host_data(
 	configured = host_group_access_configured(username)
 
 	if user_register() and configured:
-		allowed_clients = get_allowed_clients(username)
+		allowed_clients = get_allowed_sql(username)
 		if not allowed_clients:
 			logger.warning("No clients found for user '%s'.", username)
 			return RESTResponse(data=[], total=0)
@@ -107,7 +105,6 @@ def get_host_data(
 	if host_type:
 		params["type"] = host_type
 		where = and_(where, text("h.type = :type"))  # type: ignore
-
 
 	# IF ( "efi" IN
 	# 				,
@@ -157,7 +154,7 @@ def get_host_data(
 		for row in result:
 			if row is not None:
 				row_dict = dict(row)
-				if row_dict.get("hostId") not in allowed_clients:
+				if allowed_clients and row_dict.get("hostId") not in allowed_clients:
 					continue
 				for key in row_dict.keys():
 					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
@@ -622,7 +619,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 		username = get_username()
 		allowed_clients = None
 		if user_register() and host_group_access_configured(username):
-			allowed_clients = get_allowed_clients(username)
+			allowed_clients = get_allowed_sql(username)
 		where = and_(text("h.type = 'OpsiClient'"))
 		params: dict = {"depot_ids": []}
 		if allowed_clients:

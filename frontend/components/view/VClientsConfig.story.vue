@@ -30,7 +30,7 @@ License: AGPL-3.0
           <ViewVClients :is-mobile="false" @change="changeId" />
         </template>
         <template #page1>
-          <ViewVHostConfig :is-child="true" :id="store.selectionClients[0]" type="clients" />
+          <ViewVConfigHost :is-child="true" :id="store.selectionClients[0]" type="clients" />
         </template>
       </LayoutLPageContent>
     </Variant>

@@ -41,9 +41,7 @@ License: AGPL-3.0
                 </el-table-column>
                 <el-table-column :label="$t('columnSelection')">
                   <template #header>
-                    <el-tooltip :content="$t('columnSelection')">
-                      <IconIIcon :icon="icons.columns" />
-                    </el-tooltip>
+                    <IconIIcon :icon="icons.columns" :title="$t('columnSelection')" />
                   </template>
                   <template #default="scope">
                     <el-checkbox
@@ -55,27 +53,26 @@ License: AGPL-3.0
                 </el-table-column>
                 <el-table-column :label="$t('sort')">
                   <template #header>
-                    <el-tooltip :content="sortDesc ? $t('sortDescending') : $t('sortAscending')">
-                      <el-button @click="toggleSortOrder">
-                        <IconIIcon :icon="sortDesc ? icons.sortDesc : icons.sortAsc" />
-                      </el-button>
-                    </el-tooltip>
+                    <el-button
+                      @click="toggleSortOrder"
+                      :title="sortDescWrapper ? $t('sortDescending') : $t('sortAscending')"
+                    >
+                      <IconIIcon :icon="sortDescWrapper ? icons.sortDesc : icons.sortAsc" />
+                    </el-button>
                   </template>
                   <template #default="scope">
                     <el-radio
                       v-if="scope.row.sortable"
                       :disabled="!scope.row.sortable"
                       :value="scope.row.key"
-                      v-model="sortBy"
+                      v-model="sortByWrapper"
                       @change="applySort(scope.row.key)"
                     />
                   </template>
                 </el-table-column>
                 <el-table-column :label="$t('filter')">
                   <template #header>
-                    <el-tooltip :content="$t('filter')">
-                      <IconIIcon :icon="icons.filter" />
-                    </el-tooltip>
+                    <IconIIcon :icon="icons.filter" :title="$t('filter')" />
                   </template>
                   <template #default="scope">
                     <el-checkbox
@@ -90,11 +87,9 @@ License: AGPL-3.0
             </template>
           </el-dropdown>
 
-          <el-tooltip :content="$t('refresh')" placement="top">
-            <el-button @click="refreshTable">
-              <IconIIcon :icon="icons.refresh" />
-            </el-button>
-          </el-tooltip>
+          <el-button @click="refreshTable" :title="$t('refresh')">
+            <IconIIcon :icon="icons.refresh" />
+          </el-button>
         </div>
         <div class="toolbar-right">
           <slot name="toolbar-right" />
@@ -160,25 +155,28 @@ License: AGPL-3.0
 
         <!-- sorted column -->
         <el-table-column
-          v-if="!['selected', rowId, 'actions'].includes(sortBy)"
-          :key="tableColumnObj[sortBy].key"
-          :prop="tableColumnObj[sortBy].key"
-          :label="tableColumnObj[sortBy].title"
-          :width="tableColumnObj[sortBy].width || ''"
+          v-if="!['selected', rowId, 'actions'].includes(sortByWrapper)"
+          :key="tableColumnObj[sortByWrapper].key"
+          :prop="tableColumnObj[sortByWrapper].key"
+          :label="tableColumnObj[sortByWrapper].title"
+          :width="tableColumnObj[sortByWrapper].width || ''"
         >
-          <template #header v-if="tableColumnObj[sortBy].icon">
-            <el-tooltip class="box-item" effect="dark" :content="tableColumnObj[sortBy].title">
-              <el-text><IconIIcon :icon="tableColumnObj[sortBy].icon" /> </el-text>
-            </el-tooltip>
+          <template #header v-if="tableColumnObj[sortByWrapper].icon">
+            <el-text>
+              <IconIIcon
+                :icon="tableColumnObj?.[sortByWrapper].icon"
+                :title="tableColumnObj?.[sortByWrapper].title"
+              />
+            </el-text>
           </template>
           <template #header v-else>
-            <HeaderCellRenderer :col-data="tableColumnObj[sortBy]" />
+            <HeaderCellRenderer :col-data="tableColumnObj[sortByWrapper]" />
           </template>
           <template #default="scope">
             <CellRenderer
-              :row-id="sortBy"
+              :row-id="sortByWrapper"
               :row-data="scope.row"
-              :col-data="tableColumnObj[sortBy]"
+              :col-data="tableColumnObj[sortByWrapper]"
               class="min-w-0 whitespace-nowrap overflow-hidden text-ellipsis"
             />
           </template>
@@ -201,7 +199,11 @@ License: AGPL-3.0
         <!-- expand content -->
         <el-table-column type="expand">
           <template #default="scope">
-            <Details class="mb-3" :row-data="scope.row" :col-data="tableColumnObj[props.rowId]" />
+            <Details
+              class="mb-3 px-2"
+              :row-data="scope.row"
+              :col-data="tableColumnObj[props.rowId]"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -259,7 +261,7 @@ License: AGPL-3.0
     tableColumn: { type: Array<any>, required: true },
     fetch: { type: Function, required: true },
     sortBy: { type: String, default: undefined, required: false },
-    sortDesc: { type: Boolean, default: false, required: false },
+    sortDesc: { type: [Boolean, String], default: false, required: false },
     actionClone: { type: Function, default: undefined, required: false },
     actionLog: { type: Function, default: undefined, required: false },
     actionConfig: { type: Function, default: undefined, required: false },
@@ -300,8 +302,8 @@ License: AGPL-3.0
     // we reuse this functions and refs also in TTableDesktop
     isLoading,
     filterQuery,
-    sortBy,
-    sortDesc,
+    sortByWrapper,
+    sortDescWrapper,
     contextMenuVisible,
     contextMenuStyle,
     contextMenuRow,
@@ -336,7 +338,6 @@ License: AGPL-3.0
   )
 
   const hasRowsWrapper = computed(() => totalItems.value > 0)
-
   defineExpose({
     refetch: () => {
       fetchWrapper()

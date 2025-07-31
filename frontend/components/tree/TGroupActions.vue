@@ -62,6 +62,7 @@ License: AGPL-3.0
               trigger="click"
               :ref="node.label + action"
               @show="loadActionPopover(node.label + action)"
+              @before-enter="initChildrenData(defdata)"
             >
               <template #reference>
                 <el-button size="small" :disabled="config.read_only">
@@ -101,10 +102,20 @@ License: AGPL-3.0
                   </template>
                   <template v-else-if="['client-add', 'product-add'].includes(action)">
                     <el-form-item :label="$t('selectChildren')">
-                      <el-scrollbar height="300px" class="border w-full p-2 min-w-[300px]">
-                        <el-checkbox-group v-model="selectedChildren">
+                      <el-scrollbar height="208px" class="border h-52 p-2 min-w-[300px] w-full">
+                        <el-checkbox-group v-model="allSelectedChildren">
                           <div v-for="item in idList" :key="item">
-                            <el-checkbox size="small" :value="item" :label="item" />
+                            <el-checkbox
+                              size="small"
+                              :value="item"
+                              :label="
+                                item +
+                                ([...selectedChildren, ...unselectedChildren].includes(item)
+                                  ? ' * '
+                                  : '')
+                              "
+                              @change="updateChildrenData(item)"
+                            />
                           </div>
                         </el-checkbox-group>
                       </el-scrollbar>
@@ -114,8 +125,8 @@ License: AGPL-3.0
                       type="success"
                       data-testid="addChildren"
                       :disabled="config.read_only"
-                      @click="addChildren(node.label)"
-                      >{{ $t('add') }}</el-button
+                      @click="changeChildren(node)"
+                      >{{ $t('update') }}</el-button
                     >
                   </template>
                   <template v-else-if="['client-delete', 'product-delete'].includes(action)">
@@ -229,7 +240,11 @@ License: AGPL-3.0
   const isLoading = ref<boolean>(true)
   const fetchedData = ref<Array<any>>([])
   const idList = ref<T_ProductIds | T_ClientIds>([])
+  const originallySelectedChildren = ref<Array<any>>([])
+  const allSelectedChildren = ref<Array<any>>([])
   const selectedChildren = ref<Array<any>>([])
+  const unselectedChildren = ref<Array<any>>([])
+
   const selectedGroups = ref<Array<any>>([])
   const firstlevelkeys = ref<string[]>([])
   const treeProps = {
@@ -238,15 +253,15 @@ License: AGPL-3.0
     class: customNodeClass,
   }
   const createGroup = reactive<{ [k: string]: string }>({
-    parentGroupId: '', // for i18n check: $t('table.fields.parentGroupId')
-    groupId: '', // for i18n check: $t('table.fields.groupId')
-    description: '', // for i18n check: $t('table.fields.description')
-    notes: '', // for i18n check: $t('table.fields.notes')
+    parentGroupId: '',
+    groupId: '',
+    description: '',
+    notes: '',
   })
   const editgroup = reactive<{ [k: string]: string }>({
-    parent: '', // for i18n check: $t('table.fields.parent')
-    description: '', // for i18n check: $t('table.fields.description')
-    notes: '', // for i18n check: $t('table.fields.notes')
+    parent: '',
+    description: '',
+    notes: '',
   })
 
   const debouncedFetchClientGroups = debounce(fetchClientGroups, 300)
@@ -289,6 +304,36 @@ License: AGPL-3.0
     searchForAttribute(fetchedData.value, 'type', 'ProductGroup', 'text', groupNames)
     return groupNames
   })
+  function initChildrenData(node: any) {
+    unselectedChildren.value = []
+    selectedChildren.value = []
+    allSelectedChildren.value = node.children
+      .map((child: any) => (child.type == 'ObjectToGroup' ? child.text : undefined))
+      .filter((item: string | undefined) => item !== undefined)
+    originallySelectedChildren.value = [...allSelectedChildren.value]
+  }
+  function updateChildrenData(item: string) {
+    const checkedOrigin = originallySelectedChildren.value.includes(item)
+    const checkedNew = allSelectedChildren.value.includes(item)
+    if ((checkedOrigin && checkedNew) || (!checkedOrigin && !checkedNew)) {
+      // just remove from changes lists, cause nothing to do
+      selectedChildren.value = selectedChildren.value.filter((i) => i !== item)
+      unselectedChildren.value = unselectedChildren.value.filter((i) => i !== item)
+    } else if (checkedOrigin && !checkedNew) {
+      // unselect: if item was selected before and is not selected anymore, remove from selectedChildren
+      selectedChildren.value = selectedChildren.value.filter((i) => i !== item)
+      if (!unselectedChildren.value.includes(item)) {
+        unselectedChildren.value.push(item)
+      }
+    } else if (!checkedOrigin && checkedNew) {
+      // select: if item was not selected before and is selected now, add to selectedChildren
+      if (!selectedChildren.value.includes(item)) {
+        selectedChildren.value.push(item)
+      }
+      unselectedChildren.value = unselectedChildren.value.filter((i) => i !== item)
+    }
+  }
+
   function searchForAttribute(
     data: Array<any>,
     attribute: string,
@@ -372,7 +417,7 @@ License: AGPL-3.0
       `/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`
     )
     if (error || !data.value) return
-    fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups)
+    fetchedData.value = groupsHelper.transformToNestedArray(data.value.groups.children) // oder doch ohne children?
   }
 
   async function fetchProductList() {
@@ -411,26 +456,25 @@ License: AGPL-3.0
     }
   }
 
-  async function addChildren(selectedGroup: string) {
+  async function addChildren(selectedGroup: string, refetch: boolean = true) {
     const url =
       props.data.category === 'client-group'
         ? `/opsidata/hosts/groups/${selectedGroup}/clients`
         : `/opsidata/products/groups/${selectedGroup}/products`
-    try {
-      const { error } = await useApiPOSTkwargs(url, {
-        showError: false,
-        body: selectedChildren.value,
-      })
-      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
-      notifySuccess({
-        message: $t('message.successfullyAddedClientsToGroup', {
-          group: selectedGroup,
-        }),
-      })
-      await refetchGroup()
-    } catch (err) {
-      notifyError({ message: (err as Error).message })
-    }
+
+    const { error } = await useApiPOSTkwargs(url, {
+      showError: false,
+      body: selectedChildren.value,
+    })
+    if (error) return
+
+    notifySuccess({
+      message: $t('message.successfullyAddedClientsToGroup', {
+        group: selectedGroup,
+      }),
+    })
+    selectedChildren.value = []
+    if (refetch) await refetchGroup()
   }
 
   async function deleteAllChildren(selectedGroup: string) {
@@ -481,25 +525,42 @@ License: AGPL-3.0
       notifyError({ message: (err as Error).message })
     }
   }
-
-  async function deleteObjectToGroup(selectedChild: string, parent: string) {
+  async function changeChildren(node: any) {
+    await addChildren(node.label, false)
+    const unselectSuccess = []
+    for (const child of unselectedChildren.value) {
+      await deleteObjectToGroup(child, node.label, false)
+      unselectSuccess.push(child)
+    }
+    for (const child of unselectSuccess) {
+      const index = unselectedChildren.value.indexOf(child)
+      if (index > -1) {
+        unselectedChildren.value.splice(index, 1)
+      }
+    }
+    await refetchGroup()
+    originallySelectedChildren.value = [...allSelectedChildren.value]
+  }
+  async function deleteObjectToGroup(
+    selectedChild: string,
+    parent: string,
+    refetch: boolean = true
+  ) {
     const url =
       props.data.category === 'client-group'
         ? `/opsidata/clients/${selectedChild}/groups`
         : `/opsidata/products/groups/${parent}/${selectedChild}`
     const body = props.data.category === 'client-group' ? [parent] : {}
-    try {
-      const { error } = await useApiDELETEkwargs(url, { body: body, showError: false })
-      if (error) throw new Error(error?.response?.data?.message || 'Unknown error')
-      notifySuccess({
-        message: $t('message.successfullyDeletedClientFromGroup', {
-          client: selectedChild,
-        }),
-      })
-      await refetchGroup()
-    } catch (err) {
-      notifyError({ message: (err as Error).message })
-    }
+
+    const { error } = await useApiDELETEkwargs(url, { body: body, showError: false })
+    if (error) return
+
+    notifySuccess({
+      message: $t('message.successfullyDeletedClientFromGroup', {
+        client: selectedChild,
+      }),
+    })
+    if (refetch) await refetchGroup()
   }
 
   async function updateGroup(selectedGroup: string) {

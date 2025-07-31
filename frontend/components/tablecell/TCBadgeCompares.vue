@@ -11,36 +11,38 @@ License: AGPL-3.0
       :id="`TCBadgeCompares_${type}_hover_${rowid}`"
       class="TCBadgeCompares"
       data-testid="TCBadgeCompares"
-      @mouseenter="op.toggle"
-      @mouseleave="op.toggle"
     >
-      <TablecellTCProductInstallationStatus
-        v-if="type == 'installationStatus' && gettext == MIXED"
-        :text="gettext"
-        :variant="getvariant"
-      />
-      <TablecellTCProductInstallationStatus
-        v-else-if="type == 'installationStatus'"
-        :text="gettext"
-        :variant="getvariant"
-      />
+      <TooltipTTooltip>
+        <template #tooltip>
+          <TooltipCell />
+        </template>
+        <TablecellTCProductInstallationStatus
+          v-if="type == 'installationStatus' && gettext == MIXED"
+          :text="gettext"
+          :variant="getvariant"
+        />
+        <TablecellTCProductInstallationStatus
+          v-else-if="type == 'installationStatus'"
+          :text="gettext"
+          :variant="getvariant"
+        />
 
-      <TablecellTCProductActionResult
-        v-else-if="type == 'actionResult' && gettext == MIXED"
-        :text="gettext"
-        :variant="getvariant"
-      />
-      <TablecellTCProductActionResult
-        v-else-if="type == 'actionResult'"
-        :text="gettext"
-        :variant="getvariant"
-      />
-
-      <el-tag v-else>
-        <el-text>{{ gettext }}</el-text>
-      </el-tag>
+        <TablecellTCProductActionResult
+          v-else-if="type == 'actionResult' && gettext == MIXED"
+          :text="gettext"
+          :variant="getvariant"
+        />
+        <TablecellTCProductActionResult
+          v-else-if="type == 'actionResult'"
+          :text="gettext"
+          :variant="getvariant"
+        />
+        <el-tag v-else>
+          <el-text>{{ gettext }}</el-text>
+        </el-tag>
+      </TooltipTTooltip>
     </div>
-    <PPopover ref="op"> <TooltipCell /> </PPopover>
+    <!--<PPopover ref="op"> <TooltipCell /> </PPopover>-->
   </div>
 </template>
 
@@ -50,7 +52,6 @@ License: AGPL-3.0
   const $t = useI18n().t
 
   const MIXED = $t('mixed')
-  const op = ref()
 
   const props = defineProps({
     rowid: { type: String, default: '' },

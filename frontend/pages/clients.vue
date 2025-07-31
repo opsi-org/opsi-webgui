@@ -15,21 +15,20 @@ License: AGPL-3.0
     :classfirstcol="'col-main-visible-' + splitviewVisibilityClienttable"
   >
     <template #default>
-      <el-tooltip :content="$t('showOrHideClientTable')" placement="top">
-        <el-button
-          class="float-right"
-          v-if="routeName.startsWith('clients-products') && routeNameSettings?.page1Condition"
-          @click="toggleClientstableVisibility"
-        >
-          <IconIIcon
-            :icon="
-              splitviewVisibilityClienttable
-                ? icons.toggleVisibilityLeft
-                : icons.toggleVisibilityRight
-            "
-          />
-        </el-button>
-      </el-tooltip>
+      <el-button
+        class="float-right"
+        :title="$t('showOrHideClientTable')"
+        v-if="routeName.startsWith('clients-products') && routeNameSettings?.page1Condition"
+        @click="toggleClientstableVisibility"
+      >
+        <IconIIcon
+          :icon="
+            splitviewVisibilityClienttable
+              ? icons.toggleVisibilityLeft
+              : icons.toggleVisibilityRight
+          "
+        />
+      </el-button>
       <!-- using if-statement (v-if=splitviewVisibilityClienttable) would rerender clients again.. class simply toggle visibility of html part -->
       <ViewVClients
         :class="{ hidden: !splitviewVisibilityClienttable }"

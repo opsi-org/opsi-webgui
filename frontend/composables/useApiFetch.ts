@@ -103,14 +103,12 @@ async function useAPI2<T>(
       options.method = method
       options.body = fullBody
       options.baseURL = baseUrl
-      // options.query = query
       options.headers = headers
       options.key = Date.now()
       // console.log('onRequest', request, options)
     },
     onRequestError({ response, error }: any) {
       // Handle the request errors
-      // console.error('onRequestError', error)
       callerror.value = {
         response: { data: { class: '', message: String(error) } },
       }
@@ -127,7 +125,6 @@ async function useAPI2<T>(
       callheaders = _checkUsername(response.headers, fullURL, response.status)
     },
     onResponse({ response }) {
-      // console.log('onResponse', response)
       // Process the response data
       callresponse.value = response._data || response.body || {}
       callheaders = response.headers
@@ -136,7 +133,6 @@ async function useAPI2<T>(
       callheaders = _checkUsername(callheaders, fullURL, status)
       pendingState.value = false
     },
-    // onResponseError(context) {
     onResponseError({ response }) {
       // Handle the response errors
       console.error('onResponseError response ', response)
@@ -146,9 +142,11 @@ async function useAPI2<T>(
             class: response?._data?.class,
             message: response?._data?.message,
             // message: response?._data?.message,
-            details: response?._data?.details,
           },
         },
+      }
+      if (response?._data?.details) {
+        callerror.value.response.data.details = response._data.details
       }
       pendingState.value = false
       status = response.status
@@ -161,7 +159,6 @@ async function useAPI2<T>(
         notifyError({
           title: callerror.value.response?.data?.class,
           message: rest,
-          //details: callerror.value.response?.data?.details,
         })
       }
       // if status is 401

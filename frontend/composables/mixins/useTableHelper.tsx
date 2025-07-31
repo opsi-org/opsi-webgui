@@ -34,8 +34,26 @@ export const useTableHelper = (
   const isLoading = ref(false)
   const filterQuery = ref('')
   const filterBy = ref(props.rowId)
-  const sortBy = ref(props.sortBy || props.rowId)
-  const sortDesc = ref(props.sortDesc || false)
+  function isArrayNormalized(object: string | string[]): boolean {
+    if (Array.isArray(object)) return true
+    try {
+      // Wenn es ein "string" ist – z.B. '["foo", "bar"]' oder "foo,bar"
+      const parsed = JSON.parse(object)
+      return Array.isArray(parsed) && parsed.every((item) => typeof item === 'string')
+    } catch {
+      // kein JSON – ignorieren
+    }
+    // Wenn Komma-separierter String: "foo,bar" => ["foo", "bar"]
+    if (typeof object === 'string' && object.includes(',')) {
+      return object.split(',').every((s) => typeof s.trim() === 'string')
+    }
+    // Single-String fallback
+    return typeof object === 'string' && object.length > 0
+  }
+
+  const sortByWrapper = ref<string>(props.sortBy || props.rowId)
+  const sortDescWrapper = ref<boolean>(JSON.parse(String(props.sortDesc).toLowerCase()) || false)
+
   const contextMenuVisible = ref(false)
   const contextMenuStyle = ref({})
   const contextMenuRow = ref(null)
@@ -59,16 +77,29 @@ export const useTableHelper = (
   )
   watch(
     [() => filterQuery.value],
-    () => {
+    (after, before) => {
+      if (before.length <= 0 && after.length > 0 && after[0] === '') return
       fetchDataWrapper()
     },
-    { immediate: true }
+    {
+      immediate: true,
+    }
   )
   watch(
     () => props.sortBy,
     () => {
-      if (props.sortBy !== sortBy.value) {
-        sortBy.value = props.sortBy || props.rowId
+      if (props.sortBy !== sortByWrapper.value) {
+        sortByWrapper.value = props.sortBy || props.rowId
+        // if is not array, and does not have "," or "[", "]" store
+        if (!isArrayNormalized(props.sortBy)) {
+          storeTablesettings().setSortColumn(
+            props.tableId,
+            props.sortBy || props.rowId,
+            props.sortDesc || false
+          )
+        }
+
+        //storeT.setSortColumn(props.tableId, sortBy.value, sortDesc.value)
         fetchDataWrapper()
       }
     }
@@ -76,20 +107,29 @@ export const useTableHelper = (
   watch(
     () => props.sortDesc,
     () => {
-      if (props.sortDesc !== sortDesc.value) {
-        sortDesc.value = props.sortDesc || false
+      const propSortDesc = JSON.parse(String(props.sortDesc).toLowerCase()) || false
+      if (propSortDesc !== sortDescWrapper.value) {
+        sortDescWrapper.value = propSortDesc || false
         fetchDataWrapper()
       }
     }
   )
+  /*watch(
+    () => storeTSettings.productsSorting,
+    () => {
+      sortByWrapper.value = storeTSettings.productsSorting.column
+      sortDescWrapper.value = storeTSettings.productsSorting.isDesc
+    },
+    { deep: true }
+  )*/
 
   function prepareParams() {
     const params: any = {}
-    if (sortBy.value) params.sortBy = sortBy.value
+    if (sortByWrapper.value) params.sortBy = sortByWrapper.value
     if (filterQuery.value) params.filterQuery = filterQuery.value
     if (currentPage.value) params.pageNumber = currentPage.value
     if (pageSize.value) params.perPage = pageSize.value
-    params.sortDesc = sortDesc.value ? true : false
+    params.sortDesc = sortDescWrapper.value ? true : false
     return params
   }
   async function fetchDataWrapper() {
@@ -106,8 +146,6 @@ export const useTableHelper = (
         return
       } else if (res.total >= 0) {
         totalItems.value = res.total
-        // isFirstPage.value = currentPage.value == 1
-        // isLastPage.value = currentPage.value * pageSize.value >= res.total
         if (res.total > 0) {
           const pageExists = currentPage.value <= Math.ceil(res.total / pageSize.value)
           if (!pageExists) {
@@ -268,28 +306,65 @@ export const useTableHelper = (
   function applyFilter(columnKey: string) {
     filterBy.value = columnKey
   }
+  function updateRoute(
+    paramKey: string,
+    paramValue: any,
+    return_new_url: boolean = false,
+    url: string | undefined = undefined
+  ): string | undefined {
+    let fullRoute = router.currentRoute.value.fullPath
+    if (url) {
+      fullRoute = url
+    }
+    if (fullRoute.includes(paramKey)) {
+      //const newFullUrl = fullRoute.replace(/sortBy=[^&]+/, `sortBy=${columnKey}`)
+      const newFullUrl = fullRoute.replace(
+        new RegExp(`${paramKey}=[^&]*`),
+        `${paramKey}=${paramValue}`
+      )
+      if (return_new_url) {
+        return newFullUrl
+      }
+      router.push(newFullUrl)
+      return 'ok'
+    }
+    return undefined
+  }
 
   function applySort(columnKey: string) {
-    sortBy.value = columnKey
-    // console.error('Sort By', sortBy.value)
-
+    sortByWrapper.value = columnKey
+    if (props.tableId == 'products') {
+      updateRoute('sortBy', columnKey)
+    }
     fetchDataWrapper()
   }
 
   function handleSortChange({ prop, order }: { column: any; prop: string; order: any }) {
-    sortBy.value = prop
-    sortDesc.value = order === 'descending'
-
+    sortByWrapper.value = prop
+    sortDescWrapper.value = order === 'descending'
+    if (props.tableId == 'products') {
+      const url = updateRoute('sortBy', prop, true)
+      updateRoute('sortDesc', sortDescWrapper.value, false, url)
+    }
     fetchDataWrapper()
   }
 
   function toggleSortOrder() {
-    sortDesc.value = !sortDesc.value
+    sortDescWrapper.value = !sortDescWrapper.value
 
+    if (props.tableId == 'products') {
+      updateRoute('sortDesc', sortDescWrapper.value)
+    }
     fetchDataWrapper()
   }
   function onRowClick(row: any, column: any, event: any) {
     if (['svg', 'button', 'path', 'span'].includes(event.target?.localName)) {
+      return
+    }
+    if (
+      event.target?.offsetParent?.classList !== undefined &&
+      Array.from(event.target?.offsetParent?.classList).includes('p-select')
+    ) {
       return
     }
     $emit('selectionChanged', row[props.rowId])
@@ -322,42 +397,38 @@ export const useTableHelper = (
   }
   const ActionsRenderer = (attributes: any): VNode => {
     const rowData = attributes['row-data'] || attributes.rowData
-    // const colData = attributes['col-data'] || attributes.colData
     return (
       <div>
         {props.actionConfig ? (
-          <el-tooltip content={$t('configuration')} placement="top">
-            <el-button
-              link
-              onClick={() => handleConfigClick(rowData)}
-              class={activeButton.value === 'config-' + rowData.clientId ? 'is-active' : ''}
-            >
-              <IIcon icon={icons.settings} />
-            </el-button>
-          </el-tooltip>
+          <el-button
+            link
+            title={$t('configuration')}
+            onClick={() => handleConfigClick(rowData)}
+            class={activeButton.value === 'config-' + rowData.clientId ? 'is-active' : ''}
+          >
+            <IIcon icon={icons.settings} />
+          </el-button>
         ) : null}
         {props.actionLog ? (
-          <el-tooltip content={$t('logs')} placement="top">
-            <el-button
-              link
-              onClick={() => handleLogClick(rowData)}
-              class={activeButton.value === 'log-' + rowData.clientId ? 'is-active' : ''}
-            >
-              <IIcon icon={icons.log} />
-            </el-button>
-          </el-tooltip>
+          <el-button
+            link
+            title={$t('logs')}
+            onClick={() => handleLogClick(rowData)}
+            class={activeButton.value === 'log-' + rowData.clientId ? 'is-active' : ''}
+          >
+            <IIcon icon={icons.log} />
+          </el-button>
         ) : null}
         {props.actionClone ? (
-          <el-tooltip content={$t('clone')} placement="top">
-            <el-button
-              link
-              disabled={storeConfigapp().config?.read_only}
-              onClick={() => handleCloneClick(rowData)}
-              class={activeButton.value === 'clone-' + rowData.clientId ? 'is-active' : ''}
-            >
-              <IIcon icon={icons.client} />
-            </el-button>
-          </el-tooltip>
+          <el-button
+            link
+            title={$t('clone')}
+            disabled={storeConfigapp().config?.read_only}
+            onClick={() => handleCloneClick(rowData)}
+            class={activeButton.value === 'clone-' + rowData.clientId ? 'is-active' : ''}
+          >
+            <IIcon icon={icons.client} />
+          </el-button>
         ) : null}
 
         {props.hasClientActions ? (
@@ -449,9 +520,8 @@ export const useTableHelper = (
   return {
     isLoading,
     filterQuery,
-    // filterBy,
-    sortBy,
-    sortDesc,
+    sortByWrapper,
+    sortDescWrapper,
     contextMenuVisible,
     contextMenuStyle,
     contextMenuRow,
@@ -461,9 +531,6 @@ export const useTableHelper = (
     showContextMenu,
     handleClickOutside,
     debouncedHandleScroll,
-    // _scrollUp,
-    // _scrollDown,
-    // handleScroll,
     scrollToTopOfTable,
     handleCommand,
     handlePagination,
@@ -475,7 +542,6 @@ export const useTableHelper = (
     handleSortChange,
     toggleSortOrder,
     onRowClick,
-
     CellRenderer,
     HeaderCellRenderer,
     Details,

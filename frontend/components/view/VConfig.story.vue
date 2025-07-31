@@ -18,7 +18,7 @@ License: AGPL-3.0
 <template>
   <Story :setup-app="init">
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <ViewVHostConfig type="servers" :id="store.selectionDepots[0]" />
+      <ViewVConfigHost type="servers" :id="store.selectionDepots[0]" />
     </Variant>
   </Story>
 </template>

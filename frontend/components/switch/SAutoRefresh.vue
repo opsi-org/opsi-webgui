@@ -6,31 +6,22 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <TooltipTTooltip>
-    <template #tooltip>
-      {{ $t('message.autoRefresh') }}
-    </template>
-    <template #default>
-      <PFloatLabel v-if="props.type === 'checkbox'" variant="in">
-        <PToggleSwitch
-          v-model="msgbusAutoRefresh"
-          id="cbAutorefresh"
-          name="autorefresh"
-          :aria-label="
-            'Switch auto-refresh mode. Currently is ' + (msgbusAutoRefresh ? 'on' : 'off')
-          "
-          style="--p-toggleswitch-width: 5rem"
-          v-bind="$props"
-        />
-        <label
-          for="cbAutorefresh"
-          class="text-xs text-white !pb-1"
-          :class="msgbusAutoRefresh ? '' : 'pl-4'"
-          >{{ msgbusAutoRefresh ? $t('autoRefresh') : $t('ask') }}</label
-        >
-      </PFloatLabel>
-    </template>
-  </TooltipTTooltip>
+  <PFloatLabel v-if="props.type === 'checkbox'" variant="in" :title="$t('message.autoRefresh')">
+    <PToggleSwitch
+      v-model="msgbusAutoRefresh"
+      id="cbAutorefresh"
+      name="autorefresh"
+      :aria-label="'Switch auto-refresh mode. Currently is ' + (msgbusAutoRefresh ? 'on' : 'off')"
+      style="--p-toggleswitch-width: 5rem"
+      v-bind="$props"
+    />
+    <label
+      for="cbAutorefresh"
+      class="text-xs text-white !pb-1"
+      :class="msgbusAutoRefresh ? '' : 'pl-4'"
+      >{{ msgbusAutoRefresh ? $t('autoRefresh') : $t('ask') }}</label
+    >
+  </PFloatLabel>
 </template>
 
 <script setup lang="ts">

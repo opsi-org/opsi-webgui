@@ -7,11 +7,9 @@ License: AGPL-3.0
 -->
 <template>
   <div>
-    <TooltipTTooltip :content="$t('productQuickActions')">
-      <el-button plain @click="popoverVisible = true">
-        <IconIIcon :icon="icon.product" />
-      </el-button>
-    </TooltipTTooltip>
+    <el-button plain @click="popoverVisible = true" :title="$t('productQuickActions')">
+      <IconIIcon :icon="icon.product" />
+    </el-button>
     <el-dialog v-model="popoverVisible">
       <template #header>
         <h5>{{ $t('productQuickActions') }}</h5>

@@ -16,7 +16,12 @@ export const useSaveParameters = (_t: any = undefined) => {
   const delFromChangesHostParam = storeChanges().delFromChangesHostParam
   const pushToErrorsHostParam = storeErrors().pushToErrorsHostParam
 
-  async function saveParameters(url: string, request: any, deleteitem: any, showalert: boolean) {
+  async function saveParameters(
+    url: string,
+    request: any,
+    deleteitem: any,
+    showalert: boolean
+  ): Promise<boolean> {
     const { error } = await useApiPOSTkwargs(url, { body: request, showError: showalert })
     if (error) {
       if (!showalert) {
@@ -24,7 +29,7 @@ export const useSaveParameters = (_t: any = undefined) => {
         errorObj.error = error?.response?.data
         pushToErrorsHostParam(errorObj)
       }
-      return
+      return false
     }
 
     if (deleteitem) {
@@ -32,6 +37,7 @@ export const useSaveParameters = (_t: any = undefined) => {
     } else {
       notifySuccess({ message: t('message.successfullySavedHostParameters') })
     }
+    return true
   }
   return {
     delFromChangesHostParam,

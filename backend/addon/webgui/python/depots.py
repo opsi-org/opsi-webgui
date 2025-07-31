@@ -21,8 +21,8 @@ from .utils import (
 	backend,
 	depot_access_configured,
 	filter_depot_access,
-	get_allowed_clients,
 	get_allowed_depots,
+	get_allowed_group_objects,
 	get_username,
 	host_group_access_configured,
 	mysql,
@@ -179,7 +179,7 @@ def clients_on_depots(
 		clients = []  # pylint: disable=redefined-outer-name
 		username = get_username()
 		if user_register() and host_group_access_configured(username):
-			allowed_clients = get_allowed_clients(username)
+			allowed_clients = get_allowed_group_objects(username, "HostGroup")
 			for row in result:
 				if row is not None and dict(row).get("client") and dict(row).get("client") in allowed_clients:
 					clients.append(dict(row).get("client"))

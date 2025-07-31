@@ -30,6 +30,7 @@ License: AGPL-3.0
           v-if="path[1] === 'products'"
           :product-type="path[2]"
           :is-child="true"
+          :is-mobile="isMobile"
           v-bind="route.query"
         />
       </template>
@@ -40,6 +41,7 @@ License: AGPL-3.0
   </div>
 </template>
 <script setup lang="ts">
+  const mq = useMQ()
   const route = useRoute()
   const router = useRouter()
   const icons = useIcons()
@@ -53,6 +55,6 @@ License: AGPL-3.0
   })
 
   const isMobile = computed(() => {
-    return useMQ().isMobile.value
+    return mq.isMobile.value
   })
 </script>

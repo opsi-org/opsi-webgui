@@ -211,3 +211,9 @@ License: AGPL-3.0
     }
   })
 </script>
+
+<style scoped>
+  :deep(.el-form-item__label) {
+    line-height: normal;
+  }
+</style>
