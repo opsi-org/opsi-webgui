@@ -549,7 +549,7 @@ async def host_control_process_action(request: Request, data: ProcessActionRPC) 
 	Run process action on clients
 	"""
 	try:
-		result = backend.hostControl_processActionRequests(
+		result = await backend.hostControl_processActionRequests(
 			hostIds=data.client_ids, productIds=data.product_ids or [], visibility=data.visibility or ""
 		)
 	except Exception as err:  # pylint: disable=broad-except
