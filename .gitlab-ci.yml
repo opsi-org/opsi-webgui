@@ -670,10 +670,6 @@ build:zip:dev: # with transifex
     - echo "builing opsi-webgui-dev.zip"
     - frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)\" no-install
     - ls -lah webgui-dev # debug
-  only:
-    - tags
-    - v5
-    - ci/zip-dev
   artifacts:
     name: 'opsi-webgui-dev'
     paths:
