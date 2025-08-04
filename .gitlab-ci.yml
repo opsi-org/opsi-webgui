@@ -650,7 +650,6 @@ build:zip: # with transifex
     paths:
       - frontend/locale
       - webgui
-      - webgui-dev
     expire_in: 7 day
 
 build:zip:dev: # with transifex
