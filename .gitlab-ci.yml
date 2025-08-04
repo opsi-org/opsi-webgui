@@ -233,6 +233,7 @@ init:transifex-down:
   only:
     - tags
     - v5
+    - ci/zip-dev
   artifacts:
     paths:
       - frontend/locale
@@ -249,6 +250,7 @@ init:changelogs:
   only:
     - tags
     - v5
+    - ci/zip-dev
   artifacts:
     name: 'opsi-webgui-changelogs'
     paths:
