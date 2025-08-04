@@ -50,7 +50,7 @@
   "column": "Column",
   "columnSelection": "Column Selection",
   "conditions": "Conditions",
-  "conditions.help": "Conditions are combined using a logical 'OR'. Example: Installation status is 'unknown', action result is 'successful', or product version is outdated.",
+  "conditions.help": "Conditions are combined using a logical 'OR'. Example: Installation status is 'unknown' OR action result is 'successful' OR product version is outdated.",
   "configValues": "Config Values",
   "config_files": "Config Files",
   "configs": "Configs",
