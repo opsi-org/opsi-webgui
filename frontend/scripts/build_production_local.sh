@@ -115,21 +115,9 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
     echo ""
     echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
 elif [ "$INSTALL" = "$SHOULD_KEEP_DATA_UIFOLDER" ]; then
-    # move $(pwd)/${ADDON_ID} to working directory
+    # move $(pwd)/${ADDON_ID} to working directory (used in cicd)
     mv -f ${ADDON_ID}/ ${WORKING_DIR}/${ADDON_ID}/ || exit 36
     echo "> local install skipped, but data folder kept in ${WORKING_DIR}/${ADDON_ID}"
-#elif [ "$INSTALL" = "$SHOULD_INSTALL_USR" ]; then
-#    port=4447
-#    echo ".....install locally in ${PATH_USR}/${ADDON_ID}"
-#    rm -rf ${PATH_USR}"/${ADDON_ID} || exit 23
-#    mv -f ${ADDON_ID}/ ${PATH_USR}"/. || exit 35
-#    git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 72
-#    echo "> local install done in ${PATH_USR}"
-#
-#    # docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload
-#    #CONTAINER=$(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
-#    echo "> IMPORTANT: please restart opsiconfd"
-#    #docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
 else
     port="-1"
     echo "> local install skipped. Please upload the ZIP file to your opsi server and install it manually."
