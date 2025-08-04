@@ -626,7 +626,7 @@ build:zip: # with transifex
     - *install_dev_cli
     - pwd && ls -la frontend
     - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) no-install
-    - ls -lah frontend/webgui # debug
+    - ls -lah webgui # debug
     #- cd frontend # generate dist
     #- ls -lah locale
     #- npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
@@ -650,7 +650,7 @@ build:zip: # with transifex
     name: 'opsi-webgui'
     paths:
       - frontend/locale
-      - frontend/webgui
+      - webgui
     expire_in: 7 day
 
 build:zip:dev: # with transifex
@@ -668,12 +668,12 @@ build:zip:dev: # with transifex
     # current dir is <project_path>/
     - echo "builing opsi-webgui-dev.zip"
     - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui-dev Webgui-Dev $(pwd) no-install
-    - ls -lah frontend/webgui-dev # debug
+    - ls -lah webgui-dev # debug
   artifacts:
     name: 'opsi-webgui-dev'
     paths:
       - frontend/locale
-      - frontend/webgui-dev
+      - webgui-dev
     expire_in: 7 day
 
 #########################################################################
