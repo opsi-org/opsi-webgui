@@ -43,6 +43,18 @@ cleanup() {
 trap cleanup EXIT
 trap cleanup ERR
 
+## check if working directory is set correctly (includes frontend and backend)
+echo "> check working directory: ${WORKING_DIR}"
+if [ -z "$WORKING_DIR" ]; then
+    echo "WORKING_DIR is not set. Please provide the working directory as the third argument."
+    exit 1
+fi
+if [ ! -d "${WORKING_DIR}/${FRONTEND_DIR}" ] || [ ! -d "${WORKING_DIR}/${BACKEND_DIR}" ]; then
+    echo "WORKING_DIR does not contain the required frontend and backend directories."
+    exit 2
+fi
+
+
 #### change owner of working directory
 sudo chown 1000:1000 -R ${WORKING_DIR} || exit 90
 
@@ -86,8 +98,8 @@ zip -r -q opsi-${ADDON_ID}.zip ${ADDON_ID}  || exit 61
 sudo chown $(whoami):$(whoami) opsi-${ADDON_ID}.zip || exit 52
 
 echo "> packaging done: $(pwd)/opsi-${ADDON_ID}.zip"
-RES=cat "$(pwd)/${ADDON_ID}" || exit 62
-echo "> cat ${ADDON_ID} done: ${RES}"
+RES=pwd "$(pwd)/${ADDON_ID}" || exit 62
+echo "> pwd ${ADDON_ID} done: ${RES}"
 
 echo "> check if also install locally: ${INSTALL}"
 port=0000
@@ -105,7 +117,9 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
     echo ""
     echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
 elif [ "$INSTALL" = "$SHOULD_KEEP_DATA_UIFOLDER" ]; then
-    echo ".....keep data folder in ${PATH_DATA}/${ADDON_ID}"
+    # move $(pwd)/${ADDON_ID} to working directory
+    mv -f ${ADDON_ID}/ ${WORKING_DIR}/${ADDON_ID}/ || exit 36
+    echo "> local install skipped, but data folder kept in ${WORKING_DIR}/${ADDON_ID}"
 #elif [ "$INSTALL" = "$SHOULD_INSTALL_USR" ]; then
 #    port=4447
 #    echo ".....install locally in ${PATH_USR}/${ADDON_ID}"
