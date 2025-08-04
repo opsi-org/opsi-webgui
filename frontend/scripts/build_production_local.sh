@@ -98,8 +98,6 @@ zip -r -q opsi-${ADDON_ID}.zip ${ADDON_ID}  || exit 61
 sudo chown $(whoami):$(whoami) opsi-${ADDON_ID}.zip || exit 52
 
 echo "> packaging done: $(pwd)/opsi-${ADDON_ID}.zip"
-RES=pwd "$(pwd)/${ADDON_ID}" || exit 62
-echo "> pwd ${ADDON_ID} done: ${RES}"
 
 echo "> check if also install locally: ${INSTALL}"
 port=0000
