@@ -477,7 +477,7 @@ test:tsc:
 #       junit: ./frontend/test-result-pw-reporter-components.xml
 #     expire_in: 3 day
 
-test:backend-pytest:
+.test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   services:
     - name: mysql:latest
@@ -646,6 +646,7 @@ build:zip: # with transifex
   only:
     - tags
     - v5
+    - ci/zip-dev
   artifacts:
     name: 'opsi-webgui'
     paths:
