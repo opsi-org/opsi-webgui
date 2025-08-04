@@ -5,13 +5,13 @@
 # wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
 # tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
-
 # IMPORTANT: NAME OF ADDON (default: webgui)
 ADDON_ID=$1
 ADDON_NAME=$2
 
 WORKING_DIR=$3
 INSTALL=$4
+SHOULD_KEEP_DATA_UIFOLDER=no-install
 SHOULD_INSTALL_DATA=install
 SHOULD_INSTALL_USR=installusr
 PATH_DATA="/data/opsiconfd/addons"
@@ -42,6 +42,18 @@ cleanup() {
 
 trap cleanup EXIT
 trap cleanup ERR
+
+## check if working directory is set correctly (includes frontend and backend)
+echo "> check working directory: ${WORKING_DIR}"
+if [ -z "$WORKING_DIR" ]; then
+    echo "WORKING_DIR is not set. Please provide the working directory as the third argument."
+    exit 1
+fi
+if [ ! -d "${WORKING_DIR}/${FRONTEND_DIR}" ] || [ ! -d "${WORKING_DIR}/${BACKEND_DIR}" ]; then
+    echo "WORKING_DIR does not contain the required frontend and backend directories."
+    exit 2
+fi
+
 
 #### change owner of working directory
 sudo chown 1000:1000 -R ${WORKING_DIR} || exit 90
@@ -84,6 +96,7 @@ chown $(whoami):$(whoami) -R ${ADDON_ID}/*  || exit 51
 sudo apt install -y zip  || exit 60
 zip -r -q opsi-${ADDON_ID}.zip ${ADDON_ID}  || exit 61
 sudo chown $(whoami):$(whoami) opsi-${ADDON_ID}.zip || exit 52
+
 echo "> packaging done: $(pwd)/opsi-${ADDON_ID}.zip"
 
 echo "> check if also install locally: ${INSTALL}"
@@ -99,25 +112,18 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
     CONTAINER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
     echo "> reload supervisorctl in container: $CONTAINER"
     sudo docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
-#elif [ "$INSTALL" = "$SHOULD_INSTALL_USR" ]; then
-#    port=4447
-#    echo ".....install locally in ${PATH_USR}/${ADDON_ID}"
-#    rm -rf ${PATH_USR}"/${ADDON_ID} || exit 23
-#    mv -f ${ADDON_ID}/ ${PATH_USR}"/. || exit 35
-#    git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 72
-#    echo "> local install done in ${PATH_USR}"
-#
-#    # docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload
-#    #CONTAINER=$(docker ps --format "{{.Names}}" | grep gui | grep server | grep opsi)
-#    echo "> IMPORTANT: please restart opsiconfd"
-#    #docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
+    echo ""
+    echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
+elif [ "$INSTALL" = "$SHOULD_KEEP_DATA_UIFOLDER" ]; then
+    # move $(pwd)/${ADDON_ID} to working directory (used in cicd)
+    mv -f ${ADDON_ID}/ ${WORKING_DIR}/${ADDON_ID}/ || exit 36
+    echo "> local install skipped, but data folder kept in ${WORKING_DIR}/${ADDON_ID}"
 else
     port="-1"
     echo "> local install skipped. Please upload the ZIP file to your opsi server and install it manually."
 fi
 
 echo ""
-echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
 echo "IMPORTANT: ZIP file created: $(pwd)/opsi-${ADDON_ID}.zip"
 echo ""
 cd -

@@ -22,6 +22,7 @@ License: AGPL-3.0
       {{ $t('message.serverWriteAccessDisabled') }}
     </el-alert>
     <div class="overflow-y-auto tree-table-container" :style="`max-height: ${maxVisibleHeight}px;`">
+      <p-input-text v-model="filter" :placeholder="$t('search')" class="w-full" />
       <p-tree-table
         ref="configTree"
         column-resize-mode="fit"
@@ -281,6 +282,7 @@ License: AGPL-3.0
   const lastCMItem = ref<any>()
   const isLoading = ref(false)
   const fetchedData = ref<TreeNode[] | undefined>()
+  const filter = ref<string>('')
   const itemValues = ref<{ [key: string]: any }>({})
   const initialValues = ref<{ [key: string]: any }>({})
   const hasUnsavedChanges = ref(false)
@@ -449,6 +451,12 @@ License: AGPL-3.0
   onMounted(fetchFormData)
 
   watch(() => props.id, fetchFormData)
+  watch(
+    () => filter.value,
+    async () => {
+      await fetch()
+    }
+  )
 
   const channels = [
     'event:config_created',
@@ -478,9 +486,9 @@ License: AGPL-3.0
     isLoading.value = true
     let endpoint = ''
     if (!isGeneralDefault.value) {
-      endpoint = `/opsidata/config/objects/${props.id}`
+      endpoint = `/opsidata/config/objects/${props.id}?filterQuery=${filter.value}`
     } else if (props.type === 'servers') {
-      endpoint = '/opsidata/config'
+      endpoint = `/opsidata/config?filterQuery=${filter.value}`
     } else {
       console.error('not defined')
     }
