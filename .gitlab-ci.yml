@@ -638,6 +638,9 @@ build:zip: # with transifex
     - ls -lah webgui # debug
     - ls -lah webgui/data # debug
     - ls -lah frontend/locale
+    -  # current dir is <project_path>/
+    - echo "builing opsi-webgui-dev.zip"
+    - frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)\" no-install
   only:
     - tags
     - v5
@@ -646,6 +649,34 @@ build:zip: # with transifex
     paths:
       - frontend/locale
       - webgui
+      - webgui-dev
+    expire_in: 7 day
+
+build:zip:dev: # with transifex
+  # image: node:current-slim
+  stage: build
+  dependencies:
+    - init:npm
+    - init:transifex-down
+    - init:changelogs
+  script:
+    - *install_dev_cli
+    - *define_globals
+    - pwd && ls -la frontend
+    - ls -lah frontend/locale
+    -  # current dir is <project_path>/
+    - echo "builing opsi-webgui-dev.zip"
+    - frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)\" no-install
+    - ls -lah webgui-dev # debug
+  only:
+    - tags
+    - v5
+    - ci/zip-dev
+  artifacts:
+    name: 'opsi-webgui-dev'
+    paths:
+      - frontend/locale
+      - webgui-dev
     expire_in: 7 day
 
 #########################################################################
