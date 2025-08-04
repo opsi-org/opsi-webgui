@@ -650,7 +650,7 @@ build:zip: # with transifex
     name: 'opsi-webgui'
     paths:
       - frontend/locale
-      - webgui
+      - frontend/webgui
     expire_in: 7 day
 
 build:zip:dev: # with transifex
@@ -673,7 +673,7 @@ build:zip:dev: # with transifex
     name: 'opsi-webgui-dev'
     paths:
       - frontend/locale
-      - webgui-dev
+      - frontend/webgui-dev
     expire_in: 7 day
 
 #########################################################################
