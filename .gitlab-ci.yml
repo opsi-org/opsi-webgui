@@ -230,10 +230,6 @@ init:transifex-down:
     - test -f frontend/locale/opsi-webgui_en.json && echo "Translation en exists."
     - test -f frontend/locale/opsi-webgui_de.json && echo "Translation de exists."
     - test -f frontend/locale/opsi-webgui_fr.json && echo "Translation fr exists."
-  only:
-    - tags
-    - v5
-    - ci/zip-dev
   artifacts:
     paths:
       - frontend/locale
