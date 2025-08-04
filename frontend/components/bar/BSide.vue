@@ -115,11 +115,11 @@ License: AGPL-3.0
 
   const navItems = computed<Array<INavItem>>(() => [
     {
-      title: 'depots',
+      title: 'servers',
       route: '/servers/',
       icon: icons.depots,
       submenu: [
-        { title: 'allDepots', route: '/servers/' },
+        { title: 'allServers', route: '/servers/' },
         { title: 'configuration', route: '/servers/config' },
       ],
     },
