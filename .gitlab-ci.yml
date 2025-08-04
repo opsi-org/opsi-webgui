@@ -625,24 +625,22 @@ build:zip: # with transifex
   script:
     - *install_dev_cli
     - pwd && ls -la frontend
-    - cd frontend # generate dist
-    - ls -lah locale
-    - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
-    - *define_globals
-    - npm run generate
-    - cd .. # copy to addon
-    - mkdir -p backend/addon/webgui/data
-    - mkdir -p backend/addon/webgui/data/app
-    - cp -r frontend/dist/* backend/addon/webgui/data/app/
-    - mkdir webgui
-    - cp -r backend/addon/webgui/* webgui/
-    - cp -f output/changelog.md webgui/data/.
-    - ls -lah webgui # debug
-    - ls -lah webgui/data # debug
-    - ls -lah frontend/locale
-    # current dir is <project_path>/
-    - echo "builing opsi-webgui-dev.zip"
-    - frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)\" no-install
+    - bash "$(pwd)\frontend/scripts/build_production_local.sh" webgui Webgui \"$(pwd)\" no-install
+    #- cd frontend # generate dist
+    #- ls -lah locale
+    #- npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
+    #- *define_globals
+    #- npm run generate
+    #- cd .. # copy to addon
+    #- mkdir -p backend/addon/webgui/data
+    #- mkdir -p backend/addon/webgui/data/app
+    #- cp -r frontend/dist/* backend/addon/webgui/data/app/
+    #- mkdir webgui
+    #- cp -r backend/addon/webgui/* webgui/
+    #- cp -f output/changelog.md webgui/data/.
+    #- ls -lah webgui # debug
+    #- ls -lah webgui/data # debug
+    #- ls -lah frontend/locale
   only:
     - tags
     - v5
@@ -669,7 +667,7 @@ build:zip:dev: # with transifex
     - ls -lah frontend/locale
     # current dir is <project_path>/
     - echo "builing opsi-webgui-dev.zip"
-    - frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)\" no-install
+    - bash "$(pwd)\frontend/scripts/build_production_local.sh" webgui-dev Webgui-Dev \"$(pwd)\" no-install
     - ls -lah webgui-dev # debug
   artifacts:
     name: 'opsi-webgui-dev'

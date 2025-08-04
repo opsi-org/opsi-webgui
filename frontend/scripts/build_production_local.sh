@@ -4,8 +4,6 @@
 # apt -y install debhelper osc
 # wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
 # tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
-echo "All params: $@"
-exit 1
 
 # IMPORTANT: NAME OF ADDON (default: webgui)
 ADDON_ID=$1
