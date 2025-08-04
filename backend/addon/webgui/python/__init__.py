@@ -65,7 +65,6 @@ class Webgui(Addon, metaclass=Singleton):
 
 		app.mount(path=f"{self.router_prefix}/app", app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True), name="app")
 
-
 	def on_load(self, app: FastAPI) -> None:  # pylint: disable=no-self-use
 		"""Called after loading the addon"""
 		self.setup(app)
@@ -86,6 +85,9 @@ class Webgui(Addon, metaclass=Singleton):
 			return False
 
 		rel_path = "/" + path.removeprefix(self.router_prefix).lstrip("/")
+		if rel_path.startswith("/-dev/"):
+			# workaround for development mode
+			rel_path = rel_path.replace("/-dev/", "/", 1)
 
 		if rel_path == "/" or rel_path.startswith(("/app", "/api/user/opsiserver", "/api/opsidata/changelogs")):
 			connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
