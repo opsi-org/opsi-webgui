@@ -640,7 +640,7 @@ build:zip: # with transifex
     - ls -lah webgui # debug
     - ls -lah webgui/data # debug
     - ls -lah frontend/locale
-    -  # current dir is <project_path>/
+    # current dir is <project_path>/
     - echo "builing opsi-webgui-dev.zip"
     - frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)\" no-install
   only:
@@ -666,7 +666,7 @@ build:zip:dev: # with transifex
     - *define_globals
     - pwd && ls -la frontend
     - ls -lah frontend/locale
-    -  # current dir is <project_path>/
+    # current dir is <project_path>/
     - echo "builing opsi-webgui-dev.zip"
     - frontend/scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)\" no-install
     - ls -lah webgui-dev # debug
