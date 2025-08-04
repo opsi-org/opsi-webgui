@@ -59,8 +59,15 @@ fi
 
 echo "################# backend: check existing / force $FORCE"
 if [ -e "$ENVFILE" ] && [ "$FORCE" = "false" ]; then
-    echo "Warning: File '$ENVFILE' already exists. To overwrite use -f or --force."
-    exit 0
+    # outdated if OPSICONFD_MYSQL_INTERNAL_URL not in .env file...
+    CURRENT_ENV_OUTDATED = $(grep -q "OPSICONFD_MYSQL_INTERNAL_URL" "$ENVFILE" && echo "false" || echo "true")
+    if [ "$CURRENT_ENV_OUTDATED" = "false" ]; then
+        echo "Warning: File '$ENVFILE' already exists and is up to date."
+        exit 0
+    fi
+    echo "Warning: File '$ENVFILE' already exists and will be overwritten (because its outdated)"
+    echo "We store a backup of the old file as '$ENVFILE.bak'."
+    cp "$ENVFILE" "$ENVFILE.bak"
 fi
 
 
@@ -82,3 +89,12 @@ fi
 echo JEMALLOC_VERSION=5.2.1 >> $ENVFILE
 echo OPSILICSRV_URL=$OPSILICSRV_URL  >> $ENVFILE
 echo OPSILICSRV_TOKEN=$OPSILICSRV_TOKEN  >> $ENVFILE
+echo OPSICONFD_ADDON_DIRS=["/var/lib/opsiconfd/addons","/usr/lib/opsiconfd/addons"]
+echo OPSICONFD_MYSQL_INTERNAL_URL=mysql://opsi:opsi@opsi-webgui-mysql-1:3306/opsi
+echo MYSQL_HOST=mysql
+echo MYSQL_DATABASE=opsi
+echo MYSQL_USER=opsi
+echo MYSQL_PASSWORD=opsi
+echo MYSQL_PORT=3306
+echo REDIS_HOST=redis
+echo GRAFANA_HOST=grafana

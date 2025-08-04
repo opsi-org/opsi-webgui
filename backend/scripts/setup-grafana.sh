@@ -19,13 +19,15 @@ echo "* Configure grafana server"
 sudo grep -v "^root_url" /etc/grafana/grafana.ini > /tmp/grafana.ini
 sudo mv /tmp/grafana.ini /etc/grafana/grafana.ini
 sudo sed -i '/^;root_url/!b;n;croot_url = %(protocol)s://%(domain)s:%(http_port)s/grafana' /etc/grafana/grafana.ini
+#sudo sed -i "/^;http_port/!b;n;chttp_port = ${GF_SERVER_HTTP_PORT}" /etc/grafana/grafana.ini
 
 echo "* Installing grafana plugins"
 sudo grafana-cli plugins install $GF_INSTALL_PLUGINS
 
 echo "* Starting and waiting for grafana server"
 sudo supervisorctl start grafana-server
-while ! nc -v -z -w3 localhost 3000 >/dev/null 2>&1; do
+GH=${GRAFANA_HOST:-localhost}
+while ! nc -v -z -w3 $GH 3000 >/dev/null 2>&1; do
 	sleep 1
 done
 

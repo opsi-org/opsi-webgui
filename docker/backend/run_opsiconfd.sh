@@ -4,15 +4,15 @@ ENV_FILE=/workspace/docker/backend/.env
 set -a
 source ${ENV_FILE}
 set +a
+sudo cp /workspace/backend/addon/webgui /var/lib/opsiconfd/addons/.
 
 CURRENT_DIR=$(dirname "$(readlink -f "$0")")
 echo "Current directory: $CURRENT_DIR"
 echo "port ${OPSICONFD_PORT}"
+echo "mysql ${MYSQL_OPSICONFD_MYSQL_INTERNAL_URL}"
+echo "redis ${REDIS_OPSICONFD_REDIS_INTERNAL_URL}"
 
-#if [ "$(whoami)" != "${DEV_USER}" ]; then
-#  echo "Switching to user ${DEV_USER}"
-#  exec sudo -u ${DEV_USER} "$0" "$@"
-#fi
+echo "currently ignore mysql create table error"
 echo "Running as $(whoami)"
 cd ${CURRENT_DIR}/opsiconfd
 /root/.local/bin/uv sync --frozen
