@@ -11,6 +11,7 @@ ADDON_NAME=$2
 
 WORKING_DIR=$3
 INSTALL=$4
+SHOULD_KEEP_DATA_UIFOLDER=no-install
 SHOULD_INSTALL_DATA=install
 SHOULD_INSTALL_USR=installusr
 PATH_DATA="/data/opsiconfd/addons"
@@ -83,7 +84,10 @@ chown $(whoami):$(whoami) -R ${ADDON_ID}/*  || exit 51
 sudo apt install -y zip  || exit 60
 zip -r -q opsi-${ADDON_ID}.zip ${ADDON_ID}  || exit 61
 sudo chown $(whoami):$(whoami) opsi-${ADDON_ID}.zip || exit 52
+
 echo "> packaging done: $(pwd)/opsi-${ADDON_ID}.zip"
+RES=cat "$(pwd)/${ADDON_ID}" || exit 62
+echo "> cat ${ADDON_ID} done: ${RES}"
 
 echo "> check if also install locally: ${INSTALL}"
 port=0000
@@ -98,6 +102,10 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
     CONTAINER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
     echo "> reload supervisorctl in container: $CONTAINER"
     sudo docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
+    echo ""
+    echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
+elif [ "$INSTALL" = "$SHOULD_KEEP_DATA_UIFOLDER" ]; then
+    echo ".....keep data folder in ${PATH_DATA}/${ADDON_ID}"
 #elif [ "$INSTALL" = "$SHOULD_INSTALL_USR" ]; then
 #    port=4447
 #    echo ".....install locally in ${PATH_USR}/${ADDON_ID}"
@@ -116,7 +124,6 @@ else
 fi
 
 echo ""
-echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
 echo "IMPORTANT: ZIP file created: $(pwd)/opsi-${ADDON_ID}.zip"
 echo ""
 cd -
