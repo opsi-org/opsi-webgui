@@ -56,6 +56,7 @@ export const storeAuth = defineStore('auth', {
       this.$reset()
     },
     $reset() {
+      this.sessionExpiry = expirySec
       this.sessionEndTime = ''
       this.setUser('')
     },

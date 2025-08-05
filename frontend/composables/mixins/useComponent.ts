@@ -18,6 +18,7 @@ interface NotificationOptions {
   duration?: number
   onClose?: () => void
   messageRef?: string
+  combined?: boolean // if true, use combined notification logic
   button?: { label: string; onClick: PropTypeFunctionOptionalAsync }
 }
 
@@ -135,6 +136,7 @@ export function useNotification() {
       duration,
       onClose,
       button,
+      combined = true,
       messageRef = undefined,
     }: NotificationOptions) => {
       const notificationInstance = ref<any>()
@@ -168,7 +170,7 @@ export function useNotification() {
           )
         : []
       // check if type can be combined
-      if (combinedTypes.includes(type)) {
+      if (combined && combinedTypes.includes(type)) {
         if (type === 'error') {
           console.error('NotificationError:', title, message)
         } else if (type === 'warning') {

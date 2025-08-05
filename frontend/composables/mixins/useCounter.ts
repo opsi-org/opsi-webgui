@@ -84,6 +84,7 @@ export const useTimer = (init: boolean = false) => {
       messageRef: 'timerText',
       message: _getNotificationText(t),
       duration: 0,
+      combined: false,
       button: {
         label: $t('extend'),
         onClick: async () =>
