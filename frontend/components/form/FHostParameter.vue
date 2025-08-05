@@ -59,6 +59,7 @@ License: AGPL-3.0
                 <span> {{ slotProps.node.label.replaceAll('.', ' / ') }}</span>
                 <template #tooltip>
                   <span>{{ slotProps.node.key }}</span> <br />
+                  <Markdown :source="slotProps.node?.data?.description" />
                 </template>
               </TooltipTTooltip>
 
@@ -257,6 +258,7 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
+  import Markdown from 'vue3-markdown-it'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useMBus } from '~/composables/mixins/useMessagebus'
   import { useSaveParameters } from '~/composables/mixins/useSave'

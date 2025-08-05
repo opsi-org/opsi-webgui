@@ -24,8 +24,7 @@ License: AGPL-3.0
         :source="
           fetchedData.properties.productDescription || fetchedData.dependencies.productDescription
         "
-      >
-      </Markdown>
+      />
     </el-form-item>
     <el-form-item
       v-if="fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice"
@@ -33,8 +32,7 @@ License: AGPL-3.0
     >
       <Markdown
         :source="fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice"
-      >
-      </Markdown>
+      />
     </el-form-item>
   </el-form>
   <el-alert

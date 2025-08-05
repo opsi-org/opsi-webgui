@@ -20,7 +20,9 @@ License: AGPL-3.0
       <slot name="default" />
     </div>
     <template #content>
-      <el-text v-if="props.content">{{ props.content }}</el-text>
+      <el-text v-if="props.content">
+        <Markdown :source="props.content" />
+      </el-text>
       <slot name="tooltip" />
     </template>
   </el-tooltip>
@@ -32,6 +34,7 @@ License: AGPL-3.0
    * * primevue tooltip is a directive and does not support raw content / html content
    * * primevue popover does not support a delay (even with debounce/delay workaround)
    */
+  import Markdown from 'vue3-markdown-it' // this module exists and needs to be imported // no need to import as Module/Plugin
 
   type TMethod = 'hover' | 'click'
   const { colormode } = storeToRefs(storeSettings())
