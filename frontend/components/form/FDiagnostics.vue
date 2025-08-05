@@ -26,7 +26,7 @@ License: AGPL-3.0
           <code>{{ values }}</code>
         </el-form-item>
       </template>
-      <template v-if="values && Object.keys(values).length !== 0">
+      <template v-else-if="values && Object.keys(values).length !== 0">
         <h3 class="mt-4 text-lg font-semibold">
           {{ category }}
         </h3>
