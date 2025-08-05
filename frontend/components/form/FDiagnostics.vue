@@ -14,6 +14,18 @@ License: AGPL-3.0
     :key="rerenderKey"
   >
     <div v-for="(values, category) in dataCopy" :key="category">
+      <!-- types of value is string -->
+      <template v-if="typeof values == 'string'">
+        <h3 class="mt-4 text-lg font-semibold">
+          {{ category }}
+        </h3>
+        <el-form-item class="border-b">
+          <template #label>
+            <span :class="mq.isMobile.value ? '!font-bold' : ''">{{ category }}</span>
+          </template>
+          <code>{{ values }}</code>
+        </el-form-item>
+      </template>
       <template v-if="values && Object.keys(values).length !== 0">
         <h3 class="mt-4 text-lg font-semibold">
           {{ category }}
