@@ -57,6 +57,6 @@ License: AGPL-3.0
 
   type TPropType = 'withoutLabel' | 'withLabel'
   const props = defineProps({
-    type: { type: String as PropType, default: 'withLabel' },
+    type: { type: String as TPropType, default: 'withLabel' },
   })
 </script>
