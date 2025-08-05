@@ -6,11 +6,34 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
+  <el-form v-if="props.type === 'withLabel'">
+    <el-form-item :label="$t('selectionMode')" class="!mb-0 flex justify-between">
+      <p-float-label variant="in" class="" :title="$t('selectionModeTooltip')">
+        <p-toggle-switch
+          :key="componentKeyForceUpdate"
+          v-model="cbValue"
+          ref="cbMultiSelection"
+          id="cbMultiSelection"
+          name="multiselection"
+          aria-label="Multiselection mode"
+          style="--p-toggleswitch-width: 5rem"
+          v-bind="$props"
+          @change="() => changeSelectionMode(true)"
+        />
+        <label
+          for="cbMultiSelection"
+          class="text-xs text-white !pb-1"
+          :class="cbValue ? '' : 'pl-4'"
+          >{{ cbValue ? $t('multi') : $t('single') }}</label
+        >
+      </p-float-label>
+    </el-form-item>
+  </el-form>
   <p-float-label
-    v-if="props.type === 'checkbox'"
+    v-else-if="props.type === 'withoutLabel'"
     variant="in"
     class=""
-    :title="$t('selectionMode')"
+    :title="$t('selectionModeTooltip')"
   >
     <p-toggle-switch
       :key="componentKeyForceUpdate"
@@ -35,8 +58,9 @@ License: AGPL-3.0
 
   const componentKeyForceUpdate = ref(0)
   const emit = defineEmits(['action'])
+  type TPropType = 'withoutLabel' | 'withLabel'
   const props = defineProps({
-    type: { type: String, default: 'checkbox' },
+    type: { type: String as TPropType, default: 'withLabel' },
   })
   const cbMultiSelection = ref()
   const cbValue = computed({

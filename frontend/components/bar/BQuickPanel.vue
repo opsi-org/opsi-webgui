@@ -43,7 +43,7 @@ License: AGPL-3.0
       <header class="mb-2">
         <el-text tag="b" size="small">{{ $t('settings') }}</el-text>
       </header>
-      <div class="flex justify-evenly">
+      <div class="mx-2">
         <SwitchSMultiselection />
         <SwitchSAutoRefresh />
       </div>
