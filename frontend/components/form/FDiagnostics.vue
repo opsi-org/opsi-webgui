@@ -78,7 +78,16 @@ License: AGPL-3.0
     const filteredData: Record<string, any> = {}
     for (const [category, values] of Object.entries(_props.data)) {
       if (category == undefined || values == undefined) continue
-      const filteredValues: Record<string, any> = {}
+      if
+      const filteredValues: Record<string, any> | String = {}
+      if (typeof values === 'string') {
+        const includes = values.toLowerCase().includes(_props.filter.toLowerCase())
+        if (includes) {
+          filteredValues[category] = values
+          continue
+        }
+      }
+      // else
       for (const [key, value] of Object.entries(values)) {
         const keyvalue = key.toString() + JSON.stringify(value)
         const includes = keyvalue.toLowerCase().includes(_props.filter.toLowerCase())
