@@ -235,9 +235,9 @@ License: AGPL-3.0
       title: $t('installationStatus'),
       key: 'installationStatus',
       sortable: 'custom',
-      visible:
-        clientSelection.value.length > 0 &&
-        storeTSettings.productsColumns.includes('installationStatus'),
+      // using this visibilityCondition do not change the visibility state in store (have to be updated manually on clientselection change)
+      visibilityCondition: clientSelection.value.length > 0,
+      visible: storeTSettings.productsColumns.includes('installationStatus'),
       className: 'max-w-8 min-w-min max-w-max',
       icon: icons.product,
       cellRenderer: ({ rowData }: any) => {
@@ -263,8 +263,8 @@ License: AGPL-3.0
       title: $t('actionResult'),
       key: 'actionResult',
       sortable: 'custom',
-      visible:
-        clientSelection.value.length > 0 && storeTSettings.productsColumns.includes('actionResult'),
+      visibilityCondition: clientSelection.value.length > 0,
+      visible: storeTSettings.productsColumns.includes('actionResult'),
       className: 'max-w-8  min-w-min max-w-max',
       icon: icons.productActionResult,
       cellRenderer: ({ rowData }: any) => {
@@ -340,17 +340,15 @@ License: AGPL-3.0
       title: $t('actionProgress'),
       key: 'actionProgress',
       sortable: 'custom',
-      visible:
-        selectionClients.value.length > 0 &&
-        storeTSettings.productsColumns.includes('actionProgress'),
+      visibilityCondition: clientSelection.value.length > 0,
+      visible: storeTSettings.productsColumns.includes('actionProgress'),
     },
     {
       title: $t('actionRequest'),
       key: 'actionRequest',
       sortable: 'custom',
-      visible:
-        clientSelection.value.length > 0 &&
-        storeTSettings.productsColumns.includes('actionRequest'),
+      visibilityCondition: clientSelection.value.length > 0,
+      visible: storeTSettings.productsColumns.includes('actionRequest'),
       className: 'max-w-28',
       headerCellRenderer: mq.isMobile.value
         ? undefined
@@ -418,6 +416,7 @@ License: AGPL-3.0
 
         fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
         productsRef.value?.refetch()
+        updateColumnVisibility()
       }
     },
     { deep: true }
@@ -433,10 +432,20 @@ License: AGPL-3.0
 
       fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
       productsRef.value?.refetch()
+      updateColumnVisibility()
     }
   )
   watch(() => selectionDepots.value, refetch)
 
+  function updateColumnVisibility() {
+    const cols = ['installationStatus', 'actionResult', 'actionProgress', 'actionRequest']
+
+    for (const col of tableColumn.value) {
+      const key = col.key as string
+      if (!cols.includes(key)) continue
+      col.visibilityCondition = clientSelection.value.length > 0
+    }
+  }
   function refetch() {
     productsRef.value?.refetch()
   }
