@@ -83,11 +83,13 @@ License: AGPL-3.0
       if (typeof values === 'string') {
         const includes = values.toLowerCase().includes(_props.filter.toLowerCase())
         if (includes) {
-          filteredValues[category] = values
+          filteredValues[category] = {
+            category: values,
+          }
           continue
         }
       }
-      // else
+      // else is object
       for (const [key, value] of Object.entries(values)) {
         const keyvalue = key.toString() + JSON.stringify(value)
         const includes = keyvalue.toLowerCase().includes(_props.filter.toLowerCase())
