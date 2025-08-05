@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-form v-if="props.type === 'withLabel'">
+  <el-form v-if="props.withLabel">
     <el-form-item :label="$t('autoRefresh')" class="!mb-0 flex justify-between">
       <p-float-label variant="in" :title="$t('autoRefreshTooltip')">
         <p-toggle-switch
@@ -28,11 +28,7 @@ License: AGPL-3.0
       </p-float-label>
     </el-form-item>
   </el-form>
-  <p-float-label
-    v-if="props.type === 'withoutLabel'"
-    variant="in"
-    :title="$t('autoRefreshTooltip')"
-  >
+  <p-float-label v-else variant="in" :title="$t('autoRefreshTooltip')">
     <p-toggle-switch
       v-model="msgbusAutoRefresh"
       id="cbAutorefresh"
@@ -55,8 +51,7 @@ License: AGPL-3.0
 
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
-  type TPropType = 'withoutLabel' | 'withLabel'
   const props = defineProps({
-    type: { type: String as TPropType, default: 'withLabel' },
+    withLabel: { type: Boolean, default: true },
   })
 </script>

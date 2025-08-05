@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-form v-if="props.type === 'withLabel'">
+  <el-form v-if="props.withLabel">
     <el-form-item :label="$t('selectionMode')" class="!mb-0 flex justify-between">
       <p-float-label variant="in" class="" :title="$t('selectionModeTooltip')">
         <p-toggle-switch
@@ -29,12 +29,7 @@ License: AGPL-3.0
       </p-float-label>
     </el-form-item>
   </el-form>
-  <p-float-label
-    v-else-if="props.type === 'withoutLabel'"
-    variant="in"
-    class=""
-    :title="$t('selectionModeTooltip')"
-  >
+  <p-float-label v-else variant="in" class="" :title="$t('selectionModeTooltip')">
     <p-toggle-switch
       :key="componentKeyForceUpdate"
       v-model="cbValue"
@@ -58,9 +53,8 @@ License: AGPL-3.0
 
   const componentKeyForceUpdate = ref(0)
   const emit = defineEmits(['action'])
-  type TPropType = 'withoutLabel' | 'withLabel'
   const props = defineProps({
-    type: { type: String as TPropType, default: 'withLabel' },
+    withLabel: { type: Boolean, default: true },
   })
   const cbMultiSelection = ref()
   const cbValue = computed({
