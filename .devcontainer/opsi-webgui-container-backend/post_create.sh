@@ -22,7 +22,10 @@ sudo mkdir -p /var/lib/opsi/repository
 sudo mkdir -p /var/lib/opsi/workbench
 sudo mkdir -p /var/lib/opsiconfd
 sudo mkdir -p /tftpboot
-sudo ln -s /workspace/backend/addons /var/lib/opsiconfd/addons
+
+sudo mkdir -p /var/lib/opsiconfd/addons
+#sudo ln -s /workspace/backend/addon/webgui /var/lib/opsiconfd/addons/webgui
+sudo cp /workspace/backend/addon/webgui /var/lib/opsiconfd/addons/.
 
 sudo chown -R $DEV_USER:$DEV_USER /workspace
 
@@ -39,3 +42,6 @@ if [ -f /workspace/docker/test.opsilic ]; then
 fi
 
 
+# create  a link which point from /workspace/backend/addons/webgui to /var/lib/opsiconfd/addons/webgui
+
+#sudo ln -s /workspace/backend/addon/webgui /var/lib/opsiconfd/addons/webgui

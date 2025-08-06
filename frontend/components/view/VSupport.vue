@@ -30,7 +30,7 @@ License: AGPL-3.0
     </div>
     <div v-if="withIframe">
       <iframe
-        class="opsidoc-frame w-100 min-w-1/1 border border-red-500"
+        class="opsidoc-frame w-100 min-w-1/1"
         :style="
           `max-height: ${maxVisibleHeight}px;` +
           `height: ${maxVisibleHeight}px;` +
@@ -89,5 +89,8 @@ License: AGPL-3.0
   .opsidoc-frame {
     min-height: calc(100vh - 270px);
     max-height: calc(100vh - 270px);
+  }
+  a {
+    color: var(--color-opsi-magenta);
   }
 </style>

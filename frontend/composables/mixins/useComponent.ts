@@ -18,6 +18,7 @@ interface NotificationOptions {
   duration?: number
   onClose?: () => void
   messageRef?: string
+  combined?: boolean // if true, use combined notification logic
   button?: { label: string; onClick: PropTypeFunctionOptionalAsync }
 }
 
@@ -135,6 +136,7 @@ export function useNotification() {
       duration,
       onClose,
       button,
+      combined = true,
       messageRef = undefined,
     }: NotificationOptions) => {
       const notificationInstance = ref<any>()
@@ -168,7 +170,7 @@ export function useNotification() {
           )
         : []
       // check if type can be combined
-      if (combinedTypes.includes(type)) {
+      if (combined && combinedTypes.includes(type)) {
         if (type === 'error') {
           console.error('NotificationError:', title, message)
         } else if (type === 'warning') {
@@ -341,6 +343,9 @@ export function useNotification() {
     title?: string
     msg: string
     class?: string
+    style?: object
+    tagClass?: string // class for the title div
+    tagStyle?: object // style for the title div
     retryButton?: { label: string; onClick: PropTypeFunctionOptionalAsync }
     tag?: string // default is div
     tagTitle?: string
@@ -362,27 +367,31 @@ export function useNotification() {
       duration = 0, // 0 means no auto hide
       onClose,
     }: NotificationOptionsDetailed) => {
-      const notificationInstance = ref<any>()
-
-      const notificationMessageItems = ref<Array<any>>([])
+      const notificationMessageItems: Array<any> = []
       for (const messageRow of messages) {
-        notificationMessageItems.value.push(
+        notificationMessageItems.push(
           h('div', [
-            h(messageRow.tagTitle || 'div', {}, messageRow.title),
-            h(messageRow.tag || 'div', { class: messageRow.class }, messageRow.msg),
+            h(
+              messageRow.tagTitle || 'div',
+              { class: messageRow.tagClass, style: messageRow.tagStyle },
+              messageRow.title
+            ),
+            h(
+              messageRow.tag || 'div',
+              { class: messageRow.class, style: messageRow.style },
+              messageRow.msg
+            ),
           ])
         )
       }
 
-      notificationInstance.value = ElNotification({
+      return ElNotification({
         title,
-        message: h('div', { class: wrapperClass }, notificationMessageItems.value),
+        message: h('div', { class: wrapperClass }, notificationMessageItems),
         showClose: showClose,
         duration: duration || 0,
         onClose: onClose,
       })
-
-      return notificationInstance.value
     }
   }
   const closeAll = () => {

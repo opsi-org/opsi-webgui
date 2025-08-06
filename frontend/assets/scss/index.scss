@@ -199,3 +199,9 @@ html .p-button.p-button-sm {
   min-height: 20px !important;
   box-shadow: none !important;
 }
+
+.p-inputgroup,
+.p-treetable-table-container th.border-y,
+.p-treetable-table-container td.border-y {
+  border-color: var(--hover) !important;
+}

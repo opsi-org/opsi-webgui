@@ -6,12 +6,34 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <PFloatLabel v-if="props.type === 'checkbox'" variant="in" :title="$t('message.autoRefresh')">
-    <PToggleSwitch
+  <el-form v-if="props.withLabel">
+    <el-form-item :label="$t('autoRefresh')" class="!mb-0 flex justify-between">
+      <p-float-label variant="in" :title="$t('autoRefreshTooltip')">
+        <p-toggle-switch
+          v-model="msgbusAutoRefresh"
+          id="cbAutorefresh"
+          name="autorefresh"
+          :aria-label="
+            $t('autoRefreshAriaLabel', { 'on-off': $t(msgbusAutoRefresh ? 'on' : 'off') })
+          "
+          style="--p-toggleswitch-width: 5rem"
+          v-bind="$props"
+        />
+        <label
+          for="cbAutorefresh"
+          class="text-xs text-white !pb-1"
+          :class="msgbusAutoRefresh ? '' : 'pl-4'"
+          >{{ msgbusAutoRefresh ? $t('autoRefreshEnabled') : $t('ask') }}</label
+        >
+      </p-float-label>
+    </el-form-item>
+  </el-form>
+  <p-float-label v-else variant="in" :title="$t('autoRefreshTooltip')">
+    <p-toggle-switch
       v-model="msgbusAutoRefresh"
       id="cbAutorefresh"
       name="autorefresh"
-      :aria-label="'Switch auto-refresh mode. Currently is ' + (msgbusAutoRefresh ? 'on' : 'off')"
+      :aria-label="$t('autoRefreshAriaLabel', { 'on-off': $t(msgbusAutoRefresh ? 'on' : 'off') })"
       style="--p-toggleswitch-width: 5rem"
       v-bind="$props"
     />
@@ -19,9 +41,9 @@ License: AGPL-3.0
       for="cbAutorefresh"
       class="text-xs text-white !pb-1"
       :class="msgbusAutoRefresh ? '' : 'pl-4'"
-      >{{ msgbusAutoRefresh ? $t('autoRefresh') : $t('ask') }}</label
+      >{{ msgbusAutoRefresh ? $t('autoRefreshEnabled') : $t('ask') }}</label
     >
-  </PFloatLabel>
+  </p-float-label>
 </template>
 
 <script setup lang="ts">
@@ -30,6 +52,6 @@ License: AGPL-3.0
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
 
   const props = defineProps({
-    type: { type: String, default: 'checkbox' },
+    withLabel: { type: Boolean, default: true },
   })
 </script>

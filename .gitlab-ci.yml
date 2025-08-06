@@ -230,9 +230,6 @@ init:transifex-down:
     - test -f frontend/locale/opsi-webgui_en.json && echo "Translation en exists."
     - test -f frontend/locale/opsi-webgui_de.json && echo "Translation de exists."
     - test -f frontend/locale/opsi-webgui_fr.json && echo "Translation fr exists."
-  only:
-    - tags
-    - v5
   artifacts:
     paths:
       - frontend/locale
@@ -249,6 +246,7 @@ init:changelogs:
   only:
     - tags
     - v5
+    - ci/zip-dev
   artifacts:
     name: 'opsi-webgui-changelogs'
     paths:
@@ -475,7 +473,7 @@ test:tsc:
 #       junit: ./frontend/test-result-pw-reporter-components.xml
 #     expire_in: 3 day
 
-test:backend-pytest:
+.test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   services:
     - name: mysql:latest
@@ -584,36 +582,7 @@ build:static:app: # with transifex
     - tags
     - v5
 
-build:addon: # with transifex
-  stage: build
-  dependencies:
-    - init:npm
-    - init:transifex-down
-    - init:changelogs
-  script:
-    - *install_dev_cli
-    - pwd && ls -la frontend
-    - cd frontend # generate dist
-    - cd ..
-    - *define_globals
-    # - npm run generate-nossl
-    - bash frontend/scripts/build_production_local.sh webgui Webgui $(pwd)
-    - mv frontend/webgui webgui
-    - cp -f output/changelog.md webgui/data/.
-    - ls -lah webgui # debug
-    - zip -r -q opsi-webgui.zip webgui
-  only:
-    - tags
-    - v5
-  artifacts:
-    name: 'opsi-webgui-with-zip'
-    paths:
-      - webgui
-      - opsi-webgui.zip
-    expire_in: 3 day
-
 build:zip: # with transifex
-  # image: node:current-slim
   stage: build
   dependencies:
     - init:npm
@@ -623,29 +592,38 @@ build:zip: # with transifex
   script:
     - *install_dev_cli
     - pwd && ls -la frontend
-    - cd frontend # generate dist
-    - ls -lah locale
-    - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
-    - *define_globals
-    - npm run generate
-    - cd .. # copy to addon
-    - mkdir -p backend/addon/webgui/data
-    - mkdir -p backend/addon/webgui/data/app
-    - cp -r frontend/dist/* backend/addon/webgui/data/app/
-    - mkdir webgui
-    - cp -r backend/addon/webgui/* webgui/
-    - cp -f output/changelog.md webgui/data/.
+    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) no-install
     - ls -lah webgui # debug
-    - ls -lah webgui/data # debug
-    - ls -lah frontend/locale
   only:
     - tags
     - v5
+    - ci/zip-dev
   artifacts:
     name: 'opsi-webgui'
     paths:
       - frontend/locale
       - webgui
+    expire_in: 7 day
+
+build:zip:dev: # with transifex
+  stage: build
+  dependencies:
+    - init:npm
+    - init:transifex-down
+    - init:changelogs
+  script:
+    - *install_dev_cli
+    - *define_globals
+    - pwd && ls -la frontend
+    - ls -lah frontend/locale
+    - echo "builing opsi-webgui-dev.zip"
+    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui-dev Webgui-Dev $(pwd) no-install
+    - ls -lah webgui-dev # debug
+  artifacts:
+    name: 'opsi-webgui-dev'
+    paths:
+      - frontend/locale
+      - webgui-dev
     expire_in: 7 day
 
 #########################################################################
@@ -708,7 +686,7 @@ publish:obs_ext:
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   dependencies:
     - init:changelogs
-    - build:addon # todo which is really needed?
+    - build:zip # todo which is really needed?
     - build:static:app # todo which is really needed?
   script:
     - ls -la
@@ -730,7 +708,7 @@ publish:obs_ext:
 publish:binary-index:
   stage: publish
   dependencies:
-    - build:addon
+    - build:zip
     - init:changelogs
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   script:

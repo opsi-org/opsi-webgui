@@ -115,11 +115,11 @@ License: AGPL-3.0
 
   const navItems = computed<Array<INavItem>>(() => [
     {
-      title: 'depots',
+      title: 'servers',
       route: '/servers/',
       icon: icons.depots,
       submenu: [
-        { title: 'allDepots', route: '/servers/' },
+        { title: 'allServers', route: '/servers/' },
         { title: 'configuration', route: '/servers/config' },
       ],
     },
@@ -156,7 +156,7 @@ License: AGPL-3.0
           disabled: config.value?.['terminal.forbidden'] === true,
         },
         { title: 'healthCheck', route: '/admin/diagnostics?id=health' },
-        { title: 'general', route: '/admin/general' },
+        { title: 'system', route: '/admin/general' },
         { title: 'modules', route: '/admin/modules' },
       ],
     },

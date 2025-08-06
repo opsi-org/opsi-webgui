@@ -150,7 +150,11 @@ License: AGPL-3.0
       >
         <template v-for="column in tableColumn">
           <el-table-column
-            v-if="column.visible || column.alwaysVisible"
+            v-if="
+              column.alwaysVisible ||
+              ((column.visibilityCondition == undefined || column.visibilityCondition) &&
+                column.visible)
+            "
             :key="column.key"
             :prop="column.key"
             :label="column.title"

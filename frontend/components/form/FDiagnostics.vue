@@ -14,7 +14,19 @@ License: AGPL-3.0
     :key="rerenderKey"
   >
     <div v-for="(values, category) in dataCopy" :key="category">
-      <template v-if="values && Object.keys(values).length !== 0">
+      <!-- types of value is string -->
+      <template v-if="typeof values == 'string'">
+        <h3 class="mt-4 text-lg font-semibold">
+          {{ category }}
+        </h3>
+        <el-form-item class="border-b">
+          <template #label>
+            <span :class="mq.isMobile.value ? '!font-bold' : ''">{{ category }}</span>
+          </template>
+          <code>{{ values }}</code>
+        </el-form-item>
+      </template>
+      <template v-else-if="values && Object.keys(values).length !== 0">
         <h3 class="mt-4 text-lg font-semibold">
           {{ category }}
         </h3>
@@ -66,7 +78,18 @@ License: AGPL-3.0
     const filteredData: Record<string, any> = {}
     for (const [category, values] of Object.entries(_props.data)) {
       if (category == undefined || values == undefined) continue
-      const filteredValues: Record<string, any> = {}
+
+      const filteredValues: Record<string, any> | string = {}
+      if (typeof values === 'string') {
+        const includes = values.toLowerCase().includes(_props.filter.toLowerCase())
+        if (includes) {
+          filteredValues[category] = {
+            category: values,
+          }
+          continue
+        }
+      }
+      // else is object
       for (const [key, value] of Object.entries(values)) {
         const keyvalue = key.toString() + JSON.stringify(value)
         const includes = keyvalue.toLowerCase().includes(_props.filter.toLowerCase())
