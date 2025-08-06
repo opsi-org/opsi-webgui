@@ -7,39 +7,36 @@ License: AGPL-3.0
 -->
 <template>
   <el-form
-    label-width="30%"
-    :label-position="mq.isMobile.value ? 'top' : 'left'"
-    class="diagnostics-form"
     v-if="Object.keys(data).length > 0"
+    label-width="40%"
+    class="diagnostics-form"
+    :label-position="mq.isMobile.value ? 'top' : 'left'"
     :key="rerenderKey"
   >
     <div v-for="(values, category) in dataCopy" :key="category">
       <!-- types of value is string -->
       <template v-if="typeof values == 'string'">
-        <!--
-        <h3 class="mt-4 text-lg font-semibold">
-          {{ category }}
-        </h3>
-        -->
-        <el-form-item class="border-b">
+        <el-form-item>
           <template #label>
-            <span :class="mq.isMobile.value ? '!font-bold' : ''">{{ category }}</span>
+            <span class="break-word" :class="mq.isMobile.value ? '!font-bold' : ''">{{
+              category
+            }}</span>
           </template>
           <code>{{ values }}</code>
         </el-form-item>
       </template>
       <template v-else-if="values && Object.keys(values).length !== 0">
-        <h3 class="mt-4 text-lg font-semibold">
+        <h3 class="mt-4 text-lg font-semibold" :title="category">
           {{ category }}
         </h3>
         <el-form-item v-for="(v, k) in values" :key="k" class="border-b">
           <template #label>
-            <span :class="mq.isMobile.value ? '!font-bold' : ''">{{ k }}</span>
+            <span class="break-word" :class="mq.isMobile.value ? '!font-bold' : ''">{{ k }}</span>
           </template>
-          <div :class="mq.isMobile.value ? 'ml-4' : ''">
+          <div :class="mq.isMobile.value ? 'ml-4' : ''" class="break-word">
             <template v-if="typeof v == 'object'">
               <div class="scrollValue">
-                <pre class="" :class="mq.isMobile.value ? 'w-screen' : 'min-w-[250px]'">{{
+                <pre class="" :class="mq.isMobile.value ? 'w-screen' : ''">{{
                   JSON.stringify(v, null, 2)
                 }}</pre>
               </div>
@@ -124,5 +121,8 @@ License: AGPL-3.0
   }
   .diagnostics-form .el-form-item__content {
     line-height: 28px;
+  }
+  .diagnostics-form .el-form-item__content {
+    display: grid !important;
   }
 </style>
