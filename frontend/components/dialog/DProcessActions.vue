@@ -63,7 +63,7 @@
 <script setup lang="ts">
   import { useNotification } from '~/composables/mixins/useComponent'
 
-  const { notifySuccess } = useNotification()
+  const { notifyError, notifyInfo } = useNotification()
   const mq = useMQ()
   const $t = useI18n().t
   const storeSelection = storeSelections()
@@ -103,11 +103,11 @@
     if (selectedProductMode.value === 'Selected') {
       payload.product_ids = storeSelection.selectionProducts
     }
-    const { error } = await useApiPOST('/command/process_action', payload)
+    const { data, error } = await useApiPOST('/command/process_action', payload)
     openProcessActionsModal.value = false
-    if (!error) {
-      notifySuccess({ message: $t('message.successfullyExecutedProcessActions') })
-    }
     isLoading.value = false
+    if (data) {
+      notifyInfo({ message: data.value })
+    }
   }
 </script>
