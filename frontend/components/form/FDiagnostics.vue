@@ -16,9 +16,11 @@ License: AGPL-3.0
     <div v-for="(values, category) in dataCopy" :key="category">
       <!-- types of value is string -->
       <template v-if="typeof values == 'string'">
+        <!--
         <h3 class="mt-4 text-lg font-semibold">
           {{ category }}
         </h3>
+        -->
         <el-form-item class="border-b">
           <template #label>
             <span :class="mq.isMobile.value ? '!font-bold' : ''">{{ category }}</span>
@@ -79,13 +81,11 @@ License: AGPL-3.0
     for (const [category, values] of Object.entries(_props.data)) {
       if (category == undefined || values == undefined) continue
 
-      const filteredValues: Record<string, any> | string = {}
+      const filteredValues: Record<string, any> = {}
       if (typeof values === 'string') {
         const includes = values.toLowerCase().includes(_props.filter.toLowerCase())
         if (includes) {
-          filteredValues[category] = {
-            category: values,
-          }
+          filteredData[category] = values
           continue
         }
       }
@@ -97,11 +97,14 @@ License: AGPL-3.0
           filteredValues[key] = value
         }
       }
+      // sort filteredValues by key
+
       if (Object.keys(filteredValues).length > 0) {
         filteredData[category] = filteredValues
       }
     }
     rerenderKey.value++
+    // sort filteredData by: first entries are string values, then alphabetically by key
     dataCopy.value = filteredData
   }
 </script>
