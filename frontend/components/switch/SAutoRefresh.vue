@@ -14,9 +14,9 @@ License: AGPL-3.0
           id="cbAutorefresh"
           name="autorefresh"
           :aria-label="
-            'Switch auto-refresh mode. Currently is ' + (msgbusAutoRefresh ? 'on' : 'off')
+            $t('autoRefreshAriaLabel', { 'on-off': $t(msgbusAutoRefresh ? 'on' : 'off') })
           "
-          style="--p-toggleswitch-width: 7rem"
+          style="--p-toggleswitch-width: 5rem"
           v-bind="$props"
         />
         <label
@@ -33,8 +33,8 @@ License: AGPL-3.0
       v-model="msgbusAutoRefresh"
       id="cbAutorefresh"
       name="autorefresh"
-      :aria-label="'Switch auto-refresh mode. Currently is ' + (msgbusAutoRefresh ? 'on' : 'off')"
-      style="--p-toggleswitch-width: 7rem"
+      :aria-label="$t('autoRefreshAriaLabel', { 'on-off': $t(msgbusAutoRefresh ? 'on' : 'off') })"
+      style="--p-toggleswitch-width: 5rem"
       v-bind="$props"
     />
     <label

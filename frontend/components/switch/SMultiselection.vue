@@ -16,7 +16,7 @@ License: AGPL-3.0
           id="cbMultiSelection"
           name="multiselection"
           aria-label="Multiselection mode"
-          style="--p-toggleswitch-width: 7rem"
+          style="--p-toggleswitch-width: 5rem"
           v-bind="$props"
           @change="() => changeSelectionMode(true)"
         />
@@ -37,7 +37,7 @@ License: AGPL-3.0
       id="cbMultiSelection"
       name="multiselection"
       aria-label="Multiselection mode"
-      style="--p-toggleswitch-width: 7rem"
+      style="--p-toggleswitch-width: 5rem"
       v-bind="$props"
       @change="() => changeSelectionMode(true)"
     />
