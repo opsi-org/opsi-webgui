@@ -1,8 +1,20 @@
 <template>
-  <el-button @click="openProcessActionsModal = true">
-    {{ $t('processActions') }}
-  </el-button>
-  <el-dialog v-model="openProcessActionsModal" :title="$t('processActions.help')" align-center>
+  <el-tooltip
+    :content="
+      storeSelection.selectionClients.length < 1
+        ? $t('message.selectClientsToProcessActions')
+        : $t('processActions.help')
+    "
+  >
+    <el-button
+      @click="openProcessActionsModal = true"
+      :disabled="storeSelection.selectionClients.length < 1"
+    >
+      {{ $t('processActions') }}
+    </el-button>
+  </el-tooltip>
+
+  <el-dialog v-model="openProcessActionsModal" :title="$t('processActions')">
     <el-form
       :label-position="mq.isMobile.value ? 'top' : 'left'"
       label-width="30%"
@@ -11,7 +23,14 @@
       <el-form-item :label="$t('products')">
         <el-radio-group v-model="selectedProductMode">
           <el-radio value="All">{{ $t('allProducts') }}</el-radio>
-          <el-radio value="Selected">{{ $t('onlySelectedProducts') }}</el-radio>
+          <el-tooltip
+            :content="$t('message.selectProductsToEnableThisOption')"
+            :disabled="storeSelection.selectionProducts.length > 0"
+          >
+            <el-radio value="Selected" :disabled="storeSelection.selectionProducts.length < 1">
+              {{ $t('onlySelectedProducts') }}
+            </el-radio>
+          </el-tooltip>
         </el-radio-group>
       </el-form-item>
       <el-form-item :label="$t('visiblilityOnClients')">

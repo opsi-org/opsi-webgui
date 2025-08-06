@@ -198,7 +198,9 @@
   "message.productsOnClient": "Products on client {id}",
   "message.propertyChanged": "Property \"{property}\" has been changed.",
   "message.readOnlyActive": "Read-only mode is active. Changes are not allowed.",
+  "message.selectClientsToProcessActions": "Select clients to process actions",
   "message.selectItem": "Please select an item.",
+  "message.selectProductsToEnableThisOption": "Select products to enable this option",
   "message.serverWriteAccessDisabled": "Server write access is disabled. Changes are not allowed.",
   "message.sessionExpired": "Your session has expired. Please log in again.",
   "message.sessionExpiring": "Your session is about to expire.",
@@ -342,7 +344,7 @@
   "version_outdated_localboot": "Version Outdated (LocalBoot)",
   "version_outdated_netboot": "Version Outdated (NetBoot)",
   "visible": "Visible",
-  "visiblilityOnClients": "Visiblility of action processing on clients",
+  "visiblilityOnClients": "Visiblility on clients",
   "visitOPSIForum": "Visit OPSI Forum",
   "workbenchLocalUrl": "Workbench Local URL",
   "workbenchRemoteUrl": "Workbench Remote URL"
