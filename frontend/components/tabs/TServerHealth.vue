@@ -11,7 +11,7 @@ License: AGPL-3.0
 
     <div class="flex justify-start">
       <!-- Global filter input for healthCheck and diagnostics. It is a workaround, cause filtering in diagnostics causes loose of focus (Setting focus on input field again not really possible, cause it is then not possible to mark any text) -->
-      <p-input-group class="min-w-fit border">
+      <p-input-group class="min-w-fit border-0 border-left">
         <p-input-group-addon>
           <IconIIcon :icon="useIcons().filter" class="my-auto" />
         </p-input-group-addon>

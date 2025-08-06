@@ -40,6 +40,9 @@ html .text-white {
   color: $white;
 }
 
+.break-word {
+  word-break: break-word;
+}
 /* Backgrounds */
 .bg-general {
   --el-text-color-regular: var(--color-text);
@@ -202,6 +205,7 @@ html .p-button.p-button-sm {
 
 .p-inputgroup,
 .p-treetable-table-container th.border-y,
-.p-treetable-table-container td.border-y {
+.p-treetable-table-container td.border-y,
+.el-form-item.border-b {
   border-color: var(--hover) !important;
 }
