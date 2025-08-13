@@ -240,6 +240,8 @@ html .p-button.p-button-sm {
   border-color: var(--hover) !important;
 }
 
-.el-dialog {
-  z-index: 3000 !important;
+.el-popper.is-dark,
+.el-popper.is-dark .el-text {
+  --el-text-color: var(--opsi-base-dark-text);
+  color: var(--opsi-base-dark-text);
 }

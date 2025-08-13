@@ -26,7 +26,7 @@ export const storeChanges = defineStore('changes', {
     delFromChangesHostParam(obj: object) {
       this._changesHostParam.splice(this._changesHostParam.indexOf(obj), 1)
     },
-    delFromChangesProductsByIds(productId: string, clientId?: string) {},
+    delFromChangesProductsByIds(clientIds: string[], productId: string) {},
     clearChangesProducts() {
       this.triggerChangesProducts += 1 // increment to trigger UI updates
       this._changesProducts = []

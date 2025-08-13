@@ -45,8 +45,8 @@ License: AGPL-3.0
       </el-table-column>
     </el-table>
     <template v-if="props.withFooter">
-      <div class="dialog-footer right">
-        <el-button v-if="hasEmitDiscard" type="danger" class="right" @click="emit('discard')">{{
+      <div class="dialog-footer flex justify-end">
+        <el-button v-if="hasEmitDiscard" type="danger" @click="emit('discard')">{{
           $t('discardAll')
         }}</el-button>
 

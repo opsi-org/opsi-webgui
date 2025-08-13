@@ -21,7 +21,12 @@ License: AGPL-3.0
     </el-button>
   </TooltipTTooltip>
 
-  <el-dialog v-model="openProcessActionsModal" :title="$t('onDemand')" append-to="body">
+  <el-dialog
+    v-model="openProcessActionsModal"
+    :title="$t('onDemand')"
+    append-to-body
+    z-index="3000"
+  >
     <PanelPOnDemand :with-footer="true" />
   </el-dialog>
 </template>

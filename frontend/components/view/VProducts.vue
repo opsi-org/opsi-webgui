@@ -32,7 +32,12 @@ License: AGPL-3.0
         {{ $t('save') }}
       </el-button>
       <DialogDProcessActions />
-      <el-dialog v-model="openBufferedChangesModal" align-center :width="isMobile ? '100%' : '70%'">
+      <el-dialog
+        v-model="openBufferedChangesModal"
+        align-center
+        :width="isMobile ? '100%' : '70%'"
+        append-to-body
+      >
         <PanelPChanges
           :buffered-changes="changesProducts"
           @save="saveBufferedChanges"
@@ -407,18 +412,8 @@ License: AGPL-3.0
     productsRef.value?.refetch()
   }
   function discardOneChange(row: any) {
-    console.debug('discardOneChange', row)
-    /*
-    const idx = changesProducts.value.findIndex(
-      (c) => c.productIds.length === 1 && c.productIds[0] === row.productId
-    )
-    if (idx !== -1) {
-      changesProducts.value.splice(idx, 1)
-    }
-    lastChanges.value.clientIds = selectionClients.value
-    lastChanges.value.productIds = [row.productId]
-    storeChanges().clearChangesProduct(row.productId)
-    productsRef.value?.refetch()*/
+    storeChanges().delFromChangesProductsByIds(selectionClients.value, row.productId)
+    /*productsRef.value?.refetch()*/
   }
   function discardAllChanges() {
     storeChanges().clearChangesProducts()

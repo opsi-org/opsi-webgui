@@ -48,11 +48,12 @@ License: AGPL-3.0
           }}
         </el-checkbox>
       </el-form-item>
+      <br />
     </el-form>
     <!-- if withFooter-->
 
     <template v-if="props.withFooter">
-      <div class="!dialog-footer">
+      <div class="dialog-footer flex justify-end">
         <TooltipTTooltip
           :content="
             storeSelection.selectionClients.length < 1
@@ -62,6 +63,7 @@ License: AGPL-3.0
         >
           <el-button
             :disabled="storeSelection.selectionClients.length < 1"
+            class=""
             @click="executeOnDemand"
           >
             {{ props.title || $t('onDemand') }}

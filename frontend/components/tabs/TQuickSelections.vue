@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-tabs class="quickselection" v-model="activeName">
+  <el-tabs class="quickselection z-0" v-model="activeName">
     <el-tab-pane v-for="category in quickSelDisplayList" :key="category.name" :name="category.name">
       <template #label>
         <IconIIcon
