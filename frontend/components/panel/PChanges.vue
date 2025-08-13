@@ -80,8 +80,3 @@ License: AGPL-3.0
   const hasEmitDiscard = thisInstance?.vnode?.props?.onDiscard !== undefined
   const hasEmitDeleteOne = thisInstance?.vnode?.props?.onDeleteOne !== undefined
 </script>
-<style scoped lang="css">
-  :deep(.p-panel-content) {
-    padding: 0;
-  }
-</style>

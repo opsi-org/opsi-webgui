@@ -82,7 +82,7 @@ License: AGPL-3.0
         >
           <el-button
             :disabled="storeSelection.selectionClients.length < 1 && productIds.length < 1"
-            class=""
+            type="success"
             @click="executeOnDemand"
           >
             {{ props.title || $t('onDemand') }}
