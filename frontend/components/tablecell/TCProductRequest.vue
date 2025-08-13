@@ -11,26 +11,38 @@ License: AGPL-3.0
     :class="{ 'cursor-not-allowed': config.read_only }"
   >
     <template #tooltip>
+      <!--
+      visibleRequest {{ visibleRequest }} <br /> (may include change)
+      originalCombinedValue {{ originalCombinedValue }} <br /> (without changes)
+      -->
+      <p v-if="visibleRequest.includes('*')">{{ originalCombinedValue }}</p>
       <span v-for="data in tooltipdata" :key="data.label" class="w-full !flex !justify-between">
         <p>{{ data.label }}</p>
         <p-tag :severity="VARIANTS[data.actionRequest] || 'info'" pt:root:class="m-0 p-0 min-w-28">
           {{ data.actionRequest }}
         </p-tag>
       </span>
-      <p>{{ modelRowitem }}</p>
     </template>
     <template #default>
       <p-select
         v-model="visibleRequest"
         :disabled="config.read_only"
-        class="min-w-[120px] w-[120px] max-w-[120px]"
+        :class="{
+          'min-w-[130px] w-[130px]': true,
+          'max-w-[170px]': visibleRequest.includes('*'), // changed row
+        }"
         :placeholder="title"
         :options="get_options"
         size="small"
         fluid
         @change="
-          (e: any) => {
-            save(modelRowitem, e.value)
+  (e: any) => {
+            emit(
+              'save',
+              modelRowitem,
+              e.value,
+            )
+            //save(modelRowitem, e.value)
           }
         "
       >
@@ -48,7 +60,8 @@ License: AGPL-3.0
           <p v-if="visibleRequest?.includes('*')" class="inline">
             {{
               $t('textInBrackets', {
-                value: modelRowitem?.actionRequest || '',
+                //value: modelRowitem?.actionRequest || '',
+                value: originalCombinedValue || modelRowitem?.actionRequest || '',
               })
             }}
           </p>
@@ -88,17 +101,10 @@ License: AGPL-3.0
   const selectedClients = ref<string[]>(selectionClients.value)
   // modelValue not required, cause column header is not for specific row.
   const modelRowitem = defineModel<ITableRowItemProducts>({ required: false })
+  const emit = defineEmits(['save'])
   const _props = defineProps({
     title: { type: String, required: false, default: '' },
     rowIsSelected: { type: Boolean, default: undefined },
-    save: {
-      type: Function,
-      default: () => {
-        return () => {
-          return {}
-        }
-      },
-    },
   })
 
   const get_options = computed((): Array<string> => {
@@ -130,24 +136,13 @@ License: AGPL-3.0
     // clientId -> actionRequest (from changes)
     // format changes to { client: actionRequest}
     const _changedValues: IObjectString2String = {}
-    changesProducts.value?.forEach((item: any) => {
-      if (
-        item.productId === modelRowitem.value?.productId ||
-        item.productIds.includes(modelRowitem.value?.productId)
-      ) {
-        // if arrays equal (independend from items order): selectedClients & item.clientIds
-        if (
-          JSON.stringify(selectedClients.value.sort()) === JSON.stringify(item.clientIds.sort())
-        ) {
-          for (const clientId of selectedClients.value) {
-            _changedValues[clientId] = item.actionRequest
-          }
-        } else if (selectedClients.value.includes(item.clientIds)) {
-          // if selectedClients includes item.clientIds
-          // mixed...
-        }
+    for (const clientId of selectedClients.value) {
+      const pId: string = modelRowitem.value?.productId as string
+      //_changedValues[clientId]
+      if (changesProducts.value?.[clientId]?.[pId]) {
+        _changedValues[clientId] = changesProducts.value[clientId][pId].actionRequest
       }
-    })
+    }
     return _changedValues
   })
 

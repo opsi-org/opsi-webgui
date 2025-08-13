@@ -317,6 +317,9 @@ License: AGPL-3.0
     },
     fetchedData,
     hasRows: hasRowsWrapper,
+    getRowById: (id: string) => {
+      return fetchedData.value?.find((row: any) => row[props.rowId] === id)
+    },
   })
 
   onMounted(() => {

@@ -7,15 +7,14 @@ License: AGPL-3.0
 -->
 <template>
   <p-panel :header="$t('unsavedChanges')">
-    <el-table :data="bufferedChanges" :span-method="spanClients">
+    <el-table :data="changesProductsFlat">
       <el-table-column :label="$t('clients')" prop="client">
         <template #default="scope">
-          <div v-if="scope.$index === 0">
-            <PanelPList
-              :data="storeSelection.selectionClients"
-              @delete="storeSelection['delFromSelectionClients']"
-            />
-          </div>
+          <ul>
+            <li v-for="client in scope.row.clientIds" :key="client">
+              {{ client }}
+            </li>
+          </ul>
         </template>
       </el-table-column>
       <el-table-column prop="productIds" :label="$t('products')">
@@ -34,6 +33,7 @@ License: AGPL-3.0
       ></el-table-column>
       <el-table-column width="50px" label="">
         <template #default="scope">
+          <ButtonBTNDelete @delete="emit('deleteOne', scope.row)" class="justify-end" />
           <p-button
             v-if="hasEmitDeleteOne"
             icon="pi pi-trash"
@@ -46,14 +46,18 @@ License: AGPL-3.0
     </el-table>
     <template v-if="props.withFooter">
       <div class="dialog-footer flex justify-end">
-        <el-button v-if="hasEmitDiscard" type="danger" @click="emit('discard')">{{
-          $t('discardAll')
-        }}</el-button>
+        <el-button
+          v-if="hasEmitDiscard"
+          type="danger"
+          @click="emit('discard')"
+          :disabled="!changesProductsExists"
+          >{{ $t('discardAll') }}</el-button
+        >
 
         <el-button
-          :type="hasUnsavedChanges ? 'success' : ''"
+          :type="changesProductsExists ? 'success' : ''"
           class="right"
-          :disabled="!hasUnsavedChanges"
+          :disabled="!changesProductsExists"
           @click="emit('save')"
         >
           {{ $t('save') }}
@@ -65,40 +69,16 @@ License: AGPL-3.0
 
 <script setup lang="ts">
   const thisInstance = getCurrentInstance()
-  const storeSelection = storeSelections()
-  const icons = useIcons()
   const emit = defineEmits(['save', 'discard', 'deleteOne'])
   const props = defineProps({
     withFooter: {
       type: Boolean,
       default: true,
     },
-    bufferedChanges: {
-      type: Array as PropType<
-        Array<{
-          client: string
-          productIds: string[]
-          actionRequest: string
-          oldActionRequest: string
-        }>
-      >,
-      required: true,
-    },
   })
-  const hasUnsavedChanges = computed(() => props.bufferedChanges?.length > 0)
+  const { changesProductsExists, changesProductsFlat } = storeToRefs(storeChanges())
   const hasEmitDiscard = thisInstance?.vnode?.props?.onDiscard !== undefined
   const hasEmitDeleteOne = thisInstance?.vnode?.props?.onDeleteOne !== undefined
-
-  function spanClients({ rowIndex, columnIndex }: { rowIndex: number; columnIndex: number }) {
-    // Merge the first column (Clients) vertically for all rows
-    if (columnIndex === 0) {
-      if (rowIndex === 0) {
-        return [props.bufferedChanges.length, 1]
-      } else {
-        return [0, 0]
-      }
-    }
-  }
 </script>
 <style scoped lang="css">
   :deep(.p-panel-content) {

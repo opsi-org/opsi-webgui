@@ -15,9 +15,12 @@ License: AGPL-3.0
       <el-form-item :label="$t('products')">
         <el-radio-group v-model="selectedProductMode">
           <el-radio :value="KEYS.ALL">{{ $t('allProducts') }}</el-radio>
-          <el-radio v-if="props.productIds" :value="KEYS.PASSED">{{
-            $t('listedProducts')
-          }}</el-radio>
+          <el-radio
+            v-if="props.productIds"
+            :value="KEYS.PASSED"
+            :disabled="props.productIds === undefined || props.productIds.length < 1"
+            >{{ $t('listedProducts') }}</el-radio
+          >
           <TooltipTTooltip
             :content="$t('message.selectProductsToEnableThisOption')"
             :disabled="storeSelection.selectionProducts.length > 0"
@@ -62,7 +65,7 @@ License: AGPL-3.0
           "
         >
           <el-button
-            :disabled="storeSelection.selectionClients.length < 1"
+            :disabled="storeSelection.selectionClients.length < 1 && productIds.length < 1"
             class=""
             @click="executeOnDemand"
           >
@@ -93,8 +96,8 @@ License: AGPL-3.0
   const emit = defineEmits(['pre-action'])
   const props = defineProps({
     withFooter: { type: Boolean, default: true },
-    productIds: { type: Array as PropType<string[]>, required: false },
-    title: { type: String, required: false },
+    productIds: { type: Array as PropType<string[]>, required: false, default: () => undefined },
+    title: { type: String, required: false, default: undefined },
   })
   const processActions = ref({
     client_ids: storeSelection.selectionClients,
@@ -131,7 +134,7 @@ License: AGPL-3.0
 
   async function executeOnDemand() {
     isLoading.value = true
-    if (emitPreActionExists) {
+    if (emitPreActionExists.value) {
       await emit('pre-action')
     }
     let visibility = ''
@@ -146,7 +149,8 @@ License: AGPL-3.0
     }
     if (selectedProductMode.value !== KEYS.ALL) {
       payload.product_ids = visibleProductIds.value
-    }
+    } // otherwise we do not pass the product_ids
+
     const { data } = await useApiPOST('/command/process_action', payload)
     isLoading.value = false
     if (data) {

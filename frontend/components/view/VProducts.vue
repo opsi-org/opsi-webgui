@@ -25,8 +25,8 @@ License: AGPL-3.0
   >
     <template #toolbar-right>
       <el-button
-        :type="hasUnsavedChanges && storeSelection.selectionClients.length > 0 ? 'success' : ''"
-        :disabled="!hasUnsavedChanges || storeSelection.selectionClients.length <= 0"
+        :type="changesProductsExists && storeSelection.selectionClients.length > 0 ? 'success' : ''"
+        :disabled="!changesProductsExists || storeSelection.selectionClients.length <= 0"
         @click="openBufferedChangesModal = true"
       >
         {{ $t('save') }}
@@ -46,7 +46,7 @@ License: AGPL-3.0
         />
         <PanelPOnDemand
           :title="$t('processActionsSave')"
-          :product-ids="changesProducts.map((c) => c.productIds).flat()"
+          :product-ids="changesProductsProducts"
           @pre-action="saveBufferedChanges"
         />
       </el-dialog>
@@ -95,6 +95,7 @@ License: AGPL-3.0
   import RadioButton from 'primevue/radiobutton'
   import TCBadgeCompares from '../tablecell/TCBadgeCompares.vue'
   import TCProductRequest from '../tablecell/TCProductRequest.vue'
+  import type { IChangeProducts, IChangeProductsFlat } from '~/types/tobjects'
 
   const { notifyInfo } = useNotification()
   const $t = useI18n().t
@@ -108,8 +109,9 @@ License: AGPL-3.0
   const storeSelection = storeSelections()
   const storeTSettings = storeTablesettings()
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
-  //const { productActionRequest } = storeToRefs(storeInternalData())
-  const { changesProducts } = storeToRefs(storeChanges())
+  const { productActionRequest } = storeToRefs(storeInternalData())
+  const { changesProductsProducts, changesProductsExists, changesProducts, changesProductsFlat } =
+    storeToRefs(storeChanges())
 
   const emit = defineEmits(['change'])
   const props = defineProps({
@@ -144,10 +146,7 @@ License: AGPL-3.0
   const clientSelection: Ref<Array<string>> =
     props.selectedClient !== undefined ? ref([props.selectedClient]) : ref(selectionClients.value)
   const fetchedDataClients2Depots = ref<T_Client2Depot>({})
-  const lastChanges = ref({
-    clientIds: [] as Array<string>,
-    productIds: [] as Array<string>,
-  }) // used to check if we caused the last event
+  const lastChanges = ref<IChangeProducts>() // used to check if we caused the last event
   const productsTypeChecked = ref({
     LocalbootProduct: true,
     NetbootProduct: false,
@@ -318,7 +317,7 @@ License: AGPL-3.0
             return (
               <TCProductRequest
                 title={$t('message.setActionRequestForSelectedProducts')}
-                save={saveActionRequests}
+                onSave={saveActionRequestsLocally}
               />
             )
           },
@@ -327,7 +326,7 @@ License: AGPL-3.0
           <TCProductRequest
             modelValue={rowData}
             row-is-selected={selectionProducts.value.includes(rowData.productId)}
-            save={saveActionRequest}
+            onSave={saveActionRequestLocally}
           />
         )
       },
@@ -358,8 +357,6 @@ License: AGPL-3.0
   ])
 
   const openBufferedChangesModal = ref(false)
-  //const bufferedChanges = ref<Array<any>>([])
-  const hasUnsavedChanges = computed(() => changesProducts.value?.length > 0)
   const hasRowsWrapper = computed(() => productsRef.value?.hasRows.value)
 
   onMounted(async () => {
@@ -372,7 +369,6 @@ License: AGPL-3.0
   watch(
     () => selectionClients.value,
     async () => {
-      console.log('selectionClients changed', selectionClients.value)
       if (props.selectedClient === undefined) {
         clientSelection.value = selectionClients.value
 
@@ -411,8 +407,8 @@ License: AGPL-3.0
   function refetch() {
     productsRef.value?.refetch()
   }
-  function discardOneChange(row: any) {
-    storeChanges().delFromChangesProductsByIds(selectionClients.value, row.productId)
+  function discardOneChange(row: IChangeProductsFlat) {
+    storeChanges().delFromChangesProducts(row)
     /*productsRef.value?.refetch()*/
   }
   function discardAllChanges() {
@@ -456,12 +452,9 @@ License: AGPL-3.0
       msg.data.productType === currentType.value &&
       clientSelection.value.includes(msg.data.clientId)
     ) {
-      if (
-        !(
-          lastChanges.value.clientIds.includes(msg.data.clientId) &&
-          lastChanges.value.productIds.includes(msg.data.productId)
-        )
-      ) {
+      if (lastChanges.value?.[msg.data.clientId]?.[msg.data.productId]) {
+        delete lastChanges.value?.[msg.data.clientId]?.[msg.data.productId]
+      } else {
         if (msgbusAutoRefresh.value) {
           productsRef.value?.refetch()
           return
@@ -512,51 +505,39 @@ License: AGPL-3.0
     return params
   }
 
-  async function saveActionRequests(rowItem: any, newrequest: string) {
-    const data = {
-      clientIds: clientSelection.value,
-      productIds: selectionProducts.value,
-      actionRequest: newrequest,
-      oldActionRequest: rowItem.actionRequest, // original
+  async function saveActionRequestsLocally(rowitem: any, newrequest: string) {
+    for (const productId of selectionProducts.value) {
+      const rowitem = productsRef.value?.getRowById(productId)
+      if (rowitem && newrequest) {
+        await saveActionRequestLocally(rowitem, newrequest)
+      } else {
+        console.error(
+          'saveActionRequestsLocally: rowitem not found or newrequest is empty',
+          rowitem,
+          newrequest
+        )
+      }
     }
-
-    lastChanges.value.clientIds = data.clientIds
-    lastChanges.value.productIds = data.productIds
-
-    storeChanges().pushChangesProduct(data)
   }
 
-  async function saveActionRequest(rowitem: any, newrequest: string) {
-    const idx = storeChanges().setChangeActionRequest(
+  async function saveActionRequestLocally(rowitem: any, newrequest: string) {
+    const idx = storeChanges().pushChangesProduct(
       selectionClients.value,
-      rowitem.productId,
-      newrequest
+      [rowitem.productId],
+      newrequest,
+      productActionRequest.value[rowitem.productId] || rowitem.actionRequest || 'none'
     )
     if (idx === true) {
       return
     }
-
-    const data = {
-      clientIds: selectionClients.value,
-      productIds: [rowitem.productId],
-      actionRequest: newrequest,
-      oldActionRequest: rowitem.actionRequest,
-    }
-
-    lastChanges.value.clientIds = data.clientIds
-    lastChanges.value.productIds = data.productIds
-
-    if (idx !== -1) {
-      changesProducts.value.splice(idx, 1)
-    }
-
-    storeChanges().pushChangesProduct(data)
   }
 
   async function saveBufferedChanges() {
-    for (const change of changesProducts.value) {
-      const { oldActionRequest, ...data } = change
-      await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
+    lastChanges.value = { ...changesProducts.value }
+    // clients with same products and actionRequests
+
+    for (const change of changesProductsFlat.value) {
+      await useSaveProductActionRequest($t).saveProdActionRequest(change, null, true)
     }
 
     discardAllChanges()
@@ -591,7 +572,7 @@ License: AGPL-3.0
   }
 
   onBeforeRouteLeave((to, from, next) => {
-    if (hasUnsavedChanges.value && storeAuth().isAuthenticated) {
+    if (changesProductsExists.value && storeAuth().isAuthenticated) {
       const answer = window.confirm($t('message.unsavedChanges'))
       if (answer) {
         next()

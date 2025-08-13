@@ -10,3 +10,19 @@ export interface IErrorDepProp {
   dependencies: string
   properties: string
 }
+
+export interface IChangeProducts {
+  [clientId: string]: {
+    [productId: string]: {
+      actionRequest: string
+      old: string
+    }
+  }
+}
+
+export interface IChangeProductsFlat {
+  clientIds: string[]
+  productIds: string[]
+  actionRequest: string
+  old?: string
+}

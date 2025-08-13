@@ -37,6 +37,4 @@ License: AGPL-3.0
   const storeSelection = storeSelections()
 
   const openProcessActionsModal = ref(false)
-
-  const emit = defineEmits(['pre-action'])
 </script>
