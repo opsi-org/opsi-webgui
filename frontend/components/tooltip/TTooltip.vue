@@ -11,6 +11,7 @@ License: AGPL-3.0
     ref="popoverRef"
     id="popover"
     raw-content
+    :style="props.style"
     :effect="colormode !== 'dark' ? 'dark' : 'light'"
     :trigger="props.method"
     :show-after="props.delay"
@@ -44,5 +45,15 @@ License: AGPL-3.0
     method: { type: String as PropType<TMethod>, default: 'hover' },
     content: { type: String, default: '', required: false },
     delay: { type: Number, default: 1000 },
+    style: { type: [String, Object], default: () => ({}) },
   })
 </script>
+<style scoped>
+  /*:deep(.el-tooltip__trigger) {
+    display: flex;
+  }*/
+  .el-tooltip__trigger,
+  :deep(.el-tooltip__trigger) {
+    display: inherit !important;
+  }
+</style>

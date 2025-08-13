@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <div
-    :class="['flex flex-col items-stretch p-2 rounded-lg shadow-md']"
+    class="flex flex-col items-stretch p-2 rounded-lg shadow-md"
     data-testid="BQuickPanel"
     style="height: calc(100vh - var(--above-main))"
   >
@@ -35,6 +35,9 @@ License: AGPL-3.0
           :client-ids="storeSelection.selectionClients"
           icon="client"
           :link="false"
+          :disabled="
+            storeSelection.selectionClients.length === 0 || storeConfigapp().config?.read_only
+          "
         />
         <DialogDProductQuickActions />
       </div>

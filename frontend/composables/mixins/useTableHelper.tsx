@@ -34,6 +34,12 @@ export const useTableHelper = (
   const isLoading = ref(false)
   const filterQuery = ref('')
   const filterBy = ref(props.rowId)
+
+  // if this type of target or classes is in table, it should not propergate click events,
+  // and only use the clickevent from this targets
+  const notPropagateClickTargets = ['svg', 'button', 'path', 'span']
+  const notPropagateClickClasses = ['p-select']
+
   function isArrayNormalized(object: string | string[]): boolean {
     if (Array.isArray(object)) return true
     try {
@@ -340,6 +346,9 @@ export const useTableHelper = (
   }
 
   function handleSortChange({ prop, order }: { column: any; prop: string; order: any }) {
+    if (onClickWrapper(event)) {
+      return
+    }
     sortByWrapper.value = prop
     sortDescWrapper.value = order === 'descending'
     if (props.tableId == 'products') {
@@ -357,14 +366,23 @@ export const useTableHelper = (
     }
     fetchDataWrapper()
   }
-  function onRowClick(row: any, column: any, event: any) {
-    if (['svg', 'button', 'path', 'span'].includes(event.target?.localName)) {
-      return
+
+  function onClickWrapper(event: any) {
+    if (notPropagateClickTargets.includes(event.target?.localName)) {
+      return true
     }
-    if (
-      event.target?.offsetParent?.classList !== undefined &&
-      Array.from(event.target?.offsetParent?.classList).includes('p-select')
-    ) {
+    if (event?.target?.offsetParent?.classList !== undefined) {
+      for (const cls of notPropagateClickClasses) {
+        if (Array.from(event.target?.offsetParent?.classList).includes(cls)) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  function onRowClick(row: any, column: any, event: any) {
+    if (onClickWrapper(event)) {
       return
     }
     $emit('selectionChanged', row[props.rowId])

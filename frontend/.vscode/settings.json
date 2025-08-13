@@ -84,7 +84,7 @@
       },
       {
         // copyBackend2opsidocker
-        "command": "opsiconfd-docker-container rm -rf /usr/lib/opsiconfd/addons/webgui && bash /workspace/frontend/scripts/link_backend_opsidocker.sh && opsiconfd-docker-restart",
+        "command": "opsiconfd-docker-container rm -rf /usr/lib/opsiconfd/addons/webgui && bash /workspace/frontend/scripts/link_backend_opsidocker.sh && opsiconfd-docker-container sudo cp -rf /data/opsiconfd/addons/* /var/lib/opsiconfd/addons/. && opsiconfd-docker-restart",
         "name": "$(link) copyBackendFiles",
         "tooltip": "Copy local backend files to opsi-docker (`localhost:44471/../webgui/..` )"
       },

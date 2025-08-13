@@ -11,6 +11,11 @@ License: AGPL-3.0
     :class="{ 'cursor-not-allowed': config.read_only }"
   >
     <template #tooltip>
+      <!--
+      visibleRequest {{ visibleRequest }} <br /> (may include change)
+      originalCombinedValue {{ originalCombinedValue }} <br /> (without changes)
+      -->
+      <p v-if="visibleRequest.includes('*')">{{ originalCombinedValue }}</p>
       <span v-for="data in tooltipdata" :key="data.label" class="w-full !flex !justify-between">
         <p>{{ data.label }}</p>
         <p-tag :severity="VARIANTS[data.actionRequest] || 'info'" pt:root:class="m-0 p-0 min-w-28">
@@ -22,15 +27,22 @@ License: AGPL-3.0
       <p-select
         v-model="visibleRequest"
         :disabled="config.read_only"
-        class="min-w-[82px] w-full"
+        :class="{
+          'min-w-[130px] w-[130px]': true,
+          'max-w-[170px]': visibleRequest.includes('*'), // changed row
+        }"
         :placeholder="title"
         :options="get_options"
         size="small"
         fluid
         @change="
-          (e: any) => {
-            save(modelRowitem, e.value)
-            visibleRequest = e.value
+  (e: any) => {
+            emit(
+              'save',
+              modelRowitem,
+              e.value,
+            )
+            //save(modelRowitem, e.value)
           }
         "
       >
@@ -48,7 +60,8 @@ License: AGPL-3.0
           <p v-if="visibleRequest?.includes('*')" class="inline">
             {{
               $t('textInBrackets', {
-                value: modelRowitem?.actionRequest || '',
+                //value: modelRowitem?.actionRequest || '',
+                value: originalCombinedValue || modelRowitem?.actionRequest || '',
               })
             }}
           </p>
@@ -65,21 +78,22 @@ License: AGPL-3.0
 
   const $t = useI18n().t
   const config = storeConfigapp().config ?? { read_only: true }
+
   const { changesProducts } = storeToRefs(storeChanges())
   const { selectionClients } = storeToRefs(storeSelections())
+  const { productActionRequest } = storeToRefs(storeInternalData())
 
   const MIXED_VALUE = $t('mixed')
   const DEFAULT_OPTIONS = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
   const VARIANTS: {
     [key: string]: PSeverity
   } = {
-    always: 'danger',
-    setup: 'danger',
-    once: 'danger',
-    custom: 'danger',
+    always: 'secondary',
+    setup: 'secondary',
+    once: 'secondary',
+    custom: 'secondary',
     uninstall: 'primary',
-    foo: 'primary',
-    none: 'secondary',
+    none: 'contrast',
     [MIXED_VALUE]: 'warn',
     undefined: 'primary',
   }
@@ -87,18 +101,10 @@ License: AGPL-3.0
   const selectedClients = ref<string[]>(selectionClients.value)
   // modelValue not required, cause column header is not for specific row.
   const modelRowitem = defineModel<ITableRowItemProducts>({ required: false })
-
+  const emit = defineEmits(['save'])
   const _props = defineProps({
     title: { type: String, required: false, default: '' },
     rowIsSelected: { type: Boolean, default: undefined },
-    save: {
-      type: Function,
-      default: () => {
-        return () => {
-          return {}
-        }
-      },
-    },
   })
 
   const get_options = computed((): Array<string> => {
@@ -130,11 +136,29 @@ License: AGPL-3.0
     // clientId -> actionRequest (from changes)
     // format changes to { client: actionRequest}
     const _changedValues: IObjectString2String = {}
-    changesProducts.value?.forEach((item: any) => {
-      if (item.productId === modelRowitem.value?.productId) {
-        _changedValues[item.clientId] = item.actionRequest
+    for (const clientId of selectedClients.value) {
+      const pId: string = modelRowitem.value?.productId as string
+      //_changedValues[clientId]
+      if (changesProducts.value?.[clientId]?.[pId]) {
+        if (
+          modelRowitem.value?.actions?.includes(changesProducts.value[clientId][pId].actionRequest)
+        ) {
+          _changedValues[clientId] = changesProducts.value[clientId][pId].actionRequest
+        } else if (modelRowitem.value?.actions) {
+          console.warn(
+            'TCProductRequest: actionRequest ',
+            changesProducts.value[clientId][pId].actionRequest,
+            ' not in allowed for product',
+            modelRowitem.value?.productId,
+            '(actions:',
+            modelRowitem.value?.actions,
+            ')'
+          )
+
+          storeChanges().delCProductByProductId([clientId], pId)
+        }
       }
-    })
+    }
     return _changedValues
   })
 
@@ -200,7 +224,18 @@ License: AGPL-3.0
         : `${changedCombinedValue.value}`
     return result
   })
+  setActionRequest()
+  watch(() => visibleRequest, setActionRequest, { deep: true })
 
+  function setActionRequest() {
+    if (modelRowitem.value && visibleRequest.value && modelRowitem.value.productId) {
+      if (!productActionRequest.value) {
+        productActionRequest.value = {}
+      }
+
+      productActionRequest.value[modelRowitem.value?.productId] = visibleRequest.value
+    }
+  }
   function xorLike<T>(values: T[]): T | string | undefined {
     if (values.length === 0) {
       return undefined

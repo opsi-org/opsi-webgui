@@ -78,6 +78,14 @@ License: AGPL-3.0
     }
   })
 
+  const getRowByIdWrapper = computed(() => {
+    if (isMobileWrapper.value) {
+      return tableMobile.value?.getRowById
+    } else {
+      return tableDesktop.value?.getRowById
+    }
+  })
+
   function dataWrapper() {
     if (isMobileWrapper.value) {
       return tableMobile.value?.fetchedData
@@ -90,5 +98,6 @@ License: AGPL-3.0
     refetch: fetchWrapper,
     fetchedData: dataWrapper,
     hasRows: hasRowsWrapper,
+    getRowById: getRowByIdWrapper,
   })
 </script>
