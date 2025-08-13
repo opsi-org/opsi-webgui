@@ -140,7 +140,23 @@ License: AGPL-3.0
       const pId: string = modelRowitem.value?.productId as string
       //_changedValues[clientId]
       if (changesProducts.value?.[clientId]?.[pId]) {
-        _changedValues[clientId] = changesProducts.value[clientId][pId].actionRequest
+        if (
+          modelRowitem.value?.actions?.includes(changesProducts.value[clientId][pId].actionRequest)
+        ) {
+          _changedValues[clientId] = changesProducts.value[clientId][pId].actionRequest
+        } else if (modelRowitem.value?.actions) {
+          console.warn(
+            'TCProductRequest: actionRequest ',
+            changesProducts.value[clientId][pId].actionRequest,
+            ' not in allowed for product',
+            modelRowitem.value?.productId,
+            '(actions:',
+            modelRowitem.value?.actions,
+            ')'
+          )
+
+          storeChanges().delCProductByProductId([clientId], pId)
+        }
       }
     }
     return _changedValues
