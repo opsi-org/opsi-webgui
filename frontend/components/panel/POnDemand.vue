@@ -51,12 +51,28 @@ License: AGPL-3.0
           }}
         </el-checkbox>
       </el-form-item>
-      <br />
+      <el-form-item :label="$t('clients')">
+        <el-button
+          :disabled="
+            JSON.stringify(storeSelection.selectionClients.sort()) ===
+            JSON.stringify(processActions.client_ids.sort())
+          "
+          @click="processActions.client_ids = storeSelection.selectionClients"
+        >
+          {{ $t('reset') }}
+        </el-button>
+        <PanelPList
+          :data="processActions.client_ids"
+          @delete="
+            (id) => (processActions.client_ids = processActions.client_ids.filter((c) => c !== id))
+          "
+        />
+      </el-form-item>
     </el-form>
-    <!-- if withFooter-->
 
+    <!-- if withFooter-->
     <template v-if="props.withFooter">
-      <div class="dialog-footer flex justify-end">
+      <div class="dialog-footer flex justify-end mt-4">
         <TooltipTTooltip
           :content="
             storeSelection.selectionClients.length < 1
@@ -144,7 +160,7 @@ License: AGPL-3.0
       visibility = 'hidden'
     }
     const payload: Record<string, any> = {
-      client_ids: storeSelection.selectionClients,
+      client_ids: processActions.value.client_ids,
       visibility: visibility,
     }
     if (selectedProductMode.value !== KEYS.ALL) {

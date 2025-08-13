@@ -11,7 +11,7 @@ License: AGPL-3.0
       <ul direction="vertical">
         <li v-for="item in props.data" :key="item" class="relative flex items-stretch">
           <p class="pr-8">{{ item }}</p>
-          <ButtonBTNDelete :id="item" @delete="emit('delete', item)" />
+          <ButtonBTNDelete v-if="emitDeleteExists" :id="item" @delete="emit('delete', item)" />
         </li>
       </ul>
     </p-panel>
@@ -19,11 +19,16 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
+  const thisInstance = getCurrentInstance()
   const emit = defineEmits(['delete'])
   const props = defineProps({
     data: {
       type: Object,
       required: true,
     },
+  })
+
+  const emitDeleteExists = computed(() => {
+    return thisInstance?.vnode?.props?.onDelete !== undefined
   })
 </script>

@@ -25,6 +25,7 @@ License: AGPL-3.0
     v-model="openProcessActionsModal"
     :title="$t('onDemand')"
     append-to-body
+    :width="mq.isMobile.value ? '100%' : '80%'"
     z-index="3000"
   >
     <PanelPOnDemand :with-footer="true" />
@@ -34,6 +35,7 @@ License: AGPL-3.0
 <script setup lang="ts">
   const $t = useI18n().t
   const icons = useIcons()
+  const mq = useMQ()
   const storeSelection = storeSelections()
 
   const openProcessActionsModal = ref(false)

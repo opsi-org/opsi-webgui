@@ -35,7 +35,7 @@ License: AGPL-3.0
       <el-dialog
         v-model="openBufferedChangesModal"
         align-center
-        :width="isMobile ? '100%' : '70%'"
+        :width="isMobile ? '100%' : '80%'"
         append-to-body
       >
         <PanelPChanges
