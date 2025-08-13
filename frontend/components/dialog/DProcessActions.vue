@@ -26,7 +26,6 @@ License: AGPL-3.0
     :title="$t('onDemand')"
     append-to-body
     :width="mq.isMobile.value ? '100%' : '80%'"
-    z-index="3000"
   >
     <PanelPOnDemand :with-footer="true" />
   </el-dialog>
