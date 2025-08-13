@@ -5,7 +5,10 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
-export default {
+import type { Config } from 'tailwindcss'
+import colors from 'tailwindcss/colors'
+
+export default <Partial<Config>>{
   content: [
     './components/**/*.{vue,js,ts,tsx}',
     './layouts/**/*.vue',
@@ -27,7 +30,6 @@ export default {
         info: 'var(--el-color-info)',
         warning: 'var(--el-color-warning)',
         warn: 'var(--el-color-warning)',
-
         'opsi-deep-gray': 'var(--color-opsi-deep-gray)',
         'opsi-gray': 'var(--color-opsi-gray)',
         'opsi-medium-gray': 'var(--color-opsi-medium-gray)',

@@ -39,6 +39,36 @@ html .text-white {
   --el-text-color-regular: $white;
   color: $white;
 }
+/* its not enough to define it in tailwind config...*/
+html .text-warn,
+html .text-warning {
+  --el-text-color-regular: var(--el-color-warning);
+  color: var(--el-color-warning);
+}
+html .text-primary {
+  --el-text-color-regular: var(--el-color-primary);
+  color: var(--el-color-primary);
+}
+html .text-primary {
+  --el-text-color-regular: var(--color-opsi-blue);
+  color: var(--color-opsi-blue);
+}
+html .text-secondary {
+  --el-text-color-regular: var(--color-opsi-magenta);
+  color: var(--color-opsi-magenta);
+}
+html .text-success {
+  --el-text-color-regular: var(--el-color-success);
+  color: var(--el-color-success);
+}
+html .text-danger {
+  --el-text-color-regular: var(--el-color-danger);
+  color: var(--el-color-danger);
+}
+html .text-info {
+  --el-text-color-regular: var(--el-color-info);
+  color: var(--el-color-info);
+}
 
 .break-word {
   word-break: break-word;
@@ -208,4 +238,8 @@ html .p-button.p-button-sm {
 .p-treetable-table-container td.border-y,
 .el-form-item.border-b {
   border-color: var(--hover) !important;
+}
+
+.el-dialog {
+  z-index: 3000 !important;
 }

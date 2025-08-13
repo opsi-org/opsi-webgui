@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <div data-testid="IDetails" :class="'IDetails ' + content" class="inline">
+  <div data-testid="IDetails" :class="content" class="IDetails inline">
     <p-tag :severity="props.variant" size="small" class="pt-0 pb-0">
       <span v-if="props.content == 'depot-unequal'" class="inline">
         <el-text>{{ props.text ? props.text : t_fixed('unequal') }}</el-text>

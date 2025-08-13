@@ -46,3 +46,8 @@ License: AGPL-3.0
     delay: { type: Number, default: 1000 },
   })
 </script>
+<style scoped>
+  :deep(.el-tooltip__trigger) {
+    display: flex;
+  }
+</style>

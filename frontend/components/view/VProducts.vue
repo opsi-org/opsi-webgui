@@ -31,66 +31,20 @@ License: AGPL-3.0
       >
         {{ $t('save') }}
       </el-button>
-      <el-dialog v-model="openBufferedChangesModal" title="Unsaved changes" align-center>
-        <el-table :data="bufferedChanges" :span-method="spanClients">
-          <el-table-column :label="$t('clients')" prop="client">
-            <template #default="scope">
-              <div v-if="scope.$index === 0">
-                <el-scrollbar max-height="70vh" class="w-full items-stretch flex ml-3">
-                  <ul direction="vertical">
-                    <li
-                      v-for="client in storeSelection.selectionClients"
-                      :key="client"
-                      class="relative flex items-stretch"
-                    >
-                      <p class="pr-8">{{ client }}</p>
-                      <el-button
-                        size="small"
-                        class="!border-none !p-1 absolute top-0 right-0"
-                        :title="$t('deselectItem', { item: client })"
-                      >
-                        <span class="sr-only">{{ $t('deselect') }}</span>
-                        <IconIIcon
-                          :icon="icons.x"
-                          @click="storeSelection['delFromSelectionClients'](client)"
-                        />
-                      </el-button>
-                    </li>
-                  </ul>
-                </el-scrollbar>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="productIds" :label="$t('products')">
-            <template #default="scope">
-              <ul>
-                <li v-for="product in scope.row.productIds" :key="product">
-                  {{ product }}
-                </li>
-              </ul>
-            </template>
-          </el-table-column>
-          <el-table-column prop="actionRequest" :label="$t('actionRequest')"></el-table-column>
-          <el-table-column
-            prop="oldActionRequest"
-            :label="$t('old') + ' ' + $t('actionRequest')"
-          ></el-table-column>
-        </el-table>
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button type="danger" @click="discardAllChanges">{{ $t('discardAll') }}</el-button>
-
-            <el-button
-              :type="hasUnsavedChanges ? 'success' : ''"
-              :disabled="!hasUnsavedChanges"
-              @click="saveBufferedChanges"
-            >
-              {{ $t('save') }}
-            </el-button>
-          </div>
-        </template>
-      </el-dialog>
       <DialogDProcessActions />
+      <el-dialog v-model="openBufferedChangesModal" align-center :width="isMobile ? '100%' : '70%'">
+        <PanelPChanges
+          :buffered-changes="changesProducts"
+          @save="saveBufferedChanges"
+          @discard="discardAllChanges"
+          @delete-one="discardOneChange"
+        />
+        <PanelPOnDemand
+          :title="$t('processActionsSave')"
+          :product-ids="changesProducts.map((c) => c.productIds).flat()"
+          @pre-action="saveBufferedChanges"
+        />
+      </el-dialog>
 
       <ModalMServerSelection
         v-if="storeSelection.selectionDepots.length <= 0"
@@ -149,6 +103,8 @@ License: AGPL-3.0
   const storeSelection = storeSelections()
   const storeTSettings = storeTablesettings()
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
+  //const { productActionRequest } = storeToRefs(storeInternalData())
+  const { changesProducts } = storeToRefs(storeChanges())
 
   const emit = defineEmits(['change'])
   const props = defineProps({
@@ -397,8 +353,8 @@ License: AGPL-3.0
   ])
 
   const openBufferedChangesModal = ref(false)
-  const bufferedChanges = ref<Array<any>>([])
-  const hasUnsavedChanges = computed(() => bufferedChanges.value?.length > 0)
+  //const bufferedChanges = ref<Array<any>>([])
+  const hasUnsavedChanges = computed(() => changesProducts.value?.length > 0)
   const hasRowsWrapper = computed(() => productsRef.value?.hasRows.value)
 
   onMounted(async () => {
@@ -411,6 +367,7 @@ License: AGPL-3.0
   watch(
     () => selectionClients.value,
     async () => {
+      console.log('selectionClients changed', selectionClients.value)
       if (props.selectedClient === undefined) {
         clientSelection.value = selectionClients.value
 
@@ -449,20 +406,23 @@ License: AGPL-3.0
   function refetch() {
     productsRef.value?.refetch()
   }
-
-  function spanClients({ rowIndex, columnIndex }: { rowIndex: number; columnIndex: number }) {
-    // Merge the first column (Clients) vertically for all rows
-    if (columnIndex === 0) {
-      if (rowIndex === 0) {
-        return [bufferedChanges.value.length, 1]
-      } else {
-        return [0, 0]
-      }
+  function discardOneChange(row: any) {
+    console.debug('discardOneChange', row)
+    /*
+    const idx = changesProducts.value.findIndex(
+      (c) => c.productIds.length === 1 && c.productIds[0] === row.productId
+    )
+    if (idx !== -1) {
+      changesProducts.value.splice(idx, 1)
     }
+    lastChanges.value.clientIds = selectionClients.value
+    lastChanges.value.productIds = [row.productId]
+    storeChanges().clearChangesProduct(row.productId)
+    productsRef.value?.refetch()*/
   }
-
   function discardAllChanges() {
-    bufferedChanges.value = []
+    storeChanges().clearChangesProducts()
+    refetch()
     openBufferedChangesModal.value = false
   }
 
@@ -562,23 +522,22 @@ License: AGPL-3.0
       clientIds: clientSelection.value,
       productIds: selectionProducts.value,
       actionRequest: newrequest,
-      oldActionRequest: rowItem.actionRequest,
+      oldActionRequest: rowItem.actionRequest, // original
     }
 
     lastChanges.value.clientIds = data.clientIds
     lastChanges.value.productIds = data.productIds
 
-    bufferedChanges.value.push(data)
+    storeChanges().pushChangesProduct(data)
   }
 
   async function saveActionRequest(rowitem: any, newrequest: string) {
-    const idx = bufferedChanges.value.findIndex(
-      (c) => c.productIds.length === 1 && c.productIds[0] === rowitem.productId
+    const idx = storeChanges().setChangeActionRequest(
+      selectionClients.value,
+      rowitem.productId,
+      newrequest
     )
-    if (newrequest === rowitem.actionRequest) {
-      if (idx !== -1) {
-        bufferedChanges.value.splice(idx, 1)
-      }
+    if (idx === true) {
       return
     }
 
@@ -593,19 +552,19 @@ License: AGPL-3.0
     lastChanges.value.productIds = data.productIds
 
     if (idx !== -1) {
-      bufferedChanges.value.splice(idx, 1)
+      changesProducts.value.splice(idx, 1)
     }
 
-    bufferedChanges.value.push(data)
+    storeChanges().pushChangesProduct(data)
   }
 
   async function saveBufferedChanges() {
-    for (const change of bufferedChanges.value) {
+    for (const change of changesProducts.value) {
       const { oldActionRequest, ...data } = change
       await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
     }
 
-    bufferedChanges.value = []
+    discardAllChanges()
     productsRef.value?.refetch()
     openBufferedChangesModal.value = false
   }
@@ -637,7 +596,7 @@ License: AGPL-3.0
   }
 
   onBeforeRouteLeave((to, from, next) => {
-    if (hasUnsavedChanges.value) {
+    if (hasUnsavedChanges.value && storeAuth().isAuthenticated) {
       const answer = window.confirm($t('message.unsavedChanges'))
       if (answer) {
         next()

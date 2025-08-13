@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <div
-    :class="['flex flex-col items-stretch p-2 rounded-lg shadow-md']"
+    class="flex flex-col items-stretch p-2 rounded-lg shadow-md z-0"
     data-testid="BQuickPanel"
     style="height: calc(100vh - var(--above-main))"
   >
