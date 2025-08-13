@@ -6,7 +6,6 @@ All rights reserved.
 License: AGPL-3.0
 */
 import type { Config } from 'tailwindcss'
-import colors from 'tailwindcss/colors'
 
 export default <Partial<Config>>{
   content: [

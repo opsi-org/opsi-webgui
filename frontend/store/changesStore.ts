@@ -104,18 +104,6 @@ export const storeChanges = defineStore('changes', {
       oldActionRequest: string,
       cleanup: boolean = true
     ) {
-      console.log(
-        'pushChangesProduct clientIds:',
-        clientIds,
-        'productIds:',
-        productIds,
-        'newActionRequest:',
-        newActionRequest,
-        'oldActionRequest:',
-        oldActionRequest,
-        'cleanup:',
-        cleanup
-      )
       if (newActionRequest === oldActionRequest) {
         // no change, don't add to changes
         if (cleanup) {
