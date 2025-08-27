@@ -18,7 +18,7 @@ License: AGPL-3.0
       class="flex items-stretch"
     >
       <template #label>
-        <div class="!d-inline">
+        <div class="!d-inline flex justify-between items-center">
           <b class="pr-2"> {{ $t(category.toLowerCase()) }} </b>
           <el-button
             v-if="storeSelection['selection' + category].length > 1"
@@ -45,7 +45,7 @@ License: AGPL-3.0
           <li
             v-for="item in storeSelection['selection' + category]"
             :key="item"
-            class="relative flex items-stretch"
+            class="flex justify-between items-center"
           >
             <p class="pr-8">{{ item }}</p>
             <el-button
