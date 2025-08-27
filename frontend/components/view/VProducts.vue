@@ -25,13 +25,18 @@ License: AGPL-3.0
   >
     <template #toolbar-right>
       <el-button
-        :type="changesProductsExists && storeSelection.selectionClients.length > 0 ? 'success' : ''"
-        :disabled="!changesProductsExists || storeSelection.selectionClients.length <= 0"
+        :type="
+          changesProductsExists && storeSelection.selectionClients.length > 0
+            ? 'success'
+            : 'primary'
+        "
         @click="openBufferedChangesModal = true"
       >
-        {{ $t('save') }}
+        <IconIIcon :icon="icons.onDemand" />
+        <p v-if="changesProductsExists && storeSelection.selectionClients.length > 0" class="ml-2">
+          {{ $t('save') }}
+        </p>
       </el-button>
-      <DialogDProcessActions />
       <el-dialog
         v-model="openBufferedChangesModal"
         align-center
@@ -542,7 +547,7 @@ License: AGPL-3.0
 
     discardAllChanges()
     productsRef.value?.refetch()
-    openBufferedChangesModal.value = false
+    //openBufferedChangesModal.value = false
   }
 
   function changeProductsType(type: IProductTypes) {

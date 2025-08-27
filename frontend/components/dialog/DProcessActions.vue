@@ -16,6 +16,7 @@ License: AGPL-3.0
     <el-button
       @click="openProcessActionsModal = true"
       :disabled="storeSelection.selectionClients.length < 1"
+      :type="props.type"
     >
       <IconIIcon :icon="icons.onDemand" />
     </el-button>
@@ -38,4 +39,10 @@ License: AGPL-3.0
   const storeSelection = storeSelections()
 
   const openProcessActionsModal = ref(false)
+  const props = defineProps({
+    type: {
+      type: String as () => 'primary' | 'success' | 'info' | 'warning' | 'danger',
+      default: 'primary',
+    },
+  })
 </script>
