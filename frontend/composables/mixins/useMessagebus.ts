@@ -86,7 +86,7 @@ export const useMBus = (
   })
   const { retries, retriesMax } = storeToRefs(storeMBus)
   async function wsInit(reconnect: boolean = false) {
-    console.debug('wsInit', reconnect, wsIsConnected.value, retries.value, retriesMax.value)
+    //console.debug('wsInit', reconnect, wsIsConnected.value, retries.value, retriesMax.value)
     if ((!reconnect && wsIsConnected.value) || retries.value >= retriesMax.value) {
       return
     }
