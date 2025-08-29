@@ -25,6 +25,15 @@ License: AGPL-3.0
   >
     <template #toolbar-right>
       <el-button
+        v-if="storeTSettings.filterQuery['products']"
+        @click="storeTSettings.filterQuery['products'] = ''"
+        data-testid="clients-filterGroups-button"
+        :title="$t('clearFilterGroups')"
+        type="warning"
+      >
+        <IconIIcon :icon="icons.filterFilled" />
+      </el-button>
+      <el-button
         :type="
           changesProductsExists && storeSelection.selectionClients.length > 0
             ? 'success'
@@ -372,6 +381,12 @@ License: AGPL-3.0
   })
 
   watch(
+    () => storeTSettings.filterQuery['products'],
+    () => {
+      refetch()
+    }
+  )
+  watch(
     () => selectionClients.value,
     async () => {
       if (props.selectedClient === undefined) {
@@ -425,6 +440,9 @@ License: AGPL-3.0
   async function fetchProducts(_params: any) {
     const params = prepareParams(_params)
 
+    if (storeTSettings.filterQuery['products']) {
+      params.filteredGroups = storeTSettings.filterQuery['products']
+    }
     if (_params.sortBy) {
       storeTSettings.productsSorting.column = _params.sortBy
       storeTSettings.productsSorting.isDesc = _params.sortDesc

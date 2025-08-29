@@ -75,6 +75,7 @@ export const useIcons = () => {
     sortDesc: 'bi:sort-down',
     columns: 'bi:grid-3x3',
     filter: 'bi:funnel',
+    filterFilled: 'bi:funnel-fill',
     clear: 'bi:brush',
     refresh: 'bi:arrow-repeat',
     readonly: 'material-symbols-light:edit-off-outline',

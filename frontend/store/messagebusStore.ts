@@ -10,6 +10,8 @@ import { defineStore } from 'pinia'
 export const storeMBus = defineStore('mbus', {
   persist: false,
   state: () => ({
+    retries: 0,
+    retriesMax: 3,
     _bus: undefined as WebSocket | undefined,
     _busterminal: undefined as WebSocket | undefined,
     _bus_last_msg: undefined as any,

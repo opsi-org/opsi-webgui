@@ -24,6 +24,15 @@ License: AGPL-3.0
   >
     <template #toolbar-right>
       <el-button
+        v-if="storeTSettings.filterQuery['clients']"
+        @click="storeTSettings.filterQuery['clients'] = ''"
+        data-testid="clients-filterGroups-button"
+        type="warning"
+        :title="$t('clearFilterGroups')"
+      >
+        <IconIIcon :icon="icons.filterFilled" />
+      </el-button>
+      <el-button
         type="primary"
         @click="router.push('/clients/products/LocalbootProduct')"
         data-testid="clients-products-button"
@@ -362,7 +371,12 @@ License: AGPL-3.0
       }
     }
   )
-
+  watch(
+    () => storeTSettings.filterQuery['clients'],
+    () => {
+      refetch()
+    }
+  )
   watch(
     () => storeTSettings.clientsSorting,
     () => {
@@ -390,6 +404,9 @@ License: AGPL-3.0
     }
     params.selected = JSON.stringify(storeSelection.selectionClients)
     params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)
+    if (storeTSettings.filterQuery['clients']) {
+      params.filteredGroups = storeTSettings.filterQuery['clients']
+    }
     if (params.sortBy) {
       storeTSettings.clientsSorting.column = params.sortBy
       storeTSettings.clientsSorting.isDesc = params.sortDesc

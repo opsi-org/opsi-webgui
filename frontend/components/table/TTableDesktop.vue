@@ -120,6 +120,7 @@ License: AGPL-3.0
           <slot name="toolbar-right" />
         </div>
       </div>
+      {{ storeTSettings.filterQuery[props.tableId] }}
     </div>
 
     <!-- SCROLL AND TABLE -->

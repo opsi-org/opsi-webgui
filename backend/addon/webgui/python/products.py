@@ -35,12 +35,14 @@ from .utils import (
 	get_allowed_products,
 	get_depot_of_client,
 	get_groups_ids,
+	get_objects_of_group,
 	get_sub_groups,
 	get_username,
 	merge_dicts,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
+	parse_group_list,
 	parse_selected_list,
 	product_group_access_configured,
 	read_only_check,
@@ -211,6 +213,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 	selectedClients: List[str] = Depends(parse_client_list),
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	selected: Optional[List[str]] = Depends(parse_selected_list),
+	filteredGroups: Optional[List[str]] = Depends(parse_group_list),
 ) -> RESTResponse:
 	"""
 	Get products from selected depots and clients.
@@ -247,6 +250,9 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 
 	with mysql.session() as session:
 		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
+		if filteredGroups:
+			where = and_(where, text("(pod.productId IN :filtered_groups)"))
+			params["filtered_groups"] = get_objects_of_group(filteredGroups, "ProductGroup")
 		if commons.get("filterQuery"):
 			where = and_(where, text("(pod.productId LIKE :search)"))
 			params["search"] = f"%{commons['filterQuery']}%"

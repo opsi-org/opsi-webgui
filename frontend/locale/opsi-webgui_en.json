@@ -42,6 +42,7 @@
   "checkClientReachability": "Check Client Reachability",
   "chooseFile": "Choose a file",
   "clearAllSelections": "Clear All Selections",
+  "clearFilterGroups": "Clear groups filter",
   "client-add": "Add Clients",
   "client-delete": "Delete Clients",
   "client-delete.confirm": "Are you sure you want to delete the selected group's client assignments?",

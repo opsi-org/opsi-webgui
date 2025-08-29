@@ -47,6 +47,21 @@ License: AGPL-3.0
         :input-id="'rb-item-' + data.id"
         v-model="selectedItem"
       />
+      <!-- current url has /clients or /products or both-->
+      <p-toggle-button
+        v-if="data.type !== 'ObjectToGroup' && isFilterAllowed"
+        size="small"
+        :readonly="true"
+        :default-value="data.text == tableSettingsStore.getFilter(data.type)"
+        class="ml-2"
+        @click.stop="tableSettingsStore.toggleFilter(data.type, data.text)"
+      >
+        <IconIIcon
+          v-if="data.text == tableSettingsStore.getFilter(data.type)"
+          :icon="icons.filterFilled"
+        />
+        <IconIIcon v-else :icon="icons.filter" />
+      </p-toggle-button>
       <span :for="'rb-item-' + data.id" class="ml-1"> {{ data.text }} </span>
     </template>
   </el-tree>
@@ -56,13 +71,15 @@ License: AGPL-3.0
   import { ElTree } from 'element-plus'
   import { useNotification } from '~/composables/mixins/useComponent'
   import { useGroupsHelper } from '~/composables/mixins/useGroupsHelper'
-  import type { T_Groups } from '~/types/APItypes'
+  import type { T_Groups, T_GroupsTransformed } from '~/types/APItypes'
   import type { TreeNodeData } from 'element-plus/lib/components/tree/src/tree.type.js'
   import { GroupTree_CLIENTGROUP, type PropTypeGroupTree } from '~/types/tproptypes'
 
   const { notifyError } = useNotification()
   const $t = useI18n().t
+  const icons = useIcons()
   const groupsHelper = useGroupsHelper()
+  const tableSettingsStore = storeTablesettings()
   const props = defineProps({
     grouptype: { type: String as PropType<PropTypeGroupTree>, required: true },
   })
@@ -78,11 +95,15 @@ License: AGPL-3.0
     children: 'children',
     class: customNodeClass,
   }
-  const fetchedData = ref<any>([])
+  const fetchedData = ref<T_GroupsTransformed[]>([])
   const selectionStore = storeSelections()
   const { selectionDepots, selectionClients, selectionProducts, multiSelection } =
     storeToRefs(selectionStore)
-
+  const isFilterAllowed = computed(() => {
+    if (props.grouptype == 'client-group') return useRoute().fullPath.includes('/clients')
+    if (props.grouptype == 'product-group') return useRoute().fullPath.includes('/products')
+    return false
+  })
   const getInitialSelection = () => {
     if (multiSelection.value) return ''
     return props.grouptype == GroupTree_CLIENTGROUP

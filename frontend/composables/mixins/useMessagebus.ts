@@ -84,12 +84,13 @@ export const useMBus = (
   onUnmounted(() => {
     wsDisconnect()
   })
-
+  const { retries, retriesMax } = storeToRefs(storeMBus)
   async function wsInit(reconnect: boolean = false) {
-    if (!reconnect && wsIsConnected.value) {
+    console.debug('wsInit', reconnect, wsIsConnected.value, retries.value, retriesMax.value)
+    if ((!reconnect && wsIsConnected.value) || retries.value >= retriesMax.value) {
       return
     }
-
+    retries.value += 1
     const host = window.location.hostname
     const port =
       process.env.NODE_ENV === 'production'
@@ -130,6 +131,7 @@ export const useMBus = (
     _setBusMethods(wsBus.value, setBusLastMsg)
     await wsWait(1000)
     if (wsIsConnected.value) {
+      retries.value = 0
       if (showStartNotifications) notifySuccess({ message: 'MessageBus: connected' })
     }
   }

@@ -56,6 +56,11 @@ const _data_settings = {
   clients: { statisticIcons: true, reachableAllClients: false } as Record<string, any>,
   products: {} as Record<string, any>,
 }
+const _filterQuery = {
+  //servers: '',
+  clients: '',
+  products: '',
+}
 const deepCp = (obj: any) => obj
 
 export const storeTablesettings = defineStore('tablesettings', {
@@ -69,6 +74,7 @@ export const storeTablesettings = defineStore('tablesettings', {
     _visibleColumns: deepCp(_data_visibleColumns) as tVisible,
     _sortColumns: deepCp(_data_sortColumns) as tSort,
     _settings: deepCp(_data_settings),
+    _filterQuery: deepCp(_filterQuery) as Record<string, string>,
     secondColumnSelectedRowId: '',
   }),
   getters: {
@@ -83,6 +89,8 @@ export const storeTablesettings = defineStore('tablesettings', {
     otherSettings: ({ _settings }) => _settings,
 
     configLastSelected: ({ _configLastSelected }) => _configLastSelected,
+
+    filterQuery: ({ _filterQuery }) => _filterQuery,
   },
   actions: {
     $reset() {
@@ -102,6 +110,22 @@ export const storeTablesettings = defineStore('tablesettings', {
     },
     setConfigLastSelected(tabletype: string, value: string) {
       this._configLastSelected[tabletype] = value
+    },
+    getFilter(groupTable: 'ProductGroup' | 'HostGroup') {
+      const ttype = groupTable === 'ProductGroup' ? 'products' : 'clients'
+      return this._filterQuery[ttype]
+    },
+    setFilter(groupTable: 'ProductGroup' | 'HostGroup', filter: string) {
+      const ttype = groupTable === 'ProductGroup' ? 'products' : 'clients'
+      this._filterQuery[ttype] = filter
+    },
+    toggleFilter(groupTable: 'ProductGroup' | 'HostGroup', filter: string) {
+      const ttype = groupTable === 'ProductGroup' ? 'products' : 'clients'
+      if (this._filterQuery[ttype] === filter) {
+        this._filterQuery[ttype] = ''
+      } else {
+        this._filterQuery[ttype] = filter
+      }
     },
   },
 })

@@ -37,11 +37,13 @@ from .utils import (
 	filter_depot_access,
 	get_allowed_clients,
 	get_allowed_group_objects,
+	get_objects_of_group,
 	get_username,
 	host_group_access_configured,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
+	parse_group_list,
 	parse_selected_list,
 	read_only_check,
 	user_register,
@@ -86,6 +88,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 	commons: dict = Depends(common_query_parameters),
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	selected: Optional[List[str]] = Depends(parse_selected_list),
+	filteredGroups: Optional[List[str]] = Depends(parse_group_list),
 ) -> RESTResponse:
 	"""
 	Get Clients on selected depots with infos on the client.
@@ -107,6 +110,11 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 	with mysql.session() as session:
 		where = and_(text("h.type = 'OpsiClient'"))
 		params: Dict[str, Union[List[Any], str]] = {"depot_ids": [], "search": []}
+
+		if filteredGroups:
+			where = and_(where, text("(h.hostId IN :filtered_groups)"))
+			# client_select = client_select.where(text("(h.hostId IN :filtered_groups)"))
+			params["filtered_groups"] = get_objects_of_group(filteredGroups, "HostGroup")
 		if commons.get("filterQuery"):
 			where = and_(where, text("(h.hostId LIKE :search OR h.description LIKE :search)"))
 			params["search"] = f"%{commons.get('filterQuery')}%"
@@ -258,6 +266,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		"""
 			)
 		).select_from(client_with_depot)
+
 		query = order_by(client_select, commons)  # type: ignore
 		query = pagination(query, commons)
 		result = session.execute(query, params)

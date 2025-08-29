@@ -69,6 +69,10 @@ def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]:  #
 	return parse_list(selected)
 
 
+def parse_group_list(filteredGroups: List[str] = Query(None)) -> Optional[List]:  # pylint: disable=invalid-name
+	return parse_list(filteredGroups)
+
+
 def get_username() -> str:
 	client_session = contextvar_client_session.get()
 	if not client_session:
@@ -222,10 +226,17 @@ def get_allowed_product_groups(user: str) -> list:
 	return groups
 
 
-def _get_groups(gtype: str) -> list:
+def get_groups(gtype: str, parent_ids: str | list[str] | None = None) -> list:
 	"""
 	Helper function to get all groups of a specific type.
 	"""
+
+	where = text("g.type = :type")
+	params = {"type": gtype}
+	if parent_ids is not None:
+		parent_ids = [parent_ids] if isinstance(parent_ids, str) else parent_ids
+		where = and_(where, text("(g.parentGroupId IN :parentIds)"))
+		params["parentIds"] = parent_ids
 
 	with mysql.session() as session:
 		query = (
@@ -238,16 +249,88 @@ def _get_groups(gtype: str) -> list:
 				"""
 				)
 			)
-			.where(text("g.type = :type"))
+			.where(where)
 			.select_from(table("GROUP").alias("g"))
 		)
-		result = session.execute(query, params={"type": gtype})
+		logger.warning("GType %s, parent_ids %s", gtype, parent_ids)
+		logger.warning("Group query: %s", query)
+		result = session.execute(query, params=params)
 		result = result.fetchall()
 		groups = []
 		for row in result:
 			if row:
 				groups.append(dict(row))
 		return groups
+
+
+def _get_object_to_groups(gtype: str, group_ids: list[str] | str | None = None) -> list[str]:
+	"""Helper function to get all objects in a specific group.
+	MariaDB [opsi]> SELECT * FROM OBJECT_TO_GROUP WHERE groupType='HostGroup' AND groupId IN ("verwaltung");"""
+	if group_ids is not None:
+		group_ids = [group_ids] if isinstance(group_ids, str) else group_ids
+
+	where = text("groupType=:type")
+	params = {"type": gtype}
+	if group_ids:
+		where = and_(where, text("(groupId IN :group_ids)"))
+		params["group_ids"] = group_ids
+
+	with mysql.session() as session:
+		query = (
+			select(  # type: ignore[arg-type,attr-defined]
+				text(  # type: ignore[arg-type]
+					"""
+					objectId,
+					groupId,
+					groupType
+				"""
+				)
+			)
+			.where(where)
+			.select_from(table("OBJECT_TO_GROUP"))
+		)
+		logger.warning("GType %s, group_ids %s", gtype, group_ids)
+		logger.warning("Object to group query: %s", query)
+		result = session.execute(query, params=params)
+		result = result.fetchall()
+		objects = []
+		for row in result:
+			objects.append(dict(row))
+		return objects
+
+
+def get_objects_of_group(group: str | List[str] = ["verwaltung"], group_type: str = "HostGroup") -> List[str]:
+	"""
+	Get all (nested) clients in a specific group, which are allowed (by userroles)
+	"""
+	if group_type not in ["HostGroup", "ProductGroup"]:
+		raise ValueError("Invalid group type")
+
+		allowed_clients = None
+		username = get_username()
+		configured = host_group_access_configured(username)
+
+	if user_register() and configured:
+		allowed_clients = get_allowed_group_objects(username, group_type)
+		if not allowed_clients:
+			logger.warning("No clients found for user '%s'.", username)
+			# return RESTResponse(data=[], total=0)
+			return []
+
+	child_groups = get_groups(group_type, parent_ids=group)
+	logger.warning("Child groups: %s", child_groups)
+	object_to_groups = [obj["objectId"] for obj in _get_object_to_groups(group_type, group_ids=group)]
+	logger.warning("Object to groups: %s", object_to_groups)
+	processed_groups = [group] if isinstance(group, str) else group
+	for row in child_groups:
+		if row["group_id"] in processed_groups:
+			continue
+		processed_groups.append(row["group_id"])
+		child_groups.extend(get_groups(group_type, parent_ids=row["group_id"]))
+		objs_ids = [obj["objectId"] for obj in _get_object_to_groups(group_type, group_ids=row["group_id"])]
+		object_to_groups.extend(objs_ids)
+
+	return object_to_groups
 
 
 def get_allowed_host_groups(user: str) -> list:
@@ -321,7 +404,7 @@ def get_allowed_sql(user: str, gtype: str = "HostGroup") -> list:
 
 
 def get_allowed_clients(user: str) -> list:
-	all_groups = _get_groups("HostGroup")
+	all_groups = get_groups("HostGroup")
 	allowed_groups = get_allowed_host_groups(user)
 	allowed_groups_with_childs = get_all_children_groupids(all_groups, allowed_groups)
 
