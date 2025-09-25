@@ -27,6 +27,7 @@ declare module 'vue' {
     PRadioButton: typeof import('primevue/radiobutton')['default']
     PSelect: typeof import('primevue/select')['default']
     PTag: typeof import('primevue/tag')['default']
+    PToggleButton: typeof import('primevue/togglebutton')['default']
     PToggleSwitch: typeof import('primevue/toggleswitch')['default']
     PTreeTable: typeof import('primevue/treetable')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
