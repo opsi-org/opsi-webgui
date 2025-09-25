@@ -84,7 +84,7 @@ export const useMBus = (
   onUnmounted(() => {
     wsDisconnect()
   })
-  const { retries, retriesMax } = storeToRefs(storeMBus)
+  const { retries, retriesMax } = storeToRefs(storeMBus())
   async function wsInit(reconnect: boolean = false) {
     //console.debug('wsInit', reconnect, wsIsConnected.value, retries.value, retriesMax.value)
     if ((!reconnect && wsIsConnected.value) || retries.value >= retriesMax.value) {
