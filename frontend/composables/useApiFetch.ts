@@ -126,7 +126,7 @@ async function useAPI2<T>(
     },
     onResponse({ response }) {
       // Process the response data
-      callresponse.value = response._data || response.body || {}
+      callresponse.value = (response._data as T) || (response.body as T) || ({} as T)
       callheaders = response.headers
       status = response.status
 
@@ -136,17 +136,18 @@ async function useAPI2<T>(
     onResponseError({ response }) {
       // Handle the response errors
       console.error('onResponseError response ', response)
+      const res: any = response?._data as any
       callerror.value = {
         response: {
           data: {
-            class: response?._data?.class,
-            message: response?._data?.message,
+            class: res?.class,
+            message: res?.message,
             // message: response?._data?.message,
           },
         },
       }
-      if (response?._data?.details) {
-        callerror.value.response.data.details = response._data.details
+      if (res?.details) {
+        callerror.value.response.data.details = res.details
       }
       pendingState.value = false
       status = response.status

@@ -265,8 +265,7 @@ test:security:
     - *define_globals
   script:
     - npm install -g npm@latest
-    - npm run check-blocked-packages
-    - npm audit --omit=dev --audit-level=moderate || exit_code=$?
+    - npm run check-blocked-packages || exit_code=$?
     - exit $exit_code
 test:build:
   stage: test

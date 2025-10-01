@@ -83,6 +83,14 @@
         "tooltip": "Clean rebuild and install"
       },
       {
+        // CHECK WEBGUI
+        "command": "npm run lint && npm run tsc && npm run check-blocked-packages",
+        "cwd": "/workspace/frontend",
+        "name": "$(check)",
+        "singleInstance": true,
+        "tooltip": "Check code for errors, types, security"
+      },
+      {
         // copyBackend2opsidocker
         "command": "opsiconfd-docker-container rm -rf /usr/lib/opsiconfd/addons/webgui && bash /workspace/frontend/scripts/link_backend_opsidocker.sh && opsiconfd-docker-container sudo cp -r -f -n /data/opsiconfd/addons/* /var/lib/opsiconfd/addons/ && opsiconfd-docker-restart",
         "name": "$(link) copyBackendFiles",
