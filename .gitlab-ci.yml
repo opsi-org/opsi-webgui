@@ -256,7 +256,18 @@ init:changelogs:
 #########################################################################
 ######################################################################### test
 #########################################################################
-
+test:security:
+  stage: test
+  dependencies:
+    - init:npm
+  before_script:
+    - cd frontend
+    - *define_globals
+  script:
+    - npm install -g npm@latest
+    - npm run check-blocked-packages
+    - npm audit --omit=dev --audit-level=moderate || exit_code=$?
+    - exit $exit_code
 test:build:
   stage: test
   dependencies:
