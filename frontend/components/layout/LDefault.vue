@@ -53,7 +53,6 @@ License: AGPL-3.0
         <!-- MAIN CONTENT -->
         <el-main class="z-0 p-2">
           <BreadcrumbBPageNavigation />
-          {{ useI18n().availableLocales }}; {{ useI18n().locale }}
           <slot />
         </el-main>
 
