@@ -81,6 +81,7 @@ async function useAPI2<T>(
   // const fetch = $fetch<T>(fullURL, {  // does not work (now) if session expired
   const fetch = useFetch<T>(fullURL, {
     onRequest({ options }: any) {
+      console.log('fetching  onrequest', method, fullURL)
       // Set the request headers
       const headers: IObjectString2Any = { ...opts?.headers }
 
@@ -108,6 +109,7 @@ async function useAPI2<T>(
       // console.log('onRequest', request, options)
     },
     onRequestError({ response, error }: any) {
+      console.log('fetching  onRequestError', method, fullURL, response, error)
       // Handle the request errors
       callerror.value = {
         response: { data: { class: '', message: String(error) } },
@@ -125,6 +127,7 @@ async function useAPI2<T>(
       callheaders = _checkUsername(response.headers, fullURL, response.status)
     },
     onResponse({ response }) {
+      console.log('fetching  onResponse', method, fullURL, response)
       // Process the response data
       callresponse.value = (response._data as T) || (response.body as T) || ({} as T)
       callheaders = response.headers
@@ -135,7 +138,7 @@ async function useAPI2<T>(
     },
     onResponseError({ response }) {
       // Handle the response errors
-      console.error('onResponseError response ', response)
+      console.error('fetching  onResponseError', method, fullURL, response)
       const res: any = response?._data as any
       callerror.value = {
         response: {
@@ -177,7 +180,7 @@ async function useAPI2<T>(
       }
     }
   }
-
+  console.log('fetching  done', method, fullURL, callresponse.value, callerror.value, status)
   callheaders = _checkUsername(callheaders, fullURL, status)
 
   return {

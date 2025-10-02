@@ -53,6 +53,7 @@ License: AGPL-3.0
         <!-- MAIN CONTENT -->
         <el-main class="z-0 p-2">
           <BreadcrumbBPageNavigation />
+          {{ useI18n().availableLocales }}; {{ useI18n().locale }}
           <slot />
         </el-main>
 
@@ -96,6 +97,7 @@ License: AGPL-3.0
   const configapp = storeConfigapp()
   const settings = storeSettings()
   const { isLight } = storeToRefs(storeSettings())
+  settings.initLanguage()
 
   const leftSideIsSmall = ref<boolean>(settings.menuCollapsed && !mq.isMobile.value)
   const leftSideVisible = ref<boolean>(!mq.isMobile.value)

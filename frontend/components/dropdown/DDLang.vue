@@ -17,13 +17,13 @@ License: AGPL-3.0
         <el-dropdown-item
           v-for="(lang, i) in availableLocales"
           :key="i"
-          :command="lang"
-          :class="{ 'is-active': lang === locale }"
-          :data-testid="`language-dropdown-item-${lang}`"
+          :command="lang.code"
+          :class="{ 'is-active': lang.code === locale }"
+          :data-testid="`language-dropdown-item-${lang.code}`"
         >
-          <span style="text-transform: uppercase">{{ lang }}</span>
-          <span>{{
-            ['en', 'de', 'fr'].includes(lang) ? '' : $t('maintainedByOPSICommunity')
+          <span style="text-transform: uppercase">{{ lang.name }}</span>
+          <span v-if="!supportedLangs.includes(lang.code)">{{
+            $t('maintainedByOPSICommunity')
           }}</span>
         </el-dropdown-item>
         <el-dropdown-item
@@ -45,14 +45,20 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
-  const { availableLocales, locale, setLocale } = useI18n()
+  const { locale, locales, setLocale } = useI18n()
   const $t = useI18n().t
   const icons = useIcons()
-
+  const supportedLangs = ['en', 'de', 'fr']
   const _props = defineProps({
     footer: { type: Boolean, default: false },
   })
 
+  const availableLocales = computed(() => {
+    return locales.value.filter((i) => i.code !== locale.value)
+  })
+  onMounted(() => {
+    change(storeSettings().language || 'en')
+  })
   function change(event: any) {
     setLocale(event)
     storeSettings().setLanguage(event)

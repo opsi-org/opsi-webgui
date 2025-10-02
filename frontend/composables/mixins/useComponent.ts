@@ -139,6 +139,8 @@ export function useNotification() {
       combined = true,
       messageRef = undefined,
     }: NotificationOptions) => {
+      if (type == undefined) type = 'error'
+
       const notificationInstance = ref<any>()
 
       if (_checkAuth()) return notificationInstance

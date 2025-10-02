@@ -6,6 +6,10 @@ All rights reserved.
 License: AGPL-3.0
 */
 /* eslint-disable no-console */
+
+import path from 'path'
+import fs from 'fs'
+
 import pkg from './package.json'
 import MyPreset from './assets/scss/primevue'
 
@@ -15,12 +19,40 @@ const WEBUI_PORT: number = parseInt(WEBUI_PORT_STR)
 // do not change following line, cause it is automatically patched by the build_production_local.sh script
 const ADDON_PATH: string = '/addons/webgui'
 
+// Reading all locale files for dynamic configuration of nuxt/i18n
+const langs: { [key: string]: { code: string; name: string; file: string } } = {}
+const dir = './locale/'
+const fullPath = path.join(__dirname, dir)
+const files = fs.readdirSync(fullPath)
+console.log('DEBUG: Reading locales')
+try {
+  // gets all internationalization files, which are located in 'dir'
+  files.forEach((file) => {
+    if (/opsi-webgui_(.*)\.json/.test(file)) {
+      const l = file.match(/opsi-webgui_(.*)\.json/)
+      if (!l) return
+      console.log('  found locale:', l[1], 'in file', file)
+      try {
+        const json = require(fullPath + '/' + file)
+        //langs[l[1]] = json
+        langs[l[1]] = { code: l[1], name: l[1], file: file }
+      } catch (error) {
+        console.log('Error reading file ', file, error)
+      }
+    }
+  })
+} catch (error) {
+  console.log(error)
+}
+
 if (process.env.NODE_ENV === 'development') {
   console.log('---------------------------------------------------')
   console.log('OPSICONFD PORT', CONFD_PORT, ', env: ', process.env.OPSICONFD_PORT)
   console.log('WEBGUI PORT', WEBUI_PORT_STR, WEBUI_PORT)
   console.log('ADDON PATH', ADDON_PATH)
   console.log('VERSION', pkg.version)
+  console.log('LOCALES ', Object.keys(langs))
+  console.log(Object.values(langs))
   console.log('---------------------------------------------------')
 }
 
@@ -91,7 +123,11 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
   ],
   i18n: {
-    vueI18n: './i18n.config.js',
+    //vueI18n: './i18n.config.js', // seems not to work with update nuxt/i18n to 10.1.0
+    langDir: '../locale/',
+    strategy: 'no_prefix',
+    defaultLocale: 'en',
+    locales: Object.values(langs) || [],
   },
   piniaPluginPersistedstate: {
     key: 'opsiwui-%id',

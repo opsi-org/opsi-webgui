@@ -197,7 +197,10 @@ License: AGPL-3.0
 
   function handleSuccessfulLogin() {
     storeAuth().setErrorLoggedOutShown(false)
-    notifySuccess({ message: $t('message.page.redirect') })
+    notifySuccess({
+      message: $t('message.page.redirect'),
+      duration: 2000,
+    })
     storeAuth().setSession()
     const route = useRoute()
     const router = useRouter()

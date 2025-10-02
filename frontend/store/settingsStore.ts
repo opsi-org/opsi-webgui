@@ -5,8 +5,20 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
+import * as z from 'zod'
 import { defineStore } from 'pinia'
 import { useColorMode } from '@vueuse/core'
+
+let LangsCodeSchema
+try {
+  LangsCodeSchema = z.enum(useI18n().availableLocales as string[])
+} catch (error) {
+  LangsCodeSchema = z.enum(['en', 'de'])
+}
+
+type TDefaultLangs = 'en' | 'de' // in production more
+type TLangs = z.infer<typeof LangsCodeSchema> | TDefaultLangs
+type TLangLiteral = z.ZodLiteral<TLangs>
 
 type t_theme = 'light' | 'dark'
 const mq = useMQ()
@@ -18,7 +30,7 @@ export const storeSettings = defineStore('settings', {
   },
   state: () => ({
     isMobile: mq.isMobile.value as boolean,
-    language: 'en',
+    language: 'en' as TDefaultLangs,
     quickpanelOpened: true as boolean,
     msgbusAutoRefresh: true as boolean,
     menuCollapsed: false as boolean,
@@ -42,7 +54,7 @@ export const storeSettings = defineStore('settings', {
       }
       this.expiresInterval = int
     },
-    setLanguage(lang: string) {
+    setLanguage(lang: TDefaultLangs) {
       this.language = lang
       useCookie('Language').value = this.language
     },
@@ -57,10 +69,35 @@ export const storeSettings = defineStore('settings', {
       // only for testing purpose
       this.isMobile = isMobile
     },
+
     initLanguage() {
       // Set initial locale if not already set
-      if (this.language && useI18n().availableLocales.includes(this.language)) {
-        useI18n().setLocale(this.language)
+      if (this.language === null || this.language === undefined) this.language = 'en'
+      const isValidLang = (lang: any): lang is TLangs => useI18n().availableLocales.includes(lang)
+
+      if (!isValidLang(this.language)) {
+        return
+      }
+
+      if (this.language && isValidLang(this.language)) {
+        useI18n().setLocale(this.language) // ts-ignore
+      } else {
+        const cookieLang = useCookie('Language').value as TDefaultLangs
+        if (cookieLang && isValidLang(cookieLang)) {
+          this.language = cookieLang
+          useI18n().setLocale(this.language)
+        } else {
+          const browserLang = navigator.language.split('-')[0] as TLangs
+          if (browserLang && isValidLang(browserLang)) {
+            this.language = browserLang as TDefaultLangs
+            useI18n().setLocale(this.language)
+            useCookie('Language').value = browserLang
+          } else {
+            this.language = 'en'
+            useI18n().setLocale('en')
+            useCookie('Language').value = 'en'
+          }
+        }
       }
     },
     initColormode() {
