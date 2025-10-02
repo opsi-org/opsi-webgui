@@ -236,18 +236,12 @@ License: AGPL-3.0
           :to="cdata.item.route"
           custom
         >
-          <a v-ripple :href="href" v-bind="cdata.props.action" @click="navigate">
+          <a :href="href" v-bind="cdata.props.action" @click="navigate">
             <span :class="cdata.item.icon" />
             <span class="ml-2">{{ cdata.item.label }}</span>
           </a>
         </router-link>
-        <a
-          v-else
-          v-ripple
-          :href="cdata.item.url"
-          :target="cdata.item.target"
-          v-bind="cdata.props.action"
-        >
+        <a v-else :href="cdata.item.url" :target="cdata.item.target" v-bind="cdata.props.action">
           <span :class="cdata.item.icon" />
           <span class="ml-2">{{ cdata.item.label }}</span>
         </a>

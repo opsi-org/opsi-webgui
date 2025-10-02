@@ -179,16 +179,20 @@ export function useNotification() {
           console.warn('NotificationWarning:', title, message)
         }
         // init message
-        if (errorsStore._error_log[type] == undefined) {
-          errorsStore._error_log[type] = []
+        if (errorsStore !== null && errorsStore != undefined) {
+          if (errorsStore._error_log == undefined) errorsStore._error_log = {}
+          if (errorsStore._error_log[type] == undefined) errorsStore._error_log[type] = []
+
+          if (errorsStore)
+            errorsStore._error_log[type].push({
+              type: type,
+              title: title,
+              message,
+              timestamp: Date.now(),
+              showed: false,
+            })
         }
-        errorsStore._error_log[type].push({
-          type: type,
-          title: title,
-          message,
-          timestamp: Date.now(),
-          showed: false,
-        })
+
         // show single or combined notification
         const res = _handleCombinedNotification(
           type,

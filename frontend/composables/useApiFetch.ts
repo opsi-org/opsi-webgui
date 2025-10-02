@@ -44,7 +44,7 @@ interface ApiResult<T> {
   readonly pending: Ref<boolean>
   readonly data: Ref<T | undefined>
   readonly error: terror | undefined
-  readonly headers: IObjectString2Any
+  readonly headers: Headers
   readonly status: number
 }
 
@@ -53,10 +53,11 @@ function define_vars<T>(prePath: string | undefined) {
   const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE
   const basePath: string = prePath ?? config.public.API_PATH
 
-  const callresponse = ref<T | undefined>()
-  const callerror = ref<terror | undefined>(undefined)
+  const responseData = ref<T | undefined>()
+  const responseError = ref<terror | undefined>(undefined)
+  const responseHeaders = ref<Headers | undefined>(undefined)
   const pendingState = ref<boolean>(true)
-  return { baseUrl, basePath, callresponse, callerror, pendingState }
+  return { baseUrl, basePath, responseData, responseError, pendingState, responseHeaders }
 }
 async function useAPI2<T>(
   method: tmethod,
@@ -67,9 +68,9 @@ async function useAPI2<T>(
   synced: boolean = true, // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
   showError: boolean = true
 ): Promise<ApiResult<T>> {
-  const { baseUrl, basePath, callresponse, callerror, pendingState } = define_vars<T>(prePath)
+  const { baseUrl, basePath, responseData, responseError, pendingState, responseHeaders } =
+    define_vars<T>(prePath)
   let fullURL = baseUrl + basePath + url
-  let callheaders: Headers | undefined = undefined
   let status: any = null
   let fullBody: any = body
 
@@ -79,7 +80,8 @@ async function useAPI2<T>(
   }
 
   // const fetch = $fetch<T>(fullURL, {  // does not work (now) if session expired
-  const fetch = useFetch<T>(fullURL, {
+  //const fetch = useFetch<T>(fullURL, {
+  const useFetchInterceptors = {
     onRequest({ options }: any) {
       console.log('fetching  onrequest', method, fullURL)
       // Set the request headers
@@ -106,41 +108,36 @@ async function useAPI2<T>(
       options.baseURL = baseUrl
       options.headers = headers
       options.key = Date.now()
-      // console.log('onRequest', request, options)
     },
     onRequestError({ response, error }: any) {
-      console.log('fetching  onRequestError', method, fullURL, response, error)
       // Handle the request errors
-      callerror.value = {
+      responseError.value = {
         response: { data: { class: '', message: String(error) } },
       }
       if (showError) {
         const { notifyError } = useNotification()
-        const { class: _, ...rest } = callerror.value.response.data
+        const { class: _, ...rest } = responseError.value.response.data
         rest.message = rest.message + ` (${basePath + url})`
         notifyError({
-          title: callerror.value?.response?.data?.class,
+          title: responseError.value?.response?.data?.class,
           message: rest,
         })
       }
 
-      callheaders = _checkUsername(response.headers, fullURL, response.status)
+      responseHeaders.value = _checkUsername(response.headers, fullURL, response.status)
     },
-    onResponse({ response }) {
-      console.log('fetching  onResponse', method, fullURL, response)
+    onResponse({ response, options }: any) {
       // Process the response data
-      callresponse.value = (response._data as T) || (response.body as T) || ({} as T)
-      callheaders = response.headers
+      responseData.value = (response._data as T) || (response.body as T) || ({} as T)
       status = response.status
-
-      callheaders = _checkUsername(callheaders, fullURL, status)
+      responseHeaders.value = _checkUsername(response.headers, fullURL, status)
       pendingState.value = false
     },
-    onResponseError({ response }) {
+    onResponseError({ response }: any) {
       // Handle the response errors
       console.error('fetching  onResponseError', method, fullURL, response)
       const res: any = response?._data as any
-      callerror.value = {
+      responseError.value = {
         response: {
           data: {
             class: res?.class,
@@ -150,67 +147,69 @@ async function useAPI2<T>(
         },
       }
       if (res?.details) {
-        callerror.value.response.data.details = res.details
+        responseError.value.response.data.details = res.details
       }
       pendingState.value = false
       status = response.status
-      callheaders = response.headers
-      const { class: _, ...rest } = callerror.value.response.data
+      responseHeaders.value = response.headers
+      const { class: _, ...rest } = responseError.value.response.data
       rest.message = rest.message + ` (${basePath + url})`
 
       if (showError) {
         const { notifyError } = useNotification()
         notifyError({
-          title: callerror.value.response?.data?.class,
+          title: responseError.value.response?.data?.class,
           message: rest,
         })
       }
       // if status is 401
       _logout_on_specific_error(fullURL, status)
-      console.error('onResponseError callerror', callerror.value)
+      console.error('onResponseError responseError', responseError.value)
     },
-  })
+  }
+  const result = {
+    pending: pendingState,
+    data: responseData,
+    error: responseError.value,
+    headers: responseHeaders.value !== undefined ? responseHeaders.value : new Headers(),
+    status,
+  }
   if (synced) {
-    await fetch
+    const { data, error, status } = await useFetch<T>(fullURL, useFetchInterceptors)
+    result.data.value = data.value as T | undefined
+    result.error = responseError.value as terror | undefined
+    result.pending.value = pendingState.value
+    result.status = status
+    result.headers = responseHeaders.value !== undefined ? responseHeaders.value : new Headers()
   } else {
+    useFetch<T>(fullURL, useFetchInterceptors)
     pendingState.value = false
-    if (callresponse.value === undefined) {
-      callerror.value = {
-        response: { data: { class: 'error', message: 'no response' } },
+    if (responseData.value === undefined) {
+      responseError.value = {
+        response: { data: { class: 'error', message: 'EMPTY. no response' } },
       }
     }
   }
-  console.log('fetching  done', method, fullURL, callresponse.value, callerror.value, status)
-  callheaders = _checkUsername(callheaders, fullURL, status)
 
-  return {
-    pending: pendingState,
-    data: callresponse,
-    error: callerror.value,
-    headers: callheaders as IObjectString2Any,
-    status,
-  }
+  return result
 }
 
 function _checkUsername(headers: Headers | undefined, fullURL: string, status: number) {
-  const callheaders = headers as Headers
-  if (headers === undefined) {
-    console.warn('no headers in request response. url: ', fullURL, headers, status)
-  } else {
-    const headerusername = headers.get(opsiheaders.xopsiuserid)
-    if (!headerusername) {
-      console.warn('No username in headers. Clearing session')
-      storeAuth().clearSession()
-    } else {
-      const username = headerusername.split('user:')[1]
-      if (username) {
-        storeAuth().setUser(username)
-      } else {
-        storeAuth().clearSession()
-      }
-    }
+  // check username in headers
+  const headerusername = headers?.get(opsiheaders.xopsiuserid)
+  if (!headerusername) {
+    console.warn('No username in headers. Clearing session')
+    storeAuth().clearSession()
+    return headers
   }
-  return callheaders
+
+  const username = headerusername.split('user:')[1]
+  if (username) {
+    storeAuth().setUser(username)
+  } else {
+    storeAuth().clearSession()
+  }
+  return headers
 }
 const _logout_on_specific_error = (url: string, status: number) => {
   const authStore = storeAuth()
