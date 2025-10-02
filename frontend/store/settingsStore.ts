@@ -5,20 +5,10 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
-import * as z from 'zod'
 import { defineStore } from 'pinia'
 import { useColorMode } from '@vueuse/core'
 
-let LangsCodeSchema
-try {
-  LangsCodeSchema = z.enum(useI18n().availableLocales as string[])
-} catch (error) {
-  LangsCodeSchema = z.enum(['en', 'de'])
-}
-
 type TDefaultLangs = 'en' | 'de' // in production more
-type TLangs = z.infer<typeof LangsCodeSchema> | TDefaultLangs
-type TLangLiteral = z.ZodLiteral<TLangs>
 
 type t_theme = 'light' | 'dark'
 const mq = useMQ()
@@ -73,7 +63,8 @@ export const storeSettings = defineStore('settings', {
     initLanguage() {
       // Set initial locale if not already set
       if (this.language === null || this.language === undefined) this.language = 'en'
-      const isValidLang = (lang: any): lang is TLangs => useI18n().availableLocales.includes(lang)
+      const isValidLang = (lang: any): lang is TDefaultLangs =>
+        useI18n().availableLocales.includes(lang)
 
       if (!isValidLang(this.language)) {
         return
@@ -87,7 +78,7 @@ export const storeSettings = defineStore('settings', {
           this.language = cookieLang
           useI18n().setLocale(this.language)
         } else {
-          const browserLang = navigator.language.split('-')[0] as TLangs
+          const browserLang = navigator.language.split('-')[0] as TDefaultLangs
           if (browserLang && isValidLang(browserLang)) {
             this.language = browserLang as TDefaultLangs
             useI18n().setLocale(this.language)

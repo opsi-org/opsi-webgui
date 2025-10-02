@@ -33,7 +33,7 @@ try {
       if (!l) return
       console.log('  found locale:', l[1], 'in file', file)
       try {
-        const json = require(fullPath + '/' + file)
+        //const json = require(fullPath + '/' + file)
         //langs[l[1]] = json
         langs[l[1]] = { code: l[1], name: l[1], file: file }
       } catch (error) {
