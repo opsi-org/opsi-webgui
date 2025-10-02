@@ -83,7 +83,7 @@ async function useAPI2<T>(
   //const fetch = useFetch<T>(fullURL, {
   const useFetchInterceptors = {
     onRequest({ options }: any) {
-      console.log('fetching  onrequest', method, fullURL)
+      console.log('fetching  onrequest', 'synced', synced, method, fullURL)
       // Set the request headers
       const headers: IObjectString2Any = { ...opts?.headers }
 

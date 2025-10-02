@@ -26,5 +26,32 @@ export const useUtils = () => {
     return arr.every((v) => v === arr[0])
   }
 
-  return { addOrRemoveListItem, isEqual, delay }
+  const equals = (a: any, b: any) => {
+    if (a === b) return true
+    if (a == null || b == null) return false
+    if (a.length !== b.length) return false
+
+    // if is array
+    if (Array.isArray(a) && Array.isArray(b)) {
+      for (let i = 0; i < a.length; ++i) {
+        if (!equals(a[i], b[i])) return false
+      }
+      return true
+    }
+
+    // if is object
+    if (typeof a === 'object' && typeof b === 'object') {
+      const keysA = Object.keys(a)
+      const keysB = Object.keys(b)
+      if (keysA.length !== keysB.length) return false
+      for (const key of keysA) {
+        if (!equals(a[key], b[key])) return false
+      }
+      return true
+    }
+
+    return false
+  }
+
+  return { addOrRemoveListItem, isEqual, delay, equals }
 }

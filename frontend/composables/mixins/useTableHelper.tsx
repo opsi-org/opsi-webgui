@@ -74,6 +74,7 @@ export const useTableHelper = (
   watch(
     () => visibleColumns.value,
     () => {
+      console.log('visibleColumns changed.')
       const visibleColumnIds = Object.keys(visibleColumns.value).filter(
         (key) => visibleColumns.value[key]
       )
@@ -85,6 +86,7 @@ export const useTableHelper = (
     [() => filterQuery.value],
     (after, before) => {
       if (before.length <= 0 && after.length > 0 && after[0] === '') return
+      console.log('FilterQuery changed. refetching')
       fetchDataWrapper()
     },
     {
@@ -104,7 +106,7 @@ export const useTableHelper = (
             props.sortDesc || false
           )
         }
-
+        console.log('sortby changed. refetching')
         //storeT.setSortColumn(props.tableId, sortBy.value, sortDesc.value)
         fetchDataWrapper()
       }
@@ -116,6 +118,7 @@ export const useTableHelper = (
       const propSortDesc = JSON.parse(String(props.sortDesc).toLowerCase()) || false
       if (propSortDesc !== sortDescWrapper.value) {
         sortDescWrapper.value = propSortDesc || false
+        console.log('sortdesc changed. refetching')
         fetchDataWrapper()
       }
     }

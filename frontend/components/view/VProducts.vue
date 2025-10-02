@@ -102,6 +102,7 @@ License: AGPL-3.0
   import { useNavigate } from '~/composables/mixins/useNavigateTo'
   import { useSaveProductActionRequest } from '~/composables/mixins/useSave'
   import { useClient } from '~/composables/mixins/useGet'
+  import { useUtils } from '~/composables/mixins/useUtils'
   import { useMBus } from '~/composables/mixins/useMessagebus'
   import TCProductVersionCell from '~/components/tablecell/TCProductVersionCell.vue'
   import BTNRowLink from '~/components/button/BTNRowLink.vue'
@@ -122,6 +123,7 @@ License: AGPL-3.0
 
   const storeSelection = storeSelections()
   const storeTSettings = storeTablesettings()
+  const cache = storeInternalData()
   const { msgbusAutoRefresh } = storeToRefs(storeSettings())
   const { productActionRequest } = storeToRefs(storeInternalData())
   const { changesProductsProducts, changesProductsExists, changesProducts, changesProductsFlat } =
@@ -374,15 +376,21 @@ License: AGPL-3.0
   const hasRowsWrapper = computed(() => productsRef.value?.hasRows.value)
 
   onMounted(async () => {
-    if (props.productType && props.productType !== currentType.value)
-      changeProductsType(props.productType as IProductTypes)
+    console.log('VProducts mounted with type', props.productType, 'currentType', currentType.value)
     fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
+    if (props.productType && props.productType !== currentType.value) {
+      //changeProductsType(props.productType as IProductTypes)
+      //currentType.value = props.productType as IProductTypes
+      productsTypeChecked.value[currentType.value as IProductTypes] = false
+      productsTypeChecked.value[props.productType as IProductTypes] = true
+    }
     //refetch() // triggered by watchers
   })
 
   watch(
     () => storeTSettings.filterQuery['products'],
     () => {
+      console.log('Filter changed, refetching')
       refetch()
     }
   )
@@ -402,6 +410,7 @@ License: AGPL-3.0
   watch(
     () => props.selectedClient,
     async (v) => {
+      console.log('Selected client changed:', v, 'refetching')
       if (v !== undefined) {
         clientSelection.value = [v]
       } else {
@@ -413,7 +422,13 @@ License: AGPL-3.0
       updateColumnVisibility()
     }
   )
-  watch(() => selectionDepots.value, refetch)
+  watch(
+    () => selectionDepots.value,
+    () => {
+      console.log('Selected depots changed. refetching')
+      refetch()
+    }
+  )
 
   function updateColumnVisibility() {
     const cols = ['installationStatus', 'actionResult', 'actionProgress', 'actionRequest']
@@ -447,7 +462,23 @@ License: AGPL-3.0
       storeTSettings.productsSorting.column = _params.sortBy
       storeTSettings.productsSorting.isDesc = _params.sortDesc
     }
-    const { data, error, headers } = await useApiGETBody<Array<any>>('/opsidata/products', params)
+    const url = '/opsidata/products'
+
+    if (
+      cache.productsLastRequestUrl == url &&
+      useUtils().equals(params, cache.productsLastRequestParams) &&
+      cache.productsLastRequestTime > 0 &&
+      Date.now() - cache.productsLastRequestTime < 5 * 1000 // 5 seconds cache time
+    ) {
+      // same request as last time, return cached data
+      console.log('keeping cached data for url and params', url, params)
+      return []
+    }
+    console.log('fetching with url and params', url, params)
+    cache.productsLastRequestUrl = url
+    cache.productsLastRequestParams = params
+    cache.productsLastRequestTime = Date.now()
+    const { data, error, headers } = await useApiGETBody<Array<any>>(url, params)
 
     if (error) {
       return
@@ -499,7 +530,7 @@ License: AGPL-3.0
   }
 
   function prepareParams(params: any) {
-    params.type = currentType.value
+    params.type = props.productType
     params.selectedDepots = JSON.stringify(selectionDepots.value)
     params.selectedClients = JSON.stringify(clientSelection.value)
     if (params.sortBy === 'installationStatus') {
@@ -569,6 +600,7 @@ License: AGPL-3.0
   }
 
   function changeProductsType(type: IProductTypes) {
+    console.log('Changing product type to', type)
     const currentFullUrl = router.currentRoute.value.fullPath
     //let urlChanged = false
     if (!currentFullUrl.includes(`/products/${type}`)) {
@@ -590,7 +622,8 @@ License: AGPL-3.0
     else throw new Error('Unknown product type ' + type)
     //if (!router.currentRoute.value.query.sortBy && urlChanged) {
     // if it is in query, the sortBy will trigger a refetch
-    productsRef.value?.refetch()
+    console.log('Product type changed, refetching')
+    //productsRef.value?.refetch()
     //}
   }
 

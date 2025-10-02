@@ -10,6 +10,9 @@ import { defineStore } from 'pinia'
 export const storeInternalData = defineStore('settingsData', {
   state: () => ({
     productActionRequest: {} as Record<string, string>,
+    productsLastRequestUrl: '',
+    productsLastRequestParams: {} as any,
+    productsLastRequestTime: 0,
   }),
 })
 
