@@ -196,6 +196,10 @@ html .p-button.p-button-sm {
   --p-checkbox-width: 20px !important;
   --p-checkbox-height: 20px !important;
   margin-right: 35px !important;
+  max-width: calc(100vw - 50px) !important;
+}
+.sselect-overlay .p-select-option {
+  max-width: calc(100vw - 50px) !important;
 }
 .sselect-overlay .p-multiselect-header,
 .sselect-overlay .p-multiselect-header .p-checkbox {
@@ -214,7 +218,8 @@ html .p-button.p-button-sm {
   min-height: 1rem;
   max-height: fit-content;
   height: fit-content;
-  max-width: 260px !important;
+  /*max-width: 260px !important;*/
+  max-width: calc(100vw - 120px) !important;
   word-wrap: normal;
   overflow: auto;
 }

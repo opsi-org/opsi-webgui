@@ -72,6 +72,7 @@ async function useAPI2<T>(
     define_vars<T>(prePath)
   let fullURL = baseUrl + basePath + url
   let status: any = null
+
   let fullBody: any = body
 
   if (method === 'GET' && body != undefined) {
@@ -82,6 +83,8 @@ async function useAPI2<T>(
   // const fetch = $fetch<T>(fullURL, {  // does not work (now) if session expired
   //const fetch = useFetch<T>(fullURL, {
   const useFetchInterceptors = {
+    signal: new AbortController().signal,
+
     onRequest({ options }: any) {
       console.log('fetching  onrequest', 'synced', synced, method, fullURL)
       // Set the request headers
@@ -107,6 +110,7 @@ async function useAPI2<T>(
       options.body = fullBody
       options.baseURL = baseUrl
       options.headers = headers
+      options.dedupe = 'defer'
       options.key = Date.now()
     },
     onRequestError({ response, error }: any) {

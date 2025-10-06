@@ -13,7 +13,8 @@ License: AGPL-3.0
     :max-selected-labels="1"
     :options="dataCopy"
     :disabled="disabled"
-    class="w-full justify-stretch text-xs"
+    style="max-width: calc(100vw - 120px)"
+    class="sselect flex w-full justify-stretch text-xs"
     show-clear
     size="small"
     overlay-class="sselect-overlay"
@@ -91,8 +92,9 @@ License: AGPL-3.0
     :options="dataCopy"
     :disabled="disabled"
     size="small"
+    style="max-width: calc(100vw - 120px)"
     overlay-class="sselect-overlay"
-    class="w-full justify-stretch text-xs"
+    class="sselect flex w-full justify-stretch text-xs"
   >
     <!-- editable -->
     <template #option="{ option }">
@@ -384,3 +386,8 @@ License: AGPL-3.0
     $emit('change', localSelectedItems.value)
   }
 </script>
+<style scoped lang="css">
+  :deep(.sselect-overlay) {
+    max-width: calc(100vw - 20px) !important;
+  }
+</style>
