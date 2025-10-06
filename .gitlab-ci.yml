@@ -204,7 +204,7 @@ init:npm:
     - *define_globals
     - npm i
     - npm run dev &
-    - sleep 30
+    - sleep 10
   artifacts:
     paths:
       - frontend/package.json
@@ -265,8 +265,8 @@ test:security:
     - *define_globals
   script:
     - npm install -g npm@latest
-    - npm run check-blocked-packages || exit_code=$?
-    - exit $exit_code
+    - npm run check-blocked-packages
+
 test:build:
   stage: test
   dependencies:
