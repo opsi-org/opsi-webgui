@@ -86,7 +86,6 @@ async function useAPI2<T>(
     signal: new AbortController().signal,
 
     onRequest({ options }: any) {
-      console.log('fetching  onrequest', 'synced', synced, method, fullURL)
       // Set the request headers
       const headers: IObjectString2Any = { ...opts?.headers }
 
@@ -128,13 +127,13 @@ async function useAPI2<T>(
         })
       }
 
-      responseHeaders.value = _checkUsername(response.headers, fullURL, response.status)
+      responseHeaders.value = _checkUsername(response.headers)
     },
-    onResponse({ response, options }: any) {
+    onResponse({ response }: any) {
       // Process the response data
       responseData.value = (response._data as T) || (response.body as T) || ({} as T)
       status = response.status
-      responseHeaders.value = _checkUsername(response.headers, fullURL, status)
+      responseHeaders.value = _checkUsername(response.headers)
       pendingState.value = false
     },
     onResponseError({ response }: any) {
@@ -179,7 +178,7 @@ async function useAPI2<T>(
     status,
   }
   if (synced) {
-    const { data, error, status } = await useFetch<T>(fullURL, useFetchInterceptors)
+    const { data, status } = await useFetch<T>(fullURL, useFetchInterceptors)
     result.data.value = data.value as T | undefined
     result.error = responseError.value as terror | undefined
     result.pending.value = pendingState.value
@@ -198,7 +197,7 @@ async function useAPI2<T>(
   return result
 }
 
-function _checkUsername(headers: Headers | undefined, fullURL: string, status: number) {
+function _checkUsername(headers: Headers | undefined) {
   // check username in headers
   const headerusername = headers?.get(opsiheaders.xopsiuserid)
   if (!headerusername) {
