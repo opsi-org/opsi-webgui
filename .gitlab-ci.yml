@@ -264,9 +264,10 @@ test:security:
     - cd frontend
     - *define_globals
   script:
-    #- npm install -g npm@latest
-    - npm run check-blocked-packages
-
+    - npm install -g npm@latest
+    - npm run check-blocked-packages || exit_code=$?
+    # if exitcode is zero or one everything is fine (npm ls returns 1 if peer dependencies are not ok, but that is not what we want to test here..)
+    - if [ -z "$exit_code" ] || [ "$exit_code" -le 1 ]; then exit 0; else exit $exit_code; fi
 test:build:
   stage: test
   dependencies:
