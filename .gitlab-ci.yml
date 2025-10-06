@@ -264,7 +264,7 @@ test:security:
     - cd frontend
     - *define_globals
   script:
-    - npm install -g npm@latest
+    #- npm install -g npm@latest
     - npm run check-blocked-packages
 
 test:build:
