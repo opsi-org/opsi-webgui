@@ -8,6 +8,7 @@ License: AGPL-3.0
 <template>
   <IconILoading v-if="isLoadingData || isLoading" />
   <p-multi-select
+    ref="sselect"
     v-if="multiSelection"
     v-model="localSelectedItems"
     :max-selected-labels="1"
@@ -28,6 +29,11 @@ License: AGPL-3.0
         :class="{
           '!font-bold':
             (isArray(markedOptions) && markedOptions?.includes(option)) || markedOptions == option,
+          'sselect-option-wrapper': true,
+          'sselect-highlight': editItemDialogLastValue == option,
+        }"
+        :style="{
+          '--p-multiselect-option-focus-background': 'var(--cyan-500)',
         }"
       >
         <p-button
@@ -50,7 +56,17 @@ License: AGPL-3.0
         >
           <IconIIcon :title="$t('copy')" :icon="icons.copy" class="m-1" />
         </p-button>
-        <span class="mt-2">{{ option }}</span>
+        <p-button
+          v-if="props.editable && props.editableMultiline"
+          :label="$t('edit')"
+          severity="secondary"
+          text
+          size="small"
+          @click.stop="showEditItemDialog(option, true)"
+        >
+          <IconIIcon :title="$t('edit')" :icon="icons.edit" class="m-1" />
+        </p-button>
+        <span class="mt-2">{{ option.replace('\n', '\\n') }}</span>
       </span>
     </template>
 
@@ -60,7 +76,7 @@ License: AGPL-3.0
           v-model="localAddOption"
           class="w-full"
           :placeholder="$t('addNew')"
-          @keyup.enter="addItemToOptions(localAddOption)"
+          @keyup.enter="addItemToOptions(localAddOption, false)"
         />
 
         <p-button
@@ -72,12 +88,23 @@ License: AGPL-3.0
         >
           <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
+
+        <p-button
+          v-if="props.editableMultiline"
+          :label="$t('edit')"
+          severity="secondary"
+          text
+          size="small"
+          @click.stop="showEditItemDialog(localAddOption, false)"
+        >
+          <IconIIcon :title="$t('edit')" :icon="icons.edit" class="m-1" />
+        </p-button>
         <p-button
           :label="$t('add')"
           severity="secondary"
           text
           :disabled="dataIncludesLocalAddOption()"
-          @click="addItemToOptions(localAddOption)"
+          @click="addItemToOptions(localAddOption, false)"
         >
           <IconIIcon :title="$t('add')" :icon="icons.add" class="m-1" />
         </p-button>
@@ -86,6 +113,7 @@ License: AGPL-3.0
   </p-multi-select>
   <p-select
     v-else
+    ref="sselect"
     data-testId="sselect"
     v-model="localSelectedItems"
     v-p-tooltip="{ value: localSelectedItems?.toString(), autoHide: false }"
@@ -127,6 +155,16 @@ License: AGPL-3.0
         >
           <IconIIcon :title="$t('copy')" :icon="icons.copy" class="m-1" />
         </p-button>
+        <p-button
+          v-if="props.editable && props.editableMultiline"
+          :label="$t('edit')"
+          severity="secondary"
+          text
+          size="small"
+          @click.stop="showEditItemDialog(option, true)"
+        >
+          <IconIIcon :title="$t('edit')" :icon="icons.edit" class="m-1" />
+        </p-button>
         <el-text class="m-auto" :title="option"> {{ option }} </el-text>
       </span>
     </template>
@@ -136,7 +174,7 @@ License: AGPL-3.0
           v-model="localAddOption"
           class="w-full"
           :placeholder="$t('addNew')"
-          @keyup.enter="addItemToOptions(localAddOption)"
+          @keyup.enter="addItemToOptions(localAddOption, false)"
         />
         <p-button
           v-if="props.editable"
@@ -147,18 +185,63 @@ License: AGPL-3.0
         >
           <IconIIcon :title="$t('reset')" :icon="icons.x" class="m-1" />
         </p-button>
+
+        <p-button
+          v-if="props.editableMultiline"
+          :label="$t('edit')"
+          severity="secondary"
+          text
+          size="small"
+          @click.stop="showEditItemDialog(localAddOption, false)"
+        >
+          <IconIIcon :title="$t('edit')" :icon="icons.edit" class="m-1" />
+        </p-button>
         <p-button
           :label="$t('add')"
           severity="success"
           text
           :disabled="dataIncludesLocalAddOption()"
-          @click="addItemToOptions(localAddOption)"
+          @click="addItemToOptions(localAddOption, false)"
         >
           <IconIIcon :title="$t('add')" :icon="icons.add" class="m-1" />
         </p-button>
       </div>
     </template>
   </p-select>
+  <p-dialog
+    v-model:visible="editItemDialogVisible"
+    modal
+    :closeable="false"
+    :header="editItemDialogUpdate ? $t('editItem') : $t('addItem')"
+    :style="{ width: '50vw' }"
+    :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    <p-textarea v-model="editItemDialogValue" rows="5" class="w-full border-1 border-cyan-500" />
+    <pre>{{ dataCopy }}</pre>
+    <div class="flex justify-end gap-2">
+      <p-button
+        type="button"
+        label="Cancel"
+        severity="secondary"
+        @click="editItemDialogVisible = false"
+      ></p-button>
+      <p-button
+        type="button"
+        label="Save"
+        @click="
+          () => {
+            if (editItemDialogUpdate) {
+              console.log('update item', editItemDialogValueOrigin, 'to', editItemDialogValue)
+              updateItemInOptions(editItemDialogValueOrigin, editItemDialogValue, false, true)
+            } else {
+              // add
+              addItemToOptions(editItemDialogValue, false, true)
+            }
+          }
+        "
+      ></p-button>
+    </div>
+  </p-dialog>
 </template>
 
 <script setup lang="ts" generic="T extends string | boolean">
@@ -184,6 +267,10 @@ License: AGPL-3.0
     editable: {
       type: Boolean,
       default: false,
+    },
+    editableMultiline: {
+      type: Boolean,
+      default: true,
     },
     selectedOptions: {
       type: [String, Array] as PropType<T | T[]>,
@@ -232,6 +319,12 @@ License: AGPL-3.0
   const localSelectedItems = defineModel<T | T[]>('selection')
   const localAddOption = ref<string>('')
   const isLoading = ref(false)
+  const sselect = ref<any>(null)
+  const editItemDialogVisible = ref(false)
+  const editItemDialogUpdate = ref(false)
+  const editItemDialogLastValue = ref<string>('')
+  const editItemDialogValue = ref<string>('')
+  const editItemDialogValueOrigin = ref<string>('')
 
   onMounted(() => {
     isLoading.value = true
@@ -316,6 +409,16 @@ License: AGPL-3.0
     },
     { deep: true }
   )
+  watch(
+    () => editItemDialogLastValue.value,
+    (newValue) => {
+      if (newValue === undefined || newValue.length <= 0) return
+      // highlight item in options for 2 seconds
+      /*setTimeout(() => {
+        editItemDialogLastValue.value = ''
+      }, 2000)*/
+    }
+  )
 
   function initDataCopy() {
     if (props.multiSelection)
@@ -338,7 +441,34 @@ License: AGPL-3.0
   function copyItemToInput(item: string) {
     localAddOption.value = item
   }
-  function addItemToOptions(item: string) {
+  function updateItemInOptions(
+    oldItem: string,
+    newItem: string,
+    store: boolean = true,
+    openOptions: boolean = false
+  ) {
+    console.log('updateItemInOptions', oldItem, newItem)
+    const index = (dataCopy.value as string[]).indexOf(oldItem)
+    console.log('updateItemInOptions', oldItem, index)
+    if (index !== -1) {
+      // remove old item
+      ;(dataCopy.value as string[]).splice(index, 1)
+      // add new item
+      ;(dataCopy.value as string[]).push(newItem)
+      // sort
+      //dataCopy.value = [...new Set(dataCopy.value)]
+      dataCopy.value.sort((a: any, b: any) =>
+        a.toString().localeCompare(b, undefined, { numeric: true })
+      )
+    }
+    if (store) selectOptionIfNotAlready(newItem, store)
+    editItemDialogVisible.value = false
+    if (openOptions) {
+      editItemDialogLastValue.value = newItem
+      sselect.value?.show()
+    }
+  }
+  function addItemToOptions(item: string, store: boolean = true, openOptions: boolean = false) {
     if (!(dataCopy.value as string[]).includes(item)) {
       ;(data.value as string[]).push(item)
       ;(dataCopy.value as string[]).push(item)
@@ -349,13 +479,18 @@ License: AGPL-3.0
       )
     }
 
-    selectOptionIfNotAlready(item)
     localAddOption.value = ''
     // $emit('change')
-    $emit('change', localSelectedItems.value)
+
+    if (store) selectOptionIfNotAlready(item, store)
+    editItemDialogVisible.value = false
+    if (openOptions) {
+      editItemDialogLastValue.value = item
+      sselect.value?.show()
+    }
   }
 
-  function selectOptionIfNotAlready(item: string) {
+  function selectOptionIfNotAlready(item: string, store: boolean = true) {
     // init if not already
     if (localSelectedItems.value === undefined) {
       localSelectedItems.value = props.multiSelection ? [] : ('' as T)
@@ -375,19 +510,34 @@ License: AGPL-3.0
     // } else
     if (!props.multiSelection) {
       localSelectedItems.value = item as T
-      data.value?.push(item as T)
+      if (store) data.value?.push(item as T)
     } else if (isArray(localSelectedItems.value) && !localSelectedItems.value.includes(item as T)) {
       localSelectedItems.value.push(item as T)
       data.value?.push(item as T)
     }
-    if (!props.multiSelection) {
-      localSelectedItems.value = item as T
+    if (store) $emit('change', localSelectedItems.value)
+  }
+
+  function showEditItemDialog(item: string, update = false) {
+    editItemDialogUpdate.value = update
+    if (item === undefined || item.length <= 0) {
+      item = ''
     }
-    $emit('change', localSelectedItems.value)
+    editItemDialogVisible.value = true
+    editItemDialogValue.value = item
+    editItemDialogValueOrigin.value = item
   }
 </script>
 <style scoped lang="css">
   :deep(.sselect-overlay) {
     max-width: calc(100vw - 20px) !important;
+  }
+  :deep(.sselect-option-wrapper) {
+    transition: all 0.4s ease-out;
+    opacity: 0;
+    height: 2em;
+  }
+  :deep(.sselect-option-wrapper.sselect-highlight) {
+    opacity: 1;
   }
 </style>
