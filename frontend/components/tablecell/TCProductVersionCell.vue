@@ -102,7 +102,6 @@ License: AGPL-3.0
 
   const tooltiptext = computed(() => {
     if (Object.keys(rowitem.value || {}).length <= 0) {
-      console.error('rowitem is empty')
       return {}
     }
 
