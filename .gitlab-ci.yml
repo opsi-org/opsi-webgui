@@ -569,7 +569,7 @@ build:screenshot:
     MYSQL_PASSWORD: 'opsi'
     CI: true
     HOSTNAME: 'localhost'
-  before_script:
+  script:
     - *install_uv
     - *prepare_backend_minimal
     - cd frontend
@@ -581,7 +581,6 @@ build:screenshot:
     - npm ci
     - npx playwright install-deps
     #- npm run dev & # we use the production build here
-  script:
     - npx playwright test tests/screenshot/
   artifacts:
     paths:
