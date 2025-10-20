@@ -570,6 +570,7 @@ build:screenshot:
     MYSQL_USER: 'opsi'
     MYSQL_PASSWORD: 'opsi'
     CI: true
+    FF_NETWORK_PER_BUILD: true
     HOSTNAME: 'localhost'
   script:
     - *install_uv
