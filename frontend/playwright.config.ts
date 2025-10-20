@@ -15,7 +15,7 @@ if (!process.env.CI) {
 } else {
   // CICD environment
   BASE_URL = `https://${HOSTNAME}:4447/` // port from inside containers is not 44471/2
-  APP_PATH = 'addons/webgui-dev/app/'
+  APP_PATH = 'addons/webgui/app/'
   console.warn('We are in CICD: ' + BASE_URL + APP_PATH)
 }
 

@@ -284,17 +284,6 @@ test:build:
     - *define_globals
   script:
     - npm run generate
-# test:npm-versions:
-#   stage: test
-#   dependencies:
-#     - init:npm
-#   before_script:
-#     - cd frontend
-#     - *define_globals
-#   script:
-#     - apt -y install python3
-#     - npm run versions
-
 test:languages:
   stage: test
   dependencies:
@@ -550,7 +539,7 @@ test:tsc:
 
 build:screenshot:
   stage: build
-  image: mcr.microsoft.com/playwright:v1.38.0-focal
+  image: mcr.microsoft.com/playwright:v1.56.0-focal
   dependencies:
     - init:npm
     - init:transifex-down
@@ -559,6 +548,7 @@ build:screenshot:
       command:
         - --max_connections=1000
         - --default-authentication-plugin=mysql_native_password
+      alias: mysql
     - name: redislabs/redistimeseries:latest
       alias: redis
   variables:
@@ -571,7 +561,7 @@ build:screenshot:
   before_script:
     - *prepare_backend_minimal
     - cd frontend
-    - bash scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)/..\" copydata
+    - bash scripts/build_production_local.sh webgui Webgui \"$(pwd)/..\" copydata
     - sleep 30
     - cd ..
     - *start_backend_minimal
