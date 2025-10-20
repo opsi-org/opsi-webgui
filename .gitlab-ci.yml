@@ -105,7 +105,9 @@ stages:
   apt -y install git wget python3-pip python3-dev mariadb-client
   git clone -b v4.3 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git
   cd opsiconfd
-
+  export OPSICONFD_MAX_SESSIONS_PER_IP=20000
+  export OPSICONFD_RESTORE_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
+  export OPSICONFD_RESTORE_BACKUP_ALWAYS="true"
   # Configure database access
   mysql --host=mysql --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
 
@@ -117,10 +119,15 @@ stages:
   mkdir -p /etc/opsi /var/lib/opsi/repository /var/lib/opsi/depot
   echo "redis-internal-url = redis://redis" >> tests/data/default-opsiconfd.conf
   echo "log-file = /tmp/opsiconfd.log" >> tests/data/default-opsiconfd.conf
+  echo "addon-dirs = [../backend/addon]" >> tests/data/default-opsiconfd.conf
+  cd ..
 
+.start_backend_minimal: &start_backend_minimal |
+  cd opsiconfd
   # Start opsiconfd
   poetry run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup &
   sleep 30
+  cd ..
 
 .pytest: &pytest |
 
@@ -559,20 +566,29 @@ build:screenshot:
     MYSQL_DATABASE: 'opsitest'
     MYSQL_USER: 'opsi'
     MYSQL_PASSWORD: 'opsi'
+    CI: true
+    HOSTNAME: 'localhost'
   before_script:
     - *prepare_backend_minimal
     - cd frontend
+    - bash scripts/build_production_local.sh webgui-dev Webgui-Dev \"$(pwd)/..\" copydata
+    - sleep 30
+    - cd ..
+    - *start_backend_minimal
+    - cd frontend
     - npm ci
     - npx playwright install-deps
-    - npm run dev &
+    #- npm run dev & # we use the production build here
   script:
     - npx playwright test tests/screenshot/
   artifacts:
     paths:
-      - frontend/screenshots/
+      - frontend/screenshots/opsidoc
     expire_in: 7 days
   only:
     - tags
+    - v5
+    - test/opsidocs
 
 build:static:app: # with transifex
   stage: build

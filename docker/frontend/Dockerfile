@@ -31,6 +31,9 @@ RUN apt-get update \
 	vim \
 	nano \
 	python3 \
+	# playwright dependencies
+	#libgtk-4.so.1 \
+	#libgraphene-1.0.so.0 \
 	&& apt-get clean
 
 WORKDIR /workspace/frontend
@@ -60,6 +63,9 @@ RUN npm install -g n
 # RUN npm install -g npm@10.9.0 # node 23.0.0
 # RUN npm install -g npm@10.9.2
 # RUN npm install -g npm@11.0.0
+
+
+RUN npx -y playwright@1.56.0 install --with-deps
 
 RUN export NODE_OPTIONS='--disable-warning=ExperimentalWarning'
 

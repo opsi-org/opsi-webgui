@@ -34,6 +34,7 @@ export const useIcons = () => {
     exclamation: 'bi:exclamation',
     warning: 'bi:exclamation-triangle',
     copy: 'bi:copy',
+    clone: 'bi:files',
     edit: 'bi:pencil',
     x: 'bi:x',
     add: 'bi:plus',

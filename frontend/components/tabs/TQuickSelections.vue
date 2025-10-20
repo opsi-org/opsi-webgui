@@ -7,7 +7,12 @@ License: AGPL-3.0
 -->
 <template>
   <el-tabs class="quickselection z-0" v-model="activeName">
-    <el-tab-pane v-for="category in quickSelDisplayList" :key="category.name" :name="category.name">
+    <el-tab-pane
+      v-for="category in quickSelDisplayList"
+      :key="category.name"
+      :name="category.name"
+      :data-testid="`tab-${category.name}-content`"
+    >
       <template #label>
         <IconIIcon
           v-for="icon in category.name.split('-')"

@@ -31,6 +31,7 @@ License: AGPL-3.0
           'min-w-[130px] w-[130px]': true,
           'max-w-[170px]': visibleRequest.includes('*'), // changed row
         }"
+        :overlay-class="'tc-product-request-select-' + (modelRowitem?.productId || 'none')"
         :placeholder="title"
         :options="get_options"
         size="small"
@@ -76,9 +77,12 @@ License: AGPL-3.0
   import type { IObjectString2String } from '~/types/tgeneral'
   import type { ITableRowItemProducts } from '~/types/ttable'
 
+  import { useNotification } from '~/composables/mixins/useComponent'
+
   const $t = useI18n().t
   const config = storeConfigapp().config ?? { read_only: true }
 
+  const { notifyWarning } = useNotification()
   const { changesProducts } = storeToRefs(storeChanges())
   const { selectionClients } = storeToRefs(storeSelections())
   const { productActionRequest } = storeToRefs(storeInternalData())
@@ -135,6 +139,7 @@ License: AGPL-3.0
   const changedValues = computed((): IObjectString2String => {
     // clientId -> actionRequest (from changes)
     // format changes to { client: actionRequest}
+    const warnProducts: any[] = []
     const _changedValues: IObjectString2String = {}
     for (const clientId of selectedClients.value) {
       const pId: string = modelRowitem.value?.productId as string
@@ -154,6 +159,15 @@ License: AGPL-3.0
             modelRowitem.value?.actions,
             ')'
           )
+          warnProducts.push({
+            clientId: clientId,
+            productId: modelRowitem.value?.productId,
+            actionRequest: changesProducts.value[clientId][pId].actionRequest,
+          })
+          notifyWarning({
+            title: $t('warning') + ' ' + changesProducts.value[clientId][pId].actionRequest,
+            message: 'Invalid actionRequest for product ' + modelRowitem.value?.productId,
+          })
 
           storeChanges().delCProductByProductId([clientId], pId)
         }

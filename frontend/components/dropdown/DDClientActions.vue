@@ -6,19 +6,27 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-dropdown>
+  <el-dropdown
+    :data-testid="`btn-clientactions-` + (props.clientIds.length > 0 ? props.clientIds[0] : 'none')"
+  >
     <el-button class="ml-1 mt-1" :link="props.link" :disabled="isLoadingCurrent || disabled">
       <IconIIcon :icon="getIcon(props.icon)" :title="$t('clientActions')" />
       <IconILoading v-if="isLoadingCurrent" class="ml-1" small :title="$t('message.loading')" />
     </el-button>
     <template #dropdown>
-      <el-dropdown-menu>
+      <el-dropdown-menu
+        :data-testid="
+          `content-clientactions-` + (props.clientIds.length > 0 ? props.clientIds[0] : 'none')
+        "
+      >
         <div v-for="action in clientActions" :key="action" :data-testid="`client-action-${action}`">
           <el-popover
             :width="mq.isMobile.value ? '100%' : '360px'"
             trigger="click"
             :visible="popoverVisible[action]"
             placement="left"
+            :popper-class="`popover-${action}-${props.clientIds.length > 0 ? props.clientIds[0] : 'none'}`"
+            :data-testid="`popover-${action}-${props.clientIds.length > 0 ? props.clientIds[0] : 'none'}`"
           >
             <template #reference>
               <el-button
@@ -54,9 +62,7 @@ License: AGPL-3.0
                 <div v-for="key in Object.keys(opsiClientAgent)" :key="key">
                   <el-form-item :label="$t(key)">
                     <el-radio-group v-if="key === 'type'" v-model="opsiClientAgent[key]">
-                      <el-radio v-for="os in ['Windows', 'Linux', 'Mac']" :key="os" :value="os">{{
-                        os
-                      }}</el-radio>
+                      <el-radio v-for="os in OSTYPES" :key="os" :value="os">{{ os }}</el-radio>
                     </el-radio-group>
                     <el-input
                       v-else-if="key === 'password'"
@@ -67,6 +73,7 @@ License: AGPL-3.0
                   </el-form-item>
                 </div>
               </div>
+
               <el-button
                 class="float-right"
                 :type="action == 'delete' ? 'danger' : 'success'"
@@ -76,6 +83,21 @@ License: AGPL-3.0
                 @click="executeClientAction(action)"
               >
                 {{ $t(action) }}
+              </el-button>
+
+              <el-button
+                class="float-right"
+                type="primary"
+                size="small"
+                :disabled="isLoadingCurrent"
+                :data-testid="`popover-${action}-${props.clientIds.length > 0 ? props.clientIds[0] : 'none'}-cancel`"
+                @click="
+                  () => {
+                    popoverVisible[action] = false
+                  }
+                "
+              >
+                {{ $t('cancel') }}
               </el-button>
             </el-form>
           </el-popover>
@@ -107,6 +129,7 @@ License: AGPL-3.0
   interface tvisibility {
     [key: string]: boolean
   }
+  const OSTYPES = ['Windows', 'Linux', 'Mac']
   const popoverVisible = ref<tvisibility>({})
   const isLoading = ref<boolean>(false)
   const notifyText = ref<string>('')

@@ -61,7 +61,7 @@ export function mapValues2Objects(
     return {}
   }
   const client2value: IObjectString2String = {}
-  for (const o in objectsorigin) {
+  for (const o in objectsorigin || []) {
     const i = objects.indexOf(objectsorigin[o])
     if (i >= 0 && values.length === 1) {
       client2value[objects[i]] = values[0]

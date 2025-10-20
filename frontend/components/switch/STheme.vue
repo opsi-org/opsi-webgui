@@ -16,7 +16,7 @@ License: AGPL-3.0
       v-bind="$props"
       data-testid="theme-toggle"
     />
-    <label for="cbAutorefresh" class="text-xs text-white !pb-1" :class="isDarkMode ? '' : 'pl-4'">{{
+    <label for="cbAutorefresh" class="text-xs !pb-2" :class="isDarkMode ? 'text-white' : 'pl-4 '">{{
       isDarkMode ? $t('dark') : $t('light')
     }}</label>
   </PFloatLabel>

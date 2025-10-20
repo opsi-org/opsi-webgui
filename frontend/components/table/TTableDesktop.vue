@@ -12,21 +12,26 @@ License: AGPL-3.0
       <slot name="header" />
       <div class="toolbar">
         <div class="toolbar-left">
-          <el-button @click="$emit('clearSelection')">
+          <el-button @click="$emit('clearSelection')" data-testid="btn-clearSelection">
             <IconIIcon :icon="icons.clear" />
           </el-button>
-          <el-input v-model="filterQuery" :placeholder="$t('typeToFilter')" clearable>
+          <el-input
+            v-model="filterQuery"
+            :placeholder="$t('typeToFilter')"
+            clearable
+            data-testid="input-filter"
+          >
             <template #prefix>
               <IconIIcon :icon="icons.filter" />
             </template>
           </el-input>
 
-          <el-dropdown trigger="click">
+          <el-dropdown trigger="click" data-testid="btn-columns" class="dropdown-columns">
             <el-button>
               <IconIIcon :icon="icons.columns" />
             </el-button>
             <template #dropdown>
-              <div class="table-caption">
+              <div class="table-caption" data-testid="table-column-settings">
                 <el-checkbox
                   v-model="storeTSettings.otherSettings[props.tableId].border"
                   :label="$t('border')"
@@ -112,7 +117,7 @@ License: AGPL-3.0
             </template>
           </el-dropdown>
 
-          <el-button @click="refreshTable" :title="$t('refresh')">
+          <el-button @click="refreshTable" :title="$t('refresh')" data-testid="btn-refresh">
             <IconIIcon :icon="icons.refresh" />
           </el-button>
         </div>
@@ -120,7 +125,6 @@ License: AGPL-3.0
           <slot name="toolbar-right" />
         </div>
       </div>
-      {{ storeTSettings.filterQuery[props.tableId] }}
     </div>
 
     <!-- SCROLL AND TABLE -->

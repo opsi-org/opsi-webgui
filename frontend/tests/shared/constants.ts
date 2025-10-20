@@ -6,11 +6,13 @@ All rights reserved.
 License: AGPL-3.0
 */
 
+const CICD = process.env.CI ? true : false
+
 export const MOCK_DATA_URL =
   'https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json'
 
-export const themes = ['light', 'dark'] as const
-export const languages = ['en', 'de'] as const
+export const themes = CICD ? (['light', 'dark'] as const) : (['light'] as const)
+export const languages = CICD ? ['en', 'de'] : ['en']
 
 export const opsiconfdSessionCookie = [
   {

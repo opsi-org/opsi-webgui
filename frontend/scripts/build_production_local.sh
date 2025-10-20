@@ -14,6 +14,7 @@ INSTALL=$4
 SHOULD_KEEP_DATA_UIFOLDER=no-install
 SHOULD_INSTALL_DATA=install
 SHOULD_INSTALL_USR=installusr
+SHOULD_COPY_DATA_CICD=copydata
 PATH_DATA="/data/opsiconfd/addons"
 PATH_USR="/workspace/backend/addon"
 FRONTEND_DIR=frontend
@@ -114,6 +115,11 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
     sudo docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
     echo ""
     echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
+elif [ "$INSTALL" = "$SHOULD_COPY_DATA_CICD" ]; then
+    sudo rm -rf ${PATH_USR}/${ADDON_ID} || exit 22
+    sudo mv -f ${ADDON_ID}/ ${PATH_USR}/. || exit 34
+    git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
+    echo "> local copy done"
 elif [ "$INSTALL" = "$SHOULD_KEEP_DATA_UIFOLDER" ]; then
     # move $(pwd)/${ADDON_ID} to working directory (used in cicd)
     mv -f ${ADDON_ID}/ ${WORKING_DIR}/${ADDON_ID}/ || exit 36

@@ -9,7 +9,7 @@ License: AGPL-3.0
   <div>
     <el-text tag="b" class="text-capitalize after:content-['-']"> {{ pagetype }}</el-text>
     <el-text tag="i"> {{ id }} </el-text>
-    <el-button class="float-right" @click="router.push('/clients/')">
+    <el-button data-testid="page-close-side" class="float-right" @click="router.push('/clients/')">
       <IconIIcon :icon="icons.x" />
     </el-button>
     <ViewVConfigHost

@@ -28,14 +28,14 @@ License: AGPL-3.0
       </p-button>
     </div>
     <el-tabs lazy v-model="activeName">
-      <el-tab-pane :label="$t('healthCheck')" name="health">
+      <el-tab-pane :label="$t('healthCheck')" name="health" data-testid="tab-health">
         <TableTHealthCheck
           v-if="fetchedData.health_check && fetchedData.health_check.length > 0"
           v-model="fetchedData.health_check"
           :filter="filter"
         />
       </el-tab-pane>
-      <el-tab-pane name="all">
+      <el-tab-pane name="all" data-testid="tab-diagnostics">
         <template #label>
           <el-text class="mr-4"> {{ $t('diagnostics') }}</el-text>
           <el-button

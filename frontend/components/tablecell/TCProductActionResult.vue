@@ -7,10 +7,24 @@ License: AGPL-3.0
 -->
 <template>
   <div data-testid="TCActionResult">
-    <p-tag v-if="props.text == MIXED" data-testid="TCActionResultBadge" :severity="props.variant">
+    <IconIDetails
+      v-if="props.text == MIXED"
+      :content="icon.unequal"
+      :variant="props.variant"
+      data-testid="TCActionResultDetailsMixed"
+      content-is-icon
+    />
+    <!--<p-tag v-if="props.text == MIXED" data-testid="TCActionResultBadge" :severity="props.variant">
       <IconIIcon :icon="icon.unequal" alt="mixed" />
-    </p-tag>
-    <p-tag
+    </p-tag>-->
+    <IconIDetails
+      v-else-if="props.text == 'successful'"
+      :content="icon.productActionResultSuccessful"
+      variant="success"
+      data-testid="TCActionResultDetailsSuccessful"
+      content-is-icon
+    />
+    <!--<p-tag
       v-else-if="props.text == 'successful'"
       data-testid="TCActionResultBadge"
       severity="success"
@@ -18,10 +32,17 @@ License: AGPL-3.0
       <span class="h6">
         <IconIIcon :icon="icon.productActionResultSuccessful" alt="successful" />
       </span>
-    </p-tag>
-    <p-tag v-else-if="props.text == 'failed'" data-testid="TCActionResultBadge" severity="danger">
+    </p-tag>-->
+    <!--<p-tag v-else-if="props.text == 'failed'" data-testid="TCActionResultBadge" severity="danger">
       <span class="h6"> <IconIIcon :icon="icon.x" alt="failed" /> </span>
-    </p-tag>
+    </p-tag>-->
+    <IconIDetails
+      v-else-if="props.text == 'failed'"
+      :content="icon.x"
+      variant="danger"
+      data-testid="TCActionResultDetailsFailed"
+      content-is-icon
+    />
     <div
       v-else-if="
         $mq == 'mobile' &&
@@ -51,6 +72,7 @@ License: AGPL-3.0
 <script lang="ts" setup>
   import { useStrings } from '~/composables/mixins/useStrings'
   import type { PSeverity } from '~/types/LibComponentTypes'
+  import IDetails from '../icon/IDetails.vue'
 
   const icon = useIcons()
   const t_fixed = useStrings().t_fixed

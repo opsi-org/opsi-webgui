@@ -28,6 +28,9 @@ License: AGPL-3.0
         <el-text>{{ t_fixed('unequal') }} </el-text>
         <IconIIcon :icon="icons.depots" class="inline" />
       </span>
+      <span v-else-if="props.contentIsIcon">
+        <IconIIcon :icon="props.content" class="inline" />
+      </span>
       <el-text v-else class="h6"
         >{{ props.content === 'unequal' ? t_fixed('unequal') : props.content }}
       </el-text>
@@ -43,6 +46,7 @@ License: AGPL-3.0
     text: { type: String, default: '' },
     content: { type: String, default: '*' },
     variant: { type: String as PropType<PSeverity>, default: 'warning' },
+    contentIsIcon: { type: Boolean, default: false },
   })
 
   const icons = useIcons()

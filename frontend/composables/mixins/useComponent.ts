@@ -48,6 +48,7 @@ export function useNotification() {
         style: { 'white-space': 'pre-wrap' },
       })
     }
+    if (message == null) message = '<null>'
     return h('p', { ref: messageRef, id: messageRef }, message) // simple
   }
 

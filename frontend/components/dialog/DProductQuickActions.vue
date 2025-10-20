@@ -7,10 +7,15 @@ License: AGPL-3.0
 -->
 <template>
   <div>
-    <el-button plain @click="popoverVisible = true" :title="$t('productQuickActions')">
+    <el-button
+      plain
+      @click="popoverVisible = true"
+      :title="$t('productQuickActions')"
+      data-testid="btn-product-quick-actions"
+    >
       <IconIIcon :icon="icon.product" />
     </el-button>
-    <el-dialog v-model="popoverVisible">
+    <el-dialog v-model="popoverVisible" modal-class="dialog-products-quickaction-modal">
       <template #header>
         <h5>{{ $t('productQuickActions') }}</h5>
       </template>
@@ -36,7 +41,11 @@ License: AGPL-3.0
               :closable="false"
             />
             <el-form-item v-else :label="$t(label)">
-              <div v-if="label == 'demoResult'" class="max-h-64 min-w-full overflow-y-auto">
+              <div
+                v-if="label == 'demoResult'"
+                class="max-h-64 min-w-full overflow-y-auto"
+                :data-testid="'product-qa-' + label"
+              >
                 <div v-if="productActions.demo.demoResult == undefined">
                   {{ EMPTY }}
                 </div>
@@ -72,12 +81,14 @@ License: AGPL-3.0
 
               <el-checkbox
                 v-else-if="typeof value == 'boolean'"
+                :data-testid="'product-qa-' + label"
                 v-model="productActions[category][label]"
                 @update:model-value="executeAction(true)"
               />
 
               <el-select
                 v-else-if="isObject(value)"
+                :data-testid="'product-qa-' + label"
                 v-model="(productActions[category][label] as any).value"
                 :multiple="Array.isArray((productActions[category][label] as any).value)"
                 :disable="(productActions[category][label] as any).options.length <= 1"
@@ -92,9 +103,10 @@ License: AGPL-3.0
                   :key="item || NO_VALUE"
                   :label="item ? item : NO_VALUE"
                   :value="item || NO_VALUE"
+                  :data-testid="'product-qa-' + label + '-' + (item ? item : 'null')"
                 />
               </el-select>
-              <div v-else>
+              <div v-else :data-testid="'product-qa-' + label">
                 {{ value }}
               </div>
             </el-form-item>

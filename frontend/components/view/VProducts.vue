@@ -34,6 +34,7 @@ License: AGPL-3.0
         <IconIIcon :icon="icons.filterFilled" />
       </el-button>
       <el-button
+        data-testid="btn-products-save-on-demand"
         :type="
           changesProductsExists && storeSelection.selectionClients.length > 0
             ? 'success'
@@ -49,6 +50,8 @@ License: AGPL-3.0
       <el-dialog
         v-model="openBufferedChangesModal"
         align-center
+        modal-class="dialog-products-save-modal"
+        data-testid="dialog-products-save"
         :width="isMobile ? '100%' : '80%'"
         append-to-body
       >
@@ -332,6 +335,7 @@ License: AGPL-3.0
         : () => {
             return (
               <TCProductRequest
+                data-testid="header-action-request"
                 title={$t('message.setActionRequestForSelectedProducts')}
                 onSave={saveActionRequestsLocally}
               />

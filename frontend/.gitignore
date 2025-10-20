@@ -8,6 +8,8 @@ opsi-webgui.zip
 dist
 webgui/
 webgui-dev/
+screenshots/opsidoc/
+# opsidoc screenshot should be generated in pipeline only
 
 # Node dependencies
 node_modules

@@ -9,7 +9,6 @@ License: AGPL-3.0
   <div>
     <IconILoading v-if="isLoading" />
     <FormFTerminalSettings
-      v-else
       v-model:terminal-id="terminalId"
       v-model:terminal-channel="terminalChannel"
       :disabled="isDisabled"
@@ -44,6 +43,8 @@ License: AGPL-3.0
 
   await useConfigserver(true, undefined, $t) // init with configserver if empty selectiondepots
   const ws = useMBus(undefined, false, $t)
+  ws.mount()
+
   const terminalcontainer = ref()
   const mbTerminal = ref<any>(undefined)
   const terminalIdDefault = 'f40dbaa4-dc9f-46c0-9dc5-186a87a3eee5'
@@ -91,10 +92,12 @@ License: AGPL-3.0
   }
   onMounted(async () => {
     while (ws.wsBus.value === undefined) {
+      console.log('VAdminTerminal: waiting for wsBus general connection')
       await new Promise((resolve) => {
         setTimeout(resolve, 100)
       })
     }
+    console.log('VAdminTerminal: wsBus connected')
     isDisabled.value = await _fetchIsDisabled()
     waitForRefNot(isDisabled, undefined)
     if (isDisabled.value) {

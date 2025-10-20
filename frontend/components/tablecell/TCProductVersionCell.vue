@@ -92,6 +92,10 @@ License: AGPL-3.0
     row: { type: Object as PropType<T_ProductRow>, required: true },
     type: { type: String, required: true },
     selectedClients: { type: Array as PropType<string[]>, required: true },
+    /*selectedDepots: {
+      type: Array as PropType<string[]>,
+      default: () => storeToRefs(storeSelections()).selectionDepots,
+    },*/
     clients2depots: {
       type: Object as PropType<T_Client2Depot>,
       required: true,

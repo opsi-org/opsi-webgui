@@ -43,6 +43,10 @@ export const useMBus = (
     () => wsBusMsg.value,
     async () => {
       if (watchFn !== undefined) {
+        // not connected
+        if (wsBus.value === undefined || wsIsConnected.value === false) {
+          await mount()
+        }
         await watchFn(wsBusMsg.value)
       } else {
         wsNotification(
@@ -306,7 +310,7 @@ export const useMBus = (
   }
 
   return {
-    mount,
+    mount, // doing that need to update all files which loads this file
     channels,
     wsBus,
     wsBusMsg,

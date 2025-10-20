@@ -7,7 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <el-dropdown data-testid="language-dropdown" @command="change">
-    <el-button link>
+    <el-button link data-testid="dd-lang">
       <IconIIcon :icon="icons.language" class="inline mr-1" />
       <el-text>{{ locale.toUpperCase() }}</el-text>
       <i class="el-icon-arrow-down el-icon--right"></i>
@@ -64,3 +64,4 @@ License: AGPL-3.0
     storeSettings().setLanguage(event)
   }
 </script>
+<style scoped></style>

@@ -122,7 +122,7 @@ async function useAPI2<T>(
         const { class: _, ...rest } = responseError.value.response.data
         rest.message = rest.message + ` (${basePath + url})`
         notifyError({
-          title: responseError.value?.response?.data?.class,
+          title: 'REQUEST_ERROR ' + responseError.value?.response?.data?.class,
           message: rest,
         })
       }
@@ -161,7 +161,7 @@ async function useAPI2<T>(
       if (showError) {
         const { notifyError } = useNotification()
         notifyError({
-          title: responseError.value.response?.data?.class,
+          title: 'RESPONSE_ERROR: ' + responseError.value.response?.data?.class,
           message: rest,
         })
       }

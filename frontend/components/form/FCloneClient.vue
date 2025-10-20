@@ -7,6 +7,7 @@ License: AGPL-3.0
 -->
 <template>
   <el-form
+    data-testid="form-clientclone"
     label-width="30%"
     :label-position="mq.isMobile.value ? 'top' : 'left'"
     v-loading="isLoading"
@@ -112,7 +113,7 @@ License: AGPL-3.0
   const mq = useMQ()
   const isLoading = ref(false)
   const domain = ref('')
-  const sourceID = ref('')
+  const sourceID = ref(props.id)
   const clientIDList = ref()
   const cloneClient = ref(getDefaultCloneClient())
   const originalClient = ref<THost>({

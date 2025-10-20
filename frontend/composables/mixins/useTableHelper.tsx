@@ -420,6 +420,7 @@ export const useTableHelper = (
           <el-button
             link
             title={$t('configuration')}
+            data-testid="btn-config"
             onClick={() => handleConfigClick(rowData)}
             class={activeButton.value === 'config-' + rowData.clientId ? 'is-active' : ''}
           >
@@ -430,6 +431,7 @@ export const useTableHelper = (
           <el-button
             link
             title={$t('logs')}
+            data-testid="btn-log"
             onClick={() => handleLogClick(rowData)}
             class={activeButton.value === 'log-' + rowData.clientId ? 'is-active' : ''}
           >
@@ -440,16 +442,18 @@ export const useTableHelper = (
           <el-button
             link
             title={$t('clone')}
+            data-testid="btn-clone"
             disabled={storeConfigapp().config?.read_only}
             onClick={() => handleCloneClick(rowData)}
             class={activeButton.value === 'clone-' + rowData.clientId ? 'is-active' : ''}
           >
-            <IIcon icon={icons.client} />
+            <IIcon icon={icons.clone} />
           </el-button>
         ) : null}
 
         {props.hasClientActions ? (
           <DDClientActions
+            data-testid={`wrapper-clientactions-${rowData.clientId}`}
             disabled={storeConfigapp().config?.read_only}
             client-ids={[rowData.clientId]}
           />

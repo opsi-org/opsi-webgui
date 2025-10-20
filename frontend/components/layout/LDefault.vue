@@ -51,7 +51,7 @@ License: AGPL-3.0
         </el-aside>
 
         <!-- MAIN CONTENT -->
-        <el-main class="z-0 p-2">
+        <el-main class="z-0 p-2" data-testid="page-main-content">
           <BreadcrumbBPageNavigation />
           <slot />
         </el-main>

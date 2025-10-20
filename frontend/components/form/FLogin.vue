@@ -9,6 +9,7 @@ License: AGPL-3.0
   <main data-testid="FLogin" :class="$mq === 'mobile' ? 'px-[4%]' : ''" v-loading="isLoading">
     <h1 class="sr-only">{{ $t('login') }}</h1>
     <el-card
+      data-testid="login-card"
       class="text-center bg-opsi-blue text-white mx-auto"
       :class="$mq === 'mobile' ? 'w-full' : 'w-1/2; max-w-md'"
     >

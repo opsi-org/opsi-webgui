@@ -17,6 +17,9 @@ backend/.vscode/settings.json
 opsi-webgui*.zip
 **/test-result-pw-reporter-component.xml
 
+screenshots/opsidoc/
+# opsidoc screenshot should be generated in pipeline only
+
 **/test-result-pw-reporter-component.xml
 **/test-result-pw-reporter-accessibility.xml
 **/test-result-pw-reporter-components.xml

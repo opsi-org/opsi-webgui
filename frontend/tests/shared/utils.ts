@@ -7,17 +7,32 @@ License: AGPL-3.0
 */
 import { test } from '@playwright/test'
 import type { BrowserContext, Page } from '@playwright/test'
-import { opsiconfdSessionCookie } from '../shared/constants'
 
-export const login = async (context: BrowserContext, page: Page) => {
-  await context.addCookies(opsiconfdSessionCookie)
-  await context.cookies()
-  await page.waitForURL('**/app/**', { timeout: 60000 })
+//export const login = async (context: BrowserContext, page: Page) => {
+//  await context.addCookies(opsiconfdSessionCookie)
+//  await context.cookies()
+//  await page.waitForURL('**/ app /**', { timeout: 60000 })
+//}
+
+export const login = async (page: Page) => {
+  page.on('console', (msg) => {
+    console.log('>', msg)
+  })
+  await page.getByTestId('login-username-input').fill('adminuser')
+  await page.getByTestId('login-password-input').fill('adminuser')
+  await page.getByTestId('btn-login').click()
+
+  await page.waitForLoadState('networkidle')
+  await page.waitForTimeout(10000)
+  console.log('URL after login: ', page.url())
+
+  //await page.waitForURL('**/clients/**', { timeout: 60000 })
 }
 
 export const toggleTheme = async (page: Page, targetTheme: 'light' | 'dark') => {
   const themeToggle = page.getByTestId('theme-toggle')
-  await themeToggle.waitFor({ state: 'visible' })
+  //await themeToggle.waitFor({ state: 'visible' })
+  await themeToggle.waitFor()
   const ariaLabel = await themeToggle.getAttribute('aria-label')
   const isDarkMode = ariaLabel?.includes('on')
   if ((targetTheme === 'dark' && !isDarkMode) || (targetTheme === 'light' && isDarkMode)) {
@@ -26,7 +41,7 @@ export const toggleTheme = async (page: Page, targetTheme: 'light' | 'dark') => 
   await page.waitForTimeout(1000)
 }
 
-export const selectLanguage = async (page: Page, targetLanguage: 'en' | 'de') => {
+export const selectLanguage = async (page: Page, targetLanguage: string) => {
   const languageDropdown = page.getByTestId('language-dropdown')
   await languageDropdown.waitFor({ state: 'visible' })
   const activeLanguage = await languageDropdown.textContent()
@@ -35,6 +50,7 @@ export const selectLanguage = async (page: Page, targetLanguage: 'en' | 'de') =>
   }
   await languageDropdown.click()
   await page.waitForTimeout(500)
+  console.log('Selecting language: ', targetLanguage)
   const languageOption = page.getByTestId(`language-dropdown-item-${targetLanguage}`)
   await languageOption.waitFor({ state: 'visible' })
   await languageOption.click()
@@ -64,6 +80,7 @@ export const connectTerminal = async (page: Page) => {
 
 export const takeFullPageScreenshot = async (page: Page, path: string) => {
   await page.screenshot({ path, fullPage: true })
+  await page.waitForTimeout(2000)
 }
 
 export const useHighResolutionViewport = () => {

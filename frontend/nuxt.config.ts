@@ -58,7 +58,10 @@ if (process.env.NODE_ENV === 'development') {
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-01-23',
-  experimental: { appManifest: false },
+  experimental: {
+    appManifest: false,
+    payloadExtraction: false,
+  },
   build: {
     analyze: false,
   },

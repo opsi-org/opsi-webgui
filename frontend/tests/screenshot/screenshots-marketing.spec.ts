@@ -14,7 +14,7 @@ import {
   login,
   takeFullPageScreenshot,
 } from '../shared/utils'
-import { setupMockRoutes } from '../shared/mock/mocks'
+//import { setupMockRoutes } from '../shared/mock/mocks'
 import { themes, languages } from '../shared/constants'
 
 test.describe('Clients Page with Products', () => {
@@ -25,19 +25,25 @@ test.describe('Clients Page with Products', () => {
         context,
         page,
       }) => {
-        await setupMockRoutes(page, true) // Logged in
-        await page.goto('/login', {
+        //await setupMockRoutes(page, true) // Logged in
+        await page.goto('login', {
           waitUntil: 'networkidle',
           timeout: 60000,
         })
         await toggleTheme(page, theme)
         await selectLanguage(page, language)
-        await login(context, page)
-        if (page.url() !== '/clients') {
-          await page.goto('/clients/', {
+        await login(page)
+
+        if (!page.url().includes('clients')) {
+          await page.goto('clients/', {
             waitUntil: 'networkidle',
             timeout: 60000,
           })
+          await page.waitForLoadState('networkidle')
+          await page.waitForTimeout(10000)
+          if (!page.url().includes('clients')) {
+            throw new Error('Failed to navigate to clients page')
+          }
         }
         await page.waitForSelector('[data-testid="clients-products-button"]', {
           state: 'visible',
