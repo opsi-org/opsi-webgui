@@ -112,6 +112,7 @@ stages:
 .prepare_backend_minimal: &prepare_backend_minimal |
   apt update
   apt -y install git wget python3-pip python3-dev mariadb-client
+  apt -y install clang zstd libmariadb-dev libmariadb-dev-compat
 
   git clone -b v4.3 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git
   cd opsiconfd
@@ -120,7 +121,7 @@ stages:
   export OPSICONFD_RESTORE_BACKUP_ALWAYS="true"
   # Configure database access
 
-  #mysql --host=mysql --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
+  mysql --host=mysql --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO 'opsi'@'%';"
 
   # Install dependencies
   uv self update
