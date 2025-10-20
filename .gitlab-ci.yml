@@ -112,7 +112,6 @@ stages:
 .prepare_backend_minimal: &prepare_backend_minimal |
   apt update
   apt -y install git wget python3-pip python3-dev mariadb-client
-  apt -y install clang zstd libmariadb-dev libmariadb-dev-compat
 
   git clone -b v4.3 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git
   cd opsiconfd
@@ -557,7 +556,7 @@ build:screenshot:
     - init:npm
     - init:transifex-down
   services:
-    - name: mysql:latest
+    - name: mysql:8.4
       command:
         - --max_connections=1000
         - --default-authentication-plugin=mysql_native_password
