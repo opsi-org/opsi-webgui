@@ -574,7 +574,6 @@ build:screenshot:
     MARIADB_PASSWORD: 'opsi'
     CI: true
     FF_NETWORK_PER_BUILD: true
-    default-authentication-plugin: ON
     HOSTNAME: 'localhost'
   script:
     - *install_uv
