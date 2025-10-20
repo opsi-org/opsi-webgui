@@ -111,7 +111,8 @@ stages:
 
 .prepare_backend_minimal: &prepare_backend_minimal |
   apt update
-  apt -y install git wget python3-pip python3-dev mariadb-client default-libmysqlclient-dev build-essential
+  apt -y install git wget python3-pip python3-dev mariadb-client default-libmysqlclient-dev build-essential \
+    libxml2 libxslt
 
   git clone -b v4.3 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git
   cd opsiconfd
