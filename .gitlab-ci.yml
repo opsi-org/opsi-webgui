@@ -539,7 +539,7 @@ test:tsc:
 
 build:screenshot:
   stage: build
-  image: mcr.microsoft.com/playwright:v1.56.0-focal
+  image: mcr.microsoft.com/playwright:v1.56.0-noble
   dependencies:
     - init:npm
     - init:transifex-down
