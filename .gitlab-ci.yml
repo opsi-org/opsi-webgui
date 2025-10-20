@@ -103,7 +103,7 @@ stages:
 .install_uv: &install_uv |
   apt update
   apt -y install curl
-  curl -LsSf https://astral.sh/uv/install.sh
+  curl -LsSf https://astral.sh/uv/install.sh | sh
   uv self update
   export UV_PYTHON_PREFERENCE="only-managed"
   export UV_PYTHON="3.13"
