@@ -556,10 +556,10 @@ build:screenshot:
     - init:npm
     - init:transifex-down
   services:
-    - name: mysql:8.4
+    - name: mysql:latest
       command:
         - --max_connections=1000
-        - --default-authentication-plugin=mysql_native_password
+        #- --default-authentication-plugin=mysql_native_password
       alias: mysql
     - name: redislabs/redistimeseries:latest
       alias: redis
@@ -568,8 +568,13 @@ build:screenshot:
     MYSQL_DATABASE: 'opsitest'
     MYSQL_USER: 'opsi'
     MYSQL_PASSWORD: 'opsi'
+    MARIADB_ROOT_PASSWORD: 'opsi'
+    MARIADB_DATABASE: 'opsitest'
+    MARIADB_USER: 'opsi'
+    MARIADB_PASSWORD: 'opsi'
     CI: true
     FF_NETWORK_PER_BUILD: true
+    default-authentication-plugin: ON
     HOSTNAME: 'localhost'
   script:
     - *install_uv
