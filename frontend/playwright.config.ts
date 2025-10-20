@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig } from '@playwright/test'
 
 //const WEBGUI_DEV_PORT = process.env.WEBGUI_DEV_PORT || 8888
 //const OPSICONFD_PORT = process.env.OPSICONFD_PORT || 44471
@@ -11,12 +11,12 @@ if (!process.env.CI) {
   // development environment
   BASE_URL = `https://${HOSTNAME}:4447/` // port from inside containers is not 44471/2
   APP_PATH = 'addons/webgui-dev/app/'
-  console.log('We are not in CICD: ' + BASE_URL + APP_PATH)
+  console.warn('We are not in CICD: ' + BASE_URL + APP_PATH)
 } else {
   // CICD environment
   BASE_URL = `https://${HOSTNAME}:4447/` // port from inside containers is not 44471/2
   APP_PATH = 'addons/webgui-dev/app/'
-  console.log('We are in CICD: ' + BASE_URL + APP_PATH)
+  console.warn('We are in CICD: ' + BASE_URL + APP_PATH)
 }
 
 export default defineConfig({

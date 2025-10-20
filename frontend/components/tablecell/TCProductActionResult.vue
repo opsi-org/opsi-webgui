@@ -72,7 +72,6 @@ License: AGPL-3.0
 <script lang="ts" setup>
   import { useStrings } from '~/composables/mixins/useStrings'
   import type { PSeverity } from '~/types/LibComponentTypes'
-  import IDetails from '../icon/IDetails.vue'
 
   const icon = useIcons()
   const t_fixed = useStrings().t_fixed

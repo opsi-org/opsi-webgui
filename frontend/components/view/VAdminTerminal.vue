@@ -92,12 +92,10 @@ License: AGPL-3.0
   }
   onMounted(async () => {
     while (ws.wsBus.value === undefined) {
-      console.log('VAdminTerminal: waiting for wsBus general connection')
       await new Promise((resolve) => {
         setTimeout(resolve, 100)
       })
     }
-    console.log('VAdminTerminal: wsBus connected')
     isDisabled.value = await _fetchIsDisabled()
     waitForRefNot(isDisabled, undefined)
     if (isDisabled.value) {

@@ -231,7 +231,6 @@ License: AGPL-3.0
         @click="
           () => {
             if (editItemDialogUpdate) {
-              console.log('update item', editItemDialogValueOrigin, 'to', editItemDialogValue)
               updateItemInOptions(editItemDialogValueOrigin, editItemDialogValue, false, true)
             } else {
               // add
@@ -447,9 +446,7 @@ License: AGPL-3.0
     store: boolean = true,
     openOptions: boolean = false
   ) {
-    console.log('updateItemInOptions', oldItem, newItem)
     const index = (dataCopy.value as string[]).indexOf(oldItem)
-    console.log('updateItemInOptions', oldItem, index)
     if (index !== -1) {
       // remove old item
       ;(dataCopy.value as string[]).splice(index, 1)

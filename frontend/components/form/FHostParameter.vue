@@ -514,7 +514,6 @@ License: AGPL-3.0
   }
 
   function handleSelection(item: any, value: any) {
-    console.log('handleSelection', item, value)
     assert(value !== undefined, `values should not be undefined (${item.configId}, ${value})`)
     assert(
       itemValues.value[item.configId] !== undefined,

@@ -1,7 +1,6 @@
 <template>
   <div>
-    This page is for debugging the product related table cells and creating screenshots of
-    components which may not be created by dummy data.
+    {{ debugText }}
     <br />
 
     <IconIDetails content="depot-wo-prod" variant="warn" data-testid="depot-notall" />
@@ -34,4 +33,7 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  const debugText =
+    'This page is for debugging the product related table cells and creating screenshots of components which may not be created by dummy data.'
+</script>

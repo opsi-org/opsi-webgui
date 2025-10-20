@@ -165,8 +165,10 @@ License: AGPL-3.0
             actionRequest: changesProducts.value[clientId][pId].actionRequest,
           })
           notifyWarning({
-            title: $t('warning') + ' ' + changesProducts.value[clientId][pId].actionRequest,
-            message: 'Invalid actionRequest for product ' + modelRowitem.value?.productId,
+            title: $t('message.warning') + ' ' + changesProducts.value[clientId][pId].actionRequest,
+            message: $t('message.warning.invalidActionRequest', {
+              product: modelRowitem.value?.productId,
+            }),
           })
 
           storeChanges().delCProductByProductId([clientId], pId)
