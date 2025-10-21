@@ -131,8 +131,8 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
     echo ""
     echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
 elif [ "$INSTALL" = "$SHOULD_COPY_DATA_CICD" ]; then
-    $SUDO rm -rf ${PATH_USR}/${ADDON_ID} || exit 22
-    $SUDO mv -f ${ADDON_ID}/ ${PATH_USR}/. || exit 34
+    $SUDO rm -rf ${WORKING_DIR}/${BACKEND_DIR}/addon/${ADDON_ID} || exit 22
+    $SUDO mv -f ${ADDON_ID}/ ${WORKING_DIR}/${BACKEND_DIR}/addon/. || exit 34
 
     if [ "$IS_CICD" = "false" ]; then
         git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
