@@ -330,7 +330,6 @@ License: AGPL-3.0
   watch(
     () => useRoute().fullPath,
     (val) => {
-      console.log('Route changed, refetching table data: ', val)
       fetchWrapper()
     },
     { deep: true }
