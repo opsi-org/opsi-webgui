@@ -366,6 +366,7 @@ License: AGPL-3.0
         return (
           <div class="flex flex-row">
             <BTNRowLink
+              data-testid="btn-config"
               is-pressed={navigation.rowactionConfigChecked.value[rowData.productId]}
               icon={icons.settings}
               onOnClick={change}
