@@ -157,7 +157,7 @@ License: AGPL-3.0
       outdatedOnClient: false,
     },
     possibleActions: {
-      rowactions: {
+      actionRequest: {
         options: ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'],
         value: NOT_APPLIED,
       },
@@ -230,7 +230,7 @@ License: AGPL-3.0
     )
 
     const params: Record<string, any> = {
-      action: productActions.value.possibleActions.rowactions.value || '',
+      action: productActions.value.possibleActions.actionRequest.value || '',
       outdated: productActions.value.conditions.outdatedOnClient,
       installation_status: productActions.value.conditions.instStatus.value,
       action_result: productActions.value.conditions.actionResult.value,
