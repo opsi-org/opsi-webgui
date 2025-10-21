@@ -159,8 +159,6 @@ License: AGPL-3.0
         await useSetUEFI($t).setUEFI(hostAttr.hostId, (hostAttr.uefi as string).toString())
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    //notEditable.forEach((attrKey) => delete hostAttr[attrKey])
 
     const { error } = await useApiPUT(`/opsidata/${props.type}/${props.id}`, hostAttr)
     if (error) return

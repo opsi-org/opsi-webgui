@@ -329,7 +329,7 @@ License: AGPL-3.0
 
   watch(
     () => useRoute().fullPath,
-    (val) => {
+    () => {
       fetchWrapper()
     },
     { deep: true }
