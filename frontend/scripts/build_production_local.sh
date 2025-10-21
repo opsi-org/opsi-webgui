@@ -133,6 +133,9 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
 elif [ "$INSTALL" = "$SHOULD_COPY_DATA_CICD" ]; then
     $SUDO rm -rf ${WORKING_DIR}/${BACKEND_DIR}/addon/${ADDON_ID} || exit 22
     $SUDO mv -f ${ADDON_ID}/ ${WORKING_DIR}/${BACKEND_DIR}/addon/. || exit 34
+    ls -lah ${WORKING_DIR}/${BACKEND_DIR}/addon/
+    ls -lah ${WORKING_DIR}/${BACKEND_DIR}/addon/${ADDON_ID}
+
 
     if [ "$IS_CICD" = "false" ]; then
         git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71

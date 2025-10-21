@@ -51,7 +51,7 @@ stages:
 
 
   # Grant full database access to opsi user
-  mysql --host=mysql --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
+  mysql --host=${MYSQL_HOST} --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
 
   # Get config files from opsi-server package
   [ -e /etc/opsi ] && rm -r /etc/opsi
@@ -111,7 +111,7 @@ stages:
 
 .prepare_backend_minimal: &prepare_backend_minimal |
   apt update
-  apt -y install git wget python3-pip python3-dev
+  apt -y install git wget python3-pip python3-dev python3-venv iproute2 net-tools iputils-ping
   apt -y install mariadb-client default-libmysqlclient-dev build-essential
   apt -y install libxslt-dev python3-lxml
   apt -y install build-essential pkg-config libxml2-dev libxmlsec1-dev libxmlsec1-openssl #libpython3.??-dev
@@ -122,6 +122,7 @@ stages:
   export OPSICONFD_RESTORE_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
   export OPSICONFD_RESTORE_BACKUP_ALWAYS="true"
   export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}"
+  echo "OPSICONFD_MYSQL_INTERNAL_URL=${OPSICONFD_MYSQL_INTERNAL_URL}"
   # Configure database access
 
   mysql --host=${MYSQL_HOST} --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO 'opsi'@'%';"
@@ -140,10 +141,12 @@ stages:
 
 .start_backend_minimal: &start_backend_minimal |
   cd opsiconfd
+  # Setup database
+  uv run opsiconfd setup --configure-mysql -c tests/data/default-opsiconfd.conf -l5
+
   # Start opsiconfd
   #poetry run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup &
   uv run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup &
-  sleep 30
   cd ..
 
 .pytest: &pytest |
@@ -348,6 +351,7 @@ test:tsc:
     - *define_globals
   script:
     - npm run tsc || exit 1
+
 # test:unit:
 #   stage: test
 #   dependencies:
@@ -564,7 +568,7 @@ build:screenshot:
     - name: mysql:latest
       command:
         - --max_connections=1000
-        #- --default-authentication-plugin=mysql_native_password
+      #- --default-authentication-plugin=mysql_native_password
       alias: mysql
     - name: redislabs/redistimeseries:latest
       alias: redis
@@ -584,7 +588,11 @@ build:screenshot:
     - bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
     - sleep 30
     - cd ..
+    - echo ""
+    - echo "MYSQL $OPSICONFD_MYSQL_INTERNAL_URL"
+    - echo ""
     - *start_backend_minimal
+    - sleep 40
     - cd frontend
     - mkdir test-results
     - npm ci
