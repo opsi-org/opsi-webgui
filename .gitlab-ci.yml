@@ -123,6 +123,9 @@ stages:
   export OPSICONFD_RESTORE_BACKUP_ALWAYS="true"
   export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}"
   echo "OPSICONFD_MYSQL_INTERNAL_URL=${OPSICONFD_MYSQL_INTERNAL_URL}"
+  export OPSICONFD_ADDON_DIRS=["../backend/addon"]
+  #    echo "addon-dirs = [../backend/addon]" >> tests/data/default-opsiconfd.conf
+
   # Configure database access
 
   mysql --host=${MYSQL_HOST} --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO 'opsi'@'%';"
