@@ -691,9 +691,7 @@ test.describe('Products Page', () => {
               await filter.fill('l-desktop')
               await page.waitForTimeout(2000)
 
-              const btnProductSettings = page.getByTestId('btn-config').nth(0)
-              await btnProductSettings.waitFor()
-              await btnProductSettings.click()
+              await page.getByTestId('btn-config').nth(0).click()
 
               // tab-dependencies
               const tabDependencies = page.locator('#tab-dependencies')
@@ -756,6 +754,7 @@ test.describe('System Page', () => {
             path: `${screenshotPath}/${theme}/${language}/opsi-webgui-admin-diagnostics.png`,
             gotoUrl: 'admin/diagnostics/?id=all',
             preScreenshot: async (page: Page, data: IElement) => {
+              await page.locator('#tab-all').first().click()
               await page.waitForTimeout(1000)
             },
           },

@@ -33,7 +33,7 @@ export default defineConfig({
   },
   testDir: './tests',
   reporter: 'list',
-  timeout: 5 * 60 * 1000, // 5 minutes per test
+  timeout: 2 * 60 * 1000, // 5 minutes per test
   fullyParallel: true,
   workers: 4,
 })
