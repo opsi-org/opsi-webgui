@@ -11,7 +11,7 @@ webgui client methods
 import os
 import subprocess
 from datetime import date, datetime
-from ipaddress import IPv4Address, IPv6Address
+#from ipaddress import IPv4Address, IPv6Address
 from typing import Any, Dict, List, Literal, Optional, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
@@ -72,7 +72,8 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	description: Optional[str] = None
 	notes: Optional[str] = None
 	hardwareAddress: Optional[str] = None
-	ipAddress: Optional[Union[IPv4Address, IPv6Address]] = None
+	ipAddress: Optional[str] = None
+	#ipAddress: Optional[Union[IPv4Address, IPv6Address]] = None
 	inventoryNumber: Optional[str] = ""
 	systemUUID: Optional[str] = ""
 	oneTimePassword: Optional[str] = None

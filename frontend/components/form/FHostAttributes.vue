@@ -160,13 +160,13 @@ License: AGPL-3.0
       }
     }
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    notEditable.forEach((attrKey) => delete hostAttr[attrKey])
+    //notEditable.forEach((attrKey) => delete hostAttr[attrKey])
 
-    const { error } = await useApiPUT(`/opsidata/${props.type}/${hostAttr.hostId}`, hostAttr)
+    const { error } = await useApiPUT(`/opsidata/${props.type}/${props.id}`, hostAttr)
     if (error) return
     notifySuccess({
       message: $t('message.hostAttributesSaved', {
-        host: hostAttr.hostId,
+        host: props.id,
       }),
     })
 
@@ -175,6 +175,10 @@ License: AGPL-3.0
       hasUnsavedChanges.value = false
     } catch (error) {
       notifyError({ message: error || $t('message.error.general') })
+    }
+    if (props.id !== undefined && props.id !== hostAttr.hostId) {
+      const newRoute = useRoute().fullPath.replace(props.id, hostAttr.hostId)
+      useRouter().push(newRoute)
     }
   }
 
