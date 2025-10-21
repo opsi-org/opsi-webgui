@@ -21,6 +21,9 @@ FRONTEND_DIR=frontend
 BACKEND_DIR=backend
 WEBGUI_DIR=webgui
 
+#process.env.CI
+IS_CICD=${CI:-false}
+
 PY_CONST_FILE=${WORKING_DIR}/${BACKEND_DIR}/addon/${WEBGUI_DIR}/python/const.py
 ADDON_ID_ORIGIN=webgui
 ADDON_NAME_ORIGIN=Webgui
@@ -35,7 +38,9 @@ ADDON_PATH_ORIGIN=/addons/${ADDON_ID_ORIGIN}
 cleanup() {
     echo 'Undo changes and exiting'
     if command -v git 2>&1 >/dev/null; then
-        git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/python/const.py || exit 70
+        if [ "$IS_CICD" = "false" ]; then
+            git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/python/const.py || exit 70
+        fi
     fi
     sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = '$ADDON_PATH_ORIGIN'|" "$TS_CONST_FILE" || exit 13
     sudo chown 1000:1000 -R ${WORKING_DIR} || exit 90
@@ -107,7 +112,10 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
     echo ".....install locally to ${PATH_DATA}"
     sudo rm -rf ${PATH_DATA}/${ADDON_ID} || exit 22
     sudo mv -f ${ADDON_ID}/ ${PATH_DATA}/. || exit 34
-    git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
+
+    if [ "$IS_CICD" = "false" ]; then
+        git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
+    fi
     echo "> local install done"
 
     CONTAINER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
@@ -118,7 +126,10 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
 elif [ "$INSTALL" = "$SHOULD_COPY_DATA_CICD" ]; then
     sudo rm -rf ${PATH_USR}/${ADDON_ID} || exit 22
     sudo mv -f ${ADDON_ID}/ ${PATH_USR}/. || exit 34
-    git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
+
+    if [ "$IS_CICD" = "false" ]; then
+        git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
+    fi
     echo "> local copy done"
 elif [ "$INSTALL" = "$SHOULD_KEEP_DATA_UIFOLDER" ]; then
     # move $(pwd)/${ADDON_ID} to working directory (used in cicd)
