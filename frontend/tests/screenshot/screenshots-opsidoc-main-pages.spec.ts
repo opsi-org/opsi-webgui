@@ -16,6 +16,7 @@ import {
   connectTerminal,
 } from '../shared/utils'
 //import { setupMockRoutes } from '../shared/mock/mocks'
+import { mockLogs } from '../shared/mock/mocks'
 //import { themes, languages } from '../shared/constants'
 import { themes, languages } from '../shared/constants'
 const screenshotPath = 'screenshots/opsidoc/'
@@ -23,13 +24,14 @@ const screenshotPath = 'screenshots/opsidoc/'
 // Reset storage state for this file to avoid being authenticated
 const existingClientId = 'nb-00023.acme.corp' // avoid using this (better use the ones which definitly exists on page e.g. by selecting first table row..)
 const realClientId = 'wk-00037.acme.corp'
-
+const clientRow = 3
 interface IElement {
   path: string
 
   datatestid?: string
   locator?: string
   fullPage?: boolean
+  nth?: number
 
   // helpers
   wrapper?: string // optional wrapper for locator
@@ -258,7 +260,7 @@ test.describe('General Table Page', () => {
             path: `${screenshotPath}/${theme}/${language}/opsi-webgui-table-settings.png`,
             postScreenshot: async (page: Page, data: IElement) => {
               // close popup
-              await page.getByTestId('btn-columns').click()
+              await page.getByTestId('btn-columns').first().click()
               await page.waitForTimeout(2000)
               //const dtId = 'table-column-settings'
               //const elemn = page.getByTestId(dtId).first()
@@ -305,7 +307,7 @@ test.describe('Server Page', () => {
             //opsi-webgui-server-attribute
             path: `${screenshotPath}/${theme}/${language}/opsi-webgui-servers-attributes.png`,
             preScreenshot: async (page: Page, data: IElement) => {
-              await page.getByTestId('btn-config').first().click()
+              await page.getByTestId('btn-config').nth(clientRow).click()
               await page.waitForTimeout(2000)
               await page.locator('#tab-attr').click()
               await page
@@ -327,7 +329,7 @@ test.describe('Clients Page', () => {
       }) => {
         await doLogin(page, theme, language)
         await page.getByTestId('menu-quickpanel').click()
-
+        await mockLogs(page, realClientId)
         const elementsToScreenshot: IElement[] = [
           // ORDER MATTERS!
           {
@@ -338,14 +340,17 @@ test.describe('Clients Page', () => {
           {
             locator: '[data-testid^="wrapper-clientactions-"]',
             wrapper: '[data-testid^="wrapper-clientactions-"]', // actually the same as locator
+            nth: clientRow,
             path: `${screenshotPath}/${theme}/${language}/opsi-webgui-buttonclientactions.png`,
             postScreenshot: async (page: Page, data: IElement) => {
               if (data.wrapper === undefined)
                 throw new Error('wrapper must be defined for clientactions button')
               // get any rows actions button and click on it (to open popup with concrete actions)
-              const elClientAction = page.locator(data.wrapper).first()
-              await elClientAction.click()
+              const elClientAction = page.locator(data.wrapper).nth(clientRow)
               const clientDataTestId = await elClientAction.getAttribute('data-testid')
+              if (!clientDataTestId)
+                throw new Error('Failed to get clientDataTestId from btn-clientactions')
+              await page.getByTestId(clientDataTestId).locator('button').click()
               if (!clientDataTestId)
                 throw new Error('Failed to get clientDataTestId from btn-clientactions')
 
@@ -485,11 +490,11 @@ test.describe('Clients Page', () => {
             preScreenshot: async (page: Page, data: IElement) => {
               await page
                 .getByTestId('btn-clone')
-                .first()
+                .nth(clientRow)
                 .screenshot({
                   path: `${screenshotPath}/${theme}/${language}/opsi-webgui-buttonclone.png`,
                 })
-              await page.getByTestId('btn-config').first().click()
+              await page.getByTestId('btn-config').nth(clientRow).click()
               await page.waitForTimeout(2000)
               await page.locator('#tab-attr').click()
               await page
@@ -549,7 +554,7 @@ test.describe('Products Page', () => {
         await page.getByTestId('menu-quickpanel').click()
         const selectClient = async (page: Page) => {
           // select any client by class ".el-table__row", use third row to avoid header
-          const rowC = page.locator('.el-table__row').nth(3)
+          const rowC = page.locator('.el-table__row').nth(clientRow)
           const cell = rowC.locator('td .p-checkbox-input').first()
 
           await cell.waitFor()
@@ -624,7 +629,7 @@ test.describe('Products Page', () => {
               await page.waitForTimeout(2000)
 
               // screenshot of Headers ActionRequest
-              const arHeader = page.locator('.column-actionRequest .p-select').first()
+              const arHeader = page.locator('.column-actionRequest .p-select').nth(clientRow)
               await arHeader.waitFor()
               await arHeader.click()
               await page.waitForTimeout(1000)
@@ -652,7 +657,7 @@ test.describe('Products Page', () => {
               await page.waitForTimeout(2000)
 
               // open actionRequest-Select
-              const cellAR = page.locator('.column-actionRequest .p-select').nth(1) // first select is in header row
+              const cellAR = page.locator('.column-actionRequest .p-select').nth(clientRow) // first select is in header row
               await cellAR.waitFor()
               await cellAR.click()
               await page.waitForTimeout(2000)
@@ -691,7 +696,7 @@ test.describe('Products Page', () => {
               await filter.fill('l-desktop')
               await page.waitForTimeout(2000)
 
-              await page.getByTestId('btn-config').nth(0).click()
+              await page.getByTestId('btn-config').first().click()
 
               // tab-dependencies
               const tabDependencies = page.locator('#tab-dependencies')
@@ -799,10 +804,15 @@ async function getRowId(page: Page, wrapper: string, action: string, path: strin
   // optionally returns new locator to take screenshot of
 
   // get any rows actions button and click on it (to open popup with concrete actions)
-  const elClientAction = page.locator(wrapper).first()
-  await elClientAction.waitFor()
-  await elClientAction.click()
+  const elClientAction = page.locator(wrapper).nth(clientRow)
+
   const clientDataTestId = await elClientAction.getAttribute('data-testid')
+  if (!clientDataTestId) throw new Error('Failed to get clientDataTestId from btn-clientactions')
+  await page.getByTestId(clientDataTestId).locator('button').click()
+  //await elClientAction.waitFor()
+  //await elClientAction.click()
+  await page.waitForTimeout(1000)
+  //const clientDataTestId = await elClientAction.getAttribute('data-testid')
   if (!clientDataTestId) throw new Error('Failed to get clientDataTestId from btn-clientactions')
 
   const id = clientDataTestId.replace('wrapper-clientactions-', '')
@@ -860,10 +870,10 @@ async function runScreenshots(page: Page, data: IElement[]) {
     // Screenshots
     if (element.locator !== undefined && typeof element.locator === 'string') {
       console.log(`Taking screenshot of element with locator="${element.locator}"`)
-      await screenshot_selector(page, element.locator, element.path)
+      await screenshot_selector(page, element.locator, element.path, element.nth || 0)
     } else if (element.datatestid !== undefined && typeof element.datatestid === 'string') {
       console.log(`Taking screenshot of element with data-testid="${element.datatestid}"`)
-      await screenshot_datatestid(page, element.datatestid, element.path)
+      await screenshot_datatestid(page, element.datatestid, element.path, element.nth || 0)
     } else if (element.fullPage !== undefined && element.fullPage === true) {
       console.log(`Taking full page screenshot`)
       await takeFullPageScreenshot(page, element.path)
@@ -879,22 +889,22 @@ async function runScreenshots(page: Page, data: IElement[]) {
   }
 }
 
-async function screenshot_datatestid(page: Page, dtid: string, path: string) {
-  await screenshot_selector(page, `[data-testid="${dtid}"]`, path)
+async function screenshot_datatestid(page: Page, dtid: string, path: string, nth: number = 0) {
+  await screenshot_selector(page, `[data-testid="${dtid}"]`, path, nth)
 }
 
-async function screenshot_selector(page: Page, selector: string, path: string) {
+async function screenshot_selector(page: Page, selector: string, path: string, nth: number = 0) {
   var el = page.locator(selector)
   // if its a list of elements, take the first one
-  if ((await el.count()) > 1) el = el.first()
+  if ((await el.count()) > 1) el = el.nth(nth)
   await el.waitFor({ state: 'visible' })
   await el.screenshot({ path })
 }
 
-async function screenshot_element(page: Page, element: Locator, path: string) {
+async function screenshot_element(page: Page, element: Locator, path: string, nth: number = 0) {
   var el = element
   // if its a list of elements, take the first one
-  if ((await el.count()) > 1) el = el.first()
+  if ((await el.count()) > 1) el = el.nth(nth)
   await el.waitFor({ state: 'visible' })
   await el.screenshot({ path })
 }
