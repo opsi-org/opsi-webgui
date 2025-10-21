@@ -582,7 +582,7 @@ build:screenshot:
     - *install_uv
     - *prepare_backend_minimal
     - cd frontend
-    - bash scripts/build_production_local.sh webgui Webgui \"$(pwd)/..\" copydata
+    - bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
     - sleep 30
     - cd ..
     - *start_backend_minimal
