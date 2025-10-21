@@ -121,7 +121,8 @@ stages:
 
   # Configure opsiconfd
   mkdir -p /etc/opsi /var/lib/opsi/repository /var/lib/opsi/depot
-  cp -a opsi-server_data/etc /etc/opsi
+  cp -a opsiconfd_data/etc /etc/opsi
+  export OPSICONFD_STATIC_DIR=opsiconfd_data/static
   export OPSICONFD_MAX_SESSIONS_PER_IP=20000
   export OPSICONFD_RESTORE_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
   export OPSICONFD_RESTORE_BACKUP_ALWAYS="true"
