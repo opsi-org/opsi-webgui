@@ -136,7 +136,7 @@ stages:
   echo "redis-internal-url = redis://redis" >> tests/data/default-opsiconfd.conf
   echo "log-file = /tmp/opsiconfd.log" >> tests/data/default-opsiconfd.conf
   echo "addon-dirs = [../backend/addon]" >> tests/data/default-opsiconfd.conf
-
+  echo "skip-setup = [files, file_permissions]" >> tests/data/default-opsiconfd.conf
   cd ..
 
 .start_backend_minimal: &start_backend_minimal |
