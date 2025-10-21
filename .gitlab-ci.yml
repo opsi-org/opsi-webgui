@@ -118,38 +118,37 @@ stages:
 
   git clone -b v4.3 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git
   cd opsiconfd
+
+  # Configure opsiconfd
+  mkdir -p /etc/opsi /var/lib/opsi/repository /var/lib/opsi/depot
   export OPSICONFD_MAX_SESSIONS_PER_IP=20000
   export OPSICONFD_RESTORE_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
   export OPSICONFD_RESTORE_BACKUP_ALWAYS="true"
   export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}"
-  echo "OPSICONFD_MYSQL_INTERNAL_URL=${OPSICONFD_MYSQL_INTERNAL_URL}"
   export OPSICONFD_ADDON_DIRS=["../backend/addon"]
-  #    echo "addon-dirs = [../backend/addon]" >> tests/data/default-opsiconfd.conf
+  export OPSICONFD_SKIP_SETUP=["files","file_permissions"]
+  export OPSICONFD_LOG_FILE="opsiconfd.log"
+  export OPSICONFD_REDIS_INTERNAL_URL="redis://redis"
+
+  echo "OPSICONFD_ADDON_DIRS=${OPSICONFD_ADDON_DIRS}"
+  echo "OPSICONFD_MYSQL_INTERNAL_URL=${OPSICONFD_MYSQL_INTERNAL_URL}"
 
   # Configure database access
-
   mysql --host=${MYSQL_HOST} --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO 'opsi'@'%';"
 
   # Install dependencies
   uv self update
   uv sync --frozen
 
-  # Configure opsiconfd
-  mkdir -p /etc/opsi /var/lib/opsi/repository /var/lib/opsi/depot
-  echo "redis-internal-url = redis://redis" >> tests/data/default-opsiconfd.conf
-  echo "log-file = /tmp/opsiconfd.log" >> tests/data/default-opsiconfd.conf
-  echo "addon-dirs = [../backend/addon]" >> tests/data/default-opsiconfd.conf
-  echo "skip-setup = [files, file_permissions]" >> tests/data/default-opsiconfd.conf
   cd ..
 
 .start_backend_minimal: &start_backend_minimal |
   cd opsiconfd
-  # Setup database
-  uv run opsiconfd setup --configure-mysql -c tests/data/default-opsiconfd.conf -l5
-
+  # Configure database
+  uv run opsiconfd setup --configure-mysql  -l6
+  echo ""---------------------------------------
   # Start opsiconfd
-  #poetry run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup &
-  uv run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup &
+  uv run opsiconfd  -l6 setup &
   cd ..
 
 .pytest: &pytest |
@@ -606,6 +605,7 @@ build:screenshot:
     paths:
       - frontend/screenshots/opsidoc
       - frontend/test-results/
+      - opsiconfd/opsiconfd.log
     expire_in: 2 days
     when: always
   only:
