@@ -587,6 +587,7 @@ build:screenshot:
     - cd ..
     - *start_backend_minimal
     - cd frontend
+    - mkdir test-results
     - npm ci
     - npx playwright install-deps
     #- npm run dev & # we use the production build here
@@ -594,6 +595,7 @@ build:screenshot:
   artifacts:
     paths:
       - frontend/screenshots/opsidoc
+      - frontend/test-results/
     expire_in: 7 days
   only:
     - tags
