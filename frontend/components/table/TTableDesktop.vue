@@ -230,7 +230,7 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="tsx">
-  import { vContextmenu } from '../../composables/mixins/v-contextmenu'
+  //import { vContextmenu } from '../../composables/mixins/v-contextmenu'
   import { useDynamicHeightTable } from '~/composables/mixins/useDynamicHeightTable'
   import { useTableHelper } from '~/composables/mixins/useTableHelper'
 
@@ -285,7 +285,7 @@ License: AGPL-3.0
     contextMenuRow,
 
     debouncedHandleScroll,
-    showContextMenu,
+    //showContextMenu,
     handleCommand,
     toggleSortOrder,
     applySort,
