@@ -23,6 +23,13 @@ WEBGUI_DIR=webgui
 
 #process.env.CI
 IS_CICD=${CI:-false}
+#if is cicd that sudo="" else sudo="sudo"
+
+SUDO=""
+if [ "$IS_CICD" = "false" ]; then
+    SUDO="sudo"
+fi
+
 
 PY_CONST_FILE=${WORKING_DIR}/${BACKEND_DIR}/addon/${WEBGUI_DIR}/python/const.py
 ADDON_ID_ORIGIN=webgui
@@ -43,7 +50,7 @@ cleanup() {
         fi
     fi
     sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = '$ADDON_PATH_ORIGIN'|" "$TS_CONST_FILE" || exit 13
-    sudo chown 1000:1000 -R ${WORKING_DIR} || exit 90
+    $SUDO chown 1000:1000 -R ${WORKING_DIR} || exit 90
 }
 
 trap cleanup EXIT
@@ -62,7 +69,7 @@ fi
 
 
 #### change owner of working directory
-sudo chown 1000:1000 -R ${WORKING_DIR} || exit 90
+$SUDO chown 1000:1000 -R ${WORKING_DIR} || exit 90
 
 # replace the ADDON_ID and ADDON_NAME in const.py
 echo "> update ${PY_CONST_FILE}...."
@@ -74,7 +81,7 @@ echo "> update ${TS_CONST_FILE}...."
 sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = '$ADDON_PATH'|" "$TS_CONST_FILE" || exit 14
 
 cd ${WORKING_DIR}/${FRONTEND_DIR}/
-sudo rm -rf ${WORKING_DIR}/${FRONTEND_DIR}/dist || exit 20
+$SUDO rm -rf ${WORKING_DIR}/${FRONTEND_DIR}/dist || exit 20
 echo "WORKING FRONTEND DIR: ${WORKING_DIR}/${FRONTEND_DIR}"
 echo "WORKING BACKEND DIR: ${WORKING_DIR}/${BACKEND_DIR}"
 
@@ -83,7 +90,7 @@ npm run generate || exit 1
 echo "> npm generate done"
 
 mkdir -p webgui  || exit 30
-sudo rm -rf opsi-${ADDON_ID}.zip  || exit 21
+$SUDO rm -rf opsi-${ADDON_ID}.zip  || exit 21
 
 # chmod 770 ${WORKING_DIR}/${BACKEND_DIR}/addon/changelogs.md
 # chown 998:1000 ${WORKING_DIR}/${BACKEND_DIR}/addon/changelogs.md
@@ -99,9 +106,9 @@ mkdir -p ${ADDON_ID}  || exit 7
 cp -r ${WORKING_DIR}/${BACKEND_DIR}/addon/${WEBGUI_DIR}/* ${ADDON_ID}/  || exit 33
 chown $(whoami):$(whoami) -R ${ADDON_ID}  || exit 50
 chown $(whoami):$(whoami) -R ${ADDON_ID}/*  || exit 51
-sudo apt install -y zip  || exit 60
+$SUDO apt install -y zip  || exit 60
 zip -r -q opsi-${ADDON_ID}.zip ${ADDON_ID}  || exit 61
-sudo chown $(whoami):$(whoami) opsi-${ADDON_ID}.zip || exit 52
+$SUDO chown $(whoami):$(whoami) opsi-${ADDON_ID}.zip || exit 52
 
 echo "> packaging done: $(pwd)/opsi-${ADDON_ID}.zip"
 
@@ -110,22 +117,22 @@ port=0000
 if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
     port=44471
     echo ".....install locally to ${PATH_DATA}"
-    sudo rm -rf ${PATH_DATA}/${ADDON_ID} || exit 22
-    sudo mv -f ${ADDON_ID}/ ${PATH_DATA}/. || exit 34
+    $SUDO rm -rf ${PATH_DATA}/${ADDON_ID} || exit 22
+    $SUDO mv -f ${ADDON_ID}/ ${PATH_DATA}/. || exit 34
 
     if [ "$IS_CICD" = "false" ]; then
         git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
     fi
     echo "> local install done"
 
-    CONTAINER=$(sudo docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
+    CONTAINER=$($SUDO docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
     echo "> reload supervisorctl in container: $CONTAINER"
-    sudo docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
+    $SUDO docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
     echo ""
     echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
 elif [ "$INSTALL" = "$SHOULD_COPY_DATA_CICD" ]; then
-    sudo rm -rf ${PATH_USR}/${ADDON_ID} || exit 22
-    sudo mv -f ${ADDON_ID}/ ${PATH_USR}/. || exit 34
+    $SUDO rm -rf ${PATH_USR}/${ADDON_ID} || exit 22
+    $SUDO mv -f ${ADDON_ID}/ ${PATH_USR}/. || exit 34
 
     if [ "$IS_CICD" = "false" ]; then
         git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
