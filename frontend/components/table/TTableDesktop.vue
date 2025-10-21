@@ -181,9 +181,9 @@ License: AGPL-3.0
             </template>
 
             <template #default="scope" v-if="column.key === 'actions'">
-              <div v-contextmenu="(e:any) => showContextMenu(e, scope)">
-                <ActionsRenderer :row-data="scope.row" />
-              </div>
+              <!--<div v-contextmenu="(e:any) => showContextMenu(e, scope)">-->
+              <ActionsRenderer :row-data="scope.row" />
+              <!--</div>-->
             </template>
             <template #default="scope" v-else>
               <CellRenderer :col-data="column" :row-data="scope.row" />
