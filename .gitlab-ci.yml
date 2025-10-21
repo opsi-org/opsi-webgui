@@ -113,7 +113,7 @@ stages:
   apt update
   apt -y install git wget python3-pip python3-dev
   apt -y install mariadb-client default-libmysqlclient-dev build-essential
-  apt -y install libxml2-dev libxslt-dev build-dep python3-lxml
+  apt -y install libxml2-dev libxslt-dev python3-lxml
 
   git clone -b v4.3 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git
   cd opsiconfd
