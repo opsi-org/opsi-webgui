@@ -121,12 +121,13 @@ stages:
 
   # Configure opsiconfd
   mkdir -p /etc/opsi /var/lib/opsi/repository /var/lib/opsi/depot
+  cp -a opsi-server_data/etc /etc/opsi
   export OPSICONFD_MAX_SESSIONS_PER_IP=20000
   export OPSICONFD_RESTORE_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
   export OPSICONFD_RESTORE_BACKUP_ALWAYS="true"
   export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}"
   export OPSICONFD_ADDON_DIRS=["../backend/addon"]
-  export OPSICONFD_SKIP_SETUP=["files","file_permissions"]
+  export OPSICONFD_SKIP_SETUP=["files","file_permissions","saml","dhcpd","backend"]
   export OPSICONFD_LOG_FILE="opsiconfd.log"
   export OPSICONFD_REDIS_INTERNAL_URL="redis://redis"
 
