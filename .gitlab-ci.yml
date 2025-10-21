@@ -596,7 +596,8 @@ build:screenshot:
     paths:
       - frontend/screenshots/opsidoc
       - frontend/test-results/
-    expire_in: 7 days
+    expire_in: 2 days
+    when: always
   only:
     - tags
     - v5
