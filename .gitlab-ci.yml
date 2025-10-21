@@ -571,10 +571,7 @@ build:screenshot:
     MYSQL_DATABASE: 'opsitest'
     MYSQL_USER: 'opsi'
     MYSQL_PASSWORD: 'opsi'
-    MARIADB_ROOT_PASSWORD: 'opsi'
-    MARIADB_DATABASE: 'opsitest'
-    MARIADB_USER: 'opsi'
-    MARIADB_PASSWORD: 'opsi'
+    MYSQL_HOST: 'mysql'
     CI: true
     FF_NETWORK_PER_BUILD: true
     HOSTNAME: 'localhost'
