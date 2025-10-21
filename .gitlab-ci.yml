@@ -121,9 +121,10 @@ stages:
   export OPSICONFD_MAX_SESSIONS_PER_IP=20000
   export OPSICONFD_RESTORE_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
   export OPSICONFD_RESTORE_BACKUP_ALWAYS="true"
+  export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}"
   # Configure database access
 
-  mysql --host=mysql --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO 'opsi'@'%';"
+  mysql --host=${MYSQL_HOST} --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO 'opsi'@'%';"
 
   # Install dependencies
   uv self update
@@ -134,6 +135,7 @@ stages:
   echo "redis-internal-url = redis://redis" >> tests/data/default-opsiconfd.conf
   echo "log-file = /tmp/opsiconfd.log" >> tests/data/default-opsiconfd.conf
   echo "addon-dirs = [../backend/addon]" >> tests/data/default-opsiconfd.conf
+
   cd ..
 
 .start_backend_minimal: &start_backend_minimal |
