@@ -98,9 +98,11 @@ stages:
   echo "internal url: $OPSICONFD_MYSQL_INTERNAL_URL"
 
   # install opsiconfd
-  echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
+  echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install python dependencies"
   uv sync --frozen
+  echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
   uv run opsiconfd -c tests/data/default-opsiconfd.conf -l6 setup
+  echo ">> configure mysql"
   uv run opsiconfd -c tests/data/default-opsiconfd.conf -l6 setup --configure-mysql
 
   # Create adminuser used in tests
