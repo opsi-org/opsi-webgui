@@ -86,8 +86,9 @@ stages:
 
   # Grant full database access to opsi user
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> configure mysql"
-  mysql --host="${MYSQL_HOST}" --user=root --password="${MYSQL_ROOT_PASSWORD}" -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
-
+  MYSQL_GRANT="GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
+  #mysql --host="${MYSQL_HOST}" --user=root --password="${MYSQL_ROOT_PASSWORD}" -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
+  mysql --host="${MYSQL_HOST}" --user=root --password="${MYSQL_ROOT_PASSWORD}" -e "${MYSQL_GRANT}"
   # install opsiconfd
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
   uv sync --frozen
@@ -354,10 +355,6 @@ build:screenshot:
     - bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
     - sleep 30
     - cd ..
-    # start backend
-    - echo ""
-    - echo "MYSQL $OPSICONFD_MYSQL_INTERNAL_URL"
-    - echo ""
     - *start_backend
     # start opsidoc screenshots
     - cd frontend
