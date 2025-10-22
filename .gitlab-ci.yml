@@ -573,6 +573,7 @@ build:screenshot:
     expire_in: 7 days
   only:
     - tags
+    - v5
 
 build:static:app: # with transifex
   stage: build
