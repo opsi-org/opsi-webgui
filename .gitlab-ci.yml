@@ -17,6 +17,7 @@ variables:
   MYSQL_DATABASE: 'opsitest'
   MYSQL_USER: 'opsi'
   MYSQL_PASSWORD: 'opsi'
+  MYSQL_HOST: 'mysql'
   OPSI_ADMINUSER: 'adminuser'
   OPSI_ADMINPW: 'adminuser'
 
