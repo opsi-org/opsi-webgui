@@ -1,9 +1,17 @@
 image: node:23.0.0-bookworm-slim
 
 variables:
+  CI: true
+  DEBIAN_FRONTEND: noninteractive
   OPSI_VERSION: '4.3'
   UV_PYTHON: '3.13'
   UV_PYTHON_PREFERENCE: 'only-managed'
+  OPSICONFD_REDIS_INTERNAL_URL: 'redis://redis'
+  OPSICONFD_LOG_FILE: '/tmp/opsiconfd.log'
+  OPSICONFD_LOG_LEVEL_STDERR: '0'
+  OPSICONFD_LOG_LEVEL_FILE: '6'
+  OPSICONFD_ADDON_DIRS: '../backend/addon'
+  OPSICONFD_MAX_SESSIONS_PER_IP: '20000'
 
 stages:
   - preinit
@@ -28,7 +36,6 @@ stages:
   PORT=8888 nohup npm run dev > .dev.log &
 
 .install_dev_cli: &install_dev_cli |
-  export DEBIAN_FRONTEND=noninteractive
   apt update
   apt -y install debhelper osc zip
   curl -sS "${OPSIDEVTOOLS_INSTALLER_URL_LINUX_X64}" | sh
@@ -43,7 +50,6 @@ stages:
   uv self update
 
 .prepare_backend: &prepare_backend |
-  export DEBIAN_FRONTEND=noninteractive
   apt update
   echo "install stuff"
   apt -y install debhelper osc bc git wget python3-pip python3-dev python3-venv iproute2 net-tools iputils-ping
@@ -59,19 +65,10 @@ stages:
 
   # Get config files for opsiconfd
   [ -e /etc/opsi ] && rm -r /etc/opsi
-  #[ -e ../opsi-server ] && rm -r ../opsi-server
-  #url=$(git remote -v | grep fetch | cut -f2 | sed s'#/opsiconfd.git.*#/opsi-server.git#')
-  #GIT_TERMINAL_PROMPT=0 git clone --branch "v$OPSI_VERSION" $url ../opsi-server
-  #cp -a ../opsi-server/opsi-server_data/etc /etc/opsi
   cp -a opsiconfd_data/etc /etc/opsi
 
   # Configure opsiconfd
   mkdir -p /var/lib/opsi/repository /var/lib/opsi/depot
-  echo "redis-internal-url = redis://redis" >> tests/data/default-opsiconfd.conf
-  echo "log-level-stderr = 0" >> tests/data/default-opsiconfd.conf
-  echo "log-level-file = 6" >> tests/data/default-opsiconfd.conf
-  echo "log-file = /tmp/opsiconfd.log" >> tests/data/default-opsiconfd.conf
-  echo "addon-dirs = [../backend/addon]" >> tests/data/default-opsiconfd.conf
   echo "mysql-internal-url = mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}" >> tests/data/default-opsiconfd.conf
 
   # Installing opsi test modules file
@@ -85,7 +82,7 @@ stages:
 
   # install opsiconfd
   uv sync --frozen
-  uv run opsiconfd -c tests/data/default-opsiconfd.conf -l6 setup
+  uv run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup
 
   # Create adminuser used in tests
   useradd adminuser
@@ -97,57 +94,15 @@ stages:
   sleep 20
   cd ..
 
-.prepare_backend_minimal: &prepare_backend_minimal |
-  apt update
-  apt -y install git wget python3-pip python3-dev python3-venv iproute2 net-tools iputils-ping
-  apt -y install mariadb-client default-libmysqlclient-dev build-essential
-  apt -y install libxslt-dev python3-lxml
-  apt -y install build-essential pkg-config libxml2-dev libxmlsec1-dev libxmlsec1-openssl #libpython3.??-dev
-
-  git clone -b v4.3 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git
+.start_backend: &start_backend |
   cd opsiconfd
-
-  # Configure opsiconfd
-  mkdir -p /etc/opsi /var/lib/opsi/repository /var/lib/opsi/depot
-  cp -a opsiconfd_data/etc /etc/opsi
-  export OPSICONFD_STATIC_DIR=opsiconfd_data/static
-  export OPSICONFD_MAX_SESSIONS_PER_IP=20000
-  export OPSICONFD_RESTORE_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
-  export OPSICONFD_RESTORE_BACKUP_ALWAYS="true"
-  export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}"
-  export OPSICONFD_ADDON_DIRS=["../backend/addon"]
-  #export OPSICONFD_SKIP_SETUP=["files","file_permissions","saml","dhcpd","backend"]
-  export OPSICONFD_LOG_FILE="opsiconfd.log"
-  export OPSICONFD_REDIS_INTERNAL_URL="redis://redis"
-
-  echo "OPSICONFD_ADDON_DIRS=${OPSICONFD_ADDON_DIRS}"
-  echo "OPSICONFD_MYSQL_INTERNAL_URL=${OPSICONFD_MYSQL_INTERNAL_URL}"
-
-  # Configure database access
-  mysql --host=${MYSQL_HOST} --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO 'opsi'@'%';"
-
-  # Install dependencies
-  uv self update
-  uv sync --frozen
-
-  cd ..
-
-.start_backend_minimal: &start_backend_minimal |
-  cd opsiconfd
-  # Configure database
-  #uv run opsiconfd setup --configure-mysql  -l6
-  echo ""---------------------------------------
   # Start opsiconfd
-  uv run opsiconfd  -l6 setup &
+  uv run opsiconfd  -c tests/data/default-opsiconfd.conf &
+  sleeep 60
+  curl -I https://adminuser:adminuser@localhost:4447/admin
   cd ..
 
 .pytest: &pytest |
-
-  [ -e /tmp/opsiconfd.log ] && rm /tmp/opsiconfd.log
-  export OPSICONFD_MAX_SESSIONS_PER_IP=20000
-  poetry run opsiconfd -c tests/data/default-opsiconfd.conf &
-  sleep 60
-  curl -I https://adminuser:adminuser@localhost:4447/admin
   echo "---------------------------------------"
   echo "Run tests"
   echo "---------------------------------------"
@@ -157,7 +112,7 @@ stages:
   ls -la ../backend
   ls -la ../backend/addon
   # cp -R ../backend/tests
-  poetry run pytest  --tb=short -v ../backend/tests || exit_code=$?
+  uv run pytest  --tb=short -v ../backend/tests || exit_code=$?
   if [ $exit_code -ne 0 ]; then
     echo "---------------------------------------"
     echo "opsiconfd log"
@@ -344,6 +299,262 @@ test:tsc:
   script:
     - npm run tsc || exit 1
 
+.test:backend-pytest:
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
+  services:
+    - name: mysql:latest
+      command:
+        - --max_connections=1000
+        - --default-authentication-plugin=mysql_native_password
+    - name: redislabs/redistimeseries:latest
+      alias: redis
+  variables:
+    MYSQL_ROOT_PASSWORD: 'opsi'
+    MYSQL_DATABASE: 'opsitest'
+    MYSQL_USER: 'opsi'
+    MYSQL_PASSWORD: 'opsi'
+  script:
+    - *install_dev_cli
+    - *prepare_backend
+    - echo "##########################################"
+    - echo "##################pytest##################"
+    - echo "##########################################"
+    - *pytest
+  allow_failure: true ##### TODO remove again
+
+#########################################################################
+######################################################################### build
+#########################################################################
+build:screenshot:
+  stage: build
+  image: mcr.microsoft.com/playwright:v1.56.0-noble
+  dependencies:
+    - init:npm
+    - init:transifex-down
+  services:
+    - name: mysql:latest
+      command:
+        - --max_connections=1000
+      alias: mysql
+    - name: redislabs/redistimeseries:latest
+      alias: redis
+  variables:
+    MYSQL_ROOT_PASSWORD: 'opsi'
+    MYSQL_DATABASE: 'opsitest'
+    MYSQL_USER: 'opsi'
+    MYSQL_PASSWORD: 'opsi'
+    MYSQL_HOST: 'mysql'
+    FF_NETWORK_PER_BUILD: true
+    HOSTNAME: 'localhost'
+  script:
+    - *install_uv
+    - *prepare_backend
+    - cd frontend
+    - bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
+    - sleep 30
+    - cd ..
+    - echo ""
+    - echo "MYSQL $OPSICONFD_MYSQL_INTERNAL_URL"
+    - echo ""
+    - *start_backend
+    - sleep 40
+    - cd frontend
+    - mkdir test-results
+    - npm ci
+    - npx playwright install-deps
+    #- npm run dev & # we use the production build here
+    - npx playwright test tests/screenshot/
+  artifacts:
+    paths:
+      - frontend/screenshots/opsidoc
+      - frontend/test-results/
+      - opsiconfd/opsiconfd.log
+    expire_in: 2 days
+    when: always
+  only:
+    - tags
+    - v5
+    - test/opsidocs
+
+build:static:app: # with transifex
+  stage: build
+  dependencies:
+    - init:npm
+    - init:transifex-down
+    # - test:lint # todo activate again for main
+  script:
+    - cd frontend
+    - npm i @nuxt/typescript-build
+    - *define_globals
+    - npm run generate
+  artifacts:
+    paths:
+      - frontend/dist # not used...?
+    expire_in: 3 day
+  only:
+    - tags
+    - v5
+
+build:zip: # with transifex
+  stage: build
+  dependencies:
+    - init:npm
+    - init:transifex-down
+    - init:changelogs
+    - build:static:app
+  script:
+    - *install_dev_cli
+    - pwd && ls -la frontend
+    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) no-install
+    - ls -lah webgui # debug
+  only:
+    - tags
+    - v5
+    - ci/zip-dev
+  artifacts:
+    name: 'opsi-webgui'
+    paths:
+      - frontend/locale
+      - webgui
+    expire_in: 7 day
+
+build:zip:dev: # with transifex
+  stage: build
+  dependencies:
+    - init:npm
+    - init:transifex-down
+    - init:changelogs
+  script:
+    - *install_dev_cli
+    - *define_globals
+    - pwd && ls -la frontend
+    - ls -lah frontend/locale
+    - echo "builing opsi-webgui-dev.zip"
+    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui-dev Webgui-Dev $(pwd) no-install
+    - ls -lah webgui-dev # debug
+  artifacts:
+    name: 'opsi-webgui-dev'
+    paths:
+      - frontend/locale
+      - webgui-dev
+    expire_in: 7 day
+
+#########################################################################
+######################################################################### publish
+#########################################################################
+
+publish:obs_int:
+  stage: publish
+  dependencies:
+    - build:static:app
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
+  script:
+    - opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.4:development
+  only:
+    - tags
+
+publish:obs_ext:
+  stage: publish
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
+  dependencies:
+    - init:changelogs
+    - build:zip # todo which is really needed?
+    - build:static:app # todo which is really needed?
+  script:
+    - ls -la
+    - ls -la frontend
+    - ls -la webgui
+    - ls -la output
+    # - opsi-dev-cli -l 5 changelog from-git output
+    - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.4:development
+    - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
+    - opsi-dev-cli -l 6 release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.4-development
+  only:
+    - tags
+  artifacts:
+    paths:
+      - output
+    expire_in: 1 day
+  # Copy to experimental via release-tui
+
+publish:binary-index:
+  stage: publish
+  dependencies:
+    - build:zip
+    - init:changelogs
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
+  script:
+    - ls -la
+    - ls -la frontend
+    - ls -la webgui
+    - ls -la output
+    # - opsi-dev-cli -l 5 changelog from-git output # done during init
+    - cat output/changelog.md
+    - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip # pushing as opsi-webgui.zip now
+    - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip
+  only:
+    - tags
+# release:experimental:
+#   stage: release
+#   when: manual
+#   before_script:
+#     - "which ssh-agent || (apt update && apt -y install openssh-client)"
+#     - mkdir -p ~/.ssh
+#     - eval $(ssh-agent -s)
+#     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
+#   dependencies:
+#     - publish:obs_ext
+#     - publish:binary-index
+#   script:
+#     - *install_dev_cli
+#     - ./opsi-dev-tool -l debug --binary-pull
+#     - scp -o StrictHostKeyChecking=no -r opsi-webgui-${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+#     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
+#     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.4:development opsi-webgui home:uibmz:opsi:4.4:experimental
+#   only:
+#     - tags
+
+# .push_release: &push_release |
+#   # post release
+#   echo "ProjectURL: $CI_API_V4_URL"
+#   echo "ProjectID: $CI_PROJECT_ID"
+#   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+#   echo "ProjectTAG: $TAG"
+#   printf "ProjectMSG: \n$(cat $FILE)\n"
+#   http_response=$(curl --request POST \
+#     -o response.txt \
+#     --fail-with-body \
+#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main" \
+#     --data-urlencode "message=$(cat $FILE)" )
+
+#   echo "$http_response: $(cat response.txt)"
+#   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+#   echo ""
+
+# upload:git:
+#   stage: upload
+#   image: registry.gitlab.com/gitlab-org/release-cli:latest
+#   needs:
+#     - job: build:zip
+#       artifacts: true
+#   rules:
+#     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
+#   script:
+#     - echo "Create Release $TAG, $CI_COMMIT_TAG, $JOB_ID"
+#   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+#     tag_name: '$CI_COMMIT_TAG'
+#     description: '$CI_COMMIT_TAG'
+#   release:
+#     name: 'Release $CI_COMMIT_TAG'
+#     tag_name: '$CI_COMMIT_TAG'
+#     ref: '$CI_COMMIT_TAG'
+#     description: 'Release $CI_COMMIT_TAG'
+#     assets:
+#       links:
+#         - name: "opsi-webgui"
+#           url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
+
 # test:unit:
 #   stage: test
 #   dependencies:
@@ -492,292 +703,3 @@ test:tsc:
 #     reports:
 #       junit: ./frontend/test-result-pw-reporter-components.xml
 #     expire_in: 3 day
-
-.test:backend-pytest:
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  services:
-    - name: mysql:latest
-      command:
-        - --max_connections=1000
-        - --default-authentication-plugin=mysql_native_password
-    - name: redislabs/redistimeseries:latest
-      alias: redis
-  variables:
-    MYSQL_ROOT_PASSWORD: 'opsi'
-    MYSQL_DATABASE: 'opsitest'
-    MYSQL_USER: 'opsi'
-    MYSQL_PASSWORD: 'opsi'
-  script:
-    - *install_dev_cli
-    - *prepare_backend
-    - echo "##########################################"
-    - echo "##################pytest##################"
-    - echo "##########################################"
-    - *pytest
-  allow_failure: true ##### TODO remove again
-
-#########################################################################
-######################################################################### build
-#########################################################################
-# build:screenshots:docs: # with transifex
-#   image: mcr.microsoft.com/playwright:v1.15.2-focal
-#   stage: build
-#   dependencies:
-#     - init:npm
-#     - init:transifex-down
-#   only:
-#     - main # cause in main we test all files, but only chromium browser
-#     - tags
-#   before_script:
-#     - cd frontend
-#     - *define_globals
-#     - *install_playwright
-#     - *start_storybook
-#     - *start_webgui
-#   script:
-#     - cd screenshots4Docs
-#     - npx playwright test -c playwright-screenshots.config.js take_screenshots/  || exit_code=$?
-#   after_script:
-#     - exit $exit_code
-#   allow_failure: true
-#   artifacts:
-#     name: 'opsi-webgui-screenshots-docs-result'
-#     when: always
-#     paths:
-#       - frontend/screenshots4Docs/screenshots
-#       - ./**/*/test-results/
-#       - frontend/.storybook.log
-#       - frontend/.dev.log
-#     expire_in: 7 day
-
-build:screenshot:
-  stage: build
-  image: mcr.microsoft.com/playwright:v1.56.0-noble
-  dependencies:
-    - init:npm
-    - init:transifex-down
-  services:
-    - name: mysql:latest
-      command:
-        - --max_connections=1000
-      #- --default-authentication-plugin=mysql_native_password
-      alias: mysql
-    - name: redislabs/redistimeseries:latest
-      alias: redis
-  variables:
-    MYSQL_ROOT_PASSWORD: 'opsi'
-    MYSQL_DATABASE: 'opsitest'
-    MYSQL_USER: 'opsi'
-    MYSQL_PASSWORD: 'opsi'
-    MYSQL_HOST: 'mysql'
-    CI: true
-    FF_NETWORK_PER_BUILD: true
-    HOSTNAME: 'localhost'
-  script:
-    - *install_uv
-    - *prepare_backend
-    - cd frontend
-    - bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
-    - sleep 30
-    - cd ..
-    - echo ""
-    - echo "MYSQL $OPSICONFD_MYSQL_INTERNAL_URL"
-    - echo ""
-    - *start_backend_minimal
-    - sleep 40
-    - cd frontend
-    - mkdir test-results
-    - npm ci
-    - npx playwright install-deps
-    #- npm run dev & # we use the production build here
-    - npx playwright test tests/screenshot/
-  artifacts:
-    paths:
-      - frontend/screenshots/opsidoc
-      - frontend/test-results/
-      - opsiconfd/opsiconfd.log
-    expire_in: 2 days
-    when: always
-  only:
-    - tags
-    - v5
-    - test/opsidocs
-
-build:static:app: # with transifex
-  stage: build
-  dependencies:
-    - init:npm
-    - init:transifex-down
-    # - test:lint # todo activate again for main
-  script:
-    - cd frontend
-    - npm i @nuxt/typescript-build
-    - *define_globals
-    - npm run generate
-  artifacts:
-    paths:
-      - frontend/dist # not used...?
-    expire_in: 3 day
-  only:
-    - tags
-    - v5
-
-build:zip: # with transifex
-  stage: build
-  dependencies:
-    - init:npm
-    - init:transifex-down
-    - init:changelogs
-    - build:static:app
-  script:
-    - *install_dev_cli
-    - pwd && ls -la frontend
-    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) no-install
-    - ls -lah webgui # debug
-  only:
-    - tags
-    - v5
-    - ci/zip-dev
-  artifacts:
-    name: 'opsi-webgui'
-    paths:
-      - frontend/locale
-      - webgui
-    expire_in: 7 day
-
-build:zip:dev: # with transifex
-  stage: build
-  dependencies:
-    - init:npm
-    - init:transifex-down
-    - init:changelogs
-  script:
-    - *install_dev_cli
-    - *define_globals
-    - pwd && ls -la frontend
-    - ls -lah frontend/locale
-    - echo "builing opsi-webgui-dev.zip"
-    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui-dev Webgui-Dev $(pwd) no-install
-    - ls -lah webgui-dev # debug
-  artifacts:
-    name: 'opsi-webgui-dev'
-    paths:
-      - frontend/locale
-      - webgui-dev
-    expire_in: 7 day
-
-#########################################################################
-######################################################################### publish
-#########################################################################
-
-# .push_release: &push_release |
-#   # post release
-#   echo "ProjectURL: $CI_API_V4_URL"
-#   echo "ProjectID: $CI_PROJECT_ID"
-#   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
-#   echo "ProjectTAG: $TAG"
-#   printf "ProjectMSG: \n$(cat $FILE)\n"
-#   http_response=$(curl --request POST \
-#     -o response.txt \
-#     --fail-with-body \
-#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main" \
-#     --data-urlencode "message=$(cat $FILE)" )
-
-#   echo "$http_response: $(cat response.txt)"
-#   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
-#   echo ""
-
-# upload:git:
-#   stage: upload
-#   image: registry.gitlab.com/gitlab-org/release-cli:latest
-#   needs:
-#     - job: build:zip
-#       artifacts: true
-#   rules:
-#     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
-#   script:
-#     - echo "Create Release $TAG, $CI_COMMIT_TAG, $JOB_ID"
-#   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
-#     tag_name: '$CI_COMMIT_TAG'
-#     description: '$CI_COMMIT_TAG'
-#   release:
-#     name: 'Release $CI_COMMIT_TAG'
-#     tag_name: '$CI_COMMIT_TAG'
-#     ref: '$CI_COMMIT_TAG'
-#     description: 'Release $CI_COMMIT_TAG'
-#     assets:
-#       links:
-#         - name: "opsi-webgui"
-#           url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
-
-publish:obs_int:
-  stage: publish
-  dependencies:
-    - build:static:app
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  script:
-    - opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.4:development
-  only:
-    - tags
-
-publish:obs_ext:
-  stage: publish
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  dependencies:
-    - init:changelogs
-    - build:zip # todo which is really needed?
-    - build:static:app # todo which is really needed?
-  script:
-    - ls -la
-    - ls -la frontend
-    - ls -la webgui
-    - ls -la output
-    # - opsi-dev-cli -l 5 changelog from-git output
-    - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.4:development
-    - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
-    - opsi-dev-cli -l 6 release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.4-development
-  only:
-    - tags
-  artifacts:
-    paths:
-      - output
-    expire_in: 1 day
-  # Copy to experimental via release-tui
-
-publish:binary-index:
-  stage: publish
-  dependencies:
-    - build:zip
-    - init:changelogs
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  script:
-    - ls -la
-    - ls -la frontend
-    - ls -la webgui
-    - ls -la output
-    # - opsi-dev-cli -l 5 changelog from-git output # done during init
-    - cat output/changelog.md
-    - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip # pushing as opsi-webgui.zip now
-    - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip
-  only:
-    - tags
-# release:experimental:
-#   stage: release
-#   when: manual
-#   before_script:
-#     - "which ssh-agent || (apt update && apt -y install openssh-client)"
-#     - mkdir -p ~/.ssh
-#     - eval $(ssh-agent -s)
-#     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
-#   dependencies:
-#     - publish:obs_ext
-#     - publish:binary-index
-#   script:
-#     - *install_dev_cli
-#     - ./opsi-dev-tool -l debug --binary-pull
-#     - scp -o StrictHostKeyChecking=no -r opsi-webgui-${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
-#     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
-#     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.4:development opsi-webgui home:uibmz:opsi:4.4:experimental
-#   only:
-#     - tags
