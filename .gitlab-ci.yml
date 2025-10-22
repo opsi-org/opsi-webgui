@@ -74,7 +74,8 @@ stages:
 
   # Configure opsiconfd
   mkdir -p /var/lib/opsi/repository /var/lib/opsi/depot
-  export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}?ssl=true"
+  export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}"
+  #export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}?ssl=true"
   echo "mysql-internal-url = ${OPSICONFD_MYSQL_INTERNAL_URL}" >> tests/data/default-opsiconfd.conf
   echo "mysql internal url: $OPSICONFD_MYSQL_INTERNAL_URL"
   echo ">>>>> opsiconfd config"
@@ -360,8 +361,27 @@ build:screenshot:
     - name: redislabs/redistimeseries:latest
       alias: redis
   variables:
-    FF_NETWORK_PER_BUILD: true
+    #FF_NETWORK_PER_BUILD: true
     HOSTNAME: 'localhost'
+    CI: true
+    DEBIAN_FRONTEND: noninteractive
+    OPSI_VERSION: '4.3'
+    UV_PYTHON: '3.13'
+    UV_PYTHON_PREFERENCE: 'only-managed'
+    OPSICONFD_REDIS_INTERNAL_URL: 'redis://redis'
+    #OPSICONFD_LOG_FILE: '/tmp/opsiconfd.log'
+    #OPSICONFD_LOG_LEVEL_STDERR: '0'
+    OPSICONFD_LOG_LEVEL_FILE: '6'
+    OPSICONFD_LOG_LEVEL: '6'
+    OPSICONFD_ADDON_DIRS: '../backend/addon'
+    OPSICONFD_MAX_SESSIONS_PER_IP: '20000'
+    MYSQL_ROOT_PASSWORD: 'opsi'
+    MYSQL_DATABASE: 'opsitest'
+    MYSQL_USER: 'opsi'
+    MYSQL_PASSWORD: 'opsi'
+    MYSQL_HOST: 'mysql'
+    OPSI_ADMINUSER: 'adminuser'
+    OPSI_ADMINPW: 'adminuser'
   script:
     - *install_uv
     - *prepare_backend
