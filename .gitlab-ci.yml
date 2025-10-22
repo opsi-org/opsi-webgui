@@ -16,6 +16,8 @@ variables:
   MYSQL_DATABASE: 'opsitest'
   MYSQL_USER: 'opsi'
   MYSQL_PASSWORD: 'opsi'
+  OPSI_ADMINUSER: 'adminuser'
+  OPSI_ADMINPW: 'adminuser'
 
 stages:
   - preinit
@@ -84,7 +86,7 @@ stages:
 
   # Grant full database access to opsi user
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> configure mysql"
-  mysql --host=${MYSQL_HOST} --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
+  mysql --host="${MYSQL_HOST}" --user=root --password="${MYSQL_ROOT_PASSWORD}" -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
 
   # install opsiconfd
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
@@ -93,9 +95,9 @@ stages:
 
   # Create adminuser used in tests
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup adminuser"
-  useradd adminuser
-  echo "adminuser:adminuser" | chpasswd
-  adduser adminuser opsiadmin
+  useradd "${OPSI_ADMINUSER}"
+  echo "${OPSI_ADMINUSER}:${OPSI_ADMINPW}" | chpasswd
+  adduser "${OPSI_ADMINUSER}" opsiadmin
 
   # Start and wait for redis server
   # echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start redis"
@@ -109,7 +111,7 @@ stages:
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start opsiconfd"
   uv run opsiconfd  -c tests/data/default-opsiconfd.conf &
   sleep 60
-  curl -I https://adminuser:adminuser@localhost:4447/admin
+  curl -I "https://${OPSI_ADMINUSER}:${OPSI_ADMINPW}@localhost:4447/admin"
   cd ..
 
 .pytest: &pytest |
