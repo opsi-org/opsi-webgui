@@ -100,10 +100,12 @@ stages:
   # install opsiconfd
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
   uv sync --frozen
+  uv run opsiconfd -c tests/data/default-opsiconfd.conf -l6 setup
   uv run opsiconfd -c tests/data/default-opsiconfd.conf -l6 setup --configure-mysql
 
   # Create adminuser used in tests
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup adminuser"
+
   useradd "${OPSI_ADMINUSER}"
   echo "${OPSI_ADMINUSER}:${OPSI_ADMINPW}" | chpasswd
   adduser "${OPSI_ADMINUSER}" opsiadmin
