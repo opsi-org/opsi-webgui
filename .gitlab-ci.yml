@@ -72,9 +72,11 @@ stages:
 
   # Configure opsiconfd
   mkdir -p /var/lib/opsi/repository /var/lib/opsi/depot
-  echo "mysql-internal-url = mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}" >> tests/data/default-opsiconfd.conf
-  export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}"
+  export OPSICONFD_MYSQL_INTERNAL_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}?ssl=true"
+  echo "mysql-internal-url = ${OPSICONFD_MYSQL_INTERNAL_URL}" >> tests/data/default-opsiconfd.conf
   echo "mysql internal url: $OPSICONFD_MYSQL_INTERNAL_URL"
+  echo ">>>>> opsiconfd config"
+  cat tests/data/default-opsiconfd.conf
 
   # Installing opsi test modules file
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> get license"
