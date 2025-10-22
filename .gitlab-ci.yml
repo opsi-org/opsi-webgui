@@ -57,12 +57,13 @@ stages:
   # Grant full database access to opsi user
   mysql --host=${MYSQL_HOST} --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
 
-  # Get config files from opsi-server package
+  # Get config files for opsiconfd
   [ -e /etc/opsi ] && rm -r /etc/opsi
-  [ -e ../opsi-server ] && rm -r ../opsi-server
-  url=$(git remote -v | grep fetch | cut -f2 | sed s'#/opsiconfd.git.*#/opsi-server.git#')
-  GIT_TERMINAL_PROMPT=0 git clone --branch "v$OPSI_VERSION" $url ../opsi-server
-  cp -a ../opsi-server/opsi-server_data/etc /etc/opsi
+  #[ -e ../opsi-server ] && rm -r ../opsi-server
+  #url=$(git remote -v | grep fetch | cut -f2 | sed s'#/opsiconfd.git.*#/opsi-server.git#')
+  #GIT_TERMINAL_PROMPT=0 git clone --branch "v$OPSI_VERSION" $url ../opsi-server
+  #cp -a ../opsi-server/opsi-server_data/etc /etc/opsi
+  cp -a opsiconfd_data/etc /etc/opsi
 
   # Configure opsiconfd
   mkdir -p /var/lib/opsi/repository /var/lib/opsi/depot
