@@ -12,6 +12,10 @@ variables:
   OPSICONFD_LOG_LEVEL_FILE: '6'
   OPSICONFD_ADDON_DIRS: '../backend/addon'
   OPSICONFD_MAX_SESSIONS_PER_IP: '20000'
+  MYSQL_ROOT_PASSWORD: 'opsi'
+  MYSQL_DATABASE: 'opsitest'
+  MYSQL_USER: 'opsi'
+  MYSQL_PASSWORD: 'opsi'
 
 stages:
   - preinit
@@ -98,7 +102,7 @@ stages:
   cd opsiconfd
   # Start opsiconfd
   uv run opsiconfd  -c tests/data/default-opsiconfd.conf &
-  sleeep 60
+  sleep 60
   curl -I https://adminuser:adminuser@localhost:4447/admin
   cd ..
 
@@ -305,14 +309,8 @@ test:tsc:
     - name: mysql:latest
       command:
         - --max_connections=1000
-        - --default-authentication-plugin=mysql_native_password
     - name: redislabs/redistimeseries:latest
       alias: redis
-  variables:
-    MYSQL_ROOT_PASSWORD: 'opsi'
-    MYSQL_DATABASE: 'opsitest'
-    MYSQL_USER: 'opsi'
-    MYSQL_PASSWORD: 'opsi'
   script:
     - *install_dev_cli
     - *prepare_backend
@@ -339,11 +337,6 @@ build:screenshot:
     - name: redislabs/redistimeseries:latest
       alias: redis
   variables:
-    MYSQL_ROOT_PASSWORD: 'opsi'
-    MYSQL_DATABASE: 'opsitest'
-    MYSQL_USER: 'opsi'
-    MYSQL_PASSWORD: 'opsi'
-    MYSQL_HOST: 'mysql'
     FF_NETWORK_PER_BUILD: true
     HOSTNAME: 'localhost'
   script:
@@ -353,22 +346,23 @@ build:screenshot:
     - bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
     - sleep 30
     - cd ..
+    # start backend
     - echo ""
     - echo "MYSQL $OPSICONFD_MYSQL_INTERNAL_URL"
     - echo ""
     - *start_backend
-    - sleep 40
+    # start opsidoc screenshots
     - cd frontend
     - mkdir test-results
     - npm ci
     - npx playwright install-deps
-    #- npm run dev & # we use the production build here
     - npx playwright test tests/screenshot/
   artifacts:
     paths:
       - frontend/screenshots/opsidoc
       - frontend/test-results/
-      - opsiconfd/opsiconfd.log
+      # '${OPSICONFD_LOG_FILE}'
+      - /tmp/opsiconfd.log
     expire_in: 2 days
     when: always
   only:
