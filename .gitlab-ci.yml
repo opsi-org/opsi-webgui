@@ -30,7 +30,16 @@ stages:
   opsi-dev-cli --version
   opsi-dev-tool --version
 
-.prepare_backend_tests: &prepare_backend_tests |
+.install_uv: &install_uv |
+  apt update
+  apt -y install curl
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  source $HOME/.local/bin/env
+  uv self update
+  export UV_PYTHON_PREFERENCE="only-managed"
+  export UV_PYTHON="3.13"
+
+.prepare_backend: &prepare_backend |
   apt update
   echo "install stuff"
   apt -y install git
@@ -46,9 +55,6 @@ stages:
   apt -y install python3-dev
   apt -y install mariadb-client bc
   pip3 install --upgrade pip
-  #pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
-  #pip3 install poetry
-
 
   # Grant full database access to opsi user
   mysql --host=${MYSQL_HOST} --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
@@ -57,39 +63,38 @@ stages:
   [ -e /etc/opsi ] && rm -r /etc/opsi
   [ -e ../opsi-server ] && rm -r ../opsi-server
   url=$(git remote -v | grep fetch | cut -f2 | sed s'#/opsiconfd.git.*#/opsi-server.git#')
-  #branch=$(git rev-parse --abbrev-ref HEAD)
-  branch=master
+  branch=4.3
   GIT_TERMINAL_PROMPT=0 git clone --branch $branch $url ../opsi-server
   cp -a ../opsi-server/opsi-server_data/etc /etc/opsi
 
   # Configure opsiconfd
   mkdir -p /var/lib/opsi/repository /var/lib/opsi/depot
-
   echo "redis-internal-url = redis://redis" >> tests/data/default-opsiconfd.conf
   echo "log-level-stderr = 0" >> tests/data/default-opsiconfd.conf
   echo "log-level-file = 6" >> tests/data/default-opsiconfd.conf
   echo "log-file = /tmp/opsiconfd.log" >> tests/data/default-opsiconfd.conf
   echo "addon-dirs = [../backend/addon]" >> tests/data/default-opsiconfd.conf
+  echo "mysql-internal-url = mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:3306/${MYSQL_DATABASE}" >> tests/data/default-opsiconfd.conf
 
   # Installing opsi test modules file
   mkdir -p /etc/opsi/licenses
   wget --header="Authorization: Bearer ${OPSILICSRV_TOKEN}" "https://opsi-license-server.uib.gmbh/api/v1/licenses/test?usage=opsiconfd-gitlab-ci" -O /etc/opsi/licenses/test.opsilic
-
-
-  # linking python3 as python for compatibility
-  # ln -s /usr/bin/python3 /usr/bin/python
 
   # Create dirs
   mkdir -p /var/log/opsi/clientconnect
   mkdir -p /var/lib/opsi/public
   mkdir -p /tftpboot
 
+  # install opsiconfd
+  uv sync --frozen
+  uv run opsiconfd -c tests/data/default-opsiconfd.conf -l6 setup
+
   # Install poetry
-  pip3 install poetry
-  poetry config experimental.new-installer false
-  poetry lock --no-update
-  poetry install
-  poetry run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup
+  #pip3 install poetry
+  #poetry config experimental.new-installer false
+  #poetry lock --no-update
+  #poetry install
+  #poetry run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup
 
   # Create adminuser used in tests
   useradd adminuser
@@ -99,15 +104,7 @@ stages:
   # Start and wait for redis server
   # redis-server /etc/redis/redis.conf &
   sleep 20
-
-.install_uv: &install_uv |
-  apt update
-  apt -y install curl
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-  source $HOME/.local/bin/env
-  uv self update
-  export UV_PYTHON_PREFERENCE="only-managed"
-  export UV_PYTHON="3.13"
+  cd ..
 
 .prepare_backend_minimal: &prepare_backend_minimal |
   apt update
@@ -147,7 +144,7 @@ stages:
 .start_backend_minimal: &start_backend_minimal |
   cd opsiconfd
   # Configure database
-  uv run opsiconfd setup --configure-mysql  -l6
+  #uv run opsiconfd setup --configure-mysql  -l6
   echo ""---------------------------------------
   # Start opsiconfd
   uv run opsiconfd  -l6 setup &
@@ -521,7 +518,7 @@ test:tsc:
     MYSQL_PASSWORD: 'opsi'
   script:
     - *install_dev_cli
-    - *prepare_backend_tests
+    - *prepare_backend
     - echo "##########################################"
     - echo "##################pytest##################"
     - echo "##########################################"
@@ -587,7 +584,7 @@ build:screenshot:
     HOSTNAME: 'localhost'
   script:
     - *install_uv
-    - *prepare_backend_minimal
+    - *prepare_backend
     - cd frontend
     - bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
     - sleep 30
