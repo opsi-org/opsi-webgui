@@ -37,6 +37,7 @@ stages:
 
 .define_globals: &define_globals |
   shopt -s expand_aliases
+  dpkg -l | grep python
 
 .install_playwright: &install_playwright |
   npm i -D @playwright/test
@@ -377,6 +378,7 @@ build:screenshot:
       alias: redis
     #FF_NETWORK_PER_BUILD: true
   script:
+    - *define_globals
     - *install_uv
     - *prepare_backend
     - cd frontend
