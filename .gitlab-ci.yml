@@ -25,6 +25,7 @@ variables:
   OPSI_ADMINUSER: 'adminuser'
   OPSI_ADMINPW: 'adminuser'
   MAIN: main
+
 stages:
   - preinit
   - init
@@ -88,8 +89,8 @@ stages:
 
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup users and groups"
   groupadd -g 2001 opsifileadmins
-	groupadd -g 2002 opsiadmin
-	useradd --system -g opsifileadmins -d /var/lib/opsi -s /bin/bash opsiconfd -G opsiadmin
+  groupadd -g 2002 opsiadmin
+  useradd --system -g opsifileadmins -d /var/lib/opsi -s /bin/bash opsiconfd -G opsiadmin
 
   useradd "${OPSI_ADMINUSER}"
   echo "${OPSI_ADMINUSER}:${OPSI_ADMINPW}" | chpasswd
