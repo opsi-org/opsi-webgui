@@ -104,10 +104,10 @@ stages:
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install python dependencies"
   uv sync --frozen
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
-  uv run opsiconfd -c tests/data/default-opsiconfd.conf setup --configure-mysql
+  echo "opsiconfd loglevel: "
   uv run opsiconfd -c tests/data/default-opsiconfd.conf setup
   echo ">> configure mysql"
-  uv run opsiconfd -c tests/data/default-opsiconfd.conf setup --configure-mysql
+  #uv run opsiconfd -c tests/data/default-opsiconfd.conf setup --configure-mysql
 
   # Create adminuser used in tests
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup adminuser"
