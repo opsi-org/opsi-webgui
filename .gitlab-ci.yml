@@ -59,7 +59,8 @@ stages:
   apt update
   apt -y install curl
   curl -LsSf https://astral.sh/uv/install.sh | sh
-  source $HOME/.local/bin/env
+  # in uv install dir
+  source $UV_INSTALL_DIR/env
   uv self update
 
 .prepare_backend: &prepare_backend |
