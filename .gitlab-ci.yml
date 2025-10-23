@@ -4,6 +4,7 @@ variables:
   CI: true
   DEBIAN_FRONTEND: noninteractive
   OPSI_VERSION: '4.3'
+  PYTHONUNBUFFERED: 1
   UV_PYTHON: '3.13'
   UV_PYTHON_PREFERENCE: 'only-managed'
   OPSICONFD_REDIS_INTERNAL_URL: 'redis://redis'
@@ -101,7 +102,6 @@ stages:
 
   # install opsiconfd
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install python dependencies"
-  uv pip install -e .
   uv sync --frozen
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
   uv run opsiconfd -c tests/data/default-opsiconfd.conf setup --configure-mysql
@@ -363,11 +363,11 @@ build:screenshot:
     - name: redislabs/redistimeseries:latest
       alias: redis
   variables:
-    #FF_NETWORK_PER_BUILD: true
-    HOSTNAME: 'localhost'
+    FF_NETWORK_PER_BUILD: true
     CI: true
     DEBIAN_FRONTEND: noninteractive
     OPSI_VERSION: '4.3'
+    PYTHONUNBUFFERED: 1
     UV_PYTHON: '3.13'
     UV_PYTHON_PREFERENCE: 'only-managed'
     OPSICONFD_REDIS_INTERNAL_URL: 'redis://redis'
@@ -464,7 +464,7 @@ build:zip:dev: # with transifex
     - *define_globals
     - pwd && ls -la frontend
     - ls -lah frontend/locale
-    - echo "builing opsi-webgui-dev.zip"
+    - echo "building opsi-webgui-dev.zip"
     - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui-dev Webgui-Dev $(pwd) no-install
     - ls -lah webgui-dev # debug
   artifacts:
