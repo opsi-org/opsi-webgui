@@ -103,6 +103,7 @@ stages:
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install python dependencies"
   uv sync --frozen
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
+  uv run opsiconfd -c tests/data/default-opsiconfd.conf setup --configure-mysql
   uv run opsiconfd -c tests/data/default-opsiconfd.conf setup
   echo ">> configure mysql"
   uv run opsiconfd -c tests/data/default-opsiconfd.conf setup --configure-mysql
