@@ -8,7 +8,7 @@ variables:
   OPSI_VERSION: '4.3'
   PYTHONUNBUFFERED: 1
   UV_PYTHON: '3.13'
-  UV_INSTALL_DIR="/opt/uv"
+  UV_INSTALL_DIR: /opt/uv
   UV_PYTHON_PREFERENCE: 'only-managed'
   OPSICONFD_REDIS_INTERNAL_URL: 'redis://redis'
   #OPSICONFD_LOG_FILE: '/tmp/opsiconfd.log'
@@ -34,7 +34,6 @@ stages:
   - upload
   - publish
   - release
-
 
 .define_globals: &define_globals |
   shopt -s expand_aliases
