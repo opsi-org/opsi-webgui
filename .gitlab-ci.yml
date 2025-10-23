@@ -2,6 +2,8 @@ image: node:23.0.0-bookworm-slim
 
 variables:
   CI: true
+  #FF_NETWORK_PER_BUILD: 1
+  #FF_SCRIPT_SECTIONS: 1
   DEBIAN_FRONTEND: noninteractive
   OPSI_VERSION: '4.3'
   PYTHONUNBUFFERED: 1
@@ -21,7 +23,7 @@ variables:
   MYSQL_HOST: 'mysql'
   OPSI_ADMINUSER: 'adminuser'
   OPSI_ADMINPW: 'adminuser'
-
+  MAIN: main
 stages:
   - preinit
   - init
@@ -30,6 +32,30 @@ stages:
   - upload
   - publish
   - release
+
+.define_vars: &define_vars |
+  export CI=true
+  export MAIN=anchor
+  #export FF_NETWORK_PER_BUILD=1
+  #export FF_SCRIPT_SECTIONS=1
+  export DEBIAN_FRONTEND=noninteractive
+  export PYTHONUNBUFFERED=1
+  export UV_PYTHON='3.13'
+  export UV_PYTHON_PREFERENCE='only-managed'
+  export OPSICONFD_REDIS_INTERNAL_URL='redis://redis'
+  #export OPSICONFD_LOG_FILE='/tmp/opsiconfd.log'
+  #export OPSICONFD_LOG_LEVEL_STDERR='0'
+  export OPSICONFD_LOG_LEVEL_FILE=6
+  export OPSICONFD_LOG_LEVEL=6
+  export OPSICONFD_ADDON_DIRS='../backend/addon'
+  export OPSICONFD_MAX_SESSIONS_PER_IP='20000'
+  export MYSQL_ROOT_PASSWORD='opsi'
+  export MYSQL_DATABASE='opsitest'
+  export MYSQL_USER='opsi'
+  export MYSQL_PASSWORD='opsi'
+  export MYSQL_HOST='mysql'
+  export OPSI_ADMINUSER='adminuser'
+  export OPSI_ADMINPW='adminuser'
 
 .define_globals: &define_globals |
   shopt -s expand_aliases
@@ -104,7 +130,7 @@ stages:
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install python dependencies"
   uv sync --frozen
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
-  echo "opsiconfd loglevel: ${OPSICONFD_LOG_LEVEL}"
+  echo "opsiconfd loglevel: ${OPSICONFD_LOG_LEVEL} using: ${MAIN}"
   uv run opsiconfd -c tests/data/default-opsiconfd.conf setup -l6
   echo ">> configure mysql"
   #uv run opsiconfd -c tests/data/default-opsiconfd.conf setup --configure-mysql
@@ -362,29 +388,9 @@ build:screenshot:
       alias: mysql
     - name: redislabs/redistimeseries:latest
       alias: redis
-  variables:
-    FF_NETWORK_PER_BUILD: true
-    CI: true
-    DEBIAN_FRONTEND: noninteractive
-    OPSI_VERSION: '4.3'
-    PYTHONUNBUFFERED: 1
-    UV_PYTHON: '3.13'
-    UV_PYTHON_PREFERENCE: 'only-managed'
-    OPSICONFD_REDIS_INTERNAL_URL: 'redis://redis'
-    #OPSICONFD_LOG_FILE: '/tmp/opsiconfd.log'
-    #OPSICONFD_LOG_LEVEL_STDERR: '0'
-    OPSICONFD_LOG_LEVEL_FILE: '6'
-    OPSICONFD_LOG_LEVEL: '6'
-    OPSICONFD_ADDON_DIRS: '../backend/addon'
-    OPSICONFD_MAX_SESSIONS_PER_IP: '20000'
-    MYSQL_ROOT_PASSWORD: 'opsi'
-    MYSQL_DATABASE: 'opsitest'
-    MYSQL_USER: 'opsi'
-    MYSQL_PASSWORD: 'opsi'
-    MYSQL_HOST: 'mysql'
-    OPSI_ADMINUSER: 'adminuser'
-    OPSI_ADMINPW: 'adminuser'
+    #FF_NETWORK_PER_BUILD: true
   script:
+    - *define_vars
     - *install_uv
     - *prepare_backend
     - cd frontend
