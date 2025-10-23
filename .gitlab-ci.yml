@@ -104,8 +104,8 @@ stages:
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install python dependencies"
   uv sync --frozen
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
-  echo "opsiconfd loglevel: "
-  uv run opsiconfd -c tests/data/default-opsiconfd.conf setup
+  echo "opsiconfd loglevel: ${OPSICONFD_LOG_LEVEL}"
+  uv run opsiconfd -c tests/data/default-opsiconfd.conf setup -l6
   echo ">> configure mysql"
   #uv run opsiconfd -c tests/data/default-opsiconfd.conf setup --configure-mysql
 
@@ -127,7 +127,7 @@ stages:
   # Start opsiconfd
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start opsiconfd"
   echo "mysql internal url: $OPSICONFD_MYSQL_INTERNAL_URL"
-  uv run opsiconfd  -c tests/data/default-opsiconfd.conf &
+  uv run opsiconfd  -c tests/data/default-opsiconfd.conf  -l6 &
   sleep 60
   curl -I "https://${OPSI_ADMINUSER}:${OPSI_ADMINPW}@localhost:4447/admin"
   cd ..
