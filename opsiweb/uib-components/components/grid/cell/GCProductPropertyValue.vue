@@ -154,10 +154,13 @@ export default class GCProductPropertyValue extends Vue {
     }
 
     if (Object.keys(this.rowItem.clients).length > 0 && this.rowItem.allClientValuesEqual) {
-      if (this.rowItem.type === 'BoolProductProperty') {
-        this.visibleValueBool = Object.values(this.rowItem.clients)[0][0] as boolean
+      const clientValues = Object.values(this.rowItem.clients)
+      if (clientValues.length > 0) {
+        if (this.rowItem.type === 'BoolProductProperty') {
+          this.visibleValueBool = clientValues[0][0] as boolean
+        }
+        return clientValues[0]
       }
-      return Object.values(this.rowItem.clients)[0]
     } else if (Object.keys(this.rowItem.clients).length > 0 && !this.rowItem.allClientValuesEqual) {
       this.visibleValueBoolIndeterminate = true
       return [this.$t('values.mixed') as string] // for boolean egal, cause indeterminate=true
