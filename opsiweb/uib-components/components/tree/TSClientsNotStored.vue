@@ -40,7 +40,7 @@ export default class TSClientsNotStored extends Vue {
     this.clientIds = clients
     if (this.selectionClients.length !== 0) {
       this.idselection = this.selectionClients[0]
-    } else {
+    } else if (result.length > 0) {
       this.idselection = result[0]
     }
     this.$emit('update:id', this.idselection)
