@@ -8,7 +8,7 @@ wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/installer.
 chmod +x installer.sh
 ./installer.sh
 opsi-dev-cli self upgrade
-rm -f installer.sh
+rm -f installer.sh*
 
 opsi-dev-cli self upgrade
 opsi-dev-cli git-hook install
