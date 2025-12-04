@@ -137,39 +137,11 @@ stages:
   echo "$testfilesUnique"
   cd ..
 
-# .prepare_tag: &prepare_tag |
-#   # "prepare tag"
-#   if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
-#   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
-#   # LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
-#   LTAG=$(git tag --sort=taggerdate | tail -1)
-#   echo "Latest tag... '$LTAG'"
-
-# .push_tag: &push_tag |
-#   # post tag
-#   echo "ProjectURL: $CI_API_V4_URL"
-#   echo "ProjectID: $CI_PROJECT_ID"
-#   echo "ProjectTAG: $TAG"
-#   printf "ProjectMSG: \n$(cat $FILE)\n"
-#   printf "ProjectURL: $CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=v4.3\n"
-#   # if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
-#   # echo ""
-
-# .delete_tag: &delete_tag |
-#   # delete tag
-#   curl --request DELETE \
-#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
-#   echo ""
-#   git tag -d $TAG || exit_code_del=$?
-#   echo ""
-
-# .prepare_git: &prepare_git |
-#   # "prepare git"
-#   git config --global user.name "${GITLAB_USER_NAME}"
-#   git config --global user.email "${GITLAB_USER_EMAIL}"
-#   git config --global http.postBuffer 52428800
-#   git fetch
+.npm_sbom: &npm_sbom |
+  npm install --global @cyclonedx/cyclonedx-npm
+  mkdir sbom
+  npm sbom --sbom-format cyclonedx --omit dev > sbom/webgui-npm-cyclonedx.json
+  npm sbom --sbom-format spdx --omit dev > sbom/webgui-npm-spdx.json
 
 #########################################################################
 ######################################################################### init
@@ -214,11 +186,8 @@ init:npm:production:
     - cd opsiweb
     - *define_globals
     - npm --production --only=prod i #--legacy-peer-deps # Todo: whats the difference between --production and --only=prod
-    - mkdir sbom
-    - npm install --global @cyclonedx/cyclonedx-npm
-    - npm sbom --sbom-format cyclonedx --omit dev > sbom/cyclonedx.json
-    - npm sbom --sbom-format spdx --omit dev > sbom/spdx.json
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
+    - *npm_sbom
   artifacts:
     paths:
       - opsiweb/package.json
@@ -231,11 +200,8 @@ init:npm:
     - cd opsiweb
     - *define_globals
     - npm i #--legacy-peer-deps
-    - npm install --global @cyclonedx/cyclonedx-npm
-    - mkdir sbom
-    - npm sbom --sbom-format cyclonedx --omit dev > sbom/cyclonedx.json
-    - npm sbom --sbom-format spdx --omit dev > sbom/spdx.json
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
+    - *npm_sbom
   artifacts:
     paths:
       - opsiweb/package.json
