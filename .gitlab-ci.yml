@@ -213,7 +213,7 @@ init:npm:production:
   script:
     - cd opsiweb
     - *define_globals
-    - npm --production --only=prod i --legacy-peer-deps # Todo: whats the difference between --production and --only=prod
+    - npm --production --only=prod i #--legacy-peer-deps # Todo: whats the difference between --production and --only=prod
     - mkdir sbom
     - npm install --global @cyclonedx/cyclonedx-npm
     - npm sbom --sbom-format cyclonedx --omit dev > sbom/cyclonedx.json
@@ -230,8 +230,7 @@ init:npm:
   script:
     - cd opsiweb
     - *define_globals
-    - npm i --legacy-peer-deps
-
+    - npm i #--legacy-peer-deps
     - npm install --global @cyclonedx/cyclonedx-npm
     - mkdir sbom
     - npm sbom --sbom-format cyclonedx --omit dev > sbom/cyclonedx.json
