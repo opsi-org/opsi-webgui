@@ -140,8 +140,6 @@ stages:
 .npm_sbom: &npm_sbom |
   npm install --global @cyclonedx/cyclonedx-npm
   mkdir sbom
-  npm sbom --sbom-format cyclonedx --omit dev > sbom/webgui-npm-cyclonedx.json
-  npm sbom --sbom-format spdx --omit dev > sbom/webgui-npm-spdx.json
 
 #########################################################################
 ######################################################################### init
@@ -188,6 +186,8 @@ init:npm:production:
     - npm --production --only=prod i #--legacy-peer-deps # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
     - *npm_sbom
+    - npm sbom --sbom-format cyclonedx > sbom/webgui-npm-cyclonedx.json
+    - npm sbom --sbom-format spdx > sbom/webgui-npm-spdx.json
   artifacts:
     paths:
       - opsiweb/package.json
@@ -202,6 +202,8 @@ init:npm:
     - npm i #--legacy-peer-deps
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
     - *npm_sbom
+    - npm sbom --sbom-format cyclonedx --omit dev > sbom/webgui-npm-cyclonedx-dev.json
+    - npm sbom --sbom-format spdx --omit dev > sbom/webgui-npm-spdx-dev.json
   artifacts:
     paths:
       - opsiweb/package.json
