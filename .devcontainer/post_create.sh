@@ -11,7 +11,7 @@ rm -f installer.sh*
 
 echo "========================================== Install webgui dependencies"
 cd /workspace/opsiweb/
-npm i
+npm ci --legacy-peer-deps
 echo "========================================== Link webgui backend"
 
 rm -rf /data/opsiconfd/addons/webgui
