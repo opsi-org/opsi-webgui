@@ -209,15 +209,20 @@ init:npm:production:
   only:
     - v4.3
     - tags
+    - sbom
   script:
     - cd opsiweb
     - *define_globals
     - npm --production --only=prod i --legacy-peer-deps # Todo: whats the difference between --production and --only=prod
+    - mkdir sbom
+    - npm sbom --sbom-format cyclonedx --omit dev > sbom/cyclonedx.json
+    - npm sbom --sbom-format spdx --omit dev > sbom/spdx.json
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
   artifacts:
     paths:
       - opsiweb/package.json
       - opsiweb/node_modules/
+      - opsiweb/sbom
     expire_in: 1 day
 init:npm:
   stage: init
@@ -225,11 +230,16 @@ init:npm:
     - cd opsiweb
     - *define_globals
     - npm i --legacy-peer-deps
+
+    - mkdir sbom
+    - npm sbom --sbom-format cyclonedx --omit dev > sbom/cyclonedx.json
+    - npm sbom --sbom-format spdx --omit dev > sbom/spdx.json
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
   artifacts:
     paths:
       - opsiweb/package.json
       - opsiweb/node_modules/
+      - opsiweb/sbom
     expire_in: 1 day
 init:transifex:
   # this step have to be done before building webgui
@@ -273,22 +283,6 @@ init:changelogs:
     expire_in: 1 day
 
 
-init:sbom:
-  stage: init
-  dependencies:
-    - init:npm:production
-  script:
-    - *install_tools
-    - cd opsiweb # generate dist
-    - mkdir sbom
-    - npm sbom --sbom-format cyclonedx --omit dev > sbom/cyclonedx.json
-    - npm sbom --sbom-format spdx --omit dev > sbom/spdx.json
-
-  artifacts:
-    name: "opsi-webgui-sbom"
-    paths:
-      - opsiweb/sbom
-    expire_in: 7 day
 #########################################################################
 ######################################################################### test
 #########################################################################
@@ -507,6 +501,7 @@ test:backend-pytest:
 #########################################################################
 ######################################################################### build
 #########################################################################
+
 build:screenshots:docs: # with transifex
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: build
@@ -543,7 +538,6 @@ build:static:app: # with transifex
   dependencies:
     - init:npm:production
     - init:transifex
-    - init:sbom
     # - test:lint # todo activate again for main
   script:
     - cd opsiweb
@@ -565,7 +559,6 @@ build:addon: # with transifex
     - init:npm:production # doesnt download artifacts from static-app
     - init:transifex
     - init:changelogs
-    - init:sbom
     # - build:static:app # already done in this job
   script:
     - *install_tools
@@ -606,7 +599,6 @@ build:zip: # with transifex
     - build:static:app
     - init:transifex
     - init:changelogs
-    - init:sbom
   script:
     - *install_tools
     - pwd && ls -la opsiweb
@@ -636,98 +628,8 @@ build:zip: # with transifex
     expire_in: 7 day
 
 #########################################################################
-######################################################################### create tag
+######################################################################### PUBLISH
 #########################################################################
-
-# upload:gittag:
-#   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-#   stage: upload
-#   script:
-#     - FILE=".tmp_changelog"
-#     - *prepare_git
-#     - *install_tools
-#     - echo "all tags... $(git tag)"
-#     # - echo "delete Tag..."
-#     # - TAG=4.3.1.1
-#     # - *delete_tag
-#     # - TAG=4.3.14-test # on docker 4
-#     # - *delete_tag
-#     # - TAG=4.3.15 # on docker 4
-#     # - *delete_tag
-#     # - echo ""
-#     - *compare_versions
-#     - *prepare_tag
-#     - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || (echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3)
-#     - CHANGELOG_MSG=$(cat $FILE)
-#     - *push_tag
-#     # - |
-#     #   curl --request POST \
-#     #     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-#     #     --data-urlencode "message=$CHANGELOG_MSG" \
-#     #     --url "https://gitlab.uib.gmbh/api/v4/projects/335/repository/tags?tag_name=$TAG&ref=main"
-#     # - echo "Git Tag created successfully"
-#     - echo "changelog since last tag collected:"
-#     - echo "$CHANGELOG_MSG"
-#         # --url "$CI_API_V4_URL/projects/335/repository/tags?tag_name=$TAG&ref=main"
-#     # -o response.txt \
-#     # - URL="$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
-#     # - echo "$URL"
-#     # - |
-#     #   curl --request POST --header "PRIVATE-TOKEN: $TOKEN_SUCHER"  --data-urlencode "message=$(cat $FILE)"  "$URL"
-
-#     # - printf "\nRESPONSE:\n $(cat response.txt)"
-#     - rm $FILE
-#   # when: manual
-#   allow_failure: false
-#   when: always
-#   only: # visible in this branches: (main!)
-#     - main
-#     - tag
-
-#########################################################################
-######################################################################### publish
-#########################################################################
-
-# .push_release: &push_release |
-#   # post release
-#   echo "ProjectURL: $CI_API_V4_URL"
-#   echo "ProjectID: $CI_PROJECT_ID"
-#   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
-#   echo "ProjectTAG: $TAG"
-#   printf "ProjectMSG: \n$(cat $FILE)\n"
-#   http_response=$(curl --request POST \
-#     -o response.txt \
-#     --fail-with-body \
-#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main" \
-#     --data-urlencode "message=$(cat $FILE)" )
-
-#   echo "$http_response: $(cat response.txt)"
-#   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
-#   echo ""
-
-# upload:git:
-#   stage: upload
-#   image: registry.gitlab.com/gitlab-org/release-cli:latest
-#   needs:
-#     - job: build:zip
-#       artifacts: true
-#   rules:
-#     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
-#   script:
-#     - echo "Create Release $TAG, $CI_COMMIT_TAG, $JOB_ID"
-#   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
-#     tag_name: '$CI_COMMIT_TAG'
-#     description: '$CI_COMMIT_TAG'
-#   release:
-#     name: 'Release $CI_COMMIT_TAG'
-#     tag_name: '$CI_COMMIT_TAG'
-#     ref: '$CI_COMMIT_TAG'
-#     description: 'Release $CI_COMMIT_TAG'
-#     assets:
-#       links:
-#         - name: "opsi-webgui"
-#           url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
 
 publish:obs_int:
   stage: publish
@@ -781,22 +683,3 @@ publish:binary-index:
     - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip
   only:
     - tags
-# release:experimental:
-#   stage: release
-#   when: manual
-#   before_script:
-#     - "which ssh-agent || (apt update && apt -y install openssh-client)"
-#     - mkdir -p ~/.ssh
-#     - eval $(ssh-agent -s)
-#     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
-#   dependencies:
-#     - publish:obs_ext
-#     - publish:binary-index
-#   script:
-#     - *install_tools
-#     - ./opsi-dev-tool -l debug --binary-pull
-#     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
-#     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
-#     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
-#   only:
-#     - tags
