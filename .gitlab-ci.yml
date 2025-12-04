@@ -215,6 +215,7 @@ init:npm:production:
     - *define_globals
     - npm --production --only=prod i --legacy-peer-deps # Todo: whats the difference between --production and --only=prod
     - mkdir sbom
+    - npm install --global @cyclonedx/cyclonedx-npm
     - npm sbom --sbom-format cyclonedx --omit dev > sbom/cyclonedx.json
     - npm sbom --sbom-format spdx --omit dev > sbom/spdx.json
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
@@ -231,6 +232,7 @@ init:npm:
     - *define_globals
     - npm i --legacy-peer-deps
 
+    - npm install --global @cyclonedx/cyclonedx-npm
     - mkdir sbom
     - npm sbom --sbom-format cyclonedx --omit dev > sbom/cyclonedx.json
     - npm sbom --sbom-format spdx --omit dev > sbom/spdx.json
