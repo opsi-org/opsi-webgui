@@ -527,7 +527,7 @@ build:static:app: # with transifex
     - *define_globals
     - npm run generate-nossl
     - cd ..
-    - cp -f opsiweb/sbom/* dist/sbom/.
+    - cp -f opsiweb/sbom/* opsiweb/dist/sbom/.
   artifacts:
     paths:
       - opsiweb/dist # not used...?
@@ -571,7 +571,7 @@ build:zip: # with transifex
     - init:transifex
     - init:changelogs
     - init:sbom
-    - build:static:app # doesnt download artifacts from static-app cause same stage...
+    #- build:static:app # doesnt download artifacts from static-app cause same stage...
   script:
     - *install_tools
     - pwd && ls -la opsiweb
