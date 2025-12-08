@@ -807,7 +807,7 @@ build:screenshot:
     MYSQL_USER: 'opsi'
     MYSQL_PASSWORD: 'opsi'
   before_script:
-    - *prepare_backend_minimal
+    - *prepare_backend
     - cd frontend
     - npm ci
     - npx playwright install-deps
