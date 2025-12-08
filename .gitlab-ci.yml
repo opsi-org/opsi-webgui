@@ -183,6 +183,7 @@ init:npm:production:
     - cd opsiweb
     - *define_globals
     - npm --production --only=prod i #--legacy-peer-deps # Todo: whats the difference between --production and --only=prod
+    - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
     #- *npm_sbom
     #- npm sbom --sbom-format cyclonedx --omit dev  > sbom/webgui-npm-cyclonedx.json
@@ -190,6 +191,7 @@ init:npm:production:
   artifacts:
     paths:
       - opsiweb/package.json
+      - opsiweb/package-lock.json
       - opsiweb/node_modules/
       - opsiweb/sbom
     expire_in: 1 day
@@ -203,6 +205,7 @@ init:npm:
   artifacts:
     paths:
       - opsiweb/package.json
+      - opsiweb/package-lock.json
       - opsiweb/node_modules/
     expire_in: 1 day
 
@@ -524,6 +527,7 @@ build:static:app: # with transifex
     - npm i @nuxt/typescript-build
     - *define_globals
     - npm run generate-nossl
+    - cd ..
     - cp -f opsiweb/sbom/* dist/sbom/.
   artifacts:
     paths:
@@ -535,19 +539,30 @@ build:static:app: # with transifex
 
 build:addon: # with transifex
   stage: build
-  dependencies:
-    - init:npm:production # doesnt download artifacts from static-app
-    - init:transifex
-    - init:changelogs
-    - init:sbom
+  needs:
+    - job: init:npm:production
+      artifacts: true
+    - job: init:transifex
+      artifacts: true
+    - job: init:changelogs
+      artifacts: true
+    - job: init:sbom
+      artifacts: true
+
+
+  #dependencies:
+  #  - init:npm:production # doesnt download artifacts from static-app
+  #  - init:transifex
+  #  - init:changelogs
+  #  - init:sbom
     # - build:static:app # already done in this job
   script:
     - *install_tools
     - pwd && ls -la opsiweb
-    - cd opsiweb # generate dist
-    - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
+    #- cd opsiweb # generate dist
+    #- npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
+    #- cd ..
     - cp -f opsiweb/sbom/* dist/sbom/.
-    - cd ..
     - *define_globals
     # - npm run generate-nossl
     - bash opsiweb/scripts/build_production_local.sh webgui Webgui $(pwd)
@@ -583,11 +598,10 @@ build:zip: # with transifex
     - pwd && ls -la opsiweb
     - cd opsiweb # generate dist
     - ls -lah uib-components/locale
-    - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
     - *define_globals
     - npm run generate-nossl
-    - cp -f opsiweb/sbom/* dist/sbom/.
     - cd .. # copy to addon
+    - cp -f opsiweb/sbom/* dist/sbom/.
     - mkdir -p backend/addon/webgui/data
     - mkdir -p backend/addon/webgui/data/app
     - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
