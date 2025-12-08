@@ -49,7 +49,7 @@ if [ "$IS_CICD" = "true" ]; then
   echo "Opsiconfd: $latestTag"
   git checkout "$latestTag"
   cd -
-else
+end
 
 ##########################################################
 ###################################### configure opsiconfd
