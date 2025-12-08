@@ -5,7 +5,7 @@ variables:
   #FF_NETWORK_PER_BUILD: 1
   #FF_SCRIPT_SECTIONS: 1
   DEBIAN_FRONTEND: noninteractive
-  OPSI_MAJOR_VERSION: '4.3'    # used as branch/tag name "v$OPSI_VERSION"
+  OPSI_MAJOR_VERSION: '4.3'    # used as branch/tag name "v$OPSI_VERSION" as well as a prefix for tags in opsiconfd
   PYTHONUNBUFFERED: 1
   UV_PYTHON: '3.13'
   UV_INSTALL_DIR: /opt/uv
@@ -71,7 +71,8 @@ stages:
   #apt -y install mariadb-client default-libmysqlclient-dev build-essential
   #apt -y install libxslt-dev python3-lxml
   #apt -y install build-essential pkg-config libxml2-dev libxmlsec1-dev libxmlsec1-openssl
-  git clone "https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git"
+  echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install opsiconfd from repo"
+  git clone --branch "v${OPSI_MAJOR_VERSION}"  "https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git"
   # Get new tags from remote
   cd opsiconfd
   git fetch --tags
