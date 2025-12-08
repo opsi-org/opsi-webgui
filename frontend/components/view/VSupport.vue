@@ -81,7 +81,7 @@ License: AGPL-3.0
   const documentationUrl = computed(() =>
     locale.value === 'de'
       ? 'https://docs.opsi.org/opsi-docs-de/4.3/index.html'
-      : 'https://docs.opsi.org/opsi-docs-en/4.2/index.html'
+      : 'https://docs.opsi.org/opsi-docs-en/4.3/index.html'
   )
 </script>
 
