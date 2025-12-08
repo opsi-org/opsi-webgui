@@ -547,21 +547,11 @@ build:addon: # with transifex
   script:
     - *install_tools
     - pwd && ls -la opsiweb
-    #- cd opsiweb # generate dist
-    #- npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
-    #- cd ..
-    - cp -f opsiweb/sbom/* dist/sbom/.
     - *define_globals
-    # - npm run generate-nossl
     - bash opsiweb/scripts/build_production_local.sh webgui Webgui $(pwd)
-    # - cd .. # copy to addon
-    # - mkdir -p backend/addon/webgui/data
-    # - mkdir -p backend/addon/webgui/data/app
-    # - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
-    # - mkdir webgui
-    # - cp -r backend/addon/webgui/* webgui/
-    # path should be opsiweb/.. again
     - mv opsiweb/webgui webgui
+    - mkdir -p webgui/sbom
+    - cp -f opsiweb/sbom/* webgui/sbom/.
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
@@ -589,11 +579,12 @@ build:zip: # with transifex
     - *define_globals
     - npm run generate-nossl
     - cd .. # copy to addon
-    - cp -f opsiweb/sbom/* dist/sbom/.
     - mkdir -p backend/addon/webgui/data
     - mkdir -p backend/addon/webgui/data/app
     - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
     - mkdir webgui
+    - mkdir -p webgui/sbom
+    - cp -f opsiweb/sbom/* webgui/sbom/.
     - cp -r backend/addon/webgui/* webgui/
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
