@@ -140,12 +140,14 @@ def get_client_config(
 		tmp_config = config.to_hash()
 		tmp_config["objects"] = {}
 		if config.getType() == "BoolConfig":
-			tmp_config["objects"][object_id] = bool_value(config_states.get(config.id, {})[0])
+			config_values = config_states.get(config.id, {})
+			tmp_config["objects"][object_id] = bool_value(config_values[0] if config_values else False)
 		elif config.multiValue:
 			tmp_config["objects"][object_id] = config_states.get(config.id, {})
 		else:
+			config_values = config_states.get(config.id, {})
 			tmp_config["objects"][object_id] = (
-				config_states.get(config.id) if config_states.get(config.id) and config_states.get(config.id, {})[0] else ""
+				config_values[0] if config_values else ""
 			)
 		tmp_config["configId"] = config.id
 		if config.editable:
@@ -255,6 +257,7 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
 
 					config["possibleValues"] = list(dict.fromkeys(p_values))
 
+				client_values = config.get("clientValues", [])
 				if (
 					(
 						len(config.get("clientsWithDiff", "").split(";")) != len(selectedClients)
@@ -262,7 +265,7 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
 					)
 					or config.get("value", "") == "mixed"
 					or config.get("clientValues", []) == config.get("values", [])
-					or config.get("clientValues", [])[0] == config.get("defaultValue", [])
+					or (client_values and client_values[0] == config.get("defaultValue", []))
 				):
 					config["allClientValuesEqual"] = False
 				else:
@@ -283,10 +286,14 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
 					and config.get("value", "") != config.get("defaultValue", "")
 				):
 					clients = config.get("clientsWithDiff", "").split(";")
+					client_values = config.get("clientValues", [])
 
 					for idx, client in enumerate(clients):
 						config["clients"][client] = {}
-						config["clients"][client] = config.get("clientValues", [])[idx]
+						if idx < len(client_values):
+							config["clients"][client] = client_values[idx]
+						else:
+							config["clients"][client] = ""
 
 				del config["clientValues"]
 				del config["clientsWithDiff"]
