@@ -53,13 +53,14 @@ stages:
   uv self update
 
 .opsiconfd_install_dependencies: &opsiconfd_install_dependencies |
-  apt update
-  echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install stuff"
-  apt -y install git sudo inetutils-ping mariadb-client default-libmysqlclient-dev
-  #apt -y install debhelper osc bc git wget python3 python3-pip python3-dev python3-venv iproute2 net-tools iputils-ping
-  #apt -y install mariadb-client default-libmysqlclient-dev build-essential
-  apt -y install libxslt-dev python3-lxml
-  apt -y install build-essential pkg-config libxml2-dev libxmlsec1-dev libxmlsec1-openssl
+  ./frontend/scripts/env_install.sh
+  #apt update
+  #echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install stuff"
+  #apt -y install git sudo inetutils-ping mariadb-client default-libmysqlclient-dev
+  ##apt -y install debhelper osc bc git wget python3 python3-pip python3-dev python3-venv iproute2 net-tools iputils-ping
+  ##apt -y install mariadb-client default-libmysqlclient-dev build-essential
+  #apt -y install libxslt-dev python3-lxml
+  #apt -y install build-essential pkg-config libxml2-dev libxmlsec1-dev libxmlsec1-openssl
 
 .opsiconfd_repo: &opsiconfd_repo |
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install opsiconfd from repo"
@@ -406,10 +407,10 @@ build:screenshot:
     - *install_uv
     - echo "> opsiconfd install dependencies"
     - *opsiconfd_install_dependencies
-    - echo "> opsiconfd repo"
-    - *opsiconfd_repo
-    - echo "> opsiconfd prepare"
-    - *opsiconfd_prepare
+    #- echo "> opsiconfd repo"
+    #- *opsiconfd_repo
+    #- echo "> opsiconfd prepare"
+    #- *opsiconfd_prepare
     # start opsidoc screenshots
     - echo "> webgui init"
     - cd frontend
