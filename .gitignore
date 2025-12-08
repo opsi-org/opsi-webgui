@@ -31,5 +31,5 @@ screenshots/opsidoc/
 
 # python
 __pycache__
-
+opsiconfd/
 .vscode

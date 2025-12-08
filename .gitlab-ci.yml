@@ -63,7 +63,8 @@ stages:
   source $UV_INSTALL_DIR/env
   uv self update
 
-.prepare_backend: &prepare_backend |
+
+.opsiconfd_install_dependencies: &opsiconfd_install_dependencies |
   apt update
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install stuff"
   apt -y install git sudo inetutils-ping mariadb-client default-libmysqlclient-dev
@@ -71,6 +72,8 @@ stages:
   #apt -y install mariadb-client default-libmysqlclient-dev build-essential
   apt -y install libxslt-dev python3-lxml
   apt -y install build-essential pkg-config libxml2-dev libxmlsec1-dev libxmlsec1-openssl
+
+.opsiconfd_repo: &opsiconfd_repo |
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> install opsiconfd from repo"
   git clone --branch "v${OPSI_MAJOR_VERSION}"  "https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git"
   ls -lah
@@ -82,11 +85,13 @@ stages:
   echo "OPSI_MAJOR_VERSION='${OPSI_MAJOR_VERSION}'"
   git --version || true
   latestTag=$(git tag -l "$OPSI_MAJOR_VERSION*" --sort=-creatordate | head -n1) || true
-  echo "Latest tag is: $latestTag"
+  echo "Opsiconfd: $latestTag"
   git checkout "$latestTag"
+  cd -
 
+.opsiconfd_prepare: &opsiconfd_prepare |
+  cd opsiconfd
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> configure opsiconfd"
-  # Get config files for opsiconfd
   [ -e /etc/opsi ] && rm -r /etc/opsi
   cp -a opsiconfd_data/etc /etc/opsi
 
@@ -120,9 +125,6 @@ stages:
 
   # Grant full database access to opsi user
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> configure mysql"
-  #MYSQL_GRANT="GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
-  #mysql --host="${MYSQL_HOST}" --user=root --password="${MYSQL_ROOT_PASSWORD}" -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
-  #mysql --host="$MYSQL_HOST" --user=root --password="$MYSQL_ROOT_PASSWORD" -e "$MYSQL_GRANT"
   mysql --host=mysql --user=root --password=opsi -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
   echo "internal url: $OPSICONFD_MYSQL_INTERNAL_URL"
 
@@ -134,17 +136,11 @@ stages:
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> setup opsiconfd"
   echo "opsiconfd loglevel: ${OPSICONFD_LOG_LEVEL} using: ${MAIN}"
   uv run opsiconfd -c tests/data/default-opsiconfd.conf setup -l6
-  echo ">> configure mysql"
-  #uv run opsiconfd -c tests/data/default-opsiconfd.conf setup --configure-mysql
 
-
-  # Start and wait for redis server
-  # echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start redis"
-  # redis-server /etc/redis/redis.conf &
   sleep 20
-  cd ..
+  cd -
 
-.start_backend: &start_backend |
+.opsiconfd_start: &opsiconfd_start |
   cd opsiconfd
   # Start opsiconfd
   echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start opsiconfd"
@@ -152,7 +148,7 @@ stages:
   uv run opsiconfd  -c tests/data/default-opsiconfd.conf  -l6 &
   sleep 60
   curl -I "https://${OPSI_ADMINUSER}:${OPSI_ADMINPW}@localhost:4447/admin"
-  cd ..
+  cd -
 
 .pytest: &pytest |
   echo "---------------------------------------"
@@ -186,7 +182,7 @@ stages:
 #########################################################################
 ######################################################################### init
 #########################################################################
-preinit:test:opsiconfd:
+.preinit:test:opsiconfd:
   stage: preinit
   image: mcr.microsoft.com/playwright:v1.56.0-noble
   services:
@@ -200,12 +196,13 @@ preinit:test:opsiconfd:
   script:
     - *define_globals
     - *install_uv
-    - *prepare_backend
-    - cd frontend
-    - bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
+    - *opsiconfd_install_dependencies
+    - *opsiconfd_repo
+    - *opsiconfd_prepare
+    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) copydata
+    #- bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
     - sleep 30
-    - cd ..
-    - *start_backend
+    - *opsiconfd_start
     # start opsidoc screenshots
     - cd frontend
     - mkdir test-results
@@ -395,8 +392,11 @@ test:tsc:
     - name: redislabs/redistimeseries:latest
       alias: redis
   script:
-    - *install_dev_cli
-    - *prepare_backend
+    - *define_globals
+    - *install_uv
+    - *opsiconfd_install_dependencies
+    - *opsiconfd_repo
+    - *opsiconfd_prepare
     - echo "##########################################"
     - echo "##################pytest##################"
     - echo "##########################################"
@@ -420,19 +420,23 @@ build:screenshot:
     - name: redislabs/redistimeseries:latest
       alias: redis
     #FF_NETWORK_PER_BUILD: true
+
   script:
     - *define_globals
     - *install_uv
-    - *prepare_backend
-    - cd frontend
-    - bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
-    - sleep 30
-    - cd ..
-    - *start_backend
+    - *opsiconfd_install_dependencies
+    - *opsiconfd_repo
+    - *opsiconfd_prepare
     # start opsidoc screenshots
     - cd frontend
     - mkdir test-results
     - npm ci
+    - cd ..
+    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) copydata
+    #- bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
+    - sleep 30
+    - *opsiconfd_start
+    - cd frontend
     - npx playwright install-deps
     - npx playwright test tests/screenshot/
   artifacts:
@@ -566,215 +570,6 @@ publish:binary-index:
     - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip
   only:
     - tags
-# release:experimental:
-#   stage: release
-#   when: manual
-#   before_script:
-#     - "which ssh-agent || (apt update && apt -y install openssh-client)"
-#     - mkdir -p ~/.ssh
-#     - eval $(ssh-agent -s)
-#     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
-#   dependencies:
-#     - publish:obs_ext
-#     - publish:binary-index
-#   script:
-#     - *install_dev_cli
-#     - ./opsi-dev-tool -l debug --binary-pull
-#     - scp -o StrictHostKeyChecking=no -r opsi-webgui-${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
-#     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
-#     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.4:development opsi-webgui home:uibmz:opsi:4.4:experimental
-#   only:
-#     - tags
-
-# .push_release: &push_release |
-#   # post release
-#   echo "ProjectURL: $CI_API_V4_URL"
-#   echo "ProjectID: $CI_PROJECT_ID"
-#   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
-#   echo "ProjectTAG: $TAG"
-#   printf "ProjectMSG: \n$(cat $FILE)\n"
-#   http_response=$(curl --request POST \
-#     -o response.txt \
-#     --fail-with-body \
-#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main" \
-#     --data-urlencode "message=$(cat $FILE)" )
-
-#   echo "$http_response: $(cat response.txt)"
-#   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
-#   echo ""
-
-# upload:git:
-#   stage: upload
-#   image: registry.gitlab.com/gitlab-org/release-cli:latest
-#   needs:
-#     - job: build:zip
-#       artifacts: true
-#   rules:
-#     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
-#   script:
-#     - echo "Create Release $TAG, $CI_COMMIT_TAG, $JOB_ID"
-#   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
-#     tag_name: '$CI_COMMIT_TAG'
-#     description: '$CI_COMMIT_TAG'
-#   release:
-#     name: 'Release $CI_COMMIT_TAG'
-#     tag_name: '$CI_COMMIT_TAG'
-#     ref: '$CI_COMMIT_TAG'
-#     description: 'Release $CI_COMMIT_TAG'
-#     assets:
-#       links:
-#         - name: "opsi-webgui"
-#           url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
-
-# test:unit:
-#   stage: test
-#   dependencies:
-#     - init:npm
-#   script:
-#     - cd frontend
-#     - *define_globals
-#     - npm run test:unit
-#   allow_failure: true
-#   coverage: /All files\s*\|\s*([\d\.]+)/
-#   artifacts:
-#     expire_in: 1 day
-#     reports:
-#       coverage_report:
-#         coverage_format: cobertura
-#         path: frontend/coverage/clover.xmlci
-
-# test:accessibility:
-#   image: mcr.microsoft.com/playwright:v1.38.0-jammy
-#   stage: test
-#   dependencies:
-#     - init:npm
-#   before_script:
-#     - cd frontend
-#     - *start_webgui
-#   script:
-#     - npm run pwtest:access || exit_code=$?
-#     - exit $exit_code
-#   after_script:
-#     - npm run bash:delete-empty-test-results
-#   allow_failure: true
-#   only:
-#     - v5
-#     - tags
-#   artifacts:
-#     name: 'opsi-webgui-test-result-accessibility'
-#     when: on_failure
-#     paths:
-#       - ./**/*/test-results/
-#       - frontend/.dev.log
-#     reports:
-#       junit: frontend/.config/test-result-pw-reporter-accessibility.xml
-#     expire_in: 1 day
-# test:usecase:
-#   image: mcr.microsoft.com/playwright:v1.38.0-jammy
-#   stage: test
-#   dependencies:
-#     - init:npm
-#   before_script:
-#     - cd frontend
-#     - *define_globals
-#     - *install_playwright
-#     - *start_webgui
-#   script:
-#     - npm run pwtest:usecase || exit_code=$?
-#     - exit $exit_code
-#   after_script:
-#     - npm run bash:delete-empty-test-results
-#   allow_failure: true
-#   only:
-#     - v5
-#     - tags
-#   artifacts:
-#     name: 'opsi-webgui-test-result-usecase'
-#     when: on_failure
-#     paths:
-#       - ./**/*/test-results/
-#       - frontend/.dev.log
-#     reports:
-#       junit: frontend/.config/test-result-pw-reporter-usecase.xml
-#     expire_in: 1 day
-
-# test:components:changes:
-#   image: mcr.microsoft.com/playwright:v1.15.2-focal
-#   stage: test
-#   dependencies:
-#     - init:npm
-#   except:
-#     - cicd
-#     - tags # cause in tags we test all browsers (and all files)
-#     - main # cause in main we test all files
-#     - v5 # cause in v5 we test all files
-#   only:
-#     changes:
-#       - frontend/pages/*
-#       - frontend/components/*
-#       - frontend/*
-#   before_script:
-#     - cd frontend
-#     - *define_globals
-#     - *install_playwright
-#     - *get_changed_files
-#     - echo "$testfilesUnique"
-#     - *start_storybook
-#     - *start_webgui
-#     - sleep 120
-#   script:
-#     - npm run pwtest:components $testfilesUnique || exit_code=$?
-#     - exit $exit_code
-#   after_script:
-#     - npm run bash:delete-empty-test-results
-#   allow_failure: true
-#   artifacts:
-#     name: 'opsi-webgui-test-result-components'
-#     when: on_failure
-#     paths:
-#       - ./**/*/test-results/
-#       - frontend/.storybook.log
-#       - frontend/.dev.log
-#     reports:
-#       junit: ./frontend/.config/test-result-pw-reporter-components.xml
-#     expire_in: 1 day
-# test:components:
-#   image: mcr.microsoft.com/playwright:v1.15.2-focal
-#   stage: test
-#   dependencies:
-#     - init:npm
-#   only:
-#     - main # cause in main we test all files, but only chromium browser
-#     - tags
-#   before_script:
-#     - cd frontend
-#     - *define_globals
-#     - *install_playwright
-#     - *start_storybook
-#     - *start_webgui
-#     - sleep 60
-#   script:
-#     - npm run test:all:components | tee .tmpRESULT
-#     - exit_code=${PIPESTATUS[0]}
-#     - exit $exit_code
-#   after_script:
-#     - cd frontend
-#     - scripts/playwright_coverage.sh .tmpRESULT
-#     - npm run bash:delete-empty-test-results
-#   allow_failure: true
-#   coverage: /TESTED FILES\s*:\s*([^%]+)/
-#   artifacts:
-#     name: 'opsi-webgui-test-result-components'
-#     when: on_failure
-#     paths:
-#       - ./**/*/test-results/
-#       - frontend/.storybook.log
-#       - frontend/.dev.log
-#       - frontend/.tmpRESULT
-#     reports:
-#       junit: ./frontend/test-result-pw-reporter-components.xml
-#     expire_in: 3 day
 
 .test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
@@ -792,7 +587,7 @@ publish:binary-index:
     MYSQL_PASSWORD: 'opsi'
   script:
     - *install_dev_cli
-    - *prepare_backend
+    - *opsiconfd_prepare
     - echo "##########################################"
     - echo "##################pytest##################"
     - echo "##########################################"
@@ -851,7 +646,7 @@ build:screenshot:
     MYSQL_USER: 'opsi'
     MYSQL_PASSWORD: 'opsi'
   before_script:
-    - *prepare_backend
+    - *opsiconfd_prepare
     - cd frontend
     - npm ci
     - npx playwright install-deps
