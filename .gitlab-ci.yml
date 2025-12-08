@@ -748,7 +748,7 @@ publish:binary-index:
     MYSQL_PASSWORD: 'opsi'
   script:
     - *install_dev_cli
-    - *prepare_backend_tests
+    - *prepare_backend
     - echo "##########################################"
     - echo "##################pytest##################"
     - echo "##########################################"
