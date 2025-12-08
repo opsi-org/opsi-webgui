@@ -419,7 +419,6 @@ build:screenshot:
     - name: mysql:latest
       command:
         - --max_connections=1000
-        -
         #- mysql --host=mysql --user=root --password=opsi -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
       alias: mysql
     - name: redislabs/redistimeseries:latest
