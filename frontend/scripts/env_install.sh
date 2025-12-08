@@ -16,6 +16,7 @@ SUDO=""
 IS_CICD=${CI:-false}
 if [ "$(id -u)" -ne 0 ]; then
   SUDO="sudo"
+  echo "Not running as root, using sudo for commands that need elevated permissions"
   if [ "$IS_CICD" = "true" ]; then
     echo "In CICD environment but not running as root, exiting"
     exit 1
@@ -79,9 +80,7 @@ $SUDO adduser "${OPSI_ADMINUSER}" opsiadmin
 # Installing opsi test modules file
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> get license"
 mkdir -p /etc/opsi/licenses
-if [ -z "$OPSILICSRV_TOKEN" ]; then
-  echo "No OPSILICSRV_TOKEN set, skipping license download"
-else
+if [ ! -z "$OPSILICSRV_TOKEN" ]; then
   wget --header="Authorization: Bearer ${OPSILICSRV_TOKEN}" "https://opsi-license-server.uib.gmbh/api/v1/licenses/test?usage=opsiconfd-gitlab-ci" -O /etc/opsi/licenses/test.opsilic
 fi
 
