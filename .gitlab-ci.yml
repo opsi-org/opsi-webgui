@@ -80,6 +80,10 @@ stages:
   ls -lah
   git fetch --tags
   echo ">>>> fetching latest opsiconfd tag"
+  echo "SHELL: $SHELL"
+  echo "OPSI_MAJOR_VERSION='${OPSI_MAJOR_VERSION}'"
+  echo "which git: $(which git || echo no-git)"
+  git --version || true
   git tag -l "$OPSI_MAJOR_VERSION*" --sort=-creatordate | head -n1
   latestTag=$(git tag -l "$OPSI_MAJOR_VERSION*" --sort=-creatordate | head -n1)
   echo "Latest tag is: $latestTag"
@@ -185,6 +189,45 @@ stages:
 #########################################################################
 ######################################################################### init
 #########################################################################
+preinit:test:opsiconfd:
+  stage: preinit
+  image: mcr.microsoft.com/playwright:v1.56.0-noble
+  services:
+    - name: mysql:latest
+      command:
+        - --max_connections=1000
+      alias: mysql
+    - name: redislabs/redistimeseries:latest
+      alias: redis
+    #FF_NETWORK_PER_BUILD: true
+  script:
+    - *define_globals
+    - *install_uv
+    - *prepare_backend
+    - cd frontend
+    - bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
+    - sleep 30
+    - cd ..
+    - *start_backend
+    # start opsidoc screenshots
+    - cd frontend
+    - mkdir test-results
+    - npm ci
+    - npx playwright install-deps
+    - npx playwright test tests/screenshot/
+  artifacts:
+    paths:
+      - frontend/screenshots/opsidoc
+      - frontend/test-results/
+      # '${OPSICONFD_LOG_FILE}'
+      - /tmp/opsiconfd.log
+    expire_in: 2 days
+    when: always
+  only:
+    - tags
+    - v5
+    - test/opsidocs
+
 preinit:versions:
   stage: preinit
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11 # cause smaller then node...
@@ -316,7 +359,6 @@ test:languages:
   artifacts:
     paths:
       - frontend/locale
-
 test:lint:
   stage: test
   dependencies:
@@ -327,7 +369,6 @@ test:lint:
     - *define_globals
   script:
     - npm run lint
-
 test:i18n-additional:
   stage: test
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
@@ -339,7 +380,6 @@ test:i18n-additional:
   script:
     # - npm run lint:missing-i18n
     - python scripts/compare_translation_keys.py -s
-
 test:tsc:
   stage: test
   dependencies:
@@ -349,7 +389,6 @@ test:tsc:
     - *define_globals
   script:
     - npm run tsc || exit 1
-
 .test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   services:
