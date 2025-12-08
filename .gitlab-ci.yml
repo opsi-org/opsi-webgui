@@ -563,9 +563,6 @@ build:addon: # with transifex
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
-  only:
-    - tags
-    - v4.3
   artifacts:
     name: "opsi-webgui-with-zip"
     paths:
