@@ -539,23 +539,11 @@ build:static:app: # with transifex
 
 build:addon: # with transifex
   stage: build
-  needs:
-    - job: init:npm:production
-      artifacts: true
-    - job: init:transifex
-      artifacts: true
-    - job: init:changelogs
-      artifacts: true
-    - job: init:sbom
-      artifacts: true
-
-
-  #dependencies:
-  #  - init:npm:production # doesnt download artifacts from static-app
-  #  - init:transifex
-  #  - init:changelogs
-  #  - init:sbom
-    # - build:static:app # already done in this job
+  dependencies:
+    - init:npm:production # doesnt download artifacts from static-app
+    - init:transifex
+    - init:changelogs
+    - init:sbom
   script:
     - *install_tools
     - pwd && ls -la opsiweb
