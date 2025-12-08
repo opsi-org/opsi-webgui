@@ -185,9 +185,6 @@ init:npm:production:
     - npm --production --only=prod i #--legacy-peer-deps # Todo: whats the difference between --production and --only=prod
     - npm i @nuxt/typescript-build # quick fix, cause this lib cant be found in
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
-    #- *npm_sbom
-    #- npm sbom --sbom-format cyclonedx --omit dev  > sbom/webgui-npm-cyclonedx.json
-    #- npm sbom --sbom-format spdx --omit dev > sbom/webgui-npm-spdx.json
   artifacts:
     paths:
       - opsiweb/package.json
@@ -195,6 +192,7 @@ init:npm:production:
       - opsiweb/node_modules/
       - opsiweb/sbom
     expire_in: 1 day
+
 init:npm:
   stage: init
   script:
@@ -223,6 +221,7 @@ init:sbom:
     paths:
       - opsiweb/sbom
     expire_in: 1 day
+
 init:transifex:
   # this step have to be done before building webgui
   stage: init
