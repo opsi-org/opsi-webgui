@@ -422,20 +422,29 @@ build:screenshot:
     #FF_NETWORK_PER_BUILD: true
 
   script:
+    - echo "> init"
     - *define_globals
+    - echo "> uv install"
     - *install_uv
+    - echo "> opsiconfd install dependencies"
     - *opsiconfd_install_dependencies
+    - echo "> opsiconfd repo"
     - *opsiconfd_repo
+    - echo "> opsiconfd prepare"
     - *opsiconfd_prepare
     # start opsidoc screenshots
+    - echo "> webgui init"
     - cd frontend
     - mkdir test-results
     - npm ci
     - cd ..
+    - echo "> webgui production init"
     - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) copydata
     #- bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
     - sleep 30
+    - echo "> opsiconfd start"
     - *opsiconfd_start
+    - echo "> webgui screenshots"
     - cd frontend
     - npx playwright install-deps
     - npx playwright test tests/screenshot/
