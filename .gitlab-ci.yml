@@ -425,7 +425,7 @@ build:screenshot:
     - name: redislabs/redistimeseries:latest
       alias: redis
     # FF_NETWORK_PER_BUILD: true
-  before_script:
+  script:
     - echo "> init"
     - *define_globals
     - echo "> uv install"
@@ -448,7 +448,6 @@ build:screenshot:
     - sleep 30
     - echo "> opsiconfd start"
     - *opsiconfd_start
-  script:
     - echo "> webgui screenshots"
     - cd frontend
     - npx playwright install-deps
