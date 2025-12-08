@@ -416,11 +416,11 @@ build:screenshot:
     - name: mysql:latest
       command:
         - --max_connections=1000
+        - mysql --host=mysql --user=root --password=opsi -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
       alias: mysql
     - name: redislabs/redistimeseries:latest
       alias: redis
-    #FF_NETWORK_PER_BUILD: true
-
+    # FF_NETWORK_PER_BUILD: true
   script:
     - echo "> init"
     - *define_globals
@@ -450,12 +450,8 @@ build:screenshot:
     - npx playwright test tests/screenshot/
   artifacts:
     paths:
-      - frontend/screenshots/opsidoc
-      - frontend/test-results/
-      # '${OPSICONFD_LOG_FILE}'
-      - /tmp/opsiconfd.log
-    expire_in: 2 days
-    when: always
+      - frontend/screenshots/
+    expire_in: 7 days
   only:
     - tags
     - v5
@@ -637,7 +633,7 @@ publish:binary-index:
 #       - frontend/.dev.log
 #     expire_in: 7 day
 
-build:screenshot:
+.build:screenshot2:
   stage: build
   image: mcr.microsoft.com/playwright:v1.38.0-focal
   dependencies:
