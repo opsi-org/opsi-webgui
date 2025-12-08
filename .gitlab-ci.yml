@@ -6,10 +6,10 @@ variables:
   #FF_SCRIPT_SECTIONS: 1
   DEBIAN_FRONTEND: noninteractive
   OPSI_MAJOR_VERSION: '4.3'    # used as branch/tag name "v$OPSI_VERSION" as well as a prefix for tags in opsiconfd
-  PYTHONUNBUFFERED: 1
-  UV_PYTHON: '3.13'
+  UV_PYTHON: '3.14'
   UV_INSTALL_DIR: /opt/uv
   UV_PYTHON_PREFERENCE: 'only-managed'
+  PYTHONUNBUFFERED: 1
   OPSICONFD_REDIS_INTERNAL_URL: 'redis://redis'
   #OPSICONFD_LOG_FILE: '/tmp/opsiconfd.log'
   #OPSICONFD_LOG_LEVEL_STDERR: '0'
