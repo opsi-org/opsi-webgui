@@ -552,6 +552,7 @@ build:addon: # with transifex
     - mv opsiweb/webgui webgui
     - mkdir -p webgui/sbom
     - cp -f opsiweb/sbom/* webgui/sbom/.
+    - touch output/changelog.md  # in case changelog is missing (usually in branches)
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
@@ -566,11 +567,11 @@ build:zip: # with transifex
   image: node:current-slim
   stage: build
   dependencies:
-    - init:npm:production # doesnt download artifacts from static-app
-    - build:static:app
+    - init:npm:production
     - init:transifex
     - init:changelogs
     - init:sbom
+    - build:static:app # doesnt download artifacts from static-app cause same stage...
   script:
     - *install_tools
     - pwd && ls -la opsiweb
@@ -586,6 +587,7 @@ build:zip: # with transifex
     - mkdir -p webgui/sbom
     - cp -f opsiweb/sbom/* webgui/sbom/.
     - cp -r backend/addon/webgui/* webgui/
+    - touch output/changelog.md  # in case changelog is missing (usually in branches)
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - ls -lah webgui/data # debug
