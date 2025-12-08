@@ -416,12 +416,13 @@ build:screenshot:
     - name: mysql:latest
       command:
         - --max_connections=1000
-        - mysql --host=mysql --user=root --password=opsi -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
+        -
+        #- mysql --host=mysql --user=root --password=opsi -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
       alias: mysql
     - name: redislabs/redistimeseries:latest
       alias: redis
     # FF_NETWORK_PER_BUILD: true
-  script:
+  before_script:
     - echo "> init"
     - *define_globals
     - echo "> uv install"
@@ -444,6 +445,7 @@ build:screenshot:
     - sleep 30
     - echo "> opsiconfd start"
     - *opsiconfd_start
+  script:
     - echo "> webgui screenshots"
     - cd frontend
     - npx playwright install-deps
