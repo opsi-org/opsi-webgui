@@ -85,9 +85,9 @@ stages:
   echo "which git: $(which git || echo no-git)"
   git --version || true
   echo "latest Tag:"
-  git tag -l "$OPSI_MAJOR_VERSION*" --sort=-creatordate | head -n1
+  git tag -l "$OPSI_MAJOR_VERSION*" --sort=-creatordate | head -n1 || true
   echo "in variable"
-  latestTag=$(git tag -l "$OPSI_MAJOR_VERSION*" --sort=-creatordate | head -n1)
+  latestTag=$(git tag -l "$OPSI_MAJOR_VERSION*" --sort=-creatordate | head -n1) || true
   echo "set to:..."
   echo "Latest tag is: $latestTag"
   git checkout "$latestTag"
