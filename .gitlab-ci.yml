@@ -552,6 +552,7 @@ build:addon: # with transifex
     - mv opsiweb/webgui webgui
     - mkdir -p webgui/sbom
     - cp -f opsiweb/sbom/* webgui/sbom/.
+    - mkdir -p output
     - touch output/changelog.md  # in case changelog is missing (usually in branches)
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
@@ -587,6 +588,7 @@ build:zip: # with transifex
     - mkdir -p webgui/sbom
     - cp -f opsiweb/sbom/* webgui/sbom/.
     - cp -r backend/addon/webgui/* webgui/
+    - mkdir -p output
     - touch output/changelog.md  # in case changelog is missing (usually in branches)
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
