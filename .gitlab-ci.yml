@@ -185,9 +185,9 @@ init:npm:production:
     - *define_globals
     - npm --production --only=prod i #--legacy-peer-deps # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
-    - *npm_sbom
-    - npm sbom --sbom-format cyclonedx --omit dev  > sbom/webgui-npm-cyclonedx.json
-    - npm sbom --sbom-format spdx --omit dev > sbom/webgui-npm-spdx.json
+    #- *npm_sbom
+    #- npm sbom --sbom-format cyclonedx --omit dev  > sbom/webgui-npm-cyclonedx.json
+    #- npm sbom --sbom-format spdx --omit dev > sbom/webgui-npm-spdx.json
   artifacts:
     paths:
       - opsiweb/package.json
@@ -201,13 +201,24 @@ init:npm:
     - *define_globals
     - npm i #--legacy-peer-deps
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
+  artifacts:
+    paths:
+      - opsiweb/package.json
+      - opsiweb/node_modules/
+    expire_in: 1 day
+
+init:sbom:
+  stage: init
+  script:
+    - cd opsiweb
+    - *define_globals
+    - npm i #--legacy-peer-deps
+    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
     - *npm_sbom
     - npm sbom --sbom-format cyclonedx --omit dev > sbom/webgui-npm-cyclonedx-dev.json
     - npm sbom --sbom-format spdx --omit dev > sbom/webgui-npm-spdx-dev.json
   artifacts:
     paths:
-      - opsiweb/package.json
-      - opsiweb/node_modules/
       - opsiweb/sbom
     expire_in: 1 day
 init:transifex:
@@ -507,6 +518,7 @@ build:static:app: # with transifex
   dependencies:
     - init:npm:production
     - init:transifex
+    - init:sbom
     # - test:lint # todo activate again for main
   script:
     - cd opsiweb
@@ -528,6 +540,7 @@ build:addon: # with transifex
     - init:npm:production # doesnt download artifacts from static-app
     - init:transifex
     - init:changelogs
+    - init:sbom
     # - build:static:app # already done in this job
   script:
     - *install_tools
@@ -568,6 +581,7 @@ build:zip: # with transifex
     - build:static:app
     - init:transifex
     - init:changelogs
+    - init:sbom
   script:
     - *install_tools
     - pwd && ls -la opsiweb
