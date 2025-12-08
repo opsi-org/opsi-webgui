@@ -26,6 +26,9 @@ variables:
   OPSI_ADMINPW: 'adminuser'
   MAIN: main
 
+environment:
+  FF_NETWORK_PER_BUILD: 1
+
 stages:
   - preinit
   - init
