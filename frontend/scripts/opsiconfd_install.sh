@@ -1,6 +1,19 @@
 #!/bin/bash
 set -e
-
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Starting environment setup script"
+echo "Current working directory: $(pwd)"
+echo "Environment variables:"
+echo "  OPSI_MAJOR_VERSION=${OPSI_MAJOR_VERSION}"
+echo "  OPSILICSRV_TOKEN=${OPSILICSRV_TOKEN:+***}"
+echo "  MYSQL_HOST=${MYSQL_HOST}"
+echo "  MYSQL_DATABASE=${MYSQL_DATABASE}"
+echo "  MYSQL_USER=${MYSQL_USER}"
+echo "  OPSICONFD_LOG_LEVEL=${OPSICONFD_LOG_LEVEL}"
+echo "  OPSI_ADMINUSER=${OPSI_ADMINUSER}"
+echo "  OPSI_ADMINPW=${OPSI_ADMINPW:+***}"
+##########################################################
+############################### set default environment variables
+##########################################################
 ## needed environment variables:
 OPSI_MAJOR_VERSION=${OPSI_MAJOR_VERSION:-4.3}
 OPSILICSRV_TOKEN=${OPSILICSRV_TOKEN:-}
