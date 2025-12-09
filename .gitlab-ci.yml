@@ -374,8 +374,8 @@ test:tsc:
     - *define_globals
     - *install_uv
     - *opsiconfd_install_dependencies
-    - *opsiconfd_repo
-    - *opsiconfd_prepare
+    #- *opsiconfd_repo
+    #- *opsiconfd_prepare
     - echo "##########################################"
     - echo "##################pytest##################"
     - echo "##########################################"
