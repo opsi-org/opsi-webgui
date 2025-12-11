@@ -19,9 +19,10 @@ OPSICONFD_ARGS = [
     "opsiconfd",
     "--workers=1",
     "--log-mode=redis",
-    "--log-level-stderr=5",
+    "--log-level-stderr=6",
     "--log-level-file=7",
     "--static-dir=/workspace/docker/opsiconfd/opsiconfd_data/static",
+    "--addon-dir=/workspace/backend/addon",
 ]
 
 
@@ -60,6 +61,7 @@ def cleanup():
             print("timeout reached, processes may still be running.", file=sys.stderr)
     except Exception as e:
         print(f"error cleaning up: {e}", file=sys.stderr)
+    print("Exiting cleanup.")
 
 
 def main():
@@ -76,6 +78,7 @@ def main():
     os.chdir(WORKDIR)
 
     try:
+        subprocess.run([OPSICONFD_CMD] + ["--version"], check=True)
         # subprocess.run([OPSICONFD_CMD] + OPSICONFD_ARGS_SETUP, check=True)
         subprocess.run([OPSICONFD_CMD] + OPSICONFD_ARGS, check=True)
     except subprocess.CalledProcessError as e:

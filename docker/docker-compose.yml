@@ -31,4 +31,7 @@ services:
       OPSICONFD_PORT: ${OPSICONFD_PORT}
       OPSICONFD_STATIC_DIR: /workspace/opsiconfd_data/static
       OPSICONFD_RESTORE_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
+
+      #OPSICONFD_ADDON_DIR: "/usr/lib/opsiconfd/addons"
+      OPSICONFD_ADDON_DIR: "/workspace/backend/addon"
     entrypoint: [ '/docker-entrypoint.sh' ]

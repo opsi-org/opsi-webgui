@@ -4,7 +4,7 @@ ENV_FILE=/workspace/docker/.env
 set -a
 source ${ENV_FILE}
 set +a
-sudo cp /workspace/addon/webgui /var/lib/opsiconfd/addons/.
+#sudo cp /workspace/backend/addon/webgui /var/lib/opsiconfd/addons/.
 
 CURRENT_DIR=$(dirname "$(readlink -f "$0")")
 echo "Current directory: $CURRENT_DIR"
