@@ -17,7 +17,7 @@ variables:
   OPSICONFD_LOG_LEVEL: '6'
   OPSICONFD_ADDON_DIRS: '../backend/addon'
   OPSICONFD_MAX_SESSIONS_PER_IP: '20000'
-  OPSICONFD_RESTORE_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
+  OPSICONFD_RESTORE_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
   MYSQL_ROOT_PASSWORD: 'opsi'
   MYSQL_DATABASE: 'opsitest'
   MYSQL_USER: 'opsi'
