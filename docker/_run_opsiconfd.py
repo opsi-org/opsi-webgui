@@ -11,7 +11,7 @@ print("OPSICONFD_PORT", port)
 
 WAIT_TIME_CLEANUP = 10
 TIMEOUT = 3
-WORKDIR = "/workspace/docker/backend/opsiconfd"
+WORKDIR = "/workspace/docker/opsiconfd"
 OPSICONFD_CMD = f"{WORKDIR}/.venv/bin/python"
 OPSICONFD_ARGS_SETUP = ["-m", "opsiconfd", "setup"]
 OPSICONFD_ARGS = [
@@ -21,7 +21,7 @@ OPSICONFD_ARGS = [
     "--log-mode=redis",
     "--log-level-stderr=5",
     "--log-level-file=7",
-    "--static-dir=/workspace/docker/backend/opsiconfd/opsiconfd_data/static",
+    "--static-dir=/workspace/docker/opsiconfd/opsiconfd_data/static",
 ]
 
 

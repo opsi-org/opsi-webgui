@@ -4,7 +4,7 @@
 *_tmp*
 .env
 *backup*
-docker/backend/opsiconfd
+docker/opsiconfd
 docker/frontend/opsi-docker
 *.opsilic
 backend/opsibackup

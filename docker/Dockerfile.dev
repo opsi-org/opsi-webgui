@@ -54,7 +54,7 @@ RUN mkdir -p /usr/local/share/keyrings \
 	opsi-utils \
 	&& apt-get clean
 
-COPY docker/backend/files/ /
+COPY docker/files/ /
 
 # Setup poetry
 RUN useradd --create-home -s /bin/bash ${DEV_USER} \
@@ -78,5 +78,9 @@ RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& chmod +x /*entrypoint.sh \
 	&& mkdir tftpboot \
 	&& chown -R $DEV_USER:$DEV_USER /workspace
+
+RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - \
+	&& apt-get install -y nodejs
+#&& npx playwright install --with-deps
 
 WORKDIR /workspace

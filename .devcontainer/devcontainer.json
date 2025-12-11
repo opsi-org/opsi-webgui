@@ -1,11 +1,11 @@
 {
-  "name": "opsi-webgui-backend-dev",
-  "dockerComposeFile": "../../docker-compose.yml",
-  "service": "opsi-webgui-backend-dev",
-  "runServices": ["opsi-webgui-frontend-dev", "opsi-server", "mysql", "redis", "grafana"],
-  "initializeCommand": ".devcontainer/opsi-webgui-container-backend/initialize.sh",
-  "postCreateCommand": ".devcontainer/opsi-webgui-container-backend/post_create.sh",
-  "postStartCommand": ".devcontainer/opsi-webgui-container-backend/post_start.sh",
+  "name": "opsi-webgui-dev",
+  "dockerComposeFile": "../docker/docker-compose.yml",
+  "service": "dev",
+  //"runServices": ["opsi-server", "mysql", "redis", "grafana"],
+  "initializeCommand": ".devcontainer/initialize.sh",
+  "postCreateCommand": ".devcontainer/post_create.sh",
+  "postStartCommand": ".devcontainer/post_start.sh",
   "workspaceFolder": "/workspace",
   "containerEnv": {
     "DEV_USER": "${localEnv:USER}",
@@ -43,12 +43,18 @@
         "python.testing.nosetestsEnabled": false,
         "python.testing.pytestEnabled": true,
         "python.testing.pytestPath": ".venv/bin/pytest",
-        "python.testing.pytestArgs": ["tests"],
+        "python.testing.pytestArgs": [
+          "tests"
+        ],
         "pylint.severity": {
           "refactor": "Information"
         },
-        "mypy-type-checker.path": [".venv/bin/mypy"],
-        "mypy-type-checker.args": ["--show-error-codes"]
+        "mypy-type-checker.path": [
+          ".venv/bin/mypy"
+        ],
+        "mypy-type-checker.args": [
+          "--show-error-codes"
+        ]
       },
       "extensions": [
         "ms-python.python",
@@ -61,7 +67,8 @@
         "Postman.postman-for-vscode",
         "ms-azuretools.vscode-docker",
         "docker.docker",
-        "seunlanlege.action-buttons"
+        "seunlanlege.action-buttons",
+        "GitHub.copilot-chat"
       ]
     }
   },

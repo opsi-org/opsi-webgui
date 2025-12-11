@@ -2,7 +2,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "opyiconfd py",
+			"name": "opsiconfd",
 			"type": "debugpy",
 			"request": "launch",
 			"program": "/workspace/docker/backend/_run_opsiconfd.py",
@@ -16,17 +16,11 @@
 			//"console": "integratedTerminal"
 		},
 		{
-			"name": "webgui this backend",
+			"name": "webgui",
 			"outputCapture": "std",
 			"request": "launch",
-			"preLaunchTask": "webgui-frontend-this-backend",
-			"type": "node"
-		},
-		{
-			"name": "webgui docker",
-			"outputCapture": "std",
-			"request": "launch",
-			"preLaunchTask": "webgui-frontend-docker",
+			"cwd": "${workspaceFolder}/frontend",
+			"preLaunchTask": "npm run dev",
 			"type": "node"
 		},
 	],

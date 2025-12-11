@@ -17,6 +17,7 @@ variables:
   OPSICONFD_LOG_LEVEL: '6'
   OPSICONFD_ADDON_DIRS: '../backend/addon'
   OPSICONFD_MAX_SESSIONS_PER_IP: '20000'
+  OPSICONFD_RESTORE_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
   MYSQL_ROOT_PASSWORD: 'opsi'
   MYSQL_DATABASE: 'opsitest'
   MYSQL_USER: 'opsi'
@@ -77,48 +78,6 @@ stages:
     exit $exit_code
   fi
 
-#########################################################################
-######################################################################### init
-#########################################################################
-.preinit:test:opsiconfd:
-  stage: preinit
-  image: mcr.microsoft.com/playwright:v1.56.0-noble
-  services:
-    - name: mysql:latest
-      command:
-        - --max_connections=1000
-      alias: mysql
-    - name: redislabs/redistimeseries:latest
-      alias: redis
-    #FF_NETWORK_PER_BUILD: true
-  script:
-    - *define_globals
-    - *install_uv
-    - *opsiconfd_install_dependencies
-    - *opsiconfd_repo
-    - *opsiconfd_prepare
-    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) copydata
-    #- bash scripts/build_production_local.sh webgui Webgui "$(pwd)/.." copydata
-    - sleep 30
-    - *opsiconfd_start
-    # start opsidoc screenshots
-    - cd frontend
-    - mkdir test-results
-    - npm ci
-    - npx playwright install-deps
-    - npx playwright test tests/screenshot/
-  artifacts:
-    paths:
-      - frontend/screenshots/opsidoc
-      - frontend/test-results/
-      # '${OPSICONFD_LOG_FILE}'
-      - /tmp/opsiconfd.log
-    expire_in: 2 days
-    when: always
-  only:
-    - tags
-    - v5
-    - test/opsidocs
 
 preinit:versions:
   stage: preinit
@@ -309,14 +268,29 @@ build:screenshot:
     - init:npm
     - init:transifex-down
   services:
-    - name: mysql:latest
+    - name: mysql:8.0
       command:
         - --max_connections=1000
-        #- mysql --host=mysql --user=root --password=opsi -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
-      alias: mysql
+        - --default-authentication-plugin=mysql_native_password
     - name: redislabs/redistimeseries:latest
       alias: redis
-    # FF_NETWORK_PER_BUILD: true
+    - name: docker.uib.gmbh/opsi/opsi-server:4.3-development
+      alias: opsiconfd
+  variables:
+    CI_DEBUG_SERVICES: "true" # Show debug information for services in ci
+    REDIS_HOST: redis
+    OPSI_HOST: opsiconfd
+    OPSI_ADMIN_PASSWORD: vhahd8usaz # also hardcoded in tests/utils.py
+    OPSI_HOST_ROLE: configserver
+    HOSTNAME: test.uib.gmbh
+    OPSICONFD_RESTORE_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
+    OPSI_HOST_ID: "test.uib.gmbh"
+    OPSI_TFTPBOOT: "false"
+    OPSICONFD_SSL_SERVER_CERT_SANS: "[opsiconfd]"
+    OPSICONFD_MAX_SESSIONS_PER_IP: "10000"
+
+  before_script:
+    - for trynum in $(seq 1 30); do curl --insecure https://opsiconfd:4447 && break; sleep 6; done
   script:
     - echo "> init"
     - *define_globals

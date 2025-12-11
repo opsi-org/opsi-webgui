@@ -5,6 +5,7 @@ echo "MYSQL_ROOT_PASSWORD = ${MYSQL_ROOT_PASSWORD}"
 echo "MYSQL_DATABASE = ${MYSQL_DATABASE}"
 echo "MYSQL_USER = ${MYSQL_USER}"
 echo "MYSQL_PASSWORD = ${MYSQL_PASSWORD}"
+echo "OPSICONFD_RESTORE_BACKUP_URL = ${OPSICONFD_RESTORE_BACKUP_URL}"
 
 [ -d /var/run/mysqld ] || sudo install -m 755 -o mysql -g root -d /var/run/mysqld
 
@@ -26,7 +27,15 @@ echo "* Create opsi test db"
 sudo mysql -u root -e "DROP DATABASE IF EXISTS opsitest;"
 sudo mysql -u root -e "CREATE DATABASE opsitest;"
 
-echo "* Fill opsi database with dev data"
-echo ${OPSI_HOSTNAME}
-zcat /confd-dev-data.sql.gz | sed 's/dev-server.uib.local/'${OPSI_HOSTNAME}'/g' | \
-	mariadb -h localhost -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE}
+echo "* Fill opsi database with dev data from $OPSICONFD_RESTORE_BACKUP_URL"
+
+#rm -f /confd-dev-data.sql.gz
+echo "hostname: ${OPSI_HOSTNAME}"
+DIR=confd-dev-data
+echo "Downloading backup from $OPSICONFD_RESTORE_BACKUP_URL"
+#echo "to $DIR.sql.gz"
+
+#wget -O "$OPSICONFD_RESTORE_BACKUP_URL"
+
+#zcat $DIR.sql.gz | sed 's/dev-server.uib.local/'${OPSI_HOSTNAME}'/g' | \
+#	mariadb -h localhost -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE}
