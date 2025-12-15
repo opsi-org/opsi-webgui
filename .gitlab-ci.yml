@@ -305,7 +305,8 @@ build:screenshot:
     - cd ..
     - echo "> webgui production init"
     - apt update && apt -y install zip git   # install dependencies for build_production_local.sh
-    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) copydata
+    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) noinstall
+    - curl --insecure --verbose -u adminuser:adminuser -F addonfile=@opsi-webgui.zip    https://$HOSTNAME:$OPSICONFD_PORT/admin/addons/install
     - sleep 10
     - echo "> webgui screenshots"
     - cd frontend
