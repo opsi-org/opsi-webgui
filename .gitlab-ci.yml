@@ -284,9 +284,9 @@ build:screenshot:
     OPSI_HOST: opsiconfd
     OPSI_ADMIN_PASSWORD: vhahd8usaz # also hardcoded in tests/utils.py
     OPSI_HOST_ROLE: configserver
-    HOSTNAME: test.uib.gmbh
+    HOSTNAME: opsiconfd
     OPSICONFD_RESTORE_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
-    OPSI_HOST_ID: "test.uib.gmbh"
+    OPSI_HOST_ID: "opsiconfd"
     OPSI_TFTPBOOT: "false"
     OPSICONFD_SSL_SERVER_CERT_SANS: "[opsiconfd]"
     OPSICONFD_MAX_SESSIONS_PER_IP: "10000"
@@ -294,6 +294,7 @@ build:screenshot:
     OPSICONFD_ADDON_DIR: ../backend/addon
 
   before_script:
+    - echo ">>>> Try cannect to opsiconfd at https://$HOSTNAME:$OPSICONFD_PORT"
     - for trynum in $(seq 1 30); do curl --insecure https://$HOSTNAME:$OPSICONFD_PORT && break; sleep 6; done
   script:
     - echo "> init"
