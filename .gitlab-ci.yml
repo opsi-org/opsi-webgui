@@ -80,6 +80,7 @@ stages:
     exit $exit_code
   fi
 
+# MARK: PREINIT
 preinit:versions:
   stage: preinit
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11 # cause smaller then node...
@@ -117,6 +118,7 @@ preinit:transifex-up:
     - tags
     - v5
 
+# MARK: INIT
 init:npm:
   stage: init
   script:
@@ -173,9 +175,7 @@ init:changelogs:
       - output
     expire_in: 1 day
 
-#########################################################################
-######################################################################### test
-#########################################################################
+# MARK: TEST
 test:security:
   stage: test
   dependencies:
@@ -257,11 +257,9 @@ test:tsc:
     - echo "##################pytest##################"
     - echo "##########################################"
     - *pytest
-  allow_failure: true ##### TODO remove again
+  allow_failure: true ##### TODO pytest do not work yet
 
-#########################################################################
-######################################################################### build
-#########################################################################
+# MARK: BUILD
 build:screenshot:
   stage: build
   image: mcr.microsoft.com/playwright:v1.56.0-noble
@@ -276,7 +274,7 @@ build:screenshot:
     - name: redislabs/redistimeseries:latest
       alias: redis
     - name: docker.uib.gmbh/opsi/opsi-server:4.3-development
-      alias: opsiconfd
+      alias: opsitest.acme.corp
   variables:
     CI_DEBUG_SERVICES: true # Show debug information for services in ci
     REDIS_HOST: redis
@@ -386,10 +384,7 @@ build:zip:dev: # with transifex
       - webgui-dev
     expire_in: 7 day
 
-#########################################################################
-######################################################################### publish
-#########################################################################
-
+# MARK: PUBLISH
 publish:obs_int:
   stage: publish
   dependencies:
