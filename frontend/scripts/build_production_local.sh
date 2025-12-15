@@ -47,7 +47,7 @@ cleanup() {
     echo 'Undo changes and exiting'
     if command -v git 2>&1 >/dev/null; then
         if [ "$IS_CICD" = "false" ]; then
-            git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/python/const.py || exit 70
+            git checkout -- ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/python/const.py || exit 70
         fi
     fi
     sed -i "s|const ADDON_PATH: string = .*|const ADDON_PATH: string = '$ADDON_PATH_ORIGIN'|" "$TS_CONST_FILE" || exit 13
@@ -122,7 +122,7 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
     $SUDO mv -f ${ADDON_ID}/ ${PATH_DATA}/. || exit 34
 
     if [ "$IS_CICD" = "false" ]; then
-        git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
+        git checkout -- ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
     fi
     echo "> local install done"
 
@@ -139,7 +139,7 @@ elif [ "$INSTALL" = "$SHOULD_COPY_DATA_CICD" ]; then
 
 
     if [ "$IS_CICD" = "false" ]; then
-        git restore ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
+        git checkout -- ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
     fi
     echo "> local copy done"
 elif [ "$INSTALL" = "$SHOULD_KEEP_DATA_UIFOLDER" ]; then
