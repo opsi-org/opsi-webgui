@@ -9,8 +9,8 @@ echo "  MYSQL_HOST=${MYSQL_HOST}"
 echo "  MYSQL_DATABASE=${MYSQL_DATABASE}"
 echo "  MYSQL_USER=${MYSQL_USER}"
 echo "  OPSICONFD_LOG_LEVEL=${OPSICONFD_LOG_LEVEL}"
-echo "  OPSI_ADMINUSER=${OPSI_ADMINUSER}"
-echo "  OPSI_ADMINPW=${OPSI_ADMINPW:+***}"
+echo "  OPSI_ADMIN_USER=${OPSI_ADMIN_USER}"
+echo "  OPSI_ADMIN_PASSWORD=${OPSI_ADMIN_PASSWORD:+***}"
 ##########################################################
 ############################### set default environment variables
 ##########################################################
@@ -22,8 +22,8 @@ MYSQL_DATABASE=${MYSQL_DATABASE:-opsitest}
 MYSQL_USER=${MYSQL_USER:-opsi}
 MYSQL_PASSWORD=${MYSQL_PASSWORD:-opsi}
 OPSICONFD_LOG_LEVEL=${OPSICONFD_LOG_LEVEL:-info}
-OPSI_ADMINUSER=${OPSI_ADMINUSER:-adminuser}
-OPSI_ADMINPW=${OPSI_ADMINPW:-adminuser}
+OPSI_ADMIN_USER=${OPSI_ADMIN_USER:-adminuser}
+OPSI_ADMIN_PASSWORD=${OPSI_ADMIN_PASSWORD:-adminuser}
 
 SUDO=""
 IS_CICD=${CI:-false}
@@ -87,7 +87,7 @@ $SUDO groupadd -g 2002 opsiadmin
 $SUDO useradd --system -g opsifileadmins -d /var/lib/opsi -s /bin/bash opsiconfd -G opsiadmin
 
 $SUDO useradd "${OPSI_ADMINUSER}"
-echo "${OPSI_ADMINUSER}:${OPSI_ADMINPW}" | chpasswd
+echo "${OPSI_ADMINUSER}:${OPSI_ADMIN_PASSWORD}" | chpasswd
 $SUDO adduser "${OPSI_ADMINUSER}" opsiadmin
 
 # Installing opsi test modules file

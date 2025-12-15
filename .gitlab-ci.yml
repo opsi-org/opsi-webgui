@@ -5,28 +5,28 @@ variables:
   FF_NETWORK_PER_BUILD: 1
   FF_SCRIPT_SECTIONS: 1
   DEBIAN_FRONTEND: noninteractive
-  OPSI_MAJOR_VERSION: '4.3' # used as branch/tag name "v$OPSI_VERSION" as well as a prefix for tags in opsiconfd
-  UV_PYTHON: '3.14'
+  OPSI_MAJOR_VERSION: "4.3" # used as branch/tag name "v$OPSI_VERSION" as well as a prefix for tags in opsiconfd
+  UV_PYTHON: "3.14"
   UV_INSTALL_DIR: /opt/uv
-  UV_PYTHON_PREFERENCE: 'only-managed'
+  UV_PYTHON_PREFERENCE: "only-managed"
   PYTHONUNBUFFERED: 1
-  OPSICONFD_REDIS_INTERNAL_URL: 'redis://redis'
+  OPSICONFD_REDIS_INTERNAL_URL: "redis://redis"
   #OPSICONFD_LOG_FILE: '/tmp/opsiconfd.log'
   #OPSICONFD_LOG_LEVEL_STDERR: '0'
-  OPSICONFD_LOG_LEVEL_FILE: '6'
-  OPSICONFD_LOG_LEVEL: '6'
+  OPSICONFD_LOG_LEVEL_FILE: "6"
+  OPSICONFD_LOG_LEVEL: "6"
   #OPSICONFD_ADDON_DIRS: 'backend/addon'
-  OPSICONFD_MAX_SESSIONS_PER_IP: '20000'
+  OPSICONFD_MAX_SESSIONS_PER_IP: "20000"
   OPSICONFD_RESTORE_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
-  MYSQL_ROOT_PASSWORD: 'opsi'
-  MYSQL_DATABASE: 'opsitest'
-  MYSQL_USER: 'opsi'
-  MYSQL_PASSWORD: 'opsi'
-  MYSQL_HOST: 'mysql'
-  OPSI_ADMINUSER: 'adminuser'
-  OPSI_ADMINPW: 'adminuser'
-  OPSICONFD_PORT: '4447'
-  WEBGUI_DEV_PORT: '8888'
+  MYSQL_ROOT_PASSWORD: "opsi"
+  MYSQL_DATABASE: "opsitest"
+  MYSQL_USER: "opsi"
+  MYSQL_PASSWORD: "opsi"
+  MYSQL_HOST: "mysql"
+  OPSI_ADMIN_USER: "adminuser"
+  OPSI_ADMIN_PASSWORD: "adminuser"
+  OPSICONFD_PORT: "4447"
+  WEBGUI_DEV_PORT: "8888"
   MAIN: main
 
 stages:
@@ -79,7 +79,6 @@ stages:
     cat /tmp/opsiconfd.log
     exit $exit_code
   fi
-
 
 preinit:versions:
   stage: preinit
@@ -169,7 +168,7 @@ init:changelogs:
     - v5
     - ci/zip-dev
   artifacts:
-    name: 'opsi-webgui-changelogs'
+    name: "opsi-webgui-changelogs"
     paths:
       - output
     expire_in: 1 day
@@ -284,8 +283,8 @@ build:screenshot:
     OPSI_HOST: opsiconfd
     OPSI_ADMIN_PASSWORD: vhahd8usaz # also hardcoded in tests/utils.py
     OPSI_HOST_ROLE: configserver
-    HOSTNAME: opsi.acme.corp
-    OPSI_HOST_ID: opsi.acme.corp
+    HOSTNAME: opsitest.acme.corp
+    OPSI_HOST_ID: opsitest.acme.corp
     OPSI_TFTPBOOT: "false"
     OPSICONFD_SSL_SERVER_CERT_SANS: "[opsiconfd]"
     OPSICONFD_MAX_SESSIONS_PER_IP: "10000"
@@ -305,9 +304,9 @@ build:screenshot:
     - cd ..
     # workspace folder
     - echo "> webgui production init"
-    - apt update && apt -y install zip git   # install dependencies for build_production_local.sh
+    - apt update && apt -y install zip git # install dependencies for build_production_local.sh
     - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) noinstall
-    - curl --insecure --verbose -u adminuser:adminuser -F addonfile=@frontend/opsi-webgui.zip "https://$HOSTNAME:$OPSICONFD_PORT/admin/addons/install"
+    - curl --insecure --verbose -u "$OPSI_ADMIN_USER:$OPSI_ADMIN_PASSWORD" -F addonfile=@frontend/opsi-webgui.zip "https://$HOSTNAME:$OPSICONFD_PORT/admin/addons/install"
     - sleep 10
     # frontend folder
     - echo "> webgui screenshots"
@@ -360,7 +359,7 @@ build:zip: # with transifex
     - v5
     - ci/zip-dev
   artifacts:
-    name: 'opsi-webgui'
+    name: "opsi-webgui"
     paths:
       - frontend/locale
       - webgui
@@ -381,7 +380,7 @@ build:zip:dev: # with transifex
     - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui-dev Webgui-Dev $(pwd) no-install
     - ls -lah webgui-dev # debug
   artifacts:
-    name: 'opsi-webgui-dev'
+    name: "opsi-webgui-dev"
     paths:
       - frontend/locale
       - webgui-dev
