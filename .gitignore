@@ -3,6 +3,7 @@
 *.tmp*
 *_tmp*
 .env
+.env.*
 *backup*
 docker/opsiconfd
 docker/frontend/opsi-docker
