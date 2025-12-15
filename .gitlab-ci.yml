@@ -1,5 +1,5 @@
 image: node:23.0.0-bookworm-slim
-
+# MARK: ENV
 variables:
   CI: true
   FF_NETWORK_PER_BUILD: 1
@@ -37,6 +37,7 @@ stages:
   - upload
   - publish
 
+# MARK: SCRIPTS
 .define_globals: &define_globals |
   shopt -s expand_aliases
 
@@ -262,7 +263,7 @@ test:tsc:
 # MARK: BUILD
 build:screenshot:
   stage: build
-  image: mcr.microsoft.com/playwright:v1.56.0-noble
+  image: mcr.microsoft.com/playwright:v1.57.0-noble
   dependencies:
     - init:npm
     - init:transifex-down
