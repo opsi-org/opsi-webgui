@@ -34,3 +34,4 @@ screenshots/opsidoc/
 __pycache__
 opsiconfd/
 .vscode
+webgui-dev/
