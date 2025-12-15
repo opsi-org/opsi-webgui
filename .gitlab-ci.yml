@@ -279,14 +279,14 @@ build:screenshot:
     - name: docker.uib.gmbh/opsi/opsi-server:4.3-development
       alias: opsiconfd
   variables:
-    CI_DEBUG_SERVICES: "true" # Show debug information for services in ci
+    CI_DEBUG_SERVICES: true # Show debug information for services in ci
     REDIS_HOST: redis
     OPSI_HOST: opsiconfd
     OPSI_ADMIN_PASSWORD: vhahd8usaz # also hardcoded in tests/utils.py
     OPSI_HOST_ROLE: configserver
-    HOSTNAME: "opsi.acme.corp"
+    HOSTNAME: opsi.acme.corp
     OPSICONFD_RESTORE_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
-    OPSI_HOST_ID: "opsi.acme.corp"
+    OPSI_HOST_ID: opsi.acme.corp
     OPSI_TFTPBOOT: "false"
     OPSICONFD_SSL_SERVER_CERT_SANS: "[opsiconfd]"
     OPSICONFD_MAX_SESSIONS_PER_IP: "10000"
@@ -295,7 +295,7 @@ build:screenshot:
 
   before_script:
     - echo ">>>> Try cannect to opsiconfd at https://$HOSTNAME:$OPSICONFD_PORT"
-    - for trynum in $(seq 1 30); do curl --insecure https://$HOSTNAME:$OPSICONFD_PORT && break; sleep 10; done
+    - for trynum in $(seq 1 30); do curl --insecure https://$HOSTNAME:$OPSICONFD_PORT && break; sleep 6; done
   script:
     - echo "> init"
     - *define_globals
@@ -305,14 +305,9 @@ build:screenshot:
     - npm ci
     - cd ..
     - echo "> webgui production init"
-    - apt update
-    - apt search zip
-    - apt -y install zip
-    - cat /etc/apt/sources.list
+    - apt update && apt -y install zip git   # install dependencies for build_production_local.sh
     - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) copydata
-    - sleep 30
-    - echo "> opsiconfd start"
-    - *opsiconfd_start
+    - sleep 10
     - echo "> webgui screenshots"
     - cd frontend
     - npx playwright install-deps
