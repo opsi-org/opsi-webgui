@@ -292,21 +292,24 @@ build:screenshot:
     #OPSICONFD_ADDON_DIR: backend/addon
 
   before_script:
-    - echo ">>>> Try cannect to opsiconfd at https://$HOSTNAME:$OPSICONFD_PORT"
+    - echo ">>>> Try connect to opsiconfd at https://$HOSTNAME:$OPSICONFD_PORT"
     - for trynum in $(seq 1 30); do curl --insecure https://$HOSTNAME:$OPSICONFD_PORT && break; sleep 6; done
   script:
     - echo "> init"
     - *define_globals
+    # frontend folder
     - echo "> webgui init"
     - cd frontend
     - mkdir test-results
     - npm ci
     - cd ..
+    # workspace folder
     - echo "> webgui production init"
     - apt update && apt -y install zip git   # install dependencies for build_production_local.sh
     - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) noinstall
     - curl --insecure --verbose -u adminuser:adminuser -F addonfile=@opsi-webgui.zip    https://$HOSTNAME:$OPSICONFD_PORT/admin/addons/install
     - sleep 10
+    # frontend folder
     - echo "> webgui screenshots"
     - cd frontend
     - npx playwright install-deps
