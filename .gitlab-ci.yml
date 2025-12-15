@@ -292,7 +292,6 @@ build:screenshot:
     #OPSICONFD_ADDON_DIR: backend/addon
 
   before_script:
-    - ln -sf backend/addon/webgui /data/opsiconfd/addons/webgui
     - echo ">>>> Try cannect to opsiconfd at https://$HOSTNAME:$OPSICONFD_PORT"
     - for trynum in $(seq 1 30); do curl --insecure https://$HOSTNAME:$OPSICONFD_PORT && break; sleep 6; done
   script:
