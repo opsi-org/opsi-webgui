@@ -305,6 +305,7 @@ build:screenshot:
     - npm ci
     - cd ..
     - echo "> webgui production init"
+    - apt update && apt -y install zip
     - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) copydata
     - sleep 30
     - echo "> opsiconfd start"
