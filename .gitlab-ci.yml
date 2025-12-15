@@ -15,7 +15,7 @@ variables:
   #OPSICONFD_LOG_LEVEL_STDERR: '0'
   OPSICONFD_LOG_LEVEL_FILE: '6'
   OPSICONFD_LOG_LEVEL: '6'
-  OPSICONFD_ADDON_DIRS: '../backend/addon'
+  #OPSICONFD_ADDON_DIRS: 'backend/addon'
   OPSICONFD_MAX_SESSIONS_PER_IP: '20000'
   OPSICONFD_RESTORE_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
   MYSQL_ROOT_PASSWORD: 'opsi'
@@ -285,15 +285,14 @@ build:screenshot:
     OPSI_ADMIN_PASSWORD: vhahd8usaz # also hardcoded in tests/utils.py
     OPSI_HOST_ROLE: configserver
     HOSTNAME: opsi.acme.corp
-    OPSICONFD_RESTORE_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
     OPSI_HOST_ID: opsi.acme.corp
     OPSI_TFTPBOOT: "false"
     OPSICONFD_SSL_SERVER_CERT_SANS: "[opsiconfd]"
     OPSICONFD_MAX_SESSIONS_PER_IP: "10000"
-    OPSICONFD_ADDONS_DIR: ../backend/addon
-    OPSICONFD_ADDON_DIR: ../backend/addon
+    #OPSICONFD_ADDON_DIR: backend/addon
 
   before_script:
+    - ln -sf backend/addon/webgui /data/opsiconfd/addons/webgui
     - echo ">>>> Try cannect to opsiconfd at https://$HOSTNAME:$OPSICONFD_PORT"
     - for trynum in $(seq 1 30); do curl --insecure https://$HOSTNAME:$OPSICONFD_PORT && break; sleep 6; done
   script:
@@ -316,6 +315,7 @@ build:screenshot:
     paths:
       - frontend/screenshots/
     expire_in: 7 days
+    when: always
   only:
     - tags
     - v5
