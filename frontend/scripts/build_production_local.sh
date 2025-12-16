@@ -16,7 +16,8 @@ SHOULD_KEEP_DATA_UIFOLDER=no-install
 SHOULD_INSTALL_DATA=install
 SHOULD_INSTALL_USR=installusr
 SHOULD_COPY_DATA_CICD=copydata
-PATH_DATA="/data/opsiconfd/addons"
+#PATH_DATA="/data/opsiconfd/addons"
+PATH_DATA="/var/lib/opsiconfd/addons"
 PATH_USR="/workspace/backend/addon"
 FRONTEND_DIR=frontend
 BACKEND_DIR=backend
@@ -126,10 +127,10 @@ if [ "$INSTALL" = "$SHOULD_INSTALL_DATA" ]; then
     fi
     echo "> local install done"
 
-    CONTAINER=$($SUDO docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
-    echo "> reload supervisorctl in container: $CONTAINER"
-    $SUDO docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
-    echo ""
+    #CONTAINER=$($SUDO docker ps --format "{{.Names}}" | grep gui | grep -v gui-43 | grep server | grep opsi)
+    #echo "> reload supervisorctl in container: $CONTAINER"
+    #$SUDO docker exec -u root ${CONTAINER} supervisorctl reload || exit 80
+    echo "IMPORTANT: please reload opsiconfd"
     echo "IMPORTANT: Access your webgui at: https://....:${port}${ADDON_PATH}/app"
 elif [ "$INSTALL" = "$SHOULD_COPY_DATA_CICD" ]; then
     $SUDO rm -rf ${WORKING_DIR}/${BACKEND_DIR}/addon/${ADDON_ID} || exit 22
@@ -141,6 +142,7 @@ elif [ "$INSTALL" = "$SHOULD_COPY_DATA_CICD" ]; then
     if [ "$IS_CICD" = "false" ]; then
         git checkout -- ${WORKING_DIR}/backend/addon/${WEBGUI_DIR}/data/app/README.md || exit 71
     fi
+    curl -I -u ${OPSI_ADMIN_USER:adminuser}:${OPSI_ADMIN_PW:adminuser} https://localhost:$OPSICONFD_PORT/admin/reload
     echo "> local copy done"
 elif [ "$INSTALL" = "$SHOULD_KEEP_DATA_UIFOLDER" ]; then
     # move $(pwd)/${ADDON_ID} to working directory (used in cicd)
