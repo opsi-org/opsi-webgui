@@ -6,8 +6,8 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <PFloatLabel variant="in">
-    <PToggleSwitch
+  <p-float-label variant="in">
+    <p-toggle-switch
       v-model="isDarkMode"
       id="cbAutorefresh"
       name="autorefresh"
@@ -19,7 +19,7 @@ License: AGPL-3.0
     <label for="cbAutorefresh" class="text-xs !pb-2" :class="isDarkMode ? 'text-white' : 'pl-4 '">{{
       isDarkMode ? $t('dark') : $t('light')
     }}</label>
-  </PFloatLabel>
+  </p-float-label>
 </template>
 
 <script setup lang="ts">
