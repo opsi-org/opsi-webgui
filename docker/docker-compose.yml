@@ -15,8 +15,10 @@ services:
         - USER
         - UID
     volumes:
-      - ${PWD}/:/workspace
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ../:/workspace
+      #- ${PWD}/:/workspace
+      - ./files/docker-entrypoint.sh:/entrypoint.sh
+      #- /var/run/docker.sock:/var/run/docker.sock
     ports:
       - ${OPSICONFD_PORT}:${OPSICONFD_PORT}
     environment:
@@ -34,4 +36,4 @@ services:
 
       #OPSICONFD_ADDON_DIR: "/usr/lib/opsiconfd/addons"
       OPSICONFD_ADDON_DIR: "/workspace/backend/addon"
-    entrypoint: [ '/docker-entrypoint.sh' ]
+    entrypoint: [ '/entrypoint.sh' ]

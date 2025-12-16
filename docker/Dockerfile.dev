@@ -80,6 +80,7 @@ RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& chown -R $DEV_USER:$DEV_USER /workspace
 
 RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - \
+	&& apt update \
 	&& apt-get install -y nodejs
 #&& npx playwright install --with-deps
 

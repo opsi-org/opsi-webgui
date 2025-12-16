@@ -44,16 +44,16 @@ if cd $DOCKERDIR; then git pull; else git clone git@gitlab.uib.gmbh:uib/opsiconf
 # evtl muss hier noch ein uv sync o.ä. passieren
 
 echo "################# backend: setup backend if needed" # (IGNORE_OTHER_ENV is set to false)
-ENVFILE_FRONTEND=$WORKSPACE_DIR/docker/frontend/.env
-DEVENVSCRIPT=$WORKSPACE_DIR/.devcontainer/opsi-webgui-container-frontend/devenv.sh
+#ENVFILE_FRONTEND=$WORKSPACE_DIR/docker/frontend/.env
+#DEVENVSCRIPT=$WORKSPACE_DIR/.devcontainer/opsi-webgui-container-frontend/devenv.sh
 
-if [ "$IGNORE_OTHER_ENV" = "true" ]; then
-    echo "Skipping backend setup because --ignore-other-envs is set."
-elif [ "$FORCE" = "true" ]; then
-    bash $DEVENVSCRIPT --force --ignore-other-envs --yes
-else
-    bash $DEVENVSCRIPT --ignore-other-envs --yes
-fi
+#if [ "$IGNORE_OTHER_ENV" = "true" ]; then
+#    echo "Skipping backend setup because --ignore-other-envs is set."
+#elif [ "$FORCE" = "true" ]; then
+#    bash $DEVENVSCRIPT --force --ignore-other-envs --yes
+#else
+#    bash $DEVENVSCRIPT --ignore-other-envs --yes
+#fi
 
 
 
@@ -89,12 +89,13 @@ fi
 echo JEMALLOC_VERSION=5.2.1 >> $ENVFILE
 echo OPSILICSRV_URL=$OPSILICSRV_URL  >> $ENVFILE
 echo OPSILICSRV_TOKEN=$OPSILICSRV_TOKEN  >> $ENVFILE
-echo OPSICONFD_ADDON_DIRS=["/var/lib/opsiconfd/addons","/usr/lib/opsiconfd/addons"]
-echo OPSICONFD_MYSQL_INTERNAL_URL=mysql://opsi:opsi@opsi-webgui-mysql-1:3306/opsi
-echo MYSQL_HOST=mysql
-echo MYSQL_DATABASE=opsi
-echo MYSQL_USER=opsi
-echo MYSQL_PASSWORD=opsi
-echo MYSQL_PORT=3306
-echo REDIS_HOST=redis
-echo GRAFANA_HOST=grafana
+echo OPSICONFD_ADDON_DIRS=["/var/lib/opsiconfd/addons","/usr/lib/opsiconfd/addons"] >> $ENVFILE
+#echo OPSICONFD_MYSQL_INTERNAL_URL=mysql://opsi:opsi@opsi-webgui-mysql-1:3306/opsi >> $ENVFILE
+echo OPSICONFD_MYSQL_INTERNAL_URL=mysql://opsi:opsi@localhost:3306/opsi >> $ENVFILE
+echo MYSQL_HOST=localhost >> $ENVFILE
+echo MYSQL_DATABASE=opsi >> $ENVFILE
+echo MYSQL_USER=opsi >> $ENVFILE
+echo MYSQL_PASSWORD=opsi >> $ENVFILE
+echo MYSQL_PORT=3306 >> $ENVFILE
+echo REDIS_HOST=redis >> $ENVFILE
+echo GRAFANA_HOST=grafana >> $ENVFILE

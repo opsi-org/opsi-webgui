@@ -36,15 +36,17 @@ This project espacially the devcontainer is not for production usage. To install
 ### Environment
 
 - Requirements: Docker, VisualStudioCode with 'Remote - Container' extension
+
 ### Structure
+
 - `.devcontainer/`: VSCode devcontainer configuration files and installation files of tools (zsh, uv, opsi-dev-cli)
 - `docker/`: Docker related files \
   `docker/opsiconfd/`: Local opsiconfd from git for development
 - `frontend/`: Webgui frontend source code (Nuxt)
 - `backend/`: Webgui backend source code (Python FastAPI)
 
-
 ### Build development environment
+
 - **Clone project and open** it in VSCode with `git clone https://github.com/opsi-org/opsi-webgui.git`
 - **Reopen** the project in remote-container (as vscode suggests) and select your primary container
   (Hint: `Strg + Shift + P` opens command palette; search for: `(rebuild and) reopen in container` )
@@ -56,17 +58,19 @@ This project espacially the devcontainer is not for production usage. To install
   - You may want to update this file/s. After this you will be able to start container and the applications
 
 ### Start applications
-* **opsiconfd (44472)**:
+
+- **opsiconfd (44472)**:
   - First you need to start the opsiconfd server: `sudo bash /workspace/docker/run_opsiconfd.sh`. This will start opsiconfd on port $OPSICONFD_PORT (default 44472)
   - server data at folder `/etc/opsi/...`
   - Accept certificate of opsiconfd: `https://localhost:44472/admin`
   - Updating: `cd /workspace/docker/opsiconfd && git pull` (not tested yet)
   - Hints:
     - Be patient with cancelling the opsiconfd command (uv -> Ctrl + C), it may take some time to shutdown properly. Otherwise it may keep running in background. You could use `"kill $(lsof -t -i:$OPSICONFD_PORT)"` to kill the process.
-* **webgui (8888)**:
+- **webgui (8888)**:
   - Then you can start the development webgui: `cd /workspace/frontend/ && npm run dev`. This will start the webgui on port $WEBGUI_DEV_PORT (default 8889)
   - Access webgui at: `https://localhost:8888/`
   - The webgui is connected to the opsiconfd server started before
+  - ATTENTION: Playwright tests do not work currently in the devcontainer! (opsiconfd uses a deb10 container, but playwright needs at least deb12)
 
 ### Contributing
 
