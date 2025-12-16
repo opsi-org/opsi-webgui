@@ -314,7 +314,7 @@ build:screenshot:
     - npx playwright test tests/screenshot/
   artifacts:
     paths:
-      - test-results/
+      - frontend/test-results/
     expire_in: 7 days
     when: always
   only:
