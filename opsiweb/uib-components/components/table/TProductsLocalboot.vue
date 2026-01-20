@@ -90,7 +90,7 @@
         />
       </template>
       <template #cell(modificationTime)="row">
-        <small>{{ new Date(row.item.modificationTime).toLocaleString() }}</small>
+        <small v-if="row.item.modificationTime">{{ new Date(row.item.modificationTime).toLocaleString() }}</small>
       </template>
       <template #cell(advice)="row">
         <small> <vue-markdown>{{ row.item.advice }}</vue-markdown> </small>

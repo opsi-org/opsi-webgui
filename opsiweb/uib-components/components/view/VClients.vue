@@ -114,7 +114,7 @@
           </template>
           <template #cell(lastSeen)="row">
             <!-- as utc -->
-            <small>{{ new Date(row.item.lastSeen).toLocaleString() }}</small>
+            <small v-if="row.item.lastSeen">{{ new Date(row.item.lastSeen).toLocaleString() }}</small>
           </template>
 
           <template #cell(version_outdated)="row">
