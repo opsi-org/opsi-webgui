@@ -559,16 +559,6 @@ build:zip: # with transifex
 ######################################################################### PUBLISH
 #########################################################################
 
-publish:obs_int:
-  stage: publish
-  dependencies:
-    - build:static:app
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  script:
-    - opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.3:development
-  only:
-    - tags
-
 publish:obs_ext:
   stage: publish
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
