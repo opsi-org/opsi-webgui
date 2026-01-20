@@ -113,7 +113,8 @@
             <IconIIcon v-if="row.item.uefi" :icon="icon.check" />
           </template>
           <template #cell(lastSeen)="row">
-            <small>{{ date(row.item.lastSeen) }}</small>
+            <!-- as utc -->
+            <small>{{ new Date(row.item.lastSeen).toLocaleString() }}</small>
           </template>
 
           <template #cell(version_outdated)="row">
