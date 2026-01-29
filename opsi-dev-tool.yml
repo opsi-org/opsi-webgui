@@ -26,7 +26,7 @@ project:
   version_files:
     opsi-dev-tool.yml: pull-binaries[0].version
     opsiweb/package.json: "$.version"
-    backend/addon/webgui/opsi-dev-tool.yml: "project.version"
+    backend/addon/webgui/python/opsi-dev-tool.yml: "project.version"
     backend/addon/webgui/python/const.py: 'ADDON_VERSION'
 pull-binaries:
   - architecture: x64
