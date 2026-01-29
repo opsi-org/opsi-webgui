@@ -143,4 +143,11 @@ async def authenticate(connection: HTTPConnection, receive: Receive) -> None:
 	username = form.get("username")
 	password = form.get("password")
 	mfa_otp = form.get("mfa_otp")
-	await opsiconfd_authenticate(connection.scope, username, password, mfa_otp)  # type: ignore
+	#await opsiconfd_authenticate(connection.scope, username, password, mfa_otp)  # type: ignore
+	result = await opsiconfd_authenticate(
+        scope=connection.scope,
+        username=username,
+        password=password,
+        mfa_otp=mfa_otp,
+    )
+	logger.debug(f"Authentication result for user {username}: {result}")
