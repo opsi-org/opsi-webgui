@@ -137,9 +137,10 @@ async def authenticate(connection: HTTPConnection, receive: Receive) -> None:
 	logger.info("Start authentication of client %s", connection.client.host)  # type: ignore[union-attr]
 	username = None
 	password = None
+	mfa_otp = None
 	req = Request(connection.scope, receive)
 	form = await req.form()
 	username = form.get("username")
 	password = form.get("password")
-
-	await opsiconfd_authenticate(connection.scope, username, password)  # type: ignore
+	mfa_otp = form.get("mfa_otp")
+	await opsiconfd_authenticate(connection.scope, username, password, mfa_otp)  # type: ignore
