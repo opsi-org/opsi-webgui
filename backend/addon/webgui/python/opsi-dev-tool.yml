@@ -1,6 +1,6 @@
 project:
   name: opsi-webgui-backend
-  version: 1.0.0
+  version: "4.3.47.4"
   description: backend for opsi webgui
   homepage: http://www.opsi.org
   licenses:
