@@ -15,7 +15,6 @@ package:
     cp -a "${SRC}"/opsiweb/dist/* "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui/data/app"
   type: binary
 project:
-  allow_tag_delete: false
   description: opsi webgui
   homepage: http://www.opsi.org
   licenses:
