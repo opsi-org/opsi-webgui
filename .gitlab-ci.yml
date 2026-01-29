@@ -279,7 +279,7 @@ test:lint:
   script:
     - npm run lint
 
-test:accessibility:
+.test:accessibility:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
   dependencies:
@@ -305,7 +305,7 @@ test:accessibility:
     reports:
       junit: opsiweb/.config/test-result-pw-reporter-accessibility.xml
     expire_in: 1 day
-test:usecase:
+.test:usecase:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
   dependencies:
@@ -334,7 +334,7 @@ test:usecase:
       junit: opsiweb/.config/test-result-pw-reporter-usecase.xml
     expire_in: 1 day
 
-test:components:changes:
+.test:components:changes:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
@@ -373,7 +373,7 @@ test:components:changes:
     reports:
       junit: ./opsiweb/.config/test-result-pw-reporter-components.xml
     expire_in: 1 day
-test:components:
+.test:components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
@@ -410,7 +410,7 @@ test:components:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 3 day
 
-test:backend-pytest:
+.test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
   services:
     - name: mysql:latest
@@ -436,7 +436,7 @@ test:backend-pytest:
 ######################################################################### build
 #########################################################################
 
-build:screenshots:docs: # with transifex
+.build:screenshots:docs: # with transifex
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: build
   dependencies:
