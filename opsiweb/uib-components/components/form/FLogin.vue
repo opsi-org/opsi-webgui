@@ -181,7 +181,7 @@ export default class FLogin extends Vue {
     const User = new FormData()
     User.append('username', this.form.username)
     User.append('password', this.form.password)
-    User.append('mfa_otp', this.totp)
+    User.append('mfa_otp', this.totp ? this.totp.toString() : '')
     this.$axios.post('/api/auth/login', User)
       .then((response) => {
         if (response.data.result === 'Login success') {
