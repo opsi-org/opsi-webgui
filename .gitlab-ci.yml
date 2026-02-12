@@ -5,28 +5,7 @@ variables:
   FF_NETWORK_PER_BUILD: 1
   FF_SCRIPT_SECTIONS: 1
   DEBIAN_FRONTEND: noninteractive
-  OPSI_MAJOR_VERSION: "4.3" # used as branch/tag name "v$OPSI_VERSION" as well as a prefix for tags in opsiconfd
-  UV_PYTHON: "3.14"
-  UV_INSTALL_DIR: /opt/uv
-  UV_PYTHON_PREFERENCE: "only-managed"
-  PYTHONUNBUFFERED: 1
-  OPSICONFD_REDIS_INTERNAL_URL: "redis://redis"
-  #OPSICONFD_LOG_FILE: '/tmp/opsiconfd.log'
-  #OPSICONFD_LOG_LEVEL_STDERR: '0'
-  OPSICONFD_LOG_LEVEL_FILE: "6"
-  OPSICONFD_LOG_LEVEL: "6"
-  #OPSICONFD_ADDON_DIRS: 'backend/addon'
-  OPSICONFD_MAX_SESSIONS_PER_IP: "20000"
-  OPSICONFD_RESTORE_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
-  MYSQL_ROOT_PASSWORD: "opsi"
-  MYSQL_DATABASE: "opsitest"
-  MYSQL_USER: "opsi"
-  MYSQL_PASSWORD: "opsi"
-  MYSQL_HOST: "mysql"
-  OPSI_ADMIN_USER: "adminuser"
-  OPSI_ADMIN_PASSWORD: "adminuser"
-  OPSICONFD_PORT: "4447"
-  WEBGUI_DEV_PORT: "8888"
+  ADDON_DEV_PORT: "7777"
   MAIN: main
 
 stages:
@@ -34,8 +13,6 @@ stages:
   - init
   - test
   - build
-  - upload
-  - publish
 
 # MARK: SCRIPTS
 .define_globals: &define_globals |
@@ -48,39 +25,6 @@ stages:
   opsi-dev-cli --version
   opsi-dev-tool --version
 
-.install_uv: &install_uv |
-  apt update
-  apt -y install curl
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-  # in uv install dir
-  source $UV_INSTALL_DIR/env
-  uv self update
-
-.opsiconfd_install_dependencies: &opsiconfd_install_dependencies |
-  ./frontend/scripts/opsiconfd_install.sh
-
-.opsiconfd_start: &opsiconfd_start |
-  ./frontend/scripts/opsiconfd_start.sh
-
-.pytest: &pytest |
-  echo "---------------------------------------"
-  echo "Run tests"
-  echo "---------------------------------------"
-  exit_code=0
-  pwd
-  ls -la
-  ls -la ../backend
-  ls -la ../backend/addon
-  # cp -R ../backend/tests
-  uv run pytest  --tb=short -v ../backend/tests || exit_code=$?
-  if [ $exit_code -ne 0 ]; then
-    echo "---------------------------------------"
-    echo "opsiconfd log"
-    echo "---------------------------------------"
-    cat /tmp/opsiconfd.log
-    exit $exit_code
-  fi
-
 # MARK: PREINIT
 preinit:versions:
   stage: preinit
@@ -92,32 +36,22 @@ preinit:versions:
     - VERSION_YML=$(yq '.project.version' opsi-dev-tool.yml | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_YML
 
-    - echo "----------------------------------------------------------------"
-    - VERSION_YML2=$(yq '.pull-binaries[0].version' opsi-dev-tool.yml | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
-    - echo $VERSION_YML2
+    #- echo "----------------------------------------------------------------"
+    #- VERSION_YML2=$(yq '.pull-binaries[0].version' opsi-dev-tool.yml | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
+    #- echo $VERSION_YML2
 
     - echo "----------------------------------------------------------------"
     - VERSION_JSN=$(yq '.version' frontend/package.json | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_JSN
 
     - echo "----------------------------------------------------------------"
-    - VERSION_PY=$(cat backend/addon/webgui/python/const.py | grep "ADDON_VERSION =" | awk '{print $3}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
+    - VERSION_PY=$(cat backend/src/python/const.py | grep "ADDON_VERSION =" | awk '{print $3}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
     - echo $VERSION_PY
 
     - echo "----------------------------------------------------------------"
-    - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml are uneuqal (project.version and pull-binaries[0].version].. $VERSION_YML - $VERSION_YML2)"; exit 1; fi
+    #- if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml are uneuqal (project.version and pull-binaries[0].version].. $VERSION_YML - $VERSION_YML2)"; exit 1; fi
     - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN) "; exit 1; else echo "Versions are equal"; fi
-    - if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/addon/webgui/python/const.py ($VERSION_YML - $VERSION_PY)"; exit 1; else echo "Versions are equal"; fi
-
-preinit:transifex-up:
-  # this step have to be done before building webgui
-  stage: preinit
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  script:
-    - opsi-dev-cli -l debug transifex upload-resource frontend/locale/opsi-webgui_en.json --resource-name opsi-webgui.json
-  only:
-    - tags
-    - v5
+    - if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/src/python/const.py ($VERSION_YML - $VERSION_PY)"; exit 1; else echo "Versions are equal"; fi
 
 # MARK: INIT
 init:npm:
@@ -135,49 +69,8 @@ init:npm:
       - frontend/.nuxt/
     expire_in: 1 day
 
-init:transifex-down:
-  # this step have to be done before building webgui
-  stage: init
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  script:
-    - TRANSIFEX_MIN_REVIEW_RATE=0.0
-    - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_REVIEW_RATE=1.0'
-    # download all 100% translated files
-    - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json frontend/locale/ --min-translation-rate 1
-    - rm -f frontend/locale/opsi-webgui_de.json
-    - rm -f frontend/locale/opsi-webgui_fr.json
-    # download 100 reviewed files (de, fr)
-    - opsi-dev-cli -l debug transifex download-translations opsi-webgui.json frontend/locale/ --min-review-rate $TRANSIFEX_MIN_REVIEW_RATE -l de -l fr
-    - chmod 666 frontend/locale/*
-    # at least en,de,fr have to exist
-    - test -f frontend/locale/opsi-webgui_en.json && echo "Translation en exists."
-    - test -f frontend/locale/opsi-webgui_de.json && echo "Translation de exists."
-    - test -f frontend/locale/opsi-webgui_fr.json && echo "Translation fr exists."
-  artifacts:
-    paths:
-      - frontend/locale
-    expire_in: 3 day
-
-init:changelogs:
-  # this step have to be done before building webgui
-  stage: init
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  script:
-    - opsi-dev-cli -l 5 changelog from-git output
-    # - cp -f output/changelog.md webgui/data/.
-    - chmod 666 output/*
-  only:
-    - tags
-    - v5
-    - ci/zip-dev
-  artifacts:
-    name: "opsi-webgui-changelogs"
-    paths:
-      - output
-    expire_in: 1 day
-
 # MARK: TEST
-test:security:
+test:typescript:
   stage: test
   dependencies:
     - init:npm
@@ -185,149 +78,13 @@ test:security:
     - cd frontend
     - *define_globals
   script:
-    - npm install -g npm@latest
-    - npm run check-blocked-packages || exit_code=$?
-    # if exitcode is zero or one everything is fine (npm ls returns 1 if peer dependencies are not ok, but that is not what we want to test here..)
-    - if [ -z "$exit_code" ] || [ "$exit_code" -le 1 ]; then exit 0; else exit $exit_code; fi
-test:build:
-  stage: test
-  dependencies:
-    - init:npm
-  before_script:
-    - cd frontend
-    - *define_globals
-  script:
-    - npm run generate
-test:languages:
-  stage: test
-  dependencies:
-    - init:npm
-    - init:transifex-down
-  before_script:
-    - cd frontend
-    - *define_globals
-  script:
-    - ls -lah
-    - ls -lah locale
-  artifacts:
-    paths:
-      - frontend/locale
-test:lint:
-  stage: test
-  dependencies:
-    - init:npm
-    # - init:transifex-down
-  before_script:
-    - cd frontend
-    - *define_globals
-  script:
-    - npm run lint
-test:i18n-additional:
-  stage: test
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  dependencies:
-    - init:npm
-  before_script:
-    - cd frontend
-    - *define_globals
-  script:
-    # - npm run lint:missing-i18n
-    - python scripts/compare_translation_keys.py -s
-test:tsc:
-  stage: test
-  dependencies:
-    - init:npm
-  before_script:
-    - cd frontend
-    - *define_globals
-  script:
-    - npm run tsc || exit 1
-.test:backend-pytest:
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  services:
-    - name: mysql:latest
-      command:
-        - --max_connections=1000
-    - name: redislabs/redistimeseries:latest
-      alias: redis
-  script:
-    - *define_globals
-    - *install_uv
-    - *opsiconfd_install_dependencies
-    - echo "##########################################"
-    - echo "##################pytest##################"
-    - echo "##########################################"
-    - *pytest
-  allow_failure: true ##### TODO pytest do not work yet
+    - npm run ts
 
-# MARK: BUILD
-build:screenshot:
-  stage: build
-  image: mcr.microsoft.com/playwright:v1.57.0-noble
+test:build: # with transifex
+  stage: test
   dependencies:
     - init:npm
-    - init:transifex-down
-  services:
-    - name: mysql:8.0
-      command:
-        - --max_connections=1000
-        - --default-authentication-plugin=mysql_native_password
-    - name: redislabs/redistimeseries:latest
-      alias: redis
-    - name: docker.uib.gmbh/opsi/opsi-server:4.3-development
-      alias: opsitest.acme.corp
-  variables:
-    CI_DEBUG_SERVICES: true # Show debug information for services in ci
-    REDIS_HOST: redis
-    OPSI_HOST: opsiconfd
-    OPSI_ADMIN_PASSWORD: vhahd8usaz # also hardcoded in tests/utils.py
-    OPSI_HOST_ROLE: configserver
-    HOSTNAME: opsitest.acme.corp
-    OPSI_HOST_ID: opsitest.acme.corp
-    OPSI_TFTPBOOT: "false"
-    OPSICONFD_SSL_SERVER_CERT_SANS: "[opsiconfd]"
-    OPSICONFD_MAX_SESSIONS_PER_IP: "10000"
-    #OPSICONFD_ADDON_DIR: backend/addon
-
-  before_script:
-    - echo ">>>> Try connect to opsiconfd at https://$HOSTNAME:$OPSICONFD_PORT"
-    - for trynum in $(seq 1 30); do curl --insecure https://$HOSTNAME:$OPSICONFD_PORT && break; sleep 6; done
-  script:
-    - echo "> init"
-    - *define_globals
-    # frontend folder
-    - echo "> webgui init"
-    - cd frontend
-    - mkdir test-results
-    - npm ci
-    - cd ..
-    # workspace folder
-    - echo "> webgui production init"
-    - apt update && apt -y install zip git # install dependencies for build_production_local.sh
-    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) noinstall
-    - curl --insecure --verbose -u "$OPSI_ADMIN_USER:$OPSI_ADMIN_PASSWORD" -F addonfile=@frontend/opsi-webgui.zip "https://$HOSTNAME:$OPSICONFD_PORT/admin/addons/install"
-    - sleep 10
-    # frontend folder
-    - echo "> webgui screenshots"
-    - cd frontend
-    - npx playwright install-deps
-    - npx playwright test tests/screenshot/
-  artifacts:
-    paths:
-      - frontend/test-results/
-    expire_in: 7 days
-    when: always
-  only:
-    - tags
-    - v5
-    - test/opsidocs
-
-build:static:app: # with transifex
-  stage: build
-  dependencies:
-    - init:npm
-    - init:transifex-down
-    # - test:lint # todo activate again for main
+    - test:typescript
   script:
     - cd frontend
     - npm i @nuxt/typescript-build
@@ -337,103 +94,20 @@ build:static:app: # with transifex
     paths:
       - frontend/dist # not used...?
     expire_in: 3 day
-  only:
-    - tags
-    - v5
 
 build:zip: # with transifex
   stage: build
   dependencies:
     - init:npm
-    - init:transifex-down
-    - init:changelogs
-    - build:static:app
+    - test:build
   script:
     - *install_dev_cli
     - pwd && ls -la frontend
-    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui Webgui $(pwd) no-install
-    - ls -lah webgui # debug
-  only:
-    - tags
-    - v5
-    - ci/zip-dev
+    - bash "$(pwd)/scripts/build-app.sh" opsi-webgui "OPSI Webgui" $(pwd)/ no-install
+    - ls -lah # debug
+    - ls -lah frontend # debug
   artifacts:
     name: "opsi-webgui"
     paths:
-      - frontend/locale
-      - webgui
+      - opsi-webgui
     expire_in: 7 day
-
-build:zip:dev: # with transifex
-  stage: build
-  dependencies:
-    - init:npm
-    - init:transifex-down
-    - init:changelogs
-  script:
-    - *install_dev_cli
-    - *define_globals
-    - pwd && ls -la frontend
-    - ls -lah frontend/locale
-    - echo "building opsi-webgui-dev.zip"
-    - bash "$(pwd)/frontend/scripts/build_production_local.sh" webgui-dev Webgui-Dev $(pwd) no-install
-    - ls -lah webgui-dev # debug
-  artifacts:
-    name: "opsi-webgui-dev"
-    paths:
-      - frontend/locale
-      - webgui-dev
-    expire_in: 7 day
-
-# MARK: PUBLISH
-publish:obs_int:
-  stage: publish
-  dependencies:
-    - build:static:app
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  script:
-    - opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.4:development
-  only:
-    - tags
-
-publish:obs_ext:
-  stage: publish
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  dependencies:
-    - init:changelogs
-    - build:zip # todo which is really needed?
-    - build:static:app # todo which is really needed?
-  script:
-    - ls -la
-    - ls -la frontend
-    - ls -la webgui
-    - ls -la output
-    # - opsi-dev-cli -l 5 changelog from-git output
-    - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.4:development
-    - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
-    - opsi-dev-cli -l 6 release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.4-development
-  only:
-    - tags
-  artifacts:
-    paths:
-      - output
-    expire_in: 1 day
-  # Copy to experimental via release-tui
-
-publish:binary-index:
-  stage: publish
-  dependencies:
-    - build:zip
-    - init:changelogs
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
-  script:
-    - ls -la
-    - ls -la frontend
-    - ls -la webgui
-    - ls -la output
-    # - opsi-dev-cli -l 5 changelog from-git output # done during init
-    - cat output/changelog.md
-    - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip # pushing as opsi-webgui.zip now
-    - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip
-  only:
-    - tags

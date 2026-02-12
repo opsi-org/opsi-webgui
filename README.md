@@ -1,77 +1,62 @@
-# Official opsi-webgui
+# bgprevent-opsi-webgui
 
-This is the source of the official opsi-webgui for the open source client management solution opsi.
+This repository contains the opsi Client Migration Tool, which helps administrators migrate their existing opsi clients to a new opsi server. The tool is designed to simplify the migration process and ensure a smooth transition for users. This is an opsiconfd addon that provides a web-based interface.
 
-The opsi-webgui is a web-based graphical user interface for managing the opsi system. It simplifies the deployment and management tasks, without installing an application on your device. With opsi-webgui, you can configure the opsi-servers, set up new opsi-clients, deploy products, inspect logs from any device with a web browser and more.
+It is part of the larger opsi project, an open-source client management system for Windows and Linux clients.
+For more information about opsi, visit the official website: https://opsi.org/
 
-For further information about the webgui technology, installation or the usage checkout opsi docs [en](https://docs.opsi.org/opsi-docs-en/4.3/gui/webgui.html)/[de](https://docs.opsi.org/opsi-docs-de/4.3/gui/webgui.html)
+## Installation
 
-Further links:
+You can install these via the admin interface under the ‘Addons’ tab (similar to the description for the web GUI https://docs.opsi.org/opsi-docs-de/4.3/gui/webgui/installation.html#opsiwebgui-installation-admininterface). The add-on is then accessible at https://<configserver>/addons/opsi-webgui/app/.
 
-- https://docs.opsi.org
-- https://opsi.org/ https://opsi.org/de/blog/
-- https://www.uib.de/
-- LinkedIn: uib GmbH
-- Twitter/X: @opsi_org @uibDE
+## Configuration
 
-## Quick installation guide (Production)
+When the add-on is installed, a configuration file is automatically created on the server under `/etc/opsi/opsiconfd-addon-opsi-webgui.yaml`, in which the product lists in particular can be customised. The following entries are currently the default (even if they are not explicitly stated in the file):
 
-This project espacially the devcontainer is not for production usage. To install the webgui from official sources see this chapter.
+```yaml
+# Location of this config file: /etc/opsi/opsiconfd-addon-opsi-webgui.yaml
+log:
+  path: ‘/var/log/opsi/opsiconfd/addons/opsi-webgui’
+  level: ‘INFO’ # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  rotate-max-bytes: 10485760 # 10 MB
+  rotate-backup-count: 5
 
-### Installation from sources
+client-id-prefix:
+  old: ‘bad-’
+  new: ‘bgp-device-’
 
-- optional: use `experimental`/`testing`/`stable` branch by editiing the content of `/etc/apt/sources.list.d/opsi.list`
-- run `sudo apt update && sudo apt install opsi-webgui`
-- restart opsiconfd: `sudo systemctl restart opsiconfd`
-- checkout https://YOUROPSISERVER:OPSICONFD_PORT/addons/webgui/app
+products: # Lists of productIds
+  allowed: []
+  must-have: []
+# For example: [‘opsi-cli’, ‘opsi-configed’, ...]
+# or:
+#    allowed:
+#        - opsi-cli
+#        - opsi-configed
+```
 
-### Installation using Zip
+## Permissions
 
-- get zip from https://tools.43.opsi.org/stable/opsi-webgui.zip
-- upload zip through https://YOUROPSISERVER:OPSICONFD_PORT/admin/#addons
-- checkout https://YOUROPSISERVER:OPSICONFD_PORT/addons/webgui/app
+### Configuration file
 
-## Development
+To prevent unauthorised persons from editing the file, a Unix group can be created and assigned to the file. The group contains the users who are allowed to edit the configuration file. The user “opsiconfd” only has read access to the file (after its initial creation). If he is the owner of the file, he does not need to be in this group.
 
-### Environment
+### Add-on user permissions
 
-- Requirements: Docker, VisualStudioCode with 'Remote - Container' extension
+Currently, all opsiadmins can use the add-on (provided they know the URL or can find it on the admin interface). This was discussed at the kick-off meeting. If there is a need to restrict this, we are happy to discuss it.
 
-### Structure
+Logging: In addition to the existing logging of the opsiconfd, there is a type of event logging with a separate log level. The aim is to be able to track which user did what and when – without going into too much detail. Example during a migration
 
-- `.devcontainer/`: VSCode devcontainer configuration files and installation files of tools (zsh, uv, opsi-dev-cli)
-- `docker/`: Docker related files \
-  `docker/opsiconfd/`: Local opsiconfd from git for development
-- `frontend/`: Webgui frontend source code (Nuxt)
-- `backend/`: Webgui backend source code (Python FastAPI)
+```
+[6] [2026-01-22 12:43:03.047] [opsi-webgui] [adminuser    ] Start opsi-webgui (old-client: pytest-client-5.domain.local , new-client: pytest-host-12.domain.local , new-server: pytest-opsi-2.uib.local , product_ids: ['pytest-prod-1', 'pytest-prod-5'] , on-demand: False, delete-old: False)   (clients.py:100)
+[6] [2026-01-22 12:43:03.298] [opsi-webgui] [adminuser    ] Migration done for client pytest-host-12.domain.local. Products skipped/failed: []   (clients.py:165)
+```
 
-### Build development environment
+## Client lists
 
-- **Clone project and open** it in VSCode with `git clone https://github.com/opsi-org/opsi-webgui.git`
-- **Reopen** the project in remote-container (as vscode suggests) and select your primary container
-  (Hint: `Strg + Shift + P` opens command palette; search for: `(rebuild and) reopen in container` )
-  - the container starts and creates an environment file `docker/.env` \
-    during the first initial setup you might need to update this file/s depending on your environment and needs (e.g. git username/email, hostname, domain, etc)
-    ATTENTION: This file/s may be a source of building errors if not configured properly! Espacially the following properties must be set correctly:
-    - `HOSTNAME`: The hostname of your development machine (e.g. `mydevmachine.localdomain`)
-    - `OPSI_DOMAIN` / `DOMAIN`: The domain of your development machine (e.g. `localdomain`)
-  - You may want to update this file/s. After this you will be able to start container and the applications
+The left side shows all clients whose prefix is ‘bad-’. The right client side filters by the prefix ‘bgp-device-’ and an empty client description to distinguish which client has already been migrated. This is because the description is a mandatory field during migration.
 
-### Start applications
+## Migration
 
-- **opsiconfd (44472)**:
-  - First you need to start the opsiconfd server: `sudo bash /workspace/docker/run_opsiconfd.sh`. This will start opsiconfd on port $OPSICONFD_PORT (default 44472)
-  - server data at folder `/etc/opsi/...`
-  - Accept certificate of opsiconfd: `https://localhost:44472/admin`
-  - Updating: `cd /workspace/docker/opsiconfd && git pull` (not tested yet)
-  - Hints:
-    - Be patient with cancelling the opsiconfd command (uv -> Ctrl + C), it may take some time to shutdown properly. Otherwise it may keep running in background. You could use `"kill $(lsof -t -i:$OPSICONFD_PORT)"` to kill the process.
-- **webgui (8888)**:
-  - Then you can start the development webgui: `cd /workspace/frontend/ && npm run dev`. This will start the webgui on port $WEBGUI_DEV_PORT (default 8889)
-  - Access webgui at: `https://localhost:8888/`
-  - The webgui is connected to the opsiconfd server started before
-  - ATTENTION: Playwright tests do not work currently in the devcontainer! (opsiconfd uses a deb10 container, but playwright needs at least deb12)
-
-### Contributing
-
-For information on how to contribute to this project, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+All products selected in the interface are set to setup, plus their dependencies. The selection options are (in principle) based on the ProductOnDepots of the (new) depot, depending on the list of fundamentally permitted and must-have products. Properties: All ProductPropertyStates of the old client (the selected products) are moved (even if they have the same value in principle).
+After migration confirmation and thus setting the description, new depots if necessary, the products, properties, and on_demand if necessary, the old client is deleted and the licences used (in licence management) are released.

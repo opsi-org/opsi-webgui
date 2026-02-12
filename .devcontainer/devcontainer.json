@@ -1,7 +1,7 @@
 {
   "name": "opsi-webgui-dev",
   "dockerComposeFile": "../docker/docker-compose.yml",
-  "service": "dev",
+  "service": "opsi-webgui-dev",
   "initializeCommand": ".devcontainer/initialize.sh",
   "postCreateCommand": ".devcontainer/post_create.sh",
   "postStartCommand": ".devcontainer/post_start.sh",
@@ -10,14 +10,15 @@
     "DEV_USER": "${localEnv:USER}",
     "DEV_UID": "${localEnv:UID}",
     "OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
-    "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}"
+    "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
+    "ADDON_NAME": "OPSI Webgui",
+    "ADDON_ID": "opsi-webgui",
+    "ADDON_DEV_PORT": "8888"
   },
   "customizations": {
     "vscode": {
       "extensions": [
         // General
-        "ms-azuretools.vscode-docker",
-        "docker.docker",
         "seunlanlege.action-buttons",
         "GitHub.copilot-chat",
         "shardulm94.trailing-spaces",
@@ -26,12 +27,7 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ryanluker.vscode-coverage-gutters",
-        "ms-python.mypy-type-checker",
         "charliermarsh.ruff",
-        "cweijan.dbclient-jdbc",
-        "cweijan.vscode-database-client2",
-        "Postman.postman-for-vscode",
-        // "streetsidesoftware.code-spell-checker", used ?
         // frontend
         "Vue.volar",
         "wejectchan.vue3-snippets-for-vscode",

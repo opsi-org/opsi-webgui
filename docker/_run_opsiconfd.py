@@ -13,16 +13,35 @@ WAIT_TIME_CLEANUP = 10
 TIMEOUT = 3
 WORKDIR = "/workspace/docker/opsiconfd"
 OPSICONFD_CMD = f"{WORKDIR}/.venv/bin/python"
+url = os.environ.get("OPSICONFD_RESTORE_BACKUP_URL", None)
+serverid = os.environ.get("OPSI_HOSTNAME", "opsi.acme.corp")
+OPSICONFD_RESTORE = [
+    "-m",
+    "opsiconfd",
+    "restore",
+    "--config-files",
+    "--redis-data",
+    "--server-id",
+    serverid,
+]
+OPSICONFD_RENAME_ARGS = [
+    "-m",
+    "opsiconfd",
+    "setup",
+    "--rename-server",
+    serverid,
+]
 OPSICONFD_ARGS_SETUP = ["-m", "opsiconfd", "setup"]
 OPSICONFD_ARGS = [
     "-m",
     "opsiconfd",
     "--workers=1",
     "--log-mode=redis",
-    "--log-level-stderr=6",
+    "--log-level-stderr=7",
     "--log-level-file=7",
     "--static-dir=/workspace/docker/opsiconfd/opsiconfd_data/static",
-    "--addon-dir=/workspace/backend/addon",
+    # "--addon-dir=/workspace/backend/addon",
+    "--cors-origin=*",
 ]
 
 
@@ -34,34 +53,34 @@ def cleanup():
     # wait 5 seconds
     print(f"Cleanup in {WAIT_TIME_CLEANUP} seconds...")
     time.sleep(WAIT_TIME_CLEANUP)
-    try:
-        print("Sending SIGTERM to all opsiconfd processes...")
-        p1 = subprocess.run(
-            ["pgrep", "-f", "opsiconfd"], capture_output=True, text=True, check=False
-        )
-        pids = [
-            pid
-            for pid in p1.stdout.strip().split("\n")
-            if pid and pid != str(os.getpid())
-        ]
-        if pids:
-            subprocess.run(["kill"] + pids, check=False)
-            print("Cleanup completed (1).")
-        else:
-            print("Cleanup completed (2).")
-
-        print(f"Waiting for opsiconfd processes to terminate... ({TIMEOUT} seconds)")
-        for i in range(TIMEOUT):
-            time.sleep(1)
-            check = subprocess.run(["pgrep", "-f", "opsiconfd"], capture_output=True)
-            if not check.stdout.strip():
-                print("Cleanup completed (3)")
-                break
-        else:
-            print("timeout reached, processes may still be running.", file=sys.stderr)
-    except Exception as e:
-        print(f"error cleaning up: {e}", file=sys.stderr)
+    kill_opsiconfd_processes()
     print("Exiting cleanup.")
+
+
+def kill_opsiconfd_processes():
+    cmd = "pkill -f ' opsiconfd' && ps -af | grep 'opsiconfd'"
+    try:
+        print("Killing existing opsiconfd processes...")
+        subprocess.run(cmd, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"no opsiconfd processes to kill: {e}", file=sys.stderr)
+
+
+def restore_backup():
+    if not url:
+        print("No OPSICONFD_RESTORE_BACKUP_URL set, skipping restore.")
+        return
+    # dowload json file from url and restore
+    print("Restoring backup from", url)
+    filename = "/workspace/opsi.acme.corp_4.3.json"
+    requests_cmd = ["curl", "-o", filename, url]
+    subprocess.run(requests_cmd, check=True)
+    res = subprocess.run([OPSICONFD_CMD] + OPSICONFD_RESTORE + [filename], check=True)
+
+    # delete backup file
+    os.remove(filename)
+    print("Backup restored and file removed.")
+    # subprocess.run([OPSICONFD_CMD] + OPSICONFD_RESTORE, check=True)
 
 
 def main():
@@ -76,10 +95,17 @@ def main():
 
     print("> run opsiconfd")
     os.chdir(WORKDIR)
+    kill_opsiconfd_processes()
+    try:
+        restore_backup()
+    except Exception as e:
+        print(f"error restoring backup: {e}", file=sys.stderr)
 
     try:
+        subprocess.run([OPSICONFD_CMD] + OPSICONFD_RENAME_ARGS, check=False)
         subprocess.run([OPSICONFD_CMD] + ["--version"], check=True)
-        # subprocess.run([OPSICONFD_CMD] + OPSICONFD_ARGS_SETUP, check=True)
+        ## download backup file from url
+
         subprocess.run([OPSICONFD_CMD] + OPSICONFD_ARGS, check=True)
     except subprocess.CalledProcessError as e:
         print(f"error starting opsiconfd: {e}", file=sys.stderr)

@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["app/**/*.ts", "app/**/*.tsx", "app/**/!(*.story).vue"],
+  "exclude": [
+    "../**/*.story.vue",
+    "../**/*.test.component.ts",
+    "node_modules/**/*",
+    "dist/**/*",
+    "1_new/**/*"
+  ]
+  /*"vueCompilerOptions": {
+    "target": 2.7
+  }*/
+}

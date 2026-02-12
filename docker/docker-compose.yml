@@ -1,8 +1,7 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  # context is /workspace/docker/
-  dev:
+  opsi-webgui-dev:
     hostname: ${OPSI_HOSTNAME}
     env_file: .env
     privileged: true
@@ -16,11 +15,7 @@ services:
         - UID
     volumes:
       - ../:/workspace
-      #- ${PWD}/:/workspace
       - ./files/docker-entrypoint.sh:/entrypoint.sh
-      #- /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - ${OPSICONFD_PORT}:${OPSICONFD_PORT}
     environment:
       GF_INSTALL_PLUGINS: grafana-simple-json-datasource
       GF_SECURITY_ADMIN_USER: adminuser
@@ -34,6 +29,5 @@ services:
       OPSICONFD_STATIC_DIR: /workspace/opsiconfd_data/static
       OPSICONFD_RESTORE_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
 
-      #OPSICONFD_ADDON_DIR: "/usr/lib/opsiconfd/addons"
-      OPSICONFD_ADDON_DIR: "/workspace/backend/addon"
-    entrypoint: [ '/entrypoint.sh' ]
+      OPSICONFD_ADDON_DIR: "/workspace/backend/src"
+    entrypoint: ["/entrypoint.sh"]

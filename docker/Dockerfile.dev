@@ -1,8 +1,10 @@
-FROM docker.uib.gmbh/opsi/dev/pybuilder:deb10-py3.13 AS opsi_webgui_backend_build_43
+FROM docker.uib.gmbh/opsi/dev/pybuilder:deb10-py3.13 AS oad_client_migration_backend_build_43
 
 ARG DOCKER_ENV
 ARG USER
 ARG UID
+ARG ADDON_NAME
+ARG ADDON_ID
 
 ENV DOCKER_ENV=${DOCKER_ENV} \
 	DEV_USER=${USER} \
@@ -79,9 +81,15 @@ RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& mkdir tftpboot \
 	&& chown -R $DEV_USER:$DEV_USER /workspace
 
-RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - \
+RUN curl -fsSL https://deb.nodesource.com/setup_25.x | bash - \
 	&& apt update \
-	&& apt-get install -y nodejs
+	&& apt-get install -y nodejs \
+	&& npm install -g eslint \
+	&& npm install -g depcheck
+
 #&& npx playwright install --with-deps
+RUN rm -f /var/lib/opsiconfd/addons/${ADDON_ID}
+RUN mkdir -p /var/lib/opsiconfd/addons/
+RUN ln -s /workspace/backend/src /var/lib/opsiconfd/addons/${ADDON_ID}
 
 WORKDIR /workspace

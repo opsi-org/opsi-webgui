@@ -9,19 +9,21 @@
 test opsiconfd webgui products
 """
 
-import socket
-import pytest
-from string import Template
-import requests
 import json
 import os
+import socket
+from string import Template
+
+import pytest
+import requests
 from fastapi import status
 
 API_ROOT = "/addons/webgui/api/opsidata"
 
-from .utils import ( # pylint: disable=unused-import
-	config, clean_redis, database_connection, create_check_data, disable_request_warning,
-	ADMIN_USER, ADMIN_PASS
+from .utils import (  # pylint: disable=unused-import
+	ADMIN_PASS,
+	#config, clean_redis, database_connection, create_check_data, disable_request_warning,
+	ADMIN_USER,
 )
 
 FQDN = socket.getfqdn()

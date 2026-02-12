@@ -4,7 +4,6 @@ ENV_FILE=/workspace/docker/.env
 set -a
 source ${ENV_FILE}
 set +a
-#sudo cp /workspace/backend/addon/webgui /var/lib/opsiconfd/addons/.
 
 CURRENT_DIR=$(dirname "$(readlink -f "$0")")
 echo "Current directory: $CURRENT_DIR"
@@ -15,7 +14,7 @@ echo "redis ${REDIS_OPSICONFD_REDIS_INTERNAL_URL}"
 echo "currently ignore mysql create table error"
 echo "Running as $(whoami)"
 cd ${CURRENT_DIR}/opsiconfd
-/root/.local/bin/uv sync --frozen
+/root/.local/bin/uv sync --frozen --group dev
 cd -
 
 ${CURRENT_DIR}/opsiconfd/.venv/bin/python ${CURRENT_DIR}/_run_opsiconfd.py
