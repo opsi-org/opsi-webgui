@@ -1,78 +1,38 @@
-git:
-  hooks:
-    pre-push: |
-      #bash /workspace/frontend/scripts/prehook.sh || exit 1
-      # cd /workspace/frontend/
-      # file=".tmp_prepush_result_changed_files.log"
-      # echo "> Test Changed files"
-      # bash ./scripts/devhelper.sh all-changed .test.component.ts pwtest:components $file v4.4
-      ## bash ./scripts/devhelper.sh all-changed .test.component.js test:all:components $file || exit_code=$?
-      # echo "====================================================== Check test files"
-      # bash ./scripts/playwright_coverage_by_files.sh $file
-      # # rm $file
-      # echo "======================================================"
-      # echo ""
-      # cd ..
-      # echo "exitcode $exit_code"
-      # exit $exit_code
 package:
   architecture: all
   depends:
-    - opsiconfd (>= 4.3.24.0)
+    - opsiconfd (>= 4.3.47.10)
   name: opsi-webgui
-  postinst_script:
-    - echo "OPSI webgui folder '/usr/lib/opsiconfd/addons/webgui'"
-    - '[ -e /var/lib/opsiconfd/addons/webgui ] && rm -r /var/lib/opsiconfd/addons/webgui'
-    - exit 0
-  source_script: |
-    mkdir -p "${DST}/rootfs/usr/lib/opsiconfd/addons"
-    cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui"
-    mkdir -p "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui/data"
-    ls -la "${SRC}/opsiweb/dist/"
-    cp -a "${SRC}"/opsiweb/dist/* "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui/data/app"
   type: binary
 project:
   allow_tag_delete: false
-  description: opsi webgui
+  description: opsiconfd addon opsi-webgui
   homepage: http://www.opsi.org
   licenses:
     - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
   name: opsi-webgui
-  version: '4.3.99.2'
+  version: "1.0.1"
   version_files:
-    opsi-dev-tool.yml: pull-binaries[0].version
-    frontend/package.json: '$.version'
-    backend/addon/webgui/python/const.py: 'ADDON_VERSION'
-pull-binaries:
-  - architecture: x64
-    branch: development
-    destination: '.'
-    extract: true
-    name: opsi-webgui
-    os: linux
-    post-script:
-      - WEBGUI_VERSION=$(grep $FILE -A 42 -e project | grep -m 1 "version" )
-      - echo "webgui-version row $WEBGUI_VERSION"
-      - WEBGUI_VERSION=$(echo $WEBGUI_VERSION | awk '{print $2}')
-      - echo "webgui-version row-value $WEBGUI_VERSION"
-      - WEBGUI_VERSION=$(echo $WEBGUI_VERSION | sed -e s/"//g | sed -e s/,//g)
-      - zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui
-      - ls -lah
-    server-type: binaryindex
-    server-url: http://binaryindex.uib.gmbh
-    version: '4.3.99.2'
-transifex:
-  download_translations:
-    - install_dir: frontend/locale
-      languages:
-        - de
-        - fr
-      organization: opsi-org
-      project: opsiorg
-      resource_name: opsi-webgui.json
-  upload_resources:
-    - organization: opsi-org
-      project: opsiorg
-      resource_file: frontend/locale/opsi-webgui_en.json
-      resource_name: opsi-webgui.json
+    #opsi-dev-tool.yml: pull-binaries[0].version
+    frontend/package.json: "$.version"
+    backend/src/python/const.py: "ADDON_VERSION"
+#pull-binaries:
+#  - architecture: x64
+#    branch: development
+#    destination: "."
+#    extract: true
+#    name: opsi-webgui
+#    os: linux
+#    post-script:
+#     - VERSION=$(grep $FILE -A 42 -e project | grep -m 1 "version" )
+#     - echo "opsi-webgui-version row $VERSION"
+#     - VERSION=$(echo $VERSION | awk '{print $2}')
+#     - echo "opsi-webgui-version row-value $VERSION"
+#     - VERSION=$(echo $VERSION | sed -e s/"//g | sed -e s/,//g)
+#     - zip -r opsiconfd-addon-opsi-webgui_${opsi-webgui_VERSION}.zip opsi-webgui
+#     - ls -lah
+#  server-type: binaryindex
+#   server-url: http://binaryindex.uib.gmbh
+#   version: "0.0.0"
+#

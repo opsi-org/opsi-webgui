@@ -1,0 +1,47 @@
+{
+  "name": "opsi-webgui-dev",
+  "dockerComposeFile": "../docker/docker-compose.yml",
+  "service": "opsi-webgui-dev",
+  "initializeCommand": ".devcontainer/initialize.sh",
+  "postCreateCommand": ".devcontainer/post_create.sh",
+  "postStartCommand": ".devcontainer/post_start.sh",
+  "workspaceFolder": "/workspace",
+  "containerEnv": {
+    "DEV_USER": "${localEnv:USER}",
+    "DEV_UID": "${localEnv:UID}",
+    "OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
+    "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
+    "ADDON_NAME": "OPSI Webgui",
+    "ADDON_ID": "opsi-webgui",
+    "ADDON_DEV_PORT": "8888"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // General
+        "seunlanlege.action-buttons",
+        "GitHub.copilot-chat",
+        "shardulm94.trailing-spaces",
+        "gruntfuggly.todo-tree",
+        // backend
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ryanluker.vscode-coverage-gutters",
+        "charliermarsh.ruff",
+        // frontend
+        "Vue.volar",
+        "wejectchan.vue3-snippets-for-vscode",
+        "lokalise.i18n-ally",
+        "bradlc.vscode-tailwindcss",
+        "antfu.iconify",
+        "fooxly.workspace",
+        "esbenp.prettier-vscode",
+        "anseki.vscode-color",
+        "dbaeumer.vscode-eslint",
+        "richie5um2.vscode-sort-json",
+        "ms-playwright.playwright"
+      ]
+    }
+  },
+  "remoteUser": "${localEnv:USER}"
+}

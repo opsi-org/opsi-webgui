@@ -1,103 +1,62 @@
-# Official opsi-webgui
+# bgprevent-opsi-webgui
 
-This is the source of the official opsi-webgui for the open source client management solution opsi.
+This repository contains the opsi Client Migration Tool, which helps administrators migrate their existing opsi clients to a new opsi server. The tool is designed to simplify the migration process and ensure a smooth transition for users. This is an opsiconfd addon that provides a web-based interface.
 
-The opsi-webgui is a web-based graphical user interface for managing the opsi system. It simplifies the deployment and management tasks, without installing an application on your device. With opsi-webgui, you can configure the opsi-servers, set up new opsi-clients, deploy products, inspect logs from any device with a web browser and more.
+It is part of the larger opsi project, an open-source client management system for Windows and Linux clients.
+For more information about opsi, visit the official website: https://opsi.org/
 
-For further information about the webgui technology, installation or the usage checkout opsi docs [en](https://docs.opsi.org/opsi-docs-en/4.3/gui/webgui.html)/[de](https://docs.opsi.org/opsi-docs-de/4.3/gui/webgui.html)
+## Installation
 
-Further links:
+You can install these via the admin interface under the ‘Addons’ tab (similar to the description for the web GUI https://docs.opsi.org/opsi-docs-de/4.3/gui/webgui/installation.html#opsiwebgui-installation-admininterface). The add-on is then accessible at https://<configserver>/addons/opsi-webgui/app/.
 
-- https://docs.opsi.org
-- https://opsi.org/ https://opsi.org/de/blog/
-- https://www.uib.de/
-- LinkedIn: uib GmbH
-- Twitter/X: @opsi_org @uibDE
+## Configuration
 
-## Quick installation guide (Production)
+When the add-on is installed, a configuration file is automatically created on the server under `/etc/opsi/opsiconfd-addon-opsi-webgui.yaml`, in which the product lists in particular can be customised. The following entries are currently the default (even if they are not explicitly stated in the file):
 
-This project espacially the devcontainer is not for production usage. To install the webgui from official sources see this chapter.
+```yaml
+# Location of this config file: /etc/opsi/opsiconfd-addon-opsi-webgui.yaml
+log:
+  path: ‘/var/log/opsi/opsiconfd/addons/opsi-webgui’
+  level: ‘INFO’ # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  rotate-max-bytes: 10485760 # 10 MB
+  rotate-backup-count: 5
 
-### Installation from sources
+client-id-prefix:
+  old: ‘bad-’
+  new: ‘bgp-device-’
 
-- optional: use `experimental`/`testing`/`stable` branch by editiing the content of `/etc/apt/sources.list.d/opsi.list`
-- run `sudo apt update && sudo apt install opsi-webgui`
-- restart opsiconfd: `sudo systemctl restart opsiconfd`
-- checkout https://YOUROPSISERVER:OPSICONFD_PORT/addons/webgui/app
+products: # Lists of productIds
+  allowed: []
+  must-have: []
+# For example: [‘opsi-cli’, ‘opsi-configed’, ...]
+# or:
+#    allowed:
+#        - opsi-cli
+#        - opsi-configed
+```
 
-### Installation using Zip
+## Permissions
 
-- get zip from https://tools.43.opsi.org/stable/opsi-webgui.zip
-- upload zip through https://YOUROPSISERVER:OPSICONFD_PORT/admin/#addons
-- checkout https://YOUROPSISERVER:OPSICONFD_PORT/addons/webgui/app
+### Configuration file
 
-## Development
+To prevent unauthorised persons from editing the file, a Unix group can be created and assigned to the file. The group contains the users who are allowed to edit the configuration file. The user “opsiconfd” only has read access to the file (after its initial creation). If he is the owner of the file, he does not need to be in this group.
 
-### Environment
+### Add-on user permissions
 
-- Requirements: Docker, VisualStudioCode with 'Remote - Container' extension
+Currently, all opsiadmins can use the add-on (provided they know the URL or can find it on the admin interface). This was discussed at the kick-off meeting. If there is a need to restrict this, we are happy to discuss it.
 
-### Structure
+Logging: In addition to the existing logging of the opsiconfd, there is a type of event logging with a separate log level. The aim is to be able to track which user did what and when – without going into too much detail. Example during a migration
 
-This project includes a development setup using multiple DevContainers (Docker containers). Only one container can serve as the primary container, while the others run in the background and can be controlled via specific commands when needed.
-Container Configuration Overview
+```
+[6] [2026-01-22 12:43:03.047] [opsi-webgui] [adminuser    ] Start opsi-webgui (old-client: pytest-client-5.domain.local , new-client: pytest-host-12.domain.local , new-server: pytest-opsi-2.uib.local , product_ids: ['pytest-prod-1', 'pytest-prod-5'] , on-demand: False, delete-old: False)   (clients.py:100)
+[6] [2026-01-22 12:43:03.298] [opsi-webgui] [adminuser    ] Migration done for client pytest-host-12.domain.local. Products skipped/failed: []   (clients.py:165)
+```
 
-If the frontend is set as the primary container, you can choose between two backend options:
+## Client lists
 
-- **opsi-docker as the backend (recommended):**
-  Ideal if you're primarily working on the frontend and don't need detailed backend output or logging.
+The left side shows all clients whose prefix is ‘bad-’. The right client side filters by the prefix ‘bgp-device-’ and an empty client description to distinguish which client has already been migrated. This is because the description is a mandatory field during migration.
 
-  - Default port: 44471
-  - Start the web GUI with: `npm run dev` (`https://localhost:8888`)
+## Migration
 
-  - **opsiconfd from Git:**
-    Use this if you need a live version of opsiconfd from the repository.
-
-    - Default port: 44472
-    - Start opsiconfd manually using `opsiconfd-frontend-start` or via "Run and Debug" `https://localhost:8889`
-    - Then launch the webgui with: npm run dev-backend
-
-    Note: This setup offers minimal advantages for typical frontend development.
-
-If you're mainly working on the backend, it should be run as the primary container. In this case, opsi-docker is not required.
-
-- Start opsiconfd in debug mode via "Run and Debug"
-- Launch the webgui with: `npm-run-dev-backend` or through "Run and Debug"
-
-For more detailed setup and usage instructions, please refer to the respective README.md files in the `frontend` and `backend` directories.
-
-The opsiconfd will be available at the address https://localhost:44472 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser` (changeable through `docker/<frontend|backend>/.env` file)
-
-### Build devcontainer
-
-- **Clone project and open** it in VSCode with `git clone https://github.com/opsi-org/opsi-webgui.git`
-- **Reopen** the project in remote-container (as vscode suggests) and select your primary container
-  (Hint: `Strg + Shift + P` opens command palette; search for: `(rebuild and) reopen in container` )
-  - You will be asked which container you want to open (backend/frontend)
-  - the container starts and creates an environment file `dockter/(backend|frontend)/.env` \
-    during the first initial setup you might need to update this file/s depending on your environment and needs (e.g. git username/email, hostname, etc)
-    ATTENTION: This file/s may be a source of building errors if not configured properly! Espacially the following properties must be set correctly:
-    - `HOSTNAME`: The hostname of your development machine (e.g. `mydevmachine.localdomain`)
-    - `OPSI_DOMAIN` / `DOMAIN`: The domain of your development machine (e.g. `localdomain`)
-  - You may want to update this file/s. After this you will be able to start container and the applications
-
-### Start applications
-
-- opsiconfd will be available at `https://localhost:44471` (automatically started), `htpps://localhost:44472` (needs manual start) and webgui at `https://localhost:8888` / `https://localhost:8889`
-- **Re-starting webgui**: `cd /workspace/frontend/ && npm run dev` or Start 'webgui' in 'Run and Debug' section (same as F5)
-  - Re-starting from backend container: `npm-run-dev` (for webgui 8888 accessing opsi-docker 44471) and `npm-run-dev-backend` (for webgui 8889 accessing local opsiconfd 44472)
-- **opsiconfd from opsi-docker (44471)**:
-  - server data at folder/volume `/data`
-  - Accept certificate of opsiconfd: `https://localhost:44471/admin`
-  - Restarting from both containers: `opsiconfd-docker-restart` or `opsiconfdcontainer supervisorctl reload`
-  - Updating from both containers: `opsiconfd-docker-container apt update -y`
-
-* **opsiconfd from git (4447)**:
-  - server data at folder `/etc/opsi/...`
-  - Accept certificate of opsiconfd: `https://localhost:44472/admin`
-  - Restarting: Stop opsiconfd via "Run and Debug" or cancel the command
-  - Updating: `cd /workspace/docker/backend/opsiconfd && git pull` (not tested yet)
-
-### Contributing
-
-For information on how to contribute to this project, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+All products selected in the interface are set to setup, plus their dependencies. The selection options are (in principle) based on the ProductOnDepots of the (new) depot, depending on the list of fundamentally permitted and must-have products. Properties: All ProductPropertyStates of the old client (the selected products) are moved (even if they have the same value in principle).
+After migration confirmation and thus setting the description, new depots if necessary, the products, properties, and on_demand if necessary, the old client is deleted and the licences used (in licence management) are released.

@@ -12,7 +12,6 @@ test opsiconfd webgui products
 import json
 import os
 import socket
-from datetime import datetime
 from string import Template
 
 import pytest
@@ -22,11 +21,11 @@ from fastapi import status
 from .utils import (  # pylint: disable=unused-import
     ADMIN_PASS,
     ADMIN_USER,
-    clean_redis,
-    config,
-    create_check_data,
-    database_connection,
-    disable_request_warning,
+    #clean_redis,
+    #config,
+    #create_check_data,
+    #database_connection,
+    #disable_request_warning,
 )
 
 API_ROOT = "/addons/webgui/api/opsidata"

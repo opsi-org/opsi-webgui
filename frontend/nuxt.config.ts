@@ -1,95 +1,53 @@
 /**
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+This file is part of <opsi-webgui> opsiconfd addon .
+opsiconfd is part of the desktop management solution opsi http://www.opsi.org
 Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
-/* eslint-disable no-console */
-
-import path from 'path'
-import fs from 'fs'
-
+// https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite'
 import pkg from './package.json'
-import MyPreset from './assets/scss/primevue'
 
 const CONFD_PORT: string = process.env.OPSICONFD_PORT ?? '4447'
-const WEBUI_PORT_STR: string = process.env.PORT ?? '8888'
-const WEBUI_PORT: number = parseInt(WEBUI_PORT_STR)
-// do not change following line, cause it is automatically patched by the build_production_local.sh script
-const ADDON_PATH: string = '/addons/webgui'
-
-// Reading all locale files for dynamic configuration of nuxt/i18n
-const langs: { [key: string]: { code: string; name: string; file: string } } = {}
-const dir = './locale/'
-const fullPath = path.join(__dirname, dir)
-const files = fs.readdirSync(fullPath)
-console.log('DEBUG: Reading locales')
-try {
-  // gets all internationalization files, which are located in 'dir'
-  files.forEach((file) => {
-    if (/opsi-webgui_(.*)\.json/.test(file)) {
-      const l = file.match(/opsi-webgui_(.*)\.json/)
-      if (!l) return
-      console.log('  found locale:', l[1], 'in file', file)
-      try {
-        //const json = require(fullPath + '/' + file)
-        //langs[l[1]] = json
-        langs[l[1]] = { code: l[1], name: l[1], file: file }
-      } catch (error) {
-        console.log('Error reading file ', file, error)
-      }
-    }
-  })
-} catch (error) {
-  console.log(error)
-}
-
-if (process.env.NODE_ENV === 'development') {
-  console.log('---------------------------------------------------')
-  console.log('OPSICONFD PORT', CONFD_PORT, ', env: ', process.env.OPSICONFD_PORT)
-  console.log('WEBGUI PORT', WEBUI_PORT_STR, WEBUI_PORT)
-  console.log('ADDON PATH', ADDON_PATH)
-  console.log('VERSION', pkg.version)
-  console.log('LOCALES ', Object.keys(langs))
-  console.log(Object.values(langs))
-  console.log('---------------------------------------------------')
-}
-
+const ADDON_PORT: number = parseInt(process.env.ADDON_DEV_PORT ?? '7777')
+const ADDON_PATH: string = '/addons/opsi-webgui'
 export default defineNuxtConfig({
-  compatibilityDate: '2025-01-23',
-  experimental: { appManifest: false },
-  build: {
-    analyze: false,
-  },
-  sourcemap: false,
-  ignore: [
-    '**/tests-configs/**',
-    '**/*.test.component.ts',
-    '**/*.test.accessibility.ts',
-    '**/*.test.usecase.ts',
-    '**/*.test.screenshot.ts',
-  ],
-  devtools: {
-    enabled: false,
-  },
+  compatibilityDate: '2026-01-26',
+  devtools: { enabled: true },
+
   typescript: {
-    typeCheck: true,
+    typeCheck: false,
+    shim: true,
     tsConfig: {
+      exclude: ['./node_modules/', './dist/', './app/'],
       compilerOptions: {
+        strict: false,
         skipLibCheck: true,
         noEmit: true,
       },
     },
   },
   ssr: false,
+  vite: { plugins: [tailwindcss()] },
+  css: ['./app/assets/css/main.css'],
   devServer: {
-    port: WEBUI_PORT,
+    port: ADDON_PORT,
     https: {
-      key: '.config/https/server.key',
-      cert: '.config/https/server.crt',
+      key: 'certificates/server.key',
+      cert: 'certificates/server.crt',
     },
   },
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/ui',
+    '@nuxt/image',
+    '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
+    '@nuxtjs/i18n',
+    '@primevue/nuxt-module',
+    '@element-plus/nuxt',
+  ],
   app: {
     baseURL: ADDON_PATH + '/app',
     head: {
@@ -113,65 +71,14 @@ export default defineNuxtConfig({
         process.env.NODE_ENV === 'production' ? '' : 'https://localhost:' + CONFD_PORT,
     },
   },
-  modules: [
-    '@nuxtjs/i18n',
-    '@primevue/nuxt-module',
-    '@element-plus/nuxt',
-    '@nuxtjs/tailwindcss',
-    ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],
-    'pinia-plugin-persistedstate/nuxt',
-    '@nuxt/eslint',
-  ],
   i18n: {
-    //vueI18n: './i18n.config.js', // seems not to work with update nuxt/i18n to 10.1.0
-    langDir: '../locale/',
+    detectBrowserLanguage: false,
     strategy: 'no_prefix',
-    defaultLocale: 'en',
-    locales: Object.values(langs) || [],
+    defaultLocale: 'de',
+    //locales: [{ code: 'de', file: 'de.json' }],
+    locales: [{ code: 'en', file: 'opsi-webgui_en.json' }],
   },
-  piniaPluginPersistedstate: {
-    key: 'opsiwui-%id',
-    storage: 'localStorage',
-    debug: true,
-  },
-  css: ['~/assets/scss/index.scss', '~/assets/scss/tailwind.scss'],
-  vite: {
-    optimizeDeps: {
-      include: ['vue', 'vue-router', '@vueuse/core'],
-      esbuildOptions: {
-        target: 'esnext',
-      },
-    },
-    cacheDir: 'node_modules/.vite_cache',
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `@use "@/assets/scss/opsi.scss" as *;`,
-        },
-      },
-    },
-    server: {
-      watch: {
-        ignored: [
-          '**/node_modules/**',
-          '**/test-results/**',
-          '**/tests/**',
-          '**/tests-configs/**',
-          '**/tests-screenshots/**',
-        ],
-      },
-      hmr: {
-        protocol: 'ws',
-        host: 'localhost',
-      },
-    },
-    esbuild: {
-      target: 'esnext',
-    },
-  },
-  tailwindcss: {
-    viewer: false,
-  },
+  // component libs:
   elementPlus: {
     icon: false,
     defaultLocale: 'de',
@@ -182,7 +89,7 @@ export default defineNuxtConfig({
       ripple: false,
       pt: {},
       theme: {
-        preset: MyPreset,
+        //preset: MyPreset,
         options: {
           prefix: 'p',
           darkModeSelector: '.dark',
@@ -201,8 +108,5 @@ export default defineNuxtConfig({
       prefix: 'P', // usage: v-p-tooltip
       include: ['Tooltip'],
     },
-  },
-  imports: {
-    dirs: ['store'],
   },
 })
