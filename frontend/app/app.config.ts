@@ -5,7 +5,6 @@ export default defineAppConfig({
     colors: {
       primary: 'opsi-blue',
       secondary: 'opsi-magenta',
-      //neutral: 'zinc',
     },
   },
 })

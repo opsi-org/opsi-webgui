@@ -1,4 +1,4 @@
-FROM docker.uib.gmbh/opsi/dev/pybuilder:deb10-py3.13 AS oad_client_migration_backend_build_43
+FROM docker.uib.gmbh/opsi/dev/pybuilder:deb10-py3.13 AS opsi-webgui-dev-43
 
 ARG DOCKER_ENV
 ARG USER
