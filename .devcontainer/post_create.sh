@@ -2,7 +2,6 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Running post_create as $(whoami)"
 echo "ADDON_NAME is ${ADDON_NAME}"
 
 # install uv
-#wget -qO- https://astral.sh/uv/install.sh | sh # user context
 curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sudo sh # root context
 
 uv self update
@@ -35,7 +34,6 @@ sudo chown -R $DEV_USER:$DEV_USER /workspace
 /workspace/scripts/setup-grafana.sh
 /workspace/scripts/setup-mysql.sh
 /workspace/scripts/setup-redis.sh
-
 
 # use license if available
 if [ -f /workspace/docker/test.opsilic ]; then

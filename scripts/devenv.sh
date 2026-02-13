@@ -3,15 +3,8 @@
 FORCE=false
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 WORKSPACE_DIR="$(pwd)"
-#ENVFILE=$SCRIPT_DIR/.env
-#ENVFILE=.env
-
-
-DOCKERDIR0=$WORKSPACE_DIR/docker/
-
+DOCKERDIR0=$WORKSPACE_DIR/docker
 ENVFILE=$DOCKERDIR0/.env
-
-
 
 #echo "################# backend: parsing arguments"
 for arg in "$@"
@@ -37,17 +30,15 @@ do
     esac
 done
 
-
 echo "################# backend: setup opsiconfd"
 DOCKERDIR=$DOCKERDIR0/opsiconfd
 if cd $DOCKERDIR; then git pull; else git clone git@gitlab.uib.gmbh:uib/opsiconfd.git $DOCKERDIR; fi
 # evtl muss hier noch ein uv sync o.ä. passieren
 
-
 echo "################# backend: check existing / force $FORCE"
 if [ -e "$ENVFILE" ] && [ "$FORCE" = "false" ]; then
     # outdated if OPSICONFD_MYSQL_INTERNAL_URL not in .env file...
-    CURRENT_ENV_OUTDATED = $(grep -q "OPSICONFD_MYSQL_INTERNAL_URL" "$ENVFILE" && echo "false" || echo "true")
+    CURRENT_ENV_OUTDATED=$(grep -q "OPSICONFD_MYSQL_INTERNAL_URL" "$ENVFILE" && echo "false" || echo "true")
     if [ "$CURRENT_ENV_OUTDATED" = "false" ]; then
         echo "Warning: File '$ENVFILE' already exists and is up to date."
         exit 0
@@ -57,15 +48,12 @@ if [ -e "$ENVFILE" ] && [ "$FORCE" = "false" ]; then
     cp "$ENVFILE" "$ENVFILE.bak"
 fi
 
-
-
 echo "################# backend: env for backend"
 echo OPSICONFD_GRAFANA_EXTERNAL_URL=http://$(hostname -f):3000 > $ENVFILE
 echo OPSI_HOSTNAME=$(hostname -f) >> $ENVFILE
 echo OPSI_DOMAIN=$(hostname -d) >> $ENVFILE
 echo OPSICONFD_PORT=44472 >> $ENVFILE
 echo OPSICONFD_PORT_UDP=692 >> $ENVFILE
-
 
 if [ -z ${USER+x} ]; then
 	echo DEV_USER=$DEV_USER >> $ENVFILE

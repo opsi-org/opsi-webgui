@@ -11,7 +11,7 @@
     "DEV_UID": "${localEnv:UID}",
     "OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
     "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
-    "ADDON_NAME": "OPSI Webgui",
+    "ADDON_NAME": "OPSI WebGUI",
     "ADDON_ID": "opsi-webgui",
     "ADDON_DEV_PORT": "8888"
   },
