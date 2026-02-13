@@ -1,6 +1,7 @@
 {
   "arrowParens": "always",
   "bracketSpacing": true,
+  "embeddedLanguageFormatting": "auto",
   "endOfLine": "lf",
   "printWidth": 100,
   "semi": false,
@@ -8,7 +9,5 @@
   "tabWidth": 2,
   "trailingComma": "es5",
   "useTabs": false,
-  "vueIndentScriptAndStyle": true,
-  "strict": true,
-  "embeddedLanguageFormatting": "auto"
+  "vueIndentScriptAndStyle": true
 }
