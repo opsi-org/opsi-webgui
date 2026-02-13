@@ -18,15 +18,52 @@ export default defineNuxtConfig({
 
   typescript: {
     typeCheck: false,
-    shim: true,
+    shim: false,
     tsConfig: {
-      exclude: ['./node_modules/', './dist/', './app/'],
+      exclude: ['./node_modules/', './dist/'],
       compilerOptions: {
         strict: false,
         skipLibCheck: true,
         noEmit: true,
+        target: 'ES2022',
+        lib: ['ES2022', 'DOM', 'DOM.Iterable'],
+        module: 'ESNext',
+        moduleResolution: 'bundler',
+        allowImportingTsExtensions: true,
+        isolatedModules: true,
+        verbatimModuleSyntax: true,
       },
     },
+  },
+
+  imports: {
+    autoImport: true,
+    global: true,
+    imports: [
+      {
+        from: 'pinia',
+        imports: ['defineStore', 'acceptHMRUpdate', 'storeToRefs']
+      },
+      {
+        from: 'vue',
+        imports: ['reactive']
+      }
+    ],
+    dirs: [
+      'composables/**',
+      'utils/**',
+      'stores/**'
+    ]
+  },
+
+  components: {
+    global: true,
+    dirs: [
+      {
+        path: '~/components',
+        global: true,
+      },
+    ],
   },
   ssr: false,
   vite: { plugins: [tailwindcss()] },
