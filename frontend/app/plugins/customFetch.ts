@@ -58,6 +58,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     },
   })
 
-  // Expose customFetch globally; USAGE: useNuxtApp().$customFetch
+  // Expose customFetch globally;
   nuxtApp.provide('customFetch', $customFetch)
 })
