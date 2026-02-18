@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
+/* Default and shared variables */
+:root {
+  /* OPSI colors */
+  --color-opsi-blue: #3f5aa6;
+  --color-opsi-magenta: #cb1e58;
+  --color-opsi-deep-blue: #2d4380;
+
+  /* Light theme defaults */
+  --color-background: #fff;
+  --color-text: #222;
+  --hover: #f2f6fc;
+  --border: #b3b3b3;
+  --placeholder: #888;
+}
+
+/* Dark theme overrides */
+html.dark {
+  --color-background: #181c24;
+  --color-text: #e0e6ef;
+  --hover: #242c47;
+  --border: #3c5091;
+  --placeholder: #a9c6e7;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+/* OPSI utility classes */
+.bg-opsi-blue {
+  background-color: var(--color-opsi-blue);
+}
+.text-opsi-blue {
+  color: var(--color-opsi-blue);
+}
