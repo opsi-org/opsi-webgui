@@ -1,3 +1,5 @@
+@import 'components.css';
+@import 'utilities.css';
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
@@ -28,12 +30,4 @@ html.dark {
 body {
   background: var(--color-background);
   color: var(--color-text);
-}
-
-/* OPSI utility classes */
-.bg-opsi-blue {
-  background-color: var(--color-opsi-blue);
-}
-.text-opsi-blue {
-  color: var(--color-opsi-blue);
 }
