@@ -6,9 +6,8 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-const opsiheaders = {
-  xopsiauthmethods: 'x-opsi-auth-methods',
-  xopsiuserid: 'x-opsi-user-id',
-  xtotalcount: 'x-total-count',
+export const OPSI_HEADERS = {
+  AUTH_METHODS: 'x-opsi-auth-methods',
+  USER_ID: 'x-opsi-user-id',
+  TOTAL_COUNT: 'x-total-count',
 }
-export { opsiheaders }
