@@ -11,3 +11,17 @@ export const OPSI_HEADERS = {
   USER_ID: 'x-opsi-user-id',
   TOTAL_COUNT: 'x-total-count',
 }
+
+export const UI_LABELS = {
+  contentPlaceholder: '(content)',
+  bracketContentPlaceholder: '[content]',
+  countAllLabel: 'count/all',
+  colonSymbol: ':',
+  emptyValue: '--',
+  titleSeparator: ' - ',
+  projectName: 'opsi-webgui',
+  projectWebguiSuffix: ' WebGUI',
+  companyName: 'uib GmbH',
+  notEqualSymbol: '≠',
+  notOriginSymbol: '*',
+}

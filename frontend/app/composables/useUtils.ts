@@ -6,6 +6,8 @@ All rights reserved.
 License: AGPL-3.0
 */
 
+import { UI_LABELS } from '~/utils/constants'
+
 // Assertion
 export function assertOrThrow(condition: any, message: string = 'Type error') {
   if (!condition) {
@@ -60,25 +62,12 @@ export function useBlockingDelay() {
   return { sleep }
 }
 
-// String Constants & Helpers
-export function useStringConstants() {
-  const constants = {
-    content: '(content)',
-    bracketContent: '[content]',
-    countAll: 'count/all',
-    colon: ':',
-    empty: '--',
-    titleDelimiter: ' - ',
-    project: 'opsi-webgui',
-    projectWebgui: ' WebGUI',
-    uib: 'uib GmbH',
-    unequal: '≠',
-    notOrigin: '*',
+// String Utilities
+export function useStringLabels() {
+  function getLabel(key: keyof typeof UI_LABELS) {
+    return UI_LABELS[key]
   }
-  function getConstant(key: keyof typeof constants) {
-    return constants[key]
-  }
-  return { constants, getConstant }
+  return { labels: UI_LABELS, getLabel }
 }
 
 // Date Formatting
