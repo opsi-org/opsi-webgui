@@ -6,10 +6,6 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-export interface TTimeDiff {
-  diff: number
-  days: number
-  hours: number
-  minutes: number
-  seconds: number
+export interface Logout {
+  result: string
 }
