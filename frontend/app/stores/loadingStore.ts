@@ -7,42 +7,24 @@ License: AGPL-3.0
 */
 import { defineStore } from 'pinia'
 
-interface TActions {
-  [key: string]: Record<string, any>
-}
-export const storeLoading = defineStore('loading', {
+export const useLoadingStore = defineStore('loading', {
   state: () => ({
-    actions: {} as TActions,
+    actions: {} as Record<string, Record<string, boolean>>,
   }),
   getters: {
-    anyActionIsLoading: (state) => {
-      for (const action in state.actions) {
-        // Check if any client is loading True for this action
-        if (Object.values(state.actions[action] as any).some((isLoading) => isLoading)) {
-          return true
-        }
-      }
-      return false
-    },
+    anyLoading: (state) =>
+      Object.values(state.actions).some((action) => Object.values(action).some(Boolean)),
   },
   actions: {
-    setIsLoadingClients(action: string, clientIds: string[], value: boolean = true) {
-      for (const clientId of clientIds) {
-        if (!this.actions?.[action]) {
-          this.actions[action] = {}
-        }
-        this.actions[action][clientId] = value
-      }
+    setLoading(action: string, id: string, value: boolean) {
+      if (!this.actions[action]) this.actions[action] = {}
+      this.actions[action][id] = value
     },
-    setIsLoadingClient(action: string, clientId: string, value: boolean = true) {
-      if (!this.actions?.[action]) {
-        this.actions[action] = {}
-      }
-      this.actions[action][clientId] = value
+    setLoadingMany(action: string, ids: string[], value: boolean) {
+      if (!this.actions[action]) this.actions[action] = {}
+      ids.forEach((id) => {
+        this.actions[action][id] = value
+      })
     },
   },
 })
-
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeLoading, import.meta.hot))
-}

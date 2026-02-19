@@ -7,14 +7,10 @@ License: AGPL-3.0
 */
 import { defineStore } from 'pinia'
 
-export const storeLogs = defineStore('logs', {
-  persist: {
-    key: 'opsi-logs',
-    storage: localStorage,
-    pick: ['_logmarker'],
-  },
+export const useLogStore = defineStore('log', {
+  persist: { key: 'opsi-log', storage: localStorage },
   state: () => ({
-    _logmarker: '-1;;instlog', // format: rowNr;clientId;logtype
+    logmarker: '-1;;instlog',
     loglevel: 5,
     logtype: 'instlog',
     autofetch: false,
@@ -22,23 +18,13 @@ export const storeLogs = defineStore('logs', {
     syncSelection: true,
   }),
   getters: {
-    logmarkerNr: (state: any): number => {
-      return state._logmarker.split(';')[0] ? parseInt(state._logmarker.split(';')[0]) : -1
-    },
-    logmarkerId: (state: any): string => {
-      return state._logmarker.split(';')[1] ? state._logmarker.split(';')[1] : ''
-    },
-    logmarkerType: (state: any): string => {
-      return state._logmarker.split(';')[2] ? state._logmarker.split(';')[2] : ''
-    },
+    logmarkerNr: (state) => parseInt(state.logmarker.split(';')[0]) || -1,
+    logmarkerId: (state) => state.logmarker.split(';')[1] || '',
+    logmarkerType: (state) => state.logmarker.split(';')[2] || '',
   },
   actions: {
     setLogmarker(nr: number, id: string) {
-      this._logmarker = `${nr};${id};${this.logtype}`
+      this.logmarker = `${nr};${id};${this.logtype}`
     },
   },
 })
-
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeSettings, import.meta.hot))
-}

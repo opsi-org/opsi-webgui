@@ -5,15 +5,17 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 */
+
 import { defineStore } from 'pinia'
 
-export const storeInternalSettings = defineStore('settingsInternal', {
+export const useCacheStore = defineStore('cache', {
+  persist: { key: 'opsi-cache', storage: localStorage },
   state: () => ({
-    splitviewVisibilityClienttable: true,
-    splitviewVisibilityServertable: true,
+    configServer: '',
   }),
+  actions: {
+    setConfigServer(s: string) {
+      this.configServer = s
+    },
+  },
 })
-
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(storeSettings, import.meta.hot))
-}
