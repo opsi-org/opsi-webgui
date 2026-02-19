@@ -1,5 +1,4 @@
 {
-  // JSON settings
   "[json]": {
     "diffEditor.ignoreTrimWhitespace": false,
     "editor.autoIndent": "advanced",
@@ -11,72 +10,36 @@
     "editor.tabSize": 2,
     "prettier.singleQuote": false
   },
-
-  // YAML settings
   "[yml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "prettier.singleQuote": false
   },
-
-  // Python settings
   "[python]": {
     "diffEditor.ignoreTrimWhitespace": false
   },
-
-  // TypeScript settings
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-
-  // JavaScript settings
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-
-  // Vue settings
   "[vue]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-
-  // Shell script settings
-  "[shellscript]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format",
-    "editor.formatOnSave": true
-  },
-
-  // Editor settings
   "editor.codeActionsOnSave": {
     "source.fixAll.sortJSON": "explicit"
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-
-  // ESLint settings
   "eslint.onIgnoredFiles": "warn",
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-    "vue",
-    "html",
-    "json",
-    "jsonc"
-  ],
-
-  // i18n Ally settings
+  "eslint.validate": ["javascript", "typescript", "vue", "html", "json", "jsonc"],
   "i18n-ally.displayLanguage": "opsi-webgui_en",
   "i18n-ally.enabledFrameworks": ["vue"],
   "i18n-ally.enabledParsers": ["json"],
   "i18n-ally.keystyle": "flat",
-  "i18n-ally.localesPaths": ["frontend/locale/"],
+  "i18n-ally.localesPaths": ["frontend/app/i18n/"],
   "i18n-ally.sourceLanguage": "opsi-webgui_en",
-
-  // JavaScript/TypeScript settings
   "js/ts.implicitProjectConfig.experimentalDecorators": true,
-
-  // Prettier settings
   "prettier.configPath": "/workspace/frontend/.prettierrc",
-  "prettier.requireConfig": false,
-
-  // Trailing spaces settings
-  "trailing-spaces.trimOnSave": true,
+  "trailing-spaces.trimOnSave": true
 }
