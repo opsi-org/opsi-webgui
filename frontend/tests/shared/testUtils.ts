@@ -7,7 +7,7 @@ License: AGPL-3.0
 */
 import { test } from '@playwright/test'
 import type { BrowserContext, Page } from '@playwright/test'
-import { opsiconfdSessionCookie } from '../shared/constants'
+import { opsiconfdSessionCookie } from './constants'
 
 export const login = async (context: BrowserContext, page: Page) => {
   await context.addCookies(opsiconfdSessionCookie)

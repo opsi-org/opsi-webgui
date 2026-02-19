@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-import type { Host, Depot, Client, Product } from './types'
+import type { Host, Depot, Client, Product } from './mockTypes'
 
 export const getDepots = (hosts: Host[]): Depot[] => {
   return hosts
