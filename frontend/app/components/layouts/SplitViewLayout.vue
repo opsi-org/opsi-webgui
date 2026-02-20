@@ -8,6 +8,7 @@ License: AGPL-3.0
 <template>
   <div>
     <el-container
+      data-testid="page-content"
       :class="{
         mycontainer: true,
         [classcontainer]: true,
@@ -15,6 +16,7 @@ License: AGPL-3.0
     >
       <el-main
         v-if="page0Condition"
+        data-testid="page-main-content"
         class="mycol"
         :class="{
           [props.classfirstcol]: !isMobile,
@@ -28,6 +30,7 @@ License: AGPL-3.0
         v-if="page1Condition"
         :width="width"
         class="mycol"
+        data-testid="page-side-content"
         :class="{
           [props.classeachcol]: true,
           [props.classlastcol]: !isMobile && !page2Condition,
@@ -39,6 +42,7 @@ License: AGPL-3.0
         v-if="page2Condition"
         :width="width"
         class="mycol"
+        data-testid="page-second-side-content"
         :class="{
           [props.classlastcol]: !isMobile,
           [props.classeachcol]: true,
