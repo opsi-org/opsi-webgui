@@ -1,8 +1,5 @@
-const { test, expect } = require('@playwright/test')
-const AxeBuilder = require('@axe-core/playwright').default
-
-const { mockEveryThing } = require('../../uib-components/.utils/playwright/pw-api-mock')
-mockEveryThing(test, expect)
+import { test, expect } from '@playwright/test'
+import AxeBuilder from '@axe-core/playwright'
 
 test.describe('accessibility', () => {
   test('topbar', async ({ page }) => {

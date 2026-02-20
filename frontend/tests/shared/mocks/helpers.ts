@@ -54,7 +54,9 @@ export const getClientsList = (hosts: Host[]): string[] => {
   return hosts.filter((host) => host.type === 'OpsiClient').map((client) => client.id)
 }
 
-export const getHostParam = (configs: any[]): any => {
+export const getHostParam = (
+  configs: Array<{ [key: string]: unknown }>
+): { general: Array<{ [key: string]: unknown }> } => {
   return {
     general: configs.map((config) => ({
       description: config.description || '',
@@ -72,38 +74,40 @@ export const getHostParam = (configs: any[]): any => {
   }
 }
 
-export const getProducts = (products: any[]): Product[] => {
+export const getProducts = (products: Array<{ [key: string]: unknown }>): Product[] => {
   return products.map((product) => ({
-    productId: product.id,
-    name: product.name,
-    priority: product.priority || 0,
-    description: product.description || '',
-    advice: product.advice || '',
-    selectedDepots: product.selectedDepots || [],
-    selectedClients: product.selectedClients || null,
-    installationStatusErrorLevel: product.installationStatusErrorLevel || 0,
-    installationStatus: product.installationStatus || 'unknown',
-    actionRequest: product.actionRequest || 'none',
-    actionProgress: product.actionProgress || '',
-    actionResultErrorLevel: product.actionResultErrorLevel || 0,
-    actionResult: product.actionResult || 'none',
-    modificationTime: product.modificationTime || null,
-    clientVersions: product.clientVersions || null,
-    client_version_outdated: product.client_version_outdated || false,
-    actions: product.actions || [],
-    depot_version_diff: product.depot_version_diff || false,
-    not_on_all_depots: product.not_on_all_depots || false,
-    numDepots: product.numDepots || 0,
-    depotVersions: product.depotVersions || [],
-    productType: product.type || 'unknown',
-    selected: product.selected || 0,
+    productId: product.id as string,
+    name: product.name as string,
+    priority: (product.priority as number) || 0,
+    description: (product.description as string) || '',
+    advice: (product.advice as string) || '',
+    selectedDepots: (product.selectedDepots as string[]) || [],
+    selectedClients: (product.selectedClients as string[]) || null,
+    installationStatusErrorLevel: (product.installationStatusErrorLevel as number) || 0,
+    installationStatus: (product.installationStatus as string) || 'unknown',
+    actionRequest: (product.actionRequest as string) || 'none',
+    actionProgress: (product.actionProgress as string) || '',
+    actionResultErrorLevel: (product.actionResultErrorLevel as number) || 0,
+    actionResult: (product.actionResult as string) || 'none',
+    modificationTime: (product.modificationTime as string) || null,
+    clientVersions: (product.clientVersions as string) || null,
+    client_version_outdated: (product.client_version_outdated as boolean) || false,
+    actions: (product.actions as string[]) || [],
+    depot_version_diff: (product.depot_version_diff as boolean) || false,
+    not_on_all_depots: (product.not_on_all_depots as boolean) || false,
+    numDepots: (product.numDepots as number) || 0,
+    depotVersions: (product.depotVersions as string[]) || [],
+    productType: (product.type as string) || 'unknown',
+    selected: (product.selected as number) || 0,
   }))
 }
 
-export const getHostGroups = (groups: any[]): any => {
-  const groupMap: Record<string, any> = {}
+export const getHostGroups = (
+  groups: Array<{ [key: string]: unknown }>
+): Array<{ [key: string]: unknown }> => {
+  const groupMap: Record<string, { [key: string]: unknown }> = {}
   groups.forEach((group) => {
-    groupMap[group.id] = {
+    groupMap[group.id as string] = {
       id: `${group.id};${group.parentGroupId || 'groups'}`,
       type: 'HostGroup',
       text: group.id,
@@ -113,10 +117,11 @@ export const getHostGroups = (groups: any[]): any => {
   })
   groups.forEach((group) => {
     if (group.parentGroupId) {
-      if (!groupMap[group.parentGroupId].children) {
-        groupMap[group.parentGroupId].children = {}
+      if (!groupMap[group.parentGroupId as string].children) {
+        groupMap[group.parentGroupId as string].children = {}
       }
-      groupMap[group.parentGroupId].children[group.id] = groupMap[group.id]
+      groupMap[group.parentGroupId as string].children[group.id as string] =
+        groupMap[group.id as string]
     }
   })
   const rootGroups = Object.values(groupMap).filter((group) => group.parent === 'groups')

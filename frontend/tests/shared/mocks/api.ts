@@ -7,7 +7,7 @@ License: AGPL-3.0
 */
 
 import { MOCK_DATA_URL, defaultResponseHeaders } from '../constants'
-import type { Depot, Client } from './types'
+import type { Depot, Client, Product, Host } from './types'
 import type { Page, Route } from '@playwright/test'
 import {
   getDepots,
@@ -21,17 +21,29 @@ import {
 
 import { serverDiagnostic } from './data'
 
-let mockData: any
+let mockData:
+  | {
+      meta: { server_id: string }
+      objects: {
+        User: { id: string }[]
+        Host: Host[]
+        Config: { [key: string]: unknown }[] // Replace any[] with object array
+        Product: Product[]
+        Group: { [key: string]: unknown }[] // Replace any[] with object array
+      }
+      config_files: unknown
+    }
+  | undefined
 let serverId: string = ''
 let userId: string = ''
-let userConfig: any = {}
+let userConfig: { user: string; configuration: unknown } = { user: '', configuration: {} }
 let serverObjectList: Depot[] = []
 let serverList: string[] = []
 let clientObjectList: Client[] = []
 let clientList: string[] = []
-let hostParameters: any = []
-let productObjectList: any = []
-let hostGroups: any = []
+let productObjectList: Product[] = []
+let hostParameters: { general: { [key: string]: unknown }[] } = { general: [] }
+let hostGroups: { [key: string]: unknown }[] = []
 
 export const fetchMockData = async (): Promise<void> => {
   if (mockData) return
@@ -59,7 +71,7 @@ export const fetchMockData = async (): Promise<void> => {
   }
 }
 
-export const addMockRoute = async (page: Page, url: string, response: any) => {
+export const addMockRoute = async (page: Page, url: string, response: unknown) => {
   await page.unroute(url)
   await page.route(url, (route: Route) => {
     route.fulfill({
@@ -78,7 +90,7 @@ export const addMockRoute = async (page: Page, url: string, response: any) => {
 export const setupMockRoutes = async (
   page: Page,
   isLoggedIn: boolean = false,
-  customRoutes: Array<{ url: string; response: any }> = []
+  customRoutes: Array<{ url: string; response: unknown }> = []
 ) => {
   await fetchMockData()
   await page.unroute('**/api/**')
