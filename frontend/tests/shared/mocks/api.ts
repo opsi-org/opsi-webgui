@@ -7,7 +7,7 @@ License: AGPL-3.0
 */
 
 import { MOCK_DATA_URL, defaultResponseHeaders } from '../constants'
-import type { Depot, Client } from './mockTypes'
+import type { Depot, Client } from './types'
 import type { Page, Route } from '@playwright/test'
 import {
   getDepots,
@@ -17,9 +17,9 @@ import {
   getHostParam,
   getProducts,
   getHostGroups,
-} from './mockHelpers'
+} from './helpers'
 
-import { serverDiagnostic } from './mockData'
+import { serverDiagnostic } from './data'
 
 let mockData: any
 let serverId: string = ''
