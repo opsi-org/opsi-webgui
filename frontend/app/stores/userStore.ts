@@ -8,6 +8,8 @@ License: AGPL-3.0
 
 import { defineStore } from 'pinia'
 import { useCookie } from 'nuxt/app'
+import { useNotification } from '~/composables/mixins/useComponent'
+import type { T_configurationResult, T_DisabledFeatures, T_configuration } from '@/types/APItypes'
 
 const SESSION_EXPIRY_SEC = 60 * 30
 
@@ -28,10 +30,11 @@ interface UserState {
   isAuth: boolean
   authMethods: string
   globalError?: string
+  config?: T_configurationResult
 }
 
 export const useUserStore = defineStore('user', {
-  persist: { key: 'opsi-user', storage: localStorage },
+  persist: { key: 'opsi-webgui-user', storage: localStorage },
   state: (): UserState => ({
     username: '',
     usernameUpdated: null,
@@ -41,6 +44,7 @@ export const useUserStore = defineStore('user', {
     isAuth: false,
     authMethods: '',
     globalError: undefined,
+    config: undefined,
   }),
   getters: {
     isAuthenticated(state): boolean {
@@ -66,6 +70,30 @@ export const useUserStore = defineStore('user', {
     },
     setExpiresIn(payload: SessionExpiresIn) {
       this.sessionExpiresIn = payload
+    },
+    setConfig(config: T_configurationResult) {
+      this.config = config
+    },
+    async initConfig() {
+      const { notifyError } = useNotification()
+      const $t = useI18n().t
+      const result = await useApiPOSTkwargs<T_configuration>('/user/configuration', {
+        showError: true,
+      })
+      if (result.error || !result.data.value) {
+        notifyError({ title: $t('message.fetchingFailed'), message: $t('message.noResponse') })
+        return
+      }
+      const forbidden = await useApiGET<T_DisabledFeatures>('/opsidata/server/disabled-features')
+      if (forbidden.error || !forbidden.data.value) {
+        notifyError({ title: $t('message.fetchingFailed'), message: $t('message.noResponse') })
+        return
+      }
+      const config: T_configurationResult = { ...result.data.value.configuration }
+      forbidden.data.value.forEach((key: string) => {
+        config[key + '.forbidden'] = true
+      })
+      this.setConfig(config)
     },
   },
 })
