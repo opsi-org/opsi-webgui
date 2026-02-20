@@ -1,5 +1,18 @@
+/**
+This file is part of <opsi-webgui> opsiconfd addon .
+opsiconfd is part of the desktop management solution opsi http://www.opsi.org
+Copyright (c) uib GmbH <info@uib.de> 2025
+All rights reserved.
+License: AGPL-3.0
+*/
 {
   // https://nuxt.com/docs/guide/concepts/typescript
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./*"]
+    }
+  },
   "files": [],
   "references": [
     { "path": "./.nuxt/tsconfig.app.json" },
