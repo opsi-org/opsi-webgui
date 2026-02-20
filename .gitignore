@@ -1,8 +1,11 @@
+# Docker
 docker/.env
 docker/opsiconfd/
 
+# Frontend
 frontend/.nuxt/
-frontend/node_modules/
 frontend/dist/
 frontend/tsconfig.tsbuildinfo
+frontend/node_modules/
 frontend/certs/
+frontend/test-results/
