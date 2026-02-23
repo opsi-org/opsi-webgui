@@ -1,4 +1,14 @@
 {
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.nuxt/**": true,
+    "**/dist/**": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.nuxt": true,
+    "**/dist": true
+  },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
@@ -19,5 +29,6 @@
   "editor.formatOnSave": true,
   "eslint.validate": ["javascript", "typescript", "vue", "html", "json", "jsonc"],
   "prettier.configPath": "/workspace/frontend/.prettierrc",
-  "trailing-spaces.trimOnSave": true
+  "trailing-spaces.trimOnSave": true,
+  "git.ignoreLimitWarning": true
 }
