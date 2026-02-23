@@ -33,7 +33,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         ...headersToObject(options.headers),
         'Content-Type': 'application/json',
         Accept: 'application/json, text/plain, */*',
-      } as any
+      } as unknown as Headers
     },
   })
 

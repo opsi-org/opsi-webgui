@@ -7,32 +7,13 @@ License: AGPL-3.0
 */
 
 import { ref, computed, onMounted } from 'vue'
-
-// Notification
-// export function useNotification() {
-//   function notify(type: 'success' | 'error' | 'warning' | 'info', title: string, message: any) {
-//     ElNotification[type]({
-//       title,
-//       message:
-//         typeof message === 'object' ? h('pre', {}, JSON.stringify(message, null, 2)) : message,
-//       duration: type === 'error' ? 0 : 5000,
-//       showClose: true,
-//     })
-//   }
-//   return {
-//     notifySuccess: (title: string, message: any) => notify('success', title, message),
-//     notifyError: (title: string, message: any) => notify('error', title, message),
-//     notifyWarning: (title: string, message: any) => notify('warning', title, message),
-//     notifyInfo: (title: string, message: any) => notify('info', title, message),
-//   }
-// }
+import type { Ref } from 'vue'
 
 // Dynamic Height
 export function useDynamicHeight(reduceIds: string[], correction = 0) {
   const windowHeight = ref(window.innerHeight)
   const reduceHeightBy = ref(220)
   const maxVisibleHeight = computed(() => Math.min(windowHeight.value - reduceHeightBy.value, 3000))
-
   function setElHeights() {
     let total = 0
     for (const id of reduceIds) {
@@ -50,64 +31,43 @@ export function useDynamicHeight(reduceIds: string[], correction = 0) {
   return { maxVisibleHeight, reduceHeightBy, updateWindowValues, setElHeights }
 }
 
-// Dynamic Table Height
-// export function useDynamicTableHeight(
-//   actualDataSize: Ref<number>,
-//   pageSize: Ref<number>,
-//   tableId: string,
-//   refetchData: () => void
-// ) {
-//   const scrollDivHeight = ref(400)
-//   const rowHeight = computed(() => 52.48)
-//   const { maxVisibleHeight, updateWindowValues, setElHeights } = useDynamicHeight(
-//     ['btop-header', 'globalBreadcrumb', `tableHeader-${tableId}`, `tableFooter-${tableId}`],
-//     0,
-//     refetchData
-//   )
-//   const visibleTableHeight = computed(() =>
-//     actualDataSize.value < pageSize.value / 2 && maxVisibleHeight.value > 1000
-//       ? Math.min(maxVisibleHeight.value / 2, 1000)
-//       : maxVisibleHeight.value
-//   )
-//   const tableHeight = computed(() =>
-//     actualDataSize.value < pageSize.value / 2
-//       ? visibleTableHeight.value + scrollDivHeight.value
-//       : actualDataSize.value * rowHeight.value + 200
-//   )
-//   return {
-//     rowHeight,
-//     scrollDivHeight,
-//     visibleTableHeight,
-//     tableHeight,
-//     updateWindowValues,
-//     setElHeights,
-//   }
-// }
-
 // Group Tree
+type GroupNode = {
+  id: string
+  type?: string
+  text: string
+  parent?: string
+  children?: GroupNode[]
+  disabled?: boolean
+}
 export function useGroupTree(multiSelection: Ref<boolean>) {
-  function transformNode(node: any): any {
-    if (!node) return {}
+  function transformNode(node: Record<string, unknown>): GroupNode {
+    if (!node) return {} as GroupNode
     const nodeIsLeaf = node.type === 'ObjectToGroup'
-    const newNode: any = {
-      id: node.id,
-      type: node.type || 'Group',
-      text: node.text,
-      parent: node.parent,
+    return {
+      id: node.id as string,
+      type: (node.type as string) || 'Group',
+      text: node.text as string,
+      parent: node.parent as string,
       disabled: !nodeIsLeaf && !multiSelection.value,
-      children: node.children ? Object.values(node.children).map(transformNode) : [],
+      children: node.children ? Object.values(node.children as object).map(transformNode) : [],
     }
-    return newNode
   }
 
-  function transformToNestedArray(data: any): any[] {
+  function transformToNestedArray(data: Record<string, unknown>): GroupNode[] {
     if (!data) return []
-    return Object.values(data).map(transformNode)
+    return Object.values(data).map((n) => transformNode(n as Record<string, unknown>))
   }
 
-  function filterNodes(nodes: any[], searchFor: any[], key: string, returnKey?: string): any[] {
-    return nodes.reduce((acc: any[], node: any) => {
-      if (key && searchFor.includes(node[key])) acc.push(returnKey ? node[returnKey] : node)
+  function filterNodes(
+    nodes: GroupNode[],
+    searchFor: unknown[],
+    key: string,
+    returnKey?: string
+  ): unknown[] {
+    return nodes.reduce((acc: unknown[], node: GroupNode) => {
+      if (key && searchFor.includes((node as Record<string, unknown>)[key]))
+        acc.push(returnKey ? (node as Record<string, unknown>)[returnKey] : node)
       if (node.children) acc.push(...filterNodes(node.children, searchFor, key, returnKey))
       return acc
     }, [])
@@ -116,26 +76,31 @@ export function useGroupTree(multiSelection: Ref<boolean>) {
 }
 
 // Table Helper
-export function useTableHelper(
-  props: any,
+export function useTableHelper<T extends Record<string, unknown>>(
+  props: {
+    [key: string]: unknown
+    fetch: (params: Record<string, unknown>) => Promise<{ total?: number; data?: T[] }>
+    sortBy?: string
+    rowId?: string
+    sortDesc?: boolean
+    actionConfig?: (row: T) => string
+    actionLog?: (row: T) => string
+    actionClone?: (row: T) => string
+  },
   currentPage: Ref<number>,
   pageSize: Ref<number>,
-  $emit: any,
-  fetchedData: Ref<any[]>,
+  fetchedData: Ref<T[]>,
   totalItems: Ref<number>,
-  isFirstPage: Ref<boolean>,
-  isLastPage: Ref<boolean>,
-  infiniteScrollDiv: Ref<any>,
-  activeButton: Ref<string>,
-  scrollDivHeight: Ref<number>
+  infiniteScrollDiv: Ref<HTMLElement | null>,
+  activeButton: Ref<string>
 ) {
   const isLoading = ref(false)
   const filterQuery = ref('')
-  const sortByWrapper = ref<string>(props.sortBy || props.rowId)
-  const sortDescWrapper = ref<boolean>(JSON.parse(String(props.sortDesc).toLowerCase()) || false)
+  const sortByWrapper = ref<string>(props.sortBy || props.rowId || '')
+  const sortDescWrapper = ref<boolean>(!!props.sortDesc)
   const contextMenuVisible = ref(false)
-  const contextMenuStyle = ref({})
-  const contextMenuRow = ref(null)
+  const contextMenuStyle = ref<Record<string, string>>({})
+  const contextMenuRow = ref<T | null>(null)
 
   function prepareParams() {
     return {
@@ -153,10 +118,9 @@ export function useTableHelper(
       const res = await props.fetch(prepareParams())
       totalItems.value = res?.total || 0
       fetchedData.value = res?.data || []
-    } catch (error) {
+    } catch {
       totalItems.value = 0
       fetchedData.value = []
-      // useNotification().notifyError('Fetch Error', error)
     } finally {
       isLoading.value = false
       scrollToTopOfTable()
@@ -169,42 +133,43 @@ export function useTableHelper(
     }
   }
 
-  function showContextMenu(event: any, row: any) {
+  function showContextMenu(event: MouseEvent, row: T) {
     event.preventDefault()
     contextMenuRow.value = row
     contextMenuStyle.value = {
       top: `${event.clientY}px`,
       left: `${event.clientX}px`,
       position: 'absolute',
-      zIndex: 1000,
+      zIndex: '1000',
     }
     contextMenuVisible.value = true
   }
 
-  function handleCommand(rowData: any, command: string) {
+  function handleCommand(rowData: T, command: string) {
     contextMenuVisible.value = false
     if (command === 'config') handleConfigClick(rowData)
     if (command === 'log') handleLogClick(rowData)
     if (command === 'clone') handleCloneClick(rowData)
   }
 
-  function handleConfigClick(rowData: any) {
+  function handleConfigClick(rowData: T) {
     if (!props.actionConfig) return
-    activeButton.value = 'config-' + rowData[props.rowId]
+    activeButton.value = 'config-' + rowData[props.rowId as string]
     useRouter().push(props.actionConfig(rowData))
   }
 
-  function handleLogClick(rowData: any) {
+  function handleLogClick(rowData: T) {
     if (!props.actionLog) return
-    activeButton.value = 'log-' + rowData[props.rowId]
+    activeButton.value = 'log-' + rowData[props.rowId as string]
     useRouter().push(props.actionLog(rowData))
   }
 
-  function handleCloneClick(rowData: any) {
+  function handleCloneClick(rowData: T) {
     if (!props.actionClone) return
-    activeButton.value = 'clone-' + rowData[props.rowId]
+    activeButton.value = 'clone-' + rowData[props.rowId as string]
     useRouter().push(props.actionClone(rowData))
   }
+
   return {
     isLoading,
     filterQuery,
@@ -226,23 +191,26 @@ export function useTableHelper(
 
 // Config Tree
 export function useConfigTree() {
-  function buildTree(data: any, maxDepth = 2, minEntries = 2) {
-    const tree: any[] = []
-    function traverse(nodes: any[], segments: string[]): any {
+  function buildTree(data: Record<string, { configId: string }[]>) {
+    const tree: Array<Record<string, unknown>> = []
+    function traverse(
+      nodes: Array<Record<string, unknown>>,
+      segments: string[]
+    ): Record<string, unknown> {
       let currentNodes = nodes
-      let node: any
+      let node: Record<string, unknown> | undefined
       for (const seg of segments) {
-        node = currentNodes.find((n: any) => n.key === seg)
+        node = currentNodes.find((n) => n.key === seg)
         if (!node) {
           node = { key: seg, label: seg, children: [] }
           currentNodes.push(node)
         }
-        currentNodes = node.children
+        currentNodes = node.children as Array<Record<string, unknown>>
       }
-      return node
+      return node!
     }
     for (const synonym in data) {
-      data[synonym]?.forEach((entry: any) => {
+      data[synonym]?.forEach((entry) => {
         const segments = entry.configId.split('.')
         const node = traverse(tree, segments)
         node.data = entry
