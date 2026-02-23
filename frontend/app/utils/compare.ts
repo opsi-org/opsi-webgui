@@ -17,14 +17,19 @@ export function isArray(obj: unknown): obj is unknown[] {
 export function isObjectEqual<T extends object>(a: T, b: T): boolean {
   if (a === b) return true
 
-  const obj1 = Object.hasOwn(a, 'value') ? (a as any).value : a
-  const obj2 = Object.hasOwn(b, 'value') ? (b as any).value : b
-  const keys1 = Object.keys(obj1)
-  const keys2 = Object.keys(obj2)
+  type ValueObj = { value?: unknown }
+  const obj1 = Object.hasOwn(a, 'value') ? (a as ValueObj).value : a
+  const obj2 = Object.hasOwn(b, 'value') ? (b as ValueObj).value : b
+  const keys1 = Object.keys(obj1 as object)
+  const keys2 = Object.keys(obj2 as object)
   if (keys1.length !== keys2.length) return false
 
   for (const key of keys1) {
-    if (!Object.hasOwn(obj2, key) || obj1[key] !== obj2[key]) {
+    if (
+      !Object.hasOwn(obj2 as object, key) ||
+      !(obj1 as Record<string, unknown>)[key] === undefined ||
+      (obj1 as Record<string, unknown>)[key] !== (obj2 as Record<string, unknown>)[key]
+    ) {
       return false
     }
   }

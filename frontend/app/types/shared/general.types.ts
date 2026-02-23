@@ -7,8 +7,8 @@ License: AGPL-3.0
 */
 
 export type StringFunctionMap = Record<string, () => void>
-export type StringArrayMap = Record<string, any[]>
-export type StringAnyMap = Record<string, any>
+export type StringArrayMap<T = unknown> = Record<string, T[]>
+export type StringAnyMap<T = unknown> = Record<string, T>
 export type StringStringMap = Record<string, string>
 export type StringStringOrUndefinedMap = Record<string, string | undefined>
 export type StringBooleanMap = Record<string, boolean>

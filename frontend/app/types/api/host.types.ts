@@ -22,5 +22,5 @@ export interface HostParameterEntry {
   editable: boolean
   newValue?: string
   newValues?: string[]
-  [key: string]: any
+  [key: string]: string | boolean | string[] | boolean[] | Array<string | boolean> | undefined
 }

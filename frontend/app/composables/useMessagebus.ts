@@ -7,56 +7,50 @@ License: AGPL-3.0
 */
 
 import { encode, decode } from '@msgpack/msgpack'
-// import { useNotification } from './useComponentHelpers'
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { useMessageBusStore } from '~/stores/messageBusStore'
-// const { notifyInfo, notifySuccess, notifyWarning, notifyError } = useNotification()
+import { storeToRefs } from 'pinia'
+
+type MessageHandler = (msg: unknown) => Promise<void>
+type Terminal = {
+  terminalId: string
+  terminalChannel: string
+  terminalSessionChannel: string
+  cols: number
+  rows: number
+}
+type MessageTemplate = Record<string, unknown>
 
 export function useMessageBus(
-  onMessage: ((msg: any) => Promise<void>) | undefined = undefined,
-  showStartNotifications = false,
-  _t: any = undefined,
+  onMessage?: MessageHandler,
+  showNotifications = false,
   _channels: string[] = []
 ) {
-  // State
   const $config = useRuntimeConfig()
-  const wsBus = ref<WebSocket | undefined>(useMessageBusStore().bus)
-  const wsBusMsg = ref(useMessageBusStore().wsBusMsg)
+  const store = useMessageBusStore()
+  const wsBus = ref<WebSocket | undefined>(store.bus)
+  const busMsg = ref(store.lastMsg)
   const channels = _channels || []
   let urlHost = ''
 
-  // Store sync
-  const setBus = (bus: WebSocket | undefined) => {
-    useMessageBusStore().setBus(bus)
-    wsBus.value = bus
-  }
-  const setBusLastMsg = (msg: any) => {
-    useMessageBusStore().setBusLastMsg(msg)
-    wsBusMsg.value = msg
-  }
-
-  // Connection state
   const wsIsConnected = computed(() => wsBus.value?.readyState === 1)
-  const { retries, retriesMax } = storeToRefs(useMessageBusStore())
+  const { retries, retriesMax } = storeToRefs(store)
 
-  // Watch for new messages
   watch(
-    () => wsBusMsg.value,
+    () => busMsg.value,
     async () => {
       if (onMessage) {
         if (!wsBus.value || !wsIsConnected.value) await mount()
-        await onMessage(wsBusMsg.value)
+        await onMessage(busMsg.value)
       } else {
-        wsNotification('(info) received unhandled message', wsBusMsg.value)
+        wsNotification('Received unhandled message', busMsg.value)
       }
     },
     { deep: true }
   )
 
-  // Lifecycle
-  onUnmounted(() => wsDisconnect())
+  onUnmounted(wsDisconnect)
 
-  // WebSocket Management
   async function mount() {
     await wsInit()
     if (channels.length) wsSubscribeChannel(channels)
@@ -69,18 +63,15 @@ export function useMessageBus(
     const port =
       process.env.NODE_ENV === 'production'
         ? window.location.port
-        : Number(($config as any).public.OPSICONFD_PORT) || 4447
+        : Number(($config as { public: { OPSICONFD_PORT?: number } }).public.OPSICONFD_PORT) || 4447
     urlHost = `wss://${host}:${port}/messagebus/v1?`
     const bus = new WebSocket(urlHost)
     setBus(undefined)
     setBus(bus)
-    if (!bus || !wsBus.value) {
-      // notifyError({ message: 'MessageBus: connection failed' })
-      throw new Error('MessageBus connection failed')
-    }
+    if (!bus || !wsBus.value) throw new Error('MessageBus connection failed')
     wsBus.value.binaryType = 'arraybuffer'
     wsBus.value.onopen = () => {
-      if (showStartNotifications) wsNotification('WebSocket opened')
+      if (showNotifications) wsNotification('WebSocket opened')
       wsSubscribeChannel([
         '@',
         '$',
@@ -97,12 +88,22 @@ export function useMessageBus(
         'event:productOnClient_deleted',
       ])
     }
-    setBusMethods(wsBus.value, setBusLastMsg)
+    setBusMethods(wsBus.value, setLastMsg)
     await wsWait(1000)
     if (wsIsConnected.value) {
       retries.value = 0
-      if (showStartNotifications) console.info('MessageBus: connected')
+      if (showNotifications) console.info('MessageBus: connected')
     }
+  }
+
+  function setBus(bus?: WebSocket) {
+    store.setBus(bus)
+    wsBus.value = bus
+  }
+
+  function setLastMsg(msg: unknown) {
+    store.setLastMsg(msg)
+    busMsg.value = msg
   }
 
   function wsDisconnect() {
@@ -110,8 +111,7 @@ export function useMessageBus(
     setBus(undefined)
   }
 
-  // Messaging
-  function wsSend(msg: any) {
+  function wsSend(msg: unknown) {
     if (!wsBus.value) return console.error('wsBus is undefined')
     if (!wsIsConnected.value) {
       console.error('wsBus is not connected')
@@ -122,7 +122,7 @@ export function useMessageBus(
   }
 
   function wsSubscribeChannel(channels: string[]) {
-    const message = wsCreateMsgTemplate()
+    const message: MessageTemplate = wsCreateMsgTemplate()
     message.type = 'channel_subscription_request'
     message.channel = 'service:messagebus'
     message.operation = 'add'
@@ -131,13 +131,13 @@ export function useMessageBus(
   }
 
   // Terminal helpers
-  async function wsTerminalOpen(suid: string, terminal: any) {
+  async function wsTerminalOpen(suid: string, terminal: Terminal) {
     terminal.terminalId = suid || createUUID()
     terminal.terminalChannel = 'service:config:terminal'
     terminal.terminalSessionChannel = 'session:' + suid
     wsSubscribeChannel([terminal.terminalSessionChannel])
     await wsWait(2000)
-    const message = wsCreateMsgTemplate()
+    const message: MessageTemplate = wsCreateMsgTemplate()
     message.type = 'terminal_open_request'
     message.terminal_id = terminal.terminalId
     message.channel = terminal.terminalChannel
@@ -147,23 +147,23 @@ export function useMessageBus(
     wsSend(message)
   }
 
-  function wsTerminalClose(terminal: any) {
-    const message = wsCreateMsgTemplate()
+  function wsTerminalClose(terminal: Terminal) {
+    const message: MessageTemplate = wsCreateMsgTemplate()
     message.type = 'terminal_close_request'
     message.channel = terminal.terminalChannel
     message.terminal_id = terminal.terminalId
     wsSend(message)
   }
 
-  function wsTerminalSend(msg: any, terminal: any) {
+  function wsTerminalSend(msg: string, terminal: Terminal) {
     if (!wsBus.value) return
     waitForSocketConnection(wsBus.value, () => _wsTerminalSend(msg, terminal))
   }
 
-  function _wsTerminalSend(msg: any, terminal: any) {
+  function _wsTerminalSend(msg: string, terminal: Terminal) {
     if (!wsBus.value) return
     const utf8Encode = new TextEncoder()
-    const message = wsCreateMsgTemplate()
+    const message: MessageTemplate = wsCreateMsgTemplate()
     message.type = 'terminal_data_write'
     message.channel = terminal.terminalChannel
     message.terminal_id = terminal.terminalId
@@ -171,9 +171,9 @@ export function useMessageBus(
     wsSend(message)
   }
 
-  function wsTerminalResize(rows: number, cols: number, terminal: any) {
+  function wsTerminalResize(rows: number, cols: number, terminal: Terminal) {
     if (!wsBus.value || !wsIsConnected.value) return
-    const message = wsCreateMsgTemplate()
+    const message: MessageTemplate = wsCreateMsgTemplate()
     message.type = 'terminal_resize_request'
     message.channel = terminal.terminalChannel
     message.terminal_id = terminal.terminalId
@@ -184,8 +184,7 @@ export function useMessageBus(
     return true
   }
 
-  // Utilities
-  function wsCreateMsgTemplate() {
+  function wsCreateMsgTemplate(): MessageTemplate {
     return {
       type: 'xxx',
       channel: 'yyy',
@@ -196,7 +195,7 @@ export function useMessageBus(
     }
   }
 
-  function wsNotification(text: string, data: any = '') {
+  function wsNotification(text: string, data: unknown = '') {
     console.debug('MessageBus:', text, data)
   }
 
@@ -213,20 +212,18 @@ export function useMessageBus(
     })
   }
 
-  function setBusMethods(bus: WebSocket, setBusLastMsgMethod: any) {
-    bus.onclose = () => {
-      // if (showStartNotifications) notifyInfo({ message: 'MessageBus: Connection closed.' })
-      setBus(undefined)
+  function setBusMethods(bus: WebSocket, setLastMsgMethod: (msg: unknown) => void) {
+    bus.onclose = () => setBus(undefined)
+    bus.onerror = () => {
+      if (showNotifications) setBus(undefined)
     }
-    bus.onerror = (err: any) => {
-      // notifyWarning({ message: 'WebSocket error: ' + JSON.stringify(err) })
-      if (showStartNotifications)
-        // notifyError({ message: 'MessageBus: Connection error: ' + JSON.stringify(err) })
-        setBus(undefined)
-    }
-    bus.onmessage = (event) => {
-      const message: any = decode(event.data)
-      if (message.expires > Date.now()) setBusLastMsgMethod(message)
+    bus.onmessage = (event: MessageEvent) => {
+      const message = decode(event.data)
+      if (
+        (message as { expires?: number }).expires &&
+        (message as { expires: number }).expires > Date.now()
+      )
+        setLastMsgMethod(message)
       else wsNotification('Message is expired', message)
     }
   }
@@ -242,7 +239,7 @@ export function useMessageBus(
     mount,
     channels,
     wsBus,
-    wsBusMsg,
+    busMsg,
     setBus,
     wsTerminalResize,
     wsTerminalSend,

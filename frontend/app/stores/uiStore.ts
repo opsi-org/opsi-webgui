@@ -65,7 +65,7 @@ export const useUiStore = defineStore('ui', {
     // Internal UI
     productActionRequest: {} as Record<string, string>,
     productsLastRequestUrl: '',
-    productsLastRequestParams: {} as any,
+    productsLastRequestParams: {} as unknown,
     productsLastRequestTime: 0,
 
     // Log UI
@@ -138,7 +138,7 @@ export const useUiStore = defineStore('ui', {
     setProductActionRequest(key: string, value: string) {
       this.productActionRequest[key] = value
     },
-    setProductsLastRequest(url: string, params: any, time: number) {
+    setProductsLastRequest(url: string, params: unknown, time: number) {
       this.productsLastRequestUrl = url
       this.productsLastRequestParams = params
       this.productsLastRequestTime = time

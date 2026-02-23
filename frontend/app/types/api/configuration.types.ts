@@ -21,5 +21,5 @@ export interface ConfigurationResult {
     worst_case: 'ok' | 'warning' | 'error'
     counts: { ok: number; warning: number; error: number }
   }
-  [key: string]: any
+  [key: string]: unknown
 }

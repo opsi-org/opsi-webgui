@@ -25,28 +25,28 @@ export const useMessageBusStore = defineStore('messageBus', {
     lastMsg: undefined,
   }),
   getters: {
-    isConnected: (state: MessageBusState): boolean => state.bus?.readyState === 1,
+    isConnected: (state) => state.bus?.readyState === 1,
   },
   actions: {
-    reset(this: MessageBusState) {
+    reset() {
       this.bus = undefined
       this.terminal = undefined
       this.lastMsg = undefined
       this.retries = 0
     },
-    setBus(this: MessageBusState, bus: WebSocket | undefined) {
+    setBus(bus?: WebSocket) {
       this.bus = bus
     },
-    setTerminal(this: MessageBusState, terminal: WebSocket | undefined) {
+    setTerminal(terminal?: WebSocket) {
       this.terminal = terminal
     },
-    setLastMsg(this: MessageBusState, msg: unknown) {
+    setLastMsg(msg: unknown) {
       this.lastMsg = msg
     },
-    incRetries(this: MessageBusState) {
+    incRetries() {
       this.retries += 1
     },
-    resetRetries(this: MessageBusState) {
+    resetRetries() {
       this.retries = 0
     },
   },

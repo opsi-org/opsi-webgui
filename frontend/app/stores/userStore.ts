@@ -15,7 +15,7 @@ interface UserState {
   isAuth: boolean
   authMethods: string
   globalError?: string
-  config?: any
+  config?: unknown
 }
 
 export const useUserStore = defineStore('user', {
@@ -43,7 +43,7 @@ export const useUserStore = defineStore('user', {
     logout() {
       this.$reset()
     },
-    setConfig(config: any) {
+    setConfig(config: unknown) {
       this.config = config
     },
   },

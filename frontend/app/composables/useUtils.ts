@@ -9,7 +9,7 @@ License: AGPL-3.0
 import { UI_LABELS } from '~/utils/constants'
 
 // Assertion
-export function assertOrThrow(condition: any, message: string = 'Type error') {
+export function assertOrThrow(condition: unknown, message = 'Type error') {
   if (!condition) {
     console.error(message)
     throw new Error(message)
@@ -18,21 +18,18 @@ export function assertOrThrow(condition: any, message: string = 'Type error') {
 
 // Array Utilities
 export function useArrayHelpers() {
-  // Add item if not present, remove if present (by key).
-  function toggleItem<T>(arr: T[], item: T, key: string = 'ident'): T[] {
-    const idx = arr.findIndex((el: any) => el[key] === (item as any)[key])
+  function toggleItem<T extends Record<string, unknown>>(arr: T[], item: T, key = 'ident'): T[] {
+    const idx = arr.findIndex((el) => el[key] === item[key])
     if (idx > -1) arr.splice(idx, 1)
     else arr.push(item)
     return arr
   }
 
-  // Check if all values in array are equal.
   function allValuesEqual<T>(arr: T[]): boolean {
     return arr.length === 0 || arr.every((v) => v === arr[0])
   }
 
-  // Deep equality check for arrays/objects.
-  function deepEqual(a: any, b: any): boolean {
+  function deepEqual(a: unknown, b: unknown): boolean {
     if (a === b) return true
     if (a == null || b == null) return false
     if (Array.isArray(a) && Array.isArray(b)) {
@@ -41,21 +38,21 @@ export function useArrayHelpers() {
       return true
     }
     if (typeof a === 'object' && typeof b === 'object') {
-      const keysA = Object.keys(a)
-      const keysB = Object.keys(b)
+      const keysA = Object.keys(a as object)
+      const keysB = Object.keys(b as object)
       if (keysA.length !== keysB.length) return false
-      for (const key of keysA) if (!deepEqual(a[key], b[key])) return false
+      for (const key of keysA)
+        if (!deepEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]))
+          return false
       return true
     }
     return false
   }
-
   return { toggleItem, allValuesEqual, deepEqual }
 }
 
 // Blocking Timer
 export function useBlockingDelay() {
-  // Synchronous/blocking delay (not recommended for UI).
   function sleep(ms: number) {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
   }
