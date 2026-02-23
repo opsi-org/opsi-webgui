@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
+# Copyright (c) 2026 uib GmbH <info@uib.de>
+# All rights reserved.
+# License: AGPL-3.0
 
 echo "*** Setup mysql ***"
 echo "MYSQL_ROOT_PASSWORD = ${MYSQL_ROOT_PASSWORD}"
