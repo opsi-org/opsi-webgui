@@ -8,37 +8,45 @@ License: AGPL-3.0
 
 import { defineStore } from 'pinia'
 
+interface MessageBusState {
+  retries: number
+  retriesMax: number
+  bus?: WebSocket
+  terminal?: WebSocket
+  lastMsg?: unknown
+}
+
 export const useMessageBusStore = defineStore('messageBus', {
-  state: () => ({
+  state: (): MessageBusState => ({
     retries: 0,
     retriesMax: 3,
-    bus: undefined as WebSocket | undefined,
-    terminal: undefined as WebSocket | undefined,
-    lastMsg: undefined as any,
+    bus: undefined,
+    terminal: undefined,
+    lastMsg: undefined,
   }),
   getters: {
-    isConnected: (state) => state.bus?.readyState === 1,
+    isConnected: (state: MessageBusState): boolean => state.bus?.readyState === 1,
   },
   actions: {
-    reset() {
+    reset(this: MessageBusState) {
       this.bus = undefined
       this.terminal = undefined
       this.lastMsg = undefined
       this.retries = 0
     },
-    setBus(bus: WebSocket | undefined) {
+    setBus(this: MessageBusState, bus: WebSocket | undefined) {
       this.bus = bus
     },
-    setTerminal(terminal: WebSocket | undefined) {
+    setTerminal(this: MessageBusState, terminal: WebSocket | undefined) {
       this.terminal = terminal
     },
-    setLastMsg(msg: any) {
+    setLastMsg(this: MessageBusState, msg: unknown) {
       this.lastMsg = msg
     },
-    incRetries() {
+    incRetries(this: MessageBusState) {
       this.retries += 1
     },
-    resetRetries() {
+    resetRetries(this: MessageBusState) {
       this.retries = 0
     },
   },

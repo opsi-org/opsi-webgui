@@ -7,11 +7,10 @@ License: AGPL-3.0
 */
 
 import { encode, decode } from '@msgpack/msgpack'
-import { useNotification } from './useComponent'
-import { useI18n } from 'vue-i18n'
+// import { useNotification } from './useComponentHelpers'
 import { ref, computed, watch, onUnmounted } from 'vue'
-
-const { notifyInfo, notifySuccess, notifyWarning, notifyError } = useNotification()
+import { useMessageBusStore } from '~/stores/messageBusStore'
+// const { notifyInfo, notifySuccess, notifyWarning, notifyError } = useNotification()
 
 export function useMessageBus(
   onMessage: ((msg: any) => Promise<void>) | undefined = undefined,
@@ -21,25 +20,24 @@ export function useMessageBus(
 ) {
   // State
   const $config = useRuntimeConfig()
-  const wsBus = ref<WebSocket | undefined>(storeMBus().bus)
-  const wsBusMsg = ref(storeMBus().wsBusMsg)
+  const wsBus = ref<WebSocket | undefined>(useMessageBusStore().bus)
+  const wsBusMsg = ref(useMessageBusStore().wsBusMsg)
   const channels = _channels || []
-  let $t = _t || useI18n().t
   let urlHost = ''
 
   // Store sync
   const setBus = (bus: WebSocket | undefined) => {
-    storeMBus().setBus(bus)
+    useMessageBusStore().setBus(bus)
     wsBus.value = bus
   }
   const setBusLastMsg = (msg: any) => {
-    storeMBus().setBusLastMsg(msg)
+    useMessageBusStore().setBusLastMsg(msg)
     wsBusMsg.value = msg
   }
 
   // Connection state
   const wsIsConnected = computed(() => wsBus.value?.readyState === 1)
-  const { retries, retriesMax } = storeToRefs(storeMBus())
+  const { retries, retriesMax } = storeToRefs(useMessageBusStore())
 
   // Watch for new messages
   watch(
@@ -77,7 +75,7 @@ export function useMessageBus(
     setBus(undefined)
     setBus(bus)
     if (!bus || !wsBus.value) {
-      notifyError({ message: 'MessageBus: connection failed' })
+      // notifyError({ message: 'MessageBus: connection failed' })
       throw new Error('MessageBus connection failed')
     }
     wsBus.value.binaryType = 'arraybuffer'
@@ -103,7 +101,7 @@ export function useMessageBus(
     await wsWait(1000)
     if (wsIsConnected.value) {
       retries.value = 0
-      if (showStartNotifications) notifySuccess({ message: 'MessageBus: connected' })
+      if (showStartNotifications) console.info('MessageBus: connected')
     }
   }
 
@@ -217,14 +215,14 @@ export function useMessageBus(
 
   function setBusMethods(bus: WebSocket, setBusLastMsgMethod: any) {
     bus.onclose = () => {
-      if (showStartNotifications) notifyInfo({ message: 'MessageBus: Connection closed.' })
+      // if (showStartNotifications) notifyInfo({ message: 'MessageBus: Connection closed.' })
       setBus(undefined)
     }
     bus.onerror = (err: any) => {
-      notifyWarning({ message: 'WebSocket error: ' + JSON.stringify(err) })
+      // notifyWarning({ message: 'WebSocket error: ' + JSON.stringify(err) })
       if (showStartNotifications)
-        notifyError({ message: 'MessageBus: Connection error: ' + JSON.stringify(err) })
-      setBus(undefined)
+        // notifyError({ message: 'MessageBus: Connection error: ' + JSON.stringify(err) })
+        setBus(undefined)
     }
     bus.onmessage = (event) => {
       const message: any = decode(event.data)

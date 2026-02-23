@@ -13,7 +13,6 @@ import { useCookie } from 'nuxt/app'
 type Lang = 'en' | 'de'
 type Theme = 'light' | 'dark'
 type TableType = 'servers' | 'clients' | 'products'
-type SortItem = { column: string; isDesc: boolean }
 
 const defaultVisible = {
   servers: ['selected', 'depotId', 'description', 'type', 'actions'],
@@ -69,9 +68,6 @@ export const useUiStore = defineStore('ui', {
     productsLastRequestParams: {} as any,
     productsLastRequestTime: 0,
 
-    // Loading state
-    loadingActions: {} as Record<string, Record<string, boolean>>,
-
     // Log UI
     logmarker: '-1;;instlog',
     loglevel: 5,
@@ -85,11 +81,9 @@ export const useUiStore = defineStore('ui', {
     getColumns: (state) => (type: TableType) => state.visibleColumns[type],
     getSorting: (state) => (type: TableType) => state.sortColumns[type],
     getFilter: (state) => (type: TableType) => state.filterQuery[type] || '',
-    anyLoading: (state) =>
-      Object.values(state.loadingActions).some((action) => Object.values(action).some(Boolean)),
-    logmarkerNr: (state) => parseInt(state.logmarker.split(';')[0]) || -1,
-    logmarkerId: (state) => state.logmarker.split(';')[1] || '',
-    logmarkerType: (state) => state.logmarker.split(';')[2] || '',
+    logmarkerNr: (state) => parseInt(String(state.logmarker?.split(';')[0] ?? '-1')) || -1,
+    logmarkerId: (state) => state.logmarker?.split(';')[1] || '',
+    logmarkerType: (state) => state.logmarker?.split(';')[2] || '',
   },
   actions: {
     // General UI
@@ -117,6 +111,9 @@ export const useUiStore = defineStore('ui', {
     },
     setSplitviewServer(val: boolean) {
       this.splitviewServer = val
+    },
+    setSecondColumnSelectedRowId(id: string) {
+      this.secondColumnSelectedRowId = id
     },
 
     // Table UI
@@ -146,19 +143,6 @@ export const useUiStore = defineStore('ui', {
       this.productsLastRequestParams = params
       this.productsLastRequestTime = time
     },
-
-    // Loading state
-    setLoading(action: string, id: string, value: boolean) {
-      if (!this.loadingActions[action]) this.loadingActions[action] = {}
-      this.loadingActions[action][id] = value
-    },
-    setLoadingMany(action: string, ids: string[], value: boolean) {
-      if (!this.loadingActions[action]) this.loadingActions[action] = {}
-      ids.forEach((id) => {
-        this.loadingActions[action][id] = value
-      })
-    },
-
     // Log UI
     setLogmarker(nr: number, id: string) {
       this.logmarker = `${nr};${id};${this.logtype}`

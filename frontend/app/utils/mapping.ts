@@ -49,13 +49,14 @@ export function mapValuesToObjects(
   const clientToValue: StringStringMap = {}
   for (const originKey of objectsOrigin) {
     const i = objects.indexOf(originKey)
+    const objectKey = objects[i]
     if (i >= 0 && values.length === 1) {
       if (values[0] === undefined) throw new Error('values contains undefined value')
-      clientToValue[objects[i]] = values[0]
+      if (objectKey !== undefined) clientToValue[objectKey] = values[0]
     } else if (i >= 0 && values[i] !== undefined) {
-      clientToValue[objects[i]] = values[i]
+      if (objectKey !== undefined) clientToValue[objectKey] = values[i]
     } else if (i >= 0) {
-      clientToValue[objects[i]] = defaultValue
+      if (objectKey !== undefined) clientToValue[objectKey] = defaultValue
     } else {
       clientToValue[originKey] = defaultValue
     }

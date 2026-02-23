@@ -74,16 +74,22 @@ export function useStringLabels() {
 export function useDateFormatter() {
   function formatDate(value: string): string {
     if (!value || typeof value === 'object') return ''
-    let date, time
+    let date: Date | undefined, time: string | undefined
     if (value.includes('T') && value.includes('Z')) {
-      date = new Date(value.split('T')[0])
-      time = value.split('T')[1].split('Z')[0]
+      const [datePart, timePart] = value.split('T')
+      if (datePart) date = new Date(datePart)
+      if (timePart) {
+        const [t] = timePart.split('Z')
+        time = t
+      }
     } else if (value.includes('T')) {
-      date = new Date(value.split('T')[0])
-      time = value.split('T')[1]
+      const [datePart, timePart] = value.split('T')
+      if (datePart) date = new Date(datePart)
+      if (timePart) time = timePart
     } else if (value.includes(' ')) {
-      date = new Date(value.split(' ')[0])
-      time = value.split(' ')[1]
+      const [datePart, timePart] = value.split(' ')
+      if (datePart) date = new Date(datePart)
+      if (timePart) time = timePart
     } else {
       console.warn('formatDate: unknown format', value)
       return ''

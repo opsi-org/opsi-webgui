@@ -8,7 +8,7 @@ License: AGPL-3.0
 
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { storeTablesettings } from '~/app/stores/tablesettings'
+import { useUiStore } from '~/stores/uiStore'
 import { storeToRefs } from 'pinia'
 
 export interface PageSettings {
@@ -17,10 +17,10 @@ export interface PageSettings {
   width: string | undefined
 }
 
-export function usePageHelper() {
+export function usePageHelpers() {
   // Navigation
-  const storeTS = storeTablesettings()
-  const { secondColumnSelectedRowId } = storeToRefs(storeTS)
+  const uiStore = useUiStore()
+  const { secondColumnSelectedRowId } = storeToRefs(uiStore)
   const route = useRoute()
   const router = useRouter()
 
@@ -50,7 +50,7 @@ export function usePageHelper() {
     isChild = false,
     productType = 'LocalbootProduct'
   ) {
-    storeTS.setSecondColumnSelectedRowId(id)
+    uiStore.setSecondColumnSelectedRowId(id)
     if (type === 'clients') {
       router.push(`/clients/${id}/config/`)
     } else if (type === 'servers') {
@@ -65,7 +65,7 @@ export function usePageHelper() {
   }
 
   function navigateToType(type: string, id: string, pagetype = 'config') {
-    storeTS.setSecondColumnSelectedRowId(id)
+    uiStore.setSecondColumnSelectedRowId(id)
     if (type === 'clients') {
       router.push(`/clients/${id}/${pagetype}/`)
     } else if (type === 'servers') {

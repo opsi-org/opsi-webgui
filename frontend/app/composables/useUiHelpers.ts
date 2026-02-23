@@ -7,7 +7,7 @@ License: AGPL-3.0
 */
 import { useMediaQuery } from '@vueuse/core'
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
+import $t from 'nuxt-i18n-micro'
 
 export function useUiHelpers() {
   // Media queries
@@ -16,15 +16,6 @@ export function useUiHelpers() {
   const isTablet = useMediaQuery('(min-width: 767.98px)')
   const mq = computed(() => (isDesktop.value ? 'desktop' : isTablet.value ? 'tablet' : 'mobile'))
   const isMobile = computed(() => mq.value === 'mobile')
-
-  // i18n translation function
-  let translate = (key: string) => key
-  try {
-    const { t } = useI18n({ useScope: 'global' })
-    if (t) translate = t
-  } catch {
-    // fallback: return key as-is
-  }
-
-  return { mq, isDark, isMobile, translate }
+  const t = $t
+  return { mq, isDark, isMobile, t }
 }
