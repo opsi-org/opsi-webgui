@@ -21,8 +21,11 @@ module.exports = [
     },
     rules: {
       ...(vuePlugin.configs['vue3-recommended']?.rules || {}),
-      '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
+      'padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: 'function', next: 'function' },
+      ],
     },
   },
   {
@@ -37,8 +40,11 @@ module.exports = [
     },
     rules: {
       ...(tsPlugin.configs.recommended?.rules || {}),
-      '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
+      'padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: 'function', next: 'function' },
+      ],
     },
   },
 ]
