@@ -12,18 +12,11 @@ export default defineConfig({
   testDir: './',
   reporter: 'list',
   timeout: 60000,
-  retries: 0,
-  fullyParallel: true,
-  workers: 4,
   use: {
-    baseURL: 'https://localhost:8888/addons/webgui/app',
+    baseURL: 'http://localhost:3000',
     browserName: 'chromium',
     headless: true,
     ignoreHTTPSErrors: true,
-    // screenshot: 'only-on-failure',
     viewport: { width: 1440, height: 900 },
-    launchOptions: {
-      args: ['--disable-web-security'],
-    },
   },
 })

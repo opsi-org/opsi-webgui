@@ -26,7 +26,7 @@ export const opsiconfdSessionCookie = [
 ]
 
 export const defaultResponseHeaders = {
-  'access-control-allow-origin': 'https://localhost:8888',
+  'access-control-allow-origin': 'https://localhost:3000',
   'access-control-allow-credentials': 'true',
   'access-control-allow-headers':
     'Accept,Accept-Encoding,Authorization,Connection,Content-Type,Encoding,Host,Origin,X-opsi-session-lifetime,X-Requested-With',
