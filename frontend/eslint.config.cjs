@@ -21,6 +21,7 @@ module.exports = [
     },
     rules: {
       ...(vuePlugin.configs['vue3-recommended']?.rules || {}),
+      'no-console': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
       'padding-line-between-statements': [
         'error',
@@ -40,6 +41,7 @@ module.exports = [
     },
     rules: {
       ...(tsPlugin.configs.recommended?.rules || {}),
+      'no-console': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
       'padding-line-between-statements': [
         'error',

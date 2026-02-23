@@ -11,7 +11,6 @@ import { UI_LABELS } from '~/utils/constants'
 // Assertion
 export function assertOrThrow(condition: unknown, message = 'Type error') {
   if (!condition) {
-    console.error(message)
     throw new Error(message)
   }
 }
@@ -88,7 +87,7 @@ export function useDateFormatter() {
       if (datePart) date = new Date(datePart)
       if (timePart) time = timePart
     } else {
-      console.warn('formatDate: unknown format', value)
+      // console.warn('formatDate: unknown format', value)
       return ''
     }
     if (!date || !time) return ''

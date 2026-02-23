@@ -66,7 +66,7 @@ export const fetchMockData = async (): Promise<void> => {
     productObjectList = getProducts(mockData.objects.Product)
     hostGroups = getHostGroups(mockData.objects.Group)
   } catch (error) {
-    console.error('Error fetching mock data:', error)
+    // console.error('Error fetching mock data:', error)
     throw error
   }
 }

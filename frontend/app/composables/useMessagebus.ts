@@ -92,7 +92,7 @@ export function useMessageBus(
     await wsWait(1000)
     if (wsIsConnected.value) {
       retries.value = 0
-      if (showNotifications) console.info('MessageBus: connected')
+      if (showNotifications) wsNotification('MessageBus: connected')
     }
   }
 
@@ -112,9 +112,12 @@ export function useMessageBus(
   }
 
   function wsSend(msg: unknown) {
-    if (!wsBus.value) return console.error('wsBus is undefined')
+    if (!wsBus.value) {
+      if (showNotifications) wsNotification('wsBus is undefined')
+      return
+    }
     if (!wsIsConnected.value) {
-      console.error('wsBus is not connected')
+      if (showNotifications) wsNotification('wsBus is not connected')
       wsInit(true)
       return
     }
@@ -196,7 +199,11 @@ export function useMessageBus(
   }
 
   function wsNotification(text: string, data: unknown = '') {
-    console.debug('MessageBus:', text, data)
+    if (showNotifications) {
+      // eslint-disable-next-line no-console
+      console.info(`MessageBus: ${text}`, data)
+      // TODO: Replace this with a UI notification
+    }
   }
 
   function wsWait(ms: number) {
