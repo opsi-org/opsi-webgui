@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   opsi-webgui-dev:
     hostname: ${OPSI_HOSTNAME}
@@ -9,25 +7,23 @@ services:
       - SYS_PTRACE
     build:
       context: ../
-      dockerfile: ./docker/Dockerfile.dev
+      dockerfile: ./docker/Dockerfile
       args:
         - USER
         - UID
+        - ADDON_NAME
+        - ADDON_ID
     volumes:
       - ../:/workspace
       - ./files/docker-entrypoint.sh:/entrypoint.sh
+    ports:
+      - "4447:4447"
     environment:
-      GF_INSTALL_PLUGINS: grafana-simple-json-datasource
-      GF_SECURITY_ADMIN_USER: adminuser
-      GF_SECURITY_ADMIN_PASSWORD: adminuser
       MYSQL_ROOT_PASSWORD: opsi
       MYSQL_DATABASE: opsi
       MYSQL_USER: opsi
       MYSQL_PASSWORD: opsi
       MYSQL_HOST: localhost
       OPSICONFD_PORT: ${OPSICONFD_PORT}
-      OPSICONFD_STATIC_DIR: /workspace/opsiconfd_data/static
-      OPSICONFD_RESTORE_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
-
-      OPSICONFD_ADDON_DIR: "/workspace/backend/src"
+      OPSICONFD_ADDON_DIRS: "[/var/lib/opsiconfd/addons]"
     entrypoint: ["/entrypoint.sh"]

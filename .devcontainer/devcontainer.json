@@ -1,47 +1,46 @@
 {
-  "name": "opsi-webgui-dev",
-  "dockerComposeFile": "../docker/docker-compose.yml",
-  "service": "opsi-webgui-dev",
-  "initializeCommand": ".devcontainer/initialize.sh",
-  "postCreateCommand": ".devcontainer/post_create.sh",
-  "postStartCommand": ".devcontainer/post_start.sh",
-  "workspaceFolder": "/workspace",
-  "containerEnv": {
-    "DEV_USER": "${localEnv:USER}",
-    "DEV_UID": "${localEnv:UID}",
-    "OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
-    "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
-    "ADDON_NAME": "OPSI WebGUI",
-    "ADDON_ID": "opsi-webgui",
-    "ADDON_DEV_PORT": "8888"
-  },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        // General
-        "seunlanlege.action-buttons",
-        "GitHub.copilot-chat",
-        "shardulm94.trailing-spaces",
-        "gruntfuggly.todo-tree",
-        // backend
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ryanluker.vscode-coverage-gutters",
-        "charliermarsh.ruff",
-        // frontend
-        "Vue.volar",
-        "wejectchan.vue3-snippets-for-vscode",
-        "lokalise.i18n-ally",
-        "bradlc.vscode-tailwindcss",
-        "antfu.iconify",
-        "fooxly.workspace",
-        "esbenp.prettier-vscode",
-        "anseki.vscode-color",
-        "dbaeumer.vscode-eslint",
-        "richie5um2.vscode-sort-json",
-        "ms-playwright.playwright"
-      ]
-    }
-  },
-  "remoteUser": "${localEnv:USER}"
+	"name": "opsi-webgui",
+	"dockerComposeFile": "../docker/docker-compose.yml",
+	"service": "opsi-webgui",
+	"initializeCommand": ".devcontainer/initialize.sh",
+	"postCreateCommand": ".devcontainer/post_create.sh",
+	"postStartCommand": ".devcontainer/post_start.sh",
+	"workspaceFolder": "/workspace",
+	"containerEnv": {
+		"UV_PYTHON": "3.14",
+		"DEV_USER": "${localEnv:USER}",
+		"DEV_UID": "${localEnv:UID}",
+		"OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
+		"OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
+		"ADDON_NAME": "webgui",
+		"ADDON_ID": "webgui"
+	},
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"files.trimTrailingWhitespace": true,
+				"editor.formatOnSave": true,
+				"[python]": {
+					"editor.codeActionsOnSave": {
+						"source.fixAll": "explicit",
+						"source.organizeImports": "explicit"
+					},
+					"editor.defaultFormatter": "charliermarsh.ruff"
+				},
+				"python.defaultInterpreterPath": "/workspace/docker/opsiconfd/.venv/bin/python3",
+				"python.languageServer": "Pylance",
+				"python.testing.pytestEnabled": true
+			},
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"charliermarsh.ruff",
+				"GitHub.copilot-chat"
+			]
+		}
+	},
+	"forwardPorts": [
+		4447
+	],
+	"remoteUser": "${localEnv:USER}"
 }
