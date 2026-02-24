@@ -1,7 +1,7 @@
 {
 	"name": "opsi-webgui",
 	"dockerComposeFile": "../docker/docker-compose.yml",
-	"service": "opsi-webgui",
+	"service": "opsi-webgui-dev",
 	"initializeCommand": ".devcontainer/initialize.sh",
 	"postCreateCommand": ".devcontainer/post_create.sh",
 	"postStartCommand": ".devcontainer/post_start.sh",

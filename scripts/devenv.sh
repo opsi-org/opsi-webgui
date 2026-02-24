@@ -1,9 +1,11 @@
 #!/bin/sh
+# devenv.sh - Initial setup script (run BEFORE opening in devcontainer)
+# Creates docker/.env file from current environment
 
 FORCE=false
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 WORKSPACE_DIR="$(pwd)"
-DOCKERDIR=$WORKSPACE_DIR/docker/
+DOCKERDIR=$WORKSPACE_DIR/docker
 ENVFILE=$DOCKERDIR/.env
 
 for arg in "$@"; do
@@ -24,7 +26,7 @@ for arg in "$@"; do
     esac
 done
 
-echo "################# Setting up opsiconfd"
+echo "[INFO] Setting up opsiconfd..."
 OPSICONFD_DIR=$DOCKERDIR/opsiconfd
 if cd $OPSICONFD_DIR 2>/dev/null; then
     git pull
@@ -32,13 +34,13 @@ else
     git clone git@gitlab.uib.gmbh:uib/opsiconfd.git $OPSICONFD_DIR
 fi
 
-echo "################# Checking existing .env / force $FORCE"
+echo "[INFO] Checking existing .env (force=$FORCE)..."
 if [ -e "$ENVFILE" ] && [ "$FORCE" = "false" ]; then
-    echo "Warning: File '$ENVFILE' already exists. Use -f to force overwrite."
+    echo "[WARN] File '$ENVFILE' already exists. Use -f to force overwrite."
     exit 0
 fi
 
-echo "################# Creating .env file"
+echo "[INFO] Creating .env file..."
 echo "OPSI_HOSTNAME=$(hostname -f)" > $ENVFILE
 echo "OPSI_DOMAIN=$(hostname -d)" >> $ENVFILE
 echo "OPSICONFD_PORT=4447" >> $ENVFILE
@@ -66,3 +68,5 @@ echo "REDIS_HOST=localhost" >> $ENVFILE
 echo "OPSI_ADMIN_USER=adminuser" >> $ENVFILE
 echo "OPSI_ADMIN_PW=adminuser" >> $ENVFILE
 echo "UV_PYTHON=${UV_PYTHON:-3.14}" >> $ENVFILE
+
+echo "[INFO] .env file created at $ENVFILE"

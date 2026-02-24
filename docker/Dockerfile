@@ -1,12 +1,15 @@
 FROM docker.uib.gmbh/opsi/dev/pybuilder:deb10-py3.13
 
-ARG USER=john
-ARG UID=1000
-ARG ADDON_NAME=webgui
-ARG ADDON_ID=webgui
+# Build args - passed from docker-compose.yml which reads from .env
+# These defaults are overridden by values in docker/.env (created by scripts/devenv.sh)
+ARG USER
+ARG UID
+ARG ADDON_NAME
+ARG ADDON_ID
 
-ENV DEV_USER=${USER:-john} \
+ENV DEV_USER=${USER:-dev} \
 	DEV_UID=${UID:-1000} \
+	ADDON_ID=${ADDON_ID:-webgui} \
 	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.3:/development/Debian_10/ \
 	PYTHONFAULTHANDLER=1 \
 	PYTHONUNBUFFERED=1 \
