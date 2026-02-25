@@ -17,7 +17,8 @@ services:
       - ../:/workspace
       - ./files/docker-entrypoint.sh:/entrypoint.sh
     ports:
-      - "4447:4447"
+      - "4447:4447" # opsi-confd
+      - "3000:3000" # webgui
     environment:
       MYSQL_ROOT_PASSWORD: opsi
       MYSQL_DATABASE: opsi

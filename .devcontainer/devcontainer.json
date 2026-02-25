@@ -36,7 +36,8 @@
 				"ms-python.vscode-pylance",
 				"charliermarsh.ruff",
 				"GitHub.copilot-chat",
-				"Vue.volar"
+				"Vue.volar",
+				"bradlc.vscode-tailwindcss"
 			]
 		}
 	},
