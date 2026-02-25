@@ -63,7 +63,7 @@ export function useMessageBus(
     const port =
       process.env.NODE_ENV === 'production'
         ? window.location.port
-        : Number(($config as { public: { OPSICONFD_PORT?: number } }).public.OPSICONFD_PORT) || 4447
+        : Number(($config as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT) || 4447
     urlHost = `wss://${host}:${port}/messagebus/v1?`
     const bus = new WebSocket(urlHost)
     setBus(undefined)
