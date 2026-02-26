@@ -11,7 +11,6 @@ License: AGPL-3.0
             <div class="space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
-                        <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{{ t('logs') }}</h1>
                         <p v-if="clientId" class="text-sm text-gray-500">{{ clientId }}</p>
                     </div>
                     <div class="flex items-center gap-2">

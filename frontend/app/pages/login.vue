@@ -9,9 +9,11 @@ License: AGPL-3.0
   <div class="w-full max-w-md p-4">
     <UCard class="shadow-lg">
       <div class="text-center mb-6">
-        <img v-if="isDark" src="~/assets/images/opsi-webgui-light.svg" alt="OPSI Bee" class="h-14 mx-auto mb-3" />
-        <img v-else src="~/assets/images/opsi-webgui-dark.svg" alt="OPSI Bee" class="h-14 mx-auto mb-3" />
-        <h1 class="text-xl font-bold text-gray-900 dark:text-white">opsi-WebGUI</h1>
+        <img v-if="isDark" src="~/assets/images/opsi-webgui-dark.svg" alt="OPSI Bee" class="mx-auto mb-2"
+          style="width: 100px; height: auto;" />
+        <img v-else src="~/assets/images/opsi-webgui-light.svg" alt="OPSI Bee" class="mx-auto mb-2"
+          style="width: 100px; height: auto;" />
+        <span class="text-base md:text-xl font-semibold hidden sm:inline">opsi-WebGUI</span>
       </div>
       <form @submit.prevent="handleLogin" class="space-y-5">
         <UAlert v-if="errorMessage" color="error" variant="soft" :close-button="{ icon: 'i-heroicons-x-mark' }"
@@ -35,7 +37,7 @@ License: AGPL-3.0
             </div>
             <div class="relative flex justify-center text-sm"><span
                 class="px-2 bg-white dark:bg-gray-800 text-gray-500">{{
-                $t('or') }}</span></div>
+                  $t('or') }}</span></div>
           </div>
           <UButton v-if="showSaml" type="button" block size="lg" variant="outline" color="primary" @click="samlLogin">{{
             $t('loginWithSAML') }}</UButton>

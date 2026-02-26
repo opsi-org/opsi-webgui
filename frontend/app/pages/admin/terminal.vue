@@ -7,10 +7,6 @@ License: AGPL-3.0
 -->
 <template>
     <div class="space-y-4">
-        <div class="flex items-center justify-between">
-            <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{{ t('terminal') }}</h1>
-        </div>
-
         <UCard class="h-[calc(100vh-16rem)]">
             <div class="h-full flex flex-col">
                 <div class="flex-1 bg-gray-900 text-green-400 font-mono text-sm p-4 rounded overflow-auto">

@@ -8,7 +8,6 @@ License: AGPL-3.0
 <template>
     <div class="space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{{ t('modules') }}</h1>
             <UButton :icon="icons.refresh" variant="outline" color="neutral" size="sm" :loading="loading"
                 @click="refresh" />
         </div>
