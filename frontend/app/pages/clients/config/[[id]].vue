@@ -23,7 +23,7 @@ License: AGPL-3.0
 
                 <div v-if="selectedClientId" class="text-sm text-[var(--color-text-muted)]">
                     {{ $t('clientId') }}: <span class="font-medium text-[var(--color-text)]">{{ selectedClientId
-                    }}</span>
+                        }}</span>
                 </div>
 
                 <!-- Table -->
@@ -54,7 +54,7 @@ License: AGPL-3.0
                 <div class="flex gap-2 pt-4">
                     <UButton color="primary" size="sm">{{ $t('save') }}</UButton>
                     <UButton variant="outline" color="neutral" size="sm" @click="selectedConfig = null">{{ $t('cancel')
-                    }}</UButton>
+                        }}</UButton>
                 </div>
             </div>
         </template>
@@ -65,7 +65,7 @@ License: AGPL-3.0
 definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
 
 const route = useRoute()
 

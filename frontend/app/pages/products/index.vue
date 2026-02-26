@@ -11,17 +11,22 @@ License: AGPL-3.0
             <div class="space-y-4">
                 <!-- Header with Tabs -->
                 <CommonPageHeader :title="String($t('products'))" v-model="search" show-search
-                    :search-placeholder="String($t('filter'))" show-refresh :loading="loading" @refresh="refresh">
+                    :search-placeholder="String($t('filter'))" show-refresh :loading="loading" @refresh="fetchProducts">
                     <template #tabs>
                         <CommonTabsNav v-model="activeType" :tabs="productTypes" />
                     </template>
                 </CommonPageHeader>
 
+                <!-- Error State -->
+                <div v-if="error" class="p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg">
+                    {{ error }}
+                </div>
+
                 <!-- Table -->
                 <CommonDataTable :rows="filtered" :columns="columns" :loading="loading" :page-size="20"
                     @select="(row) => selectedProduct = row as any">
-                    <template #version-data="{ row }">
-                        <span class="text-[var(--color-text-muted)]">{{ (row as any).version }}</span>
+                    <template #depotVersions-data="{ row }">
+                        <span class="text-[var(--color-text-muted)]">{{ (row as any).depotVersions }}</span>
                     </template>
                     <template #actions-data="{ row }">
                         <UButton :icon="icons.eye" variant="ghost" color="neutral" size="xs"
@@ -31,23 +36,24 @@ License: AGPL-3.0
             </div>
         </template>
 
-        <template #title>{{ selectedProduct?.id }}</template>
+        <template #title>{{ selectedProduct?.productId }}</template>
         <template #panel>
             <div v-if="selectedProduct" class="space-y-4">
                 <div class="space-y-2">
                     <div><span class="text-sm text-[var(--color-text-muted)]">{{ $t('productId') }}:</span> <span
-                            class="ml-2 font-medium">{{ selectedProduct.id }}</span></div>
+                            class="ml-2 font-medium">{{ selectedProduct.productId }}</span></div>
                     <div><span class="text-sm text-[var(--color-text-muted)]">{{ $t('name') }}:</span> <span
-                            class="ml-2">{{ selectedProduct.name }}</span></div>
+                            class="ml-2">{{ selectedProduct.productId }}</span></div>
                     <div><span class="text-sm text-[var(--color-text-muted)]">{{ $t('version') }}:</span> <span
-                            class="ml-2">{{ selectedProduct.version }}</span></div>
+                            class="ml-2">{{ selectedProduct.depotVersions }}</span></div>
                     <div><span class="text-sm text-[var(--color-text-muted)]">{{ $t('type') }}:</span>
                         <CommonStatusBadge class="ml-2" status="info"
-                            :label="String(activeType === 'localboot' ? $t('localbootProducts') : $t('netbootProducts'))" />
+                            :label="String(activeType === 'LocalbootProduct' ? $t('localbootProducts') : $t('netbootProducts'))" />
                     </div>
                 </div>
                 <div class="pt-4 border-t border-[var(--color-border)]">
-                    <p class="text-sm text-[var(--color-text-muted)]">{{ selectedProduct.description }}</p>
+                    <p class="text-sm text-[var(--color-text-muted)]">{{ selectedProduct.description ||
+                        $t('noDescription') }}</p>
                 </div>
             </div>
         </template>
@@ -57,41 +63,84 @@ License: AGPL-3.0
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
+interface Product {
+    productId: string
+    description?: string
+    depotVersions?: string
+    clientVersions?: string
+    installationStatus?: string
+    actionRequest?: string
+    actionResult?: string
+    selectedClients?: string[]
+    [key: string]: unknown
+}
+
 const icons = useIcons()
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
+const { getProducts } = useApiHelpers()
 
 const search = ref('')
 const loading = ref(false)
-const activeType = ref('localboot')
-const selectedProduct = ref<typeof products.value[0] | null>(null)
+const error = ref<string | null>(null)
+const activeType = ref<'LocalbootProduct' | 'NetbootProduct'>('LocalbootProduct')
+const selectedProduct = ref<Product | null>(null)
+const products = ref<Product[]>([])
+const totalCount = ref(0)
 
 const productTypes = [
-    { label: String($t('localbootProducts')), value: 'localboot' },
-    { label: String($t('netbootProducts')), value: 'netboot' },
+    { label: String($t('localbootProducts')), value: 'LocalbootProduct' },
+    { label: String($t('netbootProducts')), value: 'NetbootProduct' },
 ]
 
 const columns = [
-    { key: 'id', label: String($t('productId')) },
-    { key: 'name', label: String($t('name')), class: 'hidden md:table-cell' },
-    { key: 'version', label: String($t('version')), class: 'hidden sm:table-cell' },
+    { key: 'productId', label: String($t('productId')) },
+    { key: 'description', label: String($t('description')), class: 'hidden md:table-cell' },
+    { key: 'depotVersions', label: String($t('version')), class: 'hidden sm:table-cell' },
     { key: 'actions', label: String($t('actions')) },
 ]
-
-const products = ref([
-    { id: 'opsi-client-agent', name: 'OPSI Client Agent', version: '4.3.0.1-1', description: 'OPSI client agent for automated software deployment' },
-    { id: 'hwaudit', name: 'Hardware Audit', version: '4.3.0.1-1', description: 'Collects hardware information from clients' },
-    { id: 'swaudit', name: 'Software Audit', version: '4.3.0.3-1', description: 'Collects installed software information' },
-    { id: 'opsi-configed', name: 'OPSI Configed', version: '4.3.0.2-1', description: 'Management console for OPSI' },
-])
 
 const filtered = computed(() => {
     let items = products.value
     if (search.value) {
         const q = search.value.toLowerCase()
-        items = items.filter(p => p.id.toLowerCase().includes(q) || p.name.toLowerCase().includes(q))
+        items = items.filter(p =>
+            p.productId.toLowerCase().includes(q) ||
+            (p.description?.toLowerCase().includes(q) ?? false)
+        )
     }
     return items
 })
 
-const refresh = async () => { loading.value = true; await new Promise(r => setTimeout(r, 500)); loading.value = false }
+const fetchProducts = async () => {
+    loading.value = true
+    error.value = null
+    try {
+        const result = await getProducts({
+            type: activeType.value,
+            sortBy: 'productId',
+            sortDesc: false,
+            pageNumber: 1,
+            perPage: 100,
+        })
+        if (result.error) {
+            throw result.error
+        }
+        products.value = result.data || []
+        totalCount.value = products.value.length
+    } catch (err: unknown) {
+        console.error('Failed to fetch products:', err)
+        error.value = err instanceof Error ? err.message : $t('errorFetchingProducts')
+    } finally {
+        loading.value = false
+    }
+}
+
+// Refetch when product type changes
+watch(activeType, () => {
+    fetchProducts()
+})
+
+onMounted(() => {
+    fetchProducts()
+})
 </script>

@@ -48,7 +48,7 @@ License: AGPL-3.0
                 <div class="flex justify-end gap-3 pt-4">
                     <UButton type="button" variant="outline" color="neutral" @click="navigateTo('/clients')">{{
                         $t('button.cancel')
-                        }}</UButton>
+                    }}</UButton>
                     <UButton type="submit" color="primary" :loading="loading">{{ t('button.clone') }}</UButton>
                 </div>
             </form>
@@ -60,12 +60,12 @@ License: AGPL-3.0
 definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
 
 const t = (key: string) => {
-  const translated = $t(key)
-  if (translated && translated !== key) return String(translated)
-  return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
+    const translated = $t(key)
+    if (translated && translated !== key) return String(translated)
+    return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
 }
 const route = useRoute()
 

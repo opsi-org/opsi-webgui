@@ -10,9 +10,9 @@ PageHeader - A reusable page header component with title and actions.
 <template>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div class="flex items-center gap-3">
-            <h1 class="text-xl md:text-2xl font-bold text-[var(--color-text)] dark:text-[var(--color-text)]">
+            <!-- <h1 class="text-xl md:text-2xl font-bold text-[var(--color-text)] dark:text-[var(--color-text)]">
                 {{ title }}
-            </h1>
+            </h1> -->
             <slot name="tabs" />
         </div>
         <div class="flex flex-wrap items-center gap-2">
@@ -49,7 +49,7 @@ const emit = defineEmits<{
 }>()
 
 const icons = useIcons()
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
 
 const searchModel = computed({
     get: () => props.modelValue || '',

@@ -93,7 +93,7 @@ const emit = defineEmits<{
 }>()
 
 const icons = useIcons()
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
 
 const tableContainer = ref<HTMLElement | null>(null)
 const currentPage = ref(1)

@@ -6,8 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-// All available icons: https://icon-sets.iconify.design
-// Preferred: heroicons for UI, bootstrap for content
+//Iconify Heroicons Outline collection: https://icon-sets.iconify.design/heroicons-outline/
 export const icons = {
   // UI Navigation
   menu: 'heroicons:bars-3',
@@ -37,7 +36,7 @@ export const icons = {
 
   // Content types
   client: 'heroicons:computer-desktop',
-  depot: 'heroicons:server-stack',
+  serverStack: 'heroicons:server-stack',
   server: 'heroicons:server',
   product: 'heroicons:cube',
   group: 'heroicons:rectangle-group',
@@ -46,7 +45,6 @@ export const icons = {
   support: 'heroicons:lifebuoy',
 
   // Status & Info
-  home: 'heroicons:home',
   config: 'heroicons:cog-8-tooth',
   settings: 'heroicons:adjustments-vertical',
   log: 'heroicons:document-text',

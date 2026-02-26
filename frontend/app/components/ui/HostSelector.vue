@@ -12,54 +12,36 @@ data for a specific client.
 <template>
   <div class="relative" ref="containerRef">
     <!-- Trigger button -->
-    <button
-      @click="open = !open"
-      type="button"
-      class="flex items-center gap-2 px-3 py-1.5 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-opsi-blue transition-colors text-sm min-w-48"
-    >
+    <button @click="open = !open" type="button"
+      class="flex items-center gap-2 px-3 py-1.5 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-opsi-blue transition-colors text-sm min-w-48">
       <UIcon :name="icons.client" class="w-4 h-4 text-gray-400" />
       <span class="flex-1 text-left truncate" :class="modelValue ? 'text-gray-900 dark:text-white' : 'text-gray-400'">
         {{ modelValue || placeholder }}
       </span>
-      <UIcon :name="icons.arrowDown" class="w-4 h-4 text-gray-400 transition-transform" :class="{ 'rotate-180': open }" />
+      <UIcon :name="icons.arrowDown" class="w-4 h-4 text-gray-400 transition-transform"
+        :class="{ 'rotate-180': open }" />
     </button>
 
     <!-- Dropdown -->
     <Transition name="dropdown">
-      <div
-        v-if="open"
-        class="absolute top-full left-0 mt-1 min-w-56 max-h-64 overflow-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50"
-      >
+      <div v-if="open"
+        class="absolute top-full left-0 mt-1 min-w-56 max-h-64 overflow-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
         <!-- Search input -->
         <div class="p-2 border-b border-gray-200 dark:border-gray-700">
-          <UInput
-            v-model="search"
-            :placeholder="String($t('filter'))"
-            :icon="icons.search"
-            size="xs"
-          />
+          <UInput v-model="search" :placeholder="String($t('filter'))" :icon="icons.search" size="xs" />
         </div>
         <!-- All clients option -->
-        <button
-          v-if="allowAll"
-          type="button"
-          @click="selectHost(null)"
-          class="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-left"
-        >
+        <button v-if="allowAll" type="button" @click="selectHost(null)"
+          class="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-left">
           <UIcon :name="icons.list" class="w-4 h-4" />
           {{ $t('allClients') || 'All Clients' }}
         </button>
         <div v-if="allowAll" class="border-b border-gray-200 dark:border-gray-700" />
         <!-- Host list -->
         <template v-if="filteredHosts.length">
-          <button
-            v-for="host in filteredHosts"
-            :key="host.id"
-            type="button"
-            @click="selectHost(host.id)"
+          <button v-for="host in filteredHosts" :key="host.id" type="button" @click="selectHost(host.id)"
             class="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-left"
-            :class="{ 'bg-opsi-blue/10': host.id === modelValue }"
-          >
+            :class="{ 'bg-opsi-blue/10': host.id === modelValue }">
             <span :class="['w-2 h-2 rounded-full shrink-0', host.online ? 'bg-green-500' : 'bg-gray-400']" />
             <span class="truncate flex-1">{{ host.id }}</span>
             <span v-if="host.description" class="text-xs text-gray-400 truncate max-w-24">{{ host.description }}</span>
@@ -90,7 +72,7 @@ const emit = defineEmits<{
 }>()
 
 const icons = useIcons()
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
 
 const open = ref(false)
 const search = ref('')
@@ -118,7 +100,7 @@ const hosts = ref([
 const filteredHosts = computed(() => {
   if (!search.value) return hosts.value
   const q = search.value.toLowerCase()
-  return hosts.value.filter(h => 
+  return hosts.value.filter(h =>
     h.id.toLowerCase().includes(q) || h.description?.toLowerCase().includes(q)
   )
 })
@@ -136,6 +118,7 @@ function selectHost(id: string | null) {
 .dropdown-leave-active {
   transition: opacity 0.15s, transform 0.15s;
 }
+
 .dropdown-enter-from,
 .dropdown-leave-to {
   opacity: 0;

@@ -7,7 +7,6 @@ License: AGPL-3.0
 */
 import { useMediaQuery } from '@vueuse/core'
 import { computed } from 'vue'
-import $t from 'nuxt-i18n-micro'
 
 export function useUiHelpers() {
   // Media queries
@@ -16,6 +15,6 @@ export function useUiHelpers() {
   const isTablet = useMediaQuery('(min-width: 767.98px)')
   const mq = computed(() => (isDesktop.value ? 'desktop' : isTablet.value ? 'tablet' : 'mobile'))
   const isMobile = computed(() => mq.value === 'mobile')
-  const t = $t
+  const { t } = useI18n()
   return { mq, isDark, isMobile, t }
 }

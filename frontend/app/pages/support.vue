@@ -107,6 +107,6 @@ License: AGPL-3.0
 definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
 const $config = useRuntimeConfig()
 </script>

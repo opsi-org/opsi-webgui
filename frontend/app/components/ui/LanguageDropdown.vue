@@ -33,8 +33,8 @@ const props = defineProps<{
 }>()
 
 const icons = useIcons()
-const { $getLocale, $switchLocale, $getLocales } = useNuxtApp()
-const currentLocale = computed(() => $getLocale() || 'en')
+const { locale, locales, setLocale } = useI18n()
+const currentLocale = computed(() => locale.value || 'en')
 
 const open = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
@@ -42,12 +42,12 @@ const containerRef = ref<HTMLElement | null>(null)
 interface LocaleInfo { code: string; name?: string }
 
 const availableLocales = computed(() => {
-  const locales = $getLocales() as LocaleInfo[]
-  return locales.filter(l => l.code !== currentLocale.value)
+  const allLocales = locales.value as LocaleInfo[]
+  return allLocales.filter(l => l.code !== currentLocale.value)
 })
 
 function switchTo(code: string) {
-  $switchLocale(code)
+  setLocale(code as 'de' | 'en')
   open.value = false
 }
 

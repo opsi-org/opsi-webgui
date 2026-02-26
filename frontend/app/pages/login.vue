@@ -46,7 +46,7 @@ import { useUserStore } from '~/stores/userStore'
 definePageMeta({ layout: 'auth' })
 
 const icons = useIcons()
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
 const userStore = useUserStore()
 const colorMode = useColorMode()
 

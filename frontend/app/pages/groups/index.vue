@@ -8,7 +8,7 @@ License: AGPL-3.0
 <template>
     <div class="space-y-4 h-full">
         <!-- Header with Tabs -->
-        <CommonPageHeader :title="String($t('groups'))">
+        <CommonPageHeader :title="String($t('groups'))" :loading="loading" show-refresh @refresh="fetchGroups">
             <template #tabs>
                 <CommonTabsNav v-model="activeGroupType" :tabs="groupTypes" />
             </template>
@@ -18,6 +18,11 @@ License: AGPL-3.0
                 </UButton>
             </template>
         </CommonPageHeader>
+
+        <!-- Error State -->
+        <div v-if="error" class="p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg">
+            {{ error }}
+        </div>
 
         <div class="flex flex-col md:flex-row gap-4 h-full min-h-0">
             <!-- Tree sidebar -->
@@ -29,13 +34,20 @@ License: AGPL-3.0
                         <UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" />
                     </div>
                 </template>
-                <div class="space-y-1">
+                <div v-if="loading" class="py-4 text-center">
+                    <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-[var(--color-text-muted)]" />
+                </div>
+                <div v-else class="space-y-1">
                     <div v-for="g in currentGroups" :key="g.id" @click="selectedGroup = g"
                         class="flex items-center gap-2 px-2 py-2 rounded cursor-pointer transition-colors"
                         :class="selectedGroup?.id === g.id ? 'bg-opsi-blue/10 text-opsi-blue' : 'hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)]'">
                         <UIcon :name="icons.group" class="w-4 h-4 shrink-0" />
                         <span class="text-sm flex-1 truncate">{{ g.name }}</span>
                         <span class="text-xs text-[var(--color-text-muted)]">({{ g.count }})</span>
+                    </div>
+                    <div v-if="currentGroups.length === 0"
+                        class="text-sm text-[var(--color-text-muted)] px-2 py-4 text-center">
+                        {{ $t('noGroupsFound') || 'No groups found' }}
                     </div>
                 </div>
             </UCard>
@@ -78,6 +90,10 @@ License: AGPL-3.0
                                         class="w-4 h-4 text-[var(--color-text-muted)]" />
                                     {{ member }}
                                 </div>
+                                <div v-if="selectedGroup.members.length === 0"
+                                    class="text-sm text-[var(--color-text-muted)] py-2 text-center">
+                                    {{ $t('noMembers') || 'No members' }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -96,36 +112,114 @@ License: AGPL-3.0
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-const icons = useIcons()
-const { $t } = useNuxtApp()
+interface GroupItem {
+    id: string
+    name: string
+    description: string
+    count: number
+    members: string[]
+}
 
-const activeGroupType = ref('clients')
-const selectedGroup = ref<typeof clientGroups.value[0] | null>(null)
+const icons = useIcons()
+const { t: $t } = useI18n()
+const { getHostGroups, getProductGroups } = useApiHelpers()
+
+const activeGroupType = ref<'clients' | 'products'>('clients')
+const selectedGroup = ref<GroupItem | null>(null)
+const loading = ref(false)
+const error = ref<string | null>(null)
+const clientGroups = ref<GroupItem[]>([])
+const productGroups = ref<GroupItem[]>([])
 
 const groupTypes = [
     { label: String($t('client-group')), value: 'clients' },
     { label: String($t('product-group')), value: 'products' },
 ]
 
-const clientGroups = ref([
-    { id: 'clientdirectory', name: 'All Clients', description: 'Root group containing all clients', count: 42, members: ['client1.domain.local', 'client2.domain.local', 'laptop1.domain.local'] },
-    { id: 'workstations', name: 'Workstations', description: 'Desktop workstations', count: 30, members: ['client1.domain.local', 'client2.domain.local'] },
-    { id: 'servers', name: 'Servers', description: 'Server machines', count: 8, members: ['server-test.domain.local'] },
-    { id: 'laptops', name: 'Laptops', description: 'Mobile devices', count: 4, members: ['laptop1.domain.local'] },
-])
-
-const productGroups = ref([
-    { id: 'all-products', name: 'All Products', description: 'Root group containing all products', count: 120, members: ['opsi-client-agent', 'hwaudit', 'swaudit'] },
-    { id: 'system-tools', name: 'System Tools', description: 'System maintenance tools', count: 15, members: ['hwaudit', 'swaudit'] },
-    { id: 'office', name: 'Office Software', description: 'Office applications', count: 8, members: ['libreoffice'] },
-])
-
 const currentGroups = computed(() => {
     return activeGroupType.value === 'clients' ? clientGroups.value : productGroups.value
 })
 
+// Helper to flatten tree structure to list
+function flattenGroupTree(tree: Record<string, unknown>, result: GroupItem[] = []): GroupItem[] {
+    if (!tree) return result
+
+    // Handle tree node
+    if (tree.id || tree.text) {
+        const id = (tree.id || tree.text) as string
+        const name = (tree.text || tree.id || id) as string
+        const children = (tree.children || []) as Record<string, unknown>[]
+        const objects = (tree.objects || tree.data || []) as string[]
+
+        result.push({
+            id,
+            name,
+            description: (tree.description || '') as string,
+            count: objects.length || children.length || 0,
+            members: objects.slice(0, 10) // Show first 10 members
+        })
+
+        // Recurse into children
+        if (children && Array.isArray(children)) {
+            for (const child of children) {
+                flattenGroupTree(child, result)
+            }
+        }
+    }
+
+    // Handle root with children array
+    if (tree.children && Array.isArray(tree.children) && !tree.id && !tree.text) {
+        for (const child of (tree.children as Record<string, unknown>[])) {
+            flattenGroupTree(child, result)
+        }
+    }
+
+    return result
+}
+
+const fetchGroups = async () => {
+    loading.value = true
+    error.value = null
+    try {
+        // Fetch both types of groups
+        const [hostGroupsRes, productGroupsRes] = await Promise.all([
+            getHostGroups(),
+            getProductGroups()
+        ])
+
+        if (hostGroupsRes.error) {
+            console.error('Failed to fetch host groups:', hostGroupsRes.error)
+        } else if (hostGroupsRes.data) {
+            clientGroups.value = flattenGroupTree(hostGroupsRes.data.data || hostGroupsRes.data)
+        }
+
+        if (productGroupsRes.error) {
+            console.error('Failed to fetch product groups:', productGroupsRes.error)
+        } else if (productGroupsRes.data) {
+            productGroups.value = flattenGroupTree(productGroupsRes.data.data || productGroupsRes.data)
+        }
+
+        // Set default placeholder if nothing returned
+        if (clientGroups.value.length === 0) {
+            clientGroups.value = [{ id: 'clientdirectory', name: 'All Clients', description: 'Root client group', count: 0, members: [] }]
+        }
+        if (productGroups.value.length === 0) {
+            productGroups.value = [{ id: 'groups', name: 'All Products', description: 'Root product group', count: 0, members: [] }]
+        }
+    } catch (err: unknown) {
+        console.error('Failed to fetch groups:', err)
+        error.value = err instanceof Error ? err.message : $t('errorFetchingGroups')
+    } finally {
+        loading.value = false
+    }
+}
+
 // Reset selection when switching group types
 watch(activeGroupType, () => {
     selectedGroup.value = null
+})
+
+onMounted(() => {
+    fetchGroups()
 })
 </script>

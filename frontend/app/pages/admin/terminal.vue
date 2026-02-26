@@ -37,13 +37,13 @@ License: AGPL-3.0
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
 
 // Helper to format translation keys
 const t = (key: string) => {
-  const translated = $t(key)
-  if (translated && translated !== key) return String(translated)
-  return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
+    const translated = $t(key)
+    if (translated && translated !== key) return String(translated)
+    return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
 }
 
 const command = ref('')

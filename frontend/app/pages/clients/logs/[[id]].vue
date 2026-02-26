@@ -80,12 +80,12 @@ License: AGPL-3.0
 definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
 
 const t = (key: string) => {
-  const translated = $t(key)
-  if (translated && translated !== key) return String(translated)
-  return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
+    const translated = $t(key)
+    if (translated && translated !== key) return String(translated)
+    return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
 }
 const route = useRoute()
 

@@ -80,7 +80,7 @@ defineProps<{
 }>()
 
 const icons = useIcons()
-const { $t } = useNuxtApp()
+const { t: $t } = useI18n()
 const $route = useRoute()
 
 const expanded = ref<Record<string, boolean>>({})
@@ -116,7 +116,7 @@ const navItems = computed<NavItem[]>(() => [
     {
         title: 'servers',
         route: '/servers',
-        icon: icons.server,
+        icon: icons.serverStack,
         submenu: [
             { title: 'allServers', route: '/servers' },
             { title: 'configuration', route: '/servers/config' },
