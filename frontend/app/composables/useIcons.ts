@@ -62,7 +62,7 @@ export const icons = {
   user: 'i-heroicons-user',
   users: 'i-heroicons-user-group',
   key: 'i-heroicons-key',
-  logout: 'i-heroicons-arrow-right-on-rectangle',
+  logout: 'i-heroicons-power',
 
   // Theme & Language
   language: 'i-heroicons-globe',
