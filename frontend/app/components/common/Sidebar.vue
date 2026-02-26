@@ -150,9 +150,8 @@ const navItems = computed<NavItem[]>(() => [
         icon: icons.admin,
         submenu: [
             { title: 'terminal', route: '/admin/terminal' },
-            { title: 'healthCheck', route: '/admin/diagnostics' },
-            { title: 'system', route: '/admin/general' },
-            { title: 'modules', route: '/admin/modules' },
+            { title: 'diagnostics', route: '/admin/diagnostics' },
+            { title: 'maintenance', route: '/admin/maintenance' },
         ],
     },
     {
