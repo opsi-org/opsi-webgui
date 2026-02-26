@@ -135,6 +135,44 @@ export function useApiHelpers() {
   const getClientLogs = (clientId: string, logType: string, params?: Record<string, unknown>) =>
     apiGet<{ content: string; marker: number }>(`/opsidata/clients/${clientId}/logs/${logType}`, params)
 
+  // Admin: Blocked clients & Locked products
+  const getBlockedClients = () => apiGet<Record<string, string>>('/opsidata/blocked-clients')
+  const unblockClient = (clientId: string) => apiPost<void>(`/opsidata/clients/${clientId}/unblock`)
+  const unblockAllClients = () => apiPost<void>('/opsidata/clients/unblock')
+  const getLockedProducts = () => apiGet<Record<string, string>>('/opsidata/locked-products')
+  const unlockProduct = (productId: string) => apiPost<void>(`/opsidata/products/${productId}/unlock`)
+  const unlockAllProducts = () => apiPost<void>('/opsidata/products/unlock')
+
+  // Admin: App state
+  const getAppState = () => apiGet<{
+    type: 'normal' | 'maintenance'
+    address_exceptions: string[]
+    retry_after: number
+  }>('/app-state')
+  const setAppState = (state: { type: string; address_exceptions?: string[]; retry_after?: number }) =>
+    apiPost<{ type: string }>('/app-state', state)
+
+  // Admin: Backup & Restore
+  const createBackup = (options: {
+    config_files?: boolean
+    redis_data?: boolean
+    maintenance_mode?: boolean
+    password?: string
+  }) => apiPost<string>('/backup/create', options)
+  const restoreBackup = (options: {
+    file_id: string
+    config_files?: boolean
+    redis_data?: boolean
+    server_id?: string
+    password?: string
+  }) => apiPost<void>('/backup/restore', options)
+
+  // Admin: Modules
+  const getModulesContent = () => apiPost<{ result: string[] }>('/opsidata/modulesContent')
+
+  // Admin: Disabled features
+  const getDisabledFeatures = () => apiGet<string[]>('/opsidata/server/disabled-features')
+
   return {
     apiGet,
     apiPost,
@@ -156,5 +194,18 @@ export function useApiHelpers() {
     getDiagnosticData,
     getServerConfig,
     getClientLogs,
+    // Admin APIs
+    getBlockedClients,
+    unblockClient,
+    unblockAllClients,
+    getLockedProducts,
+    unlockProduct,
+    unlockAllProducts,
+    getAppState,
+    setAppState,
+    createBackup,
+    restoreBackup,
+    getModulesContent,
+    getDisabledFeatures,
   }
 }

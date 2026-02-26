@@ -29,6 +29,8 @@ export const icons = {
   copy: 'i-heroicons-clipboard-document',
   clone: 'i-heroicons-document-duplicate',
   refresh: 'i-heroicons-arrow-path',
+  upload: 'i-heroicons-arrow-up-tray',
+  download: 'i-heroicons-arrow-down-tray',
   search: 'i-heroicons-magnifying-glass',
   filter: 'i-heroicons-funnel',
   eye: 'i-heroicons-eye',

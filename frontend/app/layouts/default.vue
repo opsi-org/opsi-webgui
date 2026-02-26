@@ -87,7 +87,7 @@ License: AGPL-3.0
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-sm font-medium text-[var(--color-text)] dark:text-[var(--color-text)]">{{
                             t('settings')
-                        }}</span>
+                            }}</span>
                         <button @click="quickpanelOpen = false"
                             class="p-1 hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] rounded">
                             <UIcon :name="icons.close" class="w-4 h-4" />
@@ -324,10 +324,9 @@ const getPageDescription = (path: string): string => {
         'servers': t('serversPageDescription') || 'Manage depots and config servers',
         'products': t('productsPageDescription') || 'Browse and deploy software packages',
         'groups': t('groupsPageDescription') || 'Organize clients into logical groups',
-        'admin/general': t('adminGeneralPageDescription') || 'System information and settings',
-        'admin/modules': t('adminModulesPageDescription') || 'Licensed modules overview',
-        'admin/diagnostics': t('adminDiagnosticsPageDescription') || 'System health and diagnostics',
-        'admin/terminal': t('adminTerminalPageDescription') || 'Direct server access',
+        'admin/maintenance': t('adminMaintenancePageDescription') || 'System maintenance, backup and restore',
+        'admin/diagnostics': t('adminDiagnosticsPageDescription') || 'Health checks, diagnostics and modules',
+        'admin/terminal': t('adminTerminalPageDescription') || 'Direct server terminal access',
         'support': t('supportPageDescription') || 'Help and documentation resources',
     }
 
