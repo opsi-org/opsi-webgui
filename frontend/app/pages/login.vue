@@ -14,6 +14,9 @@ License: AGPL-3.0
         <h1 class="text-xl font-bold text-gray-900 dark:text-white">opsi-WebGUI</h1>
       </div>
       <form @submit.prevent="handleLogin" class="space-y-5">
+        <UAlert v-if="errorMessage" color="error" variant="soft" :close-button="{ icon: 'i-heroicons-x-mark' }" @close="errorMessage = ''">
+          <template #title>{{ errorMessage }}</template>
+        </UAlert>
         <UFormGroup :label="String($t('username'))">
           <UInput v-model="cred.username" :placeholder="String($t('username'))" size="lg" :icon="icons.user"
             autocomplete="username" required class="w-full" />
@@ -47,23 +50,54 @@ definePageMeta({ layout: 'auth' })
 
 const icons = useIcons()
 const { t: $t } = useI18n()
+const route = useRoute()
+const config = useRuntimeConfig()
 const userStore = useUserStore()
 const colorMode = useColorMode()
+const { $customFetch } = useNuxtApp() as unknown as { $customFetch: typeof $fetch }
 
 const isDark = computed(() => colorMode.value === 'dark')
 
 const cred = reactive({ username: '', password: '' })
 const loading = ref(false)
 const showSaml = ref(true)
+const errorMessage = ref('')
 
 const handleLogin = async () => {
   loading.value = true
+  errorMessage.value = ''
+  userStore.setErrorLoggedOutShown(false)
+
   try {
-    await new Promise(r => setTimeout(r, 500))
-    userStore.login(cred.username)
-    await navigateTo('/clients')
-  } finally { loading.value = false }
+    // Create FormData as expected by the backend
+    const formData = new FormData()
+    formData.append('username', cred.username)
+    formData.append('password', cred.password)
+
+    const result = await $customFetch<{ result: string }>('/auth/login', {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (result.result === 'Login success') {
+      userStore.login(cred.username)
+      // Navigate to redirect path or base page
+      const redirectPath = route.query.redirect?.toString() || config.public.BASE_PAGE || '/clients'
+      await navigateTo(redirectPath)
+    } else {
+      errorMessage.value = $t('message.login.failed')
+    }
+  } catch (e: unknown) {
+    const error = e as { statusCode?: number, message?: string }
+    if (error.statusCode === 401) {
+      errorMessage.value = $t('message.login.invalidCredentials')
+    } else {
+      errorMessage.value = error.message || $t('message.login.failed')
+    }
+  } finally {
+    loading.value = false
+  }
 }
 
-const samlLogin = () => { window.location.href = '/api/auth/saml' }
+const samlLogin = () => { window.location.href = '/addons/webgui/api/auth/saml' }
 </script>

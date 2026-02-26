@@ -6,6 +6,10 @@ All rights reserved.
 License: AGPL-3.0
 */
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { useUserStore } from '~/stores/userStore'
+
+// URLs that don't need session management
+const urlsWithoutSession = ['/auth/logout', '/user/configuration']
 
 function headersToObject(
   headers: Headers | Record<string, string> | undefined
@@ -28,12 +32,44 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   const $customFetch = $fetch.create({
     baseURL: baseUrl + basePath,
-    onRequest({ options }) {
+    credentials: 'include', // Send cookies with cross-origin requests (opsiconfd-session)
+    onRequest({ request, options }) {
+      const userStore = useUserStore()
+      const url = typeof request === 'string' ? request : request.toString()
+
+      // Don't set Content-Type for FormData - browser sets it automatically with boundary
+      const isFormData = options.body instanceof FormData
+      const existingHeaders = headersToObject(options.headers)
+
+      // Add session lifetime header for authenticated requests
+      const sessionHeaders: Record<string, string> = {}
+      if (!urlsWithoutSession.some(path => url.includes(path))) {
+        sessionHeaders['X-opsi-session-lifetime'] = String(userStore.sessionExpiry)
+        // Refresh session timestamp on each API call
+        userStore.setSession()
+      }
+
       options.headers = {
-        ...headersToObject(options.headers),
-        'Content-Type': 'application/json',
+        ...existingHeaders,
+        ...sessionHeaders,
         Accept: 'application/json, text/plain, */*',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       } as unknown as Headers
+    },
+    onResponseError({ response }) {
+      // Handle 401 Unauthorized - session expired or invalid
+      if (response.status === 401) {
+        const userStore = useUserStore()
+        if (userStore.username && !userStore.errorLoggedOutShown) {
+          console.warn('Session expired or invalid - logging out')
+          userStore.setErrorLoggedOutShown(true)
+          userStore.logout()
+          // Redirect to login
+          if (typeof window !== 'undefined') {
+            window.location.href = '/addons/webgui/app/login'
+          }
+        }
+      }
     },
   })
 
