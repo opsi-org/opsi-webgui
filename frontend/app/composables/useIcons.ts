@@ -6,72 +6,69 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-//Iconify Heroicons Outline collection: https://icon-sets.iconify.design/heroicons-outline/
+// Nuxt UI icons use the i-{collection}-{name} format
+// https://ui.nuxt.com/components/icon
+// Using Heroicons: https://icon-sets.iconify.design/heroicons/
 export const icons = {
   // UI Navigation
-  menu: 'heroicons:bars-3',
-  menuClose: 'heroicons:x-mark',
-  sidebarExpand: 'heroicons:chevron-double-right',
-  sidebarCollapse: 'heroicons:chevron-double-left',
-  quickPanel: 'heroicons:squares-2x2',
-  quickPanelAlt: 'heroicons:adjustments-horizontal',
+  menu: 'i-heroicons-bars-3',
+  menuClose: 'i-heroicons-x-mark',
+  quickPanel: 'i-heroicons-squares-2x2',
 
   // Arrows
-  arrowDown: 'heroicons:chevron-down',
-  arrowLeft: 'heroicons:chevron-left',
-  arrowRight: 'heroicons:chevron-right',
-  arrowUp: 'heroicons:chevron-up',
+  arrowDown: 'i-heroicons-chevron-down',
+  arrowLeft: 'i-heroicons-chevron-left',
+  arrowRight: 'i-heroicons-chevron-right',
+  arrowUp: 'i-heroicons-chevron-up',
 
   // Actions
-  add: 'heroicons:plus',
-  close: 'heroicons:x-mark',
-  delete: 'heroicons:trash',
-  edit: 'heroicons:pencil',
-  copy: 'heroicons:clipboard-document',
-  clone: 'heroicons:document-duplicate',
-  refresh: 'heroicons:arrow-path',
-  search: 'heroicons:magnifying-glass',
-  filter: 'heroicons:funnel',
-  eye: 'heroicons:eye',
+  add: 'i-heroicons-plus',
+  close: 'i-heroicons-x-mark',
+  delete: 'i-heroicons-trash',
+  edit: 'i-heroicons-pencil',
+  copy: 'i-heroicons-clipboard-document',
+  clone: 'i-heroicons-document-duplicate',
+  refresh: 'i-heroicons-arrow-path',
+  search: 'i-heroicons-magnifying-glass',
+  filter: 'i-heroicons-funnel',
+  eye: 'i-heroicons-eye',
+  eyeOff: 'i-heroicons-eye-slash',
 
   // Content types
-  client: 'heroicons:computer-desktop',
-  serverStack: 'heroicons:server-stack',
-  server: 'heroicons:server',
-  product: 'heroicons:cube',
-  group: 'heroicons:rectangle-group',
-  admin: 'heroicons:cog-6-tooth',
-  terminal: 'heroicons:command-line',
-  support: 'heroicons:lifebuoy',
+  client: 'i-heroicons-computer-desktop',
+  serverStack: 'i-heroicons-server-stack',
+  product: 'i-heroicons-cube',
+  group: 'i-heroicons-rectangle-group',
+  admin: 'i-heroicons-wrench-screwdriver',
+  terminal: 'i-heroicons-command-line',
+  support: 'i-heroicons-user-group',
+  modules: 'i-heroicons-puzzle-piece',
+  diagnostics: 'i-heroicons-chart-bar',
+  log: 'i-heroicons-document-text',
+  config: 'i-heroicons-cog-8-tooth',
 
   // Status & Info
-  config: 'heroicons:cog-8-tooth',
-  settings: 'heroicons:adjustments-vertical',
-  log: 'heroicons:document-text',
-  warning: 'heroicons:exclamation-triangle',
-  check: 'heroicons:check-circle',
-  error: 'heroicons:x-circle',
-  info: 'heroicons:information-circle',
-  health: 'heroicons:heart',
-  list: 'heroicons:list-bullet',
-  table: 'heroicons:table-cells',
+  settings: 'i-heroicons-adjustments-vertical',
+  warning: 'i-heroicons-exclamation-triangle',
+  check: 'i-heroicons-check-circle',
+  error: 'i-heroicons-x-circle',
+  info: 'i-heroicons-information-circle',
+  health: 'i-heroicons-heart',
+  list: 'i-heroicons-list-bullet',
+  table: 'i-heroicons-table-cells',
+  loading: 'i-heroicons-arrow-path',
 
   // User & Auth
-  user: 'heroicons:user',
-  users: 'heroicons:user-group',
-  key: 'heroicons:key',
-  logout: 'heroicons:arrow-right-on-rectangle',
+  user: 'i-heroicons-user',
+  users: 'i-heroicons-user-group',
+  key: 'i-heroicons-key',
+  logout: 'i-heroicons-arrow-right-on-rectangle',
 
   // Theme & Language
-  language: 'heroicons:language',
-  themeLight: 'heroicons:sun',
-  themeDark: 'heroicons:moon',
+  language: 'i-heroicons-globe',
+  themeLight: 'i-heroicons-sun',
+  themeDark: 'i-heroicons-moon',
 
-  // Misc
-  loading: 'heroicons:arrow-path',
-  modules: 'heroicons:puzzle-piece',
-  maintenance: 'heroicons:wrench-screwdriver',
-  diagnostics: 'heroicons:chart-bar',
 } as const
 
 export type IconName = keyof typeof icons
