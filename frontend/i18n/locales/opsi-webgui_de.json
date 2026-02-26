@@ -193,5 +193,19 @@
   "warning": "Warnung",
   "yes": "Ja",
   "clearCache": "Cache leeren",
-  "clientsTotal": "Clients gesamt"
+  "clientsTotal": "Clients gesamt",
+  "clientsPageDescription": "Clients anzeigen und verwalten",
+  "serversPageDescription": "Depots und Configserver verwalten",
+  "productsPageDescription": "Softwarepakete durchsuchen und bereitstellen",
+  "groupsPageDescription": "Clients in logische Gruppen organisieren",
+  "adminGeneralPageDescription": "Systeminformationen und Einstellungen",
+  "adminModulesPageDescription": "Übersicht der lizenzierten Module",
+  "adminDiagnosticsPageDescription": "Systemzustand und Diagnose",
+  "adminTerminalPageDescription": "Direkter Serverzugriff",
+  "supportPageDescription": "Hilfe und Dokumentation",
+  "systemInformation": "Systeminformationen",
+  "serviceStatus": "Dienststatus",
+  "resourceUsage": "Ressourcenauslastung",
+  "running": "Läuft",
+  "stopped": "Gestoppt"
 }

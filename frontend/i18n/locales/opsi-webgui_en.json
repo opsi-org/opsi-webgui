@@ -351,5 +351,19 @@
   "visiblilityOnClients": "Visiblility on clients",
   "visitOPSIForum": "Visit OPSI Forum",
   "workbenchLocalUrl": "Workbench Local URL",
-  "workbenchRemoteUrl": "Workbench Remote URL"
+  "workbenchRemoteUrl": "Workbench Remote URL",
+  "clientsPageDescription": "View and manage opsi clients",
+  "serversPageDescription": "Manage depots and config servers",
+  "productsPageDescription": "Browse and deploy software packages",
+  "groupsPageDescription": "Organize clients into logical groups",
+  "adminGeneralPageDescription": "System information and settings",
+  "adminModulesPageDescription": "Licensed modules overview",
+  "adminDiagnosticsPageDescription": "System health and diagnostics",
+  "adminTerminalPageDescription": "Direct server access",
+  "supportPageDescription": "Help and documentation resources",
+  "systemInformation": "System Information",
+  "serviceStatus": "Service Status",
+  "resourceUsage": "Resource Usage",
+  "running": "Running",
+  "stopped": "Stopped"
 }
