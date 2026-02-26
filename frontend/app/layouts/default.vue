@@ -77,7 +77,7 @@ License: AGPL-3.0
                         </span>
                     </div>
                 </div>
-                <div class="flex-1 p-3 md:p-4 overflow-hidden">
+                <div class="flex-1 p-3 md:p-4 overflow-auto">
                     <slot />
                 </div>
             </main>
@@ -313,24 +313,68 @@ const breadcrumbs = computed(() => {
     return crumbs
 })
 
-// Page descriptions mapping
-const pageDescriptions: Record<string, string> = {
-    'clients': t('clientsPageDescription') || 'View and manage opsi clients',
-    'servers': t('serversPageDescription') || 'Manage depots and config servers',
-    'products': t('productsPageDescription') || 'Browse and deploy software packages',
-    'groups': t('groupsPageDescription') || 'Organize clients into logical groups',
-    'admin/general': t('adminGeneralPageDescription') || 'System information and settings',
-    'admin/modules': t('adminModulesPageDescription') || 'Licensed modules overview',
-    'admin/diagnostics': t('adminDiagnosticsPageDescription') || 'System health and diagnostics',
-    'admin/terminal': t('adminTerminalPageDescription') || 'Direct server access',
-    'support': t('supportPageDescription') || 'Help and documentation resources',
+// Page descriptions mapping - supports both exact paths and patterns
+const getPageDescription = (path: string): string => {
+    const normalizedPath = path.replace(/^\//, '') // Remove leading slash
+    const segments = normalizedPath.split('/')
+    const firstSegment = segments[0] || ''
+    const lastSegment = segments[segments.length - 1] || ''
+
+    // Exact path matches first
+    const exactMatches: Record<string, string> = {
+        'clients': t('clientsPageDescription') || 'View and manage opsi clients',
+        'servers': t('serversPageDescription') || 'Manage depots and config servers',
+        'products': t('productsPageDescription') || 'Browse and deploy software packages',
+        'groups': t('groupsPageDescription') || 'Organize clients into logical groups',
+        'admin/general': t('adminGeneralPageDescription') || 'System information and settings',
+        'admin/modules': t('adminModulesPageDescription') || 'Licensed modules overview',
+        'admin/diagnostics': t('adminDiagnosticsPageDescription') || 'System health and diagnostics',
+        'admin/terminal': t('adminTerminalPageDescription') || 'Direct server access',
+        'support': t('supportPageDescription') || 'Help and documentation resources',
+    }
+
+    if (exactMatches[normalizedPath]) {
+        return exactMatches[normalizedPath]
+    }
+
+    // Pattern-based descriptions for sub-pages
+    if (firstSegment === 'clients' && segments.length > 1) {
+        if (segments[1] === 'config') {
+            const clientId = segments[2]
+            return clientId
+                ? t('clientConfigPageDescription') || `Configuration for ${clientId}`
+                : t('clientConfigSelectDescription') || 'Select a client to configure'
+        }
+        return t('clientDetailPageDescription') || 'Client details and actions'
+    }
+
+    if (firstSegment === 'servers' && segments.length > 1) {
+        if (segments[1] === 'config') {
+            const serverId = segments[2]
+            return serverId
+                ? t('serverConfigPageDescription') || `Configuration for ${serverId}`
+                : t('serverConfigSelectDescription') || 'Select a server to configure'
+        }
+        return t('serverDetailPageDescription') || 'Server details and actions'
+    }
+
+    if (firstSegment === 'products' && segments.length > 1) {
+        const productId = lastSegment
+        return productId && productId !== 'config'
+            ? t('productDetailPageDescription') || `Product details for ${productId}`
+            : t('productConfigPageDescription') || 'Product configuration'
+    }
+
+    if (firstSegment === 'groups' && segments.length > 1) {
+        return t('groupDetailPageDescription') || 'Group details and members'
+    }
+
+    // Fallback to first segment description
+    return exactMatches[firstSegment] || ''
 }
 
 const pageDescription = computed(() => {
-    const path = $route.path.replace(/^\//, '') // Remove leading slash
-    const firstSegment = path.split('/')[0] || ''
-    // Try exact match first, then first segment
-    return pageDescriptions[path] || pageDescriptions[firstSegment] || ''
+    return getPageDescription($route.path)
 })
 
 function toggleSidebar() {
