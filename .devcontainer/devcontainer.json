@@ -13,7 +13,8 @@
 		"OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
 		"OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
 		"ADDON_NAME": "webgui",
-		"ADDON_ID": "webgui"
+		"ADDON_ID": "webgui",
+		"OPSI_BACKUP_URL": "https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json"
 	},
 	"customizations": {
 		"vscode": {
