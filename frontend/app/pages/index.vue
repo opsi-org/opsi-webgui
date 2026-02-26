@@ -6,26 +6,25 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <div class="max-w-[500px] m-auto shadow-lg rounded-lg p-4">
-    <div class="grid place-items-center gap-4">
-      <IconIOpsiLogo :short="false" :light="storeSettings().isLight" class="h-50 max-w-[700px]" />
-      <h2 class="text-center font-semibold">
-        {{ t_fixed('title.project') }} {{ $config.public.packageVersion }}
-      </h2>
-      <IconIUibLogo :short="false" :light="storeSettings().isLight" class="mt-10 h-10" />
+    <div class="min-h-screen flex items-center justify-center">
+        <UIcon :name="icons.loading" class="w-8 h-8 text-opsi-blue animate-spin" />
     </div>
-  </div>
 </template>
 
-<script setup>
-  import { useStrings } from '~/composables/mixins/useStrings'
-  import { useMBus } from '~/composables/mixins/useMessagebus'
+<script setup lang="ts">
+import { useUserStore } from '~/stores/userStore'
 
-  const $config = useRuntimeConfig()
-  const $t = useI18n().t
-  const { t_fixed } = useStrings()
+definePageMeta({ layout: false })
 
-  useMBus(() => {}, false, $t)
+const icons = useIcons()
+const userStore = useUserStore()
 
-  // TODO: close right menu on mount
+onMounted(async () => {
+    // Check if user is logged in and redirect accordingly
+    if (userStore.isAuthenticated) {
+        await navigateTo('/clients')
+    } else {
+        await navigateTo('/login')
+    }
+})
 </script>

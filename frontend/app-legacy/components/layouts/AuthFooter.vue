@@ -6,22 +6,22 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-footer
+  <UFooter
     class="bg-opsi-blue text-white max-h-10 flex justify-between p-4"
     data-testid="BAuthFooter"
   >
     <div class="flex items-center">
-      <el-text>{{ staticStrings.t_fixed('uib') }}</el-text>
+      <UText>{{ staticStrings.t_fixed('uib') }}</UText>
     </div>
     <div class="flex justify-center items-center space-x-2">
       <SwitchSTheme class="mt-1" />
       <DropdownDDLang :footer="true" />
     </div>
     <div class="flex justify-end space-x-1">
-      <el-text>{{ $t('version') }}</el-text>
-      <el-text class="BAuthFooter-version">{{ $config.public.packageVersion }}</el-text>
+      <UText>{{ $t('version') }}</UText>
+      <UText class="BAuthFooter-version">{{ $config.public.packageVersion }}</UText>
     </div>
-  </el-footer>
+  </UFooter>
 </template>
 
 <script setup lang="ts">

@@ -7,80 +7,74 @@ License: AGPL-3.0
 */
 
 // All available icons: https://icon-sets.iconify.design
-// Preferred: bootstrap icons
-export const useIcons = () => {
-  const icon = {
-    add: 'bi:plus',
-    admin: 'bi:tools',
-    arrowDoubleDown: 'bi:chevron-double-down',
-    arrowDoubleLeft: 'bi:chevron-double-left',
-    arrowDoubleRight: 'bi:chevron-double-right',
-    arrowDoubleUp: 'bi:chevron-double-up',
-    arrowDown: 'bi:chevron-down',
-    arrowFillDown: 'bi:caret-down-fill',
-    arrowFillUp: 'bi:caret-up',
-    arrowLeft: 'bi:chevron-left',
-    arrowRight: 'bi:chevron-right',
-    arrowUp: 'bi:chevron-up',
-    bookmark: 'bi:bookmark-fill',
-    check: 'bi:check2',
-    checkBox: 'material-symbols:check-box-outline',
-    client: 'bi:laptop',
-    clientReachable: 'bi:link-45deg',
-    clone: 'bi:files',
-    columns: 'bi:grid-3x3',
-    copy: 'bi:copy',
-    dash: 'bi:dash',
-    delete: 'bi:trash',
-    deployClientAgent: 'material-symbols-light:real-estate-agent-outline-sharp',
-    depots: 'bi:server',
-    download: 'bi:download',
-    edit: 'bi:pencil',
-    exclamation: 'bi:exclamation',
-    filter: 'bi:funnel',
-    filterFilled: 'bi:funnel-fill',
-    group: 'bi:diagram-2',
-    help: 'bi:question-circle',
-    info: 'bi:info-circle',
-    language: 'bi:globe2',
-    loading: 'eos-icons:three-dots-loading',
-    log: 'bi:file-earmark-text',
-    logout: 'bi:power',
-    menu: 'bi:three-dots-vertical',
-    navMenu: 'bi:list',
-    notify: 'bi:envelope',
-    onDemand: 'bi:collection-play',
-    product: 'bi:box-seam',
-    productActionResult: 'bi:hourglass-bottom',
-    productActionResultSuccessful: 'bi:check',
-    productInstallationStatusInstalled: 'material-symbols-light:install-desktop-rounded',
-    productInstallationStatusUnknown: 'bi:question',
-    productsFailedActionResult: 'bi:exclamation',
-    productsOutdatedLocal: 'material-symbols-light:deployed-code-history-outline-rounded',
-    productsOutdatedNet: 'material-symbols-light:deployed-code-history-rounded',
-    quickPanel: 'bi:grid',
-    readOnly: 'material-symbols-light:edit-off-outline',
-    refresh: 'bi:arrow-repeat',
-    rename: 'bi:pencil-square',
-    reboot: 'bi:bootstrap-reboot',
-    reset: 'bi:arrow-counterclockwise',
-    settings: 'bi:gear',
-    sort: 'bi:arrows-vertical',
-    sortAsc: 'bi:sort-up',
-    sortDesc: 'bi:sort-down',
-    support: 'bi:headset',
-    table: 'bi:table',
-    themeLight: 'bi:sun',
-    themeDark: 'bi:moon',
-    toggleVisibilityLeft: 'bi:chevron-bar-left',
-    toggleVisibilityRight: 'bi:chevron-bar-right',
-    trackChanges: 'bi:card-checklist',
-    tree: 'bi:list-nested',
-    unequal: 'mdi:not-equal-variant',
-    valueHide: 'bi:eye',
-    valueShow: 'bi:eye-slash',
-    warning: 'bi:exclamation-triangle',
-    x: 'bi:x',
-  }
-  return { ...icon }
-}
+// Preferred: heroicons for UI, bootstrap for content
+export const icons = {
+  // UI Navigation
+  menu: 'heroicons:bars-3',
+  menuClose: 'heroicons:x-mark',
+  sidebarExpand: 'heroicons:chevron-double-right',
+  sidebarCollapse: 'heroicons:chevron-double-left',
+  quickPanel: 'heroicons:squares-2x2',
+  quickPanelAlt: 'heroicons:adjustments-horizontal',
+
+  // Arrows
+  arrowDown: 'heroicons:chevron-down',
+  arrowLeft: 'heroicons:chevron-left',
+  arrowRight: 'heroicons:chevron-right',
+  arrowUp: 'heroicons:chevron-up',
+
+  // Actions
+  add: 'heroicons:plus',
+  close: 'heroicons:x-mark',
+  delete: 'heroicons:trash',
+  edit: 'heroicons:pencil',
+  copy: 'heroicons:clipboard-document',
+  clone: 'heroicons:document-duplicate',
+  refresh: 'heroicons:arrow-path',
+  search: 'heroicons:magnifying-glass',
+  filter: 'heroicons:funnel',
+  eye: 'heroicons:eye',
+
+  // Content types
+  client: 'heroicons:computer-desktop',
+  depot: 'heroicons:server-stack',
+  server: 'heroicons:server',
+  product: 'heroicons:cube',
+  group: 'heroicons:rectangle-group',
+  admin: 'heroicons:cog-6-tooth',
+  terminal: 'heroicons:command-line',
+  support: 'heroicons:lifebuoy',
+
+  // Status & Info
+  home: 'heroicons:home',
+  config: 'heroicons:cog-8-tooth',
+  settings: 'heroicons:adjustments-vertical',
+  log: 'heroicons:document-text',
+  warning: 'heroicons:exclamation-triangle',
+  check: 'heroicons:check-circle',
+  error: 'heroicons:x-circle',
+  info: 'heroicons:information-circle',
+  health: 'heroicons:heart',
+  list: 'heroicons:list-bullet',
+  table: 'heroicons:table-cells',
+
+  // User & Auth
+  user: 'heroicons:user',
+  users: 'heroicons:user-group',
+  key: 'heroicons:key',
+  logout: 'heroicons:arrow-right-on-rectangle',
+
+  // Theme & Language
+  language: 'heroicons:language',
+  themeLight: 'heroicons:sun',
+  themeDark: 'heroicons:moon',
+
+  // Misc
+  loading: 'heroicons:arrow-path',
+  modules: 'heroicons:puzzle-piece',
+  maintenance: 'heroicons:wrench-screwdriver',
+  diagnostics: 'heroicons:chart-bar',
+} as const
+
+export type IconName = keyof typeof icons
+export const useIcons = () => icons

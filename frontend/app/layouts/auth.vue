@@ -6,18 +6,21 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-  <el-container class="h-screen">
-    <el-header />
-    <!-- do not remove header -->
-    <el-main>
+  <div class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+    <main class="flex-1 flex items-center justify-center">
       <slot />
-    </el-main>
-    <BarBAuthFooter v-once />
-  </el-container>
+    </main>
+    <footer class="bg-opsi-blue text-white h-12 flex items-center justify-between px-6 text-sm">
+      <img src="~/assets/images/uib_logo_wide_dark.svg" alt="OPSI by uib GmbH" class="h-7" />
+      <div class="flex items-center gap-2">
+        <UiThemeToggle />
+        <UiLanguageDropdown direction="up" />
+      </div>
+      <span class="opacity-80">v{{ $config.public.packageVersion || '1.0.0' }}</span>
+    </footer>
+  </div>
 </template>
 
 <script setup lang="ts">
-  const settings = storeSettings()
-  settings.initColormode()
-  settings.initLanguage()
+const $config = useRuntimeConfig()
 </script>
