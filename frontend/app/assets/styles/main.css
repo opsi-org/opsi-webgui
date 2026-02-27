@@ -161,3 +161,72 @@ html.dark .status-offline {
   background-color: var(--color-opsi-deep-blue) !important;
 }
 
+/* Focus states for accessibility - WCAG 2.1 compliant */
+*:focus-visible {
+  outline: 2px solid var(--color-opsi-blue);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-opsi-blue);
+  outline-offset: 2px;
+}
+
+html.dark *:focus-visible {
+  outline-color: #6b98e8;
+}
+
+/* Skip to content link for accessibility */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-opsi-blue);
+  color: white;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+/* High contrast table rows for accessibility */
+.table-row-selected {
+  background-color: rgba(63, 90, 166, 0.1) !important;
+}
+
+html.dark .table-row-selected {
+  background-color: rgba(63, 90, 166, 0.2) !important;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
