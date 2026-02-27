@@ -6,54 +6,75 @@ All rights reserved.
 License: AGPL-3.0
 -->
 <template>
-    <div class="max-w-2xl mx-auto">
-        <UCard>
-            <template #header>
-                <div class="flex items-center gap-3">
-                    <UIcon :name="icons.clone" class="w-5 h-5 text-opsi-blue" />
-                    <h2 class="text-lg font-semibold">{{ t('clone') }} {{ t('client') }}</h2>
+    <LayoutsPageLayout :showSearch="false" :showRefresh="false">
+        <template #actions>
+            <UButton variant="outline" color="neutral" @click="navigateTo('/clients')" :disabled="loading">
+                {{ $t('button.cancel') }}
+            </UButton>
+            <UButton color="primary" :loading="loading" @click="handleSubmit">
+                {{ t('button.clone') }}
+            </UButton>
+        </template>
+
+        <div class="h-full overflow-auto p-4">
+
+            <!-- Error Alert -->
+            <div v-if="error"
+                class="mb-4 p-3 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-sm">
+                {{ error }}
+            </div>
+
+            <!-- Success Alert -->
+            <div v-if="success"
+                class="mb-4 p-3 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-lg text-sm">
+                {{ $t('clientClonedSuccessfully') }}
+            </div>
+
+            <form @submit.prevent="handleSubmit" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Left column -->
+                <div class="space-y-4">
+                    <UFormGroup :label="$t('sourceClient')">
+                        <UInput :model-value="sourceClientId" disabled />
+                    </UFormGroup>
+
+                    <UFormGroup :label="$t('newClientId')" required :error="formErrors.newId">
+                        <UInput v-model="form.newId" placeholder="newclient.domain.local" :disabled="loading" />
+                        <template #hint>
+                            <span class="text-xs text-gray-500">{{ $t('clientIdHint') }}</span>
+                        </template>
+                    </UFormGroup>
+
+                    <UFormGroup :label="$t('description')">
+                        <UInput v-model="form.description" :placeholder="String($t('description'))"
+                            :disabled="loading" />
+                    </UFormGroup>
                 </div>
-            </template>
 
-            <form @submit.prevent="handleSubmit" class="space-y-4">
-                <UFormGroup :label="$t('sourceClient')">
-                    <UInput :model-value="sourceClientId" disabled />
-                </UFormGroup>
+                <!-- Right column -->
+                <div class="space-y-4">
+                    <UFormGroup :label="$t('ipAddress')">
+                        <UInput v-model="form.ipAddress" placeholder="192.168.1.101" :disabled="loading" />
+                    </UFormGroup>
 
-                <UFormGroup :label="$t('newClientId')" required>
-                    <UInput v-model="form.newId" placeholder="newclient.domain.local" />
-                </UFormGroup>
+                    <UFormGroup :label="$t('macAddress')">
+                        <UInput v-model="form.macAddress" placeholder="00:11:22:33:44:66" :disabled="loading" />
+                        <template #hint>
+                            <span class="text-xs text-gray-500">{{ $t('macAddressHint') }}</span>
+                        </template>
+                    </UFormGroup>
 
-                <UFormGroup :label="$t('description')">
-                    <UInput v-model="form.description" :placeholder="String($t('description'))" />
-                </UFormGroup>
-
-                <UFormGroup :label="$t('ipAddress')">
-                    <UInput v-model="form.ipAddress" placeholder="192.168.1.101" />
-                </UFormGroup>
-
-                <UFormGroup :label="$t('macAddress')">
-                    <UInput v-model="form.macAddress" placeholder="00:11:22:33:44:66" />
-                </UFormGroup>
-
-                <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded text-sm text-blue-700 dark:text-blue-300">
-                    <p class="font-medium mb-1">{{ t('cloneOptions') }}:</p>
-                    <ul class="list-disc list-inside space-y-1 text-xs">
-                        <li>Product configurations will be copied</li>
-                        <li>Client configurations will be copied</li>
-                        <li>Group memberships will be copied</li>
-                    </ul>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-4">
-                    <UButton type="button" variant="outline" color="neutral" @click="navigateTo('/clients')">{{
-                        $t('button.cancel')
-                    }}</UButton>
-                    <UButton type="submit" color="primary" :loading="loading">{{ t('button.clone') }}</UButton>
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded text-sm text-blue-700 dark:text-blue-300">
+                        <p class="font-medium mb-1">{{ t('cloneOptions') }}:</p>
+                        <ul class="list-disc list-inside space-y-1 text-xs">
+                            <li>{{ $t('cloneProductConfigs') }}</li>
+                            <li>{{ $t('cloneClientConfigs') }}</li>
+                            <li>{{ $t('cloneGroupMemberships') }}</li>
+                        </ul>
+                    </div>
                 </div>
             </form>
-        </UCard>
-    </div>
+        </div>
+    </LayoutsPageLayout>
 </template>
 
 <script setup lang="ts">
@@ -61,6 +82,7 @@ definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
 const { t: $t } = useI18n()
+const { apiPost } = useApiHelpers()
 
 const t = (key: string) => {
     const translated = $t(key)
@@ -69,8 +91,11 @@ const t = (key: string) => {
 }
 const route = useRoute()
 
-const sourceClientId = computed(() => route.params.id as string || 'Select a client')
+const sourceClientId = computed(() => route.params.id as string || '')
 const loading = ref(false)
+const error = ref<string | null>(null)
+const success = ref(false)
+
 const form = reactive({
     newId: '',
     description: '',
@@ -78,10 +103,59 @@ const form = reactive({
     macAddress: '',
 })
 
+const formErrors = reactive({
+    newId: '',
+})
+
+// Validate form
+function validateForm(): boolean {
+    formErrors.newId = ''
+    let valid = true
+
+    if (!form.newId.trim()) {
+        formErrors.newId = String($t('newClientIdRequired'))
+        valid = false
+    } else if (!form.newId.includes('.')) {
+        formErrors.newId = String($t('clientIdMustBeFqdn'))
+        valid = false
+    }
+
+    return valid
+}
+
 const handleSubmit = async () => {
+    if (!validateForm()) return
+
     loading.value = true
-    await new Promise(r => setTimeout(r, 500))
-    loading.value = false
-    await navigateTo('/clients')
+    error.value = null
+    success.value = false
+
+    try {
+        // Clone client via API
+        const res = await apiPost<{ success: boolean }>('/opsidata/clients/clone', {
+            sourceClientId: sourceClientId.value,
+            newClientId: form.newId,
+            description: form.description || undefined,
+            ipAddress: form.ipAddress || undefined,
+            macAddress: form.macAddress || undefined,
+        })
+
+        if (res.error) {
+            error.value = res.error.message || String($t('failedToCloneClient'))
+        } else {
+            success.value = true
+            // Reset form
+            form.newId = ''
+            form.description = ''
+            form.ipAddress = ''
+            form.macAddress = ''
+            // Navigate to clients list after short delay
+            setTimeout(() => navigateTo('/clients'), 1500)
+        }
+    } catch (e) {
+        error.value = e instanceof Error ? e.message : String($t('failedToCloneClient'))
+    } finally {
+        loading.value = false
+    }
 }
 </script>
