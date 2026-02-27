@@ -5,20 +5,20 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 
-PageHeader - A reusable page header component with title and actions.
+PageHeader - A reusable page header component with tabs and actions.
+No title prop - breadcrumb already shows page title.
 -->
 <template>
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" role="toolbar"
+        aria-label="page toolbar">
         <div class="flex items-center gap-3">
-            <!-- <h1 class="text-xl md:text-2xl font-bold text-[var(--color-text)] dark:text-[var(--color-text)]">
-                {{ title }}
-            </h1> -->
             <slot name="tabs" />
         </div>
         <div class="flex flex-wrap items-center gap-2">
             <slot name="filters" />
             <UInput v-if="showSearch" v-model="searchModel" :placeholder="searchPlaceholder" :icon="icons.search"
-                size="sm" class="w-full sm:w-48 md:w-64" />
+                size="sm" class="w-full sm:w-48 md:w-64" :aria-label="searchPlaceholder || 'Search'" />
+            <slot name="tableControls" />
             <slot name="actions" />
             <NuxtLink v-if="addLink" :to="addLink">
                 <UButton :icon="icons.add" color="primary" size="sm">
@@ -26,14 +26,13 @@ PageHeader - A reusable page header component with title and actions.
                 </UButton>
             </NuxtLink>
             <UButton v-if="showRefresh" :icon="icons.refresh" variant="outline" color="neutral" size="sm"
-                :loading="loading" @click="$emit('refresh')" />
+                :loading="loading" @click="$emit('refresh')" :aria-label="$t('refresh')" />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
-    title: string
     showSearch?: boolean
     searchPlaceholder?: string
     addLink?: string

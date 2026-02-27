@@ -1,5 +1,3 @@
-/* OPSI Corporate Design Fonts - must be first */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Fira+Mono&display=swap');
 
 @import 'tailwindcss';
 @import '@nuxt/ui';
@@ -33,19 +31,6 @@
   --color-text-secondary: #3f3f3e;
   --color-text-muted: #6b7280;
   --color-border: #e4e4e3;
-
-  /* Primary color palette for UI components */
-  --color-primary-50: #eef2fa;
-  --color-primary-100: #d9e1f4;
-  --color-primary-200: #b3c3e9;
-  --color-primary-300: #8da5de;
-  --color-primary-400: #6787d3;
-  --color-primary-500: #3f5aa6;
-  --color-primary-600: #2d4178;
-  --color-primary-700: #253566;
-  --color-primary-800: #1d2a54;
-  --color-primary-900: #151e42;
-  --color-primary-950: #0d1330;
 }
 
 /* OPSI Dark Mode - OPSI Corporate Design compliant */

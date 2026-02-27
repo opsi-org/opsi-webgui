@@ -37,8 +37,7 @@ DataTable - A reusable table component with pagination and infinite scroll suppo
         <div v-if="!infiniteScroll && totalPages > 1"
             class="border-t border-[var(--color-border)] px-4 py-3 flex items-center justify-between">
             <div class="text-sm text-[var(--color-text-muted)]">
-                {{ $t('showing') || 'Showing' }} {{ startIndex + 1 }}-{{ Math.min(endIndex, total) }} {{ $t('of') ||
-                    'of' }} {{
+                {{ $t('showing') }} {{ startIndex + 1 }}-{{ Math.min(endIndex, total) }} {{ $t('of') }} {{
                     total }}
             </div>
             <div class="flex items-center gap-2">

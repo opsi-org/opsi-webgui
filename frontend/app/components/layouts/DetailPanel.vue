@@ -6,7 +6,7 @@ All rights reserved.
 License: AGPL-3.0
 
 DetailPanel - A side panel component for showing details alongside main content.
-Desktop: side-by-side split with resizable divider.
+Desktop: side-by-side split with resizable divider (default 50% width).
 Mobile: overlay panel with close button.
 -->
 <template>
@@ -21,7 +21,9 @@ Mobile: overlay panel with close button.
             <div v-if="showPanel" :style="panelStyle" :class="panelClasses">
                 <!-- Resize handle (desktop only) -->
                 <div v-if="!isMobile" @mousedown="startResize"
-                    class="absolute left-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-opsi-blue/50 transition-colors z-10" />
+                    class="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize bg-transparent hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group">
+                    <div class="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-12 bg-gray-300 dark:bg-gray-600 rounded group-hover:bg-opsi-blue transition-colors" />
+                </div>
 
                 <!-- Panel header -->
                 <div
@@ -48,9 +50,12 @@ Mobile: overlay panel with close button.
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     showPanel: boolean
-}>()
+    defaultWidthPercent?: number  // Default panel width as percentage (25-75)
+}>(), {
+    defaultWidthPercent: 50  // Default to 50% of container width
+})
 
 defineEmits<{
     close: []
@@ -61,10 +66,10 @@ const icons = useIcons()
 // Responsive state
 const isMobile = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
-const panelWidth = ref(400)
+const panelWidthPercent = ref(props.defaultWidthPercent)  // Percentage of container width
 const isResizing = ref(false)
-const minPanelWidth = 280
-const maxPanelWidth = 600
+const minPanelPercent = 25   // Minimum 25% width
+const maxPanelPercent = 75   // Maximum 75% width
 
 onMounted(() => {
     const checkMobile = () => {
@@ -75,15 +80,15 @@ onMounted(() => {
     onUnmounted(() => window.removeEventListener('resize', checkMobile))
 })
 
-// Computed styles
+// Computed styles - use percentage for desktop
 const mainStyle = computed(() => {
     if (!props.showPanel || isMobile.value) return { width: '100%' }
-    return { width: `calc(100% - ${panelWidth.value}px)` }
+    return { width: `${100 - panelWidthPercent.value}%` }
 })
 
 const panelStyle = computed(() => {
     if (isMobile.value) return {}
-    return { width: `${panelWidth.value}px` }
+    return { width: `${panelWidthPercent.value}%` }
 })
 
 const panelClasses = computed(() => {
@@ -93,17 +98,19 @@ const panelClasses = computed(() => {
     return 'absolute right-0 top-0 bottom-0 bg-white dark:bg-[var(--color-surface)] border-l border-[var(--color-border)] dark:border-[var(--color-border)] flex flex-col shadow-lg'
 })
 
-// Resize handling
+// Resize handling - now percentage-based
 function startResize(e: MouseEvent) {
     e.preventDefault()
     isResizing.value = true
     const startX = e.clientX
-    const startWidth = panelWidth.value
+    const containerWidth = containerRef.value?.clientWidth || window.innerWidth
+    const startPercent = panelWidthPercent.value
 
     const onMove = (e: MouseEvent) => {
         const delta = startX - e.clientX
-        const newWidth = Math.min(maxPanelWidth, Math.max(minPanelWidth, startWidth + delta))
-        panelWidth.value = newWidth
+        const deltaPercent = (delta / containerWidth) * 100
+        const newPercent = Math.min(maxPanelPercent, Math.max(minPanelPercent, startPercent + deltaPercent))
+        panelWidthPercent.value = Math.round(newPercent)
     }
 
     const onUp = () => {

@@ -34,7 +34,7 @@ data for a specific client.
         <button v-if="allowAll" type="button" @click="selectHost(null)"
           class="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-left">
           <UIcon :name="icons.list" class="w-4 h-4" />
-          {{ $t('allClients') || 'All Clients' }}
+          {{ $t('allClients') }}
         </button>
         <div v-if="allowAll" class="border-b border-gray-200 dark:border-gray-700" />
         <!-- Host list -->
@@ -48,7 +48,7 @@ data for a specific client.
           </button>
         </template>
         <div v-else class="px-3 py-4 text-center text-sm text-gray-500">
-          {{ $t('message.noItemsSelected') || 'No hosts found' }}
+          {{ $t('message.noItemsSelected') }}
         </div>
       </div>
     </Transition>
