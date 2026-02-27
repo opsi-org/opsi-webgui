@@ -148,7 +148,6 @@ const visiblePages = computed(() => {
     return pages
 })
 
-// Methods
 function goToPage(page: number) {
     if (page >= 1 && page <= totalPages.value) {
         currentPage.value = page
@@ -169,7 +168,6 @@ function handleScroll() {
     }
 }
 
-// Reset pagination when rows change
 watch(() => props.rows, () => {
     currentPage.value = 1
     loadedPages.value = 1

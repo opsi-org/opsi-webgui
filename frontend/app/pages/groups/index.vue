@@ -126,7 +126,7 @@ interface GroupItem {
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getGroupsViaRpc, getHostGroups, getProductGroups } = useApiHelpers()
+const { getHostGroups, getProductGroups } = useApiHelpers()
 
 const activeGroupType = ref<'clients' | 'products'>('clients')
 const selectedGroup = ref<GroupItem | null>(null)
@@ -222,8 +222,8 @@ const fetchGroups = async () => {
     try {
         // Fetch both types of groups via RPC (more reliable than REST endpoints)
         const [hostData, productData] = await Promise.all([
-            getGroupsViaRpc('HostGroup'),
-            getGroupsViaRpc('ProductGroup')
+            getHostGroups(),
+            getProductGroups()
         ])
 
         // Transform and set client groups

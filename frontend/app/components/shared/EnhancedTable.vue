@@ -5,13 +5,7 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 
-EnhancedTable - A feature-rich reusable table component with:
-- Server-side pagination & infinite scroll
-- Sorting
-- Filtering
-- Column visibility toggle
-- Row selection
-- Row actions
+EnhancedTable - A reusable table component with pagination and infinite scroll support.
 -->
 <template>
     <div class="enhanced-table">
@@ -70,25 +64,21 @@ EnhancedTable - A feature-rich reusable table component with:
             <div ref="tableContainer" class="overflow-x-auto transition-all duration-200"
                 :class="{ 'max-h-[calc(100vh-280px)] overflow-y-auto': infiniteScroll }" @scroll="handleScroll">
 
-                <!-- Loading overlay for initial load -->
                 <div v-if="loading && rows.length === 0"
                     class="flex items-center justify-center py-12 text-[var(--color-text-muted)]">
                     <UIcon :name="icons.loading" class="w-6 h-6 animate-spin mr-2" />
                     {{ $t('loading') }}
                 </div>
 
-                <!-- Table -->
                 <table v-else class="w-full" role="grid" aria-label="Data table">
                     <thead class="bg-[var(--color-surface)] dark:bg-[var(--color-surface)] sticky top-0 z-10">
                         <tr role="row">
-                            <!-- Selection column -->
                             <th v-if="selectable" class="w-10 px-3 py-3 text-center" role="columnheader"
                                 aria-label="Select all">
                                 <input type="checkbox" :checked="allSelected" :indeterminate="someSelected"
                                     @change="toggleSelectAll" aria-label="Select all rows"
                                     class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue" />
                             </th>
-                            <!-- Data columns -->
                             <th v-for="col in visibleColumns" :key="col.key" role="columnheader"
                                 :aria-sort="sortState.column === col.key ? (sortState.direction === 'asc' ? 'ascending' : 'descending') : undefined"
                                 class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]"
@@ -107,7 +97,6 @@ EnhancedTable - A feature-rich reusable table component with:
                                     </template>
                                 </div>
                             </th>
-                            <!-- Actions column -->
                             <th v-if="hasActions" role="columnheader"
                                 class="w-24 px-3 py-3 text-center text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">
                                 {{ $t('actions') }}
@@ -122,13 +111,11 @@ EnhancedTable - A feature-rich reusable table component with:
                                 'cursor-pointer': clickable,
                                 'table-row-selected': isSelected(row)
                             }" @click="handleRowClick(row)" @keydown.enter="handleRowClick(row)">
-                            <!-- Selection cell -->
                             <td v-if="selectable" class="px-3 py-3 text-center" role="gridcell" @click.stop>
                                 <input type="checkbox" :checked="isSelected(row)" @change="toggleSelection(row)"
                                     :aria-label="`Select row ${getRowKey(row, idx)}`"
                                     class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue" />
                             </td>
-                            <!-- Data cells -->
                             <td v-for="col in visibleColumns" :key="col.key" role="gridcell"
                                 class="px-3 py-3 text-sm text-[var(--color-text)]" :class="col.class"
                                 :style="{ textAlign: col.align }">
@@ -136,7 +123,6 @@ EnhancedTable - A feature-rich reusable table component with:
                                     {{ formatCellValue(row, col) }}
                                 </slot>
                             </td>
-                            <!-- Actions cell -->
                             <td v-if="hasActions" class="px-3 py-3 text-center" @click.stop>
                                 <div class="flex items-center justify-center gap-1">
                                     <slot name="row-actions" :row="row">
@@ -149,7 +135,6 @@ EnhancedTable - A feature-rich reusable table component with:
                                 </div>
                             </td>
                         </tr>
-                        <!-- Empty state -->
                         <tr v-if="displayedRows.length === 0 && !loading">
                             <td :colspan="totalColumns" class="px-4 py-12 text-center">
                                 <div class="flex flex-col items-center gap-2 text-[var(--color-text-muted)]">
@@ -205,23 +190,18 @@ interface Props {
     columns: TableColumn<T>[]
     loading?: boolean
     rowKey?: string
-    // Pagination
     pageSize?: number
     totalItems?: number
     currentPage?: number
     infiniteScroll?: boolean
-    // Features
     selectable?: boolean
     filterable?: boolean
     columnToggle?: boolean
     showRefresh?: boolean
     clickable?: boolean
-    // Sorting
     defaultSortColumn?: string
     defaultSortDirection?: 'asc' | 'desc'
-    // Actions
     actions?: TableAction<T>[]
-    // Empty state
     emptyIcon?: string
     emptyLabel?: string
 }
@@ -254,34 +234,29 @@ const emit = defineEmits<{
 const icons = useIcons()
 const { t: $t } = useI18n()
 
-// Internal state
 const tableContainer = ref<HTMLElement | null>(null)
 const filterQuery = ref('')
 const loadedPages = ref(1)
 const selectedRowKeys = ref<string[]>([])
 const columnVisibility = ref<Record<string, boolean>>({})
 
-// Initialize column visibility
 onMounted(() => {
     props.columns.forEach(col => {
         columnVisibility.value[col.key] = col.visible !== false
     })
 })
 
-// Sort state
 const sortState = ref<TableSortState>({
     column: props.defaultSortColumn || '',
     direction: props.defaultSortDirection || 'asc'
 })
 
-// Pagination state
 const pagination = computed<TablePaginationState>(() => ({
     page: props.currentPage,
     pageSize: props.pageSize,
     total: props.totalItems || props.rows.length
 }))
 
-// Computed
 const toggleableColumns = computed(() =>
     props.columns.filter(col => !col.alwaysVisible)
 )
@@ -330,12 +305,10 @@ const totalPages = computed(() => Math.ceil(pagination.value.total / pagination.
 
 const displayedRows = computed(() => {
     if (props.totalItems > 0) {
-        // Server-side pagination - use rows directly
         return props.infiniteScroll
             ? sortedRows.value.slice(0, loadedPages.value * pagination.value.pageSize)
             : sortedRows.value
     }
-    // Client-side pagination
     return props.infiniteScroll
         ? sortedRows.value.slice(0, loadedPages.value * pagination.value.pageSize)
         : sortedRows.value.slice(startIndex.value, endIndex.value)
@@ -367,7 +340,6 @@ const visiblePages = computed(() => {
     return pages
 })
 
-// Selection computed
 const allSelected = computed(() =>
     displayedRows.value.length > 0 && displayedRows.value.every(row => isSelected(row))
 )
@@ -376,7 +348,6 @@ const someSelected = computed(() =>
     selectedRowKeys.value.length > 0 && !allSelected.value
 )
 
-// Methods
 function getRowKey(row: T, index: number): string {
     return String(row[props.rowKey] ?? index)
 }
@@ -439,7 +410,6 @@ function refresh() {
     emit('refresh')
 }
 
-// Selection methods
 function isSelected(row: T): boolean {
     const key = getRowKey(row, -1)
     return selectedRowKeys.value.includes(key)
@@ -475,17 +445,14 @@ function emitSelectionChange() {
     emit('selection-change', selected)
 }
 
-// Watch filter changes
 watch(filterQuery, (val) => {
     emit('filter-change', val)
 })
 
-// Reset pagination when rows change
 watch(() => props.rows, () => {
     loadedPages.value = 1
 })
 
-// Expose methods for parent components
 defineExpose({
     refresh,
     clearSelection,

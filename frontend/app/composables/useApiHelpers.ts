@@ -46,14 +46,12 @@ export function useApiHelpers() {
     }
   }
 
-  // Server/Auth endpoints
   const getConfigServer = () => apiGet<string>('/user/opsiserver')
   const checkAuth = () => apiGet<{ authenticated: boolean; username: string }>('/auth/session')
   const callLogin = (username: string, password: string) =>
     apiPost<{ success: boolean }>('/auth/login', { username, password })
   const callLogout = () => apiPost('/auth/logout')
 
-  // Depots/Servers endpoints
   const getDepots = (params?: Record<string, unknown>) =>
     apiGet<Array<{
       depotId: string
@@ -66,7 +64,6 @@ export function useApiHelpers() {
     }>>('/opsidata/depots', params)
   const getDepotIds = () => apiGet<string[]>('/opsidata/depot_ids')
 
-  // Clients endpoints
   const getClients = (params?: Record<string, unknown>) =>
     apiGet<Array<{
       clientId: string
@@ -83,7 +80,6 @@ export function useApiHelpers() {
   const getClientConfig = (clientId: string) =>
     apiGet<Array<{ id: string; type: string; value: unknown }>>(`/opsidata/clients/${clientId}/config`)
 
-  // Products endpoints
   const getProducts = (params?: Record<string, unknown>) =>
     apiGet<Array<{
       productId: string
@@ -95,7 +91,6 @@ export function useApiHelpers() {
       packageVersion: string
     }>>('/opsidata/products', params)
 
-  // Groups endpoints
   const getGroups = (params?: Record<string, unknown>) =>
     apiGet<Array<{
       groupId: string
@@ -108,58 +103,7 @@ export function useApiHelpers() {
   const getProductGroups = () =>
     apiGet<{ data: Record<string, unknown>; total: number }>('/opsidata/products/groups')
 
-  // RPC call helper for direct backend RPC access
-  async function callRpc<T>(method: string, params: unknown[] = []): Promise<ApiResponse<T>> {
-    try {
-      const data = await $customFetch<{ result: T; error?: { message: string } }>('/../../rpc', {
-        method: 'POST',
-        body: {
-          jsonrpc: '2.0',
-          method,
-          params,
-          id: 1
-        }
-      })
-      if (data.error) {
-        return { data: null, error: new Error(data.error.message), headers: null }
-      }
-      return { data: data.result, error: null, headers: null }
-    } catch (e) {
-      return { data: null, error: e as Error, headers: null }
-    }
-  }
 
-  // Group RPC methods (fallback when REST endpoints fail)
-  const getGroupsViaRpc = async (groupType: 'HostGroup' | 'ProductGroup') => {
-    const groupsRes = await callRpc<Array<{
-      id: string
-      description: string
-      notes: string
-      parentGroupId: string | null
-      type: string
-    }>>('group_getObjects', [[], { type: groupType }])
-
-    const membersRes = await callRpc<Array<{
-      groupId: string
-      objectId: string
-      groupType: string
-    }>>('objectToGroup_getObjects', [[], { groupType }])
-
-    return { groups: groupsRes.data || [], members: membersRes.data || [] }
-  }
-
-  // Generic API call that can be used for any endpoint
-  async function callApi<T>(endpoint: string, options?: FetchOptions): Promise<T | null> {
-    try {
-      const url = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
-      return await $customFetch<T>(url, options)
-    } catch (e) {
-      console.error(`API call to ${endpoint} failed:`, e)
-      return null
-    }
-  }
-
-  // Admin endpoints
   const getServerInfo = () => apiGet<{
     opsiVersion: string
     hostname: string
@@ -182,11 +126,9 @@ export function useApiHelpers() {
   const getServerConfig = (params?: Record<string, unknown>) =>
     apiGet<Record<string, Array<{ configId: string; description: string; type: string; value: unknown; possibleValues: string; multiValue: boolean; editable: boolean }>>>('/opsidata/config/server', params)
 
-  // Logs endpoint
   const getClientLogs = (clientId: string, logType: string, params?: Record<string, unknown>) =>
     apiGet<{ content: string; marker: number }>(`/opsidata/clients/${clientId}/logs/${logType}`, params)
 
-  // Admin: Blocked clients & Locked products
   const getBlockedClients = () => apiGet<Record<string, string>>('/opsidata/blocked-clients')
   const unblockClient = (clientId: string) => apiPost<void>(`/opsidata/clients/${clientId}/unblock`)
   const unblockAllClients = () => apiPost<void>('/opsidata/clients/unblock')
@@ -194,7 +136,6 @@ export function useApiHelpers() {
   const unlockProduct = (productId: string) => apiPost<void>(`/opsidata/products/${productId}/unlock`)
   const unlockAllProducts = () => apiPost<void>('/opsidata/products/unlock')
 
-  // Admin: App state
   const getAppState = () => apiGet<{
     type: 'normal' | 'maintenance'
     address_exceptions: string[]
@@ -203,7 +144,6 @@ export function useApiHelpers() {
   const setAppState = (state: { type: string; address_exceptions?: string[]; retry_after?: number }) =>
     apiPost<{ type: string }>('/app-state', state)
 
-  // Admin: Backup & Restore
   const createBackup = (options: {
     config_files?: boolean
     redis_data?: boolean
@@ -218,13 +158,10 @@ export function useApiHelpers() {
     password?: string
   }) => apiPost<void>('/backup/restore', options)
 
-  // Admin: Modules
   const getModulesContent = () => apiPost<{ result: string[] }>('/opsidata/modulesContent')
 
-  // Admin: Disabled features
   const getDisabledFeatures = () => apiGet<string[]>('/opsidata/server/disabled-features')
 
-  // Product Properties & Dependencies
   const getProductProperties = (productId: string, params?: { selectedClients?: string[]; selectedDepots?: string[] }) => {
     const queryParams: Record<string, unknown> = {}
     if (params?.selectedClients?.length) {
@@ -297,8 +234,6 @@ export function useApiHelpers() {
   return {
     apiGet,
     apiPost,
-    callApi,
-    callRpc,
     getConfigServer,
     checkAuth,
     callLogin,
@@ -312,13 +247,11 @@ export function useApiHelpers() {
     getGroups,
     getHostGroups,
     getProductGroups,
-    getGroupsViaRpc,
     getServerInfo,
     getHealthcheck,
     getDiagnosticData,
     getServerConfig,
     getClientLogs,
-    // Admin APIs
     getBlockedClients,
     unblockClient,
     unblockAllClients,
@@ -331,7 +264,6 @@ export function useApiHelpers() {
     restoreBackup,
     getModulesContent,
     getDisabledFeatures,
-    // Product properties & dependencies
     getProductProperties,
     saveProductProperties,
     getProductDependencies,

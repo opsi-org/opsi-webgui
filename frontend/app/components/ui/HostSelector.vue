@@ -11,7 +11,6 @@ data for a specific client.
 -->
 <template>
   <div class="relative" ref="containerRef">
-    <!-- Trigger button -->
     <button @click="open = !open" type="button"
       class="flex items-center gap-2 px-3 py-1.5 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-opsi-blue transition-colors text-sm min-w-48">
       <UIcon :name="icons.client" class="w-4 h-4 text-gray-400" />
@@ -22,11 +21,9 @@ data for a specific client.
         :class="{ 'rotate-180': open }" />
     </button>
 
-    <!-- Dropdown -->
     <Transition name="dropdown">
       <div v-if="open"
         class="absolute top-full left-0 mt-1 min-w-56 max-h-64 overflow-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
-        <!-- Search input -->
         <div class="p-2 border-b border-gray-200 dark:border-gray-700">
           <UInput v-model="search" :placeholder="String($t('filter'))" :icon="icons.search" size="xs" />
         </div>
@@ -78,7 +75,6 @@ const open = ref(false)
 const search = ref('')
 const containerRef = ref<HTMLElement | null>(null)
 
-// Close on click outside
 onMounted(() => {
   const handleClickOutside = (e: MouseEvent) => {
     if (containerRef.value && !containerRef.value.contains(e.target as Node)) {
@@ -89,7 +85,7 @@ onMounted(() => {
   onUnmounted(() => document.removeEventListener('click', handleClickOutside))
 })
 
-// Mock host data - in real app, this would come from a composable/store
+// Mock host datas
 const hosts = ref([
   { id: 'client1.domain.local', description: 'Workstation 1', online: true },
   { id: 'client2.domain.local', description: 'Workstation 2', online: false },

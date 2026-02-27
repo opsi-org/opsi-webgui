@@ -8,9 +8,8 @@ License: AGPL-3.0
 PageLayout - A layout component that enforces:
 - Fixed header (with tabs, filters, table controls, stats)
 - Scrollable content area
-- Full page height utilization
 
-Header structure (no title - breadcrumb already shows it):
+Header structure:
 - Row 1: Tabs + Filters (left) | Search + TableControls + Actions + Refresh (right)
 - Row 2: Stats (optional)
 -->
@@ -18,19 +17,19 @@ Header structure (no title - breadcrumb already shows it):
 	<div class="page-layout flex flex-col h-full min-h-0 overflow-hidden">
 		<!-- Fixed Header Section -->
 		<div class="page-header shrink-0 bg-[var(--color-surface)] dark:bg-[var(--color-background)] pb-3">
-			<!-- Controls Row: Tabs + Filters (left) | Search + TableControls + Actions + Refresh (right) -->
+			<!-- Controls Row -->
 			<div v-if="showControlsRow" class="flex flex-wrap items-center justify-between gap-3">
-				<!-- Left side: Tabs + Filters -->
+				<!-- Left side -->
 				<div class="flex items-center gap-2">
 					<slot name="tabs" />
 					<slot name="filters" />
 				</div>
-				<!-- Right side: Search + Table Controls + Actions + Refresh -->
+				<!-- Right side -->
 				<div class="flex flex-wrap items-center gap-2">
 					<UInput v-if="showSearch" v-model="searchModel"
 						:placeholder="searchPlaceholder || $t('typeToFilter')" :icon="icons.search" size="sm"
 						class="w-full sm:w-48 md:w-64" />
-					<!-- Table controls: column selection, total count, clear selection -->
+					<!-- Table controls -->
 					<slot name="tableControls" />
 					<slot name="actions" />
 					<NuxtLink v-if="addLink" :to="addLink">
@@ -52,11 +51,6 @@ Header structure (no title - breadcrumb already shows it):
 		<!-- Scrollable Content Section -->
 		<div class="page-content flex-1 min-h-0 overflow-auto">
 			<slot />
-		</div>
-
-		<!-- Optional Footer -->
-		<div v-if="$slots.footer" class="page-footer shrink-0 pt-3 border-t border-[var(--color-border)]">
-			<slot name="footer" />
 		</div>
 	</div>
 </template>
@@ -93,7 +87,6 @@ const searchModel = computed({
 
 <style scoped>
 .page-layout {
-	/* Ensure full height within parent */
 	max-height: 100%;
 }
 </style>

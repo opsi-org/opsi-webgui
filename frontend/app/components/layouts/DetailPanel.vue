@@ -22,7 +22,8 @@ Mobile: overlay panel with close button.
                 <!-- Resize handle (desktop only) -->
                 <div v-if="!isMobile" @mousedown="startResize"
                     class="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize bg-transparent hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group">
-                    <div class="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-12 bg-gray-300 dark:bg-gray-600 rounded group-hover:bg-opsi-blue transition-colors" />
+                    <div
+                        class="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-12 bg-gray-300 dark:bg-gray-600 rounded group-hover:bg-opsi-blue transition-colors" />
                 </div>
 
                 <!-- Panel header -->
@@ -52,9 +53,9 @@ Mobile: overlay panel with close button.
 <script setup lang="ts">
 const props = withDefaults(defineProps<{
     showPanel: boolean
-    defaultWidthPercent?: number  // Default panel width as percentage (25-75)
+    defaultWidthPercent?: number
 }>(), {
-    defaultWidthPercent: 50  // Default to 50% of container width
+    defaultWidthPercent: 50
 })
 
 defineEmits<{
@@ -63,13 +64,12 @@ defineEmits<{
 
 const icons = useIcons()
 
-// Responsive state
 const isMobile = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
-const panelWidthPercent = ref(props.defaultWidthPercent)  // Percentage of container width
+const panelWidthPercent = ref(props.defaultWidthPercent)
 const isResizing = ref(false)
-const minPanelPercent = 25   // Minimum 25% width
-const maxPanelPercent = 75   // Maximum 75% width
+const minPanelPercent = 25
+const maxPanelPercent = 75
 
 onMounted(() => {
     const checkMobile = () => {
@@ -80,7 +80,6 @@ onMounted(() => {
     onUnmounted(() => window.removeEventListener('resize', checkMobile))
 })
 
-// Computed styles - use percentage for desktop
 const mainStyle = computed(() => {
     if (!props.showPanel || isMobile.value) return { width: '100%' }
     return { width: `${100 - panelWidthPercent.value}%` }
@@ -98,7 +97,6 @@ const panelClasses = computed(() => {
     return 'absolute right-0 top-0 bottom-0 bg-white dark:bg-[var(--color-surface)] border-l border-[var(--color-border)] dark:border-[var(--color-border)] flex flex-col shadow-lg'
 })
 
-// Resize handling - now percentage-based
 function startResize(e: MouseEvent) {
     e.preventDefault()
     isResizing.value = true

@@ -88,14 +88,12 @@ const hoveredItem = ref<string | null>(null)
 const itemPositions = ref<Record<string, { top: number; left: number }>>({})
 let hoverTimeout: ReturnType<typeof setTimeout> | null = null
 
-// Helper to format translation keys
 const t = (key: string) => {
     const translated = $t(key)
     if (translated && translated !== key) return String(translated)
     return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
 }
 
-// Get popup position for teleported element
 function getPopupPosition(route: string) {
     const pos = itemPositions.value[route]
     if (!pos) return { top: '0px', left: '0px' }
@@ -161,7 +159,6 @@ const navItems = computed<NavItem[]>(() => [
     },
 ])
 
-// Auto-expand active section
 onMounted(() => {
     navItems.value.forEach((item) => {
         if (item.submenu && isActive(item.route)) {
@@ -192,7 +189,6 @@ function toggleSubmenu(route: string) {
 function onHover(route: string, event?: MouseEvent) {
     if (hoverTimeout) clearTimeout(hoverTimeout)
     hoveredItem.value = route
-    // Capture position for teleported popup
     if (event) {
         const target = event.currentTarget as HTMLElement
         const rect = target.getBoundingClientRect()

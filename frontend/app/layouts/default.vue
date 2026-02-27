@@ -99,7 +99,7 @@ License: AGPL-3.0
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-sm font-medium text-[var(--color-text)] dark:text-[var(--color-text)]">{{
                             t('quickPanel')
-                            }}</span>
+                        }}</span>
                         <button @click="quickpanelOpen = false"
                             class="p-1 hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] rounded">
                             <UIcon :name="icons.close" class="w-4 h-4" />
@@ -359,20 +359,17 @@ const stateStore = useStateStore()
 const { callLogout } = useApiHelpers()
 const uiStore = useUiStore()
 
-// Session timer - auto-starts and handles auto-logout
 const { remainingSeconds, isWarning, formattedTime, formattedTimeText, refreshSession } = useSessionTimer(true)
 const $route = useRoute()
 const $config = useRuntimeConfig()
 const colorMode = useColorMode()
 const { t: i18nT, locale, locales, setLocale } = useI18n()
 
-// Theme handling
 const isDarkMode = computed(() => colorMode.value === 'dark')
 function setTheme(theme: 'light' | 'dark') {
     colorMode.preference = theme
 }
 
-// Locale handling
 interface LocaleInfo { code: string; name?: string }
 const currentLocale = computed(() => locale.value || 'en')
 const allLocales = computed(() => locales.value as LocaleInfo[])
@@ -380,7 +377,6 @@ function switchLocale(code: string) {
     setLocale(code as 'de' | 'en')
 }
 
-// Quick panel helpers
 const hasSelections = computed(() =>
     stateStore.depots.length > 0 ||
     stateStore.clients.length > 0 ||
@@ -391,7 +387,6 @@ function clearAllSelections() {
     stateStore.clearAll()
 }
 
-// Helper to format translation keys to readable text
 const t = (key: string) => {
     const translated = i18nT(key)
     if (translated && translated !== key) return String(translated)
@@ -399,13 +394,11 @@ const t = (key: string) => {
     return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
 }
 
-// Responsive state
 const isMobile = ref(false)
 const sidebarOpen = ref(false)
 const quickpanelOpen = ref(false)
 
-// Quickpanel resize state
-const DEFAULT_QUICKPANEL_WIDTH = 288 // 18rem
+const DEFAULT_QUICKPANEL_WIDTH = 288
 const MIN_QUICKPANEL_WIDTH = 250
 const quickpanelWidth = ref(DEFAULT_QUICKPANEL_WIDTH)
 const isResizingQuickpanel = ref(false)
@@ -417,7 +410,6 @@ function startQuickpanelResize(e: MouseEvent) {
     const startWidth = quickpanelWidth.value
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-        // Calculate new width (dragging left increases width)
         const deltaX = startX - moveEvent.clientX
         const maxWidth = window.innerWidth * 0.5 // Max 50% of viewport
         const newWidth = Math.min(Math.max(startWidth + deltaX, MIN_QUICKPANEL_WIDTH), maxWidth)
@@ -451,7 +443,6 @@ onMounted(() => {
     onUnmounted(() => window.removeEventListener('resize', checkMobile))
 })
 
-// Close mobile sidebar on route change
 watch(
     () => $route.path,
     () => {
@@ -471,8 +462,6 @@ const breadcrumbs = computed(() => {
 
     segments.forEach((segment, index) => {
         currentPath += `/${segment}`
-        // If segment looks like a hostname (contains dots and no spaces), keep as-is
-        // Otherwise, translate it
         const isHostname = segment.includes('.') && !segment.includes(' ')
         const label = isHostname ? segment : t(segment)
         crumbs.push({
@@ -484,14 +473,12 @@ const breadcrumbs = computed(() => {
     return crumbs
 })
 
-// Page descriptions mapping - supports both exact paths and patterns
 const getPageDescription = (path: string): string => {
-    const normalizedPath = path.replace(/^\//, '') // Remove leading slash
+    const normalizedPath = path.replace(/^\//, '')
     const segments = normalizedPath.split('/')
     const firstSegment = segments[0] || ''
     const lastSegment = segments[segments.length - 1] || ''
 
-    // Exact path matches first
     const exactMatches: Record<string, string> = {
         'clients': t('clientsPageDescription') || 'View and manage opsi clients',
         'servers': t('serversPageDescription') || 'Manage depots and config servers',
@@ -507,7 +494,6 @@ const getPageDescription = (path: string): string => {
         return exactMatches[normalizedPath]
     }
 
-    // Pattern-based descriptions for sub-pages
     if (firstSegment === 'clients' && segments.length > 1) {
         if (segments[1] === 'config') {
             const clientId = segments[2]
@@ -539,7 +525,6 @@ const getPageDescription = (path: string): string => {
         return t('groupDetailPageDescription') || 'Group details and members'
     }
 
-    // Fallback to first segment description
     return exactMatches[firstSegment] || ''
 }
 

@@ -6,7 +6,6 @@ All rights reserved.
 License: AGPL-3.0
 
 PageHeader - A reusable page header component with tabs and actions.
-No title prop - breadcrumb already shows page title.
 -->
 <template>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" role="toolbar"

@@ -8,9 +8,8 @@ License: AGPL-3.0
 
 import { useUserStore } from '~/stores/userStore'
 
-const WARNING_THRESHOLD_SEC = 60 * 5 // Show warning 5 minutes before expiry
+const WARNING_THRESHOLD_SEC = 60 * 5 // 5 minutes
 
-// Session timer state (singleton across components)
 const sessionState = reactive({
   remainingSeconds: 0,
   isWarning: false,
@@ -19,18 +18,10 @@ const sessionState = reactive({
   initialized: false,
 })
 
-/**
- * Composable for managing session expiry countdown and auto-logout.
- * Automatically decrements timer and triggers logout when session expires.
- *
- * @param autoStart - Whether to automatically start the timer (default: false)
- * @returns Session timer state and helpers
- */
 export function useSessionTimer(autoStart = false) {
   const userStore = useUserStore()
   const { t } = useI18n()
 
-  // Calculate remaining seconds from stored session end time
   function calculateRemaining(): number {
     if (!userStore.sessionEndTime) return 0
     const endTime = new Date(userStore.sessionEndTime).getTime()
@@ -38,14 +29,12 @@ export function useSessionTimer(autoStart = false) {
     return remaining
   }
 
-  // Update session state
   function updateState() {
     sessionState.remainingSeconds = calculateRemaining()
     sessionState.isWarning = sessionState.remainingSeconds > 0 && sessionState.remainingSeconds <= WARNING_THRESHOLD_SEC
     sessionState.isExpired = sessionState.remainingSeconds === 0 && !!userStore.sessionEndTime
   }
 
-  // Format remaining time for display
   function formatTime(seconds: number): string {
     if (seconds <= 0) return '0:00'
     const mins = Math.floor(seconds / 60)
@@ -53,7 +42,6 @@ export function useSessionTimer(autoStart = false) {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  // Format with localized text
   function formatTimeText(seconds: number): string {
     if (seconds <= 0) return t('sessionExpired') || 'Session expired'
     const hours = Math.floor(seconds / 3600)
@@ -69,15 +57,13 @@ export function useSessionTimer(autoStart = false) {
     return `${secs}s`
   }
 
-  // Start the countdown timer
   function startTimer() {
-    if (sessionState.timerInterval) return // Already running
+    if (sessionState.timerInterval) return
 
     updateState()
     sessionState.timerInterval = setInterval(() => {
       updateState()
 
-      // Auto-logout when expired
       if (sessionState.isExpired && userStore.isAuthenticated) {
         stopTimer()
         handleSessionExpired()
@@ -85,7 +71,6 @@ export function useSessionTimer(autoStart = false) {
     }, 1000)
   }
 
-  // Stop the countdown timer
   function stopTimer() {
     if (sessionState.timerInterval) {
       clearInterval(sessionState.timerInterval)
@@ -93,20 +78,17 @@ export function useSessionTimer(autoStart = false) {
     }
   }
 
-  // Handle session expiry
   async function handleSessionExpired() {
     console.warn('Session expired - auto logout')
     userStore.logout()
     await navigateTo('/login?expired=1')
   }
 
-  // Refresh session (extend expiry)
   function refreshSession(expiryInSec?: number) {
     userStore.setSession(expiryInSec)
     updateState()
   }
 
-  // Initialize on first use (if autoStart)
   if (autoStart && !sessionState.initialized) {
     sessionState.initialized = true
     onMounted(() => {
@@ -114,12 +96,8 @@ export function useSessionTimer(autoStart = false) {
         startTimer()
       }
     })
-    onUnmounted(() => {
-      // Don't stop timer on unmount as it's shared
-    })
   }
 
-  // Watch authentication state
   watch(
     () => userStore.isAuthenticated,
     (isAuth) => {
@@ -135,17 +113,12 @@ export function useSessionTimer(autoStart = false) {
   )
 
   return {
-    // State (readonly)
     remainingSeconds: computed(() => sessionState.remainingSeconds),
     isWarning: computed(() => sessionState.isWarning),
     isExpired: computed(() => sessionState.isExpired),
     isRunning: computed(() => !!sessionState.timerInterval),
-
-    // Formatted values
     formattedTime: computed(() => formatTime(sessionState.remainingSeconds)),
     formattedTimeText: computed(() => formatTimeText(sessionState.remainingSeconds)),
-
-    // Actions
     startTimer,
     stopTimer,
     refreshSession,
