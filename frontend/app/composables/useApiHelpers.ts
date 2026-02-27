@@ -108,6 +108,57 @@ export function useApiHelpers() {
   const getProductGroups = () =>
     apiGet<{ data: Record<string, unknown>; total: number }>('/opsidata/products/groups')
 
+  // RPC call helper for direct backend RPC access
+  async function callRpc<T>(method: string, params: unknown[] = []): Promise<ApiResponse<T>> {
+    try {
+      const data = await $customFetch<{ result: T; error?: { message: string } }>('/../../rpc', {
+        method: 'POST',
+        body: {
+          jsonrpc: '2.0',
+          method,
+          params,
+          id: 1
+        }
+      })
+      if (data.error) {
+        return { data: null, error: new Error(data.error.message), headers: null }
+      }
+      return { data: data.result, error: null, headers: null }
+    } catch (e) {
+      return { data: null, error: e as Error, headers: null }
+    }
+  }
+
+  // Group RPC methods (fallback when REST endpoints fail)
+  const getGroupsViaRpc = async (groupType: 'HostGroup' | 'ProductGroup') => {
+    const groupsRes = await callRpc<Array<{
+      id: string
+      description: string
+      notes: string
+      parentGroupId: string | null
+      type: string
+    }>>('group_getObjects', [[], { type: groupType }])
+
+    const membersRes = await callRpc<Array<{
+      groupId: string
+      objectId: string
+      groupType: string
+    }>>('objectToGroup_getObjects', [[], { groupType }])
+
+    return { groups: groupsRes.data || [], members: membersRes.data || [] }
+  }
+
+  // Generic API call that can be used for any endpoint
+  async function callApi<T>(endpoint: string, options?: FetchOptions): Promise<T | null> {
+    try {
+      const url = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
+      return await $customFetch<T>(url, options)
+    } catch (e) {
+      console.error(`API call to ${endpoint} failed:`, e)
+      return null
+    }
+  }
+
   // Admin endpoints
   const getServerInfo = () => apiGet<{
     opsiVersion: string
@@ -173,9 +224,81 @@ export function useApiHelpers() {
   // Admin: Disabled features
   const getDisabledFeatures = () => apiGet<string[]>('/opsidata/server/disabled-features')
 
+  // Product Properties & Dependencies
+  const getProductProperties = (productId: string, params?: { selectedClients?: string[]; selectedDepots?: string[] }) => {
+    const queryParams: Record<string, unknown> = {}
+    if (params?.selectedClients?.length) {
+      queryParams.selectedClients = `[${params.selectedClients.join(',')}]`
+    }
+    if (params?.selectedDepots?.length) {
+      queryParams.selectedDepots = `[${params.selectedDepots.join(',')}]`
+    }
+    return apiGet<{
+      properties: Record<string, {
+        productId: string
+        propertyId: string
+        type: 'UnicodeProductProperty' | 'BoolProductProperty'
+        version: string
+        description: string
+        multiValue: boolean
+        editable: boolean
+        default: (string | boolean)[]
+        possibleValues: Record<string, (string | boolean)[]>
+        allValues: (string | boolean)[]
+        depots: Record<string, (string | boolean)[]>
+        clients: Record<string, (string | boolean)[]>
+        defaultDetails?: Record<string, (string | boolean)[]>
+        versionDetails?: Record<string, string>
+        descriptionDetails?: Record<string, string>
+        multiValueDetails?: Record<string, boolean>
+        editableDetails?: Record<string, boolean>
+        allClientValuesEqual: boolean
+        anyDepotDifferentFromDefault: boolean
+        anyClientDifferentFromDepot: boolean
+      }>
+      productVersions: Record<string, string | undefined>
+      productDescription: string
+      productDescriptionDetails: Record<string, string>
+      productAdvice: string
+      productAdviceDetails: Record<string, string>
+    }>(`/opsidata/products/${productId}/properties`, queryParams)
+  }
+
+  const saveProductProperties = (productId: string, data: {
+    clientIds?: string[]
+    depotIds?: string[]
+    properties: Record<string, string | boolean | string[]>
+  }) => apiPost<{ status: number; data: Record<string, unknown> }>(`/opsidata/products/${productId}/properties`, data)
+
+  const getProductDependencies = (productId: string, params?: { selectedClients?: string[] }) => {
+    const queryParams: Record<string, unknown> = {}
+    if (params?.selectedClients?.length) {
+      queryParams.selectedClients = `[${params.selectedClients.join(',')}]`
+    }
+    return apiGet<{
+      dependencies: Array<{
+        productId: string
+        productAction: string | null
+        version: string
+        requiredProductId: string
+        requiredVersion: string | null
+        requiredAction: string | null
+        requiredInstallationStatus: string | null
+        requirementType: string | null
+      }>
+      productVersions: Record<string, string | undefined>
+      productDescription: string
+      productDescriptionDetails: Record<string, string>
+      productAdvice: string
+      productAdviceDetails: Record<string, string>
+    }>(`/opsidata/products/${productId}/dependencies`, queryParams)
+  }
+
   return {
     apiGet,
     apiPost,
+    callApi,
+    callRpc,
     getConfigServer,
     checkAuth,
     callLogin,
@@ -189,6 +312,7 @@ export function useApiHelpers() {
     getGroups,
     getHostGroups,
     getProductGroups,
+    getGroupsViaRpc,
     getServerInfo,
     getHealthcheck,
     getDiagnosticData,
@@ -207,5 +331,9 @@ export function useApiHelpers() {
     restoreBackup,
     getModulesContent,
     getDisabledFeatures,
+    // Product properties & dependencies
+    getProductProperties,
+    saveProductProperties,
+    getProductDependencies,
   }
 }

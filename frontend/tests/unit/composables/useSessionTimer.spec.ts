@@ -1,45 +1,74 @@
-import { describe, it, expect, vi } from 'vitest'
-import { useSessionTimer } from '~/app/composables/useTimer'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { ref, reactive } from 'vue'
 
-vi.mock('~/composables/mixins/useComponent', () => ({
-  useNotification: () => ({ notifyInfo: vi.fn() }),
-}))
-vi.mock('~/composables/mixins/useGet', () => ({
-  useConfigserver: vi.fn(),
-}))
-vi.mock('~/composables/mixins/usePost', () => ({
-  useCallLogout: vi.fn(() => ({ callLogout: vi.fn() })),
-}))
-vi.mock('vue-i18n', () => ({
+// Mock Vue reactivity
+vi.mock('vue', async () => {
+  const actual = await vi.importActual<typeof import('vue')>('vue')
+  return {
+    ...actual,
+    watch: vi.fn(),
+    onMounted: vi.fn((cb) => cb()),
+    onUnmounted: vi.fn(),
+  }
+})
+
+// Mock useI18n
+vi.mock('#imports', () => ({
   useI18n: () => ({ t: (key: string) => key }),
+  navigateTo: vi.fn(),
 }))
-vi.mock('vue-router', () => ({
-  useRouter: () => ({ push: vi.fn() }),
-}))
-globalThis.storeAuth = () => ({
-  isAuthenticated: true,
+
+// Mock the user store
+const mockUserStore = {
   sessionEndTime: new Date(Date.now() + 60000).toISOString(),
-  setSession: vi.fn(),
-  setExpiresIn: vi.fn(),
-  sessionExpiresIn: { diff: 60000, days: 0, hours: 0, minutes: 1, seconds: 0 },
+  isAuthenticated: true,
   logout: vi.fn(),
-  clearSession: vi.fn(),
-})
-globalThis.storeSettings = () => ({
-  setExpiresInterval: vi.fn(),
-})
+  setSession: vi.fn(),
+}
+
+vi.mock('~/stores/userStore', () => ({
+  useUserStore: () => mockUserStore,
+}))
 
 describe('useSessionTimer', () => {
-  it('should initialize and provide countdownText', () => {
-    const timer = useSessionTimer(false)
-    expect(timer.countdownText.value).toBe('')
-    expect(typeof timer.startCountdown).toBe('function')
-    expect(typeof timer.formatCountdownText).toBe('function')
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUserStore.sessionEndTime = new Date(Date.now() + 60000).toISOString()
+    mockUserStore.isAuthenticated = true
   })
 
-  it('should format countdown text correctly', () => {
+  it('should export the composable', async () => {
+    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
+    expect(useSessionTimer).toBeDefined()
+    expect(typeof useSessionTimer).toBe('function')
+  })
+
+  it('should provide timer state', async () => {
+    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
     const timer = useSessionTimer(false)
-    const text = timer.formatCountdownText({ days: 0, hours: 1, minutes: 2, seconds: 3 })
-    expect(text).toContain('1h 2m 3s')
+
+    expect(timer.remainingSeconds).toBeDefined()
+    expect(timer.isWarning).toBeDefined()
+    expect(timer.isExpired).toBeDefined()
+    expect(timer.formattedTime).toBeDefined()
+    expect(timer.formattedTimeText).toBeDefined()
+  })
+
+  it('should format time correctly', async () => {
+    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
+    const timer = useSessionTimer(false)
+
+    expect(timer.formatTime(0)).toBe('0:00')
+    expect(timer.formatTime(65)).toBe('1:05')
+    expect(timer.formatTime(3661)).toBe('61:01')
+  })
+
+  it('should provide start and stop functions', async () => {
+    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
+    const timer = useSessionTimer(false)
+
+    expect(typeof timer.startTimer).toBe('function')
+    expect(typeof timer.stopTimer).toBe('function')
+    expect(typeof timer.refreshSession).toBe('function')
   })
 })
