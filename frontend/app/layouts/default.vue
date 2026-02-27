@@ -226,8 +226,11 @@ License: AGPL-3.0
 
 <script setup lang="ts">
 import { useUiStore } from '~/stores/uiStore'
+import { useUserStore } from '~/stores/userStore'
 
 const icons = useIcons()
+const userStore = useUserStore()
+const { callLogout } = useApiHelpers()
 const uiStore = useUiStore()
 const $route = useRoute()
 const $config = useRuntimeConfig()
@@ -389,6 +392,12 @@ function toggleQuickpanel() {
 }
 
 async function handleLogout() {
+    try {
+        await callLogout()
+    } catch (e) {
+        console.warn('Logout API call failed:', e)
+    }
+    userStore.logout()
     await navigateTo('/login')
 }
 </script>
