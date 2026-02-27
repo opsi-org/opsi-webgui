@@ -25,29 +25,33 @@ export type ProductIds = string[]
 
 export interface ProductRow {
   productId: string
-  productType: ProductType
-  depotId: string
-  ident: string
-  selected: boolean
-  name: string
-  description: string
-  advice: string
-  modificationTime: string
-  installationStatusErrorLevel: number
-  installationStatus: string
-  actionRequest: string
-  actionProgress: string
-  actionResultErrorLevel: number
-  actionResult: string
-  clientVersionOutdated: boolean
-  depotVersionDiff: boolean
-  notOnAllDepots: boolean
-  numDepots: number
-  actions: string[]
-  selectedDepots: string[]
-  selectedClients: string[]
+  productType?: ProductType
+  depotId?: string
+  ident?: string
+  selected?: boolean
+  name?: string
+  description?: string
+  advice?: string
+  modificationTime?: string
+  installationStatusErrorLevel?: number
+  installationStatus?: string
+  actionRequest?: string
+  actionProgress?: string
+  actionResultErrorLevel?: number
+  actionResult?: string
+  // API returns snake_case for these fields
+  client_version_outdated?: boolean
+  clientVersionOutdated?: boolean // Also accept camelCase
+  depot_version_diff?: boolean
+  depotVersionDiff?: boolean // Also accept camelCase
+  notOnAllDepots?: boolean
+  numDepots?: number
+  actions?: string[]
+  selectedDepots?: string[]
+  selectedClients?: string[]
   clientVersions?: string[]
   depotVersions?: string[]
+  [key: string]: unknown // Allow additional fields
 }
 
 /* Tracks product action requests/changes per client */

@@ -6,25 +6,48 @@ All rights reserved.
 License: AGPL-3.0
 */
 
-export interface Client {
+/** Client list item returned by /api/opsidata/clients */
+export interface ClientListItem {
   clientId: string
   ident: string
+  macAddress: string
+  ipAddress: string
   description: string
   notes: string
-  hardwareAddress: string
-  ipAddress: string
-  inventoryNumber: string
-  systemUUID: string
   lastSeen: string
+  depotId: string
   uefi: boolean
+  reachable?: boolean
+  selected?: boolean | number
+  version_outdated?: number
+  installationStatus_unknown?: number
+  installationStatus_installed?: number
+  actionResult_failed?: number
+  actionResult_successful?: number
+}
+
+/** Full client details - used for /api/opsidata/clients response */
+export interface Client {
+  clientId: string
+  ident?: string // Optional - not always returned by API
+  description?: string
+  notes?: string
+  macAddress?: string
+  hardwareAddress?: string
+  ipAddress?: string
+  inventoryNumber?: string
+  systemUUID?: string
+  lastSeen?: string
+  depotId?: string
+  uefi?: boolean
   uefiValue?: boolean
-  versionOutdated: number
-  versionOutdatedNetboot: number
-  installationStatusUnknown: number
-  installationStatusInstalled: number
-  actionResultFailed: number
-  actionResultSuccessful: number
-  selected: boolean | number
+  versionOutdated?: number
+  versionOutdatedNetboot?: number
+  installationStatusUnknown?: number
+  installationStatusInstalled?: number
+  actionResultFailed?: number
+  actionResultSuccessful?: number
+  selected?: boolean | number
   reachable?: boolean
 }
 

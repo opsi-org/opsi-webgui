@@ -35,6 +35,13 @@ export const icons = {
   filter: 'i-heroicons-funnel',
   eye: 'i-heroicons-eye',
   eyeOff: 'i-heroicons-eye-slash',
+  clear: 'i-heroicons-x-circle',
+
+  // Table
+  columns: 'i-heroicons-view-columns',
+  sort: 'i-heroicons-arrows-up-down',
+  sortAsc: 'i-heroicons-bars-arrow-up',
+  sortDesc: 'i-heroicons-bars-arrow-down',
 
   // Content types
   client: 'i-heroicons-computer-desktop',
