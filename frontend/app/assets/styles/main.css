@@ -1,7 +1,10 @@
+/* OPSI Corporate Design Fonts - must be first */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Fira+Mono&display=swap');
+
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
-/* OPSI Corporate Design Colors - https://bonifax.uib.gmbh/corporate-design/opsi-design.html */
+/* OPSI Corporate Design Colors*/
 :root {
   /* Primary brand colors */
   --color-opsi-blue: #3f5aa6;
@@ -45,7 +48,7 @@
   --color-primary-950: #0d1330;
 }
 
-/* OPSI Dark Mode - Corporate Design compliant */
+/* OPSI Dark Mode - OPSI Corporate Design compliant */
 html.dark {
   --color-background: #3f3f3e;
   --color-surface: #4b4b49;
@@ -60,6 +63,19 @@ html.dark {
 body {
   background-color: var(--color-background);
   color: var(--color-text);
+  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* OPSI Typography - Headings use Montserrat */
+h1, h2, h3, h4, h5, h6,
+.font-heading {
+  font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+}
+
+/* Monospace/Code uses Fira Mono */
+code, pre, .font-mono {
+  font-family: 'Fira Mono', ui-monospace, monospace;
 }
 
 /* Dark mode overrides */
