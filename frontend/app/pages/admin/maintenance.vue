@@ -9,7 +9,8 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
 -->
 <template>
     <div class="space-y-6">
-        <UAlert v-if="error" color="error" variant="soft" :close-button="{ icon: 'i-heroicons-x-mark' }" @close="error = ''">
+        <UAlert v-if="error" color="error" variant="soft" :close-button="{ icon: 'i-heroicons-x-mark' }"
+            @close="error = ''">
             <template #title>{{ error }}</template>
         </UAlert>
 
@@ -19,8 +20,9 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <span class="font-medium">{{ $t('blockedClients') || 'Blocked Clients' }}</span>
-                        <CommonStatusBadge v-if="blockedClientsCount > 0" status="warning" :label="String(blockedClientsCount)" />
+                        <span class="font-medium">{{ $t('blockedClients') }}</span>
+                        <CommonStatusBadge v-if="blockedClientsCount > 0" status="warning"
+                            :label="String(blockedClientsCount)" />
                     </div>
                 </template>
                 <div v-if="loadingClients" class="py-6 text-center">
@@ -28,14 +30,17 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
                 <div v-else-if="blockedClientsCount === 0" class="py-6 text-center">
                     <UIcon :name="icons.check" class="w-10 h-10 text-green-500 mx-auto mb-2" />
-                    <p class="text-gray-500 dark:text-gray-400">{{ $t('message.noBlockedClients') || 'No blocked clients' }}</p>
+                    <p class="text-gray-500 dark:text-gray-400">{{ $t('message.noBlockedClients') }}</p>
                 </div>
                 <div v-else class="space-y-4">
                     <div class="flex gap-2">
-                        <USelect v-model="selectedBlockedClient" :options="blockedClientOptions" :placeholder="$t('selectClient') || 'Select client...'" class="flex-1" size="sm" />
-                        <UButton :icon="icons.check" color="primary" size="sm" :disabled="!selectedBlockedClient" :loading="unblockingClient" @click="unblockSelectedClient">{{ $t('unblock') }}</UButton>
+                        <USelect v-model="selectedBlockedClient" :options="blockedClientOptions"
+                            :placeholder="$t('selectClient')" class="flex-1" size="sm" />
+                        <UButton :icon="icons.check" color="primary" size="sm" :disabled="!selectedBlockedClient"
+                            :loading="unblockingClient" @click="unblockSelectedClient">{{ $t('unblock') }}</UButton>
                     </div>
-                    <UButton block variant="outline" color="warning" size="sm" :loading="unblockingClient" @click="unblockAll('clients')">{{ $t('unblockAll') || 'Unblock All' }}</UButton>
+                    <UButton block variant="outline" color="warning" size="sm" :loading="unblockingClient"
+                        @click="unblockAll('clients')">{{ $t('unblockAll') }}</UButton>
                 </div>
             </UCard>
 
@@ -43,8 +48,9 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <span class="font-medium">{{ $t('lockedProducts') || 'Locked Products' }}</span>
-                        <CommonStatusBadge v-if="lockedProductsCount > 0" status="warning" :label="String(lockedProductsCount)" />
+                        <span class="font-medium">{{ $t('lockedProducts') }}</span>
+                        <CommonStatusBadge v-if="lockedProductsCount > 0" status="warning"
+                            :label="String(lockedProductsCount)" />
                     </div>
                 </template>
                 <div v-if="loadingProducts" class="py-6 text-center">
@@ -52,14 +58,17 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
                 <div v-else-if="lockedProductsCount === 0" class="py-6 text-center">
                     <UIcon :name="icons.check" class="w-10 h-10 text-green-500 mx-auto mb-2" />
-                    <p class="text-gray-500 dark:text-gray-400">{{ $t('message.noLockedProducts') || 'No locked products' }}</p>
+                    <p class="text-gray-500 dark:text-gray-400">{{ $t('message.noLockedProducts') }}</p>
                 </div>
                 <div v-else class="space-y-4">
                     <div class="flex gap-2">
-                        <USelect v-model="selectedLockedProduct" :options="lockedProductOptions" :placeholder="$t('selectProduct') || 'Select product...'" class="flex-1" size="sm" />
-                        <UButton :icon="icons.check" color="primary" size="sm" :disabled="!selectedLockedProduct" :loading="unlockingProduct" @click="unlockSelectedProduct">{{ $t('unlock') }}</UButton>
+                        <USelect v-model="selectedLockedProduct" :options="lockedProductOptions"
+                            :placeholder="$t('selectProduct')" class="flex-1" size="sm" />
+                        <UButton :icon="icons.check" color="primary" size="sm" :disabled="!selectedLockedProduct"
+                            :loading="unlockingProduct" @click="unlockSelectedProduct">{{ $t('unlock') }}</UButton>
                     </div>
-                    <UButton block variant="outline" color="warning" size="sm" :loading="unlockingProduct" @click="unblockAll('products')">{{ $t('unlockAll') || 'Unlock All' }}</UButton>
+                    <UButton block variant="outline" color="warning" size="sm" :loading="unlockingProduct"
+                        @click="unblockAll('products')">{{ $t('unlockAll') }}</UButton>
                 </div>
             </UCard>
         </div>
@@ -68,8 +77,9 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
         <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
-                    <span class="font-medium">{{ $t('applicationState') || 'Application State' }}</span>
-                    <CommonStatusBadge :status="currentAppState === 'normal' ? 'success' : 'warning'" :label="currentAppState" />
+                    <span class="font-medium">{{ $t('applicationState') }}</span>
+                    <CommonStatusBadge :status="currentAppState === 'normal' ? 'success' : 'warning'"
+                        :label="currentAppState" />
                 </div>
             </template>
             <div v-if="loadingAppState" class="py-6 text-center">
@@ -77,45 +87,57 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             </div>
             <div v-else class="space-y-4">
                 <div class="flex flex-wrap gap-3">
-                    <button v-for="state in ['normal', 'maintenance']" :key="state" @click="newAppState.type = state" :class="[
-                        'flex-1 min-w-32 px-4 py-3 rounded-lg border-2 transition-all text-center',
-                        newAppState.type === state
-                            ? state === 'normal' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20'
-                            : 'border-[var(--color-border)] hover:border-gray-400'
-                    ]">
-                        <div class="font-medium" :class="newAppState.type === state ? (state === 'normal' ? 'text-primary-600 dark:text-primary-400' : 'text-yellow-600 dark:text-yellow-400') : ''">
-                            {{ $t(state) || state }}
+                    <button v-for="state in ['normal', 'maintenance']" :key="state" @click="newAppState.type = state"
+                        :class="[
+                            'flex-1 min-w-32 px-4 py-3 rounded-lg border-2 transition-all text-center',
+                            newAppState.type === state
+                                ? state === 'normal' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20'
+                                : 'border-[var(--color-border)] hover:border-gray-400'
+                        ]">
+                        <div class="font-medium"
+                            :class="newAppState.type === state ? (state === 'normal' ? 'text-primary-600 dark:text-primary-400' : 'text-yellow-600 dark:text-yellow-400') : ''">
+                            {{ $t(state) }}
                         </div>
-                        <div class="text-xs text-gray-500 mt-1">{{ state === 'normal' ? $t('serverIsOperational') || 'Server is operational' : $t('blockClientConnections') || 'Block client connections' }}</div>
+                        <div class="text-xs text-gray-500 mt-1">{{ state === 'normal' ? $t('serverIsOperational') :
+                            $t('blockClientConnections') }}</div>
                     </button>
                 </div>
 
-                <div v-if="newAppState.type === 'maintenance'" class="p-4 rounded-lg border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/10">
+                <div v-if="newAppState.type === 'maintenance'"
+                    class="p-4 rounded-lg border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/10">
                     <div class="space-y-4">
-                        <UFormField :label="$t('addressExceptions') || 'Address Exceptions'" :help="$t('allowTheseAddressesDuringMaintenance') || 'Allow these IP addresses during maintenance'">
+                        <UFormField :label="$t('addressExceptions')" :help="$t('allowTheseAddressesDuringMaintenance')">
                             <div class="flex gap-2">
-                                <UInput v-model="addressExceptionInput" :placeholder="$t('enterNetworkAddress') || 'Enter IP (e.g., 192.168.1.0/24)'" size="sm" class="flex-1" @keydown.enter.prevent="addAddressException" />
-                                <UButton color="primary" size="sm" :icon="icons.add" @click="addAddressException">{{ $t('add') }}</UButton>
+                                <UInput v-model="addressExceptionInput" :placeholder="$t('enterNetworkAddress')"
+                                    size="sm" class="flex-1" @keydown.enter.prevent="addAddressException" />
+                                <UButton color="primary" size="sm" :icon="icons.add" @click="addAddressException">{{
+                                    $t('add')
+                                }}</UButton>
                             </div>
                             <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
-                                <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-[var(--color-border)] rounded-full">
+                                <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
+                                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-[var(--color-border)] rounded-full">
                                     {{ addr }}
-                                    <button type="button" @click="removeAddressException(idx)" class="text-gray-400 hover:text-red-500 transition-colors">
+                                    <button type="button" @click="removeAddressException(idx)"
+                                        class="text-gray-400 hover:text-red-500 transition-colors">
                                         <UIcon :name="icons.close" class="w-3 h-3" />
                                     </button>
                                 </span>
                             </div>
                         </UFormField>
 
-                        <UFormField :label="$t('retryAfterInSeconds') || 'Retry After'" :help="$t('clientsShouldRetryAfter') || 'How long clients should wait before retrying (seconds)'">
-                            <UInput v-model.number="newAppState.retry_after" type="number" size="sm" min="0" class="w-40" />
+                        <UFormField :label="$t('retryAfterInSeconds')" :help="$t('clientsShouldRetryAfter')">
+                            <UInput v-model.number="newAppState.retry_after" type="number" size="sm" min="0"
+                                class="w-40" />
                         </UFormField>
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
-                    <UButton variant="outline" color="neutral" size="sm" @click="resetAppState">{{ $t('reset') }}</UButton>
-                    <UButton color="primary" size="sm" :loading="savingAppState" :disabled="!newAppState.type" @click="saveAppState">{{ $t('apply') }}</UButton>
+                    <UButton variant="outline" color="neutral" size="sm" @click="resetAppState">{{ $t('reset') }}
+                    </UButton>
+                    <UButton color="primary" size="sm" :loading="savingAppState" :disabled="!newAppState.type"
+                        @click="saveAppState">{{ $t('apply') }}</UButton>
                 </div>
             </div>
         </UCard>
@@ -126,47 +148,54 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             <UCard>
                 <template #header>
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                             <UIcon :name="icons.copy" class="w-4 h-4 text-primary-600 dark:text-primary-400" />
                         </div>
-                        <span class="font-medium">{{ $t('createBackup') || 'Create Backup' }}</span>
+                        <span class="font-medium">{{ $t('createBackup') }}</span>
                     </div>
                 </template>
                 <div class="space-y-5">
                     <!-- Backup Options -->
                     <div>
-                        <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup') || 'Include in backup' }}</div>
+                        <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup')
+                        }}</div>
                         <div class="space-y-3">
-                            <label class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
+                            <label
+                                class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
                                 <UCheckbox v-model="backupOptions.config_files" class="mt-0.5" />
                                 <div>
-                                    <div class="font-medium text-sm">{{ $t('config_files') || 'Config Files' }}</div>
-                                    <div class="text-xs text-gray-500">{{ $t('configFilesDescription') || 'Server configuration and settings' }}</div>
+                                    <div class="font-medium text-sm">{{ $t('config_files') }}</div>
+                                    <div class="text-xs text-gray-500">{{ $t('configFilesDescription') }}</div>
                                 </div>
                             </label>
-                            <label class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
+                            <label
+                                class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
                                 <UCheckbox v-model="backupOptions.redis_data" class="mt-0.5" />
                                 <div>
-                                    <div class="font-medium text-sm">{{ $t('redisData') || 'Redis Data' }}</div>
-                                    <div class="text-xs text-gray-500">{{ $t('redisDataDescription') || 'Session and cache data from Redis' }}</div>
+                                    <div class="font-medium text-sm">{{ $t('redisData') }}</div>
+                                    <div class="text-xs text-gray-500">{{ $t('redisDataDescription') }}</div>
                                 </div>
                             </label>
-                            <label class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
+                            <label
+                                class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
                                 <UCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5" />
                                 <div>
-                                    <div class="font-medium text-sm">{{ $t('maintenance_mode') || 'Maintenance Mode' }}</div>
-                                    <div class="text-xs text-gray-500">{{ $t('maintenanceModeDescription') || 'Enable maintenance mode during backup' }}</div>
+                                    <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
+                                    <div class="text-xs text-gray-500">{{ $t('maintenanceModeDescription') }}</div>
                                 </div>
                             </label>
                         </div>
                     </div>
 
                     <!-- Password (optional) -->
-                    <UFormField :label="$t('password') || 'Password'" :help="$t('optionalEncryption') || 'Optional - encrypt backup with password'">
-                        <UInput v-model="backupOptions.password" type="password" :placeholder="$t('enterPassword') || 'Enter password (optional)'" size="sm" />
+                    <UFormField :label="$t('password')" :help="$t('optionalEncryption')">
+                        <UInput v-model="backupOptions.password" type="password" :placeholder="$t('enterPassword')"
+                            size="sm" />
                     </UFormField>
 
-                    <UButton block color="primary" :icon="icons.copy" :loading="creatingBackup" @click="createBackup">{{ $t('createBackup') || 'Create Backup' }}</UButton>
+                    <UButton block color="primary" :icon="icons.copy" :loading="creatingBackup" @click="createBackup">{{
+                        $t('createBackup') }}</UButton>
                 </div>
             </UCard>
 
@@ -174,24 +203,30 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             <UCard>
                 <template #header>
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
                             <UIcon :name="icons.refresh" class="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
                         </div>
-                        <span class="font-medium">{{ $t('restoreBackup') || 'Restore Backup' }}</span>
+                        <span class="font-medium">{{ $t('restoreBackup') }}</span>
                     </div>
                 </template>
                 <div class="space-y-5">
                     <!-- File Upload -->
-                    <UFormField :label="$t('backupFile') || 'Backup File'" required>
+                    <UFormField :label="$t('backupFile')" required>
                         <div class="relative">
-                            <input ref="fileInputRef" type="file" accept=".tar.gz,.tgz" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" @change="handleFileSelect" />
-                            <div class="flex items-center gap-3 p-3 rounded-lg border-2 border-dashed border-[var(--color-border)] hover:border-primary-400 transition-colors">
-                                <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                                    <UIcon :name="icons.upload || 'i-heroicons-arrow-up-tray'" class="w-5 h-5 text-gray-400" />
+                            <input ref="fileInputRef" type="file" accept=".tar.gz,.tgz"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                @change="handleFileSelect" />
+                            <div
+                                class="flex items-center gap-3 p-3 rounded-lg border-2 border-dashed border-[var(--color-border)] hover:border-primary-400 transition-colors">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                                    <UIcon :name="icons.upload" class="w-5 h-5 text-gray-400" />
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <div v-if="restoreOptions.file_id" class="font-medium text-sm truncate">{{ restoreOptions.file_id }}</div>
-                                    <div v-else class="text-gray-500 text-sm">{{ $t('clickToSelectFile') || 'Click to select backup file (.tar.gz)' }}</div>
+                                    <div v-if="restoreOptions.file_id" class="font-medium text-sm truncate">{{
+                                        restoreOptions.file_id }}</div>
+                                    <div v-else class="text-gray-500 text-sm">{{ $t('clickToSelectFile') }}</div>
                                 </div>
                             </div>
                         </div>
@@ -199,48 +234,55 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
 
                     <!-- Restore Options -->
                     <div>
-                        <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('restoreOptions') || 'Restore options' }}</div>
+                        <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('restoreOptions')
+                        }}</div>
                         <div class="space-y-3">
-                            <label class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
+                            <label
+                                class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
                                 <UCheckbox v-model="restoreOptions.config_files" class="mt-0.5" />
                                 <div>
-                                    <div class="font-medium text-sm">{{ $t('config_files') || 'Config Files' }}</div>
-                                    <div class="text-xs text-gray-500">{{ $t('restoreConfigFiles') || 'Restore server configuration' }}</div>
+                                    <div class="font-medium text-sm">{{ $t('config_files') }}</div>
+                                    <div class="text-xs text-gray-500">{{ $t('restoreConfigFiles') }}</div>
                                 </div>
                             </label>
-                            <label class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
+                            <label
+                                class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
                                 <UCheckbox v-model="restoreOptions.redis_data" class="mt-0.5" />
                                 <div>
-                                    <div class="font-medium text-sm">{{ $t('redisData') || 'Redis Data' }}</div>
-                                    <div class="text-xs text-gray-500">{{ $t('restoreRedisData') || 'Restore session and cache data' }}</div>
+                                    <div class="font-medium text-sm">{{ $t('redisData') }}</div>
+                                    <div class="text-xs text-gray-500">{{ $t('restoreRedisData') }}</div>
                                 </div>
                             </label>
                         </div>
                     </div>
 
                     <!-- Server ID Option -->
-                    <UFormField :label="$t('serverIdHandling') || 'Server ID Handling'" :help="$t('serverIdHelp') || 'How to handle server ID during restore'">
+                    <UFormField :label="$t('serverIdHandling')" :help="$t('serverIdHelp')">
                         <div class="space-y-2">
                             <div class="flex flex-wrap gap-2">
-                                <button v-for="opt in serverIdOptions" :key="opt.value" @click="serverIdOption = opt.value" :class="[
-                                    'px-3 py-2 rounded-lg border text-sm transition-all',
-                                    serverIdOption === opt.value
-                                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium'
-                                        : 'border-[var(--color-border)] hover:border-gray-400'
-                                ]">
+                                <button v-for="opt in serverIdOptions" :key="opt.value"
+                                    @click="serverIdOption = opt.value" :class="[
+                                        'px-3 py-2 rounded-lg border text-sm transition-all',
+                                        serverIdOption === opt.value
+                                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium'
+                                            : 'border-[var(--color-border)] hover:border-gray-400'
+                                    ]">
                                     {{ opt.label }}
                                 </button>
                             </div>
-                            <UInput v-if="serverIdOption === 'new'" v-model="restoreOptions.server_id" :placeholder="$t('enterNewID') || 'Enter new server ID'" size="sm" class="mt-2" />
+                            <UInput v-if="serverIdOption === 'new'" v-model="restoreOptions.server_id"
+                                :placeholder="$t('enterNewID')" size="sm" class="mt-2" />
                         </div>
                     </UFormField>
 
                     <!-- Password -->
-                    <UFormField :label="$t('backupPassword') || 'Backup Password'" :help="$t('enterIfEncrypted') || 'Required if backup is encrypted'">
-                        <UInput v-model="restoreOptions.password" type="password" :placeholder="$t('enterPassword') || 'Enter password'" size="sm" />
+                    <UFormField :label="$t('backupPassword')" :help="$t('enterIfEncrypted')">
+                        <UInput v-model="restoreOptions.password" type="password" :placeholder="$t('enterPassword')"
+                            size="sm" />
                     </UFormField>
 
-                    <UButton block color="warning" :icon="icons.refresh" :loading="restoringBackup" :disabled="!restoreOptions.file_id" @click="restoreBackup">{{ $t('restoreBackup') || 'Restore Backup' }}</UButton>
+                    <UButton block color="warning" :icon="icons.refresh" :loading="restoringBackup"
+                        :disabled="!restoreOptions.file_id" @click="restoreBackup">{{ $t('restoreBackup') }}</UButton>
                 </div>
             </UCard>
         </div>
@@ -281,9 +323,9 @@ const blockedClientOptions = computed(() => Object.entries(blockedClients.value)
 const lockedProductOptions = computed(() => Object.entries(lockedProducts.value).map(([id, reason]) => ({ label: id + ' (' + reason + ')', value: id })))
 
 const serverIdOptions = computed(() => [
-    { label: String($t('useFromBackup') || 'From Backup'), value: 'backup' },
-    { label: String($t('useLocalId') || 'Keep Local'), value: 'local' },
-    { label: String($t('useNewId') || 'New ID'), value: 'new' },
+    { label: String($t('useFromBackup')), value: 'backup' },
+    { label: String($t('useLocalId')), value: 'local' },
+    { label: String($t('useNewId')), value: 'new' },
 ])
 
 watch(serverIdOption, (val) => { if (val !== 'new') restoreOptions.value.server_id = val })

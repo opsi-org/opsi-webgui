@@ -13,30 +13,28 @@ Admin Terminal Page - Server terminal access via messagebus
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
             <div class="flex items-center gap-3">
                 <UButton v-if="!isConnected" color="primary" size="sm" :icon="icons.check" :loading="isConnecting"
-                    :disabled="isDisabled" @click="connect">{{ $t('connectOrReconnect') || 'Connect' }}</UButton>
+                    :disabled="isDisabled" @click="connect">{{ $t('connectOrReconnect') }}</UButton>
                 <UButton v-else color="error" variant="outline" size="sm" :icon="icons.close" @click="disconnect">{{
                     $t('disconnect') }}</UButton>
                 <span v-if="isConnected" class="flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>{{ $t('connected') ||
-                        'Connected' }}
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>{{ $t('connected') }}
                 </span>
                 <span v-else class="flex items-center gap-1 text-sm text-gray-500"><span
-                        class="w-2 h-2 rounded-full bg-gray-400"></span>{{ $t('disconnected') || 'Disconnected'
-                        }}</span>
+                        class="w-2 h-2 rounded-full bg-gray-400"></span>{{ $t('disconnected') }}</span>
             </div>
             <!-- Settings toggle -->
             <UButton variant="ghost" color="neutral" size="sm" :icon="icons.config"
-                @click="showSettings = !showSettings">{{ $t('settings') || 'Settings' }}</UButton>
+                @click="showSettings = !showSettings">{{ $t('settings') }}</UButton>
         </div>
 
         <!-- Settings panel (collapsible) -->
         <div v-if="showSettings"
             class="shrink-0 p-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <UFormField :label="$t('terminalID') || 'Terminal ID'">
+                <UFormField :label="$t('terminalID')">
                     <UInput v-model="terminalId" :disabled="isConnected" size="sm" class="w-full" />
                 </UFormField>
-                <UFormField :label="$t('terminalChannel') || 'Terminal Channel'">
+                <UFormField :label="$t('terminalChannel')">
                     <UInput v-model="terminalChannel" :disabled="isConnected" size="sm" class="w-full" />
                 </UFormField>
             </div>
@@ -44,7 +42,7 @@ Admin Terminal Page - Server terminal access via messagebus
 
         <!-- Disabled Warning -->
         <UAlert v-if="isDisabled" color="warning" variant="soft" class="shrink-0">
-            <template #title>{{ $t('message.terminalDisabled') || 'Terminal is disabled on this server' }}</template>
+            <template #title>{{ $t('message.terminalDisabled') }}</template>
         </UAlert>
 
         <!-- Terminal Container (flex-grow to fill remaining space) -->
