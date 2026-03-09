@@ -499,5 +499,6 @@
   "operatingSystem": "Operating System",
   "statistics": "Statistics",
   "backupDescription": "Create or restore system backups",
-  "runCheck": "Run Check"
+  "runCheck": "Run Check",
+  "documentationDescription": "Browse the official OPSI documentation for guides, API references, and troubleshooting."
 }
