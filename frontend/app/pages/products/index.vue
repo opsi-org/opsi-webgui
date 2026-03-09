@@ -4,236 +4,49 @@ opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
 Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
+
+Products index page - provides tab navigation between localboot and netboot products.
 -->
 <template>
-    <LayoutsDetailPanel :showPanel="!!selectedProduct" @close="selectedProduct = null">
-        <template #main>
-            <LayoutsPageLayout v-model="filterQuery" show-search :search-placeholder="String($t('typeToFilter'))"
-                show-refresh :loading="loading" @refresh="fetchProducts">
-                <template #tabs>
-                    <SharedTabsNav v-model="activeType" :tabs="productTypes" />
-                </template>
-                <template #stats>
-                    <span class="text-sm text-[var(--color-text-muted)]">
-                        {{ $t('total') }}: {{ filteredProducts.length }}
-                        <span v-if="selectedProducts.length > 0" class="ml-2">
-                            | {{ $t('selected') }}: {{ selectedProducts.length }}
-                        </span>
-                    </span>
-                </template>
-
-                <!-- Error State -->
-                <div v-if="error" class="p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg">
-                    {{ error }}
-                </div>
-
-                <!-- Enhanced Table (without toolbar since controls are in header) -->
-                <SharedEnhancedTable :rows="filteredProducts" :columns="columns" :loading="loading"
-                    :row-key="'productId'" :actions="tableActions" :selectable="true" :filterable="false"
-                    :column-toggle="true" :show-refresh="false" :clickable="true" :infinite-scroll="true"
-                    :page-size="50" @select="handleRowSelect" @selection-change="handleSelectionChange">
-                    <template #productId-data="{ row }">
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium">{{ (row as Product).productId }}</span>
-                            <UBadge v-if="(row as Product).client_version_outdated" color="warning" variant="soft"
-                                size="xs">
-                                {{ $t('outdated') }}
-                            </UBadge>
-                        </div>
-                    </template>
-                    <template #description-data="{ row }">
-                        <span class="line-clamp-1">{{ (row as Product).description || '-' }}</span>
-                    </template>
-                    <template #depotVersions-data="{ row }">
-                        <span class="font-mono text-xs text-[var(--color-text-muted)]">
-                            {{ formatVersions((row as Product).depotVersions) }}
-                        </span>
-                    </template>
-                    <template #installationStatus-data="{ row }">
-                        <SharedStatusBadge v-if="(row as Product).installationStatus"
-                            :status="getInstallationStatus((row as Product).installationStatus!)"
-                            :label="(row as Product).installationStatus!" />
-                        <span v-else class="text-[var(--color-text-muted)]">-</span>
-                    </template>
-                    <template #actionResult-data="{ row }">
-                        <SharedStatusBadge v-if="(row as Product).actionResult"
-                            :status="getActionResultStatus((row as Product).actionResult!)"
-                            :label="(row as Product).actionResult!" />
-                        <span v-else class="text-[var(--color-text-muted)]">-</span>
-                    </template>
-                </SharedEnhancedTable>
-            </LayoutsPageLayout>
+    <LayoutsPageLayout show-refresh :loading="loading" @refresh="refresh">
+        <template #tabs>
+            <SharedTabsNav v-model="activeType" :tabs="productTypes" />
         </template>
 
-        <template #title>{{ selectedProduct?.productId }}</template>
-        <template #panel>
-            <div v-if="selectedProduct" class="space-y-4">
-                <div class="space-y-3">
-                    <div class="flex items-start gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('productId')
-                            }}:</span>
-                        <span class="font-medium">{{ selectedProduct.productId }}</span>
-                    </div>
-                    <div class="flex items-start gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('name') }}:</span>
-                        <span>{{ selectedProduct.name || selectedProduct.productId }}</span>
-                    </div>
-                    <div class="flex items-start gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('version')
-                            }}:</span>
-                        <span class="font-mono text-xs">{{ formatVersions(selectedProduct.depotVersions) }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('type') }}:</span>
-                        <SharedStatusBadge status="info"
-                            :label="String(activeType === 'LocalbootProduct' ? $t('localboot') : $t('netboot'))" />
-                    </div>
-                    <div v-if="selectedProduct.installationStatus" class="flex items-center gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('status')
-                            }}:</span>
-                        <SharedStatusBadge :status="getInstallationStatus(selectedProduct.installationStatus)"
-                            :label="selectedProduct.installationStatus" />
-                    </div>
-                </div>
-                <div v-if="selectedProduct.description" class="pt-4 border-t border-[var(--color-border)]">
-                    <p class="text-sm text-[var(--color-text-muted)]">{{ selectedProduct.description }}</p>
-                </div>
-                <div v-if="selectedProduct.advice" class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                    <p class="text-sm text-amber-700 dark:text-amber-400">{{ selectedProduct.advice }}</p>
-                </div>
-            </div>
-        </template>
-    </LayoutsDetailPanel>
+        <SharedProductsList ref="productsListRef" :product-type="activeProductType" />
+    </LayoutsPageLayout>
 </template>
 
 <script setup lang="ts">
-import type { TableColumn, TableAction } from '~/types/table.types'
-import type { ProductRow, ProductType } from '~/types/api/product.types'
-import { useStateStore } from '~/stores/stateStore'
+import type { ProductType } from '~/types/api/product.types'
 
 definePageMeta({ layout: 'default' })
 
-// Use ProductRow as the Product type for this page
-type Product = ProductRow
-
-const icons = useIcons()
 const { t: $t } = useI18n()
-const { getProducts } = useApiHelpers()
-const stateStore = useStateStore()
+const router = useRouter()
+const route = useRoute()
 
-const loading = ref(false)
-const error = ref<string | null>(null)
-const activeType = ref<ProductType>('LocalbootProduct')
-const selectedProduct = ref<Product | null>(null)
-const products = ref<Product[]>([])
-const selectedProducts = ref<Product[]>([])
-const filterQuery = ref('')
+// Get initial type from query param or default to localboot
+const activeType = ref<string>((route.query.type as string) || 'localboot')
 
 const productTypes = [
-    { label: String($t('localbootProducts')), value: 'LocalbootProduct' },
-    { label: String($t('netbootProducts')), value: 'NetbootProduct' },
+    { label: String($t('localbootProducts')), value: 'localboot' },
+    { label: String($t('netbootProducts')), value: 'netboot' },
 ]
 
-const columns: TableColumn<Product>[] = [
-    { key: 'productId', label: String($t('productId')), sortable: true, alwaysVisible: true },
-    { key: 'description', label: String($t('description')), sortable: true, class: 'hidden md:table-cell max-w-xs' },
-    { key: 'depotVersions', label: String($t('version')), sortable: true, class: 'hidden sm:table-cell' },
-    { key: 'installationStatus', label: String($t('status')), sortable: true, class: 'hidden lg:table-cell', visible: false },
-    { key: 'actionResult', label: String($t('result')), sortable: true, class: 'hidden lg:table-cell', visible: false },
-]
+const activeProductType = computed<ProductType>(() =>
+    activeType.value === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'
+)
 
-const tableActions: TableAction<Product>[] = [
-    {
-        icon: icons.eye,
-        label: String($t('view')),
-        handler: (row) => { selectedProduct.value = row }
-    }
-]
+const loading = ref(false)
+const productsListRef = ref<{ refresh: () => void } | null>(null)
 
-function formatVersions(versions?: string | string[]): string {
-    if (!versions) return '-'
-    if (Array.isArray(versions)) {
-        const unique = [...new Set(versions)]
-        return unique.length > 1 ? `${unique[0]} (+${unique.length - 1})` : unique[0] || '-'
-    }
-    return String(versions)
-}
-
-function getInstallationStatus(status: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' {
-    const s = status?.toLowerCase()
-    if (s === 'installed') return 'success'
-    if (s === 'unknown') return 'warning'
-    if (s === 'not_installed') return 'neutral'
-    return 'info'
-}
-
-function getActionResultStatus(result: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' {
-    const r = result?.toLowerCase()
-    if (r === 'successful') return 'success'
-    if (r === 'failed') return 'error'
-    if (r === 'none') return 'neutral'
-    return 'info'
-}
-
-async function fetchProducts() {
-    loading.value = true
-    error.value = null
-    try {
-        // Ensure we have depots selected (will default to configserver if needed)
-        await stateStore.ensureDepotsSelected()
-
-        if (stateStore.depots.length === 0) {
-            error.value = String($t('message.noServerSelected'))
-            return
-        }
-
-        const params: Record<string, unknown> = {
-            type: activeType.value,
-            sortBy: 'productId',
-            sortDesc: false,
-            pageNumber: 1,
-            perPage: 100,
-            selectedDepots: stateStore.selectedDepotsParam
-        }
-
-        const result = await getProducts(params)
-        if (result.error) {
-            throw result.error
-        }
-        products.value = (result.data || []) as Product[]
-    } catch (err: unknown) {
-        console.error('Failed to fetch products:', err)
-        error.value = err instanceof Error ? err.message : String($t('errorFetchingProducts'))
-    } finally {
-        loading.value = false
-    }
-}
-
-function handleSelectionChange(rows: Product[]) {
-    selectedProducts.value = rows
-}
-
-function handleRowSelect(row: Product) {
-    selectedProduct.value = row
-}
-
-// Client-side filtering for responsiveness
-const filteredProducts = computed(() => {
-    if (!filterQuery.value) return products.value
-    const q = filterQuery.value.toLowerCase()
-    return products.value.filter(p =>
-        p.productId.toLowerCase().includes(q) ||
-        (p.name?.toLowerCase().includes(q)) ||
-        (p.description?.toLowerCase().includes(q))
-    )
+// Sync type with query param
+watch(activeType, (newType) => {
+    router.replace({ query: { ...route.query, type: newType } })
 })
 
-// Refetch when product type changes
-watch(activeType, () => {
-    fetchProducts()
-})
-
-onMounted(() => {
-    fetchProducts()
-})
+function refresh() {
+    productsListRef.value?.refresh()
+}
 </script>
