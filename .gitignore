@@ -2,7 +2,10 @@
 docker/.env
 docker/opsiconfd/
 
+.pnpm-store/
+
 # Frontend
+frontend/.output/
 frontend/.nuxt/
 frontend/dist/
 frontend/tsconfig.tsbuildinfo
