@@ -1,23 +1,16 @@
 <!--
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
 
-PageLayout - A layout component that enforces:
-- Fixed header (with tabs, filters, table controls, stats)
-- Scrollable content area
-
-Header structure:
-- Row 1: Tabs + Filters (left) | Search + TableControls + Actions + Refresh (right)
-- Row 2: Stats (optional)
+PageLayout - A layout component with a fixed header (for controls) and a scrollable content area.
 -->
 <template>
 	<div class="page-layout flex flex-col h-full min-h-0 overflow-hidden">
 		<!-- Fixed Header Section -->
 		<div class="page-header shrink-0 bg-[var(--color-surface)] dark:bg-[var(--color-background)] pb-3">
-			<!-- Controls Row -->
 			<div v-if="showControlsRow" class="flex flex-wrap items-center justify-between gap-3">
 				<!-- Left side -->
 				<div class="flex items-center gap-2">
@@ -37,6 +30,8 @@ Header structure:
 							<span class="hidden sm:inline">{{ addLabel || $t('addNew') }}</span>
 						</UButton>
 					</NuxtLink>
+					<!-- Save / discard actions -->
+					<slot name="saveActions" />
 					<UButton v-if="showRefresh" :icon="icons.refresh" variant="outline" color="neutral" size="sm"
 						:loading="loading" @click="$emit('refresh')" />
 				</div>

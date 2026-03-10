@@ -1,0 +1,122 @@
+<!--
+This file is part of opsi-webgui application.
+opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+Copyright (c) uib GmbH <info@uib.de> 2026
+All rights reserved.
+License: AGPL-3.0
+
+HostSelector - Unified searchable dropdown for selecting a client or a server.
+-->
+<template>
+  <USelectMenu :model-value="modelValue || ''" :items="dropdownOptions" :loading="loading"
+    :filter-fields="['label', 'description']"
+    :placeholder="placeholder || (type === 'server' ? String($t('selectServer')) : String($t('selectClient')))"
+    value-key="value" class="min-w-48" size="sm" @update:model-value="onSelect">
+    <template #leading>
+      <UIcon :name="type === 'server' ? icons.server : icons.client" class="w-4 h-4 text-muted" />
+    </template>
+    <template #item="{ item }">
+      <template v-if="item.value === '__clear__'">
+        <div class="flex items-center gap-2 text-muted italic py-0.5">
+          <UIcon name="i-heroicons-x-circle" class="w-4 h-4 shrink-0" />
+          <span class="text-sm">{{ $t('clearSelection') }}</span>
+        </div>
+      </template>
+      <template v-else>
+        <div class="flex flex-col min-w-0 py-0.5">
+          <span class="truncate text-sm font-medium">{{ item.label }}</span>
+          <span v-if="item.description" class="truncate text-xs text-muted">{{ item.description }}</span>
+        </div>
+      </template>
+    </template>
+  </USelectMenu>
+</template>
+
+<script setup lang="ts">
+interface DropdownItem {
+  label: string
+  value: string
+  description?: string
+}
+
+interface Props {
+  modelValue?: string
+  placeholder?: string
+  allowAll?: boolean
+  allowClear?: boolean
+  type?: 'client' | 'server'
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: undefined,
+  placeholder: undefined,
+  allowAll: false,
+  allowClear: true,
+  type: 'client',
+})
+
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+  'change': [value: string]
+}>()
+
+const icons = useIcons()
+const { t: $t } = useI18n()
+const { getClients, getDepots } = useApiHelpers()
+const stateStore = useStateStore()
+
+const loading = ref(false)
+const items = ref<Array<{ id: string; description: string }>>([])
+
+const dropdownOptions = computed<DropdownItem[]>(() => {
+  const opts: DropdownItem[] = items.value.map((item) => ({
+    label: item.id,
+    value: item.id,
+    description: item.description || '',
+  }))
+
+  if (props.allowClear && props.modelValue) {
+    opts.unshift({ label: String($t('clearSelection')), value: '__clear__' })
+  }
+  if (props.allowAll && opts.length > 0) {
+    const allLabel = props.type === 'server' ? String($t('allServers')) : String($t('allClients'))
+    return [{ label: allLabel, value: '' }, ...opts.filter(o => o.value !== '__clear__')]
+  }
+  return opts
+})
+
+async function fetchItems() {
+  loading.value = true
+  try {
+    if (props.type === 'server') {
+      const { data, error } = await getDepots()
+      if (!error) items.value = (data || []).map((d) => ({ id: d.depotId, description: d.description || '' }))
+    } else {
+      const params: Record<string, unknown> = {}
+      if (stateStore.depots.length > 0) params.selectedDepots = stateStore.selectedDepotsParam
+      const { data, error } = await getClients(params)
+      if (!error) items.value = (data || []).map((c) => ({ id: c.clientId, description: c.description || '' }))
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+function onSelect(value: string) {
+  if (value === '__clear__') {
+    emit('update:modelValue', '')
+    emit('change', '')
+  } else {
+    emit('update:modelValue', value)
+    emit('change', value)
+  }
+}
+
+onMounted(fetchItems)
+
+watch(() => stateStore.depots, () => {
+  if (props.type === 'client') fetchItems()
+}, { deep: true })
+
+defineExpose({ refresh: fetchItems })
+</script>

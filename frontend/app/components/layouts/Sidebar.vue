@@ -1,9 +1,10 @@
 <!--
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
+Sidebar component - main navigation.
 -->
 <template>
     <nav class="h-full flex flex-col bg-opsi-blue text-white">
@@ -117,7 +118,7 @@ const navItems = computed<NavItem[]>(() => [
         icon: icons.serverStack,
         submenu: [
             { title: 'allServers', route: '/servers' },
-            { title: 'configuration', route: '/servers/config' },
+            { title: 'configuration', route: '/servers/configuration/parameters' },
         ],
     },
     {
@@ -128,7 +129,7 @@ const navItems = computed<NavItem[]>(() => [
             { title: 'allClients', route: '/clients' },
             { title: 'addNew', route: '/clients/create' },
             { title: 'clone', route: '/clients/clone' },
-            { title: 'configuration', route: '/clients/config' },
+            { title: 'configuration', route: '/clients/configuration/parameters' },
             { title: 'logs', route: '/clients/logs' },
         ],
     },

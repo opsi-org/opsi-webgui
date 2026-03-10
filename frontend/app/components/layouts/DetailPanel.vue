@@ -1,7 +1,7 @@
 <!--
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
 
@@ -28,18 +28,28 @@ Mobile: overlay panel with close button.
 
                 <!-- Panel header -->
                 <div
-                    class="shrink-0 border-b border-[var(--color-border)] dark:border-[var(--color-border)] px-4 py-3 flex items-center gap-3 bg-white dark:bg-[var(--color-surface)]">
-                    <button v-if="isMobile" @click="$emit('close')"
-                        class="p-1 rounded hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] transition-colors">
-                        <UIcon :name="icons.arrowLeft" class="w-5 h-5" />
-                    </button>
-                    <h3 class="flex-1 font-medium text-[var(--color-text)] dark:text-[var(--color-text)] truncate">
-                        <slot name="title">Details</slot>
-                    </h3>
-                    <button @click="$emit('close')"
-                        class="p-1 rounded hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] transition-colors">
-                        <UIcon :name="icons.close" class="w-5 h-5" />
-                    </button>
+                    class="shrink-0 border-b border-[var(--color-border)] dark:border-[var(--color-border)] px-4 py-3 bg-white dark:bg-[var(--color-surface)]">
+                    <div class="flex items-center gap-3">
+                        <button v-if="isMobile" @click="$emit('close')"
+                            class="p-1 rounded hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] transition-colors">
+                            <UIcon :name="icons.arrowLeft" class="w-5 h-5" />
+                        </button>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-medium text-[var(--color-text)] dark:text-[var(--color-text)] truncate">
+                                <slot name="title">Details</slot>
+                            </h3>
+                            <p v-if="$slots.subtitle" class="text-xs text-muted truncate mt-0.5">
+                                <slot name="subtitle" />
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <slot name="panelActions" />
+                            <button @click="$emit('close')"
+                                class="p-1 rounded hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] transition-colors">
+                                <UIcon :name="icons.close" class="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <!-- Panel content -->
                 <div class="flex-1 overflow-auto p-4">

@@ -1,7 +1,7 @@
 /*
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
 */
@@ -40,6 +40,16 @@ export function useApiHelpers() {
   async function apiPost<T>(url: string, body?: unknown): Promise<ApiResponse<T>> {
     try {
       const data = await $customFetch<T>(url, { method: 'POST', body })
+      return { data, error: null, headers: null }
+    } catch (e) {
+      return { data: null, error: e as Error, headers: null }
+    }
+  }
+
+  // Generic PUT request
+  async function apiPut<T>(url: string, body?: unknown): Promise<ApiResponse<T>> {
+    try {
+      const data = await $customFetch<T>(url, { method: 'PUT', body })
       return { data, error: null, headers: null }
     } catch (e) {
       return { data: null, error: e as Error, headers: null }
@@ -99,9 +109,9 @@ export function useApiHelpers() {
       parentGroupId: string | null
     }>>('/opsidata/groups', params)
   const getHostGroups = (params?: Record<string, unknown>) =>
-    apiGet<{ data: Record<string, unknown>; total: number }>('/opsidata/hosts/groups', params)
+    apiGet<{ groups: Record<string, unknown>; clientdirectory: Record<string, unknown> }>('/opsidata/hosts/groups', params)
   const getProductGroups = () =>
-    apiGet<{ data: Record<string, unknown>; total: number }>('/opsidata/products/groups')
+    apiGet<{ groups: Record<string, unknown> }>('/opsidata/products/groups')
 
 
   const getServerInfo = () => apiGet<{
@@ -231,9 +241,68 @@ export function useApiHelpers() {
     }>(`/opsidata/products/${productId}/dependencies`, queryParams)
   }
 
+  /** Get config parameters for a specific host (client or server) */
+  const getHostConfigObjects = (hostId: string) =>
+    apiGet<Record<string, Array<{
+      configId: string
+      description: string
+      type: 'BoolConfig' | 'UnicodeConfig'
+      defaultValues: unknown[]
+      possibleValues: unknown[]
+      multiValue: boolean
+      editable: boolean
+      objects: Record<string, unknown>
+      newValue?: string
+      newValues?: unknown[]
+    }>>>(`/opsidata/config/objects/${hostId}`)
+
+  /** Save host-specific config state overrides (CONFIG_STATE table) */
+  const saveHostConfigState = (hostId: string, configs: Array<{ configId: string; value: unknown }>) =>
+    apiPost<string>('/opsidata/config/values/objects', {
+      objectIds: [hostId],
+      configs: configs.map(c => ({ configId: c.configId, value: c.value })),
+    })
+
+  /** Save server-level config default values (CONFIG_VALUE table) */
+  const saveServerConfigValues = (configs: Array<{ configId: string; value: unknown }>) =>
+    apiPost<string>('/opsidata/config/values', configs)
+
+  /** Get host attributes via /opsidata/hosts */
+  const getHostAttributes = (hostId: string) =>
+    apiGet<Array<Record<string, unknown>>>(`/opsidata/hosts?hosts=${hostId}`)
+
+  /** Get server/depot attributes via /opsidata/servers */
+  const getServerAttributes = (serverId: string) =>
+    apiGet<Array<Record<string, unknown>>>(`/opsidata/servers?servers=[${serverId}]`)
+
+  /** Get server-wide default config (same format as getHostConfigObjects but without objects) */
+  const getServerDefaultConfig = (filterQuery?: string) =>
+    apiGet<Record<string, Array<{
+      configId: string
+      description: string
+      type: 'BoolConfig' | 'UnicodeConfig'
+      defaultValues: unknown[]
+      possibleValues: unknown[]
+      multiValue: boolean
+      editable: boolean
+      objects: Record<string, unknown>
+    }>>>('/opsidata/config', filterQuery ? { filterQuery } : undefined)
+
+  /** Update client attributes via PUT /opsidata/clients/{id} */
+  const updateClientAttributes = (clientId: string, attrs: Record<string, unknown>) =>
+    apiPut<Record<string, unknown>>(`/opsidata/clients/${clientId}`, attrs)
+
+  /** Update server attributes via PUT /opsidata/servers/{id} */
+  const updateServerAttributes = (serverId: string, attrs: Record<string, unknown>) =>
+    apiPut<Record<string, unknown>>(`/opsidata/servers/${serverId}`, attrs)
+
+  /** Get depot/server list (alias for getDepots, for clarity in server contexts) */
+  const getServers = (params?: Record<string, unknown>) => getDepots(params)
+
   return {
     apiGet,
     apiPost,
+    apiPut,
     getConfigServer,
     checkAuth,
     callLogin,
@@ -267,5 +336,14 @@ export function useApiHelpers() {
     getProductProperties,
     saveProductProperties,
     getProductDependencies,
+    getHostConfigObjects,
+    saveHostConfigState,
+    saveServerConfigValues,
+    getHostAttributes,
+    getServerAttributes,
+    updateClientAttributes,
+    updateServerAttributes,
+    getServers,
+    getServerDefaultConfig,
   }
 }

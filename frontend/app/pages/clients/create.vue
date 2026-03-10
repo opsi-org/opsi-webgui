@@ -1,9 +1,11 @@
 <!--
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
+
+Client Add New page - form for adding a new client.
 -->
 <template>
     <LayoutsPageLayout :showSearch="false" :showRefresh="false">
@@ -17,56 +19,88 @@ License: AGPL-3.0
         </template>
 
         <div class="h-full overflow-auto p-4">
-            <!-- Error Alert -->
             <div v-if="error"
                 class="mb-4 p-3 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-sm">
                 {{ error }}
             </div>
 
-            <!-- Success Alert -->
             <div v-if="success"
                 class="mb-4 p-3 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-lg text-sm">
                 {{ $t('clientCreatedSuccessfully') }}
             </div>
-
-            <form @submit.prevent="handleSubmit" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Left column -->
-                <div class="space-y-4">
-                    <UFormGroup :label="$t('clientId')" required :error="formErrors.id">
-                        <UInput v-model="form.id" placeholder="client.domain.local" :disabled="loading" />
-                        <template #hint>
-                            <span class="text-xs text-[var(--color-text-muted)]">{{ $t('clientIdHint') }}</span>
-                        </template>
-                    </UFormGroup>
-
-                    <UFormGroup :label="$t('description')">
-                        <UInput v-model="form.description" :placeholder="String($t('description'))"
-                            :disabled="loading" />
-                    </UFormGroup>
-
-                    <UFormGroup :label="$t('depot')" required :error="formErrors.depotId">
-                        <USelect v-model="form.depotId" :options="depotOptions" :placeholder="String($t('selectDepot'))"
-                            :loading="loadingDepots" :disabled="loading" />
-                    </UFormGroup>
+            <form @submit.prevent="handleSubmit" class="w-full">
+                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-4">Basics</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        <UFormGroup label="Client ID" required :error="formErrors.id"
+                            class="flex flex-row items-center gap-4">
+                            <UInput v-model="form.id" :disabled="loading" size="md" class="form-input flex-1"
+                                icon="i-heroicons-identification" />
+                            <template #hint>
+                                <span class="text-xs text-muted">Unique identifier for the client (e.g.
+                                    nb-00001a.acme.corp)</span>
+                            </template>
+                        </UFormGroup>
+                        <UFormGroup label="Description" class="flex flex-row items-center gap-4">
+                            <UInput v-model="form.description" :disabled="loading" size="md" class="form-input flex-1"
+                                icon="i-heroicons-document-text" />
+                        </UFormGroup>
+                        <UFormGroup label="Depot" required :error="formErrors.depotId"
+                            class="flex flex-row items-center gap-4">
+                            <USelect v-model="form.depotId" :options="depotOptions" :loading="loadingDepots"
+                                :disabled="loading" size="md" class="form-input flex-1" icon="i-heroicons-server" />
+                        </UFormGroup>
+                        <UFormGroup label="IP Address" class="flex flex-row items-center gap-4">
+                            <UInput v-model="form.ipAddress" :disabled="loading" size="md" class="form-input flex-1"
+                                icon="i-heroicons-globe-alt" />
+                        </UFormGroup>
+                        <UFormGroup label="MAC Address" class="flex flex-row items-center gap-4">
+                            <UInput v-model="form.macAddress" :disabled="loading" size="md" class="form-input flex-1"
+                                icon="i-heroicons-chip" />
+                            <template #hint>
+                                <span class="text-xs text-muted">Format: 00:11:22:33:44:55</span>
+                            </template>
+                        </UFormGroup>
+                        <UFormGroup label="Notes" class="flex flex-row items-center gap-4">
+                            <UTextarea v-model="form.notes" :disabled="loading" :rows="4" size="md"
+                                class="form-input flex-1" icon="i-heroicons-pencil-square" />
+                        </UFormGroup>
+                    </div>
                 </div>
 
-                <!-- Right column -->
-                <div class="space-y-4">
-                    <UFormGroup :label="$t('ipAddress')">
-                        <UInput v-model="form.ipAddress" placeholder="192.168.1.100" :disabled="loading" />
-                    </UFormGroup>
+                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-6 mt-8">
+                    <h3 class="text-lg font-semibold mb-4">Initial Setup</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        <UFormGroup label="Enable Agent Setup" class="flex flex-row items-center gap-4">
+                            <UCheckbox v-model="form.agentSetup" :disabled="loading" />
+                        </UFormGroup>
+                        <UFormGroup label="Agent Type" class="flex flex-row items-center gap-4">
+                            <URadioGroup v-model="form.agentType" :options="['windows', 'linux', 'mac']"
+                                :disabled="!form.agentSetup || loading" />
+                        </UFormGroup>
+                        <UFormGroup label="Agent Username" class="flex flex-row items-center gap-4">
+                            <UInput v-model="form.agentUsername" :disabled="!form.agentSetup || loading" size="md"
+                                class="form-input flex-1" />
+                        </UFormGroup>
+                        <UFormGroup label="Agent Password" class="flex flex-row items-center gap-4">
+                            <UInput v-model="form.agentPassword" :disabled="!form.agentSetup || loading" size="md"
+                                class="form-input flex-1" type="password" />
+                        </UFormGroup>
+                        <UFormGroup label="Netboot Products" class="flex flex-row items-center gap-4">
+                            <USelect v-model="form.netbootProducts" :options="netbootProductOptions" multiple
+                                :disabled="loading" size="md" class="form-input flex-1" />
+                        </UFormGroup>
+                    </div>
+                </div>
 
-                    <UFormGroup :label="$t('macAddress')">
-                        <UInput v-model="form.macAddress" placeholder="00:11:22:33:44:55" :disabled="loading" />
-                        <template #hint>
-                            <span class="text-xs text-[var(--color-text-muted)]">{{ $t('macAddressHint') }}</span>
-                        </template>
-                    </UFormGroup>
-
-                    <UFormGroup :label="$t('notes')">
-                        <UTextarea v-model="form.notes" :placeholder="String($t('notes'))" :disabled="loading"
-                            rows="4" />
-                    </UFormGroup>
+                <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-6 mt-8">
+                    <h3 class="text-lg font-semibold mb-4">Assignments</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        <UFormGroup label="Groups" class="flex flex-row items-center gap-4">
+                            <USelect v-model="form.groups" :options="groupOptions" multiple :disabled="loading"
+                                size="md" class="form-input flex-1" />
+                        </UFormGroup>
+                    </div>
                 </div>
             </form>
         </div>
@@ -76,10 +110,12 @@ License: AGPL-3.0
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-const icons = useIcons()
 const { t: $t } = useI18n()
 const { apiPost, getDepots } = useApiHelpers()
 const stateStore = useStateStore()
+
+const netbootProductOptions = ref<Array<{ label: string; value: string }>>([])
+const groupOptions = ref<Array<{ label: string; value: string }>>([])
 
 const t = (key: string) => {
     const translated = $t(key)
@@ -100,6 +136,12 @@ const form = reactive({
     ipAddress: '',
     macAddress: '',
     notes: '',
+    agentSetup: false,
+    agentType: 'windows',
+    agentUsername: '',
+    agentPassword: '',
+    netbootProducts: [],
+    groups: [],
 })
 
 const formErrors = reactive({
@@ -107,34 +149,38 @@ const formErrors = reactive({
     depotId: '',
 })
 
-// Depot options for select
 const depotOptions = computed(() => depots.value.map(d => ({
     label: d.description ? `${d.depotId} - ${d.description}` : d.depotId,
     value: d.depotId
 })))
 
-// Fetch depots on mount
 onMounted(async () => {
     loadingDepots.value = true
     try {
         const res = await getDepots()
         if (res.data) {
             depots.value = res.data
-            // Set default depot from state store if available
             if (stateStore.depots.length > 0 && stateStore.depots[0]) {
                 form.depotId = stateStore.depots[0]
             } else if (depots.value.length > 0 && depots.value[0]) {
                 form.depotId = depots.value[0].depotId
             }
         }
+        const netbootRes = await apiPost('/opsidata/depots/products', { selectedDepots: [form.depotId] })
+        if (netbootRes.data && Array.isArray(netbootRes.data)) {
+            netbootProductOptions.value = netbootRes.data.map((item: any) => ({ label: item.productId, value: item.productId }))
+        }
+        const groupRes = await apiPost('/opsidata/hosts/groups/id', {})
+        if (groupRes.data && Array.isArray(groupRes.data)) {
+            groupOptions.value = groupRes.data.map((item: any) => ({ label: item, value: item }))
+        }
     } catch (e) {
-        console.error('Failed to fetch depots:', e)
+        console.error('Failed to fetch depots/products/groups:', e)
     } finally {
         loadingDepots.value = false
     }
 })
 
-// Validate form
 function validateForm(): boolean {
     formErrors.id = ''
     formErrors.depotId = ''
@@ -181,7 +227,6 @@ const handleSubmit = async () => {
         }
 
         success.value = true
-        // Navigate to clients list after short delay
         setTimeout(() => navigateTo('/clients'), 1500)
     } catch (e: unknown) {
         error.value = e instanceof Error ? e.message : String($t('errorCreatingClient'))

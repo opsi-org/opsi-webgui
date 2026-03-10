@@ -5,8 +5,7 @@ Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
 
-ProductsList - Reusable component for displaying products by type.
-Used by /products/localboot and /products/netboot pages.
+Products List component - used for both Localboot and Netboot products.
 -->
 <template>
 	<LayoutsDetailPanel :showPanel="!!selectedProduct" @close="selectedProduct = null">
@@ -219,7 +218,6 @@ const filteredProducts = computed(() => {
 	)
 })
 
-// Refetch when product type changes
 watch(() => props.productType, () => {
 	fetchProducts()
 })
@@ -228,6 +226,5 @@ onMounted(() => {
 	fetchProducts()
 })
 
-// Expose refresh method
 defineExpose({ refresh: fetchProducts })
 </script>

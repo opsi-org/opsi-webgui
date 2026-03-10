@@ -1,12 +1,14 @@
 <!--
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
+
+Clients page - Clients table with detail panel for selected clients and selected action.
 -->
 <template>
-    <LayoutsDetailPanel :showPanel="!!selectedClient" @close="selectedClient = null">
+    <LayoutsDetailPanel :showPanel="!!selectedClient" @close="handlePanelClose">
         <template #main>
             <LayoutsPageLayout v-model="filterQuery" show-search :search-placeholder="String($t('typeToFilter'))"
                 show-refresh :loading="loading" @refresh="fetchClients">
@@ -34,13 +36,12 @@ License: AGPL-3.0
                     </div>
                 </template>
 
-                <!-- Error state -->
                 <div v-if="error"
                     class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
                     {{ error }}
                 </div>
 
-                <!-- Enhanced Table with full height -->
+                <!-- Clients Table -->
                 <SharedEnhancedTable :rows="filteredClients" :columns="columns" :loading="loading" :row-key="'clientId'"
                     :actions="tableActions" :selectable="true" :filterable="false" :column-toggle="true"
                     :show-refresh="false" :clickable="true" :infinite-scroll="true" :page-size="50" class="min-h-0"
@@ -67,51 +68,25 @@ License: AGPL-3.0
         </template>
 
         <template #title>{{ selectedClient?.clientId }}</template>
+
+        <!-- Unsaved-changes controls  -->
+        <template v-if="selectedPanelType === 'config'" #panelActions>
+            <SharedUnsavedChangesModal :config-ref="panelConfigRef" size="xs" @save-all="panelConfigRef?.saveAll?.()"
+                @discard-all="panelConfigRef?.discardAll?.()" />
+        </template>
+
         <template #panel>
             <div v-if="selectedClient" class="space-y-4">
-                <div class="space-y-3">
-                    <div class="flex items-start gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('clientId') }}:</span>
-                        <span class="font-medium break-all">{{ selectedClient.clientId }}</span>
+                <!-- Panel Content -->
+                <div>
+                    <div v-show="selectedPanelType === 'config'" class="flex flex-col gap-2">
+                        <SharedTabsNav v-model="panelActiveTab" :tabs="panelConfigTabs" class="shrink-0" />
+                        <HostsConfigTabs ref="panelConfigRef" :host-id="selectedClient.clientId" host-type="client"
+                            :tab="panelActiveTab" :show-tabs="false" :show-change-banner="false" :panel-mode="true" />
                     </div>
-                    <div class="flex items-start gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('description')
-                            }}:</span>
-                        <span>{{ selectedClient.description || '-' }}</span>
-                    </div>
-                    <div class="flex items-start gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('macAddress')
-                            }}:</span>
-                        <span class="font-mono text-xs">{{ selectedClient.macAddress || '-' }}</span>
-                    </div>
-                    <div class="flex items-start gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('ipAddress') }}:</span>
-                        <span class="font-mono text-xs">{{ selectedClient.ipAddress || '-' }}</span>
-                    </div>
-                    <div class="flex items-start gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('lastSeen') }}:</span>
-                        <span>{{ selectedClient.lastSeen ? new Date(selectedClient.lastSeen).toLocaleString() : '-'
-                            }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm text-[var(--color-text-muted)] w-24 shrink-0">{{ $t('uefi') }}:</span>
-                        <SharedStatusBadge v-if="selectedClient.uefi" status="info" :label="'UEFI'" />
-                        <span v-else>-</span>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-2 pt-4 border-t border-[var(--color-border)]">
-                    <UButton size="sm" :icon="icons.config" color="primary"
-                        @click="navigateTo(`/clients/config/${selectedClient.clientId}`)">
-                        {{ $t('configuration') }}
-                    </UButton>
-                    <UButton size="sm" :icon="icons.log" variant="outline" color="neutral"
-                        @click="navigateTo(`/clients/logs/${selectedClient.clientId}`)">
-                        {{ $t('logs') }}
-                    </UButton>
-                    <UButton size="sm" :icon="icons.clone" variant="outline" color="neutral"
-                        @click="navigateTo(`/clients/clone/${selectedClient.clientId}`)">
-                        {{ $t('clone') }}
-                    </UButton>
+                    <ClientsLogs v-show="selectedPanelType === 'logs'" :client-id="selectedClient.clientId" />
+                    <ClientsClone v-show="selectedPanelType === 'clone'" :source-id="selectedClient.clientId"
+                        @success="fetchClients" />
                 </div>
             </div>
         </template>
@@ -127,6 +102,7 @@ definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
 const { t: $t } = useI18n()
+const router = useRouter()
 const { getClients, getDepotIds } = useApiHelpers()
 const stateStore = useStateStore()
 
@@ -136,6 +112,28 @@ const selectedClient = ref<Client | null>(null)
 const clients = ref<Client[]>([])
 const selectedClients = ref<Client[]>([])
 const filterQuery = ref('')
+const selectedPanelType = ref<'config' | 'logs' | 'clone' | null>(null)
+const panelConfigRef = ref<any>(null)
+const panelActiveTab = ref<string>('parameters')
+const panelConfigTabs = computed(() => [
+    { label: String($t('parameters')), value: 'parameters' },
+    { label: String($t('attributes')), value: 'attributes' },
+])
+
+function switchPanelType(type: 'config' | 'logs' | 'clone') {
+    if (type !== selectedPanelType.value && panelConfigRef.value?.hasAnyChanges) {
+        panelConfigRef.value.discardAll()
+    }
+    selectedPanelType.value = type
+}
+
+function handlePanelClose() {
+    if (panelConfigRef.value?.hasAnyChanges) {
+        panelConfigRef.value.discardAll()
+    }
+    selectedClient.value = null
+    selectedPanelType.value = null
+}
 
 const columns: TableColumn<Client>[] = [
     { key: 'clientId', label: String($t('clientId')), sortable: true, alwaysVisible: true },
@@ -150,17 +148,29 @@ const tableActions: TableAction<Client>[] = [
     {
         icon: icons.config,
         label: String($t('configuration')),
-        handler: (row) => navigateTo(`/clients/config/${row.clientId}`)
+        handler: (row) => {
+            if (panelConfigRef.value?.hasAnyChanges && row.clientId !== selectedClient.value?.clientId) {
+                panelConfigRef.value.discardAll()
+            }
+            selectedClient.value = row
+            switchPanelType('config')
+        }
     },
     {
         icon: icons.log,
         label: String($t('logs')),
-        handler: (row) => navigateTo(`/clients/logs/${row.clientId}`)
+        handler: (row) => {
+            selectedClient.value = row
+            switchPanelType('logs')
+        }
     },
     {
         icon: icons.clone,
         label: String($t('clone')),
-        handler: (row) => navigateTo(`/clients/clone/${row.clientId}`)
+        handler: (row) => {
+            selectedClient.value = row
+            switchPanelType('clone')
+        }
     }
 ]
 
@@ -168,11 +178,9 @@ async function fetchClients() {
     loading.value = true
     error.value = null
     try {
-        // Ensure we have depots selected (will default to configserver if needed)
         await stateStore.ensureDepotsSelected()
 
         if (stateStore.depots.length === 0) {
-            // Still no depots - need to fetch them first
             const depotResult = await getDepotIds()
             const firstDepot = depotResult.data?.[0]
             if (firstDepot) {
@@ -200,7 +208,6 @@ async function fetchClients() {
     }
 }
 
-// Client-side filtering for responsiveness
 const filteredClients = computed(() => {
     if (!filterQuery.value) return clients.value
     const q = filterQuery.value.toLowerCase()
@@ -213,7 +220,13 @@ const filteredClients = computed(() => {
 })
 
 function handleRowSelect(row: Client) {
+    if (panelConfigRef.value?.hasAnyChanges && row.clientId !== selectedClient.value?.clientId) {
+        panelConfigRef.value.discardAll()
+    }
     selectedClient.value = row
+    if (selectedPanelType.value !== 'logs' && selectedPanelType.value !== 'clone') {
+        selectedPanelType.value = null
+    }
 }
 
 function handleSelectionChange(rows: Client[]) {
