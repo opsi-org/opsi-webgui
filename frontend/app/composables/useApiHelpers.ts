@@ -299,6 +299,57 @@ export function useApiHelpers() {
   /** Get depot/server list (alias for getDepots, for clarity in server contexts) */
   const getServers = (params?: Record<string, unknown>) => getDepots(params)
 
+  // Client Actions API
+  interface OpsiclientdRpcResult {
+    [clientId: string]: {
+      error?: string | null
+      result?: string | null
+    }
+  }
+
+  /** Execute opsiclientd RPC method on selected clients */
+  const opsiclientdRpc = (clientIds: string[], method: string, params: unknown[] = []) =>
+    apiPost<OpsiclientdRpcResult>('/command/opsiclientd_rpc', {
+      client_ids: clientIds,
+      method,
+      params,
+    })
+
+  /** Trigger on_demand event on clients */
+  const triggerOnDemand = (clientIds: string[]) =>
+    opsiclientdRpc(clientIds, 'fireEvent', ['on_demand'])
+
+  /** Send notification popup to clients */
+  const sendNotification = (clientIds: string[], message: string) =>
+    opsiclientdRpc(clientIds, 'showPopup', [message])
+
+  /** Reboot clients */
+  const rebootClients = (clientIds: string[]) =>
+    opsiclientdRpc(clientIds, 'reboot', [''])
+
+  /** Shutdown clients */
+  const shutdownClients = (clientIds: string[]) =>
+    opsiclientdRpc(clientIds, 'shutdown', [''])
+
+  /** Deploy opsi client agent to clients */
+  const deployClientAgent = (clientIds: string[], options: { username: string; password: string; type: string }) =>
+    apiPost<OpsiclientdRpcResult>('/opsidata/clients/deploy', {
+      clients: clientIds,
+      ...options,
+    })
+
+  /** Delete a client */
+  const deleteClient = (clientId: string) =>
+    apiPost<void>(`/opsidata/clients/${clientId}/delete`, {})
+
+  /** Check client reachability */
+  const checkClientReachable = (clientIds: string[]) =>
+    apiPost<Record<string, boolean>>('/opsidata/clients/reachable', { selectedClients: clientIds })
+
+  /** Execute client action via general endpoint */
+  const executeClientAction = (clientIds: string[], action: string, params?: Record<string, unknown>) =>
+    apiPost<OpsiclientdRpcResult>('/opsidata/clients/action', { clientIds, action, ...params })
+
   return {
     apiGet,
     apiPost,
@@ -345,5 +396,15 @@ export function useApiHelpers() {
     updateServerAttributes,
     getServers,
     getServerDefaultConfig,
+    // Client Actions
+    opsiclientdRpc,
+    triggerOnDemand,
+    sendNotification,
+    rebootClients,
+    shutdownClients,
+    deployClientAgent,
+    deleteClient,
+    checkClientReachable,
+    executeClientAction,
   }
 }
