@@ -50,7 +50,7 @@ test.describe('usecase', () => {
     }
     await page.click('[data-testid="NSidebar-title.clients"]')
     await page.click('[data-testid="NICollapsible-submenu-title.addNew"]')
-    await expect(page).toHaveURL('/addons/webgui/app/clients/create')
+    await expect(page).toHaveURL('/addons/webgui/app/clients/add')
 
     const elInput = await page.getByTestId('hostId')
     await elInput.scrollIntoViewIfNeeded()

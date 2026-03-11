@@ -76,7 +76,7 @@ test.describe('Main Pages', () => {
           page,
           `screenshots/opsidoc/${theme}/${language}/opsi-webgui-servers-config.png`
         )
-        await page.goto('/clients/create', {
+        await page.goto('/clients/add', {
           waitUntil: 'networkidle',
           timeout: 60000,
         })
