@@ -49,46 +49,14 @@ echo "[INFO] Creating static directory symlink..."
 rm -rf $OPSICONFD_DIR/static 2>/dev/null || true
 ln -sf $OPSICONFD_DIR/opsiconfd_data/static $OPSICONFD_DIR/static
 
-# Start opsiconfd and restore backup automatically
+# Start opsiconfd
 echo ""
-echo "[INFO] Starting opsiconfd and restoring test data..."
+echo "[INFO] Starting opsiconfd ..."
 sudo supervisorctl start opsiconfd
-
-# Wait for opsiconfd to be ready
-echo "[INFO] Waiting for opsiconfd to be ready..."
-for i in {1..60}; do
-    if curl -sk https://localhost:4447/admin/healthy 2>/dev/null | grep -q '"healthy"'; then
-        echo "[INFO] opsiconfd is ready"
-        break
-    fi
-    if [ $i -eq 60 ]; then
-        echo "[WARN] Timeout waiting for opsiconfd - skipping backup restore"
-    fi
-    sleep 1
-done
-
-# Restore test backup data
-BACKUP_URL="${OPSI_BACKUP_URL:-https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json}"
-BACKUP_FILE="/tmp/opsi-backup.json"
-
-if curl -sk https://localhost:4447/admin/healthy 2>/dev/null | grep -q '"healthy"'; then
-    echo "[INFO] Downloading and restoring test backup..."
-    if curl -sL "$BACKUP_URL" -o "$BACKUP_FILE" 2>/dev/null; then
-        cd $OPSICONFD_DIR
-        .venv/bin/opsiconfd backup restore "$BACKUP_FILE" \
-            --server-id=local \
-            --no-config-files \
-            --no-redis-data 2>/dev/null || echo "[WARN] Backup restore may have had issues"
-        rm -f "$BACKUP_FILE"
-        echo "[INFO] Test data restored successfully"
-    else
-        echo "[WARN] Failed to download backup - continuing without test data"
-    fi
-fi
 
 echo ""
 echo "========================================"
-echo "[INFO] Setup complete - opsiconfd is running with test data!"
+echo "[INFO] Setup completed."
 echo ""
 echo "  View logs:"
 echo "    sudo tail -f /var/log/opsi/opsiconfd/stderr.log"
@@ -97,6 +65,6 @@ echo "  Test endpoints:"
 echo "    API docs: https://localhost:4447/docs"
 echo "    opsi-WebGUI addon: https://localhost:4447/addons/${ADDON_ID:-webgui}/api/user/opsiserver"
 echo ""
-echo "  To restore a different backup:"
+echo "  To restore a backup:"
 echo "    /workspace/scripts/restore-backup.sh <backup_url>"
 echo "========================================"
