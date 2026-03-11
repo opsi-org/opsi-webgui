@@ -1,0 +1,341 @@
+<!--
+This file is part of opsi-webgui application.
+opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+Copyright (c) uib GmbH <info@uib.de> 2026
+All rights reserved.
+License: AGPL-3.0
+-->
+<template>
+	<div class="flex-1 relative">
+		<!-- Show dropdown when clients are selected -->
+		<UDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
+			<UButton variant="soft" color="primary" size="sm" class="w-full">
+				<UIcon :name="icons.client" class="w-4 h-4" />
+				<span>{{ t('clientActions') }}</span>
+				<UBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</UBadge>
+				<UIcon :name="icons.arrowDown" class="w-3 h-3 ml-1" />
+			</UButton>
+		</UDropdownMenu>
+		<!-- Show hint button when no clients selected -->
+		<UButton v-else variant="ghost" color="neutral" size="sm" class="w-full opacity-70 hover:opacity-100"
+			@click="showSelectionHint">
+			<UIcon :name="icons.client" class="w-4 h-4" />
+			<span>{{ t('clientActions') }}</span>
+			<UIcon :name="icons.arrowDown" class="w-3 h-3 ml-1" />
+		</UButton>
+	</div>
+
+	<!-- Confirm Dialog -->
+	<UModal v-model:open="confirmOpen" :dismissible="true">
+		<template #content>
+			<div class="p-4 min-w-[350px]" @click.stop>
+				<div class="flex items-center justify-between mb-3">
+					<h3 class="text-lg font-semibold flex items-center gap-2">
+						<UIcon :name="currentActionIcon" class="w-5 h-5" :class="currentActionColor" />
+						{{ t(currentAction || '') || currentAction }}
+					</h3>
+					<UButton variant="ghost" size="xs" icon="i-heroicons-x-mark" @click="confirmOpen = false" />
+				</div>
+
+				<p class="text-sm text-(--color-text-muted)] mb-4">
+					{{ t('confirmActionOnClients') || `Execute action on ${clientIds.length} client(s)?` }}
+				</p>
+
+				<!-- On Demand options -->
+				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3 bg-(--color-surface)] rounded">
+					<p class="text-xs text-(--color-text-muted)] mb-2">
+						{{ t('onDemandDescription') || 'Triggers the on_demand event to process pending action
+						requests.' }}
+					</p>
+					<div v-if="stateStore.selectedProducts.length > 0" class="text-xs">
+						<span class="text-(--color-text-muted)]">{{ t('selectedProducts') }}:</span>
+						<span class="ml-1 font-medium">{{ stateStore.selectedProducts.length }}</span>
+					</div>
+				</div>
+
+				<!-- Notify input -->
+				<div v-if="currentAction === 'notify'" class="mb-4">
+					<label class="block text-xs text-(--color-text-muted)] mb-1">{{ t('notificationText') ||
+						'Notification Text' }}</label>
+					<UTextarea v-model="notifyText"
+						:placeholder="t('enterNotificationText') || 'Enter message to display on clients...'" :rows="3"
+						class="w-full" />
+				</div>
+
+				<!-- Reboot options -->
+				<div v-if="currentAction === 'reboot'"
+					class="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800">
+					<div class="flex items-start gap-2">
+						<UIcon :name="icons.warning" class="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5" />
+						<p class="text-xs text-amber-800 dark:text-amber-200">
+							{{ t('rebootWarning') || 'This will reboot the selected clients. Unsaved work may be lost.'
+							}}
+						</p>
+					</div>
+				</div>
+
+				<!-- Deploy Client Agent options -->
+				<div v-if="currentAction === 'deployClientAgent'" class="space-y-3 mb-4">
+					<div class="grid grid-cols-3 gap-2 mb-3">
+						<UButton v-for="os in osTypes" :key="os.value"
+							:variant="deployOptions.type === os.value ? 'solid' : 'outline'"
+							:color="deployOptions.type === os.value ? 'primary' : 'neutral'" size="sm"
+							class="justify-center" @click="deployOptions.type = os.value">
+							<UIcon :name="os.icon" class="w-4 h-4 mr-1" />
+							{{ os.label }}
+						</UButton>
+					</div>
+					<div>
+						<label class="block text-xs text-(--color-text-muted)] mb-1">{{ t('username') || 'Username'
+						}}</label>
+						<UInput v-model="deployOptions.username" :placeholder="t('adminUsername') || 'Administrator'"
+							size="sm" />
+					</div>
+					<div>
+						<label class="block text-xs text-(--color-text-muted)] mb-1">{{ t('password') || 'Password'
+						}}</label>
+						<UInput v-model="deployOptions.password" type="password"
+							:placeholder="t('enterPassword') || 'Password'" size="sm" />
+					</div>
+				</div>
+
+				<!-- Delete confirmation -->
+				<div v-if="currentAction === 'delete'"
+					class="mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-200 dark:border-red-800">
+					<div class="flex items-start gap-2">
+						<UIcon :name="icons.warning" class="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5" />
+						<div>
+							<p class="text-xs text-red-800 dark:text-red-200 font-medium">
+								{{ t('deleteWarning') || 'This action cannot be undone!' }}
+							</p>
+							<p class="text-xs text-red-700 dark:text-red-300 mt-1">
+								{{ t('deleteClientsDescription') || 'Selected clients will be permanently removed.' }}
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Client list preview -->
+				<div v-if="clientIds.length <= 5" class="mb-4">
+					<label class="block text-xs text-(--color-text-muted)] mb-1">{{ t('affectedClients') ||
+						'Affected Clients' }}</label>
+					<div class="text-xs font-mono bg-(--color-surface)] rounded p-2 max-h-24 overflow-y-auto">
+						<div v-for="client in clientIds" :key="client" class="py-0.5">{{ client }}</div>
+					</div>
+				</div>
+
+				<div class="flex justify-end gap-2 pt-3 border-t border-(--color-border)]">
+					<UButton variant="ghost" @click="confirmOpen = false">{{ t('cancel') || 'Cancel' }}</UButton>
+					<UButton :color="currentAction === 'delete' ? 'error' : 'primary'" :loading="loading"
+						:disabled="!canExecute" @click="executeAction">
+						{{ t(currentAction || 'confirm') || currentAction }}
+					</UButton>
+				</div>
+			</div>
+		</template>
+	</UModal>
+
+	<!-- Result Dialog -->
+	<UModal v-model:open="resultOpen" :dismissible="true">
+		<template #content>
+			<div class="p-4 min-w-[350px]">
+				<div class="flex items-center justify-between mb-3">
+					<h3 class="text-lg font-semibold">{{ t('actionResults') || 'Action Results' }}</h3>
+					<UButton variant="ghost" size="xs" icon="i-heroicons-x-mark" @click="resultOpen = false" />
+				</div>
+
+				<div class="max-h-60 overflow-y-auto space-y-2">
+					<div v-for="(result, clientId) in actionResults" :key="clientId"
+						class="flex items-center justify-between p-2 bg-(--color-surface)] rounded text-xs">
+						<span class="font-mono">{{ clientId }}</span>
+						<UBadge :color="result.success ? 'success' : 'error'" size="xs">
+							{{ result.success ? t('success') : t('failed') }}
+						</UBadge>
+					</div>
+				</div>
+
+				<div class="flex justify-end mt-4 pt-3 border-t border-(--color-border)]">
+					<UButton variant="soft" @click="resultOpen = false">{{ t('close') || 'Close' }}</UButton>
+				</div>
+			</div>
+		</template>
+	</UModal>
+</template>
+
+<script setup lang="ts">
+const props = defineProps<{
+	clientIds: string[]
+	disabled?: boolean
+}>()
+
+const icons = useIcons()
+const { t } = useI18n()
+const { apiPost } = useApiHelpers()
+const toast = useToast()
+const stateStore = useStateStore()
+
+const confirmOpen = ref(false)
+const resultOpen = ref(false)
+const currentAction = ref<string | null>(null)
+const loading = ref(false)
+const notifyText = ref('')
+const deployOptions = ref({ username: '', password: '', type: 'windows' })
+const actionResults = ref<Record<string, { success: boolean; message?: string }>>({})
+
+const osTypes = [
+	{ value: 'windows', label: 'Windows', icon: 'i-heroicons-window' },
+	{ value: 'linux', label: 'Linux', icon: 'i-heroicons-command-line' },
+	{ value: 'macos', label: 'macOS', icon: 'i-heroicons-computer-desktop' },
+]
+
+function showSelectionHint() {
+	toast.add({
+		title: t('noClientsSelected') || 'No Clients Selected',
+		description: t('selectClientsFirst') || 'Select clients first to use quick actions',
+		color: 'warning',
+		icon: icons.warning,
+	})
+}
+
+const actions = [
+	{ key: 'onDemand', icon: icons.refresh, color: 'text-blue-600 dark:text-blue-400' },
+	{ key: 'notify', icon: icons.info, color: 'text-blue-600 dark:text-blue-400' },
+	{ key: 'reboot', icon: icons.warning, color: 'text-amber-600 dark:text-amber-400' },
+	{ key: 'deployClientAgent', icon: icons.upload, color: 'text-green-600 dark:text-green-400' },
+	{ key: 'delete', icon: icons.delete, color: 'text-red-600 dark:text-red-400' },
+] as const
+
+const currentActionIcon = computed(() => {
+	const action = actions.find(a => a.key === currentAction.value)
+	return action?.icon || icons.info
+})
+
+const currentActionColor = computed(() => {
+	const action = actions.find(a => a.key === currentAction.value)
+	return action?.color || ''
+})
+
+const canExecute = computed(() => {
+	if (currentAction.value === 'notify' && !notifyText.value.trim()) return false
+	if (currentAction.value === 'deployClientAgent' && (!deployOptions.value.username || !deployOptions.value.password)) return false
+	return true
+})
+
+const actionItems = computed(() => [
+	actions.map(action => ({
+		label: t(action.key) || action.key,
+		icon: action.icon,
+		onSelect: () => openConfirm(action.key),
+	}))
+])
+
+function openConfirm(action: string) {
+	currentAction.value = action
+	// Reset form fields
+	notifyText.value = ''
+	deployOptions.value = { username: '', password: '', type: 'windows' }
+	confirmOpen.value = true
+}
+
+async function executeAction() {
+	if (!currentAction.value || !props.clientIds.length) return
+
+	loading.value = true
+	actionResults.value = {}
+
+	try {
+		let result: Record<string, any> = {}
+
+		switch (currentAction.value) {
+			case 'onDemand':
+				// Fire on_demand event to process action requests
+				const onDemandResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
+					client_ids: props.clientIds,
+					method: 'fireEvent',
+					params: ['on_demand'],
+				})
+				result = onDemandResponse.data || {}
+				break
+
+			case 'notify':
+				// Show popup notification on clients
+				const notifyResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
+					client_ids: props.clientIds,
+					method: 'showPopup',
+					params: [notifyText.value],
+				})
+				result = notifyResponse.data || {}
+				break
+
+			case 'reboot':
+				// Reboot clients
+				const rebootResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
+					client_ids: props.clientIds,
+					method: 'reboot',
+					params: [],
+				})
+				result = rebootResponse.data || {}
+				break
+
+			case 'deployClientAgent':
+				// Deploy client agent
+				const deployResponse = await apiPost<Record<string, any>>('/opsidata/clients/deploy', {
+					clients: props.clientIds,
+					username: deployOptions.value.username,
+					password: deployOptions.value.password,
+					type: deployOptions.value.type,
+				})
+				result = deployResponse.data || {}
+				break
+
+			case 'delete':
+				// Delete clients via API
+				for (const clientId of props.clientIds) {
+					try {
+						await apiPost(`/opsidata/clients/${clientId}/delete`, {})
+						result[clientId] = { success: true }
+					} catch (e) {
+						result[clientId] = { success: false, error: String(e) }
+					}
+				}
+				// Also remove from selection
+				stateStore.setClients(stateStore.selectedClients.filter(c => !props.clientIds.includes(c)))
+				break
+		}
+
+		// Parse results
+		const successCount = Object.values(result).filter((r: any) => r?.success !== false && !r?.error).length
+		const failCount = props.clientIds.length - successCount
+
+		if (failCount === 0) {
+			toast.add({
+				title: t('success') || 'Success',
+				description: `${t('actionCompleted') || 'Action completed'} (${successCount} ${t('clients') || 'clients'})`,
+				color: 'success'
+			})
+		} else {
+			toast.add({
+				title: t('partialSuccess') || 'Partial Success',
+				description: `${successCount} ${t('successful') || 'successful'}, ${failCount} ${t('failed') || 'failed'}`,
+				color: 'warning'
+			})
+			// Show detailed results
+			actionResults.value = Object.fromEntries(
+				props.clientIds.map(id => [id, { success: !result[id]?.error }])
+			)
+			resultOpen.value = true
+		}
+
+		confirmOpen.value = false
+	} catch (e) {
+		console.error('Action failed:', e)
+		toast.add({
+			title: t('error') || 'Error',
+			description: String(e),
+			color: 'error'
+		})
+	} finally {
+		loading.value = false
+	}
+}
+</script>

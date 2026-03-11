@@ -15,9 +15,9 @@ Clients page - Clients table with detail panel for selected clients and selected
                 <template #actions>
                     <UButton v-if="selectedClients.length > 0" :icon="icons.product" color="primary" size="sm"
                         @click="navigateTo('/clients/products/LocalbootProduct')">
-                        {{ $t('products') }} ({{ selectedClients.length }})
+                        {{ $t('products') }}
                     </UButton>
-                    <NuxtLink to="/clients/create">
+                    <NuxtLink to="/clients/add">
                         <UButton :icon="icons.add" color="primary" size="sm">
                             <span class="hidden sm:inline">{{ $t('addNew') }}</span>
                         </UButton>
