@@ -1,3 +1,13 @@
+/**
+This file is part of opsi-webgui application.
+opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+Copyright (c) uib GmbH <info@uib.de> 2026
+All rights reserved.
+License: AGPL-3.0
+
+Type definitions for xterm.js and its addons used in the Terminal component.
+*/
+
 declare module '@xterm/xterm' {
   export class Terminal {
     constructor(options?: ITerminalOptions)

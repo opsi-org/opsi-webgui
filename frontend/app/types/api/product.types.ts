@@ -1,7 +1,7 @@
 /**
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
 */
@@ -33,12 +33,15 @@ export interface ProductRow {
   description?: string
   advice?: string
   modificationTime?: string
+  priority?: number
   installationStatusErrorLevel?: number
   installationStatus?: string
+  installationStatusDetails?: string[]
   actionRequest?: string
   actionProgress?: string
   actionResultErrorLevel?: number
   actionResult?: string
+  actionResultDetails?: string[]
   // API returns snake_case for these fields
   client_version_outdated?: boolean
   clientVersionOutdated?: boolean // Also accept camelCase

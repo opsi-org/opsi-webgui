@@ -1,7 +1,7 @@
 /**
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
 */
@@ -41,6 +41,14 @@ export interface Client {
   depotId?: string
   uefi?: boolean
   uefiValue?: boolean
+  // Statistics columns (snake_case to match API response)
+  version_outdated?: number
+  version_outdated_netboot?: number
+  installationStatus_unknown?: number
+  installationStatus_installed?: number
+  actionResult_failed?: number
+  actionResult_successful?: number
+  // CamelCase aliases for backwards compatibility
   versionOutdated?: number
   versionOutdatedNetboot?: number
   installationStatusUnknown?: number
