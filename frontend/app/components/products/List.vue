@@ -1,7 +1,7 @@
 <!--
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
 
@@ -40,24 +40,62 @@ Products List component - used for both Localboot and Netboot products.
 						</div>
 					</template>
 					<template #description-data="{ row }">
-						<span class="line-clamp-1">{{ (row as Product).description || '-' }}</span>
+						<span class="line-clamp-1" :title="(row as Product).description || ''">
+							{{ (row as Product).description || '-' }}
+						</span>
+					</template>
+					<template #advice-data="{ row }">
+						<span v-if="(row as Product).advice" class="line-clamp-1 text-amber-600 dark:text-amber-400"
+							:title="(row as Product).advice">
+							{{ (row as Product).advice }}
+						</span>
+						<span v-else class="text-muted">-</span>
 					</template>
 					<template #depotVersions-data="{ row }">
 						<span class="font-mono text-xs text-muted">
 							{{ formatVersions((row as Product).depotVersions) }}
 						</span>
 					</template>
-					<template #installationStatus-data="{ row }">
-						<SharedStatusBadge v-if="(row as Product).installationStatus"
-							:status="getInstallationStatus((row as Product).installationStatus!)"
-							:label="(row as Product).installationStatus!" />
+					<template #priority-data="{ row }">
+						<UBadge v-if="(row as Product).priority !== undefined && (row as Product).priority !== 0"
+							:color="getPriorityColor((row as Product).priority!)" variant="subtle" size="xs">
+							{{ (row as Product).priority }}
+						</UBadge>
+						<span v-else class="text-muted text-xs">0</span>
+					</template>
+					<template #modificationTime-data="{ row }">
+						<span v-if="(row as Product).modificationTime" class="text-xs text-muted">
+							{{ formatDate((row as Product).modificationTime!) }}
+						</span>
 						<span v-else class="text-muted">-</span>
 					</template>
+					<template #installationStatus-data="{ row }">
+						<ProductsInstallationStatusBadge :status="(row as Product).installationStatus"
+							:status-details="(row as Product).installationStatusDetails" />
+					</template>
 					<template #actionResult-data="{ row }">
-						<SharedStatusBadge v-if="(row as Product).actionResult"
-							:status="getActionResultStatus((row as Product).actionResult!)"
-							:label="(row as Product).actionResult!" />
+						<ProductsActionResultBadge :result="(row as Product).actionResult"
+							:result-details="(row as Product).actionResultDetails" />
+					</template>
+					<template #actionProgress-data="{ row }">
+						<span v-if="(row as Product).actionProgress" class="text-xs">
+							{{ (row as Product).actionProgress }}
+						</span>
 						<span v-else class="text-muted">-</span>
+					</template>
+					<template #actionRequest-data="{ row }">
+						<ProductsActionRequestDropdown :product-id="(row as Product).productId"
+							:current-request="(row as Product).actionRequest"
+							:disabled="stateStore.selectedClients.length === 0"
+							@change="handleActionRequestChange((row as Product).productId, $event)" />
+					</template>
+					<template #row-actions="{ row }">
+						<div class="flex items-center gap-1">
+							<UTooltip :text="String($t('configuration'))">
+								<UButton :icon="icons.settings" variant="ghost" color="neutral" size="xs"
+									@click.stop="openProductConfig((row as Product).productId)" />
+							</UTooltip>
+						</div>
 					</template>
 				</SharedEnhancedTable>
 			</LayoutsPageLayout>
@@ -79,6 +117,12 @@ Products List component - used for both Localboot and Netboot products.
 						<span class="text-sm text-muted w-24 shrink-0">{{ $t('version') }}:</span>
 						<span class="font-mono text-xs">{{ formatVersions(selectedProduct.depotVersions) }}</span>
 					</div>
+					<div v-if="selectedProduct.priority !== undefined" class="flex items-center gap-2">
+						<span class="text-sm text-muted w-24 shrink-0">{{ $t('priority') }}:</span>
+						<UBadge :color="getPriorityColor(selectedProduct.priority)" variant="subtle" size="xs">
+							{{ selectedProduct.priority }}
+						</UBadge>
+					</div>
 					<div class="flex items-center gap-2">
 						<span class="text-sm text-muted w-24 shrink-0">{{ $t('type') }}:</span>
 						<SharedStatusBadge status="info"
@@ -88,6 +132,11 @@ Products List component - used for both Localboot and Netboot products.
 						<span class="text-sm text-muted w-24 shrink-0">{{ $t('status') }}:</span>
 						<SharedStatusBadge :status="getInstallationStatus(selectedProduct.installationStatus)"
 							:label="selectedProduct.installationStatus" />
+					</div>
+					<div v-if="selectedProduct.actionResult" class="flex items-center gap-2">
+						<span class="text-sm text-muted w-24 shrink-0">{{ $t('result') }}:</span>
+						<SharedStatusBadge :status="getActionResultStatus(selectedProduct.actionResult)"
+							:label="selectedProduct.actionResult" />
 					</div>
 				</div>
 				<div v-if="selectedProduct.description" class="pt-4 border-t border-default">
@@ -116,6 +165,7 @@ type Product = ProductRow
 
 const icons = useIcons()
 const { t: $t } = useI18n()
+const router = useRouter()
 const { getProducts } = useApiHelpers()
 const stateStore = useStateStore()
 
@@ -125,13 +175,19 @@ const selectedProduct = ref<Product | null>(null)
 const products = ref<Product[]>([])
 const selectedProducts = ref<Product[]>([])
 const filterQuery = ref('')
+const pendingActionRequests = ref<Record<string, string>>({})
 
 const columns: TableColumn<Product>[] = [
+	{ key: 'installationStatus', label: String($t('installationStatus')), sortable: true, class: 'text-center w-12', icon: icons.product, visible: false },
+	{ key: 'actionResult', label: String($t('actionResult')), sortable: true, class: 'text-center w-12', icon: icons.productActionResult, visible: false },
 	{ key: 'productId', label: String($t('productId')), sortable: true, alwaysVisible: true },
 	{ key: 'description', label: String($t('description')), sortable: true, class: 'hidden md:table-cell max-w-xs' },
+	{ key: 'advice', label: String($t('advice')), sortable: true, class: 'hidden lg:table-cell max-w-xs', visible: false },
+	{ key: 'modificationTime', label: String($t('modificationTime')), sortable: true, class: 'hidden xl:table-cell', visible: false },
+	{ key: 'priority', label: String($t('priority')), sortable: true, class: 'text-center w-16', visible: false },
 	{ key: 'depotVersions', label: String($t('version')), sortable: true, class: 'hidden sm:table-cell' },
-	{ key: 'installationStatus', label: String($t('status')), sortable: true, class: 'hidden lg:table-cell', visible: false },
-	{ key: 'actionResult', label: String($t('result')), sortable: true, class: 'hidden lg:table-cell', visible: false },
+	{ key: 'actionProgress', label: String($t('actionProgress')), sortable: true, class: 'hidden xl:table-cell', visible: false },
+	{ key: 'actionRequest', label: String($t('actionRequest')), sortable: true, class: 'w-28', visible: false },
 ]
 
 const tableActions: TableAction<Product>[] = [
@@ -139,6 +195,11 @@ const tableActions: TableAction<Product>[] = [
 		icon: icons.eye,
 		label: String($t('view')),
 		handler: (row) => { selectedProduct.value = row }
+	},
+	{
+		icon: icons.settings,
+		label: String($t('configuration')),
+		handler: (row) => { openProductConfig(row.productId) }
 	}
 ]
 
@@ -149,6 +210,22 @@ function formatVersions(versions?: string | string[]): string {
 		return unique.length > 1 ? `${unique[0]} (+${unique.length - 1})` : unique[0] || '-'
 	}
 	return String(versions)
+}
+
+function formatDate(dateStr: string): string {
+	try {
+		return new Date(dateStr).toLocaleDateString()
+	} catch {
+		return dateStr
+	}
+}
+
+function getPriorityColor(priority: number): 'success' | 'warning' | 'error' | 'info' | 'neutral' {
+	if (priority >= 80) return 'error'
+	if (priority >= 50) return 'warning'
+	if (priority > 0) return 'info'
+	if (priority < 0) return 'neutral'
+	return 'neutral'
 }
 
 function getInstallationStatus(status: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' {
@@ -165,6 +242,16 @@ function getActionResultStatus(result: string): 'success' | 'warning' | 'error' 
 	if (r === 'failed') return 'error'
 	if (r === 'none') return 'neutral'
 	return 'info'
+}
+
+function openProductConfig(productId: string) {
+	router.push(`/products/${productId}`)
+}
+
+function handleActionRequestChange(productId: string, request: string) {
+	pendingActionRequests.value[productId] = request
+	// In the legacy app, this saves to a buffer and is applied with "on_demand"
+	console.log(`Action request changed for ${productId}: ${request}`)
 }
 
 async function fetchProducts() {
@@ -185,6 +272,11 @@ async function fetchProducts() {
 			pageNumber: 1,
 			perPage: 100,
 			selectedDepots: stateStore.selectedDepotsParam
+		}
+
+		// Include selected clients if any
+		if (stateStore.selectedClients.length > 0) {
+			params.selectedClients = `[${stateStore.selectedClients.join(',')}]`
 		}
 
 		const result = await getProducts(params)
@@ -214,7 +306,8 @@ const filteredProducts = computed(() => {
 	return products.value.filter(p =>
 		p.productId.toLowerCase().includes(q) ||
 		(p.name?.toLowerCase().includes(q)) ||
-		(p.description?.toLowerCase().includes(q))
+		(p.description?.toLowerCase().includes(q)) ||
+		(p.advice?.toLowerCase().includes(q))
 	)
 })
 
