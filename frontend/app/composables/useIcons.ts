@@ -14,6 +14,7 @@ export const icons = {
   menu: 'i-heroicons-bars-3',
   menuClose: 'i-heroicons-x-mark',
   quickPanel: 'i-heroicons-squares-2x2',
+  dashboard: 'i-heroicons-chart-bar-square',
   home: 'i-heroicons-home',
   back: 'i-heroicons-arrow-left',
   forward: 'i-heroicons-arrow-right',
@@ -81,8 +82,10 @@ export const icons = {
   loading: 'i-heroicons-arrow-path',
   success: 'i-heroicons-check-circle',
   blocked: 'i-heroicons-no-symbol',
+  lock: 'i-heroicons-lock-closed',
   locked: 'i-heroicons-lock-closed',
   unlocked: 'i-heroicons-lock-open',
+  x: 'i-heroicons-x-mark',
 
   // User & Auth
   user: 'i-heroicons-user',
@@ -106,6 +109,26 @@ export const icons = {
   link: 'i-heroicons-link',
   github: 'i-simple-icons-github',
   forum: 'i-heroicons-chat-bubble-left-right',
+
+  // Client Actions
+  onDemand: 'i-heroicons-bolt',
+  notify: 'i-heroicons-bell',
+  reboot: 'i-heroicons-arrow-path-rounded-square',
+  shutdown: 'i-heroicons-power',
+  wakeOnLan: 'i-heroicons-signal',
+  deploy: 'i-heroicons-cloud-arrow-down',
+  play: 'i-heroicons-play',
+
+  // Statistics & Status columns
+  productsOutdatedLocal: 'i-heroicons-exclamation-circle',
+  productsOutdatedNet: 'i-heroicons-arrow-down-circle',
+  productInstallationStatusUnknown: 'i-heroicons-question-mark-circle',
+  productInstallationStatusInstalled: 'i-heroicons-check-badge',
+  productActionResultSuccessful: 'i-heroicons-check-circle',
+  productsFailedActionResult: 'i-heroicons-x-circle',
+  clientReachable: 'i-heroicons-wifi',
+  productActionResult: 'i-heroicons-clipboard-document-check',
+  unequal: 'i-heroicons-arrows-right-left',
 
 } as const
 
