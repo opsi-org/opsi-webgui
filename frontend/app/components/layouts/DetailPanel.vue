@@ -28,14 +28,14 @@ Mobile: overlay panel with close button.
 
                 <!-- Panel header -->
                 <div
-                    class="shrink-0 border-b border-[var(--color-border)] dark:border-[var(--color-border)] px-4 py-3 bg-white dark:bg-[var(--color-surface)]">
+                    class="shrink-0 border-b border-(--color-border) dark:border-(--color-border) px-4 py-3 bg-white dark:bg-(--color-surface)">
                     <div class="flex items-center gap-3">
                         <button v-if="isMobile" @click="$emit('close')"
-                            class="p-1 rounded hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] transition-colors">
+                            class="p-1 rounded hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) transition-colors">
                             <UIcon :name="icons.arrowLeft" class="w-5 h-5" />
                         </button>
                         <div class="flex-1 min-w-0">
-                            <h3 class="font-medium text-[var(--color-text)] dark:text-[var(--color-text)] truncate">
+                            <h3 class="font-medium text-(--color-text) dark:text-(--color-text) truncate">
                                 <slot name="title">Details</slot>
                             </h3>
                             <p v-if="$slots.subtitle" class="text-xs text-muted truncate mt-0.5">
@@ -45,7 +45,7 @@ Mobile: overlay panel with close button.
                         <div class="flex items-center gap-1 shrink-0">
                             <slot name="panelActions" />
                             <button @click="$emit('close')"
-                                class="p-1 rounded hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] transition-colors">
+                                class="p-1 rounded hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) transition-colors">
                                 <UIcon :name="icons.close" class="w-5 h-5" />
                             </button>
                         </div>
@@ -102,9 +102,9 @@ const panelStyle = computed(() => {
 
 const panelClasses = computed(() => {
     if (isMobile.value) {
-        return 'absolute inset-0 z-50 bg-white dark:bg-[var(--color-surface)] flex flex-col'
+        return 'absolute inset-0 z-50 bg-white dark:bg-(--color-surface) flex flex-col'
     }
-    return 'absolute right-0 top-0 bottom-0 bg-white dark:bg-[var(--color-surface)] border-l border-[var(--color-border)] dark:border-[var(--color-border)] flex flex-col shadow-lg'
+    return 'absolute right-0 top-0 bottom-0 bg-white dark:bg-(--color-surface) border-l border-(--color-border) dark:border-(--color-border) flex flex-col shadow-lg'
 })
 
 function startResize(e: MouseEvent) {

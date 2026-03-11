@@ -29,7 +29,7 @@ Admin Terminal Page - Server terminal access via messagebus
 
         <!-- Settings panel (collapsible) -->
         <div v-if="showSettings"
-            class="shrink-0 p-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
+            class="shrink-0 p-3 rounded-lg border border-(--color-border) bg-(--color-surface)">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <UFormField :label="$t('terminalID')">
                     <UInput v-model="terminalId" :disabled="isConnected" size="sm" class="w-full" />
@@ -46,7 +46,7 @@ Admin Terminal Page - Server terminal access via messagebus
         </UAlert>
 
         <!-- Terminal Container (flex-grow to fill remaining space) -->
-        <div v-if="!isDisabled" class="flex-1 min-h-0 rounded-lg overflow-hidden border border-[var(--color-border)]">
+        <div v-if="!isDisabled" class="flex-1 min-h-0 rounded-lg overflow-hidden border border-(--color-border)">
             <div ref="terminalContainer" class="h-full w-full bg-gray-900" />
         </div>
     </div>

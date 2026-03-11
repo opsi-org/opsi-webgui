@@ -31,8 +31,8 @@ TreeView - tree view component.
 
 		<!-- Empty state -->
 		<div v-if="nodes.length === 0" class="tree-empty py-6 text-center">
-			<UIcon :name="emptyIcon || icons.folder" class="w-10 h-10 mx-auto mb-2 opacity-40" />
-			<p class="text-sm text-[var(--color-text-muted)]">{{ emptyText || $t('noItemsFound') }}</p>
+			<UIcon :name="icons.folder" class="w-10 h-10 mx-auto mb-2 opacity-40" />
+			<p class="text-sm text-(--color-text-muted)">{{ $t('noItemsFound') }}</p>
 		</div>
 	</div>
 </template>

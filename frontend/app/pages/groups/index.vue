@@ -24,26 +24,26 @@ License: AGPL-3.0
         <div ref="containerRef" class="flex h-full min-h-0 relative">
             <!-- Tree sidebar (resizable) -->
             <div :style="{ width: isMobile ? '100%' : `${sidebarWidthPercent}%` }"
-                class="shrink-0 border-r border-[var(--color-border)] bg-white dark:bg-[var(--color-surface)] flex flex-col transition-[width] duration-100"
+                class="shrink-0 border-r border-(--color-border) bg-white dark:bg-(--color-surface) flex flex-col transition-[width] duration-100"
                 :class="{ 'absolute inset-0 z-20': isMobile && !showSidebar ? 'hidden' : '' }">
-                <div class="p-3 border-b border-[var(--color-border)] flex items-center justify-between">
+                <div class="p-3 border-b border-(--color-border) flex items-center justify-between">
                     <span class="text-sm font-medium">{{ activeGroupType === 'clients' ? $t('client-group') :
                         $t('product-group') }}</span>
                     <UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" />
                 </div>
                 <div v-if="loading" class="py-4 text-center">
-                    <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-[var(--color-text-muted)]" />
+                    <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
                 </div>
                 <div v-else class="flex-1 overflow-auto p-2 space-y-1">
                     <div v-for="g in currentGroups" :key="g.id" @click="selectGroup(g)"
                         class="flex items-center gap-2 px-2 py-2 rounded cursor-pointer transition-colors"
-                        :class="selectedGroup?.id === g.id ? 'bg-opsi-blue/10 text-opsi-blue' : 'hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)]'">
+                        :class="selectedGroup?.id === g.id ? 'bg-opsi-blue/10 text-opsi-blue' : 'hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover)'">
                         <UIcon :name="icons.group" class="w-4 h-4 shrink-0" />
                         <span class="text-sm flex-1 truncate">{{ g.name }}</span>
-                        <span class="text-xs text-[var(--color-text-muted)]">({{ g.count }})</span>
+                        <span class="text-xs text-(--color-text-muted)">({{ g.count }})</span>
                     </div>
                     <div v-if="currentGroups.length === 0"
-                        class="text-sm text-[var(--color-text-muted)] px-2 py-4 text-center">
+                        class="text-sm text-(--color-text-muted) px-2 py-4 text-center">
                         {{ $t('noGroupsFound') }}
                     </div>
                 </div>
@@ -57,10 +57,10 @@ License: AGPL-3.0
             </div>
 
             <!-- Group details panel -->
-            <div class="flex-1 min-w-0 bg-[var(--color-background)] overflow-auto">
+            <div class="flex-1 min-w-0 bg-(--color-background) overflow-auto">
                 <div v-if="selectedGroup" class="h-full flex flex-col">
                     <div
-                        class="p-3 border-b border-[var(--color-border)] flex items-center justify-between bg-white dark:bg-[var(--color-surface)]">
+                        class="p-3 border-b border-(--color-border) flex items-center justify-between bg-white dark:bg-(--color-surface)">
                         <span class="font-medium">{{ selectedGroup.name }}</span>
                         <div class="flex gap-1">
                             <UButton :icon="icons.edit" variant="ghost" color="neutral" size="xs" />
@@ -70,31 +70,31 @@ License: AGPL-3.0
                     <div class="flex-1 overflow-auto p-4 space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <span class="text-sm text-[var(--color-text-muted)]">{{ $t('groupId') }}</span>
+                                <span class="text-sm text-(--color-text-muted)">{{ $t('groupId') }}</span>
                                 <p class="font-medium">{{ selectedGroup.id }}</p>
                             </div>
                             <div>
-                                <span class="text-sm text-[var(--color-text-muted)]">{{ activeGroupType === 'clients' ?
+                                <span class="text-sm text-(--color-text-muted)">{{ activeGroupType === 'clients' ?
                                     $t('clients') : $t('products') }}</span>
                                 <p class="font-medium">{{ selectedGroup.count }}</p>
                             </div>
                             <div class="sm:col-span-2">
-                                <span class="text-sm text-[var(--color-text-muted)]">{{ $t('description') }}</span>
+                                <span class="text-sm text-(--color-text-muted)">{{ $t('description') }}</span>
                                 <p>{{ selectedGroup.description || '-' }}</p>
                             </div>
                         </div>
 
-                        <div class="pt-4 border-t border-[var(--color-border)]">
+                        <div class="pt-4 border-t border-(--color-border)">
                             <h4 class="text-sm font-medium mb-3">{{ $t('groupMembers') }}</h4>
                             <div class="space-y-1">
                                 <div v-for="member in selectedGroup.members" :key="member"
-                                    class="flex items-center gap-2 text-sm px-2 py-1.5 bg-[var(--color-surface)] dark:bg-[var(--color-surface)] rounded">
+                                    class="flex items-center gap-2 text-sm px-2 py-1.5 bg-(--color-surface) dark:bg-(--color-surface) rounded">
                                     <UIcon :name="activeGroupType === 'clients' ? icons.client : icons.product"
-                                        class="w-4 h-4 text-[var(--color-text-muted)]" />
+                                        class="w-4 h-4 text-(--color-text-muted)" />
                                     {{ member }}
                                 </div>
                                 <div v-if="selectedGroup.members.length === 0"
-                                    class="text-sm text-[var(--color-text-muted)] py-2 text-center">
+                                    class="text-sm text-(--color-text-muted) py-2 text-center">
                                     {{ $t('noMembers') }}
                                 </div>
                             </div>
@@ -102,7 +102,7 @@ License: AGPL-3.0
                     </div>
                 </div>
                 <div v-else class="h-full flex items-center justify-center">
-                    <div class="text-center text-[var(--color-text-muted)] py-8">
+                    <div class="text-center text-(--color-text-muted) py-8">
                         <UIcon :name="icons.group" class="w-12 h-12 mx-auto mb-3 opacity-50" />
                         <p>{{ $t('message.noItemsSelected') }}</p>
                     </div>

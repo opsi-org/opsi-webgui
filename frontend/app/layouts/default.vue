@@ -60,26 +60,26 @@ License: AGPL-3.0
 
             <!-- Main -->
             <main
-                class="flex-1 bg-[var(--color-surface)] dark:bg-[var(--color-background)] flex flex-col min-w-0 overflow-hidden">
+                class="flex-1 bg-(--color-surface) dark:bg-(--color-background) flex flex-col min-w-0 overflow-hidden">
                 <!-- Breadcrumb with Page Description -->
                 <div
-                    class="shrink-0 px-3 md:px-4 py-1.5 border-b border-[var(--color-border)] dark:border-[var(--color-border)] bg-white dark:bg-[var(--color-surface)]">
+                    class="shrink-0 px-3 md:px-4 py-1.5 border-b border-(--color-border) dark:border-(--color-border) bg-white dark:bg-(--color-surface)">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                         <nav class="flex items-center gap-1.5 text-xs overflow-x-auto">
                             <template v-for="(crumb, i) in breadcrumbs" :key="i">
                                 <UIcon v-if="i > 0" :name="icons.arrowRight"
-                                    class="w-2.5 h-2.5 text-[var(--color-text-muted)] shrink-0" />
+                                    class="w-2.5 h-2.5 text-(--color-text-muted) shrink-0" />
                                 <NuxtLink v-if="crumb.to" :to="crumb.to"
-                                    class="text-[var(--color-text-muted)] hover:text-opsi-blue whitespace-nowrap">
+                                    class="text-(--color-text-muted) hover:text-opsi-blue whitespace-nowrap">
                                     {{ crumb.label }}
                                 </NuxtLink>
                                 <span v-else
-                                    class="text-[var(--color-text)] dark:text-[var(--color-text)] font-medium whitespace-nowrap">
+                                    class="text-(--color-text) dark:text-(--color-text) font-medium whitespace-nowrap">
                                     {{ crumb.label }}
                                 </span>
                             </template>
                         </nav>
-                        <span v-if="pageDescription" class="text-xs text-[var(--color-text-muted)] hidden sm:inline">
+                        <span v-if="pageDescription" class="text-xs text-(--color-text-muted) hidden sm:inline">
                             {{ pageDescription }}
                         </span>
                     </div>
@@ -91,17 +91,17 @@ License: AGPL-3.0
 
             <!-- Quickpanel (desktop only) - Resizable -->
             <aside v-if="quickpanelOpen && !isMobile" :style="{ width: quickpanelWidth + 'px' }"
-                class="bg-white dark:bg-[var(--color-surface)] border-l border-[var(--color-border)] dark:border-[var(--color-border)] overflow-auto shrink-0 flex flex-col relative">
+                class="bg-white dark:bg-(--color-surface) border-l border-(--color-border) dark:border-(--color-border) overflow-auto shrink-0 flex flex-col relative">
                 <!-- Resize Handle -->
                 <div class="absolute left-0 top-0 bottom-0 w-1 cursor-ew-resize hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10"
                     @mousedown="startQuickpanelResize" />
                 <div class="p-4 flex-1 flex flex-col">
                     <div class="flex items-center justify-between mb-4">
-                        <span class="text-sm font-medium text-[var(--color-text)] dark:text-[var(--color-text)]">{{
+                        <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                             t('quickPanel')
                         }}</span>
                         <button @click="quickpanelOpen = false"
-                            class="p-1 hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] rounded">
+                            class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
                             <UIcon :name="icons.close" class="w-4 h-4" />
                         </button>
                     </div>
@@ -109,28 +109,28 @@ License: AGPL-3.0
                     <!-- Quick Select Section -->
                     <div class="mb-4">
                         <label
-                            class="block text-xs font-medium text-[var(--color-text-muted)] dark:text-[var(--color-text-muted)] mb-2 uppercase">
+                            class="block text-xs font-medium text-(--color-text-muted) dark:text-(--color-text-muted) mb-2 uppercase">
                             {{ t('quickSelect') }}
                         </label>
                         <div class="space-y-2">
                             <!-- Depot Selection Info -->
-                            <div class="p-2 rounded bg-[var(--color-surface)] dark:bg-[var(--color-background)]">
+                            <div class="p-2 rounded bg-(--color-surface) dark:bg-(--color-background)">
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-[var(--color-text-muted)]">{{ t('selectedDepots') }}</span>
+                                    <span class="text-(--color-text-muted)">{{ t('selectedDepots') }}</span>
                                     <span class="font-medium">{{ stateStore.depots.length }}</span>
                                 </div>
                             </div>
                             <!-- Client Selection Info -->
-                            <div class="p-2 rounded bg-[var(--color-surface)] dark:bg-[var(--color-background)]">
+                            <div class="p-2 rounded bg-(--color-surface) dark:bg-(--color-background)">
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-[var(--color-text-muted)]">{{ t('selectedClients') }}</span>
+                                    <span class="text-(--color-text-muted)">{{ t('selectedClients') }}</span>
                                     <span class="font-medium">{{ stateStore.clients.length }}</span>
                                 </div>
                             </div>
                             <!-- Product Selection Info -->
-                            <div class="p-2 rounded bg-[var(--color-surface)] dark:bg-[var(--color-background)]">
+                            <div class="p-2 rounded bg-(--color-surface) dark:bg-(--color-background)">
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-[var(--color-text-muted)]">{{ t('selectedProducts') }}</span>
+                                    <span class="text-(--color-text-muted)">{{ t('selectedProducts') }}</span>
                                     <span class="font-medium">{{ stateStore.products.length }}</span>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@ License: AGPL-3.0
                     <!-- Quick Actions Section -->
                     <div class="mb-4">
                         <label
-                            class="block text-xs font-medium text-[var(--color-text-muted)] dark:text-[var(--color-text-muted)] mb-2 uppercase">
+                            class="block text-xs font-medium text-(--color-text-muted) dark:text-(--color-text-muted) mb-2 uppercase">
                             {{ t('quickActions') }}
                         </label>
                         <div class="flex gap-2">
@@ -162,19 +162,19 @@ License: AGPL-3.0
                     <!-- Settings Section -->
                     <div class="mb-4">
                         <label
-                            class="block text-xs font-medium text-[var(--color-text-muted)] dark:text-[var(--color-text-muted)] mb-2 uppercase">
+                            class="block text-xs font-medium text-(--color-text-muted) dark:text-(--color-text-muted) mb-2 uppercase">
                             {{ t('settings') }}
                         </label>
 
                         <!-- Theme Selection -->
                         <div class="mb-3">
-                            <span class="text-xs text-[var(--color-text-muted)] mb-1 block">{{ t('theme') }}</span>
+                            <span class="text-xs text-(--color-text-muted) mb-1 block">{{ t('theme') }}</span>
                             <div class="flex items-center gap-2">
                                 <button @click="setTheme('light')"
                                     :class="['flex-1 py-2 px-3 rounded text-sm transition-colors flex items-center justify-center gap-2',
                                         !isDarkMode
                                             ? 'bg-opsi-blue text-white'
-                                            : 'bg-[var(--color-surface)] dark:bg-[var(--color-background)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-surface-hover)]']">
+                                            : 'bg-(--color-surface) dark:bg-(--color-background) hover:bg-(--color-surface-hover) dark:hover:bg-(--color-surface-hover)']">
                                     <UIcon :name="icons.themeLight" class="w-4 h-4" />
                                     {{ t('light') }}
                                 </button>
@@ -182,7 +182,7 @@ License: AGPL-3.0
                                     :class="['flex-1 py-2 px-3 rounded text-sm transition-colors flex items-center justify-center gap-2',
                                         isDarkMode
                                             ? 'bg-opsi-blue text-white'
-                                            : 'bg-[var(--color-surface)] dark:bg-[var(--color-background)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-surface-hover)]']">
+                                            : 'bg-(--color-surface) dark:bg-(--color-background) hover:bg-(--color-surface-hover) dark:hover:bg-(--color-surface-hover)']">
                                     <UIcon :name="icons.themeDark" class="w-4 h-4" />
                                     {{ t('dark') }}
                                 </button>
@@ -191,13 +191,13 @@ License: AGPL-3.0
 
                         <!-- Language Selection -->
                         <div>
-                            <span class="text-xs text-[var(--color-text-muted)] mb-1 block">{{ t('language') }}</span>
+                            <span class="text-xs text-(--color-text-muted) mb-1 block">{{ t('language') }}</span>
                             <div class="flex flex-wrap gap-2">
                                 <button v-for="loc in allLocales" :key="loc.code" @click="switchLocale(loc.code)"
                                     :class="['py-2 px-3 rounded text-sm transition-colors',
                                         loc.code === currentLocale
                                             ? 'bg-opsi-blue text-white'
-                                            : 'bg-[var(--color-surface)] dark:bg-[var(--color-background)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-surface-hover)]']">
+                                            : 'bg-(--color-surface) dark:bg-(--color-background) hover:bg-(--color-surface-hover) dark:hover:bg-(--color-surface-hover)']">
                                     {{ loc.code.toUpperCase() }}
                                 </button>
                             </div>
@@ -205,18 +205,18 @@ License: AGPL-3.0
                     </div>
 
                     <!-- Footer with user info, session timer, version and logout -->
-                    <div class="mt-auto pt-4 border-t border-[var(--color-border)] dark:border-[var(--color-border)]">
+                    <div class="mt-auto pt-4 border-t border-(--color-border) dark:border-(--color-border)">
                         <div class="flex items-center justify-between mb-2">
                             <div>
-                                <p class="text-xs text-[var(--color-text-muted)]">
+                                <p class="text-xs text-(--color-text-muted)">
                                     {{ t('currentUser') }}: <span class="font-medium">{{ userStore.username }}</span>
                                 </p>
-                                <p class="text-xs text-[var(--color-text-muted)]">
+                                <p class="text-xs text-(--color-text-muted)">
                                     Version {{ $config.public.packageVersion || '1.0.0' }}
                                 </p>
                             </div>
                             <div v-if="remainingSeconds > 0" class="flex items-center gap-1 text-xs"
-                                :class="isWarning ? 'text-amber-600 dark:text-amber-400' : 'text-[var(--color-text-muted)]'">
+                                :class="isWarning ? 'text-amber-600 dark:text-amber-400' : 'text-(--color-text-muted)'">
                                 <UIcon :name="icons.clock" class="w-3 h-3" />
                                 <span>{{ formattedTimeText }}</span>
                             </div>
@@ -237,7 +237,7 @@ License: AGPL-3.0
                 <div class="absolute inset-0 bg-black/50" @click="quickpanelOpen = false" />
                 <!-- Drawer Content -->
                 <div
-                    class="absolute bottom-0 left-0 right-0 bg-white dark:bg-[var(--color-surface)] rounded-t-2xl max-h-[80vh] overflow-auto">
+                    class="absolute bottom-0 left-0 right-0 bg-white dark:bg-(--color-surface) rounded-t-2xl max-h-[80vh] overflow-auto">
                     <div class="p-4">
                         <!-- Drag Handle -->
                         <div class="flex justify-center mb-3">
@@ -245,7 +245,7 @@ License: AGPL-3.0
                         </div>
 
                         <div class="flex items-center justify-between mb-4">
-                            <span class="text-base font-medium text-[var(--color-text)]">{{ t('quickPanel') }}</span>
+                            <span class="text-base font-medium text-(--color-text)">{{ t('quickPanel') }}</span>
                             <button @click="quickpanelOpen = false"
                                 class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
                                 <UIcon :name="icons.close" class="w-5 h-5" />
@@ -254,21 +254,21 @@ License: AGPL-3.0
 
                         <!-- Quick Select Section -->
                         <div class="mb-4">
-                            <label class="block text-xs font-medium text-[var(--color-text-muted)] mb-2 uppercase">
+                            <label class="block text-xs font-medium text-(--color-text-muted) mb-2 uppercase">
                                 {{ t('quickSelect') }}
                             </label>
                             <div class="grid grid-cols-3 gap-2 mb-2">
                                 <div class="p-2 rounded bg-gray-100 dark:bg-gray-700 text-center">
                                     <span class="block text-lg font-bold">{{ stateStore.depots.length }}</span>
-                                    <span class="text-[10px] text-[var(--color-text-muted)]">{{ t('depots') }}</span>
+                                    <span class="text-[10px] text-(--color-text-muted)">{{ t('depots') }}</span>
                                 </div>
                                 <div class="p-2 rounded bg-gray-100 dark:bg-gray-700 text-center">
                                     <span class="block text-lg font-bold">{{ stateStore.clients.length }}</span>
-                                    <span class="text-[10px] text-[var(--color-text-muted)]">{{ t('clients') }}</span>
+                                    <span class="text-[10px] text-(--color-text-muted)">{{ t('clients') }}</span>
                                 </div>
                                 <div class="p-2 rounded bg-gray-100 dark:bg-gray-700 text-center">
                                     <span class="block text-lg font-bold">{{ stateStore.products.length }}</span>
-                                    <span class="text-[10px] text-[var(--color-text-muted)]">{{ t('products') }}</span>
+                                    <span class="text-[10px] text-(--color-text-muted)">{{ t('products') }}</span>
                                 </div>
                             </div>
                             <button @click="clearAllSelections" v-if="hasSelections"
@@ -279,7 +279,7 @@ License: AGPL-3.0
 
                         <!-- Theme Section -->
                         <div class="mb-4">
-                            <label class="block text-xs font-medium text-[var(--color-text-muted)] mb-2 uppercase">
+                            <label class="block text-xs font-medium text-(--color-text-muted) mb-2 uppercase">
                                 {{ t('theme') }}
                             </label>
                             <div class="flex items-center gap-3">
@@ -304,7 +304,7 @@ License: AGPL-3.0
 
                         <!-- Language Section -->
                         <div class="mb-4">
-                            <label class="block text-xs font-medium text-[var(--color-text-muted)] mb-2 uppercase">
+                            <label class="block text-xs font-medium text-(--color-text-muted) mb-2 uppercase">
                                 {{ t('language') }}
                             </label>
                             <div class="flex flex-wrap gap-3">
@@ -319,18 +319,18 @@ License: AGPL-3.0
                         </div>
 
                         <!-- Footer -->
-                        <div class="pt-4 border-t border-[var(--color-border)]">
+                        <div class="pt-4 border-t border-(--color-border)">
                             <div class="flex items-center justify-between mb-2">
                                 <div>
-                                    <p class="text-sm text-[var(--color-text-muted)]">
+                                    <p class="text-sm text-(--color-text-muted)">
                                         {{ t('currentUser') }}: {{ userStore.username }}
                                     </p>
-                                    <p class="text-sm text-[var(--color-text-muted)]">
+                                    <p class="text-sm text-(--color-text-muted)">
                                         Version {{ $config.public.packageVersion || '1.0.0' }}
                                     </p>
                                 </div>
                                 <div v-if="remainingSeconds > 0" class="flex items-center gap-1 text-sm"
-                                    :class="isWarning ? 'text-amber-600 dark:text-amber-400' : 'text-[var(--color-text-muted)]'">
+                                    :class="isWarning ? 'text-amber-600 dark:text-amber-400' : 'text-(--color-text-muted)'">
                                     <UIcon :name="icons.clock" class="w-4 h-4" />
                                     <span>{{ formattedTimeText }}</span>
                                 </div>

@@ -92,7 +92,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                             'flex-1 min-w-32 px-4 py-3 rounded-lg border-2 transition-all text-center',
                             newAppState.type === state
                                 ? state === 'normal' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20'
-                                : 'border-[var(--color-border)] hover:border-gray-400'
+                                : 'border-(--color-border) hover:border-gray-400'
                         ]">
                         <div class="font-medium"
                             :class="newAppState.type === state ? (state === 'normal' ? 'text-primary-600 dark:text-primary-400' : 'text-yellow-600 dark:text-yellow-400') : ''">
@@ -116,7 +116,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                             </div>
                             <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
                                 <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
-                                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-[var(--color-border)] rounded-full">
+                                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-(--color-border) rounded-full">
                                     {{ addr }}
                                     <button type="button" @click="removeAddressException(idx)"
                                         class="text-gray-400 hover:text-red-500 transition-colors">
@@ -162,7 +162,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         }}</div>
                         <div class="space-y-3">
                             <label
-                                class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
+                                class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
                                 <UCheckbox v-model="backupOptions.config_files" class="mt-0.5" />
                                 <div>
                                     <div class="font-medium text-sm">{{ $t('config_files') }}</div>
@@ -170,7 +170,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                 </div>
                             </label>
                             <label
-                                class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
+                                class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
                                 <UCheckbox v-model="backupOptions.redis_data" class="mt-0.5" />
                                 <div>
                                     <div class="font-medium text-sm">{{ $t('redisData') }}</div>
@@ -178,7 +178,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                 </div>
                             </label>
                             <label
-                                class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
+                                class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
                                 <UCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5" />
                                 <div>
                                     <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
@@ -218,7 +218,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                 @change="handleFileSelect" />
                             <div
-                                class="flex items-center gap-3 p-3 rounded-lg border-2 border-dashed border-[var(--color-border)] hover:border-primary-400 transition-colors">
+                                class="flex items-center gap-3 p-3 rounded-lg border-2 border-dashed border-(--color-border) hover:border-primary-400 transition-colors">
                                 <div
                                     class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                                     <UIcon :name="icons.upload" class="w-5 h-5 text-gray-400" />
@@ -238,7 +238,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         }}</div>
                         <div class="space-y-3">
                             <label
-                                class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
+                                class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
                                 <UCheckbox v-model="restoreOptions.config_files" class="mt-0.5" />
                                 <div>
                                     <div class="font-medium text-sm">{{ $t('config_files') }}</div>
@@ -246,7 +246,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                 </div>
                             </label>
                             <label
-                                class="flex items-start gap-3 p-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] cursor-pointer transition-colors">
+                                class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
                                 <UCheckbox v-model="restoreOptions.redis_data" class="mt-0.5" />
                                 <div>
                                     <div class="font-medium text-sm">{{ $t('redisData') }}</div>
@@ -265,7 +265,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                         'px-3 py-2 rounded-lg border text-sm transition-all',
                                         serverIdOption === opt.value
                                             ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium'
-                                            : 'border-[var(--color-border)] hover:border-gray-400'
+                                            : 'border-(--color-border) hover:border-gray-400'
                                     ]">
                                     {{ opt.label }}
                                 </button>

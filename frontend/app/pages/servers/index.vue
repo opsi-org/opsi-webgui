@@ -14,8 +14,8 @@ Servers page - Servers table with configuration panel for selected server.
                 show-refresh :loading="loading" @refresh="fetchServers">
                 <template #stats>
                     <div class="flex items-center gap-4 text-sm">
-                        <span class="text-[var(--color-text-muted)]">
-                            {{ $t('total') }}: <span class="font-medium text-[var(--color-text)]">{{
+                        <span class="text-(--color-text-muted)">
+                            {{ $t('total') }}: <span class="font-medium text-(--color-text)">{{
                                 servers.length }}</span>
                         </span>
                     </div>

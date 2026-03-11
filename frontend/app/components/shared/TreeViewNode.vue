@@ -14,13 +14,13 @@ TreeViewNode - Individual tree node component.
 
 		<div :class="[
 			'tree-node-content flex items-center gap-1 py-1.5 px-2 rounded cursor-pointer transition-colors',
-			isSelected ? 'bg-opsi-blue/10 text-opsi-blue dark:bg-opsi-blue/20' : 'hover:bg-[var(--color-surface-hover)]',
+			isSelected ? 'bg-opsi-blue/10 text-opsi-blue dark:bg-opsi-blue/20' : 'hover:bg-(--color-surface-hover)',
 			isFocusable ? 'ring-offset-1' : ''
 		]" :style="{ paddingLeft: `${level * 16 + 8}px` }" @click="handleClick" @dblclick="handleDoubleClick">
 
 			<!-- Expand/Collapse Toggle -->
 			<button v-if="hasChildren" type="button"
-				class="tree-toggle w-5 h-5 flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-transform shrink-0"
+				class="tree-toggle w-5 h-5 flex items-center justify-center text-(--color-text-muted) hover:text-(--color-text) transition-transform shrink-0"
 				:class="{ 'rotate-90': isExpanded }" :aria-label="isExpanded ? 'Collapse' : 'Expand'"
 				@click.stop="handleToggle" @keydown.enter.stop="handleToggle" @keydown.space.stop="handleToggle">
 				<UIcon :name="icons.arrowRight" class="w-4 h-4" />
@@ -30,7 +30,7 @@ TreeViewNode - Individual tree node component.
 			<!-- Node Icon -->
 			<slot name="icon" :node="node" :is-expanded="isExpanded">
 				<UIcon v-if="showIcons" :name="nodeIcon" class="w-4 h-4 shrink-0"
-					:class="isSelected ? 'text-opsi-blue' : 'text-[var(--color-text-muted)]'" />
+					:class="isSelected ? 'text-opsi-blue' : 'text-(--color-text-muted)'" />
 			</slot>
 
 			<!-- Node Label -->
@@ -55,7 +55,7 @@ TreeViewNode - Individual tree node component.
 						@update:model-value="handleValueChange" @click.stop />
 
 					<!-- Text value -->
-					<span v-else class="text-xs text-[var(--color-text-muted)] font-mono max-w-[150px] truncate">
+					<span v-else class="text-xs text-(--color-text-muted) font-mono max-w-[150px] truncate">
 						{{ formatValue(node.value) }}
 					</span>
 				</div>

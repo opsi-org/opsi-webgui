@@ -17,8 +17,8 @@ License: AGPL-3.0
 
 		<!-- No Product Selected -->
 		<UCard v-if="!productId" class="text-center py-8">
-			<UIcon :name="icons.product" class="w-12 h-12 mx-auto mb-3 text-[var(--color-text-muted)]" />
-			<p class="text-[var(--color-text-muted)]">{{ $t('selectProduct') }}
+			<UIcon :name="icons.product" class="w-12 h-12 mx-auto mb-3 text-(--color-text-muted)" />
+			<p class="text-(--color-text-muted)">{{ $t('selectProduct') }}
 			</p>
 			<NuxtLink to="/products" class="mt-4 inline-block">
 				<UButton color="primary" variant="soft">{{ $t('browseProducts') }}</UButton>
@@ -34,7 +34,7 @@ License: AGPL-3.0
 							<UIcon :name="icons.product" class="w-6 h-6 text-opsi-blue" />
 							<div>
 								<h2 class="font-semibold text-lg">{{ productId }}</h2>
-								<p v-if="productInfo.productDescription" class="text-sm text-[var(--color-text-muted)]">
+								<p v-if="productInfo.productDescription" class="text-sm text-(--color-text-muted)">
 									{{ productInfo.productDescription }}
 								</p>
 							</div>
@@ -58,13 +58,13 @@ License: AGPL-3.0
 				<UCard v-if="loading">
 					<div class="py-8 text-center">
 						<UIcon :name="icons.loading" class="w-8 h-8 animate-spin mx-auto text-opsi-blue" />
-						<p class="mt-2 text-[var(--color-text-muted)]">{{ $t('loading') }}...</p>
+						<p class="mt-2 text-(--color-text-muted)">{{ $t('loading') }}...</p>
 					</div>
 				</UCard>
 
 				<UCard v-else-if="properties.length === 0" class="text-center py-8">
-					<UIcon :name="icons.settings" class="w-12 h-12 mx-auto mb-3 text-[var(--color-text-muted)]" />
-					<p class="text-[var(--color-text-muted)]">{{ $t('noProperties') }}</p>
+					<UIcon :name="icons.settings" class="w-12 h-12 mx-auto mb-3 text-(--color-text-muted)" />
+					<p class="text-(--color-text-muted)">{{ $t('noProperties') }}</p>
 				</UCard>
 
 				<div v-else class="space-y-3">
@@ -82,10 +82,10 @@ License: AGPL-3.0
 										Multi
 									</UBadge>
 								</div>
-								<p v-if="prop.description" class="text-sm text-[var(--color-text-muted)] mb-2">
+								<p v-if="prop.description" class="text-sm text-(--color-text-muted) mb-2">
 									{{ prop.description }}
 								</p>
-								<div class="flex flex-wrap gap-1 text-xs text-[var(--color-text-muted)]">
+								<div class="flex flex-wrap gap-1 text-xs text-(--color-text-muted)">
 									<span>{{ $t('default') }}: </span>
 									<UBadge v-for="val in prop.default" :key="String(val)" color="neutral"
 										variant="soft" size="xs">
@@ -131,19 +131,19 @@ License: AGPL-3.0
 				<UCard v-if="loading">
 					<div class="py-8 text-center">
 						<UIcon :name="icons.loading" class="w-8 h-8 animate-spin mx-auto text-opsi-blue" />
-						<p class="mt-2 text-[var(--color-text-muted)]">{{ $t('loading') }}...</p>
+						<p class="mt-2 text-(--color-text-muted)">{{ $t('loading') }}...</p>
 					</div>
 				</UCard>
 
 				<UCard v-else-if="dependencies.length === 0" class="text-center py-8">
-					<UIcon :name="icons.product" class="w-12 h-12 mx-auto mb-3 text-[var(--color-text-muted)]" />
-					<p class="text-[var(--color-text-muted)]">{{ $t('noDependencies') }}</p>
+					<UIcon :name="icons.product" class="w-12 h-12 mx-auto mb-3 text-(--color-text-muted)" />
+					<p class="text-(--color-text-muted)">{{ $t('noDependencies') }}</p>
 				</UCard>
 
 				<div v-else class="space-y-2">
 					<UCard v-for="(dep, index) in dependencies" :key="index">
 						<div class="flex items-center gap-3">
-							<UIcon :name="icons.arrowRight" class="w-5 h-5 text-[var(--color-text-muted)]" />
+							<UIcon :name="icons.arrowRight" class="w-5 h-5 text-(--color-text-muted)" />
 							<div class="flex-1 min-w-0">
 								<div class="flex items-center gap-2">
 									<NuxtLink :to="`/products/${dep.requiredProductId}`"
@@ -154,7 +154,7 @@ License: AGPL-3.0
 										{{ dep.requiredVersion }}
 									</UBadge>
 								</div>
-								<div class="flex flex-wrap gap-2 mt-1 text-xs text-[var(--color-text-muted)]">
+								<div class="flex flex-wrap gap-2 mt-1 text-xs text-(--color-text-muted)">
 									<span v-if="dep.requirementType">
 										<strong>{{ $t('type') }}:</strong> {{ dep.requirementType }}
 									</span>

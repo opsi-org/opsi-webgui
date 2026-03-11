@@ -8,12 +8,12 @@ License: AGPL-3.0
 TabsNav - A reusable tabs navigation component.
 -->
 <template>
-    <div class="flex rounded-md overflow-hidden border border-[var(--color-border)]">
+    <div class="flex rounded-md overflow-hidden border border-(--color-border)">
         <button v-for="tab in tabs" :key="tab.value" @click="selectTab(tab.value)"
             class="px-3 py-1.5 text-sm font-medium transition-colors"
             :class="modelValue === tab.value
                 ? 'bg-opsi-blue text-white'
-                : 'bg-white dark:bg-[var(--color-surface)] text-[var(--color-text-secondary)] dark:text-[var(--color-text-muted)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)]'">
+                : 'bg-white dark:bg-(--color-surface) text-(--color-text-secondary) dark:text-(--color-text-muted) hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover)'">
             <UIcon v-if="tab.icon" :name="tab.icon" class="w-4 h-4 mr-1.5 inline-block" />
             {{ tab.label }}
         </button>

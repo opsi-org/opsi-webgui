@@ -24,7 +24,7 @@ Uses tabbed interface similar to products page
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <button @click="filterByStatus('ok')" :class="[
                     'p-4 rounded-lg border transition-all text-center',
-                    statusFilter === 'ok' ? 'ring-2 ring-green-500 border-green-500' : 'border-[var(--color-border)] hover:border-green-400',
+                    statusFilter === 'ok' ? 'ring-2 ring-green-500 border-green-500' : 'border-(--color-border) hover:border-green-400',
                     'bg-green-50 dark:bg-green-900/20'
                 ]">
                     <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ stats.ok }}</div>
@@ -32,7 +32,7 @@ Uses tabbed interface similar to products page
                 </button>
                 <button @click="filterByStatus('warning')" :class="[
                     'p-4 rounded-lg border transition-all text-center',
-                    statusFilter === 'warning' ? 'ring-2 ring-yellow-500 border-yellow-500' : 'border-[var(--color-border)] hover:border-yellow-400',
+                    statusFilter === 'warning' ? 'ring-2 ring-yellow-500 border-yellow-500' : 'border-(--color-border) hover:border-yellow-400',
                     'bg-yellow-50 dark:bg-yellow-900/20'
                 ]">
                     <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ stats.warning }}</div>
@@ -40,7 +40,7 @@ Uses tabbed interface similar to products page
                 </button>
                 <button @click="filterByStatus('error')" :class="[
                     'p-4 rounded-lg border transition-all text-center',
-                    statusFilter === 'error' ? 'ring-2 ring-red-500 border-red-500' : 'border-[var(--color-border)] hover:border-red-400',
+                    statusFilter === 'error' ? 'ring-2 ring-red-500 border-red-500' : 'border-(--color-border) hover:border-red-400',
                     'bg-red-50 dark:bg-red-900/20'
                 ]">
                     <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ stats.error }}</div>
@@ -48,7 +48,7 @@ Uses tabbed interface similar to products page
                 </button>
                 <button @click="activeTab = 'modules'; statusFilter = ''" :class="[
                     'p-4 rounded-lg border transition-all text-center',
-                    activeTab === 'modules' && !statusFilter ? 'ring-2 ring-[var(--color-opsi-blue)] border-[var(--color-opsi-blue)]' : 'border-[var(--color-border)] hover:border-[var(--color-opsi-blue)]',
+                    activeTab === 'modules' && !statusFilter ? 'ring-2 ring-(--color-opsi-blue) border-(--color-opsi-blue)' : 'border-(--color-border) hover:border-(--color-opsi-blue)',
                     'bg-primary-50 dark:bg-primary-900/20'
                 ]">
                     <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{ modules.length }}</div>
@@ -139,7 +139,7 @@ Uses tabbed interface similar to products page
                     </div>
                     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <div v-for="module in filteredModules" :key="module"
-                            class="flex items-center gap-3 p-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] transition-colors">
+                            class="flex items-center gap-3 p-3 rounded-lg border border-(--color-border) bg-(--color-surface) hover:bg-(--color-surface-hover) transition-colors">
                             <div
                                 class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                                 <UIcon :name="icons.check" class="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -164,7 +164,7 @@ Uses tabbed interface similar to products page
                     <!-- Key Metrics Row -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div v-for="(metric, idx) in keyMetrics" :key="idx"
-                            class="p-4 rounded-xl border border-[var(--color-border)] bg-gradient-to-br from-white to-gray-50 dark:from-gray-800/50 dark:to-gray-900/50">
+                            class="p-4 rounded-xl border border-(--color-border) bg-gradient-to-br from-white to-gray-50 dark:from-gray-800/50 dark:to-gray-900/50">
                             <div class="flex items-center gap-3">
                                 <div :class="[
                                     'w-10 h-10 rounded-lg flex items-center justify-center shrink-0',
@@ -191,9 +191,9 @@ Uses tabbed interface similar to products page
                                 <span class="font-medium">{{ $t('systemProperties') }}</span>
                             </div>
                         </template>
-                        <div class="divide-y divide-[var(--color-border)]">
+                        <div class="divide-y divide-(--color-border)">
                             <div v-for="(value, key) in filteredSystemInfo" :key="key"
-                                class="flex items-center justify-between gap-4 py-2.5 group hover:bg-[var(--color-surface-hover)] -mx-4 px-4 transition-colors">
+                                class="flex items-center justify-between gap-4 py-2.5 group hover:bg-(--color-surface-hover) -mx-4 px-4 transition-colors">
                                 <span class="text-sm text-gray-600 dark:text-gray-400 min-w-0">
                                     {{ formatKey(String(key)) }}
                                 </span>
@@ -223,9 +223,9 @@ Uses tabbed interface similar to products page
                                     }}</UBadge>
                                 </div>
                             </template>
-                            <div class="divide-y divide-[var(--color-border)]">
+                            <div class="divide-y divide-(--color-border)">
                                 <div v-for="(v, k) in (values as Record<string, unknown>)" :key="k"
-                                    class="flex items-center justify-between gap-4 py-2.5 group hover:bg-[var(--color-surface-hover)] -mx-4 px-4 transition-colors">
+                                    class="flex items-center justify-between gap-4 py-2.5 group hover:bg-(--color-surface-hover) -mx-4 px-4 transition-colors">
                                     <span class="text-sm text-gray-600 dark:text-gray-400 min-w-0">{{ k }}</span>
                                     <div class="flex items-center gap-2">
                                         <UBadge v-if="typeof v === 'boolean'" :color="v ? 'success' : 'neutral'"

@@ -10,7 +10,7 @@ PageLayout - A layout component with a fixed header (for controls) and a scrolla
 <template>
 	<div class="page-layout flex flex-col h-full min-h-0 overflow-hidden">
 		<!-- Fixed Header Section -->
-		<div class="page-header shrink-0 bg-[var(--color-surface)] dark:bg-[var(--color-background)] pb-3">
+		<div class="page-header shrink-0 bg-(--color-surface) dark:bg-(--color-background) pb-3">
 			<div v-if="showControlsRow" class="flex flex-wrap items-center justify-between gap-3">
 				<!-- Left side -->
 				<div class="flex items-center gap-2">
@@ -38,7 +38,7 @@ PageLayout - A layout component with a fixed header (for controls) and a scrolla
 			</div>
 
 			<!-- Stats/Summary Row -->
-			<div v-if="$slots.stats" class="mt-3 pt-3 border-t border-[var(--color-border)]">
+			<div v-if="$slots.stats" class="mt-3 pt-3 border-t border-(--color-border)">
 				<slot name="stats" />
 			</div>
 		</div>

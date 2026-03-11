@@ -26,8 +26,8 @@ Clients page - Clients table with detail panel for selected clients and selected
 
                 <template #stats>
                     <div class="flex items-center gap-4 text-sm">
-                        <span class="text-[var(--color-text-muted)]">
-                            {{ $t('total') }}: <span class="font-medium text-[var(--color-text)]">{{
+                        <span class="text-(--color-text-muted)">
+                            {{ $t('total') }}: <span class="font-medium text-(--color-text)">{{
                                 clients.length }}</span>
                         </span>
                         <span v-if="selectedClients.length > 0" class="text-opsi-blue">
@@ -61,7 +61,56 @@ Clients page - Clients table with detail panel for selected clients and selected
                     </template>
                     <template #uefi-data="{ row }">
                         <SharedStatusBadge v-if="(row as Client).uefi" status="info" :label="'UEFI'" />
-                        <span v-else class="text-[var(--color-text-muted)]">-</span>
+                        <span v-else class="text-(--color-text-muted)">-</span>
+                    </template>
+
+                    <!-- Statistics Columns -->
+                    <template #version_outdated-data="{ row }">
+                        <StatisticBadge :value="(row as Client).version_outdated" :icon="icons.productsOutdatedLocal"
+                            :tooltip="$t('version_outdated_localboot')" status="warning"
+                            :link="`/clients/products/LocalbootProduct?sortBy=version&selectedClient=${(row as Client).clientId}`" />
+                    </template>
+                    <template #version_outdated_netboot-data="{ row }">
+                        <StatisticBadge :value="(row as Client).version_outdated_netboot"
+                            :icon="icons.productsOutdatedNet" :tooltip="$t('version_outdated_netboot')" status="warning"
+                            :link="`/clients/products/NetbootProduct?sortBy=version&selectedClient=${(row as Client).clientId}`" />
+                    </template>
+                    <template #installationStatus_unknown-data="{ row }">
+                        <StatisticBadge :value="(row as Client).installationStatus_unknown"
+                            :icon="icons.productInstallationStatusUnknown" :tooltip="$t('installationStatus_unknown')"
+                            status="warning"
+                            :link="`/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=${(row as Client).clientId}`" />
+                    </template>
+                    <template #installationStatus_installed-data="{ row }">
+                        <StatisticBadge :value="(row as Client).installationStatus_installed"
+                            :icon="icons.productInstallationStatusInstalled"
+                            :tooltip="$t('installationStatus_installed')" status="success"
+                            :link="`/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=${(row as Client).clientId}`" />
+                    </template>
+                    <template #actionResult_successful-data="{ row }">
+                        <StatisticBadge :value="(row as Client).actionResult_successful"
+                            :icon="icons.productActionResultSuccessful" :tooltip="$t('actionResult_successful')"
+                            status="success"
+                            :link="`/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=${(row as Client).clientId}`" />
+                    </template>
+                    <template #actionResult_failed-data="{ row }">
+                        <StatisticBadge :value="(row as Client).actionResult_failed"
+                            :icon="icons.productsFailedActionResult" :tooltip="$t('actionResult_failed')" status="error"
+                            :link="`/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=${(row as Client).clientId}`" />
+                    </template>
+                    <template #reachable-data="{ row }">
+                        <ReachableBadge :client-id="(row as Client).clientId"
+                            :reachable="reachableStatus[(row as Client).clientId]"
+                            :loading="reachableLoading[(row as Client).clientId]"
+                            @check="checkReachability((row as Client).clientId)" />
+                    </template>
+
+                    <!-- Row Actions (Client Actions Dropdown) -->
+                    <template #row-actions="{ row }">
+                        <div class="flex items-center gap-1">
+                            <ClientsRowActionsDropdown :client-id="(row as Client).clientId"
+                                @action-complete="handleActionComplete" />
+                        </div>
                     </template>
                 </SharedEnhancedTable>
             </LayoutsPageLayout>
@@ -103,7 +152,8 @@ definePageMeta({ layout: 'default' })
 const icons = useIcons()
 const { t: $t } = useI18n()
 const router = useRouter()
-const { getClients, getDepotIds } = useApiHelpers()
+const toast = useToast()
+const { getClients, getDepotIds, checkClientReachable } = useApiHelpers()
 const stateStore = useStateStore()
 
 const loading = ref(false)
@@ -115,6 +165,9 @@ const filterQuery = ref('')
 const selectedPanelType = ref<'config' | 'logs' | 'clone' | null>(null)
 const panelConfigRef = ref<any>(null)
 const panelActiveTab = ref<string>('parameters')
+const reachableStatus = ref<Record<string, boolean | undefined>>({})
+const reachableLoading = ref<Record<string, boolean>>({})
+
 const panelConfigTabs = computed(() => [
     { label: String($t('parameters')), value: 'parameters' },
     { label: String($t('attributes')), value: 'attributes' },
@@ -142,6 +195,14 @@ const columns: TableColumn<Client>[] = [
     { key: 'ipAddress', label: String($t('ipAddress')), sortable: true, class: 'hidden lg:table-cell', visible: false },
     { key: 'lastSeen', label: String($t('lastSeen')), sortable: true, class: 'hidden xl:table-cell' },
     { key: 'uefi', label: 'UEFI', sortable: true, class: 'hidden xl:table-cell', visible: false },
+    // Statistics columns
+    { key: 'version_outdated', label: String($t('version_outdated_localboot')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productsOutdatedLocal },
+    { key: 'version_outdated_netboot', label: String($t('version_outdated_netboot')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productsOutdatedNet },
+    { key: 'installationStatus_unknown', label: String($t('installationStatus_unknown')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productInstallationStatusUnknown },
+    { key: 'installationStatus_installed', label: String($t('installationStatus_installed')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productInstallationStatusInstalled },
+    { key: 'actionResult_successful', label: String($t('actionResult_successful')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productActionResultSuccessful },
+    { key: 'actionResult_failed', label: String($t('actionResult_failed')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productsFailedActionResult },
+    { key: 'reachable', label: String($t('reachable')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.clientReachable },
 ]
 
 const tableActions: TableAction<Client>[] = [
@@ -205,6 +266,27 @@ async function fetchClients() {
         error.value = (e as Error).message
     } finally {
         loading.value = false
+    }
+}
+
+async function checkReachability(clientId: string) {
+    reachableLoading.value[clientId] = true
+    try {
+        const result = await checkClientReachable([clientId])
+        if (result.data) {
+            reachableStatus.value[clientId] = result.data[clientId]
+        }
+    } catch (e) {
+        console.error('Failed to check reachability:', e)
+    } finally {
+        reachableLoading.value[clientId] = false
+    }
+}
+
+function handleActionComplete(action: string, success: boolean) {
+    if (action === 'delete' && success) {
+        // Remove the deleted client from the list
+        fetchClients()
     }
 }
 

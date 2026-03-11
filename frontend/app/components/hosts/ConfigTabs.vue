@@ -59,9 +59,9 @@ HostConfigTabs - Parameters and Attributes tabs.
 
 			<!-- Param rows  -->
 			<div v-else
-				:class="['overflow-auto divide-y divide-[var(--color-border)]', panelMode ? '' : 'flex-1 min-h-0']">
+				:class="['overflow-auto divide-y divide-(--color-border)', panelMode ? '' : 'flex-1 min-h-0']">
 				<div v-for="p in filteredParams" :key="p.configId"
-					class="grid grid-cols-1 sm:grid-cols-[1fr_240px] items-start sm:items-center gap-x-6 gap-y-1 py-2.5 px-2 hover:bg-[var(--color-surface)] transition-colors"
+					class="grid grid-cols-1 sm:grid-cols-[1fr_240px] items-start sm:items-center gap-x-6 gap-y-1 py-2.5 px-2 hover:bg-(--color-surface) transition-colors"
 					:class="changedParams.has(p.configId) ? 'bg-yellow-50 dark:bg-yellow-900/10' : ''">
 					<!-- Left: id + description tooltip -->
 					<div class="min-w-0">
@@ -141,7 +141,7 @@ HostConfigTabs - Parameters and Attributes tabs.
 			<div v-else :class="['overflow-auto', panelMode ? '' : 'flex-1 min-h-0']">
 				<!-- read-only group -->
 				<div v-if="readonlyAttrKeys.length" class="mb-6">
-					<div class="divide-y divide-[var(--color-border)] rounded-lg border border-[var(--color-border)]">
+					<div class="divide-y divide-(--color-border) rounded-lg border border-(--color-border)">
 						<div v-for="key in readonlyAttrKeys" :key="key"
 							class="grid grid-cols-1 sm:grid-cols-[200px_1fr] items-center gap-x-6 gap-y-0.5 px-4 py-2.5">
 							<label class="text-sm font-medium text-default shrink-0">{{
@@ -156,9 +156,9 @@ HostConfigTabs - Parameters and Attributes tabs.
 					<p class="text-[10px] font-semibold uppercase tracking-wide text-muted mb-2">
 						{{ $t('editableFields') }}
 					</p>
-					<div class="divide-y divide-[var(--color-border)] rounded-lg border border-[var(--color-border)]">
+					<div class="divide-y divide-(--color-border) rounded-lg border border-(--color-border)">
 						<div v-for="key in editableAttrKeys" :key="key"
-							class="grid grid-cols-1 sm:grid-cols-[200px_1fr] items-center gap-x-6 gap-y-1.5 px-4 py-2.5 hover:bg-[var(--color-surface)] transition-colors"
+							class="grid grid-cols-1 sm:grid-cols-[200px_1fr] items-center gap-x-6 gap-y-1.5 px-4 py-2.5 hover:bg-(--color-surface) transition-colors"
 							:class="isAttrChanged(key) ? 'bg-yellow-50 dark:bg-yellow-900/10' : ''">
 							<label class="text-sm font-medium text-default shrink-0 flex items-center gap-1">
 								{{ getAttributeLabel(key) }}

@@ -30,11 +30,11 @@ const badgeClasses = computed(() => {
         case 'neutral':
             return `${base} status-offline`
         case 'warning':
-            return `${base} bg-[var(--color-opsi-warning)]/15 text-[var(--color-opsi-warning)]`
+            return `${base} bg-(--color-opsi-warning)/15 text-(--color-opsi-warning)`
         case 'error':
-            return `${base} bg-[var(--color-opsi-error)]/15 text-[var(--color-opsi-error)]`
+            return `${base} bg-(--color-opsi-error)/15 text-(--color-opsi-error)`
         case 'info':
-            return `${base} bg-[var(--color-opsi-blue)]/15 text-[var(--color-opsi-blue)]`
+            return `${base} bg-(--color-opsi-blue)/15 text-(--color-opsi-blue)`
         default:
             return `${base} status-offline`
     }
