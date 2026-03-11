@@ -109,4 +109,9 @@ RUN rm -f /var/lib/opsiconfd/addons/${ADDON_ID} \
 # Allow opsiconfd user to access uv-installed Python
 RUN chmod a+rx /root && mkdir -p /root/.local/share && chmod -R a+rX /root/.local
 
+# Frontend setup: Node.js, pnpm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g pnpm
+
 WORKDIR /workspace
