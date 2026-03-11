@@ -128,6 +128,28 @@ html.dark .status-offline {
   color: var(--color-text-muted);
 }
 
+/* Card and dropdown consistent backgrounds */
+.bg-card {
+  background-color: #ffffff;
+}
+html.dark .bg-card {
+  background-color: var(--color-surface);
+}
+.bg-surface-light {
+  background-color: var(--color-surface);
+}
+html.dark .bg-surface-light {
+  background-color: var(--color-background);
+}
+.dropdown-bg {
+  background-color: #ffffff;
+  border-color: var(--color-border);
+}
+html.dark .dropdown-bg {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+
 /* Tabs styling */
 .opsi-tabs {
   display: flex;
