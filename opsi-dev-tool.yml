@@ -12,11 +12,11 @@ project:
     - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
   name: opsi-webgui
-  version: "1.0.1"
+  version: "4.3.99.3"
   version_files:
     #opsi-dev-tool.yml: pull-binaries[0].version
     frontend/package.json: "$.version"
-    backend/src/python/const.py: "ADDON_VERSION"
+    backend/webgui/python/const.py: "ADDON_VERSION"
 #pull-binaries:
 #  - architecture: x64
 #    branch: development

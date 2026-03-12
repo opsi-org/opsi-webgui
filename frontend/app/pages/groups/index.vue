@@ -24,26 +24,26 @@ License: AGPL-3.0
         <div ref="containerRef" class="flex h-full min-h-0 relative">
             <!-- Tree sidebar (resizable) -->
             <div :style="{ width: isMobile ? '100%' : `${sidebarWidthPercent}%` }"
-                class="shrink-0 border-r border-(--color-border) bg-white dark:bg-(--color-surface) flex flex-col transition-[width] duration-100"
+                class="shrink-0 border-r border-[--color-border) bg-white dark:bg-[--color-surface) flex flex-col transition-[width] duration-100"
                 :class="{ 'absolute inset-0 z-20': isMobile && !showSidebar ? 'hidden' : '' }">
-                <div class="p-3 border-b border-(--color-border) flex items-center justify-between">
+                <div class="p-3 border-b border-[--color-border) flex items-center justify-between">
                     <span class="text-sm font-medium">{{ activeGroupType === 'clients' ? $t('client-group') :
                         $t('product-group') }}</span>
                     <UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" />
                 </div>
                 <div v-if="loading" class="py-4 text-center">
-                    <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+                    <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-[--color-text-muted)" />
                 </div>
                 <div v-else class="flex-1 overflow-auto p-2 space-y-1">
                     <div v-for="g in currentGroups" :key="g.id" @click="selectGroup(g)"
                         class="flex items-center gap-2 px-2 py-2 rounded cursor-pointer transition-colors"
-                        :class="selectedGroup?.id === g.id ? 'bg-opsi-blue/10 text-opsi-blue' : 'hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover)'">
+                        :class="selectedGroup?.id === g.id ? 'bg-opsi-blue/10 text-opsi-blue' : 'hover:bg-[--color-surface) dark:hover:bg-[--color-surface-hover)'">
                         <UIcon :name="icons.group" class="w-4 h-4 shrink-0" />
                         <span class="text-sm flex-1 truncate">{{ g.name }}</span>
-                        <span class="text-xs text-(--color-text-muted)">({{ g.count }})</span>
+                        <span class="text-xs text-[--color-text-muted)">({{ g.count }})</span>
                     </div>
                     <div v-if="currentGroups.length === 0"
-                        class="text-sm text-(--color-text-muted) px-2 py-4 text-center">
+                        class="text-sm text-[--color-text-muted) px-2 py-4 text-center">
                         {{ $t('noGroupsFound') }}
                     </div>
                 </div>
@@ -57,10 +57,10 @@ License: AGPL-3.0
             </div>
 
             <!-- Group details panel -->
-            <div class="flex-1 min-w-0 bg-(--color-background) overflow-auto">
+            <div class="flex-1 min-w-0 bg-[--color-background) overflow-auto">
                 <div v-if="selectedGroup" class="h-full flex flex-col">
                     <div
-                        class="p-3 border-b border-(--color-border) flex items-center justify-between bg-white dark:bg-(--color-surface)">
+                        class="p-3 border-b border-[--color-border) flex items-center justify-between bg-white dark:bg-[--color-surface)">
                         <span class="font-medium">{{ selectedGroup.name }}</span>
                         <div class="flex gap-1">
                             <UButton :icon="icons.edit" variant="ghost" color="neutral" size="xs" />
@@ -70,31 +70,31 @@ License: AGPL-3.0
                     <div class="flex-1 overflow-auto p-4 space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <span class="text-sm text-(--color-text-muted)">{{ $t('groupId') }}</span>
+                                <span class="text-sm text-[--color-text-muted)">{{ $t('groupId') }}</span>
                                 <p class="font-medium">{{ selectedGroup.id }}</p>
                             </div>
                             <div>
-                                <span class="text-sm text-(--color-text-muted)">{{ activeGroupType === 'clients' ?
+                                <span class="text-sm text-[--color-text-muted)">{{ activeGroupType === 'clients' ?
                                     $t('clients') : $t('products') }}</span>
                                 <p class="font-medium">{{ selectedGroup.count }}</p>
                             </div>
                             <div class="sm:col-span-2">
-                                <span class="text-sm text-(--color-text-muted)">{{ $t('description') }}</span>
+                                <span class="text-sm text-[--color-text-muted)">{{ $t('description') }}</span>
                                 <p>{{ selectedGroup.description || '-' }}</p>
                             </div>
                         </div>
 
-                        <div class="pt-4 border-t border-(--color-border)">
+                        <div class="pt-4 border-t border-[--color-border)">
                             <h4 class="text-sm font-medium mb-3">{{ $t('groupMembers') }}</h4>
                             <div class="space-y-1">
                                 <div v-for="member in selectedGroup.members" :key="member"
-                                    class="flex items-center gap-2 text-sm px-2 py-1.5 bg-(--color-surface) dark:bg-(--color-surface) rounded">
+                                    class="flex items-center gap-2 text-sm px-2 py-1.5 bg-[--color-surface) dark:bg-[--color-surface) rounded">
                                     <UIcon :name="activeGroupType === 'clients' ? icons.client : icons.product"
-                                        class="w-4 h-4 text-(--color-text-muted)" />
+                                        class="w-4 h-4 text-[--color-text-muted)" />
                                     {{ member }}
                                 </div>
                                 <div v-if="selectedGroup.members.length === 0"
-                                    class="text-sm text-(--color-text-muted) py-2 text-center">
+                                    class="text-sm text-[--color-text-muted) py-2 text-center">
                                     {{ $t('noMembers') }}
                                 </div>
                             </div>
@@ -102,7 +102,7 @@ License: AGPL-3.0
                     </div>
                 </div>
                 <div v-else class="h-full flex items-center justify-center">
-                    <div class="text-center text-(--color-text-muted) py-8">
+                    <div class="text-center text-[--color-text-muted) py-8">
                         <UIcon :name="icons.group" class="w-12 h-12 mx-auto mb-3 opacity-50" />
                         <p>{{ $t('message.noItemsSelected') }}</p>
                     </div>
@@ -200,6 +200,59 @@ onMounted(() => {
     fetchGroups()
 })
 
+// Transform RPC tree data to flat GroupItem format
+function flattenGroupTree(tree: Record<string, unknown>, result: Array<{ id: string; description: string; notes: string; parentGroupId: string | null }> = []): typeof result {
+    if (!tree || typeof tree !== 'object') return result
+
+    const nodeId = (tree.id as string)?.split(';')[0] || ''
+    const nodeText = (tree.text as string) || nodeId
+    const nodeType = tree.type as string
+    const description = (tree.description as string) || ''
+    const notes = (tree.notes as string) || ''
+    const parentGroupId = (tree.parentGroupId as string) || null
+
+    // Skip root and special nodes
+    const isRoot = nodeText === 'clientdirectory' || nodeText === 'groups'
+    if (nodeType !== 'ObjectToGroup' && !isRoot && nodeId) {
+        result.push({ id: nodeId, description, notes, parentGroupId })
+    }
+
+    // Recursively process children
+    if (tree.children && typeof tree.children === 'object') {
+        for (const child of Object.values(tree.children as Record<string, unknown>)) {
+            if ((child as Record<string, unknown>)?.type !== 'ObjectToGroup') {
+                flattenGroupTree(child as Record<string, unknown>, result)
+            }
+        }
+    }
+
+    return result
+}
+
+// Extract members from tree data
+function extractMembers(tree: Record<string, unknown>, currentGroupId?: string, result: Array<{ groupId: string; objectId: string }> = []): typeof result {
+    if (!tree || typeof tree !== 'object') return result
+
+    const nodeId = (tree.id as string)?.split(';')[0] || currentGroupId || ''
+    const nodeType = tree.type as string
+
+    // If this node represents an object-to-group relationship, add it
+if (nodeType === 'ObjectToGroup' && nodeId && currentGroupId) {
+        const objectId = (tree.text as string) || nodeId
+        result.push({ groupId: currentGroupId, objectId })
+    }
+
+    // Recursively process children
+    if (tree.children && typeof tree.children === 'object') {
+        const groupIdToPass = nodeType !== 'ObjectToGroup' && nodeId ? nodeId : currentGroupId
+        for (const child of Object.values(tree.children as Record<string, unknown>)) {
+            extractMembers(child as Record<string, unknown>, groupIdToPass, result)
+        }
+    }
+
+    return result
+}
+
 // Transform RPC data to GroupItem format
 function transformGroupData(groups: Array<{ id: string; description: string; notes: string; parentGroupId: string | null }>,
     members: Array<{ groupId: string; objectId: string }>): GroupItem[] {
@@ -227,9 +280,21 @@ const fetchGroups = async () => {
         ])
 
         // Transform and set client groups
-        clientGroups.value = transformGroupData(hostData.groups, hostData.members)
+        if (hostData.data) {
+            const tree = hostData.data.clientdirectory || hostData.data.groups
+            if (tree && typeof tree === 'object') {
+                const flatGroups = flattenGroupTree(tree as Record<string, unknown>)
+                const members = extractMembers(tree as Record<string, unknown>)
+                clientGroups.value = transformGroupData(flatGroups, members)
+            }
+        }
+
         // Transform and set product groups
-        productGroups.value = transformGroupData(productData.groups, productData.members)
+        if (productData.data?.groups && typeof productData.data.groups === 'object') {
+            const flatGroups = flattenGroupTree(productData.data.groups as Record<string, unknown>)
+            const members = extractMembers(productData.data.groups as Record<string, unknown>)
+            productGroups.value = transformGroupData(flatGroups, members)
+        }
 
         // Set default placeholder if nothing returned
         if (clientGroups.value.length === 0) {

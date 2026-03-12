@@ -32,7 +32,7 @@ Action result badge with icon for products table.
 
 		<!-- None / empty -->
 		<span v-else-if="normalizedResult === 'none' || !normalizedResult"
-			class="text-(--color-text-muted) text-xs">-</span>
+			class="text-[--color-text-muted) text-xs">-</span>
 
 		<!-- Other result -->
 		<UBadge v-else color="neutral" variant="subtle" size="xs">

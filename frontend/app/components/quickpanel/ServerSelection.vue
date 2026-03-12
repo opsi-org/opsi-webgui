@@ -16,13 +16,13 @@ License: AGPL-3.0
 		</div>
 		<div v-else-if="servers.length" class="space-y-1">
 			<label v-for="server in servers" :key="server"
-				class="flex items-center gap-2 p-1.5 rounded hover:bg-(--color-surface)] cursor-pointer">
+				class="flex items-center gap-2 p-1.5 rounded hover:bg-[--color-surface] cursor-pointer">
 				<input type="checkbox" :checked="stateStore.selectedServers.includes(server)"
 					@change="stateStore.toggleServer(server)" class="rounded" />
 				<span class="text-xs">{{ server }}</span>
 			</label>
 		</div>
-		<div v-else class="text-center py-4 text-xs text-(--color-text-muted)]">No servers</div>
+		<div v-else class="text-center py-4 text-xs text-[--color-text-muted]">No servers</div>
 	</div>
 </template>
 

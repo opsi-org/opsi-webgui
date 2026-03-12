@@ -26,8 +26,8 @@ Clients page - Clients table with detail panel for selected clients and selected
 
                 <template #stats>
                     <div class="flex items-center gap-4 text-sm">
-                        <span class="text-(--color-text-muted)">
-                            {{ $t('total') }}: <span class="font-medium text-(--color-text)">{{
+                        <span class="text-[--color-text-muted)">
+                            {{ $t('total') }}: <span class="font-medium text-[--color-text)">{{
                                 clients.length }}</span>
                         </span>
                         <span v-if="selectedClients.length > 0" class="text-opsi-blue">
@@ -42,7 +42,7 @@ Clients page - Clients table with detail panel for selected clients and selected
                 </div>
 
                 <!-- Clients Table -->
-                <SharedEnhancedTable :rows="filteredClients" :columns="columns" :loading="loading" :row-key="'clientId'"
+                <SharedTable :rows="filteredClients" :columns="columns" :loading="loading" :row-key="'clientId'"
                     :actions="tableActions" :selectable="true" :filterable="false" :column-toggle="true"
                     :show-refresh="false" :clickable="true" :infinite-scroll="true" :page-size="50" class="min-h-0"
                     @select="handleRowSelect" @selection-change="handleSelectionChange">
@@ -61,7 +61,7 @@ Clients page - Clients table with detail panel for selected clients and selected
                     </template>
                     <template #uefi-data="{ row }">
                         <SharedStatusBadge v-if="(row as Client).uefi" status="info" :label="'UEFI'" />
-                        <span v-else class="text-(--color-text-muted)">-</span>
+                        <span v-else class="text-[--color-text-muted)">-</span>
                     </template>
 
                     <!-- Statistics Columns -->
@@ -107,12 +107,13 @@ Clients page - Clients table with detail panel for selected clients and selected
 
                     <!-- Row Actions (Client Actions Dropdown) -->
                     <template #row-actions="{ row }">
-                        <div class="flex items-center gap-1">
-                            <ClientsRowActionsDropdown :client-id="(row as Client).clientId"
-                                @action-complete="handleActionComplete" />
-                        </div>
+                        <ClientsRowActionsDropdown :client-id="(row as Client).clientId"
+                            @open-config="openClientPanel((row as Client), 'config')"
+                            @open-logs="openClientPanel((row as Client), 'logs')"
+                            @open-clone="openClientPanel((row as Client), 'clone')"
+                            @action-complete="handleActionComplete" />
                     </template>
-                </SharedEnhancedTable>
+                </SharedTable>
             </LayoutsPageLayout>
         </template>
 
@@ -186,6 +187,14 @@ function handlePanelClose() {
     }
     selectedClient.value = null
     selectedPanelType.value = null
+}
+
+function openClientPanel(client: Client, type: 'config' | 'logs' | 'clone') {
+    if (panelConfigRef.value?.hasAnyChanges && client.clientId !== selectedClient.value?.clientId) {
+        panelConfigRef.value.discardAll()
+    }
+    selectedClient.value = client
+    switchPanelType(type)
 }
 
 const columns: TableColumn<Client>[] = [

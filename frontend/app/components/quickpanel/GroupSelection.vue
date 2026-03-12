@@ -15,11 +15,11 @@ License: AGPL-3.0
 		</div>
 		<div v-else-if="groups.length" class="space-y-1 max-h-64 overflow-y-auto">
 			<label v-for="group in groups" :key="group.id"
-				class="flex items-center gap-2 p-1.5 rounded hover:bg-(--color-surface)] cursor-pointer">
+				class="flex items-center gap-2 p-1.5 rounded hover:bg-[--color-surface] cursor-pointer">
 				<input type="checkbox" :checked="selected.includes(group.id)" @change="toggleGroup(group.id)"
-					class="rounded text-opsi-blue border-(--color-border)]" />
+					class="rounded text-opsi-blue border-[--color-border]" />
 				<span class="text-xs truncate flex-1"
-					:class="group.isSpecial ? 'italic text-(--color-text-muted)]' : ''">
+					:class="group.isSpecial ? 'italic text-[--color-text-muted]' : ''">
 					{{ group.name }}
 				</span>
 				<UBadge v-if="group.memberCount" size="xs" variant="soft" color="neutral">
@@ -27,7 +27,7 @@ License: AGPL-3.0
 				</UBadge>
 			</label>
 		</div>
-		<div v-else class="text-center py-4 text-xs text-(--color-text-muted)]">
+		<div v-else class="text-center py-4 text-xs text-[--color-text-muted]">
 			{{ $t('noGroupsFound') }}
 		</div>
 	</div>

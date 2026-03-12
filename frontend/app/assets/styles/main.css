@@ -253,3 +253,88 @@ html.dark .table-row-selected {
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================
+   OPSI LOG COLORS - Corporate Design Compliant
+   ============================================ */
+
+/* Light mode log colors */
+.text-opsi-log-light-essential { color: #2979FF; }
+.text-opsi-log-light-critical { color: #E20066; }
+.text-opsi-log-light-error { color: #E51D3B; }
+.text-opsi-log-light-warning { color: #FF9100; }
+.text-opsi-log-light-notice { color: #009605; }
+.text-opsi-log-light-info { color: #212121; }
+.text-opsi-log-light-debug { color: #565656; }
+.text-opsi-log-light-trace { color: #8B8B8B; }
+.text-opsi-log-light-secret { color: #D500F9; }
+
+/* Dark mode log colors */
+.text-opsi-log-dark-essential { color: #2979FF; }
+.text-opsi-log-dark-critical { color: #E20066; }
+.text-opsi-log-dark-error { color: #E51D3B; }
+.text-opsi-log-dark-warning { color: #FF9100; }
+.text-opsi-log-dark-notice { color: #009605; }
+.text-opsi-log-dark-info { color: #F5F5F5; }
+.text-opsi-log-dark-debug { color: #C0C0C0; }
+.text-opsi-log-dark-trace { color: #8B8B8B; }
+.text-opsi-log-dark-secret { color: #D500F9; }
+
+/* Log level background highlights */
+.bg-opsi-log-essential { background-color: rgba(41, 121, 255, 0.1); }
+.bg-opsi-log-critical { background-color: rgba(226, 0, 102, 0.1); }
+.bg-opsi-log-error { background-color: rgba(229, 29, 59, 0.1); }
+.bg-opsi-log-warning { background-color: rgba(255, 145, 0, 0.1); }
+.bg-opsi-log-notice { background-color: rgba(0, 150, 5, 0.1); }
+
+html.dark .bg-opsi-log-essential { background-color: rgba(41, 121, 255, 0.2); }
+html.dark .bg-opsi-log-critical { background-color: rgba(226, 0, 102, 0.2); }
+html.dark .bg-opsi-log-error { background-color: rgba(229, 29, 59, 0.2); }
+html.dark .bg-opsi-log-warning { background-color: rgba(255, 145, 0, 0.2); }
+html.dark .bg-opsi-log-notice { background-color: rgba(0, 150, 5, 0.2); }
+
+/* Log row marker highlight */
+.log-row-marker {
+  background-color: rgba(63, 90, 166, 0.15) !important;
+  border-left: 3px solid var(--color-opsi-blue);
+}
+
+html.dark .log-row-marker {
+  background-color: rgba(63, 90, 166, 0.25) !important;
+}
+
+/* Log viewer scrollbar styling */
+.log-viewer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.log-viewer::-webkit-scrollbar-track {
+  background: var(--color-surface);
+  border-radius: 4px;
+}
+
+.log-viewer::-webkit-scrollbar-thumb {
+  background: var(--color-opsi-gray);
+  border-radius: 4px;
+}
+
+.log-viewer::-webkit-scrollbar-thumb:hover {
+  background: var(--color-opsi-dark-alt);
+}
+
+/* Nuxt UI Primary Color Override for OPSI Blue */
+:root {
+  --ui-primary: var(--color-opsi-blue);
+  --ui-color-primary-50: #eef2fb;
+  --ui-color-primary-100: #d4ddf4;
+  --ui-color-primary-200: #aabbea;
+  --ui-color-primary-300: #7f99df;
+  --ui-color-primary-400: #5577d5;
+  --ui-color-primary-500: #3f5aa6;
+  --ui-color-primary-600: #2d4178;
+  --ui-color-primary-700: #233366;
+  --ui-color-primary-800: #1a2654;
+  --ui-color-primary-900: #111a42;
+  --ui-color-primary-950: #0a0f2a;
+}

@@ -7,19 +7,19 @@ License: AGPL-3.0
 -->
 <template>
 	<div class="space-y-2">
-		<div v-if="!stateStore.hasAnySelections" class="text-center py-6 text-xs text-(--color-text-muted)]">
+		<div v-if="!stateStore.hasAnySelections" class="text-center py-6 text-xs text-[--color-text-muted]">
 			<UIcon name="i-heroicons-information-circle" class="w-6 h-6 mb-1 mx-auto opacity-30" />
 			No items selected
 		</div>
 		<template v-else>
 			<div v-for="section in sections" :key="section.key" v-show="section.items.length">
 				<div class="flex items-center justify-between mb-1">
-					<span class="text-xs text-(--color-text-muted)] uppercase">{{ section.label }}</span>
+					<span class="text-xs text-[--color-text-muted] uppercase">{{ section.label }}</span>
 					<button @click="section.clear" class="text-xs text-red-500 hover:underline">Clear</button>
 				</div>
 				<div class="space-y-0.5">
 					<div v-for="item in section.items" :key="item"
-						class="flex items-center justify-between p-1 rounded bg-(--color-surface)] text-xs group">
+						class="flex items-center justify-between p-1 rounded bg-[--color-surface] text-xs group">
 						<span class="truncate">{{ item }}</span>
 						<button @click="section.remove(item)" class="opacity-0 group-hover:opacity-100">
 							<UIcon name="i-heroicons-x-mark" class="w-3 h-3" />

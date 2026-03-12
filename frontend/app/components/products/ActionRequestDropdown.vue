@@ -15,7 +15,7 @@ Action request dropdown for products table - allows setting product actions.
 				<span class="text-xs" :class="getRequestClass(item.value)">{{ item.label }}</span>
 			</template>
 		</USelectMenu>
-		<span v-else class="text-xs text-(--color-text-muted)">
+		<span v-else class="text-xs text-[--color-text-muted]">
 			{{ currentLabel || '-' }}
 		</span>
 	</div>

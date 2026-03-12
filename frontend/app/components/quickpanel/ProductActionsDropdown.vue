@@ -37,7 +37,7 @@ License: AGPL-3.0
 
 				<div v-else class="space-y-4">
 					<!-- Selection Summary -->
-					<div class="text-xs text-muted p-2 rounded bg-(--color-surface)]">
+					<div class="text-xs text-muted p-2 rounded bg-[--color-surface]">
 						<div class="flex justify-between">
 							<span>{{ t('selectedClients') }}:</span>
 							<span class="font-medium">{{ stateStore.selectedClients.length || t('all') }}</span>
@@ -72,7 +72,7 @@ License: AGPL-3.0
 					<div v-if="previewProducts.length > 0" class="text-xs">
 						<div class="text-muted mb-1">{{ t('preview') }} ({{ previewProducts.length }})</div>
 						<div
-							class="max-h-32 overflow-y-auto border border-(--color-border)] rounded p-2 space-y-0.5 bg-(--color-surface)]">
+							class="max-h-32 overflow-y-auto border border-[--color-border] rounded p-2 space-y-0.5 bg-[--color-surface]">
 							<div v-for="p in previewProducts.slice(0, 15)" :key="p.productId"
 								class="flex justify-between">
 								<span class="font-mono">{{ p.productId }}</span>
@@ -85,7 +85,7 @@ License: AGPL-3.0
 						</div>
 					</div>
 					<div v-else
-						class="text-center py-3 text-xs text-muted border border-dashed border-(--color-border)] rounded">
+						class="text-center py-3 text-xs text-muted border border-dashed border-[--color-border] rounded">
 						{{ t('noProductsMatchCriteria') }}
 					</div>
 				</div>

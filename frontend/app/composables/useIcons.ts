@@ -69,6 +69,10 @@ export const icons = {
   restore: 'i-heroicons-arrow-path-rounded-square',
   document: 'i-heroicons-document',
   folder: 'i-heroicons-folder',
+  folderOpen: 'i-heroicons-folder-open',
+  file: 'i-heroicons-document-text',
+  drag: 'i-heroicons-arrows-pointing-out',
+  userMinus: 'i-heroicons-user-minus',
 
   // Status & Info
   settings: 'i-heroicons-adjustments-vertical',

@@ -1,3 +1,6 @@
+# Backend
+**/__pycache__/
+
 # Docker
 docker/.env
 docker/opsiconfd/

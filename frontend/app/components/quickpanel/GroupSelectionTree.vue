@@ -13,11 +13,11 @@ Used for both client groups and product groups.
 	<div class="group-selection-tree">
 		<!-- Loading state -->
 		<div v-if="loading" class="flex justify-center py-6">
-			<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+			<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-[--color-text-muted)" />
 		</div>
 
 		<!-- Empty state -->
-		<div v-else-if="treeNodes.length === 0" class="text-center py-6 text-sm text-(--color-text-muted)">
+		<div v-else-if="treeNodes.length === 0" class="text-center py-6 text-sm text-[--color-text-muted)">
 			{{ groupType === 'client' ? $t('noClientGroupsFound') : $t('noProductGroupsFound') }}
 		</div>
 
@@ -190,7 +190,7 @@ async function fetchGroups() {
 				// Auto-expand first level
 				const firstNode = treeNodes.value[0]
 				if (firstNode) {
-					expandedIds.value = new Set([firstNode.id)
+					expandedIds.value = new Set([firstNode.id])
 				}
 			}
 		}

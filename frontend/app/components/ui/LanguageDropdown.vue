@@ -8,18 +8,20 @@ License: AGPL-3.0
 <template>
   <div class="relative" ref="containerRef">
     <button @click="open = !open" type="button"
-      class="flex items-center gap-1 px-2 py-1 rounded hover:bg-white/20 transition-colors text-sm">
+      class="flex items-center gap-1 px-2 py-1 rounded hover:bg-white/20 transition-colors text-sm"
+      data-testid="language-dropdown">
       <UIcon :name="icons.language" class="w-4 h-4" />
       <span>{{ currentLocale.toUpperCase() }}</span>
       <UIcon :name="icons.arrowDown" class="w-3 h-3 transition-transform" :class="{ 'rotate-180': open }" />
     </button>
     <Transition :name="direction === 'up' ? 'dropdown-up' : 'dropdown'">
       <div v-if="open" :class="[
-        'absolute right-0 min-w-32 bg-white dark:bg-(--color-surface) border border-(--color-border) dark:border-(--color-border) rounded-lg shadow-lg z-50 py-1',
+        'absolute right-0 min-w-32 bg-white dark:bg-[--color-surface] border border-[--color-border] dark:border-[--color-border] rounded-lg shadow-lg z-50 py-1',
         direction === 'up' ? 'bottom-full mb-1' : 'top-full mt-1'
       ]">
         <button v-for="locale in availableLocales" :key="locale.code" @click="switchTo(locale.code)" type="button"
-          class="w-full px-3 py-2 text-left text-sm text-(--color-text) dark:text-(--color-text) hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) transition-colors">
+          class="w-full px-3 py-2 text-left text-sm text-[--color-text] dark:text-[--color-text] hover:bg-[--color-surface] dark:hover:bg-[--color-surface-hover] transition-colors"
+          :data-testid="`language-dropdown-item-${locale.code}`">
           {{ locale.name || locale.code.toUpperCase() }}
         </button>
       </div>

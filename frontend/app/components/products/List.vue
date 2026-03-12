@@ -26,7 +26,7 @@ Products List component - used for both Localboot and Netboot products.
 					:close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
 
 				<!-- Products Table -->
-				<SharedEnhancedTable :rows="filteredProducts" :columns="columns" :loading="loading" row-key="productId"
+				<SharedTable :rows="filteredProducts" :columns="columns" :loading="loading" row-key="productId"
 					:actions="tableActions" :selectable="true" :filterable="false" :column-toggle="true"
 					:show-refresh="false" :clickable="true" :infinite-scroll="true" :page-size="50"
 					@select="handleRowSelect" @selection-change="handleSelectionChange">
@@ -97,7 +97,7 @@ Products List component - used for both Localboot and Netboot products.
 							</UTooltip>
 						</div>
 					</template>
-				</SharedEnhancedTable>
+				</SharedTable>
 			</LayoutsPageLayout>
 		</template>
 

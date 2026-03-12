@@ -2,11 +2,11 @@ export default defineAppConfig({
   ui: {
     colors: {
       // Use custom opsi colors - defined via CSS variables in main.css
-      primary: 'blue',
-      neutral: 'zinc',
-      success: 'emerald',
-      warning: 'amber',
-      error: 'red',
+      primary: 'custom',
+      // neutral: 'zinc',
+      // success: 'emerald',
+      // warning: 'amber',
+      // error: 'red',
     },
     card: {
       slots: {

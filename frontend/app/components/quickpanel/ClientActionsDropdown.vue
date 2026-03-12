@@ -28,37 +28,34 @@ License: AGPL-3.0
 	<!-- Confirm Dialog -->
 	<UModal v-model:open="confirmOpen" :dismissible="true">
 		<template #content>
-			<div class="p-4 min-w-[350px]" @click.stop>
+			<div class="p-4 min-w-87.5" @click.stop>
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-lg font-semibold flex items-center gap-2">
 						<UIcon :name="currentActionIcon" class="w-5 h-5" :class="currentActionColor" />
-						{{ t(currentAction || '') || currentAction }}
+						{{ t(currentAction) }}
 					</h3>
 					<UButton variant="ghost" size="xs" icon="i-heroicons-x-mark" @click="confirmOpen = false" />
 				</div>
 
-				<p class="text-sm text-(--color-text-muted)] mb-4">
-					{{ t('confirmActionOnClients') || `Execute action on ${clientIds.length} client(s)?` }}
+				<p class="text-sm text-[--color-text-muted) mb-4">
+					{{ t('confirmActionOnClients') }}
 				</p>
 
 				<!-- On Demand options -->
-				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3 bg-(--color-surface)] rounded">
-					<p class="text-xs text-(--color-text-muted)] mb-2">
-						{{ t('onDemandDescription') || 'Triggers the on_demand event to process pending action
-						requests.' }}
+				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3 bg-[--color-surface) rounded">
+					<p class="text-xs text-[--color-text-muted) mb-2">
+						{{ t('onDemandDescription') }}
 					</p>
 					<div v-if="stateStore.selectedProducts.length > 0" class="text-xs">
-						<span class="text-(--color-text-muted)]">{{ t('selectedProducts') }}:</span>
+						<span class="text-[--color-text-muted)">{{ t('selectedProducts') }}:</span>
 						<span class="ml-1 font-medium">{{ stateStore.selectedProducts.length }}</span>
 					</div>
 				</div>
 
 				<!-- Notify input -->
 				<div v-if="currentAction === 'notify'" class="mb-4">
-					<label class="block text-xs text-(--color-text-muted)] mb-1">{{ t('notificationText') ||
-						'Notification Text' }}</label>
-					<UTextarea v-model="notifyText"
-						:placeholder="t('enterNotificationText') || 'Enter message to display on clients...'" :rows="3"
+					<label class="block text-xs text-[--color-text-muted) mb-1">{{ t('notificationText') }}</label>
+					<UTextarea v-model="notifyText" :placeholder="t('enterNotificationText')" :rows="3"
 						class="w-full" />
 				</div>
 
@@ -68,8 +65,7 @@ License: AGPL-3.0
 					<div class="flex items-start gap-2">
 						<UIcon :name="icons.warning" class="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5" />
 						<p class="text-xs text-amber-800 dark:text-amber-200">
-							{{ t('rebootWarning') || 'This will reboot the selected clients. Unsaved work may be lost.'
-							}}
+							{{ t('rebootWarning') }}
 						</p>
 					</div>
 				</div>
@@ -86,16 +82,13 @@ License: AGPL-3.0
 						</UButton>
 					</div>
 					<div>
-						<label class="block text-xs text-(--color-text-muted)] mb-1">{{ t('username') || 'Username'
-						}}</label>
-						<UInput v-model="deployOptions.username" :placeholder="t('adminUsername') || 'Administrator'"
-							size="sm" />
+						<label class="block text-xs text-[--color-text-muted] mb-1">{{ t('username') }}</label>
+						<UInput v-model="deployOptions.username" :placeholder="t('adminUsername')" size="sm" />
 					</div>
 					<div>
-						<label class="block text-xs text-(--color-text-muted)] mb-1">{{ t('password') || 'Password'
-						}}</label>
-						<UInput v-model="deployOptions.password" type="password"
-							:placeholder="t('enterPassword') || 'Password'" size="sm" />
+						<label class="block text-xs text-[--color-text-muted] mb-1">{{ t('password') }}</label>
+						<UInput v-model="deployOptions.password" type="password" :placeholder="t('enterPassword')"
+							size="sm" />
 					</div>
 				</div>
 
@@ -106,10 +99,10 @@ License: AGPL-3.0
 						<UIcon :name="icons.warning" class="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5" />
 						<div>
 							<p class="text-xs text-red-800 dark:text-red-200 font-medium">
-								{{ t('deleteWarning') || 'This action cannot be undone!' }}
+								{{ t('deleteWarning') }}
 							</p>
 							<p class="text-xs text-red-700 dark:text-red-300 mt-1">
-								{{ t('deleteClientsDescription') || 'Selected clients will be permanently removed.' }}
+								{{ t('deleteClientsDescription') }}
 							</p>
 						</div>
 					</div>
@@ -117,14 +110,13 @@ License: AGPL-3.0
 
 				<!-- Client list preview -->
 				<div v-if="clientIds.length <= 5" class="mb-4">
-					<label class="block text-xs text-(--color-text-muted)] mb-1">{{ t('affectedClients') ||
-						'Affected Clients' }}</label>
-					<div class="text-xs font-mono bg-(--color-surface)] rounded p-2 max-h-24 overflow-y-auto">
+					<label class="block text-xs text-[--color-text-muted] mb-1">{{ t('affectedClients') }}</label>
+					<div class="text-xs font-mono bg-[--color-surface] rounded p-2 max-h-24 overflow-y-auto">
 						<div v-for="client in clientIds" :key="client" class="py-0.5">{{ client }}</div>
 					</div>
 				</div>
 
-				<div class="flex justify-end gap-2 pt-3 border-t border-(--color-border)]">
+				<div class="flex justify-end gap-2 pt-3 border-t border-[--color-border]">
 					<UButton variant="ghost" @click="confirmOpen = false">{{ t('cancel') || 'Cancel' }}</UButton>
 					<UButton :color="currentAction === 'delete' ? 'error' : 'primary'" :loading="loading"
 						:disabled="!canExecute" @click="executeAction">
@@ -138,7 +130,7 @@ License: AGPL-3.0
 	<!-- Result Dialog -->
 	<UModal v-model:open="resultOpen" :dismissible="true">
 		<template #content>
-			<div class="p-4 min-w-[350px]">
+			<div class="p-4 min-w-87.5">
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-lg font-semibold">{{ t('actionResults') || 'Action Results' }}</h3>
 					<UButton variant="ghost" size="xs" icon="i-heroicons-x-mark" @click="resultOpen = false" />
@@ -146,7 +138,7 @@ License: AGPL-3.0
 
 				<div class="max-h-60 overflow-y-auto space-y-2">
 					<div v-for="(result, clientId) in actionResults" :key="clientId"
-						class="flex items-center justify-between p-2 bg-(--color-surface)] rounded text-xs">
+						class="flex items-center justify-between p-2 bg-[--color-surface] rounded text-xs">
 						<span class="font-mono">{{ clientId }}</span>
 						<UBadge :color="result.success ? 'success' : 'error'" size="xs">
 							{{ result.success ? t('success') : t('failed') }}
@@ -154,7 +146,7 @@ License: AGPL-3.0
 					</div>
 				</div>
 
-				<div class="flex justify-end mt-4 pt-3 border-t border-(--color-border)]">
+				<div class="flex justify-end mt-4 pt-3 border-t border-[--color-border]">
 					<UButton variant="soft" @click="resultOpen = false">{{ t('close') || 'Close' }}</UButton>
 				</div>
 			</div>
@@ -176,7 +168,7 @@ const stateStore = useStateStore()
 
 const confirmOpen = ref(false)
 const resultOpen = ref(false)
-const currentAction = ref<string | null>(null)
+const currentAction = ref<string>('')
 const loading = ref(false)
 const notifyText = ref('')
 const deployOptions = ref({ username: '', password: '', type: 'windows' })

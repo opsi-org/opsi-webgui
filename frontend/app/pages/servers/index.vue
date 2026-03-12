@@ -25,7 +25,7 @@ Servers page - Servers table with configuration panel for selected server.
                     :close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
 
                 <!-- Servers Table -->
-                <SharedEnhancedTable :rows="filteredServers" :columns="columns" :loading="loading" :row-key="'depotId'"
+                <SharedTable :rows="filteredServers" :columns="columns" :loading="loading" :row-key="'depotId'"
                     :actions="tableActions" :filterable="false" :column-toggle="true" :show-refresh="false"
                     :clickable="true" :infinite-scroll="true" :page-size="50" @select="handleRowSelect">
                     <template #type-data="{ row }">
@@ -35,7 +35,7 @@ Servers page - Servers table with configuration panel for selected server.
                     <template #description-data="{ row }">
                         {{ (row as Server).description || '-' }}
                     </template>
-                </SharedEnhancedTable>
+                </SharedTable>
             </LayoutsPageLayout>
         </template>
 
