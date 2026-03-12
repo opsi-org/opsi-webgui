@@ -1,113 +1,175 @@
-image: node:23.0.0-bookworm-slim
-# MARK: ENV
+# =============================================================================
+# opsi-webgui GitLab CI/CD Pipeline
+# STAGES:
+#   setup    → Install deps
+#   validate → Lint, types, tests, security scan
+#   build    → Compile frontend
+#   release  → Package, SBOM, publish (tags only)
+# =============================================================================
+
+image: node:22-bookworm-slim
+
 variables:
-  CI: true
-  FF_NETWORK_PER_BUILD: 1
-  FF_SCRIPT_SECTIONS: 1
+  CI: "true"
   DEBIAN_FRONTEND: noninteractive
-  ADDON_DEV_PORT: "7777"
-  MAIN: main
 
-stages:
-  - preinit
-  - init
-  - test
-  - build
+stages: [setup, validate, build, release]
 
-# MARK: SCRIPTS
-.define_globals: &define_globals |
-  shopt -s expand_aliases
+# TEMPLATES
+.pybuilder:
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
 
-.install_dev_cli: &install_dev_cli |
-  apt update
-  apt -y install debhelper osc zip
+.only-tags:
+  rules:
+    - if: $CI_COMMIT_TAG
+
+.install-devtools: &install-devtools |
+  apt update && apt -y install curl zip wget
   curl -sS "${OPSIDEVTOOLS_INSTALLER_URL_LINUX_X64}" | sh
-  opsi-dev-cli --version
-  opsi-dev-tool --version
 
-# MARK: PREINIT
-preinit:versions:
-  stage: preinit
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11 # cause smaller then node...
+
+# SETUP
+setup:deps:
+  stage: setup
   script:
-    # download yq (yml parser) https://github.com/mikefarah/yq?tab=readme-ov-file
-    - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - echo "----------------------------------------------------------------"
-    - VERSION_YML=$(yq '.project.version' opsi-dev-tool.yml | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
-    - echo $VERSION_YML
-
-    #- echo "----------------------------------------------------------------"
-    #- VERSION_YML2=$(yq '.pull-binaries[0].version' opsi-dev-tool.yml | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
-    #- echo $VERSION_YML2
-
-    - echo "----------------------------------------------------------------"
-    - VERSION_JSN=$(yq '.version' frontend/package.json | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
-    - echo $VERSION_JSN
-
-    - echo "----------------------------------------------------------------"
-    - VERSION_PY=$(cat backend/src/python/const.py | grep "ADDON_VERSION =" | awk '{print $3}' | sed -e "s/,//g" | sed "s/\"//g" | sed "s/'//g")
-    - echo $VERSION_PY
-
-    - echo "----------------------------------------------------------------"
-    #- if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml are uneuqal (project.version and pull-binaries[0].version].. $VERSION_YML - $VERSION_YML2)"; exit 1; fi
-    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and frontend/package.json ($VERSION_YML - $VERSION_JSN) "; exit 1; else echo "Versions are equal"; fi
-    - if [ "$VERSION_YML" != "$VERSION_PY" ]; then echo "Versions do not match for opsi-dev-tool-yml and backend/src/python/const.py ($VERSION_YML - $VERSION_PY)"; exit 1; else echo "Versions are equal"; fi
-
-# MARK: INIT
-init:npm:
-  stage: init
-  script:
-    - cd frontend
-    - *define_globals
-    - npm i
-    - npm run dev &
-    - sleep 10
+    - corepack enable
+    - cd frontend && pnpm install --frozen-lockfile && pnpm run postinstall
   artifacts:
-    paths:
-      - frontend/package.json
-      - frontend/node_modules/
-      - frontend/.nuxt/
+    paths: [frontend/node_modules/, frontend/.nuxt/]
     expire_in: 1 day
 
-# MARK: TEST
-test:typescript:
-  stage: test
-  dependencies:
-    - init:npm
-  before_script:
-    - cd frontend
-    - *define_globals
+setup:i18n:
+  stage: setup
+  extends: .pybuilder
   script:
-    - npm run ts
-
-test:build: # with transifex
-  stage: test
-  dependencies:
-    - init:npm
-    - test:typescript
-  script:
-    - cd frontend
-    - npm i @nuxt/typescript-build
-    - *define_globals
-    - npm run generate
+    - RATE=0.0 && [ "$CI_COMMIT_TAG" != "" ] && RATE=1.0
+    - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json frontend/i18n/locales/ --min-translation-rate $RATE || true
+    - chmod -R 666 frontend/i18n/locales/* || true
   artifacts:
-    paths:
-      - frontend/dist # not used...?
-    expire_in: 3 day
+    paths: [frontend/i18n/locales/]
+    expire_in: 3 days
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - when: manual
+      allow_failure: true
 
-build:zip: # with transifex
+setup:changelog:
+  stage: setup
+  extends: [.pybuilder, .only-tags]
+  script:
+    - opsi-dev-cli -l 5 changelog from-git output
+    - chmod 666 output/*
+  artifacts:
+    paths: [output/]
+    expire_in: 1 day
+
+setup:versions:
+  stage: setup
+  extends: [.pybuilder, .only-tags]
+  script:
+    - wget -q https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - |
+      V_YML=$(yq '.project.version' opsi-dev-tool.yml | tr -d '"')
+      V_PKG=$(yq '.version' frontend/package.json | tr -d '"')
+      V_PY=$(grep "ADDON_VERSION =" backend/webgui/python/const.py | awk '{print $3}' | tr -d '"')
+      echo "Versions: yml=$V_YML pkg=$V_PKG py=$V_PY"
+      [ "$V_YML" = "$V_PKG" ] && [ "$V_YML" = "$V_PY" ] || { echo "ERROR: Version mismatch"; exit 1; }
+
+
+# VALIDATE
+validate:lint:
+  stage: validate
+  needs: [setup:deps]
+  script: cd frontend && pnpm run lint
+
+validate:types:
+  stage: validate
+  needs: [setup:deps]
+  script: cd frontend && pnpm run typecheck
+
+validate:test:
+  stage: validate
+  needs: [setup:deps]
+  script: cd frontend && pnpm run test:unit
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+
+validate:security:
+  stage: validate
+  needs: [setup:deps]
+  script:
+    - cd frontend
+    - echo "=== Checking for vulnerabilities ==="
+    - pnpm audit --audit-level=high
+  allow_failure: true
+
+# TODO: Backend tests
+# validate:backend:
+#   stage: validate
+#   extends: .pybuilder
+#   script: cd backend && pytest tests/
+
+
+# BUILD
+build:frontend:
   stage: build
-  dependencies:
-    - init:npm
-    - test:build
-  script:
-    - *install_dev_cli
-    - pwd && ls -la frontend
-    - bash "$(pwd)/scripts/build-app.sh" opsi-webgui "OPSI Webgui" $(pwd)/ no-install
-    - ls -lah # debug
-    - ls -lah frontend # debug
+  needs: [setup:deps, validate:lint, validate:types, { job: setup:i18n, optional: true }]
+  script: cd frontend && pnpm run build
   artifacts:
-    name: "opsi-webgui"
-    paths:
-      - opsi-webgui
-    expire_in: 7 day
+    paths: [frontend/.output/]
+    expire_in: 7 days
+
+
+# RELEASE (tags only)
+release:package:
+  stage: release
+  extends: .only-tags
+  needs: [build:frontend, setup:versions, { job: setup:changelog, optional: true }]
+  script:
+    - *install-devtools
+    - mkdir -p backend/webgui/data/app
+    - cp -r frontend/.output/public/* backend/webgui/data/app/
+    - '[ -f output/changelog.md ] && cp output/changelog.md backend/webgui/data/changelog/ || true'
+    - mkdir -p webgui && cp -r backend/webgui/* webgui/
+    - zip -r opsi-webgui.zip webgui && ls -lah opsi-webgui.zip
+  artifacts:
+    name: "opsi-webgui-${CI_COMMIT_TAG}"
+    paths: [opsi-webgui.zip, webgui/]
+    expire_in: 7 days
+
+release:sbom:
+  stage: release
+  extends: .only-tags
+  needs: [setup:deps]
+  script: cd frontend && pnpm run sbom && mv ../sbom.json .
+  artifacts:
+    paths: [frontend/sbom.json]
+    expire_in: 30 days
+    reports:
+      cyclonedx: frontend/sbom.json
+
+release:binary-index:
+  stage: release
+  extends: [.pybuilder, .only-tags]
+  needs: [release:package, { job: setup:changelog, optional: true }]
+  script:
+    - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
+    - '[ -f output/changelog.md ] && opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip || true'
+
+release:obs-internal:
+  stage: release
+  extends: [.pybuilder, .only-tags]
+  needs: [release:package]
+  script: opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.4:development
+
+release:obs-external:
+  stage: release
+  extends: [.pybuilder, .only-tags]
+  needs: [release:package, { job: setup:changelog, optional: true }]
+  script:
+    - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.4:development
+    - |
+      [ -f output/changelog.md ] && {
+        opsi-dev-cli -l 6 release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
+        opsi-dev-cli -l 6 release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.4-development
+      } || true
