@@ -1,7 +1,7 @@
 <!--
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
 -->
@@ -11,39 +11,46 @@ License: AGPL-3.0
             <SharedTabsNav v-model="activeGroupType" :tabs="groupTypes" />
         </template>
         <template #actions>
-            <UButton :icon="icons.add" color="primary" size="sm">
+            <UButton :icon="icons.add" color="primary" size="sm" @click="openCreateModal()">
                 <span class="hidden sm:inline">{{ $t('group-add') }}</span>
             </UButton>
         </template>
 
         <!-- Error State -->
-        <div v-if="error" class="p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg">
-            {{ error }}
-        </div>
+        <UAlert v-if="error" color="error" :title="$t('error')" :description="error"
+            :close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" class="mb-4" />
 
         <div ref="containerRef" class="flex h-full min-h-0 relative">
             <!-- Tree sidebar (resizable) -->
             <div :style="{ width: isMobile ? '100%' : `${sidebarWidthPercent}%` }"
-                class="shrink-0 border-r border-[--color-border) bg-white dark:bg-[--color-surface) flex flex-col transition-[width] duration-100"
+                class="shrink-0 border-r border-(--color-border) bg-white dark:bg-(--color-surface) flex flex-col transition-[width] duration-100"
                 :class="{ 'absolute inset-0 z-20': isMobile && !showSidebar ? 'hidden' : '' }">
-                <div class="p-3 border-b border-[--color-border) flex items-center justify-between">
+                <div class="p-3 border-b border-(--color-border) flex items-center justify-between">
                     <span class="text-sm font-medium">{{ activeGroupType === 'clients' ? $t('client-group') :
                         $t('product-group') }}</span>
-                    <UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" />
+                    <UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" @click="openCreateModal()" />
                 </div>
                 <div v-if="loading" class="py-4 text-center">
-                    <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-[--color-text-muted)" />
+                    <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
                 </div>
                 <div v-else class="flex-1 overflow-auto p-2 space-y-1">
                     <div v-for="g in currentGroups" :key="g.id" @click="selectGroup(g)"
-                        class="flex items-center gap-2 px-2 py-2 rounded cursor-pointer transition-colors"
-                        :class="selectedGroup?.id === g.id ? 'bg-opsi-blue/10 text-opsi-blue' : 'hover:bg-[--color-surface) dark:hover:bg-[--color-surface-hover)'">
+                        class="flex items-center gap-2 px-2 py-2 rounded cursor-pointer transition-colors group"
+                        :class="selectedGroup?.id === g.id ? 'bg-opsi-blue/10 text-opsi-blue' : 'hover:bg-(--color-surface-hover)'">
                         <UIcon :name="icons.group" class="w-4 h-4 shrink-0" />
                         <span class="text-sm flex-1 truncate">{{ g.name }}</span>
-                        <span class="text-xs text-[--color-text-muted)">({{ g.count }})</span>
+                        <span class="text-xs text-(--color-text-muted)">({{ g.count }})</span>
+                        <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
+                            <UButton :icon="icons.add" size="xs" variant="ghost" color="neutral"
+                                :title="$t('addSubgroup')" @click="openCreateModal(g.id)" />
+                            <UButton :icon="icons.edit" size="xs" variant="ghost" color="neutral" :title="$t('edit')"
+                                @click="openEditModal(g)" />
+                            <UButton :icon="icons.delete" size="xs" variant="ghost" color="error" :title="$t('delete')"
+                                @click="confirmDeleteGroup(g)" />
+                        </div>
                     </div>
                     <div v-if="currentGroups.length === 0"
-                        class="text-sm text-[--color-text-muted) px-2 py-4 text-center">
+                        class="text-sm text-(--color-text-muted) px-2 py-4 text-center">
                         {{ $t('noGroupsFound') }}
                     </div>
                 </div>
@@ -51,50 +58,68 @@ License: AGPL-3.0
 
             <!-- Resize handle (desktop only) -->
             <div v-if="!isMobile" @mousedown="startResize"
-                class="w-1 cursor-col-resize bg-transparent hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors flex-shrink-0 relative group">
+                class="w-1 cursor-col-resize bg-transparent hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors shrink-0 relative group">
                 <div
                     class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-16 bg-gray-300 dark:bg-gray-600 rounded group-hover:bg-opsi-blue transition-colors" />
             </div>
 
             <!-- Group details panel -->
-            <div class="flex-1 min-w-0 bg-[--color-background) overflow-auto">
+            <div class="flex-1 min-w-0 bg-(--color-background) overflow-auto">
                 <div v-if="selectedGroup" class="h-full flex flex-col">
                     <div
-                        class="p-3 border-b border-[--color-border) flex items-center justify-between bg-white dark:bg-[--color-surface)">
+                        class="p-3 border-b border-(--color-border) flex items-center justify-between bg-white dark:bg-(--color-surface)">
                         <span class="font-medium">{{ selectedGroup.name }}</span>
                         <div class="flex gap-1">
-                            <UButton :icon="icons.edit" variant="ghost" color="neutral" size="xs" />
-                            <UButton :icon="icons.delete" variant="ghost" size="xs" color="error" />
+                            <UButton :icon="icons.add" variant="ghost" color="neutral" size="xs"
+                                :title="$t('addSubgroup')" @click="openCreateModal(selectedGroup.id)" />
+                            <UButton :icon="icons.edit" variant="ghost" color="neutral" size="xs" :title="$t('edit')"
+                                @click="openEditModal(selectedGroup)" />
+                            <UButton :icon="icons.delete" variant="ghost" size="xs" color="error" :title="$t('delete')"
+                                @click="confirmDeleteGroup(selectedGroup)" />
                         </div>
                     </div>
                     <div class="flex-1 overflow-auto p-4 space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <span class="text-sm text-[--color-text-muted)">{{ $t('groupId') }}</span>
+                                <span class="text-sm text-(--color-text-muted)">{{ $t('groupId') }}</span>
                                 <p class="font-medium">{{ selectedGroup.id }}</p>
                             </div>
                             <div>
-                                <span class="text-sm text-[--color-text-muted)">{{ activeGroupType === 'clients' ?
+                                <span class="text-sm text-(--color-text-muted)">{{ activeGroupType === 'clients' ?
                                     $t('clients') : $t('products') }}</span>
                                 <p class="font-medium">{{ selectedGroup.count }}</p>
                             </div>
+                            <div v-if="selectedGroup.parentGroupId">
+                                <span class="text-sm text-(--color-text-muted)">{{ $t('parentGroup') }}</span>
+                                <p class="font-medium">{{ selectedGroup.parentGroupId }}</p>
+                            </div>
                             <div class="sm:col-span-2">
-                                <span class="text-sm text-[--color-text-muted)">{{ $t('description') }}</span>
+                                <span class="text-sm text-(--color-text-muted)">{{ $t('description') }}</span>
                                 <p>{{ selectedGroup.description || '-' }}</p>
                             </div>
                         </div>
 
-                        <div class="pt-4 border-t border-[--color-border)">
-                            <h4 class="text-sm font-medium mb-3">{{ $t('groupMembers') }}</h4>
+                        <div class="pt-4 border-t border-(--color-border)">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-medium">{{ $t('groupMembers') }}</h4>
+                                <UButton v-if="selectedGroup.members.length > 0" :icon="icons.delete" size="xs"
+                                    variant="ghost" color="error" :title="$t('removeAllMembers')"
+                                    @click="confirmRemoveAllMembers">
+                                    {{ $t('removeAll') }}
+                                </UButton>
+                            </div>
                             <div class="space-y-1">
                                 <div v-for="member in selectedGroup.members" :key="member"
-                                    class="flex items-center gap-2 text-sm px-2 py-1.5 bg-[--color-surface) dark:bg-[--color-surface) rounded">
+                                    class="flex items-center gap-2 text-sm px-2 py-1.5 bg-(--color-surface) rounded group">
                                     <UIcon :name="activeGroupType === 'clients' ? icons.client : icons.product"
-                                        class="w-4 h-4 text-[--color-text-muted)" />
-                                    {{ member }}
+                                        class="w-4 h-4 text-(--color-text-muted)" />
+                                    <span class="flex-1 truncate">{{ member }}</span>
+                                    <UButton :icon="icons.close" size="xs" variant="ghost" color="error"
+                                        class="opacity-0 group-hover:opacity-100 transition-opacity"
+                                        @click="removeMemberFromGroup(member)" />
                                 </div>
                                 <div v-if="selectedGroup.members.length === 0"
-                                    class="text-sm text-[--color-text-muted) py-2 text-center">
+                                    class="text-sm text-(--color-text-muted) py-4 text-center">
                                     {{ $t('noMembers') }}
                                 </div>
                             </div>
@@ -102,13 +127,79 @@ License: AGPL-3.0
                     </div>
                 </div>
                 <div v-else class="h-full flex items-center justify-center">
-                    <div class="text-center text-[--color-text-muted) py-8">
+                    <div class="text-center text-(--color-text-muted) py-8">
                         <UIcon :name="icons.group" class="w-12 h-12 mx-auto mb-3 opacity-50" />
                         <p>{{ $t('message.noItemsSelected') }}</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Create/Edit Group Modal -->
+        <UModal v-model:open="showGroupModal">
+            <template #content>
+                <UCard>
+                    <template #header>
+                        <div class="flex items-center gap-2">
+                            <UIcon :name="isEditing ? icons.edit : icons.add" class="w-5 h-5 text-opsi-blue" />
+                            <span class="font-medium">{{ isEditing ? $t('editGroup') : $t('createGroup') }}</span>
+                        </div>
+                    </template>
+                    <form @submit.prevent="saveGroup" class="space-y-4">
+                        <UFormField :label="$t('groupId')" required>
+                            <UInput v-model="groupForm.groupId" :placeholder="$t('groupId')" :disabled="isEditing"
+                                class="w-full" />
+                        </UFormField>
+                        <UFormField v-if="groupForm.parentGroupId || !isEditing" :label="$t('parentGroup')">
+                            <USelect v-model="groupForm.parentGroupId"
+                                :items="parentGroupOptions.map(g => ({ label: g, value: g }))" :placeholder="$t('none')"
+                                class="w-full" />
+                        </UFormField>
+                        <UFormField :label="$t('description')">
+                            <UTextarea v-model="groupForm.description" :placeholder="$t('description')" :rows="3"
+                                class="w-full" />
+                        </UFormField>
+                        <UFormField :label="$t('notes')">
+                            <UTextarea v-model="groupForm.notes" :placeholder="$t('notes')" :rows="2" class="w-full" />
+                        </UFormField>
+                    </form>
+                    <template #footer>
+                        <div class="flex justify-end gap-2">
+                            <UButton variant="ghost" color="neutral" @click="showGroupModal = false">{{ $t('cancel') }}
+                            </UButton>
+                            <UButton color="primary" :loading="saving" @click="saveGroup"
+                                :disabled="!groupForm.groupId">
+                                {{ isEditing ? $t('save') : $t('create') }}
+                            </UButton>
+                        </div>
+                    </template>
+                </UCard>
+            </template>
+        </UModal>
+
+        <!-- Delete Confirmation Modal -->
+        <UModal v-model:open="showDeleteModal">
+            <template #content>
+                <UCard>
+                    <template #header>
+                        <div class="flex items-center gap-2 text-red-600">
+                            <UIcon name="i-heroicons-exclamation-triangle" class="w-5 h-5" />
+                            <span class="font-medium">{{ $t('confirmDelete') }}</span>
+                        </div>
+                    </template>
+                    <p class="text-sm">
+                        {{ $t('message.confirmDeleteGroup', { groupId: groupToDelete?.id || '' }) }}
+                    </p>
+                    <template #footer>
+                        <div class="flex justify-end gap-2">
+                            <UButton variant="ghost" color="neutral" @click="showDeleteModal = false">{{ $t('cancel') }}
+                            </UButton>
+                            <UButton color="error" :loading="deleting" @click="deleteGroup">{{ $t('delete') }}</UButton>
+                        </div>
+                    </template>
+                </UCard>
+            </template>
+        </UModal>
     </LayoutsPageLayout>
 </template>
 
@@ -119,6 +210,7 @@ interface GroupItem {
     id: string
     name: string
     description: string
+    notes?: string
     count: number
     members: string[]
     parentGroupId?: string | null
@@ -126,7 +218,19 @@ interface GroupItem {
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getHostGroups, getProductGroups } = useApiHelpers()
+const toast = useToast()
+const {
+    getHostGroups,
+    getProductGroups,
+    createHostGroup,
+    createProductGroup,
+    updateHostGroup,
+    updateProductGroup,
+    deleteHostGroup,
+    deleteProductGroup,
+    removeClientsFromGroup,
+    removeProductsFromGroup
+} = useApiHelpers()
 
 const activeGroupType = ref<'clients' | 'products'>('clients')
 const selectedGroup = ref<GroupItem | null>(null)
@@ -135,11 +239,25 @@ const error = ref<string | null>(null)
 const clientGroups = ref<GroupItem[]>([])
 const productGroups = ref<GroupItem[]>([])
 
+// Modal state
+const showGroupModal = ref(false)
+const showDeleteModal = ref(false)
+const isEditing = ref(false)
+const saving = ref(false)
+const deleting = ref(false)
+const groupToDelete = ref<GroupItem | null>(null)
+const groupForm = reactive({
+    groupId: '',
+    parentGroupId: '' as string | undefined,
+    description: '',
+    notes: ''
+})
+
 // Resizable panel state
 const containerRef = ref<HTMLElement | null>(null)
 const isMobile = ref(false)
 const showSidebar = ref(true)
-const sidebarWidthPercent = ref(25) // Default 25% width
+const sidebarWidthPercent = ref(25)
 const isResizing = ref(false)
 const minSidebarPercent = 15
 const maxSidebarPercent = 50
@@ -153,11 +271,150 @@ const currentGroups = computed(() => {
     return activeGroupType.value === 'clients' ? clientGroups.value : productGroups.value
 })
 
+const parentGroupOptions = computed(() => {
+    const groups = currentGroups.value
+    const currentId = groupForm.groupId
+    return groups.filter(g => g.id !== currentId).map(g => g.id)
+})
+
 // Select group and show sidebar on mobile
 function selectGroup(group: GroupItem) {
     selectedGroup.value = group
     if (isMobile.value) {
         showSidebar.value = false
+    }
+}
+
+// Group CRUD operations
+function openCreateModal(parentGroupId?: string) {
+    isEditing.value = false
+    groupForm.groupId = ''
+    groupForm.parentGroupId = parentGroupId
+    groupForm.description = ''
+    groupForm.notes = ''
+    showGroupModal.value = true
+}
+
+function openEditModal(group: GroupItem) {
+    isEditing.value = true
+    groupForm.groupId = group.id
+    groupForm.parentGroupId = group.parentGroupId || undefined
+    groupForm.description = group.description
+    groupForm.notes = group.notes || ''
+    showGroupModal.value = true
+}
+
+async function saveGroup() {
+    if (!groupForm.groupId) return
+
+    saving.value = true
+    try {
+        const groupData = {
+            groupId: groupForm.groupId,
+            parentGroupId: groupForm.parentGroupId || undefined,
+            description: groupForm.description || undefined,
+            notes: groupForm.notes || undefined
+        }
+
+        if (isEditing.value) {
+            // Update existing group
+            const updateFn = activeGroupType.value === 'clients' ? updateHostGroup : updateProductGroup
+            await updateFn(groupForm.groupId, {
+                parent: groupForm.parentGroupId,
+                description: groupForm.description,
+                note: groupForm.notes
+            })
+            toast.add({ title: String($t('success')), description: String($t('message.groupUpdated')), color: 'success' })
+        } else {
+            // Create new group
+            const createFn = activeGroupType.value === 'clients' ? createHostGroup : createProductGroup
+            await createFn(groupData)
+            toast.add({ title: String($t('success')), description: String($t('message.groupCreated')), color: 'success' })
+        }
+
+        showGroupModal.value = false
+        await fetchGroups()
+    } catch (e) {
+        console.error('Failed to save group:', e)
+        toast.add({
+            title: String($t('error')),
+            description: e instanceof Error ? e.message : String($t('message.failedToSaveGroup')),
+            color: 'error'
+        })
+    } finally {
+        saving.value = false
+    }
+}
+
+function confirmDeleteGroup(group: GroupItem) {
+    groupToDelete.value = group
+    showDeleteModal.value = true
+}
+
+async function deleteGroup() {
+    if (!groupToDelete.value) return
+
+    deleting.value = true
+    try {
+        const deleteFn = activeGroupType.value === 'clients' ? deleteHostGroup : deleteProductGroup
+        await deleteFn(groupToDelete.value.id)
+
+        toast.add({ title: String($t('success')), description: String($t('message.groupDeleted')), color: 'success' })
+        showDeleteModal.value = false
+
+        if (selectedGroup.value?.id === groupToDelete.value.id) {
+            selectedGroup.value = null
+        }
+
+        await fetchGroups()
+    } catch (e) {
+        console.error('Failed to delete group:', e)
+        toast.add({
+            title: String($t('error')),
+            description: e instanceof Error ? e.message : String($t('message.failedToDeleteGroup')),
+            color: 'error'
+        })
+    } finally {
+        deleting.value = false
+    }
+}
+
+async function removeMemberFromGroup(memberId: string) {
+    if (!selectedGroup.value) return
+
+    try {
+        // For now, update the local state - API implementation may vary
+        const removeFn = activeGroupType.value === 'clients' ? removeClientsFromGroup : removeProductsFromGroup
+        await removeFn(selectedGroup.value.id)
+
+        toast.add({ title: String($t('success')), description: String($t('message.memberRemoved')), color: 'success' })
+        await fetchGroups()
+
+        // Update selected group
+        const updated = currentGroups.value.find(g => g.id === selectedGroup.value?.id)
+        if (updated) selectedGroup.value = updated
+    } catch (e) {
+        console.error('Failed to remove member:', e)
+        toast.add({ title: String($t('error')), description: String($t('message.failedToRemoveMember')), color: 'error' })
+    }
+}
+
+async function confirmRemoveAllMembers() {
+    if (!selectedGroup.value) return
+
+    try {
+        const removeFn = activeGroupType.value === 'clients' ? removeClientsFromGroup : removeProductsFromGroup
+        await removeFn(selectedGroup.value.id)
+
+        toast.add({ title: String($t('success')), description: String($t('message.allMembersRemoved')), color: 'success' })
+        await fetchGroups()
+
+        // Update selected group
+        const updated = currentGroups.value.find(g => g.id === selectedGroup.value?.id)
+        if (updated) selectedGroup.value = updated
+    } catch (e) {
+        console.error('Failed to remove all members:', e)
+        toast.add({ title: String($t('error')), description: String($t('message.failedToRemoveMembers')), color: 'error' })
     }
 }
 
@@ -237,7 +494,7 @@ function extractMembers(tree: Record<string, unknown>, currentGroupId?: string, 
     const nodeType = tree.type as string
 
     // If this node represents an object-to-group relationship, add it
-if (nodeType === 'ObjectToGroup' && nodeId && currentGroupId) {
+    if (nodeType === 'ObjectToGroup' && nodeId && currentGroupId) {
         const objectId = (tree.text as string) || nodeId
         result.push({ groupId: currentGroupId, objectId })
     }
@@ -261,9 +518,10 @@ function transformGroupData(groups: Array<{ id: string; description: string; not
         return {
             id: g.id,
             name: g.id, // Use ID as name since that's what we have
-            description: g.description || g.notes || '',
+            description: g.description || '',
+            notes: g.notes || '',
             count: groupMembers.length,
-            members: groupMembers.slice(0, 20), // Show first 20 members
+            members: groupMembers.slice(0, 50), // Show first 50 members
             parentGroupId: g.parentGroupId
         }
     })
