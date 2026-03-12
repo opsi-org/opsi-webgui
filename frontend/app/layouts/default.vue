@@ -211,9 +211,9 @@ License: AGPL-3.0
                                 <p class="text-xs text-(--color-text-muted)">
                                     {{ t('currentUser') }}: <span class="font-medium">{{ userStore.username }}</span>
                                 </p>
-                                <p class="text-xs text-(--color-text-muted)">
+                                <!-- <p class="text-xs text-(--color-text-muted)">
                                     Version {{ $config.public.packageVersion || '1.0.0' }}
-                                </p>
+                                </p> -->
                             </div>
                             <div v-if="remainingSeconds > 0" class="flex items-center gap-1 text-xs"
                                 :class="isWarning ? 'text-amber-600 dark:text-amber-400' : 'text-(--color-text-muted)'">
@@ -325,9 +325,9 @@ License: AGPL-3.0
                                     <p class="text-sm text-(--color-text-muted)">
                                         {{ t('currentUser') }}: {{ userStore.username }}
                                     </p>
-                                    <p class="text-sm text-(--color-text-muted)">
+                                    <!-- <p class="text-sm text-(--color-text-muted)">
                                         Version {{ $config.public.packageVersion || '1.0.0' }}
-                                    </p>
+                                    </p> -->
                                 </div>
                                 <div v-if="remainingSeconds > 0" class="flex items-center gap-1 text-sm"
                                     :class="isWarning ? 'text-amber-600 dark:text-amber-400' : 'text-(--color-text-muted)'">
