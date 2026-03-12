@@ -36,9 +36,9 @@ const stateStore = useStateStore()
 
 const sections = computed(() => [
 	{ key: 'servers', label: 'Servers', items: stateStore.selectedServers, remove: (id: string) => stateStore.toggleServer(id), clear: () => stateStore.clearServers() },
-	{ key: 'clientGroups', label: 'Client Groups', items: stateStore.selectedClientGroups, remove: (id: string) => stateStore.setClientGroups(stateStore.selectedClientGroups.filter(g => g !== id)), clear: () => stateStore.clearClientGroups() },
+	{ key: 'clientGroups', label: 'Client Groups', items: stateStore.selectedClientGroups, remove: (id: string) => stateStore.toggleClientGroup(id), clear: () => stateStore.clearClientGroups() },
 	{ key: 'clients', label: 'Clients', items: stateStore.selectedClients, remove: (id: string) => stateStore.toggleClient(id), clear: () => stateStore.clearClients() },
-	{ key: 'productGroups', label: 'Product Groups', items: stateStore.selectedProductGroups, remove: (id: string) => stateStore.setProductGroups(stateStore.selectedProductGroups.filter(g => g !== id)), clear: () => stateStore.clearProductGroups() },
+	{ key: 'productGroups', label: 'Product Groups', items: stateStore.selectedProductGroups, remove: (id: string) => stateStore.toggleProductGroup(id), clear: () => stateStore.clearProductGroups() },
 	{ key: 'products', label: 'Products', items: stateStore.selectedProducts, remove: (id: string) => stateStore.toggleProduct(id), clear: () => stateStore.clearProducts() }
 ])
 </script>

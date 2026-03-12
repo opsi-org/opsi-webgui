@@ -38,7 +38,8 @@ Mobile: overlay panel with close button.
                             <h3 class="font-medium text-(--color-text) dark:text-(--color-text) truncate">
                                 <slot name="title">Details</slot>
                             </h3>
-                            <p v-if="$slots.subtitle" class="text-xs text-muted truncate mt-0.5">
+                            <p v-if="$slots.subtitle"
+                                class="text-xs text-(--color-text-muted) dark:text-(--color-text-muted) truncate mt-0.5">
                                 <slot name="subtitle" />
                             </p>
                         </div>

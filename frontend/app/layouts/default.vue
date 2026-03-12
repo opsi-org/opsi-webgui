@@ -14,8 +14,7 @@ License: AGPL-3.0
                     <UIcon :name="sidebarOpen ? icons.menuClose : icons.menu" class="w-5 h-5" />
                 </button>
                 <NuxtLink to="/clients" class="flex items-center gap-2">
-                    <img src="~/assets/images/opsi-webgui-dark.svg" alt="OPSI" class="h-7 md:h-8" />
-                    <span class="text-base md:text-lg font-semibold hidden sm:inline">opsi-WebGUI</span>
+                    <img src="~/assets/images/opsi_webgui_wide_dark.svg" alt="OPSI" class="h-10" />
                 </NuxtLink>
             </div>
             <div class="flex-1" />

@@ -33,15 +33,19 @@
   --color-border: #e4e4e3;
 }
 
-/* OPSI Dark Mode - OPSI Corporate Design compliant */
+/* OPSI Dark Mode - OPSI Corporate Design compliant with improved accessibility */
 html.dark {
-  --color-background: #3f3f3e;
-  --color-surface: #4b4b49;
-  --color-surface-hover: #565655;
-  --color-text: #e1e1e1;
-  --color-text-secondary: #c0c0c0;
-  --color-text-muted: #b2b2b2;
-  --color-border: #636362;
+  --color-background: #2d2d2c;
+  --color-surface: #3f3f3e;
+  --color-surface-hover: #4b4b49;
+  --color-text: #f0f0f0;
+  --color-text-secondary: #d4d4d4;
+  --color-text-muted: #a8a8a8;
+  --color-border: #5a5a59;
+
+  /* Enhanced contrast for interactive elements */
+  --color-surface-elevated: #4b4b49;
+  --color-surface-inset: #353534;
 }
 
 /* Global element styles */
@@ -63,7 +67,7 @@ code, pre, .font-mono {
   font-family: 'Fira Mono', ui-monospace, monospace;
 }
 
-/* Dark mode overrides */
+/* Dark mode overrides - cleaner, less cluttered appearance */
 html.dark body {
   background-color: var(--color-background);
   color: var(--color-text);
@@ -75,12 +79,12 @@ html.dark .bg-gray-800 { background-color: var(--color-surface); }
 html.dark .bg-gray-900 { background-color: var(--color-background); }
 html.dark .bg-white { background-color: var(--color-surface); }
 html.dark .text-gray-500 { color: var(--color-text-muted); }
-html.dark .text-gray-600 { color: var(--color-text-muted); }
+html.dark .text-gray-600 { color: var(--color-text-secondary); }
 html.dark .text-gray-900 { color: var(--color-text); }
 html.dark .border-gray-200 { border-color: var(--color-border); }
 html.dark .border-gray-700 { border-color: var(--color-border); }
 
-/* Table hover states - eye-soothing colors */
+/* Table hover states - subtle hover effect */
 html.dark .hover\:bg-gray-800:hover { background-color: var(--color-surface-hover) !important; }
 html.dark tr:hover { background-color: var(--color-surface-hover) !important; }
 

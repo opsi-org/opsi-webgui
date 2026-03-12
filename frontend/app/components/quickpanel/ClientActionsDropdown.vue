@@ -37,24 +37,24 @@ License: AGPL-3.0
 					<UButton variant="ghost" size="xs" icon="i-heroicons-x-mark" @click="confirmOpen = false" />
 				</div>
 
-				<p class="text-sm text-[--color-text-muted) mb-4">
+				<p class="text-sm text-(--color-text-muted) mb-4">
 					{{ t('confirmActionOnClients') }}
 				</p>
 
 				<!-- On Demand options -->
-				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3 bg-[--color-surface) rounded">
-					<p class="text-xs text-[--color-text-muted) mb-2">
+				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3 bg-(--color-surface) rounded">
+					<p class="text-xs text-(--color-text-muted) mb-2">
 						{{ t('onDemandDescription') }}
 					</p>
 					<div v-if="stateStore.selectedProducts.length > 0" class="text-xs">
-						<span class="text-[--color-text-muted)">{{ t('selectedProducts') }}:</span>
+						<span class="text-(--color-text-muted)">{{ t('selectedProducts') }}:</span>
 						<span class="ml-1 font-medium">{{ stateStore.selectedProducts.length }}</span>
 					</div>
 				</div>
 
 				<!-- Notify input -->
 				<div v-if="currentAction === 'notify'" class="mb-4">
-					<label class="block text-xs text-[--color-text-muted) mb-1">{{ t('notificationText') }}</label>
+					<label class="block text-xs text-(--color-text-muted) mb-1">{{ t('notificationText') }}</label>
 					<UTextarea v-model="notifyText" :placeholder="t('enterNotificationText')" :rows="3"
 						class="w-full" />
 				</div>

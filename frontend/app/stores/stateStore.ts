@@ -98,6 +98,30 @@ export const useStateStore = defineStore('state', {
         this.products.push(productId)
       }
     },
+    toggleClientGroup(groupId: string) {
+      const index = this.clientGroups.indexOf(groupId)
+      if (index > -1) {
+        this.clientGroups.splice(index, 1)
+      } else {
+        this.clientGroups.push(groupId)
+      }
+    },
+    toggleProductGroup(groupId: string) {
+      const index = this.productGroups.indexOf(groupId)
+      if (index > -1) {
+        this.productGroups.splice(index, 1)
+      } else {
+        this.productGroups.push(groupId)
+      }
+    },
+    toggleDepot(depotId: string) {
+      const index = this.depots.indexOf(depotId)
+      if (index > -1) {
+        this.depots.splice(index, 1)
+      } else {
+        this.depots.push(depotId)
+      }
+    },
     clearServers() {
       this.servers = []
     },

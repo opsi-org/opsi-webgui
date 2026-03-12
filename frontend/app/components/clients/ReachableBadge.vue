@@ -19,7 +19,7 @@ Reachable status badge with check button functionality.
 			:title="$t('message.clientIsNotReachable')" />
 
 		<!-- Check button (when status is unknown) -->
-		<UButton v-else variant="ghost" color="neutral" size="2xs" :icon="icons.clientReachable"
+		<UButton v-else variant="ghost" color="neutral" size="xs" :icon="icons.clientReachable"
 			:title="$t('checkClientReachability')" @click.stop="$emit('check')" />
 	</div>
 </template>

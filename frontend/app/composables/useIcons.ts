@@ -122,6 +122,7 @@ export const icons = {
   wakeOnLan: 'i-heroicons-signal',
   deploy: 'i-heroicons-cloud-arrow-down',
   play: 'i-heroicons-play',
+  bookmark: 'i-heroicons-bookmark',
 
   // Statistics & Status columns
   productsOutdatedLocal: 'i-heroicons-exclamation-circle',

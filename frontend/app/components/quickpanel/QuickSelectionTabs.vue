@@ -270,11 +270,11 @@ const totalSelections = computed(() =>
 
 // Remove functions for the All Selections tab
 function removeClientGroup(id: string) {
-	stateStore.setClientGroups(stateStore.selectedClientGroups.filter(g => g !== id))
+	stateStore.toggleClientGroup(id)
 }
 
 function removeProductGroup(id: string) {
-	stateStore.setProductGroups(stateStore.selectedProductGroups.filter(g => g !== id))
+	stateStore.toggleProductGroup(id)
 }
 
 // Load data when tab changes

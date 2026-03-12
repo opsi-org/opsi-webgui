@@ -15,12 +15,12 @@ Supports checkbox selection and hierarchical navigation.
 			'flex items-center gap-1.5 py-1.5 px-2 rounded cursor-pointer transition-all duration-150',
 			isSelected
 				? 'bg-opsi-blue/10 border border-opsi-blue/30'
-				: 'hover:bg-[--color-surface-hover) border border-transparent',
+				: 'hover:bg-(--color-surface-hover) border border-transparent',
 			node.isSpecial ? 'opacity-60' : '',
 		]" :style="{ paddingLeft: `${level * 12 + 8}px` }" @click="handleClick">
 			<!-- Expand/Collapse Toggle -->
 			<button v-if="hasChildren" type="button"
-				class="w-4 h-4 flex items-center justify-center text-[--color-text-muted) hover:text-[--color-text) transition-transform shrink-0"
+				class="w-4 h-4 flex items-center justify-center text-(--color-text-muted) hover:text-(--color-text) transition-transform shrink-0"
 				:class="{ 'rotate-90': isExpanded }" @click.stop="$emit('toggle', node.id)">
 				<UIcon name="i-heroicons-chevron-right" class="w-3.5 h-3.5" />
 			</button>
@@ -28,17 +28,17 @@ Supports checkbox selection and hierarchical navigation.
 
 			<!-- Checkbox -->
 			<input v-if="!node.isRoot" type="checkbox" :checked="isSelected" @change.stop="$emit('select', node.id)"
-				@click.stop class="rounded border-[--color-border) text-opsi-blue focus:ring-opsi-blue shrink-0" />
+				@click.stop class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue shrink-0" />
 
 			<!-- Node Label -->
 			<span class="flex-1 truncate text-xs"
-				:class="node.isSpecial ? 'italic text-[--color-text-muted)' : 'font-medium'" :title="node.label">
+				:class="node.isSpecial ? 'italic text-(--color-text-muted)' : 'font-medium'" :title="node.label">
 				{{ node.label }}
 			</span>
 
 			<!-- Member count badge -->
 			<span v-if="node.memberCount !== undefined && node.memberCount > 0"
-				class="text-[10px] text-[--color-text-muted) shrink-0">
+				class="text-[10px] text-(--color-text-muted) shrink-0">
 				{{ node.memberCount }}
 			</span>
 		</div>

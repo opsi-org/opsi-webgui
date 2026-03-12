@@ -15,10 +15,7 @@ log level control, auto-fetch, auto-scroll, and download options.
             <!-- Log Type Selector -->
             <div class="flex flex-col gap-1">
                 <label class="text-xs font-medium text-muted">{{ $t('logType') }}</label>
-                <USelectMenu v-model="selectedLogType" :items="LOG_TYPES" value-key="type" :loading="loading"
-                    class="w-44">
-                    <template #label>{{ selectedLogType?.type || $t('selectLogType') }}</template>
-                </USelectMenu>
+                <USelectMenu v-model="selectedLogType" :items="LOG_TYPES" :loading="loading" class="w-44" />
             </div>
 
             <!-- Log Level Slider -->
@@ -123,12 +120,18 @@ const { t: $t } = useI18n()
 const { apiGet } = useApiHelpers()
 const uiStore = useUiStore()
 
-const LOG_TYPES = [
-    { type: 'instlog', description: 'Installation log' },
-    { type: 'clientconnect', description: 'Client connect log' },
-    { type: 'userlogin', description: 'User login log' },
-    { type: 'bootimage', description: 'Boot image log' },
-    { type: 'opsiconfd', description: 'Opsiconfd log' },
+interface LogType {
+    label: string
+    value: string
+    description: string
+}
+
+const LOG_TYPES: LogType[] = [
+    { label: 'instlog', value: 'instlog', description: 'Installation log' },
+    { label: 'clientconnect', value: 'clientconnect', description: 'Client connect log' },
+    { label: 'userlogin', value: 'userlogin', description: 'User login log' },
+    { label: 'bootimage', value: 'bootimage', description: 'Boot image log' },
+    { label: 'opsiconfd', value: 'opsiconfd', description: 'Opsiconfd log' },
 ]
 
 // Log level color mappings (per OPSI corporate design)
@@ -158,7 +161,7 @@ const LOG_COLORS_DARK = [
     'text-opsi-log-dark-secret',    // 9
 ]
 
-const selectedLogType = ref<typeof LOG_TYPES[0] | null>(null)
+const selectedLogType = ref<LogType | undefined>(undefined)
 const logContent = ref<string[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -172,7 +175,7 @@ const markerLine = ref(-1)
 
 const logContainerRef = ref<HTMLElement | null>(null)
 
-const isDarkMode = computed(() => uiStore.colorMode === 'dark')
+const isDarkMode = computed(() => uiStore.theme === 'dark')
 const hasMarker = computed(() => markerLine.value >= 0)
 
 // Filter log content by level and query
@@ -189,7 +192,7 @@ const filteredLogContent = computed(() => {
 // Extract log level from line (format: [N] ...)
 function getLogLevel(line: string): number {
     const match = line.match(/^\[(\d)\]/)
-    return match ? parseInt(match[1], 10) : 6 // Default to INFO
+    return match && match[1] ? parseInt(match[1], 10) : 6 // Default to INFO
 }
 
 // Check if log level should be visible
@@ -248,7 +251,7 @@ async function fetchLog() {
     try {
         const result = await apiGet<{ result: string[] } | string[]>('/opsidata/log', {
             selectedClient: props.clientId,
-            selectedLogType: selectedLogType.value.type,
+            selectedLogType: selectedLogType.value.value,
         })
 
         if (result.error) {
@@ -287,7 +290,7 @@ function scrollToBottom() {
 
 // Download current filtered log
 function downloadLog() {
-    const fileName = `${props.clientId}_${selectedLogType.value?.type || 'log'}.log`
+    const fileName = `${props.clientId}_${selectedLogType.value?.value || 'log'}.log`
     const content = filteredLogContent.value.join('\n')
     const blob = new Blob([content], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
@@ -310,7 +313,7 @@ watch(selectedLogType, () => {
 
 // Watch for client ID changes
 watch(() => props.clientId, () => {
-    selectedLogType.value = null
+    selectedLogType.value = undefined
     logContent.value = []
     error.value = null
     markerLine.value = -1

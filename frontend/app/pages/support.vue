@@ -9,7 +9,7 @@
                             <span class="font-medium">{{ $t('professionalSupport') }}</span>
                         </div>
                     </template>
-                    <p class="text-sm text-[--color-text-muted) mb-4">{{ $t('professionalSupportDescription') }}</p>
+                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('professionalSupportDescription') }}</p>
                     <UButton variant="outline" color="neutral" block as="a" :href="supportUrl" target="_blank">{{
                         $t('contactSupport')
                         }}</UButton>
@@ -21,7 +21,7 @@
                             <span class="font-medium">{{ $t('community') }}</span>
                         </div>
                     </template>
-                    <p class="text-sm text-[--color-text-muted) mb-4">{{ $t('communityDescription') }}</p>
+                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('communityDescription') }}</p>
                     <UButton variant="outline" color="neutral" block as="a" href="https://forum.opsi.org"
                         target="_blank">{{
                             $t('visitOPSIForum') }}</UButton>
@@ -33,7 +33,7 @@
                             <span class="font-medium">{{ $t('documentation') }}</span>
                         </div>
                     </template>
-                    <p class="text-sm text-[--color-text-muted) mb-4">{{ $t('documentationDescription') }}</p>
+                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('documentationDescription') }}</p>
                     <UButton variant="outline" color="neutral" block as="a" href="https://docs.opsi.org"
                         target="_blank">
                         {{ $t('openDocumentation') }}

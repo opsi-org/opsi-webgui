@@ -143,7 +143,7 @@ const navGroups = computed<NavItem[][]>(() => [
             icon: icons.client,
             submenu: [
                 { title: 'allClients', route: '/clients' },
-                { title: 'addNew', route: '/clients/create' },
+                { title: 'addNew', route: '/clients/add' },
                 { title: 'clone', route: '/clients/clone' },
                 { title: 'configuration', route: '/clients/configuration/parameters' },
                 { title: 'logs', route: '/clients/logs' },

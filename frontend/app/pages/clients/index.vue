@@ -26,8 +26,8 @@ Clients page - Clients table with detail panel for selected clients and selected
 
                 <template #stats>
                     <div class="flex items-center gap-4 text-sm">
-                        <span class="text-[--color-text-muted)">
-                            {{ $t('total') }}: <span class="font-medium text-[--color-text)">{{
+                        <span class="text-(--color-text-muted)">
+                            {{ $t('total') }}: <span class="font-medium text-(--color-text)">{{
                                 clients.length }}</span>
                         </span>
                         <span v-if="selectedClients.length > 0" class="text-opsi-blue">
@@ -61,7 +61,7 @@ Clients page - Clients table with detail panel for selected clients and selected
                     </template>
                     <template #uefi-data="{ row }">
                         <SharedStatusBadge v-if="(row as Client).uefi" status="info" :label="'UEFI'" />
-                        <span v-else class="text-[--color-text-muted)">-</span>
+                        <span v-else class="text-(--color-text-muted)">-</span>
                     </template>
 
                     <!-- Statistics Columns -->

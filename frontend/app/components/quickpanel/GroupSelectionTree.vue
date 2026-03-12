@@ -13,11 +13,11 @@ Used for both client groups and product groups.
 	<div class="group-selection-tree">
 		<!-- Loading state -->
 		<div v-if="loading" class="flex justify-center py-6">
-			<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-[--color-text-muted)" />
+			<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
 		</div>
 
 		<!-- Empty state -->
-		<div v-else-if="treeNodes.length === 0" class="text-center py-6 text-sm text-[--color-text-muted)">
+		<div v-else-if="treeNodes.length === 0" class="text-center py-6 text-sm text-(--color-text-muted)">
 			{{ groupType === 'client' ? $t('noClientGroupsFound') : $t('noProductGroupsFound') }}
 		</div>
 
@@ -71,23 +71,12 @@ function toggleExpand(nodeId: string) {
 	expandedIds.value = newExpanded
 }
 
-// Toggle group selection
+// Toggle group selection - using new toggle methods
 function toggleSelect(nodeId: string) {
-	const current = props.groupType === 'client'
-		? [...stateStore.selectedClientGroups]
-		: [...stateStore.selectedProductGroups]
-
-	const idx = current.indexOf(nodeId)
-	if (idx > -1) {
-		current.splice(idx, 1)
-	} else {
-		current.push(nodeId)
-	}
-
 	if (props.groupType === 'client') {
-		stateStore.setClientGroups(current)
+		stateStore.toggleClientGroup(nodeId)
 	} else {
-		stateStore.setProductGroups(current)
+		stateStore.toggleProductGroup(nodeId)
 	}
 }
 

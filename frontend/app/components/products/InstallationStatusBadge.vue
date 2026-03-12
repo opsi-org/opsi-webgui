@@ -32,7 +32,7 @@ Installation status badge with icon for products table.
 
 		<!-- Not installed / None -->
 		<span v-else-if="normalizedStatus === 'not_installed' || normalizedStatus === 'none' || !normalizedStatus"
-			class="text-[--color-text-muted) text-xs">-</span>
+			class="text-(--color-text-muted) text-xs">-</span>
 
 		<!-- Other status -->
 		<UBadge v-else color="neutral" variant="subtle" size="xs">

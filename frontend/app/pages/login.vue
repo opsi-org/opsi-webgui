@@ -9,11 +9,9 @@ License: AGPL-3.0
   <div class="w-full max-w-md p-4">
     <UCard class="shadow-lg">
       <div class="text-center mb-6">
-        <img v-if="isDark" src="~/assets/images/opsi-webgui-dark.svg" alt="OPSI Bee" class="mx-auto mb-2"
-          style="width: 100px; height: auto;" />
-        <img v-else src="~/assets/images/opsi-webgui-light.svg" alt="OPSI Bee" class="mx-auto mb-2"
-          style="width: 100px; height: auto;" />
-        <span class="text-base md:text-xl font-semibold hidden sm:inline">opsi-WebGUI</span>
+        <img v-if="isDark" src="~/assets/images/opsi_webgui_with_text_light.svg" alt="OPSI Bee"
+          class="mx-auto mb-2 h-50" />
+        <img v-else src="~/assets/images/opsi_webgui_with_text_dark.svg" alt="OPSI Bee" class="mx-auto mb-2 h-50" />
       </div>
       <form @submit.prevent="handleLogin" class="space-y-5">
         <UAlert v-if="errorMessage" color="error" variant="soft" :close-button="{ icon: 'i-heroicons-x-mark' }"

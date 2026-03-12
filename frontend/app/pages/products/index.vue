@@ -14,7 +14,8 @@ Products page - unified localboot and netboot products with tab navigation
         </template>
 
         <ProductsList ref="productsListRef"
-            :product-type="activeType === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'" />
+            :product-type="activeType === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'"
+            :initial-product-id="initialProductId" />
     </LayoutsPageLayout>
 </template>
 
@@ -26,6 +27,7 @@ const router = useRouter()
 const route = useRoute()
 
 const activeType = ref<string>((route.query.type as string) || 'localboot')
+const initialProductId = computed(() => route.query.product as string | undefined)
 
 const productTypes = [
     { label: String($t('localbootProducts')), value: 'localboot' },
@@ -36,7 +38,7 @@ const loading = ref(false)
 const productsListRef = ref<{ refresh: () => void } | null>(null)
 
 watch(activeType, (newType) => {
-    router.replace({ query: { type: newType } })
+    router.replace({ query: { ...route.query, type: newType } })
 })
 
 watch(() => route.query.type, (newType) => {
