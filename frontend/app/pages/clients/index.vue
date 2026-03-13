@@ -21,13 +21,13 @@ Clients page - Clients table with detail panel for selected clients and selected
                         <label class="flex items-center gap-1 cursor-pointer text-xs text-(--color-text-muted)">
                             <input type="checkbox" v-model="autoRefreshEnabled"
                                 class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue w-3.5 h-3.5" />
-                            {{ $t('autoRefresh') || 'Auto' }}
+                            {{ $t('autoRefresh') }}
                         </label>
                     </div>
                     <!-- Changes detected banner -->
                     <UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
                         variant="soft" size="xs" @click="manualRefresh">
-                        {{ $t('changesDetected') || 'Changes detected - Click to refresh' }}
+                        {{ $t('changesDetected') }}
                     </UButton>
 
                     <UButton v-if="selectedClients.length > 0" :icon="icons.product" color="primary" size="sm"

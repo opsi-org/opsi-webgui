@@ -98,7 +98,7 @@ License: AGPL-3.0
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                             t('quickPanel')
-                            }}</span>
+                        }}</span>
                         <button @click="quickpanelOpen = false"
                             class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
                             <UIcon :name="icons.close" class="w-4 h-4" />
@@ -203,15 +203,15 @@ License: AGPL-3.0
                             <div class="flex items-center justify-between mb-2">
                                 <div class="flex items-center gap-2">
                                     <span v-if="messageBusStore.isConnected" class="w-2 h-2 rounded-full bg-green-500"
-                                        :title="t('messageBusConnected') || 'MessageBus connected'" />
+                                        :title="t('messageBusConnected')" />
                                     <span v-else class="w-2 h-2 rounded-full bg-red-400"
-                                        :title="t('messageBusDisconnected') || 'MessageBus disconnected'" />
+                                        :title="t('messageBusDisconnected')" />
                                     <span class="text-sm">{{ t('autoRefresh') }}</span>
                                 </div>
                                 <UToggle v-model="autoRefreshEnabled" size="sm" />
                             </div>
                             <p class="text-[10px] text-(--color-text-muted) leading-relaxed">
-                                {{ t('autoRefreshTooltip') || 'When enabled, pages auto-refresh on changes.' }}
+                                {{ t('autoRefreshTooltip') }}
                             </p>
                         </div>
                     </div>
@@ -284,17 +284,16 @@ License: AGPL-3.0
                             class="mb-2 px-2 py-1.5 rounded bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-xs flex items-center gap-1.5">
                             <UIcon :name="icons.warning || 'i-heroicons-exclamation-triangle'"
                                 class="w-3.5 h-3.5 shrink-0" />
-                            <span>{{ t('readOnlyMode') || 'Read-only mode' }}</span>
+                            <span>{{ t('readOnlyMode') }}</span>
                         </div>
                         <!-- Access levels (when some are restricted) -->
                         <div v-if="!userStore.clientCreation || !userStore.hostGroupAccess || !userStore.productGroupAccess"
                             class="mb-2 px-2 py-1 rounded bg-(--color-surface) dark:bg-(--color-background) text-xs text-(--color-text-muted)">
-                            <span class="block font-medium mb-0.5">{{ t('accessRestrictions') || 'Restrictions'
-                            }}:</span>
+                            <span class="block font-medium mb-0.5">{{ t('accessRestrictions') }}:</span>
                             <span v-if="!userStore.clientCreation" class="block">- {{ t('noClientCreation') }}</span>
                             <span v-if="!userStore.hostGroupAccess" class="block">- {{ t('noHostGroupAccess') }}</span>
                             <span v-if="!userStore.productGroupAccess" class="block">- {{ t('noProductGroupAccess')
-                            }}</span>
+                                }}</span>
                         </div>
                         <div class="flex items-center justify-between mb-2">
                             <div>
@@ -581,14 +580,14 @@ const getPageDescription = (path: string): string => {
     const lastSegment = segments[segments.length - 1] || ''
 
     const exactMatches: Record<string, string> = {
-        'clients': t('clientsPageDescription') || 'View and manage opsi clients',
-        'servers': t('serversPageDescription') || 'Manage depots and config servers',
-        'products': t('productsPageDescription') || 'Browse and deploy software packages',
-        'groups': t('groupsPageDescription') || 'Organize clients into logical groups',
-        'admin/maintenance': t('adminMaintenancePageDescription') || 'System maintenance, backup and restore',
-        'admin/diagnostics': t('adminDiagnosticsPageDescription') || 'Health checks, diagnostics and modules',
-        'admin/terminal': t('adminTerminalPageDescription') || 'Direct server terminal access',
-        'support': t('supportPageDescription') || 'Help and documentation resources',
+        'clients': t('clientsPageDescription'),
+        'servers': t('serversPageDescription'),
+        'products': t('productsPageDescription'),
+        'groups': t('groupsPageDescription'),
+        'admin/maintenance': t('adminMaintenancePageDescription'),
+        'admin/diagnostics': t('adminDiagnosticsPageDescription'),
+        'admin/terminal': t('adminTerminalPageDescription'),
+        'support': t('supportPageDescription'),
     }
 
     if (exactMatches[normalizedPath]) {
@@ -599,31 +598,31 @@ const getPageDescription = (path: string): string => {
         if (segments[1] === 'config') {
             const clientId = segments[2]
             return clientId
-                ? t('clientConfigPageDescription') || `Configuration for ${clientId}`
-                : t('clientConfigSelectDescription') || 'Select a client to configure'
+                ? t('clientConfigPageDescription')
+                : t('clientConfigSelectDescription')
         }
-        return t('clientDetailPageDescription') || 'Client details and actions'
+        return t('clientDetailPageDescription')
     }
 
     if (firstSegment === 'servers' && segments.length > 1) {
         if (segments[1] === 'config') {
             const serverId = segments[2]
             return serverId
-                ? t('serverConfigPageDescription') || `Configuration for ${serverId}`
-                : t('serverConfigSelectDescription') || 'Select a server to configure'
+                ? t('serverConfigPageDescription')
+                : t('serverConfigSelectDescription')
         }
-        return t('serverDetailPageDescription') || 'Server details and actions'
+        return t('serverDetailPageDescription')
     }
 
     if (firstSegment === 'products' && segments.length > 1) {
         const productId = lastSegment
         return productId && productId !== 'config'
-            ? t('productDetailPageDescription') || `Product details for ${productId}`
-            : t('productConfigPageDescription') || 'Product configuration'
+            ? t('productDetailPageDescription')
+            : t('productConfigPageDescription')
     }
 
     if (firstSegment === 'groups' && segments.length > 1) {
-        return t('groupDetailPageDescription') || 'Group details and members'
+        return t('groupDetailPageDescription')
     }
 
     return exactMatches[firstSegment] || ''

@@ -28,12 +28,12 @@ Includes side panel with tabs for product properties and dependencies.
 						<label class="flex items-center gap-1 cursor-pointer text-xs text-(--color-text-muted)">
 							<input type="checkbox" v-model="autoRefreshEnabled"
 								class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue w-3.5 h-3.5" />
-							{{ $t('autoRefresh') || 'Auto' }}
+							{{ $t('autoRefresh') }}
 						</label>
 					</div>
 					<UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
 						variant="soft" size="xs" class="ml-2" @click="manualRefresh">
-						{{ $t('changesDetected') || 'Refresh' }}
+						{{ $t('changesDetected') }}
 					</UButton>
 				</template>
 
@@ -472,7 +472,7 @@ async function fetchProductConfig(productId: string) {
 			console.error('Properties API error:', propsResult.error)
 			toast.add({
 				title: String($t('warning')),
-				description: String($t('message.failedToLoadProperties') || 'Failed to load product properties'),
+				description: String($t('message.failedToLoadProperties')),
 				color: 'warning',
 			})
 		} else if (propsResult.data) {

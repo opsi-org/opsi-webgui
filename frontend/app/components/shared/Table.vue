@@ -105,7 +105,7 @@ Table - A reusable table component with pagination and infinite scroll support.
                         <!-- End of data marker -->
                         <tr v-else-if="infiniteScroll && displayedRows.length > 0 && !hasMoreData">
                             <td :colspan="totalColumns" class="px-4 py-3 text-center">
-                                <span class="text-xs text-(--color-text-muted)">{{ $t('allItemsLoaded') || 'All items loaded' }}</span>
+                                <span class="text-xs text-(--color-text-muted)">{{ $t('allItemsLoaded') }}</span>
                             </td>
                         </tr>
                     </tbody>
@@ -122,9 +122,9 @@ Table - A reusable table component with pagination and infinite scroll support.
                 <div class="text-sm text-(--color-text-muted)">
                     <template v-if="infiniteScroll">
                         {{ $t('showing') }} {{ displayedRows.length }} {{ $t('of') }} {{ sortedRows.length }} {{
-                            $t('items') || 'items' }}
+                            $t('items') }}
                         <span v-if="hasMoreData" class="ml-1 text-opsi-blue">
-                            ({{ $t('scrollForMore') || 'scroll for more' }})
+                            ({{ $t('scrollForMore') }})
                         </span>
                     </template>
                     <template v-else>
@@ -358,14 +358,6 @@ function loadMoreData() {
     emit('load-more')
 }
 
-// Watch for sentinel element appearing/disappearing
-watch(() => hasMoreData.value, async (hasMore) => {
-    if (hasMore && intersectionObserver) {
-        await nextTick()
-        observeSentinel()
-    }
-})
-
 // Re-observe when rows change
 watch(() => props.rows.length, async () => {
     if (props.infiniteScroll && intersectionObserver) {
@@ -447,6 +439,14 @@ const hasMoreData = computed(() => {
         return loadedPages.value * pagination.value.pageSize < sortedRows.value.length
     }
     return false
+})
+
+// Watch for sentinel element appearing/disappearing
+watch(() => hasMoreData.value, async (hasMore) => {
+    if (hasMore && intersectionObserver) {
+        await nextTick()
+        observeSentinel()
+    }
 })
 
 const visiblePages = computed(() => {

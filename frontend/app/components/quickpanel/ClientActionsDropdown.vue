@@ -117,10 +117,10 @@ License: AGPL-3.0
 				</div>
 
 				<div class="flex justify-end gap-2 pt-3 border-t border-[--color-border]">
-					<UButton variant="ghost" @click="confirmOpen = false">{{ t('cancel') || 'Cancel' }}</UButton>
+					<UButton variant="ghost" @click="confirmOpen = false">{{ t('cancel') }}</UButton>
 					<UButton :color="currentAction === 'delete' ? 'error' : 'primary'" :loading="loading"
 						:disabled="!canExecute" @click="executeAction">
-						{{ t(currentAction || 'confirm') || currentAction }}
+						{{ t(currentAction || 'confirm') }}
 					</UButton>
 				</div>
 			</div>
@@ -132,7 +132,7 @@ License: AGPL-3.0
 		<template #content>
 			<div class="p-4 min-w-87.5">
 				<div class="flex items-center justify-between mb-3">
-					<h3 class="text-lg font-semibold">{{ t('actionResults') || 'Action Results' }}</h3>
+					<h3 class="text-lg font-semibold">{{ t('actionResults') }}</h3>
 					<UButton variant="ghost" size="xs" icon="i-heroicons-x-mark" @click="resultOpen = false" />
 				</div>
 
@@ -147,7 +147,7 @@ License: AGPL-3.0
 				</div>
 
 				<div class="flex justify-end mt-4 pt-3 border-t border-[--color-border]">
-					<UButton variant="soft" @click="resultOpen = false">{{ t('close') || 'Close' }}</UButton>
+					<UButton variant="soft" @click="resultOpen = false">{{ t('close') }}</UButton>
 				</div>
 			</div>
 		</template>
@@ -182,8 +182,8 @@ const osTypes = [
 
 function showSelectionHint() {
 	toast.add({
-		title: t('noClientsSelected') || 'No Clients Selected',
-		description: t('selectClientsFirst') || 'Select clients first to use quick actions',
+		title: t('noClientsSelected'),
+		description: t('selectClientsFirst'),
 		color: 'warning',
 		icon: icons.warning,
 	})
@@ -301,14 +301,14 @@ async function executeAction() {
 
 		if (failCount === 0) {
 			toast.add({
-				title: t('success') || 'Success',
-				description: `${t('actionCompleted') || 'Action completed'} (${successCount} ${t('clients') || 'clients'})`,
+				title: t('success'),
+				description: `${t('actionCompleted')} (${successCount} ${t('clients')})`,
 				color: 'success'
 			})
 		} else {
 			toast.add({
-				title: t('partialSuccess') || 'Partial Success',
-				description: `${successCount} ${t('successful') || 'successful'}, ${failCount} ${t('failed') || 'failed'}`,
+				title: t('partialSuccess'),
+				description: `${successCount} ${t('successful')}, ${failCount} ${t('failed')}`,
 				color: 'warning'
 			})
 			// Show detailed results
@@ -322,7 +322,7 @@ async function executeAction() {
 	} catch (e) {
 		console.error('Action failed:', e)
 		toast.add({
-			title: t('error') || 'Error',
+			title: t('error'),
 			description: String(e),
 			color: 'error'
 		})

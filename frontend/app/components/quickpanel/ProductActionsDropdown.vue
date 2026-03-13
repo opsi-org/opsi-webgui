@@ -77,7 +77,7 @@ License: AGPL-3.0
 								class="flex justify-between">
 								<span class="font-mono">{{ p.productId }}</span>
 								<span class="text-muted">→ <span class="text-opsi-blue">{{ actionRequest
-										}}</span></span>
+								}}</span></span>
 							</div>
 							<div v-if="previewProducts.length > 15" class="text-muted text-center pt-1">
 								+{{ previewProducts.length - 15 }} {{ t('more') }}
@@ -123,17 +123,17 @@ const filters = ref({ installationStatus: '', actionResult: '' })
 const actionRequest = ref('setup')
 
 const installationStatusOptions = [
-	{ value: '', label: t('all') || 'All' },
-	{ value: 'installed', label: t('installed') || 'Installed' },
-	{ value: 'not_installed', label: t('notInstalled') || 'Not Installed' },
-	{ value: 'unknown', label: t('unknown') || 'Unknown' },
+	{ value: '', label: t('all') },
+	{ value: 'installed', label: t('installed') },
+	{ value: 'not_installed', label: t('notInstalled') },
+	{ value: 'unknown', label: t('unknown') },
 ]
 
 const actionResultOptions = [
-	{ value: '', label: t('all') || 'All' },
-	{ value: 'successful', label: t('successful') || 'Successful' },
-	{ value: 'failed', label: t('failed') || 'Failed' },
-	{ value: 'none', label: t('none') || 'None' },
+	{ value: '', label: t('all') },
+	{ value: 'successful', label: t('successful') },
+	{ value: 'failed', label: t('failed') },
+	{ value: 'none', label: t('none') },
 ]
 
 const actionRequestOptions = [
@@ -200,14 +200,14 @@ async function applyActions() {
 		})
 
 		toast.add({
-			title: t('success') || 'Success',
-			description: t('actionsApplied') || `Action "${actionRequest.value}" set for ${productIds.length} products`,
+			title: t('success'),
+			description: t('actionsApplied'),
 			color: 'success'
 		})
 		dialogOpen.value = false
 	} catch (e) {
 		console.error('Failed to apply actions:', e)
-		toast.add({ title: t('error') || 'Error', description: String(e), color: 'error' })
+		toast.add({ title: t('error'), description: String(e), color: 'error' })
 	} finally {
 		applying.value = false
 	}

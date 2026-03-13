@@ -40,7 +40,7 @@ Row-level client actions dropdown for the clients table.
 					<span class="font-medium">{{ $t('onDemand') }}</span>
 				</div>
 				<p class="text-sm text-[--color-text-muted] mb-4">
-					{{ $t('onDemandDescription') || 'Trigger action requests on this client?' }}
+					{{ $t('onDemandDescription') }}
 				</p>
 				<div class="flex justify-end gap-2">
 					<UButton variant="outline" color="neutral" size="sm" @click="showOnDemandPopover = false">
@@ -63,7 +63,7 @@ Row-level client actions dropdown for the clients table.
 					<h3 class="text-lg font-semibold">{{ $t('notify') }}</h3>
 				</div>
 				<p class="text-sm text-[--color-text-muted] mb-3">
-					{{ $t('sendNotificationTo') || 'Send notification to' }} {{ clientId }}
+					{{ $t('sendNotificationTo') }} {{ clientId }}
 				</p>
 				<UFormField :label="$t('notificationText')" class="mb-4">
 					<UTextarea v-model="notifyText" :placeholder="String($t('enterNotificationText'))" :rows="3" />
@@ -135,7 +135,7 @@ Row-level client actions dropdown for the clients table.
 					<h3 class="text-lg font-semibold">{{ $t('deployClientAgent') }}</h3>
 				</div>
 				<p class="text-sm text-[--color-text-muted] mb-4">
-					{{ $t('deployAgentTo') || 'Deploy agent to' }} {{ clientId }}
+					{{ $t('deployAgentTo') }} {{ clientId }}
 				</p>
 
 				<div class="space-y-3 mb-4">
@@ -173,10 +173,10 @@ Row-level client actions dropdown for the clients table.
 					<h3 class="text-lg font-semibold text-red-600">{{ $t('delete') }}</h3>
 				</div>
 				<p class="text-sm mb-2">
-					{{ $t('confirmDeleteClient') || `Delete client "${clientId}"?` }}
+					{{ $t('confirmDeleteClient', { clientId }) }}
 				</p>
 				<p class="text-xs text-[--color-text-muted] mb-4">
-					{{ $t('deleteClientWarning') || 'This action cannot be undone.' }}
+					{{ $t('deleteClientWarning') }}
 				</p>
 				<div class="flex justify-end gap-2">
 					<UButton variant="outline" color="neutral" @click="showDeleteModal = false" :disabled="executing">

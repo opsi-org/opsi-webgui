@@ -32,11 +32,10 @@ License: AGPL-3.0
 				<div v-if="!hasAnySelections" class="text-center py-8">
 					<UIcon name="i-heroicons-cursor-arrow-ripple"
 						class="w-10 h-10 mx-auto mb-2 text-[--color-text-muted] opacity-30" />
-					<p class="text-sm text-[--color-text-muted]">{{ t('noSelectionsYet') || 'No selections yet' }}
+					<p class="text-sm text-[--color-text-muted]">{{ t('noSelectionsYet') }}
 					</p>
 					<p class="text-xs text-[--color-text-muted] mt-1 opacity-70">
-						{{ t('selectFromOtherTabs') || 'Select servers, client groups or product groups to get started'
-						}}
+						{{ t('selectFromOtherTabs') }}
 					</p>
 				</div>
 				<div v-else class="space-y-3 max-h-[35vh] overflow-y-auto pr-1">
@@ -46,10 +45,10 @@ License: AGPL-3.0
 							<span
 								class="text-xs font-medium text-[--color-text-muted] uppercase flex items-center gap-1.5">
 								<UIcon :name="icons.server" class="w-3.5 h-3.5" />
-								{{ t('servers') || 'Servers' }}
+								{{ t('servers') }}
 							</span>
 							<button @click="stateStore.clearServers()" class="text-xs text-red-500 hover:text-red-600">
-								{{ t('clear') || 'Clear' }}
+								{{ t('clear') }}
 							</button>
 						</div>
 						<div class="space-y-1">
@@ -71,11 +70,11 @@ License: AGPL-3.0
 							<span
 								class="text-xs font-medium text-[--color-text-muted] uppercase flex items-center gap-1.5">
 								<UIcon name="i-heroicons-user-group" class="w-3.5 h-3.5" />
-								{{ t('clientGroups') || 'Client Groups' }}
+								{{ t('clientGroups') }}
 							</span>
 							<button @click="stateStore.clearClientGroups()"
 								class="text-xs text-red-500 hover:text-red-600">
-								{{ t('clear') || 'Clear' }}
+								{{ t('clear') }}
 							</button>
 						</div>
 						<div class="space-y-1">
@@ -97,11 +96,11 @@ License: AGPL-3.0
 							<span
 								class="text-xs font-medium text-[--color-text-muted] uppercase flex items-center gap-1.5">
 								<UIcon :name="icons.product" class="w-3.5 h-3.5" />
-								{{ t('productGroups') || 'Product Groups' }}
+								{{ t('productGroups') }}
 							</span>
 							<button @click="stateStore.clearProductGroups()"
 								class="text-xs text-red-500 hover:text-red-600">
-								{{ t('clear') || 'Clear' }}
+								{{ t('clear') }}
 							</button>
 						</div>
 						<div class="space-y-1">
@@ -123,10 +122,10 @@ License: AGPL-3.0
 							<span
 								class="text-xs font-medium text-[--color-text-muted] uppercase flex items-center gap-1.5">
 								<UIcon :name="icons.client" class="w-3.5 h-3.5" />
-								{{ t('clients') || 'Clients' }}
+								{{ t('clients') }}
 							</span>
 							<button @click="stateStore.clearClients()" class="text-xs text-red-500 hover:text-red-600">
-								{{ t('clear') || 'Clear' }}
+								{{ t('clear') }}
 							</button>
 						</div>
 						<div class="space-y-1">
@@ -141,7 +140,7 @@ License: AGPL-3.0
 							</div>
 							<div v-if="stateStore.selectedClients.length > 10"
 								class="text-xs text-center text-[--color-text-muted] py-1">
-								+{{ stateStore.selectedClients.length - 10 }} {{ t('more') || 'more' }}
+								+{{ stateStore.selectedClients.length - 10 }} {{ t('more') }}
 							</div>
 						</div>
 					</div>
@@ -152,10 +151,10 @@ License: AGPL-3.0
 							<span
 								class="text-xs font-medium text-[--color-text-muted] uppercase flex items-center gap-1.5">
 								<UIcon :name="icons.product" class="w-3.5 h-3.5" />
-								{{ t('products') || 'Products' }}
+								{{ t('products') }}
 							</span>
 							<button @click="stateStore.clearProducts()" class="text-xs text-red-500 hover:text-red-600">
-								{{ t('clear') || 'Clear' }}
+								{{ t('clear') }}
 							</button>
 						</div>
 						<div class="space-y-1">
@@ -170,7 +169,7 @@ License: AGPL-3.0
 							</div>
 							<div v-if="stateStore.selectedProducts.length > 10"
 								class="text-xs text-center text-[--color-text-muted] py-1">
-								+{{ stateStore.selectedProducts.length - 10 }} {{ t('more') || 'more' }}
+								+{{ stateStore.selectedProducts.length - 10 }} {{ t('more') }}
 							</div>
 						</div>
 					</div>
@@ -183,7 +182,7 @@ License: AGPL-3.0
 					<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-[--color-text-muted]" />
 				</div>
 				<div v-else-if="servers.length === 0" class="text-center py-6 text-sm text-[--color-text-muted]">
-					{{ t('noServersFound') || 'No servers found' }}
+					{{ t('noServersFound') }}
 				</div>
 				<div v-else class="space-y-1 max-h-[35vh] overflow-y-auto pr-1">
 					<label v-for="server in servers" :key="server.id"
@@ -237,25 +236,25 @@ const tabs = computed(() => [
 	{
 		value: 'all',
 		icon: 'i-heroicons-list-bullet',
-		label: t('overview') || 'Overview',
+		label: t('overview'),
 		count: totalSelections.value
 	},
 	{
 		value: 'servers',
 		icon: 'i-heroicons-server-stack',
-		label: t('servers') || 'Servers',
+		label: t('servers'),
 		count: stateStore.selectedServers.length
 	},
 	{
 		value: 'client-groups',
 		icon: 'i-heroicons-user-group',
-		label: t('clientGroups') || 'Client Groups',
+		label: t('clientGroups'),
 		count: stateStore.selectedClientGroups.length
 	},
 	{
 		value: 'product-groups',
 		icon: 'i-heroicons-cube',
-		label: t('productGroups') || 'Product Groups',
+		label: t('productGroups'),
 		count: stateStore.selectedProductGroups.length
 	}
 ])
