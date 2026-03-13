@@ -78,6 +78,7 @@ export const icons = {
   settings: 'i-heroicons-adjustments-vertical',
   warning: 'i-heroicons-exclamation-triangle',
   check: 'i-heroicons-check-circle',
+  checkCircle: 'i-heroicons-check-circle',
   error: 'i-heroicons-x-circle',
   info: 'i-heroicons-information-circle',
   health: 'i-heroicons-heart',
@@ -89,6 +90,7 @@ export const icons = {
   lock: 'i-heroicons-lock-closed',
   locked: 'i-heroicons-lock-closed',
   unlocked: 'i-heroicons-lock-open',
+  license: 'i-heroicons-shield-check',
   x: 'i-heroicons-x-mark',
 
   // User & Auth
