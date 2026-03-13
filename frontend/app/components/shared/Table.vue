@@ -8,10 +8,11 @@ License: AGPL-3.0
 Table - A reusable table component with pagination and infinite scroll support.
 -->
 <template>
-    <div class="data-table flex flex-col h-full min-h-0">
+    <div class="data-table flex flex-col h-full min-h-0"
+        :style="infiniteScroll ? 'max-height: calc(100vh - 200px)' : ''">
         <!-- Table Container (scrollable) -->
         <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
-            <div ref="tableContainer" class="flex-1 overflow-auto transition-all duration-200" @scroll="handleScroll">
+            <div ref="tableContainer" class="flex-1 overflow-y-auto transition-all duration-200" @scroll="handleScroll">
 
                 <div v-if="loading && rows.length === 0"
                     class="flex items-center justify-center py-12 text-(--color-text-muted)]">
@@ -92,6 +93,15 @@ Table - A reusable table component with pagination and infinite scroll support.
                                 </div>
                             </td>
                         </tr>
+                        <!-- Infinite scroll sentinel -->
+                        <tr v-if="infiniteScroll && hasMoreData" ref="scrollSentinel">
+                            <td :colspan="totalColumns" class="px-4 py-4 text-center">
+                                <div class="flex items-center justify-center gap-2 text-(--color-text-muted)] text-sm">
+                                    <UIcon :name="icons.loading" class="w-4 h-4 animate-spin" />
+                                    <span>{{ $t('loading') }}...</span>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -112,7 +122,7 @@ Table - A reusable table component with pagination and infinite scroll support.
                     </template>
                     <template v-else>
                         {{ $t('showing') }} {{ Math.min(displayedRows.length, startIndex + 1) }}-{{ Math.min(endIndex,
-                        pagination.total) }} {{ $t('of') }} {{ pagination.total }}
+                            pagination.total) }} {{ $t('of') }} {{ pagination.total }}
                     </template>
                 </div>
 
@@ -241,16 +251,60 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 
 const tableContainer = ref<HTMLElement | null>(null)
+const scrollSentinel = ref<HTMLElement | null>(null)
 const filterQuery = ref('')
 const loadedPages = ref(1)
 const selectedRowKeys = ref<string[]>([])
 const columnVisibility = ref<Record<string, boolean>>({})
+let intersectionObserver: IntersectionObserver | null = null
 
 onMounted(() => {
     props.columns.forEach(col => {
         columnVisibility.value[col.key] = col.visible !== false
     })
+
+    // Setup IntersectionObserver for infinite scroll
+    if (props.infiniteScroll) {
+        setupIntersectionObserver()
+    }
 })
+
+onUnmounted(() => {
+    if (intersectionObserver) {
+        intersectionObserver.disconnect()
+        intersectionObserver = null
+    }
+})
+
+function setupIntersectionObserver() {
+    if (!tableContainer.value) return
+
+    intersectionObserver = new IntersectionObserver(
+        (entries) => {
+            const entry = entries[0]
+            if (entry && entry.isIntersecting && hasMoreData.value && !props.loading) {
+                loadMoreData()
+            }
+        },
+        {
+            root: tableContainer.value,
+            rootMargin: '200px',
+            threshold: 0.1
+        }
+    )
+}
+
+function loadMoreData() {
+    loadedPages.value++
+    emit('load-more')
+}
+
+// Watch for sentinel element changes
+watch(scrollSentinel, (newSentinel) => {
+    if (intersectionObserver && newSentinel) {
+        intersectionObserver.observe(newSentinel)
+    }
+}, { immediate: true })
 
 const sortState = ref<TableSortState>({
     column: props.defaultSortColumn || '',
@@ -405,9 +459,9 @@ function goToPage(page: number) {
 function handleScroll() {
     if (!props.infiniteScroll || !tableContainer.value || props.loading) return
     const { scrollTop, scrollHeight, clientHeight } = tableContainer.value
-    if (scrollTop + clientHeight >= scrollHeight - 100 && hasMoreData.value) {
-        loadedPages.value++
-        emit('load-more')
+    // Fallback scroll detection if IntersectionObserver doesn't work
+    if (scrollTop + clientHeight >= scrollHeight - 150 && hasMoreData.value) {
+        loadMoreData()
     }
 }
 
