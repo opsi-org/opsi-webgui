@@ -18,7 +18,7 @@ License: AGPL-3.0
 				<UIcon :name="tab.icon" class="w-4 h-4" />
 				<span class="hidden sm:inline">{{ tab.label }}</span>
 				<span v-if="tab.count > 0"
-					class="min-w-[18px] h-[18px] flex items-center justify-center text-[10px] rounded-full font-semibold"
+					class="min-w-4.5 h-4.5 flex items-center justify-center text-[10px] rounded-full font-semibold"
 					:class="activeTab === tab.value ? 'bg-opsi-blue text-white' : 'bg-[--color-surface-hover] text-[--color-text-muted]'">
 					{{ tab.count }}
 				</span>

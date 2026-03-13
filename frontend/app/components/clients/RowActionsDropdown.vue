@@ -34,7 +34,7 @@ Row-level client actions dropdown for the clients table.
 	<!-- On Demand Confirmation Popover -->
 	<UPopover v-model:open="showOnDemandPopover" :popper="{ placement: 'bottom' }">
 		<template #content>
-			<div class="p-4 min-w-[280px]">
+			<div class="p-4 min-w-70">
 				<div class="flex items-center gap-2 mb-3">
 					<UIcon :name="icons.onDemand" class="w-5 h-5 text-opsi-blue" />
 					<span class="font-medium">{{ $t('onDemand') }}</span>
@@ -83,13 +83,13 @@ Row-level client actions dropdown for the clients table.
 	<!-- Reboot Confirmation Popover -->
 	<UPopover v-model:open="showRebootPopover" :popper="{ placement: 'bottom' }">
 		<template #content>
-			<div class="p-4 min-w-[280px]">
+			<div class="p-4 min-w-70">
 				<div class="flex items-center gap-2 mb-3">
 					<UIcon :name="icons.reboot" class="w-5 h-5 text-amber-500" />
 					<span class="font-medium">{{ $t('reboot') }}</span>
 				</div>
 				<p class="text-sm text-[--color-text-muted] mb-4">
-					{{ $t('confirmRebootClient') || `Reboot client ${clientId}?` }}
+					{{ $t('confirmRebootClient') }}
 				</p>
 				<div class="flex justify-end gap-2">
 					<UButton variant="outline" color="neutral" size="sm" @click="showRebootPopover = false">
@@ -106,13 +106,13 @@ Row-level client actions dropdown for the clients table.
 	<!-- Shutdown Confirmation Popover -->
 	<UPopover v-model:open="showShutdownPopover" :popper="{ placement: 'bottom' }">
 		<template #content>
-			<div class="p-4 min-w-[280px]">
+			<div class="p-4 min-w-70">
 				<div class="flex items-center gap-2 mb-3">
 					<UIcon :name="icons.shutdown" class="w-5 h-5 text-amber-600" />
 					<span class="font-medium">{{ $t('shutdown') }}</span>
 				</div>
 				<p class="text-sm text-[--color-text-muted] mb-4">
-					{{ $t('confirmShutdownClient') || `Shutdown client ${clientId}?` }}
+					{{ $t('confirmShutdownClient') }}
 				</p>
 				<div class="flex justify-end gap-2">
 					<UButton variant="outline" color="neutral" size="sm" @click="showShutdownPopover = false">
@@ -129,7 +129,7 @@ Row-level client actions dropdown for the clients table.
 	<!-- Deploy Client Agent Modal -->
 	<UModal v-model:open="showDeployModal">
 		<template #content>
-			<div class="p-4 min-w-[360px]">
+			<div class="p-4 min-w-90">
 				<div class="flex items-center gap-3 mb-4">
 					<UIcon :name="icons.deploy" class="w-6 h-6 text-opsi-blue" />
 					<h3 class="text-lg font-semibold">{{ $t('deployClientAgent') }}</h3>

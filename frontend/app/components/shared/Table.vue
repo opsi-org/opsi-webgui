@@ -157,7 +157,7 @@ Table - A reusable table component with pagination and infinite scroll support.
                                 <input type="checkbox" v-model="columnVisibility[col.key]" :disabled="col.alwaysVisible"
                                     class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue disabled:opacity-50" />
                                 <span class="text-sm" :class="{ 'opacity-50': col.alwaysVisible }">{{ col.label
-                                }}</span>
+                                    }}</span>
                             </label>
                         </div>
                     </template>
@@ -184,7 +184,7 @@ Table - A reusable table component with pagination and infinite scroll support.
                     <template v-for="page in visiblePages" :key="page">
                         <span v-if="page === '...'" class="px-2 text-(--color-text-muted)">...</span>
                         <UButton v-else :variant="page === pagination.page ? 'solid' : 'ghost'"
-                            :color="page === pagination.page ? 'primary' : 'neutral'" size="xs" class="min-w-[32px]"
+                            :color="page === pagination.page ? 'primary' : 'neutral'" size="xs" class="min-w-8"
                             @click="goToPage(page as number)">
                             {{ page }}
                         </UButton>
