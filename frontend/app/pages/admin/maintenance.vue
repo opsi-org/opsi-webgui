@@ -1,7 +1,7 @@
 <!--
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
 
@@ -14,7 +14,6 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             <template #title>{{ error }}</template>
         </UAlert>
 
-        <!-- Blocked Clients & Locked Products Row -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Blocked Clients -->
             <UCard>
@@ -112,7 +111,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                     size="sm" class="flex-1" @keydown.enter.prevent="addAddressException" />
                                 <UButton color="primary" size="sm" :icon="icons.add" @click="addAddressException">{{
                                     $t('add')
-                                }}</UButton>
+                                    }}</UButton>
                             </div>
                             <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
                                 <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
@@ -159,7 +158,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     <!-- Backup Options -->
                     <div>
                         <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup')
-                        }}</div>
+                            }}</div>
                         <div class="space-y-3">
                             <label
                                 class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
@@ -235,7 +234,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     <!-- Restore Options -->
                     <div>
                         <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('restoreOptions')
-                        }}</div>
+                            }}</div>
                         <div class="space-y-3">
                             <label
                                 class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">

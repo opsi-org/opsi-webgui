@@ -98,7 +98,7 @@ License: AGPL-3.0
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                             t('quickPanel')
-                        }}</span>
+                            }}</span>
                         <button @click="quickpanelOpen = false"
                             class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
                             <UIcon :name="icons.close" class="w-4 h-4" />
@@ -192,6 +192,30 @@ License: AGPL-3.0
                         </div>
                     </div>
 
+                    <!-- Auto-Refresh Section -->
+                    <div class="mb-4">
+                        <label
+                            class="block text-xs font-medium text-(--color-text-muted) dark:text-(--color-text-muted) mb-2 uppercase">
+                            {{ t('autoRefresh') }}
+                        </label>
+                        <div
+                            class="p-3 rounded bg-(--color-surface) dark:bg-(--color-background) border border-(--color-border) dark:border-(--color-border)">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span v-if="messageBusStore.isConnected" class="w-2 h-2 rounded-full bg-green-500"
+                                        :title="t('messageBusConnected') || 'MessageBus connected'" />
+                                    <span v-else class="w-2 h-2 rounded-full bg-red-400"
+                                        :title="t('messageBusDisconnected') || 'MessageBus disconnected'" />
+                                    <span class="text-sm">{{ t('autoRefresh') }}</span>
+                                </div>
+                                <UToggle v-model="autoRefreshEnabled" size="sm" />
+                            </div>
+                            <p class="text-[10px] text-(--color-text-muted) leading-relaxed">
+                                {{ t('autoRefreshTooltip') || 'When enabled, pages auto-refresh on changes.' }}
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- Quick Actions Section -->
                     <div class="mb-4">
                         <label
@@ -266,11 +290,11 @@ License: AGPL-3.0
                         <div v-if="!userStore.clientCreation || !userStore.hostGroupAccess || !userStore.productGroupAccess"
                             class="mb-2 px-2 py-1 rounded bg-(--color-surface) dark:bg-(--color-background) text-xs text-(--color-text-muted)">
                             <span class="block font-medium mb-0.5">{{ t('accessRestrictions') || 'Restrictions'
-                                }}:</span>
+                            }}:</span>
                             <span v-if="!userStore.clientCreation" class="block">- {{ t('noClientCreation') }}</span>
                             <span v-if="!userStore.hostGroupAccess" class="block">- {{ t('noHostGroupAccess') }}</span>
                             <span v-if="!userStore.productGroupAccess" class="block">- {{ t('noProductGroupAccess')
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex items-center justify-between mb-2">
                             <div>
@@ -418,14 +442,21 @@ import { useUiStore } from '~/stores/uiStore'
 import { useUserStore } from '~/stores/userStore'
 import { useStateStore } from '~/stores/stateStore'
 import { useSelectionStore } from '~/stores/selectionStore'
+import { useMessageBusStore } from '~/stores/messageBusStore'
 import { useSessionTimer } from '~/composables/useSessionTimer'
 
 const icons = useIcons()
 const userStore = useUserStore()
 const stateStore = useStateStore()
 const selectionStore = useSelectionStore()
+const messageBusStore = useMessageBusStore()
 const { callLogout } = useApiHelpers()
 const uiStore = useUiStore()
+
+const autoRefreshEnabled = computed({
+    get: () => messageBusStore.autoRefresh,
+    set: (val: boolean) => messageBusStore.setAutoRefresh(val)
+})
 
 const { remainingSeconds, isWarning, formattedTime, formattedTimeText, refreshSession } = useSessionTimer(true)
 const $route = useRoute()

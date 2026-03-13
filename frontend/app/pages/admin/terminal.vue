@@ -1,7 +1,7 @@
 <!--
 This file is part of opsi-webgui application.
 opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
+Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
 
@@ -9,7 +9,7 @@ Admin Terminal Page - Server terminal access via messagebus
 -->
 <template>
     <div class="h-full flex flex-col gap-3">
-        <!-- Header with controls -->
+        <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
             <div class="flex items-center gap-3">
                 <UButton v-if="!isConnected" color="primary" size="sm" :icon="icons.check" :loading="isConnecting"
@@ -22,14 +22,12 @@ Admin Terminal Page - Server terminal access via messagebus
                 <span v-else class="flex items-center gap-1 text-sm text-gray-500"><span
                         class="w-2 h-2 rounded-full bg-gray-400"></span>{{ $t('disconnected') }}</span>
             </div>
-            <!-- Settings toggle -->
             <UButton variant="ghost" color="neutral" size="sm" :icon="icons.config"
                 @click="showSettings = !showSettings">{{ $t('settings') }}</UButton>
         </div>
 
-        <!-- Settings panel (collapsible) -->
-        <div v-if="showSettings"
-            class="shrink-0 p-3 rounded-lg border border-(--color-border) bg-(--color-surface)">
+        <!-- Settings panel -->
+        <div v-if="showSettings" class="shrink-0 p-3 rounded-lg border border-(--color-border)">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <UFormField :label="$t('terminalID')">
                     <UInput v-model="terminalId" :disabled="isConnected" size="sm" class="w-full" />
@@ -45,7 +43,7 @@ Admin Terminal Page - Server terminal access via messagebus
             <template #title>{{ $t('message.terminalDisabled') }}</template>
         </UAlert>
 
-        <!-- Terminal Container (flex-grow to fill remaining space) -->
+        <!-- Terminal Container -->
         <div v-if="!isDisabled" class="flex-1 min-h-0 rounded-lg overflow-hidden border border-(--color-border)">
             <div ref="terminalContainer" class="h-full w-full bg-gray-900" />
         </div>
@@ -59,7 +57,6 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const api = useApiHelpers()
 
-// Terminal state
 const terminalContainer = ref<HTMLElement | null>(null)
 const isDisabled = ref(false)
 const isConnecting = ref(false)
@@ -70,17 +67,14 @@ const terminalInstance = ref<{
     fitAddon: { fit: () => void }
 } | null>(null)
 
-// Terminal config
 const terminalIdDefault = crypto.randomUUID()
 const terminalChannelDefault = 'service:config:terminal'
 const terminalId = ref(terminalIdDefault)
 const terminalChannel = ref(terminalChannelDefault)
 const terminalSessionChannel = ref('')
 
-// MessageBus
 const messageBus = useMessageBus(handleMessage, false)
 
-// Create a terminal interface type helper
 function createTerminalInterface(t: unknown): {
     cols: number
     rows: number
@@ -97,13 +91,11 @@ function createTerminalInterface(t: unknown): {
     return t as ReturnType<typeof createTerminalInterface>
 }
 
-// Check if terminal is disabled
 async function checkDisabled() {
     const { data, error } = await api.getDisabledFeatures()
     if (!error && data) isDisabled.value = data.includes('terminal')
 }
 
-// Handle messagebus messages
 async function handleMessage(msg: unknown) {
     if (!msg || typeof msg !== 'object') return
     const message = msg as { type?: string; cols?: number; rows?: number; data?: Uint8Array; back_channel?: string }
@@ -126,7 +118,6 @@ async function handleMessage(msg: unknown) {
     }
 }
 
-// Initialize terminal
 async function initTerminal() {
     if (!terminalContainer.value || typeof window === 'undefined') return
 
@@ -169,7 +160,6 @@ async function initTerminal() {
         terminal.open(terminalContainer.value)
         fitAddon.fit()
 
-        // Enhance terminal object with our properties
         const enhancedTerminal = terminal as typeof terminal & {
             terminalId: string
             terminalChannel: string
@@ -184,11 +174,9 @@ async function initTerminal() {
             fitAddon,
         }
 
-        // Handle resize
         const handleResize = () => fitAddon.fit()
         window.addEventListener('resize', handleResize)
 
-        // Welcome message
         terminal.writeln('\x1b[1;34m╔════════════════════════════════════════╗\x1b[0m')
         terminal.writeln('\x1b[1;34m║     OPSI Server Terminal               ║\x1b[0m')
         terminal.writeln('\x1b[1;34m╚════════════════════════════════════════╝\x1b[0m')
@@ -205,7 +193,6 @@ async function initTerminal() {
     }
 }
 
-// Connect to terminal via messagebus
 async function connect() {
     if (!terminalInstance.value) return
 
@@ -213,32 +200,21 @@ async function connect() {
 
     try {
         const terminal = terminalInstance.value.terminal
-
-        // Initialize messagebus
         await messageBus.mount()
-
         terminal.clear()
         terminal.writeln('\x1b[1;33mConnecting to server...\x1b[0m')
-
-        // Set session channel
         terminalSessionChannel.value = 'session:' + terminalId.value
         terminal.terminalSessionChannel = terminalSessionChannel.value
-
-        // Open terminal via messagebus
         await messageBus.wsTerminalOpen(terminalId.value, terminal)
-
         terminal.writeln('\x1b[1;32mConnected!\x1b[0m')
         terminal.writeln('')
-
         isConnected.value = true
 
-        // Handle terminal input
         terminal.onData((data: string) => {
             if (!isConnected.value) return
             messageBus.wsTerminalSend(data, terminal)
         })
 
-        // Handle terminal resize
         let skipResizeEvent = true
         setTimeout(() => { skipResizeEvent = false }, 500)
 
@@ -257,7 +233,6 @@ async function connect() {
     }
 }
 
-// Disconnect terminal
 function disconnect() {
     if (terminalInstance.value && isConnected.value) {
         messageBus.wsTerminalClose(terminalInstance.value.terminal)
@@ -270,7 +245,6 @@ function disconnect() {
     terminalChannel.value = terminalChannelDefault
 }
 
-// Lifecycle
 onMounted(async () => {
     await checkDisabled()
     if (!isDisabled.value) {

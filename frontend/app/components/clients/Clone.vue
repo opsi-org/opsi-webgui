@@ -4,7 +4,7 @@ opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
 Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
-Client Clone component - form for cloning a client (similar to clients/add page).
+Client Clone component - form for cloning a client.
 -->
 <template>
     <div class="space-y-4">
@@ -31,10 +31,11 @@ Client Clone component - form for cloning a client (similar to clients/add page)
             <!-- New Client Section -->
             <div>
                 <p class="text-[10px] font-semibold uppercase tracking-wide text-muted mb-2">{{ $t('newClient') }}</p>
-                <div class="divide-y divide-[--color-border] rounded-lg border border-[--color-border]">
+                <div
+                    class="rounded-lg border border-[--color-border] bg-white dark:bg-[--color-surface] shadow-sm dark:shadow-none">
                     <!-- New Client ID -->
                     <div
-                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 hover:bg-[--color-surface] transition-colors">
+                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 hover:bg-gray-50 dark:hover:bg-[--color-surface-hover] transition-colors">
                         <label class="text-sm font-medium text-default shrink-0">
                             {{ $t('clientId') }} <span class="text-error">*</span>
                         </label>
@@ -46,27 +47,27 @@ Client Clone component - form for cloning a client (similar to clients/add page)
                     </div>
                     <!-- Description -->
                     <div
-                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 hover:bg-[--color-surface] transition-colors">
+                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 border-t border-[--color-border] hover:bg-gray-50 dark:hover:bg-[--color-surface-hover] transition-colors">
                         <label class="text-sm font-medium text-default shrink-0">{{ $t('description') }}</label>
                         <UInput v-model="form.description" :disabled="loading" size="sm"
                             :placeholder="$t('optionalDescription')" />
                     </div>
                     <!-- IP Address -->
                     <div
-                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 hover:bg-[--color-surface] transition-colors">
+                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 border-t border-[--color-border] hover:bg-gray-50 dark:hover:bg-[--color-surface-hover] transition-colors">
                         <label class="text-sm font-medium text-default shrink-0">{{ $t('ipAddress') }}</label>
                         <UInput v-model="form.ipAddress" :disabled="loading" size="sm" placeholder="192.168.1.x" />
                     </div>
                     <!-- MAC Address -->
                     <div
-                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 hover:bg-[--color-surface] transition-colors">
+                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 border-t border-[--color-border] hover:bg-gray-50 dark:hover:bg-[--color-surface-hover] transition-colors">
                         <label class="text-sm font-medium text-default shrink-0">{{ $t('macAddress') }}</label>
                         <UInput v-model="form.macAddress" :disabled="loading" size="sm"
                             placeholder="00:11:22:33:44:55" />
                     </div>
                     <!-- Notes -->
                     <div
-                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-start gap-x-4 gap-y-1 px-3 py-2 hover:bg-[--color-surface] transition-colors">
+                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-start gap-x-4 gap-y-1 px-3 py-2 border-t border-[--color-border] hover:bg-gray-50 dark:hover:bg-[--color-surface-hover] transition-colors">
                         <label class="text-sm font-medium text-default shrink-0 pt-1">{{ $t('notes') }}</label>
                         <UTextarea v-model="form.notes" :disabled="loading" :rows="2" size="sm" />
                     </div>
@@ -77,22 +78,23 @@ Client Clone component - form for cloning a client (similar to clients/add page)
             <div>
                 <p class="text-[10px] font-semibold uppercase tracking-wide text-muted mb-2">{{ $t('cloneOptions') }}
                 </p>
-                <div class="divide-y divide-[--color-border] rounded-lg border border-[--color-border]">
+                <div
+                    class="rounded-lg border border-[--color-border] bg-white dark:bg-[--color-surface] shadow-sm dark:shadow-none">
                     <!-- Copy Product States -->
                     <div
-                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 hover:bg-[--color-surface] transition-colors">
+                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 hover:bg-gray-50 dark:hover:bg-[--color-surface-hover] transition-colors">
                         <label class="text-sm font-medium text-default shrink-0">{{ $t('copyProductStates') }}</label>
                         <UToggle v-model="form.copyProductStates" :disabled="loading" />
                     </div>
                     <!-- Copy Config States -->
                     <div
-                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 hover:bg-[--color-surface] transition-colors">
+                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 border-t border-[--color-border] hover:bg-gray-50 dark:hover:bg-[--color-surface-hover] transition-colors">
                         <label class="text-sm font-medium text-default shrink-0">{{ $t('copyConfigStates') }}</label>
                         <UToggle v-model="form.copyConfigStates" :disabled="loading" />
                     </div>
                     <!-- Copy Group Memberships -->
                     <div
-                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 hover:bg-[--color-surface] transition-colors">
+                        class="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-x-4 gap-y-1 px-3 py-2 border-t border-[--color-border] hover:bg-gray-50 dark:hover:bg-[--color-surface-hover] transition-colors">
                         <label class="text-sm font-medium text-default shrink-0">{{ $t('copyGroups') }}</label>
                         <UToggle v-model="form.copyGroups" :disabled="loading" />
                     </div>

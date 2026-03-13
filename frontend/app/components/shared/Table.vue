@@ -15,13 +15,13 @@ Table - A reusable table component with pagination and infinite scroll support.
             <div ref="tableContainer" class="flex-1 overflow-y-auto transition-all duration-200" @scroll="handleScroll">
 
                 <div v-if="loading && rows.length === 0"
-                    class="flex items-center justify-center py-12 text-(--color-text-muted)]">
+                    class="flex items-center justify-center py-12 text-(--color-text-muted)">
                     <UIcon :name="icons.loading" class="w-6 h-6 animate-spin mr-2" />
                     {{ $t('loading') }}
                 </div>
 
                 <table v-else class="w-full" role="grid" aria-label="Data table">
-                    <thead class="bg-(--color-surface)] dark:bg-(--color-surface)] sticky top-0 z-10">
+                    <thead class="bg-(--color-surface) dark:bg-(--color-surface) sticky top-0 z-10">
                         <tr role="row">
                             <th v-if="selectable" class="w-10 px-3 py-3 text-center" role="columnheader"
                                 aria-label="Select all">
@@ -31,8 +31,8 @@ Table - A reusable table component with pagination and infinite scroll support.
                             </th>
                             <th v-for="col in visibleColumns" :key="col.key" role="columnheader"
                                 :aria-sort="sortState.column === col.key ? (sortState.direction === 'asc' ? 'ascending' : 'descending') : undefined"
-                                class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-(--color-text-muted)]"
-                                :class="[col.headerClass, { 'cursor-pointer hover:bg-(--color-surface-hover)]': col.sortable }]"
+                                class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-(--color-text-muted)"
+                                :class="[col.headerClass, { 'cursor-pointer hover:bg-(--color-surface-hover)': col.sortable }]"
                                 :style="{ width: col.width, minWidth: col.minWidth, textAlign: col.align }"
                                 @click="col.sortable && handleSort(col.key)"
                                 @keydown.enter="col.sortable && handleSort(col.key)"
@@ -48,15 +48,15 @@ Table - A reusable table component with pagination and infinite scroll support.
                                 </div>
                             </th>
                             <th v-if="hasActions" role="columnheader"
-                                class="w-24 px-3 py-3 text-center text-xs font-medium uppercase tracking-wider text-(--color-text-muted)]">
+                                class="w-24 px-3 py-3 text-center text-xs font-medium uppercase tracking-wider text-(--color-text-muted)">
                                 {{ $t('actions') }}
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-(--color-border)]">
+                    <tbody class="divide-y divide-(--color-border)">
                         <tr v-for="(row, idx) in displayedRows" :key="getRowKey(row, idx)" role="row"
                             :aria-selected="isSelected(row)" :tabindex="clickable ? 0 : undefined"
-                            class="hover:bg-(--color-surface)] dark:hover:bg-(--color-surface-hover)] transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-(--color-opsi-blue)]"
+                            class="hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-(--color-opsi-blue)]"
                             :class="{
                                 'cursor-pointer': clickable,
                                 'table-row-selected': isSelected(row)
@@ -87,19 +87,25 @@ Table - A reusable table component with pagination and infinite scroll support.
                         </tr>
                         <tr v-if="displayedRows.length === 0 && !loading">
                             <td :colspan="totalColumns" class="px-4 py-12 text-center">
-                                <div class="flex flex-col items-center gap-2 text-(--color-text-muted)]">
+                                <div class="flex flex-col items-center gap-2 text-(--color-text-muted)">
                                     <UIcon :name="emptyIcon || icons.table" class="w-8 h-8 opacity-50" />
                                     <span>{{ emptyLabel || $t('message.noItemsSelected') }}</span>
                                 </div>
                             </td>
                         </tr>
                         <!-- Infinite scroll sentinel -->
-                        <tr v-if="infiniteScroll && hasMoreData" ref="scrollSentinel">
+                        <tr v-if="infiniteScroll && hasMoreData" ref="scrollSentinel" class="scroll-sentinel">
                             <td :colspan="totalColumns" class="px-4 py-4 text-center">
-                                <div class="flex items-center justify-center gap-2 text-(--color-text-muted)] text-sm">
+                                <div class="flex items-center justify-center gap-2 text-(--color-text-muted) text-sm">
                                     <UIcon :name="icons.loading" class="w-4 h-4 animate-spin" />
                                     <span>{{ $t('loading') }}...</span>
                                 </div>
+                            </td>
+                        </tr>
+                        <!-- End of data marker -->
+                        <tr v-else-if="infiniteScroll && displayedRows.length > 0 && !hasMoreData">
+                            <td :colspan="totalColumns" class="px-4 py-3 text-center">
+                                <span class="text-xs text-(--color-text-muted)">{{ $t('allItemsLoaded') || 'All items loaded' }}</span>
                             </td>
                         </tr>
                     </tbody>
@@ -109,11 +115,11 @@ Table - A reusable table component with pagination and infinite scroll support.
 
         <!-- Fixed Bottom Bar -->
         <div
-            class="shrink-0 border-t border-(--color-border)] bg-(--color-surface)] dark:bg-(--color-background)] px-4 py-2 flex flex-wrap items-center justify-between gap-2">
+            class="shrink-0 border-t border-(--color-border) bg-(--color-surface) dark:bg-(--color-background) px-4 py-2 flex flex-wrap items-center justify-between gap-2">
             <!-- Left side: Showing X of Y + Table controls -->
             <div class="flex items-center gap-3">
                 <!-- Showing info -->
-                <div class="text-sm text-(--color-text-muted)]">
+                <div class="text-sm text-(--color-text-muted)">
                     <template v-if="infiniteScroll">
                         {{ $t('showing') }} {{ displayedRows.length }} {{ $t('of') }} {{ sortedRows.length }} {{
                             $t('items') || 'items' }}
@@ -129,7 +135,7 @@ Table - A reusable table component with pagination and infinite scroll support.
 
                 <!-- Separator -->
                 <div v-if="(selectable && selectedRowKeys.length > 0) || columnToggle || showRefresh || filterable"
-                    class="hidden sm:block w-px h-4 bg-(--color-border)]" />
+                    class="hidden sm:block w-px h-4 bg-(--color-border)" />
 
                 <!-- Clear Selection -->
                 <UButton v-if="selectable && selectedRowKeys.length > 0" :icon="icons.clear" variant="ghost"
@@ -143,11 +149,11 @@ Table - A reusable table component with pagination and infinite scroll support.
                         :title="$t('columnSettings')" />
                     <template #content>
                         <div class="p-3 space-y-2 max-h-64 overflow-y-auto min-w-48">
-                            <div class="text-xs font-medium text-(--color-text-muted)] uppercase mb-2">
+                            <div class="text-xs font-medium text-(--color-text-muted) uppercase mb-2">
                                 {{ $t('columns') }}
                             </div>
                             <label v-for="col in toggleableColumns" :key="col.key"
-                                class="flex items-center gap-2 cursor-pointer hover:bg-(--color-surface)] p-1 rounded">
+                                class="flex items-center gap-2 cursor-pointer hover:bg-(--color-surface) p-1 rounded">
                                 <input type="checkbox" v-model="columnVisibility[col.key]" :disabled="col.alwaysVisible"
                                     class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue disabled:opacity-50" />
                                 <span class="text-sm" :class="{ 'opacity-50': col.alwaysVisible }">{{ col.label
@@ -176,7 +182,7 @@ Table - A reusable table component with pagination and infinite scroll support.
                     :disabled="pagination.page === 1" @click="goToPage(pagination.page - 1)" />
                 <div class="flex items-center gap-1">
                     <template v-for="page in visiblePages" :key="page">
-                        <span v-if="page === '...'" class="px-2 text-(--color-text-muted)]">...</span>
+                        <span v-if="page === '...'" class="px-2 text-(--color-text-muted)">...</span>
                         <UButton v-else :variant="page === pagination.page ? 'solid' : 'ghost'"
                             :color="page === pagination.page ? 'primary' : 'neutral'" size="xs" class="min-w-[32px]"
                             @click="goToPage(page as number)">
@@ -267,7 +273,7 @@ onMounted(() => {
     const savedCols = props.tableId ? loadPersistedColumns(props.tableId) : null
     props.columns.forEach(col => {
         if (savedCols && col.key in savedCols) {
-            columnVisibility.value[col.key] = savedCols[col.key]
+            columnVisibility.value[col.key] = savedCols[col.key] ?? true
         } else {
             columnVisibility.value[col.key] = col.visible !== false
         }
@@ -325,28 +331,48 @@ function setupIntersectionObserver() {
         },
         {
             root: tableContainer.value,
-            rootMargin: '300px',
-            threshold: 0
+            rootMargin: '200px 0px',
+            threshold: 0.1
         }
     )
 
-    // Observe sentinel if it already exists
-    if (scrollSentinel.value) {
-        intersectionObserver.observe(scrollSentinel.value as unknown as Element)
+    // Try to observe sentinel immediately if it exists
+    nextTick(() => {
+        observeSentinel()
+    })
+}
+
+function observeSentinel() {
+    if (!intersectionObserver) return
+
+    // Find the sentinel element by class
+    const sentinel = tableContainer.value?.querySelector('.scroll-sentinel')
+    if (sentinel) {
+        intersectionObserver.observe(sentinel)
     }
 }
 
 function loadMoreData() {
+    if (props.loading) return
     loadedPages.value++
     emit('load-more')
 }
 
-// Watch for sentinel element changes
-watch(scrollSentinel, (newSentinel) => {
-    if (intersectionObserver && newSentinel) {
-        intersectionObserver.observe(newSentinel)
+// Watch for sentinel element appearing/disappearing
+watch(() => hasMoreData.value, async (hasMore) => {
+    if (hasMore && intersectionObserver) {
+        await nextTick()
+        observeSentinel()
     }
-}, { immediate: true })
+})
+
+// Re-observe when rows change
+watch(() => props.rows.length, async () => {
+    if (props.infiniteScroll && intersectionObserver) {
+        await nextTick()
+        observeSentinel()
+    }
+})
 
 const sortState = ref<TableSortState>({
     column: props.defaultSortColumn || '',
