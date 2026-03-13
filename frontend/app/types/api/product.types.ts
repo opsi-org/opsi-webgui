@@ -28,11 +28,11 @@ export interface ProductRow {
   productType?: ProductType
   depotId?: string
   ident?: string
-  selected?: boolean
+  selected?: boolean | number
   name?: string
   description?: string
   advice?: string
-  modificationTime?: string
+  modificationTime?: string | null
   priority?: number
   installationStatusErrorLevel?: number
   installationStatus?: string
@@ -44,17 +44,15 @@ export interface ProductRow {
   actionResultDetails?: string[]
   // API returns snake_case for these fields
   client_version_outdated?: boolean
-  clientVersionOutdated?: boolean // Also accept camelCase
   depot_version_diff?: boolean
-  depotVersionDiff?: boolean // Also accept camelCase
-  notOnAllDepots?: boolean
+  not_on_all_depots?: boolean
   numDepots?: number
   actions?: string[]
   selectedDepots?: string[]
-  selectedClients?: string[]
-  clientVersions?: string[]
+  selectedClients?: string[] | null
+  clientVersions?: string[] | null
   depotVersions?: string[]
-  [key: string]: unknown // Allow additional fields
+  [key: string]: unknown
 }
 
 /* Tracks product action requests/changes per client */

@@ -29,7 +29,7 @@ export interface ClientListItem {
 /** Full client details - used for /api/opsidata/clients response */
 export interface Client {
   clientId: string
-  ident?: string // Optional - not always returned by API
+  ident?: string
   description?: string
   notes?: string
   macAddress?: string
@@ -40,7 +40,7 @@ export interface Client {
   lastSeen?: string
   depotId?: string
   uefi?: boolean
-  uefiValue?: boolean
+  uefi_value?: boolean | null    // API returns snake_case
   // Statistics columns (snake_case to match API response)
   version_outdated?: number
   version_outdated_netboot?: number
@@ -48,15 +48,8 @@ export interface Client {
   installationStatus_installed?: number
   actionResult_failed?: number
   actionResult_successful?: number
-  // CamelCase aliases for backwards compatibility
-  versionOutdated?: number
-  versionOutdatedNetboot?: number
-  installationStatusUnknown?: number
-  installationStatusInstalled?: number
-  actionResultFailed?: number
-  actionResultSuccessful?: number
   selected?: boolean | number
-  reachable?: boolean
+  reachable?: boolean | null
 }
 
 export type ClientList = Client[]
