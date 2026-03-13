@@ -14,15 +14,28 @@ interface MessageBusState {
   bus?: WebSocket
   terminal?: WebSocket
   lastMsg?: unknown
+  autoRefresh: boolean
+  changesDetected: boolean
+  lastEventType: string
+  lastEventTime: number
 }
 
 export const useMessageBusStore = defineStore('messageBus', {
+  persist: {
+    key: 'opsi-webgui-messagebus',
+    storage: localStorage,
+    pick: ['autoRefresh'],
+  },
   state: (): MessageBusState => ({
     retries: 0,
     retriesMax: 3,
     bus: undefined,
     terminal: undefined,
     lastMsg: undefined,
+    autoRefresh: true,
+    changesDetected: false,
+    lastEventType: '',
+    lastEventTime: 0,
   }),
   getters: {
     isConnected: (state) => state.bus?.readyState === 1,
@@ -48,6 +61,17 @@ export const useMessageBusStore = defineStore('messageBus', {
     },
     resetRetries() {
       this.retries = 0
+    },
+    setAutoRefresh(val: boolean) {
+      this.autoRefresh = val
+    },
+    setChangesDetected(val: boolean) {
+      this.changesDetected = val
+    },
+    setLastEvent(type: string) {
+      this.lastEventType = type
+      this.lastEventTime = Date.now()
+      this.changesDetected = true
     },
   },
 })

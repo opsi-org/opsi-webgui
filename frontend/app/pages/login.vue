@@ -18,23 +18,39 @@ License: AGPL-3.0
           @close="errorMessage = ''">
           <template #title>{{ errorMessage }}</template>
         </UAlert>
-        <UFormGroup :label="String($t('username'))">
+
+        <!-- Config Server Info -->
+        <div v-if="configServerName"
+          class="flex items-center gap-2 p-3 rounded-lg bg-(--color-surface) dark:bg-(--color-surface) border border-(--color-border) dark:border-(--color-border)">
+          <UIcon :name="icons.serverStack" class="w-5 h-5 text-opsi-blue" />
+          <div class="flex-1 min-w-0">
+            <span class="text-xs text-(--color-text-muted) dark:text-(--color-text-muted) block">{{ $t('configServer')
+              ||
+              'Config Server' }}</span>
+            <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text) truncate block">{{
+              configServerName
+              }}</span>
+          </div>
+          <UIcon :name="icons.check" class="w-4 h-4 text-green-500" />
+        </div>
+
+        <UFormField :label="String($t('username'))">
           <UInput v-model="cred.username" :placeholder="String($t('username'))" size="lg" :icon="icons.user"
             autocomplete="username" required class="w-full" />
-        </UFormGroup>
-        <UFormGroup :label="String($t('password'))">
+        </UFormField>
+        <UFormField :label="String($t('password'))">
           <UInput v-model="cred.password" :placeholder="String($t('password'))" type="password" size="lg"
             :icon="icons.key" autocomplete="current-password" required class="w-full" />
-        </UFormGroup>
+        </UFormField>
         <div class="space-y-3 pt-2">
           <UButton type="submit" block size="lg" :disabled="!cred.username || !cred.password" color="primary"
             :loading="loading">{{ $t('login') }}</UButton>
           <div v-if="showSaml" class="relative my-4">
             <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-gray-300 dark:border-gray-700" />
+              <div class="w-full border-t border-(--color-border) dark:border-(--color-border)" />
             </div>
             <div class="relative flex justify-center text-sm"><span
-                class="px-2 bg-white dark:bg-gray-800 text-gray-500">{{
+                class="px-2 bg-white dark:bg-(--color-surface) text-(--color-text-muted) dark:text-(--color-text-muted)">{{
                   $t('or') }}</span></div>
           </div>
           <UButton v-if="showSaml" type="button" block size="lg" variant="outline" color="primary" @click="samlLogin">{{
@@ -58,12 +74,41 @@ const userStore = useUserStore()
 const colorMode = useColorMode()
 const { $customFetch } = useNuxtApp() as unknown as { $customFetch: typeof $fetch }
 
-const isDark = computed(() => colorMode.value === 'dark')
+const isDark = computed(() => colorMode.preference === 'dark')
 
 const cred = reactive({ username: '', password: '' })
 const loading = ref(false)
 const showSaml = ref(true)
 const errorMessage = ref('')
+const configServerName = ref('')
+
+// Fetch config server name on mount
+onMounted(async () => {
+  try {
+    const result = await $customFetch<string>('/user/opsiserver')
+    if (result) {
+      configServerName.value = typeof result === 'string' ? result : (result as any)?.result || ''
+    }
+  } catch {
+    // Not critical - ignore if not reachable pre-login
+  }
+
+  // Handle SAML callback (token in URL after SAML redirect)
+  const samlSession = route.query.session as string
+  if (samlSession) {
+    // SAML login returned - the session cookie should already be set by the backend
+    try {
+      const authResult = await $customFetch<{ result: string; username?: string }>('/auth/session')
+      if (authResult && (authResult as any).username) {
+        userStore.login((authResult as any).username)
+        const redirectPath = route.query.redirect?.toString() || config.public.BASE_PAGE || '/clients'
+        await navigateTo(redirectPath)
+      }
+    } catch {
+      errorMessage.value = String($t('message.login.failed'))
+    }
+  }
+})
 
 const handleLogin = async () => {
   loading.value = true
@@ -101,5 +146,9 @@ const handleLogin = async () => {
   }
 }
 
-const samlLogin = () => { window.location.href = '/addons/webgui/api/auth/saml' }
+const samlLogin = () => {
+  // Redirect to SAML login endpoint - backend handles the SAML flow
+  const currentUrl = window.location.origin + (config.public.OWN_PATH || '/addons/webgui/app') + '/login'
+  window.location.href = (config.public.API_PATH || '/addons/webgui/api') + '/auth/saml?redirect=' + encodeURIComponent(currentUrl)
+}
 </script>

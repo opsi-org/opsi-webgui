@@ -4,17 +4,16 @@ opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
 Copyright (c) uib GmbH <info@uib.de> 2025
 All rights reserved.
 License: AGPL-3.0
+
+FACADE STORE - delegates all selection state to selectionStore.
+Only owns: configServer, _initialized.
+All selection getters/actions proxy to useSelectionStore() for backward compatibility.
 */
 import { defineStore } from 'pinia'
+import { useSelectionStore } from './selectionStore'
 
 interface StateStoreState {
   configServer: string
-  depots: string[]
-  clients: string[]
-  products: string[]
-  servers: string[]
-  clientGroups: string[]
-  productGroups: string[]
   _initialized: boolean
 }
 
@@ -22,137 +21,80 @@ export const useStateStore = defineStore('state', {
   persist: { key: 'opsi-webgui-state', storage: localStorage },
   state: (): StateStoreState => ({
     configServer: '',
-    depots: [],
-    clients: [],
-    products: [],
-    servers: [],
-    clientGroups: [],
-    productGroups: [],
     _initialized: false,
   }),
   getters: {
-    selectedDepots: (state: StateStoreState): string[] => state.depots,
-    selectedClients: (state: StateStoreState): string[] => state.clients,
-    selectedProducts: (state: StateStoreState): string[] => state.products,
-    selectedServers: (state: StateStoreState): string[] => state.servers,
-    selectedClientGroups: (state: StateStoreState): string[] => state.clientGroups,
-    selectedProductGroups: (state: StateStoreState): string[] => state.productGroups,
+    /** @deprecated Use selectionStore.selectedDepots */
+    depots(): string[] { return useSelectionStore().selectedDepots },
+    /** @deprecated Use selectionStore.selectedClients */
+    clients(): string[] { return useSelectionStore().selectedClients },
+    /** @deprecated Use selectionStore.selectedProducts */
+    products(): string[] { return useSelectionStore().selectedProducts },
+    /** @deprecated Use selectionStore.selectedDepots */
+    servers(): string[] { return useSelectionStore().selectedDepots },
+    /** @deprecated Use selectionStore.selectedDepots */
+    selectedDepots(): string[] { return useSelectionStore().selectedDepots },
+    /** @deprecated Use selectionStore.selectedClients */
+    selectedClients(): string[] { return useSelectionStore().selectedClients },
+    /** @deprecated Use selectionStore.selectedProducts */
+    selectedProducts(): string[] { return useSelectionStore().selectedProducts },
+    /** @deprecated Use selectionStore.selectedDepots */
+    selectedServers(): string[] { return useSelectionStore().selectedDepots },
+    /** @deprecated Use selectionStore.selectedClientGroups */
+    selectedClientGroups(): string[] { return useSelectionStore().selectedClientGroups },
+    /** @deprecated Use selectionStore.selectedProductGroups */
+    selectedProductGroups(): string[] { return useSelectionStore().selectedProductGroups },
     isInitialized: (state: StateStoreState): boolean => state._initialized,
-    hasAnySelections: (state: StateStoreState): boolean =>
-      state.depots.length > 0 ||
-      state.clients.length > 0 ||
-      state.products.length > 0 ||
-      state.servers.length > 0 ||
-      state.clientGroups.length > 0 ||
-      state.productGroups.length > 0,
-    /** Returns selectedDepots formatted for API calls: [depot1,depot2] */
-    selectedDepotsParam: (state: StateStoreState): string => `[${state.depots.join(',')}]`,
+    hasAnySelections(): boolean { return useSelectionStore().hasAnySelection },
+    /** @deprecated Use selectionStore.selectedDepotsParam */
+    selectedDepotsParam(): string { return useSelectionStore().selectedDepotsParam },
   },
   actions: {
     setConfigServer(server: string) {
       this.configServer = server
-      // If no depots selected, default to configserver
-      if (this.depots.length === 0 && server) {
-        this.depots = [server]
+      const sel = useSelectionStore()
+      if (sel.selectedDepots.length === 0 && server) {
+        sel.setDepots([server])
       }
     },
     setDepots(depots: string[]) {
-      this.depots = depots
-    },
-    setClients(clients: string[]) {
-      this.clients = clients
-    },
-    setProducts(products: string[]) {
-      this.products = products
-    },
-    setServers(servers: string[]) {
-      this.servers = servers
-    },
-    setClientGroups(groups: string[]) {
-      this.clientGroups = groups
-    },
-    setProductGroups(groups: string[]) {
-      this.productGroups = groups
-    },
-    toggleServer(serverId: string) {
-      const index = this.servers.indexOf(serverId)
-      if (index > -1) {
-        this.servers.splice(index, 1)
+      const sel = useSelectionStore()
+      if (depots.length === 0 && this.configServer) {
+        sel.setDepots([this.configServer])
       } else {
-        this.servers.push(serverId)
+        sel.setDepots(depots)
       }
     },
-    toggleClient(clientId: string) {
-      const index = this.clients.indexOf(clientId)
-      if (index > -1) {
-        this.clients.splice(index, 1)
-      } else {
-        this.clients.push(clientId)
-      }
-    },
-    toggleProduct(productId: string) {
-      const index = this.products.indexOf(productId)
-      if (index > -1) {
-        this.products.splice(index, 1)
-      } else {
-        this.products.push(productId)
-      }
-    },
-    toggleClientGroup(groupId: string) {
-      const index = this.clientGroups.indexOf(groupId)
-      if (index > -1) {
-        this.clientGroups.splice(index, 1)
-      } else {
-        this.clientGroups.push(groupId)
-      }
-    },
-    toggleProductGroup(groupId: string) {
-      const index = this.productGroups.indexOf(groupId)
-      if (index > -1) {
-        this.productGroups.splice(index, 1)
-      } else {
-        this.productGroups.push(groupId)
-      }
-    },
-    toggleDepot(depotId: string) {
-      const index = this.depots.indexOf(depotId)
-      if (index > -1) {
-        this.depots.splice(index, 1)
-      } else {
-        this.depots.push(depotId)
-      }
-    },
+    setClients(clients: string[]) { useSelectionStore().setClients(clients) },
+    setProducts(products: string[]) { useSelectionStore().setProducts(products) },
+    setServers(servers: string[]) { useSelectionStore().setDepots(servers) },
+    setClientGroups(groups: string[]) { useSelectionStore().setClientGroups(groups) },
+    setProductGroups(groups: string[]) { useSelectionStore().setProductGroups(groups) },
+    toggleServer(serverId: string) { useSelectionStore().toggleDepot(serverId) },
+    toggleClient(clientId: string) { useSelectionStore().toggleClient(clientId) },
+    toggleProduct(productId: string) { useSelectionStore().toggleProduct(productId) },
+    toggleClientGroup(groupId: string) { useSelectionStore().toggleClientGroup(groupId) },
+    toggleProductGroup(groupId: string) { useSelectionStore().toggleProductGroup(groupId) },
+    toggleDepot(depotId: string) { useSelectionStore().toggleDepot(depotId) },
     clearServers() {
-      this.servers = []
-    },
-    clearClients() {
-      this.clients = []
-    },
-    clearProducts() {
-      this.products = []
-    },
-    clearClientGroups() {
-      this.clientGroups = []
-    },
-    clearProductGroups() {
-      this.productGroups = []
-    },
-    setInitialized(value: boolean) {
-      this._initialized = value
-    },
-    clearAll() {
-      this.depots = []
-      this.clients = []
-      this.products = []
-      this.servers = []
-      this.clientGroups = []
-      this.productGroups = []
-    },
-    /** Ensure at least the configserver is selected */
-    async ensureDepotsSelected() {
-      if (this.depots.length > 0) return true
+      const sel = useSelectionStore()
       if (this.configServer) {
-        this.depots = [this.configServer]
+        sel.setDepots([this.configServer])
+      } else {
+        sel.clearDepots()
+      }
+    },
+    clearClients() { useSelectionStore().clearClients() },
+    clearProducts() { useSelectionStore().clearProducts() },
+    clearClientGroups() { useSelectionStore().clearClientGroups() },
+    clearProductGroups() { useSelectionStore().clearProductGroups() },
+    setInitialized(value: boolean) { this._initialized = value },
+    clearAll() { useSelectionStore().clearAll() },
+    async ensureDepotsSelected() {
+      const sel = useSelectionStore()
+      if (sel.selectedDepots.length > 0) return true
+      if (this.configServer) {
+        sel.setDepots([this.configServer])
         return true
       }
       return false

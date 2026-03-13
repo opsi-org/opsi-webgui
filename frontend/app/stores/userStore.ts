@@ -20,6 +20,12 @@ interface UserState {
   authMethods: string
   globalError?: string
   config?: unknown
+  readOnly: boolean
+  serverWriteAccess: boolean
+  depotAccess: boolean
+  hostGroupAccess: boolean
+  productGroupAccess: boolean
+  clientCreation: boolean
 }
 
 export const useUserStore = defineStore('user', {
@@ -37,6 +43,12 @@ export const useUserStore = defineStore('user', {
     authMethods: '',
     globalError: undefined,
     config: undefined,
+    readOnly: false,
+    serverWriteAccess: true,
+    depotAccess: true,
+    hostGroupAccess: true,
+    productGroupAccess: true,
+    clientCreation: true,
   }),
   getters: {
     /**
@@ -90,6 +102,21 @@ export const useUserStore = defineStore('user', {
     },
     setConfig(config: unknown) {
       this.config = config
+    },
+    setUserConfiguration(cfg: {
+      read_only?: boolean
+      server_write_access?: boolean
+      depot_access?: boolean
+      host_group_access?: boolean
+      product_group_access?: boolean
+      client_creation?: boolean
+    }) {
+      this.readOnly = cfg.read_only ?? false
+      this.serverWriteAccess = cfg.server_write_access ?? true
+      this.depotAccess = cfg.depot_access ?? true
+      this.hostGroupAccess = cfg.host_group_access ?? true
+      this.productGroupAccess = cfg.product_group_access ?? true
+      this.clientCreation = cfg.client_creation ?? true
     },
     setErrorLoggedOutShown(val: boolean) {
       this.errorLoggedOutShown = val

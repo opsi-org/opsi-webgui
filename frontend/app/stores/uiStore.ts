@@ -93,8 +93,20 @@ export const useUiStore = defineStore('ui', {
     },
     setTheme(theme: Theme) {
       this.theme = theme
-      useColorMode().value = theme
-      document.documentElement.classList.toggle('dark', theme === 'dark')
+      // Sync with Nuxt color mode - this is the source of truth
+      if (typeof document !== 'undefined') {
+        document.documentElement.classList.toggle('dark', theme === 'dark')
+        // Set cookie directly for persistence across page reloads
+        document.cookie = `nuxt-color-mode=${theme}; path=/; max-age=31536000; SameSite=Lax`
+      }
+    },
+    initTheme() {
+      // Restore theme from stored state on app init
+      const storedTheme = this.theme
+      if (storedTheme && typeof document !== 'undefined') {
+        document.documentElement.classList.toggle('dark', storedTheme === 'dark')
+        document.cookie = `nuxt-color-mode=${storedTheme}; path=/; max-age=31536000; SameSite=Lax`
+      }
     },
     setQuickpanelOpened(opened: boolean) {
       this.quickpanelOpened = opened

@@ -9,7 +9,7 @@ Table - A reusable table component with pagination and infinite scroll support.
 -->
 <template>
     <div class="data-table flex flex-col h-full min-h-0"
-        :style="infiniteScroll ? 'max-height: calc(100vh - 200px)' : ''">
+        :style="infiniteScroll ? 'max-height: calc(100vh - 180px); min-height: 300px' : ''">
         <!-- Table Container (scrollable) -->
         <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
             <div ref="tableContainer" class="flex-1 overflow-y-auto transition-all duration-200" @scroll="handleScroll">
@@ -115,9 +115,10 @@ Table - A reusable table component with pagination and infinite scroll support.
                 <!-- Showing info -->
                 <div class="text-sm text-(--color-text-muted)]">
                     <template v-if="infiniteScroll">
-                        {{ $t('showing') }} {{ displayedRows.length }} {{ $t('of') }} {{ sortedRows.length }}
-                        <span v-if="hasMoreData" class="ml-1">
-                            <UIcon :name="icons.loading" class="w-3 h-3 animate-spin inline" />
+                        {{ $t('showing') }} {{ displayedRows.length }} {{ $t('of') }} {{ sortedRows.length }} {{
+                            $t('items') || 'items' }}
+                        <span v-if="hasMoreData" class="ml-1 text-opsi-blue">
+                            ({{ $t('scrollForMore') || 'scroll for more' }})
                         </span>
                     </template>
                     <template v-else>
@@ -150,7 +151,7 @@ Table - A reusable table component with pagination and infinite scroll support.
                                 <input type="checkbox" v-model="columnVisibility[col.key]" :disabled="col.alwaysVisible"
                                     class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue disabled:opacity-50" />
                                 <span class="text-sm" :class="{ 'opacity-50': col.alwaysVisible }">{{ col.label
-                                    }}</span>
+                                }}</span>
                             </label>
                         </div>
                     </template>
@@ -219,6 +220,7 @@ interface Props {
     emptyLabel?: string
     selectedKeys?: string[] // External selected keys for sync
     syncSelection?: boolean // Enable bidirectional sync
+    tableId?: string // When set, column visibility is persisted to localStorage
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -258,16 +260,46 @@ const selectedRowKeys = ref<string[]>([])
 const columnVisibility = ref<Record<string, boolean>>({})
 let intersectionObserver: IntersectionObserver | null = null
 
+const STORAGE_PREFIX = 'opsi-table-cols-'
+
 onMounted(() => {
+    // Load column visibility - from localStorage if tableId set, otherwise from column defaults
+    const savedCols = props.tableId ? loadPersistedColumns(props.tableId) : null
     props.columns.forEach(col => {
-        columnVisibility.value[col.key] = col.visible !== false
+        if (savedCols && col.key in savedCols) {
+            columnVisibility.value[col.key] = savedCols[col.key]
+        } else {
+            columnVisibility.value[col.key] = col.visible !== false
+        }
     })
 
-    // Setup IntersectionObserver for infinite scroll
+    // Setup IntersectionObserver for infinite scroll after next tick so DOM is ready
     if (props.infiniteScroll) {
-        setupIntersectionObserver()
+        nextTick(() => {
+            setupIntersectionObserver()
+        })
     }
 })
+
+// Persist column visibility changes
+watch(columnVisibility, (newVis) => {
+    if (props.tableId) {
+        persistColumns(props.tableId, newVis)
+    }
+}, { deep: true })
+
+function loadPersistedColumns(tableId: string): Record<string, boolean> | null {
+    try {
+        const raw = localStorage.getItem(STORAGE_PREFIX + tableId)
+        return raw ? JSON.parse(raw) : null
+    } catch { return null }
+}
+
+function persistColumns(tableId: string, vis: Record<string, boolean>) {
+    try {
+        localStorage.setItem(STORAGE_PREFIX + tableId, JSON.stringify(vis))
+    } catch { /* quota exceeded - ignore */ }
+}
 
 onUnmounted(() => {
     if (intersectionObserver) {
@@ -279,6 +311,11 @@ onUnmounted(() => {
 function setupIntersectionObserver() {
     if (!tableContainer.value) return
 
+    // Disconnect any previous observer
+    if (intersectionObserver) {
+        intersectionObserver.disconnect()
+    }
+
     intersectionObserver = new IntersectionObserver(
         (entries) => {
             const entry = entries[0]
@@ -288,10 +325,15 @@ function setupIntersectionObserver() {
         },
         {
             root: tableContainer.value,
-            rootMargin: '200px',
-            threshold: 0.1
+            rootMargin: '300px',
+            threshold: 0
         }
     )
+
+    // Observe sentinel if it already exists
+    if (scrollSentinel.value) {
+        intersectionObserver.observe(scrollSentinel.value as unknown as Element)
+    }
 }
 
 function loadMoreData() {
@@ -445,7 +487,10 @@ function handleSort(column: string) {
 }
 
 function handleRowClick(row: T) {
-    if (props.clickable) {
+    if (props.selectable) {
+        // Clicking a row toggles its selection (like checkbox)
+        toggleSelection(row)
+    } else if (props.clickable) {
         emit('select', row)
     }
 }
@@ -459,8 +504,8 @@ function goToPage(page: number) {
 function handleScroll() {
     if (!props.infiniteScroll || !tableContainer.value || props.loading) return
     const { scrollTop, scrollHeight, clientHeight } = tableContainer.value
-    // Fallback scroll detection if IntersectionObserver doesn't work
-    if (scrollTop + clientHeight >= scrollHeight - 150 && hasMoreData.value) {
+    // Fallback scroll detection - load more when near bottom
+    if (scrollTop + clientHeight >= scrollHeight - 200 && hasMoreData.value) {
         loadMoreData()
     }
 }

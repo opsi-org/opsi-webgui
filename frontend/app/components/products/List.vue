@@ -20,6 +20,21 @@ Includes side panel with tabs for product properties and dependencies.
 							| {{ $t('selected') }}: {{ selectedProducts.length }}
 						</span>
 					</span>
+					<!-- Auto-refresh toggle -->
+					<div class="flex items-center gap-1.5 ml-3">
+						<span v-if="mbConnected" class="w-2 h-2 rounded-full bg-green-500"
+							title="MessageBus connected" />
+						<span v-else class="w-2 h-2 rounded-full bg-red-400" title="MessageBus disconnected" />
+						<label class="flex items-center gap-1 cursor-pointer text-xs text-(--color-text-muted)">
+							<input type="checkbox" v-model="autoRefreshEnabled"
+								class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue w-3.5 h-3.5" />
+							{{ $t('autoRefresh') || 'Auto' }}
+						</label>
+					</div>
+					<UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
+						variant="soft" size="xs" class="ml-2" @click="manualRefresh">
+						{{ $t('changesDetected') || 'Refresh' }}
+					</UButton>
 				</template>
 
 				<!-- Error State -->
@@ -29,7 +44,7 @@ Includes side panel with tabs for product properties and dependencies.
 				<!-- Products Table -->
 				<SharedTable :rows="filteredProducts" :columns="columns" :loading="loading" row-key="productId"
 					:actions="tableActions" :selectable="true" :filterable="false" :column-toggle="true"
-					:show-refresh="false" :clickable="true" :infinite-scroll="true" :page-size="50"
+					:show-refresh="false" :clickable="true" :infinite-scroll="true" :page-size="50" table-id="products"
 					@select="handleRowSelect" @selection-change="handleSelectionChange">
 					<template #productId-data="{ row }">
 						<div class="flex items-center gap-2">
@@ -308,6 +323,9 @@ const selectedProducts = ref<Product[]>([])
 const filterQuery = ref('')
 const pendingActionRequests = ref<Record<string, string>>({})
 
+// Messagebus auto-refresh integration
+const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRefresh } = useAutoRefreshProducts(fetchProducts)
+
 // Panel state
 const panelActiveTab = ref<'properties' | 'dependencies'>('properties')
 const propertiesLoading = ref(false)
@@ -429,36 +447,58 @@ async function fetchProductConfig(productId: string) {
 	// Fetch properties and dependencies in parallel
 	propertiesLoading.value = true
 	dependenciesLoading.value = true
+	properties.value = []
+	dependencies.value = []
 
-	const [propsResult, depsResult] = await Promise.all([
-		getProductProperties(productId, {
-			selectedDepots: depots,
-			selectedClients: clients.length > 0 ? clients : undefined
-		}).catch(e => ({ data: null, error: e })),
-		getProductDependencies(productId, {
-			selectedClients: clients.length > 0 ? clients : undefined
-		}).catch(e => ({ data: null, error: e }))
-	])
+	try {
+		const [propsResult, depsResult] = await Promise.all([
+			getProductProperties(productId, {
+				selectedDepots: depots,
+				selectedClients: clients.length > 0 ? clients : undefined
+			}).catch(e => {
+				console.error('Failed to fetch product properties:', e)
+				return { data: null, error: e }
+			}),
+			getProductDependencies(productId, {
+				selectedClients: clients.length > 0 ? clients : undefined
+			}).catch(e => {
+				console.error('Failed to fetch product dependencies:', e)
+				return { data: null, error: e }
+			})
+		])
 
-	// Handle properties result
-	if (propsResult.error) {
-		console.error('Failed to fetch properties:', propsResult.error)
-	} else if (propsResult.data) {
-		properties.value = Object.values(propsResult.data.properties || {}).map(p => ({
-			...p,
-			_value: getInitialPropertyValue(p),
-			_originalValue: getInitialPropertyValue(p),
-		}))
+		// Handle properties result
+		if (propsResult.error) {
+			console.error('Properties API error:', propsResult.error)
+			toast.add({
+				title: String($t('warning')),
+				description: String($t('message.failedToLoadProperties') || 'Failed to load product properties'),
+				color: 'warning',
+			})
+		} else if (propsResult.data) {
+			const propsData = propsResult.data.properties || propsResult.data
+			if (propsData && typeof propsData === 'object') {
+				properties.value = Object.values(propsData).map((p: any) => ({
+					...p,
+					_value: getInitialPropertyValue(p),
+					_originalValue: getInitialPropertyValue(p),
+				}))
+			}
+		}
+		propertiesLoading.value = false
+
+		// Handle dependencies result
+		if (depsResult.error) {
+			console.error('Dependencies API error:', depsResult.error)
+		} else if (depsResult.data) {
+			dependencies.value = depsResult.data.dependencies || []
+		}
+		dependenciesLoading.value = false
+	} catch (e) {
+		console.error('fetchProductConfig failed:', e)
+		propertiesLoading.value = false
+		dependenciesLoading.value = false
 	}
-	propertiesLoading.value = false
-
-	// Handle dependencies result
-	if (depsResult.error) {
-		console.error('Failed to fetch dependencies:', depsResult.error)
-	} else if (depsResult.data) {
-		dependencies.value = depsResult.data.dependencies || []
-	}
-	dependenciesLoading.value = false
 }
 
 function getInitialPropertyValue(prop: any): PropertyValue {

@@ -13,6 +13,23 @@ Clients page - Clients table with detail panel for selected clients and selected
             <LayoutsPageLayout v-model="filterQuery" show-search :search-placeholder="String($t('typeToFilter'))"
                 show-refresh :loading="loading" @refresh="fetchClients">
                 <template #actions>
+                    <!-- Auto-refresh toggle with messagebus indicator -->
+                    <div class="flex items-center gap-1.5 mr-2">
+                        <span v-if="mbConnected" class="w-2 h-2 rounded-full bg-green-500"
+                            title="MessageBus connected" />
+                        <span v-else class="w-2 h-2 rounded-full bg-red-400" title="MessageBus disconnected" />
+                        <label class="flex items-center gap-1 cursor-pointer text-xs text-(--color-text-muted)">
+                            <input type="checkbox" v-model="autoRefreshEnabled"
+                                class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue w-3.5 h-3.5" />
+                            {{ $t('autoRefresh') || 'Auto' }}
+                        </label>
+                    </div>
+                    <!-- Changes detected banner -->
+                    <UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
+                        variant="soft" size="xs" @click="manualRefresh">
+                        {{ $t('changesDetected') || 'Changes detected - Click to refresh' }}
+                    </UButton>
+
                     <UButton v-if="selectedClients.length > 0" :icon="icons.product" color="primary" size="sm"
                         @click="navigateTo('/clients/products/LocalbootProduct')">
                         {{ $t('products') }}
@@ -45,6 +62,7 @@ Clients page - Clients table with detail panel for selected clients and selected
                 <SharedTable :rows="filteredClients" :columns="columns" :loading="loading" :row-key="'clientId'"
                     :actions="tableActions" :selectable="true" :filterable="false" :column-toggle="true"
                     :show-refresh="false" :clickable="true" :infinite-scroll="true" :page-size="50" class="min-h-0"
+                    :selected-keys="selectedTableKeys" :sync-selection="true" table-id="clients"
                     @select="handleRowSelect" @selection-change="handleSelectionChange">
                     <template #description-data="{ row }">
                         {{ (row as Client).description || '-' }}
@@ -147,6 +165,7 @@ Clients page - Clients table with detail panel for selected clients and selected
 import type { TableColumn, TableAction } from '~/types/table.types'
 import type { Client } from '~/types/api/client.types'
 import { useStateStore } from '~/stores/stateStore'
+import { useSelectionStore } from '~/stores/selectionStore'
 
 definePageMeta({ layout: 'default' })
 
@@ -156,18 +175,30 @@ const router = useRouter()
 const toast = useToast()
 const { getClients, getDepotIds, checkClientReachable } = useApiHelpers()
 const stateStore = useStateStore()
+const selectionStore = useSelectionStore()
 
 const loading = ref(false)
 const error = ref<string | null>(null)
 const selectedClient = ref<Client | null>(null)
 const clients = ref<Client[]>([])
-const selectedClients = ref<Client[]>([])
 const filterQuery = ref('')
 const selectedPanelType = ref<'config' | 'logs' | 'clone' | null>(null)
 const panelConfigRef = ref<any>(null)
 const panelActiveTab = ref<string>('parameters')
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
+
+// Messagebus auto-refresh integration
+const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRefresh } = useAutoRefreshClients(fetchClients)
+
+// Sync selected clients with selection store
+const selectedClients = computed({
+    get: () => clients.value.filter(c => selectionStore.selectedClients.includes(c.clientId)),
+    set: (val: Client[]) => selectionStore.setClients(val.map(c => c.clientId), 'table')
+})
+
+// Selected keys for table sync
+const selectedTableKeys = computed(() => selectionStore.selectedClients)
 
 const panelConfigTabs = computed(() => [
     { label: String($t('parameters')), value: 'parameters' },
@@ -311,13 +342,8 @@ const filteredClients = computed(() => {
 })
 
 function handleRowSelect(row: Client) {
-    if (panelConfigRef.value?.hasAnyChanges && row.clientId !== selectedClient.value?.clientId) {
-        panelConfigRef.value.discardAll()
-    }
-    selectedClient.value = row
-    if (selectedPanelType.value !== 'logs' && selectedPanelType.value !== 'clone') {
-        selectedPanelType.value = null
-    }
+    // Row click now only toggles selection; detail panel opens via action buttons only
+    selectionStore.toggleClient(row.clientId, 'table')
 }
 
 function handleSelectionChange(rows: Client[]) {

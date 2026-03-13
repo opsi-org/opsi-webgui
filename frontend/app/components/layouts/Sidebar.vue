@@ -10,24 +10,24 @@ Sidebar component - main navigation.
     <nav class="h-full flex flex-col bg-opsi-blue text-white">
         <div :class="['flex-1 py-2', collapsed ? 'overflow-visible' : 'overflow-y-auto']">
             <template v-for="(group, groupIdx) in navGroups" :key="groupIdx">
-                <div v-for="item in group" :key="item.route" class="relative" @mouseenter="onHover(item.route, $event)"
-                    @mouseleave="onLeave">
+                <div v-for="item in group" :key="item.route" class="relative mx-1.5"
+                    @mouseenter="onHover(item.route, $event)" @mouseleave="onLeave">
                     <!-- With submenu -->
                     <template v-if="item.submenu">
                         <!-- Expanded state -->
                         <template v-if="!collapsed">
                             <button @click="toggleSubmenu(item.route)"
-                                class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-white/10 transition-colors"
-                                :class="{ 'bg-white/10': isActive(item.route) }">
+                                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/15 transition-colors duration-100"
+                                :class="{ 'bg-white/10': isActive(item.route) && !expanded[item.route] }">
                                 <UIcon :name="item.icon" class="w-5 h-5 shrink-0" />
                                 <span class="flex-1 text-sm text-left">{{ t(item.title) }}</span>
                                 <UIcon :name="expanded[item.route] ? icons.arrowUp : icons.arrowDown"
                                     class="w-4 h-4 transition-transform" />
                             </button>
-                            <div v-if="expanded[item.route]" class="bg-black/10">
+                            <div v-if="expanded[item.route]" class="ml-4 mt-0.5 mb-1 border-l-2 border-white/20 pl-2">
                                 <NuxtLink v-for="sub in item.submenu" :key="sub.route" :to="sub.route"
-                                    class="flex items-center gap-3 px-3 py-2 pl-11 hover:bg-white/10 text-sm transition-colors"
-                                    :class="{ 'bg-white/20 font-medium': $route.path === sub.route }">
+                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-100 text-white/80 hover:text-white hover:bg-white/15"
+                                    :class="{ 'bg-white/25 text-white font-medium': $route.path === sub.route }">
                                     {{ t(sub.title) }}
                                 </NuxtLink>
                             </div>
@@ -36,7 +36,7 @@ Sidebar component - main navigation.
                         <!-- Collapsed state - icon with hover popup -->
                         <template v-else>
                             <NuxtLink :to="item.submenu[0]?.route || item.route"
-                                class="flex items-center justify-center py-3 hover:bg-white/10 transition-colors"
+                                class="flex items-center justify-center py-3 rounded-lg hover:bg-white/15 transition-colors duration-100"
                                 :class="{ 'bg-white/10': isActive(item.route) }" :title="t(item.title)">
                                 <UIcon :name="item.icon" class="w-5 h-5" />
                             </NuxtLink>
@@ -44,14 +44,14 @@ Sidebar component - main navigation.
                             <Teleport to="body">
                                 <div v-if="hoveredItem === item.route" :style="getPopupPosition(item.route)"
                                     @mouseenter="keepPopupOpen(item.route)" @mouseleave="onLeave"
-                                    class="fixed bg-opsi-blue rounded shadow-lg min-w-44 py-1 z-100">
+                                    class="fixed bg-opsi-blue rounded-xl shadow-lg min-w-44 py-1 z-100 border border-white/10">
                                     <div class="px-3 py-2 text-xs font-semibold text-white/70 border-b border-white/10">
                                         {{ t(item.title) }}
                                     </div>
                                     <NuxtLink v-for="sub in item.submenu" :key="sub.route" :to="sub.route"
                                         @click="hoveredItem = null"
-                                        class="flex items-center px-3 py-2 hover:bg-white/10 text-sm text-white transition-colors"
-                                        :class="{ 'bg-white/20': $route.path === sub.route }">
+                                        class="flex items-center px-3 py-2 rounded-lg mx-1 my-0.5 text-sm text-white/80 hover:text-white hover:bg-white/15 transition-colors duration-100"
+                                        :class="{ 'bg-white/25 text-white': $route.path === sub.route }">
                                         {{ t(sub.title) }}
                                     </NuxtLink>
                                 </div>
@@ -62,8 +62,10 @@ Sidebar component - main navigation.
                     <!-- Without submenu -->
                     <template v-else>
                         <NuxtLink :to="item.route"
-                            class="flex items-center gap-3 px-3 py-2.5 hover:bg-white/10 transition-colors" :class="[
-                                { 'bg-white/20': $route.path === item.route },
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/15 transition-colors duration-100"
+                            :class="[
+                                { 'bg-white/25 font-medium': $route.path === item.route },
+                                { 'bg-white/10': isActive(item.route) && $route.path !== item.route },
                                 collapsed ? 'justify-center' : ''
                             ]" :title="collapsed ? t(item.title) : undefined">
                             <UIcon :name="item.icon" class="w-5 h-5 shrink-0" />

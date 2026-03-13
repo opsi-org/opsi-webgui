@@ -20,11 +20,14 @@ License: AGPL-3.0
         <UAlert v-if="error" color="error" :title="$t('error')" :description="error"
             :close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" class="mb-4" />
 
-        <div ref="containerRef" class="flex h-full min-h-0 relative">
+        <div ref="containerRef" class="flex h-full min-h-0 relative" style="min-height: 400px;">
             <!-- Tree sidebar (resizable) -->
             <div :style="{ width: isMobile ? '100%' : `${sidebarWidthPercent}%` }"
                 class="shrink-0 border-r border-(--color-border) bg-white dark:bg-(--color-surface) flex flex-col transition-[width] duration-100"
-                :class="{ 'absolute inset-0 z-20': isMobile && !showSidebar ? 'hidden' : '' }">
+                :class="{
+                    'absolute inset-0 z-20': isMobile,
+                    'hidden': isMobile && !showSidebar
+                }">
                 <div class="p-3 border-b border-(--color-border) flex items-center justify-between">
                     <span class="text-sm font-medium">{{ activeGroupType === 'clients' ? $t('client-group') :
                         $t('product-group') }}</span>
@@ -34,23 +37,11 @@ License: AGPL-3.0
                     <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
                 </div>
                 <div v-else class="flex-1 overflow-auto p-2 space-y-1">
-                    <div v-for="g in currentGroups" :key="g.id" @click="selectGroup(g)"
-                        class="flex items-center gap-2 px-2 py-2 rounded cursor-pointer transition-colors group"
-                        :class="selectedGroup?.id === g.id ? 'bg-opsi-blue/10 text-opsi-blue' : 'hover:bg-(--color-surface-hover)'">
-                        <UIcon :name="icons.group" class="w-4 h-4 shrink-0" />
-                        <span class="text-sm flex-1 truncate">{{ g.name }}</span>
-                        <span class="text-xs text-(--color-text-muted)">({{ g.count }})</span>
-                        <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
-                            <UButton :icon="icons.add" size="xs" variant="ghost" color="neutral"
-                                :title="$t('addSubgroup')" @click="openCreateModal(g.id)" />
-                            <UButton :icon="icons.edit" size="xs" variant="ghost" color="neutral" :title="$t('edit')"
-                                @click="openEditModal(g)" />
-                            <UButton :icon="icons.delete" size="xs" variant="ghost" color="error" :title="$t('delete')"
-                                @click="confirmDeleteGroup(g)" />
-                        </div>
-                    </div>
-                    <div v-if="currentGroups.length === 0"
-                        class="text-sm text-(--color-text-muted) px-2 py-4 text-center">
+                    <!-- Tree view for groups with subgroups -->
+                    <GroupTreeNodeItem v-for="g in treeGroups" :key="g.id" :group="g" :selected-id="selectedGroup?.id"
+                        :expanded-ids="expandedGroupIds" @select="selectGroup" @toggle="toggleExpand"
+                        @create-subgroup="openCreateModal" @edit="openEditModal" @delete="confirmDeleteGroup" />
+                    <div v-if="treeGroups.length === 0" class="text-sm text-(--color-text-muted) px-2 py-4 text-center">
                         {{ $t('noGroupsFound') }}
                     </div>
                 </div>
@@ -261,6 +252,7 @@ const sidebarWidthPercent = ref(25)
 const isResizing = ref(false)
 const minSidebarPercent = 15
 const maxSidebarPercent = 50
+const expandedGroupIds = ref<Set<string>>(new Set())
 
 const groupTypes = [
     { label: String($t('client-group')), value: 'clients' },
@@ -270,6 +262,47 @@ const groupTypes = [
 const currentGroups = computed(() => {
     return activeGroupType.value === 'clients' ? clientGroups.value : productGroups.value
 })
+
+// Build tree structure from flat list
+interface GroupTreeItem extends GroupItem {
+    children: GroupTreeItem[]
+    level: number
+}
+
+const treeGroups = computed(() => {
+    const groups = currentGroups.value
+    const groupMap = new Map<string, GroupTreeItem>()
+    const rootGroups: GroupTreeItem[] = []
+
+    // First pass: Create tree items
+    for (const g of groups) {
+        groupMap.set(g.id, { ...g, children: [], level: 0 })
+    }
+
+    // Second pass: Build hierarchy
+    for (const g of groups) {
+        const treeItem = groupMap.get(g.id)!
+        if (g.parentGroupId && groupMap.has(g.parentGroupId)) {
+            const parent = groupMap.get(g.parentGroupId)!
+            treeItem.level = parent.level + 1
+            parent.children.push(treeItem)
+        } else {
+            rootGroups.push(treeItem)
+        }
+    }
+
+    return rootGroups
+})
+
+function toggleExpand(groupId: string) {
+    const newSet = new Set(expandedGroupIds.value)
+    if (newSet.has(groupId)) {
+        newSet.delete(groupId)
+    } else {
+        newSet.add(groupId)
+    }
+    expandedGroupIds.value = newSet
+}
 
 const parentGroupOptions = computed(() => {
     const groups = currentGroups.value
@@ -458,27 +491,31 @@ onMounted(() => {
 })
 
 // Transform RPC tree data to flat GroupItem format
-function flattenGroupTree(tree: Record<string, unknown>, result: Array<{ id: string; description: string; notes: string; parentGroupId: string | null }> = []): typeof result {
+function flattenGroupTree(tree: Record<string, unknown>, parentId: string | null = null, result: Array<{ id: string; description: string; notes: string; parentGroupId: string | null }> = []): typeof result {
     if (!tree || typeof tree !== 'object') return result
 
-    const nodeId = (tree.id as string)?.split(';')[0] || ''
-    const nodeText = (tree.text as string) || nodeId
-    const nodeType = tree.type as string
-    const description = (tree.description as string) || ''
-    const notes = (tree.notes as string) || ''
-    const parentGroupId = (tree.parentGroupId as string) || null
+    const nodeId = String(tree.id || tree.ident || '').split(';')[0] || ''
+    const nodeText = String(tree.text || tree.name || nodeId)
+    const nodeType = String(tree.type || '')
+    const description = String(tree.description || '')
+    const notes = String(tree.notes || '')
 
-    // Skip root and special nodes
-    const isRoot = nodeText === 'clientdirectory' || nodeText === 'groups'
-    if (nodeType !== 'ObjectToGroup' && !isRoot && nodeId) {
-        result.push({ id: nodeId, description, notes, parentGroupId })
+    // Skip root/special nodes and ObjectToGroup entries
+    const isRoot = nodeText === 'clientdirectory' || nodeText === 'groups' || nodeId === 'clientdirectory' || nodeId === 'groups'
+    const isObjectMapping = nodeType === 'ObjectToGroup'
+
+    if (!isRoot && !isObjectMapping && nodeId) {
+        result.push({ id: nodeId, description, notes, parentGroupId: parentId })
     }
 
     // Recursively process children
-    if (tree.children && typeof tree.children === 'object') {
-        for (const child of Object.values(tree.children as Record<string, unknown>)) {
-            if ((child as Record<string, unknown>)?.type !== 'ObjectToGroup') {
-                flattenGroupTree(child as Record<string, unknown>, result)
+    const children = tree.children as Record<string, unknown> | unknown[] | undefined
+    if (children) {
+        const childEntries = Array.isArray(children) ? children : Object.values(children)
+        for (const child of childEntries) {
+            if (child && typeof child === 'object' && (child as Record<string, unknown>).type !== 'ObjectToGroup') {
+                const newParentId = (!isRoot && !isObjectMapping && nodeId) ? nodeId : parentId
+                flattenGroupTree(child as Record<string, unknown>, newParentId, result)
             }
         }
     }
@@ -490,20 +527,28 @@ function flattenGroupTree(tree: Record<string, unknown>, result: Array<{ id: str
 function extractMembers(tree: Record<string, unknown>, currentGroupId?: string, result: Array<{ groupId: string; objectId: string }> = []): typeof result {
     if (!tree || typeof tree !== 'object') return result
 
-    const nodeId = (tree.id as string)?.split(';')[0] || currentGroupId || ''
-    const nodeType = tree.type as string
+    const nodeId = String(tree.id || tree.ident || '').split(';')[0] || currentGroupId || ''
+    const nodeText = String(tree.text || tree.name || nodeId)
+    const nodeType = String(tree.type || '')
 
     // If this node represents an object-to-group relationship, add it
-    if (nodeType === 'ObjectToGroup' && nodeId && currentGroupId) {
-        const objectId = (tree.text as string) || nodeId
-        result.push({ groupId: currentGroupId, objectId })
+    if (nodeType === 'ObjectToGroup' && currentGroupId) {
+        const objectId = nodeText || nodeId
+        if (objectId) {
+            result.push({ groupId: currentGroupId, objectId })
+        }
     }
 
     // Recursively process children
-    if (tree.children && typeof tree.children === 'object') {
-        const groupIdToPass = nodeType !== 'ObjectToGroup' && nodeId ? nodeId : currentGroupId
-        for (const child of Object.values(tree.children as Record<string, unknown>)) {
-            extractMembers(child as Record<string, unknown>, groupIdToPass, result)
+    const children = tree.children as Record<string, unknown> | unknown[] | undefined
+    if (children) {
+        const childEntries = Array.isArray(children) ? children : Object.values(children)
+        const isRoot = nodeText === 'clientdirectory' || nodeText === 'groups' || nodeId === 'clientdirectory' || nodeId === 'groups'
+        const groupIdToPass = (nodeType !== 'ObjectToGroup' && !isRoot && nodeId) ? nodeId : currentGroupId
+        for (const child of childEntries) {
+            if (child && typeof child === 'object') {
+                extractMembers(child as Record<string, unknown>, groupIdToPass, result)
+            }
         }
     }
 
