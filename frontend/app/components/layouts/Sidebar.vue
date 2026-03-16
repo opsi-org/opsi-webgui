@@ -119,6 +119,11 @@ interface NavItem {
 const navGroups = computed<NavItem[][]>(() => [
     [
         {
+            title: 'dashboard',
+            route: '/dashboard',
+            icon: icons.dashboard,
+        },
+        {
             title: 'admin',
             route: '/admin',
             icon: icons.admin,
