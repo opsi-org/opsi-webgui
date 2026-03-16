@@ -10,8 +10,7 @@ Clients page - Clients table with detail panel for selected clients and selected
 <template>
     <LayoutsDetailPanel :showPanel="!!selectedClient" @close="handlePanelClose">
         <template #main>
-            <LayoutsPageLayout v-model="filterQuery" show-search :search-placeholder="String($t('typeToFilter'))"
-                show-refresh :loading="loading" @refresh="fetchClients">
+            <LayoutsPageLayout show-refresh :loading="loading" @refresh="fetchClients">
                 <template #actions>
                     <!-- Auto-refresh toggle with messagebus indicator -->
                     <div class="flex items-center gap-1.5 mr-2">
@@ -41,82 +40,79 @@ Clients page - Clients table with detail panel for selected clients and selected
                     </NuxtLink>
                 </template>
 
-                <template #stats>
-                    <div class="flex items-center gap-4 text-sm">
-                        <span class="text-(--color-text-muted)">
-                            {{ $t('total') }}: <span class="font-medium text-(--color-text)">{{
-                                clients.length }}</span>
-                        </span>
-                        <span v-if="selectedClients.length > 0" class="text-opsi-blue">
-                            {{ $t('selected') }}: {{ selectedClients.length }}
-                        </span>
-                    </div>
-                </template>
-
                 <div v-if="error"
                     class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
                     {{ error }}
                 </div>
 
                 <!-- Clients Table -->
-                <SharedTable :rows="filteredClients" :columns="columns" :loading="loading" :row-key="'clientId'"
-                    :actions="tableActions" :selectable="true" :filterable="false" :column-toggle="true"
-                    :show-refresh="false" :clickable="true" :infinite-scroll="true" :page-size="50" class="min-h-0"
-                    :selected-keys="selectedTableKeys" :sync-selection="true" table-id="clients"
-                    @select="handleRowSelect" @selection-change="handleSelectionChange">
-                    <template #description-data="{ row }">
+                <SharedDataTable
+                    :rows="clients"
+                    :columns="columns"
+                    :loading="loading"
+                    table-id="clients"
+                    row-key="clientId"
+                    :selectable="true"
+                    :filterable="true"
+                    :show-refresh="false"
+                    :clickable="true"
+                    :selected-keys="selectedTableKeys"
+                    @select="handleRowSelect"
+                    @selection-change="handleSelectionChange"
+                    @refresh="fetchClients"
+                >
+                    <template #cell-description="{ row }">
                         {{ (row as Client).description || '-' }}
                     </template>
-                    <template #macAddress-data="{ row }">
+                    <template #cell-macAddress="{ row }">
                         <span class="font-mono text-xs">{{ (row as Client).macAddress || '-' }}</span>
                     </template>
-                    <template #ipAddress-data="{ row }">
+                    <template #cell-ipAddress="{ row }">
                         <span class="font-mono text-xs">{{ (row as Client).ipAddress || '-' }}</span>
                     </template>
-                    <template #lastSeen-data="{ row }">
-                        {{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as string).toLocaleString() :
-                            '-' }}
+                    <template #cell-lastSeen="{ row }">
+                        {{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as string).toLocaleString() : '-' }}
                     </template>
-                    <template #uefi-data="{ row }">
+                    <template #cell-uefi="{ row }">
                         <SharedStatusBadge v-if="(row as Client).uefi" status="info" :label="'UEFI'" />
                         <span v-else class="text-(--color-text-muted)">-</span>
                     </template>
 
                     <!-- Statistics Columns -->
-                    <template #version_outdated-data="{ row }">
+                    <template #cell-version_outdated="{ row }">
                         <StatisticBadge :value="(row as Client).version_outdated" :icon="icons.productsOutdatedLocal"
                             :tooltip="$t('version_outdated_localboot')" status="warning"
                             :link="`/clients/products/LocalbootProduct?sortBy=version&selectedClient=${(row as Client).clientId}`" />
                     </template>
-                    <template #version_outdated_netboot-data="{ row }">
+                    <template #cell-version_outdated_netboot="{ row }">
                         <StatisticBadge :value="(row as Client).version_outdated_netboot"
                             :icon="icons.productsOutdatedNet" :tooltip="$t('version_outdated_netboot')" status="warning"
                             :link="`/clients/products/NetbootProduct?sortBy=version&selectedClient=${(row as Client).clientId}`" />
                     </template>
-                    <template #installationStatus_unknown-data="{ row }">
+                    <template #cell-installationStatus_unknown="{ row }">
                         <StatisticBadge :value="(row as Client).installationStatus_unknown"
                             :icon="icons.productInstallationStatusUnknown" :tooltip="$t('installationStatus_unknown')"
                             status="warning"
                             :link="`/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=${(row as Client).clientId}`" />
                     </template>
-                    <template #installationStatus_installed-data="{ row }">
+                    <template #cell-installationStatus_installed="{ row }">
                         <StatisticBadge :value="(row as Client).installationStatus_installed"
                             :icon="icons.productInstallationStatusInstalled"
                             :tooltip="$t('installationStatus_installed')" status="success"
                             :link="`/clients/products/LocalbootProduct?sortBy=installationStatus&selectedClient=${(row as Client).clientId}`" />
                     </template>
-                    <template #actionResult_successful-data="{ row }">
+                    <template #cell-actionResult_successful="{ row }">
                         <StatisticBadge :value="(row as Client).actionResult_successful"
                             :icon="icons.productActionResultSuccessful" :tooltip="$t('actionResult_successful')"
                             status="success"
                             :link="`/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=${(row as Client).clientId}`" />
                     </template>
-                    <template #actionResult_failed-data="{ row }">
+                    <template #cell-actionResult_failed="{ row }">
                         <StatisticBadge :value="(row as Client).actionResult_failed"
                             :icon="icons.productsFailedActionResult" :tooltip="$t('actionResult_failed')" status="error"
                             :link="`/clients/products/LocalbootProduct?sortBy=actionResult&selectedClient=${(row as Client).clientId}`" />
                     </template>
-                    <template #reachable-data="{ row }">
+                    <template #cell-reachable="{ row }">
                         <ReachableBadge :client-id="(row as Client).clientId"
                             :reachable="reachableStatus[(row as Client).clientId]"
                             :loading="reachableLoading[(row as Client).clientId]"
@@ -131,7 +127,7 @@ Clients page - Clients table with detail panel for selected clients and selected
                             @open-clone="openClientPanel((row as Client), 'clone')"
                             @action-complete="handleActionComplete" />
                     </template>
-                </SharedTable>
+                </SharedDataTable>
             </LayoutsPageLayout>
         </template>
 
@@ -162,7 +158,7 @@ Clients page - Clients table with detail panel for selected clients and selected
 </template>
 
 <script setup lang="ts">
-import type { TableColumn, TableAction } from '~/types/table.types'
+import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
 import type { Client } from '~/types/api/client.types'
 import { useStateStore } from '~/stores/stateStore'
 import { useSelectionStore } from '~/stores/selectionStore'
@@ -171,7 +167,6 @@ definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const router = useRouter()
 const toast = useToast()
 const { getClients, getDepotIds, checkClientReachable } = useApiHelpers()
 const stateStore = useStateStore()
@@ -181,7 +176,6 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const selectedClient = ref<Client | null>(null)
 const clients = ref<Client[]>([])
-const filterQuery = ref('')
 const selectedPanelType = ref<'config' | 'logs' | 'clone' | null>(null)
 const panelConfigRef = ref<any>(null)
 const panelActiveTab = ref<string>('parameters')
@@ -228,7 +222,7 @@ function openClientPanel(client: Client, type: 'config' | 'logs' | 'clone') {
     switchPanelType(type)
 }
 
-const columns: TableColumn<Client>[] = [
+const columns: DataTableColumnDef[] = [
     { key: 'clientId', label: String($t('clientId')), sortable: true, alwaysVisible: true },
     { key: 'description', label: String($t('description')), sortable: true, class: 'hidden md:table-cell' },
     { key: 'macAddress', label: String($t('macAddress')), sortable: true, class: 'hidden lg:table-cell', visible: false },
@@ -236,43 +230,13 @@ const columns: TableColumn<Client>[] = [
     { key: 'lastSeen', label: String($t('lastSeen')), sortable: true, class: 'hidden xl:table-cell' },
     { key: 'uefi', label: 'UEFI', sortable: true, class: 'hidden xl:table-cell', visible: false },
     // Statistics columns
-    { key: 'version_outdated', label: String($t('version_outdated_localboot')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productsOutdatedLocal },
-    { key: 'version_outdated_netboot', label: String($t('version_outdated_netboot')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productsOutdatedNet },
-    { key: 'installationStatus_unknown', label: String($t('installationStatus_unknown')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productInstallationStatusUnknown },
-    { key: 'installationStatus_installed', label: String($t('installationStatus_installed')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productInstallationStatusInstalled },
-    { key: 'actionResult_successful', label: String($t('actionResult_successful')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productActionResultSuccessful },
-    { key: 'actionResult_failed', label: String($t('actionResult_failed')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.productsFailedActionResult },
-    { key: 'reachable', label: String($t('reachable')), sortable: true, visible: false, class: 'text-center w-12', icon: icons.clientReachable },
-]
-
-const tableActions: TableAction<Client>[] = [
-    {
-        icon: icons.config,
-        label: String($t('configuration')),
-        handler: (row) => {
-            if (panelConfigRef.value?.hasAnyChanges && row.clientId !== selectedClient.value?.clientId) {
-                panelConfigRef.value.discardAll()
-            }
-            selectedClient.value = row
-            switchPanelType('config')
-        }
-    },
-    {
-        icon: icons.log,
-        label: String($t('logs')),
-        handler: (row) => {
-            selectedClient.value = row
-            switchPanelType('logs')
-        }
-    },
-    {
-        icon: icons.clone,
-        label: String($t('clone')),
-        handler: (row) => {
-            selectedClient.value = row
-            switchPanelType('clone')
-        }
-    }
+    { key: 'version_outdated', label: String($t('version_outdated_localboot')), sortable: true, visible: false, class: 'text-center w-12' },
+    { key: 'version_outdated_netboot', label: String($t('version_outdated_netboot')), sortable: true, visible: false, class: 'text-center w-12' },
+    { key: 'installationStatus_unknown', label: String($t('installationStatus_unknown')), sortable: true, visible: false, class: 'text-center w-12' },
+    { key: 'installationStatus_installed', label: String($t('installationStatus_installed')), sortable: true, visible: false, class: 'text-center w-12' },
+    { key: 'actionResult_successful', label: String($t('actionResult_successful')), sortable: true, visible: false, class: 'text-center w-12' },
+    { key: 'actionResult_failed', label: String($t('actionResult_failed')), sortable: true, visible: false, class: 'text-center w-12' },
+    { key: 'reachable', label: String($t('reachable')), sortable: true, visible: false, class: 'text-center w-12' },
 ]
 
 async function fetchClients() {
@@ -330,23 +294,12 @@ function handleActionComplete(action: string, success: boolean) {
     }
 }
 
-const filteredClients = computed(() => {
-    if (!filterQuery.value) return clients.value
-    const q = filterQuery.value.toLowerCase()
-    return clients.value.filter(c =>
-        c.clientId.toLowerCase().includes(q) ||
-        (c.description?.toLowerCase().includes(q)) ||
-        (c.macAddress?.toLowerCase().includes(q)) ||
-        (c.ipAddress?.toLowerCase().includes(q))
-    )
-})
-
 function handleRowSelect(row: Client) {
     // Row click now only toggles selection; detail panel opens via action buttons only
     selectionStore.toggleClient(row.clientId, 'table')
 }
 
-function handleSelectionChange(rows: Client[]) {
+function handleSelectionChange(rows: Client[], keys: string[]) {
     selectedClients.value = rows
 }
 

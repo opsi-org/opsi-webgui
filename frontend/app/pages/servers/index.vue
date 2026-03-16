@@ -10,32 +10,35 @@ Servers page - Servers table with configuration panel for selected server.
 <template>
     <LayoutsDetailPanel :showPanel="!!selectedServer" @close="handlePanelClose">
         <template #main>
-            <LayoutsPageLayout v-model="filterQuery" show-search :search-placeholder="String($t('typeToFilter'))"
-                show-refresh :loading="loading" @refresh="fetchServers">
-                <template #stats>
-                    <div class="flex items-center gap-4 text-sm">
-                        <span class="text-(--color-text-muted)">
-                            {{ $t('total') }}: <span class="font-medium text-(--color-text)">{{
-                                servers.length }}</span>
-                        </span>
-                    </div>
-                </template>
-
+            <LayoutsPageLayout show-refresh :loading="loading" @refresh="fetchServers">
                 <UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4"
                     :close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
 
                 <!-- Servers Table -->
-                <SharedTable :rows="filteredServers" :columns="columns" :loading="loading" :row-key="'depotId'"
-                    :actions="tableActions" :filterable="false" :column-toggle="true" :show-refresh="false"
-                    :clickable="true" :infinite-scroll="true" :page-size="50" @select="handleRowSelect">
-                    <template #type-data="{ row }">
-                        <SharedStatusBadge :status="getServerType(row) === 'OpsiConfigserver' ? 'info' : 'neutral'"
-                            :label="String(getServerType(row) === 'OpsiConfigserver' ? $t('configserver') : $t('depot'))" />
+                <SharedDataTable
+                    :rows="servers"
+                    :columns="columns"
+                    :loading="loading"
+                    table-id="servers"
+                    row-key="depotId"
+                    :actions="tableActions"
+                    :selectable="false"
+                    :filterable="true"
+                    :show-refresh="false"
+                    :clickable="true"
+                    @select="handleRowSelect"
+                    @refresh="fetchServers"
+                >
+                    <template #cell-type="{ row }">
+                        <SharedStatusBadge
+                            :status="getServerType(row) === 'OpsiConfigserver' ? 'info' : 'neutral'"
+                            :label="String(getServerType(row) === 'OpsiConfigserver' ? $t('configserver') : $t('depot'))"
+                        />
                     </template>
-                    <template #description-data="{ row }">
+                    <template #cell-description="{ row }">
                         {{ (row as Server).description || '-' }}
                     </template>
-                </SharedTable>
+                </SharedDataTable>
             </LayoutsPageLayout>
         </template>
 
@@ -58,7 +61,8 @@ Servers page - Servers table with configuration panel for selected server.
 </template>
 
 <script setup lang="ts">
-import type { TableColumn, TableAction } from '~/types/table.types'
+import type { DataTableAction } from '~/components/shared/DataTable.vue'
+import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
 import type { Server } from '~/types/api/server.types'
 import { useStateStore } from '~/stores/stateStore'
 
@@ -74,7 +78,6 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const selectedServer = ref<Server | null>(null)
 const servers = ref<Server[]>([])
-const filterQuery = ref('')
 const selectedPanelType = ref<'config' | null>(null)
 const panelConfigRef = ref<any>(null)
 const panelActiveTab = ref<string>('parameters')
@@ -98,13 +101,13 @@ function handlePanelClose() {
     selectedPanelType.value = null
 }
 
-const columns: TableColumn<Server>[] = [
+const columns: DataTableColumnDef[] = [
     { key: 'depotId', label: String($t('serverId')), sortable: true, alwaysVisible: true },
     { key: 'description', label: String($t('description')), sortable: true, class: 'hidden md:table-cell' },
     { key: 'type', label: String($t('type')), sortable: true, class: 'hidden sm:table-cell' },
 ]
 
-const tableActions: TableAction<Server>[] = [
+const tableActions: DataTableAction<Server>[] = [
     {
         icon: icons.config,
         label: String($t('configuration')),
@@ -117,15 +120,6 @@ const tableActions: TableAction<Server>[] = [
         }
     }
 ]
-
-const filteredServers = computed(() => {
-    if (!filterQuery.value) return servers.value
-    const q = filterQuery.value.toLowerCase()
-    return servers.value.filter(s =>
-        s.depotId.toLowerCase().includes(q) ||
-        (s.description?.toLowerCase().includes(q))
-    )
-})
 
 function handleRowSelect(row: Server) {
     if (panelConfigRef.value?.hasAnyChanges && row.depotId !== selectedServer.value?.depotId) {
