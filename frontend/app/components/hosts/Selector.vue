@@ -25,7 +25,6 @@ HostSelector - Unified searchable dropdown for selecting a client or a server.
       <template v-else>
         <div class="flex flex-col min-w-0 py-0.5">
           <span class="truncate text-sm font-medium">{{ item.label }}</span>
-          <span v-if="item.description" class="truncate text-xs text-muted">{{ item.description }}</span>
         </div>
       </template>
     </template>
@@ -63,7 +62,6 @@ const emit = defineEmits<{
 const icons = useIcons()
 const { t: $t } = useI18n()
 const { getClients, getDepots } = useApiHelpers()
-const stateStore = useStateStore()
 
 const loading = ref(false)
 const items = ref<Array<{ id: string; description: string }>>([])
@@ -93,7 +91,6 @@ async function fetchItems() {
       if (!error) items.value = (data || []).map((d) => ({ id: d.depotId, description: d.description || '' }))
     } else {
       const params: Record<string, unknown> = {}
-      if (stateStore.depots.length > 0) params.selectedDepots = stateStore.selectedDepotsParam
       const { data, error } = await getClients(params)
       if (!error) items.value = (data || []).map((c) => ({ id: c.clientId, description: c.description || '' }))
     }
@@ -113,10 +110,6 @@ function onSelect(value: string) {
 }
 
 onMounted(fetchItems)
-
-watch(() => stateStore.depots, () => {
-  if (props.type === 'client') fetchItems()
-}, { deep: true })
 
 defineExpose({ refresh: fetchItems })
 </script>
