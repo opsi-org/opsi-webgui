@@ -160,6 +160,12 @@ html.dark button[role="checkbox"] {
   border: 1px solid var(--color-border);
 }
 
+html.dark input[type="text"],
+html.dark input,
+html.dark textarea,
+html.dark select {
+  border-color: var(--color-border) !important;
+}
 /* Tabs styling */
 .opsi-tabs {
   display: flex;

@@ -30,7 +30,6 @@ Modules - Component to display available opsi modules
 				</div>
 				<div class="flex-1 min-w-0">
 					<div class="font-medium text-sm truncate" :title="module">{{ formatModuleName(module) }}</div>
-					<div class="text-xs text-gray-500 truncate">{{ module }}</div>
 				</div>
 			</div>
 		</div>
