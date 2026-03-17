@@ -77,7 +77,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             <template #header>
                 <div class="flex items-center justify-between">
                     <span class="font-medium">{{ $t('applicationState') }}</span>
-                    <CommonStatusBadge :status="currentAppState === 'normal' ? 'success' : 'warning'"
+                    <SharedStatusBadge :status="currentAppState === 'normal' ? 'success' : 'warning'"
                         :label="currentAppState" />
                 </div>
             </template>
@@ -90,28 +90,25 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         :class="[
                             'flex-1 min-w-32 px-4 py-3 rounded-lg border-2 transition-all text-center',
                             newAppState.type === state
-                                ? state === 'normal' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20'
+                                ? state === 'normal' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20'
                                 : 'border-(--color-border) hover:border-gray-400'
                         ]">
                         <div class="font-medium"
                             :class="newAppState.type === state ? (state === 'normal' ? 'text-primary-600 dark:text-primary-400' : 'text-yellow-600 dark:text-yellow-400') : ''">
                             {{ $t(state) }}
                         </div>
-                        <div class="text-xs text-gray-500 mt-1">{{ state === 'normal' ? $t('serverIsOperational') :
-                            $t('blockClientConnections') }}</div>
                     </button>
                 </div>
-
                 <div v-if="newAppState.type === 'maintenance'"
                     class="p-4 rounded-lg border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/10">
                     <div class="space-y-4">
-                        <UFormField :label="$t('addressExceptions')" :help="$t('allowTheseAddressesDuringMaintenance')">
+                        <UFormField :label="$t('addressExceptions')">
                             <div class="flex gap-2">
                                 <UInput v-model="addressExceptionInput" :placeholder="$t('enterNetworkAddress')"
                                     size="sm" class="flex-1" @keydown.enter.prevent="addAddressException" />
                                 <UButton color="primary" size="sm" :icon="icons.add" @click="addAddressException">{{
                                     $t('add')
-                                    }}</UButton>
+                                }}</UButton>
                             </div>
                             <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
                                 <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
@@ -124,14 +121,12 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                 </span>
                             </div>
                         </UFormField>
-
-                        <UFormField :label="$t('retryAfterInSeconds')" :help="$t('clientsShouldRetryAfter')">
+                        <UFormField :label="$t('retryAfterInSeconds')">
                             <UInput v-model.number="newAppState.retry_after" type="number" size="sm" min="0"
                                 class="w-40" />
                         </UFormField>
                     </div>
                 </div>
-
                 <div class="flex justify-end gap-2 pt-2">
                     <UButton variant="outline" color="neutral" size="sm" @click="resetAppState">{{ $t('reset') }}
                     </UButton>
@@ -155,40 +150,28 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </div>
                 </template>
                 <div class="space-y-5">
-                    <!-- Backup Options -->
                     <div>
                         <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup')
-                            }}</div>
-                        <div class="space-y-3">
+                        }}</div>
+                        <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                             <label
-                                class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
                                 <UCheckbox v-model="backupOptions.config_files" class="mt-0.5" />
-                                <div>
-                                    <div class="font-medium text-sm">{{ $t('config_files') }}</div>
-                                    <div class="text-xs text-gray-500">{{ $t('configFilesDescription') }}</div>
-                                </div>
+                                <div class="font-medium text-sm">{{ $t('config_files') }}</div>
                             </label>
                             <label
-                                class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
                                 <UCheckbox v-model="backupOptions.redis_data" class="mt-0.5" />
-                                <div>
-                                    <div class="font-medium text-sm">{{ $t('redisData') }}</div>
-                                    <div class="text-xs text-gray-500">{{ $t('redisDataDescription') }}</div>
-                                </div>
+                                <div class="font-medium text-sm">{{ $t('redisData') }}</div>
                             </label>
                             <label
-                                class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
                                 <UCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5" />
-                                <div>
-                                    <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
-                                    <div class="text-xs text-gray-500">{{ $t('maintenanceModeDescription') }}</div>
-                                </div>
+                                <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
                             </label>
                         </div>
                     </div>
-
-                    <!-- Password (optional) -->
-                    <UFormField :label="$t('password')" :help="$t('optionalEncryption')">
+                    <UFormField :label="$t('password') + ' (' + $t('optional') + ')'">
                         <UInput v-model="backupOptions.password" type="password" :placeholder="$t('enterPassword')"
                             size="sm" />
                     </UFormField>
@@ -210,7 +193,6 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </div>
                 </template>
                 <div class="space-y-5">
-                    <!-- File Upload -->
                     <UFormField :label="$t('backupFile')" required>
                         <div class="relative">
                             <input ref="fileInputRef" type="file" accept=".tar.gz,.tgz"
@@ -230,33 +212,23 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                             </div>
                         </div>
                     </UFormField>
-
-                    <!-- Restore Options -->
                     <div>
                         <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('restoreOptions')
-                            }}</div>
-                        <div class="space-y-3">
+                        }}</div>
+                        <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                             <label
-                                class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
                                 <UCheckbox v-model="restoreOptions.config_files" class="mt-0.5" />
-                                <div>
-                                    <div class="font-medium text-sm">{{ $t('config_files') }}</div>
-                                    <div class="text-xs text-gray-500">{{ $t('restoreConfigFiles') }}</div>
-                                </div>
+                                <div class="font-medium text-sm">{{ $t('config_files') }}</div>
                             </label>
                             <label
-                                class="flex items-start gap-3 p-3 rounded-lg border border-(--color-border) hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
                                 <UCheckbox v-model="restoreOptions.redis_data" class="mt-0.5" />
-                                <div>
-                                    <div class="font-medium text-sm">{{ $t('redisData') }}</div>
-                                    <div class="text-xs text-gray-500">{{ $t('restoreRedisData') }}</div>
-                                </div>
+                                <div class="font-medium text-sm">{{ $t('redisData') }}</div>
                             </label>
                         </div>
                     </div>
-
-                    <!-- Server ID Option -->
-                    <UFormField :label="$t('serverIdHandling')" :help="$t('serverIdHelp')">
+                    <UFormField :label="$t('serverIdHandling')">
                         <div class="space-y-2">
                             <div class="flex flex-wrap gap-2">
                                 <button v-for="opt in serverIdOptions" :key="opt.value"
@@ -273,13 +245,10 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                 :placeholder="$t('enterNewID')" size="sm" class="mt-2" />
                         </div>
                     </UFormField>
-
-                    <!-- Password -->
-                    <UFormField :label="$t('backupPassword')" :help="$t('enterIfEncrypted')">
+                    <UFormField :label="$t('backupPassword')">
                         <UInput v-model="restoreOptions.password" type="password" :placeholder="$t('enterPassword')"
                             size="sm" />
                     </UFormField>
-
                     <UButton block color="warning" :icon="icons.refresh" :loading="restoringBackup"
                         :disabled="!restoreOptions.file_id" @click="restoreBackup">{{ $t('restoreBackup') }}</UButton>
                 </div>

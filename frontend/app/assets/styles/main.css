@@ -153,6 +153,12 @@ html.dark .dropdown-bg {
   background-color: var(--color-surface);
   border-color: var(--color-border);
 }
+button[role="checkbox"] {
+  border: 1px solid var(--color-border);
+}
+html.dark button[role="checkbox"] {
+  border: 1px solid var(--color-border);
+}
 
 /* Tabs styling */
 .opsi-tabs {

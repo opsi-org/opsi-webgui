@@ -23,7 +23,7 @@ SystemInfo - Component to display system diagnostic information
 				<div class="divide-y divide-(--color-border)">
 					<div v-for="(value, key) in filteredSystemInfo" :key="key"
 						class="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 md:gap-4 py-2.5 group hover:bg-(--color-surface-hover) -mx-4 px-4 transition-colors">
-						<span class="text-sm text-gray-600 dark:text-gray-400 min-w-0 md:w-1/3 break-all">
+						<span class="text-sm text-(--color-text) dark:text-(--color-text) min-w-0 md:w-1/3 break-all">
 							{{ formatKey(String(key)) }}
 						</span>
 						<div class="flex items-center gap-2 w-full md:w-2/3">
@@ -55,7 +55,8 @@ SystemInfo - Component to display system diagnostic information
 					<div>
 						<div v-for="(v, k) in (values as Record<string, unknown>)" :key="k"
 							class="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 md:gap-4 py-2.5 group hover:bg-(--color-surface-hover) -mx-4 px-4 transition-colors">
-							<span class="text-sm text-gray-600 dark:text-gray-400 min-w-0 md:w-1/3 break-all">
+							<span
+								class="font-mono text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 								{{ k }}
 							</span>
 							<div class="flex items-center gap-2 w-full md:w-2/3">
