@@ -32,8 +32,10 @@ PageLayout - A layout component with a fixed header (for controls) and a scrolla
 					</NuxtLink>
 					<!-- Save / discard actions -->
 					<slot name="saveActions" />
-					<UButton v-if="showRefresh" :icon="icons.refresh" variant="outline" color="neutral" size="sm"
-						:loading="loading" @click="$emit('refresh')" />
+					<UTooltip :text="$t('refresh')">
+						<UButton v-if="showRefresh" :icon="icons.refresh" color="primary" variant="outline" size="sm"
+							:loading="loading" @click="$emit('refresh')" />
+					</UTooltip>
 				</div>
 			</div>
 
