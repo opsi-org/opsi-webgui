@@ -177,7 +177,15 @@ export function useApiHelpers() {
     hardwareAddress?: string | null
     notes?: string | null
     depotId: string
+    inventoryNumber?: string
   }) => apiPost<Record<string, unknown>>('/opsidata/clients', clientData)
+
+  const deployClientAgent = (agentData: {
+    clients: string[]
+    username: string
+    password: string
+    type: 'windows' | 'linux' | 'mac'
+  }) => apiPost<void>('/opsidata/clients/agent/deploy', agentData)
 
   const setClientUefi = (clientId: string, uefi: boolean) =>
     apiPost<void>(`/opsidata/clients/${clientId}/uefi`, { uefi })
@@ -188,35 +196,16 @@ export function useApiHelpers() {
   const removeClientFromGroups = (clientId: string, groupIds: string[]) =>
     apiPost<void>(`/opsidata/clients/${clientId}/groups`, groupIds) // Uses DELETE in backend
 
-  // const cloneClient = (clientId: string, target: {
-  //   hostId: string
-  //   ipAddress?: string
-  //   hardwareAddress?: string
-  //   systemUUID?: string
-  // }, options: {
-  //   configs?: boolean
-  //   products?: boolean
-  //   productProperties?: boolean
-  // }) => apiPost<void>(`/opsidata/clients/${clientId}/clone`, { target, options })
-
-  const cloneClient = (
-    clientId: string,
-    target: {
-      hostId: string
-      ipAddress?: string
-      hardwareAddress?: string
-      systemUUID?: string
-    },
-    options: {
-      configs?: boolean
-      products?: boolean
-      productProperties?: boolean
-      groups?: boolean
-      description?: string
-      notes?: string
-    }
-  ) => apiPost<void>(`/opsidata/clients/${clientId}/clone`, { target, options })
-
+  const cloneClient = (clientId: string, target: {
+    hostId: string
+    ipAddress?: string
+    hardwareAddress?: string
+    systemUUID?: string
+  }, options: {
+    configs?: boolean
+    products?: boolean
+    productProperties?: boolean
+  }) => apiPost<void>(`/opsidata/clients/${clientId}/clone`, { target, options })
 
   const getClientDepotMapping = (clientIds: string[]) =>
     apiGet<Record<string, string>>('/opsidata/clientsdepots', { selectedClients: `[${clientIds.join(',')}]` })
@@ -547,7 +536,7 @@ export function useApiHelpers() {
     opsiclientdRpc(clientIds, 'shutdown', [''])
 
   /** Deploy opsi client agent to clients */
-  const deployClientAgent = (clientIds: string[], options: { username: string; password: string; type: string }) =>
+  const deployClientAgentOld = (clientIds: string[], options: { username: string; password: string; type: string }) =>
     apiPost<OpsiclientdRpcResult>('/opsidata/clients/deploy', {
       clients: clientIds,
       ...options,
@@ -618,7 +607,7 @@ export function useApiHelpers() {
     sendNotification,
     rebootClients,
     shutdownClients,
-    deployClientAgent,
+    deployClientAgentOld,
     deleteClient,
     checkClientReachable,
     executeClientAction,
@@ -627,6 +616,7 @@ export function useApiHelpers() {
     getUserConfiguration,
     // New Client Management
     createClient,
+    deployClientAgent,
     setClientUefi,
     addClientToGroups,
     removeClientFromGroups,

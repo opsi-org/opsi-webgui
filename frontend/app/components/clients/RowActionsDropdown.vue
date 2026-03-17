@@ -352,7 +352,12 @@ async function executeShutdown() {
 async function executeDeploy() {
 	executing.value = true
 	try {
-		const result = await deployClientAgent([props.clientId], deployOptions.value)
+		const result = await deployClientAgent({
+			clients: [props.clientId],
+			username: deployOptions.value.username,
+			password: deployOptions.value.password,
+			type: deployOptions.value.type
+		})
 		if (result?.error) {
 			throw result.error
 		}

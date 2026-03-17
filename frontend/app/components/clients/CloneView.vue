@@ -30,8 +30,6 @@ ClientsCloneView - Can be used both in standalone pages and detail panels.
 		</template>
 
 		<template #saveActions>
-			<UInput v-model="formSearch" :placeholder="String($t('typeToFilter'))" size="sm"
-				:class="panelMode ? 'w-full sm:w-32 md:w-40' : 'w-full sm:w-48 md:w-64'" icon="i-lucide-search" />
 			<div class="flex gap-2">
 				<UButton color="primary" :loading="saving" :disabled="loading || !canClone"
 					:size="panelMode ? 'sm' : 'md'" @click="cloneClient">
@@ -48,7 +46,7 @@ ClientsCloneView - Can be used both in standalone pages and detail panels.
 		</div>
 
 		<!-- Clone content -->
-		<ClientsCloneForm v-else ref="cloneFormRef" :source-id="resolvedSourceId || ''" :search="formSearch"
+		<ClientsCloneForm v-else ref="cloneFormRef" :source-id="resolvedSourceId || ''"
 			:panel-mode="panelMode" @saved="handleSaved" @has-changes="handleHasChanges" />
 	</LayoutsPageLayout>
 </template>
@@ -96,7 +94,6 @@ const resolvedSourceId = computed(() => props.sourceId || (props.showSourceSelec
 // State management
 const loading = ref(false)
 const saving = ref(false)
-const formSearch = ref('')
 const hasChanges = ref(false)
 
 // Form ref
