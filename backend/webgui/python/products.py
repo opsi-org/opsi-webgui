@@ -275,7 +275,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
         params["selected"] = [""]
     allowed_products = None
 
-    params["num_depots"] = len(selectedDepots)
+    params["num_depots"] = len(selectedDepots) if selectedDepots else 0
 
     if user_register() and product_group_access_configured(username):
         allowed_products = get_allowed_group_objects(username, "ProductGroup")
