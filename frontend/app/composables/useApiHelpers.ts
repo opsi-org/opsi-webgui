@@ -188,16 +188,35 @@ export function useApiHelpers() {
   const removeClientFromGroups = (clientId: string, groupIds: string[]) =>
     apiPost<void>(`/opsidata/clients/${clientId}/groups`, groupIds) // Uses DELETE in backend
 
-  const cloneClient = (clientId: string, target: {
-    hostId: string
-    ipAddress?: string
-    hardwareAddress?: string
-    systemUUID?: string
-  }, options: {
-    configs?: boolean
-    products?: boolean
-    productProperties?: boolean
-  }) => apiPost<void>(`/opsidata/clients/${clientId}/clone`, { target, options })
+  // const cloneClient = (clientId: string, target: {
+  //   hostId: string
+  //   ipAddress?: string
+  //   hardwareAddress?: string
+  //   systemUUID?: string
+  // }, options: {
+  //   configs?: boolean
+  //   products?: boolean
+  //   productProperties?: boolean
+  // }) => apiPost<void>(`/opsidata/clients/${clientId}/clone`, { target, options })
+
+  const cloneClient = (
+    clientId: string,
+    target: {
+      hostId: string
+      ipAddress?: string
+      hardwareAddress?: string
+      systemUUID?: string
+    },
+    options: {
+      configs?: boolean
+      products?: boolean
+      productProperties?: boolean
+      groups?: boolean
+      description?: string
+      notes?: string
+    }
+  ) => apiPost<void>(`/opsidata/clients/${clientId}/clone`, { target, options })
+
 
   const getClientDepotMapping = (clientIds: string[]) =>
     apiGet<Record<string, string>>('/opsidata/clientsdepots', { selectedClients: `[${clientIds.join(',')}]` })

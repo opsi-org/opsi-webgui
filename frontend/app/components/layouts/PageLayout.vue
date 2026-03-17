@@ -8,9 +8,10 @@ License: AGPL-3.0
 PageLayout - A layout component with a fixed header (for controls) and a scrollable content area.
 -->
 <template>
-	<div class="page-layout flex flex-col h-full min-h-0 overflow-hidden">
+	<div
+		class="page-layout flex flex-col h-full min-h-0 overflow-hidden bg-(--color-background) dark:bg-(--color-background-dark)">
 		<!-- Fixed Header Section -->
-		<div class="page-header shrink-0 bg-(--color-surface) dark:bg-(--color-background) pb-3">
+		<div class="page-header shrink-0 bg-(--color-background) dark:bg-(--color-background-dark) pb-3">
 			<div v-if="showControlsRow" class="flex flex-wrap items-center justify-between gap-3">
 				<!-- Left side -->
 				<div class="flex items-center gap-2">

@@ -123,21 +123,15 @@ Clients page - Clients table with detail panel for selected clients and selected
 
         <template #title>{{ selectedClient?.clientId }}</template>
 
-        <template v-if="selectedPanelType === 'config'" #panelActions>
-            <!-- Panel actions are now handled inside HostsConfigView -->
-        </template>
-
         <template #panel>
             <div v-if="selectedClient" class="space-y-4">
                 <!-- Panel Content -->
                 <div>
-                    <div v-show="selectedPanelType === 'config'">
-                        <HostsConfigView :host-id="selectedClient.clientId" host-type="client" :tab="panelActiveTab"
-                            panel-mode @update:tab="panelActiveTab = $event" />
-                    </div>
-                    <ClientsLogs v-show="selectedPanelType === 'logs'" :client-id="selectedClient.clientId" />
-                    <ClientsClone v-show="selectedPanelType === 'clone'" :source-id="selectedClient.clientId"
-                        @success="fetchClients" />
+                    <HostsConfigView v-if="selectedPanelType === 'config'" :host-id="selectedClient.clientId"
+                        host-type="client" :tab="panelActiveTab" panel-mode @update:tab="panelActiveTab = $event" />
+                    <ClientsLogs v-if="selectedPanelType === 'logs'" :client-id="selectedClient.clientId" />
+                    <ClientsCloneView v-if="selectedPanelType === 'clone'" :source-id="selectedClient.clientId"
+                        panel-mode @saved="fetchClients" />
                 </div>
             </div>
         </template>
