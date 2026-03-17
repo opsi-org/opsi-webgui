@@ -179,9 +179,9 @@ Includes side panel with tabs for product properties and dependencies.
 
 									<!-- Property Value Editor -->
 									<div class="mt-2">
-										<UToggle v-if="prop.type === 'BoolProductProperty'"
+										<UCheckbox v-if="prop.type === 'BoolProductProperty'"
 											:model-value="Boolean(prop._value)"
-											@update:model-value="(v: boolean) => updatePropertyValue(prop.propertyId, v)"
+											@update:model-value="(v: boolean | 'indeterminate') => updatePropertyValue(prop.propertyId, v)"
 											:disabled="!prop.editable" />
 										<USelect v-else-if="prop.allValues && prop.allValues.length > 0"
 											:model-value="String(prop._value ?? '')"

@@ -8,7 +8,8 @@ License: AGPL-3.0
 HostsConfigTabs - Parameters and Attributes tabs.
 -->
 <template>
-	<div :class="['flex flex-col bg-(--color-background)', panelMode ? '' : 'h-full min-h-0']">
+	<div
+		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
 		<SharedTabsNav v-if="showTabs" v-model="activeTab" :tabs="tabDefs" class="mb-3 shrink-0" />
 
 		<!-- PARAMETERS TAB  -->

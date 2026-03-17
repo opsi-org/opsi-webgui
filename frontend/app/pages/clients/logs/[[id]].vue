@@ -28,7 +28,7 @@ Unified logs page that works as both a main page and in panel mode.
         </template>
 
         <!-- No Client Selected -->
-        <div v-if="!selectedClientId && !loading" class="p-8 text-center border border-default rounded-lg">
+        <div v-if="!selectedClientId && !loading" class="p-8 text-center">
             <UIcon :name="icons.log" class="w-12 h-12 mx-auto mb-3 opacity-50 text-muted" />
             <p class="text-muted">{{ $t('selectClientToViewLogs') }}</p>
         </div>

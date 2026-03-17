@@ -30,8 +30,7 @@ Client Add New page - form for adding a new client.
                 <!-- Basics Section -->
                 <div>
                     <p class="text-[10px] font-semibold uppercase tracking-wide text-muted mb-2">{{ $t('basics') }}</p>
-                    <div
-                        class="rounded-lg border border-(--color-border) dark:border-(--color-border) bg-white dark:bg-(--color-surface) shadow-sm dark:shadow-none">
+                    <div class="rounded-lg  bg-white dark:bg-(--color-surface) shadow-sm dark:shadow-none">
                         <!-- Client ID -->
                         <div
                             class="grid grid-cols-1 sm:grid-cols-[200px_1fr] items-center gap-x-6 gap-y-1.5 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-(--color-surface-hover) transition-colors">
@@ -60,7 +59,7 @@ Client Add New page - form for adding a new client.
                                 <USelect v-model="form.depotId" :items="depotOptions" :loading="loadingDepots"
                                     :disabled="loading" size="sm" class="w-full" />
                                 <span v-if="formErrors.depotId" class="text-xs text-error">{{ formErrors.depotId
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                         <!-- IP Address -->
@@ -89,15 +88,14 @@ Client Add New page - form for adding a new client.
                 <!-- Initial Setup Section -->
                 <div>
                     <p class="text-[10px] font-semibold uppercase tracking-wide text-muted mb-2">{{ $t('initialSetup')
-                        }}</p>
-                    <div
-                        class="rounded-lg border border-(--color-border) dark:border-(--color-border) bg-white dark:bg-(--color-surface) shadow-sm dark:shadow-none">
+                    }}</p>
+                    <div class="rounded-lg  bg-white dark:bg-(--color-surface) shadow-sm dark:shadow-none">
                         <!-- Agent Setup -->
                         <div
                             class="grid grid-cols-1 sm:grid-cols-[200px_1fr] items-center gap-x-6 gap-y-1.5 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-(--color-surface-hover) transition-colors">
                             <label class="text-sm font-medium text-default shrink-0">{{ $t('enableAgentSetup')
-                                }}</label>
-                            <UToggle v-model="form.agentSetup" :disabled="loading" />
+                            }}</label>
+                            <UCheckbox v-model="form.agentSetup" :disabled="loading" />
                         </div>
                         <!-- Agent Type -->
                         <div class="grid grid-cols-1 sm:grid-cols-[200px_1fr] items-center gap-x-6 gap-y-1.5 px-4 py-2.5 border-t border-(--color-border) hover:bg-gray-50 dark:hover:bg-(--color-surface-hover) transition-colors"
@@ -134,8 +132,7 @@ Client Add New page - form for adding a new client.
                 <div>
                     <p class="text-[10px] font-semibold uppercase tracking-wide text-muted mb-2">{{ $t('assignments') }}
                     </p>
-                    <div
-                        class="rounded-lg border border-(--color-border) dark:border-(--color-border) bg-white dark:bg-(--color-surface) shadow-sm dark:shadow-none">
+                    <div class="rounded-lg bg-white dark:bg-(--color-surface) shadow-sm dark:shadow-none">
                         <!-- Groups -->
                         <div
                             class="grid grid-cols-1 sm:grid-cols-[200px_1fr] items-center gap-x-6 gap-y-1.5 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-(--color-surface-hover) transition-colors">

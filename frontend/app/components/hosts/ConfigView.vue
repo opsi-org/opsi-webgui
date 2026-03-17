@@ -50,13 +50,12 @@ Can be used both in standalone pages and detail panels.
 		</template>
 
 		<!-- No Host Selected -->
-		<div v-if="!resolvedHostId && !loading && hostType !== 'server'"
-			class="p-8 text-center border border-default rounded-lg">
+		<div v-if="!resolvedHostId && !loading && hostType !== 'server'" class="p-8 text-center">
 			<UIcon :name="hostType === 'client' ? icons.client : icons.server"
 				class="w-12 h-12 mx-auto mb-3 opacity-50 text-muted" />
 			<p class="text-muted">{{ hostType === 'client' ? $t('selectClientToViewConfig') :
 				$t('selectServerToViewConfig')
-				}}</p>
+			}}</p>
 		</div>
 
 		<!-- Config content -->
@@ -108,8 +107,7 @@ Can be used both in standalone pages and detail panels.
 			</template>
 
 			<!-- No Host Selected -->
-			<div v-if="!resolvedHostId && !loading && hostType !== 'server'"
-				class="p-8 text-center border border-default rounded-lg">
+			<div v-if="!resolvedHostId && !loading && hostType !== 'server'" class="p-8 text-center">
 				<UIcon :name="hostType === 'client' ? icons.client : icons.server"
 					class="w-12 h-12 mx-auto mb-3 opacity-50 text-muted" />
 				<p class="text-muted">{{ hostType === 'client' ? $t('selectClientToViewConfig') :

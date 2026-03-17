@@ -106,7 +106,7 @@ QuickPanel - A side panel for group selections, quick actions,and settings.
 					<span v-else class="w-2 h-2 rounded-full bg-red-400" :title="t('messageBusDisconnected')" />
 					<span class="text-sm">{{ t('autoRefresh') }}</span>
 				</div>
-				<UToggle v-model="autoRefreshEnabled" size="sm" />
+				<UCheckbox v-model="autoRefreshEnabled" size="sm" />
 			</div>
 			<p class="text-[10px] text-(--color-text-muted) leading-relaxed">
 				{{ t('autoRefreshTooltip') }}

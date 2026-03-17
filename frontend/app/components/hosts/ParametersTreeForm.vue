@@ -33,8 +33,9 @@ HostsParametersTreeForm - Parameters tree form.
 					<div class="opsi-tree-col opsi-tree-label-col" :title="node.param.configId">
 						<span class="opsi-tree-indent" :style="{ width: `${getDepth(node.key) * 30}px` }"></span>
 						<span class="opsi-tree-label min-w-0 break-all">
-							<span class="font-mono text-sm text-(--color-text) dark:text-(--color-text) truncate">{{
-								node.param.configId }}</span>
+							<span
+								class="font-mono text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) truncate">{{
+									node.param.configId }}</span>
 							<UButton v-if="node.param.description" size="xs" icon="i-lucide-info" variant="ghost"
 								color="neutral" class="shrink-0 opacity-60 hover:opacity-100" tabindex="-1"
 								:title="node.param.description" />

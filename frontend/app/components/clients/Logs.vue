@@ -35,11 +35,11 @@ log level control, auto-fetch, auto-scroll, and download options.
             <!-- Control Toggles -->
             <div v-if="logContent.length > 0" class="flex items-center gap-3">
                 <div class="flex items-center gap-1.5">
-                    <UToggle v-model="autoFetch" size="xs" />
+                    <UCheckbox v-model="autoFetch" size="xs" />
                     <span class="text-xs text-muted">{{ $t('autoFetch') }}</span>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <UToggle v-model="autoScroll" size="xs" :disabled="hasMarker" />
+                    <UCheckbox v-model="autoScroll" size="xs" :disabled="hasMarker" />
                     <span class="text-xs text-muted">{{ $t('autoScroll') }}</span>
                 </div>
             </div>
