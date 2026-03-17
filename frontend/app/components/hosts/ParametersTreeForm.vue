@@ -20,8 +20,7 @@ HostsParametersTreeForm - Parameters tree form.
 						<UButton icon="i-heroicons-chevron-down" size="xs" variant="ghost" color="neutral"
 							class="shrink-0 transition-transform duration-200"
 							:class="{ '-rotate-90': !open[node.key] }" tabindex="-1" @click.stop="toggle(node.key)" />
-						<span class="opsi-tree-label transition-colors"
-							:class="{ 'font-heading': getDepth(node.key) === 0 }">
+						<span class="opsi-tree-label transition-colors font-mono">
 							{{ node.label }}
 						</span>
 					</div>
@@ -77,7 +76,7 @@ HostsParametersTreeForm - Parameters tree form.
 </template>
 
 <script setup lang="ts">
-import { ref, computed, toRefs } from 'vue'
+import { ref, computed, toRefs, watch } from 'vue'
 
 interface Param {
 	configId: string
@@ -106,6 +105,7 @@ const props = defineProps<{
 	discardSingleParam: (id: string) => void
 	icons: Record<string, string>
 	fmtVal: (v: unknown) => string
+	autoOpenAll?: boolean
 }>()
 
 const { changedParams, readonly, currentValue, setParam, discardSingleParam, icons, fmtVal } = toRefs(props)
@@ -157,7 +157,16 @@ if (typeof window !== 'undefined') {
 }
 const tree = computed<TreeNode[]>(() => props.tree ?? (props.params ? buildTree(props.params) : []))
 
+function getDepth(key: string): number {
+	return key.split('.').length - 1
+}
+
 function toggle(key: string) {
+	// Disable accordion logic if filtering
+	if (props.autoOpenAll) {
+		open.value[key] = !open.value[key]
+		return
+	}
 	const depth = getDepth(key)
 	if (depth === 0) {
 		// Accordion: close all other main categories
@@ -171,10 +180,30 @@ function toggle(key: string) {
 		open.value[key] = !open.value[key]
 	}
 }
-function getDepth(key: string): number {
-	return key.split('.').length - 1
-}
 
+watch(
+	() => props.autoOpenAll,
+	(val) => {
+		if (val) {
+			// Open all nodes
+			function openAll(nodes: TreeNode[]) {
+				for (const node of nodes) {
+					open.value[node.key] = true
+					if (node.children) openAll(node.children)
+				}
+			}
+			openAll(tree.value)
+		} else {
+			// Restore accordion: only first main category open
+			const mainCategories = tree.value.filter(n => getDepth(n.key) === 0)
+			for (const node of mainCategories) {
+				open.value[node.key] = false
+			}
+			const firstCategory = mainCategories[0]
+			if (firstCategory) open.value[firstCategory.key] = true
+		}
+	}
+)
 </script>
 
 <style scoped>

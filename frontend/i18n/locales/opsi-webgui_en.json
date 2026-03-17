@@ -561,7 +561,7 @@
   "selectedProducts": "Selected Products",
   "selectFromOtherTabs": "Select servers, client groups or product groups to get started",
   "selectGroupsToCopyClients": "Select Groups to copy clients",
-  "selectHostFirst": "Select a host to view parameters",
+  "selectHostFirst": "Select a host to view configuration",
   "selection": "Selection",
   "selectionMode": "Selection Mode",
   "selectionModeTooltip": "If enabled, you can select multiple items (servers, clients, or products) in tables or groups.",

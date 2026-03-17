@@ -46,21 +46,10 @@ Clients page - Clients table with detail panel for selected clients and selected
                 </div>
 
                 <!-- Clients Table -->
-                <SharedDataTable
-                    :rows="clients"
-                    :columns="columns"
-                    :loading="loading"
-                    table-id="clients"
-                    row-key="clientId"
-                    :selectable="true"
-                    :filterable="true"
-                    :show-refresh="false"
-                    :clickable="true"
-                    :selected-keys="selectedTableKeys"
-                    @select="handleRowSelect"
-                    @selection-change="handleSelectionChange"
-                    @refresh="fetchClients"
-                >
+                <SharedDataTable :rows="clients" :columns="columns" :loading="loading" table-id="clients"
+                    row-key="clientId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
+                    :selected-keys="selectedTableKeys" @select="handleRowSelect"
+                    @selection-change="handleSelectionChange" @refresh="fetchClients">
                     <template #cell-description="{ row }">
                         {{ (row as Client).description || '-' }}
                     </template>
@@ -71,7 +60,8 @@ Clients page - Clients table with detail panel for selected clients and selected
                         <span class="font-mono text-xs">{{ (row as Client).ipAddress || '-' }}</span>
                     </template>
                     <template #cell-lastSeen="{ row }">
-                        {{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as string).toLocaleString() : '-' }}
+                        {{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as string).toLocaleString() :
+                            '-' }}
                     </template>
                     <template #cell-uefi="{ row }">
                         <SharedStatusBadge v-if="(row as Client).uefi" status="info" :label="'UEFI'" />
@@ -133,20 +123,17 @@ Clients page - Clients table with detail panel for selected clients and selected
 
         <template #title>{{ selectedClient?.clientId }}</template>
 
-        <!-- Unsaved-changes controls  -->
         <template v-if="selectedPanelType === 'config'" #panelActions>
-            <SharedUnsavedChangesModal :config-ref="panelConfigRef" size="xs" @save-all="panelConfigRef?.saveAll?.()"
-                @discard-all="panelConfigRef?.discardAll?.()" />
+            <!-- Panel actions are now handled inside HostsConfigView -->
         </template>
 
         <template #panel>
             <div v-if="selectedClient" class="space-y-4">
                 <!-- Panel Content -->
                 <div>
-                    <div v-show="selectedPanelType === 'config'" class="flex flex-col gap-2">
-                        <SharedTabsNav v-model="panelActiveTab" :tabs="panelConfigTabs" class="shrink-0" />
-                        <HostsConfigTabs ref="panelConfigRef" :host-id="selectedClient.clientId" host-type="client"
-                            :tab="panelActiveTab" :show-tabs="false" :show-change-banner="false" :panel-mode="true" />
+                    <div v-show="selectedPanelType === 'config'">
+                        <HostsConfigView :host-id="selectedClient.clientId" host-type="client" :tab="panelActiveTab"
+                            panel-mode @update:tab="panelActiveTab = $event" />
                     </div>
                     <ClientsLogs v-show="selectedPanelType === 'logs'" :client-id="selectedClient.clientId" />
                     <ClientsClone v-show="selectedPanelType === 'clone'" :source-id="selectedClient.clientId"
@@ -177,7 +164,6 @@ const error = ref<string | null>(null)
 const selectedClient = ref<Client | null>(null)
 const clients = ref<Client[]>([])
 const selectedPanelType = ref<'config' | 'logs' | 'clone' | null>(null)
-const panelConfigRef = ref<any>(null)
 const panelActiveTab = ref<string>('parameters')
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
@@ -194,30 +180,19 @@ const selectedClients = computed({
 // Selected keys for table sync
 const selectedTableKeys = computed(() => selectionStore.selectedClients)
 
-const panelConfigTabs = computed(() => [
-    { label: String($t('parameters')), value: 'parameters' },
-    { label: String($t('attributes')), value: 'attributes' },
-])
-
 function switchPanelType(type: 'config' | 'logs' | 'clone') {
-    if (type !== selectedPanelType.value && panelConfigRef.value?.hasAnyChanges) {
-        panelConfigRef.value.discardAll()
-    }
+    // HostsConfigView now handles unsaved changes internally
     selectedPanelType.value = type
 }
 
 function handlePanelClose() {
-    if (panelConfigRef.value?.hasAnyChanges) {
-        panelConfigRef.value.discardAll()
-    }
+    // HostsConfigView now handles unsaved changes internally
     selectedClient.value = null
     selectedPanelType.value = null
 }
 
 function openClientPanel(client: Client, type: 'config' | 'logs' | 'clone') {
-    if (panelConfigRef.value?.hasAnyChanges && client.clientId !== selectedClient.value?.clientId) {
-        panelConfigRef.value.discardAll()
-    }
+    // HostsConfigView now handles unsaved changes internally
     selectedClient.value = client
     switchPanelType(type)
 }

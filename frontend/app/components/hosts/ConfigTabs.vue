@@ -8,7 +8,7 @@ License: AGPL-3.0
 HostsConfigTabs - Parameters and Attributes tabs.
 -->
 <template>
-	<div :class="['flex flex-col', panelMode ? '' : 'h-full min-h-0']">
+	<div :class="['flex flex-col bg-(--color-background)', panelMode ? '' : 'h-full min-h-0']">
 		<SharedTabsNav v-if="showTabs" v-model="activeTab" :tabs="tabDefs" class="mb-3 shrink-0" />
 
 		<!-- PARAMETERS TAB  -->
@@ -16,18 +16,14 @@ HostsConfigTabs - Parameters and Attributes tabs.
 			<div v-if="loadingParams" class="py-8 flex justify-center">
 				<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-opsi-blue" />
 			</div>
-
 			<div v-else-if="Object.keys(groupedFilteredParams).length === 0"
 				class="py-8 text-center text-sm text-muted">
 				<UIcon :name="icons.config" class="w-10 h-10 mx-auto mb-2 opacity-40" />
 				<p>{{ (hostId || hostType === 'server') ? $t('noParametersFound') : $t('selectHostFirst') }}</p>
 			</div>
-
-			<div class="bg-(--color-background)">
-				<HostsParametersTreeForm :params="flatParams" :changed-params="changedParams" :readonly="readonly"
-					:current-value="currentValue" :set-param="setParam" :discard-single-param="discardSingleParam"
-					:icons="icons" :fmt-val="fmtVal" />
-			</div>
+			<HostsParametersTreeForm :params="filteredFlatParams" :changed-params="changedParams" :readonly="readonly"
+				:current-value="currentValue" :set-param="setParam" :discard-single-param="discardSingleParam"
+				:icons="icons" :fmt-val="fmtVal" :auto-open-all="!!paramSearch" />
 		</div>
 
 		<!-- ATTRIBUTES TAB -->
@@ -35,55 +31,52 @@ HostsConfigTabs - Parameters and Attributes tabs.
 			<div v-if="loadingAttrs" class="py-8 flex justify-center">
 				<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-opsi-blue" />
 			</div>
-
 			<div v-else-if="!hostId" class="py-8 text-center text-sm text-muted">
+				<UIcon :name="icons.config" class="w-10 h-10 mx-auto mb-2 opacity-40" />
 				<p>{{ $t('selectHostFirst') }}</p>
 			</div>
-
-			<div class="bg-(--color-background)">
-				<!-- read-only -->
-				<div v-if="readonlyAttrKeys.length"
-					class="mb-6 border-b border-(--color-border) dark:border-(--color-border)">
-					<div v-for="key in readonlyAttrKeys" :key="key"
-						class="form-row flex items-center gap-x-6 min-h-[40px] hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span
-							class="text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
-							{{ getAttributeLabel(key) }}
-						</span>
-						<span class="text-sm font-mono flex-1 truncate" :title="fmtVal(originalAttributes[key])">
-							{{ fmtVal(originalAttributes[key]) }}
-						</span>
-					</div>
+			<!-- read-only -->
+			<div v-if="filteredReadonlyAttrKeys.length"
+				class="mb-6 border-b border-(--color-border) dark:border-(--color-border)">
+				<div v-for="key in filteredReadonlyAttrKeys" :key="key"
+					class="orm-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
+					<span
+						class="text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						{{ getAttributeLabel(key) }}
+					</span>
+					<span class="text-sm font-mono flex-1 truncate" :title="fmtVal(originalAttributes[key])">
+						{{ fmtVal(originalAttributes[key]) }}
+					</span>
 				</div>
+			</div>
 
-				<!-- Editable -->
-				<div v-if="editableAttrKeys.length" class="mb-6">
-					<div v-for="key in editableAttrKeys" :key="key"
-						class="form-row flex items-center gap-x-6 min-h-[40px] hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-						:class="isAttrChanged(key) ? 'bg-yellow-50 dark:bg-yellow-700/10' : ''">
-						<span
-							class="font-mono text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
-							{{ getAttributeLabel(key) }}
-							<span v-if="isAttrChanged(key)"
-								class="inline-flex items-center text-[10px] text-yellow-700 dark:text-yellow-200">
-								<UIcon name="i-heroicons-pencil-square" class="w-3 h-3" />
-							</span>
+			<!-- Editable -->
+			<div v-if="filteredEditableAttrKeys.length" class="mb-6">
+				<div v-for="key in filteredEditableAttrKeys" :key="key"
+					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+					:class="isAttrChanged(key) ? 'bg-yellow-50 dark:bg-yellow-700/10' : ''">
+					<span
+						class="font-mono text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						{{ getAttributeLabel(key) }}
+						<span v-if="isAttrChanged(key)"
+							class="inline-flex items-center text-[10px] text-yellow-700 dark:text-yellow-200">
+							<UIcon name="i-heroicons-pencil-square" class="w-3 h-3" />
 						</span>
-						<div class="flex-1 flex items-center gap-2 min-w-0">
-							<UCheckbox v-if="typeof originalAttributes[key] === 'boolean'"
-								v-model="(editableAttributes as Record<string, boolean>)[key]" :disabled="readonly" />
-							<UCheckbox v-else-if="key === 'isMasterDepot'"
-								:model-value="editableAttributes[key] === true || editableAttributes[key] === 'true'"
-								:disabled="readonly"
-								@update:model-value="(v: boolean | 'indeterminate') => { editableAttributes[key] = v }" />
-							<SharedPasswordInput v-else-if="isPasswordAttribute(key)"
-								v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
-								:disabled="readonly" class="flex-1 font-mono" />
-							<UInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
-								:disabled="readonly" class="flex-1" />
-							<UButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral"
-								:icon="icons.close" :title="$t('discardItem')" @click="discardSingleAttribute(key)" />
-						</div>
+					</span>
+					<div class="flex-1 flex items-center gap-2 min-w-0">
+						<UCheckbox v-if="typeof originalAttributes[key] === 'boolean'"
+							v-model="(editableAttributes as Record<string, boolean>)[key]" :disabled="readonly" />
+						<UCheckbox v-else-if="key === 'isMasterDepot'"
+							:model-value="editableAttributes[key] === true || editableAttributes[key] === 'true'"
+							:disabled="readonly"
+							@update:model-value="(v: boolean | 'indeterminate') => { editableAttributes[key] = v }" />
+						<SharedPasswordInput v-else-if="isPasswordAttribute(key)"
+							v-model="(editableAttributes as Record<string, string>)[key]" size="sm" :disabled="readonly"
+							class="flex-1 font-mono" />
+						<UInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
+							:disabled="readonly" class="flex-1" />
+						<UButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral" :icon="icons.close"
+							:title="$t('discardItem')" @click="discardSingleAttribute(key)" />
 					</div>
 				</div>
 			</div>
@@ -166,14 +159,6 @@ const paramSearch = computed({
 })
 const activeCategory = ref('all')
 
-// const flatParams = computed<Param[]>(() => {
-// 	const all: Param[] = []
-// 	for (const items of Object.values(rawParams.value)) {
-// 		all.push(...items.filter((i) => i.configId))
-// 	}
-// 	return all.sort((a, b) => a.configId.localeCompare(b.configId))
-// })
-
 const flatParams = computed<Param[]>(() => {
 	const all: Param[] = []
 	for (const [category, items] of Object.entries(rawParams.value)) {
@@ -188,18 +173,23 @@ const flatParams = computed<Param[]>(() => {
 	return all.sort((a, b) => a.configId.localeCompare(b.configId))
 })
 
-const groupedFilteredParams = computed(() => {
+const filteredFlatParams = computed(() => {
 	const q = paramSearch.value.trim().toLowerCase()
+	if (!q) return flatParams.value
+	return flatParams.value.filter(
+		(p) =>
+			p.configId.toLowerCase().includes(q) ||
+			(p.description || '').toLowerCase().includes(q),
+	)
+})
+
+const groupedFilteredParams = computed(() => {
 	const result: Record<string, Param[]> = {}
-	for (const [category, params] of Object.entries(rawParams.value)) {
-		const filtered = q
-			? params.filter(
-				(p) =>
-					p.configId.toLowerCase().includes(q) ||
-					(p.description || '').toLowerCase().includes(q),
-			)
-			: params
-		if (filtered.length > 0) result[category] = filtered
+	for (const p of filteredFlatParams.value) {
+		const [categoryRaw] = p.configId.split('.', 1)
+		const category = categoryRaw || '_uncategorized'
+		if (!result[category]) result[category] = []
+		result[category].push(p)
 	}
 	return result
 })
@@ -239,14 +229,6 @@ const loadingAttrs = ref(false)
 const savingAttrs = ref(false)
 const originalAttributes = ref<Record<string, unknown>>({})
 const editableAttributes = ref<Record<string, unknown>>({})
-const shownPasswords = ref(new Set<string>())
-
-function togglePassword(key: string) {
-	const next = new Set(shownPasswords.value)
-	if (next.has(key)) next.delete(key)
-	else next.add(key)
-	shownPasswords.value = next
-}
 
 const hasAttributeChanges = computed(() =>
 	Object.keys(editableAttributes.value).some(
@@ -291,6 +273,21 @@ const readonlyAttrKeys = computed(() =>
 )
 const editableAttrKeys = computed(() =>
 	Object.keys(editableAttributes.value).filter((k) => !isReadonlyAttribute(k)),
+)
+const attributeSearch = computed(() => paramSearch.value.trim().toLowerCase())
+
+const filteredReadonlyAttrKeys = computed(() =>
+	readonlyAttrKeys.value.filter((k) =>
+		getAttributeLabel(k).toLowerCase().includes(attributeSearch.value) ||
+		String(originalAttributes.value[k] ?? '').toLowerCase().includes(attributeSearch.value)
+	)
+)
+
+const filteredEditableAttrKeys = computed(() =>
+	editableAttrKeys.value.filter((k) =>
+		getAttributeLabel(k).toLowerCase().includes(attributeSearch.value) ||
+		String(editableAttributes.value[k] ?? '').toLowerCase().includes(attributeSearch.value)
+	)
 )
 
 async function fetchParameters() {

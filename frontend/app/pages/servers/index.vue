@@ -15,25 +15,12 @@ Servers page - Servers table with configuration panel for selected server.
                     :close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
 
                 <!-- Servers Table -->
-                <SharedDataTable
-                    :rows="servers"
-                    :columns="columns"
-                    :loading="loading"
-                    table-id="servers"
-                    row-key="depotId"
-                    :actions="tableActions"
-                    :selectable="false"
-                    :filterable="true"
-                    :show-refresh="false"
-                    :clickable="true"
-                    @select="handleRowSelect"
-                    @refresh="fetchServers"
-                >
+                <SharedDataTable :rows="servers" :columns="columns" :loading="loading" table-id="servers"
+                    row-key="depotId" :actions="tableActions" :selectable="false" :filterable="true"
+                    :show-refresh="false" :clickable="true" @select="handleRowSelect" @refresh="fetchServers">
                     <template #cell-type="{ row }">
-                        <SharedStatusBadge
-                            :status="getServerType(row) === 'OpsiConfigserver' ? 'info' : 'neutral'"
-                            :label="String(getServerType(row) === 'OpsiConfigserver' ? $t('configserver') : $t('depot'))"
-                        />
+                        <SharedStatusBadge :status="getServerType(row) === 'OpsiConfigserver' ? 'info' : 'neutral'"
+                            :label="String(getServerType(row) === 'OpsiConfigserver' ? $t('configserver') : $t('depot'))" />
                     </template>
                     <template #cell-description="{ row }">
                         {{ (row as Server).description || '-' }}
@@ -44,16 +31,14 @@ Servers page - Servers table with configuration panel for selected server.
 
         <template #title>{{ selectedServer?.depotId }}</template>
         <template v-if="selectedPanelType === 'config'" #panelActions>
-            <SharedUnsavedChangesModal :config-ref="panelConfigRef" size="xs" @save-all="panelConfigRef?.saveAll?.()"
-                @discard-all="panelConfigRef?.discardAll?.()" />
+            <!-- Panel actions are now handled inside HostsConfigView -->
         </template>
         <template #panel>
             <div v-if="selectedServer" class="space-y-4">
                 <!-- Panel Content -->
-                <div v-if="selectedPanelType === 'config'" class="flex flex-col gap-2">
-                    <SharedTabsNav v-model="panelActiveTab" :tabs="panelConfigTabs" />
-                    <HostsConfigTabs ref="panelConfigRef" :host-id="selectedServer.depotId" host-type="server"
-                        :tab="panelActiveTab" :show-tabs="false" :show-change-banner="false" :panel-mode="true" />
+                <div v-if="selectedPanelType === 'config'">
+                    <HostsConfigView :host-id="selectedServer.depotId" host-type="server" :tab="panelActiveTab"
+                        panel-mode @update:tab="panelActiveTab = $event" />
                 </div>
             </div>
         </template>
@@ -79,24 +64,15 @@ const error = ref<string | null>(null)
 const selectedServer = ref<Server | null>(null)
 const servers = ref<Server[]>([])
 const selectedPanelType = ref<'config' | null>(null)
-const panelConfigRef = ref<any>(null)
 const panelActiveTab = ref<string>('parameters')
-const panelConfigTabs = computed(() => [
-    { label: String($t('parameters')), value: 'parameters' },
-    { label: String($t('attributes')), value: 'attributes' },
-])
 
 function switchPanelType(type: 'config') {
-    if (type !== selectedPanelType.value && panelConfigRef.value?.hasAnyChanges) {
-        panelConfigRef.value.discardAll()
-    }
+    // HostsConfigView now handles unsaved changes internally
     selectedPanelType.value = type
 }
 
 function handlePanelClose() {
-    if (panelConfigRef.value?.hasAnyChanges) {
-        panelConfigRef.value.discardAll()
-    }
+    // HostsConfigView now handles unsaved changes internally
     selectedServer.value = null
     selectedPanelType.value = null
 }
@@ -112,9 +88,7 @@ const tableActions: DataTableAction<Server>[] = [
         icon: icons.config,
         label: String($t('configuration')),
         handler: (row) => {
-            if (panelConfigRef.value?.hasAnyChanges && row.depotId !== selectedServer.value?.depotId) {
-                panelConfigRef.value.discardAll()
-            }
+            // HostsConfigView now handles unsaved changes internally
             selectedServer.value = row
             switchPanelType('config')
         }
@@ -122,9 +96,7 @@ const tableActions: DataTableAction<Server>[] = [
 ]
 
 function handleRowSelect(row: Server) {
-    if (panelConfigRef.value?.hasAnyChanges && row.depotId !== selectedServer.value?.depotId) {
-        panelConfigRef.value.discardAll()
-    }
+    // HostsConfigView now handles unsaved changes internally
     selectedServer.value = row
     if (selectedPanelType.value !== null) {
         selectedPanelType.value = null
