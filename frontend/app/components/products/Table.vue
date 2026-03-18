@@ -5,7 +5,7 @@ Copyright (c) uib GmbH <info@uib.de> 2026
 All rights reserved.
 License: AGPL-3.0
 
-Products List component - used for both Localboot and Netboot products.
+ProductsTable component - used for both Localboot and Netboot products.
 Includes side panel with tabs for product properties and dependencies.
 -->
 <template>

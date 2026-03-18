@@ -13,7 +13,7 @@ Products page - unified localboot and netboot products with tab navigation
             <SharedTabsNav v-model="activeType" :tabs="productTypes" />
         </template>
 
-        <ProductsList ref="productsListRef"
+        <ProductsTable ref="productsTableRef"
             :product-type="activeType === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'"
             :initial-product-id="initialProductId" />
     </LayoutsPageLayout>
@@ -35,7 +35,7 @@ const productTypes = [
 ]
 
 const loading = ref(false)
-const productsListRef = ref<{ refresh: () => void } | null>(null)
+const productsTableRef = ref<{ refresh: () => void } | null>(null)
 
 watch(activeType, (newType) => {
     router.replace({ query: { ...route.query, type: newType } })
@@ -48,6 +48,6 @@ watch(() => route.query.type, (newType) => {
 })
 
 function refresh() {
-    productsListRef.value?.refresh()
+    productsTableRef.value?.refresh()
 }
 </script>

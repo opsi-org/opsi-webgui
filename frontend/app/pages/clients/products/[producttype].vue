@@ -37,7 +37,8 @@ Client Products page - manage products for selected clients
 			</template>
 		</UAlert>
 
-		<ProductsList v-if="stateStore.selectedClients.length > 0" ref="productsListRef" :product-type="productType" />
+		<ProductsTable v-if="stateStore.selectedClients.length > 0" ref="productsTableRef"
+			:product-type="productType" />
 	</LayoutsPageLayout>
 </template>
 
@@ -72,7 +73,7 @@ const productType = computed<ProductType>(() => {
 })
 
 const loading = ref(false)
-const productsListRef = ref<{ refresh: () => void } | null>(null)
+const productsTableRef = ref<{ refresh: () => void } | null>(null)
 
 watch(activeType, (newType) => {
 	const typeParam = newType === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'
@@ -80,6 +81,6 @@ watch(activeType, (newType) => {
 })
 
 function refresh() {
-	productsListRef.value?.refresh()
+	productsTableRef.value?.refresh()
 }
 </script>
