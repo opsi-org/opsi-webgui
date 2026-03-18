@@ -15,7 +15,6 @@ Client Add New page - form for adding a new client.
                     <UIcon :name="icons.add" />
                 </UButton>
             </UTooltip>
-
         </template>
 
         <div class="space-y-4">

@@ -24,7 +24,7 @@ WhatsNew - Displays changelog.
 			{{ $t('changelogNotAvailable') }}
 		</div>
 
-		<div v-else class="space-y-2 max-h-64 overflow-y-auto">
+		<div v-else class="space-y-2 max-h-100 overflow-y-auto">
 			<div v-for="(item, idx) in displayItems" :key="idx"
 				class="flex items-start gap-2 text-sm pb-2 border-b border-[--color-border] last:border-0">
 				<UIcon :name="getItemIcon(item)" :class="getItemIconClass(item)" class="w-4 h-4 mt-0.5 shrink-0" />

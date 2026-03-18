@@ -49,7 +49,7 @@ Login page - allows users to log in with username/password or SAML SSO.
                 class="px-2 bg-white dark:bg-(--color-surface) text-(--color-text-muted) dark:text-(--color-text-muted)">{{
                   $t('or') }}</span></div>
           </div>
-          <UButton v-if="showSaml" type="button" block size="lg" variant="outline" color="primary" @click="samlLogin">{{
+          <UButton v-if="showSaml" type="button" block size="lg" variant="soft" color="primary" @click="samlLogin">{{
             $t('loginWithSAML') }}</UButton>
         </div>
       </form>

@@ -78,7 +78,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                             t('quickPanel')
-                        }}</span>
+                            }}</span>
                         <button @click="quickpanelOpen = false"
                             class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
                             <UIcon :name="icons.close" class="w-4 h-4" />

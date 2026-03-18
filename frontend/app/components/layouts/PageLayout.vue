@@ -34,8 +34,8 @@ PageLayout - A layout component with a fixed header (for controls) and a scrolla
 					<!-- Save / discard actions -->
 					<slot name="saveActions" />
 					<UTooltip :text="$t('refresh')">
-						<UButton v-if="showRefresh" :icon="icons.refresh" color="primary" variant="outline" size="sm"
-							:loading="loading" @click="$emit('refresh')" />
+						<UButton v-if="showRefresh" :icon="icons.refresh" color="primary" size="sm" :loading="loading"
+							@click="$emit('refresh')" />
 					</UTooltip>
 				</div>
 			</div>

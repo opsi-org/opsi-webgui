@@ -31,11 +31,11 @@ ClientsCloneView - Can be used both in standalone pages and detail panels.
 
 		<template #saveActions>
 			<div class="flex gap-2">
-				<UButton color="primary" :loading="saving" :disabled="loading || !canClone"
-					:size="panelMode ? 'sm' : 'md'" @click="cloneClient">
-					<UIcon :name="icons.clone" class="w-4 h-4 mr-1" />
-					{{ $t('clone') }}
-				</UButton>
+				<UTooltip :text="$t('cloneClient')">
+					<UButton color="success" :loading="saving" v-if="canClone" @click="cloneClient">
+						<UIcon :name="icons.clone" />
+					</UButton>
+				</UTooltip>
 			</div>
 		</template>
 
@@ -46,8 +46,8 @@ ClientsCloneView - Can be used both in standalone pages and detail panels.
 		</div>
 
 		<!-- Clone content -->
-		<ClientsCloneForm v-else ref="cloneFormRef" :source-id="resolvedSourceId || ''"
-			:panel-mode="panelMode" @saved="handleSaved" @has-changes="handleHasChanges" />
+		<ClientsCloneForm v-else ref="cloneFormRef" :source-id="resolvedSourceId || ''" :panel-mode="panelMode"
+			@saved="handleSaved" @has-changes="handleHasChanges" />
 	</LayoutsPageLayout>
 </template>
 
@@ -101,7 +101,7 @@ const cloneFormRef = ref<ClientsCloneFormRef | null>(null)
 
 // Computed properties
 const canClone = computed(() => {
-	return resolvedSourceId.value && cloneFormRef.value && !loading.value
+	return resolvedSourceId.value || hasChanges.value
 })
 
 // Functions

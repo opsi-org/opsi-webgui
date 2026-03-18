@@ -28,6 +28,7 @@ export default defineAppConfig({
           link: 'text-[var(--color-opsi-blue)] hover:text-[var(--color-opsi-deep-blue)] dark:text-[#6b98e8] dark:hover:text-[#8fb3f5]',
         },
         color: {
+          primary: 'bg-[var(--color-opsi-blue)] text-[var(--color-text)] dark:text-[var(--color-text)]',
           neutral: 'text-[var(--color-text)] dark:text-[var(--color-text)]',
         }
       }
