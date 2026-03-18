@@ -24,6 +24,20 @@ export interface GroupTreeNodeData {
   hasSelection?: boolean
 }
 
+/* Group tree node for the groups page tree view */
+export interface GroupTreeNode {
+  id: string
+  name: string
+  description: string
+  notes?: string
+  count: number
+  members: string[]
+  parentGroupId?: string | null
+  children: GroupTreeNode[]
+  level: number
+  isSpecial?: boolean
+}
+
 /* Available actions for group nodes */
 export type GroupAction =
   | 'addSubgroup'

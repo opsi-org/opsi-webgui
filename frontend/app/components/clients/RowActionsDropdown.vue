@@ -221,17 +221,17 @@ const showDeleteModal = ref(false)
 
 // Form data
 const notifyText = ref('')
-const deployOptions = ref({ username: '', password: '', type: 'windows' })
+const deployOptions = ref<{ username: string; password: string; type: 'windows' | 'linux' | 'mac' }>({ username: '', password: '', type: 'windows' })
 const selectedOsType = ref({ label: 'Windows', value: 'windows' })
 
 const osTypes = [
 	{ label: 'Windows', value: 'windows' },
 	{ label: 'Linux', value: 'linux' },
-	{ label: 'macOS', value: 'macos' },
+	{ label: 'macOS', value: 'mac' },
 ]
 
 watch(selectedOsType, (newVal) => {
-	deployOptions.value.type = newVal.value
+	deployOptions.value.type = newVal.value as 'windows' | 'linux' | 'mac'
 })
 
 // Client action menu items - Nuxt UI v3 format

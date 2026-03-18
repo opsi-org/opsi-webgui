@@ -164,7 +164,8 @@ html.dark input[type="text"],
 html.dark input,
 html.dark textarea,
 html.dark select {
-  border-color: var(--color-border) !important;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 /* Tabs styling */
 .opsi-tabs {

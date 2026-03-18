@@ -56,6 +56,16 @@ export function useApiHelpers() {
     }
   }
 
+  // Generic DELETE request
+  async function apiDelete<T>(url: string, body?: unknown): Promise<ApiResponse<T>> {
+    try {
+      const data = await $customFetch<T>(url, { method: 'DELETE', body })
+      return { data, error: null, headers: null }
+    } catch (e) {
+      return { data: null, error: e as Error, headers: null }
+    }
+  }
+
   const getConfigServer = () => apiGet<string>('/user/opsiserver')
   const checkAuth = () => apiGet<{ authenticated: boolean; username: string }>('/auth/session')
   const callLogin = (username: string, password: string) =>
@@ -115,6 +125,67 @@ export function useApiHelpers() {
   const getProductGroups = () =>
     apiGet<{ groups?: Record<string, unknown>; members?: Array<{ groupId: string; objectId: string }> }>('/opsidata/products/groups')
 
+  const createHostGroup = (groupData: {
+    groupId: string
+    parentGroupId?: string
+    description?: string
+    notes?: string
+  }) => apiPost('/opsidata/hosts/groups', groupData)
+
+  const createProductGroup = (groupData: {
+    groupId: string
+    parentGroupId?: string
+    description?: string
+    notes?: string
+  }) => apiPost('/opsidata/products/groups', groupData)
+
+  const updateHostGroup = (groupId: string, updateData: {
+    parent?: string
+    description?: string
+    note?: string
+  }) => apiPut(`/opsidata/hosts/groups/${groupId}`, updateData)
+
+  const updateProductGroup = (groupId: string, updateData: {
+    parent?: string
+    description?: string
+    note?: string
+  }) => apiPut(`/opsidata/products/groups/${groupId}`, updateData)
+
+  // Delete host group (DELETE method)
+  const deleteHostGroup = (groupId: string) =>
+    apiDelete(`/opsidata/hosts/groups/${groupId}`)
+
+  // Delete product group (Note: backend uses GET for delete - bug in backend)
+  const deleteProductGroup = (groupId: string) =>
+    apiGet(`/opsidata/products/groups/${groupId}`)
+
+  // Remove ALL clients from a host group
+  const removeClientsFromGroup = (groupId: string) =>
+    apiDelete(`/opsidata/hosts/groups/${groupId}/clients`)
+
+  // Remove ALL products from a product group
+  const removeProductsFromGroup = (groupId: string) =>
+    apiDelete(`/opsidata/products/groups/${groupId}/products`)
+
+  // Add clients to a host group
+  const addClientsToGroup = (groupId: string, clientIds: string[]) =>
+    apiPost(`/opsidata/hosts/groups/${groupId}/clients`, clientIds)
+
+  // Add products to a product group
+  const addProductsToGroup = (groupId: string, productIds: string[]) =>
+    apiPost(`/opsidata/products/groups/${groupId}/products`, productIds)
+
+  // Remove a specific product from a product group
+  const removeProductFromGroup = (groupId: string, productId: string) =>
+    apiDelete(`/opsidata/products/groups/${groupId}/${productId}`)
+
+  // Remove a specific client from groups (body is array of group IDs)
+  const removeClientFromGroups = (clientId: string, groupIds: string[]) =>
+    apiDelete(`/opsidata/clients/${clientId}/groups`, groupIds)
+
+  // Add a client to multiple groups
+  const addClientToMultipleGroups = (clientId: string, groupIds: string[]) =>
+    apiPost(`/opsidata/clients/${clientId}/groups`, groupIds)
 
   const getServerInfo = () => apiGet<{
     opsiVersion: string
@@ -195,8 +266,9 @@ export function useApiHelpers() {
   const addClientToGroups = (clientId: string, groupIds: string[]) =>
     apiPost<void>(`/opsidata/clients/${clientId}/groups`, groupIds)
 
-  const removeClientFromGroups = (clientId: string, groupIds: string[]) =>
-    apiPost<void>(`/opsidata/clients/${clientId}/groups`, groupIds) // Uses DELETE in backend
+  // Note: This is already defined above in the Groups section
+  // const removeClientFromGroups = (clientId: string, groupIds: string[]) =>
+  //   apiPost<void>(`/opsidata/clients/${clientId}/groups`, groupIds) // Uses DELETE in backend
 
   const cloneClient = (clientId: string, target: {
     hostId: string
@@ -231,43 +303,6 @@ export function useApiHelpers() {
     if (params?.withClients !== undefined) queryParams.withClients = params.withClients
     return apiGet<{ groups: Record<string, unknown> }>('/opsidata/hosts/groups-dynamic', queryParams)
   }
-
-  const createHostGroup = (group: { groupId: string; parentGroupId?: string; description?: string; notes?: string }) =>
-    apiPost<Record<string, unknown>>('/opsidata/hosts/groups', group)
-
-  const updateHostGroup = (groupId: string, data: { parent?: string; description?: string; note?: string }) =>
-    apiPut<void>(`/opsidata/hosts/groups/${groupId}`, data)
-
-  const deleteHostGroup = (groupId: string) =>
-    apiPost<void>(`/opsidata/hosts/groups/${groupId}`, {}) // Uses DELETE method in backend
-
-  const addClientsToGroup = (groupId: string, clientIds: string[]) =>
-    apiPost<void>(`/opsidata/hosts/groups/${groupId}/clients`, clientIds)
-
-  const removeClientsFromGroup = (groupId: string) =>
-    apiPost<void>(`/opsidata/hosts/groups/${groupId}/clients`, {}) // Uses DELETE in backend
-
-  // ============================================================================
-  // Product Groups Endpoints
-  // ============================================================================
-
-  const createProductGroup = (group: { groupId: string; parentGroupId?: string; description?: string; notes?: string }) =>
-    apiPost<Record<string, unknown>>('/opsidata/products/groups', group)
-
-  const updateProductGroup = (groupId: string, data: { parent?: string; description?: string; note?: string }) =>
-    apiPut<void>(`/opsidata/products/groups/${groupId}`, data)
-
-  const deleteProductGroup = (groupId: string) =>
-    apiGet<void>(`/opsidata/products/groups/${groupId}`) // Uses GET as DELETE in backend (odd pattern)
-
-  const addProductsToGroup = (groupId: string, productIds: string[]) =>
-    apiPost<void>(`/opsidata/products/groups/${groupId}/products`, productIds)
-
-  const removeProductsFromGroup = (groupId: string) =>
-    apiPost<void>(`/opsidata/products/groups/${groupId}/products`, {}) // Uses DELETE in backend
-
-  const removeProductFromGroup = (groupId: string, productId: string) =>
-    apiPost<void>(`/opsidata/products/groups/${groupId}/${productId}`, {}) // Uses DELETE in backend
 
   // ============================================================================
   // Products Extended Endpoints
@@ -632,6 +667,7 @@ export function useApiHelpers() {
     deleteHostGroup,
     addClientsToGroup,
     removeClientsFromGroup,
+    addClientToMultipleGroups,
     // New Product Groups
     createProductGroup,
     updateProductGroup,
@@ -656,6 +692,6 @@ export function useApiHelpers() {
     // New Depot Products
     getDepotsProducts,
     // New Home/Dashboard
-    getHomeData,
+    getHomeData
   }
 }
