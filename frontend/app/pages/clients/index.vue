@@ -129,7 +129,8 @@ Clients page - Clients table with detail panel for selected clients and selected
                 <div>
                     <HostsConfigView v-if="selectedPanelType === 'config'" :host-id="selectedClient.clientId"
                         host-type="client" :tab="panelActiveTab" panel-mode @update:tab="panelActiveTab = $event" />
-                    <ClientsLogs v-if="selectedPanelType === 'logs'" :client-id="selectedClient.clientId" />
+                    <ClientsLogsView v-if="selectedPanelType === 'logs'" :client-id="selectedClient.clientId"
+                        panel-mode />
                     <ClientsCloneView v-if="selectedPanelType === 'clone'" :source-id="selectedClient.clientId"
                         panel-mode @saved="fetchClients" />
                 </div>

@@ -353,6 +353,72 @@ html.dark .log-row-marker {
   background: var(--color-opsi-dark-alt);
 }
 
+/* Log Level Slider Styling */
+.opsi-log-level-slider {
+  background: var(--color-border);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.opsi-log-level-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--color-opsi-blue);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.opsi-log-level-slider::-webkit-slider-thumb:hover {
+  background: var(--color-opsi-deep-blue);
+  transform: scale(1.1);
+}
+
+.opsi-log-level-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--color-opsi-blue);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.opsi-log-level-slider::-moz-range-thumb:hover {
+  background: var(--color-opsi-deep-blue);
+  transform: scale(1.1);
+}
+
+.opsi-log-level-slider::-moz-range-track {
+  background: var(--color-border);
+  height: 8px;
+  border-radius: 4px;
+}
+
+html.dark .opsi-log-level-slider {
+  background: var(--color-border);
+}
+
+html.dark .opsi-log-level-slider::-webkit-slider-thumb {
+  background: var(--color-opsi-blue);
+}
+
+html.dark .opsi-log-level-slider::-webkit-slider-thumb:hover {
+  background: var(--color-opsi-deep-blue);
+}
+
+html.dark .opsi-log-level-slider::-moz-range-thumb {
+  background: var(--color-opsi-blue);
+}
+
+html.dark .opsi-log-level-slider::-moz-range-thumb:hover {
+  background: var(--color-opsi-deep-blue);
+}
+
 /* Nuxt UI Primary Color Override for OPSI Blue */
 :root {
   --ui-primary: var(--color-opsi-blue);

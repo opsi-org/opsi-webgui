@@ -79,11 +79,10 @@ Can be used both in standalone pages and detail panels.
 				<div class="flex flex-wrap items-center gap-2">
 					<UInput v-model="paramSearch" :placeholder="String($t('typeToFilter'))" size="sm"
 						class="w-full sm:w-32 md:w-40" icon="i-lucide-search" />
-					<SharedUnsavedChangesModal :config-ref="hostConfigTabsRef" size="xs" @save-all="saveAll"
+					<SharedUnsavedChangesModal :config-ref="hostConfigTabsRef" size="sm" @save-all="saveAll"
 						@discard-all="discardAll" />
 					<UTooltip :text="$t('refresh')">
-						<UButton :icon="icons.refresh" color="primary" variant="outline" size="sm" :loading="loading"
-							@click="refresh" />
+						<UButton :icon="icons.refresh" color="primary" size="sm" :loading="loading" @click="refresh" />
 					</UTooltip>
 				</div>
 			</div>
