@@ -10,10 +10,12 @@ Client Add New page - form for adding a new client.
 <template>
     <LayoutsPageLayout show-refresh @refresh="resetForm">
         <template #actions>
-            <UButton color="primary" :loading="loading" :disabled="!canCreate" @click="handleSubmit">
-                <UIcon :name="icons.add" class="w-4 h-4 mr-1" />
-                {{ $t('add') }}
-            </UButton>
+            <UTooltip :text="$t('addClient')">
+                <UButton color="success" :loading="loading" v-if="canCreate" @click="handleSubmit">
+                    <UIcon :name="icons.add" />
+                </UButton>
+            </UTooltip>
+
         </template>
 
         <div class="space-y-4">
@@ -25,13 +27,11 @@ Client Add New page - form for adding a new client.
                 :close-button="{ icon: 'i-heroicons-x-mark' }" @close="error = null" />
 
             <div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
-                <!-- New Client Section -->
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-3">
                         <p class="text-sm font-semibold uppercase tracking-wide text-muted">{{ $t('newClient') }}</p>
                     </div>
                     <div class="mb-6">
-                        <!-- HostId (clientName + domain) -->
                         <div
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -49,7 +49,6 @@ Client Add New page - form for adding a new client.
                                 </div>
                             </div>
                         </div>
-                        <!-- Description -->
                         <div
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -60,7 +59,6 @@ Client Add New page - form for adding a new client.
                                     placeholder="Client description" class="flex-1" />
                             </div>
                         </div>
-                        <!-- Inventory Number -->
                         <div
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -71,7 +69,6 @@ Client Add New page - form for adding a new client.
                                     placeholder="Inventory number" class="flex-1" />
                             </div>
                         </div>
-                        <!-- IP Address -->
                         <div
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -82,7 +79,6 @@ Client Add New page - form for adding a new client.
                                     class="flex-1" />
                             </div>
                         </div>
-                        <!-- MAC Address -->
                         <div
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -93,7 +89,6 @@ Client Add New page - form for adding a new client.
                                     placeholder="00:11:22:33:44:55" class="flex-1" />
                             </div>
                         </div>
-                        <!-- Notes -->
                         <div
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -107,13 +102,11 @@ Client Add New page - form for adding a new client.
                     </div>
                 </div>
 
-                <!-- Assignments Section -->
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-3">
                         <p class="text-sm font-semibold uppercase tracking-wide text-muted">{{ $t('assignments') }}</p>
                     </div>
                     <div class="mb-6">
-                        <!-- Depot -->
                         <div
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -127,7 +120,6 @@ Client Add New page - form for adding a new client.
                                 </div>
                             </div>
                         </div>
-                        <!-- Groups -->
                         <div
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -141,13 +133,11 @@ Client Add New page - form for adding a new client.
                     </div>
                 </div>
 
-                <!-- Initial Setup Section -->
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-3">
                         <p class="text-sm font-semibold uppercase tracking-wide text-muted">{{ $t('initialSetup') }}</p>
                     </div>
                     <div class="mb-6">
-                        <!-- Netboot Products -->
                         <div
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -158,7 +148,6 @@ Client Add New page - form for adding a new client.
                                     :disabled="loading" size="sm" class="w-full" />
                             </div>
                         </div>
-                        <!-- Agent Setup -->
                         <div
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -168,7 +157,6 @@ Client Add New page - form for adding a new client.
                                 <UCheckbox v-model="form.agentSetup" :disabled="loading" />
                             </div>
                         </div>
-                        <!-- Agent Type -->
                         <div v-if="form.agentSetup"
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -180,7 +168,6 @@ Client Add New page - form for adding a new client.
                                     :disabled="loading" />
                             </div>
                         </div>
-                        <!-- Agent Username -->
                         <div v-if="form.agentSetup"
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -191,7 +178,6 @@ Client Add New page - form for adding a new client.
                                     placeholder="Username" class="w-full" />
                             </div>
                         </div>
-                        <!-- Agent Password -->
                         <div v-if="form.agentSetup"
                             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                             <span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -222,7 +208,6 @@ const loadingDepots = ref(false)
 const error = ref<string | null>(null)
 const success = ref(false)
 
-// Form state
 const clientName = ref('')
 const domain = ref('')
 const clientIds = ref<string[]>([])
@@ -247,7 +232,6 @@ const formErrors = reactive({
     depotId: '',
 })
 
-// Options
 const depots = ref<Array<{ depotId: string; description: string }>>([])
 const netbootProductOptions = ref<Array<{ label: string; value: string }>>([])
 const groupOptions = ref<Array<{ label: string; value: string }>>([])
@@ -257,7 +241,6 @@ const depotOptions = computed(() => depots.value.map(d => ({
     value: d.depotId
 })))
 
-// Validation
 const canCreate = computed(() => {
     return clientName.value.length > 0 &&
         !Number.isInteger(parseInt(clientName.value.charAt(0))) &&
@@ -351,7 +334,6 @@ watch(() => form.depotId, async (newDepot) => {
     }
 })
 
-// Validate clientId
 watch([clientName, domain], () => {
     formErrors.clientId = ''
     if (!clientName.value) return
@@ -407,7 +389,6 @@ async function handleSubmit() {
     try {
         const hostId = clientName.value + domain.value
 
-        // Build client object as required by backend
         const clientObj = {
             hostId,
             description: form.description.trim() || undefined,
@@ -417,25 +398,17 @@ async function handleSubmit() {
             notes: form.notes.trim() || null,
         }
 
-        // Send request in correct structure
         const res = await createClient({
-            clientId: hostId,
-            description: form.description.trim() || undefined,
-            inventoryNumber: form.inventoryNumber.trim() || undefined,
-            hardwareAddress: form.macAddress.trim() || null,
-            ipAddress: form.ipAddress.trim() || null,
-            notes: form.notes.trim() || null,
-            depotId: form.depotId
+            client: clientObj,
+            depot: form.depotId
         })
         if (res.error) throw res.error
 
-        // Assign to groups if selected
         if (form.groups.length > 0) {
             const groupIds = form.groups.map(g => g.value)
             await addClientToGroups(hostId, groupIds)
         }
 
-        // Deploy agent if enabled
         if (form.agentSetup && form.agentUsername && form.agentPassword) {
             await deployClientAgent({
                 clients: [hostId],
@@ -445,7 +418,6 @@ async function handleSubmit() {
             })
         }
 
-        // Setup netboot products if selected
         if (form.netbootProducts.length > 0) {
             const productIds = form.netbootProducts.map(p => p.value)
             await setClientProductActions({

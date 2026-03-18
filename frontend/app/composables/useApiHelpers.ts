@@ -170,22 +170,24 @@ export function useApiHelpers() {
   // Client Management Endpoints
   // ============================================================================
 
-  const createClient = (clientData: {
-    clientId: string
-    description?: string
-    ipAddress?: string | null
-    hardwareAddress?: string | null
-    notes?: string | null
-    depotId: string
-    inventoryNumber?: string
-  }) => apiPost<Record<string, unknown>>('/opsidata/clients', clientData)
+  const createClient = (request: {
+    client: {
+      hostId: string
+      description?: string
+      inventoryNumber?: string
+      hardwareAddress?: string | null
+      ipAddress?: string | null
+      notes?: string | null
+    }
+    depot: string
+  }) => apiPost<Record<string, unknown>>('/opsidata/clients', request)
 
   const deployClientAgent = (agentData: {
     clients: string[]
     username: string
     password: string
     type: 'windows' | 'linux' | 'mac'
-  }) => apiPost<void>('/opsidata/clients/agent/deploy', agentData)
+  }) => apiPost<void>('/opsidata/clients/deploy', agentData)
 
   const setClientUefi = (clientId: string, uefi: boolean) =>
     apiPost<void>(`/opsidata/clients/${clientId}/uefi`, { uefi })
