@@ -12,7 +12,7 @@
                     <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('professionalSupportDescription') }}</p>
                     <UButton variant="outline" color="neutral" block as="a" :href="supportUrl" target="_blank">{{
                         $t('contactSupport')
-                        }}</UButton>
+                    }}</UButton>
                 </UCard>
                 <UCard>
                     <template #header>
@@ -41,7 +41,7 @@
                 </UCard>
             </div>
             <div class="h-full">
-                <SharedWhatsNew />
+                <SupportWhatsNew />
             </div>
         </div>
     </LayoutsPageLayout>
