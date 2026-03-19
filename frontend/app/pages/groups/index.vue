@@ -243,16 +243,15 @@ License: AGPL-3.0
                         </div>
                     </template>
                     <form @submit.prevent="doEditGroup" class="space-y-5">
-                        <UFormField :label="$t('parentGroup')">
+                        <UFormField :label="$t('parentGroup')" class="add-border">
                             <USelect v-model="editForm.parentGroupId" :items="editParentGroupSelectItems"
                                 :placeholder="$t('none')" class="w-full" />
                         </UFormField>
                         <UFormField :label="$t('description')">
-                            <UTextarea v-model="editForm.description" :placeholder="$t('description')" :rows="2"
-                                class="w-full" />
+                            <UTextarea v-model="editForm.description" :rows="2" class="w-full" />
                         </UFormField>
                         <UFormField :label="$t('notes')">
-                            <UTextarea v-model="editForm.notes" :placeholder="$t('notes')" :rows="2" class="w-full" />
+                            <UTextarea v-model="editForm.notes" :rows="2" class="w-full" />
                         </UFormField>
                     </form>
                     <template #footer>
@@ -527,8 +526,8 @@ const editParentGroupSelectItems = computed(() => {
         for (const node of nodes) {
             if (node.id !== currentId && node.id !== 'not_assigned' && !childIds.has(node.id)) {
                 const indent = '\u00A0\u00A0\u00A0\u00A0'.repeat(depth)
-                const prefix = depth > 0 ? '└ ' : ''
-                items.push({ label: `${indent}${prefix}${node.id}`, value: node.id })
+                // const prefix = depth > 0 ? '└ ' : ''
+                items.push({ label: `${indent}${node.id}`, value: node.id })
             }
             if (node.children?.length) {
                 walk(node.children, depth + 1)
