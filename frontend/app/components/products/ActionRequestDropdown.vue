@@ -1,23 +1,11 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
-Action request dropdown for products table - allows setting product actions.
--->
 <template>
 	<div class="flex items-center gap-1">
-		<USelectMenu v-if="!disabled" v-model="selectedRequest" :items="requestOptions" size="xs" class="min-w-20"
-			value-key="value" label-key="label" @update:model-value="handleChange">
-			<template #item="{ item }">
-				<span class="text-xs" :class="getRequestClass(item.value)">{{ item.label }}</span>
-			</template>
-		</USelectMenu>
-		<span v-else class="text-xs text-[--color-text-muted]">
+		<USelect v-if="!disabled" v-model="selectedRequest" :items="requestItems" size="xs" class="min-w-24"
+			@update:model-value="handleChange" />
+		<span v-else class="text-xs text-(--color-text-muted)">
 			{{ currentLabel || '-' }}
 		</span>
+		<span v-if="hasChanged" class="w-1.5 h-1.5 rounded-full bg-yellow-500 shrink-0" :title="$t('unsavedChange')" />
 	</div>
 </template>
 
@@ -25,52 +13,53 @@ Action request dropdown for products table - allows setting product actions.
 interface Props {
 	productId: string
 	currentRequest?: string
+	availableActions?: string[]
 	disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	disabled: false
+	disabled: false,
+	availableActions: () => [],
 })
 
 const emit = defineEmits<{
-	(e: 'change', request: string): void
+	change: [request: string]
 }>()
 
 const { t: $t } = useI18n()
 
-const requestOptions = [
-	{ label: String($t('none')), value: 'none' },
-	{ label: String($t('setup')), value: 'setup' },
-	{ label: String($t('uninstall')), value: 'uninstall' },
-	{ label: String($t('update')), value: 'update' },
-	{ label: String($t('always')), value: 'always' },
-	{ label: String($t('once')), value: 'once' },
-	{ label: String($t('custom')), value: 'custom' },
-]
+const defaultActions = ['none', 'setup', 'uninstall', 'update', 'always', 'once', 'custom']
 
-const selectedRequest = ref(props.currentRequest || 'none')
-
-const currentLabel = computed(() => {
-	const option = requestOptions.find(o => o.value === selectedRequest.value)
-	return option?.label || selectedRequest.value || String($t('none'))
+const requestItems = computed(() => {
+	const actions = props.availableActions.length > 0 ? ['none', ...props.availableActions] : defaultActions
+	return [...new Set(actions)].map(a => ({
+		label: a === 'none' ? String($t('none')) : a,
+		value: a,
+	}))
 })
 
-function getRequestClass(request: string): string {
-	switch (request) {
-		case 'setup': return 'text-blue-600 dark:text-blue-400'
-		case 'uninstall': return 'text-red-600 dark:text-red-400'
-		case 'update': return 'text-green-600 dark:text-green-400'
-		case 'always':
-		case 'once': return 'text-purple-600 dark:text-purple-400'
-		default: return ''
-	}
-}
+const originalRequest = ref(props.currentRequest || 'none')
+const selectedRequest = ref(props.currentRequest || 'none')
+
+const hasChanged = computed(() => selectedRequest.value !== originalRequest.value)
+
+const currentLabel = computed(() => {
+	const option = requestItems.value.find(o => o.value === selectedRequest.value)
+	return option?.label || selectedRequest.value || String($t('none'))
+})
 
 function handleChange(value: string) {
 	emit('change', value)
 }
 
+function resetToOriginal() {
+	selectedRequest.value = originalRequest.value
+}
+
 watch(() => props.currentRequest, (newVal) => {
+	originalRequest.value = newVal || 'none'
 	selectedRequest.value = newVal || 'none'
 })
+
+defineExpose({ hasChanged, resetToOriginal })
 </script>

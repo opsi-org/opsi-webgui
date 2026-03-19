@@ -1,40 +1,26 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
-Installation status badge with icon for products table.
--->
 <template>
 	<div class="flex justify-center">
-		<!-- Mixed status (multiple clients with different statuses) -->
 		<UTooltip v-if="isMixed" :text="mixedTooltip">
 			<UBadge color="warning" variant="subtle" size="xs">
 				<UIcon :name="icons.unequal" class="w-3 h-3" />
 			</UBadge>
 		</UTooltip>
 
-		<!-- Installed -->
 		<UTooltip v-else-if="normalizedStatus === 'installed'" :text="$t('installed')">
 			<UBadge color="success" variant="subtle" size="xs">
 				<UIcon :name="icons.productInstallationStatusInstalled" class="w-3 h-3" />
 			</UBadge>
 		</UTooltip>
 
-		<!-- Unknown -->
 		<UTooltip v-else-if="normalizedStatus === 'unknown'" :text="$t('unknown')">
 			<UBadge color="warning" variant="subtle" size="xs">
 				<UIcon :name="icons.productInstallationStatusUnknown" class="w-3 h-3" />
 			</UBadge>
 		</UTooltip>
 
-		<!-- Not installed / None -->
 		<span v-else-if="normalizedStatus === 'not_installed' || normalizedStatus === 'none' || !normalizedStatus"
 			class="text-(--color-text-muted) text-xs">-</span>
 
-		<!-- Other status -->
 		<UBadge v-else color="neutral" variant="subtle" size="xs">
 			{{ status }}
 		</UBadge>
