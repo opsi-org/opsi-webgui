@@ -162,8 +162,10 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
         # commons.get("sortBy", None) == "reachable" or "reachable" in commons.get("sortBy", [])
         # )
         sort_by = commons.get("sortBy") or []
-        if backend._host_control_use_messagebus is True or (
-            backend._host_control_use_messagebus == "hybrid"
+        use_messagebus = backend._host_control_use_messagebus
+        if use_messagebus is True or (
+            use_messagebus is not None
+            and use_messagebus == "hybrid"
             and "reachable" in sort_by
         ):
             result: dict[str, bool] = await backend.hostControl_reachable(
