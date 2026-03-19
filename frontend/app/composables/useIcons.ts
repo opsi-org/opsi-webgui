@@ -50,6 +50,8 @@ export const icons = {
   sort: 'i-heroicons-arrows-up-down',
   sortAsc: 'i-heroicons-bars-arrow-up',
   sortDesc: 'i-heroicons-bars-arrow-down',
+  table: 'i-heroicons-table-cells',
+  tableSettings: 'i-heroicons-cog',
 
   // Content types
   client: 'i-heroicons-computer-desktop',
@@ -83,7 +85,6 @@ export const icons = {
   info: 'i-heroicons-information-circle',
   health: 'i-heroicons-heart',
   list: 'i-heroicons-list-bullet',
-  table: 'i-heroicons-table-cells',
   loading: 'i-heroicons-arrow-path',
   success: 'i-heroicons-check-circle',
   blocked: 'i-heroicons-no-symbol',
@@ -136,7 +137,6 @@ export const icons = {
   clientReachable: 'i-heroicons-wifi',
   productActionResult: 'i-heroicons-clipboard-document-check',
   unequal: 'i-heroicons-arrows-right-left',
-
 } as const
 
 export type IconName = keyof typeof icons

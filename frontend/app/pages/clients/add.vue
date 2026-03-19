@@ -95,7 +95,7 @@ Client Add New page - form for adding a new client.
                             </span>
                             <div class="flex-1">
                                 <UTextarea v-model="form.notes" :disabled="loading" size="sm" :rows="3"
-                                    placeholder="Additional notes" class="flex-1" />
+                                    placeholder="Additional notes" class="flex-1 w-full" />
                             </div>
                         </div>
                     </div>

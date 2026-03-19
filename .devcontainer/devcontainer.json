@@ -1,49 +1,48 @@
 {
-	"name": "opsi-webgui",
-	"dockerComposeFile": "../docker/docker-compose.yml",
-	"service": "opsi-webgui-dev",
-	"initializeCommand": ".devcontainer/initialize.sh",
-	"postCreateCommand": ".devcontainer/post_create.sh",
-	"postStartCommand": ".devcontainer/post_start.sh",
-	"workspaceFolder": "/workspace",
-	"containerEnv": {
-		"UV_PYTHON": "3.14",
-		"DEV_USER": "${localEnv:USER}",
-		"DEV_UID": "${localEnv:UID}",
-		"OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
-		"OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
-		"ADDON_NAME": "webgui",
-		"ADDON_ID": "webgui",
-		"OPSI_BACKUP_URL": "https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json"
-	},
-	"customizations": {
-		"vscode": {
-			"settings": {
-				"files.trimTrailingWhitespace": true,
-				"editor.formatOnSave": true,
-				"[python]": {
-					"editor.codeActionsOnSave": {
-						"source.fixAll": "explicit",
-						"source.organizeImports": "explicit"
-					},
-					"editor.defaultFormatter": "charliermarsh.ruff"
-				},
-				"python.defaultInterpreterPath": "/workspace/docker/opsiconfd/.venv/bin/python3",
-				"python.languageServer": "Pylance",
-				"python.testing.pytestEnabled": true
-			},
-			"extensions": [
-				"ms-python.python",
-				"ms-python.vscode-pylance",
-				"charliermarsh.ruff",
-				"GitHub.copilot-chat",
-				"Vue.volar",
-				"bradlc.vscode-tailwindcss"
-			]
-		}
-	},
-	"forwardPorts": [
-		4447
-	],
-	"remoteUser": "${localEnv:USER}"
+  "name": "opsi-webgui",
+  "dockerComposeFile": "../docker/docker-compose.yml",
+  "service": "opsi-webgui-dev",
+  "initializeCommand": ".devcontainer/initialize.sh",
+  "postCreateCommand": ".devcontainer/post_create.sh",
+  "postStartCommand": ".devcontainer/post_start.sh",
+  "workspaceFolder": "/workspace",
+  "containerEnv": {
+    "UV_PYTHON": "3.14",
+    "DEV_USER": "${localEnv:USER}",
+    "DEV_UID": "${localEnv:UID}",
+    "OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
+    "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
+    "ADDON_NAME": "webgui",
+    "ADDON_ID": "webgui",
+    "OPSI_BACKUP_URL": "https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "files.trimTrailingWhitespace": true,
+        "editor.formatOnSave": true,
+        "[python]": {
+          "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+          },
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+        "python.defaultInterpreterPath": "/workspace/docker/opsiconfd/.venv/bin/python3",
+        "python.languageServer": "Pylance",
+        "python.testing.pytestEnabled": true
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "GitHub.copilot-chat",
+        "Vue.volar",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "forwardPorts": [4447],
+  "remoteUser": "${localEnv:USER}"
 }

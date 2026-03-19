@@ -26,7 +26,8 @@ DataTable - A high-performance, feature-rich table component with:
             {{ $t('showing') }} {{ displayedRowCount }} {{ $t('of') }} {{ totalRowCount }}
           </template>
           <template v-else>
-            {{ $t('showing') }} {{ paginationStartIndex + 1 }}-{{ Math.min(paginationEndIndex, totalRowCount) }} {{ $t('of') }} {{ totalRowCount }}
+            {{ $t('showing') }} {{ paginationStartIndex + 1 }}-{{ Math.min(paginationEndIndex, totalRowCount) }} {{
+              $t('of') }} {{ totalRowCount }}
           </template>
         </span>
         <span v-if="selectedKeys.length > 0" class="text-opsi-blue font-medium">
@@ -38,53 +39,31 @@ DataTable - A high-performance, feature-rich table component with:
       <div class="flex items-center gap-2">
         <!-- Filter Input -->
         <div v-if="filterable" class="relative">
-          <UInput
-            v-model="filterQueryInternal"
-            :placeholder="filterPlaceholder || String($t('filter'))"
-            size="sm"
-            :icon="icons.filter"
-            class="w-32 sm:w-40"
-          />
-          <UButton
-            v-if="filterQueryInternal"
-            :icon="icons.close"
-            variant="link"
-            color="neutral"
-            size="xs"
-            :padded="false"
-            class="absolute right-1 top-1/2 -translate-y-1/2"
-            @click="filterQueryInternal = ''"
-          />
+          <UInput v-model="filterQueryInternal" :placeholder="filterPlaceholder || String($t('filter'))" size="sm"
+            :icon="icons.filter" class="w-32 sm:w-40" />
+          <UButton v-if="filterQueryInternal" :icon="icons.close" variant="link" color="neutral" size="xs"
+            :padded="false" class="absolute right-1 top-1/2 -translate-y-1/2" @click="filterQueryInternal = ''" />
         </div>
 
         <!-- Settings Popover -->
         <UPopover>
-          <UButton :icon="icons.settings" variant="ghost" color="neutral" size="sm" :title="$t('tableSettings')" />
+          <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('tableSettings')" />
           <template #content>
-            <div class="p-3 w-64 max-h-96 overflow-y-auto">
+            <div class="p-3 w-75 max-h-250 overflow-y-auto">
               <div class="text-xs font-medium text-(--color-text-muted) uppercase mb-3">{{ $t('tableSettings') }}</div>
 
               <!-- Display Mode -->
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('displayMode') }}</label>
                 <div class="flex gap-1">
-                  <UButton
-                    size="xs"
-                    :variant="tableSettings.settings.displayMode === 'infinite' ? 'solid' : 'outline'"
-                    color="neutral"
-                    class="flex-1"
-                    @click="tableSettings.setDisplayMode('infinite')"
-                  >
+                  <UButton size="xs" :variant="tableSettings.settings.displayMode === 'infinite' ? 'solid' : 'outline'"
+                    color="neutral" class="flex-1" @click="tableSettings.setDisplayMode('infinite')">
                     <UIcon :name="icons.arrowDown" class="w-3 h-3 mr-1" />
                     {{ $t('infiniteScroll') }}
                   </UButton>
-                  <UButton
-                    size="xs"
-                    :variant="tableSettings.settings.displayMode === 'pagination' ? 'solid' : 'outline'"
-                    color="neutral"
-                    class="flex-1"
-                    @click="tableSettings.setDisplayMode('pagination')"
-                  >
+                  <UButton size="xs"
+                    :variant="tableSettings.settings.displayMode === 'pagination' ? 'solid' : 'outline'" color="neutral"
+                    class="flex-1" @click="tableSettings.setDisplayMode('pagination')">
                     <UIcon :name="icons.table" class="w-3 h-3 mr-1" />
                     {{ $t('pagination') }}
                   </UButton>
@@ -95,22 +74,12 @@ DataTable - A high-performance, feature-rich table component with:
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('selectionMode') }}</label>
                 <div class="flex gap-1">
-                  <UButton
-                    size="xs"
-                    :variant="tableSettings.settings.selectionMode === 'multi' ? 'solid' : 'outline'"
-                    color="neutral"
-                    class="flex-1"
-                    @click="tableSettings.setSelectionMode('multi')"
-                  >
+                  <UButton size="xs" :variant="tableSettings.settings.selectionMode === 'multi' ? 'solid' : 'outline'"
+                    color="neutral" class="flex-1" @click="tableSettings.setSelectionMode('multi')">
                     {{ $t('multiSelect') }}
                   </UButton>
-                  <UButton
-                    size="xs"
-                    :variant="tableSettings.settings.selectionMode === 'single' ? 'solid' : 'outline'"
-                    color="neutral"
-                    class="flex-1"
-                    @click="tableSettings.setSelectionMode('single')"
-                  >
+                  <UButton size="xs" :variant="tableSettings.settings.selectionMode === 'single' ? 'solid' : 'outline'"
+                    color="neutral" class="flex-1" @click="tableSettings.setSelectionMode('single')">
                     {{ $t('singleSelect') }}
                   </UButton>
                 </div>
@@ -119,42 +88,25 @@ DataTable - A high-performance, feature-rich table component with:
               <!-- Page Size -->
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('pageSize') }}</label>
-                <USelect
-                  :model-value="tableSettings.settings.pageSize"
-                  :items="pageSizeOptions"
-                  size="xs"
-                  class="w-full"
-                  @update:model-value="(v: number) => tableSettings.setPageSize(v)"
-                />
+                <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs"
+                  class="w-full" @update:model-value="(v: number) => tableSettings.setPageSize(v)" />
               </div>
 
               <!-- Sort By -->
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('sortBy') }}</label>
-                <USelect
-                  :model-value="tableSettings.settings.sortColumn"
-                  :items="sortableColumnOptions"
-                  size="xs"
+                <USelect :model-value="tableSettings.settings.sortColumn" :items="sortableColumnOptions" size="xs"
                   class="w-full"
-                  @update:model-value="(v: string) => tableSettings.setSort(v, tableSettings.settings.sortDirection)"
-                />
+                  @update:model-value="(v: string) => tableSettings.setSort(v, tableSettings.settings.sortDirection)" />
                 <div class="flex gap-1 mt-1">
-                  <UButton
-                    size="xs"
-                    :variant="tableSettings.settings.sortDirection === 'asc' ? 'solid' : 'outline'"
-                    color="neutral"
-                    class="flex-1"
-                    @click="tableSettings.setSort(tableSettings.settings.sortColumn, 'asc')"
-                  >
+                  <UButton size="xs" :variant="tableSettings.settings.sortDirection === 'asc' ? 'solid' : 'outline'"
+                    color="neutral" class="flex-1"
+                    @click="tableSettings.setSort(tableSettings.settings.sortColumn, 'asc')">
                     <UIcon :name="icons.sortAsc" class="w-3 h-3 mr-1" /> {{ $t('ascending') }}
                   </UButton>
-                  <UButton
-                    size="xs"
-                    :variant="tableSettings.settings.sortDirection === 'desc' ? 'solid' : 'outline'"
-                    color="neutral"
-                    class="flex-1"
-                    @click="tableSettings.setSort(tableSettings.settings.sortColumn, 'desc')"
-                  >
+                  <UButton size="xs" :variant="tableSettings.settings.sortDirection === 'desc' ? 'solid' : 'outline'"
+                    color="neutral" class="flex-1"
+                    @click="tableSettings.setSort(tableSettings.settings.sortColumn, 'desc')">
                     <UIcon :name="icons.sortDesc" class="w-3 h-3 mr-1" /> {{ $t('descending') }}
                   </UButton>
                 </div>
@@ -164,18 +116,11 @@ DataTable - A high-performance, feature-rich table component with:
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('columns') }}</label>
                 <div class="space-y-1 max-h-40 overflow-y-auto">
-                  <label
-                    v-for="col in toggleableColumns"
-                    :key="col.key"
-                    class="flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      :checked="isColumnVisibleComputed(col.key)"
-                      :disabled="col.alwaysVisible"
+                  <label v-for="col in toggleableColumns" :key="col.key"
+                    class="flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer">
+                    <input type="checkbox" :checked="isColumnVisibleComputed(col.key)" :disabled="col.alwaysVisible"
                       class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue disabled:opacity-50"
-                      @change="tableSettings.toggleColumn(col.key)"
-                    />
+                      @change="tableSettings.toggleColumn(col.key)" />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ col.label }}</span>
                   </label>
                 </div>
@@ -190,27 +135,12 @@ DataTable - A high-performance, feature-rich table component with:
         </UPopover>
 
         <!-- Refresh -->
-        <UButton
-          v-if="showRefresh"
-          :icon="icons.refresh"
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :loading="loading"
-          :title="String($t('refresh'))"
-          @click="handleRefresh"
-        />
+        <UButton v-if="showRefresh" :icon="icons.refresh" variant="ghost" color="neutral" size="sm" :loading="loading"
+          :title="String($t('refresh'))" @click="handleRefresh" />
 
         <!-- Clear Selection -->
-        <UButton
-          v-if="selectedKeys.length > 0"
-          :icon="icons.clear"
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :title="String($t('clearSelection'))"
-          @click="clearSelection"
-        />
+        <UButton v-if="selectedKeys.length > 0" :icon="icons.clear" variant="ghost" color="neutral" size="sm"
+          :title="String($t('clearSelection'))" @click="clearSelection" />
 
         <!-- Toolbar right slot -->
         <slot name="toolbar-right" />
@@ -219,14 +149,11 @@ DataTable - A high-performance, feature-rich table component with:
 
     <!-- Table Container -->
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
-      <div
-        ref="tableContainer"
-        class="flex-1 overflow-auto transition-all duration-200"
-        :style="{ maxHeight: maxHeight }"
-        @scroll="handleScroll"
-      >
+      <div ref="tableContainer" class="flex-1 overflow-auto transition-all duration-200"
+        :style="{ maxHeight: maxHeight }" @scroll="handleScroll">
         <!-- Loading State -->
-        <div v-if="loading && sortedRows.length === 0" class="flex items-center justify-center py-12 text-(--color-text-muted)">
+        <div v-if="loading && sortedRows.length === 0"
+          class="flex items-center justify-center py-12 text-(--color-text-muted)">
           <UIcon :name="icons.loading" class="w-6 h-6 animate-spin mr-2" />
           {{ $t('loading') }}
         </div>
@@ -236,55 +163,35 @@ DataTable - A high-performance, feature-rich table component with:
           <thead class="bg-(--color-surface) sticky top-0 z-10">
             <tr role="row">
               <!-- Select All Header -->
-              <th
-                v-if="selectable"
-                class="w-10 px-3 py-2 text-center whitespace-nowrap"
-                role="columnheader"
-                :aria-label="selectionMode === 'multi' ? 'Select all' : 'Selection'"
-              >
-                <input
-                  v-if="selectionMode === 'multi'"
-                  type="checkbox"
-                  :checked="allSelected"
-                  :indeterminate="someSelected"
-                  class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
-                  aria-label="Select all rows"
-                  @change="toggleSelectAll"
-                />
+              <th v-if="selectable" class="w-10 px-3 py-2 text-center whitespace-nowrap" role="columnheader"
+                :aria-label="selectionMode === 'multi' ? 'Select all' : 'Selection'">
+                <input v-if="selectionMode === 'multi'" type="checkbox" :checked="allSelected"
+                  :indeterminate="someSelected" class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
+                  aria-label="Select all rows" @change="toggleSelectAll" />
               </th>
 
               <!-- Column Headers -->
-              <th
-                v-for="col in visibleColumns"
-                :key="col.key"
-                role="columnheader"
+              <th v-for="col in visibleColumns" :key="col.key" role="columnheader"
                 :aria-sort="getSortAriaLabel(col.key)"
                 class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-(--color-text-muted) whitespace-nowrap"
                 :class="[col.headerClass, { 'cursor-pointer hover:bg-(--color-surface-hover)': col.sortable }]"
                 :style="{ width: col.width, minWidth: col.minWidth, textAlign: col.align }"
-                :tabindex="col.sortable ? 0 : undefined"
-                @click="col.sortable && handleSort(col.key)"
-                @keydown.enter="col.sortable && handleSort(col.key)"
-              >
+                :tabindex="col.sortable ? 0 : undefined" @click="col.sortable && handleSort(col.key)"
+                @keydown.enter="col.sortable && handleSort(col.key)">
                 <div class="flex items-center gap-1">
                   {{ col.label }}
                   <template v-if="col.sortable">
-                    <UIcon
-                      v-if="tableSettings.settings.sortColumn === col.key"
+                    <UIcon v-if="tableSettings.settings.sortColumn === col.key"
                       :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
-                      class="w-3 h-3"
-                    />
+                      class="w-3 h-3" />
                     <UIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
                   </template>
                 </div>
               </th>
 
               <!-- Actions Header -->
-              <th
-                v-if="hasActions"
-                role="columnheader"
-                class="w-24 px-3 py-2 text-center text-xs font-medium uppercase tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface)"
-              >
+              <th v-if="hasActions" role="columnheader"
+                class="w-24 px-3 py-2 text-center text-xs font-medium uppercase tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface)">
                 {{ $t('actions') }}
               </th>
             </tr>
@@ -297,50 +204,26 @@ DataTable - A high-performance, feature-rich table component with:
             </tr>
 
             <!-- Data Rows -->
-            <tr
-              v-for="(row, idx) in virtualRows"
-              :key="getRowKey(row)"
-              role="row"
-              :aria-selected="isSelected(row)"
+            <tr v-for="(row, idx) in virtualRows" :key="getRowKey(row)" role="row" :aria-selected="isSelected(row)"
               :tabindex="clickable ? 0 : undefined"
               class="hover:bg-(--color-surface-hover) transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue"
               :class="{
                 'cursor-pointer': clickable || selectable,
                 'bg-opsi-blue/5 dark:bg-opsi-blue/10': isSelected(row),
-              }"
-              @click="handleRowClick(row, $event)"
-              @keydown.enter="handleRowClick(row, $event)"
-            >
+              }" @click="handleRowClick(row, $event)" @keydown.enter="handleRowClick(row, $event)">
               <!-- Selection Cell -->
               <td v-if="selectable" class="px-3 py-2 text-center" role="gridcell" @click.stop>
-                <input
-                  v-if="selectionMode === 'multi'"
-                  type="checkbox"
-                  :checked="isSelected(row)"
+                <input v-if="selectionMode === 'multi'" type="checkbox" :checked="isSelected(row)"
                   class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
-                  :aria-label="`Select row ${getRowKey(row)}`"
-                  @change="toggleSelection(row)"
-                />
-                <input
-                  v-else
-                  type="radio"
-                  :checked="isSelected(row)"
-                  :name="`${tableId}-selection`"
+                  :aria-label="`Select row ${getRowKey(row)}`" @change="toggleSelection(row)" />
+                <input v-else type="radio" :checked="isSelected(row)" :name="`${tableId}-selection`"
                   class="border-gray-300 text-opsi-blue focus:ring-opsi-blue"
-                  :aria-label="`Select row ${getRowKey(row)}`"
-                  @change="selectSingle(row)"
-                />
+                  :aria-label="`Select row ${getRowKey(row)}`" @change="selectSingle(row)" />
               </td>
 
               <!-- Data Cells -->
-              <td
-                v-for="col in visibleColumns"
-                :key="col.key"
-                role="gridcell"
-                class="px-3 py-2 text-sm text-(--color-text)"
-                :class="col.class"
-                :style="{ textAlign: col.align }"
-              >
+              <td v-for="col in visibleColumns" :key="col.key" role="gridcell"
+                class="px-3 py-2 text-sm text-(--color-text)" :class="col.class" :style="{ textAlign: col.align }">
                 <slot :name="`cell-${col.key}`" :row="row" :value="getNestedValue(row, col.key)" :index="idx">
                   {{ formatCellValue(row, col) }}
                 </slot>
@@ -351,14 +234,9 @@ DataTable - A high-performance, feature-rich table component with:
                 <div class="flex items-center justify-center gap-1">
                   <slot name="row-actions" :row="row" :index="idx">
                     <template v-for="action in visibleActionsForRow(row)" :key="action.icon">
-                      <UButton
-                        :icon="action.icon"
-                        variant="ghost"
+                      <UButton :icon="action.icon" variant="ghost"
                         :color="(action.color as 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error' | 'neutral') || 'neutral'"
-                        size="xs"
-                        :title="action.label"
-                        @click="action.handler(row)"
-                      />
+                        size="xs" :title="action.label" @click="action.handler(row)" />
                     </template>
                   </slot>
                 </div>
@@ -391,7 +269,8 @@ DataTable - A high-performance, feature-rich table component with:
             </tr>
 
             <!-- End of Data Marker -->
-            <tr v-else-if="displayMode === 'infinite' && sortedRows.length > 0 && !hasMoreData && !virtualScrollEnabled">
+            <tr
+              v-else-if="displayMode === 'infinite' && sortedRows.length > 0 && !hasMoreData && !virtualScrollEnabled">
               <td :colspan="totalColSpan" class="px-4 py-3 text-center">
                 <span class="text-xs text-(--color-text-muted)">{{ $t('allItemsLoaded') }}</span>
               </td>
@@ -402,41 +281,22 @@ DataTable - A high-performance, feature-rich table component with:
     </UCard>
 
     <!-- Pagination Footer (only in pagination mode) -->
-    <div
-      v-if="displayMode === 'pagination' && totalPages > 1"
-      class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 flex items-center justify-center gap-2"
-    >
-      <UButton
-        :icon="icons.arrowLeft"
-        variant="outline"
-        color="neutral"
-        size="xs"
-        :disabled="currentPage === 1"
-        @click="goToPage(currentPage - 1)"
-      />
+    <div v-if="displayMode === 'pagination' && totalPages > 1"
+      class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 flex items-center justify-center gap-2">
+      <UButton :icon="icons.arrowLeft" variant="outline" color="neutral" size="xs" :disabled="currentPage === 1"
+        @click="goToPage(currentPage - 1)" />
       <div class="flex items-center gap-1">
         <template v-for="page in visiblePageNumbers" :key="page">
           <span v-if="page === '...'" class="px-2 text-(--color-text-muted)">...</span>
-          <UButton
-            v-else
-            :variant="page === currentPage ? 'solid' : 'ghost'"
-            :color="page === currentPage ? 'primary' : 'neutral'"
-            size="xs"
-            class="min-w-8"
-            @click="goToPage(page as number)"
-          >
+          <UButton v-else :variant="page === currentPage ? 'solid' : 'ghost'"
+            :color="page === currentPage ? 'primary' : 'neutral'" size="xs" class="min-w-8"
+            @click="goToPage(page as number)">
             {{ page }}
           </UButton>
         </template>
       </div>
-      <UButton
-        :icon="icons.arrowRight"
-        variant="outline"
-        color="neutral"
-        size="xs"
-        :disabled="currentPage === totalPages"
-        @click="goToPage(currentPage + 1)"
-      />
+      <UButton :icon="icons.arrowRight" variant="outline" color="neutral" size="xs"
+        :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)" />
     </div>
   </div>
 </template>
