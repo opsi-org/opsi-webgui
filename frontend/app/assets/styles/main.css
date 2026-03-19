@@ -191,6 +191,11 @@ html.dark select {
   background-color: var(--color-opsi-blue);
   color: white;
 }
+[data-slot="content"] {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+}
+
 
 /* Form rows - borderless with hover highlight */
 .form-row {
