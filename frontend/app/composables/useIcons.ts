@@ -44,6 +44,7 @@ export const icons = {
   clear: 'i-heroicons-x-circle',
   save: 'i-heroicons-check',
   cancel: 'i-heroicons-x-mark',
+  minus: 'i-heroicons-minus',
 
   // Table
   columns: 'i-heroicons-view-columns',
