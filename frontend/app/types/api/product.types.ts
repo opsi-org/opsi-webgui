@@ -176,3 +176,45 @@ export interface ProductPropertiesDependenciesResult {
   dependencies: ProductDependenciesResult
   properties: ProductPropertiesResult
 }
+
+export type EditablePropertyValue = string | boolean | string[]
+
+export interface EditableProductProperty extends ProductProperty {
+  _value: EditablePropertyValue
+  _originalValue: EditablePropertyValue
+}
+
+export interface ProductActionRequestChange {
+  productId: string
+  actionRequest: string
+  oldRequest: string
+}
+
+export interface ProcessActionPayload {
+  client_ids: string[]
+  product_ids?: string[]
+  visibility?: '' | 'visible' | 'hidden'
+}
+
+export type ProductVisibility = '' | 'visible' | 'hidden'
+
+export interface ProductQuickActionFilters {
+  installationStatus: string
+  actionResult: string
+  outdatedOnly: boolean
+}
+
+export interface ProductConfigTabsRef {
+  hasAnyChanges: boolean
+  isSaving: boolean
+  changedCount: number
+  changedProperties: Map<string, EditablePropertyValue>
+  changedActionRequests: Map<string, ProductActionRequestChange>
+  saveAll: () => Promise<void>
+  discardAll: () => void
+  discardSingleProperty: (propertyId: string) => void
+  discardSingleActionRequest: (productId: string) => void
+  getOriginalPropertyValue: (propertyId: string) => EditablePropertyValue | undefined
+  fmtVal: (v: unknown) => string
+  refresh: () => Promise<void>
+}
