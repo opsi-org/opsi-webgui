@@ -18,11 +18,9 @@
 			<div class="flex-1 overflow-auto min-h-0">
 				<div class="divide-y divide-(--color-border) dark:divide-(--color-border)">
 					<div v-for="(dep, index) in filteredDependencies" :key="`${dep.requiredProductId}-${index}`"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5 px-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded transition-colors">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5 px-2 hover:bg-(--color-surface-hover) dark:hover:bg-(--color-surface-hover) rounded transition-colors">
 						<div class="min-w-0 md:w-2/5">
 							<div class="flex items-center gap-2 flex-wrap">
-								<UIcon :name="icons.arrowRight"
-									class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
 								<span class="font-mono text-sm text-opsi-blue font-medium">
 									{{ dep.requiredProductId }}
 								</span>
@@ -33,27 +31,23 @@
 						</div>
 
 						<div class="flex-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-(--color-text-muted)">
-							<span v-if="dep.requirementType" class="flex items-center gap-1">
-								<strong>{{ $t('type') }}:</strong>
-								<UBadge :color="getDependencyTypeColor(dep.requirementType)" variant="subtle" size="xs">
-									{{ getDependencyTypeLabel(dep.requirementType, dep.productAction) }}
-								</UBadge>
-							</span>
 							<span v-if="dep.requiredAction" class="flex items-center gap-1">
-								<strong>{{ $t('action') }}:</strong>
-								<UBadge color="info" variant="subtle" size="xs">
+								<strong>requiredAction:</strong>
+								<UBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requiredAction }}
 								</UBadge>
 							</span>
 							<span v-if="dep.requiredInstallationStatus" class="flex items-center gap-1">
-								<strong>{{ $t('status') }}:</strong>
-								<UBadge color="neutral" variant="subtle" size="xs">
+								<strong>requiredInstallationStatus:</strong>
+								<UBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requiredInstallationStatus }}
 								</UBadge>
 							</span>
-							<span v-if="dep.productAction" class="flex items-center gap-1">
-								<strong>{{ $t('productAction') }}:</strong>
-								<span>{{ dep.productAction }}</span>
+							<span v-if="dep.requirementType" class="flex items-center gap-1">
+								<strong>requirementType:</strong>
+								<UBadge color="neutral" variant="soft" size="xs">
+									{{ dep.requirementType }}
+								</UBadge>
 							</span>
 						</div>
 					</div>
