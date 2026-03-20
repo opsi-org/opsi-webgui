@@ -50,8 +50,8 @@
 
 				<SharedDataTable :rows="products" :columns="columns" :loading="loading" :table-id="tableId"
 					row-key="productId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
-					:selected-keys="selectedTableKeys" @row-activate="handleRowActivate"
-					@selection-change="handleSelectionChange" @refresh="fetchProducts">
+					:total-items="totalItems" :selected-keys="selectedTableKeys" @row-activate="handleRowActivate"
+					@selection-change="handleSelectionChange" @page-change="handlePageChange" @refresh="fetchProducts">
 
 					<template #cell-productId="{ row }">
 						<div class="flex items-center gap-2">
@@ -153,6 +153,7 @@
 
 <script setup lang="ts">
 import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
+import type { PageChangeParams } from '~/components/shared/DataTable.vue'
 import type { ProductRow, ProductType, ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue } from '~/types'
 import { useSelectionStore } from '~/stores/selectionStore'
 
@@ -172,6 +173,7 @@ const selectedTableKeys = computed(() => selectionStore.selectedProducts)
 const loading = ref(false)
 const error = ref<string | null>(null)
 const products = ref<ProductRow[]>([])
+const totalItems = ref(0)
 const configProduct = ref<ProductRow | null>(null)
 const showConfigPanel = ref(false)
 const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string } | null>(null)
@@ -179,6 +181,7 @@ const processActionsOpen = ref(false)
 const pendingActionRequests = ref(new Map<string, ProductActionRequestChange>())
 const savingActionRequests = ref(false)
 const configTabsComponentRef = ref<InstanceType<typeof import('./ConfigTabs.vue').default> | null>(null)
+const lastPageParams = ref<PageChangeParams | null>(null)
 
 const tableId = computed(() => props.productType === 'NetbootProduct' ? 'products-netboot' : 'products-localboot')
 const selectedProductIds = computed(() => selectionStore.selectedProducts)
@@ -305,24 +308,43 @@ function discardAllChanges() {
 
 function onConfigSaved() { fetchProducts() }
 
-async function fetchProducts() {
+function handlePageChange(params: PageChangeParams) {
+	lastPageParams.value = params
+	fetchProducts(params)
+}
+
+async function fetchProducts(params?: PageChangeParams) {
 	loading.value = true
 	error.value = null
 	try {
 		await selectionStore.ensureServersSelected()
 		if (selectionStore.selectedServers.length === 0) { error.value = String($t('message.noServerSelected')); return }
 
-		const params: Record<string, unknown> = {
-			type: props.productType, sortBy: 'productId', sortDesc: false,
-			pageNumber: 1, perPage: 500,
+		const p: Record<string, unknown> = {
+			type: props.productType,
 			selectedDepots: selectionStore.selectedServersParam,
 		}
 		if (selectionStore.selectedClients.length > 0)
-			params.selectedClients = `[${selectionStore.selectedClients.join(',')}]`
+			p.selectedClients = `[${selectionStore.selectedClients.join(',')}]`
+		if (params) {
+			p.pageNumber = params.pageNumber
+			p.perPage = params.perPage
+			p.sortBy = params.sortBy
+			p.sortDesc = params.sortDesc
+			p.filterQuery = params.filterQuery
+		}
 
-		const result = await getProducts(params)
+		const result = await getProducts(p)
 		if (result.error) throw result.error
-		products.value = (result.data || []) as ProductRow[]
+		const newData = (result.data || []) as ProductRow[]
+		if (result.total !== null) totalItems.value = result.total
+		if (params && params.pageNumber > 1 && lastPageParams.value) {
+			const existingIds = new Set(products.value.map(p => p.productId))
+			const unique = newData.filter(p => !existingIds.has(p.productId))
+			products.value = [...products.value, ...unique]
+		} else {
+			products.value = newData
+		}
 	} catch (e) {
 		error.value = e instanceof Error ? e.message : String($t('errorFetchingProducts'))
 	} finally { loading.value = false }
@@ -337,10 +359,10 @@ watch(() => props.initialProductId, (newId) => {
 	}
 }, { immediate: true })
 
-watch(() => selectionStore.selectedClients, fetchProducts, { deep: true })
-watch(() => selectionStore.selectedServers, fetchProducts, { deep: true })
+watch(() => selectionStore.selectedClients, () => fetchProducts(), { deep: true })
+watch(() => selectionStore.selectedServers, () => fetchProducts(), { deep: true })
 
-onMounted(fetchProducts)
+onMounted(() => fetchProducts())
 
-defineExpose({ refresh: fetchProducts })
+defineExpose({ refresh: () => fetchProducts() })
 </script>

@@ -1,25 +1,14 @@
-DataTable - A high-performance, feature-rich table component with:
-- Infinite scroll OR pagination (switchable)
-- Single-select by default (auto switches to multi when group selections sync)
-- Virtual scrolling for 50,000+ rows performance
-- Column visibility toggle with localStorage persistence
-- Sorting with localStorage persistence
-- Filter
-- Row actions
-- Responsive design (desktop & mobile)
-- Horizontal scroll when all columns visible
 <template>
   <div class="data-table flex flex-col h-full min-h-0">
-    <!-- Toolbar -->
     <div class="shrink-0 flex flex-wrap items-center justify-between gap-2 mb-3">
       <div class="flex items-center gap-3 text-sm">
         <span class="text-(--color-text-muted)">
           <template v-if="displayMode === 'infinite'">
-            {{ $t('showing') }} {{ displayedRowCount }} {{ $t('of') }} {{ totalRowCount }}
+            {{ $t('showing') }} {{ rows.length }} {{ $t('of') }} {{ serverTotal }}
           </template>
           <template v-else>
-            {{ $t('showing') }} {{ paginationStartIndex + 1 }}-{{ Math.min(paginationEndIndex, totalRowCount) }} {{
-              $t('of') }} {{ totalRowCount }}
+            {{ $t('showing') }} {{ paginationStartIndex + 1 }}-{{ Math.min(paginationEndIndex, serverTotal) }} {{
+              $t('of') }} {{ serverTotal }}
           </template>
         </span>
         <UBadge v-if="selectedKeys.length > 0" color="primary" variant="subtle" size="sm">
@@ -48,13 +37,13 @@ DataTable - A high-performance, feature-rich table component with:
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('displayMode') }}</label>
                 <div class="flex gap-1">
                   <UButton size="xs" :variant="tableSettings.settings.displayMode === 'infinite' ? 'solid' : 'outline'"
-                    color="neutral" class="flex-1" @click="tableSettings.setDisplayMode('infinite')">
+                    color="neutral" class="flex-1" @click="changeDisplayMode('infinite')">
                     <UIcon :name="icons.arrowDown" class="w-3 h-3 mr-1" />
                     {{ $t('infiniteScroll') }}
                   </UButton>
                   <UButton size="xs"
                     :variant="tableSettings.settings.displayMode === 'pagination' ? 'solid' : 'outline'" color="neutral"
-                    class="flex-1" @click="tableSettings.setDisplayMode('pagination')">
+                    class="flex-1" @click="changeDisplayMode('pagination')">
                     <UIcon :name="icons.table" class="w-3 h-3 mr-1" />
                     {{ $t('pagination') }}
                   </UButton>
@@ -78,23 +67,20 @@ DataTable - A high-performance, feature-rich table component with:
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('pageSize') }}</label>
                 <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs"
-                  class="w-full" @update:model-value="(v: number) => tableSettings.setPageSize(v)" />
+                  class="w-full" @update:model-value="(v: number) => changePageSize(v)" />
               </div>
 
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('sortBy') }}</label>
                 <USelect :model-value="tableSettings.settings.sortColumn" :items="sortableColumnOptions" size="xs"
-                  class="w-full"
-                  @update:model-value="(v: string) => tableSettings.setSort(v, tableSettings.settings.sortDirection)" />
+                  class="w-full" @update:model-value="(v: string) => handleSort(v)" />
                 <div class="flex gap-1 mt-1">
                   <UButton size="xs" :variant="tableSettings.settings.sortDirection === 'asc' ? 'solid' : 'outline'"
-                    color="neutral" class="flex-1"
-                    @click="tableSettings.setSort(tableSettings.settings.sortColumn, 'asc')">
+                    color="neutral" class="flex-1" @click="changeSortDirection('asc')">
                     <UIcon :name="icons.sortAsc" class="w-3 h-3 mr-1" /> {{ $t('ascending') }}
                   </UButton>
                   <UButton size="xs" :variant="tableSettings.settings.sortDirection === 'desc' ? 'solid' : 'outline'"
-                    color="neutral" class="flex-1"
-                    @click="tableSettings.setSort(tableSettings.settings.sortColumn, 'desc')">
+                    color="neutral" class="flex-1" @click="changeSortDirection('desc')">
                     <UIcon :name="icons.sortDesc" class="w-3 h-3 mr-1" /> {{ $t('descending') }}
                   </UButton>
                 </div>
@@ -134,7 +120,7 @@ DataTable - A high-performance, feature-rich table component with:
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div ref="tableContainer" class="flex-1 overflow-auto transition-all duration-200"
         :style="{ maxHeight: maxHeight }" @scroll="handleScroll">
-        <div v-if="loading && sortedRows.length === 0"
+        <div v-if="loading && rows.length === 0"
           class="flex items-center justify-center py-12 text-(--color-text-muted)">
           <UIcon :name="icons.loading" class="w-6 h-6 animate-spin mr-2" />
           {{ $t('loading') }}
@@ -184,11 +170,7 @@ DataTable - A high-performance, feature-rich table component with:
             </thead>
 
             <tbody class="divide-y divide-(--color-border)">
-              <tr v-if="virtualScrollEnabled && virtualTopHeight > 0" :style="{ height: virtualTopHeight + 'px' }">
-                <td :colspan="totalColSpan" />
-              </tr>
-
-              <tr v-for="(row, idx) in virtualRows" :key="getRowKey(row)" role="row" :aria-selected="isSelected(row)"
+              <tr v-for="(row, idx) in rows" :key="getRowKey(row)" role="row" :aria-selected="isSelected(row)"
                 :tabindex="0"
                 class="group hover:bg-(--color-surface-hover) transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue"
                 :class="{
@@ -227,12 +209,7 @@ DataTable - A high-performance, feature-rich table component with:
                 </td>
               </tr>
 
-              <tr v-if="virtualScrollEnabled && virtualBottomHeight > 0"
-                :style="{ height: virtualBottomHeight + 'px' }">
-                <td :colspan="totalColSpan" />
-              </tr>
-
-              <tr v-if="sortedRows.length === 0 && !loading">
+              <tr v-if="rows.length === 0 && !loading">
                 <td :colspan="totalColSpan" class="px-4 py-12 text-center">
                   <div class="flex flex-col items-center gap-2 text-(--color-text-muted)">
                     <UIcon :name="emptyIcon || icons.table" class="w-8 h-8 opacity-50" />
@@ -241,7 +218,7 @@ DataTable - A high-performance, feature-rich table component with:
                 </td>
               </tr>
 
-              <tr v-if="displayMode === 'infinite' && hasMoreData && !virtualScrollEnabled" class="scroll-sentinel">
+              <tr v-if="displayMode === 'infinite' && hasMoreData" class="scroll-sentinel">
                 <td :colspan="totalColSpan" class="px-4 py-4 text-center">
                   <div class="flex items-center justify-center gap-2 text-(--color-text-muted) text-sm">
                     <UIcon :name="icons.loading" class="w-4 h-4 animate-spin" />
@@ -250,8 +227,7 @@ DataTable - A high-performance, feature-rich table component with:
                 </td>
               </tr>
 
-              <tr
-                v-else-if="displayMode === 'infinite' && sortedRows.length > 0 && !hasMoreData && !virtualScrollEnabled">
+              <tr v-else-if="displayMode === 'infinite' && rows.length > 0 && !hasMoreData">
                 <td :colspan="totalColSpan" class="px-4 py-3 text-center">
                   <span class="text-xs text-(--color-text-muted)">{{ $t('allItemsLoaded') }}</span>
                 </td>
@@ -264,10 +240,10 @@ DataTable - A high-performance, feature-rich table component with:
 
     <!-- Pagination -->
     <div v-if="displayMode === 'pagination'"
-      class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 mt-2 rounded-b-lg flex items-center justify-between gap-2">
+      class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 mt-2 rounded-b-lg flex items-center justify-end gap-4">
       <span class="text-xs text-(--color-text-muted)">
         {{ $t('page') }} {{ currentPage }} {{ $t('of') }} {{ totalPages }}
-        ({{ totalRowCount }} {{ $t('items') }})
+        ({{ serverTotal }} {{ $t('items') }})
       </span>
       <div v-if="totalPages > 1" class="flex items-center gap-1">
         <UButton :icon="icons.arrowLeft" variant="outline" color="neutral" size="xs" :disabled="currentPage === 1"
@@ -298,12 +274,21 @@ export interface DataTableAction<R = unknown> {
   visible?: (row: R) => boolean
 }
 
+export interface PageChangeParams {
+  pageNumber: number
+  perPage: number
+  sortBy: string
+  sortDesc: boolean
+  filterQuery: string
+}
+
 interface Props {
   rows: T[]
   columns: DataTableColumnDef[]
   tableId: string
   rowKey?: string
   loading?: boolean
+  totalItems?: number
 
   selectable?: boolean
   selectedKeys?: string[]
@@ -319,21 +304,17 @@ interface Props {
   emptyLabel?: string
   tableLabel?: string
   maxHeight?: string
-
-  virtualScrollThreshold?: number
-  rowHeight?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   rowKey: 'id',
   loading: false,
+  totalItems: 0,
   selectable: true,
   filterable: true,
   showRefresh: true,
   clickable: true,
   maxHeight: 'calc(100vh - 220px)',
-  virtualScrollThreshold: 500,
-  rowHeight: 48,
 })
 
 const emit = defineEmits<{
@@ -343,6 +324,7 @@ const emit = defineEmits<{
   (e: 'update:filterQuery', query: string): void
   (e: 'row-action', action: string, row: T): void
   (e: 'row-activate', row: T): void
+  (e: 'page-change', params: PageChangeParams): void
 }>()
 
 const icons = useIcons()
@@ -355,22 +337,17 @@ const tableContainer = ref<HTMLElement | null>(null)
 const selectedKeys = ref<string[]>([])
 const filterQueryInternal = ref(props.filterQuery || '')
 const currentPage = ref(1)
-const loadedCount = ref(tableSettings.settings.pageSize)
 const selectionModeOverride = ref<'single' | 'multi' | null>(null)
-
-const scrollTop = ref(0)
+let filterDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
 const displayMode = computed(() => tableSettings.settings.displayMode)
 const pageSize = computed(() => tableSettings.settings.pageSize)
 
-// Selection mode: single by default, auto-switches to multi when multiple items
-// are selected from external source (e.g. groups)
 const effectiveSelectionMode = computed(() => {
   if (selectionModeOverride.value) return selectionModeOverride.value
   return tableSettings.settings.selectionMode
 })
 
-// Compute minimum table width based on visible columns for horizontal scroll
 const tableMinWidth = computed(() => {
   const selCol = props.selectable ? 48 : 0
   const actCol = hasActions.value ? 96 : 0
@@ -412,38 +389,8 @@ const totalColSpan = computed(() => {
   return count
 })
 
-const filteredRows = computed(() => {
-  if (!filterQueryInternal.value) return props.rows
-  const query = filterQueryInternal.value.toLowerCase()
-  return props.rows.filter((row) =>
-    visibleColumns.value.some((col) => {
-      const value = getNestedValue(row, col.key)
-      return String(value || '').toLowerCase().includes(query)
-    })
-  )
-})
-
-const sortedRows = computed(() => {
-  const { sortColumn, sortDirection } = tableSettings.settings
-  if (!sortColumn) return filteredRows.value
-
-  return [...filteredRows.value].sort((a, b) => {
-    const aVal = getNestedValue(a, sortColumn)
-    const bVal = getNestedValue(b, sortColumn)
-    const comparison = String(aVal || '').localeCompare(String(bVal || ''), undefined, { numeric: true })
-    return sortDirection === 'asc' ? comparison : -comparison
-  })
-})
-
-const totalRowCount = computed(() => sortedRows.value.length)
-const displayedRowCount = computed(() => {
-  if (displayMode.value === 'infinite') {
-    return Math.min(loadedCount.value, totalRowCount.value)
-  }
-  return Math.min(pageSize.value, totalRowCount.value)
-})
-
-const totalPages = computed(() => Math.ceil(totalRowCount.value / pageSize.value))
+const serverTotal = computed(() => props.totalItems || props.rows.length)
+const totalPages = computed(() => Math.max(1, Math.ceil(serverTotal.value / pageSize.value)))
 const paginationStartIndex = computed(() => (currentPage.value - 1) * pageSize.value)
 const paginationEndIndex = computed(() => currentPage.value * pageSize.value)
 
@@ -451,7 +398,6 @@ const visiblePageNumbers = computed(() => {
   const pages: (number | string)[] = []
   const total = totalPages.value
   const current = currentPage.value
-
   if (total <= 7) {
     for (let i = 1; i <= total; i++) pages.push(i)
   } else {
@@ -466,57 +412,32 @@ const visiblePageNumbers = computed(() => {
   return pages
 })
 
-const virtualScrollEnabled = computed(() => sortedRows.value.length > props.virtualScrollThreshold)
-
-const visibleRowCount = computed(() => {
-  if (!virtualScrollEnabled.value) return sortedRows.value.length
-  const containerHeight = tableContainer.value?.clientHeight || 600
-  return Math.ceil(containerHeight / props.rowHeight) + 10
-})
-
-const virtualStartIndex = computed(() => {
-  if (!virtualScrollEnabled.value) return 0
-  return Math.max(0, Math.floor(scrollTop.value / props.rowHeight) - 5)
-})
-
-const virtualTopHeight = computed(() => {
-  if (!virtualScrollEnabled.value) return 0
-  return virtualStartIndex.value * props.rowHeight
-})
-
-const virtualBottomHeight = computed(() => {
-  if (!virtualScrollEnabled.value) return 0
-  const endIndex = virtualStartIndex.value + visibleRowCount.value
-  const remaining = sortedRows.value.length - endIndex
-  return Math.max(0, remaining * props.rowHeight)
-})
-
-const virtualRows = computed<T[]>(() => {
-  if (virtualScrollEnabled.value) {
-    return sortedRows.value.slice(virtualStartIndex.value, virtualStartIndex.value + visibleRowCount.value)
-  }
-
-  if (displayMode.value === 'infinite') {
-    return sortedRows.value.slice(0, loadedCount.value)
-  }
-
-  return sortedRows.value.slice(paginationStartIndex.value, paginationEndIndex.value)
-})
-
 const hasMoreData = computed(() => {
-  if (displayMode.value === 'infinite') {
-    return loadedCount.value < totalRowCount.value
-  }
+  if (displayMode.value === 'infinite') return props.rows.length < serverTotal.value
   return false
 })
 
 const allSelected = computed(() =>
-  virtualRows.value.length > 0 && virtualRows.value.every((row) => isSelected(row))
+  props.rows.length > 0 && props.rows.every((row) => isSelected(row))
 )
 
 const someSelected = computed(() =>
   selectedKeys.value.length > 0 && !allSelected.value
 )
+
+function getPageChangeParams(): PageChangeParams {
+  return {
+    pageNumber: currentPage.value,
+    perPage: pageSize.value,
+    sortBy: tableSettings.settings.sortColumn,
+    sortDesc: tableSettings.settings.sortDirection === 'desc',
+    filterQuery: filterQueryInternal.value,
+  }
+}
+
+function emitPageChange() {
+  emit('page-change', getPageChangeParams())
+}
 
 function getRowKey(row: T): string {
   return String(row[props.rowKey] ?? '')
@@ -549,14 +470,35 @@ function getSortAriaLabel(colKey: string): 'ascending' | 'descending' | undefine
 }
 
 function handleSort(column: string) {
-  tableSettings.setSort(column)
+  const current = tableSettings.settings.sortColumn
+  if (current === column) {
+    tableSettings.settings.sortDirection = tableSettings.settings.sortDirection === 'asc' ? 'desc' : 'asc'
+  } else {
+    tableSettings.settings.sortColumn = column
+    tableSettings.settings.sortDirection = 'asc'
+  }
+  currentPage.value = 1
+  emitPageChange()
 }
 
-/**
- * Row click behavior:
- * - SINGLE mode: select that row (deselect others) AND emit row-activate to open detail panel
- * - MULTI mode: toggle selection on the row (no detail panel - use row action button)
- */
+function changeSortDirection(dir: 'asc' | 'desc') {
+  tableSettings.settings.sortDirection = dir
+  currentPage.value = 1
+  emitPageChange()
+}
+
+function changePageSize(size: number) {
+  tableSettings.setPageSize(size)
+  currentPage.value = 1
+  emitPageChange()
+}
+
+function changeDisplayMode(mode: 'infinite' | 'pagination') {
+  tableSettings.setDisplayMode(mode)
+  currentPage.value = 1
+  emitPageChange()
+}
+
 function handleRowClick(row: T, event: Event) {
   const target = event.target as HTMLElement
   if (target.closest('button') || target.closest('[role="button"]') || target.closest('input')) return
@@ -569,9 +511,6 @@ function handleRowClick(row: T, event: Event) {
   }
 }
 
-/**
- * Checkbox/radio click in the selection column
- */
 function handleCheckboxClick(row: T) {
   if (effectiveSelectionMode.value === 'single') {
     selectSingle(row)
@@ -588,26 +527,19 @@ function isSelected(row: T): boolean {
 function toggleSelection(row: T) {
   const key = getRowKey(row)
   const idx = selectedKeys.value.indexOf(key)
-  if (idx >= 0) {
-    selectedKeys.value.splice(idx, 1)
-  } else {
-    selectedKeys.value.push(key)
-  }
+  if (idx >= 0) selectedKeys.value.splice(idx, 1)
+  else selectedKeys.value.push(key)
   emitSelectionChange()
 }
 
 function selectSingle(row: T) {
-  const key = getRowKey(row)
-  selectedKeys.value = [key]
+  selectedKeys.value = [getRowKey(row)]
   emitSelectionChange()
 }
 
 function toggleSelectAll() {
-  if (allSelected.value) {
-    selectedKeys.value = []
-  } else {
-    selectedKeys.value = virtualRows.value.map((row) => getRowKey(row))
-  }
+  if (allSelected.value) selectedKeys.value = []
+  else selectedKeys.value = props.rows.map((row) => getRowKey(row))
   emitSelectionChange()
 }
 
@@ -621,7 +553,6 @@ function forceSelectionMode(mode: 'single' | 'multi') {
   selectionModeOverride.value = mode
   tableSettings.setSelectionMode(mode)
   if (mode === 'single' && selectedKeys.value.length > 1) {
-    // Keep only last selected
     const lastKey = selectedKeys.value[selectedKeys.value.length - 1] || ''
     selectedKeys.value = [lastKey]
     emitSelectionChange()
@@ -634,32 +565,35 @@ function emitSelectionChange() {
 }
 
 function handleRefresh() {
-  loadedCount.value = pageSize.value
   currentPage.value = 1
-  emit('refresh')
+  emitPageChange()
 }
 
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page
+    emitPageChange()
   }
 }
 
 function handleScroll() {
   if (!tableContainer.value) return
-
-  const { scrollTop: st, scrollHeight, clientHeight } = tableContainer.value
-  scrollTop.value = st
-
-  if (displayMode.value === 'infinite' && !virtualScrollEnabled.value) {
-    if (st + clientHeight >= scrollHeight - 100 && hasMoreData.value && !props.loading) {
-      loadedCount.value += pageSize.value
+  const { scrollTop, scrollHeight, clientHeight } = tableContainer.value
+  if (displayMode.value === 'infinite') {
+    if (scrollTop + clientHeight >= scrollHeight - 100 && hasMoreData.value && !props.loading) {
+      currentPage.value++
+      emitPageChange()
     }
   }
 }
 
 watch(filterQueryInternal, (val) => {
   emit('update:filterQuery', val)
+  if (filterDebounceTimer) clearTimeout(filterDebounceTimer)
+  filterDebounceTimer = setTimeout(() => {
+    currentPage.value = 1
+    emitPageChange()
+  }, 400)
 })
 
 watch(() => props.filterQuery, (val) => {
@@ -668,26 +602,18 @@ watch(() => props.filterQuery, (val) => {
   }
 })
 
-// Watch selectedKeys from parent - auto-switch to multi if multiple items synced
 watch(() => props.selectedKeys, (newKeys) => {
   if (newKeys) {
     selectedKeys.value = [...newKeys]
-    // Auto-switch to multi if external source pushes multiple selections
     if (newKeys.length > 1 && effectiveSelectionMode.value === 'single') {
       selectionModeOverride.value = 'multi'
     }
-    // If only 1 or 0 items left and user hasn't manually forced multi, go back to single
     if (newKeys.length <= 1 && selectionModeOverride.value === 'multi'
       && tableSettings.settings.selectionMode === 'single') {
       selectionModeOverride.value = null
     }
   }
 }, { immediate: true, deep: true })
-
-watch(() => props.rows.length, () => {
-  currentPage.value = 1
-  loadedCount.value = pageSize.value
-})
 
 defineExpose({
   clearSelection,
@@ -698,6 +624,7 @@ defineExpose({
   },
   refresh: handleRefresh,
   effectiveSelectionMode,
+  getPageChangeParams,
 })
 </script>
 

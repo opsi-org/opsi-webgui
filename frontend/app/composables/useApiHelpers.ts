@@ -7,12 +7,12 @@ interface FetchOptions {
 interface ApiResponse<T> {
   data: T | null
   error: Error | null
-  headers: Headers | null
+  total: number | null
 }
 
 export function useApiHelpers() {
   const { $customFetch } = useNuxtApp() as unknown as {
-    $customFetch: <T>(url: string, opts?: FetchOptions) => Promise<T>
+    $customFetch: typeof $fetch
   }
 
   async function apiGet<T>(url: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
@@ -26,37 +26,56 @@ export function useApiHelpers() {
             ])
           ).toString()
         : ''
-      const data = await $customFetch<T>(url + qs)
-      return { data, error: null, headers: null }
+      const response = await $customFetch.raw<T>(url + qs)
+      const total = response.headers.get('X-Total-Count')
+      return {
+        data: response._data ?? null,
+        error: null,
+        total: total ? parseInt(total, 10) : null,
+      }
     } catch (e) {
-      return { data: null, error: e as Error, headers: null }
+      return { data: null, error: e as Error, total: null }
     }
   }
 
   async function apiPost<T>(url: string, body?: unknown): Promise<ApiResponse<T>> {
     try {
-      const data = await $customFetch<T>(url, { method: 'POST', body })
-      return { data, error: null, headers: null }
+      const response = await $customFetch.raw<T>(url, {
+        method: 'POST',
+        body: body as Record<string, unknown>,
+      })
+      const total = response.headers.get('X-Total-Count')
+      return {
+        data: response._data ?? null,
+        error: null,
+        total: total ? parseInt(total, 10) : null,
+      }
     } catch (e) {
-      return { data: null, error: e as Error, headers: null }
+      return { data: null, error: e as Error, total: null }
     }
   }
 
   async function apiPut<T>(url: string, body?: unknown): Promise<ApiResponse<T>> {
     try {
-      const data = await $customFetch<T>(url, { method: 'PUT', body })
-      return { data, error: null, headers: null }
+      const data = await $customFetch<T>(url, {
+        method: 'PUT',
+        body: body as Record<string, unknown>,
+      })
+      return { data, error: null, total: null }
     } catch (e) {
-      return { data: null, error: e as Error, headers: null }
+      return { data: null, error: e as Error, total: null }
     }
   }
 
   async function apiDelete<T>(url: string, body?: unknown): Promise<ApiResponse<T>> {
     try {
-      const data = await $customFetch<T>(url, { method: 'DELETE', body })
-      return { data, error: null, headers: null }
+      const data = await $customFetch<T>(url, {
+        method: 'DELETE',
+        body: body as Record<string, unknown>,
+      })
+      return { data, error: null, total: null }
     } catch (e) {
-      return { data: null, error: e as Error, headers: null }
+      return { data: null, error: e as Error, total: null }
     }
   }
 

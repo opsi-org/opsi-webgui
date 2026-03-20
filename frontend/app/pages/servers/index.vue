@@ -24,8 +24,9 @@
 
                 <SharedDataTable :rows="servers" :columns="columns" :loading="loading" table-id="servers"
                     row-key="depotId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
-                    :selected-keys="selectionStore.selectedServers" @row-activate="handleRowActivate"
-                    @selection-change="handleSelectionChange" @refresh="fetchServers">
+                    :total-items="totalItems" :selected-keys="selectionStore.selectedServers"
+                    @row-activate="handleRowActivate" @selection-change="handleSelectionChange"
+                    @page-change="handlePageChange" @refresh="fetchServers">
                     <template #cell-type="{ row }">
                         <SharedStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
                             :label="String((row as Server).type === 'OpsiConfigserver' ? $t('configserver') : $t('server'))" />
@@ -53,6 +54,7 @@
 
 <script setup lang="ts">
 import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
+import type { PageChangeParams } from '~/components/shared/DataTable.vue'
 import type { Server } from '~/types'
 import { useSelectionStore } from '~/stores/selectionStore'
 
@@ -67,9 +69,11 @@ const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRef
 const loading = ref(false)
 const error = ref<string | null>(null)
 const servers = ref<Server[]>([])
+const totalItems = ref(0)
 const panelServer = ref<Server | null>(null)
 const panelType = ref<'config' | null>(null)
 const panelTab = ref('parameters')
+const lastPageParams = ref<PageChangeParams | null>(null)
 
 const columns: DataTableColumnDef[] = [
     { key: 'depotId', label: String($t('serverId')), sortable: true, alwaysVisible: true },
@@ -89,27 +93,35 @@ function handleRowActivate(row: Server) {
 }
 
 function handleSelectionChange(_rows: Server[], keys: string[]) {
-    // In single select, always keep config server selected - it's the main point of this app
-    if (selectionStore.configServer && !keys.includes(selectionStore.configServer)) {
-        selectionStore.setServers([selectionStore.configServer], 'table')
-    } else {
-        selectionStore.setServers(keys, 'table')
-    }
+    selectionStore.setServers(keys, 'table')
 }
 
-async function fetchServers() {
+function handlePageChange(params: PageChangeParams) {
+    lastPageParams.value = params
+    fetchServers(params)
+}
+
+async function fetchServers(params?: PageChangeParams) {
     loading.value = true
     error.value = null
     try {
-        const result = await getServers({})
+        const p: Record<string, unknown> = {}
+        if (params) {
+            p.pageNumber = params.pageNumber
+            p.perPage = params.perPage
+            p.sortBy = params.sortBy
+            p.sortDesc = params.sortDesc
+            p.filterQuery = params.filterQuery
+        }
+        const result = await getServers(p)
         if (result.error) { error.value = result.error.message; return }
         if (result.data) {
             servers.value = result.data as Server[]
+            if (result.total !== null) totalItems.value = result.total
             const cs = result.data.find(d => d.type === 'OpsiConfigserver')
             if (cs) {
                 selectionStore.setConfigServer(cs.depotId)
-                // Always ensure config server is selected
-                if (!selectionStore.selectedServers.includes(cs.depotId)) {
+                if (selectionStore.selectedServers.length === 0) {
                     selectionStore.setServers([cs.depotId])
                 }
             }

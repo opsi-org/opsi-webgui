@@ -41,8 +41,9 @@
 
 				<SharedDataTable :rows="clients" :columns="columns" :loading="loading" table-id="clients"
 					row-key="clientId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
-					:selected-keys="selectionStore.selectedClients" @row-activate="handleRowActivate"
-					@selection-change="handleSelectionChange" @refresh="fetchClients">
+					:total-items="totalItems" :selected-keys="selectionStore.selectedClients"
+					@row-activate="handleRowActivate" @selection-change="handleSelectionChange"
+					@page-change="handlePageChange" @refresh="fetchClients">
 					<template #cell-description="{ row }">
 						{{ (row as Client).description || '-' }}
 					</template>
@@ -124,6 +125,7 @@
 
 <script setup lang="ts">
 import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
+import type { PageChangeParams } from '~/components/shared/DataTable.vue'
 import type { Client } from '~/types'
 import { useSelectionStore } from '~/stores/selectionStore'
 
@@ -137,12 +139,14 @@ const selectionStore = useSelectionStore()
 const loading = ref(false)
 const error = ref<string | null>(null)
 const clients = ref<Client[]>([])
+const totalItems = ref(0)
 const panelClient = ref<Client | null>(null)
 const panelType = ref<'config' | 'logs' | 'clone' | null>(null)
 const panelTab = ref('parameters')
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
 const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string } | null>(null)
+const lastPageParams = ref<PageChangeParams | null>(null)
 
 const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRefresh } = useAutoRefreshClients(fetchClients)
 
@@ -209,7 +213,12 @@ function handleActionComplete(action: string, success: boolean) {
 	if ((action === 'delete' || action === 'rename') && success) fetchClients()
 }
 
-async function fetchClients() {
+function handlePageChange(params: PageChangeParams) {
+	lastPageParams.value = params
+	fetchClients(params)
+}
+
+async function fetchClients(params?: PageChangeParams) {
 	loading.value = true
 	error.value = null
 	try {
@@ -220,15 +229,30 @@ async function fetchClients() {
 			if (first) selectionStore.setServers([first])
 			else { error.value = String($t('message.noServerSelected')); return }
 		}
-		const result = await getClients({
+		const p: Record<string, unknown> = {
 			selectedDepots: selectionStore.selectedServersParam,
 			selectedClients: `[${selectionStore.selectedClients.join(',')}]`,
-		})
+		}
+		if (params) {
+			p.pageNumber = params.pageNumber
+			p.perPage = params.perPage
+			p.sortBy = params.sortBy
+			p.sortDesc = params.sortDesc
+			p.filterQuery = params.filterQuery
+		}
+		const result = await getClients(p)
 		if (result.error) error.value = result.error.message
 		else if (result.data) {
-			clients.value = result.data as Client[]
-			// Auto-check reachability for visible clients
-			checkAllReachability(result.data as Client[])
+			const newData = result.data as Client[]
+			if (result.total !== null) totalItems.value = result.total
+			if (params && params.pageNumber > 1 && lastPageParams.value) {
+				const existingIds = new Set(clients.value.map(c => c.clientId))
+				const unique = newData.filter(c => !existingIds.has(c.clientId))
+				clients.value = [...clients.value, ...unique]
+			} else {
+				clients.value = newData
+			}
+			checkAllReachability(newData)
 		}
 	} catch (e) { error.value = (e as Error).message }
 	finally { loading.value = false }
@@ -252,7 +276,7 @@ async function checkAllReachability(clientList: Client[]) {
 	}
 }
 
-watch(() => selectionStore.selectedServers, fetchClients, { deep: true })
+watch(() => selectionStore.selectedServers, () => fetchClients(), { deep: true })
 
-onMounted(fetchClients)
+onMounted(() => fetchClients())
 </script>
