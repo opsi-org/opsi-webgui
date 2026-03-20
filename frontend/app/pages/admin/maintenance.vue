@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 Admin Maintenance Page - System maintenance, clients, products, backup/restore
--->
 <template>
     <div class="space-y-6">
         <UAlert v-if="error" color="error" variant="soft" :close-button="{ icon: 'i-heroicons-x-mark' }"
@@ -15,7 +7,6 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
         </UAlert>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Blocked Clients -->
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
@@ -43,7 +34,6 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
             </UCard>
 
-            <!-- Locked Products -->
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
@@ -72,7 +62,6 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             </UCard>
         </div>
 
-        <!-- Application State -->
         <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
@@ -136,9 +125,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             </div>
         </UCard>
 
-        <!-- Backup & Restore Row -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Create Backup -->
             <UCard>
                 <template #header>
                     <div class="flex items-center gap-2">
@@ -181,7 +168,6 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
             </UCard>
 
-            <!-- Restore Backup -->
             <UCard>
                 <template #header>
                     <div class="flex items-center gap-2">

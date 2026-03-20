@@ -1,11 +1,3 @@
-/**
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
-All rights reserved.
-License: AGPL-3.0
-*/
-
 import { defineStore } from 'pinia'
 import { useColorMode } from '@vueuse/core'
 import { useCookie } from 'nuxt/app'
@@ -14,17 +6,18 @@ type Lang = 'en' | 'de'
 type Theme = 'light' | 'dark'
 type TableType = 'servers' | 'clients' | 'products'
 
-const defaultVisible = {
+const defaultVisible: Record<TableType, string[]> = {
   servers: ['selected', 'depotId', 'description', 'type', 'actions'],
   clients: [
     'selected',
     'clientId',
-    'version_outdated_localboot',
-    'version_outdated_netboot',
-    'installationStatus_unknown',
+    'description',
+    'lastSeen',
+    'version_outdated',
     'installationStatus_installed',
     'actionResult_failed',
     'actionResult_successful',
+    'reachable',
     'actions',
   ],
   products: [
@@ -37,7 +30,8 @@ const defaultVisible = {
     'actions',
   ],
 }
-const defaultSort = {
+
+const defaultSort: Record<TableType, { column: string; isDesc: boolean }> = {
   servers: { column: 'depotId', isDesc: false },
   clients: { column: 'clientId', isDesc: false },
   products: { column: 'productId', isDesc: false },
@@ -46,7 +40,6 @@ const defaultSort = {
 export const useUiStore = defineStore('ui', {
   persist: { key: 'opsi-webgui-ui', storage: localStorage },
   state: () => ({
-    // General UI
     isMobile: false,
     language: 'en' as Lang,
     theme: (useColorMode().value === 'auto' ? 'light' : useColorMode().value) as Theme,
@@ -54,21 +47,15 @@ export const useUiStore = defineStore('ui', {
     menuCollapsed: false,
     splitviewClient: true,
     splitviewServer: true,
-
-    // Table UI
-    visibleColumns: { ...defaultVisible },
-    sortColumns: { ...defaultSort },
+    visibleColumns: { ...defaultVisible } as Record<TableType, string[]>,
+    sortColumns: { ...defaultSort } as Record<TableType, { column: string; isDesc: boolean }>,
     filterQuery: { clients: '', products: '' } as Record<string, string>,
     lastSelected: { clients: '', servers: '', products: '' },
     secondColumnSelectedRowId: '',
-
-    // Internal UI
     productActionRequest: {} as Record<string, string>,
     productsLastRequestUrl: '',
     productsLastRequestParams: {} as unknown,
     productsLastRequestTime: 0,
-
-    // Log UI
     logmarker: '-1;;instlog',
     loglevel: 5,
     logtype: 'instlog',
@@ -77,35 +64,30 @@ export const useUiStore = defineStore('ui', {
     syncSelection: true,
   }),
   getters: {
-    isLight: (state) => state.theme === 'light',
-    getColumns: (state) => (type: TableType) => state.visibleColumns[type],
-    getSorting: (state) => (type: TableType) => state.sortColumns[type],
-    getFilter: (state) => (type: TableType) => state.filterQuery[type] || '',
-    logmarkerNr: (state) => parseInt(String(state.logmarker?.split(';')[0] ?? '-1')) || -1,
-    logmarkerId: (state) => state.logmarker?.split(';')[1] || '',
-    logmarkerType: (state) => state.logmarker?.split(';')[2] || '',
+    isLight: (s) => s.theme === 'light',
+    getColumns: (s) => (type: TableType) => s.visibleColumns[type],
+    getSorting: (s) => (type: TableType) => s.sortColumns[type],
+    getFilter: (s) => (type: TableType) => s.filterQuery[type] || '',
+    logmarkerNr: (s) => parseInt(String(s.logmarker?.split(';')[0] ?? '-1')) || -1,
+    logmarkerId: (s) => s.logmarker?.split(';')[1] || '',
+    logmarkerType: (s) => s.logmarker?.split(';')[2] || '',
   },
   actions: {
-    // General UI
     setLanguage(lang: Lang) {
       this.language = lang
       useCookie('Language').value = lang
     },
     setTheme(theme: Theme) {
       this.theme = theme
-      // Sync with Nuxt color mode - this is the source of truth
       if (typeof document !== 'undefined') {
         document.documentElement.classList.toggle('dark', theme === 'dark')
-        // Set cookie directly for persistence across page reloads
         document.cookie = `nuxt-color-mode=${theme}; path=/; max-age=31536000; SameSite=Lax`
       }
     },
     initTheme() {
-      // Restore theme from stored state on app init
-      const storedTheme = this.theme
-      if (storedTheme && typeof document !== 'undefined') {
-        document.documentElement.classList.toggle('dark', storedTheme === 'dark')
-        document.cookie = `nuxt-color-mode=${storedTheme}; path=/; max-age=31536000; SameSite=Lax`
+      if (this.theme && typeof document !== 'undefined') {
+        document.documentElement.classList.toggle('dark', this.theme === 'dark')
+        document.cookie = `nuxt-color-mode=${this.theme}; path=/; max-age=31536000; SameSite=Lax`
       }
     },
     setQuickpanelOpened(opened: boolean) {
@@ -127,8 +109,6 @@ export const useUiStore = defineStore('ui', {
     setSecondColumnSelectedRowId(id: string) {
       this.secondColumnSelectedRowId = id
     },
-
-    // Table UI
     setColumns(type: TableType, columns: string[]) {
       this.visibleColumns[type] = columns
     },
@@ -145,8 +125,6 @@ export const useUiStore = defineStore('ui', {
       this.visibleColumns = { ...defaultVisible }
       this.sortColumns = { ...defaultSort }
     },
-
-    // Internal UI
     setProductActionRequest(key: string, value: string) {
       this.productActionRequest[key] = value
     },
@@ -155,7 +133,6 @@ export const useUiStore = defineStore('ui', {
       this.productsLastRequestParams = params
       this.productsLastRequestTime = time
     },
-    // Log UI
     setLogmarker(nr: number, id: string) {
       this.logmarker = `${nr};${id};${this.logtype}`
     },

@@ -1,14 +1,5 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 SharedUnsavedChangesModal — Reusable unsaved-changes button + popup.
--->
 <template>
-	<!-- Trigger button (only shown when there are changes) -->
 	<template v-if="configRef?.hasAnyChanges">
 		<UButton :size="size" color="warning" variant="outline" @click="open = true">
 			{{ $t('unsavedChanges') }}
@@ -24,11 +15,9 @@ SharedUnsavedChangesModal — Reusable unsaved-changes button + popup.
 		</template>
 	</template>
 
-	<!-- Changes popup modal -->
 	<UModal v-model:open="open" :title="$t('unsavedChanges')" :ui="{ content: 'max-w-2xl' }">
 		<template #body>
 			<div class="space-y-4">
-				<!-- Changed parameters -->
 				<div v-if="(configRef?.changedParams?.size ?? 0) > 0">
 					<p class="text-xs font-semibold text-muted uppercase mb-2">{{ $t('parameters') }}</p>
 					<div class="divide-y divide-default border border-default rounded-lg">
@@ -48,7 +37,6 @@ SharedUnsavedChangesModal — Reusable unsaved-changes button + popup.
 						</div>
 					</div>
 				</div>
-				<!-- Changed attributes -->
 				<div v-if="(configRef?.changedAttributesList?.length ?? 0) > 0">
 					<p class="text-xs font-semibold text-muted uppercase mb-2">{{ $t('attributes') }}</p>
 					<div class="divide-y divide-default border border-default rounded-lg">

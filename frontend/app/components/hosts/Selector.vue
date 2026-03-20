@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 HostSelector - Unified searchable dropdown for selecting a client or a server.
--->
 <template>
   <USelectMenu :model-value="modelValue || ''" :items="dropdownOptions" :loading="loading"
     :filter-fields="['label', 'description']"
@@ -61,7 +53,7 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getClients, getDepots } = useApiHelpers()
+const { getClients, getServers } = useApiHelpers()
 
 const loading = ref(false)
 const items = ref<Array<{ id: string; description: string }>>([])
@@ -87,7 +79,7 @@ async function fetchItems() {
   loading.value = true
   try {
     if (props.type === 'server') {
-      const { data, error } = await getDepots()
+      const { data, error } = await getServers()
       if (!error) items.value = (data || []).map((d) => ({ id: d.depotId, description: d.description || '' }))
     } else {
       const params: Record<string, unknown> = {}

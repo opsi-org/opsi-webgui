@@ -1,32 +1,20 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 DetailPanel - A side panel component for showing details alongside main content.
 Desktop: side-by-side split with resizable divider (default 50% width).
 Mobile: overlay panel with close button.
--->
 <template>
     <div class="h-full w-full relative bg-(--color-surface) dark:bg-(--color-background)" ref="containerRef">
-        <!-- Main content -->
         <div :style="mainStyle" class="h-full overflow-auto transition-[width] duration-200">
             <slot name="main" />
         </div>
 
-        <!-- Detail panel (Desktop: side-by-side, Mobile: overlay) -->
         <Transition :name="isMobile ? 'slide-up' : 'slide-in'">
             <div v-if="showPanel" :style="panelStyle" :class="panelClasses">
-                <!-- Resize handle (desktop only) -->
                 <div v-if="!isMobile" @mousedown="startResize"
                     class="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize bg-transparent hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group">
                     <div
                         class="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-12 bg-gray-300 dark:bg-gray-600 rounded group-hover:bg-opsi-blue transition-colors" />
                 </div>
 
-                <!-- Panel header -->
                 <div
                     class="shrink-0 border-b border-(--color-border) dark:border-(--color-border) px-4 py-3 bg-white dark:bg-(--color-surface)">
                     <div class="flex items-center gap-3">
@@ -52,7 +40,6 @@ Mobile: overlay panel with close button.
                         </div>
                     </div>
                 </div>
-                <!-- Panel content -->
                 <div class="flex-1 overflow-auto p-4 bg-(--color-background) dark:bg-(--color-background)">
                     <slot name="panel" />
                 </div>

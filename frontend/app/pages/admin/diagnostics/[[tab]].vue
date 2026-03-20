@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 Admin Diagnostics Page - Health check, system diagnostics, and modules
--->
 <template>
     <LayoutsPageLayout v-model="filter" show-search :search-placeholder="$t('filter')" show-refresh :loading="loading"
         @refresh="refresh(true)">
@@ -18,7 +10,6 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
                 $t('download') }}</UButton>
         </template>
 
-        <!-- Summary Stats (clickable to filter) -->
         <template #stats>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <button @click="filterByStatus('ok')" :class="[
@@ -55,7 +46,6 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
                 </button>
             </div>
 
-            <!-- Active Filter Indicator -->
             <div v-if="statusFilter" class="flex items-center gap-2 mt-3">
                 <span class="text-sm text-gray-500">{{ $t('filteringBy') }}:</span>
                 <SharedStatusBadge :status="getStatusType(statusFilter)" :label="statusFilter" />

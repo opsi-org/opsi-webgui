@@ -1,18 +1,9 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 HostsConfigTabs - Parameters and Attributes tabs.
--->
 <template>
 	<div
 		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
 		<SharedTabsNav v-if="showTabs" v-model="activeTab" :tabs="tabDefs" class="mb-3 shrink-0" />
 
-		<!-- PARAMETERS TAB  -->
 		<div v-show="activeTab === 'parameters'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 h-full']">
 			<div v-if="loadingParams" class="py-8 flex justify-center">
 				<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-opsi-blue" />
@@ -27,7 +18,6 @@ HostsConfigTabs - Parameters and Attributes tabs.
 				:icons="icons" :fmt-val="fmtVal" :auto-open-all="!!paramSearch" />
 		</div>
 
-		<!-- ATTRIBUTES TAB -->
 		<div v-show="activeTab === 'attributes'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 h-full']">
 			<div v-if="loadingAttrs" class="py-8 flex justify-center">
 				<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-opsi-blue" />
@@ -36,7 +26,6 @@ HostsConfigTabs - Parameters and Attributes tabs.
 				<UIcon :name="icons.config" class="w-10 h-10 mx-auto mb-2 opacity-40" />
 				<p>{{ $t('selectHostFirst') }}</p>
 			</div>
-			<!-- read-only -->
 			<div v-if="filteredReadonlyAttrKeys.length"
 				class="mb-6 border-b border-(--color-border) dark:border-(--color-border)">
 				<div v-for="key in filteredReadonlyAttrKeys" :key="key"
@@ -51,7 +40,6 @@ HostsConfigTabs - Parameters and Attributes tabs.
 				</div>
 			</div>
 
-			<!-- Editable -->
 			<div v-if="filteredEditableAttrKeys.length" class="mb-6">
 				<div v-for="key in filteredEditableAttrKeys" :key="key"
 					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
@@ -165,7 +153,6 @@ const flatParams = computed<Param[]>(() => {
 	for (const [category, items] of Object.entries(rawParams.value)) {
 		for (const p of items) {
 			if (p.configId) {
-				// Prefix configId with category if not already present
 				const prefixed = p.configId.startsWith(category + ".") ? p.configId : `${category}.${p.configId}`
 				all.push({ ...p, configId: prefixed })
 			}

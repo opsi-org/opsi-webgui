@@ -1,18 +1,11 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
--->
 <template>
 	<div class="flex-1">
 		<UButton v-if="hasSelections" variant="soft" color="primary" size="sm" class="w-full"
 			@click="dialogOpen = true">
 			<UIcon :name="icons.product" class="w-4 h-4" />
 			<span>{{ $t('productQuickActions') }}</span>
-			<UBadge v-if="stateStore.selectedProducts.length" size="xs" color="primary" class="ml-1">
-				{{ stateStore.selectedProducts.length }}
+			<UBadge v-if="selectionStore.selectedProducts.length" size="xs" color="primary" class="ml-1">
+				{{ selectionStore.selectedProducts.length }}
 			</UBadge>
 		</UButton>
 		<UButton v-else variant="ghost" color="neutral" size="sm" class="w-full opacity-70" disabled>
@@ -42,11 +35,11 @@ License: AGPL-3.0
 					<div class="p-2.5 rounded-lg bg-(--color-surface) dark:bg-(--color-surface) text-xs">
 						<div class="flex justify-between">
 							<span class="text-(--color-text-muted)">{{ $t('selectedClients') }}:</span>
-							<span class="font-medium">{{ stateStore.selectedClients.length || $t('all') }}</span>
+							<span class="font-medium">{{ selectionStore.selectedClients.length || $t('all') }}</span>
 						</div>
 						<div class="flex justify-between mt-1">
 							<span class="text-(--color-text-muted)">{{ $t('selectedProducts') }}:</span>
-							<span class="font-medium">{{ stateStore.selectedProducts.length || $t('all') }}</span>
+							<span class="font-medium">{{ selectionStore.selectedProducts.length || $t('all') }}</span>
 						</div>
 					</div>
 
@@ -134,7 +127,7 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
-import type { ProductRow } from '~/types/api/product.types'
+import type { ProductRow } from '~/types'
 
 interface Props {
 	products?: ProductRow[]
@@ -152,14 +145,14 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const { setClientProductActions } = useApiHelpers()
 const toast = useToast()
-const stateStore = useStateStore()
+const selectionStore = useSelectionStore()
 
 const dialogOpen = ref(false)
 const loading = ref(false)
 const applying = ref(false)
 
 const hasSelections = computed(() =>
-	stateStore.selectedProducts.length > 0 || stateStore.selectedClients.length > 0 || stateStore.selectedDepots.length > 0
+	selectionStore.selectedProducts.length > 0 || selectionStore.selectedClients.length > 0 || selectionStore.selectedServers.length > 0
 )
 
 const filters = ref({ installationStatus: '', actionResult: '', outdatedOnly: false })
@@ -203,7 +196,7 @@ async function loadPreview() {
 	loading.value = true
 	try {
 		const sourceProducts = props.products.length > 0 ? props.products : []
-		const selectedProductSet = new Set(stateStore.selectedProducts)
+		const selectedProductSet = new Set(selectionStore.selectedProducts)
 
 		previewProducts.value = sourceProducts
 			.filter(p => {
@@ -227,7 +220,7 @@ async function applyActions() {
 	applying.value = true
 	try {
 		const productIds = [...new Set(previewProducts.value.map(p => p.productId))]
-		const clientIds = stateStore.selectedClients.length ? stateStore.selectedClients : []
+		const clientIds = selectionStore.selectedClients.length ? selectionStore.selectedClients : []
 
 		const result = await setClientProductActions({
 			clientIds,

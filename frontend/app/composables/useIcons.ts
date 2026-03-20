@@ -1,16 +1,4 @@
-/**
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
-All rights reserved.
-License: AGPL-3.0
-*/
-
-// Nuxt UI icons use the i-{collection}-{name} format
-// https://ui.nuxt.com/components/icon
-// Using Heroicons: https://icon-sets.iconify.design/heroicons/
 export const icons = {
-  // UI Navigation
   menu: 'i-heroicons-bars-3',
   menuClose: 'i-heroicons-x-mark',
   quickPanel: 'i-heroicons-squares-2x2',
@@ -18,16 +6,12 @@ export const icons = {
   home: 'i-heroicons-home',
   back: 'i-heroicons-arrow-left',
   forward: 'i-heroicons-arrow-right',
-
-  // Arrows
   arrowDown: 'i-heroicons-chevron-down',
   arrowLeft: 'i-heroicons-chevron-left',
   arrowRight: 'i-heroicons-chevron-right',
   arrowUp: 'i-heroicons-chevron-up',
   expand: 'i-heroicons-chevron-down',
   collapse: 'i-heroicons-chevron-up',
-
-  // Actions
   add: 'i-heroicons-plus',
   close: 'i-heroicons-x-mark',
   delete: 'i-heroicons-trash',
@@ -45,16 +29,12 @@ export const icons = {
   save: 'i-heroicons-check',
   cancel: 'i-heroicons-x-mark',
   minus: 'i-heroicons-minus',
-
-  // Table
   columns: 'i-heroicons-view-columns',
   sort: 'i-heroicons-arrows-up-down',
   sortAsc: 'i-heroicons-bars-arrow-up',
   sortDesc: 'i-heroicons-bars-arrow-down',
   table: 'i-heroicons-table-cells',
   tableSettings: 'i-heroicons-cog',
-
-  // Content types
   client: 'i-heroicons-computer-desktop',
   server: 'i-heroicons-server',
   serverStack: 'i-heroicons-server-stack',
@@ -76,8 +56,6 @@ export const icons = {
   file: 'i-heroicons-document-text',
   drag: 'i-heroicons-arrows-pointing-out',
   userMinus: 'i-heroicons-user-minus',
-
-  // Status & Info
   settings: 'i-heroicons-adjustments-vertical',
   warning: 'i-heroicons-exclamation-triangle',
   check: 'i-heroicons-check-circle',
@@ -94,31 +72,21 @@ export const icons = {
   unlocked: 'i-heroicons-lock-open',
   license: 'i-heroicons-shield-check',
   x: 'i-heroicons-x-mark',
-
-  // User & Auth
   user: 'i-heroicons-user',
   users: 'i-heroicons-user-group',
   key: 'i-heroicons-key',
   logout: 'i-heroicons-power',
   shield: 'i-heroicons-shield-check',
-
-  // Theme & Language
   language: 'i-heroicons-globe-alt',
   themeLight: 'i-heroicons-sun',
   themeDark: 'i-heroicons-moon',
   globe: 'i-heroicons-globe-alt',
-
-  // Time
   clock: 'i-heroicons-clock',
   calendar: 'i-heroicons-calendar',
-
-  // External
   externalLink: 'i-heroicons-arrow-top-right-on-square',
   link: 'i-heroicons-link',
   github: 'i-simple-icons-github',
   forum: 'i-heroicons-chat-bubble-left-right',
-
-  // Client Actions
   onDemand: 'i-heroicons-bolt',
   notify: 'i-heroicons-bell',
   reboot: 'i-heroicons-arrow-path-rounded-square',
@@ -127,8 +95,6 @@ export const icons = {
   deploy: 'i-heroicons-cloud-arrow-down',
   play: 'i-heroicons-play',
   bookmark: 'i-heroicons-bookmark',
-
-  // Statistics & Status columns
   productsOutdatedLocal: 'i-heroicons-exclamation-circle',
   productsOutdatedNet: 'i-heroicons-arrow-down-circle',
   productInstallationStatusUnknown: 'i-heroicons-question-mark-circle',
@@ -138,6 +104,7 @@ export const icons = {
   clientReachable: 'i-heroicons-wifi',
   productActionResult: 'i-heroicons-clipboard-document-check',
   unequal: 'i-heroicons-arrows-right-left',
+  messageBus: 'i-heroicons-signal',
 } as const
 
 export type IconName = keyof typeof icons

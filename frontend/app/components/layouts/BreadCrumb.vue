@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 BreadCrumb - A breadcrumb navigation component for displaying current page hierarchy with page descriptions on right side.
--->
 <template>
 	<div
 		class="shrink-0 px-3 md:px-4 py-1.5 border-b border-(--color-border) dark:border-(--color-border) bg-white dark:bg-(--color-surface)">
@@ -40,7 +32,6 @@ const { t: i18nT } = useI18n()
 const t = (key: string) => {
 	const translated = i18nT(key)
 	if (translated && translated !== key) return String(translated)
-	// Convert camelCase to Title Case with spaces
 	return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
 }
 

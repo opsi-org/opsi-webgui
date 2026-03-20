@@ -70,8 +70,8 @@
 							<div class="flex-1">
 								<div class="flex items-center gap-2 mb-2">
 									<UButton size="xs" variant="outline" color="neutral"
-										:disabled="arraysEqual(clientIds, stateStore.selectedClients)"
-										@click="clientIds = [...stateStore.selectedClients]">
+										:disabled="arraysEqual(clientIds, selectionStore.selectedClients)"
+										@click="clientIds = [...selectionStore.selectedClients]">
 										{{ $t('reset') }}
 									</UButton>
 								</div>
@@ -107,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ProductVisibility } from '~/types/api/product.types'
+import type { ProductVisibility } from '~/types'
 
 const open = defineModel<boolean>('open', { default: false })
 
@@ -126,17 +126,17 @@ const emit = defineEmits<{
 const icons = useIcons()
 const { t: $t } = useI18n()
 const toast = useToast()
-const stateStore = useStateStore()
+const selectionStore = useSelectionStore()
 const { processActionRequests } = useApiHelpers()
 
 const executing = ref(false)
 const productMode = ref<'all' | 'selected'>('all')
 const visibility = ref<ProductVisibility>('')
-const clientIds = ref<string[]>([...stateStore.selectedClients])
+const clientIds = ref<string[]>([...selectionStore.selectedClients])
 
 watch(open, (isOpen) => {
 	if (isOpen) {
-		clientIds.value = [...stateStore.selectedClients]
+		clientIds.value = [...selectionStore.selectedClients]
 		productMode.value = props.selectedProductIds.length > 0 ? 'selected' : 'all'
 	}
 })

@@ -21,7 +21,7 @@ import type {
 	EditableProductProperty,
 	EditablePropertyValue,
 	ProductConfigTabsRef,
-} from '~/types/api/product.types'
+} from '~/types'
 
 interface Props {
 	productId: string | null
@@ -44,7 +44,7 @@ const emit = defineEmits<{
 const icons = useIcons()
 const { t: $t } = useI18n()
 const toast = useToast()
-const stateStore = useStateStore()
+const selectionStore = useSelectionStore()
 const { getProductProperties, saveProductProperties, getProductDependencies } = useApiHelpers()
 
 const activeTab = ref(props.tab || 'properties')
@@ -93,7 +93,7 @@ function fmtVal(v: unknown): string {
 	return String(v)
 }
 
-function getInitialPropertyValue(prop: ProductProperty, selectedClients: string[], selectedDepots: string[]): EditablePropertyValue {
+function getInitialPropertyValue(prop: ProductProperty, selectedClients: string[], selectedServers: string[]): EditablePropertyValue {
 	if (prop.clients && Object.keys(prop.clients).length > 0) {
 		const clientValues = Object.values(prop.clients)
 		if (clientValues.length > 0) {
@@ -150,16 +150,16 @@ async function fetchProperties() {
 	}
 	loadingProps.value = true
 	try {
-		await stateStore.ensureDepotsSelected()
-		const depots = stateStore.selectedDepots
-		const clients = stateStore.selectedClients
+		await selectionStore.ensureServersSelected()
+		const depots = selectionStore.selectedServers
+		const clients = selectionStore.selectedClients
 
 		const queryParams: Record<string, unknown> = {}
-		if (depots.length) queryParams.selectedDepots = `[${depots.join(',')}]`
+		if (depots.length) queryParams.selectedServers = `[${depots.join(',')}]`
 		if (clients.length) queryParams.selectedClients = `[${clients.join(',')}]`
 
 		const result = await getProductProperties(props.productId, {
-			selectedDepots: depots,
+			selectedServers: depots,
 			selectedClients: clients.length > 0 ? clients : undefined,
 		})
 
@@ -199,7 +199,7 @@ async function fetchDependencies() {
 	}
 	loadingDeps.value = true
 	try {
-		const clients = stateStore.selectedClients
+		const clients = selectionStore.selectedClients
 		const result = await getProductDependencies(props.productId, {
 			selectedClients: clients.length > 0 ? clients : undefined,
 		})
@@ -228,8 +228,8 @@ async function saveAll() {
 			changedProps[propertyId] = value as string | boolean | string[]
 		}
 
-		const depots = stateStore.selectedDepots
-		const clients = stateStore.selectedClients
+		const depots = selectionStore.selectedServers
+		const clients = selectionStore.selectedClients
 
 		const result = await saveProductProperties(props.productId, {
 			depotIds: depots,

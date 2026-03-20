@@ -1,11 +1,3 @@
-/**
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
-All rights reserved.
-License: AGPL-3.0
-*/
-
 import { encode, decode } from '@msgpack/msgpack'
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { useMessageBusStore } from '~/stores/messageBusStore'
@@ -19,7 +11,7 @@ type Terminal = {
   cols: number
   rows: number
 }
-type MessageTemplate = Record<string, unknown>
+type MsgTemplate = Record<string, unknown>
 
 export function useMessageBus(
   onMessage?: MessageHandler,
@@ -31,7 +23,6 @@ export function useMessageBus(
   const wsBus = ref<WebSocket | undefined>(store.bus)
   const busMsg = ref(store.lastMsg)
   const channels = _channels || []
-  let urlHost = ''
 
   const wsIsConnected = computed(() => wsBus.value?.readyState === 1)
   const { retries, retriesMax } = storeToRefs(store)
@@ -42,8 +33,6 @@ export function useMessageBus(
       if (onMessage) {
         if (!wsBus.value || !wsIsConnected.value) await mount()
         await onMessage(busMsg.value)
-      } else {
-        wsNotification('Received unhandled message', busMsg.value)
       }
     },
     { deep: true }
@@ -64,14 +53,12 @@ export function useMessageBus(
       process.env.NODE_ENV === 'production'
         ? window.location.port
         : Number(($config as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT) || 4447
-    urlHost = `wss://${host}:${port}/messagebus/v1?`
-    const bus = new WebSocket(urlHost)
+    const bus = new WebSocket(`wss://${host}:${port}/messagebus/v1?`)
     setBus(undefined)
     setBus(bus)
     if (!bus || !wsBus.value) throw new Error('MessageBus connection failed')
     wsBus.value.binaryType = 'arraybuffer'
     wsBus.value.onopen = () => {
-      if (showNotifications) wsNotification('WebSocket opened')
       wsSubscribeChannel([
         '@',
         '$',
@@ -92,7 +79,6 @@ export function useMessageBus(
     await wsWait(1000)
     if (wsIsConnected.value) {
       retries.value = 0
-      if (showNotifications) wsNotification('MessageBus: connected')
     }
   }
 
@@ -100,94 +86,83 @@ export function useMessageBus(
     store.setBus(bus)
     wsBus.value = bus
   }
-
   function setLastMsg(msg: unknown) {
     store.setLastMsg(msg)
     busMsg.value = msg
   }
-
   function wsDisconnect() {
     wsBus.value?.close()
     setBus(undefined)
   }
 
   function wsSend(msg: unknown) {
-    if (!wsBus.value) {
-      if (showNotifications) wsNotification('wsBus is undefined')
-      return
-    }
-    if (!wsIsConnected.value) {
-      if (showNotifications) wsNotification('wsBus is not connected')
+    if (!wsBus.value || !wsIsConnected.value) {
       wsInit(true)
       return
     }
-    waitForSocketConnection(wsBus.value, () => wsBus.value?.send(encode(msg)))
+    waitForSocket(wsBus.value, () => wsBus.value?.send(encode(msg)))
   }
 
-  function wsSubscribeChannel(channels: string[]) {
-    const message: MessageTemplate = wsCreateMsgTemplate()
-    message.type = 'channel_subscription_request'
-    message.channel = 'service:messagebus'
-    message.operation = 'add'
-    message.channels = channels
-    wsSend(message)
+  function wsSubscribeChannel(chs: string[]) {
+    const m = createMsgTemplate()
+    m.type = 'channel_subscription_request'
+    m.channel = 'service:messagebus'
+    m.operation = 'add'
+    m.channels = chs
+    wsSend(m)
   }
 
-  // Terminal helpers
   async function wsTerminalOpen(suid: string, terminal: Terminal) {
     terminal.terminalId = suid || createUUID()
     terminal.terminalChannel = 'service:config:terminal'
     terminal.terminalSessionChannel = 'session:' + suid
     wsSubscribeChannel([terminal.terminalSessionChannel])
     await wsWait(2000)
-    const message: MessageTemplate = wsCreateMsgTemplate()
-    message.type = 'terminal_open_request'
-    message.terminal_id = terminal.terminalId
-    message.channel = terminal.terminalChannel
-    message.back_channel = terminal.terminalSessionChannel
-    message.cols = terminal.cols
-    message.rows = terminal.rows
-    wsSend(message)
+    const m = createMsgTemplate()
+    m.type = 'terminal_open_request'
+    m.terminal_id = terminal.terminalId
+    m.channel = terminal.terminalChannel
+    m.back_channel = terminal.terminalSessionChannel
+    m.cols = terminal.cols
+    m.rows = terminal.rows
+    wsSend(m)
   }
 
   function wsTerminalClose(terminal: Terminal) {
-    const message: MessageTemplate = wsCreateMsgTemplate()
-    message.type = 'terminal_close_request'
-    message.channel = terminal.terminalChannel
-    message.terminal_id = terminal.terminalId
-    wsSend(message)
+    const m = createMsgTemplate()
+    m.type = 'terminal_close_request'
+    m.channel = terminal.terminalChannel
+    m.terminal_id = terminal.terminalId
+    wsSend(m)
   }
 
   function wsTerminalSend(msg: string, terminal: Terminal) {
     if (!wsBus.value) return
-    waitForSocketConnection(wsBus.value, () => _wsTerminalSend(msg, terminal))
-  }
-
-  function _wsTerminalSend(msg: string, terminal: Terminal) {
-    if (!wsBus.value) return
-    const utf8Encode = new TextEncoder()
-    const message: MessageTemplate = wsCreateMsgTemplate()
-    message.type = 'terminal_data_write'
-    message.channel = terminal.terminalChannel
-    message.terminal_id = terminal.terminalId
-    message.data = utf8Encode.encode(msg)
-    wsSend(message)
+    waitForSocket(wsBus.value, () => {
+      if (!wsBus.value) return
+      const m = createMsgTemplate()
+      m.type = 'terminal_data_write'
+      m.channel = terminal.terminalChannel
+      m.terminal_id = terminal.terminalId
+      m.data = new TextEncoder().encode(msg)
+      wsSend(m)
+    })
   }
 
   function wsTerminalResize(rows: number, cols: number, terminal: Terminal) {
     if (!wsBus.value || !wsIsConnected.value) return
-    const message: MessageTemplate = wsCreateMsgTemplate()
-    message.type = 'terminal_resize_request'
-    message.channel = terminal.terminalChannel
-    message.terminal_id = terminal.terminalId
-    message.back_channel = terminal.terminalSessionChannel
-    message.rows = rows
-    message.cols = cols
-    wsSend(message)
+    const m = createMsgTemplate()
+    m.type = 'terminal_resize_request'
+    m.channel = terminal.terminalChannel
+    m.terminal_id = terminal.terminalId
+    m.back_channel = terminal.terminalSessionChannel
+    m.rows = rows
+    m.cols = cols
+    wsSend(m)
     return true
   }
 
-  function wsCreateMsgTemplate(): MessageTemplate {
+  function createMsgTemplate(): MsgTemplate {
     return {
       type: 'xxx',
       channel: 'yyy',
@@ -198,47 +173,35 @@ export function useMessageBus(
     }
   }
 
-  function wsNotification(text: string, data: unknown = '') {
-    if (showNotifications) {
-      // eslint-disable-next-line no-console
-      console.info(`MessageBus: ${text}`, data)
-      // TODO: Replace this with a UI notification
-    }
-  }
-
   function wsWait(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms))
+    return new Promise((r) => setTimeout(r, ms))
   }
 
   function createUUID() {
     if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      const r = (Math.random() * 16) | 0,
-        v = c == 'x' ? r : (r & 0x3) | 0x8
-      return v.toString(16)
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0
+      return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
     })
   }
 
-  function setBusMethods(bus: WebSocket, setLastMsgMethod: (msg: unknown) => void) {
+  function setBusMethods(bus: WebSocket, setMsg: (msg: unknown) => void) {
     bus.onclose = () => setBus(undefined)
-    bus.onerror = () => {
-      if (showNotifications) setBus(undefined)
-    }
+    bus.onerror = () => setBus(undefined)
     bus.onmessage = (event: MessageEvent) => {
       const message = decode(event.data)
       if (
         (message as { expires?: number }).expires &&
         (message as { expires: number }).expires > Date.now()
       )
-        setLastMsgMethod(message)
-      else wsNotification('Message is expired', message)
+        setMsg(message)
     }
   }
 
-  function waitForSocketConnection(socket: WebSocket, callback: () => void) {
+  function waitForSocket(socket: WebSocket, cb: () => void) {
     setTimeout(() => {
-      if (socket.readyState === 1) callback()
-      else waitForSocketConnection(socket, callback)
+      if (socket.readyState === 1) cb()
+      else waitForSocket(socket, cb)
     }, 5)
   }
 

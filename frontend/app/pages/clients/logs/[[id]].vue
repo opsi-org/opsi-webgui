@@ -1,13 +1,5 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 Route: /clients/logs/:id?
 Client Logs page - displays logs for a selected client.
--->
 <template>
     <ClientsLogsView :client-id="selectedClientId" show-client-selector
         :client-selector-placeholder="String($t('selectClient'))" @update:client-id="updateClientId" />

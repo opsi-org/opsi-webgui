@@ -1,14 +1,6 @@
-/*
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
-All rights reserved.
-License: AGPL-3.0
-*/
-
 import { useUserStore } from '~/stores/userStore'
 
-const WARNING_THRESHOLD_SEC = 60 * 5 // 5 minutes
+const WARNING_THRESHOLD_SEC = 60 * 5
 
 const sessionState = reactive({
   remainingSeconds: 0,
@@ -24,46 +16,39 @@ export function useSessionTimer(autoStart = false) {
 
   function calculateRemaining(): number {
     if (!userStore.sessionEndTime) return 0
-    const endTime = new Date(userStore.sessionEndTime).getTime()
-    const remaining = Math.max(0, Math.floor((endTime - Date.now()) / 1000))
-    return remaining
+    return Math.max(
+      0,
+      Math.floor((new Date(userStore.sessionEndTime).getTime() - Date.now()) / 1000)
+    )
   }
 
   function updateState() {
     sessionState.remainingSeconds = calculateRemaining()
-    sessionState.isWarning = sessionState.remainingSeconds > 0 && sessionState.remainingSeconds <= WARNING_THRESHOLD_SEC
+    sessionState.isWarning =
+      sessionState.remainingSeconds > 0 && sessionState.remainingSeconds <= WARNING_THRESHOLD_SEC
     sessionState.isExpired = sessionState.remainingSeconds === 0 && !!userStore.sessionEndTime
   }
 
   function formatTime(seconds: number): string {
     if (seconds <= 0) return '0:00'
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
+    return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`
   }
 
   function formatTimeText(seconds: number): string {
     if (seconds <= 0) return t('sessionExpired') || 'Session expired'
-    const hours = Math.floor(seconds / 3600)
-    const mins = Math.floor((seconds % 3600) / 60)
-    const secs = seconds % 60
-
-    if (hours > 0) {
-      return `${hours}h ${mins}m`
-    }
-    if (mins > 0) {
-      return `${mins}m ${secs}s`
-    }
-    return `${secs}s`
+    const h = Math.floor(seconds / 3600)
+    const m = Math.floor((seconds % 3600) / 60)
+    const s = seconds % 60
+    if (h > 0) return `${h}h ${m}m`
+    if (m > 0) return `${m}m ${s}s`
+    return `${s}s`
   }
 
   function startTimer() {
     if (sessionState.timerInterval) return
-
     updateState()
     sessionState.timerInterval = setInterval(() => {
       updateState()
-
       if (sessionState.isExpired && userStore.isAuthenticated) {
         stopTimer()
         handleSessionExpired()
@@ -79,7 +64,6 @@ export function useSessionTimer(autoStart = false) {
   }
 
   async function handleSessionExpired() {
-    console.warn('Session expired - auto logout')
     userStore.logout()
     await navigateTo('/login?expired=1')
   }
@@ -92,18 +76,15 @@ export function useSessionTimer(autoStart = false) {
   if (autoStart && !sessionState.initialized) {
     sessionState.initialized = true
     onMounted(() => {
-      if (userStore.isAuthenticated) {
-        startTimer()
-      }
+      if (userStore.isAuthenticated) startTimer()
     })
   }
 
   watch(
     () => userStore.isAuthenticated,
     (isAuth) => {
-      if (isAuth && autoStart) {
-        startTimer()
-      } else if (!isAuth) {
+      if (isAuth && autoStart) startTimer()
+      else if (!isAuth) {
         stopTimer()
         sessionState.remainingSeconds = 0
         sessionState.isWarning = false

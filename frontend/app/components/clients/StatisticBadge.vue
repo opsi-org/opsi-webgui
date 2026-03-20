@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 Statistic badge component for displaying numeric statistics with icon and link.
--->
 <template>
 	<NuxtLink v-if="displayValue > 0" :to="link" class="inline-flex items-center justify-center" :title="tooltipText">
 		<UBadge :color="badgeColor" variant="subtle" size="xs" class="min-w-6 justify-center">

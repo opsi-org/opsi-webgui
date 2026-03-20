@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
-All rights reserved.
-License: AGPL-3.0
-
 Redirect page for direct product links - redirects to products list
--->
 <template>
 	<div class="flex items-center justify-center h-64">
 		<div class="text-center">
@@ -24,7 +16,6 @@ const { t: $t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-// Redirect to products list with the product ID in query params
 onMounted(() => {
 	const productId = route.params.id as string
 	router.replace({

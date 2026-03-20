@@ -109,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import type { EditableProductProperty, EditablePropertyValue } from '~/types/api/product.types'
+import type { EditableProductProperty, EditablePropertyValue } from '~/types'
 
 interface Props {
 	properties: EditableProductProperty[]

@@ -1,32 +1,8 @@
-/**
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
-All rights reserved.
-License: AGPL-3.0
-*/
 import { defineStore } from 'pinia'
 import { useCookie } from 'nuxt/app'
 
-const SESSION_EXPIRY_SEC = 60 * 30 // Default 30 minutes
+const SESSION_EXPIRY_SEC = 60 * 30
 const SESSION_COOKIE_NAME = 'opsiconfd-session'
-
-interface UserState {
-  username: string
-  usernameUpdated: number | null
-  sessionExpiry: number
-  sessionEndTime: string
-  errorLoggedOutShown: boolean
-  authMethods: string
-  globalError?: string
-  config?: unknown
-  readOnly: boolean
-  serverWriteAccess: boolean
-  depotAccess: boolean
-  hostGroupAccess: boolean
-  productGroupAccess: boolean
-  clientCreation: boolean
-}
 
 export const useUserStore = defineStore('user', {
   persist: {
@@ -34,66 +10,44 @@ export const useUserStore = defineStore('user', {
     storage: typeof window !== 'undefined' ? localStorage : undefined,
     pick: ['username', 'usernameUpdated', 'sessionExpiry', 'sessionEndTime'],
   },
-  state: (): UserState => ({
+  state: () => ({
     username: '',
-    usernameUpdated: null,
+    usernameUpdated: null as number | null,
     sessionExpiry: SESSION_EXPIRY_SEC,
     sessionEndTime: '',
     errorLoggedOutShown: false,
     authMethods: '',
-    globalError: undefined,
-    config: undefined,
+    globalError: undefined as string | undefined,
+    config: undefined as unknown,
     readOnly: false,
     serverWriteAccess: true,
-    depotAccess: true,
+    serverAccess: true,
     hostGroupAccess: true,
     productGroupAccess: true,
     clientCreation: true,
   }),
   getters: {
-    /**
-     * Check if username has expired (user didn't logout properly)
-     */
-    isUsernameOutdated(state): boolean {
-      if (!state.usernameUpdated) return true
-      const now = Date.now()
-      const expired = now - state.usernameUpdated > 1000 * SESSION_EXPIRY_SEC
-      if (expired) console.warn('Username expired - session timeout')
-      return expired
+    isUsernameOutdated(s): boolean {
+      if (!s.usernameUpdated) return true
+      return Date.now() - s.usernameUpdated > 1000 * SESSION_EXPIRY_SEC
     },
-    /**
-     * User is authenticated if:
-     * 1. Has the opsiconfd-session cookie (set by backend after login)
-     * 2. Has a username stored
-     * 3. Username hasn't expired
-     */
-    isAuthenticated(state): boolean {
+    isAuthenticated(s): boolean {
       const sessionCookie = useCookie(SESSION_COOKIE_NAME)
-      return Boolean(sessionCookie.value && state.username && !this.isUsernameOutdated)
+      return Boolean(sessionCookie.value && s.username && !this.isUsernameOutdated)
     },
   },
   actions: {
-    /**
-     * Called after successful login
-     */
     login(username: string) {
       this.errorLoggedOutShown = false
       this.username = username
       this.usernameUpdated = Date.now()
       this.setSession()
     },
-    /**
-     * Set/refresh the session end time
-     */
     setSession(expiryInSec?: number) {
       const expiry = expiryInSec ?? this.sessionExpiry ?? SESSION_EXPIRY_SEC
       this.sessionExpiry = expiry
-      const expiryTime = new Date(Date.now() + expiry * 1000)
-      this.sessionEndTime = expiryTime.toISOString()
+      this.sessionEndTime = new Date(Date.now() + expiry * 1000).toISOString()
     },
-    /**
-     * Clear session and logout
-     */
     logout() {
       this.username = ''
       this.usernameUpdated = null
@@ -113,7 +67,7 @@ export const useUserStore = defineStore('user', {
     }) {
       this.readOnly = cfg.read_only ?? false
       this.serverWriteAccess = cfg.server_write_access ?? true
-      this.depotAccess = cfg.depot_access ?? true
+      this.serverAccess = cfg.depot_access ?? true
       this.hostGroupAccess = cfg.host_group_access ?? true
       this.productGroupAccess = cfg.product_group_access ?? true
       this.clientCreation = cfg.client_creation ?? true

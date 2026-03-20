@@ -1,15 +1,6 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 Admin Terminal Page - Server terminal access via messagebus
--->
 <template>
     <div class="h-full flex flex-col gap-3">
-        <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
             <div class="flex items-center gap-3">
                 <UButton v-if="!isConnected" color="primary" size="sm" :icon="icons.check" :loading="isConnecting"
@@ -26,7 +17,6 @@ Admin Terminal Page - Server terminal access via messagebus
                 @click="showSettings = !showSettings">{{ $t('settings') }}</UButton>
         </div>
 
-        <!-- Settings panel -->
         <div v-if="showSettings" class="shrink-0 p-3 rounded-lg border border-(--color-border)">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <UFormField :label="$t('terminalID')">
@@ -38,12 +28,10 @@ Admin Terminal Page - Server terminal access via messagebus
             </div>
         </div>
 
-        <!-- Disabled Warning -->
         <UAlert v-if="isDisabled" color="warning" variant="soft" class="shrink-0">
             <template #title>{{ $t('message.terminalDisabled') }}</template>
         </UAlert>
 
-        <!-- Terminal Container -->
         <div v-if="!isDisabled" class="flex-1 min-h-0 rounded-lg overflow-hidden border border-(--color-border)">
             <div ref="terminalContainer" class="h-full w-full bg-gray-900" />
         </div>

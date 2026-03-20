@@ -1,10 +1,3 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
--->
 <template>
     <LayoutsPageLayout :loading="loading" :showSearch="false" @refresh="fetchCurrentGroups">
         <template #tabs>
@@ -115,7 +108,7 @@ License: AGPL-3.0
                                 <h4 class="text-sm font-medium text-(--color-text)">
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ selectedGroup.members.length
-                                        }})</span>
+                                    }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -288,7 +281,7 @@ License: AGPL-3.0
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                                }}
+                            }}
                             </UButton>
                             <UButton color="error" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -373,7 +366,7 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
-import type { GroupTreeNode } from '~/types/groups.types'
+import type { GroupTreeNode } from '~/types'
 
 definePageMeta({ layout: 'default' })
 
@@ -383,7 +376,7 @@ const {
     getHostGroups,
     getProductGroups,
     getClientIds,
-    getDepotIds,
+    getServerIds,
     createHostGroup,
     createProductGroup,
     updateHostGroup,
@@ -526,7 +519,6 @@ const editParentGroupSelectItems = computed(() => {
         for (const node of nodes) {
             if (node.id !== currentId && node.id !== 'not_assigned' && !childIds.has(node.id)) {
                 const indent = '\u00A0\u00A0\u00A0\u00A0'.repeat(depth)
-                // const prefix = depth > 0 ? '└ ' : ''
                 items.push({ label: `${indent}${node.id}`, value: node.id })
             }
             if (node.children?.length) {
@@ -823,7 +815,7 @@ async function fetchProductGroups() {
 
 async function ensureDepotIds(): Promise<string[]> {
     if (cachedDepotIds.value.length > 0) return cachedDepotIds.value
-    const { data } = await getDepotIds()
+    const { data } = await getServerIds()
     if (data && Array.isArray(data)) {
         cachedDepotIds.value = data
     }
@@ -853,7 +845,7 @@ async function fetchAvailableProducts() {
             $customFetch: <T>(url: string, opts?: { method?: string; body?: unknown }) => Promise<T>
         }
         const depotParam = encodeURIComponent(`[${depotIds.join(',')}]`)
-        const data = await $customFetch<Array<{ productId: string }>>(`/opsidata/depots/products?selectedDepots=${depotParam}&productType=LocalbootProduct`)
+        const data = await $customFetch<Array<{ productId: string }>>(`/opsidata/depots/products?selectedServers=${depotParam}&productType=LocalbootProduct`)
         if (data && Array.isArray(data)) {
             availableProducts.value = data.map(p => p.productId)
         }

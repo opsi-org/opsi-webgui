@@ -1,13 +1,5 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
--->
 <template>
 	<div class="flex-1 relative">
-		<!-- Show dropdown when clients are selected -->
 		<UDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
 			<UButton variant="soft" color="primary" size="sm" class="w-full">
 				<UIcon :name="icons.client" class="w-4 h-4" />
@@ -16,7 +8,6 @@ License: AGPL-3.0
 				<UIcon :name="icons.arrowDown" class="w-3 h-3 ml-1" />
 			</UButton>
 		</UDropdownMenu>
-		<!-- Show hint button when no clients selected -->
 		<UButton v-else variant="ghost" color="neutral" size="sm" class="w-full opacity-70 hover:opacity-100"
 			@click="showSelectionHint">
 			<UIcon :name="icons.client" class="w-4 h-4" />
@@ -25,7 +16,6 @@ License: AGPL-3.0
 		</UButton>
 	</div>
 
-	<!-- Confirm Dialog -->
 	<UModal v-model:open="confirmOpen" :dismissible="true">
 		<template #content>
 			<div class="p-4 min-w-87.5" @click.stop>
@@ -41,25 +31,22 @@ License: AGPL-3.0
 					{{ t('confirmActionOnClients') }}
 				</p>
 
-				<!-- On Demand options -->
 				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3 bg-(--color-surface) rounded">
 					<p class="text-xs text-(--color-text-muted) mb-2">
 						{{ t('onDemandDescription') }}
 					</p>
-					<div v-if="stateStore.selectedProducts.length > 0" class="text-xs">
+					<div v-if="selectionStore.selectedProducts.length > 0" class="text-xs">
 						<span class="text-(--color-text-muted)">{{ t('selectedProducts') }}:</span>
-						<span class="ml-1 font-medium">{{ stateStore.selectedProducts.length }}</span>
+						<span class="ml-1 font-medium">{{ selectionStore.selectedProducts.length }}</span>
 					</div>
 				</div>
 
-				<!-- Notify input -->
 				<div v-if="currentAction === 'notify'" class="mb-4">
 					<label class="block text-xs text-(--color-text-muted) mb-1">{{ t('notificationText') }}</label>
 					<UTextarea v-model="notifyText" :placeholder="t('enterNotificationText')" :rows="3"
 						class="w-full" />
 				</div>
 
-				<!-- Reboot options -->
 				<div v-if="currentAction === 'reboot'"
 					class="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800">
 					<div class="flex items-start gap-2">
@@ -70,7 +57,6 @@ License: AGPL-3.0
 					</div>
 				</div>
 
-				<!-- Deploy Client Agent options -->
 				<div v-if="currentAction === 'deployClientAgent'" class="space-y-3 mb-4">
 					<div class="grid grid-cols-3 gap-2 mb-3">
 						<UButton v-for="os in osTypes" :key="os.value"
@@ -92,7 +78,6 @@ License: AGPL-3.0
 					</div>
 				</div>
 
-				<!-- Delete confirmation -->
 				<div v-if="currentAction === 'delete'"
 					class="mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-200 dark:border-red-800">
 					<div class="flex items-start gap-2">
@@ -108,7 +93,6 @@ License: AGPL-3.0
 					</div>
 				</div>
 
-				<!-- Client list preview -->
 				<div v-if="clientIds.length <= 5" class="mb-4">
 					<label class="block text-xs text-[--color-text-muted] mb-1">{{ t('affectedClients') }}</label>
 					<div class="text-xs font-mono bg-[--color-surface] rounded p-2 max-h-24 overflow-y-auto">
@@ -127,7 +111,6 @@ License: AGPL-3.0
 		</template>
 	</UModal>
 
-	<!-- Result Dialog -->
 	<UModal v-model:open="resultOpen" :dismissible="true">
 		<template #content>
 			<div class="p-4 min-w-87.5">
@@ -164,7 +147,7 @@ const icons = useIcons()
 const { t } = useI18n()
 const { apiPost } = useApiHelpers()
 const toast = useToast()
-const stateStore = useStateStore()
+const selectionStore = useSelectionStore()
 
 const confirmOpen = ref(false)
 const resultOpen = ref(false)
@@ -223,7 +206,6 @@ const actionItems = computed(() => [
 
 function openConfirm(action: string) {
 	currentAction.value = action
-	// Reset form fields
 	notifyText.value = ''
 	deployOptions.value = { username: '', password: '', type: 'windows' }
 	confirmOpen.value = true
@@ -240,7 +222,6 @@ async function executeAction() {
 
 		switch (currentAction.value) {
 			case 'onDemand':
-				// Fire on_demand event to process action requests
 				const onDemandResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
 					client_ids: props.clientIds,
 					method: 'fireEvent',
@@ -250,7 +231,6 @@ async function executeAction() {
 				break
 
 			case 'notify':
-				// Show popup notification on clients
 				const notifyResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
 					client_ids: props.clientIds,
 					method: 'showPopup',
@@ -260,7 +240,6 @@ async function executeAction() {
 				break
 
 			case 'reboot':
-				// Reboot clients
 				const rebootResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
 					client_ids: props.clientIds,
 					method: 'reboot',
@@ -270,7 +249,6 @@ async function executeAction() {
 				break
 
 			case 'deployClientAgent':
-				// Deploy client agent
 				const deployResponse = await apiPost<Record<string, any>>('/opsidata/clients/deploy', {
 					clients: props.clientIds,
 					username: deployOptions.value.username,
@@ -281,7 +259,6 @@ async function executeAction() {
 				break
 
 			case 'delete':
-				// Delete clients via API
 				for (const clientId of props.clientIds) {
 					try {
 						await apiPost(`/opsidata/clients/${clientId}/delete`, {})
@@ -290,12 +267,10 @@ async function executeAction() {
 						result[clientId] = { success: false, error: String(e) }
 					}
 				}
-				// Also remove from selection
-				stateStore.setClients(stateStore.selectedClients.filter(c => !props.clientIds.includes(c)))
+				selectionStore.setClients(selectionStore.selectedClients.filter(c => !props.clientIds.includes(c)))
 				break
 		}
 
-		// Parse results
 		const successCount = Object.values(result).filter((r: any) => r?.success !== false && !r?.error).length
 		const failCount = props.clientIds.length - successCount
 
@@ -311,7 +286,6 @@ async function executeAction() {
 				description: `${successCount} ${t('successful')}, ${failCount} ${t('failed')}`,
 				color: 'warning'
 			})
-			// Show detailed results
 			actionResults.value = Object.fromEntries(
 				props.clientIds.map(id => [id, { success: !result[id]?.error }])
 			)

@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 Client Add New page - form for adding a new client.
--->
 <template>
     <LayoutsPageLayout show-refresh @refresh="resetForm">
         <template #actions>
@@ -198,8 +190,8 @@ Client Add New page - form for adding a new client.
 definePageMeta({ layout: 'default' })
 
 const { t: $t } = useI18n()
-const { createClient, deployClientAgent, getDepots, addClientToGroups, setClientProductActions, getClientIds, getDepotsProducts, getHostGroupIds } = useApiHelpers()
-const stateStore = useStateStore()
+const { createClient, deployClientAgent, getServers, addClientToGroups, setClientProductActions, getClientIds, getServersProducts, getHostGroupIds } = useApiHelpers()
+const selectionStore = useSelectionStore()
 const icons = useIcons()
 
 const loading = ref(false)
@@ -268,11 +260,11 @@ onMounted(async () => {
 async function fetchDepots() {
     loadingDepots.value = true
     try {
-        const res = await getDepots()
+        const res = await getServers()
         if (res.data) {
             depots.value = res.data
-            if (stateStore.depots.length > 0 && stateStore.depots[0]) {
-                form.depotId = stateStore.depots[0]
+            if (selectionStore.selectedServers.length > 0 && selectionStore.selectedServers[0]) {
+                form.depotId = selectionStore.selectedServers[0]
             } else if (depots.value.length > 0 && depots.value[0]) {
                 form.depotId = depots.value[0].depotId
             }
@@ -286,7 +278,7 @@ async function fetchDepots() {
 
 async function fetchClientIds() {
     try {
-        const depotList = form.depotId ? [form.depotId] : (stateStore.depots || [])
+        const depotList = form.depotId ? [form.depotId] : (selectionStore.selectedServers || [])
         const result = await getClientIds(depotList)
         clientIds.value = result.data || []
     } catch (e) {
@@ -296,9 +288,9 @@ async function fetchClientIds() {
 
 async function fetchNetbootProducts() {
     try {
-        const depot = form.depotId || (stateStore.depots[0])
+        const depot = form.depotId || (selectionStore.selectedServers[0])
         if (depot) {
-            const res = await getDepotsProducts([depot])
+            const res = await getServersProducts([depot])
             if (res.data && Array.isArray(res.data)) {
                 netbootProductOptions.value = res.data.map((item: any) => ({
                     label: item.productId,

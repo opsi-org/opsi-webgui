@@ -12,24 +12,24 @@
 			</div>
 
 			<div class="flex-1 overflow-y-auto min-h-0 space-y-3">
-				<div v-if="selectionStore.selectedDepots.length > 0">
+				<div v-if="selectionStore.selectedServers.length > 0">
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
 							<UIcon :name="icons.server" class="w-3.5 h-3.5" />
-							<span>{{ t('depots') }}</span>
-							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedDepots.length
+							<span>{{ t('servers') }}</span>
+							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedServers.length
 							}}</UBadge>
 						</div>
-						<UButton size="xs" variant="link" color="error" @click="clearDepots">{{ t('clearAll') }}
+						<UButton size="xs" variant="link" color="error" @click="clearServers">{{ t('clearAll') }}
 						</UButton>
 					</div>
 					<div class="space-y-0.5">
-						<div v-for="depot in selectionStore.selectedDepots" :key="depot"
+						<div v-for="server in selectionStore.selectedServers" :key="server"
 							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
-							<span class="truncate">{{ depot }}</span>
+							<span class="truncate">{{ server }}</span>
 							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
-								@click="removeDepot(depot)" />
+								@click="removeServer(server)" />
 						</div>
 					</div>
 				</div>
@@ -142,30 +142,30 @@ const t = (key: string) => {
 const hasAny = computed(() => selectionStore.hasAnySelection)
 
 const totalCount = computed(() =>
-	selectionStore.selectedDepots.length +
+	selectionStore.selectedServers.length +
 	selectionStore.selectedClients.length +
 	selectionStore.selectedProducts.length +
 	selectionStore.selectedClientGroups.length +
 	selectionStore.selectedProductGroups.length
 )
 
-function clearDepots() {
+function clearServers() {
 	if (selectionStore.configServer) {
-		selectionStore.setDepots([selectionStore.configServer])
+		selectionStore.setServers([selectionStore.configServer])
 	} else {
-		selectionStore.clearDepots()
+		selectionStore.clearServers()
 	}
 }
 
-function removeDepot(depotId: string) {
-	if (selectionStore.selectedDepots.length === 1 && selectionStore.configServer) return
-	selectionStore.toggleDepot(depotId, 'quickpanel')
+function removeServer(serverId: string) {
+	if (selectionStore.selectedServers.length === 1 && selectionStore.configServer) return
+	selectionStore.toggleServer(serverId, 'quickpanel')
 }
 
 function clearAll() {
 	selectionStore.clearAll()
 	if (selectionStore.configServer) {
-		selectionStore.setDepots([selectionStore.configServer])
+		selectionStore.setServers([selectionStore.configServer])
 	}
 }
 </script>

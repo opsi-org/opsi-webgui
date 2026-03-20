@@ -1,29 +1,17 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 PageLayout - A layout component with a fixed header (for controls) and a scrollable content area.
--->
 <template>
 	<div
 		class="page-layout flex flex-col h-full min-h-0 overflow-hidden bg-(--color-background) dark:bg-(--color-background-dark)">
-		<!-- Fixed Header Section -->
 		<div class="page-header shrink-0 bg-(--color-background) dark:bg-(--color-background-dark) pb-3">
 			<div v-if="showControlsRow" class="flex flex-wrap items-center justify-between gap-3">
-				<!-- Left side -->
 				<div class="flex items-center gap-2">
 					<slot name="tabs" />
 					<slot name="filters" />
 				</div>
-				<!-- Right side -->
 				<div class="flex flex-wrap items-center gap-2">
 					<UInput v-if="showSearch" v-model="searchModel"
 						:placeholder="searchPlaceholder || $t('typeToFilter')" :icon="icons.search" size="sm"
 						class="w-full sm:w-48 md:w-64" />
-					<!-- Table controls -->
 					<slot name="tableControls" />
 					<slot name="actions" />
 					<NuxtLink v-if="addLink" :to="addLink">
@@ -31,7 +19,6 @@ PageLayout - A layout component with a fixed header (for controls) and a scrolla
 							<span class="hidden sm:inline">{{ addLabel || $t('addNew') }}</span>
 						</UButton>
 					</NuxtLink>
-					<!-- Save / discard actions -->
 					<slot name="saveActions" />
 					<UTooltip :text="$t('refresh')">
 						<UButton v-if="showRefresh" :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
@@ -40,13 +27,11 @@ PageLayout - A layout component with a fixed header (for controls) and a scrolla
 				</div>
 			</div>
 
-			<!-- Stats/Summary Row -->
 			<div v-if="$slots.stats" class="mt-3 pt-3 border-t border-(--color-border)">
 				<slot name="stats" />
 			</div>
 		</div>
 
-		<!-- Scrollable Content Section -->
 		<div class="page-content flex-1 min-h-0 overflow-auto">
 			<slot />
 		</div>

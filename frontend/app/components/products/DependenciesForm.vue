@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ProductDependency } from '~/types/api/product.types'
+import type { ProductDependency } from '~/types'
 
 interface Props {
 	dependencies: ProductDependency[]

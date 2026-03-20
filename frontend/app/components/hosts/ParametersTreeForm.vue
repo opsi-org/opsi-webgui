@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 HostsParametersTreeForm - Parameters tree form.
--->
 <template>
 	<UList>
 		<UListItem v-for="node in tree" :key="node.key" class="mb-1" :class="{
@@ -163,14 +155,12 @@ function getDepth(key: string): number {
 }
 
 function toggle(key: string) {
-	// Disable accordion logic if filtering
 	if (props.autoOpenAll) {
 		open.value[key] = !open.value[key]
 		return
 	}
 	const depth = getDepth(key)
 	if (depth === 0) {
-		// Accordion: close all other main categories
 		for (const k in open.value) {
 			if (getDepth(k) === 0 && k !== key) {
 				open.value[k] = false
@@ -186,7 +176,6 @@ watch(
 	() => props.autoOpenAll,
 	(val) => {
 		if (val) {
-			// Open all nodes
 			function openAll(nodes: TreeNode[]) {
 				for (const node of nodes) {
 					open.value[node.key] = true
@@ -195,7 +184,6 @@ watch(
 			}
 			openAll(tree.value)
 		} else {
-			// Restore accordion: only first main category open
 			const mainCategories = tree.value.filter(n => getDepth(n.key) === 0)
 			for (const node of mainCategories) {
 				open.value[node.key] = false

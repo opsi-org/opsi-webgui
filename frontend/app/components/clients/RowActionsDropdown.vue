@@ -1,17 +1,8 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 Row-level client actions dropdown for the clients table.
 - Buttons: Configuration, Logs, Clone
 - Client Actions: Dropdown with on_demand, notify, reboot, shutdown, deploy, delete
--->
 <template>
 	<div class="flex items-center gap-0.5">
-		<!-- Buttons -->
 		<UTooltip :text="String($t('configuration'))">
 			<UButton :icon="icons.config" variant="ghost" color="neutral" size="xs" @click="emit('open-config')" />
 		</UTooltip>
@@ -24,14 +15,12 @@ Row-level client actions dropdown for the clients table.
 			<UButton :icon="icons.clone" variant="ghost" color="neutral" size="xs" @click="emit('open-clone')" />
 		</UTooltip>
 
-		<!-- Client Actions Dropdown -->
 		<UDropdownMenu :items="clientActionItems">
 			<UButton :icon="icons.menu" variant="ghost" color="neutral" size="xs" :loading="loading" :disabled="loading"
 				:title="String($t('clientActions'))" />
 		</UDropdownMenu>
 	</div>
 
-	<!-- On Demand Confirmation Popover -->
 	<UPopover v-model:open="showOnDemandPopover" :popper="{ placement: 'bottom' }">
 		<template #content>
 			<div class="p-4 min-w-70">
@@ -54,7 +43,6 @@ Row-level client actions dropdown for the clients table.
 		</template>
 	</UPopover>
 
-	<!-- Notify Modal -->
 	<UModal v-model:open="showNotifyModal">
 		<template #content>
 			<div class="p-4 min-w-[320px]">
@@ -80,7 +68,6 @@ Row-level client actions dropdown for the clients table.
 		</template>
 	</UModal>
 
-	<!-- Reboot Confirmation Popover -->
 	<UPopover v-model:open="showRebootPopover" :popper="{ placement: 'bottom' }">
 		<template #content>
 			<div class="p-4 min-w-70">
@@ -103,7 +90,6 @@ Row-level client actions dropdown for the clients table.
 		</template>
 	</UPopover>
 
-	<!-- Shutdown Confirmation Popover -->
 	<UPopover v-model:open="showShutdownPopover" :popper="{ placement: 'bottom' }">
 		<template #content>
 			<div class="p-4 min-w-70">
@@ -126,7 +112,6 @@ Row-level client actions dropdown for the clients table.
 		</template>
 	</UPopover>
 
-	<!-- Deploy Client Agent Modal -->
 	<UModal v-model:open="showDeployModal">
 		<template #content>
 			<div class="p-4 min-w-90">
@@ -164,7 +149,6 @@ Row-level client actions dropdown for the clients table.
 		</template>
 	</UModal>
 
-	<!-- Delete Confirmation Modal -->
 	<UModal v-model:open="showDeleteModal">
 		<template #content>
 			<div class="p-4 min-w-[320px]">
@@ -211,7 +195,6 @@ const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deplo
 const loading = ref(false)
 const executing = ref(false)
 
-// Modal/Popover states
 const showOnDemandPopover = ref(false)
 const showNotifyModal = ref(false)
 const showRebootPopover = ref(false)
@@ -219,7 +202,6 @@ const showShutdownPopover = ref(false)
 const showDeployModal = ref(false)
 const showDeleteModal = ref(false)
 
-// Form data
 const notifyText = ref('')
 const deployOptions = ref<{ username: string; password: string; type: 'windows' | 'linux' | 'mac' }>({ username: '', password: '', type: 'windows' })
 const selectedOsType = ref({ label: 'Windows', value: 'windows' })
@@ -234,7 +216,6 @@ watch(selectedOsType, (newVal) => {
 	deployOptions.value.type = newVal.value as 'windows' | 'linux' | 'mac'
 })
 
-// Client action menu items - Nuxt UI v3 format
 const clientActionItems = computed(() => [
 	[
 		{

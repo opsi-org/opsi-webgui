@@ -1,134 +1,107 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
-Servers page - Servers table with configuration panel for selected server.
--->
 <template>
-    <LayoutsDetailPanel :showPanel="!!selectedServer" @close="handlePanelClose">
+    <LayoutsDetailPanel :showPanel="!!panelServer" @close="panelServer = null; panelType = null">
         <template #main>
             <LayoutsPageLayout show-refresh :loading="loading" @refresh="fetchServers">
+                <template #actions>
+                    <div class="flex items-center gap-1.5">
+                        <span v-if="mbConnected" class="w-2 h-2 rounded-full bg-green-500"
+                            :title="$t('messageBusConnected')" />
+                        <span v-else class="w-2 h-2 rounded-full bg-red-400" :title="$t('messageBusDisconnected')" />
+                    </div>
+                </template>
+
                 <UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4"
                     :close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
 
-                <!-- Servers Table -->
                 <SharedDataTable :rows="servers" :columns="columns" :loading="loading" table-id="servers"
-                    row-key="depotId" :actions="tableActions" :selectable="false" :filterable="true"
-                    :show-refresh="false" :clickable="true" @select="handleRowSelect" @refresh="fetchServers">
+                    row-key="depotId" :actions="tableActions" :selectable="true" :filterable="true"
+                    :show-refresh="false" :clickable="true" :selected-keys="selectionStore.selectedServers"
+                    @select="handleRowSelect" @selection-change="handleSelectionChange" @refresh="fetchServers">
                     <template #cell-type="{ row }">
-                        <SharedStatusBadge :status="getServerType(row) === 'OpsiConfigserver' ? 'info' : 'neutral'"
-                            :label="String(getServerType(row) === 'OpsiConfigserver' ? $t('configserver') : $t('depot'))" />
+                        <SharedStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
+                            :label="String((row as Server).type === 'OpsiConfigserver' ? $t('configserver') : $t('server'))" />
                     </template>
                     <template #cell-description="{ row }">
                         {{ (row as Server).description || '-' }}
+                    </template>
+                    <template #row-actions="{ row }">
+                        <UButton :icon="icons.config" variant="ghost" color="neutral" size="xs"
+                            :title="$t('configuration')" @click.stop="openConfig(row as Server)" />
                     </template>
                 </SharedDataTable>
             </LayoutsPageLayout>
         </template>
 
-        <template #title>{{ selectedServer?.depotId }}</template>
-        <template v-if="selectedPanelType === 'config'" #panelActions>
-            <!-- Panel actions are now handled inside HostsConfigView -->
-        </template>
+        <template #title>{{ panelServer?.depotId }}</template>
         <template #panel>
-            <div v-if="selectedServer" class="space-y-4">
-                <!-- Panel Content -->
-                <div v-if="selectedPanelType === 'config'">
-                    <HostsConfigView :host-id="selectedServer.depotId" host-type="server" :tab="panelActiveTab"
-                        panel-mode @update:tab="panelActiveTab = $event" />
-                </div>
+            <div v-if="panelServer">
+                <HostsConfigView v-if="panelType === 'config'" :host-id="panelServer.depotId" host-type="server"
+                    :tab="panelTab" panel-mode @update:tab="panelTab = $event" />
             </div>
         </template>
     </LayoutsDetailPanel>
 </template>
 
 <script setup lang="ts">
-import type { DataTableAction } from '~/components/shared/DataTable.vue'
 import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
-import type { Server } from '~/types/api/server.types'
-import { useStateStore } from '~/stores/stateStore'
+import type { Server } from '~/types'
+import { useSelectionStore } from '~/stores/selectionStore'
 
 definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-
-const { getDepots } = useApiHelpers()
-const stateStore = useStateStore()
+const { getServers } = useApiHelpers()
+const selectionStore = useSelectionStore()
+const { isConnected: mbConnected } = useAutoRefresh(fetchServers)
 
 const loading = ref(false)
 const error = ref<string | null>(null)
-const selectedServer = ref<Server | null>(null)
 const servers = ref<Server[]>([])
-const selectedPanelType = ref<'config' | null>(null)
-const panelActiveTab = ref<string>('parameters')
-
-function switchPanelType(type: 'config') {
-    // HostsConfigView now handles unsaved changes internally
-    selectedPanelType.value = type
-}
-
-function handlePanelClose() {
-    // HostsConfigView now handles unsaved changes internally
-    selectedServer.value = null
-    selectedPanelType.value = null
-}
+const panelServer = ref<Server | null>(null)
+const panelType = ref<'config' | null>(null)
+const panelTab = ref('parameters')
 
 const columns: DataTableColumnDef[] = [
     { key: 'depotId', label: String($t('serverId')), sortable: true, alwaysVisible: true },
-    { key: 'description', label: String($t('description')), sortable: true, class: 'hidden md:table-cell' },
-    { key: 'type', label: String($t('type')), sortable: true, class: 'hidden sm:table-cell' },
+    { key: 'description', label: String($t('description')), sortable: true },
+    { key: 'type', label: String($t('type')), sortable: true },
+    { key: 'ip', label: String($t('ipAddress')), sortable: true, visible: false },
 ]
 
-const tableActions: DataTableAction<Server>[] = [
-    {
-        icon: icons.config,
-        label: String($t('configuration')),
-        handler: (row) => {
-            // HostsConfigView now handles unsaved changes internally
-            selectedServer.value = row
-            switchPanelType('config')
-        }
-    }
+const tableActions = [
+    { icon: icons.config, label: String($t('configuration')), handler: (row: Server) => openConfig(row) }
 ]
 
-function handleRowSelect(row: Server) {
-    // HostsConfigView now handles unsaved changes internally
-    selectedServer.value = row
-    if (selectedPanelType.value !== null) {
-        selectedPanelType.value = null
-    }
+function openConfig(row: Server) {
+    panelServer.value = row
+    panelType.value = 'config'
 }
 
-const getServerType = (row: unknown): string => (row as Server).type || ''
+function handleRowSelect(row: Server) {
+    selectionStore.toggleServer(row.depotId, 'table')
+}
+
+function handleSelectionChange(_rows: Server[], keys: string[]) {
+    selectionStore.setServers(keys, 'table')
+}
 
 async function fetchServers() {
     loading.value = true
     error.value = null
     try {
-        const result = await getDepots({})
-        if (result.error) {
-            error.value = result.error.message
-        } else if (result.data) {
-            servers.value = result.data
-            const configServer = result.data.find(d => d.type === 'OpsiConfigserver')
-            if (configServer) {
-                stateStore.setConfigServer(configServer.depotId)
-            } else if (result.data[0] && stateStore.depots.length === 0) {
-                stateStore.setDepots([result.data[0].depotId])
-            }
+        const result = await getServers({})
+        if (result.error) { error.value = result.error.message; return }
+        if (result.data) {
+            servers.value = result.data as Server[]
+            const cs = result.data.find(d => d.type === 'OpsiConfigserver')
+            if (cs) selectionStore.setConfigServer(cs.depotId)
+            else if (result.data[0] && selectionStore.selectedServers.length === 0)
+                selectionStore.setServers([result.data[0].depotId])
         }
-    } catch (e) {
-        error.value = (e as Error).message
-    } finally {
-        loading.value = false
-    }
+    } catch (e) { error.value = (e as Error).message }
+    finally { loading.value = false }
 }
 
-onMounted(() => {
-    fetchServers()
-})
+onMounted(fetchServers)
 </script>

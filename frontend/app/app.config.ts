@@ -1,7 +1,6 @@
 export default defineAppConfig({
   ui: {
     colors: {
-      // Use custom opsi colors - defined via CSS variables in main.css
       primary: 'custom',
       neutral: 'zinc',
     },

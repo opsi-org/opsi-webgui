@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 ClientCloneForm  - form for cloning a client.
--->
 <template>
 	<div :class="['space-y-4', panelMode ? 'h-full overflow-y-auto' : '']">
 		<UAlert v-if="success" color="success" :title="String($t('success'))"
@@ -17,7 +9,6 @@ ClientCloneForm  - form for cloning a client.
 			:close-button="{ icon: 'i-heroicons-x-mark' }" @close="error = null" />
 
 		<div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
-			<!-- Source Client Section -->
 			<div v-if="!panelMode || showSourceInPanel" class="mb-6">
 				<div
 					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
@@ -30,13 +21,11 @@ ClientCloneForm  - form for cloning a client.
 				</div>
 			</div>
 
-			<!-- New Client Section -->
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
 					<p class="text-sm font-semibold uppercase tracking-wide text-muted">{{ $t('newClient') }}</p>
 				</div>
 				<div class="mb-6">
-					<!-- HostId (clientName + domain) -->
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
 						<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -54,7 +43,6 @@ ClientCloneForm  - form for cloning a client.
 							</div>
 						</div>
 					</div>
-					<!-- Other fields from cloneclient.target -->
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
 						<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
@@ -88,7 +76,6 @@ ClientCloneForm  - form for cloning a client.
 				</div>
 			</div>
 
-			<!-- Clone Options Section -->
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
 					<p class="text-sm font-semibold uppercase tracking-wide text-muted">{{ $t('cloneOptions') }}</p>
@@ -169,19 +156,17 @@ function getDefaultDomain(id: string) {
 	return idx > 0 ? id.substring(idx) : ''
 }
 
-// Set domain default from sourceId
 onMounted(() => {
 	domain.value = getDefaultDomain(props.sourceId)
 	fetchClientIds()
 })
 
 async function fetchClientIds() {
-	const depots = selectionStore.selectedDepots
+	const depots = selectionStore.selectedServers
 	const result = await getClientIds(depots)
 	clientIds.value = result.data || []
 }
 
-// Validation
 const formErrors = reactive({ newId: '' })
 watch([clientName, domain], () => {
 	formErrors.newId = ''

@@ -1,10 +1,3 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
--->
 <template>
   <button @click="toggleTheme" class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition-colors border" :class="isDarkMode
     ? 'bg-(--color-surface) hover:bg-(--color-surface-hover) border-(--color-border) text-white'
@@ -31,7 +24,6 @@ function toggleTheme() {
   const newMode = isDarkMode.value ? 'light' : 'dark'
   colorMode.preference = newMode
   uiStore.setTheme(newMode)
-  // Ensure cookie is set for persistence
   document.cookie = `nuxt-color-mode=${newMode}; path=/; max-age=31536000; SameSite=Lax`
 }
 </script>

@@ -1,20 +1,11 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
 Sidebar component - main navigation.
--->
 <template>
     <nav class="h-full flex flex-col bg-opsi-blue text-white">
         <div :class="['flex-1 py-2', collapsed ? 'overflow-visible' : 'overflow-y-auto']">
             <template v-for="(group, groupIdx) in navGroups" :key="groupIdx">
                 <div v-for="item in group" :key="item.route" class="relative mx-1.5"
                     @mouseenter="onHover(item.route, $event)" @mouseleave="onLeave">
-                    <!-- With submenu -->
                     <template v-if="item.submenu">
-                        <!-- Expanded state -->
                         <template v-if="!collapsed">
                             <button @click="toggleSubmenu(item.route)"
                                 class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/15 transition-colors duration-100"
@@ -33,14 +24,12 @@ Sidebar component - main navigation.
                             </div>
                         </template>
 
-                        <!-- Collapsed state - icon with hover popup -->
                         <template v-else>
                             <NuxtLink :to="item.submenu[0]?.route || item.route"
                                 class="flex items-center justify-center py-3 rounded-lg hover:bg-white/15 transition-colors duration-100"
                                 :class="{ 'bg-white/10': isActive(item.route) }" :title="t(item.title)">
                                 <UIcon :name="item.icon" class="w-5 h-5" />
                             </NuxtLink>
-                            <!-- Hover popup for submenus -->
                             <Teleport to="body">
                                 <div v-if="hoveredItem === item.route" :style="getPopupPosition(item.route)"
                                     @mouseenter="keepPopupOpen(item.route)" @mouseleave="onLeave"
@@ -59,7 +48,6 @@ Sidebar component - main navigation.
                         </template>
                     </template>
 
-                    <!-- Without submenu -->
                     <template v-else>
                         <NuxtLink :to="item.route"
                             class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/15 transition-colors duration-100"

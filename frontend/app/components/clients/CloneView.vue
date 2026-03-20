@@ -1,14 +1,5 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 ClientsCloneView - Can be used both in standalone pages and detail panels.
--->
 <template>
-	<!-- Unsaved changes navigation warning -->
 	<UModal v-model:open="showLeaveWarning" :title="$t('unsavedChanges')">
 		<template #body>
 			<p class="text-sm">{{ $t('navigateAwayWarning') }}</p>
@@ -39,13 +30,11 @@ ClientsCloneView - Can be used both in standalone pages and detail panels.
 			</div>
 		</template>
 
-		<!-- No Source Client Selected -->
 		<div v-if="!resolvedSourceId && !loading" class="p-8 text-center rounded-lg">
 			<UIcon :name="icons.client" class="w-12 h-12 mx-auto mb-3 opacity-50 text-muted" />
 			<p class="text-muted">{{ $t('selectClientToClone') }}</p>
 		</div>
 
-		<!-- Clone content -->
 		<ClientsCloneForm v-else ref="cloneFormRef" :source-id="resolvedSourceId || ''" :panel-mode="panelMode"
 			@saved="handleSaved" @has-changes="handleHasChanges" />
 	</LayoutsPageLayout>
@@ -83,28 +72,22 @@ const emit = defineEmits<{
 const icons = useIcons()
 const { t: $t } = useI18n()
 
-// Source selector model for when using internal source selection
 const sourceSelectorModel = ref<string>(props.sourceId || '')
 watch(() => props.sourceId, (v) => { sourceSelectorModel.value = v || '' })
 watch(sourceSelectorModel, (v) => emit('update:sourceId', v || null))
 
-// Resolved source ID (either from prop or selector)
 const resolvedSourceId = computed(() => props.sourceId || (props.showSourceSelector ? sourceSelectorModel.value : null))
 
-// State management
 const loading = ref(false)
 const saving = ref(false)
 const hasChanges = ref(false)
 
-// Form ref
 const cloneFormRef = ref<ClientsCloneFormRef | null>(null)
 
-// Computed properties
 const canClone = computed(() => {
 	return resolvedSourceId.value || hasChanges.value
 })
 
-// Functions
 function refresh() {
 	loading.value = true
 	try {
@@ -133,7 +116,6 @@ function handleHasChanges(changes: boolean) {
 	hasChanges.value = changes
 }
 
-// Unsaved changes warning similar to HostsConfigView
 const showLeaveWarning = ref(false)
 let resolveLeave: ((ok: boolean) => void) | null = null
 
@@ -162,7 +144,6 @@ function cancelLeave() {
 	props.onCancelLeave?.()
 }
 
-// Expose ref for parent components
 defineExpose({
 	cloneFormRef: cloneFormRef as Ref<ClientsCloneFormRef | null>,
 	refresh,

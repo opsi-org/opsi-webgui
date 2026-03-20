@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 Route: /servers/configuration/:tab/:id?
--->
 <template>
 	<HostsConfigView :host-id="selectedServerId" host-type="server" :tab="activeTab" show-host-selector
 		:on-cancel-leave="() => { manualServerId = routeServerId }" @update:host-id="updateSelectedServerId"
@@ -59,7 +51,6 @@ function updateSelectedServerId(id: string | null) {
 }
 
 function handleSaved() {
-	// Handle save completion if needed
 }
 
 watch(routeServerId, (id) => { manualServerId.value = id }, { immediate: true })

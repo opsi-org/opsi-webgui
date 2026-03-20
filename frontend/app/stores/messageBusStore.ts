@@ -1,24 +1,4 @@
-/**
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
-All rights reserved.
-License: AGPL-3.0
-*/
-
 import { defineStore } from 'pinia'
-
-interface MessageBusState {
-  retries: number
-  retriesMax: number
-  bus?: WebSocket
-  terminal?: WebSocket
-  lastMsg?: unknown
-  autoRefresh: boolean
-  changesDetected: boolean
-  lastEventType: string
-  lastEventTime: number
-}
 
 export const useMessageBusStore = defineStore('messageBus', {
   persist: {
@@ -26,19 +6,19 @@ export const useMessageBusStore = defineStore('messageBus', {
     storage: localStorage,
     pick: ['autoRefresh'],
   },
-  state: (): MessageBusState => ({
+  state: () => ({
     retries: 0,
     retriesMax: 3,
-    bus: undefined,
-    terminal: undefined,
-    lastMsg: undefined,
+    bus: undefined as WebSocket | undefined,
+    terminal: undefined as WebSocket | undefined,
+    lastMsg: undefined as unknown,
     autoRefresh: true,
     changesDetected: false,
     lastEventType: '',
     lastEventTime: 0,
   }),
   getters: {
-    isConnected: (state) => state.bus?.readyState === 1,
+    isConnected: (s) => s.bus?.readyState === 1,
   },
   actions: {
     reset() {

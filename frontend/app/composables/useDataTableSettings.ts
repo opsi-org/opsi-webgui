@@ -1,22 +1,3 @@
-/*
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
-Composable for managing DataTable settings with localStorage persistence.
-*/
-
-export interface DataTableSettings {
-  visibleColumns: string[]
-  sortColumn: string
-  sortDirection: 'asc' | 'desc'
-  pageSize: number
-  displayMode: 'infinite' | 'pagination'
-  selectionMode: 'multi' | 'single'
-}
-
 export interface DataTableColumnDef {
   key: string
   label: string
@@ -30,10 +11,18 @@ export interface DataTableColumnDef {
   headerClass?: string
 }
 
+export interface DataTableSettings {
+  visibleColumns: string[]
+  sortColumn: string
+  sortDirection: 'asc' | 'desc'
+  pageSize: number
+  displayMode: 'infinite' | 'pagination'
+  selectionMode: 'multi' | 'single'
+}
+
 const STORAGE_KEY = 'opsi-datatable-settings'
 
-// Default settings for each table type
-const defaultSettings: Record<string, DataTableSettings> = {
+const defaults: Record<string, DataTableSettings> = {
   servers: {
     visibleColumns: ['depotId', 'description', 'type'],
     sortColumn: 'depotId',
@@ -43,7 +32,15 @@ const defaultSettings: Record<string, DataTableSettings> = {
     selectionMode: 'multi',
   },
   clients: {
-    visibleColumns: ['clientId', 'description', 'lastSeen', 'macAddress'],
+    visibleColumns: [
+      'clientId',
+      'description',
+      'lastSeen',
+      'version_outdated',
+      'installationStatus_installed',
+      'actionResult_failed',
+      'reachable',
+    ],
     sortColumn: 'clientId',
     sortDirection: 'asc',
     pageSize: 20,
@@ -51,7 +48,13 @@ const defaultSettings: Record<string, DataTableSettings> = {
     selectionMode: 'multi',
   },
   products: {
-    visibleColumns: ['productId', 'description', 'depotVersions', 'priority'],
+    visibleColumns: [
+      'productId',
+      'description',
+      'depotVersions',
+      'installationStatus',
+      'actionRequest',
+    ],
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
@@ -59,7 +62,13 @@ const defaultSettings: Record<string, DataTableSettings> = {
     selectionMode: 'multi',
   },
   'products-localboot': {
-    visibleColumns: ['productId', 'description', 'depotVersions', 'installationStatus', 'actionRequest'],
+    visibleColumns: [
+      'productId',
+      'description',
+      'depotVersions',
+      'installationStatus',
+      'actionRequest',
+    ],
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
@@ -76,30 +85,30 @@ const defaultSettings: Record<string, DataTableSettings> = {
   },
 }
 
-function getStoredSettings(): Record<string, DataTableSettings> {
+function getStored(): Record<string, DataTableSettings> {
   if (import.meta.server) return {}
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    return stored ? JSON.parse(stored) : {}
+    const s = localStorage.getItem(STORAGE_KEY)
+    return s ? JSON.parse(s) : {}
   } catch {
     return {}
   }
 }
 
-function saveSettings(tableId: string, settings: DataTableSettings) {
+function save(id: string, s: DataTableSettings) {
   if (import.meta.server) return
   try {
-    const all = getStoredSettings()
-    all[tableId] = settings
+    const all = getStored()
+    all[id] = s
     localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
   } catch {
-    // localStorage quota exceeded - ignore
+    /* */
   }
 }
 
 export function useDataTableSettings(tableId: string) {
-  const stored = getStoredSettings()
-  const defaults = defaultSettings[tableId] || {
+  const stored = getStored()
+  const def = defaults[tableId] || {
     visibleColumns: [],
     sortColumn: '',
     sortDirection: 'asc' as const,
@@ -108,42 +117,28 @@ export function useDataTableSettings(tableId: string) {
     selectionMode: 'multi' as const,
   }
 
-  // Merge stored with defaults (stored takes precedence)
-  const initial: DataTableSettings = {
-    ...defaults,
-    ...stored[tableId],
-  }
+  const settings = reactive<DataTableSettings>({ ...def, ...stored[tableId] })
 
-  const settings = reactive<DataTableSettings>({ ...initial })
-
-  // Watch for changes and persist
   watch(
     () => ({ ...settings }),
-    (newSettings) => {
-      saveSettings(tableId, newSettings)
-    },
+    (n) => save(tableId, n),
     { deep: true }
   )
 
-  function setVisibleColumns(columns: string[]) {
-    settings.visibleColumns = columns
+  function setVisibleColumns(cols: string[]) {
+    settings.visibleColumns = cols
   }
 
   function toggleColumn(key: string) {
-    const idx = settings.visibleColumns.indexOf(key)
-    if (idx >= 0) {
-      settings.visibleColumns.splice(idx, 1)
-    } else {
-      settings.visibleColumns.push(key)
-    }
+    const i = settings.visibleColumns.indexOf(key)
+    if (i >= 0) settings.visibleColumns.splice(i, 1)
+    else settings.visibleColumns.push(key)
   }
 
   function isColumnVisible(key: string, columns: DataTableColumnDef[]): boolean {
     const col = columns.find((c) => c.key === key)
     if (col?.alwaysVisible) return true
-    if (settings.visibleColumns.length === 0) {
-      return col?.visible !== false
-    }
+    if (settings.visibleColumns.length === 0) return col?.visible !== false
     return settings.visibleColumns.includes(key)
   }
 
@@ -151,39 +146,26 @@ export function useDataTableSettings(tableId: string) {
     if (direction) {
       settings.sortColumn = column
       settings.sortDirection = direction
-    } else {
-      // Toggle direction if same column
-      if (settings.sortColumn === column) {
-        settings.sortDirection = settings.sortDirection === 'asc' ? 'desc' : 'asc'
-      } else {
-        settings.sortColumn = column
-        settings.sortDirection = 'asc'
-      }
+    } else if (settings.sortColumn === column)
+      settings.sortDirection = settings.sortDirection === 'asc' ? 'desc' : 'asc'
+    else {
+      settings.sortColumn = column
+      settings.sortDirection = 'asc'
     }
   }
 
   function setPageSize(size: number) {
     settings.pageSize = size
   }
-
   function setDisplayMode(mode: 'infinite' | 'pagination') {
     settings.displayMode = mode
   }
-
   function setSelectionMode(mode: 'multi' | 'single') {
     settings.selectionMode = mode
   }
 
   function reset() {
-    const defaults = defaultSettings[tableId] || {
-      visibleColumns: [],
-      sortColumn: '',
-      sortDirection: 'asc' as const,
-      pageSize: 20,
-      displayMode: 'infinite' as const,
-      selectionMode: 'multi' as const,
-    }
-    Object.assign(settings, defaults)
+    Object.assign(settings, defaults[tableId] || def)
   }
 
   return {

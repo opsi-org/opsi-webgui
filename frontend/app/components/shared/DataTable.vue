@@ -1,10 +1,3 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 DataTable - A high-performance, feature-rich table component with:
 - Infinite scroll OR pagination (switchable)
 - Multi-select OR single-select (checkbox vs radio)
@@ -14,12 +7,9 @@ DataTable - A high-performance, feature-rich table component with:
 - Filter
 - Row actions
 - Responsive design (desktop & mobile)
--->
 <template>
   <div class="data-table flex flex-col h-full min-h-0">
-    <!-- Toolbar -->
     <div class="shrink-0 flex flex-wrap items-center justify-between gap-2 mb-3">
-      <!-- Left: Stats & Selection Info -->
       <div class="flex items-center gap-3 text-sm">
         <span class="text-(--color-text-muted)">
           <template v-if="displayMode === 'infinite'">
@@ -35,9 +25,7 @@ DataTable - A high-performance, feature-rich table component with:
         </span>
       </div>
 
-      <!-- Right: Controls -->
       <div class="flex items-center gap-2">
-        <!-- Filter Input -->
         <div v-if="filterable" class="relative">
           <UInput v-model="filterQueryInternal" :placeholder="filterPlaceholder || String($t('filter'))" size="sm"
             :icon="icons.filter" class="w-32 sm:w-40" />
@@ -45,14 +33,12 @@ DataTable - A high-performance, feature-rich table component with:
             :padded="false" class="absolute right-1 top-1/2 -translate-y-1/2" @click="filterQueryInternal = ''" />
         </div>
 
-        <!-- Settings Popover -->
         <UPopover>
           <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('tableSettings')" />
           <template #content>
             <div class="p-3 w-75 max-h-250 overflow-y-auto">
               <div class="text-xs font-medium text-(--color-text-muted) uppercase mb-3">{{ $t('tableSettings') }}</div>
 
-              <!-- Display Mode -->
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('displayMode') }}</label>
                 <div class="flex gap-1">
@@ -70,7 +56,6 @@ DataTable - A high-performance, feature-rich table component with:
                 </div>
               </div>
 
-              <!-- Selection Mode -->
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('selectionMode') }}</label>
                 <div class="flex gap-1">
@@ -85,14 +70,12 @@ DataTable - A high-performance, feature-rich table component with:
                 </div>
               </div>
 
-              <!-- Page Size -->
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('pageSize') }}</label>
                 <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs"
                   class="w-full" @update:model-value="(v: number) => tableSettings.setPageSize(v)" />
               </div>
 
-              <!-- Sort By -->
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('sortBy') }}</label>
                 <USelect :model-value="tableSettings.settings.sortColumn" :items="sortableColumnOptions" size="xs"
@@ -112,7 +95,6 @@ DataTable - A high-performance, feature-rich table component with:
                 </div>
               </div>
 
-              <!-- Visible Columns -->
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('columns') }}</label>
                 <div class="space-y-1 max-h-40 overflow-y-auto">
@@ -126,7 +108,6 @@ DataTable - A high-performance, feature-rich table component with:
                 </div>
               </div>
 
-              <!-- Reset -->
               <UButton variant="ghost" color="neutral" size="xs" block @click="tableSettings.reset">
                 {{ $t('resetDefaults') }}
               </UButton>
@@ -134,35 +115,28 @@ DataTable - A high-performance, feature-rich table component with:
           </template>
         </UPopover>
 
-        <!-- Refresh -->
         <UButton v-if="showRefresh" :icon="icons.refresh" variant="ghost" color="neutral" size="sm" :loading="loading"
           :title="String($t('refresh'))" @click="handleRefresh" />
 
-        <!-- Clear Selection -->
         <UButton v-if="selectedKeys.length > 0" :icon="icons.clear" variant="ghost" color="neutral" size="sm"
           :title="String($t('clearSelection'))" @click="clearSelection" />
 
-        <!-- Toolbar right slot -->
         <slot name="toolbar-right" />
       </div>
     </div>
 
-    <!-- Table Container -->
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div ref="tableContainer" class="flex-1 overflow-auto transition-all duration-200"
         :style="{ maxHeight: maxHeight }" @scroll="handleScroll">
-        <!-- Loading State -->
         <div v-if="loading && sortedRows.length === 0"
           class="flex items-center justify-center py-12 text-(--color-text-muted)">
           <UIcon :name="icons.loading" class="w-6 h-6 animate-spin mr-2" />
           {{ $t('loading') }}
         </div>
 
-        <!-- Table -->
         <table v-else class="w-full min-w-max table-auto" role="grid" :aria-label="tableLabel">
           <thead class="bg-(--color-surface) sticky top-0 z-10">
             <tr role="row">
-              <!-- Select All Header -->
               <th v-if="selectable" class="w-10 px-3 py-2 text-center whitespace-nowrap" role="columnheader"
                 :aria-label="selectionMode === 'multi' ? 'Select all' : 'Selection'">
                 <input v-if="selectionMode === 'multi'" type="checkbox" :checked="allSelected"
@@ -170,7 +144,6 @@ DataTable - A high-performance, feature-rich table component with:
                   aria-label="Select all rows" @change="toggleSelectAll" />
               </th>
 
-              <!-- Column Headers -->
               <th v-for="col in visibleColumns" :key="col.key" role="columnheader"
                 :aria-sort="getSortAriaLabel(col.key)"
                 class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-(--color-text-muted) whitespace-nowrap"
@@ -189,7 +162,6 @@ DataTable - A high-performance, feature-rich table component with:
                 </div>
               </th>
 
-              <!-- Actions Header -->
               <th v-if="hasActions" role="columnheader"
                 class="w-24 px-3 py-2 text-center text-xs font-medium uppercase tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface)">
                 {{ $t('actions') }}
@@ -198,12 +170,10 @@ DataTable - A high-performance, feature-rich table component with:
           </thead>
 
           <tbody class="divide-y divide-(--color-border)">
-            <!-- Virtual spacer for top (for virtual scroll simulation) -->
             <tr v-if="virtualScrollEnabled && virtualTopHeight > 0" :style="{ height: virtualTopHeight + 'px' }">
               <td :colspan="totalColSpan" />
             </tr>
 
-            <!-- Data Rows -->
             <tr v-for="(row, idx) in virtualRows" :key="getRowKey(row)" role="row" :aria-selected="isSelected(row)"
               :tabindex="clickable ? 0 : undefined"
               class="hover:bg-(--color-surface-hover) transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue"
@@ -211,7 +181,6 @@ DataTable - A high-performance, feature-rich table component with:
                 'cursor-pointer': clickable || selectable,
                 'bg-opsi-blue/5 dark:bg-opsi-blue/10': isSelected(row),
               }" @click="handleRowClick(row, $event)" @keydown.enter="handleRowClick(row, $event)">
-              <!-- Selection Cell -->
               <td v-if="selectable" class="px-3 py-2 text-center" role="gridcell" @click.stop>
                 <input v-if="selectionMode === 'multi'" type="checkbox" :checked="isSelected(row)"
                   class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
@@ -221,7 +190,6 @@ DataTable - A high-performance, feature-rich table component with:
                   :aria-label="`Select row ${getRowKey(row)}`" @change="selectSingle(row)" />
               </td>
 
-              <!-- Data Cells -->
               <td v-for="col in visibleColumns" :key="col.key" role="gridcell"
                 class="px-3 py-2 text-sm text-(--color-text)" :class="col.class" :style="{ textAlign: col.align }">
                 <slot :name="`cell-${col.key}`" :row="row" :value="getNestedValue(row, col.key)" :index="idx">
@@ -229,7 +197,6 @@ DataTable - A high-performance, feature-rich table component with:
                 </slot>
               </td>
 
-              <!-- Actions Cell -->
               <td v-if="hasActions" class="px-3 py-2 text-center sticky right-0 bg-(--color-surface)" @click.stop>
                 <div class="flex items-center justify-center gap-1">
                   <slot name="row-actions" :row="row" :index="idx">
@@ -243,12 +210,10 @@ DataTable - A high-performance, feature-rich table component with:
               </td>
             </tr>
 
-            <!-- Virtual spacer for bottom -->
             <tr v-if="virtualScrollEnabled && virtualBottomHeight > 0" :style="{ height: virtualBottomHeight + 'px' }">
               <td :colspan="totalColSpan" />
             </tr>
 
-            <!-- Empty State -->
             <tr v-if="sortedRows.length === 0 && !loading">
               <td :colspan="totalColSpan" class="px-4 py-12 text-center">
                 <div class="flex flex-col items-center gap-2 text-(--color-text-muted)">
@@ -258,7 +223,6 @@ DataTable - A high-performance, feature-rich table component with:
               </td>
             </tr>
 
-            <!-- Infinite Scroll Loading Indicator -->
             <tr v-if="displayMode === 'infinite' && hasMoreData && !virtualScrollEnabled" class="scroll-sentinel">
               <td :colspan="totalColSpan" class="px-4 py-4 text-center">
                 <div class="flex items-center justify-center gap-2 text-(--color-text-muted) text-sm">
@@ -268,7 +232,6 @@ DataTable - A high-performance, feature-rich table component with:
               </td>
             </tr>
 
-            <!-- End of Data Marker -->
             <tr
               v-else-if="displayMode === 'infinite' && sortedRows.length > 0 && !hasMoreData && !virtualScrollEnabled">
               <td :colspan="totalColSpan" class="px-4 py-3 text-center">
@@ -280,7 +243,6 @@ DataTable - A high-performance, feature-rich table component with:
       </div>
     </UCard>
 
-    <!-- Pagination Footer (only in pagination mode) -->
     <div v-if="displayMode === 'pagination' && totalPages > 1"
       class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 flex items-center justify-center gap-2">
       <UButton :icon="icons.arrowLeft" variant="outline" color="neutral" size="xs" :disabled="currentPage === 1"
@@ -313,18 +275,15 @@ export interface DataTableAction<R = unknown> {
 }
 
 interface Props {
-  // Core
   rows: T[]
   columns: DataTableColumnDef[]
-  tableId: string // Required for localStorage persistence
+  tableId: string
   rowKey?: string
   loading?: boolean
 
-  // Selection
   selectable?: boolean
-  selectedKeys?: string[] // For bidirectional sync
+  selectedKeys?: string[]
 
-  // Features
   filterable?: boolean
   filterQuery?: string
   filterPlaceholder?: string
@@ -332,15 +291,13 @@ interface Props {
   clickable?: boolean
   actions?: DataTableAction<T>[]
 
-  // Display
   emptyIcon?: string
   emptyLabel?: string
   tableLabel?: string
   maxHeight?: string
 
-  // Virtual scroll (for large datasets)
-  virtualScrollThreshold?: number // Enable virtual scroll when rows exceed this
-  rowHeight?: number // Estimated row height for virtual scroll
+  virtualScrollThreshold?: number
+  rowHeight?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -367,20 +324,16 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const slots = useSlots()
 
-// Settings composable
 const tableSettings = useDataTableSettings(props.tableId)
 
-// Local state
 const tableContainer = ref<HTMLElement | null>(null)
 const selectedKeys = ref<string[]>([])
 const filterQueryInternal = ref(props.filterQuery || '')
 const currentPage = ref(1)
 const loadedCount = ref(tableSettings.settings.pageSize)
 
-// Virtual scroll state
 const scrollTop = ref(0)
 
-// Computed
 const displayMode = computed(() => tableSettings.settings.displayMode)
 const selectionMode = computed(() => tableSettings.settings.selectionMode)
 const pageSize = computed(() => tableSettings.settings.pageSize)
@@ -419,7 +372,6 @@ const totalColSpan = computed(() => {
   return count
 })
 
-// Filtering
 const filteredRows = computed(() => {
   if (!filterQueryInternal.value) return props.rows
   const query = filterQueryInternal.value.toLowerCase()
@@ -431,7 +383,6 @@ const filteredRows = computed(() => {
   )
 })
 
-// Sorting
 const sortedRows = computed(() => {
   const { sortColumn, sortDirection } = tableSettings.settings
   if (!sortColumn) return filteredRows.value
@@ -444,7 +395,6 @@ const sortedRows = computed(() => {
   })
 })
 
-// Display counts
 const totalRowCount = computed(() => sortedRows.value.length)
 const displayedRowCount = computed(() => {
   if (displayMode.value === 'infinite') {
@@ -453,7 +403,6 @@ const displayedRowCount = computed(() => {
   return Math.min(pageSize.value, totalRowCount.value)
 })
 
-// Pagination
 const totalPages = computed(() => Math.ceil(totalRowCount.value / pageSize.value))
 const paginationStartIndex = computed(() => (currentPage.value - 1) * pageSize.value)
 const paginationEndIndex = computed(() => currentPage.value * pageSize.value)
@@ -477,13 +426,12 @@ const visiblePageNumbers = computed(() => {
   return pages
 })
 
-// Virtual scroll
 const virtualScrollEnabled = computed(() => sortedRows.value.length > props.virtualScrollThreshold)
 
 const visibleRowCount = computed(() => {
   if (!virtualScrollEnabled.value) return sortedRows.value.length
   const containerHeight = tableContainer.value?.clientHeight || 600
-  return Math.ceil(containerHeight / props.rowHeight) + 10 // Buffer
+  return Math.ceil(containerHeight / props.rowHeight) + 10
 })
 
 const virtualStartIndex = computed(() => {
@@ -512,7 +460,6 @@ const virtualRows = computed<T[]>(() => {
     return sortedRows.value.slice(0, loadedCount.value)
   }
 
-  // Pagination mode
   return sortedRows.value.slice(paginationStartIndex.value, paginationEndIndex.value)
 })
 
@@ -523,7 +470,6 @@ const hasMoreData = computed(() => {
   return false
 })
 
-// Selection
 const allSelected = computed(() =>
   virtualRows.value.length > 0 && virtualRows.value.every((row) => isSelected(row))
 )
@@ -532,7 +478,6 @@ const someSelected = computed(() =>
   selectedKeys.value.length > 0 && !allSelected.value
 )
 
-// Methods
 function getRowKey(row: T): string {
   return String(row[props.rowKey] ?? '')
 }
@@ -568,7 +513,6 @@ function handleSort(column: string) {
 }
 
 function handleRowClick(row: T, event: Event) {
-  // Prevent selection if clicking on action buttons
   const target = event.target as HTMLElement
   if (target.closest('button') || target.closest('[role="button"]')) return
 
@@ -643,7 +587,6 @@ function handleScroll() {
   const { scrollTop: st, scrollHeight, clientHeight } = tableContainer.value
   scrollTop.value = st
 
-  // Infinite scroll - load more when near bottom
   if (displayMode.value === 'infinite' && !virtualScrollEnabled.value) {
     if (st + clientHeight >= scrollHeight - 100 && hasMoreData.value && !props.loading) {
       loadedCount.value += pageSize.value
@@ -651,7 +594,6 @@ function handleScroll() {
   }
 }
 
-// Sync filter with parent
 watch(filterQueryInternal, (val) => {
   emit('update:filterQuery', val)
 })
@@ -662,20 +604,17 @@ watch(() => props.filterQuery, (val) => {
   }
 })
 
-// Sync external selected keys
 watch(() => props.selectedKeys, (newKeys) => {
   if (newKeys) {
     selectedKeys.value = [...newKeys]
   }
 }, { immediate: true, deep: true })
 
-// Reset pagination when data changes
 watch(() => props.rows.length, () => {
   currentPage.value = 1
   loadedCount.value = pageSize.value
 })
 
-// Expose methods
 defineExpose({
   clearSelection,
   getSelectedRows: () => props.rows.filter((row) => selectedKeys.value.includes(getRowKey(row))),

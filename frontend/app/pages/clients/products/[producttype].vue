@@ -1,12 +1,4 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 Client Products page - manage products for selected clients
--->
 <template>
 	<LayoutsPageLayout show-refresh :loading="loading" @refresh="refresh">
 		<template #actions>
@@ -20,15 +12,15 @@ Client Products page - manage products for selected clients
 		</template>
 
 		<template #stats>
-			<span v-if="stateStore.selectedClients.length > 0" class="text-sm text-opsi-blue">
-				{{ $t('clients') }}: {{ stateStore.selectedClients.length }}
+			<span v-if="selectionStore.selectedClients.length > 0" class="text-sm text-opsi-blue">
+				{{ $t('clients') }}: {{ selectionStore.selectedClients.length }}
 			</span>
 			<span v-else class="text-sm text-warning">
 				{{ $t('selectClientsFirst') }}
 			</span>
 		</template>
 
-		<UAlert v-if="stateStore.selectedClients.length === 0" color="warning" :title="$t('warning')"
+		<UAlert v-if="selectionStore.selectedClients.length === 0" color="warning" :title="$t('warning')"
 			:description="$t('selectClientsFirst')" class="mb-4">
 			<template #actions>
 				<UButton color="primary" size="sm" @click="router.push('/clients')">
@@ -37,14 +29,14 @@ Client Products page - manage products for selected clients
 			</template>
 		</UAlert>
 
-		<ProductsTable v-if="stateStore.selectedClients.length > 0" ref="productsTableRef"
+		<ProductsTable v-if="selectionStore.selectedClients.length > 0" ref="productsTableRef"
 			:product-type="productType" />
 	</LayoutsPageLayout>
 </template>
 
 <script setup lang="ts">
-import type { ProductType } from '~/types/api/product.types'
-import { useStateStore } from '~/stores/stateStore'
+import type { ProductType } from '~/types'
+import { useSelectionStore } from '~/stores/selectionStore'
 
 definePageMeta({ layout: 'default' })
 
@@ -52,7 +44,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const router = useRouter()
 const route = useRoute()
-const stateStore = useStateStore()
+const selectionStore = useSelectionStore()
 
 const routeProductType = computed(() => {
 	const param = route.params.producttype as string

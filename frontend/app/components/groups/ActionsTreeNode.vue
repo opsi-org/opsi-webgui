@@ -1,10 +1,3 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
--->
 <template>
 	<div class="group-tree-node">
 		<div :class="[
@@ -51,7 +44,7 @@ License: AGPL-3.0
 </template>
 
 <script setup lang="ts">
-import type { GroupTreeNode } from '~/types/groups.types'
+import type { GroupTreeNode } from '~/types'
 
 interface Props {
 	group: GroupTreeNode

@@ -20,16 +20,17 @@
 				<div v-if="filteredServers.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">
 					{{ t('noResults') }}
 				</div>
-				<div v-for="server in filteredServers" :key="server.depotId"
+				<div v-for="server in filteredServers" :key="server.serverId"
 					class="flex items-center gap-2 px-2 py-1.5 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer"
-					@click="toggleServer(server.depotId)">
-					<UCheckbox :model-value="selectionStore.selectedDepots.includes(server.depotId)" size="xs"
-						@click.stop @update:model-value="toggleServer(server.depotId)" />
+					@click="toggleServer(server.serverId)">
+					<UCheckbox :model-value="selectionStore.selectedServers.includes(server.serverId)" size="xs"
+						@click.stop @update:model-value="toggleServer(server.serverId)" />
 					<div class="flex-1 min-w-0">
 						<div class="flex items-center gap-1.5">
 							<UIcon :name="server.isConfigServer ? icons.serverStack : icons.server"
 								class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
-							<span class="truncate" :class="server.isConfigServer ? 'font-medium' : ''">{{ server.depotId
+							<span class="truncate" :class="server.isConfigServer ? 'font-medium' : ''">{{
+								server.serverId
 								}}</span>
 						</div>
 						<span v-if="server.description"
@@ -40,10 +41,10 @@
 				</div>
 			</div>
 
-			<div v-if="selectionStore.selectedDepots.length > 0"
+			<div v-if="selectionStore.selectedServers.length > 0"
 				class="shrink-0 pt-2 mt-2 border-t border-(--color-border)">
 				<div class="flex items-center justify-between text-xs">
-					<span class="text-(--color-text-muted)">{{ selectionStore.selectedDepots.length }}
+					<span class="text-(--color-text-muted)">{{ selectionStore.selectedServers.length }}
 						{{ t('selected') }}</span>
 					<div class="flex gap-2">
 						<UButton size="xs" variant="link" color="primary" @click="selectAll">{{ t('selectAll') }}
@@ -61,7 +62,7 @@
 import { useSelectionStore } from '~/stores/selectionStore'
 
 interface ServerItem {
-	depotId: string
+	serverId: string
 	description: string
 	isConfigServer: boolean
 }
@@ -69,7 +70,7 @@ interface ServerItem {
 const icons = useIcons()
 const { t: i18nT } = useI18n()
 const selectionStore = useSelectionStore()
-const { getDepots } = useApiHelpers()
+const { getServers } = useApiHelpers()
 
 const t = (key: string) => {
 	const translated = i18nT(key)
@@ -86,23 +87,23 @@ const filteredServers = computed(() => {
 	if (!searchQuery.value) return servers.value
 	const q = searchQuery.value.toLowerCase()
 	return servers.value.filter(s =>
-		s.depotId.toLowerCase().includes(q) || s.description?.toLowerCase().includes(q)
+		s.serverId.toLowerCase().includes(q) || s.description?.toLowerCase().includes(q)
 	)
 })
 
-function toggleServer(depotId: string) {
-	selectionStore.toggleDepot(depotId, 'quickpanel')
+function toggleServer(serverId: string) {
+	selectionStore.toggleServer(serverId, 'quickpanel')
 }
 
 function selectAll() {
-	selectionStore.setDepots(servers.value.map(s => s.depotId), 'quickpanel')
+	selectionStore.setServers(servers.value.map(s => s.serverId), 'quickpanel')
 }
 
 function clearSelection() {
 	if (selectionStore.configServer) {
-		selectionStore.setDepots([selectionStore.configServer], 'quickpanel')
+		selectionStore.setServers([selectionStore.configServer], 'quickpanel')
 	} else {
-		selectionStore.clearDepots()
+		selectionStore.clearServers()
 	}
 }
 
@@ -110,12 +111,12 @@ async function fetchServers() {
 	loading.value = true
 	error.value = null
 	try {
-		const result = await getDepots({})
+		const result = await getServers({})
 		if (result.error) {
 			error.value = result.error.message
 		} else if (result.data) {
 			servers.value = result.data.map(d => ({
-				depotId: d.depotId,
+				serverId: d.depotId,
 				description: d.description || '',
 				isConfigServer: d.type === 'OpsiConfigserver',
 			}))

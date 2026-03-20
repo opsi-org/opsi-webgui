@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ProductConfigTabsRef } from '~/types/api/product.types'
+import type { ProductConfigTabsRef } from '~/types'
 
 const props = withDefaults(defineProps<{
 	configRef: ProductConfigTabsRef | null

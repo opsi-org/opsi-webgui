@@ -1,14 +1,6 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
 ClientsLogsView - displays various logs for a selected client with filtering,
 log level control, auto-refresh, auto-scroll, marker, download and messagebus integration.
 Can be used both in standalone pages and detail panels.
--->
 <template>
 	<LayoutsPageLayout :loading="loading">
 		<template #filters>
@@ -193,25 +185,25 @@ const LOG_LEVEL_LABELS: Record<number, string> = {
 }
 
 const LOG_COLORS_LIGHT = [
-	'text-opsi-log-light-essential', // 1
-	'text-opsi-log-light-critical',  // 2
-	'text-opsi-log-light-error',     // 3
-	'text-opsi-log-light-warning',   // 4
-	'text-opsi-log-light-notice',    // 5
-	'text-opsi-log-light-info',      // 6
-	'text-opsi-log-light-debug',     // 7
-	'text-opsi-log-light-trace',     // 8
+	'text-opsi-log-light-essential',
+	'text-opsi-log-light-critical',
+	'text-opsi-log-light-error',
+	'text-opsi-log-light-warning',
+	'text-opsi-log-light-notice',
+	'text-opsi-log-light-info',
+	'text-opsi-log-light-debug',
+	'text-opsi-log-light-trace',
 ]
 
 const LOG_COLORS_DARK = [
-	'text-opsi-log-dark-essential', // 1
-	'text-opsi-log-dark-critical',  // 2
-	'text-opsi-log-dark-error',     // 3
-	'text-opsi-log-dark-warning',   // 4
-	'text-opsi-log-dark-notice',    // 5
-	'text-opsi-log-dark-info',      // 6
-	'text-opsi-log-dark-debug',     // 7
-	'text-opsi-log-dark-trace',     // 8
+	'text-opsi-log-dark-essential',
+	'text-opsi-log-dark-critical',
+	'text-opsi-log-dark-error',
+	'text-opsi-log-dark-warning',
+	'text-opsi-log-dark-notice',
+	'text-opsi-log-dark-info',
+	'text-opsi-log-dark-debug',
+	'text-opsi-log-dark-trace',
 ]
 
 const clientSelectorModel = ref<string>(props.clientId || '')

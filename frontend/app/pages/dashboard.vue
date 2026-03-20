@@ -1,16 +1,6 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
-
-Dashboard page - System overviewa chang.
--->
 <template>
     <LayoutsPageLayout :show-search="false" :show-refresh="true" :loading="loading" @refresh="refreshAll">
         <div class="space-y-6">
-            <!-- Config Server Info Card (Full Width) -->
             <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none  p-4">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 rounded-lg bg-opsi-blue/10 flex items-center justify-center">
@@ -26,9 +16,7 @@ Dashboard page - System overviewa chang.
 
             </div>
 
-            <!-- Quick Stats Row -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Depots Stat Card -->
                 <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md dark:hover:border-opsi-blue/50 transition-all"
                     @click="navigateTo('/servers')">
                     <div class="flex items-center justify-between mb-2">
@@ -37,11 +25,10 @@ Dashboard page - System overviewa chang.
                         </div>
                         <UIcon :name="icons.arrowRight" class="w-4 h-4 text-[--color-text-muted]" />
                     </div>
-                    <p class="text-3xl font-bold">{{ stats.totalDepots ?? '-' }}</p>
+                    <p class="text-3xl font-bold">{{ stats.totalServers ?? '-' }}</p>
                     <p class="text-sm text-[--color-text-muted]">{{ $t('totalServers') }}</p>
                 </div>
 
-                <!-- Clients Stat Card -->
                 <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none  p-4 cursor-pointer hover:shadow-md dark:hover:border-opsi-blue/50 transition-all"
                     @click="navigateTo('/clients')">
                     <div class="flex items-center justify-between mb-2">
@@ -54,7 +41,6 @@ Dashboard page - System overviewa chang.
                     <p class="text-sm text-[--color-text-muted]">{{ $t('totalClients') }}</p>
                 </div>
 
-                <!-- Products Stat Card (Localboot + Netboot) -->
                 <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md dark:hover:border-opsi-blue/50 transition-all"
                     @click="navigateTo('/products')">
                     <div class="flex items-center justify-between mb-2">
@@ -79,7 +65,6 @@ Dashboard page - System overviewa chang.
                     </div>
                 </div>
 
-                <!-- Modules Card -->
                 <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none  p-4 cursor-pointer hover:shadow-md dark:hover:border-opsi-blue/50 transition-all"
                     @click="navigateTo('/admin/modules')">
                     <div class="flex items-center justify-between mb-2">
@@ -101,9 +86,7 @@ Dashboard page - System overviewa chang.
                 </div>
             </div>
 
-            <!-- Reachable Clients & Last Seen Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <!-- Reachable Clients Card -->
                 <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none  p-4">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-2">
@@ -144,14 +127,13 @@ Dashboard page - System overviewa chang.
                     </div>
                 </div>
 
-                <!-- Clients Last Seen Card -->
                 <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-2">
                             <UIcon :name="icons.calendar" class="w-5 h-5 text-blue-500" />
                             <h3 class="font-semibold">{{ $t('clients') }} {{ $t('lastSeen') }}</h3>
                         </div>
-                        <USelect v-model="selectedDepotForLastSeen" :items="depotOptions" size="xs" class="w-48" />
+                        <USelect v-model="selectedServerForLastSeen" :items="serverOptions" size="xs" class="w-48" />
                     </div>
                     <div v-if="lastSeenStats" class="space-y-2">
                         <div class="grid grid-cols-2 gap-2 text-sm">
@@ -177,19 +159,19 @@ Dashboard page - System overviewa chang.
                         </div>
                         <div class="mt-4">
                             <h4 class="text-xs font-semibold text-[--color-text-muted] mb-2">
-                                {{ $t('clients') }} ({{ selectedDepotForLastSeen === 'all' ? $t('allServers') :
-                                    selectedDepotForLastSeen }})
+                                {{ $t('clients') }} ({{ selectedServerForLastSeen === 'all' ? $t('allServers') :
+                                    selectedServerForLastSeen }})
                             </h4>
-                            <div v-if="filteredClientsForDepot.length > 0" class="max-h-40 overflow-y-auto space-y-1">
-                                <div v-for="client in filteredClientsForDepot.slice(0, 20)" :key="client.clientId"
+                            <div v-if="filteredClientsForServer.length > 0" class="max-h-40 overflow-y-auto space-y-1">
+                                <div v-for="client in filteredClientsForServer.slice(0, 20)" :key="client.clientId"
                                     class="flex items-center justify-between p-2 rounded bg-gray-50 dark:bg-gray-800/50 text-xs">
                                     <span class="font-mono truncate">{{ client.clientId }}</span>
                                     <span class="text-[--color-text-muted]">{{ client.lastSeen ? new
                                         Date(client.lastSeen).toLocaleString() : 'Never' }}</span>
                                 </div>
-                                <p v-if="filteredClientsForDepot.length > 20"
+                                <p v-if="filteredClientsForServer.length > 20"
                                     class="text-xs text-[--color-text-muted] text-center pt-2">
-                                    {{ $t('countMore', { count: filteredClientsForDepot.length - 20 }) }}
+                                    {{ $t('countMore', { count: filteredClientsForServer.length - 20 }) }}
                                 </p>
                             </div>
                             <div v-else class="text-xs text-[--color-text-muted] text-center py-2">
@@ -211,14 +193,12 @@ definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getServerInfo, getHealthcheck, getClients, getDepots, getProducts, getBlockedClients, getLockedProducts, checkClientReachable, getModulesContent } = useApiHelpers()
+const { getServerInfo, getHealthcheck, getClients, getServers, getProducts, getBlockedClients, getLockedProducts, checkClientReachable, getModulesContent } = useApiHelpers()
 
-// Loading states
 const loading = ref(false)
 const loadingHealth = ref(false)
 const loadingReachable = ref(false)
 
-// Data
 const serverInfo = ref<{
     opsiVersion: string
     hostname: string
@@ -239,7 +219,7 @@ const healthChecks = ref<Array<{
 
 const stats = reactive({
     totalClients: null as number | null,
-    totalDepots: null as number | null,
+    totalServers: null as number | null,
     totalProducts: null as number | null,
     localbootProducts: null as number | null,
     netbootProducts: null as number | null,
@@ -251,15 +231,14 @@ const stats = reactive({
 const blockedClientsMap = ref<Record<string, string>>({})
 const lockedProductsMap = ref<Record<string, string>>({})
 const allClients = ref<Array<{ clientId: string; lastSeen: string; depotId: string }>>([])
-const allDepots = ref<Array<{ depotId: string }>>([])
+const allServers = ref<Array<{ depotId: string }>>([])
 const reachableClients = ref<string[]>([])
 const unreachableCount = ref(0)
-const selectedDepotForLastSeen = ref('all')
+const selectedServerForLastSeen = ref('all')
 
-// Computed
-const depotOptions = computed(() => [
+const serverOptions = computed(() => [
     { value: 'all', label: $t('allServers') },
-    ...allDepots.value.map(d => ({ value: d.depotId, label: d.depotId }))
+    ...allServers.value.map(d => ({ value: d.depotId, label: d.depotId }))
 ])
 
 const lastSeenStats = computed(() => {
@@ -268,9 +247,9 @@ const lastSeenStats = computed(() => {
     const now = new Date()
     const day = 24 * 60 * 60 * 1000
 
-    const filteredClients = selectedDepotForLastSeen.value === 'all'
+    const filteredClients = selectedServerForLastSeen.value === 'all'
         ? allClients.value
-        : allClients.value.filter(c => c.depotId === selectedDepotForLastSeen.value)
+        : allClients.value.filter(c => c.depotId === selectedServerForLastSeen.value)
 
     let last24h = 0, last7d = 0, last30d = 0, older = 0
 
@@ -292,10 +271,10 @@ const lastSeenStats = computed(() => {
 })
 
 
-const filteredClientsForDepot = computed(() =>
-    selectedDepotForLastSeen.value === 'all'
+const filteredClientsForServer = computed(() =>
+    selectedServerForLastSeen.value === 'all'
         ? allClients.value
-        : allClients.value.filter(c => c.depotId === selectedDepotForLastSeen.value)
+        : allClients.value.filter(c => c.depotId === selectedServerForLastSeen.value)
 )
 async function fetchServerInfo() {
     const { data } = await getServerInfo()
@@ -319,24 +298,21 @@ async function fetchHealthChecks() {
 async function fetchStats() {
     const [clientsRes, depotsRes, productsRes, modulesRes] = await Promise.all([
         getClients(),
-        getDepots(),
+        getServers(),
         getProducts(),
         getModulesContent(),
     ])
 
-    // Store clients for last seen calculation
     if (clientsRes.data) {
         allClients.value = clientsRes.data as Array<{ clientId: string; lastSeen: string; depotId: string }>
         stats.totalClients = clientsRes.data.length
     }
 
-    // Store depots
     if (depotsRes.data) {
-        allDepots.value = depotsRes.data as Array<{ depotId: string }>
-        stats.totalDepots = depotsRes.data.length
+        allServers.value = depotsRes.data as Array<{ depotId: string }>
+        stats.totalServers = depotsRes.data.length
     }
 
-    // Count products by type
     if (productsRes.data) {
         const products = productsRes.data as Array<{ type: string }>
         stats.totalProducts = products.length
@@ -344,12 +320,9 @@ async function fetchStats() {
         stats.netbootProducts = products.filter(p => p.type === 'NetbootProduct').length
     }
 
-    // Count modules
     if (modulesRes.data) {
         const modules = (modulesRes.data as { result: string[] }).result || []
         stats.totalModules = modules.length
-        // Modules result contains strings, check if they contain dates for expiration
-        // For now, we assume all listed modules are active - backend needs enhancement for expiry info
         stats.activeModules = modules.length
         stats.expiredModules = 0
     }
@@ -374,7 +347,7 @@ async function checkAllReachable() {
 
     loadingReachable.value = true
     try {
-        const clientIds = allClients.value.map(c => c.clientId).slice(0, 100) // Limit to 100 for performance
+        const clientIds = allClients.value.map(c => c.clientId).slice(0, 100)
         const result = await checkClientReachable(clientIds)
         if (result.data) {
             const reachableData = result.data as Record<string, boolean>
@@ -405,7 +378,6 @@ async function refreshAll() {
     }
 }
 
-// Initialize
 onMounted(() => {
     refreshAll()
 })

@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import type { GroupTreeNodeData } from '~/types/groups.types'
+import type { GroupTreeNodeData } from '~/types'
 import { useSelectionStore } from '~/stores/selectionStore'
 
 const props = defineProps<{ groupType: 'client' | 'product' }>()
@@ -297,7 +297,7 @@ async function fetchAllClients() {
 	allClientsLoading.value = true
 	try {
 		const { getClientIds } = useApiHelpers()
-		const depots = selectionStore.selectedDepots
+		const depots = selectionStore.selectedServers
 		if (depots.length > 0) {
 			const result = await getClientIds(depots)
 			allClientsList.value = result.data || []

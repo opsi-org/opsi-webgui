@@ -1,10 +1,3 @@
-<!--
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2026
-All rights reserved.
-License: AGPL-3.0
--->
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div class="flex shrink-0 mb-3 -mx-4 px-4 gap-0.5 border-b border-(--color-border)">
@@ -141,14 +134,14 @@ const activeTab = ref<TabId>('overview')
 
 const tabs = computed(() => [
 	{ id: 'overview' as TabId, label: 'overview', icon: icons.list, count: totalSelectionCount.value },
-	{ id: 'servers' as TabId, label: 'depots', icon: icons.server, count: selectionStore.selectedDepots.length },
+	{ id: 'servers' as TabId, label: 'servers', icon: icons.server, count: selectionStore.selectedServers.length },
 	{ id: 'clients' as TabId, label: 'clients', icon: icons.client, count: selectionStore.selectedClients.length },
 	{ id: 'products' as TabId, label: 'products', icon: icons.product, count: selectionStore.selectedProducts.length },
 	{ id: 'settings' as TabId, label: 'settings', icon: icons.settings, count: 0 },
 ])
 
 const totalSelectionCount = computed(() =>
-	selectionStore.selectedDepots.length +
+	selectionStore.selectedServers.length +
 	selectionStore.selectedClients.length +
 	selectionStore.selectedProducts.length
 )
