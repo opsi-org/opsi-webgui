@@ -3,20 +3,29 @@
         <template #main>
             <LayoutsPageLayout show-refresh :loading="loading" @refresh="fetchServers">
                 <template #actions>
-                    <div class="flex items-center gap-1.5">
+                    <div class="flex items-center gap-1.5 mr-2">
                         <span v-if="mbConnected" class="w-2 h-2 rounded-full bg-green-500"
                             :title="$t('messageBusConnected')" />
                         <span v-else class="w-2 h-2 rounded-full bg-red-400" :title="$t('messageBusDisconnected')" />
+                        <label class="flex items-center gap-1 cursor-pointer text-xs text-(--color-text-muted)">
+                            <input type="checkbox" v-model="autoRefreshEnabled"
+                                class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue w-3.5 h-3.5" />
+                            {{ $t('autoRefresh') }}
+                        </label>
                     </div>
+                    <UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
+                        variant="soft" size="xs" @click="manualRefresh">
+                        {{ $t('changesDetected') }}
+                    </UButton>
                 </template>
 
                 <UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4"
                     :close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
 
                 <SharedDataTable :rows="servers" :columns="columns" :loading="loading" table-id="servers"
-                    row-key="depotId" :actions="tableActions" :selectable="true" :filterable="true"
-                    :show-refresh="false" :clickable="true" :selected-keys="selectionStore.selectedServers"
-                    @select="handleRowSelect" @selection-change="handleSelectionChange" @refresh="fetchServers">
+                    row-key="depotId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
+                    :selected-keys="selectionStore.selectedServers" @row-activate="handleRowActivate"
+                    @selection-change="handleSelectionChange" @refresh="fetchServers">
                     <template #cell-type="{ row }">
                         <SharedStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
                             :label="String((row as Server).type === 'OpsiConfigserver' ? $t('configserver') : $t('server'))" />
@@ -53,7 +62,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const { getServers } = useApiHelpers()
 const selectionStore = useSelectionStore()
-const { isConnected: mbConnected } = useAutoRefresh(fetchServers)
+const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRefresh } = useAutoRefresh(fetchServers)
 
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -69,17 +78,15 @@ const columns: DataTableColumnDef[] = [
     { key: 'ip', label: String($t('ipAddress')), sortable: true, visible: false },
 ]
 
-const tableActions = [
-    { icon: icons.config, label: String($t('configuration')), handler: (row: Server) => openConfig(row) }
-]
-
 function openConfig(row: Server) {
     panelServer.value = row
     panelType.value = 'config'
 }
 
-function handleRowSelect(row: Server) {
-    selectionStore.toggleServer(row.depotId, 'table')
+/** Single-select row click: select + open config panel */
+function handleRowActivate(row: Server) {
+    selectionStore.setServers([row.depotId], 'table')
+    openConfig(row)
 }
 
 function handleSelectionChange(_rows: Server[], keys: string[]) {

@@ -189,7 +189,6 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const toast = useToast()
 const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deployClientAgent, deleteClient } = useApiHelpers()
 
 const loading = ref(false)
@@ -264,10 +263,8 @@ async function executeOnDemand() {
 		if (result?.error || result?.data?.[props.clientId]?.error) {
 			throw new Error(result?.data?.[props.clientId]?.error || 'Failed')
 		}
-		toast.add({ title: String($t('success')), description: String($t('onDemandTriggered')), color: 'success' })
 		emit('action-complete', 'onDemand', true)
 	} catch (e) {
-		toast.add({ title: String($t('error')), description: String(e), color: 'error' })
 		emit('action-complete', 'onDemand', false)
 	} finally {
 		executing.value = false
@@ -282,11 +279,9 @@ async function executeNotify() {
 		if (result?.error || result?.data?.[props.clientId]?.error) {
 			throw new Error(result?.data?.[props.clientId]?.error || 'Failed')
 		}
-		toast.add({ title: String($t('success')), description: String($t('notificationSent')), color: 'success' })
 		emit('action-complete', 'notify', true)
 		notifyText.value = ''
 	} catch (e) {
-		toast.add({ title: String($t('error')), description: String(e), color: 'error' })
 		emit('action-complete', 'notify', false)
 	} finally {
 		executing.value = false
@@ -301,10 +296,8 @@ async function executeReboot() {
 		if (result?.error || result?.data?.[props.clientId]?.error) {
 			throw new Error(result?.data?.[props.clientId]?.error || 'Failed')
 		}
-		toast.add({ title: String($t('success')), description: String($t('rebootInitiated')), color: 'success' })
 		emit('action-complete', 'reboot', true)
 	} catch (e) {
-		toast.add({ title: String($t('error')), description: String(e), color: 'error' })
 		emit('action-complete', 'reboot', false)
 	} finally {
 		executing.value = false
@@ -319,10 +312,8 @@ async function executeShutdown() {
 		if (result?.error || result?.data?.[props.clientId]?.error) {
 			throw new Error(result?.data?.[props.clientId]?.error || 'Failed')
 		}
-		toast.add({ title: String($t('success')), description: String($t('shutdownInitiated')), color: 'success' })
 		emit('action-complete', 'shutdown', true)
 	} catch (e) {
-		toast.add({ title: String($t('error')), description: String(e), color: 'error' })
 		emit('action-complete', 'shutdown', false)
 	} finally {
 		executing.value = false
@@ -342,11 +333,9 @@ async function executeDeploy() {
 		if (result?.error) {
 			throw result.error
 		}
-		toast.add({ title: String($t('success')), description: String($t('deploymentStarted')), color: 'success' })
 		emit('action-complete', 'deploy', true)
 		deployOptions.value = { username: '', password: '', type: 'windows' }
 	} catch (e) {
-		toast.add({ title: String($t('error')), description: String(e), color: 'error' })
 		emit('action-complete', 'deploy', false)
 	} finally {
 		executing.value = false
@@ -361,10 +350,8 @@ async function executeDelete() {
 		if (result?.error) {
 			throw result.error
 		}
-		toast.add({ title: String($t('success')), description: String($t('clientDeleted')), color: 'success' })
 		emit('action-complete', 'delete', true)
 	} catch (e) {
-		toast.add({ title: String($t('error')), description: String(e), color: 'error' })
 		emit('action-complete', 'delete', false)
 	} finally {
 		executing.value = false

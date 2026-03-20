@@ -2,8 +2,8 @@
 	<LayoutsDetailPanel :showPanel="showConfigPanel" @close="closePanel">
 		<template #main>
 			<LayoutsPageLayout show-refresh :loading="loading" @refresh="fetchProducts">
-				<template #stats>
-					<div class="flex items-center gap-1.5">
+				<template #actions>
+					<div class="flex items-center gap-1.5 mr-2">
 						<span v-if="mbConnected" class="w-2 h-2 rounded-full bg-green-500"
 							:title="$t('messageBusConnected')" />
 						<span v-else class="w-2 h-2 rounded-full bg-red-400" :title="$t('messageBusDisconnected')" />
@@ -14,12 +14,9 @@
 						</label>
 					</div>
 					<UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
-						variant="soft" size="xs" class="ml-2" @click="manualRefresh">
+						variant="soft" size="xs" @click="manualRefresh">
 						{{ $t('changesDetected') }}
 					</UButton>
-				</template>
-
-				<template #actions>
 					<div class="flex items-center gap-2">
 						<ProductsQuickActionsDropdown :products="products" @applied="fetchProducts" />
 						<UButton variant="soft" color="neutral" size="sm"
@@ -43,9 +40,17 @@
 				<UAlert v-if="error" color="error" :title="$t('error')" :description="error"
 					:close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
 
+				<!-- Inline action status -->
+				<div v-if="actionStatus" class="mb-3">
+					<UAlert :color="actionStatus.type" :title="actionStatus.title" :description="actionStatus.message"
+						variant="subtle"
+						:close-button="{ icon: icons.close, color: actionStatus.type, variant: 'link' }"
+						@close="actionStatus = null" />
+				</div>
+
 				<SharedDataTable :rows="products" :columns="columns" :loading="loading" :table-id="tableId"
 					row-key="productId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
-					:selected-keys="selectedTableKeys" @select="handleRowSelect"
+					:selected-keys="selectedTableKeys" @row-activate="handleRowActivate"
 					@selection-change="handleSelectionChange" @refresh="fetchProducts">
 
 					<template #cell-productId="{ row }">
@@ -159,7 +164,6 @@ interface Props {
 const props = defineProps<Props>()
 const icons = useIcons()
 const { t: $t } = useI18n()
-const toast = useToast()
 const { getProducts, setClientProductActions } = useApiHelpers()
 const selectionStore = useSelectionStore()
 
@@ -170,6 +174,7 @@ const error = ref<string | null>(null)
 const products = ref<ProductRow[]>([])
 const configProduct = ref<ProductRow | null>(null)
 const showConfigPanel = ref(false)
+const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string } | null>(null)
 const processActionsOpen = ref(false)
 const pendingActionRequests = ref(new Map<string, ProductActionRequestChange>())
 const savingActionRequests = ref(false)
@@ -248,8 +253,10 @@ function closePanel() {
 	configProduct.value = null
 }
 
-function handleRowSelect(row: ProductRow) {
-	selectionStore.toggleProduct(row.productId, 'table')
+/** Single-select: select + open config panel */
+function handleRowActivate(row: ProductRow) {
+	selectionStore.setProducts([row.productId], 'table')
+	openProductConfig(row)
 }
 
 function handleSelectionChange(_rows: ProductRow[], keys: string[]) {
@@ -277,10 +284,12 @@ async function saveActionRequests() {
 			if (r.error) throw r.error
 		}
 		pendingActionRequests.value.clear()
-		toast.add({ title: String($t('success')), description: String($t('message.actionRequestsSaved')), color: 'success' })
+		actionStatus.value = { type: 'success', title: String($t('success')), message: String($t('message.actionRequestsSaved')) }
+		setTimeout(() => { actionStatus.value = null }, 5000)
 		await fetchProducts()
 	} catch (e) {
-		toast.add({ title: String($t('error')), description: e instanceof Error ? e.message : String($t('message.failedToSaveActionRequests')), color: 'error' })
+		actionStatus.value = { type: 'error', title: String($t('error')), message: e instanceof Error ? e.message : String($t('message.failedToSaveActionRequests')) }
+		setTimeout(() => { actionStatus.value = null }, 8000)
 	} finally { savingActionRequests.value = false }
 }
 

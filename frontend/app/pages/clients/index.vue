@@ -31,9 +31,17 @@
 				<UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4"
 					:close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
 
+				<!-- Inline action status bar -->
+				<div v-if="actionStatus" class="mb-3">
+					<UAlert :color="actionStatus.type" :title="actionStatus.title" :description="actionStatus.message"
+						variant="subtle"
+						:close-button="{ icon: icons.close, color: actionStatus.type, variant: 'link' }"
+						@close="actionStatus = null" />
+				</div>
+
 				<SharedDataTable :rows="clients" :columns="columns" :loading="loading" table-id="clients"
 					row-key="clientId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
-					:selected-keys="selectionStore.selectedClients" @select="handleRowSelect"
+					:selected-keys="selectionStore.selectedClients" @row-activate="handleRowActivate"
 					@selection-change="handleSelectionChange" @refresh="fetchClients">
 					<template #cell-description="{ row }">
 						{{ (row as Client).description || '-' }}
@@ -56,36 +64,37 @@
 						<span class="text-xs">{{ (row as Client).depotId || '-' }}</span>
 					</template>
 					<template #cell-version_outdated="{ row }">
-						<StatisticBadge :value="(row as Client).version_outdated" :icon="icons.productsOutdatedLocal"
-							:tooltip="$t('version_outdated_localboot')" status="warning" />
+						<ClientsStatisticBadge :value="(row as Client).version_outdated"
+							:icon="icons.productsOutdatedLocal" :tooltip="$t('version_outdated_localboot')"
+							status="warning" />
 					</template>
 					<template #cell-version_outdated_netboot="{ row }">
-						<StatisticBadge :value="(row as Client).version_outdated_netboot"
+						<ClientsStatisticBadge :value="(row as Client).version_outdated_netboot"
 							:icon="icons.productsOutdatedNet" :tooltip="$t('version_outdated_netboot')"
 							status="warning" />
 					</template>
 					<template #cell-installationStatus_unknown="{ row }">
-						<StatisticBadge :value="(row as Client).installationStatus_unknown"
+						<ClientsStatisticBadge :value="(row as Client).installationStatus_unknown"
 							:icon="icons.productInstallationStatusUnknown" :tooltip="$t('installationStatus_unknown')"
 							status="warning" />
 					</template>
 					<template #cell-installationStatus_installed="{ row }">
-						<StatisticBadge :value="(row as Client).installationStatus_installed"
+						<ClientsStatisticBadge :value="(row as Client).installationStatus_installed"
 							:icon="icons.productInstallationStatusInstalled"
 							:tooltip="$t('installationStatus_installed')" status="success" />
 					</template>
 					<template #cell-actionResult_successful="{ row }">
-						<StatisticBadge :value="(row as Client).actionResult_successful"
+						<ClientsStatisticBadge :value="(row as Client).actionResult_successful"
 							:icon="icons.productActionResultSuccessful" :tooltip="$t('actionResult_successful')"
 							status="success" />
 					</template>
 					<template #cell-actionResult_failed="{ row }">
-						<StatisticBadge :value="(row as Client).actionResult_failed"
+						<ClientsStatisticBadge :value="(row as Client).actionResult_failed"
 							:icon="icons.productsFailedActionResult" :tooltip="$t('actionResult_failed')"
 							status="error" />
 					</template>
 					<template #cell-reachable="{ row }">
-						<ReachableBadge :client-id="(row as Client).clientId"
+						<ClientsReachableBadge :client-id="(row as Client).clientId"
 							:reachable="reachableStatus[(row as Client).clientId]"
 							:loading="reachableLoading[(row as Client).clientId]"
 							@check="checkReachability((row as Client).clientId)" />
@@ -133,6 +142,7 @@ const panelType = ref<'config' | 'logs' | 'clone' | null>(null)
 const panelTab = ref('parameters')
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
+const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string } | null>(null)
 
 const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRefresh } = useAutoRefreshClients(fetchClients)
 
@@ -158,8 +168,10 @@ function openPanel(client: Client, type: 'config' | 'logs' | 'clone') {
 	panelType.value = type
 }
 
-function handleRowSelect(row: Client) {
-	selectionStore.toggleClient(row.clientId, 'table')
+/** Single-select row click: select this client + open config panel */
+function handleRowActivate(row: Client) {
+	selectionStore.setClients([row.clientId], 'table')
+	openPanel(row, 'config')
 }
 
 function handleSelectionChange(_rows: Client[], keys: string[]) {
@@ -176,6 +188,22 @@ async function checkReachability(clientId: string) {
 }
 
 function handleActionComplete(action: string, success: boolean) {
+	// Show inline status instead of toast
+	if (success) {
+		actionStatus.value = {
+			type: 'success',
+			title: String($t('success')),
+			message: String($t(`actionCompleted.${action}`, action))
+		}
+	} else {
+		actionStatus.value = {
+			type: 'error',
+			title: String($t('error')),
+			message: String($t(`actionFailed.${action}`, action))
+		}
+	}
+	// Auto-dismiss after 5 seconds
+	setTimeout(() => { actionStatus.value = null }, 5000)
 	if (action === 'delete' && success) fetchClients()
 }
 

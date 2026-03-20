@@ -146,7 +146,6 @@ const props = defineProps<{
 const icons = useIcons()
 const { t } = useI18n()
 const { apiPost } = useApiHelpers()
-const toast = useToast()
 const selectionStore = useSelectionStore()
 
 const confirmOpen = ref(false)
@@ -156,6 +155,7 @@ const loading = ref(false)
 const notifyText = ref('')
 const deployOptions = ref({ username: '', password: '', type: 'windows' })
 const actionResults = ref<Record<string, { success: boolean; message?: string }>>({})
+const statusMessage = ref<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
 
 const osTypes = [
 	{ value: 'windows', label: 'Windows', icon: 'i-heroicons-window' },
@@ -164,12 +164,11 @@ const osTypes = [
 ]
 
 function showSelectionHint() {
-	toast.add({
-		title: t('noClientsSelected'),
-		description: t('selectClientsFirst'),
-		color: 'warning',
-		icon: icons.warning,
-	})
+	statusMessage.value = {
+		type: 'warning',
+		message: t('selectClientsFirst'),
+	}
+	setTimeout(() => { statusMessage.value = null }, 4000)
 }
 
 const actions = [
@@ -275,17 +274,16 @@ async function executeAction() {
 		const failCount = props.clientIds.length - successCount
 
 		if (failCount === 0) {
-			toast.add({
-				title: t('success'),
-				description: `${t('actionCompleted')} (${successCount} ${t('clients')})`,
-				color: 'success'
-			})
+			statusMessage.value = {
+				type: 'success',
+				message: `${t('actionCompleted')} (${successCount} ${t('clients')})`,
+			}
+			setTimeout(() => { statusMessage.value = null }, 5000)
 		} else {
-			toast.add({
-				title: t('partialSuccess'),
-				description: `${successCount} ${t('successful')}, ${failCount} ${t('failed')}`,
-				color: 'warning'
-			})
+			statusMessage.value = {
+				type: 'warning',
+				message: `${successCount} ${t('successful')}, ${failCount} ${t('failed')}`,
+			}
 			actionResults.value = Object.fromEntries(
 				props.clientIds.map(id => [id, { success: !result[id]?.error }])
 			)
@@ -295,11 +293,10 @@ async function executeAction() {
 		confirmOpen.value = false
 	} catch (e) {
 		console.error('Action failed:', e)
-		toast.add({
-			title: t('error'),
-			description: String(e),
-			color: 'error'
-		})
+		statusMessage.value = {
+			type: 'error',
+			message: String(e),
+		}
 	} finally {
 		loading.value = false
 	}

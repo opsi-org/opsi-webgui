@@ -53,7 +53,7 @@
 									<div>
 										<label class="text-xs text-(--color-text-muted) block mb-1">{{
 											$t('installationStatus')
-											}}</label>
+										}}</label>
 										<USelect v-model="filters.installationStatus" :items="installationStatusOptions"
 											size="xs" class="w-full" @update:model-value="loadPreview" />
 									</div>
@@ -144,12 +144,12 @@ const emit = defineEmits<{
 const icons = useIcons()
 const { t: $t } = useI18n()
 const { setClientProductActions } = useApiHelpers()
-const toast = useToast()
 const selectionStore = useSelectionStore()
 
 const dialogOpen = ref(false)
 const loading = ref(false)
 const applying = ref(false)
+const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
 
 const hasSelections = computed(() =>
 	selectionStore.selectedProducts.length > 0 || selectionStore.selectedClients.length > 0 || selectionStore.selectedServers.length > 0
@@ -230,16 +230,13 @@ async function applyActions() {
 
 		if (result.error) throw result.error
 
-		toast.add({
-			title: String($t('success')),
-			description: String($t('message.actionsApplied')),
-			color: 'success',
-		})
+		statusMessage.value = { type: 'success', message: String($t('message.actionsApplied')) }
+		setTimeout(() => { statusMessage.value = null }, 5000)
 		dialogOpen.value = false
 		emit('applied')
 	} catch (e) {
 		console.error('Failed to apply actions:', e)
-		toast.add({ title: String($t('error')), description: String(e), color: 'error' })
+		statusMessage.value = { type: 'error', message: String(e) }
 	} finally {
 		applying.value = false
 	}

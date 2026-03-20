@@ -1,14 +1,16 @@
 DataTable - A high-performance, feature-rich table component with:
 - Infinite scroll OR pagination (switchable)
-- Multi-select OR single-select (checkbox vs radio)
+- Single-select by default (auto switches to multi when group selections sync)
 - Virtual scrolling for 50,000+ rows performance
 - Column visibility toggle with localStorage persistence
 - Sorting with localStorage persistence
 - Filter
 - Row actions
 - Responsive design (desktop & mobile)
+- Horizontal scroll when all columns visible
 <template>
   <div class="data-table flex flex-col h-full min-h-0">
+    <!-- Toolbar -->
     <div class="shrink-0 flex flex-wrap items-center justify-between gap-2 mb-3">
       <div class="flex items-center gap-3 text-sm">
         <span class="text-(--color-text-muted)">
@@ -20,9 +22,12 @@ DataTable - A high-performance, feature-rich table component with:
               $t('of') }} {{ totalRowCount }}
           </template>
         </span>
-        <span v-if="selectedKeys.length > 0" class="text-opsi-blue font-medium">
+        <UBadge v-if="selectedKeys.length > 0" color="primary" variant="subtle" size="sm">
           {{ selectedKeys.length }} {{ $t('selected') }}
-        </span>
+        </UBadge>
+        <UBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
+          {{ $t('singleSelect') }}
+        </UBadge>
       </div>
 
       <div class="flex items-center gap-2">
@@ -59,12 +64,12 @@ DataTable - A high-performance, feature-rich table component with:
               <div class="mb-4">
                 <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('selectionMode') }}</label>
                 <div class="flex gap-1">
-                  <UButton size="xs" :variant="tableSettings.settings.selectionMode === 'multi' ? 'solid' : 'outline'"
-                    color="neutral" class="flex-1" @click="tableSettings.setSelectionMode('multi')">
+                  <UButton size="xs" :variant="effectiveSelectionMode === 'multi' ? 'solid' : 'outline'" color="neutral"
+                    class="flex-1" @click="forceSelectionMode('multi')">
                     {{ $t('multiSelect') }}
                   </UButton>
-                  <UButton size="xs" :variant="tableSettings.settings.selectionMode === 'single' ? 'solid' : 'outline'"
-                    color="neutral" class="flex-1" @click="tableSettings.setSelectionMode('single')">
+                  <UButton size="xs" :variant="effectiveSelectionMode === 'single' ? 'solid' : 'outline'"
+                    color="neutral" class="flex-1" @click="forceSelectionMode('single')">
                     {{ $t('singleSelect') }}
                   </UButton>
                 </div>
@@ -125,6 +130,7 @@ DataTable - A high-performance, feature-rich table component with:
       </div>
     </div>
 
+    <!-- Table -->
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div ref="tableContainer" class="flex-1 overflow-auto transition-all duration-200"
         :style="{ maxHeight: maxHeight }" @scroll="handleScroll">
@@ -134,120 +140,130 @@ DataTable - A high-performance, feature-rich table component with:
           {{ $t('loading') }}
         </div>
 
-        <table v-else class="w-full min-w-max table-auto" role="grid" :aria-label="tableLabel">
-          <thead class="bg-(--color-surface) sticky top-0 z-10">
-            <tr role="row">
-              <th v-if="selectable" class="w-10 px-3 py-2 text-center whitespace-nowrap" role="columnheader"
-                :aria-label="selectionMode === 'multi' ? 'Select all' : 'Selection'">
-                <input v-if="selectionMode === 'multi'" type="checkbox" :checked="allSelected"
-                  :indeterminate="someSelected" class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
-                  aria-label="Select all rows" @change="toggleSelectAll" />
-              </th>
+        <div v-else class="min-w-full overflow-x-auto">
+          <table class="w-full table-auto" role="grid" :aria-label="tableLabel" :style="{ minWidth: tableMinWidth }">
+            <thead class="bg-(--color-surface) sticky top-0 z-10">
+              <tr role="row">
+                <th v-if="selectable" class="w-10 px-3 py-2.5 text-center whitespace-nowrap" role="columnheader"
+                  :aria-label="effectiveSelectionMode === 'multi' ? 'Select all' : 'Selection'">
+                  <input v-if="effectiveSelectionMode === 'multi'" type="checkbox" :checked="allSelected"
+                    :indeterminate="someSelected" class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
+                    aria-label="Select all rows" @change="toggleSelectAll" />
+                </th>
 
-              <th v-for="col in visibleColumns" :key="col.key" role="columnheader"
-                :aria-sort="getSortAriaLabel(col.key)"
-                class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-(--color-text-muted) whitespace-nowrap"
-                :class="[col.headerClass, { 'cursor-pointer hover:bg-(--color-surface-hover)': col.sortable }]"
-                :style="{ width: col.width, minWidth: col.minWidth, textAlign: col.align }"
-                :tabindex="col.sortable ? 0 : undefined" @click="col.sortable && handleSort(col.key)"
-                @keydown.enter="col.sortable && handleSort(col.key)">
-                <div class="flex items-center gap-1">
-                  {{ col.label }}
-                  <template v-if="col.sortable">
-                    <UIcon v-if="tableSettings.settings.sortColumn === col.key"
-                      :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
-                      class="w-3 h-3" />
-                    <UIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
-                  </template>
-                </div>
-              </th>
-
-              <th v-if="hasActions" role="columnheader"
-                class="w-24 px-3 py-2 text-center text-xs font-medium uppercase tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface)">
-                {{ $t('actions') }}
-              </th>
-            </tr>
-          </thead>
-
-          <tbody class="divide-y divide-(--color-border)">
-            <tr v-if="virtualScrollEnabled && virtualTopHeight > 0" :style="{ height: virtualTopHeight + 'px' }">
-              <td :colspan="totalColSpan" />
-            </tr>
-
-            <tr v-for="(row, idx) in virtualRows" :key="getRowKey(row)" role="row" :aria-selected="isSelected(row)"
-              :tabindex="clickable ? 0 : undefined"
-              class="hover:bg-(--color-surface-hover) transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue"
-              :class="{
-                'cursor-pointer': clickable || selectable,
-                'bg-opsi-blue/5 dark:bg-opsi-blue/10': isSelected(row),
-              }" @click="handleRowClick(row, $event)" @keydown.enter="handleRowClick(row, $event)">
-              <td v-if="selectable" class="px-3 py-2 text-center" role="gridcell" @click.stop>
-                <input v-if="selectionMode === 'multi'" type="checkbox" :checked="isSelected(row)"
-                  class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
-                  :aria-label="`Select row ${getRowKey(row)}`" @change="toggleSelection(row)" />
-                <input v-else type="radio" :checked="isSelected(row)" :name="`${tableId}-selection`"
-                  class="border-gray-300 text-opsi-blue focus:ring-opsi-blue"
-                  :aria-label="`Select row ${getRowKey(row)}`" @change="selectSingle(row)" />
-              </td>
-
-              <td v-for="col in visibleColumns" :key="col.key" role="gridcell"
-                class="px-3 py-2 text-sm text-(--color-text)" :class="col.class" :style="{ textAlign: col.align }">
-                <slot :name="`cell-${col.key}`" :row="row" :value="getNestedValue(row, col.key)" :index="idx">
-                  {{ formatCellValue(row, col) }}
-                </slot>
-              </td>
-
-              <td v-if="hasActions" class="px-3 py-2 text-center sticky right-0 bg-(--color-surface)" @click.stop>
-                <div class="flex items-center justify-center gap-1">
-                  <slot name="row-actions" :row="row" :index="idx">
-                    <template v-for="action in visibleActionsForRow(row)" :key="action.icon">
-                      <UButton :icon="action.icon" variant="ghost"
-                        :color="(action.color as 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error' | 'neutral') || 'neutral'"
-                        size="xs" :title="action.label" @click="action.handler(row)" />
+                <th v-for="col in visibleColumns" :key="col.key" role="columnheader"
+                  :aria-sort="getSortAriaLabel(col.key)"
+                  class="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-(--color-text-muted) whitespace-nowrap"
+                  :class="[col.headerClass, { 'cursor-pointer hover:bg-(--color-surface-hover)': col.sortable }]"
+                  :style="{ width: col.width, minWidth: col.minWidth || '80px', textAlign: col.align }"
+                  :tabindex="col.sortable ? 0 : undefined" @click="col.sortable && handleSort(col.key)"
+                  @keydown.enter="col.sortable && handleSort(col.key)">
+                  <div class="flex items-center gap-1">
+                    {{ col.label }}
+                    <template v-if="col.sortable">
+                      <UIcon v-if="tableSettings.settings.sortColumn === col.key"
+                        :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
+                        class="w-3 h-3" />
+                      <UIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
                     </template>
+                  </div>
+                </th>
+
+                <th v-if="hasActions" role="columnheader"
+                  class="w-24 px-3 py-2.5 text-center text-xs font-semibold uppercase tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface)">
+                  {{ $t('actions') }}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y divide-(--color-border)">
+              <tr v-if="virtualScrollEnabled && virtualTopHeight > 0" :style="{ height: virtualTopHeight + 'px' }">
+                <td :colspan="totalColSpan" />
+              </tr>
+
+              <tr v-for="(row, idx) in virtualRows" :key="getRowKey(row)" role="row" :aria-selected="isSelected(row)"
+                :tabindex="0"
+                class="group hover:bg-(--color-surface-hover) transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue"
+                :class="{
+                  'cursor-pointer': true,
+                  'bg-opsi-blue/5 dark:bg-opsi-blue/10': isSelected(row),
+                }" @click="handleRowClick(row, $event)" @keydown.enter="handleRowClick(row, $event)">
+                <td v-if="selectable" class="px-3 py-2 text-center" role="gridcell"
+                  @click.stop="handleCheckboxClick(row)">
+                  <input v-if="effectiveSelectionMode === 'multi'" type="checkbox" :checked="isSelected(row)"
+                    class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
+                    :aria-label="'Select row ' + getRowKey(row)" />
+                  <input v-else type="radio" :checked="isSelected(row)" :name="tableId + '-selection'"
+                    class="border-gray-300 text-opsi-blue focus:ring-opsi-blue"
+                    :aria-label="'Select row ' + getRowKey(row)" />
+                </td>
+
+                <td v-for="col in visibleColumns" :key="col.key" role="gridcell"
+                  class="px-3 py-2 text-sm text-(--color-text)" :class="col.class" :style="{ textAlign: col.align }">
+                  <slot :name="'cell-' + col.key" :row="row" :value="getNestedValue(row, col.key)" :index="idx">
+                    {{ formatCellValue(row, col) }}
                   </slot>
-                </div>
-              </td>
-            </tr>
+                </td>
 
-            <tr v-if="virtualScrollEnabled && virtualBottomHeight > 0" :style="{ height: virtualBottomHeight + 'px' }">
-              <td :colspan="totalColSpan" />
-            </tr>
+                <td v-if="hasActions"
+                  class="px-3 py-2 text-center sticky right-0 bg-(--color-surface) group-hover:bg-(--color-surface-hover)"
+                  @click.stop>
+                  <div class="flex items-center justify-center gap-1">
+                    <slot name="row-actions" :row="row" :index="idx">
+                      <template v-for="action in visibleActionsForRow(row)" :key="action.icon">
+                        <UButton :icon="action.icon" variant="ghost"
+                          :color="(action.color as 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error' | 'neutral') || 'neutral'"
+                          size="xs" :title="action.label" @click="action.handler(row)" />
+                      </template>
+                    </slot>
+                  </div>
+                </td>
+              </tr>
 
-            <tr v-if="sortedRows.length === 0 && !loading">
-              <td :colspan="totalColSpan" class="px-4 py-12 text-center">
-                <div class="flex flex-col items-center gap-2 text-(--color-text-muted)">
-                  <UIcon :name="emptyIcon || icons.table" class="w-8 h-8 opacity-50" />
-                  <span>{{ emptyLabel || $t('message.noItemsFound') }}</span>
-                </div>
-              </td>
-            </tr>
+              <tr v-if="virtualScrollEnabled && virtualBottomHeight > 0"
+                :style="{ height: virtualBottomHeight + 'px' }">
+                <td :colspan="totalColSpan" />
+              </tr>
 
-            <tr v-if="displayMode === 'infinite' && hasMoreData && !virtualScrollEnabled" class="scroll-sentinel">
-              <td :colspan="totalColSpan" class="px-4 py-4 text-center">
-                <div class="flex items-center justify-center gap-2 text-(--color-text-muted) text-sm">
-                  <UIcon :name="icons.loading" class="w-4 h-4 animate-spin" />
-                  <span>{{ $t('loading') }}...</span>
-                </div>
-              </td>
-            </tr>
+              <tr v-if="sortedRows.length === 0 && !loading">
+                <td :colspan="totalColSpan" class="px-4 py-12 text-center">
+                  <div class="flex flex-col items-center gap-2 text-(--color-text-muted)">
+                    <UIcon :name="emptyIcon || icons.table" class="w-8 h-8 opacity-50" />
+                    <span>{{ emptyLabel || $t('message.noItemsFound') }}</span>
+                  </div>
+                </td>
+              </tr>
 
-            <tr
-              v-else-if="displayMode === 'infinite' && sortedRows.length > 0 && !hasMoreData && !virtualScrollEnabled">
-              <td :colspan="totalColSpan" class="px-4 py-3 text-center">
-                <span class="text-xs text-(--color-text-muted)">{{ $t('allItemsLoaded') }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              <tr v-if="displayMode === 'infinite' && hasMoreData && !virtualScrollEnabled" class="scroll-sentinel">
+                <td :colspan="totalColSpan" class="px-4 py-4 text-center">
+                  <div class="flex items-center justify-center gap-2 text-(--color-text-muted) text-sm">
+                    <UIcon :name="icons.loading" class="w-4 h-4 animate-spin" />
+                    <span>{{ $t('loading') }}...</span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr
+                v-else-if="displayMode === 'infinite' && sortedRows.length > 0 && !hasMoreData && !virtualScrollEnabled">
+                <td :colspan="totalColSpan" class="px-4 py-3 text-center">
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('allItemsLoaded') }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </UCard>
 
+    <!-- Pagination -->
     <div v-if="displayMode === 'pagination' && totalPages > 1"
-      class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 flex items-center justify-center gap-2">
-      <UButton :icon="icons.arrowLeft" variant="outline" color="neutral" size="xs" :disabled="currentPage === 1"
-        @click="goToPage(currentPage - 1)" />
+      class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 mt-2 rounded-b-lg flex items-center justify-between gap-2">
+      <span class="text-xs text-(--color-text-muted)">
+        {{ $t('page') }} {{ currentPage }} {{ $t('of') }} {{ totalPages }}
+      </span>
       <div class="flex items-center gap-1">
+        <UButton :icon="icons.arrowLeft" variant="outline" color="neutral" size="xs" :disabled="currentPage === 1"
+          @click="goToPage(currentPage - 1)" />
         <template v-for="page in visiblePageNumbers" :key="page">
           <span v-if="page === '...'" class="px-2 text-(--color-text-muted)">...</span>
           <UButton v-else :variant="page === currentPage ? 'solid' : 'ghost'"
@@ -256,9 +272,9 @@ DataTable - A high-performance, feature-rich table component with:
             {{ page }}
           </UButton>
         </template>
+        <UButton :icon="icons.arrowRight" variant="outline" color="neutral" size="xs"
+          :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)" />
       </div>
-      <UButton :icon="icons.arrowRight" variant="outline" color="neutral" size="xs"
-        :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)" />
     </div>
   </div>
 </template>
@@ -318,6 +334,7 @@ const emit = defineEmits<{
   (e: 'refresh'): void
   (e: 'update:filterQuery', query: string): void
   (e: 'row-action', action: string, row: T): void
+  (e: 'row-activate', row: T): void
 }>()
 
 const icons = useIcons()
@@ -331,12 +348,27 @@ const selectedKeys = ref<string[]>([])
 const filterQueryInternal = ref(props.filterQuery || '')
 const currentPage = ref(1)
 const loadedCount = ref(tableSettings.settings.pageSize)
+const selectionModeOverride = ref<'single' | 'multi' | null>(null)
 
 const scrollTop = ref(0)
 
 const displayMode = computed(() => tableSettings.settings.displayMode)
-const selectionMode = computed(() => tableSettings.settings.selectionMode)
 const pageSize = computed(() => tableSettings.settings.pageSize)
+
+// Selection mode: single by default, auto-switches to multi when multiple items
+// are selected from external source (e.g. groups)
+const effectiveSelectionMode = computed(() => {
+  if (selectionModeOverride.value) return selectionModeOverride.value
+  return tableSettings.settings.selectionMode
+})
+
+// Compute minimum table width based on visible columns for horizontal scroll
+const tableMinWidth = computed(() => {
+  const selCol = props.selectable ? 48 : 0
+  const actCol = hasActions.value ? 96 : 0
+  const colWidth = visibleColumns.value.length * 120
+  return `${selCol + actCol + colWidth}px`
+})
 
 const pageSizeOptions = computed(() => [
   { value: 10, label: '10' },
@@ -512,20 +544,32 @@ function handleSort(column: string) {
   tableSettings.setSort(column)
 }
 
+/**
+ * Row click behavior:
+ * - SINGLE mode: select that row (deselect others) AND emit row-activate to open detail panel
+ * - MULTI mode: toggle selection on the row (no detail panel - use row action button)
+ */
 function handleRowClick(row: T, event: Event) {
   const target = event.target as HTMLElement
-  if (target.closest('button') || target.closest('[role="button"]')) return
+  if (target.closest('button') || target.closest('[role="button"]') || target.closest('input')) return
 
-  if (props.selectable) {
-    if (selectionMode.value === 'single') {
-      selectSingle(row)
-    } else {
-      toggleSelection(row)
-    }
+  if (effectiveSelectionMode.value === 'single') {
+    selectSingle(row)
+    emit('row-activate', row)
+  } else {
+    toggleSelection(row)
   }
+}
 
-  if (props.clickable) {
-    emit('select', row)
+/**
+ * Checkbox/radio click in the selection column
+ */
+function handleCheckboxClick(row: T) {
+  if (effectiveSelectionMode.value === 'single') {
+    selectSingle(row)
+    emit('row-activate', row)
+  } else {
+    toggleSelection(row)
   }
 }
 
@@ -561,7 +605,19 @@ function toggleSelectAll() {
 
 function clearSelection() {
   selectedKeys.value = []
+  selectionModeOverride.value = null
   emitSelectionChange()
+}
+
+function forceSelectionMode(mode: 'single' | 'multi') {
+  selectionModeOverride.value = mode
+  tableSettings.setSelectionMode(mode)
+  if (mode === 'single' && selectedKeys.value.length > 1) {
+    // Keep only last selected
+    const lastKey = selectedKeys.value[selectedKeys.value.length - 1] || ''
+    selectedKeys.value = [lastKey]
+    emitSelectionChange()
+  }
 }
 
 function emitSelectionChange() {
@@ -604,9 +660,19 @@ watch(() => props.filterQuery, (val) => {
   }
 })
 
+// Watch selectedKeys from parent - auto-switch to multi if multiple items synced
 watch(() => props.selectedKeys, (newKeys) => {
   if (newKeys) {
     selectedKeys.value = [...newKeys]
+    // Auto-switch to multi if external source pushes multiple selections
+    if (newKeys.length > 1 && effectiveSelectionMode.value === 'single') {
+      selectionModeOverride.value = 'multi'
+    }
+    // If only 1 or 0 items left and user hasn't manually forced multi, go back to single
+    if (newKeys.length <= 1 && selectionModeOverride.value === 'multi'
+      && tableSettings.settings.selectionMode === 'single') {
+      selectionModeOverride.value = null
+    }
   }
 }, { immediate: true, deep: true })
 
@@ -623,11 +689,11 @@ defineExpose({
     emitSelectionChange()
   },
   refresh: handleRefresh,
+  effectiveSelectionMode,
 })
 </script>
 
 <style scoped>
-/* Ensure smooth scrolling */
 .data-table {
   contain: layout style;
 }

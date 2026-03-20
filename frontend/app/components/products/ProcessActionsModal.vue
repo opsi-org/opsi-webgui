@@ -12,6 +12,11 @@
 					</div>
 				</template>
 
+				<UAlert v-if="statusMessage" :color="statusMessage.type" :description="statusMessage.message"
+					variant="subtle" class="mb-3"
+					:close-button="{ icon: icons.close, color: statusMessage.type, variant: 'link' }"
+					@close="statusMessage = null" />
+
 				<div class="space-y-4">
 					<div class="divide-y divide-(--color-border) dark:divide-(--color-border)">
 						<div
@@ -125,11 +130,11 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const toast = useToast()
 const selectionStore = useSelectionStore()
 const { processActionRequests } = useApiHelpers()
 
 const executing = ref(false)
+const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
 const productMode = ref<'all' | 'selected'>('all')
 const visibility = ref<ProductVisibility>('')
 const clientIds = ref<string[]>([...selectionStore.selectedClients])
@@ -157,20 +162,16 @@ async function executeProcessAction() {
 
 		if (result.error) throw result.error
 
-		toast.add({
-			title: String($t('success')),
-			description: String($t('message.processActionsExecuted')),
-			color: 'success',
-		})
+		statusMessage.value = { type: 'success', message: String($t('message.processActionsExecuted')) }
+		setTimeout(() => { statusMessage.value = null }, 5000)
 		open.value = false
 		emit('executed')
 	} catch (e) {
 		console.error('Failed to execute process actions:', e)
-		toast.add({
-			title: String($t('error')),
-			description: e instanceof Error ? e.message : String($t('message.failedToProcessActions')),
-			color: 'error',
-		})
+		statusMessage.value = {
+			type: 'error',
+			message: e instanceof Error ? e.message : String($t('message.failedToProcessActions')),
+		}
 	} finally {
 		executing.value = false
 	}

@@ -1,6 +1,13 @@
 <template>
 	<div
 		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
+		<!-- Inline status -->
+		<UAlert v-if="statusMessage" :color="statusMessage.type"
+			:title="statusMessage.type === 'success' ? $t('success') : $t('error')" :description="statusMessage.message"
+			variant="subtle" class="mb-2 shrink-0"
+			:close-button="{ icon: icons.close, color: statusMessage.type, variant: 'link' }"
+			@close="statusMessage = null" />
+
 		<SharedTabsNav v-model="activeTab" :tabs="tabDefs" class="mb-3 shrink-0" />
 
 		<div v-show="activeTab === 'properties'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1']">
@@ -43,7 +50,6 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const toast = useToast()
 const selectionStore = useSelectionStore()
 const { getProductProperties, saveProductProperties, getProductDependencies } = useApiHelpers()
 
@@ -53,6 +59,7 @@ watch(() => props.tab, (v) => { if (v) activeTab.value = v })
 const loadingProps = ref(false)
 const loadingDeps = ref(false)
 const savingProps = ref(false)
+const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
 
 const rawProperties = ref<Record<string, ProductProperty>>({})
 const editableProperties = ref<EditableProductProperty[]>([])
@@ -165,7 +172,7 @@ async function fetchProperties() {
 
 		if (result.error) {
 			console.error('Failed to fetch product properties:', result.error)
-			toast.add({ title: String($t('error')), description: String($t('message.failedToLoadProperties')), color: 'error' })
+			statusMessage.value = { type: 'error', message: String($t('message.failedToLoadProperties')) }
 			editableProperties.value = []
 			return
 		}
@@ -244,15 +251,15 @@ async function saveAll() {
 			originalPropertyValues.value.set(prop.propertyId, JSON.parse(JSON.stringify(prop._value)))
 		}
 
-		toast.add({ title: String($t('success')), description: String($t('message.propertiesSaved')), color: 'success' })
+		statusMessage.value = { type: 'success', message: String($t('message.propertiesSaved')) }
+		setTimeout(() => { statusMessage.value = null }, 5000)
 		emit('saved')
 	} catch (e) {
 		console.error('Failed to save properties:', e)
-		toast.add({
-			title: String($t('error')),
-			description: e instanceof Error ? e.message : String($t('message.failedToSaveProperties')),
-			color: 'error',
-		})
+		statusMessage.value = {
+			type: 'error',
+			message: e instanceof Error ? e.message : String($t('message.failedToSaveProperties')),
+		}
 	} finally {
 		savingProps.value = false
 	}

@@ -29,7 +29,7 @@ const defaults: Record<string, DataTableSettings> = {
     sortDirection: 'asc',
     pageSize: 20,
     displayMode: 'infinite',
-    selectionMode: 'multi',
+    selectionMode: 'single',
   },
   clients: {
     visibleColumns: [
