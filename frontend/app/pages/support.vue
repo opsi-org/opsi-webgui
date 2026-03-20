@@ -10,9 +10,9 @@
                         </div>
                     </template>
                     <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('professionalSupportDescription') }}</p>
-                    <UButton variant="outline" color="neutral" block as="a" :href="supportUrl" target="_blank">{{
+                    <UButton variant="soft" color="neutral" block as="a" :href="supportUrl" target="_blank">{{
                         $t('contactSupport')
-                    }}</UButton>
+                        }}</UButton>
                 </UCard>
                 <UCard>
                     <template #header>
@@ -22,8 +22,8 @@
                         </div>
                     </template>
                     <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('communityDescription') }}</p>
-                    <UButton variant="outline" color="neutral" block as="a" href="https://forum.opsi.org"
-                        target="_blank">{{
+                    <UButton variant="soft" color="neutral" block as="a" href="https://forum.opsi.org" target="_blank">
+                        {{
                             $t('visitOPSIForum') }}</UButton>
                 </UCard>
                 <UCard class="h-full">
@@ -34,8 +34,7 @@
                         </div>
                     </template>
                     <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('documentationDescription') }}</p>
-                    <UButton variant="outline" color="neutral" block as="a" href="https://docs.opsi.org"
-                        target="_blank">
+                    <UButton variant="soft" color="neutral" block as="a" href="https://docs.opsi.org" target="_blank">
                         {{ $t('openDocumentation') }}
                     </UButton>
                 </UCard>

@@ -25,8 +25,8 @@ SupportWhatsNew - Displays changelog.
 		</div>
 		<div v-else class="space-y-2 max-h-100 overflow-y-auto">
 			<div v-for="(item, idx) in items" :key="idx" class="changelog-item flex items-start gap-2 text-sm pb-2">
-				<UIcon :name="getItemIcon(item)" :class="getItemIconClass(item)" class="w-4 h-4 mt-0.5 shrink-0" />
-				<span :class="getItemTextClass(item)">{{ formatItem(item) }}</span>
+				<UIcon :name="icons.minus" class="h-5 w-2" />
+				<span>{{ item.text }}</span>
 			</div>
 		</div>
 
@@ -47,56 +47,27 @@ const { getChangelogs } = useApiHelpers()
 
 const loading = ref(true)
 const error = ref(false)
-const items = ref<string[]>([])
+const items = ref<{ section: string, text: string }[]>([])
 
 const version = computed(() => config.public.packageVersion || '—')
 
-function parseChangelog(markdown: string): string[] {
+function parseChangelog(markdown: string): { section: string, text: string }[] {
 	const lines = markdown.split('\n')
-	const parsedItems: string[] = []
+	const parsedItems: { section: string, text: string }[] = []
+	let currentSection = ''
 
 	for (const line of lines) {
 		const trimmed = line.trim()
 		if (!trimmed || trimmed.startsWith('#')) continue
+		if (trimmed.startsWith('### ')) {
+			currentSection = trimmed.replace(/^###\s+/, '').trim()
+			continue
+		}
 		if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-			parsedItems.push(trimmed.substring(2).trim())
-		} else if (trimmed.startsWith('[') && trimmed.includes(']')) {
-			parsedItems.push(trimmed)
+			parsedItems.push({ section: currentSection, text: trimmed.substring(2).trim() })
 		}
 	}
-
 	return parsedItems
-}
-
-function getItemIcon(item: string): string {
-	const lowerItem = item.toLowerCase()
-	if (lowerItem.includes('[fix]') || lowerItem.startsWith('fix')) return icons.check
-	if (lowerItem.includes('[add]') || lowerItem.includes('[new]') || lowerItem.startsWith('add')) return icons.add
-	if (lowerItem.includes('[change]') || lowerItem.includes('[update]')) return icons.refresh
-	if (lowerItem.includes('[remove]') || lowerItem.includes('[delete]')) return icons.delete
-	if (lowerItem.includes('[security]')) return icons.lock
-	if (lowerItem.includes('[deprecate]')) return icons.warning
-	return icons.check
-}
-
-function getItemIconClass(item: string): string {
-	const lowerItem = item.toLowerCase()
-	if (lowerItem.includes('[fix]') || lowerItem.startsWith('fix')) return 'text-[--color-opsi-success]'
-	if (lowerItem.includes('[add]') || lowerItem.includes('[new]')) return 'text-opsi-blue'
-	if (lowerItem.includes('[security]')) return 'text-[--color-opsi-error]'
-	if (lowerItem.includes('[deprecate]')) return 'text-[--color-opsi-warning]'
-	return 'text-[--color-text-muted]'
-}
-
-function getItemTextClass(item: string): string {
-	const lowerItem = item.toLowerCase()
-	if (lowerItem.includes('[security]')) return 'text-[--color-opsi-error]'
-	return ''
-}
-
-function formatItem(item: string): string {
-	// Remove common prefixes like [fix], [add], etc.
-	return item.replace(/^\[(fix|add|new|change|update|remove|delete|security|deprecate|pub|cg)\]\s*/gi, '').trim()
 }
 
 async function fetchChangelog() {
