@@ -1,0 +1,318 @@
+<template>
+	<div class="flex flex-col h-full min-h-0">
+		<div class="flex items-center gap-1 mb-2 shrink-0">
+			<UInput v-model="searchQuery" :placeholder="t('filter')" size="xs" :icon="icons.search" class="flex-1">
+				<template v-if="searchQuery" #trailing>
+					<UButton :icon="icons.close" size="xs" variant="link" color="neutral" @click="searchQuery = ''" />
+				</template>
+			</UInput>
+			<UButton :icon="allExpanded ? icons.collapse : icons.expand" size="xs" variant="ghost" color="neutral"
+				:title="allExpanded ? t('collapseAll') : t('expandAll')" @click="toggleExpandAll" />
+			<UButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="t('refresh')"
+				:loading="loading" @click="refresh" />
+		</div>
+
+		<div v-if="loading && !hasData" class="flex items-center justify-center py-8">
+			<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+		</div>
+		<div v-else-if="errorMsg" class="text-xs text-red-500 py-2">{{ errorMsg }}</div>
+
+		<div v-else class="flex-1 overflow-y-auto min-h-0">
+			<template v-if="groupType === 'client'">
+				<div v-for="section in clientSections" :key="section.id" class="mb-3">
+					<div class="flex items-center justify-between px-1 py-1 mb-0.5">
+						<span class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted)">{{
+							section.label }}</span>
+						<UBadge size="xs" variant="subtle" color="neutral">{{ section.count }}</UBadge>
+					</div>
+					<div v-for="item in section.flatItems" :key="`${section.id}-${item.id}`"
+						:style="{ paddingLeft: `${item.depth * 16}px` }"
+						class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer">
+						<UButton v-if="item.hasChildren" :icon="item.isExpanded ? icons.arrowDown : icons.arrowRight"
+							size="xs" variant="ghost" color="neutral" class="shrink-0 !p-0 !h-4 !w-4"
+							@click.stop="toggleExpand(item.id)" />
+						<span v-else class="w-4 shrink-0" />
+						<UCheckbox :model-value="isItemChecked(item)" size="xs" @click.stop
+							@update:model-value="handleItemClick(item)" />
+						<span class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
+							@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
+							}}</span>
+						<UBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle" color="neutral">
+							{{ item.memberCount }}</UBadge>
+					</div>
+					<div v-if="section.flatItems.length === 0"
+						class="text-[10px] text-(--color-text-muted) py-1 px-2 italic">{{ t('noResults') }}</div>
+				</div>
+				<div class="mb-3">
+					<div class="flex items-center justify-between px-1 py-1 mb-0.5">
+						<span class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted)">{{
+							t('allClients') }}</span>
+						<UBadge size="xs" variant="subtle" color="neutral">{{ allClientsList.length }}</UBadge>
+					</div>
+					<div v-if="allClientsLoading" class="py-2 text-center">
+						<UIcon :name="icons.loading" class="w-4 h-4 animate-spin text-(--color-text-muted)" />
+					</div>
+					<div v-else class="max-h-48 overflow-y-auto">
+						<div v-for="client in filteredAllClients" :key="client"
+							class="flex items-center gap-2 px-2 py-0.5 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer"
+							@click="selectionStore.toggleClient(client, 'quickpanel')">
+							<UCheckbox :model-value="selectionStore.selectedClients.includes(client)" size="xs"
+								@click.stop @update:model-value="selectionStore.toggleClient(client, 'quickpanel')" />
+							<span class="truncate">{{ client }}</span>
+						</div>
+						<div v-if="filteredAllClients.length === 0"
+							class="text-[10px] text-(--color-text-muted) py-1 px-2 italic">{{ t('noResults') }}</div>
+					</div>
+				</div>
+			</template>
+
+			<template v-else>
+				<div v-for="item in productFlatItems" :key="item.id" :style="{ paddingLeft: `${item.depth * 16}px` }"
+					class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer">
+					<UButton v-if="item.hasChildren" :icon="item.isExpanded ? icons.arrowDown : icons.arrowRight"
+						size="xs" variant="ghost" color="neutral" class="shrink-0 !p-0 !h-4 !w-4"
+						@click.stop="toggleExpand(item.id)" />
+					<span v-else class="w-4 shrink-0" />
+					<UCheckbox :model-value="isItemChecked(item)" size="xs" @click.stop
+						@update:model-value="handleItemClick(item)" />
+					<span class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
+						@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
+						}}</span>
+					<UBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle" color="neutral">{{
+						item.memberCount }}</UBadge>
+				</div>
+				<div v-if="productFlatItems.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">{{
+					t('noResults') }}</div>
+			</template>
+		</div>
+
+		<div v-if="selectedCount > 0" class="shrink-0 pt-2 mt-2 border-t border-(--color-border)">
+			<div class="flex items-center justify-between">
+				<span class="text-xs text-(--color-text-muted)">{{ selectedCount }} {{ t('selected') }}</span>
+				<UButton size="xs" variant="link" color="error" @click="clearAll">{{ t('clearAll') }}</UButton>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script setup lang="ts">
+import type { GroupTreeNodeData } from '~/types/groups.types'
+import { useSelectionStore } from '~/stores/selectionStore'
+
+const props = defineProps<{ groupType: 'client' | 'product' }>()
+
+const icons = useIcons()
+const { t: i18nT } = useI18n()
+const selectionStore = useSelectionStore()
+
+const t = (key: string) => {
+	const translated = i18nT(key)
+	if (translated && translated !== key) return String(translated)
+	return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
+}
+
+const searchQuery = ref('')
+const allClientsList = ref<string[]>([])
+const allClientsLoading = ref(false)
+
+const loading = computed(() =>
+	props.groupType === 'client' ? selectionStore.clientGroupsLoading : selectionStore.productGroupsLoading
+)
+const errorMsg = computed(() =>
+	props.groupType === 'client' ? selectionStore.clientGroupsError : selectionStore.productGroupsError
+)
+const rawTree = computed(() =>
+	props.groupType === 'client' ? selectionStore.clientGroupsTree : selectionStore.productGroupsTree
+)
+const expandedIds = computed(() => {
+	const ids = props.groupType === 'client' ? selectionStore.clientGroupsExpanded : selectionStore.productGroupsExpanded
+	return new Set(ids)
+})
+const hasData = computed(() => rawTree.value.length > 0)
+
+interface FlatItem {
+	id: string
+	label: string
+	depth: number
+	isGroup: boolean
+	memberCount: number
+	members: string[]
+	hasChildren: boolean
+	isExpanded: boolean
+}
+
+function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string): FlatItem[] {
+	const result: FlatItem[] = []
+	for (const node of nodes) {
+		const label = node.label || node.id
+		const labelMatch = !query || label.toLowerCase().includes(query)
+		const hasGroupChildren = (node.children?.length || 0) > 0
+		const hasMemberChildren = (node.members?.length || 0) > 0
+		const isGroup = hasGroupChildren || hasMemberChildren || node.type === 'HostGroup' || node.type === 'ProductGroup'
+		const isExpanded = expandedIds.value.has(node.id)
+
+		const childItems = node.children ? flattenNodes(node.children, depth + 1, query) : []
+		const memberItems: FlatItem[] = []
+		if (node.members) {
+			for (const m of node.members) {
+				if (!query || m.toLowerCase().includes(query)) {
+					memberItems.push({
+						id: m, label: m, depth: depth + 1, isGroup: false,
+						memberCount: 0, members: [], hasChildren: false, isExpanded: false,
+					})
+				}
+			}
+		}
+
+		const hasMatchingDescendants = childItems.length > 0 || memberItems.length > 0
+		if (labelMatch || hasMatchingDescendants) {
+			result.push({
+				id: node.id, label, depth, isGroup,
+				memberCount: node.memberCount || node.members?.length || 0,
+				members: node.members || [],
+				hasChildren: hasGroupChildren || hasMemberChildren,
+				isExpanded: query ? true : isExpanded,
+			})
+			if (query ? true : isExpanded) {
+				result.push(...childItems)
+				result.push(...memberItems)
+			}
+		}
+	}
+	return result
+}
+
+const clientSections = computed(() => {
+	if (props.groupType !== 'client') return []
+	const q = searchQuery.value.toLowerCase()
+	return rawTree.value.map(root => ({
+		id: root.id,
+		label: root.label || root.id,
+		count: root.memberCount || root.members?.length || 0,
+		flatItems: root.children ? flattenNodes(root.children, 0, q) : [],
+	}))
+})
+
+const productFlatItems = computed(() => {
+	if (props.groupType !== 'product') return []
+	const q = searchQuery.value.toLowerCase()
+	const root = rawTree.value
+	const first = root.length === 1 ? root[0] : null
+	const nodes = first?.children?.length ? first.children : root
+	return flattenNodes(nodes, 0, q)
+})
+
+const filteredAllClients = computed(() => {
+	const q = searchQuery.value.toLowerCase()
+	if (!q) return allClientsList.value
+	return allClientsList.value.filter(c => c.toLowerCase().includes(q))
+})
+
+const selectedCount = computed(() =>
+	props.groupType === 'client' ? selectionStore.selectedClients.length : selectionStore.selectedProducts.length
+)
+
+const allExpanded = computed(() => {
+	const collectIds = (nodes: GroupTreeNodeData[]): string[] => {
+		const ids: string[] = []
+		for (const n of nodes) {
+			if (n.children?.length || n.members?.length) {
+				ids.push(n.id)
+				if (n.children) ids.push(...collectIds(n.children))
+			}
+		}
+		return ids
+	}
+	const allIds = collectIds(rawTree.value)
+	return allIds.length > 0 && allIds.every(id => expandedIds.value.has(id))
+})
+
+function isItemChecked(item: FlatItem): boolean {
+	if (item.isGroup) {
+		const groups = props.groupType === 'client' ? selectionStore.selectedClientGroups : selectionStore.selectedProductGroups
+		if (groups.includes(item.id)) return true
+		if (item.members.length > 0) {
+			const selected = props.groupType === 'client' ? selectionStore.selectedClients : selectionStore.selectedProducts
+			return item.members.every(m => selected.includes(m))
+		}
+		return false
+	}
+	const selected = props.groupType === 'client' ? selectionStore.selectedClients : selectionStore.selectedProducts
+	return selected.includes(item.id)
+}
+
+function handleItemClick(item: FlatItem) {
+	if (item.isGroup) {
+		if (props.groupType === 'client') {
+			selectionStore.toggleClientGroup(item.id)
+			if (item.members.length > 0) {
+				const allSel = item.members.every(m => selectionStore.selectedClients.includes(m))
+				if (allSel) selectionStore.removeClients(item.members)
+				else selectionStore.addClients(item.members, 'quickpanel')
+			}
+		} else {
+			selectionStore.toggleProductGroup(item.id)
+			if (item.members.length > 0) {
+				const allSel = item.members.every(m => selectionStore.selectedProducts.includes(m))
+				if (allSel) selectionStore.removeProducts(item.members)
+				else selectionStore.addProducts(item.members, 'quickpanel')
+			}
+		}
+	} else {
+		if (props.groupType === 'client') selectionStore.toggleClient(item.id, 'quickpanel')
+		else selectionStore.toggleProduct(item.id, 'quickpanel')
+	}
+}
+
+function toggleExpand(nodeId: string) {
+	selectionStore.toggleGroupExpand(props.groupType, nodeId)
+}
+
+function toggleExpandAll() {
+	if (allExpanded.value) selectionStore.collapseAllGroups(props.groupType)
+	else selectionStore.expandAllGroups(props.groupType)
+}
+
+function clearAll() {
+	if (props.groupType === 'client') {
+		selectionStore.clearClients()
+		selectionStore.clearClientGroups()
+	} else {
+		selectionStore.clearProducts()
+		selectionStore.clearProductGroups()
+	}
+}
+
+function refresh() {
+	if (props.groupType === 'client') {
+		selectionStore.fetchClientGroups(true)
+		fetchAllClients()
+	} else {
+		selectionStore.fetchProductGroups(true)
+	}
+}
+
+async function fetchAllClients() {
+	if (props.groupType !== 'client') return
+	allClientsLoading.value = true
+	try {
+		const { getClientIds } = useApiHelpers()
+		const depots = selectionStore.selectedDepots
+		if (depots.length > 0) {
+			const result = await getClientIds(depots)
+			allClientsList.value = result.data || []
+		}
+	} catch { /* ignore */ } finally {
+		allClientsLoading.value = false
+	}
+}
+
+onMounted(() => {
+	if (props.groupType === 'client') {
+		selectionStore.fetchClientGroups()
+		fetchAllClients()
+	} else {
+		selectionStore.fetchProductGroups()
+	}
+})
+</script>

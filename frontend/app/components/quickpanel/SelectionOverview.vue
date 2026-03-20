@@ -1,0 +1,171 @@
+<template>
+	<div class="flex flex-col h-full min-h-0">
+		<div v-if="!hasAny" class="text-xs text-(--color-text-muted) py-8 text-center">
+			{{ t('noSelectionsYet') }}
+		</div>
+
+		<template v-else>
+			<div class="flex items-center justify-between mb-2 shrink-0">
+				<span class="text-xs text-(--color-text-muted)">{{ totalCount }} {{ t('total') }}</span>
+				<UButton size="xs" variant="link" color="error" @click="clearAll">{{ t('clearAllSelections') }}
+				</UButton>
+			</div>
+
+			<div class="flex-1 overflow-y-auto min-h-0 space-y-3">
+				<div v-if="selectionStore.selectedDepots.length > 0">
+					<div class="flex items-center justify-between mb-1">
+						<div class="flex items-center gap-1.5 text-xs font-medium">
+							<UIcon :name="icons.server" class="w-3.5 h-3.5" />
+							<span>{{ t('depots') }}</span>
+							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedDepots.length
+							}}</UBadge>
+						</div>
+						<UButton size="xs" variant="link" color="error" @click="clearDepots">{{ t('clearAll') }}
+						</UButton>
+					</div>
+					<div class="space-y-0.5">
+						<div v-for="depot in selectionStore.selectedDepots" :key="depot"
+							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
+							<span class="truncate">{{ depot }}</span>
+							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
+								class="opacity-0 group-hover:opacity-100 transition-opacity"
+								@click="removeDepot(depot)" />
+						</div>
+					</div>
+				</div>
+
+				<div v-if="selectionStore.selectedClients.length > 0">
+					<div class="flex items-center justify-between mb-1">
+						<div class="flex items-center gap-1.5 text-xs font-medium">
+							<UIcon :name="icons.client" class="w-3.5 h-3.5" />
+							<span>{{ t('clients') }}</span>
+							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedClients.length
+							}}</UBadge>
+						</div>
+						<UButton size="xs" variant="link" color="error" @click="selectionStore.clearClients()">{{
+							t('clearAll') }}</UButton>
+					</div>
+					<div class="space-y-0.5 max-h-40 overflow-y-auto">
+						<div v-for="client in selectionStore.selectedClients" :key="client"
+							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
+							<span class="truncate">{{ client }}</span>
+							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
+								class="opacity-0 group-hover:opacity-100 transition-opacity"
+								@click="selectionStore.toggleClient(client)" />
+						</div>
+					</div>
+				</div>
+
+				<div v-if="selectionStore.selectedProducts.length > 0">
+					<div class="flex items-center justify-between mb-1">
+						<div class="flex items-center gap-1.5 text-xs font-medium">
+							<UIcon :name="icons.product" class="w-3.5 h-3.5" />
+							<span>{{ t('products') }}</span>
+							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedProducts.length
+							}}</UBadge>
+						</div>
+						<UButton size="xs" variant="link" color="error" @click="selectionStore.clearProducts()">{{
+							t('clearAll') }}</UButton>
+					</div>
+					<div class="space-y-0.5 max-h-40 overflow-y-auto">
+						<div v-for="product in selectionStore.selectedProducts" :key="product"
+							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
+							<span class="truncate">{{ product }}</span>
+							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
+								class="opacity-0 group-hover:opacity-100 transition-opacity"
+								@click="selectionStore.toggleProduct(product)" />
+						</div>
+					</div>
+				</div>
+
+				<div v-if="selectionStore.selectedClientGroups.length > 0">
+					<div class="flex items-center justify-between mb-1">
+						<div class="flex items-center gap-1.5 text-xs font-medium">
+							<UIcon :name="icons.group" class="w-3.5 h-3.5" />
+							<span>{{ t('clientGroups') }}</span>
+							<UBadge size="xs" variant="subtle" color="neutral">{{
+								selectionStore.selectedClientGroups.length }}</UBadge>
+						</div>
+						<UButton size="xs" variant="link" color="error" @click="selectionStore.clearClientGroups()">{{
+							t('clearAll') }}</UButton>
+					</div>
+					<div class="space-y-0.5">
+						<div v-for="group in selectionStore.selectedClientGroups" :key="group"
+							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
+							<span class="truncate">{{ group }}</span>
+							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
+								class="opacity-0 group-hover:opacity-100 transition-opacity"
+								@click="selectionStore.toggleClientGroup(group)" />
+						</div>
+					</div>
+				</div>
+
+				<div v-if="selectionStore.selectedProductGroups.length > 0">
+					<div class="flex items-center justify-between mb-1">
+						<div class="flex items-center gap-1.5 text-xs font-medium">
+							<UIcon :name="icons.group" class="w-3.5 h-3.5" />
+							<span>{{ t('productGroups') }}</span>
+							<UBadge size="xs" variant="subtle" color="neutral">{{
+								selectionStore.selectedProductGroups.length }}</UBadge>
+						</div>
+						<UButton size="xs" variant="link" color="error" @click="selectionStore.clearProductGroups()">{{
+							t('clearAll') }}</UButton>
+					</div>
+					<div class="space-y-0.5">
+						<div v-for="group in selectionStore.selectedProductGroups" :key="group"
+							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
+							<span class="truncate">{{ group }}</span>
+							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
+								class="opacity-0 group-hover:opacity-100 transition-opacity"
+								@click="selectionStore.toggleProductGroup(group)" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</template>
+	</div>
+</template>
+
+<script setup lang="ts">
+import { useSelectionStore } from '~/stores/selectionStore'
+
+const icons = useIcons()
+const { t: i18nT } = useI18n()
+const selectionStore = useSelectionStore()
+
+const t = (key: string) => {
+	const translated = i18nT(key)
+	if (translated && translated !== key) return String(translated)
+	return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
+}
+
+const hasAny = computed(() => selectionStore.hasAnySelection)
+
+const totalCount = computed(() =>
+	selectionStore.selectedDepots.length +
+	selectionStore.selectedClients.length +
+	selectionStore.selectedProducts.length +
+	selectionStore.selectedClientGroups.length +
+	selectionStore.selectedProductGroups.length
+)
+
+function clearDepots() {
+	if (selectionStore.configServer) {
+		selectionStore.setDepots([selectionStore.configServer])
+	} else {
+		selectionStore.clearDepots()
+	}
+}
+
+function removeDepot(depotId: string) {
+	if (selectionStore.selectedDepots.length === 1 && selectionStore.configServer) return
+	selectionStore.toggleDepot(depotId, 'quickpanel')
+}
+
+function clearAll() {
+	selectionStore.clearAll()
+	if (selectionStore.configServer) {
+		selectionStore.setDepots([selectionStore.configServer])
+	}
+}
+</script>

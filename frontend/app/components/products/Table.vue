@@ -47,7 +47,8 @@
 
 				<SharedDataTable :rows="products" :columns="columns" :loading="loading" :table-id="tableId"
 					row-key="productId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
-					@select="handleRowSelect" @selection-change="handleSelectionChange" @refresh="fetchProducts">
+					:selected-keys="selectedTableKeys" @select="handleRowSelect"
+					@selection-change="handleSelectionChange" @refresh="fetchProducts">
 
 					<template #cell-productId="{ row }">
 						<div class="flex items-center gap-2">
@@ -191,6 +192,7 @@
 import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
 import type { ProductRow, ProductType, ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue } from '~/types/api/product.types'
 import { useStateStore } from '~/stores/stateStore'
+import { useSelectionStore } from '~/stores/selectionStore'
 
 interface Props {
 	productType: ProductType
@@ -204,6 +206,9 @@ const { t: $t } = useI18n()
 const toast = useToast()
 const { getProducts, setClientProductActions } = useApiHelpers()
 const stateStore = useStateStore()
+const selectionStore = useSelectionStore()
+
+const selectedTableKeys = computed(() => selectionStore.selectedProducts)
 
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -425,7 +430,7 @@ async function fetchProducts() {
 
 function handleSelectionChange(rows: ProductRow[], _keys: string[]) {
 	selectedProducts.value = rows
-	stateStore.setProducts(rows.map(r => r.productId))
+	selectionStore.setProducts(rows.map(r => r.productId), 'table')
 }
 
 function handleRowSelect(row: ProductRow) {

@@ -84,7 +84,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                             <UIcon :name="icons.close" class="w-4 h-4" />
                         </button>
                     </div>
-                    <LayoutsQuickPanel />
+                    <QuickpanelPanel />
                 </div>
             </aside>
         </div>
@@ -105,13 +105,11 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
 
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-base font-medium text-(--color-text)">{{ t('quickPanel') }}</span>
-                            <button @click="quickpanelOpen = false"
-                                class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
-                                <UIcon :name="icons.close" class="w-5 h-5" />
-                            </button>
+                            <UButton :icon="icons.close" size="sm" variant="ghost" color="neutral" class="rounded-full"
+                                @click="quickpanelOpen = false" />
                         </div>
 
-                        <LayoutsQuickPanel />
+                        <QuickpanelPanel />
                     </div>
                 </div>
             </div>
