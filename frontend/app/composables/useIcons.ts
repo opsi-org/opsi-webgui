@@ -105,6 +105,8 @@ export const icons = {
   productActionResult: 'i-heroicons-clipboard-document-check',
   unequal: 'i-heroicons-arrows-right-left',
   messageBus: 'i-heroicons-signal',
+  moreVertical: 'i-heroicons-ellipsis-vertical',
+  rename: 'i-heroicons-pencil-square',
 } as const
 
 export type IconName = keyof typeof icons

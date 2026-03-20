@@ -54,7 +54,7 @@
 					</template>
 					<template #cell-lastSeen="{ row }">
 						{{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as string).toLocaleString() :
-						'-' }}
+							'-' }}
 					</template>
 					<template #cell-uefi="{ row }">
 						<SharedStatusBadge v-if="(row as Client).uefi" status="info" label="UEFI" />
@@ -148,19 +148,19 @@ const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRef
 
 const columns: DataTableColumnDef[] = [
 	{ key: 'clientId', label: String($t('clientId')), sortable: true, alwaysVisible: true },
+	{ key: 'version_outdated', label: String($t('version_outdated_localboot')), headerIcon: icons.productsOutdatedLocal, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'version_outdated_netboot', label: String($t('version_outdated_netboot')), headerIcon: icons.productsOutdatedNet, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'installationStatus_installed', label: String($t('installationStatus_installed')), headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'installationStatus_unknown', label: String($t('installationStatus_unknown')), headerIcon: icons.productInstallationStatusUnknown, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'actionResult_failed', label: String($t('actionResult_failed')), headerIcon: icons.productsFailedActionResult, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'actionResult_successful', label: String($t('actionResult_successful')), headerIcon: icons.productActionResultSuccessful, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'reachable', label: String($t('reachable')), headerIcon: icons.clientReachable, sortable: false, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'description', label: String($t('description')), sortable: true },
+	{ key: 'lastSeen', label: String($t('lastSeen')), sortable: true },
 	{ key: 'macAddress', label: String($t('macAddress')), sortable: true, visible: false },
 	{ key: 'ipAddress', label: String($t('ipAddress')), sortable: true, visible: false },
-	{ key: 'lastSeen', label: String($t('lastSeen')), sortable: true },
 	{ key: 'depotId', label: String($t('server')), sortable: true, visible: false },
 	{ key: 'uefi', label: 'UEFI', sortable: true, visible: false },
-	{ key: 'version_outdated', label: String($t('version_outdated_localboot')), sortable: true, class: 'text-center w-12' },
-	{ key: 'version_outdated_netboot', label: String($t('version_outdated_netboot')), sortable: true, visible: false, class: 'text-center w-12' },
-	{ key: 'installationStatus_unknown', label: String($t('installationStatus_unknown')), sortable: true, visible: false, class: 'text-center w-12' },
-	{ key: 'installationStatus_installed', label: String($t('installationStatus_installed')), sortable: true, class: 'text-center w-12' },
-	{ key: 'actionResult_successful', label: String($t('actionResult_successful')), sortable: true, visible: false, class: 'text-center w-12' },
-	{ key: 'actionResult_failed', label: String($t('actionResult_failed')), sortable: true, class: 'text-center w-12' },
-	{ key: 'reachable', label: String($t('reachable')), sortable: false, class: 'text-center w-12' },
 ]
 
 function openPanel(client: Client, type: 'config' | 'logs' | 'clone') {
@@ -202,9 +202,11 @@ function handleActionComplete(action: string, success: boolean) {
 			message: String($t(`actionFailed.${action}`, action))
 		}
 	}
-	// Auto-dismiss after 5 seconds
-	setTimeout(() => { actionStatus.value = null }, 5000)
-	if (action === 'delete' && success) fetchClients()
+	// Auto-dismiss only success messages after 5 seconds, errors stay until manually closed
+	if (success) {
+		setTimeout(() => { actionStatus.value = null }, 5000)
+	}
+	if ((action === 'delete' || action === 'rename') && success) fetchClients()
 }
 
 async function fetchClients() {
@@ -218,11 +220,36 @@ async function fetchClients() {
 			if (first) selectionStore.setServers([first])
 			else { error.value = String($t('message.noServerSelected')); return }
 		}
-		const result = await getClients({ selectedDepots: selectionStore.selectedServersParam })
+		const result = await getClients({
+			selectedDepots: selectionStore.selectedServersParam,
+			selectedClients: `[${selectionStore.selectedClients.join(',')}]`,
+		})
 		if (result.error) error.value = result.error.message
-		else if (result.data) clients.value = result.data as Client[]
+		else if (result.data) {
+			clients.value = result.data as Client[]
+			// Auto-check reachability for visible clients
+			checkAllReachability(result.data as Client[])
+		}
 	} catch (e) { error.value = (e as Error).message }
 	finally { loading.value = false }
+}
+
+async function checkAllReachability(clientList: Client[]) {
+	const ids = clientList.map(c => c.clientId)
+	if (ids.length === 0) return
+	// Mark all as loading
+	for (const id of ids) reachableLoading.value[id] = true
+	try {
+		const result = await checkClientReachable(ids)
+		if (result.data) {
+			for (const [id, status] of Object.entries(result.data)) {
+				reachableStatus.value[id] = status
+			}
+		}
+	} catch { /* silently fail */ }
+	finally {
+		for (const id of ids) reachableLoading.value[id] = false
+	}
 }
 
 watch(() => selectionStore.selectedServers, fetchClients, { deep: true })

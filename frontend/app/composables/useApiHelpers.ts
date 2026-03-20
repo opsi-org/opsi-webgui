@@ -491,6 +491,8 @@ export function useApiHelpers() {
   const shutdownClients = (clientIds: string[]) => opsiclientdRpc(clientIds, 'shutdown', [''])
   const deleteClient = (clientId: string) =>
     apiPost<void>(`/opsidata/clients/${clientId}/delete`, {})
+  const renameClient = (clientId: string, newHostId: string) =>
+    apiPut<Record<string, unknown>>(`/opsidata/clients/${clientId}`, { hostId: newHostId })
   const checkClientReachable = (clientIds: string[]) =>
     apiPost<Record<string, boolean>>('/opsidata/clients/reachable', { selectedClients: clientIds })
   const executeClientAction = (
@@ -587,6 +589,7 @@ export function useApiHelpers() {
     rebootClients,
     shutdownClients,
     deleteClient,
+    renameClient,
     checkClientReachable,
     executeClientAction,
   }

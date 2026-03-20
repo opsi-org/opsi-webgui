@@ -140,7 +140,7 @@ DataTable - A high-performance, feature-rich table component with:
           {{ $t('loading') }}
         </div>
 
-        <div v-else class="min-w-full overflow-x-auto">
+        <div v-else class="min-w-full">
           <table class="w-full table-auto" role="grid" :aria-label="tableLabel" :style="{ minWidth: tableMinWidth }">
             <thead class="bg-(--color-surface) sticky top-0 z-10">
               <tr role="row">
@@ -159,7 +159,14 @@ DataTable - A high-performance, feature-rich table component with:
                   :tabindex="col.sortable ? 0 : undefined" @click="col.sortable && handleSort(col.key)"
                   @keydown.enter="col.sortable && handleSort(col.key)">
                   <div class="flex items-center gap-1">
-                    {{ col.label }}
+                    <template v-if="col.headerIcon">
+                      <UTooltip :text="col.label">
+                        <UIcon :name="col.headerIcon" class="w-4 h-4" />
+                      </UTooltip>
+                    </template>
+                    <template v-else>
+                      {{ col.label }}
+                    </template>
                     <template v-if="col.sortable">
                       <UIcon v-if="tableSettings.settings.sortColumn === col.key"
                         :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
@@ -256,12 +263,13 @@ DataTable - A high-performance, feature-rich table component with:
     </UCard>
 
     <!-- Pagination -->
-    <div v-if="displayMode === 'pagination' && totalPages > 1"
+    <div v-if="displayMode === 'pagination'"
       class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 mt-2 rounded-b-lg flex items-center justify-between gap-2">
       <span class="text-xs text-(--color-text-muted)">
         {{ $t('page') }} {{ currentPage }} {{ $t('of') }} {{ totalPages }}
+        ({{ totalRowCount }} {{ $t('items') }})
       </span>
-      <div class="flex items-center gap-1">
+      <div v-if="totalPages > 1" class="flex items-center gap-1">
         <UButton :icon="icons.arrowLeft" variant="outline" color="neutral" size="xs" :disabled="currentPage === 1"
           @click="goToPage(currentPage - 1)" />
         <template v-for="page in visiblePageNumbers" :key="page">

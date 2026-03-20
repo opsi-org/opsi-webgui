@@ -9,6 +9,7 @@ export interface DataTableColumnDef {
   align?: 'left' | 'center' | 'right'
   class?: string
   headerClass?: string
+  headerIcon?: string
 }
 
 export interface DataTableSettings {

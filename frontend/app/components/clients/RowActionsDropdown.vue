@@ -16,8 +16,8 @@ Row-level client actions dropdown for the clients table.
 		</UTooltip>
 
 		<UDropdownMenu :items="clientActionItems">
-			<UButton :icon="icons.menu" variant="ghost" color="neutral" size="xs" :loading="loading" :disabled="loading"
-				:title="String($t('clientActions'))" />
+			<UButton :icon="icons.moreVertical" variant="ghost" color="neutral" size="xs" :loading="loading"
+				:disabled="loading" :title="String($t('clientActions'))" />
 		</UDropdownMenu>
 	</div>
 

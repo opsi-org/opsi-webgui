@@ -83,14 +83,18 @@ function openConfig(row: Server) {
     panelType.value = 'config'
 }
 
-/** Single-select row click: select + open config panel */
+/** Single-select row click: open config panel but keep config server selected */
 function handleRowActivate(row: Server) {
-    selectionStore.setServers([row.depotId], 'table')
     openConfig(row)
 }
 
 function handleSelectionChange(_rows: Server[], keys: string[]) {
-    selectionStore.setServers(keys, 'table')
+    // In single select, always keep config server selected - it's the main point of this app
+    if (selectionStore.configServer && !keys.includes(selectionStore.configServer)) {
+        selectionStore.setServers([selectionStore.configServer], 'table')
+    } else {
+        selectionStore.setServers(keys, 'table')
+    }
 }
 
 async function fetchServers() {
@@ -102,7 +106,13 @@ async function fetchServers() {
         if (result.data) {
             servers.value = result.data as Server[]
             const cs = result.data.find(d => d.type === 'OpsiConfigserver')
-            if (cs) selectionStore.setConfigServer(cs.depotId)
+            if (cs) {
+                selectionStore.setConfigServer(cs.depotId)
+                // Always ensure config server is selected
+                if (!selectionStore.selectedServers.includes(cs.depotId)) {
+                    selectionStore.setServers([cs.depotId])
+                }
+            }
             else if (result.data[0] && selectionStore.selectedServers.length === 0)
                 selectionStore.setServers([result.data[0].depotId])
         }
