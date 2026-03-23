@@ -10,7 +10,7 @@ PageLayout - A layout component with a fixed header (for controls) and a scrolla
 				</div>
 				<div class="flex flex-wrap items-center gap-2">
 					<UInput v-if="showSearch" v-model="searchModel"
-						:placeholder="searchPlaceholder || $t('typeToFilter')" :icon="icons.search" size="sm"
+						:placeholder="searchPlaceholder || $t('typeToFilter')" :icon="icons.filter" size="sm"
 						class="w-full sm:w-48 md:w-64" />
 					<slot name="tableControls" />
 					<slot name="actions" />

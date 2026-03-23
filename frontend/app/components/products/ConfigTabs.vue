@@ -9,7 +9,8 @@
 
 		<div class="flex items-center justify-between gap-2 mb-3 shrink-0">
 			<SharedTabsNav v-model="activeTab" :tabs="tabDefs" />
-			<UInput v-model="filterQuery" :placeholder="$t('filter')" :icon="icons.filter" size="xs" class="w-32" />
+			<UInput v-model="filterQuery" :placeholder="$t('filter')" :icon="icons.filter" size="xs"
+				class="w-full sm:w-48 md:w-64" />
 		</div>
 
 		<div v-show="activeTab === 'properties'"

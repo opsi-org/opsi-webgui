@@ -37,8 +37,8 @@
                         <UButton v-if="activeGroupType === 'products'" :icon="icons.add" size="xs" variant="ghost"
                             color="neutral" @click="openCreateModal()" :title="$t('createGroup')" />
                     </div>
-                    <UInput v-model="searchQuery" :placeholder="$t('search') + '...'" size="sm"
-                        :leading-icon="icons.search" class="w-full" />
+                    <UInput v-model="searchQuery" :placeholder="$t('filter')" size="sm" :leading-icon="icons.filter"
+                        class="w-full" />
                 </div>
                 <div v-if="loading" class="py-4 text-center">
                     <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
@@ -108,7 +108,7 @@
                                 <h4 class="text-sm font-medium text-(--color-text)">
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ selectedGroup.members.length
-                                    }})</span>
+                                        }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -281,7 +281,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                            }}
+                                }}
                             </UButton>
                             <UButton color="error" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -306,8 +306,8 @@
                         </div>
                     </template>
                     <div class="space-y-3" tabindex="-1" @keydown="handleAddMembersKeydown">
-                        <UInput v-model="availableMembersSearch" :placeholder="$t('search') + '...'" size="sm"
-                            :leading-icon="icons.search" autofocus />
+                        <UInput v-model="availableMembersSearch" :placeholder="$t('filter')" size="sm"
+                            :leading-icon="icons.filter" autofocus />
                         <div v-if="loadingMembers" class="py-4 text-center">
                             <UIcon name="i-heroicons-arrow-path"
                                 class="w-5 h-5 animate-spin text-(--color-text-muted)" />

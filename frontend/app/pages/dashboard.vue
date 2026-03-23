@@ -6,11 +6,13 @@
                 <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-lg bg-opsi-blue/10 flex items-center justify-center">
-                            <UIcon :name="icons.serverStack" class="w-4 h-4 text-opsi-blue" />
+                            <UIcon :name="icons.serverStack" class="w-4 h-4" />
                         </div>
                         <div>
-                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-wide">{{ $t('configServer') }}</p>
-                            <p class="font-semibold text-sm" :title="serverInfo?.hostname">{{ serverInfo?.hostname || '-' }}</p>
+                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-wide">{{
+                                $t('configServer') }}</p>
+                            <p class="font-semibold text-sm" :title="serverInfo?.hostname">{{ serverInfo?.hostname ||
+                                '-' }}</p>
                         </div>
                     </div>
                 </div>
@@ -18,13 +20,15 @@
                 <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-lg bg-opsi-blue/10 flex items-center justify-center">
-                            <UIcon :name="icons.user" class="w-4 h-4 text-opsi-blue" />
+                            <UIcon :name="icons.user" class="w-4 h-4" />
                         </div>
                         <div class="min-w-0">
-                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-wide">{{ $t('currentUser') }}</p>
+                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-wide">{{
+                                $t('currentUser') }}</p>
                             <p class="font-semibold text-sm truncate">{{ userStore.username || '-' }}</p>
                         </div>
-                        <UBadge v-if="userStore.readOnly" color="warning" variant="subtle" size="xs" class="ml-auto shrink-0">
+                        <UBadge v-if="userStore.readOnly" color="warning" variant="subtle" size="xs"
+                            class="ml-auto shrink-0">
                             {{ $t('readOnlyMode') }}
                         </UBadge>
                     </div>
@@ -32,9 +36,9 @@
 
                 <div v-if="healthChecks.length > 0"
                     class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
-                    <div class="flex items-center gap-2 mb-2">
-                        <UIcon :name="icons.health" class="w-4 h-4 text-opsi-blue" />
+                    <div class="flex items-center gap-2 mb-2" @click="navigateTo('/admin/diagnostics/healthcheck')">
                         <span class="text-sm font-semibold">{{ $t('healthCheck') }}</span>
+
                         <UBadge v-if="healthSummary.error > 0" color="error" variant="subtle" size="xs">
                             {{ healthSummary.error }} {{ $t('errors') }}
                         </UBadge>
@@ -42,26 +46,9 @@
                             {{ healthSummary.warning }} {{ $t('warnings') }}
                         </UBadge>
                         <UBadge v-if="healthSummary.ok > 0" color="success" variant="subtle" size="xs">
-                            {{ healthSummary.ok }} ok
+                            {{ healthSummary.ok }} {{ $t('ok') }}
                         </UBadge>
-                        <NuxtLink to="/admin/diagnostics/healthcheck" class="ml-auto text-xs text-opsi-blue hover:underline">
-                            {{ $t('details') }}
-                        </NuxtLink>
-                    </div>
-                    <div class="space-y-0.5 max-h-24 overflow-y-auto">
-                        <div v-for="check in healthChecks.filter(c => c.check_status !== 'ok').slice(0, 5)" :key="check.check_id"
-                            class="flex items-center gap-1.5 text-xs px-1.5 py-0.5 rounded" :class="{
-                                'bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200': check.check_status === 'error',
-                                'bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200': check.check_status === 'warning',
-                            }">
-                            <UIcon
-                                :name="check.check_status === 'warning' ? icons.warning : icons.error"
-                                class="w-3 h-3 shrink-0" :class="{
-                                    'text-amber-500': check.check_status === 'warning',
-                                    'text-red-500': check.check_status === 'error',
-                                }" />
-                            <span class="truncate">{{ check.check_name }}</span>
-                        </div>
+                        <UIcon :name="icons.arrowRight" class="ml-auto w-3 h-3 text-[--color-text-muted]" />
                     </div>
                 </div>
             </div>
@@ -71,7 +58,7 @@
                 <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer hover:shadow-md transition-all"
                     @click="navigateTo('/servers')">
                     <div class="flex items-center justify-between mb-1">
-                        <UIcon :name="icons.serverStack" class="w-4 h-4 text-[--color-text-muted]" />
+                        <UIcon :name="icons.server" class="w-4 h-4 text-[--color-text-muted]" />
                         <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
                     </div>
                     <p class="text-2xl font-bold">{{ stats.totalServers ?? '-' }}</p>
@@ -101,10 +88,12 @@
                     <p class="text-xs text-[--color-text-muted]">{{ $t('totalProducts') }}</p>
                     <div class="mt-1 flex gap-3 text-[10px]">
                         <span class="text-[--color-text-muted]">
-                            <span class="font-medium text-[--color-text]">{{ stats.localbootProducts ?? '-' }}</span> Localboot
+                            <span class="font-medium text-[--color-text]">{{ stats.localbootProducts ?? '-' }}</span>
+                            Localboot
                         </span>
                         <span class="text-[--color-text-muted]">
-                            <span class="font-medium text-[--color-text]">{{ stats.netbootProducts ?? '-' }}</span> Netboot
+                            <span class="font-medium text-[--color-text]">{{ stats.netbootProducts ?? '-' }}</span>
+                            Netboot
                         </span>
                     </div>
                 </div>
@@ -130,14 +119,16 @@
 
             <!-- Bottom row: Reachable clients + Last seen -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0">
+                <div
+                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0">
                     <div class="flex items-center justify-between mb-2 shrink-0">
                         <div class="flex items-center gap-2">
                             <UIcon :name="icons.clientReachable" class="w-4 h-4 text-emerald-500" />
                             <h3 class="text-sm font-semibold">{{ $t('reachable') }} {{ $t('clients') }}</h3>
                         </div>
                         <div class="flex items-center gap-2">
-                            <USelect v-model="selectedServerForReachable" :items="serverOptions" size="xs" class="w-40" />
+                            <USelect v-model="selectedServerForReachable" :items="serverOptions" size="xs"
+                                class="w-40" />
                             <UButton v-if="!loadingReachable" variant="ghost" color="neutral" size="xs"
                                 @click="checkAllReachable">
                                 <UIcon :name="icons.refresh" class="w-3.5 h-3.5" />
@@ -173,10 +164,11 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0">
+                <div
+                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0">
                     <div class="flex items-center justify-between mb-2 shrink-0">
                         <div class="flex items-center gap-2">
-                            <UIcon :name="icons.calendar" class="w-4 h-4 text-blue-500" />
+                            <UIcon :name="icons.calendar" class="w-4 h-4" />
                             <h3 class="text-sm font-semibold">{{ $t('clients') }} {{ $t('lastSeen') }}</h3>
                         </div>
                         <USelect v-model="selectedServerForLastSeen" :items="serverOptions" size="xs" class="w-40" />
@@ -185,15 +177,18 @@
                         <div class="grid grid-cols-2 gap-2 text-sm">
                             <div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
                                 <p class="text-[10px] text-[--color-text-muted]">Last 24 hours</p>
-                                <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{ lastSeenStats.last24h }}</p>
+                                <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{
+                                    lastSeenStats.last24h }}</p>
                             </div>
                             <div class="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20">
                                 <p class="text-[10px] text-[--color-text-muted]">Last 7 days</p>
-                                <p class="text-xl font-bold text-blue-600 dark:text-blue-400">{{ lastSeenStats.last7d }}</p>
+                                <p class="text-xl font-bold text-blue-600 dark:text-blue-400">{{ lastSeenStats.last7d }}
+                                </p>
                             </div>
                             <div class="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/20">
                                 <p class="text-[10px] text-[--color-text-muted]">Last 30 days</p>
-                                <p class="text-xl font-bold text-amber-600 dark:text-amber-400">{{ lastSeenStats.last30d }}</p>
+                                <p class="text-xl font-bold text-amber-600 dark:text-amber-400">{{ lastSeenStats.last30d
+                                }}</p>
                             </div>
                             <div class="p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                                 <p class="text-[10px] text-[--color-text-muted]">Older / Never</p>
@@ -202,7 +197,8 @@
                         </div>
                         <div class="flex-1 min-h-0 overflow-y-auto">
                             <h4 class="text-[10px] font-semibold text-[--color-text-muted] mb-1">
-                                {{ $t('clients') }} ({{ selectedServerForLastSeen === 'all' ? $t('allServers') : selectedServerForLastSeen }})
+                                {{ $t('clients') }} ({{ selectedServerForLastSeen === 'all' ? $t('allServers') :
+                                    selectedServerForLastSeen }})
                             </h4>
                             <div v-if="filteredClientsForServer.length > 0" class="space-y-0.5">
                                 <div v-for="client in filteredClientsForServer.slice(0, 20)" :key="client.clientId"
@@ -234,7 +230,8 @@
                     <div class="flex items-center gap-2 mb-2">
                         <UIcon :name="icons.blocked" class="w-4 h-4 text-red-500" />
                         <h3 class="text-sm font-semibold">{{ $t('blockedClients') }}</h3>
-                        <UBadge color="error" variant="subtle" size="xs">{{ Object.keys(blockedClientsMap).length }}</UBadge>
+                        <UBadge color="error" variant="subtle" size="xs">{{ Object.keys(blockedClientsMap).length }}
+                        </UBadge>
                     </div>
                     <div class="space-y-0.5 max-h-24 overflow-y-auto">
                         <div v-for="(reason, clientId) in blockedClientsMap" :key="clientId"
@@ -249,7 +246,8 @@
                     <div class="flex items-center gap-2 mb-2">
                         <UIcon :name="icons.locked" class="w-4 h-4 text-amber-500" />
                         <h3 class="text-sm font-semibold">{{ $t('lockedProducts') }}</h3>
-                        <UBadge color="warning" variant="subtle" size="xs">{{ Object.keys(lockedProductsMap).length }}</UBadge>
+                        <UBadge color="warning" variant="subtle" size="xs">{{ Object.keys(lockedProductsMap).length }}
+                        </UBadge>
                     </div>
                     <div class="space-y-0.5 max-h-24 overflow-y-auto">
                         <div v-for="(reason, productId) in lockedProductsMap" :key="productId"

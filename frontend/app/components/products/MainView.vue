@@ -312,7 +312,7 @@ function openProductConfig(product: ProductRow) {
 function formatModificationTime(value: string | undefined | null): string {
 	if (!value) return '-'
 	try {
-		return new Date(value).toLocaleString(undefined, { timeZone: 'UTC' })
+		return new Date(value).toLocaleString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true })
 	} catch {
 		return value
 	}

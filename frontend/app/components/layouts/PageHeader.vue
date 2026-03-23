@@ -7,7 +7,7 @@ PageHeader - A reusable page header component with tabs and actions.
         </div>
         <div class="flex flex-wrap items-center gap-2">
             <slot name="filters" />
-            <UInput v-if="showSearch" v-model="searchModel" :placeholder="searchPlaceholder" :icon="icons.search"
+            <UInput v-if="showSearch" v-model="searchModel" :placeholder="searchPlaceholder" :icon="icons.filter"
                 size="sm" class="w-full sm:w-48 md:w-64" :aria-label="searchPlaceholder || 'Search'" />
             <slot name="tableControls" />
             <slot name="actions" />

@@ -53,8 +53,12 @@
 						<span class="font-mono text-xs">{{ (row as Client).ipAddress || '-' }}</span>
 					</template>
 					<template #cell-lastSeen="{ row }">
-						{{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as string).toLocaleString() :
-							'-' }}
+						{{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as
+							string).toLocaleString('en-US', {
+								year: 'numeric', month: 'numeric', day: 'numeric', hour:
+									'numeric', minute: '2-digit', second: '2-digit', hour12: true
+							}) :
+						'-' }}
 					</template>
 					<template #cell-uefi="{ row }">
 						<SharedStatusBadge v-if="(row as Client).uefi" status="info" label="UEFI" />

@@ -25,7 +25,7 @@ Can be used both in standalone pages and detail panels.
 			<div v-if="resolvedClientId" class="flex gap-2">
 				<div v-if="logContent.length > 0">
 					<UInput v-model="filterQuery" :placeholder="$t('typeToFilter')" class="w-full sm:w-40 md:w-64"
-						size="sm" :icon="icons.search" />
+						size="sm" :icon="icons.filter" />
 				</div>
 				<div v-if="logContent.length > 0">
 					<UTooltip :text="$t('autoRefreshDescription')">

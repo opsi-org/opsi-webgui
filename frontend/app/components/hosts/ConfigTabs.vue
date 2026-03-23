@@ -12,6 +12,85 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 		</template>
 	</UModal>
 
+	<!-- Create Config Modal -->
+	<UModal v-model:open="showCreateConfigModal" :title="$t('createConfig')">
+		<template #body>
+			<div class="space-y-4">
+				<div>
+					<label class="block text-sm font-medium mb-1">{{ $t('configId') }} *</label>
+					<UInput v-model="newConfig.configId" :placeholder="'e.g. category.subcategory.name'" size="sm" />
+				</div>
+				<div>
+					<label class="block text-sm font-medium mb-1">{{ $t('description') }}</label>
+					<UInput v-model="newConfig.description" size="sm" />
+				</div>
+				<div>
+					<label class="block text-sm font-medium mb-1">{{ $t('type') }}</label>
+					<USelect v-model="newConfig.type" :items="configTypeOptions" size="sm" />
+				</div>
+				<div class="flex items-center gap-4">
+					<label class="flex items-center gap-2 text-sm">
+						<UCheckbox v-model="newConfig.multiValue" size="sm" />
+						{{ $t('multiValue') }}
+					</label>
+					<label class="flex items-center gap-2 text-sm">
+						<UCheckbox v-model="newConfig.editable" size="sm" />
+						{{ $t('editable') }}
+					</label>
+				</div>
+				<div v-if="newConfig.type === 'UnicodeConfig'">
+					<label class="block text-sm font-medium mb-1">{{ $t('possibleValues') }}</label>
+					<div v-if="newConfig.possibleValues.length > 0" class="flex flex-wrap gap-1 mb-1">
+						<span v-for="(val, idx) in newConfig.possibleValues" :key="idx"
+							class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20">
+							{{ val }}
+							<button type="button" class="hover:text-red-500 transition-colors"
+								@click="newConfig.possibleValues.splice(idx, 1)">
+								<UIcon name="i-heroicons-x-mark" class="w-3 h-3" />
+							</button>
+						</span>
+					</div>
+					<div class="flex gap-1">
+						<UInput v-model="newPossibleValue" :placeholder="$t('pressEnterToAdd')" size="sm" class="flex-1"
+							@keydown.enter.prevent="addPossibleValue" />
+						<UButton size="sm" variant="soft" color="neutral" :icon="icons.add" @click="addPossibleValue" />
+					</div>
+				</div>
+				<div v-if="newConfig.type === 'UnicodeConfig'">
+					<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
+					<div v-if="newConfig.defaultValues.length > 0" class="flex flex-wrap gap-1 mb-1">
+						<span v-for="(val, idx) in newConfig.defaultValues" :key="idx"
+							class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20">
+							{{ val }}
+							<button type="button" class="hover:text-red-500 transition-colors"
+								@click="newConfig.defaultValues.splice(idx, 1)">
+								<UIcon name="i-heroicons-x-mark" class="w-3 h-3" />
+							</button>
+						</span>
+					</div>
+					<div class="flex gap-1">
+						<UInput v-model="newDefaultValue" :placeholder="$t('pressEnterToAdd')" size="sm" class="flex-1"
+							@keydown.enter.prevent="addDefaultValue" />
+						<UButton size="sm" variant="soft" color="neutral" :icon="icons.add" @click="addDefaultValue" />
+					</div>
+				</div>
+				<div v-if="newConfig.type === 'BoolConfig'">
+					<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
+					<USelect v-model="newConfig.boolDefault" :items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
+				</div>
+				<UAlert v-if="createConfigError" color="error" :title="$t('error')" :description="createConfigError"
+					variant="subtle" />
+			</div>
+		</template>
+		<template #footer>
+			<div class="flex gap-2 justify-end">
+				<UButton variant="outline" color="neutral" @click="resetCreateConfigModal">{{ $t('cancel') }}</UButton>
+				<UButton color="primary" :loading="creatingConfig" :disabled="!newConfig.configId.trim()"
+					@click="handleCreateConfig">{{ $t('create') }}</UButton>
+			</div>
+		</template>
+	</UModal>
+
 	<div
 		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
 
@@ -30,6 +109,12 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 				<div class="flex flex-wrap items-center gap-2">
 					<UInput v-model="paramSearch" :placeholder="String($t('typeToFilter'))" size="sm"
 						class="w-full sm:w-32 md:w-40" icon="i-lucide-search" />
+					<UTooltip v-if="isServerDefaultMode" :text="$t('createConfig')">
+						<UButton :icon="icons.add" color="primary" variant="soft" size="sm"
+							@click="showCreateConfigModal = true">
+							<span class="hidden sm:inline">{{ $t('createConfig') }}</span>
+						</UButton>
+					</UTooltip>
 					<SharedUnsavedChangesModal v-if="showUnsavedModal" :config-ref="unsavedChangesRef" size="sm"
 						@save-all="saveAll" @discard-all="discardAll" />
 					<UTooltip :text="$t('refresh')">
@@ -166,7 +251,91 @@ const {
 	updateClientAttributes,
 	updateServerAttributes,
 	getServerDefaultConfig,
+	createConfig,
 } = useApiHelpers()
+
+const isServerDefaultMode = computed(() => props.hostType === 'server' && !props.hostId)
+
+// Create Config modal state
+const showCreateConfigModal = ref(false)
+const creatingConfig = ref(false)
+const createConfigError = ref<string | null>(null)
+const newPossibleValue = ref('')
+const newDefaultValue = ref('')
+const configTypeOptions = [
+	{ label: 'Unicode', value: 'UnicodeConfig' },
+	{ label: 'Bool', value: 'BoolConfig' },
+]
+const newConfig = reactive({
+	configId: '',
+	description: '',
+	type: 'UnicodeConfig' as 'UnicodeConfig' | 'BoolConfig',
+	multiValue: false,
+	editable: true,
+	possibleValues: [] as string[],
+	defaultValues: [] as string[],
+	boolDefault: 'false',
+})
+
+function addPossibleValue() {
+	const v = newPossibleValue.value.trim()
+	if (v && !newConfig.possibleValues.includes(v)) {
+		newConfig.possibleValues.push(v)
+	}
+	newPossibleValue.value = ''
+}
+
+function addDefaultValue() {
+	const v = newDefaultValue.value.trim()
+	if (v && !newConfig.defaultValues.includes(v)) {
+		newConfig.defaultValues.push(v)
+	}
+	newDefaultValue.value = ''
+}
+
+function resetCreateConfigModal() {
+	showCreateConfigModal.value = false
+	creatingConfig.value = false
+	createConfigError.value = null
+	newConfig.configId = ''
+	newConfig.description = ''
+	newConfig.type = 'UnicodeConfig'
+	newConfig.multiValue = false
+	newConfig.editable = true
+	newConfig.possibleValues = []
+	newConfig.defaultValues = []
+	newConfig.boolDefault = 'false'
+	newPossibleValue.value = ''
+	newDefaultValue.value = ''
+}
+
+async function handleCreateConfig() {
+	createConfigError.value = null
+	if (!newConfig.configId.trim()) return
+	creatingConfig.value = true
+	try {
+		const payload: Parameters<typeof createConfig>[0] = {
+			configId: newConfig.configId.trim(),
+			type: newConfig.type,
+			editable: newConfig.editable,
+			multiValue: newConfig.multiValue,
+			description: newConfig.description,
+		}
+		if (newConfig.type === 'UnicodeConfig') {
+			payload.possibleValues = newConfig.possibleValues
+			payload.defaultValues = newConfig.defaultValues
+		} else {
+			payload.defaultValues = [newConfig.boolDefault]
+		}
+		await createConfig(payload)
+		resetCreateConfigModal()
+		await fetchParameters()
+	} catch (e: unknown) {
+		createConfigError.value = e instanceof Error ? e.message : String(e)
+	} finally {
+		creatingConfig.value = false
+	}
+}
 
 const activeTab = ref(props.tab || 'parameters')
 watch(() => props.tab, (v) => { if (v) activeTab.value = v })
