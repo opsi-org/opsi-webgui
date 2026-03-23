@@ -88,9 +88,10 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         </div>
                     </button>
                 </div>
-                <div v-if="newAppState.type === 'maintenance'"
-                    class="p-4 rounded-lg border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/10">
-                    <div class="space-y-4">
+                <div v-if="newAppState.type === 'maintenance'">
+                    <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('optionalSettings')
+                    }}</div>
+                    <div class="space-y-4 border border-yellow-300 dark:border-yellow-700 rounded-lg p-2">
                         <UFormField :label="$t('addressExceptions')">
                             <div class="flex gap-2">
                                 <UInput v-model="addressExceptionInput" :placeholder="$t('enterNetworkAddress')"
@@ -129,38 +130,33 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             <UCard>
                 <template #header>
                     <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                            <UIcon :name="icons.copy" class="w-4 h-4 text-primary-600 dark:text-primary-400" />
-                        </div>
                         <span class="font-medium">{{ $t('createBackup') }}</span>
                     </div>
                 </template>
                 <div class="space-y-5">
-                    <div>
-                        <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup')
-                            }}</div>
-                        <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
-                            <label
-                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                <UCheckbox v-model="backupOptions.config_files" class="mt-0.5" />
-                                <div class="font-medium text-sm">{{ $t('config_files') }}</div>
-                            </label>
-                            <label
-                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                <UCheckbox v-model="backupOptions.redis_data" class="mt-0.5" />
-                                <div class="font-medium text-sm">{{ $t('redisData') }}</div>
-                            </label>
-                            <label
-                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                <UCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5" />
-                                <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
-                            </label>
-                        </div>
+                    <label
+                        class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                        <UCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5" />
+                        <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
+                    </label>
+                    <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup')
+                    }}</div>
+                    <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
+                        <label
+                            class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                            <UCheckbox v-model="backupOptions.config_files" class="mt-0.5" />
+                            <div class="font-medium text-sm">{{ $t('config_files') }}</div>
+                        </label>
+                        <label
+                            class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                            <UCheckbox v-model="backupOptions.redis_data" class="mt-0.5" />
+                            <div class="font-medium text-sm">{{ $t('redisData') }}</div>
+                        </label>
                     </div>
+
                     <UFormField :label="$t('password') + ' (' + $t('optional') + ')'">
-                        <UInput v-model="backupOptions.password" type="password" :placeholder="$t('enterPassword')"
-                            size="sm" />
+                        <UInput v-model="backupOptions.password" type="password"
+                            :placeholder="$t('enterEncryptionPassword')" size="sm" />
                     </UFormField>
 
                     <UButton block color="primary" :icon="icons.copy" :loading="creatingBackup" @click="createBackup">{{
@@ -171,10 +167,6 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
             <UCard>
                 <template #header>
                     <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
-                            <UIcon :name="icons.refresh" class="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
-                        </div>
                         <span class="font-medium">{{ $t('restoreBackup') }}</span>
                     </div>
                 </template>
@@ -231,9 +223,9 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                 :placeholder="$t('enterNewID')" size="sm" class="mt-2" />
                         </div>
                     </UFormField>
-                    <UFormField :label="$t('backupPassword')">
-                        <UInput v-model="restoreOptions.password" type="password" :placeholder="$t('enterPassword')"
-                            size="sm" />
+                    <UFormField :label="$t('backupPassword') + ' (' + $t('optional') + ')'">
+                        <UInput v-model="restoreOptions.password" type="password"
+                            :placeholder="$t('enterDecryptionPassword')" size="sm" />
                     </UFormField>
                     <div v-if="uploadProgress > 0 && uploadProgress < 100" class="mb-3">
                         <div class="flex justify-between text-xs text-(--color-text-muted) mb-1">
@@ -283,7 +275,7 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 const selectedFile = ref<File | null>(null)
 const selectedFileName = ref('')
 const serverIdOption = ref('backup')
-const restoreOptions = ref({ file_id: '', config_files: false, redis_data: false, server_id: 'backup', password: '' })
+const restoreOptions = ref({ file_id: '', config_files: false, redis_data: false, server_id: '', password: '' })
 
 const blockedClientsCount = computed(() => Object.keys(blockedClients.value).length)
 const lockedProductsCount = computed(() => Object.keys(lockedProducts.value).length)

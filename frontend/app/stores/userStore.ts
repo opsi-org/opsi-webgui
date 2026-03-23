@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { useCookie } from 'nuxt/app'
 
-const SESSION_EXPIRY_SEC = 60 * 30
+const SESSION_EXPIRY_SEC = 60 * 30 // 30 minutes
 const SESSION_COOKIE_NAME = 'opsiconfd-session'
 
 export const useUserStore = defineStore('user', {

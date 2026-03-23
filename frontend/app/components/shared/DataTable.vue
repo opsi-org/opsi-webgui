@@ -2,7 +2,8 @@
   <div class="data-table flex flex-col h-full min-h-0">
     <div class="shrink-0 flex flex-wrap items-center justify-between gap-2 mb-3">
       <div class="flex items-center gap-3 text-sm">
-        <UTooltip v-if="selectedKeys.length > 0" :text="`${selectedKeys.length} ${$t('selected')} — ${$t('clearSelection')}`">
+        <UTooltip v-if="selectedKeys.length > 0"
+          :text="`${selectedKeys.length} ${$t('selected')} — ${$t('clearSelection')}`">
           <UButton :icon="icons.clear" variant="soft" color="primary" size="xs" @click="clearSelection">
             {{ selectedKeys.length }}
           </UButton>
@@ -14,7 +15,7 @@
 
       <div class="flex items-center gap-2">
         <div v-if="filterable" class="relative">
-          <UInput v-model="filterQueryInternal" :placeholder="filterPlaceholder || String($t('filter'))" size="sm"
+          <UInput v-model="filterQueryInternal" :placeholder="filterPlaceholder || String($t('typeToFilter'))" size="sm"
             :icon="icons.filter" class="w-32 sm:w-40" />
           <UButton v-if="filterQueryInternal" :icon="icons.close" variant="link" color="neutral" size="xs"
             :padded="false" class="absolute right-1 top-1/2 -translate-y-1/2" @click="filterQueryInternal = ''" />
@@ -23,44 +24,57 @@
         <UPopover>
           <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('tableSettings')" />
           <template #content>
-            <div class="p-3 w-75 max-h-250 overflow-y-auto">
+            <div class="p-3 w-85 max-h-250 overflow-y-auto">
               <div class="text-xs font-medium text-(--color-text-muted) uppercase mb-3">{{ $t('tableSettings') }}</div>
 
-              <div class="mb-4">
-                <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('displayMode') }}</label>
-                <div class="flex gap-1">
-                  <UButton size="xs" :variant="tableSettings.settings.displayMode === 'infinite' ? 'solid' : 'outline'"
-                    color="neutral" class="flex-1" @click="changeDisplayMode('infinite')">
-                    <UIcon :name="icons.arrowDown" class="w-3 h-3 mr-1" />
+              <div class="mb-4 flex items-center justify-between gap-2">
+                <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('displayMode') }}</label>
+                <div class="flex gap-0.5">
+                  <button :class="[
+                    'px-2.5 py-1 text-xs font-medium rounded-l-lg transition-colors',
+                    tableSettings.settings.displayMode === 'infinite'
+                      ? 'bg-opsi-blue text-white'
+                      : 'bg-(--color-surface-hover) text-(--color-text-muted) hover:bg-(--color-surface-hover)'
+                  ]" @click="changeDisplayMode('infinite')">
                     {{ $t('infiniteScroll') }}
-                  </UButton>
-                  <UButton size="xs"
-                    :variant="tableSettings.settings.displayMode === 'pagination' ? 'solid' : 'outline'" color="neutral"
-                    class="flex-1" @click="changeDisplayMode('pagination')">
-                    <UIcon :name="icons.table" class="w-3 h-3 mr-1" />
+                  </button>
+                  <button :class="[
+                    'px-2.5 py-1 text-xs font-medium rounded-r-lg transition-colors',
+                    tableSettings.settings.displayMode === 'pagination'
+                      ? 'bg-opsi-blue text-white'
+                      : 'bg-(--color-surface-hover) text-(--color-text-muted) hover:bg-(--color-surface-hover)'
+                  ]" @click="changeDisplayMode('pagination')">
                     {{ $t('pagination') }}
-                  </UButton>
+                  </button>
                 </div>
               </div>
 
-              <div class="mb-4">
-                <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('selectionMode') }}</label>
-                <div class="flex gap-1">
-                  <UButton size="xs" :variant="effectiveSelectionMode === 'multi' ? 'solid' : 'outline'" color="neutral"
-                    class="flex-1" @click="forceSelectionMode('multi')">
+              <div class="mb-4 flex items-center justify-between gap-2">
+                <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('selectionMode') }}</label>
+                <div class="flex gap-0.5">
+                  <button :class="[
+                    'px-2.5 py-1 text-xs font-medium rounded-l-lg transition-colors',
+                    effectiveSelectionMode === 'multi'
+                      ? 'bg-opsi-blue text-white'
+                      : 'bg-(--color-surface-hover) text-(--color-text-muted) hover:bg-(--color-surface-hover)'
+                  ]" @click="forceSelectionMode('multi')">
                     {{ $t('multiSelect') }}
-                  </UButton>
-                  <UButton size="xs" :variant="effectiveSelectionMode === 'single' ? 'solid' : 'outline'"
-                    color="neutral" class="flex-1" @click="forceSelectionMode('single')">
+                  </button>
+                  <button :class="[
+                    'px-2.5 py-1 text-xs font-medium rounded-r-lg transition-colors',
+                    effectiveSelectionMode === 'single'
+                      ? 'bg-opsi-blue text-white'
+                      : 'bg-(--color-surface-hover) text-(--color-text-muted) hover:bg-(--color-surface-hover)'
+                  ]" @click="forceSelectionMode('single')">
                     {{ $t('singleSelect') }}
-                  </UButton>
+                  </button>
                 </div>
               </div>
 
-              <div class="mb-4">
-                <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('pageSize') }}</label>
-                <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs"
-                  class="w-full" @update:model-value="(v: number) => changePageSize(v)" />
+              <div class="mb-4 flex items-center justify-between gap-2">
+                <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('pageSize') }}</label>
+                <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs" class="w-24"
+                  @update:model-value="(v: number) => changePageSize(v)" />
               </div>
 
               <div class="mb-4">
@@ -141,7 +155,8 @@
                   :style="{ width: col.width, minWidth: col.minWidth || '80px', textAlign: col.align }"
                   :tabindex="col.sortable ? 0 : undefined" @click="col.sortable && handleSort(col.key)"
                   @keydown.enter="col.sortable && handleSort(col.key)">
-                  <slot :name="(`header-cell-${col.key}` as any)" :column="col" :sort-column="tableSettings.settings.sortColumn"
+                  <slot :name="(`header-cell-${col.key}` as any)" :column="col"
+                    :sort-column="tableSettings.settings.sortColumn"
                     :sort-direction="tableSettings.settings.sortDirection">
                     <div class="flex items-center gap-1">
                       <template v-if="col.headerIcon">
@@ -189,7 +204,8 @@
 
                 <td v-for="col in visibleColumns" :key="col.key" role="gridcell"
                   class="px-3 py-2 text-sm text-(--color-text)" :class="col.class" :style="{ textAlign: col.align }">
-                  <slot :name="(`cell-${col.key}` as any)" :row="row" :value="getNestedValue(row, col.key)" :index="idx">
+                  <slot :name="(`cell-${col.key}` as any)" :row="row" :value="getNestedValue(row, col.key)"
+                    :index="idx">
                     {{ formatCellValue(row, col) }}
                   </slot>
                 </td>

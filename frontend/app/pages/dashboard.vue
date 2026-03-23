@@ -1,44 +1,58 @@
 <template>
     <LayoutsPageLayout :show-search="false" :show-refresh="true" :loading="loading" @refresh="refreshAll">
         <div class="h-full flex flex-col min-h-0">
-            <!-- Top row: Config server + User info + Health check -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3 shrink-0">
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-opsi-blue/10 flex items-center justify-center">
-                            <UIcon :name="icons.serverStack" class="w-4 h-4" />
-                        </div>
-                        <div>
-                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-wide">{{
-                                $t('configServer') }}</p>
-                            <p class="font-semibold text-sm" :title="serverInfo?.hostname">{{ serverInfo?.hostname ||
-                                '-' }}</p>
-                        </div>
-                    </div>
-                </div>
+            <!-- Top row: Config server + User info + User config + Health check -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3 shrink-0">
+                <DashboardInfoCard :icon="icons.serverStack" :label="$t('configServer')" :value="serverInfo?.hostname" />
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-opsi-blue/10 flex items-center justify-center">
-                            <UIcon :name="icons.user" class="w-4 h-4" />
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-wide">{{
-                                $t('currentUser') }}</p>
-                            <p class="font-semibold text-sm truncate">{{ userStore.username || '-' }}</p>
-                        </div>
-                        <UBadge v-if="userStore.readOnly" color="warning" variant="subtle" size="xs"
-                            class="ml-auto shrink-0">
+                <DashboardInfoCard :icon="icons.user" :label="$t('currentUser')" :value="userStore.username">
+                    <template #trailing>
+                        <UBadge v-if="userStore.readOnly" color="warning" variant="subtle" size="xs" class="shrink-0">
                             {{ $t('readOnlyMode') }}
                         </UBadge>
+                    </template>
+                </DashboardInfoCard>
+
+                <DashboardInfoCard :icon="icons.config" :label="$t('userConfiguration')" :value="userStore.username">
+                    <div v-if="userConfigData" class="mt-2 space-y-1 text-[10px]">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[--color-text-muted]">{{ $t('readOnly') }}</span>
+                            <UBadge :color="userConfigData.read_only ? 'warning' : 'success'" variant="subtle" size="xs">
+                                {{ userConfigData.read_only ? $t('yes') : $t('no') }}
+                            </UBadge>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[--color-text-muted]">{{ $t('depotAccess') }}</span>
+                            <UBadge :color="userConfigData.depot_access ? 'success' : 'neutral'" variant="subtle" size="xs">
+                                {{ userConfigData.depot_access ? $t('yes') : $t('no') }}
+                            </UBadge>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[--color-text-muted]">{{ $t('clientCreation') }}</span>
+                            <UBadge :color="userConfigData.client_creation ? 'success' : 'neutral'" variant="subtle" size="xs">
+                                {{ userConfigData.client_creation ? $t('yes') : $t('no') }}
+                            </UBadge>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[--color-text-muted]">{{ $t('hostGroupAccess') }}</span>
+                            <UBadge :color="userConfigData.host_group_access ? 'success' : 'neutral'" variant="subtle" size="xs">
+                                {{ userConfigData.host_group_access ? $t('yes') : $t('no') }}
+                            </UBadge>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[--color-text-muted]">{{ $t('productGroupAccess') }}</span>
+                            <UBadge :color="userConfigData.product_group_access ? 'success' : 'neutral'" variant="subtle" size="xs">
+                                {{ userConfigData.product_group_access ? $t('yes') : $t('no') }}
+                            </UBadge>
+                        </div>
                     </div>
-                </div>
+                </DashboardInfoCard>
 
                 <div v-if="healthChecks.length > 0"
-                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
-                    <div class="flex items-center gap-2 mb-2" @click="navigateTo('/admin/diagnostics/healthcheck')">
+                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer"
+                    @click="navigateTo('/admin/diagnostics/healthcheck')">
+                    <div class="flex items-center gap-2 mb-2">
                         <span class="text-sm font-semibold">{{ $t('healthCheck') }}</span>
-
                         <UBadge v-if="healthSummary.error > 0" color="error" variant="subtle" size="xs">
                             {{ healthSummary.error }} {{ $t('errors') }}
                         </UBadge>
@@ -55,72 +69,38 @@
 
             <!-- Stat cards row -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3 shrink-0">
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer hover:shadow-md transition-all"
-                    @click="navigateTo('/servers')">
-                    <div class="flex items-center justify-between mb-1">
-                        <UIcon :name="icons.server" class="w-4 h-4 text-[--color-text-muted]" />
-                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
-                    </div>
-                    <p class="text-2xl font-bold">{{ stats.totalServers ?? '-' }}</p>
-                    <p class="text-xs text-[--color-text-muted]">{{ $t('totalServers') }}</p>
-                </div>
+                <DashboardStatCard :icon="icons.server" :value="stats.totalServers" :label="$t('totalServers')"
+                    @click="navigateTo('/servers')" />
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer hover:shadow-md transition-all"
-                    @click="navigateTo('/clients')">
-                    <div class="flex items-center justify-between mb-1">
-                        <UIcon :name="icons.client" class="w-4 h-4 text-[--color-text-muted]" />
-                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
-                    </div>
-                    <p class="text-2xl font-bold">{{ stats.totalClients ?? '-' }}</p>
-                    <p class="text-xs text-[--color-text-muted]">
-                        {{ $t('totalClients') }}
-                        <span v-if="selectedServerLabel" class="text-[10px]">({{ selectedServerLabel }})</span>
-                    </p>
-                </div>
+                <DashboardStatCard :icon="icons.client" :value="stats.totalClients" :label="$t('totalClients')"
+                    :subtitle="selectedServerLabel" @click="navigateTo('/clients')" />
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer hover:shadow-md transition-all"
+                <DashboardStatCard :icon="icons.product" :value="stats.totalProducts" :label="$t('totalProducts')"
                     @click="navigateTo('/products')">
-                    <div class="flex items-center justify-between mb-1">
-                        <UIcon :name="icons.product" class="w-4 h-4 text-[--color-text-muted]" />
-                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
-                    </div>
-                    <p class="text-2xl font-bold">{{ stats.totalProducts ?? '-' }}</p>
-                    <p class="text-xs text-[--color-text-muted]">{{ $t('totalProducts') }}</p>
-                    <div class="mt-1 flex gap-3 text-[10px]">
-                        <span class="text-[--color-text-muted]">
-                            <span class="font-medium text-[--color-text]">{{ stats.localbootProducts ?? '-' }}</span>
-                            Localboot
-                        </span>
-                        <span class="text-[--color-text-muted]">
-                            <span class="font-medium text-[--color-text]">{{ stats.netbootProducts ?? '-' }}</span>
-                            Netboot
-                        </span>
-                    </div>
-                </div>
+                    <span class="text-[--color-text-muted]">
+                        <span class="font-medium text-[--color-text]">{{ stats.localbootProducts ?? '-' }}</span>
+                        Localboot
+                    </span>
+                    <span class="text-[--color-text-muted]">
+                        <span class="font-medium text-[--color-text]">{{ stats.netbootProducts ?? '-' }}</span>
+                        Netboot
+                    </span>
+                </DashboardStatCard>
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer hover:shadow-md transition-all"
+                <DashboardStatCard :icon="icons.license" :value="stats.totalModules" :label="$t('modules')"
                     @click="navigateTo('/admin/diagnostics/modules')">
-                    <div class="flex items-center justify-between mb-1">
-                        <UIcon :name="icons.license" class="w-4 h-4 text-[--color-text-muted]" />
-                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
-                    </div>
-                    <p class="text-2xl font-bold">{{ stats.totalModules ?? '-' }}</p>
-                    <p class="text-xs text-[--color-text-muted]">{{ $t('modules') }}</p>
-                    <div class="mt-1 flex gap-3 text-[10px]">
-                        <span class="text-emerald-600 dark:text-emerald-400">
-                            <span class="font-medium">{{ stats.activeModules ?? '-' }}</span> {{ $t('active') }}
-                        </span>
-                        <span class="text-red-500">
-                            <span class="font-medium">{{ stats.expiredModules ?? '-' }}</span> {{ $t('expired') }}
-                        </span>
-                    </div>
-                </div>
+                    <span class="text-emerald-600 dark:text-emerald-400">
+                        <span class="font-medium">{{ stats.activeModules ?? '-' }}</span> {{ $t('active') }}
+                    </span>
+                    <span class="text-red-500">
+                        <span class="font-medium">{{ stats.expiredModules ?? '-' }}</span> {{ $t('expired') }}
+                    </span>
+                </DashboardStatCard>
             </div>
 
             <!-- Bottom row: Reachable clients + Last seen -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
-                <div
-                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0">
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0 max-h-[calc(100vh-380px)]">
                     <div class="flex items-center justify-between mb-2 shrink-0">
                         <div class="flex items-center gap-2">
                             <UIcon :name="icons.clientReachable" class="w-4 h-4 text-emerald-500" />
@@ -136,8 +116,8 @@
                             <UIcon v-else :name="icons.loading" class="w-3.5 h-3.5 animate-spin" />
                         </div>
                     </div>
-                    <div v-if="reachableClients.length > 0 || unreachableCount > 0" class="flex-1 min-h-0 space-y-2">
-                        <div class="flex items-center gap-4 text-sm">
+                    <div v-if="reachableClients.length > 0 || unreachableCount > 0" class="flex-1 min-h-0 space-y-2 overflow-hidden">
+                        <div class="flex items-center gap-4 text-sm shrink-0">
                             <span class="text-emerald-600 dark:text-emerald-400">
                                 <span class="font-bold text-xl">{{ reachableClients.length }}</span>
                                 <span class="ml-1 text-xs">{{ $t('reachable') }}</span>
@@ -148,15 +128,11 @@
                             </span>
                         </div>
                         <div v-if="reachableClients.length > 0" class="overflow-y-auto flex-1 min-h-0 space-y-0.5">
-                            <div v-for="client in reachableClients.slice(0, 20)" :key="client"
+                            <div v-for="client in reachableClients" :key="client"
                                 class="flex items-center justify-between p-1.5 rounded bg-emerald-50 dark:bg-emerald-900/20 text-xs">
                                 <span class="font-mono text-[10px] truncate">{{ client }}</span>
                                 <UIcon :name="icons.checkCircle" class="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                             </div>
-                            <p v-if="reachableClients.length > 20"
-                                class="text-[10px] text-[--color-text-muted] text-center pt-1">
-                                {{ $t('countMore', { count: reachableClients.length - 20 }) }}
-                            </p>
                         </div>
                     </div>
                     <div v-else class="text-xs text-[--color-text-muted] py-4 text-center">
@@ -164,8 +140,7 @@
                     </div>
                 </div>
 
-                <div
-                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0">
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0 max-h-[calc(100vh-380px)]">
                     <div class="flex items-center justify-between mb-2 shrink-0">
                         <div class="flex items-center gap-2">
                             <UIcon :name="icons.calendar" class="w-4 h-4" />
@@ -173,8 +148,8 @@
                         </div>
                         <USelect v-model="selectedServerForLastSeen" :items="serverOptions" size="xs" class="w-40" />
                     </div>
-                    <div v-if="lastSeenStats" class="flex-1 min-h-0 space-y-2">
-                        <div class="grid grid-cols-2 gap-2 text-sm">
+                    <div v-if="lastSeenStats" class="flex-1 min-h-0 space-y-2 overflow-hidden">
+                        <div class="grid grid-cols-2 gap-2 text-sm shrink-0">
                             <div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
                                 <p class="text-[10px] text-[--color-text-muted]">Last 24 hours</p>
                                 <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{
@@ -201,15 +176,11 @@
                                     selectedServerForLastSeen }})
                             </h4>
                             <div v-if="filteredClientsForServer.length > 0" class="space-y-0.5">
-                                <div v-for="client in filteredClientsForServer.slice(0, 20)" :key="client.clientId"
+                                <div v-for="client in filteredClientsForServer" :key="client.clientId"
                                     class="flex items-center justify-between p-1.5 rounded bg-gray-50 dark:bg-gray-800/50 text-[10px]">
                                     <span class="font-mono truncate">{{ client.clientId }}</span>
                                     <span class="text-[--color-text-muted]">{{ formatLastSeen(client.lastSeen) }}</span>
                                 </div>
-                                <p v-if="filteredClientsForServer.length > 20"
-                                    class="text-[10px] text-[--color-text-muted] text-center pt-1">
-                                    {{ $t('countMore', { count: filteredClientsForServer.length - 20 }) }}
-                                </p>
                             </div>
                             <div v-else class="text-xs text-[--color-text-muted] text-center py-2">
                                 {{ $t('noClients') }}
@@ -272,7 +243,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const selectionStore = useSelectionStore()
 const userStore = useUserStore()
-const { getServerInfo, getHealthcheck, getClients, getServers, getProducts, getBlockedClients, getLockedProducts, checkClientReachable, getModulesContent } = useApiHelpers()
+const { getServerInfo, getHealthcheck, getClients, getServers, getProducts, getBlockedClients, getLockedProducts, checkClientReachable, getModulesContent, getUserConfiguration } = useApiHelpers()
 
 const loading = ref(false)
 const loadingHealth = ref(false)
@@ -315,6 +286,13 @@ const reachableClients = ref<string[]>([])
 const unreachableCount = ref(0)
 const selectedServerForLastSeen = ref('all')
 const selectedServerForReachable = ref('all')
+const userConfigData = ref<{
+    read_only: boolean
+    depot_access: boolean
+    host_group_access: boolean
+    product_group_access: boolean
+    client_creation: boolean
+} | null>(null)
 
 const selectedServerLabel = computed(() => {
     const servers = selectionStore.selectedServers
@@ -469,6 +447,19 @@ async function fetchLockedProducts() {
     }
 }
 
+async function fetchUserConfig() {
+    const { data } = await getUserConfiguration()
+    if (data?.configuration) {
+        userConfigData.value = {
+            read_only: data.configuration.read_only ?? false,
+            depot_access: data.configuration.depot_access ?? false,
+            host_group_access: data.configuration.host_group_access ?? false,
+            product_group_access: data.configuration.product_group_access ?? false,
+            client_creation: data.configuration.client_creation ?? true,
+        }
+    }
+}
+
 async function checkAllReachable() {
     const clientPool = selectedServerForReachable.value === 'all'
         ? allClients.value
@@ -503,6 +494,7 @@ async function refreshAll() {
             fetchStats(),
             fetchBlockedClients(),
             fetchLockedProducts(),
+            fetchUserConfig(),
         ])
     } finally {
         loading.value = false

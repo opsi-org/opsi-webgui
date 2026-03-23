@@ -1,11 +1,12 @@
 Statistic badge component for displaying numeric statistics with icon and link.
 <template>
-	<NuxtLink v-if="displayValue > 0" :to="link" class="inline-flex items-center justify-center" :title="tooltipText">
-		<UBadge :color="badgeColor" variant="subtle" size="xs" class="min-w-6 justify-center">
+	<button v-if="displayValue > 0" class="inline-flex items-center justify-center" :title="tooltipText"
+		@click.stop="$emit('stat-click')">
+		<UBadge :color="badgeColor" variant="subtle" size="xs" class="min-w-6 justify-center cursor-pointer">
 			<UIcon v-if="icon" :name="icon" class="w-3 h-3 mr-0.5" />
 			<span class="font-medium">{{ displayValue }}</span>
 		</UBadge>
-	</NuxtLink>
+	</button>
 	<span v-else class="text-(--color-text-muted) text-xs flex justify-center">-</span>
 </template>
 
@@ -15,13 +16,13 @@ interface Props {
 	icon?: string
 	tooltip?: string
 	status?: 'success' | 'warning' | 'error' | 'info' | 'neutral'
-	link?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	status: 'neutral',
-	link: '#'
 })
+
+defineEmits<{ 'stat-click': [] }>()
 
 const displayValue = computed(() => props.value ?? 0)
 const tooltipText = computed(() => `${props.tooltip || ''}: ${displayValue.value}`)

@@ -110,23 +110,24 @@
 					</template>
 
 					<template #cell-actionProgress="{ row }">
-						<span class="text-xs text-(--color-text-muted)">
+						<span class="text-sm text-(--color-text)">
 							{{ (row as ProductRow).actionProgress || '-' }}
 						</span>
 					</template>
 
 					<template #cell-advice="{ row }">
-						<span class="line-clamp-1 text-xs" :title="(row as ProductRow).advice || undefined">
+						<span class="line-clamp-1 text-sm text-(--color-text)"
+							:title="(row as ProductRow).advice || undefined">
 							{{ (row as ProductRow).advice || '-' }}
 						</span>
 					</template>
 
 					<template #cell-priority="{ row }">
-						<span class="text-xs">{{ (row as ProductRow).priority ?? '-' }}</span>
+						<span class="text-sm text-(--color-text)">{{ (row as ProductRow).priority ?? '-' }}</span>
 					</template>
 
 					<template #cell-modificationTime="{ row }">
-						<span class="text-xs text-(--color-text-muted)">
+						<span class="text-sm text-(--color-text)">
 							{{ formatModificationTime((row as ProductRow).modificationTime) }}
 						</span>
 					</template>
@@ -171,6 +172,7 @@ import { useSelectionStore } from '~/stores/selectionStore'
 interface Props {
 	productType: ProductType
 	initialProductId?: string
+	initialSortColumn?: string
 }
 
 const props = defineProps<Props>()
@@ -321,18 +323,21 @@ function formatModificationTime(value: string | undefined | null): string {
 function closePanel() {
 	if (configTabsComponentRef.value?.hasAnyChanges) {
 		pendingAction.value = () => {
-			showConfigPanel.value = false
-			configProduct.value = null
-			const { product: _p, view: _v, ...rest } = route.query
-			router.replace({ query: rest })
+			doClosePanel()
 		}
 		showLeaveWarning.value = true
 		return
 	}
+	doClosePanel()
+}
+
+function doClosePanel() {
 	showConfigPanel.value = false
 	configProduct.value = null
-	const { product: _p, view: _v, ...rest } = route.query
-	router.replace({ query: rest })
+	nextTick(() => {
+		const { product: _p, view: _v, ...rest } = route.query
+		router.replace({ query: rest })
+	})
 }
 
 function handleRowActivate(row: ProductRow) {
@@ -521,6 +526,10 @@ watch(() => selectionStore.selectedClients, () => fetchProducts(), { deep: true 
 watch(() => selectionStore.selectedServers, () => fetchProducts(), { deep: true })
 
 onMounted(async () => {
+	if (props.initialSortColumn) {
+		const tableSettingsObj = useDataTableSettings(tableId.value)
+		tableSettingsObj.setSort(props.initialSortColumn, 'desc')
+	}
 	await fetchProducts()
 	tryOpenPanelFromRoute()
 })

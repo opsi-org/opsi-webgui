@@ -8,7 +8,8 @@
 
 		<template v-else>
 			<div class="flex items-center gap-1 mb-2 shrink-0">
-				<UInput v-model="searchQuery" :placeholder="t('filter')" size="xs" :icon="icons.filter" class="flex-1 min-w-0">
+				<UInput v-model="searchQuery" :placeholder="t('typeToFilter')" size="xs" :icon="icons.filter"
+					class="flex-1 min-w-0">
 					<template v-if="searchQuery" #trailing>
 						<UButton :icon="icons.close" size="xs" variant="link" color="neutral"
 							@click="searchQuery = ''" />

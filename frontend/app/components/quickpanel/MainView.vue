@@ -1,11 +1,10 @@
 <template>
 	<div class="flex flex-col h-full min-h-0">
-		<!-- Quick Selection: tabs for overview, depots, client groups, product groups -->
 		<div class="shrink-0 mb-2">
 			<div class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted) mb-1">{{
 				t('quickSelection') }}</div>
-			<div class="flex gap-0.5 border-b border-(--color-border) -mx-4 px-4">
-				<UButton v-for="tab in selectionTabs" :key="tab.id" variant="ghost"
+			<div class="flex gap-1.5 border-b border-(--color-border)">
+				<UButton v-for="tab in selectionTabs" :key="tab.id" variant="soft"
 					:color="activeTab === tab.id ? 'primary' : 'neutral'" size="xs"
 					class="relative rounded-none border-b-2 px-2.5 py-2"
 					:class="activeTab === tab.id ? 'border-opsi-blue' : 'border-transparent'" :title="t(tab.label)"
@@ -18,8 +17,6 @@
 				</UButton>
 			</div>
 		</div>
-
-		<!-- Tab content -->
 		<div class="flex-1 min-h-0 overflow-hidden">
 			<div v-show="activeTab === 'overview'" class="h-full overflow-y-auto">
 				<QuickpanelSelectionOverview />
@@ -38,9 +35,7 @@
 			</div>
 		</div>
 
-		<!-- Footer sections -->
 		<div class="mt-auto shrink-0 border-t border-(--color-border) pt-3 space-y-3">
-			<!-- Quick Actions -->
 			<div>
 				<div class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted) mb-1.5">{{
 					t('quickActions') }}</div>
@@ -50,7 +45,6 @@
 				</div>
 			</div>
 
-			<!-- Settings -->
 			<div class="border-t border-(--color-border) pt-3">
 				<div class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted) mb-1.5">{{
 					t('settings') }}</div>
@@ -67,19 +61,10 @@
 						</UTooltip>
 						<UCheckbox v-model="autoRefreshEnabled" size="sm" />
 					</div>
-					<!-- Theme + Language in single line -->
 					<div class="flex items-center justify-between">
 						<SettingsThemeToggle />
 						<SettingsLanguageDropdown />
-						<!-- <div class="flex gap-1">
-							<UButton v-for="loc in allLocales" :key="loc.code"
-								:variant="loc.code === currentLocale ? 'solid' : 'outline'" color="primary" size="xs"
-								@click="switchLocale(loc.code)">
-								{{ loc.code.toUpperCase() }}
-							</UButton>
-						</div> -->
 					</div>
-					<!-- Default page after login -->
 					<div class="flex items-center justify-between">
 						<span class="text-xs">{{ t('defaultPage') }}</span>
 						<USelect v-model="defaultPage" :items="defaultPageOptions" size="xs" class="w-30" />
@@ -87,7 +72,6 @@
 				</div>
 			</div>
 
-			<!-- User Section -->
 			<div class="border-t border-(--color-border) pt-3">
 				<div v-if="userStore.readOnly"
 					class="mb-2 px-2 py-1.5 rounded bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-xs flex items-center gap-1.5">
@@ -149,16 +133,9 @@ const autoRefreshEnabled = computed({
 })
 
 const { remainingSeconds, isWarning, formattedTimeText } = useSessionTimer(true)
-const { t: i18nT, locale, locales, setLocale } = useI18n()
+const { t: i18nT } = useI18n()
 
-interface LocaleInfo { code: string; name?: string }
-const currentLocale = computed(() => locale.value || 'en')
-const allLocales = computed(() => locales.value as LocaleInfo[])
-function switchLocale(code: string) {
-	setLocale(code as 'de' | 'en')
-}
 
-// Default page after login
 const DEFAULT_PAGE_KEY = 'opsi-default-page'
 const defaultPageOptions = [
 	{ value: '/dashboard', label: 'Dashboard' },

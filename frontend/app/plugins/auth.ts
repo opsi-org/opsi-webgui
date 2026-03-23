@@ -7,7 +7,7 @@ License: AGPL-3.0
 
 Auth plugin - handles route guarding based on authentication state.
 */
-import { defineNuxtPlugin, useRuntimeConfig, navigateTo }  from '#app'
+import { defineNuxtPlugin, useRuntimeConfig, navigateTo } from '#app'
 import { useUserStore } from '~/stores/userStore'
 
 export default defineNuxtPlugin({
@@ -15,23 +15,40 @@ export default defineNuxtPlugin({
   order: 1,
   setup() {
     const router = useRouter()
-    const config = useRuntimeConfig()
 
     router.beforeEach((to) => {
-      if (typeof window !== 'undefined' &&
-          (window.location.port === '6006' || window.location.port === '3000')) {
+      if (
+        typeof window !== 'undefined' &&
+        (window.location.port === '6006' || window.location.port === '3000')
+      ) {
       }
 
       const userStore = useUserStore()
-      const basePage = config.public.BASE_PAGE || '/clients'
 
       if (userStore.isAuthenticated && to.name === 'login') {
-        return navigateTo(basePage)
+        return navigateTo(getDefaultPage())
       }
 
       if (!userStore.isAuthenticated && to.name !== 'login') {
         return navigateTo(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
       }
     })
-  }
+
+    function getDefaultPage(): string {
+      if (typeof document === 'undefined') return '/clients'
+      const match = document.cookie.match(/(?:^|; )opsi-default-page=([^;]*)/)
+      const stored = match?.[1] ? decodeURIComponent(match[1]) : null
+      const validPages = [
+        '/dashboard',
+        '/clients',
+        '/products',
+        '/servers',
+        '/admin/terminal',
+        '/admin/maintenance',
+        '/admin/diagnostics',
+      ]
+      if (stored && validPages.includes(stored)) return stored
+      return '/clients'
+    }
+  },
 })

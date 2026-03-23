@@ -7,7 +7,6 @@ const sessionState = reactive({
   isWarning: false,
   isExpired: false,
   timerInterval: null as ReturnType<typeof setInterval> | null,
-  initialized: false,
 })
 
 export function useSessionTimer(autoStart = false) {
@@ -73,10 +72,23 @@ export function useSessionTimer(autoStart = false) {
     updateState()
   }
 
-  if (autoStart && !sessionState.initialized) {
-    sessionState.initialized = true
+  if (autoStart) {
     onMounted(() => {
-      if (userStore.isAuthenticated) startTimer()
+      if (userStore.isAuthenticated) {
+        // Always ensure the timer is running when mounted with autoStart
+        if (!sessionState.timerInterval) {
+          startTimer()
+        } else {
+          // Timer already running, just update state
+          updateState()
+        }
+      }
+    })
+
+    onUnmounted(() => {
+      // Don't stop the timer on unmount since it's shared state
+      // Only update state
+      updateState()
     })
   }
 

@@ -47,10 +47,12 @@
 						{{ (row as Client).description || '-' }}
 					</template>
 					<template #cell-macAddress="{ row }">
-						<span class="font-mono text-xs">{{ (row as Client).macAddress || '-' }}</span>
+						<span class="font-mono text-sm text-(--color-text)">{{ (row as Client).macAddress || '-'
+							}}</span>
 					</template>
 					<template #cell-ipAddress="{ row }">
-						<span class="font-mono text-xs">{{ (row as Client).ipAddress || '-' }}</span>
+						<span class="font-mono text-sm text-(--color-text)">{{ (row as Client).ipAddress || '-'
+							}}</span>
 					</template>
 					<template #cell-lastSeen="{ row }">
 						{{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as
@@ -58,44 +60,47 @@
 								year: 'numeric', month: 'numeric', day: 'numeric', hour:
 									'numeric', minute: '2-digit', second: '2-digit', hour12: true
 							}) :
-						'-' }}
+							'-' }}
 					</template>
 					<template #cell-uefi="{ row }">
 						<SharedStatusBadge v-if="(row as Client).uefi" status="info" label="UEFI" />
 						<span v-else class="text-(--color-text-muted)">-</span>
 					</template>
 					<template #cell-depotId="{ row }">
-						<span class="text-xs">{{ (row as Client).depotId || '-' }}</span>
+						<span class="text-sm text-(--color-text)">{{ (row as Client).depotId || '-' }}</span>
 					</template>
 					<template #cell-version_outdated="{ row }">
 						<ClientsStatisticBadge :value="(row as Client).version_outdated"
 							:icon="icons.productsOutdatedLocal" :tooltip="$t('version_outdated_localboot')"
-							status="warning" />
+							status="warning"
+							@stat-click="openProductsPanelForClient(row as Client, 'version_outdated')" />
 					</template>
 					<template #cell-version_outdated_netboot="{ row }">
 						<ClientsStatisticBadge :value="(row as Client).version_outdated_netboot"
-							:icon="icons.productsOutdatedNet" :tooltip="$t('version_outdated_netboot')"
-							status="warning" />
+							:icon="icons.productsOutdatedNet" :tooltip="$t('version_outdated_netboot')" status="warning"
+							@stat-click="openProductsPanelForClient(row as Client, 'version_outdated')" />
 					</template>
 					<template #cell-installationStatus_unknown="{ row }">
 						<ClientsStatisticBadge :value="(row as Client).installationStatus_unknown"
 							:icon="icons.productInstallationStatusUnknown" :tooltip="$t('installationStatus_unknown')"
-							status="warning" />
+							status="warning"
+							@stat-click="openProductsPanelForClient(row as Client, 'installationStatus')" />
 					</template>
 					<template #cell-installationStatus_installed="{ row }">
 						<ClientsStatisticBadge :value="(row as Client).installationStatus_installed"
 							:icon="icons.productInstallationStatusInstalled"
-							:tooltip="$t('installationStatus_installed')" status="success" />
+							:tooltip="$t('installationStatus_installed')" status="success"
+							@stat-click="openProductsPanelForClient(row as Client, 'installationStatus')" />
 					</template>
 					<template #cell-actionResult_successful="{ row }">
 						<ClientsStatisticBadge :value="(row as Client).actionResult_successful"
 							:icon="icons.productActionResultSuccessful" :tooltip="$t('actionResult_successful')"
-							status="success" />
+							status="success" @stat-click="openProductsPanelForClient(row as Client, 'actionResult')" />
 					</template>
 					<template #cell-actionResult_failed="{ row }">
 						<ClientsStatisticBadge :value="(row as Client).actionResult_failed"
-							:icon="icons.productsFailedActionResult" :tooltip="$t('actionResult_failed')"
-							status="error" />
+							:icon="icons.productsFailedActionResult" :tooltip="$t('actionResult_failed')" status="error"
+							@stat-click="openProductsPanelForClient(row as Client, 'actionResult')" />
 					</template>
 					<template #cell-reachable="{ row }">
 						<ClientsReachableBadge :client-id="(row as Client).clientId"
@@ -130,7 +135,8 @@
 				<ClientsCloneForm v-if="panelType === 'clone'" :source-id="panelClient.clientId" panel-mode
 					@saved="fetchClients" />
 			</div>
-			<ProductsMainView v-if="panelType === 'products'" product-type="LocalbootProduct" />
+			<ProductsMainView v-if="panelType === 'products'" product-type="LocalbootProduct"
+				:initial-sort-column="productsSortColumn" />
 			<ClientsAddForm v-if="panelType === 'add'" panel-mode @saved="handleAddSaved" />
 		</template>
 	</LayoutsDetailPanel>
@@ -162,6 +168,7 @@ const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
 const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string } | null>(null)
 const lastPageParams = ref<PageChangeParams | null>(null)
+const productsSortColumn = ref<string | undefined>(undefined)
 
 const sortBySelectionEnabled = computed(() => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedClients.length > 0)
 
@@ -200,6 +207,14 @@ function openAddPanel() {
 	panelClient.value = null
 	panelType.value = 'add'
 	router.replace({ query: { ...route.query, view: 'panel', panelType: 'add' } })
+}
+
+function openProductsPanelForClient(client: Client, sortColumn: string) {
+	selectionStore.setClients([client.clientId], 'table')
+	productsSortColumn.value = sortColumn
+	panelClient.value = null
+	panelType.value = 'products'
+	router.replace({ query: { ...route.query, view: 'panel', panelType: 'products', sortBy: sortColumn } })
 }
 
 function handleAddSaved() {

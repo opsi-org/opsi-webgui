@@ -14,10 +14,10 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
             <div class="flex-1" />
             <nav class="flex items-center gap-0.5 md:gap-1">
                 <div v-if="isWarning"
-                    class="hidden sm:flex items-center gap-1 text-xs bg-amber-500/20 px-2 py-1 rounded"
+                    class="flex items-center gap-1 text-xs bg-amber-500/20 px-2 py-1 rounded animate-pulse"
                     :title="t('sessionExpiresIn')">
                     <UIcon :name="icons.clock" class="w-4 h-4" />
-                    <span>{{ formattedTime }}</span>
+                    <span class="font-medium">{{ formattedTime }}</span>
                 </div>
                 <NuxtLink v-if="userStore.healthWorstCase && userStore.healthWorstCase !== 'ok'" to="/admin/diagnostics"
                     class="px-2.5 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5"
@@ -64,6 +64,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                 </div>
             </main>
 
+            <Transition name="quickpanel-slide">
             <aside v-if="quickpanelOpen && !isMobile" :style="{ width: quickpanelWidth + 'px' }"
                 class="bg-white dark:bg-(--color-surface) border-l border-(--color-border) dark:border-(--color-border) overflow-auto shrink-0 flex flex-col relative">
                 <div class="absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group flex items-center justify-center"
@@ -84,6 +85,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                     <QuickpanelMainView />
                 </div>
             </aside>
+            </Transition>
         </div>
 
         <Transition name="slide-up">
@@ -123,13 +125,15 @@ const { isWarning, formattedTime } = useSessionTimer(true)
 const $route = useRoute()
 const { t: i18nT } = useI18n()
 
-const defaultPage = computed(() => {
-    if (typeof document === 'undefined') return '/clients'
+const defaultPage = ref('/clients')
+
+function updateDefaultPage() {
+    if (typeof document === 'undefined') return
     const match = document.cookie.match(/(?:^|; )opsi-default-page=([^;]*)/)
     const stored = match?.[1] ? decodeURIComponent(match[1]) : null
     const validPages = ['/dashboard', '/clients', '/products', '/servers', '/admin/terminal', '/admin/maintenance', '/admin/diagnostics']
-    return (stored && validPages.includes(stored)) ? stored : '/clients'
-})
+    defaultPage.value = (stored && validPages.includes(stored)) ? stored : '/clients'
+}
 
 const t = (key: string) => {
     const translated = i18nT(key)
@@ -171,6 +175,7 @@ function startQuickpanelResize(e: MouseEvent) {
 
 
 onMounted(() => {
+    updateDefaultPage()
     const checkMobile = () => {
         isMobile.value = window.innerWidth < 768
         if (!isMobile.value) {
@@ -192,6 +197,7 @@ watch(
         if (isMobile.value) {
             sidebarOpen.value = false
         }
+        updateDefaultPage()
     }
 )
 
@@ -207,10 +213,29 @@ function toggleQuickpanel() {
     if (!isMobile.value) {
         uiStore.quickpanelOpened = quickpanelOpen.value
     }
+    updateDefaultPage()
 }
 </script>
 
 <style scoped>
+.quickpanel-slide-enter-active {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+}
+
+.quickpanel-slide-leave-active {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease;
+}
+
+.quickpanel-slide-enter-from {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.quickpanel-slide-leave-to {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
 .slide-up-enter-active,
 .slide-up-leave-active {
     transition: all 0.3s ease;
