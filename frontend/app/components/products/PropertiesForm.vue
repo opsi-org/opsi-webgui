@@ -10,92 +10,34 @@
 		</div>
 
 		<template v-else>
-			<div class="shrink-0 mb-3">
-				<UInput v-model="search" :placeholder="$t('filterProperties')" :icon="icons.search" size="sm"
-					class="w-full" />
-			</div>
-
 			<div class="flex-1 overflow-auto min-h-0">
-				<div class="divide-y divide-(--color-border) dark:divide-(--color-border)">
+				<div class="space-y-0">
 					<div v-for="prop in filteredProperties" :key="prop.propertyId"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5 px-2 rounded transition-colors"
-						:class="isPropertyChanged(prop.propertyId) ? 'bg-yellow-50 dark:bg-yellow-700/10' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'">
-						<div class="min-w-0 md:w-2/5 flex items-start gap-2">
-							<div class="flex-1 min-w-0">
-								<div class="flex items-center gap-1.5 flex-wrap">
-									<span class="font-mono text-sm break-all" :class="{
-										'italic': prop.anyClientDifferentFromDepot,
-										'font-bold': prop.anyDepotDifferentFromDefault,
-									}">
-										{{ prop.propertyId }}
-									</span>
-									<UBadge :color="prop.type === 'BoolProductProperty' ? 'info' : 'neutral'"
-										variant="subtle" size="xs">
-										{{ prop.type === 'BoolProductProperty' ? 'Bool' : 'Text' }}
-									</UBadge>
-									<UBadge v-if="prop.multiValue" color="secondary" variant="subtle" size="xs">
-										Multi
-									</UBadge>
-									<span v-if="isPropertyChanged(prop.propertyId)"
-										class="inline-flex items-center text-yellow-700 dark:text-yellow-200">
-										<UIcon name="i-heroicons-pencil-square" class="w-3 h-3" />
-									</span>
-								</div>
-								<p v-if="prop.description" class="text-xs text-(--color-text-muted) mt-0.5 line-clamp-2"
-									:title="prop.description">
-									{{ prop.description }}
-								</p>
-								<div v-if="prop.default && prop.default.length > 0"
-									class="flex items-center gap-1 mt-1 text-xs text-(--color-text-muted)">
-									<span>{{ $t('default') }}:</span>
-									<UBadge v-for="val in prop.default.slice(0, 3)" :key="String(val)" color="neutral"
-										variant="soft" size="xs">
-										{{ String(val) }}
-									</UBadge>
-									<span v-if="prop.default.length > 3">+{{ prop.default.length - 3 }}</span>
-								</div>
-							</div>
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2 px-2 rounded transition-colors"
+						:class="isPropertyChanged(prop.propertyId) ? 'bg-yellow-50 dark:bg-yellow-700/10' : 'hover:bg-(--color-surface-hover)'">
+
+						<div class="min-w-0 md:w-2/5 flex items-center gap-1.5">
+							<SharedTooltipTable :rows="getPropertyTooltipRows(prop)">
+								<span class="font-mono text-sm break-all cursor-help" :class="{
+									'italic': prop.anyClientDifferentFromDepot,
+									'font-bold': prop.anyDepotDifferentFromDefault,
+								}">
+									{{ prop.propertyId }}
+								</span>
+							</SharedTooltipTable>
+							<span v-if="isPropertyChanged(prop.propertyId)"
+								class="inline-flex items-center text-yellow-700 dark:text-yellow-200">
+								<UIcon name="i-heroicons-pencil-square" class="w-3 h-3" />
+							</span>
 						</div>
 
 						<div class="flex-1 flex items-center gap-2 min-w-0 w-full md:w-auto">
-							<template v-if="prop.type === 'BoolProductProperty'">
-								<UCheckbox :model-value="getBoolValue(prop)" :indeterminate="isMixedValue(prop)"
-									:disabled="readonly || !prop.editable"
-									@update:model-value="(v: boolean | 'indeterminate') => handlePropertyChange(prop, v)" />
-								<span v-if="isMixedValue(prop)" class="text-xs text-(--color-text-muted) italic">
-									{{ $t('mixed') }}
-								</span>
-							</template>
-
-							<template v-else-if="isPasswordProperty(prop.propertyId)">
-								<SharedPasswordInput :model-value="getStringValue(prop)"
-									:disabled="readonly || !prop.editable" size="sm" class="flex-1 font-mono"
-									@update:model-value="(v: string) => handlePropertyChange(prop, v)" />
-							</template>
-
-							<template v-else-if="prop.multiValue">
-								<USelectMenu :model-value="getMultiValue(prop)" :items="getAllValueOptions(prop)"
-									multiple size="sm" class="flex-1" :disabled="readonly || !prop.editable"
-									@update:model-value="(v: string[]) => handlePropertyChange(prop, v)" />
-							</template>
-
-							<template v-else-if="prop.allValues && prop.allValues.length > 0 && !prop.editable">
-								<USelect :model-value="getStringValue(prop)" :items="getAllValueItems(prop)" size="sm"
-									class="flex-1" :disabled="readonly"
-									@update:model-value="(v: string) => handlePropertyChange(prop, v)" />
-							</template>
-
-							<template v-else-if="prop.allValues && prop.allValues.length > 0 && prop.editable">
-								<USelectMenu :model-value="getStringValue(prop)" :items="getAllValueOptions(prop)"
-									:creatable="true" size="sm" class="flex-1" :disabled="readonly"
-									@update:model-value="(v: string | string[]) => handlePropertyChange(prop, Array.isArray(v) ? v[0] || '' : v)" />
-							</template>
-
-							<template v-else>
-								<UInput :model-value="getStringValue(prop)" size="sm" class="flex-1"
-									:disabled="readonly || !prop.editable"
-									@update:model-value="(v: string) => handlePropertyChange(prop, v)" />
-							</template>
+							<SharedPropertyFormItem :model-value="prop._value"
+								:type="prop.type === 'BoolProductProperty' ? 'bool' : 'unicode'"
+								:possible-values="prop.allValues || []" :multi-value="prop.multiValue"
+								:editable="prop.editable" :disabled="readonly"
+								:password="isPasswordProperty(prop.propertyId)" :mixed="isMixedValue(prop)"
+								@update:model-value="(v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)" />
 
 							<UButton v-if="isPropertyChanged(prop.propertyId)" size="xs" variant="ghost" color="neutral"
 								:icon="icons.close" :title="$t('discardItem')"
@@ -115,11 +57,13 @@ interface Props {
 	properties: EditableProductProperty[]
 	loading?: boolean
 	readonly?: boolean
+	externalFilter?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	loading: false,
 	readonly: false,
+	externalFilter: '',
 })
 
 const emit = defineEmits<{
@@ -131,10 +75,9 @@ const MIXED_MARKER = '___MIXED___'
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const search = ref('')
 
 const filteredProperties = computed(() => {
-	const q = search.value.trim().toLowerCase()
+	const q = (props.externalFilter || '').trim().toLowerCase()
 	if (!q) return props.properties
 	return props.properties.filter(
 		p => p.propertyId.toLowerCase().includes(q) ||
@@ -152,39 +95,24 @@ function isMixedValue(prop: EditableProductProperty): boolean {
 	return prop._value === MIXED_MARKER || prop._originalValue === MIXED_MARKER
 }
 
-function getBoolValue(prop: EditableProductProperty): boolean {
-	if (isMixedValue(prop)) return false
-	if (typeof prop._value === 'boolean') return prop._value
-	if (typeof prop._value === 'string') return prop._value === 'true' || prop._value === '1'
-	if (Array.isArray(prop._value)) return prop._value[0] === 'true' || prop._value[0] === '1' || prop._value[0] === true as unknown as string
-	return false
-}
-
-function getStringValue(prop: EditableProductProperty): string {
-	if (isMixedValue(prop)) return String($t('mixed'))
-	if (typeof prop._value === 'string') return prop._value
-	if (typeof prop._value === 'boolean') return String(prop._value)
-	if (Array.isArray(prop._value)) return prop._value[0] || ''
-	return ''
-}
-
-function getMultiValue(prop: EditableProductProperty): string[] {
-	if (Array.isArray(prop._value)) return prop._value.map(String)
-	if (typeof prop._value === 'string' && prop._value) return [prop._value]
-	return []
-}
-
-function getAllValueOptions(prop: EditableProductProperty): string[] {
-	const values = (prop.allValues || []).map(String)
-	return [...new Set(values)]
-}
-
-function getAllValueItems(prop: EditableProductProperty): Array<{ label: string; value: string }> {
-	return getAllValueOptions(prop).map(v => ({ label: v, value: v }))
-}
-
 function isPasswordProperty(propertyId: string): boolean {
-	return ['password', 'secret'].some(marker => propertyId.toLowerCase().includes(marker))
+	const id = propertyId.toLowerCase()
+	return ['password', 'secret', 'passwd'].some(marker => id.includes(marker))
+}
+
+function getPropertyTooltipRows(prop: EditableProductProperty): Array<{ key: string; value: string }> {
+	const rows: Array<{ key: string; value: string }> = []
+	rows.push({ key: String($t('type')), value: `${prop.type === 'BoolProductProperty' ? 'Bool' : 'Text'}${prop.multiValue ? ' (multi)' : ''}${prop.editable ? ' (editable)' : ''}` })
+	if (prop.description) rows.push({ key: String($t('description')), value: prop.description })
+	if (prop.default && prop.default.length > 0) {
+		rows.push({ key: String($t('default')), value: prop.default.join(', ') })
+	}
+	if (prop.allValues && prop.allValues.length > 0) {
+		rows.push({ key: String($t('values')), value: prop.allValues.map(String).join(', ') })
+	}
+	if (prop.anyDepotDifferentFromDefault) rows.push({ key: String($t('note')), value: 'Depot ≠ Default (bold)' })
+	if (prop.anyClientDifferentFromDepot) rows.push({ key: String($t('note')), value: 'Client ≠ Depot (italic)' })
+	return rows
 }
 
 function handlePropertyChange(prop: EditableProductProperty, value: EditablePropertyValue) {

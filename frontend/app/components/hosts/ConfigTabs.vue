@@ -1,8 +1,44 @@
-HostsConfigTabs - Parameters and Attributes tabs.
+HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 <template>
+	<UModal v-if="showHostSelector || !panelMode" v-model:open="showLeaveWarning" :title="$t('unsavedChanges')">
+		<template #body>
+			<p class="text-sm">{{ $t('navigateAwayWarning') }}</p>
+		</template>
+		<template #footer>
+			<div class="flex gap-2 justify-end">
+				<UButton variant="outline" color="neutral" @click="cancelLeave">{{ $t('stayOnPage') }}</UButton>
+				<UButton color="error" @click="confirmLeave">{{ $t('leaveAnyway') }}</UButton>
+			</div>
+		</template>
+	</UModal>
+
 	<div
 		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
-		<SharedTabsNav v-if="showTabs" v-model="activeTab" :tabs="tabDefs" class="mb-3 shrink-0" />
+
+		<div class="shrink-0 pb-3">
+			<div class="flex flex-wrap items-center justify-between gap-3">
+				<div class="flex items-center gap-2">
+					<SharedTabsNav v-model="activeTab" :tabs="tabDefs" />
+					<template v-if="showHostSelector">
+						<span class="h-5 w-px bg-(--color-border) mx-1" />
+						<slot name="hostSelector">
+							<HostsSelector v-model="hostSelectorModel" :type="hostType"
+								:placeholder="hostSelectorPlaceholder" allow-clear />
+						</slot>
+					</template>
+				</div>
+				<div class="flex flex-wrap items-center gap-2">
+					<UInput v-model="paramSearch" :placeholder="String($t('typeToFilter'))" size="sm"
+						class="w-full sm:w-32 md:w-40" icon="i-lucide-search" />
+					<SharedUnsavedChangesModal v-if="showUnsavedModal" :config-ref="unsavedChangesRef" size="sm"
+						@save-all="saveAll" @discard-all="discardAll" />
+					<UTooltip :text="$t('refresh')">
+						<UButton :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
+							:loading="loadingParams || loadingAttrs" @click="refresh" />
+					</UTooltip>
+				</div>
+			</div>
+		</div>
 
 		<div v-show="activeTab === 'parameters'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 h-full']">
 			<div v-if="loadingParams" class="py-8 flex justify-center">
@@ -93,6 +129,9 @@ interface Props {
 	showTabs?: boolean
 	search?: string
 	panelMode?: boolean
+	showChangeBanner?: boolean
+	showHostSelector?: boolean
+	hostSelectorPlaceholder?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -103,12 +142,17 @@ const props = withDefaults(defineProps<Props>(), {
 	showTabs: true,
 	search: undefined,
 	panelMode: false,
+	showChangeBanner: true,
+	showHostSelector: false,
+	hostSelectorPlaceholder: undefined,
 })
 
 const emit = defineEmits<{
 	saved: []
 	'attribute-change': [hasChanges: boolean]
 	'update:search': [value: string]
+	'update:hostId': [value: string | null]
+	'update:tab': [value: string]
 }>()
 
 const icons = useIcons()
@@ -126,6 +170,51 @@ const {
 
 const activeTab = ref(props.tab || 'parameters')
 watch(() => props.tab, (v) => { if (v) activeTab.value = v })
+watch(activeTab, (v) => emit('update:tab', v))
+
+const hostSelectorModel = ref<string>(props.hostId || '')
+watch(() => props.hostId, (v) => { hostSelectorModel.value = v || '' })
+watch(hostSelectorModel, (v) => emit('update:hostId', v || null))
+
+const showLeaveWarning = ref(false)
+let resolveLeave: ((ok: boolean) => void) | null = null
+
+const showUnsavedModal = computed(() => hasAnyChanges.value || changedParams.value.size > 0 || hasAttributeChanges.value)
+
+const unsavedChangesRef = computed(() => ({
+	hasAnyChanges: hasAnyChanges.value,
+	isSaving: isSaving.value,
+	changedCount: changedCount.value,
+	changedParams: changedParams.value,
+	changedAttributesList: changedAttributesList.value,
+	saveAll,
+	discardAll,
+	discardSingleParam,
+	discardSingleAttribute,
+	getOriginalParamValue,
+	fmtVal,
+}))
+
+onBeforeRouteLeave(() => {
+	if (!hasAnyChanges.value) return true
+	showLeaveWarning.value = true
+	return new Promise<boolean>((resolve) => {
+		resolveLeave = resolve
+	})
+})
+
+function confirmLeave() {
+	showLeaveWarning.value = false
+	discardAll()
+	resolveLeave?.(true)
+	resolveLeave = null
+}
+
+function cancelLeave() {
+	showLeaveWarning.value = false
+	resolveLeave?.(false)
+	resolveLeave = null
+}
 
 const showParamChanges = ref(false)
 const showAttrChanges = ref(false)

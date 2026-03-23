@@ -7,8 +7,9 @@
 		<template v-else>
 			<div class="flex items-center justify-between mb-2 shrink-0">
 				<span class="text-xs text-(--color-text-muted)">{{ totalCount }} {{ t('total') }}</span>
-				<UButton size="xs" variant="link" color="error" @click="clearAll">{{ t('clearAllSelections') }}
-				</UButton>
+				<UTooltip :text="t('clearAllSelections')">
+					<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="clearAll" />
+				</UTooltip>
 			</div>
 
 			<div class="flex-1 overflow-y-auto min-h-0 space-y-3">
@@ -20,12 +21,13 @@
 							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedServers.length
 							}}</UBadge>
 						</div>
-						<UButton size="xs" variant="link" color="error" @click="clearServers">{{ t('clearAll') }}
-						</UButton>
+						<UTooltip :text="t('clearAll')">
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="clearServers" />
+						</UTooltip>
 					</div>
 					<div class="space-y-0.5">
 						<div v-for="server in selectionStore.selectedServers" :key="server"
-							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
+							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ server }}</span>
 							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -42,12 +44,13 @@
 							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedClients.length
 							}}</UBadge>
 						</div>
-						<UButton size="xs" variant="link" color="error" @click="selectionStore.clearClients()">{{
-							t('clearAll') }}</UButton>
+						<UTooltip :text="t('clearAll')">
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="selectionStore.clearClients()" />
+						</UTooltip>
 					</div>
 					<div class="space-y-0.5 max-h-40 overflow-y-auto">
 						<div v-for="client in selectionStore.selectedClients" :key="client"
-							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
+							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ client }}</span>
 							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -64,60 +67,17 @@
 							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedProducts.length
 							}}</UBadge>
 						</div>
-						<UButton size="xs" variant="link" color="error" @click="selectionStore.clearProducts()">{{
-							t('clearAll') }}</UButton>
+						<UTooltip :text="t('clearAll')">
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="selectionStore.clearProducts()" />
+						</UTooltip>
 					</div>
 					<div class="space-y-0.5 max-h-40 overflow-y-auto">
 						<div v-for="product in selectionStore.selectedProducts" :key="product"
-							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
+							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ product }}</span>
 							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
 								@click="selectionStore.toggleProduct(product)" />
-						</div>
-					</div>
-				</div>
-
-				<div v-if="selectionStore.selectedClientGroups.length > 0">
-					<div class="flex items-center justify-between mb-1">
-						<div class="flex items-center gap-1.5 text-xs font-medium">
-							<UIcon :name="icons.group" class="w-3.5 h-3.5" />
-							<span>{{ t('clientGroups') }}</span>
-							<UBadge size="xs" variant="subtle" color="neutral">{{
-								selectionStore.selectedClientGroups.length }}</UBadge>
-						</div>
-						<UButton size="xs" variant="link" color="error" @click="selectionStore.clearClientGroups()">{{
-							t('clearAll') }}</UButton>
-					</div>
-					<div class="space-y-0.5">
-						<div v-for="group in selectionStore.selectedClientGroups" :key="group"
-							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
-							<span class="truncate">{{ group }}</span>
-							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
-								class="opacity-0 group-hover:opacity-100 transition-opacity"
-								@click="selectionStore.toggleClientGroup(group)" />
-						</div>
-					</div>
-				</div>
-
-				<div v-if="selectionStore.selectedProductGroups.length > 0">
-					<div class="flex items-center justify-between mb-1">
-						<div class="flex items-center gap-1.5 text-xs font-medium">
-							<UIcon :name="icons.group" class="w-3.5 h-3.5" />
-							<span>{{ t('productGroups') }}</span>
-							<UBadge size="xs" variant="subtle" color="neutral">{{
-								selectionStore.selectedProductGroups.length }}</UBadge>
-						</div>
-						<UButton size="xs" variant="link" color="error" @click="selectionStore.clearProductGroups()">{{
-							t('clearAll') }}</UButton>
-					</div>
-					<div class="space-y-0.5">
-						<div v-for="group in selectionStore.selectedProductGroups" :key="group"
-							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group">
-							<span class="truncate">{{ group }}</span>
-							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
-								class="opacity-0 group-hover:opacity-100 transition-opacity"
-								@click="selectionStore.toggleProductGroup(group)" />
 						</div>
 					</div>
 				</div>
@@ -144,9 +104,7 @@ const hasAny = computed(() => selectionStore.hasAnySelection)
 const totalCount = computed(() =>
 	selectionStore.selectedServers.length +
 	selectionStore.selectedClients.length +
-	selectionStore.selectedProducts.length +
-	selectionStore.selectedClientGroups.length +
-	selectionStore.selectedProductGroups.length
+	selectionStore.selectedProducts.length
 )
 
 function clearServers() {

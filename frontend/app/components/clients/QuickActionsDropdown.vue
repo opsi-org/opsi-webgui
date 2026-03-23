@@ -57,6 +57,16 @@
 					</div>
 				</div>
 
+				<div v-if="currentAction === 'shutdown'"
+					class="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800">
+					<div class="flex items-start gap-2">
+						<UIcon :name="icons.warning" class="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5" />
+						<p class="text-xs text-amber-800 dark:text-amber-200">
+							{{ t('shutdownWarning') }}
+						</p>
+					</div>
+				</div>
+
 				<div v-if="currentAction === 'deployClientAgent'" class="space-y-3 mb-4">
 					<div class="grid grid-cols-3 gap-2 mb-3">
 						<UButton v-for="os in osTypes" :key="os.value"
@@ -175,6 +185,7 @@ const actions = [
 	{ key: 'onDemand', icon: icons.refresh, color: 'text-blue-600 dark:text-blue-400' },
 	{ key: 'notify', icon: icons.info, color: 'text-blue-600 dark:text-blue-400' },
 	{ key: 'reboot', icon: icons.warning, color: 'text-amber-600 dark:text-amber-400' },
+	{ key: 'shutdown', icon: icons.warning, color: 'text-amber-600 dark:text-amber-400' },
 	{ key: 'deployClientAgent', icon: icons.upload, color: 'text-green-600 dark:text-green-400' },
 	{ key: 'delete', icon: icons.delete, color: 'text-red-600 dark:text-red-400' },
 ] as const
@@ -245,6 +256,15 @@ async function executeAction() {
 					params: [],
 				})
 				result = rebootResponse.data || {}
+				break
+
+			case 'shutdown':
+				const shutdownResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
+					client_ids: props.clientIds,
+					method: 'shutdown',
+					params: [],
+				})
+				result = shutdownResponse.data || {}
 				break
 
 			case 'deployClientAgent':

@@ -2,18 +2,11 @@
   <div class="data-table flex flex-col h-full min-h-0">
     <div class="shrink-0 flex flex-wrap items-center justify-between gap-2 mb-3">
       <div class="flex items-center gap-3 text-sm">
-        <span class="text-(--color-text-muted)">
-          <template v-if="displayMode === 'infinite'">
-            {{ $t('showing') }} {{ rows.length }} {{ $t('of') }} {{ serverTotal }}
-          </template>
-          <template v-else>
-            {{ $t('showing') }} {{ paginationStartIndex + 1 }}-{{ Math.min(paginationEndIndex, serverTotal) }} {{
-              $t('of') }} {{ serverTotal }}
-          </template>
-        </span>
-        <UBadge v-if="selectedKeys.length > 0" color="primary" variant="subtle" size="sm">
-          {{ selectedKeys.length }} {{ $t('selected') }}
-        </UBadge>
+        <UTooltip v-if="selectedKeys.length > 0" :text="`${selectedKeys.length} ${$t('selected')} — ${$t('clearSelection')}`">
+          <UButton :icon="icons.clear" variant="soft" color="primary" size="xs" @click="clearSelection">
+            {{ selectedKeys.length }}
+          </UButton>
+        </UTooltip>
         <UBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
           {{ $t('singleSelect') }}
         </UBadge>
@@ -109,9 +102,6 @@
         <UButton v-if="showRefresh" :icon="icons.refresh" variant="ghost" color="neutral" size="sm" :loading="loading"
           :title="String($t('refresh'))" @click="handleRefresh" />
 
-        <UButton v-if="selectedKeys.length > 0" :icon="icons.clear" variant="ghost" color="neutral" size="sm"
-          :title="String($t('clearSelection'))" @click="clearSelection" />
-
         <slot name="toolbar-right" />
       </div>
     </div>
@@ -119,7 +109,8 @@
     <!-- Table -->
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div ref="tableContainer" class="flex-1 overflow-auto transition-all duration-200"
-        :style="{ maxHeight: maxHeight }" @scroll="handleScroll">
+        :style="{ maxHeight: displayMode === 'pagination' ? `calc(${maxHeight} - 48px)` : maxHeight }"
+        @scroll="handleScroll">
         <div v-if="loading && rows.length === 0"
           class="flex items-center justify-center py-12 text-(--color-text-muted)">
           <UIcon :name="icons.loading" class="w-6 h-6 animate-spin mr-2" />
@@ -127,14 +118,20 @@
         </div>
 
         <div v-else class="min-w-full">
-          <table class="w-full table-auto" role="grid" :aria-label="tableLabel" :style="{ minWidth: tableMinWidth }">
+          <table class="w-full table-auto" role="grid" :aria-label="tableLabel">
             <thead class="bg-(--color-surface) sticky top-0 z-10">
               <tr role="row">
-                <th v-if="selectable" class="w-10 px-3 py-2.5 text-center whitespace-nowrap" role="columnheader"
-                  :aria-label="effectiveSelectionMode === 'multi' ? 'Select all' : 'Selection'">
-                  <input v-if="effectiveSelectionMode === 'multi'" type="checkbox" :checked="allSelected"
-                    :indeterminate="someSelected" class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
-                    aria-label="Select all rows" @change="toggleSelectAll" />
+                <th v-if="selectable" class="w-10 px-3 py-2.5 text-center whitespace-nowrap bg-(--color-surface)"
+                  role="columnheader" :aria-label="effectiveSelectionMode === 'multi' ? 'Select all' : 'Selection'">
+                  <div class="flex items-center justify-center gap-1">
+                    <input v-if="effectiveSelectionMode === 'multi'" type="checkbox" :checked="allSelected"
+                      :indeterminate="someSelected" class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
+                      aria-label="Select all rows" @change="toggleSelectAll" />
+                    <UButton v-if="selectedKeys.length > 0" size="xs" variant="ghost" color="neutral"
+                      :icon="sortBySelection ? icons.sortDesc : icons.sort" :class="sortBySelection ? '' : 'opacity-30'"
+                      class="p-0! w-4 h-4" :title="String($t('sortBySelection'))"
+                      @click.stop="sortBySelection = !sortBySelection" />
+                  </div>
                 </th>
 
                 <th v-for="col in visibleColumns" :key="col.key" role="columnheader"
@@ -144,22 +141,25 @@
                   :style="{ width: col.width, minWidth: col.minWidth || '80px', textAlign: col.align }"
                   :tabindex="col.sortable ? 0 : undefined" @click="col.sortable && handleSort(col.key)"
                   @keydown.enter="col.sortable && handleSort(col.key)">
-                  <div class="flex items-center gap-1">
-                    <template v-if="col.headerIcon">
-                      <UTooltip :text="col.label">
-                        <UIcon :name="col.headerIcon" class="w-4 h-4" />
-                      </UTooltip>
-                    </template>
-                    <template v-else>
-                      {{ col.label }}
-                    </template>
-                    <template v-if="col.sortable">
-                      <UIcon v-if="tableSettings.settings.sortColumn === col.key"
-                        :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
-                        class="w-3 h-3" />
-                      <UIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
-                    </template>
-                  </div>
+                  <slot :name="(`header-cell-${col.key}` as any)" :column="col" :sort-column="tableSettings.settings.sortColumn"
+                    :sort-direction="tableSettings.settings.sortDirection">
+                    <div class="flex items-center gap-1">
+                      <template v-if="col.headerIcon">
+                        <UTooltip :text="col.label">
+                          <UIcon :name="col.headerIcon" class="w-4 h-4" />
+                        </UTooltip>
+                      </template>
+                      <template v-else>
+                        {{ col.label }}
+                      </template>
+                      <template v-if="col.sortable">
+                        <UIcon v-if="tableSettings.settings.sortColumn === col.key"
+                          :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
+                          class="w-3 h-3" />
+                        <UIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
+                      </template>
+                    </div>
+                  </slot>
                 </th>
 
                 <th v-if="hasActions" role="columnheader"
@@ -169,8 +169,8 @@
               </tr>
             </thead>
 
-            <tbody class="divide-y divide-(--color-border)">
-              <tr v-for="(row, idx) in rows" :key="getRowKey(row)" role="row" :aria-selected="isSelected(row)"
+            <tbody class="divide-y divide-(--color-border)" :class="{ 'pb-2': displayMode === 'pagination' }">
+              <tr v-for="(row, idx) in displayRows" :key="getRowKey(row)" role="row" :aria-selected="isSelected(row)"
                 :tabindex="0"
                 class="group hover:bg-(--color-surface-hover) transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue"
                 :class="{
@@ -189,7 +189,7 @@
 
                 <td v-for="col in visibleColumns" :key="col.key" role="gridcell"
                   class="px-3 py-2 text-sm text-(--color-text)" :class="col.class" :style="{ textAlign: col.align }">
-                  <slot :name="'cell-' + col.key" :row="row" :value="getNestedValue(row, col.key)" :index="idx">
+                  <slot :name="(`cell-${col.key}` as any)" :row="row" :value="getNestedValue(row, col.key)" :index="idx">
                     {{ formatCellValue(row, col) }}
                   </slot>
                 </td>
@@ -238,14 +238,19 @@
       </div>
     </UCard>
 
-    <!-- Pagination -->
-    <div v-if="displayMode === 'pagination'"
-      class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 mt-2 rounded-b-lg flex items-center justify-end gap-4">
+    <!-- Footer -->
+    <div
+      class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 mt-2 rounded-b-lg flex items-center justify-between gap-4">
       <span class="text-xs text-(--color-text-muted)">
-        {{ $t('page') }} {{ currentPage }} {{ $t('of') }} {{ totalPages }}
-        ({{ serverTotal }} {{ $t('items') }})
+        <template v-if="displayMode === 'infinite'">
+          {{ $t('showing') }} {{ rows.length }} {{ $t('of') }} {{ serverTotal }}
+        </template>
+        <template v-else>
+          {{ $t('showing') }} {{ paginationStartIndex + 1 }}-{{ Math.min(paginationEndIndex, serverTotal) }}
+          {{ $t('of') }} {{ serverTotal }}
+        </template>
       </span>
-      <div v-if="totalPages > 1" class="flex items-center gap-1">
+      <div v-if="displayMode === 'pagination' && totalPages > 1" class="flex items-center gap-1">
         <UButton :icon="icons.arrowLeft" variant="outline" color="neutral" size="xs" :disabled="currentPage === 1"
           @click="goToPage(currentPage - 1)" />
         <template v-for="page in visiblePageNumbers" :key="page">
@@ -304,6 +309,7 @@ interface Props {
   emptyLabel?: string
   tableLabel?: string
   maxHeight?: string
+  sortBySelectionEnabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -327,6 +333,13 @@ const emit = defineEmits<{
   (e: 'page-change', params: PageChangeParams): void
 }>()
 
+defineSlots<{
+  [key: `header-cell-${string}`]: (props: { column: DataTableColumnDef; sortColumn: string; sortDirection: 'asc' | 'desc' }) => any
+  [key: `cell-${string}`]: (props: { row: T; value: unknown; index: number }) => any
+  'row-actions': (props: { row: T; index: number }) => any
+  'toolbar-right': () => any
+}>()
+
 const icons = useIcons()
 const { t: $t } = useI18n()
 const slots = useSlots()
@@ -338,6 +351,11 @@ const selectedKeys = ref<string[]>([])
 const filterQueryInternal = ref(props.filterQuery || '')
 const currentPage = ref(1)
 const selectionModeOverride = ref<'single' | 'multi' | null>(null)
+const sortBySelection = ref(props.sortBySelectionEnabled || false)
+
+watch(() => props.sortBySelectionEnabled, (v) => {
+  if (v !== undefined) sortBySelection.value = v
+})
 let filterDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
 const displayMode = computed(() => tableSettings.settings.displayMode)
@@ -415,6 +433,18 @@ const visiblePageNumbers = computed(() => {
 const hasMoreData = computed(() => {
   if (displayMode.value === 'infinite') return props.rows.length < serverTotal.value
   return false
+})
+
+const displayRows = computed(() => {
+  if (!sortBySelection.value || selectedKeys.value.length === 0) return props.rows
+  const keySet = new Set(selectedKeys.value)
+  const selected: T[] = []
+  const unselected: T[] = []
+  for (const row of props.rows) {
+    if (keySet.has(getRowKey(row))) selected.push(row)
+    else unselected.push(row)
+  }
+  return [...selected, ...unselected]
 })
 
 const allSelected = computed(() =>
@@ -546,6 +576,7 @@ function toggleSelectAll() {
 function clearSelection() {
   selectedKeys.value = []
   selectionModeOverride.value = null
+  sortBySelection.value = false
   emitSelectionChange()
 }
 

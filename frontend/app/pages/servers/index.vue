@@ -1,5 +1,5 @@
 <template>
-    <LayoutsDetailPanel :showPanel="!!panelServer" @close="panelServer = null; panelType = null">
+    <LayoutsDetailPanel :showPanel="!!panelServer" @close="closePanel">
         <template #main>
             <LayoutsPageLayout show-refresh :loading="loading" @refresh="fetchServers">
                 <template #actions>
@@ -29,7 +29,7 @@
                     @page-change="handlePageChange" @refresh="fetchServers">
                     <template #cell-type="{ row }">
                         <SharedStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
-                            :label="String((row as Server).type === 'OpsiConfigserver' ? $t('configserver') : $t('server'))" />
+                            :label="String((row as Server).type || '-')" />
                     </template>
                     <template #cell-description="{ row }">
                         {{ (row as Server).description || '-' }}
@@ -42,10 +42,15 @@
             </LayoutsPageLayout>
         </template>
 
-        <template #title>{{ panelServer?.depotId }}</template>
+        <template #title>
+            <span class="flex items-center gap-2">
+                <UIcon :name="icons.server" class="w-4 h-4 text-opsi-blue shrink-0" />
+                {{ panelServer?.depotId }}
+            </span>
+        </template>
         <template #panel>
             <div v-if="panelServer">
-                <HostsConfigView v-if="panelType === 'config'" :host-id="panelServer.depotId" host-type="server"
+                <HostsConfigTabs v-if="panelType === 'config'" :host-id="panelServer.depotId" host-type="server"
                     :tab="panelTab" panel-mode @update:tab="panelTab = $event" />
             </div>
         </template>
@@ -64,6 +69,8 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const { getServers } = useApiHelpers()
 const selectionStore = useSelectionStore()
+const router = useRouter()
+const route = useRoute()
 const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRefresh } = useAutoRefresh(fetchServers)
 
 const loading = ref(false)
@@ -85,6 +92,14 @@ const columns: DataTableColumnDef[] = [
 function openConfig(row: Server) {
     panelServer.value = row
     panelType.value = 'config'
+    router.replace({ query: { ...route.query, server: row.depotId, view: 'panel' } })
+}
+
+function closePanel() {
+    panelServer.value = null
+    panelType.value = null
+    const { server: _s, view: _v, ...rest } = route.query
+    router.replace({ query: rest })
 }
 
 /** Single-select row click: open config panel but keep config server selected */
@@ -132,5 +147,13 @@ async function fetchServers(params?: PageChangeParams) {
     finally { loading.value = false }
 }
 
-onMounted(fetchServers)
+onMounted(async () => {
+    await fetchServers()
+    // Open panel from URL if server specified
+    const serverId = route.query.server as string | undefined
+    if (serverId && route.query.view === 'panel') {
+        const s = servers.value.find(sv => sv.depotId === serverId)
+        if (s) openConfig(s)
+    }
+})
 </script>

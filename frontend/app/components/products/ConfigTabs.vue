@@ -1,22 +1,28 @@
 <template>
 	<div
 		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
-		<!-- Inline status -->
 		<UAlert v-if="statusMessage" :color="statusMessage.type"
 			:title="statusMessage.type === 'success' ? $t('success') : $t('error')" :description="statusMessage.message"
 			variant="subtle" class="mb-2 shrink-0"
 			:close-button="{ icon: icons.close, color: statusMessage.type, variant: 'link' }"
 			@close="statusMessage = null" />
 
-		<SharedTabsNav v-model="activeTab" :tabs="tabDefs" class="mb-3 shrink-0" />
-
-		<div v-show="activeTab === 'properties'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1']">
-			<ProductsPropertiesForm :properties="editableProperties" :loading="loadingProps" :readonly="readonly"
-				@update:property="setProperty" @discard:property="discardSingleProperty" />
+		<div class="flex items-center justify-between gap-2 mb-3 shrink-0">
+			<SharedTabsNav v-model="activeTab" :tabs="tabDefs" />
+			<UInput v-model="filterQuery" :placeholder="$t('filter')" :icon="icons.filter" size="xs" class="w-32" />
 		</div>
 
-		<div v-show="activeTab === 'dependencies'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1']">
-			<ProductsDependenciesForm :dependencies="dependencies" :loading="loadingDeps" />
+		<div v-show="activeTab === 'properties'"
+			:class="['flex flex-col overflow-auto', panelMode ? '' : 'min-h-0 flex-1']">
+			<ProductsPropertiesForm :properties="editableProperties" :loading="loadingProps" :readonly="readonly"
+				:external-filter="filterQuery" @update:property="setProperty"
+				@discard:property="discardSingleProperty" />
+		</div>
+
+		<div v-show="activeTab === 'dependencies'"
+			:class="['flex flex-col overflow-auto', panelMode ? '' : 'min-h-0 flex-1']">
+			<ProductsDependenciesForm :dependencies="dependencies" :loading="loadingDeps"
+				:external-filter="filterQuery" />
 		</div>
 	</div>
 </template>
@@ -60,6 +66,7 @@ const loadingProps = ref(false)
 const loadingDeps = ref(false)
 const savingProps = ref(false)
 const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+const filterQuery = ref('')
 
 const rawProperties = ref<Record<string, ProductProperty>>({})
 const editableProperties = ref<EditableProductProperty[]>([])
@@ -239,7 +246,7 @@ async function saveAll() {
 		const clients = selectionStore.selectedClients
 
 		const result = await saveProductProperties(props.productId, {
-			depotIds: depots,
+			depotIds: clients.length > 0 ? undefined : depots,
 			clientIds: clients.length > 0 ? clients : undefined,
 			properties: changedProps,
 		})

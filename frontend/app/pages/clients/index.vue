@@ -1,5 +1,6 @@
 <template>
-	<LayoutsDetailPanel :showPanel="!!panelClient" @close="panelClient = null; panelType = null">
+	<LayoutsDetailPanel :showPanel="!!panelClient || panelType === 'products' || panelType === 'add'"
+		@close="closePanel">
 		<template #main>
 			<LayoutsPageLayout show-refresh :loading="loading" @refresh="fetchClients">
 				<template #actions>
@@ -18,14 +19,12 @@
 						{{ $t('changesDetected') }}
 					</UButton>
 					<UButton v-if="selectionStore.selectedClients.length > 0" :icon="icons.product" color="primary"
-						size="sm" @click="navigateTo('/clients/products/LocalbootProduct')">
+						size="sm" @click="openProductsPanel">
 						{{ $t('products') }}
 					</UButton>
-					<NuxtLink to="/clients/add">
-						<UButton :icon="icons.add" color="primary" size="sm">
-							<span class="hidden sm:inline">{{ $t('addNew') }}</span>
-						</UButton>
-					</NuxtLink>
+					<UButton :icon="icons.add" color="primary" size="sm" @click="openAddPanel">
+						<span class="hidden sm:inline">{{ $t('addNew') }}</span>
+					</UButton>
 				</template>
 
 				<UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4"
@@ -42,8 +41,8 @@
 				<SharedDataTable :rows="clients" :columns="columns" :loading="loading" table-id="clients"
 					row-key="clientId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
 					:total-items="totalItems" :selected-keys="selectionStore.selectedClients"
-					@row-activate="handleRowActivate" @selection-change="handleSelectionChange"
-					@page-change="handlePageChange" @refresh="fetchClients">
+					:sort-by-selection-enabled="sortBySelectionEnabled" @row-activate="handleRowActivate"
+					@selection-change="handleSelectionChange" @page-change="handlePageChange" @refresh="fetchClients">
 					<template #cell-description="{ row }">
 						{{ (row as Client).description || '-' }}
 					</template>
@@ -110,15 +109,25 @@
 			</LayoutsPageLayout>
 		</template>
 
-		<template #title>{{ panelClient?.clientId }}</template>
+		<template #title>
+			<span class="flex items-center gap-2">
+				<UIcon :name="panelType === 'products' ? icons.product : panelType === 'add' ? icons.add : icons.client"
+					class="w-4 h-4 text-opsi-blue shrink-0" />
+				<template v-if="panelType === 'products'">{{ $t('products') }}</template>
+				<template v-else-if="panelType === 'add'">{{ $t('addNew') }}</template>
+				<template v-else>{{ panelClient?.clientId }}</template>
+			</span>
+		</template>
 		<template #panel>
 			<div v-if="panelClient">
-				<HostsConfigView v-if="panelType === 'config'" :host-id="panelClient.clientId" host-type="client"
+				<HostsConfigTabs v-if="panelType === 'config'" :host-id="panelClient.clientId" host-type="client"
 					:tab="panelTab" panel-mode @update:tab="panelTab = $event" />
 				<ClientsLogsView v-if="panelType === 'logs'" :client-id="panelClient.clientId" panel-mode />
-				<ClientsCloneView v-if="panelType === 'clone'" :source-id="panelClient.clientId" panel-mode
+				<ClientsCloneForm v-if="panelType === 'clone'" :source-id="panelClient.clientId" panel-mode
 					@saved="fetchClients" />
 			</div>
+			<ProductsMainView v-if="panelType === 'products'" product-type="LocalbootProduct" />
+			<ClientsAddForm v-if="panelType === 'add'" panel-mode @saved="handleAddSaved" />
 		</template>
 	</LayoutsDetailPanel>
 </template>
@@ -135,18 +144,22 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const { getClients, getServerIds, checkClientReachable } = useApiHelpers()
 const selectionStore = useSelectionStore()
+const router = useRouter()
+const route = useRoute()
 
 const loading = ref(false)
 const error = ref<string | null>(null)
 const clients = ref<Client[]>([])
 const totalItems = ref(0)
 const panelClient = ref<Client | null>(null)
-const panelType = ref<'config' | 'logs' | 'clone' | null>(null)
+const panelType = ref<'config' | 'logs' | 'clone' | 'products' | 'add' | null>(null)
 const panelTab = ref('parameters')
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
 const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string } | null>(null)
 const lastPageParams = ref<PageChangeParams | null>(null)
+
+const sortBySelectionEnabled = computed(() => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedClients.length > 0)
 
 const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRefresh } = useAutoRefreshClients(fetchClients)
 
@@ -170,6 +183,31 @@ const columns: DataTableColumnDef[] = [
 function openPanel(client: Client, type: 'config' | 'logs' | 'clone') {
 	panelClient.value = client
 	panelType.value = type
+	router.replace({ query: { ...route.query, client: client.clientId, view: 'panel', panelType: type } })
+}
+
+function openProductsPanel() {
+	panelClient.value = null
+	panelType.value = 'products'
+	router.replace({ query: { ...route.query, view: 'panel', panelType: 'products' } })
+}
+
+function openAddPanel() {
+	panelClient.value = null
+	panelType.value = 'add'
+	router.replace({ query: { ...route.query, view: 'panel', panelType: 'add' } })
+}
+
+function handleAddSaved() {
+	closePanel()
+	fetchClients()
+}
+
+function closePanel() {
+	panelClient.value = null
+	panelType.value = null
+	const { client: _c, view: _v, panelType: _pt, ...rest } = route.query
+	router.replace({ query: rest })
 }
 
 /** Single-select row click: select this client + open config panel */
@@ -278,5 +316,14 @@ async function checkAllReachability(clientList: Client[]) {
 
 watch(() => selectionStore.selectedServers, () => fetchClients(), { deep: true })
 
-onMounted(() => fetchClients())
+onMounted(async () => {
+	await fetchClients()
+	// Open panel from URL if client specified
+	const clientId = route.query.client as string | undefined
+	const pType = route.query.panelType as 'config' | 'logs' | 'clone' | undefined
+	if (clientId && route.query.view === 'panel') {
+		const c = clients.value.find(cl => cl.clientId === clientId)
+		if (c) openPanel(c, pType || 'config')
+	}
+})
 </script>

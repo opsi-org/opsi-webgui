@@ -25,6 +25,9 @@ export const useUserStore = defineStore('user', {
     hostGroupAccess: true,
     productGroupAccess: true,
     clientCreation: true,
+    disabledFeatures: [] as string[],
+    healthCounts: {} as Record<string, number>,
+    healthWorstCase: 'ok' as string,
   }),
   getters: {
     isUsernameOutdated(s): boolean {
@@ -64,6 +67,7 @@ export const useUserStore = defineStore('user', {
       host_group_access?: boolean
       product_group_access?: boolean
       client_creation?: boolean
+      health?: { counts: Record<string, number>; worst_case: string }
     }) {
       this.readOnly = cfg.read_only ?? false
       this.serverWriteAccess = cfg.server_write_access ?? true
@@ -71,9 +75,16 @@ export const useUserStore = defineStore('user', {
       this.hostGroupAccess = cfg.host_group_access ?? true
       this.productGroupAccess = cfg.product_group_access ?? true
       this.clientCreation = cfg.client_creation ?? true
+      if (cfg.health) {
+        this.healthCounts = cfg.health.counts ?? {}
+        this.healthWorstCase = cfg.health.worst_case ?? 'ok'
+      }
     },
     setErrorLoggedOutShown(val: boolean) {
       this.errorLoggedOutShown = val
+    },
+    setDisabledFeatures(features: string[]) {
+      this.disabledFeatures = features
     },
   },
 })

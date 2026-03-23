@@ -1,9 +1,8 @@
 Configuration page for clients, with tabs for parameters and attributes, and optional client selector.
 Route: /clients/configuration/:tab/:id?
 <template>
-	<HostsConfigView :host-id="selectedClientId" host-type="client" :tab="activeTab" show-host-selector
-		:host-selector-placeholder="String($t('selectClient'))"
-		:on-cancel-leave="() => { manualClientId = routeClientId }" @update:host-id="updateSelectedClientId"
+	<HostsConfigTabs :host-id="selectedClientId" host-type="client" :tab="activeTab" show-host-selector
+		:host-selector-placeholder="String($t('selectClient'))" @update:host-id="updateSelectedClientId"
 		@update:tab="updateActiveTab" @saved="handleSaved" />
 </template>
 

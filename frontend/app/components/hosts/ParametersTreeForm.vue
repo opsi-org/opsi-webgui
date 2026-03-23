@@ -1,9 +1,15 @@
-HostsParametersTreeForm - Parameters tree form.
+HostsParametersTreeForm - Parameters tree form with proper type handling.
+Supports: BoolConfig (checkbox), UnicodeConfig (select/input/multivalue/password).
+Password detection for configIds containing 'password', 'secret', 'key' patterns.
+Multivalue with tag-like editing and add-new-value for editable params.
 <template>
 	<UList>
-		<UListItem v-for="node in tree" :key="node.key" class="mb-1" :class="{
+		<UListItem v-for="node in tree" :key="node.key" class="mb-1 relative" :class="{
 			'opsi-main-category': getDepth(node.key) === 0
 		}">
+			<!-- Tree guide lines for nested items -->
+			<span v-for="i in getDepth(node.key)" :key="i" class="tree-guide-line"
+				:style="{ left: `${(i - 1) * 25 + 12}px` }" />
 			<template v-if="node.children">
 				<div class="tree-node select-none opsi-tree-row" :class="{ 'tree-node-open': open[node.key] }"
 					@click="toggle(node.key)">
@@ -14,6 +20,10 @@ HostsParametersTreeForm - Parameters tree form.
 							:class="{ '-rotate-90': !open[node.key] }" tabindex="-1" @click.stop="toggle(node.key)" />
 						<span class="opsi-tree-label transition-colors font-mono">
 							{{ node.label }}
+						</span>
+						<span class="text-xs text-(--color-text-muted) ml-2"
+							v-if="node.children && getDepth(node.key) > 0">
+							({{ countLeafParams(node.children) }})
 						</span>
 					</div>
 					<div class="opsi-tree-col opsi-tree-value-col"></div>
@@ -28,9 +38,16 @@ HostsParametersTreeForm - Parameters tree form.
 							<span
 								class="font-mono text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) truncate">{{
 									node.param.configId }}</span>
-							<UButton v-if="node.param.description" size="xs" icon="i-lucide-info" variant="ghost"
-								color="neutral" class="shrink-0 opacity-60 hover:opacity-100" tabindex="-1"
-								:title="node.param.description" />
+							<UTooltip v-if="node.param.description" :text="node.param.description">
+								<UButton size="xs" icon="i-lucide-info" variant="ghost" color="neutral"
+									class="shrink-0 opacity-60 hover:opacity-100" tabindex="-1" />
+							</UTooltip>
+							<!-- Type badges -->
+							<span v-if="!node.param.editable"
+								class="inline-flex items-center text-[10px] text-(--color-text-muted) ml-1 opacity-60"
+								:title="$t('readOnlyParam')">
+								<UIcon name="i-heroicons-lock-closed" class="w-3 h-3" />
+							</span>
 							<span v-if="changedParams.has(node.param.configId)"
 								class="inline-flex items-center gap-1 text-[10px] text-yellow-700 dark:text-yellow-200 ml-1">
 								<UIcon name="i-heroicons-pencil-square" class="w-3 h-3" />
@@ -40,22 +57,14 @@ HostsParametersTreeForm - Parameters tree form.
 					<div class="opsi-tree-col opsi-tree-value-col"
 						:style="{ '--mobile-indent': `${getDepth(node.key) * 25}px` }">
 						<div class="opsi-tree-controls">
-							<UCheckbox v-if="node.param.type === 'BoolConfig'"
-								:model-value="Boolean(currentValue(node.param))"
-								:disabled="readonly || !node.param.editable" size="sm"
-								@update:model-value="(v: boolean | 'indeterminate') => node.param && setParam(node.param, v)" />
-							<USelect v-else-if="node.param.possibleValues?.length && !node.param.multiValue"
-								:model-value="String(currentValue(node.param))"
-								:items="node.param.possibleValues.map((pv: unknown) => ({ label: String(pv), value: String(pv) }))"
-								:disabled="readonly || !node.param.editable" size="sm" class="flex-1"
-								@update:model-value="(v: string) => node.param && setParam(node.param, v)" />
-							<UInput v-else-if="node.param.multiValue" :model-value="fmtVal(currentValue(node.param))"
-								:disabled="readonly || !node.param.editable" size="sm" class="flex-1 font-mono"
-								:title="fmtVal(currentValue(node.param))"
-								@update:model-value="(v: string) => node.param && setParam(node.param, v.split(',').map((s) => s.trim()))" />
-							<UInput v-else :model-value="String(currentValue(node.param) ?? '')"
-								:disabled="readonly || !node.param.editable" size="sm" class="flex-1 font-mono"
-								@update:model-value="(v: string) => node.param && setParam(node.param, v)" />
+							<SharedPropertyFormItem :model-value="currentValue(node.param)"
+								:type="node.param.type === 'BoolConfig' ? 'bool' : 'unicode'"
+								:possible-values="node.param.possibleValues || []" :multi-value="node.param.multiValue"
+								:editable="node.param.editable" :disabled="readonly || !node.param.editable"
+								:password="isPasswordParam(node.param.configId)"
+								@update:model-value="(v: unknown) => node.param && setParam(node.param, v)" />
+
+							<!-- Discard button -->
 							<UButton v-if="changedParams.has(node.param.configId)" size="xs" variant="ghost"
 								color="neutral" :icon="icons.close" :title="$t('discardItem')"
 								@click="() => node.param && discardSingleParam(node.param.configId)" />
@@ -101,6 +110,7 @@ const props = defineProps<{
 	autoOpenAll?: boolean
 }>()
 
+const { t: $t } = useI18n()
 const { changedParams, readonly, currentValue, setParam, discardSingleParam, icons, fmtVal } = toRefs(props)
 const passProps = computed(() => ({
 	changedParams: changedParams.value,
@@ -111,6 +121,28 @@ const passProps = computed(() => ({
 	icons: icons.value,
 	fmtVal: fmtVal.value,
 }))
+
+// Password detection patterns
+const PASSWORD_PATTERNS = /password|passwd|secret|\.key$|opsiHostKey|oneTimePassword/i
+
+function isPasswordParam(configId: string): boolean {
+	return PASSWORD_PATTERNS.test(configId)
+}
+
+function asArray(val: unknown): string[] {
+	if (Array.isArray(val)) return val.map(String)
+	if (val === null || val === undefined || val === '') return []
+	return [String(val)]
+}
+
+function countLeafParams(nodes: TreeNode[]): number {
+	let count = 0
+	for (const node of nodes) {
+		if (node.param) count++
+		else if (node.children) count += countLeafParams(node.children)
+	}
+	return count
+}
 
 function buildTree(params: Param[]): TreeNode[] {
 	const root: Record<string, any> = {}
@@ -235,6 +267,17 @@ watch(
 .opsi-main-category>.form-row {
 	border-left: 4px solid var(--color-border);
 	padding-left: 8px;
+}
+
+/* Tree connector guide lines */
+.tree-guide-line {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 1px;
+	background-color: var(--color-border);
+	opacity: 0.3;
+	pointer-events: none;
 }
 
 @media (max-width: 700px) {

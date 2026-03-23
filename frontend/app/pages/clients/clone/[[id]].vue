@@ -1,9 +1,8 @@
 Route: /clients/clone/:id?
 Client Clone page - allows cloning an existing client.
 <template>
-    <ClientsCloneView :source-id="selectedClientId" show-source-selector
-        :source-selector-placeholder="String($t('selectClient'))"
-        :on-cancel-leave="() => { manualClientId = routeClientId }" @update:source-id="updateSelectedClientId"
+    <ClientsCloneForm :source-id="selectedClientId" show-source-selector
+        :source-selector-placeholder="String($t('selectClient'))" @update:source-id="updateSelectedClientId"
         @saved="handleSuccess" />
 </template>
 

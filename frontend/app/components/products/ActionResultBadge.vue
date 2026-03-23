@@ -1,22 +1,25 @@
 <template>
 	<div class="flex justify-center">
-		<UTooltip v-if="isMixed" :text="mixedTooltip">
-			<UBadge color="warning" variant="subtle" size="xs">
+		<SharedTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
+			<UBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help">
 				<UIcon :name="icons.unequal" class="w-3 h-3" />
+				<span>{{ $t('mixed') }}</span>
 			</UBadge>
-		</UTooltip>
+		</SharedTooltipTable>
 
-		<UTooltip v-else-if="normalizedResult === 'successful'" :text="$t('successful')">
-			<UBadge color="success" variant="subtle" size="xs">
-				<UIcon :name="icons.productActionResultSuccessful" class="w-3 h-3" />
+		<template v-else-if="normalizedResult === 'successful'">
+			<UBadge color="success" variant="subtle" size="xs" class="gap-1">
+				<UIcon :name="icons.check" class="w-3 h-3" />
+				<span>{{ $t('successful') }}</span>
 			</UBadge>
-		</UTooltip>
+		</template>
 
-		<UTooltip v-else-if="normalizedResult === 'failed'" :text="$t('failed')">
-			<UBadge color="error" variant="subtle" size="xs">
-				<UIcon :name="icons.productsFailedActionResult" class="w-3 h-3" />
+		<template v-else-if="normalizedResult === 'failed'">
+			<UBadge color="error" variant="subtle" size="xs" class="gap-1">
+				<UIcon :name="icons.error" class="w-3 h-3" />
+				<span>{{ $t('failed') }}</span>
 			</UBadge>
-		</UTooltip>
+		</template>
 
 		<span v-else-if="normalizedResult === 'none' || !normalizedResult"
 			class="text-(--color-text-muted) text-xs">-</span>
@@ -31,6 +34,7 @@
 interface Props {
 	result?: string
 	resultDetails?: string[]
+	selectedClients?: string[] | null
 }
 
 const props = defineProps<Props>()
@@ -41,18 +45,23 @@ const { t: $t } = useI18n()
 const normalizedResult = computed(() => props.result?.toLowerCase())
 
 const isMixed = computed(() => {
+	if (normalizedResult.value === 'mixed') return true
 	if (!props.resultDetails || props.resultDetails.length <= 1) return false
-	const uniqueResults = [...new Set(props.resultDetails.map(r => r?.toLowerCase()))]
+	const uniqueResults = [...new Set(props.resultDetails.map(r => (r || 'none').toLowerCase()))]
 	return uniqueResults.length > 1
 })
 
-const mixedTooltip = computed(() => {
-	if (!props.resultDetails) return String($t('mixed'))
+const mixedTooltipRows = computed(() => {
+	if (!props.resultDetails) return []
+	const clients = props.selectedClients || []
+	if (clients.length > 0 && clients.length === props.resultDetails.length) {
+		return clients.map((c, i) => ({ key: c, value: props.resultDetails![i] || 'none' }))
+	}
 	const counts: Record<string, number> = {}
 	props.resultDetails.forEach(r => {
 		const key = r?.toLowerCase() || 'none'
 		counts[key] = (counts[key] || 0) + 1
 	})
-	return Object.entries(counts).map(([k, v]) => `${k}: ${v}`).join(', ')
+	return Object.entries(counts).map(([k, v]) => ({ key: k, value: String(v) }))
 })
 </script>

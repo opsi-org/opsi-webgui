@@ -115,10 +115,10 @@ export function useApiHelpers() {
     >('/opsidata/clients', params)
   const getClientIds = (servers: string[]) =>
     apiGet<string[]>(`/opsidata/depots/clients?selectedDepots=[${servers.join(',')}]`)
-  const getClientConfig = (clientId: string) =>
-    apiGet<Array<{ id: string; type: string; value: unknown }>>(
-      `/opsidata/clients/${clientId}/config`
-    )
+  // const getClientConfig = (clientId: string) =>
+  //   apiGet<Array<{ id: string; type: string; value: unknown }>>(
+  //     `/opsidata/clients/${clientId}/config`
+  //   )
 
   const getProducts = (params?: Record<string, unknown>) =>
     apiGet<
@@ -159,6 +159,7 @@ export function useApiHelpers() {
     updateData: { parent?: string; description?: string; note?: string }
   ) => apiPut(`/opsidata/products/groups/${groupId}`, updateData)
   const deleteHostGroup = (groupId: string) => apiDelete(`/opsidata/hosts/groups/${groupId}`)
+  // Backend bug: product group deletion uses GET instead of DELETE
   const deleteProductGroup = (groupId: string) => apiGet(`/opsidata/products/groups/${groupId}`)
   const removeClientsFromGroup = (groupId: string) =>
     apiDelete(`/opsidata/hosts/groups/${groupId}/clients`)
@@ -215,10 +216,11 @@ export function useApiHelpers() {
     >('/opsidata/config/server', params)
 
   const getClientLogs = (clientId: string, logType: string, params?: Record<string, unknown>) =>
-    apiGet<{ content: string; marker: number }>(
-      `/opsidata/clients/${clientId}/logs/${logType}`,
-      params
-    )
+    apiGet<{ content: string; marker: number }>('/opsidata/log', {
+      selectedClient: clientId,
+      selectedLogType: logType,
+      ...params,
+    })
 
   const getBlockedClients = () => apiGet<Record<string, string>>('/opsidata/blocked-clients')
   const unblockClient = (clientId: string) => apiPost<void>(`/opsidata/clients/${clientId}/unblock`)
@@ -345,11 +347,16 @@ export function useApiHelpers() {
       visibility,
     })
 
-  const getServersProducts = (selectedServers: string[], productType?: string) =>
-    apiPost<Array<{ productId: string; [k: string]: unknown }>>('/opsidata/depots/products', {
-      selectedDepots: selectedServers,
-      productType,
-    })
+  const getServersProducts = (selectedServers: string[], productType?: string) => {
+    const params: Record<string, unknown> = {
+      selectedDepots: `[${selectedServers.join(',')}]`,
+    }
+    if (productType) params.productType = productType
+    return apiGet<Array<{ productId: string; [k: string]: unknown }>>(
+      '/opsidata/depots/products',
+      params
+    )
+  }
 
   const getHomeData = () => apiPost<{ groups: Record<string, unknown> }>('/opsidata/home', {})
   const getAppState = () =>
@@ -378,6 +385,13 @@ export function useApiHelpers() {
 
   const getModulesContent = () => apiPost<{ result: string[] }>('/opsidata/modulesContent')
   const getDisabledFeatures = () => apiGet<string[]>('/opsidata/server/disabled-features')
+
+  const createActivity = (type: string, status: string) =>
+    apiPost<Record<string, unknown>>('/user/createactivity', {
+      username: '',
+      type,
+      status,
+    })
 
   const getProductProperties = (
     productId: string,
@@ -513,12 +527,19 @@ export function useApiHelpers() {
   const renameClient = (clientId: string, newHostId: string) =>
     apiPut<Record<string, unknown>>(`/opsidata/clients/${clientId}`, { hostId: newHostId })
   const checkClientReachable = (clientIds: string[]) =>
-    apiPost<Record<string, boolean>>('/opsidata/clients/reachable', { selectedClients: clientIds })
+    apiGet<Record<string, boolean>>('/opsidata/clients/reachable', {
+      selectedClients: `[${clientIds.join(',')}]`,
+    })
   const executeClientAction = (
     clientIds: string[],
     action: string,
     params?: Record<string, unknown>
-  ) => apiPost<OpsiclientdRpcResult>('/opsidata/clients/action', { clientIds, action, ...params })
+  ) =>
+    apiPost<OpsiclientdRpcResult>('/opsidata/clients/action', {
+      selectedClients: clientIds,
+      action,
+      ...params,
+    })
 
   return {
     apiGet,
@@ -534,7 +555,7 @@ export function useApiHelpers() {
     getServerIds,
     getClients,
     getClientIds,
-    getClientConfig,
+    // getClientConfig,
     getProducts,
     getHostGroups,
     getProductGroups,
@@ -591,6 +612,7 @@ export function useApiHelpers() {
     restoreBackup,
     getModulesContent,
     getDisabledFeatures,
+    createActivity,
     getProductProperties,
     saveProductProperties,
     getProductDependencies,

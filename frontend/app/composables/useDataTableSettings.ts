@@ -49,13 +49,7 @@ const defaults: Record<string, DataTableSettings> = {
     selectionMode: 'multi',
   },
   products: {
-    visibleColumns: [
-      'productId',
-      'description',
-      'depotVersions',
-      'installationStatus',
-      'actionRequest',
-    ],
+    visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionRequest'],
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
@@ -63,13 +57,7 @@ const defaults: Record<string, DataTableSettings> = {
     selectionMode: 'multi',
   },
   'products-localboot': {
-    visibleColumns: [
-      'productId',
-      'description',
-      'depotVersions',
-      'installationStatus',
-      'actionRequest',
-    ],
+    visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionRequest'],
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
@@ -77,7 +65,7 @@ const defaults: Record<string, DataTableSettings> = {
     selectionMode: 'multi',
   },
   'products-netboot': {
-    visibleColumns: ['productId', 'description', 'depotVersions'],
+    visibleColumns: ['productId', 'description', 'version'],
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,

@@ -21,7 +21,7 @@ Row-level client actions dropdown for the clients table.
 		</UDropdownMenu>
 	</div>
 
-	<UPopover v-model:open="showOnDemandPopover" :popper="{ placement: 'bottom' }">
+	<UModal v-model:open="showOnDemandPopover">
 		<template #content>
 			<div class="p-4 min-w-70">
 				<div class="flex items-center gap-2 mb-3">
@@ -41,7 +41,7 @@ Row-level client actions dropdown for the clients table.
 				</div>
 			</div>
 		</template>
-	</UPopover>
+	</UModal>
 
 	<UModal v-model:open="showNotifyModal">
 		<template #content>
@@ -68,7 +68,7 @@ Row-level client actions dropdown for the clients table.
 		</template>
 	</UModal>
 
-	<UPopover v-model:open="showRebootPopover" :popper="{ placement: 'bottom' }">
+	<UModal v-model:open="showRebootPopover">
 		<template #content>
 			<div class="p-4 min-w-70">
 				<div class="flex items-center gap-2 mb-3">
@@ -88,9 +88,9 @@ Row-level client actions dropdown for the clients table.
 				</div>
 			</div>
 		</template>
-	</UPopover>
+	</UModal>
 
-	<UPopover v-model:open="showShutdownPopover" :popper="{ placement: 'bottom' }">
+	<UModal v-model:open="showShutdownPopover">
 		<template #content>
 			<div class="p-4 min-w-70">
 				<div class="flex items-center gap-2 mb-3">
@@ -110,7 +110,7 @@ Row-level client actions dropdown for the clients table.
 				</div>
 			</div>
 		</template>
-	</UPopover>
+	</UModal>
 
 	<UModal v-model:open="showDeployModal">
 		<template #content>
@@ -143,6 +143,47 @@ Row-level client actions dropdown for the clients table.
 					<UButton color="primary" @click="executeDeploy" :loading="executing"
 						:disabled="!deployOptions.username || !deployOptions.password">
 						{{ $t('deploy') }}
+					</UButton>
+				</div>
+			</div>
+		</template>
+	</UModal>
+
+	<UModal v-model:open="showRenameModal">
+		<template #content>
+			<div class="p-4 min-w-90">
+				<div class="flex items-center gap-3 mb-4">
+					<UIcon :name="icons.rename" class="w-6 h-6 text-opsi-blue" />
+					<h3 class="text-lg font-semibold">{{ $t('rename') }}</h3>
+				</div>
+				<p class="text-sm text-[--color-text-muted] mb-1">
+					{{ $t('renameClientDescription') }}
+				</p>
+				<p class="text-xs text-[--color-text-muted] mb-4 italic">
+					{{ $t('renameWarning') }}
+				</p>
+
+				<div class="space-y-3 mb-4">
+					<UFormField :label="$t('newHostId')">
+						<div class="flex gap-1 items-center">
+							<UInput v-model="renameHostname" :placeholder="String($t('enterHostname'))" class="flex-1"
+								:color="renameValidation.color as any" />
+							<span class="text-sm text-[--color-text-muted]">.</span>
+							<UInput v-model="renameDomain" :placeholder="String($t('domain'))" class="flex-1" />
+						</div>
+						<p v-if="renameValidation.message" class="text-xs mt-1" :class="renameValidation.textClass">
+							{{ renameValidation.message }}
+						</p>
+					</UFormField>
+				</div>
+
+				<div class="flex justify-end gap-2">
+					<UButton variant="outline" color="neutral" @click="showRenameModal = false" :disabled="executing">
+						{{ $t('cancel') }}
+					</UButton>
+					<UButton color="primary" @click="executeRename" :loading="executing"
+						:disabled="!renameHostname.trim() || !!renameValidation.message">
+						{{ $t('rename') }}
 					</UButton>
 				</div>
 			</div>
@@ -189,7 +230,7 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deployClientAgent, deleteClient } = useApiHelpers()
+const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deployClientAgent, deleteClient, renameClient, getHostAttributes, getConfigServer } = useApiHelpers()
 
 const loading = ref(false)
 const executing = ref(false)
@@ -199,11 +240,23 @@ const showNotifyModal = ref(false)
 const showRebootPopover = ref(false)
 const showShutdownPopover = ref(false)
 const showDeployModal = ref(false)
+const showRenameModal = ref(false)
 const showDeleteModal = ref(false)
 
 const notifyText = ref('')
 const deployOptions = ref<{ username: string; password: string; type: 'windows' | 'linux' | 'mac' }>({ username: '', password: '', type: 'windows' })
 const selectedOsType = ref({ label: 'Windows', value: 'windows' })
+const renameHostname = ref('')
+const renameDomain = ref('')
+
+const renameValidation = computed(() => {
+	const hostname = renameHostname.value.trim()
+	if (!hostname) return { color: undefined, message: '', textClass: '' }
+	if (/^\d/.test(hostname)) return { color: 'error', message: String($t('hostnameRequired')), textClass: 'text-red-500' }
+	const newId = hostname + '.' + renameDomain.value.trim()
+	if (newId === props.clientId) return { color: 'error', message: String($t('clientAlreadyExists')), textClass: 'text-red-500' }
+	return { color: undefined, message: '', textClass: '' }
+})
 
 const osTypes = [
 	{ label: 'Windows', value: 'windows' },
@@ -248,6 +301,11 @@ const clientActionItems = computed(() => [
 		}
 	],
 	[
+		{
+			label: String($t('rename')),
+			icon: icons.rename,
+			onSelect: () => { openRenameModal() }
+		},
 		{
 			label: String($t('delete')),
 			icon: icons.delete,
@@ -340,6 +398,53 @@ async function executeDeploy() {
 	} finally {
 		executing.value = false
 		showDeployModal.value = false
+	}
+}
+
+async function openRenameModal() {
+	// Extract hostname and domain from current clientId
+	const dotIndex = props.clientId.indexOf('.')
+	if (dotIndex > 0) {
+		renameHostname.value = ''
+		renameDomain.value = props.clientId.substring(dotIndex + 1)
+	} else {
+		renameHostname.value = ''
+		renameDomain.value = ''
+	}
+	showRenameModal.value = true
+}
+
+async function executeRename() {
+	const hostname = renameHostname.value.trim()
+	const domain = renameDomain.value.trim()
+	if (!hostname) return
+
+	const newHostId = domain ? `${hostname}.${domain}` : hostname
+	executing.value = true
+	try {
+		// First get current host attributes
+		const { data: hostData } = await getHostAttributes(props.clientId)
+		const attrs = (hostData as Array<Record<string, unknown>>)?.[0] || {}
+		// Remove computed/readonly fields
+		delete attrs.type
+		delete attrs.created
+		delete attrs.lastSeen
+		delete attrs.systemUUID
+		delete attrs.uefi
+		// Set the new hostId
+		attrs.hostId = newHostId
+		// Use the rename API - PUT to update the client
+		const result = await renameClient(props.clientId, newHostId)
+		if (result?.error) {
+			throw result.error
+		}
+		emit('action-complete', 'rename', true)
+		renameHostname.value = ''
+	} catch (e) {
+		emit('action-complete', 'rename', false)
+	} finally {
+		executing.value = false
+		showRenameModal.value = false
 	}
 }
 

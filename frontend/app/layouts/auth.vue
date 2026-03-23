@@ -16,8 +16,8 @@ Authentication layout - provides a centered login form and a footer with theme/l
         <img src="~/assets/images/uib_logo_wide_dark.svg" alt="uib GmbH Logo" class="h-7" />
       </a>
       <div class="flex items-center gap-2">
-        <UiThemeToggle />
-        <UiLanguageDropdown direction="up" />
+        <SettingsThemeToggle />
+        <SettingsLanguageDropdown direction="up" />
       </div>
       <span class="opacity-80">v{{ $config.public.packageVersion || '1.0.0' }}</span>
     </footer>

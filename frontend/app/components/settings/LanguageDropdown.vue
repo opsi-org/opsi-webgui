@@ -1,10 +1,10 @@
 <template>
   <div class="relative" ref="containerRef">
     <button @click="open = !open" type="button"
-      class="flex items-center gap-1 px-2 py-1 rounded hover:bg-white/20 transition-colors text-sm"
+      class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-colors bg-opsi-blue text-white hover:bg-opsi-blue/90"
       data-testid="language-dropdown">
-      <UIcon :name="icons.language" class="w-4 h-4" />
-      <span>{{ currentLocale.toUpperCase() }}</span>
+      <UIcon :name="icons.language" class="w-3.5 h-3.5" />
+      <span class="text-xs font-medium">{{ currentLocale.toUpperCase() }}</span>
       <UIcon :name="icons.arrowDown" class="w-3 h-3 transition-transform" :class="{ 'rotate-180': open }" />
     </button>
     <Transition :name="direction === 'up' ? 'dropdown-up' : 'dropdown'">

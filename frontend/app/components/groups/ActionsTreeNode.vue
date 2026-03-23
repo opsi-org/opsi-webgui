@@ -1,21 +1,36 @@
 <template>
-	<div class="group-tree-node">
+	<div class="group-tree-node" :class="{ 'group-tree-node-root': isRootLevel }">
 		<div :class="[
 			'flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors group/node',
-			isSelected ? 'font-heading hover:bg-(--color-surface-hover) border border-(--color-border)' : 'hover:bg-(--color-surface-hover)'
+			isSelected ? 'bg-primary/8 border border-primary/25 shadow-sm' : 'hover:bg-(--color-surface-hover)',
 		]" :style="{ paddingLeft: `${indentPx}px` }" @click="handleClick">
+			<!-- Tree connector lines -->
+			<span v-for="i in treeDepth" :key="i" class="tree-guide-line" :style="{ left: `${8 + (i - 1) * 16}px` }" />
 			<button v-if="hasChildren" type="button"
-				class="w-4 h-4 flex items-center justify-center text-(--color-text-muted) hover:text-(--color-text) transition-transform shrink-0"
-				:class="{ 'rotate-90': isExpanded }" @click.stop="$emit('toggle', group.id)">
-				<UIcon name="i-heroicons-chevron-right" class="w-3.5 h-3.5" />
+				class="w-5 h-5 flex items-center justify-center rounded transition-all shrink-0" :class="isExpanded
+					? 'text-(--color-primary) bg-primary/10'
+					: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
+				@click.stop="$emit('toggle', group.id)">
+				<UIcon name="i-heroicons-chevron-right" class="w-3.5 h-3.5 transition-transform duration-200"
+					:class="{ 'rotate-90': isExpanded }" />
 			</button>
-			<span v-else class="w-4 shrink-0" />
-			<UIcon :name="icons.group" class="w-4 h-4 shrink-0"
-				:class="group.isSpecial ? 'text-(--color-text-muted)' : ''" />
-			<span class="text-sm flex-1 truncate" :class="group.isSpecial ? 'text-(--color-text-muted) italic' : ''">
+			<span v-else class="w-5 flex items-center justify-center shrink-0">
+				<span class="w-1.5 h-1.5 rounded-full bg-(--color-text-muted)/40" />
+			</span>
+			<UIcon :name="group.isSpecial ? icons.group : (hasChildren ? icons.group : icons.group)"
+				class="w-4 h-4 shrink-0 transition-colors" :class="isSelected
+					? 'text-(--color-primary)'
+					: group.isSpecial ? 'text-(--color-text-muted)' : 'text-(--color-text-secondary)'" />
+			<span class="text-sm flex-1 truncate transition-colors" :class="[
+				isSelected ? 'font-medium text-(--color-text)' : '',
+				group.isSpecial ? 'text-(--color-text-muted) italic' : ''
+			]">
 				{{ group.name }}
 			</span>
-			<span v-if="group.count > 0" class="text-xs text-(--color-text-muted)">({{ group.count }})</span>
+			<span v-if="group.members?.length > 0"
+				class="text-[11px] tabular-nums px-1.5 py-0.5 rounded-full bg-(--color-surface-hover) text-(--color-text-muted)">
+				{{ group.members.length }}
+			</span>
 			<div v-if="group.isSpecial && group.name !== 'not_assigned'"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
 				<UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
@@ -33,13 +48,15 @@
 					@click="$emit('delete', group)" />
 			</div>
 		</div>
-		<div v-if="hasChildren && isExpanded" class="children">
-			<GroupsActionsTreeNode v-for="child in group.children" :key="child.id" :group="child"
-				:selected-id="selectedId" :expanded-ids="expandedIds" :group-type="groupType" :is-root-level="false"
-				:root-id="rootId" @select="$emit('select', $event)" @toggle="$emit('toggle', $event)"
-				@create-subgroup="$emit('create-subgroup', $event)" @edit="$emit('edit', $event)"
-				@delete="$emit('delete', $event)" @add-members="$emit('add-members', $event)" />
-		</div>
+		<Transition name="tree-expand">
+			<div v-if="hasChildren && isExpanded" class="children-container">
+				<GroupsActionsTreeNode v-for="child in group.children" :key="child.id" :group="child"
+					:selected-id="selectedId" :expanded-ids="expandedIds" :group-type="groupType" :is-root-level="false"
+					:root-id="rootId" @select="$emit('select', $event)" @toggle="$emit('toggle', $event)"
+					@create-subgroup="$emit('create-subgroup', $event)" @edit="$emit('edit', $event)"
+					@delete="$emit('delete', $event)" @add-members="$emit('add-members', $event)" />
+			</div>
+		</Transition>
 	</div>
 </template>
 
@@ -77,6 +94,11 @@ const indentPx = computed(() => {
 	return 8 + level * 16
 })
 
+const treeDepth = computed(() => {
+	const level = props.group.level || 0
+	return level > 0 ? level : 0
+})
+
 const hasChildren = computed(() => Boolean(props.group.children?.length))
 const isExpanded = computed(() => props.expandedIds.has(props.group.id))
 const isSelected = computed(() => props.selectedId === props.group.id)
@@ -89,9 +111,45 @@ function handleClick() {
 <style scoped>
 .group-tree-node {
 	user-select: none;
+	position: relative;
 }
 
-.children {
+.children-container {
 	margin-left: 0;
+	position: relative;
+}
+
+/* Tree connector guide lines */
+.tree-guide-line {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 1px;
+	background-color: var(--color-border);
+	opacity: 0.4;
+	pointer-events: none;
+}
+
+/* Expand/collapse animation */
+.tree-expand-enter-active {
+	transition: all 0.2s ease-out;
+	overflow: hidden;
+}
+
+.tree-expand-leave-active {
+	transition: all 0.15s ease-in;
+	overflow: hidden;
+}
+
+.tree-expand-enter-from,
+.tree-expand-leave-to {
+	opacity: 0;
+	max-height: 0;
+}
+
+.tree-expand-enter-to,
+.tree-expand-leave-from {
+	opacity: 1;
+	max-height: 2000px;
 }
 </style>

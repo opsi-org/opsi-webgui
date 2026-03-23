@@ -7,13 +7,19 @@
 		<div v-else-if="error" class="text-xs text-red-500 py-2">{{ error }}</div>
 
 		<template v-else>
-			<div class="mb-2 shrink-0">
-				<UInput v-model="searchQuery" :placeholder="t('filter')" size="xs" :icon="icons.search">
+			<div class="flex items-center gap-1 mb-2 shrink-0">
+				<UInput v-model="searchQuery" :placeholder="t('filter')" size="xs" :icon="icons.filter" class="flex-1 min-w-0">
 					<template v-if="searchQuery" #trailing>
 						<UButton :icon="icons.close" size="xs" variant="link" color="neutral"
 							@click="searchQuery = ''" />
 					</template>
 				</UInput>
+				<UTooltip :text="t('selectAll')">
+					<UButton :icon="icons.check" size="xs" variant="ghost" color="primary" @click="selectAll" />
+				</UTooltip>
+				<UTooltip :text="`${t('clearAll')} (${selectionStore.selectedServers.length})`">
+					<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="clearSelection" />
+				</UTooltip>
 			</div>
 
 			<div class="flex-1 overflow-y-auto min-h-0 space-y-0.5">
@@ -31,7 +37,7 @@
 								class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
 							<span class="truncate" :class="server.isConfigServer ? 'font-medium' : ''">{{
 								server.serverId
-								}}</span>
+							}}</span>
 						</div>
 						<span v-if="server.description"
 							class="text-[10px] text-(--color-text-muted) truncate block pl-5">{{
@@ -41,19 +47,6 @@
 				</div>
 			</div>
 
-			<div v-if="selectionStore.selectedServers.length > 0"
-				class="shrink-0 pt-2 mt-2 border-t border-(--color-border)">
-				<div class="flex items-center justify-between text-xs">
-					<span class="text-(--color-text-muted)">{{ selectionStore.selectedServers.length }}
-						{{ t('selected') }}</span>
-					<div class="flex gap-2">
-						<UButton size="xs" variant="link" color="primary" @click="selectAll">{{ t('selectAll') }}
-						</UButton>
-						<UButton size="xs" variant="link" color="error" @click="clearSelection">{{ t('clearAll') }}
-						</UButton>
-					</div>
-				</div>
-			</div>
 		</template>
 	</div>
 </template>
@@ -128,5 +121,15 @@ async function fetchServers() {
 	}
 }
 
-onMounted(fetchServers)
+const props = defineProps<{ active?: boolean }>()
+
+onMounted(() => {
+	// Data is fetched lazily when the component becomes visible
+})
+
+watch(() => props.active, (isActive) => {
+	if (isActive && servers.value.length === 0 && !loading.value) {
+		fetchServers()
+	}
+}, { immediate: true })
 </script>

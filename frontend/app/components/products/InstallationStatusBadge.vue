@@ -1,22 +1,25 @@
 <template>
 	<div class="flex justify-center">
-		<UTooltip v-if="isMixed" :text="mixedTooltip">
-			<UBadge color="warning" variant="subtle" size="xs">
+		<SharedTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
+			<UBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help">
 				<UIcon :name="icons.unequal" class="w-3 h-3" />
+				<span>{{ $t('mixed') }}</span>
 			</UBadge>
-		</UTooltip>
+		</SharedTooltipTable>
 
-		<UTooltip v-else-if="normalizedStatus === 'installed'" :text="$t('installed')">
-			<UBadge color="success" variant="subtle" size="xs">
-				<UIcon :name="icons.productInstallationStatusInstalled" class="w-3 h-3" />
+		<template v-else-if="normalizedStatus === 'installed'">
+			<UBadge color="success" variant="subtle" size="xs" class="gap-1">
+				<UIcon :name="icons.check" class="w-3 h-3" />
+				<span>{{ $t('installed') }}</span>
 			</UBadge>
-		</UTooltip>
+		</template>
 
-		<UTooltip v-else-if="normalizedStatus === 'unknown'" :text="$t('unknown')">
-			<UBadge color="warning" variant="subtle" size="xs">
+		<template v-else-if="normalizedStatus === 'unknown'">
+			<UBadge color="warning" variant="subtle" size="xs" class="gap-1">
 				<UIcon :name="icons.productInstallationStatusUnknown" class="w-3 h-3" />
+				<span>{{ $t('unknown') }}</span>
 			</UBadge>
-		</UTooltip>
+		</template>
 
 		<span v-else-if="normalizedStatus === 'not_installed' || normalizedStatus === 'none' || !normalizedStatus"
 			class="text-(--color-text-muted) text-xs">-</span>
@@ -31,6 +34,7 @@
 interface Props {
 	status?: string
 	statusDetails?: string[]
+	selectedClients?: string[] | null
 }
 
 const props = defineProps<Props>()
@@ -41,18 +45,23 @@ const { t: $t } = useI18n()
 const normalizedStatus = computed(() => props.status?.toLowerCase())
 
 const isMixed = computed(() => {
+	if (normalizedStatus.value === 'mixed') return true
 	if (!props.statusDetails || props.statusDetails.length <= 1) return false
-	const uniqueStatuses = [...new Set(props.statusDetails.map(s => s?.toLowerCase()))]
+	const uniqueStatuses = [...new Set(props.statusDetails.map(s => (s || 'none').toLowerCase()))]
 	return uniqueStatuses.length > 1
 })
 
-const mixedTooltip = computed(() => {
-	if (!props.statusDetails) return String($t('mixed'))
+const mixedTooltipRows = computed(() => {
+	if (!props.statusDetails) return []
+	const clients = props.selectedClients || []
+	if (clients.length > 0 && clients.length === props.statusDetails.length) {
+		return clients.map((c, i) => ({ key: c, value: props.statusDetails![i] || 'none' }))
+	}
 	const counts: Record<string, number> = {}
 	props.statusDetails.forEach(s => {
 		const key = s?.toLowerCase() || 'none'
 		counts[key] = (counts[key] || 0) + 1
 	})
-	return Object.entries(counts).map(([k, v]) => `${k}: ${v}`).join(', ')
+	return Object.entries(counts).map(([k, v]) => ({ key: k, value: String(v) }))
 })
 </script>

@@ -97,7 +97,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                     size="sm" class="flex-1" @keydown.enter.prevent="addAddressException" />
                                 <UButton color="primary" size="sm" :icon="icons.add" @click="addAddressException">{{
                                     $t('add')
-                                }}</UButton>
+                                    }}</UButton>
                             </div>
                             <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
                                 <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
@@ -139,7 +139,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 <div class="space-y-5">
                     <div>
                         <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup')
-                        }}</div>
+                            }}</div>
                         <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                             <label
                                 class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
@@ -181,7 +181,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 <div class="space-y-5">
                     <UFormField :label="$t('backupFile')" required>
                         <div class="relative">
-                            <input ref="fileInputRef" type="file" accept=".tar.gz,.tgz"
+                            <input ref="fileInputRef" type="file"
                                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                 @change="handleFileSelect" />
                             <div
@@ -191,8 +191,8 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                     <UIcon :name="icons.upload" class="w-5 h-5 text-gray-400" />
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <div v-if="restoreOptions.file_id" class="font-medium text-sm truncate">{{
-                                        restoreOptions.file_id }}</div>
+                                    <div v-if="selectedFileName" class="font-medium text-sm truncate">{{
+                                        selectedFileName }}</div>
                                     <div v-else class="text-gray-500 text-sm">{{ $t('clickToSelectFile') }}</div>
                                 </div>
                             </div>
@@ -200,7 +200,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </UFormField>
                     <div>
                         <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('restoreOptions')
-                        }}</div>
+                            }}</div>
                         <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                             <label
                                 class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
@@ -235,8 +235,18 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         <UInput v-model="restoreOptions.password" type="password" :placeholder="$t('enterPassword')"
                             size="sm" />
                     </UFormField>
-                    <UButton block color="warning" :icon="icons.refresh" :loading="restoringBackup"
-                        :disabled="!restoreOptions.file_id" @click="restoreBackup">{{ $t('restoreBackup') }}</UButton>
+                    <div v-if="uploadProgress > 0 && uploadProgress < 100" class="mb-3">
+                        <div class="flex justify-between text-xs text-(--color-text-muted) mb-1">
+                            <span>{{ $t('uploading') }}...</span>
+                            <span>{{ uploadProgress }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                            <div class="bg-primary-500 h-1.5 rounded-full transition-all"
+                                :style="{ width: uploadProgress + '%' }" />
+                        </div>
+                    </div>
+                    <UButton block color="warning" :icon="icons.refresh" :loading="restoringBackup || uploadingFile"
+                        :disabled="!selectedFile" @click="restoreBackup">{{ $t('restoreBackup') }}</UButton>
                 </div>
             </UCard>
         </div>
@@ -267,7 +277,11 @@ const addressExceptionInput = ref('')
 const creatingBackup = ref(false)
 const backupOptions = ref({ config_files: true, redis_data: false, maintenance_mode: false, password: '' })
 const restoringBackup = ref(false)
+const uploadingFile = ref(false)
+const uploadProgress = ref(0)
 const fileInputRef = ref<HTMLInputElement | null>(null)
+const selectedFile = ref<File | null>(null)
+const selectedFileName = ref('')
 const serverIdOption = ref('backup')
 const restoreOptions = ref({ file_id: '', config_files: false, redis_data: false, server_id: 'backup', password: '' })
 
@@ -369,6 +383,7 @@ async function createBackup() {
     if (!err && data) {
         const a = document.createElement('a')
         a.href = '/file-transfer/' + data + '?delete=true'
+        a.download = ''
         a.style.display = 'none'
         document.body.appendChild(a)
         a.click()
@@ -380,14 +395,58 @@ async function createBackup() {
 function handleFileSelect(e: Event) {
     const input = e.target as HTMLInputElement
     if (input.files && input.files.length > 0 && input.files[0]) {
-        restoreOptions.value.file_id = input.files[0].name
+        selectedFile.value = input.files[0]
+        selectedFileName.value = input.files[0].name
     }
 }
 
 async function restoreBackup() {
+    if (!selectedFile.value) return
     restoringBackup.value = true
-    await api.restoreBackup(restoreOptions.value)
+    uploadingFile.value = true
+    uploadProgress.value = 0
+
+    try {
+        // Step 1: Upload file to /file-transfer/multipart
+        const formData = new FormData()
+        formData.append('file', selectedFile.value)
+
+        const xhr = new XMLHttpRequest()
+        const fileId = await new Promise<string>((resolve, reject) => {
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    uploadProgress.value = Math.round((e.loaded / e.total) * 100)
+                }
+            })
+            xhr.addEventListener('load', () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const res = JSON.parse(xhr.responseText)
+                        resolve(res.file_id)
+                    } catch { reject(new Error('Invalid upload response')) }
+                } else {
+                    reject(new Error('Upload failed: ' + xhr.statusText))
+                }
+            })
+            xhr.addEventListener('error', () => reject(new Error('Upload failed')))
+            xhr.open('POST', '/file-transfer/multipart')
+            xhr.withCredentials = true
+            xhr.send(formData)
+        })
+
+        uploadingFile.value = false
+        uploadProgress.value = 100
+
+        // Step 2: Restore using uploaded file_id
+        restoreOptions.value.file_id = fileId
+        await api.restoreBackup(restoreOptions.value)
+    } catch (e) {
+        error.value = (e as Error).message
+    }
+
     restoringBackup.value = false
+    uploadingFile.value = false
+    uploadProgress.value = 0
 }
 
 onMounted(() => {

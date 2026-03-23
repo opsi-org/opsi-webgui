@@ -29,7 +29,7 @@ Client Products page - manage products for selected clients
 			</template>
 		</UAlert>
 
-		<ProductsTable v-if="selectionStore.selectedClients.length > 0" ref="productsTableRef"
+		<ProductsMainView v-if="selectionStore.selectedClients.length > 0" ref="productsTableRef"
 			:product-type="productType" />
 	</LayoutsPageLayout>
 </template>

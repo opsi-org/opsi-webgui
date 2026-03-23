@@ -14,9 +14,18 @@ const userStore = useUserStore()
 
 onMounted(async () => {
     if (userStore.isAuthenticated) {
-        await navigateTo('/clients')
+        const defaultPage = getDefaultPage()
+        await navigateTo(defaultPage)
     } else {
         await navigateTo('/login')
     }
 })
+
+function getDefaultPage(): string {
+    const match = document.cookie.match(/(?:^|; )opsi-default-page=([^;]*)/)
+    const stored = match?.[1] ? decodeURIComponent(match[1]) : null
+    const validPages = ['/dashboard', '/clients', '/products', '/servers', '/admin/terminal', '/admin/maintenance', '/admin/diagnostics']
+    if (stored && validPages.includes(stored)) return stored
+    return '/clients'
+}
 </script>

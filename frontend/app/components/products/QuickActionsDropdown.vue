@@ -1,22 +1,19 @@
 <template>
-	<div class="flex-1">
-		<UButton v-if="hasSelections" variant="soft" color="primary" size="sm" class="w-full"
-			@click="dialogOpen = true">
-			<UIcon :name="icons.product" class="w-4 h-4" />
-			<span>{{ $t('productQuickActions') }}</span>
-			<UBadge v-if="selectionStore.selectedProducts.length" size="xs" color="primary" class="ml-1">
-				{{ selectionStore.selectedProducts.length }}
-			</UBadge>
-		</UButton>
-		<UButton v-else variant="ghost" color="neutral" size="sm" class="w-full opacity-70" disabled>
-			<UIcon :name="icons.product" class="w-4 h-4" />
-			<span>{{ $t('productQuickActions') }}</span>
-		</UButton>
-	</div>
+	<UButton v-if="hasSelections" variant="soft" color="primary" size="sm" @click="dialogOpen = true">
+		<UIcon :name="icons.product" class="w-4 h-4" />
+		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
+		<UBadge v-if="selectionStore.selectedProducts.length" size="xs" color="primary" class="ml-1">
+			{{ selectionStore.selectedProducts.length }}
+		</UBadge>
+	</UButton>
+	<UButton v-else variant="ghost" color="neutral" size="sm" class="opacity-70" disabled>
+		<UIcon :name="icons.product" class="w-4 h-4" />
+		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
+	</UButton>
 
 	<UModal v-model:open="dialogOpen" :dismissible="true">
 		<template #content>
-			<UCard class="min-w-96" @click.stop>
+			<UCard class="min-w-96">
 				<template #header>
 					<div class="flex items-center justify-between">
 						<div class="flex items-center gap-2">
@@ -27,23 +24,16 @@
 					</div>
 				</template>
 
-				<div v-if="loading" class="flex justify-center py-6">
-					<UIcon :name="icons.loading" class="w-5 h-5 animate-spin" />
+				<div v-if="loadingOptions" class="flex justify-center py-8">
+					<UIcon :name="icons.loading" class="w-6 h-6 animate-spin" />
 				</div>
 
 				<div v-else class="space-y-4">
-					<div class="p-2.5 rounded-lg bg-(--color-surface) dark:bg-(--color-surface) text-xs">
-						<div class="flex justify-between">
-							<span class="text-(--color-text-muted)">{{ $t('selectedClients') }}:</span>
-							<span class="font-medium">{{ selectionStore.selectedClients.length || $t('all') }}</span>
-						</div>
-						<div class="flex justify-between mt-1">
-							<span class="text-(--color-text-muted)">{{ $t('selectedProducts') }}:</span>
-							<span class="font-medium">{{ selectionStore.selectedProducts.length || $t('all') }}</span>
-						</div>
-					</div>
+					<UAlert v-if="errorMessage" color="error" :description="errorMessage" variant="subtle"
+						:close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
+						@close="errorMessage = null" />
 
-					<div class="divide-y divide-(--color-border) dark:divide-(--color-border)">
+					<div class="divide-y divide-(--color-border)">
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
 							<span class="text-xs font-semibold text-(--color-text-muted) uppercase md:w-1/3 shrink-0">
 								{{ $t('conditions') }}
@@ -51,21 +41,22 @@
 							<div class="flex-1 space-y-2">
 								<div class="grid grid-cols-2 gap-2">
 									<div>
-										<label class="text-xs text-(--color-text-muted) block mb-1">{{
-											$t('installationStatus')
-										}}</label>
+										<label class="text-xs text-(--color-text-muted) block mb-1">
+											{{ $t('installationStatus') }}
+										</label>
 										<USelect v-model="filters.installationStatus" :items="installationStatusOptions"
-											size="xs" class="w-full" @update:model-value="loadPreview" />
+											size="xs" class="w-full" @update:model-value="fetchPreview" />
 									</div>
 									<div>
-										<label class="text-xs text-(--color-text-muted) block mb-1">{{
-											$t('actionResult') }}</label>
+										<label class="text-xs text-(--color-text-muted) block mb-1">
+											{{ $t('actionResult') }}
+										</label>
 										<USelect v-model="filters.actionResult" :items="actionResultOptions" size="xs"
-											class="w-full" @update:model-value="loadPreview" />
+											class="w-full" @update:model-value="fetchPreview" />
 									</div>
 								</div>
 								<label class="flex items-center gap-2 cursor-pointer">
-									<UCheckbox v-model="filters.outdatedOnly" @update:model-value="loadPreview" />
+									<UCheckbox v-model="filters.outdatedOnly" @update:model-value="fetchPreview" />
 									<span class="text-xs">{{ $t('outdatedOnClient') }}</span>
 								</label>
 							</div>
@@ -76,8 +67,18 @@
 								{{ $t('actionRequest') }}
 							</span>
 							<div class="flex-1">
-								<USelect v-model="actionRequest" :items="actionRequestOptions" size="sm"
-									class="w-full" />
+								<USelect v-model="actionRequest" :items="actionRequestOptions" size="sm" class="w-full"
+									@update:model-value="fetchPreview" />
+							</div>
+						</div>
+
+						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
+							<span class="text-xs font-semibold text-(--color-text-muted) uppercase md:w-1/3 shrink-0">
+								{{ $t('scope') }}
+							</span>
+							<div class="flex-1">
+								<USelect v-model="scope" :items="scopeOptions" size="sm" class="w-full"
+									@update:model-value="fetchPreview" />
 							</div>
 						</div>
 					</div>
@@ -87,37 +88,60 @@
 							<span class="text-xs font-semibold text-(--color-text-muted) uppercase">
 								{{ $t('preview') }}
 							</span>
-							<UBadge color="neutral" variant="soft" size="xs">
-								{{ previewProducts.length }}
-							</UBadge>
+							<div class="flex items-center gap-2">
+								<UButton size="xs" variant="ghost" color="neutral" :icon="icons.refresh"
+									:loading="loadingPreview" @click="fetchPreview" />
+								<UBadge color="neutral" variant="soft" size="xs">
+									{{ previewCount }}
+								</UBadge>
+							</div>
 						</div>
-						<div v-if="previewProducts.length > 0"
-							class="max-h-40 overflow-y-auto border border-(--color-border) rounded-lg p-2 space-y-0.5 bg-(--color-surface) text-xs">
-							<div v-for="p in previewProducts.slice(0, 20)" :key="p.productId"
-								class="flex justify-between items-center py-0.5">
-								<span class="font-mono truncate">{{ p.productId }}</span>
-								<span class="text-(--color-text-muted) shrink-0 ml-2">→
-									<span class="text-opsi-blue font-medium">{{ actionRequest }}</span>
-								</span>
+
+						<div v-if="loadingPreview" class="flex justify-center py-4">
+							<UIcon :name="icons.loading" class="w-5 h-5 animate-spin" />
+						</div>
+						<div v-else-if="previewData && Object.keys(previewData).length > 0"
+							class="max-h-64 overflow-y-auto border border-(--color-border) rounded-lg p-2 space-y-1 bg-(--color-surface) text-xs">
+							<div v-for="(products, clientId) in previewData" :key="clientId">
+								<details>
+									<summary class="font-medium text-(--color-text-muted) py-0.5 cursor-pointer">
+										{{ clientId }} ({{ products.length }})
+									</summary>
+									<div v-for="p in products" :key="p.productId"
+										class="flex justify-between items-center py-0.5 pl-3 gap-2">
+										<span class="font-mono truncate">{{ p.productId }}</span>
+										<span v-if="p.productType" class="text-(--color-text-muted) shrink-0">
+											{{ p.productType }}
+										</span>
+										<span v-if="p.productVersion || p.packageVersion"
+											class="text-(--color-text-muted) shrink-0">
+											{{ p.productVersion }}-{{ p.packageVersion }}
+										</span>
+										<span class="shrink-0">{{ p.actionRequest || actionRequest }}</span>
+										<span v-if="p.installationStatus" class="text-(--color-text-muted) shrink-0">
+											{{ p.installationStatus }}
+										</span>
+									</div>
+								</details>
 							</div>
-							<div v-if="previewProducts.length > 20"
-								class="text-(--color-text-muted) text-center pt-1 border-t border-(--color-border) mt-1">
-								+{{ previewProducts.length - 20 }} {{ $t('more') }}
-							</div>
+						</div>
+						<div v-else-if="previewData !== null"
+							class="text-center py-4 text-xs text-(--color-text-muted) border border-dashed border-(--color-border) rounded-lg">
+							{{ $t('noProductsMatchCriteria') }}
 						</div>
 						<div v-else
 							class="text-center py-4 text-xs text-(--color-text-muted) border border-dashed border-(--color-border) rounded-lg">
-							{{ $t('noProductsMatchCriteria') }}
+							--
 						</div>
 					</div>
 				</div>
 
 				<template #footer>
-					<div class="flex justify-end gap-2">
-						<UButton variant="ghost" size="sm" @click="dialogOpen = false">{{ $t('cancel') }}</UButton>
-						<UButton color="primary" size="sm" :disabled="previewProducts.length === 0 || applying"
+					<div class="flex justify-between">
+						<UButton variant="ghost" size="sm" @click="resetForm">{{ $t('reset') }}</UButton>
+						<UButton color="primary" size="sm" :disabled="previewData == null || applying"
 							:loading="applying" @click="applyActions">
-							{{ $t('apply') }} ({{ previewProducts.length }})
+							{{ $t('apply') }}
 						</UButton>
 					</div>
 				</template>
@@ -133,7 +157,7 @@ interface Props {
 	products?: ProductRow[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
 	products: () => [],
 })
 
@@ -143,102 +167,173 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { setClientProductActions } = useApiHelpers()
+const { apiPost, apiGet } = useApiHelpers()
 const selectionStore = useSelectionStore()
 
+const NOT_APPLIED = String($t('notApplied'))
+
 const dialogOpen = ref(false)
-const loading = ref(false)
+const loadingOptions = ref(false)
+const loadingPreview = ref(false)
 const applying = ref(false)
-const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+const errorMessage = ref<string | null>(null)
 
 const hasSelections = computed(() =>
 	selectionStore.selectedProducts.length > 0 || selectionStore.selectedClients.length > 0 || selectionStore.selectedServers.length > 0
 )
 
-const filters = ref({ installationStatus: '', actionResult: '', outdatedOnly: false })
-const actionRequest = ref('setup')
+const filters = ref({ installationStatus: NOT_APPLIED, actionResult: NOT_APPLIED, outdatedOnly: false })
+const actionRequest = ref(NOT_APPLIED)
+const scope = ref('clients')
 
-const installationStatusOptions = [
-	{ value: '', label: String($t('all')) },
-	{ value: 'installed', label: String($t('installed')) },
-	{ value: 'not_installed', label: String($t('notInstalled')) },
-	{ value: 'unknown', label: String($t('unknown')) },
-]
+const installationStatusOptions = ref([
+	{ value: NOT_APPLIED, label: NOT_APPLIED },
+	{ value: 'installed', label: 'installed' },
+	{ value: 'not_installed', label: 'not_installed' },
+	{ value: 'unknown', label: 'unknown' },
+])
 
-const actionResultOptions = [
-	{ value: '', label: String($t('all')) },
-	{ value: 'successful', label: String($t('successful')) },
-	{ value: 'failed', label: String($t('failed')) },
-	{ value: 'none', label: String($t('none')) },
-]
+const actionResultOptions = ref([
+	{ value: NOT_APPLIED, label: NOT_APPLIED },
+	{ value: 'failed', label: 'failed' },
+	{ value: 'successful', label: 'successful' },
+	{ value: 'none', label: 'none' },
+])
 
 const actionRequestOptions = [
+	{ value: NOT_APPLIED, label: NOT_APPLIED },
+	{ value: 'none', label: 'none' },
 	{ value: 'setup', label: 'setup' },
 	{ value: 'uninstall', label: 'uninstall' },
 	{ value: 'update', label: 'update' },
 	{ value: 'always', label: 'always' },
 	{ value: 'once', label: 'once' },
-	{ value: 'none', label: 'none' },
+	{ value: 'custom', label: 'custom' },
 ]
 
-interface ProductPreview {
+const scopeOptions = [
+	{ value: 'both', label: String($t('toBothSelectedServersAndClients')) },
+	{ value: 'servers', label: String($t('toSelectedServers')) },
+	{ value: 'clients', label: String($t('toSelectedClients')) },
+]
+
+interface PreviewProduct {
 	productId: string
-	currentStatus: string
+	productType?: string
+	productVersion?: string
+	packageVersion?: string
+	actionRequest?: string
+	installationStatus?: string
 }
 
-const previewProducts = ref<ProductPreview[]>([])
+const previewData = ref<Record<string, PreviewProduct[]> | null>(null)
 
-watch(dialogOpen, async (open) => {
-	if (open) await loadPreview()
+const previewCount = computed(() => {
+	if (!previewData.value) return 0
+	return Object.values(previewData.value).reduce((sum, arr) => sum + arr.length, 0)
 })
 
-async function loadPreview() {
-	loading.value = true
-	try {
-		const sourceProducts = props.products.length > 0 ? props.products : []
-		const selectedProductSet = new Set(selectionStore.selectedProducts)
+watch(dialogOpen, async (open) => {
+	if (open) {
+		resetForm()
+		await fetchOptions()
+	}
+})
 
-		previewProducts.value = sourceProducts
-			.filter(p => {
-				if (selectedProductSet.size > 0 && !selectedProductSet.has(p.productId)) return false
-				if (filters.value.installationStatus && p.installationStatus !== filters.value.installationStatus) return false
-				if (filters.value.actionResult && p.actionResult !== filters.value.actionResult) return false
-				if (filters.value.outdatedOnly && !p.client_version_outdated) return false
-				return true
-			})
-			.map(p => ({ productId: p.productId, currentStatus: p.installationStatus || 'unknown' }))
+async function fetchOptions() {
+	loadingOptions.value = true
+	try {
+		const [statusResult, resultResult] = await Promise.all([
+			apiGet<string[]>('/opsidata/products/installation-status'),
+			apiGet<string[]>('/opsidata/products/action-result'),
+		])
+		if (statusResult.data) {
+			installationStatusOptions.value = [
+				{ value: NOT_APPLIED, label: NOT_APPLIED },
+				...(statusResult.data as string[]).map((s: string) => ({ value: s, label: s })),
+			]
+		}
+		if (resultResult.data) {
+			actionResultOptions.value = [
+				{ value: NOT_APPLIED, label: NOT_APPLIED },
+				...(resultResult.data as string[]).map((s: string) => ({ value: s, label: s })),
+			]
+		}
 	} catch (e) {
-		console.error('Failed to load preview:', e)
-		previewProducts.value = []
+		errorMessage.value = e instanceof Error ? e.message : String(e)
 	} finally {
-		loading.value = false
+		loadingOptions.value = false
+	}
+}
+
+function buildParams(demoMode: boolean): Record<string, unknown> | null {
+	const includeClients = scope.value === 'both' || scope.value === 'clients'
+	const includeServers = scope.value === 'both' || scope.value === 'servers'
+
+	const instStatus = filters.value.installationStatus === NOT_APPLIED ? null : filters.value.installationStatus
+	const actResult = filters.value.actionResult === NOT_APPLIED ? null : filters.value.actionResult
+	const action = actionRequest.value === NOT_APPLIED ? '' : actionRequest.value
+
+	if (!filters.value.outdatedOnly && instStatus === null && actResult === null) {
+		previewData.value = null
+		return null
+	}
+
+	if (action === '' && !demoMode) {
+		errorMessage.value = String($t('message.chooseAction'))
+		return null
+	}
+
+	return {
+		action,
+		demoMode,
+		outdated: filters.value.outdatedOnly,
+		installation_status: instStatus,
+		action_result: actResult,
+		selectedClients: includeClients && selectionStore.selectedClients.length > 0 ? selectionStore.selectedClients : null,
+		selectedDepots: includeServers && selectionStore.selectedServers.length > 0 ? selectionStore.selectedServers : null,
+	}
+}
+
+async function fetchPreview() {
+	const params = buildParams(true)
+	if (!params) return
+	loadingPreview.value = true
+	errorMessage.value = null
+	try {
+		const result = await apiPost<Record<string, PreviewProduct[]>>('/opsidata/clients/action', params)
+		if (result.error) throw result.error
+		previewData.value = (result.data || {}) as Record<string, PreviewProduct[]>
+	} catch (e) {
+		errorMessage.value = e instanceof Error ? e.message : String(e)
+		previewData.value = null
+	} finally {
+		loadingPreview.value = false
 	}
 }
 
 async function applyActions() {
-	if (!previewProducts.value.length) return
+	const params = buildParams(false)
+	if (!params) return
 	applying.value = true
+	errorMessage.value = null
 	try {
-		const productIds = [...new Set(previewProducts.value.map(p => p.productId))]
-		const clientIds = selectionStore.selectedClients.length ? selectionStore.selectedClients : []
-
-		const result = await setClientProductActions({
-			clientIds,
-			productIds,
-			actionRequest: actionRequest.value,
-		})
-
+		const result = await apiPost<Record<string, unknown[]>>('/opsidata/clients/action', params)
 		if (result.error) throw result.error
-
-		statusMessage.value = { type: 'success', message: String($t('message.actionsApplied')) }
-		setTimeout(() => { statusMessage.value = null }, 5000)
 		dialogOpen.value = false
 		emit('applied')
 	} catch (e) {
-		console.error('Failed to apply actions:', e)
-		statusMessage.value = { type: 'error', message: String(e) }
+		errorMessage.value = e instanceof Error ? e.message : String(e)
 	} finally {
 		applying.value = false
 	}
+}
+
+function resetForm() {
+	filters.value = { installationStatus: NOT_APPLIED, actionResult: NOT_APPLIED, outdatedOnly: false }
+	actionRequest.value = NOT_APPLIED
+	scope.value = 'clients'
+	previewData.value = null
+	errorMessage.value = null
 }
 </script>

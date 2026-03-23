@@ -68,6 +68,8 @@ Sidebar component - main navigation.
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from '~/stores/userStore'
+
 defineProps<{
     collapsed: boolean
     isMobile: boolean
@@ -76,6 +78,7 @@ defineProps<{
 const icons = useIcons()
 const { t: $t } = useI18n()
 const $route = useRoute()
+const userStore = useUserStore()
 
 const expanded = ref<Record<string, boolean>>({})
 const hoveredItem = ref<string | null>(null)

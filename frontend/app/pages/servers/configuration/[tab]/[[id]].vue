@@ -1,8 +1,7 @@
 Route: /servers/configuration/:tab/:id?
 <template>
-	<HostsConfigView :host-id="selectedServerId" host-type="server" :tab="activeTab" show-host-selector
-		:on-cancel-leave="() => { manualServerId = routeServerId }" @update:host-id="updateSelectedServerId"
-		@update:tab="updateActiveTab" @saved="handleSaved" />
+	<HostsConfigTabs :host-id="selectedServerId" host-type="server" :tab="activeTab" show-host-selector
+		@update:host-id="updateSelectedServerId" @update:tab="updateActiveTab" @saved="handleSaved" />
 </template>
 
 <script setup lang="ts">

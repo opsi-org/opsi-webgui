@@ -1,81 +1,123 @@
 <template>
     <LayoutsPageLayout :show-search="false" :show-refresh="true" :loading="loading" @refresh="refreshAll">
-        <div class="space-y-6">
-            <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none  p-4">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-lg bg-opsi-blue/10 flex items-center justify-center">
-                        <UIcon :name="icons.serverStack" class="w-5 h-5 text-opsi-blue" />
-                    </div>
-                    <div>
-                        <p class="text-xs text-[--color-text-muted] uppercase tracking-wide">{{ $t('configServer') }}
-                        </p>
-                        <p class="font-semibold text-lg" :title="serverInfo?.hostname">{{ serverInfo?.hostname || '-' }}
-                        </p>
+        <div class="h-full flex flex-col min-h-0">
+            <!-- Top row: Config server + User info + Health check -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3 shrink-0">
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-opsi-blue/10 flex items-center justify-center">
+                            <UIcon :name="icons.serverStack" class="w-4 h-4 text-opsi-blue" />
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-wide">{{ $t('configServer') }}</p>
+                            <p class="font-semibold text-sm" :title="serverInfo?.hostname">{{ serverInfo?.hostname || '-' }}</p>
+                        </div>
                     </div>
                 </div>
 
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-opsi-blue/10 flex items-center justify-center">
+                            <UIcon :name="icons.user" class="w-4 h-4 text-opsi-blue" />
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-wide">{{ $t('currentUser') }}</p>
+                            <p class="font-semibold text-sm truncate">{{ userStore.username || '-' }}</p>
+                        </div>
+                        <UBadge v-if="userStore.readOnly" color="warning" variant="subtle" size="xs" class="ml-auto shrink-0">
+                            {{ $t('readOnlyMode') }}
+                        </UBadge>
+                    </div>
+                </div>
+
+                <div v-if="healthChecks.length > 0"
+                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
+                    <div class="flex items-center gap-2 mb-2">
+                        <UIcon :name="icons.health" class="w-4 h-4 text-opsi-blue" />
+                        <span class="text-sm font-semibold">{{ $t('healthCheck') }}</span>
+                        <UBadge v-if="healthSummary.error > 0" color="error" variant="subtle" size="xs">
+                            {{ healthSummary.error }} {{ $t('errors') }}
+                        </UBadge>
+                        <UBadge v-if="healthSummary.warning > 0" color="warning" variant="subtle" size="xs">
+                            {{ healthSummary.warning }} {{ $t('warnings') }}
+                        </UBadge>
+                        <UBadge v-if="healthSummary.ok > 0" color="success" variant="subtle" size="xs">
+                            {{ healthSummary.ok }} ok
+                        </UBadge>
+                        <NuxtLink to="/admin/diagnostics/healthcheck" class="ml-auto text-xs text-opsi-blue hover:underline">
+                            {{ $t('details') }}
+                        </NuxtLink>
+                    </div>
+                    <div class="space-y-0.5 max-h-24 overflow-y-auto">
+                        <div v-for="check in healthChecks.filter(c => c.check_status !== 'ok').slice(0, 5)" :key="check.check_id"
+                            class="flex items-center gap-1.5 text-xs px-1.5 py-0.5 rounded" :class="{
+                                'bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200': check.check_status === 'error',
+                                'bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200': check.check_status === 'warning',
+                            }">
+                            <UIcon
+                                :name="check.check_status === 'warning' ? icons.warning : icons.error"
+                                class="w-3 h-3 shrink-0" :class="{
+                                    'text-amber-500': check.check_status === 'warning',
+                                    'text-red-500': check.check_status === 'error',
+                                }" />
+                            <span class="truncate">{{ check.check_name }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md dark:hover:border-opsi-blue/50 transition-all"
+            <!-- Stat cards row -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3 shrink-0">
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer hover:shadow-md transition-all"
                     @click="navigateTo('/servers')">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center">
-                            <UIcon :name="icons.serverStack" class="w-5 h-5" />
-                        </div>
-                        <UIcon :name="icons.arrowRight" class="w-4 h-4 text-[--color-text-muted]" />
+                    <div class="flex items-center justify-between mb-1">
+                        <UIcon :name="icons.serverStack" class="w-4 h-4 text-[--color-text-muted]" />
+                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
                     </div>
-                    <p class="text-3xl font-bold">{{ stats.totalServers ?? '-' }}</p>
-                    <p class="text-sm text-[--color-text-muted]">{{ $t('totalServers') }}</p>
+                    <p class="text-2xl font-bold">{{ stats.totalServers ?? '-' }}</p>
+                    <p class="text-xs text-[--color-text-muted]">{{ $t('totalServers') }}</p>
                 </div>
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none  p-4 cursor-pointer hover:shadow-md dark:hover:border-opsi-blue/50 transition-all"
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer hover:shadow-md transition-all"
                     @click="navigateTo('/clients')">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 rounded-lg  flex items-center justify-center">
-                            <UIcon :name="icons.client" class="w-5 h-5" />
-                        </div>
-                        <UIcon :name="icons.arrowRight" class="w-4 h-4 text-[--color-text-muted]" />
+                    <div class="flex items-center justify-between mb-1">
+                        <UIcon :name="icons.client" class="w-4 h-4 text-[--color-text-muted]" />
+                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
                     </div>
-                    <p class="text-3xl font-bold">{{ stats.totalClients ?? '-' }}</p>
-                    <p class="text-sm text-[--color-text-muted]">{{ $t('totalClients') }}</p>
+                    <p class="text-2xl font-bold">{{ stats.totalClients ?? '-' }}</p>
+                    <p class="text-xs text-[--color-text-muted]">
+                        {{ $t('totalClients') }}
+                        <span v-if="selectedServerLabel" class="text-[10px]">({{ selectedServerLabel }})</span>
+                    </p>
                 </div>
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md dark:hover:border-opsi-blue/50 transition-all"
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer hover:shadow-md transition-all"
                     @click="navigateTo('/products')">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 rounded-lg  flex items-center justify-center">
-                            <UIcon :name="icons.product" class="w-5 h-5 " />
-                        </div>
-                        <UIcon :name="icons.arrowRight" class="w-4 h-4 text-[--color-text-muted]" />
+                    <div class="flex items-center justify-between mb-1">
+                        <UIcon :name="icons.product" class="w-4 h-4 text-[--color-text-muted]" />
+                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
                     </div>
-                    <div class="flex items-baseline gap-2">
-                        <p class="text-3xl font-bold">{{ stats.totalProducts ?? '-' }}</p>
-                        <p class="text-sm text-[--color-text-muted]">{{ $t('totalProducts') }}</p>
-                    </div>
-                    <div class="mt-2 flex gap-4 text-xs">
+                    <p class="text-2xl font-bold">{{ stats.totalProducts ?? '-' }}</p>
+                    <p class="text-xs text-[--color-text-muted]">{{ $t('totalProducts') }}</p>
+                    <div class="mt-1 flex gap-3 text-[10px]">
                         <span class="text-[--color-text-muted]">
-                            <span class="font-medium text-[--color-text]">{{ stats.localbootProducts ?? '-' }}</span>
-                            Localboot
+                            <span class="font-medium text-[--color-text]">{{ stats.localbootProducts ?? '-' }}</span> Localboot
                         </span>
                         <span class="text-[--color-text-muted]">
-                            <span class="font-medium text-[--color-text]">{{ stats.netbootProducts ?? '-' }}</span>
-                            Netboot
+                            <span class="font-medium text-[--color-text]">{{ stats.netbootProducts ?? '-' }}</span> Netboot
                         </span>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none  p-4 cursor-pointer hover:shadow-md dark:hover:border-opsi-blue/50 transition-all"
-                    @click="navigateTo('/admin/modules')">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center">
-                            <UIcon :name="icons.license" class="w-5 h-5 " />
-                        </div>
-                        <UIcon :name="icons.arrowRight" class="w-4 h-4 text-[--color-text-muted]" />
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer hover:shadow-md transition-all"
+                    @click="navigateTo('/admin/diagnostics/modules')">
+                    <div class="flex items-center justify-between mb-1">
+                        <UIcon :name="icons.license" class="w-4 h-4 text-[--color-text-muted]" />
+                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
                     </div>
-                    <p class="text-3xl font-bold">{{ stats.totalModules ?? '-' }}</p>
-                    <p class="text-sm text-[--color-text-muted]">{{ $t('modules') }}</p>
-                    <div class="mt-2 flex gap-4 text-xs">
+                    <p class="text-2xl font-bold">{{ stats.totalModules ?? '-' }}</p>
+                    <p class="text-xs text-[--color-text-muted]">{{ $t('modules') }}</p>
+                    <div class="mt-1 flex gap-3 text-[10px]">
                         <span class="text-emerald-600 dark:text-emerald-400">
                             <span class="font-medium">{{ stats.activeModules ?? '-' }}</span> {{ $t('active') }}
                         </span>
@@ -86,91 +128,90 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none  p-4">
-                    <div class="flex items-center justify-between mb-4">
+            <!-- Bottom row: Reachable clients + Last seen -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0">
+                    <div class="flex items-center justify-between mb-2 shrink-0">
                         <div class="flex items-center gap-2">
-                            <UIcon :name="icons.clientReachable" class="w-5 h-5 text-emerald-500" />
-                            <h3 class="font-semibold">{{ $t('reachable') }} {{ $t('clients') }}</h3>
+                            <UIcon :name="icons.clientReachable" class="w-4 h-4 text-emerald-500" />
+                            <h3 class="text-sm font-semibold">{{ $t('reachable') }} {{ $t('clients') }}</h3>
                         </div>
-                        <UButton v-if="!loadingReachable" variant="ghost" color="neutral" size="xs"
-                            @click="checkAllReachable">
-                            <UIcon :name="icons.refresh" class="w-4 h-4" />
-                        </UButton>
-                        <UIcon v-else :name="icons.loading" class="w-4 h-4 animate-spin" />
+                        <div class="flex items-center gap-2">
+                            <USelect v-model="selectedServerForReachable" :items="serverOptions" size="xs" class="w-40" />
+                            <UButton v-if="!loadingReachable" variant="ghost" color="neutral" size="xs"
+                                @click="checkAllReachable">
+                                <UIcon :name="icons.refresh" class="w-3.5 h-3.5" />
+                            </UButton>
+                            <UIcon v-else :name="icons.loading" class="w-3.5 h-3.5 animate-spin" />
+                        </div>
                     </div>
-                    <div v-if="reachableClients.length > 0 || unreachableCount > 0" class="space-y-3">
+                    <div v-if="reachableClients.length > 0 || unreachableCount > 0" class="flex-1 min-h-0 space-y-2">
                         <div class="flex items-center gap-4 text-sm">
                             <span class="text-emerald-600 dark:text-emerald-400">
-                                <span class="font-bold text-2xl">{{ reachableClients.length }}</span>
-                                <span class="ml-1">{{ $t('reachable') }}</span>
+                                <span class="font-bold text-xl">{{ reachableClients.length }}</span>
+                                <span class="ml-1 text-xs">{{ $t('reachable') }}</span>
                             </span>
                             <span class="text-[--color-text-muted]">
-                                <span class="font-bold text-2xl">{{ unreachableCount }}</span>
-                                <span class="ml-1">Unreachable</span>
+                                <span class="font-bold text-xl">{{ unreachableCount }}</span>
+                                <span class="ml-1 text-xs">Unreachable</span>
                             </span>
                         </div>
-                        <div v-if="reachableClients.length > 0" class="max-h-40 overflow-y-auto space-y-1">
+                        <div v-if="reachableClients.length > 0" class="overflow-y-auto flex-1 min-h-0 space-y-0.5">
                             <div v-for="client in reachableClients.slice(0, 20)" :key="client"
-                                class="flex items-center justify-between p-2 rounded bg-emerald-50 dark:bg-emerald-900/20 text-sm">
-                                <span class="font-mono text-xs truncate">{{ client }}</span>
-                                <UIcon :name="icons.checkCircle" class="w-4 h-4 text-emerald-500 shrink-0" />
+                                class="flex items-center justify-between p-1.5 rounded bg-emerald-50 dark:bg-emerald-900/20 text-xs">
+                                <span class="font-mono text-[10px] truncate">{{ client }}</span>
+                                <UIcon :name="icons.checkCircle" class="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                             </div>
                             <p v-if="reachableClients.length > 20"
-                                class="text-xs text-[--color-text-muted] text-center pt-2">
+                                class="text-[10px] text-[--color-text-muted] text-center pt-1">
                                 {{ $t('countMore', { count: reachableClients.length - 20 }) }}
                             </p>
                         </div>
                     </div>
-                    <div v-else class="text-sm text-[--color-text-muted] py-4 text-center">
+                    <div v-else class="text-xs text-[--color-text-muted] py-4 text-center">
                         {{ loadingReachable ? $t('loading') : 'Click refresh to check client reachability' }}
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4">
-                    <div class="flex items-center justify-between mb-4">
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0">
+                    <div class="flex items-center justify-between mb-2 shrink-0">
                         <div class="flex items-center gap-2">
-                            <UIcon :name="icons.calendar" class="w-5 h-5 text-blue-500" />
-                            <h3 class="font-semibold">{{ $t('clients') }} {{ $t('lastSeen') }}</h3>
+                            <UIcon :name="icons.calendar" class="w-4 h-4 text-blue-500" />
+                            <h3 class="text-sm font-semibold">{{ $t('clients') }} {{ $t('lastSeen') }}</h3>
                         </div>
-                        <USelect v-model="selectedServerForLastSeen" :items="serverOptions" size="xs" class="w-48" />
+                        <USelect v-model="selectedServerForLastSeen" :items="serverOptions" size="xs" class="w-40" />
                     </div>
-                    <div v-if="lastSeenStats" class="space-y-2">
+                    <div v-if="lastSeenStats" class="flex-1 min-h-0 space-y-2">
                         <div class="grid grid-cols-2 gap-2 text-sm">
-                            <div class="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
-                                <p class="text-xs text-[--color-text-muted]">Last 24 hours</p>
-                                <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{
-                                    lastSeenStats.last24h }}</p>
+                            <div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+                                <p class="text-[10px] text-[--color-text-muted]">Last 24 hours</p>
+                                <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{ lastSeenStats.last24h }}</p>
                             </div>
-                            <div class="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
-                                <p class="text-xs text-[--color-text-muted]">Last 7 days</p>
-                                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ lastSeenStats.last7d
-                                    }}</p>
+                            <div class="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+                                <p class="text-[10px] text-[--color-text-muted]">Last 7 days</p>
+                                <p class="text-xl font-bold text-blue-600 dark:text-blue-400">{{ lastSeenStats.last7d }}</p>
                             </div>
-                            <div class="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20">
-                                <p class="text-xs text-[--color-text-muted]">Last 30 days</p>
-                                <p class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{
-                                    lastSeenStats.last30d }}</p>
+                            <div class="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/20">
+                                <p class="text-[10px] text-[--color-text-muted]">Last 30 days</p>
+                                <p class="text-xl font-bold text-amber-600 dark:text-amber-400">{{ lastSeenStats.last30d }}</p>
                             </div>
-                            <div class="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                                <p class="text-xs text-[--color-text-muted]">Older / Never</p>
-                                <p class="text-2xl font-bold text-[--color-text-muted]">{{ lastSeenStats.older }}</p>
+                            <div class="p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                                <p class="text-[10px] text-[--color-text-muted]">Older / Never</p>
+                                <p class="text-xl font-bold text-[--color-text-muted]">{{ lastSeenStats.older }}</p>
                             </div>
                         </div>
-                        <div class="mt-4">
-                            <h4 class="text-xs font-semibold text-[--color-text-muted] mb-2">
-                                {{ $t('clients') }} ({{ selectedServerForLastSeen === 'all' ? $t('allServers') :
-                                    selectedServerForLastSeen }})
+                        <div class="flex-1 min-h-0 overflow-y-auto">
+                            <h4 class="text-[10px] font-semibold text-[--color-text-muted] mb-1">
+                                {{ $t('clients') }} ({{ selectedServerForLastSeen === 'all' ? $t('allServers') : selectedServerForLastSeen }})
                             </h4>
-                            <div v-if="filteredClientsForServer.length > 0" class="max-h-40 overflow-y-auto space-y-1">
+                            <div v-if="filteredClientsForServer.length > 0" class="space-y-0.5">
                                 <div v-for="client in filteredClientsForServer.slice(0, 20)" :key="client.clientId"
-                                    class="flex items-center justify-between p-2 rounded bg-gray-50 dark:bg-gray-800/50 text-xs">
+                                    class="flex items-center justify-between p-1.5 rounded bg-gray-50 dark:bg-gray-800/50 text-[10px]">
                                     <span class="font-mono truncate">{{ client.clientId }}</span>
-                                    <span class="text-[--color-text-muted]">{{ client.lastSeen ? new
-                                        Date(client.lastSeen).toLocaleString() : 'Never' }}</span>
+                                    <span class="text-[--color-text-muted]">{{ formatLastSeen(client.lastSeen) }}</span>
                                 </div>
                                 <p v-if="filteredClientsForServer.length > 20"
-                                    class="text-xs text-[--color-text-muted] text-center pt-2">
+                                    class="text-[10px] text-[--color-text-muted] text-center pt-1">
                                     {{ $t('countMore', { count: filteredClientsForServer.length - 20 }) }}
                                 </p>
                             </div>
@@ -179,8 +220,43 @@
                             </div>
                         </div>
                     </div>
-                    <div v-else class="text-sm text-[--color-text-muted] py-4 text-center">
+                    <div v-else class="text-xs text-[--color-text-muted] py-4 text-center">
                         {{ loading ? $t('loading') : $t('noDataAvailable') }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blocked Clients & Locked Products -->
+            <div v-if="Object.keys(blockedClientsMap).length > 0 || Object.keys(lockedProductsMap).length > 0"
+                class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-3 shrink-0">
+                <div v-if="Object.keys(blockedClientsMap).length > 0"
+                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
+                    <div class="flex items-center gap-2 mb-2">
+                        <UIcon :name="icons.blocked" class="w-4 h-4 text-red-500" />
+                        <h3 class="text-sm font-semibold">{{ $t('blockedClients') }}</h3>
+                        <UBadge color="error" variant="subtle" size="xs">{{ Object.keys(blockedClientsMap).length }}</UBadge>
+                    </div>
+                    <div class="space-y-0.5 max-h-24 overflow-y-auto">
+                        <div v-for="(reason, clientId) in blockedClientsMap" :key="clientId"
+                            class="flex items-center justify-between p-1 rounded bg-red-50 dark:bg-red-900/20 text-[10px]">
+                            <span class="font-mono truncate">{{ clientId }}</span>
+                            <span class="text-[--color-text-muted] ml-2 shrink-0">{{ reason }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="Object.keys(lockedProductsMap).length > 0"
+                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
+                    <div class="flex items-center gap-2 mb-2">
+                        <UIcon :name="icons.locked" class="w-4 h-4 text-amber-500" />
+                        <h3 class="text-sm font-semibold">{{ $t('lockedProducts') }}</h3>
+                        <UBadge color="warning" variant="subtle" size="xs">{{ Object.keys(lockedProductsMap).length }}</UBadge>
+                    </div>
+                    <div class="space-y-0.5 max-h-24 overflow-y-auto">
+                        <div v-for="(reason, productId) in lockedProductsMap" :key="productId"
+                            class="flex items-center justify-between p-1 rounded bg-amber-50 dark:bg-amber-900/20 text-[10px]">
+                            <span class="font-mono truncate">{{ productId }}</span>
+                            <span class="text-[--color-text-muted] ml-2 shrink-0">{{ reason }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -189,10 +265,15 @@
 </template>
 
 <script setup lang="ts">
+import { useSelectionStore } from '~/stores/selectionStore'
+import { useUserStore } from '~/stores/userStore'
+
 definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
 const { t: $t } = useI18n()
+const selectionStore = useSelectionStore()
+const userStore = useUserStore()
 const { getServerInfo, getHealthcheck, getClients, getServers, getProducts, getBlockedClients, getLockedProducts, checkClientReachable, getModulesContent } = useApiHelpers()
 
 const loading = ref(false)
@@ -235,11 +316,35 @@ const allServers = ref<Array<{ depotId: string }>>([])
 const reachableClients = ref<string[]>([])
 const unreachableCount = ref(0)
 const selectedServerForLastSeen = ref('all')
+const selectedServerForReachable = ref('all')
+
+const selectedServerLabel = computed(() => {
+    const servers = selectionStore.selectedServers
+    if (servers.length === 0 || servers.length === allServers.value.length) return ''
+    return servers.length === 1 ? servers[0] : `${servers.length} servers`
+})
 
 const serverOptions = computed(() => [
-    { value: 'all', label: $t('allServers') },
+    { value: 'all', label: String($t('allServers')) },
     ...allServers.value.map(d => ({ value: d.depotId, label: d.depotId }))
 ])
+
+const healthSummary = computed(() => {
+    const counts = { ok: 0, warning: 0, error: 0 }
+    healthChecks.value.forEach(c => {
+        if (c.check_status in counts) counts[c.check_status as keyof typeof counts]++
+    })
+    return counts
+})
+
+function formatLastSeen(lastSeen: string): string {
+    if (!lastSeen) return 'Never'
+    try {
+        return new Date(lastSeen).toLocaleString()
+    } catch {
+        return lastSeen || 'Never'
+    }
+}
 
 const lastSeenStats = computed(() => {
     if (!allClients.value.length) return null
@@ -259,6 +364,10 @@ const lastSeenStats = computed(() => {
             continue
         }
         const lastSeen = new Date(client.lastSeen)
+        if (isNaN(lastSeen.getTime())) {
+            older++
+            continue
+        }
         const diff = now.getTime() - lastSeen.getTime()
 
         if (diff <= day) last24h++
@@ -279,7 +388,19 @@ const filteredClientsForServer = computed(() =>
 async function fetchServerInfo() {
     const { data } = await getServerInfo()
     if (data) {
-        serverInfo.value = data as typeof serverInfo.value
+        const rawData = data as unknown
+        const serverId = typeof rawData === 'string' ? rawData : (rawData as Record<string, unknown>)?.result as string
+        if (serverId) {
+            serverInfo.value = {
+                opsiVersion: '',
+                hostname: serverId,
+                pythonVersion: '',
+                uptime: 0,
+                os: '',
+                computerName: serverId,
+                ip: '',
+            }
+        }
     }
 }
 
@@ -296,29 +417,37 @@ async function fetchHealthChecks() {
 }
 
 async function fetchStats() {
-    const [clientsRes, depotsRes, productsRes, modulesRes] = await Promise.all([
-        getClients(),
+    // Use selected servers from selection store for client/product counts
+    const selectedDepots = selectionStore.selectedServers
+    const depotParams = selectedDepots.length > 0 ? { selectedDepots: `[${selectedDepots.join(',')}]` } : {}
+
+    const [clientsRes, depotsRes, localbootRes, netbootRes, modulesRes] = await Promise.all([
+        getClients(depotParams),
         getServers(),
-        getProducts(),
+        getProducts({ ...depotParams, type: 'LocalbootProduct' }),
+        getProducts({ ...depotParams, type: 'NetbootProduct' }),
         getModulesContent(),
     ])
 
     if (clientsRes.data) {
         allClients.value = clientsRes.data as Array<{ clientId: string; lastSeen: string; depotId: string }>
-        stats.totalClients = clientsRes.data.length
+        stats.totalClients = clientsRes.total ?? clientsRes.data.length
     }
 
     if (depotsRes.data) {
         allServers.value = depotsRes.data as Array<{ depotId: string }>
-        stats.totalServers = depotsRes.data.length
+        stats.totalServers = depotsRes.total ?? depotsRes.data.length
     }
 
-    if (productsRes.data) {
-        const products = productsRes.data as Array<{ type: string }>
-        stats.totalProducts = products.length
-        stats.localbootProducts = products.filter(p => p.type === 'LocalbootProduct').length
-        stats.netbootProducts = products.filter(p => p.type === 'NetbootProduct').length
-    }
+    const localProducts = localbootRes.data as Array<{ type: string; productId: string }> | null
+    const netProducts = netbootRes.data as Array<{ type: string; productId: string }> | null
+
+    // Deduplicate each type separately
+    const uniqueLocal = new Set(localProducts?.map(p => p.productId) ?? [])
+    const uniqueNet = new Set(netProducts?.map(p => p.productId) ?? [])
+    stats.localbootProducts = uniqueLocal.size
+    stats.netbootProducts = uniqueNet.size
+    stats.totalProducts = uniqueLocal.size + uniqueNet.size
 
     if (modulesRes.data) {
         const modules = (modulesRes.data as { result: string[] }).result || []
@@ -343,11 +472,15 @@ async function fetchLockedProducts() {
 }
 
 async function checkAllReachable() {
-    if (!allClients.value.length) return
+    const clientPool = selectedServerForReachable.value === 'all'
+        ? allClients.value
+        : allClients.value.filter(c => c.depotId === selectedServerForReachable.value)
+
+    if (!clientPool.length) return
 
     loadingReachable.value = true
     try {
-        const clientIds = allClients.value.map(c => c.clientId).slice(0, 100)
+        const clientIds = clientPool.map(c => c.clientId).slice(0, 100)
         const result = await checkClientReachable(clientIds)
         if (result.data) {
             const reachableData = result.data as Record<string, boolean>

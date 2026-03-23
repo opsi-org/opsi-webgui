@@ -24,6 +24,8 @@ HostSelector - Unified searchable dropdown for selecting a client or a server.
 </template>
 
 <script setup lang="ts">
+import { useSelectionStore } from '~/stores/selectionStore'
+
 interface DropdownItem {
   label: string
   value: string
@@ -53,7 +55,8 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getClients, getServers } = useApiHelpers()
+const { getClients, getServers, getClientIds } = useApiHelpers()
+const selectionStore = useSelectionStore()
 
 const loading = ref(false)
 const items = ref<Array<{ id: string; description: string }>>([])
@@ -82,9 +85,19 @@ async function fetchItems() {
       const { data, error } = await getServers()
       if (!error) items.value = (data || []).map((d) => ({ id: d.depotId, description: d.description || '' }))
     } else {
-      const params: Record<string, unknown> = {}
-      const { data, error } = await getClients(params)
-      if (!error) items.value = (data || []).map((c) => ({ id: c.clientId, description: c.description || '' }))
+      const selectedServers = selectionStore.selectedServers
+      if (selectedServers.length > 0) {
+        const { data, error } = await getClientIds(selectedServers)
+        if (!error && data) {
+          items.value = (data as string[]).map((id) => ({ id, description: '' }))
+        } else {
+          const { data: clientData, error: clientError } = await getClients()
+          if (!clientError) items.value = (clientData || []).map((c) => ({ id: c.clientId, description: c.description || '' }))
+        }
+      } else {
+        const { data, error } = await getClients()
+        if (!error) items.value = (data || []).map((c) => ({ id: c.clientId, description: c.description || '' }))
+      }
     }
   } finally {
     loading.value = false
@@ -102,6 +115,10 @@ function onSelect(value: string) {
 }
 
 onMounted(fetchItems)
+
+watch(() => selectionStore.selectedServers, () => {
+  if (props.type === 'client') fetchItems()
+}, { deep: true })
 
 defineExpose({ refresh: fetchItems })
 </script>

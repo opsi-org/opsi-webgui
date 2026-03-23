@@ -7,7 +7,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                 <button @click="toggleSidebar" class="p-2 rounded hover:bg-white/20 transition-colors">
                     <UIcon :name="sidebarOpen ? icons.menuClose : icons.menu" class="w-5 h-5" />
                 </button>
-                <NuxtLink to="/clients" class="flex items-center gap-2">
+                <NuxtLink :to="defaultPage" class="flex items-center gap-2">
                     <img src="~/assets/images/opsi_webgui_wide_dark.svg" alt="OPSI" class="h-10" />
                 </NuxtLink>
             </div>
@@ -19,6 +19,16 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                     <UIcon :name="icons.clock" class="w-4 h-4" />
                     <span>{{ formattedTime }}</span>
                 </div>
+                <NuxtLink v-if="userStore.healthWorstCase && userStore.healthWorstCase !== 'ok'" to="/admin/diagnostics"
+                    class="px-2.5 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5"
+                    :class="{
+                        'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30': userStore.healthWorstCase === 'warning',
+                        'bg-red-500/20 text-red-300 hover:bg-red-500/30': userStore.healthWorstCase === 'error',
+                    }" :title="t('healthCheck')">
+                    <span>Health</span>
+                    <span class="tabular-nums">{{ userStore.healthCounts?.error || userStore.healthCounts?.warning || 0
+                        }}</span>
+                </NuxtLink>
                 <button @click="toggleQuickpanel"
                     class="p-2 rounded hover:bg-white/20 transition-colors flex items-center gap-1.5"
                     :title="t('quickPanel')">
@@ -56,19 +66,22 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
 
             <aside v-if="quickpanelOpen && !isMobile" :style="{ width: quickpanelWidth + 'px' }"
                 class="bg-white dark:bg-(--color-surface) border-l border-(--color-border) dark:border-(--color-border) overflow-auto shrink-0 flex flex-col relative">
-                <div class="absolute left-0 top-0 bottom-0 w-1 cursor-ew-resize hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10"
-                    @mousedown="startQuickpanelResize" />
+                <div class="absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group flex items-center justify-center"
+                    @mousedown="startQuickpanelResize">
+                    <div
+                        class="w-0.5 h-8 bg-gray-300 dark:bg-gray-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
                 <div class="p-4 flex-1 flex flex-col">
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                             t('quickPanel')
-                            }}</span>
+                        }}</span>
                         <button @click="quickpanelOpen = false"
                             class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
                             <UIcon :name="icons.close" class="w-4 h-4" />
                         </button>
                     </div>
-                    <QuickpanelPanel />
+                    <QuickpanelMainView />
                 </div>
             </aside>
         </div>
@@ -89,7 +102,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                                 @click="quickpanelOpen = false" />
                         </div>
 
-                        <QuickpanelPanel />
+                        <QuickpanelMainView />
                     </div>
                 </div>
             </div>
@@ -109,6 +122,14 @@ const uiStore = useUiStore()
 const { isWarning, formattedTime } = useSessionTimer(true)
 const $route = useRoute()
 const { t: i18nT } = useI18n()
+
+const defaultPage = computed(() => {
+    if (typeof document === 'undefined') return '/clients'
+    const match = document.cookie.match(/(?:^|; )opsi-default-page=([^;]*)/)
+    const stored = match?.[1] ? decodeURIComponent(match[1]) : null
+    const validPages = ['/dashboard', '/clients', '/products', '/servers', '/admin/terminal', '/admin/maintenance', '/admin/diagnostics']
+    return (stored && validPages.includes(stored)) ? stored : '/clients'
+})
 
 const t = (key: string) => {
     const translated = i18nT(key)

@@ -1,15 +1,16 @@
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div class="flex items-center gap-1 mb-2 shrink-0">
-			<UInput v-model="searchQuery" :placeholder="t('filter')" size="xs" :icon="icons.search" class="flex-1">
+			<UInput v-model="searchQuery" :placeholder="t('filter')" size="xs" :icon="icons.filter" class="flex-1 min-w-0">
 				<template v-if="searchQuery" #trailing>
 					<UButton :icon="icons.close" size="xs" variant="link" color="neutral" @click="searchQuery = ''" />
 				</template>
 			</UInput>
 			<UButton :icon="allExpanded ? icons.collapse : icons.expand" size="xs" variant="ghost" color="neutral"
 				:title="allExpanded ? t('collapseAll') : t('expandAll')" @click="toggleExpandAll" />
-			<UButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="t('refresh')"
-				:loading="loading" @click="refresh" />
+			<UTooltip v-if="selectedCount > 0" :text="`${t('clearAll')} (${selectedCount})`">
+				<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="clearAll" />
+			</UTooltip>
 		</div>
 
 		<div v-if="loading && !hasData" class="flex items-center justify-center py-8">
@@ -29,7 +30,7 @@
 						:style="{ paddingLeft: `${item.depth * 16}px` }"
 						class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer">
 						<UButton v-if="item.hasChildren" :icon="item.isExpanded ? icons.arrowDown : icons.arrowRight"
-							size="xs" variant="ghost" color="neutral" class="shrink-0 !p-0 !h-4 !w-4"
+							size="xs" variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
 							@click.stop="toggleExpand(item.id)" />
 						<span v-else class="w-4 shrink-0" />
 						<UCheckbox :model-value="isItemChecked(item)" size="xs" @click.stop
@@ -70,7 +71,7 @@
 				<div v-for="item in productFlatItems" :key="item.id" :style="{ paddingLeft: `${item.depth * 16}px` }"
 					class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer">
 					<UButton v-if="item.hasChildren" :icon="item.isExpanded ? icons.arrowDown : icons.arrowRight"
-						size="xs" variant="ghost" color="neutral" class="shrink-0 !p-0 !h-4 !w-4"
+						size="xs" variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
 						@click.stop="toggleExpand(item.id)" />
 					<span v-else class="w-4 shrink-0" />
 					<UCheckbox :model-value="isItemChecked(item)" size="xs" @click.stop
@@ -86,12 +87,7 @@
 			</template>
 		</div>
 
-		<div v-if="selectedCount > 0" class="shrink-0 pt-2 mt-2 border-t border-(--color-border)">
-			<div class="flex items-center justify-between">
-				<span class="text-xs text-(--color-text-muted)">{{ selectedCount }} {{ t('selected') }}</span>
-				<UButton size="xs" variant="link" color="error" @click="clearAll">{{ t('clearAll') }}</UButton>
-			</div>
-		</div>
+
 	</div>
 </template>
 
@@ -99,7 +95,7 @@
 import type { GroupTreeNodeData } from '~/types'
 import { useSelectionStore } from '~/stores/selectionStore'
 
-const props = defineProps<{ groupType: 'client' | 'product' }>()
+const props = defineProps<{ groupType: 'client' | 'product'; active?: boolean }>()
 
 const icons = useIcons()
 const { t: i18nT } = useI18n()
@@ -283,6 +279,25 @@ function clearAll() {
 	}
 }
 
+function selectAll() {
+	if (props.groupType === 'client') {
+		const allIds = allClientsList.value.length > 0 ? allClientsList.value : []
+		if (allIds.length > 0) selectionStore.addClients(allIds, 'quickpanel')
+	} else {
+		const allIds = collectAllMembers(rawTree.value)
+		if (allIds.length > 0) selectionStore.addProducts(allIds, 'quickpanel')
+	}
+}
+
+function collectAllMembers(nodes: GroupTreeNodeData[]): string[] {
+	const result: string[] = []
+	for (const node of nodes) {
+		if (node.members) result.push(...node.members)
+		if (node.children) result.push(...collectAllMembers(node.children))
+	}
+	return result
+}
+
 function refresh() {
 	if (props.groupType === 'client') {
 		selectionStore.fetchClientGroups(true)
@@ -308,11 +323,18 @@ async function fetchAllClients() {
 }
 
 onMounted(() => {
-	if (props.groupType === 'client') {
-		selectionStore.fetchClientGroups()
-		fetchAllClients()
-	} else {
-		selectionStore.fetchProductGroups()
-	}
+	// Data is fetched lazily when the component becomes visible
+	// See the watch on 'active' prop
 })
+
+watch(() => props.active, (isActive) => {
+	if (isActive && !hasData.value && !loading.value) {
+		if (props.groupType === 'client') {
+			selectionStore.fetchClientGroups()
+			fetchAllClients()
+		} else {
+			selectionStore.fetchProductGroups()
+		}
+	}
+}, { immediate: true })
 </script>

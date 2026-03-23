@@ -19,10 +19,10 @@ Login page - allows users to log in with username/password or SAML SSO.
           <UIcon :name="icons.serverStack" class="w-5 h-5 text-opsi-blue" />
           <div class="flex-1 min-w-0">
             <span class="text-xs text-(--color-text-muted) dark:text-(--color-text-muted) block">{{ $t('configServer')
-            }}</span>
+              }}</span>
             <span class="font-medium text-(--color-text) dark:text-(--color-text) truncate block">{{
               configServerName
-            }}</span>
+              }}</span>
           </div>
         </div>
 
@@ -62,6 +62,7 @@ const config = useRuntimeConfig()
 const userStore = useUserStore()
 const colorMode = useColorMode()
 const { $customFetch } = useNuxtApp() as unknown as { $customFetch: typeof $fetch }
+const { createActivity } = useApiHelpers()
 
 const isDark = computed(() => colorMode.preference === 'dark')
 
@@ -70,6 +71,14 @@ const loading = ref(false)
 const showSaml = ref(true)
 const errorMessage = ref('')
 const configServerName = ref('')
+
+function getDefaultPage(): string {
+    const match = document.cookie.match(/(?:^|; )opsi-default-page=([^;]*)/)
+    const stored = match?.[1] ? decodeURIComponent(match[1]) : null
+    const validPages = ['/dashboard', '/clients', '/products', '/servers', '/admin/terminal', '/admin/maintenance', '/admin/diagnostics']
+    if (stored && validPages.includes(stored)) return stored
+    return config.public.BASE_PAGE as string || '/clients'
+}
 
 onMounted(async () => {
   try {
@@ -87,7 +96,7 @@ onMounted(async () => {
       const authResult = await $customFetch<{ result: string; username?: string }>('/auth/session')
       if (authResult && (authResult as any).username) {
         userStore.login((authResult as any).username)
-        const redirectPath = route.query.redirect?.toString() || config.public.BASE_PAGE || '/clients'
+        const redirectPath = route.query.redirect?.toString() || getDefaultPage()
         await navigateTo(redirectPath)
       }
     } catch {
@@ -113,7 +122,8 @@ const handleLogin = async () => {
 
     if (result.result === 'Login success') {
       userStore.login(cred.username)
-      const redirectPath = route.query.redirect?.toString() || config.public.BASE_PAGE || '/clients'
+      createActivity('Login', 'ok').catch(() => { })
+      const redirectPath = route.query.redirect?.toString() || getDefaultPage()
       await navigateTo(redirectPath)
     } else {
       errorMessage.value = $t('message.login.failed')

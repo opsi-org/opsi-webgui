@@ -91,6 +91,7 @@ export interface ProductRow {
   installationStatus?: string
   installationStatusDetails?: string[]
   actionRequest?: string
+  actionRequestDetails?: string[]
   actionProgress?: string
   actionResult?: string
   actionResultDetails?: string[]

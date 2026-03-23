@@ -1,13 +1,11 @@
 <template>
-    <LayoutsPageLayout show-refresh :loading="loading" @refresh="refresh">
+    <ProductsMainView ref="productsTableRef"
+        :product-type="activeType === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'"
+        :initial-product-id="initialProductId">
         <template #tabs>
             <SharedTabsNav v-model="activeType" :tabs="productTypes" />
         </template>
-
-        <ProductsTable ref="productsTableRef"
-            :product-type="activeType === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'"
-            :initial-product-id="initialProductId" />
-    </LayoutsPageLayout>
+    </ProductsMainView>
 </template>
 
 <script setup lang="ts">
@@ -25,10 +23,16 @@ const productTypes = [
     { label: String($t('netbootProducts')), value: 'netboot' },
 ]
 
-const loading = ref(false)
-const productsTableRef = ref<{ refresh: () => void } | null>(null)
+const productsTableRef = ref<{ refresh: () => void; hasUnsavedChanges: boolean } | null>(null)
 
-watch(activeType, (newType) => {
+watch(activeType, (newType, oldType) => {
+    if (productsTableRef.value?.hasUnsavedChanges) {
+        const confirmed = window.confirm(String($t('message.unsavedChanges')))
+        if (!confirmed) {
+            nextTick(() => { activeType.value = oldType })
+            return
+        }
+    }
     router.replace({ query: { ...route.query, type: newType } })
 })
 
@@ -38,7 +42,9 @@ watch(() => route.query.type, (newType) => {
     }
 })
 
-function refresh() {
-    productsTableRef.value?.refresh()
-}
+onBeforeRouteLeave(() => {
+    if (productsTableRef.value?.hasUnsavedChanges) {
+        return window.confirm(String($t('message.unsavedChanges')))
+    }
+})
 </script>
