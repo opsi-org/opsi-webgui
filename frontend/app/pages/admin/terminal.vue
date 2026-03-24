@@ -17,7 +17,7 @@ Admin Terminal Page - Server terminal access via messagebus
                 @click="showSettings = !showSettings">{{ $t('settings') }}</UButton>
         </div>
 
-        <div v-if="showSettings" class="shrink-0 p-3 rounded-lg border border-(--color-border)">
+        <div v-if="showSettings" class="shrink-0 p-3 rounded-lg">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <UFormField :label="$t('terminalID')">
                     <UInput v-model="terminalId" :disabled="isConnected" size="sm" class="w-full" />

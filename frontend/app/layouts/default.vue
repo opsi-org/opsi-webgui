@@ -24,17 +24,20 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                     :class="{
                         'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30': userStore.healthWorstCase === 'warning',
                         'bg-red-500/20 text-red-300 hover:bg-red-500/30': userStore.healthWorstCase === 'error',
-                    }" :title="t('healthCheck')">
-                    <span>Health</span>
+                    }" :title="healthCheckTooltip">
+                    <UIcon :name="icons.diagnostics" class="w-4 h-4" />
                     <span class="tabular-nums">{{ userStore.healthCounts?.error || userStore.healthCounts?.warning || 0
-                        }}</span>
+                    }}</span>
                 </NuxtLink>
                 <UTooltip :text="messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')">
-                    <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs"
+                    <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs cursor-help"
                         :class="messageBusStore.isConnected ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'">
-                        <span class="w-2 h-2 rounded-full"
-                            :class="messageBusStore.isConnected ? 'bg-emerald-400' : 'bg-red-400'" />
-                        <span class="hidden md:inline">MB</span>
+                        <span class="relative inline-flex w-5 h-5 items-center justify-center">
+                            <img src="~/assets/images/opsi_logo_bee_dark.svg" alt="opsi" class="w-4 h-4" />
+                            <span
+                                class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-[--color-background]"
+                                :class="messageBusStore.isConnected ? 'bg-emerald-400' : 'bg-red-400'" />
+                        </span>
                     </div>
                 </UTooltip>
                 <button @click="toggleQuickpanel"
@@ -105,7 +108,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                                 t('quickPanel')
-                            }}</span>
+                                }}</span>
                             <button @click="quickpanelOpen = false"
                                 class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
                                 <UIcon :name="icons.close" class="w-4 h-4" />
@@ -157,6 +160,15 @@ const $route = useRoute()
 const { t: i18nT } = useI18n()
 
 const defaultPage = ref('/clients')
+
+const healthCheckTooltip = computed(() => {
+    const counts = userStore.healthCounts
+    if (!counts) return t('healthCheck')
+    const parts: string[] = []
+    if (counts.error) parts.push(`${counts.error} ${t('errors')}`)
+    if (counts.warning) parts.push(`${counts.warning} ${t('warnings')}`)
+    return parts.length > 0 ? `${t('healthCheck')}: ${parts.join(', ')}` : t('healthCheck')
+})
 
 function updateDefaultPage() {
     if (typeof document === 'undefined') return

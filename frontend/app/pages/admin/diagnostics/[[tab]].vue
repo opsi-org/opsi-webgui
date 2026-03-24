@@ -6,7 +6,7 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
             <SharedTabsNav v-model="activeTab" :tabs="tabs" />
         </template>
         <template #actions>
-            <UButton :icon="icons.copy" variant="outline" color="neutral" size="sm" @click="downloadDiagnostics">{{
+            <UButton :icon="icons.copy" variant="soft" color="neutral" size="sm" @click="downloadDiagnostics">{{
                 $t('download') }}</UButton>
         </template>
 

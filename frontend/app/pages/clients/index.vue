@@ -1,14 +1,8 @@
 <template>
-	<LayoutsDetailPanel :showPanel="!!panelClient || panelType === 'products' || panelType === 'add'"
-		@close="closePanel">
+	<LayoutsDetailPanel :showPanel="!!panelClient || !!panelType" @close="closePanel">
 		<template #main>
 			<LayoutsPageLayout show-refresh :loading="loading" @refresh="fetchClients">
 				<template #actions>
-					<div class="flex items-center gap-1.5 mr-2">
-						<span v-if="mbConnected" class="w-2 h-2 rounded-full bg-green-500"
-							:title="$t('messageBusConnected')" />
-						<span v-else class="w-2 h-2 rounded-full bg-red-400" :title="$t('messageBusDisconnected')" />
-					</div>
 					<UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
 						variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
 						{{ $t('changesDetected') }}
@@ -167,7 +161,7 @@ const productsSortColumn = ref<string | undefined>(undefined)
 
 const sortBySelectionEnabled = computed(() => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedClients.length > 0)
 
-const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
+const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
 
 const columns: DataTableColumnDef[] = [
 	{ key: 'clientId', label: String($t('clientId')), sortable: true, alwaysVisible: true },

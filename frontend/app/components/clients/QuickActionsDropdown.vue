@@ -1,5 +1,5 @@
 <template>
-	<div class="flex-1 relative">
+	<div class="relative">
 		<UDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
 			<UTooltip v-if="compact" :text="t('clientActions')">
 				<UButton variant="soft" color="primary" size="sm">
@@ -38,6 +38,11 @@
 					</h3>
 					<UButton variant="ghost" size="xs" icon="i-heroicons-x-mark" @click="confirmOpen = false" />
 				</div>
+
+				<UAlert v-if="statusMessage && statusMessage.type === 'error'" color="error" :title="t('error')"
+					:description="statusMessage.message" variant="subtle" class="mb-3"
+					:close-button="{ icon: 'i-heroicons-x-mark', color: 'error', variant: 'link' }"
+					@close="statusMessage = null" />
 
 				<p class="text-sm text-(--color-text-muted) mb-4">
 					{{ t('confirmActionOnClients') }}
@@ -328,7 +333,7 @@ async function executeAction() {
 		console.error('Action failed:', e)
 		statusMessage.value = {
 			type: 'error',
-			message: String(e),
+			message: e instanceof Error ? e.message : String(e),
 		}
 	} finally {
 		loading.value = false

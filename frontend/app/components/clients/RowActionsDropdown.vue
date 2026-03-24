@@ -23,107 +23,160 @@ Row-level client actions dropdown for the clients table.
 
 	<UModal v-model:open="showOnDemandPopover">
 		<template #content>
-			<div class="p-4 min-w-70">
-				<div class="flex items-center gap-2 mb-3">
-					<UIcon :name="icons.onDemand" class="w-5 h-5 text-opsi-blue" />
-					<span class="font-medium">{{ $t('onDemand') }}</span>
-				</div>
-				<p class="text-sm text-[--color-text-muted] mb-4">
+			<UCard>
+				<template #header>
+					<div class="flex items-center justify-between">
+						<div class="flex items-center gap-3">
+							<UIcon :name="icons.onDemand" class="w-5 h-5 text-opsi-blue" />
+							<h3 class="font-semibold text-(--color-text)">{{ $t('onDemand') }}</h3>
+						</div>
+						<UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+							@click="showOnDemandPopover = false" />
+					</div>
+				</template>
+				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" :close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
+					@close="actionError = null" />
+				<p class="text-sm text-(--color-text-muted)">
 					{{ $t('onDemandDescription') }}
 				</p>
-				<div class="flex justify-end gap-2">
-					<UButton variant="outline" color="neutral" size="sm" @click="showOnDemandPopover = false">
-						{{ $t('cancel') }}
-					</UButton>
-					<UButton color="primary" size="sm" :loading="executing" @click="executeOnDemand">
-						{{ $t('trigger') }}
-					</UButton>
-				</div>
-			</div>
+				<template #footer>
+					<div class="flex justify-end gap-2">
+						<UButton variant="soft" color="neutral" @click="showOnDemandPopover = false">
+							{{ $t('cancel') }}
+						</UButton>
+						<UButton color="primary" :loading="executing" @click="executeOnDemand">
+							{{ $t('trigger') }}
+						</UButton>
+					</div>
+				</template>
+			</UCard>
 		</template>
 	</UModal>
 
 	<UModal v-model:open="showNotifyModal">
 		<template #content>
-			<div class="p-4 min-w-[320px]">
-				<div class="flex items-center gap-3 mb-4">
-					<UIcon :name="icons.notify" class="w-6 h-6 text-opsi-blue" />
-					<h3 class="text-lg font-semibold">{{ $t('notify') }}</h3>
-				</div>
-				<p class="text-sm text-[--color-text-muted] mb-3">
+			<UCard>
+				<template #header>
+					<div class="flex items-center justify-between">
+						<div class="flex items-center gap-3">
+							<UIcon :name="icons.notify" class="w-5 h-5 text-opsi-blue" />
+							<h3 class="font-semibold text-(--color-text)">{{ $t('notify') }}</h3>
+						</div>
+						<UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+							@click="showNotifyModal = false" />
+					</div>
+				</template>
+				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" :close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
+					@close="actionError = null" />
+				<p class="text-sm text-(--color-text-muted) mb-3">
 					{{ $t('sendNotificationTo') }} {{ clientId }}
 				</p>
-				<UFormField :label="$t('notificationText')" class="mb-4">
+				<UFormField :label="$t('notificationText')">
 					<UTextarea v-model="notifyText" :placeholder="String($t('enterNotificationText'))" :rows="3" />
 				</UFormField>
-				<div class="flex justify-end gap-2">
-					<UButton variant="outline" color="neutral" @click="showNotifyModal = false" :disabled="executing">
-						{{ $t('cancel') }}
-					</UButton>
-					<UButton color="primary" @click="executeNotify" :loading="executing" :disabled="!notifyText.trim()">
-						{{ $t('send') }}
-					</UButton>
-				</div>
-			</div>
+				<template #footer>
+					<div class="flex justify-end gap-2">
+						<UButton variant="soft" color="neutral" @click="showNotifyModal = false" :disabled="executing">
+							{{ $t('cancel') }}
+						</UButton>
+						<UButton color="primary" @click="executeNotify" :loading="executing"
+							:disabled="!notifyText.trim()">
+							{{ $t('send') }}
+						</UButton>
+					</div>
+				</template>
+			</UCard>
 		</template>
 	</UModal>
 
 	<UModal v-model:open="showRebootPopover">
 		<template #content>
-			<div class="p-4 min-w-70">
-				<div class="flex items-center gap-2 mb-3">
-					<UIcon :name="icons.reboot" class="w-5 h-5 text-amber-500" />
-					<span class="font-medium">{{ $t('reboot') }}</span>
-				</div>
-				<p class="text-sm text-[--color-text-muted] mb-4">
+			<UCard>
+				<template #header>
+					<div class="flex items-center justify-between">
+						<div class="flex items-center gap-3">
+							<UIcon :name="icons.reboot" class="w-5 h-5 text-amber-500" />
+							<h3 class="font-semibold text-(--color-text)">{{ $t('reboot') }}</h3>
+						</div>
+						<UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+							@click="showRebootPopover = false" />
+					</div>
+				</template>
+				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" :close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
+					@close="actionError = null" />
+				<p class="text-sm text-(--color-text-muted)">
 					{{ $t('confirmRebootClient') }}
 				</p>
-				<div class="flex justify-end gap-2">
-					<UButton variant="outline" color="neutral" size="sm" @click="showRebootPopover = false">
-						{{ $t('cancel') }}
-					</UButton>
-					<UButton color="warning" size="sm" :loading="executing" @click="executeReboot">
-						{{ $t('reboot') }}
-					</UButton>
-				</div>
-			</div>
+				<template #footer>
+					<div class="flex justify-end gap-2">
+						<UButton variant="soft" color="neutral" @click="showRebootPopover = false">
+							{{ $t('cancel') }}
+						</UButton>
+						<UButton color="warning" :loading="executing" @click="executeReboot">
+							{{ $t('reboot') }}
+						</UButton>
+					</div>
+				</template>
+			</UCard>
 		</template>
 	</UModal>
 
 	<UModal v-model:open="showShutdownPopover">
 		<template #content>
-			<div class="p-4 min-w-70">
-				<div class="flex items-center gap-2 mb-3">
-					<UIcon :name="icons.shutdown" class="w-5 h-5 text-amber-600" />
-					<span class="font-medium">{{ $t('shutdown') }}</span>
-				</div>
-				<p class="text-sm text-[--color-text-muted] mb-4">
+			<UCard>
+				<template #header>
+					<div class="flex items-center justify-between">
+						<div class="flex items-center gap-3">
+							<UIcon :name="icons.shutdown" class="w-5 h-5 text-amber-600" />
+							<h3 class="font-semibold text-(--color-text)">{{ $t('shutdown') }}</h3>
+						</div>
+						<UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+							@click="showShutdownPopover = false" />
+					</div>
+				</template>
+				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" :close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
+					@close="actionError = null" />
+				<p class="text-sm text-(--color-text-muted)">
 					{{ $t('confirmShutdownClient') }}
 				</p>
-				<div class="flex justify-end gap-2">
-					<UButton variant="outline" color="neutral" size="sm" @click="showShutdownPopover = false">
-						{{ $t('cancel') }}
-					</UButton>
-					<UButton color="warning" size="sm" :loading="executing" @click="executeShutdown">
-						{{ $t('shutdown') }}
-					</UButton>
-				</div>
-			</div>
+				<template #footer>
+					<div class="flex justify-end gap-2">
+						<UButton variant="soft" color="neutral" @click="showShutdownPopover = false">
+							{{ $t('cancel') }}
+						</UButton>
+						<UButton color="warning" :loading="executing" @click="executeShutdown">
+							{{ $t('shutdown') }}
+						</UButton>
+					</div>
+				</template>
+			</UCard>
 		</template>
 	</UModal>
 
 	<UModal v-model:open="showDeployModal">
 		<template #content>
-			<div class="p-4 min-w-90">
-				<div class="flex items-center gap-3 mb-4">
-					<UIcon :name="icons.deploy" class="w-6 h-6 text-opsi-blue" />
-					<h3 class="text-lg font-semibold">{{ $t('deployClientAgent') }}</h3>
-				</div>
-				<p class="text-sm text-[--color-text-muted] mb-4">
+			<UCard>
+				<template #header>
+					<div class="flex items-center justify-between">
+						<div class="flex items-center gap-3">
+							<UIcon :name="icons.deploy" class="w-5 h-5 text-opsi-blue" />
+							<h3 class="font-semibold text-(--color-text)">{{ $t('deployClientAgent') }}</h3>
+						</div>
+						<UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+							@click="showDeployModal = false" />
+					</div>
+				</template>
+				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" :close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
+					@close="actionError = null" />
+				<p class="text-sm text-(--color-text-muted) mb-4">
 					{{ $t('deployAgentTo') }} {{ clientId }}
 				</p>
-
-				<div class="space-y-3 mb-4">
+				<div class="space-y-3">
 					<UFormField :label="$t('type')">
 						<USelectMenu v-model="selectedOsType" :items="osTypes" class="w-full" />
 					</UFormField>
@@ -135,40 +188,49 @@ Row-level client actions dropdown for the clients table.
 							:placeholder="String($t('password'))" />
 					</UFormField>
 				</div>
-
-				<div class="flex justify-end gap-2">
-					<UButton variant="outline" color="neutral" @click="showDeployModal = false" :disabled="executing">
-						{{ $t('cancel') }}
-					</UButton>
-					<UButton color="primary" @click="executeDeploy" :loading="executing"
-						:disabled="!deployOptions.username || !deployOptions.password">
-						{{ $t('deploy') }}
-					</UButton>
-				</div>
-			</div>
+				<template #footer>
+					<div class="flex justify-end gap-2">
+						<UButton variant="soft" color="neutral" @click="showDeployModal = false" :disabled="executing">
+							{{ $t('cancel') }}
+						</UButton>
+						<UButton color="primary" @click="executeDeploy" :loading="executing"
+							:disabled="!deployOptions.username || !deployOptions.password">
+							{{ $t('deploy') }}
+						</UButton>
+					</div>
+				</template>
+			</UCard>
 		</template>
 	</UModal>
 
 	<UModal v-model:open="showRenameModal">
 		<template #content>
-			<div class="p-4 min-w-90">
-				<div class="flex items-center gap-3 mb-4">
-					<UIcon :name="icons.rename" class="w-6 h-6 text-opsi-blue" />
-					<h3 class="text-lg font-semibold">{{ $t('rename') }}</h3>
-				</div>
-				<p class="text-sm text-[--color-text-muted] mb-1">
+			<UCard>
+				<template #header>
+					<div class="flex items-center justify-between">
+						<div class="flex items-center gap-3">
+							<UIcon :name="icons.rename" class="w-5 h-5 text-opsi-blue" />
+							<h3 class="font-semibold text-(--color-text)">{{ $t('rename') }}</h3>
+						</div>
+						<UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+							@click="showRenameModal = false" />
+					</div>
+				</template>
+				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" :close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
+					@close="actionError = null" />
+				<p class="text-sm text-(--color-text-muted) mb-1">
 					{{ $t('renameClientDescription') }}
 				</p>
-				<p class="text-xs text-[--color-text-muted] mb-4 italic">
+				<p class="text-xs text-(--color-text-muted) mb-4 italic">
 					{{ $t('renameWarning') }}
 				</p>
-
-				<div class="space-y-3 mb-4">
+				<div class="space-y-3">
 					<UFormField :label="$t('newHostId')">
 						<div class="flex gap-1 items-center">
 							<UInput v-model="renameHostname" :placeholder="String($t('enterHostname'))" class="flex-1"
 								:color="renameValidation.color as any" />
-							<span class="text-sm text-[--color-text-muted]">.</span>
+							<span class="text-sm text-(--color-text-muted)">.</span>
 							<UInput v-model="renameDomain" :placeholder="String($t('domain'))" class="flex-1" />
 						</div>
 						<p v-if="renameValidation.message" class="text-xs mt-1" :class="renameValidation.textClass">
@@ -176,42 +238,54 @@ Row-level client actions dropdown for the clients table.
 						</p>
 					</UFormField>
 				</div>
-
-				<div class="flex justify-end gap-2">
-					<UButton variant="outline" color="neutral" @click="showRenameModal = false" :disabled="executing">
-						{{ $t('cancel') }}
-					</UButton>
-					<UButton color="primary" @click="executeRename" :loading="executing"
-						:disabled="!renameHostname.trim() || !!renameValidation.message">
-						{{ $t('rename') }}
-					</UButton>
-				</div>
-			</div>
+				<template #footer>
+					<div class="flex justify-end gap-2">
+						<UButton variant="soft" color="neutral" @click="showRenameModal = false" :disabled="executing">
+							{{ $t('cancel') }}
+						</UButton>
+						<UButton color="primary" @click="executeRename" :loading="executing"
+							:disabled="!renameHostname.trim() || !!renameValidation.message">
+							{{ $t('rename') }}
+						</UButton>
+					</div>
+				</template>
+			</UCard>
 		</template>
 	</UModal>
 
 	<UModal v-model:open="showDeleteModal">
 		<template #content>
-			<div class="p-4 min-w-[320px]">
-				<div class="flex items-center gap-3 mb-4">
-					<UIcon :name="icons.delete" class="w-6 h-6 text-red-500" />
-					<h3 class="text-lg font-semibold text-red-600">{{ $t('delete') }}</h3>
-				</div>
+			<UCard>
+				<template #header>
+					<div class="flex items-center justify-between">
+						<div class="flex items-center gap-3">
+							<UIcon :name="icons.delete" class="w-5 h-5 text-(--color-opsi-error)" />
+							<h3 class="font-semibold text-(--color-text)">{{ $t('delete') }}</h3>
+						</div>
+						<UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+							@click="showDeleteModal = false" />
+					</div>
+				</template>
+				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" :close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
+					@close="actionError = null" />
 				<p class="text-sm mb-2">
 					{{ $t('confirmDeleteClient', { clientId }) }}
 				</p>
-				<p class="text-xs text-[--color-text-muted] mb-4">
+				<p class="text-xs text-(--color-text-muted)">
 					{{ $t('deleteClientWarning') }}
 				</p>
-				<div class="flex justify-end gap-2">
-					<UButton variant="outline" color="neutral" @click="showDeleteModal = false" :disabled="executing">
-						{{ $t('cancel') }}
-					</UButton>
-					<UButton color="error" @click="executeDelete" :loading="executing">
-						{{ $t('delete') }}
-					</UButton>
-				</div>
-			</div>
+				<template #footer>
+					<div class="flex justify-end gap-2">
+						<UButton variant="soft" color="neutral" @click="showDeleteModal = false" :disabled="executing">
+							{{ $t('cancel') }}
+						</UButton>
+						<UButton color="error" @click="executeDelete" :loading="executing">
+							{{ $t('delete') }}
+						</UButton>
+					</div>
+				</template>
+			</UCard>
 		</template>
 	</UModal>
 </template>
@@ -234,6 +308,7 @@ const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deplo
 
 const loading = ref(false)
 const executing = ref(false)
+const actionError = ref<string | null>(null)
 
 const showOnDemandPopover = ref(false)
 const showNotifyModal = ref(false)
@@ -273,65 +348,68 @@ const clientActionItems = computed(() => [
 		{
 			label: String($t('onDemand')),
 			icon: icons.onDemand,
-			onSelect: () => { showOnDemandPopover.value = true }
+			onSelect: () => { actionError.value = null; showOnDemandPopover.value = true }
 		},
 		{
 			label: String($t('notify')),
 			icon: icons.notify,
-			onSelect: () => { showNotifyModal.value = true }
+			onSelect: () => { actionError.value = null; showNotifyModal.value = true }
 		}
 	],
 	[
 		{
 			label: String($t('reboot')),
 			icon: icons.reboot,
-			onSelect: () => { showRebootPopover.value = true }
+			onSelect: () => { actionError.value = null; showRebootPopover.value = true }
 		},
 		{
 			label: String($t('shutdown')),
 			icon: icons.shutdown,
-			onSelect: () => { showShutdownPopover.value = true }
+			onSelect: () => { actionError.value = null; showShutdownPopover.value = true }
 		}
 	],
 	[
 		{
 			label: String($t('deployClientAgent')),
 			icon: icons.deploy,
-			onSelect: () => { showDeployModal.value = true }
+			onSelect: () => { actionError.value = null; showDeployModal.value = true }
 		}
 	],
 	[
 		{
 			label: String($t('rename')),
 			icon: icons.rename,
-			onSelect: () => { openRenameModal() }
+			onSelect: () => { actionError.value = null; openRenameModal() }
 		},
 		{
 			label: String($t('delete')),
 			icon: icons.delete,
-			onSelect: () => { showDeleteModal.value = true }
+			onSelect: () => { actionError.value = null; showDeleteModal.value = true }
 		}
 	]
 ])
 
 async function executeOnDemand() {
 	executing.value = true
+	actionError.value = null
 	try {
 		const result = await triggerOnDemand([props.clientId])
 		if (result?.error || result?.data?.[props.clientId]?.error) {
 			throw new Error(result?.data?.[props.clientId]?.error || 'Failed')
 		}
 		emit('action-complete', 'onDemand', true)
+		showOnDemandPopover.value = false
 	} catch (e) {
+		actionError.value = e instanceof Error ? e.message : String(e)
 		emit('action-complete', 'onDemand', false)
 	} finally {
 		executing.value = false
-		showOnDemandPopover.value = false
 	}
 }
 
 async function executeNotify() {
 	executing.value = true
+	actionError.value = null
 	try {
 		const result = await sendNotification([props.clientId], notifyText.value)
 		if (result?.error || result?.data?.[props.clientId]?.error) {
@@ -339,48 +417,54 @@ async function executeNotify() {
 		}
 		emit('action-complete', 'notify', true)
 		notifyText.value = ''
+		showNotifyModal.value = false
 	} catch (e) {
+		actionError.value = e instanceof Error ? e.message : String(e)
 		emit('action-complete', 'notify', false)
 	} finally {
 		executing.value = false
-		showNotifyModal.value = false
 	}
 }
 
 async function executeReboot() {
 	executing.value = true
+	actionError.value = null
 	try {
 		const result = await rebootClients([props.clientId])
 		if (result?.error || result?.data?.[props.clientId]?.error) {
 			throw new Error(result?.data?.[props.clientId]?.error || 'Failed')
 		}
 		emit('action-complete', 'reboot', true)
+		showRebootPopover.value = false
 	} catch (e) {
+		actionError.value = e instanceof Error ? e.message : String(e)
 		emit('action-complete', 'reboot', false)
 	} finally {
 		executing.value = false
-		showRebootPopover.value = false
 	}
 }
 
 async function executeShutdown() {
 	executing.value = true
+	actionError.value = null
 	try {
 		const result = await shutdownClients([props.clientId])
 		if (result?.error || result?.data?.[props.clientId]?.error) {
 			throw new Error(result?.data?.[props.clientId]?.error || 'Failed')
 		}
 		emit('action-complete', 'shutdown', true)
+		showShutdownPopover.value = false
 	} catch (e) {
+		actionError.value = e instanceof Error ? e.message : String(e)
 		emit('action-complete', 'shutdown', false)
 	} finally {
 		executing.value = false
-		showShutdownPopover.value = false
 	}
 }
 
 async function executeDeploy() {
 	executing.value = true
+	actionError.value = null
 	try {
 		const result = await deployClientAgent({
 			clients: [props.clientId],
@@ -393,11 +477,12 @@ async function executeDeploy() {
 		}
 		emit('action-complete', 'deploy', true)
 		deployOptions.value = { username: '', password: '', type: 'windows' }
+		showDeployModal.value = false
 	} catch (e) {
+		actionError.value = e instanceof Error ? e.message : String(e)
 		emit('action-complete', 'deploy', false)
 	} finally {
 		executing.value = false
-		showDeployModal.value = false
 	}
 }
 
@@ -421,6 +506,7 @@ async function executeRename() {
 
 	const newHostId = domain ? `${hostname}.${domain}` : hostname
 	executing.value = true
+	actionError.value = null
 	try {
 		// First get current host attributes
 		const { data: hostData } = await getHostAttributes(props.clientId)
@@ -440,27 +526,30 @@ async function executeRename() {
 		}
 		emit('action-complete', 'rename', true)
 		renameHostname.value = ''
+		showRenameModal.value = false
 	} catch (e) {
+		actionError.value = e instanceof Error ? e.message : String(e)
 		emit('action-complete', 'rename', false)
 	} finally {
 		executing.value = false
-		showRenameModal.value = false
 	}
 }
 
 async function executeDelete() {
 	executing.value = true
+	actionError.value = null
 	try {
 		const result = await deleteClient(props.clientId)
 		if (result?.error) {
 			throw result.error
 		}
 		emit('action-complete', 'delete', true)
+		showDeleteModal.value = false
 	} catch (e) {
+		actionError.value = e instanceof Error ? e.message : String(e)
 		emit('action-complete', 'delete', false)
 	} finally {
 		executing.value = false
-		showDeleteModal.value = false
 	}
 }
 </script>

@@ -601,6 +601,7 @@
   "readOnly": "Read Only",
   "readOnlyMode": "Read-only mode",
   "readOnlyParam": "Read-only",
+  "noFailedClients": "No failed clients",
   "totalServers": "Total Servers",
   "reboot": "Reboot",
   "rebootWarning": "This will immediately reboot the selected clients. Unsaved work may be lost.",

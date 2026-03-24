@@ -3,11 +3,6 @@
         <template #main>
             <LayoutsPageLayout show-refresh :loading="loading" @refresh="fetchServers">
                 <template #actions>
-                    <div class="flex items-center gap-1.5 mr-2">
-                        <span v-if="mbConnected" class="w-2 h-2 rounded-full bg-green-500"
-                            :title="$t('messageBusConnected')" />
-                        <span v-else class="w-2 h-2 rounded-full bg-red-400" :title="$t('messageBusDisconnected')" />
-                    </div>
                     <UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
                         variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
                         {{ $t('changesDetected') }}
@@ -66,7 +61,7 @@ const { getServers } = useApiHelpers()
 const selectionStore = useSelectionStore()
 const router = useRouter()
 const route = useRoute()
-const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefresh(fetchServers)
+const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefresh(fetchServers)
 
 const loading = ref(false)
 const error = ref<string | null>(null)

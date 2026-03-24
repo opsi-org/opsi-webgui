@@ -27,9 +27,9 @@
             <div class="p-3 w-85 max-h-250 overflow-y-auto">
               <div class="text-xs font-medium text-(--color-text-muted) uppercase mb-3">{{ $t('tableSettings') }}</div>
 
-              <div class="mb-4 flex items-center justify-between gap-2">
-                <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('displayMode') }}</label>
-                <div class="flex gap-0.5 flex-1">
+              <div class="mb-4 grid grid-cols-[7rem_1fr] items-center gap-x-2 gap-y-3">
+                <label class="text-xs text-(--color-text-muted)">{{ $t('displayMode') }}</label>
+                <div class="flex gap-0.5">
                   <button :class="[
                     'flex-1 px-2.5 py-1 text-xs font-medium rounded-l-lg transition-colors',
                     tableSettings.settings.displayMode === 'infinite'
@@ -47,11 +47,9 @@
                     {{ $t('pagination') }}
                   </button>
                 </div>
-              </div>
 
-              <div class="mb-4 flex items-center justify-between gap-2">
-                <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('selectionMode') }}</label>
-                <div class="flex gap-0.5 flex-1">
+                <label class="text-xs text-(--color-text-muted)">{{ $t('selectionMode') }}</label>
+                <div class="flex gap-0.5">
                   <button :class="[
                     'flex-1 px-2.5 py-1 text-xs font-medium rounded-l-lg transition-colors',
                     effectiveSelectionMode === 'multi'
@@ -69,27 +67,25 @@
                     {{ $t('singleSelect') }}
                   </button>
                 </div>
-              </div>
 
-              <div class="mb-4 flex items-center justify-between gap-2">
-                <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('pageSize') }}</label>
+                <label class="text-xs text-(--color-text-muted)">{{ $t('pageSize') }}</label>
                 <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs"
-                  class="flex-1" @update:model-value="(v: number) => changePageSize(v)" />
-              </div>
+                  @update:model-value="(v: number) => changePageSize(v)" />
 
-              <div class="mb-4 flex items-center gap-2">
-                <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('sortBy') }}</label>
-                <USelect :model-value="tableSettings.settings.sortColumn" :items="sortableColumnOptions" size="xs"
-                  class="flex-1" @update:model-value="(v: string) => handleSort(v)" />
-                <UTooltip :text="tableSettings.settings.sortDirection === 'asc' ? $t('ascending') : $t('descending')">
-                  <button :class="[
-                    'w-7 h-7 flex items-center justify-center rounded transition-colors',
-                    'bg-(--color-surface-hover) hover:bg-(--color-surface-hover)'
-                  ]" @click="changeSortDirection(tableSettings.settings.sortDirection === 'asc' ? 'desc' : 'asc')">
-                    <UIcon :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
-                      class="w-3.5 h-3.5" />
-                  </button>
-                </UTooltip>
+                <label class="text-xs text-(--color-text-muted)">{{ $t('sortBy') }}</label>
+                <div class="flex items-center gap-1">
+                  <USelect :model-value="tableSettings.settings.sortColumn" :items="sortableColumnOptions" size="xs"
+                    class="flex-1" @update:model-value="(v: string) => handleSort(v)" />
+                  <UTooltip :text="tableSettings.settings.sortDirection === 'asc' ? $t('ascending') : $t('descending')">
+                    <button :class="[
+                      'w-7 h-7 flex items-center justify-center rounded transition-colors',
+                      'bg-(--color-surface-hover) hover:bg-(--color-surface-hover)'
+                    ]" @click="changeSortDirection(tableSettings.settings.sortDirection === 'asc' ? 'desc' : 'asc')">
+                      <UIcon :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
+                        class="w-3.5 h-3.5" />
+                    </button>
+                  </UTooltip>
+                </div>
               </div>
 
               <div class="mb-4">
@@ -129,8 +125,8 @@
           {{ $t('loading') }}
         </div>
 
-        <div v-else class="min-w-full">
-          <table class="w-full table-auto" role="grid" :aria-label="tableLabel">
+        <div v-else>
+          <table class="min-w-full table-auto" role="grid" :aria-label="tableLabel">
             <thead class="bg-(--color-surface) sticky top-0 z-10">
               <tr role="row">
                 <th v-if="selectable" class="w-10 px-3 py-2.5 text-center whitespace-nowrap bg-(--color-surface)"

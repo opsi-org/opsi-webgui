@@ -18,11 +18,6 @@
 					<slot name="tabs" />
 				</template>
 				<template #actions>
-					<div class="flex items-center gap-1.5 mr-2">
-						<span v-if="mbConnected" class="w-2 h-2 rounded-full bg-green-500"
-							:title="$t('messageBusConnected')" />
-						<span v-else class="w-2 h-2 rounded-full bg-red-400" :title="$t('messageBusDisconnected')" />
-					</div>
 					<UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
 						variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
 						{{ $t('changesDetected') }}
@@ -286,7 +281,7 @@ const panelPropertyConfigRef = computed<ProductConfigTabsRef | null>(() => {
 
 const hasUnsavedChanges = computed(() => productConfigTabsRef.value?.hasAnyChanges || false)
 
-const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshProducts(fetchProducts)
+const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshProducts(fetchProducts)
 
 const columns: DataTableColumnDef[] = [
 	{ key: 'installationStatus', label: String($t('installationStatus')), headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-16', align: 'center' },
@@ -330,10 +325,8 @@ function closePanel() {
 function doClosePanel() {
 	showConfigPanel.value = false
 	configProduct.value = null
-	nextTick(() => {
-		const { product: _p, view: _v, ...rest } = route.query
-		router.replace({ query: rest })
-	})
+	const { product: _p, view: _v, ...rest } = route.query
+	router.replace({ query: rest })
 }
 
 function handleRowActivate(row: ProductRow) {
@@ -503,8 +496,9 @@ async function fetchProducts(params?: PageChangeParams) {
 watch(() => props.productType, () => { pendingActionRequests.value.clear(); fetchProducts() })
 
 watch(() => route.query.product, (newProductId, oldProductId) => {
-	if (!newProductId || newProductId === oldProductId) return
-	if (!showConfigPanel.value && route.query.view !== 'panel') return
+	if (!newProductId) return
+	if (newProductId === oldProductId) return
+	if (!showConfigPanel.value) return
 	const p = products.value.find(pr => pr.productId === newProductId)
 	if (p) {
 		configProduct.value = p

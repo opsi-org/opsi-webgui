@@ -7,6 +7,8 @@
 					<UButton :icon="icons.close" size="xs" variant="link" color="neutral" @click="searchQuery = ''" />
 				</template>
 			</UInput>
+			<UButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="t('refresh')"
+				@click="refresh" />
 			<UButton :icon="allExpanded ? icons.collapse : icons.expand" size="xs" variant="ghost" color="neutral"
 				:title="allExpanded ? t('collapseAll') : t('expandAll')" @click="toggleExpandAll" />
 			<UTooltip v-if="selectedCount > 0" :text="`${t('clearAll')} (${selectedCount})`">
@@ -25,7 +27,8 @@
 					<div class="flex items-center justify-between px-1 py-1 mb-0.5">
 						<span class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted)">{{
 							section.label }}</span>
-						<UBadge size="xs" variant="subtle" color="neutral">{{ section.count }}</UBadge>
+						<UBadge v-if="section.count > 0" size="xs" variant="subtle" color="neutral">{{ section.count }}
+						</UBadge>
 					</div>
 					<div v-for="item in section.flatItems" :key="`${section.id}-${item.id}`"
 						:style="{ paddingLeft: `${item.depth * 16}px` }"
@@ -54,7 +57,7 @@
 					<div v-if="allClientsLoading" class="py-2 text-center">
 						<UIcon :name="icons.loading" class="w-4 h-4 animate-spin text-(--color-text-muted)" />
 					</div>
-					<div v-else class="max-h-48 overflow-y-auto">
+					<div v-else class="max-h-50 overflow-y-auto">
 						<div v-for="client in filteredAllClients" :key="client"
 							class="flex items-center gap-2 px-2 py-0.5 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer"
 							@click="selectionStore.toggleClient(client, 'quickpanel')">

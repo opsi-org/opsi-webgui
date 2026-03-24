@@ -39,7 +39,7 @@
 			<div>
 				<div class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted) mb-1.5">{{
 					t('quickActions') }}</div>
-				<div class="flex items-center gap-1.5">
+				<div class="flex items-center gap-1.5 flex-nowrap">
 					<ClientsQuickActionsDropdown :client-ids="selectionStore.selectedClients" compact />
 					<ProductsQuickActionsDropdown :products="[]" compact @applied="() => { }" />
 				</div>
@@ -48,9 +48,9 @@
 			<div class="border-t border-(--color-border) pt-3">
 				<div class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted) mb-1.5">{{
 					t('settings') }}</div>
-				<div class="grid grid-cols-2 gap-2">
+				<div class="space-y-1.5">
 					<div
-						class="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-(--color-surface) dark:bg-(--color-background)">
+						class="flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-(--color-surface-hover) transition-colors">
 						<UTooltip
 							:text="(messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')) + ' — ' + t('autoRefreshTooltip')">
 							<div class="flex items-center gap-1.5 cursor-help">
@@ -59,17 +59,13 @@
 								<span class="text-xs">{{ t('autoRefresh') }}</span>
 							</div>
 						</UTooltip>
-						<UCheckbox v-model="autoRefreshEnabled" size="sm" class="ml-auto" />
+						<UCheckbox v-model="autoRefreshEnabled" size="sm" />
 					</div>
-					<div
-						class="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-(--color-surface) dark:bg-(--color-background)">
+					<div class="flex items-center gap-1.5 flex-nowrap">
 						<SettingsThemeToggle />
-						<SettingsLanguageDropdown class="ml-auto" />
-					</div>
-					<div
-						class="col-span-2 flex items-center gap-2 px-2 py-1.5 rounded-lg bg-(--color-surface) dark:bg-(--color-background)">
-						<span class="text-xs shrink-0">{{ t('defaultPage') }}</span>
-						<USelect v-model="defaultPage" :items="defaultPageOptions" size="xs" class="ml-auto w-40" />
+						<SettingsLanguageDropdown />
+						<USelect v-model="defaultPage" :items="defaultPageOptions" size="xs" :title="$t('defaultPage')"
+							class="min-w-27" />
 					</div>
 				</div>
 			</div>

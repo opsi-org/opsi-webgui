@@ -26,7 +26,7 @@
 								@click="clearServers" />
 						</UTooltip>
 					</div>
-					<div class="space-y-0.5">
+					<div class="max-h-30 overflow-y-auto">
 						<div v-for="server in selectionStore.selectedServers" :key="server"
 							class="flex items-center justify-between px-5 rounded text-xs  group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ server }}</span>
@@ -50,7 +50,7 @@
 								@click="selectionStore.clearClients()" />
 						</UTooltip>
 					</div>
-					<div class="space-y-0.5 max-h-40 overflow-y-auto">
+					<div class="max-h-30 overflow-y-auto">
 						<div v-for="client in selectionStore.selectedClients" :key="client"
 							class="flex items-center justify-between px-5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ client }}</span>
@@ -74,7 +74,7 @@
 								@click="selectionStore.clearProducts()" />
 						</UTooltip>
 					</div>
-					<div class="space-y-0.5 max-h-40 overflow-y-auto">
+					<div class="max-h-30 overflow-y-auto">
 						<div v-for="product in selectionStore.selectedProducts" :key="product"
 							class="flex items-center justify-between px-5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ product }}</span>

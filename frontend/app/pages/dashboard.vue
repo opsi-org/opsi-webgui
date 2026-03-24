@@ -1,13 +1,12 @@
 <template>
     <LayoutsPageLayout :show-search="false" :show-refresh="true" :loading="loading" @refresh="refreshAll">
-        <div class="h-full flex flex-col min-h-0 overflow-y-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3 shrink-0">
-                <DashboardInfoCard :icon="icons.serverStack" :label="$t('configServer')"
-                    :value="String((diagnosticData as any)?.opsiconfd_version || '').split(' ')[0] || serverHostname || '-'" />
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer"
+        <div class="h-full flex flex-col min-h-0 overflow-y-auto gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 shrink-0">
+                <DashboardInfoCard :icon="icons.serverStack" :label="$t('configServer')" :value="serverHostname" />
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all"
                     @click="navigateTo('/admin/diagnostics/healthcheck')">
-                    <div class="flex items-center gap-2 mb-2">
-                        <UIcon :name="icons.diagnostics" class="w-4 h-4" />
+                    <div class="flex items-center gap-2 mb-4">
+                        <UIcon :name="icons.diagnostics" class="w-5 h-5" />
                         <span class="text-sm font-semibold">{{ $t('healthCheck') }}</span>
                         <UIcon :name="icons.arrowRight" class="ml-auto w-3 h-3 text-[--color-text-muted]" />
                     </div>
@@ -25,62 +24,62 @@
                     <p v-else class="text-xs text-[--color-text-muted]">{{ $t('loading') }}</p>
                 </div>
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 lg:col-span-2">
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4 lg:col-span-2">
                     <div class="flex items-center gap-3 mb-2">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-opsi-blue/10">
-                            <UIcon :name="icons.user" class="w-4 h-4" />
+                            <UIcon :name="icons.user" class="w-5 h-5" />
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-wide">{{
+                            <p class="text-sm text-[--color-text-muted] uppercase tracking-wide">{{
                                 $t('currentUser') }}</p>
-                            <p class="font-semibold text-sm truncate">{{ userConfigResponse?.user || userStore.username
+                            <p class="font-semibold truncate">{{ userConfigResponse?.user || userStore.username
                                 || '-' }}</p>
                         </div>
-                        <UBadge v-if="userConfigData?.read_only" color="warning" variant="subtle" size="xs"
+                        <UBadge v-if="userConfigData?.read_only" color="warning" variant="subtle" size="sm"
                             class="shrink-0">
                             {{ $t('readOnlyMode') }}
                         </UBadge>
                     </div>
-                    <div v-if="userConfigData" class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 text-[10px] mt-2">
+                    <div v-if="userConfigData" class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 text-xs mt-2">
                         <div class="flex items-center justify-between">
                             <span class="text-[--color-text-muted] font-mono">read_only</span>
                             <UBadge :color="userConfigData.read_only ? 'warning' : 'success'" variant="subtle"
-                                size="xs">
+                                size="sm">
                                 {{ userConfigData.read_only }}
                             </UBadge>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-[--color-text-muted] font-mono">server_write_access</span>
                             <UBadge :color="userConfigData.server_write_access ? 'success' : 'neutral'" variant="subtle"
-                                size="xs">
+                                size="sm">
                                 {{ userConfigData.server_write_access }}
                             </UBadge>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-[--color-text-muted] font-mono">depot_access</span>
                             <UBadge :color="userConfigData.depot_access ? 'success' : 'neutral'" variant="subtle"
-                                size="xs">
+                                size="sm">
                                 {{ userConfigData.depot_access }}
                             </UBadge>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-[--color-text-muted] font-mono">client_creation</span>
                             <UBadge :color="userConfigData.client_creation ? 'success' : 'neutral'" variant="subtle"
-                                size="xs">
+                                size="sm">
                                 {{ userConfigData.client_creation }}
                             </UBadge>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-[--color-text-muted] font-mono">host_group_access</span>
                             <UBadge :color="userConfigData.host_group_access ? 'success' : 'neutral'" variant="subtle"
-                                size="xs">
+                                size="sm">
                                 {{ userConfigData.host_group_access }}
                             </UBadge>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-[--color-text-muted] font-mono">product_group_access</span>
                             <UBadge :color="userConfigData.product_group_access ? 'success' : 'neutral'"
-                                variant="subtle" size="xs">
+                                variant="subtle" size="sm">
                                 {{ userConfigData.product_group_access }}
                             </UBadge>
                         </div>
@@ -88,47 +87,15 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3 shrink-0">
-                <DashboardStatCard :icon="icons.server" :value="depotCount" :label="$t('totalServers')"
-                    @click="navigateTo('/servers')" />
-                <DashboardStatCard :icon="icons.client" :value="clientCount" :label="$t('totalClients')"
-                    @click="navigateTo('/clients')">
-                    <span v-if="activeClientCount !== null" class="text-[--color-text-muted]">
-                        <span class="font-medium text-[--color-text]">{{ activeClientCount }}</span>
-                        {{ $t('active') }}
-                    </span>
-                </DashboardStatCard>
 
-                <DashboardStatCard :icon="icons.product" :value="totalProductCount" :label="$t('totalProducts')"
-                    @click="navigateTo('/products')">
-                    <span class="text-[--color-text-muted]">
-                        <span class="font-medium text-[--color-text]">{{ localbootProductCount }}</span>
-                        {{ $t('localbootProducts') }}
-                    </span>
-                    <span class="text-[--color-text-muted]">
-                        <span class="font-medium text-[--color-text]">{{ netbootProductCount }}</span>
-                        {{ $t('netbootProducts') }}
-                    </span>
-                </DashboardStatCard>
 
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 cursor-pointer hover:shadow-md transition-all"
-                    @click="navigateTo('/admin/diagnostics/modules')">
-                    <div class="flex items-center justify-between mb-1">
-                        <img :src="opsiLogoSrc" alt="opsi" class="w-5 h-5" />
-                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
-                    </div>
-                    <p class="text-2xl font-bold">{{ modulesAvailableCount ?? '-' }}</p>
-                    <p class="text-xs text-[--color-text-muted]">{{ $t('opsiModules') }}</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3 shrink-0">
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 shrink-0">
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4">
                     <div class="flex items-center gap-2 mb-2">
-                        <UIcon :name="icons.server" class="w-4 h-4 text-blue-500" />
+                        <UIcon :name="icons.server" class="w-5 h-5" />
                         <h3 class="text-sm font-semibold">{{ $t('systemInfo') }}</h3>
                     </div>
-                    <div v-if="diagnosticData" class="space-y-1 text-[10px]">
+                    <div v-if="diagnosticData" class="space-y-1.5 text-sm">
                         <div class="flex justify-between">
                             <span class="text-[--color-text-muted] font-mono">opsiconfd_version</span>
                             <span class="font-medium truncate ml-2">{{ diagnosticData.opsiconfd_version }}</span>
@@ -146,7 +113,7 @@
                         <div v-if="diagnosticData.memory" class="flex justify-between">
                             <span class="text-[--color-text-muted] font-mono">memory</span>
                             <span class="font-medium">{{ (diagnosticData.memory as Record<string, unknown>).total_human
-                            }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent }}%
+                                    }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent }}%
                                         used)</span>
                         </div>
                         <div v-if="diagnosticData.processor" class="flex justify-between">
@@ -157,59 +124,90 @@
                     </div>
                     <p v-else class="text-xs text-[--color-text-muted]">{{ $t('loading') }}</p>
                 </div>
-
-                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4">
                     <div class="flex items-center gap-2 mb-2">
-                        <UIcon :name="icons.warning" class="w-4 h-4 text-red-500" />
-                        <h3 class="text-sm font-semibold">{{ $t('failedClients') }}</h3>
+                        <UIcon :name="icons.client" class="w-5 h-5" />
+                        <h3 class="text-sm font-semibold">{{ $t('clients') }}</h3>
                     </div>
-                    <div v-if="failedClients && Object.keys(failedClients).length > 0"
-                        class="space-y-0.5 max-h-32 overflow-y-auto">
-                        <div v-for="(products, clientId) in failedClients" :key="clientId"
-                            class="flex items-center justify-between p-1 rounded bg-red-50 dark:bg-red-900/20 text-[10px]">
-                            <span class="font-mono truncate">{{ clientId }}</span>
-                            <span class="text-[--color-text-muted] ml-2 shrink-0">{{ Array.isArray(products) ?
-                                products.join(', ') : products }}</span>
+                    <div v-if="licenseClientNumbers" class="space-y-1.5 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[--color-text-muted] font-mono">{{ $t('active') }}</span>
+                            <UBadge color="success" variant="subtle">{{ licenseClientNumbers.all }}
+                            </UBadge>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[--color-text-muted] font-mono">Windows</span>
+                            <UBadge color="primary" variant="subtle">{{ licenseClientNumbers.windows }}
+                            </UBadge>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[--color-text-muted] font-mono">Linux</span>
+                            <UBadge color="primary" variant="subtle">{{ licenseClientNumbers.linux }}</UBadge>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[--color-text-muted] font-mono">macOS</span>
+                            <UBadge color="primary" variant="subtle">{{ licenseClientNumbers.macos }}</UBadge>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[--color-text-muted] font-mono">{{ $t('inactive') }}</span>
+                            <UBadge color="error" variant="subtle">{{ licenseClientNumbers.inactive }}
+                            </UBadge>
                         </div>
                     </div>
-                    <p v-else class="text-xs text-[--color-text-muted]">{{ $t('noBlockedClients') }}</p>
+                    <p v-else class="text-xs text-[--color-text-muted]">{{ $t('loading') }}</p>
                 </div>
             </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
+                <DashboardStatCard :icon="icons.server" :value="depotCount" :label="$t('totalServers')"
+                    @click="navigateTo('/servers')" />
+                <DashboardStatCard :icon="icons.client" :value="clientCount" :label="$t('totalClients')"
+                    @click="navigateTo('/clients')">
+                </DashboardStatCard>
 
-            <div v-if="Object.keys(blockedClientsMap).length > 0 || Object.keys(lockedProductsMap).length > 0"
-                class="grid grid-cols-1 lg:grid-cols-2 gap-3 shrink-0">
-                <div v-if="Object.keys(blockedClientsMap).length > 0"
-                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
-                    <div class="flex items-center gap-2 mb-2">
-                        <UIcon :name="icons.blocked" class="w-4 h-4 text-red-500" />
-                        <h3 class="text-sm font-semibold">{{ $t('blockedClients') }}</h3>
-                        <UBadge color="error" variant="subtle" size="xs">{{ Object.keys(blockedClientsMap).length }}
-                        </UBadge>
+                <DashboardStatCard :icon="icons.product" :value="totalProductCount" :label="$t('totalProducts')"
+                    @click="navigateTo('/products')">
+                    <span class="text-[--color-text-muted]">
+                        <span class="font-medium text-[--color-text]">{{ localbootProductCount }}</span>
+                        {{ $t('localbootProducts') }}
+                    </span>
+                    <span class="text-[--color-text-muted]">
+                        <span class="font-medium text-[--color-text]">{{ netbootProductCount }}</span>
+                        {{ $t('netbootProducts') }}
+                    </span>
+                </DashboardStatCard>
+
+                <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all"
+                    @click="navigateTo('/admin/diagnostics/modules')">
+                    <div class="flex items-center justify-between mb-2">
+                        <img :src="opsiLogoSrc" alt="opsi" class="w-5 h-5" />
+                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
                     </div>
-                    <div class="space-y-0.5 max-h-24 overflow-y-auto">
-                        <div v-for="(reason, clientId) in blockedClientsMap" :key="clientId"
-                            class="flex items-center justify-between p-1 rounded bg-red-50 dark:bg-red-900/20 text-[10px]">
-                            <span class="font-mono truncate">{{ clientId }}</span>
-                            <span class="text-[--color-text-muted] ml-2 shrink-0">{{ reason }}</span>
-                        </div>
-                    </div>
-                </div>
-                <div v-if="Object.keys(lockedProductsMap).length > 0"
-                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3">
-                    <div class="flex items-center gap-2 mb-2">
-                        <UIcon :name="icons.locked" class="w-4 h-4 text-amber-500" />
-                        <h3 class="text-sm font-semibold">{{ $t('lockedProducts') }}</h3>
-                        <UBadge color="warning" variant="subtle" size="xs">{{ Object.keys(lockedProductsMap).length }}
-                        </UBadge>
-                    </div>
-                    <div class="space-y-0.5 max-h-24 overflow-y-auto">
-                        <div v-for="(reason, productId) in lockedProductsMap" :key="productId"
-                            class="flex items-center justify-between p-1 rounded bg-amber-50 dark:bg-amber-900/20 text-[10px]">
-                            <span class="font-mono truncate">{{ productId }}</span>
-                            <span class="text-[--color-text-muted] ml-2 shrink-0">{{ reason }}</span>
-                        </div>
+                    <p class="text-2xl font-bold mb-2">{{ modulesAvailableCount ?? '-' }}</p>
+                    <p class="text-[--color-text-muted]">{{ $t('opsiModules') }}</p>
+                    <div v-if="obsoleteModulesCount > 0" class="mt-2 gap-3 text-sm">
+                        <UTooltip :text="obsoleteModulesTooltip">
+                            <span class="font-medium text-amber-600 dark:text-amber-400 cursor-help">{{
+                                obsoleteModulesCount }}</span>
+                            <span class="text-[--color-text-muted] ml-1 text-xs"> {{ $t('obsolete') }}</span>
+                        </UTooltip>
                     </div>
                 </div>
+            </div>
+            <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <UIcon :name="icons.warning" class="w-5 h-5 text-red-500" />
+                    <h3 class="text-sm font-semibold">{{ $t('failedClients') }}</h3>
+                </div>
+                <div v-if="failedClients && Object.keys(failedClients).length > 0"
+                    class="space-y-0.5 max-h-40 overflow-y-auto">
+                    <div v-for="(products, clientId) in failedClients" :key="clientId"
+                        class="flex items-center justify-between p-1.5 rounded bg-red-50 dark:bg-red-900/20 text-sm">
+                        <span class="font-mono truncate">{{ clientId }}</span>
+                        <span class="text-[--color-text-muted] ml-2 shrink-0">{{ Array.isArray(products) ?
+                            products.join(', ') : products }}</span>
+                    </div>
+                </div>
+                <p v-else class="text-xs text-[--color-text-muted]">{{ $t('noFailedClients') }}</p>
             </div>
         </div>
     </LayoutsPageLayout>
@@ -226,13 +224,11 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const userStore = useUserStore()
 const colorMode = useColorMode()
-const { getDiagnosticData, getBlockedClients, getLockedProducts, getUserConfiguration } = useApiHelpers()
+const { getDiagnosticData, getUserConfiguration } = useApiHelpers()
 
 const loading = ref(false)
 
 const diagnosticData = ref<Record<string, unknown> | null>(null)
-const blockedClientsMap = ref<Record<string, string>>({})
-const lockedProductsMap = ref<Record<string, string>>({})
 
 const userConfigResponse = ref<{ user: string } | null>(null)
 const userConfigData = ref<{
@@ -310,6 +306,49 @@ const modulesAvailableCount = computed(() => {
     return Object.values(modules).filter(m => m.available).length
 })
 
+const obsoleteModules = computed(() => {
+    if (!diagnosticData.value) return []
+    const licenses = diagnosticData.value.licenses as Record<string, unknown> | undefined
+    return (licenses?.obsolete_modules as string[]) || []
+})
+
+const obsoleteModulesCount = computed(() => obsoleteModules.value.length)
+
+const obsoleteModulesTooltip = computed(() => {
+    if (obsoleteModules.value.length === 0) return ''
+    return `${$t('obsoleteModules')}: ${obsoleteModules.value.join(', ')}`
+})
+
+const outdatedClientCount = computed(() => {
+    if (!diagnosticData.value) return null
+    const healthChecks = diagnosticData.value.health_check as Array<Record<string, unknown>> | undefined
+    if (!healthChecks) return null
+    const activeCheck = healthChecks.find(c => (c.check as Record<string, unknown>)?.id === 'opsi_active_clients')
+    if (!activeCheck?.details) return null
+    const outdated = (activeCheck.details as Record<string, unknown>).outdated_clients as string[] | undefined
+    return outdated?.length ?? null
+})
+
+const outdatedClientsTooltip = computed(() => {
+    if (!diagnosticData.value) return ''
+    const healthChecks = diagnosticData.value.health_check as Array<Record<string, unknown>> | undefined
+    if (!healthChecks) return ''
+    const activeCheck = healthChecks.find(c => (c.check as Record<string, unknown>)?.id === 'opsi_active_clients')
+    if (!activeCheck?.details) return ''
+    const outdated = (activeCheck.details as Record<string, unknown>).outdated_clients as string[] | undefined
+    if (!outdated || outdated.length === 0) return ''
+    const shown = outdated.slice(0, 10)
+    const suffix = outdated.length > 10 ? ` ... (+${outdated.length - 10})` : ''
+    return `${$t('outdatedClients')}: ${shown.join(', ')}${suffix}`
+})
+
+const licenseClientNumbers = computed(() => {
+    if (!diagnosticData.value) return null
+    const licenses = diagnosticData.value.licenses as Record<string, unknown> | undefined
+    if (!licenses?.client_numbers) return null
+    return licenses.client_numbers as { macos: number; linux: number; windows: number; inactive: number; all: number }
+})
+
 const failedClients = computed(() => {
     if (!diagnosticData.value) return null
     const healthChecks = diagnosticData.value.health_check as Array<Record<string, unknown>> | undefined
@@ -338,16 +377,6 @@ async function fetchDiagnosticData() {
     }
 }
 
-async function fetchBlockedClientsData() {
-    const { data } = await getBlockedClients()
-    if (data) blockedClientsMap.value = data as Record<string, string>
-}
-
-async function fetchLockedProductsData() {
-    const { data } = await getLockedProducts()
-    if (data) lockedProductsMap.value = data as Record<string, string>
-}
-
 async function fetchUserConfig() {
     const { data } = await getUserConfiguration()
     if (data) {
@@ -370,8 +399,6 @@ async function refreshAll() {
     try {
         await Promise.all([
             fetchDiagnosticData(),
-            fetchBlockedClientsData(),
-            fetchLockedProductsData(),
             fetchUserConfig(),
         ])
     } finally {
