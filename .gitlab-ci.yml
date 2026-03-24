@@ -10,7 +10,7 @@
 image: node:22-bookworm-slim
 
 variables:
-  CI: "true"
+  CI: 'true'
   DEBIAN_FRONTEND: noninteractive
 
 stages: [setup, validate, build, release]
@@ -26,7 +26,6 @@ stages: [setup, validate, build, release]
 .install-devtools: &install-devtools |
   apt update && apt -y install curl zip wget
   curl -sS "${OPSIDEVTOOLS_INSTALLER_URL_LINUX_X64}" | sh
-
 
 # SETUP
 setup:deps:
@@ -58,7 +57,7 @@ setup:changelog:
   stage: setup
   extends: [.pybuilder, .only-tags]
   script:
-    - opsi-dev-cli -l 5 changelog from-git output
+    - opsi-dev-tool -l 5 --changelog-format=md changelog from-git output
     - chmod 666 output/*
   artifacts:
     paths: [output/]
@@ -75,7 +74,6 @@ setup:versions:
       V_PY=$(grep "ADDON_VERSION =" backend/webgui/python/const.py | awk '{print $3}' | tr -d '"')
       echo "Versions: yml=$V_YML pkg=$V_PKG py=$V_PY"
       [ "$V_YML" = "$V_PKG" ] && [ "$V_YML" = "$V_PY" ] || { echo "ERROR: Version mismatch"; exit 1; }
-
 
 # VALIDATE
 validate:lint:
@@ -109,7 +107,6 @@ validate:security:
 #   extends: .pybuilder
 #   script: cd backend && pytest tests/
 
-
 # BUILD
 build:frontend:
   stage: build
@@ -119,24 +116,22 @@ build:frontend:
     paths: [frontend/.output/]
     expire_in: 7 days
 
-
-# RELEASE (tags only)
-release:package:
-  stage: release
-  extends: .only-tags
-  needs: [build:frontend, setup:versions, { job: setup:changelog, optional: true }]
+build:package:
+  stage: build
+  needs: [build:frontend, { job: setup:changelog, optional: true }]
   script:
-    - *install-devtools
+    - apt update && apt -y install zip
     - mkdir -p backend/webgui/data/app
     - cp -r frontend/.output/public/* backend/webgui/data/app/
     - '[ -f output/changelog.md ] && cp output/changelog.md backend/webgui/data/changelog/ || true'
     - mkdir -p webgui && cp -r backend/webgui/* webgui/
     - zip -r opsi-webgui.zip webgui && ls -lah opsi-webgui.zip
   artifacts:
-    name: "opsi-webgui-${CI_COMMIT_TAG}"
+    name: 'opsi-webgui-${CI_COMMIT_REF_NAME}'
     paths: [opsi-webgui.zip, webgui/]
     expire_in: 7 days
 
+# RELEASE (tags only)
 release:sbom:
   stage: release
   extends: .only-tags
@@ -151,7 +146,7 @@ release:sbom:
 release:binary-index:
   stage: release
   extends: [.pybuilder, .only-tags]
-  needs: [release:package, { job: setup:changelog, optional: true }]
+  needs: [build:package, setup:versions, { job: setup:changelog, optional: true }]
   script:
     - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
     - '[ -f output/changelog.md ] && opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip || true'
@@ -159,13 +154,13 @@ release:binary-index:
 release:obs-internal:
   stage: release
   extends: [.pybuilder, .only-tags]
-  needs: [release:package]
+  needs: [build:package, setup:versions]
   script: opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.4:development
 
 release:obs-external:
   stage: release
   extends: [.pybuilder, .only-tags]
-  needs: [release:package, { job: setup:changelog, optional: true }]
+  needs: [build:package, setup:versions, { job: setup:changelog, optional: true }]
   script:
     - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.4:development
     - |
