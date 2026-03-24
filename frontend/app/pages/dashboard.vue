@@ -119,85 +119,77 @@
                 </DashboardStatCard>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3 flex-1 min-h-0">
+            <div class="grid grid-cols-1 gap-3 mb-3 flex-1 min-h-0">
                 <div
                     class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0">
                     <div class="flex items-center justify-between mb-2 shrink-0">
                         <div class="flex items-center gap-2">
                             <UIcon :name="icons.clientReachable" class="w-4 h-4 text-emerald-500" />
-                            <h3 class="text-sm font-semibold">{{ $t('reachable') }} {{ $t('clients') }}</h3>
+                            <h3 class="text-sm font-semibold">{{ $t('clients') }} — {{ $t('lastSeen') }} &amp; {{
+                                $t('reachable') }}</h3>
                         </div>
                         <div class="flex items-center gap-2">
-                            <USelect v-model="selectedServerForReachable" :items="serverOptions" size="xs"
-                                class="w-40" />
+                            <USelect v-model="selectedServerForClients" :items="serverOptions" size="xs" class="w-40" />
                             <UButton v-if="!loadingReachable" variant="ghost" color="neutral" size="xs"
-                                @click="checkAllReachable">
+                                @click="checkAllReachable" :title="$t('checkReachability')">
                                 <UIcon :name="icons.refresh" class="w-3.5 h-3.5" />
                             </UButton>
                             <UIcon v-else :name="icons.loading" class="w-3.5 h-3.5 animate-spin" />
                         </div>
                     </div>
-                    <div v-if="reachableClients.length > 0 || unreachableCount > 0"
-                        class="flex-1 min-h-0 space-y-2 overflow-y-auto">
-                        <div class="flex items-center gap-4 text-sm shrink-0">
-                            <span class="text-emerald-600 dark:text-emerald-400">
-                                <span class="font-bold text-xl">{{ reachableClients.length }}</span>
-                                <span class="ml-1 text-xs">{{ $t('reachable') }}</span>
-                            </span>
-                            <span class="text-[--color-text-muted]">
-                                <span class="font-bold text-xl">{{ unreachableCount }}</span>
-                                <span class="ml-1 text-xs">{{ $t('unreachable') }}</span>
-                            </span>
-                        </div>
-                        <div v-if="reachableClients.length > 0" class="space-y-0.5">
-                            <div v-for="client in reachableClients" :key="client"
-                                class="flex items-center justify-between p-1.5 rounded bg-emerald-50 dark:bg-emerald-900/20 text-xs">
-                                <span class="font-mono text-[10px] truncate">{{ client }}</span>
-                                <UIcon :name="icons.checkCircle" class="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                            </div>
-                        </div>
-                    </div>
-                    <div v-else class="text-xs text-[--color-text-muted] py-4 text-center">
-                        {{ loadingReachable ? $t('loading') : $t('clickRefreshToCheck') }}
-                    </div>
-                </div>
 
-                <div
-                    class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-3 flex flex-col min-h-0">
-                    <div class="flex items-center justify-between mb-2 shrink-0">
-                        <div class="flex items-center gap-2">
-                            <UIcon :name="icons.calendar" class="w-4 h-4" />
-                            <h3 class="text-sm font-semibold">{{ $t('clients') }} {{ $t('lastSeen') }}</h3>
+                    <div v-if="lastSeenStats || reachableClients.length > 0 || unreachableCount > 0"
+                        class="flex flex-col min-h-0 flex-1">
+                        <div class="shrink-0 space-y-2 mb-2">
+                            <div v-if="lastSeenStats" class="grid grid-cols-2 lg:grid-cols-4 gap-2 text-sm">
+                                <div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+                                    <p class="text-[10px] text-[--color-text-muted]">{{ $t('last24Hours') }}</p>
+                                    <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{
+                                        lastSeenStats.last24h }}</p>
+                                </div>
+                                <div class="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+                                    <p class="text-[10px] text-[--color-text-muted]">{{ $t('last7Days') }}</p>
+                                    <p class="text-xl font-bold text-blue-600 dark:text-blue-400">{{
+                                        lastSeenStats.last7d }}</p>
+                                </div>
+                                <div class="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/20">
+                                    <p class="text-[10px] text-[--color-text-muted]">{{ $t('last30Days') }}</p>
+                                    <p class="text-xl font-bold text-amber-600 dark:text-amber-400">{{
+                                        lastSeenStats.last30d }}</p>
+                                </div>
+                                <div class="p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                                    <p class="text-[10px] text-[--color-text-muted]">{{ $t('olderOrNever') }}</p>
+                                    <p class="text-xl font-bold text-[--color-text-muted]">{{ lastSeenStats.older }}</p>
+                                </div>
+                            </div>
+                            <div v-if="reachableClients.length > 0 || unreachableCount > 0"
+                                class="flex items-center gap-4 text-sm">
+                                <span class="text-emerald-600 dark:text-emerald-400">
+                                    <span class="font-bold text-xl">{{ reachableClients.length }}</span>
+                                    <span class="ml-1 text-xs">{{ $t('reachable') }}</span>
+                                </span>
+                                <span class="text-[--color-text-muted]">
+                                    <span class="font-bold text-xl">{{ unreachableCount }}</span>
+                                    <span class="ml-1 text-xs">{{ $t('unreachable') }}</span>
+                                </span>
+                            </div>
                         </div>
-                        <USelect v-model="selectedServerForLastSeen" :items="serverOptions" size="xs" class="w-40" />
-                    </div>
-                    <div v-if="lastSeenStats" class="flex-1 min-h-0 space-y-2 overflow-y-auto">
-                        <div class="grid grid-cols-2 gap-2 text-sm shrink-0">
-                            <div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
-                                <p class="text-[10px] text-[--color-text-muted]">{{ $t('last24Hours') }}</p>
-                                <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{
-                                    lastSeenStats.last24h }}</p>
-                            </div>
-                            <div class="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20">
-                                <p class="text-[10px] text-[--color-text-muted]">{{ $t('last7Days') }}</p>
-                                <p class="text-xl font-bold text-blue-600 dark:text-blue-400">{{ lastSeenStats.last7d }}
-                                </p>
-                            </div>
-                            <div class="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/20">
-                                <p class="text-[10px] text-[--color-text-muted]">{{ $t('last30Days') }}</p>
-                                <p class="text-xl font-bold text-amber-600 dark:text-amber-400">{{ lastSeenStats.last30d
-                                }}</p>
-                            </div>
-                            <div class="p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                                <p class="text-[10px] text-[--color-text-muted]">{{ $t('olderOrNever') }}</p>
-                                <p class="text-xl font-bold text-[--color-text-muted]">{{ lastSeenStats.older }}</p>
-                            </div>
-                        </div>
-                        <div class="space-y-0.5">
+
+                        <div class="flex-1 min-h-0 overflow-y-auto space-y-0.5">
                             <div v-for="client in filteredClientsForServer" :key="client.clientId"
-                                class="flex items-center justify-between p-1.5 rounded bg-gray-50 dark:bg-gray-800/50 text-[10px]">
+                                class="flex items-center justify-between p-1.5 rounded text-[10px]" :class="reachabilityMap[client.clientId] === true
+                                    ? 'bg-emerald-50 dark:bg-emerald-900/20'
+                                    : reachabilityMap[client.clientId] === false
+                                        ? 'bg-gray-50 dark:bg-gray-800/50'
+                                        : 'bg-gray-50 dark:bg-gray-800/50'">
                                 <span class="font-mono truncate">{{ client.clientId }}</span>
-                                <span class="text-[--color-text-muted]">{{ formatLastSeen(client.lastSeen) }}</span>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <span class="text-[--color-text-muted]">{{ formatLastSeen(client.lastSeen) }}</span>
+                                    <UIcon v-if="reachabilityMap[client.clientId] === true" :name="icons.checkCircle"
+                                        class="w-3.5 h-3.5 text-emerald-500" />
+                                    <UIcon v-else-if="reachabilityMap[client.clientId] === false" :name="icons.close"
+                                        class="w-3.5 h-3.5 text-red-400" />
+                                </div>
                             </div>
                             <div v-if="filteredClientsForServer.length === 0"
                                 class="text-xs text-[--color-text-muted] text-center py-2">
@@ -260,7 +252,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const selectionStore = useSelectionStore()
 const userStore = useUserStore()
-const { getServerInfo, getClients, getServers, getProducts, getBlockedClients, getLockedProducts, checkClientReachable, getModulesContent, getUserConfiguration } = useApiHelpers()
+const { getServerInfo, getClients, getServers, getProductCount, getBlockedClients, getLockedProducts, checkClientReachable, getModulesContent, getUserConfiguration } = useApiHelpers()
 
 const loading = ref(false)
 const loadingReachable = ref(false)
@@ -284,8 +276,8 @@ const allClients = ref<Array<{ clientId: string; lastSeen: string; depotId: stri
 const allServers = ref<Array<{ depotId: string }>>([])
 const reachableClients = ref<string[]>([])
 const unreachableCount = ref(0)
-const selectedServerForLastSeen = ref('all')
-const selectedServerForReachable = ref('all')
+const reachabilityMap = ref<Record<string, boolean>>({})
+const selectedServerForClients = ref('all')
 
 const userConfigResponse = ref<{ user: string } | null>(null)
 const userConfigData = ref<{
@@ -310,11 +302,13 @@ const serverOptions = computed(() => [
 ])
 
 function formatLastSeen(lastSeen: string): string {
-    if (!lastSeen) return $t('unknown')
+    if (!lastSeen || lastSeen === 'None' || lastSeen === 'null') return String($t('unknown'))
     try {
-        return new Date(lastSeen).toLocaleString()
+        const date = new Date(lastSeen.replace(' ', 'T'))
+        if (isNaN(date.getTime())) return lastSeen || String($t('unknown'))
+        return date.toLocaleString()
     } catch {
-        return lastSeen || $t('unknown')
+        return lastSeen || String($t('unknown'))
     }
 }
 
@@ -322,13 +316,13 @@ const lastSeenStats = computed(() => {
     if (!allClients.value.length) return null
     const now = new Date()
     const day = 24 * 60 * 60 * 1000
-    const filteredClients = selectedServerForLastSeen.value === 'all'
+    const filteredClients = selectedServerForClients.value === 'all'
         ? allClients.value
-        : allClients.value.filter(c => c.depotId === selectedServerForLastSeen.value)
+        : allClients.value.filter(c => c.depotId === selectedServerForClients.value)
     let last24h = 0, last7d = 0, last30d = 0, older = 0
     for (const client of filteredClients) {
-        if (!client.lastSeen) { older++; continue }
-        const lastSeen = new Date(client.lastSeen)
+        if (!client.lastSeen || client.lastSeen === 'None' || client.lastSeen === 'null') { older++; continue }
+        const lastSeen = new Date(client.lastSeen.replace(' ', 'T'))
         if (isNaN(lastSeen.getTime())) { older++; continue }
         const diff = now.getTime() - lastSeen.getTime()
         if (diff <= day) last24h++
@@ -340,9 +334,9 @@ const lastSeenStats = computed(() => {
 })
 
 const filteredClientsForServer = computed(() =>
-    selectedServerForLastSeen.value === 'all'
+    selectedServerForClients.value === 'all'
         ? allClients.value
-        : allClients.value.filter(c => c.depotId === selectedServerForLastSeen.value)
+        : allClients.value.filter(c => c.depotId === selectedServerForClients.value)
 )
 
 async function fetchServerInfo() {
@@ -357,33 +351,62 @@ async function fetchServerInfo() {
 async function fetchStats() {
     const selectedDepots = selectionStore.selectedServers
     const depotParams = selectedDepots.length > 0 ? { selectedDepots: `[${selectedDepots.join(',')}]` } : {}
-    const [clientsRes, depotsRes, localbootRes, netbootRes, modulesRes] = await Promise.all([
+
+    // Fetch clients, servers, and modules first
+    const [clientsRes, depotsRes, modulesRes] = await Promise.all([
         getClients(depotParams),
         getServers(),
-        getProducts({ ...depotParams, type: 'LocalbootProduct' }),
-        getProducts({ ...depotParams, type: 'NetbootProduct' }),
         getModulesContent(),
     ])
     if (clientsRes.data) {
-        allClients.value = clientsRes.data as Array<{ clientId: string; lastSeen: string; depotId: string }>
-        stats.totalClients = clientsRes.total ?? clientsRes.data.length
+        const rawClients = clientsRes.data as Array<Record<string, unknown>>
+        allClients.value = rawClients.map(c => ({
+            clientId: String(c.clientId || c.hostId || ''),
+            lastSeen: String(c.lastSeen || c.last_seen || ''),
+            depotId: String(c.depotId || c.depot_id || ''),
+        }))
+        stats.totalClients = clientsRes.total ?? allClients.value.length
     }
     if (depotsRes.data) {
         allServers.value = depotsRes.data as Array<{ depotId: string }>
         stats.totalServers = depotsRes.total ?? depotsRes.data.length
     }
-    const localProducts = localbootRes.data as Array<{ type: string; productId: string }> | null
-    const netProducts = netbootRes.data as Array<{ type: string; productId: string }> | null
-    const uniqueLocal = new Set(localProducts?.map(p => p.productId) ?? [])
-    const uniqueNet = new Set(netProducts?.map(p => p.productId) ?? [])
-    stats.localbootProducts = uniqueLocal.size
-    stats.netbootProducts = uniqueNet.size
-    stats.totalProducts = uniqueLocal.size + uniqueNet.size
+
+    // Use selected depots or all known depots for product count
+    const depotList = selectedDepots.length > 0
+        ? selectedDepots
+        : allServers.value.map(s => s.depotId)
+    if (depotList.length > 0) {
+        const [localbootCountRes, netbootCountRes] = await Promise.all([
+            getProductCount('LocalbootProduct', depotList),
+            getProductCount('NetbootProduct', depotList),
+        ])
+        const localCount = typeof localbootCountRes.data === 'number' ? localbootCountRes.data : 0
+        const netCount = typeof netbootCountRes.data === 'number' ? netbootCountRes.data : 0
+        stats.localbootProducts = localCount
+        stats.netbootProducts = netCount
+        stats.totalProducts = localCount + netCount
+    }
     if (modulesRes.data) {
-        const modules = (modulesRes.data as { result: string[] }).result || []
-        stats.totalModules = modules.length
-        stats.activeModules = modules.length
-        stats.expiredModules = 0
+        const rawResult = modulesRes.data as Record<string, unknown>
+        const modules = (rawResult.result || rawResult) as Array<Record<string, unknown>> | string[]
+        if (Array.isArray(modules)) {
+            stats.totalModules = modules.length
+            // Count active vs expired based on module state
+            let active = 0
+            let expired = 0
+            for (const mod of modules) {
+                if (typeof mod === 'object' && mod !== null) {
+                    const state = (mod.state || mod.status || '') as string
+                    if (state === 'expired' || state === 'disabled') expired++
+                    else active++
+                } else {
+                    active++ // Simple string modules are active
+                }
+            }
+            stats.activeModules = active
+            stats.expiredModules = expired
+        }
     }
 }
 
@@ -422,9 +445,7 @@ async function fetchUserConfig() {
 }
 
 async function checkAllReachable() {
-    const clientPool = selectedServerForReachable.value === 'all'
-        ? allClients.value
-        : allClients.value.filter(c => c.depotId === selectedServerForReachable.value)
+    const clientPool = filteredClientsForServer.value
     if (!clientPool.length) return
     loadingReachable.value = true
     try {
@@ -432,6 +453,7 @@ async function checkAllReachable() {
         const result = await checkClientReachable(clientIds)
         if (result.data) {
             const reachableData = result.data as Record<string, boolean>
+            reachabilityMap.value = { ...reachabilityMap.value, ...reachableData }
             reachableClients.value = Object.entries(reachableData)
                 .filter(([, isReachable]) => isReachable)
                 .map(([clientId]) => clientId)
@@ -459,5 +481,11 @@ async function refreshAll() {
 
 onMounted(() => {
     refreshAll()
+})
+
+watch(selectedServerForClients, () => {
+    reachableClients.value = []
+    unreachableCount.value = 0
+    reachabilityMap.value = {}
 })
 </script>

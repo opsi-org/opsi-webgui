@@ -79,6 +79,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const $route = useRoute()
 const userStore = useUserStore()
+const { filterNavItems, isPageAccessible } = useFeatureFlags()
 
 const expanded = ref<Record<string, boolean>>({})
 const hoveredItem = ref<string | null>(null)
@@ -107,65 +108,68 @@ interface NavItem {
     submenu?: { title: string; route: string }[]
 }
 
-const navGroups = computed<NavItem[][]>(() => [
-    [
-        {
-            title: 'dashboard',
-            route: '/dashboard',
-            icon: icons.dashboard,
-        },
-        {
-            title: 'admin',
-            route: '/admin',
-            icon: icons.admin,
-            submenu: [
-                { title: 'terminal', route: '/admin/terminal' },
-                { title: 'diagnostics', route: '/admin/diagnostics' },
-                { title: 'maintenance', route: '/admin/maintenance' },
-            ],
-        },
-    ],
-    [
-        {
-            title: 'servers',
-            route: '/servers',
-            icon: icons.serverStack,
-            submenu: [
-                { title: 'allServers', route: '/servers' },
-                { title: 'configuration', route: '/servers/configuration/parameters' },
-            ],
-        },
-        {
-            title: 'clients',
-            route: '/clients',
-            icon: icons.client,
-            submenu: [
-                { title: 'allClients', route: '/clients' },
-                { title: 'addNew', route: '/clients/add' },
-                { title: 'clone', route: '/clients/clone' },
-                { title: 'configuration', route: '/clients/configuration/parameters' },
-                { title: 'logs', route: '/clients/logs' },
-            ],
-        },
-        {
-            title: 'products',
-            route: '/products',
-            icon: icons.product,
-        },
-        {
-            title: 'groups',
-            route: '/groups',
-            icon: icons.group,
-        },
-    ],
-    [
-        {
-            title: 'support',
-            route: '/support',
-            icon: icons.support,
-        },
-    ],
-])
+const navGroups = computed<NavItem[][]>(() => {
+    const rawGroups: NavItem[][] = [
+        [
+            {
+                title: 'dashboard',
+                route: '/dashboard',
+                icon: icons.dashboard,
+            },
+            {
+                title: 'admin',
+                route: '/admin',
+                icon: icons.admin,
+                submenu: [
+                    { title: 'terminal', route: '/admin/terminal' },
+                    { title: 'diagnostics', route: '/admin/diagnostics' },
+                    { title: 'maintenance', route: '/admin/maintenance' },
+                ],
+            },
+        ],
+        [
+            {
+                title: 'servers',
+                route: '/servers',
+                icon: icons.serverStack,
+                submenu: [
+                    { title: 'allServers', route: '/servers' },
+                    { title: 'configuration', route: '/servers/configuration/parameters' },
+                ],
+            },
+            {
+                title: 'clients',
+                route: '/clients',
+                icon: icons.client,
+                submenu: [
+                    { title: 'allClients', route: '/clients' },
+                    { title: 'addNew', route: '/clients/add' },
+                    { title: 'clone', route: '/clients/clone' },
+                    { title: 'configuration', route: '/clients/configuration/parameters' },
+                    { title: 'logs', route: '/clients/logs' },
+                ],
+            },
+            {
+                title: 'products',
+                route: '/products',
+                icon: icons.product,
+            },
+            {
+                title: 'groups',
+                route: '/groups',
+                icon: icons.group,
+            },
+        ],
+        [
+            {
+                title: 'support',
+                route: '/support',
+                icon: icons.support,
+            },
+        ],
+    ]
+    return rawGroups.map(group => filterNavItems(group)).filter(group => group.length > 0)
+})
 
 onMounted(() => {
     navGroups.value.flat().forEach((item) => {

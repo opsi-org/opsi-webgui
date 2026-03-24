@@ -29,9 +29,9 @@
 
               <div class="mb-4 flex items-center justify-between gap-2">
                 <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('displayMode') }}</label>
-                <div class="flex gap-0.5">
+                <div class="flex gap-0.5 flex-1">
                   <button :class="[
-                    'px-2.5 py-1 text-xs font-medium rounded-l-lg transition-colors',
+                    'flex-1 px-2.5 py-1 text-xs font-medium rounded-l-lg transition-colors',
                     tableSettings.settings.displayMode === 'infinite'
                       ? 'bg-opsi-blue text-white'
                       : 'bg-(--color-surface-hover) text-(--color-text-muted) hover:bg-(--color-surface-hover)'
@@ -39,7 +39,7 @@
                     {{ $t('infiniteScroll') }}
                   </button>
                   <button :class="[
-                    'px-2.5 py-1 text-xs font-medium rounded-r-lg transition-colors',
+                    'flex-1 px-2.5 py-1 text-xs font-medium rounded-r-lg transition-colors',
                     tableSettings.settings.displayMode === 'pagination'
                       ? 'bg-opsi-blue text-white'
                       : 'bg-(--color-surface-hover) text-(--color-text-muted) hover:bg-(--color-surface-hover)'
@@ -51,9 +51,9 @@
 
               <div class="mb-4 flex items-center justify-between gap-2">
                 <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('selectionMode') }}</label>
-                <div class="flex gap-0.5">
+                <div class="flex gap-0.5 flex-1">
                   <button :class="[
-                    'px-2.5 py-1 text-xs font-medium rounded-l-lg transition-colors',
+                    'flex-1 px-2.5 py-1 text-xs font-medium rounded-l-lg transition-colors',
                     effectiveSelectionMode === 'multi'
                       ? 'bg-opsi-blue text-white'
                       : 'bg-(--color-surface-hover) text-(--color-text-muted) hover:bg-(--color-surface-hover)'
@@ -61,7 +61,7 @@
                     {{ $t('multiSelect') }}
                   </button>
                   <button :class="[
-                    'px-2.5 py-1 text-xs font-medium rounded-r-lg transition-colors',
+                    'flex-1 px-2.5 py-1 text-xs font-medium rounded-r-lg transition-colors',
                     effectiveSelectionMode === 'single'
                       ? 'bg-opsi-blue text-white'
                       : 'bg-(--color-surface-hover) text-(--color-text-muted) hover:bg-(--color-surface-hover)'
@@ -73,24 +73,23 @@
 
               <div class="mb-4 flex items-center justify-between gap-2">
                 <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('pageSize') }}</label>
-                <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs" class="w-24"
-                  @update:model-value="(v: number) => changePageSize(v)" />
+                <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs"
+                  class="flex-1" @update:model-value="(v: number) => changePageSize(v)" />
               </div>
 
-              <div class="mb-4">
-                <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('sortBy') }}</label>
+              <div class="mb-4 flex items-center gap-2">
+                <label class="text-xs text-(--color-text-muted) shrink-0">{{ $t('sortBy') }}</label>
                 <USelect :model-value="tableSettings.settings.sortColumn" :items="sortableColumnOptions" size="xs"
-                  class="w-full" @update:model-value="(v: string) => handleSort(v)" />
-                <div class="flex gap-1 mt-1">
-                  <UButton size="xs" :variant="tableSettings.settings.sortDirection === 'asc' ? 'solid' : 'outline'"
-                    color="neutral" class="flex-1" @click="changeSortDirection('asc')">
-                    <UIcon :name="icons.sortAsc" class="w-3 h-3 mr-1" /> {{ $t('ascending') }}
-                  </UButton>
-                  <UButton size="xs" :variant="tableSettings.settings.sortDirection === 'desc' ? 'solid' : 'outline'"
-                    color="neutral" class="flex-1" @click="changeSortDirection('desc')">
-                    <UIcon :name="icons.sortDesc" class="w-3 h-3 mr-1" /> {{ $t('descending') }}
-                  </UButton>
-                </div>
+                  class="flex-1" @update:model-value="(v: string) => handleSort(v)" />
+                <UTooltip :text="tableSettings.settings.sortDirection === 'asc' ? $t('ascending') : $t('descending')">
+                  <button :class="[
+                    'w-7 h-7 flex items-center justify-center rounded transition-colors',
+                    'bg-(--color-surface-hover) hover:bg-(--color-surface-hover)'
+                  ]" @click="changeSortDirection(tableSettings.settings.sortDirection === 'asc' ? 'desc' : 'asc')">
+                    <UIcon :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
+                      class="w-3.5 h-3.5" />
+                  </button>
+                </UTooltip>
               </div>
 
               <div class="mb-4">
@@ -120,7 +119,6 @@
       </div>
     </div>
 
-    <!-- Table -->
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div ref="tableContainer" class="flex-1 overflow-auto transition-all duration-200"
         :style="{ maxHeight: displayMode === 'pagination' ? `calc(${maxHeight} - 48px)` : maxHeight }"
@@ -254,7 +252,6 @@
       </div>
     </UCard>
 
-    <!-- Footer -->
     <div
       class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 mt-2 rounded-b-lg flex items-center justify-between gap-4">
       <span class="text-xs text-(--color-text-muted)">
@@ -380,13 +377,6 @@ const pageSize = computed(() => tableSettings.settings.pageSize)
 const effectiveSelectionMode = computed(() => {
   if (selectionModeOverride.value) return selectionModeOverride.value
   return tableSettings.settings.selectionMode
-})
-
-const tableMinWidth = computed(() => {
-  const selCol = props.selectable ? 48 : 0
-  const actCol = hasActions.value ? 96 : 0
-  const colWidth = visibleColumns.value.length * 120
-  return `${selCol + actCol + colWidth}px`
 })
 
 const pageSizeOptions = computed(() => [

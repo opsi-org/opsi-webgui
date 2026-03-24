@@ -22,14 +22,9 @@
 						<span v-if="mbConnected" class="w-2 h-2 rounded-full bg-green-500"
 							:title="$t('messageBusConnected')" />
 						<span v-else class="w-2 h-2 rounded-full bg-red-400" :title="$t('messageBusDisconnected')" />
-						<label class="flex items-center gap-1 cursor-pointer text-xs text-(--color-text-muted)">
-							<input type="checkbox" v-model="autoRefreshEnabled"
-								class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue w-3.5 h-3.5" />
-							{{ $t('autoRefresh') }}
-						</label>
 					</div>
 					<UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
-						variant="soft" size="xs" @click="manualRefresh">
+						variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
 						{{ $t('changesDetected') }}
 					</UButton>
 					<ProductsQuickActionsDropdown :products="products" @applied="fetchProducts" />
@@ -233,6 +228,7 @@ onBeforeRouteLeave(() => {
 })
 
 const tableId = computed(() => props.productType === 'NetbootProduct' ? 'products-netboot' : 'products-localboot')
+const tableSettings = useDataTableSettings(tableId.value)
 const selectedProductIds = computed(() => selectionStore.selectedProducts)
 const pendingActionRequestCount = computed(() => pendingActionRequests.value.size)
 
@@ -290,7 +286,7 @@ const panelPropertyConfigRef = computed<ProductConfigTabsRef | null>(() => {
 
 const hasUnsavedChanges = computed(() => productConfigTabsRef.value?.hasAnyChanges || false)
 
-const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRefresh } = useAutoRefreshProducts(fetchProducts)
+const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshProducts(fetchProducts)
 
 const columns: DataTableColumnDef[] = [
 	{ key: 'installationStatus', label: String($t('installationStatus')), headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-16', align: 'center' },
@@ -481,6 +477,11 @@ async function fetchProducts(params?: PageChangeParams) {
 				p.sortDesc = params.sortDesc
 			}
 			p.filterQuery = params.filterQuery
+		} else {
+			if (tableSettings.settings.sortColumn && !tableSettings.settings.sortColumn.startsWith('__')) {
+				p.sortBy = tableSettings.settings.sortColumn
+				p.sortDesc = tableSettings.settings.sortDirection === 'desc'
+			}
 		}
 
 		const result = await getProducts(p)
@@ -503,6 +504,7 @@ watch(() => props.productType, () => { pendingActionRequests.value.clear(); fetc
 
 watch(() => route.query.product, (newProductId, oldProductId) => {
 	if (!newProductId || newProductId === oldProductId) return
+	if (!showConfigPanel.value && route.query.view !== 'panel') return
 	const p = products.value.find(pr => pr.productId === newProductId)
 	if (p) {
 		configProduct.value = p
@@ -527,8 +529,7 @@ watch(() => selectionStore.selectedServers, () => fetchProducts(), { deep: true 
 
 onMounted(async () => {
 	if (props.initialSortColumn) {
-		const tableSettingsObj = useDataTableSettings(tableId.value)
-		tableSettingsObj.setSort(props.initialSortColumn, 'desc')
+		tableSettings.setSort(props.initialSortColumn, 'desc')
 	}
 	await fetchProducts()
 	tryOpenPanelFromRoute()

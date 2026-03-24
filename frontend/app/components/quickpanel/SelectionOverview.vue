@@ -12,7 +12,7 @@
 				</UTooltip>
 			</div>
 
-			<div class="flex-1 overflow-y-auto min-h-0 space-y-3">
+			<div class="flex-1 overflow-y-auto min-h-0 space-y-1.5">
 				<div v-if="selectionStore.selectedServers.length > 0">
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
@@ -22,14 +22,15 @@
 							}}</UBadge>
 						</div>
 						<UTooltip :text="t('clearAll')">
-							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="clearServers" />
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
+								@click="clearServers" />
 						</UTooltip>
 					</div>
 					<div class="space-y-0.5">
 						<div v-for="server in selectionStore.selectedServers" :key="server"
-							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group hover:bg-(--color-surface-hover) transition-colors">
+							class="flex items-center justify-between px-5 rounded text-xs  group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ server }}</span>
-							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
 								@click="removeServer(server)" />
 						</div>
@@ -45,14 +46,15 @@
 							}}</UBadge>
 						</div>
 						<UTooltip :text="t('clearAll')">
-							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="selectionStore.clearClients()" />
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
+								@click="selectionStore.clearClients()" />
 						</UTooltip>
 					</div>
 					<div class="space-y-0.5 max-h-40 overflow-y-auto">
 						<div v-for="client in selectionStore.selectedClients" :key="client"
-							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group hover:bg-(--color-surface-hover) transition-colors">
+							class="flex items-center justify-between px-5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ client }}</span>
-							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
 								@click="selectionStore.toggleClient(client)" />
 						</div>
@@ -68,14 +70,15 @@
 							}}</UBadge>
 						</div>
 						<UTooltip :text="t('clearAll')">
-							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="selectionStore.clearProducts()" />
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
+								@click="selectionStore.clearProducts()" />
 						</UTooltip>
 					</div>
 					<div class="space-y-0.5 max-h-40 overflow-y-auto">
 						<div v-for="product in selectionStore.selectedProducts" :key="product"
-							class="flex items-center justify-between px-2 py-1 rounded text-xs bg-(--color-surface) dark:bg-(--color-background) group hover:bg-(--color-surface-hover) transition-colors">
+							class="flex items-center justify-between px-5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ product }}</span>
-							<UButton :icon="icons.close" size="xs" variant="ghost" color="neutral"
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
 								@click="selectionStore.toggleProduct(product)" />
 						</div>

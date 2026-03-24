@@ -62,7 +62,7 @@ const config = useRuntimeConfig()
 const userStore = useUserStore()
 const colorMode = useColorMode()
 const { $customFetch } = useNuxtApp() as unknown as { $customFetch: typeof $fetch }
-const { createActivity } = useApiHelpers()
+const { createActivity, getUserConfiguration, getDisabledFeatures } = useApiHelpers()
 
 const isDark = computed(() => colorMode.preference === 'dark')
 
@@ -72,12 +72,29 @@ const showSaml = ref(true)
 const errorMessage = ref('')
 const configServerName = ref('')
 
+async function fetchPostLoginData() {
+  try {
+    const [userConfigResult, disabledFeaturesResult] = await Promise.all([
+      getUserConfiguration(),
+      getDisabledFeatures(),
+    ])
+    if (userConfigResult.data?.configuration) {
+      userStore.setUserConfiguration(userConfigResult.data.configuration)
+    }
+    if (disabledFeaturesResult.data && Array.isArray(disabledFeaturesResult.data)) {
+      userStore.setDisabledFeatures(disabledFeaturesResult.data)
+    }
+  } catch {
+    // Non-critical: topbar will show data on next navigation
+  }
+}
+
 function getDefaultPage(): string {
-    const match = document.cookie.match(/(?:^|; )opsi-default-page=([^;]*)/)
-    const stored = match?.[1] ? decodeURIComponent(match[1]) : null
-    const validPages = ['/dashboard', '/clients', '/products', '/servers', '/admin/terminal', '/admin/maintenance', '/admin/diagnostics']
-    if (stored && validPages.includes(stored)) return stored
-    return config.public.BASE_PAGE as string || '/clients'
+  const match = document.cookie.match(/(?:^|; )opsi-default-page=([^;]*)/)
+  const stored = match?.[1] ? decodeURIComponent(match[1]) : null
+  const validPages = ['/dashboard', '/clients', '/products', '/servers', '/admin/terminal', '/admin/maintenance', '/admin/diagnostics']
+  if (stored && validPages.includes(stored)) return stored
+  return config.public.BASE_PAGE as string || '/clients'
 }
 
 onMounted(async () => {
@@ -96,6 +113,7 @@ onMounted(async () => {
       const authResult = await $customFetch<{ result: string; username?: string }>('/auth/session')
       if (authResult && (authResult as any).username) {
         userStore.login((authResult as any).username)
+        await fetchPostLoginData()
         const redirectPath = route.query.redirect?.toString() || getDefaultPage()
         await navigateTo(redirectPath)
       }
@@ -122,6 +140,7 @@ const handleLogin = async () => {
 
     if (result.result === 'Login success') {
       userStore.login(cred.username)
+      await fetchPostLoginData()
       createActivity('Login', 'ok').catch(() => { })
       const redirectPath = route.query.redirect?.toString() || getDefaultPage()
       await navigateTo(redirectPath)

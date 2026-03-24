@@ -1,13 +1,25 @@
 <template>
 	<div class="flex-1 relative">
 		<UDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
-			<UButton variant="soft" color="primary" size="sm" class="w-full">
+			<UTooltip v-if="compact" :text="t('clientActions')">
+				<UButton variant="soft" color="primary" size="sm">
+					<UIcon :name="icons.client" class="w-4 h-4" />
+					<UBadge size="xs" color="primary" class="ml-0.5">{{ clientIds.length }}</UBadge>
+				</UButton>
+			</UTooltip>
+			<UButton v-else variant="soft" color="primary" size="sm" class="w-full">
 				<UIcon :name="icons.client" class="w-4 h-4" />
 				<span>{{ t('clientActions') }}</span>
 				<UBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</UBadge>
 				<UIcon :name="icons.arrowDown" class="w-3 h-3 ml-1" />
 			</UButton>
 		</UDropdownMenu>
+		<UTooltip v-else-if="compact" :text="t('clientActions')">
+			<UButton variant="ghost" color="neutral" size="sm" class="opacity-70 hover:opacity-100"
+				@click="showSelectionHint">
+				<UIcon :name="icons.client" class="w-4 h-4" />
+			</UButton>
+		</UTooltip>
 		<UButton v-else variant="ghost" color="neutral" size="sm" class="w-full opacity-70 hover:opacity-100"
 			@click="showSelectionHint">
 			<UIcon :name="icons.client" class="w-4 h-4" />
@@ -151,6 +163,7 @@
 const props = defineProps<{
 	clientIds: string[]
 	disabled?: boolean
+	compact?: boolean
 }>()
 
 const icons = useIcons()

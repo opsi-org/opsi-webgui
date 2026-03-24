@@ -226,13 +226,12 @@ const allExpanded = computed(() => {
 
 function isItemChecked(item: FlatItem): boolean {
 	if (item.isGroup) {
-		const groups = props.groupType === 'client' ? selectionStore.selectedClientGroups : selectionStore.selectedProductGroups
-		if (groups.includes(item.id)) return true
 		if (item.members.length > 0) {
 			const selected = props.groupType === 'client' ? selectionStore.selectedClients : selectionStore.selectedProducts
 			return item.members.every(m => selected.includes(m))
 		}
-		return false
+		const groups = props.groupType === 'client' ? selectionStore.selectedClientGroups : selectionStore.selectedProductGroups
+		return groups.includes(item.id)
 	}
 	const selected = props.groupType === 'client' ? selectionStore.selectedClients : selectionStore.selectedProducts
 	return selected.includes(item.id)
@@ -240,19 +239,40 @@ function isItemChecked(item: FlatItem): boolean {
 
 function handleItemClick(item: FlatItem) {
 	if (item.isGroup) {
+		const isCurrentlyChecked = isItemChecked(item)
 		if (props.groupType === 'client') {
-			selectionStore.toggleClientGroup(item.id)
-			if (item.members.length > 0) {
-				const allSel = item.members.every(m => selectionStore.selectedClients.includes(m))
-				if (allSel) selectionStore.removeClients(item.members)
-				else selectionStore.addClients(item.members, 'quickpanel')
+			if (isCurrentlyChecked) {
+				// Uncheck: remove group and its members
+				if (selectionStore.selectedClientGroups.includes(item.id)) {
+					selectionStore.toggleClientGroup(item.id)
+				}
+				if (item.members.length > 0) {
+					selectionStore.removeClients(item.members)
+				}
+			} else {
+				// Check: add group and its members
+				if (!selectionStore.selectedClientGroups.includes(item.id)) {
+					selectionStore.toggleClientGroup(item.id)
+				}
+				if (item.members.length > 0) {
+					selectionStore.addClients(item.members, 'quickpanel')
+				}
 			}
 		} else {
-			selectionStore.toggleProductGroup(item.id)
-			if (item.members.length > 0) {
-				const allSel = item.members.every(m => selectionStore.selectedProducts.includes(m))
-				if (allSel) selectionStore.removeProducts(item.members)
-				else selectionStore.addProducts(item.members, 'quickpanel')
+			if (isCurrentlyChecked) {
+				if (selectionStore.selectedProductGroups.includes(item.id)) {
+					selectionStore.toggleProductGroup(item.id)
+				}
+				if (item.members.length > 0) {
+					selectionStore.removeProducts(item.members)
+				}
+			} else {
+				if (!selectionStore.selectedProductGroups.includes(item.id)) {
+					selectionStore.toggleProductGroup(item.id)
+				}
+				if (item.members.length > 0) {
+					selectionStore.addProducts(item.members, 'quickpanel')
+				}
 			}
 		}
 	} else {

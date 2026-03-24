@@ -8,14 +8,9 @@
 						<span v-if="mbConnected" class="w-2 h-2 rounded-full bg-green-500"
 							:title="$t('messageBusConnected')" />
 						<span v-else class="w-2 h-2 rounded-full bg-red-400" :title="$t('messageBusDisconnected')" />
-						<label class="flex items-center gap-1 cursor-pointer text-xs text-(--color-text-muted)">
-							<input type="checkbox" v-model="autoRefreshEnabled"
-								class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue w-3.5 h-3.5" />
-							{{ $t('autoRefresh') }}
-						</label>
 					</div>
 					<UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
-						variant="soft" size="xs" @click="manualRefresh">
+						variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
 						{{ $t('changesDetected') }}
 					</UButton>
 					<UButton v-if="selectionStore.selectedClients.length > 0" :icon="icons.product" color="primary"
@@ -48,11 +43,11 @@
 					</template>
 					<template #cell-macAddress="{ row }">
 						<span class="font-mono text-sm text-(--color-text)">{{ (row as Client).macAddress || '-'
-							}}</span>
+						}}</span>
 					</template>
 					<template #cell-ipAddress="{ row }">
 						<span class="font-mono text-sm text-(--color-text)">{{ (row as Client).ipAddress || '-'
-							}}</span>
+						}}</span>
 					</template>
 					<template #cell-lastSeen="{ row }">
 						{{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as
@@ -172,7 +167,7 @@ const productsSortColumn = ref<string | undefined>(undefined)
 
 const sortBySelectionEnabled = computed(() => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedClients.length > 0)
 
-const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, manualRefresh } = useAutoRefreshClients(fetchClients)
+const { isConnected: mbConnected, autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
 
 const columns: DataTableColumnDef[] = [
 	{ key: 'clientId', label: String($t('clientId')), sortable: true, alwaysVisible: true },

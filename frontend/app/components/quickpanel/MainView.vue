@@ -40,34 +40,36 @@
 				<div class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted) mb-1.5">{{
 					t('quickActions') }}</div>
 				<div class="flex items-center gap-1.5">
-					<ClientsQuickActionsDropdown :client-ids="selectionStore.selectedClients" />
-					<ProductsQuickActionsDropdown :products="[]" @applied="() => { }" />
+					<ClientsQuickActionsDropdown :client-ids="selectionStore.selectedClients" compact />
+					<ProductsQuickActionsDropdown :products="[]" compact @applied="() => { }" />
 				</div>
 			</div>
 
 			<div class="border-t border-(--color-border) pt-3">
 				<div class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted) mb-1.5">{{
 					t('settings') }}</div>
-				<div class="space-y-2">
-					<!-- Auto refresh -->
-					<div class="flex items-center justify-between">
+				<div class="grid grid-cols-2 gap-2">
+					<div
+						class="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-(--color-surface) dark:bg-(--color-background)">
 						<UTooltip
-							:text="messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')">
-							<div class="flex items-center gap-2 cursor-help">
+							:text="(messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')) + ' — ' + t('autoRefreshTooltip')">
+							<div class="flex items-center gap-1.5 cursor-help">
 								<span v-if="messageBusStore.isConnected" class="w-2 h-2 rounded-full bg-green-500" />
 								<span v-else class="w-2 h-2 rounded-full bg-red-400" />
 								<span class="text-xs">{{ t('autoRefresh') }}</span>
 							</div>
 						</UTooltip>
-						<UCheckbox v-model="autoRefreshEnabled" size="sm" />
+						<UCheckbox v-model="autoRefreshEnabled" size="sm" class="ml-auto" />
 					</div>
-					<div class="flex items-center justify-between">
+					<div
+						class="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-(--color-surface) dark:bg-(--color-background)">
 						<SettingsThemeToggle />
-						<SettingsLanguageDropdown />
+						<SettingsLanguageDropdown class="ml-auto" />
 					</div>
-					<div class="flex items-center justify-between">
-						<span class="text-xs">{{ t('defaultPage') }}</span>
-						<USelect v-model="defaultPage" :items="defaultPageOptions" size="xs" class="w-30" />
+					<div
+						class="col-span-2 flex items-center gap-2 px-2 py-1.5 rounded-lg bg-(--color-surface) dark:bg-(--color-background)">
+						<span class="text-xs shrink-0">{{ t('defaultPage') }}</span>
+						<USelect v-model="defaultPage" :items="defaultPageOptions" size="xs" class="ml-auto w-40" />
 					</div>
 				</div>
 			</div>
@@ -97,7 +99,6 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { useUiStore } from '~/stores/uiStore'
 import { useUserStore } from '~/stores/userStore'
 import { useSelectionStore } from '~/stores/selectionStore'
 import { useMessageBusStore } from '~/stores/messageBusStore'
@@ -108,7 +109,6 @@ const userStore = useUserStore()
 const selectionStore = useSelectionStore()
 const messageBusStore = useMessageBusStore()
 const { callLogout } = useApiHelpers()
-const uiStore = useUiStore()
 
 type TabId = 'overview' | 'servers' | 'clients' | 'products'
 
@@ -137,21 +137,21 @@ const { t: i18nT } = useI18n()
 
 
 const DEFAULT_PAGE_KEY = 'opsi-default-page'
-const defaultPageOptions = [
-	{ value: '/dashboard', label: 'Dashboard' },
-	{ value: '/servers', label: 'Servers' },
-	{ value: '/clients', label: 'Clients' },
-	{ value: '/products', label: 'Products' },
-	{ value: '/admin/terminal', label: 'Admin - Terminal' },
-	{ value: '/admin/diagnostics', label: 'Admin - Diagnostics' },
-	{ value: '/admin/maintenance', label: 'Admin - Maintenance' },
-]
+const defaultPageOptions = computed(() => [
+	{ value: '/dashboard', label: t('dashboard') },
+	{ value: '/servers', label: t('servers') },
+	{ value: '/clients', label: t('clients') },
+	{ value: '/products', label: t('products') },
+	{ value: '/admin/terminal', label: `${t('admin')} - ${t('terminal')}` },
+	{ value: '/admin/diagnostics', label: `${t('admin')} - ${t('diagnostics')}` },
+	{ value: '/admin/maintenance', label: `${t('admin')} - ${t('maintenance')}` },
+])
 
 const defaultPage = ref('/clients')
 
 onMounted(() => {
 	const stored = getCookie(DEFAULT_PAGE_KEY)
-	if (stored && defaultPageOptions.some(o => o.value === stored)) {
+	if (stored && defaultPageOptions.value.some(o => o.value === stored)) {
 		defaultPage.value = stored
 	}
 })

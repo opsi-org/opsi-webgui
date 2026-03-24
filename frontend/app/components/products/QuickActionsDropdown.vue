@@ -1,11 +1,24 @@
 <template>
-	<UButton v-if="hasSelections" variant="soft" color="primary" size="sm" @click="dialogOpen = true">
+	<UTooltip v-if="hasSelections && compact" :text="$t('productQuickActions')">
+		<UButton variant="soft" color="primary" size="sm" @click="dialogOpen = true">
+			<UIcon :name="icons.product" class="w-4 h-4" />
+			<UBadge v-if="selectionStore.selectedProducts.length" size="xs" color="primary" class="ml-0.5">
+				{{ selectionStore.selectedProducts.length }}
+			</UBadge>
+		</UButton>
+	</UTooltip>
+	<UButton v-else-if="hasSelections" variant="soft" color="primary" size="sm" @click="dialogOpen = true">
 		<UIcon :name="icons.product" class="w-4 h-4" />
 		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
 		<UBadge v-if="selectionStore.selectedProducts.length" size="xs" color="primary" class="ml-1">
 			{{ selectionStore.selectedProducts.length }}
 		</UBadge>
 	</UButton>
+	<UTooltip v-else-if="compact" :text="$t('productQuickActions')">
+		<UButton variant="ghost" color="neutral" size="sm" class="opacity-70" disabled>
+			<UIcon :name="icons.product" class="w-4 h-4" />
+		</UButton>
+	</UTooltip>
 	<UButton v-else variant="ghost" color="neutral" size="sm" class="opacity-70" disabled>
 		<UIcon :name="icons.product" class="w-4 h-4" />
 		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
@@ -155,10 +168,12 @@ import type { ProductRow } from '~/types'
 
 interface Props {
 	products?: ProductRow[]
+	compact?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
 	products: () => [],
+	compact: false,
 })
 
 const emit = defineEmits<{

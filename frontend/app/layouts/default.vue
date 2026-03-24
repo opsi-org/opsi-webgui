@@ -27,8 +27,16 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                     }" :title="t('healthCheck')">
                     <span>Health</span>
                     <span class="tabular-nums">{{ userStore.healthCounts?.error || userStore.healthCounts?.warning || 0
-                        }}</span>
+                    }}</span>
                 </NuxtLink>
+                <UTooltip :text="messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')">
+                    <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs"
+                        :class="messageBusStore.isConnected ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'">
+                        <span class="w-2 h-2 rounded-full"
+                            :class="messageBusStore.isConnected ? 'bg-emerald-400' : 'bg-red-400'" />
+                        <span class="hidden md:inline">MB</span>
+                    </div>
+                </UTooltip>
                 <button @click="toggleQuickpanel"
                     class="p-2 rounded hover:bg-white/20 transition-colors flex items-center gap-1.5"
                     :title="t('quickPanel')">
@@ -59,32 +67,53 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
             <main
                 class="flex-1 bg-(--color-surface) dark:bg-(--color-background) flex flex-col min-w-0 overflow-hidden">
                 <LayoutsBreadCrumb />
+                <Transition name="slide-down">
+                    <div v-if="messageBusStore.changesDetected && !messageBusStore.autoRefresh"
+                        class="mx-3 md:mx-4 mt-2 flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-sm">
+                        <div class="flex items-center gap-2 text-amber-700 dark:text-amber-300">
+                            <UIcon :name="icons.info" class="w-4 h-4 shrink-0" />
+                            <span>{{ t('changesDetected') }}: <strong>{{
+                                messageBusStore.lastEventType?.replace('event:', '') || t('activity')
+                                    }}</strong></span>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <UButton size="xs" color="warning" variant="soft" @click="$router.go(0)">
+                                <UIcon :name="icons.refresh" class="w-3.5 h-3.5 mr-1" />
+                                {{ t('refresh') }}
+                            </UButton>
+                            <UButton size="xs" variant="ghost" color="neutral"
+                                @click="messageBusStore.setChangesDetected(false)">
+                                <UIcon :name="icons.close" class="w-3.5 h-3.5" />
+                            </UButton>
+                        </div>
+                    </div>
+                </Transition>
                 <div class="flex-1 p-3 md:p-4 overflow-auto min-h-0">
                     <slot />
                 </div>
             </main>
 
             <Transition name="quickpanel-slide">
-            <aside v-if="quickpanelOpen && !isMobile" :style="{ width: quickpanelWidth + 'px' }"
-                class="bg-white dark:bg-(--color-surface) border-l border-(--color-border) dark:border-(--color-border) overflow-auto shrink-0 flex flex-col relative">
-                <div class="absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group flex items-center justify-center"
-                    @mousedown="startQuickpanelResize">
-                    <div
-                        class="w-0.5 h-8 bg-gray-300 dark:bg-gray-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div class="p-4 flex-1 flex flex-col">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
-                            t('quickPanel')
-                        }}</span>
-                        <button @click="quickpanelOpen = false"
-                            class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
-                            <UIcon :name="icons.close" class="w-4 h-4" />
-                        </button>
+                <aside v-if="quickpanelOpen && !isMobile" :style="{ width: quickpanelWidth + 'px' }"
+                    class="bg-white dark:bg-(--color-surface) border-l border-(--color-border) dark:border-(--color-border) overflow-auto shrink-0 flex flex-col relative">
+                    <div class="absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group flex items-center justify-center"
+                        @mousedown="startQuickpanelResize">
+                        <div
+                            class="w-0.5 h-8 bg-gray-300 dark:bg-gray-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                    <QuickpanelMainView />
-                </div>
-            </aside>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
+                                t('quickPanel')
+                                }}</span>
+                            <button @click="quickpanelOpen = false"
+                                class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
+                                <UIcon :name="icons.close" class="w-4 h-4" />
+                            </button>
+                        </div>
+                        <QuickpanelMainView />
+                    </div>
+                </aside>
             </Transition>
         </div>
 
@@ -115,11 +144,13 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
 <script setup lang="ts">
 import { useUiStore } from '~/stores/uiStore'
 import { useUserStore } from '~/stores/userStore'
+import { useMessageBusStore } from '~/stores/messageBusStore'
 import { useSessionTimer } from '~/composables/useSessionTimer'
 
 const icons = useIcons()
 const userStore = useUserStore()
 const uiStore = useUiStore()
+const messageBusStore = useMessageBusStore()
 
 const { isWarning, formattedTime } = useSessionTimer(true)
 const $route = useRoute()
@@ -254,5 +285,16 @@ function toggleQuickpanel() {
 .slide-up-enter-to>div:last-child,
 .slide-up-leave-from>div:last-child {
     transform: translateY(0);
+}
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+    transition: all 0.2s ease;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+    opacity: 0;
+    transform: translateY(-8px);
 }
 </style>

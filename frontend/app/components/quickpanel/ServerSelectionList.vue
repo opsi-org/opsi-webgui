@@ -15,9 +15,6 @@
 							@click="searchQuery = ''" />
 					</template>
 				</UInput>
-				<UTooltip :text="t('selectAll')">
-					<UButton :icon="icons.check" size="xs" variant="ghost" color="primary" @click="selectAll" />
-				</UTooltip>
 				<UTooltip :text="`${t('clearAll')} (${selectionStore.selectedServers.length})`">
 					<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="clearSelection" />
 				</UTooltip>
@@ -40,11 +37,9 @@
 								server.serverId
 							}}</span>
 						</div>
-						<span v-if="server.description"
-							class="text-[10px] text-(--color-text-muted) truncate block pl-5">{{
-								server.description }}</span>
 					</div>
-					<UBadge v-if="server.isConfigServer" size="xs" variant="subtle" color="primary">config</UBadge>
+					<UBadge v-if="server.isConfigServer" size="xs" variant="subtle" color="primary">{{ t('configServer')
+					}}</UBadge>
 				</div>
 			</div>
 
@@ -87,10 +82,6 @@ const filteredServers = computed(() => {
 
 function toggleServer(serverId: string) {
 	selectionStore.toggleServer(serverId, 'quickpanel')
-}
-
-function selectAll() {
-	selectionStore.setServers(servers.value.map(s => s.serverId), 'quickpanel')
 }
 
 function clearSelection() {

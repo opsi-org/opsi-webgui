@@ -1,5 +1,5 @@
 import { encode, decode } from '@msgpack/msgpack'
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
 import { useMessageBusStore } from '~/stores/messageBusStore'
 import { storeToRefs } from 'pinia'
 
@@ -12,7 +12,37 @@ type Terminal = {
   rows: number
 }
 type MsgTemplate = Record<string, unknown>
+type RefreshCallback = () => void | Promise<void>
 
+// ── Event Constants ──
+const HOST_EVENTS = [
+  'event:host_created',
+  'event:host_updated',
+  'event:host_deleted',
+  'event:host_connected',
+  'event:host_disconnected',
+]
+
+const PRODUCT_EVENTS = [
+  'event:productOnClient_created',
+  'event:productOnClient_updated',
+  'event:productOnClient_deleted',
+]
+
+const ALL_DATA_EVENTS = [...HOST_EVENTS, ...PRODUCT_EVENTS]
+
+// Default channels to subscribe on connect
+const DEFAULT_CHANNELS = [
+  '@',
+  '$',
+  'event:app_state_changed',
+  'event:user_connected',
+  'event:user_disconnected',
+  ...HOST_EVENTS.map((e) => e),
+  ...PRODUCT_EVENTS.map((e) => e),
+]
+
+// ── Core MessageBus composable ──
 export function useMessageBus(
   onMessage?: MessageHandler,
   showNotifications = false,
@@ -53,27 +83,14 @@ export function useMessageBus(
       process.env.NODE_ENV === 'production'
         ? window.location.port
         : Number(($config as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT) || 4447
-    const bus = new WebSocket(`wss://${host}:${port}/messagebus/v1?`)
+    const bus = new WebSocket(`wss://${host}:${port}/messagebus/v1`)
     setBus(undefined)
     setBus(bus)
     if (!bus || !wsBus.value) throw new Error('MessageBus connection failed')
     wsBus.value.binaryType = 'arraybuffer'
     wsBus.value.onopen = () => {
-      wsSubscribeChannel([
-        '@',
-        '$',
-        'event:app_state_changed',
-        'event:user_connected',
-        'event:user_disconnected',
-        'event:host_created',
-        'event:host_updated',
-        'event:host_deleted',
-        'event:host_connected',
-        'event:host_disconnected',
-        'event:productOnClient_created',
-        'event:productOnClient_updated',
-        'event:productOnClient_deleted',
-      ])
+      store.resetRetries()
+      wsSubscribeChannel(DEFAULT_CHANNELS)
     }
     setBusMethods(wsBus.value, setLastMsg)
     await wsWait(1000)
@@ -218,3 +235,103 @@ export function useMessageBus(
     wsDisconnect,
   }
 }
+
+// ── Auto-Refresh composable (integrates with MessageBus) ──
+export function useAutoRefresh(
+  refreshCallback: RefreshCallback,
+  options: { watchEvents?: string[]; debounceMs?: number } = {}
+) {
+  const mbStore = useMessageBusStore()
+  const { mount, busMsg, wsBus } = useMessageBus(handleMessage, false, [])
+
+  const watchEvents = options.watchEvents || ALL_DATA_EVENTS
+  const debounceMs = options.debounceMs || 2000
+
+  const changesDetected = ref(false)
+  const lastChangeEvent = ref('')
+  const lastChangeDescription = ref('')
+  const isConnected = computed(() => wsBus.value?.readyState === 1)
+  const autoRefreshEnabled = computed({
+    get: () => mbStore.autoRefresh,
+    set: (val: boolean) => mbStore.setAutoRefresh(val),
+  })
+
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+  function getEventDescription(msgType: string): string {
+    const map: Record<string, string> = {
+      host_created: 'Client created',
+      host_updated: 'Client updated',
+      host_deleted: 'Client deleted',
+      host_connected: 'Client connected',
+      host_disconnected: 'Client disconnected',
+      productOnClient_created: 'Product action created',
+      productOnClient_updated: 'Product action updated',
+      productOnClient_deleted: 'Product action deleted',
+    }
+    const cleanType = msgType.replace('event:', '')
+    return map[cleanType] || cleanType
+  }
+
+  async function handleMessage(msg: unknown) {
+    if (!msg || typeof msg !== 'object') return
+    const msgType = (msg as Record<string, unknown>).type as string
+    if (!msgType) return
+
+    const matches = watchEvents.some(
+      (ev) =>
+        ev === msgType || ev === `event:${msgType}` || msgType.startsWith(ev.replace('event:', ''))
+    )
+
+    if (matches) {
+      changesDetected.value = true
+      lastChangeEvent.value = msgType
+      lastChangeDescription.value = getEventDescription(msgType)
+      mbStore.setLastEvent(msgType)
+      if (autoRefreshEnabled.value) {
+        if (debounceTimer) clearTimeout(debounceTimer)
+        debounceTimer = setTimeout(async () => {
+          await refreshCallback()
+          changesDetected.value = false
+          mbStore.setChangesDetected(false)
+        }, debounceMs)
+      }
+    }
+  }
+
+  function manualRefresh() {
+    changesDetected.value = false
+    mbStore.setChangesDetected(false)
+    refreshCallback()
+  }
+
+  function dismissChanges() {
+    changesDetected.value = false
+    mbStore.setChangesDetected(false)
+  }
+
+  onMounted(() => {
+    mount()
+  })
+
+  return {
+    isConnected,
+    autoRefreshEnabled,
+    changesDetected,
+    lastChangeEvent,
+    lastChangeDescription,
+    manualRefresh,
+    dismissChanges,
+  }
+}
+
+export function useAutoRefreshClients(cb: RefreshCallback) {
+  return useAutoRefresh(cb, { watchEvents: HOST_EVENTS })
+}
+
+export function useAutoRefreshProducts(cb: RefreshCallback) {
+  return useAutoRefresh(cb, { watchEvents: PRODUCT_EVENTS })
+}
+
+// Re-export event constants for external use
+export { HOST_EVENTS, PRODUCT_EVENTS, ALL_DATA_EVENTS }

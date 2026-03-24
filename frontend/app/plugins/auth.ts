@@ -32,6 +32,14 @@ export default defineNuxtPlugin({
       if (!userStore.isAuthenticated && to.name !== 'login') {
         return navigateTo(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
       }
+
+      // Check feature flags for restricted pages
+      if (userStore.isAuthenticated) {
+        const { isPageAccessible } = useFeatureFlags()
+        if (!isPageAccessible(to.path)) {
+          return navigateTo('/clients')
+        }
+      }
     })
 
     function getDefaultPage(): string {

@@ -15,6 +15,7 @@ export const useMessageBusStore = defineStore('messageBus', {
     autoRefresh: true,
     changesDetected: false,
     lastEventType: '',
+    lastEventDescription: '',
     lastEventTime: 0,
   }),
   getters: {
