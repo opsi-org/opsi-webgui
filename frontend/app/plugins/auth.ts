@@ -44,7 +44,7 @@ export default defineNuxtPlugin({
 
     function getDefaultPage(): string {
       if (typeof document === 'undefined') return '/clients'
-      const match = document.cookie.match(/(?:^|; )opsi-default-page=([^;]*)/)
+      const match = document.cookie.match(/(?:^|; )opsi-webgui-default-page=([^;]*)/)
       const stored = match?.[1] ? decodeURIComponent(match[1]) : null
       const validPages = [
         '/dashboard',

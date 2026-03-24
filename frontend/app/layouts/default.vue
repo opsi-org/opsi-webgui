@@ -27,7 +27,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                     }" :title="t('healthCheck')">
                     <span>Health</span>
                     <span class="tabular-nums">{{ userStore.healthCounts?.error || userStore.healthCounts?.warning || 0
-                    }}</span>
+                        }}</span>
                 </NuxtLink>
                 <UTooltip :text="messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')">
                     <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs"
@@ -105,7 +105,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                                 t('quickPanel')
-                                }}</span>
+                            }}</span>
                             <button @click="quickpanelOpen = false"
                                 class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
                                 <UIcon :name="icons.close" class="w-4 h-4" />
@@ -160,7 +160,7 @@ const defaultPage = ref('/clients')
 
 function updateDefaultPage() {
     if (typeof document === 'undefined') return
-    const match = document.cookie.match(/(?:^|; )opsi-default-page=([^;]*)/)
+    const match = document.cookie.match(/(?:^|; )opsi-webgui-default-page=([^;]*)/)
     const stored = match?.[1] ? decodeURIComponent(match[1]) : null
     const validPages = ['/dashboard', '/clients', '/products', '/servers', '/admin/terminal', '/admin/maintenance', '/admin/diagnostics']
     defaultPage.value = (stored && validPages.includes(stored)) ? stored : '/clients'

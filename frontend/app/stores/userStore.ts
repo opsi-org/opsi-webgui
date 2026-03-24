@@ -6,7 +6,7 @@ const SESSION_COOKIE_NAME = 'opsiconfd-session'
 
 export const useUserStore = defineStore('user', {
   persist: {
-    key: 'opsi-user',
+    key: 'opsi-webgui-user',
     storage: typeof window !== 'undefined' ? localStorage : undefined,
     pick: ['username', 'usernameUpdated', 'sessionExpiry', 'sessionEndTime'],
   },

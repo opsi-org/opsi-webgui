@@ -19,10 +19,10 @@ Login page - allows users to log in with username/password or SAML SSO.
           <UIcon :name="icons.serverStack" class="w-5 h-5 text-opsi-blue" />
           <div class="flex-1 min-w-0">
             <span class="text-xs text-(--color-text-muted) dark:text-(--color-text-muted) block">{{ $t('configServer')
-              }}</span>
+            }}</span>
             <span class="font-medium text-(--color-text) dark:text-(--color-text) truncate block">{{
               configServerName
-              }}</span>
+            }}</span>
           </div>
         </div>
 
@@ -90,7 +90,7 @@ async function fetchPostLoginData() {
 }
 
 function getDefaultPage(): string {
-  const match = document.cookie.match(/(?:^|; )opsi-default-page=([^;]*)/)
+  const match = document.cookie.match(/(?:^|; )opsi-webgui-default-page=([^;]*)/)
   const stored = match?.[1] ? decodeURIComponent(match[1]) : null
   const validPages = ['/dashboard', '/clients', '/products', '/servers', '/admin/terminal', '/admin/maintenance', '/admin/diagnostics']
   if (stored && validPages.includes(stored)) return stored

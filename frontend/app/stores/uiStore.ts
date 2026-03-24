@@ -75,24 +75,24 @@ export const useUiStore = defineStore('ui', {
   actions: {
     setLanguage(lang: Lang) {
       this.language = lang
-      useCookie('Language').value = lang
+      useCookie('opsi-webgui-language').value = lang
     },
     setTheme(theme: Theme) {
       this.theme = theme
       if (typeof document !== 'undefined') {
         document.documentElement.classList.toggle('dark', theme === 'dark')
-        document.cookie = `nuxt-color-mode=${theme}; path=/; max-age=31536000; SameSite=Lax`
+        document.cookie = `opsi-webgui-color-mode=${theme}; path=/; max-age=31536000; SameSite=Lax`
       }
     },
     initTheme() {
       if (this.theme && typeof document !== 'undefined') {
         document.documentElement.classList.toggle('dark', this.theme === 'dark')
-        document.cookie = `nuxt-color-mode=${this.theme}; path=/; max-age=31536000; SameSite=Lax`
+        document.cookie = `opsi-webgui-color-mode=${this.theme}; path=/; max-age=31536000; SameSite=Lax`
       }
     },
     setQuickpanelOpened(opened: boolean) {
       this.quickpanelOpened = opened
-      useCookie('QuickpanelOpened').value = opened ? 'true' : 'false'
+      useCookie('opsi-webgui-quickpanel-opened').value = opened ? 'true' : 'false'
     },
     setMenuCollapsed(collapsed: boolean) {
       this.menuCollapsed = collapsed

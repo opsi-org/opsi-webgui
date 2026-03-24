@@ -21,7 +21,7 @@ export interface DataTableSettings {
   selectionMode: 'multi' | 'single'
 }
 
-const STORAGE_KEY = 'opsi-datatable-settings'
+const STORAGE_KEY = 'opsi-webgui-datatable-settings'
 
 const defaults: Record<string, DataTableSettings> = {
   servers: {

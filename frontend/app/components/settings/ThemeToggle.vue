@@ -21,6 +21,6 @@ function toggleTheme() {
   const newMode = isDarkMode.value ? 'light' : 'dark'
   colorMode.preference = newMode
   uiStore.setTheme(newMode)
-  document.cookie = `nuxt-color-mode=${newMode}; path=/; max-age=31536000; SameSite=Lax`
+  document.cookie = `opsi-webgui-color-mode=${newMode}; path=/; max-age=31536000; SameSite=Lax`
 }
 </script>

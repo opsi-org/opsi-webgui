@@ -136,7 +136,7 @@ const { remainingSeconds, isWarning, formattedTimeText } = useSessionTimer(true)
 const { t: i18nT } = useI18n()
 
 
-const DEFAULT_PAGE_KEY = 'opsi-default-page'
+const DEFAULT_PAGE_KEY = 'opsi-webgui-default-page'
 const defaultPageOptions = computed(() => [
 	{ value: '/dashboard', label: t('dashboard') },
 	{ value: '/servers', label: t('servers') },
