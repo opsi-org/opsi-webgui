@@ -93,6 +93,7 @@ const { t: $t } = useI18n()
 const api = useApiHelpers()
 const route = useRoute()
 const router = useRouter()
+const { data: sharedDiagData, fetchDiagnostics: fetchSharedDiag, refresh: refreshSharedDiag } = useDiagnosticsData()
 
 const loading = ref(false)
 const filter = ref('')
@@ -273,10 +274,10 @@ function getStatusType(status: string): 'success' | 'warning' | 'error' | 'info'
 
 async function fetchDiagnostics() {
     loading.value = true
-    const { data, error } = await api.getDiagnosticData()
-    if (!error && data) {
-        diagnosticsData.value = data as Record<string, unknown>
-        const typedData = data as Record<string, unknown>
+    await refreshSharedDiag()
+    if (sharedDiagData.value) {
+        diagnosticsData.value = sharedDiagData.value
+        const typedData = sharedDiagData.value
         if (Array.isArray(typedData.health_check)) healthCheckData.value = typedData.health_check as HealthCheckResult[]
         if (Array.isArray(typedData.modules)) modules.value = typedData.modules as string[]
         else if (Array.isArray(typedData.available_modules)) modules.value = typedData.available_modules as string[]

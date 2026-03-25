@@ -1,4 +1,17 @@
 <template>
+	<UModal v-model:open="showLeaveWarning" :title="$t('unsavedChanges')">
+		<template #body>
+			<p class="text-sm">{{ $t('navigateAwayWarning') }}</p>
+		</template>
+		<template #footer>
+			<div class="flex gap-2 justify-end">
+				<UButton variant="outline" color="neutral" @click="showLeaveWarning = false; pendingPanelAction = null">
+					{{ $t('stayOnPage') }}</UButton>
+				<UButton color="error" @click="confirmPanelLeave">{{ $t('leaveAnyway') }}</UButton>
+			</div>
+		</template>
+	</UModal>
+
 	<LayoutsDetailPanel :showPanel="!!panelClient || !!panelType" @close="closePanel">
 		<template #main>
 			<LayoutsPageLayout show-refresh :loading="loading" @refresh="fetchClients">
@@ -116,10 +129,17 @@
 				<template v-else>{{ panelClient?.clientId }}</template>
 			</span>
 		</template>
+		<template #subtitle>
+			<template v-if="panelType === 'config'">{{ $t('configuration') }}</template>
+			<template v-else-if="panelType === 'logs'">{{ $t('logs') }}</template>
+			<template v-else-if="panelType === 'clone'">{{ $t('clone') }}</template>
+			<template v-else-if="panelType === 'products'">{{ $t('localbootProducts') }}</template>
+			<template v-else-if="panelType === 'add'">{{ $t('client') }}</template>
+		</template>
 		<template #panel>
 			<div v-if="panelClient">
-				<HostsConfigTabs v-if="panelType === 'config'" :host-id="panelClient.clientId" host-type="client"
-					:tab="panelTab" panel-mode @update:tab="panelTab = $event" />
+				<HostsConfigTabs v-if="panelType === 'config'" ref="configTabsRef" :host-id="panelClient.clientId"
+					host-type="client" :tab="panelTab" panel-mode @update:tab="panelTab = $event" />
 				<ClientsLogsView v-if="panelType === 'logs'" :client-id="panelClient.clientId" panel-mode />
 				<ClientsCloneForm v-if="panelType === 'clone'" :source-id="panelClient.clientId" panel-mode
 					@saved="fetchClients" />
@@ -158,6 +178,9 @@ const reachableLoading = ref<Record<string, boolean>>({})
 const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string } | null>(null)
 const lastPageParams = ref<PageChangeParams | null>(null)
 const productsSortColumn = ref<string | undefined>(undefined)
+const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void } | null>(null)
+const showLeaveWarning = ref(false)
+const pendingPanelAction = ref<(() => void) | null>(null)
 
 const sortBySelectionEnabled = computed(() => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedClients.length > 0)
 
@@ -212,16 +235,38 @@ function handleAddSaved() {
 }
 
 function closePanel() {
-	panelClient.value = null
-	panelType.value = null
-	const { client: _c, view: _v, panelType: _pt, ...rest } = route.query
-	router.replace({ query: rest })
+	checkUnsavedAndDo(() => {
+		panelClient.value = null
+		panelType.value = null
+		const { client: _c, view: _v, panelType: _pt, ...rest } = route.query
+		router.replace({ query: rest })
+	})
+}
+
+function checkUnsavedAndDo(action: () => void) {
+	if (configTabsRef.value?.hasAnyChanges) {
+		pendingPanelAction.value = action
+		showLeaveWarning.value = true
+		return
+	}
+	action()
+}
+
+function confirmPanelLeave() {
+	showLeaveWarning.value = false
+	configTabsRef.value?.discardAll?.()
+	if (pendingPanelAction.value) {
+		pendingPanelAction.value()
+		pendingPanelAction.value = null
+	}
 }
 
 /** Single-select row click: select this client + open config panel */
 function handleRowActivate(row: Client) {
-	selectionStore.setClients([row.clientId], 'table')
-	openPanel(row, 'config')
+	checkUnsavedAndDo(() => {
+		selectionStore.setClients([row.clientId], 'table')
+		openPanel(row, 'config')
+	})
 }
 
 function handleSelectionChange(_rows: Client[], keys: string[]) {

@@ -29,12 +29,12 @@ Multivalue with tag-like editing and add-new-value for editable params.
 						:class="open[node.key] ? 'font-medium' : ''">
 						{{ node.label }}
 					</span>
+					<span class="text-xs text-(--color-text-muted) opacity-60">{{ countLeaves(node) }}</span>
 				</div>
-				<Transition name="tree-expand">
-					<div v-if="open[node.key]" class="children-container">
-						<HostsParametersTreeForm :tree="node.children" v-bind="passProps" />
-					</div>
-				</Transition>
+				<!-- Lazy mount: only render children after first open, then use v-show to keep alive -->
+				<div v-if="mounted[node.key]" v-show="open[node.key]" class="children-container">
+					<HostsParametersTreeForm :tree="node.children" v-bind="passProps" />
+				</div>
 			</template>
 
 			<!-- Leaf param node -->
@@ -72,7 +72,7 @@ Multivalue with tag-like editing and add-new-value for editable params.
 							<SharedPropertyFormItem :model-value="currentValue(node.param)"
 								:type="node.param.type === 'BoolConfig' ? 'bool' : 'unicode'"
 								:possible-values="node.param.possibleValues || []" :multi-value="node.param.multiValue"
-								:editable="node.param.editable" :disabled="readonly"
+								:editable="node.param.editable" :disabled="false"
 								:password="isPasswordParam(node.param.configId)"
 								@update:model-value="(v: unknown) => node.param && setParam(node.param, v)" />
 							<UButton v-if="changedParams.has(node.param.configId)" size="xs" variant="ghost"
@@ -170,30 +170,29 @@ function buildTree(params: Param[]): TreeNode[] {
 }
 
 const open = ref<Record<string, boolean>>({})
+const mounted = ref<Record<string, boolean>>({})
 if (typeof window !== 'undefined') {
 	open.value['general'] = true
+	mounted.value['general'] = true
 }
 const tree = computed<TreeNode[]>(() => props.tree ?? (props.params ? buildTree(props.params) : []))
+
+function countLeaves(node: TreeNode): number {
+	if (node.param) return 1
+	if (!node.children) return 0
+	let count = 0
+	for (const child of node.children) count += countLeaves(child)
+	return count
+}
 
 function getDepth(key: string): number {
 	return key.split('.').length - 1
 }
 
 function toggle(key: string) {
-	if (props.autoOpenAll) {
-		open.value[key] = !open.value[key]
-		return
-	}
-	const depth = getDepth(key)
-	if (depth === 0) {
-		for (const k in open.value) {
-			if (getDepth(k) === 0 && k !== key) {
-				open.value[k] = false
-			}
-		}
-		open.value[key] = !open.value[key]
-	} else {
-		open.value[key] = !open.value[key]
+	open.value[key] = !open.value[key]
+	if (open.value[key] && !mounted.value[key]) {
+		mounted.value[key] = true
 	}
 }
 
@@ -204,6 +203,7 @@ watch(
 			function openAll(nodes: TreeNode[]) {
 				for (const node of nodes) {
 					open.value[node.key] = true
+					mounted.value[node.key] = true
 					if (node.children) openAll(node.children)
 				}
 			}
@@ -242,28 +242,5 @@ watch(
 	background-color: var(--color-border);
 	opacity: 0.4;
 	pointer-events: none;
-}
-
-/* Expand/collapse animation */
-.tree-expand-enter-active {
-	transition: all 0.2s ease-out;
-	overflow: hidden;
-}
-
-.tree-expand-leave-active {
-	transition: all 0.15s ease-in;
-	overflow: hidden;
-}
-
-.tree-expand-enter-from,
-.tree-expand-leave-to {
-	opacity: 0;
-	max-height: 0;
-}
-
-.tree-expand-enter-to,
-.tree-expand-leave-from {
-	opacity: 1;
-	max-height: 5000px;
 }
 </style>

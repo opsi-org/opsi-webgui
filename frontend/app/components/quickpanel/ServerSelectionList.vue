@@ -16,7 +16,7 @@
 					</template>
 				</UInput>
 				<UTooltip :text="`${t('clearAll')} (${selectionStore.selectedServers.length})`">
-					<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="clearSelection" />
+					<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral" @click="clearSelection" />
 				</UTooltip>
 			</div>
 

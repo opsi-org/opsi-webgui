@@ -186,7 +186,7 @@
                     <p class="text-[--color-text-muted]">{{ $t('opsiModules') }}</p>
                     <div v-if="obsoleteModulesCount > 0" class="mt-2 gap-3 text-sm">
                         <UTooltip :text="obsoleteModulesTooltip">
-                            <span class="font-medium text-amber-600 dark:text-amber-400 cursor-help">{{
+                            <span class=" text-amber-600 dark:text-amber-400 cursor-help">{{
                                 obsoleteModulesCount }}</span>
                             <span class="text-[--color-text-muted] ml-1 text-xs"> {{ $t('obsolete') }}</span>
                         </UTooltip>
@@ -225,10 +225,11 @@ const { t: $t } = useI18n()
 const userStore = useUserStore()
 const colorMode = useColorMode()
 const { getDiagnosticData, getUserConfiguration } = useApiHelpers()
+const { data: sharedDiagData, healthCounts: sharedHealthCounts, fetchDiagnostics: fetchSharedDiag, refresh: refreshDiag } = useDiagnosticsData()
 
 const loading = ref(false)
 
-const diagnosticData = ref<Record<string, unknown> | null>(null)
+const diagnosticData = computed(() => sharedDiagData.value)
 
 const userConfigResponse = ref<{ user: string } | null>(null)
 const userConfigData = ref<{
@@ -239,7 +240,7 @@ const userConfigData = ref<{
     product_group_access: boolean
     client_creation: boolean
 } | null>(null)
-const healthCounts = ref<{ ok: number; warning: number; error: number } | null>(null)
+const healthCounts = sharedHealthCounts
 
 const opsiLogoSrc = computed(() => colorMode.preference === 'dark' ? opsiLogoDark : opsiLogoLight)
 
@@ -359,22 +360,7 @@ const failedClients = computed(() => {
 })
 
 async function fetchDiagnosticData() {
-    const { data, error } = await getDiagnosticData()
-    if (!error && data) {
-        diagnosticData.value = data as Record<string, unknown>
-        // Extract health counts from health_check array
-        const healthChecks = (data as Record<string, unknown>).health_check as Array<Record<string, unknown>> | undefined
-        if (healthChecks) {
-            let ok = 0, warning = 0, errorCount = 0
-            for (const check of healthChecks) {
-                const status = check.check_status as string
-                if (status === 'ok') ok++
-                else if (status === 'warning') warning++
-                else if (status === 'error') errorCount++
-            }
-            healthCounts.value = { ok, warning, error: errorCount }
-        }
-    }
+    await refreshDiag()
 }
 
 async function fetchUserConfig() {

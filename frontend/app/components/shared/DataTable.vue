@@ -116,7 +116,7 @@
     </div>
 
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
-      <div ref="tableContainer" class="flex-1 overflow-auto transition-all duration-200"
+      <div ref="tableContainer" class="flex-1 overflow-x-auto overflow-y-auto transition-all duration-200"
         :style="{ maxHeight: displayMode === 'pagination' ? `calc(${maxHeight} - 48px)` : maxHeight }"
         @scroll="handleScroll">
         <div v-if="loading && rows.length === 0"

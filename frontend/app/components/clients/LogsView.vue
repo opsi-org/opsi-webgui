@@ -105,7 +105,9 @@ Can be used both in standalone pages and detail panels.
 					<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-opsi-blue" />
 					<p class="text-sm">{{ $t('loading') }}…</p>
 				</div>
-				<UAlert v-else-if="error" color="error" :title="String($t('error'))" :description="error" class="m-3" />
+				<UAlert v-else-if="error" color="error" :title="String($t('error'))" :description="error" class="m-3"
+					:close-button="{ icon: 'i-heroicons-x-mark', color: 'error', variant: 'link' }"
+					@close="error = null" />
 				<div v-else-if="logContent.length === 0"
 					class="flex flex-col items-center justify-center h-full gap-3 text-center bg-[--color-surface] rounded-xl">
 					<UIcon :name="icons.document" class="w-12 h-12 opacity-40 text-muted" />

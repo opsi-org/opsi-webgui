@@ -15,7 +15,7 @@
 
 		<div v-show="activeTab === 'properties'"
 			:class="['flex flex-col overflow-auto', panelMode ? '' : 'min-h-0 flex-1']">
-			<ProductsPropertiesForm :properties="editableProperties" :loading="loadingProps" :readonly="readonly"
+			<ProductsPropertiesForm :properties="editableProperties" :loading="loadingProps"
 				:external-filter="filterQuery" @update:property="setProperty"
 				@discard:property="discardSingleProperty" />
 		</div>
@@ -39,15 +39,12 @@ import type {
 
 interface Props {
 	productId: string | null
-	readonly?: boolean
 	tab?: string
 	panelMode?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	productId: null,
-	readonly: false,
-	tab: 'properties',
 	panelMode: false,
 })
 

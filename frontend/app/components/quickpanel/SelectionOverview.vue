@@ -8,7 +8,7 @@
 			<div class="flex items-center justify-between mb-2 shrink-0">
 				<span class="text-xs text-(--color-text-muted)">{{ totalCount }} {{ t('total') }}</span>
 				<UTooltip :text="t('clearAllSelections')">
-					<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="clearAll" />
+					<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral" @click="clearAll" />
 				</UTooltip>
 			</div>
 
@@ -22,7 +22,7 @@
 							}}</UBadge>
 						</div>
 						<UTooltip :text="t('clearAll')">
-							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral"
 								@click="clearServers" />
 						</UTooltip>
 					</div>
@@ -30,7 +30,7 @@
 						<div v-for="server in selectionStore.selectedServers" :key="server"
 							class="flex items-center justify-between px-5 rounded text-xs  group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ server }}</span>
-							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
 								@click="removeServer(server)" />
 						</div>
@@ -46,7 +46,7 @@
 							}}</UBadge>
 						</div>
 						<UTooltip :text="t('clearAll')">
-							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral"
 								@click="selectionStore.clearClients()" />
 						</UTooltip>
 					</div>
@@ -54,7 +54,7 @@
 						<div v-for="client in selectionStore.selectedClients" :key="client"
 							class="flex items-center justify-between px-5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ client }}</span>
-							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
 								@click="selectionStore.toggleClient(client)" />
 						</div>
@@ -70,7 +70,7 @@
 							}}</UBadge>
 						</div>
 						<UTooltip :text="t('clearAll')">
-							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral"
 								@click="selectionStore.clearProducts()" />
 						</UTooltip>
 					</div>
@@ -78,7 +78,7 @@
 						<div v-for="product in selectionStore.selectedProducts" :key="product"
 							class="flex items-center justify-between px-5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ product }}</span>
-							<UButton :icon="icons.clear" size="xs" variant="ghost" color="error"
+							<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
 								@click="selectionStore.toggleProduct(product)" />
 						</div>

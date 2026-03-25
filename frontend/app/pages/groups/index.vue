@@ -92,8 +92,8 @@
                                 :title="$t('addSubgroup')" @click="openCreateModal(selectedGroup.id)" />
                             <UButton :icon="icons.edit" variant="ghost" color="neutral" size="xs" :title="$t('edit')"
                                 @click="openEditModal(selectedGroup)" />
-                            <UButton :icon="icons.delete" variant="ghost" size="xs" color="error" :title="$t('delete')"
-                                @click="confirmDeleteGroup(selectedGroup)" />
+                            <UButton :icon="icons.delete" variant="ghost" size="xs" color="neutral"
+                                :title="$t('delete')" @click="confirmDeleteGroup(selectedGroup)" />
                         </div>
                         <div class="flex gap-1" v-else-if="selectedGroup.isSpecial && activeGroupType === 'clients'">
                             <UButton :icon="icons.add" variant="ghost" color="neutral" size="xs"
@@ -108,7 +108,7 @@
                                 <h4 class="text-sm font-medium text-(--color-text)">
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ selectedGroup.members.length
-                                    }})</span>
+                                        }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -117,7 +117,7 @@
                                         {{ $t('remove') }} ({{ selectedMembers.length }})
                                     </UButton>
                                     <UButton v-if="selectedGroup.members.length > 0 && !selectedGroup.isSpecial"
-                                        :icon="icons.delete" size="xs" variant="ghost" color="error"
+                                        :icon="icons.delete" size="xs" variant="ghost" color="neutral"
                                         :title="$t('removeAllMembers')" @click="confirmRemoveAllMembers">
                                         {{ $t('removeAll') }}
                                     </UButton>
@@ -152,7 +152,7 @@
                                         class="w-4 h-4 text-(--color-text-muted) shrink-0" />
                                     <span class="flex-1 truncate text-(--color-text)">{{ member }}</span>
                                     <UButton v-if="!selectedGroup.isSpecial" :icon="icons.delete" size="xs"
-                                        variant="ghost" color="error"
+                                        variant="ghost" color="neutral" :title="$t('remove')"
                                         class="opacity-0 group-hover/member:opacity-100 transition-opacity shrink-0"
                                         @click="removeSingleMember(member)" />
                                 </div>
@@ -281,9 +281,9 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                            }}
+                                }}
                             </UButton>
-                            <UButton color="error" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
+                            <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
                         </div>
                     </template>

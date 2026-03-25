@@ -136,7 +136,10 @@
 				{{ configProduct?.productId }}
 			</span>
 		</template>
-		<template #subtitle>{{ configProduct?.description }}</template>
+		<template #subtitle>
+			{{ configProduct?.description }}
+			<span v-if="configProduct" class="text-xs opacity-75 ml-1">— {{ $t('configuration') }}</span>
+		</template>
 
 		<template #panelActions>
 			<ProductsUnsavedChangesModal :config-ref="panelPropertyConfigRef"
@@ -325,8 +328,10 @@ function closePanel() {
 function doClosePanel() {
 	showConfigPanel.value = false
 	configProduct.value = null
-	const { product: _p, view: _v, ...rest } = route.query
-	router.replace({ query: rest })
+	nextTick(() => {
+		const { product: _p, view: _v, ...rest } = route.query
+		router.replace({ query: rest })
+	})
 }
 
 function handleRowActivate(row: ProductRow) {
@@ -496,6 +501,11 @@ async function fetchProducts(params?: PageChangeParams) {
 watch(() => props.productType, () => { pendingActionRequests.value.clear(); fetchProducts() })
 
 watch(() => route.query.product, (newProductId, oldProductId) => {
+	if (!newProductId && showConfigPanel.value) {
+		showConfigPanel.value = false
+		configProduct.value = null
+		return
+	}
 	if (!newProductId) return
 	if (newProductId === oldProductId) return
 	if (!showConfigPanel.value) return

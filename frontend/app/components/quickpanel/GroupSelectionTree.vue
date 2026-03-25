@@ -12,14 +12,14 @@
 			<UButton :icon="allExpanded ? icons.collapse : icons.expand" size="xs" variant="ghost" color="neutral"
 				:title="allExpanded ? t('collapseAll') : t('expandAll')" @click="toggleExpandAll" />
 			<UTooltip v-if="selectedCount > 0" :text="`${t('clearAll')} (${selectedCount})`">
-				<UButton :icon="icons.clear" size="xs" variant="ghost" color="error" @click="clearAll" />
+				<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral" @click="clearAll" />
 			</UTooltip>
 		</div>
 
 		<div v-if="loading && !hasData" class="flex items-center justify-center py-8">
 			<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
 		</div>
-		<div v-else-if="errorMsg" class="text-xs text-red-500 py-2">{{ errorMsg }}</div>
+		<div v-else-if="errorMsg" class="text-xs text-(--color-error) py-2">{{ errorMsg }}</div>
 
 		<div v-else class="flex-1 overflow-y-auto min-h-0">
 			<template v-if="groupType === 'client'">

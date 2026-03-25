@@ -14,13 +14,14 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 
 	<div :class="['flex flex-col', panelMode ? 'h-full' : 'h-full min-h-0']">
 		<div class="shrink-0 pb-3">
-			<div class="flex flex-wrap items-center justify-between gap-3">
+			<div class="flex flex-wrap items-center gap-3">
 				<div v-if="showSourceSelector" class="flex items-center gap-2">
 					<slot name="sourceSelector">
 						<HostsSelector v-model="sourceSelectorModel" type="client"
 							:placeholder="sourceSelectorPlaceholder" :allow-all="false" allow-clear />
 					</slot>
 				</div>
+				<div class="flex-1" />
 				<div class="flex flex-wrap items-center gap-2">
 					<UTooltip :text="$t('cloneClient')">
 						<UButton v-if="resolvedSourceId" color="success" :loading="loading" @click="cloneClient">

@@ -54,8 +54,15 @@
 						<UTooltip
 							:text="(messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')) + ' — ' + t('autoRefreshTooltip')">
 							<div class="flex items-center gap-1.5 cursor-help">
-								<span v-if="messageBusStore.isConnected" class="w-2 h-2 rounded-full bg-green-500" />
-								<span v-else class="w-2 h-2 rounded-full bg-red-400" />
+								<span class="relative inline-flex w-4 h-4 items-center justify-center">
+									<img src="~/assets/images/opsi_logo_bee_light.svg" alt="opsi"
+										class="w-3.5 h-3.5 dark:hidden" />
+									<img src="~/assets/images/opsi_logo_bee_dark.svg" alt="opsi"
+										class="w-3.5 h-3.5 hidden dark:block" />
+									<span
+										class="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 rounded-full border border-white dark:border-gray-900"
+										:class="messageBusStore.isConnected ? 'bg-green-500' : 'bg-red-400'" />
+								</span>
 								<span class="text-xs">{{ t('autoRefresh') }}</span>
 							</div>
 						</UTooltip>
@@ -86,7 +93,7 @@
 						<span>{{ formattedTimeText }}</span>
 					</div>
 				</div>
-				<UButton color="error" variant="soft" size="sm" class="w-full" @click="handleLogout">
+				<UButton color="neutral" variant="soft" size="sm" class="w-full" @click="handleLogout">
 					<UIcon :name="icons.logout" class="w-4 h-4 mr-1" />
 					{{ t('logout') }}
 				</UButton>

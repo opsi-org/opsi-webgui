@@ -13,11 +13,12 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
             </div>
             <div class="flex-1" />
             <nav class="flex items-center gap-0.5 md:gap-1">
-                <div v-if="isWarning"
-                    class="flex items-center gap-1 text-xs bg-amber-500/20 px-2 py-1 rounded animate-pulse"
+                <div v-if="formattedTime && formattedTime !== '0:00'"
+                    class="flex items-center gap-1 text-xs px-2 py-1 rounded"
+                    :class="isWarning ? 'bg-amber-500/20 animate-pulse font-semibold' : 'bg-white/10'"
                     :title="t('sessionExpiresIn')">
                     <UIcon :name="icons.clock" class="w-4 h-4" />
-                    <span class="font-medium">{{ formattedTime }}</span>
+                    <span class="font-medium tabular-nums">{{ formattedTime }}</span>
                 </div>
                 <NuxtLink v-if="userStore.healthWorstCase && userStore.healthWorstCase !== 'ok'" to="/admin/diagnostics"
                     class="px-2.5 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5"
@@ -30,7 +31,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                     }}</span>
                 </NuxtLink>
                 <UTooltip :text="messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')">
-                    <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs cursor-help"
+                    <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs"
                         :class="messageBusStore.isConnected ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'">
                         <span class="relative inline-flex w-5 h-5 items-center justify-center">
                             <img src="~/assets/images/opsi_logo_bee_dark.svg" alt="opsi" class="w-4 h-4" />

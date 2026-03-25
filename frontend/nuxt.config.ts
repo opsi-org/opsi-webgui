@@ -113,7 +113,7 @@ export default defineNuxtConfig({
     },
     detectBrowserLanguage: {
       useCookie: true,
-      cookieKey: 'user-locale',
+      cookieKey: 'opsi-webgui-user-locale',
       fallbackLocale: 'de',
     },
   },

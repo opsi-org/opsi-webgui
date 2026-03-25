@@ -107,9 +107,17 @@ Row-level client actions dropdown for the clients table.
 				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
 					variant="subtle" class="mb-3" :close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
 					@close="actionError = null" />
-				<p class="text-sm text-(--color-text-muted)">
-					{{ $t('confirmRebootClient') }}
-				</p>
+				<div
+					class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 mb-3">
+					<div class="flex items-start gap-2">
+						<UIcon :name="icons.warning"
+							class="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+						<p class="text-sm text-amber-800 dark:text-amber-200">
+							{{ $t('confirmRebootClient') }}
+						</p>
+					</div>
+				</div>
+				<p class="text-xs text-(--color-text-muted) font-mono">{{ clientId }}</p>
 				<template #footer>
 					<div class="flex justify-end gap-2">
 						<UButton variant="soft" color="neutral" @click="showRebootPopover = false">
@@ -140,9 +148,17 @@ Row-level client actions dropdown for the clients table.
 				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
 					variant="subtle" class="mb-3" :close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
 					@close="actionError = null" />
-				<p class="text-sm text-(--color-text-muted)">
-					{{ $t('confirmShutdownClient') }}
-				</p>
+				<div
+					class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 mb-3">
+					<div class="flex items-start gap-2">
+						<UIcon :name="icons.warning"
+							class="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+						<p class="text-sm text-amber-800 dark:text-amber-200">
+							{{ $t('confirmShutdownClient') }}
+						</p>
+					</div>
+				</div>
+				<p class="text-xs text-(--color-text-muted) font-mono">{{ clientId }}</p>
 				<template #footer>
 					<div class="flex justify-end gap-2">
 						<UButton variant="soft" color="neutral" @click="showShutdownPopover = false">
@@ -269,12 +285,20 @@ Row-level client actions dropdown for the clients table.
 				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
 					variant="subtle" class="mb-3" :close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
 					@close="actionError = null" />
-				<p class="text-sm mb-2">
-					{{ $t('confirmDeleteClient', { clientId }) }}
-				</p>
-				<p class="text-xs text-(--color-text-muted)">
-					{{ $t('deleteClientWarning') }}
-				</p>
+				<div class="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-200 dark:border-red-800 mb-3">
+					<div class="flex items-start gap-2">
+						<UIcon :name="icons.warning" class="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+						<div>
+							<p class="text-sm text-red-800 dark:text-red-200 font-medium">
+								{{ $t('confirmDeleteClient', { clientId }) }}
+							</p>
+							<p class="text-xs text-red-700 dark:text-red-300 mt-1">
+								{{ $t('deleteClientWarning') }}
+							</p>
+						</div>
+					</div>
+				</div>
+				<p class="text-xs text-(--color-text-muted) font-mono">{{ clientId }}</p>
 				<template #footer>
 					<div class="flex justify-end gap-2">
 						<UButton variant="soft" color="neutral" @click="showDeleteModal = false" :disabled="executing">

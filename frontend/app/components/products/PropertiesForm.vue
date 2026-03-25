@@ -35,8 +35,8 @@
 							<SharedPropertyFormItem :model-value="prop._value"
 								:type="prop.type === 'BoolProductProperty' ? 'bool' : 'unicode'"
 								:possible-values="prop.allValues || []" :multi-value="prop.multiValue"
-								:editable="prop.editable" :disabled="readonly"
-								:password="isPasswordProperty(prop.propertyId)" :mixed="isMixedValue(prop)"
+								:editable="prop.editable" :password="isPasswordProperty(prop.propertyId)"
+								:mixed="isMixedValue(prop)"
 								@update:model-value="(v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)" />
 
 							<UButton v-if="isPropertyChanged(prop.propertyId)" size="xs" variant="ghost" color="neutral"
@@ -56,13 +56,11 @@ import type { EditableProductProperty, EditablePropertyValue } from '~/types'
 interface Props {
 	properties: EditableProductProperty[]
 	loading?: boolean
-	readonly?: boolean
 	externalFilter?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	loading: false,
-	readonly: false,
 	externalFilter: '',
 })
 

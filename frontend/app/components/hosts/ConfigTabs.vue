@@ -76,7 +76,8 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 				</div>
 				<div v-if="newConfig.type === 'BoolConfig'">
 					<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
-					<USelect v-model="newConfig.boolDefault" :items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
+					<USelect v-model="newConfig.boolDefault"
+						:items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
 				</div>
 				<UAlert v-if="createConfigError" color="error" :title="$t('error')" :description="createConfigError"
 					variant="subtle" />
@@ -389,12 +390,12 @@ const showParamChanges = ref(false)
 const showAttrChanges = ref(false)
 
 const tabDefs = computed(() => [
-	{ label: props.hostId ? String($t('parameters')) : String($t('parameters(default)')), value: 'parameters' },
+	{ label: (!props.hostId && props.hostType === 'server') ? String($t('parameters(default)')) : String($t('parameters')), value: 'parameters' },
 	{ label: String($t('attributes')), value: 'attributes' },
 ])
 const loadingParams = ref(false)
 const savingParams = ref(false)
-const rawParams = ref<Record<string, Param[]>>({})
+const rawParams = shallowRef<Record<string, Param[]>>({})
 const changedParams = ref(new Map<string, unknown>())
 const _internalSearch = ref('')
 const paramSearch = computed({

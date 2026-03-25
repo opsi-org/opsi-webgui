@@ -1,18 +1,29 @@
 SharedUnsavedChangesModal — Reusable unsaved-changes button + popup.
 <template>
 	<template v-if="configRef?.hasAnyChanges">
-		<UButton :size="size" color="warning" variant="outline" @click="open = true">
-			{{ $t('unsavedChanges') }}
-			<UBadge :size="size === 'xs' ? 'xs' : 'xs'" color="warning" class="ml-1">
-				{{ configRef?.changedCount }}
-			</UBadge>
-		</UButton>
-		<template v-if="showSaveDiscard">
-			<UTooltip :text="$t('saveChanges')">
-				<UButton :size="size" color="success" icon="i-lucide-check" :loading="configRef?.isSaving"
-					@click="$emit('saveAll')" />
-			</UTooltip>
-		</template>
+		<div class="inline-flex rounded-md shadow-sm">
+			<template v-if="showSaveDiscard">
+				<UTooltip :text="$t('save')">
+					<UButton :size="size" color="success" variant="solid" class="rounded-r-none"
+						:loading="configRef?.isSaving" @click="$emit('saveAll')">
+						<UIcon name="i-lucide-check" class="w-3.5 h-3.5" />
+					</UButton>
+				</UTooltip>
+				<UTooltip :text="$t('discard')">
+					<UButton :size="size" color="error" variant="outline" class="rounded-none border-l-0"
+						@click="$emit('discardAll')">
+						<UIcon name="i-lucide-x" class="w-3.5 h-3.5" />
+					</UButton>
+				</UTooltip>
+			</template>
+			<UButton :size="size" color="warning" variant="outline"
+				:class="showSaveDiscard ? 'rounded-l-none border-l-0' : ''" @click="open = true">
+				{{ $t('unsavedChanges') }}
+				<UBadge size="xs" color="warning" class="ml-1">
+					{{ configRef?.changedCount }}
+				</UBadge>
+			</UButton>
+		</div>
 	</template>
 
 	<UModal v-model:open="open" :title="$t('unsavedChanges')" :ui="{ content: 'max-w-2xl' }">

@@ -44,7 +44,7 @@
 					@click="$emit('create-subgroup', group.id)" />
 				<UButton :icon="icons.edit" size="xs" variant="ghost" color="neutral" :title="$t('edit')"
 					@click="$emit('edit', group)" />
-				<UButton :icon="icons.delete" size="xs" variant="ghost" color="error" :title="$t('delete')"
+				<UButton :icon="icons.delete" size="xs" variant="ghost" color="neutral" :title="$t('delete')"
 					@click="$emit('delete', group)" />
 			</div>
 		</div>

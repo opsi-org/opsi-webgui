@@ -38,11 +38,30 @@
                 {{ panelServer?.depotId }}
             </span>
         </template>
+        <template #subtitle>{{ $t('configuration') }}</template>
         <template #panel>
             <div v-if="panelServer">
-                <HostsConfigTabs v-if="panelType === 'config'" :host-id="panelServer.depotId" host-type="server"
-                    :tab="panelTab" panel-mode @update:tab="panelTab = $event" />
+                <HostsConfigTabs v-if="panelType === 'config'" ref="configTabsRef" :host-id="panelServer.depotId"
+                    host-type="server" :tab="panelTab" panel-mode @update:tab="panelTab = $event" />
             </div>
+
+            <UModal v-model:open="showLeaveWarning">
+                <template #content>
+                    <UCard>
+                        <template #header>
+                            <span class="font-semibold">{{ $t('unsavedChanges') }}</span>
+                        </template>
+                        <p>{{ $t('unsavedChangesDesc') }}</p>
+                        <template #footer>
+                            <div class="flex justify-end gap-2">
+                                <UButton color="neutral" variant="outline" @click="showLeaveWarning = false">{{
+                                    $t('stay') }}</UButton>
+                                <UButton color="warning" @click="confirmPanelLeave">{{ $t('leaveAnyway') }}</UButton>
+                            </div>
+                        </template>
+                    </UCard>
+                </template>
+            </UModal>
         </template>
     </LayoutsDetailPanel>
 </template>
@@ -71,6 +90,9 @@ const panelServer = ref<Server | null>(null)
 const panelType = ref<'config' | null>(null)
 const panelTab = ref('parameters')
 const lastPageParams = ref<PageChangeParams | null>(null)
+const configTabsRef = ref<any>(null)
+const showLeaveWarning = ref(false)
+const pendingPanelAction = ref<(() => void) | null>(null)
 
 const columns: DataTableColumnDef[] = [
     { key: 'depotId', label: String($t('serverId')), sortable: true, alwaysVisible: true },
@@ -85,16 +107,38 @@ function openConfig(row: Server) {
     router.replace({ query: { ...route.query, server: row.depotId, view: 'panel' } })
 }
 
-function closePanel() {
+function doClosePanel() {
     panelServer.value = null
     panelType.value = null
     const { server: _s, view: _v, ...rest } = route.query
     router.replace({ query: rest })
 }
 
+function closePanel() {
+    checkUnsavedAndDo(() => doClosePanel())
+}
+
+function checkUnsavedAndDo(action: () => void) {
+    if (configTabsRef.value?.hasAnyChanges) {
+        pendingPanelAction.value = action
+        showLeaveWarning.value = true
+        return
+    }
+    action()
+}
+
+function confirmPanelLeave() {
+    configTabsRef.value?.discardAll?.()
+    showLeaveWarning.value = false
+    if (pendingPanelAction.value) {
+        pendingPanelAction.value()
+        pendingPanelAction.value = null
+    }
+}
+
 /** Single-select row click: open config panel but keep config server selected */
 function handleRowActivate(row: Server) {
-    openConfig(row)
+    checkUnsavedAndDo(() => openConfig(row))
 }
 
 function handleSelectionChange(_rows: Server[], keys: string[]) {
