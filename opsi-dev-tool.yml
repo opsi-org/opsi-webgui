@@ -5,6 +5,8 @@ package:
   name: opsi-webgui
   postinst_script:
     - echo "OPSI webgui folder '/usr/lib/opsiconfd/addons/webgui'"
+    - '[ -e /var/lib/opsiconfd/addons/__webgui ] && rm -rf /var/lib/opsiconfd/addons/__webgui || true'
+    - '[ -e /var/lib/opsiconfd/addons/__webgui-dev ] && rm -rf /var/lib/opsiconfd/addons/__webgui-dev || true'
     - '[ -e /var/lib/opsiconfd/addons/webgui ] && rm -r /var/lib/opsiconfd/addons/webgui'
     - exit 0
   source_script: |
@@ -19,11 +21,11 @@ project:
     - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
   name: opsi-webgui
-  version: "4.3.99.3"
+  version: '4.3.99.3'
   version_files:
     #opsi-dev-tool.yml: pull-binaries[0].version
-    frontend/package.json: "$.version"
-    backend/webgui/python/const.py: "ADDON_VERSION"
+    frontend/package.json: '$.version'
+    backend/webgui/python/const.py: 'ADDON_VERSION'
 #pull-binaries:
 #  - architecture: x64
 #    branch: development
