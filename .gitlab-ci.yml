@@ -23,6 +23,10 @@ stages: [setup, validate, build, release]
   rules:
     - if: $CI_COMMIT_TAG
 
+.node:
+  before_script:
+    - corepack enable pnpm
+
 .install-devtools: &install-devtools |
   apt update && apt -y install curl zip wget
   curl -sS "${OPSIDEVTOOLS_INSTALLER_URL_LINUX_X64}" | sh
@@ -30,8 +34,8 @@ stages: [setup, validate, build, release]
 # SETUP
 setup:deps:
   stage: setup
+  extends: .node
   script:
-    - corepack enable pnpm
     - cd frontend && pnpm install --frozen-lockfile && pnpm run postinstall
   artifacts:
     paths: [frontend/node_modules/, frontend/.nuxt/]
@@ -78,11 +82,13 @@ setup:versions:
 # VALIDATE
 validate:lint:
   stage: validate
+  extends: .node
   needs: [setup:deps]
   script: cd frontend && pnpm run lint
 
 validate:types:
   stage: validate
+  extends: .node
   needs: [setup:deps]
   script: cd frontend && pnpm run typecheck
 
@@ -94,6 +100,7 @@ validate:types:
 
 validate:security:
   stage: validate
+  extends: .node
   needs: [setup:deps]
   script:
     - cd frontend
@@ -110,6 +117,7 @@ validate:security:
 # BUILD
 build:frontend:
   stage: build
+  extends: .node
   needs: [setup:deps, validate:lint, validate:types, { job: setup:i18n, optional: true }]
   script: cd frontend && pnpm run build
   artifacts:
@@ -134,7 +142,7 @@ build:package:
 # RELEASE (tags only)
 release:sbom:
   stage: release
-  extends: .only-tags
+  extends: [.node, .only-tags]
   needs: [setup:deps]
   script: cd frontend && pnpm run sbom && mv ../sbom.json .
   artifacts:
