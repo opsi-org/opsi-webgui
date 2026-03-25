@@ -57,7 +57,7 @@ setup:changelog:
   stage: setup
   extends: .pybuilder
   script:
-    - opsi-dev-tool -l 5 --changelog-format=md changelog from-git output
+    - opsi-dev-cli -l 5 changelog from-git output
     - chmod 666 output/*
   artifacts:
     paths: [output/]
