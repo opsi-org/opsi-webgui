@@ -22,22 +22,17 @@ Multivalue with tag-like editing and add-new-value for editable params.
 						<UIcon name="i-heroicons-chevron-right" class="w-3.5 h-3.5 transition-transform duration-200"
 							:class="{ 'rotate-90': open[node.key] }" />
 					</button>
-					<UIcon name="i-lucide-folder" class="w-4 h-4 shrink-0 transition-colors" :class="open[node.key]
-						? 'text-(--color-primary)'
-						: 'text-(--color-text-muted)'" />
 					<span class="text-sm font-mono flex-1 truncate transition-colors"
 						:class="open[node.key] ? 'font-medium' : ''">
 						{{ node.label }}
 					</span>
 					<span class="text-xs text-(--color-text-muted) opacity-60">{{ countLeaves(node) }}</span>
 				</div>
-				<!-- Lazy mount: only render children after first open, then use v-show to keep alive -->
 				<div v-if="mounted[node.key]" v-show="open[node.key]" class="children-container">
 					<HostsParametersTreeForm :tree="node.children" v-bind="passProps" />
 				</div>
 			</template>
 
-			<!-- Leaf param node -->
 			<template v-else-if="node.param">
 				<div :class="[
 					'flex items-start gap-1.5 px-2 py-1.5 rounded transition-colors',
@@ -45,9 +40,7 @@ Multivalue with tag-like editing and add-new-value for editable params.
 				]" :style="{ paddingLeft: `${8 + getDepth(node.key) * 16}px` }">
 					<span v-for="i in getDepth(node.key)" :key="i" class="tree-guide-line"
 						:style="{ left: `${8 + (i - 1) * 16}px` }" />
-					<span class="w-5 flex items-center justify-center shrink-0 mt-1">
-						<span class="w-1.5 h-1.5 rounded-full bg-(--color-text-muted)/40" />
-					</span>
+					<span class="w-5 flex items-center justify-center shrink-0 mt-1" />
 					<div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
 						<div class="min-w-0 md:w-2/5 flex items-center gap-1">
 							<span class="font-mono text-sm text-(--color-text-secondary) truncate"
@@ -58,11 +51,6 @@ Multivalue with tag-like editing and add-new-value for editable params.
 								<UButton size="xs" icon="i-lucide-info" variant="ghost" color="neutral"
 									class="shrink-0 opacity-60 hover:opacity-100" tabindex="-1" />
 							</UTooltip>
-							<span v-if="!node.param.editable"
-								class="inline-flex items-center text-[10px] text-(--color-text-muted) ml-0.5 opacity-60"
-								:title="$t('readOnlyParam')">
-								<UIcon name="i-heroicons-lock-closed" class="w-3 h-3" />
-							</span>
 							<span v-if="changedParams.has(node.param.configId)"
 								class="inline-flex items-center text-[10px] text-yellow-700 dark:text-yellow-200 ml-0.5">
 								<UIcon name="i-heroicons-pencil-square" class="w-3 h-3" />
@@ -93,11 +81,14 @@ interface Param {
 	configId: string
 	type: 'BoolConfig' | 'UnicodeConfig'
 	description?: string
-	defaultValues: unknown[]
+	defaultValues?: unknown[]
 	possibleValues: unknown[]
 	multiValue: boolean
 	editable: boolean
-	objects: Record<string, unknown>
+	objects?: Record<string, unknown>
+	value?: unknown
+	newValue?: string
+	newValues?: unknown[]
 }
 interface TreeNode {
 	key: string

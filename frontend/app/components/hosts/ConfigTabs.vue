@@ -200,11 +200,14 @@ interface Param {
 	configId: string
 	type: 'BoolConfig' | 'UnicodeConfig'
 	description?: string
-	defaultValues: unknown[]
+	defaultValues?: unknown[]
 	possibleValues: unknown[]
 	multiValue: boolean
 	editable: boolean
-	objects: Record<string, unknown>
+	objects?: Record<string, unknown>
+	value?: unknown
+	newValue?: string
+	newValues?: unknown[]
 }
 
 interface Props {
@@ -409,11 +412,10 @@ const activeCategory = ref('all')
 
 const flatParams = computed<Param[]>(() => {
 	const all: Param[] = []
-	for (const [category, items] of Object.entries(rawParams.value)) {
+	for (const items of Object.values(rawParams.value)) {
 		for (const p of items) {
 			if (p.configId) {
-				const prefixed = p.configId.startsWith(category + ".") ? p.configId : `${category}.${p.configId}`
-				all.push({ ...p, configId: prefixed })
+				all.push(p)
 			}
 		}
 	}
@@ -441,10 +443,35 @@ const groupedFilteredParams = computed(() => {
 	return result
 })
 
+function getOriginalValue(p: Param): unknown {
+	let raw: unknown
+	if (props.hostId && p.objects && props.hostId in p.objects) {
+		raw = p.objects[props.hostId]
+	} else if (!props.hostId && p.value !== undefined) {
+		raw = p.value
+	} else if (p.defaultValues !== undefined) {
+		raw = p.defaultValues
+	} else {
+		raw = p.type === 'BoolConfig' ? false : ''
+	}
+	if (p.type === 'BoolConfig') {
+		if (typeof raw === 'boolean') return raw
+		if (Array.isArray(raw)) return raw.length > 0 ? Boolean(raw[0]) : false
+		return Boolean(raw)
+	}
+	if (p.multiValue) {
+		if (Array.isArray(raw)) return raw.map(String)
+		if (raw === '' || raw === null || raw === undefined) return []
+		return [String(raw)]
+	}
+	if (Array.isArray(raw)) return raw.length > 0 ? String(raw[0]) : ''
+	if (raw === null || raw === undefined) return ''
+	return String(raw)
+}
+
 function currentValue(p: Param): unknown {
 	if (changedParams.value.has(p.configId)) return changedParams.value.get(p.configId)
-	if (props.hostId) return p.objects?.[props.hostId] ?? p.defaultValues?.[0] ?? ''
-	return p.defaultValues?.[0] ?? ''
+	return getOriginalValue(p)
 }
 
 function fmtVal(v: unknown): string {
@@ -454,7 +481,7 @@ function fmtVal(v: unknown): string {
 }
 
 function setParam(p: Param, value: unknown) {
-	const orig = props.hostId ? (p.objects?.[props.hostId] ?? p.defaultValues?.[0]) : p.defaultValues?.[0]
+	const orig = getOriginalValue(p)
 	if (JSON.stringify(orig) === JSON.stringify(value)) changedParams.value.delete(p.configId)
 	else changedParams.value.set(p.configId, value)
 }
@@ -462,8 +489,7 @@ function setParam(p: Param, value: unknown) {
 function getOriginalParamValue(configId: string): unknown {
 	const p = flatParams.value.find((fp) => fp.configId === configId)
 	if (!p) return undefined
-	if (props.hostId) return p.objects?.[props.hostId] ?? p.defaultValues?.[0]
-	return p.defaultValues?.[0]
+	return getOriginalValue(p)
 }
 
 function discardSingleParam(configId: string) {

@@ -6,18 +6,18 @@ SharedUnsavedChangesModal — Reusable unsaved-changes button + popup.
 				<UTooltip :text="$t('save')">
 					<UButton :size="size" color="success" variant="solid" class="rounded-r-none"
 						:loading="configRef?.isSaving" @click="$emit('saveAll')">
-						<UIcon name="i-lucide-check" class="w-3.5 h-3.5" />
+						<UIcon :name="icons.save" class="w-3.5 h-3.5" />
 					</UButton>
 				</UTooltip>
 				<UTooltip :text="$t('discard')">
-					<UButton :size="size" color="error" variant="outline" class="rounded-none border-l-0"
-						@click="$emit('discardAll')">
-						<UIcon name="i-lucide-x" class="w-3.5 h-3.5" />
+					<UButton :size="size" color="neutral" variant="soft"
+						class="rounded-none border border-(--color-border)" @click="$emit('discardAll')">
+						<UIcon :name="icons.delete" class="w-3.5 h-3.5" />
 					</UButton>
 				</UTooltip>
 			</template>
-			<UButton :size="size" color="warning" variant="outline"
-				:class="showSaveDiscard ? 'rounded-l-none border-l-0' : ''" @click="open = true">
+			<UButton :size="size" color="neutral" variant="soft"
+				:class="showSaveDiscard ? 'rounded-l-none border border-(--color-border)' : ''" @click="open = true">
 				{{ $t('unsavedChanges') }}
 				<UBadge size="xs" color="warning" class="ml-1">
 					{{ configRef?.changedCount }}
