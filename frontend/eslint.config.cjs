@@ -5,6 +5,9 @@ const tsPlugin = require('@typescript-eslint/eslint-plugin')
 
 module.exports = [
   {
+    ignores: ['.output/**', '.nuxt/**', 'node_modules/**', 'dist/**'],
+  },
+  {
     files: ['**/*.vue'],
     languageOptions: {
       parser: vueParser,
@@ -43,6 +46,10 @@ module.exports = [
       ...(tsPlugin.configs.recommended?.rules || {}),
       'no-console': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       'padding-line-between-statements': [
         'error',
         { blankLine: 'always', prev: 'function', next: 'function' },

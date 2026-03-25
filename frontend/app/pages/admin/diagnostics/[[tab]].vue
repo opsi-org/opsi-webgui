@@ -240,7 +240,9 @@ const filteredDiagnosticsData = computed(() => {
 })
 
 function formatModuleName(name: string): string { return name.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') }
+
 function formatKey(key: string): string { return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) }
+
 function formatValue(value: unknown): string {
     if (value === null || value === undefined) return '-'
     if (typeof value === 'boolean') return value ? 'Yes' : 'No'

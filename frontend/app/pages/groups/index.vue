@@ -541,6 +541,7 @@ function getChildGroupIds(nodes: GroupTreeNode[], parentId: string): Set<string>
             }
         }
     }
+
     function collectAll(nodes: GroupTreeNode[], set: Set<string>) {
         for (const node of nodes) {
             set.add(node.id)

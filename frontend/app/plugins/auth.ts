@@ -7,7 +7,7 @@ License: AGPL-3.0
 
 Auth plugin - handles route guarding based on authentication state.
 */
-import { defineNuxtPlugin, useRuntimeConfig, navigateTo } from '#app'
+import { defineNuxtPlugin, navigateTo } from '#app'
 import { useUserStore } from '~/stores/userStore'
 
 export default defineNuxtPlugin({

@@ -367,6 +367,7 @@ function validateForm(): boolean {
 
     return valid
 }
+
 async function handleSubmit() {
     error.value = null
     success.value = false

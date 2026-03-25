@@ -146,9 +146,11 @@ export function useDataTableSettings(tableId: string) {
   function setPageSize(size: number) {
     settings.pageSize = size
   }
+
   function setDisplayMode(mode: 'infinite' | 'pagination') {
     settings.displayMode = mode
   }
+
   function setSelectionMode(mode: 'multi' | 'single') {
     settings.selectionMode = mode
   }

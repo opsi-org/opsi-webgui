@@ -45,7 +45,7 @@ const DEFAULT_CHANNELS = [
 // ── Core MessageBus composable ──
 export function useMessageBus(
   onMessage?: MessageHandler,
-  showNotifications = false,
+  _showNotifications = false,
   _channels: string[] = []
 ) {
   const $config = useRuntimeConfig()
@@ -103,10 +103,12 @@ export function useMessageBus(
     store.setBus(bus)
     wsBus.value = bus
   }
+
   function setLastMsg(msg: unknown) {
     store.setLastMsg(msg)
     busMsg.value = msg
   }
+
   function wsDisconnect() {
     wsBus.value?.close()
     setBus(undefined)
@@ -242,7 +244,7 @@ export function useAutoRefresh(
   options: { watchEvents?: string[]; debounceMs?: number } = {}
 ) {
   const mbStore = useMessageBusStore()
-  const { mount, busMsg, wsBus } = useMessageBus(handleMessage, false, [])
+  const { mount, wsBus } = useMessageBus(handleMessage, false, [])
 
   const watchEvents = options.watchEvents || ALL_DATA_EVENTS
   const debounceMs = options.debounceMs || 2000

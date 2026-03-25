@@ -1,9 +1,3 @@
-interface FetchOptions {
-  method?: string
-  body?: unknown
-  params?: Record<string, unknown>
-}
-
 interface ApiResponse<T> {
   data: T | null
   error: Error | null
