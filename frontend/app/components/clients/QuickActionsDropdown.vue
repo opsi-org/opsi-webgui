@@ -40,9 +40,8 @@
 				</div>
 
 				<UAlert v-if="statusMessage && statusMessage.type === 'error'" color="error" :title="t('error')"
-					:description="statusMessage.message" variant="subtle" class="mb-3"
-					:close-button="{ icon: 'i-heroicons-x-mark', color: 'error', variant: 'link' }"
-					@close="statusMessage = null" />
+					:description="statusMessage.message" variant="subtle" class="mb-3" close
+					@update:open="statusMessage = null" />
 
 				<p class="text-sm text-(--color-text-muted) mb-4">
 					{{ t('confirmActionOnClients') }}

@@ -45,8 +45,8 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 				:close-button="{ icon: 'i-heroicons-x-mark' }" @close="success = false">
 				<template #description>{{ $t('clientClonedSuccessfully') }}</template>
 			</UAlert>
-			<UAlert v-if="error" color="error" :title="String($t('error'))" :description="error"
-				:close-button="{ icon: 'i-heroicons-x-mark' }" @close="error = null" />
+			<UAlert v-if="error" color="error" :title="String($t('error'))" :description="error" close
+				@update:open="error = null" />
 
 			<div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
 				<div v-if="!panelMode || showSourceInPanel" class="mb-6">

@@ -80,7 +80,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 						:items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
 				</div>
 				<UAlert v-if="createConfigError" color="error" :title="$t('error')" :description="createConfigError"
-					variant="subtle" />
+					variant="subtle" close @update:open="createConfigError = null" />
 			</div>
 		</template>
 		<template #footer>

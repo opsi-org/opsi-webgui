@@ -36,9 +36,8 @@
 				</div>
 
 				<div v-else class="space-y-4">
-					<UAlert v-if="errorMessage" color="error" :description="errorMessage" variant="subtle"
-						:close-button="{ icon: icons.close, color: 'error', variant: 'link' }"
-						@close="errorMessage = null" />
+					<UAlert v-if="errorMessage" color="error" :description="errorMessage" variant="subtle" close
+						@update:open="errorMessage = null" />
 
 					<div class="divide-y divide-(--color-border)">
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">

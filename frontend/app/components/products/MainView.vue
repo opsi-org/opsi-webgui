@@ -34,14 +34,12 @@
 						@discard-all="discardAllChanges" />
 				</template>
 
-				<UAlert v-if="error" color="error" :title="$t('error')" :description="error"
-					:close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
+				<UAlert v-if="error" color="error" :title="$t('error')" :description="error" close
+					@update:open="error = null" />
 
 				<div v-if="actionStatus" class="mb-3">
 					<UAlert :color="actionStatus.type" :title="actionStatus.title" :description="actionStatus.message"
-						variant="subtle"
-						:close-button="{ icon: icons.close, color: actionStatus.type, variant: 'link' }"
-						@close="actionStatus = null" />
+						variant="subtle" close @update:open="actionStatus = null" />
 				</div>
 
 				<SharedDataTable :rows="products" :columns="columns" :loading="loading" :table-id="tableId"

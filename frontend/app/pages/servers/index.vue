@@ -9,8 +9,8 @@
                     </UButton>
                 </template>
 
-                <UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4"
-                    :close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
+                <UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4" close
+                    @update:open="error = null" />
 
                 <SharedDataTable :rows="servers" :columns="columns" :loading="loading" table-id="servers"
                     row-key="depotId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"

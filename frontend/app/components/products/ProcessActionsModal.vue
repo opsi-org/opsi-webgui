@@ -13,9 +13,7 @@
 				</template>
 
 				<UAlert v-if="statusMessage" :color="statusMessage.type" :description="statusMessage.message"
-					variant="subtle" class="mb-3"
-					:close-button="{ icon: icons.close, color: statusMessage.type, variant: 'link' }"
-					@close="statusMessage = null" />
+					variant="subtle" class="mb-3" close @update:open="statusMessage = null" />
 
 				<div class="space-y-4">
 					<div class="divide-y divide-(--color-border) dark:divide-(--color-border)">

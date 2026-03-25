@@ -23,13 +23,14 @@ Mobile: overlay panel with close button.
                             <UIcon :name="icons.arrowLeft" class="w-5 h-5" />
                         </button>
                         <div class="flex-1 min-w-0">
-                            <h3 class="font-medium text-(--color-text) dark:text-(--color-text) truncate">
-                                <slot name="title">Details</slot>
-                            </h3>
-                            <p v-if="$slots.subtitle"
-                                class="text-xs text-(--color-text-muted) dark:text-(--color-text-muted) truncate mt-0.5">
-                                <slot name="subtitle" />
-                            </p>
+                            <div class="flex items-baseline gap-2 min-w-0">
+                                <h3 class="font-medium text-(--color-text) truncate">
+                                    <slot name="title">Details</slot>
+                                </h3>
+                                <span v-if="$slots.subtitle" class="text-(--color-text-muted) truncate">
+                                    <slot name="subtitle" />
+                                </span>
+                            </div>
                         </div>
                         <div class="flex items-center gap-1 shrink-0">
                             <slot name="panelActions" />

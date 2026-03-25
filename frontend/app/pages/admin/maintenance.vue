@@ -1,8 +1,7 @@
 Admin Maintenance Page - System maintenance, clients, products, backup/restore
 <template>
     <div class="space-y-6">
-        <UAlert v-if="error" color="error" variant="soft" :close-button="{ icon: 'i-heroicons-x-mark' }"
-            @close="error = ''">
+        <UAlert v-if="error" color="error" variant="soft" close @update:open="error = ''">
             <template #title>{{ error }}</template>
         </UAlert>
 
@@ -90,7 +89,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
                 <div v-if="newAppState.type === 'maintenance'">
                     <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('optionalSettings')
-                    }}</div>
+                        }}</div>
                     <div class="space-y-4 border border-yellow-300 dark:border-yellow-700 rounded-lg p-2">
                         <UFormField :label="$t('addressExceptions')">
                             <div class="flex gap-2">
@@ -98,7 +97,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                     size="sm" class="flex-1" @keydown.enter.prevent="addAddressException" />
                                 <UButton color="primary" size="sm" :icon="icons.add" @click="addAddressException">{{
                                     $t('add')
-                                    }}</UButton>
+                                }}</UButton>
                             </div>
                             <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
                                 <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
@@ -140,7 +139,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
                     </label>
                     <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup')
-                    }}</div>
+                        }}</div>
                     <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                         <label
                             class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
@@ -192,7 +191,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </UFormField>
                     <div>
                         <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('restoreOptions')
-                            }}</div>
+                        }}</div>
                         <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                             <label
                                 class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">

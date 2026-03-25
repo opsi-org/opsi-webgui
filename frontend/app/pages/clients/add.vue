@@ -10,12 +10,11 @@ Client Add New page - form for adding a new client.
         </template>
 
         <div class="space-y-4">
-            <UAlert v-if="success" color="success" :title="String($t('success'))"
-                :close-button="{ icon: 'i-heroicons-x-mark' }" @close="success = false">
+            <UAlert v-if="success" color="success" :title="String($t('success'))">
                 <template #description>{{ $t('clientCreatedSuccessfully') }}</template>
             </UAlert>
-            <UAlert v-if="error" color="error" :title="String($t('error'))" :description="error"
-                :close-button="{ icon: 'i-heroicons-x-mark' }" @close="error = null" />
+            <UAlert v-if="error" color="error" :title="String($t('error'))" :description="error" close
+                @update:open="error = null" />
 
             <div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
                 <div class="mb-6">

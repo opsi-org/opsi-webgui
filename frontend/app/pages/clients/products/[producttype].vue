@@ -11,24 +11,6 @@ Client Products page - manage products for selected clients
 			<SharedTabsNav v-model="activeType" :tabs="productTypes" />
 		</template>
 
-		<template #stats>
-			<span v-if="selectionStore.selectedClients.length > 0" class="text-sm text-opsi-blue">
-				{{ $t('clients') }}: {{ selectionStore.selectedClients.length }}
-			</span>
-			<span v-else class="text-sm text-warning">
-				{{ $t('selectClientsFirst') }}
-			</span>
-		</template>
-
-		<UAlert v-if="selectionStore.selectedClients.length === 0" color="warning" :title="$t('warning')"
-			:description="$t('selectClientsFirst')" class="mb-4">
-			<template #actions>
-				<UButton color="primary" size="sm" @click="router.push('/clients')">
-					{{ $t('clients') }}
-				</UButton>
-			</template>
-		</UAlert>
-
 		<ProductsMainView v-if="selectionStore.selectedClients.length > 0" ref="productsTableRef"
 			:product-type="productType" />
 	</LayoutsPageLayout>

@@ -9,8 +9,7 @@ Login page - allows users to log in with username/password or SAML SSO.
           class="mx-auto mb-2 h-50" />
       </div>
       <form @submit.prevent="handleLogin" class="space-y-5">
-        <UAlert v-if="errorMessage" color="error" variant="soft" :close-button="{ icon: 'i-heroicons-x-mark' }"
-          @close="errorMessage = ''">
+        <UAlert v-if="errorMessage" color="error" variant="soft" close @update:open="errorMessage = ''">
           <template #title>{{ errorMessage }}</template>
         </UAlert>
 

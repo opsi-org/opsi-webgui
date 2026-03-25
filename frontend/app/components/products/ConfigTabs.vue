@@ -3,9 +3,7 @@
 		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
 		<UAlert v-if="statusMessage" :color="statusMessage.type"
 			:title="statusMessage.type === 'success' ? $t('success') : $t('error')" :description="statusMessage.message"
-			variant="subtle" class="mb-2 shrink-0"
-			:close-button="{ icon: icons.close, color: statusMessage.type, variant: 'link' }"
-			@close="statusMessage = null" />
+			variant="subtle" class="mb-2 shrink-0" close @update:open="statusMessage = null" />
 
 		<div class="flex items-center justify-between gap-2 mb-3 shrink-0">
 			<SharedTabsNav v-model="activeTab" :tabs="tabDefs" />

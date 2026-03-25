@@ -1,12 +1,11 @@
 ClientsAddForm - add client form for panel mode with all options.
 <template>
 	<div class="space-y-4 h-full overflow-y-auto p-2">
-		<UAlert v-if="success" color="success" :title="String($t('success'))"
-			:close-button="{ icon: 'i-heroicons-x-mark' }" @close="success = false">
+		<UAlert v-if="success" color="success" :title="String($t('success'))">
 			<template #description>{{ $t('clientCreatedSuccessfully') }}</template>
 		</UAlert>
-		<UAlert v-if="error" color="error" :title="String($t('error'))" :description="error"
-			:close-button="{ icon: 'i-heroicons-x-mark' }" @close="error = null" />
+		<UAlert v-if="error" color="error" :title="String($t('error'))" :description="error" close
+			@update:open="error = null" />
 
 		<div class="shrink-0 flex justify-end gap-2 mb-2">
 			<UTooltip :text="$t('addClient')">

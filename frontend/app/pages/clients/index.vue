@@ -29,15 +29,12 @@
 					</UButton>
 				</template>
 
-				<UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4"
-					:close-button="{ icon: icons.close, color: 'error', variant: 'link' }" @close="error = null" />
+				<UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4" close
+					@update:open="error = null" />
 
-				<!-- Inline action status bar -->
 				<div v-if="actionStatus" class="mb-3">
 					<UAlert :color="actionStatus.type" :title="actionStatus.title" :description="actionStatus.message"
-						variant="subtle"
-						:close-button="{ icon: icons.close, color: actionStatus.type, variant: 'link' }"
-						@close="actionStatus = null" />
+						variant="subtle" close @update:open="actionStatus = null" />
 				</div>
 
 				<SharedDataTable :rows="clients" :columns="columns" :loading="loading" table-id="clients"
@@ -133,8 +130,6 @@
 			<template v-if="panelType === 'config'">{{ $t('configuration') }}</template>
 			<template v-else-if="panelType === 'logs'">{{ $t('logs') }}</template>
 			<template v-else-if="panelType === 'clone'">{{ $t('clone') }}</template>
-			<template v-else-if="panelType === 'products'">{{ $t('localbootProducts') }}</template>
-			<template v-else-if="panelType === 'add'">{{ $t('client') }}</template>
 		</template>
 		<template #panel>
 			<div v-if="panelClient">
