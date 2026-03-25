@@ -2,9 +2,10 @@
 	<UTooltip v-if="visibleRows.length > 0" :delay="{ open: 200 }">
 		<slot />
 		<template #content>
-			<div class="max-w-xs max-h-48 overflow-auto p-1">
+			<div class="max-w-sm max-h-100 overflow-auto p-5 bg-(--color-surface) dark:bg-black rounded">
 				<table class="text-xs w-full">
-					<tr v-for="(row, i) in visibleRows" :key="i" class="border-b border-(--color-border)/30 last:border-0">
+					<tr v-for="(row, i) in visibleRows" :key="i"
+						class="border-b border-(--color-border)/30 last:border-0">
 						<td class="pr-3 py-0.5 font-mono text-(--color-text-muted) whitespace-nowrap max-w-40 truncate">
 							{{ row.key }}
 						</td>

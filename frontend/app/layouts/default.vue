@@ -13,7 +13,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
             </div>
             <div class="flex-1" />
             <nav class="flex items-center gap-0.5 md:gap-1">
-                <div v-if="formattedTime && formattedTime !== '0:00'"
+                <div v-if="formattedTime && formattedTime !== '0:00' && isWarning"
                     class="flex items-center gap-1 text-xs px-2 py-1 rounded"
                     :class="isWarning ? 'bg-amber-500/20 animate-pulse font-semibold' : 'bg-white/10'"
                     :title="t('sessionExpiresIn')">

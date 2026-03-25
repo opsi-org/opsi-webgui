@@ -139,8 +139,15 @@
 				<ClientsCloneForm v-if="panelType === 'clone'" :source-id="panelClient.clientId" panel-mode
 					@saved="fetchClients" />
 			</div>
-			<ProductsMainView v-if="panelType === 'products'" product-type="LocalbootProduct"
-				:initial-sort-column="productsSortColumn" />
+			<template v-if="panelType === 'products'">
+				<ProductsMainView ref="productsTableRef"
+					:product-type="panelProductType === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'"
+					:initial-sort-column="productsSortColumn">
+					<template #tabs>
+						<SharedTabsNav v-model="panelProductType" :tabs="panelProductTypes" />
+					</template>
+				</ProductsMainView>
+			</template>
 			<ClientsAddForm v-if="panelType === 'add'" panel-mode @saved="handleAddSaved" />
 		</template>
 	</LayoutsDetailPanel>
@@ -168,6 +175,11 @@ const totalItems = ref(0)
 const panelClient = ref<Client | null>(null)
 const panelType = ref<'config' | 'logs' | 'clone' | 'products' | 'add' | null>(null)
 const panelTab = ref('parameters')
+const panelProductType = ref('localboot')
+const panelProductTypes = [
+	{ label: String($t('localbootProducts')), value: 'localboot' },
+	{ label: String($t('netbootProducts')), value: 'netboot' },
+]
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
 const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string } | null>(null)

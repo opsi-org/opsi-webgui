@@ -135,8 +135,7 @@
 			</span>
 		</template>
 		<template #subtitle>
-			{{ configProduct?.description }}
-			<span v-if="configProduct" class="text-xs opacity-75 ml-1">— {{ $t('configuration') }}</span>
+			<div v-if="configProduct">{{ $t('configuration') }}</div>
 		</template>
 
 		<template #panelActions>

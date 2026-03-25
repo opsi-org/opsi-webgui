@@ -117,8 +117,7 @@
 
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div ref="tableContainer" class="flex-1 overflow-x-auto overflow-y-auto transition-all duration-200"
-        :style="{ maxHeight: displayMode === 'pagination' ? `calc(${maxHeight} - 48px)` : maxHeight }"
-        @scroll="handleScroll">
+        :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" @scroll="handleScroll">
         <div v-if="loading && rows.length === 0"
           class="flex items-center justify-center py-12 text-(--color-text-muted)">
           <UIcon :name="icons.loading" class="w-6 h-6 animate-spin mr-2" />
@@ -379,7 +378,6 @@ const pageSizeOptions = computed(() => [
   { value: 10, label: '10' },
   { value: 20, label: '20' },
   { value: 50, label: '50' },
-  { value: 100, label: '100' },
 ])
 
 const sortableColumnOptions = computed(() =>

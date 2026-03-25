@@ -75,19 +75,15 @@ export function useSessionTimer(autoStart = false) {
   if (autoStart) {
     onMounted(() => {
       if (userStore.isAuthenticated) {
-        // Always ensure the timer is running when mounted with autoStart
         if (!sessionState.timerInterval) {
           startTimer()
         } else {
-          // Timer already running, just update state
           updateState()
         }
       }
     })
 
     onUnmounted(() => {
-      // Don't stop the timer on unmount since it's shared state
-      // Only update state
       updateState()
     })
   }

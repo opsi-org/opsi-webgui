@@ -4,7 +4,7 @@
 			<UIcon :name="icons.product" class="w-4 h-4" />
 		</UButton>
 	</UTooltip>
-	<UButton v-else-if="hasSelections" variant="soft" color="primary" size="sm" @click="dialogOpen = true">
+	<UButton v-else-if="hasSelections" color="primary" size="sm" @click="dialogOpen = true">
 		<UIcon :name="icons.product" class="w-4 h-4" />
 		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
 	</UButton>
@@ -187,7 +187,7 @@ const applying = ref(false)
 const errorMessage = ref<string | null>(null)
 
 const hasSelections = computed(() =>
-	selectionStore.selectedProducts.length > 0 || selectionStore.selectedClients.length > 0 || selectionStore.selectedServers.length > 0
+	selectionStore.selectedClients.length > 0 || selectionStore.selectedServers.length > 0
 )
 
 const filters = ref({ installationStatus: NOT_APPLIED, actionResult: NOT_APPLIED, outdatedOnly: false })
