@@ -17,7 +17,7 @@ single editable (select + custom input), plain input.
 		</template>
 
 		<!-- Multi-value with possible values: tags + select -->
-		<template v-else-if="multiValue && possibleValues.length > 0">
+		<template v-else-if="multiValue && hasPossibleValues">
 			<div class="flex-1 space-y-1">
 				<div v-if="arrayValue.length > 0" class="flex flex-wrap gap-1">
 					<span v-for="(val, idx) in arrayValue" :key="idx"
@@ -58,22 +58,21 @@ single editable (select + custom input), plain input.
 		</template>
 
 		<!-- Single value, non-editable with possible values: select -->
-		<template v-else-if="possibleValues.length > 0 && !editable">
-			<USelect :model-value="stringValue" :items="selectItemsWithEmpty" :disabled="disabled" size="sm"
-				class="flex-1" @update:model-value="(v: string) => emit('update:modelValue', v)" />
+		<template v-else-if="hasPossibleValues && !editable">
+			<USelect :model-value="selectModelValue" :items="selectItemsWithEmpty" :disabled="disabled" size="sm"
+				class="flex-1" @update:model-value="handleNonEditableSelectChange" />
 		</template>
 
 		<!-- Single value, editable with possible values: select + custom input -->
-		<template v-else-if="possibleValues.length > 0 && editable">
+		<template v-else-if="hasPossibleValues && editable">
 			<div class="flex-1 flex items-center gap-1">
-				<USelect :model-value="stringValue" :items="editableSelectItems" :disabled="disabled" size="sm"
-					class="flex-1"
-					@update:model-value="(v: string) => emit('update:modelValue', v === '__custom__' ? '' : v)" />
+				<USelect :model-value="selectModelValue" :items="editableSelectItems" :disabled="disabled" size="sm"
+					class="flex-1" @update:model-value="handleEditableSelectChange" />
 				<UInput v-if="showCustomInput" :model-value="stringValue" size="sm" class="flex-1" :disabled="disabled"
 					:placeholder="String($t('enterValue'))"
 					@update:model-value="(v: string) => emit('update:modelValue', v)" />
 				<UButton v-if="stringValue && !disabled" size="xs" variant="ghost" color="neutral" :icon="icons.close"
-					:title="$t('clearValue')" @click="emit('update:modelValue', '')" />
+					:title="$t('clearValue')" @click="clearEditableValue" />
 			</div>
 		</template>
 
@@ -115,6 +114,8 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 
 const customInput = ref('')
+const EMPTY_SENTINEL = '__empty__'
+const customInputMode = ref(false)
 
 const boolValue = computed(() => {
 	if (props.mixed) return false
@@ -138,33 +139,60 @@ const arrayValue = computed(() => {
 })
 
 const possibleValueStrings = computed(() => props.possibleValues.map(String))
+const filteredPossibleValueStrings = computed(() => possibleValueStrings.value.filter(v => v !== ''))
+const hasPossibleValues = computed(() => filteredPossibleValueStrings.value.length > 0)
+
+const selectModelValue = computed(() => {
+	if (props.mixed) return ''
+	const val = stringValue.value
+	return val === '' ? EMPTY_SENTINEL : val
+})
 
 const availableMultiOptions = computed(() => {
 	const current = new Set(arrayValue.value)
-	return possibleValueStrings.value
+	return filteredPossibleValueStrings.value
 		.filter(v => !current.has(v))
 		.map(v => ({ label: v, value: v }))
 })
 
 const selectItemsWithEmpty = computed(() => {
-	const items = possibleValueStrings.value.map(v => ({ label: v, value: v }))
-	return [{ label: `(${String($t('empty'))})`, value: '' }, ...items]
+	const items = filteredPossibleValueStrings.value.map(v => ({ label: v, value: v }))
+	return [{ label: `(${String($t('empty'))})`, value: EMPTY_SENTINEL }, ...items]
 })
 
 const editableSelectItems = computed(() => {
-	const items = possibleValueStrings.value.map(v => ({ label: v, value: v }))
+	const items = filteredPossibleValueStrings.value.map(v => ({ label: v, value: v }))
 	return [
-		{ label: `(${String($t('empty'))})`, value: '' },
+		{ label: `(${String($t('empty'))})`, value: EMPTY_SENTINEL },
 		...items,
 		{ label: `+ ${String($t('customValue'))}...`, value: '__custom__' },
 	]
 })
 
 const showCustomInput = computed(() => {
+	if (customInputMode.value) return true
 	const val = stringValue.value
 	if (!val) return false
-	return !possibleValueStrings.value.includes(val)
+	return !filteredPossibleValueStrings.value.includes(val)
 })
+
+function handleNonEditableSelectChange(v: string) {
+	emit('update:modelValue', v === EMPTY_SENTINEL ? '' : v)
+}
+
+function handleEditableSelectChange(v: string) {
+	if (v === '__custom__') {
+		customInputMode.value = true
+	} else {
+		customInputMode.value = false
+		emit('update:modelValue', v === EMPTY_SENTINEL ? '' : v)
+	}
+}
+
+function clearEditableValue() {
+	customInputMode.value = false
+	emit('update:modelValue', '')
+}
 
 function removeMultiItem(idx: number) {
 	const updated = [...arrayValue.value]
