@@ -16,26 +16,38 @@ single editable (select + custom input), plain input.
 				@update:model-value="(v: string) => emit('update:modelValue', v)" />
 		</template>
 
-		<!-- Multi-value with possible values: tags + select -->
+		<!-- Multi-value with possible values: select with checkmarks -->
 		<template v-else-if="multiValue && hasPossibleValues">
-			<div class="flex-1 space-y-1">
-				<div v-if="arrayValue.length > 0" class="flex flex-wrap gap-1">
-					<span v-for="(val, idx) in arrayValue" :key="idx"
-						class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20">
-						{{ val }}
-						<button v-if="!disabled" type="button" class="hover:text-red-500 transition-colors"
-							@click="removeMultiItem(idx)">
-							<UIcon name="i-heroicons-x-mark" class="w-3 h-3" />
-						</button>
-					</span>
-				</div>
-				<div class="flex items-center gap-1">
-					<USelect :model-value="''" :items="availableMultiOptions" :disabled="disabled" size="sm"
-						class="flex-1" :placeholder="$t('addValue')"
-						@update:model-value="(v: string) => v && addMultiItem(v)" />
-					<UInput v-if="editable" v-model="customInput" :placeholder="$t('pressEnterToAdd')" size="sm"
-						class="flex-1" :disabled="disabled" @keydown.enter.prevent="addCustomMultiItem" />
-				</div>
+			<div class="flex-1">
+				<UPopover :ui="{ content: 'p-0 w-64' }">
+					<UButton variant="outline" color="neutral" size="sm" class="w-full justify-between font-normal"
+						:disabled="disabled">
+						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{ $t('selectValues')
+						}}</span>
+						<span v-else class="truncate">{{ arrayValue.join(', ') }}</span>
+						<UIcon name="i-lucide-chevron-down" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
+					</UButton>
+					<template #content>
+						<div class="max-h-64 overflow-y-auto">
+							<button v-for="opt in allMultiOptions" :key="opt" type="button"
+								class="flex items-center gap-2 w-full px-3 py-1.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
+								@click="toggleMultiItem(opt)">
+								<UIcon :name="arrayValue.includes(opt) ? 'i-lucide-square-check' : 'i-lucide-square'"
+									class="w-4 h-4 shrink-0"
+									:class="arrayValue.includes(opt) ? 'text-(--color-primary)' : 'text-(--color-text-muted)'" />
+								<span class="truncate">{{ opt }}</span>
+							</button>
+							<div v-if="editable" class="border-t border-(--color-border) px-3 py-1.5">
+								<div class="flex items-center gap-1">
+									<UInput v-model="customInput" :placeholder="$t('pressEnterToAdd')" size="xs"
+										class="flex-1" @keydown.enter.prevent="addCustomMultiItem" />
+									<UButton size="xs" variant="ghost" color="primary" :icon="icons.add"
+										:disabled="!customInput.trim()" @click="addCustomMultiItem" />
+								</div>
+							</div>
+						</div>
+					</template>
+				</UPopover>
 			</div>
 		</template>
 
@@ -155,6 +167,10 @@ const availableMultiOptions = computed(() => {
 		.map(v => ({ label: v, value: v }))
 })
 
+const allMultiOptions = computed(() => {
+	return filteredPossibleValueStrings.value
+})
+
 const selectItemsWithEmpty = computed(() => {
 	const items = filteredPossibleValueStrings.value.map(v => ({ label: v, value: v }))
 	return [{ label: `(${String($t('empty'))})`, value: EMPTY_SENTINEL }, ...items]
@@ -192,6 +208,14 @@ function handleEditableSelectChange(v: string) {
 function clearEditableValue() {
 	customInputMode.value = false
 	emit('update:modelValue', '')
+}
+
+function toggleMultiItem(value: string) {
+	const current = [...arrayValue.value]
+	const idx = current.indexOf(value)
+	if (idx >= 0) current.splice(idx, 1)
+	else current.push(value)
+	emit('update:modelValue', current)
 }
 
 function removeMultiItem(idx: number) {

@@ -29,13 +29,13 @@
 			</UBadge>
 		</SharedTooltipTable>
 		<template v-else-if="!disabled">
+			<USelect v-model="selectedRequest" :items="requestItems" size="xs" class="min-w-24"
+				@update:model-value="handleChange" />
 			<SharedTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
 				<UBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help shrink-0">
 					<UIcon :name="icons.unequal" class="w-3 h-3" />
 				</UBadge>
 			</SharedTooltipTable>
-			<USelect v-model="selectedRequest" :items="requestItems" size="xs" class="min-w-24"
-				@update:model-value="handleChange" />
 		</template>
 		<span v-else class="text-xs text-(--color-text-muted)">
 			{{ currentLabel || '-' }}

@@ -186,6 +186,7 @@ const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title
 const lastPageParams = ref<PageChangeParams | null>(null)
 const productsSortColumn = ref<string | undefined>(undefined)
 const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void } | null>(null)
+const productsTableRef = ref<{ hasUnsavedChanges?: { value: boolean } } | null>(null)
 const showLeaveWarning = ref(false)
 const pendingPanelAction = ref<(() => void) | null>(null)
 
@@ -251,7 +252,9 @@ function closePanel() {
 }
 
 function checkUnsavedAndDo(action: () => void) {
-	if (configTabsRef.value?.hasAnyChanges) {
+	const hasConfigChanges = configTabsRef.value?.hasAnyChanges
+	const hasProductChanges = productsTableRef.value?.hasUnsavedChanges?.value
+	if (hasConfigChanges || hasProductChanges) {
 		pendingPanelAction.value = action
 		showLeaveWarning.value = true
 		return

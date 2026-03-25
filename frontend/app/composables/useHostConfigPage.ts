@@ -33,12 +33,15 @@ export function useHostConfigPage(onCancelLeave?: () => void) {
   function refresh() {
     hostConfigTabsRef.value?.refresh?.()
   }
+
   function saveAll() {
     hostConfigTabsRef.value?.saveAll?.()
   }
+
   function discardAll() {
     hostConfigTabsRef.value?.discardAll?.()
   }
+
   function handleSaved() {}
 
   const showLeaveWarning = ref(false)

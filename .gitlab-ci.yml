@@ -31,7 +31,7 @@ stages: [setup, validate, build, release]
 setup:deps:
   stage: setup
   script:
-    - corepack enable
+    - corepack enable pnpm
     - cd frontend && pnpm install --frozen-lockfile && pnpm run postinstall
   artifacts:
     paths: [frontend/node_modules/, frontend/.nuxt/]
@@ -55,7 +55,7 @@ setup:deps:
 
 setup:changelog:
   stage: setup
-  extends: [.pybuilder, .only-tags]
+  extends: .pybuilder
   script:
     - opsi-dev-tool -l 5 --changelog-format=md changelog from-git output
     - chmod 666 output/*
@@ -65,7 +65,7 @@ setup:changelog:
 
 setup:versions:
   stage: setup
-  extends: [.pybuilder, .only-tags]
+  extends: .pybuilder
   script:
     - wget -q https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
     - |

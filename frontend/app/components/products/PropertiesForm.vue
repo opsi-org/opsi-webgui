@@ -5,7 +5,7 @@
 		</div>
 
 		<div v-else-if="properties.length === 0" class="py-8 text-center text-sm text-(--color-text-muted)">
-			<UIcon :name="icons.settings" class="w-10 h-10 mx-auto mb-2 opacity-40" />
+			<UIcon :name="icons.config" class="w-10 h-10 mx-auto mb-2 opacity-40" />
 			<p>{{ $t('noProperties') }}</p>
 		</div>
 
