@@ -3,8 +3,10 @@
   "version": "4.3.99.3",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@10.30.3",
   "scripts": {
     "build": "nuxt build",
+    "generate": "nuxt generate",
     "dev": "nuxt dev",
     "postinstall": "nuxt prepare",
     "lint": "eslint --ext .ts,.js,.vue .",
@@ -48,5 +50,19 @@
     "vitest": "^4.0.18",
     "vue-eslint-parser": "^10.4.0",
     "vue-tsc": "^3.2.5"
+  },
+  "pnpm": {
+    "overrides": {
+      "simple-git": ">=3.32.3",
+      "minimatch@^5": "^5.1.8",
+      "minimatch@^9": "^9.0.7",
+      "minimatch@^10": "^10.2.3",
+      "serialize-javascript": ">=7.0.3",
+      "svgo": ">=4.0.1",
+      "tar": ">=7.5.11",
+      "flatted": ">=3.4.2",
+      "undici": ">=7.24.0",
+      "h3": ">=1.15.6"
+    }
   }
 }

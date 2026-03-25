@@ -115,25 +115,27 @@ validate:security:
 #   script: cd backend && pytest tests/
 
 # BUILD
-build:frontend:
+build:addon:
   stage: build
   extends: .node
-  needs: [setup:deps, validate:lint, validate:types, { job: setup:i18n, optional: true }]
-  script: cd frontend && pnpm run build
-  artifacts:
-    paths: [frontend/.output/]
-    expire_in: 7 days
-
-build:package:
-  stage: build
-  needs: [build:frontend, { job: setup:changelog, optional: true }]
+  needs:
+    [
+      setup:deps,
+      validate:lint,
+      validate:types,
+      { job: setup:i18n, optional: true },
+      { job: setup:changelog, optional: true },
+    ]
   script:
     - apt update && apt -y install zip
-    - mkdir -p backend/webgui/data/app
-    - cp -r frontend/.output/public/* backend/webgui/data/app/
+    - cd frontend && pnpm run generate && cd ..
+    - rm -rf backend/webgui/data/app && mkdir -p backend/webgui/data/app
+    - cp -r frontend/.output/public/. backend/webgui/data/app/
     - '[ -f output/changelog.md ] && cp output/changelog.md backend/webgui/data/changelog/ || true'
-    - mkdir -p webgui && cp -r backend/webgui/* webgui/
-    - zip -r opsi-webgui.zip webgui && ls -lah opsi-webgui.zip
+    - mkdir -p webgui
+    - cp -r backend/webgui/data webgui/
+    - cp -r backend/webgui/python webgui/
+    - zip -r opsi-webgui.zip webgui -x '*/__pycache__/*' && ls -lah opsi-webgui.zip
   artifacts:
     name: 'opsi-webgui-${CI_COMMIT_REF_NAME}'
     paths: [opsi-webgui.zip, webgui/]
@@ -154,7 +156,7 @@ release:sbom:
 release:binary-index:
   stage: release
   extends: [.pybuilder, .only-tags]
-  needs: [build:package, setup:versions, { job: setup:changelog, optional: true }]
+  needs: [build:addon, setup:versions, { job: setup:changelog, optional: true }]
   script:
     - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
     - '[ -f output/changelog.md ] && opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip || true'
@@ -162,13 +164,13 @@ release:binary-index:
 release:obs-internal:
   stage: release
   extends: [.pybuilder, .only-tags]
-  needs: [build:package, setup:versions]
+  needs: [build:addon, setup:versions]
   script: opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.4:development
 
 release:obs-external:
   stage: release
   extends: [.pybuilder, .only-tags]
-  needs: [build:package, setup:versions, { job: setup:changelog, optional: true }]
+  needs: [build:addon, setup:versions, { job: setup:changelog, optional: true }]
   script:
     - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.4:development
     - |
