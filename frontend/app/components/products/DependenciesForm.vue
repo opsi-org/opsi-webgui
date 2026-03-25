@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div v-if="loading" class="py-8 flex justify-center">
-			<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-opsi-blue" />
+			<UIcon :name="icons.loading" class="w-6 h-6 animate-spin" />
 		</div>
 
 		<div v-else-if="dependencies.length === 0" class="py-8 text-center text-sm text-(--color-text-muted)">
@@ -16,7 +16,7 @@
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2 px-2 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<div class="min-w-0 md:w-2/5">
 							<div class="flex items-center gap-2 flex-wrap">
-								<span class="font-mono text-sm text-opsi-blue font-medium">
+								<span class="font-mono text-sm font-medium">
 									{{ dep.requiredProductId }}
 								</span>
 								<UBadge v-if="dep.requiredVersion" color="neutral" variant="soft" size="xs">
@@ -27,19 +27,19 @@
 
 						<div class="flex-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-(--color-text-muted)">
 							<span v-if="dep.requiredAction" class="flex items-center gap-1">
-								<strong>requiredAction:</strong>
+								<strong>{{ $t('requiredAction') }}:</strong>
 								<UBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requiredAction }}
 								</UBadge>
 							</span>
 							<span v-if="dep.requiredInstallationStatus" class="flex items-center gap-1">
-								<strong>requiredInstallationStatus:</strong>
+								<strong>{{ $t('requiredInstallationStatus') }}:</strong>
 								<UBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requiredInstallationStatus }}
 								</UBadge>
 							</span>
 							<span v-if="dep.requirementType" class="flex items-center gap-1">
-								<strong>requirementType:</strong>
+								<strong>{{ $t('requirementType') }}:</strong>
 								<UBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requirementType }}
 								</UBadge>

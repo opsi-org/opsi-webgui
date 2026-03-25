@@ -1,18 +1,19 @@
 <template>
 	<div v-if="visibleChangesCount > 0" class="inline-flex rounded-md shadow-sm">
-		<UTooltip :text="$t('save')">
+		<UTooltip :text="$t('saveAll')">
 			<UButton :size="size" color="success" variant="solid" class="rounded-r-none" :loading="configRef?.isSaving"
 				@click="emit('saveAll', false)">
 				<UIcon :name="icons.save" class="w-3.5 h-3.5" />
 			</UButton>
 		</UTooltip>
 		<UTooltip :text="$t('discard')">
-			<UButton :size="size" color="error" variant="outline" class="rounded-none border-l-0"
+			<UButton :size="size" color="neutral" variant="soft" class="rounded-none border border-(--color-border)"
 				@click="emit('discardAll')">
-				<UIcon :name="icons.close" class="w-3.5 h-3.5" />
+				<UIcon :name="icons.delete" class="w-3.5 h-3.5" />
 			</UButton>
 		</UTooltip>
-		<UButton :size="size" color="warning" variant="outline" class="rounded-l-none border-l-0" @click="open = true">
+		<UButton :size="size" color="neutral" variant="soft" class="rounded-l-none border border-(--color-border)"
+			@click="open = true">
 			{{ $t('unsavedChanges') }}
 			<UBadge size="xs" color="warning" class="ml-1">{{ visibleChangesCount }}</UBadge>
 		</UButton>
@@ -29,7 +30,7 @@
 							<UIcon :name="icons.product" class="w-4 h-4 text-opsi-blue" />
 							<span class="font-mono text-sm font-medium">{{ group.productId }}</span>
 						</div>
-						<UBadge color="warning" variant="subtle" size="xs">
+						<UBadge v-if="group.changes.length > 1" color="warning" variant="subtle" size="xs">
 							{{ group.changes.length }} {{ group.changes.length === 1 ? 'change' : 'changes' }}
 						</UBadge>
 					</div>
@@ -42,7 +43,8 @@
 										size="xs">
 										{{ change.type === 'property' ? $t('property') : $t('actionRequest') }}
 									</UBadge>
-									<span class="font-mono text-xs truncate">{{ change.label }}</span>
+									<span v-if="change.label != 'Action Request'" class="font-mono text-xs truncate">{{
+										change.label }}</span>
 								</div>
 								<p class="text-xs text-(--color-text-muted) mt-0.5">
 									{{ change.oldValue }} → {{ change.newValue }}
@@ -121,7 +123,7 @@
 					</template>
 				</div>
 				<div class="flex gap-2 justify-end">
-					<UButton variant="outline" color="neutral" @click="handleDiscardAll">{{ $t('discardAll') }}
+					<UButton variant="soft" color="neutral" @click="handleDiscardAll">{{ $t('discardAll') }}
 					</UButton>
 					<UButton color="primary" :loading="configRef?.isSaving" @click="handleSaveAll">
 						{{ processAfterSave && mode === 'actionRequests' ? $t('saveAndProcess') : $t('saveAll') }}
