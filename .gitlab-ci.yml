@@ -128,14 +128,28 @@ build:addon:
     ]
   script:
     - apt update && apt -y install zip
-    - cd frontend && pnpm run generate && cd ..
+    - cd frontend && pnpm install --frozen-lockfile && pnpm run generate
+    - |
+      if [ ! -f .output/public/index.html ]; then
+        echo "ERROR: Nuxt generate failed - no output found at .output/public/"
+        exit 1
+      fi
+      echo "Generated $(find .output/public -type f | wc -l) files"
+    - cd ..
     - rm -rf backend/webgui/data/app && mkdir -p backend/webgui/data/app
     - cp -r frontend/.output/public/. backend/webgui/data/app/
     - '[ -f output/changelog.md ] && cp output/changelog.md backend/webgui/data/changelog/ || true'
-    - mkdir -p webgui
+    - rm -rf webgui && mkdir -p webgui
     - cp -r backend/webgui/data webgui/
     - cp -r backend/webgui/python webgui/
-    - zip -r opsi-webgui.zip webgui -x '*/__pycache__/*' && ls -lah opsi-webgui.zip
+    - zip -r opsi-webgui.zip webgui -x '*/__pycache__/*'
+    - |
+      echo "=== Addon ZIP verification ==="
+      ls -lah opsi-webgui.zip
+      echo "Files in zip: $(unzip -l opsi-webgui.zip | tail -1)"
+      unzip -l opsi-webgui.zip | grep -q "webgui/python/__init__.py" || { echo "ERROR: Missing python/__init__.py"; exit 1; }
+      unzip -l opsi-webgui.zip | grep -q "webgui/data/app/index.html" || { echo "ERROR: Missing data/app/index.html"; exit 1; }
+      echo "Addon ZIP verified successfully"
   artifacts:
     name: 'opsi-webgui-${CI_COMMIT_REF_NAME}'
     paths: [opsi-webgui.zip, webgui/]
