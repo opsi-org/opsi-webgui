@@ -71,8 +71,9 @@ Row-level client actions dropdown for the clients table.
 				<p class="text-sm text-(--color-text-muted) mb-3">
 					{{ $t('sendNotificationTo') }} {{ clientId }}
 				</p>
-				<UFormField :label="$t('notificationText')">
-					<UTextarea v-model="notifyText" :placeholder="String($t('enterNotificationText'))" :rows="3" />
+				<UFormField>
+					<UTextarea v-model="notifyText" :placeholder="String($t('enterNotificationText'))" :rows="3"
+						class="w-full" />
 				</UFormField>
 				<template #footer>
 					<div class="flex justify-end gap-2">
@@ -81,7 +82,7 @@ Row-level client actions dropdown for the clients table.
 						</UButton>
 						<UButton color="primary" @click="executeNotify" :loading="executing"
 							:disabled="!notifyText.trim()">
-							{{ $t('send') }}
+							{{ $t('notify') }}
 						</UButton>
 					</div>
 				</template>
@@ -192,11 +193,11 @@ Row-level client actions dropdown for the clients table.
 						<USelectMenu v-model="selectedOsType" :items="osTypes" class="w-full" />
 					</UFormField>
 					<UFormField :label="$t('username')">
-						<UInput v-model="deployOptions.username" :placeholder="String($t('username'))" />
+						<UInput v-model="deployOptions.username" :placeholder="String($t('adminUsername'))" />
 					</UFormField>
 					<UFormField :label="$t('password')">
 						<UInput v-model="deployOptions.password" type="password"
-							:placeholder="String($t('password'))" />
+							:placeholder="String($t('enterPassword'))" />
 					</UFormField>
 				</div>
 				<template #footer>
@@ -206,7 +207,7 @@ Row-level client actions dropdown for the clients table.
 						</UButton>
 						<UButton color="primary" @click="executeDeploy" :loading="executing"
 							:disabled="!deployOptions.username || !deployOptions.password">
-							{{ $t('deploy') }}
+							{{ $t('deployClientAgent') }}
 						</UButton>
 					</div>
 				</template>
@@ -231,9 +232,6 @@ Row-level client actions dropdown for the clients table.
 					variant="subtle" class="mb-3" close @update:open="actionError = null" />
 				<p class="text-sm text-(--color-text-muted) mb-1">
 					{{ $t('renameClientDescription') }}
-				</p>
-				<p class="text-xs text-(--color-text-muted) mb-4 italic">
-					{{ $t('renameWarning') }}
 				</p>
 				<div class="space-y-3">
 					<UFormField :label="$t('newHostId')">

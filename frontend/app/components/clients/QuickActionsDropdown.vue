@@ -36,16 +36,16 @@
 						<UIcon :name="currentActionIcon" class="w-5 h-5" :class="currentActionColor" />
 						{{ t(currentAction) }}
 					</h3>
-					<UButton variant="ghost" size="xs" icon="i-heroicons-x-mark" @click="confirmOpen = false" />
+					<UButton :icon="icons.close" variant="ghost" color="neutral" @click="confirmOpen = false" />
 				</div>
 
 				<UAlert v-if="statusMessage && statusMessage.type === 'error'" color="error" :title="t('error')"
 					:description="statusMessage.message" variant="subtle" class="mb-3" close
 					@update:open="statusMessage = null" />
 
-				<p class="text-sm text-(--color-text-muted) mb-4">
+				<!-- <p class="text-sm text-(--color-text-muted) mb-4">
 					{{ t('confirmActionOnClients') }}
-				</p>
+				</p> -->
 
 				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3 bg-(--color-surface) rounded">
 					<p class="text-xs text-(--color-text-muted) mb-2">
@@ -89,7 +89,6 @@
 							:variant="deployOptions.type === os.value ? 'solid' : 'outline'"
 							:color="deployOptions.type === os.value ? 'primary' : 'neutral'" size="sm"
 							class="justify-center" @click="deployOptions.type = os.value">
-							<UIcon :name="os.icon" class="w-4 h-4 mr-1" />
 							{{ os.label }}
 						</UButton>
 					</div>
@@ -126,8 +125,8 @@
 					</div>
 				</div>
 
-				<div class="flex justify-end gap-2 pt-3 border-t border-[--color-border]">
-					<UButton variant="ghost" @click="confirmOpen = false">{{ t('cancel') }}</UButton>
+				<div class="flex justify-end gap-2 pt-3 border-[--color-border]">
+					<UButton variant="ghost" color="neutral" @click="confirmOpen = false">{{ t('cancel') }}</UButton>
 					<UButton :color="currentAction === 'delete' ? 'error' : 'primary'" :loading="loading"
 						:disabled="!canExecute" @click="executeAction">
 						{{ t(currentAction || 'confirm') }}
@@ -142,7 +141,7 @@
 			<div class="p-4 min-w-87.5">
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-lg font-semibold">{{ t('actionResults') }}</h3>
-					<UButton variant="ghost" size="xs" icon="i-heroicons-x-mark" @click="resultOpen = false" />
+					<UButton :icon="icons.close" variant="ghost" color="neutral" @click="resultOpen = false" />
 				</div>
 
 				<div class="max-h-60 overflow-y-auto space-y-2">
@@ -199,11 +198,11 @@ function showSelectionHint() {
 }
 
 const actions = [
-	{ key: 'onDemand', icon: icons.refresh, color: 'text-blue-600 dark:text-blue-400' },
-	{ key: 'notify', icon: icons.info, color: 'text-blue-600 dark:text-blue-400' },
-	{ key: 'reboot', icon: icons.warning, color: 'text-amber-600 dark:text-amber-400' },
-	{ key: 'shutdown', icon: icons.warning, color: 'text-amber-600 dark:text-amber-400' },
-	{ key: 'deployClientAgent', icon: icons.upload, color: 'text-green-600 dark:text-green-400' },
+	{ key: 'onDemand', icon: icons.onDemand, color: 'text-blue-600 dark:text-blue-400' },
+	{ key: 'notify', icon: icons.notify, color: 'text-blue-600 dark:text-blue-400' },
+	{ key: 'reboot', icon: icons.reboot, color: 'text-amber-600 dark:text-amber-400' },
+	{ key: 'shutdown', icon: icons.shutdown, color: 'text-amber-600 dark:text-amber-400' },
+	{ key: 'deployClientAgent', icon: icons.deploy, color: 'text-green-600 dark:text-green-400' },
 	{ key: 'delete', icon: icons.delete, color: 'text-red-600 dark:text-red-400' },
 ] as const
 
