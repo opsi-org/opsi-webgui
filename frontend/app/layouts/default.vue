@@ -23,12 +23,12 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                 <NuxtLink v-if="userStore.healthWorstCase && userStore.healthWorstCase !== 'ok'" to="/admin/diagnostics"
                     class="px-2.5 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5"
                     :class="{
-                        'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30': userStore.healthWorstCase === 'warning',
-                        'bg-red-500/20 text-red-300 hover:bg-red-500/30': userStore.healthWorstCase === 'error',
+                        'bg-amber-500/50 text-black hover:bg-amber-500/30': userStore.healthWorstCase === 'warning',
+                        'bg-red-500/50 text-white hover:bg-red-500/30': userStore.healthWorstCase === 'error',
                     }" :title="healthCheckTooltip">
                     <UIcon :name="icons.diagnostics" class="w-4 h-4" />
                     <span class="tabular-nums">{{ userStore.healthCounts?.error || userStore.healthCounts?.warning || 0
-                    }}</span>
+                        }}</span>
                 </NuxtLink>
                 <UTooltip :text="messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')">
                     <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs"
@@ -37,7 +37,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                             <img src="~/assets/images/opsi_logo_bee_dark.svg" alt="opsi" class="w-4 h-4" />
                             <span
                                 class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-[--color-background]"
-                                :class="messageBusStore.isConnected ? 'bg-emerald-400' : 'bg-red-400'" />
+                                :class="messageBusStore.isConnected ? 'bg-emerald-500' : 'bg-red-500'" />
                         </span>
                     </div>
                 </UTooltip>
@@ -109,7 +109,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                                 t('quickPanel')
-                                }}</span>
+                            }}</span>
                             <button @click="quickpanelOpen = false"
                                 class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
                                 <UIcon :name="icons.close" class="w-4 h-4" />

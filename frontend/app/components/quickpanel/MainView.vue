@@ -17,7 +17,7 @@
 				</UButton>
 			</div>
 		</div>
-		<div class="flex-1 min-h-0 overflow-hidden">
+		<div class="flex-1 min-h-0 max-h-300 overflow-hidden">
 			<div v-show="activeTab === 'overview'" class="h-full overflow-y-auto">
 				<QuickpanelSelectionOverview />
 			</div>

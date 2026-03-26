@@ -27,7 +27,8 @@
 							<UIcon :name="icons.product" class="w-5 h-5 text-opsi-blue" />
 							<span class="font-medium">{{ $t('productQuickActions') }}</span>
 						</div>
-						<UButton variant="ghost" size="xs" :icon="icons.close" @click="dialogOpen = false" />
+						<UButton variant="ghost" color="neutral" size="xs" :icon="icons.close"
+							@click="dialogOpen = false" />
 					</div>
 				</template>
 
@@ -143,8 +144,8 @@
 				</div>
 
 				<template #footer>
-					<div class="flex justify-between">
-						<UButton variant="ghost" size="sm" @click="resetForm">{{ $t('reset') }}</UButton>
+					<div class="flex justify-end gap-2">
+						<UButton variant="soft" color="neutral" size="sm" @click="resetForm">{{ $t('reset') }}</UButton>
 						<UButton color="primary" size="sm" :disabled="previewData == null || applying"
 							:loading="applying" @click="applyActions">
 							{{ $t('apply') }}
