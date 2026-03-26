@@ -7,13 +7,15 @@ const CACHE_DURATION = 5 * 60 * 1000
 
 function transformApiToTree(
   data: Record<string, unknown>,
-  groupType: 'client' | 'product'
+  groupType: 'client' | 'product',
+  level = 0
 ): GroupTreeNodeData[] {
   if (!data || typeof data !== 'object') return []
   const processNode = (
     key: string,
     value: unknown,
-    parentId?: string
+    parentId?: string,
+    nodeLevel = 0
   ): GroupTreeNodeData | null => {
     if (!value || typeof value !== 'object') return null
     const obj = value as Record<string, unknown>
@@ -40,7 +42,7 @@ function transformApiToTree(
           const memberId = (childObj.text as string) || (childObj.id as string)?.split(';')[0]
           if (memberId) members.push(memberId)
         } else {
-          const subNode = processNode(childKey as string, childValue, nodeId)
+          const subNode = processNode(childKey as string, childValue, nodeId, nodeLevel + 1)
           if (subNode) childNodes.push(subNode)
         }
       }
@@ -55,16 +57,17 @@ function transformApiToTree(
       children: childNodes.length > 0 ? childNodes : undefined,
       isRoot,
       isSpecial,
+      level: nodeLevel,
     }
   }
   const rootData = data as Record<string, unknown>
   if (rootData.id) {
-    const rootNode = processNode(rootData.id as string, rootData)
+    const rootNode = processNode(rootData.id as string, rootData, undefined, level)
     return rootNode ? [rootNode] : []
   }
   const nodes: GroupTreeNodeData[] = []
   for (const [key, value] of Object.entries(rootData)) {
-    const node = processNode(key, value)
+    const node = processNode(key, value, undefined, level)
     if (node) nodes.push(node)
   }
   return nodes

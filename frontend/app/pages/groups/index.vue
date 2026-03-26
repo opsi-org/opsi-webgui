@@ -1,5 +1,5 @@
 <template>
-    <LayoutsPageLayout :loading="loading" :showSearch="false" @refresh="fetchCurrentGroups">
+    <LayoutsPageLayout :loading="loading" :showSearch="false" show-refresh @refresh="fetchCurrentGroups">
         <template #tabs>
             <div class="flex items-center gap-3">
                 <SharedTabsNav v-model="activeGroupType" :tabs="groupTypes" />
@@ -47,8 +47,9 @@
                     <template v-for="rootGroup in filteredTreeGroups" :key="rootGroup.id">
                         <div v-if="activeGroupType === 'clients'"
                             class="flex items-center justify-between text-xs font-medium text-(--color-text-muted) uppercase px-2 py-1.5 mt-2 first:mt-0">
-                            <span>{{ rootGroup.name === 'groups' ? $t('Groups') : rootGroup.name === 'clientdirectory' ?
-                                $t('clientDirectory') : rootGroup.name }}</span>
+                            <span>{{ rootGroup.label === 'groups' ? $t('Groups') : rootGroup.label === 'clientdirectory'
+                                ?
+                                $t('clientDirectory') : rootGroup.label }}</span>
                             <UButton :icon="icons.group" size="xs" variant="ghost" color="neutral"
                                 :title="$t('createGroup')" @click="openCreateModal(rootGroup.id)" />
                         </div>
@@ -80,7 +81,7 @@
                         <div class="flex items-center gap-2">
                             <UButton v-if="isMobile" :icon="icons.back" variant="ghost" color="neutral" size="xs"
                                 @click="showSidebar = true" />
-                            <span class="font-medium text-(--color-text)">{{ selectedGroup.name }}</span>
+                            <span class="font-medium text-(--color-text)">{{ selectedGroup.label }}</span>
                             <span v-if="selectedGroup.isSpecial" class="text-xs text-(--color-text-muted)">
                                 ({{ $t('systemGroup') }})
                             </span>
@@ -107,8 +108,9 @@
                             <div class="flex items-center justify-between mb-3">
                                 <h4 class="text-sm font-medium text-(--color-text)">
                                     {{ $t('groupMembers') }}
-                                    <span class="text-(--color-text-muted) font-normal">({{ selectedGroup.members.length
-                                    }})</span>
+                                    <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
+                                        []).length
+                                        }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -116,14 +118,14 @@
                                         @click="removeSelectedMembers">
                                         {{ $t('remove') }} ({{ selectedMembers.length }})
                                     </UButton>
-                                    <UButton v-if="selectedGroup.members.length > 0 && !selectedGroup.isSpecial"
+                                    <UButton v-if="(selectedGroup.members?.length || 0) > 0 && !selectedGroup.isSpecial"
                                         :icon="icons.delete" size="xs" variant="ghost" color="neutral"
                                         :title="$t('removeAllMembers')" @click="confirmRemoveAllMembers">
                                         {{ $t('removeAll') }}
                                     </UButton>
                                 </div>
                             </div>
-                            <UInput v-if="selectedGroup.members.length > 5" v-model="memberSearchQuery"
+                            <UInput v-if="(selectedGroup.members?.length || 0) > 5" v-model="memberSearchQuery"
                                 :placeholder="$t('filterMembers') + '...'" size="sm" class="mb-2" />
                             <div v-if="filteredMembers.length > 0 && !selectedGroup.isSpecial"
                                 class="flex items-center gap-2 px-2 py-1 mb-1">
@@ -288,7 +290,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                            }}
+                                }}
                             </UButton>
                             <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -306,7 +308,7 @@
                             <div class="flex items-center gap-3">
                                 <UIcon :name="icons.add" class="w-5 h-5 text-opsi-blue" />
                                 <h3 class="font-semibold text-(--color-text)">{{ $t('addMembers') }}</h3>
-                                <p class="text-sm text-(--color-text-muted)">{{ memberTargetGroup?.name }}</p>
+                                <p class="text-sm text-(--color-text-muted)">{{ memberTargetGroup?.label }}</p>
                             </div>
                             <UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
                                 @click="showAddMembersModal = false" />
@@ -373,15 +375,15 @@
 </template>
 
 <script setup lang="ts">
-import type { GroupTreeNode } from '~/types'
+import type { GroupTreeNodeData } from '~/types'
+import { useSelectionStore } from '~/stores/selectionStore'
 
 definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
 const { t: $t } = useI18n()
+const selectionStore = useSelectionStore()
 const {
-    getHostGroups,
-    getProductGroups,
     getClientIds,
     getServerIds,
     createHostGroup,
@@ -399,14 +401,9 @@ const {
 } = useApiHelpers()
 
 const activeGroupType = ref<'clients' | 'products'>('clients')
-const selectedGroup = ref<GroupTreeNode | null>(null)
-const loading = ref(false)
+const selectedGroup = ref<GroupTreeNodeData | null>(null)
+const loading = computed(() => selectionStore.clientGroupsLoading || selectionStore.productGroupsLoading)
 const loadingMembers = ref(false)
-
-const clientGroupsTree = shallowRef<GroupTreeNode[]>([])
-const productGroupsTree = shallowRef<GroupTreeNode[]>([])
-const clientsFetched = ref(false)
-const productsFetched = ref(false)
 
 const availableClients = shallowRef<string[]>([])
 const availableProducts = shallowRef<string[]>([])
@@ -437,8 +434,8 @@ const showAddMembersModal = ref(false)
 const saving = ref(false)
 const deleting = ref(false)
 const addingMembers = ref(false)
-const groupToDelete = ref<GroupTreeNode | null>(null)
-const memberTargetGroup = ref<GroupTreeNode | null>(null)
+const groupToDelete = ref<GroupTreeNodeData | null>(null)
+const memberTargetGroup = ref<GroupTreeNodeData | null>(null)
 
 const createForm = reactive({
     groupId: '',
@@ -474,8 +471,16 @@ const groupTypes = [
     { label: String($t('product-group')), value: 'products' },
 ]
 
-const currentTreeGroups = computed(() => {
-    return activeGroupType.value === 'clients' ? clientGroupsTree.value : productGroupsTree.value
+const currentTreeGroups = computed((): GroupTreeNodeData[] => {
+    if (activeGroupType.value === 'clients') {
+        return selectionStore.clientGroupsTree
+    }
+    // For products, the store stores [rootGroupsNode]; we want its children
+    const tree = selectionStore.productGroupsTree
+    if (tree.length === 1 && tree[0]?.isRoot) {
+        return tree[0].children || []
+    }
+    return tree
 })
 
 const filteredTreeGroups = computed(() => {
@@ -484,10 +489,10 @@ const filteredTreeGroups = computed(() => {
     return filterTree(currentTreeGroups.value, query)
 })
 
-function filterTree(nodes: GroupTreeNode[], query: string): GroupTreeNode[] {
-    const result: GroupTreeNode[] = []
+function filterTree(nodes: GroupTreeNodeData[], query: string): GroupTreeNodeData[] {
+    const result: GroupTreeNodeData[] = []
     for (const node of nodes) {
-        const matches = node.name.toLowerCase().includes(query)
+        const matches = (node.label || node.id).toLowerCase().includes(query)
         const filteredChildren = node.children?.length ? filterTree(node.children, query) : []
         if (matches || filteredChildren.length > 0) {
             result.push(filteredChildren.length > 0 ? { ...node, children: filteredChildren } : node)
@@ -502,10 +507,10 @@ watch(debouncedSearchQuery, (q) => {
     const query = q.toLowerCase()
     const ids = expandedGroupIds.value
     let changed = false
-    function expandMatching(nodes: GroupTreeNode[]) {
+    function expandMatching(nodes: GroupTreeNodeData[]) {
         for (const node of nodes) {
             if (node.children?.length) {
-                const hasMatch = node.children.some(c => c.name.toLowerCase().includes(query))
+                const hasMatch = node.children.some(c => (c.label || c.id).toLowerCase().includes(query))
                 if (hasMatch && !ids.has(node.id)) { ids.add(node.id); changed = true }
                 expandMatching(node.children)
             }
@@ -551,7 +556,7 @@ const editParentGroupSelectItems = computed(() => {
     const currentId = editForm.groupId
     const childIds = getChildGroupIds(currentTreeGroups.value, currentId)
 
-    function walk(nodes: GroupTreeNode[], depth: number) {
+    function walk(nodes: GroupTreeNodeData[], depth: number) {
         for (const node of nodes) {
             if (node.id !== currentId && node.id !== 'not_assigned' && !childIds.has(node.id)) {
                 const indent = '\u00A0\u00A0\u00A0\u00A0'.repeat(depth)
@@ -566,9 +571,9 @@ const editParentGroupSelectItems = computed(() => {
     return items
 })
 
-function getChildGroupIds(nodes: GroupTreeNode[], parentId: string): Set<string> {
+function getChildGroupIds(nodes: GroupTreeNodeData[], parentId: string): Set<string> {
     const result = new Set<string>()
-    function findAndCollect(nodes: GroupTreeNode[], collecting: boolean) {
+    function findAndCollect(nodes: GroupTreeNodeData[], collecting: boolean) {
         for (const node of nodes) {
             if (node.id === parentId) {
                 collectAll(node.children || [], result)
@@ -578,7 +583,7 @@ function getChildGroupIds(nodes: GroupTreeNode[], parentId: string): Set<string>
         }
     }
 
-    function collectAll(nodes: GroupTreeNode[], set: Set<string>) {
+    function collectAll(nodes: GroupTreeNodeData[], set: Set<string>) {
         for (const node of nodes) {
             set.add(node.id)
             if (node.children?.length) collectAll(node.children, set)
@@ -604,7 +609,7 @@ function toggleExpand(groupId: string) {
     expandedGroupIds.value = newSet
 }
 
-function selectGroup(group: GroupTreeNode) {
+function selectGroup(group: GroupTreeNodeData) {
     if (selectedGroup.value?.id === group.id) {
         selectedGroup.value = null
         selectedMembers.value = []
@@ -743,119 +748,14 @@ function handleAddMembersKeydown(e: KeyboardEvent) {
     }
 }
 
-function transformApiTree(
-    apiData: Record<string, unknown>,
-    rootId: string,
-    level: number = 0
-): GroupTreeNode | null {
-    if (!apiData || typeof apiData !== 'object') return null
-
-    const nodeId = extractNodeId(String(apiData.id || apiData.ident || ''))
-    const nodeText = String(apiData.text || apiData.name || nodeId)
-    const nodeType = String(apiData.type || '')
-    const isObjectToGroup = nodeType === 'ObjectToGroup'
-
-    if (isObjectToGroup) return null
-
-    const children: GroupTreeNode[] = []
-    const members: string[] = []
-
-    const apiChildren = apiData.children as Record<string, unknown> | Array<unknown> | null | undefined
-    if (apiChildren) {
-        const childEntries = Array.isArray(apiChildren) ? apiChildren : Object.values(apiChildren)
-        for (const child of childEntries) {
-            if (child && typeof child === 'object') {
-                const childObj = child as Record<string, unknown>
-                const childType = String(childObj.type || '')
-
-                if (childType === 'ObjectToGroup') {
-                    const memberId = String(childObj.text || childObj.id || '').split(';')[0]
-                    if (memberId) {
-                        members.push(memberId)
-                    }
-                } else {
-                    const childNode = transformApiTree(childObj, rootId, level + 1)
-                    if (childNode) {
-                        children.push(childNode)
-                    }
-                }
-            }
-        }
-    }
-
-    const isSpecialGroup = ['groups', 'clientdirectory', 'not_assigned'].includes(nodeText)
-
-    return {
-        id: nodeId || nodeText,
-        name: nodeText,
-        description: String(apiData.description || ''),
-        notes: String(apiData.notes || ''),
-        count: members.length,
-        members,
-        parentGroupId: apiData.parent as string || null,
-        children,
-        level,
-        isSpecial: isSpecialGroup
-    }
-}
-
-function extractNodeId(idString: string): string {
-    return idString.split(';')[0] || idString
-}
-
-async function fetchClientGroups() {
+async function fetchCurrentGroups() {
     try {
-        const { data, error: fetchError } = await getHostGroups()
-        if (fetchError) throw fetchError
-
-        if (data) {
-            const trees: GroupTreeNode[] = []
-
-            if (data.groups) {
-                const groupsTree = transformApiTree(data.groups as Record<string, unknown>, 'groups', 0)
-                if (groupsTree) {
-                    groupsTree.isSpecial = true
-                    trees.push(groupsTree)
-                }
-            }
-
-            if (data.clientdirectory) {
-                const clientDirTree = transformApiTree(data.clientdirectory as Record<string, unknown>, 'clientdirectory', 0)
-                if (clientDirTree) {
-                    clientDirTree.isSpecial = true
-                    trees.push(clientDirTree)
-                }
-            }
-
-            clientGroupsTree.value = trees
-            clientsFetched.value = true
-            const ids = new Set(expandedGroupIds.value)
-            trees.forEach(t => ids.add(t.id))
-            expandedGroupIds.value = ids
+        if (activeGroupType.value === 'clients') {
+            await selectionStore.fetchClientGroups(true)
+        } else {
+            await selectionStore.fetchProductGroups(true)
         }
     } catch (err) {
-        console.error('Failed to fetch client groups:', err)
-        showStatus('error', err instanceof Error ? err.message : String($t('errorFetchingGroups')))
-    }
-}
-
-async function fetchProductGroups() {
-    try {
-        const { data, error: fetchError } = await getProductGroups()
-        if (fetchError) throw fetchError
-
-        if (data?.groups) {
-            const groupsTree = transformApiTree(data.groups as Record<string, unknown>, 'groups', 0)
-            if (groupsTree) {
-                productGroupsTree.value = groupsTree.children || []
-                productsFetched.value = true
-                const ids = new Set(expandedGroupIds.value)
-                groupsTree.children?.forEach(c => ids.add(c.id))
-                expandedGroupIds.value = ids
-            }
-        }
-    } catch (err) {
-        console.error('Failed to fetch product groups:', err)
         showStatus('error', err instanceof Error ? err.message : String($t('errorFetchingGroups')))
     }
 }
@@ -903,19 +803,6 @@ async function fetchAvailableProducts() {
     }
 }
 
-async function fetchCurrentGroups() {
-    loading.value = true
-    try {
-        if (activeGroupType.value === 'clients') {
-            await fetchClientGroups()
-        } else {
-            await fetchProductGroups()
-        }
-    } finally {
-        loading.value = false
-    }
-}
-
 function openCreateModal(parentGroupId?: string) {
     createForm.groupId = ''
     createForm.parentGroupId = parentGroupId || ''
@@ -924,11 +811,11 @@ function openCreateModal(parentGroupId?: string) {
     showCreateModal.value = true
 }
 
-function openEditModal(group: GroupTreeNode) {
+function openEditModal(group: GroupTreeNodeData) {
     if (group.isSpecial) return
     editForm.groupId = group.id
-    editForm.parentGroupId = group.parentGroupId || undefined
-    editForm.description = group.description
+    editForm.parentGroupId = group.parentId || undefined
+    editForm.description = group.description || ''
     editForm.notes = group.notes || ''
     showEditModal.value = true
 }
@@ -980,7 +867,7 @@ async function doEditGroup() {
     }
 }
 
-function confirmDeleteGroup(group: GroupTreeNode) {
+function confirmDeleteGroup(group: GroupTreeNodeData) {
     if (group.isSpecial) return
     groupToDelete.value = group
     showDeleteModal.value = true
@@ -1010,7 +897,7 @@ async function deleteGroup() {
     }
 }
 
-async function openAddMembersModal(group: GroupTreeNode) {
+async function openAddMembersModal(group: GroupTreeNodeData) {
     if (group.isSpecial) return
     memberTargetGroup.value = group
     selectedNewMembers.value = []
@@ -1031,7 +918,7 @@ async function addSelectedMembers() {
         const addFn = activeGroupType.value === 'clients' ? addClientsToGroup : addProductsToGroup
         await addFn(memberTargetGroup.value.id, selectedNewMembers.value)
 
-        showStatus('success', String($t('message.successfullyAddedClientsToGroup', { group: memberTargetGroup.value.name })))
+        showStatus('success', String($t('message.successfullyAddedClientsToGroup', { group: memberTargetGroup.value.label })))
         showAddMembersModal.value = false
         await fetchCurrentGroups()
 
@@ -1075,7 +962,7 @@ async function confirmRemoveAllMembers() {
         const removeFn = activeGroupType.value === 'clients' ? removeClientsFromGroup : removeProductsFromGroup
         await removeFn(selectedGroup.value.id)
 
-        showStatus('success', String($t('message.successfullyDeletedClientFromGroup', { client: selectedGroup.value.name })))
+        showStatus('success', String($t('message.successfullyDeletedClientFromGroup', { client: selectedGroup.value.label })))
         await fetchCurrentGroups()
 
         const updated = findGroupById(currentTreeGroups.value, selectedGroup.value.id)
@@ -1086,7 +973,7 @@ async function confirmRemoveAllMembers() {
     }
 }
 
-function findGroupById(nodes: GroupTreeNode[], id: string): GroupTreeNode | null {
+function findGroupById(nodes: GroupTreeNodeData[], id: string): GroupTreeNodeData | null {
     for (const node of nodes) {
         if (node.id === id) return node
         if (node.children?.length) {
@@ -1131,17 +1018,32 @@ onMounted(() => {
     checkMobile()
     window.addEventListener('resize', checkMobile)
     onUnmounted(() => window.removeEventListener('resize', checkMobile))
-    // Pre-fetch both group types in parallel on mount
-    loading.value = true
-    Promise.all([
-        fetchClientGroups(),
-        fetchProductGroups(),
-    ]).finally(() => {
-        loading.value = false
-    })
+    // Fetch groups from store (respects cache — only calls API if data is stale/missing)
+    selectionStore.fetchClientGroups()
+    selectionStore.fetchProductGroups()
 })
 
-watch(activeGroupType, async (newType) => {
+// Auto-expand root nodes when store tree data changes
+watch(() => selectionStore.clientGroupsTree, (tree) => {
+    if (tree.length) {
+        const ids = new Set(expandedGroupIds.value)
+        tree.forEach(t => ids.add(t.id))
+        expandedGroupIds.value = ids
+    }
+}, { immediate: true })
+
+watch(() => selectionStore.productGroupsTree, (tree) => {
+    if (tree.length) {
+        const ids = new Set(expandedGroupIds.value)
+        // For products, expand the children of the root "groups" node
+        const root = tree.length === 1 && tree[0]?.isRoot ? tree[0] : null
+        const nodes = root?.children?.length ? root.children : tree
+        nodes.forEach(t => ids.add(t.id))
+        expandedGroupIds.value = ids
+    }
+}, { immediate: true })
+
+watch(activeGroupType, () => {
     selectedGroup.value = null
     searchQuery.value = ''
     memberSearchQuery.value = ''
@@ -1151,15 +1053,11 @@ watch(activeGroupType, async (newType) => {
         showSidebar.value = true
     }
 
-    // Only fetch if data hasn't been loaded yet
-    if (newType === 'clients' && !clientsFetched.value) {
-        loading.value = true
-        await fetchClientGroups()
-        loading.value = false
-    } else if (newType === 'products' && !productsFetched.value) {
-        loading.value = true
-        await fetchProductGroups()
-        loading.value = false
+    // Ensure data is loaded (respects store cache)
+    if (activeGroupType.value === 'clients') {
+        selectionStore.fetchClientGroups()
+    } else {
+        selectionStore.fetchProductGroups()
     }
 })
 </script>

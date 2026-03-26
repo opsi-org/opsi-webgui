@@ -187,19 +187,7 @@ export interface GroupTreeNodeData {
   isRoot?: boolean
   isSpecial?: boolean
   hasSelection?: boolean
-}
-
-export interface GroupTreeNode {
-  id: string
-  name: string
-  description: string
-  notes?: string
-  count: number
-  members: string[]
-  parentGroupId?: string | null
-  children: GroupTreeNode[]
-  level: number
-  isSpecial?: boolean
+  level?: number
 }
 
 export type GroupAction =

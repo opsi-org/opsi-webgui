@@ -25,13 +25,13 @@
 				isSelected ? 'font-medium text-(--color-text)' : '',
 				group.isSpecial ? 'text-(--color-text-muted) italic' : ''
 			]">
-				{{ group.name }}
+				{{ group.label }}
 			</span>
-			<span v-if="group.members?.length > 0"
+			<span v-if="(group.members?.length || 0) > 0"
 				class="text-[11px] tabular-nums px-1.5 py-0.5 rounded-full bg-(--color-surface-hover) text-(--color-text-muted)">
-				{{ group.members.length }}
+				{{ (group.members || []).length }}
 			</span>
-			<div v-if="group.isSpecial && group.name !== 'not_assigned'"
+			<div v-if="group.isSpecial && group.label !== 'not_assigned'"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
 				<UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
 					@click="$emit('create-subgroup', group.id)" />
@@ -61,10 +61,10 @@
 </template>
 
 <script setup lang="ts">
-import type { GroupTreeNode } from '~/types'
+import type { GroupTreeNodeData } from '~/types'
 
 interface Props {
-	group: GroupTreeNode
+	group: GroupTreeNodeData
 	selectedId?: string | null
 	expandedIds: Set<string>
 	groupType: 'clients' | 'products'
@@ -78,12 +78,12 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-	(e: 'select', group: GroupTreeNode): void
+	(e: 'select', group: GroupTreeNodeData): void
 	(e: 'toggle', groupId: string): void
 	(e: 'create-subgroup', parentId: string): void
-	(e: 'edit', group: GroupTreeNode): void
-	(e: 'delete', group: GroupTreeNode): void
-	(e: 'add-members', group: GroupTreeNode): void
+	(e: 'edit', group: GroupTreeNodeData): void
+	(e: 'delete', group: GroupTreeNodeData): void
+	(e: 'add-members', group: GroupTreeNodeData): void
 }>()
 
 const icons = useIcons()
