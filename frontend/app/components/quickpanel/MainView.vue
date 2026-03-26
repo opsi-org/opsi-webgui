@@ -157,6 +157,9 @@ onMounted(() => {
 	if (stored && defaultPageOptions.value.some(o => o.value === stored)) {
 		defaultPage.value = stored
 	}
+	// Pre-fetch groups when panel mounts so they're ready when user switches tabs
+	selectionStore.fetchClientGroups()
+	selectionStore.fetchProductGroups()
 })
 
 watch(defaultPage, (val) => {

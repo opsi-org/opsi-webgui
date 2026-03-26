@@ -108,7 +108,7 @@
                                 <h4 class="text-sm font-medium text-(--color-text)">
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ selectedGroup.members.length
-                                        }})</span>
+                                    }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -281,7 +281,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                                }}
+                            }}
                             </UButton>
                             <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -1085,7 +1085,14 @@ onMounted(() => {
     checkMobile()
     window.addEventListener('resize', checkMobile)
     onUnmounted(() => window.removeEventListener('resize', checkMobile))
-    fetchCurrentGroups()
+    // Pre-fetch both group types in parallel on mount
+    loading.value = true
+    Promise.all([
+        fetchClientGroups(),
+        fetchProductGroups(),
+    ]).finally(() => {
+        loading.value = false
+    })
 })
 
 watch(activeGroupType, async (newType) => {
@@ -1098,10 +1105,15 @@ watch(activeGroupType, async (newType) => {
         showSidebar.value = true
     }
 
+    // Only fetch if data hasn't been loaded yet
     if (newType === 'clients' && !clientsFetched.value) {
-        await fetchCurrentGroups()
+        loading.value = true
+        await fetchClientGroups()
+        loading.value = false
     } else if (newType === 'products' && !productsFetched.value) {
-        await fetchCurrentGroups()
+        loading.value = true
+        await fetchProductGroups()
+        loading.value = false
     }
 })
 </script>
