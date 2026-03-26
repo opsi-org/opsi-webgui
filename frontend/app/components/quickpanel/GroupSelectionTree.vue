@@ -24,29 +24,37 @@
 		<div v-else class="flex-1 overflow-y-auto min-h-0">
 			<template v-if="groupType === 'client'">
 				<div v-for="section in clientSections" :key="section.id" class="mb-3">
-					<div class="flex items-center justify-between px-1 py-1 mb-0.5">
-						<span class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted)">{{
-							section.label }}</span>
+					<div class="flex items-center justify-between px-1 py-1 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded"
+						@click="toggleSectionCollapse(section.id)">
+						<div class="flex items-center gap-1">
+							<UIcon :name="isSectionCollapsed(section.id) ? icons.arrowRight : icons.arrowDown"
+								class="w-3 h-3 text-(--color-text-muted)" />
+							<span class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted)">{{
+								section.label }}</span>
+						</div>
 						<UBadge v-if="section.count > 0" size="xs" variant="subtle" color="neutral">{{ section.count }}
 						</UBadge>
 					</div>
-					<div v-for="item in section.flatItems" :key="`${section.id}-${item.id}`"
-						:style="{ paddingLeft: `${item.depth * 16}px` }"
-						class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer">
-						<UButton v-if="item.hasChildren" :icon="item.isExpanded ? icons.arrowDown : icons.arrowRight"
-							size="xs" variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
-							@click.stop="toggleExpand(item.id)" />
-						<span v-else class="w-4 shrink-0" />
-						<UCheckbox :model-value="isItemChecked(item)" size="xs" @click.stop
-							@update:model-value="handleItemClick(item)" />
-						<span class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
-							@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
-							}}</span>
-						<UBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle" color="neutral">
-							{{ item.memberCount }}</UBadge>
-					</div>
-					<div v-if="section.flatItems.length === 0"
-						class="text-[10px] text-(--color-text-muted) py-1 px-2 italic">{{ t('noResults') }}</div>
+					<template v-if="!isSectionCollapsed(section.id)">
+						<div v-for="item in section.flatItems" :key="`${section.id}-${item.id}`"
+							:style="{ paddingLeft: `${item.depth * 16}px` }"
+							class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer">
+							<UButton v-if="item.hasChildren"
+								:icon="item.isExpanded ? icons.arrowDown : icons.arrowRight" size="xs" variant="ghost"
+								color="neutral" class="shrink-0 p-0! h-4! w-4!" @click.stop="toggleExpand(item.id)" />
+							<span v-else class="w-4 shrink-0" />
+							<UCheckbox :model-value="isItemChecked(item)" size="xs" @click.stop
+								@update:model-value="handleItemClick(item)" />
+							<span class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
+								@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
+								}}</span>
+							<UBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle"
+								color="neutral">
+								{{ item.memberCount }}</UBadge>
+						</div>
+						<div v-if="section.flatItems.length === 0"
+							class="text-[10px] text-(--color-text-muted) py-1 px-2 italic">{{ t('noResults') }}</div>
+					</template>
 				</div>
 				<div class="mb-3">
 					<div class="flex items-center justify-between px-1 py-1 mb-0.5">
@@ -66,7 +74,8 @@
 							<span class="truncate">{{ client }}</span>
 						</div>
 						<div v-if="filteredAllClients.length === 0"
-							class="text-[10px] text-(--color-text-muted) py-1 px-2 italic">{{ t('noResults') }}</div>
+							class="text-[10px] text-(--color-text-muted) py-1 px-2 italic">{{
+								t('noResults') }}</div>
 					</div>
 				</div>
 			</template>
@@ -114,6 +123,21 @@ const t = (key: string) => {
 const searchQuery = ref('')
 const allClientsList = ref<string[]>([])
 const allClientsLoading = ref(false)
+const collapsedSections = ref<Set<string>>(new Set(['groups', 'clientdirectory']))
+
+function isSectionCollapsed(sectionId: string): boolean {
+	return collapsedSections.value.has(sectionId) && !searchQuery.value
+}
+
+function toggleSectionCollapse(sectionId: string) {
+	const newSet = new Set(collapsedSections.value)
+	if (newSet.has(sectionId)) {
+		newSet.delete(sectionId)
+	} else {
+		newSet.add(sectionId)
+	}
+	collapsedSections.value = newSet
+}
 
 const loading = computed(() =>
 	props.groupType === 'client' ? selectionStore.clientGroupsLoading : selectionStore.productGroupsLoading
