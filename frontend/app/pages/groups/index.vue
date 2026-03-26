@@ -108,7 +108,7 @@
                                 <h4 class="text-sm font-medium text-(--color-text)">
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ selectedGroup.members.length
-                                        }})</span>
+                                    }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -288,7 +288,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                                }}
+                            }}
                             </UButton>
                             <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -403,16 +403,22 @@ const selectedGroup = ref<GroupTreeNode | null>(null)
 const loading = ref(false)
 const loadingMembers = ref(false)
 
-const clientGroupsTree = ref<GroupTreeNode[]>([])
-const productGroupsTree = ref<GroupTreeNode[]>([])
+const clientGroupsTree = shallowRef<GroupTreeNode[]>([])
+const productGroupsTree = shallowRef<GroupTreeNode[]>([])
 const clientsFetched = ref(false)
 const productsFetched = ref(false)
 
-const availableClients = ref<string[]>([])
-const availableProducts = ref<string[]>([])
+const availableClients = shallowRef<string[]>([])
+const availableProducts = shallowRef<string[]>([])
 const cachedDepotIds = ref<string[]>([])
 
 const searchQuery = ref('')
+const debouncedSearchQuery = ref('')
+let _searchDebounce: ReturnType<typeof setTimeout> | null = null
+watch(searchQuery, (q) => {
+    if (_searchDebounce) clearTimeout(_searchDebounce)
+    _searchDebounce = setTimeout(() => { debouncedSearchQuery.value = q }, 180)
+})
 const memberSearchQuery = ref('')
 
 const statusMessage = ref<{ type: 'success' | 'error'; text: string } | null>(null)
@@ -473,40 +479,40 @@ const currentTreeGroups = computed(() => {
 })
 
 const filteredTreeGroups = computed(() => {
-    if (!searchQuery.value.trim()) return currentTreeGroups.value
-    const query = searchQuery.value.toLowerCase()
+    if (!debouncedSearchQuery.value.trim()) return currentTreeGroups.value
+    const query = debouncedSearchQuery.value.toLowerCase()
     return filterTree(currentTreeGroups.value, query)
 })
 
 function filterTree(nodes: GroupTreeNode[], query: string): GroupTreeNode[] {
-    return nodes.reduce((acc: GroupTreeNode[], node) => {
+    const result: GroupTreeNode[] = []
+    for (const node of nodes) {
         const matches = node.name.toLowerCase().includes(query)
-        const filteredChildren = filterTree(node.children || [], query)
-
+        const filteredChildren = node.children?.length ? filterTree(node.children, query) : []
         if (matches || filteredChildren.length > 0) {
-            acc.push({
-                ...node,
-                children: filteredChildren.length > 0 ? filteredChildren : node.children
-            })
+            result.push(filteredChildren.length > 0 ? { ...node, children: filteredChildren } : node)
         }
-        return acc
-    }, [])
+    }
+    return result
 }
 
-// Auto-expand matching groups when search query changes (outside computed to avoid side effects)
-watch(searchQuery, (q) => {
+// Auto-expand matching groups when debounced search query changes
+watch(debouncedSearchQuery, (q) => {
     if (!q.trim()) return
     const query = q.toLowerCase()
+    const ids = expandedGroupIds.value
+    let changed = false
     function expandMatching(nodes: GroupTreeNode[]) {
         for (const node of nodes) {
             if (node.children?.length) {
                 const hasMatch = node.children.some(c => c.name.toLowerCase().includes(query))
-                if (hasMatch) expandedGroupIds.value.add(node.id)
+                if (hasMatch && !ids.has(node.id)) { ids.add(node.id); changed = true }
                 expandMatching(node.children)
             }
         }
     }
     expandMatching(currentTreeGroups.value)
+    if (changed) expandedGroupIds.value = new Set(ids)
 })
 
 const MEMBER_DISPLAY_LIMIT = 200
@@ -687,15 +693,20 @@ async function removeSelectedMembers() {
     if (!selectedGroup.value || selectedGroup.value.isSpecial || selectedMembers.value.length === 0) return
 
     try {
-        for (const memberId of [...selectedMembers.value]) {
-            if (activeGroupType.value === 'clients') {
-                await removeClientFromGroups(memberId, [selectedGroup.value.id])
-            } else {
-                await removeProductFromGroup(selectedGroup.value.id, memberId)
-            }
+        const groupId = selectedGroup.value.id
+        const members = [...selectedMembers.value]
+        // Parallelize removal — batch concurrent API calls
+        const BATCH_SIZE = 10
+        for (let i = 0; i < members.length; i += BATCH_SIZE) {
+            const batch = members.slice(i, i + BATCH_SIZE)
+            await Promise.all(batch.map(memberId =>
+                activeGroupType.value === 'clients'
+                    ? removeClientFromGroups(memberId, [groupId])
+                    : removeProductFromGroup(groupId, memberId)
+            ))
         }
 
-        showStatus('success', String($t('message.successfullyDeletedClientFromGroup', { client: `${selectedMembers.value.length}` })))
+        showStatus('success', String($t('message.successfullyDeletedClientFromGroup', { client: `${members.length}` })))
         selectedMembers.value = []
         await fetchCurrentGroups()
         const updated = findGroupById(currentTreeGroups.value, selectedGroup.value.id)
@@ -818,7 +829,9 @@ async function fetchClientGroups() {
 
             clientGroupsTree.value = trees
             clientsFetched.value = true
-            trees.forEach(t => expandedGroupIds.value.add(t.id))
+            const ids = new Set(expandedGroupIds.value)
+            trees.forEach(t => ids.add(t.id))
+            expandedGroupIds.value = ids
         }
     } catch (err) {
         console.error('Failed to fetch client groups:', err)
@@ -836,7 +849,9 @@ async function fetchProductGroups() {
             if (groupsTree) {
                 productGroupsTree.value = groupsTree.children || []
                 productsFetched.value = true
-                groupsTree.children?.forEach(c => expandedGroupIds.value.add(c.id))
+                const ids = new Set(expandedGroupIds.value)
+                groupsTree.children?.forEach(c => ids.add(c.id))
+                expandedGroupIds.value = ids
             }
         }
     } catch (err) {
