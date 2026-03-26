@@ -63,6 +63,11 @@ async def auth_login() -> JSONResponse:
     return JSONResponse({"result": "Login success"})
 
 
+@webgui_router.get("/api/auth/session")
+async def auth_session() -> JSONResponse:
+    return JSONResponse({"result": "authenticated", "username": get_username()})
+
+
 @webgui_router.get("/api/auth/logout")
 @webgui_router.post("/api/auth/logout")
 async def auth_logout() -> JSONResponse:
@@ -340,10 +345,7 @@ async def create_backup(
 
 @webgui_router.get("/api/opsidata/changelogs")
 def get_markdown() -> PlainTextResponse:
-    from . import Webgui
-
+    changelog_path = Path(__file__).parent.parent / "data" / "changelog" / "changelog.md"
     return PlainTextResponse(
-        (Path(Webgui().data_path) / "changelog/changelog.md").read_text(
-            encoding="utf-8"
-        )
+        changelog_path.read_text(encoding="utf-8")
     )
