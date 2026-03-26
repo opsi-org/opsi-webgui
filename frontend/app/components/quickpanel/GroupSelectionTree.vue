@@ -154,6 +154,16 @@ const expandedIds = computed(() => {
 })
 const hasData = computed(() => rawTree.value.length > 0)
 
+// Pre-compute selection sets for O(1) lookups
+const selectedItemsSet = computed(() => {
+	const items = props.groupType === 'client' ? selectionStore.selectedClients : selectionStore.selectedProducts
+	return new Set(items)
+})
+const selectedGroupsSet = computed(() => {
+	const groups = props.groupType === 'client' ? selectionStore.selectedClientGroups : selectionStore.selectedProductGroups
+	return new Set(groups)
+})
+
 interface FlatItem {
 	id: string
 	label: string
@@ -178,12 +188,18 @@ function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string):
 		const childItems = node.children ? flattenNodes(node.children, depth + 1, query) : []
 		const memberItems: FlatItem[] = []
 		if (node.members) {
-			for (const m of node.members) {
+			const members = node.members
+			let matchCount = 0
+			for (const m of members) {
 				if (!query || m.toLowerCase().includes(query)) {
-					memberItems.push({
-						id: m, label: m, depth: depth + 1, isGroup: false,
-						memberCount: 0, members: [], hasChildren: false, isExpanded: false,
-					})
+					// Limit visible members to avoid DOM overload
+					if (matchCount < 200) {
+						memberItems.push({
+							id: m, label: m, depth: depth + 1, isGroup: false,
+							memberCount: 0, members: [], hasChildren: false, isExpanded: false,
+						})
+					}
+					matchCount++
 				}
 			}
 		}
@@ -254,14 +270,11 @@ const allExpanded = computed(() => {
 function isItemChecked(item: FlatItem): boolean {
 	if (item.isGroup) {
 		if (item.members.length > 0) {
-			const selected = props.groupType === 'client' ? selectionStore.selectedClients : selectionStore.selectedProducts
-			return item.members.every(m => selected.includes(m))
+			return item.members.every(m => selectedItemsSet.value.has(m))
 		}
-		const groups = props.groupType === 'client' ? selectionStore.selectedClientGroups : selectionStore.selectedProductGroups
-		return groups.includes(item.id)
+		return selectedGroupsSet.value.has(item.id)
 	}
-	const selected = props.groupType === 'client' ? selectionStore.selectedClients : selectionStore.selectedProducts
-	return selected.includes(item.id)
+	return selectedItemsSet.value.has(item.id)
 }
 
 function handleItemClick(item: FlatItem) {

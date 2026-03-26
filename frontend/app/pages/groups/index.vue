@@ -108,7 +108,7 @@
                                 <h4 class="text-sm font-medium text-(--color-text)">
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ selectedGroup.members.length
-                                    }})</span>
+                                        }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -141,7 +141,7 @@
                                 </span>
                             </div>
                             <div class="space-y-0 overflow-auto" style="max-height: 60vh;">
-                                <div v-for="member in filteredMembers" :key="member"
+                                <div v-for="member in displayedMembers" :key="member"
                                     class="flex items-center gap-2 text-sm px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/member"
                                     :class="selectedMembers.includes(member) ? 'bg-opsi-blue/5' : ''">
                                     <input v-if="!selectedGroup.isSpecial" type="checkbox"
@@ -160,6 +160,13 @@
                                     class="text-sm text-(--color-text-muted) py-4 text-center">
                                     {{ memberSearchQuery ? $t('noSearchResults') : $t('noMembers') }}
                                 </div>
+                                <button v-else-if="hasMoreMembers" type="button"
+                                    class="w-full py-2 text-xs text-center text-(--color-primary) hover:bg-(--color-surface-hover) rounded transition-colors"
+                                    @click="showMoreMembers">
+                                    {{ $t('showMore') }} ({{ filteredMembers.length - memberDisplayLimit }} {{
+                                    $t('remaining')
+                                    }})
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -281,7 +288,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                            }}
+                                }}
                             </UButton>
                             <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -481,13 +488,29 @@ function filterTree(nodes: GroupTreeNode[], query: string): GroupTreeNode[] {
                 ...node,
                 children: filteredChildren.length > 0 ? filteredChildren : node.children
             })
-            if (filteredChildren.length > 0) {
-                expandedGroupIds.value.add(node.id)
-            }
         }
         return acc
     }, [])
 }
+
+// Auto-expand matching groups when search query changes (outside computed to avoid side effects)
+watch(searchQuery, (q) => {
+    if (!q.trim()) return
+    const query = q.toLowerCase()
+    function expandMatching(nodes: GroupTreeNode[]) {
+        for (const node of nodes) {
+            if (node.children?.length) {
+                const hasMatch = node.children.some(c => c.name.toLowerCase().includes(query))
+                if (hasMatch) expandedGroupIds.value.add(node.id)
+                expandMatching(node.children)
+            }
+        }
+    }
+    expandMatching(currentTreeGroups.value)
+})
+
+const MEMBER_DISPLAY_LIMIT = 200
+const memberDisplayLimit = ref(MEMBER_DISPLAY_LIMIT)
 
 const filteredMembers = computed(() => {
     if (!selectedGroup.value) return []
@@ -496,6 +519,13 @@ const filteredMembers = computed(() => {
     const query = memberSearchQuery.value.toLowerCase()
     return members.filter(m => m.toLowerCase().includes(query))
 })
+
+const displayedMembers = computed(() => filteredMembers.value.slice(0, memberDisplayLimit.value))
+const hasMoreMembers = computed(() => filteredMembers.value.length > memberDisplayLimit.value)
+
+function showMoreMembers() {
+    memberDisplayLimit.value += MEMBER_DISPLAY_LIMIT
+}
 
 const filteredAvailableMembers = computed(() => {
     if (!memberTargetGroup.value) return []
@@ -580,6 +610,7 @@ function selectGroup(group: GroupTreeNode) {
     selectedGroup.value = group
     memberSearchQuery.value = ''
     selectedMembers.value = []
+    memberDisplayLimit.value = MEMBER_DISPLAY_LIMIT
     expandGroupAndParents(group.id)
     if (isMobile.value) {
         showSidebar.value = false
