@@ -115,7 +115,7 @@ Can be used both in standalone pages and detail panels.
 				<div v-else ref="logContainerRef"
 					class="h-full overflow-auto log-viewer bg-[--color-surface] rounded-xl font-mono text-xs">
 					<div v-for="(line, idx) in filteredLogContent" :id="'logrow-' + idx" :key="idx"
-						:class="[getLogRowClass(line, idx), 'flex items-start hover:bg-[--color-surface-hover] cursor-pointer transition-colors group border-b border-[--color-border]/30 last:border-b-0']"
+						:class="[getLogRowClass(line, idx), 'flex items-start hover:bg-[--color-surface-hover] cursor-pointer transition-colors group']"
 						@click="setMarker(idx)">
 						<span
 							class="w-12 shrink-0 px-2 py-1.5 text-right text-[--color-text-muted] border-r border-[--color-border] select-none sticky left-0 bg-inherit">
