@@ -84,6 +84,8 @@ fi
 
 # Create zip
 ZIP_NAME="opsi-${ADDON_ID}.zip"
+cd "${WORKING_DIR}"
+zip -r "${ZIP_NAME}" "${ADDON_ID}/"
 
 echo ""
 echo "> Done."
