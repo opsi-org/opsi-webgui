@@ -5,8 +5,6 @@ package:
   name: opsi-webgui
   postinst_script:
     - echo "OPSI webgui folder '/usr/lib/opsiconfd/addons/webgui'"
-    - '[ -e /var/lib/opsiconfd/addons/__webgui ] && rm -rf /var/lib/opsiconfd/addons/__webgui || true'
-    - '[ -e /var/lib/opsiconfd/addons/__webgui-dev ] && rm -rf /var/lib/opsiconfd/addons/__webgui-dev || true'
     - '[ -e /var/lib/opsiconfd/addons/webgui ] && rm -r /var/lib/opsiconfd/addons/webgui'
     - exit 0
   source_script: |
