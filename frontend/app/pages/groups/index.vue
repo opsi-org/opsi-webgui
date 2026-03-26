@@ -34,7 +34,7 @@
                         <span class="text-sm font-medium text-(--color-text)">{{ activeGroupType === 'clients' ?
                             $t('client-group') :
                             $t('product-group') }}</span>
-                        <UButton v-if="activeGroupType === 'products'" :icon="icons.add" size="xs" variant="ghost"
+                        <UButton v-if="activeGroupType === 'products'" :icon="icons.group" size="xs" variant="ghost"
                             color="neutral" @click="openCreateModal()" :title="$t('createGroup')" />
                     </div>
                     <UInput v-model="searchQuery" :placeholder="$t('typeToFilter')" size="sm"
@@ -49,7 +49,7 @@
                             class="flex items-center justify-between text-xs font-medium text-(--color-text-muted) uppercase px-2 py-1.5 mt-2 first:mt-0">
                             <span>{{ rootGroup.name === 'groups' ? $t('Groups') : rootGroup.name === 'clientdirectory' ?
                                 $t('clientDirectory') : rootGroup.name }}</span>
-                            <UButton :icon="icons.add" size="xs" variant="ghost" color="neutral"
+                            <UButton :icon="icons.group" size="xs" variant="ghost" color="neutral"
                                 :title="$t('createGroup')" @click="openCreateModal(rootGroup.id)" />
                         </div>
                         <GroupsActionsTreeNode
@@ -164,7 +164,7 @@
                                     class="w-full py-2 text-xs text-center text-(--color-primary) hover:bg-(--color-surface-hover) rounded transition-colors"
                                     @click="showMoreMembers">
                                     {{ $t('showMore') }} ({{ filteredMembers.length - memberDisplayLimit }} {{
-                                    $t('remaining')
+                                        $t('remaining')
                                     }})
                                 </button>
                             </div>

@@ -65,7 +65,7 @@
 					<div v-if="allClientsLoading" class="py-2 text-center">
 						<UIcon :name="icons.loading" class="w-4 h-4 animate-spin text-(--color-text-muted)" />
 					</div>
-					<div v-else class="max-h-50 overflow-y-auto">
+					<div v-else class="max-h-90 overflow-y-auto">
 						<div v-for="client in filteredAllClients" :key="client"
 							class="flex items-center gap-2 px-2 py-0.5 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer"
 							@click="selectionStore.toggleClient(client, 'quickpanel')">

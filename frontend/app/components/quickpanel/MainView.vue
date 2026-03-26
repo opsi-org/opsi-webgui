@@ -17,7 +17,7 @@
 				</UButton>
 			</div>
 		</div>
-		<div class="min-h-0 overflow-hidden" style="max-height: 60vh;">
+		<div class="min-h-0 overflow-hidden" style="max-height: 55vh;">
 			<div v-show="activeTab === 'overview'" class="h-full overflow-y-auto">
 				<QuickpanelSelectionOverview />
 			</div>
