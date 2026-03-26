@@ -141,7 +141,7 @@ build:addon-nuxt4:
   needs: [setup:deps, { job: setup:i18n, optional: true }, { job: setup:changelog, optional: true }]
   script:
     - apt update && apt -y install zip
-    - bash "$(pwd)/scripts/build_addon.sh" webgui-dev "OpsiWebGUI-Nuxt4" "$(pwd)"
+    - bash "$(pwd)/scripts/build_addon.sh" webgui-nuxt4 "OpsiWebGUI-Nuxt4" "$(pwd)"
     - ls -lah opsi-webgui-nuxt4.zip webgui-nuxt4/
   artifacts:
     name: 'opsi-webgui-nuxt4-${CI_COMMIT_REF_NAME}'
