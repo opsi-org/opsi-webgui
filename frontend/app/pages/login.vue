@@ -18,10 +18,10 @@ Login page - allows users to log in with username/password or SAML SSO.
           <UIcon :name="icons.serverStack" class="w-5 h-5 text-opsi-blue" />
           <div class="flex-1 min-w-0">
             <span class="text-xs text-(--color-text-muted) dark:text-(--color-text-muted) block">{{ $t('configServer')
-              }}</span>
+            }}</span>
             <span class="font-medium text-(--color-text) dark:text-(--color-text) truncate block">{{
               configServerName
-              }}</span>
+            }}</span>
           </div>
         </div>
 
@@ -109,21 +109,15 @@ onMounted(async () => {
   const samlSession = route.query.session as string
   if (samlSession) {
     try {
-      const authResult = await $customFetch<{ result: string; username?: string }>('/auth/session')
-      const username = authResult?.username || (authResult as any)?.result
-      if (username && username !== 'authenticated') {
-        userStore.login(username)
+      // After SAML redirect, the session cookie is set by opsiconfd.
+      // Use the addon's own auth endpoint to verify and get the username.
+      const settings = await $customFetch<{ username?: string }>('/user/getsettings')
+      if (settings?.username) {
+        userStore.login(settings.username)
         await fetchPostLoginData()
-        const redirectPath = getDefaultPage()
-        await navigateTo(redirectPath)
-      } else if (authResult) {
-        // Session cookie is valid - try getsettings as fallback
-        const settings = await $customFetch<{ username?: string }>('/user/getsettings')
-        if (settings?.username) {
-          userStore.login(settings.username)
-          await fetchPostLoginData()
-          await navigateTo(getDefaultPage())
-        }
+        await navigateTo(getDefaultPage())
+      } else {
+        errorMessage.value = String($t('message.login.failed'))
       }
     } catch {
       errorMessage.value = String($t('message.login.failed'))

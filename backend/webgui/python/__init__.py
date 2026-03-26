@@ -44,7 +44,7 @@ from .utils import mysql
 from .webgui import webgui_router
 
 SESSION_LIFETIME = 60 * 30
-PUBLIC_PATHS = ["/app", "/api/user/opsiserver", "/api/auth/status"]
+PUBLIC_PATHS = ["/app", "/api/user/opsiserver", "/api/auth/status", "/api/auth/session"]
 
 logger = get_logger()
 
