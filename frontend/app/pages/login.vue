@@ -18,10 +18,10 @@ Login page - allows users to log in with username/password or SAML SSO.
           <UIcon :name="icons.serverStack" class="w-5 h-5 text-opsi-blue" />
           <div class="flex-1 min-w-0">
             <span class="text-xs text-(--color-text-muted) dark:text-(--color-text-muted) block">{{ $t('configServer')
-            }}</span>
+              }}</span>
             <span class="font-medium text-(--color-text) dark:text-(--color-text) truncate block">{{
               configServerName
-            }}</span>
+              }}</span>
           </div>
         </div>
 
@@ -110,11 +110,20 @@ onMounted(async () => {
   if (samlSession) {
     try {
       const authResult = await $customFetch<{ result: string; username?: string }>('/auth/session')
-      if (authResult && (authResult as any).username) {
-        userStore.login((authResult as any).username)
+      const username = authResult?.username || (authResult as any)?.result
+      if (username && username !== 'authenticated') {
+        userStore.login(username)
         await fetchPostLoginData()
-        const redirectPath = route.query.redirect?.toString() || getDefaultPage()
+        const redirectPath = getDefaultPage()
         await navigateTo(redirectPath)
+      } else if (authResult) {
+        // Session cookie is valid - try getsettings as fallback
+        const settings = await $customFetch<{ username?: string }>('/user/getsettings')
+        if (settings?.username) {
+          userStore.login(settings.username)
+          await fetchPostLoginData()
+          await navigateTo(getDefaultPage())
+        }
       }
     } catch {
       errorMessage.value = String($t('message.login.failed'))
@@ -159,7 +168,7 @@ const handleLogin = async () => {
 }
 
 const samlLogin = () => {
-  const currentUrl = window.location.origin + (config.public.OWN_PATH || '/addons/webgui/app') + '/login'
-  window.location.href = (config.public.API_PATH || '/addons/webgui/api') + '/auth/saml?redirect=' + encodeURIComponent(currentUrl)
+  const currentUrl = window.location.origin + (config.public.OWN_PATH || '/addons/webgui/app') + '/login?session=saml'
+  window.location.href = '/auth/saml/login?redirect=' + encodeURIComponent(currentUrl)
 }
 </script>
