@@ -64,8 +64,6 @@ export function useMessageBus(
   const store = useMessageBusStore()
   const channels = _channels || []
 
-  const wsIsConnected = computed(() => store.isConnected)
-
   // Watch store lastMsg for the onMessage callback
   if (onMessage) {
     const { lastMsg: storeLastMsg } = storeToRefs(store)
