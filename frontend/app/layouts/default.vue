@@ -28,7 +28,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                     }" :title="healthCheckTooltip">
                     <UIcon :name="icons.diagnostics" class="w-4 h-4" />
                     <span class="tabular-nums">{{ userStore.healthCounts?.error || userStore.healthCounts?.warning || 0
-                        }}</span>
+                    }}</span>
                 </NuxtLink>
                 <UTooltip :text="messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')">
                     <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs"
@@ -109,7 +109,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                                 t('quickPanel')
-                            }}</span>
+                                }}</span>
                             <button @click="quickpanelOpen = false"
                                 class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
                                 <UIcon :name="icons.close" class="w-4 h-4" />
@@ -150,11 +150,15 @@ import { useUiStore } from '~/stores/uiStore'
 import { useUserStore } from '~/stores/userStore'
 import { useMessageBusStore } from '~/stores/messageBusStore'
 import { useSessionTimer } from '~/composables/useSessionTimer'
+import { useMessageBus } from '~/composables/useMessagebus'
 
 const icons = useIcons()
 const userStore = useUserStore()
 const uiStore = useUiStore()
 const messageBusStore = useMessageBusStore()
+
+// Establish persistent messagebus connection at the layout level
+const { mount: mountMessageBus } = useMessageBus()
 
 const { isWarning, formattedTime } = useSessionTimer(true)
 const $route = useRoute()
@@ -220,6 +224,7 @@ function startQuickpanelResize(e: MouseEvent) {
 
 onMounted(() => {
     updateDefaultPage()
+    mountMessageBus()
     const checkMobile = () => {
         isMobile.value = window.innerWidth < 768
         if (!isMobile.value) {

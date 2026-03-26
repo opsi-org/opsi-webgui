@@ -1,5 +1,5 @@
 import { encode, decode } from '@msgpack/msgpack'
-import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useMessageBusStore } from '~/stores/messageBusStore'
 import { storeToRefs } from 'pinia'
 
@@ -67,8 +67,6 @@ export function useMessageBus(
     },
     { deep: true }
   )
-
-  onUnmounted(wsDisconnect)
 
   async function mount() {
     await wsInit()
@@ -244,7 +242,8 @@ export function useAutoRefresh(
   options: { watchEvents?: string[]; debounceMs?: number } = {}
 ) {
   const mbStore = useMessageBusStore()
-  const { mount, wsBus } = useMessageBus(handleMessage, false, [])
+  const { lastMsg: storeLastMsg } = storeToRefs(mbStore)
+  const { mount, wsBus } = useMessageBus(undefined, false, [])
 
   const watchEvents = options.watchEvents || ALL_DATA_EVENTS
   const debounceMs = options.debounceMs || 2000
@@ -252,7 +251,7 @@ export function useAutoRefresh(
   const changesDetected = ref(false)
   const lastChangeEvent = ref('')
   const lastChangeDescription = ref('')
-  const isConnected = computed(() => wsBus.value?.readyState === 1)
+  const isConnected = computed(() => wsBus.value?.readyState === 1 || mbStore.isConnected)
   const autoRefreshEnabled = computed({
     get: () => mbStore.autoRefresh,
     set: (val: boolean) => mbStore.setAutoRefresh(val),
@@ -311,6 +310,12 @@ export function useAutoRefresh(
     changesDetected.value = false
     mbStore.setChangesDetected(false)
   }
+
+  // Watch store's lastMsg reactively so we get messages regardless of which
+  // composable instance owns the active WebSocket connection
+  watch(storeLastMsg, (msg) => {
+    if (msg) handleMessage(msg)
+  })
 
   onMounted(() => {
     mount()
