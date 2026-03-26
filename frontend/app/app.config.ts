@@ -50,6 +50,8 @@ export default defineAppConfig({
     selectMenu: {
       slots: {
         base: 'bg-white dark:bg-[var(--color-surface)] border border-transparent text-[var(--color-text)] dark:text-[var(--color-text)] rounded-lg',
+        trigger:
+          'ring-[var(--color-opsi-blue)] focus:ring-[var(--color-opsi-blue)] data-[state=open]:ring-[var(--color-opsi-blue)]',
         content:
           'bg-white dark:bg-[var(--color-surface)] border border-[var(--color-border)]/50 dark:border-[var(--color-border)]/50 shadow-lg rounded-xl',
         item: 'text-[var(--color-text)] dark:text-[var(--color-text)] rounded-lg hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] transition-colors duration-100',
@@ -98,6 +100,12 @@ export default defineAppConfig({
         content:
           'bg-white dark:bg-[var(--color-surface)] border border-[var(--color-border)]/50 dark:border-[var(--color-border)]/50 shadow-lg rounded-xl',
         item: 'text-[var(--color-text)] dark:text-[var(--color-text)] rounded-lg hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] transition-colors duration-100',
+      },
+    },
+    popover: {
+      slots: {
+        content:
+          'bg-white dark:bg-[var(--color-surface)] border border-[var(--color-border)]/50 dark:border-[var(--color-border)]/50 shadow-lg rounded-xl',
       },
     },
     tooltip: {

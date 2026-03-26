@@ -574,4 +574,5 @@ html.dark .opsi-log-level-slider::-moz-range-thumb:hover {
   --ui-color-primary-800: #1a2654;
   --ui-color-primary-900: #111a42;
   --ui-color-primary-950: #0a0f2a;
+  --color-accented: var(--color-opsi-blue);
 }

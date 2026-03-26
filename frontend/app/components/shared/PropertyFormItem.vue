@@ -20,7 +20,8 @@ single editable (select + custom input), plain input.
 		<template v-else-if="multiValue && hasPossibleValues">
 			<div class="flex-1">
 				<UPopover :ui="{ content: 'p-0 w-64' }">
-					<UButton variant="outline" color="neutral" size="sm" class="w-full justify-between font-normal"
+					<UButton variant="ghost" color="neutral" size="sm"
+						class="w-full justify-between font-normal border border-(--color-border) rounded"
 						:disabled="disabled">
 						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{ $t('selectValues')
 						}}</span>
