@@ -17,20 +17,20 @@
 				</UButton>
 			</div>
 		</div>
-		<div class="flex-1 min-h-0 max-h-300 overflow-hidden">
+		<div class="min-h-0 overflow-hidden" style="max-height: 60vh;">
 			<div v-show="activeTab === 'overview'" class="h-full overflow-y-auto">
 				<QuickpanelSelectionOverview />
 			</div>
 
-			<div v-show="activeTab === 'servers'" class="h-full">
+			<div v-show="activeTab === 'servers'" class="h-full overflow-y-auto">
 				<QuickpanelServerSelectionList :active="activeTab === 'servers'" />
 			</div>
 
-			<div v-show="activeTab === 'clients'" class="h-full">
+			<div v-show="activeTab === 'clients'" class="h-full overflow-y-auto">
 				<QuickpanelGroupSelectionTree group-type="client" :active="activeTab === 'clients'" />
 			</div>
 
-			<div v-show="activeTab === 'products'" class="h-full">
+			<div v-show="activeTab === 'products'" class="h-full overflow-y-auto">
 				<QuickpanelGroupSelectionTree group-type="product" :active="activeTab === 'products'" />
 			</div>
 		</div>
