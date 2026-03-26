@@ -1,4 +1,4 @@
-import { encode, decode } from '@msgpack/msgpack'
+import { encode } from '@msgpack/msgpack'
 import { ref, computed, watch, onMounted } from 'vue'
 import { useMessageBusStore } from '~/stores/messageBusStore'
 import { storeToRefs } from 'pinia'
@@ -11,7 +11,6 @@ type Terminal = {
   cols: number
   rows: number
 }
-type MsgTemplate = Record<string, unknown>
 type RefreshCallback = () => void | Promise<void>
 
 // ── Event Constants ──
@@ -31,109 +30,72 @@ const PRODUCT_EVENTS = [
 
 const ALL_DATA_EVENTS = [...HOST_EVENTS, ...PRODUCT_EVENTS]
 
-// Default channels to subscribe on connect
-const DEFAULT_CHANNELS = [
-  '@',
-  '$',
-  'event:app_state_changed',
-  'event:user_connected',
-  'event:user_disconnected',
-  ...HOST_EVENTS.map((e) => e),
-  ...PRODUCT_EVENTS.map((e) => e),
-]
+function createUUID() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
+    return crypto.randomUUID()
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
+  })
+}
+
+function createMsgTemplate(): Record<string, unknown> {
+  return {
+    type: 'xxx',
+    channel: 'yyy',
+    sender: '@',
+    id: createUUID(),
+    created: Date.now(),
+    expires: Date.now() + 60000,
+  }
+}
+
+function wsWait(ms: number) {
+  return new Promise((r) => setTimeout(r, ms))
+}
 
 // ── Core MessageBus composable ──
+// Uses the store's singleton WebSocket. Does NOT create competing connections.
 export function useMessageBus(
   onMessage?: MessageHandler,
   _showNotifications = false,
   _channels: string[] = []
 ) {
-  const $config = useRuntimeConfig()
   const store = useMessageBusStore()
-  const wsBus = ref<WebSocket | undefined>(store.bus)
-  const busMsg = ref(store.lastMsg)
   const channels = _channels || []
 
-  const wsIsConnected = computed(() => wsBus.value?.readyState === 1)
-  const { retries, retriesMax } = storeToRefs(store)
+  const wsIsConnected = computed(() => store.isConnected)
 
-  watch(
-    () => busMsg.value,
-    async () => {
-      if (onMessage) {
-        if (!wsBus.value || !wsIsConnected.value) await mount()
-        await onMessage(busMsg.value)
+  // Watch store lastMsg for the onMessage callback
+  if (onMessage) {
+    const { lastMsg: storeLastMsg } = storeToRefs(store)
+    watch(storeLastMsg, async (msg) => {
+      if (msg) {
+        // Ensure connection before processing
+        if (!store.isConnected) store.connect()
+        await onMessage(msg)
       }
-    },
-    { deep: true }
-  )
-
-  async function mount() {
-    await wsInit()
-    if (channels.length) wsSubscribeChannel(channels)
+    })
   }
 
-  async function wsInit(reconnect = false) {
-    if ((!reconnect && wsIsConnected.value) || retries.value >= retriesMax.value) return
-    retries.value += 1
-    const host = window.location.hostname
-    const port =
-      process.env.NODE_ENV === 'production'
-        ? window.location.port
-        : Number(($config as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT) || 4447
-    const bus = new WebSocket(`wss://${host}:${port}/messagebus/v1`)
-    setBus(undefined)
-    setBus(bus)
-    if (!bus || !wsBus.value) throw new Error('MessageBus connection failed')
-    wsBus.value.binaryType = 'arraybuffer'
-    wsBus.value.onopen = () => {
-      store.resetRetries()
-      wsSubscribeChannel(DEFAULT_CHANNELS)
-    }
-    setBusMethods(wsBus.value, setLastMsg)
-    await wsWait(1000)
-    if (wsIsConnected.value) {
-      retries.value = 0
-    }
-  }
-
-  function setBus(bus?: WebSocket) {
-    store.setBus(bus)
-    wsBus.value = bus
-  }
-
-  function setLastMsg(msg: unknown) {
-    store.setLastMsg(msg)
-    busMsg.value = msg
+  function mount() {
+    store.connect()
+    if (channels.length) store.subscribeChannels(channels)
   }
 
   function wsDisconnect() {
-    wsBus.value?.close()
-    setBus(undefined)
+    store.disconnect()
   }
 
-  function wsSend(msg: unknown) {
-    if (!wsBus.value || !wsIsConnected.value) {
-      wsInit(true)
-      return
-    }
-    waitForSocket(wsBus.value, () => wsBus.value?.send(encode(msg)))
-  }
-
-  function wsSubscribeChannel(chs: string[]) {
-    const m = createMsgTemplate()
-    m.type = 'channel_subscription_request'
-    m.channel = 'service:messagebus'
-    m.operation = 'add'
-    m.channels = chs
-    wsSend(m)
+  function wsSend(msg: Record<string, unknown>) {
+    store.send(msg)
   }
 
   async function wsTerminalOpen(suid: string, terminal: Terminal) {
     terminal.terminalId = suid || createUUID()
     terminal.terminalChannel = 'service:config:terminal'
     terminal.terminalSessionChannel = 'session:' + suid
-    wsSubscribeChannel([terminal.terminalSessionChannel])
+    store.subscribeChannels([terminal.terminalSessionChannel])
     await wsWait(2000)
     const m = createMsgTemplate()
     m.type = 'terminal_open_request'
@@ -154,20 +116,20 @@ export function useMessageBus(
   }
 
   function wsTerminalSend(msg: string, terminal: Terminal) {
-    if (!wsBus.value) return
-    waitForSocket(wsBus.value, () => {
-      if (!wsBus.value) return
-      const m = createMsgTemplate()
-      m.type = 'terminal_data_write'
-      m.channel = terminal.terminalChannel
-      m.terminal_id = terminal.terminalId
-      m.data = new TextEncoder().encode(msg)
-      wsSend(m)
-    })
+    if (!store.isConnected) return
+    const m = createMsgTemplate()
+    m.type = 'terminal_data_write'
+    m.channel = terminal.terminalChannel
+    m.terminal_id = terminal.terminalId
+    m.data = new TextEncoder().encode(msg)
+    // Send directly via the store's bus for terminal data (low-latency)
+    if (store.bus && store.bus.readyState === WebSocket.OPEN) {
+      store.bus.send(encode(m))
+    }
   }
 
   function wsTerminalResize(rows: number, cols: number, terminal: Terminal) {
-    if (!wsBus.value || !wsIsConnected.value) return
+    if (!store.isConnected) return
     const m = createMsgTemplate()
     m.type = 'terminal_resize_request'
     m.channel = terminal.terminalChannel
@@ -179,55 +141,11 @@ export function useMessageBus(
     return true
   }
 
-  function createMsgTemplate(): MsgTemplate {
-    return {
-      type: 'xxx',
-      channel: 'yyy',
-      sender: '@',
-      id: createUUID(),
-      created: Date.now(),
-      expires: Date.now() + 10000,
-    }
-  }
-
-  function wsWait(ms: number) {
-    return new Promise((r) => setTimeout(r, ms))
-  }
-
-  function createUUID() {
-    if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0
-      return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
-    })
-  }
-
-  function setBusMethods(bus: WebSocket, setMsg: (msg: unknown) => void) {
-    bus.onclose = () => setBus(undefined)
-    bus.onerror = () => setBus(undefined)
-    bus.onmessage = (event: MessageEvent) => {
-      const message = decode(event.data)
-      if (
-        (message as { expires?: number }).expires &&
-        (message as { expires: number }).expires > Date.now()
-      )
-        setMsg(message)
-    }
-  }
-
-  function waitForSocket(socket: WebSocket, cb: () => void) {
-    setTimeout(() => {
-      if (socket.readyState === 1) cb()
-      else waitForSocket(socket, cb)
-    }, 5)
-  }
-
   return {
     mount,
     channels,
-    wsBus,
-    busMsg,
-    setBus,
+    wsBus: computed(() => store.bus),
+    busMsg: computed(() => store.lastMsg),
     wsTerminalResize,
     wsTerminalSend,
     wsTerminalClose,
@@ -237,13 +155,13 @@ export function useMessageBus(
 }
 
 // ── Auto-Refresh composable (integrates with MessageBus) ──
+// Watches store messages reactively. Does NOT create its own WebSocket.
 export function useAutoRefresh(
   refreshCallback: RefreshCallback,
   options: { watchEvents?: string[]; debounceMs?: number } = {}
 ) {
   const mbStore = useMessageBusStore()
   const { lastMsg: storeLastMsg } = storeToRefs(mbStore)
-  const { mount, wsBus } = useMessageBus(undefined, false, [])
 
   const watchEvents = options.watchEvents || ALL_DATA_EVENTS
   const debounceMs = options.debounceMs || 2000
@@ -251,7 +169,7 @@ export function useAutoRefresh(
   const changesDetected = ref(false)
   const lastChangeEvent = ref('')
   const lastChangeDescription = ref('')
-  const isConnected = computed(() => wsBus.value?.readyState === 1 || mbStore.isConnected)
+  const isConnected = computed(() => mbStore.isConnected)
   const autoRefreshEnabled = computed({
     get: () => mbStore.autoRefresh,
     set: (val: boolean) => mbStore.setAutoRefresh(val),
@@ -311,14 +229,14 @@ export function useAutoRefresh(
     mbStore.setChangesDetected(false)
   }
 
-  // Watch store's lastMsg reactively so we get messages regardless of which
-  // composable instance owns the active WebSocket connection
+  // Watch store's lastMsg reactively — no own WebSocket needed
   watch(storeLastMsg, (msg) => {
     if (msg) handleMessage(msg)
   })
 
+  // Ensure connection is established (idempotent — store handles singleton)
   onMounted(() => {
-    mount()
+    mbStore.connect()
   })
 
   return {
