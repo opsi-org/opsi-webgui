@@ -50,8 +50,6 @@
 						<div class="flex items-center gap-2">
 							<UIcon v-if="(row as ProductRow).locked" :name="icons.lock"
 								class="w-3.5 h-3.5 text-red-500 shrink-0" :title="$t('locked')" />
-							<UIcon v-else :name="icons.product"
-								class="w-3.5 h-3.5 text-(--color-text-muted) shrink-0" />
 							<span class="text-sm text-(--color-text)">{{ (row as ProductRow).productId }}</span>
 						</div>
 					</template>

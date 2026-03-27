@@ -31,6 +31,13 @@
 					:total-items="totalItems" :selected-keys="selectionStore.selectedClients"
 					:sort-by-selection-enabled="sortBySelectionEnabled" @row-activate="handleRowActivate"
 					@selection-change="handleSelectionChange" @page-change="handlePageChange" @refresh="fetchClients">
+					<template #cell-clientId="{ row }">
+						<div class="flex items-center gap-1.5">
+							<UIcon v-if="blockedClients.has((row as Client).ipAddress || '')" :name="icons.lock"
+								class="w-3.5 h-3.5 text-red-500 shrink-0" :title="$t('blocked')" />
+							<span>{{ (row as Client).clientId }}</span>
+						</div>
+					</template>
 					<template #cell-description="{ row }">
 						{{ (row as Client).description || '-' }}
 					</template>
@@ -62,7 +69,8 @@
 					</template>
 					<template #cell-version_outdated_netboot="{ row }">
 						<ClientsStatisticBadge :value="(row as Client).version_outdated_netboot"
-							:icon="icons.productsOutdatedLocal" label="N" :tooltip="$t('version_outdated_netboot')" status="warning"
+							:icon="icons.productsOutdatedLocal" label="N" :tooltip="$t('version_outdated_netboot')"
+							status="warning"
 							@stat-click="openProductsPanelForClient(row as Client, 'version_outdated')" />
 					</template>
 					<template #cell-installationStatus_unknown="{ row }">
@@ -149,7 +157,7 @@ definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getClients, getServerIds, checkClientReachable } = useApiHelpers()
+const { getClients, getServerIds, checkClientReachable, getBlockedClients } = useApiHelpers()
 const selectionStore = useSelectionStore()
 const router = useRouter()
 const route = useRoute()
@@ -168,6 +176,7 @@ const panelProductTypes = [
 ]
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
+const blockedClients = ref<Set<string>>(new Set())
 const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string } | null>(null)
 const lastPageParams = ref<PageChangeParams | null>(null)
 const productsSortColumn = ref<string | undefined>(undefined)
@@ -366,9 +375,24 @@ async function fetchClients(params?: PageChangeParams) {
 				clients.value = newData
 			}
 			checkAllReachability(newData)
+			fetchBlockedClients(newData)
 		}
 	} catch (e) { error.value = (e as Error).message }
 	finally { loading.value = false }
+}
+
+async function fetchBlockedClients(clientList: Client[]) {
+	try {
+		const result = await getBlockedClients()
+		if (result.data) {
+			const blockedIps = new Set(Array.isArray(result.data) ? result.data : Object.keys(result.data))
+			const matched = new Set<string>()
+			for (const c of clientList) {
+				if (c.ipAddress && blockedIps.has(c.ipAddress)) matched.add(c.ipAddress)
+			}
+			blockedClients.value = matched
+		}
+	} catch { /* silently fail */ }
 }
 
 async function checkAllReachability(clientList: Client[]) {
