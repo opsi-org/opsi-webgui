@@ -5,7 +5,7 @@
 		</template>
 		<template #footer>
 			<div class="flex gap-2 justify-end">
-				<UButton variant="outline" color="neutral" @click="showLeaveWarning = false; pendingPanelAction = null">
+				<UButton variant="outline" color="neutral" @click="cancelPanelLeave">
 					{{ $t('stayOnPage') }}</UButton>
 				<UButton color="error" @click="confirmPanelLeave">{{ $t('leaveAnyway') }}</UButton>
 			</div>
@@ -136,8 +136,8 @@
 				<HostsConfigTabs v-if="panelType === 'config'" ref="configTabsRef" :host-id="panelClient.clientId"
 					host-type="client" :tab="panelTab" panel-mode @update:tab="panelTab = $event" />
 				<ClientsLogsView v-if="panelType === 'logs'" :client-id="panelClient.clientId" panel-mode />
-				<ClientsCloneForm v-if="panelType === 'clone'" :source-id="panelClient.clientId" panel-mode
-					@saved="fetchClients" />
+				<ClientsCloneForm v-if="panelType === 'clone'" ref="cloneFormRef" :source-id="panelClient.clientId"
+					panel-mode @saved="fetchClients" />
 			</div>
 			<template v-if="panelType === 'products'">
 				<ProductsMainView ref="productsTableRef"
@@ -187,27 +187,41 @@ const lastPageParams = ref<PageChangeParams | null>(null)
 const productsSortColumn = ref<string | undefined>(undefined)
 const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void } | null>(null)
 const productsTableRef = ref<{ hasUnsavedChanges?: { value: boolean } } | null>(null)
+const cloneFormRef = ref<{ hasChanges?: boolean } | null>(null)
 const showLeaveWarning = ref(false)
 const pendingPanelAction = ref<(() => void) | null>(null)
+let resolveRouteLeave: ((ok: boolean) => void) | null = null
+
+// Route-level guard: intercepts navigation away from this page when the panel has unsaved changes
+onBeforeRouteLeave(() => {
+	const hasChanges = configTabsRef.value?.hasAnyChanges
+		|| productsTableRef.value?.hasUnsavedChanges?.value
+		|| cloneFormRef.value?.hasChanges
+	if (!hasChanges) return true
+	showLeaveWarning.value = true
+	return new Promise<boolean>((resolve) => {
+		resolveRouteLeave = resolve
+	})
+})
 
 const sortBySelectionEnabled = computed(() => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedClients.length > 0)
 
 const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
 
 const columns: DataTableColumnDef[] = [
-	{ key: 'clientId', label: String($t('clientId')), sortable: true, alwaysVisible: true },
-	{ key: 'version_outdated', label: String($t('version_outdated_localboot')), headerIcon: icons.productsOutdatedLocal, sortable: true, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'version_outdated_netboot', label: String($t('version_outdated_netboot')), headerIcon: icons.productsOutdatedNet, sortable: true, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'installationStatus_installed', label: String($t('installationStatus_installed')), headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'installationStatus_unknown', label: String($t('installationStatus_unknown')), headerIcon: icons.productInstallationStatusUnknown, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'actionResult_failed', label: String($t('actionResult_failed')), headerIcon: icons.productsFailedActionResult, sortable: true, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'actionResult_successful', label: String($t('actionResult_successful')), headerIcon: icons.productActionResultSuccessful, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'reachable', label: String($t('reachable')), headerIcon: icons.clientReachable, sortable: false, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'description', label: String($t('description')), sortable: true },
-	{ key: 'lastSeen', label: String($t('lastSeen')), sortable: true },
-	{ key: 'macAddress', label: String($t('macAddress')), sortable: true, visible: false },
-	{ key: 'ipAddress', label: String($t('ipAddress')), sortable: true, visible: false },
-	{ key: 'depotId', label: String($t('server')), sortable: true, visible: false },
+	{ key: 'clientId', label: String($t('clientId')), labelKey: 'clientId', sortable: true, alwaysVisible: true },
+	{ key: 'version_outdated', label: String($t('version_outdated_localboot')), labelKey: 'version_outdated_localboot', headerIcon: icons.productsOutdatedLocal, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'version_outdated_netboot', label: String($t('version_outdated_netboot')), labelKey: 'version_outdated_netboot', headerIcon: icons.productsOutdatedNet, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'installationStatus_installed', label: String($t('installationStatus_installed')), labelKey: 'installationStatus_installed', headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'installationStatus_unknown', label: String($t('installationStatus_unknown')), labelKey: 'installationStatus_unknown', headerIcon: icons.productInstallationStatusUnknown, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'actionResult_failed', label: String($t('actionResult_failed')), labelKey: 'actionResult_failed', headerIcon: icons.productsFailedActionResult, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'actionResult_successful', label: String($t('actionResult_successful')), labelKey: 'actionResult_successful', headerIcon: icons.productActionResultSuccessful, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'reachable', label: String($t('reachable')), labelKey: 'reachable', headerIcon: icons.clientReachable, sortable: false, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'description', label: String($t('description')), labelKey: 'description', sortable: true },
+	{ key: 'lastSeen', label: String($t('lastSeen')), labelKey: 'lastSeen', sortable: true },
+	{ key: 'macAddress', label: String($t('macAddress')), labelKey: 'macAddress', sortable: true, visible: false },
+	{ key: 'ipAddress', label: String($t('ipAddress')), labelKey: 'ipAddress', sortable: true, visible: false },
+	{ key: 'depotId', label: String($t('depot')), labelKey: 'depot', sortable: true, visible: false },
 	{ key: 'uefi', label: 'UEFI', sortable: true, visible: false },
 ]
 
@@ -265,10 +279,23 @@ function checkUnsavedAndDo(action: () => void) {
 function confirmPanelLeave() {
 	showLeaveWarning.value = false
 	configTabsRef.value?.discardAll?.()
+	if (resolveRouteLeave) {
+		resolveRouteLeave(true)
+		resolveRouteLeave = null
+	}
 	if (pendingPanelAction.value) {
 		pendingPanelAction.value()
 		pendingPanelAction.value = null
 	}
+}
+
+function cancelPanelLeave() {
+	showLeaveWarning.value = false
+	if (resolveRouteLeave) {
+		resolveRouteLeave(false)
+		resolveRouteLeave = null
+	}
+	pendingPanelAction.value = null
 }
 
 /** Single-select row click: select this client + open config panel */

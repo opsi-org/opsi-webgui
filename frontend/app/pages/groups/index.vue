@@ -110,7 +110,7 @@
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
                                         []).length
-                                        }})</span>
+                                    }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -144,12 +144,12 @@
                             </div>
                             <div class="space-y-0 overflow-auto" style="max-height: 60vh;">
                                 <div v-for="member in displayedMembers" :key="member"
-                                    class="flex items-center gap-2 text-sm px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/member"
-                                    :class="selectedMembers.includes(member) ? 'bg-opsi-blue/5' : ''">
+                                    class="flex items-center gap-2 text-sm px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/member cursor-pointer select-none"
+                                    :class="selectedMembers.includes(member) ? 'bg-opsi-blue/5' : ''"
+                                    @click="!selectedGroup.isSpecial && toggleMemberSelection(member, $event)">
                                     <input v-if="!selectedGroup.isSpecial" type="checkbox"
                                         :checked="selectedMembers.includes(member)"
-                                        class="rounded text-opsi-blue shrink-0"
-                                        @click.stop="toggleMemberSelection(member, $event)" />
+                                        class="rounded text-opsi-blue shrink-0" @click.stop />
                                     <UIcon :name="activeGroupType === 'clients' ? icons.client : icons.product"
                                         class="w-4 h-4 text-(--color-text-muted) shrink-0" />
                                     <span class="flex-1 truncate text-(--color-text)">{{ member }}</span>
@@ -290,7 +290,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                                }}
+                            }}
                             </UButton>
                             <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>

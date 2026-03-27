@@ -25,26 +25,13 @@ const productTypes = [
 
 const productsTableRef = ref<{ refresh: () => void; hasUnsavedChanges: boolean } | null>(null)
 
-watch(activeType, (newType, oldType) => {
-    if (productsTableRef.value?.hasUnsavedChanges) {
-        const confirmed = window.confirm(String($t('message.unsavedChanges')))
-        if (!confirmed) {
-            nextTick(() => { activeType.value = oldType })
-            return
-        }
-    }
+watch(activeType, (newType) => {
     router.replace({ query: { ...route.query, type: newType } })
 })
 
 watch(() => route.query.type, (newType) => {
     if (newType && typeof newType === 'string' && (newType === 'localboot' || newType === 'netboot')) {
         activeType.value = newType
-    }
-})
-
-onBeforeRouteLeave(() => {
-    if (productsTableRef.value?.hasUnsavedChanges) {
-        return window.confirm(String($t('message.unsavedChanges')))
     }
 })
 </script>

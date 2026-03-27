@@ -284,16 +284,16 @@ const hasUnsavedChanges = computed(() => productConfigTabsRef.value?.hasAnyChang
 const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshProducts(fetchProducts)
 
 const columns: DataTableColumnDef[] = [
-	{ key: 'installationStatus', label: String($t('installationStatus')), headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-16', align: 'center' },
-	{ key: 'actionResult', label: String($t('actionResult')), headerIcon: icons.productActionResult, sortable: true, class: 'text-center w-16', align: 'center', visible: false },
-	{ key: 'productId', label: String($t('productId')), sortable: true, alwaysVisible: true },
-	{ key: 'description', label: String($t('description')), sortable: true },
-	{ key: 'version', label: String($t('version')), sortable: true },
-	{ key: 'advice', label: String($t('advice')), sortable: true, visible: false },
-	{ key: 'priority', label: String($t('priority')), sortable: true, visible: false },
-	{ key: 'modificationTime', label: String($t('modificationTime')), sortable: true, visible: false },
-	{ key: 'actionProgress', label: String($t('actionProgress')), sortable: true, visible: false },
-	{ key: 'actionRequest', label: String($t('actionRequest')), sortable: true, class: 'w-40' },
+	{ key: 'installationStatus', label: String($t('installationStatus')), labelKey: 'installationStatus', headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-16', align: 'center' },
+	{ key: 'actionResult', label: String($t('actionResult')), labelKey: 'actionResult', headerIcon: icons.productActionResult, sortable: true, class: 'text-center w-16', align: 'center', visible: false },
+	{ key: 'productId', label: String($t('productId')), labelKey: 'productId', sortable: true, alwaysVisible: true },
+	{ key: 'description', label: String($t('description')), labelKey: 'description', sortable: true },
+	{ key: 'version', label: String($t('version')), labelKey: 'version', sortable: true },
+	{ key: 'advice', label: String($t('advice')), labelKey: 'advice', sortable: true, visible: false },
+	{ key: 'priority', label: String($t('priority')), labelKey: 'priority', sortable: true, visible: false },
+	{ key: 'modificationTime', label: String($t('modificationTime')), labelKey: 'modificationTime', sortable: true, visible: false },
+	{ key: 'actionProgress', label: String($t('actionProgress')), labelKey: 'actionProgress', sortable: true, visible: false },
+	{ key: 'actionRequest', label: String($t('actionRequest')), labelKey: 'actionRequest', sortable: true, class: 'w-40' },
 ]
 
 function openProductConfig(product: ProductRow) {

@@ -51,11 +51,11 @@
                         <template #header>
                             <span class="font-semibold">{{ $t('unsavedChanges') }}</span>
                         </template>
-                        <p>{{ $t('unsavedChangesDesc') }}</p>
+                        <p>{{ $t('navigateAwayWarning') }}</p>
                         <template #footer>
                             <div class="flex justify-end gap-2">
-                                <UButton color="neutral" variant="outline" @click="showLeaveWarning = false">{{
-                                    $t('stay') }}</UButton>
+                                <UButton color="neutral" variant="outline" @click="cancelPanelLeave">{{
+                                    $t('stayOnPage') }}</UButton>
                                 <UButton color="warning" @click="confirmPanelLeave">{{ $t('leaveAnyway') }}</UButton>
                             </div>
                         </template>
@@ -93,12 +93,22 @@ const lastPageParams = ref<PageChangeParams | null>(null)
 const configTabsRef = ref<any>(null)
 const showLeaveWarning = ref(false)
 const pendingPanelAction = ref<(() => void) | null>(null)
+let resolveRouteLeave: ((ok: boolean) => void) | null = null
+
+// Route-level guard: intercepts navigation away from this page when the panel has unsaved changes
+onBeforeRouteLeave(() => {
+    if (!configTabsRef.value?.hasAnyChanges) return true
+    showLeaveWarning.value = true
+    return new Promise<boolean>((resolve) => {
+        resolveRouteLeave = resolve
+    })
+})
 
 const columns: DataTableColumnDef[] = [
-    { key: 'depotId', label: String($t('serverId')), sortable: true, alwaysVisible: true },
-    { key: 'description', label: String($t('description')), sortable: true },
-    { key: 'type', label: String($t('type')), sortable: true },
-    { key: 'ip', label: String($t('ipAddress')), sortable: true, visible: false },
+    { key: 'depotId', label: String($t('serverId')), labelKey: 'serverId', sortable: true, alwaysVisible: true },
+    { key: 'description', label: String($t('description')), labelKey: 'description', sortable: true },
+    { key: 'type', label: String($t('type')), labelKey: 'type', sortable: true },
+    { key: 'ip', label: String($t('ipAddress')), labelKey: 'ipAddress', sortable: true, visible: false },
 ]
 
 function openConfig(row: Server) {
@@ -130,10 +140,23 @@ function checkUnsavedAndDo(action: () => void) {
 function confirmPanelLeave() {
     configTabsRef.value?.discardAll?.()
     showLeaveWarning.value = false
+    if (resolveRouteLeave) {
+        resolveRouteLeave(true)
+        resolveRouteLeave = null
+    }
     if (pendingPanelAction.value) {
         pendingPanelAction.value()
         pendingPanelAction.value = null
     }
+}
+
+function cancelPanelLeave() {
+    showLeaveWarning.value = false
+    if (resolveRouteLeave) {
+        resolveRouteLeave(false)
+        resolveRouteLeave = null
+    }
+    pendingPanelAction.value = null
 }
 
 /** Single-select row click: open config panel but keep config server selected */

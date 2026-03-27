@@ -192,13 +192,17 @@ let resolveLeave: ((ok: boolean) => void) | null = null
 
 const hasChanges = computed(() => clientName.value.length > 0)
 
-onBeforeRouteLeave(() => {
-	if (!hasChanges.value) return true
-	showLeaveWarning.value = true
-	return new Promise<boolean>((resolve) => {
-		resolveLeave = resolve
+// Only register route-leave guard when NOT in panel mode.
+// In panel mode the parent page handles navigation guards.
+if (!props.panelMode) {
+	onBeforeRouteLeave(() => {
+		if (!hasChanges.value) return true
+		showLeaveWarning.value = true
+		return new Promise<boolean>((resolve) => {
+			resolveLeave = resolve
+		})
 	})
-})
+}
 
 function confirmLeave() {
 	showLeaveWarning.value = false
@@ -307,6 +311,7 @@ function refresh() {
 
 defineExpose({
 	refresh,
-	cloneClient
+	cloneClient,
+	hasChanges,
 })
 </script>

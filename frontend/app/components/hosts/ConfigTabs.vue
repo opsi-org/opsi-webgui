@@ -368,13 +368,17 @@ const unsavedChangesRef = computed(() => ({
 	fmtVal,
 }))
 
-onBeforeRouteLeave(() => {
-	if (!hasAnyChanges.value) return true
-	showLeaveWarning.value = true
-	return new Promise<boolean>((resolve) => {
-		resolveLeave = resolve
+// Only register route-leave guard when NOT in panel mode.
+// In panel mode the parent page handles navigation guards.
+if (!props.panelMode) {
+	onBeforeRouteLeave(() => {
+		if (!hasAnyChanges.value) return true
+		showLeaveWarning.value = true
+		return new Promise<boolean>((resolve) => {
+			resolveLeave = resolve
+		})
 	})
-})
+}
 
 function confirmLeave() {
 	showLeaveWarning.value = false
