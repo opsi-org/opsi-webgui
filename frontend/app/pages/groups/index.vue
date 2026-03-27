@@ -122,7 +122,7 @@
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
                                         []).length
-                                        }})</span>
+                                    }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -302,7 +302,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                                }}
+                            }}
                             </UButton>
                             <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -1031,9 +1031,12 @@ onMounted(() => {
     checkMobile()
     window.addEventListener('resize', checkMobile)
     onUnmounted(() => window.removeEventListener('resize', checkMobile))
-    // Fetch groups from store (respects cache — only calls API if data is stale/missing)
-    selectionStore.fetchClientGroups()
-    selectionStore.fetchProductGroups()
+    // Fetch groups from store (respects cache — only calls API if data is missing)
+    if (activeGroupType.value === 'clients') {
+        selectionStore.fetchClientGroups()
+    } else {
+        selectionStore.fetchProductGroups()
+    }
 })
 
 // Auto-expand root nodes when store tree data changes

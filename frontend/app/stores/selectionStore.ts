@@ -120,9 +120,9 @@ export const useSelectionStore = defineStore('selection', {
     selectedServersParam: (s): string => `[${s.selectedServers.join(',')}]`,
     isInitialized: (s): boolean => s._initialized,
     clientGroupsNeedsRefresh: (s): boolean =>
-      !s.clientGroupsLastFetch || Date.now() - s.clientGroupsLastFetch > CACHE_DURATION,
+      !s.clientGroupsLastFetch || s.clientGroupsTree.length === 0,
     productGroupsNeedsRefresh: (s): boolean =>
-      !s.productGroupsLastFetch || Date.now() - s.productGroupsLastFetch > CACHE_DURATION,
+      !s.productGroupsLastFetch || s.productGroupsTree.length === 0,
   },
   actions: {
     setConfigServer(server: string) {
