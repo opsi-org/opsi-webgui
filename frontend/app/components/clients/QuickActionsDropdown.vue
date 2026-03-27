@@ -144,13 +144,19 @@
 					<UButton :icon="icons.close" variant="ghost" color="neutral" @click="resultOpen = false" />
 				</div>
 
-				<div class="max-h-60 overflow-y-auto space-y-2">
+				<div class="max-h-80 overflow-y-auto space-y-1">
 					<div v-for="(result, clientId) in actionResults" :key="clientId"
-						class="flex items-center justify-between p-2 bg-[--color-surface] rounded text-xs">
-						<span class="font-mono">{{ clientId }}</span>
-						<UBadge :color="result.success ? 'success' : 'error'" size="xs">
-							{{ result.success ? t('success') : t('failed') }}
-						</UBadge>
+						class="p-2 bg-[--color-surface] rounded text-xs">
+						<div class="flex items-center justify-between">
+							<span class="font-mono">{{ clientId }}</span>
+							<UBadge :color="result.success ? 'success' : 'error'" size="xs">
+								{{ result.success ? t('success') : t('failed') }}
+							</UBadge>
+						</div>
+						<div v-if="!result.success && result.message"
+							class="mt-1 text-[11px] text-(--color-error) wrap-break-word">
+							{{ result.message }}
+						</div>
 					</div>
 				</div>
 
@@ -321,7 +327,10 @@ async function executeAction() {
 				message: `${successCount} ${t('successful')}, ${failCount} ${t('failed')}`,
 			}
 			actionResults.value = Object.fromEntries(
-				props.clientIds.map(id => [id, { success: !result[id]?.error }])
+				props.clientIds.map(id => [id, {
+					success: !result[id]?.error,
+					message: result[id]?.error ? String(result[id].error) : undefined,
+				}])
 			)
 			resultOpen.value = true
 		}
