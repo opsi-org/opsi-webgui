@@ -198,6 +198,7 @@
   "deleteClientsDescription": "Selected clients will be deleted.",
   "deleteClientWarning": "This action cannot be undone.",
   "deleteWarning": "This action cannot be undone!",
+  "selectValues": "Select values",
   "demo": "Demo Mode",
   "demoHelp": "Demo mode simulates product quick actions without making changes, showing expected results.",
   "dependencies": "Dependencies",

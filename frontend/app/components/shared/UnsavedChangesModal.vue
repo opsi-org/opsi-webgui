@@ -35,8 +35,8 @@ SharedUnsavedChangesModal — Reusable unsaved-changes button + popup.
 						<div v-for="[key] in configRef?.changedParams" :key="key"
 							class="changed-item flex items-center justify-between gap-2 px-3 py-2 text-sm">
 							<div class="min-w-0">
-								<p class="font-mono text-xs truncate">{{ key }}</p>
-								<p class="text-xs text-muted">
+								<p class="font-medium truncate">{{ key }}</p>
+								<p class="text-xs">
 									{{ configRef?.fmtVal?.(configRef?.getOriginalParamValue?.(key)) }}
 									→ {{ configRef?.fmtVal?.(configRef?.changedParams?.get(key)) }}
 								</p>
@@ -54,8 +54,8 @@ SharedUnsavedChangesModal — Reusable unsaved-changes button + popup.
 						<div v-for="item in configRef?.changedAttributesList" :key="item.key"
 							class="flex items-center justify-between gap-2 px-3 py-2 text-sm">
 							<div class="min-w-0">
-								<p class="font-mono text-xs truncate">{{ item.key }}</p>
-								<p class="text-xs text-muted">
+								<p class="font-medium truncate">{{ item.key }}</p>
+								<p class="text-xs">
 									{{ configRef?.fmtVal?.(item.oldValue) }}
 									→ {{ configRef?.fmtVal?.(item.newValue) }}
 								</p>

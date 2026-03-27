@@ -84,8 +84,8 @@ single editable (select + custom input), plain input.
 				<UInput v-if="showCustomInput" :model-value="stringValue" size="sm" class="flex-1" :disabled="disabled"
 					:placeholder="String($t('enterValue'))"
 					@update:model-value="(v: string) => emit('update:modelValue', v)" />
-				<UButton v-if="stringValue && !disabled" size="xs" variant="ghost" color="neutral" :icon="icons.close"
-					:title="$t('clearValue')" @click="clearEditableValue" />
+				<!-- <UButton v-if="stringValue && !disabled" size="xs" variant="ghost" color="neutral" :icon="icons.close"
+					:title="$t('clearValue')" @click="clearEditableValue" /> -->
 			</div>
 		</template>
 

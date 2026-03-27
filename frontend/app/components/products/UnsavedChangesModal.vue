@@ -36,17 +36,13 @@
 					</div>
 					<div class="divide-y divide-(--color-border)">
 						<div v-for="change in group.changes" :key="change.key"
-							class="changed-item flex items-center justify-between gap-2 px-3 py-2 text-sm">
+							class="changed-item flex items-center justify-between gap-2 px-2 py-1 text-sm">
 							<div class="min-w-0 flex-1">
 								<div class="flex items-center gap-2">
-									<UBadge :color="change.type === 'property' ? 'info' : 'warning'" variant="subtle"
-										size="xs">
-										{{ change.type === 'property' ? $t('property') : $t('actionRequest') }}
-									</UBadge>
-									<span v-if="change.label != 'Action Request'" class="font-mono text-xs truncate">{{
+									<span v-if="change.label != 'Action Request'" class="font-medium truncate">{{
 										change.label }}</span>
 								</div>
-								<p class="text-xs text-(--color-text-muted) mt-0.5">
+								<p class="text-xs  mt-0.5">
 									{{ change.oldValue }} → {{ change.newValue }}
 								</p>
 							</div>

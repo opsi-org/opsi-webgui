@@ -203,6 +203,7 @@
   "deleteClientWarning": "Diese Aktion kann nicht rückgängig gemacht werden.",
   "deleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden!",
   "demo": "Demo-Modus",
+  "selectValues": "Werte auswählen",
   "demoHelp": "Der Demo-Modus simuliert Produkt-Schnellaktionen ohne Änderungen vorzunehmen und zeigt die erwarteten Ergebnisse an.",
   "dependencies": "Abhängigkeiten",
   "dependencies(empty)": "Abhängigkeiten (leer)",

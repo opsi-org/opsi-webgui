@@ -1,10 +1,10 @@
 # =============================================================================
 # opsi-webgui GitLab CI/CD Pipeline
 # STAGES:
-#   setup    → Install deps
-#   validate → Lint, types, tests, security scan
-#   build    → Compile frontend
-#   release  → Package, SBOM, publish (tags only)
+#   setup    -> Install deps
+#   validate -> Lint, types, tests, security scan
+#   build    -> Compile frontend
+#   release  -> Package, SBOM, publish (tags only)
 # =============================================================================
 
 image: node:22-bookworm-slim
@@ -128,7 +128,7 @@ build:addon:
     ]
   script:
     - apt update && apt -y install zip
-    - bash "$(pwd)/scripts/build_addon.sh" webgui "OpsiWebGUI" "$(pwd)"
+    - bash "$(pwd)/scripts/build_addon.sh" webgui "opsi-WebGUI" "$(pwd)"
     - ls -lah opsi-webgui.zip webgui/
   artifacts:
     name: 'opsi-webgui-${CI_COMMIT_REF_NAME}'
@@ -141,7 +141,7 @@ build:addon-nuxt4:
   needs: [setup:deps, { job: setup:i18n, optional: true }, { job: setup:changelog, optional: true }]
   script:
     - apt update && apt -y install zip
-    - bash "$(pwd)/scripts/build_addon.sh" webgui-nuxt4 "OpsiWebGUI-Nuxt4" "$(pwd)"
+    - bash "$(pwd)/scripts/build_addon.sh" webgui-nuxt4 "opsi-WebGUI-Nuxt4" "$(pwd)"
     - ls -lah opsi-webgui-nuxt4.zip webgui-nuxt4/
   artifacts:
     name: 'opsi-webgui-nuxt4-${CI_COMMIT_REF_NAME}'

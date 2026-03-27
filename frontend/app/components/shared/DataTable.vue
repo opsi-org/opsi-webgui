@@ -24,7 +24,7 @@
         <UPopover>
           <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('tableSettings')" />
           <template #content>
-            <div class="p-3 w-85 max-h-250 overflow-y-auto">
+            <div class="p-3 min-w-85 overflow-y-auto">
               <div class="text-xs font-medium text-(--color-text-muted) uppercase mb-3">{{ $t('tableSettings') }}</div>
 
               <div class="mb-4 grid grid-cols-[7rem_1fr] items-center gap-x-2 gap-y-3">
