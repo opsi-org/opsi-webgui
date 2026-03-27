@@ -56,9 +56,10 @@ export const useMessageBusStore = defineStore('messageBus', {
     _reconnectTimer: null as ReturnType<typeof setTimeout> | null,
     _reconnectDelay: 1000,
     _connecting: false,
+    _connected: false,
   }),
   getters: {
-    isConnected: (s) => s.bus?.readyState === 1,
+    isConnected: (s) => s._connected,
   },
   actions: {
     connect() {
@@ -93,6 +94,7 @@ export const useMessageBusStore = defineStore('messageBus', {
         this._connecting = false
         this._reconnectDelay = 1000 // reset backoff on success
         this.bus = ws
+        this._connected = true
         // Subscribe to default channels
         this._sendRaw(ws, {
           ...createMsgTemplate(),
@@ -124,6 +126,7 @@ export const useMessageBusStore = defineStore('messageBus', {
         const wasSameBus = this.bus === ws
         if (wasSameBus) {
           this.bus = undefined
+          this._connected = false
         }
         // Schedule reconnect only if this was our active bus
         if (wasSameBus) {
@@ -159,6 +162,7 @@ export const useMessageBusStore = defineStore('messageBus', {
       if (this.bus) {
         const ws = this.bus
         this.bus = undefined
+        this._connected = false
         ws.close()
       }
     },
@@ -190,6 +194,7 @@ export const useMessageBusStore = defineStore('messageBus', {
     reset() {
       this.disconnect()
       this.lastMsg = undefined
+      this._connected = false
     },
 
     setAutoRefresh(val: boolean) {
