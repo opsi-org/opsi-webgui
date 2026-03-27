@@ -29,23 +29,34 @@
 						<div class="flex items-center gap-1.5">
 							<UIcon :name="isSectionCollapsed(section.id) ? icons.arrowRight : icons.arrowDown"
 								class="w-3.5 h-3.5 text-(--color-text-muted)" />
-							<span class="text-xs font-semibold text-(--color-text)">{{ sectionLabel(section.id)
-								}}</span>
+							<UTooltip v-if="sectionTooltip(section.id)" :text="sectionTooltip(section.id)">
+								<span
+									class="text-xs font-semibold text-(--color-text) cursor-help border-b border-dashed border-(--color-text-muted)/40">{{
+										sectionLabel(section.id) }}</span>
+							</UTooltip>
+							<span v-else class="text-xs font-semibold text-(--color-text)">{{
+								sectionLabel(section.id) }}</span>
 						</div>
 						<UBadge v-if="section.count > 0" size="xs" variant="subtle" color="neutral">{{ section.count }}
 						</UBadge>
 					</div>
 					<template v-if="!isSectionCollapsed(section.id)">
 						<div v-for="item in section.flatItems" :key="`${section.id}-${item.id}`"
-							:style="{ paddingLeft: `${item.depth * 16}px` }"
-							class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer">
+							:style="{ paddingLeft: `${(item.depth * 14) + 6}px`, borderLeftWidth: item.depth > 0 ? '1px' : '0', marginLeft: item.depth > 0 ? `${((item.depth - 1) * 14) + 10}px` : '0' }"
+							class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer border-l-transparent hover:border-l-(--color-border)"
+							:class="{ 'border-l-(--color-border)/40': item.depth > 0 }">
 							<UButton v-if="item.hasChildren"
 								:icon="item.isExpanded ? icons.arrowDown : icons.arrowRight" size="xs" variant="ghost"
 								color="neutral" class="shrink-0 p-0! h-4! w-4!" @click.stop="toggleExpand(item.id)" />
 							<span v-else class="w-4 shrink-0" />
 							<UCheckbox :model-value="isItemChecked(item)" size="xs" @click.stop
 								@update:model-value="handleItemClick(item)" />
-							<span class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
+							<UTooltip v-if="item.label === 'not_assigned'" :text="t('notAssignedTooltip')">
+								<span
+									class="truncate flex-1 cursor-help border-b border-dashed border-(--color-text-muted)/40"
+									:class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
+							</UTooltip>
+							<span v-else class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
 								@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
 								}}</span>
 							<UBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle"
@@ -136,6 +147,12 @@ function sectionLabel(id: string): string {
 	if (id === 'groups') return t('Groups')
 	if (id === 'clientdirectory') return t('clientDirectory')
 	return id
+}
+
+function sectionTooltip(id: string): string {
+	if (id === 'groups') return t('groupsTooltip')
+	if (id === 'clientdirectory') return t('clientDirectoryTooltip')
+	return ''
 }
 
 // Pre-compute selection sets for O(1) lookups
