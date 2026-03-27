@@ -1,6 +1,7 @@
 export interface DataTableColumnDef {
   key: string
   label: string
+  labelKey?: string
   sortable?: boolean
   visible?: boolean
   alwaysVisible?: boolean

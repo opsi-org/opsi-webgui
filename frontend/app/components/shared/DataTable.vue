@@ -96,7 +96,8 @@
                     <input type="checkbox" :checked="isColumnVisibleComputed(col.key)" :disabled="col.alwaysVisible"
                       class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue disabled:opacity-50"
                       @change="tableSettings.toggleColumn(col.key)" />
-                    <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ col.label }}</span>
+                    <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col)
+                      }}</span>
                   </label>
                 </div>
               </div>
@@ -117,7 +118,8 @@
 
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
       <div ref="tableContainer" class="flex-1 overflow-x-auto overflow-y-auto transition-all duration-200"
-        :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" @scroll="handleScroll">
+        :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" tabindex="-1" @scroll="handleScroll"
+        @keydown="handleTableKeydown">
         <div v-if="loading && rows.length === 0"
           class="flex items-center justify-center py-12 text-(--color-text-muted)">
           <UIcon :name="icons.loading" class="w-6 h-6 animate-spin mr-2" />
@@ -153,12 +155,12 @@
                     :sort-direction="tableSettings.settings.sortDirection">
                     <div class="flex items-center gap-1">
                       <template v-if="col.headerIcon">
-                        <UTooltip :text="col.label">
+                        <UTooltip :text="resolveColumnLabel(col)">
                           <UIcon :name="col.headerIcon" class="w-4 h-4" />
                         </UTooltip>
                       </template>
                       <template v-else>
-                        {{ col.label }}
+                        {{ resolveColumnLabel(col) }}
                       </template>
                       <template v-if="col.sortable">
                         <UIcon v-if="tableSettings.settings.sortColumn === col.key"
@@ -360,6 +362,7 @@ const filterQueryInternal = ref(props.filterQuery || '')
 const currentPage = ref(1)
 const selectionModeOverride = ref<'single' | 'multi' | null>(null)
 const sortBySelection = ref(props.sortBySelectionEnabled || false)
+const lastClickedIndex = ref<number | null>(null)
 
 watch(() => props.sortBySelectionEnabled, (v) => {
   if (v !== undefined) sortBySelection.value = v
@@ -383,7 +386,7 @@ const pageSizeOptions = computed(() => [
 const sortableColumnOptions = computed(() =>
   props.columns
     .filter((c) => c.sortable)
-    .map((c) => ({ value: c.key, label: c.label }))
+    .map((c) => ({ value: c.key, label: c.labelKey ? String($t(c.labelKey)) : c.label }))
 )
 
 const toggleableColumns = computed(() =>
@@ -489,6 +492,11 @@ function formatCellValue(row: T, col: DataTableColumnDef): string {
   return String(value)
 }
 
+function resolveColumnLabel(col: DataTableColumnDef): string {
+  if (col.labelKey) return String($t(col.labelKey))
+  return col.label
+}
+
 function visibleActionsForRow(row: T): DataTableAction<T>[] {
   if (!props.actions) return []
   return props.actions.filter((action) => !action.visible || action.visible(row))
@@ -537,8 +545,29 @@ function handleRowClick(row: T, event: Event) {
     selectSingle(row)
     emit('row-activate', row)
   } else {
-    toggleSelection(row)
+    const mouseEvent = event as MouseEvent
+    const currentIndex = displayRows.value.indexOf(row)
+    if (mouseEvent.shiftKey && lastClickedIndex.value !== null && currentIndex >= 0) {
+      shiftSelectRange(lastClickedIndex.value, currentIndex)
+    } else {
+      toggleSelection(row)
+      lastClickedIndex.value = currentIndex >= 0 ? currentIndex : null
+    }
   }
+}
+
+function shiftSelectRange(fromIndex: number, toIndex: number) {
+  const start = Math.min(fromIndex, toIndex)
+  const end = Math.max(fromIndex, toIndex)
+  const rangeKeys = displayRows.value.slice(start, end + 1).map(r => getRowKey(r))
+  const allAlreadySelected = rangeKeys.every(k => selectedKeys.value.includes(k))
+  if (allAlreadySelected) {
+    selectedKeys.value = selectedKeys.value.filter(k => !rangeKeys.includes(k))
+  } else {
+    const newSet = new Set([...selectedKeys.value, ...rangeKeys])
+    selectedKeys.value = [...newSet]
+  }
+  emitSelectionChange()
 }
 
 function handleCheckboxClick(row: T) {
@@ -615,6 +644,16 @@ function handleScroll() {
       currentPage.value++
       emitPageChange()
     }
+  }
+}
+
+function handleTableKeydown(e: KeyboardEvent) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+    const target = e.target as HTMLElement
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
+    if (effectiveSelectionMode.value !== 'multi' || !props.selectable) return
+    e.preventDefault()
+    toggleSelectAll()
   }
 }
 
