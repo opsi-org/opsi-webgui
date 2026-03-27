@@ -4,6 +4,7 @@ Statistic badge component for displaying numeric statistics with icon and link.
 		@click.stop="$emit('stat-click')">
 		<UBadge :color="badgeColor" variant="subtle" size="xs" class="min-w-6 justify-center cursor-pointer">
 			<UIcon v-if="icon" :name="icon" class="w-3 h-3 mr-0.5" />
+			<span v-if="label" class="text-[10px] opacity-70 mr-0.5">{{ label }}</span>
 			<span class="font-medium">{{ displayValue }}</span>
 		</UBadge>
 	</button>
@@ -14,6 +15,7 @@ Statistic badge component for displaying numeric statistics with icon and link.
 interface Props {
 	value?: number
 	icon?: string
+	label?: string
 	tooltip?: string
 	status?: 'success' | 'warning' | 'error' | 'info' | 'neutral'
 }
