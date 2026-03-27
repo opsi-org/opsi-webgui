@@ -1,15 +1,5 @@
 <template>
-	<UModal v-model:open="showLeaveWarning" :title="$t('unsavedChanges')">
-		<template #body>
-			<p class="text-sm">{{ $t('navigateAwayWarning') }}</p>
-		</template>
-		<template #footer>
-			<div class="flex gap-2 justify-end">
-				<UButton variant="outline" color="neutral" @click="cancelLeave">{{ $t('stayOnPage') }}</UButton>
-				<UButton color="error" @click="confirmLeave">{{ $t('leaveAnyway') }}</UButton>
-			</div>
-		</template>
-	</UModal>
+	<SharedNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
 
 	<LayoutsDetailPanel :showPanel="showConfigPanel" @close="closePanel">
 		<template #main>
@@ -60,12 +50,15 @@
 						<div class="flex items-center gap-2">
 							<UIcon v-if="(row as ProductRow).locked" :name="icons.lock"
 								class="w-3.5 h-3.5 text-red-500 shrink-0" :title="$t('locked')" />
-							<span class="font-medium">{{ (row as ProductRow).productId }}</span>
+							<UIcon v-else :name="icons.product"
+								class="w-3.5 h-3.5 text-(--color-text-muted) shrink-0" />
+							<span class="text-sm text-(--color-text)">{{ (row as ProductRow).productId }}</span>
 						</div>
 					</template>
 
 					<template #cell-description="{ row }">
-						<span class="line-clamp-1" :title="(row as ProductRow).description || undefined">
+						<span class="line-clamp-1 text-sm text-(--color-text)"
+							:title="(row as ProductRow).description || undefined">
 							{{ (row as ProductRow).description || '-' }}
 						</span>
 					</template>
@@ -451,6 +444,30 @@ function handlePageChange(params: PageChangeParams) {
 	fetchProducts(params)
 }
 
+// Translate frontend sort column names to backend-valid SQL column names
+function translateSortBy(sortBy: string): string {
+	switch (sortBy) {
+		case 'version':
+			return '["client_version_outdated", "depot_version_diff", "not_on_all_depots"]'
+		case 'version_outdated':
+			return 'client_version_outdated'
+		case 'installationStatus':
+			return '["installationStatus", "installationStatusErrorLevel"]'
+		case 'actionResult':
+			return '["actionResultErrorLevel", "actionResult"]'
+		case 'depotVersions':
+			return 'depot_version_diff'
+		case 'clientVersions':
+			return 'client_version_outdated'
+		case 'desc':
+			return 'description'
+		case '':
+			return 'productId'
+		default:
+			return sortBy
+	}
+}
+
 async function fetchProducts(params?: PageChangeParams) {
 	loading.value = true
 	error.value = null
@@ -468,13 +485,13 @@ async function fetchProducts(params?: PageChangeParams) {
 			p.pageNumber = params.pageNumber
 			p.perPage = params.perPage
 			if (params.sortBy && !params.sortBy.startsWith('__')) {
-				p.sortBy = params.sortBy
+				p.sortBy = translateSortBy(params.sortBy)
 				p.sortDesc = params.sortDesc
 			}
 			p.filterQuery = params.filterQuery
 		} else {
 			if (tableSettings.settings.sortColumn && !tableSettings.settings.sortColumn.startsWith('__')) {
-				p.sortBy = tableSettings.settings.sortColumn
+				p.sortBy = translateSortBy(tableSettings.settings.sortColumn)
 				p.sortDesc = tableSettings.settings.sortDirection === 'desc'
 			}
 		}

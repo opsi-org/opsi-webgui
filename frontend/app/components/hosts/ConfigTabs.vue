@@ -1,16 +1,7 @@
 HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 <template>
-	<UModal v-if="showHostSelector || !panelMode" v-model:open="showLeaveWarning" :title="$t('unsavedChanges')">
-		<template #body>
-			<p class="text-sm">{{ $t('navigateAwayWarning') }}</p>
-		</template>
-		<template #footer>
-			<div class="flex gap-2 justify-end">
-				<UButton variant="outline" color="neutral" @click="cancelLeave">{{ $t('stayOnPage') }}</UButton>
-				<UButton color="error" @click="confirmLeave">{{ $t('leaveAnyway') }}</UButton>
-			</div>
-		</template>
-	</UModal>
+	<SharedNavigationGuardModal v-if="showHostSelector || !panelMode" v-model="showLeaveWarning" @cancel="cancelLeave"
+		@confirm="confirmLeave" />
 
 	<!-- Create Config Modal -->
 	<UModal v-model:open="showCreateConfigModal" :title="$t('createConfig')">

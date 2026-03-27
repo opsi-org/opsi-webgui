@@ -1,16 +1,6 @@
 ClientCloneForm - form for cloning a client. Supports standalone page and detail panel modes.
 <template>
-	<UModal v-model:open="showLeaveWarning" :title="$t('unsavedChanges')">
-		<template #body>
-			<p class="text-sm">{{ $t('navigateAwayWarning') }}</p>
-		</template>
-		<template #footer>
-			<div class="flex gap-2 justify-end">
-				<UButton variant="outline" color="neutral" @click="cancelLeave">{{ $t('stayOnPage') }}</UButton>
-				<UButton color="error" @click="confirmLeave">{{ $t('leaveAnyway') }}</UButton>
-			</div>
-		</template>
-	</UModal>
+	<SharedNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
 
 	<div :class="['flex flex-col', panelMode ? 'h-full' : 'h-full min-h-0']">
 		<div class="shrink-0 pb-3">

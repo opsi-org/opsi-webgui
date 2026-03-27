@@ -45,23 +45,8 @@
                     host-type="server" :tab="panelTab" panel-mode @update:tab="panelTab = $event" />
             </div>
 
-            <UModal v-model:open="showLeaveWarning">
-                <template #content>
-                    <UCard>
-                        <template #header>
-                            <span class="font-semibold">{{ $t('unsavedChanges') }}</span>
-                        </template>
-                        <p>{{ $t('navigateAwayWarning') }}</p>
-                        <template #footer>
-                            <div class="flex justify-end gap-2">
-                                <UButton color="neutral" variant="outline" @click="cancelPanelLeave">{{
-                                    $t('stayOnPage') }}</UButton>
-                                <UButton color="warning" @click="confirmPanelLeave">{{ $t('leaveAnyway') }}</UButton>
-                            </div>
-                        </template>
-                    </UCard>
-                </template>
-            </UModal>
+            <SharedNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelPanelLeave"
+                @confirm="confirmPanelLeave" />
         </template>
     </LayoutsDetailPanel>
 </template>

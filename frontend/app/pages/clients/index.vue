@@ -1,16 +1,5 @@
 <template>
-	<UModal v-model:open="showLeaveWarning" :title="$t('unsavedChanges')">
-		<template #body>
-			<p class="text-sm">{{ $t('navigateAwayWarning') }}</p>
-		</template>
-		<template #footer>
-			<div class="flex gap-2 justify-end">
-				<UButton variant="outline" color="neutral" @click="cancelPanelLeave">
-					{{ $t('stayOnPage') }}</UButton>
-				<UButton color="error" @click="confirmPanelLeave">{{ $t('leaveAnyway') }}</UButton>
-			</div>
-		</template>
-	</UModal>
+	<SharedNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelPanelLeave" @confirm="confirmPanelLeave" />
 
 	<LayoutsDetailPanel :showPanel="!!panelClient || !!panelType" @close="closePanel">
 		<template #main>
@@ -64,9 +53,6 @@
 					<template #cell-uefi="{ row }">
 						<SharedStatusBadge v-if="(row as Client).uefi" status="info" label="UEFI" />
 						<span v-else class="text-(--color-text-muted)">-</span>
-					</template>
-					<template #cell-depotId="{ row }">
-						<span class="text-sm text-(--color-text)">{{ (row as Client).depotId || '-' }}</span>
 					</template>
 					<template #cell-version_outdated="{ row }">
 						<ClientsStatisticBadge :value="(row as Client).version_outdated"
@@ -221,7 +207,6 @@ const columns: DataTableColumnDef[] = [
 	{ key: 'lastSeen', label: String($t('lastSeen')), labelKey: 'lastSeen', sortable: true },
 	{ key: 'macAddress', label: String($t('macAddress')), labelKey: 'macAddress', sortable: true, visible: false },
 	{ key: 'ipAddress', label: String($t('ipAddress')), labelKey: 'ipAddress', sortable: true, visible: false },
-	{ key: 'depotId', label: String($t('depot')), labelKey: 'depot', sortable: true, visible: false },
 	{ key: 'uefi', label: 'UEFI', sortable: true, visible: false },
 ]
 
