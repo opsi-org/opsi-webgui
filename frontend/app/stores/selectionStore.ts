@@ -3,8 +3,6 @@ import type { GroupTreeNodeData } from '~/types'
 
 export type SelectionSource = 'table' | 'quickpanel' | 'groups' | null
 
-const CACHE_DURATION = 5 * 60 * 1000
-
 function transformApiToTree(
   data: Record<string, unknown>,
   groupType: 'client' | 'product',
