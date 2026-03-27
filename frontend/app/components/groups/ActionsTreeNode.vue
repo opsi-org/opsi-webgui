@@ -21,7 +21,15 @@
 				class="w-4 h-4 shrink-0 transition-colors" :class="isSelected
 					? 'text-(--color-primary)'
 					: group.isSpecial ? 'text-(--color-text-muted)' : 'text-(--color-text-secondary)'" />
-			<span class="text-sm flex-1 truncate transition-colors" :class="[
+			<UTooltip v-if="group.label === 'not_assigned'" :text="$t('notAssignedTooltip')">
+				<span class="text-sm flex-1 truncate transition-colors cursor-help" :class="[
+					isSelected ? 'font-medium text-(--color-text)' : '',
+					group.isSpecial ? 'text-(--color-text-muted) italic' : ''
+				]">
+					{{ group.label }}
+				</span>
+			</UTooltip>
+			<span v-else class="text-sm flex-1 truncate transition-colors" :class="[
 				isSelected ? 'font-medium text-(--color-text)' : '',
 				group.isSpecial ? 'text-(--color-text-muted) italic' : ''
 			]">

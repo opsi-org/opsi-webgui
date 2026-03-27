@@ -23,14 +23,14 @@
 
 		<div v-else class="flex-1 overflow-y-auto min-h-0">
 			<template v-if="groupType === 'client'">
-				<div v-for="section in clientSections" :key="section.id" class="mb-3">
-					<div class="flex items-center justify-between px-1 py-1 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded"
+				<div v-for="section in clientSections" :key="section.id" class="mb-2">
+					<div class="flex items-center justify-between px-1 py-1.5 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded"
 						@click="toggleSectionCollapse(section.id)">
-						<div class="flex items-center gap-1">
+						<div class="flex items-center gap-1.5">
 							<UIcon :name="isSectionCollapsed(section.id) ? icons.arrowRight : icons.arrowDown"
-								class="w-3 h-3 text-(--color-text-muted)" />
-							<span class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted)">{{
-								section.label }}</span>
+								class="w-3.5 h-3.5 text-(--color-text-muted)" />
+							<span class="text-xs font-semibold text-(--color-text)">{{ sectionLabel(section.id)
+								}}</span>
 						</div>
 						<UBadge v-if="section.count > 0" size="xs" variant="subtle" color="neutral">{{ section.count }}
 						</UBadge>
@@ -55,28 +55,6 @@
 						<div v-if="section.flatItems.length === 0"
 							class="text-[10px] text-(--color-text-muted) py-1 px-2 italic">{{ t('noResults') }}</div>
 					</template>
-				</div>
-				<div class="mb-3">
-					<div class="flex items-center justify-between px-1 py-1 mb-0.5">
-						<span class="text-[10px] font-semibold uppercase tracking-wide text-(--color-text-muted)">{{
-							t('allClients') }}</span>
-						<UBadge size="xs" variant="subtle" color="neutral">{{ allClientsList.length }}</UBadge>
-					</div>
-					<div v-if="allClientsLoading" class="py-2 text-center">
-						<UIcon :name="icons.loading" class="w-4 h-4 animate-spin text-(--color-text-muted)" />
-					</div>
-					<div v-else class="max-h-90 overflow-y-auto">
-						<div v-for="client in filteredAllClients" :key="client"
-							class="flex items-center gap-2 px-2 py-0.5 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer"
-							@click="selectionStore.toggleClient(client, 'quickpanel')">
-							<UCheckbox :model-value="selectionStore.selectedClients.includes(client)" size="xs"
-								@click.stop @update:model-value="selectionStore.toggleClient(client, 'quickpanel')" />
-							<span class="truncate">{{ client }}</span>
-						</div>
-						<div v-if="filteredAllClients.length === 0"
-							class="text-[10px] text-(--color-text-muted) py-1 px-2 italic">{{
-								t('noResults') }}</div>
-					</div>
 				</div>
 			</template>
 
@@ -153,6 +131,12 @@ const expandedIds = computed(() => {
 	return new Set(ids)
 })
 const hasData = computed(() => rawTree.value.length > 0)
+
+function sectionLabel(id: string): string {
+	if (id === 'groups') return t('Groups')
+	if (id === 'clientdirectory') return t('clientDirectory')
+	return id
+}
 
 // Pre-compute selection sets for O(1) lookups
 const selectedItemsSet = computed(() => {
@@ -240,12 +224,6 @@ const productFlatItems = computed(() => {
 	const first = root.length === 1 ? root[0] : null
 	const nodes = first?.children?.length ? first.children : root
 	return flattenNodes(nodes, 0, q)
-})
-
-const filteredAllClients = computed(() => {
-	const q = searchQuery.value.toLowerCase()
-	if (!q) return allClientsList.value
-	return allClientsList.value.filter(c => c.toLowerCase().includes(q))
 })
 
 const selectedCount = computed(() =>

@@ -46,20 +46,32 @@
                 <div v-else class="flex-1 overflow-auto p-2 space-y-0.5">
                     <template v-for="rootGroup in filteredTreeGroups" :key="rootGroup.id">
                         <div v-if="activeGroupType === 'clients'"
-                            class="flex items-center justify-between text-xs font-medium text-(--color-text-muted) uppercase px-2 py-1.5 mt-2 first:mt-0">
-                            <span>{{ rootGroup.label === 'groups' ? $t('Groups') : rootGroup.label === 'clientdirectory'
-                                ?
-                                $t('clientDirectory') : rootGroup.label }}</span>
+                            class="flex items-center justify-between text-sm font-semibold text-(--color-text) px-2 py-2 mt-3 first:mt-1 cursor-pointer select-none"
+                            @click="collapsedSections.has(rootGroup.id) ? collapsedSections.delete(rootGroup.id) : collapsedSections.add(rootGroup.id)">
+                            <div class="flex items-center gap-1.5">
+                                <UIcon :name="collapsedSections.has(rootGroup.id) ? icons.arrowRight : icons.arrowDown"
+                                    class="w-3.5 h-3.5 text-(--color-text-muted)" />
+                                <UTooltip
+                                    :text="rootGroup.label === 'groups' ? $t('groupsTooltip') : rootGroup.label === 'clientdirectory' ? $t('clientDirectoryTooltip') : ''">
+                                    <span class="cursor-help border-b border-dashed border-(--color-text-muted)/40">{{
+                                        rootGroup.label === 'groups' ? $t('Groups') : rootGroup.label ===
+                                            'clientdirectory'
+                                            ?
+                                            $t('clientDirectory') : rootGroup.label }}</span>
+                                </UTooltip>
+                            </div>
                             <UButton :icon="icons.group" size="xs" variant="ghost" color="neutral"
-                                :title="$t('createGroup')" @click="openCreateModal(rootGroup.id)" />
+                                :title="$t('createGroup')" @click.stop="openCreateModal(rootGroup.id)" />
                         </div>
-                        <GroupsActionsTreeNode
-                            v-for="g in (activeGroupType === 'clients' ? rootGroup.children : [rootGroup])" :key="g.id"
-                            :group="g" :selected-id="selectedGroup?.id" :expanded-ids="expandedGroupIds"
-                            :group-type="activeGroupType" :is-root-level="activeGroupType === 'products'"
-                            :root-id="rootGroup.id" @select="selectGroup" @toggle="toggleExpand"
-                            @create-subgroup="openCreateModal" @edit="openEditModal" @delete="confirmDeleteGroup"
-                            @add-members="openAddMembersModal" />
+                        <template v-if="activeGroupType !== 'clients' || !collapsedSections.has(rootGroup.id)">
+                            <GroupsActionsTreeNode
+                                v-for="g in (activeGroupType === 'clients' ? rootGroup.children : [rootGroup])"
+                                :key="g.id" :group="g" :selected-id="selectedGroup?.id" :expanded-ids="expandedGroupIds"
+                                :group-type="activeGroupType" :is-root-level="activeGroupType === 'products'"
+                                :root-id="rootGroup.id" @select="selectGroup" @toggle="toggleExpand"
+                                @create-subgroup="openCreateModal" @edit="openEditModal" @delete="confirmDeleteGroup"
+                                @add-members="openAddMembersModal" />
+                        </template>
                     </template>
                     <div v-if="filteredTreeGroups.length === 0 && !loading"
                         class="text-sm text-(--color-text-muted) px-2 py-4 text-center">
@@ -110,7 +122,7 @@
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
                                         []).length
-                                    }})</span>
+                                        }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -290,7 +302,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                            }}
+                                }}
                             </UButton>
                             <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -465,6 +477,7 @@ const isResizing = ref(false)
 const minSidebarPercent = 15
 const maxSidebarPercent = 50
 const expandedGroupIds = ref<Set<string>>(new Set())
+const collapsedSections = ref<Set<string>>(new Set())
 
 const groupTypes = [
     { label: String($t('client-group')), value: 'clients' },
