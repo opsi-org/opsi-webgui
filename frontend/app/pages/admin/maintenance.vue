@@ -89,7 +89,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
                 <div v-if="newAppState.type === 'maintenance'">
                     <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('optionalSettings')
-                        }}</div>
+                    }}</div>
                     <div class="space-y-4 border border-yellow-300 dark:border-yellow-700 rounded-lg p-2">
                         <UFormField :label="$t('addressExceptions')">
                             <div class="flex gap-2">
@@ -97,7 +97,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                     size="sm" class="flex-1" @keydown.enter.prevent="addAddressException" />
                                 <UButton color="primary" size="sm" :icon="icons.add" @click="addAddressException">{{
                                     $t('add')
-                                }}</UButton>
+                                    }}</UButton>
                             </div>
                             <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
                                 <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
@@ -139,7 +139,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
                     </label>
                     <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup')
-                        }}</div>
+                    }}</div>
                     <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                         <label
                             class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
@@ -191,7 +191,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </UFormField>
                     <div>
                         <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('restoreOptions')
-                        }}</div>
+                            }}</div>
                         <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                             <label
                                 class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
@@ -254,7 +254,7 @@ const api = useApiHelpers()
 const error = ref('')
 const loadingClients = ref(false)
 const loadingProducts = ref(false)
-const blockedClients = ref<Record<string, string>>({})
+const blockedClients = ref<string[]>([])
 const selectedBlockedClient = ref('')
 const unblockingClient = ref(false)
 const lockedProducts = ref<Record<string, string>>({})
@@ -276,10 +276,10 @@ const selectedFileName = ref('')
 const serverIdOption = ref('backup')
 const restoreOptions = ref({ file_id: '', config_files: false, redis_data: false, server_id: '', password: '' })
 
-const blockedClientsCount = computed(() => Object.keys(blockedClients.value).length)
+const blockedClientsCount = computed(() => blockedClients.value.length)
 const lockedProductsCount = computed(() => Object.keys(lockedProducts.value).length)
-const blockedClientOptions = computed(() => Object.entries(blockedClients.value).map(([id, reason]) => ({ label: id + ' (' + reason + ')', value: id })))
-const lockedProductOptions = computed(() => Object.entries(lockedProducts.value).map(([id, reason]) => ({ label: id + ' (' + reason + ')', value: id })))
+const blockedClientOptions = computed(() => blockedClients.value.map((id) => ({ label: id, value: id })))
+const lockedProductOptions = computed(() => Object.entries(lockedProducts.value).map(([id, reason]) => ({ label: reason ? id + ' (' + reason + ')' : id, value: id })))
 
 const serverIdOptions = computed(() => [
     { label: String($t('useFromBackup')), value: 'backup' },
@@ -292,7 +292,15 @@ watch(serverIdOption, (val) => { if (val !== 'new') restoreOptions.value.server_
 async function fetchBlockedClients() {
     loadingClients.value = true
     const { data, error: err } = await api.getBlockedClients()
-    if (!err && data) blockedClients.value = data as Record<string, string>
+    if (!err && data) {
+        if (Array.isArray(data)) {
+            blockedClients.value = data as string[]
+        } else if (typeof data === 'object' && data !== null) {
+            blockedClients.value = Object.keys(data as Record<string, unknown>)
+        } else {
+            blockedClients.value = []
+        }
+    }
     loadingClients.value = false
 }
 

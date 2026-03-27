@@ -113,7 +113,7 @@
                         <div v-if="diagnosticData.memory" class="flex justify-between">
                             <span class="text-[--color-text-muted] font-mono">memory</span>
                             <span class="font-medium">{{ (diagnosticData.memory as Record<string, unknown>).total_human
-                                    }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent }}%
+                            }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent }}%
                                         used)</span>
                         </div>
                         <div v-if="diagnosticData.processor" class="flex justify-between">
@@ -360,7 +360,7 @@ const failedClients = computed(() => {
 })
 
 async function fetchDiagnosticData() {
-    await refreshDiag()
+    await fetchSharedDiag()
 }
 
 async function fetchUserConfig() {
@@ -384,7 +384,7 @@ async function refreshAll() {
     loading.value = true
     try {
         await Promise.all([
-            fetchDiagnosticData(),
+            refreshDiag(),
             fetchUserConfig(),
         ])
     } finally {

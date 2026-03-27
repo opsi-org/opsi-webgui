@@ -216,7 +216,8 @@ export function useApiHelpers() {
       ...params,
     })
 
-  const getBlockedClients = () => apiGet<Record<string, string>>('/opsidata/blocked-clients')
+  const getBlockedClients = () =>
+    apiGet<string[] | Record<string, string>>('/opsidata/blocked-clients')
   const unblockClient = (clientId: string) => apiPost<void>(`/opsidata/clients/${clientId}/unblock`)
   const unblockAllClients = () => apiPost<void>('/opsidata/clients/unblock')
   const getLockedProducts = () => apiGet<Record<string, string>>('/opsidata/locked-products')

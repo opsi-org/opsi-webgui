@@ -239,7 +239,12 @@ const filteredDiagnosticsData = computed(() => {
     return result
 })
 
-function formatModuleName(name: string): string { return name.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') }
+function formatModuleName(name: string): string {
+    const key = `module.${name}`
+    const translated = $t(key)
+    if (translated && translated !== key) return String(translated)
+    return name.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+}
 
 function formatKey(key: string): string { return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) }
 
@@ -274,9 +279,13 @@ function getStatusType(status: string): 'success' | 'warning' | 'error' | 'info'
     }
 }
 
-async function fetchDiagnostics() {
+async function fetchDiagnostics(force = false) {
     loading.value = true
-    await refreshSharedDiag()
+    if (force) {
+        await refreshSharedDiag()
+    } else {
+        await fetchSharedDiag()
+    }
     if (sharedDiagData.value) {
         diagnosticsData.value = sharedDiagData.value
         const typedData = sharedDiagData.value
@@ -293,7 +302,7 @@ async function fetchModules() {
 }
 
 async function refresh(force = false) {
-    await fetchDiagnostics()
+    await fetchDiagnostics(force)
     if (force || modules.value.length === 0) await fetchModules()
 }
 
