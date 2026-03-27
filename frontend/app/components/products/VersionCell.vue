@@ -1,6 +1,6 @@
 <template>
 	<div class="flex items-center gap-1.5">
-		<span class="font-mono text-xs">{{ primaryVersion }}</span>
+		<span class="text-xs text-(--color-text)">{{ primaryVersion }}</span>
 		<SharedTooltipTable v-if="hasVersionDetails" :rows="versionTooltipRows">
 			<span class="flex items-center gap-0.5">
 				<UBadge v-if="row.client_version_outdated" color="error" variant="subtle" size="xs" class="gap-0.5">
@@ -51,34 +51,62 @@ const hasMultipleVersions = computed(() => {
 	return new Set(allVersions).size > 1
 })
 
+const selectedDepotIds = computed(() => {
+	return props.row.selectedDepots || props.row.selectedServers || []
+})
+
 const versionTooltipRows = computed(() => {
-	const rows: Array<{ key: string; value: string }> = []
+	const rows: Array<{ key: string; value: string; badge?: string; badgeColor?: string }> = []
 	const depotVersions = props.row.depotVersions || []
 	const clientVersions = props.row.clientVersions || []
-	const selectedServers = props.row.selectedServers || []
+	const depots = selectedDepotIds.value
 	const selectedClients = props.row.selectedClients || []
 
+	// Depot versions section
 	if (depotVersions.length > 0) {
-		if (selectedServers.length > 0 && selectedServers.length === depotVersions.length) {
-			selectedServers.forEach((s, i) => rows.push({ key: s, value: depotVersions[i] || '-' }))
+		rows.push({ key: `── ${String($t('depots'))} ──`, value: '' })
+		if (depots.length > 0 && depots.length === depotVersions.length) {
+			depots.forEach((s, i) => rows.push({ key: s, value: depotVersions[i] || '-' }))
 		} else {
 			const unique = [...new Set(depotVersions.filter(Boolean))]
 			unique.forEach(v => rows.push({ key: String($t('depot')), value: v }))
 		}
 	}
 
-	if (clientVersions.length > 0) {
-		if (selectedClients && selectedClients.length > 0 && selectedClients.length === clientVersions.length) {
-			selectedClients.forEach((c, i) => rows.push({ key: c, value: clientVersions[i] || '-' }))
-		} else {
-			const unique = [...new Set(clientVersions.filter(Boolean))]
-			unique.forEach(v => rows.push({ key: String($t('client')), value: v }))
+	// Not on all depots details
+	if (props.row.not_on_all_depots && props.row.numDepots !== undefined) {
+		const totalDepots = depots.length > 0 ? depots.length : 0
+		if (totalDepots > 0 && props.row.numDepots < totalDepots) {
+			rows.push({
+				key: String($t('notOnAllDepots')),
+				value: `${props.row.numDepots}/${totalDepots}`,
+				badge: String($t('missing')),
+				badgeColor: 'warning',
+			})
 		}
 	}
 
-	if (props.row.client_version_outdated) rows.push({ key: '⚠', value: String($t('versionOutdated')) })
+	// Client versions section
+	if (clientVersions.length > 0) {
+		rows.push({ key: `── ${String($t('clients'))} ──`, value: '' })
+		const depotUnique = new Set(depotVersions.filter(Boolean))
+		if (selectedClients.length > 0 && selectedClients.length === clientVersions.length) {
+			selectedClients.forEach((c, i) => {
+				const cv = clientVersions[i] || '-'
+				const isOutdated = props.row.client_version_outdated && !depotUnique.has(cv)
+				rows.push({ key: c, value: cv, badge: isOutdated ? String($t('versionOutdated')) : undefined, badgeColor: isOutdated ? 'error' : undefined })
+			})
+		} else {
+			const unique = [...new Set(clientVersions.filter(Boolean))]
+			unique.forEach(v => {
+				const isOutdated = props.row.client_version_outdated && !depotUnique.has(v)
+				rows.push({ key: String($t('client')), value: v, badge: isOutdated ? String($t('versionOutdated')) : undefined, badgeColor: isOutdated ? 'error' : undefined })
+			})
+		}
+	}
+
+	// Warnings section
 	if (props.row.depot_version_diff) rows.push({ key: '⚠', value: String($t('depotVersionDiff')) })
-	if (props.row.not_on_all_depots) rows.push({ key: '⚠', value: String($t('notOnAllDepots')) })
 
 	return rows
 })

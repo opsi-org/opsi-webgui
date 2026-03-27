@@ -101,6 +101,7 @@ export interface ProductRow {
   numDepots?: number
   actions?: string[]
   selectedServers?: string[]
+  selectedDepots?: string[]
   selectedClients?: string[] | null
   clientVersions?: string[] | null
   depotVersions?: string[]

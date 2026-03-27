@@ -55,13 +55,26 @@ const mixedTooltipRows = computed(() => {
 	if (!props.resultDetails) return []
 	const clients = props.selectedClients || []
 	if (clients.length > 0 && clients.length === props.resultDetails.length) {
-		return clients.map((c, i) => ({ key: c, value: props.resultDetails![i] || 'none' }))
+		return clients.map((c, i) => {
+			const result = (props.resultDetails![i] || 'none').toLowerCase()
+			return {
+				key: c,
+				value: props.resultDetails![i] || 'none',
+				badge: result === 'none' ? undefined : result,
+				badgeColor: result === 'successful' ? 'success' : result === 'failed' ? 'error' : undefined,
+			}
+		})
 	}
 	const counts: Record<string, number> = {}
 	props.resultDetails.forEach(r => {
 		const key = r?.toLowerCase() || 'none'
 		counts[key] = (counts[key] || 0) + 1
 	})
-	return Object.entries(counts).map(([k, v]) => ({ key: k, value: String(v) }))
+	return Object.entries(counts).map(([k, v]) => ({
+		key: k,
+		value: String(v),
+		badge: k === 'none' ? undefined : k,
+		badgeColor: k === 'successful' ? 'success' : k === 'failed' ? 'error' : undefined,
+	}))
 })
 </script>
