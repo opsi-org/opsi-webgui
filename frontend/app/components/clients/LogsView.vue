@@ -182,7 +182,7 @@ const LOG_TYPES: LogType[] = [
 const LOG_LEVEL_LABELS: Record<number, string> = {
 	1: 'essential', 2: 'critical', 3: 'error',
 	4: 'warning', 5: 'notice', 6: 'info',
-	7: 'debug', 8: 'trace'
+	7: 'debug', 8: 'trace', 9: 'secret'
 }
 
 const LOG_COLORS_LIGHT = [
@@ -194,6 +194,7 @@ const LOG_COLORS_LIGHT = [
 	'text-opsi-log-light-info',
 	'text-opsi-log-light-debug',
 	'text-opsi-log-light-trace',
+	'text-opsi-log-light-secret',
 ]
 
 const LOG_COLORS_DARK = [
@@ -205,6 +206,7 @@ const LOG_COLORS_DARK = [
 	'text-opsi-log-dark-info',
 	'text-opsi-log-dark-debug',
 	'text-opsi-log-dark-trace',
+	'text-opsi-log-dark-secret',
 ]
 
 const clientSelectorModel = ref<string>(props.clientId || '')
@@ -264,7 +266,10 @@ function getLogRowClass(line: string, idx: number): string {
 	const classes: string[] = []
 	const level = getLogLevel(line)
 
-	const colorClass = isDarkMode.value ? LOG_COLORS_DARK[level] : LOG_COLORS_LIGHT[level]
+	// Arrays are 0-based while log levels are 1-based. Clamp level to available range.
+	const maxLevels = Math.max(LOG_COLORS_LIGHT.length, LOG_COLORS_DARK.length)
+	const safeLevel = Math.min(Math.max(level, 1), maxLevels)
+	const colorClass = isDarkMode.value ? LOG_COLORS_DARK[safeLevel - 1] : LOG_COLORS_LIGHT[safeLevel - 1]
 	if (colorClass) classes.push(colorClass)
 	if (markerLine.value === idx) classes.push('log-row-marker')
 
