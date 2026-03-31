@@ -6,6 +6,7 @@ docker/.env
 docker/opsiconfd/
 
 .pnpm-store/
+sbom.json
 
 # Frontend
 frontend/.output/
