@@ -21,25 +21,5 @@ project:
   name: opsi-webgui
   version: '4.3.99.3'
   version_files:
-    #opsi-dev-tool.yml: pull-binaries[0].version
     frontend/package.json: '$.version'
     backend/webgui/python/const.py: 'ADDON_VERSION'
-#pull-binaries:
-#  - architecture: x64
-#    branch: development
-#    destination: "."
-#    extract: true
-#    name: opsi-webgui
-#    os: linux
-#    post-script:
-#     - VERSION=$(grep $FILE -A 42 -e project | grep -m 1 "version" )
-#     - echo "opsi-webgui-version row $VERSION"
-#     - VERSION=$(echo $VERSION | awk '{print $2}')
-#     - echo "opsi-webgui-version row-value $VERSION"
-#     - VERSION=$(echo $VERSION | sed -e s/"//g | sed -e s/,//g)
-#     - zip -r opsiconfd-addon-opsi-webgui_${opsi-webgui_VERSION}.zip opsi-webgui
-#     - ls -lah
-#  server-type: binaryindex
-#   server-url: http://binaryindex.uib.gmbh
-#   version: "0.0.0"
-#

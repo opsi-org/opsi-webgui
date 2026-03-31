@@ -3,8 +3,8 @@
 # STAGES:
 #   setup    -> Install deps
 #   validate -> Lint, types, tests, security scan
-#   build    -> Compile frontend
-#   release  -> Package, SBOM, publish (tags only)
+#   build    -> Build addon package
+#   release  -> SBOM, publish (tags only)
 # =============================================================================
 
 image: node:22-bookworm-slim
@@ -102,11 +102,7 @@ validate:security:
   stage: validate
   extends: .node
   needs: [setup:deps]
-  script:
-    - cd frontend
-    - echo "=== Checking for vulnerabilities ==="
-    - pnpm audit --audit-level=high
-  allow_failure: true
+  script: cd frontend && pnpm audit --audit-level=high
 
 # TODO: Backend tests
 # validate:backend:
