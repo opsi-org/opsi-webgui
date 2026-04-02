@@ -11,7 +11,7 @@
 					? 'text-(--color-primary) bg-primary/10'
 					: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
 				@click.stop="$emit('toggle', group.id)">
-				<UIcon name="i-heroicons-chevron-right" class="w-3.5 h-3.5 transition-transform duration-200"
+				<UIcon :name="icons.arrowRight" class="w-3.5 h-3.5 transition-transform duration-200"
 					:class="{ 'rotate-90': isExpanded }" />
 			</button>
 			<span v-else class="w-5 flex items-center justify-center shrink-0">

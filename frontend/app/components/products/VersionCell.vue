@@ -14,7 +14,7 @@
 					<UIcon :name="icons.warning" class="w-3 h-3" />
 				</UBadge>
 				<UIcon v-if="!row.client_version_outdated && !row.depot_version_diff && !row.not_on_all_depots"
-					name="i-lucide-info" class="w-3 h-3 text-(--color-text-muted) cursor-help" />
+					:name="icons.info" class="w-3 h-3 text-(--color-text-muted) cursor-help" />
 			</span>
 		</SharedTooltipTable>
 	</div>

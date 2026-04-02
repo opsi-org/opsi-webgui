@@ -10,7 +10,7 @@ HostSelector - Unified searchable dropdown for selecting a client or a server.
     <template #item="{ item }">
       <template v-if="item.value === '__clear__'">
         <div class="flex items-center gap-2 text-muted italic py-0.5">
-          <UIcon name="i-heroicons-x-circle" class="w-4 h-4 shrink-0" />
+          <UIcon :name="icons.clearValue" class="w-4 h-4 shrink-0" />
           <span class="text-sm">{{ $t('clearSelection') }}</span>
         </div>
       </template>

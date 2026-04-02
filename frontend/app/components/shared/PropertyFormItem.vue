@@ -26,14 +26,14 @@ single editable (select + custom input), plain input.
 						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{ $t('selectValues')
 						}}</span>
 						<span v-else class="truncate">{{ arrayValue.join(', ') }}</span>
-						<UIcon name="i-lucide-chevron-down" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
+						<UIcon :name="icons.arrowDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
 					</UButton>
 					<template #content>
 						<div class="max-h-64 overflow-y-auto">
 							<button v-for="opt in allMultiOptions" :key="opt" type="button"
 								class="flex items-center gap-2 w-full px-3 py-1.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
 								@click="toggleMultiItem(opt)">
-								<UIcon :name="arrayValue.includes(opt) ? 'i-lucide-square-check' : 'i-lucide-square'"
+								<UIcon :name="arrayValue.includes(opt) ? icons.squareCheck : icons.square"
 									class="w-4 h-4 shrink-0"
 									:class="arrayValue.includes(opt) ? 'text-(--color-primary)' : 'text-(--color-text-muted)'" />
 								<span class="truncate">{{ opt }}</span>
@@ -61,7 +61,7 @@ single editable (select + custom input), plain input.
 						{{ val }}
 						<button v-if="!disabled" type="button" class="hover:text-red-500 transition-colors"
 							@click="removeMultiItem(idx)">
-							<UIcon name="i-heroicons-x-mark" class="w-3 h-3" />
+							<UIcon :name="icons.x" class="w-3 h-3" />
 						</button>
 					</span>
 				</div>

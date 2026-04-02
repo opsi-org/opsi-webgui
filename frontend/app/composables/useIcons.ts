@@ -1,3 +1,5 @@
+import { sq } from '@nuxt/ui/runtime/locale/index.js'
+
 export const icons = {
   menu: 'i-heroicons-bars-3',
   menuClose: 'i-heroicons-x-mark',
@@ -60,7 +62,9 @@ export const icons = {
   warning: 'i-heroicons-exclamation-triangle',
   check: 'i-heroicons-check-circle',
   checkCircle: 'i-heroicons-check-circle',
+  exclamationCircle: 'i-heroicons-exclamation-circle',
   error: 'i-heroicons-x-circle',
+  clearValue: 'i-heroicons-x-circle',
   info: 'i-heroicons-information-circle',
   health: 'i-heroicons-heart',
   list: 'i-heroicons-list-bullet',
@@ -107,6 +111,9 @@ export const icons = {
   messageBus: 'i-heroicons-signal',
   moreVertical: 'i-heroicons-ellipsis-vertical',
   rename: 'i-heroicons-pencil-square',
+  modify: 'i-heroicons-pencil-square',
+  squareCheck: 'i-lucide-square-check',
+  square: 'i-lucide-square',
 } as const
 
 export type IconName = keyof typeof icons

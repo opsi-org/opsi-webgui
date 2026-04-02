@@ -10,8 +10,7 @@
                             ? 'bg-(--color-opsi-success)/15 text-(--color-opsi-success)'
                             : 'bg-(--color-opsi-error)/15 text-(--color-opsi-error)'
                     ]">
-                        <UIcon
-                            :name="statusMessage.type === 'success' ? 'i-heroicons-check-circle' : 'i-heroicons-exclamation-circle'"
+                        <UIcon :name="statusMessage.type === 'success' ? icons.checkCircle : icons.exclamationCircle"
                             class="w-4 h-4 shrink-0" />
                         <span>{{ statusMessage.text }}</span>
                         <button type="button" class="ml-1 opacity-60 hover:opacity-100" @click="statusMessage = null">
@@ -41,7 +40,7 @@
                         :leading-icon="icons.filter" class="w-full" />
                 </div>
                 <div v-if="loading" class="py-4 text-center">
-                    <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+                    <UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
                 </div>
                 <div v-else class="flex-1 overflow-auto p-2 space-y-0.5">
                     <template v-for="rootGroup in filteredTreeGroups" :key="rootGroup.id">
@@ -122,7 +121,7 @@
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
                                         []).length
-                                    }})</span>
+                                        }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -302,7 +301,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                            }}
+                                }}
                             </UButton>
                             <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -330,8 +329,7 @@
                         <UInput v-model="availableMembersSearch" :placeholder="$t('typeToFilter')" size="sm"
                             :leading-icon="icons.filter" autofocus />
                         <div v-if="loadingMembers" class="py-4 text-center">
-                            <UIcon name="i-heroicons-arrow-path"
-                                class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+                            <UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
                             <p class="text-sm text-(--color-text-muted) mt-2">{{ $t('message.loading') }}</p>
                         </div>
                         <template v-else>

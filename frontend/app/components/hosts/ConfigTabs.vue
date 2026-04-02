@@ -37,7 +37,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 							{{ val }}
 							<button type="button" class="hover:text-red-500 transition-colors"
 								@click="newConfig.possibleValues.splice(idx, 1)">
-								<UIcon name="i-heroicons-x-mark" class="w-3 h-3" />
+								<UIcon :name="icons.x" class="w-3 h-3" />
 							</button>
 						</span>
 					</div>
@@ -55,7 +55,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 							{{ val }}
 							<button type="button" class="hover:text-red-500 transition-colors"
 								@click="newConfig.defaultValues.splice(idx, 1)">
-								<UIcon name="i-heroicons-x-mark" class="w-3 h-3" />
+								<UIcon :name="icons.x" class="w-3 h-3" />
 							</button>
 						</span>
 					</div>
@@ -100,7 +100,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 				</div>
 				<div class="flex flex-wrap items-center gap-2">
 					<UInput v-model="paramSearch" :placeholder="String($t('typeToFilter'))" size="sm"
-						class="w-full sm:w-32 md:w-40" icon="i-lucide-search" />
+						class="w-full sm:w-32 md:w-40" :name="icons.filter" />
 					<UTooltip v-if="isServerDefaultMode" :text="$t('createConfig')">
 						<UButton :icon="icons.add" color="primary" variant="soft" size="sm"
 							@click="showCreateConfigModal = true">
@@ -162,7 +162,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 						{{ getAttributeLabel(key) }}
 						<span v-if="isAttrChanged(key)"
 							class="inline-flex items-center text-[10px] text-yellow-700 dark:text-yellow-200">
-							<UIcon name="i-heroicons-pencil-square" class="w-3 h-3" />
+							<UIcon :name="icons.modify" class="w-3 h-3" />
 						</span>
 					</span>
 					<div class="flex-1 flex items-center gap-2 min-w-0">

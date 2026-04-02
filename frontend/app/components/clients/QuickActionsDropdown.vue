@@ -190,9 +190,9 @@ const actionResults = ref<Record<string, { success: boolean; message?: string }>
 const statusMessage = ref<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
 
 const osTypes = [
-	{ value: 'windows', label: 'Windows', icon: 'i-heroicons-window' },
-	{ value: 'linux', label: 'Linux', icon: 'i-heroicons-command-line' },
-	{ value: 'macos', label: 'macOS', icon: 'i-heroicons-computer-desktop' },
+	{ value: 'windows', label: 'Windows' },
+	{ value: 'linux', label: 'Linux' },
+	{ value: 'macos', label: 'macOS' },
 ]
 
 function showSelectionHint() {

@@ -27,7 +27,7 @@
 							</SharedTooltipTable>
 							<span v-if="isPropertyChanged(prop.propertyId)"
 								class="inline-flex items-center text-yellow-700 dark:text-yellow-200">
-								<UIcon name="i-heroicons-pencil-square" class="w-3 h-3" />
+								<UIcon :name="icons.modify" class="w-3 h-3" />
 							</span>
 						</div>
 
