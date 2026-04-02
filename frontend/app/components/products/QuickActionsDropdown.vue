@@ -27,13 +27,13 @@
 							<UIcon :name="icons.product" class="w-5 h-5 text-opsi-blue" />
 							<span class="font-medium">{{ $t('productQuickActions') }}</span>
 						</div>
-						<UButton variant="ghost" color="neutral" size="xs" :icon="icons.close"
+						<UButton variant="ghost" color="neutral" size="xs" :icon="icons.x"
 							@click="dialogOpen = false" />
 					</div>
 				</template>
 
 				<div v-if="loadingOptions" class="flex justify-center py-8">
-					<UIcon :name="icons.loading" class="w-6 h-6 animate-spin" />
+					<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin" />
 				</div>
 
 				<div v-else class="space-y-4">
@@ -105,7 +105,7 @@
 						</div>
 
 						<div v-if="loadingPreview" class="flex justify-center py-4">
-							<UIcon :name="icons.loading" class="w-5 h-5 animate-spin" />
+							<UIcon :name="icons.refresh" class="w-5 h-5 animate-spin" />
 						</div>
 						<div v-else-if="previewData && Object.keys(previewData).length > 0"
 							class="max-h-64 overflow-y-auto border border-(--color-border) rounded-lg p-2 space-y-1 bg-(--color-surface) text-xs">

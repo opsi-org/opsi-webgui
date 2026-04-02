@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div v-if="loading" class="flex items-center justify-center py-8">
-			<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+			<UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
 		</div>
 
 		<div v-else-if="error" class="text-xs text-red-500 py-2">{{ error }}</div>
@@ -11,12 +11,11 @@
 				<UInput v-model="searchQuery" :placeholder="t('typeToFilter')" size="xs" :icon="icons.filter"
 					class="flex-1 min-w-0">
 					<template v-if="searchQuery" #trailing>
-						<UButton :icon="icons.close" size="xs" variant="link" color="neutral"
-							@click="searchQuery = ''" />
+						<UButton :icon="icons.x" size="xs" variant="link" color="neutral" @click="searchQuery = ''" />
 					</template>
 				</UInput>
 				<UTooltip :text="`${t('clearAll')} (${selectionStore.selectedServers.length})`">
-					<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral" @click="clearSelection" />
+					<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral" @click="clearSelection" />
 				</UTooltip>
 			</div>
 

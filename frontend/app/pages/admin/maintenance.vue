@@ -15,17 +15,17 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </div>
                 </template>
                 <div v-if="loadingClients" class="py-6 text-center">
-                    <UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-gray-400" />
+                    <UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
                 </div>
                 <div v-else-if="blockedClientsCount === 0" class="py-6 text-center">
-                    <UIcon :name="icons.check" class="w-10 h-10 text-green-500 mx-auto mb-2" />
+                    <UIcon :name="icons.checkCircle" class="w-10 h-10 text-green-500 mx-auto mb-2" />
                     <p class="text-gray-500 dark:text-gray-400">{{ $t('message.noBlockedClients') }}</p>
                 </div>
                 <div v-else class="space-y-4">
                     <div class="flex gap-2">
                         <USelect v-model="selectedBlockedClient" :options="blockedClientOptions"
                             :placeholder="$t('selectClient')" class="flex-1" size="sm" />
-                        <UButton :icon="icons.check" color="primary" size="sm" :disabled="!selectedBlockedClient"
+                        <UButton color="primary" size="sm" :disabled="!selectedBlockedClient"
                             :loading="unblockingClient" @click="unblockSelectedClient">{{ $t('unblock') }}</UButton>
                     </div>
                     <UButton block variant="outline" color="warning" size="sm" :loading="unblockingClient"
@@ -42,17 +42,17 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </div>
                 </template>
                 <div v-if="loadingProducts" class="py-6 text-center">
-                    <UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-gray-400" />
+                    <UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
                 </div>
                 <div v-else-if="lockedProductsCount === 0" class="py-6 text-center">
-                    <UIcon :name="icons.check" class="w-10 h-10 text-green-500 mx-auto mb-2" />
+                    <UIcon :name="icons.checkCircle" class="w-10 h-10 text-green-500 mx-auto mb-2" />
                     <p class="text-gray-500 dark:text-gray-400">{{ $t('message.noLockedProducts') }}</p>
                 </div>
                 <div v-else class="space-y-4">
                     <div class="flex gap-2">
                         <USelect v-model="selectedLockedProduct" :options="lockedProductOptions"
                             :placeholder="$t('selectProduct')" class="flex-1" size="sm" />
-                        <UButton :icon="icons.check" color="primary" size="sm" :disabled="!selectedLockedProduct"
+                        <UButton color="primary" size="sm" :disabled="!selectedLockedProduct"
                             :loading="unlockingProduct" @click="unlockSelectedProduct">{{ $t('unlock') }}</UButton>
                     </div>
                     <UButton block variant="outline" color="warning" size="sm" :loading="unlockingProduct"
@@ -70,7 +70,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
             </template>
             <div v-if="loadingAppState" class="py-6 text-center">
-                <UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-gray-400" />
+                <UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
             </div>
             <div v-else class="space-y-4">
                 <div class="flex flex-wrap gap-3">
@@ -89,7 +89,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
                 <div v-if="newAppState.type === 'maintenance'">
                     <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('optionalSettings')
-                    }}</div>
+                        }}</div>
                     <div class="space-y-4 border border-yellow-300 dark:border-yellow-700 rounded-lg p-2">
                         <UFormField :label="$t('addressExceptions')">
                             <div class="flex gap-2">
@@ -97,7 +97,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                     size="sm" class="flex-1" @keydown.enter.prevent="addAddressException" />
                                 <UButton color="primary" size="sm" :icon="icons.add" @click="addAddressException">{{
                                     $t('add')
-                                    }}</UButton>
+                                }}</UButton>
                             </div>
                             <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
                                 <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
@@ -105,7 +105,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                     {{ addr }}
                                     <button type="button" @click="removeAddressException(idx)"
                                         class="text-gray-400 hover:text-red-500 transition-colors">
-                                        <UIcon :name="icons.close" class="w-3 h-3" />
+                                        <UIcon :name="icons.x" class="w-3 h-3" />
                                     </button>
                                 </span>
                             </div>
@@ -139,7 +139,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
                     </label>
                     <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup')
-                    }}</div>
+                        }}</div>
                     <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                         <label
                             class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
@@ -191,7 +191,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </UFormField>
                     <div>
                         <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('restoreOptions')
-                            }}</div>
+                        }}</div>
                         <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                             <label
                                 class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">

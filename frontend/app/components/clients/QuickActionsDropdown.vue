@@ -11,7 +11,7 @@
 				<UIcon :name="icons.client" class="w-4 h-4" />
 				<span>{{ t('clientActions') }}</span>
 				<UBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</UBadge>
-				<UIcon :name="icons.arrowDown" class="w-3 h-3 ml-1" />
+				<UIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
 			</UButton>
 		</UDropdownMenu>
 		<UTooltip v-else-if="compact" :text="t('clientActions')">
@@ -24,7 +24,7 @@
 			@click="showSelectionHint">
 			<UIcon :name="icons.client" class="w-4 h-4" />
 			<span>{{ t('clientActions') }}</span>
-			<UIcon :name="icons.arrowDown" class="w-3 h-3 ml-1" />
+			<UIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
 		</UButton>
 	</div>
 
@@ -36,7 +36,7 @@
 						<UIcon :name="currentActionIcon" class="w-5 h-5" :class="currentActionColor" />
 						{{ t(currentAction) }}
 					</h3>
-					<UButton :icon="icons.close" variant="ghost" color="neutral" @click="confirmOpen = false" />
+					<UButton :icon="icons.x" variant="ghost" color="neutral" @click="confirmOpen = false" />
 				</div>
 
 				<UAlert v-if="statusMessage && statusMessage.type === 'error'" color="error" :title="t('error')"
@@ -89,6 +89,7 @@
 							:variant="deployOptions.type === os.value ? 'solid' : 'outline'"
 							:color="deployOptions.type === os.value ? 'primary' : 'neutral'" size="sm"
 							class="justify-center" @click="deployOptions.type = os.value">
+							<UIcon :name="os.icon" class="w-4 h-4 mr-1" />
 							{{ os.label }}
 						</UButton>
 					</div>
@@ -141,7 +142,7 @@
 			<div class="p-4 min-w-87.5">
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-lg font-semibold">{{ t('actionResults') }}</h3>
-					<UButton :icon="icons.close" variant="ghost" color="neutral" @click="resultOpen = false" />
+					<UButton :icon="icons.x" variant="ghost" color="neutral" @click="resultOpen = false" />
 				</div>
 
 				<div class="max-h-80 overflow-y-auto space-y-1">
@@ -190,9 +191,9 @@ const actionResults = ref<Record<string, { success: boolean; message?: string }>
 const statusMessage = ref<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
 
 const osTypes = [
-	{ value: 'windows', label: 'Windows' },
-	{ value: 'linux', label: 'Linux' },
-	{ value: 'macos', label: 'macOS' },
+	{ value: 'windows', label: 'Windows', icon: icons.windows },
+	{ value: 'linux', label: 'Linux', icon: icons.linux },
+	{ value: 'macos', label: 'macOS', icon: icons.apple },
 ]
 
 function showSelectionHint() {

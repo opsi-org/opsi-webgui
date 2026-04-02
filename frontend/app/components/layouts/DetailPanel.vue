@@ -20,7 +20,7 @@ Mobile: overlay panel with close button.
                     <div class="flex items-center gap-3">
                         <button v-if="isMobile" @click="$emit('close')"
                             class="p-1 rounded hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) transition-colors">
-                            <UIcon :name="icons.arrowLeft" class="w-3 h-3" />
+                            <UIcon :name="icons.chevronLeft" class="w-3 h-3" />
                         </button>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-x-1 min-w-0">
@@ -36,7 +36,7 @@ Mobile: overlay panel with close button.
                             <slot name="panelActions" />
                             <button @click="$emit('close')"
                                 class="p-1 rounded hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) transition-colors">
-                                <UIcon :name="icons.close" class="w-3 h-3" />
+                                <UIcon :name="icons.x" class="w-3 h-3" />
                             </button>
                         </div>
                     </div>

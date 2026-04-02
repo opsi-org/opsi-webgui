@@ -4,20 +4,20 @@
 			<UInput v-model="searchQuery" :placeholder="t('typeToFilter')" size="xs" :icon="icons.filter"
 				class="flex-1 min-w-0">
 				<template v-if="searchQuery" #trailing>
-					<UButton :icon="icons.close" size="xs" variant="link" color="neutral" @click="searchQuery = ''" />
+					<UButton :icon="icons.x" size="xs" variant="link" color="neutral" @click="searchQuery = ''" />
 				</template>
 			</UInput>
 			<UButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="t('refresh')"
 				@click="refresh" />
-			<UButton :icon="allExpanded ? icons.collapse : icons.expand" size="xs" variant="ghost" color="neutral"
+			<UButton :icon="allExpanded ? icons.chevronUp : icons.chevronDown" size="xs" variant="ghost" color="neutral"
 				:title="allExpanded ? t('collapseAll') : t('expandAll')" @click="toggleExpandAll" />
 			<UTooltip v-if="selectedCount > 0" :text="`${t('clearAll')} (${selectedCount})`">
-				<UButton :icon="icons.clear" size="xs" variant="ghost" color="neutral" @click="clearAll" />
+				<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral" @click="clearAll" />
 			</UTooltip>
 		</div>
 
 		<div v-if="loading && !hasData" class="flex items-center justify-center py-8">
-			<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+			<UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
 		</div>
 		<div v-else-if="errorMsg" class="text-xs text-(--color-error) py-2">{{ errorMsg }}</div>
 
@@ -27,7 +27,7 @@
 					<div class="flex items-center justify-between px-1 py-1.5 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded"
 						@click="toggleSectionCollapse(section.id)">
 						<div class="flex items-center gap-1.5">
-							<UIcon :name="isSectionCollapsed(section.id) ? icons.arrowRight : icons.arrowDown"
+							<UIcon :name="isSectionCollapsed(section.id) ? icons.chevronRight : icons.chevronDown"
 								class="w-3.5 h-3.5 text-(--color-text-muted)" />
 							<UTooltip v-if="sectionTooltip(section.id)" :text="sectionTooltip(section.id)">
 								<span
@@ -46,8 +46,9 @@
 							class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer border-l-transparent hover:border-l-(--color-border)"
 							:class="{ 'border-l-(--color-border)/40': item.depth > 0 }">
 							<UButton v-if="item.hasChildren"
-								:icon="item.isExpanded ? icons.arrowDown : icons.arrowRight" size="xs" variant="ghost"
-								color="neutral" class="shrink-0 p-0! h-4! w-4!" @click.stop="toggleExpand(item.id)" />
+								:icon="item.isExpanded ? icons.chevronDown : icons.chevronRight" size="xs"
+								variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
+								@click.stop="toggleExpand(item.id)" />
 							<span v-else class="w-4 shrink-0" />
 							<UCheckbox :model-value="isItemChecked(item)" size="xs" @click.stop
 								@update:model-value="handleItemClick(item)" />
@@ -72,7 +73,7 @@
 			<template v-else>
 				<div v-for="item in productFlatItems" :key="item.id" :style="{ paddingLeft: `${item.depth * 16}px` }"
 					class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer">
-					<UButton v-if="item.hasChildren" :icon="item.isExpanded ? icons.arrowDown : icons.arrowRight"
+					<UButton v-if="item.hasChildren" :icon="item.isExpanded ? icons.chevronDown : icons.chevronRight"
 						size="xs" variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
 						@click.stop="toggleExpand(item.id)" />
 					<span v-else class="w-4 shrink-0" />

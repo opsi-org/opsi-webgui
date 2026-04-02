@@ -49,7 +49,7 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
             <div v-if="statusFilter" class="flex items-center gap-2 mt-3">
                 <span class="text-sm text-gray-500">{{ $t('filteringBy') }}:</span>
                 <SharedStatusBadge :status="getStatusType(statusFilter)" :label="statusFilter" />
-                <UButton variant="ghost" color="neutral" size="xs" :icon="icons.close" @click="statusFilter = ''" />
+                <UButton variant="ghost" color="neutral" size="xs" :icon="icons.x" @click="statusFilter = ''" />
             </div>
         </template>
 

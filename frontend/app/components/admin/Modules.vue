@@ -9,7 +9,7 @@ Modules - Component to display available opsi modules
 			</div>
 		</template>
 		<div v-if="loading" class="py-8 text-center">
-			<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-gray-400" />
+			<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
 		</div>
 		<div v-else-if="filteredModules.length === 0" class="py-8 text-center text-gray-500">
 			{{ filter ? $t('noResultsFound') : $t('noModulesFound') }}

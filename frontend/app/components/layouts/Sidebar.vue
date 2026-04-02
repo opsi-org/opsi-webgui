@@ -12,7 +12,7 @@ Sidebar component - main navigation.
                                 :class="{ 'bg-white/10': isActive(item.route) && !expanded[item.route] }">
                                 <UIcon :name="item.icon" class="w-5 h-5 shrink-0" />
                                 <span class="flex-1 text-sm text-left">{{ t(item.title) }}</span>
-                                <UIcon :name="expanded[item.route] ? icons.arrowUp : icons.arrowDown"
+                                <UIcon :name="expanded[item.route] ? icons.chevronUp : icons.chevronDown"
                                     class="w-4 h-4 transition-transform" />
                             </button>
                             <div v-if="expanded[item.route]" class="ml-4 mt-0.5 mb-1 border-l-2 border-white/20 pl-2">

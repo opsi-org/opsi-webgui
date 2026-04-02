@@ -11,7 +11,7 @@
 					? 'text-(--color-primary) bg-primary/10'
 					: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
 				@click.stop="$emit('toggle', group.id)">
-				<UIcon :name="icons.arrowRight" class="w-3.5 h-3.5 transition-transform duration-200"
+				<UIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
 					:class="{ 'rotate-90': isExpanded }" />
 			</button>
 			<span v-else class="w-5 flex items-center justify-center shrink-0">
@@ -50,7 +50,7 @@
 					@click="$emit('add-members', group)" />
 				<UButton :icon="icons.group" size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
 					@click="$emit('create-subgroup', group.id)" />
-				<UButton :icon="icons.edit" size="xs" variant="ghost" color="neutral" :title="$t('edit')"
+				<UButton :icon="icons.pencil" size="xs" variant="ghost" color="neutral" :title="$t('edit')"
 					@click="$emit('edit', group)" />
 				<UButton :icon="icons.delete" size="xs" variant="ghost" color="neutral" :title="$t('delete')"
 					@click="$emit('delete', group)" />

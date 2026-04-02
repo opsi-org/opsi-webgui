@@ -26,7 +26,7 @@ single editable (select + custom input), plain input.
 						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{ $t('selectValues')
 						}}</span>
 						<span v-else class="truncate">{{ arrayValue.join(', ') }}</span>
-						<UIcon :name="icons.arrowDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
+						<UIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
 					</UButton>
 					<template #content>
 						<div class="max-h-64 overflow-y-auto">
@@ -84,7 +84,7 @@ single editable (select + custom input), plain input.
 				<UInput v-if="showCustomInput" :model-value="stringValue" size="sm" class="flex-1" :disabled="disabled"
 					:placeholder="String($t('enterValue'))"
 					@update:model-value="(v: string) => emit('update:modelValue', v)" />
-				<!-- <UButton v-if="stringValue && !disabled" size="xs" variant="ghost" color="neutral" :icon="icons.close"
+				<!-- <UButton v-if="stringValue && !disabled" size="xs" variant="ghost" color="neutral" :icon="icons.x"
 					:title="$t('clearValue')" @click="clearEditableValue" /> -->
 			</div>
 		</template>

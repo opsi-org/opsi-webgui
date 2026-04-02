@@ -6,9 +6,9 @@
                 <div class="bg-white dark:bg-[--color-surface] rounded-xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all"
                     @click="navigateTo('/admin/diagnostics/healthcheck')">
                     <div class="flex items-center gap-2 mb-4">
-                        <UIcon :name="icons.diagnostics" class="w-5 h-5" />
+                        <UIcon :name="icons.health" class="w-5 h-5" />
                         <span class="text-sm font-semibold">{{ $t('healthCheck') }}</span>
-                        <UIcon :name="icons.arrowRight" class="ml-auto w-3 h-3 text-[--color-text-muted]" />
+                        <UIcon :name="icons.chevronRight" class="ml-auto w-3 h-3 text-[--color-text-muted]" />
                     </div>
                     <div v-if="healthCounts" class="flex items-center gap-2">
                         <UBadge v-if="healthCounts.error > 0" color="error">
@@ -180,7 +180,7 @@
                     @click="navigateTo('/admin/diagnostics/modules')">
                     <div class="flex items-center justify-between mb-2">
                         <img :src="opsiLogoSrc" alt="opsi" class="w-5 h-5" />
-                        <UIcon :name="icons.arrowRight" class="w-3 h-3 text-[--color-text-muted]" />
+                        <UIcon :name="icons.chevronRight" class="w-3 h-3 text-[--color-text-muted]" />
                     </div>
                     <p class="text-2xl font-bold mb-2">{{ modulesAvailableCount ?? '-' }}</p>
                     <p class="text-[--color-text-muted]">{{ $t('opsiModules') }}</p>

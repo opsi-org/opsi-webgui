@@ -5,7 +5,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
         <header class="bg-opsi-blue text-white h-12 flex items-center px-3 md:px-4 shadow-md shrink-0 z-50">
             <div class="flex items-center gap-2 md:gap-3">
                 <button @click="toggleSidebar" class="p-2 rounded hover:bg-white/20 transition-colors">
-                    <UIcon :name="sidebarOpen ? icons.menuClose : icons.menu" class="w-5 h-5" />
+                    <UIcon :name="sidebarOpen ? icons.x : icons.menu" class="w-5 h-5" />
                 </button>
                 <NuxtLink :to="defaultPage" class="flex items-center gap-2">
                     <img src="~/assets/images/opsi_webgui_wide_dark.svg" alt="OPSI" class="h-10" />
@@ -26,9 +26,9 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                         'bg-amber-500/50 text-black hover:bg-amber-500/30': userStore.healthWorstCase === 'warning',
                         'bg-red-500/50 text-white hover:bg-red-500/30': userStore.healthWorstCase === 'error',
                     }" :title="healthCheckTooltip">
-                    <UIcon :name="icons.diagnostics" class="w-4 h-4" />
+                    <UIcon :name="icons.health" class="w-4 h-4" />
                     <span class="tabular-nums">{{ userStore.healthCounts?.error || userStore.healthCounts?.warning || 0
-                    }}</span>
+                        }}</span>
                 </NuxtLink>
                 <UTooltip :text="messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')">
                     <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs"
@@ -87,7 +87,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                             </UButton>
                             <UButton size="xs" variant="ghost" color="neutral"
                                 @click="messageBusStore.setChangesDetected(false)">
-                                <UIcon :name="icons.close" class="w-3.5 h-3.5" />
+                                <UIcon :name="icons.x" class="w-3.5 h-3.5" />
                             </UButton>
                         </div>
                     </div>
@@ -109,10 +109,10 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                                 t('quickPanel')
-                                }}</span>
+                            }}</span>
                             <button @click="quickpanelOpen = false"
                                 class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
-                                <UIcon :name="icons.close" class="w-4 h-4" />
+                                <UIcon :name="icons.x" class="w-4 h-4" />
                             </button>
                         </div>
                         <QuickpanelMainView />
@@ -133,7 +133,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
 
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-base font-medium text-(--color-text)">{{ t('quickPanel') }}</span>
-                            <UButton :icon="icons.close" size="sm" variant="ghost" color="neutral" class="rounded-full"
+                            <UButton :icon="icons.x" size="sm" variant="ghost" color="neutral" class="rounded-full"
                                 @click="quickpanelOpen = false" />
                         </div>
 

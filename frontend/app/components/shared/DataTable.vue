@@ -4,7 +4,7 @@
       <div class="flex items-center gap-3 text-sm">
         <UTooltip v-if="selectedKeys.length > 0"
           :text="`${selectedKeys.length} ${$t('selected')} — ${$t('clearSelection')}`">
-          <UButton :icon="icons.clear" variant="soft" color="primary" size="xs" @click="clearSelection">
+          <UButton :icon="icons.xCircle" variant="soft" color="primary" size="xs" @click="clearSelection">
             {{ selectedKeys.length }}
           </UButton>
         </UTooltip>
@@ -17,8 +17,8 @@
         <div v-if="filterable" class="relative">
           <UInput v-model="filterQueryInternal" :placeholder="filterPlaceholder || String($t('typeToFilter'))" size="sm"
             :icon="icons.filter" class="w-32 sm:w-40" />
-          <UButton v-if="filterQueryInternal" :icon="icons.close" variant="link" color="neutral" size="xs"
-            :padded="false" class="absolute right-1 top-1/2 -translate-y-1/2" @click="filterQueryInternal = ''" />
+          <UButton v-if="filterQueryInternal" :icon="icons.x" variant="link" color="neutral" size="xs" :padded="false"
+            class="absolute right-1 top-1/2 -translate-y-1/2" @click="filterQueryInternal = ''" />
         </div>
 
         <UPopover>
@@ -97,7 +97,7 @@
                       class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue disabled:opacity-50"
                       @change="tableSettings.toggleColumn(col.key)" />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col)
-                      }}</span>
+                    }}</span>
                   </label>
                 </div>
               </div>
@@ -122,7 +122,7 @@
         @keydown="handleTableKeydown">
         <div v-if="loading && rows.length === 0"
           class="flex items-center justify-center py-12 text-(--color-text-muted)">
-          <UIcon :name="icons.loading" class="w-6 h-6 animate-spin mr-2" />
+          <UIcon :name="icons.refresh" class="w-6 h-6 animate-spin mr-2" />
           {{ $t('loading') }}
         </div>
 
@@ -223,8 +223,8 @@
               <tr v-if="rows.length === 0 && !loading">
                 <td :colspan="totalColSpan" class="px-4 py-12 text-center">
                   <div class="flex flex-col items-center gap-2 text-(--color-text-muted)">
-                    <UIcon :name="emptyIcon || icons.table" class="w-8 h-8 opacity-50" />
-                    <span>{{ emptyLabel || $t('message.noItemsFound') }}</span>
+                    <UIcon :name="icons.table" class="w-8 h-8 opacity-50" />
+                    <span>{{ $t('message.noItemsFound') }}</span>
                   </div>
                 </td>
               </tr>
@@ -232,7 +232,7 @@
               <tr v-if="displayMode === 'infinite' && hasMoreData" class="scroll-sentinel">
                 <td :colspan="totalColSpan" class="px-4 py-4 text-center">
                   <div class="flex items-center justify-center gap-2 text-(--color-text-muted) text-sm">
-                    <UIcon :name="icons.loading" class="w-4 h-4 animate-spin" />
+                    <UIcon :name="icons.refresh" class="w-4 h-4 animate-spin" />
                     <span>{{ $t('loading') }}...</span>
                   </div>
                 </td>
@@ -261,7 +261,7 @@
         </template>
       </span>
       <div v-if="displayMode === 'pagination' && totalPages > 1" class="flex items-center gap-1">
-        <UButton :icon="icons.arrowLeft" variant="outline" color="neutral" size="xs" :disabled="currentPage === 1"
+        <UButton :icon="icons.chevronLeft" variant="outline" color="neutral" size="xs" :disabled="currentPage === 1"
           @click="goToPage(currentPage - 1)" />
         <template v-for="page in visiblePageNumbers" :key="page">
           <span v-if="page === '...'" class="px-2 text-(--color-text-muted)">...</span>
@@ -271,7 +271,7 @@
             {{ page }}
           </UButton>
         </template>
-        <UButton :icon="icons.arrowRight" variant="outline" color="neutral" size="xs"
+        <UButton :icon="icons.chevronRight" variant="outline" color="neutral" size="xs"
           :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)" />
       </div>
     </div>
@@ -315,8 +315,6 @@ interface Props {
   clickable?: boolean
   actions?: DataTableAction<T>[]
 
-  emptyIcon?: string
-  emptyLabel?: string
   tableLabel?: string
   maxHeight?: string
   sortBySelectionEnabled?: boolean

@@ -50,7 +50,7 @@ Can be used both in standalone pages and detail panels.
 							@click="scrollToMarker" />
 					</UTooltip>
 					<UTooltip :text="$t('clearMarker')">
-						<UButton :icon="icons.close" variant="ghost" color="neutral" size="sm" @click="clearMarker" />
+						<UButton :icon="icons.x" variant="ghost" color="neutral" size="sm" @click="clearMarker" />
 					</UTooltip>
 				</div>
 
@@ -102,14 +102,14 @@ Can be used both in standalone pages and detail panels.
 				</div>
 				<div v-else-if="loading && logContent.length === 0"
 					class="flex items-center justify-center h-full gap-2 text-muted">
-					<UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-opsi-blue" />
+					<UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-opsi-blue" />
 					<p class="text-sm">{{ $t('loading') }}…</p>
 				</div>
 				<UAlert v-else-if="error" color="error" :title="String($t('error'))" :description="error" class="m-3"
 					close @update:open="error = null" />
 				<div v-else-if="logContent.length === 0"
 					class="flex flex-col items-center justify-center h-full gap-3 text-center bg-[--color-surface] rounded-xl">
-					<UIcon :name="icons.document" class="w-12 h-12 opacity-40 text-muted" />
+					<UIcon :name="icons.log" class="w-12 h-12 opacity-40 text-muted" />
 					<p class="text-sm text-muted">{{ $t('noLogsFound') }}</p>
 				</div>
 				<div v-else ref="logContainerRef"

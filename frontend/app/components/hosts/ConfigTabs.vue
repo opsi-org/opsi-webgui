@@ -119,7 +119,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 
 		<div v-show="activeTab === 'parameters'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 h-full']">
 			<div v-if="loadingParams" class="py-8 flex justify-center">
-				<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-opsi-blue" />
+				<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-opsi-blue" />
 			</div>
 			<div v-else-if="Object.keys(groupedFilteredParams).length === 0"
 				class="py-8 text-center text-sm text-muted">
@@ -133,7 +133,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 
 		<div v-show="activeTab === 'attributes'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 h-full']">
 			<div v-if="loadingAttrs" class="py-8 flex justify-center">
-				<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-opsi-blue" />
+				<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-opsi-blue" />
 			</div>
 			<div v-else-if="!hostId" class="py-8 text-center text-sm text-muted">
 				<UIcon :name="icons.config" class="w-10 h-10 mx-auto mb-2 opacity-40" />
@@ -162,7 +162,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 						{{ getAttributeLabel(key) }}
 						<span v-if="isAttrChanged(key)"
 							class="inline-flex items-center text-[10px] text-yellow-700 dark:text-yellow-200">
-							<UIcon :name="icons.modify" class="w-3 h-3" />
+							<UIcon :name="icons.pencilSquare" class="w-3 h-3" />
 						</span>
 					</span>
 					<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -177,7 +177,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 							class="flex-1 font-mono" />
 						<UInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
 							:disabled="readonly" class="flex-1" />
-						<UButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral" :icon="icons.close"
+						<UButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral" :icon="icons.x"
 							:title="$t('discardItem')" @click="discardSingleAttribute(key)" />
 					</div>
 				</div>

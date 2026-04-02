@@ -5,7 +5,7 @@
 			class="w-3 h-3" />
 		<UIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
 		<UPopover v-if="hasClientsSelected && hasProductsSelected">
-			<UButton size="xs" variant="ghost" color="neutral" :icon="icons.arrowDown"
+			<UButton size="xs" variant="ghost" color="neutral" :icon="icons.chevronDown"
 				:title="$t('message.setActionRequestForSelectedProducts')" />
 			<template #content>
 				<div class="p-2 w-44">

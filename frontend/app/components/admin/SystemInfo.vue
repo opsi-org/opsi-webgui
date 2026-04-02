@@ -3,13 +3,13 @@ SystemInfo - Component to display system diagnostic information
 <template>
 	<div class="space-y-4  dark:bg-(--color-surface)">
 		<div v-if="loading" class="py-8 text-center">
-			<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-gray-400" />
+			<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
 		</div>
 		<template v-else>
 			<div v-if="Object.keys(filteredSystemInfo).length > 0" class="rounded-lg overflow-hidden">
 				<button @click="toggleCard('_system')"
 					class="w-full flex items-center gap-2 px-4 py-3 hover:bg-(--color-surface-hover) transition-colors">
-					<UIcon :name="expandedCards['_system'] ? icons.arrowDown : icons.arrowRight"
+					<UIcon :name="expandedCards['_system'] ? icons.chevronDown : icons.chevronRight"
 						class="w-4 h-4 shrink-0 text-gray-500" />
 					<span class="font-heading text-xs">{{ $t('systemProperties') }}</span>
 					<UBadge color="neutral" variant="soft" size="xs" class="ml-auto">
@@ -45,7 +45,7 @@ SystemInfo - Component to display system diagnostic information
 					class="rounded-lg overflow-hidden">
 					<button @click="toggleCard(String(category))"
 						class="w-full flex items-center gap-2 px-4 py-3  hover:bg-(--color-surface-hover) transition-colors">
-						<UIcon :name="expandedCards[String(category)] ? icons.arrowDown : icons.arrowRight"
+						<UIcon :name="expandedCards[String(category)] ? icons.chevronDown : icons.chevronRight"
 							class="w-4 h-4 shrink-0 text-gray-500" />
 						<span class="capitalize font-heading text-xs">{{ formatKey(String(category)) }}</span>
 						<UBadge color="neutral" variant="soft" size="xs" class="ml-auto">

@@ -62,14 +62,13 @@
 						<span v-else class="text-(--color-text-muted)">-</span>
 					</template>
 					<template #cell-version_outdated="{ row }">
-						<ClientsStatisticBadge :value="(row as Client).version_outdated"
-							:icon="icons.productsOutdatedLocal" label="L" :tooltip="$t('version_outdated_localboot')"
-							status="warning"
+						<ClientsStatisticBadge :value="(row as Client).version_outdated" :icon="icons.productsOutdated"
+							label="L" :tooltip="$t('version_outdated_localboot')" status="warning"
 							@stat-click="openProductsPanelForClient(row as Client, 'version_outdated')" />
 					</template>
 					<template #cell-version_outdated_netboot="{ row }">
 						<ClientsStatisticBadge :value="(row as Client).version_outdated_netboot"
-							:icon="icons.productsOutdatedLocal" label="N" :tooltip="$t('version_outdated_netboot')"
+							:icon="icons.productsOutdated" label="N" :tooltip="$t('version_outdated_netboot')"
 							status="warning"
 							@stat-click="openProductsPanelForClient(row as Client, 'version_outdated')" />
 					</template>
@@ -205,8 +204,8 @@ const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefres
 
 const columns: DataTableColumnDef[] = [
 	{ key: 'clientId', label: String($t('clientId')), labelKey: 'clientId', sortable: true, alwaysVisible: true },
-	{ key: 'version_outdated', label: String($t('version_outdated_localboot')), labelKey: 'version_outdated_localboot', headerIcon: icons.productsOutdatedLocal, sortable: true, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'version_outdated_netboot', label: String($t('version_outdated_netboot')), labelKey: 'version_outdated_netboot', headerIcon: icons.productsOutdatedLocal, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'version_outdated', label: String($t('version_outdated_localboot')), labelKey: 'version_outdated_localboot', headerIcon: icons.productsOutdated, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'version_outdated_netboot', label: String($t('version_outdated_netboot')), labelKey: 'version_outdated_netboot', headerIcon: icons.productsOutdated, sortable: true, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'installationStatus_installed', label: String($t('installationStatus_installed')), labelKey: 'installationStatus_installed', headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'installationStatus_unknown', label: String($t('installationStatus_unknown')), labelKey: 'installationStatus_unknown', headerIcon: icons.productInstallationStatusUnknown, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'actionResult_failed', label: String($t('actionResult_failed')), labelKey: 'actionResult_failed', headerIcon: icons.productsFailedActionResult, sortable: true, class: 'text-center w-10', minWidth: '50px' },

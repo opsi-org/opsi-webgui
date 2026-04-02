@@ -3,7 +3,7 @@
 		<UTooltip :text="$t('saveAll')">
 			<UButton :size="size" color="success" variant="solid" class="rounded-r-none" :loading="configRef?.isSaving"
 				@click="emit('saveAll', false)">
-				<UIcon :name="icons.save" class="w-3.5 h-3.5" />
+				<UIcon :name="icons.check" class="w-3.5 h-3.5" />
 			</UButton>
 		</UTooltip>
 		<UTooltip :text="$t('discard')">
@@ -47,7 +47,7 @@
 								</p>
 							</div>
 							<UTooltip :text="$t('discard')">
-								<UButton size="xs" :icon="icons.close" color="neutral" variant="ghost"
+								<UButton size="xs" :icon="icons.x" color="neutral" variant="ghost"
 									@click="change.discard()" />
 							</UTooltip>
 						</div>

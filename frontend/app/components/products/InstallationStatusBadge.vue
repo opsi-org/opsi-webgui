@@ -9,7 +9,7 @@
 
 		<template v-else-if="normalizedStatus === 'installed'">
 			<UBadge color="success" variant="subtle" size="xs" class="gap-1">
-				<UIcon :name="icons.check" class="w-3 h-3" />
+				<UIcon :name="icons.checkCircle" class="w-3 h-3" />
 				<span>{{ $t('installed') }}</span>
 			</UBadge>
 		</template>

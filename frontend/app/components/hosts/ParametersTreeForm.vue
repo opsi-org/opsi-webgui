@@ -19,7 +19,7 @@ Multivalue with tag-like editing and add-new-value for editable params.
 							? 'text-(--color-primary) bg-primary/10'
 							: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
 						@click.stop="toggle(node.key)">
-						<UIcon :name="icons.arrowRight" class="w-3.5 h-3.5 transition-transform duration-200"
+						<UIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
 							:class="{ 'rotate-90': open[node.key] }" />
 					</button>
 					<span class="text-sm font-mono flex-1 truncate transition-colors"
@@ -53,7 +53,7 @@ Multivalue with tag-like editing and add-new-value for editable params.
 							</UTooltip>
 							<span v-if="changedParams.has(node.param.configId)"
 								class="inline-flex items-center text-[10px] text-yellow-700 dark:text-yellow-200 ml-0.5">
-								<UIcon :name="icons.modify" class="w-3 h-3" />
+								<UIcon :name="icons.pencilSquare" class="w-3 h-3" />
 							</span>
 						</div>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -64,7 +64,7 @@ Multivalue with tag-like editing and add-new-value for editable params.
 								:password="isPasswordParam(node.param.configId)"
 								@update:model-value="(v: unknown) => node.param && setParam(node.param, v)" />
 							<UButton v-if="changedParams.has(node.param.configId)" size="xs" variant="ghost"
-								color="neutral" :icon="icons.close" :title="$t('discardItem')"
+								color="neutral" :icon="icons.x" :title="$t('discardItem')"
 								@click="() => node.param && discardSingleParam(node.param.configId)" />
 						</div>
 					</div>

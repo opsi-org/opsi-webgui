@@ -10,11 +10,11 @@
                             ? 'bg-(--color-opsi-success)/15 text-(--color-opsi-success)'
                             : 'bg-(--color-opsi-error)/15 text-(--color-opsi-error)'
                     ]">
-                        <UIcon :name="statusMessage.type === 'success' ? icons.checkCircle : icons.exclamationCircle"
+                        <UIcon :name="statusMessage.type === 'success' ? icons.checkCircle : icons.xCircle"
                             class="w-4 h-4 shrink-0" />
                         <span>{{ statusMessage.text }}</span>
                         <button type="button" class="ml-1 opacity-60 hover:opacity-100" @click="statusMessage = null">
-                            <UIcon :name="icons.close" class="w-3.5 h-3.5" />
+                            <UIcon :name="icons.x" class="w-3.5 h-3.5" />
                         </button>
                     </div>
                 </Transition>
@@ -40,7 +40,7 @@
                         :leading-icon="icons.filter" class="w-full" />
                 </div>
                 <div v-if="loading" class="py-4 text-center">
-                    <UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+                    <UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
                 </div>
                 <div v-else class="flex-1 overflow-auto p-2 space-y-0.5">
                     <template v-for="rootGroup in filteredTreeGroups" :key="rootGroup.id">
@@ -48,7 +48,8 @@
                             class="flex items-center justify-between text-sm font-semibold text-(--color-text) px-2 py-2 mt-3 first:mt-1 cursor-pointer select-none"
                             @click="collapsedSections.has(rootGroup.id) ? collapsedSections.delete(rootGroup.id) : collapsedSections.add(rootGroup.id)">
                             <div class="flex items-center gap-1.5">
-                                <UIcon :name="collapsedSections.has(rootGroup.id) ? icons.arrowRight : icons.arrowDown"
+                                <UIcon
+                                    :name="collapsedSections.has(rootGroup.id) ? icons.chevronRight : icons.chevronDown"
                                     class="w-3.5 h-3.5 text-(--color-text-muted)" />
                                 <UTooltip
                                     :text="rootGroup.label === 'groups' ? $t('groupsTooltip') : rootGroup.label === 'clientdirectory' ? $t('clientDirectoryTooltip') : ''">
@@ -102,7 +103,7 @@
                                 :title="$t('addMembers')" @click="openAddMembersModal(selectedGroup)" />
                             <UButton :icon="icons.group" variant="ghost" color="neutral" size="xs"
                                 :title="$t('addSubgroup')" @click="openCreateModal(selectedGroup.id)" />
-                            <UButton :icon="icons.edit" variant="ghost" color="neutral" size="xs" :title="$t('edit')"
+                            <UButton :icon="icons.pencil" variant="ghost" color="neutral" size="xs" :title="$t('edit')"
                                 @click="openEditModal(selectedGroup)" />
                             <UButton :icon="icons.delete" variant="ghost" size="xs" color="neutral"
                                 :title="$t('delete')" @click="confirmDeleteGroup(selectedGroup)" />
@@ -121,7 +122,7 @@
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
                                         []).length
-                                        }})</span>
+                                    }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -209,7 +210,7 @@
                                 <p v-if="createForm.parentGroupId" class="text-sm text-(--color-text-muted)">
                                     {{ createForm.parentGroupId }}</p>
                             </div>
-                            <UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+                            <UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
                                 @click="showCreateModal = false" />
                         </div>
                     </template>
@@ -247,11 +248,11 @@
                     <template #header>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <UIcon :name="icons.edit" class="w-5 h-5 text-opsi-blue" />
+                                <UIcon :name="icons.pencil" class="w-5 h-5 text-opsi-blue" />
                                 <h3 class="font-semibold text-(--color-text)">{{ $t('editGroup') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ editForm.groupId }}</p>
                             </div>
-                            <UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+                            <UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
                                 @click="showEditModal = false" />
                         </div>
                     </template>
@@ -272,7 +273,7 @@
                             <UButton variant="soft" color="neutral" @click="showEditModal = false">
                                 {{ $t('cancel') }}
                             </UButton>
-                            <UButton color="primary" :loading="saving" @click="doEditGroup" :icon="icons.save">
+                            <UButton color="primary" :loading="saving" @click="doEditGroup" :icon="icons.check">
                                 {{ $t('save') }}
                             </UButton>
                         </div>
@@ -291,7 +292,7 @@
                                 <h3 class="font-semibold text-(--color-text)">{{ $t('confirmDelete') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ groupToDelete?.id }}</p>
                             </div>
-                            <UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+                            <UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
                                 @click="showDeleteModal = false" />
                         </div>
                     </template>
@@ -301,7 +302,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                                }}
+                            }}
                             </UButton>
                             <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -321,7 +322,7 @@
                                 <h3 class="font-semibold text-(--color-text)">{{ $t('addMembers') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ memberTargetGroup?.label }}</p>
                             </div>
-                            <UButton :icon="icons.close" variant="ghost" color="neutral" size="xs"
+                            <UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
                                 @click="showAddMembersModal = false" />
                         </div>
                     </template>
@@ -329,7 +330,7 @@
                         <UInput v-model="availableMembersSearch" :placeholder="$t('typeToFilter')" size="sm"
                             :leading-icon="icons.filter" autofocus />
                         <div v-if="loadingMembers" class="py-4 text-center">
-                            <UIcon :name="icons.loading" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+                            <UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
                             <p class="text-sm text-(--color-text-muted) mt-2">{{ $t('message.loading') }}</p>
                         </div>
                         <template v-else>

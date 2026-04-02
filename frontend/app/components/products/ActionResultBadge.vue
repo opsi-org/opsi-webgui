@@ -9,14 +9,14 @@
 
 		<template v-else-if="normalizedResult === 'successful'">
 			<UBadge color="success" variant="subtle" size="xs" class="gap-1">
-				<UIcon :name="icons.check" class="w-3 h-3" />
+				<UIcon :name="icons.checkCircle" class="w-3 h-3" />
 				<span>{{ $t('successful') }}</span>
 			</UBadge>
 		</template>
 
 		<template v-else-if="normalizedResult === 'failed'">
 			<UBadge color="error" variant="subtle" size="xs" class="gap-1">
-				<UIcon :name="icons.error" class="w-3 h-3" />
+				<UIcon :name="icons.xCircle" class="w-3 h-3" />
 				<span>{{ $t('failed') }}</span>
 			</UBadge>
 		</template>

@@ -3,9 +3,9 @@ Admin Terminal Page - Server terminal access via messagebus
     <div class="h-full flex flex-col gap-3">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
             <div class="flex items-center gap-3">
-                <UButton v-if="!isConnected" color="primary" size="sm" :icon="icons.check" :loading="isConnecting"
+                <UButton v-if="!isConnected" color="primary" size="sm" :icon="icons.checkCircle" :loading="isConnecting"
                     :disabled="isDisabled" @click="connect">{{ $t('connectOrReconnect') }}</UButton>
-                <UButton v-else color="error" variant="outline" size="sm" :icon="icons.close" @click="disconnect">{{
+                <UButton v-else color="error" variant="outline" size="sm" :icon="icons.x" @click="disconnect">{{
                     $t('disconnect') }}</UButton>
                 <span v-if="isConnected" class="flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>{{ $t('connected') }}

@@ -28,5 +28,5 @@ defineProps<{
 defineEmits<{ click: [] }>()
 
 const icons = useIcons()
-const arrowIcon = icons.arrowRight
+const arrowIcon = icons.chevronRight
 </script>

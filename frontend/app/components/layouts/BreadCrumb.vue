@@ -1,11 +1,12 @@
-BreadCrumb - A breadcrumb navigation component for displaying current page hierarchy with page descriptions on right side.
+BreadCrumb - A breadcrumb navigation component for displaying current page hierarchy with page descriptions on right
+side.
 <template>
 	<div
 		class="shrink-0 px-3 md:px-4 py-1.5 border-b border-(--color-border) dark:border-(--color-border) bg-white dark:bg-(--color-surface)">
 		<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
 			<nav class="flex items-center gap-1.5 text-xs overflow-x-auto">
 				<template v-for="(crumb, i) in breadcrumbs" :key="i">
-					<UIcon v-if="i > 0" :name="icons.arrowRight"
+					<UIcon v-if="i > 0" :name="icons.chevronRight"
 						class="w-2.5 h-2.5 text-(--color-text-muted) shrink-0" />
 					<NuxtLink v-if="crumb.to" :to="crumb.to"
 						class="text-(--color-text-muted) hover:text-opsi-blue whitespace-nowrap">

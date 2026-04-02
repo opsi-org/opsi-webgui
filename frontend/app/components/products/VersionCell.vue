@@ -4,7 +4,7 @@
 		<SharedTooltipTable v-if="hasVersionDetails" :rows="versionTooltipRows">
 			<span class="flex items-center gap-0.5">
 				<UBadge v-if="row.client_version_outdated" color="error" variant="subtle" size="xs" class="gap-0.5">
-					<UIcon :name="icons.productsOutdatedLocal" class="w-3 h-3" />
+					<UIcon :name="icons.productsOutdated" class="w-3 h-3" />
 					<span>{{ $t('versionOutdated') }}</span>
 				</UBadge>
 				<UBadge v-if="row.depot_version_diff" color="warning" variant="subtle" size="xs" class="gap-0.5">

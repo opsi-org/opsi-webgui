@@ -8,14 +8,14 @@ HealthCheck - Component to display health check results
 			</div>
 		</template>
 		<div v-if="loading" class="py-8 text-center">
-			<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-gray-400" />
+			<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
 		</div>
 		<div v-else class="space-y-2">
 			<div v-for="item in filteredHealthData" :key="item.key" class="rounded-lgoverflow-hidden">
 				<div class="flex items-start gap-3 p-3 cursor-pointer transition-colors"
 					@click="$emit('toggleExpand', item.key)">
 					<UIcon v-if="item.children && item.children.length > 0"
-						:name="expanded[item.key] ? icons.arrowDown : icons.arrowRight"
+						:name="expanded[item.key] ? icons.chevronDown : icons.chevronRight"
 						class="w-4 h-4 mt-0.5 shrink-0 text-gray-500" />
 					<div v-else class="w-4" />
 					<SharedStatusBadge :status="getStatusType(item.status)" :label="item.status" class="shrink-0" />

@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div v-if="loading" class="py-8 flex justify-center">
-			<UIcon :name="icons.loading" class="w-6 h-6 animate-spin text-opsi-blue" />
+			<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-opsi-blue" />
 		</div>
 
 		<div v-else-if="properties.length === 0" class="py-8 text-center text-sm text-(--color-text-muted)">
@@ -27,7 +27,7 @@
 							</SharedTooltipTable>
 							<span v-if="isPropertyChanged(prop.propertyId)"
 								class="inline-flex items-center text-yellow-700 dark:text-yellow-200">
-								<UIcon :name="icons.modify" class="w-3 h-3" />
+								<UIcon :name="icons.pencilSquare" class="w-3 h-3" />
 							</span>
 						</div>
 
@@ -40,7 +40,7 @@
 								@update:model-value="(v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)" />
 
 							<UButton v-if="isPropertyChanged(prop.propertyId)" size="xs" variant="ghost" color="neutral"
-								:icon="icons.close" :title="$t('discardItem')"
+								:icon="icons.x" :title="$t('discardItem')"
 								@click="discardSingleProperty(prop.propertyId)" />
 						</div>
 					</div>

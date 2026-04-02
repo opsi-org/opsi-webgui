@@ -5,7 +5,7 @@
       data-testid="language-dropdown">
       <UIcon :name="icons.language" class="w-3.5 h-3.5" />
       <span class="text-xs font-medium">{{ currentLocale.toUpperCase() }}</span>
-      <UIcon :name="icons.arrowDown" class="w-3 h-3 transition-transform" :class="{ 'rotate-180': open }" />
+      <UIcon :name="icons.chevronDown" class="w-3 h-3 transition-transform" :class="{ 'rotate-180': open }" />
     </button>
     <Transition :name="direction === 'up' ? 'dropdown-up' : 'dropdown'">
       <div v-if="open" :class="[

@@ -8,7 +8,7 @@
 							<UIcon :name="icons.onDemand" class="w-5 h-5 text-opsi-blue" />
 							<span class="font-medium">{{ $t('processActions') }}</span>
 						</div>
-						<UButton variant="ghost" color="neutral" size="xs" :icon="icons.close" @click="open = false" />
+						<UButton variant="ghost" color="neutral" size="xs" :icon="icons.x" @click="open = false" />
 					</div>
 				</template>
 
@@ -82,7 +82,7 @@
 									class="max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) text-xs font-mono">
 									<div v-for="id in clientIds" :key="id" class="flex items-center justify-between">
 										<span>{{ id }}</span>
-										<UButton size="xs" variant="ghost" color="neutral" :icon="icons.close"
+										<UButton size="xs" variant="ghost" color="neutral" :icon="icons.x"
 											@click="clientIds = clientIds.filter(c => c !== id)" />
 									</div>
 								</div>
