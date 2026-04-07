@@ -11,7 +11,7 @@ HealthCheck - Component to display health check results
 			<SharedLoadingSpinner />
 		</div>
 		<div v-else class="space-y-2">
-			<div v-for="item in filteredHealthData" :key="item.key" class="rounded-lgoverflow-hidden">
+			<div v-for="item in filteredHealthData" :key="item.key" class="rounded-lg overflow-hidden">
 				<div class="flex items-start gap-3 p-3 cursor-pointer transition-colors"
 					@click="$emit('toggleExpand', item.key)">
 					<UIcon v-if="item.children && item.children.length > 0"
