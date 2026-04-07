@@ -446,7 +446,9 @@
   "message.unsavedChangesWithValueinBold": "This item has unsaved changes. The original value is shown in bold.",
   "message.youHaveBeenLoggedOut": "You've been logged out. Please log in again.",
   "messageBusConnected": "opsi-Messagebus connected",
+  "messageBusConnectionFailed": "MessageBus connection failed — the server certificate may not be trusted. Please visit the server URL to accept the certificate:",
   "messageBusDisconnected": "opsi-Messagebus disconnected",
+  "acceptCertificate": "Accept certificate",
   "mixed": "mixed",
   "modificationTime": "Modification Time",
   "modified": "Modified",
@@ -606,7 +608,6 @@
   "hostGroupAccessTooltip": "Permission to manage host groups",
   "productGroupAccessTooltip": "Permission to manage product groups",
   "readOnlyTooltip": "Whether access is restricted to read-only mode",
-
   "pageDescription.admin.diagnostics.healthcheck": "Check system health and issues",
   "pageDescription.admin.diagnostics.modules": "View licensed modules overview",
   "pageDescription.admin.diagnostics.system": "View system diagnostics",

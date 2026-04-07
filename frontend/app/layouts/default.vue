@@ -72,13 +72,31 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                 class="flex-1 bg-(--color-surface) dark:bg-(--color-background) flex flex-col min-w-0 overflow-hidden">
                 <LayoutsBreadCrumb />
                 <Transition name="slide-down">
-                    <SharedAppAlert v-if="userStore.globalError" color="error" :title="t('error')"
+                    <SharedAlertInline v-if="userStore.globalError" color="error" :title="t('error')"
                         :description="userStore.globalError" closable class="mx-3 md:mx-4 mt-2"
                         @close="userStore.globalError = undefined" />
                 </Transition>
                 <Transition name="slide-down">
-                    <SharedAppAlert v-if="userStore.readOnly" color="warning" :title="t('readOnlyAccess')"
+                    <SharedAlertInline v-if="userStore.readOnly" color="warning" :title="t('readOnlyAccess')"
                         variant="subtle" class="mx-3 md:mx-4 mt-2" />
+                </Transition>
+                <Transition name="slide-down">
+                    <div v-if="messageBusStore.certWarning"
+                        class="mx-3 md:mx-4 mt-2 flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-sm">
+                        <div class="flex items-center gap-2 text-amber-700 dark:text-amber-300">
+                            <UIcon :name="icons.warning" class="w-4 h-4 shrink-0" />
+                            <span>{{ t('messageBusConnectionFailed') }}
+                                <a :href="messageBusStore.certWarningUrl" target="_blank" rel="noopener"
+                                    class="underline font-medium hover:text-amber-900 dark:hover:text-amber-100">
+                                    {{ t('acceptCertificate') }}
+                                </a>
+                            </span>
+                        </div>
+                        <UButton size="xs" variant="ghost" color="neutral"
+                            @click="messageBusStore.certWarning = false">
+                            <UIcon :name="icons.x" class="w-3.5 h-3.5" />
+                        </UButton>
+                    </div>
                 </Transition>
                 <Transition name="slide-down">
                     <div v-if="messageBusStore.changesDetected && !messageBusStore.autoRefresh"

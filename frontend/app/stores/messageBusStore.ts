@@ -57,6 +57,9 @@ export const useMessageBusStore = defineStore('messageBus', {
     _reconnectDelay: 1000,
     _connecting: false,
     _connected: false,
+    _consecutiveFailures: 0,
+    certWarning: false,
+    certWarningUrl: '',
   }),
   getters: {
     isConnected: (s) => s._connected,
@@ -85,14 +88,16 @@ export const useMessageBusStore = defineStore('messageBus', {
         process.env.NODE_ENV === 'production'
           ? window.location.port
           : Number(
-              (runtimeConfig as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT
-            ) || 4447
+            (runtimeConfig as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT
+          ) || 4447
       const ws = new WebSocket(`wss://${host}:${port}/messagebus/v1`)
       ws.binaryType = 'arraybuffer'
 
       ws.onopen = () => {
         this._connecting = false
         this._reconnectDelay = 1000 // reset backoff on success
+        this._consecutiveFailures = 0
+        this.certWarning = false
         this.bus = ws
         this._connected = true
         // Subscribe to default channels
@@ -136,6 +141,12 @@ export const useMessageBusStore = defineStore('messageBus', {
 
       ws.onerror = () => {
         this._connecting = false
+        this._consecutiveFailures++
+        // After 3 consecutive failures, likely a certificate trust issue
+        if (this._consecutiveFailures >= 3 && !this.certWarning) {
+          this.certWarning = true
+          this.certWarningUrl = `https://${host}:${port}/`
+        }
         // onerror is always followed by onclose, so reconnect happens there
       }
 
