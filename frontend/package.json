@@ -40,6 +40,7 @@
     "@cyclonedx/cdxgen": "^12.1.2",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@playwright/test": "^1.58.2",
+    "@types/node": "^25.5.2",
     "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@typescript-eslint/parser": "^8.56.1",
     "@vitejs/plugin-basic-ssl": "^2.1.4",
