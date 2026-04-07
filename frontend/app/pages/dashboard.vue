@@ -41,48 +41,60 @@
                         </UBadge>
                     </div>
                     <div v-if="userConfigData" class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 text-xs mt-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-[--color-text-muted] font-mono">read_only</span>
-                            <UBadge :color="userConfigData.read_only ? 'warning' : 'success'" variant="subtle"
-                                size="sm">
-                                {{ userConfigData.read_only }}
-                            </UBadge>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[--color-text-muted] font-mono">server_write_access</span>
-                            <UBadge :color="userConfigData.server_write_access ? 'success' : 'neutral'" variant="subtle"
-                                size="sm">
-                                {{ userConfigData.server_write_access }}
-                            </UBadge>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[--color-text-muted] font-mono">depot_access</span>
-                            <UBadge :color="userConfigData.depot_access ? 'success' : 'neutral'" variant="subtle"
-                                size="sm">
-                                {{ userConfigData.depot_access }}
-                            </UBadge>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[--color-text-muted] font-mono">client_creation</span>
-                            <UBadge :color="userConfigData.client_creation ? 'success' : 'neutral'" variant="subtle"
-                                size="sm">
-                                {{ userConfigData.client_creation }}
-                            </UBadge>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[--color-text-muted] font-mono">host_group_access</span>
-                            <UBadge :color="userConfigData.host_group_access ? 'success' : 'neutral'" variant="subtle"
-                                size="sm">
-                                {{ userConfigData.host_group_access }}
-                            </UBadge>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[--color-text-muted] font-mono">product_group_access</span>
-                            <UBadge :color="userConfigData.product_group_access ? 'success' : 'neutral'"
-                                variant="subtle" size="sm">
-                                {{ userConfigData.product_group_access }}
-                            </UBadge>
-                        </div>
+                        <UTooltip :text="$t('readOnlyTooltip')">
+                            <div class="flex items-center justify-between cursor-help">
+                                <span class="text-[--color-text-muted] font-mono">read_only</span>
+                                <UBadge :color="userConfigData.read_only ? 'warning' : 'success'" variant="subtle"
+                                    size="sm">
+                                    {{ userConfigData.read_only }}
+                                </UBadge>
+                            </div>
+                        </UTooltip>
+                        <UTooltip :text="$t('serverWriteAccessTooltip')">
+                            <div class="flex items-center justify-between cursor-help">
+                                <span class="text-[--color-text-muted] font-mono">server_write_access</span>
+                                <UBadge :color="userConfigData.server_write_access ? 'success' : 'neutral'" variant="subtle"
+                                    size="sm">
+                                    {{ userConfigData.server_write_access }}
+                                </UBadge>
+                            </div>
+                        </UTooltip>
+                        <UTooltip :text="$t('depotAccessTooltip')">
+                            <div class="flex items-center justify-between cursor-help">
+                                <span class="text-[--color-text-muted] font-mono">depot_access</span>
+                                <UBadge :color="userConfigData.depot_access ? 'success' : 'neutral'" variant="subtle"
+                                    size="sm">
+                                    {{ userConfigData.depot_access }}
+                                </UBadge>
+                            </div>
+                        </UTooltip>
+                        <UTooltip :text="$t('clientCreationTooltip')">
+                            <div class="flex items-center justify-between cursor-help">
+                                <span class="text-[--color-text-muted] font-mono">client_creation</span>
+                                <UBadge :color="userConfigData.client_creation ? 'success' : 'neutral'" variant="subtle"
+                                    size="sm">
+                                    {{ userConfigData.client_creation }}
+                                </UBadge>
+                            </div>
+                        </UTooltip>
+                        <UTooltip :text="$t('hostGroupAccessTooltip')">
+                            <div class="flex items-center justify-between cursor-help">
+                                <span class="text-[--color-text-muted] font-mono">host_group_access</span>
+                                <UBadge :color="userConfigData.host_group_access ? 'success' : 'neutral'" variant="subtle"
+                                    size="sm">
+                                    {{ userConfigData.host_group_access }}
+                                </UBadge>
+                            </div>
+                        </UTooltip>
+                        <UTooltip :text="$t('productGroupAccessTooltip')">
+                            <div class="flex items-center justify-between cursor-help">
+                                <span class="text-[--color-text-muted] font-mono">product_group_access</span>
+                                <UBadge :color="userConfigData.product_group_access ? 'success' : 'neutral'"
+                                    variant="subtle" size="sm">
+                                    {{ userConfigData.product_group_access }}
+                                </UBadge>
+                            </div>
+                        </UTooltip>
                     </div>
                 </div>
             </div>
@@ -129,29 +141,41 @@
                         <UIcon :name="icons.client" class="w-5 h-5" />
                         <h3 class="text-sm font-semibold">{{ $t('clients') }}</h3>
                     </div>
-                    <div v-if="licenseClientNumbers" class="space-y-1.5 text-sm">
+                    <div v-if="sharedClientNumbers" class="space-y-1.5 text-sm">
                         <div class="flex justify-between items-center">
-                            <span class="text-[--color-text-muted] font-mono">{{ $t('active') }}</span>
-                            <UBadge color="success" variant="subtle">{{ licenseClientNumbers.all }}
-                            </UBadge>
+                            <span class="flex items-center gap-1.5 text-[--color-text-muted]">
+                                <UIcon :name="icons.client" class="w-4 h-4 text-green-500" />
+                                <span class="font-mono">{{ $t('activeClients') }}</span>
+                            </span>
+                            <UBadge color="success" variant="subtle">{{ sharedClientNumbers.all }}</UBadge>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-[--color-text-muted] font-mono">Windows</span>
-                            <UBadge color="primary" variant="subtle">{{ licenseClientNumbers.windows }}
-                            </UBadge>
+                            <span class="flex items-center gap-1.5 text-[--color-text-muted]">
+                                <UIcon :name="icons.windows" class="w-4 h-4 text-blue-500" />
+                                <span class="font-mono">Windows</span>
+                            </span>
+                            <UBadge color="primary" variant="subtle">{{ sharedClientNumbers.windows }}</UBadge>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-[--color-text-muted] font-mono">Linux</span>
-                            <UBadge color="primary" variant="subtle">{{ licenseClientNumbers.linux }}</UBadge>
+                            <span class="flex items-center gap-1.5 text-[--color-text-muted]">
+                                <UIcon :name="icons.linux" class="w-4 h-4 text-orange-500" />
+                                <span class="font-mono">Linux</span>
+                            </span>
+                            <UBadge color="primary" variant="subtle">{{ sharedClientNumbers.linux }}</UBadge>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-[--color-text-muted] font-mono">macOS</span>
-                            <UBadge color="primary" variant="subtle">{{ licenseClientNumbers.macos }}</UBadge>
+                            <span class="flex items-center gap-1.5 text-[--color-text-muted]">
+                                <UIcon :name="icons.apple" class="w-4 h-4 text-gray-500" />
+                                <span class="font-mono">macOS</span>
+                            </span>
+                            <UBadge color="primary" variant="subtle">{{ sharedClientNumbers.macos }}</UBadge>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-[--color-text-muted] font-mono">{{ $t('inactive') }}</span>
-                            <UBadge color="error" variant="subtle">{{ licenseClientNumbers.inactive }}
-                            </UBadge>
+                            <span class="flex items-center gap-1.5 text-[--color-text-muted]">
+                                <UIcon :name="icons.xCircle" class="w-4 h-4 text-red-400" />
+                                <span class="font-mono">{{ $t('inactiveClients') }}</span>
+                            </span>
+                            <UBadge color="error" variant="subtle">{{ sharedClientNumbers.inactive }}</UBadge>
                         </div>
                     </div>
                     <p v-else class="text-xs text-[--color-text-muted]">{{ $t('loading') }}</p>
@@ -225,7 +249,16 @@ const { t: $t } = useI18n()
 const userStore = useUserStore()
 const colorMode = useColorMode()
 const { getDiagnosticData, getUserConfiguration } = useApiHelpers()
-const { data: sharedDiagData, healthCounts: sharedHealthCounts, fetchDiagnostics: fetchSharedDiag, refresh: refreshDiag } = useDiagnosticsData()
+const {
+    data: sharedDiagData,
+    healthCounts: sharedHealthCounts,
+    fetchDiagnostics: fetchSharedDiag,
+    refresh: refreshDiag,
+    modules: sharedModules,
+    modulesDetailed: sharedModulesDetailed,
+    obsoleteModules: sharedObsoleteModules,
+    licenseClientNumbers: sharedClientNumbers,
+} = useDiagnosticsData()
 
 const loading = ref(false)
 
@@ -299,25 +332,13 @@ const netbootProductCount = computed(() => {
     return Object.values(firstDepot).filter(p => p.type === 'NetbootProduct').length
 })
 
-const modulesAvailableCount = computed(() => {
-    if (!diagnosticData.value) return null
-    const licenses = diagnosticData.value.licenses as Record<string, unknown> | undefined
-    if (!licenses?.modules) return null
-    const modules = licenses.modules as Record<string, { available: boolean }>
-    return Object.values(modules).filter(m => m.available).length
-})
+const modulesAvailableCount = computed(() => sharedModules.value.length || null)
 
-const obsoleteModules = computed(() => {
-    if (!diagnosticData.value) return []
-    const licenses = diagnosticData.value.licenses as Record<string, unknown> | undefined
-    return (licenses?.obsolete_modules as string[]) || []
-})
-
-const obsoleteModulesCount = computed(() => obsoleteModules.value.length)
+const obsoleteModulesCount = computed(() => sharedObsoleteModules.value.length)
 
 const obsoleteModulesTooltip = computed(() => {
-    if (obsoleteModules.value.length === 0) return ''
-    return `${$t('obsoleteModules')}: ${obsoleteModules.value.join(', ')}`
+    if (sharedObsoleteModules.value.length === 0) return ''
+    return `${$t('obsoleteModules')}: ${sharedObsoleteModules.value.join(', ')}`
 })
 
 const outdatedClientCount = computed(() => {
@@ -341,13 +362,6 @@ const outdatedClientsTooltip = computed(() => {
     const shown = outdated.slice(0, 10)
     const suffix = outdated.length > 10 ? ` ... (+${outdated.length - 10})` : ''
     return `${$t('outdatedClients')}: ${shown.join(', ')}${suffix}`
-})
-
-const licenseClientNumbers = computed(() => {
-    if (!diagnosticData.value) return null
-    const licenses = diagnosticData.value.licenses as Record<string, unknown> | undefined
-    if (!licenses?.client_numbers) return null
-    return licenses.client_numbers as { macos: number; linux: number; windows: number; inactive: number; all: number }
 })
 
 const failedClients = computed(() => {
@@ -376,6 +390,8 @@ async function fetchUserConfig() {
                 product_group_access: data.configuration.product_group_access ?? false,
                 client_creation: data.configuration.client_creation ?? true,
             }
+            // Store user configuration globally for access controls
+            userStore.setUserConfiguration(data.configuration)
         }
     }
 }
