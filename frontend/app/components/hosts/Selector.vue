@@ -1,9 +1,9 @@
-HostSelector - Unified searchable dropdown for selecting a client or a server.
+HostSelector - Unified searchable dropdown for selecting a client or a server with lazy loading.
 <template>
   <USelectMenu :model-value="modelValue || ''" :items="dropdownOptions" :loading="loading"
     :filter-fields="['label', 'description']"
     :placeholder="placeholder || (type === 'server' ? String($t('selectServer')) : String($t('selectClient')))"
-    value-key="value" class="min-w-48" size="sm" @update:model-value="onSelect">
+    value-key="value" class="min-w-48" size="sm" @update:model-value="onSelect" @open="onOpen">
     <template #leading>
       <UIcon :name="type === 'server' ? icons.server : icons.client" class="w-4 h-4 text-muted" />
     </template>
@@ -60,6 +60,7 @@ const selectionStore = useSelectionStore()
 
 const loading = ref(false)
 const items = ref<Array<{ id: string; description: string }>>([])
+const fetched = ref(false)
 
 const dropdownOptions = computed<DropdownItem[]>(() => {
   const opts: DropdownItem[] = items.value.map((item) => ({
@@ -78,7 +79,8 @@ const dropdownOptions = computed<DropdownItem[]>(() => {
   return opts
 })
 
-async function fetchItems() {
+async function fetchItems(force = false) {
+  if (fetched.value && !force) return
   loading.value = true
   try {
     if (props.type === 'server') {
@@ -99,8 +101,16 @@ async function fetchItems() {
         if (!error) items.value = (data || []).map((c) => ({ id: c.clientId, description: c.description || '' }))
       }
     }
+    fetched.value = true
   } finally {
     loading.value = false
+  }
+}
+
+function onOpen() {
+  // Lazy load: fetch items when dropdown is first opened
+  if (!fetched.value) {
+    fetchItems()
   }
 }
 
@@ -114,11 +124,20 @@ function onSelect(value: string) {
   }
 }
 
-onMounted(fetchItems)
+onMounted(() => {
+  // Lazy loading: only fetch server items eagerly (small list)
+  // Client items are loaded on-demand when dropdown opens
+  if (props.type === 'server') {
+    fetchItems()
+  }
+})
 
 watch(() => selectionStore.selectedServers, () => {
-  if (props.type === 'client') fetchItems()
+  if (props.type === 'client') {
+    fetched.value = false
+    fetchItems(true)
+  }
 }, { deep: true })
 
-defineExpose({ refresh: fetchItems })
+defineExpose({ refresh: () => fetchItems(true) })
 </script>
