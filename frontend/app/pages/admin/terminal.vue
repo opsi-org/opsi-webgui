@@ -28,9 +28,9 @@ Admin Terminal Page - Server terminal access via messagebus
             </div>
         </div>
 
-        <UAlert v-if="isDisabled" color="warning" variant="soft" class="shrink-0">
+        <SharedAlertInline v-if="isDisabled" color="warning" variant="soft" class="shrink-0">
             <template #title>{{ $t('message.terminalDisabled') }}</template>
-        </UAlert>
+        </SharedAlertInline>
 
         <div v-if="!isDisabled" class="flex-1 min-h-0 rounded-lg overflow-hidden border border-(--color-border)">
             <div ref="terminalContainer" class="h-full w-full bg-gray-900" />
@@ -44,6 +44,7 @@ definePageMeta({ layout: 'default' })
 const icons = useIcons()
 const { t: $t } = useI18n()
 const api = useApiHelpers()
+const { isReadOnly, isTerminalEnabled } = useFeatureFlags()
 
 const terminalContainer = ref<HTMLElement | null>(null)
 const isDisabled = ref(false)
@@ -80,6 +81,10 @@ function createTerminalInterface(t: unknown): {
 }
 
 async function checkDisabled() {
+    if (isReadOnly.value || !isTerminalEnabled.value) {
+        isDisabled.value = true
+        return
+    }
     const { data, error } = await api.getDisabledFeatures()
     if (!error && data) isDisabled.value = data.includes('terminal')
 }

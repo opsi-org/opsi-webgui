@@ -44,48 +44,66 @@
                     <div v-if="userConfigData" class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
                         <UTooltip :text="`read_only — ${$t('readOnlyTooltip')}`">
                             <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.read_only ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-emerald-100 dark:bg-emerald-900/30'">
-                                    <UIcon :name="userConfigData.read_only ? icons.lock : icons.check" class="w-3 h-3" :class="userConfigData.read_only ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'" />
+                                <div class="relative w-7 h-7 flex items-center justify-center">
+                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.read_only ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-emerald-100 dark:bg-emerald-900/30'">
+                                        <UIcon :name="icons.eye" class="w-3 h-3" :class="userConfigData.read_only ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'" />
+                                    </div>
+                                    <UIcon :name="userConfigData.read_only ? icons.lock : icons.check" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.read_only ? 'text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900' : 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900'" />
                                 </div>
                                 <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">RO</span>
                             </div>
                         </UTooltip>
                         <UTooltip :text="`server_write — ${$t('serverWriteAccessTooltip')}`">
                             <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.server_write_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
-                                    <UIcon :name="userConfigData.server_write_access ? icons.check : icons.x" class="w-3 h-3" :class="userConfigData.server_write_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
+                                <div class="relative w-7 h-7 flex items-center justify-center">
+                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.server_write_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
+                                        <UIcon :name="icons.server" class="w-3 h-3" :class="userConfigData.server_write_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
+                                    </div>
+                                    <UIcon :name="icons.pencil" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.server_write_access ? 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' : 'text-[--color-text-muted] bg-gray-100 dark:bg-white/10'" />
                                 </div>
                                 <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">Server</span>
                             </div>
                         </UTooltip>
                         <UTooltip :text="`depot_access — ${$t('depotAccessTooltip')}`">
                             <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.depot_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
-                                    <UIcon :name="userConfigData.depot_access ? icons.check : icons.x" class="w-3 h-3" :class="userConfigData.depot_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
+                                <div class="relative w-7 h-7 flex items-center justify-center">
+                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.depot_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
+                                        <UIcon :name="icons.serverStack" class="w-3 h-3" :class="userConfigData.depot_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
+                                    </div>
+                                    <UIcon :name="icons.key" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.depot_access ? 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' : 'text-[--color-text-muted] bg-gray-100 dark:bg-white/10'" />
                                 </div>
                                 <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">Depot</span>
                             </div>
                         </UTooltip>
                         <UTooltip :text="`client_creation — ${$t('clientCreationTooltip')}`">
                             <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.client_creation ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
-                                    <UIcon :name="userConfigData.client_creation ? icons.check : icons.x" class="w-3 h-3" :class="userConfigData.client_creation ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
+                                <div class="relative w-7 h-7 flex items-center justify-center">
+                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.client_creation ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
+                                        <UIcon :name="icons.client" class="w-3 h-3" :class="userConfigData.client_creation ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
+                                    </div>
+                                    <UIcon :name="icons.add" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.client_creation ? 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' : 'text-[--color-text-muted] bg-gray-100 dark:bg-white/10'" />
                                 </div>
                                 <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">Create</span>
                             </div>
                         </UTooltip>
                         <UTooltip :text="`host_groups — ${$t('hostGroupAccessTooltip')}`">
                             <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.host_group_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
-                                    <UIcon :name="userConfigData.host_group_access ? icons.check : icons.x" class="w-3 h-3" :class="userConfigData.host_group_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
+                                <div class="relative w-7 h-7 flex items-center justify-center">
+                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.host_group_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
+                                        <UIcon :name="icons.client" class="w-3 h-3" :class="userConfigData.host_group_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
+                                    </div>
+                                    <UIcon :name="icons.group" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.host_group_access ? 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' : 'text-[--color-text-muted] bg-gray-100 dark:bg-white/10'" />
                                 </div>
                                 <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">Groups</span>
                             </div>
                         </UTooltip>
                         <UTooltip :text="`product_groups — ${$t('productGroupAccessTooltip')}`">
                             <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.product_group_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
-                                    <UIcon :name="userConfigData.product_group_access ? icons.check : icons.x" class="w-3 h-3" :class="userConfigData.product_group_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
+                                <div class="relative w-7 h-7 flex items-center justify-center">
+                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.product_group_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
+                                        <UIcon :name="icons.product" class="w-3 h-3" :class="userConfigData.product_group_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
+                                    </div>
+                                    <UIcon :name="icons.group" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.product_group_access ? 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' : 'text-[--color-text-muted] bg-gray-100 dark:bg-white/10'" />
                                 </div>
                                 <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">Prod.G</span>
                             </div>

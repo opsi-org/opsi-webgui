@@ -33,12 +33,12 @@
 				</template>
 
 				<div v-if="loadingOptions" class="flex justify-center py-8">
-					<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin" />
+					<SharedLoadingSpinner size="md" />
 				</div>
 
 				<div v-else class="space-y-4">
-					<UAlert v-if="errorMessage" color="error" :description="errorMessage" variant="subtle" close
-						@update:open="errorMessage = null" />
+					<SharedAlertInline v-if="errorMessage" color="error" :description="errorMessage" variant="subtle" closable
+						@close="errorMessage = null" />
 
 					<div class="divide-y divide-(--color-border)">
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
@@ -105,7 +105,7 @@
 						</div>
 
 						<div v-if="loadingPreview" class="flex justify-center py-4">
-							<UIcon :name="icons.refresh" class="w-5 h-5 animate-spin" />
+							<SharedLoadingSpinner size="sm" />
 						</div>
 						<div v-else-if="previewData && Object.keys(previewData).length > 0"
 							class="max-h-64 overflow-y-auto border border-(--color-border) rounded-lg p-2 space-y-1 bg-(--color-surface) text-xs">
@@ -146,7 +146,7 @@
 				<template #footer>
 					<div class="flex justify-end gap-2">
 						<UButton variant="soft" color="neutral" size="sm" @click="resetForm">{{ $t('reset') }}</UButton>
-						<UButton color="primary" size="sm" :disabled="previewData == null || applying"
+						<UButton color="primary" size="sm" :disabled="isReadOnly || previewData == null || applying"
 							:loading="applying" @click="applyActions">
 							{{ $t('apply') }}
 						</UButton>
@@ -179,6 +179,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const { apiPost, apiGet } = useApiHelpers()
 const selectionStore = useSelectionStore()
+const { isReadOnly } = useFeatureFlags()
 
 const NOT_APPLIED = String($t('notApplied'))
 

@@ -12,8 +12,8 @@
 					</div>
 				</template>
 
-				<UAlert v-if="statusMessage" :color="statusMessage.type" :description="statusMessage.message"
-					variant="subtle" class="mb-3" close @update:open="statusMessage = null" />
+				<SharedAlertInline v-if="statusMessage" :color="statusMessage.type" :description="statusMessage.message"
+					variant="subtle" class="mb-3" closable @close="statusMessage = null" />
 
 				<div class="space-y-4">
 					<div class="divide-y divide-(--color-border) dark:divide-(--color-border)">
@@ -98,7 +98,7 @@
 					<div class="flex justify-end gap-2">
 						<UButton variant="ghost" color="neutral" size="sm" @click="open = false">{{ $t('cancel') }}
 						</UButton>
-						<UButton color="primary" size="sm" :loading="executing" :disabled="clientIds.length === 0"
+						<UButton color="primary" size="sm" :loading="executing" :disabled="isReadOnly || clientIds.length === 0"
 							@click="executeProcessAction">
 							<UIcon :name="icons.onDemand" class="w-4 h-4 mr-1" />
 							{{ $t('processActions') }}
@@ -132,6 +132,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const selectionStore = useSelectionStore()
 const { processActionRequests } = useApiHelpers()
+const { isReadOnly } = useFeatureFlags()
 
 const executing = ref(false)
 const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)

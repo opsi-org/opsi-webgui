@@ -1,6 +1,7 @@
 Route: /servers/configuration/:tab/:id?
 <template>
 	<HostsConfigTabs :host-id="selectedServerId" host-type="server" :tab="activeTab" show-host-selector
+		:readonly="isReadOnly || !hasServerWriteAccess"
 		@update:host-id="updateSelectedServerId" @update:tab="updateActiveTab" @saved="handleSaved" />
 </template>
 
@@ -9,6 +10,8 @@ definePageMeta({
 	layout: 'default',
 	title: 'Server Configuration',
 })
+
+const { isReadOnly, hasServerWriteAccess } = useFeatureFlags()
 
 const VALID_TABS = ['parameters', 'attributes'] as const
 

@@ -9,8 +9,8 @@
                     </UButton>
                 </template>
 
-                <UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4" close
-                    @update:open="error = null" />
+                <SharedAlertInline v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4" closable
+                    @close="error = null" />
 
                 <SharedDataTable :rows="servers" :columns="columns" :loading="loading" table-id="servers"
                     row-key="depotId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
@@ -42,7 +42,7 @@
         <template #panel>
             <div v-if="panelServer">
                 <HostsConfigTabs v-if="panelType === 'config'" ref="configTabsRef" :host-id="panelServer.depotId"
-                    host-type="server" :tab="panelTab" panel-mode @update:tab="panelTab = $event" />
+                    host-type="server" :tab="panelTab" panel-mode :readonly="isReadOnly || !hasServerWriteAccess" @update:tab="panelTab = $event" />
             </div>
 
             <SharedNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelPanelLeave"
@@ -65,6 +65,7 @@ const { getServers } = useApiHelpers()
 const selectionStore = useSelectionStore()
 const router = useRouter()
 const route = useRoute()
+const { isReadOnly, hasServerWriteAccess } = useFeatureFlags()
 const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefresh(fetchServers)
 
 const loading = ref(false)

@@ -1,9 +1,9 @@
 Admin Maintenance Page - System maintenance, clients, products, backup/restore
 <template>
     <div class="space-y-6">
-        <UAlert v-if="error" color="error" variant="soft" close @update:open="error = ''">
+        <SharedAlertInline v-if="error" color="error" variant="soft" closable @close="error = ''">
             <template #title>{{ error }}</template>
-        </UAlert>
+        </SharedAlertInline>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <UCard>
@@ -15,7 +15,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </div>
                 </template>
                 <div v-if="loadingClients" class="py-6 text-center">
-                    <UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
+                    <SharedLoadingSpinner size="md" />
                 </div>
                 <div v-else-if="blockedClientsCount === 0" class="py-6 text-center">
                     <UIcon :name="icons.checkCircle" class="w-10 h-10 text-green-500 mx-auto mb-2" />
@@ -25,11 +25,11 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     <div class="flex gap-2">
                         <USelect v-model="selectedBlockedClient" :options="blockedClientOptions"
                             :placeholder="$t('selectClient')" class="flex-1" size="sm" />
-                        <UButton color="primary" size="sm" :disabled="!selectedBlockedClient"
+                        <UButton color="primary" size="sm" :disabled="isReadOnly || !selectedBlockedClient"
                             :loading="unblockingClient" @click="unblockSelectedClient">{{ $t('unblock') }}</UButton>
                     </div>
                     <UButton block variant="outline" color="warning" size="sm" :loading="unblockingClient"
-                        @click="unblockAll('clients')">{{ $t('unblockAll') }}</UButton>
+                        :disabled="isReadOnly" @click="unblockAll('clients')">{{ $t('unblockAll') }}</UButton>
                 </div>
             </UCard>
 
@@ -42,7 +42,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </div>
                 </template>
                 <div v-if="loadingProducts" class="py-6 text-center">
-                    <UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
+                    <SharedLoadingSpinner size="md" />
                 </div>
                 <div v-else-if="lockedProductsCount === 0" class="py-6 text-center">
                     <UIcon :name="icons.checkCircle" class="w-10 h-10 text-green-500 mx-auto mb-2" />
@@ -52,11 +52,11 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     <div class="flex gap-2">
                         <USelect v-model="selectedLockedProduct" :options="lockedProductOptions"
                             :placeholder="$t('selectProduct')" class="flex-1" size="sm" />
-                        <UButton color="primary" size="sm" :disabled="!selectedLockedProduct"
+                        <UButton color="primary" size="sm" :disabled="isReadOnly || !selectedLockedProduct"
                             :loading="unlockingProduct" @click="unlockSelectedProduct">{{ $t('unlock') }}</UButton>
                     </div>
                     <UButton block variant="outline" color="warning" size="sm" :loading="unlockingProduct"
-                        @click="unblockAll('products')">{{ $t('unlockAll') }}</UButton>
+                        :disabled="isReadOnly" @click="unblockAll('products')">{{ $t('unlockAll') }}</UButton>
                 </div>
             </UCard>
         </div>
@@ -70,7 +70,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
             </template>
             <div v-if="loadingAppState" class="py-6 text-center">
-                <UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
+                <SharedLoadingSpinner size="md" />
             </div>
             <div v-else class="space-y-4">
                 <div class="flex flex-wrap gap-3">
@@ -119,7 +119,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 <div class="flex justify-end gap-2 pt-2">
                     <UButton variant="outline" color="neutral" size="sm" @click="resetAppState">{{ $t('reset') }}
                     </UButton>
-                    <UButton color="primary" size="sm" :loading="savingAppState" :disabled="!newAppState.type"
+                    <UButton color="primary" size="sm" :loading="savingAppState" :disabled="isReadOnly || !hasServerWriteAccess || !newAppState.type"
                         @click="saveAppState">{{ $t('apply') }}</UButton>
                 </div>
             </div>
@@ -158,7 +158,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                             :placeholder="$t('enterEncryptionPassword')" size="sm" />
                     </UFormField>
 
-                    <UButton block color="primary" :icon="icons.copy" :loading="creatingBackup" @click="createBackup">{{
+                    <UButton block color="primary" :icon="icons.copy" :loading="creatingBackup" :disabled="isReadOnly" @click="createBackup">{{
                         $t('createBackup') }}</UButton>
                 </div>
             </UCard>
@@ -237,7 +237,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         </div>
                     </div>
                     <UButton block color="warning" :icon="icons.refresh" :loading="restoringBackup || uploadingFile"
-                        :disabled="!selectedFile" @click="restoreBackup">{{ $t('restoreBackup') }}</UButton>
+                        :disabled="isReadOnly || !hasServerWriteAccess || !selectedFile" @click="restoreBackup">{{ $t('restoreBackup') }}</UButton>
                 </div>
             </UCard>
         </div>
@@ -250,6 +250,7 @@ definePageMeta({ layout: 'default' })
 const icons = useIcons()
 const { t: $t } = useI18n()
 const api = useApiHelpers()
+const { isReadOnly, hasServerWriteAccess } = useFeatureFlags()
 
 const error = ref('')
 const loadingClients = ref(false)

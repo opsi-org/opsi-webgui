@@ -18,12 +18,12 @@
 					</UButton>
 				</template>
 
-				<UAlert v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4" close
-					@update:open="error = null" />
+				<SharedAlertInline v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4" closable
+					@close="error = null" />
 
 				<div v-if="actionStatus" class="mb-3">
-					<UAlert :color="actionStatus.type" :title="actionStatus.title" :description="actionStatus.message"
-						variant="subtle" close @update:open="actionStatus = null" />
+					<SharedAlertInline :color="actionStatus.type" :title="actionStatus.title" :description="actionStatus.message"
+						variant="subtle" closable @close="actionStatus = null" />
 				</div>
 
 				<SharedDataTable :rows="clients" :columns="columns" :loading="loading" table-id="clients"
@@ -127,7 +127,7 @@
 		<template #panel>
 			<div v-if="panelClient">
 				<HostsConfigTabs v-if="panelType === 'config'" ref="configTabsRef" :host-id="panelClient.clientId"
-					host-type="client" :tab="panelTab" panel-mode @update:tab="panelTab = $event" />
+					host-type="client" :tab="panelTab" panel-mode :readonly="isReadOnly" @update:tab="panelTab = $event" />
 				<ClientsLogsView v-if="panelType === 'logs'" :client-id="panelClient.clientId" panel-mode />
 				<ClientsCloneForm v-if="panelType === 'clone'" ref="cloneFormRef" :source-id="panelClient.clientId"
 					panel-mode @saved="fetchClients" />

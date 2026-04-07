@@ -1,14 +1,13 @@
 <template>
 	<div
 		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
-		<UAlert v-if="statusMessage" :color="statusMessage.type"
+		<SharedAlertInline v-if="statusMessage" :color="statusMessage.type"
 			:title="statusMessage.type === 'success' ? $t('success') : $t('error')" :description="statusMessage.message"
-			variant="subtle" class="mb-2 shrink-0" close @update:open="statusMessage = null" />
+			variant="subtle" class="mb-2 shrink-0" closable @close="statusMessage = null" />
 
 		<div class="flex items-center justify-between gap-2 mb-3 shrink-0">
 			<SharedTabsNav v-model="activeTab" :tabs="tabDefs" />
-			<UInput v-model="filterQuery" :placeholder="$t('typeToFilter')" :icon="icons.filter" size="xs"
-				class="w-full sm:w-48 md:w-64" />
+			<SharedFilterInput v-model="filterQuery" size="xs" />
 		</div>
 
 		<div v-show="activeTab === 'properties'"
@@ -55,6 +54,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const selectionStore = useSelectionStore()
 const { getProductProperties, saveProductProperties, getProductDependencies } = useApiHelpers()
+const { isReadOnly } = useFeatureFlags()
 
 const activeTab = ref(props.tab || 'properties')
 watch(() => props.tab, (v) => { if (v) activeTab.value = v })
@@ -231,7 +231,7 @@ async function fetchDependencies() {
 }
 
 async function saveAll() {
-	if (!props.productId || !hasPropertyChanges.value) return
+	if (isReadOnly.value || !props.productId || !hasPropertyChanges.value) return
 	savingProps.value = true
 	try {
 		const changedProps: Record<string, string | boolean | string[]> = {}

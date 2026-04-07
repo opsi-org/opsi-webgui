@@ -2,7 +2,8 @@ Configuration page for clients, with tabs for parameters and attributes, and opt
 Route: /clients/configuration/:tab/:id?
 <template>
 	<HostsConfigTabs :host-id="selectedClientId" host-type="client" :tab="activeTab" show-host-selector
-		:host-selector-placeholder="String($t('selectClient'))" @update:host-id="updateSelectedClientId"
+		:host-selector-placeholder="String($t('selectClient'))" :readonly="isReadOnly"
+		@update:host-id="updateSelectedClientId"
 		@update:tab="updateActiveTab" @saved="handleSaved" />
 </template>
 
@@ -11,6 +12,8 @@ definePageMeta({
 	layout: 'default',
 	title: 'Client Configuration',
 })
+
+const { isReadOnly } = useFeatureFlags()
 
 const VALID_TABS = ['parameters', 'attributes'] as const
 

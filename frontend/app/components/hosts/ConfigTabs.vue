@@ -70,8 +70,8 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 					<USelect v-model="newConfig.boolDefault"
 						:items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
 				</div>
-				<UAlert v-if="createConfigError" color="error" :title="$t('error')" :description="createConfigError"
-					variant="subtle" close @update:open="createConfigError = null" />
+				<SharedAlertInline v-if="createConfigError" color="error" :title="$t('error')" :description="createConfigError"
+					variant="subtle" closable @close="createConfigError = null" />
 			</div>
 		</template>
 		<template #footer>
@@ -99,9 +99,8 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 					</template>
 				</div>
 				<div class="flex flex-wrap items-center gap-2">
-					<UInput v-model="paramSearch" :placeholder="String($t('typeToFilter'))" size="sm"
-						class="w-full sm:w-32 md:w-40" :name="icons.filter" />
-					<UTooltip v-if="isServerDefaultMode" :text="$t('createConfig')">
+					<SharedFilterInput v-model="paramSearch" size="sm" input-class="w-full sm:w-32 md:w-40" />
+					<UTooltip v-if="isServerDefaultMode && !readonly" :text="$t('createConfig')">
 						<UButton :icon="icons.add" color="primary" variant="soft" size="sm"
 							@click="showCreateConfigModal = true">
 							<span class="hidden sm:inline">{{ $t('createConfig') }}</span>
@@ -119,21 +118,21 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 
 		<div v-show="activeTab === 'parameters'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 h-full']">
 			<div v-if="loadingParams" class="py-8 flex justify-center">
-				<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-opsi-blue" />
+				<SharedLoadingSpinner size="md" />
 			</div>
-			<div v-else-if="Object.keys(groupedFilteredParams).length === 0"
+			<div v-else-if="categoryAwareTree.length === 0"
 				class="py-8 text-center text-sm text-muted">
 				<UIcon :name="icons.config" class="w-10 h-10 mx-auto mb-2 opacity-40" />
 				<p>{{ (hostId || hostType === 'server') ? $t('noParametersFound') : $t('selectHostFirst') }}</p>
 			</div>
-			<HostsParametersTreeForm :params="filteredFlatParams" :changed-params="changedParams" :readonly="readonly"
+			<HostsParametersTreeForm :tree="categoryAwareTree" :changed-params="changedParams" :readonly="readonly"
 				:current-value="currentValue" :set-param="setParam" :discard-single-param="discardSingleParam"
 				:icons="icons" :fmt-val="fmtVal" :auto-open-all="!!paramSearch" />
 		</div>
 
 		<div v-show="activeTab === 'attributes'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 h-full']">
 			<div v-if="loadingAttrs" class="py-8 flex justify-center">
-				<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-opsi-blue" />
+				<SharedLoadingSpinner size="md" />
 			</div>
 			<div v-else-if="!hostId" class="py-8 text-center text-sm text-muted">
 				<UIcon :name="icons.config" class="w-10 h-10 mx-auto mb-2 opacity-40" />
@@ -436,6 +435,73 @@ const groupedFilteredParams = computed(() => {
 		result[category].push(p)
 	}
 	return result
+})
+
+interface TreeNode {
+	key: string
+	label: string
+	param?: Param
+	children?: TreeNode[]
+}
+
+/**
+ * Build a category-aware tree using the API-level category grouping.
+ * API returns { general: [...], clientconfig: [...], opsi-script: [...], ... }
+ * Each category becomes a top-level tree node, and within each category,
+ * configIds are split by dots to create sub-categories.
+ */
+const categoryAwareTree = computed<TreeNode[]>(() => {
+	const q = paramSearch.value.trim().toLowerCase()
+	const raw = rawParams.value
+	const categoryOrder = ['general', 'clientconfig', 'opsi-script', 'opsiclientd', 'software-on-demand', 'licensing']
+	const categoryKeys = [
+		...categoryOrder.filter(k => k in raw),
+		...Object.keys(raw).filter(k => !categoryOrder.includes(k)).sort(),
+	]
+
+	function buildSubTree(params: Param[], prefix: string): TreeNode[] {
+		const root: Record<string, any> = {}
+		for (const p of params) {
+			if (q && !p.configId.toLowerCase().includes(q) && !(p.description || '').toLowerCase().includes(q)) continue
+			const parts = p.configId.split('.')
+			let node = root
+			for (let i = 0; i < parts.length; i++) {
+				const part = parts[i]
+				if (!part) continue
+				if (i === parts.length - 1) {
+					node[part] = { __param: p }
+				} else {
+					node[part] = node[part] || {}
+					node = node[part]
+				}
+			}
+		}
+		function toTree(obj: Record<string, any>, pre: string): TreeNode[] {
+			return Object.entries(obj)
+				.sort(([, a], [, b]) => {
+					const aP = a && typeof a === 'object' && '__param' in a
+					const bP = b && typeof b === 'object' && '__param' in b
+					if (aP && !bP) return 1
+					if (!aP && bP) return -1
+					return 0
+				})
+				.map(([key, value]) => {
+					if (value && typeof value === 'object' && '__param' in value) {
+						return { key: pre + key, label: key, param: value.__param }
+					}
+					return { key: pre + key, label: key, children: toTree(value, pre + key + '.') }
+				})
+				.filter(n => n.param || (n.children && n.children.length > 0))
+		}
+		return toTree(root, prefix)
+	}
+
+	return categoryKeys
+		.map(cat => {
+			const children = buildSubTree(raw[cat] || [], cat + '.')
+			return { key: cat, label: cat, children }
+		})
+		.filter(n => n.children.length > 0)
 })
 
 function getOriginalValue(p: Param): unknown {

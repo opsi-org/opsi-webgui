@@ -34,7 +34,9 @@ export function useFeatureFlags() {
   function isPageAccessible(route: string): boolean {
     const routeFeatureMap: Record<string, () => boolean> = {
       '/admin/terminal': () =>
-        isFeatureEnabled('terminal') && isFeatureEnabled('messagebus_terminal'),
+        !userStore.readOnly &&
+        isFeatureEnabled('terminal') &&
+        isFeatureEnabled('messagebus_terminal'),
       '/clients/add': () => userStore.clientCreation,
       '/clients/clone': () => userStore.clientCreation,
       '/admin/maintenance': () => !userStore.readOnly,
@@ -71,6 +73,7 @@ export function useFeatureFlags() {
   const canCreateClients = computed(() => userStore.clientCreation)
   const isReadOnly = computed(() => userStore.readOnly)
   const hasServerWriteAccess = computed(() => userStore.serverWriteAccess)
+  const hasDepotAccess = computed(() => userStore.serverAccess)
   const hasHostGroupAccess = computed(() => userStore.hostGroupAccess)
   const hasProductGroupAccess = computed(() => userStore.productGroupAccess)
   const isTerminalEnabled = computed(
@@ -85,6 +88,7 @@ export function useFeatureFlags() {
     canCreateClients,
     isReadOnly,
     hasServerWriteAccess,
+    hasDepotAccess,
     hasHostGroupAccess,
     hasProductGroupAccess,
     isTerminalEnabled,

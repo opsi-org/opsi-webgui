@@ -39,9 +39,9 @@
 					<UButton :icon="icons.x" variant="ghost" color="neutral" @click="confirmOpen = false" />
 				</div>
 
-				<UAlert v-if="statusMessage && statusMessage.type === 'error'" color="error" :title="t('error')"
-					:description="statusMessage.message" variant="subtle" class="mb-3" close
-					@update:open="statusMessage = null" />
+				<SharedAlertInline v-if="statusMessage && statusMessage.type === 'error'" color="error" :title="t('error')"
+					:description="statusMessage.message" variant="subtle" class="mb-3" closable
+					@close="statusMessage = null" />
 
 				<!-- <p class="text-sm text-(--color-text-muted) mb-4">
 					{{ t('confirmActionOnClients') }}
@@ -129,7 +129,7 @@
 				<div class="flex justify-end gap-2 pt-3 border-[--color-border]">
 					<UButton variant="ghost" color="neutral" @click="confirmOpen = false">{{ t('cancel') }}</UButton>
 					<UButton :color="currentAction === 'delete' ? 'error' : 'primary'" :loading="loading"
-						:disabled="!canExecute" @click="executeAction">
+						:disabled="isReadOnly || !canExecute" @click="executeAction">
 						{{ t(currentAction || 'confirm') }}
 					</UButton>
 				</div>
@@ -182,6 +182,7 @@ const icons = useIcons()
 const { t } = useI18n()
 const { apiPost } = useApiHelpers()
 const selectionStore = useSelectionStore()
+const { isReadOnly, canCreateClients } = useFeatureFlags()
 
 const confirmOpen = ref(false)
 const resultOpen = ref(false)
@@ -235,6 +236,7 @@ const actionItems = computed(() => [
 	actions.map(action => ({
 		label: t(action.key) || action.key,
 		icon: action.icon,
+		disabled: isReadOnly.value || (action.key === 'delete' && !canCreateClients.value),
 		onSelect: () => openConfirm(action.key),
 	}))
 ])
