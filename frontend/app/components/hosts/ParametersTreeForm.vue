@@ -129,6 +129,8 @@ function isPasswordParam(configId: string): boolean {
 }
 
 function buildTree(params: Param[]): TreeNode[] {
+	// Group parameters by main categories (first part of configId before first dot)
+	// to follow backend data structure showing main categories at the top level
 	const root: Record<string, any> = {}
 	for (const p of params) {
 		const parts = p.configId.split('.')
@@ -145,7 +147,16 @@ function buildTree(params: Param[]): TreeNode[] {
 		}
 	}
 	function toTree(obj: Record<string, any>, prefix = ''): TreeNode[] {
-		return Object.entries(obj).map(([key, value]) => {
+		const entries = Object.entries(obj)
+		// Sort: categories (objects) first, then leaf params
+		entries.sort(([, a], [, b]) => {
+			const aIsParam = a && typeof a === 'object' && '__param' in a
+			const bIsParam = b && typeof b === 'object' && '__param' in b
+			if (aIsParam && !bIsParam) return 1
+			if (!aIsParam && bIsParam) return -1
+			return 0
+		})
+		return entries.map(([key, value]) => {
 			if (value && typeof value === 'object' && '__param' in value) {
 				return { key: prefix + key, label: key, param: value.__param }
 			} else {
@@ -162,11 +173,18 @@ function buildTree(params: Param[]): TreeNode[] {
 
 const open = ref<Record<string, boolean>>({})
 const mounted = ref<Record<string, boolean>>({})
-if (typeof window !== 'undefined') {
-	open.value['general'] = true
-	mounted.value['general'] = true
-}
 const tree = computed<TreeNode[]>(() => props.tree ?? (props.params ? buildTree(props.params) : []))
+
+// Auto-open the first main category when tree data becomes available
+watch(tree, (newTree) => {
+	if (newTree.length > 0 && Object.keys(open.value).length === 0) {
+		const firstCategory = newTree.find(n => n.children)
+		if (firstCategory) {
+			open.value[firstCategory.key] = true
+			mounted.value[firstCategory.key] = true
+		}
+	}
+}, { immediate: true })
 
 function countLeaves(node: TreeNode): number {
 	if (node.param) return 1
