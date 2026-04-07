@@ -1,6 +1,6 @@
 import { encode } from '@msgpack/msgpack'
 import { ref, computed, watch, onMounted } from 'vue'
-import { useMessageBusStore } from '~/stores/messageBusStore'
+import { useMessageBusStore, createUUID, createMsgTemplate } from '~/stores/messageBusStore'
 import { storeToRefs } from 'pinia'
 
 type MessageHandler = (msg: unknown) => Promise<void>
@@ -29,26 +29,6 @@ const PRODUCT_EVENTS = [
 ]
 
 const ALL_DATA_EVENTS = [...HOST_EVENTS, ...PRODUCT_EVENTS]
-
-function createUUID() {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
-    return crypto.randomUUID()
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0
-    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
-  })
-}
-
-function createMsgTemplate(): Record<string, unknown> {
-  return {
-    type: 'xxx',
-    channel: 'yyy',
-    sender: '@',
-    id: createUUID(),
-    created: Date.now(),
-    expires: Date.now() + 60000,
-  }
-}
 
 function wsWait(ms: number) {
   return new Promise((r) => setTimeout(r, ms))

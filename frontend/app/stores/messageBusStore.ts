@@ -18,7 +18,7 @@ const DEFAULT_CHANNELS = [
   'event:productOnClient_deleted',
 ]
 
-function createUUID() {
+export function createUUID() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
     return crypto.randomUUID()
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -27,7 +27,7 @@ function createUUID() {
   })
 }
 
-function createMsgTemplate(): Record<string, unknown> {
+export function createMsgTemplate(): Record<string, unknown> {
   return {
     type: 'xxx',
     channel: 'yyy',
