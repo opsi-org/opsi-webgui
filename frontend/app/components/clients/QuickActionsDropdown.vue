@@ -170,6 +170,8 @@
 </template>
 
 <script setup lang="ts">
+import { useSelectionStore } from '~/stores/selectionStore'
+
 const props = defineProps<{
 	clientIds: string[]
 	disabled?: boolean

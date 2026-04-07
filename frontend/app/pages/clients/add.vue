@@ -186,6 +186,8 @@ Client Add New page - form for adding a new client.
 </template>
 
 <script setup lang="ts">
+import { useSelectionStore } from '~/stores/selectionStore'
+
 definePageMeta({ layout: 'default' })
 
 const { t: $t } = useI18n()

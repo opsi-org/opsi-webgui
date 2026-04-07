@@ -131,6 +131,7 @@
 </template>
 
 <script setup lang="ts">
+import { useSelectionStore } from '~/stores/selectionStore'
 import type { ProductConfigTabsRef, ProductVisibility } from '~/types'
 
 const props = withDefaults(defineProps<{

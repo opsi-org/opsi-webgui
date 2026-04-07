@@ -34,6 +34,13 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
   ],
 
+  // Disable store auto-scanning to prevent false-positive auto-import
+  // of internal Pinia properties (state, storage, pick).
+  // All stores use explicit imports.
+  pinia: {
+    storesDirs: [],
+  },
+
   // Color mode configuration - uses cookies for SSR hydration and persistence
   colorMode: {
     preference: 'light', // Default theme

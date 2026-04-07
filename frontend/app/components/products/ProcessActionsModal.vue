@@ -111,6 +111,7 @@
 </template>
 
 <script setup lang="ts">
+import { useSelectionStore } from '~/stores/selectionStore'
 import type { ProductVisibility } from '~/types'
 
 const open = defineModel<boolean>('open', { default: false })
