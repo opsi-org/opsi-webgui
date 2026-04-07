@@ -43,6 +43,11 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
                 ]">
                     <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{ modules.length }}</div>
                     <div class="text-xs text-gray-500 mt-1">{{ $t('modules') }}</div>
+                    <div v-if="sharedObsoleteModules.length > 0" class="mt-1">
+                        <UTooltip :text="`${$t('obsoleteModules')}: ${sharedObsoleteModules.join(', ')}`">
+                            <span class="text-xs text-amber-600 dark:text-amber-400 cursor-help">{{ sharedObsoleteModules.length }} {{ $t('obsolete') }}</span>
+                        </UTooltip>
+                    </div>
                 </button>
             </div>
 
@@ -59,7 +64,8 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
                 @toggleExpand="toggleExpand" @filterByStatus="filterByStatus"
                 @clearStatusFilter="() => statusFilter = ''" :getStatusType="getStatusType" />
             <AdminModules v-if="activeTab === 'modules'" :filteredModules="filteredModules" :loading="loading"
-                :icons="icons" :modules="modules" :filter="filter" :formatModuleName="formatModuleName" />
+                :icons="icons" :modules="modules" :filter="filter" :formatModuleName="formatModuleName"
+                :modulesDetailed="sharedModulesDetailed" :obsoleteModules="sharedObsoleteModules" />
             <AdminSystemInfo v-if="activeTab === 'system'" :filteredSystemInfo="filteredSystemInfo"
                 :filteredDiagnosticsData="filteredDiagnosticsData" :loading="loading" :icons="icons" :filter="filter"
                 :formatKey="formatKey" :formatValue="formatValue" @copyToClipboard="copyToClipboard" />
@@ -93,7 +99,14 @@ const { t: $t } = useI18n()
 const api = useApiHelpers()
 const route = useRoute()
 const router = useRouter()
-const { data: sharedDiagData, fetchDiagnostics: fetchSharedDiag, refresh: refreshSharedDiag } = useDiagnosticsData()
+const {
+    data: sharedDiagData,
+    fetchDiagnostics: fetchSharedDiag,
+    refresh: refreshSharedDiag,
+    modules: sharedModules,
+    modulesDetailed: sharedModulesDetailed,
+    obsoleteModules: sharedObsoleteModules,
+} = useDiagnosticsData()
 
 const loading = ref(false)
 const filter = ref('')
@@ -290,20 +303,22 @@ async function fetchDiagnostics(force = false) {
         diagnosticsData.value = sharedDiagData.value
         const typedData = sharedDiagData.value
         if (Array.isArray(typedData.health_check)) healthCheckData.value = typedData.health_check as HealthCheckResult[]
-        if (Array.isArray(typedData.modules)) modules.value = typedData.modules as string[]
-        else if (Array.isArray(typedData.available_modules)) modules.value = typedData.available_modules as string[]
+        // Use modules from shared composable (extracted from diagnostics data)
+        // This avoids a separate API call for modules
+        if (sharedModules.value.length > 0) {
+            modules.value = sharedModules.value
+        } else if (Array.isArray(typedData.modules)) {
+            modules.value = typedData.modules as string[]
+        } else if (Array.isArray(typedData.available_modules)) {
+            modules.value = typedData.available_modules as string[]
+        }
     }
     loading.value = false
 }
 
-async function fetchModules() {
-    const { data, error } = await api.getModulesContent()
-    if (!error && data && data.result) modules.value = data.result.sort()
-}
-
 async function refresh(force = false) {
     await fetchDiagnostics(force)
-    if (force || modules.value.length === 0) await fetchModules()
+    // Modules are now extracted from diagnostics data, no separate API call needed
 }
 
 function downloadDiagnostics() {

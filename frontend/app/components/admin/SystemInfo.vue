@@ -1,27 +1,31 @@
-SystemInfo - Component to display system diagnostic information
+SystemInfo - Component to display system diagnostic information with tree format
 
 <template>
-	<div class="space-y-4  dark:bg-(--color-surface)">
+	<div class="space-y-0 dark:bg-(--color-surface)">
 		<div v-if="loading" class="py-8 text-center">
-			<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
+			<SharedLoadingSpinner />
 		</div>
 		<template v-else>
-			<div v-if="Object.keys(filteredSystemInfo).length > 0" class="rounded-lg overflow-hidden">
-				<button @click="toggleCard('_system')"
-					class="w-full flex items-center gap-2 px-4 py-3 hover:bg-(--color-surface-hover) transition-colors">
-					<UIcon :name="expandedCards['_system'] ? icons.chevronDown : icons.chevronRight"
-						class="w-4 h-4 shrink-0 text-gray-500" />
-					<span class="font-heading text-xs">{{ $t('systemProperties') }}</span>
-					<UBadge color="neutral" variant="soft" size="xs" class="ml-auto">
-						{{ Object.keys(filteredSystemInfo).length }}
-					</UBadge>
-				</button>
-				<div v-if="expandedCards['_system']" class="px-4">
+			<!-- Top-level simple properties -->
+			<div v-if="Object.keys(filteredSystemInfo).length > 0" class="system-tree-node">
+				<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
+					@click="toggleCard('_system')">
+					<button type="button"
+						class="w-5 h-5 flex items-center justify-center rounded transition-all shrink-0"
+						:class="expandedCards['_system']
+							? 'text-(--color-primary) bg-primary/10'
+							: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'">
+						<UIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
+							:class="{ 'rotate-90': expandedCards['_system'] }" />
+					</button>
+					<span class="text-sm font-mono font-medium flex-1">{{ $t('systemProperties') }}</span>
+					<span class="text-xs text-(--color-text-muted) opacity-60">{{ Object.keys(filteredSystemInfo).length }}</span>
+				</div>
+				<div v-if="expandedCards['_system']" class="pl-6 border-l border-(--color-border)/40 ml-4">
 					<div v-for="(value, key) in filteredSystemInfo" :key="key"
-						class="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 md:gap-4 py-2.5 group hover:bg-(--color-surface-hover) -mx-4 px-4 transition-colors">
-						<span
-							class="font-mono text-xs text-(--color-text) dark:text-(--color-text) min-w-0 md:w-1/3 break-all">
-							{{ formatKey(String(key)) }}
+						class="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 md:gap-4 py-1.5 px-2 group hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="font-mono text-xs text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							{{ key }}
 						</span>
 						<div class="flex items-center gap-2 w-full md:w-2/3">
 							<UBadge v-if="typeof value === 'boolean'" :color="value ? 'success' : 'neutral'"
@@ -30,7 +34,7 @@ SystemInfo - Component to display system diagnostic information
 							</UBadge>
 							<span v-else
 								class="font-mono text-xs font-medium truncate max-w-full md:max-w-100 lg:max-w-200"
-								:title="String(value)" v-tooltip="String(value).length > 40 ? String(value) : ''">
+								:title="String(value)">
 								{{ formatValue(value) }}
 							</span>
 							<UButton color="primary" variant="soft" size="xs" :icon="icons.copy"
@@ -40,24 +44,29 @@ SystemInfo - Component to display system diagnostic information
 					</div>
 				</div>
 			</div>
+
+			<!-- Category nodes (objects from diagnostic data) -->
 			<template v-for="(values, category) in filteredDiagnosticsData" :key="category">
 				<div v-if="typeof values === 'object' && values !== null && Object.keys(values as object).length > 0"
-					class="rounded-lg overflow-hidden">
-					<button @click="toggleCard(String(category))"
-						class="w-full flex items-center gap-2 px-4 py-3  hover:bg-(--color-surface-hover) transition-colors">
-						<UIcon :name="expandedCards[String(category)] ? icons.chevronDown : icons.chevronRight"
-							class="w-4 h-4 shrink-0 text-gray-500" />
-						<span class="capitalize font-heading text-xs">{{ formatKey(String(category)) }}</span>
-						<UBadge color="neutral" variant="soft" size="xs" class="ml-auto">
-							{{ Object.keys(values as object).length }}
-						</UBadge>
-					</button>
-					<div v-if="expandedCards[String(category)]" class="px-4">
+					class="system-tree-node">
+					<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
+						@click="toggleCard(String(category))">
+						<button type="button"
+							class="w-5 h-5 flex items-center justify-center rounded transition-all shrink-0"
+							:class="expandedCards[String(category)]
+								? 'text-(--color-primary) bg-primary/10'
+								: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'">
+							<UIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
+								:class="{ 'rotate-90': expandedCards[String(category)] }" />
+						</button>
+						<span class="text-sm font-mono font-medium flex-1">{{ String(category) }}</span>
+						<span class="text-xs text-(--color-text-muted) opacity-60">{{ Object.keys(values as object).length }}</span>
+					</div>
+					<div v-if="expandedCards[String(category)]" class="pl-6 border-l border-(--color-border)/40 ml-4">
 						<div v-for="(v, k) in (values as Record<string, unknown>)" :key="k"
-							class="py-2.5 group hover:bg-(--color-surface-hover) -mx-4 px-4 transition-colors">
+							class="py-1.5 px-2 group hover:bg-(--color-surface-hover) rounded transition-colors">
 							<div class="flex flex-col md:flex-row items-start justify-between gap-2 md:gap-4">
-								<span
-									class="font-mono text-xs text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all shrink-0">
+								<span class="font-mono text-xs text-(--color-text-secondary) min-w-0 md:w-1/3 break-all shrink-0">
 									{{ k }}
 								</span>
 								<div class="flex items-start gap-2 w-full md:w-2/3 min-w-0">
@@ -67,8 +76,7 @@ SystemInfo - Component to display system diagnostic information
 									</UBadge>
 									<template v-else-if="isComplexValue(v)">
 										<div class="w-full min-w-0">
-											<pre
-												class="font-mono text-xs bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 overflow-x-auto max-h-64 overflow-y-auto whitespace-pre-wrap break-all">{{ formatJson(v) }}</pre>
+											<pre class="font-mono text-xs bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 overflow-x-auto max-h-64 overflow-y-auto whitespace-pre-wrap break-all">{{ formatJson(v) }}</pre>
 										</div>
 									</template>
 									<span v-else class="font-mono text-xs font-medium break-all" :title="String(v)">
@@ -99,14 +107,9 @@ const props = defineProps([
 defineEmits(['copyToClipboard'])
 
 const expandedCards = ref<Record<string, boolean>>({})
-const expandedNested = ref<Record<string, boolean>>({})
 
 function toggleCard(key: string) {
 	expandedCards.value[key] = !expandedCards.value[key]
-}
-
-function toggleNestedCard(key: string) {
-	expandedNested.value[key] = !expandedNested.value[key]
 }
 
 function isComplexValue(value: unknown): boolean {
@@ -124,3 +127,10 @@ function formatJson(value: unknown): string {
 	}
 }
 </script>
+
+<style scoped>
+.system-tree-node {
+	position: relative;
+	user-select: none;
+}
+</style>
