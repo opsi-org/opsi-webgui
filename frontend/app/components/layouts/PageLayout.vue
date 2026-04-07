@@ -9,9 +9,8 @@ PageLayout - A layout component with a fixed header (for controls) and a scrolla
 					<slot name="filters" />
 				</div>
 				<div class="flex flex-wrap items-center gap-2">
-					<UInput v-if="showSearch" v-model="searchModel"
-						:placeholder="searchPlaceholder || $t('typeToFilter')" :icon="icons.filter" size="sm"
-						class="w-full sm:w-48 md:w-64" />
+					<SharedFilterInput v-if="showSearch" v-model="searchModel"
+						:placeholder="searchPlaceholder || $t('typeToFilter')" size="sm" />
 					<slot name="tableControls" />
 					<slot name="actions" />
 					<NuxtLink v-if="addLink" :to="addLink">
