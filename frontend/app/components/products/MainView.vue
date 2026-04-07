@@ -48,6 +48,11 @@
 
 					<template #cell-productId="{ row }">
 						<div class="flex items-center gap-2">
+							<img v-if="productIcons[(row as ProductRow).productId]"
+								:src="productIcons[(row as ProductRow).productId]"
+								:alt="(row as ProductRow).productId"
+								class="w-5 h-5 shrink-0 rounded object-contain"
+								@error="($event.target as HTMLImageElement).style.display = 'none'" />
 							<UIcon v-if="(row as ProductRow).locked" :name="icons.lock"
 								class="w-3.5 h-3.5 text-red-500 shrink-0" :title="$t('locked')" />
 							<span class="text-sm text-(--color-text)">{{ (row as ProductRow).productId }}</span>
@@ -81,7 +86,7 @@
 						<ProductsActionRequestDropdown :product-id="(row as ProductRow).productId"
 							:current-request="(row as ProductRow).actionRequest"
 							:available-actions="(row as ProductRow).actions || []"
-							:disabled="selectionStore.selectedClients.length === 0"
+							:disabled="isReadOnly || selectionStore.selectedClients.length === 0"
 							:request-details="(row as ProductRow).actionRequestDetails"
 							:selected-clients="(row as ProductRow).selectedClients"
 							:pending-request="pendingActionRequests.get((row as ProductRow).productId)?.actionRequest"
@@ -159,8 +164,9 @@ interface Props {
 const props = defineProps<Props>()
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getProducts, setClientProductActions, processActionRequests } = useApiHelpers()
+const { getProducts, setClientProductActions, processActionRequests, getProductIcons } = useApiHelpers()
 const selectionStore = useSelectionStore()
+const { isReadOnly } = useFeatureFlags()
 const router = useRouter()
 const route = useRoute()
 
@@ -179,6 +185,7 @@ const savingActionRequests = ref(false)
 const configTabsComponentRef = ref<InstanceType<typeof import('./ConfigTabs.vue').default> | null>(null)
 const configPanelRef = configTabsComponentRef
 const lastPageParams = ref<PageChangeParams | null>(null)
+const productIcons = ref<Record<string, string>>({})
 
 const showLeaveWarning = ref(false)
 const pendingAction = ref<(() => void) | null>(null)
@@ -543,11 +550,25 @@ function tryOpenPanelFromRoute() {
 watch(() => selectionStore.selectedClients, () => fetchProducts(), { deep: true })
 watch(() => selectionStore.selectedServers, () => fetchProducts(), { deep: true })
 
+async function fetchProductIconsFromServer() {
+	try {
+		const { data, error: err } = await getProductIcons()
+		if (!err && data?.result) {
+			productIcons.value = data.result as Record<string, string>
+		}
+	} catch {
+		// Product icons are optional, don't block on failure
+	}
+}
+
 onMounted(async () => {
 	if (props.initialSortColumn) {
 		tableSettings.setSort(props.initialSortColumn, 'desc')
 	}
-	await fetchProducts()
+	await Promise.all([
+		fetchProducts(),
+		fetchProductIconsFromServer(),
+	])
 	tryOpenPanelFromRoute()
 })
 
