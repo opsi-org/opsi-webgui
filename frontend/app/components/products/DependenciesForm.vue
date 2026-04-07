@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div v-if="loading" class="py-8 flex justify-center">
-			<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin" />
+			<SharedLoadingSpinner />
 		</div>
 
 		<div v-else-if="dependencies.length === 0" class="py-8 text-center text-sm text-(--color-text-muted)">

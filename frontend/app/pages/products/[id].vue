@@ -2,7 +2,7 @@ Redirect page for direct product links - redirects to products list
 <template>
 	<div class="flex items-center justify-center h-64">
 		<div class="text-center">
-			<UIcon :name="icons.refresh" class="w-8 h-8 animate-spin mx-auto text-opsi-blue" />
+			<SharedLoadingSpinner />
 			<p class="mt-2 text-(--color-text-muted)">{{ $t('message.page.redirect') }}</p>
 		</div>
 	</div>

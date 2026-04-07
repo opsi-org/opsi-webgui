@@ -7,8 +7,8 @@ HealthCheck - Component to display health check results
 				<span class="text-xs text-gray-500">{{ filteredHealthData.length }} {{ $t('checks') }}</span>
 			</div>
 		</template>
-		<div v-if="loading" class="py-8 text-center">
-			<UIcon :name="icons.refresh" class="w-6 h-6 animate-spin text-gray-400" />
+		<div v-if="loading" class="py-8">
+			<SharedLoadingSpinner />
 		</div>
 		<div v-else class="space-y-2">
 			<div v-for="item in filteredHealthData" :key="item.key" class="rounded-lgoverflow-hidden">

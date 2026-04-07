@@ -1,7 +1,7 @@
 Reachable status badge - auto-checks reachability on mount.
 <template>
 	<div class="flex items-center justify-center">
-		<UIcon v-if="loading" :name="icons.refresh" class="w-4 h-4 animate-spin text-(--color-text-muted)" />
+		<SharedLoadingSpinner v-if="loading" size="xs" :centered="false" />
 
 		<UTooltip v-else-if="reachable === true" :text="String($t('message.clientIsReachable'))">
 			<UIcon :name="icons.clientReachable" class="w-4 h-4 text-green-500 cursor-pointer"

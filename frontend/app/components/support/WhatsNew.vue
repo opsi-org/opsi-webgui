@@ -9,7 +9,7 @@ SupportWhatsNew - Displays changelog.
 		</template>
 
 		<div v-if="loading" class="flex justify-center py-4">
-			<UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-opsi-blue" />
+			<SharedLoadingSpinner />
 		</div>
 
 		<div v-else-if="error" class="text-sm text-[--color-text-muted]">
