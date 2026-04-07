@@ -42,17 +42,22 @@
 			<div v-if="group.isSpecial && group.label !== 'not_assigned'"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
 				<UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
+					:disabled="groupDisabled"
 					@click="$emit('create-subgroup', group.id)" />
 			</div>
 			<div v-else-if="!group.isSpecial"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
 				<UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" :title="$t('addMembers')"
+					:disabled="groupDisabled"
 					@click="$emit('add-members', group)" />
 				<UButton :icon="icons.group" size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
+					:disabled="groupDisabled"
 					@click="$emit('create-subgroup', group.id)" />
 				<UButton :icon="icons.pencil" size="xs" variant="ghost" color="neutral" :title="$t('edit')"
+					:disabled="groupDisabled"
 					@click="$emit('edit', group)" />
 				<UButton :icon="icons.delete" size="xs" variant="ghost" color="neutral" :title="$t('delete')"
+					:disabled="groupDisabled"
 					@click="$emit('delete', group)" />
 			</div>
 		</div>
@@ -96,6 +101,9 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
+const { isReadOnly, hasHostGroupAccess, hasProductGroupAccess } = useFeatureFlags()
+
+const groupDisabled = computed(() => isReadOnly.value || (props.groupType === 'clients' ? !hasHostGroupAccess.value : !hasProductGroupAccess.value))
 
 const indentPx = computed(() => {
 	const level = props.group.level || 0

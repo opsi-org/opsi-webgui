@@ -319,6 +319,7 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
+const { isReadOnly } = useFeatureFlags()
 const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deployClientAgent, deleteClient, renameClient, getHostAttributes, getConfigServer } = useApiHelpers()
 
 const loading = ref(false)
@@ -363,11 +364,13 @@ const clientActionItems = computed(() => [
 		{
 			label: String($t('onDemand')),
 			icon: icons.onDemand,
+			disabled: isReadOnly.value,
 			onSelect: () => { actionError.value = null; showOnDemandPopover.value = true }
 		},
 		{
 			label: String($t('notify')),
 			icon: icons.notify,
+			disabled: isReadOnly.value,
 			onSelect: () => { actionError.value = null; showNotifyModal.value = true }
 		}
 	],
@@ -375,11 +378,13 @@ const clientActionItems = computed(() => [
 		{
 			label: String($t('reboot')),
 			icon: icons.reboot,
+			disabled: isReadOnly.value,
 			onSelect: () => { actionError.value = null; showRebootPopover.value = true }
 		},
 		{
 			label: String($t('shutdown')),
 			icon: icons.shutdown,
+			disabled: isReadOnly.value,
 			onSelect: () => { actionError.value = null; showShutdownPopover.value = true }
 		}
 	],
@@ -387,6 +392,7 @@ const clientActionItems = computed(() => [
 		{
 			label: String($t('deployClientAgent')),
 			icon: icons.deploy,
+			disabled: isReadOnly.value,
 			onSelect: () => { actionError.value = null; showDeployModal.value = true }
 		}
 	],
@@ -394,11 +400,13 @@ const clientActionItems = computed(() => [
 		{
 			label: String($t('rename')),
 			icon: icons.pencilSquare,
+			disabled: isReadOnly.value,
 			onSelect: () => { actionError.value = null; openRenameModal() }
 		},
 		{
 			label: String($t('delete')),
 			icon: icons.delete,
+			disabled: isReadOnly.value,
 			onSelect: () => { actionError.value = null; showDeleteModal.value = true }
 		}
 	]

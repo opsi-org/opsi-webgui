@@ -10,10 +10,10 @@
 						{{ $t('changesDetected') }}
 					</UButton>
 					<UButton v-if="selectionStore.selectedClients.length > 0" :icon="icons.product" color="primary"
-						size="sm" @click="openProductsPanel">
+						size="sm" @click="openProductsPanel" :disabled="isReadOnly">
 						{{ $t('products') }}
 					</UButton>
-					<UButton :icon="icons.add" color="primary" size="sm" @click="openAddPanel">
+					<UButton :icon="icons.add" color="primary" size="sm" @click="openAddPanel" :disabled="isReadOnly || !canCreateClients">
 						<span class="hidden sm:inline">{{ $t('addNew') }}</span>
 					</UButton>
 				</template>
@@ -160,6 +160,7 @@ const { getClients, getServerIds, checkClientReachable, getBlockedClients } = us
 const selectionStore = useSelectionStore()
 const router = useRouter()
 const route = useRoute()
+const { isReadOnly, canCreateClients } = useFeatureFlags()
 
 const loading = ref(false)
 const error = ref<string | null>(null)

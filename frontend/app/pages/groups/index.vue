@@ -34,7 +34,8 @@
                             $t('client-group') :
                             $t('product-group') }}</span>
                         <UButton v-if="activeGroupType === 'products'" :icon="icons.group" size="xs" variant="ghost"
-                            color="neutral" @click="openCreateModal()" :title="$t('createGroup')" />
+                            color="neutral" @click="openCreateModal()" :title="$t('createGroup')"
+                            :disabled="isReadOnly || !hasProductGroupAccess" />
                     </div>
                     <UInput v-model="searchQuery" :placeholder="$t('typeToFilter')" size="sm"
                         :leading-icon="icons.filter" class="w-full" />
@@ -100,17 +101,22 @@
                         </div>
                         <div class="flex gap-1" v-if="!selectedGroup.isSpecial">
                             <UButton :icon="icons.add" variant="ghost" color="neutral" size="xs"
-                                :title="$t('addMembers')" @click="openAddMembersModal(selectedGroup)" />
+                                :title="$t('addMembers')" @click="openAddMembersModal(selectedGroup)"
+                                :disabled="isReadOnly || (activeGroupType === 'clients' ? !hasHostGroupAccess : !hasProductGroupAccess)" />
                             <UButton :icon="icons.group" variant="ghost" color="neutral" size="xs"
-                                :title="$t('addSubgroup')" @click="openCreateModal(selectedGroup.id)" />
+                                :title="$t('addSubgroup')" @click="openCreateModal(selectedGroup.id)"
+                                :disabled="isReadOnly || (activeGroupType === 'clients' ? !hasHostGroupAccess : !hasProductGroupAccess)" />
                             <UButton :icon="icons.pencil" variant="ghost" color="neutral" size="xs" :title="$t('edit')"
-                                @click="openEditModal(selectedGroup)" />
+                                @click="openEditModal(selectedGroup)"
+                                :disabled="isReadOnly || (activeGroupType === 'clients' ? !hasHostGroupAccess : !hasProductGroupAccess)" />
                             <UButton :icon="icons.delete" variant="ghost" size="xs" color="neutral"
-                                :title="$t('delete')" @click="confirmDeleteGroup(selectedGroup)" />
+                                :title="$t('delete')" @click="confirmDeleteGroup(selectedGroup)"
+                                :disabled="isReadOnly || (activeGroupType === 'clients' ? !hasHostGroupAccess : !hasProductGroupAccess)" />
                         </div>
                         <div class="flex gap-1" v-else-if="selectedGroup.isSpecial && activeGroupType === 'clients'">
                             <UButton :icon="icons.add" variant="ghost" color="neutral" size="xs"
-                                :title="$t('addSubgroup')" @click="openCreateModal(selectedGroup.id)" />
+                                :title="$t('addSubgroup')" @click="openCreateModal(selectedGroup.id)"
+                                :disabled="isReadOnly || !hasHostGroupAccess" />
                         </div>
                     </div>
 
@@ -127,12 +133,12 @@
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
                                         :icon="icons.delete" size="xs" variant="soft" color="error"
-                                        @click="removeSelectedMembers">
+                                        :disabled="isReadOnly" @click="removeSelectedMembers">
                                         {{ $t('remove') }} ({{ selectedMembers.length }})
                                     </UButton>
                                     <UButton v-if="(selectedGroup.members?.length || 0) > 0 && !selectedGroup.isSpecial"
                                         :icon="icons.delete" size="xs" variant="ghost" color="neutral"
-                                        :title="$t('removeAllMembers')" @click="confirmRemoveAllMembers">
+                                        :disabled="isReadOnly" :title="$t('removeAllMembers')" @click="confirmRemoveAllMembers">
                                         {{ $t('removeAll') }}
                                     </UButton>
                                 </div>
@@ -394,6 +400,7 @@ definePageMeta({ layout: 'default' })
 const icons = useIcons()
 const { t: $t } = useI18n()
 const selectionStore = useSelectionStore()
+const { isReadOnly, hasHostGroupAccess, hasProductGroupAccess } = useFeatureFlags()
 const {
     getClientIds,
     getServerIds,
