@@ -119,6 +119,7 @@ build:addon:
       setup:deps,
       validate:lint,
       validate:types,
+      validate:security,
       { job: setup:i18n, optional: true },
       { job: setup:changelog, optional: true },
     ]
