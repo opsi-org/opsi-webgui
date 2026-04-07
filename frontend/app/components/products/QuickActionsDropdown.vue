@@ -179,7 +179,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const { apiPost, apiGet } = useApiHelpers()
 const selectionStore = useSelectionStore()
-const { isReadOnly } = useFeatureFlags()
+const { isReadOnly } = useUserPermissions()
 
 const NOT_APPLIED = String($t('notApplied'))
 

@@ -182,7 +182,7 @@ const icons = useIcons()
 const { t } = useI18n()
 const { apiPost } = useApiHelpers()
 const selectionStore = useSelectionStore()
-const { isReadOnly, canCreateClients } = useFeatureFlags()
+const { isReadOnly, canCreateClients } = useUserPermissions()
 
 const confirmOpen = ref(false)
 const resultOpen = ref(false)

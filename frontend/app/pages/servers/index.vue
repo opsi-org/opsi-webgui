@@ -65,7 +65,7 @@ const { getServers } = useApiHelpers()
 const selectionStore = useSelectionStore()
 const router = useRouter()
 const route = useRoute()
-const { isReadOnly, hasServerWriteAccess } = useFeatureFlags()
+const { isReadOnly, hasServerWriteAccess } = useUserPermissions()
 const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefresh(fetchServers)
 
 const loading = ref(false)

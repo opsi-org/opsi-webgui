@@ -250,7 +250,7 @@ definePageMeta({ layout: 'default' })
 const icons = useIcons()
 const { t: $t } = useI18n()
 const api = useApiHelpers()
-const { isReadOnly, hasServerWriteAccess } = useFeatureFlags()
+const { isReadOnly, hasServerWriteAccess } = useUserPermissions()
 
 const error = ref('')
 const loadingClients = ref(false)

@@ -132,7 +132,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const selectionStore = useSelectionStore()
 const { processActionRequests } = useApiHelpers()
-const { isReadOnly } = useFeatureFlags()
+const { isReadOnly } = useUserPermissions()
 
 const executing = ref(false)
 const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)

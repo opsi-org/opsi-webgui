@@ -54,7 +54,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const selectionStore = useSelectionStore()
 const { getProductProperties, saveProductProperties, getProductDependencies } = useApiHelpers()
-const { isReadOnly } = useFeatureFlags()
+const { isReadOnly } = useUserPermissions()
 
 const activeTab = ref(props.tab || 'properties')
 watch(() => props.tab, (v) => { if (v) activeTab.value = v })

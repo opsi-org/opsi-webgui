@@ -11,7 +11,7 @@ definePageMeta({
 	title: 'Server Configuration',
 })
 
-const { isReadOnly, hasServerWriteAccess } = useFeatureFlags()
+const { isReadOnly, hasServerWriteAccess } = useUserPermissions()
 
 const VALID_TABS = ['parameters', 'attributes'] as const
 

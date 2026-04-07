@@ -35,7 +35,7 @@ export default defineNuxtPlugin({
 
       // Check feature flags for restricted pages
       if (userStore.isAuthenticated) {
-        const { isPageAccessible } = useFeatureFlags()
+        const { isPageAccessible } = useUserPermissions()
         if (!isPageAccessible(to.path)) {
           return navigateTo('/clients')
         }

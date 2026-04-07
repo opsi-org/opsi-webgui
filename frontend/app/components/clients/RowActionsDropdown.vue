@@ -319,7 +319,7 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { isReadOnly } = useFeatureFlags()
+const { isReadOnly } = useUserPermissions()
 const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deployClientAgent, deleteClient, renameClient, getHostAttributes, getConfigServer } = useApiHelpers()
 
 const loading = ref(false)

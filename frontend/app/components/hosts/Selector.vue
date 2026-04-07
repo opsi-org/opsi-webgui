@@ -55,29 +55,41 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getClients, getServers, getClientIds } = useApiHelpers()
+const { getClients, getServers, getClientIds, getServerIds } = useApiHelpers()
 const selectionStore = useSelectionStore()
 
 const loading = ref(false)
 const items = ref<Array<{ id: string; description: string }>>([])
 const fetched = ref(false)
+const searchQuery = ref('')
 
-const dropdownOptions = computed<DropdownItem[]>(() => {
-  const opts: DropdownItem[] = items.value.map((item) => ({
+const filteredOptions = computed<DropdownItem[]>(() => {
+  const q = searchQuery.value.trim().toLowerCase()
+  let opts = items.value
+  if (q) {
+    opts = opts.filter(item => item.id.toLowerCase().includes(q) || item.description.toLowerCase().includes(q))
+  }
+  // Limit displayed items for performance (lazy rendering)
+  const limited = opts.slice(0, 200)
+  const result: DropdownItem[] = limited.map((item) => ({
     label: item.id,
     value: item.id,
     description: item.description || '',
   }))
-
   if (props.allowClear && props.modelValue) {
-    opts.unshift({ label: String($t('clearSelection')), value: '__clear__' })
+    result.unshift({ label: String($t('clearSelection')), value: '__clear__' })
   }
-  if (props.allowAll && opts.length > 0) {
+  if (props.allowAll && result.length > 0) {
     const allLabel = props.type === 'server' ? String($t('allServers')) : String($t('allClients'))
-    return [{ label: allLabel, value: '' }, ...opts.filter(o => o.value !== '__clear__')]
+    return [{ label: allLabel, value: '' }, ...result.filter(o => o.value !== '__clear__')]
   }
-  return opts
+  if (opts.length > 200) {
+    result.push({ label: `... ${opts.length - 200} ${String($t('more'))}`, value: '__more__' })
+  }
+  return result
 })
+
+const dropdownOptions = computed<DropdownItem[]>(() => filteredOptions.value)
 
 async function fetchItems(force = false) {
   if (fetched.value && !force) return
@@ -87,18 +99,25 @@ async function fetchItems(force = false) {
       const { data, error } = await getServers()
       if (!error) items.value = (data || []).map((d) => ({ id: d.depotId, description: d.description || '' }))
     } else {
+      // Use lightweight client IDs endpoint for fast lazy loading
       const selectedServers = selectionStore.selectedServers
       if (selectedServers.length > 0) {
         const { data, error } = await getClientIds(selectedServers)
         if (!error && data) {
           items.value = (data as string[]).map((id) => ({ id, description: '' }))
-        } else {
-          const { data: clientData, error: clientError } = await getClients()
-          if (!clientError) items.value = (clientData || []).map((c) => ({ id: c.clientId, description: c.description || '' }))
         }
       } else {
-        const { data, error } = await getClients()
-        if (!error) items.value = (data || []).map((c) => ({ id: c.clientId, description: c.description || '' }))
+        // Fall back to server IDs endpoint first, then get all client IDs
+        const { data: serverData } = await getServerIds()
+        if (serverData && serverData.length > 0) {
+          const { data, error } = await getClientIds(serverData)
+          if (!error && data) {
+            items.value = (data as string[]).map((id) => ({ id, description: '' }))
+          }
+        } else {
+          const { data, error } = await getClients()
+          if (!error) items.value = (data || []).map((c) => ({ id: c.clientId, description: c.description || '' }))
+        }
       }
     }
     fetched.value = true
@@ -118,6 +137,8 @@ function onSelect(value: string) {
   if (value === '__clear__') {
     emit('update:modelValue', '')
     emit('change', '')
+  } else if (value === '__more__') {
+    // Not a real selection
   } else {
     emit('update:modelValue', value)
     emit('change', value)
@@ -125,11 +146,9 @@ function onSelect(value: string) {
 }
 
 onMounted(() => {
-  // Lazy loading: only fetch server items eagerly (small list)
-  // Client items are loaded on-demand when dropdown opens
-  if (props.type === 'server') {
-    fetchItems()
-  }
+  // Fetch items eagerly for both types
+  // Server items are always small, client items may be large but needed for standalone pages
+  fetchItems()
 })
 
 watch(() => selectionStore.selectedServers, () => {

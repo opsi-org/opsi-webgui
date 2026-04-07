@@ -397,7 +397,7 @@ definePageMeta({ layout: 'default' })
 const icons = useIcons()
 const { t: $t } = useI18n()
 const selectionStore = useSelectionStore()
-const { isReadOnly, hasHostGroupAccess, hasProductGroupAccess } = useFeatureFlags()
+const { isReadOnly, hasHostGroupAccess, hasProductGroupAccess } = useUserPermissions()
 const {
     getClientIds,
     getServerIds,

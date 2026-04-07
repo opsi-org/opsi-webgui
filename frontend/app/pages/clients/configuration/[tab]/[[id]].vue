@@ -13,7 +13,7 @@ definePageMeta({
 	title: 'Client Configuration',
 })
 
-const { isReadOnly } = useFeatureFlags()
+const { isReadOnly } = useUserPermissions()
 
 const VALID_TABS = ['parameters', 'attributes'] as const
 

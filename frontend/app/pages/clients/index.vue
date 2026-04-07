@@ -160,7 +160,7 @@ const { getClients, getServerIds, checkClientReachable, getBlockedClients } = us
 const selectionStore = useSelectionStore()
 const router = useRouter()
 const route = useRoute()
-const { isReadOnly, canCreateClients } = useFeatureFlags()
+const { isReadOnly, canCreateClients } = useUserPermissions()
 
 const loading = ref(false)
 const error = ref<string | null>(null)

@@ -86,7 +86,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 	<div
 		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
 
-		<div class="shrink-0 pb-3">
+		<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-background) dark:bg-(--color-background-dark) border-b border-(--color-border) mb-3">
 			<div class="flex flex-wrap items-center justify-between gap-3">
 				<div class="flex items-center gap-2">
 					<SharedTabsNav v-model="activeTab" :tabs="tabDefs" />
@@ -116,7 +116,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 			</div>
 		</div>
 
-		<div v-show="activeTab === 'parameters'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 h-full']">
+		<div v-show="activeTab === 'parameters'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1 overflow-auto']">
 			<div v-if="loadingParams" class="py-8 flex justify-center">
 				<SharedLoadingSpinner size="md" />
 			</div>
@@ -130,7 +130,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 				:icons="icons" :fmt-val="fmtVal" :auto-open-all="!!paramSearch" />
 		</div>
 
-		<div v-show="activeTab === 'attributes'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 h-full']">
+		<div v-show="activeTab === 'attributes'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1 overflow-auto']">
 			<div v-if="loadingAttrs" class="py-8 flex justify-center">
 				<SharedLoadingSpinner size="md" />
 			</div>

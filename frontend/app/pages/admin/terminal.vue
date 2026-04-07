@@ -44,7 +44,7 @@ definePageMeta({ layout: 'default' })
 const icons = useIcons()
 const { t: $t } = useI18n()
 const api = useApiHelpers()
-const { isReadOnly, isTerminalEnabled } = useFeatureFlags()
+const { isReadOnly, isTerminalEnabled } = useUserPermissions()
 
 const terminalContainer = ref<HTMLElement | null>(null)
 const isDisabled = ref(false)

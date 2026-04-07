@@ -79,7 +79,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const $route = useRoute()
 const userStore = useUserStore()
-const { filterNavItems, isPageAccessible } = useFeatureFlags()
+const { filterNavItems, isPageAccessible } = useUserPermissions()
 
 const expanded = ref<Record<string, boolean>>({})
 const hoveredItem = ref<string | null>(null)
