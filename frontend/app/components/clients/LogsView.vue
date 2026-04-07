@@ -24,8 +24,7 @@ Can be used both in standalone pages and detail panels.
 		<template #actions>
 			<div v-if="resolvedClientId" class="flex gap-2">
 				<div v-if="logContent.length > 0">
-					<UInput v-model="filterQuery" :placeholder="$t('typeToFilter')" class="w-full sm:w-40 md:w-64"
-						size="sm" :icon="icons.filter" />
+					<SharedFilterInput v-model="filterQuery" size="sm" input-class="w-full sm:w-40 md:w-64" />
 				</div>
 				<div v-if="logContent.length > 0">
 					<UTooltip :text="$t('autoRefreshDescription')">
@@ -79,7 +78,7 @@ Can be used both in standalone pages and detail panels.
 				</span>
 			</div>
 
-			<UAlert v-if="logUpdatePending" color="info" :title="$t('opsiMessageBus')"
+			<SharedAlertInline v-if="logUpdatePending" color="info" :title="$t('opsiMessageBus')"
 				:description="$t('opsiMessageBus.log_updated')" class="shrink-0">
 				<template #actions>
 					<UButton size="xs" color="primary" @click="dismissAndFetch">{{ $t('button.reload') }}</UButton>
@@ -87,7 +86,7 @@ Can be used both in standalone pages and detail panels.
 						$t('dismiss') }}
 					</UButton>
 				</template>
-			</UAlert>
+			</SharedAlertInline>
 
 			<div class="flex-1 min-h-0 overflow-hidden">
 				<div v-if="!resolvedClientId"
@@ -102,11 +101,10 @@ Can be used both in standalone pages and detail panels.
 				</div>
 				<div v-else-if="loading && logContent.length === 0"
 					class="flex items-center justify-center h-full gap-2 text-muted">
-					<UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-opsi-blue" />
-					<p class="text-sm">{{ $t('loading') }}…</p>
+					<SharedLoadingSpinner />
 				</div>
-				<UAlert v-else-if="error" color="error" :title="String($t('error'))" :description="error" class="m-3"
-					close @update:open="error = null" />
+				<SharedAlertInline v-else-if="error" color="error" :title="String($t('error'))" :description="error"
+					class="m-3" close @close="error = null" />
 				<div v-else-if="logContent.length === 0"
 					class="flex flex-col items-center justify-center h-full gap-3 text-center bg-[--color-surface] rounded-xl">
 					<UIcon :name="icons.log" class="w-12 h-12 opacity-40 text-muted" />

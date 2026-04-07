@@ -1,11 +1,11 @@
 ClientsAddForm - add client form for panel mode with all options.
 <template>
 	<div class="space-y-4 h-full overflow-y-auto p-2">
-		<UAlert v-if="success" color="success" :title="String($t('success'))">
+		<SharedAlertInline v-if="success" color="success" :title="String($t('success'))">
 			<template #description>{{ $t('clientCreatedSuccessfully') }}</template>
-		</UAlert>
-		<UAlert v-if="error" color="error" :title="String($t('error'))" :description="error" close
-			@update:open="error = null" />
+		</SharedAlertInline>
+		<SharedAlertInline v-if="error" color="error" :title="String($t('error'))" :description="error" closable
+			@close="error = null" />
 
 		<div class="shrink-0 flex justify-end gap-2 mb-2">
 			<UTooltip :text="$t('addClient')">

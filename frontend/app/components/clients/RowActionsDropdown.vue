@@ -34,8 +34,8 @@ Row-level client actions dropdown for the clients table.
 							@click="showOnDemandPopover = false" />
 					</div>
 				</template>
-				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
-					variant="subtle" class="mb-3" close @update:open="actionError = null" />
+				<SharedAlertInline v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" closable @close="actionError = null" />
 				<p class="text-sm text-(--color-text-muted)">
 					{{ $t('onDemandDescription') }}
 				</p>
@@ -66,8 +66,8 @@ Row-level client actions dropdown for the clients table.
 							@click="showNotifyModal = false" />
 					</div>
 				</template>
-				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
-					variant="subtle" class="mb-3" close @update:open="actionError = null" />
+				<SharedAlertInline v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" closable @close="actionError = null" />
 				<p class="text-sm text-(--color-text-muted) mb-3">
 					{{ $t('sendNotificationTo') }} {{ clientId }}
 				</p>
@@ -103,8 +103,8 @@ Row-level client actions dropdown for the clients table.
 							@click="showRebootPopover = false" />
 					</div>
 				</template>
-				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
-					variant="subtle" class="mb-3" close @update:open="actionError = null" />
+				<SharedAlertInline v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" closable @close="actionError = null" />
 				<div
 					class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 mb-3">
 					<div class="flex items-start gap-2">
@@ -143,8 +143,8 @@ Row-level client actions dropdown for the clients table.
 							@click="showShutdownPopover = false" />
 					</div>
 				</template>
-				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
-					variant="subtle" class="mb-3" close @update:open="actionError = null" />
+				<SharedAlertInline v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" closable @close="actionError = null" />
 				<div
 					class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 mb-3">
 					<div class="flex items-start gap-2">
@@ -183,8 +183,8 @@ Row-level client actions dropdown for the clients table.
 							@click="showDeployModal = false" />
 					</div>
 				</template>
-				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
-					variant="subtle" class="mb-3" close @update:open="actionError = null" />
+				<SharedAlertInline v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" closable @close="actionError = null" />
 				<p class="text-sm text-(--color-text-muted) mb-4">
 					{{ $t('deployAgentTo') }} {{ clientId }}
 				</p>
@@ -228,8 +228,8 @@ Row-level client actions dropdown for the clients table.
 							@click="showRenameModal = false" />
 					</div>
 				</template>
-				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
-					variant="subtle" class="mb-3" close @update:open="actionError = null" />
+				<SharedAlertInline v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" closable @close="actionError = null" />
 				<p class="text-sm text-(--color-text-muted) mb-1">
 					{{ $t('renameClientDescription') }}
 				</p>
@@ -274,8 +274,8 @@ Row-level client actions dropdown for the clients table.
 							@click="showDeleteModal = false" />
 					</div>
 				</template>
-				<UAlert v-if="actionError" color="error" :title="$t('error')" :description="actionError"
-					variant="subtle" class="mb-3" close @update:open="actionError = null" />
+				<SharedAlertInline v-if="actionError" color="error" :title="$t('error')" :description="actionError"
+					variant="subtle" class="mb-3" closable @close="actionError = null" />
 				<div class="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-200 dark:border-red-800 mb-3">
 					<div class="flex items-start gap-2">
 						<UIcon :name="icons.warning" class="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />

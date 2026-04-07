@@ -31,11 +31,11 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 		</div>
 
 		<div v-else :class="['flex-1 overflow-y-auto space-y-4']">
-			<UAlert v-if="success" color="success" :title="String($t('success'))" close @update:open="success = false">
+			<SharedAlertInline v-if="success" color="success" :title="String($t('success'))" closable @close="success = false">
 				<template #description>{{ $t('clientClonedSuccessfully') }}</template>
-			</UAlert>
-			<UAlert v-if="error" color="error" :title="String($t('error'))" :description="error" close
-				@update:open="error = null" />
+			</SharedAlertInline>
+			<SharedAlertInline v-if="error" color="error" :title="String($t('error'))" :description="error" closable
+				@close="error = null" />
 
 			<div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
 				<div v-if="!panelMode || showSourceInPanel" class="mb-6">

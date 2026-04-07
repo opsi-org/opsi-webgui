@@ -1,19 +1,14 @@
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div v-if="loading" class="flex items-center justify-center py-8">
-			<UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+			<SharedLoadingSpinner size="sm" />
 		</div>
 
 		<div v-else-if="error" class="text-xs text-red-500 py-2">{{ error }}</div>
 
 		<template v-else>
 			<div class="flex items-center gap-1 mb-2 shrink-0">
-				<UInput v-model="searchQuery" :placeholder="t('typeToFilter')" size="xs" :icon="icons.filter"
-					class="flex-1 min-w-0">
-					<template v-if="searchQuery" #trailing>
-						<UButton :icon="icons.x" size="xs" variant="link" color="neutral" @click="searchQuery = ''" />
-					</template>
-				</UInput>
+				<SharedFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
 				<UTooltip :text="`${t('clearAll')} (${selectionStore.selectedServers.length})`">
 					<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral" @click="clearSelection" />
 				</UTooltip>

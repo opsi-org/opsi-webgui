@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-screen flex items-center justify-center">
-        <UIcon :name="icons.refresh" class="w-8 h-8 text-opsi-blue animate-spin" />
+        <SharedLoadingSpinner size="lg" />
     </div>
 </template>
 

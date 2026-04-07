@@ -9,9 +9,9 @@ Login page - allows users to log in with username/password or SAML SSO.
           class="mx-auto mb-2 h-50" />
       </div>
       <form @submit.prevent="handleLogin" class="space-y-5">
-        <UAlert v-if="errorMessage" color="error" variant="soft" close @update:open="errorMessage = ''">
+        <SharedAlertInline v-if="errorMessage" color="error" variant="soft" closable @close="errorMessage = ''">
           <template #title>{{ errorMessage }}</template>
-        </UAlert>
+        </SharedAlertInline>
 
         <div v-if="configServerName"
           class="flex items-center gap-2 p-3 rounded-lg bg-(--color-surface) dark:bg-(--color-surface) border border-(--color-border) dark:border-(--color-border)">

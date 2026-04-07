@@ -1,12 +1,7 @@
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div class="flex items-center gap-1 mb-2 shrink-0">
-			<UInput v-model="searchQuery" :placeholder="t('typeToFilter')" size="xs" :icon="icons.filter"
-				class="flex-1 min-w-0">
-				<template v-if="searchQuery" #trailing>
-					<UButton :icon="icons.x" size="xs" variant="link" color="neutral" @click="searchQuery = ''" />
-				</template>
-			</UInput>
+			<SharedFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
 			<UButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="t('refresh')"
 				@click="refresh" />
 			<UButton :icon="allExpanded ? icons.chevronUp : icons.chevronDown" size="xs" variant="ghost" color="neutral"
@@ -17,7 +12,7 @@
 		</div>
 
 		<div v-if="loading && !hasData" class="flex items-center justify-center py-8">
-			<UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+			<SharedLoadingSpinner size="sm" />
 		</div>
 		<div v-else-if="errorMsg" class="text-xs text-(--color-error) py-2">{{ errorMsg }}</div>
 

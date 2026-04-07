@@ -37,11 +37,10 @@
                             color="neutral" @click="openCreateModal()" :title="$t('createGroup')"
                             :disabled="isReadOnly || !hasProductGroupAccess" />
                     </div>
-                    <UInput v-model="searchQuery" :placeholder="$t('typeToFilter')" size="sm"
-                        :leading-icon="icons.filter" class="w-full" />
+                    <SharedFilterInput v-model="searchQuery" size="sm" input-class="w-full" />
                 </div>
                 <div v-if="loading" class="py-4 text-center">
-                    <UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
+                    <SharedLoadingSpinner size="sm" />
                 </div>
                 <div v-else class="flex-1 overflow-auto p-2 space-y-0.5">
                     <template v-for="rootGroup in filteredTreeGroups" :key="rootGroup.id">
@@ -333,11 +332,9 @@
                         </div>
                     </template>
                     <div class="space-y-3" tabindex="-1" @keydown="handleAddMembersKeydown">
-                        <UInput v-model="availableMembersSearch" :placeholder="$t('typeToFilter')" size="sm"
-                            :leading-icon="icons.filter" autofocus />
+                        <SharedFilterInput v-model="availableMembersSearch" size="sm" />
                         <div v-if="loadingMembers" class="py-4 text-center">
-                            <UIcon :name="icons.refresh" class="w-5 h-5 animate-spin text-(--color-text-muted)" />
-                            <p class="text-sm text-(--color-text-muted) mt-2">{{ $t('message.loading') }}</p>
+                            <SharedLoadingSpinner size="sm" />
                         </div>
                         <template v-else>
                             <div class="flex items-center justify-between px-1">
