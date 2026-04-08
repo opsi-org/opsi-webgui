@@ -411,6 +411,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 					LEFT JOIN CONFIG_STATE AS cs ON cs.configId = 'clientconfig.depot.id'
 							AND cs.objectId = poc.clientId
 				WHERE poc.clientId IN :clients AND poc.productId = pod.productId
+					AND NOT poc.installationStatus = 'not_installed'
 			) AS client_version_outdated,
 			(
 				SELECT CONCAT_WS(',',
@@ -740,6 +741,7 @@ def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statemen
 _product_icons_cache: Dict[str, str] = {}
 _product_icons_cache_time: float = 0
 _PRODUCT_ICONS_CACHE_TTL: int = 300  # 5 minutes
+
 
 def _scan_product_icons() -> Dict[str, str]:
     """Scan depot directory for product icon files.
