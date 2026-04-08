@@ -38,7 +38,7 @@
                             <UIcon :name="icons.user" class="w-4.5 h-4.5 text-opsi-blue" />
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-semibold truncate text-sm">{{ userConfigResponse?.user || userStore.username
+                            <p class="font-semibold truncate text-sm">{{ sharedUserConfig?.user || userStore.username
                                 || '-' }}</p>
                             <p class="text-[10px] text-[--color-text-muted] uppercase tracking-widest font-medium">{{
                                 $t('currentUser') }}</p>
@@ -257,37 +257,31 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const userStore = useUserStore()
 const colorMode = useColorMode()
-const { getDiagnosticData, getUserConfiguration, getDisabledFeatures } = useApiHelpers()
 const {
-    data: sharedDiagData,
+    diagnosticsData: sharedDiagData,
     healthCounts: sharedHealthCounts,
-    fetchDiagnostics: fetchSharedDiag,
-    refresh: refreshDiag,
     modules: sharedModules,
     modulesDetailed: sharedModulesDetailed,
     obsoleteModules: sharedObsoleteModules,
     licenseClientNumbers: sharedClientNumbers,
-} = useDiagnosticsData()
+    userConfigData: sharedUserConfig,
+    refreshAll: refreshCachedData,
+    fetchDiagnostics: fetchDiagnosticsIfNeeded,
+    fetchUserConfig: fetchUserConfigIfNeeded,
+    fetchDisabledFeatures: fetchDisabledFeaturesIfNeeded,
+} = useCachedData()
 
 const loading = ref(false)
 
 const diagnosticData = computed(() => sharedDiagData.value)
 
-const userConfigResponse = ref<{ user: string } | null>(null)
-const userConfigData = ref<{
-    read_only: boolean
-    server_write_access: boolean
-    depot_access: boolean
-    host_group_access: boolean
-    product_group_access: boolean
-    client_creation: boolean
-} | null>(null)
+const userConfigData = computed(() => sharedUserConfig.value?.configuration ?? null)
 const healthCounts = sharedHealthCounts
 
 // Features/restrictions actually enforced in opsi-webgui (not opsiconfd admin page features)
 // Each entry maps to a real server config or disabled-features token
 const webguiFeatures = computed(() => {
-    const username = userConfigResponse.value?.user || userStore.username || '{user}'
+    const username = sharedUserConfig.value?.user || userStore.username || '{user}'
     const terminalDisabled = userStore.disabledFeatures.includes('messagebus_terminal') || userStore.disabledFeatures.includes('terminal')
     return [
         {
@@ -485,50 +479,30 @@ const failedClients = computed(() => {
     return (failedCheck.details as Record<string, unknown>).failed_actions as Record<string, string[]> | undefined
 })
 
-async function fetchDiagnosticData() {
-    await fetchSharedDiag()
-}
-
-async function fetchUserConfig() {
-    const { data } = await getUserConfiguration()
-    if (data) {
-        userConfigResponse.value = { user: data.user }
-        if (data.configuration) {
-            userConfigData.value = {
-                read_only: data.configuration.read_only ?? false,
-                server_write_access: data.configuration.server_write_access ?? true,
-                depot_access: data.configuration.depot_access ?? false,
-                host_group_access: data.configuration.host_group_access ?? false,
-                product_group_access: data.configuration.product_group_access ?? false,
-                client_creation: data.configuration.client_creation ?? true,
-            }
-            // Store user configuration globally for access controls
-            userStore.setUserConfiguration(data.configuration)
-        }
-    }
-}
-
 async function refreshAll() {
     loading.value = true
     try {
+        await refreshCachedData()
+    } finally {
+        loading.value = false
+    }
+}
+
+/** On mount, use cached data if available; only fetch what's missing. */
+async function initDashboard() {
+    loading.value = true
+    try {
         await Promise.all([
-            refreshDiag(),
-            fetchUserConfig(),
-            fetchDisabledFeatures(),
+            fetchDiagnosticsIfNeeded(),
+            fetchUserConfigIfNeeded(),
+            fetchDisabledFeaturesIfNeeded(),
         ])
     } finally {
         loading.value = false
     }
 }
 
-async function fetchDisabledFeatures() {
-    const { data } = await getDisabledFeatures()
-    if (data && Array.isArray(data)) {
-        userStore.setDisabledFeatures(data)
-    }
-}
-
 onMounted(() => {
-    refreshAll()
+    initDashboard()
 })
 </script>

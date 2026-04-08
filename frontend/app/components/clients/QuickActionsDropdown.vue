@@ -180,7 +180,7 @@ const props = defineProps<{
 
 const icons = useIcons()
 const { t } = useI18n()
-const { apiPost } = useApiHelpers()
+const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deployClientAgent, deleteClient } = useApiHelpers()
 const selectionStore = useSelectionStore()
 const { isReadOnly, canCreateClients } = useUserPermissions()
 
@@ -259,55 +259,34 @@ async function executeAction() {
 
 		switch (currentAction.value) {
 			case 'onDemand':
-				const onDemandResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
-					client_ids: props.clientIds,
-					method: 'fireEvent',
-					params: ['on_demand'],
-				})
-				result = onDemandResponse.data || {}
+				result = (await triggerOnDemand(props.clientIds)).data || {}
 				break
 
 			case 'notify':
-				const notifyResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
-					client_ids: props.clientIds,
-					method: 'showPopup',
-					params: [notifyText.value],
-				})
-				result = notifyResponse.data || {}
+				result = (await sendNotification(props.clientIds, notifyText.value)).data || {}
 				break
 
 			case 'reboot':
-				const rebootResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
-					client_ids: props.clientIds,
-					method: 'reboot',
-					params: [],
-				})
-				result = rebootResponse.data || {}
+				result = (await rebootClients(props.clientIds)).data || {}
 				break
 
 			case 'shutdown':
-				const shutdownResponse = await apiPost<Record<string, any>>('/command/opsiclientd_rpc', {
-					client_ids: props.clientIds,
-					method: 'shutdown',
-					params: [],
-				})
-				result = shutdownResponse.data || {}
+				result = (await shutdownClients(props.clientIds)).data || {}
 				break
 
 			case 'deployClientAgent':
-				const deployResponse = await apiPost<Record<string, any>>('/opsidata/clients/deploy', {
+				result = (await deployClientAgent({
 					clients: props.clientIds,
 					username: deployOptions.value.username,
 					password: deployOptions.value.password,
-					type: deployOptions.value.type,
-				})
-				result = deployResponse.data || {}
+					type: deployOptions.value.type as 'windows' | 'linux' | 'mac',
+				})).data || {}
 				break
 
 			case 'delete':
 				for (const clientId of props.clientIds) {
 					try {
-						await apiPost(`/opsidata/clients/${clientId}/delete`, {})
+						await deleteClient(clientId)
 						result[clientId] = { success: true }
 					} catch (e) {
 						result[clientId] = { success: false, error: String(e) }

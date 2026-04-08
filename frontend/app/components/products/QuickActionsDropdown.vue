@@ -177,7 +177,7 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { apiPost, apiGet } = useApiHelpers()
+const { getInstallationStatuses, getActionResults, bulkProductAction } = useApiHelpers()
 const selectionStore = useSelectionStore()
 const { isReadOnly } = useUserPermissions()
 
@@ -255,8 +255,8 @@ async function fetchOptions() {
 	loadingOptions.value = true
 	try {
 		const [statusResult, resultResult] = await Promise.all([
-			apiGet<string[]>('/opsidata/products/installation-status'),
-			apiGet<string[]>('/opsidata/products/action-result'),
+			getInstallationStatuses(),
+			getActionResults(),
 		])
 		if (statusResult.data) {
 			installationStatusOptions.value = [
@@ -312,7 +312,7 @@ async function fetchPreview() {
 	loadingPreview.value = true
 	errorMessage.value = null
 	try {
-		const result = await apiPost<Record<string, PreviewProduct[]>>('/opsidata/clients/action', params)
+		const result = await bulkProductAction(params as Parameters<typeof bulkProductAction>[0])
 		if (result.error) throw result.error
 		previewData.value = (result.data || {}) as Record<string, PreviewProduct[]>
 	} catch (e) {
@@ -329,7 +329,7 @@ async function applyActions() {
 	applying.value = true
 	errorMessage.value = null
 	try {
-		const result = await apiPost<Record<string, unknown[]>>('/opsidata/clients/action', params)
+		const result = await bulkProductAction(params as Parameters<typeof bulkProductAction>[0])
 		if (result.error) throw result.error
 		dialogOpen.value = false
 		emit('applied')

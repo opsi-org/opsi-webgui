@@ -28,7 +28,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                     }" :title="healthCheckTooltip">
                     <UIcon :name="icons.health" class="w-4 h-4" />
                     <span class="tabular-nums">{{ userStore.healthCounts?.error || userStore.healthCounts?.warning || 0
-                        }}</span>
+                    }}</span>
                 </NuxtLink>
                 <UTooltip :text="messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')">
                     <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs"
@@ -92,8 +92,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                                 </a>
                             </span>
                         </div>
-                        <UButton size="xs" variant="ghost" color="neutral"
-                            @click="messageBusStore.certWarning = false">
+                        <UButton size="xs" variant="ghost" color="neutral" @click="messageBusStore.certWarning = false">
                             <UIcon :name="icons.x" class="w-3.5 h-3.5" />
                         </UButton>
                     </div>
@@ -119,7 +118,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                         </div>
                     </div>
                 </Transition>
-                <div class="flex-1 p-3 md:p-4 overflow-auto min-h-0">
+                <div class="flex-1 p-3 md:p-4 overflow-y-auto overflow-x-hidden min-h-0">
                     <slot />
                 </div>
             </main>
@@ -136,7 +135,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
                                 t('quickPanel')
-                            }}</span>
+                                }}</span>
                             <button @click="quickpanelOpen = false"
                                 class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
                                 <UIcon :name="icons.x" class="w-4 h-4" />

@@ -31,7 +31,7 @@ PageLayout - A layout component with a fixed header (for controls) and a scrolla
 			</div>
 		</div>
 
-		<div class="page-content flex-1 min-h-0 overflow-auto">
+		<div class="page-content flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
 			<slot />
 		</div>
 	</div>

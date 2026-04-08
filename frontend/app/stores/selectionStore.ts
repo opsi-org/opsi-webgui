@@ -237,11 +237,11 @@ export const useSelectionStore = defineStore('selection', {
       this.clientGroupsLoading = true
       this.clientGroupsError = null
       try {
-        const { apiGet } = useApiHelpers()
+        const { getHostGroups } = useApiHelpers()
         const params: Record<string, unknown> = {}
         if (this.selectedServers.length > 0)
           params.selectedServers = `[${this.selectedServers.join(',')}]`
-        const result = await apiGet<Record<string, unknown>>('/opsidata/hosts/groups', params)
+        const result = await getHostGroups(params)
         if (result.data) {
           this.clientGroupsTree = transformApiToTree(result.data, 'client')
           this.clientGroupsLastFetch = Date.now()
@@ -261,10 +261,8 @@ export const useSelectionStore = defineStore('selection', {
       this.productGroupsLoading = true
       this.productGroupsError = null
       try {
-        const { apiGet } = useApiHelpers()
-        const result = await apiGet<{ groups?: Record<string, unknown> }>(
-          '/opsidata/products/groups'
-        )
+        const { getProductGroups } = useApiHelpers()
+        const result = await getProductGroups()
         if (result.data) {
           const rawData = (result.data as Record<string, unknown>).groups || result.data
           this.productGroupsTree = transformApiToTree(rawData as Record<string, unknown>, 'product')

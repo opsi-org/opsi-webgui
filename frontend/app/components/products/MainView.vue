@@ -28,8 +28,8 @@
 					@close="error = null" />
 
 				<div v-if="actionStatus" class="mb-3">
-					<SharedAlertInline :color="actionStatus.type" :title="actionStatus.title" :description="actionStatus.message"
-						variant="subtle" closable @close="actionStatus = null" />
+					<SharedAlertInline :color="actionStatus.type" :title="actionStatus.title"
+						:description="actionStatus.message" variant="subtle" closable @close="actionStatus = null" />
 				</div>
 
 				<SharedDataTable :rows="products" :columns="columns" :loading="loading" :table-id="tableId"
@@ -49,9 +49,8 @@
 					<template #cell-productId="{ row }">
 						<div class="flex items-center gap-2">
 							<img v-if="productIcons[(row as ProductRow).productId]"
-								:src="productIcons[(row as ProductRow).productId]"
-								:alt="(row as ProductRow).productId" loading="lazy"
-								class="w-5 h-5 shrink-0 rounded object-contain"
+								:src="productIcons[(row as ProductRow).productId]" :alt="(row as ProductRow).productId"
+								loading="lazy" class="w-5 h-5 shrink-0 rounded object-contain"
 								@error="($event.target as HTMLImageElement).style.display = 'none'" />
 							<UIcon v-else :name="icons.product" class="w-4 h-4 shrink-0 text-neutral-400" />
 							<UIcon v-if="(row as ProductRow).locked" :name="icons.lock"
@@ -165,7 +164,8 @@ interface Props {
 const props = defineProps<Props>()
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getProducts, setClientProductActions, processActionRequests, getProductIcons } = useApiHelpers()
+const { getProducts, setClientProductActions, processActionRequests } = useApiHelpers()
+const { productIcons: cachedProductIcons, fetchProductIcons } = useCachedData()
 const selectionStore = useSelectionStore()
 const { isReadOnly } = useUserPermissions()
 const router = useRouter()
@@ -186,7 +186,7 @@ const savingActionRequests = ref(false)
 const configTabsComponentRef = ref<InstanceType<typeof import('./ConfigTabs.vue').default> | null>(null)
 const configPanelRef = configTabsComponentRef
 const lastPageParams = ref<PageChangeParams | null>(null)
-const productIcons = ref<Record<string, string>>({})
+const productIcons = computed(() => (cachedProductIcons.value ?? {}) as Record<string, string>)
 
 const showLeaveWarning = ref(false)
 const pendingAction = ref<(() => void) | null>(null)
@@ -551,24 +551,13 @@ function tryOpenPanelFromRoute() {
 watch(() => selectionStore.selectedClients, () => fetchProducts(), { deep: true })
 watch(() => selectionStore.selectedServers, () => fetchProducts(), { deep: true })
 
-async function fetchProductIconsFromServer() {
-	try {
-		const { data, error: err } = await getProductIcons()
-		if (!err && data?.result) {
-			productIcons.value = data.result as Record<string, string>
-		}
-	} catch {
-		// Product icons are optional, don't block on failure
-	}
-}
-
 onMounted(async () => {
 	if (props.initialSortColumn) {
 		tableSettings.setSort(props.initialSortColumn, 'desc')
 	}
 	await Promise.all([
 		fetchProducts(),
-		fetchProductIconsFromServer(),
+		fetchProductIcons(),
 	])
 	tryOpenPanelFromRoute()
 })

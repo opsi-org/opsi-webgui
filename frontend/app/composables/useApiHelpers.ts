@@ -9,6 +9,10 @@ export function useApiHelpers() {
     $customFetch: typeof $fetch
   }
 
+  // ---------------------------------------------------------------------------
+  // Core HTTP helpers
+  // ---------------------------------------------------------------------------
+
   async function apiGet<T>(url: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
     try {
       const qs = params
@@ -73,162 +77,26 @@ export function useApiHelpers() {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Auth & User (login.vue, plugins/init.ts, dashboard.vue)
+  // ---------------------------------------------------------------------------
+
   const getConfigServer = () => apiGet<string>('/user/opsiserver')
-  const checkAuth = () => apiGet<{ authenticated: boolean; username: string }>('/auth/session')
-  const callLogin = (username: string, password: string) =>
-    apiPost<{ success: boolean }>('/auth/login', { username, password })
+
+  const callLogin = (username: string, password: string) => {
+    const formData = new FormData()
+    formData.append('username', username)
+    formData.append('password', password)
+    return apiPost<{ result: string }>('/auth/login', formData)
+  }
+
   const callLogout = () => apiPost('/auth/logout')
-  const getChangelogs = () => apiGet<string>('/opsidata/changelogs')
-
-  const getServers = (params?: Record<string, unknown>) =>
-    apiGet<
-      Array<{
-        depotId: string
-        description: string
-        type: string
-        depotRemoteUrl: string
-        depotWebdavUrl: string
-        repositoryRemoteUrl: string
-        workbenchRemoteUrl: string
-      }>
-    >('/opsidata/depots', params)
-  const getServerIds = () => apiGet<string[]>('/opsidata/depot_ids')
-
-  const getClients = (params?: Record<string, unknown>) =>
-    apiGet<
-      Array<{
-        clientId: string
-        description: string
-        macAddress: string
-        ipAddress: string
-        lastSeen: string
-        depotId: string
-        notes: string
-        uefi: boolean
-      }>
-    >('/opsidata/clients', params)
-  const getClientIds = (servers: string[]) =>
-    apiGet<string[]>(`/opsidata/depots/clients?selectedDepots=[${servers.join(',')}]`)
-  // const getClientConfig = (clientId: string) =>
-  //   apiGet<Array<{ id: string; type: string; value: unknown }>>(
-  //     `/opsidata/clients/${clientId}/config`
-  //   )
-
-  const getProducts = (params?: Record<string, unknown>) =>
-    apiGet<
-      Array<{
-        productId: string
-        name: string
-        description: string
-        version: string
-        type: string
-        productVersion: string
-        packageVersion: string
-      }>
-    >('/opsidata/products', params)
-
-  const getHostGroups = (params?: Record<string, unknown>) =>
-    apiGet<Record<string, unknown>>('/opsidata/hosts/groups', params)
-  const getProductGroups = () =>
-    apiGet<{ groups?: Record<string, unknown> }>('/opsidata/products/groups')
-
-  const createHostGroup = (groupData: {
-    groupId: string
-    parentGroupId?: string
-    description?: string
-    notes?: string
-  }) => apiPost('/opsidata/hosts/groups', groupData)
-  const createProductGroup = (groupData: {
-    groupId: string
-    parentGroupId?: string
-    description?: string
-    notes?: string
-  }) => apiPost('/opsidata/products/groups', groupData)
-  const updateHostGroup = (
-    groupId: string,
-    updateData: { parent?: string; description?: string; note?: string }
-  ) => apiPut(`/opsidata/hosts/groups/${groupId}`, updateData)
-  const updateProductGroup = (
-    groupId: string,
-    updateData: { parent?: string; description?: string; note?: string }
-  ) => apiPut(`/opsidata/products/groups/${groupId}`, updateData)
-  const deleteHostGroup = (groupId: string) => apiDelete(`/opsidata/hosts/groups/${groupId}`)
-  // Backend bug: product group deletion uses GET instead of DELETE
-  const deleteProductGroup = (groupId: string) => apiGet(`/opsidata/products/groups/${groupId}`)
-  const removeClientsFromGroup = (groupId: string) =>
-    apiDelete(`/opsidata/hosts/groups/${groupId}/clients`)
-  const removeProductsFromGroup = (groupId: string) =>
-    apiDelete(`/opsidata/products/groups/${groupId}/products`)
-  const addClientsToGroup = (groupId: string, clientIds: string[]) =>
-    apiPost(`/opsidata/hosts/groups/${groupId}/clients`, clientIds)
-  const addProductsToGroup = (groupId: string, productIds: string[]) =>
-    apiPost(`/opsidata/products/groups/${groupId}/products`, productIds)
-  const removeProductFromGroup = (groupId: string, productId: string) =>
-    apiDelete(`/opsidata/products/groups/${groupId}/${productId}`)
-  const removeClientFromGroups = (clientId: string, groupIds: string[]) =>
-    apiDelete(`/opsidata/clients/${clientId}/groups`, groupIds)
-  const addClientToMultipleGroups = (clientId: string, groupIds: string[]) =>
-    apiPost(`/opsidata/clients/${clientId}/groups`, groupIds)
-
-  const getServerInfo = () =>
-    apiGet<{
-      opsiVersion: string
-      hostname: string
-      pythonVersion: string
-      uptime: number
-      os: string
-      computerName: string
-      ip: string
-    }>('/user/opsiserver')
-  const getHealthcheck = () =>
-    apiGet<
-      Array<{
-        check_id: string
-        check_name: string
-        check_status: 'ok' | 'warning' | 'error'
-        check_description: string
-        message: string
-        upgrade_issue: string | null
-        partial_results: Array<{ message: string; check_status: string }>
-      }>
-    >('/opsidata/server/health')
-  const getDiagnosticData = () => apiGet<Record<string, unknown>>('/opsidata/server/diagnostic')
-  const getServerConfig = (params?: Record<string, unknown>) =>
-    apiGet<
-      Record<
-        string,
-        Array<{
-          configId: string
-          description: string
-          type: string
-          value: unknown
-          possibleValues: string
-          multiValue: boolean
-          editable: boolean
-        }>
-      >
-    >('/opsidata/config/server', params)
-
-  const getClientLogs = (clientId: string, logType: string, params?: Record<string, unknown>) =>
-    apiGet<{ content: string; marker: number }>('/opsidata/log', {
-      selectedClient: clientId,
-      selectedLogType: logType,
-      ...params,
-    })
-
-  const getBlockedClients = () =>
-    apiGet<string[] | Record<string, string>>('/opsidata/blocked-clients')
-  const unblockClient = (clientId: string) => apiPost<void>(`/opsidata/clients/${clientId}/unblock`)
-  const unblockAllClients = () => apiPost<void>('/opsidata/clients/unblock')
-  const getLockedProducts = () => apiGet<Record<string, string>>('/opsidata/locked-products')
-  const unlockProduct = (productId: string) =>
-    apiPost<void>(`/opsidata/products/${productId}/unlock`)
-  const unlockAllProducts = () => apiPost<void>('/opsidata/products/unlock')
 
   const getUserSettings = () =>
     apiGet<{ username: string; expertmode: boolean; recentactivityexpiry: number }>(
       '/user/getsettings'
     )
+
   const getUserConfiguration = () =>
     apiGet<{
       user: string
@@ -243,6 +111,58 @@ export function useApiHelpers() {
       }
     }>('/user/configuration')
 
+  const getDisabledFeatures = () => apiGet<string[]>('/opsidata/server/disabled-features')
+
+  const getChangelogs = () => apiGet<string>('/opsidata/changelogs')
+
+  // ---------------------------------------------------------------------------
+  // Servers / Depots (servers/index.vue, quickpanel, plugins/init.ts)
+  // ---------------------------------------------------------------------------
+
+  const getServers = (params?: Record<string, unknown>) =>
+    apiGet<
+      Array<{
+        depotId: string
+        description: string
+        type: string
+        depotRemoteUrl: string
+        depotWebdavUrl: string
+        repositoryRemoteUrl: string
+        workbenchRemoteUrl: string
+      }>
+    >('/opsidata/depots', params)
+
+  const getServerIds = () => apiGet<string[]>('/opsidata/depot_ids')
+
+  const getDiagnosticData = () => apiGet<Record<string, unknown>>('/opsidata/server/diagnostic')
+
+  const getServerAttributes = (serverId: string) =>
+    apiGet<Array<Record<string, unknown>>>(`/opsidata/servers?servers=[${serverId}]`)
+
+  const updateServerAttributes = (serverId: string, attrs: Record<string, unknown>) =>
+    apiPut<Record<string, unknown>>(`/opsidata/servers/${serverId}`, attrs)
+
+  // ---------------------------------------------------------------------------
+  // Clients (clients/index.vue, AddForm, CloneForm, RowActionsDropdown, QuickActionsDropdown)
+  // ---------------------------------------------------------------------------
+
+  const getClients = (params?: Record<string, unknown>) =>
+    apiGet<
+      Array<{
+        clientId: string
+        description: string
+        macAddress: string
+        ipAddress: string
+        lastSeen: string
+        depotId: string
+        notes: string
+        uefi: boolean
+      }>
+    >('/opsidata/clients', params)
+
+  const getClientIds = (servers: string[]) =>
+    apiGet<string[]>(`/opsidata/depots/clients?selectedDepots=[${servers.join(',')}]`)
+
   const createClient = (request: {
     client: {
       hostId: string
@@ -254,93 +174,87 @@ export function useApiHelpers() {
     }
     depot: string
   }) => apiPost<Record<string, unknown>>('/opsidata/clients', request)
+
+  const deleteClient = (clientId: string) => apiDelete<void>(`/opsidata/clients/${clientId}`)
+
+  const renameClient = (clientId: string, newHostId: string) =>
+    apiPut<Record<string, unknown>>(`/opsidata/clients/${clientId}`, { hostId: newHostId })
+
+  const cloneClient = (
+    clientId: string,
+    target: { hostId: string; ipAddress?: string; hardwareAddress?: string; systemUUID?: string },
+    options: { configs?: boolean; products?: boolean; productProperties?: boolean }
+  ) => apiPost<void>(`/opsidata/clients/${clientId}/clone`, { target, options })
+
+  const updateClientAttributes = (clientId: string, attrs: Record<string, unknown>) =>
+    apiPut<Record<string, unknown>>(`/opsidata/clients/${clientId}`, attrs)
+
+  const getHostAttributes = (hostId: string) =>
+    apiGet<Array<Record<string, unknown>>>(`/opsidata/hosts?hosts=${hostId}`)
+
+  const checkClientReachable = (clientIds: string[]) =>
+    apiGet<Record<string, boolean>>('/opsidata/clients/reachable', {
+      selectedClients: `[${clientIds.join(',')}]`,
+    })
+
   const deployClientAgent = (agentData: {
     clients: string[]
     username: string
     password: string
     type: 'windows' | 'linux' | 'mac'
   }) => apiPost<void>('/opsidata/clients/deploy', agentData)
-  const setClientUefi = (clientId: string, uefi: boolean) =>
-    apiPost<void>(`/opsidata/clients/${clientId}/uefi`, { uefi })
+
   const addClientToGroups = (clientId: string, groupIds: string[]) =>
     apiPost<void>(`/opsidata/clients/${clientId}/groups`, groupIds)
-  const cloneClient = (
-    clientId: string,
-    target: { hostId: string; ipAddress?: string; hardwareAddress?: string; systemUUID?: string },
-    options: { configs?: boolean; products?: boolean; productProperties?: boolean }
-  ) => apiPost<void>(`/opsidata/clients/${clientId}/clone`, { target, options })
-  const getClientServerMapping = (clientIds: string[]) =>
-    apiGet<Record<string, string>>('/opsidata/clientsdepots', {
-      selectedClients: `[${clientIds.join(',')}]`,
+
+  const removeClientFromGroups = (clientId: string, groupIds: string[]) =>
+    apiDelete(`/opsidata/clients/${clientId}/groups`, groupIds)
+
+  const getClientLogs = (clientId: string, logType: string, params?: Record<string, unknown>) =>
+    apiGet<{ content: string; marker: number }>('/opsidata/log', {
+      selectedClient: clientId,
+      selectedLogType: logType,
+      ...params,
     })
 
-  const getHostGroupIds = () => apiGet<string[]>('/opsidata/hosts/groups/id')
-  const getHostGroupsDynamic = (params?: {
-    selectedServers?: string[]
-    parentGroup?: string
-    selectedClients?: string[]
-    withClients?: boolean
-  }) => {
-    const qp: Record<string, unknown> = {}
-    if (params?.selectedServers?.length) qp.selectedDepots = `[${params.selectedServers.join(',')}]`
-    if (params?.parentGroup) qp.parentGroup = params.parentGroup
-    if (params?.selectedClients?.length)
-      qp.selectedClients = `[${params.selectedClients.join(',')}]`
-    if (params?.withClients !== undefined) qp.withClients = params.withClients
-    return apiGet<{ groups: Record<string, unknown> }>('/opsidata/hosts/groups-dynamic', qp)
+  // Client RPC actions (RowActionsDropdown, QuickActionsDropdown)
+  interface OpsiclientdRpcResult {
+    [clientId: string]: { error?: string | null; result?: string | null }
   }
 
-  const getProductsOnServers = (type: string, selectedServers: string[]) =>
-    apiGet<Record<string, string[]>>('/opsidata/products/depots', {
-      type,
-      selectedDepots: `[${selectedServers.join(',')}]`,
-    })
-  const getProductCount = (type: string, selectedServers: string[]) =>
-    apiGet<number>('/opsidata/products/count', {
-      type,
-      selectedDepots: `[${selectedServers.join(',')}]`,
-    })
-  const setClientProductActions = (data: {
-    clientIds: string[]
-    productIds: string[]
-    actionRequest?: string
-    installationStatus?: string
-    actionResult?: string
-  }) => apiPost<void>('/opsidata/clients/products', data)
-  const getProductIcons = () =>
-    apiGet<{ result: Record<string, unknown> }>('/opsidata/producticons')
-  const getInstallationStatuses = () => apiGet<string[]>('/opsidata/products/installation-status')
-  const getActionResults = () => apiGet<string[]>('/opsidata/products/action-result')
-
-  const getConfigForClients = (selectedClients: string[], filterQuery?: string) => {
-    const params: Record<string, unknown> = { selectedClients: `[${selectedClients.join(',')}]` }
-    if (filterQuery) params.filterQuery = filterQuery
-    return apiGet<Record<string, unknown>>('/opsidata/config/clients', params)
-  }
-  const checkConfigExists = (configId: string) =>
-    apiGet<boolean>(`/opsidata/config/exists/${configId}`)
-  const deleteConfig = (configId: string) =>
-    apiPost<void>(`/opsidata/config/delete/${configId}`, {})
-  const createConfig = (config: {
-    configId: string
-    editable?: boolean
-    multiValue?: boolean
-    description?: string
-    possibleValues?: string[]
-    defaultValues?: string[]
-    type?: 'UnicodeConfig' | 'BoolConfig'
-  }) => apiPost<Record<string, unknown>>('/opsidata/config', config)
-
-  const processActionRequests = (
-    clientIds: string[],
-    productIds?: string[],
-    visibility?: '' | 'visible' | 'hidden'
-  ) =>
-    apiPost<Record<string, Record<string, unknown>>>('/command/process_action', {
+  const opsiclientdRpc = (clientIds: string[], method: string, params: unknown[] = []) =>
+    apiPost<OpsiclientdRpcResult>('/command/opsiclientd_rpc', {
       client_ids: clientIds,
-      product_ids: productIds,
-      visibility,
+      method,
+      params,
     })
+
+  const triggerOnDemand = (clientIds: string[]) =>
+    opsiclientdRpc(clientIds, 'fireEvent', ['on_demand'])
+
+  const sendNotification = (clientIds: string[], message: string) =>
+    opsiclientdRpc(clientIds, 'showPopup', [message])
+
+  const rebootClients = (clientIds: string[]) => opsiclientdRpc(clientIds, 'reboot', [])
+
+  const shutdownClients = (clientIds: string[]) => opsiclientdRpc(clientIds, 'shutdown', [])
+
+  // ---------------------------------------------------------------------------
+  // Products (products/MainView.vue, ConfigTabs, QuickActionsDropdown)
+  // ---------------------------------------------------------------------------
+
+  const getProducts = (params?: Record<string, unknown>) =>
+    apiGet<
+      Array<{
+        productId: string
+        name: string
+        description: string
+        version: string
+        type: string
+        productVersion: string
+        packageVersion: string
+      }>
+    >('/opsidata/products', params)
 
   const getServersProducts = (selectedServers: string[], productType?: string) => {
     const params: Record<string, unknown> = {
@@ -353,41 +267,43 @@ export function useApiHelpers() {
     )
   }
 
-  const getHomeData = () => apiPost<{ groups: Record<string, unknown> }>('/opsidata/home', {})
-  const getAppState = () =>
-    apiGet<{ type: 'normal' | 'maintenance'; address_exceptions: string[]; retry_after: number }>(
-      '/app-state'
-    )
-  const setAppState = (state: {
-    type: string
-    address_exceptions?: string[]
-    retry_after?: number
-  }) => apiPost<{ type: string }>('/app-state', state)
+  const setClientProductActions = (data: {
+    clientIds: string[]
+    productIds: string[]
+    actionRequest?: string
+    installationStatus?: string
+    actionResult?: string
+  }) => apiPost<void>('/opsidata/clients/products', data)
 
-  const createBackup = (options: {
-    config_files?: boolean
-    redis_data?: boolean
-    maintenance_mode?: boolean
-    password?: string
-  }) => apiPost<string>('/backup/create', options)
-  const restoreBackup = (options: {
-    file_id: string
-    config_files?: boolean
-    redis_data?: boolean
-    server_id?: string
-    password?: string
-  }) => apiPost<void>('/backup/restore', options)
+  const getProductIcons = () =>
+    apiGet<{ result: Record<string, unknown> }>('/opsidata/producticons')
 
-  const getModulesContent = () => apiPost<{ result: string[] }>('/opsidata/modulesContent')
-  const getDisabledFeatures = () => apiGet<string[]>('/opsidata/server/disabled-features')
+  const getInstallationStatuses = () => apiGet<string[]>('/opsidata/products/installation-status')
 
-  const createActivity = (type: string, status: string) =>
-    apiPost<Record<string, unknown>>('/user/createactivity', {
-      username: '',
-      type,
-      status,
+  const getActionResults = () => apiGet<string[]>('/opsidata/products/action-result')
+
+  const processActionRequests = (
+    clientIds: string[],
+    productIds?: string[],
+    visibility?: '' | 'visible' | 'hidden'
+  ) =>
+    apiPost<Record<string, Record<string, unknown>>>('/command/process_action', {
+      client_ids: clientIds,
+      product_ids: productIds,
+      visibility,
     })
 
+  const bulkProductAction = (params: {
+    action: string
+    demoMode: boolean
+    outdated: boolean
+    installation_status: string | null
+    action_result: string | null
+    selectedClients: string[] | null
+    selectedDepots: string[] | null
+  }) => apiPost<Record<string, unknown>>('/opsidata/clients/action', params)
+
+  // Product properties & dependencies (products/ConfigTabs)
   const getProductProperties = (
     productId: string,
     params?: { selectedClients?: string[]; selectedServers?: string[] }
@@ -405,7 +321,6 @@ export function useApiHelpers() {
       productAdviceDetails: Record<string, string>
     }>(`/opsidata/products/${productId}/properties`, qp)
   }
-
   const saveProductProperties = (
     productId: string,
     data: {
@@ -442,6 +357,99 @@ export function useApiHelpers() {
     }>(`/opsidata/products/${productId}/dependencies`, qp)
   }
 
+  // ---------------------------------------------------------------------------
+  // Groups (groups/index.vue, quickpanel/GroupSelectionTree, selectionStore)
+  // ---------------------------------------------------------------------------
+
+  const getHostGroups = (params?: Record<string, unknown>) =>
+    apiGet<Record<string, unknown>>('/opsidata/hosts/groups', params)
+
+  const getProductGroups = () =>
+    apiGet<{ groups?: Record<string, unknown> }>('/opsidata/products/groups')
+
+  const getHostGroupIds = () => apiGet<string[]>('/opsidata/hosts/groups/id')
+
+  const createHostGroup = (groupData: {
+    groupId: string
+    parentGroupId?: string
+    description?: string
+    notes?: string
+  }) => apiPost('/opsidata/hosts/groups', groupData)
+
+  const createProductGroup = (groupData: {
+    groupId: string
+    parentGroupId?: string
+    description?: string
+    notes?: string
+  }) => apiPost('/opsidata/products/groups', groupData)
+
+  const updateHostGroup = (
+    groupId: string,
+    updateData: { parent?: string; description?: string; note?: string }
+  ) => apiPut(`/opsidata/hosts/groups/${groupId}`, updateData)
+
+  const updateProductGroup = (
+    groupId: string,
+    updateData: { parent?: string; description?: string; note?: string }
+  ) => apiPut(`/opsidata/products/groups/${groupId}`, updateData)
+
+  const deleteHostGroup = (groupId: string) => apiDelete(`/opsidata/hosts/groups/${groupId}`)
+
+  // TODO: Backend bug: product group deletion uses GET instead of DELETE
+  const deleteProductGroup = (groupId: string) => apiGet(`/opsidata/products/groups/${groupId}`)
+
+  const addClientsToGroup = (groupId: string, clientIds: string[]) =>
+    apiPost(`/opsidata/hosts/groups/${groupId}/clients`, clientIds)
+
+  const removeClientsFromGroup = (groupId: string) =>
+    apiDelete(`/opsidata/hosts/groups/${groupId}/clients`)
+
+  const addProductsToGroup = (groupId: string, productIds: string[]) =>
+    apiPost(`/opsidata/products/groups/${groupId}/products`, productIds)
+
+  const removeProductsFromGroup = (groupId: string) =>
+    apiDelete(`/opsidata/products/groups/${groupId}/products`)
+
+  const removeProductFromGroup = (groupId: string, productId: string) =>
+    apiDelete(`/opsidata/products/groups/${groupId}/${productId}`)
+
+  // ---------------------------------------------------------------------------
+  // Config (hosts/ConfigTabs, products/ConfigTabs)
+  // ---------------------------------------------------------------------------
+
+  const getServerConfig = (params?: Record<string, unknown>) =>
+    apiGet<
+      Record<
+        string,
+        Array<{
+          configId: string
+          description: string
+          type: string
+          value: unknown
+          possibleValues: string
+          multiValue: boolean
+          editable: boolean
+        }>
+      >
+    >('/opsidata/config/server', params)
+
+  const getServerDefaultConfig = (filterQuery?: string) =>
+    apiGet<
+      Record<
+        string,
+        Array<{
+          configId: string
+          description: string
+          type: 'BoolConfig' | 'UnicodeConfig'
+          defaultValues: unknown[]
+          possibleValues: unknown[]
+          multiValue: boolean
+          editable: boolean
+          objects: Record<string, unknown>
+        }>
+      >
+    >('/opsidata/config', filterQuery ? { filterQuery } : undefined)
+
   const getHostConfigObjects = (hostId: string) =>
     apiGet<
       Record<
@@ -473,159 +481,153 @@ export function useApiHelpers() {
   const saveServerConfigValues = (configs: Array<{ configId: string; value: unknown }>) =>
     apiPost<string>('/opsidata/config/values', configs)
 
-  const getHostAttributes = (hostId: string) =>
-    apiGet<Array<Record<string, unknown>>>(`/opsidata/hosts?hosts=${hostId}`)
+  const createConfig = (config: {
+    configId: string
+    editable?: boolean
+    multiValue?: boolean
+    description?: string
+    possibleValues?: string[]
+    defaultValues?: string[]
+    type?: 'UnicodeConfig' | 'BoolConfig'
+  }) => apiPost<Record<string, unknown>>('/opsidata/config', config)
 
-  const getServerAttributes = (serverId: string) =>
-    apiGet<Array<Record<string, unknown>>>(`/opsidata/servers?servers=[${serverId}]`)
+  // ---------------------------------------------------------------------------
+  // Admin / Maintenance (admin/maintenance.vue, admin/diagnostics)
+  // ---------------------------------------------------------------------------
 
-  const getServerDefaultConfig = (filterQuery?: string) =>
-    apiGet<
-      Record<
-        string,
-        Array<{
-          configId: string
-          description: string
-          type: 'BoolConfig' | 'UnicodeConfig'
-          defaultValues: unknown[]
-          possibleValues: unknown[]
-          multiValue: boolean
-          editable: boolean
-          objects: Record<string, unknown>
-        }>
-      >
-    >('/opsidata/config', filterQuery ? { filterQuery } : undefined)
+  const getBlockedClients = () =>
+    apiGet<string[] | Record<string, string>>('/opsidata/blocked-clients')
 
-  const updateClientAttributes = (clientId: string, attrs: Record<string, unknown>) =>
-    apiPut<Record<string, unknown>>(`/opsidata/clients/${clientId}`, attrs)
-  const updateServerAttributes = (serverId: string, attrs: Record<string, unknown>) =>
-    apiPut<Record<string, unknown>>(`/opsidata/servers/${serverId}`, attrs)
+  const unblockClient = (clientId: string) => apiPost<void>(`/opsidata/clients/${clientId}/unblock`)
 
-  interface OpsiclientdRpcResult {
-    [clientId: string]: { error?: string | null; result?: string | null }
-  }
+  const unblockAllClients = () => apiPost<void>('/opsidata/clients/unblock')
 
-  const opsiclientdRpc = (clientIds: string[], method: string, params: unknown[] = []) =>
-    apiPost<OpsiclientdRpcResult>('/command/opsiclientd_rpc', {
-      client_ids: clientIds,
-      method,
-      params,
-    })
-  const triggerOnDemand = (clientIds: string[]) =>
-    opsiclientdRpc(clientIds, 'fireEvent', ['on_demand'])
-  const sendNotification = (clientIds: string[], message: string) =>
-    opsiclientdRpc(clientIds, 'showPopup', [message])
-  const rebootClients = (clientIds: string[]) => opsiclientdRpc(clientIds, 'reboot', [''])
-  const shutdownClients = (clientIds: string[]) => opsiclientdRpc(clientIds, 'shutdown', [''])
-  const deleteClient = (clientId: string) => apiDelete<void>(`/opsidata/clients/${clientId}`)
-  const renameClient = (clientId: string, newHostId: string) =>
-    apiPut<Record<string, unknown>>(`/opsidata/clients/${clientId}`, { hostId: newHostId })
-  const checkClientReachable = (clientIds: string[]) =>
-    apiGet<Record<string, boolean>>('/opsidata/clients/reachable', {
-      selectedClients: `[${clientIds.join(',')}]`,
-    })
-  const executeClientAction = (
-    clientIds: string[],
-    action: string,
-    params?: Record<string, unknown>
-  ) =>
-    apiPost<OpsiclientdRpcResult>('/opsidata/clients/action', {
-      selectedClients: clientIds,
-      action,
-      ...params,
-    })
+  const getLockedProducts = () => apiGet<Record<string, string>>('/opsidata/locked-products')
+
+  const unlockProduct = (productId: string) =>
+    apiPost<void>(`/opsidata/products/${productId}/unlock`)
+
+  const unlockAllProducts = () => apiPost<void>('/opsidata/products/unlock')
+
+  const getAppState = () =>
+    apiGet<{ type: 'normal' | 'maintenance'; address_exceptions: string[]; retry_after: number }>(
+      '/app-state'
+    )
+
+  const setAppState = (state: {
+    type: string
+    address_exceptions?: string[]
+    retry_after?: number
+  }) => apiPost<{ type: string }>('/app-state', state)
+
+  const createBackup = (options: {
+    config_files?: boolean
+    redis_data?: boolean
+    maintenance_mode?: boolean
+    password?: string
+  }) => apiPost<string>('/backup/create', options)
+
+  const restoreBackup = (options: {
+    file_id: string
+    config_files?: boolean
+    redis_data?: boolean
+    server_id?: string
+    password?: string
+  }) => apiPost<void>('/backup/restore', options)
+
+  // ---------------------------------------------------------------------------
+  // Return
+  // ---------------------------------------------------------------------------
 
   return {
+    // Core
     apiGet,
     apiPost,
     apiPut,
     apiDelete,
+
+    // Auth & User
     getConfigServer,
-    checkAuth,
     callLogin,
     callLogout,
+    getUserSettings,
+    getUserConfiguration,
+    getDisabledFeatures,
     getChangelogs,
+
+    // Servers / Depots
     getServers,
     getServerIds,
+    getDiagnosticData,
+    getServerAttributes,
+    updateServerAttributes,
+
+    // Clients
     getClients,
     getClientIds,
-    // getClientConfig,
+    createClient,
+    deleteClient,
+    renameClient,
+    cloneClient,
+    updateClientAttributes,
+    getHostAttributes,
+    checkClientReachable,
+    deployClientAgent,
+    addClientToGroups,
+    removeClientFromGroups,
+    getClientLogs,
+    triggerOnDemand,
+    sendNotification,
+    rebootClients,
+    shutdownClients,
+
+    // Products
     getProducts,
+    getServersProducts,
+    setClientProductActions,
+    getProductIcons,
+    getInstallationStatuses,
+    getActionResults,
+    processActionRequests,
+    bulkProductAction,
+    getProductProperties,
+    saveProductProperties,
+    getProductDependencies,
+
+    // Groups
     getHostGroups,
     getProductGroups,
+    getHostGroupIds,
     createHostGroup,
-    updateHostGroup,
-    deleteHostGroup,
     createProductGroup,
+    updateHostGroup,
     updateProductGroup,
+    deleteHostGroup,
     deleteProductGroup,
     addClientsToGroup,
     removeClientsFromGroup,
-    addClientToMultipleGroups,
     addProductsToGroup,
     removeProductsFromGroup,
     removeProductFromGroup,
-    removeClientFromGroups,
-    getServerInfo,
-    getHealthcheck,
-    getDiagnosticData,
+
+    // Config
     getServerConfig,
-    getClientLogs,
+    getServerDefaultConfig,
+    getHostConfigObjects,
+    saveHostConfigState,
+    saveServerConfigValues,
+    createConfig,
+
+    // Admin / Maintenance
     getBlockedClients,
     unblockClient,
     unblockAllClients,
     getLockedProducts,
     unlockProduct,
     unlockAllProducts,
-    getUserSettings,
-    getUserConfiguration,
-    createClient,
-    deployClientAgent,
-    setClientUefi,
-    addClientToGroups,
-    cloneClient,
-    getClientServerMapping,
-    getHostGroupIds,
-    getHostGroupsDynamic,
-    getProductsOnServers,
-    getProductCount,
-    setClientProductActions,
-    getProductIcons,
-    getInstallationStatuses,
-    getActionResults,
-    getConfigForClients,
-    checkConfigExists,
-    deleteConfig,
-    createConfig,
-    processActionRequests,
-    getServersProducts,
-    getHomeData,
     getAppState,
     setAppState,
     createBackup,
     restoreBackup,
-    getModulesContent,
-    getDisabledFeatures,
-    createActivity,
-    getProductProperties,
-    saveProductProperties,
-    getProductDependencies,
-    getHostConfigObjects,
-    saveHostConfigState,
-    saveServerConfigValues,
-    getHostAttributes,
-    getServerAttributes,
-    getServerDefaultConfig,
-    updateClientAttributes,
-    updateServerAttributes,
-    opsiclientdRpc,
-    triggerOnDemand,
-    sendNotification,
-    rebootClients,
-    shutdownClients,
-    deleteClient,
-    renameClient,
-    checkClientReachable,
-    executeClientAction,
   }
 }

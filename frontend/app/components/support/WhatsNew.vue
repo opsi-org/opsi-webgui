@@ -35,12 +35,12 @@ SupportWhatsNew - Displays changelog.
 const icons = useIcons()
 const { t: $t } = useI18n()
 const config = useRuntimeConfig()
-const { getChangelogs } = useApiHelpers()
+const { changelogs: cachedChangelogs, changelogsLoading, fetchChangelogs } = useCachedData()
 
-const loading = ref(true)
 const error = ref(false)
 const items = ref<{ section: string, text: string }[]>([])
 
+const loading = changelogsLoading
 const version = computed(() => config.public.packageVersion || '—')
 
 function parseChangelog(markdown: string): { section: string, text: string }[] {
@@ -63,22 +63,22 @@ function parseChangelog(markdown: string): { section: string, text: string }[] {
 }
 
 async function fetchChangelog() {
-	loading.value = true
 	error.value = false
-
 	try {
-		const result = await getChangelogs()
-		if (result.error || !result.data) {
+		const data = await fetchChangelogs()
+		if (!data) {
 			throw new Error('Failed to fetch changelog')
 		}
-		items.value = parseChangelog(result.data)
+		items.value = parseChangelog(data)
 	} catch (e) {
 		console.error('Failed to fetch changelog:', e)
 		error.value = true
-	} finally {
-		loading.value = false
 	}
 }
+
+watch(cachedChangelogs, (v) => {
+	if (v) items.value = parseChangelog(v)
+}, { immediate: true })
 
 onMounted(() => {
 	fetchChangelog()

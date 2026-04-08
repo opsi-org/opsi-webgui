@@ -45,7 +45,8 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
                     <div class="text-xs text-gray-500 mt-1">{{ $t('modules') }}</div>
                     <div v-if="sharedObsoleteModules.length > 0" class="mt-1">
                         <UTooltip :text="`${$t('obsoleteModules')}: ${sharedObsoleteModules.join(', ')}`">
-                            <span class="text-xs text-amber-600 dark:text-amber-400 cursor-help">{{ sharedObsoleteModules.length }} {{ $t('obsolete') }}</span>
+                            <span class="text-xs text-amber-600 dark:text-amber-400 cursor-help">{{
+                                sharedObsoleteModules.length }} {{ $t('obsolete') }}</span>
                         </UTooltip>
                     </div>
                 </button>
@@ -96,17 +97,15 @@ interface TreeNode {
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const api = useApiHelpers()
 const route = useRoute()
 const router = useRouter()
 const {
-    data: sharedDiagData,
+    diagnosticsData: sharedDiagData,
     fetchDiagnostics: fetchSharedDiag,
-    refresh: refreshSharedDiag,
     modules: sharedModules,
     modulesDetailed: sharedModulesDetailed,
     obsoleteModules: sharedObsoleteModules,
-} = useDiagnosticsData()
+} = useCachedData()
 
 const loading = ref(false)
 const filter = ref('')
@@ -294,11 +293,7 @@ function getStatusType(status: string): 'success' | 'warning' | 'error' | 'info'
 
 async function fetchDiagnostics(force = false) {
     loading.value = true
-    if (force) {
-        await refreshSharedDiag()
-    } else {
-        await fetchSharedDiag()
-    }
+    await fetchSharedDiag(force)
     if (sharedDiagData.value) {
         diagnosticsData.value = sharedDiagData.value
         const typedData = sharedDiagData.value

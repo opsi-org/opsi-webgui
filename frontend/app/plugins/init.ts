@@ -18,8 +18,8 @@ export default defineNuxtPlugin({
     }
 
     // Before login: always fetch config server info
-    const { getConfigServer, getServers, getUserConfiguration, getDisabledFeatures } =
-      useApiHelpers()
+    const { getConfigServer, getServers } = useApiHelpers()
+    const { fetchPostLoginData } = useCachedData()
     try {
       const configServerResult = await getConfigServer()
       if (configServerResult.data) {
@@ -34,30 +34,21 @@ export default defineNuxtPlugin({
       console.warn('Failed to fetch config server:', e)
     }
 
-    // After login: fetch user configuration & disabled features
+    // After login: fetch user configuration & disabled features (cached)
     if (userStore.isAuthenticated) {
       try {
-        const promises: Promise<unknown>[] = [getUserConfiguration(), getDisabledFeatures()]
+        const promises: Promise<unknown>[] = [fetchPostLoginData()]
 
         // Only fetch servers if none selected
         if (selectionStore.selectedServers.length === 0) {
           promises.push(getServers({}))
         }
 
-        const [userConfigResult, disabledFeaturesResult, serverResult] = (await Promise.all(
-          promises
-        )) as [
-          Awaited<ReturnType<typeof getUserConfiguration>>,
-          Awaited<ReturnType<typeof getDisabledFeatures>>,
+        const [, serverResult] = (await Promise.all(promises)) as [
+          void,
           Awaited<ReturnType<typeof getServers>> | undefined,
         ]
 
-        if (userConfigResult.data?.configuration) {
-          userStore.setUserConfiguration(userConfigResult.data.configuration)
-        }
-        if (disabledFeaturesResult.data && Array.isArray(disabledFeaturesResult.data)) {
-          userStore.setDisabledFeatures(disabledFeaturesResult.data)
-        }
         if (serverResult?.data && serverResult.data.length > 0) {
           const configServer = serverResult.data.find((d) => d.type === 'OpsiConfigserver')
           if (configServer) selectionStore.setConfigServer(configServer.depotId)

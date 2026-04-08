@@ -18,10 +18,10 @@ Login page - allows users to log in with username/password or SAML SSO.
           <UIcon :name="icons.serverStack" class="w-5 h-5 text-opsi-blue" />
           <div class="flex-1 min-w-0">
             <span class="text-xs text-(--color-text-muted) dark:text-(--color-text-muted) block">{{ $t('configServer')
-            }}</span>
+              }}</span>
             <span class="font-medium text-(--color-text) dark:text-(--color-text) truncate block">{{
               configServerName
-            }}</span>
+              }}</span>
           </div>
         </div>
 
@@ -60,8 +60,8 @@ const route = useRoute()
 const config = useRuntimeConfig()
 const userStore = useUserStore()
 const colorMode = useColorMode()
-const { $customFetch } = useNuxtApp() as unknown as { $customFetch: typeof $fetch }
-const { createActivity, getUserConfiguration, getDisabledFeatures } = useApiHelpers()
+const { getConfigServer, callLogin, getUserSettings } = useApiHelpers()
+const { fetchPostLoginData } = useCachedData()
 
 const isDark = computed(() => colorMode.preference === 'dark')
 
@@ -70,23 +70,6 @@ const loading = ref(false)
 const showSaml = ref(true)
 const errorMessage = ref('')
 const configServerName = ref('')
-
-async function fetchPostLoginData() {
-  try {
-    const [userConfigResult, disabledFeaturesResult] = await Promise.all([
-      getUserConfiguration(),
-      getDisabledFeatures(),
-    ])
-    if (userConfigResult.data?.configuration) {
-      userStore.setUserConfiguration(userConfigResult.data.configuration)
-    }
-    if (disabledFeaturesResult.data && Array.isArray(disabledFeaturesResult.data)) {
-      userStore.setDisabledFeatures(disabledFeaturesResult.data)
-    }
-  } catch {
-    // Non-critical: topbar will show data on next navigation
-  }
-}
 
 function getDefaultPage(): string {
   const match = document.cookie.match(/(?:^|; )opsi-webgui-default-page=([^;]*)/)
@@ -98,9 +81,9 @@ function getDefaultPage(): string {
 
 onMounted(async () => {
   try {
-    const result = await $customFetch<string>('/user/opsiserver')
-    if (result) {
-      configServerName.value = typeof result === 'string' ? result : (result as any)?.result || ''
+    const result = await getConfigServer()
+    if (result.data) {
+      configServerName.value = typeof result.data === 'string' ? result.data : (result.data as any)?.result || ''
     }
   } catch {
 
@@ -111,9 +94,9 @@ onMounted(async () => {
     try {
       // After SAML redirect, the session cookie is set by opsiconfd.
       // Use the addon's own auth endpoint to verify and get the username.
-      const settings = await $customFetch<{ username?: string }>('/user/getsettings')
-      if (settings?.username) {
-        userStore.login(settings.username)
+      const settings = await getUserSettings()
+      if (settings.data?.username) {
+        userStore.login(settings.data.username)
         await fetchPostLoginData()
         await navigateTo(getDefaultPage())
       } else {
@@ -131,19 +114,11 @@ const handleLogin = async () => {
   userStore.setErrorLoggedOutShown(false)
 
   try {
-    const formData = new FormData()
-    formData.append('username', cred.username)
-    formData.append('password', cred.password)
+    const result = await callLogin(cred.username, cred.password)
 
-    const result = await $customFetch<{ result: string }>('/auth/login', {
-      method: 'POST',
-      body: formData,
-    })
-
-    if (result.result === 'Login success') {
+    if (result.data?.result === 'Login success') {
       userStore.login(cred.username)
       await fetchPostLoginData()
-      createActivity('Login', 'ok').catch(() => { })
       const redirectPath = route.query.redirect?.toString() || getDefaultPage()
       await navigateTo(redirectPath)
     } else {

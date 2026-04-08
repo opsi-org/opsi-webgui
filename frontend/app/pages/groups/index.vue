@@ -407,6 +407,7 @@ const { isReadOnly, isHostGroupAccessRestricted, isProductGroupAccessRestricted 
 const {
     getClientIds,
     getServerIds,
+    getServersProducts,
     createHostGroup,
     createProductGroup,
     updateHostGroup,
@@ -810,13 +811,9 @@ async function fetchAvailableProducts() {
     loadingMembers.value = true
     try {
         const depotIds = await ensureDepotIds()
-        const { $customFetch } = useNuxtApp() as unknown as {
-            $customFetch: <T>(url: string, opts?: { method?: string; body?: unknown }) => Promise<T>
-        }
-        const depotParam = encodeURIComponent(`[${depotIds.join(',')}]`)
-        const data = await $customFetch<Array<{ productId: string }>>(`/opsidata/depots/products?selectedServers=${depotParam}&productType=LocalbootProduct`)
-        if (data && Array.isArray(data)) {
-            availableProducts.value = data.map(p => p.productId)
+        const result = await getServersProducts(depotIds, 'LocalbootProduct')
+        if (result.data && Array.isArray(result.data)) {
+            availableProducts.value = result.data.map(p => p.productId)
         }
     } catch (err) {
         console.error('Failed to fetch products:', err)

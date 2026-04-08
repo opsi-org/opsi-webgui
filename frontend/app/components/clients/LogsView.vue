@@ -160,7 +160,7 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { apiGet } = useApiHelpers()
+const { getClientLogs } = useApiHelpers()
 const uiStore = useUiStore()
 const mbStore = useMessageBusStore()
 
@@ -301,10 +301,7 @@ async function fetchLog() {
 	error.value = null
 
 	try {
-		const result = await apiGet<{ result: string[] } | string[]>('/opsidata/log', {
-			selectedClient: resolvedClientId.value,
-			selectedLogType: selectedLogType.value.value,
-		})
+		const result = await getClientLogs(resolvedClientId.value, selectedLogType.value.value)
 
 		if (result.error) throw result.error
 

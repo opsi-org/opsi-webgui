@@ -43,8 +43,8 @@ definePageMeta({ layout: 'default' })
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const api = useApiHelpers()
 const { isReadOnly, isTerminalEnabled } = useUserPermissions()
+const { fetchDisabledFeatures } = useCachedData()
 
 const terminalContainer = ref<HTMLElement | null>(null)
 const isDisabled = ref(false)
@@ -85,8 +85,8 @@ async function checkDisabled() {
         isDisabled.value = true
         return
     }
-    const { data, error } = await api.getDisabledFeatures()
-    if (!error && data) isDisabled.value = data.includes('terminal')
+    const data = await fetchDisabledFeatures()
+    if (data) isDisabled.value = data.includes('terminal')
 }
 
 async function handleMessage(msg: unknown) {

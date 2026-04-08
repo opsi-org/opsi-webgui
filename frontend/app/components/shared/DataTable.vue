@@ -93,7 +93,7 @@
                       class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue disabled:opacity-50"
                       @change="tableSettings.toggleColumn(col.key)" />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col)
-                      }}</span>
+                    }}</span>
                   </label>
                 </div>
               </div>
@@ -113,7 +113,7 @@
     </div>
 
     <UCard :ui="{ body: 'p-0 sm:p-0' }" class="flex-1 min-h-0 flex flex-col overflow-hidden">
-      <div ref="tableContainer" class="flex-1 overflow-x-auto overflow-y-auto transition-all duration-200"
+      <div ref="tableContainer" class="flex-1 min-h-0 overflow-x-auto overflow-y-auto transition-all duration-200"
         :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" tabindex="-1" @scroll="handleScroll"
         @keydown="handleTableKeydown">
         <div v-if="loading && rows.length === 0" class="py-12">
