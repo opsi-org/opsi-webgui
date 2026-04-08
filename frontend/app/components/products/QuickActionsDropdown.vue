@@ -18,7 +18,7 @@
 		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
 	</UButton>
 
-	<UModal v-model:open="dialogOpen" :dismissible="true">
+	<UModal v-model:open="dialogOpen" :dismissible="true" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
 		<template #content>
 			<UCard class="min-w-120">
 				<template #header>
@@ -37,12 +37,12 @@
 				</div>
 
 				<div v-else class="space-y-4">
-					<SharedAlertInline v-if="errorMessage" color="error" :description="errorMessage" variant="subtle" closable
-						@close="errorMessage = null" />
+					<SharedAlertInline v-if="errorMessage" color="error" :description="errorMessage" variant="subtle"
+						closable @close="errorMessage = null" />
 
 					<div class="divide-y divide-(--color-border)">
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
-							<span class="text-xs font-semibold text-(--color-text-muted) uppercase md:w-1/3 shrink-0">
+							<span class="text-xs font-semibold text-(--color-text-muted) capitalize md:w-1/3 shrink-0">
 								{{ $t('conditions') }}
 							</span>
 							<div class="flex-1 space-y-2">
@@ -70,7 +70,7 @@
 						</div>
 
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
-							<span class="text-xs font-semibold text-(--color-text-muted) uppercase md:w-1/3 shrink-0">
+							<span class="text-xs font-semibold text-(--color-text-muted) capitalize md:w-1/3 shrink-0">
 								{{ $t('actionRequest') }}
 							</span>
 							<div class="flex-1">
@@ -80,7 +80,7 @@
 						</div>
 
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
-							<span class="text-xs font-semibold text-(--color-text-muted) uppercase md:w-1/3 shrink-0">
+							<span class="text-xs font-semibold text-(--color-text-muted) capitalize md:w-1/3 shrink-0">
 								{{ $t('scope') }}
 							</span>
 							<div class="flex-1">
@@ -92,7 +92,7 @@
 
 					<div>
 						<div class="flex items-center justify-between mb-1.5">
-							<span class="text-xs font-semibold text-(--color-text-muted) uppercase">
+							<span class="text-xs font-semibold text-(--color-text-muted) capitalize">
 								{{ $t('preview') }}
 							</span>
 							<div class="flex items-center gap-2">

@@ -1,6 +1,6 @@
 <template>
 	<div v-if="mode === 'header'" class="flex items-center gap-1" @click.stop>
-		<span class="text-xs font-semibold uppercase tracking-wider">{{ $t('actionRequest') }}</span>
+		<span class="text-xs font-semibold capitalize tracking-wider">{{ $t('actionRequest') }}</span>
 		<UIcon v-if="sortColumn === 'actionRequest'" :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
 			class="w-3 h-3" />
 		<UIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />

@@ -26,11 +26,11 @@ SharedUnsavedChangesModal — Reusable unsaved-changes button + popup.
 		</div>
 	</template>
 
-	<UModal v-model:open="open" :title="$t('unsavedChanges')" :ui="{ content: 'max-w-2xl' }">
+	<UModal v-model:open="open" :title="$t('unsavedChanges')" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
 		<template #body>
 			<div class="space-y-4">
 				<div v-if="(configRef?.changedParams?.size ?? 0) > 0">
-					<p class="text-xs font-semibold text-muted uppercase mb-2">{{ $t('parameters') }}</p>
+					<p class="text-xs font-semibold text-muted capitalize mb-2">{{ $t('parameters') }}</p>
 					<div class="divide-y divide-default border border-default rounded-lg">
 						<div v-for="[key] in configRef?.changedParams" :key="key"
 							class="changed-item flex items-center justify-between gap-2 px-3 py-2 text-sm">
@@ -49,7 +49,7 @@ SharedUnsavedChangesModal — Reusable unsaved-changes button + popup.
 					</div>
 				</div>
 				<div v-if="(configRef?.changedAttributesList?.length ?? 0) > 0">
-					<p class="text-xs font-semibold text-muted uppercase mb-2">{{ $t('attributes') }}</p>
+					<p class="text-xs font-semibold text-muted capitalize mb-2">{{ $t('attributes') }}</p>
 					<div class="divide-y divide-default border border-default rounded-lg">
 						<div v-for="item in configRef?.changedAttributesList" :key="item.key"
 							class="flex items-center justify-between gap-2 px-3 py-2 text-sm">

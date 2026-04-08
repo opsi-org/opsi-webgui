@@ -5,16 +5,14 @@ Dashboard reusable info card with icon, label, value and optional sub-content.
 		clickable ? 'cursor-pointer hover:shadow-md group' : ''
 	]" @click="clickable ? $emit('click') : undefined">
 		<div class="flex items-center gap-3">
-			<div v-if="icon" class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-				:class="iconBgClass || 'bg-opsi-blue/10'">
-				<UIcon :name="icon" class="w-4.5 h-4.5" :class="iconClass" />
-			</div>
+			<UIcon v-if="icon" :name="icon" class="w-5 h-5 text-[--color-text-muted] shrink-0" />
 			<div class="flex-1 min-w-0">
 				<p class="text-xs text-[--color-text-muted] uppercase tracking-wider font-medium">{{ label }}</p>
 				<p class="font-semibold truncate text-sm" :title="String(value)">{{ value || '-' }}</p>
 			</div>
 			<slot name="trailing" />
-			<UIcon v-if="clickable" :name="arrowIcon" class="w-3 h-3 text-[--color-text-muted] shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+			<UIcon v-if="clickable" :name="arrowIcon"
+				class="w-3 h-3 text-[--color-text-muted] shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
 		</div>
 		<slot />
 	</div>

@@ -7,10 +7,7 @@
                 <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/healthcheck')">
                     <div class="flex items-center gap-2 mb-3">
-                        <div
-                            class="w-7 h-7 rounded-lg flex items-center justify-center bg-emerald-100 dark:bg-emerald-900/30">
-                            <UIcon :name="icons.health" class="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                        </div>
+                        <UIcon :name="icons.health" class="w-5 h-5 text-[--color-text-muted]" />
                         <span class="text-sm font-semibold">{{ $t('healthCheck') }}</span>
                         <UIcon :name="icons.chevronRight"
                             class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -40,7 +37,7 @@
                         <div class="flex-1 min-w-0">
                             <p class="font-semibold truncate text-sm">{{ sharedUserConfig?.user || userStore.username
                                 || '-' }}</p>
-                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-widest font-medium">{{
+                            <p class="text-xs text-[--color-text-muted] uppercase tracking-widest font-medium">{{
                                 $t('currentUser') }}</p>
                         </div>
                         <UBadge v-if="webguiRestrictionsCount > 0" color="warning" variant="subtle" size="sm"
@@ -64,10 +61,7 @@
                 <div class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/system')">
                     <div class="flex items-center gap-2 mb-2">
-                        <div
-                            class="w-7 h-7 rounded-lg flex items-center justify-center bg-violet-100 dark:bg-violet-900/30">
-                            <UIcon :name="icons.server" class="w-4 h-4 text-violet-600 dark:text-violet-400" />
-                        </div>
+                        <UIcon :name="icons.server" class="w-5 h-5 text-[--color-text-muted]" />
                         <h3 class="text-sm font-semibold">{{ $t('systemInfo') }}</h3>
                         <UIcon :name="icons.chevronRight"
                             class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -75,49 +69,49 @@
                     <div v-if="diagnosticData" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0.5 text-sm">
                         <div
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">opsiconfd</span>
+                            <span class="text-[--color-text-muted] text-xs">opsiconfd</span>
                             <span class="font-medium truncate ml-2 text-xs">{{ diagnosticData.opsiconfd_version
                             }}</span>
                         </div>
                         <div v-if="diagnosticData.os_release"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">os</span>
+                            <span class="text-[--color-text-muted] text-xs">os</span>
                             <span class="font-medium truncate ml-2 text-xs">
                                 {{ (diagnosticData.os_release as Record<string, unknown>).PRETTY_NAME }}</span>
                         </div>
                         <div v-if="diagnosticData.processor"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">cpu</span>
+                            <span class="text-[--color-text-muted] text-xs">cpu</span>
                             <span class="font-medium truncate ml-2 text-xs">
                                 {{ (diagnosticData.processor as Record<string, unknown>).cpu_count }} cores · {{
                                     sysProcessorModel }}</span>
                         </div>
                         <div v-if="diagnosticData.memory"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">memory</span>
+                            <span class="text-[--color-text-muted] text-xs">memory</span>
                             <span class="font-medium text-xs">{{ (diagnosticData.memory as Record<string, unknown>
                             ).total_human }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent
                                     }}%)</span>
                         </div>
                         <div v-if="sysHostname"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">hostname</span>
+                            <span class="text-[--color-text-muted] text-xs">hostname</span>
                             <span class="font-medium truncate ml-2 text-xs">{{ sysHostname }}</span>
                         </div>
                         <div v-if="sysIsDocker !== null"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">docker</span>
+                            <span class="text-[--color-text-muted] text-xs">docker</span>
                             <UBadge :color="sysIsDocker ? 'info' : 'neutral'" variant="subtle" size="xs">{{ sysIsDocker
                                 ? 'Yes' : 'No' }}</UBadge>
                         </div>
                         <div v-if="sysPythonVersion"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">python</span>
+                            <span class="text-[--color-text-muted] text-xs">python</span>
                             <span class="font-medium truncate ml-2 text-xs">{{ sysPythonVersion }}</span>
                         </div>
                         <div v-if="sysLoadAvg"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">load</span>
+                            <span class="text-[--color-text-muted] text-xs">load</span>
                             <span class="font-medium truncate ml-2 text-xs">{{ sysLoadAvg }}</span>
                         </div>
                     </div>
@@ -134,7 +128,7 @@
                 <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
                     @click="navigateTo('/clients')">
                     <div class="flex items-center justify-between mb-1">
-                        <UIcon :name="icons.client" class="w-5 h-5 text-sky-600 dark:text-sky-400" />
+                        <UIcon :name="icons.client" class="w-5 h-5 text-[--color-text-muted]" />
                         <UIcon :name="icons.chevronRight"
                             class="w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
@@ -153,10 +147,10 @@
                         <div class="flex items-center gap-2 text-xs text-[--color-text-muted]">
                             <span class="flex items-center gap-1"><span
                                     class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>{{
-                                        sharedClientNumbers.all }} {{ $t('activeClients').toLowerCase() }}</span>
+                                        sharedClientNumbers.all }} {{ $t('active') }}</span>
                             <span class="flex items-center gap-1"><span
                                     class="w-1.5 h-1.5 rounded-full bg-red-400 inline-block"></span>{{
-                                        sharedClientNumbers.inactive }} {{ $t('inactiveClients').toLowerCase() }}</span>
+                                        sharedClientNumbers.inactive }} {{ $t('inactive') }}</span>
                         </div>
                     </div>
                 </div>
@@ -174,11 +168,11 @@
                     <div class="mt-2 pt-2 border-t border-gray-100 dark:border-white/5 flex gap-2 text-xs">
                         <span class="text-[--color-text-muted]">
                             <span class="font-medium text-[--color-text]">{{ localbootProductCount }}</span>
-                            {{ $t('localbootProducts') }}
+                            {{ $t('localboot') }}
                         </span>
                         <span class="text-[--color-text-muted]">
                             <span class="font-medium text-[--color-text]">{{ netbootProductCount }}</span>
-                            {{ $t('netbootProducts') }}
+                            {{ $t('netboot') }}
                         </span>
                     </div>
                 </div>
@@ -219,9 +213,7 @@
             <!-- Row 4: Failed Clients -->
             <div class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 shrink-0">
                 <div class="flex items-center gap-2 mb-2">
-                    <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-red-100 dark:bg-red-900/30">
-                        <UIcon :name="icons.warning" class="w-4 h-4 text-red-500" />
-                    </div>
+                    <UIcon :name="icons.warning" class="w-5 h-5 text-[--color-text-muted]" />
                     <h3 class="text-sm font-semibold">{{ $t('failedClients') }}</h3>
                     <UBadge v-if="failedClients && Object.keys(failedClients).length > 0" color="error" variant="subtle"
                         size="sm">
@@ -298,7 +290,7 @@ const webguiFeatures = computed(() => {
             configId: `user.{${username}}.privilege.host.all.registered_readonly`,
             restricted: userConfigData.value?.read_only ?? false,
             icon: icons.eye,
-            shortLabel: 'RO',
+            shortLabel: 'Read Only',
         },
         {
             key: 'serverWrite',
@@ -306,7 +298,7 @@ const webguiFeatures = computed(() => {
             configId: `user.{${username}}.privilege.host.opsiserver.write`,
             restricted: !(userConfigData.value?.server_write_access ?? true),
             icon: icons.server,
-            shortLabel: 'Server',
+            shortLabel: 'Server Write',
         },
         {
             key: 'depotAccess',
@@ -314,7 +306,7 @@ const webguiFeatures = computed(() => {
             configId: `user.{${username}}.privilege.host.depotaccess.configured`,
             restricted: userConfigData.value?.depot_access ?? false,
             icon: icons.serverStack,
-            shortLabel: 'Depot',
+            shortLabel: 'Depot Access',
         },
         {
             key: 'clientCreation',
@@ -322,7 +314,7 @@ const webguiFeatures = computed(() => {
             configId: `user.{${username}}.privilege.host.createclient`,
             restricted: !(userConfigData.value?.client_creation ?? true),
             icon: icons.client,
-            shortLabel: 'Create',
+            shortLabel: 'Client Create',
         },
         {
             key: 'hostGroupAccess',
@@ -330,7 +322,7 @@ const webguiFeatures = computed(() => {
             configId: `user.{${username}}.privilege.host.groupaccess.configured`,
             restricted: userConfigData.value?.host_group_access ?? false,
             icon: icons.group,
-            shortLabel: 'Groups',
+            shortLabel: 'Host Groups',
         },
         {
             key: 'productGroupAccess',
@@ -338,7 +330,7 @@ const webguiFeatures = computed(() => {
             configId: `user.{${username}}.privilege.product.groupaccess.configured`,
             restricted: userConfigData.value?.product_group_access ?? false,
             icon: icons.product,
-            shortLabel: 'Prod.G',
+            shortLabel: 'Product Groups',
         },
     ]
 })

@@ -29,10 +29,26 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
     '@nuxt/icon',
+    '@nuxt/fonts',
     '@nuxtjs/i18n',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
   ],
+
+  fonts: {
+    families: [
+      { name: 'Open Sans', weights: [300, 400, 500, 600, 700] },
+      { name: 'Montserrat', weights: [400, 500, 600, 700] },
+      { name: 'Roboto Mono', weights: [400, 500] },
+    ],
+    defaults: {
+      fallbacks: {
+        serif: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+        'sans-serif': ['ui-sans-serif', 'system-ui', 'sans-serif'],
+        monospace: ['ui-monospace', 'monospace'],
+      },
+    },
+  },
 
   // Disable store auto-scanning to prevent false-positive auto-import
   // of internal Pinia properties (state, storage, pick).

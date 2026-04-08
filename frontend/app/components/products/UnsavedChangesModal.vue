@@ -19,7 +19,7 @@
 		</UButton>
 	</div>
 
-	<UModal v-model:open="open" :title="$t('unsavedChanges')" :ui="{ content: 'max-w-2xl' }">
+	<UModal v-model:open="open" :title="$t('unsavedChanges')" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
 		<template #body>
 			<div class="space-y-3 max-h-[50vh] overflow-y-auto">
 

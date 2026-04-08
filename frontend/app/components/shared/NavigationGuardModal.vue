@@ -1,5 +1,5 @@
 <template>
-	<UModal v-model:open="model" :title="$t('unsavedChanges')">
+	<UModal v-model:open="model" :title="$t('unsavedChanges')" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
 		<template #body>
 			<p class="text-sm">{{ $t('navigateAwayWarning') }}</p>
 		</template>

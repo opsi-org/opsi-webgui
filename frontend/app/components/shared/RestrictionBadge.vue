@@ -2,14 +2,16 @@
     <UTooltip :text="tooltipText">
         <div
             class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-            <div class="relative w-7 h-7 flex items-center justify-center">
-                <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="colorClasses.bg">
-                    <UIcon :name="icon" class="w-3 h-3" :class="colorClasses.text" />
+            <div class="relative w-9 h-9 flex items-center justify-center">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center" :class="colorClasses.bg">
+                    <UIcon :name="icon" class="w-4.5 h-4.5" :class="colorClasses.text" />
                 </div>
                 <UIcon :name="restricted ? icons.lock : icons.check"
-                    class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="colorClasses.badge" />
+                    class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full p-px" :class="colorClasses.badge" />
             </div>
-            <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">{{ label }}</span>
+            <span
+                class="text-[9px] text-[--color-text-muted] font-medium leading-tight text-center max-w-14 truncate">{{
+                label }}</span>
         </div>
     </UTooltip>
 </template>

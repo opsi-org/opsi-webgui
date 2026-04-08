@@ -54,7 +54,7 @@ body {
   font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
 }
 
-/* OPSI Typography - Headings use Montserrat */
+/* OPSI Typography - Headings use Montserrat (UPPERCASE) */
 h1,
 h2,
 h3,
@@ -64,13 +64,21 @@ h6,
 .font-heading {
   font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
   font-weight: 600;
+  text-transform: uppercase;
 }
 
-/* Monospace/Code uses Fira Mono */
+/* Form labels should match table item font size */
+label,
+.form-label {
+  font-size: 0.875rem; /* 14px - matches text-sm used in table cells */
+  line-height: 1.25rem;
+}
+
+/* Monospace/Code uses Roboto Mono */
 code,
 pre,
 .font-mono {
-  font-family: 'Fira Mono', ui-monospace, monospace;
+  font-family: 'Roboto Mono', ui-monospace, monospace;
 }
 
 /* Dark mode overrides - cleaner, less cluttered appearance */
@@ -275,7 +283,7 @@ html.dark select {
 /* Form rows - borderless with hover highlight */
 .form-row {
   padding: 0.5rem 0.75rem;
-  margin: 0 -0.75rem;
+  margin: 0;
   border-radius: 0.5rem;
   transition: background-color 0.1s ease;
 }

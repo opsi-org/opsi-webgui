@@ -52,12 +52,12 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 
 				<div class="mb-6">
 					<div class="flex items-center justify-between mb-3">
-						<p class="text-sm font-semibold uppercase tracking-wide text-muted">{{ $t('newClient') }}</p>
+						<p class="text-sm font-semibold capitalize tracking-wide text-muted">{{ $t('newClient') }}</p>
 					</div>
 					<div class="mb-6">
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 								{{ $t('clientId') }} <span class="text-error">*</span>
 							</span>
 							<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
@@ -74,7 +74,7 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 						</div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 								{{ $t('ipAddress') }}
 							</span>
 							<div class="flex-1">
@@ -84,7 +84,7 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 						</div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 								{{ $t('macAddress') }}
 							</span>
 							<div class="flex-1">
@@ -94,7 +94,7 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 						</div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 								{{ $t('systemUUID') }}
 							</span>
 							<div class="flex-1">
@@ -107,12 +107,12 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 
 				<div class="mb-6">
 					<div class="flex items-center justify-between mb-3">
-						<p class="text-sm font-semibold uppercase tracking-wide text-muted">{{ $t('cloneOptions') }}</p>
+						<p class="text-sm font-semibold capitalize tracking-wide text-muted">{{ $t('cloneOptions') }}</p>
 					</div>
 					<div class="mb-6">
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 								{{ $t('configs') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -121,7 +121,7 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 						</div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 								{{ $t('products') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -130,7 +130,7 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 						</div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 								{{ $t('productProperties') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">

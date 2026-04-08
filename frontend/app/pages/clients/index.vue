@@ -13,17 +13,18 @@
 						size="sm" @click="openProductsPanel" :disabled="isReadOnly">
 						{{ $t('products') }}
 					</UButton>
-					<UButton :icon="icons.add" color="primary" size="sm" @click="openAddPanel" :disabled="isReadOnly || !canCreateClients">
+					<UButton :icon="icons.add" color="primary" size="sm" @click="openAddPanel"
+						:disabled="isReadOnly || !canCreateClients">
 						<span class="hidden sm:inline">{{ $t('addNew') }}</span>
 					</UButton>
 				</template>
 
-				<SharedAlertInline v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4" closable
-					@close="error = null" />
+				<SharedAlertInline v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4"
+					closable @close="error = null" />
 
 				<div v-if="actionStatus" class="mb-3">
-					<SharedAlertInline :color="actionStatus.type" :title="actionStatus.title" :description="actionStatus.message"
-						variant="subtle" closable @close="actionStatus = null" />
+					<SharedAlertInline :color="actionStatus.type" :title="actionStatus.title"
+						:description="actionStatus.message" variant="subtle" closable @close="actionStatus = null" />
 				</div>
 
 				<SharedDataTable :rows="clients" :columns="columns" :loading="loading" table-id="clients"
@@ -127,7 +128,8 @@
 		<template #panel>
 			<div v-if="panelClient">
 				<HostsConfigTabs v-if="panelType === 'config'" ref="configTabsRef" :host-id="panelClient.clientId"
-					host-type="client" :tab="panelTab" panel-mode :readonly="isReadOnly" @update:tab="panelTab = $event" />
+					host-type="client" :tab="panelTab" panel-mode :readonly="isReadOnly"
+					@update:tab="panelTab = $event" />
 				<ClientsLogsView v-if="panelType === 'logs'" :client-id="panelClient.clientId" panel-mode />
 				<ClientsCloneForm v-if="panelType === 'clone'" ref="cloneFormRef" :source-id="panelClient.clientId"
 					panel-mode @saved="fetchClients" />
@@ -374,23 +376,19 @@ async function fetchClients(params?: PageChangeParams) {
 			} else {
 				clients.value = newData
 			}
+			// Fire reachability check in background (non-blocking)
 			checkAllReachability(newData)
-			fetchBlockedClients(newData)
 		}
 	} catch (e) { error.value = (e as Error).message }
 	finally { loading.value = false }
 }
 
-async function fetchBlockedClients(clientList: Client[]) {
+async function fetchBlockedClients() {
 	try {
 		const result = await getBlockedClients()
 		if (result.data) {
-			const blockedIps = new Set(Array.isArray(result.data) ? result.data : Object.keys(result.data))
-			const matched = new Set<string>()
-			for (const c of clientList) {
-				if (c.ipAddress && blockedIps.has(c.ipAddress)) matched.add(c.ipAddress)
-			}
-			blockedClients.value = matched
+			const blockedIps = Array.isArray(result.data) ? result.data : Object.keys(result.data)
+			blockedClients.value = new Set(blockedIps)
 		}
 	} catch { /* silently fail */ }
 }
@@ -413,10 +411,13 @@ async function checkAllReachability(clientList: Client[]) {
 	}
 }
 
-watch(() => selectionStore.selectedServers, () => fetchClients(), { deep: true })
+watch(() => selectionStore.selectedServers, () => {
+	fetchClients()
+	fetchBlockedClients()
+}, { deep: true })
 
 onMounted(async () => {
-	await fetchClients()
+	await Promise.all([fetchClients(), fetchBlockedClients()])
 	// Open panel from URL if client specified
 	const clientId = route.query.client as string | undefined
 	const pType = route.query.panelType as 'config' | 'logs' | 'clone' | undefined
