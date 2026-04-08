@@ -63,11 +63,17 @@
 		</div>
 		<Transition name="tree-expand">
 			<div v-if="hasChildren && isExpanded" class="children-container">
-				<GroupsActionsTreeNode v-for="child in group.children" :key="child.id" :group="child"
+				<GroupsActionsTreeNode v-for="child in visibleChildren" :key="child.id" :group="child"
 					:selected-id="selectedId" :expanded-ids="expandedIds" :group-type="groupType" :is-root-level="false"
 					:root-id="rootId" @select="$emit('select', $event)" @toggle="$emit('toggle', $event)"
 					@create-subgroup="$emit('create-subgroup', $event)" @edit="$emit('edit', $event)"
 					@delete="$emit('delete', $event)" @add-members="$emit('add-members', $event)" />
+				<button v-if="hasMoreChildren" type="button"
+					class="w-full py-1.5 text-xs text-center text-(--color-primary) hover:bg-(--color-surface-hover) rounded transition-colors"
+					:style="{ paddingLeft: `${(props.group.level || 0) * 16 + 24}px` }"
+					@click="childrenLimit += CHILDREN_PAGE_SIZE">
+					{{ $t('showMore') }} ({{ (group.children?.length || 0) - childrenLimit }} {{ $t('remaining') }})
+				</button>
 			</div>
 		</Transition>
 	</div>
@@ -101,9 +107,32 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { isReadOnly, hasHostGroupAccess, hasProductGroupAccess } = useFeatureFlags()
+const { isReadOnly } = useUserPermissions()
 
-const groupDisabled = computed(() => isReadOnly.value || (props.groupType === 'clients' ? !hasHostGroupAccess.value : !hasProductGroupAccess.value))
+const groupDisabled = computed(() => isReadOnly.value)
+
+const CHILDREN_PAGE_SIZE = 100
+const childrenLimit = ref(CHILDREN_PAGE_SIZE)
+
+const hasChildren = computed(() => Boolean(props.group.children?.length))
+const isExpanded = computed(() => props.expandedIds.has(props.group.id))
+const isSelected = computed(() => props.selectedId === props.group.id)
+
+// Reset limit when node is collapsed and re-expanded
+watch(isExpanded, (expanded) => {
+	if (expanded) childrenLimit.value = CHILDREN_PAGE_SIZE
+})
+
+const visibleChildren = computed(() => {
+	const children = props.group.children || []
+	if (children.length <= CHILDREN_PAGE_SIZE) return children
+	return children.slice(0, childrenLimit.value)
+})
+
+const hasMoreChildren = computed(() => {
+	const children = props.group.children || []
+	return children.length > childrenLimit.value
+})
 
 const indentPx = computed(() => {
 	const level = props.group.level || 0
@@ -114,10 +143,6 @@ const treeDepth = computed(() => {
 	const level = props.group.level || 0
 	return level > 0 ? level : 0
 })
-
-const hasChildren = computed(() => Boolean(props.group.children?.length))
-const isExpanded = computed(() => props.expandedIds.has(props.group.id))
-const isSelected = computed(() => props.selectedId === props.group.id)
 
 function handleClick() {
 	emit('select', props.group)
