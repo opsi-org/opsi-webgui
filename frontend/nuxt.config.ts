@@ -91,6 +91,11 @@ export default defineNuxtConfig({
         changeOrigin: true,
         secure: false,
       },
+      '/depot': {
+        target: 'https://localhost:' + CONFD_PORT + '/depot',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 

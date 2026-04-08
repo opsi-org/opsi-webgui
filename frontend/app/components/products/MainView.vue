@@ -50,9 +50,10 @@
 						<div class="flex items-center gap-2">
 							<img v-if="productIcons[(row as ProductRow).productId]"
 								:src="productIcons[(row as ProductRow).productId]"
-								:alt="(row as ProductRow).productId"
+								:alt="(row as ProductRow).productId" loading="lazy"
 								class="w-5 h-5 shrink-0 rounded object-contain"
 								@error="($event.target as HTMLImageElement).style.display = 'none'" />
+							<UIcon v-else :name="icons.product" class="w-4 h-4 shrink-0 text-neutral-400" />
 							<UIcon v-if="(row as ProductRow).locked" :name="icons.lock"
 								class="w-3.5 h-3.5 text-red-500 shrink-0" :title="$t('locked')" />
 							<span class="text-sm text-(--color-text)">{{ (row as ProductRow).productId }}</span>
@@ -166,7 +167,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const { getProducts, setClientProductActions, processActionRequests, getProductIcons } = useApiHelpers()
 const selectionStore = useSelectionStore()
-const { isReadOnly } = useFeatureFlags()
+const { isReadOnly } = useUserPermissions()
 const router = useRouter()
 const route = useRoute()
 

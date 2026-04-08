@@ -736,11 +736,73 @@ def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statemen
     return RESTResponse(http_status=http_status, data=result_data)
 
 
+# Cache for product icons (avoid scanning depot on every request)
+_product_icons_cache: Dict[str, str] = {}
+_product_icons_cache_time: float = 0
+_PRODUCT_ICONS_CACHE_TTL: int = 300  # 5 minutes
+
+def _scan_product_icons() -> Dict[str, str]:
+    """Scan depot directory for product icon files.
+    Reads productIconFilePath from opsi-meta-data.toml when available.
+    """
+    import os
+    import posixpath
+
+    try:
+        import tomllib
+    except ModuleNotFoundError:
+        import tomli as tomllib  # type: ignore[no-redef]
+
+    from opsiconfd.config import DEPOT_DIR  # type: ignore[import]
+
+    icons_map: Dict[str, str] = {}
+    try:
+        for entry in os.scandir(DEPOT_DIR):
+            if not entry.is_dir():
+                continue
+            product_id = entry.name
+
+            meta_path = os.path.join(entry.path, "opsi-meta-data.toml")
+            if not os.path.isfile(meta_path):
+                continue
+            try:
+                with open(meta_path, "rb") as f:
+                    meta = tomllib.load(f)
+                product_meta = meta.get("product", {})
+                icon_file = product_meta.get(
+                    "productIconFilePath", ""
+                ) or product_meta.get("product_icon_file_path", "")
+                if not icon_file:
+                    continue
+                icon_file = icon_file.replace("\\", "/")
+                normalized = posixpath.normpath(icon_file)
+                if normalized.startswith("..") or normalized.startswith("/"):
+                    continue
+                if os.path.isfile(os.path.join(entry.path, normalized)):
+                    icons_map[product_id] = f"/depot/{product_id}/{normalized}"
+            except Exception:
+                pass
+    except Exception:
+        pass
+    return icons_map
+
+
 @product_router.get("/api/opsidata/producticons")
-async def product_icons() -> JSONResponse:
-    return JSONResponse(
-        {"result": {"opsi-client-agent": "assets/images/product_icons/opsi-logo.png"}}
-    )
+def product_icons() -> JSONResponse:
+    import time
+
+    global _product_icons_cache, _product_icons_cache_time
+
+    now = time.time()
+    if (
+        _product_icons_cache
+        and (now - _product_icons_cache_time) < _PRODUCT_ICONS_CACHE_TTL
+    ):
+        return JSONResponse({"result": _product_icons_cache})
+
+    _product_icons_cache = _scan_product_icons()
+    _product_icons_cache_time = now
+    return JSONResponse({"result": _product_icons_cache})
 
 
 class Property(BaseModel):  # pylint: disable=too-few-public-methods
