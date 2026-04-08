@@ -1,17 +1,19 @@
 <template>
     <LayoutsPageLayout :show-search="false" :show-refresh="true" :loading="loading" @refresh="refreshAll">
         <div class="h-full flex flex-col min-h-0 overflow-y-auto gap-3 lg:gap-4 lg:justify-between">
-            <!-- Row 1: Config Server, Health Check, User Config -->
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4 shrink-0">
+            <!-- Row 1: Config Server, Health Check, User Config & Restrictions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 shrink-0">
                 <DashboardInfoCard :icon="icons.serverStack" :label="$t('configServer')" :value="serverHostname" />
                 <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/healthcheck')">
                     <div class="flex items-center gap-2 mb-3">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-emerald-100 dark:bg-emerald-900/30">
+                        <div
+                            class="w-7 h-7 rounded-lg flex items-center justify-center bg-emerald-100 dark:bg-emerald-900/30">
                             <UIcon :name="icons.health" class="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <span class="text-sm font-semibold">{{ $t('healthCheck') }}</span>
-                        <UIcon :name="icons.chevronRight" class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <UIcon :name="icons.chevronRight"
+                            class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div v-if="healthCounts" class="flex items-center gap-2 flex-wrap">
                         <UBadge v-if="healthCounts.error > 0" color="error">
@@ -24,178 +26,102 @@
                             {{ healthCounts.ok }} {{ $t('ok') }}
                         </UBadge>
                     </div>
-                    <p v-else class="text-xs text-[--color-text-muted]">{{ $t('loading') }}</p>
+                    <SharedLoadingSpinner v-else size="sm" />
                 </div>
 
-                <!-- User Configuration Card -->
-                <div class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 lg:col-span-2">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-opsi-blue/20 to-opsi-blue/5">
+                <!-- Merged User Config + Restrictions Card -->
+                <div
+                    class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 md:col-span-2">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div
+                            class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-opsi-blue/20 to-opsi-blue/5">
                             <UIcon :name="icons.user" class="w-4.5 h-4.5 text-opsi-blue" />
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-semibold truncate text-sm">{{ userConfigResponse?.user || userStore.username || '-' }}</p>
-                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-widest font-medium">{{ $t('currentUser') }}</p>
+                            <p class="font-semibold truncate text-sm">{{ userConfigResponse?.user || userStore.username
+                                || '-' }}</p>
+                            <p class="text-[10px] text-[--color-text-muted] uppercase tracking-widest font-medium">{{
+                                $t('currentUser') }}</p>
                         </div>
-                        <UBadge v-if="userConfigData?.read_only" color="warning" variant="subtle" size="sm" class="shrink-0">
-                            {{ $t('readOnlyMode') }}
+                        <UBadge v-if="webguiRestrictionsCount > 0" color="warning" variant="subtle" size="sm"
+                            class="shrink-0">
+                            {{ webguiRestrictionsCount }} {{ $t('restricted') }}
+                        </UBadge>
+                        <UBadge v-else color="success" variant="subtle" size="sm" class="shrink-0">
+                            {{ $t('opsiConfig.serverFeatures.allEnabled') }}
                         </UBadge>
                     </div>
-                    <div v-if="userConfigData" class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
-                        <UTooltip :text="`read_only — ${$t('readOnlyTooltip')}`">
-                            <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="relative w-7 h-7 flex items-center justify-center">
-                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.read_only ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-emerald-100 dark:bg-emerald-900/30'">
-                                        <UIcon :name="icons.eye" class="w-3 h-3" :class="userConfigData.read_only ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'" />
-                                    </div>
-                                    <UIcon :name="userConfigData.read_only ? icons.lock : icons.check" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.read_only ? 'text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900' : 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900'" />
-                                </div>
-                                <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">RO</span>
-                            </div>
-                        </UTooltip>
-                        <UTooltip :text="`server_write — ${$t('serverWriteAccessTooltip')}`">
-                            <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="relative w-7 h-7 flex items-center justify-center">
-                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.server_write_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
-                                        <UIcon :name="icons.server" class="w-3 h-3" :class="userConfigData.server_write_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
-                                    </div>
-                                    <UIcon :name="icons.pencil" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.server_write_access ? 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' : 'text-[--color-text-muted] bg-gray-100 dark:bg-white/10'" />
-                                </div>
-                                <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">Server</span>
-                            </div>
-                        </UTooltip>
-                        <UTooltip :text="`depot_access — ${$t('depotAccessTooltip')}`">
-                            <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="relative w-7 h-7 flex items-center justify-center">
-                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.depot_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
-                                        <UIcon :name="icons.serverStack" class="w-3 h-3" :class="userConfigData.depot_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
-                                    </div>
-                                    <UIcon :name="icons.key" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.depot_access ? 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' : 'text-[--color-text-muted] bg-gray-100 dark:bg-white/10'" />
-                                </div>
-                                <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">Depot</span>
-                            </div>
-                        </UTooltip>
-                        <UTooltip :text="`client_creation — ${$t('clientCreationTooltip')}`">
-                            <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="relative w-7 h-7 flex items-center justify-center">
-                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.client_creation ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
-                                        <UIcon :name="icons.client" class="w-3 h-3" :class="userConfigData.client_creation ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
-                                    </div>
-                                    <UIcon :name="icons.add" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.client_creation ? 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' : 'text-[--color-text-muted] bg-gray-100 dark:bg-white/10'" />
-                                </div>
-                                <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">Create</span>
-                            </div>
-                        </UTooltip>
-                        <UTooltip :text="`host_groups — ${$t('hostGroupAccessTooltip')}`">
-                            <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="relative w-7 h-7 flex items-center justify-center">
-                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.host_group_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
-                                        <UIcon :name="icons.client" class="w-3 h-3" :class="userConfigData.host_group_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
-                                    </div>
-                                    <UIcon :name="icons.group" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.host_group_access ? 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' : 'text-[--color-text-muted] bg-gray-100 dark:bg-white/10'" />
-                                </div>
-                                <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">Groups</span>
-                            </div>
-                        </UTooltip>
-                        <UTooltip :text="`product_groups — ${$t('productGroupAccessTooltip')}`">
-                            <div class="flex flex-col items-center gap-0.5 rounded-lg py-1.5 cursor-help transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
-                                <div class="relative w-7 h-7 flex items-center justify-center">
-                                    <div class="w-6 h-6 rounded-full flex items-center justify-center" :class="userConfigData.product_group_access ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-gray-100 dark:bg-white/10'">
-                                        <UIcon :name="icons.product" class="w-3 h-3" :class="userConfigData.product_group_access ? 'text-emerald-600 dark:text-emerald-400' : 'text-[--color-text-muted]'" />
-                                    </div>
-                                    <UIcon :name="icons.group" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full p-px" :class="userConfigData.product_group_access ? 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900' : 'text-[--color-text-muted] bg-gray-100 dark:bg-white/10'" />
-                                </div>
-                                <span class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center">Prod.G</span>
-                            </div>
-                        </UTooltip>
+                    <div v-if="userConfigData" class="grid grid-cols-4 sm:grid-cols-7 gap-1">
+                        <SharedRestrictionBadge v-for="feat in webguiFeatures" :key="feat.key" :icon="feat.icon"
+                            :label="feat.shortLabel" :restricted="feat.restricted"
+                            :tooltip-text="feat.restricted ? $t(`opsiConfig.serverFeatures.${feat.i18nKey}.disabled`) : $t(`opsiConfig.serverFeatures.${feat.i18nKey}.enabled`)" />
                     </div>
                 </div>
             </div>
 
-            <!-- Row 2: System Info & Clients -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 shrink-0">
-                <div class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4">
+            <!-- Row 2: System Info -->
+            <div class="shrink-0">
+                <div class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
+                    @click="navigateTo('/admin/diagnostics/system')">
                     <div class="flex items-center gap-2 mb-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-violet-100 dark:bg-violet-900/30">
+                        <div
+                            class="w-7 h-7 rounded-lg flex items-center justify-center bg-violet-100 dark:bg-violet-900/30">
                             <UIcon :name="icons.server" class="w-4 h-4 text-violet-600 dark:text-violet-400" />
                         </div>
                         <h3 class="text-sm font-semibold">{{ $t('systemInfo') }}</h3>
+                        <UIcon :name="icons.chevronRight"
+                            class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                    <div v-if="diagnosticData" class="space-y-0.5 text-sm">
-                        <div class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">opsiconfd_version</span>
-                            <span class="font-medium truncate ml-2 text-xs">{{ diagnosticData.opsiconfd_version }}</span>
+                    <div v-if="diagnosticData" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0.5 text-sm">
+                        <div
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            <span class="text-[--color-text-muted] font-mono text-xs">opsiconfd</span>
+                            <span class="font-medium truncate ml-2 text-xs">{{ diagnosticData.opsiconfd_version
+                            }}</span>
                         </div>
-                        <div v-if="diagnosticData.system" class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">system</span>
-                            <span class="font-medium truncate ml-2 text-xs">{{ (diagnosticData.system as Record<string, unknown>).product_name }}</span>
+                        <div v-if="diagnosticData.os_release"
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            <span class="text-[--color-text-muted] font-mono text-xs">os</span>
+                            <span class="font-medium truncate ml-2 text-xs">
+                                {{ (diagnosticData.os_release as Record<string, unknown>).PRETTY_NAME }}</span>
                         </div>
-                        <div v-if="diagnosticData.os_release" class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">os_release</span>
-                            <span class="font-medium truncate ml-2 text-xs">{{ (diagnosticData.os_release as Record<string, unknown>).PRETTY_NAME }}</span>
-                        </div>
-                        <div v-if="diagnosticData.memory" class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                            <span class="text-[--color-text-muted] font-mono text-xs">memory</span>
-                            <span class="font-medium text-xs">{{ (diagnosticData.memory as Record<string, unknown>).total_human }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent }}% used)</span>
-                        </div>
-                        <div v-if="diagnosticData.processor" class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                        <div v-if="diagnosticData.processor"
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                             <span class="text-[--color-text-muted] font-mono text-xs">cpu</span>
-                            <span class="font-medium truncate ml-2 text-xs">{{ (diagnosticData.processor as Record<string, unknown>).cpu_count }} cores</span>
+                            <span class="font-medium truncate ml-2 text-xs">
+                                {{ (diagnosticData.processor as Record<string, unknown>).cpu_count }} cores · {{
+                                    sysProcessorModel }}</span>
+                        </div>
+                        <div v-if="diagnosticData.memory"
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            <span class="text-[--color-text-muted] font-mono text-xs">memory</span>
+                            <span class="font-medium text-xs">{{ (diagnosticData.memory as Record<string, unknown>
+                            ).total_human }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent
+                                    }}%)</span>
+                        </div>
+                        <div v-if="sysHostname"
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            <span class="text-[--color-text-muted] font-mono text-xs">hostname</span>
+                            <span class="font-medium truncate ml-2 text-xs">{{ sysHostname }}</span>
+                        </div>
+                        <div v-if="sysIsDocker !== null"
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            <span class="text-[--color-text-muted] font-mono text-xs">docker</span>
+                            <UBadge :color="sysIsDocker ? 'info' : 'neutral'" variant="subtle" size="xs">{{ sysIsDocker
+                                ? 'Yes' : 'No' }}</UBadge>
+                        </div>
+                        <div v-if="sysPythonVersion"
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            <span class="text-[--color-text-muted] font-mono text-xs">python</span>
+                            <span class="font-medium truncate ml-2 text-xs">{{ sysPythonVersion }}</span>
+                        </div>
+                        <div v-if="sysLoadAvg"
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            <span class="text-[--color-text-muted] font-mono text-xs">load</span>
+                            <span class="font-medium truncate ml-2 text-xs">{{ sysLoadAvg }}</span>
                         </div>
                     </div>
-                    <p v-else class="text-xs text-[--color-text-muted]">{{ $t('loading') }}</p>
-                </div>
-                <!-- Clients card with icon layout -->
-                <div class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-sky-100 dark:bg-sky-900/30">
-                            <UIcon :name="icons.client" class="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                        </div>
-                        <h3 class="text-sm font-semibold">{{ $t('clients') }}</h3>
-                    </div>
-                    <div v-if="sharedClientNumbers" class="flex items-center justify-around gap-2 py-1">
-                        <UTooltip :text="$t('activeClients')">
-                            <div class="flex flex-col items-center gap-1 cursor-default">
-                                <div class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                                    <UIcon :name="icons.checkCircle" class="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                                </div>
-                                <span class="text-sm font-bold">{{ sharedClientNumbers.all }}</span>
-                            </div>
-                        </UTooltip>
-                        <UTooltip text="Windows">
-                            <div class="flex flex-col items-center gap-1 cursor-default">
-                                <div class="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                                    <UIcon :name="icons.windows" class="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                                </div>
-                                <span class="text-sm font-bold">{{ sharedClientNumbers.windows }}</span>
-                            </div>
-                        </UTooltip>
-                        <UTooltip text="Linux">
-                            <div class="flex flex-col items-center gap-1 cursor-default">
-                                <div class="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-                                    <UIcon :name="icons.linux" class="w-4 h-4 text-orange-600 dark:text-orange-400" />
-                                </div>
-                                <span class="text-sm font-bold">{{ sharedClientNumbers.linux }}</span>
-                            </div>
-                        </UTooltip>
-                        <UTooltip text="macOS">
-                            <div class="flex flex-col items-center gap-1 cursor-default">
-                                <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center">
-                                    <UIcon :name="icons.apple" class="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                                </div>
-                                <span class="text-sm font-bold">{{ sharedClientNumbers.macos }}</span>
-                            </div>
-                        </UTooltip>
-                        <UTooltip :text="$t('inactiveClients')">
-                            <div class="flex flex-col items-center gap-1 cursor-default">
-                                <div class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                                    <UIcon :name="icons.shutdown" class="w-4 h-4 text-red-500 dark:text-red-400" />
-                                </div>
-                                <span class="text-sm font-bold">{{ sharedClientNumbers.inactive }}</span>
-                            </div>
-                        </UTooltip>
-                    </div>
-                    <p v-else class="text-xs text-[--color-text-muted]">{{ $t('loading') }}</p>
+                    <SharedLoadingSpinner v-else size="sm" />
                 </div>
             </div>
 
@@ -203,44 +129,88 @@
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 shrink-0">
                 <DashboardStatCard :icon="icons.server" :value="depotCount" :label="$t('totalServers')"
                     @click="navigateTo('/servers')" />
-                <DashboardStatCard :icon="icons.client" :value="clientCount" :label="$t('totalClients')"
-                    @click="navigateTo('/clients')" />
 
-                <DashboardStatCard :icon="icons.product" :value="totalProductCount" :label="$t('totalProducts')"
+                <!-- Clients stat card with OS + active/inactive breakdown -->
+                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
+                    @click="navigateTo('/clients')">
+                    <div class="flex items-center justify-between mb-1">
+                        <UIcon :name="icons.client" class="w-5 h-5 text-sky-600 dark:text-sky-400" />
+                        <UIcon :name="icons.chevronRight"
+                            class="w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <p class="text-2xl font-bold mb-0.5">{{ clientCount ?? '-' }}</p>
+                    <p class="text-[--color-text-muted] text-sm mb-2">{{ $t('totalClients') }}</p>
+                    <div v-if="sharedClientNumbers"
+                        class="space-y-1 pt-1.5 border-t border-gray-100 dark:border-white/5">
+                        <div class="flex items-center gap-2 text-xs">
+                            <UIcon :name="icons.windows" class="w-3 h-3 text-sky-500 shrink-0" />
+                            <span class="font-medium">{{ sharedClientNumbers.windows }}</span>
+                            <UIcon :name="icons.linux" class="w-3 h-3 text-orange-500 shrink-0 ml-1" />
+                            <span class="font-medium">{{ sharedClientNumbers.linux }}</span>
+                            <UIcon :name="icons.apple" class="w-3 h-3 text-gray-500 shrink-0 ml-1" />
+                            <span class="font-medium">{{ sharedClientNumbers.macos }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-[--color-text-muted]">
+                            <span class="flex items-center gap-1"><span
+                                    class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>{{
+                                        sharedClientNumbers.all }} {{ $t('activeClients').toLowerCase() }}</span>
+                            <span class="flex items-center gap-1"><span
+                                    class="w-1.5 h-1.5 rounded-full bg-red-400 inline-block"></span>{{
+                                        sharedClientNumbers.inactive }} {{ $t('inactiveClients').toLowerCase() }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products stat card with total + type breakdown -->
+                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
                     @click="navigateTo('/products')">
-                    <span class="text-[--color-text-muted]">
-                        <span class="font-medium text-[--color-text]">{{ localbootProductCount }}</span>
-                        {{ $t('localbootProducts') }}
-                    </span>
-                    <span class="text-[--color-text-muted]">
-                        <span class="font-medium text-[--color-text]">{{ netbootProductCount }}</span>
-                        {{ $t('netbootProducts') }}
-                    </span>
-                </DashboardStatCard>
+                    <div class="flex items-center justify-between mb-2">
+                        <UIcon :name="icons.product" class="w-5 h-5 text-[--color-text-muted]" />
+                        <UIcon :name="icons.chevronRight"
+                            class="w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <p class="text-2xl font-bold mb-1">{{ totalProductCount ?? '-' }}</p>
+                    <p class="text-[--color-text-muted] text-sm">{{ $t('totalProducts') }}</p>
+                    <div class="mt-2 pt-2 border-t border-gray-100 dark:border-white/5 flex gap-2 text-xs">
+                        <span class="text-[--color-text-muted]">
+                            <span class="font-medium text-[--color-text]">{{ localbootProductCount }}</span>
+                            {{ $t('localbootProducts') }}
+                        </span>
+                        <span class="text-[--color-text-muted]">
+                            <span class="font-medium text-[--color-text]">{{ netbootProductCount }}</span>
+                            {{ $t('netbootProducts') }}
+                        </span>
+                    </div>
+                </div>
 
                 <!-- Modules Card -->
                 <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/modules')">
                     <div class="flex items-center justify-between mb-2">
                         <img :src="opsiLogoSrc" alt="opsi" class="w-5 h-5" />
-                        <UIcon :name="icons.chevronRight" class="w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <UIcon :name="icons.chevronRight"
+                            class="w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <p class="text-2xl font-bold mb-1">{{ modulesAvailableCount ?? '-' }}</p>
                     <p class="text-[--color-text-muted] text-sm">{{ $t('opsiModules') }}</p>
                     <div v-if="obsoleteModulesCount > 0" class="mt-2 pt-2 border-t border-gray-100 dark:border-white/5">
                         <div class="flex items-center gap-1.5 mb-1">
                             <UIcon :name="icons.warning" class="w-3.5 h-3.5 text-amber-500" />
-                            <span class="text-xs font-medium text-amber-600 dark:text-amber-400">{{ obsoleteModulesCount }} {{ $t('obsolete') }}</span>
+                            <span class="text-xs font-medium text-amber-600 dark:text-amber-400">{{ obsoleteModulesCount
+                            }} {{ $t('obsolete') }}</span>
                         </div>
                         <div class="flex flex-wrap gap-1">
                             <span v-for="mod in sharedObsoleteModules.slice(0, 3)" :key="mod"
                                 class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 font-mono">
                                 {{ mod }}
                             </span>
-                            <span v-if="sharedObsoleteModules.length > 3"
-                                class="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/10 text-[--color-text-muted]">
-                                +{{ sharedObsoleteModules.length - 3 }}
-                            </span>
+                            <UTooltip v-if="sharedObsoleteModules.length > 3"
+                                :text="sharedObsoleteModules.slice(3).join(', ')">
+                                <span
+                                    class="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/10 text-[--color-text-muted] cursor-help">
+                                    +{{ sharedObsoleteModules.length - 3 }}
+                                </span>
+                            </UTooltip>
                         </div>
                     </div>
                 </div>
@@ -253,7 +223,8 @@
                         <UIcon :name="icons.warning" class="w-4 h-4 text-red-500" />
                     </div>
                     <h3 class="text-sm font-semibold">{{ $t('failedClients') }}</h3>
-                    <UBadge v-if="failedClients && Object.keys(failedClients).length > 0" color="error" variant="subtle" size="sm">
+                    <UBadge v-if="failedClients && Object.keys(failedClients).length > 0" color="error" variant="subtle"
+                        size="sm">
                         {{ Object.keys(failedClients).length }}
                     </UBadge>
                 </div>
@@ -286,7 +257,7 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 const userStore = useUserStore()
 const colorMode = useColorMode()
-const { getDiagnosticData, getUserConfiguration } = useApiHelpers()
+const { getDiagnosticData, getUserConfiguration, getDisabledFeatures } = useApiHelpers()
 const {
     data: sharedDiagData,
     healthCounts: sharedHealthCounts,
@@ -313,6 +284,75 @@ const userConfigData = ref<{
 } | null>(null)
 const healthCounts = sharedHealthCounts
 
+// Features/restrictions actually enforced in opsi-webgui (not opsiconfd admin page features)
+// Each entry maps to a real server config or disabled-features token
+const webguiFeatures = computed(() => {
+    const username = userConfigResponse.value?.user || userStore.username || '{user}'
+    const terminalDisabled = userStore.disabledFeatures.includes('messagebus_terminal') || userStore.disabledFeatures.includes('terminal')
+    return [
+        {
+            key: 'terminal',
+            i18nKey: 'terminal',
+            configId: 'messagebus_terminal',
+            restricted: terminalDisabled,
+            icon: 'i-heroicons-command-line',
+            shortLabel: 'Terminal',
+        },
+        {
+            key: 'readOnly',
+            i18nKey: 'readOnly',
+            configId: `user.{${username}}.privilege.host.all.registered_readonly`,
+            restricted: userConfigData.value?.read_only ?? false,
+            icon: icons.eye,
+            shortLabel: 'RO',
+        },
+        {
+            key: 'serverWrite',
+            i18nKey: 'serverWrite',
+            configId: `user.{${username}}.privilege.host.opsiserver.write`,
+            restricted: !(userConfigData.value?.server_write_access ?? true),
+            icon: icons.server,
+            shortLabel: 'Server',
+        },
+        {
+            key: 'depotAccess',
+            i18nKey: 'depotAccess',
+            configId: `user.{${username}}.privilege.host.depotaccess.configured`,
+            restricted: userConfigData.value?.depot_access ?? false,
+            icon: icons.serverStack,
+            shortLabel: 'Depot',
+        },
+        {
+            key: 'clientCreation',
+            i18nKey: 'clientCreation',
+            configId: `user.{${username}}.privilege.host.createclient`,
+            restricted: !(userConfigData.value?.client_creation ?? true),
+            icon: icons.client,
+            shortLabel: 'Create',
+        },
+        {
+            key: 'hostGroupAccess',
+            i18nKey: 'hostGroupAccess',
+            configId: `user.{${username}}.privilege.host.groupaccess.configured`,
+            restricted: userConfigData.value?.host_group_access ?? false,
+            icon: icons.group,
+            shortLabel: 'Groups',
+        },
+        {
+            key: 'productGroupAccess',
+            i18nKey: 'productGroupAccess',
+            configId: `user.{${username}}.privilege.product.groupaccess.configured`,
+            restricted: userConfigData.value?.product_group_access ?? false,
+            icon: icons.product,
+            shortLabel: 'Prod.G',
+        },
+    ]
+})
+
+const webguiRestrictionsCount = computed(() =>
+    webguiFeatures.value.filter(f => f.restricted).length
+)
+
 const opsiLogoSrc = computed(() => colorMode.preference === 'dark' ? opsiLogoDark : opsiLogoLight)
 
 const serverHostname = computed(() => {
@@ -337,6 +377,45 @@ const activeClientCount = computed(() => {
     if (!diagnosticData.value) return null
     const clients = diagnosticData.value.clients as Record<string, unknown> | undefined
     return clients?.active_client_count as number ?? null
+})
+
+const sysHostname = computed(() => {
+    if (!diagnosticData.value) return null
+    const env = diagnosticData.value.environment as Record<string, string> | undefined
+    return env?.HOSTNAME || env?.OPSI_HOSTNAME || null
+})
+
+const sysIsDocker = computed(() => {
+    if (!diagnosticData.value) return null
+    const system = diagnosticData.value.system as Record<string, unknown> | undefined
+    if (!system || system.docker === undefined) return null
+    return system.docker as boolean
+})
+
+const sysPythonVersion = computed(() => {
+    if (!diagnosticData.value) return null
+    const pyInfo = diagnosticData.value.python_info as Record<string, unknown> | undefined
+    if (!pyInfo?.version) return null
+    const full = pyInfo.version as string
+    // Extract just the version number (e.g. "3.14.0" from "3.14.0 (main, ...)")
+    return full.split(' ')[0] || full
+})
+
+const sysProcessorModel = computed(() => {
+    if (!diagnosticData.value) return null
+    const processor = diagnosticData.value.processor as Record<string, unknown> | undefined
+    if (!processor?.model) return null
+    const model = processor.model as string
+    // Shorten long model names
+    return model.replace(/\(R\)/g, '').replace(/\(TM\)/g, '').replace(/CPU\s+/g, '').replace(/\s+/g, ' ').trim()
+})
+
+const sysLoadAvg = computed(() => {
+    if (!diagnosticData.value) return null
+    const processor = diagnosticData.value.processor as Record<string, unknown> | undefined
+    if (!processor?.load_avg) return null
+    const load = processor.load_avg as number[]
+    return load.map(v => v.toFixed(2)).join(' / ')
 })
 
 const totalProductCount = computed(() => {
@@ -417,7 +496,7 @@ async function fetchUserConfig() {
         if (data.configuration) {
             userConfigData.value = {
                 read_only: data.configuration.read_only ?? false,
-                server_write_access: data.configuration.server_write_access ?? false,
+                server_write_access: data.configuration.server_write_access ?? true,
                 depot_access: data.configuration.depot_access ?? false,
                 host_group_access: data.configuration.host_group_access ?? false,
                 product_group_access: data.configuration.product_group_access ?? false,
@@ -435,9 +514,17 @@ async function refreshAll() {
         await Promise.all([
             refreshDiag(),
             fetchUserConfig(),
+            fetchDisabledFeatures(),
         ])
     } finally {
         loading.value = false
+    }
+}
+
+async function fetchDisabledFeatures() {
+    const { data } = await getDisabledFeatures()
+    if (data && Array.isArray(data)) {
+        userStore.setDisabledFeatures(data)
     }
 }
 

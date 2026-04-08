@@ -11,9 +11,9 @@ import { useUserStore } from '~/stores/userStore'
  *   - Edit controls (inputs, save buttons, action dropdowns) are disabled.
  *
  * server_write_access: When false, server/configserver settings are read-only.
- * depot_access: When true, only configured depots are visible.
- * host_group_access: When true, only configured host groups are visible.
- * product_group_access: When true, only configured product groups are visible.
+ * depot_access (depotAccessRestricted): When true, user is RESTRICTED to configured depots only.
+ * host_group_access (hostGroupAccessRestricted): When true, user is RESTRICTED to configured host groups only.
+ * product_group_access (productGroupAccessRestricted): When true, user is RESTRICTED to configured product groups only.
  * client_creation: When false, cannot create new clients.
  *
  */
@@ -34,9 +34,10 @@ export function useUserPermissions() {
         !userStore.readOnly &&
         isFeatureEnabled('terminal') &&
         isFeatureEnabled('messagebus_terminal'),
-      '/clients/add': () => userStore.clientCreation,
-      '/clients/clone': () => userStore.clientCreation,
+      '/clients/add': () => !userStore.readOnly && userStore.clientCreation,
+      '/clients/clone': () => !userStore.readOnly && userStore.clientCreation,
       '/admin/maintenance': () => !userStore.readOnly,
+      '/servers/configuration': () => !userStore.readOnly || userStore.serverWriteAccess,
     }
 
     for (const [pattern, check] of Object.entries(routeFeatureMap)) {
@@ -67,9 +68,9 @@ export function useUserPermissions() {
   const canCreateClients = computed(() => userStore.clientCreation)
   const isReadOnly = computed(() => userStore.readOnly)
   const hasServerWriteAccess = computed(() => userStore.serverWriteAccess)
-  const hasDepotAccess = computed(() => userStore.serverAccess)
-  const hasHostGroupAccess = computed(() => userStore.hostGroupAccess)
-  const hasProductGroupAccess = computed(() => userStore.productGroupAccess)
+  const isDepotAccessRestricted = computed(() => userStore.depotAccessRestricted)
+  const isHostGroupAccessRestricted = computed(() => userStore.hostGroupAccessRestricted)
+  const isProductGroupAccessRestricted = computed(() => userStore.productGroupAccessRestricted)
   const isTerminalEnabled = computed(
     () => isFeatureEnabled('terminal') && isFeatureEnabled('messagebus_terminal')
   )
@@ -82,9 +83,9 @@ export function useUserPermissions() {
     canCreateClients,
     isReadOnly,
     hasServerWriteAccess,
-    hasDepotAccess,
-    hasHostGroupAccess,
-    hasProductGroupAccess,
+    isDepotAccessRestricted,
+    isHostGroupAccessRestricted,
+    isProductGroupAccessRestricted,
     isTerminalEnabled,
   }
 }

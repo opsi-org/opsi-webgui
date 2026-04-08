@@ -12,7 +12,7 @@ Row-level client actions dropdown for the clients table.
 		</UTooltip>
 
 		<UTooltip :text="String($t('clone'))">
-			<UButton :icon="icons.clone" variant="ghost" color="neutral" size="xs" @click="emit('open-clone')" />
+			<UButton :icon="icons.clone" variant="ghost" color="neutral" size="xs" @click="emit('open-clone')" :disabled="isReadOnly || !canCreateClients" />
 		</UTooltip>
 
 		<UDropdownMenu :items="clientActionItems">
@@ -319,7 +319,7 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { isReadOnly } = useUserPermissions()
+const { isReadOnly, canCreateClients } = useUserPermissions()
 const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deployClientAgent, deleteClient, renameClient, getHostAttributes, getConfigServer } = useApiHelpers()
 
 const loading = ref(false)

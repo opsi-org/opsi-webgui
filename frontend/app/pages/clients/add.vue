@@ -3,13 +3,18 @@ Client Add New page - form for adding a new client.
     <LayoutsPageLayout show-refresh @refresh="resetForm">
         <template #actions>
             <UTooltip :text="$t('addClient')">
-                <UButton color="success" :loading="loading" v-if="canCreate" @click="handleSubmit">
+                <UButton color="success" :loading="loading" v-if="canCreate && canCreateClients && !isReadOnly" @click="handleSubmit">
                     <UIcon :name="icons.add" />
                 </UButton>
             </UTooltip>
         </template>
 
-        <div class="space-y-4">
+        <div v-if="!canCreateClients || isReadOnly" class="flex items-center justify-center h-full">
+            <SharedAlertInline color="warning" :title="$t('permissionDenied')">
+                <template #description>{{ isReadOnly ? $t('opsiConfig.serverFeatures.readOnly.disabled') : $t('opsiConfig.serverFeatures.clientCreation.disabled') }}</template>
+            </SharedAlertInline>
+        </div>
+        <div v-else class="space-y-4">
             <SharedAlertInline v-if="success" color="success" :title="String($t('success'))">
                 <template #description>{{ $t('clientCreatedSuccessfully') }}</template>
             </SharedAlertInline>
@@ -194,6 +199,7 @@ const { t: $t } = useI18n()
 const { createClient, deployClientAgent, getServers, addClientToGroups, setClientProductActions, getClientIds, getServersProducts, getHostGroupIds } = useApiHelpers()
 const selectionStore = useSelectionStore()
 const icons = useIcons()
+const { canCreateClients, isReadOnly } = useUserPermissions()
 
 const loading = ref(false)
 const loadingDepots = ref(false)

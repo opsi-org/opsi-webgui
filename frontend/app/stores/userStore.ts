@@ -21,9 +21,9 @@ export const useUserStore = defineStore('user', {
     config: undefined as unknown,
     readOnly: false,
     serverWriteAccess: true,
-    serverAccess: true,
-    hostGroupAccess: true,
-    productGroupAccess: true,
+    depotAccessRestricted: false,
+    hostGroupAccessRestricted: false,
+    productGroupAccessRestricted: false,
     clientCreation: true,
     disabledFeatures: [] as string[],
     healthCounts: {} as Record<string, number>,
@@ -71,9 +71,9 @@ export const useUserStore = defineStore('user', {
     }) {
       this.readOnly = cfg.read_only ?? false
       this.serverWriteAccess = cfg.server_write_access ?? true
-      this.serverAccess = cfg.depot_access ?? true
-      this.hostGroupAccess = cfg.host_group_access ?? true
-      this.productGroupAccess = cfg.product_group_access ?? true
+      this.depotAccessRestricted = cfg.depot_access ?? false
+      this.hostGroupAccessRestricted = cfg.host_group_access ?? false
+      this.productGroupAccessRestricted = cfg.product_group_access ?? false
       this.clientCreation = cfg.client_creation ?? true
       if (cfg.health) {
         this.healthCounts = cfg.health.counts ?? {}

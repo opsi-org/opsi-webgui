@@ -9,6 +9,11 @@
 		<template v-else>
 			<div class="flex items-center gap-1 mb-2 shrink-0">
 				<SharedFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
+				<UTooltip v-if="isDepotAccessRestricted" :text="t('opsiConfig.serverFeatures.depotAccess.disabled')">
+					<UBadge color="warning" variant="subtle" size="xs" class="cursor-help shrink-0">
+						{{ t('restricted') }}
+					</UBadge>
+				</UTooltip>
 				<UTooltip :text="`${t('clearAll')} (${selectionStore.selectedServers.length})`">
 					<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral" @click="clearSelection" />
 				</UTooltip>
@@ -53,6 +58,7 @@ interface ServerItem {
 const icons = useIcons()
 const { t: i18nT } = useI18n()
 const selectionStore = useSelectionStore()
+const { isDepotAccessRestricted } = useUserPermissions()
 const { getServers } = useApiHelpers()
 
 const t = (key: string) => {

@@ -33,9 +33,15 @@
                         <span class="text-sm font-medium text-(--color-text)">{{ activeGroupType === 'clients' ?
                             $t('client-group') :
                             $t('product-group') }}</span>
+                        <UTooltip v-if="(activeGroupType === 'clients' && isHostGroupAccessRestricted) || (activeGroupType === 'products' && isProductGroupAccessRestricted)"
+                            :text="activeGroupType === 'clients' ? $t('opsiConfig.serverFeatures.hostGroupAccess.disabled') : $t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
+                            <UBadge color="warning" variant="subtle" size="xs" class="cursor-help">
+                                {{ $t('restricted') }}
+                            </UBadge>
+                        </UTooltip>
                         <UButton v-if="activeGroupType === 'products'" :icon="icons.group" size="xs" variant="ghost"
                             color="neutral" @click="openCreateModal()" :title="$t('createGroup')"
-                            :disabled="isReadOnly || !hasProductGroupAccess" />
+                            :disabled="isReadOnly" />
                     </div>
                     <SharedFilterInput v-model="searchQuery" size="sm" input-class="w-full" />
                 </div>
@@ -101,21 +107,21 @@
                         <div class="flex gap-1" v-if="!selectedGroup.isSpecial">
                             <UButton :icon="icons.add" variant="ghost" color="neutral" size="xs"
                                 :title="$t('addMembers')" @click="openAddMembersModal(selectedGroup)"
-                                :disabled="isReadOnly || (activeGroupType === 'clients' ? !hasHostGroupAccess : !hasProductGroupAccess)" />
+                                :disabled="isReadOnly" />
                             <UButton :icon="icons.group" variant="ghost" color="neutral" size="xs"
                                 :title="$t('addSubgroup')" @click="openCreateModal(selectedGroup.id)"
-                                :disabled="isReadOnly || (activeGroupType === 'clients' ? !hasHostGroupAccess : !hasProductGroupAccess)" />
+                                :disabled="isReadOnly" />
                             <UButton :icon="icons.pencil" variant="ghost" color="neutral" size="xs" :title="$t('edit')"
                                 @click="openEditModal(selectedGroup)"
-                                :disabled="isReadOnly || (activeGroupType === 'clients' ? !hasHostGroupAccess : !hasProductGroupAccess)" />
+                                :disabled="isReadOnly" />
                             <UButton :icon="icons.delete" variant="ghost" size="xs" color="neutral"
                                 :title="$t('delete')" @click="confirmDeleteGroup(selectedGroup)"
-                                :disabled="isReadOnly || (activeGroupType === 'clients' ? !hasHostGroupAccess : !hasProductGroupAccess)" />
+                                :disabled="isReadOnly" />
                         </div>
                         <div class="flex gap-1" v-else-if="selectedGroup.isSpecial && activeGroupType === 'clients'">
                             <UButton :icon="icons.add" variant="ghost" color="neutral" size="xs"
                                 :title="$t('addSubgroup')" @click="openCreateModal(selectedGroup.id)"
-                                :disabled="isReadOnly || !hasHostGroupAccess" />
+                                :disabled="isReadOnly" />
                         </div>
                     </div>
 
@@ -397,7 +403,7 @@ definePageMeta({ layout: 'default' })
 const icons = useIcons()
 const { t: $t } = useI18n()
 const selectionStore = useSelectionStore()
-const { isReadOnly, hasHostGroupAccess, hasProductGroupAccess } = useUserPermissions()
+const { isReadOnly, isHostGroupAccessRestricted, isProductGroupAccessRestricted } = useUserPermissions()
 const {
     getClientIds,
     getServerIds,

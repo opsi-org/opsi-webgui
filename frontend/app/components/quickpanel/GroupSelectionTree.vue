@@ -2,6 +2,11 @@
 	<div class="flex flex-col h-full min-h-0">
 		<div class="flex items-center gap-1 mb-2 shrink-0">
 			<SharedFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
+			<UTooltip v-if="isGroupRestricted" :text="groupType === 'client' ? t('opsiConfig.serverFeatures.hostGroupAccess.disabled') : t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
+				<UBadge color="warning" variant="subtle" size="xs" class="cursor-help shrink-0">
+					{{ t('restricted') }}
+				</UBadge>
+			</UTooltip>
 			<UButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="t('refresh')"
 				@click="refresh" />
 			<UButton :icon="allExpanded ? icons.chevronUp : icons.chevronDown" size="xs" variant="ghost" color="neutral"
@@ -98,6 +103,11 @@ const props = defineProps<{ groupType: 'client' | 'product'; active?: boolean }>
 const icons = useIcons()
 const { t: i18nT } = useI18n()
 const selectionStore = useSelectionStore()
+const { isHostGroupAccessRestricted, isProductGroupAccessRestricted } = useUserPermissions()
+
+const isGroupRestricted = computed(() =>
+    props.groupType === 'client' ? isHostGroupAccessRestricted.value : isProductGroupAccessRestricted.value
+)
 
 const t = (key: string) => {
 	const translated = i18nT(key)
