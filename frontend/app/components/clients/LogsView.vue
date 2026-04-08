@@ -12,7 +12,7 @@ Can be used both in standalone pages and detail panels.
 			</slot>
 			<USelectMenu v-model="selectedLogTypeValue" :placeholder="$t('selectLogType')" :items="LOG_TYPES"
 				:loading="loading" value-key="value" label-key="label" class="min-w-30" size="sm" />
-			<div v-if="logContent.length > 0" class="flex flex-col gap-1 w-30">
+			<div v-if="logContent.length > 0" class="flex flex-col gap-1 min-w-30">
 				<label class="text-xs font-medium text-muted">
 					{{ $t('logLevel') }}: <span class="font-semibold text-opsi-blue">{{ logLevel }}</span>
 					<span class="ml-1 text-muted">({{ LOG_LEVEL_LABELS[logLevel] }})</span>

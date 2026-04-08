@@ -12,7 +12,7 @@ single editable (select + custom input), plain input.
 
 		<!-- Password -->
 		<template v-else-if="password">
-			<SharedPasswordInput :model-value="stringValue" :disabled="disabled" size="sm" class="flex-1 font-mono"
+			<SharedPasswordInput :model-value="stringValue" :disabled="disabled" size="sm" class="flex-1"
 				@update:model-value="(v: string) => emit('update:modelValue', v)" />
 		</template>
 
@@ -91,7 +91,7 @@ single editable (select + custom input), plain input.
 
 		<!-- Plain input (no possible values, single value) -->
 		<template v-else>
-			<UInput :model-value="stringValue" :disabled="disabled" size="sm" class="flex-1 font-mono"
+			<UInput :model-value="stringValue" :disabled="disabled" size="sm" class="flex-1"
 				@update:model-value="(v: string) => emit('update:modelValue', v)" />
 		</template>
 	</div>

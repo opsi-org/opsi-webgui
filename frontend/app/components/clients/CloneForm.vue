@@ -41,11 +41,11 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 			<div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
 				<div v-if="!panelMode || showSourceInPanel" class="mb-6">
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 							{{ $t('sourceClient') }}
 						</span>
-						<span class="text-sm font-mono flex-1 truncate" :title="resolvedSourceId || undefined">
+						<span class="text-sm flex-1 truncate" :title="resolvedSourceId || undefined">
 							{{ resolvedSourceId }}
 						</span>
 					</div>
@@ -53,12 +53,12 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 
 				<div class="mb-6">
 					<div class="flex items-center justify-between mb-3">
-						<h4 class="text-xs m-0 text-muted">{{ $t('newClient') }}</h4>
+						<h4 class="text-xs m-0">{{ $t('newClient') }}</h4>
 					</div>
 					<div class="mb-6">
 						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
 								{{ $t('clientId') }} <span class="text-error">*</span>
 							</span>
 							<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
@@ -74,8 +74,8 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 							</div>
 						</div>
 						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
 								{{ $t('ipAddress') }}
 							</span>
 							<div class="flex-1">
@@ -84,8 +84,8 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 							</div>
 						</div>
 						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
 								{{ $t('macAddress') }}
 							</span>
 							<div class="flex-1">
@@ -94,8 +94,8 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 							</div>
 						</div>
 						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
 								{{ $t('systemUUID') }}
 							</span>
 							<div class="flex-1">
@@ -108,12 +108,12 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 
 				<div class="mb-6">
 					<div class="flex items-center justify-between mb-3">
-						<h4 class="text-xs m-0 text-muted">{{ $t('cloneOptions') }}</h4>
+						<h4 class="text-xs m-0">{{ $t('cloneOptions') }}</h4>
 					</div>
 					<div class="mb-6">
 						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
 								{{ $t('configs') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -121,8 +121,8 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 							</div>
 						</div>
 						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
 								{{ $t('products') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -130,8 +130,8 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 							</div>
 						</div>
 						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-							<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
 								{{ $t('productProperties') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">

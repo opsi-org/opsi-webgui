@@ -90,7 +90,7 @@
                   <label v-for="col in toggleableColumns" :key="col.key"
                     class="flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer">
                     <input type="checkbox" :checked="isColumnVisibleComputed(col.key)" :disabled="col.alwaysVisible"
-                      class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue disabled:opacity-50"
+                      class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue disabled:opacity-50"
                       @change="tableSettings.toggleColumn(col.key)" />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col)
                     }}</span>
@@ -128,7 +128,7 @@
                   role="columnheader" :aria-label="effectiveSelectionMode === 'multi' ? 'Select all' : 'Selection'">
                   <div class="flex items-center justify-center gap-1">
                     <input v-if="effectiveSelectionMode === 'multi'" type="checkbox" :checked="allSelected"
-                      :indeterminate="someSelected" class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
+                      :indeterminate="someSelected" class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue"
                       aria-label="Select all rows" @change="toggleSelectAll" />
                     <UButton v-if="selectedKeys.length > 0" size="xs" variant="ghost" color="neutral"
                       :icon="sortBySelection ? icons.sortDesc : icons.sort" :class="sortBySelection ? '' : 'opacity-30'"
@@ -184,10 +184,10 @@
                 <td v-if="selectable" class="px-3 py-2 text-center" role="gridcell"
                   @click.stop="handleCheckboxClick(row)">
                   <input v-if="effectiveSelectionMode === 'multi'" type="checkbox" :checked="isSelected(row)"
-                    class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue"
+                    class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue"
                     :aria-label="'Select row ' + getRowKey(row)" />
                   <input v-else type="radio" :checked="isSelected(row)" :name="tableId + '-selection'"
-                    class="border-gray-300 text-opsi-blue focus:ring-opsi-blue"
+                    class="border-(--color-border) text-opsi-blue focus:ring-opsi-blue"
                     :aria-label="'Select row ' + getRowKey(row)" />
                 </td>
 

@@ -18,7 +18,7 @@
 
 						<div class="min-w-0 md:w-2/5 flex items-center gap-1.5">
 							<SharedTooltipTable :rows="getPropertyTooltipRows(prop)">
-								<span class="font-mono text-sm break-all cursor-help" :class="{
+								<span class="text-sm break-all cursor-help" :class="{
 									'italic': prop.anyClientDifferentFromDepot,
 									'font-bold': prop.anyDepotDifferentFromDefault,
 								}">

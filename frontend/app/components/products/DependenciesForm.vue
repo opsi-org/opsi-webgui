@@ -16,7 +16,7 @@
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2 px-2 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<div class="min-w-0 md:w-2/5">
 							<div class="flex items-center gap-2 flex-wrap">
-								<span class="font-mono text-sm font-medium">
+								<span class="text-sm font-medium">
 									{{ dep.requiredProductId }}
 								</span>
 								<UBadge v-if="dep.requiredVersion" color="neutral" variant="soft" size="xs">

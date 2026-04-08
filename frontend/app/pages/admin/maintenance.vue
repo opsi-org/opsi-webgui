@@ -19,7 +19,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
                 <div v-else-if="blockedClientsCount === 0" class="py-6 text-center">
                     <UIcon :name="icons.checkCircle" class="w-10 h-10 text-green-500 mx-auto mb-2" />
-                    <p class="text-gray-500 dark:text-gray-400">{{ $t('message.noBlockedClients') }}</p>
+                    <p class="text-(--color-text-muted)">{{ $t('message.noBlockedClients') }}</p>
                 </div>
                 <div v-else class="space-y-4">
                     <div class="flex gap-2">
@@ -46,7 +46,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
                 <div v-else-if="lockedProductsCount === 0" class="py-6 text-center">
                     <UIcon :name="icons.checkCircle" class="w-10 h-10 text-green-500 mx-auto mb-2" />
-                    <p class="text-gray-500 dark:text-gray-400">{{ $t('message.noLockedProducts') }}</p>
+                    <p class="text-(--color-text-muted)">{{ $t('message.noLockedProducts') }}</p>
                 </div>
                 <div v-else class="space-y-4">
                     <div class="flex gap-2">
@@ -88,8 +88,8 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </button>
                 </div>
                 <div v-if="newAppState.type === 'maintenance'">
-                    <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('optionalSettings')
-                        }}</div>
+                    <div class="text-sm font-medium text-(--color-text-secondary) mb-3">{{ $t('optionalSettings')
+                    }}</div>
                     <div class="space-y-4 border border-yellow-300 dark:border-yellow-700 rounded-lg p-2">
                         <UFormField :label="$t('addressExceptions')">
                             <div class="flex gap-2">
@@ -97,14 +97,14 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                                     size="sm" class="flex-1" @keydown.enter.prevent="addAddressException" />
                                 <UButton color="primary" size="sm" :icon="icons.add" @click="addAddressException">{{
                                     $t('add')
-                                }}</UButton>
+                                    }}</UButton>
                             </div>
                             <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
                                 <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
-                                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-(--color-border) rounded-full">
+                                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-(--color-surface) border border-(--color-border) rounded-full">
                                     {{ addr }}
                                     <button type="button" @click="removeAddressException(idx)"
-                                        class="text-gray-400 hover:text-red-500 transition-colors">
+                                        class="text-(--color-text-muted) hover:text-red-500 transition-colors">
                                         <UIcon :name="icons.x" class="w-3 h-3" />
                                     </button>
                                 </span>
@@ -119,8 +119,9 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 <div class="flex justify-end gap-2 pt-2">
                     <UButton variant="outline" color="neutral" size="sm" @click="resetAppState">{{ $t('reset') }}
                     </UButton>
-                    <UButton color="primary" size="sm" :loading="savingAppState" :disabled="isReadOnly || !hasServerWriteAccess || !newAppState.type"
-                        @click="saveAppState">{{ $t('apply') }}</UButton>
+                    <UButton color="primary" size="sm" :loading="savingAppState"
+                        :disabled="isReadOnly || !hasServerWriteAccess || !newAppState.type" @click="saveAppState">{{
+                        $t('apply') }}</UButton>
                 </div>
             </div>
         </UCard>
@@ -138,8 +139,8 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         <UCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5" />
                         <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
                     </label>
-                    <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('includeInBackup')
-                        }}</div>
+                    <div class="text-sm font-medium text-(--color-text-secondary) mb-3">{{ $t('includeInBackup')
+                    }}</div>
                     <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                         <label
                             class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
@@ -158,8 +159,9 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                             :placeholder="$t('enterEncryptionPassword')" size="sm" />
                     </UFormField>
 
-                    <UButton block color="primary" :icon="icons.copy" :loading="creatingBackup" :disabled="isReadOnly" @click="createBackup">{{
-                        $t('createBackup') }}</UButton>
+                    <UButton block color="primary" :icon="icons.copy" :loading="creatingBackup" :disabled="isReadOnly"
+                        @click="createBackup">{{
+                            $t('createBackup') }}</UButton>
                 </div>
             </UCard>
 
@@ -178,20 +180,21 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                             <div
                                 class="flex items-center gap-3 p-3 rounded-lg border-2 border-dashed border-(--color-border) hover:border-primary-400 transition-colors">
                                 <div
-                                    class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                                    <UIcon :name="icons.upload" class="w-5 h-5 text-gray-400" />
+                                    class="w-10 h-10 rounded-lg bg-(--color-surface) flex items-center justify-center">
+                                    <UIcon :name="icons.upload" class="w-5 h-5 text-(--color-text-muted)" />
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <div v-if="selectedFileName" class="font-medium text-sm truncate">{{
                                         selectedFileName }}</div>
-                                    <div v-else class="text-gray-500 text-sm">{{ $t('clickToSelectFile') }}</div>
+                                    <div v-else class="text-(--color-text-muted) text-sm">{{ $t('clickToSelectFile') }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </UFormField>
                     <div>
-                        <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ $t('restoreOptions')
-                        }}</div>
+                        <div class="text-sm font-medium text-(--color-text-secondary) mb-3">{{ $t('restoreOptions')
+                            }}</div>
                         <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                             <label
                                 class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
@@ -237,7 +240,8 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         </div>
                     </div>
                     <UButton block color="warning" :icon="icons.refresh" :loading="restoringBackup || uploadingFile"
-                        :disabled="isReadOnly || !hasServerWriteAccess || !selectedFile" @click="restoreBackup">{{ $t('restoreBackup') }}</UButton>
+                        :disabled="isReadOnly || !hasServerWriteAccess || !selectedFile" @click="restoreBackup">{{
+                            $t('restoreBackup') }}</UButton>
                 </div>
             </UCard>
         </div>

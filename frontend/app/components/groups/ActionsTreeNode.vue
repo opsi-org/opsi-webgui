@@ -36,7 +36,7 @@
 				{{ group.label }}
 			</span>
 			<span v-if="(group.members?.length || 0) > 0"
-				class="text-[11px] tabular-nums px-1.5 py-0.5 rounded-full bg-(--color-surface-hover) text-(--color-text-muted)">
+				class="text-xs tabular-nums px-1.5 py-0.5 rounded-full bg-(--color-surface-hover) text-(--color-text-muted)">
 				{{ (group.members || []).length }}
 			</span>
 			<div v-if="group.isSpecial && group.label !== 'not_assigned'"

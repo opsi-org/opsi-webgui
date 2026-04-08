@@ -34,31 +34,22 @@
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-sm flex items-center gap-2 m-0">
 						<UIcon :name="currentActionIcon" class="w-5 h-5" :class="currentActionColor" />
-						{{ t(currentAction) }}
+						{{ t(currentAction) }} {{ clientIds.length > 1 ? `(${clientIds.length} ${t('clients')})` : '' }}
 					</h3>
 					<UButton :icon="icons.x" variant="ghost" color="neutral" @click="confirmOpen = false" />
 				</div>
 
-				<SharedAlertInline v-if="statusMessage && statusMessage.type === 'error'" color="error" :title="t('error')"
-					:description="statusMessage.message" variant="subtle" class="mb-3" closable
+				<SharedAlertInline v-if="statusMessage && statusMessage.type === 'error'" color="error"
+					:title="t('error')" :description="statusMessage.message" variant="subtle" class="mb-3" closable
 					@close="statusMessage = null" />
 
-				<!-- <p class="text-sm text-(--color-text-muted) mb-4">
-					{{ t('confirmActionOnClients') }}
-				</p> -->
-
-				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3 bg-(--color-surface) rounded">
-					<p class="text-xs text-(--color-text-muted) mb-2">
+				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3">
+					<p class="mb-2">
 						{{ t('onDemandDescription') }}
 					</p>
-					<div v-if="selectionStore.selectedProducts.length > 0" class="text-xs">
-						<span class="text-(--color-text-muted)">{{ t('selectedProducts') }}:</span>
-						<span class="ml-1 font-medium">{{ selectionStore.selectedProducts.length }}</span>
-					</div>
 				</div>
 
 				<div v-if="currentAction === 'notify'" class="mb-4">
-					<label class="block text-xs text-(--color-text-muted) mb-1">{{ t('notificationText') }}</label>
 					<UTextarea v-model="notifyText" :placeholder="t('enterNotificationText')" :rows="3"
 						class="w-full" />
 				</div>
@@ -119,13 +110,6 @@
 					</div>
 				</div>
 
-				<div v-if="clientIds.length <= 5" class="mb-4">
-					<label class="block text-xs text-[--color-text-muted] mb-1">{{ t('affectedClients') }}</label>
-					<div class="text-xs font-mono bg-[--color-surface] rounded p-2 max-h-24 overflow-y-auto">
-						<div v-for="client in clientIds" :key="client" class="py-0.5">{{ client }}</div>
-					</div>
-				</div>
-
 				<div class="flex justify-end gap-2 pt-3 border-[--color-border]">
 					<UButton variant="ghost" color="neutral" @click="confirmOpen = false">{{ t('cancel') }}</UButton>
 					<UButton :color="currentAction === 'delete' ? 'error' : 'primary'" :loading="loading"
@@ -149,13 +133,13 @@
 					<div v-for="(result, clientId) in actionResults" :key="clientId"
 						class="p-2 bg-[--color-surface] rounded text-xs">
 						<div class="flex items-center justify-between">
-							<span class="font-mono">{{ clientId }}</span>
+							<span class="">{{ clientId }}</span>
 							<UBadge :color="result.success ? 'success' : 'error'" size="xs">
 								{{ result.success ? t('success') : t('failed') }}
 							</UBadge>
 						</div>
 						<div v-if="!result.success && result.message"
-							class="mt-1 text-[11px] text-(--color-error) wrap-break-word">
+							class="mt-1 text-xs text-(--color-error) wrap-break-word">
 							{{ result.message }}
 						</div>
 					</div>

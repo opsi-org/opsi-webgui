@@ -68,49 +68,49 @@
                     </div>
                     <div v-if="diagnosticData" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0.5 text-sm">
                         <div
-                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
                             <span class="text-[--color-text-muted] text-xs">opsiconfd</span>
                             <span class="font-medium truncate ml-2 text-xs">{{ diagnosticData.opsiconfd_version
-                                }}</span>
+                            }}</span>
                         </div>
                         <div v-if="diagnosticData.os_release"
-                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
                             <span class="text-[--color-text-muted] text-xs">os</span>
                             <span class="font-medium truncate ml-2 text-xs">
                                 {{ (diagnosticData.os_release as Record<string, unknown>).PRETTY_NAME }}</span>
                         </div>
                         <div v-if="diagnosticData.processor"
-                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
                             <span class="text-[--color-text-muted] text-xs">cpu</span>
                             <span class="font-medium truncate ml-2 text-xs">
                                 {{ (diagnosticData.processor as Record<string, unknown>).cpu_count }} cores · {{
                                     sysProcessorModel }}</span>
                         </div>
                         <div v-if="diagnosticData.memory"
-                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
                             <span class="text-[--color-text-muted] text-xs">memory</span>
                             <span class="font-medium text-xs">{{ (diagnosticData.memory as Record<string, unknown>
                             ).total_human }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent
-                                        }}%)</span>
+                                    }}%)</span>
                         </div>
                         <div v-if="sysHostname"
-                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
                             <span class="text-[--color-text-muted] text-xs">hostname</span>
                             <span class="font-medium truncate ml-2 text-xs">{{ sysHostname }}</span>
                         </div>
                         <div v-if="sysIsDocker !== null"
-                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
                             <span class="text-[--color-text-muted] text-xs">docker</span>
                             <UBadge :color="sysIsDocker ? 'info' : 'neutral'" variant="subtle" size="xs">{{ sysIsDocker
                                 ? 'Yes' : 'No' }}</UBadge>
                         </div>
                         <div v-if="sysPythonVersion"
-                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
                             <span class="text-[--color-text-muted] text-xs">python</span>
                             <span class="font-medium truncate ml-2 text-xs">{{ sysPythonVersion }}</span>
                         </div>
                         <div v-if="sysLoadAvg"
-                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
                             <span class="text-[--color-text-muted] text-xs">load</span>
                             <span class="font-medium truncate ml-2 text-xs">{{ sysLoadAvg }}</span>
                         </div>
@@ -135,13 +135,13 @@
                     <p class="text-2xl font-bold mb-0.5">{{ clientCount ?? '-' }}</p>
                     <p class="text-[--color-text-muted] text-sm mb-2">{{ $t('totalClients') }}</p>
                     <div v-if="sharedClientNumbers"
-                        class="space-y-1 pt-1.5 border-t border-gray-100 dark:border-white/5">
+                        class="space-y-1 pt-1.5 border-t border-(--color-border)/30">
                         <div class="flex items-center gap-2 text-xs">
                             <UIcon :name="icons.windows" class="w-3 h-3 text-sky-500 shrink-0" />
                             <span class="font-medium">{{ sharedClientNumbers.windows }}</span>
                             <UIcon :name="icons.linux" class="w-3 h-3 text-orange-500 shrink-0 ml-1" />
                             <span class="font-medium">{{ sharedClientNumbers.linux }}</span>
-                            <UIcon :name="icons.apple" class="w-3 h-3 text-gray-500 shrink-0 ml-1" />
+                            <UIcon :name="icons.apple" class="w-3 h-3 text-(--color-text-muted) shrink-0 ml-1" />
                             <span class="font-medium">{{ sharedClientNumbers.macos }}</span>
                         </div>
                         <div class="flex items-center gap-2 text-xs text-[--color-text-muted]">
@@ -165,7 +165,7 @@
                     </div>
                     <p class="text-2xl font-bold mb-1">{{ totalProductCount ?? '-' }}</p>
                     <p class="text-[--color-text-muted] text-sm">{{ $t('totalProducts') }}</p>
-                    <div class="mt-2 pt-2 border-t border-gray-100 dark:border-white/5 flex gap-2 text-xs">
+                    <div class="mt-2 pt-2 border-t border-(--color-border)/30 flex gap-2 text-xs">
                         <span class="text-[--color-text-muted]">
                             <span class="font-medium text-[--color-text]">{{ localbootProductCount }}</span>
                             {{ $t('localboot') }}
@@ -187,21 +187,21 @@
                     </div>
                     <p class="text-2xl font-bold mb-1">{{ modulesAvailableCount ?? '-' }}</p>
                     <p class="text-[--color-text-muted] text-sm">{{ $t('opsiModules') }}</p>
-                    <div v-if="obsoleteModulesCount > 0" class="mt-2 pt-2 border-t border-gray-100 dark:border-white/5">
+                    <div v-if="obsoleteModulesCount > 0" class="mt-2 pt-2 border-t border-(--color-border)/30">
                         <div class="flex items-center gap-1.5 mb-1">
                             <UIcon :name="icons.warning" class="w-3.5 h-3.5 text-amber-500" />
                             <span class="text-xs font-medium text-amber-600 dark:text-amber-400">{{ obsoleteModulesCount
-                                }} {{ $t('obsolete') }}</span>
+                            }} {{ $t('obsolete') }}</span>
                         </div>
                         <div class="flex flex-wrap gap-1">
                             <span v-for="mod in sharedObsoleteModules.slice(0, 3)" :key="mod"
-                                class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 font-mono">
+                                class="text-xs px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
                                 {{ mod }}
                             </span>
                             <UTooltip v-if="sharedObsoleteModules.length > 3"
                                 :text="sharedObsoleteModules.slice(3).join(', ')">
                                 <span
-                                    class="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/10 text-[--color-text-muted] cursor-help">
+                                    class="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/10 text-[--color-text-muted] cursor-help">
                                     +{{ sharedObsoleteModules.length - 3 }}
                                 </span>
                             </UTooltip>
@@ -224,7 +224,7 @@
                     class="space-y-1 max-h-32 overflow-y-auto">
                     <div v-for="(products, clientId) in failedClients" :key="clientId"
                         class="flex items-center justify-between p-1.5 rounded-lg bg-red-50 dark:bg-red-900/15 text-sm">
-                        <span class="font-mono truncate text-xs">{{ clientId }}</span>
+                        <span class="truncate text-xs">{{ clientId }}</span>
                         <span class="text-[--color-text-muted] ml-2 shrink-0 text-xs">{{ Array.isArray(products) ?
                             products.join(', ') : products }}</span>
                     </div>

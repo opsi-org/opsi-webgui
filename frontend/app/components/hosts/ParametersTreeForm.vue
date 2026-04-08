@@ -22,7 +22,7 @@ Multivalue with tag-like editing and add-new-value for editable params.
 						<UIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
 							:class="{ 'rotate-90': open[node.key] }" />
 					</button>
-					<span class="text-sm font-mono flex-1 truncate transition-colors"
+					<span class="text-sm flex-1 truncate transition-colors"
 						:class="open[node.key] ? 'font-medium' : ''">
 						{{ node.label }}
 					</span>
@@ -43,7 +43,7 @@ Multivalue with tag-like editing and add-new-value for editable params.
 					<span class="w-5 flex items-center justify-center shrink-0 mt-1" />
 					<div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
 						<div class="min-w-0 md:w-2/5 flex items-center gap-1">
-							<span class="font-mono text-sm text-(--color-text-secondary) truncate"
+							<span class="text-sm text-(--color-text-secondary) truncate"
 								:title="node.param.configId">
 								{{ node.param.configId }}
 							</span>
@@ -52,7 +52,7 @@ Multivalue with tag-like editing and add-new-value for editable params.
 									class="shrink-0 opacity-60 hover:opacity-100" tabindex="-1" />
 							</UTooltip>
 							<span v-if="changedParams.has(node.param.configId)"
-								class="inline-flex items-center text-[10px] text-yellow-700 dark:text-yellow-200 ml-0.5">
+								class="inline-flex items-center text-xs text-yellow-700 dark:text-yellow-200 ml-0.5">
 								<UIcon :name="icons.pencilSquare" class="w-3 h-3" />
 							</span>
 						</div>

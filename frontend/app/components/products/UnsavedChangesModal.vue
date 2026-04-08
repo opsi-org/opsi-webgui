@@ -28,7 +28,7 @@
 					<div class="bg-(--color-surface) px-3 py-2 flex items-center justify-between">
 						<div class="flex items-center gap-2">
 							<UIcon :name="icons.product" class="w-4 h-4 text-opsi-blue" />
-							<span class="font-mono text-sm font-medium">{{ group.productId }}</span>
+							<span class="text-sm font-medium">{{ group.productId }}</span>
 						</div>
 						<UBadge v-if="group.changes.length > 1" color="warning" variant="subtle" size="xs">
 							{{ group.changes.length }} {{ group.changes.length === 1 ? 'change' : 'changes' }}
@@ -66,7 +66,7 @@
 						<UIcon :name="icons.onDemand" class="w-4 h-4 text-opsi-blue" />
 						<label class="flex items-center gap-2 cursor-pointer">
 							<input type="checkbox" v-model="processAfterSave"
-								class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue w-3.5 h-3.5" />
+								class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue w-3.5 h-3.5" />
 							<span class="text-sm font-medium">{{ $t('saveAndProcess') }}</span>
 						</label>
 					</div>
@@ -110,7 +110,7 @@
 							</div>
 							<div class="text-xs text-(--color-text-muted)">
 								{{ $t('clients') }}: {{ onDemandClientIds.length }}
-								<span v-if="onDemandClientIds.length > 0" class="ml-1 font-mono">
+								<span v-if="onDemandClientIds.length > 0" class="ml-1">
 									({{ onDemandClientIds.slice(0, 3).join(', ') }}{{ onDemandClientIds.length > 3 ?
 										'...' : '' }})
 								</span>

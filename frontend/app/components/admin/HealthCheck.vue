@@ -4,7 +4,8 @@ HealthCheck - Component to display health check results
 		<template #header>
 			<div class="flex items-center justify-between">
 				<h3 class="text-xs m-0">{{ $t('healthCheck') }}</h3>
-				<span class="text-xs text-gray-500">{{ filteredHealthData.length }} {{ $t('checks') }}</span>
+				<span class="text-xs text-(--color-text-muted)">{{ filteredHealthData.length }} {{ $t('checks')
+				}}</span>
 			</div>
 		</template>
 		<div v-if="loading" class="py-8">
@@ -16,12 +17,13 @@ HealthCheck - Component to display health check results
 					@click="$emit('toggleExpand', item.key)">
 					<UIcon v-if="item.children && item.children.length > 0"
 						:name="expanded[item.key] ? icons.chevronDown : icons.chevronRight"
-						class="w-4 h-4 mt-0.5 shrink-0 text-gray-500" />
+						class="w-4 h-4 mt-0.5 shrink-0 text-(--color-text-muted)" />
 					<div v-else class="w-4" />
 					<SharedStatusBadge :status="getStatusType(item.status)" :label="item.status" class="shrink-0" />
 					<div class="flex-1 min-w-0">
 						<div class="font-medium text-sm" :title="item.description">{{ item.name }}</div>
-						<div v-if="item.message" class="text-xs text-gray-600 dark:text-gray-400 mt-0.5 break-all">
+						<div v-if="item.message"
+							class="text-(--color-text-secondary) dark:text-(--color-text-muted) mt-0.5 break-all">
 							{{ item.message }}
 						</div>
 					</div>
@@ -33,14 +35,15 @@ HealthCheck - Component to display health check results
 							class="shrink-0" />
 						<div class="flex-1 min-w-0">
 							<div class="font-medium text-sm">{{ child.name }}</div>
-							<div v-if="child.message" class="text-xs text-gray-600 dark:text-gray-400 mt-0.5 break-all">
+							<div v-if="child.message"
+								class="text-(--color-text-secondary) dark:text-(--color-text-muted) mt-0.5 break-all">
 								{{ child.message }}
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div v-if="filteredHealthData.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
+			<div v-if="filteredHealthData.length === 0" class="text-center py-8 text-(--color-text-muted)">
 				{{ $t('noResultsFound') }}
 			</div>
 		</div>

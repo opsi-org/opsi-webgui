@@ -65,7 +65,7 @@
 								{{ item.memberCount }}</UBadge>
 						</div>
 						<div v-if="section.flatItems.length === 0"
-							class="text-[10px] text-(--color-text-muted) py-1 px-2 italic">{{ t('noResults') }}</div>
+							class="text-xs text-(--color-text-muted) py-1 px-2 italic">{{ t('noResults') }}</div>
 					</template>
 				</div>
 			</template>

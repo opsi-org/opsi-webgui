@@ -10,7 +10,7 @@ Admin Terminal Page - Server terminal access via messagebus
                 <span v-if="isConnected" class="flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>{{ $t('connected') }}
                 </span>
-                <span v-else class="flex items-center gap-1 text-sm text-gray-500"><span
+                <span v-else class="flex items-center gap-1 text-sm text-(--color-text-muted)"><span
                         class="w-2 h-2 rounded-full bg-gray-400"></span>{{ $t('disconnected') }}</span>
             </div>
             <UButton variant="ghost" color="neutral" size="sm" :icon="icons.config"

@@ -9,11 +9,11 @@
     </button>
     <Transition :name="direction === 'up' ? 'dropdown-up' : 'dropdown'">
       <div v-if="open" :class="[
-        'absolute right-0 min-w-32 bg-white dark:bg-(--color-surface) border border-gray-200 dark:border-(--color-border) rounded-lg shadow-lg z-50 py-1',
+        'absolute right-0 min-w-32 bg-white dark:bg-(--color-surface) border border-(--color-border) rounded-lg shadow-lg z-50 py-1',
         direction === 'up' ? 'bottom-full mb-1' : 'top-full mt-1'
       ]">
         <button v-for="locale in availableLocales" :key="locale.code" @click="switchTo(locale.code)" type="button"
-          class="w-full px-3 py-2 text-left text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-(--color-surface-hover) transition-colors"
+          class="w-full px-3 py-2 text-left text-sm text-(--color-text) hover:bg-(--color-surface-hover) transition-colors"
           :data-testid="`language-dropdown-item-${locale.code}`">
           {{ locale.name || locale.code.toUpperCase() }}
         </button>

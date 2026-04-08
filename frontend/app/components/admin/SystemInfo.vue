@@ -17,7 +17,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 						<UIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
 							:class="{ 'rotate-90': expanded['_system'] }" />
 					</button>
-					<span class="text-sm font-mono flex-1 truncate" :class="expanded['_system'] ? 'font-medium' : ''">
+					<span class="text-sm flex-1 truncate" :class="expanded['_system'] ? 'font-medium' : ''">
 						{{ $t('systemProperties') }}
 					</span>
 					<span class="text-xs text-(--color-text-muted) opacity-60">{{ Object.keys(filteredSystemInfo).length }}</span>
@@ -29,7 +29,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 							<span class="tree-guide-line" style="left: 8px;" />
 							<span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
 							<div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-								<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-2/5 break-all truncate"
+								<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-2/5 break-all truncate"
 									:title="String(key)">
 									{{ key }}
 								</span>
@@ -37,7 +37,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 									<UBadge v-if="typeof value === 'boolean'" :color="value ? 'success' : 'neutral'" variant="soft" size="xs">
 										{{ value ? 'Yes' : 'No' }}
 									</UBadge>
-									<span v-else class="font-mono text-sm font-medium truncate" :title="String(value)">
+									<span v-else class="text-sm font-medium truncate" :title="String(value)">
 										{{ formatValue(value) }}
 									</span>
 									<UButton color="primary" variant="soft" size="xs" :icon="icons.copy"
@@ -63,7 +63,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 							<UIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
 								:class="{ 'rotate-90': expanded[String(category)] }" />
 						</button>
-						<span class="text-sm font-mono flex-1 truncate" :class="expanded[String(category)] ? 'font-medium' : ''">
+						<span class="text-sm flex-1 truncate" :class="expanded[String(category)] ? 'font-medium' : ''">
 							{{ String(category) }}
 						</span>
 						<span class="text-xs text-(--color-text-muted) opacity-60">{{ Object.keys(values as object).length }}</span>
@@ -83,7 +83,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 										<UIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
 											:class="{ 'rotate-90': expanded[String(category) + '.' + String(k)] }" />
 									</button>
-									<span class="text-sm font-mono flex-1 truncate"
+									<span class="text-sm flex-1 truncate"
 										:class="expanded[String(category) + '.' + String(k)] ? 'font-medium' : ''">
 										{{ k }}
 									</span>
@@ -99,7 +99,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 												<span class="tree-guide-line" style="left: 8px;" />
 												<span class="tree-guide-line" style="left: 24px;" />
 												<span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
-												<span class="font-mono text-sm break-all">{{ typeof item === 'object' ? JSON.stringify(item) : String(item) }}</span>
+												<span class="text-sm break-all">{{ typeof item === 'object' ? JSON.stringify(item) : String(item) }}</span>
 											</div>
 										</div>
 									</template>
@@ -111,7 +111,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 												<span class="tree-guide-line" style="left: 24px;" />
 												<span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
 												<div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-													<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-2/5 break-all truncate"
+													<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-2/5 break-all truncate"
 														:title="String(sk)">
 														{{ sk }}
 													</span>
@@ -119,11 +119,11 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 														<UBadge v-if="typeof sv === 'boolean'" :color="sv ? 'success' : 'neutral'" variant="soft" size="xs">
 															{{ sv ? 'Yes' : 'No' }}
 														</UBadge>
-														<span v-else-if="typeof sv === 'object'" class="font-mono text-xs break-all truncate max-w-full"
+														<span v-else-if="typeof sv === 'object'" class="text-xs break-all truncate max-w-full"
 															:title="JSON.stringify(sv)">
 															{{ JSON.stringify(sv) }}
 														</span>
-														<span v-else class="font-mono text-sm font-medium truncate" :title="String(sv)">
+														<span v-else class="text-sm font-medium truncate" :title="String(sv)">
 															{{ formatValue(sv) }}
 														</span>
 														<UButton color="primary" variant="soft" size="xs" :icon="icons.copy"
@@ -143,7 +143,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 									<span class="tree-guide-line" style="left: 8px;" />
 									<span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
 									<div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-										<span class="font-mono text-sm text-(--color-text-secondary) min-w-0 md:w-2/5 break-all truncate"
+										<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-2/5 break-all truncate"
 											:title="String(k)">
 											{{ k }}
 										</span>
@@ -151,7 +151,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 											<UBadge v-if="typeof v === 'boolean'" :color="v ? 'success' : 'neutral'" variant="soft" size="xs">
 												{{ v ? 'Yes' : 'No' }}
 											</UBadge>
-											<span v-else class="font-mono text-sm font-medium truncate" :title="String(v)">
+											<span v-else class="text-sm font-medium truncate" :title="String(v)">
 												{{ formatValue(v) }}
 											</span>
 											<UButton color="primary" variant="soft" size="xs" :icon="icons.copy"
@@ -167,7 +167,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 			</template>
 
 			<div v-if="Object.keys(filteredSystemInfo).length === 0 && Object.keys(filteredDiagnosticsData).length === 0"
-				class="text-center py-8 text-gray-500">
+				class="text-center py-8 text-(--color-text-muted)">
 				{{ filter ? $t('noResultsFound') : $t('noDataAvailable') }}
 			</div>
 		</template>

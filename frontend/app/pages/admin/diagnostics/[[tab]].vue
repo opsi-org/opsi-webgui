@@ -18,7 +18,7 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
                     'bg-green-50 dark:bg-green-900/20'
                 ]">
                     <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ stats.ok }}</div>
-                    <div class="text-xs text-gray-500 mt-1">{{ $t('passed') }}</div>
+                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('passed') }}</div>
                 </button>
                 <button @click="filterByStatus('warning')" :class="[
                     'p-4 rounded-lg border transition-all text-center',
@@ -26,7 +26,7 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
                     'bg-yellow-50 dark:bg-yellow-900/20'
                 ]">
                     <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ stats.warning }}</div>
-                    <div class="text-xs text-gray-500 mt-1">{{ $t('warnings') }}</div>
+                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('warnings') }}</div>
                 </button>
                 <button @click="filterByStatus('error')" :class="[
                     'p-4 rounded-lg border transition-all text-center',
@@ -34,7 +34,7 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
                     'bg-red-50 dark:bg-red-900/20'
                 ]">
                     <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ stats.error }}</div>
-                    <div class="text-xs text-gray-500 mt-1">{{ $t('errors') }}</div>
+                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('errors') }}</div>
                 </button>
                 <button @click="activeTab = 'modules'; statusFilter = ''" :class="[
                     'p-4 rounded-lg border transition-all text-center',
@@ -42,7 +42,7 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
                     'bg-primary-50 dark:bg-primary-900/20'
                 ]">
                     <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{ modules.length }}</div>
-                    <div class="text-xs text-gray-500 mt-1">{{ $t('modules') }}</div>
+                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('modules') }}</div>
                     <div v-if="sharedObsoleteModules.length > 0" class="mt-1">
                         <UTooltip :text="`${$t('obsoleteModules')}: ${sharedObsoleteModules.join(', ')}`">
                             <span class="text-xs text-amber-600 dark:text-amber-400 cursor-help">{{
@@ -53,7 +53,7 @@ Admin Diagnostics Page - Health check, system diagnostics, and modules
             </div>
 
             <div v-if="statusFilter" class="flex items-center gap-2 mt-3">
-                <span class="text-sm text-gray-500">{{ $t('filteringBy') }}:</span>
+                <span class="text-sm text-(--color-text-muted)">{{ $t('filteringBy') }}:</span>
                 <SharedStatusBadge :status="getStatusType(statusFilter)" :label="statusFilter" />
                 <UButton variant="ghost" color="neutral" size="xs" :icon="icons.x" @click="statusFilter = ''" />
             </div>

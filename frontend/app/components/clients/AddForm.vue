@@ -18,12 +18,12 @@ ClientsAddForm - add client form for panel mode with all options.
 		<div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-xs m-0 text-muted">{{ $t('newClient') }}</h4>
+					<h4 class="text-xs m-0">{{ $t('newClient') }}</h4>
 				</div>
 				<div class="mb-6">
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('clientId') }} <span class="text-error">*</span>
 						</span>
 						<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
@@ -37,8 +37,8 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('description') }}
 						</span>
 						<div class="flex-1">
@@ -47,8 +47,8 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('inventoryNumber') }}
 						</span>
 						<div class="flex-1">
@@ -57,8 +57,8 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('ipAddress') }}
 						</span>
 						<div class="flex-1">
@@ -67,8 +67,8 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('macAddress') }}
 						</span>
 						<div class="flex-1">
@@ -77,8 +77,8 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('notes') }}
 						</span>
 						<div class="flex-1">
@@ -91,12 +91,12 @@ ClientsAddForm - add client form for panel mode with all options.
 
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-xs m-0 text-muted">{{ $t('assignments') }}</h4>
+					<h4 class="text-xs m-0">{{ $t('assignments') }}</h4>
 				</div>
 				<div class="mb-6">
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('depot') }} <span class="text-error">*</span>
 						</span>
 						<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
@@ -106,8 +106,8 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('groups') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -120,12 +120,12 @@ ClientsAddForm - add client form for panel mode with all options.
 
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-xs m-0 text-muted">{{ $t('initialSetup') }}</h4>
+					<h4 class="text-xs m-0">{{ $t('initialSetup') }}</h4>
 				</div>
 				<div class="mb-6">
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('netbootProducts') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -134,8 +134,8 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('enableAgentSetup') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -143,8 +143,8 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div v-if="form.agentSetup"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('agentType') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -154,8 +154,8 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div v-if="form.agentSetup"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('agentUsername') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -164,8 +164,8 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div v-if="form.agentSetup"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('agentPassword') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">

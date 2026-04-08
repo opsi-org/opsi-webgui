@@ -115,7 +115,7 @@ Row-level client actions dropdown for the clients table.
 						</p>
 					</div>
 				</div>
-				<p class="text-xs text-(--color-text-muted) font-mono">{{ clientId }}</p>
+				<p class="text-xs text-(--color-text-muted)">{{ clientId }}</p>
 				<template #footer>
 					<div class="flex justify-end gap-2">
 						<UButton variant="soft" color="neutral" @click="showRebootPopover = false">
@@ -155,7 +155,7 @@ Row-level client actions dropdown for the clients table.
 						</p>
 					</div>
 				</div>
-				<p class="text-xs text-(--color-text-muted) font-mono">{{ clientId }}</p>
+				<p class="text-xs text-(--color-text-muted)">{{ clientId }}</p>
 				<template #footer>
 					<div class="flex justify-end gap-2">
 						<UButton variant="soft" color="neutral" @click="showShutdownPopover = false">
@@ -289,7 +289,7 @@ Row-level client actions dropdown for the clients table.
 						</div>
 					</div>
 				</div>
-				<p class="text-xs text-(--color-text-muted) font-mono">{{ clientId }}</p>
+				<p class="text-xs text-(--color-text-muted)">{{ clientId }}</p>
 				<template #footer>
 					<div class="flex justify-end gap-2">
 						<UButton variant="soft" color="neutral" @click="showDeleteModal = false" :disabled="executing">

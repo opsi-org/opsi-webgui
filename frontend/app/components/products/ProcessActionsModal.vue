@@ -36,7 +36,7 @@
 									</label>
 								</div>
 								<div v-if="productMode === 'selected' && selectedProductIds.length > 0"
-									class="mt-2 max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) text-xs font-mono">
+									class="mt-2 max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) text-xs">
 									<div v-for="id in selectedProductIds" :key="id">{{ id }}</div>
 								</div>
 							</div>
@@ -79,7 +79,7 @@
 									</UButton>
 								</div>
 								<div v-if="clientIds.length > 0"
-									class="max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) text-xs font-mono">
+									class="max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) text-xs">
 									<div v-for="id in clientIds" :key="id" class="flex items-center justify-between">
 										<span>{{ id }}</span>
 										<UButton size="xs" variant="ghost" color="neutral" :icon="icons.x"

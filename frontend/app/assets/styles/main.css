@@ -34,16 +34,16 @@
 
 /* OPSI Dark Mode - OPSI Corporate Design compliant with improved accessibility */
 html.dark {
-  --color-background: #2d2d2c;
-  --color-surface: #3f3f3e;
-  --color-surface-hover: #4b4b49;
-  --color-text: #f0f0f0;
-  --color-text-secondary: #d4d4d4;
+  --color-background: #3f3f3e;
+  --color-surface: #4b4b49;
+  --color-surface-hover: #565655;
+  --color-text: #e1e1e1;
+  --color-text-secondary: #c8c8c8;
   --color-text-muted: #a8a8a8;
   --color-border: #5a5a59;
 
   /* Enhanced contrast for interactive elements */
-  --color-surface-elevated: #4b4b49;
+  --color-surface-elevated: #565655;
   --color-surface-inset: #353534;
 }
 
@@ -113,15 +113,6 @@ html.dark .bg-gray-900 {
 }
 html.dark .bg-white {
   background-color: var(--color-surface);
-}
-html.dark .text-gray-500 {
-  color: var(--color-text-muted);
-}
-html.dark .text-gray-600 {
-  color: var(--color-text-secondary);
-}
-html.dark .text-gray-900 {
-  color: var(--color-text);
 }
 html.dark .border-gray-200 {
   border-color: var(--color-border);
@@ -595,4 +586,73 @@ html.dark .opsi-log-level-slider::-moz-range-thumb:hover {
   --ui-color-primary-900: #111a42;
   --ui-color-primary-950: #0a0f2a;
   --color-accented: var(--color-opsi-blue);
+}
+
+/* ============================================
+   GLOBAL TYPOGRAPHY UTILITIES
+   Ensures uniform text across all pages/components
+   ============================================ */
+
+/* Section heading - used for page section titles, card headers, sidebar labels */
+.text-section-heading {
+  font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-size: 0.75rem; /* 12px - text-xs */
+  line-height: 1rem;
+  color: var(--color-text);
+}
+
+/* Body text - standard content text */
+.text-body {
+  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.875rem; /* 14px - text-sm */
+  line-height: 1.25rem;
+  color: var(--color-text);
+}
+
+/* Muted/secondary text - descriptions, sub-labels */
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+/* Stat/large number display */
+.text-stat {
+  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.5rem; /* 24px - text-2xl */
+  font-weight: 700;
+  line-height: 2rem;
+  color: var(--color-text);
+}
+
+/* Card header text */
+.text-card-header {
+  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* Small label text - badge labels, metadata */
+.text-label {
+  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.75rem; /* 12px - text-xs */
+  line-height: 1rem;
+  color: var(--color-text-muted);
+}
+
+/* Override gray text utilities to use CSS variables for consistent theming */
+.text-gray-500,
+.text-gray-400,
+.text-gray-600 {
+  color: var(--color-text-muted) !important;
+}
+.text-gray-700,
+.text-gray-300 {
+  color: var(--color-text-secondary) !important;
+}
+.text-gray-900,
+.text-gray-800 {
+  color: var(--color-text) !important;
 }

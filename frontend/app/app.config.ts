@@ -39,12 +39,12 @@ export default defineAppConfig({
     input: {
       slots: {
         root: 'w-full',
-        base: 'bg-white dark:bg-[var(--color-surface)] border border-transparent text-[var(--color-text)] dark:text-[var(--color-text)] placeholder-[var(--color-text-muted)] dark:placeholder-[var(--color-text-muted)] rounded-lg transition-all duration-150 hover:bg-gray-50 dark:hover:bg-[var(--color-surface-hover)] focus:border-[var(--color-opsi-blue)] focus:ring-[var(--color-opsi-blue)]/20 focus:bg-white dark:focus:bg-[var(--color-surface)]',
+        base: 'bg-white dark:bg-[var(--color-surface)] border border-transparent text-[var(--color-text)] dark:text-[var(--color-text)] placeholder-[var(--color-text-muted)] dark:placeholder-[var(--color-text-muted)] rounded-lg transition-all duration-150 hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] focus:border-[var(--color-opsi-blue)] focus:ring-[var(--color-opsi-blue)]/20 focus:bg-white dark:focus:bg-[var(--color-surface)]',
       },
     },
     select: {
       slots: {
-        base: 'bg-white dark:bg-[var(--color-surface)] border border-transparent text-[var(--color-text)] dark:text-[var(--color-text)] rounded-lg transition-all duration-150 hover:bg-gray-50 dark:hover:bg-[var(--color-surface-hover)] focus:border-[var(--color-opsi-blue)]',
+        base: 'bg-white dark:bg-[var(--color-surface)] border border-transparent text-[var(--color-text)] dark:text-[var(--color-text)] rounded-lg transition-all duration-150 hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] focus:border-[var(--color-opsi-blue)]',
       },
     },
     selectMenu: {
@@ -66,7 +66,7 @@ export default defineAppConfig({
     },
     formGroup: {
       slots: {
-        root: 'rounded-lg p-2 -mx-2 transition-colors duration-100 hover:bg-gray-50 dark:hover:bg-[var(--color-surface-hover)]/50',
+        root: 'rounded-lg p-2 -mx-2 transition-colors duration-100 hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)]/50',
         label: 'text-sm font-medium text-[var(--color-text)] dark:text-[var(--color-text)]',
       },
     },

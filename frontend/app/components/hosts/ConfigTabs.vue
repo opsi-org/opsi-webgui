@@ -141,12 +141,12 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 			<div v-if="filteredReadonlyAttrKeys.length"
 				class="mb-6 border-b border-(--color-border) dark:border-(--color-border)">
 				<div v-for="key in filteredReadonlyAttrKeys" :key="key"
-					class="orm-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
+					class="orm-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 					<span
 						class="text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 						{{ getAttributeLabel(key) }}
 					</span>
-					<span class="text-sm font-mono flex-1 truncate" :title="fmtVal(originalAttributes[key])">
+					<span class="text-sm flex-1 truncate" :title="fmtVal(originalAttributes[key])">
 						{{ fmtVal(originalAttributes[key]) }}
 					</span>
 				</div>
@@ -154,13 +154,13 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 
 			<div v-if="filteredEditableAttrKeys.length" class="mb-6">
 				<div v-for="key in filteredEditableAttrKeys" :key="key"
-					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
 					:class="isAttrChanged(key) ? 'bg-yellow-50 dark:bg-yellow-700/10' : ''">
 					<span
-						class="font-mono text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
 						{{ getAttributeLabel(key) }}
 						<span v-if="isAttrChanged(key)"
-							class="inline-flex items-center text-[10px] text-yellow-700 dark:text-yellow-200">
+							class="inline-flex items-center text-xs text-yellow-700 dark:text-yellow-200">
 							<UIcon :name="icons.pencilSquare" class="w-3 h-3" />
 						</span>
 					</span>
@@ -173,7 +173,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 							@update:model-value="(v: boolean | 'indeterminate') => { editableAttributes[key] = v }" />
 						<SharedPasswordInput v-else-if="isPasswordAttribute(key)"
 							v-model="(editableAttributes as Record<string, string>)[key]" size="sm" :disabled="readonly"
-							class="flex-1 font-mono" />
+							class="flex-1" />
 						<UInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
 							:disabled="readonly" class="flex-1" />
 						<UButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral" :icon="icons.x"

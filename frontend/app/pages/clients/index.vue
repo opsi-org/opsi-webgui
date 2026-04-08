@@ -43,11 +43,11 @@
 						{{ (row as Client).description || '-' }}
 					</template>
 					<template #cell-macAddress="{ row }">
-						<span class="font-mono text-sm text-(--color-text)">{{ (row as Client).macAddress || '-'
+						<span class="text-sm text-(--color-text)">{{ (row as Client).macAddress || '-'
 						}}</span>
 					</template>
 					<template #cell-ipAddress="{ row }">
-						<span class="font-mono text-sm text-(--color-text)">{{ (row as Client).ipAddress || '-'
+						<span class="text-sm text-(--color-text)">{{ (row as Client).ipAddress || '-'
 						}}</span>
 					</template>
 					<template #cell-lastSeen="{ row }">

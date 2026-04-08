@@ -116,7 +116,7 @@
 									</summary>
 									<div v-for="p in products" :key="p.productId"
 										class="flex justify-between items-center py-0.5 pl-3 gap-2">
-										<span class="font-mono truncate">{{ p.productId }}</span>
+										<span class="truncate">{{ p.productId }}</span>
 										<span v-if="p.productType" class="text-(--color-text-muted) shrink-0">
 											{{ p.productType }}
 										</span>

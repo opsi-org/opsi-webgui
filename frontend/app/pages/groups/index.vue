@@ -161,9 +161,9 @@
                                     {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('selected')}` :
                                         $t('selectAll') }}
                                     <kbd
-                                        class="ml-1 px-1 py-0.5 text-[10px] bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
+                                        class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
                                     <kbd
-                                        class="ml-1 px-1 py-0.5 text-[10px] bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
+                                        class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
                                 </span>
                             </div>
                             <div class="space-y-0 overflow-auto" style="max-height: 60vh;">
@@ -353,9 +353,9 @@
                                     <span class="text-xs text-(--color-text-muted)">
                                         {{ $t('selectAll') }}
                                         <kbd
-                                            class="ml-1 px-1 py-0.5 text-[10px] bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
+                                            class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
                                         <kbd
-                                            class="ml-1 px-1 py-0.5 text-[10px] bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
+                                            class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
                                     </span>
                                 </label>
                                 <span class="text-xs text-(--color-text-muted)">{{ selectedNewMembers.length }} {{
