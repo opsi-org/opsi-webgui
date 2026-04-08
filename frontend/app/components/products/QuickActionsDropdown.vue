@@ -42,7 +42,7 @@
 
 					<div class="divide-y divide-(--color-border)">
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
-							<span class="text-xs font-semibold text-(--color-text-muted) capitalize md:w-1/3 shrink-0">
+							<span class="font-heading text-xs text-(--color-text-muted) md:w-1/3 shrink-0">
 								{{ $t('conditions') }}
 							</span>
 							<div class="flex-1 space-y-2">
@@ -70,7 +70,7 @@
 						</div>
 
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
-							<span class="text-xs font-semibold text-(--color-text-muted) capitalize md:w-1/3 shrink-0">
+							<span class="font-heading text-xs text-(--color-text-muted) md:w-1/3 shrink-0">
 								{{ $t('actionRequest') }}
 							</span>
 							<div class="flex-1">
@@ -80,7 +80,7 @@
 						</div>
 
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
-							<span class="text-xs font-semibold text-(--color-text-muted) capitalize md:w-1/3 shrink-0">
+							<span class="font-heading text-xs text-(--color-text-muted) md:w-1/3 shrink-0">
 								{{ $t('scope') }}
 							</span>
 							<div class="flex-1">
@@ -92,7 +92,7 @@
 
 					<div>
 						<div class="flex items-center justify-between mb-1.5">
-							<span class="text-xs font-semibold text-(--color-text-muted) capitalize">
+							<span class="font-heading text-xs text-(--color-text-muted)">
 								{{ $t('preview') }}
 							</span>
 							<div class="flex items-center gap-2">

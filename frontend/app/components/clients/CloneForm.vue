@@ -31,7 +31,8 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 		</div>
 
 		<div v-else :class="['flex-1 overflow-y-auto space-y-4']">
-			<SharedAlertInline v-if="success" color="success" :title="String($t('success'))" closable @close="success = false">
+			<SharedAlertInline v-if="success" color="success" :title="String($t('success'))" closable
+				@close="success = false">
 				<template #description>{{ $t('clientClonedSuccessfully') }}</template>
 			</SharedAlertInline>
 			<SharedAlertInline v-if="error" color="error" :title="String($t('error'))" :description="error" closable
@@ -52,7 +53,7 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 
 				<div class="mb-6">
 					<div class="flex items-center justify-between mb-3">
-						<p class="text-sm font-semibold capitalize tracking-wide text-muted">{{ $t('newClient') }}</p>
+						<h4 class="text-xs m-0 text-muted">{{ $t('newClient') }}</h4>
 					</div>
 					<div class="mb-6">
 						<div
@@ -107,7 +108,7 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 
 				<div class="mb-6">
 					<div class="flex items-center justify-between mb-3">
-						<p class="text-sm font-semibold capitalize tracking-wide text-muted">{{ $t('cloneOptions') }}</p>
+						<h4 class="text-xs m-0 text-muted">{{ $t('cloneOptions') }}</h4>
 					</div>
 					<div class="mb-6">
 						<div

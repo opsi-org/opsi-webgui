@@ -34,7 +34,7 @@ Sidebar component - main navigation.
                                 <div v-if="hoveredItem === item.route" :style="getPopupPosition(item.route)"
                                     @mouseenter="keepPopupOpen(item.route)" @mouseleave="onLeave"
                                     class="fixed bg-opsi-blue rounded-xl shadow-lg min-w-44 py-1 z-100 border border-white/10">
-                                    <div class="px-3 py-2 text-xs font-semibold text-white/70 border-b border-white/10">
+                                    <div class="px-3 py-2 font-heading text-xs text-white/70 border-b border-white/10">
                                         {{ t(item.title) }}
                                     </div>
                                     <NuxtLink v-for="sub in item.submenu" :key="sub.route" :to="sub.route"

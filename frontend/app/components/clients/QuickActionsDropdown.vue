@@ -32,7 +32,7 @@
 		<template #content>
 			<div class="p-4 min-w-87.5" @click.stop>
 				<div class="flex items-center justify-between mb-3">
-					<h3 class="text-lg font-semibold flex items-center gap-2">
+					<h3 class="text-sm flex items-center gap-2 m-0">
 						<UIcon :name="currentActionIcon" class="w-5 h-5" :class="currentActionColor" />
 						{{ t(currentAction) }}
 					</h3>
@@ -141,7 +141,7 @@
 		<template #content>
 			<div class="p-4 min-w-87.5">
 				<div class="flex items-center justify-between mb-3">
-					<h3 class="text-lg font-semibold">{{ t('actionResults') }}</h3>
+					<h3 class="text-sm m-0">{{ t('actionResults') }}</h3>
 					<UButton :icon="icons.x" variant="ghost" color="neutral" @click="resultOpen = false" />
 				</div>
 

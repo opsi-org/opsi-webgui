@@ -8,7 +8,7 @@
                     @click="navigateTo('/admin/diagnostics/healthcheck')">
                     <div class="flex items-center gap-2 mb-3">
                         <UIcon :name="icons.health" class="w-5 h-5 text-[--color-text-muted]" />
-                        <span class="text-sm font-semibold">{{ $t('healthCheck') }}</span>
+                        <h3 class="text-xs m-0">{{ $t('healthCheck') }}</h3>
                         <UIcon :name="icons.chevronRight"
                             class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
@@ -37,7 +37,7 @@
                         <div class="flex-1 min-w-0">
                             <p class="font-semibold truncate text-sm">{{ sharedUserConfig?.user || userStore.username
                                 || '-' }}</p>
-                            <p class="text-xs text-[--color-text-muted] uppercase tracking-widest font-medium">{{
+                            <p class="font-heading text-xs text-[--color-text-muted] tracking-widest m-0">{{
                                 $t('currentUser') }}</p>
                         </div>
                         <UBadge v-if="webguiRestrictionsCount > 0" color="warning" variant="subtle" size="sm"
@@ -62,7 +62,7 @@
                     @click="navigateTo('/admin/diagnostics/system')">
                     <div class="flex items-center gap-2 mb-2">
                         <UIcon :name="icons.server" class="w-5 h-5 text-[--color-text-muted]" />
-                        <h3 class="text-sm font-semibold">{{ $t('systemInfo') }}</h3>
+                        <h3 class="text-xs m-0">{{ $t('systemInfo') }}</h3>
                         <UIcon :name="icons.chevronRight"
                             class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
@@ -71,7 +71,7 @@
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                             <span class="text-[--color-text-muted] text-xs">opsiconfd</span>
                             <span class="font-medium truncate ml-2 text-xs">{{ diagnosticData.opsiconfd_version
-                            }}</span>
+                                }}</span>
                         </div>
                         <div v-if="diagnosticData.os_release"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
@@ -91,7 +91,7 @@
                             <span class="text-[--color-text-muted] text-xs">memory</span>
                             <span class="font-medium text-xs">{{ (diagnosticData.memory as Record<string, unknown>
                             ).total_human }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent
-                                    }}%)</span>
+                                        }}%)</span>
                         </div>
                         <div v-if="sysHostname"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
@@ -191,7 +191,7 @@
                         <div class="flex items-center gap-1.5 mb-1">
                             <UIcon :name="icons.warning" class="w-3.5 h-3.5 text-amber-500" />
                             <span class="text-xs font-medium text-amber-600 dark:text-amber-400">{{ obsoleteModulesCount
-                            }} {{ $t('obsolete') }}</span>
+                                }} {{ $t('obsolete') }}</span>
                         </div>
                         <div class="flex flex-wrap gap-1">
                             <span v-for="mod in sharedObsoleteModules.slice(0, 3)" :key="mod"
@@ -214,7 +214,7 @@
             <div class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 shrink-0">
                 <div class="flex items-center gap-2 mb-2">
                     <UIcon :name="icons.warning" class="w-5 h-5 text-[--color-text-muted]" />
-                    <h3 class="text-sm font-semibold">{{ $t('failedClients') }}</h3>
+                    <h3 class="text-xs m-0">{{ $t('failedClients') }}</h3>
                     <UBadge v-if="failedClients && Object.keys(failedClients).length > 0" color="error" variant="subtle"
                         size="sm">
                         {{ Object.keys(failedClients).length }}

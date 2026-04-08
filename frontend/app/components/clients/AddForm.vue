@@ -18,7 +18,7 @@ ClientsAddForm - add client form for panel mode with all options.
 		<div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
-					<p class="text-sm font-semibold capitalize tracking-wide text-muted">{{ $t('newClient') }}</p>
+					<h4 class="text-xs m-0 text-muted">{{ $t('newClient') }}</h4>
 				</div>
 				<div class="mb-6">
 					<div
@@ -91,7 +91,7 @@ ClientsAddForm - add client form for panel mode with all options.
 
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
-					<p class="text-sm font-semibold capitalize tracking-wide text-muted">{{ $t('assignments') }}</p>
+					<h4 class="text-xs m-0 text-muted">{{ $t('assignments') }}</h4>
 				</div>
 				<div class="mb-6">
 					<div
@@ -120,7 +120,7 @@ ClientsAddForm - add client form for panel mode with all options.
 
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
-					<p class="text-sm font-semibold capitalize tracking-wide text-muted">{{ $t('initialSetup') }}</p>
+					<h4 class="text-xs m-0 text-muted">{{ $t('initialSetup') }}</h4>
 				</div>
 				<div class="mb-6">
 					<div

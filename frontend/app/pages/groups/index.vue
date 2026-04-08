@@ -33,7 +33,8 @@
                         <span class="text-sm font-medium text-(--color-text)">{{ activeGroupType === 'clients' ?
                             $t('client-group') :
                             $t('product-group') }}</span>
-                        <UTooltip v-if="(activeGroupType === 'clients' && isHostGroupAccessRestricted) || (activeGroupType === 'products' && isProductGroupAccessRestricted)"
+                        <UTooltip
+                            v-if="(activeGroupType === 'clients' && isHostGroupAccessRestricted) || (activeGroupType === 'products' && isProductGroupAccessRestricted)"
                             :text="activeGroupType === 'clients' ? $t('opsiConfig.serverFeatures.hostGroupAccess.disabled') : $t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
                             <UBadge color="warning" variant="subtle" size="xs" class="cursor-help">
                                 {{ $t('restricted') }}
@@ -51,7 +52,7 @@
                 <div v-else class="flex-1 overflow-auto p-2 space-y-0.5">
                     <template v-for="rootGroup in filteredTreeGroups" :key="rootGroup.id">
                         <div v-if="activeGroupType === 'clients'"
-                            class="flex items-center justify-between text-sm font-semibold text-(--color-text) px-2 py-2 mt-3 first:mt-1 cursor-pointer select-none"
+                            class="flex items-center justify-between font-heading text-xs text-(--color-text) px-2 py-2 mt-3 first:mt-1 cursor-pointer select-none"
                             @click="collapsedSections.has(rootGroup.id) ? collapsedSections.delete(rootGroup.id) : collapsedSections.add(rootGroup.id)">
                             <div class="flex items-center gap-1.5">
                                 <UIcon
@@ -112,8 +113,7 @@
                                 :title="$t('addSubgroup')" @click="openCreateModal(selectedGroup.id)"
                                 :disabled="isReadOnly" />
                             <UButton :icon="icons.pencil" variant="ghost" color="neutral" size="xs" :title="$t('edit')"
-                                @click="openEditModal(selectedGroup)"
-                                :disabled="isReadOnly" />
+                                @click="openEditModal(selectedGroup)" :disabled="isReadOnly" />
                             <UButton :icon="icons.delete" variant="ghost" size="xs" color="neutral"
                                 :title="$t('delete')" @click="confirmDeleteGroup(selectedGroup)"
                                 :disabled="isReadOnly" />
@@ -133,7 +133,7 @@
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
                                         []).length
-                                    }})</span>
+                                        }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -143,7 +143,8 @@
                                     </UButton>
                                     <UButton v-if="(selectedGroup.members?.length || 0) > 0 && !selectedGroup.isSpecial"
                                         :icon="icons.delete" size="xs" variant="ghost" color="neutral"
-                                        :disabled="isReadOnly" :title="$t('removeAllMembers')" @click="confirmRemoveAllMembers">
+                                        :disabled="isReadOnly" :title="$t('removeAllMembers')"
+                                        @click="confirmRemoveAllMembers">
                                         {{ $t('removeAll') }}
                                     </UButton>
                                 </div>
@@ -217,7 +218,7 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <UIcon :name="icons.group" class="w-5 h-5 text-opsi-blue" />
-                                <h3 class="font-semibold text-(--color-text)">{{ $t('createGroup') }}</h3>
+                                <h3 class="text-sm text-(--color-text) m-0">{{ $t('createGroup') }}</h3>
                                 <p v-if="createForm.parentGroupId" class="text-sm text-(--color-text-muted)">
                                     {{ createForm.parentGroupId }}</p>
                             </div>
@@ -260,7 +261,7 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <UIcon :name="icons.pencil" class="w-5 h-5 text-opsi-blue" />
-                                <h3 class="font-semibold text-(--color-text)">{{ $t('editGroup') }}</h3>
+                                <h3 class="text-sm text-(--color-text) m-0">{{ $t('editGroup') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ editForm.groupId }}</p>
                             </div>
                             <UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
@@ -300,7 +301,7 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <UIcon :name="icons.delete" class="w-5 h-5 text-(--color-opsi-error)" />
-                                <h3 class="font-semibold text-(--color-text)">{{ $t('confirmDelete') }}</h3>
+                                <h3 class="text-sm text-(--color-text) m-0">{{ $t('confirmDelete') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ groupToDelete?.id }}</p>
                             </div>
                             <UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
@@ -313,7 +314,7 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                            }}
+                                }}
                             </UButton>
                             <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
@@ -330,7 +331,7 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <UIcon :name="icons.add" class="w-5 h-5 text-opsi-blue" />
-                                <h3 class="font-semibold text-(--color-text)">{{ $t('addMembers') }}</h3>
+                                <h3 class="text-sm text-(--color-text) m-0">{{ $t('addMembers') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ memberTargetGroup?.label }}</p>
                             </div>
                             <UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"

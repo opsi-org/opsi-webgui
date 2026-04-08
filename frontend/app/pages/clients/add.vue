@@ -3,7 +3,8 @@ Client Add New page - form for adding a new client.
     <LayoutsPageLayout show-refresh @refresh="resetForm">
         <template #actions>
             <UTooltip :text="$t('addClient')">
-                <UButton color="success" :loading="loading" v-if="canCreate && canCreateClients && !isReadOnly" @click="handleSubmit">
+                <UButton color="success" :loading="loading" v-if="canCreate && canCreateClients && !isReadOnly"
+                    @click="handleSubmit">
                     <UIcon :name="icons.add" />
                 </UButton>
             </UTooltip>
@@ -11,7 +12,8 @@ Client Add New page - form for adding a new client.
 
         <div v-if="!canCreateClients || isReadOnly" class="flex items-center justify-center h-full">
             <SharedAlertInline color="warning" :title="$t('permissionDenied')">
-                <template #description>{{ isReadOnly ? $t('opsiConfig.serverFeatures.readOnly.disabled') : $t('opsiConfig.serverFeatures.clientCreation.disabled') }}</template>
+                <template #description>{{ isReadOnly ? $t('opsiConfig.serverFeatures.readOnly.disabled') :
+                    $t('opsiConfig.serverFeatures.clientCreation.disabled') }}</template>
             </SharedAlertInline>
         </div>
         <div v-else class="space-y-4">
@@ -24,7 +26,7 @@ Client Add New page - form for adding a new client.
             <div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-3">
-                        <p class="text-sm font-semibold capitalize tracking-wide text-muted">{{ $t('newClient') }}</p>
+                        <h4 class="text-xs m-0 text-muted">{{ $t('newClient') }}</h4>
                     </div>
                     <div class="mb-6">
                         <div
@@ -99,7 +101,7 @@ Client Add New page - form for adding a new client.
 
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-3">
-                        <p class="text-sm font-semibold capitalize tracking-wide text-muted">{{ $t('assignments') }}</p>
+                        <h4 class="text-xs m-0 text-muted">{{ $t('assignments') }}</h4>
                     </div>
                     <div class="mb-6">
                         <div
@@ -130,7 +132,7 @@ Client Add New page - form for adding a new client.
 
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-3">
-                        <p class="text-sm font-semibold capitalize tracking-wide text-muted">{{ $t('initialSetup') }}</p>
+                        <h4 class="text-xs m-0 text-muted">{{ $t('initialSetup') }}</h4>
                     </div>
                     <div class="mb-6">
                         <div

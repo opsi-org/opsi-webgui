@@ -3,7 +3,7 @@ HealthCheck - Component to display health check results
 	<UCard>
 		<template #header>
 			<div class="flex items-center justify-between">
-				<span class="font-medium">{{ $t('healthCheck') }}</span>
+				<h3 class="text-xs m-0">{{ $t('healthCheck') }}</h3>
 				<span class="text-xs text-gray-500">{{ filteredHealthData.length }} {{ $t('checks') }}</span>
 			</div>
 		</template>

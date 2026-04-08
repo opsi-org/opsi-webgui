@@ -28,7 +28,7 @@ Row-level client actions dropdown for the clients table.
 					<div class="flex items-center justify-between">
 						<div class="flex items-center gap-3">
 							<UIcon :name="icons.onDemand" class="w-5 h-5 text-opsi-blue" />
-							<h3 class="font-semibold text-(--color-text)">{{ $t('onDemand') }}</h3>
+							<h3 class="text-sm text-(--color-text) m-0">{{ $t('onDemand') }}</h3>
 						</div>
 						<UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
 							@click="showOnDemandPopover = false" />
@@ -60,7 +60,7 @@ Row-level client actions dropdown for the clients table.
 					<div class="flex items-center justify-between">
 						<div class="flex items-center gap-3">
 							<UIcon :name="icons.notify" class="w-5 h-5 text-opsi-blue" />
-							<h3 class="font-semibold text-(--color-text)">{{ $t('notify') }}</h3>
+							<h3 class="text-sm text-(--color-text) m-0">{{ $t('notify') }}</h3>
 						</div>
 						<UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
 							@click="showNotifyModal = false" />
@@ -97,7 +97,7 @@ Row-level client actions dropdown for the clients table.
 					<div class="flex items-center justify-between">
 						<div class="flex items-center gap-3">
 							<UIcon :name="icons.reboot" class="w-5 h-5 text-amber-500" />
-							<h3 class="font-semibold text-(--color-text)">{{ $t('reboot') }}</h3>
+							<h3 class="text-sm text-(--color-text) m-0">{{ $t('reboot') }}</h3>
 						</div>
 						<UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
 							@click="showRebootPopover = false" />
@@ -137,7 +137,7 @@ Row-level client actions dropdown for the clients table.
 					<div class="flex items-center justify-between">
 						<div class="flex items-center gap-3">
 							<UIcon :name="icons.shutdown" class="w-5 h-5 text-amber-600" />
-							<h3 class="font-semibold text-(--color-text)">{{ $t('shutdown') }}</h3>
+							<h3 class="text-sm text-(--color-text) m-0">{{ $t('shutdown') }}</h3>
 						</div>
 						<UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
 							@click="showShutdownPopover = false" />
@@ -177,7 +177,7 @@ Row-level client actions dropdown for the clients table.
 					<div class="flex items-center justify-between">
 						<div class="flex items-center gap-3">
 							<UIcon :name="icons.deploy" class="w-5 h-5 text-opsi-blue" />
-							<h3 class="font-semibold text-(--color-text)">{{ $t('deployClientAgent') }}</h3>
+							<h3 class="text-sm text-(--color-text) m-0">{{ $t('deployClientAgent') }}</h3>
 						</div>
 						<UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
 							@click="showDeployModal = false" />
@@ -222,7 +222,7 @@ Row-level client actions dropdown for the clients table.
 					<div class="flex items-center justify-between">
 						<div class="flex items-center gap-3">
 							<UIcon :name="icons.pencilSquare" class="w-5 h-5 text-opsi-blue" />
-							<h3 class="font-semibold text-(--color-text)">{{ $t('rename') }}</h3>
+							<h3 class="text-sm text-(--color-text) m-0">{{ $t('rename') }}</h3>
 						</div>
 						<UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
 							@click="showRenameModal = false" />
@@ -268,7 +268,7 @@ Row-level client actions dropdown for the clients table.
 					<div class="flex items-center justify-between">
 						<div class="flex items-center gap-3">
 							<UIcon :name="icons.delete" class="w-5 h-5 text-(--color-opsi-error)" />
-							<h3 class="font-semibold text-(--color-text)">{{ $t('delete') }}</h3>
+							<h3 class="text-sm text-(--color-text) m-0">{{ $t('delete') }}</h3>
 						</div>
 						<UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
 							@click="showDeleteModal = false" />

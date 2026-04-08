@@ -74,7 +74,7 @@ export default defineAppConfig({
       slots: {
         root: 'bg-white dark:bg-[var(--color-surface)] border border-[var(--color-border)]/50 rounded-xl overflow-hidden',
         thead: 'bg-[var(--color-surface)] dark:bg-[var(--color-background)]',
-        th: 'text-[var(--color-text-muted)] dark:text-[var(--color-text-secondary)] text-xs font-medium capitalize px-4 py-3',
+        th: 'font-[Montserrat] text-[var(--color-text-muted)] dark:text-[var(--color-text-secondary)] text-xs font-semibold uppercase tracking-wider px-4 py-3',
         td: 'text-[var(--color-text)] dark:text-[var(--color-text)] px-4 py-3',
         tr: 'hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-hover)] transition-colors duration-100 border-b border-[var(--color-border)]/30 dark:border-[var(--color-border)]/30 last:border-b-0',
       },

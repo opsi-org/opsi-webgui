@@ -52,6 +52,8 @@ body {
   background-color: var(--color-background);
   color: var(--color-text);
   font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.875rem; /* 14px base */
+  line-height: 1.25rem;
 }
 
 /* OPSI Typography - Headings use Montserrat (UPPERCASE) */
@@ -62,12 +64,22 @@ h4,
 h5,
 h6,
 .font-heading {
-  font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
-  font-weight: 600;
+  font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif !important;
+  font-weight: 600 !important;
   text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
-/* Form labels should match table item font size */
+/* Form elements and labels - consistent Open Sans */
+label,
+.form-label,
+input,
+select,
+textarea,
+button {
+  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
 label,
 .form-label {
   font-size: 0.875rem; /* 14px - matches text-sm used in table cells */

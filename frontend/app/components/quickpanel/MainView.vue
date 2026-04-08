@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div class="shrink-0 mb-2">
-			<div class="text-xs font-semibold uppercase tracking-wide text-(--color-text-muted) mb-1">{{
+			<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1">{{
 				t('quickSelection') }}</div>
 			<div class="flex gap-1.5 border-b border-(--color-border)">
 				<UButton v-for="tab in selectionTabs" :key="tab.id" variant="soft"
@@ -37,7 +37,7 @@
 
 		<div class="mt-auto shrink-0 border-t border-(--color-border) pt-3 space-y-3">
 			<div>
-				<div class="text-xs font-semibold uppercase tracking-wide text-(--color-text-muted) mb-1.5">{{
+				<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1.5">{{
 					t('quickActions') }}</div>
 				<div class="flex items-center gap-1.5 flex-nowrap">
 					<ClientsQuickActionsDropdown :client-ids="selectionStore.selectedClients" compact />
@@ -46,7 +46,7 @@
 			</div>
 
 			<div class="border-t border-(--color-border) pt-3">
-				<div class="text-xs font-semibold uppercase tracking-wide text-(--color-text-muted) mb-1.5">{{
+				<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1.5">{{
 					t('settings') }}</div>
 				<div class="space-y-1.5">
 					<div

@@ -21,7 +21,7 @@
           <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('tableSettings')" />
           <template #content>
             <div class="p-3 min-w-85 overflow-y-auto">
-              <div class="text-xs font-medium text-(--color-text-muted) capitalize mb-3">{{ $t('tableSettings') }}</div>
+              <div class="font-heading text-xs text-(--color-text-muted) mb-3">{{ $t('tableSettings') }}</div>
 
               <div class="mb-4 grid grid-cols-[7rem_1fr] items-center gap-x-2 gap-y-3">
                 <label class="text-xs text-(--color-text-muted)">{{ $t('displayMode') }}</label>
@@ -139,7 +139,7 @@
 
                 <th v-for="col in visibleColumns" :key="col.key" role="columnheader"
                   :aria-sort="getSortAriaLabel(col.key)"
-                  class="px-3 py-2.5 text-left text-xs font-semibold capitalize tracking-wider text-(--color-text-muted) whitespace-nowrap"
+                  class="px-3 py-2.5 text-left font-heading text-xs tracking-wider text-(--color-text-muted) whitespace-nowrap"
                   :class="[col.headerClass, { 'cursor-pointer hover:bg-(--color-surface-hover)': col.sortable }]"
                   :style="{ width: col.width, minWidth: col.minWidth || '80px', textAlign: col.align }"
                   :tabindex="col.sortable ? 0 : undefined" @click="col.sortable && handleSort(col.key)"
@@ -167,7 +167,7 @@
                 </th>
 
                 <th v-if="hasActions" role="columnheader"
-                  class="w-24 px-3 py-2.5 text-center text-xs font-semibold capitalize tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface)">
+                  class="w-24 px-3 py-2.5 text-center font-heading text-xs tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface)">
                   {{ $t('actions') }}
                 </th>
               </tr>
