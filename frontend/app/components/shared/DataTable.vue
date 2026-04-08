@@ -14,12 +14,8 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <div v-if="filterable" class="relative">
-          <UInput v-model="filterQueryInternal" :placeholder="filterPlaceholder || String($t('typeToFilter'))" size="sm"
-            :icon="icons.filter" class="w-32 sm:w-40" />
-          <UButton v-if="filterQueryInternal" :icon="icons.x" variant="link" color="neutral" size="xs" :padded="false"
-            class="absolute right-1 top-1/2 -translate-y-1/2" @click="filterQueryInternal = ''" />
-        </div>
+        <SharedFilterInput v-if="filterable" v-model="filterQueryInternal"
+          :placeholder="filterPlaceholder || String($t('typeToFilter'))" size="sm" input-class="w-32 sm:w-40" />
 
         <UPopover>
           <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('tableSettings')" />
@@ -97,7 +93,7 @@
                       class="rounded border-gray-300 text-opsi-blue focus:ring-opsi-blue disabled:opacity-50"
                       @change="tableSettings.toggleColumn(col.key)" />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col)
-                    }}</span>
+                      }}</span>
                   </label>
                 </div>
               </div>
@@ -120,10 +116,8 @@
       <div ref="tableContainer" class="flex-1 overflow-x-auto overflow-y-auto transition-all duration-200"
         :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" tabindex="-1" @scroll="handleScroll"
         @keydown="handleTableKeydown">
-        <div v-if="loading && rows.length === 0"
-          class="flex items-center justify-center py-12 text-(--color-text-muted)">
-          <UIcon :name="icons.refresh" class="w-6 h-6 animate-spin mr-2" />
-          {{ $t('loading') }}
+        <div v-if="loading && rows.length === 0" class="py-12">
+          <SharedLoadingSpinner size="lg" />
         </div>
 
         <div v-else>
@@ -231,10 +225,7 @@
 
               <tr v-if="displayMode === 'infinite' && hasMoreData" class="scroll-sentinel">
                 <td :colspan="totalColSpan" class="px-4 py-4 text-center">
-                  <div class="flex items-center justify-center gap-2 text-(--color-text-muted) text-sm">
-                    <UIcon :name="icons.refresh" class="w-4 h-4 animate-spin" />
-                    <span>{{ $t('loading') }}...</span>
-                  </div>
+                  <SharedLoadingSpinner size="sm" />
                 </td>
               </tr>
 

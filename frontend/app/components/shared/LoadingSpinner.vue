@@ -1,14 +1,12 @@
 <template>
 	<div :class="containerClass">
 		<UIcon :name="icons.refresh" :class="['animate-spin', sizeClass]" />
-		<span v-if="text" class="text-sm">{{ text }}</span>
 	</div>
 </template>
 
 <script setup lang="ts">
 const props = withDefaults(defineProps<{
 	size?: 'xs' | 'sm' | 'md' | 'lg'
-	text?: string
 	centered?: boolean
 }>(), {
 	size: 'md',
