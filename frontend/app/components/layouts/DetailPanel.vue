@@ -42,7 +42,7 @@ Mobile: overlay panel with close button.
                     </div>
                 </div>
                 <div
-                    class="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-(--color-background) dark:bg-(--color-background) min-h-0">
+                    class="flex-1 overflow-y-auto overflow-x-auto p-4 bg-(--color-background) dark:bg-(--color-background) min-h-0">
                     <slot name="panel" />
                 </div>
             </div>

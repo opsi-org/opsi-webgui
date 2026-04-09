@@ -43,8 +43,10 @@
 			<div class="p-4 min-w-87.5" @click.stop>
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-sm flex items-center gap-2 m-0">
-						<UIcon :name="currentActionIcon" class="w-5 h-5" :class="currentActionColor" />
-						{{ t(currentAction) }} {{ clientIds.length > 1 ? `(${clientIds.length} ${t('clients')})` : '' }}
+						<UIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
+						{{ t(currentAction) }}
+						<span v-if="clientIds.length === 1" class="text-(--color-text-muted) font-normal truncate max-w-48">{{ clientIds[0] }}</span>
+						<span v-else-if="clientIds.length > 1" class="text-(--color-text-muted) font-normal">({{ clientIds.length }} {{ t('clients') }})</span>
 					</h3>
 					<UButton :icon="icons.x" variant="ghost" color="neutral" @click="confirmOpen = false" />
 				</div>
@@ -153,7 +155,7 @@
 			<div class="p-4 min-w-87.5">
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-sm flex items-center gap-2 m-0">
-						<UIcon :name="currentActionIcon" class="w-5 h-5" :class="currentActionColor" />
+						<UIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
 						{{ t('actionResults') }}
 					</h3>
 					<UButton :icon="icons.x" variant="ghost" color="neutral" @click="resultOpen = false" />
@@ -321,7 +323,7 @@ function openConfirm(action: string) {
 	statusMessage.value = null
 
 	if (action === 'rename' && props.clientIds.length === 1) {
-		const clientId = props.clientIds[0]
+		const clientId = props.clientIds[0]!
 		const dotIndex = clientId.indexOf('.')
 		renameHostname.value = ''
 		renameDomain.value = dotIndex > 0 ? clientId.substring(dotIndex + 1) : ''
@@ -340,33 +342,48 @@ async function executeAction() {
 		let result: Record<string, any> = {}
 
 		switch (currentAction.value) {
-			case 'onDemand':
-				result = (await triggerOnDemand(props.clientIds)).data || {}
+			case 'onDemand': {
+				const res = await triggerOnDemand(props.clientIds)
+				if (res.error) throw res.error
+				result = res.data || {}
 				break
+			}
 
-			case 'notify':
-				result = (await sendNotification(props.clientIds, notifyText.value)).data || {}
+			case 'notify': {
+				const res = await sendNotification(props.clientIds, notifyText.value)
+				if (res.error) throw res.error
+				result = res.data || {}
 				break
+			}
 
-			case 'reboot':
-				result = (await rebootClients(props.clientIds)).data || {}
+			case 'reboot': {
+				const res = await rebootClients(props.clientIds)
+				if (res.error) throw res.error
+				result = res.data || {}
 				break
+			}
 
-			case 'shutdown':
-				result = (await shutdownClients(props.clientIds)).data || {}
+			case 'shutdown': {
+				const res = await shutdownClients(props.clientIds)
+				if (res.error) throw res.error
+				result = res.data || {}
 				break
+			}
 
-			case 'deployClientAgent':
-				result = (await deployClientAgent({
+			case 'deployClientAgent': {
+				const res = await deployClientAgent({
 					clients: props.clientIds,
 					username: deployOptions.value.username,
 					password: deployOptions.value.password,
 					type: deployOptions.value.type as 'windows' | 'linux' | 'mac',
-				})).data || {}
+				})
+				if (res.error) throw res.error
+				result = res.data || {}
 				break
+			}
 
 			case 'rename': {
-				const clientId = props.clientIds[0]
+				const clientId = props.clientIds[0]!
 				const newHostId = `${renameHostname.value.trim()}.${renameDomain.value.trim()}`
 				try {
 					const res = await renameClient(clientId, newHostId)
@@ -407,10 +424,10 @@ async function executeAction() {
 		// Always show the result modal
 		resultOpen.value = true
 
+		// Only emit action-complete on full success to avoid duplicate error display
+		// (errors are already visible in the result modal)
 		if (failCount === 0) {
 			emit('action-complete', currentAction.value, true)
-		} else {
-			emit('action-complete', currentAction.value, false)
 		}
 
 		confirmOpen.value = false

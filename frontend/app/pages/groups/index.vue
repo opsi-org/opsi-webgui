@@ -217,7 +217,7 @@
                     <template #header>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <UIcon :name="icons.group" class="w-5 h-5 text-opsi-blue" />
+                                <UIcon :name="icons.group" class="w-5 h-5 text-(--color-text-muted)" />
                                 <h3 class="text-sm text-(--color-text) m-0">{{ $t('createGroup') }}</h3>
                                 <p v-if="createForm.parentGroupId" class="text-sm text-(--color-text-muted)">
                                     {{ createForm.parentGroupId }}</p>
@@ -260,7 +260,7 @@
                     <template #header>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <UIcon :name="icons.pencil" class="w-5 h-5 text-opsi-blue" />
+                                <UIcon :name="icons.pencil" class="w-5 h-5 text-(--color-text-muted)" />
                                 <h3 class="text-sm text-(--color-text) m-0">{{ $t('editGroup') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ editForm.groupId }}</p>
                             </div>
@@ -330,7 +330,7 @@
                     <template #header>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <UIcon :name="icons.add" class="w-5 h-5 text-opsi-blue" />
+                                <UIcon :name="icons.add" class="w-5 h-5 text-(--color-text-muted)" />
                                 <h3 class="text-sm text-(--color-text) m-0">{{ $t('addMembers') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ memberTargetGroup?.label }}</p>
                             </div>

@@ -114,7 +114,7 @@
 		<template #title>
 			<span class="flex items-center gap-2">
 				<UIcon :name="panelType === 'products' ? icons.product : panelType === 'add' ? icons.add : icons.client"
-					class="w-4 h-4 text-opsi-blue shrink-0" />
+					class="w-4 h-4 text-(--color-text-muted) shrink-0" />
 				<template v-if="panelType === 'products'">{{ $t('products') }}</template>
 				<template v-else-if="panelType === 'add'">{{ $t('addNew') }}</template>
 				<template v-else>{{ panelClient?.clientId }}</template>

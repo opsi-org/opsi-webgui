@@ -27,7 +27,7 @@
 					class="border border-(--color-border) rounded-lg overflow-hidden">
 					<div class="bg-(--color-surface) px-3 py-2 flex items-center justify-between">
 						<div class="flex items-center gap-2">
-							<UIcon :name="icons.product" class="w-4 h-4 text-opsi-blue" />
+							<UIcon :name="icons.product" class="w-4 h-4 text-(--color-text-muted)" />
 							<span class="text-sm font-medium">{{ group.productId }}</span>
 						</div>
 						<UBadge v-if="group.changes.length > 1" color="warning" variant="subtle" size="xs">
@@ -63,7 +63,7 @@
 			<div class="w-full space-y-3">
 				<div v-if="mode === 'actionRequests'" class="border border-(--color-border) rounded-lg overflow-hidden">
 					<div class="bg-(--color-surface) px-3 py-1.5 flex items-center gap-2">
-						<UIcon :name="icons.onDemand" class="w-4 h-4 text-opsi-blue" />
+						<UIcon :name="icons.onDemand" class="w-4 h-4 text-(--color-text-muted)" />
 						<label class="flex items-center gap-2 cursor-pointer">
 							<input type="checkbox" v-model="processAfterSave"
 								class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue w-3.5 h-3.5" />
