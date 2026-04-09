@@ -297,6 +297,18 @@ const columns: DataTableColumnDef[] = [
 ]
 
 function openProductConfig(product: ProductRow) {
+	if (configProduct.value && configProduct.value.productId !== product.productId && hasUnsavedChanges.value) {
+		pendingAction.value = () => {
+			discardAllChanges()
+			doOpenProductConfig(product)
+		}
+		showLeaveWarning.value = true
+		return
+	}
+	doOpenProductConfig(product)
+}
+
+function doOpenProductConfig(product: ProductRow) {
 	configProduct.value = product
 	showConfigPanel.value = true
 	router.replace({ query: { ...route.query, product: product.productId, view: 'panel' } })
@@ -336,7 +348,7 @@ function handleRowActivate(row: ProductRow) {
 		pendingAction.value = () => {
 			discardAllChanges()
 			selectionStore.setProducts([row.productId], 'table')
-			openProductConfig(row)
+			doOpenProductConfig(row)
 		}
 		showLeaveWarning.value = true
 		return
