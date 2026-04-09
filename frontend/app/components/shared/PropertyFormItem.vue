@@ -1,6 +1,8 @@
 Shared form item for both host parameters and product properties.
 Supports: Bool (checkbox), password, multi-value (tags + select), single non-editable (select),
 single editable (select + custom input), plain input.
+Multiline values display first line + "..." and open a textarea editor on click.
+Adding new values is integrated inline within dropdowns.
 <template>
 	<div class="flex-1 flex items-center gap-2 min-w-0 w-full">
 		<!-- Bool: checkbox -->
@@ -16,35 +18,48 @@ single editable (select + custom input), plain input.
 				@update:model-value="(v: string) => emit('update:modelValue', v)" />
 		</template>
 
-		<!-- Multi-value with possible values: select with checkmarks -->
+		<!-- Multi-value with possible values: popover with checkmarks + inline add -->
 		<template v-else-if="multiValue && hasPossibleValues">
 			<div class="flex-1">
-				<UPopover :ui="{ content: 'p-0 w-64' }">
-					<UButton variant="ghost" color="neutral" size="sm"
-						class="w-full justify-between font-normal border border-(--color-border) rounded"
-						:disabled="disabled">
-						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{ $t('selectValues')
-						}}</span>
-						<span v-else class="truncate">{{ arrayValue.join(', ') }}</span>
+				<UPopover :ui="{ content: 'p-0 w-72' }">
+					<button type="button"
+						class="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-sm font-normal border border-(--color-border) rounded-md bg-white dark:bg-(--color-surface) hover:border-(--color-primary)/50 transition-colors text-left min-h-8"
+						:class="disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'" :disabled="disabled">
+						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{ $t('selectValues') }}</span>
+						<span v-else class="flex flex-wrap gap-1 min-w-0">
+							<span v-for="val in arrayValue.slice(0, 3)" :key="val"
+								class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-primary/10 text-(--color-primary) border border-primary/20 max-w-32 truncate">
+								{{ formatDisplayValue(val) }}
+							</span>
+							<span v-if="arrayValue.length > 3"
+								class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-surface) text-(--color-text-muted)">
+								+{{ arrayValue.length - 3 }}
+							</span>
+						</span>
 						<UIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
-					</UButton>
+					</button>
 					<template #content>
-						<div class="max-h-64 overflow-y-auto">
-							<button v-for="opt in allMultiOptions" :key="opt" type="button"
+						<div class="max-h-72 overflow-y-auto">
+							<div v-if="editable" class="sticky top-0 z-10 bg-white dark:bg-(--color-surface) border-b border-(--color-border) px-2 py-1.5">
+								<div class="flex items-center gap-1">
+									<UInput ref="multiAddInputRef" v-model="customInput"
+										:placeholder="$t('addOrSearch')" size="xs" class="flex-1"
+										@keydown.enter.prevent="addCustomMultiItem" />
+									<UButton size="xs" variant="ghost" color="primary" :icon="icons.add"
+										:disabled="!customInput.trim()" @click="addCustomMultiItem" />
+								</div>
+							</div>
+							<button v-for="opt in filteredMultiOptions" :key="opt" type="button"
 								class="flex items-center gap-2 w-full px-3 py-1.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
 								@click="toggleMultiItem(opt)">
 								<UIcon :name="arrayValue.includes(opt) ? icons.squareCheck : icons.square"
 									class="w-4 h-4 shrink-0"
 									:class="arrayValue.includes(opt) ? 'text-(--color-primary)' : 'text-(--color-text-muted)'" />
-								<span class="truncate">{{ opt }}</span>
+								<span class="truncate text-left" :title="opt">{{ formatDisplayValue(opt) }}</span>
 							</button>
-							<div v-if="editable" class="border-t border-(--color-border) px-3 py-1.5">
-								<div class="flex items-center gap-1">
-									<UInput v-model="customInput" :placeholder="$t('pressEnterToAdd')" size="xs"
-										class="flex-1" @keydown.enter.prevent="addCustomMultiItem" />
-									<UButton size="xs" variant="ghost" color="primary" :icon="icons.add"
-										:disabled="!customInput.trim()" @click="addCustomMultiItem" />
-								</div>
+							<div v-if="filteredMultiOptions.length === 0 && customInput.trim()"
+								class="px-3 py-2 text-xs text-(--color-text-muted) text-center">
+								{{ $t('pressEnterToAdd') }}
 							</div>
 						</div>
 					</template>
@@ -52,21 +67,31 @@ single editable (select + custom input), plain input.
 			</div>
 		</template>
 
-		<!-- Multi-value without possible values: tags + input -->
+		<!-- Multi-value without possible values: tags + inline input -->
 		<template v-else-if="multiValue">
-			<div class="flex-1 space-y-1">
-				<div v-if="arrayValue.length > 0" class="flex flex-wrap gap-1">
+			<div class="flex-1">
+				<div class="flex flex-wrap items-center gap-1 p-1 border border-(--color-border) rounded-md bg-white dark:bg-(--color-surface) min-h-8"
+					:class="disabled ? 'opacity-50' : ''">
 					<span v-for="(val, idx) in arrayValue" :key="idx"
-						class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20">
-						{{ val }}
-						<button v-if="!disabled" type="button" class="hover:text-red-500 transition-colors"
+						class="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20 max-w-48 group/tag">
+						<span class="truncate" :title="val">{{ formatDisplayValue(val) }}</span>
+						<button v-if="!disabled" type="button"
+							class="hover:text-red-500 transition-colors opacity-60 group-hover/tag:opacity-100"
 							@click="removeMultiItem(idx)">
 							<UIcon :name="icons.x" class="w-3 h-3" />
 						</button>
 					</span>
+					<button v-if="hasMultilineValues(arrayValue)" type="button"
+						class="inline-flex items-center gap-0.5 px-1 py-0.5 text-xs text-(--color-text-muted) hover:text-(--color-primary) transition-colors"
+						@click="openMultilineEditor">
+						<UIcon :name="icons.pencilSquare" class="w-3 h-3" />
+					</button>
+					<input v-if="editable && !disabled" v-model="customInput"
+						class="flex-1 min-w-24 px-1 py-0.5 text-sm bg-transparent outline-none border-none"
+						:placeholder="arrayValue.length === 0 ? $t('pressEnterToAdd') : ''"
+						@keydown.enter.prevent="addCustomMultiItem"
+						@keydown.backspace="handleTagBackspace" />
 				</div>
-				<UInput v-if="editable" v-model="customInput" :placeholder="$t('pressEnterToAdd')" size="sm"
-					class="flex-1" :disabled="disabled" @keydown.enter.prevent="addCustomMultiItem" />
 			</div>
 		</template>
 
@@ -76,16 +101,59 @@ single editable (select + custom input), plain input.
 				class="flex-1" @update:model-value="handleNonEditableSelectChange" />
 		</template>
 
-		<!-- Single value, editable with possible values: select + custom input -->
+		<!-- Single value, editable with possible values: combobox-style -->
 		<template v-else-if="hasPossibleValues && editable">
-			<div class="flex-1 flex items-center gap-1">
-				<USelect :model-value="selectModelValue" :items="editableSelectItems" :disabled="disabled" size="sm"
-					class="flex-1" @update:model-value="handleEditableSelectChange" />
-				<UInput v-if="showCustomInput" :model-value="stringValue" size="sm" class="flex-1" :disabled="disabled"
-					:placeholder="String($t('enterValue'))"
-					@update:model-value="(v: string) => emit('update:modelValue', v)" />
-				<!-- <UButton v-if="stringValue && !disabled" size="xs" variant="ghost" color="neutral" :icon="icons.x"
-					:title="$t('clearValue')" @click="clearEditableValue" /> -->
+			<div class="flex-1">
+				<UPopover :ui="{ content: 'p-0 w-64' }">
+					<button type="button"
+						class="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-sm font-normal border border-(--color-border) rounded-md bg-white dark:bg-(--color-surface) hover:border-(--color-primary)/50 transition-colors text-left min-h-8"
+						:class="disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'" :disabled="disabled">
+						<span :class="stringValue ? '' : 'text-(--color-text-muted)'" class="truncate">
+							{{ stringValue ? formatDisplayValue(stringValue) : `(${$t('empty')})` }}
+						</span>
+						<UIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
+					</button>
+					<template #content>
+						<div class="max-h-64 overflow-y-auto">
+							<div class="sticky top-0 z-10 bg-white dark:bg-(--color-surface) border-b border-(--color-border) px-2 py-1.5">
+								<UInput v-model="editableSearchInput" :placeholder="$t('enterValue')" size="xs" class="w-full"
+									@keydown.enter.prevent="applyEditableCustomValue" />
+							</div>
+							<button type="button"
+								class="flex items-center gap-2 w-full px-3 py-1.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
+								:class="!stringValue ? 'text-(--color-primary) font-medium' : 'text-(--color-text-muted)'"
+								@click="emit('update:modelValue', ''); editableSearchInput = ''">
+								<span>({{ $t('empty') }})</span>
+							</button>
+							<button v-for="opt in filteredEditableOptions" :key="opt" type="button"
+								class="flex items-center gap-2 w-full px-3 py-1.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
+								:class="stringValue === opt ? 'text-(--color-primary) font-medium bg-primary/5' : ''"
+								@click="emit('update:modelValue', opt); editableSearchInput = ''">
+								<span class="truncate" :title="opt">{{ formatDisplayValue(opt) }}</span>
+							</button>
+							<button v-if="editableSearchInput.trim() && !filteredPossibleValueStrings.includes(editableSearchInput.trim())"
+								type="button"
+								class="flex items-center gap-2 w-full px-3 py-1.5 text-sm text-(--color-primary) hover:bg-(--color-surface-hover) transition-colors border-t border-(--color-border)"
+								@click="applyEditableCustomValue">
+								<UIcon :name="icons.add" class="w-3.5 h-3.5" />
+								<span>{{ editableSearchInput.trim() }}</span>
+							</button>
+						</div>
+					</template>
+				</UPopover>
+			</div>
+		</template>
+
+		<!-- Multiline single value: show preview + edit button -->
+		<template v-else-if="isMultilineValue">
+			<div class="flex-1 flex items-center gap-1 min-w-0">
+				<div class="flex-1 px-2.5 py-1.5 text-sm border border-(--color-border) rounded-md bg-white dark:bg-(--color-surface) min-h-8 cursor-pointer hover:border-(--color-primary)/50 transition-colors truncate"
+					:class="disabled ? 'opacity-50 cursor-not-allowed' : ''"
+					:title="stringValue" @click="!disabled && openMultilineEditor()">
+					{{ formatDisplayValue(stringValue) }}
+				</div>
+				<UButton v-if="!disabled" size="xs" variant="ghost" color="neutral" :icon="icons.pencilSquare"
+					@click="openMultilineEditor" />
 			</div>
 		</template>
 
@@ -94,6 +162,21 @@ single editable (select + custom input), plain input.
 			<UInput :model-value="stringValue" :disabled="disabled" size="sm" class="flex-1"
 				@update:model-value="(v: string) => emit('update:modelValue', v)" />
 		</template>
+
+		<!-- Multiline editor modal -->
+		<UModal v-model:open="showMultilineEditor" :title="$t('editValue')" :ui="{ content: 'max-w-sm sm:max-w-xl' }">
+			<template #body>
+				<textarea ref="multilineTextareaRef" v-model="multilineEditValue"
+					class="w-full h-48 px-3 py-2 text-sm font-mono border border-(--color-border) rounded-md bg-white dark:bg-(--color-surface) text-(--color-text) resize-y focus:outline-none focus:ring-2 focus:ring-(--color-primary) focus:border-transparent"
+					:disabled="disabled" />
+			</template>
+			<template #footer>
+				<div class="flex gap-2 justify-end">
+					<UButton variant="outline" color="neutral" @click="showMultilineEditor = false">{{ $t('cancel') }}</UButton>
+					<UButton color="primary" @click="applyMultilineEdit">{{ $t('apply') }}</UButton>
+				</div>
+			</template>
+		</UModal>
 	</div>
 </template>
 
@@ -127,8 +210,14 @@ const icons = useIcons()
 const { t: $t } = useI18n()
 
 const customInput = ref('')
+const editableSearchInput = ref('')
 const EMPTY_SENTINEL = '__empty__'
-const customInputMode = ref(false)
+const multiAddInputRef = ref<{ input?: HTMLInputElement } | null>(null)
+
+// Multiline editor state
+const showMultilineEditor = ref(false)
+const multilineEditValue = ref('')
+const multilineTextareaRef = ref<HTMLTextAreaElement | null>(null)
 
 const boolValue = computed(() => {
 	if (props.mixed) return false
@@ -155,21 +244,29 @@ const possibleValueStrings = computed(() => props.possibleValues.map(String))
 const filteredPossibleValueStrings = computed(() => possibleValueStrings.value.filter(v => v !== ''))
 const hasPossibleValues = computed(() => filteredPossibleValueStrings.value.length > 0)
 
+const isMultilineValue = computed(() => {
+	if (props.multiValue || props.type === 'bool' || props.password) return false
+	return typeof props.modelValue === 'string' && props.modelValue.includes('\n')
+})
+
 const selectModelValue = computed(() => {
 	if (props.mixed) return ''
 	const val = stringValue.value
 	return val === '' ? EMPTY_SENTINEL : val
 })
 
-const availableMultiOptions = computed(() => {
-	const current = new Set(arrayValue.value)
-	return filteredPossibleValueStrings.value
-		.filter(v => !current.has(v))
-		.map(v => ({ label: v, value: v }))
+const allMultiOptions = computed(() => filteredPossibleValueStrings.value)
+
+const filteredMultiOptions = computed(() => {
+	const q = customInput.value.trim().toLowerCase()
+	if (!q) return allMultiOptions.value
+	return allMultiOptions.value.filter(v => v.toLowerCase().includes(q))
 })
 
-const allMultiOptions = computed(() => {
-	return filteredPossibleValueStrings.value
+const filteredEditableOptions = computed(() => {
+	const q = editableSearchInput.value.trim().toLowerCase()
+	if (!q) return filteredPossibleValueStrings.value
+	return filteredPossibleValueStrings.value.filter(v => v.toLowerCase().includes(q))
 })
 
 const selectItemsWithEmpty = computed(() => {
@@ -177,38 +274,29 @@ const selectItemsWithEmpty = computed(() => {
 	return [{ label: `(${String($t('empty'))})`, value: EMPTY_SENTINEL }, ...items]
 })
 
-const editableSelectItems = computed(() => {
-	const items = filteredPossibleValueStrings.value.map(v => ({ label: v, value: v }))
-	return [
-		{ label: `(${String($t('empty'))})`, value: EMPTY_SENTINEL },
-		...items,
-		{ label: `+ ${String($t('customValue'))}...`, value: '__custom__' },
-	]
-})
+/** Format a value for display: show first line + "..." for multiline, truncate long values */
+function formatDisplayValue(value: string): string {
+	if (value.includes('\n')) {
+		const firstLine = value.substring(0, value.indexOf('\n'))
+		return firstLine + '...'
+	}
+	return value
+}
 
-const showCustomInput = computed(() => {
-	if (customInputMode.value) return true
-	const val = stringValue.value
-	if (!val) return false
-	return !filteredPossibleValueStrings.value.includes(val)
-})
+/** Check if any value in the array contains newlines */
+function hasMultilineValues(values: string[]): boolean {
+	return values.some(v => v.includes('\n'))
+}
 
 function handleNonEditableSelectChange(v: string) {
 	emit('update:modelValue', v === EMPTY_SENTINEL ? '' : v)
 }
 
-function handleEditableSelectChange(v: string) {
-	if (v === '__custom__') {
-		customInputMode.value = true
-	} else {
-		customInputMode.value = false
-		emit('update:modelValue', v === EMPTY_SENTINEL ? '' : v)
-	}
-}
-
-function clearEditableValue() {
-	customInputMode.value = false
-	emit('update:modelValue', '')
+function applyEditableCustomValue() {
+	const input = editableSearchInput.value.trim()
+	if (!input) return
+	emit('update:modelValue', input)
+	editableSearchInput.value = ''
 }
 
 function toggleMultiItem(value: string) {
@@ -225,12 +313,6 @@ function removeMultiItem(idx: number) {
 	emit('update:modelValue', updated)
 }
 
-function addMultiItem(value: string) {
-	if (!arrayValue.value.includes(value)) {
-		emit('update:modelValue', [...arrayValue.value, value])
-	}
-}
-
 function addCustomMultiItem() {
 	const input = customInput.value.trim()
 	if (!input) return
@@ -238,5 +320,37 @@ function addCustomMultiItem() {
 		emit('update:modelValue', [...arrayValue.value, input])
 	}
 	customInput.value = ''
+}
+
+function handleTagBackspace() {
+	if (customInput.value === '' && arrayValue.value.length > 0) {
+		const updated = [...arrayValue.value]
+		updated.pop()
+		emit('update:modelValue', updated)
+	}
+}
+
+function openMultilineEditor() {
+	if (props.multiValue) {
+		// For multi-value, join all values with newline for editing
+		multilineEditValue.value = arrayValue.value.join('\n')
+	} else {
+		multilineEditValue.value = stringValue.value
+	}
+	showMultilineEditor.value = true
+	nextTick(() => {
+		multilineTextareaRef.value?.focus()
+	})
+}
+
+function applyMultilineEdit() {
+	if (props.multiValue) {
+		// Split by newlines, filter empty lines, and emit as array
+		const values = multilineEditValue.value.split('\n').filter(v => v.trim() !== '')
+		emit('update:modelValue', values)
+	} else {
+		emit('update:modelValue', multilineEditValue.value)
+	}
+	showMultilineEditor.value = false
 }
 </script>

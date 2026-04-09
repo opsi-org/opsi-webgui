@@ -118,7 +118,7 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                         </div>
                     </div>
                 </Transition>
-                <div class="flex-1 p-3 md:p-4 overflow-y-auto overflow-x-hidden min-h-0">
+                <div class="flex-1 p-3 md:p-4 overflow-hidden min-h-0">
                     <slot />
                 </div>
             </main>
