@@ -1,21 +1,30 @@
 ClientsAddForm - add client form for panel mode with all options.
 <template>
-	<div class="space-y-4 h-full overflow-y-auto p-2">
-		<SharedAlertInline v-if="success" color="success" :title="String($t('success'))">
-			<template #description>{{ $t('clientCreatedSuccessfully') }}</template>
-		</SharedAlertInline>
-		<SharedAlertInline v-if="error" color="error" :title="String($t('error'))" :description="error" closable
-			@close="error = null" />
-
-		<div class="shrink-0 flex justify-end gap-2 mb-2">
-			<UTooltip :text="$t('addClient')">
-				<UButton color="success" :loading="loading" :disabled="!canCreate" @click="handleSubmit">
-					<UIcon :name="icons.add" />
-				</UButton>
-			</UTooltip>
+	<div class="flex flex-col h-full">
+		<div
+			class="shrink-0 sticky top-0 z-10 bg-(--color-background) dark:bg-(--color-background) px-2 py-2 border-b border-(--color-border)">
+			<div class="flex items-center justify-between">
+				<SharedAlertInline v-if="success" color="success" :title="String($t('success'))" class="flex-1 mr-2">
+					<template #description>{{ $t('clientCreatedSuccessfully') }}</template>
+				</SharedAlertInline>
+				<SharedAlertInline v-else-if="error" color="error" :title="String($t('error'))" :description="error"
+					closable class="flex-1 mr-2" @close="error = null" />
+				<div v-else />
+				<div class="flex gap-2 shrink-0">
+					<UTooltip :text="$t('reset')">
+						<UButton variant="ghost" color="neutral" :icon="icons.refresh" :disabled="loading"
+							@click="resetForm" />
+					</UTooltip>
+					<UTooltip :text="$t('addClient')">
+						<UButton color="success" :loading="loading" :disabled="!canCreate" @click="handleSubmit">
+							<UIcon :name="icons.add" />
+						</UButton>
+					</UTooltip>
+				</div>
+			</div>
 		</div>
 
-		<div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
+		<div class="flex-1 overflow-y-auto p-2">
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
 					<h4 class="text-sm font-semibold m-0">{{ $t('newClient') }}</h4>
@@ -143,7 +152,8 @@ ClientsAddForm - add client form for panel mode with all options.
 							<UCheckbox v-model="form.agentSetup" :disabled="loading" />
 						</div>
 					</div>
-					<div v-if="form.agentSetup" class="ml-4 border-l-2 border-green-200 dark:border-green-800 pl-4 space-y-0">
+					<div v-if="form.agentSetup"
+						class="ml-4 border-l-2 border-green-200 dark:border-green-800 pl-4 space-y-0">
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
@@ -168,8 +178,8 @@ ClientsAddForm - add client form for panel mode with all options.
 								{{ $t('agentUsername') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
-								<UInput v-model="form.agentUsername" :disabled="loading" size="sm" :placeholder="String($t('adminUsername'))"
-									class="w-full" />
+								<UInput v-model="form.agentUsername" :disabled="loading" size="sm"
+									:placeholder="String($t('adminUsername'))" class="w-full" />
 							</div>
 						</div>
 						<div
@@ -253,6 +263,28 @@ const canCreate = computed(() =>
 function getDefaultDomainFromDepot(depotId: string): string {
 	const idx = depotId.indexOf('.')
 	return idx > 0 ? depotId.substring(idx) : '.local'
+}
+
+function resetForm() {
+	clientName.value = ''
+	if (form.depotId) {
+		domain.value = getDefaultDomainFromDepot(form.depotId)
+	}
+	form.description = ''
+	form.inventoryNumber = ''
+	form.ipAddress = ''
+	form.macAddress = ''
+	form.notes = ''
+	form.agentSetup = false
+	form.agentType = 'windows'
+	form.agentUsername = ''
+	form.agentPassword = ''
+	form.netbootProducts = []
+	form.groups = []
+	formErrors.clientId = ''
+	formErrors.depotId = ''
+	error.value = null
+	success.value = false
 }
 
 onMounted(async () => {
