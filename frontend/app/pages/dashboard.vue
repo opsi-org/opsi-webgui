@@ -1,8 +1,8 @@
 <template>
     <LayoutsPageLayout :show-search="false" :show-refresh="true" :loading="loading" @refresh="refreshAll">
-        <div class="h-full flex flex-col min-h-0 overflow-y-auto gap-3 lg:gap-4 lg:justify-between">
+        <div class="h-full flex flex-col min-h-0 overflow-y-auto gap-2 lg:gap-3 lg:justify-between">
             <!-- Row 1: Config Server, Health Check, User Config & Restrictions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 shrink-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 shrink-0">
                 <DashboardInfoCard :icon="icons.serverStack" :label="$t('configServer')" :value="serverHostname" />
                 <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/healthcheck')">
@@ -37,7 +37,7 @@
                         <div class="flex-1 min-w-0">
                             <p class="font-semibold truncate text-sm">{{ sharedUserConfig?.user || userStore.username
                                 || '-' }}</p>
-                            <p class="font-heading text-xs text-[--color-text-muted] tracking-widest m-0">{{
+                            <p class="font-heading text-[10px] text-[--color-text-muted] tracking-widest m-0">{{
                                 $t('currentUser') }}</p>
                         </div>
                         <UBadge v-if="webguiRestrictionsCount > 0" color="warning" variant="subtle" size="sm"
@@ -48,7 +48,7 @@
                             {{ $t('opsiConfig.serverFeatures.allEnabled') }}
                         </UBadge>
                     </div>
-                    <div v-if="userConfigData" class="grid grid-cols-4 sm:grid-cols-7 gap-1">
+                    <div v-if="userConfigData" class="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
                         <SharedRestrictionBadge v-for="feat in webguiFeatures" :key="feat.key" :icon="feat.icon"
                             :label="feat.shortLabel" :restricted="feat.restricted"
                             :tooltip-text="feat.restricted ? $t(`opsiConfig.serverFeatures.${feat.i18nKey}.disabled`) : $t(`opsiConfig.serverFeatures.${feat.i18nKey}.enabled`)" />
@@ -58,7 +58,7 @@
 
             <!-- Row 2: System Info -->
             <div class="shrink-0">
-                <div class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
+                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/system')">
                     <div class="flex items-center gap-2 mb-2">
                         <UIcon :name="icons.server" class="w-5 h-5 text-[--color-text-muted]" />
@@ -120,7 +120,7 @@
             </div>
 
             <!-- Row 3: Stat Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 shrink-0">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 shrink-0">
                 <DashboardStatCard :icon="icons.server" :value="depotCount" :label="$t('totalServers')"
                     @click="navigateTo('/servers')" />
 

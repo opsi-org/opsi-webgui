@@ -7,8 +7,8 @@ Dashboard reusable info card with icon, label, value and optional sub-content.
 		<div class="flex items-center gap-3">
 			<UIcon v-if="icon" :name="icon" class="w-5 h-5 text-[--color-text-muted] shrink-0" />
 			<div class="flex-1 min-w-0">
-				<p class="font-heading text-xs text-[--color-text-muted] tracking-wider m-0">{{ label }}</p>
-				<p class="truncate text-sm" :title="String(value)">{{ value || '-' }}</p>
+				<p class="font-heading text-[10px] text-[--color-text-muted] tracking-wider m-0">{{ label }}</p>
+				<p class="truncate text-base font-semibold" :title="String(value)">{{ value || '-' }}</p>
 			</div>
 			<slot name="trailing" />
 			<UIcon v-if="clickable" :name="arrowIcon"

@@ -63,7 +63,7 @@
 										class="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 rounded-full border border-white dark:border-gray-900"
 										:class="messageBusStore.isConnected ? 'bg-green-500' : 'bg-red-400'" />
 								</span>
-								<span class="text-xs">{{ t('autoRefresh') }}</span>
+								<span class="text-sm">{{ t('autoRefresh') }}</span>
 							</div>
 						</UTooltip>
 						<UCheckbox v-model="autoRefreshEnabled" size="sm" />
@@ -84,10 +84,10 @@
 					<span>{{ t('readOnlyMode') }}</span>
 				</div>
 				<div class="flex items-center justify-between mb-2">
-					<p class="text-xs text-(--color-text-muted)">
+					<p class="text-sm text-(--color-text-muted)">
 						{{ t('currentUser') }}: <span class="font-medium">{{ userStore.username }}</span>
 					</p>
-					<div v-if="remainingSeconds > 0" class="flex items-center gap-1 text-xs"
+					<div v-if="remainingSeconds > 0" class="flex items-center gap-1 text-sm"
 						:class="isWarning ? 'text-amber-600 dark:text-amber-400' : 'text-(--color-text-muted)'">
 						<UIcon :name="icons.clock" class="w-3 h-3" />
 						<span>{{ formattedTimeText }}</span>

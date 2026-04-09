@@ -88,7 +88,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     </button>
                 </div>
                 <div v-if="newAppState.type === 'maintenance'">
-                    <div class="text-sm font-medium text-(--color-text-secondary) mb-3">{{ $t('optionalSettings')
+                    <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('optionalSettings')
                     }}</div>
                     <div class="space-y-4 border border-yellow-300 dark:border-yellow-700 rounded-lg p-2">
                         <UFormField :label="$t('addressExceptions')">
@@ -139,7 +139,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         <UCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5" />
                         <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
                     </label>
-                    <div class="text-sm font-medium text-(--color-text-secondary) mb-3">{{ $t('includeInBackup')
+                    <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('includeInBackup')
                     }}</div>
                     <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                         <label
@@ -193,7 +193,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                         </div>
                     </UFormField>
                     <div>
-                        <div class="text-sm font-medium text-(--color-text-secondary) mb-3">{{ $t('restoreOptions')
+                        <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('restoreOptions')
                             }}</div>
                         <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
                             <label

@@ -10,7 +10,7 @@
                     class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full p-px" :class="colorClasses.badge" />
             </div>
             <span
-                class="text-xs text-[--color-text-muted] font-medium leading-tight text-center max-w-14 truncate">{{
+                class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center max-w-16 line-clamp-2">{{
                 label }}</span>
         </div>
     </UTooltip>

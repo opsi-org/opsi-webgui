@@ -23,7 +23,7 @@ HealthCheck - Component to display health check results
 					<div class="flex-1 min-w-0">
 						<div class="font-medium text-sm" :title="item.description">{{ item.name }}</div>
 						<div v-if="item.message"
-							class="text-(--color-text-secondary) dark:text-(--color-text-muted) mt-0.5 break-all">
+							class="text-(--color-text-muted) mt-0.5 break-all">
 							{{ item.message }}
 						</div>
 					</div>
@@ -36,7 +36,7 @@ HealthCheck - Component to display health check results
 						<div class="flex-1 min-w-0">
 							<div class="font-medium text-sm">{{ child.name }}</div>
 							<div v-if="child.message"
-								class="text-(--color-text-secondary) dark:text-(--color-text-muted) mt-0.5 break-all">
+								class="text-(--color-text-muted) mt-0.5 break-all">
 								{{ child.message }}
 							</div>
 						</div>

@@ -43,7 +43,7 @@ Multivalue with tag-like editing and add-new-value for editable params.
 					<span class="w-5 flex items-center justify-center shrink-0 mt-1" />
 					<div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
 						<div class="min-w-0 md:w-2/5 flex items-center gap-1">
-							<span class="text-sm text-(--color-text-secondary) truncate"
+							<span class="text-sm text-(--color-text) truncate"
 								:title="node.param.configId">
 								{{ node.param.configId }}
 							</span>

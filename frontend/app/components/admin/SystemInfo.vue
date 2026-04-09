@@ -29,7 +29,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 							<span class="tree-guide-line" style="left: 8px;" />
 							<span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
 							<div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-								<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-2/5 break-all truncate"
+								<span class="text-sm text-(--color-text) min-w-0 md:w-2/5 break-all truncate"
 									:title="String(key)">
 									{{ key }}
 								</span>
@@ -111,7 +111,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 												<span class="tree-guide-line" style="left: 24px;" />
 												<span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
 												<div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-													<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-2/5 break-all truncate"
+													<span class="text-sm text-(--color-text) min-w-0 md:w-2/5 break-all truncate"
 														:title="String(sk)">
 														{{ sk }}
 													</span>
@@ -143,7 +143,7 @@ SystemInfo - Component to display system diagnostic information in a tree view (
 									<span class="tree-guide-line" style="left: 8px;" />
 									<span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
 									<div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-										<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-2/5 break-all truncate"
+											<span class="text-sm text-(--color-text) min-w-0 md:w-2/5 break-all truncate"
 											:title="String(k)">
 											{{ k }}
 										</span>

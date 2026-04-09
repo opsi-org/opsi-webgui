@@ -24,7 +24,7 @@
 					{{ t('noResults') }}
 				</div>
 				<div v-for="server in filteredServers" :key="server.serverId"
-					class="flex items-center gap-2 px-2 py-1.5 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer"
+					class="flex items-center gap-2 px-2 py-1.5 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer"
 					@click="toggleServer(server.serverId)">
 					<UCheckbox :model-value="selectionStore.selectedServers.includes(server.serverId)" size="xs"
 						@click.stop @update:model-value="toggleServer(server.serverId)" />

@@ -1,6 +1,6 @@
 <template>
 	<div class="flex items-center gap-1.5">
-		<span class="text-xs text-(--color-text)">{{ primaryVersion }}</span>
+		<span class="text-sm text-(--color-text)">{{ primaryVersion }}</span>
 		<SharedTooltipTable v-if="hasVersionDetails" :rows="versionTooltipRows">
 			<span class="flex items-center gap-0.5">
 				<UBadge v-if="row.client_version_outdated" color="error" variant="subtle" size="xs" class="gap-0.5">

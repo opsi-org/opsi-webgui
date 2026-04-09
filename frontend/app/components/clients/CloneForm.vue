@@ -42,7 +42,7 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 				<div v-if="!panelMode || showSourceInPanel" class="mb-6">
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
 							{{ $t('sourceClient') }}
 						</span>
 						<span class="text-sm flex-1 truncate" :title="resolvedSourceId || undefined">

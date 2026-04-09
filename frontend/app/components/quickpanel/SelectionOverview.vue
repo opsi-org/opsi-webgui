@@ -28,7 +28,7 @@
 					</div>
 					<div class="max-h-30 overflow-y-auto">
 						<div v-for="server in selectionStore.selectedServers" :key="server"
-							class="flex items-center justify-between px-5 rounded text-xs  group hover:bg-(--color-surface-hover) transition-colors">
+							class="flex items-center justify-between px-5 rounded text-sm  group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ server }}</span>
 							<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -52,7 +52,7 @@
 					</div>
 					<div class="max-h-30 overflow-y-auto">
 						<div v-for="client in selectionStore.selectedClients" :key="client"
-							class="flex items-center justify-between px-5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
+							class="flex items-center justify-between px-5 rounded text-sm group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ client }}</span>
 							<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -76,7 +76,7 @@
 					</div>
 					<div class="max-h-30 overflow-y-auto">
 						<div v-for="product in selectionStore.selectedProducts" :key="product"
-							class="flex items-center justify-between px-5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
+							class="flex items-center justify-between px-5 rounded text-sm group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ product }}</span>
 							<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
 								class="opacity-0 group-hover:opacity-100 transition-opacity"

@@ -5,7 +5,7 @@ TabsNav - A reusable tabs navigation component.
             class="px-3 py-1.5 text-sm font-medium transition-colors"
             :class="modelValue === tab.value
                 ? 'bg-opsi-blue text-white'
-                : 'bg-white dark:bg-(--color-surface) text-(--color-text-secondary) dark:text-(--color-text-muted) hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover)'">
+                : 'bg-white dark:bg-(--color-surface) text-(--color-text) dark:text-(--color-text-muted) hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover)'">
             <UIcon v-if="tab.icon" :name="tab.icon" class="w-4 h-4 mr-1.5 inline-block" />
             {{ tab.label }}
         </button>

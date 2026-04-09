@@ -43,7 +43,7 @@
 					<template v-if="!isSectionCollapsed(section.id)">
 						<div v-for="item in section.flatItems" :key="`${section.id}-${item.id}`"
 							:style="{ paddingLeft: `${(item.depth * 14) + 6}px`, borderLeftWidth: item.depth > 0 ? '1px' : '0', marginLeft: item.depth > 0 ? `${((item.depth - 1) * 14) + 10}px` : '0' }"
-							class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer border-l-transparent hover:border-l-(--color-border)"
+							class="flex items-center gap-1.5 py-0.5 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer border-l-transparent hover:border-l-(--color-border)"
 							:class="{ 'border-l-(--color-border)/40': item.depth > 0 }">
 							<UButton v-if="item.hasChildren"
 								:icon="item.isExpanded ? icons.chevronDown : icons.chevronRight" size="xs"
@@ -72,7 +72,7 @@
 
 			<template v-else>
 				<div v-for="item in productFlatItems" :key="item.id" :style="{ paddingLeft: `${item.depth * 16}px` }"
-					class="flex items-center gap-1.5 py-0.5 px-1 rounded text-xs hover:bg-(--color-surface-hover) cursor-pointer">
+					class="flex items-center gap-1.5 py-0.5 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer">
 					<UButton v-if="item.hasChildren" :icon="item.isExpanded ? icons.chevronDown : icons.chevronRight"
 						size="xs" variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
 						@click.stop="toggleExpand(item.id)" />

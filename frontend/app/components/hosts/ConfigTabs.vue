@@ -143,7 +143,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 				<div v-for="key in filteredReadonlyAttrKeys" :key="key"
 					class="orm-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 					<span
-						class="text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="text-sm text-(--color-text) dark:text-(--color-text) min-w-0 md:w-1/3 break-all">
 						{{ getAttributeLabel(key) }}
 					</span>
 					<span class="text-sm flex-1 truncate" :title="fmtVal(originalAttributes[key])">
@@ -157,7 +157,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
 					:class="isAttrChanged(key) ? 'bg-yellow-50 dark:bg-yellow-700/10' : ''">
 					<span
-						class="text-sm text-(--color-text-secondary) dark:text-(--color-text-secondary) min-w-0 md:w-1/3 break-all">
+						class="text-sm text-(--color-text) dark:text-(--color-text) min-w-0 md:w-1/3 break-all">
 						{{ getAttributeLabel(key) }}
 						<span v-if="isAttrChanged(key)"
 							class="inline-flex items-center text-xs text-yellow-700 dark:text-yellow-200">
