@@ -9,6 +9,7 @@ Route: /servers/configuration/:tab/:id?
 definePageMeta({
 	layout: 'default',
 	title: 'Server Configuration',
+	key: 'server-configuration',
 })
 
 const { isReadOnly, hasServerWriteAccess } = useUserPermissions()

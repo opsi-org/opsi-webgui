@@ -337,7 +337,24 @@ watch(activeTab, (v) => emit('update:tab', v))
 
 const hostSelectorModel = ref<string>(props.hostId || '')
 watch(() => props.hostId, (v) => { hostSelectorModel.value = v || '' })
-watch(hostSelectorModel, (v) => emit('update:hostId', v || null))
+
+let pendingHostChangeId: string | null = null
+let _ignoreHostSelectorWatch = false
+
+watch(hostSelectorModel, (newVal) => {
+	if (_ignoreHostSelectorWatch) {
+		_ignoreHostSelectorWatch = false
+		return
+	}
+	if (hasAnyChanges.value && newVal !== (props.hostId || '')) {
+		pendingHostChangeId = newVal
+		_ignoreHostSelectorWatch = true
+		hostSelectorModel.value = props.hostId || ''
+		showLeaveWarning.value = true
+		return
+	}
+	emit('update:hostId', newVal || null)
+})
 
 const showLeaveWarning = ref(false)
 let resolveLeave: ((ok: boolean) => void) | null = null
@@ -373,12 +390,19 @@ if (!props.panelMode) {
 function confirmLeave() {
 	showLeaveWarning.value = false
 	discardAll()
+	if (pendingHostChangeId !== null) {
+		const id = pendingHostChangeId
+		pendingHostChangeId = null
+		hostSelectorModel.value = id
+		// hasAnyChanges is now false after discardAll, so the watch will emit update:hostId
+	}
 	resolveLeave?.(true)
 	resolveLeave = null
 }
 
 function cancelLeave() {
 	showLeaveWarning.value = false
+	pendingHostChangeId = null
 	resolveLeave?.(false)
 	resolveLeave = null
 }

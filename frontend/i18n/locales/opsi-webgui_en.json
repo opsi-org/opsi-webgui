@@ -838,6 +838,7 @@
   "sort": "Sort",
   "sortAscending": "Sort Ascending",
   "sortBy": "Sort By",
+  "sortBySelection": "Sort by selection",
   "sortDescending": "Sort Descending",
   "sourceClient": "Source Client",
   "standardValues": "Standard Values",

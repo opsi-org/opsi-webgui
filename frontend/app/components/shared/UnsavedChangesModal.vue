@@ -56,19 +56,25 @@ Supports product properties, product action requests, host parameters, and host 
 								<tbody class="divide-y divide-(--color-border)">
 									<tr v-for="change in flatChanges" :key="change.key"
 										class="hover:bg-(--color-surface-hover)">
-										<td class="px-2 py-1 truncate max-w-32 font-medium" :title="change.productId">
-											{{ change.productId }}
+										<td class="px-2 py-1 max-w-32 font-medium">
+											<UTooltip :text="change.productId" :delay-duration="300">
+												<span class="block truncate">{{ change.productId }}</span>
+											</UTooltip>
 										</td>
-										<td class="px-2 py-1 truncate max-w-28 text-(--color-text-muted)"
-											:title="change.label">
-											{{ change.label }}
+										<td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
+											<UTooltip :text="change.label" :delay-duration="300">
+												<span class="block truncate">{{ change.label }}</span>
+											</UTooltip>
 										</td>
-										<td class="px-2 py-1 truncate max-w-24 text-(--color-text-muted)"
-											:title="change.oldValue">
-											{{ change.oldValue }}
+										<td class="px-2 py-1 max-w-24 text-(--color-text-muted)">
+											<UTooltip :text="String(change.oldValue)" :delay-duration="300">
+												<span class="block truncate">{{ change.oldValue }}</span>
+											</UTooltip>
 										</td>
-										<td class="px-2 py-1 truncate max-w-24 font-medium" :title="change.newValue">
-											{{ change.newValue }}
+										<td class="px-2 py-1 max-w-24 font-medium">
+											<UTooltip :text="String(change.newValue)" :delay-duration="300">
+												<span class="block truncate">{{ change.newValue }}</span>
+											</UTooltip>
 										</td>
 										<td class="px-2 py-1 text-center">
 											<UTooltip :text="$t('discard')">
@@ -100,12 +106,20 @@ Supports product properties, product action requests, host parameters, and host 
 								<tbody class="divide-y divide-(--color-border)">
 									<tr v-for="[key] in configRef?.changedParams" :key="key"
 										class="hover:bg-(--color-surface-hover)">
-										<td class="px-2 py-1 truncate max-w-40 font-medium" :title="key">{{ key }}</td>
-										<td class="px-2 py-1 truncate max-w-28 text-(--color-text-muted)">
-											{{ fmtVal(configRef?.getOriginalParamValue?.(key)) }}
+										<td class="px-2 py-1 max-w-40 font-medium">
+											<UTooltip :text="key" :delay-duration="300">
+												<span class="block truncate">{{ key }}</span>
+											</UTooltip>
 										</td>
-										<td class="px-2 py-1 truncate max-w-28 font-medium">
-											{{ fmtVal(configRef?.changedParams?.get(key)) }}
+										<td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
+											<UTooltip :text="fmtVal(configRef?.getOriginalParamValue?.(key))" :delay-duration="300">
+												<span class="block truncate">{{ fmtVal(configRef?.getOriginalParamValue?.(key)) }}</span>
+											</UTooltip>
+										</td>
+										<td class="px-2 py-1 max-w-28 font-medium">
+											<UTooltip :text="fmtVal(configRef?.changedParams?.get(key))" :delay-duration="300">
+												<span class="block truncate">{{ fmtVal(configRef?.changedParams?.get(key)) }}</span>
+											</UTooltip>
 										</td>
 										<td class="px-2 py-1 text-center">
 											<UTooltip :text="$t('discard')">
@@ -137,13 +151,20 @@ Supports product properties, product action requests, host parameters, and host 
 								<tbody class="divide-y divide-(--color-border)">
 									<tr v-for="item in configRef?.changedAttributesList" :key="item.key"
 										class="hover:bg-(--color-surface-hover)">
-										<td class="px-2 py-1 truncate max-w-40 font-medium" :title="item.key">{{
-											item.key }}</td>
-										<td class="px-2 py-1 truncate max-w-28 text-(--color-text-muted)">
-											{{ fmtVal(item.oldValue) }}
+										<td class="px-2 py-1 max-w-40 font-medium">
+											<UTooltip :text="item.key" :delay-duration="300">
+												<span class="block truncate">{{ item.key }}</span>
+											</UTooltip>
 										</td>
-										<td class="px-2 py-1 truncate max-w-28 font-medium">
-											{{ fmtVal(item.newValue) }}
+										<td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
+											<UTooltip :text="fmtVal(item.oldValue)" :delay-duration="300">
+												<span class="block truncate">{{ fmtVal(item.oldValue) }}</span>
+											</UTooltip>
+										</td>
+										<td class="px-2 py-1 max-w-28 font-medium">
+											<UTooltip :text="fmtVal(item.newValue)" :delay-duration="300">
+												<span class="block truncate">{{ fmtVal(item.newValue) }}</span>
+											</UTooltip>
 										</td>
 										<td class="px-2 py-1 text-center">
 											<UTooltip :text="$t('discard')">

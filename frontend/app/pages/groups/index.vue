@@ -133,7 +133,7 @@
                                     {{ $t('groupMembers') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
                                         []).length
-                                        }})</span>
+                                    }})</span>
                                 </h4>
                                 <div class="flex items-center gap-2">
                                     <UButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -300,8 +300,8 @@
                     <template #header>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <UIcon :name="icons.delete" class="w-5 h-5 text-(--color-opsi-error)" />
-                                <h3 class="text-sm text-(--color-text) m-0">{{ $t('confirmDelete') }}</h3>
+                                <UIcon :name="icons.delete" class="w-5 h-5" />
+                                <h3 class="text-sm text-(--color-text) m-0">{{ $t('Delete') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ groupToDelete?.id }}</p>
                             </div>
                             <UButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
@@ -314,9 +314,9 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <UButton variant="soft" color="neutral" @click="showDeleteModal = false">{{ $t('cancel')
-                                }}
+                            }}
                             </UButton>
-                            <UButton color="neutral" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
+                            <UButton color="error" :loading="deleting" @click="deleteGroup" :icon="icons.delete">{{
                                 $t('delete') }}</UButton>
                         </div>
                     </template>

@@ -11,6 +11,7 @@ Route: /clients/configuration/:tab/:id?
 definePageMeta({
 	layout: 'default',
 	title: 'Client Configuration',
+	key: 'client-configuration',
 })
 
 const { isReadOnly } = useUserPermissions()
