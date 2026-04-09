@@ -11,14 +11,15 @@ ClientsAddForm - add client form for panel mode with all options.
 					closable class="flex-1 mr-2" @close="error = null" />
 				<div v-else />
 				<div class="flex gap-2 shrink-0">
+					<UTooltip :text="$t('addClient')">
+						<UButton color="success" :loading="loading" :disabled="!canCreate" @click="handleSubmit">
+							<UIcon :name="icons.client" />
+							<UIcon :name="icons.add" />
+						</UButton>
+					</UTooltip>
 					<UTooltip :text="$t('reset')">
 						<UButton variant="ghost" color="neutral" :icon="icons.refresh" :disabled="loading"
 							@click="resetForm" />
-					</UTooltip>
-					<UTooltip :text="$t('addClient')">
-						<UButton color="success" :loading="loading" :disabled="!canCreate" @click="handleSubmit">
-							<UIcon :name="icons.add" />
-						</UButton>
 					</UTooltip>
 				</div>
 			</div>
@@ -145,7 +146,7 @@ ClientsAddForm - add client form for panel mode with all options.
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
-							<UIcon :name="icons.deploy" class="w-4 h-4 text-green-600 dark:text-green-400" />
+							<UIcon :name="icons.deploy" class="w-4 h-4" />
 							{{ $t('enableAgentSetup') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
@@ -153,11 +154,11 @@ ClientsAddForm - add client form for panel mode with all options.
 						</div>
 					</div>
 					<div v-if="form.agentSetup"
-						class="ml-4 border-l-2 border-green-200 dark:border-green-800 pl-4 space-y-0">
+						class="ml-4 border-l-2 border-(--color-border) pl-4 space-y-0">
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('agentType') }}
+								{{ $t('type') }}
 							</span>
 							<div class="flex-1">
 								<div class="grid grid-cols-3 gap-2">
@@ -175,7 +176,7 @@ ClientsAddForm - add client form for panel mode with all options.
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
 								<UIcon :name="icons.user" class="w-4 h-4 text-(--color-text-muted)" />
-								{{ $t('agentUsername') }}
+								{{ $t('username') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
 								<UInput v-model="form.agentUsername" :disabled="loading" size="sm"
@@ -186,7 +187,7 @@ ClientsAddForm - add client form for panel mode with all options.
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
 								<UIcon :name="icons.key" class="w-4 h-4 text-(--color-text-muted)" />
-								{{ $t('agentPassword') }}
+								{{ $t('password') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
 								<UInput v-model="form.agentPassword" :disabled="loading" size="sm" type="password"
