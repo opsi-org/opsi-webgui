@@ -24,7 +24,7 @@
 				<template #header>
 					<div class="flex items-center justify-between">
 						<div class="flex items-center gap-2">
-							<UIcon :name="icons.product" class="w-5 h-5 text-opsi-blue" />
+							<UIcon :name="icons.product" class="w-5 h-5 text-(--color-text-muted)" />
 							<span class="font-medium">{{ $t('productQuickActions') }}</span>
 						</div>
 						<UButton variant="ghost" color="neutral" size="xs" :icon="icons.x"
@@ -104,41 +104,46 @@
 							</div>
 						</div>
 
-						<div v-if="loadingPreview" class="flex justify-center py-4">
-							<SharedLoadingSpinner size="sm" />
-						</div>
-						<div v-else-if="previewData && Object.keys(previewData).length > 0"
-							class="max-h-64 overflow-y-auto border border-(--color-border) rounded-lg p-2 space-y-1 bg-(--color-surface) text-xs">
-							<div v-for="(products, clientId) in previewData" :key="clientId">
-								<details>
-									<summary class="font-medium text-(--color-text-muted) py-0.5 cursor-pointer">
-										{{ clientId }} ({{ products.length }})
-									</summary>
-									<div v-for="p in products" :key="p.productId"
-										class="flex justify-between items-center py-0.5 pl-3 gap-2">
-										<span class="truncate">{{ p.productId }}</span>
-										<span v-if="p.productType" class="text-(--color-text-muted) shrink-0">
-											{{ p.productType }}
-										</span>
-										<span v-if="p.productVersion || p.packageVersion"
-											class="text-(--color-text-muted) shrink-0">
-											{{ p.productVersion }}-{{ p.packageVersion }}
-										</span>
-										<span class="shrink-0">{{ p.actionRequest || actionRequest }}</span>
-										<span v-if="p.installationStatus" class="text-(--color-text-muted) shrink-0">
-											{{ p.installationStatus }}
-										</span>
-									</div>
-								</details>
+						<div class="border border-(--color-border) rounded-lg bg-(--color-surface)" style="min-height: 180px;">
+							<div v-if="loadingPreview" class="flex justify-center items-center" style="min-height: 180px;">
+								<SharedLoadingSpinner size="sm" />
 							</div>
-						</div>
-						<div v-else-if="previewData !== null"
-							class="text-center py-4 text-xs text-(--color-text-muted) border border-dashed border-(--color-border) rounded-lg">
-							{{ $t('noProductsMatchCriteria') }}
-						</div>
-						<div v-else
-							class="text-center py-4 text-xs text-(--color-text-muted) border border-dashed border-(--color-border) rounded-lg">
-							--
+							<div v-else-if="previewData && Object.keys(previewData).length > 0"
+								class="max-h-64 overflow-y-auto text-xs">
+								<table class="min-w-full table-auto">
+									<thead class="bg-(--color-surface) sticky top-0 z-10">
+										<tr class="text-left text-(--color-text-muted)">
+											<th class="px-2 py-1.5 font-medium">{{ $t('clientId') }}</th>
+											<th class="px-2 py-1.5 font-medium">{{ $t('productId') }}</th>
+											<th class="px-2 py-1.5 font-medium">{{ $t('version') }}</th>
+											<th class="px-2 py-1.5 font-medium">{{ $t('actionRequest') }}</th>
+											<th class="px-2 py-1.5 font-medium">{{ $t('installationStatus') }}</th>
+										</tr>
+									</thead>
+									<tbody class="divide-y divide-(--color-border)">
+										<template v-for="(products, clientId) in previewData" :key="clientId">
+											<tr v-for="p in products" :key="`${clientId}-${p.productId}`"
+												class="hover:bg-(--color-surface-hover)">
+												<td class="px-2 py-1 truncate max-w-40" :title="String(clientId)">{{ clientId }}</td>
+												<td class="px-2 py-1 truncate max-w-32" :title="p.productId">{{ p.productId }}</td>
+												<td class="px-2 py-1 text-(--color-text-muted) whitespace-nowrap">
+													{{ p.productVersion && p.packageVersion ? `${p.productVersion}-${p.packageVersion}` : '-' }}
+												</td>
+												<td class="px-2 py-1 whitespace-nowrap">{{ p.actionRequest || actionRequest }}</td>
+												<td class="px-2 py-1 text-(--color-text-muted) whitespace-nowrap">{{ p.installationStatus || '-' }}</td>
+											</tr>
+										</template>
+									</tbody>
+								</table>
+							</div>
+							<div v-else-if="previewData !== null"
+								class="flex justify-center items-center text-xs text-(--color-text-muted)" style="min-height: 180px;">
+								{{ $t('noProductsMatchCriteria') }}
+							</div>
+							<div v-else
+								class="flex justify-center items-center text-xs text-(--color-text-muted)" style="min-height: 180px;">
+								--
+							</div>
 						</div>
 					</div>
 				</div>
