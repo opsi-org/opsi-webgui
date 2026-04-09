@@ -17,7 +17,7 @@
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
 							<UIcon :name="icons.server" class="w-3.5 h-3.5" />
-							<span>{{ t('servers') }}</span>
+							<h3 class="text-xs">{{ $t('servers') }}</h3>
 							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedServers.length
 							}}</UBadge>
 						</div>
@@ -41,7 +41,7 @@
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
 							<UIcon :name="icons.client" class="w-3.5 h-3.5" />
-							<span>{{ t('clients') }}</span>
+							<h3 class="text-xs">{{ $t('clients') }}</h3>
 							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedClients.length
 							}}</UBadge>
 						</div>
@@ -50,7 +50,7 @@
 								@click="selectionStore.clearClients()" />
 						</UTooltip>
 					</div>
-					<div class="max-h-30 overflow-y-auto">
+					<div class="max-h-36 overflow-y-auto">
 						<div v-for="client in selectionStore.selectedClients" :key="client"
 							class="flex items-center justify-between px-5 rounded text-sm group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ client }}</span>
@@ -65,7 +65,7 @@
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
 							<UIcon :name="icons.product" class="w-3.5 h-3.5" />
-							<span>{{ t('products') }}</span>
+							<h3 class="text-xs">{{ $t('products') }}</h3>
 							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedProducts.length
 							}}</UBadge>
 						</div>
@@ -74,7 +74,7 @@
 								@click="selectionStore.clearProducts()" />
 						</UTooltip>
 					</div>
-					<div class="max-h-30 overflow-y-auto">
+					<div class="max-h-36 overflow-y-auto">
 						<div v-for="product in selectionStore.selectedProducts" :key="product"
 							class="flex items-center justify-between px-5 rounded text-sm group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ product }}</span>

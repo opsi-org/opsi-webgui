@@ -593,8 +593,8 @@
         "label": "Server Config Write"
       },
       "terminal": {
-        "disabled": "opsiconfd --disabled-features: messagebus_terminal → Terminal page is disabled",
-        "enabled": "opsiconfd --disabled-features: messagebus_terminal is NOT listed → Terminal page accessible at /admin/terminal",
+        "disabled": "opsiconfd disabled-features: messagebus_terminal → Terminal page is disabled",
+        "enabled": "opsiconfd disabled-features: messagebus_terminal is NOT listed → Terminal page accessible at /admin/terminal",
         "label": "Server Terminal"
       },
       "title": "Webgui Feature Restrictions"

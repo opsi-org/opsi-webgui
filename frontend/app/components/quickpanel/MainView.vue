@@ -86,7 +86,7 @@
 					<span>{{ t('readOnlyMode') }}</span>
 				</div>
 				<div class="flex items-center justify-between mb-2">
-					<p class="text-sm text-(--color-text-muted)">
+					<p class="text-xs text-(--color-text-muted)">
 						{{ t('currentUser') }}: <span class="font-medium">{{ userStore.username }}</span>
 					</p>
 					<div v-if="remainingSeconds > 0" class="flex items-center gap-1 text-sm"
