@@ -265,9 +265,14 @@ onUnmounted(() => {
 <style>
 .xterm {
     height: 100%;
+    padding-bottom: 4px;
 }
 
 .xterm-viewport {
     overflow-y: auto !important;
+}
+
+.xterm-screen {
+    padding-bottom: 1.5rem;
 }
 </style>
