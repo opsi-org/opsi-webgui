@@ -422,10 +422,16 @@ const {
     removeClientFromGroups,
     removeProductFromGroup
 } = useApiHelpers()
+const {
+    clientGroupsTree, clientGroupsLoading,
+    productGroupsTree, productGroupsLoading,
+    fetchClientGroups: cachedFetchClientGroups,
+    fetchProductGroups: cachedFetchProductGroups,
+} = useCachedData()
 
 const activeGroupType = ref<'clients' | 'products'>('clients')
 const selectedGroup = ref<GroupTreeNodeData | null>(null)
-const loading = computed(() => selectionStore.clientGroupsLoading || selectionStore.productGroupsLoading)
+const loading = computed(() => clientGroupsLoading.value || productGroupsLoading.value)
 const loadingMembers = ref(false)
 
 const availableClients = shallowRef<string[]>([])
@@ -497,10 +503,10 @@ const groupTypes = [
 
 const currentTreeGroups = computed((): GroupTreeNodeData[] => {
     if (activeGroupType.value === 'clients') {
-        return selectionStore.clientGroupsTree
+        return clientGroupsTree.value
     }
-    // For products, the store stores [rootGroupsNode]; we want its children
-    const tree = selectionStore.productGroupsTree
+    // For products, the cache stores [rootGroupsNode]; we want its children
+    const tree = productGroupsTree.value
     if (tree.length === 1 && tree[0]?.isRoot) {
         return tree[0].children || []
     }
@@ -775,9 +781,9 @@ function handleAddMembersKeydown(e: KeyboardEvent) {
 async function fetchCurrentGroups() {
     try {
         if (activeGroupType.value === 'clients') {
-            await selectionStore.fetchClientGroups(true)
+            await cachedFetchClientGroups(true, selectionStore.selectedServers)
         } else {
-            await selectionStore.fetchProductGroups(true)
+            await cachedFetchProductGroups(true)
         }
     } catch (err) {
         showStatus('error', err instanceof Error ? err.message : String($t('errorFetchingGroups')))
@@ -1038,16 +1044,16 @@ onMounted(() => {
     checkMobile()
     window.addEventListener('resize', checkMobile)
     onUnmounted(() => window.removeEventListener('resize', checkMobile))
-    // Fetch groups from store (respects cache — only calls API if data is missing)
+    // Fetch groups from cache (only calls API if data is missing)
     if (activeGroupType.value === 'clients') {
-        selectionStore.fetchClientGroups()
+        cachedFetchClientGroups(false, selectionStore.selectedServers)
     } else {
-        selectionStore.fetchProductGroups()
+        cachedFetchProductGroups()
     }
 })
 
-// Auto-expand root nodes when store tree data changes
-watch(() => selectionStore.clientGroupsTree, (tree) => {
+// Auto-expand root nodes when cached tree data changes
+watch(() => clientGroupsTree.value, (tree) => {
     if (tree.length) {
         const ids = new Set(expandedGroupIds.value)
         tree.forEach(t => ids.add(t.id))
@@ -1055,7 +1061,7 @@ watch(() => selectionStore.clientGroupsTree, (tree) => {
     }
 }, { immediate: true })
 
-watch(() => selectionStore.productGroupsTree, (tree) => {
+watch(() => productGroupsTree.value, (tree) => {
     if (tree.length) {
         const ids = new Set(expandedGroupIds.value)
         // For products, expand the children of the root "groups" node
@@ -1076,11 +1082,11 @@ watch(activeGroupType, () => {
         showSidebar.value = true
     }
 
-    // Ensure data is loaded (respects store cache)
+    // Ensure data is loaded (respects cache)
     if (activeGroupType.value === 'clients') {
-        selectionStore.fetchClientGroups()
+        cachedFetchClientGroups(false, selectionStore.selectedServers)
     } else {
-        selectionStore.fetchProductGroups()
+        cachedFetchProductGroups()
     }
 })
 </script>

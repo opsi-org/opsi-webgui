@@ -103,6 +103,12 @@ const props = defineProps<{ groupType: 'client' | 'product'; active?: boolean }>
 const icons = useIcons()
 const { t: i18nT } = useI18n()
 const selectionStore = useSelectionStore()
+const {
+	clientGroupsTree, clientGroupsLoading, clientGroupsError, clientGroupsExpanded,
+	productGroupsTree, productGroupsLoading, productGroupsError, productGroupsExpanded,
+	fetchClientGroups, fetchProductGroups,
+	toggleGroupExpand, expandAllGroups, collapseAllGroups,
+} = useCachedData()
 const { isHostGroupAccessRestricted, isProductGroupAccessRestricted } = useUserPermissions()
 
 const isGroupRestricted = computed(() =>
@@ -135,16 +141,16 @@ function toggleSectionCollapse(sectionId: string) {
 }
 
 const loading = computed(() =>
-	props.groupType === 'client' ? selectionStore.clientGroupsLoading : selectionStore.productGroupsLoading
+	props.groupType === 'client' ? clientGroupsLoading.value : productGroupsLoading.value
 )
 const errorMsg = computed(() =>
-	props.groupType === 'client' ? selectionStore.clientGroupsError : selectionStore.productGroupsError
+	props.groupType === 'client' ? clientGroupsError.value : productGroupsError.value
 )
 const rawTree = computed(() =>
-	props.groupType === 'client' ? selectionStore.clientGroupsTree : selectionStore.productGroupsTree
+	props.groupType === 'client' ? clientGroupsTree.value : productGroupsTree.value
 )
 const expandedIds = computed(() => {
-	const ids = props.groupType === 'client' ? selectionStore.clientGroupsExpanded : selectionStore.productGroupsExpanded
+	const ids = props.groupType === 'client' ? clientGroupsExpanded.value : productGroupsExpanded.value
 	return new Set(ids)
 })
 const hasData = computed(() => rawTree.value.length > 0)
@@ -323,12 +329,12 @@ function handleItemClick(item: FlatItem) {
 }
 
 function toggleExpand(nodeId: string) {
-	selectionStore.toggleGroupExpand(props.groupType, nodeId)
+	toggleGroupExpand(props.groupType, nodeId)
 }
 
 function toggleExpandAll() {
-	if (allExpanded.value) selectionStore.collapseAllGroups(props.groupType)
-	else selectionStore.expandAllGroups(props.groupType)
+	if (allExpanded.value) collapseAllGroups(props.groupType)
+	else expandAllGroups(props.groupType)
 }
 
 function clearAll() {
@@ -362,10 +368,10 @@ function collectAllMembers(nodes: GroupTreeNodeData[]): string[] {
 
 function refresh() {
 	if (props.groupType === 'client') {
-		selectionStore.fetchClientGroups(true)
+		fetchClientGroups(true, selectionStore.selectedServers)
 		fetchAllClients()
 	} else {
-		selectionStore.fetchProductGroups(true)
+		fetchProductGroups(true)
 	}
 }
 
@@ -392,10 +398,10 @@ onMounted(() => {
 watch(() => props.active, (isActive) => {
 	if (isActive && !hasData.value && !loading.value) {
 		if (props.groupType === 'client') {
-			selectionStore.fetchClientGroups()
+			fetchClientGroups(false, selectionStore.selectedServers)
 			fetchAllClients()
 		} else {
-			selectionStore.fetchProductGroups()
+			fetchProductGroups()
 		}
 	}
 }, { immediate: true })
