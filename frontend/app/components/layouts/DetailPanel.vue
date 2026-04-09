@@ -24,9 +24,9 @@ Mobile: overlay panel with close button.
                         </button>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-x-1 min-w-0">
-                                <h3 class="text-sm text-(--color-text) truncate m-0">
+                                <span class="font-semibold truncate m-0">
                                     <slot name="title">Details</slot>
-                                </h3>
+                                </span>
                                 <span v-if="$slots.subtitle" class="text-sm text-(--color-text-muted) truncate">
                                     <slot name="subtitle" />
                                 </span>
