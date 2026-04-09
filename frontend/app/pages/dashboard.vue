@@ -274,14 +274,6 @@ const webguiFeatures = computed(() => {
     const terminalDisabled = userStore.disabledFeatures.includes('messagebus_terminal') || userStore.disabledFeatures.includes('terminal')
     return [
         {
-            key: 'terminal',
-            i18nKey: 'terminal',
-            configId: 'messagebus_terminal',
-            restricted: terminalDisabled,
-            icon: 'i-heroicons-command-line',
-            shortLabel: 'Terminal',
-        },
-        {
             key: 'readOnly',
             i18nKey: 'readOnly',
             configId: `user.{${username}}.privilege.host.all.registered_readonly`,
@@ -294,7 +286,7 @@ const webguiFeatures = computed(() => {
             i18nKey: 'serverWrite',
             configId: `user.{${username}}.privilege.host.opsiserver.write`,
             restricted: !(userConfigData.value?.server_write_access ?? true),
-            icon: icons.server,
+            icon: icons.serverStack,
             shortLabel: 'Server Write',
         },
         {
@@ -302,7 +294,7 @@ const webguiFeatures = computed(() => {
             i18nKey: 'depotAccess',
             configId: `user.{${username}}.privilege.host.depotaccess.configured`,
             restricted: userConfigData.value?.depot_access ?? false,
-            icon: icons.serverStack,
+            icon: icons.server,
             shortLabel: 'Depot Access',
         },
         {
@@ -310,7 +302,7 @@ const webguiFeatures = computed(() => {
             i18nKey: 'clientCreation',
             configId: `user.{${username}}.privilege.host.createclient`,
             restricted: !(userConfigData.value?.client_creation ?? true),
-            icon: icons.client,
+            icon: icons.add,
             shortLabel: 'Client Create',
         },
         {
@@ -318,7 +310,7 @@ const webguiFeatures = computed(() => {
             i18nKey: 'hostGroupAccess',
             configId: `user.{${username}}.privilege.host.groupaccess.configured`,
             restricted: userConfigData.value?.host_group_access ?? false,
-            icon: icons.group,
+            icon: icons.client,
             shortLabel: 'Host Groups',
         },
         {
@@ -328,6 +320,14 @@ const webguiFeatures = computed(() => {
             restricted: userConfigData.value?.product_group_access ?? false,
             icon: icons.product,
             shortLabel: 'Product Groups',
+        },
+        {
+            key: 'terminal',
+            i18nKey: 'terminal',
+            configId: 'messagebus_terminal',
+            restricted: terminalDisabled,
+            icon: 'i-heroicons-command-line',
+            shortLabel: 'Terminal',
         },
     ]
 })

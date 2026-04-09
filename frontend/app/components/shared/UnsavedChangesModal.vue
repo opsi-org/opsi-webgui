@@ -5,8 +5,8 @@ Supports product properties, product action requests, host parameters, and host 
 		<div class="inline-flex rounded-md shadow-sm">
 			<template v-if="showSaveDiscard">
 				<UTooltip :text="$t('save')">
-					<UButton :size="size" color="success" variant="solid" class="rounded-r-none"
-						:loading="isSaving" @click="handleQuickSave">
+					<UButton :size="size" color="success" variant="solid" class="rounded-r-none" :loading="isSaving"
+						@click="handleQuickSave">
 						<UIcon :name="icons.check" class="w-3.5 h-3.5" />
 					</UButton>
 				</UTooltip>
@@ -27,79 +27,139 @@ Supports product properties, product action requests, host parameters, and host 
 
 	<UModal v-model:open="open" :title="$t('unsavedChanges')" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
 		<template #body>
-			<div class="space-y-3 max-h-[50vh] overflow-y-auto">
-				<!-- Product-grouped changes (properties + action requests) -->
-				<template v-if="groupedProductChanges.length > 0">
-					<div v-for="group in groupedProductChanges" :key="group.productId"
-						class="border border-(--color-border) rounded-lg overflow-hidden">
-						<div class="bg-(--color-surface) px-3 py-2 flex items-center justify-between">
-							<div class="flex items-center gap-2">
-								<UIcon :name="icons.product" class="w-4 h-4 text-(--color-text-muted)" />
-								<span class="text-sm font-medium">{{ group.productId }}</span>
-							</div>
-							<UBadge v-if="group.changes.length > 1" color="warning" variant="subtle" size="xs">
-								{{ group.changes.length }} {{ group.changes.length === 1 ? 'change' : 'changes' }}
-							</UBadge>
-						</div>
-						<div class="divide-y divide-(--color-border)">
-							<div v-for="change in group.changes" :key="change.key"
-								class="changed-item flex items-center justify-between gap-2 px-2 py-1 text-sm">
-								<div class="min-w-0 flex-1">
-									<div class="flex items-center gap-2">
-										<span v-if="change.label !== 'Action Request'" class="font-medium truncate">{{ change.label }}</span>
-									</div>
-									<p class="text-xs mt-0.5">{{ change.oldValue }} → {{ change.newValue }}</p>
-								</div>
-								<UTooltip :text="$t('discard')">
-									<UButton size="xs" :icon="icons.x" color="neutral" variant="ghost" @click="change.discard()" />
-								</UTooltip>
-							</div>
+			<div class="space-y-3">
+				<!-- Result alerts inside modal -->
+				<SharedAlertInline v-if="saveResult && saveResult.type === 'success'" color="success"
+					:title="$t('success')" :description="saveResult.message" variant="subtle" closable
+					@close="saveResult = null" />
+				<SharedAlertInline v-if="saveResult && saveResult.type === 'error'" color="error" :title="$t('error')"
+					:description="saveResult.message" variant="subtle" closable @close="saveResult = null" />
+				<SharedAlertInline v-if="saveResult && saveResult.type === 'warning'" color="warning"
+					:title="$t('warning')" :description="saveResult.message" variant="subtle" closable
+					@close="saveResult = null" />
+
+				<!-- Product changes table -->
+				<template v-if="flatChanges.length > 0">
+					<div class="border border-(--color-border) rounded-lg bg-(--color-surface)"
+						style="min-height: 80px;">
+						<div class="max-h-64 overflow-y-auto text-xs">
+							<table class="min-w-full table-auto">
+								<thead class="bg-(--color-surface) sticky top-0 z-10">
+									<tr class="text-left text-(--color-text-muted)">
+										<th class="px-2 py-1.5 font-medium">{{ $t('productId') }}</th>
+										<th class="px-2 py-1.5 font-medium">{{ $t('property') }}</th>
+										<th class="px-2 py-1.5 font-medium">{{ $t('oldValue') }}</th>
+										<th class="px-2 py-1.5 font-medium">{{ $t('newValue') }}</th>
+										<th class="px-2 py-1.5 font-medium w-10"></th>
+									</tr>
+								</thead>
+								<tbody class="divide-y divide-(--color-border)">
+									<tr v-for="change in flatChanges" :key="change.key"
+										class="hover:bg-(--color-surface-hover)">
+										<td class="px-2 py-1 truncate max-w-32 font-medium" :title="change.productId">
+											{{ change.productId }}
+										</td>
+										<td class="px-2 py-1 truncate max-w-28 text-(--color-text-muted)"
+											:title="change.label">
+											{{ change.label }}
+										</td>
+										<td class="px-2 py-1 truncate max-w-24 text-(--color-text-muted)"
+											:title="change.oldValue">
+											{{ change.oldValue }}
+										</td>
+										<td class="px-2 py-1 truncate max-w-24 font-medium" :title="change.newValue">
+											{{ change.newValue }}
+										</td>
+										<td class="px-2 py-1 text-center">
+											<UTooltip :text="$t('discard')">
+												<UButton size="xs" :icon="icons.x" color="neutral" variant="ghost"
+													@click="change.discard()" />
+											</UTooltip>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</template>
 
-				<!-- Host parameters -->
-				<div v-if="(configRef?.changedParams?.size ?? 0) > 0">
-					<h5 class="font-heading text-xs text-(--color-text-muted) mb-2 m-0">{{ $t('parameters') }}</h5>
-					<div class="divide-y divide-(--color-border) border border-(--color-border) rounded-lg">
-						<div v-for="[key] in configRef?.changedParams" :key="key"
-							class="changed-item flex items-center justify-between gap-2 px-3 py-2 text-sm">
-							<div class="min-w-0 flex-1">
-								<p class="font-medium truncate m-0">{{ key }}</p>
-								<p class="text-xs mt-0.5 m-0">
-									{{ fmtVal(configRef?.getOriginalParamValue?.(key)) }}
-									→ {{ fmtVal(configRef?.changedParams?.get(key)) }}
-								</p>
-							</div>
-							<UTooltip :text="$t('discard')">
-								<UButton size="xs" :icon="icons.x" color="neutral" variant="ghost"
-									@click="configRef?.discardSingleParam?.(key)" />
-							</UTooltip>
+				<!-- Host parameters table -->
+				<template v-if="(configRef?.changedParams?.size ?? 0) > 0">
+					<h5 class="font-heading text-xs text-(--color-text-muted) mb-1 m-0">{{ $t('parameters') }}</h5>
+					<div class="border border-(--color-border) rounded-lg bg-(--color-surface)">
+						<div class="max-h-48 overflow-y-auto text-xs">
+							<table class="min-w-full table-auto">
+								<thead class="bg-(--color-surface) sticky top-0 z-10">
+									<tr class="text-left text-(--color-text-muted)">
+										<th class="px-2 py-1.5 font-medium">{{ $t('parameter') }}</th>
+										<th class="px-2 py-1.5 font-medium">{{ $t('oldValue') }}</th>
+										<th class="px-2 py-1.5 font-medium">{{ $t('newValue') }}</th>
+										<th class="px-2 py-1.5 font-medium w-10"></th>
+									</tr>
+								</thead>
+								<tbody class="divide-y divide-(--color-border)">
+									<tr v-for="[key] in configRef?.changedParams" :key="key"
+										class="hover:bg-(--color-surface-hover)">
+										<td class="px-2 py-1 truncate max-w-40 font-medium" :title="key">{{ key }}</td>
+										<td class="px-2 py-1 truncate max-w-28 text-(--color-text-muted)">
+											{{ fmtVal(configRef?.getOriginalParamValue?.(key)) }}
+										</td>
+										<td class="px-2 py-1 truncate max-w-28 font-medium">
+											{{ fmtVal(configRef?.changedParams?.get(key)) }}
+										</td>
+										<td class="px-2 py-1 text-center">
+											<UTooltip :text="$t('discard')">
+												<UButton size="xs" :icon="icons.x" color="neutral" variant="ghost"
+													@click="configRef?.discardSingleParam?.(key)" />
+											</UTooltip>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
-				</div>
+				</template>
 
-				<!-- Host attributes -->
-				<div v-if="(configRef?.changedAttributesList?.length ?? 0) > 0">
-					<h5 class="font-heading text-xs text-(--color-text-muted) mb-2 m-0">{{ $t('attributes') }}</h5>
-					<div class="divide-y divide-(--color-border) border border-(--color-border) rounded-lg">
-						<div v-for="item in configRef?.changedAttributesList" :key="item.key"
-							class="changed-item flex items-center justify-between gap-2 px-3 py-2 text-sm">
-							<div class="min-w-0 flex-1">
-								<p class="font-medium truncate m-0">{{ item.key }}</p>
-								<p class="text-xs mt-0.5 m-0">
-									{{ fmtVal(item.oldValue) }} → {{ fmtVal(item.newValue) }}
-								</p>
-							</div>
-							<UTooltip :text="$t('discard')">
-								<UButton size="xs" :icon="icons.x" color="neutral" variant="ghost"
-									@click="configRef?.discardSingleAttribute?.(item.key)" />
-							</UTooltip>
+				<!-- Host attributes table -->
+				<template v-if="(configRef?.changedAttributesList?.length ?? 0) > 0">
+					<h5 class="font-heading text-xs text-(--color-text-muted) mb-1 m-0">{{ $t('attributes') }}</h5>
+					<div class="border border-(--color-border) rounded-lg bg-(--color-surface)">
+						<div class="max-h-48 overflow-y-auto text-xs">
+							<table class="min-w-full table-auto">
+								<thead class="bg-(--color-surface) sticky top-0 z-10">
+									<tr class="text-left text-(--color-text-muted)">
+										<th class="px-2 py-1.5 font-medium">{{ $t('attribute') }}</th>
+										<th class="px-2 py-1.5 font-medium">{{ $t('oldValue') }}</th>
+										<th class="px-2 py-1.5 font-medium">{{ $t('newValue') }}</th>
+										<th class="px-2 py-1.5 font-medium w-10"></th>
+									</tr>
+								</thead>
+								<tbody class="divide-y divide-(--color-border)">
+									<tr v-for="item in configRef?.changedAttributesList" :key="item.key"
+										class="hover:bg-(--color-surface-hover)">
+										<td class="px-2 py-1 truncate max-w-40 font-medium" :title="item.key">{{
+											item.key }}</td>
+										<td class="px-2 py-1 truncate max-w-28 text-(--color-text-muted)">
+											{{ fmtVal(item.oldValue) }}
+										</td>
+										<td class="px-2 py-1 truncate max-w-28 font-medium">
+											{{ fmtVal(item.newValue) }}
+										</td>
+										<td class="px-2 py-1 text-center">
+											<UTooltip :text="$t('discard')">
+												<UButton size="xs" :icon="icons.x" color="neutral" variant="ghost"
+													@click="configRef?.discardSingleAttribute?.(item.key)" />
+											</UTooltip>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
-				</div>
+				</template>
 
-				<div v-if="totalChangesCount === 0" class="py-6 text-center text-sm text-(--color-text-muted)">
+				<div v-if="totalChangesCount === 0 && !saveResult"
+					class="py-6 text-center text-sm text-(--color-text-muted)">
 					{{ $t('message.noItemsFound') }}
 				</div>
 			</div>
@@ -107,7 +167,8 @@ Supports product properties, product action requests, host parameters, and host 
 		<template #footer>
 			<div class="w-full space-y-3">
 				<!-- Save & Process options (products mode) -->
-				<div v-if="showProcessOptions" class="border border-(--color-border) rounded-lg overflow-hidden">
+				<div v-if="showProcessOptions && totalChangesCount > 0"
+					class="border border-(--color-border) rounded-lg overflow-hidden">
 					<div class="bg-(--color-surface) px-3 py-1.5 flex items-center gap-2">
 						<UIcon :name="icons.onDemand" class="w-4 h-4 text-(--color-text-muted)" />
 						<label class="flex items-center gap-2 cursor-pointer">
@@ -120,7 +181,8 @@ Supports product properties, product action requests, host parameters, and host 
 						<div class="px-3 py-2 space-y-2 bg-(--color-surface)/50">
 							<div class="flex flex-wrap items-center gap-x-4 gap-y-1">
 								<div class="flex items-center gap-2">
-									<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('products') }}:</span>
+									<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('products')
+										}}:</span>
 									<label class="flex items-center gap-1 cursor-pointer text-xs">
 										<input type="radio" v-model="onDemandProductMode" value="all"
 											class="text-opsi-blue focus:ring-opsi-blue w-3 h-3" />
@@ -134,7 +196,8 @@ Supports product properties, product action requests, host parameters, and host 
 									</label>
 								</div>
 								<div class="flex items-center gap-2">
-									<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('visibility') }}:</span>
+									<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('visibility')
+										}}:</span>
 									<label class="flex items-center gap-1 cursor-pointer text-xs">
 										<input type="radio" v-model="onDemandVisibility" value=""
 											class="text-opsi-blue focus:ring-opsi-blue w-3 h-3" />
@@ -155,17 +218,22 @@ Supports product properties, product action requests, host parameters, and host 
 							<div class="text-xs text-(--color-text-muted)">
 								{{ $t('clients') }}: {{ onDemandClientIds.length }}
 								<span v-if="onDemandClientIds.length > 0" class="ml-1">
-									({{ onDemandClientIds.slice(0, 3).join(', ') }}{{ onDemandClientIds.length > 3 ? '...' : '' }})
+									({{ onDemandClientIds.slice(0, 3).join(', ') }}{{ onDemandClientIds.length > 3 ?
+										'...' : '' }})
 								</span>
 							</div>
 						</div>
 					</template>
 				</div>
 				<div class="flex gap-2 justify-end">
-					<UButton variant="soft" color="neutral" @click="handleDiscardAll">{{ $t('discardAll') }}</UButton>
-					<UButton color="primary" :loading="isSaving" @click="handleSaveAll">
-						{{ processAfterSave && showProcessOptions ? $t('saveAndProcess') : $t('saveAll') }}
-					</UButton>
+					<template v-if="totalChangesCount > 0">
+						<UButton variant="soft" color="neutral" @click="handleDiscardAll">{{ $t('discardAll') }}
+						</UButton>
+						<UButton color="primary" :loading="isSaving" @click="handleSaveAll">
+							{{ processAfterSave && showProcessOptions ? $t('saveAndProcess') : $t('saveAll') }}
+						</UButton>
+					</template>
+					<UButton v-else variant="soft" color="neutral" @click="open = false">{{ $t('close') }}</UButton>
 				</div>
 			</div>
 		</template>
@@ -237,7 +305,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-	saveAll: [processOnDemand: boolean, onDemandOptions?: { productIds?: string[]; visibility?: string; clientIds?: string[] }]
+	saveAll: [processOnDemand: boolean, onDemandOptions?: { productIds?: string[]; visibility?: string; clientIds?: string[] }, onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void]
 	discardAll: []
 }>()
 
@@ -248,11 +316,13 @@ const processAfterSave = ref(false)
 const onDemandProductMode = ref<'all' | 'selected'>('all')
 const onDemandVisibility = ref<ProductVisibility>('')
 const onDemandClientIds = ref<string[]>([])
+const saveResult = ref<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
 
 watch(open, (isOpen) => {
 	if (isOpen) {
 		onDemandClientIds.value = [...props.clientIds]
 		onDemandProductMode.value = props.selectedProductIds.length > 0 ? 'selected' : 'all'
+		saveResult.value = null
 	}
 })
 
@@ -305,6 +375,17 @@ const groupedProductChanges = computed<ChangeGroup[]>(() => {
 	return Array.from(groups.entries()).map(([productId, changes]) => ({ productId, changes }))
 })
 
+/** Flat list of all product changes for table display */
+const flatChanges = computed(() => {
+	const items: Array<ChangeItem & { productId: string }> = []
+	for (const group of groupedProductChanges.value) {
+		for (const change of group.changes) {
+			items.push({ ...change, productId: group.productId })
+		}
+	}
+	return items
+})
+
 /** Total count of all changes across all contexts */
 const totalChangesCount = computed(() => {
 	let count = 0
@@ -334,24 +415,19 @@ function handleQuickDiscard() {
 }
 
 function handleSaveAll() {
-	open.value = false
+	saveResult.value = null
 	const options = processAfterSave.value && props.showProcessOptions ? {
 		productIds: onDemandProductMode.value === 'selected' ? props.selectedProductIds : undefined,
 		visibility: onDemandVisibility.value || undefined,
 		clientIds: onDemandClientIds.value.length > 0 ? onDemandClientIds.value : undefined,
 	} : undefined
-	emit('saveAll', processAfterSave.value && props.showProcessOptions, options)
+	emit('saveAll', processAfterSave.value && props.showProcessOptions, options, (result) => {
+		saveResult.value = result
+	})
 }
 
 function handleDiscardAll() {
-	open.value = false
 	emit('discardAll')
+	saveResult.value = { type: 'success', message: String($t('allChangesDiscarded')) }
 }
 </script>
-
-<style scoped>
-.changed-item:hover {
-	background: var(--color-surface-hover, #4b4b49);
-	transition: background 0.2s;
-}
-</style>
