@@ -904,5 +904,11 @@
   "windowsClients": "Windows-Clients",
   "workbenchLocalUrl": "Workbench lokale URL",
   "workbenchRemoteUrl": "Workbench Remote-URL",
-  "yes": "Ja"
+  "yes": "Ja",
+  "oldValue": "Alter Wert",
+  "newValue": "Neuer Wert",
+  "property": "Eigenschaft",
+  "parameter": "Parameter",
+  "attribute": "Attribut",
+  "allChangesDiscarded": "Alle Änderungen wurden verworfen."
 }

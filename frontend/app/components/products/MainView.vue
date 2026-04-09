@@ -368,12 +368,10 @@ function handleBulkActionRequest(actionRequest: string) {
 	}
 }
 
-async function saveActionRequests() {
-	if (pendingActionRequests.value.size === 0) return
+async function saveActionRequests(): Promise<{ type: 'success' | 'error' | 'warning'; message: string }> {
+	if (pendingActionRequests.value.size === 0) return { type: 'success', message: String($t('message.actionRequestsSaved')) }
 	if (selectionStore.selectedClients.length === 0) {
-		actionStatus.value = { type: 'error', title: String($t('error')), message: String($t('message.noClientsSelected')) }
-		setTimeout(() => { actionStatus.value = null }, 5000)
-		return
+		return { type: 'error', message: String($t('message.noClientsSelected')) }
 	}
 	savingActionRequests.value = true
 	const errors: string[] = []
@@ -392,41 +390,49 @@ async function saveActionRequests() {
 		for (const pid of savedIds) {
 			pendingActionRequests.value.delete(pid)
 		}
-		if (errors.length > 0 && savedIds.length > 0) {
-			actionStatus.value = { type: 'warning', title: String($t('warning')), message: `${savedIds.length} saved, ${errors.length} failed: ${errors.join('; ')}` }
-		} else if (errors.length > 0) {
-			actionStatus.value = { type: 'error', title: String($t('error')), message: errors.join('; ') }
-		} else {
-			actionStatus.value = { type: 'success', title: String($t('success')), message: String($t('message.actionRequestsSaved')) }
-		}
-		setTimeout(() => { actionStatus.value = null }, errors.length > 0 ? 8000 : 5000)
 		await fetchProducts()
+		if (errors.length > 0 && savedIds.length > 0) {
+			return { type: 'warning', message: `${savedIds.length} saved, ${errors.length} failed: ${errors.join('; ')}` }
+		} else if (errors.length > 0) {
+			return { type: 'error', message: errors.join('; ') }
+		} else {
+			return { type: 'success', message: String($t('message.actionRequestsSaved')) }
+		}
 	} catch (e) {
-		actionStatus.value = { type: 'error', title: String($t('error')), message: e instanceof Error ? e.message : String($t('message.failedToSaveActionRequests')) }
-		setTimeout(() => { actionStatus.value = null }, 8000)
+		return { type: 'error', message: e instanceof Error ? e.message : String($t('message.failedToSaveActionRequests')) }
 	} finally { savingActionRequests.value = false }
 }
 
-async function handleSaveAll(processOnDemand?: boolean, onDemandOptions?: { productIds?: string[]; visibility?: string; clientIds?: string[] }) {
-	await saveActionRequests()
+async function handleSaveAll(processOnDemand?: boolean, onDemandOptions?: { productIds?: string[]; visibility?: string; clientIds?: string[] }, onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void) {
+	const result = await saveActionRequests()
+	if (result.type === 'error') {
+		onResult?.(result)
+		return
+	}
 	if (processOnDemand) {
 		const clientIds = onDemandOptions?.clientIds || selectionStore.selectedClients
 		if (clientIds.length > 0) {
 			try {
 				const productIds = onDemandOptions?.productIds || undefined
 				await processActionRequests(clientIds, productIds)
-				actionStatus.value = { type: 'success', title: String($t('success')), message: String($t('message.processActionsExecuted')) }
-				setTimeout(() => { actionStatus.value = null }, 5000)
+				onResult?.({ type: 'success', message: String($t('message.processActionsExecuted')) })
 			} catch (e) {
-				actionStatus.value = { type: 'error', title: String($t('error')), message: e instanceof Error ? e.message : String($t('message.failedToProcessActions')) }
+				onResult?.({ type: 'error', message: e instanceof Error ? e.message : String($t('message.failedToProcessActions')) })
 			}
+			return
 		}
 	}
+	onResult?.(result)
 }
 
-async function handlePanelSave() {
+async function handlePanelSave(_processOnDemand?: boolean, _options?: unknown, onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void) {
 	if (configTabsComponentRef.value?.hasAnyChanges) {
-		await configTabsComponentRef.value.saveAll()
+		try {
+			await configTabsComponentRef.value.saveAll()
+			onResult?.({ type: 'success', message: String($t('message.successfullySavedHostParameters')) })
+		} catch (e) {
+			onResult?.({ type: 'error', message: e instanceof Error ? e.message : String(e) })
+		}
 	}
 }
 
