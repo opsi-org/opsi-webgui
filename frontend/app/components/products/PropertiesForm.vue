@@ -12,9 +12,9 @@
 		<template v-else>
 			<div class="flex-1 overflow-auto min-h-0">
 				<div class="space-y-0">
-					<div v-for="prop in filteredProperties" :key="prop.propertyId"
+					<div v-for="prop in visibleProperties" :key="prop.propertyId"
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2 px-2 rounded transition-colors"
-						:class="isPropertyChanged(prop.propertyId) ? 'bg-yellow-50 dark:bg-yellow-700/10' : 'hover:bg-(--color-surface-hover)'">
+						:class="changedPropertyIds.has(prop.propertyId) ? 'bg-yellow-50 dark:bg-yellow-700/10' : 'hover:bg-(--color-surface-hover)'">
 
 						<div class="min-w-0 md:w-2/5 flex items-center gap-1.5">
 							<SharedTooltipTable :rows="getPropertyTooltipRows(prop)">
@@ -25,7 +25,7 @@
 									{{ prop.propertyId }}
 								</span>
 							</SharedTooltipTable>
-							<span v-if="isPropertyChanged(prop.propertyId)"
+							<span v-if="changedPropertyIds.has(prop.propertyId)"
 								class="inline-flex items-center text-yellow-700 dark:text-yellow-200">
 								<UIcon :name="icons.pencilSquare" class="w-3 h-3" />
 							</span>
@@ -39,11 +39,14 @@
 								:mixed="isMixedValue(prop)"
 								@update:model-value="(v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)" />
 
-							<UButton v-if="isPropertyChanged(prop.propertyId)" size="xs" variant="ghost" color="neutral"
+							<UButton v-if="changedPropertyIds.has(prop.propertyId)" size="xs" variant="ghost" color="neutral"
 								:icon="icons.x" :title="$t('discardItem')"
 								@click="discardSingleProperty(prop.propertyId)" />
 						</div>
 					</div>
+				</div>
+				<div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-3">
+					<span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('loading') }}…</span>
 				</div>
 			</div>
 		</template>
@@ -51,6 +54,7 @@
 </template>
 
 <script setup lang="ts">
+import { useIntersectionObserver } from '@vueuse/core'
 import type { EditableProductProperty, EditablePropertyValue } from '~/types'
 
 interface Props {
@@ -83,11 +87,31 @@ const filteredProperties = computed(() => {
 	)
 })
 
-function isPropertyChanged(propertyId: string): boolean {
-	const prop = props.properties.find(p => p.propertyId === propertyId)
-	if (!prop) return false
-	return JSON.stringify(prop._value) !== JSON.stringify(prop._originalValue)
-}
+// Progressive rendering: render properties in batches to avoid blocking the UI
+const RENDER_BATCH = 40
+const renderLimit = ref(RENDER_BATCH)
+const visibleProperties = computed(() => filteredProperties.value.slice(0, renderLimit.value))
+const hasMore = computed(() => renderLimit.value < filteredProperties.value.length)
+const loadMoreSentinel = ref<HTMLElement | null>(null)
+
+watch(() => filteredProperties.value.length, () => { renderLimit.value = RENDER_BATCH })
+
+useIntersectionObserver(loadMoreSentinel, ([entry]) => {
+	if (entry?.isIntersecting && hasMore.value) {
+		renderLimit.value = Math.min(renderLimit.value + RENDER_BATCH, filteredProperties.value.length)
+	}
+})
+
+// Pre-compute set of changed property IDs to avoid per-item JSON.stringify during render
+const changedPropertyIds = computed(() => {
+	const ids = new Set<string>()
+	for (const prop of props.properties) {
+		if (JSON.stringify(prop._value) !== JSON.stringify(prop._originalValue)) {
+			ids.add(prop.propertyId)
+		}
+	}
+	return ids
+})
 
 function isMixedValue(prop: EditableProductProperty): boolean {
 	return prop._value === MIXED_MARKER || prop._originalValue === MIXED_MARKER

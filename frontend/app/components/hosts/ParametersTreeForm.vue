@@ -4,7 +4,7 @@ Password detection for configIds containing 'password', 'secret', 'key' patterns
 Multivalue with tag-like editing and add-new-value for editable params.
 <template>
 	<div class="params-tree">
-		<div v-for="node in tree" :key="node.key" class="param-tree-node"
+		<div v-for="node in visibleNodes" :key="node.key" class="param-tree-node"
 			:class="{ 'param-tree-node-root': getDepth(node.key) === 0 }">
 			<!-- Category node -->
 			<template v-if="node.children">
@@ -26,7 +26,7 @@ Multivalue with tag-like editing and add-new-value for editable params.
 						:class="open[node.key] ? 'font-medium' : ''">
 						{{ node.label }}
 					</span>
-					<span class="text-xs text-(--color-text-muted) opacity-60">{{ countLeaves(node) }}</span>
+					<span class="text-xs text-(--color-text-muted) opacity-60">{{ node.leafCount ?? 0 }}</span>
 				</div>
 				<div v-if="mounted[node.key]" v-show="open[node.key]" class="children-container">
 					<HostsParametersTreeForm :tree="node.children" v-bind="passProps" />
@@ -71,11 +71,15 @@ Multivalue with tag-like editing and add-new-value for editable params.
 				</div>
 			</template>
 		</div>
+		<div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-2">
+			<span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('loading') }}…</span>
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, toRefs, watch } from 'vue'
+import { useIntersectionObserver } from '@vueuse/core'
 
 interface Param {
 	configId: string
@@ -95,6 +99,7 @@ interface TreeNode {
 	label: string
 	param?: Param
 	children?: TreeNode[]
+	leafCount?: number
 }
 
 const props = defineProps<{
@@ -129,8 +134,6 @@ function isPasswordParam(configId: string): boolean {
 }
 
 function buildTree(params: Param[]): TreeNode[] {
-	// Group parameters by main categories (first part of configId before first dot)
-	// to follow backend data structure showing main categories at the top level
 	const root: Record<string, any> = {}
 	for (const p of params) {
 		const parts = p.configId.split('.')
@@ -148,7 +151,6 @@ function buildTree(params: Param[]): TreeNode[] {
 	}
 	function toTree(obj: Record<string, any>, prefix = ''): TreeNode[] {
 		const entries = Object.entries(obj)
-		// Sort: categories (objects) first, then leaf params
 		entries.sort(([, a], [, b]) => {
 			const aIsParam = a && typeof a === 'object' && '__param' in a
 			const bIsParam = b && typeof b === 'object' && '__param' in b
@@ -158,13 +160,11 @@ function buildTree(params: Param[]): TreeNode[] {
 		})
 		return entries.map(([key, value]) => {
 			if (value && typeof value === 'object' && '__param' in value) {
-				return { key: prefix + key, label: key, param: value.__param }
+				return { key: prefix + key, label: key, param: value.__param, leafCount: 1 }
 			} else {
-				return {
-					key: prefix + key,
-					label: key,
-					children: toTree(value, prefix + key + '.'),
-				}
+				const children = toTree(value, prefix + key + '.')
+				const leafCount = children.reduce((sum, c) => sum + (c.leafCount ?? 0), 0)
+				return { key: prefix + key, label: key, children, leafCount }
 			}
 		})
 	}
@@ -174,6 +174,21 @@ function buildTree(params: Param[]): TreeNode[] {
 const open = ref<Record<string, boolean>>({})
 const mounted = ref<Record<string, boolean>>({})
 const tree = computed<TreeNode[]>(() => props.tree ?? (props.params ? buildTree(props.params) : []))
+
+// Progressive rendering: only render a batch of nodes at a time to keep initial render fast
+const RENDER_BATCH = 40
+const renderLimit = ref(RENDER_BATCH)
+const visibleNodes = computed(() => tree.value.slice(0, renderLimit.value))
+const hasMore = computed(() => renderLimit.value < tree.value.length)
+const loadMoreSentinel = ref<HTMLElement | null>(null)
+
+watch(() => tree.value.length, () => { renderLimit.value = RENDER_BATCH })
+
+useIntersectionObserver(loadMoreSentinel, ([entry]) => {
+	if (entry?.isIntersecting && hasMore.value) {
+		renderLimit.value = Math.min(renderLimit.value + RENDER_BATCH, tree.value.length)
+	}
+})
 
 // Auto-open the first main category when tree data becomes available
 watch(tree, (newTree) => {
@@ -185,14 +200,6 @@ watch(tree, (newTree) => {
 		}
 	}
 }, { immediate: true })
-
-function countLeaves(node: TreeNode): number {
-	if (node.param) return 1
-	if (!node.children) return 0
-	let count = 0
-	for (const child of node.children) count += countLeaves(child)
-	return count
-}
 
 function getDepth(key: string): number {
 	return key.split('.').length - 1

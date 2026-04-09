@@ -478,6 +478,7 @@ interface TreeNode {
 	label: string
 	param?: Param
 	children?: TreeNode[]
+	leafCount?: number
 }
 
 /**
@@ -523,9 +524,11 @@ const categoryAwareTree = computed<TreeNode[]>(() => {
 				})
 				.map(([key, value]) => {
 					if (value && typeof value === 'object' && '__param' in value) {
-						return { key: pre + key, label: key, param: value.__param }
+						return { key: pre + key, label: key, param: value.__param, leafCount: 1 }
 					}
-					return { key: pre + key, label: key, children: toTree(value, pre + key + '.') }
+					const children = toTree(value, pre + key + '.')
+					const leafCount = children.reduce((sum, c) => sum + (c.leafCount ?? 0), 0)
+					return { key: pre + key, label: key, children, leafCount }
 				})
 				.filter(n => n.param || (n.children && n.children.length > 0))
 		}
@@ -535,7 +538,8 @@ const categoryAwareTree = computed<TreeNode[]>(() => {
 	return categoryKeys
 		.map(cat => {
 			const children = buildSubTree(raw[cat] || [], cat + '.')
-			return { key: cat, label: cat, children }
+			const leafCount = children.reduce((sum, c) => sum + (c.leafCount ?? 0), 0)
+			return { key: cat, label: cat, children, leafCount }
 		})
 		.filter(n => n.children.length > 0)
 })
