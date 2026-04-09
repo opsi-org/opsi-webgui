@@ -50,7 +50,7 @@
 								variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
 								@click.stop="toggleExpand(item.id)" />
 							<span v-else class="w-4 shrink-0" />
-							<UCheckbox :model-value="isItemChecked(item)" size="xs" @click.stop
+							<UCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
 								@update:model-value="handleItemClick(item)" />
 							<UTooltip v-if="item.label === 'not_assigned'" :text="t('notAssignedTooltip')">
 								<span
@@ -77,7 +77,7 @@
 						size="xs" variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
 						@click.stop="toggleExpand(item.id)" />
 					<span v-else class="w-4 shrink-0" />
-					<UCheckbox :model-value="isItemChecked(item)" size="xs" @click.stop
+					<UCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
 						@update:model-value="handleItemClick(item)" />
 					<span class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
 						@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label

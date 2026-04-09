@@ -1,7 +1,7 @@
 PageLayout - A layout component with a fixed header (for controls) and a scrollable content area.
 <template>
 	<div
-		class="page-layout flex flex-col h-full min-h-0 overflow-hidden bg-(--color-background) dark:bg-(--color-background-dark)">
+		class="page-layout flex flex-col h-full min-h-0 min-w-0 overflow-hidden bg-(--color-background) dark:bg-(--color-background-dark)">
 		<div class="page-header shrink-0 bg-(--color-background) dark:bg-(--color-background-dark) pb-3">
 			<div v-if="showControlsRow" class="flex flex-wrap items-center justify-between gap-3">
 				<div class="flex items-center gap-2">

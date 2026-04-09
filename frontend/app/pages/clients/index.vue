@@ -22,11 +22,6 @@
 				<SharedAlertInline v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4"
 					closable @close="error = null" />
 
-				<div v-if="actionStatus" class="mb-3">
-					<SharedAlertInline :color="actionStatus.type" :title="actionStatus.title"
-						:description="actionStatus.message" variant="subtle" closable @close="actionStatus = null" />
-				</div>
-
 				<SharedDataTable :rows="clients" :columns="columns" :loading="loading" table-id="clients"
 					row-key="clientId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
 					:total-items="totalItems" :selected-keys="selectionStore.selectedClients"
@@ -179,7 +174,7 @@ const panelProductTypes = [
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
 const blockedClients = ref<Set<string>>(new Set())
-const actionStatus = ref<{ type: 'success' | 'error' | 'warning' | 'info'; title: string; message: string } | null>(null)
+const actionStatus = ref<null>(null)
 const lastPageParams = ref<PageChangeParams | null>(null)
 const productsSortColumn = ref<string | undefined>(undefined)
 const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void } | null>(null)
@@ -316,24 +311,7 @@ async function checkReachability(clientId: string) {
 }
 
 function handleActionComplete(action: string, success: boolean) {
-	// Show inline status instead of toast
-	if (success) {
-		actionStatus.value = {
-			type: 'success',
-			title: String($t('success')),
-			message: String($t(`actionCompleted.${action}`, action))
-		}
-	} else {
-		actionStatus.value = {
-			type: 'error',
-			title: String($t('error')),
-			message: String($t(`actionFailed.${action}`, action))
-		}
-	}
-	// Auto-dismiss only success messages after 5 seconds, errors stay until manually closed
-	if (success) {
-		setTimeout(() => { actionStatus.value = null }, 5000)
-	}
+	// Results are shown in the action modal; only refresh the table on destructive actions
 	if ((action === 'delete' || action === 'rename') && success) fetchClients()
 }
 

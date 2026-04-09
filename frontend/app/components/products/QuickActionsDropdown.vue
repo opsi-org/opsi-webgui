@@ -149,12 +149,22 @@
 				</div>
 
 				<template #footer>
-					<div class="flex justify-end gap-2">
-						<UButton variant="soft" color="neutral" size="sm" @click="resetForm">{{ $t('reset') }}</UButton>
-						<UButton color="primary" size="sm" :disabled="isReadOnly || previewData == null || applying"
-							:loading="applying" @click="applyActions">
-							{{ $t('apply') }}
-						</UButton>
+					<div class="space-y-3">
+						<SharedAlertInline v-if="applyResult && applyResult.type === 'success'" color="success"
+							:title="$t('success')" :description="applyResult.message" variant="subtle" closable
+							@close="applyResult = null" />
+						<SharedAlertInline v-if="applyResult && applyResult.type === 'error'" color="error"
+							:title="$t('error')" :description="applyResult.message" variant="subtle" closable
+							@close="applyResult = null" />
+						<div class="flex justify-end gap-2">
+							<UButton variant="soft" color="neutral" size="sm" @click="resetForm">{{ $t('reset') }}</UButton>
+							<UButton v-if="applyResult?.type === 'success'" variant="soft" color="neutral" size="sm"
+								@click="dialogOpen = false">{{ $t('close') }}</UButton>
+							<UButton v-else color="primary" size="sm" :disabled="isReadOnly || previewData == null || applying"
+								:loading="applying" @click="applyActions">
+								{{ $t('apply') }}
+							</UButton>
+						</div>
 					</div>
 				</template>
 			</UCard>
@@ -328,18 +338,21 @@ async function fetchPreview() {
 	}
 }
 
+const applyResult = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+
 async function applyActions() {
 	const params = buildParams(false)
 	if (!params) return
 	applying.value = true
 	errorMessage.value = null
+	applyResult.value = null
 	try {
 		const result = await bulkProductAction(params as Parameters<typeof bulkProductAction>[0])
 		if (result.error) throw result.error
-		dialogOpen.value = false
+		applyResult.value = { type: 'success', message: String($t('message.actionExecuted')) }
 		emit('applied')
 	} catch (e) {
-		errorMessage.value = e instanceof Error ? e.message : String(e)
+		applyResult.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
 	} finally {
 		applying.value = false
 	}
@@ -351,5 +364,6 @@ function resetForm() {
 	scope.value = 'clients'
 	previewData.value = null
 	errorMessage.value = null
+	applyResult.value = null
 }
 </script>
