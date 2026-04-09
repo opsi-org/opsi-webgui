@@ -18,9 +18,10 @@
 				</template>
 
 				<template #saveActions>
-					<ProductsUnsavedChangesModal :config-ref="productConfigTabsRef"
+					<SharedUnsavedChangesModal :product-config-ref="productConfigTabsRef"
 						:config-product-id="configProduct?.productId" mode="actionRequests"
-						:selected-product-ids="selectedProductIds" @save-all="handleSaveAll"
+						:selected-product-ids="selectedProductIds" :show-process-options="true"
+						:client-ids="selectionStore.selectedClients" @save-all="handleSaveAll"
 						@discard-all="discardAllChanges" />
 				</template>
 
@@ -135,7 +136,7 @@
 		</template>
 
 		<template #panelActions>
-			<ProductsUnsavedChangesModal :config-ref="panelPropertyConfigRef"
+			<SharedUnsavedChangesModal :product-config-ref="panelPropertyConfigRef"
 				:config-product-id="configProduct?.productId" mode="properties" @save-all="handlePanelSave"
 				@discard-all="handlePanelDiscard" />
 		</template>
