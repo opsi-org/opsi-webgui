@@ -543,6 +543,13 @@ async function fetchProducts(params?: PageChangeParams) {
 
 watch(() => props.productType, () => { pendingActionRequests.value.clear(); fetchProducts() })
 
+watch(() => props.initialSortColumn, (newCol) => {
+	if (newCol) {
+		tableSettings.setSort(newCol, 'desc')
+		fetchProducts()
+	}
+})
+
 watch(() => route.query.product, (newProductId, oldProductId) => {
 	if (!newProductId && showConfigPanel.value) {
 		showConfigPanel.value = false

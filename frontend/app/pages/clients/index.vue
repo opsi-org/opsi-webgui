@@ -63,7 +63,7 @@
 						<ClientsStatisticBadge :value="(row as Client).version_outdated_netboot"
 							:icon="icons.productsOutdated" label="N" :tooltip="$t('version_outdated_netboot')"
 							status="warning"
-							@stat-click="openProductsPanelForClient(row as Client, 'version_outdated')" />
+							@stat-click="openProductsPanelForClient(row as Client, 'version_outdated', 'netboot')" />
 					</template>
 					<template #cell-installationStatus_unknown="{ row }">
 						<ClientsStatisticBadge :value="(row as Client).installationStatus_unknown"
@@ -239,9 +239,10 @@ function openAddPanel() {
 	})
 }
 
-function openProductsPanelForClient(client: Client, sortColumn: string) {
+function openProductsPanelForClient(client: Client, sortColumn: string, productType?: 'localboot' | 'netboot') {
 	selectionStore.setClients([client.clientId], 'table')
 	productsSortColumn.value = sortColumn
+	panelProductType.value = productType || 'localboot'
 	panelClient.value = null
 	panelType.value = 'products'
 	router.replace({ query: { ...route.query, view: 'panel', panelType: 'products', sortBy: sortColumn } })
