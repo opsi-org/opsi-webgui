@@ -9,20 +9,20 @@
                     </UButton>
                 </template>
 
-                <SharedAlertInline v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4" closable
-                    @close="error = null" />
+                <SharedAlertInline v-if="error" color="error" :title="$t('error')" :description="error" class="mb-4"
+                    closable @close="error = null" />
 
                 <SharedDataTable :rows="servers" :columns="columns" :loading="loading" table-id="servers"
                     row-key="depotId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
                     :total-items="totalItems" :selected-keys="selectionStore.selectedServers"
                     @row-activate="handleRowActivate" @selection-change="handleSelectionChange"
                     @page-change="handlePageChange" @refresh="fetchServers">
-                     <template #cell-depotId="{ row }">
+                    <template #cell-depotId="{ row }">
                         <UIcon :name="(row as Server).type === 'OpsiConfigserver' ? icons.serverStack : icons.server"
                             class="w-3.5 h-3.5 text-(--color-text-muted) mr-2" />
                         <span :class="(row as Server).type === 'OpsiConfigserver' ? 'font-bold' : ''">{{
                             (row as Server).depotId
-                        }}</span>
+                            }}</span>
                     </template>
                     <template #cell-type="{ row }">
                         <SharedStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
@@ -41,7 +41,7 @@
 
         <template #title>
             <span class="flex items-center gap-2">
-                <UIcon :name="icons.server" class="w-4 h-4 text-opsi-blue shrink-0" />
+                <UIcon :name="icons.server" class="w-4 h-4 shrink-0" />
                 {{ panelServer?.depotId }}
             </span>
         </template>
@@ -49,7 +49,8 @@
         <template #panel>
             <div v-if="panelServer">
                 <HostsConfigTabs v-if="panelType === 'config'" ref="configTabsRef" :host-id="panelServer.depotId"
-                    host-type="server" :tab="panelTab" panel-mode :readonly="isReadOnly || !hasServerWriteAccess" @update:tab="panelTab = $event" />
+                    host-type="server" :tab="panelTab" panel-mode :readonly="isReadOnly || !hasServerWriteAccess"
+                    @update:tab="panelTab = $event" />
             </div>
 
             <SharedNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelPanelLeave"

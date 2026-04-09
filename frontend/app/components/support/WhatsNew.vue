@@ -3,7 +3,7 @@ SupportWhatsNew - Displays changelog.
 	<UCard>
 		<template #header>
 			<div class="flex items-center gap-2">
-				<UIcon :name="icons.whatsNew" class="w-5 h-5 text-(--color-text-muted)" />
+				<UIcon :name="icons.whatsNew" class="w-5 h-5" />
 				<span class="font-medium">{{ $t('whatsNew') }}</span>
 			</div>
 		</template>

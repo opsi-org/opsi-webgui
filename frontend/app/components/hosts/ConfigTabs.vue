@@ -4,89 +4,102 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 		@confirm="confirmLeave" />
 
 	<!-- Create Config Modal -->
-	<UModal v-model:open="showCreateConfigModal" :title="$t('createConfig')">
-		<template #body>
-			<div class="space-y-4">
-				<div>
-					<label class="block text-sm font-medium mb-1">{{ $t('configId') }} *</label>
-					<UInput v-model="newConfig.configId" :placeholder="'e.g. category.subcategory.name'" size="sm" />
-				</div>
-				<div>
-					<label class="block text-sm font-medium mb-1">{{ $t('description') }}</label>
-					<UInput v-model="newConfig.description" size="sm" />
-				</div>
-				<div>
-					<label class="block text-sm font-medium mb-1">{{ $t('type') }}</label>
-					<USelect v-model="newConfig.type" :items="configTypeOptions" size="sm" />
-				</div>
-				<div class="flex items-center gap-4">
-					<label class="flex items-center gap-2 text-sm">
-						<UCheckbox v-model="newConfig.multiValue" size="sm" />
-						{{ $t('multiValue') }}
-					</label>
-					<label class="flex items-center gap-2 text-sm">
-						<UCheckbox v-model="newConfig.editable" size="sm" />
-						{{ $t('editable') }}
-					</label>
-				</div>
-				<div v-if="newConfig.type === 'UnicodeConfig'">
-					<label class="block text-sm font-medium mb-1">{{ $t('possibleValues') }}</label>
-					<div v-if="newConfig.possibleValues.length > 0" class="flex flex-wrap gap-1 mb-1">
-						<span v-for="(val, idx) in newConfig.possibleValues" :key="idx"
-							class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20">
-							{{ val }}
-							<button type="button" class="hover:text-red-500 transition-colors"
-								@click="newConfig.possibleValues.splice(idx, 1)">
-								<UIcon :name="icons.x" class="w-3 h-3" />
-							</button>
-						</span>
+	<UModal v-model:open="showCreateConfigModal">
+		<template #content>
+			<UCard>
+				<template #header>
+					<div class="flex items-center gap-3">
+						<UIcon :name="icons.add" class="w-5 h-5" />
+						<h3 class="text-sm text-(--color-text) m-0">{{ $t('createConfig') }}</h3>
 					</div>
-					<div class="flex gap-1">
-						<UInput v-model="newPossibleValue" :placeholder="$t('pressEnterToAdd')" size="sm" class="flex-1"
-							@keydown.enter.prevent="addPossibleValue" />
-						<UButton size="sm" variant="soft" color="neutral" :icon="icons.add" @click="addPossibleValue" />
+				</template>
+				<div class="space-y-4">
+					<div>
+						<label class="block text-sm font-medium mb-1">{{ $t('configId') }} *</label>
+						<UInput v-model="newConfig.configId" :placeholder="'e.g. category.subcategory.name'"
+							size="sm" />
 					</div>
-				</div>
-				<div v-if="newConfig.type === 'UnicodeConfig'">
-					<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
-					<div v-if="newConfig.defaultValues.length > 0" class="flex flex-wrap gap-1 mb-1">
-						<span v-for="(val, idx) in newConfig.defaultValues" :key="idx"
-							class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20">
-							{{ val }}
-							<button type="button" class="hover:text-red-500 transition-colors"
-								@click="newConfig.defaultValues.splice(idx, 1)">
-								<UIcon :name="icons.x" class="w-3 h-3" />
-							</button>
-						</span>
+					<div>
+						<label class="block text-sm font-medium mb-1">{{ $t('description') }}</label>
+						<UInput v-model="newConfig.description" size="sm" />
 					</div>
-					<div class="flex gap-1">
-						<UInput v-model="newDefaultValue" :placeholder="$t('pressEnterToAdd')" size="sm" class="flex-1"
-							@keydown.enter.prevent="addDefaultValue" />
-						<UButton size="sm" variant="soft" color="neutral" :icon="icons.add" @click="addDefaultValue" />
+					<div>
+						<label class="block text-sm font-medium mb-1">{{ $t('type') }}</label>
+						<USelect v-model="newConfig.type" :items="configTypeOptions" size="sm" />
 					</div>
+					<div class="flex items-center gap-4">
+						<label class="flex items-center gap-2 text-sm">
+							<UCheckbox v-model="newConfig.multiValue" size="sm" />
+							{{ $t('multiValue') }}
+						</label>
+						<label class="flex items-center gap-2 text-sm">
+							<UCheckbox v-model="newConfig.editable" size="sm" />
+							{{ $t('editable') }}
+						</label>
+					</div>
+					<div v-if="newConfig.type === 'UnicodeConfig'">
+						<label class="block text-sm font-medium mb-1">{{ $t('possibleValues') }}</label>
+						<div v-if="newConfig.possibleValues.length > 0" class="flex flex-wrap gap-1 mb-1">
+							<span v-for="(val, idx) in newConfig.possibleValues" :key="idx"
+								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20">
+								{{ val }}
+								<button type="button" class="hover:text-red-500 transition-colors"
+									@click="newConfig.possibleValues.splice(idx, 1)">
+									<UIcon :name="icons.x" class="w-3 h-3" />
+								</button>
+							</span>
+						</div>
+						<div class="flex gap-1">
+							<UInput v-model="newPossibleValue" :placeholder="$t('pressEnterToAdd')" size="sm"
+								class="flex-1" @keydown.enter.prevent="addPossibleValue" />
+							<UButton size="sm" variant="soft" color="neutral" :icon="icons.add"
+								@click="addPossibleValue" />
+						</div>
+					</div>
+					<div v-if="newConfig.type === 'UnicodeConfig'">
+						<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
+						<div v-if="newConfig.defaultValues.length > 0" class="flex flex-wrap gap-1 mb-1">
+							<span v-for="(val, idx) in newConfig.defaultValues" :key="idx"
+								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20">
+								{{ val }}
+								<button type="button" class="hover:text-red-500 transition-colors"
+									@click="newConfig.defaultValues.splice(idx, 1)">
+									<UIcon :name="icons.x" class="w-3 h-3" />
+								</button>
+							</span>
+						</div>
+						<div class="flex gap-1">
+							<UInput v-model="newDefaultValue" :placeholder="$t('pressEnterToAdd')" size="sm"
+								class="flex-1" @keydown.enter.prevent="addDefaultValue" />
+							<UButton size="sm" variant="soft" color="neutral" :icon="icons.add"
+								@click="addDefaultValue" />
+						</div>
+					</div>
+					<div v-if="newConfig.type === 'BoolConfig'">
+						<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
+						<USelect v-model="newConfig.boolDefault"
+							:items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
+					</div>
+					<SharedAlertInline v-if="createConfigError" color="error" :title="$t('error')"
+						:description="createConfigError" variant="subtle" closable @close="createConfigError = null" />
 				</div>
-				<div v-if="newConfig.type === 'BoolConfig'">
-					<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
-					<USelect v-model="newConfig.boolDefault"
-						:items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
-				</div>
-				<SharedAlertInline v-if="createConfigError" color="error" :title="$t('error')" :description="createConfigError"
-					variant="subtle" closable @close="createConfigError = null" />
-			</div>
-		</template>
-		<template #footer>
-			<div class="flex gap-2 justify-end">
-				<UButton variant="outline" color="neutral" @click="resetCreateConfigModal">{{ $t('cancel') }}</UButton>
-				<UButton color="primary" :loading="creatingConfig" :disabled="!newConfig.configId.trim()"
-					@click="handleCreateConfig">{{ $t('create') }}</UButton>
-			</div>
+				<template #footer>
+					<div class="flex gap-2 justify-end">
+						<UButton variant="outline" color="neutral" @click="resetCreateConfigModal">{{ $t('cancel') }}
+						</UButton>
+						<UButton color="primary" :loading="creatingConfig" :disabled="!newConfig.configId.trim()"
+							@click="handleCreateConfig">{{ $t('create') }}</UButton>
+					</div>
+				</template>
+			</UCard>
 		</template>
 	</UModal>
 
 	<div
 		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
 
-		<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-background) dark:bg-(--color-background-dark) border-b border-(--color-border) mb-3">
+		<div
+			class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-background) dark:bg-(--color-background-dark) border-b border-(--color-border) mb-3">
 			<div class="flex flex-wrap items-center justify-between gap-3">
 				<div class="flex items-center gap-2">
 					<SharedTabsNav v-model="activeTab" :tabs="tabDefs" />
@@ -116,12 +129,12 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 			</div>
 		</div>
 
-		<div v-show="activeTab === 'parameters'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1 overflow-auto']">
+		<div v-show="activeTab === 'parameters'"
+			:class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1 overflow-auto']">
 			<div v-if="loadingParams" class="py-8 flex justify-center">
 				<SharedLoadingSpinner size="md" />
 			</div>
-			<div v-else-if="categoryAwareTree.length === 0"
-				class="py-8 text-center text-sm text-muted">
+			<div v-else-if="categoryAwareTree.length === 0" class="py-8 text-center text-sm text-muted">
 				<UIcon :name="icons.config" class="w-10 h-10 mx-auto mb-2 opacity-40" />
 				<p>{{ (hostId || hostType === 'server') ? $t('noParametersFound') : $t('selectHostFirst') }}</p>
 			</div>
@@ -130,7 +143,8 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 				:icons="icons" :fmt-val="fmtVal" :auto-open-all="!!paramSearch" />
 		</div>
 
-		<div v-show="activeTab === 'attributes'" :class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1 overflow-auto']">
+		<div v-show="activeTab === 'attributes'"
+			:class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1 overflow-auto']">
 			<div v-if="loadingAttrs" class="py-8 flex justify-center">
 				<SharedLoadingSpinner size="md" />
 			</div>
@@ -142,8 +156,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 				class="mb-6 border-b border-(--color-border) dark:border-(--color-border)">
 				<div v-for="key in filteredReadonlyAttrKeys" :key="key"
 					class="orm-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-					<span
-						class="text-sm text-(--color-text) dark:text-(--color-text) min-w-0 md:w-1/3 break-all">
+					<span class="text-sm text-(--color-text) dark:text-(--color-text) min-w-0 md:w-1/3 break-all">
 						{{ getAttributeLabel(key) }}
 					</span>
 					<span class="text-sm flex-1 truncate" :title="fmtVal(originalAttributes[key])">
@@ -156,8 +169,7 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 				<div v-for="key in filteredEditableAttrKeys" :key="key"
 					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
 					:class="isAttrChanged(key) ? 'bg-yellow-50 dark:bg-yellow-700/10' : ''">
-					<span
-						class="text-sm text-(--color-text) dark:text-(--color-text) min-w-0 md:w-1/3 break-all">
+					<span class="text-sm text-(--color-text) dark:text-(--color-text) min-w-0 md:w-1/3 break-all">
 						{{ getAttributeLabel(key) }}
 						<span v-if="isAttrChanged(key)"
 							class="inline-flex items-center text-xs text-yellow-700 dark:text-yellow-200">

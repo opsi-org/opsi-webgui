@@ -40,8 +40,7 @@ Supports product properties, product action requests, host parameters, and host 
 
 				<!-- Product changes table -->
 				<template v-if="flatChanges.length > 0">
-					<div class="border border-(--color-border) rounded-lg bg-(--color-surface)"
-						style="min-height: 80px;">
+					<div class="border border-(--color-border) rounded-lg" style="min-height: 80px;">
 						<div class="max-h-64 overflow-y-auto text-xs">
 							<table class="min-w-full table-auto">
 								<thead class="bg-(--color-surface) sticky top-0 z-10">
@@ -92,7 +91,7 @@ Supports product properties, product action requests, host parameters, and host 
 				<!-- Host parameters table -->
 				<template v-if="(configRef?.changedParams?.size ?? 0) > 0">
 					<h5 class="font-heading text-xs text-(--color-text-muted) mb-1 m-0">{{ $t('parameters') }}</h5>
-					<div class="border border-(--color-border) rounded-lg bg-(--color-surface)">
+					<div class="border border-(--color-border) rounded-lg">
 						<div class="max-h-48 overflow-y-auto text-xs">
 							<table class="min-w-full table-auto">
 								<thead class="bg-(--color-surface) sticky top-0 z-10">
@@ -112,13 +111,17 @@ Supports product properties, product action requests, host parameters, and host 
 											</UTooltip>
 										</td>
 										<td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
-											<UTooltip :text="fmtVal(configRef?.getOriginalParamValue?.(key))" :delay-duration="300">
-												<span class="block truncate">{{ fmtVal(configRef?.getOriginalParamValue?.(key)) }}</span>
+											<UTooltip :text="fmtVal(configRef?.getOriginalParamValue?.(key))"
+												:delay-duration="300">
+												<span class="block truncate">{{
+													fmtVal(configRef?.getOriginalParamValue?.(key)) }}</span>
 											</UTooltip>
 										</td>
 										<td class="px-2 py-1 max-w-28 font-medium">
-											<UTooltip :text="fmtVal(configRef?.changedParams?.get(key))" :delay-duration="300">
-												<span class="block truncate">{{ fmtVal(configRef?.changedParams?.get(key)) }}</span>
+											<UTooltip :text="fmtVal(configRef?.changedParams?.get(key))"
+												:delay-duration="300">
+												<span class="block truncate">{{
+													fmtVal(configRef?.changedParams?.get(key)) }}</span>
 											</UTooltip>
 										</td>
 										<td class="px-2 py-1 text-center">
@@ -137,7 +140,7 @@ Supports product properties, product action requests, host parameters, and host 
 				<!-- Host attributes table -->
 				<template v-if="(configRef?.changedAttributesList?.length ?? 0) > 0">
 					<h5 class="font-heading text-xs text-(--color-text-muted) mb-1 m-0">{{ $t('attributes') }}</h5>
-					<div class="border border-(--color-border) rounded-lg bg-(--color-surface)">
+					<div class="border border-(--color-border) rounded-lg">
 						<div class="max-h-48 overflow-y-auto text-xs">
 							<table class="min-w-full table-auto">
 								<thead class="bg-(--color-surface) sticky top-0 z-10">
@@ -199,11 +202,11 @@ Supports product properties, product action requests, host parameters, and host 
 						</label>
 					</div>
 					<template v-if="processAfterSave">
-						<div class="px-3 py-2 space-y-2 bg-(--color-surface)/50">
+						<div class="px-3 py-2 space-y-2">
 							<div class="flex flex-wrap items-center gap-x-4 gap-y-1">
 								<div class="flex items-center gap-2">
 									<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('products')
-										}}:</span>
+									}}:</span>
 									<label class="flex items-center gap-1 cursor-pointer text-xs">
 										<input type="radio" v-model="onDemandProductMode" value="all"
 											class="text-opsi-blue focus:ring-opsi-blue w-3 h-3" />
@@ -218,7 +221,7 @@ Supports product properties, product action requests, host parameters, and host 
 								</div>
 								<div class="flex items-center gap-2">
 									<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('visibility')
-										}}:</span>
+									}}:</span>
 									<label class="flex items-center gap-1 cursor-pointer text-xs">
 										<input type="radio" v-model="onDemandVisibility" value=""
 											class="text-opsi-blue focus:ring-opsi-blue w-3 h-3" />

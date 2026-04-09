@@ -1,10 +1,10 @@
 <template>
     <LayoutsPageLayout :show-search="false" :show-refresh="true" :loading="loading" @refresh="refreshAll">
-        <div class="h-full flex flex-col min-h-0 overflow-y-auto gap-2 lg:gap-3 lg:justify-between">
+        <div class="h-full flex flex-col min-h-0 overflow-y-auto gap-2 lg:gap-3">
             <!-- Row 1: Config Server, Health Check, User Config & Restrictions -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 shrink-0">
                 <DashboardInfoCard :icon="icons.serverStack" :label="$t('configServer')" :value="serverHostname" />
-                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
+                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.2)] p-4 cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/healthcheck')">
                     <div class="flex items-center gap-2 mb-3 mt-2">
                         <UIcon :name="icons.health" class="w-5 h-5 text-[--color-text-muted]" />
@@ -28,7 +28,7 @@
 
                 <!-- Merged User Config + Restrictions Card -->
                 <div
-                    class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 md:col-span-2">
+                    class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.2)] p-4 md:col-span-2">
                     <div class="flex items-center gap-3 mb-3">
                         <UIcon :name="icons.user" class="w-4.5 h-4.5" />
                         <div class="flex-1 min-w-0">
@@ -55,7 +55,7 @@
 
             <!-- Row 2: System Info -->
             <div class="shrink-0">
-                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
+                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.2)] p-4 cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/system')">
                     <div class="flex items-center gap-2 mb-2">
                         <UIcon :name="icons.server" class="w-5 h-5 text-[--color-text-muted]" />
@@ -68,7 +68,7 @@
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
                             <span class="text-[--color-text-muted] text-sm">opsiconfd</span>
                             <span class="font-medium truncate ml-2 text-sm">{{ diagnosticData.opsiconfd_version
-                            }}</span>
+                                }}</span>
                         </div>
                         <div v-if="diagnosticData.os_release"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
@@ -88,7 +88,7 @@
                             <span class="text-[--color-text-muted] text-sm">memory</span>
                             <span class="font-medium text-sm">{{ (diagnosticData.memory as Record<string, unknown>
                             ).total_human }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent
-                                    }}%)</span>
+                                        }}%)</span>
                         </div>
                         <div v-if="sysHostname"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
@@ -122,7 +122,7 @@
                     @click="navigateTo('/servers')" />
 
                 <!-- Clients stat card with OS + active/inactive breakdown -->
-                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
+                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.2)] p-4 cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-all duration-200"
                     @click="navigateTo('/clients')">
                     <div class="flex items-center justify-between mb-1">
                         <UIcon :name="icons.client" class="w-5 h-5 text-[--color-text-muted]" />
@@ -131,8 +131,7 @@
                     </div>
                     <p class="text-2xl font-bold mb-0.5">{{ clientCount ?? '-' }}</p>
                     <p class="text-[--color-text-muted] text-sm mb-2">{{ $t('totalClients') }}</p>
-                    <div v-if="sharedClientNumbers"
-                        class="space-y-1 pt-1.5 border-t border-(--color-border)/30">
+                    <div v-if="sharedClientNumbers" class="space-y-1 pt-1.5 border-t border-(--color-border)/30">
                         <div class="flex items-center gap-4 text-xs text-[--color-text-muted]">
                             <span class="flex items-center gap-1"><span
                                     class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>{{
@@ -153,7 +152,7 @@
                 </div>
 
                 <!-- Products stat card with total + type breakdown -->
-                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
+                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.2)] p-4 cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-all duration-200"
                     @click="navigateTo('/products')">
                     <div class="flex items-center justify-between mb-2">
                         <UIcon :name="icons.product" class="w-5 h-5 text-[--color-text-muted]" />
@@ -175,7 +174,7 @@
                 </div>
 
                 <!-- Modules Card -->
-                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
+                <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.2)] p-4 cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/modules')">
                     <div class="flex items-center justify-between mb-2">
                         <img :src="opsiLogoSrc" alt="opsi" class="w-5 h-5" />
@@ -188,7 +187,7 @@
                         <div class="flex items-center gap-1.5 mb-1">
                             <UIcon :name="icons.warning" class="w-3.5 h-3.5 text-amber-500" />
                             <span class="text-xs font-medium text-amber-600 dark:text-amber-400">{{ obsoleteModulesCount
-                            }} {{ $t('obsolete') }}</span>
+                                }} {{ $t('obsolete') }}</span>
                         </div>
                         <div class="flex flex-wrap gap-1">
                             <span v-for="mod in sharedObsoleteModules.slice(0, 3)" :key="mod"
@@ -208,7 +207,8 @@
             </div>
 
             <!-- Row 4: Failed Clients -->
-            <div class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 shrink-0">
+            <div
+                class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.2)] p-4 shrink-0">
                 <div class="flex items-center gap-2 mb-2">
                     <UIcon :name="icons.warning" class="w-5 h-5 text-[--color-text-muted]" />
                     <h3 class="text-xs m-0">{{ $t('failedClients') }}</h3>

@@ -127,7 +127,7 @@
 
 		<template #title>
 			<span class="flex items-center gap-2">
-				<UIcon :name="icons.product" class="w-4 h-4 text-opsi-blue shrink-0" />
+				<UIcon :name="icons.product" class="w-4 h-4 shrink-0" />
 				{{ configProduct?.productId }}
 			</span>
 		</template>
