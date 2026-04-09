@@ -104,10 +104,14 @@ const columns: DataTableColumnDef[] = [
     { key: 'ip', label: String($t('ipAddress')), labelKey: 'ipAddress', sortable: true, visible: false },
 ]
 
-function openConfig(row: Server) {
+function doOpenConfig(row: Server) {
     panelServer.value = row
     panelType.value = 'config'
     router.replace({ query: { ...route.query, server: row.depotId, view: 'panel' } })
+}
+
+function openConfig(row: Server) {
+    checkUnsavedAndDo(() => doOpenConfig(row))
 }
 
 function doClosePanel() {
@@ -154,7 +158,7 @@ function cancelPanelLeave() {
 
 /** Single-select row click: open config panel but keep config server selected */
 function handleRowActivate(row: Server) {
-    checkUnsavedAndDo(() => openConfig(row))
+    checkUnsavedAndDo(() => doOpenConfig(row))
 }
 
 function handleSelectionChange(_rows: Server[], keys: string[]) {
@@ -203,7 +207,7 @@ onMounted(async () => {
     const serverId = route.query.server as string | undefined
     if (serverId && route.query.view === 'panel') {
         const s = servers.value.find(sv => sv.depotId === serverId)
-        if (s) openConfig(s)
+        if (s) doOpenConfig(s)
     }
 })
 </script>

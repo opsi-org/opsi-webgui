@@ -47,10 +47,7 @@
 					</template>
 					<template #cell-lastSeen="{ row }">
 						{{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as
-							string).toLocaleString('en-US', {
-								year: 'numeric', month: 'numeric', day: 'numeric', hour:
-									'numeric', minute: '2-digit', second: '2-digit', hour12: true
-							}) :
+							string).toLocaleString() :
 							'-' }}
 					</template>
 					<template #cell-uefi="{ row }">
@@ -216,10 +213,14 @@ const columns: DataTableColumnDef[] = [
 	{ key: 'uefi', label: 'UEFI', sortable: true, visible: false },
 ]
 
-function openPanel(client: Client, type: 'config' | 'logs' | 'clone') {
+function doOpenPanel(client: Client, type: 'config' | 'logs' | 'clone') {
 	panelClient.value = client
 	panelType.value = type
 	router.replace({ query: { ...route.query, client: client.clientId, view: 'panel', panelType: type } })
+}
+
+function openPanel(client: Client, type: 'config' | 'logs' | 'clone') {
+	checkUnsavedAndDo(() => doOpenPanel(client, type))
 }
 
 function openProductsPanel() {
@@ -298,7 +299,7 @@ function cancelPanelLeave() {
 function handleRowActivate(row: Client) {
 	checkUnsavedAndDo(() => {
 		selectionStore.setClients([row.clientId], 'table')
-		openPanel(row, 'config')
+		doOpenPanel(row, 'config')
 	})
 }
 
@@ -406,7 +407,7 @@ onMounted(async () => {
 	const pType = route.query.panelType as 'config' | 'logs' | 'clone' | undefined
 	if (clientId && route.query.view === 'panel') {
 		const c = clients.value.find(cl => cl.clientId === clientId)
-		if (c) openPanel(c, pType || 'config')
+		if (c) doOpenPanel(c, pType || 'config')
 	}
 })
 </script>

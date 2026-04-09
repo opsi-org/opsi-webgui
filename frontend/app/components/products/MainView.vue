@@ -293,7 +293,7 @@ const columns: DataTableColumnDef[] = [
 	{ key: 'priority', label: String($t('priority')), labelKey: 'priority', sortable: true, visible: false },
 	{ key: 'modificationTime', label: String($t('modificationTime')), labelKey: 'modificationTime', sortable: true, visible: false },
 	{ key: 'actionProgress', label: String($t('actionProgress')), labelKey: 'actionProgress', sortable: true, visible: false },
-	{ key: 'actionRequest', label: String($t('actionRequest')), labelKey: 'actionRequest', sortable: true, class: 'w-40' },
+	{ key: 'actionRequest', label: String($t('actionRequest')), labelKey: 'actionRequest', sortable: true, class: 'w-40', alwaysVisible: true },
 ]
 
 function openProductConfig(product: ProductRow) {
@@ -317,7 +317,7 @@ function doOpenProductConfig(product: ProductRow) {
 function formatModificationTime(value: string | undefined | null): string {
 	if (!value) return '-'
 	try {
-		return new Date(value).toLocaleString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true })
+		return new Date(value).toLocaleString()
 	} catch {
 		return value
 	}
