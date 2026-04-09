@@ -61,17 +61,9 @@ const selectionStore = useSelectionStore()
 const loading = ref(false)
 const items = ref<Array<{ id: string; description: string }>>([])
 const fetched = ref(false)
-const searchQuery = ref('')
 
 const filteredOptions = computed<DropdownItem[]>(() => {
-  const q = searchQuery.value.trim().toLowerCase()
-  let opts = items.value
-  if (q) {
-    opts = opts.filter(item => item.id.toLowerCase().includes(q) || item.description.toLowerCase().includes(q))
-  }
-  // Limit displayed items for performance (lazy rendering)
-  const limited = opts.slice(0, 200)
-  const result: DropdownItem[] = limited.map((item) => ({
+  const result: DropdownItem[] = items.value.map((item) => ({
     label: item.id,
     value: item.id,
     description: item.description || '',
@@ -82,9 +74,6 @@ const filteredOptions = computed<DropdownItem[]>(() => {
   if (props.allowAll && result.length > 0) {
     const allLabel = props.type === 'server' ? String($t('allServers')) : String($t('allClients'))
     return [{ label: allLabel, value: '' }, ...result.filter(o => o.value !== '__clear__')]
-  }
-  if (opts.length > 200) {
-    result.push({ label: `... ${opts.length - 200} ${String($t('more'))}`, value: '__more__' })
   }
   return result
 })
@@ -137,8 +126,6 @@ function onSelect(value: string) {
   if (value === '__clear__') {
     emit('update:modelValue', '')
     emit('change', '')
-  } else if (value === '__more__') {
-    // Not a real selection
   } else {
     emit('update:modelValue', value)
     emit('change', value)
