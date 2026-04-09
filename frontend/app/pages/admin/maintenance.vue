@@ -1,9 +1,12 @@
 Admin Maintenance Page - System maintenance, clients, products, backup/restore
 <template>
     <div class="space-y-6">
-        <SharedAlertInline v-if="error" color="error" variant="soft" closable @close="error = ''">
-            <template #title>{{ error }}</template>
-        </SharedAlertInline>
+        <SharedAlertInline v-if="pageMessage && pageMessage.type === 'success'" color="success"
+            :title="$t('success')" :description="pageMessage.message" variant="subtle" closable
+            @close="pageMessage = null" />
+        <SharedAlertInline v-if="pageMessage && pageMessage.type === 'error'" color="error"
+            :title="$t('error')" :description="pageMessage.message" variant="subtle" closable
+            @close="pageMessage = null" />
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <UCard>
@@ -22,11 +25,21 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     <p class="text-(--color-text-muted)">{{ $t('message.noBlockedClients') }}</p>
                 </div>
                 <div v-else class="space-y-4">
-                    <div class="flex gap-2">
-                        <USelect v-model="selectedBlockedClient" :options="blockedClientOptions"
-                            :placeholder="$t('selectClient')" class="flex-1" size="sm" />
-                        <UButton color="primary" size="sm" :disabled="isReadOnly || !selectedBlockedClient"
-                            :loading="unblockingClient" @click="unblockSelectedClient">{{ $t('unblock') }}</UButton>
+                    <SharedAlertInline v-if="clientCardMessage && clientCardMessage.type === 'success'" color="success"
+                        :description="clientCardMessage.message" variant="subtle" closable
+                        @close="clientCardMessage = null" />
+                    <SharedAlertInline v-if="clientCardMessage && clientCardMessage.type === 'error'" color="error"
+                        :description="clientCardMessage.message" variant="subtle" closable
+                        @close="clientCardMessage = null" />
+                    <div class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)">
+                        <div v-for="client in blockedClients" :key="client"
+                            class="flex items-center justify-between px-3 py-2 text-sm hover:bg-(--color-surface-hover)">
+                            <span class="truncate">{{ client }}</span>
+                            <UButton size="xs" variant="soft" color="primary" :loading="unblockingClient"
+                                :disabled="isReadOnly" @click="unblockSingleClient(client)">
+                                {{ $t('unblock') }}
+                            </UButton>
+                        </div>
                     </div>
                     <UButton block variant="outline" color="warning" size="sm" :loading="unblockingClient"
                         :disabled="isReadOnly" @click="unblockAll('clients')">{{ $t('unblockAll') }}</UButton>
@@ -49,11 +62,24 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                     <p class="text-(--color-text-muted)">{{ $t('message.noLockedProducts') }}</p>
                 </div>
                 <div v-else class="space-y-4">
-                    <div class="flex gap-2">
-                        <USelect v-model="selectedLockedProduct" :options="lockedProductOptions"
-                            :placeholder="$t('selectProduct')" class="flex-1" size="sm" />
-                        <UButton color="primary" size="sm" :disabled="isReadOnly || !selectedLockedProduct"
-                            :loading="unlockingProduct" @click="unlockSelectedProduct">{{ $t('unlock') }}</UButton>
+                    <SharedAlertInline v-if="productCardMessage && productCardMessage.type === 'success'" color="success"
+                        :description="productCardMessage.message" variant="subtle" closable
+                        @close="productCardMessage = null" />
+                    <SharedAlertInline v-if="productCardMessage && productCardMessage.type === 'error'" color="error"
+                        :description="productCardMessage.message" variant="subtle" closable
+                        @close="productCardMessage = null" />
+                    <div class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)">
+                        <div v-for="(reason, productId) in lockedProducts" :key="productId"
+                            class="flex items-center justify-between px-3 py-2 text-sm hover:bg-(--color-surface-hover)">
+                            <div class="truncate min-w-0 mr-2">
+                                <span>{{ productId }}</span>
+                                <span v-if="reason" class="text-(--color-text-muted) ml-1">({{ reason }})</span>
+                            </div>
+                            <UButton size="xs" variant="soft" color="primary" :loading="unlockingProduct"
+                                :disabled="isReadOnly" @click="unlockSingleProduct(String(productId))">
+                                {{ $t('unlock') }}
+                            </UButton>
+                        </div>
                     </div>
                     <UButton block variant="outline" color="warning" size="sm" :loading="unlockingProduct"
                         :disabled="isReadOnly" @click="unblockAll('products')">{{ $t('unlockAll') }}</UButton>
@@ -257,6 +283,9 @@ const api = useApiHelpers()
 const { isReadOnly, hasServerWriteAccess } = useUserPermissions()
 
 const error = ref('')
+const pageMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+const clientCardMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+const productCardMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
 const loadingClients = ref(false)
 const loadingProducts = ref(false)
 const blockedClients = ref<string[]>([])
@@ -283,8 +312,6 @@ const restoreOptions = ref({ file_id: '', config_files: false, redis_data: false
 
 const blockedClientsCount = computed(() => blockedClients.value.length)
 const lockedProductsCount = computed(() => Object.keys(lockedProducts.value).length)
-const blockedClientOptions = computed(() => blockedClients.value.map((id) => ({ label: id, value: id })))
-const lockedProductOptions = computed(() => Object.entries(lockedProducts.value).map(([id, reason]) => ({ label: reason ? id + ' (' + reason + ')' : id, value: id })))
 
 const serverIdOptions = computed(() => [
     { label: String($t('useFromBackup')), value: 'backup' },
@@ -296,72 +323,118 @@ watch(serverIdOption, (val) => { if (val !== 'new') restoreOptions.value.server_
 
 async function fetchBlockedClients() {
     loadingClients.value = true
-    const { data, error: err } = await api.getBlockedClients()
-    if (!err && data) {
-        if (Array.isArray(data)) {
-            blockedClients.value = data as string[]
-        } else if (typeof data === 'object' && data !== null) {
-            blockedClients.value = Object.keys(data as Record<string, unknown>)
-        } else {
-            blockedClients.value = []
+    try {
+        const { data, error: err } = await api.getBlockedClients()
+        if (err) throw err
+        if (data) {
+            if (Array.isArray(data)) {
+                blockedClients.value = data as string[]
+            } else if (typeof data === 'object' && data !== null) {
+                blockedClients.value = Object.keys(data as Record<string, unknown>)
+            } else {
+                blockedClients.value = []
+            }
         }
+    } catch (e) {
+        clientCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
     }
     loadingClients.value = false
 }
 
 async function fetchLockedProducts() {
     loadingProducts.value = true
-    const { data, error: err } = await api.getLockedProducts()
-    if (!err && data) lockedProducts.value = data as Record<string, string>
+    try {
+        const { data, error: err } = await api.getLockedProducts()
+        if (err) throw err
+        if (data) lockedProducts.value = data as Record<string, string>
+    } catch (e) {
+        productCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
     loadingProducts.value = false
 }
 
 async function fetchAppState() {
     loadingAppState.value = true
-    const { data, error: err } = await api.getAppState()
-    if (!err && data) {
-        currentAppState.value = data.type
-        newAppState.value = { type: data.type, address_exceptions: data.address_exceptions || [], retry_after: data.retry_after || 0 }
+    try {
+        const { data, error: err } = await api.getAppState()
+        if (err) throw err
+        if (data) {
+            currentAppState.value = data.type
+            newAppState.value = { type: data.type, address_exceptions: data.address_exceptions || [], retry_after: data.retry_after || 0 }
+        }
+    } catch (e) {
+        pageMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
     }
     loadingAppState.value = false
 }
 
-async function unblockSelectedClient() {
-    if (!selectedBlockedClient.value) return
+async function unblockSingleClient(clientId: string) {
     unblockingClient.value = true
-    await api.unblockClient(selectedBlockedClient.value)
-    await fetchBlockedClients()
-    selectedBlockedClient.value = ''
+    clientCardMessage.value = null
+    try {
+        const { error: err } = await api.unblockClient(clientId)
+        if (err) throw err
+        clientCardMessage.value = { type: 'success', message: String($t('message.clientUnblocked', { client: clientId })) }
+        await fetchBlockedClients()
+    } catch (e) {
+        clientCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
     unblockingClient.value = false
 }
 
-async function unlockSelectedProduct() {
-    if (!selectedLockedProduct.value) return
+async function unlockSingleProduct(productId: string) {
     unlockingProduct.value = true
-    await api.unlockProduct(selectedLockedProduct.value)
-    await fetchLockedProducts()
-    selectedLockedProduct.value = ''
+    productCardMessage.value = null
+    try {
+        const { error: err } = await api.unlockProduct(productId)
+        if (err) throw err
+        productCardMessage.value = { type: 'success', message: String($t('message.productUnlocked', { product: productId })) }
+        await fetchLockedProducts()
+    } catch (e) {
+        productCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
     unlockingProduct.value = false
 }
 
 async function unblockAll(type: 'clients' | 'products') {
     if (type === 'clients') {
         unblockingClient.value = true
-        await api.unblockAllClients()
-        await fetchBlockedClients()
+        clientCardMessage.value = null
+        try {
+            const { error: err } = await api.unblockAllClients()
+            if (err) throw err
+            clientCardMessage.value = { type: 'success', message: String($t('message.allClientsUnblocked')) }
+            await fetchBlockedClients()
+        } catch (e) {
+            clientCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+        }
         unblockingClient.value = false
     } else {
         unlockingProduct.value = true
-        await api.unlockAllProducts()
-        await fetchLockedProducts()
+        productCardMessage.value = null
+        try {
+            const { error: err } = await api.unlockAllProducts()
+            if (err) throw err
+            productCardMessage.value = { type: 'success', message: String($t('message.allProductsUnlocked')) }
+            await fetchLockedProducts()
+        } catch (e) {
+            productCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+        }
         unlockingProduct.value = false
     }
 }
 
 async function saveAppState() {
     savingAppState.value = true
-    const { data, error: err } = await api.setAppState(newAppState.value)
-    if (!err && data) currentAppState.value = data.type
+    pageMessage.value = null
+    try {
+        const { data, error: err } = await api.setAppState(newAppState.value)
+        if (err) throw err
+        if (data) currentAppState.value = data.type
+        pageMessage.value = { type: 'success', message: String($t('message.appStateSaved')) }
+    } catch (e) {
+        pageMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
     savingAppState.value = false
 }
 
@@ -383,15 +456,22 @@ function removeAddressException(idx: number) {
 
 async function createBackup() {
     creatingBackup.value = true
-    const { data, error: err } = await api.createBackup(backupOptions.value)
-    if (!err && data) {
-        const a = document.createElement('a')
-        a.href = '/file-transfer/' + data + '?delete=true'
-        a.download = ''
-        a.style.display = 'none'
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
+    pageMessage.value = null
+    try {
+        const { data, error: err } = await api.createBackup(backupOptions.value)
+        if (err) throw err
+        if (data) {
+            const a = document.createElement('a')
+            a.href = '/file-transfer/' + data + '?delete=true'
+            a.download = ''
+            a.style.display = 'none'
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            pageMessage.value = { type: 'success', message: String($t('message.backupCreated')) }
+        }
+    } catch (e) {
+        pageMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
     }
     creatingBackup.value = false
 }
@@ -409,6 +489,7 @@ async function restoreBackup() {
     restoringBackup.value = true
     uploadingFile.value = true
     uploadProgress.value = 0
+    pageMessage.value = null
 
     try {
         // Step 1: Upload file to /file-transfer/multipart
@@ -443,9 +524,11 @@ async function restoreBackup() {
 
         // Step 2: Restore using uploaded file_id
         restoreOptions.value.file_id = fileId
-        await api.restoreBackup(restoreOptions.value)
+        const { error: restoreErr } = await api.restoreBackup(restoreOptions.value)
+        if (restoreErr) throw restoreErr
+        pageMessage.value = { type: 'success', message: String($t('message.backupRestored')) }
     } catch (e) {
-        error.value = (e as Error).message
+        pageMessage.value = { type: 'error', message: (e as Error).message }
     }
 
     restoringBackup.value = false
