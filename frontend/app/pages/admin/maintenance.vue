@@ -1,6 +1,7 @@
 Admin Maintenance Page - System maintenance, clients, products, backup/restore
 <template>
-    <div class="space-y-6">
+    <div class="h-full overflow-y-auto">
+    <div class="space-y-6 min-h-full">
         <SharedAlertInline v-if="pageMessage && pageMessage.type === 'success'" color="success"
             :title="$t('success')" :description="pageMessage.message" variant="subtle" closable
             @close="pageMessage = null" />
@@ -271,6 +272,7 @@ Admin Maintenance Page - System maintenance, clients, products, backup/restore
                 </div>
             </UCard>
         </div>
+    </div>
     </div>
 </template>
 

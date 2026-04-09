@@ -3,7 +3,7 @@ Desktop: side-by-side split with resizable divider (default 50% width).
 Mobile: overlay panel with close button.
 <template>
     <div class="h-full w-full relative bg-(--color-surface) dark:bg-(--color-background)" ref="containerRef">
-        <div :style="mainStyle" class="h-full overflow-hidden transition-[width] duration-200 min-w-0">
+        <div :style="mainStyle" class="h-full overflow-auto transition-[width] duration-200 min-w-0">
             <slot name="main" />
         </div>
 

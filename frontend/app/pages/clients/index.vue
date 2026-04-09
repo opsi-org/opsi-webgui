@@ -178,7 +178,7 @@ const actionStatus = ref<null>(null)
 const lastPageParams = ref<PageChangeParams | null>(null)
 const productsSortColumn = ref<string | undefined>(undefined)
 const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void } | null>(null)
-const productsTableRef = ref<{ hasUnsavedChanges?: { value: boolean } } | null>(null)
+const productsTableRef = ref<{ hasUnsavedChanges?: boolean; discardAllChanges?: () => void } | null>(null)
 const cloneFormRef = ref<{ hasChanges?: boolean } | null>(null)
 const showLeaveWarning = ref(false)
 const pendingPanelAction = ref<(() => void) | null>(null)
@@ -187,7 +187,7 @@ let resolveRouteLeave: ((ok: boolean) => void) | null = null
 // Route-level guard: intercepts navigation away from this page when the panel has unsaved changes
 onBeforeRouteLeave(() => {
 	const hasChanges = configTabsRef.value?.hasAnyChanges
-		|| productsTableRef.value?.hasUnsavedChanges?.value
+		|| productsTableRef.value?.hasUnsavedChanges
 		|| cloneFormRef.value?.hasChanges
 	if (!hasChanges) return true
 	showLeaveWarning.value = true
@@ -223,15 +223,19 @@ function openPanel(client: Client, type: 'config' | 'logs' | 'clone') {
 }
 
 function openProductsPanel() {
-	panelClient.value = null
-	panelType.value = 'products'
-	router.replace({ query: { ...route.query, view: 'panel', panelType: 'products' } })
+	checkUnsavedAndDo(() => {
+		panelClient.value = null
+		panelType.value = 'products'
+		router.replace({ query: { ...route.query, view: 'panel', panelType: 'products' } })
+	})
 }
 
 function openAddPanel() {
-	panelClient.value = null
-	panelType.value = 'add'
-	router.replace({ query: { ...route.query, view: 'panel', panelType: 'add' } })
+	checkUnsavedAndDo(() => {
+		panelClient.value = null
+		panelType.value = 'add'
+		router.replace({ query: { ...route.query, view: 'panel', panelType: 'add' } })
+	})
 }
 
 function openProductsPanelForClient(client: Client, sortColumn: string) {
@@ -258,7 +262,7 @@ function closePanel() {
 
 function checkUnsavedAndDo(action: () => void) {
 	const hasConfigChanges = configTabsRef.value?.hasAnyChanges
-	const hasProductChanges = productsTableRef.value?.hasUnsavedChanges?.value
+	const hasProductChanges = productsTableRef.value?.hasUnsavedChanges
 	if (hasConfigChanges || hasProductChanges) {
 		pendingPanelAction.value = action
 		showLeaveWarning.value = true
@@ -270,6 +274,7 @@ function checkUnsavedAndDo(action: () => void) {
 function confirmPanelLeave() {
 	showLeaveWarning.value = false
 	configTabsRef.value?.discardAll?.()
+	productsTableRef.value?.discardAllChanges?.()
 	if (resolveRouteLeave) {
 		resolveRouteLeave(true)
 		resolveRouteLeave = null

@@ -22,7 +22,7 @@
 						:config-product-id="configProduct?.productId" mode="actionRequests"
 						:selected-product-ids="selectedProductIds" :show-process-options="true"
 						:client-ids="selectionStore.selectedClients" @save-all="handleSaveAll"
-						@discard-all="discardAllChanges" />
+						@discard-all="discardActionRequestsOnly" />
 				</template>
 
 				<SharedAlertInline v-if="error" color="error" :title="$t('error')" :description="error" closable
@@ -462,6 +462,10 @@ function discardAllChanges() {
 	pendingActionRequests.value.clear()
 }
 
+function discardActionRequestsOnly() {
+	pendingActionRequests.value.clear()
+}
+
 function onConfigSaved() { fetchProducts() }
 
 function handlePageChange(params: PageChangeParams) {
@@ -581,5 +585,5 @@ onMounted(async () => {
 	tryOpenPanelFromRoute()
 })
 
-defineExpose({ refresh: () => fetchProducts(), hasUnsavedChanges })
+defineExpose({ refresh: () => fetchProducts(), hasUnsavedChanges, discardAllChanges })
 </script>
