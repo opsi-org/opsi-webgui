@@ -597,8 +597,8 @@
         "label": "Server-Konfig-Schreiben"
       },
       "terminal": {
-        "disabled": "opsiconfd --disabled-features: messagebus_terminal → Terminal-Seite ist deaktiviert",
-        "enabled": "opsiconfd --disabled-features: messagebus_terminal ist NICHT gelistet → Terminal-Seite unter /admin/terminal zugänglich",
+        "disabled": "opsiconfd disabled-features: messagebus_terminal → Terminal-Seite ist deaktiviert",
+        "enabled": "opsiconfd disabled-features: messagebus_terminal ist NICHT gelistet → Terminal-Seite unter /admin/terminal zugänglich",
         "label": "Server-Terminal"
       },
       "title": "Webgui-Feature-Einschränkungen"

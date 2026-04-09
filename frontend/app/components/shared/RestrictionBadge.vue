@@ -7,10 +7,10 @@
                     <UIcon :name="icon" class="w-4.5 h-4.5" :class="colorClasses.text" />
                 </div>
                 <UIcon :name="restricted ? icons.lock : icons.check"
-                    class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full p-px" :class="colorClasses.badge" />
+                    class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full p-px" :class="colorClasses.badge" />
             </div>
             <span
-                class="text-[10px] text-[--color-text-muted] font-medium leading-tight text-center max-w-16 line-clamp-2">{{
+                class="text-[11px] text-[--color-text-muted] font-medium leading-tight text-center max-w-13 line-clamp-2">{{
                 label }}</span>
         </div>
     </UTooltip>

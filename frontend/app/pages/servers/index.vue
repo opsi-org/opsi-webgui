@@ -17,6 +17,13 @@
                     :total-items="totalItems" :selected-keys="selectionStore.selectedServers"
                     @row-activate="handleRowActivate" @selection-change="handleSelectionChange"
                     @page-change="handlePageChange" @refresh="fetchServers">
+                     <template #cell-depotId="{ row }">
+                        <UIcon :name="(row as Server).type === 'OpsiConfigserver' ? icons.serverStack : icons.server"
+                            class="w-3.5 h-3.5 text-(--color-text-muted) mr-2" />
+                        <span :class="(row as Server).type === 'OpsiConfigserver' ? 'font-bold' : ''">{{
+                            (row as Server).depotId
+                        }}</span>
+                    </template>
                     <template #cell-type="{ row }">
                         <SharedStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
                             :label="String((row as Server).type || '-')" />

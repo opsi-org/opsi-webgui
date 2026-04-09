@@ -4,7 +4,7 @@ Modules - Component to display available opsi modules with verification status
 	<UCard>
 		<template #header>
 			<div class="flex items-center justify-between">
-				<span class="font-medium">{{ $t('opsiModules') }}</span>
+				<h3 class="text-xs m-0">{{ $t('opsiModules') }}</h3>
 				<div class="flex items-center gap-2">
 					<UBadge v-if="obsoleteModules && obsoleteModules.length > 0" color="warning" variant="subtle"
 						size="xs">

@@ -6,13 +6,13 @@
                 <DashboardInfoCard :icon="icons.serverStack" :label="$t('configServer')" :value="serverHostname" />
                 <div class="group bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 cursor-pointer hover:shadow-md transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/healthcheck')">
-                    <div class="flex items-center gap-2 mb-3">
+                    <div class="flex items-center gap-2 mb-3 mt-2">
                         <UIcon :name="icons.health" class="w-5 h-5 text-[--color-text-muted]" />
                         <h3 class="text-xs m-0">{{ $t('healthCheck') }}</h3>
                         <UIcon :name="icons.chevronRight"
                             class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                    <div v-if="healthCounts" class="flex items-center gap-2 flex-wrap">
+                    <div v-if="healthCounts" class="flex items-center gap-2 flex-wrap mt-4">
                         <UBadge v-if="healthCounts.error > 0" color="error">
                             {{ healthCounts.error }} {{ $t('errors') }}
                         </UBadge>
@@ -30,10 +30,7 @@
                 <div
                     class="bg-white dark:bg-[--color-surface] rounded-2xl shadow-sm dark:shadow-none p-4 md:col-span-2">
                     <div class="flex items-center gap-3 mb-3">
-                        <div
-                            class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-opsi-blue/20 to-opsi-blue/5">
-                            <UIcon :name="icons.user" class="w-4.5 h-4.5 text-opsi-blue" />
-                        </div>
+                        <UIcon :name="icons.user" class="w-4.5 h-4.5" />
                         <div class="flex-1 min-w-0">
                             <p class="font-semibold truncate text-sm">{{ sharedUserConfig?.user || userStore.username
                                 || '-' }}</p>
@@ -136,21 +133,21 @@
                     <p class="text-[--color-text-muted] text-sm mb-2">{{ $t('totalClients') }}</p>
                     <div v-if="sharedClientNumbers"
                         class="space-y-1 pt-1.5 border-t border-(--color-border)/30">
-                        <div class="flex items-center gap-2 text-xs">
-                            <UIcon :name="icons.windows" class="w-3 h-3 text-sky-500 shrink-0" />
-                            <span class="font-medium">{{ sharedClientNumbers.windows }}</span>
-                            <UIcon :name="icons.linux" class="w-3 h-3 text-orange-500 shrink-0 ml-1" />
-                            <span class="font-medium">{{ sharedClientNumbers.linux }}</span>
-                            <UIcon :name="icons.apple" class="w-3 h-3 text-(--color-text-muted) shrink-0 ml-1" />
-                            <span class="font-medium">{{ sharedClientNumbers.macos }}</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-xs text-[--color-text-muted]">
+                        <div class="flex items-center gap-4 text-xs text-[--color-text-muted]">
                             <span class="flex items-center gap-1"><span
-                                    class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>{{
+                                    class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>{{
                                         sharedClientNumbers.all }} {{ $t('active') }}</span>
                             <span class="flex items-center gap-1"><span
-                                    class="w-1.5 h-1.5 rounded-full bg-red-400 inline-block"></span>{{
+                                    class="w-2 h-2 rounded-full bg-red-400 inline-block"></span>{{
                                         sharedClientNumbers.inactive }} {{ $t('inactive') }}</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs mt-4">
+                            <UIcon :name="icons.windows" class="w-4 h-4 text-sky-500" />
+                            <span class="font-medium">{{ sharedClientNumbers.windows }}</span>
+                            <UIcon :name="icons.linux" class="w-4 h-4 text-orange-500 ml-4" />
+                            <span class="font-medium">{{ sharedClientNumbers.linux }}</span>
+                            <UIcon :name="icons.apple" class="w-4 h-4 text-(--color-text-muted) ml-4" />
+                            <span class="font-medium">{{ sharedClientNumbers.macos }}</span>
                         </div>
                     </div>
                 </div>
@@ -170,7 +167,7 @@
                             <span class="font-medium text-[--color-text]">{{ localbootProductCount }}</span>
                             {{ $t('localboot') }}
                         </span>
-                        <span class="text-[--color-text-muted]">
+                        <span class="text-[--color-text-muted] ml-4">
                             <span class="font-medium text-[--color-text]">{{ netbootProductCount }}</span>
                             {{ $t('netboot') }}
                         </span>
@@ -277,14 +274,6 @@ const webguiFeatures = computed(() => {
     const terminalDisabled = userStore.disabledFeatures.includes('messagebus_terminal') || userStore.disabledFeatures.includes('terminal')
     return [
         {
-            key: 'terminal',
-            i18nKey: 'terminal',
-            configId: 'messagebus_terminal',
-            restricted: terminalDisabled,
-            icon: 'i-heroicons-command-line',
-            shortLabel: 'Terminal',
-        },
-        {
             key: 'readOnly',
             i18nKey: 'readOnly',
             configId: `user.{${username}}.privilege.host.all.registered_readonly`,
@@ -297,7 +286,7 @@ const webguiFeatures = computed(() => {
             i18nKey: 'serverWrite',
             configId: `user.{${username}}.privilege.host.opsiserver.write`,
             restricted: !(userConfigData.value?.server_write_access ?? true),
-            icon: icons.server,
+            icon: icons.serverStack,
             shortLabel: 'Server Write',
         },
         {
@@ -305,7 +294,7 @@ const webguiFeatures = computed(() => {
             i18nKey: 'depotAccess',
             configId: `user.{${username}}.privilege.host.depotaccess.configured`,
             restricted: userConfigData.value?.depot_access ?? false,
-            icon: icons.serverStack,
+            icon: icons.server,
             shortLabel: 'Depot Access',
         },
         {
@@ -313,7 +302,7 @@ const webguiFeatures = computed(() => {
             i18nKey: 'clientCreation',
             configId: `user.{${username}}.privilege.host.createclient`,
             restricted: !(userConfigData.value?.client_creation ?? true),
-            icon: icons.client,
+            icon: icons.add,
             shortLabel: 'Client Create',
         },
         {
@@ -321,7 +310,7 @@ const webguiFeatures = computed(() => {
             i18nKey: 'hostGroupAccess',
             configId: `user.{${username}}.privilege.host.groupaccess.configured`,
             restricted: userConfigData.value?.host_group_access ?? false,
-            icon: icons.group,
+            icon: icons.client,
             shortLabel: 'Host Groups',
         },
         {
@@ -331,6 +320,14 @@ const webguiFeatures = computed(() => {
             restricted: userConfigData.value?.product_group_access ?? false,
             icon: icons.product,
             shortLabel: 'Product Groups',
+        },
+        {
+            key: 'terminal',
+            i18nKey: 'terminal',
+            configId: 'messagebus_terminal',
+            restricted: terminalDisabled,
+            icon: 'i-heroicons-command-line',
+            shortLabel: 'Terminal',
         },
     ]
 })
