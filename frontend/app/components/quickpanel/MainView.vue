@@ -69,8 +69,10 @@
 						<UCheckbox v-model="autoRefreshEnabled" size="sm" />
 					</div>
 					<div class="flex items-center gap-1.5 flex-nowrap">
-						<USelect v-model="defaultPage" :items="defaultPageOptions" size="xs" :title="$t('defaultPage')"
-							class="flex-1 w-full" />
+						<UTooltip :text="defaultPageTooltip">
+							<USelect v-model="defaultPage" :items="defaultPageOptions" size="xs" :title="$t('defaultPage')"
+								class="flex-1 w-full" />
+						</UTooltip>
 						<SettingsThemeToggle />
 						<SettingsLanguageDropdown />
 					</div>
@@ -145,12 +147,21 @@ const defaultPageOptions = computed(() => [
 	{ value: '/servers', label: t('servers') },
 	{ value: '/clients', label: t('clients') },
 	{ value: '/products', label: t('products') },
-	{ value: '/admin/terminal', label: `${t('admin')} - ${t('terminal')}` },
-	{ value: '/admin/diagnostics', label: `${t('admin')} - ${t('diagnostics')}` },
-	{ value: '/admin/maintenance', label: `${t('admin')} - ${t('maintenance')}` },
+	{ value: '/admin/terminal', label: t('terminal') },
+	{ value: '/admin/diagnostics', label: t('diagnostics') },
+	{ value: '/admin/maintenance', label: t('maintenance') },
 ])
 
 const defaultPage = ref('/clients')
+
+const defaultPageTooltip = computed(() => {
+	const page = defaultPageOptions.value.find(o => o.value === defaultPage.value)
+	if (!page) return t('defaultPage')
+	if (defaultPage.value.startsWith('/admin/')) {
+		return `${t('defaultPage')}: ${t('admin')} - ${page.label}`
+	}
+	return `${t('defaultPage')}: ${page.label}`
+})
 
 onMounted(() => {
 	const stored = getCookie(DEFAULT_PAGE_KEY)

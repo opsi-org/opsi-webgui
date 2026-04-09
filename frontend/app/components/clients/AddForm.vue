@@ -18,7 +18,7 @@ ClientsAddForm - add client form for panel mode with all options.
 		<div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-xs m-0">{{ $t('newClient') }}</h4>
+					<h4 class="text-sm font-semibold m-0">{{ $t('newClient') }}</h4>
 				</div>
 				<div class="mb-6">
 					<div
@@ -91,7 +91,7 @@ ClientsAddForm - add client form for panel mode with all options.
 
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-xs m-0">{{ $t('assignments') }}</h4>
+					<h4 class="text-sm font-semibold m-0">{{ $t('assignments') }}</h4>
 				</div>
 				<div class="mb-6">
 					<div
@@ -120,7 +120,7 @@ ClientsAddForm - add client form for panel mode with all options.
 
 			<div class="mb-6">
 				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-xs m-0">{{ $t('initialSetup') }}</h4>
+					<h4 class="text-sm font-semibold m-0">{{ $t('initialSetup') }}</h4>
 				</div>
 				<div class="mb-6">
 					<div
@@ -135,42 +135,53 @@ ClientsAddForm - add client form for panel mode with all options.
 					</div>
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
+						<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
+							<UIcon :name="icons.deploy" class="w-4 h-4 text-green-600 dark:text-green-400" />
 							{{ $t('enableAgentSetup') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
 							<UCheckbox v-model="form.agentSetup" :disabled="loading" />
 						</div>
 					</div>
-					<div v-if="form.agentSetup"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('agentType') }}
-						</span>
-						<div class="flex-1 flex items-center gap-2 min-w-0">
-							<URadioGroup v-model="form.agentType"
-								:items="[{ label: 'Windows', value: 'windows' }, { label: 'Linux', value: 'linux' }, { label: 'Mac', value: 'mac' }]"
-								:disabled="loading" />
+					<div v-if="form.agentSetup" class="ml-4 border-l-2 border-green-200 dark:border-green-800 pl-4 space-y-0">
+						<div
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
+								{{ $t('agentType') }}
+							</span>
+							<div class="flex-1">
+								<div class="grid grid-cols-3 gap-2">
+									<UButton v-for="os in osTypes" :key="os.value"
+										:variant="form.agentType === os.value ? 'solid' : 'outline'"
+										:color="form.agentType === os.value ? 'primary' : 'neutral'" size="sm"
+										class="justify-center" :disabled="loading" @click="form.agentType = os.value">
+										<UIcon :name="os.icon" class="w-4 h-4 mr-1" />
+										{{ os.label }}
+									</UButton>
+								</div>
+							</div>
 						</div>
-					</div>
-					<div v-if="form.agentSetup"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('agentUsername') }}
-						</span>
-						<div class="flex-1 flex items-center gap-2 min-w-0">
-							<UInput v-model="form.agentUsername" :disabled="loading" size="sm" placeholder="Username"
-								class="w-full" />
+						<div
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
+								<UIcon :name="icons.user" class="w-4 h-4 text-(--color-text-muted)" />
+								{{ $t('agentUsername') }}
+							</span>
+							<div class="flex-1 flex items-center gap-2 min-w-0">
+								<UInput v-model="form.agentUsername" :disabled="loading" size="sm" :placeholder="String($t('adminUsername'))"
+									class="w-full" />
+							</div>
 						</div>
-					</div>
-					<div v-if="form.agentSetup"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('agentPassword') }}
-						</span>
-						<div class="flex-1 flex items-center gap-2 min-w-0">
-							<UInput v-model="form.agentPassword" :disabled="loading" size="sm" type="password"
-								placeholder="Password" class="w-full" />
+						<div
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
+								<UIcon :name="icons.key" class="w-4 h-4 text-(--color-text-muted)" />
+								{{ $t('agentPassword') }}
+							</span>
+							<div class="flex-1 flex items-center gap-2 min-w-0">
+								<UInput v-model="form.agentPassword" :disabled="loading" size="sm" type="password"
+									:placeholder="String($t('enterPassword'))" class="w-full" />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -219,6 +230,12 @@ const formErrors = reactive({ clientId: '', depotId: '' })
 const depots = ref<Array<{ depotId: string; description: string }>>([])
 const netbootProductOptions = ref<Array<{ label: string; value: string }>>([])
 const groupOptions = ref<Array<{ label: string; value: string }>>([])
+
+const osTypes = [
+	{ value: 'windows' as const, label: 'Windows', icon: icons.windows },
+	{ value: 'linux' as const, label: 'Linux', icon: icons.linux },
+	{ value: 'mac' as const, label: 'macOS', icon: icons.apple },
+]
 
 const depotOptions = computed(() => depots.value.map(d => ({
 	label: d.description ? `${d.depotId} - ${d.description}` : d.depotId,

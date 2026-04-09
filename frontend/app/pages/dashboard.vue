@@ -37,7 +37,7 @@
                         <div class="flex-1 min-w-0">
                             <p class="font-semibold truncate text-sm">{{ sharedUserConfig?.user || userStore.username
                                 || '-' }}</p>
-                            <p class="font-heading text-[10px] text-[--color-text-muted] tracking-widest m-0">{{
+                            <p class="font-heading text-xs text-[--color-text-muted] tracking-widest m-0">{{
                                 $t('currentUser') }}</p>
                         </div>
                         <UBadge v-if="webguiRestrictionsCount > 0" color="warning" variant="subtle" size="sm"
@@ -69,50 +69,50 @@
                     <div v-if="diagnosticData" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0.5 text-sm">
                         <div
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
-                            <span class="text-[--color-text-muted] text-xs">opsiconfd</span>
-                            <span class="font-medium truncate ml-2 text-xs">{{ diagnosticData.opsiconfd_version
+                            <span class="text-[--color-text-muted] text-sm">opsiconfd</span>
+                            <span class="font-medium truncate ml-2 text-sm">{{ diagnosticData.opsiconfd_version
                             }}</span>
                         </div>
                         <div v-if="diagnosticData.os_release"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
-                            <span class="text-[--color-text-muted] text-xs">os</span>
-                            <span class="font-medium truncate ml-2 text-xs">
+                            <span class="text-[--color-text-muted] text-sm">os</span>
+                            <span class="font-medium truncate ml-2 text-sm">
                                 {{ (diagnosticData.os_release as Record<string, unknown>).PRETTY_NAME }}</span>
                         </div>
                         <div v-if="diagnosticData.processor"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
-                            <span class="text-[--color-text-muted] text-xs">cpu</span>
-                            <span class="font-medium truncate ml-2 text-xs">
+                            <span class="text-[--color-text-muted] text-sm">cpu</span>
+                            <span class="font-medium truncate ml-2 text-sm">
                                 {{ (diagnosticData.processor as Record<string, unknown>).cpu_count }} cores · {{
                                     sysProcessorModel }}</span>
                         </div>
                         <div v-if="diagnosticData.memory"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
-                            <span class="text-[--color-text-muted] text-xs">memory</span>
-                            <span class="font-medium text-xs">{{ (diagnosticData.memory as Record<string, unknown>
+                            <span class="text-[--color-text-muted] text-sm">memory</span>
+                            <span class="font-medium text-sm">{{ (diagnosticData.memory as Record<string, unknown>
                             ).total_human }} ({{ (diagnosticData.memory as Record<string, unknown>).used_percent
                                     }}%)</span>
                         </div>
                         <div v-if="sysHostname"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
-                            <span class="text-[--color-text-muted] text-xs">hostname</span>
-                            <span class="font-medium truncate ml-2 text-xs">{{ sysHostname }}</span>
+                            <span class="text-[--color-text-muted] text-sm">hostname</span>
+                            <span class="font-medium truncate ml-2 text-sm">{{ sysHostname }}</span>
                         </div>
                         <div v-if="sysIsDocker !== null"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
-                            <span class="text-[--color-text-muted] text-xs">docker</span>
+                            <span class="text-[--color-text-muted] text-sm">docker</span>
                             <UBadge :color="sysIsDocker ? 'info' : 'neutral'" variant="subtle" size="xs">{{ sysIsDocker
                                 ? 'Yes' : 'No' }}</UBadge>
                         </div>
                         <div v-if="sysPythonVersion"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
-                            <span class="text-[--color-text-muted] text-xs">python</span>
-                            <span class="font-medium truncate ml-2 text-xs">{{ sysPythonVersion }}</span>
+                            <span class="text-[--color-text-muted] text-sm">python</span>
+                            <span class="font-medium truncate ml-2 text-sm">{{ sysPythonVersion }}</span>
                         </div>
                         <div v-if="sysLoadAvg"
                             class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
-                            <span class="text-[--color-text-muted] text-xs">load</span>
-                            <span class="font-medium truncate ml-2 text-xs">{{ sysLoadAvg }}</span>
+                            <span class="text-[--color-text-muted] text-sm">load</span>
+                            <span class="font-medium truncate ml-2 text-sm">{{ sysLoadAvg }}</span>
                         </div>
                     </div>
                     <SharedLoadingSpinner v-else size="sm" />
