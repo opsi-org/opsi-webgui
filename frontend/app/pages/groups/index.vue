@@ -535,19 +535,19 @@ function filterTree(nodes: GroupTreeNodeData[], query: string): GroupTreeNodeDat
 watch(debouncedSearchQuery, (q) => {
     if (!q.trim()) return
     const query = q.toLowerCase()
-    const ids = expandedGroupIds.value
+    const newIds = new Set(expandedGroupIds.value)
     let changed = false
     function expandMatching(nodes: GroupTreeNodeData[]) {
         for (const node of nodes) {
             if (node.children?.length) {
                 const hasMatch = node.children.some(c => (c.label || c.id).toLowerCase().includes(query))
-                if (hasMatch && !ids.has(node.id)) { ids.add(node.id); changed = true }
+                if (hasMatch && !newIds.has(node.id)) { newIds.add(node.id); changed = true }
                 expandMatching(node.children)
             }
         }
     }
     expandMatching(currentTreeGroups.value)
-    if (changed) expandedGroupIds.value = new Set(ids)
+    if (changed) expandedGroupIds.value = newIds
 })
 
 const MEMBER_DISPLAY_LIMIT = 200

@@ -122,12 +122,18 @@ const t = (key: string) => {
 }
 
 const searchQuery = ref('')
+const debouncedSearch = ref('')
+let _searchTimer: ReturnType<typeof setTimeout> | null = null
+watch(searchQuery, (q) => {
+	if (_searchTimer) clearTimeout(_searchTimer)
+	_searchTimer = setTimeout(() => { debouncedSearch.value = q }, 150)
+})
 const allClientsList = ref<string[]>([])
 const allClientsLoading = ref(false)
 const collapsedSections = ref<Set<string>>(new Set(['groups', 'clientdirectory']))
 
 function isSectionCollapsed(sectionId: string): boolean {
-	return collapsedSections.value.has(sectionId) && !searchQuery.value
+	return collapsedSections.value.has(sectionId) && !debouncedSearch.value
 }
 
 function toggleSectionCollapse(sectionId: string) {
@@ -150,8 +156,7 @@ const rawTree = computed(() =>
 	props.groupType === 'client' ? clientGroupsTree.value : productGroupsTree.value
 )
 const expandedIds = computed(() => {
-	const ids = props.groupType === 'client' ? clientGroupsExpanded.value : productGroupsExpanded.value
-	return new Set(ids)
+	return props.groupType === 'client' ? clientGroupsExpanded.value : productGroupsExpanded.value
 })
 const hasData = computed(() => rawTree.value.length > 0)
 
@@ -183,12 +188,11 @@ interface FlatItem {
 	depth: number
 	isGroup: boolean
 	memberCount: number
-	members: string[]
 	hasChildren: boolean
 	isExpanded: boolean
 }
 
-function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string): FlatItem[] {
+function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string, expandedSet: Set<string>): FlatItem[] {
 	const result: FlatItem[] = []
 	for (const node of nodes) {
 		const label = node.label || node.id
@@ -196,20 +200,36 @@ function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string):
 		const hasGroupChildren = (node.children?.length || 0) > 0
 		const hasMemberChildren = (node.members?.length || 0) > 0
 		const isGroup = hasGroupChildren || hasMemberChildren || node.type === 'HostGroup' || node.type === 'ProductGroup'
-		const isExpanded = expandedIds.value.has(node.id)
+		const isExpanded = expandedSet.has(node.id)
 
-		const childItems = node.children ? flattenNodes(node.children, depth + 1, query) : []
+		// Skip recursing into children/members for collapsed nodes when not searching
+		if (!query && !isExpanded) {
+			if (labelMatch) {
+				result.push({
+					id: node.id, label, depth, isGroup,
+					memberCount: node.memberCount || node.members?.length || 0,
+					hasChildren: hasGroupChildren || hasMemberChildren,
+					isExpanded: false,
+				})
+			}
+			continue
+		}
+
+		// When the group's own label matches the query, show all children/members
+		// without further filtering so that group-name searches reveal contents
+		const childQuery = labelMatch ? '' : query
+		const childItems = node.children ? flattenNodes(node.children, depth + 1, childQuery, expandedSet) : []
 		const memberItems: FlatItem[] = []
 		if (node.members) {
 			const members = node.members
 			let matchCount = 0
 			for (const m of members) {
-				if (!query || m.toLowerCase().includes(query)) {
+				if (!childQuery || m.toLowerCase().includes(childQuery)) {
 					// Limit visible members to avoid DOM overload
 					if (matchCount < 200) {
 						memberItems.push({
 							id: m, label: m, depth: depth + 1, isGroup: false,
-							memberCount: 0, members: [], hasChildren: false, isExpanded: false,
+							memberCount: 0, hasChildren: false, isExpanded: false,
 						})
 					}
 					matchCount++
@@ -222,14 +242,11 @@ function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string):
 			result.push({
 				id: node.id, label, depth, isGroup,
 				memberCount: node.memberCount || node.members?.length || 0,
-				members: node.members || [],
 				hasChildren: hasGroupChildren || hasMemberChildren,
 				isExpanded: query ? true : isExpanded,
 			})
-			if (query ? true : isExpanded) {
-				result.push(...childItems)
-				result.push(...memberItems)
-			}
+			result.push(...childItems)
+			result.push(...memberItems)
 		}
 	}
 	return result
@@ -237,47 +254,77 @@ function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string):
 
 const clientSections = computed(() => {
 	if (props.groupType !== 'client') return []
-	const q = searchQuery.value.toLowerCase()
+	const q = debouncedSearch.value.toLowerCase()
+	const expanded = expandedIds.value
 	return rawTree.value.map(root => ({
 		id: root.id,
 		label: root.label || root.id,
 		count: root.memberCount || root.members?.length || 0,
-		flatItems: root.children ? flattenNodes(root.children, 0, q) : [],
+		flatItems: root.children ? flattenNodes(root.children, 0, q, expanded) : [],
 	}))
 })
 
 const productFlatItems = computed(() => {
 	if (props.groupType !== 'product') return []
-	const q = searchQuery.value.toLowerCase()
+	const q = debouncedSearch.value.toLowerCase()
+	const expanded = expandedIds.value
 	const root = rawTree.value
 	const first = root.length === 1 ? root[0] : null
 	const nodes = first?.children?.length ? first.children : root
-	return flattenNodes(nodes, 0, q)
+	return flattenNodes(nodes, 0, q, expanded)
 })
 
 const selectedCount = computed(() =>
 	props.groupType === 'client' ? selectionStore.selectedClients.length : selectionStore.selectedProducts.length
 )
 
-const allExpanded = computed(() => {
-	const collectIds = (nodes: GroupTreeNodeData[]): string[] => {
-		const ids: string[] = []
+// Pre-build a map from group id to members for O(1) lookups
+const groupMembersMap = computed(() => {
+	const map = new Map<string, string[]>()
+	function walk(nodes: GroupTreeNodeData[]) {
+		for (const n of nodes) {
+			if (n.members?.length) map.set(n.id, n.members)
+			if (n.children) walk(n.children)
+		}
+	}
+	walk(rawTree.value)
+	return map
+})
+
+// Cache expandable IDs so allExpanded doesn't re-walk the tree
+const expandableIds = computed(() => {
+	const ids: string[] = []
+	function collect(nodes: GroupTreeNodeData[]) {
 		for (const n of nodes) {
 			if (n.children?.length || n.members?.length) {
 				ids.push(n.id)
-				if (n.children) ids.push(...collectIds(n.children))
+				if (n.children) collect(n.children)
 			}
 		}
-		return ids
 	}
-	const allIds = collectIds(rawTree.value)
-	return allIds.length > 0 && allIds.every(id => expandedIds.value.has(id))
+	collect(rawTree.value)
+	return ids
+})
+
+const allExpanded = computed(() => {
+	const ids = expandableIds.value
+	if (ids.length === 0) return false
+	const expanded = expandedIds.value
+	for (const id of ids) {
+		if (!expanded.has(id)) return false
+	}
+	return true
 })
 
 function isItemChecked(item: FlatItem): boolean {
 	if (item.isGroup) {
-		if (item.members.length > 0) {
-			return item.members.every(m => selectedItemsSet.value.has(m))
+		const members = groupMembersMap.value.get(item.id)
+		if (members && members.length > 0) {
+			const set = selectedItemsSet.value
+			for (const m of members) {
+				if (!set.has(m)) return false
+			}
+			return true
 		}
 		return selectedGroupsSet.value.has(item.id)
 	}
@@ -287,22 +334,23 @@ function isItemChecked(item: FlatItem): boolean {
 function handleItemClick(item: FlatItem) {
 	if (item.isGroup) {
 		const isCurrentlyChecked = isItemChecked(item)
+		const members = groupMembersMap.value.get(item.id) || []
 		if (props.groupType === 'client') {
 			if (isCurrentlyChecked) {
 				// Uncheck: remove group and its members
 				if (selectionStore.selectedClientGroups.includes(item.id)) {
 					selectionStore.toggleClientGroup(item.id)
 				}
-				if (item.members.length > 0) {
-					selectionStore.removeClients(item.members)
+				if (members.length > 0) {
+					selectionStore.removeClients(members)
 				}
 			} else {
 				// Check: add group and its members
 				if (!selectionStore.selectedClientGroups.includes(item.id)) {
 					selectionStore.toggleClientGroup(item.id)
 				}
-				if (item.members.length > 0) {
-					selectionStore.addClients(item.members, 'quickpanel')
+				if (members.length > 0) {
+					selectionStore.addClients(members, 'quickpanel')
 				}
 			}
 		} else {
@@ -310,15 +358,15 @@ function handleItemClick(item: FlatItem) {
 				if (selectionStore.selectedProductGroups.includes(item.id)) {
 					selectionStore.toggleProductGroup(item.id)
 				}
-				if (item.members.length > 0) {
-					selectionStore.removeProducts(item.members)
+				if (members.length > 0) {
+					selectionStore.removeProducts(members)
 				}
 			} else {
 				if (!selectionStore.selectedProductGroups.includes(item.id)) {
 					selectionStore.toggleProductGroup(item.id)
 				}
-				if (item.members.length > 0) {
-					selectionStore.addProducts(item.members, 'quickpanel')
+				if (members.length > 0) {
+					selectionStore.addProducts(members, 'quickpanel')
 				}
 			}
 		}

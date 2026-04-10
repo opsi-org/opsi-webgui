@@ -72,7 +72,7 @@ const clientGroupsState = reactive({
   loading: false,
   error: null as string | null,
   fetched: false,
-  expanded: [] as string[],
+  expanded: new Set<string>(),
 })
 let clientGroupsPromise: Promise<void> | null = null
 
@@ -84,7 +84,7 @@ const productGroupsState = reactive({
   loading: false,
   error: null as string | null,
   fetched: false,
-  expanded: [] as string[],
+  expanded: new Set<string>(),
 })
 let productGroupsPromise: Promise<void> | null = null
 
@@ -362,8 +362,8 @@ export function useCachedData() {
           clientGroupsState.tree = transformApiToTree(result.data, 'client')
           clientGroupsState.fetched = true
           const first = clientGroupsState.tree[0]
-          if (first && !clientGroupsState.expanded.includes(first.id))
-            clientGroupsState.expanded = [first.id]
+          if (first && !clientGroupsState.expanded.has(first.id))
+            clientGroupsState.expanded = new Set([first.id])
         }
       } catch (e) {
         clientGroupsState.error = e instanceof Error ? e.message : 'Failed to load groups'
@@ -399,8 +399,8 @@ export function useCachedData() {
           )
           productGroupsState.fetched = true
           const first = productGroupsState.tree[0]
-          if (first && !productGroupsState.expanded.includes(first.id))
-            productGroupsState.expanded = [first.id]
+          if (first && !productGroupsState.expanded.has(first.id))
+            productGroupsState.expanded = new Set([first.id])
         }
       } catch (e) {
         productGroupsState.error = e instanceof Error ? e.message : 'Failed to load groups'
@@ -418,19 +418,20 @@ export function useCachedData() {
   // -------------------------------------------------------------------------
 
   function toggleGroupExpand(groupType: 'client' | 'product', groupId: string) {
-    const arr = groupType === 'client' ? clientGroupsState.expanded : productGroupsState.expanded
-    const idx = arr.indexOf(groupId)
-    if (idx > -1) arr.splice(idx, 1)
-    else arr.push(groupId)
+    const state = groupType === 'client' ? clientGroupsState : productGroupsState
+    const newSet = new Set(state.expanded)
+    if (newSet.has(groupId)) newSet.delete(groupId)
+    else newSet.add(groupId)
+    state.expanded = newSet
   }
 
   function expandAllGroups(groupType: 'client' | 'product') {
     const tree = groupType === 'client' ? clientGroupsState.tree : productGroupsState.tree
-    const allIds: string[] = []
+    const allIds = new Set<string>()
     const collect = (nodes: GroupTreeNodeData[]) => {
       for (const n of nodes) {
         if (n.children?.length || n.members?.length) {
-          allIds.push(n.id)
+          allIds.add(n.id)
           if (n.children) collect(n.children)
         }
       }
@@ -443,8 +444,8 @@ export function useCachedData() {
   function collapseAllGroups(groupType: 'client' | 'product') {
     const tree = groupType === 'client' ? clientGroupsState.tree : productGroupsState.tree
     const rootId = tree[0]?.id
-    if (groupType === 'client') clientGroupsState.expanded = rootId ? [rootId] : []
-    else productGroupsState.expanded = rootId ? [rootId] : []
+    if (groupType === 'client') clientGroupsState.expanded = rootId ? new Set([rootId]) : new Set()
+    else productGroupsState.expanded = rootId ? new Set([rootId]) : new Set()
   }
 
   function getGroupMembers(groupId: string, groupType: 'client' | 'product'): string[] {
