@@ -8,8 +8,10 @@ Reachable status badge - auto-checks reachability on mount.
 				@click.stop="$emit('check')" />
 		</UTooltip>
 		<UTooltip v-else-if="reachable === false" :text="String($t('message.clientIsNotReachable'))">
-			<UIcon :name="icons.clientReachable" class="w-4 h-4 text-red-400 cursor-pointer"
-				@click.stop="$emit('check')" />
+			<span class="relative inline-flex items-center justify-center cursor-pointer" @click.stop="$emit('check')">
+				<UIcon :name="icons.clientReachable" class="w-4 h-4 text-red-400" />
+				<UIcon :name="icons.x" class="absolute -bottom-0.5 -right-1 w-2.5 h-2.5 text-red-500" />
+			</span>
 		</UTooltip>
 
 		<UTooltip v-else :text="String($t('checkClientReachability'))">
