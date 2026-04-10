@@ -178,7 +178,10 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
         elif reachable_clients == []:
             is_reachable_sql = "FALSE AS reachable"
         else:
-            is_reachable_sql = f"IF(hd.clientId IN {tuple(reachable_clients)}, TRUE, FALSE) AS reachable"
+            in_values = ", ".join(f"'{c}'" for c in reachable_clients)
+            is_reachable_sql = (
+                f"IF(hd.clientId IN ({in_values}), TRUE, FALSE) AS reachable"
+            )
 
         client_with_depot = alias(
             select(  # type: ignore
