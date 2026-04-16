@@ -35,6 +35,69 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
   ],
 
+  // Bundle all used icons into the client JS at build time.
+  // Without this, @nuxt/icon fetches icons from the Iconify API at runtime,
+  // which fails in air-gapped / offline environments (blank white screen).
+  // Requires @iconify-json/heroicons, @iconify-json/lucide, and
+  // @iconify-json/simple-icons as devDependencies.
+  icon: {
+    clientBundle: {
+      // Scan all Vue/TS files at build time to discover used icons and bundle them.
+      // Include .ts files so useIcons.ts (which defines all icon names) is scanned.
+      scan: {
+        globInclude: ['**/*.{vue,jsx,tsx,ts,md,mdc,mdx}'],
+      },
+      // Nuxt UI default icons (from node_modules/@nuxt/ui, not reached by scan).
+      // These are used internally by UButton, USelect, UInput, UTable, etc.
+      icons: [
+        'lucide:arrow-down',
+        'lucide:arrow-left',
+        'lucide:arrow-right',
+        'lucide:arrow-up',
+        'lucide:arrow-up-right',
+        'lucide:check',
+        'lucide:chevron-down',
+        'lucide:chevron-left',
+        'lucide:chevron-right',
+        'lucide:chevron-up',
+        'lucide:chevrons-left',
+        'lucide:chevrons-right',
+        'lucide:circle-alert',
+        'lucide:circle-check',
+        'lucide:circle-x',
+        'lucide:copy',
+        'lucide:copy-check',
+        'lucide:ellipsis',
+        'lucide:eye',
+        'lucide:eye-off',
+        'lucide:file',
+        'lucide:folder',
+        'lucide:folder-open',
+        'lucide:grip-vertical',
+        'lucide:hash',
+        'lucide:info',
+        'lucide:lightbulb',
+        'lucide:loader-circle',
+        'lucide:menu',
+        'lucide:minus',
+        'lucide:monitor',
+        'lucide:moon',
+        'lucide:panel-left-close',
+        'lucide:panel-left-open',
+        'lucide:plus',
+        'lucide:rotate-ccw',
+        'lucide:search',
+        'lucide:square',
+        'lucide:sun',
+        'lucide:triangle-alert',
+        'lucide:upload',
+        'lucide:x',
+      ],
+    },
+    // Never fall back to the external Iconify API — all icons must be bundled
+    fallbackToApi: false,
+  },
+
   fonts: {
     families: [
       { name: 'Open Sans', weights: [300, 400, 500, 600, 700] },
