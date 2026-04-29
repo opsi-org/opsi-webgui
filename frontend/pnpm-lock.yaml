@@ -82,6 +82,15 @@ importers:
       '@cyclonedx/cdxgen':
         specifier: ^12.1.2
         version: 12.1.4
+      '@iconify-json/heroicons':
+        specifier: ^1.2.0
+        version: 1.2.3
+      '@iconify-json/lucide':
+        specifier: ^1.2.0
+        version: 1.2.104
+      '@iconify-json/simple-icons':
+        specifier: ^1.2.0
+        version: 1.2.80
       '@nuxtjs/tailwindcss':
         specifier: ^6.14.0
         version: 6.14.0(magicast@0.5.2)(yaml@2.8.3)
@@ -779,6 +788,15 @@ packages:
 
   '@iarna/toml@2.2.5':
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
+
+  '@iconify-json/heroicons@1.2.3':
+    resolution: {integrity: sha512-n+vmCEgTesRsOpp5AB5ILB6srsgsYK+bieoQBNlafvoEhjVXLq8nIGN4B0v/s4DUfa0dOrjwE/cKJgIKdJXOEg==}
+
+  '@iconify-json/lucide@1.2.104':
+    resolution: {integrity: sha512-Vh4VPA/UNFhSPzEdDnSuOPA1xO6b/kI1w4SLBEiKnsFYPWimq2tVDynMgKnwddz6iZpuZfZU4PXR6kn0hJayKw==}
+
+  '@iconify-json/simple-icons@1.2.80':
+    resolution: {integrity: sha512-iglncJJ6X/dVuzFDU32MrHwwo4RBwivGf108dgyYg+HKS78ifx0h7sTenpDZMVT+UhdS6CSgZcvY/SvRXlIEUg==}
 
   '@iconify/collections@1.0.670':
     resolution: {integrity: sha512-32kW4oJ+QV1HCndcjwAprDyJJ0+T9ahP4y2lmLfekdGWNMwG1pVZah4biqT+HrZdEiBm8InJrbCvaitIusTE3g==}
@@ -6863,6 +6881,18 @@ snapshots:
   '@humanwhocodes/retry@0.4.3': {}
 
   '@iarna/toml@2.2.5': {}
+
+  '@iconify-json/heroicons@1.2.3':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/lucide@1.2.104':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/simple-icons@1.2.80':
+    dependencies:
+      '@iconify/types': 2.0.0
 
   '@iconify/collections@1.0.670':
     dependencies:
