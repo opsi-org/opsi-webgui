@@ -14,7 +14,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
 from fastapi.responses import JSONResponse
-from opsicommon.objects import ProductOnClient
+from opsi_legacy.Object import ProductOnClient
 from opsiconfd.config import get_configserver_id
 
 # from opsiconfd.logging import logger

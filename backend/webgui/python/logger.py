@@ -12,7 +12,7 @@ import inspect
 import logging
 from typing import Any
 
-from opsicommon.logging import (
+from opsi.logging import (
     get_logger,
     log_context,
 )
