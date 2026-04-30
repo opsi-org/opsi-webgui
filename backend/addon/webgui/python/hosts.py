@@ -12,7 +12,7 @@ import datetime
 from typing import Any, List, Optional
 
 from fastapi import APIRouter, Body, Depends, Request, status
-from opsi.exception._exception import BackendBadValueError
+from opsi.exception import BackendBadValueError
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, common_query_parameters, order_by, pagination, rest_api
