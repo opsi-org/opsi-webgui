@@ -12,7 +12,7 @@ import datetime
 from typing import Any, List, Optional
 
 from fastapi import APIRouter, Body, Depends, Request, status
-from opsicommon.exceptions import BackendBadValueError
+from opsi.exception._exception import BackendBadValueError
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, common_query_parameters, order_by, pagination, rest_api
@@ -186,9 +186,7 @@ def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 	with mysql.session() as session:
 		try:
 			query = insert(
-				table(
-					"GROUP", column("type"), *[column(key) for key in vars(group).keys()]
-				)  # pylint: disable=consider-iterating-dictionary
+				table("GROUP", column("type"), *[column(key) for key in vars(group).keys()])  # pylint: disable=consider-iterating-dictionary
 			).values(values)
 			session.execute(query)
 
@@ -253,7 +251,8 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 @rest_api
 @read_only_check
 def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str  # pylint: disable=unused-argument
+	request: Request,
+	group: str,  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Remove clients from host group
@@ -272,7 +271,8 @@ def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals
 @rest_api
 @read_only_check
 def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str  # pylint: disable=unused-argument
+	request: Request,
+	group: str,  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Delete host group
@@ -324,7 +324,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	Get host groups as tree.
 	"""
 
-	allowed =  get_allowd_host_groups(get_username())
+	allowed = get_allowd_host_groups(get_username())
 
 	params = {"parent": "", "depots": []}
 	if selectedDepots == [] or selectedDepots is None:
@@ -430,7 +430,7 @@ def build_group_tree(current_group: dict, groups: list[dict], processed: list) -
 	if current_group.get("children"):
 		for child in current_group["children"].values():
 			# Correct id for webgui
-			child["id"] = f'{child["id"]};{current_group["id"]}'
+			child["id"] = f"{child['id']};{current_group['id']}"
 
 	return current_group
 
@@ -447,7 +447,7 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 	Get host groups as tree.
 	If a parent group (parentGroup) is given only child groups will be returned.
 	"""
-	allowed =  get_allowd_host_groups(get_username())
+	allowed = get_allowd_host_groups(get_username())
 
 	params = {"parent": "", "depots": []}
 	if selectedDepots == [] or selectedDepots is None:
@@ -700,7 +700,11 @@ def find_parent(group: str) -> str | None:
 
 
 def read_groups(
-	raw_groups: List, root_group: dict, selectedClients: List,  allowed: List[str], withClients: bool = True  # pylint: disable=invalid-name
+	raw_groups: List,
+	root_group: dict,
+	selectedClients: List,
+	allowed: List[str],
+	withClients: bool = True,  # pylint: disable=invalid-name
 ) -> dict:
 	if not isinstance(selectedClients, list) and withClients:
 		selectedClients = []
