@@ -20,7 +20,15 @@ try:
     from opsicommon.exceptions import BackendBadValueError
 except ImportError:
 	from opsi.exception import BackendBadValueError
-from opsi_legacy.Object import ProductOnClient
+
+try:
+    from opsi_legacy.Object import ProductOnClient
+except ImportError:
+    try:
+        from opsi.opsi.service.model.object import ProductOnClient
+    except ImportError:
+        from opsicommon.objects import ProductOnClient
+		
 from opsiconfd.application.admininterface import _unblock_all_clients, _unblock_client
 from opsiconfd.config import config, get_configserver_id
 from opsiconfd.logging import logger
