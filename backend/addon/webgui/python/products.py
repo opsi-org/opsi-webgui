@@ -14,7 +14,11 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
 from fastapi.responses import JSONResponse
-from opsi_legacy.Object import ProductOnClient
+
+try: 
+	from opsi_legacy.Object import ProductOnClient
+except ImportError:
+	from opsi.opsi.service.model.object import ProductOnClient
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException, RESTErrorResponse, RESTResponse, common_query_parameters, order_by, pagination, rest_api

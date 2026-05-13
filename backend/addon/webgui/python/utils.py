@@ -15,8 +15,6 @@ from operator import and_
 from typing import Callable, List, Optional, Union
 
 from fastapi import Query, status
-
-# from OPSI.Backend.MySQL import MySQL, MySQLBackend
 from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import parse_list
 from opsiconfd.backend import get_mysql, get_protected_backend

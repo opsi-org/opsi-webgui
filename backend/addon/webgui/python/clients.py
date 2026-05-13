@@ -15,7 +15,11 @@ from ipaddress import IPv4Address, IPv6Address
 from typing import Any, Dict, List, Literal, Optional, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
-from opsi.exception import BackendBadValueError
+
+try:
+    from opsicommon.exceptions import BackendBadValueError
+except ImportError:
+	from opsi.exception import BackendBadValueError
 from opsi_legacy.Object import ProductOnClient
 from opsiconfd.application.admininterface import _unblock_all_clients, _unblock_client
 from opsiconfd.config import config, get_configserver_id
