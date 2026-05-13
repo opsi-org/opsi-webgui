@@ -16,7 +16,11 @@ from fastapi.requests import HTTPConnection
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 from fastapi.security import HTTPBasic
 from fastapi.staticfiles import StaticFiles
-from opsi.exception import BackendAuthenticationError, BackendPermissionDeniedError
+
+try:
+    from opsicommon.exceptions import BackendAuthenticationError, BackendPermissionDeniedError
+except ImportError:
+    from opsi.exception import BackendAuthenticationError, BackendPermissionDeniedError
 from opsiconfd.addon import Addon
 from opsiconfd.logging import logger
 from opsiconfd.session import ACCESS_ROLE_AUTHENTICATED, ACCESS_ROLE_PUBLIC
