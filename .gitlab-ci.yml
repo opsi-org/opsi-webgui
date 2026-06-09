@@ -79,6 +79,37 @@ setup:versions:
       echo "Versions: yml=$V_YML pkg=$V_PKG py=$V_PY"
       [ "$V_YML" = "$V_PKG" ] && [ "$V_YML" = "$V_PY" ] || { echo "ERROR: Version mismatch"; exit 1; }
 
+setup:patch-version:
+  # patch version in version_files if only commit (not a tag), 
+  # so in adminpage the concrete version is visible (which includes the pipeline ID)
+  stage: setup
+  extends: .pybuilder
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
+  before_script:
+    - opsi-dev-cli self upgrade # min. 1.61.0
+  script:
+    - |
+      echo "Init Version (dev-tool version: $(opsi-dev-cli --version))"
+      BASE_VERSION=$(opsi-dev-cli project info version)
+      DEV_VERSION="${BASE_VERSION}~${CI_PIPELINE_ID}"
+      echo "Patching version from $BASE_VERSION to: $DEV_VERSION"
+      opsi-dev-cli project patch-versions $DEV_VERSION
+      echo "Version patching complete!"
+      echo "PACKAGE_VERSION=${DEV_VERSION}" > build.env
+      cat build.env
+  artifacts:
+    paths:
+      - opsi-dev-tool.yml
+      - frontend/package.json
+      - backend/webgui/python/const.py
+    expire_in: 1 day
+    reports:
+      dotenv: build.env
+
+
 # VALIDATE
 validate:lint:
   stage: validate
@@ -120,15 +151,22 @@ build:addon:
       validate:lint,
       validate:types,
       validate:security,
+      { job: setup:patch-version, optional: true },
       { job: setup:i18n, optional: true },
       { job: setup:changelog, optional: true },
     ]
   script:
+    - |
+      if [ -z "${PACKAGE_VERSION}" ]; then
+        # Set PACKAGE_VERSION if not already set by setup:patch-version (e.g. in tags where patching is skipped)
+        echo "PACKAGE_VERSION=$(opsi-dev-cli project info version)" > build.env
+      fi    
+      echo "Building package version: ${PACKAGE_VERSION}"
     - apt update && apt -y install zip
     - bash "$(pwd)/scripts/build_addon.sh" webgui "opsi-WebGUI" "$(pwd)"
     - ls -lah opsi-webgui.zip webgui/
   artifacts:
-    name: 'opsi-webgui-${CI_COMMIT_REF_NAME}'
+    name: "opsi-webgui-${PACKAGE_VERSION}"
     paths: [opsi-webgui.zip, webgui/]
     expire_in: 7 days
 
