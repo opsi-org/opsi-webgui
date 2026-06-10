@@ -16,11 +16,10 @@ from datetime import date, datetime
 from typing import Any, Dict, List, Literal, Optional, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
+from opsi_legacy.Exceptions import BackendMissingDataError
 from opsi_legacy.Object import ProductOnClient
 from opsiconfd.application.admininterface import _unblock_client
 from opsiconfd.config import config, get_configserver_id
-
-# from opsiconfd.logging import logger
 from opsiconfd.redis import ip_address_from_redis_key, redis_client
 from opsiconfd.rest import (
     OpsiApiException,
@@ -168,10 +167,17 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
             and use_messagebus == "hybrid"
             and "reachable" in sort_by
         ):
-            result: dict[str, bool] = await backend.hostControl_reachable(
-                allowed_clients or [], 20
-            )  # pylint: disable=protected-access
-            reachable_clients = [cid for cid, reachable in result.items() if reachable]
+            try:
+                result: dict[str, bool] = await backend.hostControl_reachable(
+                    allowed_clients or [], 20
+                )  # pylint: disable=protected-access
+                reachable_clients = [
+                    cid for cid, reachable in result.items() if reachable
+                ]
+            except BackendMissingDataError:
+                # No matching clients (e.g. freshly set up server without
+                # any clients). Treat as "no reachable clients" instead of error.
+                reachable_clients = []
 
         if reachable_clients is None:
             is_reachable_sql = "NULL AS reachable"
