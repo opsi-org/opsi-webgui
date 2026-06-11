@@ -7,7 +7,7 @@
 #   release  -> SBOM, publish (tags only)
 # =============================================================================
 
-image: node:22-bookworm-slim
+image: node:26.3-bookworm-slim
 
 variables:
   CI: 'true'
@@ -25,6 +25,7 @@ stages: [setup, validate, build, release]
 
 .node:
   before_script:
+    - npm install -g corepack
     - corepack enable pnpm
 
 .install-devtools: &install-devtools |
@@ -134,6 +135,25 @@ validate:security:
   extends: .node
   needs: [setup:deps]
   script: cd frontend && pnpm audit --audit-level=high
+
+validate:security-scripts:
+  stage: validate
+  extends: .node
+  needs: [setup:deps]
+  allow_failure: true
+  script:
+    - cd frontend
+    # Validate npm version
+    - echo "npm version $(npm --version)"
+    # Check for unapproved scripts - fail if any pending
+    - |
+      OUTPUT=$(npm approve-scripts --allow-scripts-pending 2>&1)
+      echo "$OUTPUT"
+      if echo "$OUTPUT" | grep -q "packages have install scripts"; then
+        echo "\nERROR: Unapproved install scripts found!"
+        exit 1
+      fi
+      echo "All install scripts are approved ✓"
 
 # TODO: Backend tests
 # validate:backend:
