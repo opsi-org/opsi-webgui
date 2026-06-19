@@ -81,35 +81,40 @@ setup:versions:
       [ "$V_YML" = "$V_PKG" ] && [ "$V_YML" = "$V_PY" ] || { echo "ERROR: Version mismatch"; exit 1; }
 
 setup:patch-version:
-  # patch version in version_files if only commit (not a tag), 
-  # so in adminpage the concrete version is visible (which includes the pipeline ID)
+  # patch version in version_files and set PACKAGE_VERSION
+  # For commits: append pipeline ID (e.g., 1.0.0~12345)
+  # For tags: use version as-is (e.g., 1.0.0)
   stage: setup
   extends: .pybuilder
-  rules:
-    - if: $CI_COMMIT_TAG
-      when: never
-    - when: on_success
   before_script:
-    - opsi-dev-cli self upgrade # min. 1.61.0
+    - opsi-dev-cli self upgrade # min 1.61.0
   script:
     - |
       echo "Init Version (dev-tool version: $(opsi-dev-cli --version))"
       BASE_VERSION=$(opsi-dev-cli project info version)
-      DEV_VERSION="${BASE_VERSION}~${CI_PIPELINE_ID}"
-      echo "Patching version from $BASE_VERSION to: $DEV_VERSION"
-      opsi-dev-cli project patch-versions $DEV_VERSION
+      if [ -z "${CI_COMMIT_TAG}" ]; then
+        # Not a tag: append pipeline ID
+        PACKAGE_VERSION="${BASE_VERSION}~${CI_PIPELINE_ID}"
+        echo "Patching version from $BASE_VERSION to: $PACKAGE_VERSION (commit build)"
+        opsi-dev-cli project patch-versions $PACKAGE_VERSION
+      else
+        # Tag: use version as-is
+        PACKAGE_VERSION="${BASE_VERSION}"
+        echo "Using version: $PACKAGE_VERSION (tag build)"
+        opsi-dev-cli project patch-versions $PACKAGE_VERSION
+      fi
       echo "Version patching complete!"
-      echo "PACKAGE_VERSION=${DEV_VERSION}" > build.env
+      echo "PACKAGE_VERSION=${PACKAGE_VERSION}" > build.env
       cat build.env
   artifacts:
     paths:
+      # all paths from version_files
       - opsi-dev-tool.yml
       - frontend/package.json
       - backend/webgui/python/const.py
     expire_in: 1 day
     reports:
       dotenv: build.env
-
 
 # VALIDATE
 validate:lint:
@@ -176,12 +181,6 @@ build:addon:
       { job: setup:changelog, optional: true },
     ]
   script:
-    - |
-      if [ -z "${PACKAGE_VERSION}" ]; then
-        # Set PACKAGE_VERSION if not already set by setup:patch-version (e.g. in tags where patching is skipped)
-        echo "PACKAGE_VERSION=$(opsi-dev-cli project info version)" > build.env
-      fi    
-      echo "Building package version: ${PACKAGE_VERSION}"
     - apt update && apt -y install zip
     - bash "$(pwd)/scripts/build_addon.sh" webgui "opsi-WebGUI" "$(pwd)"
     - ls -lah opsi-webgui.zip webgui/
