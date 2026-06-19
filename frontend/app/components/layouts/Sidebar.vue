@@ -1,4 +1,12 @@
-Sidebar component - main navigation.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  LayoutsSidebar - Main navigation sidebar with collapsible menu items or popup based on expanded state.
+-->
 <template>
     <nav class="h-full flex flex-col bg-opsi-blue text-white">
         <div :class="['flex-1 py-2', collapsed ? 'overflow-visible' : 'overflow-y-auto']">
@@ -7,18 +15,20 @@ Sidebar component - main navigation.
                     @mouseenter="onHover(item.route, $event)" @mouseleave="onLeave">
                     <template v-if="item.submenu">
                         <template v-if="!collapsed">
-                            <button @click="toggleSubmenu(item.route)"
-                                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/15 transition-colors duration-100"
+                            <CoreAppButton @click="toggleSubmenu(item.route)" variant="ghost" color="neutral"
+                                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:bg-white/15 active:bg-white/15! focus:bg-transparent! transition-colors duration-100"
                                 :class="{ 'bg-white/10': isActive(item.route) && !expanded[item.route] }">
-                                <UIcon :name="item.icon" class="w-5 h-5 shrink-0" />
+                                <CoreAppIcon :name="item.icon" class="w-5 h-5 shrink-0" />
                                 <span class="flex-1 text-sm text-left">{{ t(item.title) }}</span>
-                                <UIcon :name="expanded[item.route] ? icons.chevronUp : icons.chevronDown"
+                                <CoreAppIcon :name="expanded[item.route] ? icons.chevronUp : icons.chevronDown"
                                     class="w-4 h-4 transition-transform" />
-                            </button>
+                            </CoreAppButton>
                             <div v-if="expanded[item.route]" class="ml-4 mt-0.5 mb-1 border-l-2 border-white/20 pl-2">
                                 <NuxtLink v-for="sub in item.submenu" :key="sub.route" :to="sub.route"
-                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-100 text-white/80 hover:text-white hover:bg-white/15"
-                                    :class="{ 'bg-white/25 text-white font-medium': $route.path === sub.route }">
+                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-100"
+                                    :class="isSubActive(sub.route, item.submenu)
+                                        ? 'bg-(--ui-color-primary-200) text-(--color-opsi-deep-blue) font-medium'
+                                        : 'text-white/80 hover:text-white hover:bg-white/15'">
                                     {{ t(sub.title) }}
                                 </NuxtLink>
                             </div>
@@ -28,7 +38,7 @@ Sidebar component - main navigation.
                             <NuxtLink :to="item.submenu[0]?.route || item.route"
                                 class="flex items-center justify-center py-3 rounded-lg hover:bg-white/15 transition-colors duration-100"
                                 :class="{ 'bg-white/10': isActive(item.route) }" :title="t(item.title)">
-                                <UIcon :name="item.icon" class="w-5 h-5" />
+                                <CoreAppIcon :name="item.icon" class="w-5 h-5" />
                             </NuxtLink>
                             <Teleport to="body">
                                 <div v-if="hoveredItem === item.route" :style="getPopupPosition(item.route)"
@@ -39,8 +49,10 @@ Sidebar component - main navigation.
                                     </div>
                                     <NuxtLink v-for="sub in item.submenu" :key="sub.route" :to="sub.route"
                                         @click="hoveredItem = null"
-                                        class="flex items-center px-3 py-2 rounded-lg mx-1 my-0.5 text-sm text-white/80 hover:text-white hover:bg-white/15 transition-colors duration-100"
-                                        :class="{ 'bg-white/25 text-white': $route.path === sub.route }">
+                                        class="flex items-center px-3 py-2 rounded-lg mx-1 my-0.5 text-sm transition-colors duration-100"
+                                        :class="isSubActive(sub.route, item.submenu)
+                                            ? 'bg-(--ui-color-primary-200) text-(--color-opsi-deep-blue) font-medium'
+                                            : 'text-white/80 hover:text-white hover:bg-white/15'">
                                         {{ t(sub.title) }}
                                     </NuxtLink>
                                 </div>
@@ -50,13 +62,16 @@ Sidebar component - main navigation.
 
                     <template v-else>
                         <NuxtLink :to="item.route"
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/15 transition-colors duration-100"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-100"
                             :class="[
-                                { 'bg-white/25 font-medium': $route.path === item.route },
-                                { 'bg-white/10': isActive(item.route) && $route.path !== item.route },
+                                $route.path === item.route
+                                    ? 'bg-(--ui-color-primary-200) text-(--color-opsi-deep-blue) font-medium'
+                                    : isActive(item.route)
+                                        ? 'text-white bg-white/10 hover:bg-white/15'
+                                        : 'text-white hover:bg-white/15',
                                 collapsed ? 'justify-center' : ''
                             ]" :title="collapsed ? t(item.title) : undefined">
-                            <UIcon :name="item.icon" class="w-5 h-5 shrink-0" />
+                            <CoreAppIcon :name="item.icon" class="w-5 h-5 shrink-0" />
                             <span v-if="!collapsed" class="text-sm">{{ t(item.title) }}</span>
                         </NuxtLink>
                     </template>
@@ -192,6 +207,18 @@ watch(
 
 function isActive(route: string): boolean {
     return $route.path.startsWith(route)
+}
+
+function isSubActive(subRoute: string, submenu: { route: string }[]): boolean {
+    const path = $route.path
+    if (path === subRoute) return true
+    if (!path.startsWith(subRoute + '/')) return false
+    // Among sibling sub-routes that match the current path, only the longest prefix wins.
+    const longest = submenu
+        .map(s => s.route)
+        .filter(r => path === r || path.startsWith(r + '/'))
+        .reduce((a, b) => (b.length > a.length ? b : a), '')
+    return longest === subRoute
 }
 
 function toggleSubmenu(route: string) {

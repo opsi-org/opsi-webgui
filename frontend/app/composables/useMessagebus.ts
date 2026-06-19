@@ -1,3 +1,12 @@
+/*
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * useMessagebus - WebSocket messagebus connection for real-time server communication.
+ */
 import { encode } from '@msgpack/msgpack'
 import { ref, computed, watch, onMounted } from 'vue'
 import { useMessageBusStore, createUUID, createMsgTemplate } from '~/stores/messageBusStore'
@@ -13,7 +22,7 @@ type Terminal = {
 }
 type RefreshCallback = () => void | Promise<void>
 
-// ── Event Constants ──
+//  Event Constants
 const HOST_EVENTS = [
   'event:host_created',
   'event:host_updated',
@@ -34,8 +43,7 @@ function wsWait(ms: number) {
   return new Promise((r) => setTimeout(r, ms))
 }
 
-// ── Core MessageBus composable ──
-// Uses the store's singleton WebSocket. Does NOT create competing connections.
+// Core MessageBus composable
 export function useMessageBus(
   onMessage?: MessageHandler,
   _showNotifications = false,
@@ -44,12 +52,10 @@ export function useMessageBus(
   const store = useMessageBusStore()
   const channels = _channels || []
 
-  // Watch store lastMsg for the onMessage callback
   if (onMessage) {
     const { lastMsg: storeLastMsg } = storeToRefs(store)
     watch(storeLastMsg, async (msg) => {
       if (msg) {
-        // Ensure connection before processing
         if (!store.isConnected) store.connect()
         await onMessage(msg)
       }
@@ -100,7 +106,6 @@ export function useMessageBus(
     m.channel = terminal.terminalChannel
     m.terminal_id = terminal.terminalId
     m.data = new TextEncoder().encode(msg)
-    // Send directly via the store's bus for terminal data (low-latency)
     if (store.bus && store.bus.readyState === WebSocket.OPEN) {
       store.bus.send(encode(m))
     }
@@ -132,8 +137,7 @@ export function useMessageBus(
   }
 }
 
-// ── Auto-Refresh composable (integrates with MessageBus) ──
-// Watches store messages reactively. Does NOT create its own WebSocket.
+// Auto-Refresh composable (integrates with MessageBus)
 export function useAutoRefresh(
   refreshCallback: RefreshCallback,
   options: { watchEvents?: string[]; debounceMs?: number } = {}
@@ -207,12 +211,10 @@ export function useAutoRefresh(
     mbStore.setChangesDetected(false)
   }
 
-  // Watch store's lastMsg reactively — no own WebSocket needed
   watch(storeLastMsg, (msg) => {
     if (msg) handleMessage(msg)
   })
 
-  // Ensure connection is established (idempotent — store handles singleton)
   onMounted(() => {
     mbStore.connect()
   })
@@ -236,5 +238,4 @@ export function useAutoRefreshProducts(cb: RefreshCallback) {
   return useAutoRefresh(cb, { watchEvents: PRODUCT_EVENTS })
 }
 
-// Re-export event constants for external use
 export { HOST_EVENTS, PRODUCT_EVENTS, ALL_DATA_EVENTS }

@@ -1,7 +1,12 @@
-HostsParametersTreeForm - Parameters tree form with groups-style tree connectors.
-Supports: BoolConfig (checkbox), UnicodeConfig (select/input/multivalue/password).
-Password detection for configIds containing 'password', 'secret', 'key' patterns.
-Multivalue with tag-like editing and add-new-value for editable params.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  HostsParametersTreeForm - Tree-based form for editing host configuration parameters.
+-->
 <template>
 	<div class="params-tree">
 		<div v-for="node in visibleNodes" :key="node.key" class="param-tree-node"
@@ -14,14 +19,13 @@ Multivalue with tag-like editing and add-new-value for editable params.
 				]" :style="{ paddingLeft: `${8 + getDepth(node.key) * 16}px` }" @click="toggle(node.key)">
 					<span v-for="i in getDepth(node.key)" :key="i" class="tree-guide-line"
 						:style="{ left: `${8 + (i - 1) * 16}px` }" />
-					<button type="button"
-						class="w-5 h-5 flex items-center justify-center rounded transition-all shrink-0" :class="open[node.key]
-							? 'text-(--color-primary) bg-primary/10'
-							: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
+					<CoreAppButton variant="ghost" color="neutral" size="xs" class="w-5! h-5! p-0! shrink-0" :class="open[node.key]
+						? 'text-(--color-primary) bg-primary/10'
+						: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
 						@click.stop="toggle(node.key)">
-						<UIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
+						<CoreAppIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
 							:class="{ 'rotate-90': open[node.key] }" />
-					</button>
+					</CoreAppButton>
 					<span class="text-sm flex-1 truncate transition-colors"
 						:class="open[node.key] ? 'font-medium' : ''">
 						{{ node.label }}
@@ -36,34 +40,33 @@ Multivalue with tag-like editing and add-new-value for editable params.
 			<template v-else-if="node.param">
 				<div :class="[
 					'flex items-start gap-1.5 px-2 py-1.5 rounded transition-colors',
-					changedParams.has(node.param.configId) ? 'bg-yellow-50 dark:bg-yellow-700/10' : 'hover:bg-(--color-surface-hover)',
+					changedParams.has(node.param.configId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)',
 				]" :style="{ paddingLeft: `${8 + getDepth(node.key) * 16}px` }">
 					<span v-for="i in getDepth(node.key)" :key="i" class="tree-guide-line"
 						:style="{ left: `${8 + (i - 1) * 16}px` }" />
 					<span class="w-5 flex items-center justify-center shrink-0 mt-1" />
 					<div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
 						<div class="min-w-0 md:w-2/5 flex items-center gap-1">
-							<span class="text-sm text-(--color-text) truncate"
-								:title="node.param.configId">
+							<span class="text-sm text-(--color-text) truncate" :title="node.param.configId">
 								{{ node.param.configId }}
 							</span>
-							<UTooltip v-if="node.param.description" :text="node.param.description">
-								<UButton size="xs" :icon="icons.info" variant="ghost" color="neutral"
+							<CoreAppTooltip v-if="node.param.description" :text="node.param.description">
+								<CoreAppButton size="xs" :icon="icons.info" variant="ghost" color="neutral"
 									class="shrink-0 opacity-60 hover:opacity-100" tabindex="-1" />
-							</UTooltip>
+							</CoreAppTooltip>
 							<span v-if="changedParams.has(node.param.configId)"
-								class="inline-flex items-center text-xs text-yellow-700 dark:text-yellow-200 ml-0.5">
-								<UIcon :name="icons.pencilSquare" class="w-3 h-3" />
+								class="inline-flex items-center text-xs text-(--color-changed-text) ml-0.5">
+								<CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
 							</span>
 						</div>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
-							<SharedPropertyFormItem :model-value="currentValue(node.param)"
+							<CoreAppPropertyFormItem :model-value="currentValue(node.param)"
 								:type="node.param.type === 'BoolConfig' ? 'bool' : 'unicode'"
 								:possible-values="node.param.possibleValues || []" :multi-value="node.param.multiValue"
 								:editable="node.param.editable" :disabled="false"
 								:password="isPasswordParam(node.param.configId)"
 								@update:model-value="(v: unknown) => node.param && setParam(node.param, v)" />
-							<UButton v-if="changedParams.has(node.param.configId)" size="xs" variant="ghost"
+							<CoreAppButton v-if="changedParams.has(node.param.configId)" size="xs" variant="ghost"
 								color="neutral" :icon="icons.x" :title="$t('discardItem')"
 								@click="() => node.param && discardSingleParam(node.param.configId)" />
 						</div>
@@ -78,7 +81,6 @@ Multivalue with tag-like editing and add-new-value for editable params.
 </template>
 
 <script setup lang="ts">
-import { ref, computed, toRefs, watch } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 
 interface Param {
@@ -110,7 +112,7 @@ const props = defineProps<{
 	currentValue: (p: Param) => unknown
 	setParam: (p: Param, v: unknown) => void
 	discardSingleParam: (id: string) => void
-	icons: Record<string, string>
+	icons: ReturnType<typeof useIcons>
 	fmtVal: (v: unknown) => string
 	autoOpenAll?: boolean
 }>()

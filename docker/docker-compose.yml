@@ -2,7 +2,6 @@ services:
   opsi-webgui-dev:
     hostname: ${OPSI_HOSTNAME}
     env_file: .env
-    privileged: true
     cap_add:
       - SYS_PTRACE
     build:
@@ -15,10 +14,9 @@ services:
         - ADDON_ID
     volumes:
       - ../:/workspace
-      - ./files/docker-entrypoint.sh:/entrypoint.sh
     ports:
-      - "4447:4447" # opsiconfd
-      - "3000:3000" # webgui
+      - '4447:4447' # opsiconfd
+      - '3000:3000' # webgui
     environment:
       MYSQL_ROOT_PASSWORD: opsi
       MYSQL_DATABASE: opsi
@@ -26,5 +24,5 @@ services:
       MYSQL_PASSWORD: opsi
       MYSQL_HOST: localhost
       OPSICONFD_PORT: ${OPSICONFD_PORT}
-      OPSICONFD_ADDON_DIRS: "[/var/lib/opsiconfd/addons]"
-    entrypoint: ["/entrypoint.sh"]
+      OPSICONFD_ADDON_DIRS: '[/var/lib/opsiconfd/addons]'
+    entrypoint: ['/entrypoint.sh']

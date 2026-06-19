@@ -1,23 +1,31 @@
-Reachable status badge - auto-checks reachability on mount.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ClientsReachableBadge - Badge showing client reachability status.
+-->
 <template>
 	<div class="flex items-center justify-center">
-		<SharedLoadingSpinner v-if="loading" size="xs" :centered="false" />
+		<CoreAppLoadingSpinner v-if="loading" size="xs" :centered="false" />
 
-		<UTooltip v-else-if="reachable === true" :text="String($t('message.clientIsReachable'))">
-			<UIcon :name="icons.clientReachable" class="w-4 h-4 text-green-500 cursor-pointer"
+		<CoreAppTooltip v-else-if="reachable === true" :text="String($t('message.clientIsReachable'))">
+			<CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 text-(--color-success-soft-text) cursor-pointer"
 				@click.stop="$emit('check')" />
-		</UTooltip>
-		<UTooltip v-else-if="reachable === false" :text="String($t('message.clientIsNotReachable'))">
-			<span class="relative inline-flex items-center justify-center cursor-pointer" @click.stop="$emit('check')">
-				<UIcon :name="icons.clientReachable" class="w-4 h-4 text-red-400" />
-				<UIcon :name="icons.x" class="absolute -bottom-0.5 -right-1 w-2.5 h-2.5 text-red-500" />
-			</span>
-		</UTooltip>
+		</CoreAppTooltip>
+		<CoreAppTooltip v-else-if="reachable === false" :text="String($t('message.clientIsNotReachable'))">
+			<CoreAppStackedIcons :primary-icon="icons.clientReachable" :secondary-icon="icons.x" size="sm"
+				primary-class="w-4 h-4 text-(--color-error-soft-text)"
+				secondary-class="w-2.5 h-2.5 text-(--color-error-soft-text)" class="cursor-pointer"
+				@click.stop="$emit('check')" />
+		</CoreAppTooltip>
 
-		<UTooltip v-else :text="String($t('checkClientReachability'))">
-			<UIcon :name="icons.clientReachable" class="w-4 h-4 text-(--color-text-muted) cursor-pointer"
+		<CoreAppTooltip v-else :text="String($t('checkClientReachability'))">
+			<CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 text-(--color-text-muted) cursor-pointer"
 				@click.stop="$emit('check')" />
-		</UTooltip>
+		</CoreAppTooltip>
 	</div>
 </template>
 
@@ -37,7 +45,6 @@ defineEmits<{
 const icons = useIcons()
 const { t: $t } = useI18n()
 
-// Auto-check reachability on mount if not already known
 onMounted(() => {
 	if (props.reachable === undefined && !props.loading) {
 		// Small delay to avoid all badges firing at once

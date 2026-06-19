@@ -1,3 +1,12 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  QuickpanelSelectionOverview - Overview of current server, client and product selections.
+-->
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div v-if="!hasAny" class="text-xs text-(--color-text-muted) py-8 text-center">
@@ -7,31 +16,32 @@
 		<template v-else>
 			<div class="flex items-center justify-between mb-2 shrink-0">
 				<span class="text-xs text-(--color-text-muted)">{{ totalCount }} {{ t('total') }}</span>
-				<UTooltip :text="t('clearAllSelections')">
-					<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral" @click="clearAll" />
-				</UTooltip>
+				<CoreAppTooltip :text="t('clearAllSelections')">
+					<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+						:aria-label="t('clearAllSelections')" @click="clearAll" />
+				</CoreAppTooltip>
 			</div>
 
 			<div class="flex-1 overflow-y-auto min-h-0 space-y-1.5">
 				<div v-if="selectionStore.selectedServers.length > 0">
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
-							<UIcon :name="icons.server" class="w-3.5 h-3.5" />
+							<CoreAppIcon :name="icons.server" class="w-3.5 h-3.5" />
 							<h3 class="text-xs">{{ $t('servers') }}</h3>
-							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedServers.length
-							}}</UBadge>
+							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedServers.length
+								}})</span>
 						</div>
-						<UTooltip :text="t('clearAll')">
-							<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								@click="clearServers" />
-						</UTooltip>
+						<CoreAppTooltip :text="t('clearAll')">
+							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+								:aria-label="t('clearAll')" @click="clearServers" />
+						</CoreAppTooltip>
 					</div>
 					<div class="max-h-30 overflow-y-auto">
 						<div v-for="server in selectionStore.selectedServers" :key="server"
 							class="flex items-center justify-between px-5 rounded text-sm  group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ server }}</span>
-							<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								class="opacity-0 group-hover:opacity-100 transition-opacity"
+							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+								class="opacity-0 group-hover:opacity-100 transition-opacity" :aria-label="t('remove')"
 								@click="removeServer(server)" />
 						</div>
 					</div>
@@ -40,22 +50,22 @@
 				<div v-if="selectionStore.selectedClients.length > 0">
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
-							<UIcon :name="icons.client" class="w-3.5 h-3.5" />
+							<CoreAppIcon :name="icons.client" class="w-3.5 h-3.5" />
 							<h3 class="text-xs">{{ $t('clients') }}</h3>
-							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedClients.length
-							}}</UBadge>
+							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedClients.length
+								}})</span>
 						</div>
-						<UTooltip :text="t('clearAll')">
-							<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								@click="selectionStore.clearClients()" />
-						</UTooltip>
+						<CoreAppTooltip :text="t('clearAll')">
+							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+								:aria-label="t('clearAll')" @click="selectionStore.clearClients()" />
+						</CoreAppTooltip>
 					</div>
 					<div class="max-h-36 overflow-y-auto">
 						<div v-for="client in selectionStore.selectedClients" :key="client"
 							class="flex items-center justify-between px-5 rounded text-sm group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ client }}</span>
-							<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								class="opacity-0 group-hover:opacity-100 transition-opacity"
+							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+								class="opacity-0 group-hover:opacity-100 transition-opacity" :aria-label="t('remove')"
 								@click="selectionStore.toggleClient(client)" />
 						</div>
 					</div>
@@ -64,22 +74,22 @@
 				<div v-if="selectionStore.selectedProducts.length > 0">
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
-							<UIcon :name="icons.product" class="w-3.5 h-3.5" />
+							<CoreAppIcon :name="icons.product" class="w-3.5 h-3.5" />
 							<h3 class="text-xs">{{ $t('products') }}</h3>
-							<UBadge size="xs" variant="subtle" color="neutral">{{ selectionStore.selectedProducts.length
-							}}</UBadge>
+							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedProducts.length
+								}})</span>
 						</div>
-						<UTooltip :text="t('clearAll')">
-							<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								@click="selectionStore.clearProducts()" />
-						</UTooltip>
+						<CoreAppTooltip :text="t('clearAll')">
+							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+								:aria-label="t('clearAll')" @click="selectionStore.clearProducts()" />
+						</CoreAppTooltip>
 					</div>
 					<div class="max-h-36 overflow-y-auto">
 						<div v-for="product in selectionStore.selectedProducts" :key="product"
 							class="flex items-center justify-between px-5 rounded text-sm group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ product }}</span>
-							<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								class="opacity-0 group-hover:opacity-100 transition-opacity"
+							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+								class="opacity-0 group-hover:opacity-100 transition-opacity" :aria-label="t('remove')"
 								@click="selectionStore.toggleProduct(product)" />
 						</div>
 					</div>

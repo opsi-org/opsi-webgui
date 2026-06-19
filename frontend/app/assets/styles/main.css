@@ -1,63 +1,241 @@
+/*
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * main.css - OPSI corporate design system with CSS custom properties, Tailwind theme, and Nuxt UI overrides.
+ */
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
-/* OPSI Corporate Design Colors*/
-:root {
-  /* Primary brand colors */
+@theme {
   --color-opsi-blue: #3f5aa6;
-  --color-opsi-magenta: #cb1e58;
   --color-opsi-deep-blue: #2d4178;
+  --color-opsi-magenta: #cb1e58;
 
-  /* Neutral palette */
+  --color-zinc-50: #f8f9fa;
+  --color-zinc-100: #f0f1f3;
+  --color-zinc-200: #e4e4e3;
+  --color-zinc-300: #d4d4d3;
+  --color-zinc-400: #b2b2b2;
+  --color-zinc-500: #8b8b8a;
+  --color-zinc-600: #6b7280;
+  --color-zinc-700: #5a5a59;
+  --color-zinc-800: #4b4b49;
+  --color-zinc-900: #3f3f3e;
+  --color-zinc-950: #353534;
+}
+
+/* ---- Light Theme (default) ---- */
+:root {
   --color-opsi-dark: #3f3f3e;
   --color-opsi-dark-alt: #4b4b49;
   --color-opsi-gray: #b2b2b2;
   --color-opsi-light-gray: #e4e4e3;
 
-  /* Status colors */
-  --color-opsi-success: #009605;
-  --color-opsi-success-dark: #246b32;
-  --color-opsi-warning: #ff9100;
-  --color-opsi-warning-dark: #bb8819;
-  --color-opsi-error: #e51d3b;
-  --color-opsi-error-dark: #aa2126;
-
-  /* Light mode defaults */
+  /* Base */
   --color-background: #ffffff;
   --color-surface: #f8f9fa;
   --color-surface-hover: #f0f1f3;
+  --color-surface-elevated: #ffffff;
+  --color-surface-inset: #f0f1f3;
   --color-text: #000000;
   --color-text-secondary: #3f3f3e;
-  --color-text-muted: #6b7280;
+  --color-text-muted: #616874;
+  --color-text-highlighted: #1a1a1a;
+  --color-text-placeholder: #9ca3af;
   --color-border: #e4e4e3;
+  --color-border-muted: #f0f0ef;
+  --color-border-accented: #b2b2b2;
+  --color-bg-muted: #f8f9fa;
+  --color-bg-accented: rgba(63, 90, 166, 0.08);
+
+  /* Semantic: Primary (opsi blue) */
+  --color-primary: #3f5aa6;
+  --color-primary-hover: #4f6ec0;
+  --color-primary-text: #ffffff;
+  --color-primary-soft-bg: rgba(63, 90, 166, 0.12);
+  --color-primary-soft-text: #3f5aa6;
+  --color-primary-soft-ring: rgba(63, 90, 166, 0.2);
+  --color-row-selected: #e8ebf4;
+
+  /* Semantic: Success (opsi OK) */
+  /* WCAG fix: #009605(--color-success) gave white-text contrast 3.92 (fails AA 4.5). #007a04 (--color-success-hover) gives 5.10 */
+  --color-success: #007a04;
+  --color-success-hover: #005d03;
+  --color-success-text: #ffffff;
+  --color-success-soft-bg: rgba(0, 122, 4, 0.12);
+  --color-success-soft-text: #007a04;
+  --color-success-soft-ring: rgba(0, 122, 4, 0.2);
+
+  /* Semantic: Info (general blue from opsi design) */
+  /* WCAG fix: #2979ff (--color-info) gave white-text contrast 3.98 (fails AA 4.5). #1565c0 (--color-info-hover) gives 5.77 */
+  --color-info: #1565c0;
+  --color-info-hover: #0d47a1;
+  --color-info-text: #ffffff;
+  --color-info-soft-bg: rgba(21, 101, 192, 0.12);
+  --color-info-soft-text: #1565c0;
+  --color-info-soft-ring: rgba(21, 101, 192, 0.2);
+
+  /* Semantic: Warning (opsi warning) */
+  --color-warning: #ff9100;
+  --color-warning-hover: #e68200;
+  --color-warning-text: #000000;
+  --color-warning-soft-bg: rgba(255, 145, 0, 0.12);
+  --color-warning-soft-text: #b26500;
+  --color-warning-soft-ring: rgba(255, 145, 0, 0.25);
+
+  /* Semantic: Error (opsi error) */
+  /* WCAG fix: #e51d3b(--color-error) gave white-text contrast 4.43 (fails AA 4.5). #d01030 (--color-error-hover) gives 5.41 */
+  --color-error: #d01030;
+  --color-error-hover: #b01028;
+  --color-error-text: #ffffff;
+  --color-error-soft-bg: rgba(208, 16, 48, 0.12);
+  --color-error-soft-text: #c4162f;
+  --color-error-soft-ring: rgba(208, 16, 48, 0.2);
+
+  /* Changed/modified state */
+  --color-changed-bg: rgba(234, 179, 8, 0.1);
+  --color-changed-text: #854d0e;
+
+  /* OS brand colors */
+  --color-os-windows: #2563eb;
+  --color-os-linux: #eab308;
+  --color-os-macos: #94a3b8;
+
+  /* Log colors */
+  --color-log-essential: #2979ff;
+  --color-log-critical: #e20066;
+  --color-log-error: #e51d3b;
+  --color-log-warning: #ff9100;
+  --color-log-notice: #009605;
+  --color-log-info: #212121;
+  --color-log-debug: #565656;
+  --color-log-trace: #8b8b8b;
+  --color-log-secret: #d500f9;
+  --log-bg-opacity: 0.1;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+  /* Nuxt UI primary scale */
+  --ui-primary: var(--color-opsi-blue);
+  --ui-color-primary-50: #eef2fb;
+  --ui-color-primary-100: #d4ddf4;
+  --ui-color-primary-200: #aabbea;
+  --ui-color-primary-300: #7f99df;
+  --ui-color-primary-400: #5577d5;
+  --ui-color-primary-500: #3f5aa6;
+  --ui-color-primary-600: #2d4178;
+  --ui-color-primary-700: #233366;
+  --ui-color-primary-800: #1a2654;
+  --ui-color-primary-900: #111a42;
+  --ui-color-primary-950: #0a0f2a;
 }
 
-/* OPSI Dark Mode - OPSI Corporate Design compliant with improved accessibility */
+/* ---- Dark Theme ---- */
 html.dark {
   --color-background: #3f3f3e;
   --color-surface: #4b4b49;
   --color-surface-hover: #565655;
+  --color-surface-elevated: #555554;
+  --color-surface-inset: #353534;
   --color-text: #e1e1e1;
   --color-text-secondary: #c8c8c8;
-  --color-text-muted: #a8a8a8;
+  /* WCAG fix: #a8a8a8 on surface #4b4b49 gave 3.68 (fails AA 4.5). #bebebe gives 4.71/5.67 */
+  --color-text-muted: #bebebe;
+  --color-text-highlighted: #ffffff;
+  --color-text-placeholder: #71717a;
   --color-border: #5a5a59;
+  --color-border-muted: #4b4b49;
+  --color-border-accented: #8b8b8a;
+  --color-bg-muted: #353534;
+  --color-bg-accented: rgba(63, 90, 166, 0.15);
+  --color-primary-soft-bg: rgba(63, 90, 166, 0.25);
+  /* WCAG fix: #8fb3f5 on surface #4b4b49 gave 4.14 (fails AA 4.5). #a8c8f8 gives 5.11 */
+  --color-primary-soft-text: #a8c8f8;
+  --color-primary-soft-ring: rgba(168, 200, 248, 0.2);
+  --color-row-selected: #3f4658;
 
-  /* Enhanced contrast for interactive elements */
-  --color-surface-elevated: #565655;
-  --color-surface-inset: #353534;
+  --color-success: #246b32;
+  --color-success-hover: #1a5025;
+  --color-success-soft-bg: rgba(0, 150, 5, 0.25);
+  --color-success-soft-text: #4ade80;
+  --color-success-soft-ring: rgba(74, 222, 128, 0.25);
+
+  /* WCAG fix: #82b1ff on rendered bg (~#3A4A64) gave 4.05 (fails AA 4.5). #93c5fd gives 4.82 */
+  --color-info-soft-bg: rgba(41, 121, 255, 0.25);
+  --color-info-soft-text: #93c5fd;
+  --color-info-soft-ring: rgba(147, 197, 253, 0.25);
+
+  --color-warning: #bb8819;
+  --color-warning-hover: #a07316;
+  --color-warning-soft-bg: rgba(255, 145, 0, 0.25);
+  --color-warning-soft-text: #fbbf24;
+  --color-warning-soft-ring: rgba(251, 191, 36, 0.25);
+
+  --color-error: #aa2126;
+  --color-error-hover: #8b1a1f;
+  /* WCAG fix: #f87171 on rendered bg (~#60383D) gave 3.57 (fails AA 4.5). #fca5a5 gives 4.69 */
+  --color-error-soft-bg: rgba(229, 29, 59, 0.25);
+  --color-error-soft-text: #fca5a5;
+  --color-error-soft-ring: rgba(252, 165, 165, 0.25);
+
+  /* Changed/modified state */
+  --color-changed-bg: rgba(234, 179, 8, 0.15);
+  --color-changed-text: #fde68a;
+
+  /* OS brand colors */
+  --color-os-windows: #60a5fa;
+  --color-os-linux: #facc15;
+  --color-os-macos: #cbd5e1;
+
+  --color-log-info: #f5f5f5;
+  --color-log-debug: #c0c0c0;
+  --log-bg-opacity: 0.2;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-card-hover: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* Global element styles */
+/* ============================================
+   NUXT UI VARIABLE OVERRIDES
+   ============================================ */
+
+:root {
+  --ui-bg: var(--color-background);
+  --ui-bg-muted: var(--color-bg-muted);
+  --ui-bg-elevated: var(--color-surface-elevated);
+  --ui-bg-accented: var(--color-bg-accented);
+  --ui-bg-inverted: var(--color-text);
+  --ui-text-dimmed: var(--color-text-placeholder);
+  --ui-text-muted: var(--color-text-muted);
+  --ui-text-toned: var(--color-text-secondary);
+  --ui-text: var(--color-text);
+  --ui-text-highlighted: var(--color-text-highlighted);
+  --ui-text-inverted: var(--color-background);
+  --ui-border: var(--color-border);
+  --ui-border-muted: var(--color-border-muted);
+  --ui-border-inverted: var(--color-text);
+}
+
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
+
 body {
   background-color: var(--color-background);
   color: var(--color-text);
   font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
   font-size: 0.875rem;
-  /* 14px base */
   line-height: 1.25rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* OPSI Typography - Headings use Montserrat (UPPERCASE) */
 h1,
 h2,
 h3,
@@ -71,7 +249,6 @@ h6,
   letter-spacing: 0.025em;
 }
 
-/* Form elements and labels - consistent Open Sans */
 label,
 .form-label,
 input,
@@ -84,244 +261,61 @@ button {
 label,
 .form-label {
   font-size: 0.875rem;
-  /* 14px - matches text-sm used in table cells */
   line-height: 1.25rem;
 }
 
-/* Monospace/Code uses Roboto Mono */
 code,
 pre,
 .font-mono {
   font-family: 'Roboto Mono', ui-monospace, monospace;
 }
 
-/* Dark mode overrides - cleaner, less cluttered appearance */
-html.dark body {
+/* ============================================
+   CARD UTILITY
+   ============================================ */
+
+.opsi-card {
   background-color: var(--color-background);
-  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-card);
+  padding: 1rem;
+  transition:
+    box-shadow 0.2s,
+    background-color 0.15s;
 }
 
-html.dark .bg-gray-50 {
-  background-color: var(--color-background);
+.opsi-card-hover:hover {
+  box-shadow: var(--shadow-card-hover);
+  background-color: var(--color-bg-accented);
+  border-color: var(--color-primary);
 }
 
-html.dark .bg-gray-100 {
-  background-color: var(--color-surface);
-}
-
-html.dark .bg-gray-800 {
-  background-color: var(--color-surface);
-}
-
-html.dark .bg-gray-900 {
-  background-color: var(--color-background);
-}
-
-html.dark .bg-white {
-  background-color: var(--color-surface);
-}
-
-html.dark .border-gray-200 {
-  border-color: var(--color-border);
-}
-
-html.dark .border-gray-700 {
-  border-color: var(--color-border);
-}
-
-/* Table hover states - subtle hover effect */
-html.dark .hover\:bg-gray-800:hover {
-  background-color: var(--color-surface-hover) !important;
-}
-
-html.dark tr:hover {
-  background-color: var(--color-surface-hover) !important;
-}
-
-/* Utility classes for OPSI colors */
-.bg-opsi-blue {
-  background-color: var(--color-opsi-blue);
-}
-
-.bg-opsi-deep-blue {
-  background-color: var(--color-opsi-deep-blue);
-}
-
-.bg-opsi-magenta {
-  background-color: var(--color-opsi-magenta);
-}
-
-.bg-opsi-dark {
-  background-color: var(--color-opsi-dark);
-}
-
-.bg-opsi-surface {
-  background-color: var(--color-surface);
-}
-
-.text-opsi-blue {
-  color: var(--color-opsi-blue);
-}
-
-.text-opsi-magenta {
-  color: var(--color-opsi-magenta);
-}
-
-.text-opsi-dark {
-  color: var(--color-opsi-dark);
-}
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
 
 input[type='checkbox'],
 input[type='radio'] {
   accent-color: var(--color-opsi-blue);
 }
 
-.border-opsi-blue {
-  border-color: var(--color-opsi-blue);
-}
-
-.border-opsi-border {
-  border-color: var(--color-border);
-}
-
-.hover\:text-opsi-blue:hover {
-  color: var(--color-opsi-blue);
-}
-
-.hover\:bg-opsi-deep-blue:hover {
-  background-color: var(--color-opsi-deep-blue);
-}
-
-.hover\:bg-opsi-surface:hover {
-  background-color: var(--color-surface-hover);
-}
-
-/* Status badges */
-.badge-success {
-  background-color: var(--color-opsi-success);
-  color: white;
-}
-
-.badge-warning {
-  background-color: var(--color-opsi-warning);
-  color: white;
-}
-
-.badge-error {
-  background-color: var(--color-opsi-error);
-  color: white;
-}
-
-html.dark .badge-success {
-  background-color: var(--color-opsi-success-dark);
-}
-
-html.dark .badge-warning {
-  background-color: var(--color-opsi-warning-dark);
-}
-
-html.dark .badge-error {
-  background-color: var(--color-opsi-error-dark);
-}
-
-/* Online/Offline status badges */
-.status-online {
-  background-color: rgba(0, 150, 5, 0.15);
-  color: var(--color-opsi-success);
-}
-
-.status-offline {
-  background-color: var(--color-opsi-light-gray);
-  color: var(--color-opsi-dark);
-}
-
-html.dark .status-online {
-  background-color: rgba(0, 150, 5, 0.25);
-  color: #4ade80;
-}
-
-html.dark .status-offline {
-  background-color: var(--color-surface-hover);
-  color: var(--color-text-muted);
-}
-
-/* Card and dropdown consistent backgrounds */
-.bg-card {
-  background-color: #ffffff;
-}
-
-html.dark .bg-card {
-  background-color: var(--color-surface);
-}
-
-.bg-surface-light {
-  background-color: var(--color-surface);
-}
-
-html.dark .bg-surface-light {
-  background-color: var(--color-background);
-}
-
-.dropdown-bg {
-  background-color: #ffffff;
-  border-color: var(--color-border);
-}
-
-html.dark .dropdown-bg {
-  background-color: var(--color-surface);
-  border-color: var(--color-border);
-}
-
 button[role='checkbox'] {
-  border: 1px solid var(--color-border);
+  border: 0.5px var(--color-border);
 }
 
-html.dark button[role='checkbox'] {
-  border: 1px solid var(--color-border);
-}
-
-html.dark input[type='text'],
-html.dark input,
-html.dark textarea,
-html.dark select {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-}
-
-/* Tabs styling */
-.opsi-tabs {
-  display: flex;
-  gap: 0;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
-}
-
-.opsi-tab {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.15s;
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  border: none;
-}
-
-.opsi-tab:hover {
-  background-color: var(--color-surface-hover);
-}
-
-.opsi-tab.active {
-  background-color: var(--color-opsi-blue);
-  color: white;
-}
-
-[data-slot='content'] {
+input[type='text'],
+html input,
+html textarea,
+html select {
   background-color: var(--color-background);
-  border: 1px solid var(--color-border);
+  border: 0.5px var(--color-border);
 }
 
-/* Form rows - borderless with hover highlight */
+.border {
+  border-color: var(--color-border);
+}
+
 .form-row {
   padding: 0.5rem 0.75rem;
   margin: 0;
@@ -330,27 +324,19 @@ html.dark select {
 }
 
 .form-row:hover {
-  background-color: var(--color-surface);
-}
-
-html.dark .form-row:hover {
   background-color: var(--color-surface-hover);
 }
 
-/* Button primary standardization */
-.btn-opsi-primary {
-  background-color: var(--color-opsi-blue) !important;
-  color: white !important;
+.add-border button {
+  border: 0.5px var(--color-border);
 }
 
-.btn-opsi-primary:hover {
-  background-color: var(--color-opsi-deep-blue) !important;
-}
+/* ============================================
+   ACCESSIBILITY — WCAG 2.1
+   ============================================ */
 
-/* Focus states for accessibility - WCAG 2.1 compliant */
 *:focus-visible {
-  outline: 2px solid var(--color-opsi-blue);
-  outline-offset: 2px;
+  outline-offset: 1px;
 }
 
 button:focus-visible,
@@ -359,59 +345,36 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--color-opsi-blue);
-  outline-offset: 2px;
+  outline-offset: 1px;
 }
 
-html.dark *:focus-visible {
-  outline-color: #6b98e8;
-}
-
-/* Skip to content link for accessibility */
-.skip-link {
+/* Skip link for keyboard navigation */
+.sr-skip-link {
   position: absolute;
   left: -9999px;
-  top: 0;
-  z-index: 9999;
-  padding: 0.5rem 1rem;
-  background-color: var(--color-opsi-blue);
-  color: white;
-  font-weight: 600;
-}
-
-.skip-link:focus {
-  left: 0;
-}
-
-/* High contrast table rows for accessibility */
-.table-row-selected {
-  background-color: rgba(63, 90, 166, 0.1) !important;
-}
-
-html.dark .table-row-selected {
-  background-color: rgba(63, 90, 166, 0.2) !important;
-}
-
-.add-border button {
-  border: 1px solid var(--color-border, #ccc);
-}
-
-/* Screen reader only utility */
-.sr-only {
-  position: absolute;
+  top: auto;
   width: 1px;
   height: 1px;
-  padding: 0;
-  margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  z-index: 9999;
 }
 
-/* Reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
+.sr-skip-link:focus {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 9999;
+}
 
+@media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
@@ -423,135 +386,50 @@ html.dark .table-row-selected {
 }
 
 /* ============================================
-   OPSI LOG COLORS - Corporate Design Compliant
+   LOG COLORS
    ============================================ */
 
-/* Light mode log colors */
-.text-opsi-log-light-essential {
-  color: #2979ff;
+.text-opsi-log-essential {
+  color: var(--color-log-essential);
 }
 
-.text-opsi-log-light-critical {
-  color: #e20066;
+.text-opsi-log-critical {
+  color: var(--color-log-critical);
 }
 
-.text-opsi-log-light-error {
-  color: #e51d3b;
+.text-opsi-log-error {
+  color: var(--color-log-error);
 }
 
-.text-opsi-log-light-warning {
-  color: #ff9100;
+.text-opsi-log-warning {
+  color: var(--color-log-warning);
 }
 
-.text-opsi-log-light-notice {
-  color: #009605;
+.text-opsi-log-notice {
+  color: var(--color-log-notice);
 }
 
-.text-opsi-log-light-info {
-  color: #212121;
+.text-opsi-log-info {
+  color: var(--color-log-info);
 }
 
-.text-opsi-log-light-debug {
-  color: #565656;
+.text-opsi-log-debug {
+  color: var(--color-log-debug);
 }
 
-.text-opsi-log-light-trace {
-  color: #8b8b8b;
+.text-opsi-log-trace {
+  color: var(--color-log-trace);
 }
 
-.text-opsi-log-light-secret {
-  color: #d500f9;
+.text-opsi-log-secret {
+  color: var(--color-log-secret);
 }
 
-/* Dark mode log colors */
-.text-opsi-log-dark-essential {
-  color: #2979ff;
-}
-
-.text-opsi-log-dark-critical {
-  color: #e20066;
-}
-
-.text-opsi-log-dark-error {
-  color: #e51d3b;
-}
-
-.text-opsi-log-dark-warning {
-  color: #ff9100;
-}
-
-.text-opsi-log-dark-notice {
-  color: #009605;
-}
-
-.text-opsi-log-dark-info {
-  color: #f5f5f5;
-}
-
-.text-opsi-log-dark-debug {
-  color: #c0c0c0;
-}
-
-.text-opsi-log-dark-trace {
-  color: #8b8b8b;
-}
-
-.text-opsi-log-dark-secret {
-  color: #d500f9;
-}
-
-/* Log level background highlights */
-.bg-opsi-log-essential {
-  background-color: rgba(41, 121, 255, 0.1);
-}
-
-.bg-opsi-log-critical {
-  background-color: rgba(226, 0, 102, 0.1);
-}
-
-.bg-opsi-log-error {
-  background-color: rgba(229, 29, 59, 0.1);
-}
-
-.bg-opsi-log-warning {
-  background-color: rgba(255, 145, 0, 0.1);
-}
-
-.bg-opsi-log-notice {
-  background-color: rgba(0, 150, 5, 0.1);
-}
-
-html.dark .bg-opsi-log-essential {
-  background-color: rgba(41, 121, 255, 0.2);
-}
-
-html.dark .bg-opsi-log-critical {
-  background-color: rgba(226, 0, 102, 0.2);
-}
-
-html.dark .bg-opsi-log-error {
-  background-color: rgba(229, 29, 59, 0.2);
-}
-
-html.dark .bg-opsi-log-warning {
-  background-color: rgba(255, 145, 0, 0.2);
-}
-
-html.dark .bg-opsi-log-notice {
-  background-color: rgba(0, 150, 5, 0.2);
-}
-
-/* Log row marker highlight */
 .log-row-marker {
-  background-color: rgba(63, 90, 166, 0.15) !important;
+  background-color: rgba(63, 90, 166, calc(var(--log-bg-opacity) + 0.05)) !important;
   border-left: 3px solid var(--color-opsi-blue);
 }
 
-html.dark .log-row-marker {
-  background-color: rgba(63, 90, 166, 0.25) !important;
-}
-
-/* Log viewer scrollbar styling */
 .log-viewer::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -571,7 +449,6 @@ html.dark .log-row-marker {
   background: var(--color-opsi-dark-alt);
 }
 
-/* Log Level Slider Styling */
 .opsi-log-level-slider {
   background: var(--color-border);
   -webkit-appearance: none;
@@ -615,117 +492,4 @@ html.dark .log-row-marker {
   background: var(--color-border);
   height: 8px;
   border-radius: 4px;
-}
-
-html.dark .opsi-log-level-slider {
-  background: var(--color-border);
-}
-
-html.dark .opsi-log-level-slider::-webkit-slider-thumb {
-  background: var(--color-opsi-blue);
-}
-
-html.dark .opsi-log-level-slider::-webkit-slider-thumb:hover {
-  background: var(--color-opsi-deep-blue);
-}
-
-html.dark .opsi-log-level-slider::-moz-range-thumb {
-  background: var(--color-opsi-blue);
-}
-
-html.dark .opsi-log-level-slider::-moz-range-thumb:hover {
-  background: var(--color-opsi-deep-blue);
-}
-
-/* Nuxt UI Primary Color Override for OPSI Blue */
-:root {
-  --ui-primary: var(--color-opsi-blue);
-  --ui-color-primary-50: #eef2fb;
-  --ui-color-primary-100: #d4ddf4;
-  --ui-color-primary-200: #aabbea;
-  --ui-color-primary-300: #7f99df;
-  --ui-color-primary-400: #5577d5;
-  --ui-color-primary-500: #3f5aa6;
-  --ui-color-primary-600: #2d4178;
-  --ui-color-primary-700: #233366;
-  --ui-color-primary-800: #1a2654;
-  --ui-color-primary-900: #111a42;
-  --ui-color-primary-950: #0a0f2a;
-  --color-accented: var(--color-opsi-blue);
-}
-
-/* ============================================
-   GLOBAL TYPOGRAPHY UTILITIES
-   Ensures uniform text across all pages/components
-   ============================================ */
-
-/* Section heading - used for page section titles, card headers, sidebar labels */
-.text-section-heading {
-  font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-  font-size: 0.75rem;
-  /* 12px - text-xs */
-  line-height: 1rem;
-  color: var(--color-text);
-}
-
-/* Body text - standard content text */
-.text-body {
-  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.875rem;
-  /* 14px - text-sm */
-  line-height: 1.25rem;
-  color: var(--color-text);
-}
-
-/* Muted/secondary text - descriptions, sub-labels */
-.text-muted {
-  color: var(--color-text-muted);
-}
-
-/* Stat/large number display */
-.text-stat {
-  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.5rem;
-  /* 24px - text-2xl */
-  font-weight: 700;
-  line-height: 2rem;
-  color: var(--color-text);
-}
-
-/* Card header text */
-.text-card-header {
-  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.875rem;
-  /* 14px */
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-/* Small label text - badge labels, metadata */
-.text-label {
-  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.75rem;
-  /* 12px - text-xs */
-  line-height: 1rem;
-  color: var(--color-text-muted);
-}
-
-/* Override gray text utilities to use CSS variables for consistent theming */
-.text-gray-500,
-.text-gray-400,
-.text-gray-600 {
-  color: var(--color-text-muted) !important;
-}
-
-.text-gray-700,
-.text-gray-300 {
-  color: var(--color-text) !important;
-}
-
-.text-gray-900,
-.text-gray-800 {
-  color: var(--color-text) !important;
 }

@@ -1,22 +1,14 @@
+/*
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * useUserPermissions - Composable for checking user roles, read-only state, and feature access.
+ */
 import { useUserStore } from '~/stores/userStore'
 
-/**
- * User permissions composable for checking disabled features and access rights.
- *
- * Disabled features come from the server config (e.g., "terminal", "messagebus_terminal").
- * User permissions come from the user configuration API (e.g., client_creation, read_only).
- *
- * read_only: User can view all data but cannot modify anything.
- *   - Tabs and navigation remain accessible (user can still read values).
- *   - Edit controls (inputs, save buttons, action dropdowns) are disabled.
- *
- * server_write_access: When false, server/configserver settings are read-only.
- * depot_access (depotAccessRestricted): When true, user is RESTRICTED to configured depots only.
- * host_group_access (hostGroupAccessRestricted): When true, user is RESTRICTED to configured host groups only.
- * product_group_access (productGroupAccessRestricted): When true, user is RESTRICTED to configured product groups only.
- * client_creation: When false, cannot create new clients.
- *
- */
 export function useUserPermissions() {
   const userStore = useUserStore()
 

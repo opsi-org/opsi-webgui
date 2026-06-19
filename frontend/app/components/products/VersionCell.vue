@@ -1,22 +1,32 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ProductsVersionCell - Table cell displaying product version information.
+-->
 <template>
 	<div class="flex items-center gap-1.5">
 		<span class="text-sm text-(--color-text)">{{ primaryVersion }}</span>
-		<SharedTooltipTable v-if="hasVersionDetails" :rows="versionTooltipRows">
+		<CoreAppTooltipTable v-if="hasVersionDetails" :rows="versionTooltipRows">
 			<span class="flex items-center gap-0.5">
-				<UBadge v-if="row.client_version_outdated" color="error" variant="subtle" size="xs" class="gap-0.5">
-					<UIcon :name="icons.productsOutdated" class="w-3 h-3" />
+				<CoreAppBadge v-if="row.client_version_outdated" color="error" variant="subtle" size="xs"
+					class="gap-0.5">
+					<CoreAppIcon :name="icons.productsOutdated" class="w-3 h-3" />
 					<span>{{ $t('versionOutdated') }}</span>
-				</UBadge>
-				<UBadge v-if="row.depot_version_diff" color="warning" variant="subtle" size="xs" class="gap-0.5">
-					<UIcon :name="icons.unequal" class="w-3 h-3" />
-				</UBadge>
-				<UBadge v-if="row.not_on_all_depots" color="warning" variant="subtle" size="xs" class="gap-0.5">
-					<UIcon :name="icons.warning" class="w-3 h-3" />
-				</UBadge>
-				<UIcon v-if="!row.client_version_outdated && !row.depot_version_diff && !row.not_on_all_depots"
+				</CoreAppBadge>
+				<CoreAppBadge v-if="row.depot_version_diff" color="warning" variant="subtle" size="xs" class="gap-0.5">
+					<CoreAppIcon :name="icons.unequal" class="w-3 h-3" />
+				</CoreAppBadge>
+				<CoreAppBadge v-if="row.not_on_all_depots" color="warning" variant="subtle" size="xs" class="gap-0.5">
+					<CoreAppIcon :name="icons.warning" class="w-3 h-3" />
+				</CoreAppBadge>
+				<CoreAppIcon v-if="!row.client_version_outdated && !row.depot_version_diff && !row.not_on_all_depots"
 					:name="icons.info" class="w-3 h-3 text-(--color-text-muted) cursor-help" />
 			</span>
-		</SharedTooltipTable>
+		</CoreAppTooltipTable>
 	</div>
 </template>
 
@@ -62,7 +72,6 @@ const versionTooltipRows = computed(() => {
 	const depots = selectedDepotIds.value
 	const selectedClients = props.row.selectedClients || []
 
-	// Depot versions section
 	if (depotVersions.length > 0) {
 		rows.push({ key: `── ${String($t('depots'))} ──`, value: '' })
 		if (depots.length > 0 && depots.length === depotVersions.length) {
@@ -73,7 +82,6 @@ const versionTooltipRows = computed(() => {
 		}
 	}
 
-	// Not on all depots details
 	if (props.row.not_on_all_depots && props.row.numDepots !== undefined) {
 		const totalDepots = depots.length > 0 ? depots.length : 0
 		if (totalDepots > 0 && props.row.numDepots < totalDepots) {
@@ -86,7 +94,6 @@ const versionTooltipRows = computed(() => {
 		}
 	}
 
-	// Client versions section
 	if (clientVersions.length > 0) {
 		rows.push({ key: `── ${String($t('clients'))} ──`, value: '' })
 		const depotUnique = new Set(depotVersions.filter(Boolean))
@@ -105,7 +112,6 @@ const versionTooltipRows = computed(() => {
 		}
 	}
 
-	// Warnings section
 	if (props.row.depot_version_diff) rows.push({ key: '⚠', value: String($t('depotVersionDiff')) })
 
 	return rows

@@ -1,32 +1,46 @@
-Row-level client actions dropdown for the clients table.
-- Buttons: Configuration, Logs, Clone
-- Client Actions: Uses ClientsQuickActionsDropdown (inline mode) with rename support
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ClientsRowActionsDropdown - Per-row action dropdown for individual client operations.
+-->
 <template>
 	<div class="flex items-center gap-0.5">
-		<UTooltip :text="String($t('configuration'))">
-			<UButton :icon="icons.config" variant="ghost" color="neutral" size="xs" @click="emit('open-config')" />
-		</UTooltip>
+		<CoreAppTooltip :text="String($t('configuration'))">
+			<CoreAppButton :icon="icons.config" variant="ghost" size="xs"
+				:color="activeAction === 'config' ? 'primary' : 'neutral'"
+				:class="activeAction === 'config' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+				:aria-label="String($t('configuration'))" @click="emit('open-config')" />
+		</CoreAppTooltip>
 
-		<UTooltip :text="String($t('logs'))">
-			<UButton :icon="icons.log" variant="ghost" color="neutral" size="xs" @click="emit('open-logs')" />
-		</UTooltip>
+		<CoreAppTooltip :text="String($t('logs'))">
+			<CoreAppButton :icon="icons.log" variant="ghost" size="xs"
+				:color="activeAction === 'logs' ? 'primary' : 'neutral'"
+				:class="activeAction === 'logs' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+				:aria-label="String($t('logs'))" @click="emit('open-logs')" />
+		</CoreAppTooltip>
 
-		<UTooltip :text="String($t('clone'))">
-			<UButton :icon="icons.clone" variant="ghost" color="neutral" size="xs" @click="emit('open-clone')" :disabled="isReadOnly || !canCreateClients" />
-		</UTooltip>
+		<CoreAppTooltip :text="String($t('clone'))">
+			<CoreAppButton :icon="icons.clone" variant="ghost" size="xs"
+				:color="activeAction === 'clone' ? 'primary' : 'neutral'"
+				:class="activeAction === 'clone' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+				:aria-label="String($t('clone'))" @click="emit('open-clone')"
+				:disabled="isReadOnly || !canCreateClients" />
+		</CoreAppTooltip>
 
-		<ClientsQuickActionsDropdown
-			:client-ids="[clientId]"
-			inline
-			show-rename
-			@action-complete="handleActionComplete"
-		/>
+		<ClientsQuickActionsDropdown :client-ids="[clientId]" inline show-rename
+			@action-complete="handleActionComplete" />
 	</div>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
 	clientId: string
+	/** Which panel is currently open for this row (highlights the matching button). */
+	activeAction?: 'config' | 'logs' | 'clone' | null
 }>()
 
 const emit = defineEmits<{

@@ -1,32 +1,31 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ProductsInstallationStatusBadge - Badge showing product installation status.
+-->
 <template>
 	<div class="flex justify-center">
-		<SharedTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
-			<UBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help">
-				<UIcon :name="icons.unequal" class="w-3 h-3" />
-				<span>{{ $t('mixed') }}</span>
-			</UBadge>
-		</SharedTooltipTable>
+		<CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
+			<CoreAppStatusBadge status="warning" :icon="icons.unequal" :label="$t('mixed')" />
+		</CoreAppTooltipTable>
 
 		<template v-else-if="normalizedStatus === 'installed'">
-			<UBadge color="success" variant="subtle" size="xs" class="gap-1">
-				<UIcon :name="icons.checkCircle" class="w-3 h-3" />
-				<span>{{ $t('installed') }}</span>
-			</UBadge>
+			<CoreAppStatusBadge status="success" :icon="icons.checkCircle" :label="$t('installed')" />
 		</template>
 
 		<template v-else-if="normalizedStatus === 'unknown'">
-			<UBadge color="warning" variant="subtle" size="xs" class="gap-1">
-				<UIcon :name="icons.productInstallationStatusUnknown" class="w-3 h-3" />
-				<span>{{ $t('unknown') }}</span>
-			</UBadge>
+			<CoreAppStatusBadge status="warning" :icon="icons.productInstallationStatusUnknown"
+				:label="$t('unknown')" />
 		</template>
 
 		<span v-else-if="normalizedStatus === 'not_installed' || normalizedStatus === 'none' || !normalizedStatus"
 			class="text-(--color-text-muted) text-xs">-</span>
 
-		<UBadge v-else color="neutral" variant="subtle" size="xs">
-			{{ status }}
-		</UBadge>
+		<CoreAppStatusBadge v-else :label="status" />
 	</div>
 </template>
 

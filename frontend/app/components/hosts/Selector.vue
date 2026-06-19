@@ -1,16 +1,24 @@
-HostSelector - Unified searchable dropdown for selecting a client or a server with lazy loading.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  HostsSelector - Host (servers or clients) selection dropdown with filter.
+-->
 <template>
-  <USelectMenu :model-value="modelValue || ''" :items="dropdownOptions" :loading="loading"
+  <CoreAppSelectMenu :model-value="modelValue || ''" :items="dropdownOptions" :loading="loading"
     :filter-fields="['label', 'description']"
     :placeholder="placeholder || (type === 'server' ? String($t('selectServer')) : String($t('selectClient')))"
     value-key="value" class="min-w-48" size="sm" @update:model-value="onSelect" @open="onOpen">
     <template #leading>
-      <UIcon :name="type === 'server' ? icons.server : icons.client" class="w-4 h-4 text-muted" />
+      <CoreAppIcon :name="type === 'server' ? icons.server : icons.client" class="w-4 h-4 text-muted" />
     </template>
     <template #item="{ item }">
       <template v-if="item.value === '__clear__'">
         <div class="flex items-center gap-2 text-muted italic py-0.5">
-          <UIcon :name="icons.xCircle" class="w-4 h-4 shrink-0" />
+          <CoreAppIcon :name="icons.xCircle" class="w-4 h-4 shrink-0" />
           <span class="text-sm">{{ $t('clearSelection') }}</span>
         </div>
       </template>
@@ -20,7 +28,7 @@ HostSelector - Unified searchable dropdown for selecting a client or a server wi
         </div>
       </template>
     </template>
-  </USelectMenu>
+  </CoreAppSelectMenu>
 </template>
 
 <script setup lang="ts">
@@ -88,7 +96,6 @@ async function fetchItems(force = false) {
       const { data, error } = await getServers()
       if (!error) items.value = (data || []).map((d) => ({ id: d.depotId, description: d.description || '' }))
     } else {
-      // Use lightweight client IDs endpoint for fast lazy loading
       const selectedServers = selectionStore.selectedServers
       if (selectedServers.length > 0) {
         const { data, error } = await getClientIds(selectedServers)
@@ -96,7 +103,6 @@ async function fetchItems(force = false) {
           items.value = (data as string[]).map((id) => ({ id, description: '' }))
         }
       } else {
-        // Fall back to server IDs endpoint first, then get all client IDs
         const { data: serverData } = await getServerIds()
         if (serverData && serverData.length > 0) {
           const { data, error } = await getClientIds(serverData)
@@ -116,7 +122,6 @@ async function fetchItems(force = false) {
 }
 
 function onOpen() {
-  // Lazy load: fetch items when dropdown is first opened
   if (!fetched.value) {
     fetchItems()
   }
@@ -133,8 +138,6 @@ function onSelect(value: string) {
 }
 
 onMounted(() => {
-  // Fetch items eagerly for both types
-  // Server items are always small, client items may be large but needed for standalone pages
   fetchItems()
 })
 

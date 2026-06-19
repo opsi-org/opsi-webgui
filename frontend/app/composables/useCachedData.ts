@@ -1,9 +1,11 @@
-/**
- * Shared cached data composable.
- * Caches slow-changing data (diagnostics, user configuration, disabled features,
- * product icons, changelogs, host groups, product groups) so they are fetched
- * once and shared across pages.
- * Data is refetched only on manual refresh, force flag, or full app refresh.
+/*
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * useCachedData - Shared cached data composable for slow-changing data shared across pages.
  */
 import type { GroupTreeNodeData } from '~/types'
 import { useUserStore } from '~/stores/userStore'

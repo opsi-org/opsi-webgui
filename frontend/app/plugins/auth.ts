@@ -1,12 +1,12 @@
 /*
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
-All rights reserved.
-License: AGPL-3.0
-
-Auth plugin - handles route guarding based on authentication state.
-*/
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * auth - Authentication guard plugin for route protection.
+ */
 import { defineNuxtPlugin, navigateTo } from '#app'
 import { useUserStore } from '~/stores/userStore'
 
@@ -26,14 +26,17 @@ export default defineNuxtPlugin({
       const userStore = useUserStore()
 
       if (userStore.isAuthenticated && to.name === 'login') {
+        const redirect = to.query.redirect?.toString()
+        if (redirect) {
+          return navigateTo(redirect, { replace: true })
+        }
         return navigateTo(getDefaultPage())
       }
 
       if (!userStore.isAuthenticated && to.name !== 'login') {
-        return navigateTo(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
+        return navigateTo({ path: '/login', query: { redirect: to.fullPath } })
       }
 
-      // Check feature flags for restricted pages
       if (userStore.isAuthenticated) {
         const { isPageAccessible } = useUserPermissions()
         if (!isPageAccessible(to.path)) {
@@ -43,20 +46,7 @@ export default defineNuxtPlugin({
     })
 
     function getDefaultPage(): string {
-      if (typeof document === 'undefined') return '/clients'
-      const match = document.cookie.match(/(?:^|; )opsi-webgui-default-page=([^;]*)/)
-      const stored = match?.[1] ? decodeURIComponent(match[1]) : null
-      const validPages = [
-        '/dashboard',
-        '/clients',
-        '/products',
-        '/servers',
-        '/admin/terminal',
-        '/admin/maintenance',
-        '/admin/diagnostics',
-      ]
-      if (stored && validPages.includes(stored)) return stored
-      return '/clients'
+      return getDefaultPageFromCookie()
     }
   },
 })

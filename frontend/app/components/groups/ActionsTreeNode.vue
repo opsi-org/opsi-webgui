@@ -1,3 +1,12 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  GroupsActionsTreeNode - Recursive tree node for group hierarchy with context actions.
+-->
 <template>
 	<div class="group-tree-node" :class="{ 'group-tree-node-root': isRootLevel }">
 		<div :class="[
@@ -6,29 +15,29 @@
 		]" :style="{ paddingLeft: `${indentPx}px` }" @click="handleClick">
 			<!-- Tree connector lines -->
 			<span v-for="i in treeDepth" :key="i" class="tree-guide-line" :style="{ left: `${8 + (i - 1) * 16}px` }" />
-			<button v-if="hasChildren" type="button"
-				class="w-5 h-5 flex items-center justify-center rounded transition-all shrink-0" :class="isExpanded
+			<CoreAppButton v-if="hasChildren" variant="ghost" color="neutral" size="xs" class="w-5! h-5! p-0! shrink-0"
+				:class="isExpanded
 					? 'text-(--color-primary) bg-primary/10'
 					: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
 				@click.stop="$emit('toggle', group.id)">
-				<UIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
+				<CoreAppIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
 					:class="{ 'rotate-90': isExpanded }" />
-			</button>
+			</CoreAppButton>
 			<span v-else class="w-5 flex items-center justify-center shrink-0">
 				<span class="w-1.5 h-1.5 rounded-full bg-(--color-text-muted)/40" />
 			</span>
-			<UIcon :name="group.isSpecial ? icons.group : (hasChildren ? icons.group : icons.group)"
+			<CoreAppIcon :name="group.isSpecial ? icons.group : (hasChildren ? icons.group : icons.group)"
 				class="w-4 h-4 shrink-0 transition-colors" :class="isSelected
 					? 'text-(--color-primary)'
 					: group.isSpecial ? 'text-(--color-text-muted)' : 'text-(--color-text)'" />
-			<UTooltip v-if="group.label === 'not_assigned'" :text="$t('notAssignedTooltip')">
+			<CoreAppTooltip v-if="group.label === 'not_assigned'" :text="$t('notAssignedTooltip')">
 				<span class="text-sm flex-1 truncate transition-colors cursor-help" :class="[
 					isSelected ? 'font-medium text-(--color-text)' : '',
 					group.isSpecial ? 'text-(--color-text-muted) italic' : ''
 				]">
 					{{ group.label }}
 				</span>
-			</UTooltip>
+			</CoreAppTooltip>
 			<span v-else class="text-sm flex-1 truncate transition-colors" :class="[
 				isSelected ? 'font-medium text-(--color-text)' : '',
 				group.isSpecial ? 'text-(--color-text-muted) italic' : ''
@@ -41,24 +50,25 @@
 			</span>
 			<div v-if="group.isSpecial && group.label !== 'not_assigned'"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
-				<UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
-					:disabled="groupDisabled"
-					@click="$emit('create-subgroup', group.id)" />
+				<CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
+					:disabled="groupDisabled" @click="$emit('create-subgroup', group.id)">
+					<CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge
+						badge-color="none" />
+				</CoreAppButton>
 			</div>
 			<div v-else-if="!group.isSpecial"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
-				<UButton :icon="icons.add" size="xs" variant="ghost" color="neutral" :title="$t('addMembers')"
-					:disabled="groupDisabled"
-					@click="$emit('add-members', group)" />
-				<UButton :icon="icons.group" size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
-					:disabled="groupDisabled"
-					@click="$emit('create-subgroup', group.id)" />
-				<UButton :icon="icons.pencil" size="xs" variant="ghost" color="neutral" :title="$t('edit')"
-					:disabled="groupDisabled"
-					@click="$emit('edit', group)" />
-				<UButton :icon="icons.delete" size="xs" variant="ghost" color="neutral" :title="$t('delete')"
-					:disabled="groupDisabled"
-					@click="$emit('delete', group)" />
+				<CoreAppButton :icon="icons.add" size="xs" variant="ghost" color="neutral" :title="$t('addMembers')"
+					:disabled="groupDisabled" @click="$emit('add-members', group)" />
+				<CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
+					:disabled="groupDisabled" @click="$emit('create-subgroup', group.id)">
+					<CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge
+						badge-color="none" />
+				</CoreAppButton>
+				<CoreAppButton :icon="icons.pencil" size="xs" variant="ghost" color="neutral" :title="$t('edit')"
+					:disabled="groupDisabled" @click="$emit('edit', group)" />
+				<CoreAppButton :icon="icons.delete" size="xs" variant="ghost" color="neutral" :title="$t('delete')"
+					:disabled="groupDisabled" @click="$emit('delete', group)" />
 			</div>
 		</div>
 		<Transition name="tree-expand">
@@ -68,12 +78,11 @@
 					:root-id="rootId" @select="$emit('select', $event)" @toggle="$emit('toggle', $event)"
 					@create-subgroup="$emit('create-subgroup', $event)" @edit="$emit('edit', $event)"
 					@delete="$emit('delete', $event)" @add-members="$emit('add-members', $event)" />
-				<button v-if="hasMoreChildren" type="button"
-					class="w-full py-1.5 text-xs text-center text-(--color-primary) hover:bg-(--color-surface-hover) rounded transition-colors"
+				<CoreAppButton v-if="hasMoreChildren" variant="ghost" color="primary" size="xs" block class="py-1.5!"
 					:style="{ paddingLeft: `${(props.group.level || 0) * 16 + 24}px` }"
 					@click="childrenLimit += CHILDREN_PAGE_SIZE">
 					{{ $t('showMore') }} ({{ (group.children?.length || 0) - childrenLimit }} {{ $t('remaining') }})
-				</button>
+				</CoreAppButton>
 			</div>
 		</Transition>
 	</div>

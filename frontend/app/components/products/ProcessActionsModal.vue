@@ -1,39 +1,39 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ProductsProcessActionsModal - Modal for processing pending product action requests.
+-->
 <template>
-	<UModal v-model:open="open" :title="$t('processActions')">
+	<CoreAppModal v-model:open="open">
 		<template #content>
-			<UCard class="min-w-96" @click.stop>
+			<CoreAppCard class="min-w-96" @click.stop>
 				<template #header>
 					<div class="flex items-center justify-between">
-						<div class="flex items-center gap-2">
-							<UIcon :name="icons.onDemand" class="w-5 h-5 text-(--color-text-muted)" />
-							<span class="font-medium">{{ $t('processActions') }}</span>
-						</div>
-						<UButton variant="ghost" color="neutral" size="xs" :icon="icons.x" @click="open = false" />
+						<CoreAppHeading :icon="icons.onDemand" :text="$t('processActions')" />
+						<CoreAppButton variant="ghost" color="neutral" size="xs" :icon="icons.x"
+							@click="open = false" />
 					</div>
 				</template>
 
-				<SharedAlertInline v-if="statusMessage" :color="statusMessage.type" :description="statusMessage.message"
-					variant="subtle" class="mb-3" closable @close="statusMessage = null" />
+				<CoreAppAlertInline v-if="statusMessage" :color="statusMessage.type"
+					:description="statusMessage.message" variant="subtle" class="mb-3" closable
+					@close="statusMessage = null" />
 
 				<div class="space-y-4">
-					<div class="divide-y divide-(--color-border) dark:divide-(--color-border)">
+					<div class="divide-y divide-(--color-border)">
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5">
 							<span class="text-sm font-medium md:w-1/3">{{ $t('products') }}</span>
 							<div class="flex-1">
 								<div class="flex flex-col gap-2">
-									<label class="flex items-center gap-2 cursor-pointer">
-										<input type="radio" v-model="productMode" value="all"
-											class="text-opsi-blue focus:ring-opsi-blue" />
-										<span class="text-sm">{{ $t('allProducts') }}</span>
-									</label>
-									<label v-if="selectedProductIds.length > 0"
-										class="flex items-center gap-2 cursor-pointer">
-										<input type="radio" v-model="productMode" value="selected"
-											class="text-opsi-blue focus:ring-opsi-blue" />
-										<span class="text-sm">{{ $t('onlySelectedProducts') }}
-											({{ selectedProductIds.length }})</span>
-									</label>
+									<CoreAppRadio v-model="productMode" value="all" :label="$t('allProducts')" />
+									<CoreAppRadio v-if="selectedProductIds.length > 0" v-model="productMode"
+										value="selected"
+										:label="`${$t('onlySelectedProducts')} (${selectedProductIds.length})`" />
 								</div>
 								<div v-if="productMode === 'selected' && selectedProductIds.length > 0"
 									class="mt-2 max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) text-xs">
@@ -47,21 +47,9 @@
 							<span class="text-sm font-medium md:w-1/3">{{ $t('visibility') }}</span>
 							<div class="flex-1">
 								<div class="flex items-center gap-3">
-									<label class="flex items-center gap-2 cursor-pointer">
-										<input type="radio" v-model="visibility" value=""
-											class="text-opsi-blue focus:ring-opsi-blue" />
-										<span class="text-sm">{{ $t('clientDefault') }}</span>
-									</label>
-									<label class="flex items-center gap-2 cursor-pointer">
-										<input type="radio" v-model="visibility" value="visible"
-											class="text-opsi-blue focus:ring-opsi-blue" />
-										<span class="text-sm">{{ $t('visible') }}</span>
-									</label>
-									<label class="flex items-center gap-2 cursor-pointer">
-										<input type="radio" v-model="visibility" value="hidden"
-											class="text-opsi-blue focus:ring-opsi-blue" />
-										<span class="text-sm">{{ $t('hidden') }}</span>
-									</label>
+									<CoreAppRadio v-model="visibility" value="" :label="$t('clientDefault')" />
+									<CoreAppRadio v-model="visibility" value="visible" :label="$t('visible')" />
+									<CoreAppRadio v-model="visibility" value="hidden" :label="$t('hidden')" />
 								</div>
 							</div>
 						</div>
@@ -72,17 +60,17 @@
 								({{ clientIds.length }})</span>
 							<div class="flex-1">
 								<div class="flex items-center gap-2 mb-2">
-									<UButton size="xs" variant="outline" color="neutral"
+									<CoreAppButton size="xs" variant="outline" color="neutral"
 										:disabled="arraysEqual(clientIds, selectionStore.selectedClients)"
 										@click="clientIds = [...selectionStore.selectedClients]">
 										{{ $t('reset') }}
-									</UButton>
+									</CoreAppButton>
 								</div>
 								<div v-if="clientIds.length > 0"
 									class="max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) text-xs">
 									<div v-for="id in clientIds" :key="id" class="flex items-center justify-between">
 										<span>{{ id }}</span>
-										<UButton size="xs" variant="ghost" color="neutral" :icon="icons.x"
+										<CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.x"
 											@click="clientIds = clientIds.filter(c => c !== id)" />
 									</div>
 								</div>
@@ -96,18 +84,19 @@
 
 				<template #footer>
 					<div class="flex justify-end gap-2">
-						<UButton variant="ghost" color="neutral" size="sm" @click="open = false">{{ $t('cancel') }}
-						</UButton>
-						<UButton color="primary" size="sm" :loading="executing" :disabled="isReadOnly || clientIds.length === 0"
-							@click="executeProcessAction">
-							<UIcon :name="icons.onDemand" class="w-4 h-4 mr-1" />
+						<CoreAppButton variant="ghost" color="neutral" size="sm" @click="open = false">{{ $t('cancel')
+							}}
+						</CoreAppButton>
+						<CoreAppButton color="primary" size="sm" :loading="executing"
+							:disabled="isReadOnly || clientIds.length === 0" @click="executeProcessAction">
+							<CoreAppIcon :name="icons.onDemand" class="w-4 h-4 mr-1" />
 							{{ $t('processActions') }}
-						</UButton>
+						</CoreAppButton>
 					</div>
 				</template>
-			</UCard>
+			</CoreAppCard>
 		</template>
-	</UModal>
+	</CoreAppModal>
 </template>
 
 <script setup lang="ts">

@@ -1,43 +1,51 @@
-<template>
-	<UTooltip v-if="hasSelections && compact" :text="$t('productQuickActions')">
-		<UButton variant="soft" color="primary" size="sm" @click="dialogOpen = true">
-			<UIcon :name="icons.product" class="w-4 h-4" />
-		</UButton>
-	</UTooltip>
-	<UButton v-else-if="hasSelections" color="primary" size="sm" @click="dialogOpen = true">
-		<UIcon :name="icons.product" class="w-4 h-4" />
-		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
-	</UButton>
-	<UTooltip v-else-if="compact" :text="$t('productQuickActions')">
-		<UButton variant="ghost" color="neutral" size="sm" class="opacity-70" disabled>
-			<UIcon :name="icons.product" class="w-4 h-4" />
-		</UButton>
-	</UTooltip>
-	<UButton v-else variant="ghost" color="neutral" size="sm" class="opacity-70" disabled>
-		<UIcon :name="icons.product" class="w-4 h-4" />
-		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
-	</UButton>
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
 
-	<UModal v-model:open="dialogOpen" :dismissible="true" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
+  ProductsQuickActionsDropdown - Bulk action dropdown for selected products.
+-->
+<template>
+	<CoreAppTooltip v-if="hasSelections && compact" :text="$t('productQuickActions')">
+		<CoreAppButton variant="soft" color="primary" size="sm" :aria-label="String($t('productQuickActions'))"
+			@click="dialogOpen = true">
+			<CoreAppIcon :name="icons.product" class="w-4 h-4" />
+		</CoreAppButton>
+	</CoreAppTooltip>
+	<CoreAppButton v-else-if="hasSelections" color="primary" size="sm" @click="dialogOpen = true">
+		<CoreAppIcon :name="icons.product" class="w-4 h-4" />
+		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
+	</CoreAppButton>
+	<CoreAppTooltip v-else-if="compact" :text="$t('productQuickActions')">
+		<CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-70"
+			:aria-label="String($t('productQuickActions'))" disabled>
+			<CoreAppIcon :name="icons.product" class="w-4 h-4" />
+		</CoreAppButton>
+	</CoreAppTooltip>
+	<CoreAppButton v-else variant="ghost" color="neutral" size="sm" class="opacity-70" disabled>
+		<CoreAppIcon :name="icons.product" class="w-4 h-4" />
+		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
+	</CoreAppButton>
+
+	<CoreAppModal v-model:open="dialogOpen" :dismissible="true" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
 		<template #content>
-			<UCard class="min-w-120">
+			<CoreAppCard class="min-w-120">
 				<template #header>
 					<div class="flex items-center justify-between">
-						<div class="flex items-center gap-2">
-							<UIcon :name="icons.product" class="w-5 h-5 text-(--color-text-muted)" />
-							<span class="font-medium">{{ $t('productQuickActions') }}</span>
-						</div>
-						<UButton variant="ghost" color="neutral" size="xs" :icon="icons.x"
+						<CoreAppHeading :icon="icons.product" :text="$t('productQuickActions')" />
+						<CoreAppButton variant="ghost" color="neutral" size="xs" :icon="icons.x"
 							@click="dialogOpen = false" />
 					</div>
 				</template>
 
 				<div v-if="loadingOptions" class="flex justify-center py-8">
-					<SharedLoadingSpinner size="md" />
+					<CoreAppLoadingSpinner size="md" />
 				</div>
 
 				<div v-else class="space-y-4">
-					<SharedAlertInline v-if="errorMessage" color="error" :description="errorMessage" variant="subtle"
+					<CoreAppAlertInline v-if="errorMessage" color="error" :description="errorMessage" variant="subtle"
 						closable @close="errorMessage = null" />
 
 					<div class="divide-y divide-(--color-border)">
@@ -51,19 +59,21 @@
 										<label class="text-xs text-(--color-text-muted) block mb-1">
 											{{ $t('installationStatus') }}
 										</label>
-										<USelect v-model="filters.installationStatus" :items="installationStatusOptions"
-											size="xs" class="w-full" @update:model-value="fetchPreview" />
+										<CoreAppSelect v-model="filters.installationStatus"
+											:items="installationStatusOptions" size="xs" class="w-full"
+											@update:model-value="fetchPreview" />
 									</div>
 									<div>
 										<label class="text-xs text-(--color-text-muted) block mb-1">
 											{{ $t('actionResult') }}
 										</label>
-										<USelect v-model="filters.actionResult" :items="actionResultOptions" size="xs"
-											class="w-full" @update:model-value="fetchPreview" />
+										<CoreAppSelect v-model="filters.actionResult" :items="actionResultOptions"
+											size="xs" class="w-full" @update:model-value="fetchPreview" />
 									</div>
 								</div>
 								<label class="flex items-center gap-2 cursor-pointer">
-									<UCheckbox v-model="filters.outdatedOnly" @update:model-value="fetchPreview" />
+									<CoreAppCheckbox v-model="filters.outdatedOnly"
+										@update:model-value="fetchPreview" />
 									<span class="text-xs">{{ $t('outdatedOnClient') }}</span>
 								</label>
 							</div>
@@ -74,8 +84,8 @@
 								{{ $t('actionRequest') }}
 							</span>
 							<div class="flex-1">
-								<USelect v-model="actionRequest" :items="actionRequestOptions" size="sm" class="w-full"
-									@update:model-value="fetchPreview" />
+								<CoreAppSelect v-model="actionRequest" :items="actionRequestOptions" size="sm"
+									class="w-full" @update:model-value="fetchPreview" />
 							</div>
 						</div>
 
@@ -84,7 +94,7 @@
 								{{ $t('scope') }}
 							</span>
 							<div class="flex-1">
-								<USelect v-model="scope" :items="scopeOptions" size="sm" class="w-full"
+								<CoreAppSelect v-model="scope" :items="scopeOptions" size="sm" class="w-full"
 									@update:model-value="fetchPreview" />
 							</div>
 						</div>
@@ -96,52 +106,47 @@
 								{{ $t('preview') }}
 							</span>
 							<div class="flex items-center gap-2">
-								<UButton size="xs" variant="ghost" color="neutral" :icon="icons.refresh"
+								<CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.refresh"
 									:loading="loadingPreview" @click="fetchPreview" />
-								<UBadge color="neutral" variant="soft" size="xs">
-									{{ previewCount }}
-								</UBadge>
+								<CoreAppStatusBadge status="neutral" variant="soft" size="xs"
+									:label="String(previewCount)" />
 							</div>
 						</div>
 
-						<div class="border border-(--color-border) rounded-lg bg-(--color-surface)" style="min-height: 180px;">
-							<div v-if="loadingPreview" class="flex justify-center items-center" style="min-height: 180px;">
-								<SharedLoadingSpinner size="sm" />
+						<div class="border border-(--color-border) rounded-lg bg-(--color-surface)"
+							style="min-height: 180px;">
+							<div v-if="loadingPreview" class="flex justify-center items-center"
+								style="min-height: 180px;">
+								<CoreAppLoadingSpinner size="sm" />
 							</div>
-							<div v-else-if="previewData && Object.keys(previewData).length > 0"
-								class="max-h-64 overflow-y-auto text-xs">
-								<table class="min-w-full table-auto">
-									<thead class="bg-(--color-surface) sticky top-0 z-10">
-										<tr class="text-left text-(--color-text-muted)">
-											<th class="px-2 py-1.5 font-medium">{{ $t('clientId') }}</th>
-											<th class="px-2 py-1.5 font-medium">{{ $t('productId') }}</th>
-											<th class="px-2 py-1.5 font-medium">{{ $t('version') }}</th>
-											<th class="px-2 py-1.5 font-medium">{{ $t('actionRequest') }}</th>
-											<th class="px-2 py-1.5 font-medium">{{ $t('installationStatus') }}</th>
-										</tr>
-									</thead>
-									<tbody class="divide-y divide-(--color-border)">
-										<template v-for="(products, clientId) in previewData" :key="clientId">
-											<tr v-for="p in products" :key="`${clientId}-${p.productId}`"
-												class="hover:bg-(--color-surface-hover)">
-												<td class="px-2 py-1 truncate max-w-40" :title="String(clientId)">{{ clientId }}</td>
-												<td class="px-2 py-1 truncate max-w-32" :title="p.productId">{{ p.productId }}</td>
-												<td class="px-2 py-1 text-(--color-text-muted) whitespace-nowrap">
-													{{ p.productVersion && p.packageVersion ? `${p.productVersion}-${p.packageVersion}` : '-' }}
-												</td>
-												<td class="px-2 py-1 whitespace-nowrap">{{ p.actionRequest || actionRequest }}</td>
-												<td class="px-2 py-1 text-(--color-text-muted) whitespace-nowrap">{{ p.installationStatus || '-' }}</td>
-											</tr>
-										</template>
-									</tbody>
-								</table>
-							</div>
+							<CoreAppTable v-else-if="previewData && Object.keys(previewData).length > 0"
+								:columns="previewColumns" max-height="16rem" :sort-key="previewSortKey"
+								:sort-dir="previewSortDir" @sort="togglePreviewSort">
+								<tr v-for="row in sortedPreviewRows" :key="`${row.clientId}-${row.product.productId}`"
+									class="hover:bg-(--color-surface-hover)">
+									<td class="px-2 py-1 truncate max-w-40" :title="row.clientId">{{ row.clientId }}
+									</td>
+									<td class="px-2 py-1 truncate max-w-32" :title="row.product.productId">{{
+										row.product.productId }}
+									</td>
+									<td class="px-2 py-1 text-(--color-text-muted) whitespace-nowrap">
+										{{ row.product.productVersion && row.product.packageVersion ?
+											`${row.product.productVersion}-${row.product.packageVersion}` : '-' }}
+									</td>
+									<td class="px-2 py-1 whitespace-nowrap">{{ row.product.actionRequest ||
+										actionRequest }}</td>
+									<td class="px-2 py-1 text-(--color-text-muted) whitespace-nowrap">{{
+										row.product.installationStatus
+										|| '-' }}</td>
+								</tr>
+							</CoreAppTable>
 							<div v-else-if="previewData !== null"
-								class="flex justify-center items-center text-xs text-(--color-text-muted)" style="min-height: 180px;">
+								class="flex justify-center items-center text-xs text-(--color-text-muted)"
+								style="min-height: 180px;">
 								{{ $t('noProductsMatchCriteria') }}
 							</div>
-							<div v-else
-								class="flex justify-center items-center text-xs text-(--color-text-muted)" style="min-height: 180px;">
+							<div v-else class="flex justify-center items-center text-xs text-(--color-text-muted)"
+								style="min-height: 180px;">
 								--
 							</div>
 						</div>
@@ -150,26 +155,28 @@
 
 				<template #footer>
 					<div class="space-y-3">
-						<SharedAlertInline v-if="applyResult && applyResult.type === 'success'" color="success"
+						<CoreAppAlertInline v-if="applyResult && applyResult.type === 'success'" color="success"
 							:title="$t('success')" :description="applyResult.message" variant="subtle" closable
 							@close="applyResult = null" />
-						<SharedAlertInline v-if="applyResult && applyResult.type === 'error'" color="error"
+						<CoreAppAlertInline v-if="applyResult && applyResult.type === 'error'" color="error"
 							:title="$t('error')" :description="applyResult.message" variant="subtle" closable
 							@close="applyResult = null" />
 						<div class="flex justify-end gap-2">
-							<UButton variant="soft" color="neutral" size="sm" @click="resetForm">{{ $t('reset') }}</UButton>
-							<UButton v-if="applyResult?.type === 'success'" variant="soft" color="neutral" size="sm"
-								@click="dialogOpen = false">{{ $t('close') }}</UButton>
-							<UButton v-else color="primary" size="sm" :disabled="isReadOnly || previewData == null || applying"
-								:loading="applying" @click="applyActions">
+							<CoreAppButton variant="soft" color="neutral" size="sm" @click="resetForm">{{ $t('reset') }}
+							</CoreAppButton>
+							<CoreAppButton v-if="applyResult?.type === 'success'" variant="ghost" color="neutral"
+								size="sm" @click="dialogOpen = false">{{ $t('close') }}</CoreAppButton>
+							<CoreAppButton v-else color="primary" size="sm"
+								:disabled="isReadOnly || previewData == null || applying" :loading="applying"
+								@click="applyActions">
 								{{ $t('apply') }}
-							</UButton>
+							</CoreAppButton>
 						</div>
 					</div>
 				</template>
-			</UCard>
+			</CoreAppCard>
 		</template>
-	</UModal>
+	</CoreAppModal>
 </template>
 
 <script setup lang="ts">
@@ -197,6 +204,14 @@ const selectionStore = useSelectionStore()
 const { isReadOnly } = useUserPermissions()
 
 const NOT_APPLIED = String($t('notApplied'))
+
+const previewColumns = computed(() => [
+	{ key: 'clientId', label: String($t('clientId')), sortable: true },
+	{ key: 'productId', label: String($t('productId')), sortable: true },
+	{ key: 'version', label: String($t('version')), sortable: true },
+	{ key: 'actionRequest', label: String($t('actionRequest')), sortable: true },
+	{ key: 'installationStatus', label: String($t('installationStatus')), sortable: true },
+])
 
 const dialogOpen = ref(false)
 const loadingOptions = ref(false)
@@ -253,11 +268,51 @@ interface PreviewProduct {
 }
 
 const previewData = ref<Record<string, PreviewProduct[]> | null>(null)
+const previewSortKey = ref<string>('clientId')
+const previewSortDir = ref<'asc' | 'desc'>('asc')
 
 const previewCount = computed(() => {
 	if (!previewData.value) return 0
 	return Object.values(previewData.value).reduce((sum, arr) => sum + arr.length, 0)
 })
+
+const sortedPreviewRows = computed(() => {
+	if (!previewData.value) return []
+	const rows: Array<{ clientId: string; product: PreviewProduct }> = []
+	for (const [clientId, products] of Object.entries(previewData.value)) {
+		for (const product of products) {
+			rows.push({ clientId, product })
+		}
+	}
+	const dir = previewSortDir.value === 'asc' ? 1 : -1
+	const valueOf = (r: { clientId: string; product: PreviewProduct }): string => {
+		switch (previewSortKey.value) {
+			case 'productId': return r.product.productId
+			case 'version': return `${r.product.productVersion ?? ''}-${r.product.packageVersion ?? ''}`
+			case 'actionRequest': return r.product.actionRequest || actionRequest.value
+			case 'installationStatus': return r.product.installationStatus || ''
+			case 'clientId':
+			default: return r.clientId
+		}
+	}
+	rows.sort((a, b) => {
+		const cmp = valueOf(a).localeCompare(valueOf(b))
+		if (cmp !== 0) return cmp * dir
+		// stable secondary sort for a predictable order
+		const sec = a.clientId.localeCompare(b.clientId) || a.product.productId.localeCompare(b.product.productId)
+		return sec
+	})
+	return rows
+})
+
+function togglePreviewSort(key: string) {
+	if (previewSortKey.value === key) {
+		previewSortDir.value = previewSortDir.value === 'asc' ? 'desc' : 'asc'
+	} else {
+		previewSortKey.value = key
+		previewSortDir.value = 'asc'
+	}
+}
 
 watch(dialogOpen, async (open) => {
 	if (open) {

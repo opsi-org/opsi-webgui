@@ -1,10 +1,17 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  SettingsThemeToggle - Dark/light theme toggle switch.
+-->
 <template>
-  <button @click="toggleTheme"
-    class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-colors bg-opsi-blue text-white hover:bg-opsi-blue/90"
-    :aria-label="isDarkMode ? t('light') : t('dark')">
-    <UIcon :name="isDarkMode ? icons.themeDark : icons.themeLight" class="w-3.5 h-3.5" />
+  <CoreAppButton @click="toggleTheme" color="primary" size="xs" :aria-label="isDarkMode ? t('light') : t('dark')">
+    <CoreAppIcon :name="isDarkMode ? icons.themeDark : icons.themeLight" class="w-3.5 h-3.5" />
     <span class="text-xs font-medium">{{ isDarkMode ? t('dark') : t('light') }}</span>
-  </button>
+  </CoreAppButton>
 </template>
 
 <script setup lang="ts">

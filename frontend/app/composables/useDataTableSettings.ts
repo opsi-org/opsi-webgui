@@ -1,3 +1,12 @@
+/*
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * useDataTableSettings - Persistent data table column visibility and sorting settings.
+ */
 export interface DataTableColumnDef {
   key: string
   label: string
@@ -11,6 +20,7 @@ export interface DataTableColumnDef {
   class?: string
   headerClass?: string
   headerIcon?: string
+  stickyRight?: boolean
 }
 
 export interface DataTableSettings {

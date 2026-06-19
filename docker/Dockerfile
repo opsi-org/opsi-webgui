@@ -1,7 +1,5 @@
 FROM docker.uib.gmbh/opsi/dev/pybuilder:deb10-py3.13
 
-# Build args - passed from docker-compose.yml which reads from .env
-# These defaults are overridden by values in docker/.env (created by scripts/devenv.sh)
 ARG USER
 ARG UID
 ARG ADDON_NAME
@@ -12,46 +10,36 @@ ENV DEV_USER=${USER:-dev} \
 	ADDON_ID=${ADDON_ID:-webgui} \
 	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.3:/development/Debian_10/ \
 	PYTHONFAULTHANDLER=1 \
-	PYTHONUNBUFFERED=1 \
-	PYTHONHASHSEED=random \
-	PIP_NO_CACHE_DIR=off \
-	PIP_DISABLE_PIP_VERSION_CHECK=on \
-	PIP_DEFAULT_TIMEOUT=100
+	PYTHONUNBUFFERED=1
 
-# System deps
+# System dependencies (single layer, no cache)
 RUN mkdir -p /usr/local/share/keyrings \
-	&& REPO_KEY=/usr/local/share/keyrings/opsi-obs.gpg \
-	&& curl -fsSL $OPSI_REPO/Release.key | gpg --dearmor | tee $REPO_KEY > /dev/null \
-	&& echo "deb [signed-by=$REPO_KEY] $OPSI_REPO/ /" | tee /etc/apt/sources.list.d/opsi.list \
+	&& curl -fsSL $OPSI_REPO/Release.key | gpg --dearmor > /usr/local/share/keyrings/opsi-obs.gpg \
+	&& echo "deb [signed-by=/usr/local/share/keyrings/opsi-obs.gpg] $OPSI_REPO/ /" > /etc/apt/sources.list.d/opsi.list \
 	&& apt-get update \
-	&& apt-get --yes dist-upgrade \
-	&& apt-get --yes --allow-downgrades install \
-	vim \
-	wget \
+	&& apt-get --yes --no-install-recommends install \
 	mariadb-client \
 	libmariadb-dev \
-	psmisc \
 	librsync1 \
 	sudo \
 	git \
-	nano \
 	netcat \
 	supervisor \
 	mariadb-server \
-	redis-tools \
 	redis-server \
 	redis-timeseries \
 	opsi-utils \
-	&& apt-get clean
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/*
 
 COPY docker/files/ /
 
-# Fix redis config for supervisor (no daemonize)
+# Redis + MySQL runtime dirs
 RUN sed -i 's/^daemonize yes/daemonize no/' /etc/redis/redis.conf \
 	&& mkdir -p /var/run/redis && chown redis:redis /var/run/redis \
 	&& install -m 755 -o mysql -g root -d /var/run/mysqld
 
-# Setup users - opsiconfd home must be /var/lib/opsi (not /var/lib/opsiconfd/home)
+# Users and groups
 RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& (getent group opsifileadmins || groupadd opsifileadmins) \
 	&& (getent group opsiadmin || groupadd opsiadmin) \
@@ -67,51 +55,47 @@ RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& adduser ${DEV_USER} opsiadmin \
 	&& adduser ${DEV_USER} sudo \
 	&& adduser ${DEV_USER} shadow \
-	&& chown -R ${DEV_USER}:${DEV_USER} /home/${DEV_USER}/ \
 	&& echo "${DEV_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-	&& (cp -r /root/.bash* /home/adminuser/ 2>/dev/null || true) \
-	&& (cp -r /root/.bash* /home/${DEV_USER}/ 2>/dev/null || true) \
-	&& chmod g+rw -R . \
-	&& chmod +x /*entrypoint.sh \
-	&& mkdir -p /tftpboot \
-	&& chown -R $DEV_USER:$DEV_USER /workspace
+	&& cp /root/.bashrc /home/${DEV_USER}/.bashrc \
+	&& cp /root/.bash_history /home/${DEV_USER}/.bash_history \
+	&& chown -R ${DEV_USER}:${DEV_USER} /home/${DEV_USER}/
 
-# Create opsi directories with proper permissions
+# opsi directory structure
 RUN mkdir -p /var/lib/opsiconfd/addons \
-	&& mkdir -p /var/lib/opsi/depot \
-	&& mkdir -p /var/lib/opsi/public \
-	&& mkdir -p /var/lib/opsi/repository \
-	&& mkdir -p /var/lib/opsi/workbench \
-	&& mkdir -p /var/lib/opsi/tmp \
-	&& mkdir -p /var/lib/opsi/tmp/file-transfer \
-	&& mkdir -p /var/lib/opsi/backup \
-	&& mkdir -p /var/lib/opsi/ntfs-images \
-	&& mkdir -p /var/log/opsi/opsiconfd \
-	&& mkdir -p /var/log/opsi/bootimage \
-	&& mkdir -p /var/log/opsi/clientconnect \
-	&& mkdir -p /var/log/opsi/instlog \
-	&& mkdir -p /var/log/opsi/userlogin \
-	&& mkdir -p /etc/opsi/ssl \
-	&& mkdir -p /etc/opsi/licenses \
-	&& chown -R opsiconfd:opsifileadmins /var/lib/opsiconfd \
-	&& chown -R opsiconfd:opsifileadmins /var/lib/opsi \
-	&& chown -R opsiconfd:opsifileadmins /var/log/opsi \
-	&& chown -R opsiconfd:opsifileadmins /etc/opsi \
-	&& chmod 770 /etc/opsi/ssl \
-	&& chmod 770 /var/lib/opsiconfd \
-	&& chmod 770 /var/lib/opsi
+	/var/lib/opsi/depot \
+	/var/lib/opsi/public \
+	/var/lib/opsi/repository \
+	/var/lib/opsi/workbench \
+	/var/lib/opsi/tmp \
+	/var/lib/opsi/tmp/file-transfer \
+	/var/lib/opsi/backup \
+	/var/lib/opsi/ntfs-images \
+	/var/log/opsi/opsiconfd \
+	/var/log/opsi/bootimage \
+	/var/log/opsi/clientconnect \
+	/var/log/opsi/instlog \
+	/var/log/opsi/userlogin \
+	/etc/opsi/ssl \
+	/etc/opsi/licenses \
+	/tftpboot /workspace \
+	&& chown -R opsiconfd:opsifileadmins /var/lib/opsiconfd /var/lib/opsi /var/log/opsi /etc/opsi \
+	&& chmod 770 /etc/opsi/ssl /var/lib/opsiconfd /var/lib/opsi \
+	&& chown -R ${DEV_USER}:${DEV_USER} /workspace \
+	&& chmod +x /entrypoint.sh
 
-# Setup addon symlink
-RUN rm -f /var/lib/opsiconfd/addons/${ADDON_ID} \
-	&& mkdir -p /var/lib/opsiconfd/addons/ \
-	&& ln -s /workspace/backend/${ADDON_ID} /var/lib/opsiconfd/addons/${ADDON_ID}
+# Addon symlink
+RUN ln -sf /workspace/backend/${ADDON_ID} /var/lib/opsiconfd/addons/${ADDON_ID}
 
 # Allow opsiconfd user to access uv-installed Python
 RUN chmod a+rx /root && mkdir -p /root/.local/share && chmod -R a+rX /root/.local
 
-# Frontend setup: Node.js, pnpm
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g pnpm
+# Node.js 22 LTS + pnpm
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+	&& apt-get install -y --no-install-recommends nodejs \
+	&& npm install -g pnpm \
+	&& apt-get clean && rm -rf /var/lib/apt/lists/*
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s \
+	CMD curl -fsk https://localhost:4447/admin/healthy || exit 1
 
 WORKDIR /workspace

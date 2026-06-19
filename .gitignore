@@ -4,6 +4,7 @@
 # Docker
 docker/.env
 docker/opsiconfd/
+docker/.backup-restored
 
 .pnpm-store/
 sbom.json

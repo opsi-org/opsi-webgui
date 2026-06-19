@@ -1,55 +1,19 @@
-<template>
-    <LayoutsPageLayout :showSearch="false" :showRefresh="false">
-        <div class="w-full p-4 flex flex-col gap-6 h-[calc(100vh-80px)]">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <UCard>
-                    <template #header>
-                        <div class="flex items-center gap-2">
-                            <UIcon :name="icons.support" class="w-5 h-5" />
-                            <span class="font-medium">{{ $t('professionalSupport') }}</span>
-                        </div>
-                    </template>
-                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('professionalSupportDescription') }}</p>
-                    <UButton variant="soft" color="neutral" block as="a" :href="supportUrl" target="_blank">{{
-                        $t('contactSupport')
-                    }}</UButton>
-                </UCard>
-                <UCard>
-                    <template #header>
-                        <div class="flex items-center gap-2">
-                            <UIcon :name="icons.users" class="w-5 h-5" />
-                            <span class="font-medium">{{ $t('community') }}</span>
-                        </div>
-                    </template>
-                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('communityDescription') }}</p>
-                    <UButton variant="soft" color="neutral" block as="a" href="https://forum.opsi.org" target="_blank">
-                        {{
-                            $t('visitOPSIForum') }}</UButton>
-                </UCard>
-                <UCard class="h-full">
-                    <template #header>
-                        <div class="flex items-center gap-2">
-                            <UIcon :name="icons.document" class="w-5 h-5" />
-                            <span class="font-medium">{{ $t('documentation') }}</span>
-                        </div>
-                    </template>
-                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('documentationDescription') }}</p>
-                    <UButton variant="soft" color="neutral" block as="a" href="https://docs.opsi.org" target="_blank">
-                        {{ $t('openDocumentation') }}
-                    </UButton>
-                </UCard>
-            </div>
-            <div class="h-full">
-                <SupportWhatsNew />
-            </div>
-        </div>
-    </LayoutsPageLayout>
-</template>
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
 
+  Support Page - Route wrapper for SupportMainView component.
+-->
+<template>
+  <SupportMainView />
+</template>
 
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
-const icons = useIcons()
-const { t: $t, locale } = useI18n()
-const supportUrl = computed(() => locale.value === 'de' ? 'https://opsi.org/de/services/support/' : 'https://opsi.org/en/services/support/')
+
+const { t } = useI18n()
+useHead({ title: () => `${t('support')} - opsi-WebGUI` })
 </script>

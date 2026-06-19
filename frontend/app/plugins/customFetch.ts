@@ -1,10 +1,12 @@
 /*
-This file is part of opsi-webgui application.
-opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
-Copyright (c) uib GmbH <info@uib.de> 2025
-All rights reserved.
-License: AGPL-3.0
-*/
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * customFetch - Custom $fetch plugin with authentication headers and error handling.
+ */
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 import { useUserStore } from '~/stores/userStore'
 
@@ -40,7 +42,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       const existingHeaders = headersToObject(options.headers)
 
       const sessionHeaders: Record<string, string> = {}
-      if (!urlsWithoutSession.some(path => url.includes(path))) {
+      if (!urlsWithoutSession.some((path) => url.includes(path))) {
         sessionHeaders['X-opsi-session-lifetime'] = String(userStore.sessionExpiry)
         userStore.setSession()
       }

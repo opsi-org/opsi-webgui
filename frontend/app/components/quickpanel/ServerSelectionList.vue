@@ -1,44 +1,56 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  QuickpanelServerSelectionList - List for selecting servers.
+-->
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div v-if="loading" class="flex items-center justify-center py-8">
-			<SharedLoadingSpinner size="sm" />
+			<CoreAppLoadingSpinner size="sm" />
 		</div>
 
-		<div v-else-if="error" class="text-xs text-red-500 py-2">{{ error }}</div>
+		<div v-else-if="error" class="text-xs text-(--color-error-soft-text) py-2">{{ error }}</div>
 
 		<template v-else>
 			<div class="flex items-center gap-1 mb-2 shrink-0">
-				<SharedFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
-				<UTooltip v-if="isDepotAccessRestricted" :text="t('opsiConfig.serverFeatures.depotAccess.disabled')">
-					<UBadge color="warning" variant="subtle" size="xs" class="cursor-help shrink-0">
+				<CoreAppFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
+				<CoreAppTooltip v-if="isDepotAccessRestricted"
+					:text="t('opsiConfig.serverFeatures.depotAccess.disabled')">
+					<CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help shrink-0">
 						{{ t('restricted') }}
-					</UBadge>
-				</UTooltip>
-				<UTooltip :text="`${t('clearAll')} (${selectionStore.selectedServers.length})`">
-					<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral" @click="clearSelection" />
-				</UTooltip>
+					</CoreAppBadge>
+				</CoreAppTooltip>
+				<CoreAppTooltip :text="`${t('clearAll')} (${selectionStore.selectedServers.length})`">
+					<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+						:aria-label="t('clearAll')" @click="clearSelection" />
+				</CoreAppTooltip>
 			</div>
 
 			<div class="flex-1 overflow-y-auto min-h-0 space-y-0.5">
 				<div v-if="filteredServers.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">
 					{{ t('noResults') }}
 				</div>
-				<div v-for="server in filteredServers" :key="server.serverId"
+				<div v-for="server in filteredServers" :key="server.serverId" v-clickable
 					class="flex items-center gap-2 px-2 py-1.5 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer"
 					@click="toggleServer(server.serverId)">
-					<UCheckbox :model-value="selectionStore.selectedServers.includes(server.serverId)" size="xs"
-						@click.stop @update:model-value="toggleServer(server.serverId)" />
+					<CoreAppCheckbox :model-value="selectionStore.selectedServers.includes(server.serverId)" size="xs"
+						:aria-label="server.serverId" @click.stop @update:model-value="toggleServer(server.serverId)" />
 					<div class="flex-1 min-w-0">
 						<div class="flex items-center gap-1.5">
-							<UIcon :name="server.isConfigServer ? icons.serverStack : icons.server"
+							<CoreAppIcon :name="server.isConfigServer ? icons.serverStack : icons.server"
 								class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
 							<span class="truncate" :class="server.isConfigServer ? 'font-medium' : ''">{{
 								server.serverId
 							}}</span>
 						</div>
 					</div>
-					<UBadge v-if="server.isConfigServer" size="xs" variant="subtle" color="primary">{{ t('configServer')
-					}}</UBadge>
+					<CoreAppBadge v-if="server.isConfigServer" size="xs" variant="subtle" color="primary">{{
+						t('configServer')
+						}}</CoreAppBadge>
 				</div>
 			</div>
 

@@ -1,6 +1,12 @@
-ClientsLogsView - displays various logs for a selected client with filtering,
-log level control, auto-refresh, auto-scroll, marker, download and messagebus integration.
-Can be used both in standalone pages and detail panels.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ClientsLogsView - Client log viewer with log type selection and search.
+-->
 <template>
 	<LayoutsPageLayout :loading="loading">
 		<template #filters>
@@ -10,7 +16,7 @@ Can be used both in standalone pages and detail panels.
 					allow-clear />
 
 			</slot>
-			<USelectMenu v-model="selectedLogTypeValue" :placeholder="$t('selectLogType')" :items="LOG_TYPES"
+			<CoreAppSelectMenu v-model="selectedLogTypeValue" :placeholder="$t('selectLogType')" :items="LOG_TYPES"
 				:loading="loading" value-key="value" label-key="label" class="min-w-30" size="sm" />
 			<div v-if="logContent.length > 0" class="flex flex-col gap-1 min-w-30">
 				<label class="text-xs font-medium text-muted">
@@ -18,109 +24,99 @@ Can be used both in standalone pages and detail panels.
 					<span class="ml-1 text-muted">({{ LOG_LEVEL_LABELS[logLevel] }})</span>
 				</label>
 				<input v-model.number="logLevel" type="range" min="1" max="9" step="1"
+					:aria-label="String($t('logLevel'))"
 					class="opsi-log-level-slider w-full h-2 rounded-full appearance-none cursor-pointer" />
 			</div>
 		</template>
 		<template #actions>
 			<div v-if="resolvedClientId" class="flex gap-2">
 				<div v-if="logContent.length > 0">
-					<SharedFilterInput v-model="filterQuery" size="sm" input-class="w-full sm:w-40 md:w-64" />
+					<CoreAppFilterInput v-model="filterQuery" size="sm" input-class="w-full sm:w-40 md:w-64" />
 				</div>
 				<div v-if="logContent.length > 0">
-					<UTooltip :text="$t('autoRefreshDescription')">
-						<UButton :color="autoRefresh ? 'primary' : 'neutral'" :variant="autoRefresh ? 'solid' : 'ghost'"
-							size="sm" @click="autoRefresh = !autoRefresh">
+					<CoreAppTooltip :text="$t('autoRefreshDescription')">
+						<CoreAppButton :color="autoRefresh ? 'primary' : 'neutral'"
+							:variant="autoRefresh ? 'solid' : 'ghost'" size="sm" @click="autoRefresh = !autoRefresh">
 							<span class="hidden sm:inline text-xs">{{ $t('autoRefresh') }}</span>
-						</UButton>
-					</UTooltip>
+						</CoreAppButton>
+					</CoreAppTooltip>
 				</div>
 				<div v-if="logContent.length > 0">
-					<UTooltip :text="$t('autoScrollDescription')">
-						<UButton :color="autoScroll ? 'primary' : 'neutral'"
+					<CoreAppTooltip :text="$t('autoScrollDescription')">
+						<CoreAppButton :color="autoScroll ? 'primary' : 'neutral'"
 							:variant="autoScroll && !hasMarker ? 'solid' : 'ghost'" :disabled="hasMarker" size="sm"
 							@click="autoScroll = !autoScroll">
 							<span class="hidden sm:inline text-xs">{{ $t('autoScroll') }}</span>
-						</UButton>
-					</UTooltip>
-				</div>
-				<div v-if="hasMarker" class="flex items-center gap-1">
-					<UTooltip :text="$t('scrollToMarker')">
-						<UButton :icon="icons.bookmark" variant="ghost" color="primary" size="sm"
-							@click="scrollToMarker" />
-					</UTooltip>
-					<UTooltip :text="$t('clearMarker')">
-						<UButton :icon="icons.x" variant="ghost" color="neutral" size="sm" @click="clearMarker" />
-					</UTooltip>
+						</CoreAppButton>
+					</CoreAppTooltip>
 				</div>
 
 				<div v-if="selectedLogTypeValue">
-					<UTooltip :text="$t('download')">
-						<UButton :icon="icons.download" variant="ghost" color="neutral" size="sm"
+					<CoreAppTooltip :text="$t('download')">
+						<CoreAppButton :icon="icons.download" variant="ghost" color="neutral" size="sm"
 							:disabled="filteredLogContent.length === 0" @click="downloadLog" />
-					</UTooltip>
+					</CoreAppTooltip>
 				</div>
 
 				<div v-if="selectedLogTypeValue">
-					<UTooltip :text="$t('refresh')">
-						<UButton :icon="icons.refresh" variant="ghost" color="neutral" size="sm" :loading="loading"
-							@click="fetchLog" />
-					</UTooltip>
+					<CoreAppTooltip :text="$t('refresh')">
+						<CoreAppButton :icon="icons.refresh" variant="ghost" color="neutral" size="sm"
+							:loading="loading" @click="fetchLog" />
+					</CoreAppTooltip>
 				</div>
 			</div>
 		</template>
 
 		<div class="flex flex-col h-full gap-2 min-h-0">
-			<div v-if="logContent.length > 0 && hasMarker"
-				class="flex items-center gap-6 text-xs text-muted shrink-0 px-3">
-				<span class="flex items-center gap-1 text-opsi-blue font-medium">
-					<UIcon :name="icons.bookmark" class="w-3 h-3" />
+			<div v-if="logContent.length > 0 && hasMarker" class="flex items-center text-xs text-muted shrink-0 px-3">
+				<CoreAppButton :icon="icons.bookmark" variant="soft" color="neutral" size="sm"
+					:title="String($t('scrollToMarker'))" @click="scrollToMarker">
 					{{ $t('marker') }}: {{ markerLine + 1 }}
-				</span>
+				</CoreAppButton>
+				<CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="sm"
+					:title="String($t('clearMarker'))" @click="clearMarker" />
 			</div>
 
-			<SharedAlertInline v-if="logUpdatePending" color="info" :title="$t('opsiMessageBus')"
+
+			<CoreAppAlertInline v-if="logUpdatePending" color="info" :title="$t('opsiMessageBus')"
 				:description="$t('opsiMessageBus.log_updated')" class="shrink-0">
 				<template #actions>
-					<UButton size="xs" color="primary" @click="dismissAndFetch">{{ $t('button.reload') }}</UButton>
-					<UButton size="xs" variant="ghost" color="neutral" @click="logUpdatePending = false">{{
+					<CoreAppButton size="xs" color="primary" @click="dismissAndFetch">{{ $t('button.reload') }}
+					</CoreAppButton>
+					<CoreAppButton size="xs" variant="ghost" color="neutral" @click="logUpdatePending = false">{{
 						$t('dismiss') }}
-					</UButton>
+					</CoreAppButton>
 				</template>
-			</SharedAlertInline>
+			</CoreAppAlertInline>
 
 			<div class="flex-1 min-h-0 overflow-hidden">
-				<div v-if="!resolvedClientId"
-					class="flex flex-col items-center justify-center h-full text-center bg-[--color-surface] rounded-xl">
-					<UIcon :name="icons.log" class="w-12 h-12 mb-3 opacity-40 text-muted" />
-					<p class="text-muted text-sm">{{ $t('selectClientToViewLogs') }}</p>
+				<div v-if="!resolvedClientId" class="h-full bg-(--color-background) rounded-xl">
+					<CoreAppEmptyState :icon="icons.log" :message="String($t('selectClientToViewLogs'))" />
 				</div>
-				<div v-else-if="!selectedLogTypeValue"
-					class="flex flex-col items-center justify-center h-full gap-3 text-center bg-[--color-surface] rounded-xl">
-					<UIcon :name="icons.log" class="w-12 h-12 opacity-40 text-muted" />
-					<p class="text-sm text-muted">{{ $t('selectLogTypeToView') }}</p>
+				<div v-else-if="!selectedLogTypeValue" class="h-full bg-(--color-background) rounded-xl">
+					<CoreAppEmptyState :icon="icons.log" :message="String($t('selectLogTypeToView'))" />
 				</div>
 				<div v-else-if="loading && logContent.length === 0"
 					class="flex items-center justify-center h-full gap-2 text-muted">
-					<SharedLoadingSpinner />
+					<CoreAppLoadingSpinner />
 				</div>
-				<SharedAlertInline v-else-if="error" color="error" :title="String($t('error'))" :description="error"
+				<CoreAppAlertInline v-else-if="error" color="error" :title="String($t('error'))" :description="error"
 					class="m-3" close @close="error = null" />
-				<div v-else-if="logContent.length === 0"
-					class="flex flex-col items-center justify-center h-full gap-3 text-center bg-[--color-surface] rounded-xl">
-					<UIcon :name="icons.log" class="w-12 h-12 opacity-40 text-muted" />
-					<p class="text-sm text-muted">{{ $t('noLogsFound') }}</p>
+				<div v-else-if="logContent.length === 0" class="h-full bg-(--color-background) rounded-xl">
+					<CoreAppEmptyState :icon="icons.log" :message="String($t('noLogsFound'))" />
 				</div>
 				<div v-else ref="logContainerRef"
-					class="h-full overflow-auto log-viewer bg-[--color-surface] rounded-xl font-mono text-xs">
-					<div v-for="(line, idx) in filteredLogContent" :id="'logrow-' + idx" :key="idx"
-						:class="[getLogRowClass(line, idx), 'flex items-start hover:bg-[--color-surface-hover] cursor-pointer transition-colors group']"
+					class="h-full overflow-auto log-viewer bg-(--color-background) rounded-xl font-mono text-xs">
+					<div v-for="(line, idx) in filteredLogContent" :id="'logrow-' + idx" :key="idx" v-clickable
+						:class="[getLogRowClass(line, idx), 'flex items-start hover:bg-(--color-surface-hover) cursor-pointer transition-colors group']"
 						@click="setMarker(idx)">
 						<span
-							class="w-12 shrink-0 px-2 py-1.5 text-right text-[--color-text-muted] border-r border-[--color-border] select-none sticky left-0 bg-inherit">
+							class="w-12 shrink-0 px-2 py-1.5 text-right text-(--color-text-muted) border-r border-(--color-border) select-none sticky left-0 bg-inherit">
 							{{ idx + 1 }}
 						</span>
 						<span class="w-5 shrink-0 flex items-center justify-center py-1.5">
-							<UIcon v-if="markerLine === idx" :name="icons.bookmark" class="w-3 h-3 text-opsi-blue" />
+							<CoreAppIcon v-if="markerLine === idx" :name="icons.bookmark"
+								class="w-3 h-3 text-opsi-blue" />
 						</span>
 						<code class="flex-1 px-2 py-1.5 whitespace-pre-wrap break-all leading-relaxed min-h-6">{{ line
 						}}</code>
@@ -132,7 +128,6 @@ Can be used both in standalone pages and detail panels.
 </template>
 
 <script setup lang="ts">
-import { useUiStore } from '~/stores/uiStore'
 import { useMessageBusStore } from '~/stores/messageBusStore'
 
 export interface ClientsLogsRef {
@@ -160,8 +155,9 @@ const emit = defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 const { getClientLogs } = useApiHelpers()
-const uiStore = useUiStore()
 const mbStore = useMessageBusStore()
 
 interface LogType {
@@ -183,28 +179,16 @@ const LOG_LEVEL_LABELS: Record<number, string> = {
 	7: 'debug', 8: 'trace', 9: 'secret'
 }
 
-const LOG_COLORS_LIGHT = [
-	'text-opsi-log-light-essential',
-	'text-opsi-log-light-critical',
-	'text-opsi-log-light-error',
-	'text-opsi-log-light-warning',
-	'text-opsi-log-light-notice',
-	'text-opsi-log-light-info',
-	'text-opsi-log-light-debug',
-	'text-opsi-log-light-trace',
-	'text-opsi-log-light-secret',
-]
-
-const LOG_COLORS_DARK = [
-	'text-opsi-log-dark-essential',
-	'text-opsi-log-dark-critical',
-	'text-opsi-log-dark-error',
-	'text-opsi-log-dark-warning',
-	'text-opsi-log-dark-notice',
-	'text-opsi-log-dark-info',
-	'text-opsi-log-dark-debug',
-	'text-opsi-log-dark-trace',
-	'text-opsi-log-dark-secret',
+const LOG_COLORS = [
+	'text-opsi-log-essential',
+	'text-opsi-log-critical',
+	'text-opsi-log-error',
+	'text-opsi-log-warning',
+	'text-opsi-log-notice',
+	'text-opsi-log-info',
+	'text-opsi-log-debug',
+	'text-opsi-log-trace',
+	'text-opsi-log-secret',
 ]
 
 const clientSelectorModel = ref<string>(props.clientId || '')
@@ -240,7 +224,6 @@ const markerLine = ref(-1)
 const logUpdatePending = ref(false)
 
 const logContainerRef = ref<HTMLElement | null>(null)
-const isDarkMode = computed(() => uiStore.theme === 'dark')
 const hasMarker = computed(() => markerLine.value >= 0)
 
 const filteredLogContent = computed(() => {
@@ -265,9 +248,8 @@ function getLogRowClass(line: string, idx: number): string {
 	const level = getLogLevel(line)
 
 	// Arrays are 0-based while log levels are 1-based. Clamp level to available range.
-	const maxLevels = Math.max(LOG_COLORS_LIGHT.length, LOG_COLORS_DARK.length)
-	const safeLevel = Math.min(Math.max(level, 1), maxLevels)
-	const colorClass = isDarkMode.value ? LOG_COLORS_DARK[safeLevel - 1] : LOG_COLORS_LIGHT[safeLevel - 1]
+	const safeLevel = Math.min(Math.max(level, 1), LOG_COLORS.length)
+	const colorClass = LOG_COLORS[safeLevel - 1]
 	if (colorClass) classes.push(colorClass)
 	if (markerLine.value === idx) classes.push('log-row-marker')
 
@@ -401,7 +383,30 @@ const { mount: mbMount } = useMessageBus(undefined, false, ['event:log_updated']
 
 onMounted(() => {
 	mbMount()
+
+	// Restore log type and level from URL when not in panel mode
+	if (!props.panelMode) {
+		const qLogType = route.query.logType as string | undefined
+		const qLogLevel = route.query.logLevel as string | undefined
+		if (qLogType && LOG_TYPES.some(t => t.value === qLogType)) {
+			selectedLogTypeValue.value = qLogType
+		}
+		if (qLogLevel) {
+			const parsed = parseInt(qLogLevel, 10)
+			if (parsed >= 1 && parsed <= 9) logLevel.value = parsed
+		}
+	}
 })
+
+// Sync log type and level to URL when not in panel mode
+if (!props.panelMode) {
+	watch(selectedLogTypeValue, (v) => {
+		if (v) router.replace({ query: { ...route.query as Record<string, string>, logType: v } })
+	})
+	watch(logLevel, (v) => {
+		router.replace({ query: { ...route.query as Record<string, string>, logLevel: String(v) } })
+	})
+}
 
 onUnmounted(() => {
 	if (autoRefreshInterval) clearInterval(autoRefreshInterval)

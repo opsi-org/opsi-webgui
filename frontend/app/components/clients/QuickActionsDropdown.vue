@@ -1,57 +1,69 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ClientsQuickActionsDropdown - Bulk action dropdown for selected clients (on-demand, reboot, etc).
+-->
 <template>
 	<div class="relative">
 		<!-- Inline mode: just a dropdown trigger icon (for row actions) -->
 		<template v-if="inline">
-			<UDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
-				<UButton :icon="icons.moreVertical" variant="ghost" color="neutral" size="xs" :loading="loading"
+			<CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
+				<CoreAppButton :icon="icons.moreVertical" variant="ghost" color="neutral" size="xs" :loading="loading"
 					:disabled="loading" :title="String(t('clientActions'))" />
-			</UDropdownMenu>
+			</CoreAppDropdownMenu>
 		</template>
 		<!-- Standard mode: button with badge -->
 		<template v-else>
-			<UDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
-				<UTooltip v-if="compact" :text="t('clientActions')">
-					<UButton variant="soft" color="primary" size="sm">
-						<UIcon :name="icons.client" class="w-4 h-4" />
-						<UBadge size="xs" color="primary" class="ml-0.5">{{ clientIds.length }}</UBadge>
-					</UButton>
-				</UTooltip>
-				<UButton v-else variant="soft" color="primary" size="sm" class="w-full">
-					<UIcon :name="icons.client" class="w-4 h-4" />
+			<CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
+				<CoreAppTooltip v-if="compact" :text="t('clientActions')">
+					<CoreAppButton variant="soft" color="primary" size="sm" :aria-label="String(t('clientActions'))">
+						<CoreAppIcon :name="icons.client" class="w-4 h-4" />
+						<CoreAppBadge size="xs" color="primary" class="ml-0.5">{{ clientIds.length }}</CoreAppBadge>
+					</CoreAppButton>
+				</CoreAppTooltip>
+				<CoreAppButton v-else variant="soft" color="primary" size="sm" class="w-full">
+					<CoreAppIcon :name="icons.client" class="w-4 h-4" />
 					<span>{{ t('clientActions') }}</span>
-					<UBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</UBadge>
-					<UIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
-				</UButton>
-			</UDropdownMenu>
-			<UTooltip v-else-if="compact" :text="t('clientActions')">
-				<UButton variant="ghost" color="neutral" size="sm" class="opacity-70 hover:opacity-100"
-					@click="showSelectionHint">
-					<UIcon :name="icons.client" class="w-4 h-4" />
-				</UButton>
-			</UTooltip>
-			<UButton v-else variant="ghost" color="neutral" size="sm" class="w-full opacity-70 hover:opacity-100"
+					<CoreAppBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</CoreAppBadge>
+					<CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
+				</CoreAppButton>
+			</CoreAppDropdownMenu>
+			<CoreAppTooltip v-else-if="compact" :text="t('clientActions')">
+				<CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-70 hover:opacity-100"
+					:aria-label="String(t('clientActions'))" @click="showSelectionHint">
+					<CoreAppIcon :name="icons.client" class="w-4 h-4" />
+				</CoreAppButton>
+			</CoreAppTooltip>
+			<CoreAppButton v-else variant="ghost" color="neutral" size="sm" class="w-full opacity-70 hover:opacity-100"
 				@click="showSelectionHint">
-				<UIcon :name="icons.client" class="w-4 h-4" />
+				<CoreAppIcon :name="icons.client" class="w-4 h-4" />
 				<span>{{ t('clientActions') }}</span>
-				<UIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
-			</UButton>
+				<CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
+			</CoreAppButton>
 		</template>
 	</div>
 
-	<UModal v-model:open="confirmOpen" :dismissible="true">
+	<CoreAppModal v-model:open="confirmOpen" :dismissible="true">
 		<template #content>
 			<div class="p-4 min-w-87.5" @click.stop>
 				<div class="flex items-center justify-between mb-3">
-					<h3 class="text-sm flex items-center gap-2 m-0">
-						<UIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
+					<h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
+						<CoreAppIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
 						{{ t(currentAction) }}
-						<span v-if="clientIds.length === 1" class="text-(--color-text-muted) font-normal truncate max-w-48">{{ clientIds[0] }}</span>
-						<span v-else-if="clientIds.length > 1" class="text-(--color-text-muted) font-normal">({{ clientIds.length }} {{ t('clients') }})</span>
+						<span v-if="clientIds.length === 1"
+							class="text-(--color-text-muted) font-normal normal-case truncate max-w-48">{{ clientIds[0]
+							}}</span>
+						<span v-else-if="clientIds.length > 1" class="text-(--color-text-muted) font-normal">({{
+							clientIds.length }} {{ t('clients') }})</span>
 					</h3>
-					<UButton :icon="icons.x" variant="ghost" color="neutral" @click="confirmOpen = false" />
+					<CoreAppButton :icon="icons.x" variant="ghost" color="neutral" @click="confirmOpen = false" />
 				</div>
 
-				<SharedAlertInline v-if="statusMessage && statusMessage.type === 'error'" color="error"
+				<CoreAppAlertInline v-if="statusMessage && statusMessage.type === 'error'" color="error"
 					:title="t('error')" :description="statusMessage.message" variant="subtle" class="mb-3" closable
 					@close="statusMessage = null" />
 
@@ -62,25 +74,25 @@
 				</div>
 
 				<div v-if="currentAction === 'notify'" class="mb-4">
-					<UTextarea v-model="notifyText" :placeholder="t('enterNotificationText')" :rows="3"
+					<CoreAppTextarea v-model="notifyText" :placeholder="t('enterNotificationText')" :rows="3"
 						class="w-full" />
 				</div>
 
 				<div v-if="currentAction === 'reboot'"
-					class="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800">
+					class="mb-4 p-3 bg-(--color-warning-soft-bg) rounded border border-(--color-warning)/30">
 					<div class="flex items-start gap-2">
-						<UIcon :name="icons.warning" class="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5" />
-						<p class="text-sm text-amber-800 dark:text-amber-200">
+						<CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-warning-soft-text) mt-0.5" />
+						<p class="text-sm text-(--color-warning-soft-text)">
 							{{ t('rebootWarning') }}
 						</p>
 					</div>
 				</div>
 
 				<div v-if="currentAction === 'shutdown'"
-					class="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800">
+					class="mb-4 p-3 bg-(--color-warning-soft-bg) rounded border border-(--color-warning)/30">
 					<div class="flex items-start gap-2">
-						<UIcon :name="icons.warning" class="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5" />
-						<p class="text-sm text-amber-800 dark:text-amber-200">
+						<CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-warning-soft-text) mt-0.5" />
+						<p class="text-sm text-(--color-warning-soft-text)">
 							{{ t('shutdownWarning') }}
 						</p>
 					</div>
@@ -88,22 +100,23 @@
 
 				<div v-if="currentAction === 'deployClientAgent'" class="space-y-3 mb-4">
 					<div class="grid grid-cols-3 gap-2 mb-3">
-						<UButton v-for="os in osTypes" :key="os.value"
+						<CoreAppButton v-for="os in osTypes" :key="os.value"
 							:variant="deployOptions.type === os.value ? 'solid' : 'outline'"
 							:color="deployOptions.type === os.value ? 'primary' : 'neutral'" size="sm"
 							class="justify-center" @click="deployOptions.type = os.value">
-							<UIcon :name="os.icon" class="w-4 h-4 mr-1" />
+							<CoreAppIcon :name="os.icon" class="w-4 h-4 mr-1" />
 							{{ os.label }}
-						</UButton>
+						</CoreAppButton>
 					</div>
 					<div>
 						<label class="block text-xs text-[--color-text-muted] mb-1">{{ t('username') }}</label>
-						<UInput v-model="deployOptions.username" :placeholder="t('adminUsername')" size="sm" />
+						<CoreAppInput v-model="deployOptions.username" :placeholder="t('adminUsername')" size="sm"
+							class="w-full" />
 					</div>
 					<div>
 						<label class="block text-xs text-[--color-text-muted] mb-1">{{ t('password') }}</label>
-						<UInput v-model="deployOptions.password" type="password" :placeholder="t('enterPassword')"
-							size="sm" />
+						<CoreAppInput v-model="deployOptions.password" type="password" :placeholder="t('enterPassword')"
+							size="sm" class="w-full" />
 					</div>
 				</div>
 
@@ -111,28 +124,28 @@
 					<p class="text-sm text-(--color-text-muted) mb-1">
 						{{ t('renameClientDescription') }}
 					</p>
-					<UFormField :label="t('newHostId')">
+					<CoreAppFormField :label="t('newHostId')">
 						<div class="flex gap-1 items-center">
-							<UInput v-model="renameHostname" :placeholder="String(t('enterHostname'))" class="flex-1"
-								:color="renameValidation.color as any" />
+							<CoreAppInput v-model="renameHostname" :placeholder="String(t('enterHostname'))"
+								class="flex-1" :color="renameValidation.color as any" />
 							<span class="text-sm text-(--color-text-muted)">.</span>
-							<UInput v-model="renameDomain" :placeholder="String(t('domain'))" class="flex-1" />
+							<CoreAppInput v-model="renameDomain" :placeholder="String(t('domain'))" class="flex-1" />
 						</div>
 						<p v-if="renameValidation.message" class="text-xs mt-1" :class="renameValidation.textClass">
 							{{ renameValidation.message }}
 						</p>
-					</UFormField>
+					</CoreAppFormField>
 				</div>
 
 				<div v-if="currentAction === 'delete'"
-					class="mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-200 dark:border-red-800">
+					class="mb-4 p-3 bg-(--color-error-soft-bg) rounded border border-(--color-error)/30">
 					<div class="flex items-start gap-2">
-						<UIcon :name="icons.warning" class="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5" />
+						<CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-error-soft-text) mt-0.5" />
 						<div>
-							<p class="text-sm text-red-800 dark:text-red-200 font-medium">
+							<p class="text-sm text-(--color-error-soft-text) font-medium">
 								{{ t('deleteWarning') }}
 							</p>
-							<p class="text-sm text-red-700 dark:text-red-300 mt-1">
+							<p class="text-sm text-(--color-error-soft-text) mt-1">
 								{{ t('deleteClientsDescription') }}
 							</p>
 						</div>
@@ -140,56 +153,57 @@
 				</div>
 
 				<div class="flex justify-end gap-2 pt-3 border-[--color-border]">
-					<UButton variant="ghost" color="neutral" @click="confirmOpen = false">{{ t('cancel') }}</UButton>
-					<UButton :color="currentAction === 'delete' ? 'error' : 'primary'" :loading="loading"
+					<CoreAppButton variant="ghost" color="neutral" @click="confirmOpen = false">{{ t('cancel') }}
+					</CoreAppButton>
+					<CoreAppButton :color="currentAction === 'delete' ? 'error' : 'primary'" :loading="loading"
 						:disabled="isReadOnly || !canExecute" @click="executeAction">
 						{{ t(currentAction || 'confirm') }}
-					</UButton>
+					</CoreAppButton>
 				</div>
 			</div>
 		</template>
-	</UModal>
+	</CoreAppModal>
 
-	<UModal v-model:open="resultOpen" :dismissible="true">
+	<CoreAppModal v-model:open="resultOpen" :dismissible="true">
 		<template #content>
 			<div class="p-4 min-w-87.5">
 				<div class="flex items-center justify-between mb-3">
-					<h3 class="text-sm flex items-center gap-2 m-0">
-						<UIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
+					<h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
+						<CoreAppIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
 						{{ t('actionResults') }}
 					</h3>
-					<UButton :icon="icons.x" variant="ghost" color="neutral" @click="resultOpen = false" />
+					<CoreAppButton :icon="icons.x" variant="ghost" color="neutral" @click="resultOpen = false" />
 				</div>
 
 				<div class="max-h-80 overflow-y-auto space-y-1.5">
 					<div v-for="(result, clientId) in actionResults" :key="clientId"
 						class="p-3 rounded-lg border text-sm"
-						:class="result.success ? 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800'">
+						:class="result.success ? 'bg-(--color-success-soft-bg) border-(--color-success)/30' : 'bg-(--color-error-soft-bg) border-(--color-error)/30'">
 						<div class="flex items-center justify-between gap-2">
 							<div class="flex items-center gap-2 min-w-0">
-								<UIcon :name="result.success ? icons.checkCircle : icons.xCircle"
+								<CoreAppIcon :name="result.success ? icons.checkCircle : icons.xCircle"
 									class="w-4 h-4 shrink-0"
-									:class="result.success ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'" />
+									:class="result.success ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'" />
 								<span class="font-medium truncate">{{ clientId }}</span>
 							</div>
-							<UBadge :color="result.success ? 'success' : 'error'" size="xs" variant="subtle">
+							<CoreAppBadge :color="result.success ? 'success' : 'error'" size="xs" variant="subtle">
 								{{ result.success ? t('success') : t('failed') }}
-							</UBadge>
+							</CoreAppBadge>
 						</div>
-						<div v-if="result.message"
-							class="mt-1.5 pl-6 text-sm wrap-break-word"
-							:class="result.success ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
+						<div v-if="result.message" class="mt-1.5 pl-6 text-sm wrap-break-word"
+							:class="result.success ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'">
 							{{ result.message }}
 						</div>
 					</div>
 				</div>
 
 				<div class="flex justify-end mt-4 pt-3 border-t border-[--color-border]">
-					<UButton variant="soft" @click="resultOpen = false">{{ t('close') }}</UButton>
+					<CoreAppButton variant="ghost" color="neutral" @click="resultOpen = false">{{ t('close') }}
+					</CoreAppButton>
 				</div>
 			</div>
 		</template>
-	</UModal>
+	</CoreAppModal>
 </template>
 
 <script setup lang="ts">
@@ -240,13 +254,13 @@ function showSelectionHint() {
 }
 
 const allActions = [
-	{ key: 'onDemand', icon: icons.onDemand, color: 'text-blue-600 dark:text-blue-400' },
-	{ key: 'notify', icon: icons.notify, color: 'text-blue-600 dark:text-blue-400' },
-	{ key: 'reboot', icon: icons.reboot, color: 'text-amber-600 dark:text-amber-400' },
-	{ key: 'shutdown', icon: icons.shutdown, color: 'text-amber-600 dark:text-amber-400' },
-	{ key: 'deployClientAgent', icon: icons.deploy, color: 'text-green-600 dark:text-green-400' },
-	{ key: 'rename', icon: icons.pencilSquare, color: 'text-blue-600 dark:text-blue-400' },
-	{ key: 'delete', icon: icons.delete, color: 'text-red-600 dark:text-red-400' },
+	{ key: 'onDemand', icon: icons.onDemand, color: 'text-(--color-info-soft-text)' },
+	{ key: 'notify', icon: icons.notify, color: 'text-(--color-info-soft-text)' },
+	{ key: 'reboot', icon: icons.reboot, color: 'text-(--color-warning-soft-text)' },
+	{ key: 'shutdown', icon: icons.shutdown, color: 'text-(--color-warning-soft-text)' },
+	{ key: 'deployClientAgent', icon: icons.deploy, color: 'text-(--color-success-soft-text)' },
+	{ key: 'rename', icon: icons.pencilSquare, color: 'text-(--color-info-soft-text)' },
+	{ key: 'delete', icon: icons.delete, color: 'text-(--color-error-soft-text)' },
 ] as const
 
 const actions = computed(() =>
@@ -256,9 +270,9 @@ const actions = computed(() =>
 const renameValidation = computed(() => {
 	const hostname = renameHostname.value.trim()
 	if (!hostname) return { color: undefined, message: '', textClass: '' }
-	if (/^\d/.test(hostname)) return { color: 'error', message: String(t('hostnameRequired')), textClass: 'text-red-500' }
+	if (/^\d/.test(hostname)) return { color: 'error', message: String(t('hostnameRequired')), textClass: 'text-(--color-error)' }
 	const newId = hostname + '.' + renameDomain.value.trim()
-	if (props.clientIds.length === 1 && newId === props.clientIds[0]) return { color: 'error', message: String(t('clientAlreadyExists')), textClass: 'text-red-500' }
+	if (props.clientIds.length === 1 && newId === props.clientIds[0]) return { color: 'error', message: String(t('clientAlreadyExists')), textClass: 'text-(--color-error)' }
 	return { color: undefined, message: '', textClass: '' }
 })
 

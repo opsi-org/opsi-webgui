@@ -1,23 +1,28 @@
-SupportWhatsNew - Displays changelog.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  SupportWhatsNew - Release notes display.
+-->
 <template>
-	<UCard>
+	<CoreAppCard class="h-full flex flex-col">
 		<template #header>
-			<div class="flex items-center gap-2">
-				<UIcon :name="icons.whatsNew" class="w-5 h-5" />
-				<span class="font-medium">{{ $t('whatsNew') }}</span>
-			</div>
+			<CoreAppHeading :icon="icons.whatsNew" :text="$t('whatsNew')" />
 		</template>
 
 		<div v-if="loading" class="flex justify-center py-4">
-			<SharedLoadingSpinner />
+			<CoreAppLoadingSpinner />
 		</div>
 
 		<div v-else-if="error" class="text-sm text-[--color-text-muted]">
 			{{ $t('changelogNotAvailable') }}
 		</div>
-		<div v-else class="space-y-2 max-h-100 overflow-y-auto">
+		<div v-else class="space-y-2 flex-1 overflow-y-auto">
 			<div v-for="(item, idx) in items" :key="idx" class="changelog-item flex items-start gap-2 text-sm pb-2">
-				<UIcon :name="icons.minus" class="h-5 w-2" />
+				<CoreAppIcon :name="icons.minus" class="h-5 w-2" />
 				<span>{{ item.text }}</span>
 			</div>
 		</div>
@@ -27,7 +32,7 @@ SupportWhatsNew - Displays changelog.
 				{{ $t('version') }}: {{ version }}
 			</div>
 		</template>
-	</UCard>
+	</CoreAppCard>
 </template>
 
 <script setup lang="ts">
