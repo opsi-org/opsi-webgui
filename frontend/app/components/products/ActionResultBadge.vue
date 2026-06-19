@@ -1,32 +1,30 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ProductsActionResultBadge - Badge showing product action result status.
+-->
 <template>
 	<div class="flex justify-center">
-		<SharedTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
-			<UBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help">
-				<UIcon :name="icons.unequal" class="w-3 h-3" />
-				<span>{{ $t('mixed') }}</span>
-			</UBadge>
-		</SharedTooltipTable>
+		<CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
+			<CoreAppStatusBadge status="warning" :icon="icons.unequal" :label="$t('mixed')" />
+		</CoreAppTooltipTable>
 
 		<template v-else-if="normalizedResult === 'successful'">
-			<UBadge color="success" variant="subtle" size="xs" class="gap-1">
-				<UIcon :name="icons.checkCircle" class="w-3 h-3" />
-				<span>{{ $t('successful') }}</span>
-			</UBadge>
+			<CoreAppStatusBadge status="success" :icon="icons.checkCircle" :label="$t('successful')" />
 		</template>
 
 		<template v-else-if="normalizedResult === 'failed'">
-			<UBadge color="error" variant="subtle" size="xs" class="gap-1">
-				<UIcon :name="icons.xCircle" class="w-3 h-3" />
-				<span>{{ $t('failed') }}</span>
-			</UBadge>
+			<CoreAppStatusBadge status="error" :icon="icons.xCircle" :label="$t('failed')" />
 		</template>
 
 		<span v-else-if="normalizedResult === 'none' || !normalizedResult"
 			class="text-(--color-text-muted) text-xs">-</span>
 
-		<UBadge v-else color="neutral" variant="subtle" size="xs">
-			{{ result }}
-		</UBadge>
+		<CoreAppStatusBadge v-else :label="result" />
 	</div>
 </template>
 

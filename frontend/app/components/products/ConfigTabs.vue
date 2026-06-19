@@ -1,13 +1,23 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ProductsConfigTabs - Tabbed product configuration with properties and dependencies.
+-->
 <template>
-	<div
-		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
-		<SharedAlertInline v-if="statusMessage" :color="statusMessage.type"
+	<div :class="['flex flex-col', panelMode ? '' : 'h-full min-h-0']">
+		<CoreAppAlertInline v-if="statusMessage" :color="statusMessage.type"
 			:title="statusMessage.type === 'success' ? $t('success') : $t('error')" :description="statusMessage.message"
 			variant="subtle" class="mb-2 shrink-0" closable @close="statusMessage = null" />
 
-		<div class="flex items-center justify-between gap-2 mb-3 shrink-0">
-			<SharedTabsNav v-model="activeTab" :tabs="tabDefs" />
-			<SharedFilterInput v-model="filterQuery" size="xs" />
+		<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-surface) mb-3">
+			<div class="flex items-center justify-between gap-2">
+				<CoreAppTabsNav v-model="activeTab" :tabs="tabDefs" />
+				<CoreAppFilterInput v-model="filterQuery" size="xs" />
+			</div>
 		</div>
 
 		<div v-show="activeTab === 'properties'"

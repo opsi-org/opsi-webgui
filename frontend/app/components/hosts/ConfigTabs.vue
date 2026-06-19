@@ -1,39 +1,48 @@
-HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  HostsConfigTabs - Tabbed host configuration editor with panel and standalone mode.
+-->
 <template>
-	<SharedNavigationGuardModal v-if="showHostSelector || !panelMode" v-model="showLeaveWarning" @cancel="cancelLeave"
+	<CoreAppNavigationGuardModal v-if="showHostSelector || !panelMode" v-model="showLeaveWarning" @cancel="cancelLeave"
 		@confirm="confirmLeave" />
 
 	<!-- Create Config Modal -->
-	<UModal v-model:open="showCreateConfigModal">
+	<CoreAppModal v-model:open="showCreateConfigModal">
 		<template #content>
-			<UCard>
+			<CoreAppCard>
 				<template #header>
 					<div class="flex items-center gap-3">
-						<UIcon :name="icons.add" class="w-5 h-5" />
-						<h3 class="text-sm text-(--color-text) m-0">{{ $t('createConfig') }}</h3>
+						<CoreAppIcon :name="icons.add" class="w-5 h-5" />
+						<h3 class="text-sm font-heading uppercase tracking-wide text-(--color-text) m-0">{{
+							$t('createConfig') }}</h3>
 					</div>
 				</template>
 				<div class="space-y-4">
 					<div>
 						<label class="block text-sm font-medium mb-1">{{ $t('configId') }} *</label>
-						<UInput v-model="newConfig.configId" :placeholder="'e.g. category.subcategory.name'"
+						<CoreAppInput v-model="newConfig.configId" :placeholder="'e.g. category.subcategory.name'"
 							size="sm" />
 					</div>
 					<div>
 						<label class="block text-sm font-medium mb-1">{{ $t('description') }}</label>
-						<UInput v-model="newConfig.description" size="sm" />
+						<CoreAppInput v-model="newConfig.description" size="sm" />
 					</div>
 					<div>
 						<label class="block text-sm font-medium mb-1">{{ $t('type') }}</label>
-						<USelect v-model="newConfig.type" :items="configTypeOptions" size="sm" />
+						<CoreAppSelect v-model="newConfig.type" :items="configTypeOptions" size="sm" />
 					</div>
 					<div class="flex items-center gap-4">
 						<label class="flex items-center gap-2 text-sm">
-							<UCheckbox v-model="newConfig.multiValue" size="sm" />
+							<CoreAppCheckbox v-model="newConfig.multiValue" size="sm" />
 							{{ $t('multiValue') }}
 						</label>
 						<label class="flex items-center gap-2 text-sm">
-							<UCheckbox v-model="newConfig.editable" size="sm" />
+							<CoreAppCheckbox v-model="newConfig.editable" size="sm" />
 							{{ $t('editable') }}
 						</label>
 					</div>
@@ -41,18 +50,19 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 						<label class="block text-sm font-medium mb-1">{{ $t('possibleValues') }}</label>
 						<div v-if="newConfig.possibleValues.length > 0" class="flex flex-wrap gap-1 mb-1">
 							<span v-for="(val, idx) in newConfig.possibleValues" :key="idx"
-								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20">
+								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20">
 								{{ val }}
-								<button type="button" class="hover:text-red-500 transition-colors"
+								<CoreAppButton type="button" variant="ghost" color="neutral" size="xs"
+									class="p-0! hover:text-(--color-error-soft-text) transition-colors"
 									@click="newConfig.possibleValues.splice(idx, 1)">
-									<UIcon :name="icons.x" class="w-3 h-3" />
-								</button>
+									<CoreAppIcon :name="icons.x" class="w-3 h-3" />
+								</CoreAppButton>
 							</span>
 						</div>
 						<div class="flex gap-1">
-							<UInput v-model="newPossibleValue" :placeholder="$t('pressEnterToAdd')" size="sm"
+							<CoreAppInput v-model="newPossibleValue" :placeholder="$t('pressEnterToAdd')" size="sm"
 								class="flex-1" @keydown.enter.prevent="addPossibleValue" />
-							<UButton size="sm" variant="soft" color="neutral" :icon="icons.add"
+							<CoreAppButton size="sm" variant="soft" color="neutral" :icon="icons.add"
 								@click="addPossibleValue" />
 						</div>
 					</div>
@@ -60,103 +70,97 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 						<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
 						<div v-if="newConfig.defaultValues.length > 0" class="flex flex-wrap gap-1 mb-1">
 							<span v-for="(val, idx) in newConfig.defaultValues" :key="idx"
-								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-(--color-primary) border border-primary/20">
+								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20">
 								{{ val }}
-								<button type="button" class="hover:text-red-500 transition-colors"
+								<CoreAppButton type="button" variant="ghost" color="neutral" size="xs"
+									class="p-0! hover:text-(--color-error-soft-text) transition-colors"
 									@click="newConfig.defaultValues.splice(idx, 1)">
-									<UIcon :name="icons.x" class="w-3 h-3" />
-								</button>
+									<CoreAppIcon :name="icons.x" class="w-3 h-3" />
+								</CoreAppButton>
 							</span>
 						</div>
 						<div class="flex gap-1">
-							<UInput v-model="newDefaultValue" :placeholder="$t('pressEnterToAdd')" size="sm"
+							<CoreAppInput v-model="newDefaultValue" :placeholder="$t('pressEnterToAdd')" size="sm"
 								class="flex-1" @keydown.enter.prevent="addDefaultValue" />
-							<UButton size="sm" variant="soft" color="neutral" :icon="icons.add"
+							<CoreAppButton size="sm" variant="soft" color="neutral" :icon="icons.add"
 								@click="addDefaultValue" />
 						</div>
 					</div>
 					<div v-if="newConfig.type === 'BoolConfig'">
 						<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
-						<USelect v-model="newConfig.boolDefault"
+						<CoreAppSelect v-model="newConfig.boolDefault"
 							:items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
 					</div>
-					<SharedAlertInline v-if="createConfigError" color="error" :title="$t('error')"
+					<CoreAppAlertInline v-if="createConfigError" color="error" :title="$t('error')"
 						:description="createConfigError" variant="subtle" closable @close="createConfigError = null" />
 				</div>
 				<template #footer>
 					<div class="flex gap-2 justify-end">
-						<UButton variant="outline" color="neutral" @click="resetCreateConfigModal">{{ $t('cancel') }}
-						</UButton>
-						<UButton color="primary" :loading="creatingConfig" :disabled="!newConfig.configId.trim()"
-							@click="handleCreateConfig">{{ $t('create') }}</UButton>
+						<CoreAppButton variant="ghost" color="neutral" @click="resetCreateConfigModal">{{ $t('cancel')
+						}}
+						</CoreAppButton>
+						<CoreAppButton color="primary" :loading="creatingConfig" :disabled="!newConfig.configId.trim()"
+							@click="handleCreateConfig">{{ $t('create') }}</CoreAppButton>
 					</div>
 				</template>
-			</UCard>
+			</CoreAppCard>
 		</template>
-	</UModal>
+	</CoreAppModal>
 
-	<div
-		:class="['flex flex-col bg-(--color-background) dark:bg-(--color-background-dark)', panelMode ? '' : 'h-full min-h-0']">
 
-		<div
-			class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-background) dark:bg-(--color-background-dark) border-b border-(--color-border) mb-3">
-			<div class="flex flex-wrap items-center justify-between gap-3">
-				<div class="flex items-center gap-2">
-					<SharedTabsNav v-model="activeTab" :tabs="tabDefs" />
-					<template v-if="showHostSelector">
-						<span class="h-5 w-px bg-(--color-border) mx-1" />
-						<slot name="hostSelector">
-							<HostsSelector v-model="hostSelectorModel" :type="hostType"
-								:placeholder="hostSelectorPlaceholder" allow-clear />
-						</slot>
-					</template>
-				</div>
-				<div class="flex flex-wrap items-center gap-2">
-					<SharedFilterInput v-model="paramSearch" size="sm" input-class="w-full sm:w-32 md:w-40" />
-					<UTooltip v-if="isServerDefaultMode && !readonly" :text="$t('createConfig')">
-						<UButton :icon="icons.add" color="primary" variant="soft" size="sm"
-							@click="showCreateConfigModal = true">
-							<span class="hidden sm:inline">{{ $t('createConfig') }}</span>
-						</UButton>
-					</UTooltip>
-					<SharedUnsavedChangesModal v-if="showUnsavedModal" :config-ref="unsavedChangesRef" size="sm"
-						@save-all="saveAll" @discard-all="discardAll" />
-					<UTooltip :text="$t('refresh')">
-						<UButton :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
-							:loading="loadingParams || loadingAttrs" @click="refresh" />
-					</UTooltip>
-				</div>
+
+	<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-surface) mb-3">
+		<div class="flex flex-wrap items-center justify-between gap-3">
+			<div class="flex items-center gap-2">
+				<CoreAppTabsNav v-model="activeTab" :tabs="tabDefs" />
+				<template v-if="showHostSelector">
+					<span class="h-5 w-px bg-(--color-border) mx-1" />
+					<slot name="hostSelector">
+						<HostsSelector v-model="hostSelectorModel" :type="hostType"
+							:placeholder="hostSelectorPlaceholder" allow-clear />
+					</slot>
+				</template>
+			</div>
+			<div class="flex flex-wrap items-center gap-2">
+				<CoreAppFilterInput v-model="paramSearch" size="sm" input-class="w-full sm:w-32 md:w-40" />
+				<CoreAppButton v-if="isServerDefaultMode && !readonly" :icon="icons.add" color="primary" variant="soft"
+					size="sm" :title="String($t('createConfig'))" @click="showCreateConfigModal = true">
+					<span class="hidden sm:inline">{{ $t('createConfig') }}</span>
+				</CoreAppButton>
+				<CoreAppUnsavedChangesModal v-if="showUnsavedModal" :config-ref="unsavedChangesRef" size="sm"
+					@save-all="saveAll" @discard-all="discardAll" />
+				<CoreAppButton :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
+					:loading="loadingParams || loadingAttrs" :title="String($t('refresh'))" @click="refresh" />
 			</div>
 		</div>
+	</div>
 
-		<div v-show="activeTab === 'parameters'"
-			:class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1 overflow-auto']">
-			<div v-if="loadingParams" class="py-8 flex justify-center">
-				<SharedLoadingSpinner size="md" />
-			</div>
-			<div v-else-if="categoryAwareTree.length === 0" class="py-8 text-center text-sm text-muted">
-				<UIcon :name="icons.config" class="w-10 h-10 mx-auto mb-2 opacity-40" />
-				<p>{{ (hostId || hostType === 'server') ? $t('noParametersFound') : $t('selectHostFirst') }}</p>
-			</div>
+	<div v-show="activeTab === 'parameters'"
+		:class="['flex flex-col min-h-0 flex-1 overflow-auto bg-(--color-surface) px-3 pb-3']">
+		<div v-if="loadingParams" class="py-8 flex justify-center">
+			<CoreAppLoadingSpinner size="md" />
+		</div>
+		<CoreAppEmptyState v-else-if="categoryAwareTree.length === 0" :icon="icons.config"
+			:message="(hostId || hostType === 'server') ? String($t('noParametersFound')) : String($t('selectHostFirst'))" />
+		<CoreAppCard v-else :ui="{ body: 'p-3 sm:p-3' }">
 			<HostsParametersTreeForm :tree="categoryAwareTree" :changed-params="changedParams" :readonly="readonly"
 				:current-value="currentValue" :set-param="setParam" :discard-single-param="discardSingleParam"
 				:icons="icons" :fmt-val="fmtVal" :auto-open-all="!!paramSearch" />
-		</div>
+		</CoreAppCard>
+	</div>
 
-		<div v-show="activeTab === 'attributes'"
-			:class="['flex flex-col', panelMode ? '' : 'min-h-0 flex-1 overflow-auto']">
-			<div v-if="loadingAttrs" class="py-8 flex justify-center">
-				<SharedLoadingSpinner size="md" />
-			</div>
-			<div v-else-if="!hostId" class="py-8 text-center text-sm text-muted">
-				<UIcon :name="icons.config" class="w-10 h-10 mx-auto mb-2 opacity-40" />
-				<p>{{ $t('selectHostFirst') }}</p>
-			</div>
+	<div v-show="activeTab === 'attributes'"
+		:class="['flex flex-col min-h-0 flex-1 overflow-auto bg-(--color-surface) px-3 pb-3']">
+		<div v-if="loadingAttrs" class="py-8 flex justify-center">
+			<CoreAppLoadingSpinner size="md" />
+		</div>
+		<CoreAppEmptyState v-else-if="!hostId" :icon="icons.config" :message="String($t('selectHostFirst'))" />
+		<CoreAppCard v-else-if="filteredReadonlyAttrKeys.length || filteredEditableAttrKeys.length">
 			<div v-if="filteredReadonlyAttrKeys.length"
-				class="mb-6 border-b border-(--color-border) dark:border-(--color-border)">
+				:class="['border-b border-(--color-border) pb-3', filteredEditableAttrKeys.length ? 'mb-3' : '']">
 				<div v-for="key in filteredReadonlyAttrKeys" :key="key"
-					class="orm-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-					<span class="text-sm text-(--color-text) dark:text-(--color-text) min-w-0 md:w-1/3 break-all">
+					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+					<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
 						{{ getAttributeLabel(key) }}
 					</span>
 					<span class="text-sm flex-1 truncate" :title="fmtVal(originalAttributes[key])">
@@ -165,36 +169,37 @@ HostsConfigTabs - Parameters and Attributes tabs with optional page layout.
 				</div>
 			</div>
 
-			<div v-if="filteredEditableAttrKeys.length" class="mb-6">
+			<div v-if="filteredEditableAttrKeys.length">
 				<div v-for="key in filteredEditableAttrKeys" :key="key"
 					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
-					:class="isAttrChanged(key) ? 'bg-yellow-50 dark:bg-yellow-700/10' : ''">
-					<span class="text-sm text-(--color-text) dark:text-(--color-text) min-w-0 md:w-1/3 break-all">
+					:class="isAttrChanged(key) ? 'bg-(--color-changed-bg)' : ''">
+					<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
 						{{ getAttributeLabel(key) }}
 						<span v-if="isAttrChanged(key)"
-							class="inline-flex items-center text-xs text-yellow-700 dark:text-yellow-200">
-							<UIcon :name="icons.pencilSquare" class="w-3 h-3" />
+							class="inline-flex items-center text-xs text-(--color-changed-text)">
+							<CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
 						</span>
 					</span>
 					<div class="flex-1 flex items-center gap-2 min-w-0">
-						<UCheckbox v-if="typeof originalAttributes[key] === 'boolean'"
+						<CoreAppCheckbox v-if="typeof originalAttributes[key] === 'boolean'"
 							v-model="(editableAttributes as Record<string, boolean>)[key]" :disabled="readonly" />
-						<UCheckbox v-else-if="key === 'isMasterDepot'"
+						<CoreAppCheckbox v-else-if="key === 'isMasterDepot'"
 							:model-value="editableAttributes[key] === true || editableAttributes[key] === 'true'"
 							:disabled="readonly"
 							@update:model-value="(v: boolean | 'indeterminate') => { editableAttributes[key] = v }" />
-						<SharedPasswordInput v-else-if="isPasswordAttribute(key)"
+						<CoreAppPasswordInput v-else-if="isPasswordAttribute(key)"
 							v-model="(editableAttributes as Record<string, string>)[key]" size="sm" :disabled="readonly"
-							class="flex-1" />
-						<UInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
+							class="flex-1" :maxlength="32" />
+						<CoreAppInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
 							:disabled="readonly" class="flex-1" />
-						<UButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral" :icon="icons.x"
-							:title="$t('discardItem')" @click="discardSingleAttribute(key)" />
+						<CoreAppButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral"
+							:icon="icons.x" :title="$t('discardItem')" @click="discardSingleAttribute(key)" />
 					</div>
 				</div>
 			</div>
-		</div>
+		</CoreAppCard>
 	</div>
+
 </template>
 
 <script setup lang="ts">
@@ -387,8 +392,6 @@ const unsavedChangesRef = computed(() => ({
 	fmtVal,
 }))
 
-// Only register route-leave guard when NOT in panel mode.
-// In panel mode the parent page handles navigation guards.
 if (!props.panelMode) {
 	onBeforeRouteLeave(() => {
 		if (!hasAnyChanges.value) return true
@@ -452,27 +455,6 @@ const flatParams = computed<Param[]>(() => {
 	return all.sort((a, b) => a.configId.localeCompare(b.configId))
 })
 
-const filteredFlatParams = computed(() => {
-	const q = paramSearch.value.trim().toLowerCase()
-	if (!q) return flatParams.value
-	return flatParams.value.filter(
-		(p) =>
-			p.configId.toLowerCase().includes(q) ||
-			(p.description || '').toLowerCase().includes(q),
-	)
-})
-
-const groupedFilteredParams = computed(() => {
-	const result: Record<string, Param[]> = {}
-	for (const p of filteredFlatParams.value) {
-		const [categoryRaw] = p.configId.split('.', 1)
-		const category = categoryRaw || '_uncategorized'
-		if (!result[category]) result[category] = []
-		result[category].push(p)
-	}
-	return result
-})
-
 interface TreeNode {
 	key: string
 	label: string
@@ -481,12 +463,6 @@ interface TreeNode {
 	leafCount?: number
 }
 
-/**
- * Build a category-aware tree using the API-level category grouping.
- * API returns { general: [...], clientconfig: [...], opsi-script: [...], ... }
- * Each category becomes a top-level tree node, and within each category,
- * configIds are split by dots to create sub-categories.
- */
 const categoryAwareTree = computed<TreeNode[]>(() => {
 	const q = paramSearch.value.trim().toLowerCase()
 	const raw = rawParams.value
@@ -727,8 +703,16 @@ async function saveAttributes() {
 	if (!props.hostId) return
 	savingAttrs.value = true
 	try {
-		if (props.hostType === 'server') await updateServerAttributes(props.hostId, { ...editableAttributes.value })
-		else await updateClientAttributes(props.hostId, { ...editableAttributes.value })
+		// Only send changed attributes to avoid re-hashing already-stored password fields
+		const changedAttrs: Record<string, unknown> = {}
+		for (const key of Object.keys(editableAttributes.value)) {
+			if (!isReadonlyAttribute(key) && JSON.stringify(originalAttributes.value[key]) !== JSON.stringify(editableAttributes.value[key])) {
+				changedAttrs[key] = editableAttributes.value[key]
+			}
+		}
+		if (Object.keys(changedAttrs).length === 0) return
+		if (props.hostType === 'server') await updateServerAttributes(props.hostId, changedAttrs)
+		else await updateClientAttributes(props.hostId, changedAttrs)
 		originalAttributes.value = { ...editableAttributes.value }
 		emit('saved')
 	} finally { savingAttrs.value = false }

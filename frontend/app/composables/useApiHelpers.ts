@@ -1,3 +1,12 @@
+/*
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * useApiHelpers - API helper functions wrapping backend FastAPI endpoints.
+ */
 interface ApiResponse<T> {
   data: T | null
   error: Error | null
@@ -78,7 +87,7 @@ export function useApiHelpers() {
   }
 
   // ---------------------------------------------------------------------------
-  // Auth & User (login.vue, plugins/init.ts, dashboard.vue)
+  // Auth & User
   // ---------------------------------------------------------------------------
 
   const getConfigServer = () => apiGet<string>('/user/opsiserver')
@@ -116,7 +125,7 @@ export function useApiHelpers() {
   const getChangelogs = () => apiGet<string>('/opsidata/changelogs')
 
   // ---------------------------------------------------------------------------
-  // Servers / Depots (servers/index.vue, quickpanel, plugins/init.ts)
+  // Servers / Depots
   // ---------------------------------------------------------------------------
 
   const getServers = (params?: Record<string, unknown>) =>
@@ -143,7 +152,7 @@ export function useApiHelpers() {
     apiPut<Record<string, unknown>>(`/opsidata/servers/${serverId}`, attrs)
 
   // ---------------------------------------------------------------------------
-  // Clients (clients/index.vue, AddForm, CloneForm, RowActionsDropdown, QuickActionsDropdown)
+  // Clients
   // ---------------------------------------------------------------------------
 
   const getClients = (params?: Record<string, unknown>) =>
@@ -217,7 +226,6 @@ export function useApiHelpers() {
       ...params,
     })
 
-  // Client RPC actions (RowActionsDropdown, QuickActionsDropdown)
   interface OpsiclientdRpcResult {
     [clientId: string]: { error?: string | null; result?: string | null }
   }
@@ -240,7 +248,7 @@ export function useApiHelpers() {
   const shutdownClients = (clientIds: string[]) => opsiclientdRpc(clientIds, 'shutdown', [])
 
   // ---------------------------------------------------------------------------
-  // Products (products/MainView.vue, ConfigTabs, QuickActionsDropdown)
+  // Products
   // ---------------------------------------------------------------------------
 
   const getProducts = (params?: Record<string, unknown>) =>
@@ -303,7 +311,6 @@ export function useApiHelpers() {
     selectedDepots: string[] | null
   }) => apiPost<Record<string, unknown>>('/opsidata/clients/action', params)
 
-  // Product properties & dependencies (products/ConfigTabs)
   const getProductProperties = (
     productId: string,
     params?: { selectedClients?: string[]; selectedServers?: string[] }
@@ -358,7 +365,7 @@ export function useApiHelpers() {
   }
 
   // ---------------------------------------------------------------------------
-  // Groups (groups/index.vue, quickpanel/GroupSelectionTree, selectionStore)
+  // Groups
   // ---------------------------------------------------------------------------
 
   const getHostGroups = (params?: Record<string, unknown>) =>
@@ -414,7 +421,7 @@ export function useApiHelpers() {
     apiDelete(`/opsidata/products/groups/${groupId}/${productId}`)
 
   // ---------------------------------------------------------------------------
-  // Config (hosts/ConfigTabs, products/ConfigTabs)
+  // Config
   // ---------------------------------------------------------------------------
 
   const getServerConfig = (params?: Record<string, unknown>) =>
@@ -492,7 +499,7 @@ export function useApiHelpers() {
   }) => apiPost<Record<string, unknown>>('/opsidata/config', config)
 
   // ---------------------------------------------------------------------------
-  // Admin / Maintenance (admin/maintenance.vue, admin/diagnostics)
+  // Admin / Maintenance
   // ---------------------------------------------------------------------------
 
   const getBlockedClients = () =>
@@ -534,10 +541,6 @@ export function useApiHelpers() {
     server_id?: string
     password?: string
   }) => apiPost<void>('/backup/restore', options)
-
-  // ---------------------------------------------------------------------------
-  // Return
-  // ---------------------------------------------------------------------------
 
   return {
     // Core

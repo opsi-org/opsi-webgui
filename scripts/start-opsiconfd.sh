@@ -2,7 +2,6 @@
 # Script used by supervisor to start opsiconfd
 set -e
 
-# Load environment variables
 if [ -f /workspace/docker/.env ]; then
     set -a
     source /workspace/docker/.env
@@ -10,12 +9,13 @@ if [ -f /workspace/docker/.env ]; then
 fi
 
 cd /workspace/docker/opsiconfd
-echo "[INFO] Waiting for services..."
-sleep 3
 
-uv sync --quiet 2>/dev/null || uv sync
+# Wait for MySQL to be available
+for i in $(seq 1 30); do
+    nc -z localhost 3306 2>/dev/null && break
+    sleep 1
+done
 
-# Start opsiconfd
 exec uv run opsiconfd \
     --log-level-stderr=6 \
     --static-dir=/workspace/docker/opsiconfd/opsiconfd_data/static \

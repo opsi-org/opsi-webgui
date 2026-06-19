@@ -1,7 +1,15 @@
+/*
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * messageBusStore - Pinia store for messagebus connection state and event handling.
+ */
 import { defineStore } from 'pinia'
 import { encode, decode } from '@msgpack/msgpack'
 
-// Default channels to subscribe on connect
 const DEFAULT_CHANNELS = [
   '@',
   '$',
@@ -52,7 +60,6 @@ export const useMessageBusStore = defineStore('messageBus', {
     lastEventType: '',
     lastEventDescription: '',
     lastEventTime: 0,
-    // Connection management (not persisted)
     _reconnectTimer: null as ReturnType<typeof setTimeout> | null,
     _reconnectDelay: 1000,
     _connecting: false,
@@ -66,7 +73,6 @@ export const useMessageBusStore = defineStore('messageBus', {
   },
   actions: {
     connect() {
-      // Singleton: skip if already connected or connecting
       if (
         this.bus?.readyState === WebSocket.OPEN ||
         this.bus?.readyState === WebSocket.CONNECTING
@@ -76,7 +82,6 @@ export const useMessageBusStore = defineStore('messageBus', {
       if (this._connecting) return
       this._connecting = true
 
-      // Clear any pending reconnect
       if (this._reconnectTimer) {
         clearTimeout(this._reconnectTimer)
         this._reconnectTimer = null
@@ -88,8 +93,8 @@ export const useMessageBusStore = defineStore('messageBus', {
         process.env.NODE_ENV === 'production'
           ? window.location.port
           : Number(
-            (runtimeConfig as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT
-          ) || 4447
+              (runtimeConfig as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT
+            ) || 4447
       const ws = new WebSocket(`wss://${host}:${port}/messagebus/v1`)
       ws.binaryType = 'arraybuffer'
 
@@ -100,7 +105,6 @@ export const useMessageBusStore = defineStore('messageBus', {
         this.certWarning = false
         this.bus = ws
         this._connected = true
-        // Subscribe to default channels
         this._sendRaw(ws, {
           ...createMsgTemplate(),
           type: 'channel_subscription_request',
@@ -133,7 +137,6 @@ export const useMessageBusStore = defineStore('messageBus', {
           this.bus = undefined
           this._connected = false
         }
-        // Schedule reconnect only if this was our active bus
         if (wasSameBus) {
           this._scheduleReconnect()
         }
@@ -142,15 +145,11 @@ export const useMessageBusStore = defineStore('messageBus', {
       ws.onerror = () => {
         this._connecting = false
         this._consecutiveFailures++
-        // After 3 consecutive failures, likely a certificate trust issue
         if (this._consecutiveFailures >= 3 && !this.certWarning) {
           this.certWarning = true
           this.certWarningUrl = `https://${host}:${port}/`
         }
-        // onerror is always followed by onclose, so reconnect happens there
       }
-
-      // Set bus reference immediately so callers can detect CONNECTING state
       this.bus = ws
     },
 
@@ -161,7 +160,6 @@ export const useMessageBusStore = defineStore('messageBus', {
         this._reconnectTimer = null
         this.connect()
       }, delay)
-      // Exponential backoff
       this._reconnectDelay = Math.min(this._reconnectDelay * 2, 30000)
     },
 

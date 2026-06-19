@@ -1,23 +1,16 @@
 #!/usr/bin/env sh
-# setup-mysql.sh - Initialize MySQL/MariaDB for opsi
-echo "[INFO] Setting up MySQL..."
+# setup-mysql.sh - Verify MySQL/MariaDB is ready (init is handled by entrypoint)
+echo "[INFO] Verifying MySQL connection..."
 echo "[INFO]   Database: ${MYSQL_DATABASE}"
 echo "[INFO]   User: ${MYSQL_USER}"
 
-[ -d /var/run/mysqld ] || sudo install -m 755 -o mysql -g root -d /var/run/mysqld
-
-echo "[INFO] Starting MariaDB server..."
-sudo supervisorctl start mariadb-server
-while ! nc -v -z -w3 localhost 3306 >/dev/null 2>&1; do
+for i in $(seq 1 30); do
+    if nc -z localhost 3306 2>/dev/null; then
+        echo "[INFO] MySQL is ready"
+        exit 0
+    fi
     sleep 1
 done
 
-echo "[INFO] Creating database user..."
-sudo mysql -u root -e "CREATE USER IF NOT EXISTS ${MYSQL_USER}@localhost IDENTIFIED BY '${MYSQL_PASSWORD}';"
-sudo mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO ${MYSQL_USER}@localhost IDENTIFIED BY '${MYSQL_PASSWORD}';"
-sudo mysql -u root -e "FLUSH PRIVILEGES"
-
-echo "[INFO] Creating database..."
-sudo mysql -u root -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
-
-echo "[INFO] MySQL setup complete"
+echo "[ERROR] MySQL not available after 30s"
+exit 1

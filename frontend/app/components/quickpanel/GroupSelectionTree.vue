@@ -1,68 +1,80 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  QuickpanelGroupSelectionTree - Tree view for selecting client/product groups.
+-->
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div class="flex items-center gap-1 mb-2 shrink-0">
-			<SharedFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
-			<UTooltip v-if="isGroupRestricted" :text="groupType === 'client' ? t('opsiConfig.serverFeatures.hostGroupAccess.disabled') : t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
-				<UBadge color="warning" variant="subtle" size="xs" class="cursor-help shrink-0">
+			<CoreAppFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
+			<CoreAppTooltip v-if="isGroupRestricted"
+				:text="groupType === 'client' ? t('opsiConfig.serverFeatures.hostGroupAccess.disabled') : t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
+				<CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help shrink-0">
 					{{ t('restricted') }}
-				</UBadge>
-			</UTooltip>
-			<UButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="t('refresh')"
+				</CoreAppBadge>
+			</CoreAppTooltip>
+			<CoreAppButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="t('refresh')"
 				@click="refresh" />
-			<UButton :icon="allExpanded ? icons.chevronUp : icons.chevronDown" size="xs" variant="ghost" color="neutral"
-				:title="allExpanded ? t('collapseAll') : t('expandAll')" @click="toggleExpandAll" />
-			<UTooltip v-if="selectedCount > 0" :text="`${t('clearAll')} (${selectedCount})`">
-				<UButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral" @click="clearAll" />
-			</UTooltip>
+			<CoreAppButton :icon="allExpanded ? icons.chevronUp : icons.chevronDown" size="xs" variant="ghost"
+				color="neutral" :title="allExpanded ? t('collapseAll') : t('expandAll')" @click="toggleExpandAll" />
+			<CoreAppButton v-if="selectedCount > 0" :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+				:title="`${t('clearAll')} (${selectedCount})`" @click="clearAll" />
 		</div>
 
 		<div v-if="loading && !hasData" class="flex items-center justify-center py-8">
-			<SharedLoadingSpinner size="sm" />
+			<CoreAppLoadingSpinner size="sm" />
 		</div>
 		<div v-else-if="errorMsg" class="text-xs text-(--color-error) py-2">{{ errorMsg }}</div>
 
 		<div v-else class="flex-1 overflow-y-auto min-h-0">
 			<template v-if="groupType === 'client'">
 				<div v-for="section in clientSections" :key="section.id" class="mb-2">
-					<div class="flex items-center justify-between px-1 py-1.5 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded"
+					<div v-clickable
+						class="flex items-center justify-between px-1 py-1.5 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded"
 						@click="toggleSectionCollapse(section.id)">
 						<div class="flex items-center gap-1.5">
-							<UIcon :name="isSectionCollapsed(section.id) ? icons.chevronRight : icons.chevronDown"
+							<CoreAppIcon :name="isSectionCollapsed(section.id) ? icons.chevronRight : icons.chevronDown"
 								class="w-3.5 h-3.5 text-(--color-text-muted)" />
-							<UTooltip v-if="sectionTooltip(section.id)" :text="sectionTooltip(section.id)">
+							<CoreAppTooltip v-if="sectionTooltip(section.id)" :text="sectionTooltip(section.id)">
 								<span
 									class="text-xs font-semibold text-(--color-text) cursor-help border-b border-dashed border-(--color-text-muted)/40">{{
 										sectionLabel(section.id) }}</span>
-							</UTooltip>
+							</CoreAppTooltip>
 							<span v-else class="text-xs font-semibold text-(--color-text)">{{
 								sectionLabel(section.id) }}</span>
 						</div>
-						<UBadge v-if="section.count > 0" size="xs" variant="subtle" color="neutral">{{ section.count }}
-						</UBadge>
+						<CoreAppBadge v-if="section.count > 0" size="xs" variant="subtle" color="neutral">{{
+							section.count }}
+						</CoreAppBadge>
 					</div>
 					<template v-if="!isSectionCollapsed(section.id)">
 						<div v-for="item in section.flatItems" :key="`${section.id}-${item.id}`"
 							:style="{ paddingLeft: `${(item.depth * 14) + 6}px`, borderLeftWidth: item.depth > 0 ? '1px' : '0', marginLeft: item.depth > 0 ? `${((item.depth - 1) * 14) + 10}px` : '0' }"
 							class="flex items-center gap-1.5 py-0.5 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer border-l-transparent hover:border-l-(--color-border)"
 							:class="{ 'border-l-(--color-border)/40': item.depth > 0 }">
-							<UButton v-if="item.hasChildren"
+							<CoreAppButton v-if="item.hasChildren"
 								:icon="item.isExpanded ? icons.chevronDown : icons.chevronRight" size="xs"
 								variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
+								:aria-label="item.isExpanded ? t('collapse') : t('expand')"
 								@click.stop="toggleExpand(item.id)" />
 							<span v-else class="w-4 shrink-0" />
-							<UCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
-								@update:model-value="handleItemClick(item)" />
-							<UTooltip v-if="item.label === 'not_assigned'" :text="t('notAssignedTooltip')">
+							<CoreAppCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
+								:aria-label="item.label" @update:model-value="handleItemClick(item)" />
+							<CoreAppTooltip v-if="item.label === 'not_assigned'" :text="t('notAssignedTooltip')">
 								<span
 									class="truncate flex-1 cursor-help border-b border-dashed border-(--color-text-muted)/40"
 									:class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
-							</UTooltip>
-							<span v-else class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
+							</CoreAppTooltip>
+							<span v-else v-clickable class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
 								@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
 								}}</span>
-							<UBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle"
+							<CoreAppBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle"
 								color="neutral">
-								{{ item.memberCount }}</UBadge>
+								{{ item.memberCount }}</CoreAppBadge>
 						</div>
 						<div v-if="section.flatItems.length === 0"
 							class="text-xs text-(--color-text-muted) py-1 px-2 italic">{{ t('noResults') }}</div>
@@ -73,17 +85,20 @@
 			<template v-else>
 				<div v-for="item in productFlatItems" :key="item.id" :style="{ paddingLeft: `${item.depth * 16}px` }"
 					class="flex items-center gap-1.5 py-0.5 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer">
-					<UButton v-if="item.hasChildren" :icon="item.isExpanded ? icons.chevronDown : icons.chevronRight"
-						size="xs" variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
+					<CoreAppButton v-if="item.hasChildren"
+						:icon="item.isExpanded ? icons.chevronDown : icons.chevronRight" size="xs" variant="ghost"
+						color="neutral" class="shrink-0 p-0! h-4! w-4!"
+						:aria-label="item.isExpanded ? t('collapse') : t('expand')"
 						@click.stop="toggleExpand(item.id)" />
 					<span v-else class="w-4 shrink-0" />
-					<UCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
-						@update:model-value="handleItemClick(item)" />
-					<span class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
+					<CoreAppCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
+						:aria-label="item.label" @update:model-value="handleItemClick(item)" />
+					<span v-clickable class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
 						@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
 						}}</span>
-					<UBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle" color="neutral">{{
-						item.memberCount }}</UBadge>
+					<CoreAppBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle"
+						color="neutral">{{
+							item.memberCount }}</CoreAppBadge>
 				</div>
 				<div v-if="productFlatItems.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">{{
 					t('noResults') }}</div>
@@ -112,7 +127,7 @@ const {
 const { isHostGroupAccessRestricted, isProductGroupAccessRestricted } = useUserPermissions()
 
 const isGroupRestricted = computed(() =>
-    props.groupType === 'client' ? isHostGroupAccessRestricted.value : isProductGroupAccessRestricted.value
+	props.groupType === 'client' ? isHostGroupAccessRestricted.value : isProductGroupAccessRestricted.value
 )
 
 const t = (key: string) => {
@@ -172,7 +187,6 @@ function sectionTooltip(id: string): string {
 	return ''
 }
 
-// Pre-compute selection sets for O(1) lookups
 const selectedItemsSet = computed(() => {
 	const items = props.groupType === 'client' ? selectionStore.selectedClients : selectionStore.selectedProducts
 	return new Set(items)
@@ -215,8 +229,6 @@ function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string, 
 			continue
 		}
 
-		// When the group's own label matches the query, show all children/members
-		// without further filtering so that group-name searches reveal contents
 		const childQuery = labelMatch ? '' : query
 		const childItems = node.children ? flattenNodes(node.children, depth + 1, childQuery, expandedSet) : []
 		const memberItems: FlatItem[] = []
@@ -278,7 +290,6 @@ const selectedCount = computed(() =>
 	props.groupType === 'client' ? selectionStore.selectedClients.length : selectionStore.selectedProducts.length
 )
 
-// Pre-build a map from group id to members for O(1) lookups
 const groupMembersMap = computed(() => {
 	const map = new Map<string, string[]>()
 	function walk(nodes: GroupTreeNodeData[]) {
@@ -291,7 +302,6 @@ const groupMembersMap = computed(() => {
 	return map
 })
 
-// Cache expandable IDs so allExpanded doesn't re-walk the tree
 const expandableIds = computed(() => {
 	const ids: string[] = []
 	function collect(nodes: GroupTreeNodeData[]) {
@@ -392,16 +402,6 @@ function clearAll() {
 	} else {
 		selectionStore.clearProducts()
 		selectionStore.clearProductGroups()
-	}
-}
-
-function selectAll() {
-	if (props.groupType === 'client') {
-		const allIds = allClientsList.value.length > 0 ? allClientsList.value : []
-		if (allIds.length > 0) selectionStore.addClients(allIds, 'quickpanel')
-	} else {
-		const allIds = collectAllMembers(rawTree.value)
-		if (allIds.length > 0) selectionStore.addProducts(allIds, 'quickpanel')
 	}
 }
 

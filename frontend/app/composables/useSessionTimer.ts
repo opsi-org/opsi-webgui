@@ -1,3 +1,12 @@
+/*
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * useSessionTimer - Session timeout management with auto-logout and renewal.
+ */
 import { useUserStore } from '~/stores/userStore'
 
 const WARNING_THRESHOLD_SEC = 60 * 5

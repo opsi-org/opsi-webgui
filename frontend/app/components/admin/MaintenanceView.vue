@@ -1,0 +1,544 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  AdminMaintenanceView - System maintenance: blocked clients, locked products, app state, backup/restore.
+-->
+<template>
+    <div class="h-full overflow-y-auto bg-(--color-surface)">
+        <div class="sticky top-0 z-10 bg-(--color-surface) px-4 pt-2" v-if="pageMessage">
+            <CoreAppAlertInline v-if="pageMessage.type === 'success'" color="success" :title="$t('success')"
+                :description="pageMessage.message" variant="subtle" closable compact @close="pageMessage = null" />
+            <CoreAppAlertInline v-if="pageMessage.type === 'error'" color="error" :title="$t('error')"
+                :description="pageMessage.message" variant="subtle" closable compact @close="pageMessage = null" />
+        </div>
+        <div class="space-y-6 min-h-full p-4">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <CoreAppCard>
+                    <template #header>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-heading uppercase tracking-wide">{{ $t('blockedClients') }}</span>
+                            <CoreAppStatusBadge v-if="blockedClientsCount > 0" status="warning"
+                                :label="String(blockedClientsCount)" />
+                        </div>
+                    </template>
+                    <div v-if="loadingClients" class="py-6 text-center">
+                        <CoreAppLoadingSpinner size="md" />
+                    </div>
+                    <div v-else-if="blockedClientsCount === 0" class="py-6 text-center">
+                        <CoreAppIcon :name="icons.checkCircle"
+                            class="w-10 h-10 text-(--color-success-soft-text) mx-auto mb-2" />
+                        <p class="text-(--color-text-muted)">{{ $t('message.noBlockedClients') }}</p>
+                    </div>
+                    <div v-else class="space-y-4">
+                        <CoreAppAlertInline v-if="clientCardMessage && clientCardMessage.type === 'success'"
+                            color="success" :title="$t('success')" :description="clientCardMessage.message"
+                            variant="subtle" closable compact @close="clientCardMessage = null" />
+                        <CoreAppAlertInline v-if="clientCardMessage && clientCardMessage.type === 'error'" color="error"
+                            :title="$t('error')" :description="clientCardMessage.message" variant="subtle" closable
+                            compact @close="clientCardMessage = null" />
+                        <div
+                            class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)">
+                            <div v-for="client in blockedClients" :key="client"
+                                class="flex items-center justify-between px-3 py-2 text-sm hover:bg-(--color-surface-hover)">
+                                <span class="truncate">{{ client }}</span>
+                                <CoreAppButton size="xs" variant="soft" color="primary" :loading="unblockingClient"
+                                    :disabled="isReadOnly" @click="unblockSingleClient(client)">
+                                    {{ $t('unblock') }}
+                                </CoreAppButton>
+                            </div>
+                        </div>
+                        <CoreAppButton block variant="outline" color="warning" size="sm" :loading="unblockingClient"
+                            :disabled="isReadOnly" @click="unblockAll('clients')">{{ $t('unblockAll') }}</CoreAppButton>
+                    </div>
+                </CoreAppCard>
+
+                <CoreAppCard>
+                    <template #header>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-heading uppercase tracking-wide">{{ $t('lockedProducts') }}</span>
+                            <CoreAppStatusBadge v-if="lockedProductsCount > 0" status="warning"
+                                :label="String(lockedProductsCount)" />
+                        </div>
+                    </template>
+                    <div v-if="loadingProducts" class="py-6 text-center">
+                        <CoreAppLoadingSpinner size="md" />
+                    </div>
+                    <div v-else-if="lockedProductsCount === 0" class="py-6 text-center">
+                        <CoreAppIcon :name="icons.checkCircle"
+                            class="w-10 h-10 text-(--color-success-soft-text) mx-auto mb-2" />
+                        <p class="text-(--color-text-muted)">{{ $t('message.noLockedProducts') }}</p>
+                    </div>
+                    <div v-else class="space-y-4">
+                        <CoreAppAlertInline v-if="productCardMessage && productCardMessage.type === 'success'"
+                            color="success" :title="$t('success')" :description="productCardMessage.message"
+                            variant="subtle" closable compact @close="productCardMessage = null" />
+                        <CoreAppAlertInline v-if="productCardMessage && productCardMessage.type === 'error'"
+                            color="error" :title="$t('error')" :description="productCardMessage.message"
+                            variant="subtle" closable compact @close="productCardMessage = null" />
+                        <div
+                            class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)">
+                            <div v-for="(reason, productId) in lockedProducts" :key="productId"
+                                class="flex items-center justify-between px-3 py-2 text-sm hover:bg-(--color-surface-hover)">
+                                <div class="truncate min-w-0 mr-2">
+                                    <span>{{ productId }}</span>
+                                    <span v-if="reason" class="text-(--color-text-muted) ml-1">({{ reason }})</span>
+                                </div>
+                                <CoreAppButton size="xs" variant="soft" color="primary" :loading="unlockingProduct"
+                                    :disabled="isReadOnly" @click="unlockSingleProduct(String(productId))">
+                                    {{ $t('unlock') }}
+                                </CoreAppButton>
+                            </div>
+                        </div>
+                        <CoreAppButton block variant="outline" color="warning" size="sm" :loading="unlockingProduct"
+                            :disabled="isReadOnly" @click="unblockAll('products')">{{ $t('unlockAll') }}</CoreAppButton>
+                    </div>
+                </CoreAppCard>
+            </div>
+
+            <CoreAppCard>
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-heading uppercase tracking-wide">{{ $t('applicationState') }}</span>
+                        <CoreAppStatusBadge :status="currentAppState === 'normal' ? 'success' : 'warning'"
+                            :label="currentAppState" />
+                    </div>
+                </template>
+                <div v-if="loadingAppState" class="py-6 text-center">
+                    <CoreAppLoadingSpinner size="md" />
+                </div>
+                <div v-else class="space-y-4">
+                    <div class="flex flex-wrap gap-3">
+                        <CoreAppButton v-for="state in ['normal', 'maintenance']" :key="state"
+                            @click="newAppState.type = state" variant="ghost" color="neutral" :class="[
+                                'flex-1 min-w-32 px-4! py-3! rounded-lg border-2 transition-all text-center h-auto!',
+                                newAppState.type === state
+                                    ? state === 'normal' ? 'border-(--color-primary) bg-(--color-primary-soft-bg)' : 'border-(--color-warning)/50 bg-(--color-warning-soft-bg)'
+                                    : 'border-(--color-border) hover:border-(--color-text-muted)'
+                            ]">
+                            <div class="font-medium"
+                                :class="newAppState.type === state ? (state === 'normal' ? 'text-(--color-primary-soft-text)' : 'text-(--color-warning-soft-text)') : ''">
+                                {{ $t(state) }}
+                            </div>
+                        </CoreAppButton>
+                    </div>
+                    <div v-if="newAppState.type === 'maintenance'">
+                        <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('optionalSettings') }}</div>
+                        <div class="space-y-4 border border-(--color-warning)/50 rounded-lg p-2">
+                            <CoreAppFormField :label="$t('addressExceptions')">
+                                <div class="flex gap-2">
+                                    <CoreAppInput v-model="addressExceptionInput"
+                                        :placeholder="$t('enterNetworkAddress')" size="sm" class="flex-1"
+                                        @keydown.enter.prevent="addAddressException" />
+                                    <CoreAppButton color="primary" size="sm" :icon="icons.add"
+                                        @click="addAddressException">{{
+                                            $t('add') }}</CoreAppButton>
+                                </div>
+                                <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
+                                    <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
+                                        class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-(--color-surface-elevated) border border-(--color-border) rounded-full">
+                                        {{ addr }}
+                                        <CoreAppButton @click="removeAddressException(idx)" variant="ghost"
+                                            color="neutral" size="xs"
+                                            class="text-(--color-text-muted) hover:text-(--color-error-soft-text)">
+                                            <CoreAppIcon :name="icons.x" class="w-3 h-3" />
+                                        </CoreAppButton>
+                                    </span>
+                                </div>
+                            </CoreAppFormField>
+                            <CoreAppFormField :label="$t('retryAfterInSeconds')">
+                                <CoreAppInput v-model.number="newAppState.retry_after" type="number" size="sm" min="0"
+                                    class="w-40" />
+                            </CoreAppFormField>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <CoreAppButton variant="soft" color="neutral" size="sm" @click="resetAppState">{{ $t('reset') }}
+                        </CoreAppButton>
+                        <CoreAppButton color="primary" size="sm" :loading="savingAppState"
+                            :disabled="isReadOnly || !hasServerWriteAccess || !newAppState.type" @click="saveAppState">
+                            {{ $t('apply') }}</CoreAppButton>
+                    </div>
+                </div>
+            </CoreAppCard>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <CoreAppCard>
+                    <template #header>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-heading uppercase tracking-wide">{{ $t('createBackup') }}</span>
+                        </div>
+                    </template>
+                    <div class="space-y-5">
+                        <label
+                            class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                            <CoreAppCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5" />
+                            <div class="font-medium text-sm">{{ $t('maintenance_mode') }}</div>
+                        </label>
+                        <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('includeInBackup') }}</div>
+                        <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
+                            <label
+                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                                <CoreAppCheckbox v-model="backupOptions.config_files" class="mt-0.5" />
+                                <div class="font-medium text-sm">{{ $t('config_files') }}</div>
+                            </label>
+                            <label
+                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                                <CoreAppCheckbox v-model="backupOptions.redis_data" class="mt-0.5" />
+                                <div class="font-medium text-sm">{{ $t('redisData') }}</div>
+                            </label>
+                        </div>
+                        <CoreAppFormField :label="$t('password') + ' (' + $t('optional') + ')'">
+                            <CoreAppInput v-model="backupOptions.password" type="password"
+                                :placeholder="$t('enterEncryptionPassword')" size="sm" class="w-full" />
+                        </CoreAppFormField>
+                        <CoreAppButton block color="primary" :icon="icons.copy" :loading="creatingBackup"
+                            :disabled="isReadOnly" @click="createBackup">{{ $t('createBackup') }}</CoreAppButton>
+                    </div>
+                </CoreAppCard>
+
+                <CoreAppCard>
+                    <template #header>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-heading uppercase tracking-wide">{{ $t('restoreBackup') }}</span>
+                        </div>
+                    </template>
+                    <div class="space-y-5">
+                        <CoreAppFormField :label="$t('backupFile')" required>
+                            <div class="relative">
+                                <input ref="fileInputRef" type="file" :aria-label="String($t('backupFile'))"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    @change="handleFileSelect" />
+                                <div
+                                    class="flex items-center gap-3 p-3 rounded-lg border-2 border-dashed border-(--color-border) hover:border-(--color-primary) transition-colors">
+                                    <div
+                                        class="w-10 h-10 rounded-lg bg-(--color-surface) flex items-center justify-center">
+                                        <CoreAppIcon :name="icons.upload" class="w-5 h-5 text-(--color-text-muted)" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div v-if="selectedFileName" class="font-medium text-sm truncate">{{
+                                            selectedFileName }}</div>
+                                        <div v-else class="text-(--color-text-muted) text-sm">{{ $t('clickToSelectFile')
+                                        }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </CoreAppFormField>
+                        <div>
+                            <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('restoreOptions') }}</div>
+                            <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
+                                <label
+                                    class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                                    <CoreAppCheckbox v-model="restoreOptions.config_files" class="mt-0.5" />
+                                    <div class="font-medium text-sm">{{ $t('config_files') }}</div>
+                                </label>
+                                <label
+                                    class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
+                                    <CoreAppCheckbox v-model="restoreOptions.redis_data" class="mt-0.5" />
+                                    <div class="font-medium text-sm">{{ $t('redisData') }}</div>
+                                </label>
+                            </div>
+                        </div>
+                        <CoreAppFormField :label="$t('serverIdHandling')">
+                            <div class="space-y-2">
+                                <div class="flex flex-wrap gap-2">
+                                    <CoreAppButton v-for="opt in serverIdOptions" :key="opt.value"
+                                        @click="serverIdOption = opt.value" size="sm" :color="'primary'"
+                                        :variant="serverIdOption === opt.value ? 'solid' : 'outline'">
+                                        {{ opt.label }}
+                                    </CoreAppButton>
+                                </div>
+                                <CoreAppInput v-if="serverIdOption === 'new'" v-model="restoreOptions.server_id"
+                                    :placeholder="$t('enterNewID')" size="sm" class="mt-2" />
+                            </div>
+                        </CoreAppFormField>
+                        <CoreAppFormField :label="$t('backupPassword') + ' (' + $t('optional') + ')'">
+                            <CoreAppInput v-model="restoreOptions.password" type="password"
+                                :placeholder="$t('enterDecryptionPassword')" size="sm" class="w-full" />
+                        </CoreAppFormField>
+                        <div v-if="uploadProgress > 0 && uploadProgress < 100" class="mb-3">
+                            <div class="flex justify-between text-xs text-(--color-text-muted) mb-1">
+                                <span>{{ $t('uploading') }}...</span>
+                                <span>{{ uploadProgress }}%</span>
+                            </div>
+                            <div class="w-full bg-(--color-surface-hover) rounded-full h-1.5">
+                                <div class="bg-(--color-primary) h-1.5 rounded-full transition-all"
+                                    :style="{ width: uploadProgress + '%' }" />
+                            </div>
+                        </div>
+                        <CoreAppButton block color="warning" variant="outline" :icon="icons.refresh"
+                            :loading="restoringBackup || uploadingFile"
+                            :disabled="isReadOnly || !hasServerWriteAccess || !selectedFile" @click="restoreBackup">{{
+                                $t('restoreBackup') }}</CoreAppButton>
+                    </div>
+                </CoreAppCard>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup lang="ts">
+const icons = useIcons()
+const { t: $t } = useI18n()
+const api = useApiHelpers()
+const { isReadOnly, hasServerWriteAccess } = useUserPermissions()
+
+const pageMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+const clientCardMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+const productCardMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+const loadingClients = ref(false)
+const loadingProducts = ref(false)
+const blockedClients = ref<string[]>([])
+const unblockingClient = ref(false)
+const lockedProducts = ref<Record<string, string>>({})
+const unlockingProduct = ref(false)
+const loadingAppState = ref(false)
+const savingAppState = ref(false)
+const currentAppState = ref('normal')
+const newAppState = ref({ type: '', address_exceptions: [] as string[], retry_after: 0 })
+const addressExceptionInput = ref('')
+const creatingBackup = ref(false)
+const backupOptions = ref({ config_files: true, redis_data: false, maintenance_mode: false, password: '' })
+const restoringBackup = ref(false)
+const uploadingFile = ref(false)
+const uploadProgress = ref(0)
+const selectedFile = ref<File | null>(null)
+const selectedFileName = ref('')
+const serverIdOption = ref('backup')
+const restoreOptions = ref({ file_id: '', config_files: false, redis_data: false, server_id: '', password: '' })
+
+const blockedClientsCount = computed(() => blockedClients.value.length)
+const lockedProductsCount = computed(() => Object.keys(lockedProducts.value).length)
+
+const serverIdOptions = computed(() => [
+    { label: String($t('useFromBackup')), value: 'backup' },
+    { label: String($t('useLocalId')), value: 'local' },
+    { label: String($t('useNewId')), value: 'new' },
+])
+
+watch(serverIdOption, (val) => { if (val !== 'new') restoreOptions.value.server_id = val })
+
+async function fetchBlockedClients() {
+    loadingClients.value = true
+    try {
+        const { data, error: err } = await api.getBlockedClients()
+        if (err) throw err
+        if (data) {
+            if (Array.isArray(data)) {
+                blockedClients.value = data as string[]
+            } else if (typeof data === 'object' && data !== null) {
+                blockedClients.value = Object.keys(data as Record<string, unknown>)
+            } else {
+                blockedClients.value = []
+            }
+        }
+    } catch (e) {
+        clientCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
+    loadingClients.value = false
+}
+
+async function fetchLockedProducts() {
+    loadingProducts.value = true
+    try {
+        const { data, error: err } = await api.getLockedProducts()
+        if (err) throw err
+        if (data) lockedProducts.value = data as Record<string, string>
+    } catch (e) {
+        productCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
+    loadingProducts.value = false
+}
+
+async function fetchAppState() {
+    loadingAppState.value = true
+    try {
+        const { data, error: err } = await api.getAppState()
+        if (err) throw err
+        if (data) {
+            currentAppState.value = data.type
+            newAppState.value = { type: data.type, address_exceptions: data.address_exceptions || [], retry_after: data.retry_after || 0 }
+        }
+    } catch (e) {
+        pageMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
+    loadingAppState.value = false
+}
+
+async function unblockSingleClient(clientId: string) {
+    unblockingClient.value = true
+    clientCardMessage.value = null
+    try {
+        const { error: err } = await api.unblockClient(clientId)
+        if (err) throw err
+        clientCardMessage.value = { type: 'success', message: String($t('message.clientUnblocked', { client: clientId })) }
+        await fetchBlockedClients()
+    } catch (e) {
+        clientCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
+    unblockingClient.value = false
+}
+
+async function unlockSingleProduct(productId: string) {
+    unlockingProduct.value = true
+    productCardMessage.value = null
+    try {
+        const { error: err } = await api.unlockProduct(productId)
+        if (err) throw err
+        productCardMessage.value = { type: 'success', message: String($t('message.productUnlocked', { product: productId })) }
+        await fetchLockedProducts()
+    } catch (e) {
+        productCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
+    unlockingProduct.value = false
+}
+
+async function unblockAll(type: 'clients' | 'products') {
+    if (type === 'clients') {
+        unblockingClient.value = true
+        clientCardMessage.value = null
+        try {
+            const { error: err } = await api.unblockAllClients()
+            if (err) throw err
+            clientCardMessage.value = { type: 'success', message: String($t('message.allClientsUnblocked')) }
+            await fetchBlockedClients()
+        } catch (e) {
+            clientCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+        }
+        unblockingClient.value = false
+    } else {
+        unlockingProduct.value = true
+        productCardMessage.value = null
+        try {
+            const { error: err } = await api.unlockAllProducts()
+            if (err) throw err
+            productCardMessage.value = { type: 'success', message: String($t('message.allProductsUnlocked')) }
+            await fetchLockedProducts()
+        } catch (e) {
+            productCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+        }
+        unlockingProduct.value = false
+    }
+}
+
+async function saveAppState() {
+    savingAppState.value = true
+    pageMessage.value = null
+    try {
+        const { data, error: err } = await api.setAppState(newAppState.value)
+        if (err) throw err
+        if (data) currentAppState.value = data.type
+        pageMessage.value = { type: 'success', message: String($t('message.appStateSaved')) }
+    } catch (e) {
+        pageMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
+    savingAppState.value = false
+}
+
+function resetAppState() {
+    newAppState.value = { type: currentAppState.value, address_exceptions: [], retry_after: 0 }
+}
+
+function addAddressException() {
+    const addr = addressExceptionInput.value.trim()
+    if (addr && !newAppState.value.address_exceptions.includes(addr)) {
+        newAppState.value.address_exceptions.push(addr)
+    }
+    addressExceptionInput.value = ''
+}
+
+function removeAddressException(idx: number) {
+    newAppState.value.address_exceptions.splice(idx, 1)
+}
+
+async function createBackup() {
+    creatingBackup.value = true
+    pageMessage.value = null
+    try {
+        const { data, error: err } = await api.createBackup(backupOptions.value)
+        if (err) throw err
+        if (data) {
+            const a = document.createElement('a')
+            a.href = '/file-transfer/' + data + '?delete=true'
+            a.download = ''
+            a.style.display = 'none'
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            pageMessage.value = { type: 'success', message: String($t('message.backupCreated')) }
+        }
+    } catch (e) {
+        pageMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+    }
+    creatingBackup.value = false
+}
+
+function handleFileSelect(e: Event) {
+    const input = e.target as HTMLInputElement
+    if (input.files && input.files.length > 0 && input.files[0]) {
+        selectedFile.value = input.files[0]
+        selectedFileName.value = input.files[0].name
+    }
+}
+
+async function restoreBackup() {
+    if (!selectedFile.value) return
+    restoringBackup.value = true
+    uploadingFile.value = true
+    uploadProgress.value = 0
+    pageMessage.value = null
+
+    try {
+        const formData = new FormData()
+        formData.append('file', selectedFile.value)
+
+        const xhr = new XMLHttpRequest()
+        const fileId = await new Promise<string>((resolve, reject) => {
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    uploadProgress.value = Math.round((e.loaded / e.total) * 100)
+                }
+            })
+            xhr.addEventListener('load', () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const res = JSON.parse(xhr.responseText)
+                        resolve(res.file_id)
+                    } catch { reject(new Error('Invalid upload response')) }
+                } else {
+                    reject(new Error('Upload failed: ' + xhr.statusText))
+                }
+            })
+            xhr.addEventListener('error', () => reject(new Error('Upload failed')))
+            xhr.open('POST', '/file-transfer/multipart')
+            xhr.withCredentials = true
+            xhr.send(formData)
+        })
+
+        uploadingFile.value = false
+        uploadProgress.value = 100
+
+        restoreOptions.value.file_id = fileId
+        const { error: restoreErr } = await api.restoreBackup(restoreOptions.value)
+        if (restoreErr) throw restoreErr
+        pageMessage.value = { type: 'success', message: String($t('message.backupRestored')) }
+    } catch (e) {
+        pageMessage.value = { type: 'error', message: (e as Error).message }
+    }
+
+    restoringBackup.value = false
+    uploadingFile.value = false
+    uploadProgress.value = 0
+}
+
+onMounted(() => {
+    fetchBlockedClients()
+    fetchLockedProducts()
+    fetchAppState()
+})
+</script>

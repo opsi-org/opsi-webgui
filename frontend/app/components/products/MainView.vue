@@ -1,142 +1,144 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ProductsMainView - Product table with configuration panel and depot selection.
+-->
 <template>
-	<SharedNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
+	<CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
 
-	<LayoutsDetailPanel :showPanel="showConfigPanel" @close="closePanel">
-		<template #main>
-			<LayoutsPageLayout :loading="loading">
-				<template #tabs>
-					<slot name="tabs" />
-				</template>
-				<template #actions>
-					<UButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
-						variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
-						{{ $t('changesDetected') }}
-					</UButton>
-					<ProductsQuickActionsDropdown :products="products" @applied="fetchProducts" />
-					<UButton :icon="icons.refresh" variant="ghost" color="neutral" size="sm" :loading="loading"
-						:title="String($t('refresh'))" @click="fetchProducts()" />
-				</template>
-
-				<template #saveActions>
-					<SharedUnsavedChangesModal :product-config-ref="productConfigTabsRef"
-						:config-product-id="configProduct?.productId" mode="actionRequests"
-						:selected-product-ids="selectedProductIds" :show-process-options="true"
-						:client-ids="selectionStore.selectedClients" @save-all="handleSaveAll"
-						@discard-all="discardActionRequestsOnly" />
-				</template>
-
-				<SharedAlertInline v-if="error" color="error" :title="$t('error')" :description="error" closable
-					@close="error = null" />
-
-				<div v-if="actionStatus" class="mb-3">
-					<SharedAlertInline :color="actionStatus.type" :title="actionStatus.title"
-						:description="actionStatus.message" variant="subtle" closable @close="actionStatus = null" />
-				</div>
-
-				<SharedDataTable :rows="products" :columns="columns" :loading="loading" :table-id="tableId"
-					row-key="productId" :selectable="true" :filterable="true" :show-refresh="false" :clickable="true"
-					:total-items="totalItems" :selected-keys="selectedTableKeys"
-					:sort-by-selection-enabled="sortBySelectionEnabled" @row-activate="handleRowActivate"
-					@selection-change="handleSelectionChange" @page-change="handlePageChange" @refresh="fetchProducts">
-
-					<template #header-cell-actionRequest="{ sortColumn, sortDirection }">
-						<ProductsActionRequestDropdown mode="header"
-							:has-clients-selected="selectionStore.selectedClients.length > 0"
-							:has-products-selected="selectionStore.selectedProducts.length > 0"
-							:sort-column="sortColumn" :sort-direction="(sortDirection as 'asc' | 'desc')"
-							@apply="handleBulkActionRequest" />
-					</template>
-
-					<template #cell-productId="{ row }">
-						<div class="flex items-center gap-2">
-							<img v-if="productIcons[(row as ProductRow).productId]"
-								:src="productIcons[(row as ProductRow).productId]" :alt="(row as ProductRow).productId"
-								loading="lazy" class="w-5 h-5 shrink-0 rounded object-contain"
-								@error="($event.target as HTMLImageElement).style.display = 'none'" />
-							<UIcon v-else :name="icons.product" class="w-4 h-4 shrink-0 text-neutral-400" />
-							<UIcon v-if="(row as ProductRow).locked" :name="icons.lock"
-								class="w-3.5 h-3.5 text-red-500 shrink-0" :title="$t('locked')" />
-							<span class="text-sm text-(--color-text)">{{ (row as ProductRow).productId }}</span>
-						</div>
-					</template>
-
-					<template #cell-description="{ row }">
-						<span class="line-clamp-1 text-sm text-(--color-text)"
-							:title="(row as ProductRow).description || undefined">
-							{{ (row as ProductRow).description || '-' }}
-						</span>
-					</template>
-
-					<template #cell-version="{ row }">
-						<ProductsVersionCell :row="(row as ProductRow)" />
-					</template>
-
-					<template #cell-installationStatus="{ row }">
-						<ProductsInstallationStatusBadge :status="(row as ProductRow).installationStatus"
-							:status-details="(row as ProductRow).installationStatusDetails"
-							:selected-clients="(row as ProductRow).selectedClients" />
-					</template>
-
-					<template #cell-actionResult="{ row }">
-						<ProductsActionResultBadge :result="(row as ProductRow).actionResult"
-							:result-details="(row as ProductRow).actionResultDetails"
-							:selected-clients="(row as ProductRow).selectedClients" />
-					</template>
-
-					<template #cell-actionRequest="{ row }">
-						<ProductsActionRequestDropdown :product-id="(row as ProductRow).productId"
-							:current-request="(row as ProductRow).actionRequest"
-							:available-actions="(row as ProductRow).actions || []"
-							:disabled="isReadOnly || selectionStore.selectedClients.length === 0"
-							:request-details="(row as ProductRow).actionRequestDetails"
-							:selected-clients="(row as ProductRow).selectedClients"
-							:pending-request="pendingActionRequests.get((row as ProductRow).productId)?.actionRequest"
-							@change="handleActionRequestChange((row as ProductRow).productId, (row as ProductRow).actionRequest || 'none', $event)" />
-					</template>
-
-					<template #cell-actionProgress="{ row }">
-						<span class="text-sm text-(--color-text)">
-							{{ (row as ProductRow).actionProgress || '-' }}
-						</span>
-					</template>
-
-					<template #cell-advice="{ row }">
-						<span class="line-clamp-1 text-sm text-(--color-text)"
-							:title="(row as ProductRow).advice || undefined">
-							{{ (row as ProductRow).advice || '-' }}
-						</span>
-					</template>
-
-					<template #cell-priority="{ row }">
-						<span class="text-sm text-(--color-text)">{{ (row as ProductRow).priority ?? '-' }}</span>
-					</template>
-
-					<template #cell-modificationTime="{ row }">
-						<span class="text-sm text-(--color-text)">
-							{{ formatModificationTime((row as ProductRow).modificationTime) }}
-						</span>
-					</template>
-
-					<template #row-actions="{ row }">
-						<UButton :icon="icons.config" variant="ghost" color="neutral" size="xs"
-							:title="$t('configuration')" @click.stop="openProductConfig(row as ProductRow)" />
-					</template>
-				</SharedDataTable>
-			</LayoutsPageLayout>
+	<LayoutsPageLayout :loading="loading" :show-panel="showConfigPanel" :allow-x-scroll="panelMode"
+		@close-panel="closePanel">
+		<template #tabs>
+			<slot name="tabs" />
+		</template>
+		<template #actions>
+			<CoreAppButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
+				variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
+				{{ $t('changesDetected') }}
+			</CoreAppButton>
+			<ProductsQuickActionsDropdown :products="products" @applied="fetchProducts" />
+			<CoreAppButton :icon="icons.refresh" variant="ghost" color="neutral" size="sm" :loading="loading"
+				:title="String($t('refresh'))" @click="fetchProducts()" />
 		</template>
 
-		<template #title>
+		<template #saveActions>
+			<CoreAppUnsavedChangesModal :product-config-ref="productConfigTabsRef"
+				:config-product-id="configProduct?.productId" mode="actionRequests"
+				:selected-product-ids="selectedProductIds" :show-process-options="true"
+				:client-ids="selectionStore.selectedClients" @save-all="handleSaveAll"
+				@discard-all="discardActionRequestsOnly" />
+		</template>
+
+		<CoreAppErrorBanner :error="error" :show="!!(error || actionStatus)" @close="error = null">
+			<CoreAppAlertInline v-if="actionStatus" :color="actionStatus.type" :title="actionStatus.title"
+				:description="actionStatus.message" variant="subtle" closable compact @close="actionStatus = null" />
+		</CoreAppErrorBanner>
+
+		<CoreAppDataTable :rows="products" :columns="columns" :loading="loading" :table-id="tableId" row-key="productId"
+			:selectable="true" :filterable="true" :show-refresh="false" :clickable="true" :total-items="totalItems"
+			:selected-keys="selectedTableKeys" :active-key="configProduct?.productId"
+			:sort-by-selection-enabled="sortBySelectionEnabled" @row-activate="handleRowActivate"
+			@selection-change="handleSelectionChange" @page-change="handlePageChange" @refresh="fetchProducts">
+
+			<template #header-cell-actionRequest="{ sortColumn, sortDirection }">
+				<ProductsActionRequestDropdown mode="header"
+					:has-clients-selected="selectionStore.selectedClients.length > 0"
+					:has-products-selected="selectionStore.selectedProducts.length > 0" :sort-column="sortColumn"
+					:sort-direction="(sortDirection as 'asc' | 'desc')" @apply="handleBulkActionRequest" />
+			</template>
+
+			<template #cell-productId="{ row }">
+				<div class="flex items-center gap-2">
+					<img v-if="productIcons[(row as ProductRow).productId]"
+						:src="productIcons[(row as ProductRow).productId]" :alt="(row as ProductRow).productId"
+						loading="lazy" class="w-5 h-5 shrink-0 rounded object-contain"
+						@error="($event.target as HTMLImageElement).style.display = 'none'" />
+					<CoreAppIcon v-else :name="icons.product" class="w-4 h-4 shrink-0 text-neutral-400" />
+					<CoreAppIcon v-if="(row as ProductRow).locked" :name="icons.lock"
+						class="w-3.5 h-3.5 text-(--color-error) shrink-0" :title="$t('locked')" />
+					<span class="text-sm text-(--color-text)">{{ (row as ProductRow).productId }}</span>
+				</div>
+			</template>
+
+			<template #cell-description="{ row }">
+				<span class="block truncate max-w-[280px] text-sm text-(--color-text)"
+					:title="(row as ProductRow).description || undefined">
+					{{ (row as ProductRow).description || '-' }}
+				</span>
+			</template>
+
+			<template #cell-version="{ row }">
+				<ProductsVersionCell :row="(row as ProductRow)" />
+			</template>
+
+			<template #cell-installationStatus="{ row }">
+				<ProductsInstallationStatusBadge :status="(row as ProductRow).installationStatus"
+					:status-details="(row as ProductRow).installationStatusDetails"
+					:selected-clients="(row as ProductRow).selectedClients" />
+			</template>
+
+			<template #cell-actionResult="{ row }">
+				<ProductsActionResultBadge :result="(row as ProductRow).actionResult"
+					:result-details="(row as ProductRow).actionResultDetails"
+					:selected-clients="(row as ProductRow).selectedClients" />
+			</template>
+
+			<template #cell-actionRequest="{ row }">
+				<ProductsActionRequestDropdown :product-id="(row as ProductRow).productId"
+					:current-request="(row as ProductRow).actionRequest"
+					:available-actions="(row as ProductRow).actions || []"
+					:disabled="isReadOnly || selectionStore.selectedClients.length === 0"
+					:request-details="(row as ProductRow).actionRequestDetails"
+					:selected-clients="(row as ProductRow).selectedClients"
+					:pending-request="pendingActionRequests.get((row as ProductRow).productId)?.actionRequest"
+					@change="handleActionRequestChange((row as ProductRow).productId, (row as ProductRow).actionRequest || 'none', $event)" />
+			</template>
+
+			<template #cell-actionProgress="{ row }">
+				<span class="text-sm text-(--color-text)">
+					{{ (row as ProductRow).actionProgress || '-' }}
+				</span>
+			</template>
+
+			<template #cell-advice="{ row }">
+				<span class="block truncate max-w-[280px] text-sm text-(--color-text)"
+					:title="(row as ProductRow).advice || undefined">
+					{{ (row as ProductRow).advice || '-' }}
+				</span>
+			</template>
+
+			<template #cell-priority="{ row }">
+				<span class="text-sm text-(--color-text)">{{ (row as ProductRow).priority ?? '-' }}</span>
+			</template>
+
+			<template #cell-modificationTime="{ row }">
+				<span class="text-sm text-(--color-text)">
+					{{ formatModificationTime((row as ProductRow).modificationTime) }}
+				</span>
+			</template>
+
+			<template #row-actions="{ row }">
+				<CoreAppButton :icon="icons.config" variant="ghost" color="neutral" size="xs"
+					:title="$t('configuration')" @click.stop="openProductConfig(row as ProductRow)" />
+			</template>
+		</CoreAppDataTable>
+
+		<template #panel-title>
 			<span class="flex items-center gap-2">
-				<UIcon :name="icons.product" class="w-4 h-4 shrink-0" />
+				<CoreAppIcon :name="icons.product" class="w-4 h-4 shrink-0" />
 				{{ configProduct?.productId }}
 			</span>
 		</template>
-		<template #subtitle>
+		<template #panel-subtitle>
 			<div v-if="configProduct">{{ $t('configuration') }}</div>
 		</template>
 
-		<template #panelActions>
-			<SharedUnsavedChangesModal :product-config-ref="panelPropertyConfigRef"
+		<template #panel-actions>
+			<CoreAppUnsavedChangesModal :product-config-ref="panelPropertyConfigRef"
 				:config-product-id="configProduct?.productId" mode="properties" @save-all="handlePanelSave"
 				@discard-all="handlePanelDiscard" />
 		</template>
@@ -147,12 +149,12 @@
 					class="flex-1" @saved="onConfigSaved" />
 			</div>
 		</template>
-	</LayoutsDetailPanel>
+	</LayoutsPageLayout>
 </template>
 
 <script setup lang="ts">
 import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
-import type { PageChangeParams } from '~/components/shared/DataTable.vue'
+import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
 import type { ProductRow, ProductType, ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue } from '~/types'
 import { useSelectionStore } from '~/stores/selectionStore'
 
@@ -160,6 +162,7 @@ interface Props {
 	productType: ProductType
 	initialProductId?: string
 	initialSortColumn?: string
+	panelMode?: boolean
 }
 
 const props = defineProps<Props>()
@@ -225,7 +228,6 @@ onBeforeRouteLeave(() => {
 const tableId = computed(() => props.productType === 'NetbootProduct' ? 'products-netboot' : 'products-localboot')
 const tableSettings = useDataTableSettings(tableId.value)
 const selectedProductIds = computed(() => selectionStore.selectedProducts)
-const pendingActionRequestCount = computed(() => pendingActionRequests.value.size)
 
 const productConfigTabsRef = computed<ProductConfigTabsRef | null>(() => {
 	const tabs = configTabsComponentRef.value
@@ -293,7 +295,7 @@ const columns: DataTableColumnDef[] = [
 	{ key: 'priority', label: String($t('priority')), labelKey: 'priority', sortable: true, visible: false },
 	{ key: 'modificationTime', label: String($t('modificationTime')), labelKey: 'modificationTime', sortable: true, visible: false },
 	{ key: 'actionProgress', label: String($t('actionProgress')), labelKey: 'actionProgress', sortable: true, visible: false },
-	{ key: 'actionRequest', label: String($t('actionRequest')), labelKey: 'actionRequest', sortable: true, class: 'w-40', alwaysVisible: true },
+	{ key: 'actionRequest', label: String($t('actionRequest')), labelKey: 'actionRequest', sortable: true, class: 'w-40', alwaysVisible: true, stickyRight: true },
 ]
 
 function openProductConfig(product: ProductRow) {
@@ -473,7 +475,6 @@ function handlePageChange(params: PageChangeParams) {
 	fetchProducts(params)
 }
 
-// Translate frontend sort column names to backend-valid SQL column names
 function translateSortBy(sortBy: string): string {
 	switch (sortBy) {
 		case 'version':

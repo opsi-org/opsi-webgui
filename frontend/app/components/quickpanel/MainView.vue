@@ -1,21 +1,18 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  QuickpanelMainView - Quick selection panel for servers and groups.
+-->
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div class="shrink-0 mb-2">
 			<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1">{{
 				t('quickSelection') }}</div>
-			<div class="flex gap-1.5 border-b border-(--color-border)">
-				<UButton v-for="tab in selectionTabs" :key="tab.id" variant="soft"
-					:color="activeTab === tab.id ? 'primary' : 'neutral'" size="xs"
-					class="relative rounded-none border-b-2 px-2.5 py-2"
-					:class="activeTab === tab.id ? 'border-opsi-blue' : 'border-transparent'" :title="t(tab.label)"
-					@click="activeTab = tab.id">
-					<UIcon :name="tab.icon" class="w-4 h-4" />
-					<UBadge v-if="tab.count > 0" size="xs" variant="subtle"
-						:color="activeTab === tab.id ? 'primary' : 'neutral'" class="ml-0.5 tabular-nums">{{ tab.count
-						}}
-					</UBadge>
-				</UButton>
-			</div>
+			<CoreAppTabsNav v-model="activeTab" :tabs="selectionTabItems" hide-labels />
 		</div>
 		<div class="min-h-0 overflow-hidden" style="max-height: 55vh;">
 			<div v-show="activeTab === 'overview'" class="h-full overflow-y-auto">
@@ -51,28 +48,25 @@
 				<div class="space-y-1.5">
 					<div
 						class="flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-(--color-surface-hover) transition-colors">
-						<UTooltip
+						<CoreAppTooltip
 							:text="(messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')) + ' — ' + t('autoRefreshTooltip')">
 							<div class="flex items-center gap-1.5 cursor-help">
-								<span class="relative inline-flex w-4 h-4 items-center justify-center">
-									<img src="~/assets/images/opsi_logo_bee_light.svg" alt="opsi"
-										class="w-3.5 h-3.5 dark:hidden" />
-									<img src="~/assets/images/opsi_logo_bee_dark.svg" alt="opsi"
-										class="w-3.5 h-3.5 hidden dark:block" />
-									<span
-										class="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 rounded-full border border-white dark:border-gray-900"
-										:class="messageBusStore.isConnected ? 'bg-green-500' : 'bg-red-400'" />
-								</span>
-								<span class="text-sm">{{ t('autoRefresh') }}</span>
+								<CoreAppMessageBusStatusIcon :connected="messageBusStore.isConnected" size="md" />
+								<div class="flex flex-col">
+									<span class="text-sm">{{ t('autoRefresh') }}</span>
+									<span class="text-xs font-medium"
+										:class="messageBusStore.isConnected ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'">
+										{{ messageBusStore.isConnected ? t('messageBusConnected') :
+											t('messageBusDisconnected') }}
+									</span>
+								</div>
 							</div>
-						</UTooltip>
-						<UCheckbox v-model="autoRefreshEnabled" size="sm" />
+						</CoreAppTooltip>
+						<CoreAppCheckbox v-model="autoRefreshEnabled" size="sm" :aria-label="t('autoRefresh')" />
 					</div>
 					<div class="flex items-center gap-1.5 flex-nowrap">
-						<UTooltip :text="defaultPageTooltip">
-							<USelect v-model="defaultPage" :items="defaultPageOptions" size="xs" :title="$t('defaultPage')"
-								class="flex-1 w-full" />
-						</UTooltip>
+						<CoreAppSelect v-model="defaultPage" :items="defaultPageOptions" size="xs"
+							:title="defaultPageTooltip" class="flex-1 w-full" />
 						<SettingsThemeToggle />
 						<SettingsLanguageDropdown />
 					</div>
@@ -81,8 +75,8 @@
 
 			<div class="border-t border-(--color-border) pt-3">
 				<div v-if="userStore.readOnly"
-					class="mb-2 px-2 py-1.5 rounded bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-xs flex items-center gap-1.5">
-					<UIcon :name="icons.warning" class="w-3.5 h-3.5 shrink-0" />
+					class="mb-2 px-2 py-1.5 rounded bg-(--color-warning-soft-bg) text-(--color-warning-soft-text) text-xs flex items-center gap-1.5 ring-1 ring-inset ring-(--color-warning-soft-ring)">
+					<CoreAppIcon :name="icons.warning" class="w-3.5 h-3.5 shrink-0" />
 					<span>{{ t('readOnlyMode') }}</span>
 				</div>
 				<div class="flex items-center justify-between mb-2">
@@ -90,15 +84,16 @@
 						{{ t('currentUser') }}: <span class="font-medium">{{ userStore.username }}</span>
 					</p>
 					<div v-if="remainingSeconds > 0" class="flex items-center gap-1 text-sm"
-						:class="isWarning ? 'text-amber-600 dark:text-amber-400' : 'text-(--color-text-muted)'">
-						<UIcon :name="icons.clock" class="w-3 h-3" />
+						:class="isWarning ? 'text-(--color-warning-soft-text)' : 'text-(--color-text-muted)'">
+						<CoreAppIcon :name="icons.clock" class="w-3 h-3" />
 						<span>{{ formattedTimeText }}</span>
 					</div>
 				</div>
-				<UButton color="neutral" variant="soft" size="sm" class="w-full" @click="handleLogout">
-					<UIcon :name="icons.logout" class="w-4 h-4 mr-1" />
-					{{ t('logout') }}
-				</UButton>
+				<CoreAppButton color="neutral" variant="soft" size="sm" class="w-full" :loading="loggingOut"
+					:disabled="loggingOut" @click="handleLogout">
+					<CoreAppIcon v-if="!loggingOut" :name="icons.logout" class="w-4 h-4 mr-1" />
+					{{ loggingOut ? t('loggingOut') : t('logout') }}
+				</CoreAppButton>
 			</div>
 		</div>
 	</div>
@@ -126,6 +121,16 @@ const selectionTabs = computed(() => [
 	{ id: 'products' as TabId, label: 'products', icon: icons.product, count: selectionStore.selectedProducts.length },
 ])
 
+const selectionTabItems = computed(() =>
+	selectionTabs.value.map(tab => ({
+		label: t(tab.label),
+		value: tab.id,
+		icon: tab.icon,
+		tooltip: `${t(tab.label)}${tab.count > 0 ? ` (${tab.count})` : ''}`,
+		count: tab.count,
+	}))
+)
+
 const totalSelectionCount = computed(() =>
 	selectionStore.selectedServers.length +
 	selectionStore.selectedClients.length +
@@ -139,6 +144,7 @@ const autoRefreshEnabled = computed({
 
 const { remainingSeconds, isWarning, formattedTimeText } = useSessionTimer(true)
 const { t: i18nT } = useI18n()
+const loggingOut = ref(false)
 
 
 const DEFAULT_PAGE_KEY = 'opsi-webgui-default-page'
@@ -186,6 +192,7 @@ const t = (key: string) => {
 }
 
 async function handleLogout() {
+	loggingOut.value = true
 	const currentPath = useRoute().fullPath
 	try {
 		await callLogout()
@@ -194,5 +201,6 @@ async function handleLogout() {
 	}
 	userStore.logout()
 	await navigateTo({ path: '/login', query: { redirect: currentPath } })
+	loggingOut.value = false
 }
 </script>

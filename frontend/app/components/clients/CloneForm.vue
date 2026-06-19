@@ -1,9 +1,23 @@
-ClientCloneForm - form for cloning a client. Supports standalone page and detail panel modes.
-<template>
-	<SharedNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
 
-	<div :class="['flex flex-col', panelMode ? 'h-full' : 'h-full min-h-0']">
-		<div class="shrink-0 pb-3">
+  ClientsCloneForm - Form for cloning an existing client to a new client.
+-->
+<template>
+	<CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
+
+	<div v-if="!canCreateClients || isReadOnly" class="flex items-center justify-center h-full p-8">
+		<CoreAppAlertInline color="warning" :title="$t('permissionDenied')">
+			<template #description>{{ isReadOnly ? $t('opsiConfig.serverFeatures.readOnly.disabled') :
+				$t('opsiConfig.serverFeatures.clientCreation.disabled') }}</template>
+		</CoreAppAlertInline>
+	</div>
+	<template v-else>
+		<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-surface) mb-3">
 			<div class="flex flex-wrap items-center gap-3">
 				<div v-if="showSourceSelector" class="flex items-center gap-2">
 					<slot name="sourceSelector">
@@ -13,142 +27,136 @@ ClientCloneForm - form for cloning a client. Supports standalone page and detail
 				</div>
 				<div class="flex-1" />
 				<div class="flex flex-wrap items-center gap-2">
-					<UTooltip :text="$t('cloneClient')">
-						<UButton v-if="resolvedSourceId" color="success" :loading="loading" @click="cloneClient">
-							<UIcon :name="icons.clone" />
-						</UButton>
-					</UTooltip>
-					<UTooltip :text="$t('refresh')">
-						<UButton :icon="icons.refresh" color="neutral" variant="ghost" size="sm" @click="refresh" />
-					</UTooltip>
+					<CoreAppButton v-if="resolvedSourceId" color="success" :loading="loading"
+						:title="String($t('cloneClient'))" @click="cloneClient">
+						<CoreAppIcon :name="icons.clone" />
+					</CoreAppButton>
+					<CoreAppButton :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
+						:title="String($t('refresh'))" @click="refresh" />
 				</div>
 			</div>
 		</div>
 
-		<div v-if="!resolvedSourceId && !loading" class="p-8 text-center rounded-lg flex-1">
-			<UIcon :name="icons.client" class="w-12 h-12 mx-auto mb-3 opacity-50 text-muted" />
-			<p class="text-muted">{{ $t('selectClientToClone') }}</p>
-		</div>
+		<CoreAppEmptyState v-if="!resolvedSourceId && !loading" :icon="icons.client"
+			:message="String($t('selectClientToClone'))" class="flex-1" />
 
 		<div v-else :class="['flex-1 overflow-y-auto space-y-4']">
-			<SharedAlertInline v-if="success" color="success" :title="String($t('success'))" closable
+			<CoreAppAlertInline v-if="success" color="success" :title="String($t('success'))" closable
 				@close="success = false">
 				<template #description>{{ $t('clientClonedSuccessfully') }}</template>
-			</SharedAlertInline>
-			<SharedAlertInline v-if="error" color="error" :title="String($t('error'))" :description="error" closable
+			</CoreAppAlertInline>
+			<CoreAppAlertInline v-if="error" color="error" :title="String($t('error'))" :description="error" closable
 				@close="error = null" />
 
-			<div class="space-y-6 bg-(--color-background) dark:bg-(--color-background-dark)">
-				<div v-if="!panelMode || showSourceInPanel" class="mb-6">
+			<div v-if="!panelMode || showSourceInPanel" class="opsi-card">
+				<div
+					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+					<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
+						{{ $t('sourceClient') }}
+					</span>
+					<span class="text-sm flex-1 truncate" :title="resolvedSourceId || undefined">
+						{{ resolvedSourceId }}
+					</span>
+				</div>
+			</div>
+
+			<div class="opsi-card">
+				<div class="flex items-center justify-between mb-3">
+					<h4 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('newClient') }}</h4>
+				</div>
+				<div>
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
-							{{ $t('sourceClient') }}
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
+							{{ $t('clientId') }} <span class="text-error">*</span>
 						</span>
-						<span class="text-sm flex-1 truncate" :title="resolvedSourceId || undefined">
-							{{ resolvedSourceId }}
+						<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
+							<div class="flex items-center gap-2 w-full">
+								<CoreAppInput v-model="clientName" :disabled="loading" size="sm"
+									placeholder="clientname" class="flex-1" />
+								<CoreAppInput v-model="domain" :disabled="loading" size="sm" placeholder=".domain.local"
+									class="flex-1" />
+							</div>
+							<div v-if="formErrors.newId" class="text-xs text-error">
+								{{ formErrors.newId }}
+							</div>
+						</div>
+					</div>
+					<div
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
+							{{ $t('ipAddress') }}
 						</span>
+						<div class="flex-1">
+							<CoreAppInput v-model="cloneclient.target.ipAddress" :disabled="loading" size="sm"
+								placeholder="192.168.1.x" class="w-full" />
+						</div>
 					</div>
-				</div>
-
-				<div class="mb-6">
-					<div class="flex items-center justify-between mb-3">
-						<h4 class="text-xs m-0">{{ $t('newClient') }}</h4>
+					<div
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
+							{{ $t('macAddress') }}
+						</span>
+						<div class="flex-1">
+							<CoreAppInput v-model="cloneclient.target.hardwareAddress" :disabled="loading" size="sm"
+								placeholder="00:11:22:33:44:55" class="w-full" />
+						</div>
 					</div>
-					<div class="mb-6">
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('clientId') }} <span class="text-error">*</span>
-							</span>
-							<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
-								<div class="flex items-center gap-2 w-full">
-									<UInput v-model="clientName" :disabled="loading" size="sm" placeholder="clientname"
-										class="flex-1" />
-									<UInput v-model="domain" :disabled="loading" size="sm" placeholder=".domain.local"
-										class="flex-1" />
-								</div>
-								<div v-if="formErrors.newId" class="text-xs text-error">
-									{{ formErrors.newId }}
-								</div>
-							</div>
-						</div>
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('ipAddress') }}
-							</span>
-							<div class="flex-1">
-								<UInput v-model="cloneclient.target.ipAddress" :disabled="loading" size="sm"
-									placeholder="192.168.1.x" class="flex-1" />
-							</div>
-						</div>
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('macAddress') }}
-							</span>
-							<div class="flex-1">
-								<UInput v-model="cloneclient.target.hardwareAddress" :disabled="loading" size="sm"
-									placeholder="00:11:22:33:44:55" class="flex-1" />
-							</div>
-						</div>
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('systemUUID') }}
-							</span>
-							<div class="flex-1">
-								<UInput v-model="cloneclient.target.systemUUID" :disabled="loading" size="sm"
-									placeholder="UUID" class="flex-1" />
-							</div>
+					<div
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
+							{{ $t('systemUUID') }}
+						</span>
+						<div class="flex-1">
+							<CoreAppInput v-model="cloneclient.target.systemUUID" :disabled="loading" size="sm"
+								placeholder="UUID" class="w-full" />
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<div class="mb-6">
-					<div class="flex items-center justify-between mb-3">
-						<h4 class="text-xs m-0">{{ $t('cloneOptions') }}</h4>
+			<div class="opsi-card">
+				<div class="flex items-center justify-between mb-3">
+					<h4 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('cloneOptions') }}</h4>
+				</div>
+				<div>
+					<div
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
+							{{ $t('configs') }}
+						</span>
+						<div class="flex-1 flex items-center gap-2 min-w-0">
+							<CoreAppCheckbox v-model="cloneclient.options.configs" :disabled="loading" />
+						</div>
 					</div>
-					<div class="mb-6">
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('configs') }}
-							</span>
-							<div class="flex-1 flex items-center gap-2 min-w-0">
-								<UCheckbox v-model="cloneclient.options.configs" :disabled="loading" />
-							</div>
+					<div
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
+							{{ $t('products') }}
+						</span>
+						<div class="flex-1 flex items-center gap-2 min-w-0">
+							<CoreAppCheckbox v-model="cloneclient.options.products" :disabled="loading" />
 						</div>
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('products') }}
-							</span>
-							<div class="flex-1 flex items-center gap-2 min-w-0">
-								<UCheckbox v-model="cloneclient.options.products" :disabled="loading" />
-							</div>
-						</div>
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('productProperties') }}
-							</span>
-							<div class="flex-1 flex items-center gap-2 min-w-0">
-								<UCheckbox v-model="cloneclient.options.productProperties" :disabled="loading" />
-							</div>
+					</div>
+					<div
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm min-w-0 md:w-1/3 break-all">
+							{{ $t('productProperties') }}
+						</span>
+						<div class="flex-1 flex items-center gap-2 min-w-0">
+							<CoreAppCheckbox v-model="cloneclient.options.productProperties" :disabled="loading" />
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</template>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from 'vue'
 import { useSelectionStore } from '~/stores/selectionStore'
 
+const { canCreateClients, isReadOnly } = useUserPermissions()
 const icons = useIcons()
 const { t: $t } = useI18n()
 const { getClientIds, cloneClient: cloneClientApi } = useApiHelpers()

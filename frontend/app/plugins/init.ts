@@ -1,3 +1,12 @@
+/*
+ * This file is part of opsi-webgui application.
+ * opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+ * Copyright (c) uib GmbH <info@uib.de> 2026
+ * All rights reserved.
+ * License: AGPL-3.0
+ *
+ * init - Application initialization plugin for loading user session and config.
+ */
 import { defineNuxtPlugin } from '#app'
 import { useSelectionStore } from '~/stores/selectionStore'
 import { useUserStore } from '~/stores/userStore'
@@ -39,7 +48,6 @@ export default defineNuxtPlugin({
       try {
         const promises: Promise<unknown>[] = [fetchPostLoginData()]
 
-        // Only fetch servers if none selected
         if (selectionStore.selectedServers.length === 0) {
           promises.push(getServers({}))
         }

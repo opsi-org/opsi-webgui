@@ -35,19 +35,13 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
   ],
 
-  // Bundle all used icons into the client JS at build time.
-  // Without this, @nuxt/icon fetches icons from the Iconify API at runtime,
-  // which fails in air-gapped / offline environments (blank white screen).
-  // Requires @iconify-json/heroicons, @iconify-json/lucide, and
-  // @iconify-json/simple-icons as devDependencies.
+  // Bundle all used icons at build time to work in offline environments.
   icon: {
     clientBundle: {
-      // Scan all Vue/TS files at build time to discover used icons and bundle them.
-      // Include .ts files so useIcons.ts (which defines all icon names) is scanned.
       scan: {
         globInclude: ['**/*.{vue,jsx,tsx,ts,md,mdc,mdx}'],
       },
-      // Nuxt UI default icons (from node_modules/@nuxt/ui, not reached by scan).
+      // Nuxt UI default icons (from node_modules/@nuxt/ui).
       // These are used internally by UButton, USelect, UInput, UTable, etc.
       icons: [
         'lucide:arrow-down',
@@ -94,7 +88,6 @@ export default defineNuxtConfig({
         'lucide:x',
       ],
     },
-    // Never fall back to the external Iconify API — all icons must be bundled
     fallbackToApi: false,
   },
 
@@ -113,14 +106,10 @@ export default defineNuxtConfig({
     },
   },
 
-  // Disable store auto-scanning to prevent false-positive auto-import
-  // of internal Pinia properties (state, storage, pick).
-  // All stores use explicit imports.
   pinia: {
     storesDirs: [],
   },
 
-  // Color mode configuration - uses cookies for SSR hydration and persistence
   colorMode: {
     preference: 'light', // Default theme
     fallback: 'light',

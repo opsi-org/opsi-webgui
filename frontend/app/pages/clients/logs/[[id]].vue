@@ -1,18 +1,27 @@
-Route: /clients/logs/:id?
-Client Logs page - displays logs for a selected client.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ClientLogsPage - Route page for viewing client logs with optional client ID.
+-->
 <template>
-    <ClientsLogsView :client-id="selectedClientId" show-client-selector
-        :client-selector-placeholder="String($t('selectClient'))" @update:client-id="updateClientId" />
+    <div class="h-full ">
+        <ClientsLogsView :client-id="selectedClientId" show-client-selector
+            :client-selector-placeholder="String($t('selectClient'))" @update:client-id="updateClientId" />
+    </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-    layout: 'default',
-    title: 'Client Logs',
-})
+definePageMeta({ layout: 'default' })
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+
+useHead({ title: () => `${t('logs')} - opsi-WebGUI` })
 
 const routeClientId = computed<string>(() => {
     const id = route.params.id

@@ -1,53 +1,61 @@
-Modules - Component to display available opsi modules with verification status
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  AdminModules - Displays available opsi modules and their licensing status.
+-->
 
 <template>
-	<UCard>
+	<CoreAppCard class="h-full flex flex-col">
 		<template #header>
 			<div class="flex items-center justify-between">
-				<h3 class="text-xs m-0">{{ $t('opsiModules') }}</h3>
+				<h3 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('opsiModules') }}</h3>
 				<div class="flex items-center gap-2">
-					<UBadge v-if="obsoleteModules && obsoleteModules.length > 0" color="warning" variant="subtle"
-						size="xs">
-						{{ obsoleteModules.length }} {{ $t('obsolete') }}
-					</UBadge>
 					<span class="text-xs text-(--color-text-muted)">{{ filteredModules.length }} {{ $t('available')
 					}}</span>
 				</div>
 			</div>
 		</template>
 		<div v-if="loading" class="py-8 text-center">
-			<SharedLoadingSpinner />
+			<CoreAppLoadingSpinner />
 		</div>
 		<div v-else-if="filteredModules.length === 0" class="py-8 text-center text-(--color-text-muted)">
 			{{ filter ? $t('noResultsFound') : $t('noModulesFound') }}
 		</div>
 		<div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 			<div v-for="module in filteredModules" :key="module"
-				class="flex items-center gap-3 p-3 rounded-lg border transition-colors" :class="isObsolete(module)
-					? 'border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/10'
-					: 'border-(--color-border) hover:bg-(--color-surface-hover)'">
-				<div class="w-10 h-10 rounded-lg flex items-center justify-center">
-					<UIcon v-if="isObsolete(module)" :name="icons.warning"
-						class="w-5 h-5 text-amber-600 dark:text-amber-400" />
-					<UIcon v-else :name="icons.check" class="w-5 h-5 text-green-600 dark:text-green-400" />
+				class="flex items-center gap-3 p-3 rounded-lg border transition-colors border-(--color-border) hover:bg-(--color-surface-hover)">
+				<div class="w-10 h-10 rounded-full flex items-center justify-center bg-(--color-success-soft-bg)">
+					<CoreAppIcon :name="icons.check" class="w-5 h-5 text-(--color-success-soft-text)" />
 				</div>
 				<div class="flex-1 min-w-0">
 					<div class="font-medium text-sm truncate" :title="module">{{ formatModuleName(module) }}</div>
 					<div class="flex items-center gap-1.5 mt-0.5">
-						<UBadge v-if="isObsolete(module)" color="warning" variant="subtle">{{ $t('obsolete')
-						}}
-						</UBadge>
-						<UBadge v-else-if="getModuleState(module) === 'free'" color="info" variant="subtle">{{
-							$t('freeModules') }}</UBadge>
-						<UBadge v-else-if="getModuleState(module) === 'licensed'" color="success" variant="subtle">{{
-							$t('licensedModules') }}</UBadge>
-						<UBadge v-else-if="getModuleState(module) === 'unlicensed'" color="error" variant="subtle">{{
-							$t('unlicensedModules') }}</UBadge>
+						<CoreAppTooltip v-if="isObsolete(module)" :text="$t('obsoleteModulesDescription')">
+							<CoreAppBadge color="warning" variant="subtle" class="cursor-help">{{ $t('integratedInCore')
+								}}
+							</CoreAppBadge>
+						</CoreAppTooltip>
+						<CoreAppBadge v-else-if="getModuleState(module) === 'free'" color="info" variant="subtle">{{
+							$t('freeModules') }}</CoreAppBadge>
+						<CoreAppBadge v-else-if="getModuleState(module) === 'licensed'" color="success"
+							variant="subtle">{{
+								$t('licensedModules') }}</CoreAppBadge>
+						<CoreAppBadge v-else-if="getModuleState(module) === 'unlicensed'" color="error"
+							variant="subtle">{{
+								$t('unlicensedModules') }}</CoreAppBadge>
 					</div>
 				</div>
+				<span v-if="getClientNumber(module) !== null"
+					class="flex items-center gap-1 shrink-0 text-xs text-(--color-text-muted)">
+					<CoreAppIcon :name="icons.client" class="w-3 h-3" />{{ getClientNumber(module) }}
+				</span>
 			</div>
 		</div>
-	</UCard>
+	</CoreAppCard>
 </template>
 
 <script setup lang="ts">
@@ -55,7 +63,7 @@ const { t: $t } = useI18n()
 const props = defineProps<{
 	filteredModules: string[]
 	loading: boolean
-	icons: Record<string, string>
+	icons: ReturnType<typeof useIcons>
 	modules: string[]
 	filter: string
 	formatModuleName: (name: string) => string
@@ -74,5 +82,11 @@ function getModuleState(module: string): string {
 	}
 	if (props.freeModules?.includes(module)) return 'free'
 	return 'licensed'
+}
+
+function getClientNumber(module: string): number | null {
+	const detail = props.modulesDetailed?.[module]
+	if (detail && detail.client_number > 0 && !isObsolete(module)) return detail.client_number
+	return null
 }
 </script>

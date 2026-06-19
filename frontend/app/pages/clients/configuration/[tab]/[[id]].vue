@@ -1,22 +1,25 @@
-Configuration page for clients, with tabs for parameters and attributes, and optional client selector.
-Route: /clients/configuration/:tab/:id?
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ClientConfigurationPage - Route page for client host configuration tabs.
+-->
 <template>
 	<HostsConfigTabs :host-id="selectedClientId" host-type="client" :tab="activeTab" show-host-selector
 		:host-selector-placeholder="String($t('selectClient'))" :readonly="isReadOnly"
-		@update:host-id="updateSelectedClientId"
-		@update:tab="updateActiveTab" @saved="handleSaved" />
+		@update:host-id="updateSelectedClientId" @update:tab="updateActiveTab" @saved="handleSaved" />
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-	layout: 'default',
-	title: 'Client Configuration',
-	key: 'client-configuration',
-})
+definePageMeta({ layout: 'default' })
 
 const { isReadOnly } = useUserPermissions()
 
 const VALID_TABS = ['parameters', 'attributes'] as const
+const TAB_ALIASES: Record<string, string> = { parameter: 'parameters', attribute: 'attributes' }
 
 const { t: $t } = useI18n()
 const route = useRoute()
@@ -25,7 +28,8 @@ const router = useRouter()
 const routeTab = computed((): string => {
 	const t = route.params.tab
 	const val = (Array.isArray(t) ? t[0] : (t as string)) || ''
-	return VALID_TABS.includes(val as any) ? val : 'parameters'
+	const normalized = TAB_ALIASES[val] || val
+	return VALID_TABS.includes(normalized as any) ? normalized : 'parameters'
 })
 
 const routeClientId = computed((): string => {
@@ -63,7 +67,7 @@ watch(routeClientId, (id) => { manualClientId.value = id }, { immediate: true })
 
 useHead({
 	title: () => selectedClientId.value
-		? `${selectedClientId.value} — ${activeTab.value}`
+		? `${selectedClientId.value} - ${activeTab.value}`
 		: 'Client Configuration',
 })
 </script>

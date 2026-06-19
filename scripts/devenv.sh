@@ -68,5 +68,6 @@ echo "REDIS_HOST=localhost" >> $ENVFILE
 echo "OPSI_ADMIN_USER=adminuser" >> $ENVFILE
 echo "OPSI_ADMIN_PW=adminuser" >> $ENVFILE
 echo "UV_PYTHON=${UV_PYTHON:-3.14}" >> $ENVFILE
+echo "OPSI_BACKUP_URL=https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json" >> $ENVFILE
 
 echo "[INFO] .env file created at $ENVFILE"

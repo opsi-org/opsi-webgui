@@ -1,13 +1,20 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ProductsDependenciesForm - Form displaying product dependency relationships.
+-->
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div v-if="loading" class="py-8 flex justify-center">
-			<SharedLoadingSpinner />
+			<CoreAppLoadingSpinner />
 		</div>
 
-		<div v-else-if="dependencies.length === 0" class="py-8 text-center text-sm text-(--color-text-muted)">
-			<UIcon :name="icons.product" class="w-10 h-10 mx-auto mb-2 opacity-40" />
-			<p>{{ $t('noDependencies') }}</p>
-		</div>
+		<CoreAppEmptyState v-else-if="dependencies.length === 0" :icon="icons.product"
+			:message="String($t('noDependencies'))" />
 
 		<template v-else>
 			<div class="flex-1 overflow-auto min-h-0">
@@ -19,30 +26,30 @@
 								<span class="text-sm font-medium">
 									{{ dep.requiredProductId }}
 								</span>
-								<UBadge v-if="dep.requiredVersion" color="neutral" variant="soft" size="xs">
+								<CoreAppBadge v-if="dep.requiredVersion" color="neutral" variant="soft" size="xs">
 									{{ dep.requiredVersion }}
-								</UBadge>
+								</CoreAppBadge>
 							</div>
 						</div>
 
 						<div class="flex-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-(--color-text-muted)">
 							<span v-if="dep.requiredAction" class="flex items-center gap-1">
 								<strong>{{ $t('requiredAction') }}:</strong>
-								<UBadge color="neutral" variant="soft" size="xs">
+								<CoreAppBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requiredAction }}
-								</UBadge>
+								</CoreAppBadge>
 							</span>
 							<span v-if="dep.requiredInstallationStatus" class="flex items-center gap-1">
 								<strong>{{ $t('requiredInstallationStatus') }}:</strong>
-								<UBadge color="neutral" variant="soft" size="xs">
+								<CoreAppBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requiredInstallationStatus }}
-								</UBadge>
+								</CoreAppBadge>
 							</span>
 							<span v-if="dep.requirementType" class="flex items-center gap-1">
 								<strong>{{ $t('requirementType') }}:</strong>
-								<UBadge color="neutral" variant="soft" size="xs">
+								<CoreAppBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requirementType }}
-								</UBadge>
+								</CoreAppBadge>
 							</span>
 						</div>
 					</div>
@@ -78,22 +85,4 @@ const filteredDependencies = computed(() => {
 			(d.requiredAction || '').toLowerCase().includes(q)
 	)
 })
-
-function getDependencyTypeColor(type: string | null): 'success' | 'warning' | 'error' | 'info' | 'neutral' {
-	if (!type) return 'neutral'
-	if (type === 'before') return 'warning'
-	if (type === 'after') return 'info'
-	return 'neutral'
-}
-
-function getDependencyTypeLabel(type: string | null, action: string | null): string {
-	const key = `${type}-${action}`
-	const labels: Record<string, string> = {
-		'null-setup': String($t('required')),
-		'after-setup': String($t('postRequired')),
-		'before-setup': String($t('preRequired')),
-		'before-uninstall': String($t('onUninstall')),
-	}
-	return labels[key] || type || String($t('unknown'))
-}
 </script>

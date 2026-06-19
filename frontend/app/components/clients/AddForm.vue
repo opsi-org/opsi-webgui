@@ -1,207 +1,222 @@
-ClientsAddForm - add client form for panel mode with all options.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ClientsAddForm - Form for adding a new client.
+-->
 <template>
 	<div class="flex flex-col h-full">
-		<div
-			class="shrink-0 sticky top-0 z-10 bg-(--color-background) dark:bg-(--color-background) px-2 py-2 border-b border-(--color-border)">
-			<div class="flex items-center justify-between">
-				<SharedAlertInline v-if="success" color="success" :title="String($t('success'))" class="flex-1 mr-2">
-					<template #description>{{ $t('clientCreatedSuccessfully') }}</template>
-				</SharedAlertInline>
-				<SharedAlertInline v-else-if="error" color="error" :title="String($t('error'))" :description="error"
-					closable class="flex-1 mr-2" @close="error = null" />
-				<div v-else />
-				<div class="flex gap-2 shrink-0">
-					<UTooltip :text="$t('addClient')">
-						<UButton color="success" :loading="loading" :disabled="!canCreate" @click="handleSubmit">
-							<UIcon :name="icons.client" />
-							<UIcon :name="icons.add" />
-						</UButton>
-					</UTooltip>
-					<UTooltip :text="$t('reset')">
-						<UButton variant="ghost" color="neutral" :icon="icons.refresh" :disabled="loading"
-							@click="resetForm" />
-					</UTooltip>
-				</div>
-			</div>
+		<div v-if="!canCreateClients || isReadOnly" class="flex items-center justify-center h-full p-8">
+			<CoreAppAlertInline color="warning" :title="$t('permissionDenied')">
+				<template #description>{{ isReadOnly ? $t('opsiConfig.serverFeatures.readOnly.disabled') :
+					$t('opsiConfig.serverFeatures.clientCreation.disabled') }}</template>
+			</CoreAppAlertInline>
 		</div>
-
-		<div class="flex-1 overflow-y-auto p-2">
-			<div class="mb-6">
-				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-sm font-semibold m-0">{{ $t('newClient') }}</h4>
-				</div>
-				<div class="mb-6">
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('clientId') }} <span class="text-error">*</span>
-						</span>
-						<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
-							<div class="flex items-center gap-2 w-full">
-								<UInput v-model="clientName" :disabled="loading" size="sm" placeholder="clientname"
-									class="flex-1" />
-								<UInput v-model="domain" :disabled="loading" size="sm" placeholder=".domain.local"
-									class="flex-1" />
-							</div>
-							<div v-if="formErrors.clientId" class="text-xs text-error">{{ formErrors.clientId }}</div>
-						</div>
-					</div>
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('description') }}
-						</span>
-						<div class="flex-1">
-							<UInput v-model="form.description" :disabled="loading" size="sm"
-								placeholder="Client description" class="flex-1" />
-						</div>
-					</div>
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('inventoryNumber') }}
-						</span>
-						<div class="flex-1">
-							<UInput v-model="form.inventoryNumber" :disabled="loading" size="sm"
-								placeholder="Inventory number" class="flex-1" />
-						</div>
-					</div>
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('ipAddress') }}
-						</span>
-						<div class="flex-1">
-							<UInput v-model="form.ipAddress" :disabled="loading" size="sm" placeholder="192.168.1.x"
-								class="flex-1" />
-						</div>
-					</div>
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('macAddress') }}
-						</span>
-						<div class="flex-1">
-							<UInput v-model="form.macAddress" :disabled="loading" size="sm"
-								placeholder="00:11:22:33:44:55" class="flex-1" />
-						</div>
-					</div>
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('notes') }}
-						</span>
-						<div class="flex-1">
-							<UTextarea v-model="form.notes" :disabled="loading" size="sm" :rows="3"
-								placeholder="Additional notes" class="flex-1 w-full" />
-						</div>
+		<template v-else>
+			<div class="shrink-0 sticky top-0 z-10 bg-(--color-surface) px-2 py-2">
+				<div class="flex items-center justify-between">
+					<CoreAppAlertInline v-if="success" color="success" :title="String($t('success'))"
+						class="flex-1 mr-2">
+						<template #description>{{ $t('clientCreatedSuccessfully') }}</template>
+					</CoreAppAlertInline>
+					<CoreAppAlertInline v-else-if="error" color="error" :title="String($t('error'))"
+						:description="error" closable class="flex-1 mr-2" @close="error = null" />
+					<div v-else />
+					<div class="flex gap-2 shrink-0">
+						<CoreAppButton color="success" :loading="loading" :disabled="!canCreate"
+							:title="String($t('addClient'))" @click="handleSubmit">
+							<CoreAppIcon :name="icons.client" />
+							<CoreAppIcon :name="icons.add" />
+						</CoreAppButton>
+						<CoreAppButton variant="ghost" color="neutral" :icon="icons.refresh" :disabled="loading"
+							:title="String($t('reset'))" @click="resetForm" />
 					</div>
 				</div>
 			</div>
 
-			<div class="mb-6">
-				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-sm font-semibold m-0">{{ $t('assignments') }}</h4>
-				</div>
-				<div class="mb-6">
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('depot') }} <span class="text-error">*</span>
-						</span>
-						<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
-							<USelect v-model="form.depotId" :items="depotOptions" :loading="loadingDepots"
-								:disabled="loading" size="sm" class="w-full" />
-							<div v-if="formErrors.depotId" class="text-xs text-error">{{ formErrors.depotId }}</div>
-						</div>
+			<div class="flex-1 overflow-y-auto p-2 space-y-3">
+				<div class="opsi-card">
+					<div class="flex items-center justify-between mb-3">
+						<CoreAppHeading size="xs" tag="h4">{{ $t('newClient') }}</CoreAppHeading>
 					</div>
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('groups') }}
-						</span>
-						<div class="flex-1 flex items-center gap-2 min-w-0">
-							<USelectMenu v-model="form.groups" :items="groupOptions" multiple :disabled="loading"
-								size="sm" class="w-full" />
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="mb-6">
-				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-sm font-semibold m-0">{{ $t('initialSetup') }}</h4>
-				</div>
-				<div class="mb-6">
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('netbootProducts') }}
-						</span>
-						<div class="flex-1 flex items-center gap-2 min-w-0">
-							<USelectMenu v-model="form.netbootProducts" :items="netbootProductOptions" multiple
-								:disabled="loading" size="sm" class="w-full" />
-						</div>
-					</div>
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-						<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
-							<UIcon :name="icons.deploy" class="w-4 h-4" />
-							{{ $t('enableAgentSetup') }}
-						</span>
-						<div class="flex-1 flex items-center gap-2 min-w-0">
-							<UCheckbox v-model="form.agentSetup" :disabled="loading" />
-						</div>
-					</div>
-					<div v-if="form.agentSetup"
-						class="ml-4 border-l-2 border-(--color-border) pl-4 space-y-0">
+					<div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('type') }}
+								{{ $t('clientId') }} <span class="text-error">*</span>
 							</span>
-							<div class="flex-1">
-								<div class="grid grid-cols-3 gap-2">
-									<UButton v-for="os in osTypes" :key="os.value"
-										:variant="form.agentType === os.value ? 'solid' : 'outline'"
-										:color="form.agentType === os.value ? 'primary' : 'neutral'" size="sm"
-										class="justify-center" :disabled="loading" @click="form.agentType = os.value">
-										<UIcon :name="os.icon" class="w-4 h-4 mr-1" />
-										{{ os.label }}
-									</UButton>
+							<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
+								<div class="flex items-center gap-2 w-full">
+									<CoreAppInput v-model="clientName" :disabled="loading" size="sm"
+										placeholder="clientname" class="flex-1" />
+									<CoreAppInput v-model="domain" :disabled="loading" size="sm"
+										placeholder=".domain.local" class="flex-1" />
+								</div>
+								<div v-if="formErrors.clientId" class="text-xs text-error">{{ formErrors.clientId }}
 								</div>
 							</div>
 						</div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
-								<UIcon :name="icons.user" class="w-4 h-4 text-(--color-text-muted)" />
-								{{ $t('username') }}
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
+								{{ $t('description') }}
+							</span>
+							<div class="flex-1">
+								<CoreAppInput v-model="form.description" :disabled="loading" size="sm"
+									placeholder="Client description" class="w-full" />
+							</div>
+						</div>
+						<div
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
+								{{ $t('inventoryNumber') }}
+							</span>
+							<div class="flex-1">
+								<CoreAppInput v-model="form.inventoryNumber" :disabled="loading" size="sm"
+									placeholder="Inventory number" class="w-full" />
+							</div>
+						</div>
+						<div
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
+								{{ $t('ipAddress') }}
+							</span>
+							<div class="flex-1">
+								<CoreAppInput v-model="form.ipAddress" :disabled="loading" size="sm"
+									placeholder="192.168.1.x" class="w-full" />
+							</div>
+						</div>
+						<div
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
+								{{ $t('macAddress') }}
+							</span>
+							<div class="flex-1">
+								<CoreAppInput v-model="form.macAddress" :disabled="loading" size="sm"
+									placeholder="00:11:22:33:44:55" class="w-full" />
+							</div>
+						</div>
+						<div
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
+								{{ $t('notes') }}
+							</span>
+							<div class="flex-1">
+								<CoreAppTextarea v-model="form.notes" :disabled="loading" size="sm" :rows="3"
+									placeholder="Additional notes" class="flex-1 w-full" />
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="opsi-card">
+					<div class="flex items-center justify-between mb-3">
+						<CoreAppHeading size="xs" tag="h4">{{ $t('assignments') }}</CoreAppHeading>
+					</div>
+					<div>
+						<div
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
+								{{ $t('depot') }} <span class="text-error">*</span>
+							</span>
+							<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
+								<CoreAppSelect v-model="form.depotId" :items="depotOptions" :loading="loadingDepots"
+									:disabled="loading" size="sm" class="w-full" />
+								<div v-if="formErrors.depotId" class="text-xs text-error">{{ formErrors.depotId }}</div>
+							</div>
+						</div>
+						<div
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
+								{{ $t('groups') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
-								<UInput v-model="form.agentUsername" :disabled="loading" size="sm"
-									:placeholder="String($t('adminUsername'))" class="w-full" />
+								<CoreAppSelectMenu v-model="form.groups" :items="groupOptions" multiple
+									:disabled="loading" size="sm" class="w-full" />
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="opsi-card">
+					<div class="flex items-center justify-between mb-3">
+						<CoreAppHeading size="xs" tag="h4">{{ $t('initialSetup') }}</CoreAppHeading>
+					</div>
+					<div>
+						<div
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							<span class="text-sm min-w-0 md:w-1/3 break-all">
+								{{ $t('netbootProducts') }}
+							</span>
+							<div class="flex-1 flex items-center gap-2 min-w-0">
+								<CoreAppSelectMenu v-model="form.netbootProducts" :items="netbootProductOptions"
+									multiple :disabled="loading" size="sm" class="w-full" />
 							</div>
 						</div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
-								<UIcon :name="icons.key" class="w-4 h-4 text-(--color-text-muted)" />
-								{{ $t('password') }}
+								<CoreAppIcon :name="icons.deploy" class="w-4 h-4" />
+								{{ $t('enableAgentSetup') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
-								<UInput v-model="form.agentPassword" :disabled="loading" size="sm" type="password"
-									:placeholder="String($t('enterPassword'))" class="w-full" />
+								<CoreAppCheckbox v-model="form.agentSetup" :disabled="loading" />
+							</div>
+						</div>
+						<div v-if="form.agentSetup" class="ml-4 border-l-2 border-(--color-border) pl-4 space-y-0">
+							<div
+								class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+								<span class="text-sm min-w-0 md:w-1/3 break-all">
+									{{ $t('type') }}
+								</span>
+								<div class="flex-1">
+									<div class="grid grid-cols-3 gap-2">
+										<CoreAppButton v-for="os in osTypes" :key="os.value"
+											:variant="form.agentType === os.value ? 'solid' : 'outline'"
+											:color="form.agentType === os.value ? 'primary' : 'neutral'" size="sm"
+											class="justify-center" :disabled="loading"
+											@click="form.agentType = os.value">
+											<CoreAppIcon :name="os.icon" class="w-4 h-4 mr-1" />
+											{{ os.label }}
+										</CoreAppButton>
+									</div>
+								</div>
+							</div>
+							<div
+								class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+								<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
+									<CoreAppIcon :name="icons.user" class="w-4 h-4 text-(--color-text-muted)" />
+									{{ $t('username') }}
+								</span>
+								<div class="flex-1 flex items-center gap-2 min-w-0">
+									<CoreAppInput v-model="form.agentUsername" :disabled="loading" size="sm"
+										:placeholder="String($t('adminUsername'))" class="w-full" />
+								</div>
+							</div>
+							<div
+								class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+								<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
+									<CoreAppIcon :name="icons.key" class="w-4 h-4 text-(--color-text-muted)" />
+									{{ $t('password') }}
+								</span>
+								<div class="flex-1 flex items-center gap-2 min-w-0">
+									<CoreAppInput v-model="form.agentPassword" :disabled="loading" size="sm"
+										type="password" :placeholder="String($t('enterPassword'))" class="w-full" />
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</template>
 	</div>
 </template>
 
 <script setup lang="ts">
+const { canCreateClients, isReadOnly } = useUserPermissions()
 import { useSelectionStore } from '~/stores/selectionStore'
 
 const emit = defineEmits<{

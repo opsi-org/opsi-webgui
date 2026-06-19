@@ -1,20 +1,25 @@
-Route: /servers/configuration/:tab/:id?
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ServerConfigurationPage - Route page for server host configuration tabs.
+-->
 <template>
 	<HostsConfigTabs :host-id="selectedServerId" host-type="server" :tab="activeTab" show-host-selector
-		:readonly="isReadOnly || !hasServerWriteAccess"
-		@update:host-id="updateSelectedServerId" @update:tab="updateActiveTab" @saved="handleSaved" />
+		:readonly="isReadOnly || !hasServerWriteAccess" @update:host-id="updateSelectedServerId"
+		@update:tab="updateActiveTab" @saved="handleSaved" />
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-	layout: 'default',
-	title: 'Server Configuration',
-	key: 'server-configuration',
-})
+definePageMeta({ layout: 'default' })
 
 const { isReadOnly, hasServerWriteAccess } = useUserPermissions()
 
 const VALID_TABS = ['parameters', 'attributes'] as const
+const TAB_ALIASES: Record<string, string> = { parameter: 'parameters', attribute: 'attributes' }
 
 const route = useRoute()
 const router = useRouter()
@@ -22,7 +27,8 @@ const router = useRouter()
 const routeTab = computed((): string => {
 	const t = route.params.tab
 	const val = (Array.isArray(t) ? t[0] : (t as string)) || ''
-	return VALID_TABS.includes(val as any) ? val : 'parameters'
+	const normalized = TAB_ALIASES[val] || val
+	return VALID_TABS.includes(normalized as any) ? normalized : 'parameters'
 })
 
 const routeServerId = computed((): string => {
@@ -60,7 +66,7 @@ watch(routeServerId, (id) => { manualServerId.value = id }, { immediate: true })
 
 useHead({
 	title: () => selectedServerId.value
-		? `${selectedServerId.value} — ${activeTab.value}`
+		? `${selectedServerId.value} - ${activeTab.value}`
 		: 'Server Configuration',
 })
 </script>

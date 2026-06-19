@@ -1,6 +1,15 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  IndexPage - Root route redirect.
+-->
 <template>
     <div class="min-h-screen flex items-center justify-center">
-        <SharedLoadingSpinner size="lg" />
+        <CoreAppLoadingSpinner size="lg" />
     </div>
 </template>
 
@@ -9,23 +18,14 @@ import { useUserStore } from '~/stores/userStore'
 
 definePageMeta({ layout: false })
 
-const icons = useIcons()
 const userStore = useUserStore()
 
 onMounted(async () => {
     if (userStore.isAuthenticated) {
-        const defaultPage = getDefaultPage()
+        const defaultPage = getDefaultPageFromCookie()
         await navigateTo(defaultPage)
     } else {
         await navigateTo('/login')
     }
 })
-
-function getDefaultPage(): string {
-    const match = document.cookie.match(/(?:^|; )opsi-webgui-default-page=([^;]*)/)
-    const stored = match?.[1] ? decodeURIComponent(match[1]) : null
-    const validPages = ['/dashboard', '/clients', '/products', '/servers', '/admin/terminal', '/admin/maintenance', '/admin/diagnostics']
-    if (stored && validPages.includes(stored)) return stored
-    return '/clients'
-}
 </script>

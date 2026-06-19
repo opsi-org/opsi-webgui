@@ -1,28 +1,28 @@
-Route: /clients/clone/:id?
-Client Clone page - allows cloning an existing client.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ClientClonePage - Route page for client cloning with optional source client ID.
+-->
 <template>
     <LayoutsPageLayout>
-        <div v-if="!canCreateClients || isReadOnly" class="flex items-center justify-center h-full p-8">
-            <SharedAlertInline color="warning" :title="$t('permissionDenied')">
-                <template #description>{{ isReadOnly ? $t('opsiConfig.serverFeatures.readOnly.disabled') :
-                    $t('opsiConfig.serverFeatures.clientCreation.disabled') }}</template>
-            </SharedAlertInline>
-        </div>
-        <ClientsCloneForm v-else :source-id="selectedClientId" show-source-selector
+        <ClientsCloneForm :source-id="selectedClientId" show-source-selector
             :source-selector-placeholder="String($t('selectClient'))" @update:source-id="updateSelectedClientId"
             @saved="handleSuccess" />
     </LayoutsPageLayout>
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-    layout: 'default',
-    title: 'Clone Client',
-})
+definePageMeta({ layout: 'default' })
 
-const { canCreateClients, isReadOnly } = useUserPermissions()
+const { t: $t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+
+useHead({ title: () => `${$t('cloneClient')} - opsi-WebGUI` })
 
 const routeClientId = computed(() => {
     const id = route.params.id

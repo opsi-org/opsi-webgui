@@ -1,46 +1,54 @@
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  ProductsActionRequestDropdown - Dropdown for selecting product action requests.
+-->
 <template>
 	<div v-if="mode === 'header'" class="flex items-center gap-1" @click.stop>
 		<span class="font-heading text-xs tracking-wider">{{ $t('actionRequest') }}</span>
-		<UIcon v-if="sortColumn === 'actionRequest'" :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
-			class="w-3 h-3" />
-		<UIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
-		<UPopover v-if="hasClientsSelected && hasProductsSelected">
-			<UButton size="xs" variant="ghost" color="neutral" :icon="icons.chevronDown"
+		<CoreAppIcon v-if="sortColumn === 'actionRequest'"
+			:name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc" class="w-3 h-3" />
+		<CoreAppIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
+		<CoreAppPopover v-if="hasClientsSelected && hasProductsSelected">
+			<CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.chevronDown"
 				:title="$t('message.setActionRequestForSelectedProducts')" />
 			<template #content>
 				<div class="p-2 w-44">
 					<p class="text-xs text-(--color-text-muted) mb-2">{{ $t('setForSelected') }}</p>
 					<div class="space-y-1">
-						<UButton v-for="action in bulkActionOptions" :key="action" size="xs" variant="ghost"
+						<CoreAppButton v-for="action in bulkActionOptions" :key="action" size="xs" variant="ghost"
 							color="neutral" block class="justify-start" @click="emit('apply', action)">
 							{{ action }}
-						</UButton>
+						</CoreAppButton>
 					</div>
 				</div>
 			</template>
-		</UPopover>
+		</CoreAppPopover>
 	</div>
 
 	<div v-else class="flex items-center gap-1">
-		<SharedTooltipTable v-if="isMixed && disabled" :rows="mixedTooltipRows">
-			<UBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help">
-				<UIcon :name="icons.unequal" class="w-3 h-3" />
-				<span>{{ $t('mixed') }}</span>
-			</UBadge>
-		</SharedTooltipTable>
+		<CoreAppTooltipTable v-if="isMixed && disabled" :rows="mixedTooltipRows">
+			<CoreAppBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help">
+				<CoreAppIcon :name="icons.unequal" class="w-3 h-3" />
+			</CoreAppBadge>
+		</CoreAppTooltipTable>
 		<template v-else-if="!disabled">
-			<USelect v-model="selectedRequest" :items="requestItems" size="xs" class="min-w-24"
+			<CoreAppSelect v-model="selectedRequest" :items="requestItems" size="xs" class="min-w-24"
 				@update:model-value="handleChange" />
-			<SharedTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
-				<UBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help shrink-0">
-					<UIcon :name="icons.unequal" class="w-3 h-3" />
-				</UBadge>
-			</SharedTooltipTable>
+			<CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
+				<CoreAppBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help shrink-0">
+					<CoreAppIcon :name="icons.unequal" class="w-3 h-3" />
+				</CoreAppBadge>
+			</CoreAppTooltipTable>
 		</template>
 		<span v-else class="text-xs text-(--color-text-muted)">
 			{{ currentLabel || '-' }}
 		</span>
-		<span v-if="hasChanged || hasPendingChange" class="w-1.5 h-1.5 rounded-full bg-yellow-500 shrink-0"
+		<span v-if="hasChanged || hasPendingChange" class="w-1.5 h-1.5 rounded-full bg-(--color-warning) shrink-0"
 			:title="$t('unsavedChange')" />
 	</div>
 </template>

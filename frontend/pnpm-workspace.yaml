@@ -1,0 +1,7 @@
+# pnpm 10 reads dependency overrides from here (no longer from package.json's  "pnpm.overrides").
+overrides:
+  # Security (pnpm audit):
+  esbuild: '>=0.28.1'
+  tar: '>=7.5.16'
+  # vite-plugin-checker 0.14.x is published broken (missing dist/@runtime/main.js), which crashes `nuxt dev`.
+  vite-plugin-checker: '0.13.0'

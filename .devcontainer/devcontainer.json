@@ -7,14 +7,12 @@
   "postStartCommand": ".devcontainer/post_start.sh",
   "workspaceFolder": "/workspace",
   "containerEnv": {
-    "UV_PYTHON": "3.14",
     "DEV_USER": "${localEnv:USER}",
     "DEV_UID": "${localEnv:UID}",
     "OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
     "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
     "ADDON_NAME": "webgui",
-    "ADDON_ID": "webgui",
-    "OPSI_BACKUP_URL": "https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json"
+    "ADDON_ID": "webgui"
   },
   "customizations": {
     "vscode": {
@@ -43,6 +41,8 @@
       ]
     }
   },
-  "forwardPorts": [4447],
+  "forwardPorts": [
+    4447
+  ],
   "remoteUser": "${localEnv:USER}"
 }

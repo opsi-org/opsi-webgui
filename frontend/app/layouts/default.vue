@@ -1,61 +1,25 @@
-Default layout component with top bar, left sidebar, breadcrumb with page description, and main content area.
-Also includes the quickpanel as a resizable right sidebar on desktop and a slide-up drawer on mobile.
+<!--
+  This file is part of opsi-webgui application.
+  opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
+  Copyright (c) uib GmbH <info@uib.de> 2026
+  All rights reserved.
+  License: AGPL-3.0
+
+  DefaultLayout - Main application layout with sidebar, topbar, breadcrumb, and quickpanel.
+-->
 <template>
     <div class="h-screen w-screen flex flex-col overflow-hidden">
-        <header class="bg-opsi-blue text-white h-12 flex items-center px-3 md:px-4 shadow-md shrink-0 z-50">
-            <div class="flex items-center gap-2 md:gap-3">
-                <button @click="toggleSidebar" class="p-2 rounded hover:bg-white/20 transition-colors">
-                    <UIcon :name="sidebarOpen ? icons.x : icons.menu" class="w-5 h-5" />
-                </button>
-                <NuxtLink :to="defaultPage" class="flex items-center gap-2">
-                    <img src="~/assets/images/opsi_webgui_wide_dark.svg" alt="OPSI" class="h-10" />
-                </NuxtLink>
-            </div>
-            <div class="flex-1" />
-            <nav class="flex items-center gap-0.5 md:gap-1">
-                <div v-if="formattedTime && formattedTime !== '0:00' && isWarning"
-                    class="flex items-center gap-1 text-xs px-2 py-1 rounded"
-                    :class="isWarning ? 'bg-amber-500/20 animate-pulse font-semibold' : 'bg-white/10'"
-                    :title="t('sessionExpiresIn')">
-                    <UIcon :name="icons.clock" class="w-4 h-4" />
-                    <span class="font-medium tabular-nums">{{ formattedTime }}</span>
-                </div>
-                <NuxtLink v-if="userStore.healthWorstCase && userStore.healthWorstCase !== 'ok'" to="/admin/diagnostics"
-                    class="px-2.5 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5"
-                    :class="{
-                        'bg-amber-500/50 text-black hover:bg-amber-500/30': userStore.healthWorstCase === 'warning',
-                        'bg-red-500/50 text-white hover:bg-red-500/30': userStore.healthWorstCase === 'error',
-                    }" :title="healthCheckTooltip">
-                    <UIcon :name="icons.health" class="w-4 h-4" />
-                    <span class="tabular-nums">{{ userStore.healthCounts?.error || userStore.healthCounts?.warning || 0
-                    }}</span>
-                </NuxtLink>
-                <UTooltip :text="messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')">
-                    <div class="flex items-center gap-1 px-2 py-1 rounded-full text-xs"
-                        :class="messageBusStore.isConnected ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'">
-                        <span class="relative inline-flex w-5 h-5 items-center justify-center">
-                            <img src="~/assets/images/opsi_logo_bee_dark.svg" alt="opsi" class="w-4 h-4" />
-                            <span
-                                class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-[--color-background]"
-                                :class="messageBusStore.isConnected ? 'bg-emerald-500' : 'bg-red-500'" />
-                        </span>
-                    </div>
-                </UTooltip>
-                <button @click="toggleQuickpanel"
-                    class="p-2 rounded hover:bg-white/20 transition-colors flex items-center gap-1.5"
-                    :title="t('quickPanel')">
-                    <UIcon :name="icons.user" class="w-5 h-5" />
-                    <span class="hidden md:inline text-sm">{{ userStore.username }}</span>
-                    <UIcon :name="icons.quickPanel" class="w-4 h-4" />
-                </button>
-            </nav>
-        </header>
+        <a href="#main-content" class="sr-skip-link">{{ t('skipToContent') }}</a>
+        <LayoutsTopbar :default-page="defaultPage" :formatted-time="formattedTime" :is-warning="isWarning"
+            :health-check-tooltip="healthCheckTooltip" :health-worst-case="currentHealthWorstCase"
+            :health-counts="currentHealthCounts" @toggle-sidebar="toggleSidebar"
+            @toggle-quickpanel="toggleQuickpanel" />
 
         <div class="flex-1 flex overflow-hidden relative">
             <div v-if="isMobile && sidebarOpen" class="absolute inset-0 bg-black/50 z-30"
                 @click="sidebarOpen = false" />
 
-            <aside :class="[
+            <aside aria-label="Navigation" :class="[
                 'shrink-0 transition-all duration-200 z-40',
                 isMobile
                     ? sidebarOpen
@@ -68,78 +32,74 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
                 <LayoutsSidebar :collapsed="!sidebarOpen && !isMobile" :is-mobile="isMobile" />
             </aside>
 
-            <main
-                class="flex-1 bg-(--color-surface) dark:bg-(--color-background) flex flex-col min-w-0 overflow-hidden">
+            <main class="flex-1 flex flex-col overflow-hidden">
                 <LayoutsBreadCrumb />
-                <Transition name="slide-down">
-                    <SharedAlertInline v-if="userStore.globalError" color="error" :title="t('error')"
-                        :description="userStore.globalError" closable class="mx-3 md:mx-4 mt-2"
-                        @close="userStore.globalError = undefined" />
-                </Transition>
-                <Transition name="slide-down">
-                    <SharedAlertInline v-if="userStore.readOnly" color="warning" :title="t('readOnlyAccess')"
-                        variant="subtle" class="mx-3 md:mx-4 mt-2" />
-                </Transition>
-                <Transition name="slide-down">
-                    <div v-if="messageBusStore.certWarning"
-                        class="mx-3 md:mx-4 mt-2 flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-sm">
-                        <div class="flex items-center gap-2 text-amber-700 dark:text-amber-300">
-                            <UIcon :name="icons.warning" class="w-4 h-4 shrink-0" />
-                            <span>{{ t('messageBusConnectionFailed') }}
-                                <a :href="messageBusStore.certWarningUrl" target="_blank" rel="noopener"
-                                    class="underline font-medium hover:text-amber-900 dark:hover:text-amber-100">
-                                    {{ t('acceptCertificate') }}
-                                </a>
-                            </span>
-                        </div>
-                        <UButton size="xs" variant="ghost" color="neutral" @click="messageBusStore.certWarning = false">
-                            <UIcon :name="icons.x" class="w-3.5 h-3.5" />
-                        </UButton>
-                    </div>
-                </Transition>
-                <Transition name="slide-down">
-                    <div v-if="messageBusStore.changesDetected && !messageBusStore.autoRefresh"
-                        class="mx-3 md:mx-4 mt-2 flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-sm">
-                        <div class="flex items-center gap-2 text-amber-700 dark:text-amber-300">
-                            <UIcon :name="icons.info" class="w-4 h-4 shrink-0" />
-                            <span>{{ t('changesDetected') }}: <strong>{{
-                                messageBusStore.lastEventType?.replace('event:', '') || t('activity')
-                                    }}</strong></span>
-                        </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            <UButton size="xs" color="warning" variant="soft" @click="$router.go(0)">
-                                <UIcon :name="icons.refresh" class="w-3.5 h-3.5 mr-1" />
-                                {{ t('refresh') }}
-                            </UButton>
-                            <UButton size="xs" variant="ghost" color="neutral"
-                                @click="messageBusStore.setChangesDetected(false)">
-                                <UIcon :name="icons.x" class="w-3.5 h-3.5" />
-                            </UButton>
-                        </div>
-                    </div>
-                </Transition>
-                <div class="flex-1 p-3 md:p-4 overflow-hidden min-h-0">
+                <div class="shrink-0 z-10 px-3 md:px-4">
+                    <Transition name="slide-down">
+                        <CoreAppAlertInline v-if="userStore.globalError" color="error" :title="t('error')"
+                            :description="userStore.globalError" closable compact class="mt-2"
+                            @close="userStore.globalError = undefined" />
+                    </Transition>
+                    <Transition name="slide-down">
+                        <CoreAppAlertInline v-if="userStore.readOnly" color="warning" :title="t('readOnlyAccess')"
+                            variant="subtle" compact class="mt-2" />
+                    </Transition>
+                    <Transition name="slide-down">
+                        <CoreAppAlertInline v-if="messageBusStore.certWarning" color="warning" variant="subtle" compact
+                            class="mt-2" closable @close="messageBusStore.certWarning = false">
+                            <template #description>
+                                <span>{{ t('messageBusCertWarningDescription') }}
+                                    <a :href="messageBusStore.certWarningUrl" target="_blank" rel="noopener"
+                                        class="underline font-medium hover:text-(--color-text-highlighted)">
+                                        {{ t('messageBusCertWarningAction') }}
+                                    </a>
+                                </span>
+                            </template>
+                        </CoreAppAlertInline>
+                    </Transition>
+                    <Transition name="slide-down">
+                        <CoreAppAlertInline v-if="messageBusStore.changesDetected && !messageBusStore.autoRefresh"
+                            color="warning" variant="subtle" compact class="mt-2">
+                            <template #description>
+                                <span class="inline-flex items-center gap-2">
+                                    <span>{{ t('changesDetected') }}: <strong>{{
+                                        messageBusStore.lastEventType?.replace('event:', '') || t('activity')
+                                            }}</strong></span>
+                                    <CoreAppButton size="xs" color="warning" variant="soft" @click="$router.go(0)">
+                                        <CoreAppIcon :name="icons.refresh" class="w-3.5 h-3.5 mr-1" />
+                                        {{ t('refresh') }}
+                                    </CoreAppButton>
+                                    <CoreAppButton size="xs" variant="ghost" color="neutral"
+                                        @click="messageBusStore.setChangesDetected(false)">
+                                        <CoreAppIcon :name="icons.x" class="w-3.5 h-3.5" />
+                                    </CoreAppButton>
+                                </span>
+                            </template>
+                        </CoreAppAlertInline>
+                    </Transition>
+                </div>
+                <div id="main-content" class="flex-1 p-3 md:p-4 overflow-hidden min-h-0 bg-(--color-surface)">
                     <slot />
                 </div>
             </main>
 
             <Transition name="quickpanel-slide">
                 <aside v-if="quickpanelOpen && !isMobile" :style="{ width: quickpanelWidth + 'px' }"
-                    class="bg-white dark:bg-(--color-surface) border-l border-(--color-border) dark:border-(--color-border) overflow-auto shrink-0 flex flex-col relative">
+                    class="bg-(--color-background) border-l border-(--color-border) overflow-auto shrink-0 flex flex-col relative">
                     <div class="absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group flex items-center justify-center"
                         @mousedown="startQuickpanelResize">
                         <div
-                            class="w-0.5 h-8 bg-gray-300 dark:bg-gray-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                            class="w-0.5 h-8 bg-(--color-border) rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div class="p-4 flex-1 flex flex-col">
                         <div class="flex items-center justify-between mb-4">
-                            <span class="text-sm font-medium text-(--color-text) dark:text-(--color-text)">{{
+                            <span class="text-sm font-medium text-(--color-text)">{{
                                 t('quickPanel')
-                                }}</span>
-                            <button @click="quickpanelOpen = false"
-                                class="p-1 hover:bg-(--color-surface) dark:hover:bg-(--color-surface-hover) rounded">
-                                <UIcon :name="icons.x" class="w-4 h-4" />
-                            </button>
+                            }}</span>
+                            <CoreAppButton @click="quickpanelOpen = false" variant="ghost" color="neutral"
+                                :aria-label="String(t('close'))" class="p-1! hover:bg-(--color-surface-hover)">
+                                <CoreAppIcon :name="icons.x" class="w-4 h-4" />
+                            </CoreAppButton>
                         </div>
                         <QuickpanelMainView />
                     </div>
@@ -151,16 +111,16 @@ Also includes the quickpanel as a resizable right sidebar on desktop and a slide
             <div v-if="quickpanelOpen && isMobile" class="fixed inset-0 z-50">
                 <div class="absolute inset-0 bg-black/50" @click="quickpanelOpen = false" />
                 <div
-                    class="absolute bottom-0 left-0 right-0 bg-white dark:bg-(--color-surface) rounded-t-2xl max-h-[80vh] overflow-auto">
+                    class="absolute bottom-0 left-0 right-0 bg-(--color-background) rounded-t-2xl max-h-[80vh] overflow-auto">
                     <div class="p-4">
                         <div class="flex justify-center mb-3">
-                            <div class="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
+                            <div class="w-10 h-1 bg-(--color-border) rounded-full" />
                         </div>
 
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-base font-medium text-(--color-text)">{{ t('quickPanel') }}</span>
-                            <UButton :icon="icons.x" size="sm" variant="ghost" color="neutral" class="rounded-full"
-                                @click="quickpanelOpen = false" />
+                            <CoreAppButton :icon="icons.x" size="sm" variant="ghost" color="neutral"
+                                class="rounded-full" @click="quickpanelOpen = false" />
                         </div>
 
                         <QuickpanelMainView />
@@ -176,15 +136,12 @@ import { useUiStore } from '~/stores/uiStore'
 import { useUserStore } from '~/stores/userStore'
 import { useMessageBusStore } from '~/stores/messageBusStore'
 import { useSessionTimer } from '~/composables/useSessionTimer'
-import { useMessageBus } from '~/composables/useMessagebus'
 
 const icons = useIcons()
 const userStore = useUserStore()
 const uiStore = useUiStore()
 const messageBusStore = useMessageBusStore()
-
-// Establish persistent messagebus connection at the layout level
-const { mount: mountMessageBus } = useMessageBus()
+const { healthCounts: cachedHealthCounts, diagnosticsFetched } = useCachedData()
 
 const { isWarning, formattedTime } = useSessionTimer(true)
 const $route = useRoute()
@@ -193,7 +150,7 @@ const { t: i18nT } = useI18n()
 const defaultPage = ref('/clients')
 
 const healthCheckTooltip = computed(() => {
-    const counts = userStore.healthCounts
+    const counts = diagnosticsFetched.value ? cachedHealthCounts.value : userStore.healthCounts
     if (!counts) return t('healthCheck')
     const parts: string[] = []
     if (counts.error) parts.push(`${counts.error} ${t('errors')}`)
@@ -201,12 +158,22 @@ const healthCheckTooltip = computed(() => {
     return parts.length > 0 ? `${t('healthCheck')}: ${parts.join(', ')}` : t('healthCheck')
 })
 
+const currentHealthCounts = computed(() => {
+    return diagnosticsFetched.value ? cachedHealthCounts.value : userStore.healthCounts
+})
+
+const currentHealthWorstCase = computed(() => {
+    if (diagnosticsFetched.value) {
+        const counts = cachedHealthCounts.value
+        if (counts.error > 0) return 'error'
+        if (counts.warning > 0) return 'warning'
+        return 'ok'
+    }
+    return userStore.healthWorstCase
+})
+
 function updateDefaultPage() {
-    if (typeof document === 'undefined') return
-    const match = document.cookie.match(/(?:^|; )opsi-webgui-default-page=([^;]*)/)
-    const stored = match?.[1] ? decodeURIComponent(match[1]) : null
-    const validPages = ['/dashboard', '/clients', '/products', '/servers', '/admin/terminal', '/admin/maintenance', '/admin/diagnostics']
-    defaultPage.value = (stored && validPages.includes(stored)) ? stored : '/clients'
+    defaultPage.value = getDefaultPageFromCookie()
 }
 
 const t = (key: string) => {
@@ -250,7 +217,7 @@ function startQuickpanelResize(e: MouseEvent) {
 
 onMounted(() => {
     updateDefaultPage()
-    mountMessageBus()
+    messageBusStore.connect()
     const checkMobile = () => {
         isMobile.value = window.innerWidth < 768
         if (!isMobile.value) {
