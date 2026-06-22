@@ -8,11 +8,11 @@
   CoreAppFilterInput - Search/filter input with clear button.
 -->
 <template>
-	<UInput v-model="model" :placeholder="placeholder || $t('typeToFilter')"
-		:aria-label="placeholder || $t('typeToFilter')" :icon="icons.filter" :size="size" :class="inputClass">
+	<UInput v-model="model" :placeholder="placeholder || $t('common.filter')"
+		:aria-label="placeholder || $t('common.filter')" :icon="icons.filter" :size="size" :class="inputClass">
 		<template v-if="model" #trailing>
-			<UButton :icon="icons.x" size="xs" variant="link" color="neutral" :aria-label="String($t('clear'))"
-				:title="String($t('clear'))" @click="model = ''" />
+			<UButton :icon="icons.x" size="xs" variant="link" color="neutral" :aria-label="String($t('common.clear'))"
+				:title="String($t('common.clear'))" @click="model = ''" />
 		</template>
 	</UInput>
 </template>

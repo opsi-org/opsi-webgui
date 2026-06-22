@@ -21,34 +21,34 @@
       <div class="flex items-center gap-2 p-3 rounded-lg bg-(--color-surface) border">
         <CoreAppIcon :name="icons.serverStack" class="w-5 h-5 text-opsi-blue" />
         <div class="flex-1 min-w-0">
-          <span class="text-xs text-(--color-text-muted) block">{{ $t('configServer') }}</span>
+          <span class="text-xs text-(--color-text-muted) block">{{ $t('servers.config') }}</span>
           <span v-if="configServerName" class="font-medium text-(--color-text) truncate block">{{
             configServerName
           }}</span>
-          <span v-else class="font-medium block italic">{{ $t('loading') }}</span>
+          <span v-else class="font-medium block italic">{{ $t('common.loading') }}</span>
         </div>
       </div>
 
-      <CoreAppInput v-model="cred.username" :placeholder="String($t('username'))" :aria-label="String($t('username'))"
-        :icon="icons.user" autocomplete="username" required class="w-full" />
-      <CoreAppPasswordInput v-model="cred.password" :placeholder="String($t('password'))"
-        :aria-label="String($t('password'))" :icon="icons.key" autocomplete="current-password" required
+      <CoreAppInput v-model="cred.username" :placeholder="String($t('auth.username'))"
+        :aria-label="String($t('auth.username'))" :icon="icons.user" autocomplete="username" required class="w-full" />
+      <CoreAppPasswordInput v-model="cred.password" :placeholder="String($t('auth.password'))"
+        :aria-label="String($t('auth.password'))" :icon="icons.key" autocomplete="current-password" required
         class="w-full" />
       <div class="space-y-3 pt-2">
         <CoreAppButton type="submit" block :disabled="!cred.username || !cred.password" color="primary"
           :loading="loading">
-          {{ $t('login') }}</CoreAppButton>
+          {{ $t('auth.login') }}</CoreAppButton>
         <div v-if="showSaml" class="relative my-4">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-(--color-border)" />
           </div>
           <div class="relative flex justify-center text-sm"><span
               class="px-2 bg-(--color-background) text-(--color-text-muted)">{{
-                $t('or') }}</span></div>
+                $t('common.or') }}</span></div>
         </div>
         <CoreAppButton v-if="showSaml" type="button" block size="lg" variant="outline" color="primary"
           @click="samlLogin">
-          {{ $t('loginWithSAMLSSO') }}</CoreAppButton>
+          {{ $t('auth.loginSaml') }}</CoreAppButton>
       </div>
     </CoreAppForm>
   </CoreAppCard>
@@ -100,10 +100,10 @@ onMounted(async () => {
         await fetchPostLoginData()
         await navigateTo(getDefaultPage())
       } else {
-        errorMessage.value = String($t('message.login.failed'))
+        errorMessage.value = String($t('auth.loginFailed'))
       }
     } catch {
-      errorMessage.value = String($t('message.login.failed'))
+      errorMessage.value = String($t('auth.loginFailed'))
     }
   }
 })
@@ -126,14 +126,14 @@ const handleLogin = async () => {
         await navigateTo(getDefaultPage())
       }
     } else {
-      errorMessage.value = $t('message.login.failed')
+      errorMessage.value = $t('auth.loginFailed')
     }
   } catch (e: unknown) {
     const error = e as { statusCode?: number, message?: string }
     if (error.statusCode === 401) {
-      errorMessage.value = $t('message.login.invalidCredentials')
+      errorMessage.value = $t('auth.invalid')
     } else {
-      errorMessage.value = error.message || $t('message.login.failed')
+      errorMessage.value = error.message || $t('auth.loginFailed')
     }
   } finally {
     loading.value = false

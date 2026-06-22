@@ -10,7 +10,7 @@
 <template>
 	<div class="flex flex-col h-full">
 		<div v-if="!canCreateClients || isReadOnly" class="flex items-center justify-center h-full p-8">
-			<CoreAppAlertInline color="warning" :title="$t('permissionDenied')">
+			<CoreAppAlertInline color="warning" :title="$t('auth.permissionDenied')">
 				<template #description>{{ isReadOnly ? $t('opsiConfig.serverFeatures.readOnly.disabled') :
 					$t('opsiConfig.serverFeatures.clientCreation.disabled') }}</template>
 			</CoreAppAlertInline>
@@ -18,21 +18,21 @@
 		<template v-else>
 			<div class="shrink-0 sticky top-0 z-10 bg-(--color-surface) px-2 py-2">
 				<div class="flex items-center justify-between">
-					<CoreAppAlertInline v-if="success" color="success" :title="String($t('success'))"
+					<CoreAppAlertInline v-if="success" color="success" :title="String($t('common.success'))"
 						class="flex-1 mr-2">
-						<template #description>{{ $t('clientCreatedSuccessfully') }}</template>
+						<template #description>{{ $t('clients.create.ok') }}</template>
 					</CoreAppAlertInline>
-					<CoreAppAlertInline v-else-if="error" color="error" :title="String($t('error'))"
+					<CoreAppAlertInline v-else-if="error" color="error" :title="String($t('common.error'))"
 						:description="error" closable class="flex-1 mr-2" @close="error = null" />
 					<div v-else />
 					<div class="flex gap-2 shrink-0">
 						<CoreAppButton color="success" :loading="loading" :disabled="!canCreate"
-							:title="String($t('addClient'))" @click="handleSubmit">
+							:title="String($t('clients.create.title'))" @click="handleSubmit">
 							<CoreAppIcon :name="icons.client" />
 							<CoreAppIcon :name="icons.add" />
 						</CoreAppButton>
 						<CoreAppButton variant="ghost" color="neutral" :icon="icons.refresh" :disabled="loading"
-							:title="String($t('reset'))" @click="resetForm" />
+							:title="String($t('common.reset'))" @click="resetForm" />
 					</div>
 				</div>
 			</div>
@@ -40,13 +40,13 @@
 			<div class="flex-1 overflow-y-auto p-2 space-y-3">
 				<div class="opsi-card">
 					<div class="flex items-center justify-between mb-3">
-						<CoreAppHeading size="xs" tag="h4">{{ $t('newClient') }}</CoreAppHeading>
+						<CoreAppHeading size="xs" tag="h4">{{ $t('clients.create.title') }}</CoreAppHeading>
 					</div>
 					<div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('clientId') }} <span class="text-error">*</span>
+								{{ $t('clients.id') }} <span class="text-error">*</span>
 							</span>
 							<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
 								<div class="flex items-center gap-2 w-full">
@@ -62,7 +62,7 @@
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('description') }}
+								{{ $t('common.description') }}
 							</span>
 							<div class="flex-1">
 								<CoreAppInput v-model="form.description" :disabled="loading" size="sm"
@@ -72,7 +72,7 @@
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('inventoryNumber') }}
+								{{ $t('fields.inventory') }}
 							</span>
 							<div class="flex-1">
 								<CoreAppInput v-model="form.inventoryNumber" :disabled="loading" size="sm"
@@ -82,7 +82,7 @@
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('ipAddress') }}
+								{{ $t('fields.ip') }}
 							</span>
 							<div class="flex-1">
 								<CoreAppInput v-model="form.ipAddress" :disabled="loading" size="sm"
@@ -92,7 +92,7 @@
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('macAddress') }}
+								{{ $t('fields.mac') }}
 							</span>
 							<div class="flex-1">
 								<CoreAppInput v-model="form.macAddress" :disabled="loading" size="sm"
@@ -102,7 +102,7 @@
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('notes') }}
+								{{ $t('common.notes') }}
 							</span>
 							<div class="flex-1">
 								<CoreAppTextarea v-model="form.notes" :disabled="loading" size="sm" :rows="3"
@@ -114,13 +114,13 @@
 
 				<div class="opsi-card">
 					<div class="flex items-center justify-between mb-3">
-						<CoreAppHeading size="xs" tag="h4">{{ $t('assignments') }}</CoreAppHeading>
+						<CoreAppHeading size="xs" tag="h4">{{ $t('common.assignments') }}</CoreAppHeading>
 					</div>
 					<div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('depot') }} <span class="text-error">*</span>
+								{{ $t('depot.title') }} <span class="text-error">*</span>
 							</span>
 							<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
 								<CoreAppSelect v-model="form.depotId" :items="depotOptions" :loading="loadingDepots"
@@ -131,7 +131,7 @@
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('groups') }}
+								{{ $t('groups.title') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
 								<CoreAppSelectMenu v-model="form.groups" :items="groupOptions" multiple
@@ -143,13 +143,13 @@
 
 				<div class="opsi-card">
 					<div class="flex items-center justify-between mb-3">
-						<CoreAppHeading size="xs" tag="h4">{{ $t('initialSetup') }}</CoreAppHeading>
+						<CoreAppHeading size="xs" tag="h4">{{ $t('clients.initialSetup') }}</CoreAppHeading>
 					</div>
 					<div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all">
-								{{ $t('netbootProducts') }}
+								{{ $t('products.netboot') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
 								<CoreAppSelectMenu v-model="form.netbootProducts" :items="netbootProductOptions"
@@ -160,7 +160,7 @@
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
 								<CoreAppIcon :name="icons.deploy" class="w-4 h-4" />
-								{{ $t('enableAgentSetup') }}
+								{{ $t('clients.deploy') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
 								<CoreAppCheckbox v-model="form.agentSetup" :disabled="loading" />
@@ -170,7 +170,7 @@
 							<div
 								class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 								<span class="text-sm min-w-0 md:w-1/3 break-all">
-									{{ $t('type') }}
+									{{ $t('common.type') }}
 								</span>
 								<div class="flex-1">
 									<div class="grid grid-cols-3 gap-2">
@@ -189,22 +189,22 @@
 								class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 								<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
 									<CoreAppIcon :name="icons.user" class="w-4 h-4 text-(--color-text-muted)" />
-									{{ $t('username') }}
+									{{ $t('auth.username') }}
 								</span>
 								<div class="flex-1 flex items-center gap-2 min-w-0">
 									<CoreAppInput v-model="form.agentUsername" :disabled="loading" size="sm"
-										:placeholder="String($t('adminUsername'))" class="w-full" />
+										:placeholder="String($t('fields.adminUsername'))" class="w-full" />
 								</div>
 							</div>
 							<div
 								class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 								<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
 									<CoreAppIcon :name="icons.key" class="w-4 h-4 text-(--color-text-muted)" />
-									{{ $t('password') }}
+									{{ $t('auth.password') }}
 								</span>
 								<div class="flex-1 flex items-center gap-2 min-w-0">
 									<CoreAppInput v-model="form.agentPassword" :disabled="loading" size="sm"
-										type="password" :placeholder="String($t('enterPassword'))" class="w-full" />
+										type="password" :placeholder="String($t('auth.enterPassword'))" class="w-full" />
 								</div>
 							</div>
 						</div>
@@ -387,11 +387,11 @@ watch([clientName, domain], () => {
 	formErrors.clientId = ''
 	if (!clientName.value) return
 	if (Number.isInteger(parseInt(clientName.value.charAt(0)))) {
-		formErrors.clientId = $t('message.formvalid.clientNameCannotStartWithNumber')
+		formErrors.clientId = $t('clients.validation.noNumber')
 		return
 	}
 	if (clientIds.value.includes(clientName.value + domain.value)) {
-		formErrors.clientId = $t('message.formvalid.clientExists')
+		formErrors.clientId = $t('clients.validation.exists')
 	}
 })
 
@@ -401,23 +401,23 @@ function validateForm(): boolean {
 	let valid = true
 
 	if (!clientName.value.trim()) {
-		formErrors.clientId = String($t('clientIdRequired'))
+		formErrors.clientId = String($t('clients.idRequired'))
 		valid = false
 	} else if (Number.isInteger(parseInt(clientName.value.charAt(0)))) {
-		formErrors.clientId = String($t('message.formvalid.clientNameCannotStartWithNumber'))
+		formErrors.clientId = String($t('clients.validation.noNumber'))
 		valid = false
 	} else if (clientIds.value.includes(clientName.value + domain.value)) {
-		formErrors.clientId = String($t('message.formvalid.clientExists'))
+		formErrors.clientId = String($t('clients.validation.exists'))
 		valid = false
 	}
 
 	if (!form.depotId) {
-		formErrors.depotId = String($t('depotRequired'))
+		formErrors.depotId = String($t('depot.required'))
 		valid = false
 	}
 
 	if (form.agentSetup && (!form.agentUsername || !form.agentPassword)) {
-		error.value = String($t('agentCredentialsRequired'))
+		error.value = String($t('clients.credentials.required'))
 		valid = false
 	}
 
@@ -473,7 +473,7 @@ async function handleSubmit() {
 		clientIds.value.push(hostId)
 		emit('saved')
 	} catch (e: unknown) {
-		error.value = e instanceof Error ? e.message : String($t('errorCreatingClient'))
+		error.value = e instanceof Error ? e.message : String($t('clients.create.err'))
 	} finally { loading.value = false }
 }
 </script>

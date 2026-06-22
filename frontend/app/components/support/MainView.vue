@@ -13,29 +13,29 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <CoreAppCard>
                     <template #header>
-                        <CoreAppHeading :icon="icons.support" :text="$t('professionalSupport')" />
+                        <CoreAppHeading :icon="icons.support" :text="$t('support.pro')" />
                     </template>
-                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('professionalSupportDescription') }}</p>
+                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('support.proDesc') }}</p>
                     <CoreAppButton variant="soft" color="neutral" block as="a" :href="supportUrl" target="_blank">{{
-                        $t('contactSupport') }}</CoreAppButton>
+                        $t('support.title') }}</CoreAppButton>
                 </CoreAppCard>
                 <CoreAppCard>
                     <template #header>
-                        <CoreAppHeading :icon="icons.users" :text="$t('community')" />
+                        <CoreAppHeading :icon="icons.users" :text="$t('support.community')" />
                     </template>
-                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('communityDescription') }}</p>
+                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('support.communityDesc') }}</p>
                     <CoreAppButton variant="soft" color="neutral" block as="a" href="https://forum.opsi.org"
                         target="_blank">
-                        {{ $t('visitOPSIForum') }}</CoreAppButton>
+                        {{ $t('support.forum') }}</CoreAppButton>
                 </CoreAppCard>
                 <CoreAppCard class="h-full">
                     <template #header>
-                        <CoreAppHeading :icon="icons.document" :text="$t('documentation')" />
+                        <CoreAppHeading :icon="icons.document" :text="$t('support.docs')" />
                     </template>
-                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('documentationDescription') }}</p>
+                    <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('support.docsDesc') }}</p>
                     <CoreAppButton variant="soft" color="neutral" block as="a" href="https://docs.opsi.org"
                         target="_blank">
-                        {{ $t('openDocumentation') }}
+                        {{ $t('support.docs') }}
                     </CoreAppButton>
                 </CoreAppCard>
             </div>

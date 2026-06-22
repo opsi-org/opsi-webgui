@@ -13,7 +13,7 @@
 			<CoreAppCard class="min-w-96" @click.stop>
 				<template #header>
 					<div class="flex items-center justify-between">
-						<CoreAppHeading :icon="icons.onDemand" :text="$t('processActions')" />
+						<CoreAppHeading :icon="icons.onDemand" :text="$t('actions.ondemand')" />
 						<CoreAppButton variant="ghost" color="neutral" size="xs" :icon="icons.x"
 							@click="open = false" />
 					</div>
@@ -27,13 +27,13 @@
 					<div class="divide-y divide-(--color-border)">
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5">
-							<span class="text-sm font-medium md:w-1/3">{{ $t('products') }}</span>
+							<span class="text-sm font-medium md:w-1/3">{{ $t('products.title') }}</span>
 							<div class="flex-1">
 								<div class="flex flex-col gap-2">
-									<CoreAppRadio v-model="productMode" value="all" :label="$t('allProducts')" />
+									<CoreAppRadio v-model="productMode" value="all" :label="$t('products.all')" />
 									<CoreAppRadio v-if="selectedProductIds.length > 0" v-model="productMode"
 										value="selected"
-										:label="`${$t('onlySelectedProducts')} (${selectedProductIds.length})`" />
+										:label="`${$t('products.onlySelected')} (${selectedProductIds.length})`" />
 								</div>
 								<div v-if="productMode === 'selected' && selectedProductIds.length > 0"
 									class="mt-2 max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) text-xs">
@@ -44,26 +44,26 @@
 
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5">
-							<span class="text-sm font-medium md:w-1/3">{{ $t('visibility') }}</span>
+							<span class="text-sm font-medium md:w-1/3">{{ $t('common.visibility') }}</span>
 							<div class="flex-1">
 								<div class="flex items-center gap-3">
-									<CoreAppRadio v-model="visibility" value="" :label="$t('clientDefault')" />
-									<CoreAppRadio v-model="visibility" value="visible" :label="$t('visible')" />
-									<CoreAppRadio v-model="visibility" value="hidden" :label="$t('hidden')" />
+									<CoreAppRadio v-model="visibility" value="" :label="$t('clients.default')" />
+									<CoreAppRadio v-model="visibility" value="visible" :label="$t('common.visible')" />
+									<CoreAppRadio v-model="visibility" value="hidden" :label="$t('common.hidden')" />
 								</div>
 							</div>
 						</div>
 
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5">
-							<span class="text-sm font-medium md:w-1/3">{{ $t('clients') }}
+							<span class="text-sm font-medium md:w-1/3">{{ $t('clients.title') }}
 								({{ clientIds.length }})</span>
 							<div class="flex-1">
 								<div class="flex items-center gap-2 mb-2">
 									<CoreAppButton size="xs" variant="outline" color="neutral"
 										:disabled="arraysEqual(clientIds, selectionStore.selectedClients)"
 										@click="clientIds = [...selectionStore.selectedClients]">
-										{{ $t('reset') }}
+										{{ $t('common.reset') }}
 									</CoreAppButton>
 								</div>
 								<div v-if="clientIds.length > 0"
@@ -75,7 +75,7 @@
 									</div>
 								</div>
 								<div v-else class="text-xs text-(--color-text-muted) italic">
-									{{ $t('noClientsSelected') }}
+									{{ $t('clients.selectNone') }}
 								</div>
 							</div>
 						</div>
@@ -84,13 +84,13 @@
 
 				<template #footer>
 					<div class="flex justify-end gap-2">
-						<CoreAppButton variant="ghost" color="neutral" size="sm" @click="open = false">{{ $t('cancel')
+						<CoreAppButton variant="ghost" color="neutral" size="sm" @click="open = false">{{ $t('common.cancel')
 							}}
 						</CoreAppButton>
 						<CoreAppButton color="primary" size="sm" :loading="executing"
 							:disabled="isReadOnly || clientIds.length === 0" @click="executeProcessAction">
 							<CoreAppIcon :name="icons.onDemand" class="w-4 h-4 mr-1" />
-							{{ $t('processActions') }}
+							{{ $t('actions.ondemand') }}
 						</CoreAppButton>
 					</div>
 				</template>
@@ -152,7 +152,7 @@ async function executeProcessAction() {
 
 		if (result.error) throw result.error
 
-		statusMessage.value = { type: 'success', message: String($t('message.processActionsExecuted')) }
+		statusMessage.value = { type: 'success', message: String($t('notify.product.actions.executed')) }
 		setTimeout(() => { statusMessage.value = null }, 5000)
 		open.value = false
 		emit('executed')
@@ -160,7 +160,7 @@ async function executeProcessAction() {
 		console.error('Failed to execute process actions:', e)
 		statusMessage.value = {
 			type: 'error',
-			message: e instanceof Error ? e.message : String($t('message.failedToProcessActions')),
+			message: e instanceof Error ? e.message : String($t('notify.errorActionsLoad')),
 		}
 	} finally {
 		executing.value = false

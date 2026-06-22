@@ -8,14 +8,14 @@
   CoreAppNavigationGuardModal - Modal guard preventing accidental navigation with unsaved changes.
 -->
 <template>
-	<UModal v-model:open="model" :title="$t('unsavedChanges')" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
+	<UModal v-model:open="model" :title="$t('unsaved.changes')" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
 		<template #body>
-			<p class="text-sm">{{ $t('navigateAwayWarning') }}</p>
+			<p class="text-sm">{{ $t('nav.navigateAway') }}</p>
 		</template>
 		<template #footer>
 			<div class="flex gap-2 justify-end">
-				<UButton variant="outline" color="neutral" @click="$emit('cancel')">{{ $t('stayOnPage') }}</UButton>
-				<UButton color="error" @click="$emit('confirm')">{{ $t('leaveAnyway') }}</UButton>
+				<UButton variant="outline" color="neutral" @click="$emit('cancel')">{{ $t('nav.stayOnPage') }}</UButton>
+				<UButton color="error" @click="$emit('confirm')">{{ $t('nav.leaveAnyway') }}</UButton>
 			</div>
 		</template>
 	</UModal>

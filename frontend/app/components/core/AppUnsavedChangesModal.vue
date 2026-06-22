@@ -12,13 +12,13 @@
 	<template v-if="totalChangesCount > 0">
 		<div class="inline-flex rounded-md shadow-sm">
 			<template v-if="showSaveDiscard">
-				<UTooltip :text="$t('save')">
+				<UTooltip :text="$t('common.save')">
 					<UButton :size="size" color="success" variant="solid" class="rounded-r-none" :loading="isSaving"
 						@click="handleQuickSave">
 						<UIcon :name="icons.check" class="w-3.5 h-3.5" />
 					</UButton>
 				</UTooltip>
-				<UTooltip :text="$t('discard')">
+				<UTooltip :text="$t('common.discard')">
 					<UButton :size="size" color="neutral" variant="soft"
 						class="rounded-none border border-(--color-border)" @click="handleQuickDiscard">
 						<UIcon :name="icons.delete" class="w-3.5 h-3.5" />
@@ -27,23 +27,23 @@
 			</template>
 			<UButton :size="size" color="neutral" variant="soft"
 				:class="showSaveDiscard ? 'rounded-l-none border border-(--color-border)' : ''" @click="open = true">
-				{{ $t('unsavedChanges') }}
+				{{ $t('unsaved.changes') }}
 				<CoreAppStatusBadge status="warning" size="xs" :value="totalChangesCount" class="ml-1" />
 			</UButton>
 		</div>
 	</template>
 
-	<UModal v-model:open="open" :title="$t('unsavedChanges')" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
+	<UModal v-model:open="open" :title="$t('unsaved.changes')" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
 		<template #body>
 			<div class="space-y-3">
 				<!-- Result alerts inside modal -->
 				<CoreAppAlertInline v-if="saveResult && saveResult.type === 'success'" color="success"
-					:title="$t('success')" :description="saveResult.message" variant="subtle" closable
+					:title="$t('common.success')" :description="saveResult.message" variant="subtle" closable
 					@close="saveResult = null" />
-				<CoreAppAlertInline v-if="saveResult && saveResult.type === 'error'" color="error" :title="$t('error')"
+				<CoreAppAlertInline v-if="saveResult && saveResult.type === 'error'" color="error" :title="$t('common.error')"
 					:description="saveResult.message" variant="subtle" closable @close="saveResult = null" />
 				<CoreAppAlertInline v-if="saveResult && saveResult.type === 'warning'" color="warning"
-					:title="$t('warning')" :description="saveResult.message" variant="subtle" closable
+					:title="$t('common.warning')" :description="saveResult.message" variant="subtle" closable
 					@close="saveResult = null" />
 
 				<!-- Product changes table -->
@@ -71,7 +71,7 @@
 								</UTooltip>
 							</td>
 							<td class="px-2 py-1 text-center">
-								<UTooltip :text="$t('discard')">
+								<UTooltip :text="$t('common.discard')">
 									<UButton size="xs" :icon="icons.x" color="neutral" variant="ghost"
 										@click="change.discard()" />
 								</UTooltip>
@@ -82,7 +82,7 @@
 
 				<!-- Host parameters table -->
 				<template v-if="(configRef?.changedParams?.size ?? 0) > 0">
-					<h5 class="font-heading text-xs text-(--color-text-muted) mb-1 m-0">{{ $t('parameters') }}</h5>
+					<h5 class="font-heading text-xs text-(--color-text-muted) mb-1 m-0">{{ $t('config.params') }}</h5>
 					<CoreAppTable :columns="paramChangeColumns" max-height="12rem">
 						<tr v-for="[key] in configRef?.changedParams" :key="key"
 							class="hover:bg-(--color-surface-hover)">
@@ -104,7 +104,7 @@
 								</UTooltip>
 							</td>
 							<td class="px-2 py-1 text-center">
-								<UTooltip :text="$t('discard')">
+								<UTooltip :text="$t('common.discard')">
 									<UButton size="xs" :icon="icons.x" color="neutral" variant="ghost"
 										@click="configRef?.discardSingleParam?.(key)" />
 								</UTooltip>
@@ -115,7 +115,7 @@
 
 				<!-- Host attributes table -->
 				<template v-if="(configRef?.changedAttributesList?.length ?? 0) > 0">
-					<h5 class="font-heading text-xs text-(--color-text-muted) mb-1 m-0">{{ $t('attributes') }}</h5>
+					<h5 class="font-heading text-xs text-(--color-text-muted) mb-1 m-0">{{ $t('common.attributes') }}</h5>
 					<CoreAppTable :columns="attrChangeColumns" max-height="12rem">
 						<tr v-for="item in configRef?.changedAttributesList" :key="item.key"
 							class="hover:bg-(--color-surface-hover)">
@@ -135,7 +135,7 @@
 								</UTooltip>
 							</td>
 							<td class="px-2 py-1 text-center">
-								<UTooltip :text="$t('discard')">
+								<UTooltip :text="$t('common.discard')">
 									<UButton size="xs" :icon="icons.x" color="neutral" variant="ghost"
 										@click="configRef?.discardSingleAttribute?.(item.key)" />
 								</UTooltip>
@@ -146,7 +146,7 @@
 
 				<div v-if="totalChangesCount === 0 && !saveResult"
 					class="py-6 text-center text-sm text-(--color-text-muted)">
-					{{ $t('message.noItemsFound') }}
+					{{ $t('common.noResults') }}
 				</div>
 			</div>
 		</template>
@@ -159,34 +159,34 @@
 						<UIcon :name="icons.onDemand" class="w-4 h-4 text-(--color-text-muted)" />
 						<label class="flex items-center gap-2 cursor-pointer">
 							<CoreAppCheckbox v-model="processAfterSave" size="sm" />
-							<span class="text-sm font-medium">{{ $t('saveAndProcess') }}</span>
+							<span class="text-sm font-medium">{{ $t('actions.saveAndProcess') }}</span>
 						</label>
 					</div>
 					<template v-if="processAfterSave">
 						<div class="px-3 py-2 space-y-2">
 							<div class="flex flex-wrap items-center gap-x-4 gap-y-1">
 								<div class="flex items-center gap-2">
-									<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('products')
+									<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('products.title')
 									}}:</span>
-									<CoreAppRadio v-model="onDemandProductMode" value="all" :label="$t('all')"
+									<CoreAppRadio v-model="onDemandProductMode" value="all" :label="$t('common.all')"
 										size="xs" />
 									<CoreAppRadio v-if="selectedProductIds.length > 0" v-model="onDemandProductMode"
-										value="selected" :label="`${$t('selected')} (${selectedProductIds.length})`"
+										value="selected" :label="`${$t('common.selected')} (${selectedProductIds.length})`"
 										size="xs" />
 								</div>
 								<div class="flex items-center gap-2">
-									<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('visibility')
+									<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('common.visibility')
 									}}:</span>
-									<CoreAppRadio v-model="onDemandVisibility" value="" :label="$t('clientDefault')"
+									<CoreAppRadio v-model="onDemandVisibility" value="" :label="$t('clients.default')"
 										size="xs" />
-									<CoreAppRadio v-model="onDemandVisibility" value="visible" :label="$t('visible')"
+									<CoreAppRadio v-model="onDemandVisibility" value="visible" :label="$t('common.visible')"
 										size="xs" />
-									<CoreAppRadio v-model="onDemandVisibility" value="hidden" :label="$t('hidden')"
+									<CoreAppRadio v-model="onDemandVisibility" value="hidden" :label="$t('common.hidden')"
 										size="xs" />
 								</div>
 							</div>
 							<div class="text-xs text-(--color-text-muted)">
-								{{ $t('clients') }}: {{ onDemandClientIds.length }}
+								{{ $t('clients.title') }}: {{ onDemandClientIds.length }}
 								<span v-if="onDemandClientIds.length > 0" class="ml-1">
 									({{ onDemandClientIds.slice(0, 3).join(', ') }}{{ onDemandClientIds.length > 3 ?
 										'...' : '' }})
@@ -197,13 +197,13 @@
 				</div>
 				<div class="flex gap-2 justify-end">
 					<template v-if="totalChangesCount > 0">
-						<UButton variant="soft" color="neutral" @click="handleDiscardAll">{{ $t('discardAll') }}
+						<UButton variant="soft" color="neutral" @click="handleDiscardAll">{{ $t('common.discardAll') }}
 						</UButton>
 						<UButton color="primary" :loading="isSaving" @click="handleSaveAll">
-							{{ processAfterSave && showProcessOptions ? $t('saveAndProcess') : $t('saveAll') }}
+							{{ processAfterSave && showProcessOptions ? $t('actions.saveAndProcess') : $t('common.saveAll') }}
 						</UButton>
 					</template>
-					<UButton v-else variant="ghost" color="neutral" @click="open = false">{{ $t('close') }}</UButton>
+					<UButton v-else variant="ghost" color="neutral" @click="open = false">{{ $t('common.close') }}</UButton>
 				</div>
 			</div>
 		</template>
@@ -285,24 +285,24 @@ const { t: $t } = useI18n()
 const open = ref(false)
 
 const productChangeColumns = computed<TableColumn[]>(() => [
-	{ key: 'productId', label: String($t('productId')) },
-	{ key: 'property', label: String($t('property')) },
-	{ key: 'oldValue', label: String($t('oldValue')) },
-	{ key: 'newValue', label: String($t('newValue')) },
+	{ key: 'productId', label: String($t('products.id')) },
+	{ key: 'property', label: String($t('products.property')) },
+	{ key: 'oldValue', label: String($t('common.oldValue')) },
+	{ key: 'newValue', label: String($t('common.newValue')) },
 	{ key: 'actions', label: '', width: '2.5rem' },
 ])
 
 const paramChangeColumns = computed<TableColumn[]>(() => [
-	{ key: 'parameter', label: String($t('parameter')) },
-	{ key: 'oldValue', label: String($t('oldValue')) },
-	{ key: 'newValue', label: String($t('newValue')) },
+	{ key: 'parameter', label: String($t('config.param')) },
+	{ key: 'oldValue', label: String($t('common.oldValue')) },
+	{ key: 'newValue', label: String($t('common.newValue')) },
 	{ key: 'actions', label: '', width: '2.5rem' },
 ])
 
 const attrChangeColumns = computed<TableColumn[]>(() => [
-	{ key: 'attribute', label: String($t('attribute')) },
-	{ key: 'oldValue', label: String($t('oldValue')) },
-	{ key: 'newValue', label: String($t('newValue')) },
+	{ key: 'attribute', label: String($t('common.attribute')) },
+	{ key: 'oldValue', label: String($t('common.oldValue')) },
+	{ key: 'newValue', label: String($t('common.newValue')) },
 	{ key: 'actions', label: '', width: '2.5rem' },
 ])
 const processAfterSave = ref(false)
@@ -335,7 +335,7 @@ const groupedProductChanges = computed<ChangeGroup[]>(() => {
 	const groups = new Map<string, ChangeItem[]>()
 
 	if (props.mode !== 'actionRequests' && props.productConfigRef.changedProperties) {
-		const productId = props.configProductId || String($t('properties'))
+		const productId = props.configProductId || String($t('products.properties'))
 		for (const [key, newVal] of props.productConfigRef.changedProperties) {
 			const items = groups.get(productId) || []
 			items.push({
@@ -356,7 +356,7 @@ const groupedProductChanges = computed<ChangeGroup[]>(() => {
 			items.push({
 				key: `ar-${productId}`,
 				type: 'actionRequest',
-				label: String($t('actionRequest')),
+				label: String($t('actions.request')),
 				oldValue: change.oldRequest || 'none',
 				newValue: change.actionRequest,
 				discard: () => props.productConfigRef?.discardSingleActionRequest?.(productId),
@@ -421,6 +421,6 @@ function handleSaveAll() {
 
 function handleDiscardAll() {
 	emit('discardAll')
-	saveResult.value = { type: 'success', message: String($t('allChangesDiscarded')) }
+	saveResult.value = { type: 'success', message: String($t('unsaved.discarded')) }
 }
 </script>

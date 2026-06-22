@@ -8,25 +8,25 @@
   ProductsQuickActionsDropdown - Bulk action dropdown for selected products.
 -->
 <template>
-	<CoreAppTooltip v-if="hasSelections && compact" :text="$t('productQuickActions')">
-		<CoreAppButton variant="soft" color="primary" size="sm" :aria-label="String($t('productQuickActions'))"
+	<CoreAppTooltip v-if="hasSelections && compact" :text="$t('products.quick')">
+		<CoreAppButton variant="soft" color="primary" size="sm" :aria-label="String($t('products.quick'))"
 			@click="dialogOpen = true">
 			<CoreAppIcon :name="icons.product" class="w-4 h-4" />
 		</CoreAppButton>
 	</CoreAppTooltip>
 	<CoreAppButton v-else-if="hasSelections" color="primary" size="sm" @click="dialogOpen = true">
 		<CoreAppIcon :name="icons.product" class="w-4 h-4" />
-		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
+		<span class="hidden sm:inline">{{ $t('products.quick') }}</span>
 	</CoreAppButton>
-	<CoreAppTooltip v-else-if="compact" :text="$t('productQuickActions')">
+	<CoreAppTooltip v-else-if="compact" :text="$t('products.quick')">
 		<CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-70"
-			:aria-label="String($t('productQuickActions'))" disabled>
+			:aria-label="String($t('products.quick'))" disabled>
 			<CoreAppIcon :name="icons.product" class="w-4 h-4" />
 		</CoreAppButton>
 	</CoreAppTooltip>
 	<CoreAppButton v-else variant="ghost" color="neutral" size="sm" class="opacity-70" disabled>
 		<CoreAppIcon :name="icons.product" class="w-4 h-4" />
-		<span class="hidden sm:inline">{{ $t('productQuickActions') }}</span>
+		<span class="hidden sm:inline">{{ $t('products.quick') }}</span>
 	</CoreAppButton>
 
 	<CoreAppModal v-model:open="dialogOpen" :dismissible="true" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
@@ -34,7 +34,7 @@
 			<CoreAppCard class="min-w-120">
 				<template #header>
 					<div class="flex items-center justify-between">
-						<CoreAppHeading :icon="icons.product" :text="$t('productQuickActions')" />
+						<CoreAppHeading :icon="icons.product" :text="$t('products.quick')" />
 						<CoreAppButton variant="ghost" color="neutral" size="xs" :icon="icons.x"
 							@click="dialogOpen = false" />
 					</div>
@@ -51,13 +51,13 @@
 					<div class="divide-y divide-(--color-border)">
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
 							<span class="font-heading text-xs text-(--color-text-muted) md:w-1/3 shrink-0">
-								{{ $t('conditions') }}
+								{{ $t('products.conditions') }}
 							</span>
 							<div class="flex-1 space-y-2">
 								<div class="grid grid-cols-2 gap-2">
 									<div>
 										<label class="text-xs text-(--color-text-muted) block mb-1">
-											{{ $t('installationStatus') }}
+											{{ $t('products.status') }}
 										</label>
 										<CoreAppSelect v-model="filters.installationStatus"
 											:items="installationStatusOptions" size="xs" class="w-full"
@@ -65,7 +65,7 @@
 									</div>
 									<div>
 										<label class="text-xs text-(--color-text-muted) block mb-1">
-											{{ $t('actionResult') }}
+											{{ $t('actions.result') }}
 										</label>
 										<CoreAppSelect v-model="filters.actionResult" :items="actionResultOptions"
 											size="xs" class="w-full" @update:model-value="fetchPreview" />
@@ -74,14 +74,14 @@
 								<label class="flex items-center gap-2 cursor-pointer">
 									<CoreAppCheckbox v-model="filters.outdatedOnly"
 										@update:model-value="fetchPreview" />
-									<span class="text-xs">{{ $t('outdatedOnClient') }}</span>
+									<span class="text-xs">{{ $t('products.outdated.onClient') }}</span>
 								</label>
 							</div>
 						</div>
 
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
 							<span class="font-heading text-xs text-(--color-text-muted) md:w-1/3 shrink-0">
-								{{ $t('actionRequest') }}
+								{{ $t('actions.request') }}
 							</span>
 							<div class="flex-1">
 								<CoreAppSelect v-model="actionRequest" :items="actionRequestOptions" size="sm"
@@ -91,7 +91,7 @@
 
 						<div class="form-row flex flex-col md:flex-row items-start gap-y-1 gap-x-4 py-2.5">
 							<span class="font-heading text-xs text-(--color-text-muted) md:w-1/3 shrink-0">
-								{{ $t('scope') }}
+								{{ $t('fields.scope') }}
 							</span>
 							<div class="flex-1">
 								<CoreAppSelect v-model="scope" :items="scopeOptions" size="sm" class="w-full"
@@ -103,7 +103,7 @@
 					<div>
 						<div class="flex items-center justify-between mb-1.5">
 							<span class="font-heading text-xs text-(--color-text-muted)">
-								{{ $t('preview') }}
+								{{ $t('common.preview') }}
 							</span>
 							<div class="flex items-center gap-2">
 								<CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.refresh"
@@ -143,7 +143,7 @@
 							<div v-else-if="previewData !== null"
 								class="flex justify-center items-center text-xs text-(--color-text-muted)"
 								style="min-height: 180px;">
-								{{ $t('noProductsMatchCriteria') }}
+								{{ $t('products.noMatch') }}
 							</div>
 							<div v-else class="flex justify-center items-center text-xs text-(--color-text-muted)"
 								style="min-height: 180px;">
@@ -156,20 +156,20 @@
 				<template #footer>
 					<div class="space-y-3">
 						<CoreAppAlertInline v-if="applyResult && applyResult.type === 'success'" color="success"
-							:title="$t('success')" :description="applyResult.message" variant="subtle" closable
+							:title="$t('common.success')" :description="applyResult.message" variant="subtle" closable
 							@close="applyResult = null" />
 						<CoreAppAlertInline v-if="applyResult && applyResult.type === 'error'" color="error"
-							:title="$t('error')" :description="applyResult.message" variant="subtle" closable
+							:title="$t('common.error')" :description="applyResult.message" variant="subtle" closable
 							@close="applyResult = null" />
 						<div class="flex justify-end gap-2">
-							<CoreAppButton variant="soft" color="neutral" size="sm" @click="resetForm">{{ $t('reset') }}
+							<CoreAppButton variant="soft" color="neutral" size="sm" @click="resetForm">{{ $t('common.reset') }}
 							</CoreAppButton>
 							<CoreAppButton v-if="applyResult?.type === 'success'" variant="ghost" color="neutral"
-								size="sm" @click="dialogOpen = false">{{ $t('close') }}</CoreAppButton>
+								size="sm" @click="dialogOpen = false">{{ $t('common.close') }}</CoreAppButton>
 							<CoreAppButton v-else color="primary" size="sm"
 								:disabled="isReadOnly || previewData == null || applying" :loading="applying"
 								@click="applyActions">
-								{{ $t('apply') }}
+								{{ $t('common.apply') }}
 							</CoreAppButton>
 						</div>
 					</div>
@@ -203,14 +203,14 @@ const { getInstallationStatuses, getActionResults, bulkProductAction } = useApiH
 const selectionStore = useSelectionStore()
 const { isReadOnly } = useUserPermissions()
 
-const NOT_APPLIED = String($t('notApplied'))
+const NOT_APPLIED = String($t('products.notApplied'))
 
 const previewColumns = computed(() => [
-	{ key: 'clientId', label: String($t('clientId')), sortable: true },
-	{ key: 'productId', label: String($t('productId')), sortable: true },
-	{ key: 'version', label: String($t('version')), sortable: true },
-	{ key: 'actionRequest', label: String($t('actionRequest')), sortable: true },
-	{ key: 'installationStatus', label: String($t('installationStatus')), sortable: true },
+	{ key: 'clientId', label: String($t('clients.id')), sortable: true },
+	{ key: 'productId', label: String($t('products.id')), sortable: true },
+	{ key: 'version', label: String($t('common.version')), sortable: true },
+	{ key: 'actionRequest', label: String($t('actions.request')), sortable: true },
+	{ key: 'installationStatus', label: String($t('products.status')), sortable: true },
 ])
 
 const dialogOpen = ref(false)
@@ -253,9 +253,9 @@ const actionRequestOptions = [
 ]
 
 const scopeOptions = [
-	{ value: 'both', label: String($t('toBothSelectedServersAndClients')) },
-	{ value: 'servers', label: String($t('toSelectedServers')) },
-	{ value: 'clients', label: String($t('toSelectedClients')) },
+	{ value: 'both', label: String($t('notifications.target.both')) },
+	{ value: 'servers', label: String($t('notifications.target.servers')) },
+	{ value: 'clients', label: String($t('notifications.target.clients')) },
 ]
 
 interface PreviewProduct {
@@ -361,7 +361,7 @@ function buildParams(demoMode: boolean): Record<string, unknown> | null {
 	}
 
 	if (action === '' && !demoMode) {
-		errorMessage.value = String($t('message.chooseAction'))
+		errorMessage.value = String($t('notify.chooseAction'))
 		return null
 	}
 
@@ -404,7 +404,7 @@ async function applyActions() {
 	try {
 		const result = await bulkProductAction(params as Parameters<typeof bulkProductAction>[0])
 		if (result.error) throw result.error
-		applyResult.value = { type: 'success', message: String($t('message.actionExecuted')) }
+		applyResult.value = { type: 'success', message: String($t('notify.action.executed')) }
 		emit('applied')
 	} catch (e) {
 		applyResult.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }

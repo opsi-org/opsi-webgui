@@ -12,9 +12,9 @@
 	<CoreAppCard class="h-full flex flex-col">
 		<template #header>
 			<div class="flex items-center justify-between">
-				<h3 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('opsiModules') }}</h3>
+				<h3 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('mods.title') }}</h3>
 				<div class="flex items-center gap-2">
-					<span class="text-xs text-(--color-text-muted)">{{ filteredModules.length }} {{ $t('available')
+					<span class="text-xs text-(--color-text-muted)">{{ filteredModules.length }} {{ $t('mods.available')
 					}}</span>
 				</div>
 			</div>
@@ -23,7 +23,7 @@
 			<CoreAppLoadingSpinner />
 		</div>
 		<div v-else-if="filteredModules.length === 0" class="py-8 text-center text-(--color-text-muted)">
-			{{ filter ? $t('noResultsFound') : $t('noModulesFound') }}
+			{{ filter ? $t('common.noResults') : $t('mods.none') }}
 		</div>
 		<div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 			<div v-for="module in filteredModules" :key="module"
@@ -34,19 +34,19 @@
 				<div class="flex-1 min-w-0">
 					<div class="font-medium text-sm truncate" :title="module">{{ formatModuleName(module) }}</div>
 					<div class="flex items-center gap-1.5 mt-0.5">
-						<CoreAppTooltip v-if="isObsolete(module)" :text="$t('obsoleteModulesDescription')">
-							<CoreAppBadge color="warning" variant="subtle" class="cursor-help">{{ $t('integratedInCore')
+						<CoreAppTooltip v-if="isObsolete(module)" :text="$t('mods.obsolete.desc')">
+							<CoreAppBadge color="warning" variant="subtle" class="cursor-help">{{ $t('mods.integrated')
 								}}
 							</CoreAppBadge>
 						</CoreAppTooltip>
 						<CoreAppBadge v-else-if="getModuleState(module) === 'free'" color="info" variant="subtle">{{
-							$t('freeModules') }}</CoreAppBadge>
+							$t('mods.free') }}</CoreAppBadge>
 						<CoreAppBadge v-else-if="getModuleState(module) === 'licensed'" color="success"
 							variant="subtle">{{
-								$t('licensedModules') }}</CoreAppBadge>
+								$t('mods.licensed') }}</CoreAppBadge>
 						<CoreAppBadge v-else-if="getModuleState(module) === 'unlicensed'" color="error"
 							variant="subtle">{{
-								$t('unlicensedModules') }}</CoreAppBadge>
+								$t('mods.unlicensed') }}</CoreAppBadge>
 					</div>
 				</div>
 				<span v-if="getClientNumber(module) !== null"

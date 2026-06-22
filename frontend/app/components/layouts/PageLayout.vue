@@ -17,12 +17,12 @@
 				</div>
 				<div class="flex flex-wrap items-center gap-2">
 					<CoreAppFilterInput v-if="showFilter" v-model="searchModel"
-						:placeholder="searchPlaceholder || $t('typeToFilter')" size="sm" />
+						:placeholder="searchPlaceholder || $t('common.filter')" size="sm" />
 					<slot name="tableControls" />
 					<slot name="actions" />
 					<slot name="saveActions" />
 					<CoreAppButton v-if="showRefresh" :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
-						:loading="loading" :title="String($t('refresh'))" @click="$emit('refresh')" />
+						:loading="loading" :title="String($t('common.refresh'))" @click="$emit('refresh')" />
 				</div>
 			</div>
 

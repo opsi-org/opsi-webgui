@@ -67,7 +67,7 @@
 								:password="isPasswordParam(node.param.configId)"
 								@update:model-value="(v: unknown) => node.param && setParam(node.param, v)" />
 							<CoreAppButton v-if="changedParams.has(node.param.configId)" size="xs" variant="ghost"
-								color="neutral" :icon="icons.x" :title="$t('discardItem')"
+								color="neutral" :icon="icons.x" :title="$t('common.discard')"
 								@click="() => node.param && discardSingleParam(node.param.configId)" />
 						</div>
 					</div>
@@ -75,7 +75,7 @@
 			</template>
 		</div>
 		<div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-2">
-			<span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('loading') }}…</span>
+			<span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('common.loading') }}…</span>
 		</div>
 	</div>
 </template>

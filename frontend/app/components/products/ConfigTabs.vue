@@ -10,7 +10,7 @@
 <template>
 	<div :class="['flex flex-col', panelMode ? '' : 'h-full min-h-0']">
 		<CoreAppAlertInline v-if="statusMessage" :color="statusMessage.type"
-			:title="statusMessage.type === 'success' ? $t('success') : $t('error')" :description="statusMessage.message"
+			:title="statusMessage.type === 'success' ? $t('common.success') : $t('common.error')" :description="statusMessage.message"
 			variant="subtle" class="mb-2 shrink-0" closable @close="statusMessage = null" />
 
 		<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-surface) mb-3">
@@ -84,11 +84,11 @@ const MIXED_MARKER = '___MIXED___'
 
 const tabDefs = computed(() => [
 	{
-		label: `${$t('properties')}${editableProperties.value.length > 0 ? ` (${editableProperties.value.length})` : ''}`,
+		label: `${$t('products.properties')}${editableProperties.value.length > 0 ? ` (${editableProperties.value.length})` : ''}`,
 		value: 'properties',
 	},
 	{
-		label: `${$t('dependencies')}${dependencies.value.length > 0 ? ` (${dependencies.value.length})` : ''}`,
+		label: `${$t('products.dependencies')}${dependencies.value.length > 0 ? ` (${dependencies.value.length})` : ''}`,
 		value: 'dependencies',
 	},
 ])
@@ -186,7 +186,7 @@ async function fetchProperties() {
 
 		if (result.error) {
 			console.error('Failed to fetch product properties:', result.error)
-			statusMessage.value = { type: 'error', message: String($t('message.failedToLoadProperties')) }
+			statusMessage.value = { type: 'error', message: String($t('notify.errorPropsLoad')) }
 			editableProperties.value = []
 			return
 		}
@@ -265,14 +265,14 @@ async function saveAll() {
 			originalPropertyValues.value.set(prop.propertyId, JSON.parse(JSON.stringify(prop._value)))
 		}
 
-		statusMessage.value = { type: 'success', message: String($t('message.propertiesSaved')) }
+		statusMessage.value = { type: 'success', message: String($t('products.propertiesSaved')) }
 		setTimeout(() => { statusMessage.value = null }, 5000)
 		emit('saved')
 	} catch (e) {
 		console.error('Failed to save properties:', e)
 		statusMessage.value = {
 			type: 'error',
-			message: e instanceof Error ? e.message : String($t('message.failedToSaveProperties')),
+			message: e instanceof Error ? e.message : String($t('notify.errorPropsSave')),
 		}
 	} finally {
 		savingProps.value = false

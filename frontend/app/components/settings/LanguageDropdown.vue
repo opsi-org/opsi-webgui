@@ -49,7 +49,7 @@ const availableLocales = computed(() => {
 })
 
 function switchTo(code: string) {
-  setLocale(code as 'de' | 'en')
+  setLocale(code as 'de' | 'en' | 'fr')
   open.value = false
 }
 

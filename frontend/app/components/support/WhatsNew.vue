@@ -10,7 +10,7 @@
 <template>
 	<CoreAppCard class="h-full flex flex-col">
 		<template #header>
-			<CoreAppHeading :icon="icons.whatsNew" :text="$t('whatsNew')" />
+			<CoreAppHeading :icon="icons.whatsNew" :text="$t('support.whatsNew')" />
 		</template>
 
 		<div v-if="loading" class="flex justify-center py-4">
@@ -18,7 +18,7 @@
 		</div>
 
 		<div v-else-if="error" class="text-sm text-[--color-text-muted]">
-			{{ $t('changelogNotAvailable') }}
+			{{ $t('products.changelog.none') }}
 		</div>
 		<div v-else class="space-y-2 flex-1 overflow-y-auto">
 			<div v-for="(item, idx) in items" :key="idx" class="changelog-item flex items-start gap-2 text-sm pb-2">
@@ -29,7 +29,7 @@
 
 		<template v-if="!loading && !error && items.length" #footer>
 			<div class="text-xs text-[--color-text-muted]">
-				{{ $t('version') }}: {{ version }}
+				{{ $t('common.version') }}: {{ version }}
 			</div>
 		</template>
 	</CoreAppCard>

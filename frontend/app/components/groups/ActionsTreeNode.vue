@@ -30,7 +30,7 @@
 				class="w-4 h-4 shrink-0 transition-colors" :class="isSelected
 					? 'text-(--color-primary)'
 					: group.isSpecial ? 'text-(--color-text-muted)' : 'text-(--color-text)'" />
-			<CoreAppTooltip v-if="group.label === 'not_assigned'" :text="$t('notAssignedTooltip')">
+			<CoreAppTooltip v-if="group.label === 'not_assigned'" :text="$t('clients.directoryNotAssigned')">
 				<span class="text-sm flex-1 truncate transition-colors cursor-help" :class="[
 					isSelected ? 'font-medium text-(--color-text)' : '',
 					group.isSpecial ? 'text-(--color-text-muted) italic' : ''
@@ -50,7 +50,7 @@
 			</span>
 			<div v-if="group.isSpecial && group.label !== 'not_assigned'"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
-				<CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
+				<CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('groups.subgroup')"
 					:disabled="groupDisabled" @click="$emit('create-subgroup', group.id)">
 					<CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge
 						badge-color="none" />
@@ -58,16 +58,16 @@
 			</div>
 			<div v-else-if="!group.isSpecial"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
-				<CoreAppButton :icon="icons.add" size="xs" variant="ghost" color="neutral" :title="$t('addMembers')"
+				<CoreAppButton :icon="icons.add" size="xs" variant="ghost" color="neutral" :title="$t('groups.membersAdd')"
 					:disabled="groupDisabled" @click="$emit('add-members', group)" />
-				<CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('addSubgroup')"
+				<CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('groups.subgroup')"
 					:disabled="groupDisabled" @click="$emit('create-subgroup', group.id)">
 					<CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge
 						badge-color="none" />
 				</CoreAppButton>
-				<CoreAppButton :icon="icons.pencil" size="xs" variant="ghost" color="neutral" :title="$t('edit')"
+				<CoreAppButton :icon="icons.pencil" size="xs" variant="ghost" color="neutral" :title="$t('common.edit')"
 					:disabled="groupDisabled" @click="$emit('edit', group)" />
-				<CoreAppButton :icon="icons.delete" size="xs" variant="ghost" color="neutral" :title="$t('delete')"
+				<CoreAppButton :icon="icons.delete" size="xs" variant="ghost" color="neutral" :title="$t('common.delete')"
 					:disabled="groupDisabled" @click="$emit('delete', group)" />
 			</div>
 		</div>
@@ -81,7 +81,7 @@
 				<CoreAppButton v-if="hasMoreChildren" variant="ghost" color="primary" size="xs" block class="py-1.5!"
 					:style="{ paddingLeft: `${(props.group.level || 0) * 16 + 24}px` }"
 					@click="childrenLimit += CHILDREN_PAGE_SIZE">
-					{{ $t('showMore') }} ({{ (group.children?.length || 0) - childrenLimit }} {{ $t('remaining') }})
+					{{ $t('common.showMore') }} ({{ (group.children?.length || 0) - childrenLimit }} {{ $t('common.remaining') }})
 				</CoreAppButton>
 			</div>
 		</Transition>

@@ -15,15 +15,15 @@
 		<template #actions>
 			<CoreAppButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
 				variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
-				{{ $t('changesDetected') }}
+				{{ $t('bus.changes') }}
 			</CoreAppButton>
 			<CoreAppButton v-if="selectionStore.selectedClients.length > 0" :icon="icons.product" color="primary"
 				size="sm" @click="openProductsPanel" :disabled="isReadOnly">
-				{{ $t('products') }}
+				{{ $t('products.title') }}
 			</CoreAppButton>
 			<CoreAppButton :icon="icons.add" color="primary" size="sm" @click="openAddPanel"
 				:disabled="isReadOnly || !canCreateClients">
-				<span class="hidden sm:inline">{{ $t('addNew') }}</span>
+				<span class="hidden sm:inline">{{ $t('common.new') }}</span>
 			</CoreAppButton>
 		</template>
 
@@ -37,7 +37,7 @@
 			<template #cell-clientId="{ row }">
 				<div class="flex items-center gap-1.5">
 					<CoreAppIcon v-if="blockedClients.has((row as Client).ipAddress || '')" :name="icons.lock"
-						class="w-3.5 h-3.5 text-(--color-error-soft-text) shrink-0" :title="$t('blocked')" />
+						class="w-3.5 h-3.5 text-(--color-error-soft-text) shrink-0" :title="$t('clients.blocked')" />
 					<span>{{ (row as Client).clientId }}</span>
 				</div>
 			</template>
@@ -60,34 +60,34 @@
 			</template>
 			<template #cell-version_outdated="{ row }">
 				<CoreAppStatusBadge :value="(row as Client).version_outdated" :icon="icons.productsOutdated" label="L"
-					:tooltip="$t('version_outdated_localboot')" status="warning" clickable
+					:tooltip="$t('products.outdated.localboot')" status="warning" clickable
 					@click="openProductsPanelForClient(row as Client, 'version_outdated')" />
 			</template>
 			<template #cell-version_outdated_netboot="{ row }">
 				<CoreAppStatusBadge :value="(row as Client).version_outdated_netboot" :icon="icons.productsOutdated"
-					label="N" :tooltip="$t('version_outdated_netboot')" status="warning" clickable
+					label="N" :tooltip="$t('products.outdated.netboot')" status="warning" clickable
 					@click="openProductsPanelForClient(row as Client, 'version_outdated', 'netboot')" />
 			</template>
 			<template #cell-installationStatus_unknown="{ row }">
 				<CoreAppStatusBadge :value="(row as Client).installationStatus_unknown"
-					:icon="icons.productInstallationStatusUnknown" :tooltip="$t('installationStatus_unknown')"
+					:icon="icons.productInstallationStatusUnknown" :tooltip="$t('products.statusUnknown')"
 					status="warning" clickable
 					@click="openProductsPanelForClient(row as Client, 'installationStatus')" />
 			</template>
 			<template #cell-installationStatus_installed="{ row }">
 				<CoreAppStatusBadge :value="(row as Client).installationStatus_installed"
-					:icon="icons.productInstallationStatusInstalled" :tooltip="$t('installationStatus_installed')"
+					:icon="icons.productInstallationStatusInstalled" :tooltip="$t('products.statusInstalled')"
 					status="success" clickable
 					@click="openProductsPanelForClient(row as Client, 'installationStatus')" />
 			</template>
 			<template #cell-actionResult_successful="{ row }">
 				<CoreAppStatusBadge :value="(row as Client).actionResult_successful"
-					:icon="icons.productActionResultSuccessful" :tooltip="$t('actionResult_successful')"
+					:icon="icons.productActionResultSuccessful" :tooltip="$t('actions.success')"
 					status="success" clickable @click="openProductsPanelForClient(row as Client, 'actionResult')" />
 			</template>
 			<template #cell-actionResult_failed="{ row }">
 				<CoreAppStatusBadge :value="(row as Client).actionResult_failed"
-					:icon="icons.productsFailedActionResult" :tooltip="$t('actionResult_failed')" status="error"
+					:icon="icons.productsFailedActionResult" :tooltip="$t('actions.failed')" status="error"
 					clickable @click="openProductsPanelForClient(row as Client, 'actionResult')" />
 			</template>
 			<template #cell-reachable="{ row }">
@@ -109,15 +109,15 @@
 				<CoreAppIcon
 					:name="panelType === 'products' ? icons.product : panelType === 'add' ? icons.add : icons.client"
 					class="w-4 h-4 text-(--color-text-muted) shrink-0" />
-				<template v-if="panelType === 'products'">{{ $t('products') }}</template>
-				<template v-else-if="panelType === 'add'">{{ $t('addNew') }}</template>
+				<template v-if="panelType === 'products'">{{ $t('products.title') }}</template>
+				<template v-else-if="panelType === 'add'">{{ $t('common.new') }}</template>
 				<template v-else>{{ panelClient?.clientId }}</template>
 			</span>
 		</template>
 		<template #panel-subtitle>
-			<template v-if="panelType === 'config'">{{ $t('configuration') }}</template>
-			<template v-else-if="panelType === 'logs'">{{ $t('logs') }}</template>
-			<template v-else-if="panelType === 'clone'">{{ $t('clone') }}</template>
+			<template v-if="panelType === 'config'">{{ $t('config.title') }}</template>
+			<template v-else-if="panelType === 'logs'">{{ $t('logs.title') }}</template>
+			<template v-else-if="panelType === 'clone'">{{ $t('clients.clone.title') }}</template>
 		</template>
 		<template #panel>
 			<div v-if="panelClient" class="h-full">
@@ -165,8 +165,8 @@ const panelType = ref<'config' | 'logs' | 'clone' | 'products' | 'add' | null>(n
 const panelTab = ref('parameters')
 const panelProductType = ref('localboot')
 const panelProductTypes = [
-	{ label: String($t('localbootProducts')), value: 'localboot' },
-	{ label: String($t('netbootProducts')), value: 'netboot' },
+	{ label: String($t('products.localboot')), value: 'localboot' },
+	{ label: String($t('products.netboot')), value: 'netboot' },
 ]
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
@@ -196,18 +196,18 @@ const sortBySelectionEnabled = computed(() => selectionStore.selectionSource ===
 const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
 
 const columns: DataTableColumnDef[] = [
-	{ key: 'clientId', label: String($t('clientId')), labelKey: 'clientId', sortable: true, alwaysVisible: true },
-	{ key: 'version_outdated', label: String($t('version_outdated_localboot')), labelKey: 'version_outdated_localboot', headerIcon: icons.productsOutdated, sortable: true, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'version_outdated_netboot', label: String($t('version_outdated_netboot')), labelKey: 'version_outdated_netboot', headerIcon: icons.productsOutdated, sortable: true, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'installationStatus_installed', label: String($t('installationStatus_installed')), labelKey: 'installationStatus_installed', headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'installationStatus_unknown', label: String($t('installationStatus_unknown')), labelKey: 'installationStatus_unknown', headerIcon: icons.productInstallationStatusUnknown, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'actionResult_failed', label: String($t('actionResult_failed')), labelKey: 'actionResult_failed', headerIcon: icons.productsFailedActionResult, sortable: true, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'actionResult_successful', label: String($t('actionResult_successful')), labelKey: 'actionResult_successful', headerIcon: icons.productActionResultSuccessful, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'reachable', label: String($t('reachable')), labelKey: 'reachable', headerIcon: icons.clientReachable, sortable: false, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'description', label: String($t('description')), labelKey: 'description', sortable: true },
-	{ key: 'lastSeen', label: String($t('lastSeen')), labelKey: 'lastSeen', sortable: true },
-	{ key: 'macAddress', label: String($t('macAddress')), labelKey: 'macAddress', sortable: true, visible: false },
-	{ key: 'ipAddress', label: String($t('ipAddress')), labelKey: 'ipAddress', sortable: true, visible: false },
+	{ key: 'clientId', label: String($t('clients.id')), labelKey: 'clients.id', sortable: true, alwaysVisible: true },
+	{ key: 'version_outdated', label: String($t('products.outdated.localboot')), labelKey: 'products.outdated.localboot', headerIcon: icons.productsOutdated, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'version_outdated_netboot', label: String($t('products.outdated.netboot')), labelKey: 'products.outdated.netboot', headerIcon: icons.productsOutdated, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'installationStatus_installed', label: String($t('products.statusInstalled')), labelKey: 'products.statusInstalled', headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'installationStatus_unknown', label: String($t('products.statusUnknown')), labelKey: 'products.statusUnknown', headerIcon: icons.productInstallationStatusUnknown, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'actionResult_failed', label: String($t('actions.failed')), labelKey: 'actions.failed', headerIcon: icons.productsFailedActionResult, sortable: true, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'actionResult_successful', label: String($t('actions.success')), labelKey: 'actions.success', headerIcon: icons.productActionResultSuccessful, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'reachable', label: String($t('clients.reachable.status')), labelKey: 'clients.reachable.status', headerIcon: icons.clientReachable, sortable: false, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'description', label: String($t('common.description')), labelKey: 'common.description', sortable: true },
+	{ key: 'lastSeen', label: String($t('fields.lastSeen')), labelKey: 'fields.lastSeen', sortable: true },
+	{ key: 'macAddress', label: String($t('fields.mac')), labelKey: 'fields.mac', sortable: true, visible: false },
+	{ key: 'ipAddress', label: String($t('fields.ip')), labelKey: 'fields.ip', sortable: true, visible: false },
 	{ key: 'uefi', label: 'UEFI', sortable: true, visible: false },
 ]
 
@@ -334,7 +334,7 @@ async function fetchClients(params?: PageChangeParams) {
 			const depotResult = await getServerIds()
 			const first = depotResult.data?.[0]
 			if (first) selectionStore.setServers([first])
-			else { error.value = String($t('message.noServerSelected')); return }
+			else { error.value = String($t('servers.noSelection')); return }
 		}
 		const p: Record<string, unknown> = {
 			selectedDepots: selectionStore.selectedServersParam,

@@ -14,7 +14,7 @@
 		</div>
 
 		<CoreAppEmptyState v-else-if="properties.length === 0" :icon="icons.config"
-			:message="String($t('noProperties'))" />
+			:message="String($t('products.propertiesNone'))" />
 
 		<template v-else>
 			<div class="flex-1 overflow-auto min-h-0">
@@ -47,13 +47,13 @@
 								@update:model-value="(v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)" />
 
 							<CoreAppButton v-if="changedPropertyIds.has(prop.propertyId)" size="xs" variant="ghost"
-								color="neutral" :icon="icons.x" :title="$t('discardItem')"
+								color="neutral" :icon="icons.x" :title="$t('common.discard')"
 								@click="discardSingleProperty(prop.propertyId)" />
 						</div>
 					</div>
 				</div>
 				<div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-3">
-					<span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('loading') }}…</span>
+					<span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('common.loading') }}…</span>
 				</div>
 			</div>
 		</template>
@@ -129,16 +129,16 @@ function isPasswordProperty(propertyId: string): boolean {
 
 function getPropertyTooltipRows(prop: EditableProductProperty): Array<{ key: string; value: string }> {
 	const rows: Array<{ key: string; value: string }> = []
-	rows.push({ key: String($t('type')), value: `${prop.type === 'BoolProductProperty' ? 'Bool' : 'Text'}${prop.multiValue ? ' (multi)' : ''}${prop.editable ? ' (editable)' : ''}` })
-	if (prop.description) rows.push({ key: String($t('description')), value: prop.description })
+	rows.push({ key: String($t('common.type')), value: `${prop.type === 'BoolProductProperty' ? 'Bool' : 'Text'}${prop.multiValue ? ' (multi)' : ''}${prop.editable ? ' (editable)' : ''}` })
+	if (prop.description) rows.push({ key: String($t('common.description')), value: prop.description })
 	if (prop.default && prop.default.length > 0) {
-		rows.push({ key: String($t('default')), value: prop.default.join(', ') })
+		rows.push({ key: String($t('common.default')), value: prop.default.join(', ') })
 	}
 	if (prop.allValues && prop.allValues.length > 0) {
-		rows.push({ key: String($t('values')), value: prop.allValues.map(String).join(', ') })
+		rows.push({ key: String($t('common.values')), value: prop.allValues.map(String).join(', ') })
 	}
-	if (prop.anyDepotDifferentFromDefault) rows.push({ key: String($t('note')), value: 'Depot ≠ Default (bold)' })
-	if (prop.anyClientDifferentFromDepot) rows.push({ key: String($t('note')), value: 'Client ≠ Depot (italic)' })
+	if (prop.anyDepotDifferentFromDefault) rows.push({ key: String($t('common.note')), value: 'Depot ≠ Default (bold)' })
+	if (prop.anyClientDifferentFromDepot) rows.push({ key: String($t('common.note')), value: 'Client ≠ Depot (italic)' })
 	return rows
 }
 

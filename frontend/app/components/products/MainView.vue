@@ -18,11 +18,11 @@
 		<template #actions>
 			<CoreAppButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
 				variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
-				{{ $t('changesDetected') }}
+				{{ $t('bus.changes') }}
 			</CoreAppButton>
 			<ProductsQuickActionsDropdown :products="products" @applied="fetchProducts" />
 			<CoreAppButton :icon="icons.refresh" variant="ghost" color="neutral" size="sm" :loading="loading"
-				:title="String($t('refresh'))" @click="fetchProducts()" />
+				:title="String($t('common.refresh'))" @click="fetchProducts()" />
 		</template>
 
 		<template #saveActions>
@@ -59,7 +59,7 @@
 						@error="($event.target as HTMLImageElement).style.display = 'none'" />
 					<CoreAppIcon v-else :name="icons.product" class="w-4 h-4 shrink-0 text-neutral-400" />
 					<CoreAppIcon v-if="(row as ProductRow).locked" :name="icons.lock"
-						class="w-3.5 h-3.5 text-(--color-error) shrink-0" :title="$t('locked')" />
+						class="w-3.5 h-3.5 text-(--color-error) shrink-0" :title="$t('products.locked')" />
 					<span class="text-sm text-(--color-text)">{{ (row as ProductRow).productId }}</span>
 				</div>
 			</template>
@@ -123,7 +123,7 @@
 
 			<template #row-actions="{ row }">
 				<CoreAppButton :icon="icons.config" variant="ghost" color="neutral" size="xs"
-					:title="$t('configuration')" @click.stop="openProductConfig(row as ProductRow)" />
+					:title="$t('config.title')" @click.stop="openProductConfig(row as ProductRow)" />
 			</template>
 		</CoreAppDataTable>
 
@@ -134,7 +134,7 @@
 			</span>
 		</template>
 		<template #panel-subtitle>
-			<div v-if="configProduct">{{ $t('configuration') }}</div>
+			<div v-if="configProduct">{{ $t('config.title') }}</div>
 		</template>
 
 		<template #panel-actions>
@@ -286,16 +286,16 @@ const hasUnsavedChanges = computed(() => productConfigTabsRef.value?.hasAnyChang
 const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshProducts(fetchProducts)
 
 const columns: DataTableColumnDef[] = [
-	{ key: 'installationStatus', label: String($t('installationStatus')), labelKey: 'installationStatus', headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-16', align: 'center' },
-	{ key: 'actionResult', label: String($t('actionResult')), labelKey: 'actionResult', headerIcon: icons.productActionResult, sortable: true, class: 'text-center w-16', align: 'center', visible: false },
-	{ key: 'productId', label: String($t('productId')), labelKey: 'productId', sortable: true, alwaysVisible: true },
-	{ key: 'description', label: String($t('description')), labelKey: 'description', sortable: true },
-	{ key: 'version', label: String($t('version')), labelKey: 'version', sortable: true },
-	{ key: 'advice', label: String($t('advice')), labelKey: 'advice', sortable: true, visible: false },
-	{ key: 'priority', label: String($t('priority')), labelKey: 'priority', sortable: true, visible: false },
-	{ key: 'modificationTime', label: String($t('modificationTime')), labelKey: 'modificationTime', sortable: true, visible: false },
-	{ key: 'actionProgress', label: String($t('actionProgress')), labelKey: 'actionProgress', sortable: true, visible: false },
-	{ key: 'actionRequest', label: String($t('actionRequest')), labelKey: 'actionRequest', sortable: true, class: 'w-40', alwaysVisible: true, stickyRight: true },
+	{ key: 'installationStatus', label: String($t('products.status')), labelKey: 'products.status', headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-16', align: 'center' },
+	{ key: 'actionResult', label: String($t('actions.result')), labelKey: 'actions.result', headerIcon: icons.productActionResult, sortable: true, class: 'text-center w-16', align: 'center', visible: false },
+	{ key: 'productId', label: String($t('products.id')), labelKey: 'products.id', sortable: true, alwaysVisible: true },
+	{ key: 'description', label: String($t('common.description')), labelKey: 'common.description', sortable: true },
+	{ key: 'version', label: String($t('common.version')), labelKey: 'common.version', sortable: true },
+	{ key: 'advice', label: String($t('products.advice')), labelKey: 'products.advice', sortable: true, visible: false },
+	{ key: 'priority', label: String($t('common.priority')), labelKey: 'common.priority', sortable: true, visible: false },
+	{ key: 'modificationTime', label: String($t('fields.modifiedAt')), labelKey: 'fields.modifiedAt', sortable: true, visible: false },
+	{ key: 'actionProgress', label: String($t('actions.progress')), labelKey: 'actions.progress', sortable: true, visible: false },
+	{ key: 'actionRequest', label: String($t('actions.request')), labelKey: 'actions.request', sortable: true, class: 'w-40', alwaysVisible: true, stickyRight: true },
 ]
 
 function openProductConfig(product: ProductRow) {
@@ -383,9 +383,9 @@ function handleBulkActionRequest(actionRequest: string) {
 }
 
 async function saveActionRequests(): Promise<{ type: 'success' | 'error' | 'warning'; message: string }> {
-	if (pendingActionRequests.value.size === 0) return { type: 'success', message: String($t('message.actionRequestsSaved')) }
+	if (pendingActionRequests.value.size === 0) return { type: 'success', message: String($t('notify.action.saved')) }
 	if (selectionStore.selectedClients.length === 0) {
-		return { type: 'error', message: String($t('message.noClientsSelected')) }
+		return { type: 'error', message: String($t('clients.selectNone')) }
 	}
 	savingActionRequests.value = true
 	const errors: string[] = []
@@ -410,10 +410,10 @@ async function saveActionRequests(): Promise<{ type: 'success' | 'error' | 'warn
 		} else if (errors.length > 0) {
 			return { type: 'error', message: errors.join('; ') }
 		} else {
-			return { type: 'success', message: String($t('message.actionRequestsSaved')) }
+			return { type: 'success', message: String($t('notify.action.saved')) }
 		}
 	} catch (e) {
-		return { type: 'error', message: e instanceof Error ? e.message : String($t('message.failedToSaveActionRequests')) }
+		return { type: 'error', message: e instanceof Error ? e.message : String($t('notify.errorActionsSave')) }
 	} finally { savingActionRequests.value = false }
 }
 
@@ -429,9 +429,9 @@ async function handleSaveAll(processOnDemand?: boolean, onDemandOptions?: { prod
 			try {
 				const productIds = onDemandOptions?.productIds || undefined
 				await processActionRequests(clientIds, productIds)
-				onResult?.({ type: 'success', message: String($t('message.processActionsExecuted')) })
+				onResult?.({ type: 'success', message: String($t('notify.product.actions.executed')) })
 			} catch (e) {
-				onResult?.({ type: 'error', message: e instanceof Error ? e.message : String($t('message.failedToProcessActions')) })
+				onResult?.({ type: 'error', message: e instanceof Error ? e.message : String($t('notify.errorActionsLoad')) })
 			}
 			return
 		}
@@ -443,7 +443,7 @@ async function handlePanelSave(_processOnDemand?: boolean, _options?: unknown, o
 	if (configTabsComponentRef.value?.hasAnyChanges) {
 		try {
 			await configTabsComponentRef.value.saveAll()
-			onResult?.({ type: 'success', message: String($t('message.successfullySavedHostParameters')) })
+			onResult?.({ type: 'success', message: String($t('notify.host.params.saved')) })
 		} catch (e) {
 			onResult?.({ type: 'error', message: e instanceof Error ? e.message : String(e) })
 		}
@@ -503,7 +503,7 @@ async function fetchProducts(params?: PageChangeParams) {
 	error.value = null
 	try {
 		await selectionStore.ensureServersSelected()
-		if (selectionStore.selectedServers.length === 0) { error.value = String($t('message.noServerSelected')); return }
+		if (selectionStore.selectedServers.length === 0) { error.value = String($t('servers.noSelection')); return }
 
 		const p: Record<string, unknown> = {
 			type: props.productType,
@@ -538,7 +538,7 @@ async function fetchProducts(params?: PageChangeParams) {
 			products.value = newData
 		}
 	} catch (e) {
-		error.value = e instanceof Error ? e.message : String($t('errorFetchingProducts'))
+		error.value = e instanceof Error ? e.message : String($t('products.none'))
 	} finally { loading.value = false }
 }
 

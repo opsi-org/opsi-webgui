@@ -13,35 +13,35 @@
 		<template v-if="inline">
 			<CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
 				<CoreAppButton :icon="icons.moreVertical" variant="ghost" color="neutral" size="xs" :loading="loading"
-					:disabled="loading" :title="String(t('clientActions'))" />
+					:disabled="loading" :title="String($t('clients.actions'))" />
 			</CoreAppDropdownMenu>
 		</template>
 		<!-- Standard mode: button with badge -->
 		<template v-else>
 			<CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
-				<CoreAppTooltip v-if="compact" :text="t('clientActions')">
-					<CoreAppButton variant="soft" color="primary" size="sm" :aria-label="String(t('clientActions'))">
+				<CoreAppTooltip v-if="compact" :text="$t('clients.actions')">
+					<CoreAppButton variant="soft" color="primary" size="sm" :aria-label="String($t('clients.actions'))">
 						<CoreAppIcon :name="icons.client" class="w-4 h-4" />
 						<CoreAppBadge size="xs" color="primary" class="ml-0.5">{{ clientIds.length }}</CoreAppBadge>
 					</CoreAppButton>
 				</CoreAppTooltip>
 				<CoreAppButton v-else variant="soft" color="primary" size="sm" class="w-full">
 					<CoreAppIcon :name="icons.client" class="w-4 h-4" />
-					<span>{{ t('clientActions') }}</span>
+					<span>{{ $t('clients.actions') }}</span>
 					<CoreAppBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</CoreAppBadge>
 					<CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
 				</CoreAppButton>
 			</CoreAppDropdownMenu>
-			<CoreAppTooltip v-else-if="compact" :text="t('clientActions')">
+			<CoreAppTooltip v-else-if="compact" :text="$t('clients.actions')">
 				<CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-70 hover:opacity-100"
-					:aria-label="String(t('clientActions'))" @click="showSelectionHint">
+					:aria-label="String($t('clients.actions'))" @click="showSelectionHint">
 					<CoreAppIcon :name="icons.client" class="w-4 h-4" />
 				</CoreAppButton>
 			</CoreAppTooltip>
 			<CoreAppButton v-else variant="ghost" color="neutral" size="sm" class="w-full opacity-70 hover:opacity-100"
 				@click="showSelectionHint">
 				<CoreAppIcon :name="icons.client" class="w-4 h-4" />
-				<span>{{ t('clientActions') }}</span>
+				<span>{{ $t('clients.actions') }}</span>
 				<CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
 			</CoreAppButton>
 		</template>
@@ -53,28 +53,28 @@
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
 						<CoreAppIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
-						{{ t(currentAction) }}
+						{{ actionLabel(currentAction) }}
 						<span v-if="clientIds.length === 1"
 							class="text-(--color-text-muted) font-normal normal-case truncate max-w-48">{{ clientIds[0]
 							}}</span>
 						<span v-else-if="clientIds.length > 1" class="text-(--color-text-muted) font-normal">({{
-							clientIds.length }} {{ t('clients') }})</span>
+							clientIds.length }} {{ $t('clients.title') }})</span>
 					</h3>
 					<CoreAppButton :icon="icons.x" variant="ghost" color="neutral" @click="confirmOpen = false" />
 				</div>
 
 				<CoreAppAlertInline v-if="statusMessage && statusMessage.type === 'error'" color="error"
-					:title="t('error')" :description="statusMessage.message" variant="subtle" class="mb-3" closable
+					:title="$t('common.error')" :description="statusMessage.message" variant="subtle" class="mb-3" closable
 					@close="statusMessage = null" />
 
 				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3">
 					<p class="mb-2">
-						{{ t('onDemandDescription') }}
+						{{ $t('actions.ondemandDesc') }}
 					</p>
 				</div>
 
 				<div v-if="currentAction === 'notify'" class="mb-4">
-					<CoreAppTextarea v-model="notifyText" :placeholder="t('enterNotificationText')" :rows="3"
+					<CoreAppTextarea v-model="notifyText" :placeholder="$t('notifications.text')" :rows="3"
 						class="w-full" />
 				</div>
 
@@ -83,7 +83,7 @@
 					<div class="flex items-start gap-2">
 						<CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-warning-soft-text) mt-0.5" />
 						<p class="text-sm text-(--color-warning-soft-text)">
-							{{ t('rebootWarning') }}
+							{{ $t('clients.reboot.warn') }}
 						</p>
 					</div>
 				</div>
@@ -93,7 +93,7 @@
 					<div class="flex items-start gap-2">
 						<CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-warning-soft-text) mt-0.5" />
 						<p class="text-sm text-(--color-warning-soft-text)">
-							{{ t('shutdownWarning') }}
+							{{ $t('clients.shutdown.warn') }}
 						</p>
 					</div>
 				</div>
@@ -109,27 +109,27 @@
 						</CoreAppButton>
 					</div>
 					<div>
-						<label class="block text-xs text-[--color-text-muted] mb-1">{{ t('username') }}</label>
-						<CoreAppInput v-model="deployOptions.username" :placeholder="t('adminUsername')" size="sm"
+						<label class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.username') }}</label>
+						<CoreAppInput v-model="deployOptions.username" :placeholder="$t('fields.adminUsername')" size="sm"
 							class="w-full" />
 					</div>
 					<div>
-						<label class="block text-xs text-[--color-text-muted] mb-1">{{ t('password') }}</label>
-						<CoreAppInput v-model="deployOptions.password" type="password" :placeholder="t('enterPassword')"
+						<label class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.password') }}</label>
+						<CoreAppInput v-model="deployOptions.password" type="password" :placeholder="$t('auth.enterPassword')"
 							size="sm" class="w-full" />
 					</div>
 				</div>
 
 				<div v-if="currentAction === 'rename'" class="space-y-3 mb-4">
 					<p class="text-sm text-(--color-text-muted) mb-1">
-						{{ t('renameClientDescription') }}
+						{{ $t('clients.rename.desc') }}
 					</p>
-					<CoreAppFormField :label="t('newHostId')">
+					<CoreAppFormField :label="$t('fields.newId')">
 						<div class="flex gap-1 items-center">
-							<CoreAppInput v-model="renameHostname" :placeholder="String(t('enterHostname'))"
+							<CoreAppInput v-model="renameHostname" :placeholder="String($t('fields.hostname.enter'))"
 								class="flex-1" :color="renameValidation.color as any" />
 							<span class="text-sm text-(--color-text-muted)">.</span>
-							<CoreAppInput v-model="renameDomain" :placeholder="String(t('domain'))" class="flex-1" />
+							<CoreAppInput v-model="renameDomain" :placeholder="String($t('fields.domain'))" class="flex-1" />
 						</div>
 						<p v-if="renameValidation.message" class="text-xs mt-1" :class="renameValidation.textClass">
 							{{ renameValidation.message }}
@@ -143,21 +143,21 @@
 						<CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-error-soft-text) mt-0.5" />
 						<div>
 							<p class="text-sm text-(--color-error-soft-text) font-medium">
-								{{ t('deleteWarning') }}
+								{{ $t('clients.delete.warn') }}
 							</p>
 							<p class="text-sm text-(--color-error-soft-text) mt-1">
-								{{ t('deleteClientsDescription') }}
+								{{ $t('clients.delete.desc') }}
 							</p>
 						</div>
 					</div>
 				</div>
 
 				<div class="flex justify-end gap-2 pt-3 border-[--color-border]">
-					<CoreAppButton variant="ghost" color="neutral" @click="confirmOpen = false">{{ t('cancel') }}
+					<CoreAppButton variant="ghost" color="neutral" @click="confirmOpen = false">{{ $t('common.cancel') }}
 					</CoreAppButton>
 					<CoreAppButton :color="currentAction === 'delete' ? 'error' : 'primary'" :loading="loading"
 						:disabled="isReadOnly || !canExecute" @click="executeAction">
-						{{ t(currentAction || 'confirm') }}
+						{{ actionLabel(currentAction) }}
 					</CoreAppButton>
 				</div>
 			</div>
@@ -170,7 +170,7 @@
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
 						<CoreAppIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
-						{{ t('actionResults') }}
+						{{ $t('actions.results') }}
 					</h3>
 					<CoreAppButton :icon="icons.x" variant="ghost" color="neutral" @click="resultOpen = false" />
 				</div>
@@ -187,7 +187,7 @@
 								<span class="font-medium truncate">{{ clientId }}</span>
 							</div>
 							<CoreAppBadge :color="result.success ? 'success' : 'error'" size="xs" variant="subtle">
-								{{ result.success ? t('success') : t('failed') }}
+								{{ result.success ? $t('common.success') : $t('common.failed') }}
 							</CoreAppBadge>
 						</div>
 						<div v-if="result.message" class="mt-1.5 pl-6 text-sm wrap-break-word"
@@ -198,7 +198,7 @@
 				</div>
 
 				<div class="flex justify-end mt-4 pt-3 border-t border-[--color-border]">
-					<CoreAppButton variant="ghost" color="neutral" @click="resultOpen = false">{{ t('close') }}
+					<CoreAppButton variant="ghost" color="neutral" @click="resultOpen = false">{{ $t('common.close') }}
 					</CoreAppButton>
 				</div>
 			</div>
@@ -222,7 +222,7 @@ const emit = defineEmits<{
 }>()
 
 const icons = useIcons()
-const { t } = useI18n()
+const { t: $t } = useI18n()
 const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deployClientAgent, deleteClient, renameClient } = useApiHelpers()
 const selectionStore = useSelectionStore()
 const { isReadOnly, canCreateClients } = useUserPermissions()
@@ -245,10 +245,24 @@ const osTypes = [
 	{ value: 'macos', label: 'macOS', icon: icons.apple },
 ]
 
+// Map each action to its translation key (reuses existing keys where possible).
+const actionLabelKeys: Record<string, string> = {
+	onDemand: 'actions.ondemand',
+	notify: 'actions.notify',
+	reboot: 'actions.reboot',
+	shutdown: 'actions.shutdown',
+	deployClientAgent: 'clients.deploy',
+	rename: 'actions.rename',
+	delete: 'common.delete',
+}
+function actionLabel(key: string) {
+	return key ? $t(actionLabelKeys[key] ?? key) : ''
+}
+
 function showSelectionHint() {
 	statusMessage.value = {
 		type: 'warning',
-		message: t('selectClientsFirst'),
+		message: $t('clients.selectFirst'),
 	}
 	setTimeout(() => { statusMessage.value = null }, 4000)
 }
@@ -270,9 +284,9 @@ const actions = computed(() =>
 const renameValidation = computed(() => {
 	const hostname = renameHostname.value.trim()
 	if (!hostname) return { color: undefined, message: '', textClass: '' }
-	if (/^\d/.test(hostname)) return { color: 'error', message: String(t('hostnameRequired')), textClass: 'text-(--color-error)' }
+	if (/^\d/.test(hostname)) return { color: 'error', message: String($t('fields.hostname.required')), textClass: 'text-(--color-error)' }
 	const newId = hostname + '.' + renameDomain.value.trim()
-	if (props.clientIds.length === 1 && newId === props.clientIds[0]) return { color: 'error', message: String(t('clientAlreadyExists')), textClass: 'text-(--color-error)' }
+	if (props.clientIds.length === 1 && newId === props.clientIds[0]) return { color: 'error', message: String($t('clients.validation.exists')), textClass: 'text-(--color-error)' }
 	return { color: undefined, message: '', textClass: '' }
 })
 
@@ -300,7 +314,7 @@ const actionItems = computed(() => {
 	const deleteAction = actions.value.find(a => a.key === 'delete')
 
 	groups.push(mainActions.map(action => ({
-		label: t(action.key) || action.key,
+		label: actionLabel(action.key),
 		icon: action.icon,
 		disabled: isReadOnly.value,
 		onSelect: () => openConfirm(action.key),
@@ -310,7 +324,7 @@ const actionItems = computed(() => {
 		const group: typeof groups[0] = []
 		if (renameAction) {
 			group.push({
-				label: t(renameAction.key) || renameAction.key,
+				label: actionLabel(renameAction.key),
 				icon: renameAction.icon,
 				disabled: isReadOnly.value,
 				onSelect: () => openConfirm(renameAction.key),
@@ -318,7 +332,7 @@ const actionItems = computed(() => {
 		}
 		if (deleteAction) {
 			group.push({
-				label: t(deleteAction.key) || deleteAction.key,
+				label: actionLabel(deleteAction.key),
 				icon: deleteAction.icon,
 				disabled: isReadOnly.value || !canCreateClients.value,
 				onSelect: () => openConfirm(deleteAction.key),

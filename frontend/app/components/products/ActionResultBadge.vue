@@ -10,15 +10,15 @@
 <template>
 	<div class="flex justify-center">
 		<CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
-			<CoreAppStatusBadge status="warning" :icon="icons.unequal" :label="$t('mixed')" />
+			<CoreAppStatusBadge status="warning" :icon="icons.unequal" :label="$t('common.mixed')" />
 		</CoreAppTooltipTable>
 
 		<template v-else-if="normalizedResult === 'successful'">
-			<CoreAppStatusBadge status="success" :icon="icons.checkCircle" :label="$t('successful')" />
+			<CoreAppStatusBadge status="success" :icon="icons.checkCircle" :label="$t('common.success')" />
 		</template>
 
 		<template v-else-if="normalizedResult === 'failed'">
-			<CoreAppStatusBadge status="error" :icon="icons.xCircle" :label="$t('failed')" />
+			<CoreAppStatusBadge status="error" :icon="icons.xCircle" :label="$t('common.failed')" />
 		</template>
 
 		<span v-else-if="normalizedResult === 'none' || !normalizedResult"

@@ -10,7 +10,7 @@
 <template>
 	<div class="shrink-0 px-3 md:px-4 py-1.5 border-b border-(--color-border) bg-(--color-surface)">
 		<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-			<nav class="flex items-center gap-1.5 text-xs overflow-x-auto" tabindex="0" :aria-label="t('breadcrumb')">
+			<nav class="flex items-center gap-1.5 text-xs overflow-x-auto" tabindex="0" :aria-label="$t('nav.breadcrumb')">
 				<template v-for="(crumb, i) in breadcrumbs" :key="i">
 					<CoreAppIcon v-if="i > 0" :name="icons.chevronRight"
 						class="w-2.5 h-2.5 text-(--color-text-muted) shrink-0" />
@@ -36,7 +36,7 @@ const icons = useIcons()
 const $route = useRoute()
 const { t: i18nT } = useI18n()
 
-const t = (key: string) => {
+const $t = (key: string) => {
 	const translated = i18nT(key)
 	if (translated && translated !== key) return String(translated)
 	return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
@@ -54,7 +54,7 @@ const breadcrumbs = computed(() => {
 	segments.forEach((segment, index) => {
 		currentPath += `/${segment}`
 		const isHostname = segment.includes('.') && !segment.includes(' ')
-		const label = isHostname ? segment : t(segment)
+		const label = isHostname ? segment : $t(segment)
 		crumbs.push({
 			label,
 			to: index < segments.length - 1 ? currentPath : undefined,
@@ -67,35 +67,35 @@ const breadcrumbs = computed(() => {
 const getPageDescription = (path: string): string => {
 	const normalizedPath = path.replace(/^\//, '')
 	const exactMatches: Record<string, string> = {
-		'dashboard': t('pageDescription.dashboard'),
-		'admin/terminal': t('pageDescription.admin.terminal'),
-		'admin/diagnostics/healthcheck': t('pageDescription.admin.diagnostics.healthcheck'),
-		'admin/diagnostics/modules': t('pageDescription.admin.diagnostics.modules'),
-		'admin/diagnostics/system': t('pageDescription.admin.diagnostics.system'),
-		'admin/maintenance': t('pageDescription.admin.maintenance'),
-		'servers': t('pageDescription.servers'),
-		'servers/configuration/parameters': t('pageDescription.servers.configuration.parameters'),
-		'servers/configuration/attributes': t('pageDescription.servers.configuration.attributes'),
-		'clients': t('pageDescription.clients'),
-		'clients/add': t('pageDescription.clients.add'),
-		'clients/clone': t('pageDescription.clients.clone'),
-		'clients/configuration/parameters': t('pageDescription.clients.configuration.parameters'),
-		'clients/configuration/attributes': t('pageDescription.clients.configuration.attributes'),
-		'clients/logs': t('pageDescription.clients.logs'),
-		'products': t('pageDescription.products'),
-		'groups': t('pageDescription.groups'),
-		'support': t('pageDescription.support'),
+		'dashboard': $t('pages.dashboard'),
+		'admin/terminal': $t('pages.admin.terminal'),
+		'admin/diagnostics/healthcheck': $t('pages.admin.diag.health'),
+		'admin/diagnostics/modules': $t('pages.admin.diag.mods'),
+		'admin/diagnostics/system': $t('pages.admin.diag.system'),
+		'admin/maintenance': $t('pages.admin.maintenance'),
+		'servers': $t('pages.servers'),
+		'servers/configuration/parameters': $t('pages.serversConfigParams'),
+		'servers/configuration/attributes': $t('pages.serversConfigAttrs'),
+		'clients': $t('pages.clients'),
+		'clients/add': $t('pages.clientsAdd'),
+		'clients/clone': $t('pages.clientsClone'),
+		'clients/configuration/parameters': $t('pages.clientsConfigParams'),
+		'clients/configuration/attributes': $t('pages.clientsConfigAttrs'),
+		'clients/logs': $t('pages.clientsLogs'),
+		'products': $t('pages.products'),
+		'groups': $t('pages.groups'),
+		'support': $t('pages.support'),
 	}
 	if (exactMatches[normalizedPath]) return exactMatches[normalizedPath]
 
 	// Match paths with dynamic host/client IDs at the end (e.g. clients/configuration/parameters/aa21.acme.corp)
 	const prefixMatches: [RegExp, string][] = [
-		[/^clients\/configuration\/parameters\//, t('pageDescription.clients.configuration.parameters')],
-		[/^clients\/configuration\/attributes\//, t('pageDescription.clients.configuration.attributes')],
-		[/^clients\/logs\//, t('pageDescription.clients.logs')],
-		[/^clients\/clone\//, t('pageDescription.clients.clone')],
-		[/^servers\/configuration\/parameters\//, t('pageDescription.servers.configuration.parameters')],
-		[/^servers\/configuration\/attributes\//, t('pageDescription.servers.configuration.attributes')],
+		[/^clients\/configuration\/parameters\//, $t('pages.clientsConfigParams')],
+		[/^clients\/configuration\/attributes\//, $t('pages.clientsConfigAttrs')],
+		[/^clients\/logs\//, $t('pages.clientsLogs')],
+		[/^clients\/clone\//, $t('pages.clientsClone')],
+		[/^servers\/configuration\/parameters\//, $t('pages.serversConfigParams')],
+		[/^servers\/configuration\/attributes\//, $t('pages.serversConfigAttrs')],
 	]
 	for (const [pattern, description] of prefixMatches) {
 		if (pattern.test(normalizedPath)) return description

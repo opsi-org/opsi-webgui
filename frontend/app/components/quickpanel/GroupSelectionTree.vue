@@ -12,17 +12,17 @@
 		<div class="flex items-center gap-1 mb-2 shrink-0">
 			<CoreAppFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
 			<CoreAppTooltip v-if="isGroupRestricted"
-				:text="groupType === 'client' ? t('opsiConfig.serverFeatures.hostGroupAccess.disabled') : t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
+				:text="groupType === 'client' ? $t('opsiConfig.serverFeatures.hostGroupAccess.disabled') : $t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
 				<CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help shrink-0">
-					{{ t('restricted') }}
+					{{ $t('auth.restricted') }}
 				</CoreAppBadge>
 			</CoreAppTooltip>
-			<CoreAppButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="t('refresh')"
+			<CoreAppButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="$t('common.refresh')"
 				@click="refresh" />
 			<CoreAppButton :icon="allExpanded ? icons.chevronUp : icons.chevronDown" size="xs" variant="ghost"
-				color="neutral" :title="allExpanded ? t('collapseAll') : t('expandAll')" @click="toggleExpandAll" />
+				color="neutral" :title="allExpanded ? $t('common.collapseAll') : $t('common.expandAll')" @click="toggleExpandAll" />
 			<CoreAppButton v-if="selectedCount > 0" :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-				:title="`${t('clearAll')} (${selectedCount})`" @click="clearAll" />
+				:title="`${$t('common.clearAll')} (${selectedCount})`" @click="clearAll" />
 		</div>
 
 		<div v-if="loading && !hasData" class="flex items-center justify-center py-8">
@@ -59,12 +59,12 @@
 							<CoreAppButton v-if="item.hasChildren"
 								:icon="item.isExpanded ? icons.chevronDown : icons.chevronRight" size="xs"
 								variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
-								:aria-label="item.isExpanded ? t('collapse') : t('expand')"
+								:aria-label="item.isExpanded ? $t('common.collapse') : $t('common.expand')"
 								@click.stop="toggleExpand(item.id)" />
 							<span v-else class="w-4 shrink-0" />
 							<CoreAppCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
 								:aria-label="item.label" @update:model-value="handleItemClick(item)" />
-							<CoreAppTooltip v-if="item.label === 'not_assigned'" :text="t('notAssignedTooltip')">
+							<CoreAppTooltip v-if="item.label === 'not_assigned'" :text="$t('clients.directoryNotAssigned')">
 								<span
 									class="truncate flex-1 cursor-help border-b border-dashed border-(--color-text-muted)/40"
 									:class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
@@ -77,7 +77,7 @@
 								{{ item.memberCount }}</CoreAppBadge>
 						</div>
 						<div v-if="section.flatItems.length === 0"
-							class="text-xs text-(--color-text-muted) py-1 px-2 italic">{{ t('noResults') }}</div>
+							class="text-xs text-(--color-text-muted) py-1 px-2 italic">{{ $t('common.noResults') }}</div>
 					</template>
 				</div>
 			</template>
@@ -88,7 +88,7 @@
 					<CoreAppButton v-if="item.hasChildren"
 						:icon="item.isExpanded ? icons.chevronDown : icons.chevronRight" size="xs" variant="ghost"
 						color="neutral" class="shrink-0 p-0! h-4! w-4!"
-						:aria-label="item.isExpanded ? t('collapse') : t('expand')"
+						:aria-label="item.isExpanded ? $t('common.collapse') : $t('common.expand')"
 						@click.stop="toggleExpand(item.id)" />
 					<span v-else class="w-4 shrink-0" />
 					<CoreAppCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
@@ -101,7 +101,7 @@
 							item.memberCount }}</CoreAppBadge>
 				</div>
 				<div v-if="productFlatItems.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">{{
-					t('noResults') }}</div>
+					$t('common.noResults') }}</div>
 			</template>
 		</div>
 
@@ -130,7 +130,7 @@ const isGroupRestricted = computed(() =>
 	props.groupType === 'client' ? isHostGroupAccessRestricted.value : isProductGroupAccessRestricted.value
 )
 
-const t = (key: string) => {
+const $t = (key: string) => {
 	const translated = i18nT(key)
 	if (translated && translated !== key) return String(translated)
 	return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
@@ -176,14 +176,14 @@ const expandedIds = computed(() => {
 const hasData = computed(() => rawTree.value.length > 0)
 
 function sectionLabel(id: string): string {
-	if (id === 'groups') return t('Groups')
-	if (id === 'clientdirectory') return t('clientDirectory')
+	if (id === 'groups') return $t('groups.title')
+	if (id === 'clientdirectory') return $t('clients.directory')
 	return id
 }
 
 function sectionTooltip(id: string): string {
-	if (id === 'groups') return t('groupsTooltip')
-	if (id === 'clientdirectory') return t('clientDirectoryTooltip')
+	if (id === 'groups') return $t('groups.tooltip')
+	if (id === 'clientdirectory') return $t('clients.directoryTooltip')
 	return ''
 }
 

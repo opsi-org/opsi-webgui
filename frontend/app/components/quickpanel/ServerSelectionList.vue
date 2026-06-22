@@ -19,20 +19,20 @@
 			<div class="flex items-center gap-1 mb-2 shrink-0">
 				<CoreAppFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
 				<CoreAppTooltip v-if="isDepotAccessRestricted"
-					:text="t('opsiConfig.serverFeatures.depotAccess.disabled')">
+					:text="$t('opsiConfig.serverFeatures.depotAccess.disabled')">
 					<CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help shrink-0">
-						{{ t('restricted') }}
+						{{ $t('auth.restricted') }}
 					</CoreAppBadge>
 				</CoreAppTooltip>
-				<CoreAppTooltip :text="`${t('clearAll')} (${selectionStore.selectedServers.length})`">
+				<CoreAppTooltip :text="`${$t('common.clearAll')} (${selectionStore.selectedServers.length})`">
 					<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-						:aria-label="t('clearAll')" @click="clearSelection" />
+						:aria-label="$t('common.clearAll')" @click="clearSelection" />
 				</CoreAppTooltip>
 			</div>
 
 			<div class="flex-1 overflow-y-auto min-h-0 space-y-0.5">
 				<div v-if="filteredServers.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">
-					{{ t('noResults') }}
+					{{ $t('common.noResults') }}
 				</div>
 				<div v-for="server in filteredServers" :key="server.serverId" v-clickable
 					class="flex items-center gap-2 px-2 py-1.5 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer"
@@ -49,7 +49,7 @@
 						</div>
 					</div>
 					<CoreAppBadge v-if="server.isConfigServer" size="xs" variant="subtle" color="primary">{{
-						t('configServer')
+						$t('servers.config')
 						}}</CoreAppBadge>
 				</div>
 			</div>
@@ -73,7 +73,7 @@ const selectionStore = useSelectionStore()
 const { isDepotAccessRestricted } = useUserPermissions()
 const { getServers } = useApiHelpers()
 
-const t = (key: string) => {
+const $t = (key: string) => {
 	const translated = i18nT(key)
 	if (translated && translated !== key) return String(translated)
 	return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()

@@ -12,71 +12,71 @@
     <div class="shrink-0 flex flex-wrap items-center justify-between gap-2 mb-3">
       <div class="flex items-center gap-3 text-sm">
         <UButton v-if="selectedKeys.length > 0" :icon="icons.xCircle" variant="soft" color="primary" size="xs"
-          :title="`${selectedKeys.length} ${$t('selected')} — ${$t('clearSelection')}`" @click="clearSelection">
+          :title="`${selectedKeys.length} ${$t('common.selected')} — ${$t('common.clearSelection')}`" @click="clearSelection">
           {{ selectedKeys.length }}
         </UButton>
         <UBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
-          {{ $t('singleSelect') }}
+          {{ $t('settings.singleSelect') }}
         </UBadge>
       </div>
 
       <div class="flex items-center gap-2">
-        <CoreAppFilterInput v-if="filterable" v-model="filterQueryInternal" :placeholder="String($t('typeToFilter'))"
+        <CoreAppFilterInput v-if="filterable" v-model="filterQueryInternal" :placeholder="String($t('common.filter'))"
           size="sm" input-class="w-32 sm:w-40" />
 
         <UPopover>
-          <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('tableSettings')" />
+          <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('settings.table')" />
           <template #content>
             <div class="p-3 min-w-85 overflow-y-auto bg-(--color-background) rounded shadow-lg">
-              <div class="font-heading text-xs text-(--color-text-muted) mb-3">{{ $t('tableSettings') }}</div>
+              <div class="font-heading text-xs text-(--color-text-muted) mb-3">{{ $t('settings.table') }}</div>
 
               <div class="mb-4 grid grid-cols-[7rem_1fr] items-center gap-x-2 gap-y-3">
-                <label class="text-xs text-(--color-text-muted)">{{ $t('displayMode') }}</label>
+                <label class="text-xs text-(--color-text-muted)">{{ $t('settings.display') }}</label>
                 <div class="flex gap-0.5">
                   <UButton size="xs" class="flex-1" :color="'primary'"
                     :variant="tableSettings.settings.displayMode === 'infinite' ? 'solid' : 'outline'"
                     @click="changeDisplayMode('infinite')">
-                    {{ $t('infiniteScroll') }}
+                    {{ $t('settings.infiniteScroll') }}
                   </UButton>
                   <UButton size="xs" class="flex-1" :color="'primary'"
                     :variant="tableSettings.settings.displayMode === 'pagination' ? 'solid' : 'outline'"
                     @click="changeDisplayMode('pagination')">
-                    {{ $t('pagination') }}
+                    {{ $t('table.pagination') }}
                   </UButton>
                 </div>
 
-                <label class="text-xs text-(--color-text-muted)">{{ $t('selectionMode') }}</label>
+                <label class="text-xs text-(--color-text-muted)">{{ $t('settings.selection') }}</label>
                 <div class="flex gap-0.5">
                   <UButton size="xs" class="flex-1" :color="'primary'"
                     :variant="effectiveSelectionMode === 'multi' ? 'solid' : 'outline'"
                     @click="forceSelectionMode('multi')">
-                    {{ $t('multiSelect') }}
+                    {{ $t('settings.multiSelect') }}
                   </UButton>
                   <UButton size="xs" class="flex-1" :color="'primary'"
                     :variant="effectiveSelectionMode === 'single' ? 'solid' : 'outline'"
                     @click="forceSelectionMode('single')">
-                    {{ $t('singleSelect') }}
+                    {{ $t('settings.singleSelect') }}
                   </UButton>
                 </div>
 
-                <label class="text-xs text-(--color-text-muted)">{{ $t('pageSize') }}</label>
+                <label class="text-xs text-(--color-text-muted)">{{ $t('settings.pageSize') }}</label>
                 <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs"
-                  :aria-label="String($t('pageSize'))" @update:model-value="(v: number) => changePageSize(v)" />
+                  :aria-label="String($t('settings.pageSize'))" @update:model-value="(v: number) => changePageSize(v)" />
 
-                <label class="text-xs text-(--color-text-muted)">{{ $t('sortBy') }}</label>
+                <label class="text-xs text-(--color-text-muted)">{{ $t('settings.sortBy') }}</label>
                 <div class="flex items-center gap-1">
                   <USelect :model-value="tableSettings.settings.sortColumn" :items="sortableColumnOptions" size="xs"
-                    :aria-label="String($t('sortBy'))" class="flex-1"
+                    :aria-label="String($t('settings.sortBy'))" class="flex-1"
                     @update:model-value="(v: string) => handleSort(v)" />
                   <UButton size="xs" variant="ghost" color="neutral"
                     :icon="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
-                    :title="tableSettings.settings.sortDirection === 'asc' ? String($t('ascending')) : String($t('descending'))"
+                    :title="tableSettings.settings.sortDirection === 'asc' ? String($t('common.ascending')) : String($t('common.descending'))"
                     @click="changeSortDirection(tableSettings.settings.sortDirection === 'asc' ? 'desc' : 'asc')" />
                 </div>
               </div>
 
               <div class="mb-4">
-                <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('columns') }}</label>
+                <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('settings.columns') }}</label>
                 <div class="space-y-1 max-h-40 overflow-y-auto">
                   <label v-for="col in toggleableColumns" :key="col.key"
                     class="flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer">
@@ -89,14 +89,14 @@
               </div>
 
               <UButton variant="ghost" color="neutral" size="xs" block @click="tableSettings.reset">
-                {{ $t('resetDefaults') }}
+                {{ $t('common.resetDefaults') }}
               </UButton>
             </div>
           </template>
         </UPopover>
 
         <UButton v-if="showRefresh" :icon="icons.refresh" variant="ghost" color="neutral" size="sm" :loading="loading"
-          :title="String($t('refresh'))" @click="handleRefresh" />
+          :title="String($t('common.refresh'))" @click="handleRefresh" />
       </div>
     </div>
 
@@ -104,7 +104,7 @@
       class="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden">
       <div ref="tableContainer"
         class="flex-1 min-h-0 min-w-0 overflow-x-auto overflow-y-auto transition-all duration-200"
-        :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" tabindex="0" role="region" :aria-label="String($t('table'))"
+        :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" tabindex="0" role="region" :aria-label="String($t('settings.table'))"
         @scroll="handleScroll" @keydown="handleTableKeydown">
         <div v-if="loading && rows.length === 0" class="py-12">
           <CoreAppLoadingSpinner size="lg" />
@@ -123,7 +123,7 @@
                       aria-label="Select all rows" @change="toggleSelectAll" />
                     <UButton v-if="selectedKeys.length > 0" size="xs" variant="ghost" color="neutral"
                       :icon="sortBySelection ? icons.sortDesc : icons.sort" :class="sortBySelection ? '' : 'opacity-30'"
-                      class="p-0! w-4 h-4" :title="String($t('sortBySelection'))"
+                      class="p-0! w-4 h-4" :title="String($t('settings.sortBySelection'))"
                       @click.stop="sortBySelection = !sortBySelection" />
                   </div>
                 </th>
@@ -159,7 +159,7 @@
 
                 <th v-if="hasActions" ref="actionsHeaderRef" role="columnheader"
                   class="min-w-24 px-3 py-2.5 text-center font-heading text-xs tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-20 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]">
-                  {{ $t('actions') }}
+                  {{ $t('actions.title') }}
                 </th>
               </tr>
             </thead>
@@ -209,7 +209,7 @@
                 <td :colspan="totalColSpan" class="px-4 py-12 text-center">
                   <div class="flex flex-col items-center gap-2 text-(--color-text-muted)">
                     <UIcon :name="icons.table" class="w-8 h-8 opacity-50" />
-                    <span>{{ $t('message.noItemsFound') }}</span>
+                    <span>{{ $t('common.noResults') }}</span>
                   </div>
                 </td>
               </tr>
@@ -222,7 +222,7 @@
 
               <tr v-else-if="displayMode === 'infinite' && rows.length > 0 && !hasMoreData">
                 <td :colspan="totalColSpan" class="px-4 py-3 text-center">
-                  <span class="text-xs text-(--color-text-muted)">{{ $t('allItemsLoaded') }}</span>
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('table.allLoaded') }}</span>
                 </td>
               </tr>
             </tbody>
@@ -235,11 +235,11 @@
       class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 mt-2 rounded-b-lg flex items-center justify-between gap-4">
       <span class="text-xs text-(--color-text-muted)">
         <template v-if="displayMode === 'infinite'">
-          {{ $t('showing') }} {{ rows.length }} {{ $t('of') }} {{ serverTotal }}
+          {{ $t('common.showing') }} {{ rows.length }} {{ $t('common.of') }} {{ serverTotal }}
         </template>
         <template v-else>
-          {{ $t('showing') }} {{ paginationStartIndex + 1 }}-{{ Math.min(paginationEndIndex, serverTotal) }}
-          {{ $t('of') }} {{ serverTotal }}
+          {{ $t('common.showing') }} {{ paginationStartIndex + 1 }}-{{ Math.min(paginationEndIndex, serverTotal) }}
+          {{ $t('common.of') }} {{ serverTotal }}
         </template>
       </span>
       <div v-if="displayMode === 'pagination' && totalPages > 1" class="flex items-center gap-1">

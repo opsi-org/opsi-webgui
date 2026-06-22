@@ -9,7 +9,7 @@
 -->
 <template>
     <div class="h-screen w-screen flex flex-col overflow-hidden">
-        <a href="#main-content" class="sr-skip-link">{{ t('skipToContent') }}</a>
+        <a href="#main-content" class="sr-skip-link">{{ $t('common.skipToContent') }}</a>
         <LayoutsTopbar :default-page="defaultPage" :formatted-time="formattedTime" :is-warning="isWarning"
             :health-check-tooltip="healthCheckTooltip" :health-worst-case="currentHealthWorstCase"
             :health-counts="currentHealthCounts" @toggle-sidebar="toggleSidebar"
@@ -36,22 +36,22 @@
                 <LayoutsBreadCrumb />
                 <div class="shrink-0 z-10 px-3 md:px-4">
                     <Transition name="slide-down">
-                        <CoreAppAlertInline v-if="userStore.globalError" color="error" :title="t('error')"
+                        <CoreAppAlertInline v-if="userStore.globalError" color="error" :title="$t('common.error')"
                             :description="userStore.globalError" closable compact class="mt-2"
                             @close="userStore.globalError = undefined" />
                     </Transition>
                     <Transition name="slide-down">
-                        <CoreAppAlertInline v-if="userStore.readOnly" color="warning" :title="t('readOnlyAccess')"
-                            variant="subtle" compact class="mt-2" />
+                        <CoreAppAlertInline v-if="userStore.readOnly" color="warning"
+                            :title="$t('common.readOnly')" variant="subtle" compact class="mt-2" />
                     </Transition>
                     <Transition name="slide-down">
                         <CoreAppAlertInline v-if="messageBusStore.certWarning" color="warning" variant="subtle" compact
                             class="mt-2" closable @close="messageBusStore.certWarning = false">
                             <template #description>
-                                <span>{{ t('messageBusCertWarningDescription') }}
+                                <span>{{ $t('bus.certWarning') }}
                                     <a :href="messageBusStore.certWarningUrl" target="_blank" rel="noopener"
                                         class="underline font-medium hover:text-(--color-text-highlighted)">
-                                        {{ t('messageBusCertWarningAction') }}
+                                        {{ $t('bus.acceptCert') }}
                                     </a>
                                 </span>
                             </template>
@@ -62,12 +62,12 @@
                             color="warning" variant="subtle" compact class="mt-2">
                             <template #description>
                                 <span class="inline-flex items-center gap-2">
-                                    <span>{{ t('changesDetected') }}: <strong>{{
-                                        messageBusStore.lastEventType?.replace('event:', '') || t('activity')
+                                    <span>{{ $t('bus.changes') }}: <strong>{{
+                                        messageBusStore.lastEventType?.replace('event:', '') || $t('common.activity')
                                             }}</strong></span>
                                     <CoreAppButton size="xs" color="warning" variant="soft" @click="$router.go(0)">
                                         <CoreAppIcon :name="icons.refresh" class="w-3.5 h-3.5 mr-1" />
-                                        {{ t('refresh') }}
+                                        {{ $t('common.refresh') }}
                                     </CoreAppButton>
                                     <CoreAppButton size="xs" variant="ghost" color="neutral"
                                         @click="messageBusStore.setChangesDetected(false)">
@@ -94,10 +94,10 @@
                     <div class="p-4 flex-1 flex flex-col">
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text)">{{
-                                t('quickPanel')
-                            }}</span>
+                                $t('quick.panel')
+                                }}</span>
                             <CoreAppButton @click="quickpanelOpen = false" variant="ghost" color="neutral"
-                                :aria-label="String(t('close'))" class="p-1! hover:bg-(--color-surface-hover)">
+                                :aria-label="String($t('common.close'))" class="p-1! hover:bg-(--color-surface-hover)">
                                 <CoreAppIcon :name="icons.x" class="w-4 h-4" />
                             </CoreAppButton>
                         </div>
@@ -118,9 +118,10 @@
                         </div>
 
                         <div class="flex items-center justify-between mb-4">
-                            <span class="text-base font-medium text-(--color-text)">{{ t('quickPanel') }}</span>
+                            <span class="text-base font-medium text-(--color-text)">{{ $t('quick.panel') }}</span>
                             <CoreAppButton :icon="icons.x" size="sm" variant="ghost" color="neutral"
-                                class="rounded-full" @click="quickpanelOpen = false" />
+                                :aria-label="String($t('common.close'))" class="rounded-full"
+                                @click="quickpanelOpen = false" />
                         </div>
 
                         <QuickpanelMainView />
@@ -151,11 +152,11 @@ const defaultPage = ref('/clients')
 
 const healthCheckTooltip = computed(() => {
     const counts = diagnosticsFetched.value ? cachedHealthCounts.value : userStore.healthCounts
-    if (!counts) return t('healthCheck')
+    if (!counts) return $t('diag.health')
     const parts: string[] = []
-    if (counts.error) parts.push(`${counts.error} ${t('errors')}`)
-    if (counts.warning) parts.push(`${counts.warning} ${t('warnings')}`)
-    return parts.length > 0 ? `${t('healthCheck')}: ${parts.join(', ')}` : t('healthCheck')
+    if (counts.error) parts.push(`${counts.error} ${$t('common.errors')}`)
+    if (counts.warning) parts.push(`${counts.warning} ${$t('common.warnings')}`)
+    return parts.length > 0 ? `${$t('diag.health')}: ${parts.join(', ')}` : $t('diag.health')
 })
 
 const currentHealthCounts = computed(() => {
@@ -176,7 +177,7 @@ function updateDefaultPage() {
     defaultPage.value = getDefaultPageFromCookie()
 }
 
-const t = (key: string) => {
+const $t = (key: string) => {
     const translated = i18nT(key)
     if (translated && translated !== key) return String(translated)
     return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
