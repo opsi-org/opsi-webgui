@@ -9,16 +9,16 @@
 -->
 <template>
 	<div v-if="mode === 'header'" class="flex items-center gap-1" @click.stop>
-		<span class="font-heading text-xs tracking-wider">{{ $t('actionRequest') }}</span>
+		<span class="font-heading text-xs tracking-wider">{{ $t('actions.request') }}</span>
 		<CoreAppIcon v-if="sortColumn === 'actionRequest'"
 			:name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc" class="w-3 h-3" />
 		<CoreAppIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
 		<CoreAppPopover v-if="hasClientsSelected && hasProductsSelected">
 			<CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.chevronDown"
-				:title="$t('message.setActionRequestForSelectedProducts')" />
+				:title="$t('products.quickHelp')" />
 			<template #content>
 				<div class="p-2 w-44">
-					<p class="text-xs text-(--color-text-muted) mb-2">{{ $t('setForSelected') }}</p>
+					<p class="text-xs text-(--color-text-muted) mb-2">{{ $t('quick.setFor') }}</p>
 					<div class="space-y-1">
 						<CoreAppButton v-for="action in bulkActionOptions" :key="action" size="xs" variant="ghost"
 							color="neutral" block class="justify-start" @click="emit('apply', action)">
@@ -49,7 +49,7 @@
 			{{ currentLabel || '-' }}
 		</span>
 		<span v-if="hasChanged || hasPendingChange" class="w-1.5 h-1.5 rounded-full bg-(--color-warning) shrink-0"
-			:title="$t('unsavedChange')" />
+			:title="$t('unsaved.changes')" />
 	</div>
 </template>
 
@@ -118,7 +118,7 @@ const defaultActions = ['none', 'setup', 'uninstall', 'update', 'always', 'once'
 const requestItems = computed(() => {
 	const actions = props.availableActions.length > 0 ? ['none', ...props.availableActions] : defaultActions
 	return [...new Set(actions)].map(a => ({
-		label: a === 'none' ? String($t('none')) : a,
+		label: a === 'none' ? String($t('common.none')) : a,
 		value: a,
 	}))
 })
@@ -130,7 +130,7 @@ const hasChanged = computed(() => selectedRequest.value !== originalRequest.valu
 
 const currentLabel = computed(() => {
 	const option = requestItems.value.find(o => o.value === selectedRequest.value)
-	return option?.label || selectedRequest.value || String($t('none'))
+	return option?.label || selectedRequest.value || String($t('common.none'))
 })
 
 function handleChange(value: string) {

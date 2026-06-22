@@ -14,7 +14,7 @@
 		</div>
 
 		<CoreAppEmptyState v-else-if="dependencies.length === 0" :icon="icons.product"
-			:message="String($t('noDependencies'))" />
+			:message="String($t('products.dependenciesNone'))" />
 
 		<template v-else>
 			<div class="flex-1 overflow-auto min-h-0">
@@ -34,19 +34,19 @@
 
 						<div class="flex-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-(--color-text-muted)">
 							<span v-if="dep.requiredAction" class="flex items-center gap-1">
-								<strong>{{ $t('requiredAction') }}:</strong>
+								<strong>{{ $t('products.requiredAction') }}:</strong>
 								<CoreAppBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requiredAction }}
 								</CoreAppBadge>
 							</span>
 							<span v-if="dep.requiredInstallationStatus" class="flex items-center gap-1">
-								<strong>{{ $t('requiredInstallationStatus') }}:</strong>
+								<strong>{{ $t('products.requiredStatus') }}:</strong>
 								<CoreAppBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requiredInstallationStatus }}
 								</CoreAppBadge>
 							</span>
 							<span v-if="dep.requirementType" class="flex items-center gap-1">
-								<strong>{{ $t('requirementType') }}:</strong>
+								<strong>{{ $t('products.requirementType') }}:</strong>
 								<CoreAppBadge color="neutral" variant="soft" size="xs">
 									{{ dep.requirementType }}
 								</CoreAppBadge>

@@ -10,7 +10,7 @@
 <template>
   <CoreAppSelectMenu :model-value="modelValue || ''" :items="dropdownOptions" :loading="loading"
     :filter-fields="['label', 'description']"
-    :placeholder="placeholder || (type === 'server' ? String($t('selectServer')) : String($t('selectClient')))"
+    :placeholder="placeholder || (type === 'server' ? String($t('servers.select')) : String($t('clients.select')))"
     value-key="value" class="min-w-48" size="sm" @update:model-value="onSelect" @open="onOpen">
     <template #leading>
       <CoreAppIcon :name="type === 'server' ? icons.server : icons.client" class="w-4 h-4 text-muted" />
@@ -19,7 +19,7 @@
       <template v-if="item.value === '__clear__'">
         <div class="flex items-center gap-2 text-muted italic py-0.5">
           <CoreAppIcon :name="icons.xCircle" class="w-4 h-4 shrink-0" />
-          <span class="text-sm">{{ $t('clearSelection') }}</span>
+          <span class="text-sm">{{ $t('common.clearSelection') }}</span>
         </div>
       </template>
       <template v-else>
@@ -77,10 +77,10 @@ const filteredOptions = computed<DropdownItem[]>(() => {
     description: item.description || '',
   }))
   if (props.allowClear && props.modelValue) {
-    result.unshift({ label: String($t('clearSelection')), value: '__clear__' })
+    result.unshift({ label: String($t('common.clearSelection')), value: '__clear__' })
   }
   if (props.allowAll && result.length > 0) {
-    const allLabel = props.type === 'server' ? String($t('allServers')) : String($t('allClients'))
+    const allLabel = props.type === 'server' ? String($t('servers.all')) : String($t('clients.all'))
     return [{ label: allLabel, value: '' }, ...result.filter(o => o.value !== '__clear__')]
   }
   return result

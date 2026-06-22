@@ -20,7 +20,7 @@ const sessionState = reactive({
 
 export function useSessionTimer(autoStart = false) {
   const userStore = useUserStore()
-  const { t } = useI18n()
+  const { t: $t } = useI18n()
 
   function calculateRemaining(): number {
     if (!userStore.sessionEndTime) return 0
@@ -43,7 +43,7 @@ export function useSessionTimer(autoStart = false) {
   }
 
   function formatTimeText(seconds: number): string {
-    if (seconds <= 0) return t('sessionExpired') || 'Session expired'
+    if (seconds <= 0) return $t('auth.expired')
     const h = Math.floor(seconds / 3600)
     const m = Math.floor((seconds % 3600) / 60)
     const s = seconds % 60

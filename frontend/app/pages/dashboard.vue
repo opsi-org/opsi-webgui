@@ -14,6 +14,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-const { t } = useI18n()
-useHead({ title: () => `${t('dashboard')} - opsi-WebGUI` })
+const { t: $t } = useI18n()
+useHead({ title: () => `${$t('dashboard.title')} - opsi-WebGUI` })
 </script>

@@ -9,25 +9,25 @@
 -->
 <template>
 	<div class="flex items-center gap-0.5">
-		<CoreAppTooltip :text="String($t('configuration'))">
+		<CoreAppTooltip :text="String($t('config.title'))">
 			<CoreAppButton :icon="icons.config" variant="ghost" size="xs"
 				:color="activeAction === 'config' ? 'primary' : 'neutral'"
 				:class="activeAction === 'config' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
-				:aria-label="String($t('configuration'))" @click="emit('open-config')" />
+				:aria-label="String($t('config.title'))" @click="emit('open-config')" />
 		</CoreAppTooltip>
 
-		<CoreAppTooltip :text="String($t('logs'))">
+		<CoreAppTooltip :text="String($t('logs.title'))">
 			<CoreAppButton :icon="icons.log" variant="ghost" size="xs"
 				:color="activeAction === 'logs' ? 'primary' : 'neutral'"
 				:class="activeAction === 'logs' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
-				:aria-label="String($t('logs'))" @click="emit('open-logs')" />
+				:aria-label="String($t('logs.title'))" @click="emit('open-logs')" />
 		</CoreAppTooltip>
 
-		<CoreAppTooltip :text="String($t('clone'))">
+		<CoreAppTooltip :text="String($t('clients.clone.title'))">
 			<CoreAppButton :icon="icons.clone" variant="ghost" size="xs"
 				:color="activeAction === 'clone' ? 'primary' : 'neutral'"
 				:class="activeAction === 'clone' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
-				:aria-label="String($t('clone'))" @click="emit('open-clone')"
+				:aria-label="String($t('clients.clone.title'))" @click="emit('open-clone')"
 				:disabled="isReadOnly || !canCreateClients" />
 		</CoreAppTooltip>
 

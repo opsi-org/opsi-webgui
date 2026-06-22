@@ -15,7 +15,7 @@
 				<CoreAppBadge v-if="row.client_version_outdated" color="error" variant="subtle" size="xs"
 					class="gap-0.5">
 					<CoreAppIcon :name="icons.productsOutdated" class="w-3 h-3" />
-					<span>{{ $t('versionOutdated') }}</span>
+					<span>{{ $t('products.outdated.version') }}</span>
 				</CoreAppBadge>
 				<CoreAppBadge v-if="row.depot_version_diff" color="warning" variant="subtle" size="xs" class="gap-0.5">
 					<CoreAppIcon :name="icons.unequal" class="w-3 h-3" />
@@ -73,12 +73,12 @@ const versionTooltipRows = computed(() => {
 	const selectedClients = props.row.selectedClients || []
 
 	if (depotVersions.length > 0) {
-		rows.push({ key: `── ${String($t('depots'))} ──`, value: '' })
+		rows.push({ key: `── ${String($t('depot.title'))} ──`, value: '' })
 		if (depots.length > 0 && depots.length === depotVersions.length) {
 			depots.forEach((s, i) => rows.push({ key: s, value: depotVersions[i] || '-' }))
 		} else {
 			const unique = [...new Set(depotVersions.filter(Boolean))]
-			unique.forEach(v => rows.push({ key: String($t('depot')), value: v }))
+			unique.forEach(v => rows.push({ key: String($t('depot.title')), value: v }))
 		}
 	}
 
@@ -86,33 +86,33 @@ const versionTooltipRows = computed(() => {
 		const totalDepots = depots.length > 0 ? depots.length : 0
 		if (totalDepots > 0 && props.row.numDepots < totalDepots) {
 			rows.push({
-				key: String($t('notOnAllDepots')),
+				key: String($t('products.notOnAllDepots')),
 				value: `${props.row.numDepots}/${totalDepots}`,
-				badge: String($t('missing')),
+				badge: String($t('common.missing')),
 				badgeColor: 'warning',
 			})
 		}
 	}
 
 	if (clientVersions.length > 0) {
-		rows.push({ key: `── ${String($t('clients'))} ──`, value: '' })
+		rows.push({ key: `── ${String($t('clients.title'))} ──`, value: '' })
 		const depotUnique = new Set(depotVersions.filter(Boolean))
 		if (selectedClients.length > 0 && selectedClients.length === clientVersions.length) {
 			selectedClients.forEach((c, i) => {
 				const cv = clientVersions[i] || '-'
 				const isOutdated = props.row.client_version_outdated && !depotUnique.has(cv)
-				rows.push({ key: c, value: cv, badge: isOutdated ? String($t('versionOutdated')) : undefined, badgeColor: isOutdated ? 'error' : undefined })
+				rows.push({ key: c, value: cv, badge: isOutdated ? String($t('products.outdated.version')) : undefined, badgeColor: isOutdated ? 'error' : undefined })
 			})
 		} else {
 			const unique = [...new Set(clientVersions.filter(Boolean))]
 			unique.forEach(v => {
 				const isOutdated = props.row.client_version_outdated && !depotUnique.has(v)
-				rows.push({ key: String($t('client')), value: v, badge: isOutdated ? String($t('versionOutdated')) : undefined, badgeColor: isOutdated ? 'error' : undefined })
+				rows.push({ key: String($t('clients.title')), value: v, badge: isOutdated ? String($t('products.outdated.version')) : undefined, badgeColor: isOutdated ? 'error' : undefined })
 			})
 		}
 	}
 
-	if (props.row.depot_version_diff) rows.push({ key: '⚠', value: String($t('depotVersionDiff')) })
+	if (props.row.depot_version_diff) rows.push({ key: '⚠', value: String($t('depot.versionDiff')) })
 
 	return rows
 })

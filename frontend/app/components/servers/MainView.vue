@@ -13,7 +13,7 @@
         <template #actions>
             <CoreAppButton v-if="changesDetected && !autoRefreshEnabled" :icon="icons.refresh" color="warning"
                 variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
-                {{ $t('changesDetected') }}
+                {{ $t('bus.changes') }}
             </CoreAppButton>
         </template>
 
@@ -39,7 +39,7 @@
                 {{ (row as Server).description || '-' }}
             </template>
             <template #row-actions="{ row }">
-                <CoreAppButton :icon="icons.config" variant="ghost" size="xs" :title="$t('configuration')"
+                <CoreAppButton :icon="icons.config" variant="ghost" size="xs" :title="$t('config.title')"
                     :color="panelServer?.depotId === (row as Server).depotId ? 'primary' : 'neutral'"
                     :class="panelServer?.depotId === (row as Server).depotId ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
                     @click.stop="openConfig(row as Server)" />
@@ -52,7 +52,7 @@
                 {{ panelServer?.depotId }}
             </span>
         </template>
-        <template #panel-subtitle>{{ $t('configuration') }}</template>
+        <template #panel-subtitle>{{ $t('config.title') }}</template>
         <template #panel>
             <div v-if="panelServer" class="h-full">
                 <HostsConfigTabs v-if="panelType === 'config'" ref="configTabsRef" :host-id="panelServer.depotId"
@@ -99,10 +99,10 @@ const { showLeaveWarning, checkUnsavedAndDo, confirmLeave: confirmPanelLeave, ca
 })
 
 const columns: DataTableColumnDef[] = [
-    { key: 'depotId', label: String($t('serverId')), labelKey: 'serverId', sortable: true, alwaysVisible: true },
-    { key: 'description', label: String($t('description')), labelKey: 'description', sortable: true },
-    { key: 'type', label: String($t('type')), labelKey: 'type', sortable: true },
-    { key: 'ip', label: String($t('ipAddress')), labelKey: 'ipAddress', sortable: true, visible: false },
+    { key: 'depotId', label: String($t('fields.serverId')), labelKey: 'fields.serverId', sortable: true, alwaysVisible: true },
+    { key: 'description', label: String($t('common.description')), labelKey: 'common.description', sortable: true },
+    { key: 'type', label: String($t('common.type')), labelKey: 'common.type', sortable: true },
+    { key: 'ip', label: String($t('fields.ip')), labelKey: 'fields.ip', sortable: true, visible: false },
 ]
 
 function doOpenConfig(row: Server) {

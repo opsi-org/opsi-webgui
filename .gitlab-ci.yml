@@ -42,21 +42,25 @@ setup:deps:
     paths: [frontend/node_modules/, frontend/.nuxt/]
     expire_in: 1 day
 
-# setup:i18n:
-#   stage: setup
-#   extends: .pybuilder
-#   script:
-#     - RATE=0.0 && [ "$CI_COMMIT_TAG" != "" ] && RATE=1.0
-#     - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json frontend/i18n/locales/ --min-translation-rate $RATE || true
-#     - chmod -R 666 frontend/i18n/locales/* || true
-#   artifacts:
-#     paths: [frontend/i18n/locales/]
-#     expire_in: 3 days
-#   rules:
-#     - if: $CI_COMMIT_TAG
-#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-#     - when: manual
-#       allow_failure: true
+setup:i18n:
+  stage: setup
+  extends: .pybuilder
+  before_script:
+    - opsi-dev-cli self upgrade
+  script:
+    - RATE=0.0 && [ "$CI_COMMIT_TAG" != "" ] && RATE=1.0
+    - opsi-dev-cli -l 6 transifex upload-resource frontend/i18n/locales/opsi-webgui_en.json --resource-name opsi-webgui.json || true
+    - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json frontend/i18n/locales/ --min-translation-rate $RATE -l de -l fr || true
+    - chmod -R 666 frontend/i18n/locales/* || true
+    - ls -lah frontend/i18n/locales/
+  artifacts:
+    paths: [frontend/i18n/locales/]
+    expire_in: 3 days
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - when: manual
+      allow_failure: true
 
 setup:changelog:
   stage: setup
@@ -185,7 +189,7 @@ build:addon:
     - bash "$(pwd)/scripts/build_addon.sh" webgui "opsi-WebGUI" "$(pwd)"
     - ls -lah opsi-webgui.zip webgui/
   artifacts:
-    name: "opsi-webgui-${PACKAGE_VERSION}"
+    name: 'opsi-webgui-${PACKAGE_VERSION}'
     paths: [opsi-webgui.zip, webgui/]
     expire_in: 7 days
 

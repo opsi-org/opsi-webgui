@@ -41,18 +41,18 @@
                 <div class="p-3 border-b border-(--color-border) space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-(--color-text)">{{ activeGroupType === 'clients' ?
-                            $t('client-group') :
-                            $t('product-group') }}</span>
+                            $t('groups.client') :
+                            $t('groups.product') }}</span>
                         <CoreAppTooltip
                             v-if="(activeGroupType === 'clients' && isHostGroupAccessRestricted) || (activeGroupType === 'products' && isProductGroupAccessRestricted)"
                             :text="activeGroupType === 'clients' ? $t('opsiConfig.serverFeatures.hostGroupAccess.disabled') : $t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
                             <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help">
-                                {{ $t('restricted') }}
+                                {{ $t('auth.restricted') }}
                             </CoreAppBadge>
                         </CoreAppTooltip>
                         <CoreAppButton v-if="activeGroupType === 'products'" size="xs" variant="ghost" color="neutral"
-                            @click="openCreateModal()" :title="$t('createGroup')"
-                            :aria-label="String($t('createGroup'))" :disabled="isReadOnly">
+                            @click="openCreateModal()" :title="$t('groups.create')"
+                            :aria-label="String($t('groups.create'))" :disabled="isReadOnly">
                             <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm"
                                 badge badge-color="none" />
                         </CoreAppButton>
@@ -72,16 +72,16 @@
                                     :name="collapsedSections.has(rootGroup.id) ? icons.chevronRight : icons.chevronDown"
                                     class="w-3.5 h-3.5 text-(--color-text-muted)" />
                                 <CoreAppTooltip
-                                    :text="rootGroup.label === 'groups' ? $t('groupsTooltip') : rootGroup.label === 'clientdirectory' ? $t('clientDirectoryTooltip') : ''">
+                                    :text="rootGroup.label === 'groups' ? $t('groups.tooltip') : rootGroup.label === 'clientdirectory' ? $t('clients.directoryTooltip') : ''">
                                     <span class="cursor-help border-b border-dashed border-(--color-text-muted)/40">{{
-                                        rootGroup.label === 'groups' ? $t('Groups') : rootGroup.label ===
+                                        rootGroup.label === 'groups' ? $t('groups.title') : rootGroup.label ===
                                             'clientdirectory'
                                             ?
-                                            $t('clientDirectory') : rootGroup.label }}</span>
+                                            $t('clients.directory') : rootGroup.label }}</span>
                                 </CoreAppTooltip>
                             </div>
-                            <CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('createGroup')"
-                                :aria-label="String($t('createGroup'))" @click.stop="openCreateModal(rootGroup.id)">
+                            <CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('groups.create')"
+                                :aria-label="String($t('groups.create'))" @click.stop="openCreateModal(rootGroup.id)">
                                 <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold"
                                     size="sm" badge badge-color="none" />
                             </CoreAppButton>
@@ -98,7 +98,7 @@
                     </template>
                     <div v-if="filteredTreeGroups.length === 0 && !loading"
                         class="text-sm text-(--color-text-muted) px-2 py-4 text-center">
-                        {{ searchQuery ? $t('noSearchResults') : $t('noGroupsFound') }}
+                        {{ searchQuery ? $t('common.noResults') : $t('groups.none') }}
                     </div>
                 </div>
             </div>
@@ -118,26 +118,26 @@
                                 @click="showSidebar = true" />
                             <span class="font-medium text-(--color-text)">{{ selectedGroup.label }}</span>
                             <span v-if="selectedGroup.isSpecial" class="text-xs text-(--color-text-muted)">
-                                ({{ $t('systemGroup') }})
+                                ({{ $t('diag.systemGroup') }})
                             </span>
                         </div>
                         <div class="flex gap-1" v-if="!selectedGroup.isSpecial">
                             <CoreAppButton :icon="icons.add" variant="ghost" color="neutral" size="xs"
-                                :title="$t('addMembers')" @click="openAddMembersModal(selectedGroup)"
+                                :title="$t('groups.membersAdd')" @click="openAddMembersModal(selectedGroup)"
                                 :disabled="isReadOnly" />
-                            <CoreAppButton variant="ghost" color="neutral" size="xs" :title="$t('addSubgroup')"
+                            <CoreAppButton variant="ghost" color="neutral" size="xs" :title="$t('groups.subgroup')"
                                 @click="openCreateModal(selectedGroup.id)" :disabled="isReadOnly">
                                 <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold"
                                     size="sm" badge badge-color="none" />
                             </CoreAppButton>
                             <CoreAppButton :icon="icons.pencil" variant="ghost" color="neutral" size="xs"
-                                :title="$t('edit')" @click="openEditModal(selectedGroup)" :disabled="isReadOnly" />
+                                :title="$t('common.edit')" @click="openEditModal(selectedGroup)" :disabled="isReadOnly" />
                             <CoreAppButton :icon="icons.delete" variant="ghost" size="xs" color="neutral"
-                                :title="$t('delete')" @click="confirmDeleteGroup(selectedGroup)"
+                                :title="$t('common.delete')" @click="confirmDeleteGroup(selectedGroup)"
                                 :disabled="isReadOnly" />
                         </div>
                         <div class="flex gap-1" v-else-if="selectedGroup.isSpecial && activeGroupType === 'clients'">
-                            <CoreAppButton variant="ghost" color="neutral" size="xs" :title="$t('addSubgroup')"
+                            <CoreAppButton variant="ghost" color="neutral" size="xs" :title="$t('groups.subgroup')"
                                 @click="openCreateModal(selectedGroup.id)" :disabled="isReadOnly">
                                 <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold"
                                     size="sm" badge badge-color="none" />
@@ -150,7 +150,7 @@
                         <div class="pt-4 border-(--color-border)">
                             <div class="flex items-center justify-between mb-3">
                                 <h4 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
-                                    {{ $t('groupMembers') }}
+                                    {{ $t('groups.members') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
                                         []).length
                                         }})</span>
@@ -159,19 +159,19 @@
                                     <CoreAppButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
                                         :icon="icons.delete" size="xs" variant="soft" color="error"
                                         :disabled="isReadOnly" @click="removeSelectedMembers">
-                                        {{ $t('remove') }} ({{ selectedMembers.length }})
+                                        {{ $t('common.remove') }} ({{ selectedMembers.length }})
                                     </CoreAppButton>
                                     <CoreAppButton
                                         v-if="(selectedGroup.members?.length || 0) > 0 && !selectedGroup.isSpecial"
                                         :icon="icons.delete" size="xs" variant="ghost" color="neutral"
-                                        :disabled="isReadOnly" :title="$t('removeAllMembers')"
+                                        :disabled="isReadOnly" :title="$t('groups.membersRemoveAll')"
                                         @click="confirmRemoveAllMembers">
-                                        {{ $t('removeAll') }}
+                                        {{ $t('common.removeAll') }}
                                     </CoreAppButton>
                                 </div>
                             </div>
                             <CoreAppFilterInput v-if="(selectedGroup.members?.length || 0) > 5"
-                                v-model="memberSearchQuery" :placeholder="$t('filterMembers') + '...'" size="sm"
+                                v-model="memberSearchQuery" :placeholder="$t('groups.membersFilter') + '...'" size="sm"
                                 input-class="w-full mb-2" />
                             <div v-if="filteredMembers.length > 0 && !selectedGroup.isSpecial"
                                 class="flex items-center gap-2 px-2 py-1 mb-1">
@@ -180,8 +180,8 @@
                                     :indeterminate="selectedMembers.length > 0 && selectedMembers.length < filteredMembers.length"
                                     @update:model-value="toggleSelectAllMembers" />
                                 <span class="text-xs text-(--color-text-muted)">
-                                    {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('selected')}` :
-                                        $t('selectAll') }}
+                                    {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('common.selected')}` :
+                                        $t('common.selectAll') }}
                                     <kbd
                                         class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
                                     <kbd
@@ -199,18 +199,18 @@
                                         class="w-4 h-4 text-(--color-text-muted) shrink-0" />
                                     <span class="flex-1 truncate text-(--color-text)">{{ member }}</span>
                                     <CoreAppButton v-if="!selectedGroup.isSpecial" :icon="icons.delete" size="xs"
-                                        variant="ghost" color="neutral" :title="$t('remove')"
+                                        variant="ghost" color="neutral" :title="$t('common.remove')"
                                         class="opacity-0 group-hover/member:opacity-100 transition-opacity shrink-0"
                                         @click="removeSingleMember(member)" />
                                 </div>
                                 <div v-if="filteredMembers.length === 0"
                                     class="text-sm text-(--color-text-muted) py-4 text-center">
-                                    {{ memberSearchQuery ? $t('noSearchResults') : $t('noMembers') }}
+                                    {{ memberSearchQuery ? $t('common.noResults') : $t('groups.membersNone') }}
                                 </div>
                                 <CoreAppButton v-else-if="hasMoreMembers" variant="ghost" color="primary" size="xs"
                                     block class="py-2!" @click="showMoreMembers">
-                                    {{ $t('showMore') }} ({{ filteredMembers.length - memberDisplayLimit }} {{
-                                        $t('remaining')
+                                    {{ $t('common.showMore') }} ({{ filteredMembers.length - memberDisplayLimit }} {{
+                                        $t('common.remaining')
                                     }})
                                 </CoreAppButton>
                             </div>
@@ -218,11 +218,11 @@
                     </div>
                 </div>
 
-                <CoreAppEmptyState v-else :icon="icons.group" :message="String($t('message.noItemsSelected'))">
+                <CoreAppEmptyState v-else :icon="icons.group" :message="String($t('common.noSelection'))">
                     <template v-if="isMobile" #actions>
                         <CoreAppButton :icon="icons.back" variant="ghost" color="neutral" size="sm"
                             @click="showSidebar = true">
-                            {{ $t('back') }}
+                            {{ $t('common.back') }}
                         </CoreAppButton>
                     </template>
                 </CoreAppEmptyState>
@@ -237,7 +237,7 @@
                             <div class="flex items-center gap-3">
                                 <CoreAppIcon :name="icons.group" class="w-5 h-5 text-(--color-text-muted)" />
                                 <h3 class="text-sm font-heading uppercase tracking-wide text-(--color-text) m-0">{{
-                                    $t('createGroup') }}</h3>
+                                    $t('groups.create') }}</h3>
                                 <p v-if="createForm.parentGroupId" class="text-sm text-(--color-text-muted)">
                                     {{ createForm.parentGroupId }}</p>
                             </div>
@@ -246,27 +246,27 @@
                         </div>
                     </template>
                     <CoreAppForm @submit="doCreateGroup" class="space-y-5">
-                        <CoreAppFormField :label="$t('groupId')" required>
-                            <CoreAppInput v-model="createForm.groupId" :placeholder="$t('groupId')" class="w-full"
+                        <CoreAppFormField :label="$t('groups.id')" required>
+                            <CoreAppInput v-model="createForm.groupId" :placeholder="$t('groups.id')" class="w-full"
                                 autofocus />
                         </CoreAppFormField>
-                        <CoreAppFormField :label="$t('description')">
-                            <CoreAppTextarea v-model="createForm.description" :placeholder="$t('description')" :rows="2"
+                        <CoreAppFormField :label="$t('common.description')">
+                            <CoreAppTextarea v-model="createForm.description" :placeholder="$t('common.description')" :rows="2"
                                 class="w-full" />
                         </CoreAppFormField>
-                        <CoreAppFormField :label="$t('notes')">
-                            <CoreAppTextarea v-model="createForm.notes" :placeholder="$t('notes')" :rows="2"
+                        <CoreAppFormField :label="$t('common.notes')">
+                            <CoreAppTextarea v-model="createForm.notes" :placeholder="$t('common.notes')" :rows="2"
                                 class="w-full" />
                         </CoreAppFormField>
                     </CoreAppForm>
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <CoreAppButton variant="ghost" color="neutral" @click="showCreateModal = false">
-                                {{ $t('cancel') }}
+                                {{ $t('common.cancel') }}
                             </CoreAppButton>
                             <CoreAppButton color="primary" :loading="saving" @click="doCreateGroup"
                                 :disabled="!createForm.groupId" :icon="icons.add">
-                                {{ $t('create') }}
+                                {{ $t('common.create') }}
                             </CoreAppButton>
                         </div>
                     </template>
@@ -282,7 +282,7 @@
                             <div class="flex items-center gap-3">
                                 <CoreAppIcon :name="icons.pencil" class="w-5 h-5 text-(--color-text-muted)" />
                                 <h3 class="text-sm font-heading uppercase tracking-wide text-(--color-text) m-0">{{
-                                    $t('editGroup') }}</h3>
+                                    $t('groups.edit') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ editForm.groupId }}</p>
                             </div>
                             <CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
@@ -290,24 +290,24 @@
                         </div>
                     </template>
                     <CoreAppForm @submit="doEditGroup" class="space-y-5">
-                        <CoreAppFormField :label="$t('parentGroup')" class="add-border">
+                        <CoreAppFormField :label="$t('groups.parent')" class="add-border">
                             <CoreAppSelect v-model="editForm.parentGroupId" :items="editParentGroupSelectItems"
-                                :placeholder="$t('none')" class="w-full" />
+                                :placeholder="$t('common.none')" class="w-full" />
                         </CoreAppFormField>
-                        <CoreAppFormField :label="$t('description')">
+                        <CoreAppFormField :label="$t('common.description')">
                             <CoreAppTextarea v-model="editForm.description" :rows="2" class="w-full" />
                         </CoreAppFormField>
-                        <CoreAppFormField :label="$t('notes')">
+                        <CoreAppFormField :label="$t('common.notes')">
                             <CoreAppTextarea v-model="editForm.notes" :rows="2" class="w-full" />
                         </CoreAppFormField>
                     </CoreAppForm>
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <CoreAppButton variant="ghost" color="neutral" @click="showEditModal = false">
-                                {{ $t('cancel') }}
+                                {{ $t('common.cancel') }}
                             </CoreAppButton>
                             <CoreAppButton color="primary" :loading="saving" @click="doEditGroup" :icon="icons.check">
-                                {{ $t('save') }}
+                                {{ $t('common.save') }}
                             </CoreAppButton>
                         </div>
                     </template>
@@ -323,7 +323,7 @@
                             <div class="flex items-center gap-3">
                                 <CoreAppIcon :name="icons.delete" class="w-5 h-5" />
                                 <h3 class="text-sm font-heading uppercase tracking-wide text-(--color-text) m-0">{{
-                                    $t('Delete') }}</h3>
+                                    $t('common.delete') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ groupToDelete?.id }}</p>
                             </div>
                             <CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
@@ -331,17 +331,17 @@
                         </div>
                     </template>
                     <p class="text-sm text-(--color-text)">
-                        {{ $t('message.confirmDeleteGroup', { groupId: groupToDelete?.id || '' }) }}
+                        {{ $t('groups.delete', { groupId: groupToDelete?.id || '' }) }}
                     </p>
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <CoreAppButton variant="ghost" color="neutral" @click="showDeleteModal = false">{{
-                                $t('cancel')
+                                $t('common.cancel')
                                 }}
                             </CoreAppButton>
                             <CoreAppButton color="error" :loading="deleting" @click="deleteGroup" :icon="icons.delete">
                                 {{
-                                    $t('delete') }}</CoreAppButton>
+                                    $t('common.delete') }}</CoreAppButton>
                         </div>
                     </template>
                 </CoreAppCard>
@@ -356,7 +356,7 @@
                             <div class="flex items-center gap-3">
                                 <CoreAppIcon :name="icons.add" class="w-5 h-5 text-(--color-text-muted)" />
                                 <h3 class="text-sm font-heading uppercase tracking-wide text-(--color-text) m-0">{{
-                                    $t('addMembers') }}</h3>
+                                    $t('groups.membersAdd') }}</h3>
                                 <p class="text-sm text-(--color-text-muted)">{{ memberTargetGroup?.label }}</p>
                             </div>
                             <CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="xs"
@@ -376,7 +376,7 @@
                                         :indeterminate="selectedNewMembers.length > 0 && selectedNewMembers.length < filteredAvailableMembers.length"
                                         @update:model-value="toggleSelectAllNewMembers" />
                                     <span class="text-xs text-(--color-text-muted)">
-                                        {{ $t('selectAll') }}
+                                        {{ $t('common.selectAll') }}
                                         <kbd
                                             class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
                                         <kbd
@@ -384,7 +384,7 @@
                                     </span>
                                 </label>
                                 <span class="text-xs text-(--color-text-muted)">{{ selectedNewMembers.length }} {{
-                                    $t('selected') }}</span>
+                                    $t('common.selected') }}</span>
                             </div>
                             <div class="border border-(--color-border) rounded-lg overflow-hidden">
                                 <div class="max-h-60 overflow-auto">
@@ -397,7 +397,7 @@
                                     </label>
                                     <div v-if="filteredAvailableMembers.length === 0"
                                         class="text-sm text-(--color-text-muted) py-4 text-center">
-                                        {{ availableMembersSearch ? $t('noSearchResults') : $t('noItemsAvailable') }}
+                                        {{ availableMembersSearch ? $t('common.noResults') : $t('common.noData') }}
                                     </div>
                                 </div>
                             </div>
@@ -406,10 +406,10 @@
                     <template #footer>
                         <div class="flex justify-end gap-2">
                             <CoreAppButton variant="ghost" color="neutral" @click="showAddMembersModal = false">{{
-                                $t('cancel') }}</CoreAppButton>
+                                $t('common.cancel') }}</CoreAppButton>
                             <CoreAppButton color="primary" :loading="addingMembers" @click="addSelectedMembers"
                                 :disabled="selectedNewMembers.length === 0" :icon="icons.add">
-                                {{ $t('add') }} ({{ selectedNewMembers.length }})
+                                {{ $t('common.add') }} ({{ selectedNewMembers.length }})
                             </CoreAppButton>
                         </div>
                     </template>
@@ -521,8 +521,8 @@ const expandedGroupIds = ref<Set<string>>(new Set())
 const collapsedSections = ref<Set<string>>(new Set())
 
 const groupTypes = [
-    { label: String($t('client-group')), value: 'clients' },
-    { label: String($t('product-group')), value: 'products' },
+    { label: String($t('groups.client')), value: 'clients' },
+    { label: String($t('groups.product')), value: 'products' },
 ]
 
 const currentTreeGroups = computed((): GroupTreeNodeData[] => {
@@ -762,13 +762,13 @@ async function removeSelectedMembers() {
             ))
         }
 
-        showStatus('success', String($t('message.successfullyDeletedClientFromGroup', { client: `${members.length}` })))
+        showStatus('success', String($t('notify.host.removed.group', { client: `${members.length}` })))
         selectedMembers.value = []
         await fetchCurrentGroups()
         const updated = findGroupById(currentTreeGroups.value, selectedGroup.value.id)
         if (updated) selectedGroup.value = updated
     } catch (e) {
-        showStatus('error', e instanceof Error ? e.message : String($t('message.error.general')))
+        showStatus('error', e instanceof Error ? e.message : String($t('notify.error')))
     }
 }
 
@@ -806,7 +806,7 @@ async function fetchCurrentGroups() {
             await cachedFetchProductGroups(true)
         }
     } catch (err) {
-        showStatus('error', err instanceof Error ? err.message : String($t('errorFetchingGroups')))
+        showStatus('error', err instanceof Error ? err.message : String($t('groups.error')))
     }
 }
 
@@ -879,11 +879,11 @@ async function doCreateGroup() {
             description: createForm.description || undefined,
             notes: createForm.notes || undefined
         })
-        showStatus('success', String($t('message.successfullyCreatedGroup', { group: createForm.groupId })))
+        showStatus('success', String($t('notify.group.created', { group: createForm.groupId })))
         showCreateModal.value = false
         await fetchCurrentGroups()
     } catch (e) {
-        showStatus('error', e instanceof Error ? e.message : String($t('message.error.general')))
+        showStatus('error', e instanceof Error ? e.message : String($t('notify.error')))
     } finally {
         saving.value = false
     }
@@ -901,11 +901,11 @@ async function doEditGroup() {
             description: editForm.description || undefined,
             note: editForm.notes || undefined
         })
-        showStatus('success', String($t('message.successfullyUpdatedGroup', { group: editForm.groupId })))
+        showStatus('success', String($t('notify.group.updated', { group: editForm.groupId })))
         showEditModal.value = false
         await fetchCurrentGroups()
     } catch (e) {
-        showStatus('error', e instanceof Error ? e.message : String($t('message.error.general')))
+        showStatus('error', e instanceof Error ? e.message : String($t('notify.error')))
     } finally {
         saving.value = false
     }
@@ -925,7 +925,7 @@ async function deleteGroup() {
         const deleteFn = activeGroupType.value === 'clients' ? deleteHostGroup : deleteProductGroup
         await deleteFn(groupToDelete.value.id)
 
-        showStatus('success', String($t('message.successfullyDeletedGroup', { group: groupToDelete.value.id })))
+        showStatus('success', String($t('notify.group.deleted', { group: groupToDelete.value.id })))
         showDeleteModal.value = false
 
         if (selectedGroup.value?.id === groupToDelete.value.id) {
@@ -934,7 +934,7 @@ async function deleteGroup() {
 
         await fetchCurrentGroups()
     } catch (e) {
-        showStatus('error', e instanceof Error ? e.message : String($t('message.error.general')))
+        showStatus('error', e instanceof Error ? e.message : String($t('notify.error')))
     } finally {
         deleting.value = false
     }
@@ -961,7 +961,7 @@ async function addSelectedMembers() {
         const addFn = activeGroupType.value === 'clients' ? addClientsToGroup : addProductsToGroup
         await addFn(memberTargetGroup.value.id, selectedNewMembers.value)
 
-        showStatus('success', String($t('message.successfullyAddedClientsToGroup', { group: memberTargetGroup.value.label })))
+        showStatus('success', String($t('notify.client.added.group', { group: memberTargetGroup.value.label })))
         showAddMembersModal.value = false
         await fetchCurrentGroups()
 
@@ -970,7 +970,7 @@ async function addSelectedMembers() {
             if (updated) selectedGroup.value = updated
         }
     } catch (e) {
-        showStatus('error', e instanceof Error ? e.message : String($t('message.error.general')))
+        showStatus('error', e instanceof Error ? e.message : String($t('notify.error')))
     } finally {
         addingMembers.value = false
     }
@@ -986,13 +986,13 @@ async function removeSingleMember(memberId: string) {
             await removeProductFromGroup(selectedGroup.value.id, memberId)
         }
 
-        showStatus('success', String($t('message.successfullyDeletedClientFromGroup', { client: memberId })))
+        showStatus('success', String($t('notify.host.removed.group', { client: memberId })))
         await fetchCurrentGroups()
 
         const updated = findGroupById(currentTreeGroups.value, selectedGroup.value.id)
         if (updated) selectedGroup.value = updated
     } catch (e) {
-        showStatus('error', e instanceof Error ? e.message : String($t('message.error.general')))
+        showStatus('error', e instanceof Error ? e.message : String($t('notify.error')))
     }
 }
 
@@ -1003,13 +1003,13 @@ async function confirmRemoveAllMembers() {
         const removeFn = activeGroupType.value === 'clients' ? removeClientsFromGroup : removeProductsFromGroup
         await removeFn(selectedGroup.value.id)
 
-        showStatus('success', String($t('message.successfullyDeletedClientFromGroup', { client: selectedGroup.value.label })))
+        showStatus('success', String($t('notify.host.removed.group', { client: selectedGroup.value.label })))
         await fetchCurrentGroups()
 
         const updated = findGroupById(currentTreeGroups.value, selectedGroup.value.id)
         if (updated) selectedGroup.value = updated
     } catch (e) {
-        showStatus('error', e instanceof Error ? e.message : String($t('message.error.general')))
+        showStatus('error', e instanceof Error ? e.message : String($t('notify.error')))
     }
 }
 

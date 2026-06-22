@@ -13,7 +13,7 @@
 		@update:model-value="$emit('update:modelValue', $event)">
 		<template #trailing>
 			<UButton color="neutral" variant="link" size="sm" :icon="show ? icons.eyeOff : icons.eye"
-				:aria-label="show ? String($t('hidePassword')) : String($t('showPassword'))" :aria-pressed="show"
+				:aria-label="show ? String($t('auth.hidePassword')) : String($t('auth.showPassword'))" :aria-pressed="show"
 				:disabled="disabled" @click="show = !show" />
 		</template>
 	</UInput>

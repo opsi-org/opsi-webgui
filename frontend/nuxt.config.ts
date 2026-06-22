@@ -187,6 +187,7 @@ export default defineNuxtConfig({
     locales: [
       { code: 'de', file: 'opsi-webgui_de.json', name: 'Deutsch' },
       { code: 'en', file: 'opsi-webgui_en.json', name: 'English' },
+      { code: 'fr', file: 'opsi-webgui_fr.json', name: 'Français' },
     ],
     bundle: {
       fullInstall: false,

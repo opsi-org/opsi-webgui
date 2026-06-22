@@ -12,19 +12,19 @@
 		<template #filters>
 			<slot name="clientSelector">
 				<HostsSelector v-if="showClientSelector" v-model="clientSelectorModel" type="client"
-					:placeholder="clientSelectorPlaceholder || String($t('selectClient'))" :allow-all="false"
+					:placeholder="clientSelectorPlaceholder || String($t('clients.select'))" :allow-all="false"
 					allow-clear />
 
 			</slot>
-			<CoreAppSelectMenu v-model="selectedLogTypeValue" :placeholder="$t('selectLogType')" :items="LOG_TYPES"
+			<CoreAppSelectMenu v-model="selectedLogTypeValue" :placeholder="$t('logs.selectType')" :items="LOG_TYPES"
 				:loading="loading" value-key="value" label-key="label" class="min-w-30" size="sm" />
 			<div v-if="logContent.length > 0" class="flex flex-col gap-1 min-w-30">
 				<label class="text-xs font-medium text-muted">
-					{{ $t('logLevel') }}: <span class="font-semibold text-opsi-blue">{{ logLevel }}</span>
+					{{ $t('logs.level') }}: <span class="font-semibold text-opsi-blue">{{ logLevel }}</span>
 					<span class="ml-1 text-muted">({{ LOG_LEVEL_LABELS[logLevel] }})</span>
 				</label>
 				<input v-model.number="logLevel" type="range" min="1" max="9" step="1"
-					:aria-label="String($t('logLevel'))"
+					:aria-label="String($t('logs.level'))"
 					class="opsi-log-level-slider w-full h-2 rounded-full appearance-none cursor-pointer" />
 			</div>
 		</template>
@@ -34,32 +34,32 @@
 					<CoreAppFilterInput v-model="filterQuery" size="sm" input-class="w-full sm:w-40 md:w-64" />
 				</div>
 				<div v-if="logContent.length > 0">
-					<CoreAppTooltip :text="$t('autoRefreshDescription')">
+					<CoreAppTooltip :text="$t('settings.autoRefreshDesc')">
 						<CoreAppButton :color="autoRefresh ? 'primary' : 'neutral'"
 							:variant="autoRefresh ? 'solid' : 'ghost'" size="sm" @click="autoRefresh = !autoRefresh">
-							<span class="hidden sm:inline text-xs">{{ $t('autoRefresh') }}</span>
+							<span class="hidden sm:inline text-xs">{{ $t('settings.autoRefresh') }}</span>
 						</CoreAppButton>
 					</CoreAppTooltip>
 				</div>
 				<div v-if="logContent.length > 0">
-					<CoreAppTooltip :text="$t('autoScrollDescription')">
+					<CoreAppTooltip :text="$t('settings.autoScrollDesc')">
 						<CoreAppButton :color="autoScroll ? 'primary' : 'neutral'"
 							:variant="autoScroll && !hasMarker ? 'solid' : 'ghost'" :disabled="hasMarker" size="sm"
 							@click="autoScroll = !autoScroll">
-							<span class="hidden sm:inline text-xs">{{ $t('autoScroll') }}</span>
+							<span class="hidden sm:inline text-xs">{{ $t('settings.autoScroll') }}</span>
 						</CoreAppButton>
 					</CoreAppTooltip>
 				</div>
 
 				<div v-if="selectedLogTypeValue">
-					<CoreAppTooltip :text="$t('download')">
+					<CoreAppTooltip :text="$t('common.download')">
 						<CoreAppButton :icon="icons.download" variant="ghost" color="neutral" size="sm"
 							:disabled="filteredLogContent.length === 0" @click="downloadLog" />
 					</CoreAppTooltip>
 				</div>
 
 				<div v-if="selectedLogTypeValue">
-					<CoreAppTooltip :text="$t('refresh')">
+					<CoreAppTooltip :text="$t('common.refresh')">
 						<CoreAppButton :icon="icons.refresh" variant="ghost" color="neutral" size="sm"
 							:loading="loading" @click="fetchLog" />
 					</CoreAppTooltip>
@@ -70,40 +70,40 @@
 		<div class="flex flex-col h-full gap-2 min-h-0">
 			<div v-if="logContent.length > 0 && hasMarker" class="flex items-center text-xs text-muted shrink-0 px-3">
 				<CoreAppButton :icon="icons.bookmark" variant="soft" color="neutral" size="sm"
-					:title="String($t('scrollToMarker'))" @click="scrollToMarker">
-					{{ $t('marker') }}: {{ markerLine + 1 }}
+					:title="String($t('logs.scroll'))" @click="scrollToMarker">
+					{{ $t('logs.marker') }}: {{ markerLine + 1 }}
 				</CoreAppButton>
 				<CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="sm"
-					:title="String($t('clearMarker'))" @click="clearMarker" />
+					:title="String($t('logs.clearMarker'))" @click="clearMarker" />
 			</div>
 
 
-			<CoreAppAlertInline v-if="logUpdatePending" color="info" :title="$t('opsiMessageBus')"
-				:description="$t('opsiMessageBus.log_updated')" class="shrink-0">
+			<CoreAppAlertInline v-if="logUpdatePending" color="info" :title="$t('bus.title')"
+				:description="$t('bus.logUpdated')" class="shrink-0">
 				<template #actions>
-					<CoreAppButton size="xs" color="primary" @click="dismissAndFetch">{{ $t('button.reload') }}
+					<CoreAppButton size="xs" color="primary" @click="dismissAndFetch">{{ $t('common.reload') }}
 					</CoreAppButton>
 					<CoreAppButton size="xs" variant="ghost" color="neutral" @click="logUpdatePending = false">{{
-						$t('dismiss') }}
+						$t('common.dismiss') }}
 					</CoreAppButton>
 				</template>
 			</CoreAppAlertInline>
 
 			<div class="flex-1 min-h-0 overflow-hidden">
 				<div v-if="!resolvedClientId" class="h-full bg-(--color-background) rounded-xl">
-					<CoreAppEmptyState :icon="icons.log" :message="String($t('selectClientToViewLogs'))" />
+					<CoreAppEmptyState :icon="icons.log" :message="String($t('clients.logs.select'))" />
 				</div>
 				<div v-else-if="!selectedLogTypeValue" class="h-full bg-(--color-background) rounded-xl">
-					<CoreAppEmptyState :icon="icons.log" :message="String($t('selectLogTypeToView'))" />
+					<CoreAppEmptyState :icon="icons.log" :message="String($t('logs.selectType'))" />
 				</div>
 				<div v-else-if="loading && logContent.length === 0"
 					class="flex items-center justify-center h-full gap-2 text-muted">
 					<CoreAppLoadingSpinner />
 				</div>
-				<CoreAppAlertInline v-else-if="error" color="error" :title="String($t('error'))" :description="error"
+				<CoreAppAlertInline v-else-if="error" color="error" :title="String($t('common.error'))" :description="error"
 					class="m-3" close @close="error = null" />
 				<div v-else-if="logContent.length === 0" class="h-full bg-(--color-background) rounded-xl">
-					<CoreAppEmptyState :icon="icons.log" :message="String($t('noLogsFound'))" />
+					<CoreAppEmptyState :icon="icons.log" :message="String($t('logs.none'))" />
 				</div>
 				<div v-else ref="logContainerRef"
 					class="h-full overflow-auto log-viewer bg-(--color-background) rounded-xl font-mono text-xs">

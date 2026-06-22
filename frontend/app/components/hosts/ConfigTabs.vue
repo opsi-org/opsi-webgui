@@ -19,35 +19,35 @@
 					<div class="flex items-center gap-3">
 						<CoreAppIcon :name="icons.add" class="w-5 h-5" />
 						<h3 class="text-sm font-heading uppercase tracking-wide text-(--color-text) m-0">{{
-							$t('createConfig') }}</h3>
+							$t('config.create') }}</h3>
 					</div>
 				</template>
 				<div class="space-y-4">
 					<div>
-						<label class="block text-sm font-medium mb-1">{{ $t('configId') }} *</label>
+						<label class="block text-sm font-medium mb-1">{{ $t('config.id') }} *</label>
 						<CoreAppInput v-model="newConfig.configId" :placeholder="'e.g. category.subcategory.name'"
 							size="sm" />
 					</div>
 					<div>
-						<label class="block text-sm font-medium mb-1">{{ $t('description') }}</label>
+						<label class="block text-sm font-medium mb-1">{{ $t('common.description') }}</label>
 						<CoreAppInput v-model="newConfig.description" size="sm" />
 					</div>
 					<div>
-						<label class="block text-sm font-medium mb-1">{{ $t('type') }}</label>
+						<label class="block text-sm font-medium mb-1">{{ $t('common.type') }}</label>
 						<CoreAppSelect v-model="newConfig.type" :items="configTypeOptions" size="sm" />
 					</div>
 					<div class="flex items-center gap-4">
 						<label class="flex items-center gap-2 text-sm">
 							<CoreAppCheckbox v-model="newConfig.multiValue" size="sm" />
-							{{ $t('multiValue') }}
+							{{ $t('config.multiValue') }}
 						</label>
 						<label class="flex items-center gap-2 text-sm">
 							<CoreAppCheckbox v-model="newConfig.editable" size="sm" />
-							{{ $t('editable') }}
+							{{ $t('common.editable') }}
 						</label>
 					</div>
 					<div v-if="newConfig.type === 'UnicodeConfig'">
-						<label class="block text-sm font-medium mb-1">{{ $t('possibleValues') }}</label>
+						<label class="block text-sm font-medium mb-1">{{ $t('config.possibleValues') }}</label>
 						<div v-if="newConfig.possibleValues.length > 0" class="flex flex-wrap gap-1 mb-1">
 							<span v-for="(val, idx) in newConfig.possibleValues" :key="idx"
 								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20">
@@ -60,14 +60,14 @@
 							</span>
 						</div>
 						<div class="flex gap-1">
-							<CoreAppInput v-model="newPossibleValue" :placeholder="$t('pressEnterToAdd')" size="sm"
+							<CoreAppInput v-model="newPossibleValue" :placeholder="$t('common.pressEnterToAdd')" size="sm"
 								class="flex-1" @keydown.enter.prevent="addPossibleValue" />
 							<CoreAppButton size="sm" variant="soft" color="neutral" :icon="icons.add"
 								@click="addPossibleValue" />
 						</div>
 					</div>
 					<div v-if="newConfig.type === 'UnicodeConfig'">
-						<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
+						<label class="block text-sm font-medium mb-1">{{ $t('products.defaultValues') }}</label>
 						<div v-if="newConfig.defaultValues.length > 0" class="flex flex-wrap gap-1 mb-1">
 							<span v-for="(val, idx) in newConfig.defaultValues" :key="idx"
 								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20">
@@ -80,27 +80,27 @@
 							</span>
 						</div>
 						<div class="flex gap-1">
-							<CoreAppInput v-model="newDefaultValue" :placeholder="$t('pressEnterToAdd')" size="sm"
+							<CoreAppInput v-model="newDefaultValue" :placeholder="$t('common.pressEnterToAdd')" size="sm"
 								class="flex-1" @keydown.enter.prevent="addDefaultValue" />
 							<CoreAppButton size="sm" variant="soft" color="neutral" :icon="icons.add"
 								@click="addDefaultValue" />
 						</div>
 					</div>
 					<div v-if="newConfig.type === 'BoolConfig'">
-						<label class="block text-sm font-medium mb-1">{{ $t('defaultValues') }}</label>
+						<label class="block text-sm font-medium mb-1">{{ $t('products.defaultValues') }}</label>
 						<CoreAppSelect v-model="newConfig.boolDefault"
 							:items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
 					</div>
-					<CoreAppAlertInline v-if="createConfigError" color="error" :title="$t('error')"
+					<CoreAppAlertInline v-if="createConfigError" color="error" :title="$t('common.error')"
 						:description="createConfigError" variant="subtle" closable @close="createConfigError = null" />
 				</div>
 				<template #footer>
 					<div class="flex gap-2 justify-end">
-						<CoreAppButton variant="ghost" color="neutral" @click="resetCreateConfigModal">{{ $t('cancel')
+						<CoreAppButton variant="ghost" color="neutral" @click="resetCreateConfigModal">{{ $t('common.cancel')
 						}}
 						</CoreAppButton>
 						<CoreAppButton color="primary" :loading="creatingConfig" :disabled="!newConfig.configId.trim()"
-							@click="handleCreateConfig">{{ $t('create') }}</CoreAppButton>
+							@click="handleCreateConfig">{{ $t('common.create') }}</CoreAppButton>
 					</div>
 				</template>
 			</CoreAppCard>
@@ -124,13 +124,13 @@
 			<div class="flex flex-wrap items-center gap-2">
 				<CoreAppFilterInput v-model="paramSearch" size="sm" input-class="w-full sm:w-32 md:w-40" />
 				<CoreAppButton v-if="isServerDefaultMode && !readonly" :icon="icons.add" color="primary" variant="soft"
-					size="sm" :title="String($t('createConfig'))" @click="showCreateConfigModal = true">
-					<span class="hidden sm:inline">{{ $t('createConfig') }}</span>
+					size="sm" :title="String($t('config.create'))" @click="showCreateConfigModal = true">
+					<span class="hidden sm:inline">{{ $t('config.create') }}</span>
 				</CoreAppButton>
 				<CoreAppUnsavedChangesModal v-if="showUnsavedModal" :config-ref="unsavedChangesRef" size="sm"
 					@save-all="saveAll" @discard-all="discardAll" />
 				<CoreAppButton :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
-					:loading="loadingParams || loadingAttrs" :title="String($t('refresh'))" @click="refresh" />
+					:loading="loadingParams || loadingAttrs" :title="String($t('common.refresh'))" @click="refresh" />
 			</div>
 		</div>
 	</div>
@@ -141,7 +141,7 @@
 			<CoreAppLoadingSpinner size="md" />
 		</div>
 		<CoreAppEmptyState v-else-if="categoryAwareTree.length === 0" :icon="icons.config"
-			:message="(hostId || hostType === 'server') ? String($t('noParametersFound')) : String($t('selectHostFirst'))" />
+			:message="(hostId || hostType === 'server') ? String($t('config.paramsNone')) : String($t('hosts.select'))" />
 		<CoreAppCard v-else :ui="{ body: 'p-3 sm:p-3' }">
 			<HostsParametersTreeForm :tree="categoryAwareTree" :changed-params="changedParams" :readonly="readonly"
 				:current-value="currentValue" :set-param="setParam" :discard-single-param="discardSingleParam"
@@ -154,7 +154,7 @@
 		<div v-if="loadingAttrs" class="py-8 flex justify-center">
 			<CoreAppLoadingSpinner size="md" />
 		</div>
-		<CoreAppEmptyState v-else-if="!hostId" :icon="icons.config" :message="String($t('selectHostFirst'))" />
+		<CoreAppEmptyState v-else-if="!hostId" :icon="icons.config" :message="String($t('hosts.select'))" />
 		<CoreAppCard v-else-if="filteredReadonlyAttrKeys.length || filteredEditableAttrKeys.length">
 			<div v-if="filteredReadonlyAttrKeys.length"
 				:class="['border-b border-(--color-border) pb-3', filteredEditableAttrKeys.length ? 'mb-3' : '']">
@@ -193,7 +193,7 @@
 						<CoreAppInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
 							:disabled="readonly" class="flex-1" />
 						<CoreAppButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral"
-							:icon="icons.x" :title="$t('discardItem')" @click="discardSingleAttribute(key)" />
+							:icon="icons.x" :title="$t('common.discard')" @click="discardSingleAttribute(key)" />
 					</div>
 				</div>
 			</div>
@@ -426,8 +426,8 @@ const showParamChanges = ref(false)
 const showAttrChanges = ref(false)
 
 const tabDefs = computed(() => [
-	{ label: (!props.hostId && props.hostType === 'server') ? String($t('parameters(default)')) : String($t('parameters')), value: 'parameters' },
-	{ label: String($t('attributes')), value: 'attributes' },
+	{ label: (!props.hostId && props.hostType === 'server') ? String($t('config.paramsDefault')) : String($t('config.params')), value: 'parameters' },
+	{ label: String($t('common.attributes')), value: 'attributes' },
 ])
 const loadingParams = ref(false)
 const savingParams = ref(false)

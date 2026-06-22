@@ -10,16 +10,16 @@
 <template>
 	<div class="flex justify-center">
 		<CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
-			<CoreAppStatusBadge status="warning" :icon="icons.unequal" :label="$t('mixed')" />
+			<CoreAppStatusBadge status="warning" :icon="icons.unequal" :label="$t('common.mixed')" />
 		</CoreAppTooltipTable>
 
 		<template v-else-if="normalizedStatus === 'installed'">
-			<CoreAppStatusBadge status="success" :icon="icons.checkCircle" :label="$t('installed')" />
+			<CoreAppStatusBadge status="success" :icon="icons.checkCircle" :label="$t('products.installed')" />
 		</template>
 
 		<template v-else-if="normalizedStatus === 'unknown'">
 			<CoreAppStatusBadge status="warning" :icon="icons.productInstallationStatusUnknown"
-				:label="$t('unknown')" />
+				:label="$t('common.unknown')" />
 		</template>
 
 		<span v-else-if="normalizedStatus === 'not_installed' || normalizedStatus === 'none' || !normalizedStatus"

@@ -16,8 +16,8 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-const { t } = useI18n()
-useHead({ title: () => `${t('addClient')} - opsi-WebGUI` })
+const { t: $t } = useI18n()
+useHead({ title: () => `${$t('clients.create.title')} - opsi-WebGUI` })
 
 function handleSaved() {
     setTimeout(() => navigateTo('/clients'), 1500)

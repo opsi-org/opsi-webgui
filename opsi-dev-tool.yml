@@ -11,6 +11,22 @@ package:
     mkdir -p "${DST}/rootfs/usr/lib/opsiconfd/addons"
     cp -a "${SRC}/webgui" "${DST}/rootfs/usr/lib/opsiconfd/addons/webgui"
   type: binary
+transifex:
+  # English is the source resource; German and French are pulled back as
+  # translations by the `setup:i18n` CI job.
+  download_translations:
+    - install_dir: frontend/i18n/locales
+      languages:
+        - de
+        - fr
+      organization: opsi-org
+      project: opsiorg
+      resource_name: opsi-webgui.json
+  upload_resource:
+    - organization: opsi-org
+      project: opsiorg
+      resource_file: frontend/i18n/locales/opsi-webgui_en.json
+      resource_name: opsi-webgui.json
 project:
   allow_tag_delete: false
   description: opsiconfd addon opsi-webgui

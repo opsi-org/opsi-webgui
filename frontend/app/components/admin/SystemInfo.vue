@@ -12,7 +12,7 @@
 	<CoreAppCard>
 		<template #header>
 			<div class="flex items-center justify-between">
-				<h3 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('systemInfo') }}</h3>
+				<h3 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('diag.systemInfo') }}</h3>
 			</div>
 		</template>
 		<div class="system-info-tree">
@@ -32,7 +32,7 @@
 								:class="{ 'rotate-90': expanded['_system'] }" />
 						</CoreAppButton>
 						<span class="text-sm flex-1 truncate" :class="expanded['_system'] ? 'font-medium' : ''">
-							{{ $t('systemProperties') }}
+							{{ $t('diag.systemProps') }}
 						</span>
 						<span class="text-xs text-(--color-text-muted) opacity-60">{{
 							Object.keys(filteredSystemInfo).length }}</span>
@@ -203,7 +203,7 @@
 
 				<div v-if="Object.keys(filteredSystemInfo).length === 0 && Object.keys(filteredDiagnosticsData).length === 0"
 					class="text-center py-8 text-(--color-text-muted)">
-					{{ filter ? $t('noResultsFound') : $t('noDataAvailable') }}
+					{{ filter ? $t('common.noResults') : $t('common.noData') }}
 				</div>
 			</template>
 		</div>

@@ -11,7 +11,7 @@
 	<CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
 
 	<div v-if="!canCreateClients || isReadOnly" class="flex items-center justify-center h-full p-8">
-		<CoreAppAlertInline color="warning" :title="$t('permissionDenied')">
+		<CoreAppAlertInline color="warning" :title="$t('auth.permissionDenied')">
 			<template #description>{{ isReadOnly ? $t('opsiConfig.serverFeatures.readOnly.disabled') :
 				$t('opsiConfig.serverFeatures.clientCreation.disabled') }}</template>
 		</CoreAppAlertInline>
@@ -28,31 +28,31 @@
 				<div class="flex-1" />
 				<div class="flex flex-wrap items-center gap-2">
 					<CoreAppButton v-if="resolvedSourceId" color="success" :loading="loading"
-						:title="String($t('cloneClient'))" @click="cloneClient">
+						:title="String($t('clients.clone.title'))" @click="cloneClient">
 						<CoreAppIcon :name="icons.clone" />
 					</CoreAppButton>
 					<CoreAppButton :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
-						:title="String($t('refresh'))" @click="refresh" />
+						:title="String($t('common.refresh'))" @click="refresh" />
 				</div>
 			</div>
 		</div>
 
 		<CoreAppEmptyState v-if="!resolvedSourceId && !loading" :icon="icons.client"
-			:message="String($t('selectClientToClone'))" class="flex-1" />
+			:message="String($t('clients.selectClone'))" class="flex-1" />
 
 		<div v-else :class="['flex-1 overflow-y-auto space-y-4']">
-			<CoreAppAlertInline v-if="success" color="success" :title="String($t('success'))" closable
+			<CoreAppAlertInline v-if="success" color="success" :title="String($t('common.success'))" closable
 				@close="success = false">
-				<template #description>{{ $t('clientClonedSuccessfully') }}</template>
+				<template #description>{{ $t('clients.clone.ok') }}</template>
 			</CoreAppAlertInline>
-			<CoreAppAlertInline v-if="error" color="error" :title="String($t('error'))" :description="error" closable
+			<CoreAppAlertInline v-if="error" color="error" :title="String($t('common.error'))" :description="error" closable
 				@close="error = null" />
 
 			<div v-if="!panelMode || showSourceInPanel" class="opsi-card">
 				<div
 					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 					<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
-						{{ $t('sourceClient') }}
+						{{ $t('clients.clone.source') }}
 					</span>
 					<span class="text-sm flex-1 truncate" :title="resolvedSourceId || undefined">
 						{{ resolvedSourceId }}
@@ -62,13 +62,13 @@
 
 			<div class="opsi-card">
 				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('newClient') }}</h4>
+					<h4 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('clients.create.title') }}</h4>
 				</div>
 				<div>
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('clientId') }} <span class="text-error">*</span>
+							{{ $t('clients.id') }} <span class="text-error">*</span>
 						</span>
 						<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
 							<div class="flex items-center gap-2 w-full">
@@ -85,7 +85,7 @@
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('ipAddress') }}
+							{{ $t('fields.ip') }}
 						</span>
 						<div class="flex-1">
 							<CoreAppInput v-model="cloneclient.target.ipAddress" :disabled="loading" size="sm"
@@ -95,7 +95,7 @@
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('macAddress') }}
+							{{ $t('fields.mac') }}
 						</span>
 						<div class="flex-1">
 							<CoreAppInput v-model="cloneclient.target.hardwareAddress" :disabled="loading" size="sm"
@@ -105,7 +105,7 @@
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('systemUUID') }}
+							{{ $t('fields.uuid') }}
 						</span>
 						<div class="flex-1">
 							<CoreAppInput v-model="cloneclient.target.systemUUID" :disabled="loading" size="sm"
@@ -117,13 +117,13 @@
 
 			<div class="opsi-card">
 				<div class="flex items-center justify-between mb-3">
-					<h4 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('cloneOptions') }}</h4>
+					<h4 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('clients.clone.options') }}</h4>
 				</div>
 				<div>
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('configs') }}
+							{{ $t('config.items') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
 							<CoreAppCheckbox v-model="cloneclient.options.configs" :disabled="loading" />
@@ -132,7 +132,7 @@
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('products') }}
+							{{ $t('products.title') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
 							<CoreAppCheckbox v-model="cloneclient.options.products" :disabled="loading" />
@@ -141,7 +141,7 @@
 					<div
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<span class="text-sm min-w-0 md:w-1/3 break-all">
-							{{ $t('productProperties') }}
+							{{ $t('products.properties') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
 							<CoreAppCheckbox v-model="cloneclient.options.productProperties" :disabled="loading" />
@@ -250,7 +250,7 @@ watch([clientName, domain], () => {
 	if (!clientName.value) return
 	const fqdn = clientName.value + domain.value
 	if (clientIds.value.includes(fqdn)) {
-		formErrors.newId = $t('message.formvalid.clientExists')
+		formErrors.newId = $t('clients.validation.exists')
 	}
 })
 
@@ -264,7 +264,7 @@ function checkValid() {
 
 async function cloneClient() {
 	if (!resolvedSourceId.value || !checkValid()) {
-		error.value = $t('message.formvalid.clientExists')
+		error.value = $t('clients.validation.exists')
 		return
 	}
 	loading.value = true
@@ -282,7 +282,7 @@ async function cloneClient() {
 		refresh()
 		emit('saved')
 	} catch (e: any) {
-		error.value = e?.message || $t('failedToCloneClient')
+		error.value = e?.message || $t('clients.clone.err')
 	} finally {
 		loading.value = false
 	}

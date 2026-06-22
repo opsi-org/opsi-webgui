@@ -11,8 +11,8 @@
 	<CoreAppCard>
 		<template #header>
 			<div class="flex items-center justify-between">
-				<h3 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('healthCheck') }}</h3>
-				<span class="text-xs text-(--color-text-muted)">{{ filteredHealthData.length }} {{ $t('checks')
+				<h3 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('diag.health') }}</h3>
+				<span class="text-xs text-(--color-text-muted)">{{ filteredHealthData.length }} {{ $t('diag.checks')
 				}}</span>
 			</div>
 		</template>
@@ -51,7 +51,7 @@
 				</div>
 			</div>
 			<div v-if="filteredHealthData.length === 0" class="text-center py-8 text-(--color-text-muted)">
-				{{ $t('noResultsFound') }}
+				{{ $t('common.noResults') }}
 			</div>
 		</div>
 	</CoreAppCard>

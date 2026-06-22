@@ -11,7 +11,7 @@
 	<div class="flex flex-col h-full min-h-0">
 		<div class="shrink-0 mb-2">
 			<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1">{{
-				t('quickSelection') }}</div>
+				$t('quick.selection') }}</div>
 			<CoreAppTabsNav v-model="activeTab" :tabs="selectionTabItems" hide-labels />
 		</div>
 		<div class="min-h-0 overflow-hidden" style="max-height: 55vh;">
@@ -35,7 +35,7 @@
 		<div class="mt-auto shrink-0 border-t border-(--color-border) pt-3 space-y-3">
 			<div>
 				<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1.5">{{
-					t('quickActions') }}</div>
+					$t('quick.actions') }}</div>
 				<div class="flex items-center gap-1.5 flex-nowrap">
 					<ClientsQuickActionsDropdown :client-ids="selectionStore.selectedClients" compact />
 					<ProductsQuickActionsDropdown :products="[]" compact @applied="() => { }" />
@@ -44,25 +44,25 @@
 
 			<div class="border-t border-(--color-border) pt-3">
 				<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1.5">{{
-					t('settings') }}</div>
+					$t('common.settings') }}</div>
 				<div class="space-y-1.5">
 					<div
 						class="flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-(--color-surface-hover) transition-colors">
 						<CoreAppTooltip
-							:text="(messageBusStore.isConnected ? t('messageBusConnected') : t('messageBusDisconnected')) + ' — ' + t('autoRefreshTooltip')">
+							:text="(messageBusStore.isConnected ? $t('bus.connected') : $t('bus.disconnected')) + ' — ' + $t('settings.autoRefreshTooltip')">
 							<div class="flex items-center gap-1.5 cursor-help">
 								<CoreAppMessageBusStatusIcon :connected="messageBusStore.isConnected" size="md" />
 								<div class="flex flex-col">
-									<span class="text-sm">{{ t('autoRefresh') }}</span>
+									<span class="text-sm">{{ $t('settings.autoRefresh') }}</span>
 									<span class="text-xs font-medium"
 										:class="messageBusStore.isConnected ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'">
-										{{ messageBusStore.isConnected ? t('messageBusConnected') :
-											t('messageBusDisconnected') }}
+										{{ messageBusStore.isConnected ? $t('bus.connected') :
+											$t('bus.disconnected') }}
 									</span>
 								</div>
 							</div>
 						</CoreAppTooltip>
-						<CoreAppCheckbox v-model="autoRefreshEnabled" size="sm" :aria-label="t('autoRefresh')" />
+						<CoreAppCheckbox v-model="autoRefreshEnabled" size="sm" :aria-label="$t('settings.autoRefresh')" />
 					</div>
 					<div class="flex items-center gap-1.5 flex-nowrap">
 						<CoreAppSelect v-model="defaultPage" :items="defaultPageOptions" size="xs"
@@ -77,11 +77,11 @@
 				<div v-if="userStore.readOnly"
 					class="mb-2 px-2 py-1.5 rounded bg-(--color-warning-soft-bg) text-(--color-warning-soft-text) text-xs flex items-center gap-1.5 ring-1 ring-inset ring-(--color-warning-soft-ring)">
 					<CoreAppIcon :name="icons.warning" class="w-3.5 h-3.5 shrink-0" />
-					<span>{{ t('readOnlyMode') }}</span>
+					<span>{{ $t('auth.readOnly') }}</span>
 				</div>
 				<div class="flex items-center justify-between mb-2">
 					<p class="text-xs text-(--color-text-muted)">
-						{{ t('currentUser') }}: <span class="font-medium">{{ userStore.username }}</span>
+						{{ $t('users.current') }}: <span class="font-medium">{{ userStore.username }}</span>
 					</p>
 					<div v-if="remainingSeconds > 0" class="flex items-center gap-1 text-sm"
 						:class="isWarning ? 'text-(--color-warning-soft-text)' : 'text-(--color-text-muted)'">
@@ -92,7 +92,7 @@
 				<CoreAppButton color="neutral" variant="soft" size="sm" class="w-full" :loading="loggingOut"
 					:disabled="loggingOut" @click="handleLogout">
 					<CoreAppIcon v-if="!loggingOut" :name="icons.logout" class="w-4 h-4 mr-1" />
-					{{ loggingOut ? t('loggingOut') : t('logout') }}
+					{{ loggingOut ? $t('auth.loggingOut') : $t('auth.logout') }}
 				</CoreAppButton>
 			</div>
 		</div>
@@ -123,10 +123,10 @@ const selectionTabs = computed(() => [
 
 const selectionTabItems = computed(() =>
 	selectionTabs.value.map(tab => ({
-		label: t(tab.label),
+		label: $t(tab.label),
 		value: tab.id,
 		icon: tab.icon,
-		tooltip: `${t(tab.label)}${tab.count > 0 ? ` (${tab.count})` : ''}`,
+		tooltip: `${$t(tab.label)}${tab.count > 0 ? ` (${tab.count})` : ''}`,
 		count: tab.count,
 	}))
 )
@@ -149,24 +149,24 @@ const loggingOut = ref(false)
 
 const DEFAULT_PAGE_KEY = 'opsi-webgui-default-page'
 const defaultPageOptions = computed(() => [
-	{ value: '/dashboard', label: t('dashboard') },
-	{ value: '/servers', label: t('servers') },
-	{ value: '/clients', label: t('clients') },
-	{ value: '/products', label: t('products') },
-	{ value: '/admin/terminal', label: t('terminal') },
-	{ value: '/admin/diagnostics', label: t('diagnostics') },
-	{ value: '/admin/maintenance', label: t('maintenance') },
+	{ value: '/dashboard', label: $t('dashboard.title') },
+	{ value: '/servers', label: $t('servers.title') },
+	{ value: '/clients', label: $t('clients.title') },
+	{ value: '/products', label: $t('products.title') },
+	{ value: '/admin/terminal', label: $t('terminal.title') },
+	{ value: '/admin/diagnostics', label: $t('diag.title') },
+	{ value: '/admin/maintenance', label: $t('admin.maintenance') },
 ])
 
 const defaultPage = ref('/clients')
 
 const defaultPageTooltip = computed(() => {
 	const page = defaultPageOptions.value.find(o => o.value === defaultPage.value)
-	if (!page) return t('defaultPage')
+	if (!page) return $t('nav.defaultPage')
 	if (defaultPage.value.startsWith('/admin/')) {
-		return `${t('defaultPage')}: ${t('admin')} - ${page.label}`
+		return `${$t('nav.defaultPage')}: ${$t('admin.title')} - ${page.label}`
 	}
-	return `${t('defaultPage')}: ${page.label}`
+	return `${$t('nav.defaultPage')}: ${page.label}`
 })
 
 onMounted(() => {
@@ -185,7 +185,7 @@ function getCookie(name: string): string | null {
 	return match?.[1] ? decodeURIComponent(match[1]) : null
 }
 
-const t = (key: string) => {
+const $t = (key: string) => {
 	const translated = i18nT(key)
 	if (translated && translated !== key) return String(translated)
 	return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()

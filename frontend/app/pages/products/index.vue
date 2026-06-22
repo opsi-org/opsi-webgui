@@ -24,14 +24,14 @@ const { t: $t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 
-useHead({ title: () => `${$t('products')} - opsi-WebGUI` })
+useHead({ title: () => `${$t('products.title')} - opsi-WebGUI` })
 
 const activeType = ref<string>((route.query.type as string) || 'localboot')
 const initialProductId = computed(() => route.query.product as string | undefined)
 
 const productTypes = [
-    { label: String($t('localbootProducts')), value: 'localboot' },
-    { label: String($t('netbootProducts')), value: 'netboot' },
+    { label: String($t('products.localboot')), value: 'localboot' },
+    { label: String($t('products.netboot')), value: 'netboot' },
 ]
 
 watch(activeType, (newType) => {

@@ -8,7 +8,7 @@
   AdminDiagnosticsView - Health check, system diagnostics, modules info with filterable tabs.
 -->
 <template>
-    <LayoutsPageLayout v-model="filter" show-filter :search-placeholder="$t('filter')" show-refresh :loading="loading"
+    <LayoutsPageLayout v-model="filter" show-filter :search-placeholder="$t('common.filter')" show-refresh :loading="loading"
         @refresh="refresh(true)">
         <template #tabs>
             <CoreAppTabsNav v-model="activeTab" :tabs="tabs" />
@@ -16,7 +16,7 @@
         <template #actions>
             <CoreAppButton :icon="icons.download" variant="soft" color="neutral" size="sm" @click="downloadDiagnostics">
                 {{
-                    $t('download') }}</CoreAppButton>
+                    $t('common.download') }}</CoreAppButton>
         </template>
 
         <template #stats>
@@ -27,7 +27,7 @@
                     'bg-(--color-success-soft-bg)'
                 ]">
                     <div class="text-2xl font-bold text-(--color-success-soft-text)">{{ stats.ok }}</div>
-                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('passed') }}</div>
+                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('diag.passed') }}</div>
                 </CoreAppButton>
                 <CoreAppButton @click="filterByStatus('warning')" variant="ghost" color="neutral" :class="[
                     'p-4! rounded-lg border transition-all text-center cursor-pointer hover:shadow-md h-auto! flex-col!',
@@ -35,7 +35,7 @@
                     'bg-(--color-warning-soft-bg)'
                 ]">
                     <div class="text-2xl font-bold text-(--color-warning-soft-text)">{{ stats.warning }}</div>
-                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('warnings') }}</div>
+                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('common.warnings') }}</div>
                 </CoreAppButton>
                 <CoreAppButton @click="filterByStatus('error')" variant="ghost" color="neutral" :class="[
                     'p-4! rounded-lg border transition-all text-center cursor-pointer hover:shadow-md h-auto! flex-col!',
@@ -43,7 +43,7 @@
                     'bg-(--color-error-soft-bg)'
                 ]">
                     <div class="text-2xl font-bold text-(--color-error-soft-text)">{{ stats.error }}</div>
-                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('errors') }}</div>
+                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('common.errors') }}</div>
                 </CoreAppButton>
                 <CoreAppButton @click="activeTab = 'modules'; statusFilter = ''" variant="ghost" color="neutral" :class="[
                     'p-4! rounded-lg border transition-all text-center cursor-pointer hover:shadow-md h-auto! flex-col!',
@@ -51,12 +51,12 @@
                     'bg-(--color-primary-soft-bg)'
                 ]">
                     <div class="text-2xl font-bold text-(--color-primary-soft-text)">{{ modules.length }}</div>
-                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('modules') }}</div>
+                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('mods.title') }}</div>
                 </CoreAppButton>
             </div>
 
             <div v-if="statusFilter" class="flex items-center gap-2 mt-3">
-                <span class="text-sm text-(--color-text-muted)">{{ $t('filteringBy') }}:</span>
+                <span class="text-sm text-(--color-text-muted)">{{ $t('common.filterBy') }}:</span>
                 <CoreAppStatusBadge :status="getStatusType(statusFilter)" :label="statusFilter" />
                 <CoreAppButton variant="ghost" color="neutral" size="xs" :icon="icons.x" @click="statusFilter = ''" />
             </div>
@@ -136,9 +136,9 @@ const modules = ref<string[]>([])
 const expanded = ref<Record<string, boolean>>({})
 
 const tabs = [
-    { label: String($t('healthCheck')), value: 'healthcheck' },
-    { label: String($t('modules')), value: 'modules' },
-    { label: String($t('systemInfo')), value: 'system' },
+    { label: String($t('diag.health')), value: 'healthcheck' },
+    { label: String($t('mods.title')), value: 'modules' },
+    { label: String($t('diag.systemInfo')), value: 'system' },
 ]
 
 const stats = sharedHealthCounts

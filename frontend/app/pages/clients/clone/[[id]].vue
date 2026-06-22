@@ -10,7 +10,7 @@
 <template>
     <LayoutsPageLayout>
         <ClientsCloneForm :source-id="selectedClientId" show-source-selector
-            :source-selector-placeholder="String($t('selectClient'))" @update:source-id="updateSelectedClientId"
+            :source-selector-placeholder="String($t('clients.select'))" @update:source-id="updateSelectedClientId"
             @saved="handleSuccess" />
     </LayoutsPageLayout>
 </template>
@@ -22,7 +22,7 @@ const { t: $t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-useHead({ title: () => `${$t('cloneClient')} - opsi-WebGUI` })
+useHead({ title: () => `${$t('clients.clone.title')} - opsi-WebGUI` })
 
 const routeClientId = computed(() => {
     const id = route.params.id

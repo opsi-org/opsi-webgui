@@ -9,7 +9,7 @@
 -->
 <template>
 	<div v-if="visible" class="sticky top-0 z-10 bg-(--color-surface) pb-2">
-		<CoreAppAlertInline v-if="error" color="error" :title="$t('error')" :description="error" closable compact
+		<CoreAppAlertInline v-if="error" color="error" :title="$t('common.error')" :description="error" closable compact
 			@close="$emit('close')" />
 		<slot />
 	</div>

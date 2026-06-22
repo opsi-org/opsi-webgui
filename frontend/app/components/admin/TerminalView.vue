@@ -12,34 +12,34 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
             <div class="flex items-center gap-3">
                 <CoreAppButton v-if="!isConnected" color="primary" size="sm" :icon="icons.checkCircle"
-                    :loading="isConnecting" :disabled="isDisabled" @click="connect">{{ $t('connectOrReconnect') }}
+                    :loading="isConnecting" :disabled="isDisabled" @click="connect">{{ $t('terminal.connect') }}
                 </CoreAppButton>
                 <CoreAppButton v-else color="error" variant="outline" size="sm" :icon="icons.x" @click="disconnect">{{
-                    $t('disconnect') }}</CoreAppButton>
+                    $t('terminal.disconnect') }}</CoreAppButton>
                 <span v-if="isConnected" class="flex items-center gap-1 text-sm text-(--color-success-soft-text)">
                     <CoreAppIcon :name="icons.checkCircle" class="w-6 h-6 text-(--color-success)" />
-                    {{ $t('connected') }}
+                    {{ $t('terminal.connected') }}
                 </span>
                 <span v-else class="flex items-center gap-1 text-sm text-(--color-text-muted)"><span
-                        class="w-2 h-2 rounded-full bg-(--color-text-muted)"></span>{{ $t('disconnected') }}</span>
+                        class="w-2 h-2 rounded-full bg-(--color-text-muted)"></span>{{ $t('terminal.disconnected') }}</span>
             </div>
             <CoreAppButton variant="ghost" color="neutral" size="sm" :icon="icons.config"
-                @click="showSettings = !showSettings">{{ $t('settings') }}</CoreAppButton>
+                @click="showSettings = !showSettings">{{ $t('common.settings') }}</CoreAppButton>
         </div>
 
         <div v-if="showSettings" class="shrink-0 p-3 rounded-lg">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <CoreAppFormField :label="$t('terminalID')">
+                <CoreAppFormField :label="$t('terminal.id')">
                     <CoreAppInput v-model="terminalId" :disabled="isConnected" size="sm" class="w-full" />
                 </CoreAppFormField>
-                <CoreAppFormField :label="$t('terminalChannel')">
+                <CoreAppFormField :label="$t('terminal.channel')">
                     <CoreAppInput v-model="terminalChannel" :disabled="isConnected" size="sm" class="w-full" />
                 </CoreAppFormField>
             </div>
         </div>
 
         <CoreAppAlertInline v-if="isDisabled" color="warning" variant="soft" class="shrink-0">
-            <template #title>{{ $t('message.terminalDisabled') }}</template>
+            <template #title>{{ $t('terminal.disabled') }}</template>
         </CoreAppAlertInline>
 
         <div v-if="!isDisabled" class="flex-1 min-h-0 rounded-lg overflow-hidden border border-(--color-border)">
@@ -179,10 +179,10 @@ async function initTerminal() {
         window.addEventListener('resize', handleResize)
 
         terminal.writeln('\x1b[1;34m╔════════════════════════════════════════╗\x1b[0m')
-        terminal.writeln(`\x1b[1;34m║     ${$t('terminalOpsiServerTerminal').toString().padEnd(35)}║\x1b[0m`)
+        terminal.writeln(`\x1b[1;34m║     ${$t('terminal.title').toString().padEnd(35)}║\x1b[0m`)
         terminal.writeln('\x1b[1;34m╚════════════════════════════════════════╝\x1b[0m')
         terminal.writeln('')
-        terminal.writeln(`${$t('terminalPressConnectToStart')}`)
+        terminal.writeln(`${$t('terminal.press')}`)
         terminal.writeln('')
 
         return () => {
@@ -203,11 +203,11 @@ async function connect() {
         const terminal = terminalInstance.value.terminal
         await messageBus.mount()
         terminal.clear()
-        terminal.writeln(`\x1b[1;33m${$t('terminalConnectingToServer')}\x1b[0m`)
+        terminal.writeln(`\x1b[1;33m${$t('terminal.connecting')}\x1b[0m`)
         terminalSessionChannel.value = 'session:' + terminalId.value
         terminal.terminalSessionChannel = terminalSessionChannel.value
         await messageBus.wsTerminalOpen(terminalId.value, terminal)
-        terminal.writeln(`\x1b[1;32m${$t('terminalConnected')}\x1b[0m`)
+        terminal.writeln(`\x1b[1;32m${$t('terminal.connected')}\x1b[0m`)
         terminal.writeln('')
         isConnected.value = true
 
@@ -226,7 +226,7 @@ async function connect() {
         })
     } catch (_e) {
         if (terminalInstance.value) {
-            terminalInstance.value.terminal.writeln(`\x1b[1;31m${$t('terminalConnectionFailed')}\x1b[0m`)
+            terminalInstance.value.terminal.writeln(`\x1b[1;31m${$t('terminal.failed')}\x1b[0m`)
         }
     } finally {
         isConnecting.value = false
@@ -237,7 +237,7 @@ function disconnect() {
     if (terminalInstance.value && isConnected.value) {
         messageBus.wsTerminalClose(terminalInstance.value.terminal)
         terminalInstance.value.terminal.writeln('')
-        terminalInstance.value.terminal.writeln(`\x1b[1;33m${$t('terminalDisconnected')}\x1b[0m`)
+        terminalInstance.value.terminal.writeln(`\x1b[1;33m${$t('terminal.disconnected')}\x1b[0m`)
     }
 
     isConnected.value = false

@@ -9,7 +9,7 @@
 -->
 <template>
 	<HostsConfigTabs :host-id="selectedClientId" host-type="client" :tab="activeTab" show-host-selector
-		:host-selector-placeholder="String($t('selectClient'))" :readonly="isReadOnly"
+		:host-selector-placeholder="String($t('clients.select'))" :readonly="isReadOnly"
 		@update:host-id="updateSelectedClientId" @update:tab="updateActiveTab" @saved="handleSaved" />
 </template>
 

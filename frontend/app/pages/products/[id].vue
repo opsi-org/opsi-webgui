@@ -11,7 +11,7 @@
 	<div class="flex items-center justify-center h-64">
 		<div class="text-center">
 			<CoreAppLoadingSpinner />
-			<p class="mt-2 text-(--color-text-muted)">{{ $t('message.page.redirect') }}</p>
+			<p class="mt-2 text-(--color-text-muted)">{{ $t('nav.redirect') }}</p>
 		</div>
 	</div>
 </template>

@@ -15,7 +15,7 @@
 			<UCheckbox :model-value="boolValue" :indeterminate="mixed" :disabled="disabled" size="sm"
 				:aria-label="controlAriaLabel"
 				@update:model-value="(v: boolean | 'indeterminate') => emit('update:modelValue', v === 'indeterminate' ? false : v)" />
-			<span v-if="mixed" class="text-xs text-(--color-text-muted) italic">{{ $t('mixed') }}</span>
+			<span v-if="mixed" class="text-xs text-(--color-text-muted) italic">{{ $t('common.mixed') }}</span>
 		</template>
 
 		<!-- Password -->
@@ -31,7 +31,7 @@
 					<button type="button" :aria-label="controlAriaLabel"
 						class="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-(--color-primary)/50 transition-colors text-left min-h-8"
 						:class="disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'" :disabled="disabled">
-						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{ $t('selectValues')
+						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{ $t('config.selectValues')
 						}}</span>
 						<span v-else class="flex flex-wrap gap-1 min-w-0">
 							<span v-for="val in arrayValue.slice(0, 3)" :key="val"
@@ -51,7 +51,7 @@
 								class="sticky top-0 z-10 bg-(--color-surface-elevated) border-b border-(--color-border) px-2 py-1.5">
 								<div class="flex items-center gap-1">
 									<UInput ref="multiAddInputRef" v-model="customInput"
-										:placeholder="$t('addOrSearch')" size="xs" class="flex-1"
+										:placeholder="$t('groups.membersSearch')" size="xs" class="flex-1"
 										@keydown.enter.prevent="addCustomMultiItem" />
 									<UButton size="xs" variant="ghost" color="primary" :icon="icons.add"
 										:disabled="!customInput.trim()" @click="addCustomMultiItem" />
@@ -67,7 +67,7 @@
 							</button>
 							<div v-if="filteredMultiOptions.length === 0 && customInput.trim()"
 								class="px-3 py-2 text-xs text-(--color-text-muted) text-center">
-								{{ $t('pressEnterToAdd') }}
+								{{ $t('common.pressEnterToAdd') }}
 							</div>
 						</div>
 					</template>
@@ -97,7 +97,7 @@
 					</UButton>
 					<UInput v-if="editable && !disabled" v-model="customInput" class="flex-1 min-w-24" size="xs"
 						:aria-label="controlAriaLabel"
-						:placeholder="arrayValue.length === 0 ? $t('pressEnterToAdd') : ''"
+						:placeholder="arrayValue.length === 0 ? $t('common.pressEnterToAdd') : ''"
 						@keydown.enter.prevent="addCustomMultiItem" @keydown.backspace="handleTagBackspace" />
 				</div>
 			</div>
@@ -117,7 +117,7 @@
 						class="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-(--color-primary)/50 transition-colors text-left min-h-8"
 						:class="disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'" :disabled="disabled">
 						<span :class="stringValue ? '' : 'text-(--color-text-muted)'" class="truncate">
-							{{ stringValue ? formatDisplayValue(stringValue) : `(${$t('empty')})` }}
+							{{ stringValue ? formatDisplayValue(stringValue) : `(${$t('common.empty')})` }}
 						</span>
 						<UIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
 					</button>
@@ -125,14 +125,14 @@
 						<div class="max-h-64 overflow-y-auto">
 							<div
 								class="sticky top-0 z-10 bg-(--color-surface-elevated) border-b border-(--color-border) px-2 py-1.5">
-								<UInput v-model="editableSearchInput" :placeholder="$t('enterValue')" size="xs"
+								<UInput v-model="editableSearchInput" :placeholder="$t('common.enterValue')" size="xs"
 									class="w-full" @keydown.enter.prevent="applyEditableCustomValue" />
 							</div>
 							<button type="button"
 								class="flex items-center gap-2 w-full px-3 py-1.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
 								:class="!stringValue ? 'text-(--color-primary) font-medium' : 'text-(--color-text-muted)'"
 								@click="emit('update:modelValue', ''); editableSearchInput = ''">
-								<span>({{ $t('empty') }})</span>
+								<span>({{ $t('common.empty') }})</span>
 							</button>
 							<button v-for="opt in filteredEditableOptions" :key="opt" type="button"
 								class="flex items-center gap-2 w-full px-3 py-1.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
@@ -175,16 +175,16 @@
 		</template>
 
 		<!-- Multiline editor modal -->
-		<UModal v-model:open="showMultilineEditor" :title="$t('editValue')" :ui="{ content: 'max-w-sm sm:max-w-xl' }">
+		<UModal v-model:open="showMultilineEditor" :title="$t('common.editValue')" :ui="{ content: 'max-w-sm sm:max-w-xl' }">
 			<template #body>
 				<CoreAppTextarea ref="multilineTextareaRef" v-model="multilineEditValue" class="w-full" :rows="12"
 					:disabled="disabled" />
 			</template>
 			<template #footer>
 				<div class="flex gap-2 justify-end">
-					<UButton variant="ghost" color="neutral" @click="showMultilineEditor = false">{{ $t('cancel') }}
+					<UButton variant="ghost" color="neutral" @click="showMultilineEditor = false">{{ $t('common.cancel') }}
 					</UButton>
-					<UButton color="primary" @click="applyMultilineEdit">{{ $t('apply') }}</UButton>
+					<UButton color="primary" @click="applyMultilineEdit">{{ $t('common.apply') }}</UButton>
 				</div>
 			</template>
 		</UModal>
@@ -223,7 +223,7 @@ const { t: $t } = useI18n()
 
 // Accessible name for the rendered control. Falls back to a generic label so the
 // control always exposes an accessible name (WCAG 4.1.2 / 1.3.1).
-const controlAriaLabel = computed(() => props.ariaLabel || String($t('value')))
+const controlAriaLabel = computed(() => props.ariaLabel || String($t('common.value')))
 
 const customInput = ref('')
 const editableSearchInput = ref('')
@@ -242,7 +242,7 @@ const boolValue = computed(() => {
 })
 
 const stringValue = computed(() => {
-	if (props.mixed) return String($t('mixed'))
+	if (props.mixed) return String($t('common.mixed'))
 	if (typeof props.modelValue === 'string') return props.modelValue
 	if (typeof props.modelValue === 'boolean') return String(props.modelValue)
 	if (Array.isArray(props.modelValue)) return props.modelValue[0] || ''
@@ -286,7 +286,7 @@ const filteredEditableOptions = computed(() => {
 
 const selectItemsWithEmpty = computed(() => {
 	const items = filteredPossibleValueStrings.value.map(v => ({ label: v, value: v }))
-	return [{ label: `(${String($t('empty'))})`, value: EMPTY_SENTINEL }, ...items]
+	return [{ label: `(${String($t('common.empty'))})`, value: EMPTY_SENTINEL }, ...items]
 })
 
 /** Format a value for display: show first line + "..." for multiline, truncate long values */

@@ -14,11 +14,11 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-const { t } = useI18n()
+const { t: $t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-useHead({ title: () => `${t('diagnostics')} - opsi-WebGUI` })
+useHead({ title: () => `${$t('diag.title')} - opsi-WebGUI` })
 
 function handleTabChange(tab: string) {
     router.push(`/admin/diagnostics/${tab}`)

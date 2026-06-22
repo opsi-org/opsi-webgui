@@ -12,22 +12,22 @@
         <div class="h-full flex flex-col min-h-0 overflow-y-auto gap-2 lg:gap-3">
             <!-- Row 1: Config Server, Health Check, User Config & Restrictions -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 shrink-0">
-                <DashboardInfoCard :icon="icons.serverStack" :label="$t('configServer')" :value="serverHostname" />
+                <DashboardInfoCard :icon="icons.serverStack" :label="$t('servers.config')" :value="serverHostname" />
                 <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
                     @click="navigateTo('/admin/diagnostics/healthcheck')">
                     <div class="flex items-center gap-2 mb-3 mt-2">
                         <CoreAppIcon :name="icons.health" class="w-5 h-5" />
-                        <CoreAppHeading size="xs">{{ $t('healthCheck') }}</CoreAppHeading>
+                        <CoreAppHeading size="xs">{{ $t('diag.health') }}</CoreAppHeading>
                         <CoreAppIcon :name="icons.chevronRight"
                             class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div v-if="healthCounts" class="flex items-center gap-2 flex-wrap mt-4">
                         <CoreAppStatusBadge v-if="healthCounts.error > 0" status="error" :value="healthCounts.error"
-                            :tooltip="$t('errors')" :label="$t('errors')" />
+                            :tooltip="$t('common.errors')" :label="$t('common.errors')" />
                         <CoreAppStatusBadge v-if="healthCounts.warning > 0" status="warning"
-                            :value="healthCounts.warning" :tooltip="$t('warnings')" :label="$t('warnings')" />
+                            :value="healthCounts.warning" :tooltip="$t('common.warnings')" :label="$t('common.warnings')" />
                         <CoreAppStatusBadge v-if="healthCounts.ok > 0" status="success" :value="healthCounts.ok"
-                            :tooltip="$t('ok')" :label="$t('ok')" />
+                            :tooltip="$t('common.ok')" :label="$t('common.ok')" />
                     </div>
                     <CoreAppLoadingSpinner v-else size="sm" />
                 </div>
@@ -38,12 +38,12 @@
                         <CoreAppIcon :name="icons.user" class="w-4.5 h-4.5" />
                         <div class="flex-1 min-w-0">
                             <p class="font-heading text-xs text-(--color-text-muted) tracking-widest m-0">{{
-                                $t('currentUser') }}</p>
+                                $t('users.current') }}</p>
                             <p class="font-semibold truncate text-sm">{{ sharedUserConfig?.user || userStore.username
                                 || '-' }}</p>
                         </div>
                         <CoreAppStatusBadge v-if="webguiRestrictionsCount > 0" status="warning" variant="subtle"
-                            size="sm" :label="`${webguiRestrictionsCount} ${$t('restricted')}`" class="shrink-0" />
+                            size="sm" :label="`${webguiRestrictionsCount} ${$t('auth.restricted')}`" class="shrink-0" />
                         <CoreAppStatusBadge v-else status="success" variant="subtle" size="sm"
                             :label="$t('opsiConfig.serverFeatures.allEnabled')" class="shrink-0" />
                     </div>
@@ -61,7 +61,7 @@
                     @click="navigateTo('/admin/diagnostics/system')">
                     <div class="flex items-center gap-2 mb-2">
                         <CoreAppIcon :name="icons.server" class="w-5 h-5" />
-                        <CoreAppHeading size="xs">{{ $t('systemInfo') }}</CoreAppHeading>
+                        <CoreAppHeading size="xs">{{ $t('diag.systemInfo') }}</CoreAppHeading>
                         <CoreAppIcon :name="icons.chevronRight"
                             class="ml-auto w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
@@ -83,7 +83,7 @@
 
             <!-- Row 3: Stat Cards -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 shrink-0">
-                <DashboardStatCard :icon="icons.server" :value="depotCount" :label="$t('totalServers')"
+                <DashboardStatCard :icon="icons.server" :value="depotCount" :label="$t('dashboard.totalServers')"
                     @click="navigateTo('/servers')" />
 
                 <!-- Clients stat card -->
@@ -95,18 +95,18 @@
                             class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <p class="text-2xl font-bold mb-0.5">{{ clientCount ?? '-' }}</p>
-                    <p class="text-sm mb-2">{{ $t('totalClients') }}</p>
+                    <p class="text-sm mb-2">{{ $t('dashboard.totalClients') }}</p>
                     <div v-if="sharedClientNumbers"
                         class="space-y-1.5 pt-1.5 border-t border-(--color-border)/30 text-xs">
                         <div class="flex items-center gap-4">
                             <span class="flex items-center gap-1.5">
                                 <CoreAppIcon :name="icons.checkCircle"
                                     class="w-4 h-4 shrink-0 text-(--color-success)" />
-                                <span class="font-medium">{{ sharedClientNumbers.all }}</span> {{ $t('active') }}
+                                <span class="font-medium">{{ sharedClientNumbers.all }}</span> {{ $t('clients.active') }}
                             </span>
                             <span class="flex items-center gap-1.5">
                                 <CoreAppIcon :name="icons.xCircle" class="w-4 h-4 shrink-0 text-(--color-error)" />
-                                <span class="font-medium">{{ sharedClientNumbers.inactive }}</span> {{ $t('inactive') }}
+                                <span class="font-medium">{{ sharedClientNumbers.inactive }}</span> {{ $t('clients.inactive') }}
                             </span>
                         </div>
                         <div class="flex items-center gap-4">
@@ -136,15 +136,15 @@
                                 class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                         <p class="text-2xl font-bold mb-1">{{ totalProductCount ?? '-' }}</p>
-                        <p class="text-sm">{{ $t('totalProducts') }}</p>
+                        <p class="text-sm">{{ $t('dashboard.totalProducts') }}</p>
                         <div class="mt-2 pt-2 border-t border-(--color-border)/30 flex gap-2 text-xs">
                             <span>
                                 <span class="font-medium text-(--color-text)">{{ localbootProductCount }}</span>
-                                {{ $t('localboot') }}
+                                {{ $t('products.localboot') }}
                             </span>
                             <span class="ml-4">
                                 <span class="font-medium text-(--color-text)">{{ netbootProductCount }}</span>
-                                {{ $t('netboot') }}
+                                {{ $t('products.netboot') }}
                             </span>
                         </div>
                     </div>
@@ -157,7 +157,7 @@
                             class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <p class="text-2xl font-bold mb-1">{{ totalProductCount ?? '-' }}</p>
-                    <p class="text-sm">{{ $t('totalProducts') }}</p>
+                    <p class="text-sm">{{ $t('dashboard.totalProducts') }}</p>
                 </div>
 
                 <!-- Modules Card -->
@@ -171,7 +171,7 @@
                             class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <p class="text-2xl font-bold mb-1">{{ modulesAvailableCount ?? '-' }}</p>
-                    <p class="text-sm">{{ $t('opsiModules') }}</p>
+                    <p class="text-sm">{{ $t('mods.title') }}</p>
                 </div>
             </div>
 
@@ -179,7 +179,7 @@
             <div class="opsi-card flex-1 min-h-0 flex flex-col">
                 <div class="flex items-center gap-2 mb-2">
                     <CoreAppIcon :name="icons.warning" class="w-5 h-5" />
-                    <CoreAppHeading size="xs">{{ $t('failedClients') }}</CoreAppHeading>
+                    <CoreAppHeading size="xs">{{ $t('actions.failedClients') }}</CoreAppHeading>
                     <CoreAppStatusBadge v-if="failedClients && Object.keys(failedClients).length > 0" status="error"
                         size="sm" :value="Object.keys(failedClients).length" />
                 </div>
@@ -198,7 +198,7 @@
                 </div>
                 <div v-else class="flex items-center gap-2 py-1">
                     <CoreAppIcon :name="icons.checkCircle" class="w-4 h-4 text-(--color-success-soft-text)" />
-                    <p class="text-xs">{{ $t('noFailedClients') }}</p>
+                    <p class="text-xs">{{ $t('actions.noFailed') }}</p>
                 </div>
             </div>
         </div>

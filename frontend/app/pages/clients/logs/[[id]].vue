@@ -10,18 +10,18 @@
 <template>
     <div class="h-full ">
         <ClientsLogsView :client-id="selectedClientId" show-client-selector
-            :client-selector-placeholder="String($t('selectClient'))" @update:client-id="updateClientId" />
+            :client-selector-placeholder="String($t('clients.select'))" @update:client-id="updateClientId" />
     </div>
 </template>
 
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-const { t } = useI18n()
+const { t: $t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-useHead({ title: () => `${t('logs')} - opsi-WebGUI` })
+useHead({ title: () => `${$t('logs.title')} - opsi-WebGUI` })
 
 const routeClientId = computed<string>(() => {
     const id = route.params.id
