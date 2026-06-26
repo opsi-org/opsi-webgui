@@ -108,7 +108,10 @@ services:
       - |
         cd /workspace/docker/opsiconfd
         uv sync
-        .venv/bin/python -m pytest /workspace/backend/tests -v
+        .venv/bin/python -m pytest /workspace/backend/tests -v \
+          --cov=/workspace/backend/webgui \
+          --cov-report=term \
+          --cov-report=xml:/workspace/backend/coverage.xml
 
 networks:
   test-net:

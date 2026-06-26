@@ -225,10 +225,15 @@ validate:backend:
     COMPOSE_PROJECT_NAME: webgui-be-$CI_JOB_ID
   script:
     - docker compose -f docker/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from backend-tests opsiconfd backend-tests
+  coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+)%/'
   artifacts:
     when: always
-    paths: [docker-test.log]
+    paths: [docker-test.log, backend/coverage.xml]
     expire_in: 7 days
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: backend/coverage.xml
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never

@@ -15,9 +15,6 @@ from operator import and_
 from typing import Any, Callable, List, Optional, Union
 
 from fastapi import Query, status
-
-# from OPSI.Backend.MySQL import MySQL, MySQLBackend
-from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import parse_list
 from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
@@ -25,6 +22,9 @@ from opsiconfd.config import get_configserver_id
 # from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, select, table, text  # type: ignore[import]
+
+# from OPSI.Backend.MySQL import MySQL, MySQLBackend
+from opsiconfd import contextvar_client_session
 
 from .logger import get_logger
 
@@ -171,13 +171,13 @@ def merge_dicts(dict_a: dict, dict_b: dict, path: Optional[List] = None) -> dict
 
 def _get_bool_config_value(config_id: str) -> bool:
     with mysql.session() as session:
-        where = text(f"cv.configId='{config_id}'")
+        where = text("cv.configId = :config_id")
         query = (
             select(text("cv.configId, cv.value, cv.isDefault"))
             .select_from(text("CONFIG_VALUE AS cv"))
             .where(where)
         )
-        result = session.execute(query)
+        result = session.execute(query, {"config_id": config_id})
         result = result.fetchall()
     if result:
         for row in result:
@@ -475,9 +475,9 @@ def get_allowed_clients(user: str) -> list:
             query = (
                 select(text("otg.objectId AS client"))
                 .select_from(text("OBJECT_TO_GROUP AS otg"))
-                .where(text(f"otg.groupId='{group}'"))
+                .where(text("otg.groupId = :groupid"))
             )
-            otg_result = session.execute(query)
+            otg_result = session.execute(query, {"groupid": group})
             otg_result = otg_result.fetchall()
             for otg_row in otg_result:
                 if otg_row is not None:
@@ -493,9 +493,9 @@ def get_allowed_products(user: str) -> list:
             query = (
                 select(text("otg.objectId AS product"))
                 .select_from(text("OBJECT_TO_GROUP AS otg"))
-                .where(text(f"otg.groupId='{group}'"))
+                .where(text("otg.groupId = :groupid"))
             )
-            otg_result = session.execute(query)
+            otg_result = session.execute(query, {"groupid": group})
             otg_result = otg_result.fetchall()
             for otg_row in otg_result:
                 if otg_row is not None:

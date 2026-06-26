@@ -538,10 +538,10 @@ def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branc
                     )
                 )
                 .select_from(table("HOST").alias("h"))
-                .where(text(f"h.hostId = '{clientid}' and h.type = 'OpsiClient'"))
+                .where(text("h.hostId = :clientid and h.type = 'OpsiClient'"))
             )  # pylint: disable=redefined-outer-name
 
-            result = session.execute(query)
+            result = session.execute(query, {"clientid": clientid})
             result = result.fetchone()
             if result:
                 data = dict(result)
