@@ -83,7 +83,7 @@
 					<p class="text-xs text-(--color-text-muted)">
 						{{ $t('users.current') }}: <span class="font-medium">{{ userStore.username }}</span>
 					</p>
-					<div v-if="remainingSeconds > 0" class="flex items-center gap-1 text-sm"
+					<div v-if="remainingSeconds > 0" data-testid="session-timer" class="flex items-center gap-1 text-sm"
 						:class="isWarning ? 'text-(--color-warning-soft-text)' : 'text-(--color-text-muted)'">
 						<CoreAppIcon :name="icons.clock" class="w-3 h-3" />
 						<span>{{ formattedTimeText }}</span>

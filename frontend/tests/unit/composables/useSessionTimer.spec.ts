@@ -10,13 +10,11 @@ vi.mock('vue', async () => {
   }
 })
 
-// Mock useI18n
 vi.mock('#imports', () => ({
   useI18n: () => ({ t: (key: string) => key }),
   navigateTo: vi.fn(),
 }))
 
-// Mock the user store
 const mockUserStore = {
   sessionEndTime: new Date(Date.now() + 60000).toISOString(),
   isAuthenticated: true,
@@ -68,5 +66,49 @@ describe('useSessionTimer', () => {
     expect(typeof timer.startTimer).toBe('function')
     expect(typeof timer.stopTimer).toBe('function')
     expect(typeof timer.refreshSession).toBe('function')
+  })
+
+  it('formatTimeText formats expired, seconds, minutes and hours', async () => {
+    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
+    const timer = useSessionTimer(false)
+
+    expect(timer.formatTimeText(0)).toBe('auth.expired')
+    expect(timer.formatTimeText(45)).toBe('45s')
+    expect(timer.formatTimeText(125)).toBe('2m 5s')
+    expect(timer.formatTimeText(3700)).toBe('1h 1m')
+  })
+
+  it('startTimer derives remaining + warning state and stopTimer clears it', async () => {
+    mockUserStore.sessionEndTime = new Date(Date.now() + 120 * 1000).toISOString()
+    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
+    const timer = useSessionTimer(false)
+
+    timer.startTimer()
+    expect(timer.remainingSeconds.value).toBeGreaterThan(100)
+    expect(timer.isWarning.value).toBe(true)
+    expect(timer.isExpired.value).toBe(false)
+    expect(timer.isRunning.value).toBe(true)
+
+    timer.stopTimer()
+    expect(timer.isRunning.value).toBe(false)
+  })
+
+  it('marks the session expired when the end time is already in the past', async () => {
+    mockUserStore.sessionEndTime = new Date(Date.now() - 1000).toISOString()
+    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
+    const timer = useSessionTimer(false)
+
+    timer.startTimer()
+    expect(timer.remainingSeconds.value).toBe(0)
+    expect(timer.isExpired.value).toBe(true)
+    timer.stopTimer()
+  })
+
+  it('refreshSession delegates renewal to the user store', async () => {
+    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
+    const timer = useSessionTimer(false)
+
+    timer.refreshSession(900)
+    expect(mockUserStore.setSession).toHaveBeenCalledWith(900)
   })
 })

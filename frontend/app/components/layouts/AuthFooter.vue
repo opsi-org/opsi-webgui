@@ -9,7 +9,7 @@
 -->
 <template>
     <footer class="bg-opsi-blue text-white h-12 flex items-center justify-between px-6 text-sm">
-        <a :href="uibLink" target="_blank" rel="noopener noreferrer">
+        <a :href="uibLink" target="_blank" rel="noopener noreferrer" aria-label="uib GmbH">
             <CoreAppImage src="~/assets/images/uib-logo-wide-dark.svg" alt="uib GmbH Logo" image-class="h-7" />
         </a>
         <div class="flex items-center gap-2">

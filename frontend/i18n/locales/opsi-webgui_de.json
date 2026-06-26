@@ -95,6 +95,7 @@
       "warn": "Diese Aktion kann nicht rükgängig gemacht werden."
     },
     "deploy": "Client-Agent bereitstellen",
+    "deployDesc": "Installiert den opsi-Client-Agent auf den ausgewählten Clients mit den unten angegebenen Zugangsdaten.",
     "directory": "Client Directory",
     "directoryNotAssigned": "Clients, die keiner Untergruppe explizit zugewiesen sind, erscheinen hier.",
     "directoryTooltip": "Ein Client kann hier nur einer Untergruppe zugewiesen werden. Clients, die nicht explizit zugewiesen sind, erscheinen in 'not_assigned'.",
@@ -310,13 +311,29 @@
     "unlicensed": "Unlizenzierte"
   },
   "nav": {
+    "addNew": "Neu hinzufügen",
+    "admin": "Administration",
+    "allClients": "Alle Clients",
+    "allServers": "Alle Server",
     "breadcrumb": "Brotkrümelnavigation",
+    "clients": "Clients",
+    "clone": "Klonen",
+    "configuration": "Konfiguration",
+    "dashboard": "Dashboard",
     "defaultPage": "Standardseite",
+    "diagnostics": "Diagnose",
+    "groups": "Gruppen",
     "leaveAnyway": "Trotzdem verlassen",
+    "logs": "Log",
+    "maintenance": "Wartung",
     "navigateAway": "Sie haben ungespeicherte Änderungen. Wenn Sie die Seite verlassen, gehen diese verloren. Möchten Sie fortfahren?",
+    "products": "Produkte",
     "redirect": "Weiterleitung...",
+    "servers": "Server",
     "sidebar": "Seitenleiste ein-/ausblenden",
-    "stayOnPage": "Auf Seite bleiben"
+    "stayOnPage": "Auf Seite bleiben",
+    "support": "Support",
+    "terminal": "Terminal"
   },
   "notifications": {
     "target.both": "An ausgewählte Server und Clients",

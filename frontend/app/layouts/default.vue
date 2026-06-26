@@ -16,8 +16,9 @@
             @toggle-quickpanel="toggleQuickpanel" />
 
         <div class="flex-1 flex overflow-hidden relative">
-            <div v-if="isMobile && sidebarOpen" class="absolute inset-0 bg-black/50 z-30"
-                @click="sidebarOpen = false" />
+            <div v-if="isMobile && sidebarOpen" class="absolute inset-0 bg-black/50 z-30" role="button" tabindex="0"
+                :aria-label="String($t('common.close'))" @click="sidebarOpen = false"
+                @keydown.enter="sidebarOpen = false" @keydown.space.prevent="sidebarOpen = false" />
 
             <aside aria-label="Navigation" :class="[
                 'shrink-0 transition-all duration-200 z-40',
@@ -32,7 +33,7 @@
                 <LayoutsSidebar :collapsed="!sidebarOpen && !isMobile" :is-mobile="isMobile" />
             </aside>
 
-            <main class="flex-1 flex flex-col overflow-hidden">
+            <main class="flex-1 flex flex-col overflow-hidden bg-(--color-surface)">
                 <LayoutsBreadCrumb />
                 <div class="shrink-0 z-10 px-3 md:px-4">
                     <Transition name="slide-down">
@@ -41,8 +42,8 @@
                             @close="userStore.globalError = undefined" />
                     </Transition>
                     <Transition name="slide-down">
-                        <CoreAppAlertInline v-if="userStore.readOnly" color="warning"
-                            :title="$t('common.readOnly')" variant="subtle" compact class="mt-2" />
+                        <CoreAppAlertInline v-if="userStore.readOnly" color="warning" :title="$t('common.readOnly')"
+                            variant="subtle" compact class="mt-2" />
                     </Transition>
                     <Transition name="slide-down">
                         <CoreAppAlertInline v-if="messageBusStore.certWarning" color="warning" variant="subtle" compact
@@ -63,7 +64,8 @@
                             <template #description>
                                 <span class="inline-flex items-center gap-2">
                                     <span>{{ $t('bus.changes') }}: <strong>{{
-                                        messageBusStore.lastEventType?.replace('event:', '') || $t('common.activity')
+                                        messageBusStore.lastEventType?.replace('event:', '') ||
+                                        $t('common.activity')
                                             }}</strong></span>
                                     <CoreAppButton size="xs" color="warning" variant="soft" @click="$router.go(0)">
                                         <CoreAppIcon :name="icons.refresh" class="w-3.5 h-3.5 mr-1" />
@@ -78,14 +80,16 @@
                         </CoreAppAlertInline>
                     </Transition>
                 </div>
-                <div id="main-content" class="flex-1 p-3 md:p-4 overflow-hidden min-h-0 bg-(--color-surface)">
+                <div id="main-content" class="flex-1 p-3 md:p-4 overflow-hidden min-h-0 ">
                     <slot />
                 </div>
             </main>
 
             <Transition name="quickpanel-slide">
                 <aside v-if="quickpanelOpen && !isMobile" :style="{ width: quickpanelWidth + 'px' }"
+                    data-testid="quickpanel"
                     class="bg-(--color-background) border-l border-(--color-border) overflow-auto shrink-0 flex flex-col relative">
+                    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- pointer-only drag resize handle; not keyboard operable by design -->
                     <div class="absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group flex items-center justify-center"
                         @mousedown="startQuickpanelResize">
                         <div
@@ -95,7 +99,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text)">{{
                                 $t('quick.panel')
-                                }}</span>
+                            }}</span>
                             <CoreAppButton @click="quickpanelOpen = false" variant="ghost" color="neutral"
                                 :aria-label="String($t('common.close'))" class="p-1! hover:bg-(--color-surface-hover)">
                                 <CoreAppIcon :name="icons.x" class="w-4 h-4" />
@@ -109,7 +113,9 @@
 
         <Transition name="slide-up">
             <div v-if="quickpanelOpen && isMobile" class="fixed inset-0 z-50">
-                <div class="absolute inset-0 bg-black/50" @click="quickpanelOpen = false" />
+                <div class="absolute inset-0 bg-black/50" role="button" tabindex="0"
+                    :aria-label="String($t('common.close'))" @click="quickpanelOpen = false"
+                    @keydown.enter="quickpanelOpen = false" @keydown.space.prevent="quickpanelOpen = false" />
                 <div
                     class="absolute bottom-0 left-0 right-0 bg-(--color-background) rounded-t-2xl max-h-[80vh] overflow-auto">
                     <div class="p-4">

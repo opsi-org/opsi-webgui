@@ -40,7 +40,7 @@
 			<div class="flex-1 overflow-y-auto p-2 space-y-3">
 				<div class="opsi-card">
 					<div class="flex items-center justify-between mb-3">
-						<CoreAppHeading size="xs" tag="h4">{{ $t('clients.create.title') }}</CoreAppHeading>
+						<CoreAppHeading size="xs" tag="h2">{{ $t('clients.create.title') }}</CoreAppHeading>
 					</div>
 					<div>
 						<div
@@ -114,7 +114,7 @@
 
 				<div class="opsi-card">
 					<div class="flex items-center justify-between mb-3">
-						<CoreAppHeading size="xs" tag="h4">{{ $t('common.assignments') }}</CoreAppHeading>
+						<CoreAppHeading size="xs" tag="h2">{{ $t('common.assignments') }}</CoreAppHeading>
 					</div>
 					<div>
 						<div
@@ -124,7 +124,7 @@
 							</span>
 							<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
 								<CoreAppSelect v-model="form.depotId" :items="depotOptions" :loading="loadingDepots"
-									:disabled="loading" size="sm" class="w-full" />
+									:aria-label="String($t('depot.title'))" :disabled="loading" size="sm" class="w-full" />
 								<div v-if="formErrors.depotId" class="text-xs text-error">{{ formErrors.depotId }}</div>
 							</div>
 						</div>
@@ -135,7 +135,7 @@
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
 								<CoreAppSelectMenu v-model="form.groups" :items="groupOptions" multiple
-									:disabled="loading" size="sm" class="w-full" />
+									:aria-label="String($t('groups.title'))" :disabled="loading" size="sm" class="w-full" />
 							</div>
 						</div>
 					</div>
@@ -143,7 +143,7 @@
 
 				<div class="opsi-card">
 					<div class="flex items-center justify-between mb-3">
-						<CoreAppHeading size="xs" tag="h4">{{ $t('clients.initialSetup') }}</CoreAppHeading>
+						<CoreAppHeading size="xs" tag="h2">{{ $t('clients.initialSetup') }}</CoreAppHeading>
 					</div>
 					<div>
 						<div
@@ -153,17 +153,18 @@
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
 								<CoreAppSelectMenu v-model="form.netbootProducts" :items="netbootProductOptions"
-									multiple :disabled="loading" size="sm" class="w-full" />
+									multiple :aria-label="String($t('products.netboot'))" :disabled="loading" size="sm" class="w-full" />
 							</div>
 						</div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
-								<CoreAppIcon :name="icons.deploy" class="w-4 h-4" />
+								<CoreAppImage src="opsi-client-agent.svg" dark-src="opsi-client-agent-light.svg"
+									:alt="String($t('clients.deploy'))" image-class="w-4 h-4 shrink-0" />
 								{{ $t('clients.deploy') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
-								<CoreAppCheckbox v-model="form.agentSetup" :disabled="loading" />
+								<CoreAppCheckbox v-model="form.agentSetup" :aria-label="String($t('clients.deploy'))" :disabled="loading" />
 							</div>
 						</div>
 						<div v-if="form.agentSetup" class="ml-4 border-l-2 border-(--color-border) pl-4 space-y-0">
@@ -350,7 +351,7 @@ async function fetchNetbootProducts() {
 		if (depot) {
 			const res = await getServersProducts([depot])
 			if (res.data && Array.isArray(res.data)) {
-				netbootProductOptions.value = res.data.map((item: any) => ({
+				netbootProductOptions.value = res.data.map((item: { productId: string }) => ({
 					label: item.productId,
 					value: item.productId
 				}))

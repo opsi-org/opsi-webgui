@@ -26,7 +26,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
 	size: 'sm',
-	tag: 'h3',
+	tag: 'h2',
 })
 
 const headingClass = computed(() => [

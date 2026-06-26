@@ -8,7 +8,7 @@
   ProductsConfigTabs - Tabbed product configuration with properties and dependencies.
 -->
 <template>
-	<div :class="['flex flex-col', panelMode ? '' : 'h-full min-h-0']">
+	<div class="flex flex-col h-full min-h-0">
 		<CoreAppAlertInline v-if="statusMessage" :color="statusMessage.type"
 			:title="statusMessage.type === 'success' ? $t('common.success') : $t('common.error')" :description="statusMessage.message"
 			variant="subtle" class="mb-2 shrink-0" closable @close="statusMessage = null" />
@@ -21,14 +21,14 @@
 		</div>
 
 		<div v-show="activeTab === 'properties'"
-			:class="['flex flex-col overflow-auto', panelMode ? '' : 'min-h-0 flex-1']">
+			class="flex flex-col overflow-auto min-h-0 flex-1">
 			<ProductsPropertiesForm :properties="editableProperties" :loading="loadingProps"
 				:external-filter="filterQuery" @update:property="setProperty"
 				@discard:property="discardSingleProperty" />
 		</div>
 
 		<div v-show="activeTab === 'dependencies'"
-			:class="['flex flex-col overflow-auto', panelMode ? '' : 'min-h-0 flex-1']">
+			class="flex flex-col overflow-auto min-h-0 flex-1">
 			<ProductsDependenciesForm :dependencies="dependencies" :loading="loadingDeps"
 				:external-filter="filterQuery" />
 		</div>

@@ -28,6 +28,7 @@
                 <span class="font-medium tabular-nums">{{ formattedTime }}</span>
             </div>
             <NuxtLink v-if="healthWorstCase && healthWorstCase !== 'ok'" to="/admin/diagnostics"
+                data-testid="health-badge"
                 class="h-7 px-1.5 inline-flex items-center justify-center rounded-md hover:bg-white/20 transition-colors"
                 :title="healthCheckTooltip">
                 <CoreAppStatusBadge :status="healthWorstCase === 'error' ? 'error' : 'warning'"
@@ -43,7 +44,8 @@
                 </div>
             </CoreAppTooltip>
             <CoreAppButton @click="$emit('toggle-quickpanel')" variant="ghost" color="neutral"
-                class="h-7 px-2! text-white hover:bg-white/20 active:bg-white/20! focus:bg-transparent! inline-flex items-center gap-1.5 rounded-md"
+                data-testid="quickpanel-toggle"
+                class="h-7 px-2! text-white hover:bg-white/10 active:bg-white/10! focus:bg-transparent! inline-flex items-center gap-1.5 rounded-md"
                 :title="$t('quick.panel')">
                 <CoreAppIcon :name="icons.user" class="w-5 h-5" />
                 <span class="hidden md:inline text-sm">{{ userStore.username }}</span>

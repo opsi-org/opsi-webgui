@@ -18,9 +18,9 @@
 						class="text-(--color-text-muted) hover:text-opsi-blue whitespace-nowrap">
 						{{ crumb.label }}
 					</NuxtLink>
-					<span v-else class="text-(--color-text) font-medium whitespace-nowrap">
+					<h1 v-else class="text-(--color-text) font-medium whitespace-nowrap text-xs m-0">
 						{{ crumb.label }}
-					</span>
+					</h1>
 				</template>
 			</nav>
 			<span v-if="pageDescription" class="text-xs hidden sm:inline">

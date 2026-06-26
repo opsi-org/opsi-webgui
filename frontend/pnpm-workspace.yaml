@@ -5,3 +5,12 @@ overrides:
   tar: '>=7.5.16'
   # vite-plugin-checker 0.14.x is published broken (missing dist/@runtime/main.js), which crashes `nuxt dev`.
   vite-plugin-checker: '0.13.0'
+
+# Reviewed allow-list of dependencies permitted to run install/build scripts.
+# These are the only packages that ship build scripts (native binaries); all
+# other lifecycle scripts stay blocked by pnpm's default-deny. CI
+# (validate:install-scripts) fails if a NEW, unreviewed build script appears.
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+  - vue-demi

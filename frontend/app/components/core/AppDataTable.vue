@@ -22,16 +22,17 @@
 
       <div class="flex items-center gap-2">
         <CoreAppFilterInput v-if="filterable" v-model="filterQueryInternal" :placeholder="String($t('common.filter'))"
-          size="sm" input-class="w-32 sm:w-40" />
+          size="sm" input-class="w-full sm:w-56 md:w-72 lg:w-80" />
 
         <UPopover>
-          <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('settings.table')" />
+          <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('settings.table')"
+            data-testid="table-settings" />
           <template #content>
             <div class="p-3 min-w-85 overflow-y-auto bg-(--color-background) rounded shadow-lg">
               <div class="font-heading text-xs text-(--color-text-muted) mb-3">{{ $t('settings.table') }}</div>
 
               <div class="mb-4 grid grid-cols-[7rem_1fr] items-center gap-x-2 gap-y-3">
-                <label class="text-xs text-(--color-text-muted)">{{ $t('settings.display') }}</label>
+                <span class="text-xs text-(--color-text-muted)">{{ $t('settings.display') }}</span>
                 <div class="flex gap-0.5">
                   <UButton size="xs" class="flex-1" :color="'primary'"
                     :variant="tableSettings.settings.displayMode === 'infinite' ? 'solid' : 'outline'"
@@ -45,7 +46,7 @@
                   </UButton>
                 </div>
 
-                <label class="text-xs text-(--color-text-muted)">{{ $t('settings.selection') }}</label>
+                <span class="text-xs text-(--color-text-muted)">{{ $t('settings.selection') }}</span>
                 <div class="flex gap-0.5">
                   <UButton size="xs" class="flex-1" :color="'primary'"
                     :variant="effectiveSelectionMode === 'multi' ? 'solid' : 'outline'"
@@ -59,11 +60,11 @@
                   </UButton>
                 </div>
 
-                <label class="text-xs text-(--color-text-muted)">{{ $t('settings.pageSize') }}</label>
+                <span class="text-xs text-(--color-text-muted)">{{ $t('settings.pageSize') }}</span>
                 <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs"
                   :aria-label="String($t('settings.pageSize'))" @update:model-value="(v: number) => changePageSize(v)" />
 
-                <label class="text-xs text-(--color-text-muted)">{{ $t('settings.sortBy') }}</label>
+                <span class="text-xs text-(--color-text-muted)">{{ $t('settings.sortBy') }}</span>
                 <div class="flex items-center gap-1">
                   <USelect :model-value="tableSettings.settings.sortColumn" :items="sortableColumnOptions" size="xs"
                     :aria-label="String($t('settings.sortBy'))" class="flex-1"
@@ -76,15 +77,15 @@
               </div>
 
               <div class="mb-4">
-                <label class="text-xs text-(--color-text-muted) block mb-1">{{ $t('settings.columns') }}</label>
+                <span class="text-xs text-(--color-text-muted) block mb-1">{{ $t('settings.columns') }}</span>
                 <div class="space-y-1 max-h-40 overflow-y-auto">
-                  <label v-for="col in toggleableColumns" :key="col.key"
+                  <span v-for="col in toggleableColumns" :key="col.key"
                     class="flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer">
                     <CoreAppCheckbox :model-value="isColumnVisibleComputed(col.key)" :disabled="col.alwaysVisible"
                       @update:model-value="tableSettings.toggleColumn(col.key)" />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col)
                       }}</span>
-                  </label>
+                  </span>
                 </div>
               </div>
 
@@ -102,6 +103,7 @@
 
     <UCard :ui="{ body: 'p-0 sm:p-0 flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden' }"
       class="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden">
+      <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- scrollable region with keyboard navigation, role=region + tabindex is correct ARIA -->
       <div ref="tableContainer"
         class="flex-1 min-h-0 min-w-0 overflow-x-auto overflow-y-auto transition-all duration-200"
         :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" tabindex="0" role="region" :aria-label="String($t('settings.table'))"
@@ -113,9 +115,9 @@
         <div v-else>
           <table class="w-max min-w-full" role="grid">
             <thead class="bg-(--color-surface) sticky top-0 z-10">
-              <tr role="row">
+              <tr>
                 <th v-if="selectable" class="w-10 px-3 py-2.5 text-center whitespace-nowrap bg-(--color-surface)"
-                  role="columnheader" :aria-label="effectiveSelectionMode === 'multi' ? 'Select all' : 'Selection'">
+                  :aria-label="effectiveSelectionMode === 'multi' ? 'Select all' : 'Selection'">
                   <div class="flex items-center justify-center gap-1">
                     <input v-if="effectiveSelectionMode === 'multi'" type="checkbox" :checked="allSelected"
                       :indeterminate="someSelected"
@@ -128,7 +130,7 @@
                   </div>
                 </th>
 
-                <th v-for="col in visibleColumns" :key="col.key" role="columnheader"
+                <th v-for="col in visibleColumns" :key="col.key"
                   :aria-sort="getSortAriaLabel(col.key)"
                   class="px-3 py-2.5 text-left font-heading text-xs tracking-wider text-(--color-text-muted) whitespace-nowrap"
                   :class="[col.headerClass, { 'cursor-pointer hover:bg-(--color-surface-hover)': col.sortable }, col.stickyRight ? 'sticky z-20 bg-(--color-surface) shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]' : '']"
@@ -157,7 +159,7 @@
                   </slot>
                 </th>
 
-                <th v-if="hasActions" ref="actionsHeaderRef" role="columnheader"
+                <th v-if="hasActions" ref="actionsHeaderRef"
                   class="min-w-24 px-3 py-2.5 text-center font-heading text-xs tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-20 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]">
                   {{ $t('actions.title') }}
                 </th>
@@ -165,7 +167,7 @@
             </thead>
 
             <tbody class="divide-y divide-(--color-border)" :class="{ 'pb-2': displayMode === 'pagination' }">
-              <tr v-for="(row, idx) in displayRows" :key="getRowKey(row)" role="row" :aria-selected="isSelected(row)"
+              <tr v-for="(row, idx) in displayRows" :key="getRowKey(row)" :aria-selected="isSelected(row)"
                 :tabindex="0"
                 class="group hover:bg-(--color-surface-hover) transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue"
                 :class="{
@@ -312,9 +314,9 @@ const emit = defineEmits<{
 }>()
 
 defineSlots<{
-  [key: `header-cell-${string}`]: (props: { column: DataTableColumnDef; sortColumn: string; sortDirection: 'asc' | 'desc' }) => any
-  [key: `cell-${string}`]: (props: { row: T; value: unknown; index: number }) => any
-  'row-actions': (props: { row: T; index: number; selected: boolean; active: boolean }) => any
+  [key: `header-cell-${string}`]: (props: { column: DataTableColumnDef; sortColumn: string; sortDirection: 'asc' | 'desc' }) => unknown
+  [key: `cell-${string}`]: (props: { row: T; value: unknown; index: number }) => unknown
+  'row-actions': (props: { row: T; index: number; selected: boolean; active: boolean }) => unknown
 }>()
 
 const icons = useIcons()
@@ -623,6 +625,27 @@ function handleScroll() {
 let sentinelObserver: IntersectionObserver | null = null
 let sentinelLoadPending = false
 let actionsResizeObserver: ResizeObserver | null = null
+let containerResizeObserver: ResizeObserver | null = null
+
+function maybeFillViewport() {
+  const el = tableContainer.value
+  if (!el || displayMode.value !== 'infinite' || sentinelLoadPending) return
+  if (
+    needsMoreToFill({
+      scrollHeight: el.scrollHeight,
+      clientHeight: el.clientHeight,
+      hasMore: hasMoreData.value,
+      loading: props.loading,
+    })
+  ) {
+    sentinelLoadPending = true
+    currentPage.value++
+    emitPageChange()
+    setTimeout(() => {
+      sentinelLoadPending = false
+    }, 200)
+  }
+}
 
 function observeActionsWidth() {
   if (actionsResizeObserver) {
@@ -654,7 +677,20 @@ onMounted(() => {
       }
     }
   }, { root: tableContainer.value, threshold: 0.1 })
+
+  if (tableContainer.value) {
+    containerResizeObserver = new ResizeObserver(() => maybeFillViewport())
+    containerResizeObserver.observe(tableContainer.value)
+  }
 })
+
+watch(
+  () => props.rows.length,
+  async () => {
+    await nextTick()
+    maybeFillViewport()
+  },
+)
 
 watch(scrollSentinel, (el, oldEl) => {
   if (oldEl && sentinelObserver) sentinelObserver.unobserve(oldEl)
@@ -669,6 +705,10 @@ onUnmounted(() => {
   if (actionsResizeObserver) {
     actionsResizeObserver.disconnect()
     actionsResizeObserver = null
+  }
+  if (containerResizeObserver) {
+    containerResizeObserver.disconnect()
+    containerResizeObserver = null
   }
 })
 

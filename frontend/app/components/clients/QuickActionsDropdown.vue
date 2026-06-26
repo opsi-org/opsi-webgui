@@ -14,6 +14,11 @@
 			<CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
 				<CoreAppButton :icon="icons.moreVertical" variant="ghost" color="neutral" size="xs" :loading="loading"
 					:disabled="loading" :title="String($t('clients.actions'))" />
+				<template #item-leading="{ item }">
+					<CoreAppImage v-if="menuItem(item).image" :src="menuItem(item).image as string" :dark-src="menuItem(item).darkImage" :alt="menuItem(item).label"
+						image-class="w-5 h-5 shrink-0" />
+					<CoreAppIcon v-else :name="menuItem(item).icon" class="w-5 h-5 shrink-0" />
+				</template>
 			</CoreAppDropdownMenu>
 		</template>
 		<!-- Standard mode: button with badge -->
@@ -31,19 +36,26 @@
 					<CoreAppBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</CoreAppBadge>
 					<CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
 				</CoreAppButton>
+				<template #item-leading="{ item }">
+					<CoreAppImage v-if="menuItem(item).image" :src="menuItem(item).image as string" :dark-src="menuItem(item).darkImage" :alt="menuItem(item).label"
+						image-class="w-5 h-5 shrink-0" />
+					<CoreAppIcon v-else :name="menuItem(item).icon" class="w-5 h-5 shrink-0" />
+				</template>
 			</CoreAppDropdownMenu>
-			<CoreAppTooltip v-else-if="compact" :text="$t('clients.actions')">
-				<CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-70 hover:opacity-100"
-					:aria-label="String($t('clients.actions'))" @click="showSelectionHint">
+			<CoreAppTooltip v-else-if="compact" :text="$t('clients.selectFirst')">
+				<CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-50 hover:opacity-70"
+					aria-disabled="true" :aria-label="String($t('clients.selectFirst'))" @click="showSelectionHint">
 					<CoreAppIcon :name="icons.client" class="w-4 h-4" />
 				</CoreAppButton>
 			</CoreAppTooltip>
-			<CoreAppButton v-else variant="ghost" color="neutral" size="sm" class="w-full opacity-70 hover:opacity-100"
-				@click="showSelectionHint">
-				<CoreAppIcon :name="icons.client" class="w-4 h-4" />
-				<span>{{ $t('clients.actions') }}</span>
-				<CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
-			</CoreAppButton>
+			<CoreAppTooltip v-else :text="$t('clients.selectFirst')" class="w-full">
+				<CoreAppButton variant="ghost" color="neutral" size="sm" class="w-full opacity-50 hover:opacity-70"
+					aria-disabled="true" :aria-label="String($t('clients.selectFirst'))" @click="showSelectionHint">
+					<CoreAppIcon :name="icons.client" class="w-4 h-4" />
+					<span>{{ $t('clients.actions') }}</span>
+					<CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
+				</CoreAppButton>
+			</CoreAppTooltip>
 		</template>
 	</div>
 
@@ -52,7 +64,10 @@
 			<div class="p-4 min-w-87.5" @click.stop>
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
-						<CoreAppIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
+						<CoreAppImage v-if="currentAction === 'deployClientAgent'" src="opsi-client-agent.svg"
+							dark-src="opsi-client-agent-light.svg" :alt="actionLabel(currentAction)"
+							image-class="w-5 h-5 shrink-0" />
+						<CoreAppIcon v-else :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
 						{{ actionLabel(currentAction) }}
 						<span v-if="clientIds.length === 1"
 							class="text-(--color-text-muted) font-normal normal-case truncate max-w-48">{{ clientIds[0]
@@ -99,6 +114,11 @@
 				</div>
 
 				<div v-if="currentAction === 'deployClientAgent'" class="space-y-3 mb-4">
+					<div class="flex items-center gap-3 mb-1">
+						<CoreAppImage src="opsi-client-agent.svg" dark-src="opsi-client-agent-light.svg"
+							:alt="String($t('clients.deploy'))" image-class="w-10 h-10 shrink-0" />
+						<p class="text-sm text-(--color-text-muted) m-0">{{ $t('clients.deployDesc') }}</p>
+					</div>
 					<div class="grid grid-cols-3 gap-2 mb-3">
 						<CoreAppButton v-for="os in osTypes" :key="os.value"
 							:variant="deployOptions.type === os.value ? 'solid' : 'outline'"
@@ -109,12 +129,12 @@
 						</CoreAppButton>
 					</div>
 					<div>
-						<label class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.username') }}</label>
+						<span class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.username') }}</span>
 						<CoreAppInput v-model="deployOptions.username" :placeholder="$t('fields.adminUsername')" size="sm"
 							class="w-full" />
 					</div>
 					<div>
-						<label class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.password') }}</label>
+						<span class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.password') }}</span>
 						<CoreAppInput v-model="deployOptions.password" type="password" :placeholder="$t('auth.enterPassword')"
 							size="sm" class="w-full" />
 					</div>
@@ -227,6 +247,12 @@ const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deplo
 const selectionStore = useSelectionStore()
 const { isReadOnly, canCreateClients } = useUserPermissions()
 
+// The CoreAppDropdownMenu wrapper forwards slots generically, so the `#item-leading`
+// slot prop loses its type (vue-tsc widens it to `never`). Cast it back to the
+// shape produced by `actionItems` so the template can read image/icon/label.
+type ActionMenuItem = { label: string; icon: string; image?: string; darkImage?: string }
+const menuItem = (i: unknown): ActionMenuItem => i as ActionMenuItem
+
 const confirmOpen = ref(false)
 const resultOpen = ref(false)
 const currentAction = ref<string>('')
@@ -272,7 +298,7 @@ const allActions = [
 	{ key: 'notify', icon: icons.notify, color: 'text-(--color-info-soft-text)' },
 	{ key: 'reboot', icon: icons.reboot, color: 'text-(--color-warning-soft-text)' },
 	{ key: 'shutdown', icon: icons.shutdown, color: 'text-(--color-warning-soft-text)' },
-	{ key: 'deployClientAgent', icon: icons.deploy, color: 'text-(--color-success-soft-text)' },
+	{ key: 'deployClientAgent', icon: icons.deploy, image: 'opsi-client-agent.svg', darkImage: 'opsi-client-agent-light.svg', color: 'text-(--color-success-soft-text)' },
 	{ key: 'rename', icon: icons.pencilSquare, color: 'text-(--color-info-soft-text)' },
 	{ key: 'delete', icon: icons.delete, color: 'text-(--color-error-soft-text)' },
 ] as const
@@ -308,7 +334,7 @@ const canExecute = computed(() => {
 })
 
 const actionItems = computed(() => {
-	const groups: Array<Array<{ label: string; icon: string; disabled: boolean; onSelect: () => void }>> = []
+	const groups: Array<Array<{ label: string; icon: string; image?: string; darkImage?: string; disabled: boolean; onSelect: () => void }>> = []
 	const mainActions = actions.value.filter(a => a.key !== 'rename' && a.key !== 'delete')
 	const renameAction = actions.value.find(a => a.key === 'rename')
 	const deleteAction = actions.value.find(a => a.key === 'delete')
@@ -316,6 +342,8 @@ const actionItems = computed(() => {
 	groups.push(mainActions.map(action => ({
 		label: actionLabel(action.key),
 		icon: action.icon,
+		image: 'image' in action ? action.image : undefined,
+		darkImage: 'darkImage' in action ? action.darkImage : undefined,
 		disabled: isReadOnly.value,
 		onSelect: () => openConfirm(action.key),
 	})))
@@ -367,7 +395,8 @@ async function executeAction() {
 	actionResults.value = {}
 
 	try {
-		let result: Record<string, any> = {}
+		type ClientActionResult = { success?: boolean; error?: unknown; message?: string }
+		let result: Record<string, ClientActionResult> = {}
 
 		switch (currentAction.value) {
 			case 'onDemand': {

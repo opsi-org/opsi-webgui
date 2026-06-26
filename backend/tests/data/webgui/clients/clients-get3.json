@@ -1,0 +1,20 @@
+[
+  {
+    "clientId": "pytest-lost-client-03.domain.local",
+    "ident": "pytest-lost-client-03.domain.local",
+    "macAddress": null,
+    "ipAddress": null,
+    "description": null,
+    "notes": null,
+    "uefi": false,
+    "uefi_value": null,
+    "reachable": null,
+    "version_outdated": 0,
+    "version_outdated_netboot": 0,
+    "installationStatus_unknown": 0,
+    "installationStatus_installed": 0,
+    "actionResult_failed": 0,
+    "actionResult_successful": 0,
+    "selected": false
+  }
+]

@@ -160,7 +160,10 @@
 				<div v-clickable
 					class="flex-1 px-2.5 py-1.5 text-sm border border-(--color-border) rounded-md bg-(--color-surface-elevated) min-h-8 cursor-pointer hover:border-(--color-primary)/50 transition-colors truncate"
 					:class="disabled ? 'opacity-50 cursor-not-allowed' : ''" :title="stringValue"
-					@click="!disabled && openMultilineEditor()">
+					role="button" tabindex="0"
+					@click="!disabled && openMultilineEditor()"
+					@keydown.enter="!disabled && openMultilineEditor()"
+					@keydown.space.prevent="!disabled && openMultilineEditor()">
 					{{ formatDisplayValue(stringValue) }}
 				</div>
 				<UButton v-if="!disabled" size="xs" variant="ghost" color="neutral" :icon="icons.pencilSquare"

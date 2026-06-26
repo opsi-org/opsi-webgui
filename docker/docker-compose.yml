@@ -1,6 +1,7 @@
 services:
   opsi-webgui-dev:
     hostname: ${OPSI_HOSTNAME}
+    image: opsi-webgui-dev:latest
     env_file: .env
     cap_add:
       - SYS_PTRACE
@@ -13,7 +14,7 @@ services:
         - ADDON_NAME
         - ADDON_ID
     volumes:
-      - ../:/workspace
+      - ${LOCAL_WORKSPACE_DIR:-..}:/workspace
     ports:
       - '4447:4447' # opsiconfd
       - '3000:3000' # webgui

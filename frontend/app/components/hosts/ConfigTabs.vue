@@ -24,30 +24,30 @@
 				</template>
 				<div class="space-y-4">
 					<div>
-						<label class="block text-sm font-medium mb-1">{{ $t('config.id') }} *</label>
+						<span class="block text-sm font-medium mb-1">{{ $t('config.id') }} *</span>
 						<CoreAppInput v-model="newConfig.configId" :placeholder="'e.g. category.subcategory.name'"
 							size="sm" />
 					</div>
 					<div>
-						<label class="block text-sm font-medium mb-1">{{ $t('common.description') }}</label>
+						<span class="block text-sm font-medium mb-1">{{ $t('common.description') }}</span>
 						<CoreAppInput v-model="newConfig.description" size="sm" />
 					</div>
 					<div>
-						<label class="block text-sm font-medium mb-1">{{ $t('common.type') }}</label>
+						<span class="block text-sm font-medium mb-1">{{ $t('common.type') }}</span>
 						<CoreAppSelect v-model="newConfig.type" :items="configTypeOptions" size="sm" />
 					</div>
 					<div class="flex items-center gap-4">
-						<label class="flex items-center gap-2 text-sm">
+						<span class="flex items-center gap-2 text-sm">
 							<CoreAppCheckbox v-model="newConfig.multiValue" size="sm" />
 							{{ $t('config.multiValue') }}
-						</label>
-						<label class="flex items-center gap-2 text-sm">
+						</span>
+						<span class="flex items-center gap-2 text-sm">
 							<CoreAppCheckbox v-model="newConfig.editable" size="sm" />
 							{{ $t('common.editable') }}
-						</label>
+						</span>
 					</div>
 					<div v-if="newConfig.type === 'UnicodeConfig'">
-						<label class="block text-sm font-medium mb-1">{{ $t('config.possibleValues') }}</label>
+						<span class="block text-sm font-medium mb-1">{{ $t('config.possibleValues') }}</span>
 						<div v-if="newConfig.possibleValues.length > 0" class="flex flex-wrap gap-1 mb-1">
 							<span v-for="(val, idx) in newConfig.possibleValues" :key="idx"
 								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20">
@@ -63,11 +63,11 @@
 							<CoreAppInput v-model="newPossibleValue" :placeholder="$t('common.pressEnterToAdd')" size="sm"
 								class="flex-1" @keydown.enter.prevent="addPossibleValue" />
 							<CoreAppButton size="sm" variant="soft" color="neutral" :icon="icons.add"
-								@click="addPossibleValue" />
+								:aria-label="String($t('common.add'))" @click="addPossibleValue" />
 						</div>
 					</div>
 					<div v-if="newConfig.type === 'UnicodeConfig'">
-						<label class="block text-sm font-medium mb-1">{{ $t('products.defaultValues') }}</label>
+						<span class="block text-sm font-medium mb-1">{{ $t('products.defaultValues') }}</span>
 						<div v-if="newConfig.defaultValues.length > 0" class="flex flex-wrap gap-1 mb-1">
 							<span v-for="(val, idx) in newConfig.defaultValues" :key="idx"
 								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20">
@@ -83,11 +83,11 @@
 							<CoreAppInput v-model="newDefaultValue" :placeholder="$t('common.pressEnterToAdd')" size="sm"
 								class="flex-1" @keydown.enter.prevent="addDefaultValue" />
 							<CoreAppButton size="sm" variant="soft" color="neutral" :icon="icons.add"
-								@click="addDefaultValue" />
+								:aria-label="String($t('common.add'))" @click="addDefaultValue" />
 						</div>
 					</div>
 					<div v-if="newConfig.type === 'BoolConfig'">
-						<label class="block text-sm font-medium mb-1">{{ $t('products.defaultValues') }}</label>
+						<span class="block text-sm font-medium mb-1">{{ $t('products.defaultValues') }}</span>
 						<CoreAppSelect v-model="newConfig.boolDefault"
 							:items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
 					</div>
@@ -122,7 +122,7 @@
 				</template>
 			</div>
 			<div class="flex flex-wrap items-center gap-2">
-				<CoreAppFilterInput v-model="paramSearch" size="sm" input-class="w-full sm:w-32 md:w-40" />
+				<CoreAppFilterInput v-model="paramSearch" size="sm" input-class="w-full sm:w-56 md:w-72 lg:w-80" />
 				<CoreAppButton v-if="isServerDefaultMode && !readonly" :icon="icons.add" color="primary" variant="soft"
 					size="sm" :title="String($t('config.create'))" @click="showCreateConfigModal = true">
 					<span class="hidden sm:inline">{{ $t('config.create') }}</span>
@@ -136,13 +136,13 @@
 	</div>
 
 	<div v-show="activeTab === 'parameters'"
-		:class="['flex flex-col min-h-0 flex-1 overflow-auto bg-(--color-surface) px-3 pb-3']">
+		:class="['flex flex-col min-h-0 flex-1 overflow-hidden bg-(--color-surface) px-3 pb-3']">
 		<div v-if="loadingParams" class="py-8 flex justify-center">
 			<CoreAppLoadingSpinner size="md" />
 		</div>
 		<CoreAppEmptyState v-else-if="categoryAwareTree.length === 0" :icon="icons.config"
 			:message="(hostId || hostType === 'server') ? String($t('config.paramsNone')) : String($t('hosts.select'))" />
-		<CoreAppCard v-else :ui="{ body: 'p-3 sm:p-3' }">
+		<CoreAppCard v-else :ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'p-3 sm:p-3 overflow-y-auto min-h-0 flex-1' }">
 			<HostsParametersTreeForm :tree="categoryAwareTree" :changed-params="changedParams" :readonly="readonly"
 				:current-value="currentValue" :set-param="setParam" :discard-single-param="discardSingleParam"
 				:icons="icons" :fmt-val="fmtVal" :auto-open-all="!!paramSearch" />
@@ -150,12 +150,13 @@
 	</div>
 
 	<div v-show="activeTab === 'attributes'"
-		:class="['flex flex-col min-h-0 flex-1 overflow-auto bg-(--color-surface) px-3 pb-3']">
+		:class="['flex flex-col min-h-0 flex-1 overflow-hidden bg-(--color-surface) px-3 pb-3']">
 		<div v-if="loadingAttrs" class="py-8 flex justify-center">
 			<CoreAppLoadingSpinner size="md" />
 		</div>
 		<CoreAppEmptyState v-else-if="!hostId" :icon="icons.config" :message="String($t('hosts.select'))" />
-		<CoreAppCard v-else-if="filteredReadonlyAttrKeys.length || filteredEditableAttrKeys.length">
+		<CoreAppCard v-else-if="filteredReadonlyAttrKeys.length || filteredEditableAttrKeys.length"
+			:ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'overflow-y-auto min-h-0 flex-1' }">
 			<div v-if="filteredReadonlyAttrKeys.length"
 				:class="['border-b border-(--color-border) pb-3', filteredEditableAttrKeys.length ? 'mb-3' : '']">
 				<div v-for="key in filteredReadonlyAttrKeys" :key="key"
@@ -473,7 +474,9 @@ const categoryAwareTree = computed<TreeNode[]>(() => {
 	]
 
 	function buildSubTree(params: Param[], prefix: string): TreeNode[] {
-		const root: Record<string, any> = {}
+		type ParamLeaf = { __param: Param }
+		type ParamBranch = Map<string, ParamLeaf | ParamBranch>
+		const root: ParamBranch = new Map()
 		for (const p of params) {
 			if (q && !p.configId.toLowerCase().includes(q) && !(p.description || '').toLowerCase().includes(q)) continue
 			const parts = p.configId.split('.')
@@ -482,24 +485,30 @@ const categoryAwareTree = computed<TreeNode[]>(() => {
 				const part = parts[i]
 				if (!part) continue
 				if (i === parts.length - 1) {
-					node[part] = { __param: p }
+					node.set(part, { __param: p })
 				} else {
-					node[part] = node[part] || {}
-					node = node[part]
+					const existing = node.get(part)
+					if (existing instanceof Map) {
+						node = existing
+					} else {
+						const branch: ParamBranch = new Map()
+						node.set(part, branch)
+						node = branch
+					}
 				}
 			}
 		}
-		function toTree(obj: Record<string, any>, pre: string): TreeNode[] {
-			return Object.entries(obj)
+		function toTree(obj: ParamBranch, pre: string): TreeNode[] {
+			return [...obj.entries()]
 				.sort(([, a], [, b]) => {
-					const aP = a && typeof a === 'object' && '__param' in a
-					const bP = b && typeof b === 'object' && '__param' in b
+					const aP = !(a instanceof Map)
+					const bP = !(b instanceof Map)
 					if (aP && !bP) return 1
 					if (!aP && bP) return -1
 					return 0
 				})
 				.map(([key, value]) => {
-					if (value && typeof value === 'object' && '__param' in value) {
+					if (!(value instanceof Map)) {
 						return { key: pre + key, label: key, param: value.__param, leafCount: 1 }
 					}
 					const children = toTree(value, pre + key + '.')

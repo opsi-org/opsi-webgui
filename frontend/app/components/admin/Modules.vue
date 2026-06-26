@@ -9,10 +9,10 @@
 -->
 
 <template>
-	<CoreAppCard class="h-full flex flex-col">
+	<CoreAppCard fill scrollable>
 		<template #header>
 			<div class="flex items-center justify-between">
-				<h3 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('mods.title') }}</h3>
+				<h2 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('mods.title') }}</h2>
 				<div class="flex items-center gap-2">
 					<span class="text-xs text-(--color-text-muted)">{{ filteredModules.length }} {{ $t('mods.available')
 					}}</span>

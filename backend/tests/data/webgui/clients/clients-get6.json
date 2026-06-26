@@ -1,0 +1,11 @@
+{
+  "hostId": "pytest-client-1.domain.local",
+  "type": "OpsiClient",
+  "description": "",
+  "notes": "notes client1",
+  "hardwareAddress": "af:fe:af:fe:af:f1",
+  "ipAddress": null,
+  "inventoryNumber": "1",
+  "systemUUID": null,
+  "uefi": false
+}

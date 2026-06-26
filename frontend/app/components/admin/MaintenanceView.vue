@@ -174,23 +174,26 @@
                         </div>
                     </template>
                     <div class="space-y-5">
-                        <label
+                        <span
                             class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                            <CoreAppCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5" />
+                            <CoreAppCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5"
+                                :aria-label="String($t('admin.maintenanceMode'))" />
                             <div class="font-medium text-sm">{{ $t('admin.maintenanceMode') }}</div>
-                        </label>
+                        </span>
                         <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('backup.include') }}</div>
                         <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
-                            <label
+                            <span
                                 class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                <CoreAppCheckbox v-model="backupOptions.config_files" class="mt-0.5" />
+                                <CoreAppCheckbox v-model="backupOptions.config_files" class="mt-0.5"
+                                    :aria-label="String($t('backup.configFiles'))" />
                                 <div class="font-medium text-sm">{{ $t('backup.configFiles') }}</div>
-                            </label>
-                            <label
+                            </span>
+                            <span
                                 class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                <CoreAppCheckbox v-model="backupOptions.redis_data" class="mt-0.5" />
+                                <CoreAppCheckbox v-model="backupOptions.redis_data" class="mt-0.5"
+                                    :aria-label="String($t('redis.data'))" />
                                 <div class="font-medium text-sm">{{ $t('redis.data') }}</div>
-                            </label>
+                            </span>
                         </div>
                         <CoreAppFormField :label="$t('auth.password') + ' (' + $t('common.optional') + ')'">
                             <CoreAppInput v-model="backupOptions.password" type="password"
@@ -232,16 +235,18 @@
                         <div>
                             <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('backup.restoreOptions') }}</div>
                             <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
-                                <label
+                                <span
                                     class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                    <CoreAppCheckbox v-model="restoreOptions.config_files" class="mt-0.5" />
+                                    <CoreAppCheckbox v-model="restoreOptions.config_files" class="mt-0.5"
+                                        :aria-label="String($t('backup.configFiles'))" />
                                     <div class="font-medium text-sm">{{ $t('backup.configFiles') }}</div>
-                                </label>
-                                <label
+                                </span>
+                                <span
                                     class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                    <CoreAppCheckbox v-model="restoreOptions.redis_data" class="mt-0.5" />
+                                    <CoreAppCheckbox v-model="restoreOptions.redis_data" class="mt-0.5"
+                                        :aria-label="String($t('redis.data'))" />
                                     <div class="font-medium text-sm">{{ $t('redis.data') }}</div>
-                                </label>
+                                </span>
                             </div>
                         </div>
                         <CoreAppFormField :label="$t('backup.serverIdHandling')">

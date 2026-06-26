@@ -1,0 +1,24 @@
+[
+  {
+    "hostId": "opsi.test.local",
+    "type": "OpsiConfigserver",
+    "description": "eine Beschreibung",
+    "notes": "",
+    "hardwareAddress": null,
+    "ipAddress": "172.30.0.5",
+    "inventoryNumber": "",
+    "systemUUID": "9160f45f-5884-11ee-8729-0242ac1f0004",
+    "uefi": false
+  },
+  {
+    "hostId": "pytest-lost-client-03.domain.local",
+    "type": "OpsiClient",
+    "description": null,
+    "notes": null,
+    "hardwareAddress": null,
+    "ipAddress": null,
+    "inventoryNumber": null,
+    "systemUUID": null,
+    "uefi": false
+  }
+]

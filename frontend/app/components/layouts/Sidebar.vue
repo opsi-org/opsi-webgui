@@ -11,8 +11,10 @@
     <nav class="h-full flex flex-col bg-opsi-blue text-white">
         <div :class="['flex-1 py-2', collapsed ? 'overflow-visible' : 'overflow-y-auto']">
             <template v-for="(group, groupIdx) in navGroups" :key="groupIdx">
+                <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- hover-popup wrapper; interactive content provided by child links/buttons -->
                 <div v-for="item in group" :key="item.route" class="relative mx-1.5"
-                    @mouseenter="onHover(item.route, $event)" @mouseleave="onLeave">
+                    @mouseenter="onHover(item.route, $event)" @mouseleave="onLeave"
+                    @focusin="onHover(item.route, $event)" @focusout="onLeave">
                     <template v-if="item.submenu">
                         <template v-if="!collapsed">
                             <CoreAppButton @click="toggleSubmenu(item.route)" variant="ghost" color="neutral"
@@ -25,6 +27,7 @@
                             </CoreAppButton>
                             <div v-if="expanded[item.route]" class="ml-4 mt-0.5 mb-1 border-l-2 border-white/20 pl-2">
                                 <NuxtLink v-for="sub in item.submenu" :key="sub.route" :to="sub.route"
+                                    :data-testid="linkTestId(sub.route)"
                                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-100"
                                     :class="isSubActive(sub.route, item.submenu)
                                         ? 'bg-(--ui-color-primary-200) text-(--color-opsi-deep-blue) font-medium'
@@ -41,8 +44,10 @@
                                 <CoreAppIcon :name="item.icon" class="w-5 h-5" />
                             </NuxtLink>
                             <Teleport to="body">
+                                <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- hover-popup wrapper; interactive content provided by child links -->
                                 <div v-if="hoveredItem === item.route" :style="getPopupPosition(item.route)"
                                     @mouseenter="keepPopupOpen(item.route)" @mouseleave="onLeave"
+                                    @focusin="keepPopupOpen(item.route)" @focusout="onLeave"
                                     class="fixed bg-opsi-blue rounded-xl shadow-lg min-w-44 py-1 z-100 border border-white/10">
                                     <div class="px-3 py-2 font-heading text-xs text-white/70 border-b border-white/10">
                                         {{ t(item.title) }}
@@ -61,7 +66,7 @@
                     </template>
 
                     <template v-else>
-                        <NuxtLink :to="item.route"
+                        <NuxtLink :to="item.route" :data-testid="linkTestId(item.route)"
                             class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-100"
                             :class="[
                                 $route.path === item.route
@@ -83,8 +88,6 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '~/stores/userStore'
-
 defineProps<{
     collapsed: boolean
     isMobile: boolean
@@ -93,8 +96,7 @@ defineProps<{
 const icons = useIcons()
 const { t: $t } = useI18n()
 const $route = useRoute()
-const userStore = useUserStore()
-const { filterNavItems, isPageAccessible } = useUserPermissions()
+const { filterNavItems } = useUserPermissions()
 
 const expanded = ref<Record<string, boolean>>({})
 const hoveredItem = ref<string | null>(null)
@@ -102,10 +104,14 @@ const itemPositions = ref<Record<string, { top: number; left: number }>>({})
 let hoverTimeout: ReturnType<typeof setTimeout> | null = null
 
 const t = (key: string) => {
-    const translated = $t(key)
-    if (translated && translated !== key) return String(translated)
+    const navKey = `nav.${key}`
+    const translated = $t(navKey)
+    if (translated && translated !== navKey) return String(translated)
     return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
 }
+
+/** Stable, locale-independent test id for a nav link, e.g. /admin/terminal -> nav-admin-terminal. */
+const linkTestId = (route: string) => `nav-${route.replace(/^\//, '').replace(/\//g, '-') || 'root'}`
 
 function getPopupPosition(route: string) {
     const pos = itemPositions.value[route]
@@ -225,7 +231,7 @@ function toggleSubmenu(route: string) {
     expanded.value[route] = !expanded.value[route]
 }
 
-function onHover(route: string, event?: MouseEvent) {
+function onHover(route: string, event?: MouseEvent | FocusEvent) {
     if (hoverTimeout) clearTimeout(hoverTimeout)
     hoveredItem.value = route
     if (event) {

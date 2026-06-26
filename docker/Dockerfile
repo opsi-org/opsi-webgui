@@ -40,7 +40,8 @@ RUN sed -i 's/^daemonize yes/daemonize no/' /etc/redis/redis.conf \
 	&& install -m 755 -o mysql -g root -d /var/run/mysqld
 
 # Users and groups
-RUN useradd --create-home -s /bin/bash ${DEV_USER} \
+# NOTE: ${DEV_USER} may already exist (e.g. CI builds with USER=root/UID=0).
+RUN (getent passwd ${DEV_USER} || useradd --create-home -s /bin/bash ${DEV_USER}) \
 	&& (getent group opsifileadmins || groupadd opsifileadmins) \
 	&& (getent group opsiadmin || groupadd opsiadmin) \
 	&& (getent passwd opsiconfd || useradd --system -g opsifileadmins -d /var/lib/opsi -s /bin/bash opsiconfd) \
@@ -56,9 +57,12 @@ RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& adduser ${DEV_USER} sudo \
 	&& adduser ${DEV_USER} shadow \
 	&& echo "${DEV_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-	&& cp /root/.bashrc /home/${DEV_USER}/.bashrc \
-	&& cp /root/.bash_history /home/${DEV_USER}/.bash_history \
-	&& chown -R ${DEV_USER}:${DEV_USER} /home/${DEV_USER}/
+	&& DEV_HOME="$(getent passwd ${DEV_USER} | cut -d: -f6)" \
+	&& if [ "${DEV_HOME}" != "/root" ]; then \
+	cp /root/.bashrc "${DEV_HOME}/.bashrc" \
+	&& cp /root/.bash_history "${DEV_HOME}/.bash_history" \
+	&& chown -R ${DEV_USER}:${DEV_USER} "${DEV_HOME}/"; \
+	fi
 
 # opsi directory structure
 RUN mkdir -p /var/lib/opsiconfd/addons \
@@ -81,7 +85,7 @@ RUN mkdir -p /var/lib/opsiconfd/addons \
 	&& chown -R opsiconfd:opsifileadmins /var/lib/opsiconfd /var/lib/opsi /var/log/opsi /etc/opsi \
 	&& chmod 770 /etc/opsi/ssl /var/lib/opsiconfd /var/lib/opsi \
 	&& chown -R ${DEV_USER}:${DEV_USER} /workspace \
-	&& chmod +x /entrypoint.sh
+	&& chmod +x /entrypoint.sh /test-entrypoint.sh
 
 # Addon symlink
 RUN ln -sf /workspace/backend/${ADDON_ID} /var/lib/opsiconfd/addons/${ADDON_ID}
@@ -93,6 +97,27 @@ RUN chmod a+rx /root && mkdir -p /root/.local/share && chmod -R a+rX /root/.loca
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 	&& apt-get install -y --no-install-recommends nodejs \
 	&& npm install -g pnpm \
+	&& apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Playwright / Chromium system libraries for the e2e suite.
+RUN apt-get update \
+	&& apt-get --yes --no-install-recommends install \
+	libnss3 \
+	libnspr4 \
+	libatk1.0-0 \
+	libatk-bridge2.0-0 \
+	libatspi2.0-0 \
+	libcups2 \
+	libdrm2 \
+	libxkbcommon0 \
+	libxcomposite1 \
+	libxdamage1 \
+	libxfixes3 \
+	libxrandr2 \
+	libgbm1 \
+	libpango-1.0-0 \
+	libcairo2 \
+	libasound2 \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s \

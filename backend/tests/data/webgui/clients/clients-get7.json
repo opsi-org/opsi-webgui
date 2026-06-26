@@ -1,0 +1,7 @@
+{
+  "class": null,
+  "code": null,
+  "status": 404,
+  "message": "Client with id 'no-client.domain.local' not found.",
+  "details": null
+}

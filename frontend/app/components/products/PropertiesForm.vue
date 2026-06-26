@@ -18,7 +18,8 @@
 
 		<template v-else>
 			<div class="flex-1 overflow-auto min-h-0">
-				<div class="space-y-0">
+				<div class="opsi-card">
+					<div class="space-y-0">
 					<div v-for="prop in visibleProperties" :key="prop.propertyId"
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2 px-2 rounded transition-colors"
 						:class="changedPropertyIds.has(prop.propertyId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)'">
@@ -50,6 +51,7 @@
 								color="neutral" :icon="icons.x" :title="$t('common.discard')"
 								@click="discardSingleProperty(prop.propertyId)" />
 						</div>
+					</div>
 					</div>
 				</div>
 				<div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-3">

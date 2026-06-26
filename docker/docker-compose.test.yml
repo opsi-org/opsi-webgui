@@ -1,0 +1,121 @@
+services:
+  redis:
+    image: redislabs/redistimeseries:latest
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    networks: [test-net]
+
+  opsiconfd:
+    image: ${OPSI_WEBGUI_TEST_IMAGE:-opsi-webgui-dev:latest}
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+      args:
+        - USER
+        - UID
+        - ADDON_NAME
+        - ADDON_ID
+    entrypoint: ['/test-entrypoint.sh']
+    hostname: opsi.test.local
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ${LOCAL_WORKSPACE_DIR:-..}:/workspace
+      - opsiconfd-venv:/workspace/docker/opsiconfd/.venv
+    environment:
+      MYSQL_ROOT_PASSWORD: opsi
+      MYSQL_DATABASE: opsi
+      MYSQL_USER: opsi
+      MYSQL_PASSWORD: opsi
+      MYSQL_HOST: localhost
+      OPSICONFD_PORT: '4447'
+      OPSICONFD_ADDON_DIRS: '[/var/lib/opsiconfd/addons]'
+      OPSICONFD_REDIS_INTERNAL_URL: redis://redis:6379/0
+      OPSI_BACKUP_URL: ${OPSI_BACKUP_URL:-https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json}
+    healthcheck:
+      test: ['CMD', 'curl', '-sk', '-o', '/dev/null', 'https://localhost:4447/admin/healthy']
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 600s
+    networks: [test-net]
+
+  e2e:
+    image: mcr.microsoft.com/playwright:v1.58.2-noble
+    depends_on:
+      opsiconfd:
+        condition: service_healthy
+    volumes:
+      - ${LOCAL_WORKSPACE_DIR:-..}/frontend:/frontend
+      - ${LOCAL_WORKSPACE_DIR:-..}/backend/webgui/data/app:/addon-app
+      - e2e-node-modules:/frontend/node_modules
+      - e2e-nuxt:/frontend/.nuxt
+      - e2e-build:/frontend/.e2e-build
+    working_dir: /frontend
+    environment:
+      BASE_URL: https://opsiconfd:4447/addons/webgui/app
+      TEST_USER: adminuser
+      TEST_PASSWORD: adminuser
+      NODE_TLS_REJECT_UNAUTHORIZED: '0'
+      CI: 'true'
+      NITRO_OUTPUT_DIR: /frontend/.e2e-build/.output
+      # Smoke vs full matrix: `pnpm test:e2e` reads CI_PIPELINE_SOURCE at runtime.
+      # Leave unset for the smoke matrix (DE/light/desktop/Chromium); set
+      # E2E_PIPELINE_SOURCE=schedule to run the full matrix (all locales/themes/
+      # viewports + Firefox + visual regression).
+      CI_PIPELINE_SOURCE: '${E2E_PIPELINE_SOURCE:-}'
+    networks: [test-net]
+    command:
+      - sh
+      - -c
+      - |
+        corepack enable pnpm
+        pnpm install --frozen-lockfile
+        pnpm exec playwright install chromium firefox
+        if [ -f /addon-app/index.html ]; then
+          echo "Reusing pre-built SPA in /addon-app (skipping pnpm generate)."
+        else
+          echo "Building webgui SPA into addon data/app..."
+          pnpm run generate
+          mkdir -p /addon-app
+          cp -r "$${NITRO_OUTPUT_DIR}/public/." /addon-app/
+        fi
+        pnpm test:e2e
+
+  backend-tests:
+    image: ${OPSI_WEBGUI_TEST_IMAGE:-opsi-webgui-dev:latest}
+    depends_on:
+      opsiconfd:
+        condition: service_healthy
+    network_mode: 'service:opsiconfd'
+    volumes:
+      - ${LOCAL_WORKSPACE_DIR:-..}:/workspace
+      - opsiconfd-venv:/workspace/docker/opsiconfd/.venv
+    working_dir: /workspace/backend
+    environment:
+      MYSQL_HOST: 127.0.0.1
+      MYSQL_DATABASE: opsi
+      MYSQL_USER: opsi
+      MYSQL_PASSWORD: opsi
+      OPSICONFD_REDIS_INTERNAL_URL: redis://redis:6379/0
+    command:
+      - bash
+      - -c
+      - |
+        cd /workspace/docker/opsiconfd
+        uv sync
+        .venv/bin/python -m pytest /workspace/backend/tests -v
+
+networks:
+  test-net:
+    driver: bridge
+
+volumes:
+  opsiconfd-venv:
+  e2e-node-modules:
+  e2e-nuxt:
+  e2e-build:

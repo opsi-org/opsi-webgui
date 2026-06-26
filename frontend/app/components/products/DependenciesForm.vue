@@ -18,7 +18,8 @@
 
 		<template v-else>
 			<div class="flex-1 overflow-auto min-h-0">
-				<div class="space-y-0">
+				<div class="opsi-card">
+					<div class="space-y-0">
 					<div v-for="(dep, index) in filteredDependencies" :key="`${dep.requiredProductId}-${index}`"
 						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2 px-2 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<div class="min-w-0 md:w-2/5">
@@ -52,6 +53,7 @@
 								</CoreAppBadge>
 							</span>
 						</div>
+					</div>
 					</div>
 				</div>
 			</div>

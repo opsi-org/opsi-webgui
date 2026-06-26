@@ -45,7 +45,8 @@
   --color-text-secondary: #3f3f3e;
   --color-text-muted: #616874;
   --color-text-highlighted: #1a1a1a;
-  --color-text-placeholder: #9ca3af;
+  /* WCAG fix: #9ca3af placeholder gave ~2.5:1 on white (fails AA). #6b7280 gives ~4.8:1. */
+  --color-text-placeholder: #6b7280;
   --color-border: #e4e4e3;
   --color-border-muted: #f0f0ef;
   --color-border-accented: #b2b2b2;
@@ -76,7 +77,8 @@
   --color-info-hover: #0d47a1;
   --color-info-text: #ffffff;
   --color-info-soft-bg: rgba(21, 101, 192, 0.12);
-  --color-info-soft-text: #1565c0;
+  /* WCAG fix: #1565c0 soft-text over the soft-bg tint fell just under 4.5:1; #0d47a1 clears AA. */
+  --color-info-soft-text: #0d47a1;
   --color-info-soft-ring: rgba(21, 101, 192, 0.2);
 
   /* Semantic: Warning (opsi warning) */
@@ -84,7 +86,8 @@
   --color-warning-hover: #e68200;
   --color-warning-text: #000000;
   --color-warning-soft-bg: rgba(255, 145, 0, 0.12);
-  --color-warning-soft-text: #b26500;
+  /* WCAG fix: #b26500 soft-text over the warning tint was ~4.3:1 (fails AA). #8a4f00 clears AA. */
+  --color-warning-soft-text: #8a4f00;
   --color-warning-soft-ring: rgba(255, 145, 0, 0.25);
 
   /* Semantic: Error (opsi error) */
@@ -148,7 +151,8 @@ html.dark {
   /* WCAG fix: #a8a8a8 on surface #4b4b49 gave 3.68 (fails AA 4.5). #bebebe gives 4.71/5.67 */
   --color-text-muted: #bebebe;
   --color-text-highlighted: #ffffff;
-  --color-text-placeholder: #71717a;
+  /* WCAG fix: #9ca3af on input bg #3f3f3e gave 4.15 (fails AA 4.5). #aeb4be gives ~5.0. */
+  --color-text-placeholder: #aeb4be;
   --color-border: #5a5a59;
   --color-border-muted: #4b4b49;
   --color-border-accented: #8b8b8a;
@@ -166,15 +170,16 @@ html.dark {
   --color-success-soft-text: #4ade80;
   --color-success-soft-ring: rgba(74, 222, 128, 0.25);
 
-  /* WCAG fix: #82b1ff on rendered bg (~#3A4A64) gave 4.05 (fails AA 4.5). #93c5fd gives 4.82 */
+  /* WCAG fix: #93c5fd on soft-bg composited over tinted cards (~#435777) gave 4.06 (fails AA 4.5). #b3d4fd gives 4.79. */
   --color-info-soft-bg: rgba(41, 121, 255, 0.25);
-  --color-info-soft-text: #93c5fd;
+  --color-info-soft-text: #b3d4fd;
   --color-info-soft-ring: rgba(147, 197, 253, 0.25);
 
   --color-warning: #bb8819;
   --color-warning-hover: #a07316;
   --color-warning-soft-bg: rgba(255, 145, 0, 0.25);
-  --color-warning-soft-text: #fbbf24;
+  /* WCAG fix: #fbbf24 on soft-bg composited over a warning card (~#6f542f) gave 4.21 (fails AA 4.5). #ffcb45 gives 4.65. */
+  --color-warning-soft-text: #ffcb45;
   --color-warning-soft-ring: rgba(251, 191, 36, 0.25);
 
   --color-error: #aa2126;
@@ -301,7 +306,7 @@ input[type='radio'] {
 }
 
 button[role='checkbox'] {
-  border: 0.5px var(--color-border);
+  border: 1px solid var(--color-border-accented);
 }
 
 input[type='text'],
@@ -336,6 +341,7 @@ html select {
    ============================================ */
 
 *:focus-visible {
+  outline: 2px solid var(--color-primary);
   outline-offset: 1px;
 }
 
@@ -345,6 +351,7 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
+  outline: 2px solid var(--color-primary);
   outline-offset: 1px;
 }
 
@@ -375,6 +382,7 @@ textarea:focus-visible,
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

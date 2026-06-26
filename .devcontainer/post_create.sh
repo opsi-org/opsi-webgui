@@ -80,4 +80,10 @@ echo "[post_create] Installing frontend dependencies..."
 cd /workspace/frontend
 pnpm install --force 2>/dev/null || echo "[WARN] pnpm install failed - run manually: cd /workspace/frontend && pnpm install"
 
+# Install the Playwright Chromium browser once, matching the pnpm lockfile
+# version. The required system libraries are already baked into the image
+# (see docker/Dockerfile)
+echo "[post_create] Installing Playwright Chromium browser..."
+pnpm exec playwright install chromium 2>/dev/null || echo "[WARN] playwright install failed - run manually: cd /workspace/frontend && pnpm exec playwright install chromium"
+
 echo "[post_create] Done."

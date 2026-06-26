@@ -8,9 +8,11 @@
   ServerConfigurationPage - Route page for server host configuration tabs.
 -->
 <template>
-	<HostsConfigTabs :host-id="selectedServerId" host-type="server" :tab="activeTab" show-host-selector
-		:readonly="isReadOnly || !hasServerWriteAccess" @update:host-id="updateSelectedServerId"
-		@update:tab="updateActiveTab" @saved="handleSaved" />
+	<div class="h-full flex flex-col min-h-0">
+		<HostsConfigTabs :host-id="selectedServerId" host-type="server" :tab="activeTab" show-host-selector
+			:readonly="isReadOnly || !hasServerWriteAccess" @update:host-id="updateSelectedServerId"
+			@update:tab="updateActiveTab" @saved="handleSaved" />
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -28,7 +30,7 @@ const routeTab = computed((): string => {
 	const t = route.params.tab
 	const val = (Array.isArray(t) ? t[0] : (t as string)) || ''
 	const normalized = TAB_ALIASES[val] || val
-	return VALID_TABS.includes(normalized as any) ? normalized : 'parameters'
+	return VALID_TABS.includes(normalized as (typeof VALID_TABS)[number]) ? normalized : 'parameters'
 })
 
 const routeServerId = computed((): string => {

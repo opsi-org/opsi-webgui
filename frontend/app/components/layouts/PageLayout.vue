@@ -40,6 +40,7 @@
 
 			<Transition :name="isMobile ? 'slide-up' : 'slide-in'">
 				<div v-if="showPanel" :style="panelStyle" :class="panelClasses">
+					<!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- pointer-only drag resize handle; not keyboard operable by design -->
 					<div v-if="!isMobile" @mousedown="startResize"
 						class="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize bg-transparent hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group">
 						<div

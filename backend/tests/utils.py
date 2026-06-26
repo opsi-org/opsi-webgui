@@ -11,7 +11,6 @@ admininterface tests
 import json
 import os
 import socket
-import sys
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -19,7 +18,7 @@ import MySQLdb
 import pytest
 import requests
 import urllib3
-from opsicommon.logging import get_logger
+from opsi.logging import get_logger
 from requests.auth import HTTPBasicAuth
 
 urllib3.disable_warnings()
@@ -31,7 +30,65 @@ OPSI_SESSION_KEY = "opsiconfd:sessions"
 MONITORING_CHECK_DAYS = 31
 
 TEST_NUM_ITEMS = 10
-config_server_id = socket.getfqdn()
+UPDATE_FIXTURES = os.environ.get("UPDATE_FIXTURES", "").lower() in ("1", "true", "yes")
+
+# Fields whose values are non-deterministic between runs (timestamps, generated
+# host keys, one-time passwords). They are dropped before a snapshot is written or
+# compared so the fixtures stay stable.
+VOLATILE_KEYS = frozenset(
+    {"created", "lastSeen", "modificationTime", "opsiHostKey", "oneTimePassword"}
+)
+
+
+def remove_volatile(obj):
+    if isinstance(obj, dict):
+        return {
+            key: remove_volatile(value)
+            for key, value in obj.items()
+            if key not in VOLATILE_KEYS
+        }
+    if isinstance(obj, list):
+        return [remove_volatile(item) for item in obj]
+    return obj
+
+
+def assert_or_update_fixture(actual_data, fixture_path):
+    """Compare actual_data with fixture file, or update the fixture if UPDATE_FIXTURES is set."""
+    if UPDATE_FIXTURES:
+        os.makedirs(os.path.dirname(fixture_path), exist_ok=True)
+        with open(fixture_path, "w", encoding="utf-8") as f:
+            json.dump(remove_volatile(actual_data), f, indent=2, ensure_ascii=False)
+        return
+    with open(fixture_path, "r", encoding="utf-8") as f:
+        expected_data = json.load(f)
+    assert remove_volatile(actual_data) == remove_volatile(expected_data)
+
+
+def _get_config_server_id():
+    """Get the actual configserver ID from the database."""
+    try:
+        mysql = MySQLdb.connect(
+            host=os.getenv("MYSQL_HOST", "localhost"),
+            port=int(os.getenv("MYSQL_PORT", 3306)),
+            user=os.getenv("MYSQL_USER", "opsi"),
+            passwd=os.getenv("MYSQL_PASSWORD", "opsi"),
+            db=os.getenv("MYSQL_DATABASE", "opsi"),
+            charset="utf8mb4",
+        )
+        cursor = mysql.cursor()
+        cursor.execute(
+            'SELECT hostId FROM HOST WHERE type = "OpsiConfigserver" LIMIT 1;'
+        )
+        row = cursor.fetchone()
+        result = row[0] if row else socket.getfqdn()
+        cursor.close()
+        mysql.close()
+        return result
+    except Exception:
+        return socket.getfqdn()
+
+
+config_server_id = _get_config_server_id()
 
 
 # MARK: http_call
@@ -103,14 +160,30 @@ def disable_request_warning():
 
 
 @pytest.fixture
-def config(monkeypatch):
-    monkeypatch.setattr(sys, "argv", ["opsiconfd"])
-    from opsiconfd.config import config  # type: ignore
+def clean_redis():
+    """No-op fixture - Redis cleanup not needed for HTTP-based integration tests."""
+    yield
 
-    config.server_id = (
-        config.external_url.replace("https://", "").replace("http://", "").split(":")[0]
-    )
-    return config
+
+@pytest.fixture
+def config():
+    """opsiconfd connection settings for the integration tests.
+
+    Resolved from the environment instead of importing ``opsiconfd.config`` so the
+    tests stay decoupled from opsiconfd internals. These are HTTP + DB integration
+    tests, so they only need the server URL, not the opsiconfd
+    source.
+    """
+    port = int(os.getenv("OPSICONFD_PORT", "4447"))
+    url = os.getenv("OPSICONFD_URL", f"https://localhost:{port}")
+
+    class _OpsiconfdConfig:
+        internal_url = url
+        external_url = url
+        server_id = url.replace("https://", "").replace("http://", "").split(":")[0]
+
+    _OpsiconfdConfig.port = port
+    return _OpsiconfdConfig()
 
 
 @pytest.fixture

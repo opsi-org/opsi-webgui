@@ -1,0 +1,38 @@
+[
+  {
+    "clientId": "pytest-client-2.domain.local",
+    "ident": "pytest-client-2.domain.local",
+    "macAddress": "af:fe:af:fe:af:f2",
+    "ipAddress": null,
+    "description": "Pytest dummy client 2",
+    "notes": "notes client2",
+    "uefi": false,
+    "uefi_value": null,
+    "reachable": null,
+    "version_outdated": 0,
+    "version_outdated_netboot": 0,
+    "installationStatus_unknown": 1,
+    "installationStatus_installed": 1,
+    "actionResult_failed": 1,
+    "actionResult_successful": 0,
+    "selected": false
+  },
+  {
+    "clientId": "pytest-client-3.domain.local",
+    "ident": "pytest-client-3.domain.local",
+    "macAddress": "af:fe:af:fe:af:f3",
+    "ipAddress": null,
+    "description": "",
+    "notes": "notes client3",
+    "uefi": false,
+    "uefi_value": null,
+    "reachable": null,
+    "version_outdated": 0,
+    "version_outdated_netboot": 0,
+    "installationStatus_unknown": 0,
+    "installationStatus_installed": 1,
+    "actionResult_failed": 0,
+    "actionResult_successful": 0,
+    "selected": false
+  }
+]

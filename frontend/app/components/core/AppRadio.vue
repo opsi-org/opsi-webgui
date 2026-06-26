@@ -8,8 +8,8 @@
   CoreAppRadio - UI library wrapper for radio button rendering.
 -->
 <template>
-	<label class="flex items-center gap-2 cursor-pointer" :class="disabled ? 'opacity-50 cursor-not-allowed' : ''">
-		<input type="radio" :checked="modelValue === value" :name="name" :disabled="disabled"
+	<label class="flex items-center gap-2 cursor-pointer" :for="inputId" :class="disabled ? 'opacity-50 cursor-not-allowed' : ''">
+		<input :id="inputId" type="radio" :checked="modelValue === value" :name="name" :disabled="disabled"
 			class="border-(--color-border) text-opsi-blue focus:ring-opsi-blue" :class="sizeClass"
 			@change="$emit('update:modelValue', value)" />
 		<span v-if="label" class="text-sm">{{ label }}</span>
@@ -32,6 +32,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 defineEmits<{ 'update:modelValue': [value: unknown] }>()
+
+const inputId = useId()
 
 const sizeClass = computed(() => {
 	switch (props.size) {
