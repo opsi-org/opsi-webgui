@@ -19,6 +19,9 @@ for i in $(seq 1 60); do
     sleep 1
 done
 
+echo "[test-entrypoint] Flushing Redis session state (CI reset)..."
+redis-cli -h redis FLUSHDB || true
+
 echo "[test-entrypoint] Initializing MySQL (idempotent)..."
 mysql -u root -e "CREATE USER IF NOT EXISTS '${MYSQL_USER:-opsi}'@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD:-opsi}';" 2>/dev/null || true
 mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_USER:-opsi}'@'localhost'; FLUSH PRIVILEGES;" 2>/dev/null || true
