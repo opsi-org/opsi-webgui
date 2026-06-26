@@ -245,7 +245,7 @@ validate:backend:
 # Smoke e2e (DE / light / desktop / Chromium) against a real opsiconfd.
 validate:e2e:smoke:
   extends: .docker-test
-  needs: [setup:spa]
+  needs: [setup:spa, validate:backend]
   variables:
     COMPOSE_PROJECT_NAME: webgui-e2e-$CI_JOB_ID
   script:
@@ -270,7 +270,7 @@ validate:e2e:smoke:
 # Full e2e matrix: nightly schedule + tags (all locales/themes/viewports/browsers).
 validate:e2e:full:
   extends: .docker-test
-  needs: [setup:spa]
+  needs: [setup:spa, validate:backend]
   variables:
     COMPOSE_PROJECT_NAME: webgui-e2e-$CI_JOB_ID
     E2E_PIPELINE_SOURCE: schedule
