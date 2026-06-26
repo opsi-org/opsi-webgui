@@ -399,10 +399,11 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
     where_depots = text("")
 
     for idx, depot in enumerate(params["depots"]):
+        params[f"depot{idx}"] = f"%{depot}%"
         if idx > 0:
-            where_depots = or_(where_depots, text(f"cs.values LIKE '%{depot}%'"))  # type: ignore[assignment]
+            where_depots = or_(where_depots, text(f"cs.values LIKE :depot{idx}"))  # type: ignore[assignment]
         else:
-            where_depots = text(f"cs.values LIKE '%{depot}%'")
+            where_depots = text(f"cs.values LIKE :depot{idx}")
         if depot == get_configserver_id():
             where_depots = or_(where_depots, text("cs.values IS NULL"))  # type: ignore[assignment]
 
@@ -539,10 +540,11 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
         }
 
     for idx, depot in enumerate(params["depots"]):
+        params[f"depot{idx}"] = f"%{depot}%"
         if idx > 0:
-            where_depots = or_(where_depots, text(f"cs.values LIKE '%{depot}%'"))  # type: ignore[assignment]
+            where_depots = or_(where_depots, text(f"cs.values LIKE :depot{idx}"))  # type: ignore[assignment]
         else:
-            where_depots = text(f"cs.values LIKE '%{depot}%'")
+            where_depots = text(f"cs.values LIKE :depot{idx}")
         if depot == get_configserver_id():
             where_depots = or_(where_depots, text("cs.values IS NULL"))  # type: ignore[assignment]
 
@@ -699,9 +701,9 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
                 query = (
                     select(text("g.groupId AS group_id, g.type AS group_type"))
                     .select_from(table("GROUP").alias("g"))
-                    .where(text(f"g.parentGroupId='{group_id}'"))
+                    .where(text("g.parentGroupId = :group_id"))
                 )
-                result = session.execute(query)
+                result = session.execute(query, {"group_id": group_id})
                 result = result.fetchall()
 
                 for row in result:
@@ -710,9 +712,9 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
                 query = (
                     select(text("objectId"))
                     .select_from(table("OBJECT_TO_GROUP"))
-                    .where(text(f"groupId='{group_id}'"))
+                    .where(text("groupId = :group_id"))
                 )
-                result2 = session.execute(query)
+                result2 = session.execute(query, {"group_id": group_id})
                 result2 = result2.fetchall()
                 for row in result2:
                     if row:
@@ -781,9 +783,9 @@ def find_parent(group: str) -> str | None:
                 )
             )
             .select_from(table("GROUP").alias("g"))
-            .where(text(f"g.groupId = '{group}'"))
+            .where(text("g.groupId = :group"))
         )  # pylint: disable=redefined-outer-name
-        result = session.execute(query)
+        result = session.execute(query, {"group": group})
         parent_id = result.fetchone()
         if parent_id:
             return parent_id["parent_id"]
@@ -887,10 +889,10 @@ def update_server(request: Request, server_id: str, server: Server) -> RESTRespo
                         *[column(key) for key in vars(server).keys()],  # pylint: disable=consider-iterating-dictionary
                     )
                 )
-                .where(text(f"hostId='{server_id}'"))
+                .where(text("hostId = :server_id"))
                 .values(values)
             )
-            session.execute(query)
+            session.execute(query, {"server_id": server_id})
 
             headers = {"Location": f"{request.url}/{server.hostId}"}
 

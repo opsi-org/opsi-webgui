@@ -581,9 +581,9 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
                 )
             )
             .select_from(table("CONFIG").alias("c"))
-            .where(text(f"configId = '{config.configId}'"))
+            .where(text("configId = :config_id"))
         )  # pylint: disable=redefined-outer-name
-        result = session.execute(query)
+        result = session.execute(query, {"config_id": config.configId})
         result = result.fetchall()
         config_result = dict(result[0]) if result and len(result) > 0 else None
         if not config_result:
@@ -605,9 +605,9 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
                 )
             )
             .select_from(table("CONFIG_VALUE").alias("cv"))
-            .where(text(f"cv.configId = '{config.configId}'"))
+            .where(text("cv.configId = :config_id"))
         )
-        result = session.execute(query)
+        result = session.execute(query, {"config_id": config.configId})
         result = result.fetchall()
         config_values = []
         for row in result:
