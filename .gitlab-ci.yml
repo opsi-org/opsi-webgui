@@ -270,7 +270,10 @@ validate:e2e:smoke:
 # Full e2e matrix: nightly schedule + tags (all locales/themes/viewports/browsers).
 validate:e2e:full:
   extends: .docker-test
-  needs: [setup:spa, validate:backend]
+  needs:
+    - job: setup:spa
+    - job: validate:backend
+      optional: true
   variables:
     COMPOSE_PROJECT_NAME: webgui-e2e-$CI_JOB_ID
     E2E_PIPELINE_SOURCE: schedule
