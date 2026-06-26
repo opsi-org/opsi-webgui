@@ -65,9 +65,10 @@
                 <div v-else class="flex-1 overflow-auto p-2 space-y-0.5">
                     <template v-for="rootGroup in filteredTreeGroups" :key="rootGroup.id">
                         <div v-if="activeGroupType === 'clients'"
-                            class="flex items-center justify-between font-heading text-xs text-(--color-text) px-2 py-2 mt-3 first:mt-1 cursor-pointer select-none"
-                            @click="collapsedSections.has(rootGroup.id) ? collapsedSections.delete(rootGroup.id) : collapsedSections.add(rootGroup.id)">
-                            <div class="flex items-center gap-1.5">
+                            class="flex items-center justify-between font-heading text-xs text-(--color-text) px-2 py-2 mt-3 first:mt-1 select-none">
+                            <button type="button"
+                                class="flex items-center gap-1.5 flex-1 min-w-0 text-left bg-transparent border-0 p-0 cursor-pointer"
+                                @click="collapsedSections.has(rootGroup.id) ? collapsedSections.delete(rootGroup.id) : collapsedSections.add(rootGroup.id)">
                                 <CoreAppIcon
                                     :name="collapsedSections.has(rootGroup.id) ? icons.chevronRight : icons.chevronDown"
                                     class="w-3.5 h-3.5 text-(--color-text-muted)" />
@@ -79,7 +80,7 @@
                                             ?
                                             $t('clients.directory') : rootGroup.label }}</span>
                                 </CoreAppTooltip>
-                            </div>
+                            </button>
                             <CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('groups.create')"
                                 :aria-label="String($t('groups.create'))" @click.stop="openCreateModal(rootGroup.id)">
                                 <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold"
@@ -103,6 +104,7 @@
                 </div>
             </div>
 
+            <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- pointer-only drag resize handle; not keyboard operable by design -->
             <div v-if="!isMobile" @mousedown="startResize"
                 class="w-1 cursor-col-resize bg-transparent hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors shrink-0 relative group">
                 <div
@@ -145,6 +147,7 @@
                         </div>
                     </div>
 
+                    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- keyboard navigation container for member list (roving focus) -->
                     <div class="flex-1 overflow-auto p-4 space-y-4 outline-none" tabindex="-1"
                         @keydown="handleMemberListKeydown">
                         <div class="pt-4 border-(--color-border)">
@@ -192,7 +195,10 @@
                                 <div v-for="member in displayedMembers" :key="member"
                                     class="flex items-center gap-2 text-sm px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/member cursor-pointer select-none"
                                     :class="selectedMembers.includes(member) ? 'bg-opsi-blue/5' : ''"
-                                    @click="!selectedGroup.isSpecial && toggleMemberSelection(member, $event)">
+                                    role="button" tabindex="0"
+                                    @click="!selectedGroup.isSpecial && toggleMemberSelection(member, $event)"
+                                    @keydown.enter="!selectedGroup.isSpecial && toggleMemberSelection(member, $event)"
+                                    @keydown.space.prevent="!selectedGroup.isSpecial && toggleMemberSelection(member, $event)">
                                     <CoreAppCheckbox v-if="!selectedGroup.isSpecial"
                                         :model-value="selectedMembers.includes(member)" class="shrink-0" @click.stop />
                                     <CoreAppIcon :name="activeGroupType === 'clients' ? icons.client : icons.product"
@@ -247,8 +253,7 @@
                     </template>
                     <CoreAppForm @submit="doCreateGroup" class="space-y-5">
                         <CoreAppFormField :label="$t('groups.id')" required>
-                            <CoreAppInput v-model="createForm.groupId" :placeholder="$t('groups.id')" class="w-full"
-                                autofocus />
+                            <CoreAppInput v-model="createForm.groupId" :placeholder="$t('groups.id')" class="w-full" />
                         </CoreAppFormField>
                         <CoreAppFormField :label="$t('common.description')">
                             <CoreAppTextarea v-model="createForm.description" :placeholder="$t('common.description')" :rows="2"
@@ -363,6 +368,7 @@
                                 @click="showAddMembersModal = false" />
                         </div>
                     </template>
+                    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- keyboard navigation container for available members list -->
                     <div class="space-y-3" tabindex="-1" @keydown="handleAddMembersKeydown">
                         <CoreAppFilterInput v-model="availableMembersSearch" size="sm" />
                         <div v-if="loadingMembers" class="py-4 text-center">
@@ -370,7 +376,7 @@
                         </div>
                         <template v-else>
                             <div class="flex items-center justify-between px-1">
-                                <label class="flex items-center gap-2 cursor-pointer">
+                                <span class="flex items-center gap-2 cursor-pointer">
                                     <CoreAppCheckbox
                                         :model-value="selectedNewMembers.length === filteredAvailableMembers.length && filteredAvailableMembers.length > 0"
                                         :indeterminate="selectedNewMembers.length > 0 && selectedNewMembers.length < filteredAvailableMembers.length"
@@ -382,19 +388,22 @@
                                         <kbd
                                             class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
                                     </span>
-                                </label>
+                                </span>
                                 <span class="text-xs text-(--color-text-muted)">{{ selectedNewMembers.length }} {{
                                     $t('common.selected') }}</span>
                             </div>
                             <div class="border border-(--color-border) rounded-lg overflow-hidden">
                                 <div class="max-h-60 overflow-auto">
-                                    <label v-for="item in filteredAvailableMembers" :key="item"
+                                    <span v-for="item in filteredAvailableMembers" :key="item"
                                         class="flex items-center gap-2 px-3 py-2 hover:bg-(--color-surface-hover) cursor-pointer border-b border-(--color-border) last:border-b-0 text-(--color-text)"
                                         :class="selectedNewMembers.includes(item) ? 'bg-opsi-blue/5' : ''"
-                                        @click.prevent="toggleNewMemberSelection(item, $event)">
+                                        role="button" tabindex="0"
+                                        @click.prevent="toggleNewMemberSelection(item, $event)"
+                                        @keydown.enter.prevent="toggleNewMemberSelection(item, $event)"
+                                        @keydown.space.prevent="toggleNewMemberSelection(item, $event)">
                                         <CoreAppCheckbox :model-value="selectedNewMembers.includes(item)" />
                                         <span class="text-sm truncate">{{ item }}</span>
-                                    </label>
+                                    </span>
                                     <div v-if="filteredAvailableMembers.length === 0"
                                         class="text-sm text-(--color-text-muted) py-4 text-center">
                                         {{ availableMembersSearch ? $t('common.noResults') : $t('common.noData') }}
@@ -513,10 +522,10 @@ const lastClickedNewMember = ref<string | null>(null)
 const containerRef = ref<HTMLElement | null>(null)
 const isMobile = ref(false)
 const showSidebar = ref(true)
-const sidebarWidthPercent = ref(25)
+const sidebarWidthPercent = ref(50)
 const isResizing = ref(false)
-const minSidebarPercent = 15
-const maxSidebarPercent = 50
+const minSidebarPercent = 20
+const maxSidebarPercent = 65
 const expandedGroupIds = ref<Set<string>>(new Set())
 const collapsedSections = ref<Set<string>>(new Set())
 
@@ -680,7 +689,7 @@ function selectGroup(group: GroupTreeNodeData) {
     }
 }
 
-function toggleMemberSelection(member: string, event?: MouseEvent) {
+function toggleMemberSelection(member: string, event?: MouseEvent | KeyboardEvent) {
     if (event?.shiftKey && lastClickedMember.value) {
         const list = filteredMembers.value
         const from = list.indexOf(lastClickedMember.value)
@@ -709,7 +718,7 @@ function toggleMemberSelection(member: string, event?: MouseEvent) {
     lastClickedMember.value = member
 }
 
-function toggleNewMemberSelection(item: string, event?: MouseEvent) {
+function toggleNewMemberSelection(item: string, event?: MouseEvent | KeyboardEvent) {
     if (event?.shiftKey && lastClickedNewMember.value) {
         const list = filteredAvailableMembers.value
         const from = list.indexOf(lastClickedNewMember.value)

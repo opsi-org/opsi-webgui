@@ -4,7 +4,9 @@ set -e
 
 if [ -f /workspace/docker/.env ]; then
     set -a
-    source /workspace/docker/.env
+    set +e
+    source /workspace/docker/.env 2>/dev/null
+    set -e
     set +a
 fi
 

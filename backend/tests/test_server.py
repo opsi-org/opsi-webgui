@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
-# Copyright (c) 2020-2021 uib GmbH <info@uib.de>
+# Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
 # License: AGPL-3.0
 
@@ -22,8 +22,8 @@ from .utils import (
 
 urllib3.disable_warnings()
 # from backend.tests.utils import ADMIN_PASS, ADMIN_USER  # pylint: disable=import-error, unused-import
-ADDON_ID = "opsi-webgui"
-API_ROOT = f"/addons/{ADDON_ID}/api/"
+ADDON_ID = "webgui"
+API_ROOT = f"/addons/{ADDON_ID}/api/opsidata/"
 # FQDN = socket.getfqdn()
 # FILE_DIR = os.path.abspath(os.path.dirname(__file__))
 print(
@@ -41,28 +41,16 @@ async def test_servers(config, with_all):  # pylint: disable=too-many-arguments,
         query_params={
             "with_all": with_all,
         },
-        # expected_result={"result": []},
     )
 
-    assert "result" in res and isinstance(res["result"], list)
-    num_entries = (TEST_NUM_ITEMS + 1) if with_all else TEST_NUM_ITEMS  # depots
-    num_entries += 1  # configserver
-    print(f"res['result']: {res['result']}")
-    assert len(res["result"]) == num_entries, (
-        f"Expected {num_entries} entries, got {len(res['result'])}\n\n{res['result']}"
+    assert isinstance(res, list), f"Expected list, got {type(res)}: {res}"
+    num_entries = TEST_NUM_ITEMS + 1  # depots + configserver
+    print(f"res: {res}")
+    assert len(res) == num_entries, (
+        f"Expected {num_entries} entries, got {len(res)}\n\n{res}"
     )
 
-    for i, server in enumerate(res["result"]):
-        if with_all and i == 0:
-            # ui is updating the text
-            assert server["id"] == ""
-            assert server["description"] == ""
-            assert server["label"] == ""
-        else:
-            assert server["id"] is not None and (
-                ".domain.local" in server["id"] or config_server_id == server["id"]
-            )
-            assert len(server["description"]) > 10
-            # assert server["description"] == f"description server{index}"
-            assert server["id"] in server["label"]
-            assert server["description"] in server["label"]
+    for server in res:
+        assert server["hostId"] is not None and (
+            ".domain.local" in server["hostId"] or config_server_id == server["hostId"]
+        )

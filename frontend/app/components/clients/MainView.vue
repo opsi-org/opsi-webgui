@@ -120,7 +120,7 @@
 			<template v-else-if="panelType === 'clone'">{{ $t('clients.clone.title') }}</template>
 		</template>
 		<template #panel>
-			<div v-if="panelClient" class="h-full">
+			<div v-if="panelClient" class="h-full flex flex-col min-h-0">
 				<HostsConfigTabs v-if="panelType === 'config'" ref="configTabsRef" :host-id="panelClient.clientId"
 					host-type="client" :tab="panelTab" panel-mode :readonly="isReadOnly"
 					@update:tab="panelTab = $event" />

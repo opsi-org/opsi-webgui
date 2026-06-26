@@ -56,26 +56,26 @@
 							<div class="flex-1 space-y-2">
 								<div class="grid grid-cols-2 gap-2">
 									<div>
-										<label class="text-xs text-(--color-text-muted) block mb-1">
+										<span class="text-xs text-(--color-text-muted) block mb-1">
 											{{ $t('products.status') }}
-										</label>
+										</span>
 										<CoreAppSelect v-model="filters.installationStatus"
 											:items="installationStatusOptions" size="xs" class="w-full"
 											@update:model-value="fetchPreview" />
 									</div>
 									<div>
-										<label class="text-xs text-(--color-text-muted) block mb-1">
+										<span class="text-xs text-(--color-text-muted) block mb-1">
 											{{ $t('actions.result') }}
-										</label>
+										</span>
 										<CoreAppSelect v-model="filters.actionResult" :items="actionResultOptions"
 											size="xs" class="w-full" @update:model-value="fetchPreview" />
 									</div>
 								</div>
-								<label class="flex items-center gap-2 cursor-pointer">
+								<span class="flex items-center gap-2 cursor-pointer">
 									<CoreAppCheckbox v-model="filters.outdatedOnly"
 										@update:model-value="fetchPreview" />
 									<span class="text-xs">{{ $t('products.outdated.onClient') }}</span>
-								</label>
+								</span>
 							</div>
 						</div>
 

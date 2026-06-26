@@ -16,16 +16,15 @@
 				<div :class="[
 					'flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors group/node',
 					'hover:bg-(--color-surface-hover)',
-				]" :style="{ paddingLeft: `${8 + getDepth(node.key) * 16}px` }" @click="toggle(node.key)">
+				]" :style="{ paddingLeft: `${8 + getDepth(node.key) * 16}px` }" role="button" tabindex="0" @click="toggle(node.key)" @keydown.enter="toggle(node.key)" @keydown.space.prevent="toggle(node.key)">
 					<span v-for="i in getDepth(node.key)" :key="i" class="tree-guide-line"
 						:style="{ left: `${8 + (i - 1) * 16}px` }" />
-					<CoreAppButton variant="ghost" color="neutral" size="xs" class="w-5! h-5! p-0! shrink-0" :class="open[node.key]
+					<span aria-hidden="true" class="inline-flex items-center justify-center w-5 h-5 rounded shrink-0" :class="open[node.key]
 						? 'text-(--color-primary) bg-primary/10'
-						: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
-						@click.stop="toggle(node.key)">
+						: 'text-(--color-text-muted)'">
 						<CoreAppIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
 							:class="{ 'rotate-90': open[node.key] }" />
-					</CoreAppButton>
+					</span>
 					<span class="text-sm flex-1 truncate transition-colors"
 						:class="open[node.key] ? 'font-medium' : ''">
 						{{ node.label }}
@@ -52,7 +51,8 @@
 							</span>
 							<CoreAppTooltip v-if="node.param.description" :text="node.param.description">
 								<CoreAppButton size="xs" :icon="icons.info" variant="ghost" color="neutral"
-									class="shrink-0 opacity-60 hover:opacity-100" tabindex="-1" />
+									class="shrink-0 opacity-60 hover:opacity-100" tabindex="-1"
+									:aria-label="node.param.description" />
 							</CoreAppTooltip>
 							<span v-if="changedParams.has(node.param.configId)"
 								class="inline-flex items-center text-xs text-(--color-changed-text) ml-0.5">
@@ -136,7 +136,9 @@ function isPasswordParam(configId: string): boolean {
 }
 
 function buildTree(params: Param[]): TreeNode[] {
-	const root: Record<string, any> = {}
+	type ParamLeaf = { __param: Param }
+	type ParamBranch = Map<string, ParamLeaf | ParamBranch>
+	const root: ParamBranch = new Map()
 	for (const p of params) {
 		const parts = p.configId.split('.')
 		let node = root
@@ -144,24 +146,30 @@ function buildTree(params: Param[]): TreeNode[] {
 			const part = parts[i]
 			if (!part) continue
 			if (i === parts.length - 1) {
-				node[part] = { __param: p }
+				node.set(part, { __param: p })
 			} else {
-				node[part] = node[part] || {}
-				node = node[part]
+				const existing = node.get(part)
+				if (existing instanceof Map) {
+					node = existing
+				} else {
+					const branch: ParamBranch = new Map()
+					node.set(part, branch)
+					node = branch
+				}
 			}
 		}
 	}
-	function toTree(obj: Record<string, any>, prefix = ''): TreeNode[] {
-		const entries = Object.entries(obj)
+	function toTree(obj: ParamBranch, prefix = ''): TreeNode[] {
+		const entries = [...obj.entries()]
 		entries.sort(([, a], [, b]) => {
-			const aIsParam = a && typeof a === 'object' && '__param' in a
-			const bIsParam = b && typeof b === 'object' && '__param' in b
+			const aIsParam = !(a instanceof Map)
+			const bIsParam = !(b instanceof Map)
 			if (aIsParam && !bIsParam) return 1
 			if (!aIsParam && bIsParam) return -1
 			return 0
 		})
 		return entries.map(([key, value]) => {
-			if (value && typeof value === 'object' && '__param' in value) {
+			if (!(value instanceof Map)) {
 				return { key: prefix + key, label: key, param: value.__param, leafCount: 1 }
 			} else {
 				const children = toTree(value, prefix + key + '.')

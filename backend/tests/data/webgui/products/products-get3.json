@@ -1,0 +1,70 @@
+[
+  {
+    "productId": "pytest-prod-0",
+    "name": "Pytest dummy PRODUCT 0",
+    "priority": 60,
+    "description": null,
+    "advice": null,
+    "selectedDepots": [
+      "opsi.test.local"
+    ],
+    "selectedClients": null,
+    "installationStatusErrorLevel": 2,
+    "installationStatus": "not_installed",
+    "actionRequest": "none",
+    "actionProgress": "",
+    "actionResultErrorLevel": 2,
+    "actionResult": "none",
+    "clientVersions": null,
+    "client_version_outdated": false,
+    "actions": [
+      "setup",
+      "uninstall",
+      "none"
+    ],
+    "depot_version_diff": false,
+    "not_on_all_depots": true,
+    "numDepots": 1,
+    "depotVersions": [
+      "1.0-1"
+    ],
+    "productType": "LocalbootProduct",
+    "selected": 0
+  },
+  {
+    "productId": "pytest-prod-1",
+    "name": "Pytest dummy PRODUCT 1",
+    "priority": 61,
+    "description": null,
+    "advice": null,
+    "selectedDepots": [
+      "opsi.test.local"
+    ],
+    "selectedClients": [
+      "pytest-client-1.domain.local"
+    ],
+    "installationStatusErrorLevel": 2,
+    "installationStatus": "not_installed",
+    "actionRequest": "setup",
+    "actionProgress": "",
+    "actionResultErrorLevel": 2,
+    "actionResult": "none",
+    "clientVersions": [
+      "1.0-1"
+    ],
+    "client_version_outdated": false,
+    "actions": [
+      "setup",
+      "uninstall",
+      "none"
+    ],
+    "depot_version_diff": false,
+    "not_on_all_depots": true,
+    "numDepots": 1,
+    "depotVersions": [
+      "1.0-1"
+    ],
+    "productType": "LocalbootProduct",
+    "selected": 0
+  }
+]

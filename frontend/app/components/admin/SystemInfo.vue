@@ -9,10 +9,10 @@
 -->
 
 <template>
-	<CoreAppCard>
+	<CoreAppCard fill scrollable>
 		<template #header>
 			<div class="flex items-center justify-between">
-				<h3 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('diag.systemInfo') }}</h3>
+				<h2 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('diag.systemInfo') }}</h2>
 			</div>
 		</template>
 		<div class="system-info-tree">
@@ -23,7 +23,10 @@
 				<!-- System properties node -->
 				<div v-if="Object.keys(filteredSystemInfo).length > 0" class="tree-node">
 					<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
-						@click="toggleNode('_system')">
+						role="button" tabindex="0"
+						@click="toggleNode('_system')"
+						@keydown.enter="toggleNode('_system')"
+						@keydown.space.prevent="toggleNode('_system')">
 						<CoreAppButton variant="ghost" color="neutral" size="xs" class="w-5! h-5! p-0! shrink-0"
 							:class="expanded['_system'] ? 'text-(--color-primary) bg-primary/10' : 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
 							@click.stop="toggleNode('_system')">
@@ -71,7 +74,10 @@
 					<div v-if="typeof values === 'object' && values !== null && Object.keys(values as object).length > 0"
 						class="tree-node">
 						<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
-							@click="toggleNode(String(category))">
+							role="button" tabindex="0"
+							@click="toggleNode(String(category))"
+							@keydown.enter="toggleNode(String(category))"
+							@keydown.space.prevent="toggleNode(String(category))">
 							<CoreAppButton variant="ghost" color="neutral" size="xs" class="w-5! h-5! p-0! shrink-0"
 								:class="expanded[String(category)] ? 'text-(--color-primary) bg-primary/10' : 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
 								@click.stop="toggleNode(String(category))">
@@ -91,8 +97,10 @@
 								<!-- Nested object child -->
 								<div v-if="isComplexValue(v)" class="tree-node">
 									<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
-										style="padding-left: 24px;"
-										@click="toggleNode(String(category) + '.' + String(k))">
+										style="padding-left: 24px;" role="button" tabindex="0"
+										@click="toggleNode(String(category) + '.' + String(k))"
+										@keydown.enter="toggleNode(String(category) + '.' + String(k))"
+										@keydown.space.prevent="toggleNode(String(category) + '.' + String(k))">
 										<span class="tree-guide-line" style="left: 8px;" />
 										<CoreAppButton variant="ghost" color="neutral" size="xs"
 											class="w-5! h-5! p-0! shrink-0"

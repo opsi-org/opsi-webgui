@@ -8,7 +8,8 @@
   SettingsThemeToggle - Dark/light theme toggle switch.
 -->
 <template>
-  <CoreAppButton @click="toggleTheme" color="primary" size="xs"
+  <CoreAppButton @click="toggleTheme" color="primary" size="xs" data-testid="theme-toggle"
+    :data-theme="isDarkMode ? 'dark' : 'light'"
     :aria-label="isDarkMode ? $t('settings.theme.light') : $t('settings.theme.dark')">
     <CoreAppIcon :name="isDarkMode ? icons.themeDark : icons.themeLight" class="w-3.5 h-3.5" />
     <span class="text-xs font-medium">{{ isDarkMode ? $t('settings.theme.dark') : $t('settings.theme.light') }}</span>

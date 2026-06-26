@@ -49,6 +49,14 @@ PUBLIC_PATHS = ["/app", "/api/user/opsiserver", "/api/auth/status", "/api/auth/s
 logger = get_logger()
 
 
+class SPAStaticFiles(StaticFiles):
+    async def get_response(self, path: str, scope: Any) -> Any:
+        response = await super().get_response(path, scope)
+        if response.status_code == status.HTTP_404_NOT_FOUND:
+            response = await super().get_response("index.html", scope)
+        return response
+
+
 class Webgui(Addon, metaclass=Singleton):
     id = ADDON_ID
     name = ADDON_NAME
@@ -85,7 +93,9 @@ class Webgui(Addon, metaclass=Singleton):
 
         app.mount(
             path=f"{self.router_prefix}/app",
-            app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True),
+            app=SPAStaticFiles(
+                directory=os.path.join(self.data_path, "app"), html=True
+            ),
             name="app",
         )
 

@@ -27,7 +27,7 @@
                     'bg-(--color-success-soft-bg)'
                 ]">
                     <div class="text-2xl font-bold text-(--color-success-soft-text)">{{ stats.ok }}</div>
-                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('diag.passed') }}</div>
+                    <div class="text-xs text-(--color-text) mt-1">{{ $t('diag.passed') }}</div>
                 </CoreAppButton>
                 <CoreAppButton @click="filterByStatus('warning')" variant="ghost" color="neutral" :class="[
                     'p-4! rounded-lg border transition-all text-center cursor-pointer hover:shadow-md h-auto! flex-col!',
@@ -35,7 +35,7 @@
                     'bg-(--color-warning-soft-bg)'
                 ]">
                     <div class="text-2xl font-bold text-(--color-warning-soft-text)">{{ stats.warning }}</div>
-                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('common.warnings') }}</div>
+                    <div class="text-xs text-(--color-text) mt-1">{{ $t('common.warnings') }}</div>
                 </CoreAppButton>
                 <CoreAppButton @click="filterByStatus('error')" variant="ghost" color="neutral" :class="[
                     'p-4! rounded-lg border transition-all text-center cursor-pointer hover:shadow-md h-auto! flex-col!',
@@ -43,7 +43,7 @@
                     'bg-(--color-error-soft-bg)'
                 ]">
                     <div class="text-2xl font-bold text-(--color-error-soft-text)">{{ stats.error }}</div>
-                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('common.errors') }}</div>
+                    <div class="text-xs text-(--color-text) mt-1">{{ $t('common.errors') }}</div>
                 </CoreAppButton>
                 <CoreAppButton @click="activeTab = 'modules'; statusFilter = ''" variant="ghost" color="neutral" :class="[
                     'p-4! rounded-lg border transition-all text-center cursor-pointer hover:shadow-md h-auto! flex-col!',
@@ -51,7 +51,7 @@
                     'bg-(--color-primary-soft-bg)'
                 ]">
                     <div class="text-2xl font-bold text-(--color-primary-soft-text)">{{ modules.length }}</div>
-                    <div class="text-xs text-(--color-text-muted) mt-1">{{ $t('mods.title') }}</div>
+                    <div class="text-xs text-(--color-text) mt-1">{{ $t('mods.title') }}</div>
                 </CoreAppButton>
             </div>
 
@@ -62,7 +62,7 @@
             </div>
         </template>
 
-        <div class="space-y-4">
+        <div class="flex flex-col h-full min-h-0">
             <AdminHealthCheck v-if="activeTab === 'healthcheck'" :filteredHealthData="filteredHealthData"
                 :loading="loading" :stats="stats" :statusFilter="statusFilter" :icons="icons" :expanded="expanded"
                 @toggleExpand="toggleExpand" @filterByStatus="filterByStatus"

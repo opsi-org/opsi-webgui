@@ -9,6 +9,7 @@
 -->
 <template>
   <CoreAppCard class="shadow-lg bg-(--color-background)">
+    <h1 class="sr-only">{{ $t('auth.login') }}</h1>
     <div class="text-center mb-6">
       <CoreAppImage :src="isDark ? '~/assets/images/opsi-webgui-dark.svg' : '~/assets/images/opsi-webgui-light.svg'"
         alt="opsi-WebGUI Logo" image-class="mx-auto mb-2 h-50" />
@@ -83,7 +84,7 @@ onMounted(async () => {
   try {
     const result = await getConfigServer()
     if (result.data) {
-      configServerName.value = typeof result.data === 'string' ? result.data : (result.data as any)?.result || ''
+      configServerName.value = typeof result.data === 'string' ? result.data : (result.data as { result?: string })?.result || ''
     }
     if (result.error) {
       errorMessage.value = ` ${result.error.message || ''}`

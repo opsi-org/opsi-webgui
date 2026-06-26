@@ -15,7 +15,7 @@
       <CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 transition-transform" :class="{ 'rotate-180': open }" />
     </CoreAppButton>
     <Transition :name="direction === 'up' ? 'dropdown-up' : 'dropdown'">
-      <div v-if="open" :class="[
+      <div v-if="open" data-testid="language-dropdown-menu" :class="[
         'absolute right-0 min-w-32 bg-(--color-surface-elevated) border border-(--color-border) rounded-lg shadow-lg z-50 py-1',
         direction === 'up' ? 'bottom-full mb-1' : 'top-full mt-1'
       ]">

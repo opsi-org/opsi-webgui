@@ -29,7 +29,7 @@ const routeTab = computed((): string => {
 	const t = route.params.tab
 	const val = (Array.isArray(t) ? t[0] : (t as string)) || ''
 	const normalized = TAB_ALIASES[val] || val
-	return VALID_TABS.includes(normalized as any) ? normalized : 'parameters'
+	return VALID_TABS.includes(normalized as (typeof VALID_TABS)[number]) ? normalized : 'parameters'
 })
 
 const routeClientId = computed((): string => {

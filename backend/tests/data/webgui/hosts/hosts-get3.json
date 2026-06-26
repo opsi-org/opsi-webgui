@@ -1,0 +1,24 @@
+[
+  {
+    "hostId": "pytest-test-depot-9.domain.local",
+    "type": "OpsiDepotserver",
+    "description": "depot description of pytest-test-depot-9.domain.local",
+    "notes": "",
+    "hardwareAddress": null,
+    "ipAddress": null,
+    "inventoryNumber": "",
+    "systemUUID": null,
+    "uefi": false
+  },
+  {
+    "hostId": "pytest-test-depot-8.domain.local",
+    "type": "OpsiDepotserver",
+    "description": "depot description of pytest-test-depot-8.domain.local",
+    "notes": "",
+    "hardwareAddress": null,
+    "ipAddress": null,
+    "inventoryNumber": "",
+    "systemUUID": null,
+    "uefi": false
+  }
+]

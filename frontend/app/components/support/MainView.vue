@@ -11,7 +11,7 @@
     <LayoutsPageLayout :showFilter="false" :showRefresh="false">
         <div class="w-full p-4 flex flex-col gap-6 h-full min-h-[calc(100vh-120px)]">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <CoreAppCard>
+                <CoreAppCard fill>
                     <template #header>
                         <CoreAppHeading :icon="icons.support" :text="$t('support.pro')" />
                     </template>
@@ -19,7 +19,7 @@
                     <CoreAppButton variant="soft" color="neutral" block as="a" :href="supportUrl" target="_blank">{{
                         $t('support.title') }}</CoreAppButton>
                 </CoreAppCard>
-                <CoreAppCard>
+                <CoreAppCard fill>
                     <template #header>
                         <CoreAppHeading :icon="icons.users" :text="$t('support.community')" />
                     </template>
@@ -28,7 +28,7 @@
                         target="_blank">
                         {{ $t('support.forum') }}</CoreAppButton>
                 </CoreAppCard>
-                <CoreAppCard class="h-full">
+                <CoreAppCard fill>
                     <template #header>
                         <CoreAppHeading :icon="icons.document" :text="$t('support.docs')" />
                     </template>

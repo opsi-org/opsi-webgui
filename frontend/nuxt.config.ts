@@ -148,6 +148,7 @@ export default defineNuxtConfig({
 
   // Proxy API requests to backend during development to avoid CORS issues
   nitro: {
+    ...(process.env.NITRO_OUTPUT_DIR ? { output: { dir: process.env.NITRO_OUTPUT_DIR } } : {}),
     devProxy: {
       '/addons/webgui/api': {
         target: 'https://localhost:' + CONFD_PORT + '/addons/webgui/api',

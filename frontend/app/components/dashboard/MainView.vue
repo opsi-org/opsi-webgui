@@ -9,12 +9,15 @@
 -->
 <template>
     <LayoutsPageLayout :show-filter="false" :show-refresh="true" :loading="loading" @refresh="refreshAll">
-        <div class="h-full flex flex-col min-h-0 overflow-y-auto gap-2 lg:gap-3">
+        <div class="@container h-full flex flex-col min-h-0 overflow-y-auto gap-2 lg:gap-3">
             <!-- Row 1: Config Server, Health Check, User Config & Restrictions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 shrink-0">
+            <div class="grid grid-cols-1 @2xl:grid-cols-2 @5xl:grid-cols-4 gap-2 lg:gap-3 shrink-0">
                 <DashboardInfoCard :icon="icons.serverStack" :label="$t('servers.config')" :value="serverHostname" />
                 <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                    @click="navigateTo('/admin/diagnostics/healthcheck')">
+                    role="button" tabindex="0"
+                    @click="navigateTo('/admin/diagnostics/healthcheck')"
+                    @keydown.enter="navigateTo('/admin/diagnostics/healthcheck')"
+                    @keydown.space.prevent="navigateTo('/admin/diagnostics/healthcheck')">
                     <div class="flex items-center gap-2 mb-3 mt-2">
                         <CoreAppIcon :name="icons.health" class="w-5 h-5" />
                         <CoreAppHeading size="xs">{{ $t('diag.health') }}</CoreAppHeading>
@@ -33,7 +36,7 @@
                 </div>
 
                 <!-- User Config + Restrictions Card -->
-                <div class="opsi-card md:col-span-2">
+                <div class="opsi-card @2xl:col-span-2">
                     <div class="flex items-center gap-3 mb-3">
                         <CoreAppIcon :name="icons.user" class="w-4.5 h-4.5" />
                         <div class="flex-1 min-w-0">
@@ -58,7 +61,10 @@
             <!-- Row 2: System Info -->
             <div class="shrink-0">
                 <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                    @click="navigateTo('/admin/diagnostics/system')">
+                    role="button" tabindex="0"
+                    @click="navigateTo('/admin/diagnostics/system')"
+                    @keydown.enter="navigateTo('/admin/diagnostics/system')"
+                    @keydown.space.prevent="navigateTo('/admin/diagnostics/system')">
                     <div class="flex items-center gap-2 mb-2">
                         <CoreAppIcon :name="icons.server" class="w-5 h-5" />
                         <CoreAppHeading size="xs">{{ $t('diag.systemInfo') }}</CoreAppHeading>
@@ -82,13 +88,16 @@
             </div>
 
             <!-- Row 3: Stat Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 shrink-0">
+            <div class="grid grid-cols-2 @5xl:grid-cols-4 gap-2 lg:gap-3 shrink-0">
                 <DashboardStatCard :icon="icons.server" :value="depotCount" :label="$t('dashboard.totalServers')"
                     @click="navigateTo('/servers')" />
 
                 <!-- Clients stat card -->
                 <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                    @click="navigateTo('/clients')">
+                    role="button" tabindex="0"
+                    @click="navigateTo('/clients')"
+                    @keydown.enter="navigateTo('/clients')"
+                    @keydown.space.prevent="navigateTo('/clients')">
                     <div class="flex items-center justify-between mb-1">
                         <CoreAppIcon :name="icons.client" class="w-5 h-5" />
                         <CoreAppIcon :name="icons.chevronRight"
@@ -129,7 +138,10 @@
                 <!-- Products stat card -->
                 <CoreAppTooltipTable v-if="depotProductTooltipRows.length > 0" :rows="depotProductTooltipRows">
                     <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                        @click="navigateTo('/products')">
+                        role="button" tabindex="0"
+                        @click="navigateTo('/products')"
+                        @keydown.enter="navigateTo('/products')"
+                        @keydown.space.prevent="navigateTo('/products')">
                         <div class="flex items-center justify-between mb-2">
                             <CoreAppIcon :name="icons.product" class="w-5 h-5" />
                             <CoreAppIcon :name="icons.chevronRight"
@@ -150,7 +162,10 @@
                     </div>
                 </CoreAppTooltipTable>
                 <div v-else class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                    @click="navigateTo('/products')">
+                    role="button" tabindex="0"
+                    @click="navigateTo('/products')"
+                    @keydown.enter="navigateTo('/products')"
+                    @keydown.space.prevent="navigateTo('/products')">
                     <div class="flex items-center justify-between mb-2">
                         <CoreAppIcon :name="icons.product" class="w-5 h-5" />
                         <CoreAppIcon :name="icons.chevronRight"
@@ -162,7 +177,10 @@
 
                 <!-- Modules Card -->
                 <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                    @click="navigateTo('/admin/diagnostics/modules')">
+                    role="button" tabindex="0"
+                    @click="navigateTo('/admin/diagnostics/modules')"
+                    @keydown.enter="navigateTo('/admin/diagnostics/modules')"
+                    @keydown.space.prevent="navigateTo('/admin/diagnostics/modules')">
                     <div class="flex items-center justify-between mb-2">
                         <CoreAppImage src="~/assets/images/opsi-modules.svg"
                             dark-src="~/assets/images/opsi-modules-light.svg" alt="opsi modules"
@@ -184,7 +202,8 @@
                         size="sm" :value="Object.keys(failedClients).length" />
                 </div>
                 <div v-if="failedClients && Object.keys(failedClients).length > 0"
-                    class="space-y-1 max-h-32 overflow-y-auto">
+                    class="space-y-1 max-h-32 overflow-y-auto" tabindex="0" role="region"
+                    :aria-label="String($t('actions.failedClients'))">
                     <div v-for="(products, clientId) in failedClients" :key="clientId"
                         class="flex items-center justify-between p-2 rounded-lg">
                         <span class="text-xs truncate">
@@ -211,6 +230,12 @@ import { useUserStore } from '~/stores/userStore'
 const icons = useIcons()
 const { t: $t } = useI18n()
 const userStore = useUserStore()
+const router = useRouter()
+
+// Navigate via the router for the card click handlers below.
+function navigateTo(path: string) {
+    return router.push(path)
+}
 const {
     diagnosticsData: sharedDiagData,
     healthCounts: sharedHealthCounts,

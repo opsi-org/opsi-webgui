@@ -34,20 +34,19 @@
 				<div v-if="filteredServers.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">
 					{{ $t('common.noResults') }}
 				</div>
-				<div v-for="server in filteredServers" :key="server.serverId" v-clickable
-					class="flex items-center gap-2 px-2 py-1.5 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer"
-					@click="toggleServer(server.serverId)">
+				<div v-for="server in filteredServers" :key="server.serverId"
+					class="flex items-center gap-2 px-2 py-1.5 rounded text-sm hover:bg-(--color-surface-hover)">
 					<CoreAppCheckbox :model-value="selectionStore.selectedServers.includes(server.serverId)" size="xs"
-						:aria-label="server.serverId" @click.stop @update:model-value="toggleServer(server.serverId)" />
-					<div class="flex-1 min-w-0">
-						<div class="flex items-center gap-1.5">
-							<CoreAppIcon :name="server.isConfigServer ? icons.serverStack : icons.server"
-								class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
-							<span class="truncate" :class="server.isConfigServer ? 'font-medium' : ''">{{
-								server.serverId
-							}}</span>
-						</div>
-					</div>
+						:aria-label="server.serverId" @update:model-value="toggleServer(server.serverId)" />
+					<button type="button"
+						class="flex-1 min-w-0 flex items-center gap-1.5 text-left cursor-pointer bg-transparent"
+						@click="toggleServer(server.serverId)">
+						<CoreAppIcon :name="server.isConfigServer ? icons.serverStack : icons.server"
+							class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
+						<span class="truncate" :class="server.isConfigServer ? 'font-medium' : ''">{{
+							server.serverId
+						}}</span>
+					</button>
 					<CoreAppBadge v-if="server.isConfigServer" size="xs" variant="subtle" color="primary">{{
 						$t('servers.config')
 						}}</CoreAppBadge>

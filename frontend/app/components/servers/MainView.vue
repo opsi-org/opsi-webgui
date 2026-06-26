@@ -54,7 +54,7 @@
         </template>
         <template #panel-subtitle>{{ $t('config.title') }}</template>
         <template #panel>
-            <div v-if="panelServer" class="h-full">
+            <div v-if="panelServer" class="h-full flex flex-col min-h-0">
                 <HostsConfigTabs v-if="panelType === 'config'" ref="configTabsRef" :host-id="panelServer.depotId"
                     host-type="server" :tab="panelTab" panel-mode :readonly="isReadOnly || !hasServerWriteAccess"
                     @update:tab="panelTab = $event" />

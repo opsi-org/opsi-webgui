@@ -8,10 +8,14 @@
   DashboardInfoCard - Information card for dashboard with description and link.
 -->
 <template>
+	<!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- conditionally interactive: role/tabindex/keyboard handlers are bound only when `clickable` is true -->
 	<div :class="[
 		'opsi-card transition-all duration-200',
 		clickable ? 'cursor-pointer opsi-card-hover group' : ''
-	]" @click="clickable ? $emit('click') : undefined">
+	]" :role="clickable ? 'button' : undefined" :tabindex="clickable ? 0 : undefined"
+		@click="clickable ? $emit('click') : undefined"
+		@keydown.enter="clickable ? $emit('click') : undefined"
+		@keydown.space.prevent="clickable ? $emit('click') : undefined">
 		<div class="flex items-center gap-3">
 			<CoreAppIcon v-if="icon" :name="icon" class="w-5 h-5 shrink-0" />
 			<div class="flex-1 min-w-0">

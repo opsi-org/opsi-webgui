@@ -8,7 +8,7 @@
   DashboardStatCard - Reusable statistic card for dashboard metrics.
 -->
 <template>
-	<div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200" @click="$emit('click')">
+	<div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200" role="button" tabindex="0" @click="$emit('click')" @keydown.enter="$emit('click')" @keydown.space.prevent="$emit('click')">
 		<div class="flex items-center justify-between mb-2">
 			<CoreAppIcon :name="icon" class="w-5 h-5" />
 			<CoreAppIcon :name="arrowIcon"

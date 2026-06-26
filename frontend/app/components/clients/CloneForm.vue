@@ -281,8 +281,8 @@ async function cloneClient() {
 		success.value = true
 		refresh()
 		emit('saved')
-	} catch (e: any) {
-		error.value = e?.message || $t('clients.clone.err')
+	} catch (e: unknown) {
+		error.value = (e instanceof Error ? e.message : '') || $t('clients.clone.err')
 	} finally {
 		loading.value = false
 	}

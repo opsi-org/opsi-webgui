@@ -19,10 +19,10 @@
 			<CoreAppSelectMenu v-model="selectedLogTypeValue" :placeholder="$t('logs.selectType')" :items="LOG_TYPES"
 				:loading="loading" value-key="value" label-key="label" class="min-w-30" size="sm" />
 			<div v-if="logContent.length > 0" class="flex flex-col gap-1 min-w-30">
-				<label class="text-xs font-medium text-muted">
+				<span class="text-xs font-medium text-muted">
 					{{ $t('logs.level') }}: <span class="font-semibold text-opsi-blue">{{ logLevel }}</span>
 					<span class="ml-1 text-muted">({{ LOG_LEVEL_LABELS[logLevel] }})</span>
-				</label>
+				</span>
 				<input v-model.number="logLevel" type="range" min="1" max="9" step="1"
 					:aria-label="String($t('logs.level'))"
 					class="opsi-log-level-slider w-full h-2 rounded-full appearance-none cursor-pointer" />
@@ -31,7 +31,7 @@
 		<template #actions>
 			<div v-if="resolvedClientId" class="flex gap-2">
 				<div v-if="logContent.length > 0">
-					<CoreAppFilterInput v-model="filterQuery" size="sm" input-class="w-full sm:w-40 md:w-64" />
+					<CoreAppFilterInput v-model="filterQuery" size="sm" input-class="w-full sm:w-56 md:w-72 lg:w-80" />
 				</div>
 				<div v-if="logContent.length > 0">
 					<CoreAppTooltip :text="$t('settings.autoRefreshDesc')">
@@ -109,7 +109,10 @@
 					class="h-full overflow-auto log-viewer bg-(--color-background) rounded-xl font-mono text-xs">
 					<div v-for="(line, idx) in filteredLogContent" :id="'logrow-' + idx" :key="idx" v-clickable
 						:class="[getLogRowClass(line, idx), 'flex items-start hover:bg-(--color-surface-hover) cursor-pointer transition-colors group']"
-						@click="setMarker(idx)">
+						role="button" tabindex="0"
+						@click="setMarker(idx)"
+						@keydown.enter="setMarker(idx)"
+						@keydown.space.prevent="setMarker(idx)">
 						<span
 							class="w-12 shrink-0 px-2 py-1.5 text-right text-(--color-text-muted) border-r border-(--color-border) select-none sticky left-0 bg-inherit">
 							{{ idx + 1 }}

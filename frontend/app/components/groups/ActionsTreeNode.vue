@@ -10,12 +10,13 @@
 <template>
 	<div class="group-tree-node" :class="{ 'group-tree-node-root': isRootLevel }">
 		<div :class="[
-			'flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors group/node',
+			'flex items-center gap-1.5 px-2 py-1.5 rounded transition-colors group/node',
 			isSelected ? 'bg-primary/8 border border-primary/25 shadow-sm' : 'hover:bg-(--color-surface-hover)',
-		]" :style="{ paddingLeft: `${indentPx}px` }" @click="handleClick">
+		]" :style="{ paddingLeft: `${indentPx}px` }">
 			<!-- Tree connector lines -->
 			<span v-for="i in treeDepth" :key="i" class="tree-guide-line" :style="{ left: `${8 + (i - 1) * 16}px` }" />
 			<CoreAppButton v-if="hasChildren" variant="ghost" color="neutral" size="xs" class="w-5! h-5! p-0! shrink-0"
+				:aria-label="String(isExpanded ? $t('common.collapse') : $t('common.expand'))"
 				:class="isExpanded
 					? 'text-(--color-primary) bg-primary/10'
 					: 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
@@ -26,28 +27,32 @@
 			<span v-else class="w-5 flex items-center justify-center shrink-0">
 				<span class="w-1.5 h-1.5 rounded-full bg-(--color-text-muted)/40" />
 			</span>
-			<CoreAppIcon :name="group.isSpecial ? icons.group : (hasChildren ? icons.group : icons.group)"
-				class="w-4 h-4 shrink-0 transition-colors" :class="isSelected
-					? 'text-(--color-primary)'
-					: group.isSpecial ? 'text-(--color-text-muted)' : 'text-(--color-text)'" />
-			<CoreAppTooltip v-if="group.label === 'not_assigned'" :text="$t('clients.directoryNotAssigned')">
-				<span class="text-sm flex-1 truncate transition-colors cursor-help" :class="[
+			<button type="button"
+				class="flex items-center gap-1.5 flex-1 min-w-0 text-left bg-transparent border-0 p-0 cursor-pointer"
+				@click="handleClick">
+				<CoreAppIcon :name="group.isSpecial ? icons.group : (hasChildren ? icons.group : icons.group)"
+					class="w-4 h-4 shrink-0 transition-colors" :class="isSelected
+						? 'text-(--color-primary)'
+						: group.isSpecial ? 'text-(--color-text-muted)' : 'text-(--color-text)'" />
+				<CoreAppTooltip v-if="group.label === 'not_assigned'" :text="$t('clients.directoryNotAssigned')">
+					<span class="text-sm flex-1 truncate transition-colors cursor-help" :class="[
+						isSelected ? 'font-medium text-(--color-text)' : '',
+						group.isSpecial ? 'text-(--color-text-muted) italic' : ''
+					]">
+						{{ group.label }}
+					</span>
+				</CoreAppTooltip>
+				<span v-else class="text-sm flex-1 truncate transition-colors" :class="[
 					isSelected ? 'font-medium text-(--color-text)' : '',
 					group.isSpecial ? 'text-(--color-text-muted) italic' : ''
 				]">
 					{{ group.label }}
 				</span>
-			</CoreAppTooltip>
-			<span v-else class="text-sm flex-1 truncate transition-colors" :class="[
-				isSelected ? 'font-medium text-(--color-text)' : '',
-				group.isSpecial ? 'text-(--color-text-muted) italic' : ''
-			]">
-				{{ group.label }}
-			</span>
-			<span v-if="(group.members?.length || 0) > 0"
-				class="text-xs tabular-nums px-1.5 py-0.5 rounded-full bg-(--color-surface-hover) text-(--color-text-muted)">
-				{{ (group.members || []).length }}
-			</span>
+				<span v-if="(group.members?.length || 0) > 0"
+					class="text-xs tabular-nums px-1.5 py-0.5 rounded-full bg-(--color-surface-hover) text-(--color-text)">
+					{{ (group.members || []).length }}
+				</span>
+			</button>
 			<div v-if="group.isSpecial && group.label !== 'not_assigned'"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
 				<CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('groups.subgroup')"

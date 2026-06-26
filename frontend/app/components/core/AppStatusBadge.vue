@@ -19,7 +19,7 @@
 	</UButton>
 	<UBadge v-else-if="displayValue !== null && displayValue > 0" :color="badgeColor" :variant="variant" :size="size"
 		class="min-w-6 justify-center" :class="{ 'cursor-pointer': clickable }" :title="tooltipText"
-		@click.stop="clickable ? $emit('click') : undefined">
+		@click="onBadgeClick">
 		<img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
 		<UIcon v-else-if="icon" :name="icon" :class="[iconSizeClass, 'mr-0.5']" />
 		<span v-if="label" class="text-xs opacity-70 mr-0.5">{{ label }}</span>
@@ -27,7 +27,7 @@
 	</UBadge>
 	<UBadge v-else-if="label && displayValue === null" :color="badgeColor" :variant="variant" :size="size" class="gap-1"
 		:class="{ 'cursor-pointer': clickable }" :title="tooltipText"
-		@click.stop="clickable ? $emit('click') : undefined">
+		@click="onBadgeClick">
 		<img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
 		<UIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
 		<span class="font-medium">{{ label }}</span>
@@ -61,7 +61,15 @@ const props = withDefaults(defineProps<Props>(), {
 	clickable: false,
 })
 
-defineEmits<{ click: [] }>()
+const emit = defineEmits<{ click: [] }>()
+
+// Only intercept the click when the badge is interactive; otherwise let it bubble
+// so decorative badges don't block clicks on a parent element (e.g. nav cards).
+function onBadgeClick(event: MouseEvent) {
+	if (!props.clickable) return
+	event.stopPropagation()
+	emit('click')
+}
 
 const displayValue = computed(() => props.value)
 const tooltipText = computed(() => {

@@ -35,7 +35,10 @@
 				<div v-for="section in clientSections" :key="section.id" class="mb-2">
 					<div v-clickable
 						class="flex items-center justify-between px-1 py-1.5 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded"
-						@click="toggleSectionCollapse(section.id)">
+						role="button" tabindex="0"
+						@click="toggleSectionCollapse(section.id)"
+						@keydown.enter="toggleSectionCollapse(section.id)"
+						@keydown.space.prevent="toggleSectionCollapse(section.id)">
 						<div class="flex items-center gap-1.5">
 							<CoreAppIcon :name="isSectionCollapsed(section.id) ? icons.chevronRight : icons.chevronDown"
 								class="w-3.5 h-3.5 text-(--color-text-muted)" />
@@ -70,7 +73,10 @@
 									:class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
 							</CoreAppTooltip>
 							<span v-else v-clickable class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
-								@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
+								role="button" tabindex="0"
+								@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)"
+								@keydown.enter="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)"
+								@keydown.space.prevent="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
 								}}</span>
 							<CoreAppBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle"
 								color="neutral">
@@ -94,7 +100,10 @@
 					<CoreAppCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
 						:aria-label="item.label" @update:model-value="handleItemClick(item)" />
 					<span v-clickable class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
-						@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
+						role="button" tabindex="0"
+						@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)"
+						@keydown.enter="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)"
+						@keydown.space.prevent="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
 						}}</span>
 					<CoreAppBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle"
 						color="neutral">{{

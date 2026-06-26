@@ -27,7 +27,7 @@
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
 							<CoreAppIcon :name="icons.server" class="w-3.5 h-3.5" />
-							<h3 class="text-xs">{{ $t('servers.title') }}</h3>
+							<h2 class="text-xs">{{ $t('servers.title') }}</h2>
 							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedServers.length
 								}})</span>
 						</div>
@@ -51,7 +51,7 @@
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
 							<CoreAppIcon :name="icons.client" class="w-3.5 h-3.5" />
-							<h3 class="text-xs">{{ $t('clients.title') }}</h3>
+							<h2 class="text-xs">{{ $t('clients.title') }}</h2>
 							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedClients.length
 								}})</span>
 						</div>
@@ -75,7 +75,7 @@
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
 							<CoreAppIcon :name="icons.product" class="w-3.5 h-3.5" />
-							<h3 class="text-xs">{{ $t('products.title') }}</h3>
+							<h2 class="text-xs">{{ $t('products.title') }}</h2>
 							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedProducts.length
 								}})</span>
 						</div>

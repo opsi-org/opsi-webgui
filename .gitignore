@@ -1,6 +1,9 @@
 # Backend
 **/__pycache__/
 
+backend/webgui/data/app/*
+!backend/webgui/data/app/README.md
+
 # Docker
 docker/.env
 docker/opsiconfd/
@@ -12,8 +15,12 @@ sbom.json
 # Frontend
 frontend/.output/
 frontend/.nuxt/
-frontend/dist/
+frontend/.e2e-build/
+frontend/dist
 frontend/tsconfig.tsbuildinfo
 frontend/node_modules/
 frontend/certs/
 frontend/test-results/
+frontend/coverage/
+frontend/screenshots/
+frontend/tests/e2e/reports/

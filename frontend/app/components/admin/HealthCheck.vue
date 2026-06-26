@@ -8,10 +8,10 @@
   AdminHealthCheck - Health check results with expandable tree view and status indicators.
 -->
 <template>
-	<CoreAppCard>
+	<CoreAppCard fill scrollable>
 		<template #header>
 			<div class="flex items-center justify-between">
-				<h3 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('diag.health') }}</h3>
+				<h2 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('diag.health') }}</h2>
 				<span class="text-xs text-(--color-text-muted)">{{ filteredHealthData.length }} {{ $t('diag.checks')
 				}}</span>
 			</div>
@@ -22,7 +22,10 @@
 		<div v-else class="space-y-2">
 			<div v-for="item in filteredHealthData" :key="item.key" class="rounded-lg overflow-hidden">
 				<div class="flex items-start gap-3 p-3 cursor-pointer transition-colors hover:bg-(--color-surface-hover) rounded-lg"
-					@click="$emit('toggleExpand', item.key)">
+					role="button" tabindex="0"
+					@click="$emit('toggleExpand', item.key)"
+					@keydown.enter="$emit('toggleExpand', item.key)"
+					@keydown.space.prevent="$emit('toggleExpand', item.key)">
 					<CoreAppIcon v-if="item.children && item.children.length > 0"
 						:name="expanded[item.key] ? icons.chevronDown : icons.chevronRight"
 						class="w-4 h-4 mt-0.5 shrink-0 text-(--color-text-muted)" />

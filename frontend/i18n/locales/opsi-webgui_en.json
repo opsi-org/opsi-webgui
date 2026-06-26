@@ -95,6 +95,7 @@
       "warn": "This action cannot be undone."
     },
     "deploy": "Deploy Client Agent",
+    "deployDesc": "Install the opsi client agent on the selected clients using the credentials below.",
     "directory": "Client Directory",
     "directoryNotAssigned": "Clients not explicitly assigned to a subgroup appear here.",
     "directoryTooltip": "A client can only be assigned to one subgroup here. Clients not explicitly assigned appear in 'not_assigned'.",
@@ -310,13 +311,29 @@
     "unlicensed": "Unlicensed"
   },
   "nav": {
+    "addNew": "Add New",
+    "admin": "Admin",
+    "allClients": "All Clients",
+    "allServers": "All Servers",
     "breadcrumb": "Breadcrumb",
+    "clients": "Clients",
+    "clone": "Clone",
+    "configuration": "Configuration",
+    "dashboard": "Dashboard",
     "defaultPage": "Default Page",
+    "diagnostics": "Diagnostics",
+    "groups": "Groups",
     "leaveAnyway": "Leave Anyway",
+    "logs": "Logs",
+    "maintenance": "Maintenance",
     "navigateAway": "You have unsaved changes. If you leave, they will be lost. Continue?",
+    "products": "Products",
     "redirect": "Redirecting...",
+    "servers": "Servers",
     "sidebar": "Toggle Sidebar",
-    "stayOnPage": "Stay on Page"
+    "stayOnPage": "Stay on Page",
+    "support": "Support",
+    "terminal": "Terminal"
   },
   "notifications": {
     "target.both": "To both selected servers and clients",

@@ -1,8 +1,9 @@
 # =============================================================================
 # opsi-webgui GitLab CI/CD Pipeline
+#
 # STAGES:
-#   setup    -> Install deps
-#   validate -> Lint, types, tests, security scan
+#   setup    -> Install deps, i18n, changelog, versions
+#   validate -> Lint, types, unit tests, e2e tests, backend tests, security
 #   build    -> Build addon package
 #   release  -> SBOM, publish (tags only)
 # =============================================================================
@@ -12,6 +13,15 @@ image: node:26.3-bookworm-slim
 variables:
   CI: 'true'
   DEBIAN_FRONTEND: noninteractive
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
 
 stages: [setup, validate, build, release]
 
@@ -32,6 +42,18 @@ stages: [setup, validate, build, release]
   apt update && apt -y install curl zip wget
   curl -sS "${OPSIDEVTOOLS_INSTALLER_URL_LINUX_X64}" | sh
 
+.clone-opsiconfd: &clone-opsiconfd |
+  command -v git >/dev/null 2>&1 || apk add --no-cache git
+  OPSICONFD_REF="${OPSICONFD_REF:-v4.3}"
+  OPSICONFD_REPO_URL="${OPSICONFD_REPO_URL:-https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git}"
+  if [ ! -d docker/opsiconfd/.git ]; then
+    echo "Cloning opsiconfd ($OPSICONFD_REF) into docker/opsiconfd..."
+    rm -rf docker/opsiconfd
+    git clone --depth 1 --branch "$OPSICONFD_REF" "$OPSICONFD_REPO_URL" docker/opsiconfd
+  else
+    echo "docker/opsiconfd already present — reusing."
+  fi
+
 # SETUP
 setup:deps:
   stage: setup
@@ -40,6 +62,16 @@ setup:deps:
     - cd frontend && pnpm install --frozen-lockfile && pnpm run postinstall
   artifacts:
     paths: [frontend/node_modules/, frontend/.nuxt/]
+    expire_in: 1 day
+
+# Pre-build the SPA ONCE here so the e2e container does not run `pnpm generate` on every job.
+setup:spa:
+  stage: setup
+  extends: .node
+  needs: [setup:deps]
+  script: cd frontend && pnpm run generate
+  artifacts:
+    paths: [frontend/.output/public/]
     expire_in: 1 day
 
 setup:i18n:
@@ -133,42 +165,147 @@ validate:types:
   needs: [setup:deps]
   script: cd frontend && pnpm run typecheck
 
-# validate:test:
-#   stage: validate
-#   needs: [setup:deps]
-#   script: cd frontend && pnpm run test:unit
-#   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+# Frontend unit tests (vitest)
+validate:unit:
+  stage: validate
+  extends: .node
+  needs: [setup:deps]
+  script: cd frontend && pnpm run test:unit:coverage
+  coverage: '/Lines\s*:\s*([\d.]+)%/'
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - frontend/coverage/
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: frontend/coverage/cobertura-coverage.xml
 
-validate:security:
+# -----------------------------------------------------------------------------
+# Docker-based integration tests (backend pytest + Playwright e2e).
+# -----------------------------------------------------------------------------
+.docker-test:
+  stage: validate
+  tags:
+    - docker-x64
+  image: docker
+  needs: []
+  retry:
+    max: 1
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+  variables:
+    OPSI_BACKUP_URL: https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json
+  before_script:
+    - CONTAINER_ID=$(docker ps -q -f "label=com.gitlab.gitlab-runner.job.id=$CI_JOB_ID" -f "label=com.gitlab.gitlab-runner.type=build")
+    - export LOCAL_WORKSPACE_DIR="$(docker inspect "$CONTAINER_ID" -f '{{ range .Mounts }}{{ if eq .Destination "/builds" }}{{ .Source }}{{ end }}{{ end }}')/${CI_PROJECT_PATH}"
+    - echo "LOCAL_WORKSPACE_DIR=$LOCAL_WORKSPACE_DIR"
+    - |
+      cat > docker/.env <<EOF
+      OPSI_HOSTNAME=opsi.test.local
+      OPSI_DOMAIN=test.local
+      OPSICONFD_PORT=4447
+      USER=root
+      UID=0
+      ADDON_NAME=webgui
+      ADDON_ID=webgui
+      LOCAL_WORKSPACE_DIR=$LOCAL_WORKSPACE_DIR
+      EOF
+    - *clone-opsiconfd
+    - docker compose -f docker/docker-compose.yml build --pull opsi-webgui-dev
+  after_script:
+    - docker compose -f docker/docker-compose.test.yml logs > docker-test.log 2>&1 || true
+    - docker compose -f docker/docker-compose.test.yml down -v || true
+
+validate:backend:
+  extends: .docker-test
+  variables:
+    COMPOSE_PROJECT_NAME: webgui-be-$CI_JOB_ID
+  script:
+    - docker compose -f docker/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from backend-tests opsiconfd backend-tests
+  artifacts:
+    when: always
+    paths: [docker-test.log]
+    expire_in: 7 days
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - when: manual
+      allow_failure: true
+
+# Smoke e2e (DE / light / desktop / Chromium) against a real opsiconfd.
+validate:e2e:smoke:
+  extends: .docker-test
+  needs: [setup:spa]
+  variables:
+    COMPOSE_PROJECT_NAME: webgui-e2e-$CI_JOB_ID
+  script:
+    - mkdir -p backend/webgui/data/app && cp -r frontend/.output/public/. backend/webgui/data/app/ 2>/dev/null || true
+    - docker compose -f docker/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from e2e opsiconfd e2e
+  artifacts:
+    when: always
+    paths: [frontend/test-results/, frontend/screenshots/, docker-test.log]
+    reports:
+      junit: frontend/test-results/junit.xml
+    expire_in: 7 days
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      allow_failure: false
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      allow_failure: false
+    - when: manual
+      allow_failure: true
+
+# Full e2e matrix: nightly schedule + tags (all locales/themes/viewports/browsers).
+validate:e2e:full:
+  extends: .docker-test
+  needs: [setup:spa]
+  variables:
+    COMPOSE_PROJECT_NAME: webgui-e2e-$CI_JOB_ID
+    E2E_PIPELINE_SOURCE: schedule
+  script:
+    - mkdir -p backend/webgui/data/app && cp -r frontend/.output/public/. backend/webgui/data/app/ 2>/dev/null || true
+    - docker compose -f docker/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from e2e opsiconfd e2e
+  artifacts:
+    when: always
+    paths: [frontend/test-results/, frontend/screenshots/, docker-test.log]
+    reports:
+      junit: frontend/test-results/junit.xml
+    expire_in: 30 days
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_COMMIT_TAG
+
+# Dependency vulnerability audit
+validate:audit:
   stage: validate
   extends: .node
   needs: [setup:deps]
   script: cd frontend && pnpm audit --audit-level=high
 
-validate:security-scripts:
+# Supply-chain check: fail if any dependency runs an UNAPPROVED install/build
+validate:install-scripts:
   stage: validate
   extends: .node
   needs: [setup:deps]
-  allow_failure: true
   script:
     - cd frontend
-    # Validate npm version
-    - echo "npm version $(npm --version)"
-    # Check for unapproved scripts - fail if any pending
     - |
-      OUTPUT=$(npm approve-scripts --allow-scripts-pending 2>&1)
+      OUTPUT=$(pnpm install --frozen-lockfile --force 2>&1)
       echo "$OUTPUT"
-      if echo "$OUTPUT" | grep -q "packages have install scripts"; then
-        echo "\nERROR: Unapproved install scripts found!"
+      if echo "$OUTPUT" | grep -qi "Ignored build scripts"; then
+        echo ""
+        echo "ERROR: Unreviewed dependency build scripts found."
+        echo "Review them and add to frontend/pnpm-workspace.yaml onlyBuiltDependencies."
         exit 1
       fi
-      echo "All install scripts are approved ✓"
-
-# TODO: Backend tests
-# validate:backend:
-#   stage: validate
-#   extends: .pybuilder
-#   script: cd backend && pytest tests/
+      echo "All dependency build scripts are reviewed and approved."
 
 # BUILD
 build:addon:
@@ -179,7 +316,7 @@ build:addon:
       setup:deps,
       validate:lint,
       validate:types,
-      validate:security,
+      validate:audit,
       { job: setup:patch-version, optional: true },
       { job: setup:i18n, optional: true },
       { job: setup:changelog, optional: true },

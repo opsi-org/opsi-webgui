@@ -157,10 +157,10 @@
 					class="border border-(--color-border) rounded-lg overflow-hidden">
 					<div class="bg-(--color-surface) px-3 py-1.5 flex items-center gap-2">
 						<UIcon :name="icons.onDemand" class="w-4 h-4 text-(--color-text-muted)" />
-						<label class="flex items-center gap-2 cursor-pointer">
+						<span class="flex items-center gap-2 cursor-pointer">
 							<CoreAppCheckbox v-model="processAfterSave" size="sm" />
 							<span class="text-sm font-medium">{{ $t('actions.saveAndProcess') }}</span>
-						</label>
+						</span>
 					</div>
 					<template v-if="processAfterSave">
 						<div class="px-3 py-2 space-y-2">
