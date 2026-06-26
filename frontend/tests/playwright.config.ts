@@ -17,7 +17,7 @@
 import { defineConfig, devices } from '@playwright/test'
 import { AUTH_FILE } from './e2e/setup/auth.setup'
 
-const isNightly = process.env.CI_PIPELINE_SOURCE === 'schedule'
+// const isNightly = process.env.CI_PIPELINE_SOURCE === 'schedule'
 const baseURL = process.env.BASE_URL || 'https://localhost:3000/addons/webgui/app'
 const authFile = AUTH_FILE
 
