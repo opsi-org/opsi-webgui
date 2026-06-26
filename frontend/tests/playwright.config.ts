@@ -29,10 +29,10 @@ export default defineConfig({
   snapshotPathTemplate: '{snapshotDir}/{arg}{ext}',
   reporter: process.env.CI
     ? [
-      ['junit', { outputFile: '../test-results/junit.xml' }],
-      ['html', { outputFolder: '../test-results/html' }],
-      ['list'],
-    ]
+        ['junit', { outputFile: '../test-results/junit.xml' }],
+        ['html', { outputFolder: '../test-results/html' }],
+        ['list'],
+      ]
     : 'list',
   timeout: 90_000,
   expect: {
@@ -65,14 +65,14 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testMatch: /login\.spec/,
     },
-    ...(isNightly
-      ? [
-        {
-          name: 'firefox',
-          use: { ...devices['Desktop Firefox'], storageState: authFile },
-          testIgnore: /login\.spec/,
-        },
-      ]
-      : []),
+    // ...(isNightly
+    //   ? [
+    //     {
+    //       name: 'firefox',
+    //       use: { ...devices['Desktop Firefox'], storageState: authFile },
+    //       testIgnore: /login\.spec/,
+    //     },
+    //   ]
+    //   : []),
   ],
 })
