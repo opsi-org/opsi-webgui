@@ -12,7 +12,7 @@
     "request": "Aktionsanforderung",
     "result": "Aktionsergebnis",
     "results": "Aktionsergebnisse",
-    "saveAndProcess": "Speichern & OnDemand",
+    "saveAndProcess": "Speichern und ausführen",
     "shutdown": "Herunterfahren",
     "success": "Erfolgreiche Aktionen",
     "title": "Aktionen"
@@ -64,7 +64,7 @@
   "bus": {
     "acceptCert": "opsiconfd-Verfügbarkeit prüfen und Zertifikat verifizieren",
     "certWarning": "opsi-Messagebus ist getrennt. Der Server ist möglicherweise nicht erreichbar oder das SSL-Zertifikat ist nicht vertrauenswürdig.",
-    "changes": "Änderungen erkannt - Klicken zum Aktualisieren",
+    "changes": "Änderungen erkannt.",
     "connected": "opsi-Messagebus verbunden",
     "disconnected": "opsi-Messagebus getrennt",
     "logUpdated": "Log wurde aktualisiert.",
