@@ -8,7 +8,7 @@ echo "[post_create] Running as $(whoami)"
 # Install uv
 echo "[post_create] Installing uv..."
 curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sudo sh
-echo 'eval "$(uv generate-shell-completion bash)"' >> ~/.bashrc
+echo 'eval "$(uv generate-shell-completion bash)"\n' >> ~/.bashrc # needs new line for proper formatting
 
 # Setup bash config (colored prompt with git branch, useful aliases)
 cat >> ~/.bashrc << 'EOF'

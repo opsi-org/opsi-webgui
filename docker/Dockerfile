@@ -16,6 +16,7 @@ ENV DEV_USER=${USER:-dev} \
 RUN mkdir -p /usr/local/share/keyrings \
 	&& curl -fsSL $OPSI_REPO/Release.key | gpg --dearmor > /usr/local/share/keyrings/opsi-obs.gpg \
 	&& echo "deb [signed-by=/usr/local/share/keyrings/opsi-obs.gpg] $OPSI_REPO/ /" > /etc/apt/sources.list.d/opsi.list \
+	&& printf 'Package: redis-server redis-tools\nPin: origin download.opensuse.org\nPin-Priority: 1001\n' > /etc/apt/preferences.d/redis-opsi \
 	&& apt-get update \
 	&& apt-get --yes --no-install-recommends install \
 	mariadb-client \
@@ -23,6 +24,7 @@ RUN mkdir -p /usr/local/share/keyrings \
 	librsync1 \
 	sudo \
 	git \
+	vim \
 	netcat \
 	supervisor \
 	mariadb-server \
@@ -36,7 +38,8 @@ COPY docker/files/ /
 
 # Redis + MySQL runtime dirs
 RUN sed -i 's/^daemonize yes/daemonize no/' /etc/redis/redis.conf \
-	&& mkdir -p /var/run/redis && chown redis:redis /var/run/redis \
+	&& sed -i 's|^dir \./|dir /var/lib/redis|' /etc/redis/redis.conf \
+	&& mkdir -p /var/run/redis /var/lib/redis && chown redis:redis /var/run/redis /var/lib/redis \
 	&& install -m 755 -o mysql -g root -d /var/run/mysqld
 
 # Users and groups
