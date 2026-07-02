@@ -12,7 +12,7 @@
     "request": "Action Request",
     "result": "Action Result",
     "results": "Action Results",
-    "saveAndProcess": "Save & OnDemand",
+    "saveAndProcess": "Save and execute",
     "shutdown": "Shutdown",
     "success": "Successful Actions",
     "title": "Actions"
@@ -64,7 +64,7 @@
   "bus": {
     "acceptCert": "Check opsiconfd availability and verify certificate",
     "certWarning": "opsi-Messagebus is disconnected. The server may be unreachable or the SSL certificate is not trusted.",
-    "changes": "Changes detected. ",
+    "changes": "Changes detected.",
     "connected": "opsi-Messagebus connected",
     "disconnected": "opsi-Messagebus disconnected",
     "logUpdated": "Log updated.",
