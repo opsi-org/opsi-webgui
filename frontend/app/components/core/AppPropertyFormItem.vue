@@ -12,7 +12,7 @@
 	<div class="flex-1 flex items-center gap-2 min-w-0 w-full">
 		<!-- Bool: checkbox -->
 		<template v-if="type === 'bool'">
-			<UCheckbox :model-value="boolValue" :indeterminate="mixed" :disabled="disabled" size="sm"
+			<UCheckbox :model-value="boolValue" :indeterminate="mixed" :disabled="disabled"
 				:aria-label="controlAriaLabel"
 				@update:model-value="(v: boolean | 'indeterminate') => emit('update:modelValue', v === 'indeterminate' ? false : v)" />
 			<span v-if="mixed" class="text-xs text-(--color-text-muted) italic">{{ $t('common.mixed') }}</span>
@@ -31,8 +31,9 @@
 					<button type="button" :aria-label="controlAriaLabel"
 						class="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-(--color-primary)/50 transition-colors text-left min-h-8"
 						:class="disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'" :disabled="disabled">
-						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{ $t('config.selectValues')
-						}}</span>
+						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{
+							$t('config.selectValues')
+							}}</span>
 						<span v-else class="flex flex-wrap gap-1 min-w-0">
 							<span v-for="val in arrayValue.slice(0, 3)" :key="val"
 								class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20 max-w-32 truncate">
@@ -62,7 +63,7 @@
 								@click="toggleMultiItem(opt)">
 								<UIcon :name="arrayValue.includes(opt) ? icons.squareCheck : icons.square"
 									class="w-4 h-4 shrink-0"
-									:class="arrayValue.includes(opt) ? 'text-(--color-primary)' : 'text-(--color-text-muted)'" />
+									:class="arrayValue.includes(opt) ? 'text-(--color-primary-soft-text)' : 'text-(--color-text-muted)'" />
 								<span class="truncate text-left" :title="opt">{{ formatDisplayValue(opt) }}</span>
 							</button>
 							<div v-if="filteredMultiOptions.length === 0 && customInput.trim()"
@@ -130,13 +131,13 @@
 							</div>
 							<button type="button"
 								class="flex items-center gap-2 w-full px-3 py-1.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
-								:class="!stringValue ? 'text-(--color-primary) font-medium' : 'text-(--color-text-muted)'"
+								:class="!stringValue ? 'text-(--color-primary-soft-text) font-medium bg-(--color-primary-soft-bg)' : 'text-(--color-text-muted)'"
 								@click="emit('update:modelValue', ''); editableSearchInput = ''">
 								<span>({{ $t('common.empty') }})</span>
 							</button>
 							<button v-for="opt in filteredEditableOptions" :key="opt" type="button"
 								class="flex items-center gap-2 w-full px-3 py-1.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
-								:class="stringValue === opt ? 'text-(--color-primary) font-medium bg-primary/5' : ''"
+								:class="stringValue === opt ? 'text-(--color-text) font-medium bg-(--color-primary-soft-bg)' : ''"
 								@click="emit('update:modelValue', opt); editableSearchInput = ''">
 								<span class="truncate" :title="opt">{{ formatDisplayValue(opt) }}</span>
 							</button>
@@ -159,9 +160,8 @@
 			<div class="flex-1 flex items-center gap-1 min-w-0">
 				<div v-clickable
 					class="flex-1 px-2.5 py-1.5 text-sm border border-(--color-border) rounded-md bg-(--color-surface-elevated) min-h-8 cursor-pointer hover:border-(--color-primary)/50 transition-colors truncate"
-					:class="disabled ? 'opacity-50 cursor-not-allowed' : ''" :title="stringValue"
-					role="button" tabindex="0"
-					@click="!disabled && openMultilineEditor()"
+					:class="disabled ? 'opacity-50 cursor-not-allowed' : ''" :title="stringValue" role="button"
+					tabindex="0" @click="!disabled && openMultilineEditor()"
 					@keydown.enter="!disabled && openMultilineEditor()"
 					@keydown.space.prevent="!disabled && openMultilineEditor()">
 					{{ formatDisplayValue(stringValue) }}
@@ -178,14 +178,16 @@
 		</template>
 
 		<!-- Multiline editor modal -->
-		<UModal v-model:open="showMultilineEditor" :title="$t('common.editValue')" :ui="{ content: 'max-w-sm sm:max-w-xl' }">
+		<UModal v-model:open="showMultilineEditor" :title="$t('common.editValue')"
+			:ui="{ content: 'max-w-sm sm:max-w-xl' }">
 			<template #body>
 				<CoreAppTextarea ref="multilineTextareaRef" v-model="multilineEditValue" class="w-full" :rows="12"
 					:disabled="disabled" />
 			</template>
 			<template #footer>
 				<div class="flex gap-2 justify-end">
-					<UButton variant="ghost" color="neutral" @click="showMultilineEditor = false">{{ $t('common.cancel') }}
+					<UButton variant="ghost" color="neutral" @click="showMultilineEditor = false">{{ $t('common.cancel')
+						}}
 					</UButton>
 					<UButton color="primary" @click="applyMultilineEdit">{{ $t('common.apply') }}</UButton>
 				</div>

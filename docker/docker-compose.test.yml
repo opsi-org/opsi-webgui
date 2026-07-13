@@ -35,6 +35,9 @@ services:
       OPSICONFD_PORT: '4447'
       OPSICONFD_ADDON_DIRS: '[/var/lib/opsiconfd/addons]'
       OPSICONFD_REDIS_INTERNAL_URL: redis://redis:6379/0
+      OPSICONFD_MAX_SESSIONS_PER_IP: '10000'
+      OPSICONFD_MAX_AUTH_FAILURES: '10000'
+      OPSICONFD_CLIENT_BLOCK_TIME: '1'
       OPSI_BACKUP_URL: ${OPSI_BACKUP_URL:-https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json}
     healthcheck:
       test: ['CMD', 'curl', '-sk', '-o', '/dev/null', 'https://localhost:4447/admin/healthy']
@@ -51,6 +54,7 @@ services:
         condition: service_healthy
     volumes:
       - ${LOCAL_WORKSPACE_DIR:-..}/frontend:/frontend
+      - ${LOCAL_WORKSPACE_DIR:-..}/screenshots:/screenshots
       - ${LOCAL_WORKSPACE_DIR:-..}/backend/webgui/data/app:/addon-app
       - e2e-node-modules:/frontend/node_modules
       - e2e-nuxt:/frontend/.nuxt

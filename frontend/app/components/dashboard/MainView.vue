@@ -13,32 +13,33 @@
             <!-- Row 1: Config Server, Health Check, User Config & Restrictions -->
             <div class="grid grid-cols-1 @2xl:grid-cols-2 @5xl:grid-cols-4 gap-2 lg:gap-3 shrink-0">
                 <DashboardInfoCard :icon="icons.serverStack" :label="$t('servers.config')" :value="serverHostname" />
-                <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                    role="button" tabindex="0"
-                    @click="navigateTo('/admin/diagnostics/healthcheck')"
+                <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200" role="button"
+                    tabindex="0" :aria-label="$t('diag.health')" @click="navigateTo('/admin/diagnostics/healthcheck')"
                     @keydown.enter="navigateTo('/admin/diagnostics/healthcheck')"
                     @keydown.space.prevent="navigateTo('/admin/diagnostics/healthcheck')">
                     <div class="flex items-center gap-2 mb-3 mt-2">
-                        <CoreAppIcon :name="icons.health" class="w-5 h-5" />
+                        <CoreAppIcon :name="icons.health" class="w-5 h-5" aria-hidden="true" />
                         <CoreAppHeading size="xs">{{ $t('diag.health') }}</CoreAppHeading>
                         <CoreAppIcon :name="icons.chevronRight"
-                            class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity" />
+                            class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity"
+                            aria-hidden="true" />
                     </div>
-                    <div v-if="healthCounts" class="flex items-center gap-2 flex-wrap mt-4">
+                    <div v-if="healthCounts" class="flex items-center gap-2 flex-wrap mt-4" aria-hidden="true">
                         <CoreAppStatusBadge v-if="healthCounts.error > 0" status="error" :value="healthCounts.error"
-                            :tooltip="$t('common.errors')" :label="$t('common.errors')" />
+                            :label="$t('common.errors')" />
                         <CoreAppStatusBadge v-if="healthCounts.warning > 0" status="warning"
-                            :value="healthCounts.warning" :tooltip="$t('common.warnings')" :label="$t('common.warnings')" />
+                            :value="healthCounts.warning" :label="$t('common.warnings')" />
                         <CoreAppStatusBadge v-if="healthCounts.ok > 0" status="success" :value="healthCounts.ok"
-                            :tooltip="$t('common.ok')" :label="$t('common.ok')" />
+                            :label="$t('common.ok')" />
                     </div>
                     <CoreAppLoadingSpinner v-else size="sm" />
                 </div>
 
                 <!-- User Config + Restrictions Card -->
-                <div class="opsi-card @2xl:col-span-2">
+                <div class="opsi-card @2xl:col-span-2" role="region" tabindex="0"
+                    :aria-label="$t('users.current') + ': ' + (sharedUserConfig?.user || userStore.username || '-')">
                     <div class="flex items-center gap-3 mb-3">
-                        <CoreAppIcon :name="icons.user" class="w-4.5 h-4.5" />
+                        <CoreAppIcon :name="icons.user" class="w-4.5 h-4.5" aria-hidden="true" />
                         <div class="flex-1 min-w-0">
                             <p class="font-heading text-xs text-(--color-text-muted) tracking-widest m-0">{{
                                 $t('users.current') }}</p>
@@ -46,11 +47,12 @@
                                 || '-' }}</p>
                         </div>
                         <CoreAppStatusBadge v-if="webguiRestrictionsCount > 0" status="warning" variant="subtle"
-                            size="sm" :label="`${webguiRestrictionsCount} ${$t('auth.restricted')}`" class="shrink-0" />
+                            size="sm" :label="`${webguiRestrictionsCount} ${$t('auth.restricted')}`" class="shrink-0"
+                            aria-hidden="true" />
                         <CoreAppStatusBadge v-else status="success" variant="subtle" size="sm"
-                            :label="$t('opsiConfig.serverFeatures.allEnabled')" class="shrink-0" />
+                            :label="$t('opsiConfig.serverFeatures.allEnabled')" class="shrink-0" aria-hidden="true" />
                     </div>
-                    <div v-if="userConfigData" class="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+                    <div v-if="userConfigData" class="grid grid-cols-4 sm:grid-cols-7 gap-1.5" aria-hidden="true">
                         <CoreAppRestrictionBadge v-for="feat in webguiFeatures" :key="feat.key" :icon="feat.icon"
                             :label="feat.shortLabel" :restricted="feat.restricted"
                             :tooltip-text="feat.restricted ? $t(`opsiConfig.serverFeatures.${feat.i18nKey}.disabled`) : $t(`opsiConfig.serverFeatures.${feat.i18nKey}.enabled`)" />
@@ -60,9 +62,8 @@
 
             <!-- Row 2: System Info -->
             <div class="shrink-0">
-                <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                    role="button" tabindex="0"
-                    @click="navigateTo('/admin/diagnostics/system')"
+                <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200" role="button"
+                    tabindex="0" :aria-label="$t('diag.systemInfo')" @click="navigateTo('/admin/diagnostics/system')"
                     @keydown.enter="navigateTo('/admin/diagnostics/system')"
                     @keydown.space.prevent="navigateTo('/admin/diagnostics/system')">
                     <div class="flex items-center gap-2 mb-2">
@@ -93,10 +94,8 @@
                     @click="navigateTo('/servers')" />
 
                 <!-- Clients stat card -->
-                <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                    role="button" tabindex="0"
-                    @click="navigateTo('/clients')"
-                    @keydown.enter="navigateTo('/clients')"
+                <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200" role="button"
+                    tabindex="0" @click="navigateTo('/clients')" @keydown.enter="navigateTo('/clients')"
                     @keydown.space.prevent="navigateTo('/clients')">
                     <div class="flex items-center justify-between mb-1">
                         <CoreAppIcon :name="icons.client" class="w-5 h-5" />
@@ -105,17 +104,18 @@
                     </div>
                     <p class="text-2xl font-bold mb-0.5">{{ clientCount ?? '-' }}</p>
                     <p class="text-sm mb-2">{{ $t('dashboard.totalClients') }}</p>
-                    <div v-if="sharedClientNumbers"
-                        class="space-y-1.5 pt-1.5 border-t border-(--color-border)/30 text-xs">
+                    <div v-if="sharedClientNumbers" class="space-y-1.5 pt-1.5 border-t border-(--color-border)/30">
                         <div class="flex items-center gap-4">
                             <span class="flex items-center gap-1.5">
                                 <CoreAppIcon :name="icons.checkCircle"
                                     class="w-4 h-4 shrink-0 text-(--color-success)" />
-                                <span class="font-medium">{{ sharedClientNumbers.all }}</span> {{ $t('clients.active') }}
+                                <span class="font-medium">{{ sharedClientNumbers.all }}</span> {{ $t('clients.active')
+                                }}
                             </span>
                             <span class="flex items-center gap-1.5">
                                 <CoreAppIcon :name="icons.xCircle" class="w-4 h-4 shrink-0 text-(--color-error)" />
-                                <span class="font-medium">{{ sharedClientNumbers.inactive }}</span> {{ $t('clients.inactive') }}
+                                <span class="font-medium">{{ sharedClientNumbers.inactive }}</span> {{
+                                    $t('clients.inactive') }}
                             </span>
                         </div>
                         <div class="flex items-center gap-4">
@@ -138,18 +138,16 @@
                 <!-- Products stat card -->
                 <CoreAppTooltipTable v-if="depotProductTooltipRows.length > 0" :rows="depotProductTooltipRows">
                     <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                        role="button" tabindex="0"
-                        @click="navigateTo('/products')"
-                        @keydown.enter="navigateTo('/products')"
-                        @keydown.space.prevent="navigateTo('/products')">
+                        role="button" tabindex="0" @click="navigateTo('/products')"
+                        @keydown.enter="navigateTo('/products')" @keydown.space.prevent="navigateTo('/products')">
                         <div class="flex items-center justify-between mb-2">
                             <CoreAppIcon :name="icons.product" class="w-5 h-5" />
                             <CoreAppIcon :name="icons.chevronRight"
                                 class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                         <p class="text-2xl font-bold mb-1">{{ totalProductCount ?? '-' }}</p>
-                        <p class="text-sm">{{ $t('dashboard.totalProducts') }}</p>
-                        <div class="mt-2 pt-2 border-t border-(--color-border)/30 flex gap-2 text-xs">
+                        <p>{{ $t('dashboard.totalProducts') }}</p>
+                        <div class="mt-2 pt-2 border-t border-(--color-border)/30 flex gap-2">
                             <span>
                                 <span class="font-medium text-(--color-text)">{{ localbootProductCount }}</span>
                                 {{ $t('products.localboot') }}
@@ -162,9 +160,7 @@
                     </div>
                 </CoreAppTooltipTable>
                 <div v-else class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                    role="button" tabindex="0"
-                    @click="navigateTo('/products')"
-                    @keydown.enter="navigateTo('/products')"
+                    role="button" tabindex="0" @click="navigateTo('/products')" @keydown.enter="navigateTo('/products')"
                     @keydown.space.prevent="navigateTo('/products')">
                     <div class="flex items-center justify-between mb-2">
                         <CoreAppIcon :name="icons.product" class="w-5 h-5" />
@@ -172,13 +168,12 @@
                             class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <p class="text-2xl font-bold mb-1">{{ totalProductCount ?? '-' }}</p>
-                    <p class="text-sm">{{ $t('dashboard.totalProducts') }}</p>
+                    <p>{{ $t('dashboard.totalProducts') }}</p>
                 </div>
 
                 <!-- Modules Card -->
-                <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-                    role="button" tabindex="0"
-                    @click="navigateTo('/admin/diagnostics/modules')"
+                <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200" role="button"
+                    tabindex="0" @click="navigateTo('/admin/diagnostics/modules')"
                     @keydown.enter="navigateTo('/admin/diagnostics/modules')"
                     @keydown.space.prevent="navigateTo('/admin/diagnostics/modules')">
                     <div class="flex items-center justify-between mb-2">
@@ -194,7 +189,7 @@
             </div>
 
             <!-- Row 4: Failed Clients -->
-            <div class="opsi-card flex-1 min-h-0 flex flex-col">
+            <div class="opsi-card shrink-0 min-h-[120px] flex flex-col">
                 <div class="flex items-center gap-2 mb-2">
                     <CoreAppIcon :name="icons.warning" class="w-5 h-5" />
                     <CoreAppHeading size="xs">{{ $t('actions.failedClients') }}</CoreAppHeading>
@@ -206,18 +201,18 @@
                     :aria-label="String($t('actions.failedClients'))">
                     <div v-for="(products, clientId) in failedClients" :key="clientId"
                         class="flex items-center justify-between p-2 rounded-lg">
-                        <span class="text-xs truncate">
+                        <span class="truncate">
                             {{ clientId }}
                         </span>
                         <div class="flex gap-1">
                             <CoreAppStatusBadge v-for="p in (Array.isArray(products) ? products : [products])" :key="p"
-                                status="error" size="sm" :label="p" />
+                                status="error" :label="p" />
                         </div>
                     </div>
                 </div>
                 <div v-else class="flex items-center gap-2 py-1">
                     <CoreAppIcon :name="icons.checkCircle" class="w-4 h-4 text-(--color-success-soft-text)" />
-                    <p class="text-xs">{{ $t('actions.noFailed') }}</p>
+                    <p>{{ $t('actions.noFailed') }}</p>
                 </div>
             </div>
         </div>

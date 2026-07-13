@@ -8,9 +8,11 @@
   ClientConfigurationPage - Route page for client host configuration tabs.
 -->
 <template>
-	<HostsConfigTabs :host-id="selectedClientId" host-type="client" :tab="activeTab" show-host-selector
-		:host-selector-placeholder="String($t('clients.select'))" :readonly="isReadOnly"
-		@update:host-id="updateSelectedClientId" @update:tab="updateActiveTab" @saved="handleSaved" />
+	<div class="h-full min-h-0 flex flex-col">
+		<HostsConfigTabs class="flex-1 min-h-0" :host-id="selectedClientId" host-type="client" :tab="activeTab"
+			show-host-selector :host-selector-placeholder="String($t('clients.select'))" :readonly="isReadOnly"
+			@update:host-id="updateSelectedClientId" @update:tab="updateActiveTab" @saved="handleSaved" />
+	</div>
 </template>
 
 <script setup lang="ts">

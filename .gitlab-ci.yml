@@ -51,7 +51,7 @@ stages: [setup, validate, build, release]
     rm -rf docker/opsiconfd
     git clone --depth 1 --branch "$OPSICONFD_REF" "$OPSICONFD_REPO_URL" docker/opsiconfd
   else
-    echo "docker/opsiconfd already present — reusing."
+    echo "docker/opsiconfd already present - reusing."
   fi
 
 # SETUP
@@ -82,7 +82,7 @@ setup:i18n:
   script:
     - RATE=0.0 && [ "$CI_COMMIT_TAG" != "" ] && RATE=1.0
     - opsi-dev-cli -l 6 transifex upload-resource frontend/i18n/locales/opsi-webgui_en.json --resource-name opsi-webgui.json || true
-    - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json frontend/i18n/locales/ --min-translation-rate $RATE -l de -l fr || true
+    - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json frontend/i18n/locales/ --min-translation-rate $RATE || true
     - chmod -R 666 frontend/i18n/locales/* || true
     - ls -lah frontend/i18n/locales/
   artifacts:
@@ -253,7 +253,7 @@ validate:e2e:smoke:
     - docker compose -f docker/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from e2e opsiconfd e2e
   artifacts:
     when: always
-    paths: [frontend/test-results/, frontend/screenshots/, docker-test.log]
+    paths: [frontend/test-results/, screenshots/, docker-test.log]
     reports:
       junit: frontend/test-results/junit.xml
     expire_in: 7 days
@@ -282,7 +282,7 @@ validate:e2e:full:
     - docker compose -f docker/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from e2e opsiconfd e2e
   artifacts:
     when: always
-    paths: [frontend/test-results/, frontend/screenshots/, docker-test.log]
+    paths: [frontend/test-results/, screenshots/, docker-test.log]
     reports:
       junit: frontend/test-results/junit.xml
     expire_in: 30 days
@@ -343,20 +343,20 @@ release:sbom:
   stage: release
   extends: [.node, .only-tags]
   needs: [setup:deps]
-  script: cd frontend && pnpm run sbom && mv ../sbom.json .
+  script: cd frontend && pnpm run sbom && cp ../sbom.cyclonedx.json .
   artifacts:
-    paths: [frontend/sbom.json]
+    paths: [frontend/sbom.cyclonedx.json]
     expire_in: 30 days
     reports:
-      cyclonedx: frontend/sbom.json
+      cyclonedx: frontend/sbom.cyclonedx.json
 
 release:binary-index:
   stage: release
   extends: [.pybuilder, .only-tags]
-  needs: [build:addon, setup:versions, { job: setup:changelog, optional: true }]
+  needs: [build:addon, setup:versions, release:sbom, { job: setup:changelog, optional: true }]
   script:
     - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
-    - '[ -f output/changelog.md ] && opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip || true'
+    - '[ -f output/changelog.md ] && opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip --sbom-file frontend/sbom.cyclonedx.json || true'
 
 release:obs-external:
   stage: release

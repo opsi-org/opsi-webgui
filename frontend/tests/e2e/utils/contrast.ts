@@ -102,3 +102,21 @@ export async function captureColorBlindSimulations(
   }
   await applyCvd(page, null)
 }
+
+/**
+ * Automated colour-blind accessibility gate.
+ *
+ * Runs the same axe contrast checks under protanopia/deuteranopia/tritanopia
+ * simulation filters. This replaces manual image inspection when desired.
+ */
+export async function checkContrastUnderColorBlindSimulations(
+  page: Page,
+  options?: ContrastOptions
+): Promise<void> {
+  await ensureCvdFilters(page)
+  for (const type of Object.keys(CVD_MATRICES) as CvdType[]) {
+    await applyCvd(page, type)
+    await checkContrast(page, options)
+  }
+  await applyCvd(page, null)
+}

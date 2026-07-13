@@ -28,7 +28,7 @@
 The official web-based management interface for opsi.
 Manage clients, deploy software, configure servers, inspect logs and perform administration tasks directly from your browser without installing additional software.
 
-![opsi-webgui showing clients and products](./screenshots/marketing/dark/en/opsi-webgui-clients-with-products.png)
+![opsi-webgui showing clients and products](./screenshots/marketing/opsi-webgui-clients.png)
 
 ## Install
 

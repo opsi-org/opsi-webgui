@@ -8,9 +8,7 @@
   LoginPage - Authentication page.
 -->
 <template>
-  <div>
-    <LoginMainForm />
-  </div>
+  <LoginMainForm />
 </template>
 
 <script setup lang="ts">

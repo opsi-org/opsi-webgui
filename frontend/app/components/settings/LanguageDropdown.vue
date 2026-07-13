@@ -9,7 +9,8 @@
 -->
 <template>
   <div class="relative" ref="containerRef">
-    <CoreAppButton @click="open = !open" color="primary" size="xs" data-testid="language-dropdown">
+    <CoreAppButton @click="open = !open" color="primary" size="xs" data-testid="language-dropdown"
+      :title="String($t('common.settings'))">
       <CoreAppIcon :name="icons.language" class="w-3.5 h-3.5" />
       <span class="text-xs font-medium">{{ currentLocale.toUpperCase() }}</span>
       <CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 transition-transform" :class="{ 'rotate-180': open }" />
@@ -22,8 +23,20 @@
         <CoreAppButton v-for="locale in availableLocales" :key="locale.code" @click="switchTo(locale.code)"
           variant="ghost" color="neutral" size="xs" block class="justify-start"
           :data-testid="`language-dropdown-item-${locale.code}`">
-          {{ locale.name || locale.code.toUpperCase() }}
+          <span>{{ locale.name || locale.code.toUpperCase() }}</span>
+          <span v-if="!supportedLocales.includes(locale.code)" class="ml-1 text-(--color-text-muted)">
+            {{ $t('maintainedByOPSICommunity') }}
+          </span>
         </CoreAppButton>
+        <div class="mt-1 border-t border-(--color-border) px-1 pt-1">
+          <a :href="transifexUrl" target="_blank" rel="noopener noreferrer"
+            class="flex min-h-8 items-center rounded-md px-2 py-1 text-xs text-(--color-primary-soft-text) hover:bg-(--color-surface-hover)"
+            data-testid="language-dropdown-item-contribute"
+            :title="String($t('message.contributeTranslations'))"
+            @click="open = false">
+            {{ $t('message.translationMissing') }}
+          </a>
+        </div>
       </div>
     </Transition>
   </div>
@@ -37,6 +50,8 @@ const props = defineProps<{
 const icons = useIcons()
 const { locale, locales, setLocale } = useI18n()
 const currentLocale = computed(() => locale.value || 'en')
+const supportedLocales = ['en', 'de', 'fr']
+const transifexUrl = 'https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/'
 
 const open = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
@@ -49,7 +64,7 @@ const availableLocales = computed(() => {
 })
 
 function switchTo(code: string) {
-  setLocale(code as 'de' | 'en' | 'fr')
+  setLocale(code as Parameters<typeof setLocale>[0])
   open.value = false
 }
 

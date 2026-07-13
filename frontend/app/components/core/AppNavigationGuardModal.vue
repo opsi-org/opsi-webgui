@@ -14,7 +14,7 @@
 		</template>
 		<template #footer>
 			<div class="flex gap-2 justify-end">
-				<UButton variant="outline" color="neutral" @click="$emit('cancel')">{{ $t('nav.stayOnPage') }}</UButton>
+				<UButton variant="outline" color="primary" @click="$emit('cancel')">{{ $t('nav.stayOnPage') }}</UButton>
 				<UButton color="error" @click="$emit('confirm')">{{ $t('nav.leaveAnyway') }}</UButton>
 			</div>
 		</template>

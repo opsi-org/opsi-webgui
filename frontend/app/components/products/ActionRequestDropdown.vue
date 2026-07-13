@@ -38,7 +38,7 @@
 		</CoreAppTooltipTable>
 		<template v-else-if="!disabled">
 			<CoreAppSelect v-model="selectedRequest" :items="requestItems" size="xs" class="min-w-24"
-				@update:model-value="handleChange" />
+				aria-label="Action request" @update:model-value="handleChange" />
 			<CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
 				<CoreAppBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help shrink-0">
 					<CoreAppIcon :name="icons.unequal" class="w-3 h-3" />

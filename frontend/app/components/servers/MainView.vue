@@ -15,12 +15,18 @@
                 variant="soft" size="xs" @click="manualRefresh" :title="lastChangeDescription">
                 {{ $t('bus.changes') }}
             </CoreAppButton>
+            <CoreAppButton v-if="!isReadOnly && hasServerWriteAccess" :icon="icons.add" color="primary" variant="soft"
+                size="sm" :title="String($t('config.create'))" @click="showCreateConfigModal = true">
+                <span class="hidden sm:inline">{{ $t('config.create') }}</span>
+            </CoreAppButton>
         </template>
 
         <CoreAppErrorBanner :error="error" @close="error = null" />
 
+        <HostsCreateConfigModal v-model:open="showCreateConfigModal" @created="handleConfigCreated" />
+
         <CoreAppDataTable :rows="servers" :columns="columns" :loading="loading" table-id="servers" row-key="depotId"
-            :selectable="true" :filterable="true" :show-refresh="false" :clickable="true" :total-items="totalItems"
+            :selectable="true" :filterable="true" :show-refresh="false" :total-items="totalItems"
             :selected-keys="selectionStore.selectedServers" :active-key="panelServer?.depotId"
             @row-activate="handleRowActivate" @selection-change="handleSelectionChange" @page-change="handlePageChange"
             @refresh="fetchServers">
@@ -29,7 +35,7 @@
                     class="w-3.5 h-3.5 text-(--color-text-muted) mr-2" />
                 <span :class="(row as Server).type === 'OpsiConfigserver' ? 'font-bold' : ''">{{
                     (row as Server).depotId
-                    }}</span>
+                }}</span>
             </template>
             <template #cell-type="{ row }">
                 <CoreAppStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
@@ -89,7 +95,8 @@ const panelServer = ref<Server | null>(null)
 const panelType = ref<'config' | null>(null)
 const panelTab = ref('parameters')
 const lastPageParams = ref<PageChangeParams | null>(null)
-const configTabsRef = ref<{ hasAnyChanges: boolean; discardAll: () => void } | null>(null)
+const configTabsRef = ref<{ hasAnyChanges: boolean; discardAll: () => void; refresh?: () => void } | null>(null)
+const showCreateConfigModal = ref(false)
 
 const { showLeaveWarning, checkUnsavedAndDo, confirmLeave: confirmPanelLeave, cancelLeave: cancelPanelLeave, setPanelQuery, clearPanelQuery } = usePanelRouter({
     entityQueryKey: 'server',
@@ -136,6 +143,10 @@ function handleSelectionChange(_rows: Server[], keys: string[]) {
 function handlePageChange(params: PageChangeParams) {
     lastPageParams.value = params
     fetchServers(params)
+}
+
+function handleConfigCreated() {
+    configTabsRef.value?.refresh?.()
 }
 
 async function fetchServers(params?: PageChangeParams) {

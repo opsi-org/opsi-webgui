@@ -1,5 +1,11 @@
 {
   "actions": {
+    "live": {
+      "failed": "Failed",
+      "processing": "Processing",
+      "saving": "Saving",
+      "updated": "Updated"
+    },
     "failed": "Failed Actions",
     "failedClients": "Failed Clients",
     "noFailed": "No failed clients",
@@ -220,6 +226,7 @@
   "config": {
     "create": "Create Configuration",
     "id": "Config ID",
+    "idPlaceholder": "e.g. category.subcategory.name",
     "items": "Configurations",
     "multiValue": "Multi Value",
     "param": "Parameter",
@@ -255,18 +262,22 @@
     "addressExceptions": "Address Exceptions",
     "adminUsername": "Administrator",
     "domain": "Domain",
+    "domainExample": ".domain.local",
     "hostname.enter": "Enter hostname",
     "hostname.required": "Hostname is required.",
     "inventory": "Inventory Number",
     "ip": "IP Address",
+    "ipExample": "192.168.1.x",
     "lastSeen": "Last Seen",
     "mac": "MAC Address",
+    "macExample": "00:11:22:33:44:55",
     "modifiedAt": "Modification Time",
     "newId": "New ID",
     "retryAfter": "Retry after (seconds)",
     "scope": "Scope",
     "serverId": "Server ID",
-    "uuid": "System UUID"
+    "uuid": "System UUID",
+    "uuidExample": "UUID"
   },
   "groups": {
     "client": "Client Groups",
@@ -300,6 +311,11 @@
     "selectType": "Select log type to view",
     "title": "Logs"
   },
+  "maintainedByOPSICommunity": "maintained by the opsi community",
+  "message": {
+    "contributeTranslations": "Help translate opsi-webgui on Transifex",
+    "translationMissing": "Missing your language? Contribute translations"
+  },
   "mods": {
     "available": "Available",
     "free": "Free Modules",
@@ -323,9 +339,11 @@
     "defaultPage": "Default Page",
     "diagnostics": "Diagnostics",
     "groups": "Groups",
+    "healthcheck": "Health Check",
     "leaveAnyway": "Leave Anyway",
     "logs": "Logs",
     "maintenance": "Maintenance",
+    "modules": "Modules",
     "navigateAway": "You have unsaved changes. If you leave, they will be lost. Continue?",
     "products": "Products",
     "redirect": "Redirecting...",
@@ -333,6 +351,7 @@
     "sidebar": "Toggle Sidebar",
     "stayOnPage": "Stay on Page",
     "support": "Support",
+    "systemInfo": "System Info",
     "terminal": "Terminal"
   },
   "notifications": {
@@ -424,9 +443,11 @@
   "products": {
     "advice": "Advice",
     "all": "All Products",
+    "clientDiffNote": "Client differs from depot (italic)",
     "changelog.none": "Changelog not available",
     "conditions": "Conditions",
     "defaultValues": "Default Values",
+    "depotDiffNote": "Depot differs from default (bold)",
     "dependencies": "Dependencies",
     "dependenciesNone": "No dependencies found",
     "id": "Product ID",
@@ -449,9 +470,11 @@
     "properties": "Product Properties",
     "propertiesNone": "No properties found",
     "propertiesSaved": "Properties saved successfully.",
+    "processHelp": "Process already-saved pending action requests now for the selected clients and products.",
     "property": "Property",
     "quick": "Product Quick Actions",
     "quickHelp": "Select products and clients to set action requests for multiple products.",
+    "quickScopeHelp": "Server scope expands to the clients assigned to the selected servers. The preview always lists the affected clients.",
     "requiredAction": "Required Action",
     "requiredStatus": "Required Installation Status",
     "requirementType": "Requirement Type",

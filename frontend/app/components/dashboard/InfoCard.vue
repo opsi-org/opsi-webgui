@@ -12,7 +12,8 @@
 	<div :class="[
 		'opsi-card transition-all duration-200',
 		clickable ? 'cursor-pointer opsi-card-hover group' : ''
-	]" :role="clickable ? 'button' : undefined" :tabindex="clickable ? 0 : undefined"
+	]" :role="clickable ? 'button' : 'region'" :tabindex="0"
+		:aria-label="clickable ? label : (label + ': ' + (value ?? '-'))"
 		@click="clickable ? $emit('click') : undefined"
 		@keydown.enter="clickable ? $emit('click') : undefined"
 		@keydown.space.prevent="clickable ? $emit('click') : undefined">

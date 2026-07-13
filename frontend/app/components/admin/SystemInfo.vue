@@ -24,16 +24,16 @@
 				<div v-if="Object.keys(filteredSystemInfo).length > 0" class="tree-node">
 					<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
 						role="button" tabindex="0"
+						:aria-label="`${$t('common.expand')} / ${$t('common.collapse')} ${$t('diag.systemProps')}`"
 						@click="toggleNode('_system')"
 						@keydown.enter="toggleNode('_system')"
 						@keydown.space.prevent="toggleNode('_system')">
-						<CoreAppButton variant="ghost" color="neutral" size="xs" class="w-5! h-5! p-0! shrink-0"
-							:class="expanded['_system'] ? 'text-(--color-primary) bg-primary/10' : 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
-							@click.stop="toggleNode('_system')">
-							<CoreAppIcon :name="icons.chevronRight"
-								class="w-3.5 h-3.5 transition-transform duration-200"
+						<span class="w-5! h-5! p-0! shrink-0 inline-flex items-center justify-center"
+							:class="expanded['_system'] ? 'text-(--color-primary)' : 'text-(--color-text-muted)'"
+							aria-hidden="true">
+							<CoreAppIcon :name="icons.chevronRight" class="w-3.5 h-3.5 transition-transform duration-200"
 								:class="{ 'rotate-90': expanded['_system'] }" />
-						</CoreAppButton>
+						</span>
 						<span class="text-sm flex-1 truncate" :class="expanded['_system'] ? 'font-medium' : ''">
 							{{ $t('diag.systemProps') }}
 						</span>
@@ -75,16 +75,17 @@
 						class="tree-node">
 						<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
 							role="button" tabindex="0"
+							:aria-label="`${$t('common.expand')} / ${$t('common.collapse')} ${String(category)}`"
 							@click="toggleNode(String(category))"
 							@keydown.enter="toggleNode(String(category))"
 							@keydown.space.prevent="toggleNode(String(category))">
-							<CoreAppButton variant="ghost" color="neutral" size="xs" class="w-5! h-5! p-0! shrink-0"
-								:class="expanded[String(category)] ? 'text-(--color-primary) bg-primary/10' : 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'"
-								@click.stop="toggleNode(String(category))">
+							<span class="w-5! h-5! p-0! shrink-0 inline-flex items-center justify-center"
+								:class="expanded[String(category)] ? 'text-(--color-primary)' : 'text-(--color-text-muted)'"
+								aria-hidden="true">
 								<CoreAppIcon :name="icons.chevronRight"
 									class="w-3.5 h-3.5 transition-transform duration-200"
 									:class="{ 'rotate-90': expanded[String(category)] }" />
-							</CoreAppButton>
+							</span>
 							<span class="text-sm flex-1 truncate"
 								:class="expanded[String(category)] ? 'font-medium' : ''">
 								{{ String(category) }}
@@ -98,18 +99,18 @@
 								<div v-if="isComplexValue(v)" class="tree-node">
 									<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
 										style="padding-left: 24px;" role="button" tabindex="0"
+										:aria-label="`${$t('common.expand')} / ${$t('common.collapse')} ${String(k)}`"
 										@click="toggleNode(String(category) + '.' + String(k))"
 										@keydown.enter="toggleNode(String(category) + '.' + String(k))"
 										@keydown.space.prevent="toggleNode(String(category) + '.' + String(k))">
 										<span class="tree-guide-line" style="left: 8px;" />
-										<CoreAppButton variant="ghost" color="neutral" size="xs"
-											class="w-5! h-5! p-0! shrink-0"
-											:class="expanded[String(category) + '.' + String(k)] ? 'text-(--color-primary) bg-primary/10' : 'text-(--color-text-muted)'"
-											@click.stop="toggleNode(String(category) + '.' + String(k))">
+										<span class="w-5! h-5! p-0! shrink-0 inline-flex items-center justify-center"
+											:class="expanded[String(category) + '.' + String(k)] ? 'text-(--color-primary)' : 'text-(--color-text-muted)'"
+											aria-hidden="true">
 											<CoreAppIcon :name="icons.chevronRight"
 												class="w-3.5 h-3.5 transition-transform duration-200"
 												:class="{ 'rotate-90': expanded[String(category) + '.' + String(k)] }" />
-										</CoreAppButton>
+										</span>
 										<span class="text-sm flex-1 truncate"
 											:class="expanded[String(category) + '.' + String(k)] ? 'font-medium' : ''">
 											{{ k }}

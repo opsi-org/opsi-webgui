@@ -8,13 +8,14 @@
   AdminDiagnosticsView - Health check, system diagnostics, modules info with filterable tabs.
 -->
 <template>
-    <LayoutsPageLayout v-model="filter" show-filter :search-placeholder="$t('common.filter')" show-refresh :loading="loading"
-        @refresh="refresh(true)">
+    <LayoutsPageLayout v-model="filter" show-filter :search-placeholder="$t('common.filter')" show-refresh
+        :loading="loading" @refresh="refresh(true)">
         <template #tabs>
             <CoreAppTabsNav v-model="activeTab" :tabs="tabs" />
         </template>
         <template #actions>
-            <CoreAppButton :icon="icons.download" variant="soft" color="neutral" size="sm" @click="downloadDiagnostics">
+            <CoreAppButton :icon="icons.download" variant="outline" color="primary" size="sm"
+                @click="downloadDiagnostics">
                 {{
                     $t('common.download') }}</CoreAppButton>
         </template>

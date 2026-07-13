@@ -1,5 +1,11 @@
 {
   "actions": {
+    "live": {
+      "failed": "Échec",
+      "processing": "Traitement",
+      "saving": "Enregistrement",
+      "updated": "Mis à jour"
+    },
     "failed": "Actions échouées",
     "failedClients": "Clients en échec",
     "noFailed": "Aucun client en échec",
@@ -220,6 +226,7 @@
   "config": {
     "create": "Créer une configuration",
     "id": "ID de configuration",
+    "idPlaceholder": "p. ex. category.subcategory.name",
     "items": "Configurations",
     "multiValue": "Valeur multiple",
     "param": "Paramètre",
@@ -255,18 +262,22 @@
     "addressExceptions": "Exceptions d'adresse",
     "adminUsername": "Administrateur",
     "domain": "Domaine",
+    "domainExample": ".domain.local",
     "hostname.enter": "Saisir le nom d'hôte",
     "hostname.required": "Le nom d'hôte est requis.",
     "inventory": "Numéro d'inventaire",
     "ip": "Adresse IP",
+    "ipExample": "192.168.1.x",
     "lastSeen": "Dernière activité",
     "mac": "Adresse MAC",
+    "macExample": "00:11:22:33:44:55",
     "modifiedAt": "Date de modification",
     "newId": "Nouvel ID",
     "retryAfter": "Réessayer après (secondes)",
     "scope": "Cible",
     "serverId": "ID serveur",
-    "uuid": "UUID système"
+    "uuid": "UUID système",
+    "uuidExample": "UUID"
   },
   "groups": {
     "client": "Groupes de clients",
@@ -299,6 +310,11 @@
     "scroll": "Aller au marqueur",
     "selectType": "Sélectionner un type de journal à afficher",
     "title": "Journaux"
+  },
+  "maintainedByOPSICommunity": "maintenu par la communauté opsi",
+  "message": {
+    "contributeTranslations": "Aider à traduire opsi-webgui sur Transifex",
+    "translationMissing": "Votre langue manque ? Contribuez aux traductions"
   },
   "mods": {
     "available": "Disponible",
@@ -424,9 +440,11 @@
   "products": {
     "advice": "Remarque",
     "all": "Tous les produits",
+    "clientDiffNote": "Le client diffère du dépôt (italique)",
     "changelog.none": "Journal des modifications non disponible",
     "conditions": "Conditions",
     "defaultValues": "Valeurs par défaut",
+    "depotDiffNote": "Le dépôt diffère de la valeur par défaut (gras)",
     "dependencies": "Dépendances",
     "dependenciesNone": "Aucune dépendance trouvée",
     "id": "ID produit",
@@ -449,9 +467,11 @@
     "properties": "Propriétés du produit",
     "propertiesNone": "Aucune propriété trouvée",
     "propertiesSaved": "Propriétés enregistrées avec succès.",
+    "processHelp": "Traiter maintenant les demandes d'action en attente déjà enregistrées pour les clients et produits sélectionnés.",
     "property": "Propriété",
     "quick": "Actions rapides sur les produits",
     "quickHelp": "Sélectionnez des produits et des clients pour définir des demandes d'action pour plusieurs produits.",
+    "quickScopeHelp": "La portée serveur s'étend aux clients affectés aux serveurs sélectionnés. L'aperçu liste toujours les clients concernés.",
     "requiredAction": "Action requise",
     "requiredStatus": "Statut d'installation requis",
     "requirementType": "Type d'exigence",

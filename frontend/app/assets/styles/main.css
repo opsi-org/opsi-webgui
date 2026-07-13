@@ -57,6 +57,7 @@
   --color-primary: #3f5aa6;
   --color-primary-hover: #4f6ec0;
   --color-primary-text: #ffffff;
+  --color-primary-disabled: #5c6fa0;
   --color-primary-soft-bg: rgba(63, 90, 166, 0.12);
   --color-primary-soft-text: #3f5aa6;
   --color-primary-soft-ring: rgba(63, 90, 166, 0.2);
@@ -241,6 +242,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Readability tweak: keep xs text legible on dense admin tables/forms. */
+.text-xs {
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+}
+
 h1,
 h2,
 h3,
@@ -300,13 +307,17 @@ pre,
    FORM ELEMENTS
    ============================================ */
 
-input[type='checkbox'],
-input[type='radio'] {
-  accent-color: var(--color-opsi-blue);
-}
-
 button[role='checkbox'] {
   border: 1px solid var(--color-border-accented);
+  color: var(--color-border-accented);
+  stroke: var(--color-border-accented);
+}
+
+button[role='checkbox'][data-state='checked'] svg,
+button[role='checkbox'][data-state='checked'] [data-state='checked'] svg {
+  color: var(--color-primary-text, #fff);
+  stroke: var(--color-primary-text, #fff);
+  fill: var(--color-primary-text, #fff);
 }
 
 input[type='text'],
@@ -337,7 +348,7 @@ html select {
 }
 
 /* ============================================
-   ACCESSIBILITY — WCAG 2.1
+   ACCESSIBILITY - WCAG 2.1
    ============================================ */
 
 *:focus-visible {
@@ -382,7 +393,6 @@ textarea:focus-visible,
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {

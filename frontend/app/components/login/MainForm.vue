@@ -30,9 +30,9 @@
         </div>
       </div>
 
-      <CoreAppInput v-model="cred.username" :placeholder="String($t('auth.username'))"
+      <CoreAppInput id="login-username" v-model="cred.username" :placeholder="String($t('auth.username'))"
         :aria-label="String($t('auth.username'))" :icon="icons.user" autocomplete="username" required class="w-full" />
-      <CoreAppPasswordInput v-model="cred.password" :placeholder="String($t('auth.password'))"
+      <CoreAppPasswordInput id="login-password" v-model="cred.password" :placeholder="String($t('auth.password'))"
         :aria-label="String($t('auth.password'))" :icon="icons.key" autocomplete="current-password" required
         class="w-full" />
       <div class="space-y-3 pt-2">

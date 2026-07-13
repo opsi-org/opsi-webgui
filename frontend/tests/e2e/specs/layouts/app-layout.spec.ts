@@ -15,18 +15,12 @@ test.describe('Layouts', () => {
         await expect(sidebar).toBeVisible({ timeout: 10000 })
         await expect(p.getByTestId('nav-dashboard')).toBeVisible()
         await expect(p.getByTestId('nav-clients')).toBeVisible()
+
+        await p.getByTestId('nav-dashboard').click()
+        await expect(p).toHaveURL(/\/dashboard/, { timeout: 10000 })
+        await p.getByTestId('nav-clients').click()
+        await expect(p).toHaveURL(/\/clients/, { timeout: 10000 })
       },
     })
-  })
-
-  test('sidebar link navigates to the target route', async ({ page }) => {
-    await page.goto('/clients', { waitUntil: 'load', timeout: 30000 })
-    await page.waitForTimeout(2000)
-
-    await page.getByTestId('nav-dashboard').click()
-    await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 })
-
-    await page.getByTestId('nav-clients').click()
-    await expect(page).toHaveURL(/\/clients/, { timeout: 10000 })
   })
 })

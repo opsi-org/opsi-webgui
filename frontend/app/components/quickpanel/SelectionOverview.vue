@@ -16,10 +16,8 @@
 		<template v-else>
 			<div class="flex items-center justify-between mb-2 shrink-0">
 				<span class="text-xs text-(--color-text-muted)">{{ totalCount }} {{ $t('common.total') }}</span>
-				<CoreAppTooltip :text="$t('common.clearAll')">
-					<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-						:aria-label="$t('common.clearAll')" @click="clearAll" />
-				</CoreAppTooltip>
+				<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+					:aria-label="$t('common.clearAll')" :title="$t('common.clearAll')" @click="clearAll" />
 			</div>
 
 			<div class="flex-1 overflow-y-auto min-h-0 space-y-1.5">
@@ -31,10 +29,8 @@
 							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedServers.length
 								}})</span>
 						</div>
-						<CoreAppTooltip :text="$t('common.clearAll')">
-							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								:aria-label="$t('common.clearAll')" @click="clearServers" />
-						</CoreAppTooltip>
+						<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+							:aria-label="$t('common.clearAll')" :title="$t('common.clearAll')" @click="clearServers" />
 					</div>
 					<div class="max-h-30 overflow-y-auto">
 						<div v-for="server in selectionStore.selectedServers" :key="server"
@@ -55,10 +51,8 @@
 							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedClients.length
 								}})</span>
 						</div>
-						<CoreAppTooltip :text="$t('common.clearAll')">
-							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								:aria-label="$t('common.clearAll')" @click="selectionStore.clearClients()" />
-						</CoreAppTooltip>
+						<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+							:aria-label="$t('common.clearAll')" :title="$t('common.clearAll')" @click="selectionStore.clearClients()" />
 					</div>
 					<div class="max-h-36 overflow-y-auto">
 						<div v-for="client in selectionStore.selectedClients" :key="client"
@@ -79,10 +73,8 @@
 							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedProducts.length
 								}})</span>
 						</div>
-						<CoreAppTooltip :text="$t('common.clearAll')">
-							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								:aria-label="$t('common.clearAll')" @click="selectionStore.clearProducts()" />
-						</CoreAppTooltip>
+						<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+							:aria-label="$t('common.clearAll')" :title="$t('common.clearAll')" @click="selectionStore.clearProducts()" />
 					</div>
 					<div class="max-h-36 overflow-y-auto">
 						<div v-for="product in selectionStore.selectedProducts" :key="product"

@@ -15,6 +15,28 @@ const keyPath = path.join(certsPath, 'server.key')
 const certPath = path.join(certsPath, 'server.crt')
 const httpsConfig =
   fs.existsSync(keyPath) && fs.existsSync(certPath) ? { key: keyPath, cert: certPath } : false
+const localeDir = path.join(__dirname, 'i18n', 'locales')
+const localeNameMap: Record<string, string> = {
+  de: 'Deutsch',
+  en: 'English',
+  fr: 'Français',
+}
+const locales = fs
+  .readdirSync(localeDir)
+  .filter(file => /^opsi-webgui_[a-z-]+\.json$/i.test(file))
+  .map((file) => {
+    const code = file.replace(/^opsi-webgui_/, '').replace(/\.json$/i, '')
+    return {
+      code,
+      file,
+      name: localeNameMap[code] || code.toUpperCase(),
+    }
+  })
+  .sort((a, b) => {
+    if (a.code === 'de') return -1
+    if (b.code === 'de') return 1
+    return a.code.localeCompare(b.code)
+  })
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -185,11 +207,7 @@ export default defineNuxtConfig({
   i18n: {
     strategy: 'no_prefix',
     defaultLocale: 'de',
-    locales: [
-      { code: 'de', file: 'opsi-webgui_de.json', name: 'Deutsch' },
-      { code: 'en', file: 'opsi-webgui_en.json', name: 'English' },
-      { code: 'fr', file: 'opsi-webgui_fr.json', name: 'Français' },
-    ],
+    locales,
     bundle: {
       fullInstall: false,
     },

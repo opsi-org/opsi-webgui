@@ -1,5 +1,11 @@
 {
   "actions": {
+    "live": {
+      "failed": "Fehlgeschlagen",
+      "processing": "Wird verarbeitet",
+      "saving": "Wird gespeichert",
+      "updated": "Aktualisiert"
+    },
     "failed": "Fehlgeschlagene Aktionen",
     "failedClients": "Fehlgeschlagene Clients",
     "noFailed": "Keine fehlgeschlagenen Clients",
@@ -220,6 +226,7 @@
   "config": {
     "create": "Konfiguration erstellen",
     "id": "Konfigurations-ID",
+    "idPlaceholder": "z. B. category.subcategory.name",
     "items": "Konfigurationen",
     "multiValue": "Mehrfachwert",
     "param": "Parameter",
@@ -255,18 +262,22 @@
     "addressExceptions": "Adressausnahmen",
     "adminUsername": "Administrator",
     "domain": "Domain",
+    "domainExample": ".domain.local",
     "hostname.enter": "Hostname eingeben",
     "hostname.required": "Hostname ist erforderlich.",
     "inventory": "Inventarnummer",
     "ip": "IP-Adresse",
+    "ipExample": "192.168.1.x",
     "lastSeen": "Zuletzt gesehen",
     "mac": "MAC-Adresse",
+    "macExample": "00:11:22:33:44:55",
     "modifiedAt": "Änderungszeitpunkt",
     "newId": "Neue ID",
     "retryAfter": "Wiederholungsversuch nach (in Sekunden)",
     "scope": "Bereich",
     "serverId": "Server-ID",
-    "uuid": "System-UUID"
+    "uuid": "System-UUID",
+    "uuidExample": "UUID"
   },
   "groups": {
     "client": "Client-Gruppen",
@@ -300,6 +311,11 @@
     "selectType": "Log-Typ zum Anzeigen auswählen",
     "title": "Logs"
   },
+  "maintainedByOPSICommunity": "von der opsi-Community gepflegt",
+  "message": {
+    "contributeTranslations": "Beim Übersetzen des opsi-webgui in Transifex helfen",
+    "translationMissing": "Ihre Sprache fehlt? Übersetzungen beitragen"
+  },
   "mods": {
     "available": "Verfügbar",
     "free": "Kostenlose",
@@ -323,9 +339,11 @@
     "defaultPage": "Standardseite",
     "diagnostics": "Diagnose",
     "groups": "Gruppen",
+    "healthcheck": "Health Check",
     "leaveAnyway": "Trotzdem verlassen",
     "logs": "Log",
     "maintenance": "Wartung",
+    "modules": "Module",
     "navigateAway": "Sie haben ungespeicherte Änderungen. Wenn Sie die Seite verlassen, gehen diese verloren. Möchten Sie fortfahren?",
     "products": "Produkte",
     "redirect": "Weiterleitung...",
@@ -333,6 +351,7 @@
     "sidebar": "Seitenleiste ein-/ausblenden",
     "stayOnPage": "Auf Seite bleiben",
     "support": "Support",
+    "systemInfo": "Systeminfo",
     "terminal": "Terminal"
   },
   "notifications": {
@@ -424,9 +443,11 @@
   "products": {
     "advice": "Hinweis",
     "all": "Alle Produkte",
+    "clientDiffNote": "Client weicht vom Depot ab (kursiv)",
     "changelog.none": "Änderungsprotokoll nicht verfügbar",
     "conditions": "Bedingungen",
     "defaultValues": "Standardwerte",
+    "depotDiffNote": "Depot weicht vom Standard ab (fett)",
     "dependencies": "Abhängigkeiten",
     "dependenciesNone": "Keine Abhängigkeiten gefunden",
     "id": "Produkt-ID",
@@ -449,9 +470,11 @@
     "properties": "Produkteigenschaften",
     "propertiesNone": "Keine Eigenschaften gefunden",
     "propertiesSaved": "Eigenschaften erfolgreich gespeichert.",
+    "processHelp": "Bereits gespeicherte, ausstehende Aktionsanforderungen jetzt für die ausgewählten Clients und Produkte verarbeiten.",
     "property": "Eigenschaft",
     "quick": "Produkt-Schnellaktionen",
     "quickHelp": "Produkte und Clients auswählen, um Aktionsanforderungen für mehrere Produkte zu setzen.",
+    "quickScopeHelp": "Der Server-Bereich erweitert sich auf die Clients, die den ausgewählten Servern zugeordnet sind. Die Vorschau zeigt immer die betroffenen Clients an.",
     "requiredAction": "Erforderliche Aktion",
     "requiredStatus": "Erforderlicher Installationsstatus",
     "requirementType": "Anforderungstyp",

@@ -56,6 +56,7 @@
 			<div v-if="group.isSpecial && group.label !== 'not_assigned'"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
 				<CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('groups.subgroup')"
+					:aria-label="String($t('groups.subgroup'))"
 					:disabled="groupDisabled" @click="$emit('create-subgroup', group.id)">
 					<CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge
 						badge-color="none" />
@@ -64,15 +65,19 @@
 			<div v-else-if="!group.isSpecial"
 				class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity" @click.stop>
 				<CoreAppButton :icon="icons.add" size="xs" variant="ghost" color="neutral" :title="$t('groups.membersAdd')"
+					:aria-label="String($t('groups.membersAdd'))"
 					:disabled="groupDisabled" @click="$emit('add-members', group)" />
 				<CoreAppButton size="xs" variant="ghost" color="neutral" :title="$t('groups.subgroup')"
+					:aria-label="String($t('groups.subgroup'))"
 					:disabled="groupDisabled" @click="$emit('create-subgroup', group.id)">
 					<CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge
 						badge-color="none" />
 				</CoreAppButton>
 				<CoreAppButton :icon="icons.pencil" size="xs" variant="ghost" color="neutral" :title="$t('common.edit')"
+					:aria-label="String($t('common.edit'))"
 					:disabled="groupDisabled" @click="$emit('edit', group)" />
 				<CoreAppButton :icon="icons.delete" size="xs" variant="ghost" color="neutral" :title="$t('common.delete')"
+					:aria-label="String($t('common.delete'))"
 					:disabled="groupDisabled" @click="$emit('delete', group)" />
 			</div>
 		</div>

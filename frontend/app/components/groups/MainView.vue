@@ -152,12 +152,12 @@
                         @keydown="handleMemberListKeydown">
                         <div class="pt-4 border-(--color-border)">
                             <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
+                                <h2 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
                                     {{ $t('groups.members') }}
                                     <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
                                         []).length
                                         }})</span>
-                                </h4>
+                                </h2>
                                 <div class="flex items-center gap-2">
                                     <CoreAppButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
                                         :icon="icons.delete" size="xs" variant="soft" color="error"
@@ -181,29 +181,33 @@
                                 <CoreAppCheckbox
                                     :model-value="selectedMembers.length === filteredMembers.length && filteredMembers.length > 0"
                                     :indeterminate="selectedMembers.length > 0 && selectedMembers.length < filteredMembers.length"
+                                    :aria-label="String($t('common.selectAll'))"
                                     @update:model-value="toggleSelectAllMembers" />
                                 <span class="text-xs text-(--color-text-muted)">
                                     {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('common.selected')}` :
                                         $t('common.selectAll') }}
                                     <kbd
-                                        class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
+                                        class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
                                     <kbd
-                                        class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
+                                        class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
                                 </span>
                             </div>
                             <div class="space-y-0 overflow-auto" style="max-height: 60vh;">
                                 <div v-for="member in displayedMembers" :key="member"
                                     class="flex items-center gap-2 text-sm px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/member cursor-pointer select-none"
-                                    :class="selectedMembers.includes(member) ? 'bg-opsi-blue/5' : ''"
-                                    role="button" tabindex="0"
-                                    @click="!selectedGroup.isSpecial && toggleMemberSelection(member, $event)"
-                                    @keydown.enter="!selectedGroup.isSpecial && toggleMemberSelection(member, $event)"
-                                    @keydown.space.prevent="!selectedGroup.isSpecial && toggleMemberSelection(member, $event)">
+                                    :class="selectedMembers.includes(member) ? 'bg-opsi-blue/5' : ''">
                                     <CoreAppCheckbox v-if="!selectedGroup.isSpecial"
-                                        :model-value="selectedMembers.includes(member)" class="shrink-0" @click.stop />
+                                        :model-value="selectedMembers.includes(member)" class="shrink-0" @click.stop
+                                        :aria-label="member"
+                                        @update:model-value="toggleMemberSelection(member)" />
                                     <CoreAppIcon :name="activeGroupType === 'clients' ? icons.client : icons.product"
                                         class="w-4 h-4 text-(--color-text-muted) shrink-0" />
-                                    <span class="flex-1 truncate text-(--color-text)">{{ member }}</span>
+                                    <button v-if="!selectedGroup.isSpecial" type="button"
+                                        class="flex-1 truncate text-(--color-text) text-left bg-transparent border-0 p-0 cursor-pointer"
+                                        @click="toggleMemberSelection(member, $event)">
+                                        {{ member }}
+                                    </button>
+                                    <span v-else class="flex-1 truncate text-(--color-text)">{{ member }}</span>
                                     <CoreAppButton v-if="!selectedGroup.isSpecial" :icon="icons.delete" size="xs"
                                         variant="ghost" color="neutral" :title="$t('common.remove')"
                                         class="opacity-0 group-hover/member:opacity-100 transition-opacity shrink-0"
@@ -253,15 +257,13 @@
                     </template>
                     <CoreAppForm @submit="doCreateGroup" class="space-y-5">
                         <CoreAppFormField :label="$t('groups.id')" required>
-                            <CoreAppInput v-model="createForm.groupId" :placeholder="$t('groups.id')" class="w-full" />
+                            <CoreAppInput v-model="createForm.groupId" class="w-full" />
                         </CoreAppFormField>
                         <CoreAppFormField :label="$t('common.description')">
-                            <CoreAppTextarea v-model="createForm.description" :placeholder="$t('common.description')" :rows="2"
-                                class="w-full" />
+                            <CoreAppTextarea v-model="createForm.description" :rows="2" class="w-full" />
                         </CoreAppFormField>
                         <CoreAppFormField :label="$t('common.notes')">
-                            <CoreAppTextarea v-model="createForm.notes" :placeholder="$t('common.notes')" :rows="2"
-                                class="w-full" />
+                            <CoreAppTextarea v-model="createForm.notes" :rows="2" class="w-full" />
                         </CoreAppFormField>
                     </CoreAppForm>
                     <template #footer>
@@ -380,13 +382,14 @@
                                     <CoreAppCheckbox
                                         :model-value="selectedNewMembers.length === filteredAvailableMembers.length && filteredAvailableMembers.length > 0"
                                         :indeterminate="selectedNewMembers.length > 0 && selectedNewMembers.length < filteredAvailableMembers.length"
+                                        :aria-label="String($t('common.selectAll'))"
                                         @update:model-value="toggleSelectAllNewMembers" />
                                     <span class="text-xs text-(--color-text-muted)">
                                         {{ $t('common.selectAll') }}
                                         <kbd
-                                            class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
+                                            class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
                                         <kbd
-                                            class="ml-1 px-1 py-0.5 text-xs bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
+                                            class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
                                     </span>
                                 </span>
                                 <span class="text-xs text-(--color-text-muted)">{{ selectedNewMembers.length }} {{
@@ -396,13 +399,15 @@
                                 <div class="max-h-60 overflow-auto">
                                     <span v-for="item in filteredAvailableMembers" :key="item"
                                         class="flex items-center gap-2 px-3 py-2 hover:bg-(--color-surface-hover) cursor-pointer border-b border-(--color-border) last:border-b-0 text-(--color-text)"
-                                        :class="selectedNewMembers.includes(item) ? 'bg-opsi-blue/5' : ''"
-                                        role="button" tabindex="0"
-                                        @click.prevent="toggleNewMemberSelection(item, $event)"
-                                        @keydown.enter.prevent="toggleNewMemberSelection(item, $event)"
-                                        @keydown.space.prevent="toggleNewMemberSelection(item, $event)">
-                                        <CoreAppCheckbox :model-value="selectedNewMembers.includes(item)" />
-                                        <span class="text-sm truncate">{{ item }}</span>
+                                        :class="selectedNewMembers.includes(item) ? 'bg-opsi-blue/5' : ''">
+                                        <CoreAppCheckbox :model-value="selectedNewMembers.includes(item)"
+                                            :aria-label="item"
+                                            @update:model-value="toggleNewMemberSelection(item)" />
+                                        <button type="button"
+                                            class="text-sm truncate text-left bg-transparent border-0 p-0 flex-1 cursor-pointer"
+                                            @click.prevent="toggleNewMemberSelection(item, $event)">
+                                            {{ item }}
+                                        </button>
                                     </span>
                                     <div v-if="filteredAvailableMembers.length === 0"
                                         class="text-sm text-(--color-text-muted) py-4 text-center">

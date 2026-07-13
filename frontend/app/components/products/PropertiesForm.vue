@@ -17,47 +17,45 @@
 			:message="String($t('products.propertiesNone'))" />
 
 		<template v-else>
-			<div class="flex-1 overflow-auto min-h-0">
-				<div class="opsi-card">
-					<div class="space-y-0">
-					<div v-for="prop in visibleProperties" :key="prop.propertyId"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2 px-2 rounded transition-colors"
-						:class="changedPropertyIds.has(prop.propertyId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)'">
+			<CoreAppCard class="flex-1 min-h-0" :ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'p-0 flex-1 min-h-0 overflow-y-auto bg-(--color-background)' }">
+				<div class="space-y-0 min-h-full bg-(--color-background)">
+						<div v-for="prop in visibleProperties" :key="prop.propertyId"
+							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2 px-2 rounded transition-colors"
+							:class="changedPropertyIds.has(prop.propertyId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)'">
 
-						<div class="min-w-0 md:w-2/5 flex items-center gap-1.5">
-							<CoreAppTooltipTable :rows="getPropertyTooltipRows(prop)">
-								<span class="text-sm break-all cursor-help" :class="{
-									'italic': prop.anyClientDifferentFromDepot,
-									'font-bold': prop.anyDepotDifferentFromDefault,
-								}">
-									{{ prop.propertyId }}
+							<div class="min-w-0 md:w-2/5 flex items-center gap-1.5">
+								<CoreAppTooltipTable :rows="getPropertyTooltipRows(prop)">
+									<span class="text-sm break-all cursor-help" :class="{
+										'italic': prop.anyClientDifferentFromDepot,
+										'font-bold': prop.anyDepotDifferentFromDefault,
+									}">
+										{{ prop.propertyId }}
+									</span>
+								</CoreAppTooltipTable>
+								<span v-if="changedPropertyIds.has(prop.propertyId)"
+									class="inline-flex items-center text-(--color-changed-text)">
+									<CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
 								</span>
-							</CoreAppTooltipTable>
-							<span v-if="changedPropertyIds.has(prop.propertyId)"
-								class="inline-flex items-center text-(--color-changed-text)">
-								<CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
-							</span>
-						</div>
+							</div>
 
-						<div class="flex-1 flex items-center gap-2 min-w-0 w-full md:w-auto">
-							<CoreAppPropertyFormItem :model-value="prop._value"
-								:type="prop.type === 'BoolProductProperty' ? 'bool' : 'unicode'"
-								:possible-values="prop.allValues || []" :multi-value="prop.multiValue"
-								:editable="prop.editable" :password="isPasswordProperty(prop.propertyId)"
-								:mixed="isMixedValue(prop)" :aria-label="prop.propertyId"
-								@update:model-value="(v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)" />
+							<div class="flex-1 flex items-center gap-2 min-w-0 w-full md:w-auto">
+								<CoreAppPropertyFormItem :model-value="prop._value"
+									:type="prop.type === 'BoolProductProperty' ? 'bool' : 'unicode'"
+									:possible-values="prop.allValues || []" :multi-value="prop.multiValue"
+									:editable="prop.editable" :password="isPasswordProperty(prop.propertyId)"
+									:mixed="isMixedValue(prop)" :aria-label="prop.propertyId"
+									@update:model-value="(v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)" />
 
-							<CoreAppButton v-if="changedPropertyIds.has(prop.propertyId)" size="xs" variant="ghost"
-								color="neutral" :icon="icons.x" :title="$t('common.discard')"
-								@click="discardSingleProperty(prop.propertyId)" />
+								<CoreAppButton v-if="changedPropertyIds.has(prop.propertyId)" size="xs" variant="ghost"
+									color="neutral" :icon="icons.x" :title="$t('common.discard')"
+									@click="discardSingleProperty(prop.propertyId)" />
+							</div>
 						</div>
-					</div>
-					</div>
-				</div>
-				<div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-3">
+					<div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-3">
 					<span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('common.loading') }}…</span>
 				</div>
-			</div>
+				</div>
+			</CoreAppCard>
 		</template>
 	</div>
 </template>
@@ -139,8 +137,8 @@ function getPropertyTooltipRows(prop: EditableProductProperty): Array<{ key: str
 	if (prop.allValues && prop.allValues.length > 0) {
 		rows.push({ key: String($t('common.values')), value: prop.allValues.map(String).join(', ') })
 	}
-	if (prop.anyDepotDifferentFromDefault) rows.push({ key: String($t('common.note')), value: 'Depot ≠ Default (bold)' })
-	if (prop.anyClientDifferentFromDepot) rows.push({ key: String($t('common.note')), value: 'Client ≠ Depot (italic)' })
+	if (prop.anyDepotDifferentFromDefault) rows.push({ key: String($t('common.note')), value: String($t('products.depotDiffNote')) })
+	if (prop.anyClientDifferentFromDepot) rows.push({ key: String($t('common.note')), value: String($t('products.clientDiffNote')) })
 	return rows
 }
 

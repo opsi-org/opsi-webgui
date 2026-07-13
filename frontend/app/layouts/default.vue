@@ -99,7 +99,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text)">{{
                                 $t('quick.panel')
-                            }}</span>
+                                }}</span>
                             <CoreAppButton @click="quickpanelOpen = false" variant="ghost" color="neutral"
                                 :aria-label="String($t('common.close'))" class="p-1! hover:bg-(--color-surface-hover)">
                                 <CoreAppIcon :name="icons.x" class="w-4 h-4" />
@@ -124,7 +124,7 @@
                         </div>
 
                         <div class="flex items-center justify-between mb-4">
-                            <span class="text-base font-medium text-(--color-text)">{{ $t('quick.panel') }}</span>
+                            <span class="text-small font-medium text-(--color-text)">{{ $t('quick.panel') }}</span>
                             <CoreAppButton :icon="icons.x" size="sm" variant="ghost" color="neutral"
                                 :aria-label="String($t('common.close'))" class="rounded-full"
                                 @click="quickpanelOpen = false" />

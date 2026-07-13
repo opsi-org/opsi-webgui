@@ -8,199 +8,110 @@
   HostsConfigTabs - Tabbed host configuration editor with panel and standalone mode.
 -->
 <template>
-	<CoreAppNavigationGuardModal v-if="showHostSelector || !panelMode" v-model="showLeaveWarning" @cancel="cancelLeave"
-		@confirm="confirmLeave" />
+	<div class="flex flex-col h-full min-h-0">
+		<CoreAppNavigationGuardModal v-if="showHostSelector || !panelMode" v-model="showLeaveWarning"
+			@cancel="cancelLeave" @confirm="confirmLeave" />
 
-	<!-- Create Config Modal -->
-	<CoreAppModal v-model:open="showCreateConfigModal">
-		<template #content>
-			<CoreAppCard>
-				<template #header>
-					<div class="flex items-center gap-3">
-						<CoreAppIcon :name="icons.add" class="w-5 h-5" />
-						<h3 class="text-sm font-heading uppercase tracking-wide text-(--color-text) m-0">{{
-							$t('config.create') }}</h3>
-					</div>
-				</template>
-				<div class="space-y-4">
-					<div>
-						<span class="block text-sm font-medium mb-1">{{ $t('config.id') }} *</span>
-						<CoreAppInput v-model="newConfig.configId" :placeholder="'e.g. category.subcategory.name'"
-							size="sm" />
-					</div>
-					<div>
-						<span class="block text-sm font-medium mb-1">{{ $t('common.description') }}</span>
-						<CoreAppInput v-model="newConfig.description" size="sm" />
-					</div>
-					<div>
-						<span class="block text-sm font-medium mb-1">{{ $t('common.type') }}</span>
-						<CoreAppSelect v-model="newConfig.type" :items="configTypeOptions" size="sm" />
-					</div>
-					<div class="flex items-center gap-4">
-						<span class="flex items-center gap-2 text-sm">
-							<CoreAppCheckbox v-model="newConfig.multiValue" size="sm" />
-							{{ $t('config.multiValue') }}
-						</span>
-						<span class="flex items-center gap-2 text-sm">
-							<CoreAppCheckbox v-model="newConfig.editable" size="sm" />
-							{{ $t('common.editable') }}
-						</span>
-					</div>
-					<div v-if="newConfig.type === 'UnicodeConfig'">
-						<span class="block text-sm font-medium mb-1">{{ $t('config.possibleValues') }}</span>
-						<div v-if="newConfig.possibleValues.length > 0" class="flex flex-wrap gap-1 mb-1">
-							<span v-for="(val, idx) in newConfig.possibleValues" :key="idx"
-								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20">
-								{{ val }}
-								<CoreAppButton type="button" variant="ghost" color="neutral" size="xs"
-									class="p-0! hover:text-(--color-error-soft-text) transition-colors"
-									@click="newConfig.possibleValues.splice(idx, 1)">
-									<CoreAppIcon :name="icons.x" class="w-3 h-3" />
-								</CoreAppButton>
-							</span>
-						</div>
-						<div class="flex gap-1">
-							<CoreAppInput v-model="newPossibleValue" :placeholder="$t('common.pressEnterToAdd')" size="sm"
-								class="flex-1" @keydown.enter.prevent="addPossibleValue" />
-							<CoreAppButton size="sm" variant="soft" color="neutral" :icon="icons.add"
-								:aria-label="String($t('common.add'))" @click="addPossibleValue" />
-						</div>
-					</div>
-					<div v-if="newConfig.type === 'UnicodeConfig'">
-						<span class="block text-sm font-medium mb-1">{{ $t('products.defaultValues') }}</span>
-						<div v-if="newConfig.defaultValues.length > 0" class="flex flex-wrap gap-1 mb-1">
-							<span v-for="(val, idx) in newConfig.defaultValues" :key="idx"
-								class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20">
-								{{ val }}
-								<CoreAppButton type="button" variant="ghost" color="neutral" size="xs"
-									class="p-0! hover:text-(--color-error-soft-text) transition-colors"
-									@click="newConfig.defaultValues.splice(idx, 1)">
-									<CoreAppIcon :name="icons.x" class="w-3 h-3" />
-								</CoreAppButton>
-							</span>
-						</div>
-						<div class="flex gap-1">
-							<CoreAppInput v-model="newDefaultValue" :placeholder="$t('common.pressEnterToAdd')" size="sm"
-								class="flex-1" @keydown.enter.prevent="addDefaultValue" />
-							<CoreAppButton size="sm" variant="soft" color="neutral" :icon="icons.add"
-								:aria-label="String($t('common.add'))" @click="addDefaultValue" />
-						</div>
-					</div>
-					<div v-if="newConfig.type === 'BoolConfig'">
-						<span class="block text-sm font-medium mb-1">{{ $t('products.defaultValues') }}</span>
-						<CoreAppSelect v-model="newConfig.boolDefault"
-							:items="[{ label: 'true', value: 'true' }, { label: 'false', value: 'false' }]" size="sm" />
-					</div>
-					<CoreAppAlertInline v-if="createConfigError" color="error" :title="$t('common.error')"
-						:description="createConfigError" variant="subtle" closable @close="createConfigError = null" />
+		<HostsCreateConfigModal v-model:open="showCreateConfigModal" @created="fetchParameters" />
+
+
+
+		<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-surface) mb-3">
+			<div class="flex flex-wrap items-center justify-between gap-3">
+				<div class="flex items-center gap-2">
+					<CoreAppTabsNav v-model="activeTab" :tabs="tabDefs" />
+					<template v-if="showHostSelector">
+						<span class="h-5 w-px bg-(--color-border) mx-1" />
+						<slot name="hostSelector">
+							<HostsSelector v-model="hostSelectorModel" :type="hostType"
+								:placeholder="hostSelectorPlaceholder" allow-clear />
+						</slot>
+					</template>
 				</div>
-				<template #footer>
-					<div class="flex gap-2 justify-end">
-						<CoreAppButton variant="ghost" color="neutral" @click="resetCreateConfigModal">{{ $t('common.cancel')
-						}}
-						</CoreAppButton>
-						<CoreAppButton color="primary" :loading="creatingConfig" :disabled="!newConfig.configId.trim()"
-							@click="handleCreateConfig">{{ $t('common.create') }}</CoreAppButton>
-					</div>
-				</template>
+				<div class="flex flex-wrap items-center gap-2">
+					<CoreAppFilterInput v-model="paramSearch" size="sm" input-class="w-full sm:w-56 md:w-72 lg:w-80" />
+					<CoreAppButton v-if="isServerDefaultMode && !readonly" :icon="icons.add" color="primary"
+						variant="soft" size="sm" :title="String($t('config.create'))"
+						@click="showCreateConfigModal = true">
+						<span class="hidden sm:inline">{{ $t('config.create') }}</span>
+					</CoreAppButton>
+					<CoreAppUnsavedChangesModal v-if="showUnsavedModal" :config-ref="unsavedChangesRef" size="sm"
+						@save-all="saveAll" @discard-all="discardAll" />
+					<CoreAppButton :icon="icons.refresh" color="primary" variant="outline" size="sm"
+						:loading="loadingParams || loadingAttrs" :title="String($t('common.refresh'))"
+						@click="refresh" />
+				</div>
+			</div>
+		</div>
+
+		<div v-show="activeTab === 'parameters'"
+			:class="['flex flex-col min-h-0 flex-1 overflow-hidden bg-(--color-surface)']">
+			<div v-if="loadingParams" class="py-8 flex justify-center">
+				<CoreAppLoadingSpinner size="md" />
+			</div>
+			<CoreAppEmptyState v-else-if="categoryAwareTree.length === 0" :icon="icons.config"
+				:message="(hostId || hostType === 'server') ? String($t('config.paramsNone')) : String($t('hosts.select'))" />
+			<CoreAppCard v-else
+				:ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'p-3 sm:p-3 overflow-y-auto min-h-0 flex-1' }">
+				<HostsParametersTreeForm :tree="categoryAwareTree" :changed-params="changedParams" :readonly="readonly"
+					:current-value="currentValue" :set-param="setParam" :discard-single-param="discardSingleParam"
+					:icons="icons" :fmt-val="fmtVal" :auto-open-all="!!paramSearch" />
 			</CoreAppCard>
-		</template>
-	</CoreAppModal>
-
-
-
-	<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-surface) mb-3">
-		<div class="flex flex-wrap items-center justify-between gap-3">
-			<div class="flex items-center gap-2">
-				<CoreAppTabsNav v-model="activeTab" :tabs="tabDefs" />
-				<template v-if="showHostSelector">
-					<span class="h-5 w-px bg-(--color-border) mx-1" />
-					<slot name="hostSelector">
-						<HostsSelector v-model="hostSelectorModel" :type="hostType"
-							:placeholder="hostSelectorPlaceholder" allow-clear />
-					</slot>
-				</template>
-			</div>
-			<div class="flex flex-wrap items-center gap-2">
-				<CoreAppFilterInput v-model="paramSearch" size="sm" input-class="w-full sm:w-56 md:w-72 lg:w-80" />
-				<CoreAppButton v-if="isServerDefaultMode && !readonly" :icon="icons.add" color="primary" variant="soft"
-					size="sm" :title="String($t('config.create'))" @click="showCreateConfigModal = true">
-					<span class="hidden sm:inline">{{ $t('config.create') }}</span>
-				</CoreAppButton>
-				<CoreAppUnsavedChangesModal v-if="showUnsavedModal" :config-ref="unsavedChangesRef" size="sm"
-					@save-all="saveAll" @discard-all="discardAll" />
-				<CoreAppButton :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
-					:loading="loadingParams || loadingAttrs" :title="String($t('common.refresh'))" @click="refresh" />
-			</div>
 		</div>
-	</div>
 
-	<div v-show="activeTab === 'parameters'"
-		:class="['flex flex-col min-h-0 flex-1 overflow-hidden bg-(--color-surface) px-3 pb-3']">
-		<div v-if="loadingParams" class="py-8 flex justify-center">
-			<CoreAppLoadingSpinner size="md" />
-		</div>
-		<CoreAppEmptyState v-else-if="categoryAwareTree.length === 0" :icon="icons.config"
-			:message="(hostId || hostType === 'server') ? String($t('config.paramsNone')) : String($t('hosts.select'))" />
-		<CoreAppCard v-else :ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'p-3 sm:p-3 overflow-y-auto min-h-0 flex-1' }">
-			<HostsParametersTreeForm :tree="categoryAwareTree" :changed-params="changedParams" :readonly="readonly"
-				:current-value="currentValue" :set-param="setParam" :discard-single-param="discardSingleParam"
-				:icons="icons" :fmt-val="fmtVal" :auto-open-all="!!paramSearch" />
-		</CoreAppCard>
-	</div>
-
-	<div v-show="activeTab === 'attributes'"
-		:class="['flex flex-col min-h-0 flex-1 overflow-hidden bg-(--color-surface) px-3 pb-3']">
-		<div v-if="loadingAttrs" class="py-8 flex justify-center">
-			<CoreAppLoadingSpinner size="md" />
-		</div>
-		<CoreAppEmptyState v-else-if="!hostId" :icon="icons.config" :message="String($t('hosts.select'))" />
-		<CoreAppCard v-else-if="filteredReadonlyAttrKeys.length || filteredEditableAttrKeys.length"
-			:ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'overflow-y-auto min-h-0 flex-1' }">
-			<div v-if="filteredReadonlyAttrKeys.length"
-				:class="['border-b border-(--color-border) pb-3', filteredEditableAttrKeys.length ? 'mb-3' : '']">
-				<div v-for="key in filteredReadonlyAttrKeys" :key="key"
-					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
-					<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
-						{{ getAttributeLabel(key) }}
-					</span>
-					<span class="text-sm flex-1 truncate" :title="fmtVal(originalAttributes[key])">
-						{{ fmtVal(originalAttributes[key]) }}
-					</span>
-				</div>
+		<div v-show="activeTab === 'attributes'"
+			:class="['flex flex-col min-h-0 flex-1 overflow-hidden bg-(--color-surface)']">
+			<div v-if="loadingAttrs" class="py-8 flex justify-center">
+				<CoreAppLoadingSpinner size="md" />
 			</div>
-
-			<div v-if="filteredEditableAttrKeys.length">
-				<div v-for="key in filteredEditableAttrKeys" :key="key"
-					class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
-					:class="isAttrChanged(key) ? 'bg-(--color-changed-bg)' : ''">
-					<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
-						{{ getAttributeLabel(key) }}
-						<span v-if="isAttrChanged(key)"
-							class="inline-flex items-center text-xs text-(--color-changed-text)">
-							<CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
+			<CoreAppEmptyState v-else-if="!hostId" :icon="icons.config" :message="String($t('hosts.select'))" />
+			<CoreAppCard v-else-if="filteredReadonlyAttrKeys.length || filteredEditableAttrKeys.length"
+				:ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'overflow-y-auto min-h-0 flex-1' }">
+				<div v-if="filteredReadonlyAttrKeys.length"
+					:class="['border-b border-(--color-border) pb-3', filteredEditableAttrKeys.length ? 'mb-3' : '']">
+					<div v-for="key in filteredReadonlyAttrKeys" :key="key"
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
+							{{ getAttributeLabel(key) }}
 						</span>
-					</span>
-					<div class="flex-1 flex items-center gap-2 min-w-0">
-						<CoreAppCheckbox v-if="typeof originalAttributes[key] === 'boolean'"
-							v-model="(editableAttributes as Record<string, boolean>)[key]" :disabled="readonly" />
-						<CoreAppCheckbox v-else-if="key === 'isMasterDepot'"
-							:model-value="editableAttributes[key] === true || editableAttributes[key] === 'true'"
-							:disabled="readonly"
-							@update:model-value="(v: boolean | 'indeterminate') => { editableAttributes[key] = v }" />
-						<CoreAppPasswordInput v-else-if="isPasswordAttribute(key)"
-							v-model="(editableAttributes as Record<string, string>)[key]" size="sm" :disabled="readonly"
-							class="flex-1" :maxlength="32" />
-						<CoreAppInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
-							:disabled="readonly" class="flex-1" />
-						<CoreAppButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral"
-							:icon="icons.x" :title="$t('common.discard')" @click="discardSingleAttribute(key)" />
+						<span class="text-sm flex-1 truncate" :title="fmtVal(originalAttributes[key])">
+							{{ fmtVal(originalAttributes[key]) }}
+						</span>
 					</div>
 				</div>
-			</div>
-		</CoreAppCard>
-	</div>
 
+				<div v-if="filteredEditableAttrKeys.length">
+					<div v-for="key in filteredEditableAttrKeys" :key="key"
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
+						:class="isAttrChanged(key) ? 'bg-(--color-changed-bg)' : ''">
+						<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
+							{{ getAttributeLabel(key) }}
+							<span v-if="isAttrChanged(key)"
+								class="inline-flex items-center text-xs text-(--color-changed-text)">
+								<CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
+							</span>
+						</span>
+						<div class="flex-1 flex items-center gap-2 min-w-0">
+							<CoreAppCheckbox v-if="typeof originalAttributes[key] === 'boolean'"
+								v-model="(editableAttributes as Record<string, boolean>)[key]" :disabled="readonly" />
+							<CoreAppCheckbox v-else-if="key === 'isMasterDepot'"
+								:model-value="editableAttributes[key] === true || editableAttributes[key] === 'true'"
+								:disabled="readonly"
+								@update:model-value="(v: boolean | 'indeterminate') => { editableAttributes[key] = v }" />
+							<CoreAppPasswordInput v-else-if="isPasswordAttribute(key)"
+								v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
+								:disabled="readonly" class="flex-1" :maxlength="32" />
+							<CoreAppInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
+								:disabled="readonly" class="flex-1" />
+							<CoreAppButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral"
+								:icon="icons.x" :title="$t('common.discard')" @click="discardSingleAttribute(key)" />
+						</div>
+					</div>
+				</div>
+			</CoreAppCard>
+		</div>
+
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -263,91 +174,12 @@ const {
 	updateClientAttributes,
 	updateServerAttributes,
 	getServerDefaultConfig,
-	createConfig,
 } = useApiHelpers()
 
 const isServerDefaultMode = computed(() => props.hostType === 'server' && !props.hostId)
 
 // Create Config modal state
 const showCreateConfigModal = ref(false)
-const creatingConfig = ref(false)
-const createConfigError = ref<string | null>(null)
-const newPossibleValue = ref('')
-const newDefaultValue = ref('')
-const configTypeOptions = [
-	{ label: 'Unicode', value: 'UnicodeConfig' },
-	{ label: 'Bool', value: 'BoolConfig' },
-]
-const newConfig = reactive({
-	configId: '',
-	description: '',
-	type: 'UnicodeConfig' as 'UnicodeConfig' | 'BoolConfig',
-	multiValue: false,
-	editable: true,
-	possibleValues: [] as string[],
-	defaultValues: [] as string[],
-	boolDefault: 'false',
-})
-
-function addPossibleValue() {
-	const v = newPossibleValue.value.trim()
-	if (v && !newConfig.possibleValues.includes(v)) {
-		newConfig.possibleValues.push(v)
-	}
-	newPossibleValue.value = ''
-}
-
-function addDefaultValue() {
-	const v = newDefaultValue.value.trim()
-	if (v && !newConfig.defaultValues.includes(v)) {
-		newConfig.defaultValues.push(v)
-	}
-	newDefaultValue.value = ''
-}
-
-function resetCreateConfigModal() {
-	showCreateConfigModal.value = false
-	creatingConfig.value = false
-	createConfigError.value = null
-	newConfig.configId = ''
-	newConfig.description = ''
-	newConfig.type = 'UnicodeConfig'
-	newConfig.multiValue = false
-	newConfig.editable = true
-	newConfig.possibleValues = []
-	newConfig.defaultValues = []
-	newConfig.boolDefault = 'false'
-	newPossibleValue.value = ''
-	newDefaultValue.value = ''
-}
-
-async function handleCreateConfig() {
-	createConfigError.value = null
-	if (!newConfig.configId.trim()) return
-	creatingConfig.value = true
-	try {
-		const payload: Parameters<typeof createConfig>[0] = {
-			configId: newConfig.configId.trim(),
-			type: newConfig.type,
-			editable: newConfig.editable,
-			multiValue: newConfig.multiValue,
-			description: newConfig.description,
-		}
-		if (newConfig.type === 'UnicodeConfig') {
-			payload.possibleValues = newConfig.possibleValues
-			payload.defaultValues = newConfig.defaultValues
-		} else {
-			payload.defaultValues = [newConfig.boolDefault]
-		}
-		await createConfig(payload)
-		resetCreateConfigModal()
-		await fetchParameters()
-	} catch (e: unknown) {
-		createConfigError.value = e instanceof Error ? e.message : String(e)
-	} finally {
-		creatingConfig.value = false
-	}
-}
 
 const activeTab = ref(props.tab || 'parameters')
 watch(() => props.tab, (v) => { if (v) activeTab.value = v })
