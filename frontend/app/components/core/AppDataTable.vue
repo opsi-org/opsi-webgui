@@ -10,9 +10,10 @@
 <template>
   <div class="data-table flex flex-col h-full min-h-0 min-w-0">
     <div class="shrink-0 flex flex-wrap items-center justify-between gap-2 mb-3">
-      <div class="flex items-center gap-3 text-sm">
+      <div class="flex items-center gap-3 text-small">
         <UButton v-if="selectedKeys.length > 0" :icon="icons.xCircle" variant="soft" color="primary" size="xs"
-          :title="`${selectedKeys.length} ${$t('common.selected')} — ${$t('common.clearSelection')}`" @click="clearSelection">
+          :title="`${selectedKeys.length} ${$t('common.selected')} - ${$t('common.clearSelection')}`"
+          @click="clearSelection">
           {{ selectedKeys.length }}
         </UButton>
         <UBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
@@ -25,10 +26,10 @@
           size="sm" input-class="w-full sm:w-56 md:w-72 lg:w-80" />
 
         <UPopover>
-          <UButton :icon="icons.tableSettings" variant="ghost" color="neutral" size="sm" :title="$t('settings.table')"
-            data-testid="table-settings" />
+          <UButton :icon="icons.tableSettings" :aria-label="$t('settings.table')" variant="outline" color="primary"
+            size="sm" :title="$t('settings.table')" data-testid="table-settings" />
           <template #content>
-            <div class="p-3 min-w-85 overflow-y-auto bg-(--color-background) rounded shadow-lg">
+            <div class="p-3 min-w-105 overflow-y-auto bg-(--color-background) rounded shadow-lg">
               <div class="font-heading text-xs text-(--color-text-muted) mb-3">{{ $t('settings.table') }}</div>
 
               <div class="mb-4 grid grid-cols-[7rem_1fr] items-center gap-x-2 gap-y-3">
@@ -62,7 +63,8 @@
 
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.pageSize') }}</span>
                 <USelect :model-value="tableSettings.settings.pageSize" :items="pageSizeOptions" size="xs"
-                  :aria-label="String($t('settings.pageSize'))" @update:model-value="(v: number) => changePageSize(v)" />
+                  :aria-label="String($t('settings.pageSize'))"
+                  @update:model-value="(v: number) => changePageSize(v)" />
 
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.sortBy') }}</span>
                 <div class="flex items-center gap-1">
@@ -82,14 +84,14 @@
                   <span v-for="col in toggleableColumns" :key="col.key"
                     class="flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer">
                     <CoreAppCheckbox :model-value="isColumnVisibleComputed(col.key)" :disabled="col.alwaysVisible"
-                      @update:model-value="tableSettings.toggleColumn(col.key)" />
+                      :aria-label="resolveColumnLabel(col)" @update:model-value="tableSettings.toggleColumn(col.key)" />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col)
                       }}</span>
                   </span>
                 </div>
               </div>
 
-              <UButton variant="ghost" color="neutral" size="xs" block @click="tableSettings.reset">
+              <UButton variant="outline" color="primary" size="xs" block @click="tableSettings.reset">
                 {{ $t('common.resetDefaults') }}
               </UButton>
             </div>
@@ -106,15 +108,15 @@
       <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- scrollable region with keyboard navigation, role=region + tabindex is correct ARIA -->
       <div ref="tableContainer"
         class="flex-1 min-h-0 min-w-0 overflow-x-auto overflow-y-auto transition-all duration-200"
-        :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" tabindex="0" role="region" :aria-label="String($t('settings.table'))"
-        @scroll="handleScroll" @keydown="handleTableKeydown">
+        :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" tabindex="0" role="region"
+        :aria-label="String($t('settings.table'))" @scroll="handleScroll" @keydown="handleTableKeydown">
         <div v-if="loading && rows.length === 0" class="py-12">
           <CoreAppLoadingSpinner size="lg" />
         </div>
 
         <div v-else>
           <table class="w-max min-w-full" role="grid">
-            <thead class="bg-(--color-surface) sticky top-0 z-10">
+            <thead class="bg-(--color-surface) sticky top-0 z-30">
               <tr>
                 <th v-if="selectable" class="w-10 px-3 py-2.5 text-center whitespace-nowrap bg-(--color-surface)"
                   :aria-label="effectiveSelectionMode === 'multi' ? 'Select all' : 'Selection'">
@@ -130,10 +132,9 @@
                   </div>
                 </th>
 
-                <th v-for="col in visibleColumns" :key="col.key"
-                  :aria-sort="getSortAriaLabel(col.key)"
+                <th v-for="col in visibleColumns" :key="col.key" :aria-sort="getSortAriaLabel(col.key)"
                   class="px-3 py-2.5 text-left font-heading text-xs tracking-wider text-(--color-text-muted) whitespace-nowrap"
-                  :class="[col.headerClass, { 'cursor-pointer hover:bg-(--color-surface-hover)': col.sortable }, col.stickyRight ? 'sticky z-20 bg-(--color-surface) shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]' : '']"
+                  :class="[col.headerClass, { 'cursor-pointer hover:bg-(--color-surface-hover)': col.sortable }, col.stickyRight ? 'sticky z-40 bg-(--color-surface) shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]' : '']"
                   :style="{ width: col.width, minWidth: col.minWidth || '80px', textAlign: col.align, ...(col.stickyRight ? { right: hasActions ? actionsColWidth + 'px' : '0' } : {}) }"
                   :tabindex="col.sortable ? 0 : undefined" @click="col.sortable && handleSort(col.key)"
                   @keydown.enter="col.sortable && handleSort(col.key)">
@@ -143,7 +144,7 @@
                     <div class="flex items-center gap-1">
                       <template v-if="col.headerIcon">
                         <UTooltip :text="resolveColumnLabel(col)">
-                          <UIcon :name="col.headerIcon" class="w-4 h-4" />
+                          <UIcon :name="col.headerIcon" class="w-4 h-4" :aria-label="resolveColumnLabel(col)" />
                         </UTooltip>
                       </template>
                       <template v-else>
@@ -160,15 +161,14 @@
                 </th>
 
                 <th v-if="hasActions" ref="actionsHeaderRef"
-                  class="min-w-24 px-3 py-2.5 text-center font-heading text-xs tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-20 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]">
+                  class="min-w-24 px-3 py-2.5 text-center font-heading text-xs tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-40 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]">
                   {{ $t('actions.title') }}
                 </th>
               </tr>
             </thead>
 
             <tbody class="divide-y divide-(--color-border)" :class="{ 'pb-2': displayMode === 'pagination' }">
-              <tr v-for="(row, idx) in displayRows" :key="getRowKey(row)" :aria-selected="isSelected(row)"
-                :tabindex="0"
+              <tr v-for="(row, idx) in displayRows" :key="getRowKey(row)" :aria-selected="isSelected(row)" :tabindex="0"
                 class="group hover:bg-(--color-surface-hover) transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue"
                 :class="{
                   'cursor-pointer': true,
@@ -186,8 +186,8 @@
                 </td>
 
                 <td v-for="col in visibleColumns" :key="col.key" role="gridcell"
-                  class="px-3 py-2 text-sm text-(--color-text) whitespace-nowrap"
-                  :class="[col.class, col.stickyRight ? ['sticky z-20 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]', isHighlighted(row) ? 'bg-(--color-row-selected)' : 'bg-(--color-background) group-hover:bg-(--color-surface-hover)'] : '']"
+                  class="px-3 py-2 text-small text-(--color-text) whitespace-nowrap"
+                  :class="[col.class, col.stickyRight ? ['sticky z-10 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]', isHighlighted(row) ? 'bg-(--color-row-selected)' : 'bg-(--color-background) group-hover:bg-(--color-surface-hover)'] : '']"
                   :style="{ textAlign: col.align, ...(col.stickyRight ? { right: hasActions ? actionsColWidth + 'px' : '0' } : {}) }">
                   <slot :name="(`cell-${col.key}` as any)" :row="row" :value="getNestedValue(row, col.key)"
                     :index="idx">
@@ -196,7 +196,7 @@
                 </td>
 
                 <td v-if="hasActions"
-                  class="px-3 py-2 text-center sticky right-0 z-20 min-w-24 whitespace-nowrap shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
+                  class="px-3 py-2 text-center sticky right-0 z-10 min-w-24 whitespace-nowrap shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
                   :class="isHighlighted(row) ? 'bg-(--color-row-selected)' : 'bg-(--color-background) group-hover:bg-(--color-surface-hover)'"
                   @click.stop>
                   <div class="flex items-center justify-center gap-1 rounded-md transition-colors"
@@ -233,8 +233,7 @@
       </div>
     </UCard>
 
-    <div
-      class="shrink-0 border-t border-(--color-border) bg-(--color-surface) px-4 py-2 mt-2 rounded-b-lg flex items-center justify-between gap-4">
+    <div class="shrink-0 px-1 rounded-b-lg flex items-center justify-between gap-4">
       <span class="text-xs text-(--color-text-muted)">
         <template v-if="displayMode === 'infinite'">
           {{ $t('common.showing') }} {{ rows.length }} {{ $t('common.of') }} {{ serverTotal }}
@@ -245,17 +244,18 @@
         </template>
       </span>
       <div v-if="displayMode === 'pagination' && totalPages > 1" class="flex items-center gap-1">
-        <UButton :icon="icons.chevronLeft" variant="outline" color="neutral" size="xs" :disabled="currentPage === 1"
-          @click="goToPage(currentPage - 1)" />
+        <UButton :icon="icons.chevronLeft" :aria-label="$t('common.previous')" variant="outline" color="neutral"
+          size="xs" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)" />
         <template v-for="page in visiblePageNumbers" :key="page">
           <span v-if="page === '...'" class="px-2 text-(--color-text-muted)">...</span>
-          <UButton v-else :variant="page === currentPage ? 'solid' : 'ghost'"
-            :color="page === currentPage ? 'primary' : 'neutral'" size="xs" class="min-w-8"
-            @click="goToPage(page as number)">
+          <UButton v-else
+            :aria-label="`${$t('common.page')} ${page}` + (page === currentPage ? ` (${$t('common.current')})` : '')"
+            :variant="page === currentPage ? 'solid' : 'ghost'" :color="page === currentPage ? 'primary' : 'neutral'"
+            size="xs" class="min-w-8" @click="goToPage(page as number)">
             {{ page }}
           </UButton>
         </template>
-        <UButton :icon="icons.chevronRight" variant="outline" color="neutral" size="xs"
+        <UButton :icon="icons.chevronRight" :aria-label="$t('common.next')" variant="outline" color="neutral" size="xs"
           :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)" />
       </div>
     </div>
@@ -287,7 +287,6 @@ interface Props {
 
   filterable?: boolean
   showRefresh?: boolean
-  clickable?: boolean
 
   maxHeight?: string
   sortBySelectionEnabled?: boolean
@@ -300,7 +299,6 @@ const props = withDefaults(defineProps<Props>(), {
   selectable: true,
   filterable: true,
   showRefresh: true,
-  clickable: true,
   maxHeight: 'calc(100vh - 220px)',
 })
 

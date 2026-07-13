@@ -46,7 +46,7 @@ const error = ref(false)
 const items = ref<{ section: string, text: string }[]>([])
 
 const loading = changelogsLoading
-const version = computed(() => config.public.packageVersion || '—')
+const version = computed(() => config.public.packageVersion || '-')
 
 function parseChangelog(markdown: string): { section: string, text: string }[] {
 	const lines = markdown.split('\n')

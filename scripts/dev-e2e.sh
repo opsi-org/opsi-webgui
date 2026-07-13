@@ -8,7 +8,7 @@
 #   scripts/dev-e2e.sh                 # smoke matrix (DE/light/desktop/chromium)
 #   scripts/dev-e2e.sh --build         # rebuild the SPA first (pick up frontend changes)
 #   scripts/dev-e2e.sh --live          # run against the running `pnpm dev` server
-#                                      # (:3000) — NO opsiconfd boot, NO SPA build.
+#                                      # (:3000) - NO opsiconfd boot, NO SPA build.
 #                                      # Fastest loop: start `pnpm dev` once, then
 #                                      # iterate. Requires opsiconfd already up.
 #   scripts/dev-e2e.sh -g "login"      # grep filter (forwarded to playwright)
@@ -33,7 +33,13 @@ if [ ! -f /test-entrypoint.sh ] || [ ! -d /workspace/frontend ]; then
   fi
   echo ">> Re-running inside the dev container ($DEV_SERVICE) ..."
   # reuse that user's Playwright browser cache instead of root's empty one.
-  exec docker compose -f "$DEV_COMPOSE" exec -T --user "$(id -u)" "$DEV_SERVICE" \
+  exec docker compose -f "$DEV_COMPOSE" exec -T --user "$(id -u)" \
+    -e E2E_PIPELINE_SOURCE="${E2E_PIPELINE_SOURCE:-}" \
+    -e SCREENSHOT_DIR="${SCREENSHOT_DIR:-}" \
+    -e TEST_USER="${TEST_USER:-}" \
+    -e TEST_PASSWORD="${TEST_PASSWORD:-}" \
+    -e TEST_SESSION_EXPIRY_SEC="${TEST_SESSION_EXPIRY_SEC:-}" \
+    "$DEV_SERVICE" \
     bash /workspace/scripts/dev-e2e.sh "$@"
 fi
 
@@ -73,7 +79,7 @@ else
     OPSI_BACKUP_URL="${OPSI_BACKUP_URL:-https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json}"
     echo "   restoring backup (first run) ..."
     /workspace/scripts/restore-backup.sh "$OPSI_BACKUP_URL" && sudo touch "$BACKUP_MARKER" \
-      || echo "   WARN: backup restore failed — tests may run against empty data"
+      || echo "   WARN: backup restore failed - tests may run against empty data"
   fi
   if ! sudo supervisorctl status opsiconfd 2>/dev/null | grep -q RUNNING; then
     sudo supervisorctl start opsiconfd || true

@@ -15,13 +15,14 @@
             <CoreAppAlertInline v-if="pageMessage.type === 'error'" color="error" :title="$t('common.error')"
                 :description="pageMessage.message" variant="subtle" closable compact @close="pageMessage = null" />
         </div>
-        <div class="space-y-6 min-h-full p-4">
+        <div class="space-y-4 min-h-full p-4 lg:p-3">
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <CoreAppCard>
                     <template #header>
                         <div class="flex items-center justify-between">
-                            <span class="text-sm font-heading uppercase tracking-wide">{{ $t('clients.blocked') }}</span>
+                            <span class="text-sm font-heading uppercase tracking-wide">{{ $t('clients.blocked')
+                            }}</span>
                             <CoreAppStatusBadge v-if="blockedClientsCount > 0" status="warning"
                                 :label="String(blockedClientsCount)" />
                         </div>
@@ -39,8 +40,8 @@
                             color="success" :title="$t('common.success')" :description="clientCardMessage.message"
                             variant="subtle" closable compact @close="clientCardMessage = null" />
                         <CoreAppAlertInline v-if="clientCardMessage && clientCardMessage.type === 'error'" color="error"
-                            :title="$t('common.error')" :description="clientCardMessage.message" variant="subtle" closable
-                            compact @close="clientCardMessage = null" />
+                            :title="$t('common.error')" :description="clientCardMessage.message" variant="subtle"
+                            closable compact @close="clientCardMessage = null" />
                         <div
                             class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)">
                             <div v-for="client in blockedClients" :key="client"
@@ -53,14 +54,16 @@
                             </div>
                         </div>
                         <CoreAppButton block variant="outline" color="warning" size="sm" :loading="unblockingClient"
-                            :disabled="isReadOnly" @click="unblockAll('clients')">{{ $t('clients.unblockAll') }}</CoreAppButton>
+                            :disabled="isReadOnly" @click="unblockAll('clients')">{{ $t('clients.unblockAll') }}
+                        </CoreAppButton>
                     </div>
                 </CoreAppCard>
 
                 <CoreAppCard>
                     <template #header>
                         <div class="flex items-center justify-between">
-                            <span class="text-sm font-heading uppercase tracking-wide">{{ $t('products.locked') }}</span>
+                            <span class="text-sm font-heading uppercase tracking-wide">{{ $t('products.locked')
+                            }}</span>
                             <CoreAppStatusBadge v-if="lockedProductsCount > 0" status="warning"
                                 :label="String(lockedProductsCount)" />
                         </div>
@@ -95,122 +98,127 @@
                             </div>
                         </div>
                         <CoreAppButton block variant="outline" color="warning" size="sm" :loading="unlockingProduct"
-                            :disabled="isReadOnly" @click="unblockAll('products')">{{ $t('products.unlockAll') }}</CoreAppButton>
+                            :disabled="isReadOnly" @click="unblockAll('products')">{{ $t('products.unlockAll') }}
+                        </CoreAppButton>
                     </div>
                 </CoreAppCard>
             </div>
 
-            <CoreAppCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-heading uppercase tracking-wide">{{ $t('admin.appState') }}</span>
-                        <CoreAppStatusBadge :status="currentAppState === 'normal' ? 'success' : 'warning'"
-                            :label="currentAppState" />
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
+                <CoreAppCard fill>
+                    <template #header>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-heading uppercase tracking-wide">{{ $t('admin.appState') }}</span>
+                            <CoreAppStatusBadge :status="currentAppState === 'normal' ? 'success' : 'warning'"
+                                :label="currentAppState" size="lg" />
+                        </div>
+                    </template>
+                    <div v-if="loadingAppState" class="py-6 text-center flex-1">
+                        <CoreAppLoadingSpinner size="md" />
                     </div>
-                </template>
-                <div v-if="loadingAppState" class="py-6 text-center">
-                    <CoreAppLoadingSpinner size="md" />
-                </div>
-                <div v-else class="space-y-4">
-                    <div class="flex flex-wrap gap-3">
-                        <CoreAppButton v-for="state in ['normal', 'maintenance']" :key="state"
-                            @click="newAppState.type = state" variant="ghost" color="neutral" :class="[
-                                'flex-1 min-w-32 px-4! py-3! rounded-lg border-2 transition-all text-center h-auto!',
-                                newAppState.type === state
-                                    ? state === 'normal' ? 'border-(--color-primary) bg-(--color-primary-soft-bg)' : 'border-(--color-warning)/50 bg-(--color-warning-soft-bg)'
-                                    : 'border-(--color-border) hover:border-(--color-text-muted)'
-                            ]">
-                            <div class="font-medium"
-                                :class="newAppState.type === state ? (state === 'normal' ? 'text-(--color-primary-soft-text)' : 'text-(--color-warning-soft-text)') : ''">
-                                {{ $t(state) }}
+                    <div v-else class="space-y-4 h-full flex flex-col">
+                        <div class="flex flex-wrap gap-2">
+                            <CoreAppButton v-for="state in ['normal', 'maintenance']" :key="state"
+                                @click="newAppState.type = state" variant="ghost" color="neutral" :class="[
+                                    'flex-1 min-w-28 px-4! py-2! rounded-lg border-2 transition-all text-center h-auto!',
+                                    newAppState.type === state
+                                        ? state === 'normal' ? 'border-(--color-primary) bg-(--color-primary-soft-bg)' : 'border-(--color-warning)/50 bg-(--color-warning-soft-bg)'
+                                        : 'border-(--color-border) hover:border-(--color-text-muted)'
+                                ]">
+                                <div class="font-medium"
+                                    :class="newAppState.type === state ? (state === 'normal' ? 'text-(--color-primary-soft-text)' : 'text-(--color-warning-soft-text)') : ''">
+                                    {{ $t(state) }}
+                                </div>
+                            </CoreAppButton>
+                        </div>
+                        <div v-if="newAppState.type === 'maintenance'">
+                            <div class="text-sm font-medium text-(--color-text) mb-2">{{ $t('backup.optional') }}</div>
+                            <div class="space-y-3 border border-(--color-warning)/50 rounded-lg p-2">
+                                <CoreAppFormField :label="$t('fields.addressExceptions')">
+                                    <div class="flex gap-2">
+                                        <CoreAppInput v-model="addressExceptionInput"
+                                            :placeholder="$t('depot.networkAddress')" size="sm" class="flex-1"
+                                            @keydown.enter.prevent="addAddressException" />
+                                        <CoreAppButton color="primary" size="sm" :icon="icons.add"
+                                            @click="addAddressException">{{
+                                                $t('common.add') }}</CoreAppButton>
+                                    </div>
+                                    <div v-if="newAppState.address_exceptions.length > 0"
+                                        class="flex flex-wrap gap-2 mt-2">
+                                        <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
+                                            class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-(--color-surface-elevated) border border-(--color-border) rounded-full">
+                                            {{ addr }}
+                                            <CoreAppButton @click="removeAddressException(idx)" variant="ghost"
+                                                color="neutral" size="xs"
+                                                class="text-(--color-text-muted) hover:text-(--color-error-soft-text)">
+                                                <CoreAppIcon :name="icons.x" class="w-3 h-3" />
+                                            </CoreAppButton>
+                                        </span>
+                                    </div>
+                                </CoreAppFormField>
+                                <CoreAppFormField :label="$t('fields.retryAfter')">
+                                    <CoreAppInput v-model.number="newAppState.retry_after" type="number" size="sm"
+                                        min="0" class="w-full" />
+                                </CoreAppFormField>
                             </div>
-                        </CoreAppButton>
-                    </div>
-                    <div v-if="newAppState.type === 'maintenance'">
-                        <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('backup.optional') }}</div>
-                        <div class="space-y-4 border border-(--color-warning)/50 rounded-lg p-2">
-                            <CoreAppFormField :label="$t('fields.addressExceptions')">
-                                <div class="flex gap-2">
-                                    <CoreAppInput v-model="addressExceptionInput"
-                                        :placeholder="$t('depot.networkAddress')" size="sm" class="flex-1"
-                                        @keydown.enter.prevent="addAddressException" />
-                                    <CoreAppButton color="primary" size="sm" :icon="icons.add"
-                                        @click="addAddressException">{{
-                                            $t('common.add') }}</CoreAppButton>
-                                </div>
-                                <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-3">
-                                    <span v-for="(addr, idx) in newAppState.address_exceptions" :key="idx"
-                                        class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-(--color-surface-elevated) border border-(--color-border) rounded-full">
-                                        {{ addr }}
-                                        <CoreAppButton @click="removeAddressException(idx)" variant="ghost"
-                                            color="neutral" size="xs"
-                                            class="text-(--color-text-muted) hover:text-(--color-error-soft-text)">
-                                            <CoreAppIcon :name="icons.x" class="w-3 h-3" />
-                                        </CoreAppButton>
-                                    </span>
-                                </div>
-                            </CoreAppFormField>
-                            <CoreAppFormField :label="$t('fields.retryAfter')">
-                                <CoreAppInput v-model.number="newAppState.retry_after" type="number" size="sm" min="0"
-                                    class="w-40" />
-                            </CoreAppFormField>
+                        </div>
+                        <div class="flex justify-end gap-2 pt-2 mt-auto">
+                            <CoreAppButton variant="outline" color="primary" size="sm" @click="resetAppState">{{
+                                $t('common.reset') }}
+                            </CoreAppButton>
+                            <CoreAppButton color="primary" size="sm" :loading="savingAppState"
+                                :disabled="isReadOnly || !hasServerWriteAccess || !newAppState.type"
+                                @click="saveAppState">
+                                {{ $t('common.apply') }}</CoreAppButton>
                         </div>
                     </div>
-                    <div class="flex justify-end gap-2 pt-2">
-                        <CoreAppButton variant="soft" color="neutral" size="sm" @click="resetAppState">{{ $t('common.reset') }}
-                        </CoreAppButton>
-                        <CoreAppButton color="primary" size="sm" :loading="savingAppState"
-                            :disabled="isReadOnly || !hasServerWriteAccess || !newAppState.type" @click="saveAppState">
-                            {{ $t('common.apply') }}</CoreAppButton>
-                    </div>
-                </div>
-            </CoreAppCard>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <CoreAppCard>
+                </CoreAppCard>
+                <CoreAppCard fill>
                     <template #header>
                         <div class="flex items-center gap-2">
                             <span class="text-sm font-heading uppercase tracking-wide">{{ $t('backup.create') }}</span>
                         </div>
                     </template>
-                    <div class="space-y-5">
-                        <span
-                            class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                            <CoreAppCheckbox v-model="backupOptions.maintenance_mode" class="mt-0.5"
-                                :aria-label="String($t('admin.maintenanceMode'))" />
-                            <div class="font-medium text-sm">{{ $t('admin.maintenanceMode') }}</div>
-                        </span>
+                    <div class="space-y-4 h-full flex flex-col">
+                        <div
+                            class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1">
+                            <CoreAppCheckbox id="backup-maintenance-mode" v-model="backupOptions.maintenance_mode"
+                                class="mt-0.5" :aria-label="String($t('admin.maintenanceMode'))" />
+                            <span class="font-medium text-sm">{{ $t('admin.maintenanceMode') }}</span>
+                        </div>
                         <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('backup.include') }}</div>
                         <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
-                            <span
-                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                <CoreAppCheckbox v-model="backupOptions.config_files" class="mt-0.5"
-                                    :aria-label="String($t('backup.configFiles'))" />
-                                <div class="font-medium text-sm">{{ $t('backup.configFiles') }}</div>
-                            </span>
-                            <span
-                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                <CoreAppCheckbox v-model="backupOptions.redis_data" class="mt-0.5"
-                                    :aria-label="String($t('redis.data'))" />
-                                <div class="font-medium text-sm">{{ $t('redis.data') }}</div>
-                            </span>
+                            <div
+                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1">
+                                <CoreAppCheckbox id="backup-config-files" v-model="backupOptions.config_files"
+                                    class="mt-0.5" :aria-label="String($t('backup.configFiles'))" />
+                                <span class="font-medium text-sm">{{ $t('backup.configFiles') }}</span>
+                            </div>
+                            <div
+                                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1">
+                                <CoreAppCheckbox id="backup-redis-data" v-model="backupOptions.redis_data"
+                                    class="mt-0.5" :aria-label="String($t('redis.data'))" />
+                                <span class="font-medium text-sm">{{ $t('redis.data') }}</span>
+                            </div>
                         </div>
                         <CoreAppFormField :label="$t('auth.password') + ' (' + $t('common.optional') + ')'">
                             <CoreAppInput v-model="backupOptions.password" type="password"
-                                :placeholder="$t('backup.encrypt')" size="sm" class="w-full" />
+                                :placeholder="$t('backup.encrypt')" :aria-label="String($t('backup.encrypt'))" size="sm"
+                                class="w-full" />
                         </CoreAppFormField>
                         <CoreAppButton block color="primary" :icon="icons.copy" :loading="creatingBackup"
-                            :disabled="isReadOnly" @click="createBackup">{{ $t('backup.create') }}</CoreAppButton>
+                            class="mt-auto" :disabled="isReadOnly" @click="createBackup">{{ $t('backup.create') }}
+                        </CoreAppButton>
                     </div>
                 </CoreAppCard>
 
-                <CoreAppCard>
+                <CoreAppCard fill>
                     <template #header>
                         <div class="flex items-center gap-2">
                             <span class="text-sm font-heading uppercase tracking-wide">{{ $t('backup.restore') }}</span>
                         </div>
                     </template>
-                    <div class="space-y-5">
+                    <div class="space-y-4 h-full flex flex-col">
                         <CoreAppFormField :label="$t('backup.file')" required>
                             <div class="relative">
                                 <input ref="fileInputRef" type="file" :aria-label="String($t('backup.file'))"
@@ -233,20 +241,21 @@
                             </div>
                         </CoreAppFormField>
                         <div>
-                            <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('backup.restoreOptions') }}</div>
+                            <div class="text-sm font-medium text-(--color-text) mb-3">{{ $t('backup.restoreOptions') }}
+                            </div>
                             <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
-                                <span
-                                    class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                    <CoreAppCheckbox v-model="restoreOptions.config_files" class="mt-0.5"
-                                        :aria-label="String($t('backup.configFiles'))" />
-                                    <div class="font-medium text-sm">{{ $t('backup.configFiles') }}</div>
-                                </span>
-                                <span
-                                    class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) cursor-pointer transition-colors">
-                                    <CoreAppCheckbox v-model="restoreOptions.redis_data" class="mt-0.5"
-                                        :aria-label="String($t('redis.data'))" />
-                                    <div class="font-medium text-sm">{{ $t('redis.data') }}</div>
-                                </span>
+                                <div
+                                    class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1">
+                                    <CoreAppCheckbox id="restore-config-files" v-model="restoreOptions.config_files"
+                                        class="mt-0.5" :aria-label="String($t('backup.configFiles'))" />
+                                    <span class="font-medium text-sm">{{ $t('backup.configFiles') }}</span>
+                                </div>
+                                <div
+                                    class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1">
+                                    <CoreAppCheckbox id="restore-redis-data" v-model="restoreOptions.redis_data"
+                                        class="mt-0.5" :aria-label="String($t('redis.data'))" />
+                                    <span class="font-medium text-sm">{{ $t('redis.data') }}</span>
+                                </div>
                             </div>
                         </div>
                         <CoreAppFormField :label="$t('backup.serverIdHandling')">
@@ -259,12 +268,13 @@
                                     </CoreAppButton>
                                 </div>
                                 <CoreAppInput v-if="serverIdOption === 'new'" v-model="restoreOptions.server_id"
-                                    :placeholder="$t('fields.newId')" size="sm" class="mt-2" />
+                                    :placeholder="$t('fields.newId')" size="sm" class="mt-2 w-full" />
                             </div>
                         </CoreAppFormField>
                         <CoreAppFormField :label="$t('backup.password') + ' (' + $t('common.optional') + ')'">
                             <CoreAppInput v-model="restoreOptions.password" type="password"
-                                :placeholder="$t('backup.decrypt')" size="sm" class="w-full" />
+                                :placeholder="$t('backup.decrypt')" :aria-label="String($t('backup.decrypt'))" size="sm"
+                                class="w-full" />
                         </CoreAppFormField>
                         <div v-if="uploadProgress > 0 && uploadProgress < 100" class="mb-3">
                             <div class="flex justify-between text-xs text-(--color-text-muted) mb-1">
@@ -276,7 +286,7 @@
                                     :style="{ width: uploadProgress + '%' }" />
                             </div>
                         </div>
-                        <CoreAppButton block color="warning" variant="outline" :icon="icons.refresh"
+                        <CoreAppButton block color="warning" variant="outline" :icon="icons.refresh" class="mt-auto"
                             :loading="restoringBackup || uploadingFile"
                             :disabled="isReadOnly || !hasServerWriteAccess || !selectedFile" @click="restoreBackup">{{
                                 $t('backup.restore') }}</CoreAppButton>
@@ -326,7 +336,11 @@ const serverIdOptions = computed(() => [
     { label: String($t('backup.useNewId')), value: 'new' },
 ])
 
-watch(serverIdOption, (val) => { if (val !== 'new') restoreOptions.value.server_id = val })
+watch(serverIdOption, (val) => {
+    if (val !== 'new') {
+        restoreOptions.value.server_id = ''
+    }
+})
 
 async function fetchBlockedClients() {
     loadingClients.value = true
@@ -529,7 +543,12 @@ async function restoreBackup() {
         uploadProgress.value = 100
 
         restoreOptions.value.file_id = fileId
-        const { error: restoreErr } = await api.restoreBackup(restoreOptions.value)
+        const { error: restoreErr } = await api.restoreBackup({
+            ...restoreOptions.value,
+            server_id: serverIdOption.value === 'new'
+                ? restoreOptions.value.server_id.trim()
+                : serverIdOption.value,
+        })
         if (restoreErr) throw restoreErr
         pageMessage.value = { type: 'success', message: String($t('backup.restored')) }
     } catch (e) {

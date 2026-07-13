@@ -43,7 +43,7 @@ if [ -d "$OPSICONFD_DIR" ]; then
         ln -sf "$OPSICONFD_DIR/opsiconfd_data/static" "$OPSICONFD_DIR/static" 2>/dev/null || true
     )
 else
-    echo "[test-entrypoint] ERROR: $OPSICONFD_DIR not found — opsiconfd cannot start."
+    echo "[test-entrypoint] ERROR: $OPSICONFD_DIR not found - opsiconfd cannot start."
     echo "[test-entrypoint]        In CI the job must clone opsiconfd into docker/opsiconfd."
 fi
 
@@ -53,7 +53,7 @@ if [ ! -f "$MARKER" ]; then
     if /workspace/scripts/restore-backup.sh "$OPSI_BACKUP_URL"; then
         sudo touch "$MARKER" 2>/dev/null || touch "$MARKER" || true
     else
-        echo "[test-entrypoint] WARN: backup restore failed — tests may run against empty data"
+        echo "[test-entrypoint] WARN: backup restore failed - tests may run against empty data"
     fi
 fi
 

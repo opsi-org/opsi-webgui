@@ -9,49 +9,53 @@
 -->
 <template>
 	<div class="flex flex-col h-full min-h-0">
-		<div class="shrink-0 mb-2">
+		<div class="shrink-0 mb-2" data-testid="quickpanel-selection-section">
 			<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1">{{
 				$t('quick.selection') }}</div>
 			<CoreAppTabsNav v-model="activeTab" :tabs="selectionTabItems" hide-labels />
 		</div>
-		<div class="min-h-0 overflow-hidden" style="max-height: 55vh;">
-			<div v-show="activeTab === 'overview'" class="h-full overflow-y-auto">
+		<div class="min-h-0 overflow-hidden" style="max-height: 48vh;" data-testid="quickpanel-tab-content">
+			<div v-show="activeTab === 'overview'" class="h-full overflow-y-auto" data-testid="quickpanel-tab-overview">
 				<QuickpanelSelectionOverview />
 			</div>
 
-			<div v-show="activeTab === 'servers'" class="h-full overflow-y-auto">
+			<div v-show="activeTab === 'servers'" class="h-full overflow-y-auto" data-testid="quickpanel-tab-servers">
 				<QuickpanelServerSelectionList :active="activeTab === 'servers'" />
 			</div>
 
-			<div v-show="activeTab === 'clients'" class="h-full overflow-y-auto">
+			<div v-show="activeTab === 'clients'" class="h-full overflow-y-auto" data-testid="quickpanel-tab-clients">
 				<QuickpanelGroupSelectionTree group-type="client" :active="activeTab === 'clients'" />
 			</div>
 
-			<div v-show="activeTab === 'products'" class="h-full overflow-y-auto">
+			<div v-show="activeTab === 'products'" class="h-full overflow-y-auto" data-testid="quickpanel-tab-products">
 				<QuickpanelGroupSelectionTree group-type="product" :active="activeTab === 'products'" />
 			</div>
 		</div>
 
-		<div class="mt-auto shrink-0 border-t border-(--color-border) pt-3 space-y-3">
-			<div>
-				<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1.5">{{
+		<div class="mt-auto shrink-0 border-t border-(--color-border) pt-2 space-y-3">
+			<div data-testid="quickpanel-quick-actions-section">
+				<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1">{{
 					$t('quick.actions') }}</div>
 				<div class="flex items-center gap-1.5 flex-nowrap">
-					<ClientsQuickActionsDropdown :client-ids="selectionStore.selectedClients" compact />
-					<ProductsQuickActionsDropdown :products="[]" compact @applied="() => { }" />
+					<div data-testid="quickpanel-client-actions">
+						<ClientsQuickActionsDropdown :client-ids="selectionStore.selectedClients" compact />
+					</div>
+					<div data-testid="quickpanel-product-actions">
+						<ProductsQuickActionsDropdown :products="[]" compact @applied="() => { }" />
+					</div>
 				</div>
 			</div>
 
-			<div class="border-t border-(--color-border) pt-3">
-				<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1.5">{{
+			<div class="border-t border-(--color-border) pt-2" data-testid="quickpanel-settings-section">
+				<div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-1">{{
 					$t('common.settings') }}</div>
 				<div class="space-y-1.5">
 					<div
-						class="flex items-center justify-between gap-2 px-2 py-1.5 rounded hover:bg-(--color-surface-hover) transition-colors">
+						class="flex items-center justify-between gap-2 py-1.5 rounded hover:bg-(--color-surface-hover) transition-colors">
 						<CoreAppTooltip
-							:text="(messageBusStore.isConnected ? $t('bus.connected') : $t('bus.disconnected')) + ' — ' + $t('settings.autoRefreshTooltip')">
-							<div class="flex items-center gap-1.5 cursor-help">
-								<CoreAppMessageBusStatusIcon :connected="messageBusStore.isConnected" size="md" />
+							:text="(messageBusStore.isConnected ? $t('bus.connected') : $t('bus.disconnected')) + ' - ' + $t('settings.autoRefreshTooltip')">
+							<div class="flex items-center gap-6 cursor-help">
+								<CoreAppMessageBusStatusIcon :connected="messageBusStore.isConnected" />
 								<div class="flex flex-col">
 									<span class="text-sm">{{ $t('settings.autoRefresh') }}</span>
 									<span class="text-xs font-medium"
@@ -62,18 +66,18 @@
 								</div>
 							</div>
 						</CoreAppTooltip>
-						<CoreAppCheckbox v-model="autoRefreshEnabled" size="sm" :aria-label="$t('settings.autoRefresh')" />
+						<CoreAppCheckbox v-model="autoRefreshEnabled" :aria-label="$t('settings.autoRefresh')" />
 					</div>
 					<div class="flex items-center gap-1.5 flex-nowrap">
 						<CoreAppSelect v-model="defaultPage" :items="defaultPageOptions" size="xs"
-							:title="defaultPageTooltip" class="flex-1 w-full" />
+							:aria-label="$t('nav.defaultPage')" :title="defaultPageTooltip" class="flex-1 w-full" />
 						<SettingsThemeToggle />
 						<SettingsLanguageDropdown />
 					</div>
 				</div>
 			</div>
 
-			<div class="border-t border-(--color-border) pt-3">
+			<div class="border-t border-(--color-border) pt-2" data-testid="quickpanel-footer-section">
 				<div v-if="userStore.readOnly"
 					class="mb-2 px-2 py-1.5 rounded bg-(--color-warning-soft-bg) text-(--color-warning-soft-text) text-xs flex items-center gap-1.5 ring-1 ring-inset ring-(--color-warning-soft-ring)">
 					<CoreAppIcon :name="icons.warning" class="w-3.5 h-3.5 shrink-0" />
@@ -83,13 +87,13 @@
 					<p class="text-xs text-(--color-text-muted)">
 						{{ $t('users.current') }}: <span class="font-medium">{{ userStore.username }}</span>
 					</p>
-					<div v-if="remainingSeconds > 0" data-testid="session-timer" class="flex items-center gap-1 text-sm"
+					<div v-if="remainingSeconds > 0" data-testid="session-timer" class="flex items-center gap-1 text-xs"
 						:class="isWarning ? 'text-(--color-warning-soft-text)' : 'text-(--color-text-muted)'">
-						<CoreAppIcon :name="icons.clock" class="w-3 h-3" />
+						<CoreAppIcon :name="icons.clock" class="w-4 h-4" />
 						<span>{{ formattedTimeText }}</span>
 					</div>
 				</div>
-				<CoreAppButton color="neutral" variant="soft" size="sm" class="w-full" :loading="loggingOut"
+				<CoreAppButton color="primary" variant="outline" size="sm" class="w-full" :loading="loggingOut"
 					:disabled="loggingOut" @click="handleLogout">
 					<CoreAppIcon v-if="!loggingOut" :name="icons.logout" class="w-4 h-4 mr-1" />
 					{{ loggingOut ? $t('auth.loggingOut') : $t('auth.logout') }}

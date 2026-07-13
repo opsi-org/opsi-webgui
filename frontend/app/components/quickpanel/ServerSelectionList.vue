@@ -25,7 +25,7 @@
 					</CoreAppBadge>
 				</CoreAppTooltip>
 				<CoreAppTooltip :text="`${$t('common.clearAll')} (${selectionStore.selectedServers.length})`">
-					<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
+					<CoreAppButton :icon="icons.xCircle" size="xs" variant="outline" color="primary"
 						:aria-label="$t('common.clearAll')" @click="clearSelection" />
 				</CoreAppTooltip>
 			</div>
@@ -49,7 +49,7 @@
 					</button>
 					<CoreAppBadge v-if="server.isConfigServer" size="xs" variant="subtle" color="primary">{{
 						$t('servers.config')
-						}}</CoreAppBadge>
+					}}</CoreAppBadge>
 				</div>
 			</div>
 

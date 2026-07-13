@@ -15,6 +15,7 @@
 					<div class="flex items-center justify-between">
 						<CoreAppHeading :icon="icons.onDemand" :text="$t('actions.ondemand')" />
 						<CoreAppButton variant="ghost" color="neutral" size="xs" :icon="icons.x"
+							:aria-label="String($t('common.close'))" :title="String($t('common.close'))"
 							@click="open = false" />
 					</div>
 				</template>
@@ -36,7 +37,7 @@
 										:label="`${$t('products.onlySelected')} (${selectedProductIds.length})`" />
 								</div>
 								<div v-if="productMode === 'selected' && selectedProductIds.length > 0"
-									class="mt-2 max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) text-xs">
+									class="mt-2 max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface)">
 									<div v-for="id in selectedProductIds" :key="id">{{ id }}</div>
 								</div>
 							</div>
@@ -56,25 +57,25 @@
 
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5">
-							<span class="text-sm font-medium md:w-1/3">{{ $t('clients.title') }}
+							<span class="font-medium md:w-1/3">{{ $t('clients.title') }}
 								({{ clientIds.length }})</span>
 							<div class="flex-1">
 								<div class="flex items-center gap-2 mb-2">
-									<CoreAppButton size="xs" variant="outline" color="neutral"
+									<CoreAppButton size="xs" variant="outline" color="primary"
 										:disabled="arraysEqual(clientIds, selectionStore.selectedClients)"
 										@click="clientIds = [...selectionStore.selectedClients]">
 										{{ $t('common.reset') }}
 									</CoreAppButton>
 								</div>
 								<div v-if="clientIds.length > 0"
-									class="max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) text-xs">
+									class="max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface)">
 									<div v-for="id in clientIds" :key="id" class="flex items-center justify-between">
 										<span>{{ id }}</span>
 										<CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.x"
 											@click="clientIds = clientIds.filter(c => c !== id)" />
 									</div>
 								</div>
-								<div v-else class="text-xs text-(--color-text-muted) italic">
+								<div v-else class="text-(--color-text-muted) italic">
 									{{ $t('clients.selectNone') }}
 								</div>
 							</div>
@@ -84,8 +85,9 @@
 
 				<template #footer>
 					<div class="flex justify-end gap-2">
-						<CoreAppButton variant="ghost" color="neutral" size="sm" @click="open = false">{{ $t('common.cancel')
-							}}
+						<CoreAppButton variant="outline" color="primary" size="sm" @click="open = false">{{
+							$t('common.cancel')
+						}}
 						</CoreAppButton>
 						<CoreAppButton color="primary" size="sm" :loading="executing"
 							:disabled="isReadOnly || clientIds.length === 0" @click="executeProcessAction">

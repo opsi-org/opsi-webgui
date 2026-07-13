@@ -8,7 +8,7 @@
   CoreAppSelect - UI library wrapper for select/dropdown rendering.
 -->
 <template>
-  <USelect v-bind="accessibleAttrs">
+  <USelect v-bind="accessibleAttrs" class="w-full">
     <template v-for="(_, name) in $slots" :key="name" #[name]="slotData">
       <slot :name="name" v-bind="slotData || {}" />
     </template>

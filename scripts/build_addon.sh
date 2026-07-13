@@ -17,6 +17,7 @@ WEBGUI_DIR="webgui"
 BACKEND_ADDON_DIR="${WORKING_DIR}/${BACKEND_DIR}/${WEBGUI_DIR}"
 PY_CONST_FILE="${BACKEND_ADDON_DIR}/python/const.py"
 TS_CONFIG_FILE="${WORKING_DIR}/${FRONTEND_DIR}/nuxt.config.ts"
+SBOM_FILE="${WORKING_DIR}/sbom.cyclonedx.json"
 
 ADDON_ID_ORIGIN="webgui"
 ADDON_NAME_ORIGIN="OpsiWebGUI"
@@ -51,8 +52,17 @@ pnpm install --frozen-lockfile
 echo "> Running pnpm generate..."
 pnpm run generate
 
+echo "> Generating SBOM..."
+pnpm run sbom
+
+if [ ! -f "${SBOM_FILE}" ]; then
+    echo "ERROR: SBOM generation failed - no output at ${SBOM_FILE}"
+    exit 1
+fi
+echo "> Generated SBOM: ${SBOM_FILE}"
+
 if [ ! -f ".output/public/index.html" ]; then
-    echo "ERROR: Nuxt generate failed — no output at .output/public/index.html"
+    echo "ERROR: Nuxt generate failed - no output at .output/public/index.html"
     exit 1
 fi
 echo "> Generated $(find .output/public -type f | wc -l) files"
@@ -75,6 +85,7 @@ rm -rf "${WORKING_DIR}/${ADDON_ID}"
 mkdir -p "${WORKING_DIR}/${ADDON_ID}"
 cp -r "${BACKEND_ADDON_DIR}/data"   "${WORKING_DIR}/${ADDON_ID}/"
 cp -r "${BACKEND_ADDON_DIR}/python" "${WORKING_DIR}/${ADDON_ID}/"
+cp -f "${SBOM_FILE}" "${WORKING_DIR}/${ADDON_ID}/sbom.cyclonedx.json"
 
 # Apply ADDON_ID/ADDON_NAME into the packaged python files
 if [ "${ADDON_ID}" != "${ADDON_ID_ORIGIN}" ]; then

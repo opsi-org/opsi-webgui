@@ -18,11 +18,11 @@
 				{{ $t('bus.changes') }}
 			</CoreAppButton>
 			<CoreAppButton v-if="selectionStore.selectedClients.length > 0" :icon="icons.product" color="primary"
-				size="sm" @click="openProductsPanel" :disabled="isReadOnly">
+				size="sm" @click="openProductsPanel" :disabled="isReadOnly" :aria-label="String($t('products.title'))" data-testid="clients-open-products-panel">
 				{{ $t('products.title') }}
 			</CoreAppButton>
 			<CoreAppButton :icon="icons.add" color="primary" size="sm" @click="openAddPanel"
-				:disabled="isReadOnly || !canCreateClients">
+				:disabled="isReadOnly || !canCreateClients" :aria-label="String($t('common.new'))">
 				<span class="hidden sm:inline">{{ $t('common.new') }}</span>
 			</CoreAppButton>
 		</template>
@@ -30,14 +30,16 @@
 		<CoreAppErrorBanner :error="error" @close="error = null" />
 
 		<CoreAppDataTable :rows="clients" :columns="columns" :loading="loading" table-id="clients" row-key="clientId"
-			:selectable="true" :filterable="true" :show-refresh="false" :clickable="true" :total-items="totalItems"
+			:selectable="true" :filterable="true" :show-refresh="false" :total-items="totalItems"
 			:selected-keys="selectionStore.selectedClients" :active-key="panelClient?.clientId"
 			:sort-by-selection-enabled="sortBySelectionEnabled" @row-activate="handleRowActivate"
 			@selection-change="handleSelectionChange" @page-change="handlePageChange" @refresh="fetchClients">
 			<template #cell-clientId="{ row }">
 				<div class="flex items-center gap-1.5">
+
 					<CoreAppIcon v-if="blockedClients.has((row as Client).ipAddress || '')" :name="icons.lock"
 						class="w-3.5 h-3.5 text-(--color-error-soft-text) shrink-0" :title="$t('clients.blocked')" />
+					<CoreAppIcon v-else :name="icons.client" class="w-4 h-4 shrink-0 text-neutral-400" />
 					<span>{{ (row as Client).clientId }}</span>
 				</div>
 			</template>
@@ -82,13 +84,13 @@
 			</template>
 			<template #cell-actionResult_successful="{ row }">
 				<CoreAppStatusBadge :value="(row as Client).actionResult_successful"
-					:icon="icons.productActionResultSuccessful" :tooltip="$t('actions.success')"
-					status="success" clickable @click="openProductsPanelForClient(row as Client, 'actionResult')" />
+					:icon="icons.productActionResultSuccessful" :tooltip="$t('actions.success')" status="success"
+					clickable @click="openProductsPanelForClient(row as Client, 'actionResult')" />
 			</template>
 			<template #cell-actionResult_failed="{ row }">
 				<CoreAppStatusBadge :value="(row as Client).actionResult_failed"
-					:icon="icons.productsFailedActionResult" :tooltip="$t('actions.failed')" status="error"
-					clickable @click="openProductsPanelForClient(row as Client, 'actionResult')" />
+					:icon="icons.productsFailedActionResult" :tooltip="$t('actions.failed')" status="error" clickable
+					@click="openProductsPanelForClient(row as Client, 'actionResult')" />
 			</template>
 			<template #cell-reachable="{ row }">
 				<ClientsReachableBadge :client-id="(row as Client).clientId"

@@ -16,7 +16,7 @@
                         <CoreAppHeading :icon="icons.support" :text="$t('support.pro')" />
                     </template>
                     <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('support.proDesc') }}</p>
-                    <CoreAppButton variant="soft" color="neutral" block as="a" :href="supportUrl" target="_blank">{{
+                    <CoreAppButton variant="outline" color="primary" block as="a" :href="supportUrl" target="_blank">{{
                         $t('support.title') }}</CoreAppButton>
                 </CoreAppCard>
                 <CoreAppCard fill>
@@ -24,7 +24,7 @@
                         <CoreAppHeading :icon="icons.users" :text="$t('support.community')" />
                     </template>
                     <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('support.communityDesc') }}</p>
-                    <CoreAppButton variant="soft" color="neutral" block as="a" href="https://forum.opsi.org"
+                    <CoreAppButton variant="outline" color="primary" block as="a" href="https://forum.opsi.org"
                         target="_blank">
                         {{ $t('support.forum') }}</CoreAppButton>
                 </CoreAppCard>
@@ -33,7 +33,7 @@
                         <CoreAppHeading :icon="icons.document" :text="$t('support.docs')" />
                     </template>
                     <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('support.docsDesc') }}</p>
-                    <CoreAppButton variant="soft" color="neutral" block as="a" href="https://docs.opsi.org"
+                    <CoreAppButton variant="outline" color="primary" block as="a" href="https://docs.opsi.org"
                         target="_blank">
                         {{ $t('support.docs') }}
                     </CoreAppButton>

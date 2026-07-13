@@ -20,7 +20,7 @@
 				:loading="loading" value-key="value" label-key="label" class="min-w-30" size="sm" />
 			<div v-if="logContent.length > 0" class="flex flex-col gap-1 min-w-30">
 				<span class="text-xs font-medium text-muted">
-					{{ $t('logs.level') }}: <span class="font-semibold text-opsi-blue">{{ logLevel }}</span>
+					{{ $t('logs.level') }}: <span class="font-bold">{{ logLevel }}</span>
 					<span class="ml-1 text-muted">({{ LOG_LEVEL_LABELS[logLevel] }})</span>
 				</span>
 				<input v-model.number="logLevel" type="range" min="1" max="9" step="1"
@@ -34,35 +34,33 @@
 					<CoreAppFilterInput v-model="filterQuery" size="sm" input-class="w-full sm:w-56 md:w-72 lg:w-80" />
 				</div>
 				<div v-if="logContent.length > 0">
-					<CoreAppTooltip :text="$t('settings.autoRefreshDesc')">
-						<CoreAppButton :color="autoRefresh ? 'primary' : 'neutral'"
-							:variant="autoRefresh ? 'solid' : 'ghost'" size="sm" @click="autoRefresh = !autoRefresh">
-							<span class="hidden sm:inline text-xs">{{ $t('settings.autoRefresh') }}</span>
-						</CoreAppButton>
-					</CoreAppTooltip>
+					<CoreAppButton color="primary" :variant="autoRefresh ? 'solid' : 'outline'" size="sm"
+						@click="autoRefresh = !autoRefresh" :aria-label="String($t('settings.autoRefresh'))"
+						:title="String($t('settings.autoRefreshDesc'))">
+						<CoreAppIcon :name="icons.check" class="w-4 h-4" v-if="autoRefresh" />
+						<span class="hidden sm:inline text-xs">{{ $t('settings.autoRefresh') }}</span>
+					</CoreAppButton>
 				</div>
 				<div v-if="logContent.length > 0">
-					<CoreAppTooltip :text="$t('settings.autoScrollDesc')">
-						<CoreAppButton :color="autoScroll ? 'primary' : 'neutral'"
-							:variant="autoScroll && !hasMarker ? 'solid' : 'ghost'" :disabled="hasMarker" size="sm"
-							@click="autoScroll = !autoScroll">
-							<span class="hidden sm:inline text-xs">{{ $t('settings.autoScroll') }}</span>
-						</CoreAppButton>
-					</CoreAppTooltip>
+					<CoreAppButton :color="autoScroll ? 'primary' : 'neutral'"
+						:variant="autoScroll && !hasMarker ? 'solid' : 'ghost'" :disabled="hasMarker" size="sm"
+						@click="autoScroll = !autoScroll" :aria-label="String($t('settings.autoScroll'))"
+						:title="String($t('settings.autoScrollDesc'))">
+						<span class="hidden sm:inline text-xs">{{ $t('settings.autoScroll') }}</span>
+					</CoreAppButton>
 				</div>
 
 				<div v-if="selectedLogTypeValue">
-					<CoreAppTooltip :text="$t('common.download')">
-						<CoreAppButton :icon="icons.download" variant="ghost" color="neutral" size="sm"
-							:disabled="filteredLogContent.length === 0" @click="downloadLog" />
-					</CoreAppTooltip>
+					<CoreAppButton :icon="icons.download" variant="outline" color="primary" size="sm"
+						:aria-label="String($t('common.download'))" :title="String($t('common.download'))"
+						:disabled="filteredLogContent.length === 0" @click="downloadLog">{{
+							$t('common.download') }}</CoreAppButton>
 				</div>
 
 				<div v-if="selectedLogTypeValue">
-					<CoreAppTooltip :text="$t('common.refresh')">
-						<CoreAppButton :icon="icons.refresh" variant="ghost" color="neutral" size="sm"
-							:loading="loading" @click="fetchLog" />
-					</CoreAppTooltip>
+					<CoreAppButton :icon="icons.refresh" variant="outline" color="primary" size="sm"
+						:aria-label="String($t('common.refresh'))" :title="String($t('common.refresh'))"
+						:loading="loading" @click="fetchLog" />
 				</div>
 			</div>
 		</template>
@@ -70,11 +68,12 @@
 		<div class="flex flex-col h-full gap-2 min-h-0">
 			<div v-if="logContent.length > 0 && hasMarker" class="flex items-center text-xs text-muted shrink-0 px-3">
 				<CoreAppButton :icon="icons.bookmark" variant="soft" color="neutral" size="sm"
-					:title="String($t('logs.scroll'))" @click="scrollToMarker">
+					:title="String($t('logs.scroll'))" :aria-label="String($t('logs.scroll'))" @click="scrollToMarker">
 					{{ $t('logs.marker') }}: {{ markerLine + 1 }}
 				</CoreAppButton>
 				<CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="sm"
-					:title="String($t('logs.clearMarker'))" @click="clearMarker" />
+					:title="String($t('logs.clearMarker'))" :aria-label="String($t('logs.clearMarker'))"
+					@click="clearMarker" />
 			</div>
 
 
@@ -100,8 +99,8 @@
 					class="flex items-center justify-center h-full gap-2 text-muted">
 					<CoreAppLoadingSpinner />
 				</div>
-				<CoreAppAlertInline v-else-if="error" color="error" :title="String($t('common.error'))" :description="error"
-					class="m-3" close @close="error = null" />
+				<CoreAppAlertInline v-else-if="error" color="error" :title="String($t('common.error'))"
+					:description="error" class="m-3" close @close="error = null" />
 				<div v-else-if="logContent.length === 0" class="h-full bg-(--color-background) rounded-xl">
 					<CoreAppEmptyState :icon="icons.log" :message="String($t('logs.none'))" />
 				</div>
@@ -109,9 +108,7 @@
 					class="h-full overflow-auto log-viewer bg-(--color-background) rounded-xl font-mono text-xs">
 					<div v-for="(line, idx) in filteredLogContent" :id="'logrow-' + idx" :key="idx" v-clickable
 						:class="[getLogRowClass(line, idx), 'flex items-start hover:bg-(--color-surface-hover) cursor-pointer transition-colors group']"
-						role="button" tabindex="0"
-						@click="setMarker(idx)"
-						@keydown.enter="setMarker(idx)"
+						role="button" tabindex="0" @click="setMarker(idx)" @keydown.enter="setMarker(idx)"
 						@keydown.space.prevent="setMarker(idx)">
 						<span
 							class="w-12 shrink-0 px-2 py-1.5 text-right text-(--color-text-muted) border-r border-(--color-border) select-none sticky left-0 bg-inherit">

@@ -12,7 +12,7 @@
 		<CoreAppIcon :name="primaryIcon" :class="primaryClass || primarySizeClass" />
 		<template v-if="secondaryIcon">
 			<span v-if="badge"
-				class="absolute -bottom-1 -right-1 inline-flex items-center justify-center rounded-full ring-2"
+				class="absolute -bottom-1 -right-3 inline-flex items-center justify-center rounded-full ring-2"
 				:class="[badgeWrapperSizeClass, badgeBgClass, badgeRingClass]">
 				<CoreAppIcon :name="secondaryIcon" :class="[badgeIconSizeClass, badgeIconColorClass]" />
 			</span>

@@ -8,7 +8,7 @@
   CoreAppInput - UI library wrapper for text input rendering.
 -->
 <template>
-  <UInput v-bind="accessibleAttrs">
+  <UInput v-bind="accessibleAttrs" class="w-full">
     <template v-for="(_, name) in $slots" :key="name" #[name]="slotData">
       <slot :name="name" v-bind="slotData || {}" />
     </template>

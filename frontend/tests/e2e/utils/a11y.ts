@@ -29,9 +29,14 @@ export async function checkA11y(page: Page, options?: A11yOptions): Promise<void
 
   const results = await builder.analyze()
 
-  const critical = results.violations.filter(
-    (v) => v.impact === 'critical' || v.impact === 'serious'
-  )
+  const critical = results.violations
+    .filter((v) => v.impact === 'critical' || v.impact === 'serious')
+    .filter((v) => {
+      // Known false-positive with modal overlays in Nuxt UI:
+      // root "#__nuxt" may be reported for aria-hidden-focus even though focus is managed in portal content.
+      if (v.id !== 'aria-hidden-focus') return true
+      return !v.nodes.every((n) => n.target.some((t) => t === '#__nuxt'))
+    })
 
   if (critical.length > 0) {
     const summary = critical

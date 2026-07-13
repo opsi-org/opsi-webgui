@@ -11,15 +11,17 @@
  *   pnpm test:e2e:full              # Full matrix (all locales/themes/viewports, + Firefox + visual regression)
  *   pnpm test:e2e:update-baselines  # Regenerate visual-regression baselines
  *   pnpm screenshots:docs           # Generate documentation/marketing screenshots into ../screenshots/
- *                                   # (full matrix incl. 1920×1080 "marketing" viewport, visual diff skipped)
+ *                                   # (artifacts are minimized to documentation/{light,dark} and marketing/{light,dark})
+ *                                   # colorblind: automated checks by default; set COLORBLIND_REVIEW_MODE=artifacts for manual screenshots
  */
 
 import { defineConfig, devices } from '@playwright/test'
-import { AUTH_FILE } from './e2e/setup/auth.setup'
+import { authFileFor } from './e2e/setup/auth.setup'
 
-// const isNightly = process.env.CI_PIPELINE_SOURCE === 'schedule'
+const isNightly = process.env.CI_PIPELINE_SOURCE === 'schedule'
 const baseURL = process.env.BASE_URL || 'https://localhost:3000/addons/webgui/app'
-const authFile = AUTH_FILE
+const chromiumAuthFile = authFileFor('chromium')
+const firefoxAuthFile = authFileFor('firefox')
 
 export default defineConfig({
   testDir: './e2e/specs',
@@ -29,12 +31,12 @@ export default defineConfig({
   snapshotPathTemplate: '{snapshotDir}/{arg}{ext}',
   reporter: process.env.CI
     ? [
-        ['junit', { outputFile: '../test-results/junit.xml' }],
-        ['html', { outputFolder: '../test-results/html' }],
-        ['list'],
-      ]
+      ['junit', { outputFile: '../test-results/junit.xml' }],
+      ['html', { outputFolder: '../test-results/html' }],
+      ['list'],
+    ]
     : 'list',
-  timeout: 90_000,
+  timeout: isNightly ? 480_000 : 90_000,
   expect: {
     toHaveScreenshot: {
       maxDiffPixelRatio: 0.05,
@@ -49,15 +51,19 @@ export default defineConfig({
     baseURL,
     headless: true,
     ignoreHTTPSErrors: true,
-    viewport: { width: 1280, height: 800 },
+    viewport: { width: 1552, height: 920 },
     screenshot: 'only-on-failure',
     trace: 'on-first-retry',
+    // Prevent individual locator actions (click, fill, waitFor…) from hanging
+    // indefinitely, especially on Firefox.
+    actionTimeout: 30_000,
+    navigationTimeout: 30_000,
   },
 
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], storageState: authFile },
+      use: { ...devices['Desktop Chrome'], storageState: chromiumAuthFile },
       testIgnore: /login\.spec/,
     },
     {
@@ -65,14 +71,19 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testMatch: /login\.spec/,
     },
-    // ...(isNightly
-    //   ? [
-    //     {
-    //       name: 'firefox',
-    //       use: { ...devices['Desktop Firefox'], storageState: authFile },
-    //       testIgnore: /login\.spec/,
-    //     },
-    //   ]
-    //   : []),
+    ...(isNightly
+      ? [
+        {
+          name: 'firefox',
+          use: { ...devices['Desktop Firefox'], storageState: firefoxAuthFile },
+          testIgnore: /login\.spec/,
+        },
+        {
+          name: 'firefox-login',
+          use: { ...devices['Desktop Firefox'] },
+          testMatch: /login\.spec/,
+        },
+      ]
+      : []),
   ],
 })

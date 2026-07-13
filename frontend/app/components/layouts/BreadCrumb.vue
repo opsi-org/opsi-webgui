@@ -10,7 +10,7 @@
 <template>
 	<div class="shrink-0 px-3 md:px-4 py-1.5 border-b border-(--color-border) bg-(--color-surface)">
 		<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-			<nav class="flex items-center gap-1.5 text-xs overflow-x-auto" tabindex="0" :aria-label="$t('nav.breadcrumb')">
+			<nav class="flex items-center gap-1.5 text-xs overflow-x-auto" :aria-label="$t('nav.breadcrumb')" tabindex="0">
 				<template v-for="(crumb, i) in breadcrumbs" :key="i">
 					<CoreAppIcon v-if="i > 0" :name="icons.chevronRight"
 						class="w-2.5 h-2.5 text-(--color-text-muted) shrink-0" />
@@ -36,10 +36,42 @@ const icons = useIcons()
 const $route = useRoute()
 const { t: i18nT } = useI18n()
 
+const segmentI18nMap: Record<string, string> = {
+	dashboard: 'nav.dashboard',
+	admin: 'nav.admin',
+	terminal: 'nav.terminal',
+	diagnostics: 'nav.diagnostics',
+	healthcheck: 'nav.healthcheck',
+	modules: 'nav.modules',
+	system: 'nav.systemInfo',
+	maintenance: 'nav.maintenance',
+	servers: 'nav.servers',
+	clients: 'nav.clients',
+	products: 'nav.products',
+	groups: 'nav.groups',
+	support: 'nav.support',
+	configuration: 'nav.configuration',
+	logs: 'nav.logs',
+	clone: 'nav.clone',
+	add: 'nav.addNew',
+}
+
 const $t = (key: string) => {
 	const translated = i18nT(key)
 	if (translated && translated !== key) return String(translated)
 	return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim()
+}
+
+const translateSegment = (segment: string): string => {
+	const normalized = decodeURIComponent(segment)
+	const mappedKey = segmentI18nMap[normalized]
+	if (mappedKey) return $t(mappedKey)
+
+	const navKey = `nav.${normalized}`
+	const navTranslated = i18nT(navKey)
+	if (navTranslated && navTranslated !== navKey) return String(navTranslated)
+
+	return $t(normalized)
 }
 
 
@@ -54,7 +86,7 @@ const breadcrumbs = computed(() => {
 	segments.forEach((segment, index) => {
 		currentPath += `/${segment}`
 		const isHostname = segment.includes('.') && !segment.includes(' ')
-		const label = isHostname ? segment : $t(segment)
+		const label = isHostname ? segment : translateSegment(segment)
 		crumbs.push({
 			label,
 			to: index < segments.length - 1 ? currentPath : undefined,

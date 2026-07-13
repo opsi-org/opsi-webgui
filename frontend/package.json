@@ -4,6 +4,11 @@
   "type": "module",
   "private": true,
   "packageManager": "pnpm@10.30.3",
+  "pnpm": {
+    "overrides": {
+      "jsonata": ">=2.2.0"
+    }
+  },
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",
@@ -21,7 +26,7 @@
     "test:e2e:ui": "playwright test --config tests/playwright.config.ts --ui",
     "test:e2e:update-baselines": "CI_PIPELINE_SOURCE=schedule playwright test --config tests/playwright.config.ts --update-snapshots",
     "screenshots:docs": "CI_PIPELINE_SOURCE=schedule SKIP_VISUAL_REGRESSION=1 playwright test --config tests/playwright.config.ts",
-    "sbom": "cdxgen -o ../sbom.json --spec-version 1.5 --type js"
+    "sbom": "cdxgen -o ../sbom.cyclonedx.json --spec-version 1.5 --type js"
   },
   "dependencies": {
     "@msgpack/msgpack": "^3.1.3",

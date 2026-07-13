@@ -9,8 +9,10 @@
 -->
 <template>
   <div class="min-h-screen flex flex-col bg-(--color-surface)">
-    <main class="flex-1 flex items-center justify-center">
-      <slot />
+    <main class="flex-1 flex items-center justify-center p-4">
+      <div class="w-full max-w-lg">
+        <slot />
+      </div>
     </main>
     <LayoutsAuthFooter :version="$config.public.packageVersion || '1.0.0'" :uib-link="uibLink" />
   </div>

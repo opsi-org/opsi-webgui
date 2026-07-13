@@ -29,9 +29,9 @@
 				<div class="flex flex-wrap items-center gap-2">
 					<CoreAppButton v-if="resolvedSourceId" color="success" :loading="loading"
 						:title="String($t('clients.clone.title'))" @click="cloneClient">
-						<CoreAppIcon :name="icons.clone" />
+						<CoreAppIcon :name="icons.clone" /> {{ $t('clients.clone.title') }}
 					</CoreAppButton>
-					<CoreAppButton :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
+					<CoreAppButton :icon="icons.refresh" color="primary" variant="outline" size="sm"
 						:title="String($t('common.refresh'))" @click="refresh" />
 				</div>
 			</div>
@@ -45,8 +45,8 @@
 				@close="success = false">
 				<template #description>{{ $t('clients.clone.ok') }}</template>
 			</CoreAppAlertInline>
-			<CoreAppAlertInline v-if="error" color="error" :title="String($t('common.error'))" :description="error" closable
-				@close="error = null" />
+			<CoreAppAlertInline v-if="error" color="error" :title="String($t('common.error'))" :description="error"
+				closable @close="error = null" />
 
 			<div v-if="!panelMode || showSourceInPanel" class="opsi-card">
 				<div
@@ -73,9 +73,9 @@
 						<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
 							<div class="flex items-center gap-2 w-full">
 								<CoreAppInput v-model="clientName" :disabled="loading" size="sm"
-									placeholder="clientname" class="flex-1" />
-								<CoreAppInput v-model="domain" :disabled="loading" size="sm" placeholder=".domain.local"
-									class="flex-1" />
+									:placeholder="String($t('fields.hostname.enter'))" class="flex-1" />
+								<CoreAppInput v-model="domain" :disabled="loading" size="sm"
+									:placeholder="String($t('fields.domainExample'))" class="flex-1" />
 							</div>
 							<div v-if="formErrors.newId" class="text-xs text-error">
 								{{ formErrors.newId }}
@@ -89,7 +89,7 @@
 						</span>
 						<div class="flex-1">
 							<CoreAppInput v-model="cloneclient.target.ipAddress" :disabled="loading" size="sm"
-								placeholder="192.168.1.x" class="w-full" />
+								:placeholder="String($t('fields.ipExample'))" class="w-full" />
 						</div>
 					</div>
 					<div
@@ -99,7 +99,7 @@
 						</span>
 						<div class="flex-1">
 							<CoreAppInput v-model="cloneclient.target.hardwareAddress" :disabled="loading" size="sm"
-								placeholder="00:11:22:33:44:55" class="w-full" />
+								:placeholder="String($t('fields.macExample'))" class="w-full" />
 						</div>
 					</div>
 					<div
@@ -109,13 +109,13 @@
 						</span>
 						<div class="flex-1">
 							<CoreAppInput v-model="cloneclient.target.systemUUID" :disabled="loading" size="sm"
-								placeholder="UUID" class="w-full" />
+								:placeholder="String($t('fields.uuidExample'))" class="w-full" />
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="opsi-card">
+			<div class="opsi-card h-full">
 				<div class="flex items-center justify-between mb-3">
 					<h4 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('clients.clone.options') }}</h4>
 				</div>

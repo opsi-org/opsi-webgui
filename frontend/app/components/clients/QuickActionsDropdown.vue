@@ -13,9 +13,11 @@
 		<template v-if="inline">
 			<CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
 				<CoreAppButton :icon="icons.moreVertical" variant="ghost" color="neutral" size="xs" :loading="loading"
-					:disabled="loading" :title="String($t('clients.actions'))" />
+					:disabled="loading" :title="String($t('clients.actions'))"
+					:aria-label="String($t('clients.actions'))" data-testid="client-quick-actions-trigger-inline" />
 				<template #item-leading="{ item }">
-					<CoreAppImage v-if="menuItem(item).image" :src="menuItem(item).image as string" :dark-src="menuItem(item).darkImage" :alt="menuItem(item).label"
+					<CoreAppImage v-if="menuItem(item).image" :src="menuItem(item).image as string"
+						:dark-src="menuItem(item).darkImage" :alt="menuItem(item).label"
 						image-class="w-5 h-5 shrink-0" />
 					<CoreAppIcon v-else :name="menuItem(item).icon" class="w-5 h-5 shrink-0" />
 				</template>
@@ -24,50 +26,40 @@
 		<!-- Standard mode: button with badge -->
 		<template v-else>
 			<CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
-				<CoreAppTooltip v-if="compact" :text="$t('clients.actions')">
-					<CoreAppButton variant="soft" color="primary" size="sm" :aria-label="String($t('clients.actions'))">
-						<CoreAppIcon :name="icons.client" class="w-4 h-4" />
-						<CoreAppBadge size="xs" color="primary" class="ml-0.5">{{ clientIds.length }}</CoreAppBadge>
-					</CoreAppButton>
-				</CoreAppTooltip>
-				<CoreAppButton v-else variant="soft" color="primary" size="sm" class="w-full">
+				<CoreAppButton variant="soft" color="primary" size="sm" :class="compact ? '' : 'w-full'"
+					:aria-label="String($t('clients.actions'))" :title="String($t('clients.actions'))" data-testid="client-quick-actions-trigger">
 					<CoreAppIcon :name="icons.client" class="w-4 h-4" />
-					<span>{{ $t('clients.actions') }}</span>
+					<span v-if="!compact">{{ $t('clients.actions') }}</span>
 					<CoreAppBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</CoreAppBadge>
-					<CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
+					<CoreAppIcon v-if="!compact" :name="icons.chevronDown" class="w-3 h-3 ml-1" />
 				</CoreAppButton>
 				<template #item-leading="{ item }">
-					<CoreAppImage v-if="menuItem(item).image" :src="menuItem(item).image as string" :dark-src="menuItem(item).darkImage" :alt="menuItem(item).label"
+					<CoreAppImage v-if="menuItem(item).image" :src="menuItem(item).image as string"
+						:dark-src="menuItem(item).darkImage" :alt="menuItem(item).label"
 						image-class="w-5 h-5 shrink-0" />
 					<CoreAppIcon v-else :name="menuItem(item).icon" class="w-5 h-5 shrink-0" />
 				</template>
 			</CoreAppDropdownMenu>
-			<CoreAppTooltip v-else-if="compact" :text="$t('clients.selectFirst')">
-				<CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-50 hover:opacity-70"
-					aria-disabled="true" :aria-label="String($t('clients.selectFirst'))" @click="showSelectionHint">
-					<CoreAppIcon :name="icons.client" class="w-4 h-4" />
-				</CoreAppButton>
-			</CoreAppTooltip>
-			<CoreAppTooltip v-else :text="$t('clients.selectFirst')" class="w-full">
-				<CoreAppButton variant="ghost" color="neutral" size="sm" class="w-full opacity-50 hover:opacity-70"
-					aria-disabled="true" :aria-label="String($t('clients.selectFirst'))" @click="showSelectionHint">
-					<CoreAppIcon :name="icons.client" class="w-4 h-4" />
-					<span>{{ $t('clients.actions') }}</span>
-					<CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 ml-1" />
-				</CoreAppButton>
-			</CoreAppTooltip>
+			<CoreAppButton v-else variant="ghost" color="neutral" size="sm"
+				class="opacity-50 hover:opacity-70" :class="compact ? '' : 'w-full'" aria-disabled="true"
+				:aria-label="String($t('clients.selectFirst'))" :title="String($t('clients.selectFirst'))"
+				@click="showSelectionHint">
+				<CoreAppIcon :name="icons.client" class="w-4 h-4" />
+				<span v-if="!compact">{{ $t('clients.actions') }}</span>
+				<CoreAppIcon v-if="!compact" :name="icons.chevronDown" class="w-3 h-3 ml-1" />
+			</CoreAppButton>
 		</template>
 	</div>
 
-	<CoreAppModal v-model:open="confirmOpen" :dismissible="true">
+	<CoreAppModal v-model:open="confirmOpen" :dismissible="true" data-testid="client-quick-actions-dialog">
 		<template #content>
 			<div class="p-4 min-w-87.5" @click.stop>
 				<div class="flex items-center justify-between mb-3">
 					<h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
 						<CoreAppImage v-if="currentAction === 'deployClientAgent'" src="opsi-client-agent.svg"
 							dark-src="opsi-client-agent-light.svg" :alt="actionLabel(currentAction)"
-							image-class="w-5 h-5 shrink-0" />
-						<CoreAppIcon v-else :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
+							image-class="w-8 h-8 shrink-0" />
+						<CoreAppIcon v-else :name="currentActionIcon" class="w-8 h-8 text-(--color-text-muted)" />
 						{{ actionLabel(currentAction) }}
 						<span v-if="clientIds.length === 1"
 							class="text-(--color-text-muted) font-normal normal-case truncate max-w-48">{{ clientIds[0]
@@ -75,12 +67,13 @@
 						<span v-else-if="clientIds.length > 1" class="text-(--color-text-muted) font-normal">({{
 							clientIds.length }} {{ $t('clients.title') }})</span>
 					</h3>
-					<CoreAppButton :icon="icons.x" variant="ghost" color="neutral" @click="confirmOpen = false" />
+					<CoreAppButton :icon="icons.x" variant="ghost" color="neutral"
+						:aria-label="String($t('common.close'))" @click="confirmOpen = false" />
 				</div>
 
 				<CoreAppAlertInline v-if="statusMessage && statusMessage.type === 'error'" color="error"
-					:title="$t('common.error')" :description="statusMessage.message" variant="subtle" class="mb-3" closable
-					@close="statusMessage = null" />
+					:title="$t('common.error')" :description="statusMessage.message" variant="subtle" class="mb-3"
+					closable @close="statusMessage = null" />
 
 				<div v-if="currentAction === 'onDemand'" class="mb-4 p-3">
 					<p class="mb-2">
@@ -115,8 +108,6 @@
 
 				<div v-if="currentAction === 'deployClientAgent'" class="space-y-3 mb-4">
 					<div class="flex items-center gap-3 mb-1">
-						<CoreAppImage src="opsi-client-agent.svg" dark-src="opsi-client-agent-light.svg"
-							:alt="String($t('clients.deploy'))" image-class="w-10 h-10 shrink-0" />
 						<p class="text-sm text-(--color-text-muted) m-0">{{ $t('clients.deployDesc') }}</p>
 					</div>
 					<div class="grid grid-cols-3 gap-2 mb-3">
@@ -124,19 +115,19 @@
 							:variant="deployOptions.type === os.value ? 'solid' : 'outline'"
 							:color="deployOptions.type === os.value ? 'primary' : 'neutral'" size="sm"
 							class="justify-center" @click="deployOptions.type = os.value">
-							<CoreAppIcon :name="os.icon" class="w-4 h-4 mr-1" />
+							<CoreAppIcon :name="os.icon" class="w-6 h-6 mr-1" />
 							{{ os.label }}
 						</CoreAppButton>
 					</div>
 					<div>
 						<span class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.username') }}</span>
-						<CoreAppInput v-model="deployOptions.username" :placeholder="$t('fields.adminUsername')" size="sm"
-							class="w-full" />
+						<CoreAppInput v-model="deployOptions.username" :placeholder="$t('fields.adminUsername')"
+							size="sm" class="w-full" />
 					</div>
 					<div>
 						<span class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.password') }}</span>
-						<CoreAppInput v-model="deployOptions.password" type="password" :placeholder="$t('auth.enterPassword')"
-							size="sm" class="w-full" />
+						<CoreAppInput v-model="deployOptions.password" type="password"
+							:placeholder="$t('auth.enterPassword')" size="sm" class="w-full" />
 					</div>
 				</div>
 
@@ -149,7 +140,8 @@
 							<CoreAppInput v-model="renameHostname" :placeholder="String($t('fields.hostname.enter'))"
 								class="flex-1" :color="renameValidation.color as any" />
 							<span class="text-sm text-(--color-text-muted)">.</span>
-							<CoreAppInput v-model="renameDomain" :placeholder="String($t('fields.domain'))" class="flex-1" />
+							<CoreAppInput v-model="renameDomain" :placeholder="String($t('fields.domain'))"
+								class="flex-1" />
 						</div>
 						<p v-if="renameValidation.message" class="text-xs mt-1" :class="renameValidation.textClass">
 							{{ renameValidation.message }}
@@ -173,7 +165,8 @@
 				</div>
 
 				<div class="flex justify-end gap-2 pt-3 border-[--color-border]">
-					<CoreAppButton variant="ghost" color="neutral" @click="confirmOpen = false">{{ $t('common.cancel') }}
+					<CoreAppButton variant="outline" color="primary" @click="confirmOpen = false">{{ $t('common.cancel')
+					}}
 					</CoreAppButton>
 					<CoreAppButton :color="currentAction === 'delete' ? 'error' : 'primary'" :loading="loading"
 						:disabled="isReadOnly || !canExecute" @click="executeAction">
@@ -192,7 +185,8 @@
 						<CoreAppIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
 						{{ $t('actions.results') }}
 					</h3>
-					<CoreAppButton :icon="icons.x" variant="ghost" color="neutral" @click="resultOpen = false" />
+					<CoreAppButton :icon="icons.x" variant="ghost" color="neutral"
+						:aria-label="String($t('common.close'))" @click="resultOpen = false" />
 				</div>
 
 				<div class="max-h-80 overflow-y-auto space-y-1.5">

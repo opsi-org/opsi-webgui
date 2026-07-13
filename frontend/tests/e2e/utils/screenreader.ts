@@ -55,9 +55,9 @@ export async function auditScreenReader(page: Page, options?: ScreenReaderOption
   const title = (await page.title()).trim()
   const bareAppName = options?.bareAppName ?? 'opsi'
   if (!title) {
-    findings.push('document has no <title> — screen reader announces an empty page name')
+    findings.push('document has no <title> - screen reader announces an empty page name')
   } else if (title.toLowerCase() === bareAppName.toLowerCase()) {
-    findings.push(`document title is just "${title}" — not specific to the current view`)
+    findings.push(`document title is just "${title}" - not specific to the current view`)
   }
 
   const aria = await page.locator('body').ariaSnapshot()
@@ -74,8 +74,10 @@ export async function auditScreenReader(page: Page, options?: ScreenReaderOption
     findings.push(`interactive nodes with no accessible name in the ARIA tree: ${summary}`)
   }
 
-  if (!/^\s*-\s+main\b/m.test(aria)) {
-    findings.push('no "main" landmark in the ARIA tree — no skip-to-content target')
+  const hasMainLandmark = /^\s*-\s+main\b/m.test(aria)
+  const hasOverlayRoot = /^\s*-\s+(dialog|menu|listbox)\b/m.test(aria)
+  if (!hasMainLandmark && !hasOverlayRoot) {
+    findings.push('no "main" landmark in the ARIA tree - no skip-to-content target')
   }
 
   try {

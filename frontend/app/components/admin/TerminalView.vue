@@ -21,9 +21,10 @@
                     {{ $t('terminal.connected') }}
                 </span>
                 <span v-else class="flex items-center gap-1 text-sm text-(--color-text-muted)"><span
-                        class="w-2 h-2 rounded-full bg-(--color-text-muted)"></span>{{ $t('terminal.disconnected') }}</span>
+                        class="w-2 h-2 rounded-full bg-(--color-text-muted)"></span>{{ $t('terminal.disconnected')
+                    }}</span>
             </div>
-            <CoreAppButton variant="ghost" color="neutral" size="sm" :icon="icons.config"
+            <CoreAppButton variant="outline" color="primary" size="sm" :icon="icons.config"
                 @click="showSettings = !showSettings">{{ $t('common.settings') }}</CoreAppButton>
         </div>
 

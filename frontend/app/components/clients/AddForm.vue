@@ -26,13 +26,13 @@
 						:description="error" closable class="flex-1 mr-2" @close="error = null" />
 					<div v-else />
 					<div class="flex gap-2 shrink-0">
-						<CoreAppButton color="success" :loading="loading" :disabled="!canCreate"
+						<CoreAppButton color="success" :loading="loading" size="sm" :disabled="!canCreate"
 							:title="String($t('clients.create.title'))" @click="handleSubmit">
-							<CoreAppIcon :name="icons.client" />
 							<CoreAppIcon :name="icons.add" />
+							{{ $t('clients.create.title') }}
 						</CoreAppButton>
-						<CoreAppButton variant="ghost" color="neutral" :icon="icons.refresh" :disabled="loading"
-							:title="String($t('common.reset'))" @click="resetForm" />
+						<CoreAppButton variant="outline" color="primary" size="sm" :icon="icons.refresh"
+							:disabled="loading" :title="String($t('common.reset'))" @click="resetForm" />
 					</div>
 				</div>
 			</div>
@@ -51,9 +51,9 @@
 							<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
 								<div class="flex items-center gap-2 w-full">
 									<CoreAppInput v-model="clientName" :disabled="loading" size="sm"
-										placeholder="clientname" class="flex-1" />
+										:placeholder="String($t('fields.hostname.enter'))" class="flex-1" />
 									<CoreAppInput v-model="domain" :disabled="loading" size="sm"
-										placeholder=".domain.local" class="flex-1" />
+										:placeholder="String($t('fields.domainExample'))" class="flex-1" />
 								</div>
 								<div v-if="formErrors.clientId" class="text-xs text-error">{{ formErrors.clientId }}
 								</div>
@@ -66,7 +66,7 @@
 							</span>
 							<div class="flex-1">
 								<CoreAppInput v-model="form.description" :disabled="loading" size="sm"
-									placeholder="Client description" class="w-full" />
+									:placeholder="String($t('common.description'))" class="w-full" />
 							</div>
 						</div>
 						<div
@@ -76,7 +76,7 @@
 							</span>
 							<div class="flex-1">
 								<CoreAppInput v-model="form.inventoryNumber" :disabled="loading" size="sm"
-									placeholder="Inventory number" class="w-full" />
+									:placeholder="String($t('fields.inventory'))" class="w-full" />
 							</div>
 						</div>
 						<div
@@ -86,7 +86,7 @@
 							</span>
 							<div class="flex-1">
 								<CoreAppInput v-model="form.ipAddress" :disabled="loading" size="sm"
-									placeholder="192.168.1.x" class="w-full" />
+									:placeholder="String($t('fields.ipExample'))" class="w-full" />
 							</div>
 						</div>
 						<div
@@ -96,7 +96,7 @@
 							</span>
 							<div class="flex-1">
 								<CoreAppInput v-model="form.macAddress" :disabled="loading" size="sm"
-									placeholder="00:11:22:33:44:55" class="w-full" />
+									:placeholder="String($t('fields.macExample'))" class="w-full" />
 							</div>
 						</div>
 						<div
@@ -106,7 +106,7 @@
 							</span>
 							<div class="flex-1">
 								<CoreAppTextarea v-model="form.notes" :disabled="loading" size="sm" :rows="3"
-									placeholder="Additional notes" class="flex-1 w-full" />
+									:placeholder="String($t('common.notes'))" class="flex-1 w-full" />
 							</div>
 						</div>
 					</div>
@@ -124,7 +124,8 @@
 							</span>
 							<div class="flex-1 flex flex-col items-start gap-1 min-w-0">
 								<CoreAppSelect v-model="form.depotId" :items="depotOptions" :loading="loadingDepots"
-									:aria-label="String($t('depot.title'))" :disabled="loading" size="sm" class="w-full" />
+									:aria-label="String($t('depot.title'))" :disabled="loading" size="sm"
+									class="w-full" />
 								<div v-if="formErrors.depotId" class="text-xs text-error">{{ formErrors.depotId }}</div>
 							</div>
 						</div>
@@ -135,7 +136,8 @@
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
 								<CoreAppSelectMenu v-model="form.groups" :items="groupOptions" multiple
-									:aria-label="String($t('groups.title'))" :disabled="loading" size="sm" class="w-full" />
+									:aria-label="String($t('groups.title'))" :disabled="loading" size="sm"
+									class="w-full" />
 							</div>
 						</div>
 					</div>
@@ -153,18 +155,20 @@
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
 								<CoreAppSelectMenu v-model="form.netbootProducts" :items="netbootProductOptions"
-									multiple :aria-label="String($t('products.netboot'))" :disabled="loading" size="sm" class="w-full" />
+									multiple :aria-label="String($t('products.netboot'))" :disabled="loading" size="sm"
+									class="w-full" />
 							</div>
 						</div>
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
 								<CoreAppImage src="opsi-client-agent.svg" dark-src="opsi-client-agent-light.svg"
-									:alt="String($t('clients.deploy'))" image-class="w-4 h-4 shrink-0" />
+									:alt="String($t('clients.deploy'))" image-class="w-8 h-8 shrink-0" />
 								{{ $t('clients.deploy') }}
 							</span>
 							<div class="flex-1 flex items-center gap-2 min-w-0">
-								<CoreAppCheckbox v-model="form.agentSetup" :aria-label="String($t('clients.deploy'))" :disabled="loading" />
+								<CoreAppCheckbox v-model="form.agentSetup" :aria-label="String($t('clients.deploy'))"
+									:disabled="loading" />
 							</div>
 						</div>
 						<div v-if="form.agentSetup" class="ml-4 border-l-2 border-(--color-border) pl-4 space-y-0">
@@ -205,7 +209,8 @@
 								</span>
 								<div class="flex-1 flex items-center gap-2 min-w-0">
 									<CoreAppInput v-model="form.agentPassword" :disabled="loading" size="sm"
-										type="password" :placeholder="String($t('auth.enterPassword'))" class="w-full" />
+										type="password" :placeholder="String($t('auth.enterPassword'))"
+										class="w-full" />
 								</div>
 							</div>
 						</div>

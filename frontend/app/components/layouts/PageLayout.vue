@@ -21,7 +21,7 @@
 					<slot name="tableControls" />
 					<slot name="actions" />
 					<slot name="saveActions" />
-					<CoreAppButton v-if="showRefresh" :icon="icons.refresh" color="neutral" variant="ghost" size="sm"
+					<CoreAppButton v-if="showRefresh" :icon="icons.refresh" color="primary" variant="outline" size="sm"
 						:loading="loading" :title="String($t('common.refresh'))" @click="$emit('refresh')" />
 				</div>
 			</div>
@@ -39,17 +39,17 @@
 			</div>
 
 			<Transition :name="isMobile ? 'slide-up' : 'slide-in'">
-				<div v-if="showPanel" :style="panelStyle" :class="panelClasses">
+				<div v-if="showPanel" :style="panelStyle" :class="panelClasses" data-testid="detail-panel">
 					<!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- pointer-only drag resize handle; not keyboard operable by design -->
 					<div v-if="!isMobile" @mousedown="startResize"
 						class="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize bg-transparent hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group">
 						<div
 							class="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-12 bg-(--color-border) rounded group-hover:bg-opsi-blue transition-colors" />
 					</div>
-					<div class="shrink-0 border-b border-(--color-border) px-4 py-3 bg-(--color-surface)">
+					<div class="shrink-0 border-t border-b border-(--color-border) px-4 py-3 bg-(--color-surface)">
 						<div class="flex items-center gap-3">
 							<CoreAppButton v-if="isMobile" @click="$emit('close-panel')" variant="ghost" color="neutral"
-								size="xs">
+								size="xs" :aria-label="String($t('common.back'))" :title="String($t('common.back'))">
 								<CoreAppIcon :name="icons.chevronLeft" class="w-3 h-3" />
 							</CoreAppButton>
 							<div class="flex-1 min-w-0">
@@ -65,14 +65,15 @@
 							</div>
 							<div class="flex items-center gap-1 shrink-0">
 								<slot name="panel-actions" />
-								<CoreAppButton @click="$emit('close-panel')" variant="ghost" color="neutral" size="xs">
+								<CoreAppButton @click="$emit('close-panel')" variant="ghost" color="neutral" size="xs"
+									:aria-label="String($t('common.close'))" :title="String($t('common.close'))">
 									<CoreAppIcon :name="icons.x" class="w-3 h-3" />
 								</CoreAppButton>
 							</div>
 						</div>
 					</div>
-					<div tabindex="0"
-						class="flex-1 overflow-y-auto overflow-x-auto p-4 bg-(--color-surface) min-h-0 min-w-0 max-w-full">
+					<div tabindex="0" data-testid="detail-panel-content"
+						class="flex-1 overflow-y-auto overflow-x-auto p-3 bg-(--color-surface) min-h-0 min-w-0 max-w-full">
 						<slot name="panel" />
 					</div>
 				</div>

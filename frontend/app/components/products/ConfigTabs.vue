@@ -16,19 +16,19 @@
 		<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-surface) mb-3">
 			<div class="flex items-center justify-between gap-2">
 				<CoreAppTabsNav v-model="activeTab" :tabs="tabDefs" />
-				<CoreAppFilterInput v-model="filterQuery" size="xs" />
+				<CoreAppFilterInput v-model="filterQuery" size="sm" />
 			</div>
 		</div>
 
 		<div v-show="activeTab === 'properties'"
-			class="flex flex-col overflow-auto min-h-0 flex-1">
+			class="flex flex-col overflow-hidden min-h-0 flex-1 bg-(--color-surface)">
 			<ProductsPropertiesForm :properties="editableProperties" :loading="loadingProps"
 				:external-filter="filterQuery" @update:property="setProperty"
 				@discard:property="discardSingleProperty" />
 		</div>
 
 		<div v-show="activeTab === 'dependencies'"
-			class="flex flex-col overflow-auto min-h-0 flex-1">
+			class="flex flex-col overflow-hidden min-h-0 flex-1 bg-(--color-surface)">
 			<ProductsDependenciesForm :dependencies="dependencies" :loading="loadingDeps"
 				:external-filter="filterQuery" />
 		</div>
@@ -60,7 +60,6 @@ const emit = defineEmits<{
 	saved: []
 }>()
 
-const icons = useIcons()
 const { t: $t } = useI18n()
 const selectionStore = useSelectionStore()
 const { getProductProperties, saveProductProperties, getProductDependencies } = useApiHelpers()
@@ -114,7 +113,7 @@ function fmtVal(v: unknown): string {
 	return String(v)
 }
 
-function getInitialPropertyValue(prop: ProductProperty, selectedClients: string[], selectedServers: string[]): EditablePropertyValue {
+function getInitialPropertyValue(prop: ProductProperty): EditablePropertyValue {
 	if (prop.clients && Object.keys(prop.clients).length > 0) {
 		const clientValues = Object.values(prop.clients)
 		if (clientValues.length > 0) {
@@ -175,10 +174,6 @@ async function fetchProperties() {
 		const depots = selectionStore.selectedServers
 		const clients = selectionStore.selectedClients
 
-		const queryParams: Record<string, unknown> = {}
-		if (depots.length) queryParams.selectedServers = `[${depots.join(',')}]`
-		if (clients.length) queryParams.selectedClients = `[${clients.join(',')}]`
-
 		const result = await getProductProperties(props.productId, {
 			selectedServers: depots,
 			selectedClients: clients.length > 0 ? clients : undefined,
@@ -197,7 +192,7 @@ async function fetchProperties() {
 
 		editableProperties.value = Object.values(propsData).map((p: unknown) => {
 			const prop = p as ProductProperty
-			const initialValue = getInitialPropertyValue(prop, clients, depots)
+			const initialValue = getInitialPropertyValue(prop)
 			originalPropertyValues.value.set(prop.propertyId, JSON.parse(JSON.stringify(initialValue)))
 			return {
 				...prop,
@@ -293,6 +288,14 @@ watch(() => props.productId, async () => {
 	activeTab.value = props.tab || 'properties'
 	await refresh()
 }, { immediate: true })
+
+watch(
+	() => [selectionStore.selectedClients.join(','), selectionStore.selectedServers.join(',')],
+	async () => {
+		if (!props.productId) return
+		await refresh()
+	},
+)
 
 defineExpose<ProductConfigTabsRef>({
 	hasAnyChanges: hasAnyChanges as unknown as boolean,

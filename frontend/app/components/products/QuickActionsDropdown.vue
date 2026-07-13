@@ -10,33 +10,35 @@
 <template>
 	<CoreAppTooltip v-if="hasSelections && compact" :text="$t('products.quick')">
 		<CoreAppButton variant="soft" color="primary" size="sm" :aria-label="String($t('products.quick'))"
-			@click="dialogOpen = true">
+			@click="dialogOpen = true" data-testid="product-quick-actions-trigger">
 			<CoreAppIcon :name="icons.product" class="w-4 h-4" />
 		</CoreAppButton>
 	</CoreAppTooltip>
-	<CoreAppButton v-else-if="hasSelections" color="primary" size="sm" @click="dialogOpen = true">
+	<CoreAppButton v-else-if="hasSelections" color="primary" size="sm" @click="dialogOpen = true"
+		:aria-label="String($t('products.quick'))" data-testid="product-quick-actions-trigger">
 		<CoreAppIcon :name="icons.product" class="w-4 h-4" />
 		<span class="hidden sm:inline">{{ $t('products.quick') }}</span>
 	</CoreAppButton>
-	<CoreAppTooltip v-else-if="compact" :text="$t('products.quick')">
+	<CoreAppTooltip v-else-if="compact" :text="$t('products.quickHelp')">
 		<CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-70"
-			:aria-label="String($t('products.quick'))" disabled>
+			:aria-label="String($t('products.quickHelp'))" disabled>
 			<CoreAppIcon :name="icons.product" class="w-4 h-4" />
 		</CoreAppButton>
 	</CoreAppTooltip>
-	<CoreAppButton v-else variant="ghost" color="neutral" size="sm" class="opacity-70" disabled>
+	<CoreAppButton v-else variant="ghost" color="neutral" size="sm" class="opacity-70" disabled
+		:aria-label="String($t('products.quickHelp'))" :title="String($t('products.quickHelp'))">
 		<CoreAppIcon :name="icons.product" class="w-4 h-4" />
 		<span class="hidden sm:inline">{{ $t('products.quick') }}</span>
 	</CoreAppButton>
 
-	<CoreAppModal v-model:open="dialogOpen" :dismissible="true" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
+	<CoreAppModal v-model:open="dialogOpen" :dismissible="true" :ui="{ content: 'max-w-sm sm:max-w-2xl' }" data-testid="product-quick-actions-dialog">
 		<template #content>
 			<CoreAppCard class="min-w-120">
 				<template #header>
 					<div class="flex items-center justify-between">
 						<CoreAppHeading :icon="icons.product" :text="$t('products.quick')" />
 						<CoreAppButton variant="ghost" color="neutral" size="xs" :icon="icons.x"
-							@click="dialogOpen = false" />
+							:aria-label="String($t('common.close'))" @click="dialogOpen = false" />
 					</div>
 				</template>
 
@@ -61,6 +63,8 @@
 										</span>
 										<CoreAppSelect v-model="filters.installationStatus"
 											:items="installationStatusOptions" size="xs" class="w-full"
+											:aria-label="String($t('products.status'))"
+											data-testid="product-quick-actions-installation-status"
 											@update:model-value="fetchPreview" />
 									</div>
 									<div>
@@ -68,11 +72,15 @@
 											{{ $t('actions.result') }}
 										</span>
 										<CoreAppSelect v-model="filters.actionResult" :items="actionResultOptions"
-											size="xs" class="w-full" @update:model-value="fetchPreview" />
+											size="xs" class="w-full" :aria-label="String($t('actions.result'))"
+											data-testid="product-quick-actions-action-result"
+											@update:model-value="fetchPreview" />
 									</div>
 								</div>
 								<span class="flex items-center gap-2 cursor-pointer">
 									<CoreAppCheckbox v-model="filters.outdatedOnly"
+										:aria-label="String($t('products.outdated.onClient'))"
+										data-testid="product-quick-actions-outdated-only"
 										@update:model-value="fetchPreview" />
 									<span class="text-xs">{{ $t('products.outdated.onClient') }}</span>
 								</span>
@@ -85,7 +93,9 @@
 							</span>
 							<div class="flex-1">
 								<CoreAppSelect v-model="actionRequest" :items="actionRequestOptions" size="sm"
-									class="w-full" @update:model-value="fetchPreview" />
+									class="w-full" :aria-label="String($t('actions.request'))"
+									data-testid="product-quick-actions-action-request"
+									@update:model-value="fetchPreview" />
 							</div>
 						</div>
 
@@ -95,7 +105,9 @@
 							</span>
 							<div class="flex-1">
 								<CoreAppSelect v-model="scope" :items="scopeOptions" size="sm" class="w-full"
-									@update:model-value="fetchPreview" />
+									:aria-label="String($t('fields.scope'))" data-testid="product-quick-actions-scope" @update:model-value="fetchPreview" />
+								<p class="mt-1 text-xs text-(--color-text-muted)">{{ scopeHelpText }}
+								</p>
 							</div>
 						</div>
 					</div>
@@ -106,8 +118,10 @@
 								{{ $t('common.preview') }}
 							</span>
 							<div class="flex items-center gap-2">
-								<CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.refresh"
-									:loading="loadingPreview" @click="fetchPreview" />
+								<CoreAppButton size="xs" variant="outline" color="primary" :icon="icons.refresh"
+									:aria-label="String($t('common.refresh'))" :loading="loadingPreview"
+									data-testid="product-quick-actions-preview-refresh"
+									@click="fetchPreview" />
 								<CoreAppStatusBadge status="neutral" variant="soft" size="xs"
 									:label="String(previewCount)" />
 							</div>
@@ -119,7 +133,7 @@
 								style="min-height: 180px;">
 								<CoreAppLoadingSpinner size="sm" />
 							</div>
-							<CoreAppTable v-else-if="previewData && Object.keys(previewData).length > 0"
+							<CoreAppTable v-else-if="previewData && Object.keys(previewData).length > 0" data-testid="product-quick-actions-preview-table"
 								:columns="previewColumns" max-height="16rem" :sort-key="previewSortKey"
 								:sort-dir="previewSortDir" @sort="togglePreviewSort">
 								<tr v-for="row in sortedPreviewRows" :key="`${row.clientId}-${row.product.productId}`"
@@ -162,9 +176,10 @@
 							:title="$t('common.error')" :description="applyResult.message" variant="subtle" closable
 							@close="applyResult = null" />
 						<div class="flex justify-end gap-2">
-							<CoreAppButton variant="soft" color="neutral" size="sm" @click="resetForm">{{ $t('common.reset') }}
+							<CoreAppButton variant="outline" color="primary" size="sm" @click="resetForm">{{
+								$t('common.reset') }}
 							</CoreAppButton>
-							<CoreAppButton v-if="applyResult?.type === 'success'" variant="ghost" color="neutral"
+							<CoreAppButton v-if="applyResult?.type === 'success'" variant="outline" color="primary"
 								size="sm" @click="dialogOpen = false">{{ $t('common.close') }}</CoreAppButton>
 							<CoreAppButton v-else color="primary" size="sm"
 								:disabled="isReadOnly || previewData == null || applying" :loading="applying"
@@ -257,6 +272,16 @@ const scopeOptions = [
 	{ value: 'servers', label: String($t('notifications.target.servers')) },
 	{ value: 'clients', label: String($t('notifications.target.clients')) },
 ]
+
+const scopeHelpText = computed(() => {
+	if (scope.value === 'clients') {
+		return String($t('notifications.target.clients'))
+	}
+	if (scope.value === 'servers') {
+		return String($t('products.quickScopeHelp'))
+	}
+	return `${String($t('notifications.target.both'))}: ${String($t('products.quickScopeHelp'))}`
+})
 
 interface PreviewProduct {
 	productId: string

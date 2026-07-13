@@ -52,7 +52,7 @@ export default defineAppConfig({
           color: 'primary',
           variant: 'solid',
           class:
-            'bg-(--color-primary) text-(--color-primary-text) hover:bg-(--color-primary-hover)',
+            'bg-(--color-primary) text-(--color-primary-text) hover:bg-(--color-primary-hover) disabled:opacity-100 disabled:bg-(--color-primary-disabled)',
         },
         {
           color: 'primary',
@@ -252,7 +252,7 @@ export default defineAppConfig({
         base: 'bg-(--color-background) border border-(--color-border) text-(--color-text) rounded-lg',
         content:
           'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
-        item: 'text-(--color-text) rounded-lg hover:bg-(--color-surface-hover) transition-colors duration-100',
+        item: 'text-(--color-text) rounded-lg transition-colors duration-100 hover:bg-(--color-surface-hover) data-[highlighted]:bg-(--color-surface-hover) data-[state=checked]:bg-(--color-primary-soft-bg) data-[state=checked]:text-(--color-text)',
         itemLeadingIcon: 'text-(--color-text-muted)',
       },
     },
@@ -472,7 +472,7 @@ export default defineAppConfig({
     },
     checkbox: {
       slots: {
-        root: 'data-[state=checked]:bg-(--color-primary) data-[state=checked]:border-(--color-primary) border-(--color-border)',
+        root: 'border-(--color-border) data-[state=checked]:border-(--color-primary) data-[state=checked]:bg-(--color-primary) data-[state=checked]:text-white',
       },
     },
     alert: {

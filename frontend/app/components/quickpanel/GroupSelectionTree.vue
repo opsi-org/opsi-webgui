@@ -10,19 +10,21 @@
 <template>
 	<div class="flex flex-col h-full min-h-0">
 		<div class="flex items-center gap-1 mb-2 shrink-0">
-			<CoreAppFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
+			<CoreAppFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0"
+				:aria-label="$t('common.filter')" :placeholder="$t('common.filter')" />
 			<CoreAppTooltip v-if="isGroupRestricted"
 				:text="groupType === 'client' ? $t('opsiConfig.serverFeatures.hostGroupAccess.disabled') : $t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
 				<CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help shrink-0">
 					{{ $t('auth.restricted') }}
 				</CoreAppBadge>
 			</CoreAppTooltip>
-			<CoreAppButton :icon="icons.refresh" size="xs" variant="ghost" color="neutral" :title="$t('common.refresh')"
-				@click="refresh" />
-			<CoreAppButton :icon="allExpanded ? icons.chevronUp : icons.chevronDown" size="xs" variant="ghost"
-				color="neutral" :title="allExpanded ? $t('common.collapseAll') : $t('common.expandAll')" @click="toggleExpandAll" />
-			<CoreAppButton v-if="selectedCount > 0" :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-				:title="`${$t('common.clearAll')} (${selectedCount})`" @click="clearAll" />
+			<CoreAppButton :icon="icons.refresh" size="xs" variant="outline" color="primary"
+				:aria-label="$t('common.refresh')" @click="refresh" />
+			<CoreAppButton :icon="allExpanded ? icons.chevronUp : icons.chevronDown" size="xs" variant="outline"
+				color="primary" :aria-label="allExpanded ? $t('common.collapseAll') : $t('common.expandAll')"
+				@click="toggleExpandAll" />
+			<CoreAppButton v-if="selectedCount > 0" :icon="icons.xCircle" size="xs" variant="outline" color="primary"
+				:aria-label="`${$t('common.clearAll')} (${selectedCount})`" @click="clearAll" />
 		</div>
 
 		<div v-if="loading && !hasData" class="flex items-center justify-center py-8">
@@ -35,8 +37,8 @@
 				<div v-for="section in clientSections" :key="section.id" class="mb-2">
 					<div v-clickable
 						class="flex items-center justify-between px-1 py-1.5 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded"
-						role="button" tabindex="0"
-						@click="toggleSectionCollapse(section.id)"
+						role="button" tabindex="0" :aria-expanded="!isSectionCollapsed(section.id)"
+						:aria-label="sectionLabel(section.id)" @click="toggleSectionCollapse(section.id)"
 						@keydown.enter="toggleSectionCollapse(section.id)"
 						@keydown.space.prevent="toggleSectionCollapse(section.id)">
 						<div class="flex items-center gap-1.5">
@@ -67,7 +69,8 @@
 							<span v-else class="w-4 shrink-0" />
 							<CoreAppCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
 								:aria-label="item.label" @update:model-value="handleItemClick(item)" />
-							<CoreAppTooltip v-if="item.label === 'not_assigned'" :text="$t('clients.directoryNotAssigned')">
+							<CoreAppTooltip v-if="item.label === 'not_assigned'"
+								:text="$t('clients.directoryNotAssigned')">
 								<span
 									class="truncate flex-1 cursor-help border-b border-dashed border-(--color-text-muted)/40"
 									:class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
@@ -76,14 +79,16 @@
 								role="button" tabindex="0"
 								@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)"
 								@keydown.enter="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)"
-								@keydown.space.prevent="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
+								@keydown.space.prevent="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{
+									item.label
 								}}</span>
 							<CoreAppBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle"
 								color="neutral">
 								{{ item.memberCount }}</CoreAppBadge>
 						</div>
 						<div v-if="section.flatItems.length === 0"
-							class="text-xs text-(--color-text-muted) py-1 px-2 italic">{{ $t('common.noResults') }}</div>
+							class="text-xs text-(--color-text-muted) py-1 px-2 italic">{{ $t('common.noResults') }}
+						</div>
 					</template>
 				</div>
 			</template>
@@ -99,11 +104,11 @@
 					<span v-else class="w-4 shrink-0" />
 					<CoreAppCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
 						:aria-label="item.label" @update:model-value="handleItemClick(item)" />
-					<span v-clickable class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''"
-						role="button" tabindex="0"
-						@click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)"
+					<span v-clickable class="truncate flex-1" :class="item.isGroup ? 'font-medium' : ''" role="button"
+						tabindex="0" @click="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)"
 						@keydown.enter="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)"
-						@keydown.space.prevent="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{ item.label
+						@keydown.space.prevent="item.hasChildren ? toggleExpand(item.id) : handleItemClick(item)">{{
+							item.label
 						}}</span>
 					<CoreAppBadge v-if="item.isGroup && item.memberCount > 0" size="xs" variant="subtle"
 						color="neutral">{{
