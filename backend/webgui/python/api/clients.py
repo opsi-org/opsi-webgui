@@ -38,8 +38,8 @@ from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table  # type: ignore[import]
 from starlette.concurrency import run_in_threadpool
 
-from .logger import get_logger
-from .utils import (
+from ..logger import get_logger
+from ..utils import (
     backend,
     check_client_creation_rights,
     filter_depot_access,
@@ -56,7 +56,7 @@ from .utils import (
     user_register,
 )
 
-client_router = APIRouter()
+api_router = APIRouter()
 logger = get_logger()
 
 
@@ -89,7 +89,7 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
     lastSeen: Optional[datetime] = None
 
 
-@client_router.get("/api/opsidata/clients", response_model=List[ClientList])
+@api_router.get("/api/opsidata/clients", response_model=List[ClientList])
 @rest_api
 @filter_depot_access
 async def clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
@@ -321,7 +321,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
         return RESTResponse(data=data, total=total)
 
 
-@client_router.get("/api/opsidata/clients/reachable", response_model=List[ClientList])
+@api_router.get("/api/opsidata/clients/reachable", response_model=List[ClientList])
 @rest_api
 @filter_depot_access
 async def reachable_clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
@@ -375,7 +375,7 @@ def _depots_of_clients(clients: list[str] | None) -> dict:
         return response
 
 
-@client_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
+@api_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
 @rest_api
 def depots_of_clients(  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
     selectedClients: List[str] = Depends(parse_client_list),
@@ -387,7 +387,7 @@ def depots_of_clients(  # pylint: disable=too-many-branches, redefined-builtin, 
     return RESTResponse(data=_depots_of_clients(selectedClients))
 
 
-@client_router.post("/api/opsidata/clients")
+@api_router.post("/api/opsidata/clients")
 @rest_api
 @read_only_check
 @check_client_creation_rights
@@ -451,7 +451,7 @@ def create_client(
         ) from err
 
 
-@client_router.put("/api/opsidata/clients/{client_id}")
+@api_router.put("/api/opsidata/clients/{client_id}")
 @rest_api
 @read_only_check
 def update_client(request: Request, client_id: str, client: Client) -> RESTResponse:  # pylint: disable=too-many-locals
@@ -501,7 +501,7 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
         ) from err
 
 
-@client_router.get("/api/opsidata/clients/{clientid}", response_model=Client)
+@api_router.get("/api/opsidata/clients/{clientid}", response_model=Client)
 @rest_api
 def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name
     """
@@ -568,7 +568,7 @@ def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branc
             ) from err
 
 
-@client_router.delete("/api/opsidata/clients/{clientid}")
+@api_router.delete("/api/opsidata/clients/{clientid}")
 @rest_api
 @read_only_check
 def delete_client(request: Request, clientid: str) -> RESTResponse:  # pylint: disable=unused-argument
@@ -598,7 +598,7 @@ def delete_client(request: Request, clientid: str) -> RESTResponse:  # pylint: d
         ) from err
 
 
-@client_router.post("/api/opsidata/clients/{clientid}/uefi")
+@api_router.post("/api/opsidata/clients/{clientid}/uefi")
 def set_uefi(
     request: Request, clientid: str, uefi: bool = Body(default=True)
 ) -> RESTResponse:  # pylint: disable=unused-argument
@@ -629,7 +629,7 @@ class ProcessActionRPC(BaseModel):  # pylint: disable=too-few-public-methods
     visibility: Optional[Literal["", "visible", "hidden"]] = ""
 
 
-@client_router.post(
+@api_router.post(
     "/api/command/process_action", response_model=Dict[str, Dict[str, Any]]
 )
 @rest_api
@@ -661,7 +661,7 @@ class OpsiclientdRPC(BaseModel):  # pylint: disable=too-few-public-methods
     params: Optional[List[Any]] = None
 
 
-@client_router.post(
+@api_router.post(
     "/api/command/opsiclientd_rpc", response_model=Dict[str, Dict[str, Any]]
 )
 @rest_api
@@ -690,7 +690,7 @@ class ClientDeployData(BaseModel):  # pylint: disable=too-few-public-methods
     type: str = Field("windows", pattern="^(windows)$|^(linux)$|^(macos)$")
 
 
-@client_router.post("/api/opsidata/clients/deploy")
+@api_router.post("/api/opsidata/clients/deploy")
 @rest_api
 async def deploy_client_agent(clientDeployData: ClientDeployData) -> RESTResponse:  # pylint: disable=invalid-name
     logger.debug(clientDeployData)
@@ -751,7 +751,7 @@ def set_depot(client: str, depot: str) -> None:
     backend.configState_create("clientconfig.depot.id", client, f'["{depot}"]')
 
 
-@client_router.post("/api/opsidata/clients/{clientid}/groups")
+@api_router.post("/api/opsidata/clients/{clientid}/groups")
 @rest_api
 @read_only_check
 def add_client_to_groups(
@@ -780,7 +780,7 @@ def add_client_to_groups(
         ) from err
 
 
-@client_router.delete("/api/opsidata/clients/{clientid}/groups")
+@api_router.delete("/api/opsidata/clients/{clientid}/groups")
 @rest_api
 @read_only_check
 def rm_client_from_groups(
@@ -817,7 +817,7 @@ def rm_client_from_groups(
         ) from err
 
 
-@client_router.post("/api/opsidata/clients/{client}/unblock")
+@api_router.post("/api/opsidata/clients/{client}/unblock")
 @rest_api
 @read_only_check
 def unblock_client(request: Request, client: str) -> RESTResponse:  # pylint: disable=unused-argument
@@ -838,7 +838,7 @@ def unblock_client(request: Request, client: str) -> RESTResponse:  # pylint: di
         ) from err
 
 
-@client_router.get("/api/opsidata/blocked-clients")
+@api_router.get("/api/opsidata/blocked-clients")
 @rest_api
 def blocked_clients(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
     """
@@ -856,7 +856,7 @@ def blocked_clients(request: Request) -> RESTResponse:  # pylint: disable=unused
     return RESTResponse(data=blocked_client_list, total=len(blocked_client_list))
 
 
-@client_router.post("/api/opsidata/clients/unblock")
+@api_router.post("/api/opsidata/clients/unblock")
 @rest_api
 @read_only_check
 def unblock_all_clients(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
@@ -903,7 +903,7 @@ class ProductAction(BaseModel):  # pylint: disable=too-few-public-methods
     selectedClients: Optional[list]
 
 
-@client_router.post("/api/opsidata/clients/action")
+@api_router.post("/api/opsidata/clients/action")
 @rest_api
 @read_only_check
 def set_product_action(  # pylint: disable=unused-argument, too-many-branches
@@ -1043,7 +1043,7 @@ class CloneOptions(BaseModel):  # pylint: disable=too-few-public-methods
     productPropeties: bool = False
 
 
-@client_router.post("/api/opsidata/clients/{client_id}/clone")
+@api_router.post("/api/opsidata/clients/{client_id}/clone")
 @rest_api
 @read_only_check
 @check_client_creation_rights

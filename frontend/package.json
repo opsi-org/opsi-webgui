@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
-    "@cyclonedx/cdxgen": "^12.3.3",
+    "@cyclonedx/cdxgen": "^12.7.0",
     "@iconify-json/heroicons": "^1.2.0",
     "@iconify-json/lucide": "^1.2.0",
     "@iconify-json/simple-icons": "^1.2.0",

@@ -23,8 +23,8 @@ from opsiconfd.rest import RESTResponse, rest_api
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
-from .logger import get_logger
-from .utils import (
+from ..logger import get_logger
+from ..utils import (
     backend,
     build_tree,
     client_creation_allowed,
@@ -40,11 +40,13 @@ from .utils import (
 )
 
 logger = get_logger()
-webgui_router = APIRouter()
+api_router = APIRouter()
+
+PUBLIC_PATHS = ["/api/user/opsiserver", "/api/auth/status", "/api/auth/session"]
 
 
-@webgui_router.get("")
-@webgui_router.get("/")
+@api_router.get("")
+@api_router.get("/")
 async def route_index(request: Request) -> RedirectResponse:
     return RedirectResponse(
         url=f"{request.scope['path'].rstrip('/')}/app/",
@@ -52,24 +54,30 @@ async def route_index(request: Request) -> RedirectResponse:
     )
 
 
-@webgui_router.options("/api/{any:path}")
+@api_router.options("/api/{any:path}")
 async def options() -> PlainTextResponse:
     return PlainTextResponse("OK", status_code=200)
 
 
-@webgui_router.get("/api/auth/login")
-@webgui_router.post("/api/auth/login")
+@api_router.get("/api/auth/status")
+@api_router.post("/api/auth/status")
+async def auth_status() -> JSONResponse:
+    return JSONResponse({"result": await Authentication().authenticated()})
+
+
+@api_router.get("/api/auth/login")
+@api_router.post("/api/auth/login")
 async def auth_login() -> JSONResponse:
     return JSONResponse({"result": "Login success"})
 
 
-@webgui_router.get("/api/auth/session")
+@api_router.get("/api/auth/session")
 async def auth_session() -> JSONResponse:
     return JSONResponse({"result": "authenticated", "username": get_username()})
 
 
-@webgui_router.get("/api/auth/logout")
-@webgui_router.post("/api/auth/logout")
+@api_router.get("/api/auth/logout")
+@api_router.post("/api/auth/logout")
 async def auth_logout() -> JSONResponse:
     client_session = contextvar_client_session.get()
     if client_session:
@@ -77,16 +85,16 @@ async def auth_logout() -> JSONResponse:
     return JSONResponse({"result": "logout success"})
 
 
-@webgui_router.get("/api/user/getsettings")
-@webgui_router.post("/api/user/getsettings")
+@api_router.get("/api/user/getsettings")
+@api_router.post("/api/user/getsettings")
 async def user_getsettings() -> JSONResponse:
     return JSONResponse(
         {"username": get_username(), "expertmode": False, "recentactivityexpiry": "3m"}
     )
 
 
-@webgui_router.get("/api/user/createactivity")
-@webgui_router.post("/api/user/createactivity")
+@api_router.get("/api/user/createactivity")
+@api_router.post("/api/user/createactivity")
 async def user_create_activity(request: Request) -> JSONResponse:
     # {"username":"adminuser","type":"Login","status":"ok"}
     request_data = {}
@@ -99,15 +107,15 @@ async def user_create_activity(request: Request) -> JSONResponse:
     return JSONResponse({"result": {}})
 
 
-@webgui_router.get("/api/user/opsiserver")
-@webgui_router.post("/api/user/opsiserver")
+@api_router.get("/api/user/opsiserver")
+@api_router.post("/api/user/opsiserver")
 async def user_opsiserver() -> JSONResponse:
     logger.info("Received request for opsiserver id")
     return JSONResponse({"result": get_configserver_id()})
 
 
-@webgui_router.get("/api/user/configuration")
-@webgui_router.post("/api/user/configuration")
+@api_router.get("/api/user/configuration")
+@api_router.post("/api/user/configuration")
 def user_configuration() -> JSONResponse:
     username = get_username()
     status_counts = {}
@@ -159,15 +167,15 @@ def user_configuration() -> JSONResponse:
     )
 
 
-@webgui_router.get("/api/opsidata/modulesContent")
-@webgui_router.post("/api/opsidata/modulesContent")
+@api_router.get("/api/opsidata/modulesContent")
+@api_router.post("/api/opsidata/modulesContent")
 async def modules_content() -> JSONResponse:
     return JSONResponse(
         {"result": backend.backend_getLicensingInfo()["available_modules"]}
     )
 
 
-@webgui_router.get("/api/opsidata/log")
+@api_router.get("/api/opsidata/log")
 async def opsidata_log(
     selectedClient: Optional[str], selectedLogType: Optional[str]
 ) -> JSONResponse:  # pylint: disable=invalid-name
@@ -180,8 +188,8 @@ async def opsidata_log(
     )  # pylint: disable=no-member
 
 
-@webgui_router.get("/api/opsidata/home")
-@webgui_router.post("/api/opsidata/home")
+@api_router.get("/api/opsidata/home")
+@api_router.post("/api/opsidata/home")
 async def home() -> JSONResponse:
     allowed = get_allowed_objects()
 
@@ -272,7 +280,7 @@ class State(BaseModel):  # pylint: disable=too-few-public-methods
     retry_after: int | None = None
 
 
-@webgui_router.post("/api/app-state")
+@api_router.post("/api/app-state")
 @rest_api
 async def set_app_state(request: Request, app_state: State) -> RESTResponse:
     params: dict = {}
@@ -293,13 +301,13 @@ async def set_app_state(request: Request, app_state: State) -> RESTResponse:
     return RESTResponse(data=request.app.app_state.to_dict())
 
 
-@webgui_router.get("/api/app-state")
+@api_router.get("/api/app-state")
 @rest_api
 async def get_app_state(request: Request) -> RESTResponse:
     return RESTResponse(data=request.app.app_state.to_dict())
 
 
-@webgui_router.post("/api/backup/restore")
+@api_router.post("/api/backup/restore")
 @rest_api
 async def restore_backup(
     file_id: Annotated[str, Body()],
@@ -325,7 +333,7 @@ async def restore_backup(
     )
 
 
-@webgui_router.post("/api/backup/create")
+@api_router.post("/api/backup/create")
 @rest_api
 async def create_backup(
     config_files: Annotated[bool, Body()] = True,
@@ -343,9 +351,9 @@ async def create_backup(
     return RESTResponse(data=backup_file)
 
 
-@webgui_router.get("/api/opsidata/changelogs")
+@api_router.get("/api/opsidata/changelogs")
 def get_markdown() -> PlainTextResponse:
-    changelog_path = Path(__file__).parent.parent / "data" / "changelog" / "changelog.md"
-    return PlainTextResponse(
-        changelog_path.read_text(encoding="utf-8")
+    changelog_path = (
+        Path(__file__).parent.parent / "data" / "changelog" / "changelog.md"
     )
+    return PlainTextResponse(changelog_path.read_text(encoding="utf-8"))

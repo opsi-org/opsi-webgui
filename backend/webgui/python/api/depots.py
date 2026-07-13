@@ -23,7 +23,7 @@ from opsiconfd.rest import (
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, or_, select, table, text  # type: ignore[import]
 
-from .utils import (
+from ..utils import (
     backend,
     depot_access_configured,
     filter_depot_access,
@@ -37,7 +37,7 @@ from .utils import (
     user_register,
 )
 
-depot_router = APIRouter()
+api_router = APIRouter()
 
 
 class Depot(BaseModel):  # pylint: disable=too-few-public-methods
@@ -62,7 +62,7 @@ def get_depots(username: str | None = None) -> List[str]:
         return result
 
 
-@depot_router.get("/api/opsidata/depot_ids", response_model=List[str])
+@api_router.get("/api/opsidata/depot_ids", response_model=List[str])
 @rest_api
 def depot_ids(request: Request) -> RESTResponse:
     """
@@ -76,7 +76,7 @@ def depot_ids(request: Request) -> RESTResponse:
     return RESTResponse(data=depot_list)
 
 
-@depot_router.get("/api/opsidata/depots", response_model=List[Depot])
+@api_router.get("/api/opsidata/depots", response_model=List[Depot])
 @rest_api
 def depots(
     request: Request,
@@ -146,7 +146,7 @@ def depots(
         return RESTResponse(data=depot_list, total=total)
 
 
-@depot_router.get("/api/opsidata/depots/clients", response_model=List[str])
+@api_router.get("/api/opsidata/depots/clients", response_model=List[str])
 @rest_api
 @filter_depot_access
 def clients_on_depots(
@@ -214,7 +214,7 @@ def clients_on_depots(
         return RESTResponse(data=clients)
 
 
-@depot_router.get("/api/opsidata/depots/products", response_model=List[str])
+@api_router.get("/api/opsidata/depots/products", response_model=List[str])
 @rest_api
 @filter_depot_access
 def products_on_depots(

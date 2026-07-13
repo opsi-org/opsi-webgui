@@ -12,15 +12,15 @@ from fastapi import APIRouter, Request, status
 from opsiconfd.config import config
 from opsiconfd.rest import OpsiApiException, RESTResponse, rest_api
 
-from .utils import backend
+from ..utils import backend
 
-server_router = APIRouter()
-from .logger import get_logger
+api_router = APIRouter()
+from ..logger import get_logger
 
 logger = get_logger()
 
 
-@server_router.get("/api/opsidata/server/health")
+@api_router.get("/api/opsidata/server/health")
 @rest_api
 def get_health_check(request: Request, clear_cache: bool = False) -> RESTResponse:  # pylint: disable=unused-argument
     """
@@ -42,7 +42,7 @@ def get_health_check(request: Request, clear_cache: bool = False) -> RESTRespons
     return RESTResponse(http_status=200, data=server_health)
 
 
-@server_router.get("/api/opsidata/server/diagnostic")
+@api_router.get("/api/opsidata/server/diagnostic")
 @rest_api
 async def get_diagnostic_data(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
     """
@@ -63,7 +63,7 @@ async def get_diagnostic_data(request: Request) -> RESTResponse:  # pylint: disa
     return RESTResponse(http_status=200, data=diagnostic_data)
 
 
-@server_router.get("/api/opsidata/server/disabled-features")
+@api_router.get("/api/opsidata/server/disabled-features")
 @rest_api
 def get_server_disabled_freatures(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
     """
