@@ -39,9 +39,8 @@ from sqlalchemy import (  # type: ignore[import]
 )
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 
-from .groups import build_nested_group, read_groups  # pylint: disable=import-error
-from .logger import get_logger
-from .utils import (
+from ..logger import get_logger
+from ..utils import (
     backend,
     build_tree,
     get_allowed_host_groups,
@@ -58,9 +57,13 @@ from .utils import (
     read_only_check,
     user_register,
 )
+from .utils_groups import (  # pylint: disable=import-error
+    build_nested_group,
+    read_groups,
+)
 
 logger = get_logger()
-host_router = APIRouter()
+api_router = APIRouter()
 
 
 class Host(BaseModel):  # pylint: disable=too-few-public-methods
@@ -95,7 +98,7 @@ class Client(Host):  # pylint: disable=too-few-public-methods
     oneTimePassword: str
 
 
-@host_router.get("/api/opsidata/hosts", response_model=List[Client])
+@api_router.get("/api/opsidata/hosts", response_model=List[Client])
 @rest_api
 def get_host_data(
     commons: dict = Depends(common_query_parameters),
@@ -196,7 +199,7 @@ class HostGroup(BaseModel):  # pylint: disable=too-few-public-methods
     notes: Optional[str] = None
 
 
-@host_router.post("/api/opsidata/hosts/groups")
+@api_router.post("/api/opsidata/hosts/groups")
 @rest_api
 @read_only_check
 def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -257,7 +260,7 @@ def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
             ) from err
 
 
-@host_router.post("/api/opsidata/hosts/groups/{group}/clients")
+@api_router.post("/api/opsidata/hosts/groups/{group}/clients")
 @rest_api
 @read_only_check
 def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -300,7 +303,7 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
             ) from err
 
 
-@host_router.delete("/api/opsidata/hosts/groups/{group}/clients")
+@api_router.delete("/api/opsidata/hosts/groups/{group}/clients")
 @rest_api
 @read_only_check
 def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -322,7 +325,7 @@ def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals
     return RESTResponse(data=f"Removed all clients from {group}.")
 
 
-@host_router.delete("/api/opsidata/hosts/groups/{group}")
+@api_router.delete("/api/opsidata/hosts/groups/{group}")
 @rest_api
 @read_only_check
 def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -346,7 +349,7 @@ def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
     return RESTResponse(data=f"Deleted group {group}.")
 
 
-@host_router.put("/api/opsidata/hosts/groups/{group}")
+@api_router.put("/api/opsidata/hosts/groups/{group}")
 @rest_api
 @read_only_check
 def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -377,7 +380,7 @@ def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
     return RESTResponse(data=f"Updated group: {values}")
 
 
-@host_router.get("/api/opsidata/hosts/groups")
+@api_router.get("/api/opsidata/hosts/groups")
 @rest_api
 def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
     selectedDepots: List[str] = Depends(parse_depot_list),
@@ -487,7 +490,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
     )
 
 
-@host_router.get("/api/opsidata/hosts/groups-dynamic")
+@api_router.get("/api/opsidata/hosts/groups-dynamic")
 @rest_api
 def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
     selectedDepots: List[str] = Depends(parse_depot_list),
@@ -761,7 +764,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
     return sorted(list(all_clients - clients))
 
 
-@host_router.get("/api/opsidata/hosts/groups/id")
+@api_router.get("/api/opsidata/hosts/groups/id")
 @rest_api
 def get_host_group_ids() -> RESTResponse:
     """
@@ -792,7 +795,7 @@ def find_parent(group: str) -> str | None:
         return None
 
 
-@host_router.get("/api/opsidata/servers", response_model=List[Server])
+@api_router.get("/api/opsidata/servers", response_model=List[Server])
 @rest_api
 def get_server_data(
     commons: dict = Depends(common_query_parameters),
@@ -867,7 +870,7 @@ def get_server_data(
         return RESTResponse(data=host_data)
 
 
-@host_router.put("/api/opsidata/servers/{server_id}")
+@api_router.put("/api/opsidata/servers/{server_id}")
 @rest_api
 @read_only_check
 def update_server(request: Request, server_id: str, server: Server) -> RESTResponse:  # pylint: disable=too-many-locals

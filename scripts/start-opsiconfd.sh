@@ -19,6 +19,6 @@ for i in $(seq 1 30); do
 done
 
 exec uv run opsiconfd \
-    --log-level-stderr=6 \
+    --log-level-stderr=7 \
     --static-dir=/workspace/docker/opsiconfd/opsiconfd_data/static \
     --workers=1

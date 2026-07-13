@@ -10,14 +10,12 @@ echo "[post_create] Installing uv..."
 curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sudo sh
 echo 'eval "$(uv generate-shell-completion bash)"\n' >> ~/.bashrc # needs new line for proper formatting
 
-# Setup bash config (colored prompt with git branch, useful aliases)
+# Setup bash config (uv completion and useful aliases)
+# Note: parse_git_branch and PS1 are already in the base .bashrc
 cat >> ~/.bashrc << 'EOF'
 
-# Git branch in prompt
-parse_git_branch() {
-    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ [\1]/'
-}
-export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[33m\]$(parse_git_branch)\[\033[00m\]\$ '
+# Enable uv shell completion
+eval "$(uv generate-shell-completion bash)"
 
 # Useful aliases
 alias logs='sudo tail -f /var/log/opsi/opsiconfd/stderr.log'

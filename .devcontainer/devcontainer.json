@@ -11,6 +11,7 @@
     "DEV_UID": "${localEnv:UID}",
     "OPSILICSRV_URL": "${localEnv:OPSILICSRV_URL}",
     "OPSILICSRV_TOKEN": "${localEnv:OPSILICSRV_TOKEN}",
+    "OPSI_TEST_LDAP_URL": "${localEnv:OPSI_TEST_LDAP_URL}",
     "ADDON_NAME": "webgui",
     "ADDON_ID": "webgui"
   },

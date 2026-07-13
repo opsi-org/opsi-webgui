@@ -33,10 +33,8 @@ from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 
-from .depots import get_depots
-from .groups import build_nested_group, read_groups  # pylint: disable=import-error
-from .logger import get_logger
-from .utils import (
+from ..logger import get_logger
+from ..utils import (
     backend,
     bool_value,
     filter_depot_access,
@@ -58,9 +56,14 @@ from .utils import (
     unicode_value,
     user_register,
 )
+from .depots import get_depots
+from .utils_groups import (  # pylint: disable=import-error
+    build_nested_group,
+    read_groups,
+)
 
 logger = get_logger()
-product_router = APIRouter()
+api_router = APIRouter()
 
 
 @lru_cache(maxsize=1000)
@@ -238,7 +241,7 @@ class Product(BaseModel):  # pylint: disable=too-few-public-methods
     actionResult: str
 
 
-@product_router.get("/api/opsidata/products", response_model=List[Product])
+@api_router.get("/api/opsidata/products", response_model=List[Product])
 @rest_api
 @filter_depot_access
 def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name, unused-argument, too-many-arguments
@@ -536,7 +539,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
         return RESTResponse(data=products, total=total)
 
 
-@product_router.get("/api/opsidata/products/depots")
+@api_router.get("/api/opsidata/products/depots")
 @rest_api
 @filter_depot_access
 def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name, unused-argument, too-many-arguments
@@ -599,7 +602,7 @@ def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, to
         return RESTResponse(data=products)
 
 
-@product_router.get("/api/opsidata/products/count", response_model=List[Product])
+@api_router.get("/api/opsidata/products/count", response_model=List[Product])
 @rest_api
 @filter_depot_access
 def product_count(
@@ -637,7 +640,7 @@ class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
     installationStatus: Optional[str] = None
 
 
-@product_router.post("/api/opsidata/clients/products")
+@api_router.post("/api/opsidata/clients/products")
 @rest_api
 @read_only_check
 def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statements, too-many-branches, unused-argument
@@ -789,7 +792,7 @@ def _scan_product_icons() -> Dict[str, str]:
     return icons_map
 
 
-@product_router.get("/api/opsidata/producticons")
+@api_router.get("/api/opsidata/producticons")
 def product_icons() -> JSONResponse:
     import time
 
@@ -831,7 +834,7 @@ class Property(BaseModel):  # pylint: disable=too-few-public-methods
     newValues: Optional[List[str]] = [""]
 
 
-@product_router.get(
+@api_router.get(
     "/api/opsidata/products/{productId}/properties", response_model=Dict[str, Property]
 )
 @rest_api
@@ -1246,7 +1249,7 @@ class ProductProperty(BaseModel):  # pylint: disable=too-few-public-methods
     properties: dict
 
 
-@product_router.post("/api/opsidata/products/{productId}/properties")
+@api_router.post("/api/opsidata/products/{productId}/properties")
 @rest_api
 @read_only_check
 def save_poduct_property(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
@@ -1381,7 +1384,7 @@ class ProductDependenciesResponse(BaseModel):  # pylint: disable=too-few-public-
     data: List[Dependency]
 
 
-@product_router.get(
+@api_router.get(
     "/api/opsidata/products/{productId}/dependencies",
     response_model=ProductDependenciesResponse,
 )
@@ -1499,7 +1502,7 @@ def product_dependencies(  # pylint: disable=too-many-locals, too-many-branches,
     return RESTResponse(http_status=status_code, data=data)
 
 
-@product_router.post("/api/opsidata/products/{product}/unlock")
+@api_router.post("/api/opsidata/products/{product}/unlock")
 @rest_api
 @read_only_check
 def unlock_product(request: Request, product: str) -> RESTResponse:  # pylint: disable=unused-argument
@@ -1515,7 +1518,7 @@ def unlock_product(request: Request, product: str) -> RESTResponse:  # pylint: d
         return RESTErrorResponse(message="Error while unlocking products", details=err)
 
 
-@product_router.post("/api/opsidata/products/unlock")
+@api_router.post("/api/opsidata/products/unlock")
 @rest_api
 @read_only_check
 def unlock_all_products() -> RESTResponse:
@@ -1531,16 +1534,14 @@ def unlock_all_products() -> RESTResponse:
         return RESTErrorResponse(message="Error while unlocking products", details=err)
 
 
-@product_router.get("/api/opsidata/locked-products", response_model=list[str])
+@api_router.get("/api/opsidata/locked-products", response_model=list[str])
 @rest_api
 def get_locked_products_list() -> RESTResponse:
     locked_products = backend.getProductLocks_hash()  # pylint: disable=no-member
     return RESTResponse(locked_products)
 
 
-@product_router.get(
-    "/api/opsidata/products/installation-status", response_model=List[str]
-)
+@api_router.get("/api/opsidata/products/installation-status", response_model=List[str])
 @rest_api
 def installation_status(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
     """
@@ -1576,7 +1577,7 @@ def installation_status(request: Request) -> RESTResponse:  # pylint: disable=un
     return RESTResponse(data=installation_status_list)
 
 
-@product_router.get("/api/opsidata/products/action-result", response_model=List[str])
+@api_router.get("/api/opsidata/products/action-result", response_model=List[str])
 @rest_api
 def action_result(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
     """
@@ -1610,7 +1611,7 @@ def action_result(request: Request) -> RESTResponse:  # pylint: disable=unused-a
     return RESTResponse(data=action_result_list)
 
 
-@product_router.get("/api/opsidata/products/groups")
+@api_router.get("/api/opsidata/products/groups")
 @rest_api
 def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
     """
@@ -1667,7 +1668,7 @@ def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
         return RESTResponse(data={"groups": product_groups})
 
 
-@product_router.get("/api/opsidata/products/groups/{group}")
+@api_router.get("/api/opsidata/products/groups/{group}")
 @rest_api
 @read_only_check
 def delete_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -1691,7 +1692,7 @@ def delete_product_group(  # pylint: disable=invalid-name, too-many-locals, too-
     return RESTResponse(data=f"Deleted group {group}.")
 
 
-@product_router.put("/api/opsidata/products/groups/{group}")
+@api_router.put("/api/opsidata/products/groups/{group}")
 @rest_api
 @read_only_check
 def update_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -1722,7 +1723,7 @@ def update_product_group(  # pylint: disable=invalid-name, too-many-locals, too-
     return RESTResponse(data=f"Updated group: {values}")
 
 
-@product_router.delete("/api/opsidata/products/groups/{group}/products")
+@api_router.delete("/api/opsidata/products/groups/{group}/products")
 @rest_api
 @read_only_check
 def rm_product_from_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -1746,7 +1747,7 @@ def rm_product_from_product_group(  # pylint: disable=invalid-name, too-many-loc
     return RESTResponse(data=f"Removed products from {group}.")
 
 
-@product_router.delete("/api/opsidata/products/groups/{group}/{product}")
+@api_router.delete("/api/opsidata/products/groups/{group}/{product}")
 @rest_api
 @read_only_check
 def rm_product_from_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -1772,7 +1773,7 @@ def rm_product_from_product_group(  # pylint: disable=invalid-name, too-many-loc
     return RESTResponse(data=f"Removed product {product} from {group}.")
 
 
-@product_router.post("/api/opsidata/products/groups/{group}/products")
+@api_router.post("/api/opsidata/products/groups/{group}/products")
 @rest_api
 @read_only_check
 def add_products_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -1822,7 +1823,7 @@ class ProductGroup(BaseModel):  # pylint: disable=too-few-public-methods
     notes: Optional[str] = None
 
 
-@product_router.post("/api/opsidata/products/groups")
+@api_router.post("/api/opsidata/products/groups")
 @rest_api
 @read_only_check
 def create_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements

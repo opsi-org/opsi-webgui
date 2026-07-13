@@ -1,9 +1,9 @@
 from typing import Any, List, Optional
 
-from .logger import get_logger
+from ..logger import get_logger
 
 # from opsiconfd.logging import logger
-from .utils import get_all_children_groupid
+from ..utils import get_all_children_groupid
 
 logger = get_logger()
 

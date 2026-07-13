@@ -40,5 +40,29 @@
   "tailwindCSS.classAttributes": ["class", "ui"],
   "tailwindCSS.experimental.classRegex": [
     ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-  ]
+  ],
+  "coverage-gutters.coverageFileNames": [
+    "backend/coverage.lcov",
+    "coverage.lcov",
+    "backend/coverage.xml",
+    "coverage.xml",
+    "lcov.info"
+  ],
+  "coverage-gutters.showLineCoverage": true,
+  "coverage-gutters.showRulerCoverage": true,
+  "actionButtons": {
+    "defaultColor": "white",
+    "reloadButton": "↻",
+    "loadNpmCommands": false,
+
+    "commands": [
+      {
+        // reload opsiconfd
+        "name": "$(refresh) b-reload",
+        "tooltip": "reload opsiconfd without restarting",
+        "singleInstance": true,
+        "command": "curl -I --request POST -u \"$OPSI_ADMIN_USER:$OPSI_ADMIN_PW\" \"https://localhost:$OPSICONFD_PORT/admin/reload\" && exit 0 || exit 1",
+      },
+    ],
+  },
 }
