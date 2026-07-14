@@ -334,7 +334,6 @@ async function fetchDepots() {
 			}
 		}
 	} catch (e) {
-		console.error('Failed to fetch depots:', e)
 	} finally {
 		loadingDepots.value = false
 	}
@@ -346,7 +345,6 @@ async function fetchClientIds() {
 		const result = await getClientIds(depotList)
 		clientIds.value = result.data || []
 	} catch (e) {
-		console.error('Failed to fetch client IDs:', e)
 	}
 }
 
@@ -363,7 +361,6 @@ async function fetchNetbootProducts() {
 			}
 		}
 	} catch (e) {
-		console.error('Failed to fetch netboot products:', e)
 	}
 }
 
@@ -377,7 +374,6 @@ async function fetchGroups() {
 			}))
 		}
 	} catch (e) {
-		console.error('Failed to fetch groups:', e)
 	}
 }
 

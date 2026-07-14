@@ -58,7 +58,6 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (response.status === 401) {
         const userStore = useUserStore()
         if (userStore.username && !userStore.errorLoggedOutShown) {
-          console.warn('Session expired or invalid - logging out')
           userStore.setErrorLoggedOutShown(true)
           userStore.logout()
           if (typeof window !== 'undefined') {

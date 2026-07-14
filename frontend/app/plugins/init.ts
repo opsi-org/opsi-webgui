@@ -39,8 +39,7 @@ export default defineNuxtPlugin({
             : ((serverData as Record<string, unknown>)?.result as string)
         if (serverId) selectionStore.setConfigServer(serverId)
       }
-    } catch (e) {
-      console.warn('Failed to fetch config server:', e)
+    } catch {
     }
 
     // After login: fetch user configuration & disabled features (cached)
@@ -62,8 +61,7 @@ export default defineNuxtPlugin({
           if (configServer) selectionStore.setConfigServer(configServer.depotId)
           else if (serverResult.data[0]) selectionStore.setServers([serverResult.data[0].depotId])
         }
-      } catch (e) {
-        console.warn('Failed to initialize:', e)
+      } catch {
       }
     }
   },

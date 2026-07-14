@@ -200,8 +200,7 @@ async function handleLogout() {
 	const currentPath = useRoute().fullPath
 	try {
 		await callLogout()
-	} catch (e) {
-		console.warn('Logout API call failed:', e)
+	} catch {
 	}
 	userStore.logout()
 	await navigateTo({ path: '/login', query: { redirect: currentPath } })

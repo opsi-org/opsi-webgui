@@ -180,7 +180,6 @@ async function fetchProperties() {
 		})
 
 		if (result.error) {
-			console.error('Failed to fetch product properties:', result.error)
 			statusMessage.value = { type: 'error', message: String($t('notify.errorPropsLoad')) }
 			editableProperties.value = []
 			return
@@ -201,7 +200,6 @@ async function fetchProperties() {
 			} as EditableProductProperty
 		}).sort((a, b) => a.propertyId.localeCompare(b.propertyId))
 	} catch (e) {
-		console.error('fetchProperties failed:', e)
 		editableProperties.value = []
 	} finally {
 		loadingProps.value = false
@@ -221,14 +219,12 @@ async function fetchDependencies() {
 		})
 
 		if (result.error) {
-			console.error('Failed to fetch product dependencies:', result.error)
 			dependencies.value = []
 			return
 		}
 
 		dependencies.value = (result.data?.dependencies || []) as ProductDependency[]
 	} catch (e) {
-		console.error('fetchDependencies failed:', e)
 		dependencies.value = []
 	} finally {
 		loadingDeps.value = false
@@ -264,7 +260,6 @@ async function saveAll() {
 		setTimeout(() => { statusMessage.value = null }, 5000)
 		emit('saved')
 	} catch (e) {
-		console.error('Failed to save properties:', e)
 		statusMessage.value = {
 			type: 'error',
 			message: e instanceof Error ? e.message : String($t('notify.errorPropsSave')),

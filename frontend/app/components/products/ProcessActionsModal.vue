@@ -159,7 +159,6 @@ async function executeProcessAction() {
 		open.value = false
 		emit('executed')
 	} catch (e) {
-		console.error('Failed to execute process actions:', e)
 		statusMessage.value = {
 			type: 'error',
 			message: e instanceof Error ? e.message : String($t('notify.errorActionsLoad')),

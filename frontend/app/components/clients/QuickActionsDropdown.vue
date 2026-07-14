@@ -241,9 +241,6 @@ const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deplo
 const selectionStore = useSelectionStore()
 const { isReadOnly, canCreateClients } = useUserPermissions()
 
-// The CoreAppDropdownMenu wrapper forwards slots generically, so the `#item-leading`
-// slot prop loses its type (vue-tsc widens it to `never`). Cast it back to the
-// shape produced by `actionItems` so the template can read image/icon/label.
 type ActionMenuItem = { label: string; icon: string; image?: string; darkImage?: string }
 const menuItem = (i: unknown): ActionMenuItem => i as ActionMenuItem
 
@@ -461,7 +458,6 @@ async function executeAction() {
 				break
 		}
 
-		// Build results for all clients
 		actionResults.value = Object.fromEntries(
 			props.clientIds.map(id => [id, {
 				success: result[id]?.success !== false && !result[id]?.error,
@@ -472,18 +468,14 @@ async function executeAction() {
 		const successCount = Object.values(actionResults.value).filter(r => r.success).length
 		const failCount = props.clientIds.length - successCount
 
-		// Always show the result modal
 		resultOpen.value = true
 
-		// Only emit action-complete on full success to avoid duplicate error display
-		// (errors are already visible in the result modal)
 		if (failCount === 0) {
 			emit('action-complete', currentAction.value, true)
 		}
 
 		confirmOpen.value = false
 	} catch (e) {
-		console.error('Action failed:', e)
 		statusMessage.value = {
 			type: 'error',
 			message: e instanceof Error ? e.message : String(e),

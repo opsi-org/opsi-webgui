@@ -75,8 +75,7 @@ async function fetchChangelog() {
 			throw new Error('Failed to fetch changelog')
 		}
 		items.value = parseChangelog(data)
-	} catch (e) {
-		console.error('Failed to fetch changelog:', e)
+	} catch {
 		error.value = true
 	}
 }
