@@ -100,10 +100,11 @@ interface TreeNode {
 
 const props = defineProps<{
     initialTab?: string
+    initialStatus?: string
 }>()
 
 const emit = defineEmits<{
-    (e: 'update:tab', value: string): void
+    (e: 'update:tab', value: string, status?: string): void
 }>()
 
 const icons = useIcons()
@@ -120,7 +121,7 @@ const {
 
 const loading = ref(false)
 const filter = ref('')
-const statusFilter = ref('')
+const statusFilter = ref(props.initialStatus || '')
 
 const validTabs = ['healthcheck', 'modules', 'system'] as const
 type TabValue = typeof validTabs[number]
@@ -129,7 +130,12 @@ const activeTab = ref<TabValue>(
     validTabs.includes(props.initialTab as TabValue) ? (props.initialTab as TabValue) : 'healthcheck'
 )
 
-watch(activeTab, (val) => emit('update:tab', val))
+watch(activeTab, (val) => {
+    // Carry statusFilter in the URL when switching to healthcheck; clear when leaving
+    const status = val === 'healthcheck' ? statusFilter.value || undefined : undefined
+    if (val !== 'healthcheck') statusFilter.value = ''
+    emit('update:tab', val, status)
+})
 
 const healthCheckData = ref<HealthCheckResult[]>([])
 const diagnosticsData = ref<Record<string, unknown>>({})
@@ -145,9 +151,12 @@ const tabs = [
 const stats = sharedHealthCounts
 
 function filterByStatus(status: string) {
-    if (statusFilter.value === status) {
+    if (activeTab.value === 'healthcheck' && statusFilter.value === status) {
+        // Toggle off only when already on healthcheck tab with the same filter
         statusFilter.value = ''
     } else {
+        // Always navigate to healthcheck with the filter applied,
+        // even if statusFilter was already set from a previous healthcheck visit
         statusFilter.value = status
         activeTab.value = 'healthcheck'
     }

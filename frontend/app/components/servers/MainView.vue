@@ -39,7 +39,7 @@
             </template>
             <template #cell-type="{ row }">
                 <CoreAppStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
-                    :label="String((row as Server).type || '-')" />
+                    variant="solid" :label="String((row as Server).type || '-')" />
             </template>
             <template #cell-description="{ row }">
                 {{ (row as Server).description || '-' }}
