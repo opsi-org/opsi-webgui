@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
+
+# opsiconfd is part of the desktop management solution opsi http://www.opsi.org
+# Copyright (c) 2026 uib GmbH <info@uib.de>
+# All rights reserved.
+# License: AGPL-3.0
+
 from typing import Any, List, Optional
 
 from ..logger import get_logger
-
-# from opsiconfd.logging import logger
 from ..utils import get_all_children_groupid
 
 logger = get_logger()

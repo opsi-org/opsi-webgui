@@ -17,6 +17,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": [
       "1.0-1"
     ],
@@ -33,7 +34,6 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": "none"
+    "selected": 0
   }
 ]

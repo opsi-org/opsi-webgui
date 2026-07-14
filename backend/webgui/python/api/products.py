@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- # pylint: disable=too-many-lines
 
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
-# Copyright (c) 2020-2021 uib GmbH <info@uib.de>
+# Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
 # License: AGPL-3.0
 """
@@ -239,7 +239,8 @@ class Product(BaseModel):  # pylint: disable=too-few-public-methods
     actionRequest: str
     actionProgress: str
     actionResult: str
-    actionSequence: int
+    lastAction: str | None = None
+    actionSequence: int | None = None
 
 
 @api_router.get("/api/opsidata/products", response_model=List[Product])
@@ -397,14 +398,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 					)
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
 			) AS lastAction,
-			(	SELECT
-					IF(
-						COUNT(DISTINCT IFNULL(poc.actionSequence, -1)) > 1,
-						-1,
-						IFNULL(poc.actionSequence, -1)
-					)
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
-			) AS actionSequence,
+            NULL AS actionSequence,
 			DATE_FORMAT((	SELECT
 					IF(
 						COUNT(DISTINCT IFNULL(poc.modificationTime, "")) > 1,
@@ -539,6 +533,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
                 product.get("client_version_outdated", False)
             )
             product["not_on_all_depots"] = bool(product.get("not_on_all_depots", False))
+            product.pop("actionSequence", None)
 
             products.append(product)
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
-# Copyright (c) 2020-2021 uib GmbH <info@uib.de>
+# Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
 # License: AGPL-3.0
 """
@@ -11,8 +11,6 @@ webgui client methods
 import os
 import subprocess
 from datetime import date, datetime
-
-# from ipaddress import IPv4Address, IPv6Address
 from typing import Any, Dict, List, Literal, Optional, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
@@ -81,7 +79,6 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
     notes: Optional[str] = None
     hardwareAddress: Optional[str] = None
     ipAddress: Optional[str] = None
-    # ipAddress: Optional[Union[IPv4Address, IPv6Address]] = None
     inventoryNumber: Optional[str] = ""
     systemUUID: Optional[str] = ""
     oneTimePassword: Optional[str] = None
@@ -122,7 +119,6 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 
         if filteredGroups:
             where = and_(where, text("(h.hostId IN :filtered_groups)"))
-            # client_select = client_select.where(text("(h.hostId IN :filtered_groups)"))
             params["filtered_groups"] = get_objects_of_group(
                 filteredGroups, "HostGroup"
             )
@@ -156,10 +152,6 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
             params["selected"] = [""]
 
         reachable_clients: list[str] | None = None
-        # is required used if only showing reachable if sortBy is "reachable. but if we sort by sth else, reachable disappear..."
-        # is_reachable_required = backend._host_control_use_messagebus is not False and (
-        # commons.get("sortBy", None) == "reachable" or "reachable" in commons.get("sortBy", [])
-        # )
         sort_by = commons.get("sortBy") or []
         use_messagebus = backend._host_control_use_messagebus
         if use_messagebus is True or (
@@ -946,7 +938,6 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
                 )
             )
             for poc in result.difference(poc_list):
-                # print(poc)
                 depot = _depots_of_clients([poc.clientId])[poc.clientId]
                 if poc.installationStatus != "installed" or not depot_versions.get(
                     depot, {}

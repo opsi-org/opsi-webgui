@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
-# Copyright (c) 2020-2021 uib GmbH <info@uib.de>
+# Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
 # License: AGPL-3.0
 """
@@ -14,7 +14,6 @@ from typing import Annotated, Optional
 
 from fastapi import APIRouter, Body, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
-from opsiconfd import contextvar_client_session
 from opsiconfd.application import AppState
 from opsiconfd.config import get_configserver_id
 
@@ -22,6 +21,8 @@ from opsiconfd.config import get_configserver_id
 from opsiconfd.rest import RESTResponse, rest_api
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
+
+from opsiconfd import contextvar_client_session
 
 from ..logger import get_logger
 from ..utils import (

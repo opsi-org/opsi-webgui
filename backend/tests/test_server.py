@@ -24,11 +24,7 @@ urllib3.disable_warnings()
 # from backend.tests.utils import ADMIN_PASS, ADMIN_USER  # pylint: disable=import-error, unused-import
 ADDON_ID = "webgui"
 API_ROOT = f"/addons/{ADDON_ID}/api/opsidata/"
-# FQDN = socket.getfqdn()
-# FILE_DIR = os.path.abspath(os.path.dirname(__file__))
-print(
-    f"Need to use this imports directly to not disappear: {config} {create_check_data}"
-)
+_fixture_refs = (config, create_check_data)
 
 
 @pytest.mark.asyncio
@@ -45,7 +41,6 @@ async def test_servers(config, with_all):  # pylint: disable=too-many-arguments,
 
     assert isinstance(res, list), f"Expected list, got {type(res)}: {res}"
     num_entries = TEST_NUM_ITEMS + 1  # depots + configserver
-    print(f"res: {res}")
     assert len(res) == num_entries, (
         f"Expected {num_entries} entries, got {len(res)}\n\n{res}"
     )

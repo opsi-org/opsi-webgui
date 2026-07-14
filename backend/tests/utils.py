@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
-# Copyright (c) 2020-2021 uib GmbH <info@uib.de>
+# Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
 # License: AGPL-3.0
 """
@@ -101,11 +101,7 @@ def http_call(
     body=None,
     expected_result=None,
 ):
-    # external_url = f"https://localhost:{config.port}"
     external_url = config.internal_url
-    print("URL:", f"{url}")
-    print("Data:", data, body, query_params)
-    # Send JSON for POST bodies when a dict is provided
     req_kwargs: dict[str, Any] = dict(
         method=method.upper(),
         url=external_url + url,
@@ -119,8 +115,6 @@ def http_call(
         req_kwargs["data"] = data
 
     res = requests.request(**req_kwargs)
-    # print pretty json response
-    print(f"Response:\n{json.dumps(res.json(), indent=4, sort_keys=True)}")
     assert res.status_code == 200
     if expected_result is not None:
         assert res.json() == expected_result
@@ -188,21 +182,6 @@ def config():
 
 @pytest.fixture
 def database_connection():
-    """with open(
-        "tests/data/opsi-config/backends/mysql.conf", mode="r", encoding="utf-8"
-    ) as conf:
-        _globals = {}
-        exec(conf.read(), _globals)  # pylint: disable=exec-used
-        mysql_config = _globals["config"]
-    """
-
-    # ORIGINAL_MYSQL_DATABASE = os.getenv("MYSQL_DATABASE", "opsi")
-    # TEST_MYSQL_DATABASE = os.getenv(
-    #    "MYSQL_DATABASE_TEST", ORIGINAL_MYSQL_DATABASE + "test"
-    # )
-
-    # os.environ["MYSQL_DATABASE_TEST"] = ORIGINAL_MYSQL_DATABASE + "test"
-    # os.environ["MYSQL_DATABASE"] = os.getenv("MYSQL_DATABASE_TEST", "opsitest")
     mysql = MySQLdb.connect(
         host=os.getenv("MYSQL_HOST", "opsi"),
         port=int(os.getenv("MYSQL_PORT", 3306)),
@@ -210,11 +189,9 @@ def database_connection():
         passwd=os.getenv("MYSQL_PASSWORD", "opsi"),
         db=os.getenv("MYSQL_DATABASE", "opsi"),
         charset="utf8mb4",
-        # autocommit=True,
     )
     yield mysql
     mysql.close()
-    # os.environ["MYSQL_DATABASE"] = ORIGINAL_MYSQL_DATABASE
 
 
 # MARK: check data
@@ -274,12 +251,6 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
             "INSERT INTO PRODUCT (productId, productVersion, packageVersion, type,  name, priority, setupScript, uninstallScript) VALUES "
             f'("pytest-prod-{i}", "1.0", "1", "LocalbootProduct", "Pytest dummy PRODUCT {i}", 60+{i}, "setup.opsiscript", "uninstall.opsiscript");'
         )
-        # for j in range(2):
-        #    cursor.execute(
-        #        "INSERT INTO PRODUCT (productId, productVersion, packageVersion, type,  name, priority, setupScript, uninstallScript) VALUES "
-        #        f'("pytest-prod-versions-{i}-{j}", "{i}.0", "{j}", "LocalbootProduct", "Pytest dummy PRODUCT {i}", 60+{i}, "setup.opsiscript", "uninstall.opsiscript");'
-        #    )
-
         cursor.execute(
             f"INSERT INTO PRODUCT_ON_DEPOT (productId, productVersion, packageVersion, depotId, productType) VALUES "
             f'("pytest-prod-{i}", "1.0", "1", "{configserver}", "LocalbootProduct");'
@@ -373,8 +344,6 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
         f'("pytest-prod-2", "param2b", "{configserver}", \'["false"]\'),'
         f'("pytest-prod-3", "param3u", "{configserver}", \'["III"]\'),'
         f'("pytest-prod-3", "param3b", "{configserver}", \'["true"]\'),'
-        #        f'("pytest-prod-4", "param4u", "{configserver}", \'["yes"]\'),'
-        #        f'("pytest-prod-4", "param4b", "{configserver}", \'["false"]\'),'
         # depot1
         f'("pytest-prod-1", "param1u", "pytest-test-depot-1.domain.local", \'["A"]\'),'  # no diff
         f'("pytest-prod-1", "param1b", "pytest-test-depot-1.domain.local", \'["false"]\'),'
@@ -389,9 +358,6 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
         f'("pytest-prod-2", "param2b", "pytest-host-2.domain.local", \'["true"]\'),'
         f'("pytest-prod-3", "param3u", "pytest-host-3.domain.local", \'["IV"]\'),'
         f'("pytest-prod-3", "param3b", "pytest-host-3.domain.local", \'["true"]\')'
-        # f'("pytest-prod-4", "param4u", "pytest-host-1.domain.local", \'["yes"]\'),'
-        # f'("pytest-prod-4", "param4u", "pytest-host-1.domain.local", \'["no"]\'),'
-        # f'("pytest-prod-4", "param4b", "pytest-host-1.domain.local", \'["true"]\')'
         ";"
     )
 

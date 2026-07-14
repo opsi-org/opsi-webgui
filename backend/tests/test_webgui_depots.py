@@ -21,9 +21,9 @@ from fastapi import status
 from .utils import (  # pylint: disable=unused-import
     ADMIN_PASS,
     ADMIN_USER,
+    UPDATE_FIXTURES,
     assert_or_update_fixture,
     remove_volatile,
-    UPDATE_FIXTURES,
 )
 
 API_ROOT = "/addons/webgui/api/opsidata"
@@ -58,7 +58,6 @@ test_data = [
 @pytest.mark.parametrize("path, query_params, expected_result", test_data)
 @pytest.mark.asyncio
 async def test_depots_get(config, path, query_params, expected_result):  # pylint: disable=too-many-arguments,redefined-outer-name
-    print(query_params)
     res = requests.get(
         f"{config.external_url}{API_ROOT}/{path}",
         auth=(ADMIN_USER, ADMIN_PASS),

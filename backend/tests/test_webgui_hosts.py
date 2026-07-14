@@ -55,7 +55,6 @@ test_data = [
 @pytest.mark.parametrize("path, query_params, expected_result", test_data)
 @pytest.mark.asyncio
 async def test_hosts_get(config, path, query_params, expected_result):  # pylint: disable=too-many-arguments,redefined-outer-name
-    print(query_params)
     res = requests.get(
         f"{config.external_url}{API_ROOT}/{path}",
         auth=(ADMIN_USER, ADMIN_PASS),

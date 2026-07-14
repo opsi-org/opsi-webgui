@@ -15,6 +15,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": null,
     "client_version_outdated": false,
     "actions": [
@@ -29,8 +30,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": null
+    "selected": 0
   },
   {
     "productId": "pytest-prod-1",
@@ -48,6 +48,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": null,
     "client_version_outdated": false,
     "actions": [
@@ -62,8 +63,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": null
+    "selected": 0
   },
   {
     "productId": "pytest-prod-2",
@@ -81,6 +81,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": null,
     "client_version_outdated": false,
     "actions": [
@@ -95,8 +96,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": null
+    "selected": 0
   },
   {
     "productId": "pytest-prod-3",
@@ -114,6 +114,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": null,
     "client_version_outdated": false,
     "actions": [
@@ -128,8 +129,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": null
+    "selected": 0
   },
   {
     "productId": "pytest-prod-4",
@@ -147,6 +147,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": null,
     "client_version_outdated": false,
     "actions": [
@@ -161,8 +162,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": null
+    "selected": 0
   },
   {
     "productId": "pytest-prod-5",
@@ -180,6 +180,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": null,
     "client_version_outdated": false,
     "actions": [
@@ -194,8 +195,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": null
+    "selected": 0
   },
   {
     "productId": "pytest-prod-6",
@@ -213,6 +213,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": null,
     "client_version_outdated": false,
     "actions": [
@@ -227,8 +228,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": null
+    "selected": 0
   },
   {
     "productId": "pytest-prod-7",
@@ -246,6 +246,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": null,
     "client_version_outdated": false,
     "actions": [
@@ -260,8 +261,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": null
+    "selected": 0
   },
   {
     "productId": "pytest-prod-8",
@@ -279,6 +279,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": null,
     "client_version_outdated": false,
     "actions": [
@@ -293,8 +294,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": null
+    "selected": 0
   },
   {
     "productId": "pytest-prod-9",
@@ -312,6 +312,7 @@
     "actionProgress": "",
     "actionResultErrorLevel": 2,
     "actionResult": "none",
+    "lastAction": "none",
     "clientVersions": null,
     "client_version_outdated": false,
     "actions": [
@@ -326,7 +327,6 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0,
-    "lastAction": null
+    "selected": 0
   }
 ]
