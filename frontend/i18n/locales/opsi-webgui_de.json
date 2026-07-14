@@ -318,13 +318,13 @@
   },
   "mods": {
     "available": "Verfügbar",
-    "free": "Kostenlose",
+    "free": "Kostenlose Module",
     "integrated": "Im Kern integriert",
-    "licensed": "Lizenzierte",
+    "licensed": "Lizenziert",
     "none": "Keine Module gefunden",
     "obsolete.desc": "Veraltete Lizenzmodule, die nicht mehr unterstützt werden. Nur noch aus historischen Gründen aufgeführt.",
     "title": "Module",
-    "unlicensed": "Unlizenzierte"
+    "unlicensed": "Nicht lizenziert"
   },
   "nav": {
     "addNew": "Neu hinzufügen",
