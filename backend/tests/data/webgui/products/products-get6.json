@@ -33,6 +33,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": "none"
   }
 ]

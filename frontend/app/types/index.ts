@@ -104,6 +104,8 @@ export interface ProductRow {
   actionProgress?: string
   actionResult?: string
   actionResultDetails?: string[]
+  actionSequence?: number
+  lastAction?: string
   client_version_outdated?: boolean
   depot_version_diff?: boolean
   not_on_all_depots?: boolean

@@ -128,6 +128,18 @@
 				</span>
 			</template>
 
+			<template #cell-actionSequence="{ row }">
+				<span class="text-small text-(--color-text)">
+					{{ (row as ProductRow).actionSequence !== undefined && (row as ProductRow).actionSequence !== -1 ? (row as ProductRow).actionSequence : '-' }}
+				</span>
+			</template>
+
+			<template #cell-lastAction="{ row }">
+				<span class="text-small text-(--color-text)">
+					{{ (row as ProductRow).lastAction || '-' }}
+				</span>
+			</template>
+
 			<template #cell-advice="{ row }">
 				<span class="block truncate max-w-[280px] text-small text-(--color-text)"
 					:title="(row as ProductRow).advice || undefined">
@@ -331,6 +343,8 @@ const columns: DataTableColumnDef[] = [
 	{ key: 'priority', label: String($t('common.priority')), labelKey: 'common.priority', sortable: true, visible: false },
 	{ key: 'modificationTime', label: String($t('fields.modifiedAt')), labelKey: 'fields.modifiedAt', sortable: true, visible: false },
 	{ key: 'actionProgress', label: String($t('actions.progress')), labelKey: 'actions.progress', sortable: true },
+	{ key: 'actionSequence', label: String($t('actions.sequence')), labelKey: 'actions.sequence', sortable: true, visible: false },
+	{ key: 'lastAction', label: String($t('actions.last')), labelKey: 'actions.last', sortable: true, visible: false },
 	{ key: 'actionRequest', label: String($t('actions.request')), labelKey: 'actions.request', sortable: true, class: 'w-40', alwaysVisible: true, stickyRight: true },
 ]
 

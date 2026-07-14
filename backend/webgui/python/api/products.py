@@ -239,6 +239,7 @@ class Product(BaseModel):  # pylint: disable=too-few-public-methods
     actionRequest: str
     actionProgress: str
     actionResult: str
+    actionSequence: int
 
 
 @api_router.get("/api/opsidata/products", response_model=List[Product])
@@ -388,6 +389,22 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 					)
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
 			) AS actionResult,
+			(	SELECT
+					IF(
+						COUNT(DISTINCT IFNULL(poc.lastAction, "none")) > 1,
+						"mixed",
+						IFNULL(poc.lastAction, "none")
+					)
+				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
+			) AS lastAction,
+			(	SELECT
+					IF(
+						COUNT(DISTINCT IFNULL(poc.actionSequence, -1)) > 1,
+						-1,
+						IFNULL(poc.actionSequence, -1)
+					)
+				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
+			) AS actionSequence,
 			DATE_FORMAT((	SELECT
 					IF(
 						COUNT(DISTINCT IFNULL(poc.modificationTime, "")) > 1,

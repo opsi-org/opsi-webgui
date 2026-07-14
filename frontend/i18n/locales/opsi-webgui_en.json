@@ -12,6 +12,7 @@
     "notify": "Notify",
     "ondemand": "OnDemand",
     "ondemandDesc": "Process pending action requests on selected clients",
+    "last": "Last Action",
     "progress": "Action Progress",
     "reboot": "Reboot",
     "rename": "Rename",
@@ -19,6 +20,7 @@
     "result": "Action Result",
     "results": "Action Results",
     "saveAndProcess": "Save and execute",
+    "sequence": "Action Sequence",
     "shutdown": "Shutdown",
     "success": "Successful Actions",
     "title": "Actions"

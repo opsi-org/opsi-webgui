@@ -12,6 +12,7 @@
     "notify": "Notifier",
     "ondemand": "OnDemand",
     "ondemandDesc": "Traiter les demandes d'action en attente sur les clients sélectionnés",
+    "last": "Dernière action",
     "progress": "Progression des actions",
     "reboot": "Redémarrer",
     "rename": "Renommer",
@@ -19,6 +20,7 @@
     "result": "Résultat de l'action",
     "results": "Résultats des actions",
     "saveAndProcess": "Enregistrer et exécuter",
+    "sequence": "Séquence d'action",
     "shutdown": "Arrêter",
     "success": "Actions réussies",
     "title": "Actions"

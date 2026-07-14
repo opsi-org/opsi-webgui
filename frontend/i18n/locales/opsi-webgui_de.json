@@ -12,6 +12,7 @@
     "notify": "Benachrichtigen",
     "ondemand": "OnDemand",
     "ondemandDesc": "Aktionsanforderungen für ausgewählte Clients verarbeiten",
+    "last": "Letzte Aktion",
     "progress": "Aktionsfortschritt",
     "reboot": "Neu starten",
     "rename": "Umbenennen",
@@ -19,6 +20,7 @@
     "result": "Aktionsergebnis",
     "results": "Aktionsergebnisse",
     "saveAndProcess": "Speichern und ausführen",
+    "sequence": "Aktionssequenz",
     "shutdown": "Herunterfahren",
     "success": "Erfolgreiche Aktionen",
     "title": "Aktionen"

@@ -29,7 +29,8 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": null
   },
   {
     "productId": "pytest-prod-1",
@@ -65,7 +66,8 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": "none"
   },
   {
     "productId": "pytest-prod-2",
@@ -97,7 +99,8 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": null
   },
   {
     "productId": "pytest-prod-3",
@@ -129,7 +132,8 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": null
   },
   {
     "productId": "pytest-prod-4",
@@ -171,7 +175,8 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": "none"
   },
   {
     "productId": "pytest-prod-5",
@@ -203,7 +208,8 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": null
   },
   {
     "productId": "pytest-prod-6",
@@ -235,7 +241,8 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": null
   },
   {
     "productId": "pytest-prod-7",
@@ -267,7 +274,8 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": null
   },
   {
     "productId": "pytest-prod-8",
@@ -299,7 +307,8 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": null
   },
   {
     "productId": "pytest-prod-9",
@@ -331,6 +340,7 @@
       "1.0-1"
     ],
     "productType": "LocalbootProduct",
-    "selected": 0
+    "selected": 0,
+    "lastAction": null
   }
 ]
