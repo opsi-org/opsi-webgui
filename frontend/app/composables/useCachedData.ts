@@ -10,18 +10,14 @@
 import type { GroupTreeNodeData } from '~/types'
 import { useUserStore } from '~/stores/userStore'
 
-// ---------------------------------------------------------------------------
 // Diagnostics cache
-// ---------------------------------------------------------------------------
 const diagnosticsState = reactive({
   data: null as Record<string, unknown> | null,
   loading: false,
   fetched: false,
 })
 
-// ---------------------------------------------------------------------------
 // User configuration cache
-// ---------------------------------------------------------------------------
 const userConfigState = reactive({
   data: null as {
     user: string
@@ -39,36 +35,28 @@ const userConfigState = reactive({
   fetched: false,
 })
 
-// ---------------------------------------------------------------------------
 // Disabled features cache
-// ---------------------------------------------------------------------------
 const disabledFeaturesState = reactive({
   data: null as string[] | null,
   loading: false,
   fetched: false,
 })
 
-// ---------------------------------------------------------------------------
 // Product icons cache
-// ---------------------------------------------------------------------------
 const productIconsState = reactive({
   data: null as Record<string, unknown> | null,
   loading: false,
   fetched: false,
 })
 
-// ---------------------------------------------------------------------------
 // Changelogs cache
-// ---------------------------------------------------------------------------
 const changelogsState = reactive({
   data: null as string | null,
   loading: false,
   fetched: false,
 })
 
-// ---------------------------------------------------------------------------
 // Host groups (client groups) cache
-// ---------------------------------------------------------------------------
 const clientGroupsState = reactive({
   tree: [] as GroupTreeNodeData[],
   loading: false,
@@ -78,9 +66,7 @@ const clientGroupsState = reactive({
 })
 let clientGroupsPromise: Promise<void> | null = null
 
-// ---------------------------------------------------------------------------
 // Product groups cache
-// ---------------------------------------------------------------------------
 const productGroupsState = reactive({
   tree: [] as GroupTreeNodeData[],
   loading: false,
@@ -90,9 +76,7 @@ const productGroupsState = reactive({
 })
 let productGroupsPromise: Promise<void> | null = null
 
-// ---------------------------------------------------------------------------
 // transformApiToTree – converts raw API group data to GroupTreeNodeData[]
-// ---------------------------------------------------------------------------
 function transformApiToTree(
   data: Record<string, unknown>,
   groupType: 'client' | 'product',
@@ -173,9 +157,7 @@ export function useCachedData() {
   } = useApiHelpers()
   const userStore = useUserStore()
 
-  // -------------------------------------------------------------------------
   // Diagnostics
-  // -------------------------------------------------------------------------
 
   async function fetchDiagnostics(force = false) {
     if (diagnosticsState.fetched && !force) return diagnosticsState.data
@@ -262,9 +244,7 @@ export function useCachedData() {
     }
   })
 
-  // -------------------------------------------------------------------------
   // User configuration
-  // -------------------------------------------------------------------------
 
   async function fetchUserConfig(force = false) {
     if (userConfigState.fetched && !force) return userConfigState.data
@@ -284,9 +264,7 @@ export function useCachedData() {
     return userConfigState.data
   }
 
-  // -------------------------------------------------------------------------
   // Disabled features
-  // -------------------------------------------------------------------------
 
   async function fetchDisabledFeatures(force = false) {
     if (disabledFeaturesState.fetched && !force) return disabledFeaturesState.data
@@ -304,9 +282,7 @@ export function useCachedData() {
     return disabledFeaturesState.data
   }
 
-  // -------------------------------------------------------------------------
   // Product icons
-  // -------------------------------------------------------------------------
 
   async function fetchProductIcons(force = false) {
     if (productIconsState.fetched && !force) return productIconsState.data
@@ -323,9 +299,7 @@ export function useCachedData() {
     return productIconsState.data
   }
 
-  // -------------------------------------------------------------------------
   // Changelogs
-  // -------------------------------------------------------------------------
 
   async function fetchChangelogs(force = false) {
     if (changelogsState.fetched && !force) return changelogsState.data
@@ -342,9 +316,7 @@ export function useCachedData() {
     return changelogsState.data
   }
 
-  // -------------------------------------------------------------------------
   // Host groups (client groups)
-  // -------------------------------------------------------------------------
 
   async function fetchClientGroups(force = false, selectedServers: string[] = []) {
     if (clientGroupsState.fetched && !force) return
@@ -378,9 +350,7 @@ export function useCachedData() {
     await clientGroupsPromise
   }
 
-  // -------------------------------------------------------------------------
   // Product groups
-  // -------------------------------------------------------------------------
 
   async function fetchProductGroups(force = false) {
     if (productGroupsState.fetched && !force) return
@@ -415,9 +385,7 @@ export function useCachedData() {
     await productGroupsPromise
   }
 
-  // -------------------------------------------------------------------------
   // Group tree helper actions
-  // -------------------------------------------------------------------------
 
   function toggleGroupExpand(groupType: 'client' | 'product', groupId: string) {
     const state = groupType === 'client' ? clientGroupsState : productGroupsState
@@ -465,27 +433,11 @@ export function useCachedData() {
     return find(tree)?.members || []
   }
 
-  // -------------------------------------------------------------------------
   // Batch fetchers & refresh
-  // -------------------------------------------------------------------------
 
   /** Fetch user config + disabled features together (used after login and in init plugin). */
   async function fetchPostLoginData(force = false) {
     await Promise.all([fetchUserConfig(force), fetchDisabledFeatures(force)])
-  }
-
-  /**
-   * Prefetch both client and product group trees in parallel (non-blocking).
-   * Call this early (e.g. after login) so data is ready before the user navigates to groups
-   * or opens the quickpanel.
-   */
-  function prefetchGroups(selectedServers: string[] = []) {
-    if (!clientGroupsState.fetched && !clientGroupsPromise) {
-      fetchClientGroups(false, selectedServers).catch(() => { /* background – ignore */ })
-    }
-    if (!productGroupsState.fetched && !productGroupsPromise) {
-      fetchProductGroups(false).catch(() => { /* background – ignore */ })
-    }
   }
 
   /** Refresh all cached data (used by dashboard refresh button). */
@@ -551,7 +503,6 @@ export function useCachedData() {
 
     // Batch
     fetchPostLoginData,
-    prefetchGroups,
     refreshAll,
   }
 }

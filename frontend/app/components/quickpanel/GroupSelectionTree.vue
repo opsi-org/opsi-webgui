@@ -466,13 +466,5 @@ watch(() => props.active, (isActive) => {
 			fetchProductGroups()
 		}
 	}
-	// Prefetch the other group type in the background so it's ready when the user switches
-	if (isActive) {
-		if (props.groupType === 'client') {
-			fetchProductGroups()
-		} else {
-			fetchClientGroups(false, selectionStore.selectedServers)
-		}
-	}
 }, { immediate: true })
 </script>

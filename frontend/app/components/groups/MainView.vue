@@ -618,6 +618,7 @@ const filteredAvailableMembers = computed(() => {
 })
 
 const editParentGroupSelectItems = computed(() => {
+    if (!editForm.groupId) return []
     const items: { label: string; value: string }[] = []
     const currentId = editForm.groupId
     const childIds = getChildGroupIds(currentTreeGroups.value, currentId)
@@ -639,23 +640,27 @@ const editParentGroupSelectItems = computed(() => {
 
 function getChildGroupIds(nodes: GroupTreeNodeData[], parentId: string): Set<string> {
     const result = new Set<string>()
-    function findAndCollect(nodes: GroupTreeNodeData[], collecting: boolean) {
+    
+    function findAndCollect(nodes: GroupTreeNodeData[]) {
         for (const node of nodes) {
             if (node.id === parentId) {
-                collectAll(node.children || [], result)
-            } else if (node.children?.length) {
-                findAndCollect(node.children, collecting)
+                collectAll(node.children || [])
+                return
+            }
+            if (node.children?.length) {
+                findAndCollect(node.children)
             }
         }
     }
 
-    function collectAll(nodes: GroupTreeNodeData[], set: Set<string>) {
+    function collectAll(nodes: GroupTreeNodeData[]) {
         for (const node of nodes) {
-            set.add(node.id)
-            if (node.children?.length) collectAll(node.children, set)
+            result.add(node.id)
+            if (node.children?.length) collectAll(node.children)
         }
     }
-    findAndCollect(nodes, false)
+    
+    findAndCollect(nodes)
     return result
 }
 
@@ -1078,34 +1083,15 @@ onMounted(() => {
         activeGroupType.value = groupTab
     }
 
-    // Fetch both group types in parallel so switching tabs is instant
-    cachedFetchClientGroups(false, selectionStore.selectedServers)
-    cachedFetchProductGroups()
+    if (activeGroupType.value === 'clients') {
+        cachedFetchClientGroups(false, selectionStore.selectedServers)
+    } else {
+        cachedFetchProductGroups()
+    }
 })
 
 watch(activeGroupType, (newType) => {
     router.replace({ query: { ...route.query as Record<string, string>, groupTab: newType } })
-})
-
-watch(() => clientGroupsTree.value, (tree) => {
-    if (tree.length) {
-        const ids = new Set(expandedGroupIds.value)
-        tree.forEach(t => ids.add(t.id))
-        expandedGroupIds.value = ids
-    }
-}, { immediate: true })
-
-watch(() => productGroupsTree.value, (tree) => {
-    if (tree.length) {
-        const ids = new Set(expandedGroupIds.value)
-        const root = tree.length === 1 && tree[0]?.isRoot ? tree[0] : null
-        const nodes = root?.children?.length ? root.children : tree
-        nodes.forEach(t => ids.add(t.id))
-        expandedGroupIds.value = ids
-    }
-}, { immediate: true })
-
-watch(activeGroupType, () => {
     selectedGroup.value = null
     searchQuery.value = ''
     memberSearchQuery.value = ''
@@ -1115,7 +1101,7 @@ watch(activeGroupType, () => {
         showSidebar.value = true
     }
 
-    if (activeGroupType.value === 'clients') {
+    if (newType === 'clients') {
         cachedFetchClientGroups(false, selectionStore.selectedServers)
     } else {
         cachedFetchProductGroups()
