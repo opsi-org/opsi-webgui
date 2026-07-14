@@ -474,6 +474,20 @@ export function useCachedData() {
     await Promise.all([fetchUserConfig(force), fetchDisabledFeatures(force)])
   }
 
+  /**
+   * Prefetch both client and product group trees in parallel (non-blocking).
+   * Call this early (e.g. after login) so data is ready before the user navigates to groups
+   * or opens the quickpanel.
+   */
+  function prefetchGroups(selectedServers: string[] = []) {
+    if (!clientGroupsState.fetched && !clientGroupsPromise) {
+      fetchClientGroups(false, selectedServers).catch(() => { /* background – ignore */ })
+    }
+    if (!productGroupsState.fetched && !productGroupsPromise) {
+      fetchProductGroups(false).catch(() => { /* background – ignore */ })
+    }
+  }
+
   /** Refresh all cached data (used by dashboard refresh button). */
   async function refreshAll() {
     await Promise.all([fetchDiagnostics(true), fetchUserConfig(true), fetchDisabledFeatures(true)])
@@ -537,6 +551,7 @@ export function useCachedData() {
 
     // Batch
     fetchPostLoginData,
+    prefetchGroups,
     refreshAll,
   }
 }

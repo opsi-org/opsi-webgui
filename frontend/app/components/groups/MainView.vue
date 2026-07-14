@@ -133,7 +133,8 @@
                                     size="sm" badge badge-color="none" />
                             </CoreAppButton>
                             <CoreAppButton :icon="icons.pencil" variant="ghost" color="neutral" size="xs"
-                                :title="$t('common.edit')" @click="openEditModal(selectedGroup)" :disabled="isReadOnly" />
+                                :title="$t('common.edit')" @click="openEditModal(selectedGroup)"
+                                :disabled="isReadOnly" />
                             <CoreAppButton :icon="icons.delete" variant="ghost" size="xs" color="neutral"
                                 :title="$t('common.delete')" @click="confirmDeleteGroup(selectedGroup)"
                                 :disabled="isReadOnly" />
@@ -184,7 +185,8 @@
                                     :aria-label="String($t('common.selectAll'))"
                                     @update:model-value="toggleSelectAllMembers" />
                                 <span class="text-xs text-(--color-text-muted)">
-                                    {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('common.selected')}` :
+                                    {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('common.selected')}`
+                                        :
                                         $t('common.selectAll') }}
                                     <kbd
                                         class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
@@ -198,8 +200,7 @@
                                     :class="selectedMembers.includes(member) ? 'bg-opsi-blue/5' : ''">
                                     <CoreAppCheckbox v-if="!selectedGroup.isSpecial"
                                         :model-value="selectedMembers.includes(member)" class="shrink-0" @click.stop
-                                        :aria-label="member"
-                                        @update:model-value="toggleMemberSelection(member)" />
+                                        :aria-label="member" @update:model-value="toggleMemberSelection(member)" />
                                     <CoreAppIcon :name="activeGroupType === 'clients' ? icons.client : icons.product"
                                         class="w-4 h-4 text-(--color-text-muted) shrink-0" />
                                     <button v-if="!selectedGroup.isSpecial" type="button"
@@ -268,7 +269,7 @@
                     </CoreAppForm>
                     <template #footer>
                         <div class="flex justify-end gap-2">
-                            <CoreAppButton variant="ghost" color="neutral" @click="showCreateModal = false">
+                            <CoreAppButton variant="outline" color="primary" @click="showCreateModal = false">
                                 {{ $t('common.cancel') }}
                             </CoreAppButton>
                             <CoreAppButton color="primary" :loading="saving" @click="doCreateGroup"
@@ -310,7 +311,7 @@
                     </CoreAppForm>
                     <template #footer>
                         <div class="flex justify-end gap-2">
-                            <CoreAppButton variant="ghost" color="neutral" @click="showEditModal = false">
+                            <CoreAppButton variant="outline" color="primary" @click="showEditModal = false">
                                 {{ $t('common.cancel') }}
                             </CoreAppButton>
                             <CoreAppButton color="primary" :loading="saving" @click="doEditGroup" :icon="icons.check">
@@ -342,7 +343,7 @@
                     </p>
                     <template #footer>
                         <div class="flex justify-end gap-2">
-                            <CoreAppButton variant="ghost" color="neutral" @click="showDeleteModal = false">{{
+                            <CoreAppButton variant="outline" color="primary" @click="showDeleteModal = false">{{
                                 $t('common.cancel')
                                 }}
                             </CoreAppButton>
@@ -401,8 +402,7 @@
                                         class="flex items-center gap-2 px-3 py-2 hover:bg-(--color-surface-hover) cursor-pointer border-b border-(--color-border) last:border-b-0 text-(--color-text)"
                                         :class="selectedNewMembers.includes(item) ? 'bg-opsi-blue/5' : ''">
                                         <CoreAppCheckbox :model-value="selectedNewMembers.includes(item)"
-                                            :aria-label="item"
-                                            @update:model-value="toggleNewMemberSelection(item)" />
+                                            :aria-label="item" @update:model-value="toggleNewMemberSelection(item)" />
                                         <button type="button"
                                             class="text-sm truncate text-left bg-transparent border-0 p-0 flex-1 cursor-pointer"
                                             @click.prevent="toggleNewMemberSelection(item, $event)">
@@ -419,7 +419,7 @@
                     </div>
                     <template #footer>
                         <div class="flex justify-end gap-2">
-                            <CoreAppButton variant="ghost" color="neutral" @click="showAddMembersModal = false">{{
+                            <CoreAppButton variant="outline" color="primary" @click="showAddMembersModal = false">{{
                                 $t('common.cancel') }}</CoreAppButton>
                             <CoreAppButton color="primary" :loading="addingMembers" @click="addSelectedMembers"
                                 :disabled="selectedNewMembers.length === 0" :icon="icons.add">
@@ -1078,11 +1078,9 @@ onMounted(() => {
         activeGroupType.value = groupTab
     }
 
-    if (activeGroupType.value === 'clients') {
-        cachedFetchClientGroups(false, selectionStore.selectedServers)
-    } else {
-        cachedFetchProductGroups()
-    }
+    // Fetch both group types in parallel so switching tabs is instant
+    cachedFetchClientGroups(false, selectionStore.selectedServers)
+    cachedFetchProductGroups()
 })
 
 watch(activeGroupType, (newType) => {

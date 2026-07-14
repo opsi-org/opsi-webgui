@@ -28,7 +28,7 @@ export default defineNuxtPlugin({
 
     // Before login: always fetch config server info
     const { getConfigServer, getServers } = useApiHelpers()
-    const { fetchPostLoginData } = useCachedData()
+    const { fetchPostLoginData, prefetchGroups } = useCachedData()
     try {
       const configServerResult = await getConfigServer()
       if (configServerResult.data) {
@@ -62,6 +62,10 @@ export default defineNuxtPlugin({
           if (configServer) selectionStore.setConfigServer(configServer.depotId)
           else if (serverResult.data[0]) selectionStore.setServers([serverResult.data[0].depotId])
         }
+
+        // Kick off group tree fetches in the background so they're ready before the user
+        // navigates to the groups page or opens the quickpanel.
+        prefetchGroups(selectionStore.selectedServers)
       } catch (e) {
         console.warn('Failed to initialize:', e)
       }
