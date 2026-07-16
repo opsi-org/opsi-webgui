@@ -14,7 +14,7 @@
 				$t('quick.selection') }}</div>
 			<CoreAppTabsNav v-model="activeTab" :tabs="selectionTabItems" hide-labels />
 		</div>
-		<div class="min-h-0 overflow-hidden" style="max-height: 48vh;" data-testid="quickpanel-tab-content">
+		<div class="flex-1 min-h-0 overflow-hidden" data-testid="quickpanel-tab-content">
 			<div v-show="activeTab === 'overview'" class="h-full overflow-y-auto" data-testid="quickpanel-tab-overview">
 				<QuickpanelSelectionOverview />
 			</div>

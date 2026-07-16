@@ -104,11 +104,12 @@
     </div>
 
     <UCard :ui="{ body: 'p-0 sm:p-0 flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden' }"
+      :style="{ maxHeight }"
       class="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden">
       <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- scrollable region with keyboard navigation, role=region + tabindex is correct ARIA -->
       <div ref="tableContainer"
         class="flex-1 min-h-0 min-w-0 overflow-x-auto overflow-y-auto transition-all duration-200"
-        :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" tabindex="0" role="region"
+        tabindex="0" role="region"
         :aria-label="String($t('settings.table'))" @scroll="handleScroll" @keydown="handleTableKeydown">
         <div v-if="loading && rows.length === 0" class="py-12">
           <CoreAppLoadingSpinner size="lg" />
