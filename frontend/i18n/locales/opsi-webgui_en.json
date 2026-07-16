@@ -326,6 +326,7 @@
     "none": "No modules found",
     "obsolete.desc": "Obsolete license modules no longer supported. Listed for historical reasons only.",
     "title": "Modules",
+    "unlimited": "Unlimited clients",
     "unlicensed": "Unlicensed"
   },
   "nav": {
