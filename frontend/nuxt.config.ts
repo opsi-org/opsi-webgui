@@ -32,11 +32,19 @@ const locales = fs
       name: localeNameMap[code] || code.toUpperCase(),
     }
   })
-  .sort((a, b) => {
-    if (a.code === 'de') return -1
-    if (b.code === 'de') return 1
-    return a.code.localeCompare(b.code)
-  })
+
+const localeByCode = new Map(locales.map(locale => [locale.code, locale]))
+const priorityCodes = ['en', 'de', 'fr']
+
+const prioritizedLocales = priorityCodes
+  .map(code => localeByCode.get(code))
+  .filter((locale): locale is NonNullable<typeof locale> => !!locale)
+
+const communityLocales = locales
+  .filter(locale => !priorityCodes.includes(locale.code))
+  .sort((a, b) => a.code.localeCompare(b.code))
+
+const orderedLocales = [...prioritizedLocales, ...communityLocales]
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -207,7 +215,7 @@ export default defineNuxtConfig({
   i18n: {
     strategy: 'no_prefix',
     defaultLocale: 'de',
-    locales,
+    locales: orderedLocales,
     bundle: {
       fullInstall: false,
     },
