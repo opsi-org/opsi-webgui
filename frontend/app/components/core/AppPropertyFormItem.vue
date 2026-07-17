@@ -33,7 +33,7 @@
 						:class="disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'" :disabled="disabled">
 						<span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{
 							$t('config.selectValues')
-							}}</span>
+						}}</span>
 						<span v-else class="flex flex-wrap gap-1 min-w-0">
 							<span v-for="val in arrayValue.slice(0, 3)" :key="val"
 								class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20 max-w-32 truncate">
@@ -187,7 +187,7 @@
 			<template #footer>
 				<div class="flex gap-2 justify-end">
 					<UButton variant="ghost" color="neutral" @click="showMultilineEditor = false">{{ $t('common.cancel')
-						}}
+					}}
 					</UButton>
 					<UButton color="primary" @click="applyMultilineEdit">{{ $t('common.apply') }}</UButton>
 				</div>
@@ -279,8 +279,13 @@ const allMultiOptions = computed(() => filteredPossibleValueStrings.value)
 
 const filteredMultiOptions = computed(() => {
 	const q = customInput.value.trim().toLowerCase()
-	if (!q) return allMultiOptions.value
-	return allMultiOptions.value.filter(v => v.toLowerCase().includes(q))
+	// This ensures manually-added values can be unchecked/deleted too.
+	const customSelected = props.editable
+		? arrayValue.value.filter(v => !filteredPossibleValueStrings.value.includes(v))
+		: []
+	const all = [...allMultiOptions.value, ...customSelected]
+	if (!q) return all
+	return all.filter(v => v.toLowerCase().includes(q))
 })
 
 const filteredEditableOptions = computed(() => {
