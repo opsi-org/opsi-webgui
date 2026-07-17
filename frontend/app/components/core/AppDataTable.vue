@@ -326,12 +326,40 @@ const slots = useSlots()
 
 const tableSettings = useDataTableSettings(props.tableId)
 
+const FILTER_STORAGE_KEY = 'opsi-webgui-datatable-filter-queries'
+
+function getStoredFilters(): Record<string, string> {
+  if (import.meta.server) return {}
+  try {
+    const raw = localStorage.getItem(FILTER_STORAGE_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+function getStoredFilter(tableId: string): string {
+  const all = getStoredFilters()
+  return all[tableId] || ''
+}
+
+function saveStoredFilter(tableId: string, filterQuery: string) {
+  if (import.meta.server) return
+  try {
+    const all = getStoredFilters()
+    all[tableId] = filterQuery
+    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(all))
+  } catch {
+    /* */
+  }
+}
+
 const tableContainer = ref<HTMLElement | null>(null)
 const actionsHeaderRef = ref<HTMLElement | null>(null)
 const actionsColWidth = ref(96)
 const scrollSentinel = ref<HTMLElement | null>(null)
 const selectedKeys = ref<string[]>([])
-const filterQueryInternal = ref('')
+const filterQueryInternal = ref(getStoredFilter(props.tableId))
 const currentPage = ref(1)
 const selectionModeOverride = ref<'single' | 'multi' | null>(null)
 const sortBySelection = ref(props.sortBySelectionEnabled || false)
@@ -683,6 +711,12 @@ onMounted(() => {
     containerResizeObserver = new ResizeObserver(() => maybeFillViewport())
     containerResizeObserver.observe(tableContainer.value)
   }
+
+  if (props.filterable && filterQueryInternal.value) {
+    emit('update:filterQuery', filterQueryInternal.value)
+    currentPage.value = 1
+    emitPageChange()
+  }
 })
 
 watch(
@@ -729,6 +763,7 @@ function toggleColumnFromRow(col: DataTableColumnDef) {
 }
 
 watch(filterQueryInternal, (val) => {
+  saveStoredFilter(props.tableId, val)
   emit('update:filterQuery', val)
   if (filterDebounceTimer) clearTimeout(filterDebounceTimer)
   filterDebounceTimer = setTimeout(() => {

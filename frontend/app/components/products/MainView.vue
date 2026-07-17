@@ -47,7 +47,8 @@
 			:selectable="true" :filterable="true" :show-refresh="false" :total-items="totalItems"
 			:selected-keys="selectedTableKeys" :active-key="configProduct?.productId"
 			:sort-by-selection-enabled="sortBySelectionEnabled" @row-activate="handleRowActivate"
-			@selection-change="handleSelectionChange" @page-change="handlePageChange" @refresh="fetchProducts">
+			@selection-change="handleSelectionChange" @page-change="handlePageChange"
+			@update:filter-query="handleFilterQueryUpdate" @refresh="fetchProducts">
 
 			<template #header-cell-actionRequest="{ sortColumn, sortDirection }">
 				<ProductsActionRequestDropdown mode="header"
@@ -236,6 +237,7 @@ const pendingActionRequests = ref(new Map<string, ProductActionRequestChange>())
 const savingActionRequests = ref(false)
 const configTabsComponentRef = ref<InstanceType<typeof import('./ConfigTabs.vue').default> | null>(null)
 const lastPageParams = ref<PageChangeParams | null>(null)
+const currentFilterQuery = ref('')
 const productIcons = computed(() => (cachedProductIcons.value ?? {}) as Record<string, string>)
 const processActionsOpen = ref(false)
 const productLiveStatus = ref(new Map<string, ProductLiveStatus>())
@@ -583,7 +585,18 @@ function onConfigSaved() { fetchProducts() }
 
 function handlePageChange(params: PageChangeParams) {
 	lastPageParams.value = params
+	currentFilterQuery.value = params.filterQuery
 	fetchProducts(params)
+}
+
+function handleFilterQueryUpdate(value: string) {
+	currentFilterQuery.value = value
+	if (lastPageParams.value) {
+		lastPageParams.value = {
+			...lastPageParams.value,
+			filterQuery: value,
+		}
+	}
 }
 
 function translateSortBy(sortBy: string): string {
@@ -637,6 +650,8 @@ async function fetchProducts(params?: PageChangeParams) {
 				p.sortDesc = effectiveParams.sortDesc
 			}
 			p.filterQuery = effectiveParams.filterQuery
+		} else if (currentFilterQuery.value) {
+			p.filterQuery = currentFilterQuery.value
 		} else {
 			if (tableSettings.settings.sortColumn && !tableSettings.settings.sortColumn.startsWith('__')) {
 				p.sortBy = translateSortBy(tableSettings.settings.sortColumn)

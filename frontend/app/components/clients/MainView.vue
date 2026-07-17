@@ -33,7 +33,8 @@
 			:selectable="true" :filterable="true" :show-refresh="false" :total-items="totalItems"
 			:selected-keys="selectionStore.selectedClients" :active-key="panelClient?.clientId"
 			:sort-by-selection-enabled="sortBySelectionEnabled" @row-activate="handleRowActivate"
-			@selection-change="handleSelectionChange" @page-change="handlePageChange" @refresh="fetchClients">
+			@selection-change="handleSelectionChange" @page-change="handlePageChange"
+			@update:filter-query="handleFilterQueryUpdate" @refresh="fetchClients">
 			<template #cell-clientId="{ row }">
 				<div class="flex items-center gap-1.5">
 
@@ -178,6 +179,7 @@ const reachableStatus = ref<Record<string, boolean | undefined>>({})
 const reachableLoading = ref<Record<string, boolean>>({})
 const blockedClients = ref<Set<string>>(new Set())
 const lastPageParams = ref<PageChangeParams | null>(null)
+const currentFilterQuery = ref('')
 const productsSortColumn = ref<string | undefined>(undefined)
 const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void } | null>(null)
 const productsTableRef = ref<{ hasUnsavedChanges?: boolean; discardAllChanges?: () => void } | null>(null)
@@ -319,7 +321,18 @@ function handleActionComplete(action: string, success: boolean) {
 
 function handlePageChange(params: PageChangeParams) {
 	lastPageParams.value = params
+	currentFilterQuery.value = params.filterQuery
 	fetchClients(params)
+}
+
+function handleFilterQueryUpdate(value: string) {
+	currentFilterQuery.value = value
+	if (lastPageParams.value) {
+		lastPageParams.value = {
+			...lastPageParams.value,
+			filterQuery: value,
+		}
+	}
 }
 
 async function fetchClients(params?: PageChangeParams) {
@@ -344,6 +357,8 @@ async function fetchClients(params?: PageChangeParams) {
 			p.sortBy = effectiveParams.sortBy
 			p.sortDesc = effectiveParams.sortDesc
 			p.filterQuery = effectiveParams.filterQuery
+		} else if (currentFilterQuery.value) {
+			p.filterQuery = currentFilterQuery.value
 		}
 		const result = await getClients(p)
 		if (result.error) error.value = result.error.message
