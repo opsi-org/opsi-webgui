@@ -61,6 +61,7 @@ export interface Client {
   version_outdated_netboot?: number
   installationStatus_unknown?: number
   installationStatus_installed?: number
+  actionRequest_set?: number
   actionResult_failed?: number
   actionResult_successful?: number
   selected?: boolean | number

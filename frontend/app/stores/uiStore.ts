@@ -24,6 +24,7 @@ const defaultVisible: Record<TableType, string[]> = {
     'lastSeen',
     'version_outdated',
     'installationStatus_installed',
+    'actionRequest_set',
     'actionResult_failed',
     'actionResult_successful',
     'reachable',
