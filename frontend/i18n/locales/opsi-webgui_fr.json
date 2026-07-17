@@ -313,7 +313,6 @@
     "selectType": "Sélectionner un type de journal à afficher",
     "title": "Journaux"
   },
-  "maintainedByOPSICommunity": "maintenu par la communauté opsi",
   "message": {
     "contributeTranslations": "Aider à traduire opsi-webgui sur Transifex",
     "translationMissing": "Votre langue manque ? Contribuez aux traductions"
@@ -518,6 +517,7 @@
     "sortBy": "Trier par",
     "sortBySelection": "Trier par sélection",
     "table": "Paramètres du tableau",
+    "communityLanguages": "Langues de la communauté",
     "theme.dark": "Sombre",
     "theme.light": "Clair"
   },
@@ -544,6 +544,7 @@
     "disabled": "Le terminal est actuellement désactivé.",
     "disconnect": "Déconnecter",
     "disconnected": "Déconnecté",
+    "exited": "Session terminée",
     "failed": "Échec de la connexion !",
     "id": "ID du terminal",
     "press": "Appuyez sur Connecter pour démarrer une session...",
