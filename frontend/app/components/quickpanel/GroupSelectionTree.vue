@@ -58,6 +58,7 @@
 					</div>
 					<template v-if="!isSectionCollapsed(section.id)">
 						<div v-for="item in section.flatItems" :key="`${section.id}-${item.id}`"
+							v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount]"
 							:style="{ paddingLeft: `${(item.depth * 14) + 6}px`, borderLeftWidth: item.depth > 0 ? '1px' : '0', marginLeft: item.depth > 0 ? `${((item.depth - 1) * 14) + 10}px` : '0' }"
 							class="flex items-center gap-1.5 py-0.5 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer border-l-transparent hover:border-l-(--color-border)"
 							:class="{ 'border-l-(--color-border)/40': item.depth > 0 }">

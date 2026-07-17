@@ -26,12 +26,12 @@ export function useApiHelpers() {
     try {
       const qs = params
         ? '?' +
-          new URLSearchParams(
-            Object.entries(params).map(([k, v]) => [
-              k,
-              typeof v === 'object' ? JSON.stringify(v) : String(v),
-            ])
-          ).toString()
+        new URLSearchParams(
+          Object.entries(params).map(([k, v]) => [
+            k,
+            typeof v === 'object' ? JSON.stringify(v) : String(v),
+          ])
+        ).toString()
         : ''
       const response = await $customFetch.raw<T>(url + qs)
       const total = response.headers.get('X-Total-Count')
@@ -166,6 +166,16 @@ export function useApiHelpers() {
         depotId: string
         notes: string
         uefi: boolean
+        uefi_value?: boolean | null
+        version_outdated?: number
+        version_outdated_netboot?: number
+        installationStatus_unknown?: number
+        installationStatus_installed?: number
+        actionRequest_set?: number
+        actionResult_failed?: number
+        actionResult_successful?: number
+        selected?: boolean
+        reachable?: boolean | null
       }>
     >('/opsidata/clients', params)
 
@@ -269,7 +279,7 @@ export function useApiHelpers() {
       selectedDepots: `[${selectedServers.join(',')}]`,
     }
     if (productType) params.productType = productType
-    return apiGet<Array<{ productId: string; [k: string]: unknown }>>(
+    return apiGet<Array<{ productId: string;[k: string]: unknown }>>(
       '/opsidata/depots/products',
       params
     )
