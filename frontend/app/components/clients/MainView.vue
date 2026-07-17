@@ -70,11 +70,11 @@
 					label="N" :tooltip="$t('products.outdated.netboot')" status="warning" clickable
 					@click="openProductsPanelForClient(row as Client, 'version_outdated', 'netboot')" />
 			</template>
-			<template #cell-installationStatus_unknown="{ row }">
-				<CoreAppStatusBadge :value="(row as Client).installationStatus_unknown"
-					:icon="icons.productInstallationStatusUnknown" :tooltip="$t('products.statusUnknown')"
-					status="warning" clickable
-					@click="openProductsPanelForClient(row as Client, 'installationStatus')" />
+			<template #cell-actionRequest_set="{ row }">
+				<CoreAppStatusBadge :value="(row as Client).actionRequest_set"
+					:icon="icons.onDemand" :tooltip="$t('actions.request')"
+					status="info" clickable
+					@click="openProductsPanelForClient(row as Client, 'actionRequest')" />
 			</template>
 			<template #cell-installationStatus_installed="{ row }">
 				<CoreAppStatusBadge :value="(row as Client).installationStatus_installed"
@@ -94,9 +94,7 @@
 			</template>
 			<template #cell-reachable="{ row }">
 				<ClientsReachableBadge :client-id="(row as Client).clientId"
-					:reachable="reachableStatus[(row as Client).clientId]"
-					:loading="reachableLoading[(row as Client).clientId]"
-					@check="checkReachability((row as Client).clientId)" />
+					:reachable="reachableStatus[(row as Client).clientId]" />
 			</template>
 			<template #row-actions="{ row }">
 				<ClientsRowActionsDropdown :client-id="(row as Client).clientId"
@@ -149,11 +147,15 @@ import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
 import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
 import type { Client } from '~/types'
 import { useSelectionStore } from '~/stores/selectionStore'
+import { useMessageBusStore } from '~/stores/messageBusStore'
+import { storeToRefs } from 'pinia'
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getClients, getServerIds, checkClientReachable, getBlockedClients } = useApiHelpers()
+const { getClients, getServerIds, getBlockedClients } = useApiHelpers()
 const selectionStore = useSelectionStore()
+const messageBusStore = useMessageBusStore()
+const { lastMsg: messageBusLastMsg } = storeToRefs(messageBusStore)
 const router = useRouter()
 const route = useRoute()
 const { isReadOnly, canCreateClients } = useUserPermissions()
@@ -171,7 +173,6 @@ const panelProductTypes = [
 	{ label: String($t('products.netboot')), value: 'netboot' },
 ]
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
-const reachableLoading = ref<Record<string, boolean>>({})
 const blockedClients = ref<Set<string>>(new Set())
 const lastPageParams = ref<PageChangeParams | null>(null)
 const productsSortColumn = ref<string | undefined>(undefined)
@@ -202,7 +203,7 @@ const columns: DataTableColumnDef[] = [
 	{ key: 'version_outdated', label: String($t('products.outdated.localboot')), labelKey: 'products.outdated.localboot', headerIcon: icons.productsOutdated, sortable: true, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'version_outdated_netboot', label: String($t('products.outdated.netboot')), labelKey: 'products.outdated.netboot', headerIcon: icons.productsOutdated, sortable: true, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'installationStatus_installed', label: String($t('products.statusInstalled')), labelKey: 'products.statusInstalled', headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'installationStatus_unknown', label: String($t('products.statusUnknown')), labelKey: 'products.statusUnknown', headerIcon: icons.productInstallationStatusUnknown, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
+	{ key: 'actionRequest_set', label: String($t('actions.request')), labelKey: 'actions.request', headerIcon: icons.onDemand, sortable: true, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'actionResult_failed', label: String($t('actions.failed')), labelKey: 'actions.failed', headerIcon: icons.productsFailedActionResult, sortable: true, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'actionResult_successful', label: String($t('actions.success')), labelKey: 'actions.success', headerIcon: icons.productActionResultSuccessful, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'reachable', label: String($t('clients.reachable.status')), labelKey: 'clients.reachable.status', headerIcon: icons.clientReachable, sortable: false, class: 'text-center w-10', minWidth: '50px' },
@@ -309,15 +310,6 @@ function handleSelectionChange(_rows: Client[], keys: string[]) {
 	selectionStore.setClients(keys, 'table')
 }
 
-async function checkReachability(clientId: string) {
-	reachableLoading.value[clientId] = true
-	try {
-		const result = await checkClientReachable([clientId])
-		if (result.data) reachableStatus.value[clientId] = result.data[clientId]
-	} catch { /* */ }
-	finally { reachableLoading.value[clientId] = false }
-}
-
 function handleActionComplete(action: string, success: boolean) {
 	if ((action === 'delete' || action === 'rename') && success) fetchClients()
 }
@@ -331,6 +323,7 @@ async function fetchClients(params?: PageChangeParams) {
 	loading.value = true
 	error.value = null
 	try {
+		const effectiveParams = params ?? lastPageParams.value ?? undefined
 		await selectionStore.ensureServersSelected()
 		if (selectionStore.selectedServers.length === 0) {
 			const depotResult = await getServerIds()
@@ -342,26 +335,25 @@ async function fetchClients(params?: PageChangeParams) {
 			selectedDepots: selectionStore.selectedServersParam,
 			selectedClients: `[${selectionStore.selectedClients.join(',')}]`,
 		}
-		if (params) {
-			p.pageNumber = params.pageNumber
-			p.perPage = params.perPage
-			p.sortBy = params.sortBy
-			p.sortDesc = params.sortDesc
-			p.filterQuery = params.filterQuery
+		if (effectiveParams) {
+			p.pageNumber = effectiveParams.pageNumber
+			p.perPage = effectiveParams.perPage
+			p.sortBy = effectiveParams.sortBy
+			p.sortDesc = effectiveParams.sortDesc
+			p.filterQuery = effectiveParams.filterQuery
 		}
 		const result = await getClients(p)
 		if (result.error) error.value = result.error.message
 		else if (result.data) {
 			const newData = result.data as Client[]
 			if (result.total !== null) totalItems.value = result.total
-			if (params && params.pageNumber > 1 && lastPageParams.value) {
+			if (effectiveParams && effectiveParams.pageNumber > 1 && lastPageParams.value) {
 				const existingIds = new Set(clients.value.map(c => c.clientId))
 				const unique = newData.filter(c => !existingIds.has(c.clientId))
 				clients.value = [...clients.value, ...unique]
 			} else {
 				clients.value = newData
 			}
-			checkAllReachability(newData)
 		}
 	} catch (e) { error.value = (e as Error).message }
 	finally { loading.value = false }
@@ -377,22 +369,48 @@ async function fetchBlockedClients() {
 	} catch { /* silently fail */ }
 }
 
-async function checkAllReachability(clientList: Client[]) {
-	const ids = clientList.map(c => c.clientId)
-	if (ids.length === 0) return
-	for (const id of ids) reachableLoading.value[id] = true
-	try {
-		const result = await checkClientReachable(ids)
-		if (result.data) {
-			for (const [id, status] of Object.entries(result.data)) {
-				reachableStatus.value[id] = status
-			}
+function extractHostId(msg: unknown): string | undefined {
+	if (!msg || typeof msg !== 'object') return undefined
+	const visited = new Set<unknown>()
+	const queue: unknown[] = [msg]
+
+	while (queue.length > 0) {
+		const current = queue.shift()
+		if (!current || typeof current !== 'object' || visited.has(current)) continue
+		visited.add(current)
+
+		if (Array.isArray(current)) {
+			queue.push(...current)
+			continue
 		}
-	} catch { /* silently fail */ }
-	finally {
-		for (const id of ids) reachableLoading.value[id] = false
+
+		const record = current as Record<string, unknown>
+		for (const [key, value] of Object.entries(record)) {
+			if (typeof value === 'string' && /(hostId|host_id|clientId|client_id|objectId|object_id)$/i.test(key)) {
+				return value
+			}
+			if (value && typeof value === 'object') queue.push(value)
+		}
 	}
+
+	return undefined
 }
+
+watch(messageBusLastMsg, (msg) => {
+	if (!msg || typeof msg !== 'object') return
+	const type = (msg as Record<string, unknown>).type
+	if (typeof type !== 'string') return
+
+	if (type === 'event:host_connected' || type === 'host_connected') {
+		const hostId = extractHostId(msg)
+		if (hostId) reachableStatus.value[hostId] = true
+	}
+
+	if (type === 'event:host_disconnected' || type === 'host_disconnected') {
+		const hostId = extractHostId(msg)
+		if (hostId) reachableStatus.value[hostId] = false
+	}
+})
 
 watch(() => selectionStore.selectedServers, () => {
 	fetchClients()

@@ -67,6 +67,7 @@ class ClientList(BaseModel):  # pylint: disable=too-few-public-methods
     version_outdated: int
     installationStatus_unknown: int
     installationStatus_installed: int
+    actionRequest_set: int
     actionResult_failed: int
     actionResult_successful: int
 
@@ -271,6 +272,10 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
 				WHERE poc.clientId = hd.clientId AND poc.installationStatus = 'installed'
 			) AS installationStatus_installed,
+            (
+                SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
+                WHERE poc.clientId = hd.clientId AND IFNULL(poc.actionRequest, 'none') <> 'none'
+            ) AS actionRequest_set,
 			(
 				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
 				WHERE poc.clientId = hd.clientId AND poc.actionResult = 'failed'
