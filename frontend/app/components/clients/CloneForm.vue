@@ -120,8 +120,8 @@
 					<h4 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('clients.clone.options') }}</h4>
 				</div>
 				<div>
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
+					<button type="button"
+						class="form-row w-full text-left flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
 						@click="cloneclient.options.configs = !cloneclient.options.configs">
 						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('config.items') }}
@@ -129,9 +129,9 @@
 						<div class="flex-1 flex items-center gap-2 min-w-0">
 							<CoreAppCheckbox v-model="cloneclient.options.configs" :disabled="loading" @click.stop />
 						</div>
-					</div>
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
+					</button>
+					<button type="button"
+						class="form-row w-full text-left flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
 						@click="cloneclient.options.products = !cloneclient.options.products">
 						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('products.title') }}
@@ -139,9 +139,9 @@
 						<div class="flex-1 flex items-center gap-2 min-w-0">
 							<CoreAppCheckbox v-model="cloneclient.options.products" :disabled="loading" @click.stop />
 						</div>
-					</div>
-					<div
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
+					</button>
+					<button type="button"
+						class="form-row w-full text-left flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
 						@click="cloneclient.options.productProperties = !cloneclient.options.productProperties">
 						<span class="text-sm min-w-0 md:w-1/3 break-all">
 							{{ $t('products.properties') }}
@@ -149,7 +149,7 @@
 						<div class="flex-1 flex items-center gap-2 min-w-0">
 							<CoreAppCheckbox v-model="cloneclient.options.productProperties" :disabled="loading" @click.stop />
 						</div>
-					</div>
+					</button>
 				</div>
 			</div>
 		</div>

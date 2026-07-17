@@ -159,8 +159,8 @@
 									class="w-full" />
 							</div>
 						</div>
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
+						<button type="button"
+							class="form-row w-full text-left flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
 							@click="form.agentSetup = !form.agentSetup">
 							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
 								<CoreAppImage src="opsi-client-agent.svg" dark-src="opsi-client-agent-light.svg"
@@ -171,7 +171,7 @@
 								<CoreAppCheckbox v-model="form.agentSetup" :aria-label="String($t('clients.deploy'))"
 									:disabled="loading" @click.stop />
 							</div>
-						</div>
+						</button>
 						<div v-if="form.agentSetup" class="ml-4 border-l-2 border-(--color-border) pl-4 space-y-0">
 							<div
 								class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">

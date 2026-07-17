@@ -37,70 +37,72 @@
 			<template #cell-clientId="{ row }">
 				<div class="flex items-center gap-1.5">
 
-					<CoreAppIcon v-if="blockedClients.has((row as Client).ipAddress || '')" :name="icons.lock"
+					<CoreAppIcon v-if="blockedClients.has((row as OpsiClient).ipAddress || '')" :name="icons.lock"
 						class="w-3.5 h-3.5 text-(--color-error-soft-text) shrink-0" :title="$t('clients.blocked')" />
 					<CoreAppIcon v-else :name="icons.client" class="w-4 h-4 shrink-0 text-neutral-400" />
-					<span>{{ (row as Client).clientId }}</span>
+					<span>{{ (row as OpsiClient).clientId }}</span>
 				</div>
 			</template>
 			<template #cell-description="{ row }">
-				{{ (row as Client).description || '-' }}
+				{{ (row as OpsiClient).description || '-' }}
 			</template>
 			<template #cell-macAddress="{ row }">
-				<span class="text-sm text-(--color-text)">{{ (row as Client).macAddress || '-' }}</span>
+				<span class="text-sm text-(--color-text)">{{ (row as OpsiClient).macAddress || '-' }}</span>
 			</template>
 			<template #cell-ipAddress="{ row }">
-				<span class="text-sm text-(--color-text)">{{ (row as Client).ipAddress || '-' }}</span>
+				<span class="text-sm text-(--color-text)">{{ (row as OpsiClient).ipAddress || '-' }}</span>
 			</template>
 			<template #cell-lastSeen="{ row }">
-				{{ (row as Client).lastSeen ? new Date((row as Client).lastSeen as string).toLocaleString() :
+				{{ (row as OpsiClient).lastSeen ? new Date((row as OpsiClient).lastSeen as string).toLocaleString() :
 					'-' }}
 			</template>
 			<template #cell-uefi="{ row }">
-				<CoreAppStatusBadge v-if="(row as Client).uefi" status="info" label="UEFI" />
+				<CoreAppStatusBadge v-if="(row as OpsiClient).uefi" status="info" label="UEFI" />
 				<span v-else class="text-(--color-text-muted)">-</span>
 			</template>
 			<template #cell-version_outdated="{ row }">
-				<CoreAppStatusBadge :value="(row as Client).version_outdated" :icon="icons.productsOutdated" label="L"
+				<CoreAppStatusBadge :value="(row as OpsiClient).version_outdated" :icon="icons.productsOutdated" label="L"
 					:tooltip="$t('products.outdated.localboot')" status="warning" clickable
-					@click="openProductsPanelForClient(row as Client, 'version_outdated')" />
+					@click="openProductsPanelForClient(row as OpsiClient, 'version_outdated')" />
 			</template>
 			<template #cell-version_outdated_netboot="{ row }">
-				<CoreAppStatusBadge :value="(row as Client).version_outdated_netboot" :icon="icons.productsOutdated"
+				<CoreAppStatusBadge :value="(row as OpsiClient).version_outdated_netboot" :icon="icons.productsOutdated"
 					label="N" :tooltip="$t('products.outdated.netboot')" status="warning" clickable
-					@click="openProductsPanelForClient(row as Client, 'version_outdated', 'netboot')" />
+					@click="openProductsPanelForClient(row as OpsiClient, 'version_outdated', 'netboot')" />
 			</template>
 			<template #cell-actionRequest_set="{ row }">
-				<CoreAppStatusBadge :value="(row as Client).actionRequest_set"
+				<CoreAppStatusBadge :value="(row as OpsiClient).actionRequest_set"
 					:icon="icons.onDemand" :tooltip="$t('actions.request')"
 					status="info" clickable
-					@click="openProductsPanelForClient(row as Client, 'actionRequest')" />
+					@click="openProductsPanelForClient(row as OpsiClient, 'actionRequest')" />
 			</template>
 			<template #cell-installationStatus_installed="{ row }">
-				<CoreAppStatusBadge :value="(row as Client).installationStatus_installed"
+				<CoreAppStatusBadge :value="(row as OpsiClient).installationStatus_installed"
 					:icon="icons.productInstallationStatusInstalled" :tooltip="$t('products.statusInstalled')"
 					status="success" clickable
-					@click="openProductsPanelForClient(row as Client, 'installationStatus')" />
+					@click="openProductsPanelForClient(row as OpsiClient, 'installationStatus')" />
 			</template>
 			<template #cell-actionResult_successful="{ row }">
-				<CoreAppStatusBadge :value="(row as Client).actionResult_successful"
+				<CoreAppStatusBadge :value="(row as OpsiClient).actionResult_successful"
 					:icon="icons.productActionResultSuccessful" :tooltip="$t('actions.success')" status="success"
-					clickable @click="openProductsPanelForClient(row as Client, 'actionResult')" />
+					clickable @click="openProductsPanelForClient(row as OpsiClient, 'actionResult')" />
 			</template>
 			<template #cell-actionResult_failed="{ row }">
-				<CoreAppStatusBadge :value="(row as Client).actionResult_failed"
+				<CoreAppStatusBadge :value="(row as OpsiClient).actionResult_failed"
 					:icon="icons.productsFailedActionResult" :tooltip="$t('actions.failed')" status="error" clickable
-					@click="openProductsPanelForClient(row as Client, 'actionResult')" />
+					@click="openProductsPanelForClient(row as OpsiClient, 'actionResult')" />
 			</template>
 			<template #cell-reachable="{ row }">
-				<ClientsReachableBadge :client-id="(row as Client).clientId"
-					:reachable="reachableStatus[(row as Client).clientId]" />
+				<ClientsReachableBadge :client-id="(row as OpsiClient).clientId"
+					:reachable="reachableStatus[(row as OpsiClient).clientId]"
+					:loading="reachableLoading[(row as OpsiClient).clientId]"
+					@check="checkReachability((row as OpsiClient).clientId)" />
 			</template>
 			<template #row-actions="{ row }">
-				<ClientsRowActionsDropdown :client-id="(row as Client).clientId"
-					:active-action="panelClient?.clientId === (row as Client).clientId ? (panelType as 'config' | 'logs' | 'clone' | null) : null"
-					@open-config="openPanel(row as Client, 'config')" @open-logs="openPanel(row as Client, 'logs')"
-					@open-clone="openPanel(row as Client, 'clone')" @action-complete="handleActionComplete" />
+				<ClientsRowActionsDropdown :client-id="(row as OpsiClient).clientId"
+					:active-action="panelClient?.clientId === (row as OpsiClient).clientId ? (panelType as 'config' | 'logs' | 'clone' | null) : null"
+					@open-config="openPanel(row as OpsiClient, 'config')" @open-logs="openPanel(row as OpsiClient, 'logs')"
+					@open-clone="openPanel(row as OpsiClient, 'clone')" @action-complete="handleActionComplete" />
 			</template>
 		</CoreAppDataTable>
 
@@ -145,14 +147,14 @@
 <script setup lang="ts">
 import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
 import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
-import type { Client } from '~/types'
+import type { Client as OpsiClient } from '~/types'
 import { useSelectionStore } from '~/stores/selectionStore'
 import { useMessageBusStore } from '~/stores/messageBusStore'
 import { storeToRefs } from 'pinia'
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-const { getClients, getServerIds, getBlockedClients } = useApiHelpers()
+const { getClients, getServerIds, getBlockedClients, checkClientReachable } = useApiHelpers()
 const selectionStore = useSelectionStore()
 const messageBusStore = useMessageBusStore()
 const { lastMsg: messageBusLastMsg } = storeToRefs(messageBusStore)
@@ -162,9 +164,9 @@ const { isReadOnly, canCreateClients } = useUserPermissions()
 
 const loading = ref(false)
 const error = ref<string | null>(null)
-const clients = ref<Client[]>([])
+const clients = ref<OpsiClient[]>([])
 const totalItems = ref(0)
-const panelClient = ref<Client | null>(null)
+const panelClient = ref<OpsiClient | null>(null)
 const panelType = ref<'config' | 'logs' | 'clone' | 'products' | 'add' | null>(null)
 const panelTab = ref('parameters')
 const panelProductType = ref('localboot')
@@ -173,6 +175,7 @@ const panelProductTypes = [
 	{ label: String($t('products.netboot')), value: 'netboot' },
 ]
 const reachableStatus = ref<Record<string, boolean | undefined>>({})
+const reachableLoading = ref<Record<string, boolean>>({})
 const blockedClients = ref<Set<string>>(new Set())
 const lastPageParams = ref<PageChangeParams | null>(null)
 const productsSortColumn = ref<string | undefined>(undefined)
@@ -214,7 +217,7 @@ const columns: DataTableColumnDef[] = [
 	{ key: 'uefi', label: 'UEFI', sortable: true, visible: false },
 ]
 
-function doOpenPanel(client: Client, type: 'config' | 'logs' | 'clone') {
+function doOpenPanel(client: OpsiClient, type: 'config' | 'logs' | 'clone') {
 	panelClient.value = client
 	panelType.value = type
 	const query: Record<string, string> = { ...route.query as Record<string, string>, client: client.clientId, view: 'panel', panelType: type }
@@ -222,7 +225,7 @@ function doOpenPanel(client: Client, type: 'config' | 'logs' | 'clone') {
 	router.replace({ query })
 }
 
-function openPanel(client: Client, type: 'config' | 'logs' | 'clone') {
+function openPanel(client: OpsiClient, type: 'config' | 'logs' | 'clone') {
 	checkUnsavedAndDo(() => doOpenPanel(client, type))
 }
 
@@ -242,7 +245,7 @@ function openAddPanel() {
 	})
 }
 
-function openProductsPanelForClient(client: Client, sortColumn: string, productType?: 'localboot' | 'netboot') {
+function openProductsPanelForClient(client: OpsiClient, sortColumn: string, productType?: 'localboot' | 'netboot') {
 	selectionStore.setClients([client.clientId], 'table')
 	productsSortColumn.value = sortColumn
 	panelProductType.value = productType || 'localboot'
@@ -299,14 +302,14 @@ function cancelPanelLeave() {
 	pendingPanelAction.value = null
 }
 
-function handleRowActivate(row: Client) {
+function handleRowActivate(row: OpsiClient) {
 	checkUnsavedAndDo(() => {
 		selectionStore.setClients([row.clientId], 'table')
 		doOpenPanel(row, 'config')
 	})
 }
 
-function handleSelectionChange(_rows: Client[], keys: string[]) {
+function handleSelectionChange(_rows: OpsiClient[], keys: string[]) {
 	selectionStore.setClients(keys, 'table')
 }
 
@@ -345,7 +348,7 @@ async function fetchClients(params?: PageChangeParams) {
 		const result = await getClients(p)
 		if (result.error) error.value = result.error.message
 		else if (result.data) {
-			const newData = result.data as Client[]
+			const newData = result.data as OpsiClient[]
 			if (result.total !== null) totalItems.value = result.total
 			if (effectiveParams && effectiveParams.pageNumber > 1 && lastPageParams.value) {
 				const existingIds = new Set(clients.value.map(c => c.clientId))
@@ -354,6 +357,7 @@ async function fetchClients(params?: PageChangeParams) {
 			} else {
 				clients.value = newData
 			}
+			void checkReachability(newData.map(c => c.clientId))
 		}
 	} catch (e) { error.value = (e as Error).message }
 	finally { loading.value = false }
@@ -367,6 +371,32 @@ async function fetchBlockedClients() {
 			blockedClients.value = new Set(blockedIps)
 		}
 	} catch { /* silently fail */ }
+}
+
+async function checkReachability(clientIds: string | string[]) {
+	const ids = Array.isArray(clientIds) ? [...new Set(clientIds)] : [clientIds]
+	if (ids.length === 0) return
+
+	for (const id of ids) {
+		reachableLoading.value[id] = true
+	}
+
+	try {
+		const result = await checkClientReachable(ids)
+		if (result.data) {
+			for (const id of ids) {
+				if (Object.prototype.hasOwnProperty.call(result.data, id)) {
+					reachableStatus.value[id] = Boolean(result.data[id])
+				}
+			}
+		}
+	} catch {
+		// keep previous status on transient errors
+	} finally {
+		for (const id of ids) {
+			reachableLoading.value[id] = false
+		}
+	}
 }
 
 function extractHostId(msg: unknown): string | undefined {
