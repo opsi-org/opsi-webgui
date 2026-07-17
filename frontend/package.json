@@ -4,11 +4,6 @@
   "type": "module",
   "private": true,
   "packageManager": "pnpm@11.10.0",
-  "pnpm": {
-    "overrides": {
-      "jsonata": ">=2.2.0"
-    }
-  },
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",
