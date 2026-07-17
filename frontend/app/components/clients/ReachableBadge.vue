@@ -9,22 +9,17 @@
 -->
 <template>
 	<div class="flex items-center justify-center">
-		<CoreAppLoadingSpinner v-if="loading" size="xs" :centered="false" />
-
-		<CoreAppTooltip v-else-if="reachable === true" :text="String($t('clients.reachable.is'))">
-			<CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 text-(--color-success-soft-text) cursor-pointer"
-				@click.stop="$emit('check')" />
+		<CoreAppTooltip v-if="reachable === true" :text="String($t('clients.reachable.is'))">
+			<CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 text-(--color-success-soft-text)" />
 		</CoreAppTooltip>
 		<CoreAppTooltip v-else-if="reachable === false" :text="String($t('clients.reachable.not'))">
 			<CoreAppStackedIcons :primary-icon="icons.clientReachable" :secondary-icon="icons.x" size="sm"
 				primary-class="w-4 h-4 text-(--color-error-soft-text)"
-				secondary-class="w-2.5 h-2.5 text-(--color-error-soft-text)" class="cursor-pointer"
-				@click.stop="$emit('check')" />
+				secondary-class="w-2.5 h-2.5 text-(--color-error-soft-text)" />
 		</CoreAppTooltip>
 
 		<CoreAppTooltip v-else :text="String($t('clients.reachable.check'))">
-			<CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 text-(--color-text-muted) cursor-pointer"
-				@click.stop="$emit('check')" />
+			<CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 text-(--color-text-muted)" />
 		</CoreAppTooltip>
 	</div>
 </template>
@@ -33,22 +28,10 @@
 interface Props {
 	clientId: string
 	reachable?: boolean
-	loading?: boolean
 }
 
-const props = defineProps<Props>()
-
-defineEmits<{
-	(e: 'check'): void
-}>()
+defineProps<Props>()
 
 const icons = useIcons()
 const { t: $t } = useI18n()
-
-onMounted(() => {
-	if (props.reachable === undefined && !props.loading) {
-		// Small delay to avoid all badges firing at once
-		// Will be batched in parent component
-	}
-})
 </script>
