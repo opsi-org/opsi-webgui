@@ -111,8 +111,8 @@
                     class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-16 bg-(--color-border) rounded group-hover:bg-opsi-blue transition-colors" />
             </div>
 
-            <div class="flex-1 min-w-0 bg-(--color-background) overflow-auto">
-                <div v-if="selectedGroup" class="h-full flex flex-col">
+            <div class="flex-1 min-w-0 bg-(--color-background) overflow-hidden">
+                <div v-if="selectedGroup" class="h-full min-h-0 flex flex-col">
                     <div
                         class="p-3 border-b border-(--color-border) flex items-center justify-between bg-(--color-background)">
                         <div class="flex items-center gap-2">
@@ -152,67 +152,69 @@
                     <div class="flex-1 overflow-auto p-4 space-y-4 outline-none" tabindex="-1"
                         @keydown="handleMemberListKeydown">
                         <div class="pt-4 border-(--color-border)">
-                            <div class="flex items-center justify-between mb-3">
-                                <h2 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
-                                    {{ $t('groups.members') }}
-                                    <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
-                                        []).length
-                                        }})</span>
-                                </h2>
-                                <div class="flex items-center gap-2">
-                                    <CoreAppButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
-                                        :icon="icons.delete" size="xs" variant="soft" color="error"
-                                        :disabled="isReadOnly" @click="removeSelectedMembers">
-                                        {{ $t('common.remove') }} ({{ selectedMembers.length }})
-                                    </CoreAppButton>
-                                    <CoreAppButton
-                                        v-if="(selectedGroup.members?.length || 0) > 0 && !selectedGroup.isSpecial"
-                                        :icon="icons.delete" size="xs" variant="ghost" color="neutral"
-                                        :disabled="isReadOnly" :title="$t('groups.membersRemoveAll')"
-                                        @click="confirmRemoveAllMembers">
-                                        {{ $t('common.removeAll') }}
-                                    </CoreAppButton>
+                            <div class="sticky top-0 z-10 bg-(--color-background) pb-2">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h2 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
+                                        {{ $t('groups.members') }}
+                                        <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
+                                            []).length
+                                            }})</span>
+                                    </h2>
+                                    <div class="flex items-center gap-2">
+                                        <CoreAppButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
+                                            :icon="icons.delete" size="xs" variant="soft" color="error"
+                                            :disabled="isReadOnly" @click="removeSelectedMembers">
+                                            {{ $t('common.remove') }} ({{ selectedMembers.length }})
+                                        </CoreAppButton>
+                                        <CoreAppButton
+                                            v-if="(selectedGroup.members?.length || 0) > 0 && !selectedGroup.isSpecial"
+                                            :icon="icons.delete" size="xs" variant="ghost" color="neutral"
+                                            :disabled="isReadOnly" :title="$t('groups.membersRemoveAll')"
+                                            @click="confirmRemoveAllMembers">
+                                            {{ $t('common.removeAll') }}
+                                        </CoreAppButton>
+                                    </div>
+                                </div>
+                                <CoreAppFilterInput v-if="(selectedGroup.members?.length || 0) > 5"
+                                    v-model="memberSearchQuery" :placeholder="$t('groups.membersFilter') + '...'" size="sm"
+                                    input-class="w-full mb-2" />
+                                <div v-if="filteredMembers.length > 0 && !selectedGroup.isSpecial"
+                                    class="flex items-center gap-2 px-2 py-1 mb-1">
+                                    <CoreAppCheckbox
+                                        :model-value="selectedMembers.length === filteredMembers.length && filteredMembers.length > 0"
+                                        :indeterminate="selectedMembers.length > 0 && selectedMembers.length < filteredMembers.length"
+                                        :aria-label="String($t('common.selectAll'))"
+                                        @update:model-value="toggleSelectAllMembers" />
+                                    <span class="text-xs text-(--color-text-muted)">
+                                        {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('common.selected')}`
+                                            :
+                                            $t('common.selectAll') }}
+                                        <kbd
+                                            class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
+                                        <kbd
+                                            class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
+                                    </span>
                                 </div>
                             </div>
-                            <CoreAppFilterInput v-if="(selectedGroup.members?.length || 0) > 5"
-                                v-model="memberSearchQuery" :placeholder="$t('groups.membersFilter') + '...'" size="sm"
-                                input-class="w-full mb-2" />
-                            <div v-if="filteredMembers.length > 0 && !selectedGroup.isSpecial"
-                                class="flex items-center gap-2 px-2 py-1 mb-1">
-                                <CoreAppCheckbox
-                                    :model-value="selectedMembers.length === filteredMembers.length && filteredMembers.length > 0"
-                                    :indeterminate="selectedMembers.length > 0 && selectedMembers.length < filteredMembers.length"
-                                    :aria-label="String($t('common.selectAll'))"
-                                    @update:model-value="toggleSelectAllMembers" />
-                                <span class="text-xs text-(--color-text-muted)">
-                                    {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('common.selected')}`
-                                        :
-                                        $t('common.selectAll') }}
-                                    <kbd
-                                        class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
-                                    <kbd
-                                        class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
-                                </span>
-                            </div>
-                            <div class="space-y-0 overflow-auto" style="max-height: 60vh;">
+                            <div class="space-y-0">
+                                <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- interactive list rows with role/keyboard handlers on each item -->
                                 <div v-for="member in displayedMembers" :key="member"
                                     class="flex items-center gap-2 text-sm px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/member cursor-pointer select-none"
-                                    :class="selectedMembers.includes(member) ? 'bg-opsi-blue/5' : ''">
+                                    :class="selectedMembersSet.has(member) ? 'bg-opsi-blue/5' : ''"
+                                    role="button" tabindex="0"
+                                    @click="toggleMemberSelection(member, $event)"
+                                    @keydown.enter="toggleMemberSelection(member)"
+                                    @keydown.space.prevent="toggleMemberSelection(member)">
                                     <CoreAppCheckbox v-if="!selectedGroup.isSpecial"
-                                        :model-value="selectedMembers.includes(member)" class="shrink-0" @click.stop
+                                        :model-value="selectedMembersSet.has(member)" class="shrink-0" @click.stop
                                         :aria-label="member" @update:model-value="toggleMemberSelection(member)" />
                                     <CoreAppIcon :name="activeGroupType === 'clients' ? icons.client : icons.product"
                                         class="w-4 h-4 text-(--color-text-muted) shrink-0" />
-                                    <button v-if="!selectedGroup.isSpecial" type="button"
-                                        class="flex-1 truncate text-(--color-text) text-left bg-transparent border-0 p-0 cursor-pointer"
-                                        @click="toggleMemberSelection(member, $event)">
-                                        {{ member }}
-                                    </button>
-                                    <span v-else class="flex-1 truncate text-(--color-text)">{{ member }}</span>
+                                    <span class="flex-1 truncate text-(--color-text)">{{ member }}</span>
                                     <CoreAppButton v-if="!selectedGroup.isSpecial" :icon="icons.delete" size="xs"
                                         variant="ghost" color="neutral" :title="$t('common.remove')"
                                         class="opacity-0 group-hover/member:opacity-100 transition-opacity shrink-0"
-                                        @click="removeSingleMember(member)" />
+                                        @click.stop="removeSingleMember(member)" />
                                 </div>
                                 <div v-if="filteredMembers.length === 0"
                                     class="text-sm text-(--color-text-muted) py-4 text-center">
@@ -598,6 +600,9 @@ const filteredMembers = computed(() => {
 })
 
 const displayedMembers = computed(() => filteredMembers.value.slice(0, memberDisplayLimit.value))
+
+// O(1) Set for member selection lookups — avoids O(n²) includes() on every render
+const selectedMembersSet = computed(() => new Set(selectedMembers.value))
 const hasMoreMembers = computed(() => filteredMembers.value.length > memberDisplayLimit.value)
 
 function showMoreMembers() {
@@ -708,9 +713,11 @@ function toggleMemberSelection(member: string, event?: MouseEvent | KeyboardEven
             const start = Math.min(from, to)
             const end = Math.max(from, to)
             const range = list.slice(start, end + 1)
-            const allSelected = range.every(m => selectedMembers.value.includes(m))
+            const currentSet = selectedMembersSet.value
+            const allSelected = range.every(m => currentSet.has(m))
             if (allSelected) {
-                selectedMembers.value = selectedMembers.value.filter(m => !range.includes(m))
+                const rangeSet = new Set(range)
+                selectedMembers.value = selectedMembers.value.filter(m => !rangeSet.has(m))
             } else {
                 const newSet = new Set([...selectedMembers.value, ...range])
                 selectedMembers.value = [...newSet]
