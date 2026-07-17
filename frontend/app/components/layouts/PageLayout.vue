@@ -107,7 +107,7 @@ const { t: $t } = useI18n()
 
 const showControlsRow = computed(() =>
 	props.showFilter || props.showRefresh ||
-	!!useSlots().tabs || !!useSlots().filters || !!useSlots().actions || !!useSlots().tableControls
+	!!useSlots().tabs || !!useSlots().filters || !!useSlots().actions || !!useSlots().tableControls || !!useSlots().saveActions
 )
 
 const searchModel = computed({

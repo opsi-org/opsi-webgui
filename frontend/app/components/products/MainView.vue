@@ -181,7 +181,7 @@
 
 		<template #panel>
 			<div v-if="configProduct?.productId" class="flex flex-col h-full">
-				<ProductsConfigTabs ref="configPanelRef" :product-id="configProduct.productId" :panel-mode="true"
+				<ProductsConfigTabs ref="configTabsComponentRef" :product-id="configProduct.productId" :panel-mode="true"
 					class="flex-1" @saved="onConfigSaved" />
 			</div>
 		</template>
@@ -609,10 +609,17 @@ function translateSortBy(sortBy: string): string {
 	}
 }
 
+function ensureVersionColumnVisible() {
+	if (!tableSettings.settings.visibleColumns.includes('version')) {
+		tableSettings.settings.visibleColumns.push('version')
+	}
+}
+
 async function fetchProducts(params?: PageChangeParams) {
 	loading.value = true
 	error.value = null
 	try {
+		const effectiveParams = params ?? lastPageParams.value ?? undefined
 		await selectionStore.ensureServersSelected()
 		if (selectionStore.selectedServers.length === 0) { error.value = String($t('servers.noSelection')); return }
 
@@ -622,14 +629,14 @@ async function fetchProducts(params?: PageChangeParams) {
 		}
 		if (selectionStore.selectedClients.length > 0)
 			p.selectedClients = `[${selectionStore.selectedClients.join(',')}]`
-		if (params) {
-			p.pageNumber = params.pageNumber
-			p.perPage = params.perPage
-			if (params.sortBy && !params.sortBy.startsWith('__')) {
-				p.sortBy = translateSortBy(params.sortBy)
-				p.sortDesc = params.sortDesc
+		if (effectiveParams) {
+			p.pageNumber = effectiveParams.pageNumber
+			p.perPage = effectiveParams.perPage
+			if (effectiveParams.sortBy && !effectiveParams.sortBy.startsWith('__')) {
+				p.sortBy = translateSortBy(effectiveParams.sortBy)
+				p.sortDesc = effectiveParams.sortDesc
 			}
-			p.filterQuery = params.filterQuery
+			p.filterQuery = effectiveParams.filterQuery
 		} else {
 			if (tableSettings.settings.sortColumn && !tableSettings.settings.sortColumn.startsWith('__')) {
 				p.sortBy = translateSortBy(tableSettings.settings.sortColumn)
@@ -641,7 +648,7 @@ async function fetchProducts(params?: PageChangeParams) {
 		if (result.error) throw result.error
 		const newData = (result.data || []) as ProductRow[]
 		if (result.total !== null) totalItems.value = result.total
-		if (params && params.pageNumber > 1 && lastPageParams.value) {
+		if (effectiveParams && effectiveParams.pageNumber > 1 && lastPageParams.value) {
 			const existingIds = new Set(products.value.map(p => p.productId))
 			const unique = newData.filter(p => !existingIds.has(p.productId))
 			products.value = [...products.value, ...unique]
@@ -710,6 +717,9 @@ watch(messageBusLastMsg, (msg) => {
 onMounted(async () => {
 	if (props.initialSortColumn) {
 		tableSettings.setSort(props.initialSortColumn, 'desc')
+		if (props.initialSortColumn === 'version_outdated') {
+			ensureVersionColumnVisible()
+		}
 	}
 	await Promise.all([
 		fetchProducts(),
