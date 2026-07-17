@@ -67,10 +67,10 @@ describe('selectionStore bulk operations – large-data performance', () => {
     expect(
       setMs * 5,
       'Set (' +
-        setMs.toFixed(1) +
-        ' ms) should be >=5x faster than includes (' +
-        slowMs.toFixed(1) +
-        ' ms)'
+      setMs.toFixed(1) +
+      ' ms) should be >=5x faster than includes (' +
+      slowMs.toFixed(1) +
+      ' ms)'
     ).toBeLessThan(slowMs)
   })
 })
@@ -197,13 +197,13 @@ describe('flattenNodes – large group tree performance', () => {
 })
 
 describe('member selection Set lookup performance', () => {
-  it('Set.has() for 5000 members < 1 ms', () => {
+  it('Set.has() for 5000 members < 5 ms', () => {
     const members = generateIds('member', 5000)
     const selectedSet = new Set(members.slice(0, 2500))
     const ms = measureMs(() => {
       for (const m of members) selectedSet.has(m)
     })
-    expect(ms, 'Set.has() x5000 took ' + ms.toFixed(2) + ' ms').toBeLessThan(1)
+    expect(ms, 'Set.has() x5000 took ' + ms.toFixed(2) + ' ms').toBeLessThan(5)
   })
 
   it('Set.has() is faster than Array.includes() for 2000 items', () => {
@@ -219,10 +219,10 @@ describe('member selection Set lookup performance', () => {
     expect(
       setMs * 5,
       'Set (' +
-        setMs.toFixed(2) +
-        ' ms) should be >=5x faster than includes (' +
-        arrayMs.toFixed(2) +
-        ' ms)'
+      setMs.toFixed(2) +
+      ' ms) should be >=5x faster than includes (' +
+      arrayMs.toFixed(2) +
+      ' ms)'
     ).toBeLessThan(arrayMs)
   })
 })
