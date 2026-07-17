@@ -82,9 +82,11 @@
                 <span class="text-xs text-(--color-text-muted) block mb-1">{{ $t('settings.columns') }}</span>
                 <div class="space-y-1 max-h-40 overflow-y-auto">
                   <span v-for="col in toggleableColumns" :key="col.key"
-                    class="flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer">
+                      class="flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer"
+                      @click="toggleColumnFromRow(col)">
                     <CoreAppCheckbox :model-value="isColumnVisibleComputed(col.key)" :disabled="col.alwaysVisible"
-                      :aria-label="resolveColumnLabel(col)" @update:model-value="tableSettings.toggleColumn(col.key)" />
+                        :aria-label="resolveColumnLabel(col)" @click.stop
+                        @update:model-value="tableSettings.toggleColumn(col.key)" />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col)
                       }}</span>
                   </span>
@@ -719,6 +721,11 @@ function handleTableKeydown(e: KeyboardEvent) {
     e.preventDefault()
     toggleSelectAll()
   }
+}
+
+function toggleColumnFromRow(col: DataTableColumnDef) {
+  if (col.alwaysVisible) return
+  tableSettings.toggleColumn(col.key)
 }
 
 watch(filterQueryInternal, (val) => {
