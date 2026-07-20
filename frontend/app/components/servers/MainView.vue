@@ -35,7 +35,7 @@
                     class="w-3.5 h-3.5 text-(--color-text-muted) mr-2" />
                 <span :class="(row as Server).type === 'OpsiConfigserver' ? 'font-bold' : ''">{{
                     (row as Server).depotId
-                }}</span>
+                    }}</span>
             </template>
             <template #cell-type="{ row }">
                 <CoreAppStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
@@ -142,6 +142,15 @@ function handleSelectionChange(_rows: Server[], keys: string[]) {
 
 function handlePageChange(params: PageChangeParams) {
     lastPageParams.value = params
+    // Persist filter query to URL
+    if (params.filterQuery || route.query.filter) {
+        router.replace({
+            query: {
+                ...route.query as Record<string, string>,
+                filter: params.filterQuery || undefined
+            }
+        })
+    }
     fetchServers(params)
 }
 
@@ -187,7 +196,8 @@ watch(panelTab, (newTab) => {
 })
 
 onMounted(async () => {
-    await fetchServers()
+    const filterQuery = route.query.filter as string | undefined
+    await fetchServers(filterQuery ? { pageNumber: 1, perPage: 20, sortBy: 'depotId', sortDesc: false, filterQuery } : undefined)
     const serverId = route.query.server as string | undefined
     const configType = route.query.configType as string | undefined
     if (configType) {

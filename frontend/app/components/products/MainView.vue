@@ -104,22 +104,18 @@
 						:selected-clients="(row as ProductRow).selectedClients"
 						:pending-request="pendingActionRequests.get((row as ProductRow).productId)?.actionRequest"
 						@change="handleActionRequestChange((row as ProductRow).productId, (row as ProductRow).actionRequest || 'none', $event)" />
-					<CoreAppStatusBadge v-if="getLiveStatus((row as ProductRow).productId)"
-						:status="getLiveStatus((row as ProductRow).productId)?.kind === 'error'
-							? 'error'
-							: getLiveStatus((row as ProductRow).productId)?.kind === 'updated'
-								? 'success'
-								: 'info'"
-						:icon="getLiveStatus((row as ProductRow).productId)?.kind === 'error'
-							? icons.xCircle
-							: getLiveStatus((row as ProductRow).productId)?.kind === 'updated'
-								? icons.checkCircle
-								: getLiveStatus((row as ProductRow).productId)?.kind === 'processing'
-									? icons.onDemand
-									: icons.refresh"
-						:label="getLiveStatus((row as ProductRow).productId)?.message"
-						:tooltip="getLiveStatus((row as ProductRow).productId)?.tooltip"
-						variant="soft" size="xs" />
+					<CoreAppStatusBadge v-if="getLiveStatus((row as ProductRow).productId)" :status="getLiveStatus((row as ProductRow).productId)?.kind === 'error'
+						? 'error'
+						: getLiveStatus((row as ProductRow).productId)?.kind === 'updated'
+							? 'success'
+							: 'info'" :icon="getLiveStatus((row as ProductRow).productId)?.kind === 'error'
+									? icons.xCircle
+									: getLiveStatus((row as ProductRow).productId)?.kind === 'updated'
+										? icons.checkCircle
+										: getLiveStatus((row as ProductRow).productId)?.kind === 'processing'
+											? icons.onDemand
+											: icons.refresh" :label="getLiveStatus((row as ProductRow).productId)?.message"
+						:tooltip="getLiveStatus((row as ProductRow).productId)?.tooltip" variant="soft" size="xs" />
 				</div>
 			</template>
 
@@ -131,7 +127,8 @@
 
 			<template #cell-actionSequence="{ row }">
 				<span class="text-small text-(--color-text)">
-					{{ (row as ProductRow).actionSequence !== undefined && (row as ProductRow).actionSequence !== -1 ? (row as ProductRow).actionSequence : '-' }}
+					{{ (row as ProductRow).actionSequence !== undefined && (row as ProductRow).actionSequence !== -1 ?
+						(row as ProductRow).actionSequence : '-' }}
 				</span>
 			</template>
 
@@ -182,8 +179,8 @@
 
 		<template #panel>
 			<div v-if="configProduct?.productId" class="flex flex-col h-full">
-				<ProductsConfigTabs ref="configTabsComponentRef" :product-id="configProduct.productId" :panel-mode="true"
-					class="flex-1" @saved="onConfigSaved" />
+				<ProductsConfigTabs ref="configTabsComponentRef" :product-id="configProduct.productId"
+					:panel-mode="true" class="flex-1" @saved="onConfigSaved" />
 			</div>
 		</template>
 	</LayoutsPageLayout>
@@ -586,6 +583,15 @@ function onConfigSaved() { fetchProducts() }
 function handlePageChange(params: PageChangeParams) {
 	lastPageParams.value = params
 	currentFilterQuery.value = params.filterQuery
+	// Persist filter query to URL
+	if (params.filterQuery || route.query.filter) {
+		router.replace({
+			query: {
+				...route.query as Record<string, string>,
+				filter: params.filterQuery || undefined
+			}
+		})
+	}
 	fetchProducts(params)
 }
 
@@ -736,8 +742,9 @@ onMounted(async () => {
 			ensureVersionColumnVisible()
 		}
 	}
+	const filterQuery = route.query.filter as string | undefined
 	await Promise.all([
-		fetchProducts(),
+		fetchProducts(filterQuery ? { pageNumber: 1, perPage: 20, sortBy: props.initialSortColumn || 'productId', sortDesc: props.initialSortColumn ? true : false, filterQuery } : undefined),
 		fetchProductIcons(),
 	])
 	tryOpenPanelFromRoute()

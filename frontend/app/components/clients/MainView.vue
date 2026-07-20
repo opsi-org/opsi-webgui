@@ -322,6 +322,15 @@ function handleActionComplete(action: string, success: boolean) {
 function handlePageChange(params: PageChangeParams) {
 	lastPageParams.value = params
 	currentFilterQuery.value = params.filterQuery
+	// Persist filter query to URL
+	if (params.filterQuery || route.query.filter) {
+		router.replace({
+			query: {
+				...route.query as Record<string, string>,
+				filter: params.filterQuery || undefined
+			}
+		})
+	}
 	fetchClients(params)
 }
 
@@ -469,7 +478,11 @@ watch(panelTab, (newTab) => {
 })
 
 onMounted(async () => {
-	await Promise.all([fetchClients(), fetchBlockedClients()])
+	const filterQuery = route.query.filter as string | undefined
+	await Promise.all([
+		fetchClients(filterQuery ? { pageNumber: 1, perPage: 20, sortBy: 'clientId', sortDesc: false, filterQuery } : undefined),
+		fetchBlockedClients()
+	])
 	const clientId = route.query.client as string | undefined
 	const pType = route.query.panelType as 'config' | 'logs' | 'clone' | undefined
 	const configType = route.query.configType as string | undefined
