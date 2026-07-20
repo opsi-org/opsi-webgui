@@ -31,10 +31,10 @@ export default defineConfig({
   snapshotPathTemplate: '{snapshotDir}/{arg}{ext}',
   reporter: process.env.CI
     ? [
-      ['junit', { outputFile: '../test-results/junit.xml' }],
-      ['html', { outputFolder: '../test-results/html' }],
-      ['list'],
-    ]
+        ['junit', { outputFile: '../test-results/junit.xml' }],
+        ['html', { outputFolder: '../test-results/html' }],
+        ['list'],
+      ]
     : 'list',
   timeout: isNightly ? 480_000 : 90_000,
   expect: {
@@ -44,7 +44,9 @@ export default defineConfig({
     },
   },
   retries: process.env.CI ? 1 : 0,
-  workers: 1,
+  // Allow multiple spec files to run in parallel (tests within each file remain sequential
+  // to avoid conflicts on the shared opsiconfd state).
+  workers: isNightly ? 4 : 2,
   fullyParallel: false,
 
   use: {
@@ -73,17 +75,17 @@ export default defineConfig({
     },
     ...(isNightly
       ? [
-        {
-          name: 'firefox',
-          use: { ...devices['Desktop Firefox'], storageState: firefoxAuthFile },
-          testIgnore: /login\.spec/,
-        },
-        {
-          name: 'firefox-login',
-          use: { ...devices['Desktop Firefox'] },
-          testMatch: /login\.spec/,
-        },
-      ]
+          {
+            name: 'firefox',
+            use: { ...devices['Desktop Firefox'], storageState: firefoxAuthFile },
+            testIgnore: /login\.spec/,
+          },
+          {
+            name: 'firefox-login',
+            use: { ...devices['Desktop Firefox'] },
+            testMatch: /login\.spec/,
+          },
+        ]
       : []),
   ],
 })
