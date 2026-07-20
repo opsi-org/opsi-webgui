@@ -39,6 +39,7 @@ test.describe('Clients', () => {
 
         // Table header columns are visible
         const headers = p.locator('thead th, [class*="header"] [class*="cell"]')
+        await headers.first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => undefined)
         expect(await headers.count()).toBeGreaterThan(2)
 
         // Filtering
