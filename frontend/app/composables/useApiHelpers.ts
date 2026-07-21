@@ -26,12 +26,12 @@ export function useApiHelpers() {
     try {
       const qs = params
         ? '?' +
-        new URLSearchParams(
-          Object.entries(params).map(([k, v]) => [
-            k,
-            typeof v === 'object' ? JSON.stringify(v) : String(v),
-          ])
-        ).toString()
+          new URLSearchParams(
+            Object.entries(params).map(([k, v]) => [
+              k,
+              typeof v === 'object' ? JSON.stringify(v) : String(v),
+            ])
+          ).toString()
         : ''
       const response = await $customFetch.raw<T>(url + qs)
       const total = response.headers.get('X-Total-Count')
@@ -279,7 +279,7 @@ export function useApiHelpers() {
       selectedDepots: `[${selectedServers.join(',')}]`,
     }
     if (productType) params.productType = productType
-    return apiGet<Array<{ productId: string;[k: string]: unknown }>>(
+    return apiGet<Array<{ productId: string; [k: string]: unknown }>>(
       '/opsidata/depots/products',
       params
     )
@@ -381,8 +381,25 @@ export function useApiHelpers() {
   const getHostGroups = (params?: Record<string, unknown>) =>
     apiGet<Record<string, unknown>>('/opsidata/hosts/groups', params)
 
-  const getProductGroups = () =>
-    apiGet<{ groups?: Record<string, unknown> }>('/opsidata/products/groups')
+  const getHostGroupsDynamic = (params: {
+    parentGroup: string
+    withClients?: boolean
+    selectedDepots?: string
+    selectedClients?: string
+  }) =>
+    apiGet<{ groups: Record<string, unknown> }>(
+      '/opsidata/hosts/groups-dynamic',
+      params as Record<string, unknown>
+    )
+
+  const getProductGroups = (params?: Record<string, unknown>) =>
+    apiGet<{ groups?: Record<string, unknown> }>('/opsidata/products/groups', params)
+
+  const getProductGroupsDynamic = (params: { parentGroup: string; withProducts?: boolean }) =>
+    apiGet<{ groups: Record<string, unknown> }>(
+      '/opsidata/products/groups-dynamic',
+      params as Record<string, unknown>
+    )
 
   const getHostGroupIds = () => apiGet<string[]>('/opsidata/hosts/groups/id')
 
@@ -609,7 +626,9 @@ export function useApiHelpers() {
 
     // Groups
     getHostGroups,
+    getHostGroupsDynamic,
     getProductGroups,
+    getProductGroupsDynamic,
     getHostGroupIds,
     createHostGroup,
     createProductGroup,

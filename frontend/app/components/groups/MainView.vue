@@ -216,7 +216,10 @@
                                         class="opacity-0 group-hover/member:opacity-100 transition-opacity shrink-0"
                                         @click.stop="removeSingleMember(member)" />
                                 </div>
-                                <div v-if="filteredMembers.length === 0"
+                                <div v-if="loadingSelectedGroupMembers" class="py-8 text-center">
+                                    <CoreAppLoadingSpinner size="sm" />
+                                </div>
+                                <div v-else-if="filteredMembers.length === 0"
                                     class="text-sm text-(--color-text-muted) py-4 text-center">
                                     {{ memberSearchQuery ? $t('common.noResults') : $t('groups.membersNone') }}
                                 </div>
@@ -467,12 +470,15 @@ const {
     productGroupsTree, productGroupsLoading,
     fetchClientGroups: cachedFetchClientGroups,
     fetchProductGroups: cachedFetchProductGroups,
+    fetchGroupChildrenLazy,
+    fetchProductGroupChildrenLazy,
 } = useCachedData()
 
 const activeGroupType = ref<'clients' | 'products'>('clients')
 const selectedGroup = ref<GroupTreeNodeData | null>(null)
 const loading = computed(() => clientGroupsLoading.value || productGroupsLoading.value)
 const loadingMembers = ref(false)
+const loadingSelectedGroupMembers = ref(false)
 
 const availableClients = shallowRef<string[]>([])
 const availableProducts = shallowRef<string[]>([])
@@ -675,17 +681,30 @@ function expandGroupAndParents(groupId: string) {
     expandedGroupIds.value = newSet
 }
 
-function toggleExpand(groupId: string) {
+async function ensureGroupLoaded(groupId: string) {
+    if (activeGroupType.value === 'clients') {
+        await fetchGroupChildrenLazy(groupId, selectionStore.selectedServers)
+    } else {
+        await fetchProductGroupChildrenLazy(groupId)
+    }
+    return findGroupById(currentTreeGroups.value, groupId)
+}
+
+async function toggleExpand(groupId: string) {
     const newSet = new Set(expandedGroupIds.value)
     if (newSet.has(groupId)) {
         newSet.delete(groupId)
     } else {
         newSet.add(groupId)
+        await ensureGroupLoaded(groupId)
+        if (selectedGroup.value?.id === groupId) {
+            selectedGroup.value = findGroupById(currentTreeGroups.value, groupId)
+        }
     }
     expandedGroupIds.value = newSet
 }
 
-function selectGroup(group: GroupTreeNodeData) {
+async function selectGroup(group: GroupTreeNodeData) {
     if (selectedGroup.value?.id === group.id) {
         selectedGroup.value = null
         selectedMembers.value = []
@@ -694,13 +713,22 @@ function selectGroup(group: GroupTreeNodeData) {
         expandedGroupIds.value = newSet
         return
     }
-    selectedGroup.value = group
-    memberSearchQuery.value = ''
-    selectedMembers.value = []
-    memberDisplayLimit.value = MEMBER_DISPLAY_LIMIT
-    expandGroupAndParents(group.id)
-    if (isMobile.value) {
-        showSidebar.value = false
+    loadingSelectedGroupMembers.value = true
+    try {
+        selectedGroup.value = findGroupById(currentTreeGroups.value, group.id) || group
+        memberSearchQuery.value = ''
+        selectedMembers.value = []
+        memberDisplayLimit.value = MEMBER_DISPLAY_LIMIT
+        expandGroupAndParents(group.id)
+        if (isMobile.value) {
+            showSidebar.value = false
+        }
+        const updatedGroup = await ensureGroupLoaded(group.id)
+        if (updatedGroup && selectedGroup.value?.id === group.id) {
+            selectedGroup.value = updatedGroup
+        }
+    } finally {
+        loadingSelectedGroupMembers.value = false
     }
 }
 
@@ -830,6 +858,19 @@ async function fetchCurrentGroups() {
             await cachedFetchClientGroups(true, selectionStore.selectedServers)
         } else {
             await cachedFetchProductGroups(true)
+        }
+        if (selectedGroup.value) {
+            const selectedGroupId = selectedGroup.value.id
+            const updatedGroup = findGroupById(currentTreeGroups.value, selectedGroupId)
+            if (!updatedGroup) {
+                selectedGroup.value = null
+            } else {
+                selectedGroup.value = updatedGroup
+                const hydratedGroup = await ensureGroupLoaded(selectedGroupId)
+                if (hydratedGroup && selectedGroup.value?.id === selectedGroupId) {
+                    selectedGroup.value = hydratedGroup
+                }
+            }
         }
     } catch (err) {
         showStatus('error', err instanceof Error ? err.message : String($t('groups.error')))
@@ -1112,6 +1153,12 @@ watch(activeGroupType, (newType) => {
         cachedFetchClientGroups(false, selectionStore.selectedServers)
     } else {
         cachedFetchProductGroups()
+    }
+})
+
+watch(() => selectionStore.selectedServers.join(','), () => {
+    if (activeGroupType.value === 'clients') {
+        fetchCurrentGroups()
     }
 })
 </script>

@@ -140,22 +140,21 @@ function flattenNodes(
       : []
     const memberItems: FlatItem[] = []
     if (node.members) {
-      let matchCount = 0
-      for (const m of node.members) {
-        if (childQuery === '' || m.toLowerCase().includes(childQuery)) {
-          if (matchCount < 200) {
-            memberItems.push({
-              id: m,
-              label: m,
-              depth: depth + 1,
-              isGroup: false,
-              memberCount: 0,
-              hasChildren: false,
-              isExpanded: false,
-            })
-          }
-          matchCount++
+      const memberDepth = depth + 1
+      for (const member of node.members) {
+        if (childQuery && !member.includes(childQuery) && !member.toLowerCase().includes(childQuery)) {
+          continue
         }
+        memberItems.push({
+          id: member,
+          label: member,
+          depth: memberDepth,
+          isGroup: false,
+          memberCount: 0,
+          hasChildren: false,
+          isExpanded: false,
+        })
+        if (memberItems.length >= 200) break
       }
     }
     if (labelMatch || childItems.length > 0 || memberItems.length > 0) {

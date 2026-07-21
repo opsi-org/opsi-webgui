@@ -81,3 +81,48 @@ async def test_hosts_get(config, path, query_params, expected_result):  # pylint
         assert sorted(res_data, key=lambda item: item["hostId"]) == sorted(
             json_data, key=lambda item: item["hostId"]
         )
+
+
+@pytest.mark.asyncio
+async def test_host_groups_dynamic_does_not_return_group_as_its_own_child(config):
+    parent_group = "pytest-lazy-parent"
+    child_group = "pytest-lazy-child"
+    client_id = "pytest-client-1.domain.local"
+
+    create_parent = requests.post(
+        f"{config.external_url}{API_ROOT}/hosts/groups",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+        json={"groupId": parent_group},
+    )
+    assert create_parent.status_code == status.HTTP_201_CREATED
+
+    create_child = requests.post(
+        f"{config.external_url}{API_ROOT}/hosts/groups",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+        json={"groupId": child_group, "parentGroupId": parent_group},
+    )
+    assert create_child.status_code == status.HTTP_201_CREATED
+
+    add_client = requests.post(
+        f"{config.external_url}{API_ROOT}/hosts/groups/{parent_group}/clients",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+        json=[client_id],
+    )
+    assert add_client.status_code == status.HTTP_201_CREATED
+
+    res = requests.get(
+        f"{config.external_url}{API_ROOT}/hosts/groups-dynamic",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+        params={"parentGroup": parent_group, "withClients": True},
+    )
+
+    assert res.status_code == status.HTTP_200_OK
+    groups = res.json()["groups"]
+    children = groups["children"]
+    assert parent_group not in children
+    assert child_group in children
+    assert client_id in children
