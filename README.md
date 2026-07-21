@@ -27,7 +27,7 @@ Manage clients, deploy software, configure servers, inspect logs and perform adm
 
 ## Install
 
-### Package manager (recommended)
+### Package manager
 
 ```bash
 sudo apt update && sudo apt install opsi-webgui
@@ -65,7 +65,7 @@ The project uses a unified test approach covering:
   - security guardrails
   - performance tests for large data components
 
-- Backend integration/API tests (pytest)
+- Backend integration tests (pytest)
   - API behavior against real backend services
   - security validation
 
@@ -120,7 +120,6 @@ The full matrix also generates documentation and marketing screenshots, availabl
 
 ```bash
 cd frontend
-
 pnpm run test:unit
 pnpm run test:unit:coverage
 ```
@@ -148,7 +147,6 @@ scripts/dev-e2e.sh -u
 
 ```bash
 cd docker/opsiconfd
-
 uv sync
 .venv/bin/python -m pytest /workspace/backend/tests -v
 ```
