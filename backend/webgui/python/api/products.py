@@ -10,7 +10,7 @@ webgui product methods
 
 import json
 from functools import lru_cache
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
 from fastapi.responses import JSONResponse
@@ -481,6 +481,9 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
         if not commons.get("sortBy"):
             commons["sortBy"] = ""
         # logger.devel(commons)
+        # Sort selected items first when a selection is active
+        if selected and selected != [""]:
+            query = query.order_by(text("selected DESC"))
         if "actionRequest" in commons.get("sortBy", []):
             query = query.order_by(text("actionRequest='none' ASC"))
         if "installationStatus" in commons.get("sortBy", []):
@@ -1625,7 +1628,7 @@ def action_result(request: Request) -> RESTResponse:  # pylint: disable=unused-a
 
 @api_router.get("/api/opsidata/products/groups")
 @rest_api
-def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
+def get_product_groups(withProducts: bool = True) -> RESTResponse:  # pylint: disable=too-many-locals
     """
     Get all product groups as a tree of groups.
     """
@@ -1638,24 +1641,40 @@ def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
     where = text("g.`type` = 'ProductGroup'")
 
     with mysql.session() as session:
-        query = (
-            select(
-                text(
-                    """
+        if withProducts:
+            query = (
+                select(
+                    text(
+                        """
 			g.parentGroupId AS parent_id,
 			g.groupId AS group_id,
 			og.objectId AS object_id
 		"""
+                    )
                 )
+                .select_from(text("`GROUP` AS g"))
+                .join(
+                    text("OBJECT_TO_GROUP AS og"),
+                    text("og.groupType = g.`type` AND og.groupId = g.groupId"),
+                    isouter=True,
+                )
+                .where(where)
             )
-            .select_from(text("`GROUP` AS g"))
-            .join(
-                text("OBJECT_TO_GROUP AS og"),
-                text("og.groupType = g.`type` AND og.groupId = g.groupId"),
-                isouter=True,
+        else:
+            query = (
+                select(
+                    text(
+                        """
+			g.parentGroupId AS parent_id,
+			g.groupId AS group_id,
+			NULL AS object_id,
+			(SELECT COUNT(*) FROM OBJECT_TO_GROUP og WHERE og.groupId = g.groupId AND og.groupType = 'ProductGroup') AS member_count
+		"""
+                    )
+                )
+                .select_from(text("`GROUP` AS g"))
+                .where(where)
             )
-            .where(where)
-        )
 
         result = session.execute(query, params)
         result = result.fetchall()
@@ -1672,12 +1691,142 @@ def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
             root_group,
             selected_object_ids=[],
             allowed=allowed,
-            withClients=True,
+            withClients=withProducts,
             gtype="ProductGroup",
         )
 
+        if not withProducts:
+            for row in result:
+                row_dict = dict(row)
+                group_id = row_dict.get("group_id")
+                member_count = int(row_dict.get("member_count", 0) or 0)
+                if group_id and group_id in all_groups and member_count > 0:
+                    all_groups[group_id]["member_count"] = member_count
+                    if all_groups[group_id].get("children") is None:
+                        all_groups[group_id]["children"] = {}
+
         product_groups = build_nested_group(root_group, all_groups)
         return RESTResponse(data={"groups": product_groups})
+
+
+@api_router.get("/api/opsidata/products/groups-dynamic")
+@rest_api
+def get_product_groups_dynamic(
+    parentGroup: Optional[str] = None,
+    withProducts: bool = True,
+) -> RESTResponse:
+    """
+    Get direct child product groups and products for a specific parent group.
+    """
+    username = get_username()
+    configured = product_group_access_configured(username)
+    allowed = None if not configured else get_allowed_product_groups(username)
+
+    if parentGroup == "root" or not parentGroup:
+        parentGroup = "groups"
+        where = text("g.`type` = 'ProductGroup' AND g.parentGroupId IS NULL")
+    else:
+        where = text("g.`type` = 'ProductGroup' AND g.parentGroupId = :parent")
+
+    params: dict[str, str] = {}
+    if parentGroup != "groups":
+        params["parent"] = parentGroup
+
+    with mysql.session() as session:
+        child_groups_query = (
+            select(
+                text(
+                    """
+				g.parentGroupId AS parent_id,
+				g.groupId AS group_id
+			"""
+                )
+            )
+            .select_from(text("`GROUP` AS g"))
+            .where(where)
+        )
+        child_group_rows = session.execute(child_groups_query, params).fetchall()
+
+        child_group_ids = [
+            row["group_id"] for row in child_group_rows if row and row["group_id"]
+        ]
+        member_counts: dict[str, int] = {}
+        if child_group_ids:
+            count_query = (
+                select(
+                    text(
+                        """
+					og.groupId AS group_id,
+					COUNT(*) AS member_count
+				"""
+                    )
+                )
+                .select_from(text("OBJECT_TO_GROUP AS og"))
+                .where(
+                    text("og.groupType = 'ProductGroup' AND og.groupId IN :group_ids")
+                )
+                .group_by(text("og.groupId"))
+            )
+            count_result = session.execute(
+                count_query, {"group_ids": child_group_ids}
+            ).fetchall()
+            member_counts = {
+                row["group_id"]: int(row["member_count"] or 0)
+                for row in count_result
+                if row is not None
+            }
+
+        member_rows = []
+        if withProducts and parentGroup != "groups":
+            member_query = (
+                select(text("og.objectId AS object_id"))
+                .select_from(text("OBJECT_TO_GROUP AS og"))
+                .where(text("og.groupType = 'ProductGroup' AND og.groupId = :parent"))
+            )
+            member_rows = session.execute(
+                member_query, {"parent": parentGroup}
+            ).fetchall()
+
+    product_groups: dict[str, Any] = {
+        "id": parentGroup,
+        "type": "ProductGroup",
+        "text": parentGroup,
+        "parent": None,
+        "children": {},
+    }
+
+    if allowed and parentGroup not in allowed and parentGroup != "groups":
+        return RESTResponse(data={"groups": product_groups})
+
+    for row in child_group_rows:
+        group_id = row["group_id"]
+        if not group_id:
+            continue
+        if allowed and group_id not in allowed:
+            continue
+        product_groups["children"][group_id] = {
+            "id": f"{group_id};{parentGroup.lower()}",
+            "type": "ProductGroup",
+            "text": group_id,
+            "parent": parentGroup,
+            "children": None,
+            "member_count": member_counts.get(group_id, 0),
+        }
+
+    if withProducts:
+        for row in member_rows:
+            object_id = row["object_id"]
+            if not object_id:
+                continue
+            product_groups["children"][object_id] = {
+                "id": f"{object_id};{parentGroup.lower()}",
+                "type": "ObjectToGroup",
+                "text": object_id,
+                "parent": parentGroup,
+                "allowed": True,
+            }
+
+    return RESTResponse(data={"groups": product_groups})
 
 
 @api_router.get("/api/opsidata/products/groups/{group}")
