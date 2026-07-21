@@ -10,7 +10,7 @@
 <template>
   <div class="relative" ref="containerRef">
     <CoreAppButton @click="open = !open" color="primary" size="xs" data-testid="language-dropdown"
-      :title="String($t('common.settings'))">
+      :title="String(t('common.settings'))">
       <CoreAppIcon :name="icons.language" class="w-3.5 h-3.5" />
       <span class="text-xs font-medium">{{ currentLocale.toUpperCase() }}</span>
       <CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 transition-transform" :class="{ 'rotate-180': open }" />
@@ -30,7 +30,7 @@
 
         <div v-if="communityLocales.length > 0" class="mt-1 border-t border-(--color-border) px-2 pt-1">
           <div class="px-2 py-1 text-[10px] uppercase tracking-wide text-(--color-text-muted)">
-            {{ $t('settings.communityLanguages') }}
+            {{ t('settings.communityLanguages') }}
           </div>
           <CoreAppButton v-for="locale in communityLocales" :key="locale.code" @click="switchTo(locale.code)"
             variant="ghost" color="neutral" size="xs" block class="justify-start"
@@ -42,9 +42,9 @@
         <div class="mt-1 border-t border-(--color-border) px-1 pt-1">
           <a :href="transifexUrl" target="_blank" rel="noopener noreferrer"
             class="flex min-h-8 items-center rounded-md px-2 py-1 text-xs text-(--color-primary-soft-text) hover:bg-(--color-surface-hover)"
-            data-testid="language-dropdown-item-contribute" :title="String($t('message.contributeTranslations'))"
+            data-testid="language-dropdown-item-contribute" :title="String(t('message.contributeTranslations'))"
             @click="open = false">
-            {{ $t('message.translationMissing') }}
+            {{ t('message.translationMissing') }}
           </a>
         </div>
       </div>
@@ -58,7 +58,7 @@ const props = defineProps<{
 }>()
 
 const icons = useIcons()
-const { locale, locales, setLocale } = useI18n()
+const { locale, locales, setLocale, t } = useI18n()
 const currentLocale = computed(() => locale.value || 'en')
 const supportedLocales = ['en', 'de', 'fr']
 const transifexUrl = 'https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/'
