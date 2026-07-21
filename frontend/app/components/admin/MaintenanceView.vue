@@ -44,11 +44,17 @@
                             closable compact @close="clientCardMessage = null" />
                         <div
                             class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)">
-                            <div v-for="client in blockedClients" :key="client"
-                                class="flex items-center justify-between px-3 py-2 text-sm hover:bg-(--color-surface-hover)">
-                                <span class="truncate">{{ client }}</span>
+                            <div v-for="client in blockedClientEntries" :key="client.clientId"
+                                class="flex items-center justify-between gap-3 px-3 py-2 text-sm hover:bg-(--color-surface-hover)">
+                                <div class="min-w-0">
+                                    <div class="truncate">{{ client.clientId }}</div>
+                                    <div v-if="client.contexts.length > 0"
+                                        class="truncate text-xs text-(--color-text-muted)">
+                                        {{ client.contexts.join(', ') }}
+                                    </div>
+                                </div>
                                 <CoreAppButton size="xs" variant="soft" color="primary" :loading="unblockingClient"
-                                    :disabled="isReadOnly" @click="unblockSingleClient(client)">
+                                    :disabled="isReadOnly" @click="unblockSingleClient(client.clientId)">
                                     {{ $t('clients.unblock') }}
                                 </CoreAppButton>
                             </div>
@@ -85,14 +91,21 @@
                             variant="subtle" closable compact @close="productCardMessage = null" />
                         <div
                             class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)">
-                            <div v-for="(reason, productId) in lockedProducts" :key="productId"
-                                class="flex items-center justify-between px-3 py-2 text-sm hover:bg-(--color-surface-hover)">
-                                <div class="truncate min-w-0 mr-2">
-                                    <span>{{ productId }}</span>
-                                    <span v-if="reason" class="text-(--color-text-muted) ml-1">({{ reason }})</span>
+                            <div v-for="product in lockedProductEntries" :key="product.productId"
+                                class="flex items-center justify-between gap-3 px-3 py-2 text-sm hover:bg-(--color-surface-hover)">
+                                <div class="min-w-0">
+                                    <div class="truncate">{{ product.productId }}</div>
+                                    <div v-if="product.locations.length > 0"
+                                        class="truncate text-xs text-(--color-text-muted)">
+                                        {{ product.locations.join(', ') }}
+                                    </div>
+                                    <div v-else-if="product.reason"
+                                        class="truncate text-xs text-(--color-text-muted)">
+                                        {{ product.reason }}
+                                    </div>
                                 </div>
                                 <CoreAppButton size="xs" variant="soft" color="primary" :loading="unlockingProduct"
-                                    :disabled="isReadOnly" @click="unlockSingleProduct(String(productId))">
+                                    :disabled="isReadOnly" @click="unlockSingleProduct(product.productId)">
                                     {{ $t('products.unlock') }}
                                 </CoreAppButton>
                             </div>
@@ -309,8 +322,9 @@ const productCardMessage = ref<{ type: 'success' | 'error'; message: string } | 
 const loadingClients = ref(false)
 const loadingProducts = ref(false)
 const blockedClients = ref<string[]>([])
+const blockedClientContexts = ref<Record<string, string[]>>({})
 const unblockingClient = ref(false)
-const lockedProducts = ref<Record<string, string>>({})
+const lockedProducts = ref<Record<string, unknown>>({})
 const unlockingProduct = ref(false)
 const loadingAppState = ref(false)
 const savingAppState = ref(false)
@@ -329,6 +343,68 @@ const restoreOptions = ref({ file_id: '', config_files: false, redis_data: false
 
 const blockedClientsCount = computed(() => blockedClients.value.length)
 const lockedProductsCount = computed(() => Object.keys(lockedProducts.value).length)
+
+type BlockedClientEntry = {
+    clientId: string
+    contexts: string[]
+}
+
+type LockedProductEntry = {
+    productId: string
+    locations: string[]
+    reason: string
+}
+
+function normalizeStringArray(value: unknown): string[] {
+    if (Array.isArray(value)) {
+        return value.map(v => String(v).trim()).filter(Boolean)
+    }
+
+    if (typeof value === 'string') {
+        const trimmed = value.trim()
+        if (!trimmed) return []
+
+        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+            try {
+                const parsed = JSON.parse(trimmed)
+                if (Array.isArray(parsed)) {
+                    return parsed.map(v => String(v).trim()).filter(Boolean)
+                }
+            } catch {
+            }
+        }
+
+        return [trimmed]
+    }
+
+    if (value && typeof value === 'object') {
+        const record = value as Record<string, unknown>
+        const depots = normalizeStringArray(record.depots)
+        if (depots.length > 0) return depots
+        const servers = normalizeStringArray(record.servers)
+        if (servers.length > 0) return servers
+    }
+
+    return []
+}
+
+const blockedClientEntries = computed<BlockedClientEntry[]>(() => {
+    return blockedClients.value.map((clientId) => ({
+        clientId,
+        contexts: blockedClientContexts.value[clientId] || [],
+    }))
+})
+
+const lockedProductEntries = computed<LockedProductEntry[]>(() => {
+    return Object.entries(lockedProducts.value).map(([productId, rawReason]) => {
+        const locations = normalizeStringArray(rawReason)
+        return {
+            productId,
+            locations,
+            reason: locations.length > 0 ? '' : String(rawReason || ''),
+        }
+    })
+})
 
 const serverIdOptions = computed(() => [
     { label: String($t('backup.useFrom')), value: 'backup' },
@@ -350,11 +426,20 @@ async function fetchBlockedClients() {
         if (data) {
             if (Array.isArray(data)) {
                 blockedClients.value = data as string[]
+                blockedClientContexts.value = {}
             } else if (typeof data === 'object' && data !== null) {
-                blockedClients.value = Object.keys(data as Record<string, unknown>)
+                const entries = data as Record<string, unknown>
+                blockedClients.value = Object.keys(entries)
+                blockedClientContexts.value = Object.fromEntries(
+                    Object.entries(entries).map(([clientId, value]) => [clientId, normalizeStringArray(value)]),
+                )
             } else {
                 blockedClients.value = []
+                blockedClientContexts.value = {}
             }
+        } else {
+            blockedClients.value = []
+            blockedClientContexts.value = {}
         }
     } catch (e) {
         clientCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
@@ -367,7 +452,11 @@ async function fetchLockedProducts() {
     try {
         const { data, error: err } = await api.getLockedProducts()
         if (err) throw err
-        if (data) lockedProducts.value = data as Record<string, string>
+        if (data && typeof data === 'object') {
+            lockedProducts.value = data as Record<string, unknown>
+        } else {
+            lockedProducts.value = {}
+        }
     } catch (e) {
         productCardMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
     }

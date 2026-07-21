@@ -26,12 +26,12 @@ export function useApiHelpers() {
     try {
       const qs = params
         ? '?' +
-          new URLSearchParams(
-            Object.entries(params).map(([k, v]) => [
-              k,
-              typeof v === 'object' ? JSON.stringify(v) : String(v),
-            ])
-          ).toString()
+        new URLSearchParams(
+          Object.entries(params).map(([k, v]) => [
+            k,
+            typeof v === 'object' ? JSON.stringify(v) : String(v),
+          ])
+        ).toString()
         : ''
       const response = await $customFetch.raw<T>(url + qs)
       const total = response.headers.get('X-Total-Count')
@@ -279,7 +279,7 @@ export function useApiHelpers() {
       selectedDepots: `[${selectedServers.join(',')}]`,
     }
     if (productType) params.productType = productType
-    return apiGet<Array<{ productId: string; [k: string]: unknown }>>(
+    return apiGet<Array<{ productId: string;[k: string]: unknown }>>(
       '/opsidata/depots/products',
       params
     )
@@ -536,7 +536,7 @@ export function useApiHelpers() {
 
   const unblockAllClients = () => apiPost<void>('/opsidata/clients/unblock')
 
-  const getLockedProducts = () => apiGet<Record<string, string>>('/opsidata/locked-products')
+  const getLockedProducts = () => apiGet<Record<string, unknown>>('/opsidata/locked-products')
 
   const unlockProduct = (productId: string) =>
     apiPost<void>(`/opsidata/products/${productId}/unlock`)
