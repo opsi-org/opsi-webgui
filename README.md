@@ -20,10 +20,10 @@
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript" alt="TypeScript">
 </p>
 
-**opsi-WebGUI** is the official browser-based management interface for [opsi](https://www.opsi.org), the open-source client management system.
+**opsi-WebGUI** is the official browser-based management interface for [OPSI](https://www.opsi.org), the open-source client management system.
 Manage clients, deploy software, configure servers, inspect logs and perform administration tasks directly from your browser without installing additional software.
 
-![opsi-webgui clients overview](./screenshots/readme/opsi-webgui-clients.png)
+![opsi-WebGUI clients overview](./screenshots/readme/opsi-webgui-clients.png)
 
 ## Install
 
@@ -171,7 +171,7 @@ Contributions are welcome! Please read this section before opening a pull reques
 
 Please open an issue on [GitHub Issues](https://github.com/opsi-org/opsi-webgui/issues) with:
 
-- opsi-webgui version (shown in the bottom-left corner of the login page)
+- opsi-WebGUI version (shown in the bottom-left corner of the login page)
 - Steps to reproduce
 - Expected vs. actual behavior
 
