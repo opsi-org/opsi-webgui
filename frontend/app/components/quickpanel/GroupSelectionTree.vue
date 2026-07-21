@@ -163,8 +163,6 @@ watch(searchQuery, (q) => {
 	if (_searchTimer) clearTimeout(_searchTimer)
 	_searchTimer = setTimeout(() => { debouncedSearch.value = q }, 150)
 })
-const allClientsList = ref<string[]>([])
-const allClientsLoading = ref(false)
 const collapsedSections = ref<Set<string>>(new Set(['groups', 'clientdirectory']))
 
 function isSectionCollapsed(sectionId: string): boolean {
@@ -319,9 +317,57 @@ const groupMembersMap = computed(() => {
 	return map
 })
 
+function findGroupNodeById(nodes: GroupTreeNodeData[], groupId: string): GroupTreeNodeData | null {
+	for (const node of nodes) {
+		if (node.id === groupId) return node
+		if (node.children?.length) {
+			const found = findGroupNodeById(node.children, groupId)
+			if (found) return found
+		}
+	}
+	return null
+}
+
+function collectGroupIdsRecursive(node: GroupTreeNodeData, out: string[] = []): string[] {
+	out.push(node.id)
+	for (const child of node.children || []) {
+		collectGroupIdsRecursive(child, out)
+	}
+	return out
+}
+
+function collectGroupMembersRecursive(groupId: string): string[] {
+	const root = findGroupNodeById(rawTree.value, groupId)
+	if (!root) return []
+	const members = new Set<string>()
+	const walk = (node: GroupTreeNodeData) => {
+		for (const member of node.members || []) members.add(member)
+		for (const child of node.children || []) walk(child)
+	}
+	walk(root)
+	return [...members]
+}
+
+async function ensureGroupSubtreeLoaded(groupId: string): Promise<void> {
+	const root = findGroupNodeById(rawTree.value, groupId)
+	if (!root) return
+	const ids = collectGroupIdsRecursive(root)
+	for (const id of ids) {
+		if (props.groupType === 'client') {
+			if (!clientGroupsLoadedGroups.value.has(id)) {
+				await fetchGroupChildrenLazy(id, selectionStore.selectedServers)
+			}
+		} else {
+			if (!productGroupsLoadedGroups.value.has(id)) {
+				await fetchProductGroupChildrenLazy(id)
+			}
+		}
+	}
+}
+
 function isItemChecked(item: FlatItem): boolean {
 	if (item.isGroup) {
-		const members = groupMembersMap.value.get(item.id)
+		const members = collectGroupMembersRecursive(item.id)
 		if (members && members.length > 0) {
 			const set = selectedItemsSet.value
 			for (const m of members) {
@@ -339,20 +385,9 @@ function isGroupLoading(groupId: string): boolean {
 	return productGroupsLoadingGroups.value.has(groupId)
 }
 
-function handleItemClick(item: FlatItem) {
+async function handleItemClick(item: FlatItem) {
 	if (item.isGroup) {
-		if (props.groupType === 'client' && !clientGroupsLoadedGroups.value.has(item.id)) {
-			fetchGroupChildrenLazy(item.id, selectionStore.selectedServers).then(() => {
-				_doGroupSelection(item)
-			})
-			return
-		}
-		if (props.groupType === 'product' && !productGroupsLoadedGroups.value.has(item.id)) {
-			fetchProductGroupChildrenLazy(item.id).then(() => {
-				_doGroupSelection(item)
-			})
-			return
-		}
+		await ensureGroupSubtreeLoaded(item.id)
 		_doGroupSelection(item)
 	} else {
 		if (props.groupType === 'client') selectionStore.toggleClient(item.id, 'quickpanel')
@@ -362,7 +397,7 @@ function handleItemClick(item: FlatItem) {
 
 function _doGroupSelection(item: FlatItem) {
 	const isCurrentlyChecked = isItemChecked(item)
-	const members = groupMembersMap.value.get(item.id) || []
+	const members = collectGroupMembersRecursive(item.id)
 	if (props.groupType === 'client') {
 		if (isCurrentlyChecked) {
 			// Uncheck: remove group and its members
@@ -414,37 +449,12 @@ function clearAll() {
 	}
 }
 
-function collectAllMembers(nodes: GroupTreeNodeData[]): string[] {
-	const result: string[] = []
-	for (const node of nodes) {
-		if (node.members) result.push(...node.members)
-		if (node.children) result.push(...collectAllMembers(node.children))
-	}
-	return result
-}
-
 function refresh() {
 	if (props.groupType === 'client') {
 		// On manual refresh, also clear lazy-load tracking so children are re-fetched
 		fetchClientGroups(true, selectionStore.selectedServers)
-		fetchAllClients()
 	} else {
 		fetchProductGroups(true)
-	}
-}
-
-async function fetchAllClients() {
-	if (props.groupType !== 'client') return
-	allClientsLoading.value = true
-	try {
-		const { getClientIds } = useApiHelpers()
-		const depots = selectionStore.selectedServers
-		if (depots.length > 0) {
-			const result = await getClientIds(depots)
-			allClientsList.value = result.data || []
-		}
-	} catch { /* ignore */ } finally {
-		allClientsLoading.value = false
 	}
 }
 
@@ -457,7 +467,6 @@ watch(() => props.active, (isActive) => {
 	if (isActive && !hasData.value && !loading.value) {
 		if (props.groupType === 'client') {
 			fetchClientGroups(false, selectionStore.selectedServers)
-			fetchAllClients()
 		} else {
 			fetchProductGroups()
 		}
@@ -468,6 +477,5 @@ watch(() => selectionStore.selectedServers.join(','), () => {
 	if (props.groupType !== 'client') return
 	if (!props.active && !hasData.value) return
 	fetchClientGroups(true, selectionStore.selectedServers)
-	fetchAllClients()
 })
 </script>

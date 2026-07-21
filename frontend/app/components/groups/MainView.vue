@@ -18,12 +18,14 @@
                         statusMessage.type === 'success'
                             ? 'bg-(--color-success)/15 text-(--color-success)'
                             : 'bg-(--color-error)/15 text-(--color-error)'
-                    ]">
+                    ]" :role="statusMessage.type === 'error' ? 'alert' : 'status'"
+                        :aria-live="statusMessage.type === 'error' ? 'assertive' : 'polite'" aria-atomic="true">
                         <CoreAppIcon :name="statusMessage.type === 'success' ? icons.checkCircle : icons.xCircle"
                             class="w-4 h-4 shrink-0" />
                         <span>{{ statusMessage.text }}</span>
                         <CoreAppButton variant="ghost" color="neutral" size="xs"
-                            class="ml-1 opacity-60 hover:opacity-100" @click="statusMessage = null">
+                            class="ml-1 opacity-60 hover:opacity-100" :aria-label="String($t('common.close'))"
+                            @click="statusMessage = null">
                             <CoreAppIcon :name="icons.x" class="w-3.5 h-3.5" />
                         </CoreAppButton>
                     </div>
@@ -151,8 +153,8 @@
                     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- keyboard navigation container for member list (roving focus) -->
                     <div class="flex-1 overflow-auto p-4 space-y-4 outline-none" tabindex="-1"
                         @keydown="handleMemberListKeydown">
-                        <div class="pt-4 border-(--color-border)">
-                            <div class="sticky top-0 z-10 bg-(--color-background) pb-2">
+                        <div class="border-(--color-border)">
+                            <div class="sticky top-0 z-10 bg-(--color-background) pt-4 pb-2 border-b border-(--color-border)">
                                 <div class="flex items-center justify-between mb-3">
                                     <h2 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
                                         {{ $t('groups.members') }}
@@ -270,6 +272,51 @@
                         </CoreAppFormField>
                         <CoreAppFormField :label="$t('common.notes')">
                             <CoreAppTextarea v-model="createForm.notes" :rows="2" class="w-full" />
+                        </CoreAppFormField>
+                        <CoreAppFormField>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-2 cursor-pointer select-none">
+                                    <CoreAppCheckbox :model-value="createAddMembersEnabled"
+                                        :aria-label="String($t('groups.membersAdd'))"
+                                        @update:model-value="toggleCreateAddMembers" />
+                                    <span class="text-sm text-(--color-text)">
+                                        {{ $t('groups.membersAdd') }}
+                                        <span class="text-(--color-text-muted)">({{ $t('common.optional') }})</span>
+                                    </span>
+                                </label>
+
+                                <div v-if="createAddMembersEnabled" class="space-y-2">
+                                    <CoreAppFilterInput v-model="createMembersSearch" size="sm"
+                                        :placeholder="$t('groups.membersSearch')" />
+                                    <div class="border border-(--color-border) rounded-lg overflow-hidden">
+                                        <div class="max-h-40 overflow-auto">
+                                            <span v-for="item in filteredCreateMembers" :key="`create-${item}`"
+                                                class="flex items-center gap-2 px-3 py-2 hover:bg-(--color-surface-hover) cursor-pointer border-b border-(--color-border) last:border-b-0 text-(--color-text)"
+                                                :class="createSelectedMembers.includes(item) ? 'bg-opsi-blue/5' : ''">
+                                                <CoreAppCheckbox :model-value="createSelectedMembers.includes(item)"
+                                                    :aria-label="item"
+                                                    @update:model-value="toggleCreateMemberSelection(item)" />
+                                                <button type="button"
+                                                    class="text-sm truncate text-left bg-transparent border-0 p-0 flex-1 cursor-pointer"
+                                                    @click.prevent="toggleCreateMemberSelection(item, $event)">
+                                                    {{ item }}
+                                                </button>
+                                            </span>
+                                            <div v-if="filteredCreateMembers.length === 0"
+                                                class="text-sm text-(--color-text-muted) py-3 text-center">
+                                                {{ createMembersSearch ? $t('common.noResults') : $t('common.noData') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-xs text-(--color-text-muted)">
+                                        <button type="button" class="underline decoration-dotted"
+                                            @click="toggleSelectAllCreateMembers">
+                                            {{ $t('common.selectAll') }}
+                                        </button>
+                                        <span>{{ createSelectedMembers.length }} {{ $t('common.selected') }}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </CoreAppFormField>
                     </CoreAppForm>
                     <template #footer>
@@ -531,6 +578,10 @@ const selectedNewMembers = ref<string[]>([])
 const selectedMembers = ref<string[]>([])
 const lastClickedMember = ref<string | null>(null)
 const lastClickedNewMember = ref<string | null>(null)
+const createAddMembersEnabled = ref(false)
+const createMembersSearch = ref('')
+const createSelectedMembers = ref<string[]>([])
+const lastClickedCreateMember = ref<string | null>(null)
 
 const containerRef = ref<HTMLElement | null>(null)
 const isMobile = ref(false)
@@ -623,6 +674,16 @@ const filteredAvailableMembers = computed(() => {
 
     if (availableMembersSearch.value.trim()) {
         const query = availableMembersSearch.value.toLowerCase()
+        available = available.filter(m => m.toLowerCase().includes(query))
+    }
+    return available.slice(0, 100)
+})
+
+const filteredCreateMembers = computed(() => {
+    const allAvailable = activeGroupType.value === 'clients' ? availableClients.value : availableProducts.value
+    let available = allAvailable
+    if (createMembersSearch.value.trim()) {
+        const query = createMembersSearch.value.toLowerCase()
         available = available.filter(m => m.toLowerCase().includes(query))
     }
     return available.slice(0, 100)
@@ -892,7 +953,7 @@ async function fetchAvailableClients() {
         const depotIds = await ensureDepotIds()
         const { data } = await getClientIds(depotIds)
         if (data && Array.isArray(data)) {
-            availableClients.value = data
+            availableClients.value = [...new Set(data)]
         }
     } catch {
         // silently ignore
@@ -907,7 +968,7 @@ async function fetchAvailableProducts() {
         const depotIds = await ensureDepotIds()
         const result = await getServersProducts(depotIds, 'LocalbootProduct')
         if (result.data && Array.isArray(result.data)) {
-            availableProducts.value = result.data.map(p => p.productId)
+            availableProducts.value = [...new Set(result.data.map(p => p.productId))]
         }
     } catch {
         // silently ignore
@@ -921,7 +982,63 @@ function openCreateModal(parentGroupId?: string) {
     createForm.parentGroupId = parentGroupId || ''
     createForm.description = ''
     createForm.notes = ''
+    createAddMembersEnabled.value = false
+    createMembersSearch.value = ''
+    createSelectedMembers.value = []
+    lastClickedCreateMember.value = null
     showCreateModal.value = true
+}
+
+async function toggleCreateAddMembers(value: boolean) {
+    createAddMembersEnabled.value = value
+    if (!value) {
+        createSelectedMembers.value = []
+        createMembersSearch.value = ''
+        return
+    }
+    if (activeGroupType.value === 'clients' && availableClients.value.length === 0) {
+        await fetchAvailableClients()
+    }
+    if (activeGroupType.value === 'products' && availableProducts.value.length === 0) {
+        await fetchAvailableProducts()
+    }
+}
+
+function toggleCreateMemberSelection(item: string, event?: MouseEvent | KeyboardEvent) {
+    if (event?.shiftKey && lastClickedCreateMember.value) {
+        const list = filteredCreateMembers.value
+        const from = list.indexOf(lastClickedCreateMember.value)
+        const to = list.indexOf(item)
+        if (from >= 0 && to >= 0) {
+            const start = Math.min(from, to)
+            const end = Math.max(from, to)
+            const range = list.slice(start, end + 1)
+            const allSelected = range.every(m => createSelectedMembers.value.includes(m))
+            if (allSelected) {
+                createSelectedMembers.value = createSelectedMembers.value.filter(m => !range.includes(m))
+            } else {
+                const newSet = new Set([...createSelectedMembers.value, ...range])
+                createSelectedMembers.value = [...newSet]
+            }
+            lastClickedCreateMember.value = item
+            return
+        }
+    }
+    const idx = createSelectedMembers.value.indexOf(item)
+    if (idx >= 0) {
+        createSelectedMembers.value.splice(idx, 1)
+    } else {
+        createSelectedMembers.value.push(item)
+    }
+    lastClickedCreateMember.value = item
+}
+
+function toggleSelectAllCreateMembers() {
+    if (createSelectedMembers.value.length === filteredCreateMembers.value.length) {
+        createSelectedMembers.value = []
+    } else {
+        createSelectedMembers.value = [...filteredCreateMembers.value]
+    }
 }
 
 function openEditModal(group: GroupTreeNodeData) {
@@ -934,21 +1051,55 @@ function openEditModal(group: GroupTreeNodeData) {
 }
 
 async function doCreateGroup() {
-    if (!createForm.groupId) return
+    const groupId = createForm.groupId.trim()
+    if (!groupId) return
+
+    const targetIdLower = groupId.toLowerCase()
+    const stack = [...currentTreeGroups.value]
+    while (stack.length > 0) {
+        const node = stack.pop()
+        if (!node) break
+        if (node.id.toLowerCase() === targetIdLower) {
+            showStatus('error', `Group "${groupId}" already exists.`)
+            return
+        }
+        if (node.children?.length) stack.push(...node.children)
+    }
 
     saving.value = true
     try {
         const parentId = createForm.parentGroupId || undefined
         const createFn = activeGroupType.value === 'clients' ? createHostGroup : createProductGroup
-        await createFn({
-            groupId: createForm.groupId,
+        const createResult = await createFn({
+            groupId,
             parentGroupId: parentId,
             description: createForm.description || undefined,
             notes: createForm.notes || undefined
         })
-        showStatus('success', String($t('notify.group.created', { group: createForm.groupId })))
+        if (createResult?.error) throw createResult.error
+
+        let memberAddError: unknown = null
+        if (createAddMembersEnabled.value && createSelectedMembers.value.length > 0) {
+            const addFn = activeGroupType.value === 'clients' ? addClientsToGroup : addProductsToGroup
+            try {
+                const addResult = await addFn(groupId, createSelectedMembers.value)
+                if (addResult?.error) throw addResult.error
+            } catch (err) {
+                memberAddError = err
+            }
+        }
+
         showCreateModal.value = false
         await fetchCurrentGroups()
+
+        if (memberAddError) {
+            const details = memberAddError instanceof Error ? memberAddError.message : String($t('notify.error'))
+            showStatus('error', `Group "${groupId}" created, but adding members failed: ${details}`)
+        } else if (createAddMembersEnabled.value && createSelectedMembers.value.length > 0) {
+            showStatus('success', `Group "${groupId}" created and ${createSelectedMembers.value.length} members added.`)
+        } else {
+            showStatus('success', String($t('notify.group.created', { group: groupId })))
+        }
     } catch (e) {
         showStatus('error', e instanceof Error ? e.message : String($t('notify.error')))
     } finally {
