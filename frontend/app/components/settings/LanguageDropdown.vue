@@ -17,7 +17,7 @@
     </CoreAppButton>
     <Transition :name="direction === 'up' ? 'dropdown-up' : 'dropdown'">
       <div v-if="open" data-testid="language-dropdown-menu" :class="[
-        'absolute right-0 min-w-50 bg-(--color-surface-elevated) border border-(--color-border) rounded-lg shadow-lg z-50 py-1',
+        'absolute right-0 min-w-50 max-h-[min(24rem,70vh)] overflow-y-auto bg-(--color-surface-elevated) border border-(--color-border) rounded-lg shadow-lg z-50 py-1',
         direction === 'up' ? 'bottom-full mb-1' : 'top-full mt-1'
       ]">
         <div v-if="priorityLocales.length > 0" class="px-2 pb-1">

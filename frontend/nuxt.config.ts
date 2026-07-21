@@ -21,17 +21,44 @@ const localeNameMap: Record<string, string> = {
   en: 'English',
   fr: 'Français',
 }
-const locales = fs
+type LocaleFileCandidate = {
+  code: string
+  file: string
+  // Lower value means higher priority.
+  // Prefer plain <code>.json (Transifex downloads) over prefixed opsi-webgui_<code>.json.
+  priority: number
+}
+
+const localeFileCandidates: LocaleFileCandidate[] = fs
   .readdirSync(localeDir)
-  .filter((file) => /^opsi-webgui_[a-z-]+\.json$/i.test(file))
-  .map((file) => {
-    const code = file.replace(/^opsi-webgui_/, '').replace(/\.json$/i, '')
-    return {
-      code,
-      file,
-      name: localeNameMap[code] || code.toUpperCase(),
+  .flatMap((file) => {
+    const prefixedMatch = file.match(/^opsi-webgui_([a-z-]+)\.json$/i)
+    if (prefixedMatch) {
+      const code = prefixedMatch[1]
+      return code ? [{ code: code.toLowerCase(), file, priority: 1 }] : []
     }
+
+    const plainMatch = file.match(/^([a-z-]+)\.json$/i)
+    if (plainMatch) {
+      const code = plainMatch[1]
+      return code ? [{ code: code.toLowerCase(), file, priority: 0 }] : []
+    }
+
+    return []
   })
+
+const localesByCode = new Map<string, { code: string; file: string; name: string }>()
+for (const candidate of localeFileCandidates.sort((a, b) => a.priority - b.priority || a.code.localeCompare(b.code))) {
+  if (!localesByCode.has(candidate.code)) {
+    localesByCode.set(candidate.code, {
+      code: candidate.code,
+      file: candidate.file,
+      name: localeNameMap[candidate.code] || candidate.code.toUpperCase(),
+    })
+  }
+}
+
+const locales = [...localesByCode.values()]
 
 const localeByCode = new Map(locales.map((locale) => [locale.code, locale]))
 const priorityCodes = ['en', 'de', 'fr']
