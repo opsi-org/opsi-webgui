@@ -72,7 +72,7 @@
 						<CoreAppSelect v-model="defaultPage" :items="defaultPageOptions" size="xs"
 							:aria-label="$t('nav.defaultPage')" :title="defaultPageTooltip" class="flex-1 w-full" />
 						<SettingsThemeToggle />
-						<SettingsLanguageDropdown />
+						<SettingsLanguageDropdown direction="up" />
 					</div>
 				</div>
 			</div>
