@@ -153,13 +153,15 @@ export const useSelectionStore = defineStore('selection', {
       if (toAdd.length > 0) this.selectedProducts = this.selectedProducts.concat(toAdd)
       this.selectionSource = source
     },
-    removeClients(clientIds: string[]) {
+    removeClients(clientIds: string[], source: SelectionSource = 'groups') {
       const toRemove = new Set(clientIds)
       this.selectedClients = this.selectedClients.filter((id) => !toRemove.has(id))
+      this.selectionSource = source
     },
-    removeProducts(productIds: string[]) {
+    removeProducts(productIds: string[], source: SelectionSource = 'groups') {
       const toRemove = new Set(productIds)
       this.selectedProducts = this.selectedProducts.filter((id) => !toRemove.has(id))
+      this.selectionSource = source
     },
   },
 })

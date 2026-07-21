@@ -405,7 +405,7 @@ function _doGroupSelection(item: FlatItem) {
 				selectionStore.toggleClientGroup(item.id)
 			}
 			if (members.length > 0) {
-				selectionStore.removeClients(members)
+				selectionStore.removeClients(members, 'quickpanel')
 			}
 		} else {
 			// Check: add group and its members
@@ -422,7 +422,7 @@ function _doGroupSelection(item: FlatItem) {
 				selectionStore.toggleProductGroup(item.id)
 			}
 			if (members.length > 0) {
-				selectionStore.removeProducts(members)
+				selectionStore.removeProducts(members, 'quickpanel')
 			}
 		} else {
 			if (!selectionStore.selectedProductGroups.includes(item.id)) {
