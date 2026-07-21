@@ -639,6 +639,7 @@ async function fetchProducts(params?: PageChangeParams) {
 	error.value = null
 	try {
 		const effectiveParams = params ?? lastPageParams.value ?? undefined
+		const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
 		await selectionStore.ensureServersSelected()
 		if (selectionStore.selectedServers.length === 0) { error.value = String($t('servers.noSelection')); return }
 
@@ -648,6 +649,8 @@ async function fetchProducts(params?: PageChangeParams) {
 		}
 		if (selectionStore.selectedClients.length > 0)
 			p.selectedClients = `[${selectionStore.selectedClients.join(',')}]`
+		if (selectionSortActive && selectionStore.selectedProducts.length > 0)
+			p.selected = `[${selectionStore.selectedProducts.join(',')}]`
 		if (effectiveParams) {
 			p.pageNumber = effectiveParams.pageNumber
 			p.perPage = effectiveParams.perPage
@@ -720,6 +723,11 @@ function tryOpenPanelFromRoute() {
 
 watch(() => selectionStore.selectedClients, () => fetchProducts(), { deep: true })
 watch(() => selectionStore.selectedServers, () => fetchProducts(), { deep: true })
+watch(() => selectionStore.selectedProducts.join(','), () => {
+	if ((lastPageParams.value?.sortBySelection || sortBySelectionEnabled.value) && selectionStore.selectionSource !== 'table') {
+		fetchProducts()
+	}
+})
 
 watch(messageBusLastMsg, (msg) => {
 	if (!msg || typeof msg !== 'object') return
@@ -744,7 +752,7 @@ onMounted(async () => {
 	}
 	const filterQuery = route.query.filter as string | undefined
 	await Promise.all([
-		fetchProducts(filterQuery ? { pageNumber: 1, perPage: 20, sortBy: props.initialSortColumn || 'productId', sortDesc: props.initialSortColumn ? true : false, filterQuery } : undefined),
+		fetchProducts(filterQuery ? { pageNumber: 1, perPage: 20, sortBy: props.initialSortColumn || 'productId', sortDesc: props.initialSortColumn ? true : false, filterQuery, sortBySelection: false } : undefined),
 		fetchProductIcons(),
 	])
 	tryOpenPanelFromRoute()

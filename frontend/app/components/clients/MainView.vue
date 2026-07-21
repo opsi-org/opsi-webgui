@@ -349,6 +349,7 @@ async function fetchClients(params?: PageChangeParams) {
 	error.value = null
 	try {
 		const effectiveParams = params ?? lastPageParams.value ?? undefined
+		const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
 		await selectionStore.ensureServersSelected()
 		if (selectionStore.selectedServers.length === 0) {
 			const depotResult = await getServerIds()
@@ -360,6 +361,8 @@ async function fetchClients(params?: PageChangeParams) {
 			selectedDepots: selectionStore.selectedServersParam,
 			selectedClients: `[${selectionStore.selectedClients.join(',')}]`,
 		}
+		if (selectionSortActive && selectionStore.selectedClients.length > 0)
+			p.selected = `[${selectionStore.selectedClients.join(',')}]`
 		if (effectiveParams) {
 			p.pageNumber = effectiveParams.pageNumber
 			p.perPage = effectiveParams.perPage
@@ -466,6 +469,12 @@ watch(messageBusLastMsg, (msg) => {
 	}
 })
 
+watch(() => selectionStore.selectedClients.join(','), () => {
+	if ((lastPageParams.value?.sortBySelection || sortBySelectionEnabled.value) && selectionStore.selectionSource !== 'table') {
+		fetchClients()
+	}
+})
+
 watch(() => selectionStore.selectedServers, () => {
 	fetchClients()
 	fetchBlockedClients()
@@ -480,7 +489,7 @@ watch(panelTab, (newTab) => {
 onMounted(async () => {
 	const filterQuery = route.query.filter as string | undefined
 	await Promise.all([
-		fetchClients(filterQuery ? { pageNumber: 1, perPage: 20, sortBy: 'clientId', sortDesc: false, filterQuery } : undefined),
+		fetchClients(filterQuery ? { pageNumber: 1, perPage: 20, sortBy: 'clientId', sortDesc: false, filterQuery, sortBySelection: false } : undefined),
 		fetchBlockedClients()
 	])
 	const clientId = route.query.client as string | undefined

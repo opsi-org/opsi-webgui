@@ -82,3 +82,26 @@ async def test_depots_get(config, path, query_params, expected_result):  # pylin
             )
         else:
             assert sorted(res_data) == sorted(json_data)
+
+
+@pytest.mark.asyncio
+async def test_depots_selected_are_sorted_first(config):
+    selected_depot = "pytest-test-depot-2.domain.local"
+    res = requests.get(
+        f"{config.external_url}{API_ROOT}/depots",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+        params={
+            "selected": f"[{selected_depot}]",
+            "sortBy": "depotId",
+            "sortDesc": False,
+            "pageNumber": 1,
+            "perPage": 20,
+        },
+    )
+
+    assert res.status_code == status.HTTP_200_OK
+    data = res.json()
+    assert data
+    assert data[0]["depotId"] == selected_depot
+    assert bool(data[0]["selected"]) is True

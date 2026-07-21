@@ -293,6 +293,9 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
             )
         ).select_from(client_with_depot)
 
+        # Sort selected items first when a selection is active
+        if selected and selected != [""]:
+            client_select = client_select.order_by(text("selected DESC"))
         query = order_by(client_select, commons)  # type: ignore
         query = pagination(query, commons)
         result = session.execute(query, params)

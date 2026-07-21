@@ -274,6 +274,7 @@ export interface PageChangeParams {
   sortBy: string
   sortDesc: boolean
   filterQuery: string
+  sortBySelection: boolean
 }
 
 interface Props {
@@ -362,12 +363,20 @@ const selectedKeys = ref<string[]>([])
 const filterQueryInternal = ref(getStoredFilter(props.tableId))
 const currentPage = ref(1)
 const selectionModeOverride = ref<'single' | 'multi' | null>(null)
-const sortBySelection = ref(props.sortBySelectionEnabled || false)
+const sortBySelection = ref(Boolean(props.sortBySelectionEnabled && (props.selectedKeys?.length ?? 0) > 0))
 const lastClickedIndex = ref<number | null>(null)
 
-watch(() => props.sortBySelectionEnabled, (v) => {
-  if (v !== undefined) sortBySelection.value = v
+watch(() => props.sortBySelectionEnabled, (enabled, wasEnabled) => {
+  if (enabled && !wasEnabled && selectedKeys.value.length > 0 && !sortBySelection.value) {
+    sortBySelection.value = true
+  }
 })
+
+watch(sortBySelection, () => {
+  currentPage.value = 1
+  emitPageChange()
+})
+
 let filterDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
 const displayMode = computed(() => tableSettings.settings.displayMode)
@@ -439,17 +448,7 @@ const hasMoreData = computed(() => {
   return false
 })
 
-const displayRows = computed(() => {
-  if (!sortBySelection.value || selectedKeys.value.length === 0) return props.rows
-  const keySet = new Set(selectedKeys.value)
-  const selected: T[] = []
-  const unselected: T[] = []
-  for (const row of props.rows) {
-    if (keySet.has(getRowKey(row))) selected.push(row)
-    else unselected.push(row)
-  }
-  return [...selected, ...unselected]
-})
+const displayRows = computed(() => props.rows)
 
 const allSelected = computed(() =>
   props.rows.length > 0 && props.rows.every((row) => isSelected(row))
@@ -466,6 +465,7 @@ function getPageChangeParams(): PageChangeParams {
     sortBy: tableSettings.settings.sortColumn,
     sortDesc: tableSettings.settings.sortDirection === 'desc',
     filterQuery: filterQueryInternal.value,
+    sortBySelection: sortBySelection.value,
   }
 }
 
@@ -775,6 +775,9 @@ watch(filterQueryInternal, (val) => {
 watch(() => props.selectedKeys, (newKeys) => {
   if (newKeys) {
     selectedKeys.value = [...newKeys]
+    if (newKeys.length === 0 && sortBySelection.value) {
+      sortBySelection.value = false
+    }
     if (newKeys.length > 1 && effectiveSelectionMode.value === 'single') {
       selectionModeOverride.value = 'multi'
     }
