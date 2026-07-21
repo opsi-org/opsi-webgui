@@ -28,6 +28,7 @@
         <CoreAppDataTable :rows="servers" :columns="columns" :loading="loading" table-id="servers" row-key="depotId"
             :selectable="true" :filterable="true" :show-refresh="false" :total-items="totalItems"
             :selected-keys="selectionStore.selectedServers" :active-key="panelServer?.depotId"
+            :sort-by-selection-enabled="sortBySelectionEnabled"
             @row-activate="handleRowActivate" @selection-change="handleSelectionChange" @page-change="handlePageChange"
             @refresh="fetchServers">
             <template #cell-depotId="{ row }">
@@ -35,7 +36,7 @@
                     class="w-3.5 h-3.5 text-(--color-text-muted) mr-2" />
                 <span :class="(row as Server).type === 'OpsiConfigserver' ? 'font-bold' : ''">{{
                     (row as Server).depotId
-                }}</span>
+                    }}</span>
             </template>
             <template #cell-type="{ row }">
                 <CoreAppStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
@@ -97,6 +98,7 @@ const panelTab = ref('parameters')
 const lastPageParams = ref<PageChangeParams | null>(null)
 const configTabsRef = ref<{ hasAnyChanges: boolean; discardAll: () => void; refresh?: () => void } | null>(null)
 const showCreateConfigModal = ref(false)
+const sortBySelectionEnabled = computed(() => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedServers.length > 0)
 
 const { showLeaveWarning, checkUnsavedAndDo, confirmLeave: confirmPanelLeave, cancelLeave: cancelPanelLeave, setPanelQuery, clearPanelQuery } = usePanelRouter({
     entityQueryKey: 'server',
@@ -142,6 +144,15 @@ function handleSelectionChange(_rows: Server[], keys: string[]) {
 
 function handlePageChange(params: PageChangeParams) {
     lastPageParams.value = params
+    // Persist filter query to URL
+    if (params.filterQuery || route.query.filter) {
+        router.replace({
+            query: {
+                ...route.query as Record<string, string>,
+                filter: params.filterQuery || undefined
+            }
+        })
+    }
     fetchServers(params)
 }
 
@@ -153,13 +164,18 @@ async function fetchServers(params?: PageChangeParams) {
     loading.value = true
     error.value = null
     try {
+        const effectiveParams = params ?? lastPageParams.value ?? undefined
+        const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
         const p: Record<string, unknown> = {}
-        if (params) {
-            p.pageNumber = params.pageNumber
-            p.perPage = params.perPage
-            p.sortBy = params.sortBy
-            p.sortDesc = params.sortDesc
-            p.filterQuery = params.filterQuery
+        if (effectiveParams) {
+            p.pageNumber = effectiveParams.pageNumber
+            p.perPage = effectiveParams.perPage
+            p.sortBy = effectiveParams.sortBy
+            p.sortDesc = effectiveParams.sortDesc
+            p.filterQuery = effectiveParams.filterQuery
+        }
+        if (selectionSortActive && selectionStore.selectedServers.length > 0) {
+            p.selected = selectionStore.selectedServersParam
         }
         const result = await getServers(p)
         if (result.error) { error.value = result.error.message; return }
@@ -186,8 +202,15 @@ watch(panelTab, (newTab) => {
     }
 })
 
+watch(() => selectionStore.selectedServers.join(','), () => {
+    if ((lastPageParams.value?.sortBySelection || sortBySelectionEnabled.value) && selectionStore.selectionSource !== 'table') {
+        fetchServers()
+    }
+})
+
 onMounted(async () => {
-    await fetchServers()
+    const filterQuery = route.query.filter as string | undefined
+    await fetchServers(filterQuery ? { pageNumber: 1, perPage: 20, sortBy: 'depotId', sortDesc: false, filterQuery, sortBySelection: false } : undefined)
     const serverId = route.query.server as string | undefined
     const configType = route.query.configType as string | undefined
     if (configType) {

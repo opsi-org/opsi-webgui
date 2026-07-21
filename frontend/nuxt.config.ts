@@ -23,7 +23,7 @@ const localeNameMap: Record<string, string> = {
 }
 const locales = fs
   .readdirSync(localeDir)
-  .filter(file => /^opsi-webgui_[a-z-]+\.json$/i.test(file))
+  .filter((file) => /^opsi-webgui_[a-z-]+\.json$/i.test(file))
   .map((file) => {
     const code = file.replace(/^opsi-webgui_/, '').replace(/\.json$/i, '')
     return {
@@ -32,11 +32,19 @@ const locales = fs
       name: localeNameMap[code] || code.toUpperCase(),
     }
   })
-  .sort((a, b) => {
-    if (a.code === 'de') return -1
-    if (b.code === 'de') return 1
-    return a.code.localeCompare(b.code)
-  })
+
+const localeByCode = new Map(locales.map((locale) => [locale.code, locale]))
+const priorityCodes = ['en', 'de', 'fr']
+
+const prioritizedLocales = priorityCodes
+  .map((code) => localeByCode.get(code))
+  .filter((locale): locale is NonNullable<typeof locale> => !!locale)
+
+const communityLocales = locales
+  .filter((locale) => !priorityCodes.includes(locale.code))
+  .sort((a, b) => a.code.localeCompare(b.code))
+
+const orderedLocales = [...prioritizedLocales, ...communityLocales]
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -207,7 +215,7 @@ export default defineNuxtConfig({
   i18n: {
     strategy: 'no_prefix',
     defaultLocale: 'de',
-    locales,
+    locales: orderedLocales,
     bundle: {
       fullInstall: false,
     },
@@ -220,6 +228,20 @@ export default defineNuxtConfig({
 
   typescript: {
     typeCheck: true,
+  },
+
+  vite: {
+    plugins: [
+      {
+        name: 'fix-checker-runtime-base',
+        enforce: 'pre',
+        resolveId(id: string) {
+          if (id.endsWith('@vite-plugin-checker-runtime') && !id.startsWith('virtual:')) {
+            return 'virtual:@vite-plugin-checker-runtime'
+          }
+        },
+      },
+    ],
   },
 
   css: ['~/assets/styles/main.css'],

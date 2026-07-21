@@ -160,7 +160,7 @@
 							</div>
 						</div>
 						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+							class="form-row w-full flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
 							<span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
 								<CoreAppImage src="opsi-client-agent.svg" dark-src="opsi-client-agent-light.svg"
 									:alt="String($t('clients.deploy'))" image-class="w-8 h-8 shrink-0" />

@@ -313,7 +313,6 @@
     "selectType": "Log-Typ zum Anzeigen auswählen",
     "title": "Logs"
   },
-  "maintainedByOPSICommunity": "von der opsi-Community gepflegt",
   "message": {
     "contributeTranslations": "Beim Übersetzen des opsi-webgui in Transifex helfen",
     "translationMissing": "Ihre Sprache fehlt? Übersetzungen beitragen"
@@ -326,6 +325,7 @@
     "none": "Keine Module gefunden",
     "obsolete.desc": "Veraltete Lizenzmodule, die nicht mehr unterstützt werden. Nur noch aus historischen Gründen aufgeführt.",
     "title": "Module",
+    "unlimited": "Unbegrenzte Clients",
     "unlicensed": "Nicht lizenziert"
   },
   "nav": {
@@ -520,6 +520,7 @@
     "sortBy": "Sortieren nach",
     "sortBySelection": "Nach Auswahl sortieren",
     "table": "Tabelleneinstellungen",
+    "communityLanguages": "Community-Sprachen",
     "theme.dark": "Dunkel",
     "theme.light": "Hell"
   },
@@ -546,6 +547,7 @@
     "disabled": "Terminal ist derzeit deaktiviert.",
     "disconnect": "Trennen",
     "disconnected": "Getrennt",
+    "exited": "Sitzung beendet",
     "failed": "Verbindung fehlgeschlagen!",
     "id": "Terminal-ID",
     "press": "Drücken Sie Verbinden, um eine Sitzung zu starten...",

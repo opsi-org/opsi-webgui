@@ -119,6 +119,8 @@ def depots(
             .select_from(table("HOST").alias("h"))
             .where(where)
         )
+        if selected and selected != [""]:
+            depot_select = depot_select.order_by(text("selected DESC"))
         query = order_by(depot_select, commons)  # type: ignore
         query = pagination(query, commons)
 

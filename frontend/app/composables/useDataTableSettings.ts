@@ -50,6 +50,7 @@ const defaults: Record<string, DataTableSettings> = {
       'lastSeen',
       'version_outdated',
       'installationStatus_installed',
+      'actionRequest_set',
       'actionResult_failed',
       'reachable',
     ],

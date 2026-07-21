@@ -88,14 +88,14 @@
             <Transition name="quickpanel-slide">
                 <aside v-if="quickpanelOpen && !isMobile" :style="{ width: quickpanelWidth + 'px' }"
                     data-testid="quickpanel"
-                    class="bg-(--color-background) border-l border-(--color-border) overflow-auto shrink-0 flex flex-col relative">
+                    class="bg-(--color-background) border-l border-(--color-border) overflow-hidden shrink-0 flex flex-col relative">
                     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- pointer-only drag resize handle; not keyboard operable by design -->
                     <div class="absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group flex items-center justify-center"
                         @mousedown="startQuickpanelResize">
                         <div
                             class="w-0.5 h-8 bg-(--color-border) rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                    <div class="p-4 flex-1 flex flex-col">
+                    <div class="p-4 flex-1 min-h-0 flex flex-col overflow-hidden">
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text)">{{
                                 $t('quick.panel')
@@ -105,7 +105,9 @@
                                 <CoreAppIcon :name="icons.x" class="w-4 h-4" />
                             </CoreAppButton>
                         </div>
-                        <QuickpanelMainView />
+                        <div class="flex-1 min-h-0 overflow-hidden">
+                            <QuickpanelMainView />
+                        </div>
                     </div>
                 </aside>
             </Transition>
@@ -117,8 +119,8 @@
                     :aria-label="String($t('common.close'))" @click="quickpanelOpen = false"
                     @keydown.enter="quickpanelOpen = false" @keydown.space.prevent="quickpanelOpen = false" />
                 <div
-                    class="absolute bottom-0 left-0 right-0 bg-(--color-background) rounded-t-2xl max-h-[80vh] overflow-auto">
-                    <div class="p-4">
+                    class="absolute inset-0 bg-(--color-background) overflow-hidden">
+                    <div class="p-4 h-full min-h-0 flex flex-col overflow-hidden">
                         <div class="flex justify-center mb-3">
                             <div class="w-10 h-1 bg-(--color-border) rounded-full" />
                         </div>
@@ -130,7 +132,9 @@
                                 @click="quickpanelOpen = false" />
                         </div>
 
-                        <QuickpanelMainView />
+                        <div class="flex-1 min-h-0 overflow-hidden">
+                            <QuickpanelMainView />
+                        </div>
                     </div>
                 </div>
             </div>

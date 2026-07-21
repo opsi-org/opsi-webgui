@@ -45,7 +45,12 @@ export const useUserStore = defineStore('user', {
     },
     isAuthenticated(s): boolean {
       const sessionCookie = useCookie(SESSION_COOKIE_NAME)
-      return Boolean(sessionCookie.value && s.username && !this.isUsernameOutdated)
+      if (!sessionCookie.value || !s.username) return false
+      // Use sessionEndTime (refreshed on every API call via customFetch)
+      if (s.sessionEndTime) {
+        return new Date(s.sessionEndTime).getTime() > Date.now()
+      }
+      return !this.isUsernameOutdated
     },
   },
   actions: {

@@ -20,9 +20,6 @@
 			</CoreAppTooltip>
 			<CoreAppButton :icon="icons.refresh" size="xs" variant="outline" color="primary"
 				:aria-label="$t('common.refresh')" @click="refresh" />
-			<CoreAppButton :icon="allExpanded ? icons.chevronUp : icons.chevronDown" size="xs" variant="outline"
-				color="primary" :aria-label="allExpanded ? $t('common.collapseAll') : $t('common.expandAll')"
-				@click="toggleExpandAll" />
 			<CoreAppButton v-if="selectedCount > 0" :icon="icons.xCircle" size="xs" variant="outline" color="primary"
 				:aria-label="`${$t('common.clearAll')} (${selectedCount})`" @click="clearAll" />
 		</div>
@@ -58,14 +55,16 @@
 					</div>
 					<template v-if="!isSectionCollapsed(section.id)">
 						<div v-for="item in section.flatItems" :key="`${section.id}-${item.id}`"
+							v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount, isGroupLoading(item.id)]"
 							:style="{ paddingLeft: `${(item.depth * 14) + 6}px`, borderLeftWidth: item.depth > 0 ? '1px' : '0', marginLeft: item.depth > 0 ? `${((item.depth - 1) * 14) + 10}px` : '0' }"
 							class="flex items-center gap-1.5 py-0.5 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer border-l-transparent hover:border-l-(--color-border)"
 							:class="{ 'border-l-(--color-border)/40': item.depth > 0 }">
-							<CoreAppButton v-if="item.hasChildren"
+							<CoreAppButton v-if="item.hasChildren && !isGroupLoading(item.id)"
 								:icon="item.isExpanded ? icons.chevronDown : icons.chevronRight" size="xs"
 								variant="ghost" color="neutral" class="shrink-0 p-0! h-4! w-4!"
 								:aria-label="item.isExpanded ? $t('common.collapse') : $t('common.expand')"
 								@click.stop="toggleExpand(item.id)" />
+							<CoreAppLoadingSpinner v-else-if="isGroupLoading(item.id)" size="xs" class="shrink-0 w-4 h-4" />
 							<span v-else class="w-4 shrink-0" />
 							<CoreAppCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
 								:aria-label="item.label" @update:model-value="handleItemClick(item)" />
@@ -94,13 +93,16 @@
 			</template>
 
 			<template v-else>
-				<div v-for="item in productFlatItems" :key="item.id" :style="{ paddingLeft: `${item.depth * 16}px` }"
+				<div v-for="item in productFlatItems" :key="item.id"
+					v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount, isGroupLoading(item.id)]"
+					:style="{ paddingLeft: `${item.depth * 16}px` }"
 					class="flex items-center gap-1.5 py-0.5 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer">
-					<CoreAppButton v-if="item.hasChildren"
+					<CoreAppButton v-if="item.hasChildren && !isGroupLoading(item.id)"
 						:icon="item.isExpanded ? icons.chevronDown : icons.chevronRight" size="xs" variant="ghost"
 						color="neutral" class="shrink-0 p-0! h-4! w-4!"
 						:aria-label="item.isExpanded ? $t('common.collapse') : $t('common.expand')"
 						@click.stop="toggleExpand(item.id)" />
+					<CoreAppLoadingSpinner v-else-if="isGroupLoading(item.id)" size="xs" class="shrink-0 w-4 h-4" />
 					<span v-else class="w-4 shrink-0" />
 					<CoreAppCheckbox :model-value="isItemChecked(item)" size="sm" class="shrink-0" @click.stop
 						:aria-label="item.label" @update:model-value="handleItemClick(item)" />
@@ -134,9 +136,13 @@ const { t: i18nT } = useI18n()
 const selectionStore = useSelectionStore()
 const {
 	clientGroupsTree, clientGroupsLoading, clientGroupsError, clientGroupsExpanded,
+	clientGroupsLoadingGroups, clientGroupsLoadedGroups,
 	productGroupsTree, productGroupsLoading, productGroupsError, productGroupsExpanded,
+	productGroupsLoadingGroups, productGroupsLoadedGroups,
 	fetchClientGroups, fetchProductGroups,
-	toggleGroupExpand, expandAllGroups, collapseAllGroups,
+	fetchGroupChildrenLazy,
+	fetchProductGroupChildrenLazy,
+	toggleGroupExpand,
 } = useCachedData()
 const { isHostGroupAccessRestricted, isProductGroupAccessRestricted } = useUserPermissions()
 
@@ -157,8 +163,6 @@ watch(searchQuery, (q) => {
 	if (_searchTimer) clearTimeout(_searchTimer)
 	_searchTimer = setTimeout(() => { debouncedSearch.value = q }, 150)
 })
-const allClientsList = ref<string[]>([])
-const allClientsLoading = ref(false)
 const collapsedSections = ref<Set<string>>(new Set(['groups', 'clientdirectory']))
 
 function isSectionCollapsed(sectionId: string): boolean {
@@ -226,7 +230,8 @@ function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string, 
 		const label = node.label || node.id
 		const labelMatch = !query || label.toLowerCase().includes(query)
 		const hasGroupChildren = (node.children?.length || 0) > 0
-		const hasMemberChildren = (node.members?.length || 0) > 0
+		// Also treat a node as having children if memberCount > 0 even if members aren't loaded yet (lazy loading)
+		const hasMemberChildren = (node.members?.length || 0) > 0 || (node.memberCount || 0) > 0
 		const isGroup = hasGroupChildren || hasMemberChildren || node.type === 'HostGroup' || node.type === 'ProductGroup'
 		const isExpanded = expandedSet.has(node.id)
 
@@ -248,18 +253,14 @@ function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string, 
 		const memberItems: FlatItem[] = []
 		if (node.members) {
 			const members = node.members
-			let matchCount = 0
-			for (const m of members) {
-				if (!childQuery || m.toLowerCase().includes(childQuery)) {
-					// Limit visible members to avoid DOM overload
-					if (matchCount < 200) {
-						memberItems.push({
-							id: m, label: m, depth: depth + 1, isGroup: false,
-							memberCount: 0, hasChildren: false, isExpanded: false,
-						})
-					}
-					matchCount++
-				}
+			const memberDepth = depth + 1
+			for (const member of members) {
+				if (childQuery && !member.includes(childQuery) && !member.toLowerCase().includes(childQuery)) continue
+				memberItems.push({
+					id: member, label: member, depth: memberDepth, isGroup: false,
+					memberCount: 0, hasChildren: false, isExpanded: false,
+				})
+				if (memberItems.length >= 200) break
 			}
 		}
 
@@ -316,33 +317,57 @@ const groupMembersMap = computed(() => {
 	return map
 })
 
-const expandableIds = computed(() => {
-	const ids: string[] = []
-	function collect(nodes: GroupTreeNodeData[]) {
-		for (const n of nodes) {
-			if (n.children?.length || n.members?.length) {
-				ids.push(n.id)
-				if (n.children) collect(n.children)
+function findGroupNodeById(nodes: GroupTreeNodeData[], groupId: string): GroupTreeNodeData | null {
+	for (const node of nodes) {
+		if (node.id === groupId) return node
+		if (node.children?.length) {
+			const found = findGroupNodeById(node.children, groupId)
+			if (found) return found
+		}
+	}
+	return null
+}
+
+function collectGroupIdsRecursive(node: GroupTreeNodeData, out: string[] = []): string[] {
+	out.push(node.id)
+	for (const child of node.children || []) {
+		collectGroupIdsRecursive(child, out)
+	}
+	return out
+}
+
+function collectGroupMembersRecursive(groupId: string): string[] {
+	const root = findGroupNodeById(rawTree.value, groupId)
+	if (!root) return []
+	const members = new Set<string>()
+	const walk = (node: GroupTreeNodeData) => {
+		for (const member of node.members || []) members.add(member)
+		for (const child of node.children || []) walk(child)
+	}
+	walk(root)
+	return [...members]
+}
+
+async function ensureGroupSubtreeLoaded(groupId: string): Promise<void> {
+	const root = findGroupNodeById(rawTree.value, groupId)
+	if (!root) return
+	const ids = collectGroupIdsRecursive(root)
+	for (const id of ids) {
+		if (props.groupType === 'client') {
+			if (!clientGroupsLoadedGroups.value.has(id)) {
+				await fetchGroupChildrenLazy(id, selectionStore.selectedServers)
+			}
+		} else {
+			if (!productGroupsLoadedGroups.value.has(id)) {
+				await fetchProductGroupChildrenLazy(id)
 			}
 		}
 	}
-	collect(rawTree.value)
-	return ids
-})
-
-const allExpanded = computed(() => {
-	const ids = expandableIds.value
-	if (ids.length === 0) return false
-	const expanded = expandedIds.value
-	for (const id of ids) {
-		if (!expanded.has(id)) return false
-	}
-	return true
-})
+}
 
 function isItemChecked(item: FlatItem): boolean {
 	if (item.isGroup) {
-		const members = groupMembersMap.value.get(item.id)
+		const members = collectGroupMembersRecursive(item.id)
 		if (members && members.length > 0) {
 			const set = selectedItemsSet.value
 			for (const m of members) {
@@ -355,58 +380,63 @@ function isItemChecked(item: FlatItem): boolean {
 	return selectedItemsSet.value.has(item.id)
 }
 
-function handleItemClick(item: FlatItem) {
+function isGroupLoading(groupId: string): boolean {
+	if (props.groupType === 'client') return clientGroupsLoadingGroups.value.has(groupId)
+	return productGroupsLoadingGroups.value.has(groupId)
+}
+
+async function handleItemClick(item: FlatItem) {
 	if (item.isGroup) {
-		const isCurrentlyChecked = isItemChecked(item)
-		const members = groupMembersMap.value.get(item.id) || []
-		if (props.groupType === 'client') {
-			if (isCurrentlyChecked) {
-				// Uncheck: remove group and its members
-				if (selectionStore.selectedClientGroups.includes(item.id)) {
-					selectionStore.toggleClientGroup(item.id)
-				}
-				if (members.length > 0) {
-					selectionStore.removeClients(members)
-				}
-			} else {
-				// Check: add group and its members
-				if (!selectionStore.selectedClientGroups.includes(item.id)) {
-					selectionStore.toggleClientGroup(item.id)
-				}
-				if (members.length > 0) {
-					selectionStore.addClients(members, 'quickpanel')
-				}
-			}
-		} else {
-			if (isCurrentlyChecked) {
-				if (selectionStore.selectedProductGroups.includes(item.id)) {
-					selectionStore.toggleProductGroup(item.id)
-				}
-				if (members.length > 0) {
-					selectionStore.removeProducts(members)
-				}
-			} else {
-				if (!selectionStore.selectedProductGroups.includes(item.id)) {
-					selectionStore.toggleProductGroup(item.id)
-				}
-				if (members.length > 0) {
-					selectionStore.addProducts(members, 'quickpanel')
-				}
-			}
-		}
+		await ensureGroupSubtreeLoaded(item.id)
+		_doGroupSelection(item)
 	} else {
 		if (props.groupType === 'client') selectionStore.toggleClient(item.id, 'quickpanel')
 		else selectionStore.toggleProduct(item.id, 'quickpanel')
 	}
 }
 
-function toggleExpand(nodeId: string) {
-	toggleGroupExpand(props.groupType, nodeId)
+function _doGroupSelection(item: FlatItem) {
+	const isCurrentlyChecked = isItemChecked(item)
+	const members = collectGroupMembersRecursive(item.id)
+	if (props.groupType === 'client') {
+		if (isCurrentlyChecked) {
+			// Uncheck: remove group and its members
+			if (selectionStore.selectedClientGroups.includes(item.id)) {
+				selectionStore.toggleClientGroup(item.id)
+			}
+			if (members.length > 0) {
+				selectionStore.removeClients(members)
+			}
+		} else {
+			// Check: add group and its members
+			if (!selectionStore.selectedClientGroups.includes(item.id)) {
+				selectionStore.toggleClientGroup(item.id)
+			}
+			if (members.length > 0) {
+				selectionStore.addClients(members, 'quickpanel')
+			}
+		}
+	} else {
+		if (isCurrentlyChecked) {
+			if (selectionStore.selectedProductGroups.includes(item.id)) {
+				selectionStore.toggleProductGroup(item.id)
+			}
+			if (members.length > 0) {
+				selectionStore.removeProducts(members)
+			}
+		} else {
+			if (!selectionStore.selectedProductGroups.includes(item.id)) {
+				selectionStore.toggleProductGroup(item.id)
+			}
+			if (members.length > 0) {
+				selectionStore.addProducts(members, 'quickpanel')
+			}
+		}
+	}
 }
 
-function toggleExpandAll() {
-	if (allExpanded.value) collapseAllGroups(props.groupType)
-	else expandAllGroups(props.groupType)
+function toggleExpand(nodeId: string) {
+	toggleGroupExpand(props.groupType, nodeId, selectionStore.selectedServers)
 }
 
 function clearAll() {
@@ -419,36 +449,12 @@ function clearAll() {
 	}
 }
 
-function collectAllMembers(nodes: GroupTreeNodeData[]): string[] {
-	const result: string[] = []
-	for (const node of nodes) {
-		if (node.members) result.push(...node.members)
-		if (node.children) result.push(...collectAllMembers(node.children))
-	}
-	return result
-}
-
 function refresh() {
 	if (props.groupType === 'client') {
+		// On manual refresh, also clear lazy-load tracking so children are re-fetched
 		fetchClientGroups(true, selectionStore.selectedServers)
-		fetchAllClients()
 	} else {
 		fetchProductGroups(true)
-	}
-}
-
-async function fetchAllClients() {
-	if (props.groupType !== 'client') return
-	allClientsLoading.value = true
-	try {
-		const { getClientIds } = useApiHelpers()
-		const depots = selectionStore.selectedServers
-		if (depots.length > 0) {
-			const result = await getClientIds(depots)
-			allClientsList.value = result.data || []
-		}
-	} catch { /* ignore */ } finally {
-		allClientsLoading.value = false
 	}
 }
 
@@ -461,10 +467,15 @@ watch(() => props.active, (isActive) => {
 	if (isActive && !hasData.value && !loading.value) {
 		if (props.groupType === 'client') {
 			fetchClientGroups(false, selectionStore.selectedServers)
-			fetchAllClients()
 		} else {
 			fetchProductGroups()
 		}
 	}
 }, { immediate: true })
+
+watch(() => selectionStore.selectedServers.join(','), () => {
+	if (props.groupType !== 'client') return
+	if (!props.active && !hasData.value) return
+	fetchClientGroups(true, selectionStore.selectedServers)
+})
 </script>

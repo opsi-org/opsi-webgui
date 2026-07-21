@@ -14,16 +14,21 @@
                 <CoreAppTabsNav v-model="activeGroupType" :tabs="groupTypes" />
                 <Transition name="fade">
                     <div v-if="statusMessage" :class="[
-                        'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm',
+                        'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border',
                         statusMessage.type === 'success'
-                            ? 'bg-(--color-success)/15 text-(--color-success)'
-                            : 'bg-(--color-error)/15 text-(--color-error)'
-                    ]">
+                            ? 'bg-(--color-success)/10 border-(--color-success)/35 text-(--color-text)'
+                            : 'bg-(--color-error)/10 border-(--color-error)/35 text-(--color-text)'
+                    ]" :role="statusMessage.type === 'error' ? 'alert' : 'status'"
+                        :aria-live="statusMessage.type === 'error' ? 'assertive' : 'polite'" aria-atomic="true">
                         <CoreAppIcon :name="statusMessage.type === 'success' ? icons.checkCircle : icons.xCircle"
-                            class="w-4 h-4 shrink-0" />
+                            :class="[
+                                'w-4 h-4 shrink-0',
+                                statusMessage.type === 'success' ? 'text-(--color-success)' : 'text-(--color-error)'
+                            ]" />
                         <span>{{ statusMessage.text }}</span>
                         <CoreAppButton variant="ghost" color="neutral" size="xs"
-                            class="ml-1 opacity-60 hover:opacity-100" @click="statusMessage = null">
+                            class="ml-1 opacity-60 hover:opacity-100" :aria-label="String($t('common.close'))"
+                            @click="statusMessage = null">
                             <CoreAppIcon :name="icons.x" class="w-3.5 h-3.5" />
                         </CoreAppButton>
                     </div>
@@ -111,8 +116,8 @@
                     class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-16 bg-(--color-border) rounded group-hover:bg-opsi-blue transition-colors" />
             </div>
 
-            <div class="flex-1 min-w-0 bg-(--color-background) overflow-auto">
-                <div v-if="selectedGroup" class="h-full flex flex-col">
+            <div class="flex-1 min-w-0 bg-(--color-background) overflow-hidden">
+                <div v-if="selectedGroup" class="h-full min-h-0 flex flex-col">
                     <div
                         class="p-3 border-b border-(--color-border) flex items-center justify-between bg-(--color-background)">
                         <div class="flex items-center gap-2">
@@ -149,72 +154,78 @@
                     </div>
 
                     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- keyboard navigation container for member list (roving focus) -->
-                    <div class="flex-1 overflow-auto p-4 space-y-4 outline-none" tabindex="-1"
+                    <div class="flex-1 overflow-auto px-4 pb-4 pt-0 outline-none" tabindex="-1"
                         @keydown="handleMemberListKeydown">
-                        <div class="pt-4 border-(--color-border)">
-                            <div class="flex items-center justify-between mb-3">
-                                <h2 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
-                                    {{ $t('groups.members') }}
-                                    <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
-                                        []).length
-                                        }})</span>
-                                </h2>
-                                <div class="flex items-center gap-2">
-                                    <CoreAppButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
-                                        :icon="icons.delete" size="xs" variant="soft" color="error"
-                                        :disabled="isReadOnly" @click="removeSelectedMembers">
-                                        {{ $t('common.remove') }} ({{ selectedMembers.length }})
-                                    </CoreAppButton>
-                                    <CoreAppButton
-                                        v-if="(selectedGroup.members?.length || 0) > 0 && !selectedGroup.isSpecial"
-                                        :icon="icons.delete" size="xs" variant="ghost" color="neutral"
-                                        :disabled="isReadOnly" :title="$t('groups.membersRemoveAll')"
-                                        @click="confirmRemoveAllMembers">
-                                        {{ $t('common.removeAll') }}
-                                    </CoreAppButton>
+                        <div class="border-(--color-border) bg-(--color-background)">
+                            <div class="sticky top-0 z-20 bg-(--color-background) pt-3 pb-2 border-b border-(--color-border)"
+                                style="background-color: var(--color-background);">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h2 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
+                                        {{ $t('groups.members') }}
+                                        <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
+                                            []).length
+                                            }})</span>
+                                    </h2>
+                                    <div class="flex items-center gap-2">
+                                        <CoreAppButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
+                                            :icon="icons.delete" size="xs" variant="soft" color="error"
+                                            :disabled="isReadOnly" @click="removeSelectedMembers">
+                                            {{ $t('common.remove') }} ({{ selectedMembers.length }})
+                                        </CoreAppButton>
+                                        <CoreAppButton
+                                            v-if="(selectedGroup.members?.length || 0) > 0 && !selectedGroup.isSpecial"
+                                            :icon="icons.delete" size="xs" variant="ghost" color="neutral"
+                                            :disabled="isReadOnly" :title="$t('groups.membersRemoveAll')"
+                                            @click="confirmRemoveAllMembers">
+                                            {{ $t('common.removeAll') }}
+                                        </CoreAppButton>
+                                    </div>
+                                </div>
+                                <CoreAppFilterInput v-if="(selectedGroup.members?.length || 0) > 5"
+                                    v-model="memberSearchQuery" :placeholder="$t('groups.membersFilter') + '...'" size="sm"
+                                    input-class="w-full mb-2" />
+                                <div v-if="filteredMembers.length > 0 && !selectedGroup.isSpecial"
+                                    class="flex items-center gap-2 px-2 py-1 mb-1">
+                                    <CoreAppCheckbox
+                                        :model-value="selectedMembers.length === filteredMembers.length && filteredMembers.length > 0"
+                                        :indeterminate="selectedMembers.length > 0 && selectedMembers.length < filteredMembers.length"
+                                        :aria-label="String($t('common.selectAll'))"
+                                        @update:model-value="toggleSelectAllMembers" />
+                                    <span class="text-xs text-(--color-text-muted)">
+                                        {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('common.selected')}`
+                                            :
+                                            $t('common.selectAll') }}
+                                        <kbd
+                                            class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
+                                        <kbd
+                                            class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
+                                    </span>
                                 </div>
                             </div>
-                            <CoreAppFilterInput v-if="(selectedGroup.members?.length || 0) > 5"
-                                v-model="memberSearchQuery" :placeholder="$t('groups.membersFilter') + '...'" size="sm"
-                                input-class="w-full mb-2" />
-                            <div v-if="filteredMembers.length > 0 && !selectedGroup.isSpecial"
-                                class="flex items-center gap-2 px-2 py-1 mb-1">
-                                <CoreAppCheckbox
-                                    :model-value="selectedMembers.length === filteredMembers.length && filteredMembers.length > 0"
-                                    :indeterminate="selectedMembers.length > 0 && selectedMembers.length < filteredMembers.length"
-                                    :aria-label="String($t('common.selectAll'))"
-                                    @update:model-value="toggleSelectAllMembers" />
-                                <span class="text-xs text-(--color-text-muted)">
-                                    {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('common.selected')}`
-                                        :
-                                        $t('common.selectAll') }}
-                                    <kbd
-                                        class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Ctrl+A</kbd>
-                                    <kbd
-                                        class="ml-1 px-1 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)">Shift+Click</kbd>
-                                </span>
-                            </div>
-                            <div class="space-y-0 overflow-auto" style="max-height: 60vh;">
+                            <div class="space-y-0">
+                                <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- interactive list rows with role/keyboard handlers on each item -->
                                 <div v-for="member in displayedMembers" :key="member"
                                     class="flex items-center gap-2 text-sm px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/member cursor-pointer select-none"
-                                    :class="selectedMembers.includes(member) ? 'bg-opsi-blue/5' : ''">
+                                    :class="selectedMembersSet.has(member) ? 'bg-opsi-blue/5' : ''"
+                                    role="button" tabindex="0"
+                                    @click="toggleMemberSelection(member, $event)"
+                                    @keydown.enter="toggleMemberSelection(member)"
+                                    @keydown.space.prevent="toggleMemberSelection(member)">
                                     <CoreAppCheckbox v-if="!selectedGroup.isSpecial"
-                                        :model-value="selectedMembers.includes(member)" class="shrink-0" @click.stop
+                                        :model-value="selectedMembersSet.has(member)" class="shrink-0" @click.stop
                                         :aria-label="member" @update:model-value="toggleMemberSelection(member)" />
                                     <CoreAppIcon :name="activeGroupType === 'clients' ? icons.client : icons.product"
                                         class="w-4 h-4 text-(--color-text-muted) shrink-0" />
-                                    <button v-if="!selectedGroup.isSpecial" type="button"
-                                        class="flex-1 truncate text-(--color-text) text-left bg-transparent border-0 p-0 cursor-pointer"
-                                        @click="toggleMemberSelection(member, $event)">
-                                        {{ member }}
-                                    </button>
-                                    <span v-else class="flex-1 truncate text-(--color-text)">{{ member }}</span>
+                                    <span class="flex-1 truncate text-(--color-text)">{{ member }}</span>
                                     <CoreAppButton v-if="!selectedGroup.isSpecial" :icon="icons.delete" size="xs"
                                         variant="ghost" color="neutral" :title="$t('common.remove')"
                                         class="opacity-0 group-hover/member:opacity-100 transition-opacity shrink-0"
-                                        @click="removeSingleMember(member)" />
+                                        @click.stop="removeSingleMember(member)" />
                                 </div>
-                                <div v-if="filteredMembers.length === 0"
+                                <div v-if="loadingSelectedGroupMembers" class="py-8 text-center">
+                                    <CoreAppLoadingSpinner size="sm" />
+                                </div>
+                                <div v-else-if="filteredMembers.length === 0"
                                     class="text-sm text-(--color-text-muted) py-4 text-center">
                                     {{ memberSearchQuery ? $t('common.noResults') : $t('groups.membersNone') }}
                                 </div>
@@ -265,6 +276,53 @@
                         </CoreAppFormField>
                         <CoreAppFormField :label="$t('common.notes')">
                             <CoreAppTextarea v-model="createForm.notes" :rows="2" class="w-full" />
+                        </CoreAppFormField>
+                        <CoreAppFormField>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 select-none">
+                                    <CoreAppCheckbox :model-value="createAddMembersEnabled"
+                                        :aria-label="String($t('groups.membersAdd'))"
+                                        @update:model-value="toggleCreateAddMembers" />
+                                    <button type="button"
+                                        class="text-sm text-(--color-text) text-left bg-transparent border-0 p-0 cursor-pointer"
+                                        @click="toggleCreateAddMembers(!createAddMembersEnabled)">
+                                        {{ $t('groups.membersAdd') }}
+                                        <span class="text-(--color-text-muted)">({{ $t('common.optional') }})</span>
+                                    </button>
+                                </div>
+
+                                <div v-if="createAddMembersEnabled" class="space-y-2">
+                                    <CoreAppFilterInput v-model="createMembersSearch" size="sm"
+                                        :placeholder="$t('groups.membersSearch')" />
+                                    <div class="border border-(--color-border) rounded-lg overflow-hidden">
+                                        <div class="max-h-40 overflow-auto">
+                                            <span v-for="item in filteredCreateMembers" :key="`create-${item}`"
+                                                class="flex items-center gap-2 px-3 py-2 hover:bg-(--color-surface-hover) cursor-pointer border-b border-(--color-border) last:border-b-0 text-(--color-text)"
+                                                :class="createSelectedMembers.includes(item) ? 'bg-opsi-blue/5' : ''">
+                                                <CoreAppCheckbox :model-value="createSelectedMembers.includes(item)"
+                                                    :aria-label="item"
+                                                    @update:model-value="toggleCreateMemberSelection(item)" />
+                                                <button type="button"
+                                                    class="text-sm truncate text-left bg-transparent border-0 p-0 flex-1 cursor-pointer"
+                                                    @click.prevent="toggleCreateMemberSelection(item, $event)">
+                                                    {{ item }}
+                                                </button>
+                                            </span>
+                                            <div v-if="filteredCreateMembers.length === 0"
+                                                class="text-sm text-(--color-text-muted) py-3 text-center">
+                                                {{ createMembersSearch ? $t('common.noResults') : $t('common.noData') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-xs text-(--color-text-muted)">
+                                        <button type="button" class="underline decoration-dotted"
+                                            @click="toggleSelectAllCreateMembers">
+                                            {{ $t('common.selectAll') }}
+                                        </button>
+                                        <span>{{ createSelectedMembers.length }} {{ $t('common.selected') }}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </CoreAppFormField>
                     </CoreAppForm>
                     <template #footer>
@@ -465,12 +523,15 @@ const {
     productGroupsTree, productGroupsLoading,
     fetchClientGroups: cachedFetchClientGroups,
     fetchProductGroups: cachedFetchProductGroups,
+    fetchGroupChildrenLazy,
+    fetchProductGroupChildrenLazy,
 } = useCachedData()
 
 const activeGroupType = ref<'clients' | 'products'>('clients')
 const selectedGroup = ref<GroupTreeNodeData | null>(null)
 const loading = computed(() => clientGroupsLoading.value || productGroupsLoading.value)
 const loadingMembers = ref(false)
+const loadingSelectedGroupMembers = ref(false)
 
 const availableClients = shallowRef<string[]>([])
 const availableProducts = shallowRef<string[]>([])
@@ -523,6 +584,10 @@ const selectedNewMembers = ref<string[]>([])
 const selectedMembers = ref<string[]>([])
 const lastClickedMember = ref<string | null>(null)
 const lastClickedNewMember = ref<string | null>(null)
+const createAddMembersEnabled = ref(false)
+const createMembersSearch = ref('')
+const createSelectedMembers = ref<string[]>([])
+const lastClickedCreateMember = ref<string | null>(null)
 
 const containerRef = ref<HTMLElement | null>(null)
 const isMobile = ref(false)
@@ -598,6 +663,9 @@ const filteredMembers = computed(() => {
 })
 
 const displayedMembers = computed(() => filteredMembers.value.slice(0, memberDisplayLimit.value))
+
+// O(1) Set for member selection lookups — avoids O(n²) includes() on every render
+const selectedMembersSet = computed(() => new Set(selectedMembers.value))
 const hasMoreMembers = computed(() => filteredMembers.value.length > memberDisplayLimit.value)
 
 function showMoreMembers() {
@@ -612,6 +680,16 @@ const filteredAvailableMembers = computed(() => {
 
     if (availableMembersSearch.value.trim()) {
         const query = availableMembersSearch.value.toLowerCase()
+        available = available.filter(m => m.toLowerCase().includes(query))
+    }
+    return available.slice(0, 100)
+})
+
+const filteredCreateMembers = computed(() => {
+    const allAvailable = activeGroupType.value === 'clients' ? availableClients.value : availableProducts.value
+    let available = allAvailable
+    if (createMembersSearch.value.trim()) {
+        const query = createMembersSearch.value.toLowerCase()
         available = available.filter(m => m.toLowerCase().includes(query))
     }
     return available.slice(0, 100)
@@ -670,17 +748,30 @@ function expandGroupAndParents(groupId: string) {
     expandedGroupIds.value = newSet
 }
 
-function toggleExpand(groupId: string) {
+async function ensureGroupLoaded(groupId: string) {
+    if (activeGroupType.value === 'clients') {
+        await fetchGroupChildrenLazy(groupId, selectionStore.selectedServers)
+    } else {
+        await fetchProductGroupChildrenLazy(groupId)
+    }
+    return findGroupById(currentTreeGroups.value, groupId)
+}
+
+async function toggleExpand(groupId: string) {
     const newSet = new Set(expandedGroupIds.value)
     if (newSet.has(groupId)) {
         newSet.delete(groupId)
     } else {
         newSet.add(groupId)
+        await ensureGroupLoaded(groupId)
+        if (selectedGroup.value?.id === groupId) {
+            selectedGroup.value = findGroupById(currentTreeGroups.value, groupId)
+        }
     }
     expandedGroupIds.value = newSet
 }
 
-function selectGroup(group: GroupTreeNodeData) {
+async function selectGroup(group: GroupTreeNodeData) {
     if (selectedGroup.value?.id === group.id) {
         selectedGroup.value = null
         selectedMembers.value = []
@@ -689,13 +780,22 @@ function selectGroup(group: GroupTreeNodeData) {
         expandedGroupIds.value = newSet
         return
     }
-    selectedGroup.value = group
-    memberSearchQuery.value = ''
-    selectedMembers.value = []
-    memberDisplayLimit.value = MEMBER_DISPLAY_LIMIT
-    expandGroupAndParents(group.id)
-    if (isMobile.value) {
-        showSidebar.value = false
+    loadingSelectedGroupMembers.value = true
+    try {
+        selectedGroup.value = findGroupById(currentTreeGroups.value, group.id) || group
+        memberSearchQuery.value = ''
+        selectedMembers.value = []
+        memberDisplayLimit.value = MEMBER_DISPLAY_LIMIT
+        expandGroupAndParents(group.id)
+        if (isMobile.value) {
+            showSidebar.value = false
+        }
+        const updatedGroup = await ensureGroupLoaded(group.id)
+        if (updatedGroup && selectedGroup.value?.id === group.id) {
+            selectedGroup.value = updatedGroup
+        }
+    } finally {
+        loadingSelectedGroupMembers.value = false
     }
 }
 
@@ -708,9 +808,11 @@ function toggleMemberSelection(member: string, event?: MouseEvent | KeyboardEven
             const start = Math.min(from, to)
             const end = Math.max(from, to)
             const range = list.slice(start, end + 1)
-            const allSelected = range.every(m => selectedMembers.value.includes(m))
+            const currentSet = selectedMembersSet.value
+            const allSelected = range.every(m => currentSet.has(m))
             if (allSelected) {
-                selectedMembers.value = selectedMembers.value.filter(m => !range.includes(m))
+                const rangeSet = new Set(range)
+                selectedMembers.value = selectedMembers.value.filter(m => !rangeSet.has(m))
             } else {
                 const newSet = new Set([...selectedMembers.value, ...range])
                 selectedMembers.value = [...newSet]
@@ -824,6 +926,19 @@ async function fetchCurrentGroups() {
         } else {
             await cachedFetchProductGroups(true)
         }
+        if (selectedGroup.value) {
+            const selectedGroupId = selectedGroup.value.id
+            const updatedGroup = findGroupById(currentTreeGroups.value, selectedGroupId)
+            if (!updatedGroup) {
+                selectedGroup.value = null
+            } else {
+                selectedGroup.value = updatedGroup
+                const hydratedGroup = await ensureGroupLoaded(selectedGroupId)
+                if (hydratedGroup && selectedGroup.value?.id === selectedGroupId) {
+                    selectedGroup.value = hydratedGroup
+                }
+            }
+        }
     } catch (err) {
         showStatus('error', err instanceof Error ? err.message : String($t('groups.error')))
     }
@@ -844,7 +959,7 @@ async function fetchAvailableClients() {
         const depotIds = await ensureDepotIds()
         const { data } = await getClientIds(depotIds)
         if (data && Array.isArray(data)) {
-            availableClients.value = data
+            availableClients.value = [...new Set(data)]
         }
     } catch {
         // silently ignore
@@ -859,7 +974,7 @@ async function fetchAvailableProducts() {
         const depotIds = await ensureDepotIds()
         const result = await getServersProducts(depotIds, 'LocalbootProduct')
         if (result.data && Array.isArray(result.data)) {
-            availableProducts.value = result.data.map(p => p.productId)
+            availableProducts.value = [...new Set(result.data.map(p => p.productId))]
         }
     } catch {
         // silently ignore
@@ -873,7 +988,63 @@ function openCreateModal(parentGroupId?: string) {
     createForm.parentGroupId = parentGroupId || ''
     createForm.description = ''
     createForm.notes = ''
+    createAddMembersEnabled.value = false
+    createMembersSearch.value = ''
+    createSelectedMembers.value = []
+    lastClickedCreateMember.value = null
     showCreateModal.value = true
+}
+
+async function toggleCreateAddMembers(value: boolean) {
+    createAddMembersEnabled.value = value
+    if (!value) {
+        createSelectedMembers.value = []
+        createMembersSearch.value = ''
+        return
+    }
+    if (activeGroupType.value === 'clients' && availableClients.value.length === 0) {
+        await fetchAvailableClients()
+    }
+    if (activeGroupType.value === 'products' && availableProducts.value.length === 0) {
+        await fetchAvailableProducts()
+    }
+}
+
+function toggleCreateMemberSelection(item: string, event?: MouseEvent | KeyboardEvent) {
+    if (event?.shiftKey && lastClickedCreateMember.value) {
+        const list = filteredCreateMembers.value
+        const from = list.indexOf(lastClickedCreateMember.value)
+        const to = list.indexOf(item)
+        if (from >= 0 && to >= 0) {
+            const start = Math.min(from, to)
+            const end = Math.max(from, to)
+            const range = list.slice(start, end + 1)
+            const allSelected = range.every(m => createSelectedMembers.value.includes(m))
+            if (allSelected) {
+                createSelectedMembers.value = createSelectedMembers.value.filter(m => !range.includes(m))
+            } else {
+                const newSet = new Set([...createSelectedMembers.value, ...range])
+                createSelectedMembers.value = [...newSet]
+            }
+            lastClickedCreateMember.value = item
+            return
+        }
+    }
+    const idx = createSelectedMembers.value.indexOf(item)
+    if (idx >= 0) {
+        createSelectedMembers.value.splice(idx, 1)
+    } else {
+        createSelectedMembers.value.push(item)
+    }
+    lastClickedCreateMember.value = item
+}
+
+function toggleSelectAllCreateMembers() {
+    if (createSelectedMembers.value.length === filteredCreateMembers.value.length) {
+        createSelectedMembers.value = []
+    } else {
+        createSelectedMembers.value = [...filteredCreateMembers.value]
+    }
 }
 
 function openEditModal(group: GroupTreeNodeData) {
@@ -886,21 +1057,55 @@ function openEditModal(group: GroupTreeNodeData) {
 }
 
 async function doCreateGroup() {
-    if (!createForm.groupId) return
+    const groupId = createForm.groupId.trim()
+    if (!groupId) return
+
+    const targetIdLower = groupId.toLowerCase()
+    const stack = [...currentTreeGroups.value]
+    while (stack.length > 0) {
+        const node = stack.pop()
+        if (!node) break
+        if (node.id.toLowerCase() === targetIdLower) {
+            showStatus('error', `Group "${groupId}" already exists.`)
+            return
+        }
+        if (node.children?.length) stack.push(...node.children)
+    }
 
     saving.value = true
     try {
         const parentId = createForm.parentGroupId || undefined
         const createFn = activeGroupType.value === 'clients' ? createHostGroup : createProductGroup
-        await createFn({
-            groupId: createForm.groupId,
+        const createResult = await createFn({
+            groupId,
             parentGroupId: parentId,
             description: createForm.description || undefined,
             notes: createForm.notes || undefined
         })
-        showStatus('success', String($t('notify.group.created', { group: createForm.groupId })))
+        if (createResult?.error) throw createResult.error
+
+        let memberAddError: unknown = null
+        if (createAddMembersEnabled.value && createSelectedMembers.value.length > 0) {
+            const addFn = activeGroupType.value === 'clients' ? addClientsToGroup : addProductsToGroup
+            try {
+                const addResult = await addFn(groupId, createSelectedMembers.value)
+                if (addResult?.error) throw addResult.error
+            } catch (err) {
+                memberAddError = err
+            }
+        }
+
         showCreateModal.value = false
         await fetchCurrentGroups()
+
+        if (memberAddError) {
+            const details = memberAddError instanceof Error ? memberAddError.message : String($t('notify.error'))
+            showStatus('error', `Group "${groupId}" created, but adding members failed: ${details}`)
+        } else if (createAddMembersEnabled.value && createSelectedMembers.value.length > 0) {
+            showStatus('success', `Group "${groupId}" created and ${createSelectedMembers.value.length} members added.`)
+        } else {
+            showStatus('success', String($t('notify.group.created', { group: groupId })))
+        }
     } catch (e) {
         showStatus('error', e instanceof Error ? e.message : String($t('notify.error')))
     } finally {
@@ -1105,6 +1310,12 @@ watch(activeGroupType, (newType) => {
         cachedFetchClientGroups(false, selectionStore.selectedServers)
     } else {
         cachedFetchProductGroups()
+    }
+})
+
+watch(() => selectionStore.selectedServers.join(','), () => {
+    if (activeGroupType.value === 'clients') {
+        fetchCurrentGroups()
     }
 })
 </script>

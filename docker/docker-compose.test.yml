@@ -79,7 +79,11 @@ services:
       - |
         corepack enable pnpm
         pnpm install --frozen-lockfile
-        pnpm exec playwright install chromium firefox
+        if [ "${CI_PIPELINE_SOURCE}" = "schedule" ]; then
+          pnpm exec playwright install chromium firefox
+        else
+          pnpm exec playwright install chromium
+        fi
         if [ -f /addon-app/index.html ]; then
           echo "Reusing pre-built SPA in /addon-app (skipping pnpm generate)."
         else

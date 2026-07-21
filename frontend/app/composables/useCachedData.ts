@@ -63,6 +63,10 @@ const clientGroupsState = reactive({
   error: null as string | null,
   fetched: false,
   expanded: new Set<string>(),
+  // Track which groups have had their children lazy-loaded (set of group IDs)
+  loadedGroups: new Set<string>(),
+  // Track which groups are currently being lazy-loaded
+  loadingGroups: new Set<string>(),
 })
 let clientGroupsPromise: Promise<void> | null = null
 
@@ -73,10 +77,11 @@ const productGroupsState = reactive({
   error: null as string | null,
   fetched: false,
   expanded: new Set<string>(),
+  loadedGroups: new Set<string>(),
+  loadingGroups: new Set<string>(),
 })
 let productGroupsPromise: Promise<void> | null = null
 
-// transformApiToTree – converts raw API group data to GroupTreeNodeData[]
 function transformApiToTree(
   data: Record<string, unknown>,
   groupType: 'client' | 'product',
@@ -119,6 +124,10 @@ function transformApiToTree(
         }
       }
     }
+    // Use backend-provided member_count when actual members are not loaded (lazy loading)
+    if (memberCount === 0 && typeof obj.member_count === 'number' && obj.member_count > 0) {
+      memberCount = obj.member_count as number
+    }
     return {
       id: nodeId,
       label: nodeText,
@@ -153,7 +162,9 @@ export function useCachedData() {
     getProductIcons,
     getChangelogs,
     getHostGroups,
+    getHostGroupsDynamic,
     getProductGroups,
+    getProductGroupsDynamic,
   } = useApiHelpers()
   const userStore = useUserStore()
 
@@ -329,12 +340,17 @@ export function useCachedData() {
     clientGroupsState.error = null
     const doFetch = async () => {
       try {
-        const params: Record<string, unknown> = {}
-        if (selectedServers.length > 0) params.selectedServers = `[${selectedServers.join(',')}]`
+        const params: Record<string, unknown> = {
+          // Fetch without client members for fast initial load; members are lazy-loaded on expand
+          withClients: false,
+        }
+        if (selectedServers.length > 0) params.selectedDepots = `[${selectedServers.join(',')}]`
         const result = await getHostGroups(params)
         if (result.data) {
           clientGroupsState.tree = transformApiToTree(result.data, 'client')
           clientGroupsState.fetched = true
+          // Reset lazy-load tracking on a full refresh
+          clientGroupsState.loadedGroups = new Set<string>()
           const first = clientGroupsState.tree[0]
           if (first && !clientGroupsState.expanded.has(first.id))
             clientGroupsState.expanded = new Set([first.id])
@@ -362,7 +378,7 @@ export function useCachedData() {
     productGroupsState.error = null
     const doFetch = async () => {
       try {
-        const result = await getProductGroups()
+        const result = await getProductGroups({ withProducts: false })
         if (result.data) {
           const rawData = (result.data as Record<string, unknown>).groups || result.data
           productGroupsState.tree = transformApiToTree(
@@ -370,6 +386,7 @@ export function useCachedData() {
             'product'
           )
           productGroupsState.fetched = true
+          productGroupsState.loadedGroups = new Set<string>()
           const first = productGroupsState.tree[0]
           if (first && !productGroupsState.expanded.has(first.id))
             productGroupsState.expanded = new Set([first.id])
@@ -387,11 +404,171 @@ export function useCachedData() {
 
   // Group tree helper actions
 
-  function toggleGroupExpand(groupType: 'client' | 'product', groupId: string) {
+  /**
+   * Lazy-load the children of a client group node.
+   */
+  async function fetchGroupChildrenLazy(
+    groupId: string,
+    selectedServers: string[] = []
+  ): Promise<void> {
+    if (clientGroupsState.loadedGroups.has(groupId)) return
+    if (clientGroupsState.loadingGroups.has(groupId)) return
+
+    const newLoading = new Set(clientGroupsState.loadingGroups)
+    newLoading.add(groupId)
+    clientGroupsState.loadingGroups = newLoading
+
+    try {
+      const params: Record<string, unknown> = {
+        parentGroup: groupId,
+        withClients: true,
+      }
+      if (selectedServers.length > 0) params.selectedDepots = `[${selectedServers.join(',')}]`
+      const result = await getHostGroupsDynamic(
+        params as Parameters<typeof getHostGroupsDynamic>[0]
+      )
+      if (result.data?.groups) {
+        const groupData = result.data.groups as Record<string, unknown>
+        const children = (groupData.children || {}) as Record<string, unknown>
+        const members: string[] = []
+        const subGroups: GroupTreeNodeData[] = []
+
+        for (const [_key, child] of Object.entries(children)) {
+          const c = child as Record<string, unknown>
+          const childType = c.type as string
+          const childId = (c.id as string)?.split(';')[0] || (c.text as string) || ''
+          if (!childId) continue
+          if (childType === 'ObjectToGroup') {
+            members.push(childId)
+          } else if (childType === 'HostGroup' && childId !== groupId) {
+            subGroups.push({
+              id: childId,
+              label: (c.text as string) || childId,
+              parentId: groupId,
+              type: 'HostGroup',
+              memberCount: typeof c.member_count === 'number' ? (c.member_count as number) : 0,
+              members: [],
+              children: [],
+              isRoot: false,
+              isSpecial: false,
+            })
+          }
+        }
+
+        patchTreeNodeContents(clientGroupsState.tree, groupId, members, subGroups)
+
+        const newLoaded = new Set(clientGroupsState.loadedGroups)
+        newLoaded.add(groupId)
+        clientGroupsState.loadedGroups = newLoaded
+      }
+    } catch {
+      // Silently fail, UI will show the group as expandable without members
+    } finally {
+      const newLoading = new Set(clientGroupsState.loadingGroups)
+      newLoading.delete(groupId)
+      clientGroupsState.loadingGroups = newLoading
+    }
+  }
+
+  async function fetchProductGroupChildrenLazy(groupId: string): Promise<void> {
+    if (productGroupsState.loadedGroups.has(groupId)) return
+    if (productGroupsState.loadingGroups.has(groupId)) return
+
+    const newLoading = new Set(productGroupsState.loadingGroups)
+    newLoading.add(groupId)
+    productGroupsState.loadingGroups = newLoading
+
+    try {
+      const result = await getProductGroupsDynamic({ parentGroup: groupId, withProducts: true })
+      if (result.data?.groups) {
+        const groupData = result.data.groups as Record<string, unknown>
+        const children = (groupData.children || {}) as Record<string, unknown>
+        const members: string[] = []
+        const subGroups: GroupTreeNodeData[] = []
+
+        for (const [_key, child] of Object.entries(children)) {
+          const c = child as Record<string, unknown>
+          const childType = c.type as string
+          const childId = (c.id as string)?.split(';')[0] || (c.text as string) || ''
+          if (!childId) continue
+          if (childType === 'ObjectToGroup') {
+            members.push(childId)
+          } else if (childType === 'ProductGroup' && childId !== groupId) {
+            subGroups.push({
+              id: childId,
+              label: (c.text as string) || childId,
+              parentId: groupId,
+              type: 'ProductGroup',
+              memberCount: typeof c.member_count === 'number' ? (c.member_count as number) : 0,
+              members: [],
+              children: [],
+              isRoot: false,
+              isSpecial: false,
+            })
+          }
+        }
+
+        patchTreeNodeContents(productGroupsState.tree, groupId, members, subGroups)
+
+        const newLoaded = new Set(productGroupsState.loadedGroups)
+        newLoaded.add(groupId)
+        productGroupsState.loadedGroups = newLoaded
+      }
+    } catch {
+      // Silently fail, UI will keep the node collapsible.
+    } finally {
+      const newLoading = new Set(productGroupsState.loadingGroups)
+      newLoading.delete(groupId)
+      productGroupsState.loadingGroups = newLoading
+    }
+  }
+
+  /** Recursively find a node and patch its members/children */
+  function patchTreeNodeContents(
+    nodes: GroupTreeNodeData[],
+    targetId: string,
+    members: string[],
+    subGroups: GroupTreeNodeData[]
+  ): boolean {
+    for (const node of nodes) {
+      if (node.id === targetId) {
+        node.members = members
+        node.memberCount = members.length
+        if (subGroups.length > 0) {
+          const existingChildren = node.children || []
+          const existingIds = new Set(existingChildren.map((child) => child.id))
+          node.children = [
+            ...existingChildren,
+            ...subGroups.filter((child) => !existingIds.has(child.id)),
+          ]
+        }
+        return true
+      }
+      if (node.children && patchTreeNodeContents(node.children, targetId, members, subGroups))
+        return true
+    }
+    return false
+  }
+
+  function toggleGroupExpand(
+    groupType: 'client' | 'product',
+    groupId: string,
+    selectedServers: string[] = []
+  ) {
     const state = groupType === 'client' ? clientGroupsState : productGroupsState
+    const isCurrentlyExpanded = state.expanded.has(groupId)
     const newSet = new Set(state.expanded)
-    if (newSet.has(groupId)) newSet.delete(groupId)
-    else newSet.add(groupId)
+    if (isCurrentlyExpanded) {
+      newSet.delete(groupId)
+    } else {
+      newSet.add(groupId)
+      if (groupType === 'client' && !clientGroupsState.loadedGroups.has(groupId)) {
+        fetchGroupChildrenLazy(groupId, selectedServers)
+      }
+      if (groupType === 'product' && !productGroupsState.loadedGroups.has(groupId)) {
+        fetchProductGroupChildrenLazy(groupId)
+      }
+    }
     state.expanded = newSet
   }
 
@@ -485,7 +662,10 @@ export function useCachedData() {
     clientGroupsError: computed(() => clientGroupsState.error),
     clientGroupsExpanded: computed(() => clientGroupsState.expanded),
     clientGroupsFetched: computed(() => clientGroupsState.fetched),
+    clientGroupsLoadingGroups: computed(() => clientGroupsState.loadingGroups),
+    clientGroupsLoadedGroups: computed(() => clientGroupsState.loadedGroups),
     fetchClientGroups,
+    fetchGroupChildrenLazy,
 
     // Product groups
     productGroupsTree: computed(() => productGroupsState.tree),
@@ -493,7 +673,10 @@ export function useCachedData() {
     productGroupsError: computed(() => productGroupsState.error),
     productGroupsExpanded: computed(() => productGroupsState.expanded),
     productGroupsFetched: computed(() => productGroupsState.fetched),
+    productGroupsLoadingGroups: computed(() => productGroupsState.loadingGroups),
+    productGroupsLoadedGroups: computed(() => productGroupsState.loadedGroups),
     fetchProductGroups,
+    fetchProductGroupChildrenLazy,
 
     // Group tree helpers
     toggleGroupExpand,

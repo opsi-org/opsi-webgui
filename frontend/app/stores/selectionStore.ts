@@ -142,20 +142,24 @@ export const useSelectionStore = defineStore('selection', {
     },
 
     addClients(clientIds: string[], source: SelectionSource = 'groups') {
-      for (const id of clientIds)
-        if (!this.selectedClients.includes(id)) this.selectedClients.push(id)
+      const existing = new Set(this.selectedClients)
+      const toAdd = clientIds.filter((id) => !existing.has(id))
+      if (toAdd.length > 0) this.selectedClients = this.selectedClients.concat(toAdd)
       this.selectionSource = source
     },
     addProducts(productIds: string[], source: SelectionSource = 'groups') {
-      for (const id of productIds)
-        if (!this.selectedProducts.includes(id)) this.selectedProducts.push(id)
+      const existing = new Set(this.selectedProducts)
+      const toAdd = productIds.filter((id) => !existing.has(id))
+      if (toAdd.length > 0) this.selectedProducts = this.selectedProducts.concat(toAdd)
       this.selectionSource = source
     },
     removeClients(clientIds: string[]) {
-      this.selectedClients = this.selectedClients.filter((id) => !clientIds.includes(id))
+      const toRemove = new Set(clientIds)
+      this.selectedClients = this.selectedClients.filter((id) => !toRemove.has(id))
     },
     removeProducts(productIds: string[]) {
-      this.selectedProducts = this.selectedProducts.filter((id) => !productIds.includes(id))
+      const toRemove = new Set(productIds)
+      this.selectedProducts = this.selectedProducts.filter((id) => !toRemove.has(id))
     },
   },
 })

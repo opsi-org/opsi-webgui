@@ -20,8 +20,8 @@
                     <CoreAppIcon :name="icons.checkCircle" class="w-6 h-6 text-(--color-success)" />
                     {{ $t('terminal.connected') }}
                 </span>
-                <span v-else class="flex items-center gap-1 text-sm text-(--color-text-muted)"><span
-                        class="w-2 h-2 rounded-full bg-(--color-text-muted)"></span>{{ $t('terminal.disconnected')
+                <span v-else class="flex items-center gap-1 text-sm" :class="terminalStatusClass"><span
+                        class="w-2 h-2 rounded-full" :class="terminalStatusDotClass"></span>{{ terminalStatusText
                     }}</span>
             </div>
             <CoreAppButton variant="outline" color="primary" size="sm" :icon="icons.config"
@@ -59,6 +59,7 @@ const terminalContainer = ref<HTMLElement | null>(null)
 const isDisabled = ref(false)
 const isConnecting = ref(false)
 const isConnected = ref(false)
+const lastDisconnectReason = ref<'disconnected' | 'exited' | 'failed'>('disconnected')
 const showSettings = ref(false)
 const terminalInstance = ref<{
     terminal: ReturnType<typeof createTerminalInterface>
@@ -71,7 +72,28 @@ const terminalId = ref(terminalIdDefault)
 const terminalChannel = ref(terminalChannelDefault)
 const terminalSessionChannel = ref('')
 
+const terminalStatusText = computed(() => {
+    if (isConnected.value) return String($t('terminal.connected'))
+    if (lastDisconnectReason.value === 'exited') return String($t('terminal.exited'))
+    if (lastDisconnectReason.value === 'failed') return String($t('terminal.failed'))
+    return String($t('terminal.disconnected'))
+})
+
+const terminalStatusClass = computed(() => {
+    if (lastDisconnectReason.value === 'exited') return 'text-(--color-warning-soft-text)'
+    if (lastDisconnectReason.value === 'failed') return 'text-(--color-error-soft-text)'
+    return 'text-(--color-text-muted)'
+})
+
+const terminalStatusDotClass = computed(() => {
+    if (lastDisconnectReason.value === 'exited') return 'bg-(--color-warning)'
+    if (lastDisconnectReason.value === 'failed') return 'bg-(--color-error)'
+    return 'bg-(--color-text-muted)'
+})
+
 const messageBus = useMessageBus(handleMessage, false)
+
+let _onDataDisposable: { dispose: () => void } | null = null
 
 function createTerminalInterface(t: unknown): {
     cols: number
@@ -100,7 +122,7 @@ async function checkDisabled() {
 
 async function handleMessage(msg: unknown) {
     if (!msg || typeof msg !== 'object') return
-    const message = msg as { type?: string; cols?: number; rows?: number; data?: Uint8Array; back_channel?: string }
+    const message = msg as { type?: string; cols?: number; rows?: number; data?: Uint8Array | string; back_channel?: string; reason?: string }
 
     if (!message.type?.startsWith('terminal_')) return
     if (!terminalInstance.value) return
@@ -115,8 +137,21 @@ async function handleMessage(msg: unknown) {
         if (terminal.cols !== message.cols || terminal.rows !== message.rows) {
             terminalInstance.value.fitAddon.fit()
         }
+    } else if (message.type === 'terminal_close_event') {
+        disconnect('exited')
+    } else if (message.type === 'terminal_error') {
+        if (terminalInstance.value) {
+            terminalInstance.value.terminal.writeln(`\x1b[1;31m${$t('terminal.failed')}\x1b[0m`)
+        }
+        disconnect('failed')
     } else if (message.type === 'terminal_data_read' && message.data) {
         terminal.write(message.data)
+        const decoded = typeof message.data === 'string'
+            ? message.data
+            : new TextDecoder().decode(message.data)
+        if (/(?:^|\r?\n)(?:logout|exit)\s*$|connection\s+closed|session\s+closed/i.test(decoded)) {
+            disconnect('exited')
+        }
     }
 }
 
@@ -211,9 +246,23 @@ async function connect() {
         terminal.writeln(`\x1b[1;32m${$t('terminal.connected')}\x1b[0m`)
         terminal.writeln('')
         isConnected.value = true
+        lastDisconnectReason.value = 'disconnected'
 
-        terminal.onData((data: string) => {
+        // prevents double-input on reconnect
+        if (_onDataDisposable) {
+            _onDataDisposable.dispose()
+            _onDataDisposable = null
+        }
+
+        _onDataDisposable = terminal.onData((data: string) => {
             if (!isConnected.value) return
+            if (data === 'exit\r' || data === 'exit\n') {
+                messageBus.wsTerminalSend(data, terminal)
+                setTimeout(() => {
+                    if (isConnected.value) disconnect('exited')
+                }, 300)
+                return
+            }
             messageBus.wsTerminalSend(data, terminal)
         })
 
@@ -229,19 +278,31 @@ async function connect() {
         if (terminalInstance.value) {
             terminalInstance.value.terminal.writeln(`\x1b[1;31m${$t('terminal.failed')}\x1b[0m`)
         }
+        lastDisconnectReason.value = 'failed'
     } finally {
         isConnecting.value = false
     }
 }
 
-function disconnect() {
+function disconnect(reason: 'disconnected' | 'exited' | 'failed' = 'disconnected') {
+    if (_onDataDisposable) {
+        _onDataDisposable.dispose()
+        _onDataDisposable = null
+    }
     if (terminalInstance.value && isConnected.value) {
         messageBus.wsTerminalClose(terminalInstance.value.terminal)
         terminalInstance.value.terminal.writeln('')
-        terminalInstance.value.terminal.writeln(`\x1b[1;33m${$t('terminal.disconnected')}\x1b[0m`)
+        if (reason === 'exited') {
+            terminalInstance.value.terminal.writeln(`\x1b[1;33m${$t('terminal.exited')}\x1b[0m`)
+        } else if (reason === 'failed') {
+            terminalInstance.value.terminal.writeln(`\x1b[1;31m${$t('terminal.failed')}\x1b[0m`)
+        } else {
+            terminalInstance.value.terminal.writeln(`\x1b[1;33m${$t('terminal.disconnected')}\x1b[0m`)
+        }
     }
 
     isConnected.value = false
+    lastDisconnectReason.value = reason
     terminalId.value = crypto.randomUUID()
     terminalChannel.value = terminalChannelDefault
 }

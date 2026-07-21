@@ -20,10 +20,11 @@
 						</td>
 						<td class="py-0.5 text-(--color-text) font-medium whitespace-nowrap">
 							<span class="inline-flex items-center gap-1">
+								<span v-if="row.value !== 'installed' && row.value !== 'successful'">{{ row.value
+									}}</span>
 								<CoreAppStatusBadge v-if="row.badge"
 									:status="row.badgeColor === 'success' ? 'success' : row.badgeColor === 'warning' ? 'warning' : 'error'"
 									:label="row.badge" size="xs" />
-								<span v-else>{{ row.value }}</span>
 							</span>
 						</td>
 					</tr>
