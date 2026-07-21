@@ -105,7 +105,7 @@
                                 <CoreAppIcon :name="icons.x" class="w-4 h-4" />
                             </CoreAppButton>
                         </div>
-                        <div class="flex-1 min-h-0 overflow-hidden">
+                        <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                             <QuickpanelMainView />
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                                 @click="quickpanelOpen = false" />
                         </div>
 
-                        <div class="flex-1 min-h-0 overflow-hidden">
+                        <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                             <QuickpanelMainView />
                         </div>
                     </div>
