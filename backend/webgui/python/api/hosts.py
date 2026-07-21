@@ -627,19 +627,9 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
                         )
                     )
                     .select_from(table("OBJECT_TO_GROUP").alias("og"))
-                    .join(
-                        table("CONFIG_STATE").alias("cs"),
-                        and_(
-                            text("og.objectId = cs.objectId"),
-                            text("cs.configId = 'clientconfig.depot.id'"),
-                        ),
-                        isouter=True,
-                    )
                     .where(
                         and_(
-                            text("og.groupType = 'HostGroup'"),
                             text("og.groupId IN :group_ids"),
-                            where_depots,
                         )
                     )
                     .group_by(text("og.groupId"))
@@ -662,15 +652,7 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
                         )
                     )
                     .select_from(table("OBJECT_TO_GROUP").alias("og"))
-                    .join(
-                        table("CONFIG_STATE").alias("cs"),
-                        and_(
-                            text("og.objectId = cs.objectId"),
-                            text("cs.configId = 'clientconfig.depot.id'"),
-                        ),
-                        isouter=True,
-                    )
-                    .where(and_(where_hosts, where_depots))
+                    .where(text("og.groupId = :parent"))
                 )
                 member_rows = session.execute(member_query, params).fetchall()
 
@@ -712,6 +694,8 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
                 for row in member_rows:
                     object_id = row["object_id"]
                     if not object_id:
+                        continue
+                    if object_id == parentGroup or object_id in host_groups["children"]:
                         continue
                     host_groups["children"][object_id] = {
                         "id": f"{object_id};{parentGroup.lower()}",

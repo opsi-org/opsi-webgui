@@ -87,7 +87,7 @@ async def test_hosts_get(config, path, query_params, expected_result):  # pylint
 async def test_host_groups_dynamic_does_not_return_group_as_its_own_child(config):
     parent_group = "pytest-lazy-parent"
     child_group = "pytest-lazy-child"
-    client_id = "pytest-client-1.domain.local"
+    client_id = "pytest-client-6.domain.local"
 
     create_parent = requests.post(
         f"{config.external_url}{API_ROOT}/hosts/groups",
