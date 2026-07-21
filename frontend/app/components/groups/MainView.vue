@@ -14,14 +14,17 @@
                 <CoreAppTabsNav v-model="activeGroupType" :tabs="groupTypes" />
                 <Transition name="fade">
                     <div v-if="statusMessage" :class="[
-                        'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm',
+                        'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border',
                         statusMessage.type === 'success'
-                            ? 'bg-(--color-success)/15 text-(--color-success)'
-                            : 'bg-(--color-error)/15 text-(--color-error)'
+                            ? 'bg-(--color-success)/10 border-(--color-success)/35 text-(--color-text)'
+                            : 'bg-(--color-error)/10 border-(--color-error)/35 text-(--color-text)'
                     ]" :role="statusMessage.type === 'error' ? 'alert' : 'status'"
                         :aria-live="statusMessage.type === 'error' ? 'assertive' : 'polite'" aria-atomic="true">
                         <CoreAppIcon :name="statusMessage.type === 'success' ? icons.checkCircle : icons.xCircle"
-                            class="w-4 h-4 shrink-0" />
+                            :class="[
+                                'w-4 h-4 shrink-0',
+                                statusMessage.type === 'success' ? 'text-(--color-success)' : 'text-(--color-error)'
+                            ]" />
                         <span>{{ statusMessage.text }}</span>
                         <CoreAppButton variant="ghost" color="neutral" size="xs"
                             class="ml-1 opacity-60 hover:opacity-100" :aria-label="String($t('common.close'))"
@@ -151,10 +154,11 @@
                     </div>
 
                     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- keyboard navigation container for member list (roving focus) -->
-                    <div class="flex-1 overflow-auto p-4 space-y-4 outline-none" tabindex="-1"
+                    <div class="flex-1 overflow-auto px-4 pb-4 pt-0 outline-none" tabindex="-1"
                         @keydown="handleMemberListKeydown">
-                        <div class="border-(--color-border)">
-                            <div class="sticky top-0 z-10 bg-(--color-background) pt-4 pb-2 border-b border-(--color-border)">
+                        <div class="border-(--color-border) bg-(--color-background)">
+                            <div class="sticky top-0 z-20 bg-(--color-background) pt-3 pb-2 border-b border-(--color-border)"
+                                style="background-color: var(--color-background);">
                                 <div class="flex items-center justify-between mb-3">
                                     <h2 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
                                         {{ $t('groups.members') }}
@@ -275,15 +279,17 @@
                         </CoreAppFormField>
                         <CoreAppFormField>
                             <div class="space-y-2">
-                                <label class="flex items-center gap-2 cursor-pointer select-none">
+                                <div class="flex items-center gap-2 select-none">
                                     <CoreAppCheckbox :model-value="createAddMembersEnabled"
                                         :aria-label="String($t('groups.membersAdd'))"
                                         @update:model-value="toggleCreateAddMembers" />
-                                    <span class="text-sm text-(--color-text)">
+                                    <button type="button"
+                                        class="text-sm text-(--color-text) text-left bg-transparent border-0 p-0 cursor-pointer"
+                                        @click="toggleCreateAddMembers(!createAddMembersEnabled)">
                                         {{ $t('groups.membersAdd') }}
                                         <span class="text-(--color-text-muted)">({{ $t('common.optional') }})</span>
-                                    </span>
-                                </label>
+                                    </button>
+                                </div>
 
                                 <div v-if="createAddMembersEnabled" class="space-y-2">
                                     <CoreAppFilterInput v-model="createMembersSearch" size="sm"
