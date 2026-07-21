@@ -21,6 +21,7 @@
 </p>
 
 **opsi-WebGUI** is the official browser-based management interface for [OPSI](https://www.opsi.org), the open-source client management system.
+
 Manage clients, deploy software, configure servers, inspect logs and perform administration tasks directly from your browser without installing additional software.
 
 ![opsi-WebGUI clients overview](./screenshots/readme/opsi-webgui-clients.png)
@@ -47,7 +48,7 @@ Download [opsi-webgui.zip](https://tools.43.opsi.org/stable/opsi-webgui.zip) and
 Clone this repository and open it in Visual Studio Code with the Remote Containers extension installed.
 The development environment will be started automatically in the devcontainer.
 
-### Devcontainer quick start
+Devcontainer quick start:
 
 1. Open the repository in VS Code.
 2. Reopen in Container.
@@ -77,12 +78,7 @@ The project uses a unified test approach covering:
 
 ### Unified E2E Testing (Playwright)
 
-All UI tests use the shared runner:
-
-```
-frontend/tests/e2e/runner/runUITest.ts
-```
-
+All UI tests use the shared runner: `frontend/tests/e2e/runner/runUITest.ts`.
 The runner executes tests in Docker with a real `opsiconfd` backend and test data.
 
 For each page it validates:
@@ -175,7 +171,7 @@ Please open an issue on [GitHub Issues](https://github.com/opsi-org/opsi-webgui/
 
 ### Security vulnerabilities
 
-Do **not** open public issues for security bugs. Report them confidentially to [privacy@uib.de](mailto:privacy@uib.de).
+Do **not** open public issues for security bugs. Report them confidentially to [security@opsi.org](mailto:security@opsi.org).
 
 ### Translations
 
