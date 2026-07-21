@@ -13,6 +13,7 @@
     "version_outdated_netboot": 0,
     "installationStatus_unknown": 0,
     "installationStatus_installed": 0,
+    "actionRequest_set": 1,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
     "selected": false

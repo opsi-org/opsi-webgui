@@ -81,13 +81,15 @@
               <div class="mb-4">
                 <span class="text-xs text-(--color-text-muted) block mb-1">{{ $t('settings.columns') }}</span>
                 <div class="space-y-1 max-h-40 overflow-y-auto">
-                  <span v-for="col in toggleableColumns" :key="col.key"
-                    class="flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer">
+                  <button v-for="col in toggleableColumns" :key="col.key" type="button"
+                    class="w-full text-left flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer"
+                    @click="toggleColumnFromRow(col)">
                     <CoreAppCheckbox :model-value="isColumnVisibleComputed(col.key)" :disabled="col.alwaysVisible"
-                      :aria-label="resolveColumnLabel(col)" @update:model-value="tableSettings.toggleColumn(col.key)" />
+                        :aria-label="resolveColumnLabel(col)" @click.stop
+                        @update:model-value="tableSettings.toggleColumn(col.key)" />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col)
                       }}</span>
-                  </span>
+                  </button>
                 </div>
               </div>
 
@@ -104,11 +106,12 @@
     </div>
 
     <UCard :ui="{ body: 'p-0 sm:p-0 flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden' }"
+      :style="{ maxHeight }"
       class="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden">
       <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- scrollable region with keyboard navigation, role=region + tabindex is correct ARIA -->
       <div ref="tableContainer"
         class="flex-1 min-h-0 min-w-0 overflow-x-auto overflow-y-auto transition-all duration-200"
-        :style="{ maxHeight: `calc(${maxHeight} - 48px)` }" tabindex="0" role="region"
+        tabindex="0" role="region"
         :aria-label="String($t('settings.table'))" @scroll="handleScroll" @keydown="handleTableKeydown">
         <div v-if="loading && rows.length === 0" class="py-12">
           <CoreAppLoadingSpinner size="lg" />
@@ -271,6 +274,7 @@ export interface PageChangeParams {
   sortBy: string
   sortDesc: boolean
   filterQuery: string
+  sortBySelection: boolean
 }
 
 interface Props {
@@ -323,20 +327,56 @@ const slots = useSlots()
 
 const tableSettings = useDataTableSettings(props.tableId)
 
+const FILTER_STORAGE_KEY = 'opsi-webgui-datatable-filter-queries'
+
+function getStoredFilters(): Record<string, string> {
+  if (import.meta.server) return {}
+  try {
+    const raw = localStorage.getItem(FILTER_STORAGE_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+function getStoredFilter(tableId: string): string {
+  const all = getStoredFilters()
+  return all[tableId] || ''
+}
+
+function saveStoredFilter(tableId: string, filterQuery: string) {
+  if (import.meta.server) return
+  try {
+    const all = getStoredFilters()
+    all[tableId] = filterQuery
+    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(all))
+  } catch {
+    /* */
+  }
+}
+
 const tableContainer = ref<HTMLElement | null>(null)
 const actionsHeaderRef = ref<HTMLElement | null>(null)
 const actionsColWidth = ref(96)
 const scrollSentinel = ref<HTMLElement | null>(null)
 const selectedKeys = ref<string[]>([])
-const filterQueryInternal = ref('')
+const filterQueryInternal = ref(getStoredFilter(props.tableId))
 const currentPage = ref(1)
 const selectionModeOverride = ref<'single' | 'multi' | null>(null)
-const sortBySelection = ref(props.sortBySelectionEnabled || false)
+const sortBySelection = ref(Boolean(props.sortBySelectionEnabled && (props.selectedKeys?.length ?? 0) > 0))
 const lastClickedIndex = ref<number | null>(null)
 
-watch(() => props.sortBySelectionEnabled, (v) => {
-  if (v !== undefined) sortBySelection.value = v
+watch(() => props.sortBySelectionEnabled, (enabled, wasEnabled) => {
+  if (enabled && !wasEnabled && selectedKeys.value.length > 0 && !sortBySelection.value) {
+    sortBySelection.value = true
+  }
 })
+
+watch(sortBySelection, () => {
+  currentPage.value = 1
+  emitPageChange()
+})
+
 let filterDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
 const displayMode = computed(() => tableSettings.settings.displayMode)
@@ -408,17 +448,7 @@ const hasMoreData = computed(() => {
   return false
 })
 
-const displayRows = computed(() => {
-  if (!sortBySelection.value || selectedKeys.value.length === 0) return props.rows
-  const keySet = new Set(selectedKeys.value)
-  const selected: T[] = []
-  const unselected: T[] = []
-  for (const row of props.rows) {
-    if (keySet.has(getRowKey(row))) selected.push(row)
-    else unselected.push(row)
-  }
-  return [...selected, ...unselected]
-})
+const displayRows = computed(() => props.rows)
 
 const allSelected = computed(() =>
   props.rows.length > 0 && props.rows.every((row) => isSelected(row))
@@ -435,6 +465,7 @@ function getPageChangeParams(): PageChangeParams {
     sortBy: tableSettings.settings.sortColumn,
     sortDesc: tableSettings.settings.sortDirection === 'desc',
     filterQuery: filterQueryInternal.value,
+    sortBySelection: sortBySelection.value,
   }
 }
 
@@ -680,6 +711,12 @@ onMounted(() => {
     containerResizeObserver = new ResizeObserver(() => maybeFillViewport())
     containerResizeObserver.observe(tableContainer.value)
   }
+
+  if (props.filterable && filterQueryInternal.value) {
+    emit('update:filterQuery', filterQueryInternal.value)
+    currentPage.value = 1
+    emitPageChange()
+  }
 })
 
 watch(
@@ -720,7 +757,13 @@ function handleTableKeydown(e: KeyboardEvent) {
   }
 }
 
+function toggleColumnFromRow(col: DataTableColumnDef) {
+  if (col.alwaysVisible) return
+  tableSettings.toggleColumn(col.key)
+}
+
 watch(filterQueryInternal, (val) => {
+  saveStoredFilter(props.tableId, val)
   emit('update:filterQuery', val)
   if (filterDebounceTimer) clearTimeout(filterDebounceTimer)
   filterDebounceTimer = setTimeout(() => {
@@ -732,6 +775,9 @@ watch(filterQueryInternal, (val) => {
 watch(() => props.selectedKeys, (newKeys) => {
   if (newKeys) {
     selectedKeys.value = [...newKeys]
+    if (newKeys.length === 0 && sortBySelection.value) {
+      sortBySelection.value = false
+    }
     if (newKeys.length > 1 && effectiveSelectionMode.value === 'single') {
       selectionModeOverride.value = 'multi'
     }

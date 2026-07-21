@@ -47,7 +47,8 @@
 			:selectable="true" :filterable="true" :show-refresh="false" :total-items="totalItems"
 			:selected-keys="selectedTableKeys" :active-key="configProduct?.productId"
 			:sort-by-selection-enabled="sortBySelectionEnabled" @row-activate="handleRowActivate"
-			@selection-change="handleSelectionChange" @page-change="handlePageChange" @refresh="fetchProducts">
+			@selection-change="handleSelectionChange" @page-change="handlePageChange"
+			@update:filter-query="handleFilterQueryUpdate" @refresh="fetchProducts">
 
 			<template #header-cell-actionRequest="{ sortColumn, sortDirection }">
 				<ProductsActionRequestDropdown mode="header"
@@ -103,22 +104,18 @@
 						:selected-clients="(row as ProductRow).selectedClients"
 						:pending-request="pendingActionRequests.get((row as ProductRow).productId)?.actionRequest"
 						@change="handleActionRequestChange((row as ProductRow).productId, (row as ProductRow).actionRequest || 'none', $event)" />
-					<CoreAppStatusBadge v-if="getLiveStatus((row as ProductRow).productId)"
-						:status="getLiveStatus((row as ProductRow).productId)?.kind === 'error'
-							? 'error'
-							: getLiveStatus((row as ProductRow).productId)?.kind === 'updated'
-								? 'success'
-								: 'info'"
-						:icon="getLiveStatus((row as ProductRow).productId)?.kind === 'error'
-							? icons.xCircle
-							: getLiveStatus((row as ProductRow).productId)?.kind === 'updated'
-								? icons.checkCircle
-								: getLiveStatus((row as ProductRow).productId)?.kind === 'processing'
-									? icons.onDemand
-									: icons.refresh"
-						:label="getLiveStatus((row as ProductRow).productId)?.message"
-						:tooltip="getLiveStatus((row as ProductRow).productId)?.tooltip"
-						variant="soft" size="xs" />
+					<CoreAppStatusBadge v-if="getLiveStatus((row as ProductRow).productId)" :status="getLiveStatus((row as ProductRow).productId)?.kind === 'error'
+						? 'error'
+						: getLiveStatus((row as ProductRow).productId)?.kind === 'updated'
+							? 'success'
+							: 'info'" :icon="getLiveStatus((row as ProductRow).productId)?.kind === 'error'
+									? icons.xCircle
+									: getLiveStatus((row as ProductRow).productId)?.kind === 'updated'
+										? icons.checkCircle
+										: getLiveStatus((row as ProductRow).productId)?.kind === 'processing'
+											? icons.onDemand
+											: icons.refresh" :label="getLiveStatus((row as ProductRow).productId)?.message"
+						:tooltip="getLiveStatus((row as ProductRow).productId)?.tooltip" variant="soft" size="xs" />
 				</div>
 			</template>
 
@@ -130,7 +127,8 @@
 
 			<template #cell-actionSequence="{ row }">
 				<span class="text-small text-(--color-text)">
-					{{ (row as ProductRow).actionSequence !== undefined && (row as ProductRow).actionSequence !== -1 ? (row as ProductRow).actionSequence : '-' }}
+					{{ (row as ProductRow).actionSequence !== undefined && (row as ProductRow).actionSequence !== -1 ?
+						(row as ProductRow).actionSequence : '-' }}
 				</span>
 			</template>
 
@@ -181,8 +179,8 @@
 
 		<template #panel>
 			<div v-if="configProduct?.productId" class="flex flex-col h-full">
-				<ProductsConfigTabs ref="configPanelRef" :product-id="configProduct.productId" :panel-mode="true"
-					class="flex-1" @saved="onConfigSaved" />
+				<ProductsConfigTabs ref="configTabsComponentRef" :product-id="configProduct.productId"
+					:panel-mode="true" class="flex-1" @saved="onConfigSaved" />
 			</div>
 		</template>
 	</LayoutsPageLayout>
@@ -236,6 +234,7 @@ const pendingActionRequests = ref(new Map<string, ProductActionRequestChange>())
 const savingActionRequests = ref(false)
 const configTabsComponentRef = ref<InstanceType<typeof import('./ConfigTabs.vue').default> | null>(null)
 const lastPageParams = ref<PageChangeParams | null>(null)
+const currentFilterQuery = ref('')
 const productIcons = computed(() => (cachedProductIcons.value ?? {}) as Record<string, string>)
 const processActionsOpen = ref(false)
 const productLiveStatus = ref(new Map<string, ProductLiveStatus>())
@@ -583,7 +582,27 @@ function onConfigSaved() { fetchProducts() }
 
 function handlePageChange(params: PageChangeParams) {
 	lastPageParams.value = params
+	currentFilterQuery.value = params.filterQuery
+	// Persist filter query to URL
+	if (params.filterQuery || route.query.filter) {
+		router.replace({
+			query: {
+				...route.query as Record<string, string>,
+				filter: params.filterQuery || undefined
+			}
+		})
+	}
 	fetchProducts(params)
+}
+
+function handleFilterQueryUpdate(value: string) {
+	currentFilterQuery.value = value
+	if (lastPageParams.value) {
+		lastPageParams.value = {
+			...lastPageParams.value,
+			filterQuery: value,
+		}
+	}
 }
 
 function translateSortBy(sortBy: string): string {
@@ -609,10 +628,18 @@ function translateSortBy(sortBy: string): string {
 	}
 }
 
+function ensureVersionColumnVisible() {
+	if (!tableSettings.settings.visibleColumns.includes('version')) {
+		tableSettings.settings.visibleColumns.push('version')
+	}
+}
+
 async function fetchProducts(params?: PageChangeParams) {
 	loading.value = true
 	error.value = null
 	try {
+		const effectiveParams = params ?? lastPageParams.value ?? undefined
+		const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
 		await selectionStore.ensureServersSelected()
 		if (selectionStore.selectedServers.length === 0) { error.value = String($t('servers.noSelection')); return }
 
@@ -622,14 +649,18 @@ async function fetchProducts(params?: PageChangeParams) {
 		}
 		if (selectionStore.selectedClients.length > 0)
 			p.selectedClients = `[${selectionStore.selectedClients.join(',')}]`
-		if (params) {
-			p.pageNumber = params.pageNumber
-			p.perPage = params.perPage
-			if (params.sortBy && !params.sortBy.startsWith('__')) {
-				p.sortBy = translateSortBy(params.sortBy)
-				p.sortDesc = params.sortDesc
+		if (selectionSortActive && selectionStore.selectedProducts.length > 0)
+			p.selected = `[${selectionStore.selectedProducts.join(',')}]`
+		if (effectiveParams) {
+			p.pageNumber = effectiveParams.pageNumber
+			p.perPage = effectiveParams.perPage
+			if (effectiveParams.sortBy && !effectiveParams.sortBy.startsWith('__')) {
+				p.sortBy = translateSortBy(effectiveParams.sortBy)
+				p.sortDesc = effectiveParams.sortDesc
 			}
-			p.filterQuery = params.filterQuery
+			p.filterQuery = effectiveParams.filterQuery
+		} else if (currentFilterQuery.value) {
+			p.filterQuery = currentFilterQuery.value
 		} else {
 			if (tableSettings.settings.sortColumn && !tableSettings.settings.sortColumn.startsWith('__')) {
 				p.sortBy = translateSortBy(tableSettings.settings.sortColumn)
@@ -641,7 +672,7 @@ async function fetchProducts(params?: PageChangeParams) {
 		if (result.error) throw result.error
 		const newData = (result.data || []) as ProductRow[]
 		if (result.total !== null) totalItems.value = result.total
-		if (params && params.pageNumber > 1 && lastPageParams.value) {
+		if (effectiveParams && effectiveParams.pageNumber > 1 && lastPageParams.value) {
 			const existingIds = new Set(products.value.map(p => p.productId))
 			const unique = newData.filter(p => !existingIds.has(p.productId))
 			products.value = [...products.value, ...unique]
@@ -692,6 +723,11 @@ function tryOpenPanelFromRoute() {
 
 watch(() => selectionStore.selectedClients, () => fetchProducts(), { deep: true })
 watch(() => selectionStore.selectedServers, () => fetchProducts(), { deep: true })
+watch(() => selectionStore.selectedProducts.join(','), () => {
+	if ((lastPageParams.value?.sortBySelection || sortBySelectionEnabled.value) && selectionStore.selectionSource !== 'table') {
+		fetchProducts()
+	}
+})
 
 watch(messageBusLastMsg, (msg) => {
 	if (!msg || typeof msg !== 'object') return
@@ -710,9 +746,13 @@ watch(messageBusLastMsg, (msg) => {
 onMounted(async () => {
 	if (props.initialSortColumn) {
 		tableSettings.setSort(props.initialSortColumn, 'desc')
+		if (props.initialSortColumn === 'version_outdated') {
+			ensureVersionColumnVisible()
+		}
 	}
+	const filterQuery = route.query.filter as string | undefined
 	await Promise.all([
-		fetchProducts(),
+		fetchProducts(filterQuery ? { pageNumber: 1, perPage: 20, sortBy: props.initialSortColumn || 'productId', sortDesc: props.initialSortColumn ? true : false, filterQuery, sortBySelection: false } : undefined),
 		fetchProductIcons(),
 	])
 	tryOpenPanelFromRoute()

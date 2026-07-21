@@ -384,9 +384,12 @@ def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 @rest_api
 def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
     selectedDepots: List[str] = Depends(parse_depot_list),
+    withClients: bool = True,
 ) -> RESTResponse:
     """
     Get host groups as tree.
+    withClients=false returns only the group structure (no client members) for fast initial load.
+    Client members can be lazy-loaded afterwards via hosts/groups-dynamic?parentGroup=<id>.
     """
     username = get_username()
     configured = host_group_access_configured(username)
@@ -411,49 +414,89 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
             where_depots = or_(where_depots, text("cs.values IS NULL"))  # type: ignore[assignment]
 
     with mysql.session() as session:
-        query = (
-            select(  # type: ignore[arg-type,attr-defined]
-                text(  # type: ignore[arg-type]
-                    """
+        if withClients:
+            query = (
+                select(  # type: ignore[arg-type,attr-defined]
+                    text(  # type: ignore[arg-type]
+                        """
 			g.groupId AS group_id,
 			g.parentGroupId AS parent_id,
 			og.objectId AS object_id,
 			TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) AS depot_id
 		"""
+                    )
                 )
-            )
-            .select_from(table("GROUP").alias("g"))
-            .join(
-                table("OBJECT_TO_GROUP").alias("og"),
-                text("g.`type` = og.groupType AND g.groupId = og.groupId"),
-                isouter=True,
-            )
-            .join(
-                table("CONFIG_STATE").alias("cs"),
-                and_(
-                    text("og.objectId = cs.objectId"),
-                    or_(
-                        text("cs.configId = 'clientconfig.depot.id'"),
-                        text("cs.values IS NULL"),
+                .select_from(table("GROUP").alias("g"))
+                .join(
+                    table("OBJECT_TO_GROUP").alias("og"),
+                    text("g.`type` = og.groupType AND g.groupId = og.groupId"),
+                    isouter=True,
+                )
+                .join(
+                    table("CONFIG_STATE").alias("cs"),
+                    and_(
+                        text("og.objectId = cs.objectId"),
+                        or_(
+                            text("cs.configId = 'clientconfig.depot.id'"),
+                            text("cs.values IS NULL"),
+                        ),
+                        where_depots,
                     ),
-                    where_depots,
-                ),
-                isouter=True,
+                    isouter=True,
+                )
+                .where(where)
             )
-            .where(where)
-        )
+        else:
+            # Fetch only group structure, no client member IDs (fast path for lazy loading)
+            # Still include member counts so the UI can show expand chevrons
+            query = (
+                select(  # type: ignore[arg-type,attr-defined]
+                    text(  # type: ignore[arg-type]
+                        """
+			g.groupId AS group_id,
+			g.parentGroupId AS parent_id,
+			NULL AS object_id,
+			NULL AS depot_id,
+			(SELECT COUNT(*) FROM OBJECT_TO_GROUP og WHERE og.groupId = g.groupId AND og.groupType = 'HostGroup') AS member_count
+		"""
+                    )
+                )
+                .select_from(table("GROUP").alias("g"))
+                .where(where)
+            )
         result = session.execute(query, params)
         result = result.fetchall()
     all_groups: dict = {}
     root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
+
+    # When withClients=False, capture member counts from the query before passing to read_groups
+    member_counts: dict = {}
+    if not withClients:
+        for row in result:
+            row_dict = dict(row)
+            gid = row_dict.get("group_id")
+            cnt = row_dict.get("member_count", 0) or 0
+            if gid:
+                member_counts[gid] = int(cnt)
+
     all_groups = read_groups(
         result,
         root_group,
         selected_object_ids=[],
         allowed=allowed,
-        withClients=True,
+        withClients=withClients,
         gtype="HostGroup",
     )
+
+    # Attach member counts to group nodes when withClients=False
+    # so the frontend knows which groups have expandable children
+    if not withClients and member_counts:
+        for gid, cnt in member_counts.items():
+            if gid in all_groups and cnt > 0:
+                all_groups[gid]["member_count"] = cnt
+                # Set a placeholder children dict so build_nested_group treats it as expandable
+                if all_groups[gid].get("children") is None:
+                    all_groups[gid]["children"] = {}
 
     host_groups = build_nested_group(root_group, all_groups)
 
@@ -474,15 +517,16 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
     children.update(clientdirectory["children"])
     clientdirectory["children"] = children
 
-    clients = group_get_all_clients("clientdirectory", selectedDepots)
+    if withClients:
+        clients = group_get_all_clients("clientdirectory", selectedDepots)
 
-    for client in clients:
-        clientdirectory["children"]["not_assigned"]["children"][client] = {
-            "id": client,
-            "type": "ObjectToGroup",
-            "text": client,
-            "parent": "not_assigned",
-        }
+        for client in clients:
+            clientdirectory["children"]["not_assigned"]["children"][client] = {
+                "id": client,
+                "type": "ObjectToGroup",
+                "text": client,
+                "parent": "not_assigned",
+            }
 
     del host_groups["children"]["clientdirectory"]
     return RESTResponse(
@@ -552,6 +596,117 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
             where_depots = or_(where_depots, text("cs.values IS NULL"))  # type: ignore[assignment]
 
     with mysql.session() as session:
+        if parentGroup and parentGroup not in ("root", "not_assigned"):
+            child_groups_query = (
+                select(
+                    text(  # type: ignore[arg-type]
+                        """
+				g.parentGroupId AS parent_id,
+				g.groupId AS group_id
+			"""
+                    )
+                )
+                .select_from(table("GROUP").alias("g"))
+                .where(where)
+            )
+            child_group_rows = session.execute(child_groups_query, params).fetchall()
+
+            child_group_ids = [
+                row["group_id"] for row in child_group_rows if row and row["group_id"]
+            ]
+            member_counts: dict[str, int] = {}
+            if child_group_ids:
+                count_params = {**params, "group_ids": child_group_ids}
+                count_query = (
+                    select(
+                        text(  # type: ignore[arg-type]
+                            """
+					og.groupId AS group_id,
+					COUNT(*) AS member_count
+				"""
+                        )
+                    )
+                    .select_from(table("OBJECT_TO_GROUP").alias("og"))
+                    .where(
+                        and_(
+                            text("og.groupId IN :group_ids"),
+                        )
+                    )
+                    .group_by(text("og.groupId"))
+                )
+                count_result = session.execute(count_query, count_params).fetchall()
+                member_counts = {
+                    row["group_id"]: int(row["member_count"] or 0)
+                    for row in count_result
+                    if row is not None
+                }
+
+            member_rows = []
+            if withClients:
+                member_query = (
+                    select(
+                        text(  # type: ignore[arg-type]
+                            """
+					og.objectId AS object_id
+				"""
+                        )
+                    )
+                    .select_from(table("OBJECT_TO_GROUP").alias("og"))
+                    .where(text("og.groupId = :parent"))
+                )
+                member_rows = session.execute(member_query, params).fetchall()
+
+            host_groups: dict[str, Any] = {
+                "id": parentGroup,
+                "type": "HostGroup",
+                "text": parentGroup,
+                "parent": None,
+                "children": {},
+            }
+
+            if (
+                allowed
+                and parentGroup not in allowed
+                and parentGroup != "clientdirectory"
+            ):
+                return RESTResponse(data={"groups": host_groups})
+
+            for row in child_group_rows:
+                group_id = row["group_id"]
+                if not group_id:
+                    continue
+                if (
+                    allowed
+                    and group_id not in allowed
+                    and group_id != "clientdirectory"
+                ):
+                    continue
+                host_groups["children"][group_id] = {
+                    "id": f"{group_id};{parentGroup.lower()}",
+                    "type": "HostGroup",
+                    "text": group_id,
+                    "parent": parentGroup,
+                    "children": None,
+                    "member_count": member_counts.get(group_id, 0),
+                }
+
+            if withClients:
+                for row in member_rows:
+                    object_id = row["object_id"]
+                    if not object_id:
+                        continue
+                    if object_id == parentGroup or object_id in host_groups["children"]:
+                        continue
+                    host_groups["children"][object_id] = {
+                        "id": f"{object_id};{parentGroup.lower()}",
+                        "type": "ObjectToGroup",
+                        "text": object_id,
+                        "parent": parentGroup,
+                        "allowed": True,
+                    }
+
+            return RESTResponse(data={"groups": host_groups})
+
         if parentGroup and parentGroup != "root":
             query = union(
                 select(

@@ -189,3 +189,48 @@ async def test_products(config, input_data, expected_result):  # pylint: disable
 
         assert res.status_code == 200
         assert remove_volatile(res.json()) == remove_volatile(json_data)
+
+
+@pytest.mark.asyncio
+async def test_product_groups_dynamic_returns_children_and_products(config):
+    parent_group = "pytest-prod-lazy-parent"
+    child_group = "pytest-prod-lazy-child"
+    product_id = "pytest-prod-1"
+
+    create_parent = requests.post(
+        f"{config.external_url}{API_ROOT}/products/groups",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+        json={"groupId": parent_group},
+    )
+    assert create_parent.status_code == 201
+
+    create_child = requests.post(
+        f"{config.external_url}{API_ROOT}/products/groups",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+        json={"groupId": child_group, "parentGroupId": parent_group},
+    )
+    assert create_child.status_code == 201
+
+    add_product = requests.post(
+        f"{config.external_url}{API_ROOT}/products/groups/{parent_group}/products",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+        json=[product_id],
+    )
+    assert add_product.status_code == 201
+
+    res = requests.get(
+        f"{config.external_url}{API_ROOT}/products/groups-dynamic",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+        params={"parentGroup": parent_group, "withProducts": True},
+    )
+
+    assert res.status_code == 200
+    groups = res.json()["groups"]
+    children = groups["children"]
+    assert parent_group not in children
+    assert child_group in children
+    assert product_id in children

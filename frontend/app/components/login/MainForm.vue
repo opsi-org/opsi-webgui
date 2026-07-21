@@ -71,9 +71,20 @@ const isDark = computed(() => colorMode.preference === 'dark')
 
 const cred = reactive({ username: '', password: '' })
 const loading = ref(false)
-const showSaml = ref(true)
+const showSaml = ref(false)
 const errorMessage = ref('')
 const configServerName = ref('')
+
+async function detectAuthMethods() {
+  try {
+    // opsiconfd returns X-opsi-auth-methods on its /login page (e.g. "password" or "password,saml")
+    const res = await fetch(`${window.location.origin}/login`, { method: 'GET', credentials: 'include' })
+    const methods = (res.headers.get('X-opsi-auth-methods') || '').split(',').map((m: string) => m.trim())
+    showSaml.value = methods.includes('saml')
+  } catch {
+    showSaml.value = false
+  }
+}
 
 function getDefaultPage(): string {
   return getDefaultPageFromCookie(config.public.BASE_PAGE as string || '/clients')
@@ -81,6 +92,7 @@ function getDefaultPage(): string {
 
 onMounted(async () => {
   errorMessage.value = ''
+  detectAuthMethods()
   try {
     const result = await getConfigServer()
     if (result.data) {

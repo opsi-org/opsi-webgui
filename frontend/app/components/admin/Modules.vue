@@ -51,7 +51,11 @@
 				</div>
 				<span v-if="getClientNumber(module) !== null"
 					class="flex items-center gap-1 shrink-0 text-xs text-(--color-text-muted)">
-					<CoreAppIcon :name="icons.client" class="w-3 h-3" />{{ getClientNumber(module) }}
+					<CoreAppIcon v-if="getClientNumber(module) !== '∞'" :name="icons.client" class="w-3 h-3" />
+					<CoreAppTooltip v-if="getClientNumber(module) === '∞'" :text="$t('mods.unlimited')">
+						<span class="text-xl cursor-help">∞</span>
+					</CoreAppTooltip>
+					<span v-else>{{ getClientNumber(module) }}</span>
 				</span>
 			</div>
 		</div>
@@ -84,9 +88,12 @@ function getModuleState(module: string): string {
 	return 'licensed'
 }
 
-function getClientNumber(module: string): number | null {
+function getClientNumber(module: string): string | null {
 	const detail = props.modulesDetailed?.[module]
-	if (detail && detail.client_number > 0 && !isObsolete(module)) return detail.client_number
+	if (detail && detail.client_number > 0 && !isObsolete(module)) {
+		if (detail.client_number >= 999999000) return '∞'
+		return String(detail.client_number)
+	}
 	return null
 }
 </script>
