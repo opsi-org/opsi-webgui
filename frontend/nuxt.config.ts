@@ -21,57 +21,21 @@ const localeNameMap: Record<string, string> = {
   en: 'English',
   fr: 'Français',
 }
-type LocaleFileCandidate = {
-  code: string
-  file: string
-  // Lower value means higher priority.
-  // Prefer plain <code>.json (Transifex downloads) over prefixed opsi-webgui_<code>.json.
-  priority: number
-}
+const coreLocaleCodes = ['en', 'de', 'fr']
 
-const localeFileCandidates: LocaleFileCandidate[] = fs
-  .readdirSync(localeDir)
-  .flatMap((file) => {
-    const prefixedMatch = file.match(/^opsi-webgui_([a-z-]+)\.json$/i)
-    if (prefixedMatch) {
-      const code = prefixedMatch[1]
-      return code ? [{ code: code.toLowerCase(), file, priority: 1 }] : []
-    }
-
-    const plainMatch = file.match(/^([a-z-]+)\.json$/i)
-    if (plainMatch) {
-      const code = plainMatch[1]
-      return code ? [{ code: code.toLowerCase(), file, priority: 0 }] : []
-    }
-
-    return []
-  })
-
-const localesByCode = new Map<string, { code: string; file: string; name: string }>()
-for (const candidate of localeFileCandidates.sort((a, b) => a.priority - b.priority || a.code.localeCompare(b.code))) {
-  if (!localesByCode.has(candidate.code)) {
-    localesByCode.set(candidate.code, {
-      code: candidate.code,
-      file: candidate.file,
-      name: localeNameMap[candidate.code] || candidate.code.toUpperCase(),
-    })
+const coreLocales = coreLocaleCodes.map((code) => {
+  const file = `opsi-webgui_${code}.json`
+  const fullPath = path.join(localeDir, file)
+  if (!fs.existsSync(fullPath)) {
+    throw new Error(`Missing required locale file: ${fullPath}`)
   }
-}
 
-const locales = [...localesByCode.values()]
-
-const localeByCode = new Map(locales.map((locale) => [locale.code, locale]))
-const priorityCodes = ['en', 'de', 'fr']
-
-const prioritizedLocales = priorityCodes
-  .map((code) => localeByCode.get(code))
-  .filter((locale): locale is NonNullable<typeof locale> => !!locale)
-
-const communityLocales = locales
-  .filter((locale) => !priorityCodes.includes(locale.code))
-  .sort((a, b) => a.code.localeCompare(b.code))
-
-const orderedLocales = [...prioritizedLocales, ...communityLocales]
+  return {
+    code,
+    file,
+    name: localeNameMap[code] || code.toUpperCase(),
+  }
+})
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -242,7 +206,7 @@ export default defineNuxtConfig({
   i18n: {
     strategy: 'no_prefix',
     defaultLocale: 'de',
-    locales: orderedLocales,
+    locales: coreLocales,
     bundle: {
       fullInstall: false,
     },

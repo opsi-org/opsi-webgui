@@ -82,15 +82,13 @@ setup:i18n:
   script:
     - RATE=0.0 && [ "$CI_COMMIT_TAG" != "" ] && RATE=1.0
     - opsi-dev-cli -l 6 transifex upload-resource frontend/i18n/locales/opsi-webgui_en.json --resource-name opsi-webgui.json || true
-    - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json frontend/i18n/locales/ --min-translation-rate $RATE || true
+    - opsi-dev-cli -l 6 transifex download-translations opsi-webgui.json frontend/i18n/locales/ --language de --language fr --min-translation-rate $RATE || true
     - chmod -R 666 frontend/i18n/locales/* || true
     - ls -lah frontend/i18n/locales/
   artifacts:
     paths: [frontend/i18n/locales/]
     expire_in: 3 days
   rules:
-    - if: $CI_COMMIT_TAG
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - when: manual
       allow_failure: true
 
@@ -326,7 +324,6 @@ build:addon:
       validate:types,
       validate:audit,
       { job: setup:patch-version, optional: true },
-      { job: setup:i18n, optional: true },
       { job: setup:changelog, optional: true },
     ]
   script:

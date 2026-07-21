@@ -28,17 +28,6 @@
           </CoreAppButton>
         </div>
 
-        <div v-if="communityLocales.length > 0" class="mt-1 border-t border-(--color-border) px-2 pt-1">
-          <div class="px-2 py-1 text-[10px] uppercase tracking-wide text-(--color-text-muted)">
-            {{ t('settings.communityLanguages') }}
-          </div>
-          <CoreAppButton v-for="locale in communityLocales" :key="locale.code" @click="switchTo(locale.code)"
-            variant="ghost" color="neutral" size="xs" block class="justify-start"
-            :data-testid="`language-dropdown-item-${locale.code}`">
-            <span>{{ locale.name || locale.code.toUpperCase() }}</span>
-          </CoreAppButton>
-        </div>
-
         <div class="mt-1 border-t border-(--color-border) px-1 pt-1">
           <a :href="transifexUrl" target="_blank" rel="noopener noreferrer"
             class="flex min-h-8 items-center rounded-md px-2 py-1 text-xs text-(--color-primary-soft-text) hover:bg-(--color-surface-hover)"
@@ -67,13 +56,17 @@ const containerRef = ref<HTMLElement | null>(null)
 
 interface LocaleInfo { code: string; name?: string }
 
+const visibleLocaleCodes = ['en', 'de', 'fr']
+
 const supportedLocales = computed(() =>
-  (locales.value as LocaleInfo[]).map(locale => String(locale.code))
+  (locales.value as LocaleInfo[])
+    .map(locale => String(locale.code))
+    .filter(code => visibleLocaleCodes.includes(code))
 )
 
 const availableLocales = computed<LocaleInfo[]>(() => {
   const allLocales = locales.value as LocaleInfo[]
-  return allLocales.filter(l => l.code !== currentLocale.value)
+  return allLocales.filter(l => visibleLocaleCodes.includes(l.code) && l.code !== currentLocale.value)
 })
 
 const priorityOrder = ['en', 'de', 'fr']
@@ -82,10 +75,6 @@ const priorityLocales = computed(() =>
   priorityOrder
     .map(code => availableLocales.value.find(locale => locale.code === code))
     .filter((locale): locale is LocaleInfo => !!locale)
-)
-
-const communityLocales = computed(() =>
-  availableLocales.value.filter(locale => !priorityOrder.includes(locale.code))
 )
 
 async function switchTo(code: string) {
