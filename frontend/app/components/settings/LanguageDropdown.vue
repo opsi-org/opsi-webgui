@@ -60,13 +60,16 @@ const props = defineProps<{
 const icons = useIcons()
 const { locale, locales, setLocale, t } = useI18n()
 const currentLocale = computed(() => locale.value || 'en')
-const supportedLocales = ['en', 'de', 'fr']
 const transifexUrl = 'https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/'
 
 const open = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
 
 interface LocaleInfo { code: string; name?: string }
+
+const supportedLocales = computed(() =>
+  (locales.value as LocaleInfo[]).map(locale => String(locale.code))
+)
 
 const availableLocales = computed<LocaleInfo[]>(() => {
   const allLocales = locales.value as LocaleInfo[]
@@ -85,8 +88,17 @@ const communityLocales = computed(() =>
   availableLocales.value.filter(locale => !priorityOrder.includes(locale.code))
 )
 
-function switchTo(code: string) {
-  setLocale(code as Parameters<typeof setLocale>[0])
+async function switchTo(code: string) {
+  if (!supportedLocales.value.includes(code)) {
+    open.value = false
+    return
+  }
+
+  try {
+    await setLocale(code as Parameters<typeof setLocale>[0])
+  } catch (error) {
+    console.error('Failed to switch locale', { code, error })
+  }
   open.value = false
 }
 
