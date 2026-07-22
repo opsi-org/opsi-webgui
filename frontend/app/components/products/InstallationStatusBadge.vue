@@ -10,20 +10,33 @@
 <template>
 	<div class="flex justify-center">
 		<CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
-			<CoreAppStatusBadge status="warning" :icon="icons.unequal" :label="$t('common.mixed')" />
+			<CoreAppTooltip v-if="iconOnly" :text="String($t('common.mixed'))">
+				<CoreAppStatusBadge status="warning" :icon="icons.unequal" size="xs" />
+			</CoreAppTooltip>
+			<CoreAppStatusBadge v-else status="warning" :icon="icons.unequal" :label="$t('common.mixed')" />
 		</CoreAppTooltipTable>
 
 		<template v-else-if="normalizedStatus === 'installed'">
-			<CoreAppStatusBadge status="success" :icon="icons.checkCircle" :label="$t('products.installed')" />
+			<CoreAppTooltip v-if="iconOnly" :text="String($t('products.installed'))">
+				<CoreAppStatusBadge status="success" :icon="icons.checkCircle" size="xs" />
+			</CoreAppTooltip>
+			<CoreAppStatusBadge v-else status="success" :icon="icons.checkCircle" :label="$t('products.installed')" />
 		</template>
 
 		<template v-else-if="normalizedStatus === 'unknown'">
-			<CoreAppStatusBadge status="warning" :icon="icons.productInstallationStatusUnknown"
+			<CoreAppTooltip v-if="iconOnly" :text="String($t('common.unknown'))">
+				<CoreAppStatusBadge status="warning" :icon="icons.productInstallationStatusUnknown" size="xs" />
+			</CoreAppTooltip>
+			<CoreAppStatusBadge v-else status="warning" :icon="icons.productInstallationStatusUnknown"
 				:label="$t('common.unknown')" />
 		</template>
 
 		<span v-else-if="normalizedStatus === 'not_installed' || normalizedStatus === 'none' || !normalizedStatus"
 			class="text-(--color-text-muted) text-xs">-</span>
+
+		<CoreAppTooltip v-else-if="iconOnly" :text="String(status)">
+			<CoreAppStatusBadge status="info" :icon="icons.productInstallationStatusUnknown" size="xs" />
+		</CoreAppTooltip>
 
 		<CoreAppStatusBadge v-else :label="status" />
 	</div>
@@ -34,9 +47,14 @@ interface Props {
 	status?: string
 	statusDetails?: string[]
 	selectedClients?: string[] | null
+	iconOnly?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+	iconOnly: false,
+})
+
+const iconOnly = computed(() => props.iconOnly)
 
 const icons = useIcons()
 const { t: $t } = useI18n()

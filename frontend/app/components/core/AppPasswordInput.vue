@@ -9,10 +9,10 @@
 -->
 <template>
 	<UInput v-bind="$attrs" :model-value="modelValue" :type="show ? 'text' : 'password'" :placeholder="placeholder"
-		:aria-label="ariaLabel" :disabled="disabled" :size="size" :icon="icon" :ui="{ trailing: 'pe-1' }"
+		:aria-label="ariaLabel" :disabled="disabled" :size="effectiveSize" :icon="icon" :ui="{ trailing: 'pe-1' }"
 		@update:model-value="$emit('update:modelValue', $event)">
 		<template #trailing>
-			<UButton color="neutral" variant="link" size="sm" :icon="show ? icons.eyeOff : icons.eye"
+			<UButton color="neutral" variant="link" :size="effectiveSize" :icon="show ? icons.eyeOff : icons.eye"
 				:aria-label="show ? String($t('auth.hidePassword')) : String($t('auth.showPassword'))" :aria-pressed="show"
 				:disabled="disabled" @click="show = !show" />
 		</template>
@@ -20,6 +20,8 @@
 </template>
 
 <script setup lang="ts">
+import { useUiStore } from '~/stores/uiStore'
+
 defineOptions({
 	inheritAttrs: false
 })
@@ -46,6 +48,7 @@ defineEmits<{
 
 const icons = useIcons()
 const { t: $t } = useI18n()
+const uiStore = useUiStore()
 
 const attrs = useAttrs()
 const ariaLabel = computed(() => {
@@ -53,6 +56,8 @@ const ariaLabel = computed(() => {
 	if (typeof existing === 'string' && existing.trim()) return existing
 	return props.placeholder || undefined
 })
+
+const effectiveSize = computed(() => uiStore.isMobile ? 'xs' : props.size)
 
 const show = ref(false)
 </script>

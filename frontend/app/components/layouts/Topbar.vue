@@ -22,7 +22,7 @@
         <div class="flex-1" />
         <nav class="flex items-center gap-2 md:gap-3 px-2 py-1 rounded-lg">
             <div v-if="formattedTime && formattedTime !== '0:00' && isWarning"
-                class="h-9 w-13 inline-flex items-center justify-center gap-1.5 rounded-md text-xs bg-yellow-500/20 text-yellow-100 px-2.5 font-semibold border border-yellow-500/30 hover:bg-yellow-500/30 transition-colors"
+                class="h-9 w-18 inline-flex items-center justify-center gap-1.5 rounded-md text-xs bg-yellow-500 text-black px-2.5 font-semibold hover:bg-yellow-500/30 transition-colors"
                 :title="$t('auth.expiresIn')">
                 <CoreAppIcon :name="icons.clock" class="w-4 h-4" />
                 <span class="font-medium tabular-nums">{{ formattedTime }}</span>

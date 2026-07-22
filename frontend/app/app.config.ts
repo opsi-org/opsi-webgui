@@ -16,8 +16,8 @@ export default defineAppConfig({
     card: {
       slots: {
         root: 'bg-(--color-background) border border-(--color-border)/50 rounded-xl shadow-sm transition-all duration-150 hover:shadow-md',
-        header: 'border-b border-(--color-border)/50 px-4 py-3',
-        body: 'p-4',
+        header: 'border-b border-(--color-border)/50 px-3 py-2',
+        body: 'p-3',
       },
     },
     button: {
@@ -264,7 +264,7 @@ export default defineAppConfig({
     },
     formGroup: {
       slots: {
-        root: 'rounded-lg p-2 -mx-2 transition-colors duration-100 hover:bg-(--color-surface-hover)/50',
+        root: 'rounded-lg p-1.5 -mx-1.5 transition-colors duration-100 hover:bg-(--color-surface-hover)/50',
         label: 'text-sm font-medium text-(--color-text)',
       },
     },
@@ -272,8 +272,8 @@ export default defineAppConfig({
       slots: {
         root: 'bg-(--color-background) border border-(--color-border)/50 rounded-xl overflow-hidden',
         thead: 'bg-(--color-surface)',
-        th: 'font-[Montserrat] text-(--color-text-muted) text-xs font-semibold uppercase tracking-wider px-4 py-3',
-        td: 'text-(--color-text) px-4 py-3',
+        th: 'font-[Montserrat] text-(--color-text-muted) text-xs font-semibold uppercase tracking-wider px-2.5 py-1.5',
+        td: 'text-(--color-text) px-2.5 py-1.5',
         tr: 'hover:bg-(--color-surface-hover) transition-colors duration-100 border-b border-(--color-border)/30 last:border-b-0',
       },
     },
@@ -489,7 +489,7 @@ export default defineAppConfig({
     },
     formField: {
       slots: {
-        root: 'rounded-lg p-2 -mx-2 transition-colors duration-100 hover:bg-(--color-surface-hover)/50',
+        root: 'rounded-lg p-1.5 -mx-1.5 transition-colors duration-100 hover:bg-(--color-surface-hover)/50',
         label: 'text-sm font-medium text-(--color-text)',
       },
     },

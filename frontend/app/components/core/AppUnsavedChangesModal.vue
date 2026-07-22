@@ -33,9 +33,10 @@
 		</div>
 	</template>
 
-	<UModal v-model:open="open" :title="$t('unsaved.changes')" :ui="{ content: 'max-w-sm sm:max-w-2xl' }">
+	<UModal v-model:open="open" :title="$t('unsaved.changes')"
+		:ui="{ content: 'w-[98vw] max-w-[98vw] h-[92vh] max-h-[92vh]' }">
 		<template #body>
-			<div class="space-y-3">
+			<div class="space-y-3 h-full min-h-0 overflow-auto">
 				<!-- Result alerts inside modal -->
 				<CoreAppAlertInline v-if="saveResult && saveResult.type === 'success'" color="success"
 					:title="$t('common.success')" :description="saveResult.message" variant="subtle" closable
@@ -49,7 +50,7 @@
 
 				<!-- Product changes table -->
 				<template v-if="flatChanges.length > 0">
-					<CoreAppTable :columns="productChangeColumns" max-height="16rem" wrapper-class="min-h-20">
+					<CoreAppTable :columns="productChangeColumns" max-height="42vh" wrapper-class="min-h-28">
 						<tr v-for="change in flatChanges" :key="change.key" class="hover:bg-(--color-surface-hover)">
 							<td class="px-2 py-1 max-w-32 font-medium">
 								<UTooltip :text="change.productId" :delay-duration="300">
@@ -84,7 +85,7 @@
 				<!-- Host parameters table -->
 				<template v-if="(configRef?.changedParams?.size ?? 0) > 0">
 					<h5 class="font-heading text-xs text-(--color-text-muted) mb-1 m-0">{{ $t('config.params') }}</h5>
-					<CoreAppTable :columns="paramChangeColumns" max-height="12rem">
+					<CoreAppTable :columns="paramChangeColumns" max-height="34vh">
 						<tr v-for="[key] in configRef?.changedParams" :key="key"
 							class="hover:bg-(--color-surface-hover)">
 							<td class="px-2 py-1 max-w-40 font-medium">
@@ -118,7 +119,7 @@
 				<template v-if="(configRef?.changedAttributesList?.length ?? 0) > 0">
 					<h5 class="font-heading text-xs text-(--color-text-muted) mb-1 m-0">{{ $t('common.attributes') }}
 					</h5>
-					<CoreAppTable :columns="attrChangeColumns" max-height="12rem">
+					<CoreAppTable :columns="attrChangeColumns" max-height="34vh">
 						<tr v-for="item in configRef?.changedAttributesList" :key="item.key"
 							class="hover:bg-(--color-surface-hover)">
 							<td class="px-2 py-1 max-w-40 font-medium">
@@ -167,7 +168,8 @@
 					<template v-if="processAfterSave">
 						<div class="px-3 py-2 space-y-2">
 							<div class="space-y-1">
-								<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('products.title') }}:</span>
+								<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('products.title')
+									}}:</span>
 								<div class="flex flex-wrap items-center gap-2">
 									<CoreAppRadio v-model="onDemandProductMode" value="all" :label="$t('common.all')"
 										size="xs" />
@@ -177,7 +179,8 @@
 								</div>
 							</div>
 							<div class="space-y-1">
-								<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('common.visibility') }}:</span>
+								<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('common.visibility')
+									}}:</span>
 								<div class="flex flex-wrap items-center gap-2">
 									<CoreAppRadio v-model="onDemandVisibility" value="" :label="$t('clients.default')"
 										size="xs" />
@@ -188,13 +191,14 @@
 								</div>
 							</div>
 							<div class="space-y-1">
-								<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('clients.title') }}:</span>
+								<span class="text-xs font-medium text-(--color-text-muted)">{{ $t('clients.title')
+									}}:</span>
 								<div class="text-xs text-(--color-text-muted)">
-								{{ onDemandClientIds.length }}
-								<span v-if="onDemandClientIds.length > 0" class="ml-1">
-									({{ onDemandClientIds.slice(0, 3).join(', ') }}{{ onDemandClientIds.length > 3 ?
-										'...' : '' }})
-								</span>
+									{{ onDemandClientIds.length }}
+									<span v-if="onDemandClientIds.length > 0" class="ml-1">
+										({{ onDemandClientIds.slice(0, 3).join(', ') }}{{ onDemandClientIds.length > 3 ?
+											'...' : '' }})
+									</span>
 								</div>
 							</div>
 						</div>
@@ -203,7 +207,7 @@
 				<div class="flex gap-2 justify-end">
 					<template v-if="totalChangesCount > 0">
 						<UButton variant="outline" color="primary" @click="handleDiscardAll">{{ $t('common.discardAll')
-							}}
+						}}
 						</UButton>
 						<UButton color="primary" :loading="isSaving" @click="handleSaveAll">
 							{{ processAfterSave && showProcessOptions ? $t('actions.saveAndProcess') :

@@ -14,31 +14,31 @@
 		</div>
 
 		<template v-else>
-			<div class="flex items-center justify-between mb-2 shrink-0">
+			<div class="flex items-center justify-between mb-1 shrink-0">
 				<span class="text-xs text-(--color-text-muted)">{{ totalCount }} {{ $t('common.total') }}</span>
 				<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
 					:aria-label="$t('common.clearAll')" :title="$t('common.clearAll')" @click="clearAll" />
 			</div>
 
-			<div class="flex-1 overflow-y-auto min-h-0 space-y-1.5">
+			<div class="flex-1 overflow-y-auto min-h-0 space-y-1">
 				<div v-if="selectionStore.selectedServers.length > 0">
 					<div class="flex items-center justify-between mb-1">
 						<div class="flex items-center gap-1.5 text-xs font-medium">
 							<CoreAppIcon :name="icons.server" class="w-3.5 h-3.5" />
 							<h2 class="text-xs">{{ $t('servers.title') }}</h2>
 							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedServers.length
-								}})</span>
+							}})</span>
 						</div>
 						<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
 							:aria-label="$t('common.clearAll')" :title="$t('common.clearAll')" @click="clearServers" />
 					</div>
 					<div class="max-h-30 overflow-y-auto">
 						<div v-for="server in selectionStore.selectedServers" :key="server"
-							class="flex items-center justify-between px-5 rounded text-sm  group hover:bg-(--color-surface-hover) transition-colors">
+							class="flex items-center justify-between px-2.5 py-0.5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ server }}</span>
 							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								class="opacity-0 group-hover:opacity-100 transition-opacity" :aria-label="$t('common.remove')"
-								@click="removeServer(server)" />
+								class="opacity-0 group-hover:opacity-100 transition-opacity"
+								:aria-label="$t('common.remove')" @click="removeServer(server)" />
 						</div>
 					</div>
 				</div>
@@ -49,18 +49,19 @@
 							<CoreAppIcon :name="icons.client" class="w-3.5 h-3.5" />
 							<h2 class="text-xs">{{ $t('clients.title') }}</h2>
 							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedClients.length
-								}})</span>
+							}})</span>
 						</div>
 						<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-							:aria-label="$t('common.clearAll')" :title="$t('common.clearAll')" @click="selectionStore.clearClients()" />
+							:aria-label="$t('common.clearAll')" :title="$t('common.clearAll')"
+							@click="selectionStore.clearClients()" />
 					</div>
 					<div class="max-h-36 overflow-y-auto">
 						<div v-for="client in selectionStore.selectedClients" :key="client"
-							class="flex items-center justify-between px-5 rounded text-sm group hover:bg-(--color-surface-hover) transition-colors">
+							class="flex items-center justify-between px-2.5 py-0.5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ client }}</span>
 							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								class="opacity-0 group-hover:opacity-100 transition-opacity" :aria-label="$t('common.remove')"
-								@click="selectionStore.toggleClient(client)" />
+								class="opacity-0 group-hover:opacity-100 transition-opacity"
+								:aria-label="$t('common.remove')" @click="selectionStore.toggleClient(client)" />
 						</div>
 					</div>
 				</div>
@@ -71,18 +72,19 @@
 							<CoreAppIcon :name="icons.product" class="w-3.5 h-3.5" />
 							<h2 class="text-xs">{{ $t('products.title') }}</h2>
 							<span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedProducts.length
-								}})</span>
+							}})</span>
 						</div>
 						<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-							:aria-label="$t('common.clearAll')" :title="$t('common.clearAll')" @click="selectionStore.clearProducts()" />
+							:aria-label="$t('common.clearAll')" :title="$t('common.clearAll')"
+							@click="selectionStore.clearProducts()" />
 					</div>
 					<div class="max-h-36 overflow-y-auto">
 						<div v-for="product in selectionStore.selectedProducts" :key="product"
-							class="flex items-center justify-between px-5 rounded text-sm group hover:bg-(--color-surface-hover) transition-colors">
+							class="flex items-center justify-between px-2.5 py-0.5 rounded text-xs group hover:bg-(--color-surface-hover) transition-colors">
 							<span class="truncate">{{ product }}</span>
 							<CoreAppButton :icon="icons.xCircle" size="xs" variant="ghost" color="neutral"
-								class="opacity-0 group-hover:opacity-100 transition-opacity" :aria-label="$t('common.remove')"
-								@click="selectionStore.toggleProduct(product)" />
+								class="opacity-0 group-hover:opacity-100 transition-opacity"
+								:aria-label="$t('common.remove')" @click="selectionStore.toggleProduct(product)" />
 						</div>
 					</div>
 				</div>

@@ -31,9 +31,11 @@
 		<span class="hidden sm:inline">{{ $t('products.quick') }}</span>
 	</CoreAppButton>
 
-	<CoreAppModal v-model:open="dialogOpen" :dismissible="true" :ui="{ content: 'max-w-sm sm:max-w-2xl' }" data-testid="product-quick-actions-dialog">
+	<CoreAppModal v-model:open="dialogOpen" :dismissible="true"
+		:ui="{ content: 'w-[98vw] max-w-[98vw] h-[92vh] max-h-[92vh]' }" data-testid="product-quick-actions-dialog">
 		<template #content>
-			<CoreAppCard class="min-w-120">
+			<CoreAppCard class="h-full min-w-0"
+				:ui="{ root: 'h-full flex flex-col', body: 'flex-1 min-h-0 overflow-auto p-3' }">
 				<template #header>
 					<div class="flex items-center justify-between">
 						<CoreAppHeading :icon="icons.product" :text="$t('products.quick')" />
@@ -46,7 +48,7 @@
 					<CoreAppLoadingSpinner size="md" />
 				</div>
 
-				<div v-else class="space-y-4">
+				<div v-else class="space-y-3 h-full min-h-0">
 					<CoreAppAlertInline v-if="errorMessage" color="error" :description="errorMessage" variant="subtle"
 						closable @close="errorMessage = null" />
 
@@ -128,13 +130,13 @@
 						</div>
 
 						<div class="border border-(--color-border) rounded-lg bg-(--color-surface)"
-							style="min-height: 180px;">
+							style="min-height: 320px;">
 							<div v-if="loadingPreview" class="flex justify-center items-center"
-								style="min-height: 180px;">
+								style="min-height: 320px;">
 								<CoreAppLoadingSpinner size="sm" />
 							</div>
 							<CoreAppTable v-else-if="previewData && Object.keys(previewData).length > 0" data-testid="product-quick-actions-preview-table"
-								:columns="previewColumns" max-height="16rem" :sort-key="previewSortKey"
+								:columns="previewColumns" max-height="52vh" :sort-key="previewSortKey"
 								:sort-dir="previewSortDir" @sort="togglePreviewSort">
 								<tr v-for="row in sortedPreviewRows" :key="`${row.clientId}-${row.product.productId}`"
 									class="hover:bg-(--color-surface-hover)">
@@ -156,11 +158,11 @@
 							</CoreAppTable>
 							<div v-else-if="previewData !== null"
 								class="flex justify-center items-center text-xs text-(--color-text-muted)"
-								style="min-height: 180px;">
+								style="min-height: 320px;">
 								{{ $t('products.noMatch') }}
 							</div>
 							<div v-else class="flex justify-center items-center text-xs text-(--color-text-muted)"
-								style="min-height: 180px;">
+								style="min-height: 320px;">
 								--
 							</div>
 						</div>

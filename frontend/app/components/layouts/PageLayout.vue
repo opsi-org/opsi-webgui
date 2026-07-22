@@ -31,25 +31,26 @@
 			</div>
 		</div>
 
-		<div class="page-body flex-1 min-h-0 relative" :class="showPanel ? 'flex' : ''">
+		<div class="page-body flex-1 min-h-0 relative" :class="showPanel && !useOverlayPanel ? 'flex' : ''">
 			<div :style="mainStyle" class="min-h-0 overflow-y-auto transition-[width] duration-200 min-w-0"
 				:tabindex="allowXScroll ? 0 : undefined"
-				:class="[showPanel && !isMobile ? '' : 'h-full', allowXScroll ? 'overflow-x-auto' : 'overflow-x-hidden']">
+				:class="[showPanel && !useOverlayPanel ? '' : 'h-full', allowXScroll ? 'overflow-x-auto' : 'overflow-x-hidden']">
 				<slot />
 			</div>
 
-			<Transition :name="isMobile ? 'slide-up' : 'slide-in'">
+			<Transition :name="useOverlayPanel ? 'slide-up' : 'slide-in'">
 				<div v-if="showPanel" :style="panelStyle" :class="panelClasses" data-testid="detail-panel">
 					<!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- pointer-only drag resize handle; not keyboard operable by design -->
-					<div v-if="!isMobile" @mousedown="startResize"
+					<div v-if="!useOverlayPanel" @mousedown="startResize"
 						class="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize bg-transparent hover:bg-opsi-blue/30 active:bg-opsi-blue/50 transition-colors z-10 group">
 						<div
 							class="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-12 bg-(--color-border) rounded group-hover:bg-opsi-blue transition-colors" />
 					</div>
 					<div class="shrink-0 border-t border-b border-(--color-border) px-4 py-3 bg-(--color-surface)">
 						<div class="flex items-center gap-3">
-							<CoreAppButton v-if="isMobile" @click="$emit('close-panel')" variant="ghost" color="neutral"
-								size="xs" :aria-label="String($t('common.back'))" :title="String($t('common.back'))">
+							<CoreAppButton v-if="useOverlayPanel" @click="$emit('close-panel')" variant="ghost"
+								color="neutral" size="xs" :aria-label="String($t('common.back'))"
+								:title="String($t('common.back'))">
 								<CoreAppIcon :name="icons.chevronLeft" class="w-3 h-3" />
 							</CoreAppButton>
 							<div class="flex-1 min-w-0">
@@ -117,30 +118,38 @@ const searchModel = computed({
 
 // Split view state
 const isMobile = ref(false)
+const isSplitPanelNarrow = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
 const panelWidthPercent = ref(props.defaultPanelWidthPercent)
 const minPanelPercent = 25
 const maxPanelPercent = 75
+const narrowSplitMinWidth = 1180
 
 onMounted(() => {
-	const checkMobile = () => { isMobile.value = window.innerWidth < 768 }
-	checkMobile()
-	window.addEventListener('resize', checkMobile)
-	onUnmounted(() => window.removeEventListener('resize', checkMobile))
+	const updateLayoutMode = () => {
+		const containerWidth = containerRef.value?.clientWidth || window.innerWidth
+		isMobile.value = window.innerWidth < 768
+		isSplitPanelNarrow.value = containerWidth < narrowSplitMinWidth
+	}
+	updateLayoutMode()
+	window.addEventListener('resize', updateLayoutMode)
+	onUnmounted(() => window.removeEventListener('resize', updateLayoutMode))
 })
 
+const useOverlayPanel = computed(() => isMobile.value || (props.showPanel && isSplitPanelNarrow.value))
+
 const mainStyle = computed(() => {
-	if (!props.showPanel || isMobile.value) return { width: '100%' }
+	if (!props.showPanel || useOverlayPanel.value) return { width: '100%' }
 	return { width: `${100 - panelWidthPercent.value}%` }
 })
 
 const panelStyle = computed(() => {
-	if (isMobile.value) return {}
+	if (useOverlayPanel.value) return {}
 	return { width: `${panelWidthPercent.value}%` }
 })
 
 const panelClasses = computed(() => {
-	if (isMobile.value) {
+	if (useOverlayPanel.value) {
 		return 'absolute inset-0 z-50 bg-(--color-surface-elevated) flex flex-col'
 	}
 	return 'absolute right-0 top-0 bottom-0 bg-(--color-surface-elevated) border-l border-(--color-border) flex flex-col shadow-lg'

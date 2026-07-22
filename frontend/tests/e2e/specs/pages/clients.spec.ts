@@ -2,7 +2,89 @@ import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
 import { waitForTable, getTableRowCount } from '../../utils/ui'
 
+async function seedClientSelection(page: import('@playwright/test').Page) {
+  await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
+  await page.waitForTimeout(3000)
+  await waitForTable(page)
+
+  const firstClientId = await page.locator('table tbody tr td').evaluateAll((cells) => {
+    for (const cell of cells) {
+      const text = (cell.textContent || '').trim()
+      if (text && text.includes('.')) return text
+    }
+    return ''
+  })
+
+  if (!firstClientId) return
+
+  await page.evaluate((clientId) => {
+    const key = 'opsi-webgui-selection'
+    const raw = window.localStorage.getItem(key)
+    const current = raw ? JSON.parse(raw) : {}
+    window.localStorage.setItem(
+      key,
+      JSON.stringify({
+        ...current,
+        selectedClients: [clientId],
+        selectionSource: 'table',
+      })
+    )
+  }, firstClientId)
+}
+
 test.describe('Clients', () => {
+  test('clients products split view opens from deep link', async ({ page }) => {
+    await seedClientSelection(page)
+
+    await page.goto(
+      '/clients?view=panel&panelType=products&sortBy=version_outdated&type=localboot',
+      {
+        waitUntil: 'networkidle',
+        timeout: 30000,
+      }
+    )
+
+    await waitForTable(page)
+    const detailPanel = page.getByTestId('detail-panel')
+    await expect(detailPanel).toBeVisible({ timeout: 15000 })
+
+    const panelTables = detailPanel.locator('table')
+    await expect(panelTables.first()).toBeVisible({ timeout: 15000 })
+    await expect(page).toHaveURL(/panelType=products/)
+    await expect(page).toHaveURL(/sortBy=version_outdated/)
+  })
+
+  test('clients products split view stays readable on narrow window', async ({ page }) => {
+    await seedClientSelection(page)
+    await page.setViewportSize({ width: 1100, height: 900 })
+
+    await page.goto(
+      '/clients?view=panel&panelType=products&sortBy=version_outdated&type=localboot',
+      {
+        waitUntil: 'networkidle',
+        timeout: 30000,
+      }
+    )
+
+    await waitForTable(page)
+    const detailPanel = page.getByTestId('detail-panel')
+    await expect(detailPanel).toBeVisible({ timeout: 15000 })
+
+    const firstPanelCell = detailPanel.locator('tbody td').first()
+    await expect(firstPanelCell).toBeVisible({ timeout: 15000 })
+
+    const fontSize = await firstPanelCell.evaluate((el) =>
+      Number.parseFloat(getComputedStyle(el).fontSize)
+    )
+    expect(fontSize).toBeGreaterThanOrEqual(14)
+
+    const panelBox = await detailPanel.boundingBox()
+    expect(panelBox).not.toBeNull()
+    if (panelBox) {
+      expect(panelBox.width).toBeGreaterThan(700)
+    }
+  })
+
   test('clients overview and key actions', async ({ page }) => {
     await runUITest(page, {
       name: 'clients',
@@ -28,7 +110,11 @@ test.describe('Clients', () => {
           await p.waitForTimeout(2000)
 
           // Wait for products table to load in the detail panel
-          const panelTable = p.locator('[data-testid="detail-panel"] table tbody tr, main .split-panel table tbody tr').first()
+          const panelTable = p
+            .locator(
+              '[data-testid="detail-panel"] table tbody tr, main .split-panel table tbody tr'
+            )
+            .first()
           await panelTable.waitFor({ state: 'visible', timeout: 12000 }).catch(() => undefined)
         }
       },
@@ -39,7 +125,10 @@ test.describe('Clients', () => {
 
         // Table header columns are visible
         const headers = p.locator('thead th, [class*="header"] [class*="cell"]')
-        await headers.first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => undefined)
+        await headers
+          .first()
+          .waitFor({ state: 'visible', timeout: 15000 })
+          .catch(() => undefined)
         expect(await headers.count()).toBeGreaterThan(2)
 
         // Filtering
@@ -77,8 +166,8 @@ test.describe('Clients', () => {
         const rowActionBtn = p
           .locator(
             'table tbody tr:first-child [aria-label*="aktion" i], ' +
-            'table tbody tr:first-child [aria-label*="action" i], ' +
-            'table tbody tr:first-child [class*="row-action"]'
+              'table tbody tr:first-child [aria-label*="action" i], ' +
+              'table tbody tr:first-child [class*="row-action"]'
           )
           .first()
         if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -170,8 +259,8 @@ test.describe('Clients', () => {
             const rowBtn = p
               .locator(
                 'table tbody tr:first-child [aria-label*="aktion" i], ' +
-                'table tbody tr:first-child [aria-label*="action" i], ' +
-                'table tbody tr:first-child [class*="row-action"]'
+                  'table tbody tr:first-child [aria-label*="action" i], ' +
+                  'table tbody tr:first-child [class*="row-action"]'
               )
               .first()
             if (await rowBtn.isVisible().catch(() => false)) {
@@ -212,8 +301,8 @@ test.describe('Clients', () => {
             const rowActionBtn = p
               .locator(
                 'table tbody tr:first-child [aria-label*="aktion" i], ' +
-                'table tbody tr:first-child [aria-label*="action" i], ' +
-                'table tbody tr:first-child [class*="row-action"]'
+                  'table tbody tr:first-child [aria-label*="action" i], ' +
+                  'table tbody tr:first-child [class*="row-action"]'
               )
               .first()
             if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -408,8 +497,8 @@ test.describe('Clients', () => {
         const rowActionBtn = p
           .locator(
             'table tbody tr:first-child [aria-label*="aktion" i], ' +
-            'table tbody tr:first-child [aria-label*="action" i], ' +
-            'table tbody tr:first-child [class*="row-action"]'
+              'table tbody tr:first-child [aria-label*="action" i], ' +
+              'table tbody tr:first-child [class*="row-action"]'
           )
           .first()
         if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -440,8 +529,8 @@ test.describe('Clients', () => {
             const rowActionBtn = p
               .locator(
                 'table tbody tr:first-child [aria-label*="aktion" i], ' +
-                'table tbody tr:first-child [aria-label*="action" i], ' +
-                'table tbody tr:first-child [class*="row-action"]'
+                  'table tbody tr:first-child [aria-label*="action" i], ' +
+                  'table tbody tr:first-child [class*="row-action"]'
               )
               .first()
             if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -478,8 +567,8 @@ test.describe('Clients', () => {
             const rowActionBtn = p
               .locator(
                 'table tbody tr:first-child [aria-label*="aktion" i], ' +
-                'table tbody tr:first-child [aria-label*="action" i], ' +
-                'table tbody tr:first-child [class*="row-action"]'
+                  'table tbody tr:first-child [aria-label*="action" i], ' +
+                  'table tbody tr:first-child [class*="row-action"]'
               )
               .first()
             if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -516,8 +605,8 @@ test.describe('Clients', () => {
             const rowActionBtn = p
               .locator(
                 'table tbody tr:first-child [aria-label*="aktion" i], ' +
-                'table tbody tr:first-child [aria-label*="action" i], ' +
-                'table tbody tr:first-child [class*="row-action"]'
+                  'table tbody tr:first-child [aria-label*="action" i], ' +
+                  'table tbody tr:first-child [class*="row-action"]'
               )
               .first()
             if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -579,7 +668,7 @@ test.describe('Clients', () => {
           // Verify at least one log row with a colour class is rendered
           const coloredRows = p.locator(
             '[class*="text-opsi-log-"], [class*="log-essential"], [class*="log-critical"],' +
-            '[class*="log-error"], [class*="log-warning"], [class*="log-info"], [class*="log-debug"]'
+              '[class*="log-error"], [class*="log-warning"], [class*="log-info"], [class*="log-debug"]'
           )
           // Logs may be empty in the test environment; tolerate that gracefully
           const hasRows = (await coloredRows.count()) > 0

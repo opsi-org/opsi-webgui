@@ -16,11 +16,14 @@ export interface DataTableColumnDef {
   alwaysVisible?: boolean
   width?: string
   minWidth?: string
+  maxWidth?: string
   align?: 'left' | 'center' | 'right'
   class?: string
   headerClass?: string
   headerIcon?: string
   stickyRight?: boolean
+  truncate?: boolean
+  tooltip?: boolean
 }
 
 export interface DataTableSettings {
@@ -36,10 +39,10 @@ const STORAGE_KEY = 'opsi-webgui-datatable-settings'
 
 const defaults: Record<string, DataTableSettings> = {
   servers: {
-    visibleColumns: ['depotId', 'description', 'type'],
+    visibleColumns: ['depotId', 'description', 'type', 'ip'],
     sortColumn: 'depotId',
     sortDirection: 'asc',
-    pageSize: 20,
+    pageSize: 50,
     displayMode: 'infinite',
     selectionMode: 'single',
   },
@@ -47,40 +50,60 @@ const defaults: Record<string, DataTableSettings> = {
     visibleColumns: [
       'clientId',
       'description',
+      'macAddress',
+      'ipAddress',
       'lastSeen',
       'version_outdated',
+      'version_outdated_netboot',
       'installationStatus_installed',
       'actionRequest_set',
       'actionResult_failed',
+      'actionResult_successful',
       'reachable',
     ],
     sortColumn: 'clientId',
     sortDirection: 'asc',
-    pageSize: 20,
+    pageSize: 50,
     displayMode: 'infinite',
     selectionMode: 'multi',
   },
   products: {
-    visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionRequest'],
+    visibleColumns: [
+      'productId',
+      'description',
+      'version',
+      'installationStatus',
+      'actionResult',
+      'actionProgress',
+      'actionRequest',
+    ],
     sortColumn: 'productId',
     sortDirection: 'asc',
-    pageSize: 20,
+    pageSize: 50,
     displayMode: 'infinite',
     selectionMode: 'multi',
   },
   'products-localboot': {
-    visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionRequest'],
+    visibleColumns: [
+      'productId',
+      'description',
+      'version',
+      'installationStatus',
+      'actionResult',
+      'actionProgress',
+      'actionRequest',
+    ],
     sortColumn: 'productId',
     sortDirection: 'asc',
-    pageSize: 20,
+    pageSize: 50,
     displayMode: 'infinite',
     selectionMode: 'multi',
   },
   'products-netboot': {
-    visibleColumns: ['productId', 'description', 'version'],
+    visibleColumns: ['productId', 'description', 'version', 'actionProgress'],
     sortColumn: 'productId',
     sortDirection: 'asc',
-    pageSize: 20,
+    pageSize: 50,
     displayMode: 'infinite',
     selectionMode: 'multi',
   },

@@ -8,9 +8,11 @@
   ProductsProcessActionsModal - Modal for processing pending product action requests.
 -->
 <template>
-	<CoreAppModal v-model:open="open">
+	<CoreAppModal v-model:open="open"
+		:ui="{ content: 'w-[96vw] max-w-[96vw] sm:w-[92vw] sm:max-w-[92vw] h-[88vh] max-h-[88vh]' }">
 		<template #content>
-			<CoreAppCard class="min-w-96" @click.stop>
+			<CoreAppCard class="h-full min-w-0"
+				:ui="{ root: 'h-full flex flex-col', body: 'flex-1 min-h-0 overflow-auto p-3' }" @click.stop>
 				<template #header>
 					<div class="flex items-center justify-between">
 						<CoreAppHeading :icon="icons.onDemand" :text="$t('actions.ondemand')" />
@@ -24,7 +26,7 @@
 					:description="statusMessage.message" variant="subtle" class="mb-3" closable
 					@close="statusMessage = null" />
 
-				<div class="space-y-4">
+				<div class="space-y-4 h-full min-h-0">
 					<div class="divide-y divide-(--color-border)">
 						<div
 							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5">
@@ -37,7 +39,7 @@
 										:label="`${$t('products.onlySelected')} (${selectedProductIds.length})`" />
 								</div>
 								<div v-if="productMode === 'selected' && selectedProductIds.length > 0"
-									class="mt-2 max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface)">
+									class="mt-2 max-h-52 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface)">
 									<div v-for="id in selectedProductIds" :key="id">{{ id }}</div>
 								</div>
 							</div>
@@ -68,7 +70,7 @@
 									</CoreAppButton>
 								</div>
 								<div v-if="clientIds.length > 0"
-									class="max-h-24 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface)">
+									class="max-h-52 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface)">
 									<div v-for="id in clientIds" :key="id" class="flex items-center justify-between">
 										<span>{{ id }}</span>
 										<CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.x"

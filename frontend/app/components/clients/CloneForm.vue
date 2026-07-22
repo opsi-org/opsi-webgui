@@ -17,7 +17,7 @@
 		</CoreAppAlertInline>
 	</div>
 	<template v-else>
-		<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-surface) mb-3">
+		<div class="shrink-0 pb-2 sticky top-0 z-10 bg-(--color-surface) mb-2">
 			<div class="flex flex-wrap items-center gap-3">
 				<div v-if="showSourceSelector" class="flex items-center gap-2">
 					<slot name="sourceSelector">
@@ -40,7 +40,7 @@
 		<CoreAppEmptyState v-if="!resolvedSourceId && !loading" :icon="icons.client"
 			:message="String($t('clients.selectClone'))" class="flex-1" />
 
-		<div v-else :class="['flex-1 overflow-y-auto space-y-4']">
+		<div v-else :class="['flex-1 overflow-y-auto space-y-3 opsi-dense-form opsi-compact-page']">
 			<CoreAppAlertInline v-if="success" color="success" :title="String($t('common.success'))" closable
 				@close="success = false">
 				<template #description>{{ $t('clients.clone.ok') }}</template>
@@ -61,7 +61,7 @@
 			</div>
 
 			<div class="opsi-card">
-				<div class="flex items-center justify-between mb-3">
+				<div class="flex items-center justify-between mb-2">
 					<h4 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('clients.create.title') }}</h4>
 				</div>
 				<div>
@@ -116,7 +116,7 @@
 			</div>
 
 			<div class="opsi-card h-full">
-				<div class="flex items-center justify-between mb-3">
+				<div class="flex items-center justify-between mb-2">
 					<h4 class="text-xs font-heading uppercase tracking-wide m-0">{{ $t('clients.clone.options') }}</h4>
 				</div>
 				<div>
@@ -147,7 +147,8 @@
 							{{ $t('products.properties') }}
 						</span>
 						<div class="flex-1 flex items-center gap-2 min-w-0">
-							<CoreAppCheckbox v-model="cloneclient.options.productProperties" :disabled="loading" @click.stop />
+							<CoreAppCheckbox v-model="cloneclient.options.productProperties" :disabled="loading"
+								@click.stop />
 						</div>
 					</button>
 				</div>

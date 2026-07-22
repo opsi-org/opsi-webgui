@@ -189,24 +189,24 @@
             </div>
 
             <!-- Row 4: Failed Clients -->
-            <div class="opsi-card shrink-0 min-h-[120px] flex flex-col">
-                <div class="flex items-center gap-2 mb-2">
+            <div class="opsi-card shrink-0 min-h-[104px] flex flex-col">
+                <div class="flex items-center gap-2 mb-1.5">
                     <CoreAppIcon :name="icons.warning" class="w-5 h-5" />
                     <CoreAppHeading size="xs">{{ $t('actions.failedClients') }}</CoreAppHeading>
                     <CoreAppStatusBadge v-if="failedClients && Object.keys(failedClients).length > 0" status="error"
                         size="sm" :value="Object.keys(failedClients).length" />
                 </div>
                 <div v-if="failedClients && Object.keys(failedClients).length > 0"
-                    class="space-y-1 max-h-32 overflow-y-auto" tabindex="0" role="region"
+                    class="space-y-0.5 max-h-36 overflow-y-auto" tabindex="0" role="region"
                     :aria-label="String($t('actions.failedClients'))">
                     <div v-for="(products, clientId) in failedClients" :key="clientId"
-                        class="flex items-center justify-between p-2 rounded-lg">
+                        class="flex items-center justify-between px-2 py-1.5 rounded-lg text-sm">
                         <span class="truncate">
                             {{ clientId }}
                         </span>
                         <div class="flex gap-1">
                             <CoreAppStatusBadge v-for="p in (Array.isArray(products) ? products : [products])" :key="p"
-                                status="error" :label="p" />
+                                status="error" :label="p" size="xs" />
                         </div>
                     </div>
                 </div>

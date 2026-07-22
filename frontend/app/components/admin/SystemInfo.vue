@@ -22,7 +22,7 @@
 			<template v-else>
 				<!-- System properties node -->
 				<div v-if="Object.keys(filteredSystemInfo).length > 0" class="tree-node">
-					<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
+					<div class="flex items-center gap-1.5 px-1.5 py-1 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
 						role="button" tabindex="0"
 						:aria-label="`${$t('common.expand')} / ${$t('common.collapse')} ${$t('diag.systemProps')}`"
 						@click="toggleNode('_system')"
@@ -42,7 +42,7 @@
 					</div>
 					<div v-if="expanded['_system']" class="children-container">
 						<div v-for="(value, key) in filteredSystemInfo" :key="key" class="tree-node">
-							<div class="flex items-start gap-1.5 px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/leaf"
+							<div class="flex items-start gap-1.5 px-1.5 py-1 rounded transition-colors hover:bg-(--color-surface-hover) group/leaf"
 								style="padding-left: 24px;">
 								<span class="tree-guide-line" style="left: 8px;" />
 								<span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
@@ -73,7 +73,7 @@
 				<template v-for="(values, category) in filteredDiagnosticsData" :key="category">
 					<div v-if="typeof values === 'object' && values !== null && Object.keys(values as object).length > 0"
 						class="tree-node">
-						<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
+						<div class="flex items-center gap-1.5 px-1.5 py-1 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
 							role="button" tabindex="0"
 							:aria-label="`${$t('common.expand')} / ${$t('common.collapse')} ${String(category)}`"
 							@click="toggleNode(String(category))"
@@ -97,7 +97,7 @@
 							<template v-for="(v, k) in (values as Record<string, unknown>)" :key="k">
 								<!-- Nested object child -->
 								<div v-if="isComplexValue(v)" class="tree-node">
-									<div class="flex items-center gap-1.5 px-2 py-1.5 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
+									<div class="flex items-center gap-1.5 px-1.5 py-1 rounded cursor-pointer transition-colors hover:bg-(--color-surface-hover)"
 										style="padding-left: 24px;" role="button" tabindex="0"
 										:aria-label="`${$t('common.expand')} / ${$t('common.collapse')} ${String(k)}`"
 										@click="toggleNode(String(category) + '.' + String(k))"
@@ -123,7 +123,7 @@
 									<div v-if="expanded[String(category) + '.' + String(k)]" class="children-container">
 										<template v-if="Array.isArray(v)">
 											<div v-for="(item, idx) in v" :key="idx" class="tree-node">
-												<div class="flex items-start gap-1.5 px-2 py-1 rounded transition-colors hover:bg-(--color-surface-hover)"
+												<div class="flex items-start gap-1.5 px-1.5 py-0.5 rounded transition-colors hover:bg-(--color-surface-hover)"
 													style="padding-left: 40px;">
 													<span class="tree-guide-line" style="left: 8px;" />
 													<span class="tree-guide-line" style="left: 24px;" />
@@ -137,7 +137,7 @@
 										<template v-else-if="typeof v === 'object' && v !== null">
 											<div v-for="(sv, sk) in (v as Record<string, unknown>)" :key="sk"
 												class="tree-node">
-												<div class="flex items-start gap-1.5 px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/deep"
+												<div class="flex items-start gap-1.5 px-1.5 py-1 rounded transition-colors hover:bg-(--color-surface-hover) group/deep"
 													style="padding-left: 40px;">
 													<span class="tree-guide-line" style="left: 8px;" />
 													<span class="tree-guide-line" style="left: 24px;" />
@@ -178,7 +178,7 @@
 								</div>
 								<!-- Simple leaf child -->
 								<div v-else class="tree-node">
-									<div class="flex items-start gap-1.5 px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/leaf"
+									<div class="flex items-start gap-1.5 px-1.5 py-1 rounded transition-colors hover:bg-(--color-surface-hover) group/leaf"
 										style="padding-left: 24px;">
 										<span class="tree-guide-line" style="left: 8px;" />
 										<span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />

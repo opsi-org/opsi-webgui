@@ -8,7 +8,7 @@
   HostsConfigTabs - Tabbed host configuration editor with panel and standalone mode.
 -->
 <template>
-	<div class="flex flex-col h-full min-h-0">
+	<div class="flex flex-col h-full min-h-0 opsi-compact-page opsi-dense-form">
 		<CoreAppNavigationGuardModal v-if="showHostSelector || !panelMode" v-model="showLeaveWarning"
 			@cancel="cancelLeave" @confirm="confirmLeave" />
 
@@ -16,8 +16,8 @@
 
 
 
-		<div class="shrink-0 pb-3 sticky top-0 z-10 bg-(--color-surface) mb-3">
-			<div class="flex flex-wrap items-center justify-between gap-3">
+		<div class="shrink-0 sticky top-0 z-10 bg-(--color-surface) mb-1">
+			<div class="flex flex-wrap items-center justify-between gap-2">
 				<div class="flex items-center gap-2">
 					<CoreAppTabsNav v-model="activeTab" :tabs="tabDefs" />
 					<template v-if="showHostSelector">
@@ -29,7 +29,7 @@
 					</template>
 				</div>
 				<div class="flex flex-wrap items-center gap-2">
-					<CoreAppFilterInput v-model="paramSearch" size="sm" input-class="w-full sm:w-56 md:w-72 lg:w-80" />
+					<CoreAppFilterInput v-model="paramSearch" size="xs" input-class="w-full sm:w-52 md:w-64 lg:w-72" />
 					<CoreAppButton v-if="isServerDefaultMode && !readonly" :icon="icons.add" color="primary"
 						variant="soft" size="sm" :title="String($t('config.create'))"
 						@click="showCreateConfigModal = true">
@@ -52,7 +52,7 @@
 			<CoreAppEmptyState v-else-if="categoryAwareTree.length === 0" :icon="icons.config"
 				:message="(hostId || hostType === 'server') ? String($t('config.paramsNone')) : String($t('hosts.select'))" />
 			<CoreAppCard v-else
-				:ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'p-3 sm:p-3 overflow-y-auto min-h-0 flex-1' }">
+				:ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'p-0.5 sm:p-0.5 overflow-y-auto min-h-0 flex-1' }">
 				<HostsParametersTreeForm :tree="categoryAwareTree" :changed-params="changedParams" :readonly="readonly"
 					:current-value="currentValue" :set-param="setParam" :discard-single-param="discardSingleParam"
 					:icons="icons" :fmt-val="fmtVal" :auto-open-all="!!paramSearch" />
@@ -68,9 +68,9 @@
 			<CoreAppCard v-else-if="filteredReadonlyAttrKeys.length || filteredEditableAttrKeys.length"
 				:ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'overflow-y-auto min-h-0 flex-1' }">
 				<div v-if="filteredReadonlyAttrKeys.length"
-					:class="['border-b border-(--color-border) pb-3', filteredEditableAttrKeys.length ? 'mb-3' : '']">
+					:class="['border-b border-(--color-border)', filteredEditableAttrKeys.length ? 'mb-1' : '']">
 					<div v-for="key in filteredReadonlyAttrKeys" :key="key"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors">
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 hover:bg-(--color-surface-hover) rounded transition-colors">
 						<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
 							{{ getAttributeLabel(key) }}
 						</span>
@@ -82,7 +82,7 @@
 
 				<div v-if="filteredEditableAttrKeys.length">
 					<div v-for="key in filteredEditableAttrKeys" :key="key"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
+						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 hover:bg-(--color-surface-hover) rounded transition-colors"
 						:class="isAttrChanged(key) ? 'bg-(--color-changed-bg)' : ''">
 						<span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
 							{{ getAttributeLabel(key) }}
@@ -99,9 +99,9 @@
 								:disabled="readonly"
 								@update:model-value="(v: boolean | 'indeterminate') => { editableAttributes[key] = v }" />
 							<CoreAppPasswordInput v-else-if="isPasswordAttribute(key)"
-								v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
+								v-model="(editableAttributes as Record<string, string>)[key]" size="xs"
 								:disabled="readonly" class="flex-1" :maxlength="32" />
-							<CoreAppInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="sm"
+							<CoreAppInput v-else v-model="(editableAttributes as Record<string, string>)[key]" size="xs"
 								:disabled="readonly" class="flex-1" />
 							<CoreAppButton v-if="isAttrChanged(key)" size="xs" variant="ghost" color="neutral"
 								:icon="icons.x" :title="$t('common.discard')" @click="discardSingleAttribute(key)" />
