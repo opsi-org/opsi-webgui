@@ -341,11 +341,13 @@ watch(selectedLogTypeValue, (newVal, oldVal) => {
 })
 
 watch(() => resolvedClientId.value, () => {
-	selectedLogTypeValue.value = ''
 	logContent.value = []
 	error.value = null
 	markerLine.value = -1
 	logUpdatePending.value = false
+	if (selectedLogTypeValue.value) {
+		fetchLog()
+	}
 })
 
 let autoRefreshInterval: ReturnType<typeof setInterval> | null = null
