@@ -1,24 +1,9 @@
-# pnpm 10 reads dependency overrides from here (no longer from package.json's  "pnpm.overrides").
 overrides:
-  # Security (pnpm audit):
-  jsonata: '>=2.2.0'
-  brace-expansion: '>=5.0.7'
-  esbuild: '>=0.28.1'
-  js-yaml: '>=4.3.0'
-  shell-quote: '>=1.8.5'
+  # Security(pnpm audit):
   tar: '>=7.5.19'
-  linkify-it: '>=5.0.2'
-  # vite-plugin-checker 0.14.x is published broken (missing dist/@runtime/main.js), which crashes `nuxt dev`.
-  vite-plugin-checker: '0.13.0'
-
-# Reviewed allow-list of dependencies permitted to run install/build scripts.
-# These are the only packages that ship build scripts (native binaries); all
-# other lifecycle scripts stay blocked by pnpm's default-deny. CI
-# (validate:install-scripts) fails if a NEW, unreviewed build script appears.
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - esbuild
-  - vue-demi
+  svgo: '>=4.0.2'
+  esbuild: '>=0.28.1'
+  fast-uri: '>=3.1.4'
 
 allowBuilds:
   '@parcel/watcher': true
