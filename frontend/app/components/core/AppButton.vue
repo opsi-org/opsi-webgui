@@ -14,18 +14,26 @@
 </template>
 
 <script setup lang="ts">
+import { useUiStore } from '~/stores/uiStore'
+
 defineOptions({ inheritAttrs: false })
 
 const slots = useSlots()
 const attrs = useAttrs()
+const uiStore = useUiStore()
 
 const computedAttrs = computed(() => {
-	const hasText = Boolean(slots.default)
-	const hasName = attrs['aria-label'] || attrs['aria-labelledby']
-	const title = attrs.title
-	if (!hasText && !hasName && typeof title === 'string' && title.trim()) {
-		return { ...attrs, 'aria-label': title }
+	const responsiveAttrs = { ...attrs } as Record<string, unknown>
+	if (uiStore.isMobile) {
+		responsiveAttrs.size = 'xs'
 	}
-	return attrs
+
+	const hasText = Boolean(slots.default)
+	const hasName = responsiveAttrs['aria-label'] || responsiveAttrs['aria-labelledby']
+	const title = responsiveAttrs.title
+	if (!hasText && !hasName && typeof title === 'string' && title.trim()) {
+		return { ...responsiveAttrs, 'aria-label': title }
+	}
+	return responsiveAttrs
 })
 </script>

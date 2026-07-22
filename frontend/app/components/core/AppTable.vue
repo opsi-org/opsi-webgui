@@ -13,7 +13,7 @@
 			<table class="min-w-full table-auto">
 				<thead v-if="columns.length > 0" class="bg-(--color-surface) sticky top-0 z-10">
 					<tr class="text-left text-(--color-text-muted)">
-						<th v-for="col in columns" :key="col.key" class="px-2 py-1.5 font-medium" :class="[col.class,
+						<th v-for="col in columns" :key="col.key" class="px-2 py-1 font-medium" :class="[col.class,
 						col.sortable ? 'cursor-pointer select-none hover:text-(--color-text)' : '']"
 							:style="col.width ? { width: col.width } : {}"
 							:aria-sort="col.sortable ? (sortKey === col.key ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none') : undefined"

@@ -13,8 +13,9 @@
 		<UBadge :color="badgeColor" :variant="variant" :size="size" class="justify-center cursor-pointer">
 			<img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
 			<UIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
-			<span v-if="label" class="text-xs opacity-70 mr-0.5" :style="contentTextStyle">{{ label }}</span>
-			<span class="font-medium" :style="contentTextStyle">{{ displayValue }}</span>
+			<span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label
+			}}</span>
+			<span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
 		</UBadge>
 	</UButton>
 	<UBadge v-else-if="displayValue !== null && displayValue > 0" :color="badgeColor" :variant="variant" :size="size"
@@ -22,14 +23,21 @@
 		v-on="clickable ? { click: onBadgeClick } : {}">
 		<img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
 		<UIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
-		<span v-if="label" class="text-xs opacity-70 mr-0.5" :style="contentTextStyle">{{ label }}</span>
-		<span class="font-medium" :style="contentTextStyle">{{ displayValue }}</span>
+		<span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label
+		}}</span>
+		<span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
 	</UBadge>
 	<UBadge v-else-if="label && displayValue === null" :color="badgeColor" :variant="variant" :size="size" class="gap-1"
 		:class="{ 'cursor-pointer': clickable }" :title="tooltipText" v-on="clickable ? { click: onBadgeClick } : {}">
 		<img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
 		<UIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
-		<span class="font-medium" :style="contentTextStyle">{{ label }}</span>
+		<span class="text-[12px] leading-none" :style="contentTextStyle">{{ label }}</span>
+	</UBadge>
+	<UBadge v-else-if="displayValue === null && (icon || imageSrc)" :color="badgeColor" :variant="variant" :size="size"
+		class="justify-center" :class="{ 'cursor-pointer': clickable }" :title="tooltipText"
+		v-on="clickable ? { click: onBadgeClick } : {}">
+		<img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
+		<UIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
 	</UBadge>
 	<span v-else class="text-(--color-text-muted) text-xs flex justify-center">-</span>
 </template>

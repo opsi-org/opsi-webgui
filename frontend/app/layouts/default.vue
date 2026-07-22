@@ -86,7 +86,7 @@
             </main>
 
             <Transition name="quickpanel-slide">
-                <aside v-if="quickpanelOpen && !isMobile" :style="{ width: quickpanelWidth + 'px' }"
+                <aside v-if="quickpanelOpen && !useOverlayQuickpanel" :style="{ width: quickpanelWidth + 'px' }"
                     data-testid="quickpanel"
                     class="bg-(--color-background) border-l border-(--color-border) overflow-hidden shrink-0 flex flex-col relative">
                     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- pointer-only drag resize handle; not keyboard operable by design -->
@@ -99,7 +99,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-medium text-(--color-text)">{{
                                 $t('quick.panel')
-                                }}</span>
+                            }}</span>
                             <CoreAppButton @click="quickpanelOpen = false" variant="ghost" color="neutral"
                                 :aria-label="String($t('common.close'))" class="p-1! hover:bg-(--color-surface-hover)">
                                 <CoreAppIcon :name="icons.x" class="w-4 h-4" />
@@ -114,19 +114,18 @@
         </div>
 
         <Transition name="slide-up">
-            <div v-if="quickpanelOpen && isMobile" class="fixed inset-0 z-50">
+            <div v-if="quickpanelOpen && useOverlayQuickpanel" class="fixed inset-0 z-50">
                 <div class="absolute inset-0 bg-black/50" role="button" tabindex="0"
                     :aria-label="String($t('common.close'))" @click="quickpanelOpen = false"
                     @keydown.enter="quickpanelOpen = false" @keydown.space.prevent="quickpanelOpen = false" />
-                <div
-                    class="absolute inset-0 bg-(--color-background) overflow-hidden">
+                <div class="absolute inset-0 bg-(--color-background) overflow-hidden">
                     <div class="p-4 h-full min-h-0 flex flex-col overflow-hidden">
                         <div class="flex justify-center mb-3">
                             <div class="w-10 h-1 bg-(--color-border) rounded-full" />
                         </div>
 
                         <div class="flex items-center justify-between mb-4">
-                            <span class="text-small font-medium text-(--color-text)">{{ $t('quick.panel') }}</span>
+                            <span class="text-sm font-medium text-(--color-text)">{{ $t('quick.panel') }}</span>
                             <CoreAppButton :icon="icons.x" size="sm" variant="ghost" color="neutral"
                                 :aria-label="String($t('common.close'))" class="rounded-full"
                                 @click="quickpanelOpen = false" />
@@ -194,6 +193,7 @@ const $t = (key: string) => {
 }
 
 const isMobile = ref(false)
+const isNarrowDesktop = ref(false)
 const sidebarOpen = ref(false)
 const quickpanelOpen = ref(false)
 
@@ -201,6 +201,7 @@ const DEFAULT_QUICKPANEL_WIDTH = 288
 const MIN_QUICKPANEL_WIDTH = 250
 const quickpanelWidth = ref(DEFAULT_QUICKPANEL_WIDTH)
 const isResizingQuickpanel = ref(false)
+const useOverlayQuickpanel = computed(() => isMobile.value || isNarrowDesktop.value)
 
 function startQuickpanelResize(e: MouseEvent) {
     e.preventDefault()
@@ -231,6 +232,13 @@ onMounted(() => {
     messageBusStore.connect()
     const checkMobile = () => {
         isMobile.value = window.innerWidth < 768
+        uiStore.setIsMobile(isMobile.value)
+        if (typeof document !== 'undefined') {
+            document.documentElement.classList.toggle('mobile-view', isMobile.value)
+            if (isMobile.value) document.documentElement.setAttribute('data-mobile-view', 'true')
+            else document.documentElement.removeAttribute('data-mobile-view')
+        }
+        isNarrowDesktop.value = window.innerWidth < 1280
         if (!isMobile.value) {
             sidebarOpen.value = !uiStore.menuCollapsed
             quickpanelOpen.value = uiStore.quickpanelOpened

@@ -8,7 +8,7 @@
   AdminMaintenanceView - System maintenance: blocked clients, locked products, app state, backup/restore.
 -->
 <template>
-    <div class="h-full overflow-y-auto bg-(--color-surface)">
+    <div class="h-full overflow-y-auto bg-(--color-surface) opsi-compact-page opsi-dense-form">
         <div class="sticky top-0 z-10 bg-(--color-surface) px-4 pt-2" v-if="pageMessage">
             <CoreAppAlertInline v-if="pageMessage.type === 'success'" color="success" :title="$t('common.success')"
                 :description="pageMessage.message" variant="subtle" closable compact @close="pageMessage = null" />
@@ -22,7 +22,7 @@
                     <template #header>
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-heading uppercase tracking-wide">{{ $t('clients.blocked')
-                            }}</span>
+                                }}</span>
                             <CoreAppStatusBadge v-if="blockedClientsCount > 0" status="warning"
                                 :label="String(blockedClientsCount)" />
                         </div>
@@ -69,7 +69,7 @@
                     <template #header>
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-heading uppercase tracking-wide">{{ $t('products.locked')
-                            }}</span>
+                                }}</span>
                             <CoreAppStatusBadge v-if="lockedProductsCount > 0" status="warning"
                                 :label="String(lockedProductsCount)" />
                         </div>
@@ -99,8 +99,7 @@
                                         class="truncate text-xs text-(--color-text-muted)">
                                         {{ product.locations.join(', ') }}
                                     </div>
-                                    <div v-else-if="product.reason"
-                                        class="truncate text-xs text-(--color-text-muted)">
+                                    <div v-else-if="product.reason" class="truncate text-xs text-(--color-text-muted)">
                                         {{ product.reason }}
                                     </div>
                                 </div>
@@ -247,7 +246,7 @@
                                         <div v-if="selectedFileName" class="font-medium text-sm truncate">{{
                                             selectedFileName }}</div>
                                         <div v-else class="text-(--color-text-muted) text-sm">{{ $t('backup.fileClick')
-                                        }}
+                                            }}
                                         </div>
                                     </div>
                                 </div>

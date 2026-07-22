@@ -16,7 +16,7 @@
 		<div v-else-if="error" class="text-xs text-(--color-error-soft-text) py-2">{{ error }}</div>
 
 		<template v-else>
-			<div class="flex items-center gap-1 mb-2 shrink-0">
+			<div class="flex items-center gap-1 mb-1.5 shrink-0">
 				<CoreAppFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
 				<CoreAppTooltip v-if="isDepotAccessRestricted"
 					:text="$t('opsiConfig.serverFeatures.depotAccess.disabled')">
@@ -35,14 +35,14 @@
 					{{ $t('common.noResults') }}
 				</div>
 				<div v-for="server in filteredServers" :key="server.serverId"
-					class="flex items-center gap-2 px-2 py-1.5 rounded text-sm hover:bg-(--color-surface-hover)">
+					class="flex items-center gap-1.5 px-1.5 py-1 rounded text-xs hover:bg-(--color-surface-hover)">
 					<CoreAppCheckbox :model-value="selectionStore.selectedServers.includes(server.serverId)" size="xs"
 						:aria-label="server.serverId" @update:model-value="toggleServer(server.serverId)" />
 					<button type="button"
 						class="flex-1 min-w-0 flex items-center gap-1.5 text-left cursor-pointer bg-transparent"
 						@click="toggleServer(server.serverId)">
 						<CoreAppIcon :name="server.isConfigServer ? icons.serverStack : icons.server"
-							class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
+							class="w-3 h-3 shrink-0 text-(--color-text-muted)" />
 						<span class="truncate" :class="server.isConfigServer ? 'font-medium' : ''">{{
 							server.serverId
 						}}</span>

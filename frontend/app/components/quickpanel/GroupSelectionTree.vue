@@ -8,7 +8,7 @@
   QuickpanelGroupSelectionTree - Tree view for selecting client/product groups.
 -->
 <template>
-	<div class="flex flex-col h-full min-h-0">
+	<div class="flex flex-col h-full min-h-0 groups-dense opsi-compact-page">
 		<div class="flex items-center gap-1 mb-2 shrink-0">
 			<CoreAppFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0"
 				:aria-label="$t('common.filter')" :placeholder="$t('common.filter')" />

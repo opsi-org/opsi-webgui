@@ -12,7 +12,14 @@
 </template>
 
 <script setup lang="ts">
+import { useUiStore } from '~/stores/uiStore'
+
 defineOptions({ inheritAttrs: false })
 const attrs = useAttrs()
-const accessibleAttrs = computed(() => withAccessibleName(attrs))
+const uiStore = useUiStore()
+const accessibleAttrs = computed(() => {
+  const a = withAccessibleName(attrs) as Record<string, unknown>
+  if (uiStore.isMobile) a.size = 'xs'
+  return a
+})
 </script>

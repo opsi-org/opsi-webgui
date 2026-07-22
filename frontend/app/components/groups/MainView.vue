@@ -8,7 +8,8 @@
   GroupsMainView - Client and product group management with tree view, member editing, and CRUD actions.
 -->
 <template>
-    <LayoutsPageLayout :loading="loading" :showFilter="false" show-refresh @refresh="fetchCurrentGroups">
+    <LayoutsPageLayout class="opsi-compact-page groups-dense" :loading="loading" :showFilter="false" show-refresh
+        @refresh="fetchCurrentGroups">
         <template #tabs>
             <div class="flex items-center gap-3">
                 <CoreAppTabsNav v-model="activeGroupType" :tabs="groupTypes" />
@@ -36,14 +37,14 @@
             </div>
         </template>
 
-        <div ref="containerRef" class="flex h-full min-h-0 relative" style="min-height: 400px;">
+        <div ref="containerRef" class="groups-dense flex h-full min-h-0 relative" style="min-height: 400px;">
             <div :style="{ width: isMobile ? '100%' : `${sidebarWidthPercent}%` }"
                 class="shrink-0 border-r border-(--color-border) bg-(--color-background) flex flex-col transition-[width] duration-100"
                 :class="{
                     'absolute inset-0 z-20': isMobile,
                     'hidden': isMobile && !showSidebar
                 }">
-                <div class="p-3 border-b border-(--color-border) space-y-2">
+                <div class="p-2.5 border-b border-(--color-border) space-y-1.5">
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-(--color-text)">{{ activeGroupType === 'clients' ?
                             $t('groups.client') :
@@ -67,10 +68,10 @@
                 <div v-if="loading" class="py-4 text-center">
                     <CoreAppLoadingSpinner size="sm" />
                 </div>
-                <div v-else class="flex-1 overflow-auto p-2 space-y-0.5">
+                <div v-else class="flex-1 overflow-auto p-1.5 space-y-0.5">
                     <template v-for="rootGroup in filteredTreeGroups" :key="rootGroup.id">
                         <div v-if="activeGroupType === 'clients'"
-                            class="flex items-center justify-between font-heading text-xs text-(--color-text) px-2 py-2 mt-3 first:mt-1 select-none">
+                            class="flex items-center justify-between font-heading text-xs text-(--color-text) px-1.5 py-1.5 mt-2 first:mt-1 select-none">
                             <button type="button"
                                 class="flex items-center gap-1.5 flex-1 min-w-0 text-left bg-transparent border-0 p-0 cursor-pointer"
                                 @click="collapsedSections.has(rootGroup.id) ? collapsedSections.delete(rootGroup.id) : collapsedSections.add(rootGroup.id)">
@@ -119,7 +120,7 @@
             <div class="flex-1 min-w-0 bg-(--color-background) overflow-hidden">
                 <div v-if="selectedGroup" class="h-full min-h-0 flex flex-col">
                     <div
-                        class="p-3 border-b border-(--color-border) flex items-center justify-between bg-(--color-background)">
+                        class="p-2.5 border-b border-(--color-border) flex items-center justify-between bg-(--color-background)">
                         <div class="flex items-center gap-2">
                             <CoreAppButton v-if="isMobile" :icon="icons.back" variant="ghost" color="neutral" size="xs"
                                 @click="showSidebar = true" />
@@ -154,17 +155,18 @@
                     </div>
 
                     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- keyboard navigation container for member list (roving focus) -->
-                    <div class="flex-1 overflow-auto px-4 pb-4 pt-0 outline-none" tabindex="-1"
+                    <div class="flex-1 overflow-auto px-2.5 pb-2.5 pt-0 outline-none" tabindex="-1"
                         @keydown="handleMemberListKeydown">
                         <div class="border-(--color-border) bg-(--color-background)">
-                            <div class="sticky top-0 z-20 bg-(--color-background) pt-3 pb-2 border-b border-(--color-border)"
+                            <div class="sticky top-0 z-20 bg-(--color-background) pt-2 pb-1.5 border-b border-(--color-border)"
                                 style="background-color: var(--color-background);">
-                                <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center justify-between mb-2">
                                     <h2 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
                                         {{ $t('groups.members') }}
-                                        <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members ||
+                                        <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members
+                                            ||
                                             []).length
-                                            }})</span>
+                                        }})</span>
                                     </h2>
                                     <div class="flex items-center gap-2">
                                         <CoreAppButton v-if="selectedMembers.length > 0 && !selectedGroup.isSpecial"
@@ -182,17 +184,18 @@
                                     </div>
                                 </div>
                                 <CoreAppFilterInput v-if="(selectedGroup.members?.length || 0) > 5"
-                                    v-model="memberSearchQuery" :placeholder="$t('groups.membersFilter') + '...'" size="sm"
-                                    input-class="w-full mb-2" />
+                                    v-model="memberSearchQuery" :placeholder="$t('groups.membersFilter') + '...'"
+                                    size="sm" input-class="w-full mb-2" />
                                 <div v-if="filteredMembers.length > 0 && !selectedGroup.isSpecial"
-                                    class="flex items-center gap-2 px-2 py-1 mb-1">
+                                    class="flex items-center gap-2 px-1.5 py-0.5 mb-1">
                                     <CoreAppCheckbox
                                         :model-value="selectedMembers.length === filteredMembers.length && filteredMembers.length > 0"
                                         :indeterminate="selectedMembers.length > 0 && selectedMembers.length < filteredMembers.length"
                                         :aria-label="String($t('common.selectAll'))"
                                         @update:model-value="toggleSelectAllMembers" />
                                     <span class="text-xs text-(--color-text-muted)">
-                                        {{ selectedMembers.length > 0 ? `${selectedMembers.length} ${$t('common.selected')}`
+                                        {{ selectedMembers.length > 0 ? `${selectedMembers.length}
+                                        ${$t('common.selected')}`
                                             :
                                             $t('common.selectAll') }}
                                         <kbd
@@ -205,10 +208,9 @@
                             <div class="space-y-0">
                                 <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- interactive list rows with role/keyboard handlers on each item -->
                                 <div v-for="member in displayedMembers" :key="member"
-                                    class="flex items-center gap-2 text-sm px-2 py-1.5 rounded transition-colors hover:bg-(--color-surface-hover) group/member cursor-pointer select-none"
-                                    :class="selectedMembersSet.has(member) ? 'bg-opsi-blue/5' : ''"
-                                    role="button" tabindex="0"
-                                    @click="toggleMemberSelection(member, $event)"
+                                    class="flex items-center gap-2 text-sm px-1.5 py-1 rounded transition-colors hover:bg-(--color-surface-hover) group/member cursor-pointer select-none"
+                                    :class="selectedMembersSet.has(member) ? 'bg-opsi-blue/5' : ''" role="button"
+                                    tabindex="0" @click="toggleMemberSelection(member, $event)"
                                     @keydown.enter="toggleMemberSelection(member)"
                                     @keydown.space.prevent="toggleMemberSelection(member)">
                                     <CoreAppCheckbox v-if="!selectedGroup.isSpecial"
@@ -718,7 +720,7 @@ const editParentGroupSelectItems = computed(() => {
 
 function getChildGroupIds(nodes: GroupTreeNodeData[], parentId: string): Set<string> {
     const result = new Set<string>()
-    
+
     function findAndCollect(nodes: GroupTreeNodeData[]) {
         for (const node of nodes) {
             if (node.id === parentId) {
@@ -737,7 +739,7 @@ function getChildGroupIds(nodes: GroupTreeNodeData[], parentId: string): Set<str
             if (node.children?.length) collectAll(node.children)
         }
     }
-    
+
     findAndCollect(nodes)
     return result
 }

@@ -18,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+import { useUiStore } from '~/stores/uiStore'
+
 interface Props {
 	modelValue?: unknown
 	value?: unknown
@@ -31,12 +33,15 @@ const props = withDefaults(defineProps<Props>(), {
 	size: 'sm',
 })
 
+const uiStore = useUiStore()
+
 defineEmits<{ 'update:modelValue': [value: unknown] }>()
 
 const inputId = useId()
 
 const sizeClass = computed(() => {
-	switch (props.size) {
+	const effectiveSize = uiStore.isMobile ? 'xs' : props.size
+	switch (effectiveSize) {
 		case 'xs': return 'w-3 h-3'
 		case 'sm': return ''
 		case 'md': return 'w-4 h-4'

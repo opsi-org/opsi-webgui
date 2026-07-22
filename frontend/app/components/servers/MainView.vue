@@ -28,22 +28,24 @@
         <CoreAppDataTable :rows="servers" :columns="columns" :loading="loading" table-id="servers" row-key="depotId"
             :selectable="true" :filterable="true" :show-refresh="false" :total-items="totalItems"
             :selected-keys="selectionStore.selectedServers" :active-key="panelServer?.depotId"
-            :sort-by-selection-enabled="sortBySelectionEnabled"
-            @row-activate="handleRowActivate" @selection-change="handleSelectionChange" @page-change="handlePageChange"
-            @refresh="fetchServers">
+            :sort-by-selection-enabled="sortBySelectionEnabled" @row-activate="handleRowActivate"
+            @selection-change="handleSelectionChange" @page-change="handlePageChange" @refresh="fetchServers">
             <template #cell-depotId="{ row }">
                 <CoreAppIcon :name="(row as Server).type === 'OpsiConfigserver' ? icons.serverStack : icons.server"
                     class="w-3.5 h-3.5 text-(--color-text-muted) mr-2" />
                 <span :class="(row as Server).type === 'OpsiConfigserver' ? 'font-bold' : ''">{{
                     (row as Server).depotId
-                    }}</span>
+                }}</span>
             </template>
             <template #cell-type="{ row }">
                 <CoreAppStatusBadge :status="(row as Server).type === 'OpsiConfigserver' ? 'info' : 'neutral'"
                     variant="solid" :label="String((row as Server).type || '-')" />
             </template>
             <template #cell-description="{ row }">
-                {{ (row as Server).description || '-' }}
+                <span class="block truncate max-w-[18rem] text-sm leading-5"
+                    :title="(row as Server).description || undefined">
+                    {{ (row as Server).description || '-' }}
+                </span>
             </template>
             <template #row-actions="{ row }">
                 <CoreAppButton :icon="icons.config" variant="ghost" size="xs" :title="$t('config.title')"
@@ -109,7 +111,7 @@ const { showLeaveWarning, checkUnsavedAndDo, confirmLeave: confirmPanelLeave, ca
 
 const columns: DataTableColumnDef[] = [
     { key: 'depotId', label: String($t('fields.serverId')), labelKey: 'fields.serverId', sortable: true, alwaysVisible: true },
-    { key: 'description', label: String($t('common.description')), labelKey: 'common.description', sortable: true },
+    { key: 'description', label: String($t('common.description')), labelKey: 'common.description', sortable: true, maxWidth: '18rem', truncate: true, tooltip: true },
     { key: 'type', label: String($t('common.type')), labelKey: 'common.type', sortable: true },
     { key: 'ip', label: String($t('fields.ip')), labelKey: 'fields.ip', sortable: true, visible: false },
 ]

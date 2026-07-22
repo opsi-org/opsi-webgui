@@ -65,8 +65,8 @@
 			</div>
 		</template>
 
-		<div class="flex flex-col h-full gap-2 min-h-0">
-			<div v-if="logContent.length > 0 && hasMarker" class="flex items-center text-xs text-muted shrink-0 px-3">
+		<div class="flex flex-col h-full gap-1.5 min-h-0">
+			<div v-if="logContent.length > 0 && hasMarker" class="flex items-center text-xs text-muted shrink-0 px-2">
 				<CoreAppButton :icon="icons.bookmark" variant="soft" color="neutral" size="sm"
 					:title="String($t('logs.scroll'))" :aria-label="String($t('logs.scroll'))" @click="scrollToMarker">
 					{{ $t('logs.marker') }}: {{ markerLine + 1 }}
@@ -111,14 +111,14 @@
 						role="button" tabindex="0" @click="setMarker(idx)" @keydown.enter="setMarker(idx)"
 						@keydown.space.prevent="setMarker(idx)">
 						<span
-							class="w-12 shrink-0 px-2 py-1.5 text-right text-(--color-text-muted) border-r border-(--color-border) select-none sticky left-0 bg-inherit">
+							class="w-11 shrink-0 px-1.5 py-1 text-right text-(--color-text-muted) border-r border-(--color-border) select-none sticky left-0 bg-inherit">
 							{{ idx + 1 }}
 						</span>
-						<span class="w-5 shrink-0 flex items-center justify-center py-1.5">
+						<span class="w-4.5 shrink-0 flex items-center justify-center py-1">
 							<CoreAppIcon v-if="markerLine === idx" :name="icons.bookmark"
 								class="w-3 h-3 text-opsi-blue" />
 						</span>
-						<code class="flex-1 px-2 py-1.5 whitespace-pre-wrap break-all leading-relaxed min-h-6">{{ line
+						<code class="flex-1 px-1.5 py-1 whitespace-pre-wrap break-all leading-snug min-h-5">{{ line
 						}}</code>
 					</div>
 				</div>
@@ -341,11 +341,13 @@ watch(selectedLogTypeValue, (newVal, oldVal) => {
 })
 
 watch(() => resolvedClientId.value, () => {
-	selectedLogTypeValue.value = ''
 	logContent.value = []
 	error.value = null
 	markerLine.value = -1
 	logUpdatePending.value = false
+	if (selectedLogTypeValue.value) {
+		fetchLog()
+	}
 })
 
 let autoRefreshInterval: ReturnType<typeof setInterval> | null = null

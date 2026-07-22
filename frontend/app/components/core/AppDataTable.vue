@@ -8,9 +8,9 @@
   CoreAppDataTable - Main data table with sorting, filtering, selection, and pagination.
 -->
 <template>
-  <div class="data-table flex flex-col h-full min-h-0 min-w-0">
-    <div class="shrink-0 flex flex-wrap items-center justify-between gap-2 mb-3">
-      <div class="flex items-center gap-3 text-small">
+  <div class="data-table flex flex-col h-full min-h-0 min-w-0" :class="{ 'data-table--compact': isCompactDensity }">
+    <div class="shrink-0 flex flex-wrap items-center justify-between gap-2 mb-2">
+      <div class="flex items-center gap-3 text-sm">
         <UButton v-if="selectedKeys.length > 0" :icon="icons.xCircle" variant="soft" color="primary" size="xs"
           :title="`${selectedKeys.length} ${$t('common.selected')} - ${$t('common.clearSelection')}`"
           @click="clearSelection">
@@ -85,10 +85,10 @@
                     class="w-full text-left flex items-center gap-2 p-1 rounded hover:bg-(--color-surface-hover) cursor-pointer"
                     @click="toggleColumnFromRow(col)">
                     <CoreAppCheckbox :model-value="isColumnVisibleComputed(col.key)" :disabled="col.alwaysVisible"
-                        :aria-label="resolveColumnLabel(col)" @click.stop
-                        @update:model-value="tableSettings.toggleColumn(col.key)" />
+                      :aria-label="resolveColumnLabel(col)" @click.stop
+                      @update:model-value="tableSettings.toggleColumn(col.key)" />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col)
-                      }}</span>
+                    }}</span>
                   </button>
                 </div>
               </div>
@@ -106,13 +106,11 @@
     </div>
 
     <UCard :ui="{ body: 'p-0 sm:p-0 flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden' }"
-      :style="{ maxHeight }"
-      class="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden">
+      :style="{ maxHeight: effectiveMaxHeight }" class="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden">
       <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- scrollable region with keyboard navigation, role=region + tabindex is correct ARIA -->
       <div ref="tableContainer"
-        class="flex-1 min-h-0 min-w-0 overflow-x-auto overflow-y-auto transition-all duration-200"
-        tabindex="0" role="region"
-        :aria-label="String($t('settings.table'))" @scroll="handleScroll" @keydown="handleTableKeydown">
+        class="flex-1 min-h-0 min-w-0 overflow-x-auto overflow-y-auto transition-all duration-200" tabindex="0"
+        role="region" :aria-label="String($t('settings.table'))" @scroll="handleScroll" @keydown="handleTableKeydown">
         <div v-if="loading && rows.length === 0" class="py-12">
           <CoreAppLoadingSpinner size="lg" />
         </div>
@@ -121,7 +119,7 @@
           <table class="w-max min-w-full" role="grid">
             <thead class="bg-(--color-surface) sticky top-0 z-30">
               <tr>
-                <th v-if="selectable" class="w-10 px-3 py-2.5 text-center whitespace-nowrap bg-(--color-surface)"
+                <th v-if="selectable" class="w-9 px-2 py-1.5 text-center whitespace-nowrap bg-(--color-surface)"
                   :aria-label="effectiveSelectionMode === 'multi' ? 'Select all' : 'Selection'">
                   <div class="flex items-center justify-center gap-1">
                     <input v-if="effectiveSelectionMode === 'multi'" type="checkbox" :checked="allSelected"
@@ -136,9 +134,9 @@
                 </th>
 
                 <th v-for="col in visibleColumns" :key="col.key" :aria-sort="getSortAriaLabel(col.key)"
-                  class="px-3 py-2.5 text-left font-heading text-xs tracking-wider text-(--color-text-muted) whitespace-nowrap"
+                  class="px-2 py-1.5 text-left font-heading text-xs tracking-wide text-(--color-text-muted) whitespace-nowrap"
                   :class="[col.headerClass, { 'cursor-pointer hover:bg-(--color-surface-hover)': col.sortable }, col.stickyRight ? 'sticky z-40 bg-(--color-surface) shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]' : '']"
-                  :style="{ width: col.width, minWidth: col.minWidth || '80px', textAlign: col.align, ...(col.stickyRight ? { right: hasActions ? actionsColWidth + 'px' : '0' } : {}) }"
+                  :style="{ width: col.width, minWidth: col.minWidth || '68px', maxWidth: col.maxWidth, textAlign: col.align, ...(col.stickyRight ? { right: hasActions ? actionsColWidth + 'px' : '0' } : {}) }"
                   :tabindex="col.sortable ? 0 : undefined" @click="col.sortable && handleSort(col.key)"
                   @keydown.enter="col.sortable && handleSort(col.key)">
                   <slot :name="(`header-cell-${col.key}` as any)" :column="col"
@@ -164,7 +162,7 @@
                 </th>
 
                 <th v-if="hasActions" ref="actionsHeaderRef"
-                  class="min-w-24 px-3 py-2.5 text-center font-heading text-xs tracking-wider text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-40 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]">
+                  class="min-w-20 px-2 py-2 text-center font-heading text-xs tracking-wide text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-40 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]">
                   {{ $t('actions.title') }}
                 </th>
               </tr>
@@ -178,7 +176,7 @@
                   'bg-(--color-primary-soft-bg)': isHighlighted(row),
                   'shadow-[inset_3px_0_0_0_var(--color-primary)]': isActive(row),
                 }" @click="handleRowClick(row, $event)" @keydown.enter="handleRowClick(row, $event)">
-                <td v-if="selectable" class="px-3 py-2 text-center" role="gridcell"
+                <td v-if="selectable" class="px-2 py-1 text-center align-middle" role="gridcell"
                   @click.stop="handleCheckboxClick(row)">
                   <input v-if="effectiveSelectionMode === 'multi'" type="checkbox" :checked="isSelected(row)"
                     class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue"
@@ -189,17 +187,20 @@
                 </td>
 
                 <td v-for="col in visibleColumns" :key="col.key" role="gridcell"
-                  class="px-3 py-2 text-small text-(--color-text) whitespace-nowrap"
+                  class="px-1.5 py-1 text-sm leading-5 text-(--color-text) whitespace-nowrap align-middle"
                   :class="[col.class, col.stickyRight ? ['sticky z-10 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]', isHighlighted(row) ? 'bg-(--color-row-selected)' : 'bg-(--color-background) group-hover:bg-(--color-surface-hover)'] : '']"
-                  :style="{ textAlign: col.align, ...(col.stickyRight ? { right: hasActions ? actionsColWidth + 'px' : '0' } : {}) }">
+                  :style="{ width: col.width, minWidth: col.minWidth, maxWidth: col.maxWidth, textAlign: col.align, ...(col.stickyRight ? { right: hasActions ? actionsColWidth + 'px' : '0' } : {}) }">
                   <slot :name="(`cell-${col.key}` as any)" :row="row" :value="getNestedValue(row, col.key)"
                     :index="idx">
-                    {{ formatCellValue(row, col) }}
+                    <CoreAppTooltip v-if="col.tooltip && getTooltipValue(row, col)" :text="getTooltipValue(row, col)">
+                      <span :class="getCellContentClass(col)">{{ formatCellValue(row, col) }}</span>
+                    </CoreAppTooltip>
+                    <span v-else :class="getCellContentClass(col)">{{ formatCellValue(row, col) }}</span>
                   </slot>
                 </td>
 
                 <td v-if="hasActions"
-                  class="px-3 py-2 text-center sticky right-0 z-10 min-w-24 whitespace-nowrap shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
+                  class="px-1.5 py-1 text-center sticky right-0 z-10 min-w-20 whitespace-nowrap shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
                   :class="isHighlighted(row) ? 'bg-(--color-row-selected)' : 'bg-(--color-background) group-hover:bg-(--color-surface-hover)'"
                   @click.stop>
                   <div class="flex items-center justify-center gap-1 rounded-md transition-colors"
@@ -303,7 +304,7 @@ const props = withDefaults(defineProps<Props>(), {
   selectable: true,
   filterable: true,
   showRefresh: true,
-  maxHeight: 'calc(100vh - 220px)',
+  maxHeight: 'calc(100vh - 180px)',
 })
 
 const emit = defineEmits<{
@@ -381,6 +382,12 @@ let filterDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
 const displayMode = computed(() => tableSettings.settings.displayMode)
 const pageSize = computed(() => tableSettings.settings.pageSize)
+const compactDensityTableIds = new Set(['clients', 'servers', 'products', 'products-localboot', 'products-netboot'])
+const isCompactDensity = computed(() => compactDensityTableIds.has(props.tableId))
+const effectiveMaxHeight = computed(() => {
+  if (props.maxHeight !== 'calc(100vh - 180px)') return props.maxHeight
+  return isCompactDensity.value ? 'calc(100vh - 155px)' : props.maxHeight
+})
 
 const effectiveSelectionMode = computed(() => {
   if (selectionModeOverride.value) return selectionModeOverride.value
@@ -391,6 +398,7 @@ const pageSizeOptions = computed(() => [
   { value: 10, label: '10' },
   { value: 20, label: '20' },
   { value: 50, label: '50' },
+  { value: 100, label: '100' },
 ])
 
 const sortableColumnOptions = computed(() =>
@@ -491,6 +499,15 @@ function formatCellValue(row: T, col: DataTableColumnDef): string {
   if (value === null || value === undefined) return '-'
   if (value instanceof Date) return value.toLocaleString()
   return String(value)
+}
+
+function getTooltipValue(row: T, col: DataTableColumnDef): string {
+  const value = formatCellValue(row, col)
+  return value === '-' ? '' : value
+}
+
+function getCellContentClass(col: DataTableColumnDef): string {
+  return col.truncate ? 'block min-w-0 truncate leading-5' : 'block leading-5'
 }
 
 function resolveColumnLabel(col: DataTableColumnDef): string {
@@ -804,5 +821,23 @@ defineExpose({
 <style scoped>
 .data-table {
   contain: layout style;
+}
+
+.data-table--compact thead th {
+  padding-top: 0.3125rem;
+  padding-bottom: 0.3125rem;
+}
+
+.data-table--compact tbody td {
+  padding-top: 0.1875rem;
+  padding-bottom: 0.1875rem;
+}
+
+.data-table--compact tbody td .leading-5 {
+  line-height: 1.15rem;
+}
+
+.data-table--compact tbody td .text-sm {
+  font-size: 0.8125rem;
 }
 </style>

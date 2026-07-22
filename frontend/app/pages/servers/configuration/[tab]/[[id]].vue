@@ -16,7 +16,14 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+definePageMeta({
+	layout: 'default',
+	key: (route) => {
+		const id = route.params.id
+		const normalizedId = Array.isArray(id) ? (id[0] || '') : (id || '')
+		return `servers-configuration-${normalizedId}`
+	},
+})
 
 const { isReadOnly, hasServerWriteAccess } = useUserPermissions()
 

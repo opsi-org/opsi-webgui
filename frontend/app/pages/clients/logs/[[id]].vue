@@ -41,6 +41,11 @@ watch(routeClientId, (id) => {
 function updateClientId(id: string | null) {
     manualClientId.value = id || ''
     const target = id ? `/clients/logs/${id}` : '/clients/logs'
-    if (route.fullPath !== target) router.replace(target)
+    if (route.path !== target) {
+        router.replace({
+            path: target,
+            query: route.query,
+        })
+    }
 }
 </script>

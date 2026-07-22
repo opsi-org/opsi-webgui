@@ -333,7 +333,7 @@ html select {
 }
 
 .form-row {
-  padding: 0.5rem 0.75rem;
+  padding: 0.375rem 0.625rem;
   margin: 0;
   border-radius: 0.5rem;
   transition: background-color 0.1s ease;
@@ -345,6 +345,98 @@ html select {
 
 .add-border button {
   border: 0.5px var(--color-border);
+}
+
+/* ============================================
+   COMPACT DENSITY (TABLE/FORM HEAVY PAGES)
+   ============================================ */
+
+.opsi-compact-page .opsi-card,
+.opsi-dense-form .opsi-card,
+.groups-dense .opsi-card {
+  padding: 0.625rem;
+  border-radius: 0.75rem;
+}
+
+.opsi-compact-page .form-row,
+.opsi-dense-form .form-row,
+.groups-dense .form-row {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.opsi-compact-page .page-header,
+.opsi-dense-form .page-header,
+.groups-dense .page-header {
+  padding-bottom: 0.5rem;
+}
+
+.opsi-compact-page .page-header .mt-3,
+.opsi-dense-form .page-header .mt-3,
+.groups-dense .page-header .mt-3 {
+  margin-top: 0.5rem;
+}
+
+.opsi-compact-page .page-header .pt-3,
+.opsi-dense-form .page-header .pt-3,
+.groups-dense .page-header .pt-3 {
+  padding-top: 0.5rem;
+}
+
+.opsi-compact-page .page-layout .page-body [class*='p-3'],
+.opsi-dense-form .page-layout .page-body [class*='p-3'],
+.groups-dense .page-layout .page-body [class*='p-3'] {
+  padding: 0.5rem;
+}
+
+.opsi-compact-page .text-sm,
+.opsi-dense-form .text-sm,
+.groups-dense .text-sm {
+  line-height: 1.15rem;
+}
+
+/* ============================================
+   GLOBAL MOBILE DENSITY
+   ============================================ */
+
+html.mobile-view body {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+html.mobile-view .text-sm {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+html.mobile-view .text-xs {
+  font-size: 0.6875rem;
+  line-height: 0.9375rem;
+}
+
+html.mobile-view .opsi-card {
+  padding: 0.5rem;
+  border-radius: 0.625rem;
+}
+
+html.mobile-view .form-row {
+  padding: 0.2rem 0.4rem;
+}
+
+html.mobile-view .page-header {
+  padding-bottom: 0.375rem;
+}
+
+html.mobile-view .page-header .gap-3 {
+  gap: 0.5rem;
+}
+
+html.mobile-view .page-layout .page-header .gap-2,
+html.mobile-view .page-layout .page-header .gap-3,
+html.mobile-view .page-layout .page-header .gap-4 {
+  gap: 0.375rem;
 }
 
 /* ============================================

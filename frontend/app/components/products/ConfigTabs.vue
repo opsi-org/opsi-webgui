@@ -8,7 +8,7 @@
   ProductsConfigTabs - Tabbed product configuration with properties and dependencies.
 -->
 <template>
-	<div class="flex flex-col h-full min-h-0">
+	<div class="flex flex-col h-full min-h-0 opsi-compact-page opsi-dense-form">
 		<CoreAppAlertInline v-if="statusMessage" :color="statusMessage.type"
 			:title="statusMessage.type === 'success' ? $t('common.success') : $t('common.error')" :description="statusMessage.message"
 			variant="subtle" class="mb-2 shrink-0" closable @close="statusMessage = null" />

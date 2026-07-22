@@ -8,7 +8,7 @@
   AdminDiagnosticsView - Health check, system diagnostics, modules info with filterable tabs.
 -->
 <template>
-    <LayoutsPageLayout v-model="filter" show-filter :search-placeholder="$t('common.filter')" show-refresh
+    <LayoutsPageLayout v-model="filter" class="opsi-compact-page" show-filter :search-placeholder="$t('common.filter')" show-refresh
         :loading="loading" @refresh="refresh(true)">
         <template #tabs>
             <CoreAppTabsNav v-model="activeTab" :tabs="tabs" />

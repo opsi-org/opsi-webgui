@@ -8,7 +8,7 @@
   ClientsAddForm - Form for adding a new client.
 -->
 <template>
-	<div class="flex flex-col h-full">
+	<div class="flex flex-col h-full opsi-dense-form">
 		<div v-if="!canCreateClients || isReadOnly" class="flex items-center justify-center h-full p-8">
 			<CoreAppAlertInline color="warning" :title="$t('auth.permissionDenied')">
 				<template #description>{{ isReadOnly ? $t('opsiConfig.serverFeatures.readOnly.disabled') :
@@ -16,7 +16,7 @@
 			</CoreAppAlertInline>
 		</div>
 		<template v-else>
-			<div class="shrink-0 sticky top-0 z-10 bg-(--color-surface) px-2 py-2">
+			<div class="shrink-0 sticky top-0 z-10 bg-(--color-surface) px-2 py-1.5">
 				<div class="flex items-center justify-between">
 					<CoreAppAlertInline v-if="success" color="success" :title="String($t('common.success'))"
 						class="flex-1 mr-2">
@@ -37,9 +37,9 @@
 				</div>
 			</div>
 
-			<div class="flex-1 overflow-y-auto p-2 space-y-3">
+			<div class="flex-1 overflow-y-auto space-y-2">
 				<div class="opsi-card">
-					<div class="flex items-center justify-between mb-3">
+					<div class="flex items-center justify-between mb-2">
 						<CoreAppHeading size="xs" tag="h2">{{ $t('clients.create.title') }}</CoreAppHeading>
 					</div>
 					<div>
@@ -113,7 +113,7 @@
 				</div>
 
 				<div class="opsi-card">
-					<div class="flex items-center justify-between mb-3">
+					<div class="flex items-center justify-between mb-2">
 						<CoreAppHeading size="xs" tag="h2">{{ $t('common.assignments') }}</CoreAppHeading>
 					</div>
 					<div>
@@ -144,7 +144,7 @@
 				</div>
 
 				<div class="opsi-card">
-					<div class="flex items-center justify-between mb-3">
+					<div class="flex items-center justify-between mb-2">
 						<CoreAppHeading size="xs" tag="h2">{{ $t('clients.initialSetup') }}</CoreAppHeading>
 					</div>
 					<div>

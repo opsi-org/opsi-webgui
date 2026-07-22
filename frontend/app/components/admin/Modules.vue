@@ -25,10 +25,10 @@
 		<div v-else-if="filteredModules.length === 0" class="py-8 text-center text-(--color-text-muted)">
 			{{ filter ? $t('common.noResults') : $t('mods.none') }}
 		</div>
-		<div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+		<div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
 			<div v-for="module in filteredModules" :key="module"
-				class="flex items-center gap-3 p-3 rounded-lg border transition-colors border-(--color-border) hover:bg-(--color-surface-hover)">
-				<div class="w-10 h-10 rounded-full flex items-center justify-center bg-(--color-success-soft-bg)">
+				class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg border transition-colors border-(--color-border) hover:bg-(--color-surface-hover)">
+				<div class="w-8 h-8 rounded-full flex items-center justify-center bg-(--color-success-soft-bg)">
 					<CoreAppIcon :name="icons.check" class="w-5 h-5 text-(--color-success-soft-text)" />
 				</div>
 				<div class="flex-1 min-w-0">

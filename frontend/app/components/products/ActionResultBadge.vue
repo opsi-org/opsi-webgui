@@ -10,19 +10,32 @@
 <template>
 	<div class="flex justify-center">
 		<CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
-			<CoreAppStatusBadge status="warning" :icon="icons.unequal" :label="$t('common.mixed')" />
+			<CoreAppTooltip v-if="iconOnly" :text="String($t('common.mixed'))">
+				<CoreAppStatusBadge status="warning" :icon="icons.unequal" size="xs" />
+			</CoreAppTooltip>
+			<CoreAppStatusBadge v-else status="warning" :icon="icons.unequal" :label="$t('common.mixed')" />
 		</CoreAppTooltipTable>
 
 		<template v-else-if="normalizedResult === 'successful'">
-			<CoreAppStatusBadge status="success" :icon="icons.checkCircle" :label="$t('common.success')" />
+			<CoreAppTooltip v-if="iconOnly" :text="String($t('common.success'))">
+				<CoreAppStatusBadge status="success" :icon="icons.checkCircle" size="xs" />
+			</CoreAppTooltip>
+			<CoreAppStatusBadge v-else status="success" :icon="icons.checkCircle" :label="$t('common.success')" />
 		</template>
 
 		<template v-else-if="normalizedResult === 'failed'">
-			<CoreAppStatusBadge status="error" :icon="icons.xCircle" :label="$t('common.failed')" />
+			<CoreAppTooltip v-if="iconOnly" :text="String($t('common.failed'))">
+				<CoreAppStatusBadge status="error" :icon="icons.xCircle" size="xs" />
+			</CoreAppTooltip>
+			<CoreAppStatusBadge v-else status="error" :icon="icons.xCircle" :label="$t('common.failed')" />
 		</template>
 
 		<span v-else-if="normalizedResult === 'none' || !normalizedResult"
 			class="text-(--color-text-muted) text-xs">-</span>
+
+		<CoreAppTooltip v-else-if="iconOnly" :text="String(result)">
+			<CoreAppStatusBadge status="info" :icon="icons.productActionResult" size="xs" />
+		</CoreAppTooltip>
 
 		<CoreAppStatusBadge v-else :label="result" />
 	</div>
@@ -33,9 +46,14 @@ interface Props {
 	result?: string
 	resultDetails?: string[]
 	selectedClients?: string[] | null
+	iconOnly?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+	iconOnly: false,
+})
+
+const iconOnly = computed(() => props.iconOnly)
 
 const icons = useIcons()
 const { t: $t } = useI18n()

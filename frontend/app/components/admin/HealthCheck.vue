@@ -19,11 +19,10 @@
 		<div v-if="loading" class="py-8">
 			<CoreAppLoadingSpinner />
 		</div>
-		<div v-else class="space-y-2">
+		<div v-else class="space-y-1.5">
 			<div v-for="item in filteredHealthData" :key="item.key" class="rounded-lg overflow-hidden">
-				<div class="flex items-start gap-3 p-3 cursor-pointer transition-colors hover:bg-(--color-surface-hover) rounded-lg"
-					role="button" tabindex="0"
-					@click="$emit('toggleExpand', item.key)"
+				<div class="flex items-start gap-2.5 p-2.5 cursor-pointer transition-colors hover:bg-(--color-surface-hover) rounded-lg"
+					role="button" tabindex="0" @click="$emit('toggleExpand', item.key)"
 					@keydown.enter="$emit('toggleExpand', item.key)"
 					@keydown.space.prevent="$emit('toggleExpand', item.key)">
 					<CoreAppIcon v-if="item.children && item.children.length > 0"
@@ -33,7 +32,7 @@
 					<CoreAppStatusBadge :status="getStatusType(item.status)" :label="item.status" class="shrink-0" />
 					<div class="flex-1 min-w-0">
 						<div class="font-medium text-sm" :title="item.description">{{ item.name }}</div>
-						<div v-if="item.message" class="text-(--color-text-muted) mt-0.5 break-all">
+						<div v-if="item.message" class="text-(--color-text-muted) break-all">
 							{{ item.message }}
 						</div>
 					</div>
@@ -41,12 +40,12 @@
 				<div v-if="item.children && item.children.length > 0 && expanded[item.key]"
 					class="border-l border-(--color-border)">
 					<div v-for="child in item.children" :key="child.key"
-						class="flex items-start gap-3 p-3 pl-10 hover:bg-(--color-surface-hover) transition-colors rounded-lg">
+						class="flex items-start gap-2.5 py-2 px-2.5 pl-9 hover:bg-(--color-surface-hover) transition-colors rounded-lg">
 						<CoreAppStatusBadge :status="getStatusType(child.status)" :label="child.status"
 							class="shrink-0" />
 						<div class="flex-1 min-w-0">
 							<div class="font-medium text-sm">{{ child.name }}</div>
-							<div v-if="child.message" class="text-(--color-text-muted) mt-0.5 break-all">
+							<div v-if="child.message" class="text-(--color-text-muted) break-all">
 								{{ child.message }}
 							</div>
 						</div>
