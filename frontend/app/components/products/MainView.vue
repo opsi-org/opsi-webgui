@@ -66,13 +66,13 @@
 					<CoreAppIcon v-else :name="icons.product" class="w-4 h-4 shrink-0 text-neutral-400" />
 					<CoreAppIcon v-if="(row as ProductRow).locked" :name="icons.lock"
 						class="w-3.5 h-3.5 text-(--color-error) shrink-0" :title="$t('products.locked')" />
-					<span class="text-small text-(--color-text)">{{ (row as ProductRow).productId
+					<span class="text-sm leading-5 text-(--color-text)">{{ (row as ProductRow).productId
 					}}</span>
 				</div>
 			</template>
 
 			<template #cell-description="{ row }">
-				<span class="block truncate max-w-[280px] text-small text-(--color-text)"
+				<span class="block truncate max-w-[14rem] text-sm leading-5 text-(--color-text)"
 					:title="(row as ProductRow).description || undefined">
 					{{ (row as ProductRow).description || '-' }}
 				</span>
@@ -85,13 +85,13 @@
 			<template #cell-installationStatus="{ row }">
 				<ProductsInstallationStatusBadge :status="(row as ProductRow).installationStatus"
 					:status-details="(row as ProductRow).installationStatusDetails"
-					:selected-clients="(row as ProductRow).selectedClients" />
+					:selected-clients="(row as ProductRow).selectedClients" icon-only />
 			</template>
 
 			<template #cell-actionResult="{ row }">
 				<ProductsActionResultBadge :result="(row as ProductRow).actionResult"
 					:result-details="(row as ProductRow).actionResultDetails"
-					:selected-clients="(row as ProductRow).selectedClients" />
+					:selected-clients="(row as ProductRow).selectedClients" icon-only />
 			</template>
 
 			<template #cell-actionRequest="{ row }">
@@ -115,42 +115,42 @@
 										: getLiveStatus((row as ProductRow).productId)?.kind === 'processing'
 											? icons.onDemand
 											: icons.refresh" :label="getLiveStatus((row as ProductRow).productId)?.message"
-						:tooltip="getLiveStatus((row as ProductRow).productId)?.tooltip" variant="soft" size="xs" />
+							:tooltip="getLiveStatus((row as ProductRow).productId)?.tooltip" variant="soft" size="xs" />
 				</div>
 			</template>
 
 			<template #cell-actionProgress="{ row }">
-				<span class="text-small text-(--color-text)">
+				<span class="text-sm leading-5 text-(--color-text)">
 					{{ (row as ProductRow).actionProgress || '-' }}
 				</span>
 			</template>
 
 			<template #cell-actionSequence="{ row }">
-				<span class="text-small text-(--color-text)">
+				<span class="text-sm leading-5 text-(--color-text)">
 					{{ (row as ProductRow).actionSequence !== undefined && (row as ProductRow).actionSequence !== -1 ?
 						(row as ProductRow).actionSequence : '-' }}
 				</span>
 			</template>
 
 			<template #cell-lastAction="{ row }">
-				<span class="text-small text-(--color-text)">
+				<span class="text-sm leading-5 text-(--color-text)">
 					{{ (row as ProductRow).lastAction || '-' }}
 				</span>
 			</template>
 
 			<template #cell-advice="{ row }">
-				<span class="block truncate max-w-[280px] text-small text-(--color-text)"
+				<span class="block truncate max-w-[14rem] text-sm leading-5 text-(--color-text)"
 					:title="(row as ProductRow).advice || undefined">
 					{{ (row as ProductRow).advice || '-' }}
 				</span>
 			</template>
 
 			<template #cell-priority="{ row }">
-				<span class="text-small text-(--color-text)">{{ (row as ProductRow).priority ?? '-' }}</span>
+				<span class="text-sm leading-5 text-(--color-text)">{{ (row as ProductRow).priority ?? '-' }}</span>
 			</template>
 
 			<template #cell-modificationTime="{ row }">
-				<span class="text-small text-(--color-text)">
+				<span class="text-sm leading-5 text-(--color-text)">
 					{{ formatModificationTime((row as ProductRow).modificationTime) }}
 				</span>
 			</template>
@@ -337,8 +337,8 @@ const columns: DataTableColumnDef[] = [
 	{ key: 'installationStatus', label: String($t('products.status')), labelKey: 'products.status', headerIcon: icons.productInstallationStatusInstalled, sortable: true, class: 'text-center w-16', align: 'center' },
 	{ key: 'actionResult', label: String($t('actions.result')), labelKey: 'actions.result', headerIcon: icons.productActionResult, sortable: true, class: 'text-center w-16', align: 'center' },
 	{ key: 'version', label: String($t('common.version')), labelKey: 'common.version', sortable: true },
-	{ key: 'description', label: String($t('common.description')), labelKey: 'common.description', sortable: true },
-	{ key: 'advice', label: String($t('products.advice')), labelKey: 'products.advice', sortable: true, visible: false },
+	{ key: 'description', label: String($t('common.description')), labelKey: 'common.description', sortable: true, maxWidth: '14rem', truncate: true, tooltip: true },
+	{ key: 'advice', label: String($t('products.advice')), labelKey: 'products.advice', sortable: true, visible: false, maxWidth: '14rem', truncate: true, tooltip: true },
 	{ key: 'priority', label: String($t('common.priority')), labelKey: 'common.priority', sortable: true, visible: false },
 	{ key: 'modificationTime', label: String($t('fields.modifiedAt')), labelKey: 'fields.modifiedAt', sortable: true, visible: false },
 	{ key: 'actionProgress', label: String($t('actions.progress')), labelKey: 'actions.progress', sortable: true },
@@ -634,6 +634,14 @@ function ensureVersionColumnVisible() {
 	}
 }
 
+function applyExternalSort(sortColumn: string | undefined) {
+	if (!sortColumn) return
+	tableSettings.setSort(sortColumn, 'desc')
+	if (sortColumn === 'version_outdated') {
+		ensureVersionColumnVisible()
+	}
+}
+
 async function fetchProducts(params?: PageChangeParams) {
 	loading.value = true
 	error.value = null
@@ -688,9 +696,15 @@ watch(() => props.productType, () => { pendingActionRequests.value.clear(); fetc
 
 watch(() => props.initialSortColumn, (newCol) => {
 	if (newCol) {
-		tableSettings.setSort(newCol, 'desc')
+		applyExternalSort(newCol)
 		fetchProducts()
 	}
+})
+
+watch(() => route.query.sortBy, (newSortBy) => {
+	if (typeof newSortBy !== 'string' || newSortBy === props.initialSortColumn) return
+	applyExternalSort(newSortBy)
+	fetchProducts()
 })
 
 watch(() => route.query.product, (newProductId, oldProductId) => {
@@ -745,10 +759,9 @@ watch(messageBusLastMsg, (msg) => {
 
 onMounted(async () => {
 	if (props.initialSortColumn) {
-		tableSettings.setSort(props.initialSortColumn, 'desc')
-		if (props.initialSortColumn === 'version_outdated') {
-			ensureVersionColumnVisible()
-		}
+		applyExternalSort(props.initialSortColumn)
+	} else if (typeof route.query.sortBy === 'string') {
+		applyExternalSort(route.query.sortBy)
 	}
 	const filterQuery = route.query.filter as string | undefined
 	await Promise.all([

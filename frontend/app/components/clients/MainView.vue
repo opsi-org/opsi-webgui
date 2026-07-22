@@ -45,7 +45,9 @@
 				</div>
 			</template>
 			<template #cell-description="{ row }">
-				{{ (row as OpsiClient).description || '-' }}
+				<span class="block truncate max-w-[16rem] text-sm leading-5" :title="(row as OpsiClient).description || undefined">
+					{{ (row as OpsiClient).description || '-' }}
+				</span>
 			</template>
 			<template #cell-macAddress="{ row }">
 				<span class="text-sm text-(--color-text)">{{ (row as OpsiClient).macAddress || '-' }}</span>
@@ -63,34 +65,34 @@
 			</template>
 			<template #cell-version_outdated="{ row }">
 				<CoreAppStatusBadge :value="(row as OpsiClient).version_outdated" :icon="icons.productsOutdated" label="L"
-					:tooltip="$t('products.outdated.localboot')" status="warning" clickable
+					:tooltip="$t('products.outdated.localboot')" status="warning" size="xs" clickable
 					@click="openProductsPanelForClient(row as OpsiClient, 'version_outdated')" />
 			</template>
 			<template #cell-version_outdated_netboot="{ row }">
 				<CoreAppStatusBadge :value="(row as OpsiClient).version_outdated_netboot" :icon="icons.productsOutdated"
-					label="N" :tooltip="$t('products.outdated.netboot')" status="warning" clickable
+					label="N" :tooltip="$t('products.outdated.netboot')" status="warning" size="xs" clickable
 					@click="openProductsPanelForClient(row as OpsiClient, 'version_outdated', 'netboot')" />
 			</template>
 			<template #cell-actionRequest_set="{ row }">
 				<CoreAppStatusBadge :value="(row as OpsiClient).actionRequest_set"
-					:icon="icons.onDemand" :tooltip="$t('actions.request')"
+					:icon="icons.onDemand" :tooltip="$t('actions.request')" size="xs"
 					status="info" clickable
 					@click="openProductsPanelForClient(row as OpsiClient, 'actionRequest')" />
 			</template>
 			<template #cell-installationStatus_installed="{ row }">
 				<CoreAppStatusBadge :value="(row as OpsiClient).installationStatus_installed"
 					:icon="icons.productInstallationStatusInstalled" :tooltip="$t('products.statusInstalled')"
-					status="success" clickable
+					status="success" size="xs" clickable
 					@click="openProductsPanelForClient(row as OpsiClient, 'installationStatus')" />
 			</template>
 			<template #cell-actionResult_successful="{ row }">
 				<CoreAppStatusBadge :value="(row as OpsiClient).actionResult_successful"
-					:icon="icons.productActionResultSuccessful" :tooltip="$t('actions.success')" status="success"
+					:icon="icons.productActionResultSuccessful" :tooltip="$t('actions.success')" status="success" size="xs"
 					clickable @click="openProductsPanelForClient(row as OpsiClient, 'actionResult')" />
 			</template>
 			<template #cell-actionResult_failed="{ row }">
 				<CoreAppStatusBadge :value="(row as OpsiClient).actionResult_failed"
-					:icon="icons.productsFailedActionResult" :tooltip="$t('actions.failed')" status="error" clickable
+					:icon="icons.productsFailedActionResult" :tooltip="$t('actions.failed')" status="error" size="xs" clickable
 					@click="openProductsPanelForClient(row as OpsiClient, 'actionResult')" />
 			</template>
 			<template #cell-reachable="{ row }">
@@ -212,7 +214,7 @@ const columns: DataTableColumnDef[] = [
 	{ key: 'actionResult_failed', label: String($t('actions.failed')), labelKey: 'actions.failed', headerIcon: icons.productsFailedActionResult, sortable: true, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'actionResult_successful', label: String($t('actions.success')), labelKey: 'actions.success', headerIcon: icons.productActionResultSuccessful, sortable: true, visible: false, class: 'text-center w-10', minWidth: '50px' },
 	{ key: 'reachable', label: String($t('clients.reachable.status')), labelKey: 'clients.reachable.status', headerIcon: icons.clientReachable, sortable: false, class: 'text-center w-10', minWidth: '50px' },
-	{ key: 'description', label: String($t('common.description')), labelKey: 'common.description', sortable: true },
+		{ key: 'description', label: String($t('common.description')), labelKey: 'common.description', sortable: true, maxWidth: '16rem', truncate: true, tooltip: true },
 	{ key: 'lastSeen', label: String($t('fields.lastSeen')), labelKey: 'fields.lastSeen', sortable: true },
 	{ key: 'macAddress', label: String($t('fields.mac')), labelKey: 'fields.mac', sortable: true, visible: false },
 	{ key: 'ipAddress', label: String($t('fields.ip')), labelKey: 'fields.ip', sortable: true, visible: false },
@@ -235,7 +237,7 @@ function openProductsPanel() {
 	checkUnsavedAndDo(() => {
 		panelClient.value = null
 		panelType.value = 'products'
-		router.replace({ query: { ...route.query, view: 'panel', panelType: 'products' } })
+		router.replace({ query: { ...route.query, view: 'panel', panelType: 'products', sortBy: productsSortColumn.value, type: panelProductType.value } })
 	})
 }
 
@@ -253,7 +255,7 @@ function openProductsPanelForClient(client: OpsiClient, sortColumn: string, prod
 	panelProductType.value = productType || 'localboot'
 	panelClient.value = null
 	panelType.value = 'products'
-	router.replace({ query: { ...route.query, view: 'panel', panelType: 'products', sortBy: sortColumn } })
+	router.replace({ query: { ...route.query, view: 'panel', panelType: 'products', sortBy: sortColumn, type: panelProductType.value } })
 }
 
 function handleAddSaved() {
@@ -265,7 +267,7 @@ function closePanel() {
 	checkUnsavedAndDo(() => {
 		panelClient.value = null
 		panelType.value = null
-		const { client: _c, view: _v, panelType: _pt, configType: _ct, ...rest } = route.query
+		const { client: _c, view: _v, panelType: _pt, configType: _ct, sortBy: _sb, type: _ty, ...rest } = route.query
 		router.replace({ query: rest })
 	})
 }
@@ -486,14 +488,38 @@ watch(panelTab, (newTab) => {
 	}
 })
 
+watch(panelProductType, (newType) => {
+	if (panelType.value === 'products') {
+		router.replace({ query: { ...route.query as Record<string, string>, type: newType } })
+	}
+})
+
+watch(() => route.query.sortBy, (sortBy) => {
+	if (typeof sortBy === 'string') {
+		productsSortColumn.value = sortBy
+	}
+})
+
+watch(() => route.query.type, (newType) => {
+	if (newType === 'localboot' || newType === 'netboot') {
+		panelProductType.value = newType
+	}
+})
+
 onMounted(async () => {
+	const routeSortBy = route.query.sortBy as string | undefined
+	if (routeSortBy) productsSortColumn.value = routeSortBy
+	const routeProductType = route.query.type as string | undefined
+	if (routeProductType === 'localboot' || routeProductType === 'netboot') {
+		panelProductType.value = routeProductType
+	}
 	const filterQuery = route.query.filter as string | undefined
 	await Promise.all([
 		fetchClients(filterQuery ? { pageNumber: 1, perPage: 20, sortBy: 'clientId', sortDesc: false, filterQuery, sortBySelection: false } : undefined),
 		fetchBlockedClients()
 	])
 	const clientId = route.query.client as string | undefined
-	const pType = route.query.panelType as 'config' | 'logs' | 'clone' | undefined
+	const pType = route.query.panelType as 'config' | 'logs' | 'clone' | 'products' | 'add' | undefined
 	const configType = route.query.configType as string | undefined
 	if (configType) {
 		const normalized = configType === 'attribute' ? 'attributes' : configType === 'parameter' ? 'parameters' : configType
@@ -503,7 +529,20 @@ onMounted(async () => {
 	}
 	if (clientId && route.query.view === 'panel') {
 		const c = clients.value.find(cl => cl.clientId === clientId)
-		if (c) doOpenPanel(c, pType || 'config')
+		const clientPanelType = pType === 'logs' || pType === 'clone' ? pType : 'config'
+		if (c) doOpenPanel(c, clientPanelType)
+		return
+	}
+
+	if (route.query.view === 'panel' && pType === 'products') {
+		panelClient.value = null
+		panelType.value = 'products'
+		return
+	}
+
+	if (route.query.view === 'panel' && pType === 'add') {
+		panelClient.value = null
+		panelType.value = 'add'
 	}
 })
 </script>
