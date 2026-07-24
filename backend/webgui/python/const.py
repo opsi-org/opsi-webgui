@@ -12,6 +12,6 @@ from fastapi import APIRouter
 
 ADDON_ID = "webgui"
 ADDON_NAME = "OpsiWebGUI"
-ADDON_VERSION = "4.3.48.2"
+ADDON_VERSION = "4.3.48.3"
 
 test_router = APIRouter()
