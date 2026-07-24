@@ -11,7 +11,7 @@ webgui client methods
 import os
 import subprocess
 from datetime import date, datetime
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Literal
 
 from fastapi import APIRouter, Body, Depends, Request, status
 from opsi_legacy.Exceptions import BackendMissingDataError
@@ -74,28 +74,28 @@ class ClientList(BaseModel):  # pylint: disable=too-few-public-methods
 
 class Client(BaseModel):  # pylint: disable=too-few-public-methods
     hostId: str
-    type: Optional[Literal["OpsiClient"]] = "OpsiClient"
-    opsiHostKey: Optional[str] = None
-    description: Optional[str] = None
-    notes: Optional[str] = None
-    hardwareAddress: Optional[str] = None
-    ipAddress: Optional[str] = None
-    inventoryNumber: Optional[str] = ""
-    systemUUID: Optional[str] = ""
-    oneTimePassword: Optional[str] = None
-    created: Optional[datetime] = None
-    lastSeen: Optional[datetime] = None
+    type: Literal["OpsiClient"] | None = "OpsiClient"
+    opsiHostKey: str | None = None
+    description: str | None = None
+    notes: str | None = None
+    hardwareAddress: str | None = None
+    ipAddress: str | None = None
+    inventoryNumber: str | None = ""
+    systemUUID: str | None = ""
+    oneTimePassword: str | None = None
+    created: datetime | None = None
+    lastSeen: datetime | None = None
 
 
-@api_router.get("/api/opsidata/clients", response_model=List[ClientList])
+@api_router.get("/api/opsidata/clients", response_model=list[ClientList])
 @rest_api
 @filter_depot_access
 async def clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
     request: Request,
     commons: dict = Depends(common_query_parameters),
-    selectedDepots: List[str] = Depends(parse_depot_list),
-    selected: Optional[List[str]] = Depends(parse_selected_list),
-    filteredGroups: Optional[List[str]] = Depends(parse_group_list),
+    selectedDepots: list[str] = Depends(parse_depot_list),
+    selected: list[str] | None = Depends(parse_selected_list),
+    filteredGroups: list[str] | None = Depends(parse_group_list),
 ) -> RESTResponse:
     """
     Get Clients on selected depots with infos on the client.
@@ -116,7 +116,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 
     with mysql.session() as session:
         where = and_(text("h.type = 'OpsiClient'"))
-        params: Dict[str, Union[List[Any], str]] = {
+        params: dict[str, list[Any] | str] = {
             "depot_ids": [],
             "search": [],
             "configserver_id": get_configserver_id(),
@@ -347,12 +347,12 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
         return RESTResponse(data=data, total=total)
 
 
-@api_router.get("/api/opsidata/clients/reachable", response_model=List[ClientList])
+@api_router.get("/api/opsidata/clients/reachable", response_model=list[ClientList])
 @rest_api
 @filter_depot_access
 async def reachable_clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
     request: Request,
-    selectedClients: List[str] = Depends(parse_client_list),
+    selectedClients: list[str] = Depends(parse_client_list),
 ) -> RESTResponse:
     """
     Get List of reachable Clients. Only test "clients".
@@ -401,10 +401,55 @@ def _depots_of_clients(clients: list[str] | None) -> dict:
         return response
 
 
-@api_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
+def _clients_of_depots(depots: list[str] | None) -> list[str]:
+    if not depots:
+        return []
+
+    normalized_depots: list[str] = []
+    for depot in depots:
+        dep = str(depot).strip().strip('"').strip("'")
+        if dep and dep not in normalized_depots:
+            normalized_depots.append(dep)
+
+    if not normalized_depots:
+        return []
+
+    with mysql.session() as session:
+        params: dict[str, list[Any] | str] = {
+            "configserver_id": get_configserver_id(),
+        }
+        depot_filters = []
+        for idx, depot in enumerate(normalized_depots):
+            key = f"depot_id_{idx}"
+            params[key] = depot
+            depot_filters.append(
+                f"""
+                COALESCE(
+                    (
+                        SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`))
+                        FROM CONFIG_STATE AS cs
+                        WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.depot.id'
+                    ),
+                    :configserver_id
+                ) = :{key}
+                """
+            )
+
+        where = text(
+            "h.type = 'OpsiClient'"
+            + (f" AND ({' OR '.join(depot_filters)})" if depot_filters else "")
+        )
+        query = (
+            select(text("h.hostId")).select_from(table("HOST").alias("h")).where(where)
+        )
+        result = session.execute(query, params).fetchall()
+        return [dict(row)["hostId"] for row in result if row is not None]
+
+
+@api_router.get("/api/opsidata/clientsdepots", response_model=dict[str, str])
 @rest_api
 def depots_of_clients(  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
-    selectedClients: List[str] = Depends(parse_client_list),
+    selectedClients: list[str] = Depends(parse_client_list),
 ) -> RESTResponse:
     """
     Get a mapping of clients to depots.
@@ -571,7 +616,7 @@ def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branc
             result = result.fetchone()
             if result:
                 data = dict(result)
-                for key in data.keys():
+                for key in data:
                     if isinstance(data.get(key), (date, datetime)):
                         data[key] = data.get(key, "").strftime("%Y-%m-%d %H:%M:%S")
                 data["uefi"] = bool(data["uefi"])
@@ -650,13 +695,13 @@ def set_uefi(
 
 
 class ProcessActionRPC(BaseModel):  # pylint: disable=too-few-public-methods
-    client_ids: List[str]
-    product_ids: Optional[List[str]] = None
-    visibility: Optional[Literal["", "visible", "hidden"]] = ""
+    client_ids: list[str]
+    product_ids: list[str] | None = None
+    visibility: Literal["", "visible", "hidden"] | None = ""
 
 
 @api_router.post(
-    "/api/command/process_action", response_model=Dict[str, Dict[str, Any]]
+    "/api/command/process_action", response_model=dict[str, dict[str, Any]]
 )
 @rest_api
 async def host_control_process_action(
@@ -682,13 +727,13 @@ async def host_control_process_action(
 
 
 class OpsiclientdRPC(BaseModel):  # pylint: disable=too-few-public-methods
-    client_ids: List[str]
+    client_ids: list[str]
     method: str
-    params: Optional[List[Any]] = None
+    params: list[Any] | None = None
 
 
 @api_router.post(
-    "/api/command/opsiclientd_rpc", response_model=Dict[str, Dict[str, Any]]
+    "/api/command/opsiclientd_rpc", response_model=dict[str, dict[str, Any]]
 )
 @rest_api
 async def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTResponse:  # pylint: disable=unused-argument
@@ -710,7 +755,7 @@ async def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTRespons
 
 
 class ClientDeployData(BaseModel):  # pylint: disable=too-few-public-methods
-    clients: List[str]
+    clients: list[str]
     username: str
     password: str
     type: str = Field("windows", pattern="^(windows)$|^(linux)$|^(macos)$")
@@ -783,7 +828,7 @@ def set_depot(client: str, depot: str) -> None:
 def add_client_to_groups(
     request: Request,
     clientid: str,
-    groups: List[str] = Body(default=None),  # pylint: disable=unused-argument
+    groups: list[str] = Body(default=None),  # pylint: disable=unused-argument
 ) -> RESTResponse:
     """
     Add client to a list of groups.
@@ -812,7 +857,7 @@ def add_client_to_groups(
 def rm_client_from_groups(
     request: Request,
     clientid: str,
-    groups: List[str] = Body(default=None),  # pylint: disable=unused-argument
+    groups: list[str] = Body(default=None),  # pylint: disable=unused-argument
 ) -> RESTResponse:
     """
     Remove client from a list of groups.
@@ -924,9 +969,10 @@ class ProductAction(BaseModel):  # pylint: disable=too-few-public-methods
     action: str
     outdated: bool = False
     demoMode: bool = False
-    installation_status: Optional[str]
-    action_result: Optional[str]
-    selectedClients: Optional[list]
+    installation_status: str | None
+    action_result: str | None
+    selectedClients: list | None
+    selectedDepots: list | None
 
 
 @api_router.post("/api/opsidata/clients/action")
@@ -942,10 +988,19 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
     try:  # pylint: disable=too-many-nested-blocks
         updates: dict = {}
         poc_list = set()
-        hosts = []
+        hosts: list[str] = []
 
         if product_action.selectedClients:
-            hosts = product_action.selectedClients
+            hosts.extend(product_action.selectedClients)
+
+        if product_action.selectedDepots:
+            hosts.extend(_clients_of_depots(product_action.selectedDepots))
+
+        # Keep order stable while removing duplicates.
+        hosts = list(dict.fromkeys(hosts))
+
+        if not hosts:
+            return RESTResponse(http_status=200, data={})
 
         if product_action.installation_status or product_action.action_result:
             poc_list = set(
@@ -956,8 +1011,9 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
                 )
             )
 
-        depots = list(_depots_of_clients(hosts).values())
-        result = {}
+        clients_to_depots = _depots_of_clients(hosts)
+        depots = list(clients_to_depots.values())
+        result: set[Any] = set()
         if product_action.outdated:
             depot_versions: dict = {}
             for pod in backend.productOnDepot_getObjects(depotId=depots):
@@ -972,7 +1028,9 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
                 )
             )
             for poc in result.difference(poc_list):
-                depot = _depots_of_clients([poc.clientId])[poc.clientId]
+                depot = clients_to_depots.get(poc.clientId)
+                if not depot:
+                    continue
                 if poc.installationStatus != "installed" or not depot_versions.get(
                     depot, {}
                 ).get(poc.productId):
@@ -985,7 +1043,7 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
                             "Product %s is outeded on client %s (depot is %s)",
                             poc.productId,
                             poc.clientId,
-                            _depots_of_clients([poc.clientId])[poc.clientId],
+                            depot,
                         )
                         if poc not in poc_list:
                             poc_list.add(poc)
@@ -1014,7 +1072,9 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 
         if product_action.installation_status == "not_installed":
             for host in hosts:
-                depot = _depots_of_clients([host])[host]
+                depot = clients_to_depots.get(host)
+                if not depot:
+                    continue
                 for prod in result.union(
                     set(backend.productOnDepot_getObjects(depotId=depot))
                 ):
