@@ -390,19 +390,7 @@
     },
   })
   const activeCategory = ref('all')
-  let serverDefaultsSearchTimer: ReturnType<typeof setTimeout> | null = null
   const paramsFetchRequestId = ref(0)
-
-  watch(paramSearch, (query) => {
-    if (!isServerDefaultMode.value || props.hostId || activeTab.value !== 'parameters') return
-    if (serverDefaultsSearchTimer) clearTimeout(serverDefaultsSearchTimer)
-    serverDefaultsSearchTimer = setTimeout(() => {
-      const q = query.trim()
-      if (q.length >= 2 || q.length === 0) {
-        fetchParameters()
-      }
-    }, 180)
-  })
 
   const flatParams = computed<Param[]>(() => {
     const all: Param[] = []
@@ -657,9 +645,9 @@
         if (requestId !== paramsFetchRequestId.value) return
         rawParams.value = (data as Record<string, Param[]>) || {}
       } else if (props.hostType === 'server') {
-        const trimmedQuery = paramSearch.value.trim()
-        const serverFilterQuery = trimmedQuery.length >= 2 ? trimmedQuery : undefined
-        const { data } = await getServerDefaultConfig(serverFilterQuery)
+        // Server defaults are fetched once in full; filtering happens client-side
+        // in categoryAwareTree (refetching per keystroke made search feel slow).
+        const { data } = await getServerDefaultConfig()
         if (requestId !== paramsFetchRequestId.value) return
         rawParams.value = (data as Record<string, Param[]>) || {}
       } else {

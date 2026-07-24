@@ -13,6 +13,7 @@
     :items="dropdownOptions"
     :loading="loading"
     :filter-fields="['label']"
+    :virtualize="virtualizeConfig"
     :placeholder="
       placeholder ||
       (type === 'server' ? String($t('servers.select')) : String($t('clients.select')))
@@ -54,7 +55,16 @@
     value: string
   }
 
-  const selectorItemsCache = new Map<string, string[]>()
+  interface CacheEntry {
+    items: string[]
+    fetchedAt: number
+  }
+
+  /** Module-level cache shared by all selector instances (stale-while-revalidate). */
+  const selectorItemsCache = new Map<string, CacheEntry>()
+  const CACHE_TTL_MS = 60_000
+  /** Virtualize the dropdown list above this item count to keep large client lists fast. */
+  const VIRTUALIZE_THRESHOLD = 100
 
   interface Props {
     modelValue?: string
@@ -115,23 +125,30 @@
 
   const dropdownOptions = computed<DropdownItem[]>(() => filteredOptions.value)
 
+  const virtualizeConfig = computed(() =>
+    dropdownOptions.value.length > VIRTUALIZE_THRESHOLD ? { estimateSize: 28 } : false
+  )
+
   async function fetchItems(force = false) {
     const key = cacheKey.value
-    if (!force) {
-      const cached = selectorItemsCache.get(key)
-      if (cached) {
-        items.value = cached
-        fetched.value = true
-        return
-      }
+    const cached = selectorItemsCache.get(key)
+    if (!force && cached) {
+      items.value = cached.items
+      fetched.value = true
+      // Fresh enough: no network roundtrip needed.
+      if (Date.now() - cached.fetchedAt < CACHE_TTL_MS) return
+      // Stale: show cached items instantly, refresh in the background below.
+    } else if (fetched.value && !force) {
+      return
     }
 
-    if (fetched.value && !force) return
-    loading.value = true
+    const showSpinner = !cached || force
+    if (showSpinner) loading.value = true
     try {
+      let nextItems: string[] = []
       if (props.type === 'server') {
         const { data, error } = await getServers()
-        items.value = !error && Array.isArray(data)
+        nextItems = !error && Array.isArray(data)
           ? [...new Set(data.map((server) => server.depotId).filter(Boolean))].sort()
           : []
       } else {
@@ -153,16 +170,19 @@
           clientIds = !result.error && Array.isArray(result.data) ? result.data : []
         }
 
-        items.value = [...new Set(clientIds.filter(Boolean))].sort()
+        nextItems = [...new Set(clientIds.filter(Boolean))].sort()
       }
-      if (items.value.length > 0) {
-        selectorItemsCache.set(key, [...items.value])
+      if (nextItems.length > 0 || !cached) {
+        items.value = nextItems
+      }
+      if (nextItems.length > 0) {
+        selectorItemsCache.set(key, { items: [...nextItems], fetchedAt: Date.now() })
         fetched.value = true
-      } else {
+      } else if (!cached) {
         fetched.value = false
       }
     } finally {
-      loading.value = false
+      if (showSpinner) loading.value = false
     }
   }
 
@@ -183,21 +203,16 @@
   }
 
   onMounted(() => {
-    fetchItems(true)
+    // Cache-first: reuse (and revalidate in the background) instead of forcing
+    // a full refetch of potentially 1000+ client ids on every mount.
+    fetchItems()
   })
 
-  watch(
-    normalizedSelectedServers,
-    () => {
-      if (props.type === 'client') {
-        selectorItemsCache.clear()
-        fetched.value = false
-        items.value = []
-        fetchItems(true)
-      }
-    },
-    { deep: true, immediate: true }
-  )
+  watch(cacheKey, () => {
+    if (props.type !== 'client') return
+    fetched.value = false
+    fetchItems()
+  })
 
   defineExpose({ refresh: () => fetchItems(true) })
 </script>

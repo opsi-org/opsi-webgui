@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
 # Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
@@ -9,7 +7,7 @@ webgui config methods
 """
 
 import json
-from typing import Any, List, Literal, Optional, Union
+from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, Request, status
 from opsiconfd.backend import get_protected_backend
@@ -67,20 +65,18 @@ def get_server_config(
             select(
                 text(  # type: ignore
                     """
-						cv.configId AS configId,
+						c.configId AS configId,
 						c.description AS description,
 						c.type AS type,
-						(SELECT GROUP_CONCAT(CONFIG_VALUE.value  SEPARATOR '|')
-							FROM CONFIG_VALUE WHERE CONFIG_VALUE.configId=c.configId AND CONFIG_VALUE.isDefault=1) AS value,
-						(SELECT GROUP_CONCAT(`value`  SEPARATOR '|')
-							FROM CONFIG_VALUE WHERE configId=c.configId) AS possibleValues,
+						GROUP_CONCAT(IF(cv.isDefault, cv.value, NULL) SEPARATOR '|') AS value,
+						GROUP_CONCAT(cv.value SEPARATOR '|') AS possibleValues,
 						c.multiValue AS multiValue,
 						c.editable AS editable
 					"""
                 )
             )
-            .select_from(table("CONFIG_VALUE").alias("cv"))
-            .join(text("CONFIG AS c"), text("cv.configId=c.configId"))  # type: ignore[arg-type]
+            .select_from(table("CONFIG").alias("c"))
+            .join(text("CONFIG_VALUE AS cv"), text("cv.configId=c.configId"))  # type: ignore[arg-type]
             .where(where)
             .group_by(text("c.configId"))
         )  # pylint: disable=redefined-outer-name
@@ -192,7 +188,7 @@ def get_client_config(
 @api_router.get("/api/opsidata/config/clients")
 @rest_api
 def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
-    selectedClients: List[str] = Depends(parse_client_list),  # pylint: disable=invalid-name
+    selectedClients: list[str] = Depends(parse_client_list),  # pylint: disable=invalid-name
     commons: dict = Depends(common_query_parameters),
 ) -> RESTResponse:
     where = text("")
@@ -230,9 +226,7 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
             .join(
                 text("CONFIG_STATE AS cs"),
                 text(
-                    (
-                        "c.configId=cs.configId AND cs.objectId IN :clients OR cs.objectId IS NULL"
-                    )
+                    "c.configId=cs.configId AND cs.objectId IN :clients OR cs.objectId IS NULL"
                 ),
                 isouter=True,
             )
@@ -401,21 +395,21 @@ class ConfigComplete(BaseModel):  # pylint: disable=too-few-public-methods
     configId: str
     editable: bool = False
     multiValue: bool = False
-    description: Optional[str] = None
-    possibleValues: Optional[List[str]] = None
-    defaultValues: Optional[List[str]] = None
+    description: str | None = None
+    possibleValues: list[str] | None = None
+    defaultValues: list[str] | None = None
     type: ConfigType = "UnicodeConfig"
 
 
 class Config(BaseModel):  # pylint: disable=too-few-public-methods
     configId: str
     description: str | None = None
-    value: Union[str, List[str], bool] | None = None
+    value: str | list[str] | bool | None = None
 
 
 class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
-    objectIds: List[str] = []
-    configs: List[Config]
+    objectIds: list[str] = []
+    configs: list[Config]
 
 
 @api_router.delete("/api/opsidata/config/delete/{configid}")
@@ -538,7 +532,7 @@ def create_config(  # pylint: disable=invalid-name, too-many-locals, too-many-st
 @read_only_check
 @opsi_server_write_check
 def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
-    request: Request, data: List[Config]
+    request: Request, data: list[Config]
 ) -> RESTResponse:
     """
     save config value
@@ -576,7 +570,7 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
             )
         return config_result
 
-    def _get_values(session, config: dict[str, Any], type: str) -> List[dict]:
+    def _get_values(session, config: dict[str, Any], type: str) -> list[dict]:
         # Get all values for a config
         query = (
             select(
@@ -757,7 +751,7 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
                         update(
                             table(
                                 "CONFIG_STATE",
-                                *[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
+                                *[column(name) for name in values],  # pylint: disable=consider-iterating-dictionary
                             )
                         )
                         .where(
@@ -773,7 +767,7 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
                         insert(
                             table(
                                 "CONFIG_STATE",
-                                *[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
+                                *[column(name) for name in values],  # pylint: disable=consider-iterating-dictionary
                             )
                         )
                         .values(**values)
@@ -788,7 +782,7 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
     )
 
 
-def get_config_state(object_id: str, config_id: str) -> Union[str, None]:
+def get_config_state(object_id: str, config_id: str) -> str | None:
     with mysql.session() as session:
         query = (
             select(
@@ -813,7 +807,7 @@ def get_config_state(object_id: str, config_id: str) -> Union[str, None]:
         return res[0]
 
 
-def get_config_value(config_id: str, value: Any) -> List:
+def get_config_value(config_id: str, value: Any) -> list:
     with mysql.session() as session:
         query = (
             select(

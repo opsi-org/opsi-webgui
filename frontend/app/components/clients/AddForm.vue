@@ -139,8 +139,8 @@
                 {{ $t('groups.title') }}
               </span>
               <div class="flex-1 min-w-0 space-y-1.5">
-                <CoreAppFilterInput v-model="groupSearch" size="sm" :placeholder="$t('common.filter') + '...'"
-                  :disabled="loading" />
+                <CoreAppFilterInput v-model="groupSearch" size="xs" input-class="w-full"
+                  :placeholder="$t('common.filter') + '...'" :disabled="loading" />
                 <div class="border border-(--color-border) rounded-md overflow-hidden">
                   <div class="max-h-40 overflow-auto px-1 py-0.5">
                     <div v-for="item in visibleGroupTreeItems" :key="`group-tree-${item.id}`"
@@ -421,10 +421,6 @@ onMounted(async () => {
     fetchNetbootProducts(),
     fetchClientGroups(false, selectionStore.selectedServers),
   ])
-
-  if (rootGroupNodes.value.length > 0) {
-    expandedGroupIds.value = new Set(rootGroupNodes.value.map((node) => node.id))
-  }
 })
 
 async function fetchDepots() {
