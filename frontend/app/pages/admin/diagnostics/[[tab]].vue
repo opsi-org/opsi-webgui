@@ -8,29 +8,30 @@
   Admin Diagnostics Page - Route wrapper for AdminDiagnosticsView component.
 -->
 <template>
-    <AdminDiagnosticsView
-        :initial-tab="String(route.params.tab || 'healthcheck')"
-        :initial-status="String(route.query.status || '')"
-        @update:tab="handleTabChange" />
+  <AdminDiagnosticsView
+    :initial-tab="String(route.params.tab || 'healthcheck')"
+    :initial-status="String(route.query.status || '')"
+    @update:tab="handleTabChange"
+  />
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+  definePageMeta({ layout: 'default' })
 
-const { t: $t } = useI18n()
-const route = useRoute()
-const router = useRouter()
+  const { t: $t } = useI18n()
+  const route = useRoute()
+  const router = useRouter()
 
-useHead({ title: () => `${$t('diag.title')} - opsi-WebGUI` })
+  useHead({ title: () => `${$t('diag.title')} - opsi-WebGUI` })
 
-function handleTabChange(tab: string, status?: string) {
+  function handleTabChange(tab: string, status?: string) {
     const query = status ? { status } : {}
     router.push({ path: `/admin/diagnostics/${tab}`, query })
-}
+  }
 
-onMounted(() => {
+  onMounted(() => {
     if (!route.params.tab) {
-        router.replace('/admin/diagnostics/healthcheck')
+      router.replace('/admin/diagnostics/healthcheck')
     }
-})
+  })
 </script>

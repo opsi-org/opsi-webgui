@@ -185,12 +185,20 @@ async function navigateTo(
     if (!/\/login(?:\?|$|\/)/.test(page.url())) return
 
     const usernameInput = page
-      .locator('#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]')
+      .locator(
+        '#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]'
+      )
       .first()
     const passwordInput = page.locator('#login-password, input[type="password"]').first()
     const canLogin = await Promise.all([
-      usernameInput.waitFor({ state: 'visible', timeout: 8000 }).then(() => true).catch(() => false),
-      passwordInput.waitFor({ state: 'visible', timeout: 8000 }).then(() => true).catch(() => false),
+      usernameInput
+        .waitFor({ state: 'visible', timeout: 8000 })
+        .then(() => true)
+        .catch(() => false),
+      passwordInput
+        .waitFor({ state: 'visible', timeout: 8000 })
+        .then(() => true)
+        .catch(() => false),
     ]).then(([u, p]) => u && p)
 
     if (!canLogin) return
@@ -200,9 +208,12 @@ async function navigateTo(
     await usernameInput.fill(testUser)
     await passwordInput.fill(testPassword)
     await page.locator('button[type="submit"]').first().click()
-    await page.waitForURL((current) => !/\/login(?:\?|$|\/)/.test(`${current.pathname}${current.search}`), {
-      timeout: 30000,
-    })
+    await page.waitForURL(
+      (current) => !/\/login(?:\?|$|\/)/.test(`${current.pathname}${current.search}`),
+      {
+        timeout: 30000,
+      }
+    )
     await page.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => undefined)
   }
 
@@ -384,7 +395,11 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
     await switchTheme(page, 'light')
 
     // Phase 5 (nightly): marketing viewport (only if spec has marketingName)
-    if (browserName === 'chromium' && config.marketingName && ALLOWED_MARKETING_SHOTS.has(config.marketingName)) {
+    if (
+      browserName === 'chromium' &&
+      config.marketingName &&
+      ALLOWED_MARKETING_SHOTS.has(config.marketingName)
+    ) {
       for (const locale of ['de', 'en'] as Locale[]) {
         await applyLocaleCookie(page, locale)
         await page.setViewportSize(viewports['marketing'])

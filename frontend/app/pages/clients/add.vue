@@ -8,18 +8,18 @@
   ClientAddPage - Route page for adding a new client.
 -->
 <template>
-    <LayoutsPageLayout :show-refresh="false">
-        <ClientsAddForm @saved="handleSaved" />
-    </LayoutsPageLayout>
+  <LayoutsPageLayout :show-refresh="false">
+    <ClientsAddForm @saved="handleSaved" />
+  </LayoutsPageLayout>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+  definePageMeta({ layout: 'default' })
 
-const { t: $t } = useI18n()
-useHead({ title: () => `${$t('clients.create.title')} - opsi-WebGUI` })
+  const { t: $t } = useI18n()
+  useHead({ title: () => `${$t('clients.create.title')} - opsi-WebGUI` })
 
-function handleSaved() {
+  function handleSaved() {
     setTimeout(() => navigateTo('/clients'), 1500)
-}
+  }
 </script>

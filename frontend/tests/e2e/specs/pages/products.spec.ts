@@ -22,11 +22,14 @@ async function seedClientSelectionFromClientsPage(page: import('@playwright/test
       const key = 'opsi-webgui-selection'
       const raw = window.localStorage.getItem(key)
       const current = raw ? JSON.parse(raw) : {}
-      window.localStorage.setItem(key, JSON.stringify({
-        ...current,
-        selectedClients: ids,
-        selectionSource: 'quickpanel',
-      }))
+      window.localStorage.setItem(
+        key,
+        JSON.stringify({
+          ...current,
+          selectedClients: ids,
+          selectionSource: 'quickpanel',
+        })
+      )
     }, clientIds)
   }
 }
@@ -69,14 +72,22 @@ test.describe('Products', () => {
 
         const detailPanel = p.locator('aside, [class*="detail"], [class*="panel"]').first()
         if (await detailPanel.isVisible().catch(() => false)) {
-          const propsTab = p.getByRole('tab').filter({ hasText: /propert|eigenschaft/i }).first()
+          const propsTab = p
+            .getByRole('tab')
+            .filter({ hasText: /propert|eigenschaft/i })
+            .first()
           if (await propsTab.isVisible().catch(() => false)) {
             await propsTab.click()
             await p.waitForTimeout(600)
-            await expect(detailPanel.locator('input, select, textarea, button, [role="checkbox"]').first()).toBeVisible({ timeout: 10000 })
+            await expect(
+              detailPanel.locator('input, select, textarea, button, [role="checkbox"]').first()
+            ).toBeVisible({ timeout: 10000 })
           }
 
-          const depTab = p.getByRole('tab').filter({ hasText: /depend|abhängig/i }).first()
+          const depTab = p
+            .getByRole('tab')
+            .filter({ hasText: /depend|abhängig/i })
+            .first()
           if (await depTab.isVisible().catch(() => false)) {
             await depTab.click()
             await p.waitForTimeout(600)
@@ -89,8 +100,8 @@ test.describe('Products', () => {
         const actionSel = p
           .locator(
             'table tbody tr:first-child select, ' +
-            'table tbody tr:first-child [class*="action-request"] button, ' +
-            'table tbody tr:first-child [class*="action"] button'
+              'table tbody tr:first-child [class*="action-request"] button, ' +
+              'table tbody tr:first-child [class*="action"] button'
           )
           .first()
         if (await actionSel.isVisible().catch(() => false)) {
@@ -115,8 +126,8 @@ test.describe('Products', () => {
             const actionSel = p
               .locator(
                 'table tbody tr:first-child select, ' +
-                'table tbody tr:first-child [class*="action-request"] button, ' +
-                'table tbody tr:first-child [class*="action"] button'
+                  'table tbody tr:first-child [class*="action-request"] button, ' +
+                  'table tbody tr:first-child [class*="action"] button'
               )
               .first()
             if (await actionSel.isVisible().catch(() => false)) {
@@ -197,5 +208,4 @@ test.describe('Products', () => {
       ],
     })
   })
-
 })

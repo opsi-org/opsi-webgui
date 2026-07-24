@@ -8,5 +8,5 @@
   Admin Index Page - Redirects to the admin terminal page.
 -->
 <script setup lang="ts">
-navigateTo('/admin/terminal', { replace: true })
+  navigateTo('/admin/terminal', { replace: true })
 </script>

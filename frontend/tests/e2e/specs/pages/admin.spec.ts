@@ -129,7 +129,10 @@ test.describe('Admin', () => {
         const maintenanceControls = p.locator(
           '#backup-maintenance-mode, #backup-config-files, #restore-config-files, button:has-text("Backup"), button:has-text("Sicherung"), [class*="maintenance"], [class*="card"]'
         )
-        const controlVisible = await maintenanceControls.first().isVisible().catch(() => false)
+        const controlVisible = await maintenanceControls
+          .first()
+          .isVisible()
+          .catch(() => false)
         if (!controlVisible) {
           // Page loaded but maintenance UI not yet rendered; accept main as sufficient
           await expect(p.locator('main')).toBeVisible()

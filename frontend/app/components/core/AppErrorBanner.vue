@@ -8,24 +8,34 @@
   CoreAppErrorBanner - Sticky error alert shown above a page's content (e.g. a data table).
 -->
 <template>
-	<div v-if="visible" class="sticky top-0 z-10 bg-(--color-surface) pb-2">
-		<CoreAppAlertInline v-if="error" color="error" :title="$t('common.error')" :description="error" closable compact
-			@close="$emit('close')" />
-		<slot />
-	</div>
+  <div v-if="visible" class="sticky top-0 z-10 bg-(--color-surface) pb-2">
+    <CoreAppAlertInline
+      v-if="error"
+      color="error"
+      :title="$t('common.error')"
+      :description="error"
+      closable
+      compact
+      @close="$emit('close')"
+    />
+    <slot />
+  </div>
 </template>
 
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
-	error?: string | null
-	show?: boolean
-}>(), {
-	error: null,
-})
+  const props = withDefaults(
+    defineProps<{
+      error?: string | null
+      show?: boolean
+    }>(),
+    {
+      error: null,
+    }
+  )
 
-defineEmits<{ (e: 'close'): void }>()
+  defineEmits<{ (e: 'close'): void }>()
 
-const { t: $t } = useI18n()
+  const { t: $t } = useI18n()
 
-const visible = computed(() => props.show ?? !!props.error)
+  const visible = computed(() => props.show ?? !!props.error)
 </script>

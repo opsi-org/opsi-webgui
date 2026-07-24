@@ -39,8 +39,7 @@ export default defineNuxtPlugin({
             : ((serverData as Record<string, unknown>)?.result as string)
         if (serverId) selectionStore.setConfigServer(serverId)
       }
-    } catch {
-    }
+    } catch {}
 
     // After login: fetch user configuration & disabled features (cached)
     if (userStore.isAuthenticated) {
@@ -61,8 +60,7 @@ export default defineNuxtPlugin({
           if (configServer) selectionStore.setConfigServer(configServer.depotId)
           else if (serverResult.data[0]) selectionStore.setServers([serverResult.data[0].depotId])
         }
-      } catch {
-      }
+      } catch {}
     }
   },
 })

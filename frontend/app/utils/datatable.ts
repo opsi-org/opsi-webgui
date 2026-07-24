@@ -9,16 +9,16 @@
  */
 
 export interface FillCheckInput {
-	scrollHeight: number
-	clientHeight: number
-	hasMore: boolean
-	loading: boolean
+  scrollHeight: number
+  clientHeight: number
+  hasMore: boolean
+  loading: boolean
 }
 
 /**
- * No scrollabr on large / high-resolution screens (e.g. 4K) 
+ * No scrollabr on large / high-resolution screens (e.g. 4K)
  */
 export function needsMoreToFill(input: FillCheckInput): boolean {
-	if (!input.hasMore || input.loading) return false
-	return input.scrollHeight <= input.clientHeight + 1
+  if (!input.hasMore || input.loading) return false
+  return input.scrollHeight <= input.clientHeight + 1
 }

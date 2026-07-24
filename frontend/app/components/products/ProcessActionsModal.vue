@@ -8,165 +8,219 @@
   ProductsProcessActionsModal - Modal for processing pending product action requests.
 -->
 <template>
-	<CoreAppModal v-model:open="open"
-		:ui="{ content: 'w-[96vw] max-w-[96vw] sm:w-[92vw] sm:max-w-[92vw] h-[88vh] max-h-[88vh]' }">
-		<template #content>
-			<CoreAppCard class="h-full min-w-0"
-				:ui="{ root: 'h-full flex flex-col', body: 'flex-1 min-h-0 overflow-auto p-3' }" @click.stop>
-				<template #header>
-					<div class="flex items-center justify-between">
-						<CoreAppHeading :icon="icons.onDemand" :text="$t('actions.ondemand')" />
-						<CoreAppButton variant="ghost" color="neutral" size="xs" :icon="icons.x"
-							:aria-label="String($t('common.close'))" :title="String($t('common.close'))"
-							@click="open = false" />
-					</div>
-				</template>
+  <CoreAppModal
+    v-model:open="open"
+    :ui="{ content: 'w-[94vw] max-w-[94vw] sm:w-[90vw] sm:max-w-[90vw] h-[84vh] max-h-[84vh]' }"
+  >
+    <template #content>
+      <CoreAppCard
+        class="h-full min-w-0"
+        :ui="{ root: 'h-full flex flex-col', body: 'flex-1 min-h-0 flex flex-col p-2.5' }"
+        @click.stop
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <CoreAppHeading :icon="icons.onDemand" :text="$t('actions.ondemand')" />
+            <CoreAppButton
+              variant="ghost"
+              color="neutral"
+              size="xs"
+              :icon="icons.x"
+              :aria-label="String($t('common.close'))"
+              :title="String($t('common.close'))"
+              @click="open = false"
+            />
+          </div>
+        </template>
 
-				<CoreAppAlertInline v-if="statusMessage" :color="statusMessage.type"
-					:description="statusMessage.message" variant="subtle" class="mb-3" closable
-					@close="statusMessage = null" />
+        <CoreAppAlertInline
+          v-if="statusMessage"
+          :color="statusMessage.type"
+          :description="statusMessage.message"
+          variant="subtle"
+          class="mb-3"
+          closable
+          @close="statusMessage = null"
+        />
 
-				<div class="space-y-4 h-full min-h-0">
-					<div class="divide-y divide-(--color-border)">
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5">
-							<span class="text-sm font-medium md:w-1/3">{{ $t('products.title') }}</span>
-							<div class="flex-1">
-								<div class="flex flex-col gap-2">
-									<CoreAppRadio v-model="productMode" value="all" :label="$t('products.all')" />
-									<CoreAppRadio v-if="selectedProductIds.length > 0" v-model="productMode"
-										value="selected"
-										:label="`${$t('products.onlySelected')} (${selectedProductIds.length})`" />
-								</div>
-								<div v-if="productMode === 'selected' && selectedProductIds.length > 0"
-									class="mt-2 max-h-52 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface)">
-									<div v-for="id in selectedProductIds" :key="id">{{ id }}</div>
-								</div>
-							</div>
-						</div>
+        <div class="flex-1 min-h-0 flex flex-col gap-3">
+          <div class="divide-y divide-(--color-border) flex-1 min-h-0 overflow-auto">
+            <div
+              class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5"
+            >
+              <span class="text-sm font-medium md:w-1/3">{{ $t('products.title') }}</span>
+              <div class="flex-1">
+                <div class="flex flex-col gap-2">
+                  <CoreAppRadio v-model="productMode" value="all" :label="$t('products.all')" />
+                  <CoreAppRadio
+                    v-if="selectedProductIds.length > 0"
+                    v-model="productMode"
+                    value="selected"
+                    :label="`${$t('products.onlySelected')} (${selectedProductIds.length})`"
+                  />
+                </div>
+                <div
+                  v-if="productMode === 'selected' && selectedProductIds.length > 0"
+                  class="mt-2 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) max-h-36"
+                >
+                  <div v-for="id in selectedProductIds" :key="id">{{ id }}</div>
+                </div>
+              </div>
+            </div>
 
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5">
-							<span class="text-sm font-medium md:w-1/3">{{ $t('common.visibility') }}</span>
-							<div class="flex-1">
-								<div class="flex items-center gap-3">
-									<CoreAppRadio v-model="visibility" value="" :label="$t('clients.default')" />
-									<CoreAppRadio v-model="visibility" value="visible" :label="$t('common.visible')" />
-									<CoreAppRadio v-model="visibility" value="hidden" :label="$t('common.hidden')" />
-								</div>
-							</div>
-						</div>
+            <div
+              class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5"
+            >
+              <span class="text-sm font-medium md:w-1/3">{{ $t('common.visibility') }}</span>
+              <div class="flex-1">
+                <div class="flex items-center gap-3">
+                  <CoreAppRadio v-model="visibility" value="" :label="$t('clients.default')" />
+                  <CoreAppRadio
+                    v-model="visibility"
+                    value="visible"
+                    :label="$t('common.visible')"
+                  />
+                  <CoreAppRadio v-model="visibility" value="hidden" :label="$t('common.hidden')" />
+                </div>
+              </div>
+            </div>
 
-						<div
-							class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5">
-							<span class="font-medium md:w-1/3">{{ $t('clients.title') }}
-								({{ clientIds.length }})</span>
-							<div class="flex-1">
-								<div class="flex items-center gap-2 mb-2">
-									<CoreAppButton size="xs" variant="outline" color="primary"
-										:disabled="arraysEqual(clientIds, selectionStore.selectedClients)"
-										@click="clientIds = [...selectionStore.selectedClients]">
-										{{ $t('common.reset') }}
-									</CoreAppButton>
-								</div>
-								<div v-if="clientIds.length > 0"
-									class="max-h-52 overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface)">
-									<div v-for="id in clientIds" :key="id" class="flex items-center justify-between">
-										<span>{{ id }}</span>
-										<CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.x"
-											@click="clientIds = clientIds.filter(c => c !== id)" />
-									</div>
-								</div>
-								<div v-else class="text-(--color-text-muted) italic">
-									{{ $t('clients.selectNone') }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+            <div
+              class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-2.5"
+            >
+              <span class="font-medium md:w-1/3"
+                >{{ $t('clients.title') }} ({{ clientIds.length }})</span
+              >
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <CoreAppButton
+                    size="xs"
+                    variant="outline"
+                    color="primary"
+                    :disabled="arraysEqual(clientIds, selectionStore.selectedClients)"
+                    @click="clientIds = [...selectionStore.selectedClients]"
+                  >
+                    {{ $t('common.reset') }}
+                  </CoreAppButton>
+                </div>
+                <div
+                  v-if="clientIds.length > 0"
+                  class="overflow-auto border border-(--color-border) rounded p-2 bg-(--color-surface) max-h-40"
+                >
+                  <div v-for="id in clientIds" :key="id" class="flex items-center justify-between">
+                    <span>{{ id }}</span>
+                    <CoreAppButton
+                      size="xs"
+                      variant="ghost"
+                      color="neutral"
+                      :icon="icons.x"
+                      @click="clientIds = clientIds.filter((c) => c !== id)"
+                    />
+                  </div>
+                </div>
+                <div v-else class="text-(--color-text-muted) italic">
+                  {{ $t('clients.selectNone') }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-				<template #footer>
-					<div class="flex justify-end gap-2">
-						<CoreAppButton variant="outline" color="primary" size="sm" @click="open = false">{{
-							$t('common.cancel')
-						}}
-						</CoreAppButton>
-						<CoreAppButton color="primary" size="sm" :loading="executing"
-							:disabled="isReadOnly || clientIds.length === 0" @click="executeProcessAction">
-							<CoreAppIcon :name="icons.onDemand" class="w-4 h-4 mr-1" />
-							{{ $t('actions.ondemand') }}
-						</CoreAppButton>
-					</div>
-				</template>
-			</CoreAppCard>
-		</template>
-	</CoreAppModal>
+        <template #footer>
+          <div class="flex justify-end gap-2">
+            <CoreAppButton variant="outline" color="primary" size="sm" @click="open = false"
+              >{{ $t('common.cancel') }}
+            </CoreAppButton>
+            <CoreAppButton
+              color="primary"
+              size="sm"
+              :loading="executing"
+              :disabled="isReadOnly || clientIds.length === 0"
+              @click="executeProcessAction"
+            >
+              <CoreAppIcon :name="icons.onDemand" class="w-4 h-4 mr-1" />
+              {{ $t('actions.ondemand') }}
+            </CoreAppButton>
+          </div>
+        </template>
+      </CoreAppCard>
+    </template>
+  </CoreAppModal>
 </template>
 
 <script setup lang="ts">
-import { useSelectionStore } from '~/stores/selectionStore'
-import type { ProductVisibility } from '~/types'
+  import { useSelectionStore } from '~/stores/selectionStore'
+  import type { ProductVisibility } from '~/types'
 
-const open = defineModel<boolean>('open', { default: false })
+  const open = defineModel<boolean>('open', { default: false })
 
-interface Props {
-	selectedProductIds?: string[]
-}
+  interface Props {
+    selectedProductIds?: string[]
+  }
 
-const props = withDefaults(defineProps<Props>(), {
-	selectedProductIds: () => [],
-})
+  const props = withDefaults(defineProps<Props>(), {
+    selectedProductIds: () => [],
+  })
 
-const emit = defineEmits<{
-	executed: []
-}>()
+  const emit = defineEmits<{
+    executed: []
+  }>()
 
-const icons = useIcons()
-const { t: $t } = useI18n()
-const selectionStore = useSelectionStore()
-const { processActionRequests } = useApiHelpers()
-const { isReadOnly } = useUserPermissions()
+  const icons = useIcons()
+  const { t: $t } = useI18n()
+  const selectionStore = useSelectionStore()
+  const { processActionRequests } = useApiHelpers()
+  const { isReadOnly } = useUserPermissions()
 
-const executing = ref(false)
-const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
-const productMode = ref<'all' | 'selected'>('all')
-const visibility = ref<ProductVisibility>('')
-const clientIds = ref<string[]>([...selectionStore.selectedClients])
+  const executing = ref(false)
+  const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+  const productMode = ref<'all' | 'selected'>('all')
+  const visibility = ref<ProductVisibility>('')
+  const clientIds = ref<string[]>([...selectionStore.selectedClients])
 
-watch(open, (isOpen) => {
-	if (isOpen) {
-		clientIds.value = [...selectionStore.selectedClients]
-		productMode.value = props.selectedProductIds.length > 0 ? 'selected' : 'all'
-	}
-})
+  watch(open, (isOpen) => {
+    if (isOpen) {
+      clientIds.value = [...selectionStore.selectedClients]
+      productMode.value = props.selectedProductIds.length > 0 ? 'selected' : 'all'
+    }
+  })
 
-function arraysEqual(a: string[], b: string[]): boolean {
-	if (a.length !== b.length) return false
-	const sortedA = [...a].sort()
-	const sortedB = [...b].sort()
-	return sortedA.every((v, i) => v === sortedB[i])
-}
+  function arraysEqual(a: string[], b: string[]): boolean {
+    if (a.length !== b.length) return false
+    const sortedA = [...a].sort()
+    const sortedB = [...b].sort()
+    return sortedA.every((v, i) => v === sortedB[i])
+  }
 
-async function executeProcessAction() {
-	if (clientIds.value.length === 0) return
-	executing.value = true
-	try {
-		const productIds = productMode.value === 'selected' ? props.selectedProductIds : undefined
-		const result = await processActionRequests(clientIds.value, productIds, visibility.value || undefined)
+  async function executeProcessAction() {
+    if (clientIds.value.length === 0) return
+    executing.value = true
+    try {
+      const productIds = productMode.value === 'selected' ? props.selectedProductIds : undefined
+      const result = await processActionRequests(
+        clientIds.value,
+        productIds,
+        visibility.value || undefined
+      )
 
-		if (result.error) throw result.error
+      if (result.error) throw result.error
 
-		statusMessage.value = { type: 'success', message: String($t('notify.product.actions.executed')) }
-		setTimeout(() => { statusMessage.value = null }, 5000)
-		open.value = false
-		emit('executed')
-	} catch (e) {
-		statusMessage.value = {
-			type: 'error',
-			message: e instanceof Error ? e.message : String($t('notify.errorActionsLoad')),
-		}
-	} finally {
-		executing.value = false
-	}
-}
+      statusMessage.value = {
+        type: 'success',
+        message: String($t('notify.product.actions.executed')),
+      }
+      setTimeout(() => {
+        statusMessage.value = null
+      }, 5000)
+      open.value = false
+      emit('executed')
+    } catch (e) {
+      statusMessage.value = {
+        type: 'error',
+        message: e instanceof Error ? e.message : String($t('notify.errorActionsLoad')),
+      }
+    } finally {
+      executing.value = false
+    }
+  }
 </script>

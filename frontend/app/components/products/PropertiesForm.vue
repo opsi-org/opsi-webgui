@@ -8,146 +8,201 @@
   ProductsPropertiesForm - Form for editing product property values.
 -->
 <template>
-	<div class="flex flex-col h-full min-h-0">
-		<div v-if="loading" class="py-8 flex justify-center">
-			<CoreAppLoadingSpinner />
-		</div>
+  <div class="flex flex-col h-full min-h-0 opsi-compact-page opsi-dense-form">
+    <div v-if="loading" class="py-8 flex justify-center">
+      <CoreAppLoadingSpinner />
+    </div>
 
-		<CoreAppEmptyState v-else-if="properties.length === 0" :icon="icons.config"
-			:message="String($t('products.propertiesNone'))" />
+    <CoreAppEmptyState
+      v-else-if="properties.length === 0"
+      :icon="icons.config"
+      :message="String($t('products.propertiesNone'))"
+    />
 
-		<template v-else>
-			<CoreAppCard class="flex-1 min-h-0"
-				:ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'p-0 flex-1 min-h-0 overflow-y-auto bg-(--color-background)' }">
-				<div class="space-y-0 min-h-full bg-(--color-background)">
-					<div v-for="prop in visibleProperties" :key="prop.propertyId"
-						class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-3 py-0.5 px-1.5 rounded transition-colors"
-						:class="changedPropertyIds.has(prop.propertyId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)'">
+    <template v-else>
+      <CoreAppCard
+        class="flex-1 min-h-0"
+        :ui="{
+          root: 'flex flex-col min-h-0 flex-1 border-0 shadow-none bg-transparent',
+          body: 'p-0 flex-1 min-h-0 overflow-y-auto bg-(--color-background)',
+        }"
+      >
+        <div class="space-y-0 min-h-full bg-(--color-background)">
+          <div
+            v-for="prop in visibleProperties"
+            :key="prop.propertyId"
+            class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-0.5 gap-x-1 min-h-8 transition-colors"
+            :class="
+              changedPropertyIds.has(prop.propertyId)
+                ? 'bg-(--color-changed-bg)'
+                : 'hover:bg-(--color-surface-hover)'
+            "
+          >
+            <div class="min-w-0 md:w-2/5 flex items-center gap-1.5">
+              <CoreAppTooltipTable :rows="getPropertyTooltipRows(prop)">
+                <span
+                  class="text-sm break-all cursor-help"
+                  :class="{
+                    italic: prop.anyClientDifferentFromDepot,
+                    'font-bold': prop.anyDepotDifferentFromDefault,
+                  }"
+                >
+                  {{ prop.propertyId }}
+                </span>
+              </CoreAppTooltipTable>
+              <span
+                v-if="changedPropertyIds.has(prop.propertyId)"
+                class="inline-flex items-center text-(--color-changed-text)"
+              >
+                <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
+              </span>
+            </div>
 
-						<div class="min-w-0 md:w-2/5 flex items-center gap-1.5">
-							<CoreAppTooltipTable :rows="getPropertyTooltipRows(prop)">
-								<span class="text-sm break-all cursor-help" :class="{
-									'italic': prop.anyClientDifferentFromDepot,
-									'font-bold': prop.anyDepotDifferentFromDefault,
-								}">
-									{{ prop.propertyId }}
-								</span>
-							</CoreAppTooltipTable>
-							<span v-if="changedPropertyIds.has(prop.propertyId)"
-								class="inline-flex items-center text-(--color-changed-text)">
-								<CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
-							</span>
-						</div>
+            <div class="flex-1 flex items-center gap-1 min-w-0 w-full">
+              <CoreAppPropertyFormItem
+                :model-value="prop._value"
+                size="xs"
+                :type="prop.type === 'BoolProductProperty' ? 'bool' : 'unicode'"
+                :possible-values="prop.allValues || []"
+                :multi-value="prop.multiValue"
+                :editable="prop.editable"
+                :password="isPasswordProperty(prop.propertyId)"
+                :mixed="isMixedValue(prop)"
+                :aria-label="prop.propertyId"
+                @update:model-value="
+                  (v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)
+                "
+              />
 
-						<div class="flex-1 flex items-center gap-2 min-w-0 w-full md:w-auto">
-							<CoreAppPropertyFormItem :model-value="prop._value"
-								:type="prop.type === 'BoolProductProperty' ? 'bool' : 'unicode'"
-								:possible-values="prop.allValues || []" :multi-value="prop.multiValue"
-								:editable="prop.editable" :password="isPasswordProperty(prop.propertyId)"
-								:mixed="isMixedValue(prop)" :aria-label="prop.propertyId"
-								@update:model-value="(v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)" />
-
-							<CoreAppButton v-if="changedPropertyIds.has(prop.propertyId)" size="xs" variant="ghost"
-								color="neutral" :icon="icons.x" :title="$t('common.discard')"
-								@click="discardSingleProperty(prop.propertyId)" />
-						</div>
-					</div>
-					<div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-2">
-						<span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('common.loading') }}…</span>
-					</div>
-				</div>
-			</CoreAppCard>
-		</template>
-	</div>
+              <CoreAppButton
+                v-if="changedPropertyIds.has(prop.propertyId)"
+                size="xs"
+                variant="ghost"
+                color="neutral"
+                :icon="icons.x"
+                :title="$t('common.discard')"
+                @click="discardSingleProperty(prop.propertyId)"
+              />
+            </div>
+          </div>
+          <div
+            v-if="hasMore"
+            ref="loadMoreSentinel"
+            class="flex items-center justify-center py-1.5"
+          >
+            <span class="text-xs text-(--color-text-muted) animate-pulse"
+              >{{ $t('common.loading') }}…</span
+            >
+          </div>
+        </div>
+      </CoreAppCard>
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { useIntersectionObserver } from '@vueuse/core'
-import type { EditableProductProperty, EditablePropertyValue } from '~/types'
+  import { useIntersectionObserver } from '@vueuse/core'
+  import type { EditableProductProperty, EditablePropertyValue } from '~/types'
 
-interface Props {
-	properties: EditableProductProperty[]
-	loading?: boolean
-	externalFilter?: string
-}
+  interface Props {
+    properties: EditableProductProperty[]
+    loading?: boolean
+    externalFilter?: string
+  }
 
-const props = withDefaults(defineProps<Props>(), {
-	loading: false,
-	externalFilter: '',
-})
+  const props = withDefaults(defineProps<Props>(), {
+    loading: false,
+    externalFilter: '',
+  })
 
-const emit = defineEmits<{
-	'update:property': [propertyId: string, value: EditablePropertyValue]
-	'discard:property': [propertyId: string]
-}>()
+  const emit = defineEmits<{
+    'update:property': [propertyId: string, value: EditablePropertyValue]
+    'discard:property': [propertyId: string]
+  }>()
 
-const MIXED_MARKER = '___MIXED___'
+  const MIXED_MARKER = '___MIXED___'
 
-const icons = useIcons()
-const { t: $t } = useI18n()
+  const icons = useIcons()
+  const { t: $t } = useI18n()
 
-const filteredProperties = computed(() => {
-	const q = (props.externalFilter || '').trim().toLowerCase()
-	if (!q) return props.properties
-	return props.properties.filter(
-		p => p.propertyId.toLowerCase().includes(q) ||
-			(p.description || '').toLowerCase().includes(q)
-	)
-})
+  const filteredProperties = computed(() => {
+    const q = (props.externalFilter || '').trim().toLowerCase()
+    if (!q) return props.properties
+    return props.properties.filter(
+      (p) =>
+        p.propertyId.toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q)
+    )
+  })
 
-const RENDER_BATCH = 40
-const renderLimit = ref(RENDER_BATCH)
-const visibleProperties = computed(() => filteredProperties.value.slice(0, renderLimit.value))
-const hasMore = computed(() => renderLimit.value < filteredProperties.value.length)
-const loadMoreSentinel = ref<HTMLElement | null>(null)
+  const RENDER_BATCH = 40
+  const renderLimit = ref(RENDER_BATCH)
+  const visibleProperties = computed(() => filteredProperties.value.slice(0, renderLimit.value))
+  const hasMore = computed(() => renderLimit.value < filteredProperties.value.length)
+  const loadMoreSentinel = ref<HTMLElement | null>(null)
 
-watch(() => filteredProperties.value.length, () => { renderLimit.value = RENDER_BATCH })
+  watch(
+    () => filteredProperties.value.length,
+    () => {
+      renderLimit.value = RENDER_BATCH
+    }
+  )
 
-useIntersectionObserver(loadMoreSentinel, ([entry]) => {
-	if (entry?.isIntersecting && hasMore.value) {
-		renderLimit.value = Math.min(renderLimit.value + RENDER_BATCH, filteredProperties.value.length)
-	}
-})
+  useIntersectionObserver(loadMoreSentinel, ([entry]) => {
+    if (entry?.isIntersecting && hasMore.value) {
+      renderLimit.value = Math.min(
+        renderLimit.value + RENDER_BATCH,
+        filteredProperties.value.length
+      )
+    }
+  })
 
-const changedPropertyIds = computed(() => {
-	const ids = new Set<string>()
-	for (const prop of props.properties) {
-		if (JSON.stringify(prop._value) !== JSON.stringify(prop._originalValue)) {
-			ids.add(prop.propertyId)
-		}
-	}
-	return ids
-})
+  const changedPropertyIds = computed(() => {
+    const ids = new Set<string>()
+    for (const prop of props.properties) {
+      if (JSON.stringify(prop._value) !== JSON.stringify(prop._originalValue)) {
+        ids.add(prop.propertyId)
+      }
+    }
+    return ids
+  })
 
-function isMixedValue(prop: EditableProductProperty): boolean {
-	return prop._value === MIXED_MARKER || prop._originalValue === MIXED_MARKER
-}
+  function isMixedValue(prop: EditableProductProperty): boolean {
+    return prop._value === MIXED_MARKER || prop._originalValue === MIXED_MARKER
+  }
 
-function isPasswordProperty(propertyId: string): boolean {
-	const id = propertyId.toLowerCase()
-	return ['password', 'secret', 'passwd'].some(marker => id.includes(marker))
-}
+  function isPasswordProperty(propertyId: string): boolean {
+    const id = propertyId.toLowerCase()
+    return ['password', 'secret', 'passwd'].some((marker) => id.includes(marker))
+  }
 
-function getPropertyTooltipRows(prop: EditableProductProperty): Array<{ key: string; value: string }> {
-	const rows: Array<{ key: string; value: string }> = []
-	rows.push({ key: String($t('common.type')), value: `${prop.type === 'BoolProductProperty' ? 'Bool' : 'Text'}${prop.multiValue ? ' (multi)' : ''}${prop.editable ? ' (editable)' : ''}` })
-	if (prop.description) rows.push({ key: String($t('common.description')), value: prop.description })
-	if (prop.default && prop.default.length > 0) {
-		rows.push({ key: String($t('common.default')), value: prop.default.join(', ') })
-	}
-	if (prop.allValues && prop.allValues.length > 0) {
-		rows.push({ key: String($t('common.values')), value: prop.allValues.map(String).join(', ') })
-	}
-	if (prop.anyDepotDifferentFromDefault) rows.push({ key: String($t('common.note')), value: String($t('products.depotDiffNote')) })
-	if (prop.anyClientDifferentFromDepot) rows.push({ key: String($t('common.note')), value: String($t('products.clientDiffNote')) })
-	return rows
-}
+  function getPropertyTooltipRows(
+    prop: EditableProductProperty
+  ): Array<{ key: string; value: string }> {
+    const rows: Array<{ key: string; value: string }> = []
+    rows.push({
+      key: String($t('common.type')),
+      value: `${prop.type === 'BoolProductProperty' ? 'Bool' : 'Text'}${prop.multiValue ? ' (multi)' : ''}${prop.editable ? ' (editable)' : ''}`,
+    })
+    if (prop.description)
+      rows.push({ key: String($t('common.description')), value: prop.description })
+    if (prop.default && prop.default.length > 0) {
+      rows.push({ key: String($t('common.default')), value: prop.default.join(', ') })
+    }
+    if (prop.allValues && prop.allValues.length > 0) {
+      rows.push({ key: String($t('common.values')), value: prop.allValues.map(String).join(', ') })
+    }
+    if (prop.anyDepotDifferentFromDefault)
+      rows.push({ key: String($t('common.note')), value: String($t('products.depotDiffNote')) })
+    if (prop.anyClientDifferentFromDepot)
+      rows.push({ key: String($t('common.note')), value: String($t('products.clientDiffNote')) })
+    return rows
+  }
 
-function handlePropertyChange(prop: EditableProductProperty, value: EditablePropertyValue) {
-	emit('update:property', prop.propertyId, value)
-}
+  function handlePropertyChange(prop: EditableProductProperty, value: EditablePropertyValue) {
+    emit('update:property', prop.propertyId, value)
+  }
 
-function discardSingleProperty(propertyId: string) {
-	emit('discard:property', propertyId)
-}
+  function discardSingleProperty(propertyId: string) {
+    emit('discard:property', propertyId)
+  }
 </script>

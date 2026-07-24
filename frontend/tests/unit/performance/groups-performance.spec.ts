@@ -67,10 +67,10 @@ describe('selectionStore bulk operations – large-data performance', () => {
     expect(
       setMs * 5,
       'Set (' +
-      setMs.toFixed(1) +
-      ' ms) should be >=5x faster than includes (' +
-      slowMs.toFixed(1) +
-      ' ms)'
+        setMs.toFixed(1) +
+        ' ms) should be >=5x faster than includes (' +
+        slowMs.toFixed(1) +
+        ' ms)'
     ).toBeLessThan(slowMs)
   })
 })
@@ -142,7 +142,11 @@ function flattenNodes(
     if (node.members) {
       const memberDepth = depth + 1
       for (const member of node.members) {
-        if (childQuery && !member.includes(childQuery) && !member.toLowerCase().includes(childQuery)) {
+        if (
+          childQuery &&
+          !member.includes(childQuery) &&
+          !member.toLowerCase().includes(childQuery)
+        ) {
           continue
         }
         memberItems.push({
@@ -218,10 +222,10 @@ describe('member selection Set lookup performance', () => {
     expect(
       setMs * 5,
       'Set (' +
-      setMs.toFixed(2) +
-      ' ms) should be >=5x faster than includes (' +
-      arrayMs.toFixed(2) +
-      ' ms)'
+        setMs.toFixed(2) +
+        ' ms) should be >=5x faster than includes (' +
+        arrayMs.toFixed(2) +
+        ' ms)'
     ).toBeLessThan(arrayMs)
   })
 })

@@ -272,7 +272,7 @@ export default defineAppConfig({
       slots: {
         root: 'bg-(--color-background) border border-(--color-border)/50 rounded-xl overflow-hidden',
         thead: 'bg-(--color-surface)',
-        th: 'font-[Montserrat] text-(--color-text-muted) text-xs font-semibold uppercase tracking-wider px-2.5 py-1.5',
+        th: 'text-(--color-text-muted) text-xs font-medium tracking-wide px-2 py-1',
         td: 'text-(--color-text) px-2.5 py-1.5',
         tr: 'hover:bg-(--color-surface-hover) transition-colors duration-100 border-b border-(--color-border)/30 last:border-b-0',
       },

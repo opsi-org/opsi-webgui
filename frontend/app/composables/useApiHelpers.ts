@@ -143,6 +143,12 @@ export function useApiHelpers() {
 
   const getServerIds = () => apiGet<string[]>('/opsidata/depot_ids')
 
+  const getDepotClientCounts = (selectedDepots?: string[]) =>
+    apiGet<Array<{ depotId: string; clientCount: number }>>(
+      '/opsidata/depots/client-counts',
+      selectedDepots?.length ? { selectedDepots: `[${selectedDepots.join(',')}]` } : undefined
+    )
+
   const getDiagnosticData = () => apiGet<Record<string, unknown>>('/opsidata/server/diagnostic')
 
   const getServerAttributes = (serverId: string) =>
@@ -386,19 +392,36 @@ export function useApiHelpers() {
     withClients?: boolean
     selectedDepots?: string
     selectedClients?: string
+    recursiveMembers?: boolean
   }) =>
     apiGet<{ groups: Record<string, unknown> }>(
       '/opsidata/hosts/groups-dynamic',
       params as Record<string, unknown>
     )
 
+  const getHostGroupMembersRecursive = (params: { parentGroup: string; selectedDepots?: string }) =>
+    apiGet<{ groups: Record<string, unknown>; members?: string[] }>(
+      '/opsidata/hosts/groups-dynamic',
+      { ...params, recursiveMembers: true, withClients: true }
+    )
+
   const getProductGroups = (params?: Record<string, unknown>) =>
     apiGet<{ groups?: Record<string, unknown> }>('/opsidata/products/groups', params)
 
-  const getProductGroupsDynamic = (params: { parentGroup: string; withProducts?: boolean }) =>
+  const getProductGroupsDynamic = (params: {
+    parentGroup: string
+    withProducts?: boolean
+    recursiveMembers?: boolean
+  }) =>
     apiGet<{ groups: Record<string, unknown> }>(
       '/opsidata/products/groups-dynamic',
       params as Record<string, unknown>
+    )
+
+  const getProductGroupMembersRecursive = (params: { parentGroup: string }) =>
+    apiGet<{ groups: Record<string, unknown>; members?: string[] }>(
+      '/opsidata/products/groups-dynamic',
+      { ...params, recursiveMembers: true, withProducts: true }
     )
 
   const getHostGroupIds = () => apiGet<string[]>('/opsidata/hosts/groups/id')
@@ -588,6 +611,7 @@ export function useApiHelpers() {
     // Servers / Depots
     getServers,
     getServerIds,
+    getDepotClientCounts,
     getDiagnosticData,
     getServerAttributes,
     updateServerAttributes,
@@ -627,8 +651,10 @@ export function useApiHelpers() {
     // Groups
     getHostGroups,
     getHostGroupsDynamic,
+    getHostGroupMembersRecursive,
     getProductGroups,
     getProductGroupsDynamic,
+    getProductGroupMembersRecursive,
     getHostGroupIds,
     createHostGroup,
     createProductGroup,

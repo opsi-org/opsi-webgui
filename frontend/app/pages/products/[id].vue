@@ -8,26 +8,26 @@
   ProductDetailPage - Route page for individual product detail/redirect.
 -->
 <template>
-	<div class="flex items-center justify-center h-64">
-		<div class="text-center">
-			<CoreAppLoadingSpinner />
-			<p class="mt-2 text-(--color-text-muted)">{{ $t('nav.redirect') }}</p>
-		</div>
-	</div>
+  <div class="flex items-center justify-center h-64">
+    <div class="text-center">
+      <CoreAppLoadingSpinner />
+      <p class="mt-2 text-(--color-text-muted)">{{ $t('nav.redirect') }}</p>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+  definePageMeta({ layout: 'default' })
 
-const { t: $t } = useI18n()
-const route = useRoute()
-const router = useRouter()
+  const { t: $t } = useI18n()
+  const route = useRoute()
+  const router = useRouter()
 
-onMounted(() => {
-	const productId = route.params.id as string
-	router.replace({
-		path: '/products',
-		query: { product: productId }
-	})
-})
+  onMounted(() => {
+    const productId = route.params.id as string
+    router.replace({
+      path: '/products',
+      query: { product: productId },
+    })
+  })
 </script>

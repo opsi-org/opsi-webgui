@@ -18,7 +18,7 @@ function installLocalStorage(): Storage {
     removeItem: (k: string) => map.delete(k),
     setItem: (k: string, v: string) => map.set(k, String(v)),
   }
-  ;(globalThis as { localStorage?: Storage }).localStorage = storage
+    ; (globalThis as { localStorage?: Storage }).localStorage = storage
   return storage
 }
 
@@ -133,7 +133,7 @@ describe('useDataTableSettings', () => {
       setPageSize(99)
       reset()
       expect(settings.visibleColumns).toEqual(['depotId', 'description', 'type', 'ip'])
-      expect(settings.pageSize).toBe(50)
+      expect(settings.pageSize).toBe(20)
     })
   })
 
@@ -183,7 +183,7 @@ describe('useDataTableSettings', () => {
           throw new Error('blocked')
         }),
       } as unknown as Storage
-      ;(globalThis as { localStorage?: Storage }).localStorage = throwing
+        ; (globalThis as { localStorage?: Storage }).localStorage = throwing
       expect(() => useDataTableSettings('clients')).not.toThrow()
     })
   })

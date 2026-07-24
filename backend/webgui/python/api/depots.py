@@ -8,7 +8,7 @@
 webgui depot methods
 """
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, Request, status
 from opsiconfd.config import get_configserver_id
@@ -46,6 +46,11 @@ class Depot(BaseModel):  # pylint: disable=too-few-public-methods
     type: str
     ip: str
     description: str
+
+
+class DepotClientCount(BaseModel):  # pylint: disable=too-few-public-methods
+    depotId: str
+    clientCount: int
 
 
 def get_depots(username: str | None = None) -> List[str]:
@@ -162,12 +167,28 @@ def clients_on_depots(
     if selectedDepots == []:
         return RESTResponse(data=[])
 
-    params = {}
+    params: dict[str, Any] = {}
     if selectedDepots is None:
         username = request.scope.get("session").username
-        params["depots"] = get_depots(username)
+        depots_raw = get_depots(username)
     else:
-        params["depots"] = selectedDepots
+        depots_raw = selectedDepots
+
+    depots: list[str] = []
+    for depot in depots_raw or []:
+        dep = str(depot).strip().strip('"').strip("'")
+        if dep and dep not in depots:
+            depots.append(dep)
+
+    if len(depots) == 1 and depots[0].startswith("[") and depots[0].endswith("]"):
+        raw = depots[0][1:-1]
+        depots = []
+        for item in raw.split(","):
+            dep = item.strip().strip('"').strip("'")
+            if dep and dep not in depots:
+                depots.append(dep)
+
+    params["depots"] = depots
 
     with mysql.session() as session:
         where = text("h.type='OpsiClient'")
@@ -206,6 +227,7 @@ def clients_on_depots(
                 if (
                     row is not None
                     and dict(row).get("client")
+                    and allowed_clients
                     and dict(row).get("client") in allowed_clients
                 ):
                     clients.append(dict(row).get("client"))
@@ -214,6 +236,101 @@ def clients_on_depots(
             if row is not None and dict(row).get("client"):
                 clients.append(dict(row).get("client"))
         return RESTResponse(data=clients)
+
+
+@api_router.get(
+    "/api/opsidata/depots/client-counts", response_model=List[DepotClientCount]
+)
+@rest_api
+@filter_depot_access
+def client_counts_on_depots(
+    request: Request,
+    selectedDepots: List[str] = Depends(parse_depot_list),  # pylint: disable=invalid-name
+) -> RESTResponse:
+    """
+    Get client counts grouped by depot.
+    """
+
+    if selectedDepots == []:
+        return RESTResponse(data=[])
+
+    username = get_username()
+    depots_raw = selectedDepots if selectedDepots is not None else get_depots(username)
+    depots: list[str] = []
+    for depot in depots_raw or []:
+        dep = str(depot).strip().strip('"').strip("'")
+        if dep and dep not in depots:
+            depots.append(dep)
+
+    # Robust fallback for malformed single-item list values like "[depot1,depot2]"
+    if len(depots) == 1 and depots[0].startswith("[") and depots[0].endswith("]"):
+        raw = depots[0][1:-1]
+        depots = []
+        for item in raw.split(","):
+            dep = item.strip().strip('"').strip("'")
+            if dep and dep not in depots:
+                depots.append(dep)
+
+    if not depots:
+        return RESTResponse(data=[])
+
+    params = {
+        "configserver_id": get_configserver_id(),
+    }
+
+    where = and_(text("h.type='OpsiClient'"))
+
+    allowed_clients = None
+    allowed_clients_set: set[str] | None = None
+    if user_register() and host_group_access_configured(username):
+        allowed_clients = get_allowed_group_objects(username, "HostGroup")
+        if not allowed_clients:
+            return RESTResponse(data=[])
+        allowed_clients_set = set(allowed_clients)
+
+    allowed_depots = set(depots)
+
+    with mysql.session() as session:
+        query = (
+            select(
+                text(  # type: ignore[arg-type]
+                    """
+                    h.hostId AS clientId,
+                    COALESCE(
+                        (
+                            SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`))
+                            FROM CONFIG_STATE AS cs
+                            WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.depot.id'
+                        ),
+                        :configserver_id
+                    ) AS depotId
+                    """
+                )
+            )
+            .select_from(table("HOST").alias("h"))
+            .where(where)
+        )
+
+        rows = session.execute(query, params).fetchall()
+
+        count_by_depot: dict[str, int] = {depot: 0 for depot in depots}
+        for row in rows:
+            if row is None:
+                continue
+            row_data = dict(row)
+            client_id = row_data.get("clientId")
+            depot_id = row_data.get("depotId")
+            if not client_id or not depot_id or depot_id not in allowed_depots:
+                continue
+            if allowed_clients_set is not None and client_id not in allowed_clients_set:
+                continue
+            count_by_depot[depot_id] = count_by_depot.get(depot_id, 0) + 1
+
+        data = [
+            {"depotId": depot, "clientCount": count_by_depot.get(depot, 0)}
+            for depot in sorted(count_by_depot.keys())
+        ]
+        return RESTResponse(data=data)
 
 
 @api_router.get("/api/opsidata/depots/products", response_model=List[str])

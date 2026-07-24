@@ -41,14 +41,15 @@ def _is_allowed(group_id: str, allowed: set[str] | None) -> bool:
         return True
     if not allowed:
         return True
-    if group_id.lower() in list(allowed) + ["clientdirectory"]:
+    normalized_group_id = group_id.lower()
+    if normalized_group_id == "clientdirectory" or normalized_group_id in allowed:
         return True
     return False
 
 
 def _next_allowed_parent(
     parent_id: str, raw_groups: List, allowed: set[str] | None
-) -> str:
+) -> Optional[str]:
     """
     Finds the next allowed parent group ID.
     """
@@ -56,14 +57,11 @@ def _next_allowed_parent(
         return None
     if _is_allowed(parent_id, allowed):
         return parent_id
-    logger.info("Finding next allowed parent for %s in %s", parent_id, allowed)
     for row in raw_groups:
-        if row.group_id == parent_id:
-            logger.info("\tChecking parent_id: %s, allowed: %s", row.parent_id, allowed)
-            if _is_allowed(row.parent_id, allowed):
-                logger.info("\t\tNext allowed parent found: %s", row.parent_id)
-                return row.parent_id
-            return _next_allowed_parent(row.parent_id, raw_groups, allowed)
+        if row["group_id"] == parent_id:
+            if _is_allowed(row["parent_id"], allowed):
+                return row["parent_id"]
+            return _next_allowed_parent(row["parent_id"], raw_groups, allowed)
     return None
 
 
@@ -75,6 +73,7 @@ def read_groups(
     withClients: bool = True,
     gtype: str = "HostGroup",  # pylint: disable=invalid-name
 ) -> dict:
+    normalized_selected_object_ids = selected_object_ids or []
     updated_allowed = None
     if allowed:
         updated_allowed = set()
@@ -86,15 +85,12 @@ def read_groups(
             # updated_allowed.update(_get_all_parents_groupids(raw_groups, group_id))
             updated_allowed.update(get_all_children_groupid(raw_groups, group_id))
 
-    if not isinstance(selected_object_ids, list) and withClients:
-        selected_object_ids = []
+    if not isinstance(normalized_selected_object_ids, list) and withClients:
+        normalized_selected_object_ids = []
     all_groups = {}
     for row in raw_groups:
         if not _is_allowed(row["group_id"], updated_allowed):
-            logger.info("Skipping group %s, not allowed", row["group_id"])
             continue
-
-        logger.info("Processing group: %s", row)
         if row["group_id"] not in all_groups:
             # get next allowed parent
             if _is_allowed(row["parent_id"], updated_allowed):
@@ -124,11 +120,11 @@ def read_groups(
                     allowed=updated_allowed,
                 )
 
-            if row["object_id"] in selected_object_ids:
+            if row["object_id"] in normalized_selected_object_ids:
                 all_groups[row["group_id"]]["hasAnySelection"] = True
             if not all_groups[row["group_id"]].get("children"):
                 all_groups[row["group_id"]]["children"] = {}
-            if row.group_id == parent:
+            if row["group_id"] == parent:
                 if row["object_id"] not in all_groups:
                     all_groups[row["object_id"]] = {
                         "id": f"{row['object_id']};{parent.lower()}"
@@ -171,7 +167,10 @@ def build_nested_group(
         if group.get("parent") is not None and group_id != "clientdirectory":
             # Ensure the group ID is unique and formatted correctly
             if ";" not in group["id"]:
-                group["id"] = f"{group['id']};{group.get('parent').lower()}"
+                parent = group.get("parent")
+                group["id"] = (
+                    f"{group['id']};{parent.lower()}" if parent else group["id"]
+                )
 
         parent_id: Optional[str] = group.get("parent")
         if parent_id is None and group_id != "clientdirectory":

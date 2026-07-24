@@ -116,7 +116,11 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 
     with mysql.session() as session:
         where = and_(text("h.type = 'OpsiClient'"))
-        params: Dict[str, Union[List[Any], str]] = {"depot_ids": [], "search": []}
+        params: Dict[str, Union[List[Any], str]] = {
+            "depot_ids": [],
+            "search": [],
+            "configserver_id": get_configserver_id(),
+        }
 
         if filteredGroups:
             where = and_(where, text("(h.hostId IN :filtered_groups)"))
@@ -129,21 +133,43 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
             )
             params["search"] = f"%{commons.get('filterQuery')}%"
         if selectedDepots:
-            where = and_(
-                where,
-                text(
-                    """
-				COALESCE(
-					(
-						SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) FROM CONFIG_STATE AS cs
-						WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.depot.id'
-					),
-					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1 LIMIT 1)
-				) IN :depot_ids
-				"""
-                ),
-            )
-            params["depot_ids"] = selectedDepots
+            normalized_depots: list[str] = []
+            for depot in selectedDepots:
+                dep = str(depot).strip().strip('"').strip("'")
+                if dep and dep not in normalized_depots:
+                    normalized_depots.append(dep)
+
+            if (
+                len(normalized_depots) == 1
+                and normalized_depots[0].startswith("[")
+                and normalized_depots[0].endswith("]")
+            ):
+                raw = normalized_depots[0][1:-1]
+                normalized_depots = []
+                for item in raw.split(","):
+                    dep = item.strip().strip('"').strip("'")
+                    if dep and dep not in normalized_depots:
+                        normalized_depots.append(dep)
+
+            depot_filters = []
+            for idx, depot in enumerate(normalized_depots):
+                key = f"depot_id_{idx}"
+                params[key] = depot
+                depot_filters.append(
+                    f"""
+					COALESCE(
+						(
+							SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`))
+							FROM CONFIG_STATE AS cs
+							WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.depot.id'
+						),
+						:configserver_id
+					) = :{key}
+					"""
+                )
+
+            if depot_filters:
+                where = and_(where, text("(" + " OR ".join(depot_filters) + ")"))
         if allowed_clients:
             params["allowed_clients"] = allowed_clients
             where = and_(where, text("(h.hostId in :allowed_clients)"))
@@ -199,7 +225,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 						SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) FROM CONFIG_STATE AS cs
 						WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.depot.id'
 					),
-					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1 LIMIT 1)
+                    :configserver_id
 				) AS depotId,
 				IF(
 					(COALESCE(

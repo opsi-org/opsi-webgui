@@ -110,12 +110,20 @@ export async function waitForTable(page: Page, timeout = 30000): Promise<void> {
     const url = page.url()
     if (/\/login(?:\?|$|\/)/.test(url)) {
       const usernameInput = page
-        .locator('#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]')
+        .locator(
+          '#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]'
+        )
         .first()
       const passwordInput = page.locator('#login-password, input[type="password"]').first()
       const canLogin = await Promise.all([
-        usernameInput.waitFor({ state: 'visible', timeout: 8000 }).then(() => true).catch(() => false),
-        passwordInput.waitFor({ state: 'visible', timeout: 8000 }).then(() => true).catch(() => false),
+        usernameInput
+          .waitFor({ state: 'visible', timeout: 8000 })
+          .then(() => true)
+          .catch(() => false),
+        passwordInput
+          .waitFor({ state: 'visible', timeout: 8000 })
+          .then(() => true)
+          .catch(() => false),
       ]).then(([u, p]) => u && p)
 
       if (canLogin) {
@@ -124,9 +132,12 @@ export async function waitForTable(page: Page, timeout = 30000): Promise<void> {
         await usernameInput.fill(testUser)
         await passwordInput.fill(testPassword)
         await page.locator('button[type="submit"]').first().click()
-        await page.waitForURL((current) => !/\/login(?:\?|$|\/)/.test(`${current.pathname}${current.search}`), {
-          timeout: 30000,
-        })
+        await page.waitForURL(
+          (current) => !/\/login(?:\?|$|\/)/.test(`${current.pathname}${current.search}`),
+          {
+            timeout: 30000,
+          }
+        )
         await page.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => undefined)
         await row.waitFor({ state: 'visible', timeout: Math.max(timeout, 45000) })
         return

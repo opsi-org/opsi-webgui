@@ -11,22 +11,28 @@ test.describe('Groups', () => {
       functional: async (p) => {
         // Wait for the tree to render
         const tree = p
-          .locator('main [class*="tree"], main [class*="group"], main [role="tree"], main [role="treeitem"]')
+          .locator(
+            'main [class*="tree"], main [class*="group"], main [role="tree"], main [role="treeitem"]'
+          )
           .first()
         await tree.waitFor({ state: 'visible', timeout: 30000 })
 
         // Click the first leaf group node to select it
         const firstNode = p
-          .locator('main [role="treeitem"], main [class*="tree-node"], main [class*="group-item"], main button')
+          .locator(
+            'main [role="treeitem"], main [class*="tree-node"], main [class*="group-item"], main button'
+          )
           .first()
         if (await firstNode.isVisible().catch(() => false)) {
           await firstNode.click()
           await p.waitForTimeout(1000)
 
           // The selected node should have an active/selected class or aria-selected
-          const selected = p.locator(
-            'main [aria-selected="true"], main [class*="selected"], main [class*="active"]'
-          ).first()
+          const selected = p
+            .locator(
+              'main [aria-selected="true"], main [class*="selected"], main [class*="active"]'
+            )
+            .first()
           await expect(selected).toBeVisible({ timeout: 5000 })
 
           // Members should be visible in the right detail area for documentation screenshot.
