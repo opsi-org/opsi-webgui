@@ -43,7 +43,7 @@
               ? 'absolute left-0 top-0 h-full w-64 shadow-lg'
               : 'absolute -left-64 top-0 h-full w-64'
             : sidebarOpen
-              ? 'w-46'
+              ? 'w-40'
               : 'w-12',
         ]"
       >
