@@ -362,7 +362,7 @@ release:obs-external:
   needs: [build:addon, setup:versions, { job: setup:changelog, optional: true }]
   script:
     - opsi-dev-cli self upgrade
-    - opsi-dev-cli -l 6 packaging obs update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
+    - opsi-dev-cli -l info packaging obs update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
     - |
       [ -f output/changelog.md ] && {
         opsi-dev-cli -l 6 release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
