@@ -19,10 +19,10 @@
 </template>
 
 <script setup lang="ts">
-const $config = useRuntimeConfig()
-const { locale } = useI18n()
+  const $config = useRuntimeConfig()
+  const { locale } = useI18n()
 
-const uibLink = computed(() => {
-  return locale.value === 'de' ? 'https://uib.de/de/' : 'https://uib.de/en/'
-})
+  const uibLink = computed(() => {
+    return locale.value === 'de' ? 'https://uib.de/de/' : 'https://uib.de/en/'
+  })
 </script>

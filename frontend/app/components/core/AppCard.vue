@@ -16,30 +16,30 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({ inheritAttrs: false })
+  defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
-  fill?: boolean
-  scrollable?: boolean
-}>()
+  const props = defineProps<{
+    fill?: boolean
+    scrollable?: boolean
+  }>()
 
-const attrs = useAttrs()
+  const attrs = useAttrs()
 
-const forwardedAttrs = computed(() => {
-  const { ui: _ui, ...rest } = attrs as Record<string, unknown>
-  return rest
-})
+  const forwardedAttrs = computed(() => {
+    const { ui: _ui, ...rest } = attrs as Record<string, unknown>
+    return rest
+  })
 
-const mergedUi = computed(() => {
-  const incoming = (attrs.ui as Record<string, string> | undefined) || {}
-  if (!props.fill && !props.scrollable) return incoming
+  const mergedUi = computed(() => {
+    const incoming = (attrs.ui as Record<string, string> | undefined) || {}
+    if (!props.fill && !props.scrollable) return incoming
 
-  const join = (...parts: (string | undefined | false)[]) => parts.filter(Boolean).join(' ')
+    const join = (...parts: (string | undefined | false)[]) => parts.filter(Boolean).join(' ')
 
-  return {
-    ...incoming,
-    root: join('flex flex-col h-full min-h-0', incoming.root),
-    body: join('flex-1 min-h-0', props.scrollable && 'overflow-y-auto', incoming.body),
-  }
-})
+    return {
+      ...incoming,
+      root: join('flex flex-col h-full min-h-0', incoming.root),
+      body: join('flex-1 min-h-0', props.scrollable && 'overflow-y-auto', incoming.body),
+    }
+  })
 </script>

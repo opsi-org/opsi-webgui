@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+  definePageMeta({ layout: 'default' })
 
-const { t: $t } = useI18n()
-useHead({ title: () => `${$t('clients.title')} - opsi-WebGUI` })
+  const { t: $t } = useI18n()
+  useHead({ title: () => `${$t('clients.title')} - opsi-WebGUI` })
 </script>

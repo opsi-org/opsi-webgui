@@ -8,45 +8,53 @@
   ClientClonePage - Route page for client cloning with optional source client ID.
 -->
 <template>
-    <LayoutsPageLayout>
-        <ClientsCloneForm :source-id="selectedClientId" show-source-selector
-            :source-selector-placeholder="String($t('clients.select'))" @update:source-id="updateSelectedClientId"
-            @saved="handleSuccess" />
-    </LayoutsPageLayout>
+  <LayoutsPageLayout>
+    <ClientsCloneForm
+      :source-id="selectedClientId"
+      show-source-selector
+      :source-selector-placeholder="String($t('clients.select'))"
+      @update:source-id="updateSelectedClientId"
+      @saved="handleSuccess"
+    />
+  </LayoutsPageLayout>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+  definePageMeta({ layout: 'default' })
 
-const { t: $t } = useI18n()
-const route = useRoute()
-const router = useRouter()
+  const { t: $t } = useI18n()
+  const route = useRoute()
+  const router = useRouter()
 
-useHead({ title: () => `${$t('clients.clone.title')} - opsi-WebGUI` })
+  useHead({ title: () => `${$t('clients.clone.title')} - opsi-WebGUI` })
 
-const routeClientId = computed(() => {
+  const routeClientId = computed(() => {
     const id = route.params.id
     return (Array.isArray(id) ? id[0] : id) || ''
-})
+  })
 
-const manualClientId = ref<string>('')
+  const manualClientId = ref<string>('')
 
-const selectedClientId = computed(() => routeClientId.value || manualClientId.value)
+  const selectedClientId = computed(() => routeClientId.value || manualClientId.value)
 
-function updateSelectedClientId(id: string | null) {
+  function updateSelectedClientId(id: string | null) {
     manualClientId.value = id || ''
     if (id !== routeClientId.value) {
-        router.replace(id ? `/clients/clone/${id}` : '/clients/clone')
+      router.replace(id ? `/clients/clone/${id}` : '/clients/clone')
     }
-}
+  }
 
-watch(routeClientId, (id) => {
-    if (id !== manualClientId.value) {
+  watch(
+    routeClientId,
+    (id) => {
+      if (id !== manualClientId.value) {
         manualClientId.value = id
-    }
-}, { immediate: true })
+      }
+    },
+    { immediate: true }
+  )
 
-function handleSuccess() {
+  function handleSuccess() {
     setTimeout(() => navigateTo('/clients'), 1500)
-}
+  }
 </script>

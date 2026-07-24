@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'auth' })
+  definePageMeta({ layout: 'auth' })
 
-const { t: $t } = useI18n()
-useHead({ title: () => `${$t('auth.login')} - opsi-WebGUI` })
+  const { t: $t } = useI18n()
+  useHead({ title: () => `${$t('auth.login')} - opsi-WebGUI` })
 </script>

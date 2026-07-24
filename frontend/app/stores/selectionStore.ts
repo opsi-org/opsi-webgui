@@ -51,7 +51,6 @@ export const useSelectionStore = defineStore('selection', {
   actions: {
     setConfigServer(server: string) {
       this.configServer = server
-      if (this.selectedServers.length === 0 && server) this.selectedServers = [server]
     },
     async ensureServersSelected() {
       if (this.selectedServers.length > 0) return true
@@ -71,9 +70,10 @@ export const useSelectionStore = defineStore('selection', {
       this.selectionSource = source
     },
     toggleServer(serverId: string, source: SelectionSource = 'table') {
-      const i = this.selectedServers.indexOf(serverId)
-      if (i > -1) this.selectedServers.splice(i, 1)
-      else this.selectedServers.push(serverId)
+      const next = new Set(this.selectedServers)
+      if (next.has(serverId)) next.delete(serverId)
+      else next.add(serverId)
+      this.selectedServers = [...next]
       this.selectionSource = source
     },
     clearServers() {
@@ -85,9 +85,10 @@ export const useSelectionStore = defineStore('selection', {
       this.selectionSource = source
     },
     toggleClient(clientId: string, source: SelectionSource = 'table') {
-      const i = this.selectedClients.indexOf(clientId)
-      if (i > -1) this.selectedClients.splice(i, 1)
-      else this.selectedClients.push(clientId)
+      const next = new Set(this.selectedClients)
+      if (next.has(clientId)) next.delete(clientId)
+      else next.add(clientId)
+      this.selectedClients = [...next]
       this.selectionSource = source
     },
     clearClients() {
@@ -99,9 +100,10 @@ export const useSelectionStore = defineStore('selection', {
       this.selectionSource = source
     },
     toggleProduct(productId: string, source: SelectionSource = 'table') {
-      const i = this.selectedProducts.indexOf(productId)
-      if (i > -1) this.selectedProducts.splice(i, 1)
-      else this.selectedProducts.push(productId)
+      const next = new Set(this.selectedProducts)
+      if (next.has(productId)) next.delete(productId)
+      else next.add(productId)
+      this.selectedProducts = [...next]
       this.selectionSource = source
     },
     clearProducts() {
@@ -112,9 +114,10 @@ export const useSelectionStore = defineStore('selection', {
       this.selectedClientGroups = groups
     },
     toggleClientGroup(groupId: string) {
-      const i = this.selectedClientGroups.indexOf(groupId)
-      if (i > -1) this.selectedClientGroups.splice(i, 1)
-      else this.selectedClientGroups.push(groupId)
+      const next = new Set(this.selectedClientGroups)
+      if (next.has(groupId)) next.delete(groupId)
+      else next.add(groupId)
+      this.selectedClientGroups = [...next]
     },
     clearClientGroups() {
       this.selectedClientGroups = []
@@ -124,9 +127,10 @@ export const useSelectionStore = defineStore('selection', {
       this.selectedProductGroups = groups
     },
     toggleProductGroup(groupId: string) {
-      const i = this.selectedProductGroups.indexOf(groupId)
-      if (i > -1) this.selectedProductGroups.splice(i, 1)
-      else this.selectedProductGroups.push(groupId)
+      const next = new Set(this.selectedProductGroups)
+      if (next.has(groupId)) next.delete(groupId)
+      else next.add(groupId)
+      this.selectedProductGroups = [...next]
     },
     clearProductGroups() {
       this.selectedProductGroups = []

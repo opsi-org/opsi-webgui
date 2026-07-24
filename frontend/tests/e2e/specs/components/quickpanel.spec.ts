@@ -23,18 +23,27 @@ async function ensureQuickPanelOpen(page: Page): Promise<void> {
 }
 
 async function seedClientSelectionFromCurrentTable(page: Page): Promise<void> {
-  const firstClientId = await page.locator('table tbody tr').first().locator('td').nth(1).innerText().catch(() => '')
+  const firstClientId = await page
+    .locator('table tbody tr')
+    .first()
+    .locator('td')
+    .nth(1)
+    .innerText()
+    .catch(() => '')
   const normalized = firstClientId.trim()
   if (!normalized) return
   await page.evaluate((clientId: string) => {
     const key = 'opsi-webgui-selection'
     const raw = window.localStorage.getItem(key)
     const current = raw ? JSON.parse(raw) : {}
-    window.localStorage.setItem(key, JSON.stringify({
-      ...current,
-      selectedClients: [clientId],
-      selectionSource: 'quickpanel',
-    }))
+    window.localStorage.setItem(
+      key,
+      JSON.stringify({
+        ...current,
+        selectedClients: [clientId],
+        selectionSource: 'quickpanel',
+      })
+    )
   }, normalized)
   await page.reload({ waitUntil: 'domcontentloaded' })
   await page.waitForTimeout(1200)
@@ -262,16 +271,16 @@ test.describe('Quick Actions', () => {
           const payload = route.request().postDataJSON() as { demoMode?: boolean } | null
           const body = payload?.demoMode
             ? {
-              'test-client-01.example.test': [
-                {
-                  productId: 'opsi-client-agent',
-                  productVersion: '4.3.0.0',
-                  packageVersion: '1',
-                  installationStatus: 'installed',
-                  actionRequest: 'setup',
-                },
-              ],
-            }
+                'test-client-01.example.test': [
+                  {
+                    productId: 'opsi-client-agent',
+                    productVersion: '4.3.0.0',
+                    packageVersion: '1',
+                    installationStatus: 'installed',
+                    actionRequest: 'setup',
+                  },
+                ],
+              }
             : {}
           await route.fulfill({
             status: 200,
@@ -302,16 +311,16 @@ test.describe('Quick Actions', () => {
               const payload = route.request().postDataJSON() as { demoMode?: boolean } | null
               const body = payload?.demoMode
                 ? {
-                  'test-client-01.example.test': [
-                    {
-                      productId: 'opsi-client-agent',
-                      productVersion: '4.3.0.0',
-                      packageVersion: '1',
-                      installationStatus: 'installed',
-                      actionRequest: 'setup',
-                    },
-                  ],
-                }
+                    'test-client-01.example.test': [
+                      {
+                        productId: 'opsi-client-agent',
+                        productVersion: '4.3.0.0',
+                        packageVersion: '1',
+                        installationStatus: 'installed',
+                        actionRequest: 'setup',
+                      },
+                    ],
+                  }
                 : {}
               await route.fulfill({
                 status: 200,
@@ -320,14 +329,20 @@ test.describe('Quick Actions', () => {
               })
             })
 
-            const productQABtn = p.getByTestId('quickpanel-product-actions').locator('button').first()
+            const productQABtn = p
+              .getByTestId('quickpanel-product-actions')
+              .locator('button')
+              .first()
             await expect(productQABtn).toBeVisible({ timeout: 10000 })
             await productQABtn.click()
 
             const statusCombo = p.getByLabel(/installationsstatus|installation status/i).first()
             if (await statusCombo.isVisible().catch(() => false)) {
               await statusCombo.click()
-              const installedOption = p.getByRole('option').filter({ hasText: /installed/i }).first()
+              const installedOption = p
+                .getByRole('option')
+                .filter({ hasText: /installed/i })
+                .first()
               if (await installedOption.isVisible().catch(() => false)) {
                 await installedOption.click()
               } else {
@@ -339,7 +354,10 @@ test.describe('Quick Actions', () => {
             const actionCombo = p.getByLabel(/aktionsanforderung|action request/i).first()
             if (await actionCombo.isVisible().catch(() => false)) {
               await actionCombo.click()
-              const setupOption = p.getByRole('option').filter({ hasText: /setup|always|once/i }).first()
+              const setupOption = p
+                .getByRole('option')
+                .filter({ hasText: /setup|always|once/i })
+                .first()
               if (await setupOption.isVisible().catch(() => false)) {
                 await setupOption.click()
               } else {

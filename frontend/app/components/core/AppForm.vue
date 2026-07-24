@@ -14,5 +14,5 @@
 </template>
 
 <script setup lang="ts">
-defineEmits<{ submit: [] }>()
+  defineEmits<{ submit: [] }>()
 </script>

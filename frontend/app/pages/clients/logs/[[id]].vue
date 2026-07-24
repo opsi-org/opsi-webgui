@@ -8,44 +8,48 @@
   ClientLogsPage - Route page for viewing client logs with optional client ID.
 -->
 <template>
-    <div class="h-full ">
-        <ClientsLogsView :client-id="selectedClientId" show-client-selector
-            :client-selector-placeholder="String($t('clients.select'))" @update:client-id="updateClientId" />
-    </div>
+  <div class="h-full">
+    <ClientsLogsView
+      :client-id="selectedClientId"
+      show-client-selector
+      :client-selector-placeholder="String($t('clients.select'))"
+      @update:client-id="updateClientId"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+  definePageMeta({ layout: 'default' })
 
-const { t: $t } = useI18n()
-const route = useRoute()
-const router = useRouter()
+  const { t: $t } = useI18n()
+  const route = useRoute()
+  const router = useRouter()
 
-useHead({ title: () => `${$t('logs.title')} - opsi-WebGUI` })
+  useHead({ title: () => `${$t('logs.title')} - opsi-WebGUI` })
 
-const routeClientId = computed<string>(() => {
+  const routeClientId = computed<string>(() => {
     const id = route.params.id
     return (Array.isArray(id) ? id[0] : id) || ''
-})
+  })
 
-const manualClientId = ref<string>(routeClientId.value)
+  const manualClientId = ref<string>(routeClientId.value)
 
-const selectedClientId = computed<string | null>(() =>
-    routeClientId.value || manualClientId.value || null
-)
+  const selectedClientId = computed<string | null>(
+    () => routeClientId.value || manualClientId.value || null
+  )
 
-watch(routeClientId, (id) => {
+  watch(routeClientId, (id) => {
     if (id !== manualClientId.value) manualClientId.value = id
-})
+  })
 
-function updateClientId(id: string | null) {
+  function updateClientId(id: string | null) {
     manualClientId.value = id || ''
     const target = id ? `/clients/logs/${id}` : '/clients/logs'
     if (route.path !== target) {
-        router.replace({
-            path: target,
-            query: route.query,
-        })
+      router.replace({
+        path: target,
+        query: route.query,
+      })
     }
-}
+  }
 </script>

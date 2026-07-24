@@ -72,9 +72,7 @@ export async function inspectA11y(page: Page, options?: InspectorOptions): Promi
       if (htmlEl.closest('[aria-hidden="true"]')) continue
       if (htmlEl.hasAttribute('disabled')) continue
       if (htmlEl.getAttribute('aria-disabled') === 'true') continue
-      if (
-        htmlEl.matches('button[role="checkbox"][data-slot="base"], [data-grace-area-trigger]')
-      )
+      if (htmlEl.matches('button[role="checkbox"][data-slot="base"], [data-grace-area-trigger]'))
         continue
       if (isExcluded(htmlEl)) continue
       if (!accessibleName(htmlEl)) {

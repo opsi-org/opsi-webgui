@@ -8,24 +8,24 @@
   IndexPage - Root route redirect.
 -->
 <template>
-    <div class="min-h-screen flex items-center justify-center">
-        <CoreAppLoadingSpinner size="lg" />
-    </div>
+  <div class="min-h-screen flex items-center justify-center">
+    <CoreAppLoadingSpinner size="lg" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '~/stores/userStore'
+  import { useUserStore } from '~/stores/userStore'
 
-definePageMeta({ layout: false })
+  definePageMeta({ layout: false })
 
-const userStore = useUserStore()
+  const userStore = useUserStore()
 
-onMounted(async () => {
+  onMounted(async () => {
     if (userStore.isAuthenticated) {
-        const defaultPage = getDefaultPageFromCookie()
-        await navigateTo(defaultPage)
+      const defaultPage = getDefaultPageFromCookie()
+      await navigateTo(defaultPage)
     } else {
-        await navigateTo('/login')
+      await navigateTo('/login')
     }
-})
+  })
 </script>

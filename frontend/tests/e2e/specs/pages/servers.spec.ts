@@ -107,8 +107,8 @@ test.describe('Servers', () => {
             const addBtn = p
               .locator(
                 'button:has-text("Neu"), button:has-text("New"), button:has-text("Hinzufügen"), ' +
-                'button:has-text("Add"), button:has-text("Create"), ' +
-                '[aria-label*="add" i], [aria-label*="create" i], [aria-label*="neu" i]'
+                  'button:has-text("Add"), button:has-text("Create"), ' +
+                  '[aria-label*="add" i], [aria-label*="create" i], [aria-label*="neu" i]'
               )
               .first()
             if (await addBtn.isVisible().catch(() => false)) {

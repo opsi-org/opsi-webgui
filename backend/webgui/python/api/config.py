@@ -100,22 +100,9 @@ def get_server_config(
             "user": [],
         }
 
-        def _log_if_configId(
-            rowDict: dict,
-            logtext: any,
-            match: str = "user.{adminuser}.privilege.host.groupaccess.hostgroups",
-        ) -> None:
-            if rowDict.get("configId").startswith(match):
-                logger.debug(
-                    "Found config with configId %s: %s",
-                    rowDict.get("configId"),
-                    logtext,
-                )
-
         for row in result:
             if row is not None:
                 row_dict = dict(row)
-                _log_if_configId(row_dict, "Found config %s", str(row_dict))
 
                 id_prefix = row_dict.get("configId", "").split(".")[0]
                 row_dict["multiValue"] = bool(row_dict.get("multiValue", False))
@@ -139,16 +126,13 @@ def get_server_config(
                         delimiter="|",
                     )
 
-                row_dict["possibleValues"] = list(
-                    set(pos_val_list)
-                )  # remove duplicates
+                row_dict["possibleValues"] = list(dict.fromkeys(pos_val_list))
 
                 if row_dict.get("editable", False):
                     row_dict["newValue"] = ""
                     row_dict["newValues"] = []
 
                 config_data[id_prefix].append(row_dict)
-                _log_if_configId(row_dict, "Added to config_data %s", str(row_dict))
         return RESTResponse(data=config_data)
 
 

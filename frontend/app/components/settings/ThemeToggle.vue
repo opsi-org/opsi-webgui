@@ -8,28 +8,35 @@
   SettingsThemeToggle - Dark/light theme toggle switch.
 -->
 <template>
-  <CoreAppButton @click="toggleTheme" color="primary" size="xs" data-testid="theme-toggle"
+  <CoreAppButton
+    @click="toggleTheme"
+    color="primary"
+    size="xs"
+    data-testid="theme-toggle"
     :data-theme="isDarkMode ? 'dark' : 'light'"
-    :aria-label="isDarkMode ? $t('settings.theme.light') : $t('settings.theme.dark')">
+    :aria-label="isDarkMode ? $t('settings.theme.light') : $t('settings.theme.dark')"
+  >
     <CoreAppIcon :name="isDarkMode ? icons.themeDark : icons.themeLight" class="w-3.5 h-3.5" />
-    <span class="text-xs font-medium">{{ isDarkMode ? $t('settings.theme.dark') : $t('settings.theme.light') }}</span>
+    <span class="text-xs font-medium">{{
+      isDarkMode ? $t('settings.theme.dark') : $t('settings.theme.light')
+    }}</span>
   </CoreAppButton>
 </template>
 
 <script setup lang="ts">
-import { useUiStore } from '~/stores/uiStore'
+  import { useUiStore } from '~/stores/uiStore'
 
-const icons = useIcons()
-const colorMode = useColorMode()
-const uiStore = useUiStore()
-const { t: $t } = useI18n()
+  const icons = useIcons()
+  const colorMode = useColorMode()
+  const uiStore = useUiStore()
+  const { t: $t } = useI18n()
 
-const isDarkMode = computed(() => colorMode.preference === 'dark')
+  const isDarkMode = computed(() => colorMode.preference === 'dark')
 
-function toggleTheme() {
-  const newMode = isDarkMode.value ? 'light' : 'dark'
-  colorMode.preference = newMode
-  uiStore.setTheme(newMode)
-  document.cookie = `opsi-webgui-color-mode=${newMode}; path=/; max-age=31536000; SameSite=Lax`
-}
+  function toggleTheme() {
+    const newMode = isDarkMode.value ? 'light' : 'dark'
+    colorMode.preference = newMode
+    uiStore.setTheme(newMode)
+    document.cookie = `opsi-webgui-color-mode=${newMode}; path=/; max-age=31536000; SameSite=Lax`
+  }
 </script>

@@ -8,74 +8,89 @@
   ServerConfigurationPage - Route page for server host configuration tabs.
 -->
 <template>
-	<div class="h-full flex flex-col min-h-0">
-		<HostsConfigTabs :host-id="selectedServerId" host-type="server" :tab="activeTab" show-host-selector
-			:readonly="isReadOnly || !hasServerWriteAccess" @update:host-id="updateSelectedServerId"
-			@update:tab="updateActiveTab" @saved="handleSaved" />
-	</div>
+  <div class="h-full flex flex-col min-h-0">
+    <HostsConfigTabs
+      :host-id="selectedServerId"
+      host-type="server"
+      :tab="activeTab"
+      show-host-selector
+      :readonly="isReadOnly || !hasServerWriteAccess"
+      @update:host-id="updateSelectedServerId"
+      @update:tab="updateActiveTab"
+      @saved="handleSaved"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-	layout: 'default',
-	key: (route) => {
-		const id = route.params.id
-		const normalizedId = Array.isArray(id) ? (id[0] || '') : (id || '')
-		return `servers-configuration-${normalizedId}`
-	},
-})
+  definePageMeta({
+    layout: 'default',
+    key: (route) => {
+      const id = route.params.id
+      const normalizedId = Array.isArray(id) ? id[0] || '' : id || ''
+      return `servers-configuration-${normalizedId}`
+    },
+  })
 
-const { isReadOnly, hasServerWriteAccess } = useUserPermissions()
+  const { isReadOnly, hasServerWriteAccess } = useUserPermissions()
 
-const VALID_TABS = ['parameters', 'attributes'] as const
-const TAB_ALIASES: Record<string, string> = { parameter: 'parameters', attribute: 'attributes' }
+  const VALID_TABS = ['parameters', 'attributes'] as const
+  const TAB_ALIASES: Record<string, string> = { parameter: 'parameters', attribute: 'attributes' }
 
-const route = useRoute()
-const router = useRouter()
+  const route = useRoute()
+  const router = useRouter()
 
-const routeTab = computed((): string => {
-	const t = route.params.tab
-	const val = (Array.isArray(t) ? t[0] : (t as string)) || ''
-	const normalized = TAB_ALIASES[val] || val
-	return VALID_TABS.includes(normalized as (typeof VALID_TABS)[number]) ? normalized : 'parameters'
-})
+  const routeTab = computed((): string => {
+    const t = route.params.tab
+    const val = (Array.isArray(t) ? t[0] : (t as string)) || ''
+    const normalized = TAB_ALIASES[val] || val
+    return VALID_TABS.includes(normalized as (typeof VALID_TABS)[number])
+      ? normalized
+      : 'parameters'
+  })
 
-const routeServerId = computed((): string => {
-	const id = route.params.id
-	return (Array.isArray(id) ? id[0] : id) || ''
-})
+  const routeServerId = computed((): string => {
+    const id = route.params.id
+    return (Array.isArray(id) ? id[0] : id) || ''
+  })
 
-const manualServerId = ref<string>('')
-const selectedServerId = computed(() => manualServerId.value)
+  const manualServerId = ref<string>('')
+  const selectedServerId = computed(() => manualServerId.value)
 
-const activeTab = computed({
-	get: () => routeTab.value,
-	set(v: string) {
-		updateActiveTab(v)
-	},
-})
+  const activeTab = computed({
+    get: () => routeTab.value,
+    set(v: string) {
+      updateActiveTab(v)
+    },
+  })
 
-function updateActiveTab(v: string) {
-	const id = selectedServerId.value
-	const path = id ? `/servers/configuration/${v}/${id}` : `/servers/configuration/${v}`
-	if (route.fullPath !== path) router.replace(path)
-}
+  function updateActiveTab(v: string) {
+    const id = selectedServerId.value
+    const path = id ? `/servers/configuration/${v}/${id}` : `/servers/configuration/${v}`
+    if (route.fullPath !== path) router.replace(path)
+  }
 
-function updateSelectedServerId(id: string | null) {
-	manualServerId.value = id || ''
-	if (id === routeServerId.value) return
-	const tab = activeTab.value
-	router.replace(id ? `/servers/configuration/${tab}/${id}` : `/servers/configuration/${tab}`)
-}
+  function updateSelectedServerId(id: string | null) {
+    manualServerId.value = id || ''
+    if (id === routeServerId.value) return
+    const tab = activeTab.value
+    router.replace(id ? `/servers/configuration/${tab}/${id}` : `/servers/configuration/${tab}`)
+  }
 
-function handleSaved() {
-}
+  function handleSaved() {}
 
-watch(routeServerId, (id) => { manualServerId.value = id }, { immediate: true })
+  watch(
+    routeServerId,
+    (id) => {
+      manualServerId.value = id
+    },
+    { immediate: true }
+  )
 
-useHead({
-	title: () => selectedServerId.value
-		? `${selectedServerId.value} - ${activeTab.value}`
-		: 'Server Configuration',
-})
+  useHead({
+    title: () =>
+      selectedServerId.value
+        ? `${selectedServerId.value} - ${activeTab.value}`
+        : 'Server Configuration',
+  })
 </script>
