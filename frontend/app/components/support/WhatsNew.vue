@@ -8,7 +8,10 @@
   SupportWhatsNew - Release notes display.
 -->
 <template>
-  <CoreAppCard class="h-full flex flex-col">
+  <CoreAppCard
+    class="h-full min-h-0"
+    :ui="{ root: 'h-full min-h-0 flex flex-col', body: 'flex-1 min-h-0 overflow-y-auto p-2' }"
+  >
     <template #header>
       <CoreAppHeading :icon="icons.whatsNew" :text="$t('support.whatsNew')" />
     </template>
@@ -17,16 +20,16 @@
       <CoreAppLoadingSpinner />
     </div>
 
-    <div v-else-if="error" class="text-sm text-[--color-text-muted]">
+    <div v-else-if="error" class="text-xs text-[--color-text-muted]">
       {{ $t('products.changelog.none') }}
     </div>
-    <div v-else class="space-y-2 flex-1 overflow-y-auto">
+    <div v-else class="space-y-1 flex-1">
       <div
         v-for="(item, idx) in items"
         :key="idx"
-        class="changelog-item flex items-start gap-2 text-sm pb-2"
+        class="changelog-item flex items-start gap-1.5 text-xs leading-snug py-1 px-1"
       >
-        <CoreAppIcon :name="icons.minus" class="h-5 w-2" />
+        <CoreAppIcon :name="icons.minus" class="h-4 w-2 mt-0.5 shrink-0" />
         <span>{{ item.text }}</span>
       </div>
     </div>
