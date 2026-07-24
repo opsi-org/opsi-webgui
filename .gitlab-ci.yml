@@ -352,6 +352,7 @@ release:binary-index:
   extends: [.pybuilder, .only-tags]
   needs: [build:addon, setup:versions, release:sbom, { job: setup:changelog, optional: true }]
   script:
+    - opsi-dev-cli self upgrade
     - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
     - '[ -f output/changelog.md ] && opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip --sbom-file frontend/sbom.cyclonedx.json || true'
 
@@ -360,6 +361,7 @@ release:obs-external:
   extends: [.pybuilder, .only-tags]
   needs: [build:addon, setup:versions, { job: setup:changelog, optional: true }]
   script:
+    - opsi-dev-cli self upgrade
     - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
     - |
       [ -f output/changelog.md ] && {
