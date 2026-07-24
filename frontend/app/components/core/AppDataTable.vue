@@ -516,6 +516,10 @@
 
 <script setup lang="ts" generic="T extends Record<string, unknown>">
   import { useDataTableSettings, type DataTableColumnDef } from '~/composables/useDataTableSettings'
+  import {
+    getStoredDataTableFilter,
+    saveStoredDataTableFilter,
+  } from '~/composables/useDataTableFilter'
 
   export interface PageChangeParams {
     pageNumber: number
@@ -530,6 +534,7 @@
     rows: T[]
     columns: DataTableColumnDef[]
     tableId: string
+    filterStorageId?: string
     rowKey?: string
     loading?: boolean
     totalItems?: number
@@ -539,6 +544,7 @@
     activeKey?: string
 
     filterable?: boolean
+    filterQuery?: string
     showRefresh?: boolean
 
     maxHeight?: string
@@ -579,34 +585,7 @@
   const slots = useSlots()
 
   const tableSettings = useDataTableSettings(props.tableId)
-
-  const FILTER_STORAGE_KEY = 'opsi-webgui-datatable-filter-queries'
-
-  function getStoredFilters(): Record<string, string> {
-    if (import.meta.server) return {}
-    try {
-      const raw = localStorage.getItem(FILTER_STORAGE_KEY)
-      return raw ? JSON.parse(raw) : {}
-    } catch {
-      return {}
-    }
-  }
-
-  function getStoredFilter(tableId: string): string {
-    const all = getStoredFilters()
-    return all[tableId] || ''
-  }
-
-  function saveStoredFilter(tableId: string, filterQuery: string) {
-    if (import.meta.server) return
-    try {
-      const all = getStoredFilters()
-      all[tableId] = filterQuery
-      localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(all))
-    } catch {
-      /* */
-    }
-  }
+  const effectiveFilterStorageId = computed(() => props.filterStorageId || props.tableId)
 
   const tableContainer = ref<HTMLElement | null>(null)
   const actionsHeaderRef = ref<HTMLElement | null>(null)
@@ -614,7 +593,11 @@
   const scrollSentinel = ref<HTMLElement | null>(null)
   const selectedKeys = ref<string[]>([])
   const selectedKeysSet = computed(() => new Set(selectedKeys.value))
-  const filterQueryInternal = ref(getStoredFilter(props.tableId))
+  const filterQueryInternal = ref(
+    props.filterQuery !== undefined
+      ? props.filterQuery
+      : getStoredDataTableFilter(effectiveFilterStorageId.value)
+  )
   const currentPage = ref(1)
   const selectionModeOverride = ref<'single' | 'multi' | null>(null)
   const sortBySelection = ref(
@@ -1087,7 +1070,7 @@
   }
 
   watch(filterQueryInternal, (val) => {
-    saveStoredFilter(props.tableId, val)
+    saveStoredDataTableFilter(effectiveFilterStorageId.value, val)
     emit('update:filterQuery', val)
     if (filterDebounceTimer) clearTimeout(filterDebounceTimer)
     filterDebounceTimer = setTimeout(() => {
@@ -1095,6 +1078,35 @@
       emitPageChange()
     }, 160)
   })
+
+  watch(
+    () => props.filterQuery,
+    (newFilter) => {
+      if (newFilter === undefined) return
+      if (newFilter !== filterQueryInternal.value) {
+        filterQueryInternal.value = newFilter
+        saveStoredDataTableFilter(effectiveFilterStorageId.value, newFilter)
+      }
+    }
+  )
+
+  watch(
+    () => [props.tableId, effectiveFilterStorageId.value],
+    () => {
+      if (props.filterQuery !== undefined) {
+        if (props.filterQuery !== filterQueryInternal.value) {
+          filterQueryInternal.value = props.filterQuery
+        }
+        saveStoredDataTableFilter(effectiveFilterStorageId.value, props.filterQuery)
+        return
+      }
+
+      const storedFilter = getStoredDataTableFilter(effectiveFilterStorageId.value)
+      if (storedFilter !== filterQueryInternal.value) {
+        filterQueryInternal.value = storedFilter
+      }
+    }
+  )
 
   watch(
     () => props.selectedKeys,

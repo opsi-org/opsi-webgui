@@ -10,6 +10,7 @@
 <template>
   <ProductsMainView
     ref="productsTableRef"
+    :key="activeType"
     :product-type="activeType === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'"
     :initial-product-id="initialProductId"
   >

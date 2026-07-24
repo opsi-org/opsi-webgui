@@ -271,6 +271,7 @@
   import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
   import type { Client as OpsiClient } from '~/types'
+  import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
   import { storeToRefs } from 'pinia'
@@ -301,7 +302,9 @@
   const reachableLoading = ref<Record<string, boolean>>({})
   const blockedClients = ref<Set<string>>(new Set())
   const lastPageParams = ref<PageChangeParams | null>(null)
-  const currentFilterQuery = ref('')
+  const currentFilterQuery = ref(
+    typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('clients')
+  )
   const fetchClientsRequestId = ref(0)
   const tableSettings = useDataTableSettings('clients')
   const productsSortColumn = ref<string | undefined>(undefined)
@@ -807,8 +810,10 @@
     if (routeProductType === 'localboot' || routeProductType === 'netboot') {
       panelProductType.value = routeProductType
     }
-    const filterQuery = route.query.filter as string | undefined
-    await Promise.all([fetchClients(buildInitialPageParams(filterQuery || '')), fetchBlockedClients()])
+    await Promise.all([
+      fetchClients(buildInitialPageParams(currentFilterQuery.value)),
+      fetchBlockedClients(),
+    ])
     const clientId = route.query.client as string | undefined
     const pType = route.query.panelType as
       | 'config'
@@ -847,4 +852,12 @@
       panelType.value = 'add'
     }
   })
+
+  watch(
+    () => route.query.filter,
+    (newFilter) => {
+      currentFilterQuery.value =
+        typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('clients')
+    }
+  )
 </script>

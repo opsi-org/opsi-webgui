@@ -137,6 +137,7 @@
   import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
   import type { Server } from '~/types'
+  import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
   import { useSelectionStore } from '~/stores/selectionStore'
 
   const icons = useIcons()
@@ -157,6 +158,10 @@
   const panelType = ref<'config' | null>(null)
   const panelTab = ref('parameters')
   const lastPageParams = ref<PageChangeParams | null>(null)
+  const currentFilterQuery = ref(
+    typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('servers')
+  )
+  const fetchServersRequestId = ref(0)
   const tableSettings = useDataTableSettings('servers')
   const configTabsRef = ref<{
     hasAnyChanges: boolean
@@ -240,6 +245,7 @@
 
   function handlePageChange(params: PageChangeParams) {
     lastPageParams.value = params
+    currentFilterQuery.value = params.filterQuery
     // Persist filter query to URL
     if (params.filterQuery || route.query.filter) {
       router.replace({
@@ -268,6 +274,7 @@
   }
 
   async function fetchServers(params?: PageChangeParams) {
+    const requestId = ++fetchServersRequestId.value
     loading.value = true
     error.value = null
     try {
@@ -286,6 +293,7 @@
         p.selected = selectionStore.selectedServersParam
       }
       const result = await getServers(p)
+      if (requestId !== fetchServersRequestId.value) return
       if (result.error) {
         error.value = result.error.message
         return
@@ -303,9 +311,12 @@
         }
       }
     } catch (e) {
+      if (requestId !== fetchServersRequestId.value) return
       error.value = (e as Error).message
     } finally {
-      loading.value = false
+      if (requestId === fetchServersRequestId.value) {
+        loading.value = false
+      }
     }
   }
 
@@ -328,8 +339,7 @@
   )
 
   onMounted(async () => {
-    const filterQuery = route.query.filter as string | undefined
-    await fetchServers(buildInitialPageParams(filterQuery || ''))
+    await fetchServers(buildInitialPageParams(currentFilterQuery.value))
     const serverId = route.query.server as string | undefined
     const configType = route.query.configType as string | undefined
     if (configType) {
@@ -348,4 +358,12 @@
       if (s) doOpenConfig(s)
     }
   })
+
+  watch(
+    () => route.query.filter,
+    (newFilter) => {
+      currentFilterQuery.value =
+        typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('servers')
+    }
+  )
 </script>

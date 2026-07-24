@@ -83,10 +83,13 @@
     />
 
     <CoreAppDataTable
+      :key="tableId"
       :rows="products"
       :columns="columns"
       :loading="loading"
       :table-id="tableId"
+      filter-storage-id="products"
+      :filter-query="currentFilterQuery || undefined"
       row-key="productId"
       :selectable="true"
       :filterable="true"
@@ -312,6 +315,7 @@
     ProductActionRequestChange,
     EditablePropertyValue,
   } from '~/types'
+  import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
   import { storeToRefs } from 'pinia'
@@ -366,7 +370,10 @@
     typeof import('./ConfigTabs.vue').default
   > | null>(null)
   const lastPageParams = ref<PageChangeParams | null>(null)
-  const currentFilterQuery = ref('')
+  const currentFilterQuery = ref(
+    typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('products')
+  )
+  const fetchProductsRequestId = ref(0)
   const productIcons = computed(() => (cachedProductIcons.value ?? {}) as Record<string, string>)
   const processActionsOpen = ref(false)
   const productLiveStatus = ref(new Map<string, ProductLiveStatus>())
@@ -407,7 +414,11 @@
   const tableId = computed(() =>
     props.productType === 'NetbootProduct' ? 'products-netboot' : 'products-localboot'
   )
-  const tableSettings = useDataTableSettings(tableId.value)
+  const localbootTableSettings = useDataTableSettings('products-localboot')
+  const netbootTableSettings = useDataTableSettings('products-netboot')
+  const tableSettings = computed(() =>
+    props.productType === 'NetbootProduct' ? netbootTableSettings : localbootTableSettings
+  )
   const selectedProductIds = computed(() => selectionStore.selectedProducts)
 
   const productConfigTabsRef = computed<ProductConfigTabsRef | null>(() => {
@@ -912,12 +923,21 @@
   function buildInitialPageParams(filterQuery = ''): PageChangeParams {
     return {
       pageNumber: 1,
-      perPage: tableSettings.settings.pageSize,
-      sortBy: tableSettings.settings.sortColumn || 'productId',
-      sortDesc: tableSettings.settings.sortDirection === 'desc',
+      perPage: tableSettings.value.settings.pageSize,
+      sortBy: tableSettings.value.settings.sortColumn || 'productId',
+      sortDesc: tableSettings.value.settings.sortDirection === 'desc',
       filterQuery,
       sortBySelection: sortBySelectionEnabled.value,
     }
+  }
+
+  function resetTableScopeState() {
+    products.value = []
+    totalItems.value = 0
+    lastPageParams.value = null
+    pendingActionRequests.value.clear()
+    productLiveStatus.value.clear()
+    selectionStore.setProducts([], 'table')
   }
 
   function translateSortBy(sortBy: string): string {
@@ -944,20 +964,21 @@
   }
 
   function ensureVersionColumnVisible() {
-    if (!tableSettings.settings.visibleColumns.includes('version')) {
-      tableSettings.settings.visibleColumns.push('version')
+    if (!tableSettings.value.settings.visibleColumns.includes('version')) {
+      tableSettings.value.settings.visibleColumns.push('version')
     }
   }
 
   function applyExternalSort(sortColumn: string | undefined) {
     if (!sortColumn) return
-    tableSettings.setSort(sortColumn, 'desc')
+    tableSettings.value.setSort(sortColumn, 'desc')
     if (sortColumn === 'version_outdated') {
       ensureVersionColumnVisible()
     }
   }
 
   async function fetchProducts(params?: PageChangeParams) {
+    const requestId = ++fetchProductsRequestId.value
     loading.value = true
     error.value = null
     try {
@@ -971,6 +992,7 @@
         if (depots.length > 0) {
           selectionStore.setServers(depots)
         } else {
+          if (requestId !== fetchProductsRequestId.value) return
           error.value = String($t('servers.noSelection'))
           return
         }
@@ -996,19 +1018,20 @@
         p.filterQuery = currentFilterQuery.value
       } else {
         if (
-          tableSettings.settings.sortColumn &&
-          !tableSettings.settings.sortColumn.startsWith('__')
+          tableSettings.value.settings.sortColumn &&
+          !tableSettings.value.settings.sortColumn.startsWith('__')
         ) {
-          p.sortBy = translateSortBy(tableSettings.settings.sortColumn)
-          p.sortDesc = tableSettings.settings.sortDirection === 'desc'
+          p.sortBy = translateSortBy(tableSettings.value.settings.sortColumn)
+          p.sortDesc = tableSettings.value.settings.sortDirection === 'desc'
         }
       }
 
       const result = await getProducts(p)
+      if (requestId !== fetchProductsRequestId.value) return
       if (result.error) throw result.error
       const newData = (result.data || []) as ProductRow[]
       if (result.total !== null) totalItems.value = result.total
-      if (effectiveParams && effectiveParams.pageNumber > 1 && lastPageParams.value) {
+      if (params && params.pageNumber > 1 && lastPageParams.value) {
         const existingIds = new Set(products.value.map((p) => p.productId))
         const unique = newData.filter((p) => !existingIds.has(p.productId))
         products.value = [...products.value, ...unique]
@@ -1016,17 +1039,20 @@
         products.value = newData
       }
     } catch (e) {
+      if (requestId !== fetchProductsRequestId.value) return
       error.value = e instanceof Error ? e.message : String($t('products.none'))
     } finally {
-      loading.value = false
+      if (requestId === fetchProductsRequestId.value) {
+        loading.value = false
+      }
     }
   }
 
   watch(
     () => props.productType,
     () => {
-      pendingActionRequests.value.clear()
-      fetchProducts()
+      resetTableScopeState()
+      fetchProducts(buildInitialPageParams(currentFilterQuery.value))
     }
   )
 
@@ -1047,6 +1073,15 @@
       applyExternalSort(newSortBy)
       fetchProducts()
     }
+  )
+
+  watch(
+    () => route.query.filter,
+    (newFilter) => {
+      currentFilterQuery.value =
+        typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('products')
+    },
+    { immediate: true }
   )
 
   watch(
@@ -1082,12 +1117,12 @@
 
   watch(
     () => selectionStore.selectedClients,
-    () => fetchProducts(),
+    () => fetchProducts(buildInitialPageParams(currentFilterQuery.value)),
     { deep: true }
   )
   watch(
     () => selectionStore.selectedServers,
-    () => fetchProducts(),
+    () => fetchProducts(buildInitialPageParams(currentFilterQuery.value)),
     { deep: true }
   )
   watch(
@@ -1126,9 +1161,8 @@
     } else if (typeof route.query.sortBy === 'string') {
       applyExternalSort(route.query.sortBy)
     }
-    const filterQuery = route.query.filter as string | undefined
     await Promise.all([
-      fetchProducts(buildInitialPageParams(filterQuery || '')),
+      fetchProducts(buildInitialPageParams(currentFilterQuery.value)),
       fetchProductIcons(),
     ])
     tryOpenPanelFromRoute()

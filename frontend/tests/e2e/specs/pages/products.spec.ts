@@ -47,6 +47,30 @@ test.describe('Products', () => {
         const count = await getTableRowCount(p)
         expect(count).toBeGreaterThan(0)
 
+        const localbootTab = p
+          .getByRole('tab')
+          .filter({ hasText: /localboot/i })
+          .first()
+        const netbootTab = p
+          .getByRole('tab')
+          .filter({ hasText: /netboot/i })
+          .first()
+
+        if (
+          (await localbootTab.isVisible().catch(() => false)) &&
+          (await netbootTab.isVisible().catch(() => false))
+        ) {
+          await netbootTab.click()
+          await p.waitForTimeout(1200)
+          await waitForTable(p)
+          expect(await getTableRowCount(p)).toBeGreaterThan(0)
+
+          await localbootTab.click()
+          await p.waitForTimeout(1200)
+          await waitForTable(p)
+          expect(await getTableRowCount(p)).toBeGreaterThan(0)
+        }
+
         const headers = p.locator('thead th, [class*="header"] [class*="cell"]')
         expect(await headers.count()).toBeGreaterThan(1)
 
@@ -100,8 +124,8 @@ test.describe('Products', () => {
         const actionSel = p
           .locator(
             'table tbody tr:first-child select, ' +
-              'table tbody tr:first-child [class*="action-request"] button, ' +
-              'table tbody tr:first-child [class*="action"] button'
+            'table tbody tr:first-child [class*="action-request"] button, ' +
+            'table tbody tr:first-child [class*="action"] button'
           )
           .first()
         if (await actionSel.isVisible().catch(() => false)) {
@@ -126,8 +150,8 @@ test.describe('Products', () => {
             const actionSel = p
               .locator(
                 'table tbody tr:first-child select, ' +
-                  'table tbody tr:first-child [class*="action-request"] button, ' +
-                  'table tbody tr:first-child [class*="action"] button'
+                'table tbody tr:first-child [class*="action-request"] button, ' +
+                'table tbody tr:first-child [class*="action"] button'
               )
               .first()
             if (await actionSel.isVisible().catch(() => false)) {
