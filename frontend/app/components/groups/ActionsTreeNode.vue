@@ -97,7 +97,7 @@
       </button>
       <div
         v-if="group.isSpecial && group.label !== 'not_assigned'"
-        class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity"
+        class="opacity-0 group-hover/node:opacity-100 flex gap-1 transition-opacity"
         @click.stop
       >
         <CoreAppButton
@@ -121,7 +121,7 @@
       </div>
       <div
         v-else-if="!group.isSpecial"
-        class="opacity-0 group-hover/node:opacity-100 flex gap-0.5 transition-opacity"
+        class="opacity-0 group-hover/node:opacity-100 flex gap-1 transition-opacity"
         @click.stop
       >
         <CoreAppButton
