@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
 # Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
@@ -9,12 +7,16 @@ webgui utils
 """
 
 import asyncio
+from collections.abc import Callable
 from functools import wraps
 from json import loads  # pylint: disable=no-name-in-module
 from operator import and_
-from typing import Any, Callable, List, Optional, Union
+from typing import Any
 
 from fastapi import Query, status
+
+# from OPSI.Backend.MySQL import MySQL, MySQLBackend
+from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import parse_list
 from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
@@ -22,9 +24,6 @@ from opsiconfd.config import get_configserver_id
 # from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, select, table, text  # type: ignore[import]
-
-# from OPSI.Backend.MySQL import MySQL, MySQLBackend
-from opsiconfd import contextvar_client_session
 
 from .logger import get_logger
 
@@ -56,27 +55,27 @@ def get_depot_of_client(client: str) -> str:
         return depot
 
 
-def parse_hosts_list(hosts: List[str] = Query(None)) -> Optional[List]:
+def parse_hosts_list(hosts: list[str] = Query(None)) -> list | None:
     return parse_list(hosts)
 
 
-def parse_server_list(servers: List[str] = Query(None)) -> Optional[List]:
+def parse_server_list(servers: list[str] = Query(None)) -> list | None:
     return parse_list(servers)
 
 
-def parse_depot_list(selectedDepots: List[str] = Query(None)) -> Optional[List]:  # pylint: disable=invalid-name
+def parse_depot_list(selectedDepots: list[str] = Query(None)) -> list | None:  # pylint: disable=invalid-name
     return parse_list(selectedDepots)
 
 
-def parse_client_list(selectedClients: List[str] = Query(None)) -> Optional[List]:  # pylint: disable=invalid-name
+def parse_client_list(selectedClients: list[str] = Query(None)) -> list | None:  # pylint: disable=invalid-name
     return parse_list(selectedClients)
 
 
-def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]:  # pylint: disable=invalid-name
+def parse_selected_list(selected: list[str] = Query(None)) -> list | None:  # pylint: disable=invalid-name
     return parse_list(selected)
 
 
-def parse_group_list(filteredGroups: List[str] = Query(None)) -> Optional[List]:  # pylint: disable=invalid-name
+def parse_group_list(filteredGroups: list[str] = Query(None)) -> list | None:  # pylint: disable=invalid-name
     return parse_list(filteredGroups)
 
 
@@ -102,9 +101,9 @@ def get_allowed_objects() -> dict:
 
 def build_tree(  # pylint: disable=too-many-branches
     group: dict,
-    groups: List[dict],
-    allowed: List[str],
-    processed: List[str] | None = None,
+    groups: list[dict],
+    allowed: list[str],
+    processed: list[str] | None = None,
     default_expanded: bool | None = None,
 ) -> dict:
     if not processed:
@@ -149,7 +148,7 @@ def build_tree(  # pylint: disable=too-many-branches
     return group
 
 
-def merge_dicts(dict_a: dict, dict_b: dict, path: Optional[List] = None) -> dict:
+def merge_dicts(dict_a: dict, dict_b: dict, path: list | None = None) -> dict:
     if dict_a is None or dict_b is None:
         raise ValueError("Merge_dicts: At least one of the dicts (a and b) is not set.")
     if path is None:
@@ -348,8 +347,8 @@ def _get_object_to_groups(
 
 
 def get_objects_of_group(
-    group: str | List[str] = ["verwaltung"], group_type: str = "HostGroup"
-) -> List[str]:
+    group: str | list[str] = ["verwaltung"], group_type: str = "HostGroup"
+) -> list[str]:
     """
     Get all (nested) clients in a specific group, which are allowed (by userroles)
     """
@@ -552,13 +551,22 @@ def filter_depot_access(func: Callable) -> Callable:
             if depot_access_configured(username):
                 allowed_depots = get_allowed_depots(username)
                 selected_depots = kwargs.get("selectedDepots")
-                for depot in selected_depots:
-                    if depot not in allowed_depots:
-                        selected_depots.remove(depot)
-                if selected_depots:
-                    kwargs["selectedDepots"] = selected_depots
+
+                # No explicit depot selection: restrict to user's allowed depots.
+                if selected_depots is None:
+                    kwargs["selectedDepots"] = list(allowed_depots)
                 else:
-                    kwargs["selectedDepots"] = []
+                    # Normalize to a list and keep only allowed depots.
+                    selected_depots_list = (
+                        list(selected_depots)
+                        if isinstance(selected_depots, (list, tuple, set))
+                        else [selected_depots]
+                    )
+                    kwargs["selectedDepots"] = [
+                        depot
+                        for depot in selected_depots_list
+                        if depot in allowed_depots
+                    ]
         if asyncio.iscoroutinefunction(func):
             return await func(*args, **kwargs)
         return func(*args, **kwargs)
@@ -582,7 +590,7 @@ def check_client_creation_rights(func: Callable) -> Callable:
     return check_user
 
 
-def bool_value(value: Union[str, bool]) -> bool:
+def bool_value(value: str | bool) -> bool:
     if isinstance(value, bool):
         return value
     if value:
@@ -591,7 +599,7 @@ def bool_value(value: Union[str, bool]) -> bool:
     return False
 
 
-def unicode_value(value: Union[str, List[str]], delimiter: str = ";") -> List[str]:
+def unicode_value(value: str | list[str], delimiter: str = ";") -> list[str]:
     if value and isinstance(value, list):
         return value
     if value and isinstance(value, str):
@@ -605,7 +613,7 @@ def unicode_value(value: Union[str, List[str]], delimiter: str = ";") -> List[st
 
 def unicode_config(
     value: str, multi_value: bool = False, delimiter: str = ";"
-) -> Union[str, List[str]]:
+) -> str | list[str]:
     if multi_value:
         return unicode_value(value, delimiter)
     if value and isinstance(value, str):
@@ -697,7 +705,7 @@ def get_all_children_groupids(raw_groups: list[dict], group_ids: list[str]) -> s
 # return all_children
 
 
-def get_all_children_groupid(raw_groups: List[dict], group_id: str) -> set[str]:
+def get_all_children_groupid(raw_groups: list[dict], group_id: str) -> set[str]:
     """
     Returns all child group IDs for a given group ID.
     """
