@@ -188,11 +188,24 @@ def get_client_config(
 @api_router.get("/api/opsidata/config/clients")
 @rest_api
 def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
-    selectedClients: list[str] = Depends(parse_client_list),  # pylint: disable=invalid-name
+    selectedClients: list[str] | None = Depends(parse_client_list),  # pylint: disable=invalid-name
     commons: dict = Depends(common_query_parameters),
 ) -> RESTResponse:
+    selected_clients = selectedClients or []
+
+    if not selected_clients:
+        return RESTResponse(
+            data={
+                "general": [],
+                "clientconfig": [],
+                "opsi-script": [],
+                "opsiclientd": [],
+                "software-on-demand": [],
+            }
+        )
+
     where = text("")
-    params: dict = {"clients": selectedClients, "num_clients": len(selectedClients)}
+    params: dict = {"clients": selected_clients, "num_clients": len(selected_clients)}
     if commons.get("filterQuery"):
         where = text("(c.configId LIKE :search)")
         params["search"] = f"%{commons['filterQuery']}%"
@@ -309,7 +322,7 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
                 if (
                     (
                         len(config.get("clientsWithDiff", "").split(";"))
-                        != len(selectedClients)
+                        != len(selected_clients)
                         and config.get("value", "") != config.get("defaultValue", "")
                     )
                     or config.get("value", "") == "mixed"
@@ -336,7 +349,7 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
                     and (
                         not config.get("allClientValuesEqual", False)
                         or len(config.get("clientsWithDiff", "").split(";"))
-                        == len(selectedClients)
+                        == len(selected_clients)
                     )  # len 1
                     and config.get("value", "") != config.get("defaultValue", "")
                 ):
@@ -353,7 +366,7 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
                 del config["clientValues"]
                 del config["clientsWithDiff"]
                 del config["value"]
-                for client in selectedClients:
+                for client in selected_clients:
                     if client not in config.get("clients", []):
                         config["clients"][client] = config.get("defaultValue", "")
 

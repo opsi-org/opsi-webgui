@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
 # Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
@@ -833,6 +831,12 @@ def add_client_to_groups(
     """
     Add client to a list of groups.
     """
+    if not groups:
+        logger.error("No groups given.")
+        return RESTErrorResponse(
+            http_status=status.HTTP_400_BAD_REQUEST, message="No groups given."
+        )
+
     try:
         for group in groups:
             backend.objectToGroup_create("HostGroup", group, clientid)
