@@ -14,6 +14,9 @@ from operator import and_
 from typing import Any
 
 from fastapi import Query, status
+
+# from OPSI.Backend.MySQL import MySQL, MySQLBackend
+from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import parse_list
 from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
@@ -21,9 +24,6 @@ from opsiconfd.config import get_configserver_id
 # from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, select, table, text  # type: ignore[import]
-
-# from OPSI.Backend.MySQL import MySQL, MySQLBackend
-from opsiconfd import contextvar_client_session
 
 from .logger import get_logger
 
@@ -297,8 +297,8 @@ def get_groups(gtype: str, parent_ids: str | list[str] | None = None) -> list:
             .where(where)
             .select_from(table("GROUP").alias("g"))
         )
-        logger.warning("GType %s, parent_ids %s", gtype, parent_ids)
-        logger.warning("Group query: %s", query)
+        logger.debug("GType %s, parent_ids %s", gtype, parent_ids)
+        logger.debug("Group query: %s", query)
         result = session.execute(query, params=params)
         result = result.fetchall()
         groups = []
@@ -336,8 +336,8 @@ def _get_object_to_groups(
             .where(where)
             .select_from(table("OBJECT_TO_GROUP"))
         )
-        logger.warning("GType %s, group_ids %s", gtype, group_ids)
-        logger.warning("Object to group query: %s", query)
+        logger.debug("GType %s, group_ids %s", gtype, group_ids)
+        logger.debug("Object to group query: %s", query)
         result = session.execute(query, params=params)
         result = result.fetchall()
         objects = []
@@ -355,24 +355,16 @@ def get_objects_of_group(
     if group_type not in ["HostGroup", "ProductGroup"]:
         raise ValueError("Invalid group type")
 
-        allowed_clients = None
-        username = get_username()
-        configured = host_group_access_configured(username)
-
-    if user_register() and configured:
-        allowed_clients = get_allowed_group_objects(username, group_type)
-        if not allowed_clients:
-            logger.warning("No clients found for user '%s'.", username)
-            # return RESTResponse(data=[], total=0)
-            return []
-
+    # Note: userrole-based object filtering (allowed clients/products) is
+    # applied by the calling endpoints; this helper only resolves the
+    # (nested) members of the given groups.
     child_groups = get_groups(group_type, parent_ids=group)
-    logger.warning("Child groups: %s", child_groups)
+    logger.debug("Child groups: %s", child_groups)
     object_to_groups = [
         obj["objectId"] for obj in _get_object_to_groups(group_type, group_ids=group)
     ]
-    logger.warning("Object to groups: %s", object_to_groups)
-    processed_groups = [group] if isinstance(group, str) else group
+    logger.debug("Object to groups: %s", object_to_groups)
+    processed_groups = [group] if isinstance(group, str) else list(group)
     for row in child_groups:
         if row["group_id"] in processed_groups:
             continue
@@ -430,9 +422,14 @@ def get_allowed_sql(user: str, gtype: str = "HostGroup") -> list:
     else:
         raise ValueError(f"Unsupported group type: {gtype}")
 
+    if not allowed_group_ids:
+        # No groups configured for the user -> no allowed objects.
+        # (An empty IN () clause would be a SQL syntax error.)
+        return []
+
     placeholders = ", ".join([f":p{i}" for i in range(len(allowed_group_ids))])
     params = {f"p{i}": gid for i, gid in enumerate(allowed_group_ids)}
-    logger.warning("Allowed group ids: %s", allowed_group_ids)
+    logger.debug("Allowed group ids: %s", allowed_group_ids)
     sql = f"""
 			WITH RECURSIVE group_tree AS (
 					SELECT groupId
@@ -459,7 +456,7 @@ def get_allowed_sql(user: str, gtype: str = "HostGroup") -> list:
             if otg_row is not None:
                 allowed_objects.append(dict(otg_row).get("objectId"))
 
-    logger.warning("Allowed objects of %s: %s", gtype, allowed_objects)
+    logger.debug("Allowed objects of %s: %s", gtype, allowed_objects)
     return allowed_objects
 
 
@@ -698,21 +695,6 @@ def get_all_children_groupids(raw_groups: list[dict], group_ids: list[str]) -> s
             stack.extend(parent_map.get(gid, []))
 
     return all_children
-
-
-# def get_all_children_groupids(raw_groups: List, group_id: List[str]) -> set[str]:
-# """
-# Returns all child group IDs for a list of group IDs.
-# """
-# if not raw_groups or not group_id:
-# return set()
-
-# all_children = set()
-# for gid in group_id:
-# all_children.add(gid)
-# all_children.update(get_all_children_groupid(raw_groups, gid))
-
-# return all_children
 
 
 def get_all_children_groupid(raw_groups: list[dict], group_id: str) -> set[str]:

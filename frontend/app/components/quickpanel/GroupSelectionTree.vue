@@ -78,9 +78,6 @@
                 sectionLabel(section.id)
               }}</span>
             </div>
-            <CoreAppBadge v-if="section.count > 0" size="xs" variant="subtle" color="neutral"
-              >{{ section.count }}
-            </CoreAppBadge>
           </button>
           <template v-if="!isSectionCollapsed(section.id)">
             <div
@@ -153,14 +150,6 @@
                   item.label
                 }}</span>
               </button>
-              <CoreAppBadge
-                v-if="item.isGroup && item.memberCount > 0"
-                size="xs"
-                variant="subtle"
-                color="neutral"
-              >
-                {{ item.memberCount }}</CoreAppBadge
-              >
             </div>
             <div
               v-if="section.flatItems.length === 0"
@@ -220,13 +209,6 @@
               item.label
             }}</span>
           </button>
-          <CoreAppBadge
-            v-if="item.isGroup && item.memberCount > 0"
-            size="xs"
-            variant="subtle"
-            color="neutral"
-            >{{ item.memberCount }}</CoreAppBadge
-          >
         </div>
         <div
           v-if="productFlatItems.length === 0"

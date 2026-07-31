@@ -192,3 +192,133 @@ def test_filter_depot_access_endpoint_signatures_are_consistent() -> None:
     )
     # Endpoints relying on the decorator skipping injection:
     assert endpoints_without_selected_depots == {"reachable_clients"}
+
+
+def test_get_objects_of_group_works_with_user_register_active(monkeypatch):
+    """Regression: with user roles active (user.{}.register = true) this
+    helper raised "NameError: name 'configured' is not defined" because the
+    userrole setup lines were unreachable dead code behind a raise."""
+    monkeypatch.setattr(utils, "user_register", lambda: True)
+    monkeypatch.setattr(
+        utils,
+        "get_groups",
+        lambda gtype, parent_ids=None: (
+            [{"group_id": "sub-group", "parent_id": "group-a", "type": gtype}]
+            if parent_ids == ["group-a"]
+            else []
+        ),
+    )
+    members = {
+        ("group-a",): [{"objectId": "client-1.opsi.org"}],
+        ("sub-group",): [{"objectId": "client-2.opsi.org"}],
+    }
+
+    def fake_object_to_groups(gtype, group_ids=None):
+        ids = [group_ids] if isinstance(group_ids, str) else list(group_ids or [])
+        return members.get(tuple(ids), [])
+
+    monkeypatch.setattr(utils, "_get_object_to_groups", fake_object_to_groups)
+
+    result = utils.get_objects_of_group(["group-a"], "HostGroup")
+    assert result == ["client-1.opsi.org", "client-2.opsi.org"]
+
+
+def test_get_objects_of_group_invalid_group_type_raises():
+    with pytest.raises(ValueError):
+        utils.get_objects_of_group(["group-a"], "InvalidType")
+
+
+def test_get_objects_of_group_does_not_mutate_input(monkeypatch):
+    """The passed group list must not grow while nested groups are resolved."""
+    monkeypatch.setattr(utils, "user_register", lambda: False)
+    monkeypatch.setattr(
+        utils,
+        "get_groups",
+        lambda gtype, parent_ids=None: (
+            [{"group_id": "sub-group", "parent_id": "group-a", "type": gtype}]
+            if parent_ids == ["group-a"]
+            else []
+        ),
+    )
+    monkeypatch.setattr(
+        utils, "_get_object_to_groups", lambda gtype, group_ids=None: []
+    )
+
+    groups = ["group-a"]
+    utils.get_objects_of_group(groups, "HostGroup")
+    assert groups == ["group-a"]
+
+
+def test_get_allowed_sql_returns_empty_for_no_configured_groups(monkeypatch):
+    """No configured groups must yield [] without touching the database
+    (an empty IN () clause would be a SQL syntax error)."""
+    monkeypatch.setattr(utils, "get_allowed_host_groups", lambda _user: [])
+    assert utils.get_allowed_sql("alice", "HostGroup") == []
+
+    monkeypatch.setattr(utils, "get_allowed_product_groups", lambda _user: [])
+    assert utils.get_allowed_sql("alice", "ProductGroup") == []
+
+
+class TestRestrictClientsToAllowedDepots:
+    """Depot-restricted users must not be able to probe reachability of
+    clients outside their allowed depots (clients/reachable endpoint)."""
+
+    @pytest.fixture
+    def api_clients(self):
+        from webgui.python.api import clients as api_clients_module
+
+        return api_clients_module
+
+    def test_unrestricted_user_passes_through(self, monkeypatch, api_clients):
+        monkeypatch.setattr(api_clients, "user_register", lambda: False)
+        assert api_clients._restrict_clients_to_allowed_depots(["c1"]) == ["c1"]
+        assert api_clients._restrict_clients_to_allowed_depots(None) is None
+
+    def test_no_depot_restriction_passes_through(self, monkeypatch, api_clients):
+        monkeypatch.setattr(api_clients, "user_register", lambda: True)
+        monkeypatch.setattr(api_clients, "get_username", lambda: "alice")
+        monkeypatch.setattr(api_clients, "depot_access_configured", lambda _user: False)
+        assert api_clients._restrict_clients_to_allowed_depots(["c1"]) == ["c1"]
+
+    def test_restricted_user_selection_is_filtered(self, monkeypatch, api_clients):
+        monkeypatch.setattr(api_clients, "user_register", lambda: True)
+        monkeypatch.setattr(api_clients, "get_username", lambda: "alice")
+        monkeypatch.setattr(api_clients, "depot_access_configured", lambda _user: True)
+        monkeypatch.setattr(
+            api_clients, "get_allowed_depots", lambda _user: ["depot-a"]
+        )
+        monkeypatch.setattr(
+            api_clients,
+            "_clients_of_depots",
+            lambda depots: ["allowed-1.opsi.org", "allowed-2.opsi.org"],
+        )
+        result = api_clients._restrict_clients_to_allowed_depots(
+            ["allowed-1.opsi.org", "forbidden.opsi.org"]
+        )
+        assert result == ["allowed-1.opsi.org"]
+
+    def test_restricted_user_without_selection_gets_allowed_clients(
+        self, monkeypatch, api_clients
+    ):
+        monkeypatch.setattr(api_clients, "user_register", lambda: True)
+        monkeypatch.setattr(api_clients, "get_username", lambda: "alice")
+        monkeypatch.setattr(api_clients, "depot_access_configured", lambda _user: True)
+        monkeypatch.setattr(
+            api_clients, "get_allowed_depots", lambda _user: ["depot-a"]
+        )
+        monkeypatch.setattr(
+            api_clients,
+            "_clients_of_depots",
+            lambda depots: ["b.opsi.org", "a.opsi.org"],
+        )
+        result = api_clients._restrict_clients_to_allowed_depots(None)
+        assert result == ["a.opsi.org", "b.opsi.org"]
+
+    def test_restricted_user_with_no_allowed_clients(self, monkeypatch, api_clients):
+        monkeypatch.setattr(api_clients, "user_register", lambda: True)
+        monkeypatch.setattr(api_clients, "get_username", lambda: "alice")
+        monkeypatch.setattr(api_clients, "depot_access_configured", lambda _user: True)
+        monkeypatch.setattr(api_clients, "get_allowed_depots", lambda _user: [])
+        monkeypatch.setattr(api_clients, "_clients_of_depots", lambda depots: [])
+        assert api_clients._restrict_clients_to_allowed_depots(["c1"]) == []
+        assert api_clients._restrict_clients_to_allowed_depots(None) == []

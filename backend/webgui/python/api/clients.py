@@ -38,7 +38,9 @@ from ..logger import get_logger
 from ..utils import (
     backend,
     check_client_creation_rights,
+    depot_access_configured,
     filter_depot_access,
+    get_allowed_depots,
     get_allowed_group_objects,
     get_objects_of_group,
     get_username,
@@ -345,6 +347,26 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
         return RESTResponse(data=data, total=total)
 
 
+def _restrict_clients_to_allowed_depots(
+    selected_clients: list[str] | None,
+) -> list[str] | None:
+    """Limit *selected_clients* for users with restricted depot access.
+
+    Returns the (possibly filtered) client list. For restricted users
+    without an explicit selection, returns all clients on their allowed
+    depots. Unrestricted users get their selection back unchanged.
+    """
+    if not user_register():
+        return selected_clients
+    username = get_username()
+    if not depot_access_configured(username):
+        return selected_clients
+    allowed_clients = set(_clients_of_depots(get_allowed_depots(username)))
+    if selected_clients:
+        return [client for client in selected_clients if client in allowed_clients]
+    return sorted(allowed_clients)
+
+
 @api_router.get("/api/opsidata/clients/reachable", response_model=list[ClientList])
 @rest_api
 @filter_depot_access
@@ -355,6 +377,11 @@ async def reachable_clients(  # pylint: disable=too-many-branches, dangerous-def
     """
     Get List of reachable Clients. Only test "clients".
     """
+    # Users with restricted depot access may only check clients
+    # that belong to their allowed depots.
+    selectedClients = _restrict_clients_to_allowed_depots(selectedClients)
+    if selectedClients == []:
+        return RESTResponse(data={}, total=0)
     result = await backend.hostControl_reachable(selectedClients, 20)
     return RESTResponse(data=result, total=len(result))
 
