@@ -9,22 +9,11 @@
  */
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 import { useUserStore } from '~/stores/userStore'
-
-const urlsWithoutSession = ['/auth/logout', '/user/configuration']
-
-function headersToObject(
-  headers: Headers | Record<string, string> | undefined
-): Record<string, string> {
-  if (!headers) return {}
-  if (headers instanceof Headers) {
-    const obj: Record<string, string> = {}
-    headers.forEach((value, key) => {
-      obj[key] = value
-    })
-    return obj
-  }
-  return headers
-}
+import {
+  headersToObject,
+  mergeRequestHeaders,
+  shouldSendSessionHeader,
+} from '../utils/requestHeaders'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
@@ -41,18 +30,16 @@ export default defineNuxtPlugin((nuxtApp) => {
       const isFormData = options.body instanceof FormData
       const existingHeaders = headersToObject(options.headers)
 
-      const sessionHeaders: Record<string, string> = {}
-      if (!urlsWithoutSession.some((path) => url.includes(path))) {
-        sessionHeaders['X-opsi-session-lifetime'] = String(userStore.sessionExpiry)
+      if (shouldSendSessionHeader(url)) {
         userStore.setSession()
       }
 
-      options.headers = {
-        ...existingHeaders,
-        ...sessionHeaders,
-        Accept: 'application/json, text/plain, */*',
-        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-      } as unknown as Headers
+      options.headers = mergeRequestHeaders(
+        existingHeaders,
+        url,
+        userStore.sessionExpiry,
+        isFormData
+      ) as unknown as Headers
     },
     onResponseError({ response }) {
       if (response.status === 401) {
