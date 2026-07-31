@@ -6,7 +6,7 @@
 webgui utils
 """
 
-import asyncio
+import inspect
 from collections.abc import Callable
 from functools import wraps
 from json import loads  # pylint: disable=no-name-in-module
@@ -14,9 +14,6 @@ from operator import and_
 from typing import Any
 
 from fastapi import Query, status
-
-# from OPSI.Backend.MySQL import MySQL, MySQLBackend
-from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import parse_list
 from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
@@ -24,6 +21,9 @@ from opsiconfd.config import get_configserver_id
 # from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, select, table, text  # type: ignore[import]
+
+# from OPSI.Backend.MySQL import MySQL, MySQLBackend
+from opsiconfd import contextvar_client_session
 
 from .logger import get_logger
 
@@ -543,10 +543,20 @@ def opsi_server_write_check(func: Callable) -> Callable:
 
 
 def filter_depot_access(func: Callable) -> Callable:
+    # Only touch the "selectedDepots" kwarg if the wrapped function actually
+    # accepts it (either as a named parameter or via **kwargs). Injecting it
+    # into functions without that parameter (e.g. reachable_clients) raises
+    # "got an unexpected keyword argument 'selectedDepots'".
+    func_parameters = inspect.signature(func).parameters
+    accepts_selected_depots = "selectedDepots" in func_parameters or any(
+        parameter.kind == inspect.Parameter.VAR_KEYWORD
+        for parameter in func_parameters.values()
+    )
+
     @wraps(func)
     async def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
         logger.debug("%s - check user", func)
-        if user_register():
+        if user_register() and accepts_selected_depots:
             username = kwargs.get("request").scope.get("session").username
             if depot_access_configured(username):
                 allowed_depots = get_allowed_depots(username)
@@ -567,7 +577,7 @@ def filter_depot_access(func: Callable) -> Callable:
                         for depot in selected_depots_list
                         if depot in allowed_depots
                     ]
-        if asyncio.iscoroutinefunction(func):
+        if inspect.iscoroutinefunction(func):
             return await func(*args, **kwargs)
         return func(*args, **kwargs)
 
