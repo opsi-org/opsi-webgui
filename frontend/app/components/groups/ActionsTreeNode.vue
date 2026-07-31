@@ -88,12 +88,6 @@
         >
           {{ group.label }}
         </span>
-        <span
-          v-if="(group.members?.length || 0) > 0"
-          class="text-xs tabular-nums px-1 py-0 rounded-full bg-(--color-surface-hover) text-(--color-text)"
-        >
-          {{ (group.members || []).length }}
-        </span>
       </button>
       <div
         v-if="group.isSpecial && group.label !== 'not_assigned'"
