@@ -386,6 +386,10 @@ export function useCachedData() {
           const first = clientGroupsState.tree[0]
           if (first && !clientGroupsState.expanded.has(first.id))
             clientGroupsState.expanded = new Set([first.id])
+          const rootIds = new Set(clientGroupsState.tree.map((node) => node.id))
+          for (const expandedId of clientGroupsState.expanded) {
+            if (!rootIds.has(expandedId)) void fetchGroupChildrenLazy(expandedId, selectedServers)
+          }
         }
       } catch (e) {
         clientGroupsState.error = e instanceof Error ? e.message : 'Failed to load groups'
@@ -423,6 +427,10 @@ export function useCachedData() {
           const first = productGroupsState.tree[0]
           if (first && !productGroupsState.expanded.has(first.id))
             productGroupsState.expanded = new Set([first.id])
+          const rootIds = new Set(productGroupsState.tree.map((node) => node.id))
+          for (const expandedId of productGroupsState.expanded) {
+            if (!rootIds.has(expandedId)) void fetchProductGroupChildrenLazy(expandedId)
+          }
         }
       } catch (e) {
         productGroupsState.error = e instanceof Error ? e.message : 'Failed to load groups'
