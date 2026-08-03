@@ -280,6 +280,8 @@ def get_groups(gtype: str, parent_ids: str | list[str] | None = None) -> list:
     params = {"type": gtype}
     if parent_ids is not None:
         parent_ids = [parent_ids] if isinstance(parent_ids, str) else parent_ids
+        if not parent_ids:
+            return []
         where = and_(where, text("(g.parentGroupId IN :parentIds)"))
         params["parentIds"] = parent_ids
 
@@ -315,6 +317,8 @@ def _get_object_to_groups(
     MariaDB [opsi]> SELECT * FROM OBJECT_TO_GROUP WHERE groupType='HostGroup' AND groupId IN ("verwaltung");"""
     if group_ids is not None:
         group_ids = [group_ids] if isinstance(group_ids, str) else group_ids
+        if not group_ids:
+            return []
 
     where = text("groupType=:type")
     params = {"type": gtype}
@@ -423,8 +427,6 @@ def get_allowed_sql(user: str, gtype: str = "HostGroup") -> list:
         raise ValueError(f"Unsupported group type: {gtype}")
 
     if not allowed_group_ids:
-        # No groups configured for the user -> no allowed objects.
-        # (An empty IN () clause would be a SQL syntax error.)
         return []
 
     placeholders = ", ".join([f":p{i}" for i in range(len(allowed_group_ids))])
