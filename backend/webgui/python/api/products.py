@@ -12,7 +12,12 @@ from typing import Any
 
 from fastapi import APIRouter, Body, Depends, Request, status
 from fastapi.responses import JSONResponse
-from opsi_legacy.Object import ProductOnClient
+
+try:
+    from opsi.opsi.service.model.object import ProductOnClient
+except ImportError:  # pragma: no cover - legacy opsi fallback
+    from opsi_legacy.Object import ProductOnClient  # type: ignore
+
 from opsiconfd.config import get_configserver_id
 
 # from opsiconfd.logging import logger

@@ -12,8 +12,17 @@ from datetime import date, datetime
 from typing import Any, Literal
 
 from fastapi import APIRouter, Body, Depends, Request, status
-from opsi_legacy.Exceptions import BackendMissingDataError
-from opsi_legacy.Object import ProductOnClient
+
+try:
+    from opsi.exception import BackendMissingDataError
+except ImportError:  # pragma: no cover - legacy opsi fallback
+    from opsi_legacy.Exceptions import BackendMissingDataError  # type: ignore
+
+try:
+    from opsi.opsi.service.model.object import ProductOnClient
+except ImportError:  # pragma: no cover - legacy opsi fallback
+    from opsi_legacy.Object import ProductOnClient  # type: ignore
+
 from opsiconfd.application.admininterface import _unblock_client
 from opsiconfd.config import config, get_configserver_id
 from opsiconfd.redis import ip_address_from_redis_key, redis_client

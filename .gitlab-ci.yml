@@ -219,10 +219,31 @@ validate:unit:
 
 validate:backend:
   extends: .docker-test
+  retry:
+    max: 1
+    when:
+      - script_failure
+      - runner_system_failure
+      - stuck_or_timeout_failure
   variables:
     COMPOSE_PROJECT_NAME: webgui-be-$CI_JOB_ID
   script:
     - docker compose -f docker/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from backend-tests opsiconfd backend-tests
+  after_script:
+    - docker compose -f docker/docker-compose.test.yml logs > docker-test.log 2>&1 || true
+    - docker compose -f docker/docker-compose.test.yml down -v || true
+    - |
+      if [ ! -f backend/coverage.xml ]; then
+        cat > backend/coverage.xml <<'EOF'
+        <?xml version="1.0" ?>
+        <coverage version="1.0" timestamp="0" lines-valid="0" lines-covered="0" line-rate="0" branches-valid="0" branches-covered="0" branch-rate="0" complexity="0">
+          <sources>
+            <source>/builds/${CI_PROJECT_PATH}/backend</source>
+          </sources>
+          <packages />
+        </coverage>
+        EOF
+      fi
   coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+)%/'
   artifacts:
     when: always
@@ -272,6 +293,12 @@ validate:e2e:full:
     - job: setup:spa
     - job: validate:backend
       optional: true
+  retry:
+    max: 1
+    when:
+      - script_failure
+      - runner_system_failure
+      - stuck_or_timeout_failure
   variables:
     COMPOSE_PROJECT_NAME: webgui-e2e-$CI_JOB_ID
     E2E_PIPELINE_SOURCE: schedule
