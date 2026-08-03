@@ -159,7 +159,7 @@ export function useAutoRefresh(
 
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-  function getEventDescription(msgType: string): string {
+  function getEventDescription(eventName: string): string {
     const map: Record<string, string> = {
       host_created: 'Client created',
       host_updated: 'Client updated',
@@ -170,25 +170,29 @@ export function useAutoRefresh(
       productOnClient_updated: 'Product action updated',
       productOnClient_deleted: 'Product action deleted',
     }
-    const cleanType = msgType.replace('event:', '')
+    const cleanType = eventName.replace('event:', '')
     return map[cleanType] || cleanType
   }
 
   async function handleMessage(msg: unknown) {
     if (!msg || typeof msg !== 'object') return
-    const msgType = (msg as Record<string, unknown>).type as string
+    const record = msg as Record<string, unknown>
+    const msgType = record.type as string
     if (!msgType) return
 
-    const matches = watchEvents.some(
-      (ev) =>
-        ev === msgType || ev === `event:${msgType}` || msgType.startsWith(ev.replace('event:', ''))
-    )
+    const eventName =
+      msgType === 'event'
+        ? (record.event as string) || String(record.channel || '').replace(/^event:/, '')
+        : msgType
+
+    if (!eventName) return
+    const matches = watchEvents.some((ev) => ev.replace(/^event:/, '') === eventName)
 
     if (matches) {
       changesDetected.value = true
-      lastChangeEvent.value = msgType
-      lastChangeDescription.value = getEventDescription(msgType)
-      mbStore.setLastEvent(msgType)
+      lastChangeEvent.value = eventName
+      lastChangeDescription.value = getEventDescription(eventName)
+      mbStore.setLastEvent(eventName)
       if (autoRefreshEnabled.value) {
         if (debounceTimer) clearTimeout(debounceTimer)
         debounceTimer = setTimeout(async () => {
