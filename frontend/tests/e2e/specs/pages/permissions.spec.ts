@@ -46,6 +46,17 @@ async function mockUserConfiguration(
 	})
 }
 
+/** Intercept disabled-features endpoint used by dashboard/terminal permission badges. */
+async function mockDisabledFeatures(page: Page, features: string[] = []): Promise<void> {
+	await page.route('**/opsidata/server/disabled-features*', async (route) => {
+		await route.fulfill({
+			status: 200,
+			contentType: 'application/json',
+			body: JSON.stringify(features),
+		})
+	})
+}
+
 test.describe('User permissions', () => {
 	test('read-only user sees banner and disabled write actions on clients page', async ({
 		page,
@@ -144,6 +155,73 @@ test.describe('User permissions', () => {
 				// The servers table must still render (viewing is allowed)
 				const table = p.locator('main table tbody tr').first()
 				await table.waitFor({ state: 'visible', timeout: 30000 })
+			},
+		})
+	})
+
+	test('dashboard shows permission restrictions for restricted users (visual regression)', async ({
+		page,
+	}) => {
+		await mockUserConfiguration(page, {
+			read_only: true,
+			server_write_access: false,
+			depot_access: true,
+			host_group_access: true,
+			product_group_access: true,
+			client_creation: false,
+		})
+		await mockDisabledFeatures(page, ['terminal', 'messagebus_terminal'])
+
+		await runUITest(page, {
+			name: 'permissions-dashboard-restricted',
+			route: '/dashboard',
+			waitAfterNav: 3000,
+			functional: async (p) => {
+				await expect(p.getByText(/restricted|eingeschränkt/i).first()).toBeVisible({
+					timeout: 15000,
+				})
+				await expect(p.getByText('Read Only').first()).toBeVisible({ timeout: 15000 })
+				await expect(p.getByText('Terminal').first()).toBeVisible({ timeout: 15000 })
+			},
+		})
+	})
+
+	test('restricted user sees restriction badges on data pages (visual regression)', async ({
+		page,
+	}) => {
+		await mockUserConfiguration(page, {
+			depot_access: true,
+			host_group_access: true,
+			product_group_access: true,
+		})
+
+		// Clients page: host-group restriction badge
+		await runUITest(page, {
+			name: 'permissions-restricted-clients-badge',
+			route: '/clients',
+			waitAfterNav: 2500,
+			functional: async (p) => {
+				await expect(p.getByTestId('clients-restricted-badge')).toBeVisible({ timeout: 15000 })
+			},
+		})
+
+		// Products page: product-group restriction badge
+		await runUITest(page, {
+			name: 'permissions-restricted-products-badge',
+			route: '/products',
+			waitAfterNav: 2500,
+			functional: async (p) => {
+				await expect(p.getByTestId('products-restricted-badge')).toBeVisible({ timeout: 15000 })
+			},
+		})
+
+		// Servers page: depot-access restriction badge
+		await runUITest(page, {
+			name: 'permissions-restricted-servers-badge',
+			route: '/servers',
+			waitAfterNav: 2500,
+			functional: async (p) => {
+				await expect(p.getByTestId('servers-restricted-badge')).toBeVisible({ timeout: 15000 })
 			},
 		})
 	})

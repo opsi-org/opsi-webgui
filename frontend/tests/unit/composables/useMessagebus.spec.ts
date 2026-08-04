@@ -109,6 +109,25 @@ describe('useAutoRefresh', () => {
 		expect(lastChangeEvent.value).toBe('productOnClient_updated')
 	})
 
+	it('provides human-readable descriptions for config/configState/log events', async () => {
+		const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
+		const cb = vi.fn()
+		const { lastChangeDescription } = useAutoRefresh(cb)
+
+		await emitMessage({ type: 'event', event: 'config_updated', channel: 'event:config_updated' })
+		expect(lastChangeDescription.value).toBe('Config updated')
+
+		await emitMessage({
+			type: 'event',
+			event: 'configState_created',
+			channel: 'event:configState_created',
+		})
+		expect(lastChangeDescription.value).toBe('Config state created')
+
+		await emitMessage({ type: 'event', event: 'log_updated', channel: 'event:log_updated' })
+		expect(lastChangeDescription.value).toBe('Log updated')
+	})
+
 	it('still matches messages with the event name directly in type', async () => {
 		const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
 		const cb = vi.fn()
@@ -130,6 +149,23 @@ describe('useAutoRefresh', () => {
 		expect(cb).not.toHaveBeenCalled()
 	})
 
+	it('detects configState events in default watchers', async () => {
+		const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
+		const cb = vi.fn()
+		const { changesDetected, lastChangeEvent } = useAutoRefresh(cb)
+
+		await emitMessage({
+			type: 'event',
+			event: 'configState_updated',
+			channel: 'event:configState_updated',
+		})
+
+		expect(changesDetected.value).toBe(true)
+		expect(lastChangeEvent.value).toBe('configState_updated')
+		await vi.advanceTimersByTimeAsync(2100)
+		expect(cb).toHaveBeenCalledTimes(1)
+	})
+
 	it('scoped watchers (clients) ignore product events', async () => {
 		const { useAutoRefreshClients } = await import('~/app/composables/useMessagebus')
 		const cb = vi.fn()
@@ -143,6 +179,26 @@ describe('useAutoRefresh', () => {
 		expect(changesDetected.value).toBe(false)
 
 		await emitMessage({ type: 'event', event: 'host_deleted', channel: 'event:host_deleted' })
+		expect(changesDetected.value).toBe(true)
+	})
+
+	it('scoped watchers (servers) react to config events and ignore product events', async () => {
+		const { useAutoRefreshServers } = await import('~/app/composables/useMessagebus')
+		const cb = vi.fn()
+		const { changesDetected } = useAutoRefreshServers(cb)
+
+		await emitMessage({
+			type: 'event',
+			event: 'productOnClient_updated',
+			channel: 'event:productOnClient_updated',
+		})
+		expect(changesDetected.value).toBe(false)
+
+		await emitMessage({
+			type: 'event',
+			event: 'config_updated',
+			channel: 'event:config_updated',
+		})
 		expect(changesDetected.value).toBe(true)
 	})
 

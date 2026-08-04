@@ -26,12 +26,27 @@
       <slot name="tabs" />
     </template>
     <template #actions>
+      <CoreAppTooltip
+        v-if="isProductGroupAccessRestricted"
+        :text="$t('opsiConfig.serverFeatures.productGroupAccess.disabled')"
+      >
+        <CoreAppBadge
+          color="warning"
+          variant="subtle"
+          size="xs"
+          class="cursor-help"
+          data-testid="products-restricted-badge"
+        >
+          {{ $t('auth.restricted') }}
+        </CoreAppBadge>
+      </CoreAppTooltip>
       <CoreAppButton
         v-if="changesDetected && !autoRefreshEnabled"
         :icon="icons.refresh"
         color="warning"
         variant="soft"
         size="xs"
+        data-testid="messagebus-changes-button"
         @click="manualRefresh"
         :title="lastChangeDescription"
       >
@@ -336,7 +351,7 @@
   const selectionStore = useSelectionStore()
   const messageBusStore = useMessageBusStore()
   const { lastMsg: messageBusLastMsg } = storeToRefs(messageBusStore)
-  const { isReadOnly } = useUserPermissions()
+  const { isReadOnly, isProductGroupAccessRestricted } = useUserPermissions()
   const router = useRouter()
   const route = useRoute()
 
@@ -624,6 +639,20 @@
     }
     visit(payload)
     return [...ids]
+  }
+
+  function getMessagebusEventName(msg: unknown): string {
+    if (!msg || typeof msg !== 'object') return ''
+    const record = msg as Record<string, unknown>
+    const msgType = typeof record.type === 'string' ? record.type : ''
+    if (!msgType) return ''
+    if (msgType === 'event') {
+      const eventField = typeof record.event === 'string' ? record.event : ''
+      if (eventField) return eventField
+      const channel = typeof record.channel === 'string' ? record.channel : ''
+      return channel.replace(/^event:/, '')
+    }
+    return msgType
   }
 
   function openProductConfig(product: ProductRow) {
@@ -1138,9 +1167,8 @@
   )
 
   watch(messageBusLastMsg, (msg) => {
-    if (!msg || typeof msg !== 'object') return
-    const msgType = (msg as Record<string, unknown>).type
-    if (typeof msgType !== 'string' || !msgType.includes('productOnClient_')) return
+    const eventName = getMessagebusEventName(msg)
+    if (!eventName.includes('productOnClient_')) return
     const ids = extractProductIdsFromMessage(msg)
     if (ids.length > 0) {
       setLiveStatus(ids, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)

@@ -22,12 +22,27 @@
     @close-panel="closePanel"
   >
     <template #actions>
+      <CoreAppTooltip
+        v-if="isHostGroupAccessRestricted"
+        :text="$t('opsiConfig.serverFeatures.hostGroupAccess.disabled')"
+      >
+        <CoreAppBadge
+          color="warning"
+          variant="subtle"
+          size="xs"
+          class="cursor-help"
+          data-testid="clients-restricted-badge"
+        >
+          {{ $t('auth.restricted') }}
+        </CoreAppBadge>
+      </CoreAppTooltip>
       <CoreAppButton
         v-if="changesDetected && !autoRefreshEnabled"
         :icon="icons.refresh"
         color="warning"
         variant="soft"
         size="xs"
+        data-testid="messagebus-changes-button"
         @click="manualRefresh"
         :title="lastChangeDescription"
       >
@@ -284,7 +299,7 @@
   const { lastMsg: messageBusLastMsg } = storeToRefs(messageBusStore)
   const router = useRouter()
   const route = useRoute()
-  const { isReadOnly, canCreateClients } = useUserPermissions()
+  const { isReadOnly, canCreateClients, isHostGroupAccessRestricted } = useUserPermissions()
 
   const loading = ref(false)
   const error = ref<string | null>(null)

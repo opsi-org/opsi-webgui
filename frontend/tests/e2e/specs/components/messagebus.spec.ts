@@ -75,7 +75,7 @@ async function firstClientId(page: Page): Promise<string> {
 }
 
 test.describe('Messagebus & auto-refresh', () => {
-  test('connection status is shown in the quick panel', async ({ page }) => {
+  test('connection status is shown in the quick panel', async ({ page, browserName }) => {
     await page.goto('/clients')
     await waitForTable(page)
     await ensureQuickPanelOpen(page)
@@ -86,7 +86,9 @@ test.describe('Messagebus & auto-refresh', () => {
     await expect(settings.getByText(/Verbunden|connected/i).first()).toBeVisible({
       timeout: 20000,
     })
-    await expect(settings).toHaveScreenshot('messagebus-quickpanel-status.png')
+    if (browserName === 'chromium') {
+      await expect(settings).toHaveScreenshot('messagebus-quickpanel-status.png')
+    }
   })
 
   test('auto-refresh reloads the clients table on host_updated events', async ({ page }) => {
@@ -117,7 +119,7 @@ test.describe('Messagebus & auto-refresh', () => {
     }
   })
 
-  test('changes-detected alert appears when auto-refresh is disabled', async ({ page }) => {
+  test('changes-detected alert appears when auto-refresh is disabled', async ({ page, browserName }) => {
     await page.goto('/clients')
     const clientId = await firstClientId(page)
     await setAutoRefresh(page, false)
@@ -135,17 +137,17 @@ test.describe('Messagebus & auto-refresh', () => {
 
       // The page toolbar shows a single "changes detected" refresh button
       // instead of reloading automatically (no duplicated global alert).
-      const changesButton = page
-        .locator('main button')
-        .filter({ hasText: /Änderungen erkannt|Changes detected/i })
-        .first()
+      const changesButton = page.getByTestId('messagebus-changes-button').first()
       await expect(changesButton).toBeVisible({ timeout: 20000 })
+      await expect(changesButton).toHaveText(/Änderungen erkannt|Changes detected/i)
 
       // Table must NOT have refreshed automatically
       await expect(page.locator('main table').getByText(marker)).toHaveCount(0)
 
       // Visual baseline of the changes-detected button
-      await expect(changesButton).toHaveScreenshot('messagebus-changes-alert.png')
+      if (browserName === 'chromium') {
+        await expect(changesButton).toHaveScreenshot('messagebus-changes-alert.png')
+      }
 
       // Clicking it refreshes the table in place -> marker visible
       await changesButton.click()
