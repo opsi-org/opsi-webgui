@@ -37,7 +37,21 @@ const PRODUCT_EVENTS = [
   'event:productOnClient_deleted',
 ]
 
-const ALL_DATA_EVENTS = [...HOST_EVENTS, ...PRODUCT_EVENTS]
+const CONFIG_EVENTS = ['event:config_created', 'event:config_updated', 'event:config_deleted']
+
+const CONFIG_STATE_EVENTS = [
+  'event:configState_created',
+  'event:configState_updated',
+  'event:configState_deleted',
+]
+
+const LOG_EVENTS = ['event:log_updated']
+
+const SYSTEM_EVENTS = ['event:app_state_changed']
+
+const SERVER_EVENTS = [...HOST_EVENTS, ...CONFIG_EVENTS, ...CONFIG_STATE_EVENTS, ...SYSTEM_EVENTS]
+
+const ALL_DATA_EVENTS = [...SERVER_EVENTS, ...PRODUCT_EVENTS, ...LOG_EVENTS]
 
 function wsWait(ms: number) {
   return new Promise((r) => setTimeout(r, ms))
@@ -169,6 +183,16 @@ export function useAutoRefresh(
       productOnClient_created: 'Product action created',
       productOnClient_updated: 'Product action updated',
       productOnClient_deleted: 'Product action deleted',
+      config_created: 'Config created',
+      config_updated: 'Config updated',
+      config_deleted: 'Config deleted',
+      configState_created: 'Config state created',
+      configState_updated: 'Config state updated',
+      configState_deleted: 'Config state deleted',
+      log_updated: 'Log updated',
+      user_connected: 'User connected',
+      user_disconnected: 'User disconnected',
+      app_state_changed: 'Application state changed',
     }
     const cleanType = eventName.replace('event:', '')
     return map[cleanType] || cleanType
@@ -242,4 +266,16 @@ export function useAutoRefreshProducts(cb: RefreshCallback) {
   return useAutoRefresh(cb, { watchEvents: PRODUCT_EVENTS })
 }
 
-export { HOST_EVENTS, PRODUCT_EVENTS, ALL_DATA_EVENTS }
+export function useAutoRefreshServers(cb: RefreshCallback) {
+  return useAutoRefresh(cb, { watchEvents: SERVER_EVENTS })
+}
+
+export {
+  HOST_EVENTS,
+  PRODUCT_EVENTS,
+  CONFIG_EVENTS,
+  CONFIG_STATE_EVENTS,
+  SYSTEM_EVENTS,
+  SERVER_EVENTS,
+  ALL_DATA_EVENTS,
+}

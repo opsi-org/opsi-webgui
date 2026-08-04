@@ -14,6 +14,12 @@ const DEFAULT_CHANNELS = [
   '@',
   '$',
   'event:app_state_changed',
+  'event:config_created',
+  'event:config_deleted',
+  'event:config_updated',
+  'event:configState_created',
+  'event:configState_deleted',
+  'event:configState_updated',
   'event:user_connected',
   'event:user_disconnected',
   'event:host_created',
@@ -21,6 +27,7 @@ const DEFAULT_CHANNELS = [
   'event:host_deleted',
   'event:host_connected',
   'event:host_disconnected',
+  'event:log_updated',
   'event:productOnClient_created',
   'event:productOnClient_updated',
   'event:productOnClient_deleted',
@@ -93,8 +100,8 @@ export const useMessageBusStore = defineStore('messageBus', {
         process.env.NODE_ENV === 'production'
           ? window.location.port
           : Number(
-              (runtimeConfig as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT
-            ) || 4447
+            (runtimeConfig as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT
+          ) || 4447
       const ws = new WebSocket(`wss://${host}:${port}/messagebus/v1`)
       ws.binaryType = 'arraybuffer'
 
