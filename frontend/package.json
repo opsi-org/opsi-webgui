@@ -1,6 +1,6 @@
 {
   "name": "opsi-webgui",
-  "version": "4.3.48.10",
+  "version": "4.3.48.11",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@11.10.0",
