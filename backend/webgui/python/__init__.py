@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
 # Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
@@ -155,7 +153,7 @@ class Webgui(Addon, metaclass=Singleton):
                 status_code=status.HTTP_301_MOVED_PERMANENTLY,
             )
             await response(connection.scope, receive, send)
-            return False
+            return True
 
         if any(rel_path.startswith(pub_path) for pub_path in PUBLIC_PATHS):
             connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
@@ -214,5 +212,14 @@ class Webgui(Addon, metaclass=Singleton):
         logger.debug(
             f"Sending error response: {response} ; {connection} ; {receive} ; {send}"
         )
-        await response(connection.scope, receive, send)
+        try:
+            await response(connection.scope, receive, send)
+        except RuntimeError as send_err:
+            if "Unexpected ASGI message" in str(send_err):
+                logger.warning(
+                    "Skipping addon error response because an HTTP response was already sent: %s",
+                    send_err,
+                )
+                return True
+            raise
         return True

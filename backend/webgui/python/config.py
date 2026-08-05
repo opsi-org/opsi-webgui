@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # opsiconfd is part of the desktop management solution opsi https://www.opsi.org
 # Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
@@ -160,7 +158,7 @@ class Config(metaclass=Singleton):  # pylint: disable=too-few-public-methods
                     del ldap_config_res["use_member_of_rdn"]
 
         ldap_url_env = os.getenv(ENV_KEY_LDAP_URL, None)
-        if ldap_url_env is not None and ldap_config_res.get("active", False):
+        if ldap_url_env and ldap_config_res.get("active", False):
             ldap_config_res["ldap_url"] = ldap_url_env
             logger.debug(
                 f"LDAP URL overridden by {ENV_KEY_LDAP_URL} env var: {ldap_url_env}"
