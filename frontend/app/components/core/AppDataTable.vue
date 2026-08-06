@@ -156,14 +156,14 @@
                     :key="col.key"
                     type="button"
                     class="w-full text-left flex items-center gap-2 px-1 py-1 rounded hover:bg-(--color-surface-hover) cursor-pointer"
-                    @click="toggleColumnFromRow(col)"
+                    @click="onToggleableColumnRowClick($event, col)"
                   >
                     <CoreAppCheckbox
                       :model-value="isColumnVisibleComputed(col.key)"
                       :disabled="col.alwaysVisible"
                       :aria-label="resolveColumnLabel(col)"
                       @click.stop
-                      @update:model-value="tableSettings.toggleColumn(col.key)"
+                      @update:model-value="(value: boolean) => setColumnVisibility(col.key, value)"
                     />
                     <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{
                       resolveColumnLabel(col)
@@ -177,7 +177,7 @@
                 color="primary"
                 size="xs"
                 block
-                @click="tableSettings.reset"
+                @click="resetTableSettings"
               >
                 {{ $t('common.resetDefaults') }}
               </UButton>
@@ -896,7 +896,22 @@
   }
 
   function handleRefresh() {
+    autoPageStalled = false
+    autoPageRowCountAtRequest = -1
     currentPage.value = 1
+    emitPageChange()
+  }
+
+  function resetTableSettings() {
+    tableSettings.reset()
+    selectionModeOverride.value = null
+    sortBySelection.value = Boolean(
+      props.sortBySelectionEnabled && (props.selectedKeys?.length ?? 0) > 0
+    )
+    autoPageStalled = false
+    autoPageRowCountAtRequest = -1
+    currentPage.value = 1
+    tableSettingsOpen.value = false
     emitPageChange()
   }
 
@@ -911,18 +926,8 @@
     if (!tableContainer.value) return
     const { scrollTop, scrollHeight, clientHeight } = tableContainer.value
     if (displayMode.value === 'infinite') {
-      if (
-        scrollTop + clientHeight >= scrollHeight - 100 &&
-        hasMoreData.value &&
-        !props.loading &&
-        !sentinelLoadPending
-      ) {
-        sentinelLoadPending = true
-        currentPage.value++
-        emitPageChange()
-        setTimeout(() => {
-          sentinelLoadPending = false
-        }, 140)
+      if (scrollTop + clientHeight >= scrollHeight - 100) {
+        requestNextInfinitePage()
       }
     }
   }
@@ -931,6 +936,31 @@
   let sentinelLoadPending = false
   let actionsResizeObserver: ResizeObserver | null = null
   let containerResizeObserver: ResizeObserver | null = null
+  // Guard against endless next-page requests when the server reports a total
+  // larger than the rows it actually returns (e.g. restricted depot access):
+  // if a next-page request completes without adding new rows, stop auto-paging
+  // until the row set changes again (filter, refresh, external reload).
+  let autoPageStalled = false
+  let autoPageRowCountAtRequest = -1
+
+  function requestNextInfinitePage() {
+    if (
+      displayMode.value !== 'infinite' ||
+      autoPageStalled ||
+      sentinelLoadPending ||
+      props.loading ||
+      !hasMoreData.value
+    ) {
+      return
+    }
+    sentinelLoadPending = true
+    autoPageRowCountAtRequest = props.rows.length
+    currentPage.value++
+    emitPageChange()
+    setTimeout(() => {
+      sentinelLoadPending = false
+    }, 140)
+  }
 
   function resetInfinitePagingState() {
     if (displayMode.value !== 'infinite') return
@@ -955,12 +985,7 @@
         loading: props.loading,
       })
     ) {
-      sentinelLoadPending = true
-      currentPage.value++
-      emitPageChange()
-      setTimeout(() => {
-        sentinelLoadPending = false
-      }, 140)
+      requestNextInfinitePage()
     }
   }
 
@@ -986,20 +1011,8 @@
     sentinelObserver = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (
-            entry.isIntersecting &&
-            displayMode.value === 'infinite' &&
-            hasMoreData.value &&
-            !props.loading &&
-            !sentinelLoadPending
-          ) {
-            sentinelLoadPending = true
-            currentPage.value++
-            emitPageChange()
-            // Reset guard after a short delay to allow loading state to propagate
-            setTimeout(() => {
-              sentinelLoadPending = false
-            }, 140)
+          if (entry.isIntersecting) {
+            requestNextInfinitePage()
           }
         }
       },
@@ -1020,7 +1033,12 @@
 
   watch(
     () => props.rows.length,
-    async () => {
+    async (newLength, oldLength) => {
+      if (newLength !== oldLength) {
+        // Row set changed: allow auto-paging again.
+        autoPageStalled = false
+        autoPageRowCountAtRequest = -1
+      }
       await nextTick()
       resetInfinitePagingState()
       maybeFillViewport()
@@ -1030,7 +1048,15 @@
   watch(
     () => props.loading,
     (loading) => {
-      if (!loading) resetInfinitePagingState()
+      if (!loading) {
+        // A next-page request finished without adding rows: stall auto-paging
+        // to avoid an endless request loop on inconsistent data/total.
+        if (isAutoPageStalled(autoPageRowCountAtRequest, props.rows.length)) {
+          autoPageStalled = true
+        }
+        autoPageRowCountAtRequest = -1
+        resetInfinitePagingState()
+      }
     }
   )
 
@@ -1067,6 +1093,27 @@
   function toggleColumnFromRow(col: DataTableColumnDef) {
     if (col.alwaysVisible) return
     tableSettings.toggleColumn(col.key)
+  }
+
+  function setColumnVisibility(key: string, visible: boolean) {
+    const next = [...tableSettings.settings.visibleColumns]
+    const hasKey = next.includes(key)
+    if (visible && !hasKey) {
+      next.push(key)
+      tableSettings.setVisibleColumns(next)
+      return
+    }
+    if (!visible && hasKey) {
+      tableSettings.setVisibleColumns(next.filter((columnKey) => columnKey !== key))
+    }
+  }
+
+  function onToggleableColumnRowClick(event: MouseEvent, col: DataTableColumnDef) {
+    const target = event.target as HTMLElement
+    if (target.closest("[role='checkbox'], input[type='checkbox'], label")) {
+      return
+    }
+    toggleColumnFromRow(col)
   }
 
   watch(filterQueryInternal, (val) => {

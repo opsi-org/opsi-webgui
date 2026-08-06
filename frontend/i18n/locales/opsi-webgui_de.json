@@ -469,6 +469,12 @@
       "onClient": "Veraltet auf Client",
       "version": "Veraltet"
     },
+    "tooltip": {
+      "indicators": "Hinweise",
+      "clientOutdatedShort": "Client-Version weicht von der Depot-Version ab",
+      "depotVersionDiffShort": "Ausgewählte Depots verwenden unterschiedliche Versionen",
+      "notOnAllDepotsShort": "Auf einigen ausgewählten Depots fehlt das Produkt"
+    },
     "properties": "Produkteigenschaften",
     "propertiesNone": "Keine Eigenschaften gefunden",
     "propertiesSaved": "Eigenschaften erfolgreich gespeichert.",
@@ -531,7 +537,7 @@
     "docsDesc": "Stöbern Sie in der offiziellen OPSI-Dokumentation für Anleitungen, API-Referenzen und Problemlösungen.",
     "forum": "OPSI-Forum besuchen",
     "pro": "Professioneller Support",
-    "proDesc": "Erhalten Sie professionellen Support von uib GmbH für Unternehmens-Deployments und erweiterte Unterstützung.",
+    "proDesc": "Erhalten Sie professionellen Support von UIB GmbH für Unternehmens-Deployments und erweiterte Unterstützung.",
     "title": "Support",
     "whatsNew": "Was ist neu"
   },

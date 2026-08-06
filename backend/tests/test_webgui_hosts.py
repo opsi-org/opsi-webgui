@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
 # Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
@@ -50,6 +48,19 @@ test_data = [
         f"{FILE_DIR}/hosts-get3.json",
     ),
 ]
+
+
+def _rpc(config, method, params):  # pylint: disable=redefined-outer-name
+    res = requests.post(
+        f"{config.external_url}/rpc",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        json={"id": 1, "method": method, "params": params},
+        verify=False,
+    )
+    res.raise_for_status()
+    result = res.json()
+    assert result.get("error") is None, result
+    return result
 
 
 @pytest.mark.parametrize("path, query_params, expected_result", test_data)
@@ -126,3 +137,51 @@ async def test_host_groups_dynamic_does_not_return_group_as_its_own_child(config
     assert parent_group not in children
     assert child_group in children
     assert client_id in children
+
+
+@pytest.mark.asyncio
+async def test_servers_respect_restricted_depot_access(config):  # pylint: disable=redefined-outer-name
+    depot_ids = requests.get(
+        f"{config.external_url}{API_ROOT}/depot_ids",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+    ).json()
+    assert depot_ids, "test data must contain at least one depot/config server"
+    allowed_depot = depot_ids[0]
+
+    config_ids = [
+        "user.{}.register",
+        f"user.{{{ADMIN_USER}}}.privilege.host.depotaccess.configured",
+        f"user.{{{ADMIN_USER}}}.privilege.host.depotaccess.depots",
+    ]
+    _rpc(
+        config,
+        "config_updateObjects",
+        [
+            [
+                {"id": config_ids[0], "type": "BoolConfig", "defaultValues": [True]},
+                {"id": config_ids[1], "type": "BoolConfig", "defaultValues": [True]},
+                {
+                    "id": config_ids[2],
+                    "type": "UnicodeConfig",
+                    "multiValue": True,
+                    "possibleValues": [allowed_depot],
+                    "defaultValues": [allowed_depot],
+                },
+            ]
+        ],
+    )
+    try:
+        res = requests.get(
+            f"{config.external_url}{API_ROOT}/servers",
+            auth=(ADMIN_USER, ADMIN_PASS),
+            verify=False,
+            params={"pageNumber": 1, "perPage": 50, "sortBy": "[hostId]"},
+        )
+        assert res.status_code == status.HTTP_200_OK
+        data = res.json()
+        assert data
+        host_ids = [row["hostId"] for row in data]
+        assert set(host_ids) == {allowed_depot}
+    finally:
+        _rpc(config, "config_delete", [config_ids])

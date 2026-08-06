@@ -40,6 +40,7 @@ from ..logger import get_logger
 from ..utils import (
     backend,
     bool_value,
+    expand_allowed_groups,
     filter_depot_access,
     get_all_children_groupids,
     get_allowed_group_objects,
@@ -581,14 +582,17 @@ def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, to
     else:
         params["depots"] = selectedDepots
 
+    restricted = user_register() and product_group_access_configured(username)
     allowed_products = None
-    if user_register() and product_group_access_configured(username):
+    if restricted:
         allowed_products = get_allowed_group_objects(username, "ProductGroup")
+        if not allowed_products:
+            return RESTResponse(data={})
 
     with mysql.session() as session:
         where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
 
-        if allowed_products:
+        if restricted:
             params["allowed_products"] = allowed_products
             where = and_(where, text("(pod.productId in :allowed_products)"))
         query = (
@@ -632,6 +636,14 @@ def product_count(
     """
     Get number products from selected depots.
     """
+    if selectedDepots == []:
+        # Empty selection (e.g. depot-restricted user without accessible depots)
+        return RESTResponse(data=0)
+    if selectedDepots is None:
+        selectedDepots = get_depots(get_username())
+        if not selectedDepots:
+            return RESTResponse(data=0)
+
     params = {"depots": selectedDepots, "product_type": ""}
     if type == "all":
         where = text("pod.depotId IN :depots")
@@ -1639,7 +1651,8 @@ def get_product_groups(withProducts: bool = True) -> RESTResponse:  # pylint: di
 
     username = get_username()
     configured = product_group_access_configured(username)
-    allowed = None if not configured else get_allowed_product_groups(username)
+    restricted = user_register() and configured
+    allowed = None if not restricted else get_allowed_product_groups(username)
 
     params: dict = {}
     where = text("g.`type` = 'ProductGroup'")
@@ -1725,7 +1738,10 @@ def get_product_groups_dynamic(
     """
     username = get_username()
     configured = product_group_access_configured(username)
-    allowed = None if not configured else get_allowed_product_groups(username)
+    restricted = user_register() and configured
+    allowed = None if not restricted else get_allowed_product_groups(username)
+    # Configed semantics: children of an allowed group are allowed as well.
+    allowed_children = expand_allowed_groups(allowed, "ProductGroup")
 
     if parentGroup == "root" or not parentGroup:
         parentGroup = "groups"
@@ -1753,7 +1769,11 @@ def get_product_groups_dynamic(
             ).fetchall()
 
             raw_group_rows = [dict(row) for row in group_rows if row]
-            if allowed and parentGroup not in allowed and parentGroup != "groups":
+            if (
+                restricted
+                and parentGroup.lower() not in (allowed_children or set())
+                and parentGroup != "groups"
+            ):
                 return RESTResponse(
                     data={
                         "groups": {
@@ -1783,12 +1803,11 @@ def get_product_groups_dynamic(
             if parentGroup not in actual_group_ids:
                 actual_group_ids.append(parentGroup)
 
-            if allowed:
-                allowed_normalized = {group_id.lower() for group_id in allowed}
+            if restricted:
                 actual_group_ids = [
                     group_id
                     for group_id in actual_group_ids
-                    if group_id.lower() in allowed_normalized
+                    if group_id.lower() in (allowed_children or set())
                 ]
 
             member_conditions = []
@@ -1903,14 +1922,18 @@ def get_product_groups_dynamic(
         "children": {},
     }
 
-    if allowed and parentGroup not in allowed and parentGroup != "groups":
+    if (
+        restricted
+        and parentGroup.lower() not in (allowed_children or set())
+        and parentGroup != "groups"
+    ):
         return RESTResponse(data={"groups": product_groups})
 
     for row in child_group_rows:
         group_id = row["group_id"]
         if not group_id:
             continue
-        if allowed and group_id not in allowed:
+        if restricted and group_id.lower() not in (allowed_children or set()):
             continue
         product_groups["children"][group_id] = {
             "id": f"{group_id};{parentGroup.lower()}",

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
 # Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
@@ -8,7 +6,7 @@
 webgui depot methods
 """
 
-from typing import Any, List, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends, Request, status
 from opsiconfd.config import get_configserver_id
@@ -53,7 +51,7 @@ class DepotClientCount(BaseModel):  # pylint: disable=too-few-public-methods
     clientCount: int
 
 
-def get_depots(username: str | None = None) -> List[str]:
+def get_depots(username: str | None = None) -> list[str]:
     with mysql.session() as session:
         query = "SELECT hostId FROM HOST WHERE `type` IN ('OpsiConfigserver', 'OpsiDepotserver') ORDER BY hostId"
         result = session.execute(query).fetchall()
@@ -67,7 +65,7 @@ def get_depots(username: str | None = None) -> List[str]:
         return result
 
 
-@api_router.get("/api/opsidata/depot_ids", response_model=List[str])
+@api_router.get("/api/opsidata/depot_ids", response_model=list[str])
 @rest_api
 def depot_ids(request: Request) -> RESTResponse:
     """
@@ -81,12 +79,12 @@ def depot_ids(request: Request) -> RESTResponse:
     return RESTResponse(data=depot_list)
 
 
-@api_router.get("/api/opsidata/depots", response_model=List[Depot])
+@api_router.get("/api/opsidata/depots", response_model=list[Depot])
 @rest_api
 def depots(
     request: Request,
     commons: dict = Depends(common_query_parameters),
-    selected: Optional[List[str]] = Depends(parse_selected_list),
+    selected: list[str] | None = Depends(parse_selected_list),
 ) -> RESTResponse:
     """
     Get all depots with depotId, ident, type, ip and description.
@@ -103,6 +101,14 @@ def depots(
                 where, text("(h.hostId LIKE :search OR h.description LIKE :search)")
             )
             params["search"] = f"%{commons['filterQuery']}%"
+
+        # Restrict rows for users with limited depot access BEFORE pagination,
+        # so paginated data and total stay consistent (otherwise the frontend
+        # infinite scroll keeps requesting pages that come back empty).
+        username = get_username()
+        if user_register() and depot_access_configured(username):
+            where = and_(where, text("h.hostId IN :allowed_depots"))
+            params["allowed_depots"] = get_allowed_depots(username) or [""]
 
         depot_select = (
             select(
@@ -137,28 +143,17 @@ def depots(
             params,
         ).fetchone()[0]  # type: ignore
 
-        depot_list = []
-        # TODO Item "None" of "Optional[Any]" has no attribute "user_store"  [union-attr]mypy(error)
-        username = request.scope.get("session").username  # type: ignore
-        if user_register() and depot_access_configured(username):
-            allowed_depots = get_allowed_depots(username)
-            for row in result:
-                if row is not None:
-                    depot_data = dict(row)
-                    if depot_data.get("depotId") in allowed_depots:
-                        depot_list.append(depot_data)
-        else:
-            depot_list = [dict(row) for row in result if row is not None]
+        depot_list = [dict(row) for row in result if row is not None]
 
         return RESTResponse(data=depot_list, total=total)
 
 
-@api_router.get("/api/opsidata/depots/clients", response_model=List[str])
+@api_router.get("/api/opsidata/depots/clients", response_model=list[str])
 @rest_api
 @filter_depot_access
 def clients_on_depots(
     request: Request,
-    selectedDepots: List[str] = Depends(parse_depot_list),  # pylint: disable=invalid-name
+    selectedDepots: list[str] = Depends(parse_depot_list),  # pylint: disable=invalid-name
 ) -> RESTResponse:
     """
     Get all client ids on selected depots.
@@ -239,13 +234,13 @@ def clients_on_depots(
 
 
 @api_router.get(
-    "/api/opsidata/depots/client-counts", response_model=List[DepotClientCount]
+    "/api/opsidata/depots/client-counts", response_model=list[DepotClientCount]
 )
 @rest_api
 @filter_depot_access
 def client_counts_on_depots(
     request: Request,
-    selectedDepots: List[str] = Depends(parse_depot_list),  # pylint: disable=invalid-name
+    selectedDepots: list[str] = Depends(parse_depot_list),  # pylint: disable=invalid-name
 ) -> RESTResponse:
     """
     Get client counts grouped by depot.
@@ -333,12 +328,12 @@ def client_counts_on_depots(
         return RESTResponse(data=data)
 
 
-@api_router.get("/api/opsidata/depots/products", response_model=List[str])
+@api_router.get("/api/opsidata/depots/products", response_model=list[str])
 @rest_api
 @filter_depot_access
 def products_on_depots(
     request: Request,
-    selectedDepots: List[str] = Depends(parse_depot_list),  # pylint: disable=invalid-name
+    selectedDepots: list[str] = Depends(parse_depot_list),  # pylint: disable=invalid-name
     productType: str = "NetbootProduct",  # pylint: disable=invalid-name
 ) -> RESTResponse:
     """

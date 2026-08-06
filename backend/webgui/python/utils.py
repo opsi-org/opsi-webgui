@@ -14,9 +14,6 @@ from operator import and_
 from typing import Any
 
 from fastapi import Query, status
-
-# from OPSI.Backend.MySQL import MySQL, MySQLBackend
-from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import parse_list
 from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
@@ -24,6 +21,9 @@ from opsiconfd.config import get_configserver_id
 # from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, select, table, text  # type: ignore[import]
+
+# from OPSI.Backend.MySQL import MySQL, MySQLBackend
+from opsiconfd import contextvar_client_session
 
 from .logger import get_logger
 
@@ -88,21 +88,21 @@ def get_username() -> str:
 
 def get_allowed_objects() -> dict:
     allowed = {"product_groups": ..., "host_groups": ...}
-    # privileges = get_user_privileges()
-    # if True in privileges.get("product.groupaccess.configured", [False]):
-    # 	allowed["product_groups"] = privileges.get("product.groupaccess.productgroups", [])
     username = get_username()
-    if product_group_access_configured(username):
-        allowed["product_groups"] = get_allowed_product_groups(username)  # type: ignore[assignment]
-    if host_group_access_configured(username):
-        allowed["host_groups"] = get_allowed_host_groups(username)  # type: ignore[assignment]
+    # Restrictions only apply when user roles are activated (user.{}.register),
+    # matching opsi-configed's behavior.
+    if user_register():
+        if product_group_access_configured(username):
+            allowed["product_groups"] = get_allowed_product_groups(username)  # type: ignore[assignment]
+        if host_group_access_configured(username):
+            allowed["host_groups"] = get_allowed_host_groups(username)  # type: ignore[assignment]
     return allowed
 
 
 def build_tree(  # pylint: disable=too-many-branches
     group: dict,
     groups: list[dict],
-    allowed: list[str],
+    allowed: list[str] | None,
     processed: list[str] | None = None,
     default_expanded: bool | None = None,
 ) -> dict:
@@ -111,7 +111,10 @@ def build_tree(  # pylint: disable=too-many-branches
     processed.append(group.get("id", ""))
 
     is_root_group = group["parent"] == "groups" or group["id"] == "clientdirectory"
-    group["allowed"] = is_root_group or allowed == ... or group["id"] in allowed
+    # allowed is None / ... = unrestricted user
+    group["allowed"] = (
+        is_root_group or allowed is None or allowed == ... or group["id"] in allowed
+    )
 
     children = {}
     for grp in groups:
@@ -168,7 +171,7 @@ def merge_dicts(dict_a: dict, dict_b: dict, path: list | None = None) -> dict:
     return dict_a
 
 
-def _get_bool_config_value(config_id: str) -> bool:
+def _get_bool_config_value(config_id: str, default: bool = False) -> bool:
     with mysql.session() as session:
         where = text("cv.configId = :config_id")
         query = (
@@ -178,16 +181,18 @@ def _get_bool_config_value(config_id: str) -> bool:
         )
         result = session.execute(query, {"config_id": config_id})
         result = result.fetchall()
-    if result:
-        for row in result:
-            row_dict = dict(row)
-            if row_dict.get("isDefault") == 1 and row_dict.get("value") in [
-                "1",
-                "true",
-                "True",
-                True,
-            ]:
-                return True
+    if not result:
+        # No config row exists at all → caller's default wins.
+        return default
+    for row in result:
+        row_dict = dict(row)
+        if row_dict.get("isDefault") == 1 and row_dict.get("value") in [
+            "1",
+            "true",
+            "True",
+            True,
+        ]:
+            return True
     return False
 
 
@@ -224,11 +229,17 @@ def read_only_user(user: str) -> bool:
 
 
 def is_opsiserver_write_permitted(user: str) -> bool:
-    return _get_bool_config_value(f"user.{{{user}}}.privilege.host.opsiserver.write")
+    # Default True: users have server-write access unless explicitly forbidden.
+    return _get_bool_config_value(
+        f"user.{{{user}}}.privilege.host.opsiserver.write", default=True
+    )
 
 
 def client_creation_allowed(user: str) -> bool:
-    return _get_bool_config_value(f"user.{{{user}}}.privilege.host.createclient")
+    # Default True: users may create clients unless explicitly forbidden.
+    return _get_bool_config_value(
+        f"user.{{{user}}}.privilege.host.createclient", default=True
+    )
 
 
 def get_allowed_depots(user: str) -> list:
@@ -556,7 +567,12 @@ def filter_depot_access(func: Callable) -> Callable:
     async def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
         logger.debug("%s - check user", func)
         if user_register() and accepts_selected_depots:
-            username = kwargs.get("request").scope.get("session").username
+            username = None
+            request = kwargs.get("request")
+            if request is not None and getattr(request, "scope", None):
+                username = getattr(request.scope.get("session"), "username", None)
+            if not username:
+                username = get_username()
             if depot_access_configured(username):
                 allowed_depots = get_allowed_depots(username)
                 selected_depots = kwargs.get("selectedDepots")
@@ -681,15 +697,16 @@ def get_all_children_groupids(raw_groups: list[dict], group_ids: list[str]) -> s
     if not raw_groups or not group_ids:
         return set()
 
-    # Build a parent_id -> [child_id, ...] mapping
+    # Build a parent_id -> [child_id, ...] mapping (case-insensitive)
     parent_map = {}
     for row in raw_groups:
         parent = row["parent_id"]
+        parent_key = str(parent).lower() if parent else parent
         child = row["group_id"].lower()
-        parent_map.setdefault(parent, []).append(child)
+        parent_map.setdefault(parent_key, []).append(child)
 
     all_children = set()
-    stack = list(group_ids)
+    stack = [str(gid).lower() for gid in group_ids]
     while stack:
         gid = stack.pop()
         if gid not in all_children:
@@ -697,6 +714,28 @@ def get_all_children_groupids(raw_groups: list[dict], group_ids: list[str]) -> s
             stack.extend(parent_map.get(gid, []))
 
     return all_children
+
+
+def expand_allowed_groups(
+    allowed: list | None, gtype: str = "HostGroup"
+) -> set[str] | None:
+    """
+    Expand an allowed-groups list with all descendant group ids (lowercased).
+    Configed semantics: children of an allowed group are allowed as well.
+    Returns None for unrestricted users (allowed is None).
+    """
+    if allowed is None:
+        return None
+    # "clientdirectory" is the virtual root; never expand it to its children
+    # (same behavior as read_groups in utils_groups.py).
+    seeds = [
+        str(group_id).lower()
+        for group_id in allowed
+        if group_id and group_id != "clientdirectory"
+    ]
+    if not seeds:
+        return set()
+    return get_all_children_groupids(get_groups(gtype), seeds)
 
 
 def get_all_children_groupid(raw_groups: list[dict], group_id: str) -> set[str]:

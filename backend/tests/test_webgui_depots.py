@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
 # Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
@@ -105,3 +103,81 @@ async def test_depots_selected_are_sorted_first(config):
     assert data
     assert data[0]["depotId"] == selected_depot
     assert bool(data[0]["selected"]) is True
+
+
+def _rpc(config, method, params):  # pylint: disable=redefined-outer-name
+    res = requests.post(
+        f"{config.external_url}/rpc",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        json={"id": 1, "method": method, "params": params},
+        verify=False,
+    )
+    res.raise_for_status()
+    result = res.json()
+    assert result.get("error") is None, result
+    return result
+
+
+@pytest.mark.asyncio
+async def test_depots_restricted_user_data_and_total_are_consistent(config):  # pylint: disable=redefined-outer-name
+    """Regression: for users with restricted depot access the depot filter was
+    applied AFTER pagination while the total stayed unfiltered. The frontend
+    infinite scroll then kept requesting pages that came back empty, causing an
+    endless refresh loop on the servers page."""
+    # Restrict the admin user to a single depot via user roles.
+    all_depots = requests.get(
+        f"{config.external_url}{API_ROOT}/depot_ids",
+        auth=(ADMIN_USER, ADMIN_PASS),
+        verify=False,
+    ).json()
+    depot_servers = [depot for depot in all_depots if depot != FQDN]
+    assert depot_servers, "test data must contain at least one depot server"
+    allowed_depot = depot_servers[0]
+
+    config_ids = [
+        "user.{}.register",
+        f"user.{{{ADMIN_USER}}}.privilege.host.depotaccess.configured",
+        f"user.{{{ADMIN_USER}}}.privilege.host.depotaccess.depots",
+    ]
+    _rpc(
+        config,
+        "config_updateObjects",
+        [
+            [
+                {"id": config_ids[0], "type": "BoolConfig", "defaultValues": [True]},
+                {"id": config_ids[1], "type": "BoolConfig", "defaultValues": [True]},
+                {
+                    "id": config_ids[2],
+                    "type": "UnicodeConfig",
+                    "multiValue": True,
+                    "possibleValues": [allowed_depot],
+                    "defaultValues": [allowed_depot],
+                },
+            ]
+        ],
+    )
+    try:
+        res = requests.get(
+            f"{config.external_url}{API_ROOT}/depots",
+            auth=(ADMIN_USER, ADMIN_PASS),
+            verify=False,
+            params={"pageNumber": 1, "perPage": 50},
+        )
+        assert res.status_code == status.HTTP_200_OK
+        data = res.json()
+        total = int(res.headers["x-total-count"])
+        assert [depot["depotId"] for depot in data] == [allowed_depot]
+        assert total == len(data) == 1
+
+        # Later pages must be empty with the same (consistent) total.
+        res = requests.get(
+            f"{config.external_url}{API_ROOT}/depots",
+            auth=(ADMIN_USER, ADMIN_PASS),
+            verify=False,
+            params={"pageNumber": 2, "perPage": 1},
+        )
+        assert res.status_code == status.HTTP_200_OK
+        assert res.json() == []
+        assert int(res.headers["x-total-count"]) == 1
+    finally:
+        _rpc(config, "config_delete", [config_ids])

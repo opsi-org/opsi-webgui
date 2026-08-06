@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-
 # opsiconfd is part of the desktop management solution opsi http://www.opsi.org
 # Copyright (c) 2026 uib GmbH <info@uib.de>
 # All rights reserved.
 # License: AGPL-3.0
 
-from typing import Any, List, Optional
+from typing import Any
 
 from ..logger import get_logger
 from ..utils import get_all_children_groupid
@@ -13,7 +11,7 @@ from ..utils import get_all_children_groupid
 logger = get_logger()
 
 
-def _get_all_parents_groupids(raw_groups: List, group_id: str) -> set[str]:
+def _get_all_parents_groupids(raw_groups: list, group_id: str) -> set[str]:
     """
     Returns all parent group IDs for a given group ID.
     """
@@ -39,7 +37,7 @@ def _is_allowed(group_id: str, allowed: set[str] | None) -> bool:
     """
     if not group_id:
         return True
-    if not allowed:
+    if allowed is None:
         return True
     normalized_group_id = group_id.lower()
     if normalized_group_id == "clientdirectory" or normalized_group_id in allowed:
@@ -48,8 +46,8 @@ def _is_allowed(group_id: str, allowed: set[str] | None) -> bool:
 
 
 def _next_allowed_parent(
-    parent_id: str, raw_groups: List, allowed: set[str] | None
-) -> Optional[str]:
+    parent_id: str, raw_groups: list, allowed: set[str] | None
+) -> str | None:
     """
     Finds the next allowed parent group ID.
     """
@@ -66,21 +64,21 @@ def _next_allowed_parent(
 
 
 def read_groups(
-    raw_groups: List,
+    raw_groups: list,
     root_group: dict,
-    selected_object_ids: List | None,
-    allowed: List[str] | None,
+    selected_object_ids: list | None,
+    allowed: list[str] | None,
     withClients: bool = True,
     gtype: str = "HostGroup",  # pylint: disable=invalid-name
 ) -> dict:
     normalized_selected_object_ids = selected_object_ids or []
     updated_allowed = None
-    if allowed:
+    if allowed is not None:
         updated_allowed = set()
         for group_id in allowed:
             if group_id == "clientdirectory":
                 continue
-            updated_allowed.add(group_id)
+            updated_allowed.add(group_id.lower())
             # currently in configed the behavior is to allow all children of the group, but not the parents (user roles)
             # updated_allowed.update(_get_all_parents_groupids(raw_groups, group_id))
             updated_allowed.update(get_all_children_groupid(raw_groups, group_id))
@@ -154,7 +152,7 @@ def read_groups(
 def build_nested_group(
     current_group: dict[str, Any],
     groups: dict[str, dict[str, Any]],
-    processed: Optional[dict[str, bool]] = None,
+    processed: dict[str, bool] | None = None,
     empty_parent_group_id: str = "groups",
 ) -> dict[str, Any]:
     if processed is None:
@@ -172,7 +170,7 @@ def build_nested_group(
                     f"{group['id']};{parent.lower()}" if parent else group["id"]
                 )
 
-        parent_id: Optional[str] = group.get("parent")
+        parent_id: str | None = group.get("parent")
         if parent_id is None and group_id != "clientdirectory":
             parent_id = empty_parent_group_id
             group["parent"] = empty_parent_group_id

@@ -61,6 +61,7 @@
 
 <script setup lang="ts">
   interface Props {
+    productId?: string
     result?: string
     resultDetails?: string[]
     selectedClients?: string[] | null
@@ -87,29 +88,40 @@
 
   const mixedTooltipRows = computed(() => {
     if (!props.resultDetails) return []
+    const heading = props.productId
+      ? [{ key: String($t('products.id')), value: props.productId }]
+      : []
     const clients = props.selectedClients || []
     if (clients.length > 0 && clients.length === props.resultDetails.length) {
-      return clients.map((c, i) => {
-        const result = (props.resultDetails![i] || 'none').toLowerCase()
-        return {
-          key: c,
-          value: props.resultDetails![i] || 'none',
-          badge: result === 'none' ? undefined : result,
-          badgeColor:
-            result === 'successful' ? 'success' : result === 'failed' ? 'error' : undefined,
-        }
-      })
+      return [
+        ...heading,
+        { key: `── ${String($t('clients.title'))} ──`, value: '' },
+        ...clients.map((c, i) => {
+          const result = (props.resultDetails![i] || 'none').toLowerCase()
+          return {
+            key: c,
+            value: props.resultDetails![i] || 'none',
+            badge: result === 'none' ? undefined : result,
+            badgeColor:
+              result === 'successful' ? 'success' : result === 'failed' ? 'error' : undefined,
+          }
+        }),
+      ]
     }
     const counts: Record<string, number> = {}
     props.resultDetails.forEach((r) => {
       const key = r?.toLowerCase() || 'none'
       counts[key] = (counts[key] || 0) + 1
     })
-    return Object.entries(counts).map(([k, v]) => ({
-      key: k,
-      value: String(v),
-      badge: k === 'none' ? undefined : k,
-      badgeColor: k === 'successful' ? 'success' : k === 'failed' ? 'error' : undefined,
-    }))
+    return [
+      ...heading,
+      { key: `── ${String($t('actions.results'))} ──`, value: '' },
+      ...Object.entries(counts).map(([k, v]) => ({
+        key: k,
+        value: String(v),
+        badge: k === 'none' ? undefined : k,
+        badgeColor: k === 'successful' ? 'success' : k === 'failed' ? 'error' : undefined,
+      })),
+    ]
   })
 </script>

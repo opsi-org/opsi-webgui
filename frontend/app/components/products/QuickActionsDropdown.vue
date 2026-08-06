@@ -148,9 +148,6 @@
                   <td class="px-1.5 py-1 text-sm whitespace-nowrap">
                     {{ row.product.actionRequest || actionRequest }}
                   </td>
-                  <td class="px-1.5 py-1 text-sm text-(--color-text-muted) whitespace-nowrap">
-                    {{ row.product.installationStatus || '-' }}
-                  </td>
                 </tr>
               </CoreAppTable>
               <div v-else-if="previewData !== null"
@@ -221,7 +218,6 @@ const previewColumns = computed(() => [
   { key: 'productId', label: String($t('products.id')), sortable: true },
   { key: 'version', label: String($t('common.version')), sortable: true },
   { key: 'actionRequest', label: String($t('actions.request')), sortable: true },
-  { key: 'installationStatus', label: String($t('products.status')), sortable: true },
 ])
 
 const dialogOpen = ref(false)
@@ -295,6 +291,10 @@ interface PreviewProduct {
 const previewData = ref<Record<string, PreviewProduct[]> | null>(null)
 const previewSortKey = ref<string>('clientId')
 const previewSortDir = ref<'asc' | 'desc'>('asc')
+const previewRequestId = ref(0)
+
+const PREVIEW_TIMEOUT_MS = 15000
+const PREVIEW_RENDER_LIMIT = 1500
 
 const previewCount = computed(() => {
   if (!previewData.value) return 0
@@ -334,7 +334,7 @@ const sortedPreviewRows = computed(() => {
       a.product.productId.localeCompare(b.product.productId)
     return sec
   })
-  return rows
+  return rows.slice(0, PREVIEW_RENDER_LIMIT)
 })
 
 function togglePreviewSort(key: string) {
@@ -398,37 +398,62 @@ function buildParams(demoMode: boolean): Record<string, unknown> | null {
     return null
   }
 
+  const selectedClients =
+    includeClients && selectionStore.selectedClients.length > 0
+      ? selectionStore.selectedClients
+      : null
+  const selectedDepots =
+    includeServers && selectionStore.selectedServers.length > 0 ? selectionStore.selectedServers : null
+
+  if (includeServers && !selectedDepots) {
+    errorMessage.value = String($t('servers.noSelection'))
+    previewData.value = null
+    return null
+  }
+
   return {
     action,
     demoMode,
     outdated: filters.value.outdatedOnly,
     installation_status: instStatus,
     action_result: actResult,
-    selectedClients:
-      includeClients && selectionStore.selectedClients.length > 0
-        ? selectionStore.selectedClients
-        : null,
-    selectedDepots:
-      includeServers && selectionStore.selectedServers.length > 0
-        ? selectionStore.selectedServers
-        : null,
+    selectedClients,
+    selectedDepots,
   }
+}
+
+async function callBulkProductActionWithTimeout(params: Record<string, unknown>) {
+  const timeoutError = new Error(
+    'Preview request timed out. Please narrow the scope or add stricter conditions.'
+  )
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => reject(timeoutError), PREVIEW_TIMEOUT_MS)
+  })
+  return (await Promise.race([
+    bulkProductAction(params as Parameters<typeof bulkProductAction>[0]),
+    timeoutPromise,
+  ])) as Awaited<ReturnType<typeof bulkProductAction>>
 }
 
 async function fetchPreview() {
   const params = buildParams(true)
   if (!params) return
+  const requestId = ++previewRequestId.value
   loadingPreview.value = true
   errorMessage.value = null
   try {
-    const result = await bulkProductAction(params as Parameters<typeof bulkProductAction>[0])
+    const result = await callBulkProductActionWithTimeout(params)
+    if (requestId !== previewRequestId.value) return
     if (result.error) throw result.error
     previewData.value = (result.data || {}) as Record<string, PreviewProduct[]>
   } catch (e) {
+    if (requestId !== previewRequestId.value) return
     errorMessage.value = e instanceof Error ? e.message : String(e)
     previewData.value = null
   } finally {
-    loadingPreview.value = false
+    if (requestId === previewRequestId.value) {
+      loadingPreview.value = false
+    }
   }
 }
 

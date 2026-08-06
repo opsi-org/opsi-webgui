@@ -466,6 +466,12 @@
       "onClient": "Obsolète sur le client",
       "version": "Obsolète"
     },
+    "tooltip": {
+      "indicators": "Indicateurs",
+      "clientOutdatedShort": "La version client diffère de la version dépôt",
+      "depotVersionDiffShort": "Les dépôts sélectionnés utilisent des versions différentes",
+      "notOnAllDepotsShort": "Absent sur certains dépôts sélectionnés"
+    },
     "properties": "Propriétés du produit",
     "propertiesNone": "Aucune propriété trouvée",
     "propertiesSaved": "Propriétés enregistrées avec succès.",
@@ -528,7 +534,7 @@
     "docsDesc": "Consultez la documentation officielle OPSI pour des guides, des références d'API et du dépannage.",
     "forum": "Visiter le forum OPSI",
     "pro": "Support professionnel",
-    "proDesc": "Obtenez un support professionnel d'uib GmbH pour les déploiements en entreprise et une assistance avancée.",
+    "proDesc": "Obtenez un support professionnel d'UIB GmbH pour les déploiements en entreprise et une assistance avancée.",
     "title": "Support",
     "whatsNew": "Nouveautés"
   },

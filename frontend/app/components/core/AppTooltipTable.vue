@@ -27,9 +27,7 @@
             </td>
             <td class="py-1 pr-2 text-(--color-text) font-medium whitespace-nowrap align-top">
               <span class="inline-flex items-center gap-1">
-                <span v-if="row.value !== 'installed' && row.value !== 'successful'">{{
-                  row.value
-                }}</span>
+                <span v-if="shouldShowValue(row)">{{ row.value }}</span>
                 <CoreAppStatusBadge
                   v-if="row.badge"
                   :status="
@@ -55,9 +53,23 @@
 </template>
 
 <script setup lang="ts">
+  interface TooltipRow {
+    key: string
+    value: string
+    badge?: string
+    badgeColor?: string
+  }
+
   const props = defineProps<{
-    rows: Array<{ key: string; value: string; badge?: string; badgeColor?: string }>
+    rows: TooltipRow[]
   }>()
 
   const visibleRows = computed(() => props.rows.filter((r) => r.key?.trim() || r.value?.trim()))
+
+  function shouldShowValue(row: TooltipRow): boolean {
+    const value = (row.value || '').trim()
+    if (!value) return false
+    if (!row.badge) return true
+    return value.toLowerCase() !== row.badge.trim().toLowerCase()
+  }
 </script>

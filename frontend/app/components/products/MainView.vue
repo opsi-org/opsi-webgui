@@ -154,10 +154,18 @@
       </template>
 
       <template #cell-description="{ row }">
-        <span
-          class="block truncate max-w-[14rem] text-sm leading-5 text-(--color-text)"
-          :title="(row as ProductRow).description || undefined"
+        <CoreAppTooltipTable
+          v-if="(row as ProductRow).description"
+          :rows="[
+            { key: String($t('products.id')), value: (row as ProductRow).productId },
+            { key: String($t('common.description')), value: (row as ProductRow).description || '-' },
+          ]"
         >
+          <span class="block truncate max-w-[14rem] text-sm leading-5 text-(--color-text)">
+            {{ (row as ProductRow).description || '-' }}
+          </span>
+        </CoreAppTooltipTable>
+        <span v-else class="block truncate max-w-[14rem] text-sm leading-5 text-(--color-text)">
           {{ (row as ProductRow).description || '-' }}
         </span>
       </template>
@@ -168,6 +176,7 @@
 
       <template #cell-installationStatus="{ row }">
         <ProductsInstallationStatusBadge
+          :product-id="(row as ProductRow).productId"
           :status="(row as ProductRow).installationStatus"
           :status-details="(row as ProductRow).installationStatusDetails"
           :selected-clients="(row as ProductRow).selectedClients"
@@ -177,6 +186,7 @@
 
       <template #cell-actionResult="{ row }">
         <ProductsActionResultBadge
+          :product-id="(row as ProductRow).productId"
           :result="(row as ProductRow).actionResult"
           :result-details="(row as ProductRow).actionResultDetails"
           :selected-clients="(row as ProductRow).selectedClients"
@@ -254,10 +264,18 @@
       </template>
 
       <template #cell-advice="{ row }">
-        <span
-          class="block truncate max-w-[14rem] text-sm leading-5 text-(--color-text)"
-          :title="(row as ProductRow).advice || undefined"
+        <CoreAppTooltipTable
+          v-if="(row as ProductRow).advice"
+          :rows="[
+            { key: String($t('products.id')), value: (row as ProductRow).productId },
+            { key: String($t('products.advice')), value: (row as ProductRow).advice || '-' },
+          ]"
         >
+          <span class="block truncate max-w-[14rem] text-sm leading-5 text-(--color-text)">
+            {{ (row as ProductRow).advice || '-' }}
+          </span>
+        </CoreAppTooltipTable>
+        <span v-else class="block truncate max-w-[14rem] text-sm leading-5 text-(--color-text)">
           {{ (row as ProductRow).advice || '-' }}
         </span>
       </template>

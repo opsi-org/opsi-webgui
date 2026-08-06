@@ -134,6 +134,29 @@ async def test_filter_depot_access_supports_sync_functions(
 
 
 @pytest.mark.asyncio
+async def test_filter_depot_access_without_request_kwarg_uses_context_username(
+    monkeypatch,
+):
+    """Regression: endpoints can be decorated with @filter_depot_access
+    without a Request parameter (e.g. hosts/groups endpoints). The decorator
+    must resolve username via get_username context and still inject allowed
+    depots instead of crashing with NoneType on kwargs['request']."""
+    monkeypatch.setattr(utils, "user_register", lambda: True)
+    monkeypatch.setattr(utils, "get_username", lambda: "alice")
+    monkeypatch.setattr(utils, "depot_access_configured", lambda _user: True)
+    monkeypatch.setattr(
+        utils, "get_allowed_depots", lambda _user: ["depot-a", "depot-b"]
+    )
+
+    @utils.filter_depot_access
+    async def handler(selectedDepots=None):  # pylint: disable=invalid-name
+        return selectedDepots
+
+    selected = await handler(selectedDepots=None)
+    assert selected == ["depot-a", "depot-b"]
+
+
+@pytest.mark.asyncio
 async def test_filter_depot_access_no_user_register_passes_through(
     monkeypatch, request_with_user
 ):
@@ -249,6 +272,60 @@ def test_get_objects_of_group_does_not_mutate_input(monkeypatch):
     assert groups == ["group-a"]
 
 
+def test_read_groups_empty_allowed_does_not_allow_all():
+    """Regression: an empty allowed-list means "restricted with no access",
+    not "unrestricted". Only special clientdirectory is still allowed."""
+    from webgui.python.api.utils_groups import read_groups
+
+    raw_groups = [
+        {"group_id": "group-a", "parent_id": None, "object_id": None},
+        {"group_id": "clientdirectory", "parent_id": None, "object_id": None},
+    ]
+    root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
+
+    restricted = read_groups(
+        raw_groups,
+        root_group,
+        selected_object_ids=[],
+        allowed=[],
+        withClients=False,
+        gtype="HostGroup",
+    )
+    assert "group-a" not in restricted
+    assert "clientdirectory" in restricted
+
+    unrestricted = read_groups(
+        raw_groups,
+        root_group,
+        selected_object_ids=[],
+        allowed=None,
+        withClients=False,
+        gtype="HostGroup",
+    )
+    assert "group-a" in unrestricted
+
+
+def test_group_get_all_clients_restricted_without_allowed_returns_empty(monkeypatch):
+    """Restricted users with no allowed host groups must get an empty
+    client list, not a full unfiltered list."""
+    from webgui.python.api import hosts as hosts_api
+
+    monkeypatch.setattr(hosts_api, "user_register", lambda: True)
+    monkeypatch.setattr(hosts_api, "host_group_access_configured", lambda _u: True)
+    monkeypatch.setattr(hosts_api, "get_username", lambda: "alice")
+    monkeypatch.setattr(hosts_api, "get_allowed_sql", lambda _u: [])
+
+    class _NoDbMySQL:
+        def session(self):
+            raise AssertionError(
+                "DB access must not happen when allowed client set is empty"
+            )
+
+    monkeypatch.setattr(hosts_api, "mysql", _NoDbMySQL())
+
+    assert hosts_api.group_get_all_clients("clientdirectory", ["depot-a"]) == []
+
+
 def test_get_allowed_sql_returns_empty_for_no_configured_groups(monkeypatch):
     """No configured groups must yield [] without touching the database
     (an empty IN () clause would be a SQL syntax error)."""
@@ -257,6 +334,74 @@ def test_get_allowed_sql_returns_empty_for_no_configured_groups(monkeypatch):
 
     monkeypatch.setattr(utils, "get_allowed_product_groups", lambda _user: [])
     assert utils.get_allowed_sql("alice", "ProductGroup") == []
+
+
+class TestGetBoolConfigValueDefaults:
+    """_get_bool_config_value must honour the caller-supplied default when no
+    CONFIG_VALUE row exists for the given configId."""
+
+    def _make_db(self, rows, monkeypatch):
+        """Patch mysql.session so that fetchall returns *rows*."""
+
+        class FakeResult:
+            def __init__(self, data):
+                self._data = data
+
+            def fetchall(self):
+                return self._data
+
+        class FakeSession:
+            def execute(self, *a, **kw):
+                return FakeResult(rows)
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                pass
+
+        class FakeMySQL:
+            def session(self):
+                return FakeSession()
+
+        monkeypatch.setattr(utils, "mysql", FakeMySQL())
+
+    def test_no_rows_returns_false_default(self, monkeypatch):
+        self._make_db([], monkeypatch)
+        assert utils._get_bool_config_value("some.config.id") is False
+
+    def test_no_rows_returns_true_when_default_true(self, monkeypatch):
+        """Regression: client_creation_allowed and is_opsiserver_write_permitted
+        must default to True (permissive) when no config row exists, matching
+        the opsiconfd Rights defaults and opsi-configed checkPermissions logic."""
+        self._make_db([], monkeypatch)
+        assert utils._get_bool_config_value("some.config.id", default=True) is True
+
+    def test_row_is_default_true_returns_true(self, monkeypatch):
+        self._make_db([{"configId": "x", "value": "1", "isDefault": 1}], monkeypatch)
+        assert utils._get_bool_config_value("x") is True
+
+    def test_row_is_default_false_returns_false_ignoring_param(self, monkeypatch):
+        """Even with default=True, an explicit False config must be honoured."""
+        self._make_db([{"configId": "x", "value": "0", "isDefault": 1}], monkeypatch)
+        assert utils._get_bool_config_value("x", default=True) is False
+
+    def test_client_creation_allowed_defaults_to_true_when_no_config(self, monkeypatch):
+        self._make_db([], monkeypatch)
+        assert utils.client_creation_allowed("alice") is True
+
+    def test_is_opsiserver_write_permitted_defaults_to_true_when_no_config(
+        self, monkeypatch
+    ):
+        self._make_db([], monkeypatch)
+        assert utils.is_opsiserver_write_permitted("alice") is True
+
+    def test_depot_access_configured_defaults_to_false_when_no_config(
+        self, monkeypatch
+    ):
+        """depot_access_configured must remain False by default (no restriction)."""
+        self._make_db([], monkeypatch)
+        assert utils.depot_access_configured("alice") is False
 
 
 class TestRestrictClientsToAllowedDepots:

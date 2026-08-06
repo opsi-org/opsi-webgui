@@ -377,6 +377,10 @@ export function useCachedData() {
         }
         if (selectedServers.length > 0) params.selectedDepots = `[${selectedServers.join(',')}]`
         const result = await getHostGroups(params)
+        if (result.error) {
+          clientGroupsState.error = result.error.message || 'Failed to load groups'
+          return
+        }
         if (result.data) {
           clientGroupsState.tree = transformApiToTree(result.data, 'client')
           clientGroupsState.fetched = true
@@ -390,6 +394,8 @@ export function useCachedData() {
           for (const expandedId of clientGroupsState.expanded) {
             if (!rootIds.has(expandedId)) void fetchGroupChildrenLazy(expandedId, selectedServers)
           }
+        } else {
+          clientGroupsState.error = 'Failed to load groups'
         }
       } catch (e) {
         clientGroupsState.error = e instanceof Error ? e.message : 'Failed to load groups'
@@ -415,6 +421,10 @@ export function useCachedData() {
     const doFetch = async () => {
       try {
         const result = await getProductGroups({ withProducts: false })
+        if (result.error) {
+          productGroupsState.error = result.error.message || 'Failed to load groups'
+          return
+        }
         if (result.data) {
           const rawData = (result.data as Record<string, unknown>).groups || result.data
           productGroupsState.tree = transformApiToTree(
@@ -431,6 +441,8 @@ export function useCachedData() {
           for (const expandedId of productGroupsState.expanded) {
             if (!rootIds.has(expandedId)) void fetchProductGroupChildrenLazy(expandedId)
           }
+        } else {
+          productGroupsState.error = 'Failed to load groups'
         }
       } catch (e) {
         productGroupsState.error = e instanceof Error ? e.message : 'Failed to load groups'

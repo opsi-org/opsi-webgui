@@ -128,14 +128,20 @@
     if (!props.requestDetails) return []
     const clients = props.selectedClients || []
     if (clients.length > 0 && clients.length === props.requestDetails.length) {
-      return clients.map((c, i) => ({ key: c, value: props.requestDetails![i] || 'none' }))
+      return [
+        { key: `── ${String($t('clients.title'))} ──`, value: '' },
+        ...clients.map((c, i) => ({ key: c, value: props.requestDetails![i] || 'none' })),
+      ]
     }
     const counts: Record<string, number> = {}
     props.requestDetails.forEach((r) => {
       const key = r?.toLowerCase() || 'none'
       counts[key] = (counts[key] || 0) + 1
     })
-    return Object.entries(counts).map(([k, v]) => ({ key: k, value: String(v) }))
+    return [
+      { key: `── ${String($t('actions.request'))} ──`, value: '' },
+      ...Object.entries(counts).map(([k, v]) => ({ key: k, value: String(v) })),
+    ]
   })
 
   const defaultActions = ['none', 'setup', 'uninstall', 'update', 'always', 'once', 'custom']
