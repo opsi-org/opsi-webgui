@@ -469,6 +469,12 @@
       "onClient": "Outdated on Client",
       "version": "Outdated"
     },
+    "tooltip": {
+      "indicators": "Indicators",
+      "clientOutdatedShort": "Client version differs from depot version",
+      "depotVersionDiffShort": "Selected depots use different versions",
+      "notOnAllDepotsShort": "Missing on some selected depots"
+    },
     "properties": "Product Properties",
     "propertiesNone": "No properties found",
     "propertiesSaved": "Properties saved successfully.",
@@ -531,7 +537,7 @@
     "docsDesc": "Browse the official OPSI documentation for guides, API references, and troubleshooting.",
     "forum": "Visit OPSI Forum",
     "pro": "Professional Support",
-    "proDesc": "Get professional support from uib GmbH for enterprise deployments and advanced assistance.",
+    "proDesc": "Get professional support from UIB GmbH for enterprise deployments and advanced assistance.",
     "title": "Support",
     "whatsNew": "What's New"
   },

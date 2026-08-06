@@ -52,7 +52,7 @@
             color="primary"
             block
             as="a"
-            href="https://docs.opsi.org"
+            :href="docsUrl"
             target="_blank"
           >
             {{ $t('support.docs') }}
@@ -73,5 +73,10 @@
     locale.value === 'de'
       ? 'https://opsi.org/de/services/support/'
       : 'https://opsi.org/en/services/support/'
+  )
+  const docsUrl = computed(() =>
+    locale.value === 'de'
+      ? 'https://docs.opsi.org/opsi-docs-de/4.3/gui/webgui.html'
+      : 'https://docs.opsi.org/opsi-docs-en/4.3/gui/webgui.html'
   )
 </script>

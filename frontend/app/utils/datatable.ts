@@ -22,3 +22,17 @@ export function needsMoreToFill(input: FillCheckInput): boolean {
   if (!input.hasMore || input.loading) return false
   return input.scrollHeight <= input.clientHeight + 1
 }
+
+/**
+ * Detect a stalled infinite scroll: a next-page request finished but did not
+ * add any new rows. This happens when the server reports a total larger than
+ * the rows it actually returns (e.g. users with restricted depot access) and
+ * would otherwise cause an endless page-request loop.
+ *
+ * @param rowCountAtRequest rows.length recorded when the next-page request
+ *   was issued, or -1 if no auto page request is in flight
+ * @param rowCountNow current rows.length after loading finished
+ */
+export function isAutoPageStalled(rowCountAtRequest: number, rowCountNow: number): boolean {
+  return rowCountAtRequest >= 0 && rowCountNow <= rowCountAtRequest
+}

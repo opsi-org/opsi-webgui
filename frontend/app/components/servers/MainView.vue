@@ -314,14 +314,21 @@
         return
       }
       if (result.data) {
-        servers.value = result.data as Server[]
+        const newData = result.data as Server[]
         if (result.total !== null) totalItems.value = result.total
-        const cs = result.data.find((d) => d.type === 'OpsiConfigserver')
+        if (effectiveParams && effectiveParams.pageNumber > 1 && lastPageParams.value) {
+          const existingIds = new Set(servers.value.map((s) => s.depotId))
+          const unique = newData.filter((s) => !existingIds.has(s.depotId))
+          servers.value = [...servers.value, ...unique]
+        } else {
+          servers.value = newData
+        }
+        const cs = servers.value.find((d) => d.type === 'OpsiConfigserver')
         if (cs) {
           selectionStore.setConfigServer(cs.depotId)
         }
         if (selectionStore.selectedServers.length === 0) {
-          const allDepotIds = result.data.map((d) => d.depotId)
+          const allDepotIds = servers.value.map((d) => d.depotId)
           if (allDepotIds.length > 0) selectionStore.setServers(allDepotIds)
         }
       }
