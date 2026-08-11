@@ -49,6 +49,9 @@ cd "${WORKING_DIR}/${FRONTEND_DIR}"
 echo "> Installing pnpm dependencies..."
 pnpm install --frozen-lockfile
 
+echo "> Preparing Nuxt..."
+pnpm run setup:nuxt
+
 echo "> Running pnpm generate..."
 pnpm run generate
 

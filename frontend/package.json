@@ -8,7 +8,7 @@
     "dev": "nuxt dev",
     "build": "nuxt build",
     "generate": "nuxt generate",
-    "postinstall": "nuxt prepare",
+    "setup:nuxt": "nuxt prepare",
     "lint": "eslint --ext .ts,.js,.vue .",
     "lint:fix": "eslint --ext .ts,.js,.vue . --fix",
     "format": "prettier --write .",
@@ -21,7 +21,8 @@
     "test:e2e:ui": "playwright test --config tests/playwright.config.ts --ui",
     "test:e2e:update-baselines": "CI_PIPELINE_SOURCE=schedule playwright test --config tests/playwright.config.ts --update-snapshots",
     "screenshots:docs": "CI_PIPELINE_SOURCE=schedule SKIP_VISUAL_REGRESSION=1 playwright test --config tests/playwright.config.ts",
-    "sbom": "cdxgen -o ../sbom.cyclonedx.json --spec-version 1.5 --type js --required-only && node ./tools/normalize-sbom-npm-scopes.mjs ../sbom.cyclonedx.json"
+    "sbom": "env -u NODE_PATH -u MYSQL_PASSWORD -u MYSQL_ROOT_PASSWORD -u MYSQL_USER -u DEV_USER -u OPSI_ADMIN_USER node ./node_modules/@cyclonedx/cdxgen/bin/cdxgen.js -o ../sbom.cyclonedx.json --spec-version 1.5 --type js --required-only --no-install-deps && node ./tools/normalize-sbom-npm-scopes.mjs --file ../sbom.cyclonedx.json --runtime-only --omit-dev --dev-scope optional --strip-dependency-risk-metadata",
+    "sbom:full": "env -u NODE_PATH -u MYSQL_PASSWORD -u MYSQL_ROOT_PASSWORD -u MYSQL_USER -u DEV_USER -u OPSI_ADMIN_USER node ./node_modules/@cyclonedx/cdxgen/bin/cdxgen.js -o ../sbom.cyclonedx.json --spec-version 1.5 --type js --required-only --no-install-deps && node ./tools/normalize-sbom-npm-scopes.mjs --file ../sbom.cyclonedx.json --dev-scope optional"
   },
   "dependencies": {
     "@msgpack/msgpack": "^3.1.3",
