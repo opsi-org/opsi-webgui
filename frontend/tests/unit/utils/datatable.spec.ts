@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { needsMoreToFill, isAutoPageStalled } from '~/app/utils/datatable'
+import { needsMoreToFill, isAutoPageStalled, hasMoreInfiniteData } from '~/app/utils/datatable'
 
 describe('needsMoreToFill', () => {
   it('loads more when content does not fill the container and more data exists', () => {
@@ -56,5 +56,22 @@ describe('isAutoPageStalled', () => {
   it('does not stall when no auto page request was in flight', () => {
     expect(isAutoPageStalled(-1, 0)).toBe(false)
     expect(isAutoPageStalled(-1, 100)).toBe(false)
+  })
+})
+
+describe('hasMoreInfiniteData', () => {
+  it('reports more data while rows are below the server total', () => {
+    expect(hasMoreInfiniteData(false, 50, 100)).toBe(true)
+  })
+
+  it('reports no more data once all rows are loaded', () => {
+    expect(hasMoreInfiniteData(false, 100, 100)).toBe(false)
+    expect(hasMoreInfiniteData(false, 101, 100)).toBe(false)
+  })
+
+  it('hides the loading indicator when auto-paging stalled despite a larger server total', () => {
+    // Regression: restricted depot access users saw a permanently spinning
+    // loading row because total > reachable rows kept hasMoreData true.
+    expect(hasMoreInfiniteData(true, 1, 4)).toBe(false)
   })
 })

@@ -36,3 +36,17 @@ export function needsMoreToFill(input: FillCheckInput): boolean {
 export function isAutoPageStalled(rowCountAtRequest: number, rowCountNow: number): boolean {
   return rowCountAtRequest >= 0 && rowCountNow <= rowCountAtRequest
 }
+
+/**
+ * Whether more rows can be loaded via infinite scroll. Returns false when
+ * auto-paging is stalled so the loading spinner row is hidden even if the
+ * server-reported total exceeds the reachable rows (e.g. restricted depot
+ * access).
+ */
+export function hasMoreInfiniteData(
+  stalled: boolean,
+  rowCount: number,
+  serverTotal: number
+): boolean {
+  return !stalled && rowCount < serverTotal
+}
