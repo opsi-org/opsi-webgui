@@ -59,7 +59,7 @@ setup:deps:
   stage: setup
   extends: .node
   script:
-    - cd frontend && pnpm install --frozen-lockfile && pnpm run postinstall
+    - cd frontend && pnpm install --frozen-lockfile && pnpm run setup:nuxt
   artifacts:
     paths: [frontend/node_modules/, frontend/.nuxt/]
     expire_in: 1 day
