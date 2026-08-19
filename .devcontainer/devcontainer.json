@@ -20,6 +20,11 @@
       "settings": {
         "files.trimTrailingWhitespace": true,
         "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[vue]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "vue.format.enable": false,
         "[python]": {
           "editor.codeActionsOnSave": {
             "source.fixAll.ruff": "explicit",
