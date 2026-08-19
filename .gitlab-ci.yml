@@ -157,11 +157,36 @@ validate:lint:
   needs: [setup:deps]
   script: cd frontend && pnpm run lint
 
+validate:format:
+  stage: validate
+  extends: .node
+  needs: [setup:deps]
+  script: cd frontend && pnpm run format:check
+
 validate:types:
   stage: validate
   extends: .node
   needs: [setup:deps]
   script: cd frontend && pnpm run typecheck
+
+validate:backend-style:
+  extends: .docker-test
+  variables:
+    COMPOSE_PROJECT_NAME: webgui-backend-style-$CI_JOB_ID
+  script:
+    - |
+      docker run --rm \
+        -v "$LOCAL_WORKSPACE_DIR:/workspace" \
+        -w /workspace \
+        opsi-webgui-dev:latest \
+        bash -lc '
+          cd /workspace/docker/opsiconfd
+          uv sync
+          cd /workspace
+          /workspace/docker/opsiconfd/.venv/bin/python -m ruff format --check backend
+          /workspace/docker/opsiconfd/.venv/bin/python -m ruff check backend
+          find backend -name "*.py" -print0 | xargs -0 /workspace/docker/opsiconfd/.venv/bin/python -m py_compile
+        '
 
 # Frontend unit tests (vitest)
 validate:unit:
@@ -347,8 +372,10 @@ build:addon:
   needs:
     [
       setup:deps,
+      validate:format,
       validate:lint,
       validate:types,
+      validate:backend-style,
       validate:audit,
       { job: setup:patch-version, optional: true },
       { job: setup:changelog, optional: true },
