@@ -22,7 +22,7 @@
   const route = useRoute()
   const router = useRouter()
 
-  useHead({ title: () => `${$t('diag.title')} - opsi-WebGUI` })
+  useHead({ title: () => `${$t('diag.title')} - OPSI-WebGUI` })
 
   function handleTabChange(tab: string, status?: string) {
     const query = status ? { status } : {}

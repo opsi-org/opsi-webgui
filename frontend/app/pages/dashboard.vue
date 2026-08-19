@@ -15,5 +15,5 @@
   definePageMeta({ layout: 'default' })
 
   const { t: $t } = useI18n()
-  useHead({ title: () => `${$t('dashboard.title')} - opsi-WebGUI` })
+  useHead({ title: () => `${$t('dashboard.title')} - OPSI-WebGUI` })
 </script>

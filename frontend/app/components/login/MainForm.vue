@@ -13,7 +13,7 @@
     <div class="text-center mb-6">
       <CoreAppImage
         :src="isDark ? '~/assets/images/opsi-webgui-dark.svg' : '~/assets/images/opsi-webgui-light.svg'"
-        alt="opsi-WebGUI Logo"
+        alt="OPSI-WebGUI Logo"
         image-class="mx-auto mb-2 h-50"
       />
     </div>

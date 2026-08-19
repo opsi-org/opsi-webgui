@@ -132,7 +132,7 @@ export default defineNuxtConfig({
   app: {
     baseURL: ADDON_PATH + '/app',
     head: {
-      title: 'opsi-WebGUI',
+      title: 'OPSI-WebGUI',
       htmlAttrs: {
         lang: 'en',
       },

@@ -25,7 +25,7 @@
   const route = useRoute()
   const router = useRouter()
 
-  useHead({ title: () => `${$t('logs.title')} - opsi-WebGUI` })
+  useHead({ title: () => `${$t('logs.title')} - OPSI-WebGUI` })
 
   const routeClientId = computed<string>(() => {
     const id = route.params.id

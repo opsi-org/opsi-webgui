@@ -27,7 +27,7 @@
   const router = useRouter()
   const route = useRoute()
 
-  useHead({ title: () => `${$t('products.title')} - opsi-WebGUI` })
+  useHead({ title: () => `${$t('products.title')} - OPSI-WebGUI` })
 
   const activeType = ref<string>((route.query.type as string) || 'localboot')
   const initialProductId = computed(() => route.query.product as string | undefined)

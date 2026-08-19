@@ -382,7 +382,7 @@ build:addon:
     ]
   script:
     - apt update && apt -y install zip
-    - bash "$(pwd)/scripts/build_addon.sh" webgui "opsi-WebGUI" "$(pwd)"
+    - bash "$(pwd)/scripts/build_addon.sh" webgui "OPSI-WebGUI" "$(pwd)"
     - ls -lah opsi-webgui.zip webgui/
   artifacts:
     name: 'opsi-webgui-${PACKAGE_VERSION}'
