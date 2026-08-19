@@ -23,21 +23,21 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # to avoid test errors with "fixture 'config' not found".
 from utils import (  # noqa: E402, F401
-    config,
-    create_check_data,
-    database_connection,
+	config,
+	create_check_data,
+	database_connection,
 )
 
 
 @pytest.hookimpl()
-def pytest_configure(config):
-    config.option.asyncio_mode = "auto"
-    config.addinivalue_line(
-        "filterwarnings",
-        "ignore:Unverified HTTPS request is being made to host.*:urllib3.exceptions.InsecureRequestWarning",
-    )
+def pytest_configure(config):  # noqa: F811
+	config.option.asyncio_mode = "auto"
+	config.addinivalue_line(
+		"filterwarnings",
+		"ignore:Unverified HTTPS request is being made to host.*:urllib3.exceptions.InsecureRequestWarning",
+	)
 
 
 @pytest.fixture(autouse=True)
 def disable_insecure_request_warning():
-    warnings.simplefilter("ignore", urllib3.exceptions.InsecureRequestWarning)
+	warnings.simplefilter("ignore", urllib3.exceptions.InsecureRequestWarning)

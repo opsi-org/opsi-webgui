@@ -22,11 +22,12 @@
         "editor.formatOnSave": true,
         "[python]": {
           "editor.codeActionsOnSave": {
-            "source.fixAll": "explicit",
-            "source.organizeImports": "explicit"
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
           },
           "editor.defaultFormatter": "charliermarsh.ruff"
         },
+        "ruff.configuration": "/workspace/pyproject.toml",
         "python.defaultInterpreterPath": "/workspace/docker/opsiconfd/.venv/bin/python3",
         "python.languageServer": "Pylance",
         "python.testing.pytestEnabled": true
