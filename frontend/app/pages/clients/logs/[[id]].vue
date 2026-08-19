@@ -34,9 +34,7 @@
 
   const manualClientId = ref<string>(routeClientId.value)
 
-  const selectedClientId = computed<string | null>(
-    () => routeClientId.value || manualClientId.value || null
-  )
+  const selectedClientId = computed<string | null>(() => routeClientId.value || manualClientId.value || null)
 
   watch(routeClientId, (id) => {
     if (id !== manualClientId.value) manualClientId.value = id

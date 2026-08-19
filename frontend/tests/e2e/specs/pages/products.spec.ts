@@ -28,7 +28,7 @@ async function seedClientSelectionFromClientsPage(page: import('@playwright/test
           ...current,
           selectedClients: ids,
           selectionSource: 'quickpanel',
-        })
+        }),
       )
     }, clientIds)
   }
@@ -56,10 +56,7 @@ test.describe('Products', () => {
           .filter({ hasText: /netboot/i })
           .first()
 
-        if (
-          (await localbootTab.isVisible().catch(() => false)) &&
-          (await netbootTab.isVisible().catch(() => false))
-        ) {
+        if ((await localbootTab.isVisible().catch(() => false)) && (await netbootTab.isVisible().catch(() => false))) {
           await netbootTab.click()
           await p.waitForTimeout(1200)
           await waitForTable(p)
@@ -75,9 +72,7 @@ test.describe('Products', () => {
         expect(await headers.count()).toBeGreaterThan(1)
 
         const filterInput = p
-          .locator(
-            'input[placeholder*="filter" i], input[placeholder*="suche" i], input[placeholder*="search" i]'
-          )
+          .locator('input[placeholder*="filter" i], input[placeholder*="suche" i], input[placeholder*="search" i]')
           .first()
         if (await filterInput.isVisible().catch(() => false)) {
           await filterInput.fill('opsi')
@@ -103,9 +98,9 @@ test.describe('Products', () => {
           if (await propsTab.isVisible().catch(() => false)) {
             await propsTab.click()
             await p.waitForTimeout(600)
-            await expect(
-              detailPanel.locator('input, select, textarea, button, [role="checkbox"]').first()
-            ).toBeVisible({ timeout: 10000 })
+            await expect(detailPanel.locator('input, select, textarea, button, [role="checkbox"]').first()).toBeVisible({
+              timeout: 10000,
+            })
           }
 
           const depTab = p
@@ -124,8 +119,8 @@ test.describe('Products', () => {
         const actionSel = p
           .locator(
             'table tbody tr:first-child select, ' +
-            'table tbody tr:first-child [class*="action-request"] button, ' +
-            'table tbody tr:first-child [class*="action"] button'
+              'table tbody tr:first-child [class*="action-request"] button, ' +
+              'table tbody tr:first-child [class*="action"] button',
           )
           .first()
         if (await actionSel.isVisible().catch(() => false)) {
@@ -150,8 +145,8 @@ test.describe('Products', () => {
             const actionSel = p
               .locator(
                 'table tbody tr:first-child select, ' +
-                'table tbody tr:first-child [class*="action-request"] button, ' +
-                'table tbody tr:first-child [class*="action"] button'
+                  'table tbody tr:first-child [class*="action-request"] button, ' +
+                  'table tbody tr:first-child [class*="action"] button',
               )
               .first()
             if (await actionSel.isVisible().catch(() => false)) {

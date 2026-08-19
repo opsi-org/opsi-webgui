@@ -51,7 +51,7 @@
         manualClientId.value = id
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   function handleSuccess() {

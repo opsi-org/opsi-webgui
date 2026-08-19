@@ -10,20 +10,10 @@
 <template>
   <div v-if="mode === 'header'" class="flex items-center gap-1" @click.stop>
     <span class="font-heading text-xs tracking-wider">{{ $t('actions.request') }}</span>
-    <CoreAppIcon
-      v-if="sortColumn === 'actionRequest'"
-      :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
-      class="w-3 h-3"
-    />
+    <CoreAppIcon v-if="sortColumn === 'actionRequest'" :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc" class="w-3 h-3" />
     <CoreAppIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
     <CoreAppPopover v-if="hasClientsSelected && hasProductsSelected">
-      <CoreAppButton
-        size="xs"
-        variant="ghost"
-        color="neutral"
-        :icon="icons.chevronDown"
-        :title="$t('products.quickHelp')"
-      />
+      <CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.chevronDown" :title="$t('products.quickHelp')" />
       <template #content>
         <div class="p-2 w-44">
           <p class="text-xs text-(--color-text-muted) mb-2">{{ $t('quick.setFor') }}</p>
@@ -147,8 +137,7 @@
   const defaultActions = ['none', 'setup', 'uninstall', 'update', 'always', 'once', 'custom']
 
   const requestItems = computed(() => {
-    const actions =
-      props.availableActions.length > 0 ? ['none', ...props.availableActions] : defaultActions
+    const actions = props.availableActions.length > 0 ? ['none', ...props.availableActions] : defaultActions
     return [...new Set(actions)].map((a) => ({
       label: a === 'none' ? String($t('common.none')) : a,
       value: a,
@@ -178,7 +167,7 @@
     (newVal) => {
       originalRequest.value = newVal || 'none'
       selectedRequest.value = newVal || 'none'
-    }
+    },
   )
 
   watch(
@@ -189,7 +178,7 @@
       } else {
         selectedRequest.value = originalRequest.value
       }
-    }
+    },
   )
 
   defineExpose({ hasChanged, resetToOriginal })

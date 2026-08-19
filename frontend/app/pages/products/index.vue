@@ -44,13 +44,9 @@
   watch(
     () => route.query.type,
     (newType) => {
-      if (
-        newType &&
-        typeof newType === 'string' &&
-        (newType === 'localboot' || newType === 'netboot')
-      ) {
+      if (newType && typeof newType === 'string' && (newType === 'localboot' || newType === 'netboot')) {
         activeType.value = newType
       }
-    }
+    },
   )
 </script>

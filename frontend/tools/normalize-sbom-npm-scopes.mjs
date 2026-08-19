@@ -84,10 +84,7 @@ function hasDevProperty(component) {
 
   return component.properties.some((property) => {
     if (!property || typeof property !== 'object') return false
-    return (
-      property.name === 'cdx:npm:package:development' &&
-      String(property.value).toLowerCase() === 'true'
-    )
+    return property.name === 'cdx:npm:package:development' && String(property.value).toLowerCase() === 'true'
   })
 }
 
@@ -99,10 +96,7 @@ function buildReachableRefs(sbom) {
   }
 
   const graph = new Map(
-    sbom.dependencies.map((entry) => [
-      entry?.ref,
-      Array.isArray(entry?.dependsOn) ? entry.dependsOn.filter(Boolean) : [],
-    ])
+    sbom.dependencies.map((entry) => [entry?.ref, Array.isArray(entry?.dependsOn) ? entry.dependsOn.filter(Boolean) : []]),
   )
 
   const reachableRefs = new Set([rootRef])
@@ -140,9 +134,7 @@ function stripRiskMetadata(component) {
     delete component.properties
   }
 
-  return (
-    component.properties?.length !== originalLength || (originalLength > 0 && !component.properties)
-  )
+  return component.properties?.length !== originalLength || (originalLength > 0 && !component.properties)
 }
 
 function getComponentNamespace(component) {
@@ -172,9 +164,7 @@ function updateMetadataNamespaces(sbom) {
 
   const namespaces = [...new Set(sbom.components.map(getComponentNamespace).filter(Boolean))].sort()
   const namespaceValue = namespaces.join('\n')
-  const namespaceProperty = sbom.metadata.properties.find(
-    (property) => property?.name === 'cdx:bom:componentNamespaces'
-  )
+  const namespaceProperty = sbom.metadata.properties.find((property) => property?.name === 'cdx:bom:componentNamespaces')
 
   if (!namespaceProperty) {
     if (namespaceValue) {
@@ -188,9 +178,7 @@ function updateMetadataNamespaces(sbom) {
     return
   }
 
-  sbom.metadata.properties = sbom.metadata.properties.filter(
-    (property) => property?.name !== 'cdx:bom:componentNamespaces'
-  )
+  sbom.metadata.properties = sbom.metadata.properties.filter((property) => property?.name !== 'cdx:bom:componentNamespaces')
 }
 
 const sbom = JSON.parse(fs.readFileSync(targetPath, 'utf8'))
@@ -234,12 +222,7 @@ if (Array.isArray(sbom.components)) {
       }
     }
 
-    if (
-      stripDependencyRiskMetadata &&
-      componentRef &&
-      componentRef !== rootRef &&
-      stripRiskMetadata(component)
-    ) {
+    if (stripDependencyRiskMetadata && componentRef && componentRef !== rootRef && stripRiskMetadata(component)) {
       riskMetadataStripped += 1
     }
 

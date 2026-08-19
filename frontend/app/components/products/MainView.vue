@@ -8,11 +8,7 @@
   ProductsMainView - Product table with configuration panel and depot selection.
 -->
 <template>
-  <CoreAppNavigationGuardModal
-    v-model="showLeaveWarning"
-    @cancel="cancelLeave"
-    @confirm="confirmLeave"
-  />
+  <CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
 
   <LayoutsPageLayout
     show-refresh
@@ -26,17 +22,8 @@
       <slot name="tabs" />
     </template>
     <template #actions>
-      <CoreAppTooltip
-        v-if="isProductGroupAccessRestricted"
-        :text="$t('opsiConfig.serverFeatures.productGroupAccess.disabled')"
-      >
-        <CoreAppBadge
-          color="warning"
-          variant="subtle"
-          size="xs"
-          class="cursor-help"
-          data-testid="products-restricted-badge"
-        >
+      <CoreAppTooltip v-if="isProductGroupAccessRestricted" :text="$t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
+        <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help" data-testid="products-restricted-badge">
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
@@ -91,11 +78,7 @@
       />
     </CoreAppErrorBanner>
 
-    <ProductsProcessActionsModal
-      v-model:open="processActionsOpen"
-      :selected-product-ids="selectedProductIds"
-      @executed="fetchProducts"
-    />
+    <ProductsProcessActionsModal v-model:open="processActionsOpen" :selected-product-ids="selectedProductIds" @executed="fetchProducts" />
 
     <CoreAppDataTable
       :key="tableId"
@@ -147,9 +130,7 @@
             class="w-3.5 h-3.5 text-(--color-error) shrink-0"
             :title="$t('products.locked')"
           />
-          <span class="text-sm leading-5 text-(--color-text)">{{
-            (row as ProductRow).productId
-          }}</span>
+          <span class="text-sm leading-5 text-(--color-text)">{{ (row as ProductRow).productId }}</span>
         </div>
       </template>
 
@@ -158,7 +139,10 @@
           v-if="(row as ProductRow).description"
           :rows="[
             { key: String($t('products.id')), value: (row as ProductRow).productId },
-            { key: String($t('common.description')), value: (row as ProductRow).description || '-' },
+            {
+              key: String($t('common.description')),
+              value: (row as ProductRow).description || '-',
+            },
           ]"
         >
           <span class="block truncate max-w-[14rem] text-sm leading-5 text-(--color-text)">
@@ -203,16 +187,8 @@
             :disabled="isReadOnly || selectionStore.selectedClients.length === 0"
             :request-details="(row as ProductRow).actionRequestDetails"
             :selected-clients="(row as ProductRow).selectedClients"
-            :pending-request="
-              pendingActionRequests.get((row as ProductRow).productId)?.actionRequest
-            "
-            @change="
-              handleActionRequestChange(
-                (row as ProductRow).productId,
-                (row as ProductRow).actionRequest || 'none',
-                $event
-              )
-            "
+            :pending-request="pendingActionRequests.get((row as ProductRow).productId)?.actionRequest"
+            @change="handleActionRequestChange((row as ProductRow).productId, (row as ProductRow).actionRequest || 'none', $event)"
           />
           <CoreAppStatusBadge
             v-if="getLiveStatus((row as ProductRow).productId)"
@@ -249,8 +225,7 @@
       <template #cell-actionSequence="{ row }">
         <span class="text-sm leading-5 text-(--color-text)">
           {{
-            (row as ProductRow).actionSequence !== undefined &&
-            (row as ProductRow).actionSequence !== -1
+            (row as ProductRow).actionSequence !== undefined && (row as ProductRow).actionSequence !== -1
               ? (row as ProductRow).actionSequence
               : '-'
           }}
@@ -281,9 +256,7 @@
       </template>
 
       <template #cell-priority="{ row }">
-        <span class="text-sm leading-5 text-(--color-text)">{{
-          (row as ProductRow).priority ?? '-'
-        }}</span>
+        <span class="text-sm leading-5 text-(--color-text)">{{ (row as ProductRow).priority ?? '-' }}</span>
       </template>
 
       <template #cell-modificationTime="{ row }">
@@ -341,13 +314,7 @@
 <script setup lang="ts">
   import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
-  import type {
-    ProductRow,
-    ProductType,
-    ProductConfigTabsRef,
-    ProductActionRequestChange,
-    EditablePropertyValue,
-  } from '~/types'
+  import type { ProductRow, ProductType, ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue } from '~/types'
   import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
@@ -363,8 +330,7 @@
   const props = defineProps<Props>()
   const icons = useIcons()
   const { t: $t } = useI18n()
-  const { getProducts, getServerIds, setClientProductActions, processActionRequests } =
-    useApiHelpers()
+  const { getProducts, getServerIds, setClientProductActions, processActionRequests } = useApiHelpers()
   const { productIcons: cachedProductIcons, fetchProductIcons } = useCachedData()
   const selectionStore = useSelectionStore()
   const messageBusStore = useMessageBusStore()
@@ -382,8 +348,7 @@
 
   const selectedTableKeys = computed(() => selectionStore.selectedProducts)
   const sortBySelectionEnabled = computed(
-    () =>
-      selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedProducts.length > 0
+    () => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedProducts.length > 0,
   )
 
   const loading = ref(false)
@@ -399,13 +364,9 @@
   } | null>(null)
   const pendingActionRequests = ref(new Map<string, ProductActionRequestChange>())
   const savingActionRequests = ref(false)
-  const configTabsComponentRef = ref<InstanceType<
-    typeof import('./ConfigTabs.vue').default
-  > | null>(null)
+  const configTabsComponentRef = ref<InstanceType<typeof import('./ConfigTabs.vue').default> | null>(null)
   const lastPageParams = ref<PageChangeParams | null>(null)
-  const currentFilterQuery = ref(
-    typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('products')
-  )
+  const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('products'))
   const fetchProductsRequestId = ref(0)
   const productIcons = computed(() => (cachedProductIcons.value ?? {}) as Record<string, string>)
   const processActionsOpen = ref(false)
@@ -444,14 +405,10 @@
     })
   })
 
-  const tableId = computed(() =>
-    props.productType === 'NetbootProduct' ? 'products-netboot' : 'products-localboot'
-  )
+  const tableId = computed(() => (props.productType === 'NetbootProduct' ? 'products-netboot' : 'products-localboot'))
   const localbootTableSettings = useDataTableSettings('products-localboot')
   const netbootTableSettings = useDataTableSettings('products-netboot')
-  const tableSettings = computed(() =>
-    props.productType === 'NetbootProduct' ? netbootTableSettings : localbootTableSettings
-  )
+  const tableSettings = computed(() => (props.productType === 'NetbootProduct' ? netbootTableSettings : localbootTableSettings))
   const selectedProductIds = computed(() => selectionStore.selectedProducts)
 
   const productConfigTabsRef = computed<ProductConfigTabsRef | null>(() => {
@@ -471,8 +428,7 @@
           pendingActionRequests.value.delete(pid)
         },
         getOriginalPropertyValue: () => undefined,
-        fmtVal: (v: unknown) =>
-          v === null || v === undefined ? '-' : Array.isArray(v) ? v.join(', ') : String(v),
+        fmtVal: (v: unknown) => (v === null || v === undefined ? '-' : Array.isArray(v) ? v.join(', ') : String(v)),
         refresh: fetchProducts,
       }
     }
@@ -515,8 +471,7 @@
 
   const hasUnsavedChanges = computed(() => productConfigTabsRef.value?.hasAnyChanges || false)
 
-  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } =
-    useAutoRefreshProducts(fetchProducts)
+  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshProducts(fetchProducts)
 
   const columns: DataTableColumnDef[] = [
     {
@@ -674,11 +629,7 @@
   }
 
   function openProductConfig(product: ProductRow) {
-    if (
-      configProduct.value &&
-      configProduct.value.productId !== product.productId &&
-      hasUnsavedChanges.value
-    ) {
+    if (configProduct.value && configProduct.value.productId !== product.productId && hasUnsavedChanges.value) {
       pendingAction.value = () => {
         discardAllChanges()
         doOpenProductConfig(product)
@@ -725,11 +676,7 @@
   }
 
   function handleRowActivate(row: ProductRow) {
-    if (
-      configProduct.value &&
-      configProduct.value.productId !== row.productId &&
-      hasUnsavedChanges.value
-    ) {
+    if (configProduct.value && configProduct.value.productId !== row.productId && hasUnsavedChanges.value) {
       pendingAction.value = () => {
         discardAllChanges()
         selectionStore.setProducts([row.productId], 'table')
@@ -747,8 +694,7 @@
   }
 
   function handleActionRequestChange(productId: string, oldReq: string, newReq: string) {
-    if (newReq === oldReq || (newReq === 'none' && !oldReq))
-      pendingActionRequests.value.delete(productId)
+    if (newReq === oldReq || (newReq === 'none' && !oldReq)) pendingActionRequests.value.delete(productId)
     else
       pendingActionRequests.value.set(productId, {
         productId,
@@ -775,8 +721,7 @@
     type: 'success' | 'error' | 'warning'
     message: string
   }> {
-    if (pendingActionRequests.value.size === 0)
-      return { type: 'success', message: String($t('notify.action.saved')) }
+    if (pendingActionRequests.value.size === 0) return { type: 'success', message: String($t('notify.action.saved')) }
     if (selectionStore.selectedClients.length === 0) {
       return { type: 'error', message: String($t('clients.selectNone')) }
     }
@@ -794,7 +739,7 @@
               message: String($t('actions.live.saving')),
               tooltip: String($t('actions.request')),
             },
-            0
+            0,
           )
           const r = await setClientProductActions({
             clientIds,
@@ -803,11 +748,7 @@
           })
           if (r.error) throw r.error
           savedIds.push(pid)
-          setLiveStatus(
-            [pid],
-            { kind: 'updated', message: String($t('actions.live.updated')) },
-            12000
-          )
+          setLiveStatus([pid], { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
         } catch (e) {
           errors.push(`${pid}: ${e instanceof Error ? e.message : String(e)}`)
           setLiveStatus(
@@ -817,7 +758,7 @@
               message: String($t('actions.live.failed')),
               tooltip: e instanceof Error ? e.message : String(e),
             },
-            15000
+            15000,
           )
         }
       }
@@ -848,7 +789,7 @@
   async function handleSaveAll(
     processOnDemand?: boolean,
     onDemandOptions?: { productIds?: string[]; visibility?: string; clientIds?: string[] },
-    onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void
+    onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void,
   ) {
     const result = await saveActionRequests()
     if (result.type === 'error') {
@@ -860,29 +801,18 @@
       if (clientIds.length > 0) {
         try {
           const productIds = onDemandOptions?.productIds || undefined
-          const processedIds =
-            productIds && productIds.length > 0 ? productIds : selectedProductIds.value
+          const processedIds = productIds && productIds.length > 0 ? productIds : selectedProductIds.value
           if (processedIds.length > 0) {
-            setLiveStatus(
-              processedIds,
-              { kind: 'processing', message: String($t('actions.live.processing')) },
-              0
-            )
+            setLiveStatus(processedIds, { kind: 'processing', message: String($t('actions.live.processing')) }, 0)
           }
           await processActionRequests(clientIds, productIds)
           if (processedIds.length > 0) {
-            setLiveStatus(
-              processedIds,
-              { kind: 'updated', message: String($t('actions.live.updated')) },
-              12000
-            )
+            setLiveStatus(processedIds, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
           }
           onResult?.({ type: 'success', message: String($t('notify.product.actions.executed')) })
         } catch (e) {
           const processedIds =
-            onDemandOptions?.productIds && onDemandOptions.productIds.length > 0
-              ? onDemandOptions.productIds
-              : selectedProductIds.value
+            onDemandOptions?.productIds && onDemandOptions.productIds.length > 0 ? onDemandOptions.productIds : selectedProductIds.value
           if (processedIds.length > 0) {
             setLiveStatus(
               processedIds,
@@ -891,7 +821,7 @@
                 message: String($t('actions.live.failed')),
                 tooltip: e instanceof Error ? e.message : String(e),
               },
-              15000
+              15000,
             )
           }
           onResult?.({
@@ -908,7 +838,7 @@
   async function handlePanelSave(
     _processOnDemand?: boolean,
     _options?: unknown,
-    onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void
+    onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void,
   ) {
     if (configTabsComponentRef.value?.hasAnyChanges) {
       try {
@@ -1049,10 +979,8 @@
         type: props.productType,
         selectedDepots: selectionStore.selectedServersParam,
       }
-      if (selectionStore.selectedClients.length > 0)
-        p.selectedClients = `[${selectionStore.selectedClients.join(',')}]`
-      if (selectionSortActive && selectionStore.selectedProducts.length > 0)
-        p.selected = `[${selectionStore.selectedProducts.join(',')}]`
+      if (selectionStore.selectedClients.length > 0) p.selectedClients = `[${selectionStore.selectedClients.join(',')}]`
+      if (selectionSortActive && selectionStore.selectedProducts.length > 0) p.selected = `[${selectionStore.selectedProducts.join(',')}]`
       if (effectiveParams) {
         p.pageNumber = effectiveParams.pageNumber
         p.perPage = effectiveParams.perPage
@@ -1064,10 +992,7 @@
       } else if (currentFilterQuery.value) {
         p.filterQuery = currentFilterQuery.value
       } else {
-        if (
-          tableSettings.value.settings.sortColumn &&
-          !tableSettings.value.settings.sortColumn.startsWith('__')
-        ) {
+        if (tableSettings.value.settings.sortColumn && !tableSettings.value.settings.sortColumn.startsWith('__')) {
           p.sortBy = translateSortBy(tableSettings.value.settings.sortColumn)
           p.sortDesc = tableSettings.value.settings.sortDirection === 'desc'
         }
@@ -1100,7 +1025,7 @@
     () => {
       resetTableScopeState()
       fetchProducts(buildInitialPageParams(currentFilterQuery.value))
-    }
+    },
   )
 
   watch(
@@ -1110,7 +1035,7 @@
         applyExternalSort(newCol)
         fetchProducts()
       }
-    }
+    },
   )
 
   watch(
@@ -1119,16 +1044,15 @@
       if (typeof newSortBy !== 'string' || newSortBy === props.initialSortColumn) return
       applyExternalSort(newSortBy)
       fetchProducts()
-    }
+    },
   )
 
   watch(
     () => route.query.filter,
     (newFilter) => {
-      currentFilterQuery.value =
-        typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('products')
+      currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('products')
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   watch(
@@ -1147,7 +1071,7 @@
         configProduct.value = p
         showConfigPanel.value = true
       }
-    }
+    },
   )
 
   function tryOpenPanelFromRoute() {
@@ -1165,23 +1089,20 @@
   watch(
     () => selectionStore.selectedClients,
     () => fetchProducts(buildInitialPageParams(currentFilterQuery.value)),
-    { deep: true }
+    { deep: true },
   )
   watch(
     () => selectionStore.selectedServers,
     () => fetchProducts(buildInitialPageParams(currentFilterQuery.value)),
-    { deep: true }
+    { deep: true },
   )
   watch(
     () => selectionStore.selectedProducts.join(','),
     () => {
-      if (
-        (lastPageParams.value?.sortBySelection || sortBySelectionEnabled.value) &&
-        selectionStore.selectionSource !== 'table'
-      ) {
+      if ((lastPageParams.value?.sortBySelection || sortBySelectionEnabled.value) && selectionStore.selectionSource !== 'table') {
         fetchProducts()
       }
-    }
+    },
   )
 
   watch(messageBusLastMsg, (msg) => {
@@ -1193,11 +1114,7 @@
       return
     }
     if (selectedProductIds.value.length > 0) {
-      setLiveStatus(
-        selectedProductIds.value,
-        { kind: 'updated', message: String($t('actions.live.updated')) },
-        8000
-      )
+      setLiveStatus(selectedProductIds.value, { kind: 'updated', message: String($t('actions.live.updated')) }, 8000)
     }
   })
 
@@ -1207,10 +1124,7 @@
     } else if (typeof route.query.sortBy === 'string') {
       applyExternalSort(route.query.sortBy)
     }
-    await Promise.all([
-      fetchProducts(buildInitialPageParams(currentFilterQuery.value)),
-      fetchProductIcons(),
-    ])
+    await Promise.all([fetchProducts(buildInitialPageParams(currentFilterQuery.value)), fetchProductIcons()])
     tryOpenPanelFromRoute()
   })
 

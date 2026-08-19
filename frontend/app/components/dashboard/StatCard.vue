@@ -18,10 +18,7 @@
   >
     <div class="flex items-center justify-between mb-2">
       <CoreAppIcon :name="icon" class="w-5 h-5" />
-      <CoreAppIcon
-        :name="arrowIcon"
-        class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity"
-      />
+      <CoreAppIcon :name="arrowIcon" class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
     <div class="min-h-8 mb-1 flex items-center">
       <CoreAppLoadingSpinner v-if="loading && value === null" size="sm" />

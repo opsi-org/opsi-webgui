@@ -30,15 +30,7 @@ const defaultVisible: Record<TableType, string[]> = {
     'reachable',
     'actions',
   ],
-  products: [
-    'selected',
-    'installationStatus',
-    'actionResult',
-    'productId',
-    'version',
-    'actionRequest',
-    'actions',
-  ],
+  products: ['selected', 'installationStatus', 'actionResult', 'productId', 'version', 'actionRequest', 'actions'],
 }
 
 const defaultSort: Record<TableType, { column: string; isDesc: boolean }> = {

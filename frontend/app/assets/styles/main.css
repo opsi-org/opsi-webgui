@@ -255,7 +255,8 @@ body {
 }
 
 /* Unified content typography for app surfaces (panels, dialogs, sidebars, cards, tables). */
-:where(.page-layout,
+:where(
+  .page-layout,
   .opsi-card,
   .data-table,
   .u-modal,
@@ -267,7 +268,8 @@ body {
   .u-textarea,
   .u-button,
   .u-badge,
-  .u-card) {
+  .u-card
+) {
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
@@ -643,7 +645,6 @@ textarea:focus-visible,
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {

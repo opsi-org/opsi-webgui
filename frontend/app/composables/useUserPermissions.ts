@@ -22,10 +22,7 @@ export function useUserPermissions() {
 
   function isPageAccessible(route: string): boolean {
     const routeFeatureMap: Record<string, () => boolean> = {
-      '/admin/terminal': () =>
-        !userStore.readOnly &&
-        isFeatureEnabled('terminal') &&
-        isFeatureEnabled('messagebus_terminal'),
+      '/admin/terminal': () => !userStore.readOnly && isFeatureEnabled('terminal') && isFeatureEnabled('messagebus_terminal'),
       '/clients/add': () => !userStore.readOnly && userStore.clientCreation,
       '/clients/clone': () => !userStore.readOnly && userStore.clientCreation,
       '/admin/maintenance': () => !userStore.readOnly,
@@ -40,9 +37,7 @@ export function useUserPermissions() {
     return true
   }
 
-  function filterNavItems<T extends { route: string; submenu?: Array<{ route: string }> }>(
-    items: T[]
-  ): T[] {
+  function filterNavItems<T extends { route: string; submenu?: Array<{ route: string }> }>(items: T[]): T[] {
     return items
       .filter((item) => isPageAccessible(item.route))
       .map((item) => {
@@ -63,9 +58,7 @@ export function useUserPermissions() {
   const isDepotAccessRestricted = computed(() => userStore.depotAccessRestricted)
   const isHostGroupAccessRestricted = computed(() => userStore.hostGroupAccessRestricted)
   const isProductGroupAccessRestricted = computed(() => userStore.productGroupAccessRestricted)
-  const isTerminalEnabled = computed(
-    () => isFeatureEnabled('terminal') && isFeatureEnabled('messagebus_terminal')
-  )
+  const isTerminalEnabled = computed(() => isFeatureEnabled('terminal') && isFeatureEnabled('messagebus_terminal'))
 
   return {
     isFeatureDisabled,

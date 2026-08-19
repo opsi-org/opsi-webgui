@@ -8,11 +8,7 @@
   CoreAppRadio - UI library wrapper for radio button rendering.
 -->
 <template>
-  <label
-    class="flex items-center gap-2 cursor-pointer"
-    :for="inputId"
-    :class="disabled ? 'opacity-50 cursor-not-allowed' : ''"
-  >
+  <label class="flex items-center gap-2 cursor-pointer" :for="inputId" :class="disabled ? 'opacity-50 cursor-not-allowed' : ''">
     <input
       :id="inputId"
       type="radio"

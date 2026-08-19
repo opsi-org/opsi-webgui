@@ -32,15 +32,9 @@
               >
                 <CoreAppIcon :name="item.icon" class="w-5 h-5 shrink-0" />
                 <span class="flex-1 text-xs text-left">{{ t(item.title) }}</span>
-                <CoreAppIcon
-                  :name="expanded[item.route] ? icons.chevronUp : icons.chevronDown"
-                  class="w-4 h-4 transition-transform"
-                />
+                <CoreAppIcon :name="expanded[item.route] ? icons.chevronUp : icons.chevronDown" class="w-4 h-4 transition-transform" />
               </CoreAppButton>
-              <div
-                v-if="expanded[item.route]"
-                class="ml-3 mt-0.5 mb-1 border-l-2 border-white/20 pl-1"
-              >
+              <div v-if="expanded[item.route]" class="ml-3 mt-0.5 mb-1 border-l-2 border-white/20 pl-1">
                 <NuxtLink
                   v-for="sub in item.submenu"
                   :key="sub.route"
@@ -78,9 +72,7 @@
                   @focusout="onLeave"
                   class="fixed bg-opsi-blue rounded-xl shadow-lg min-w-44 py-1 z-100 border border-white/10"
                 >
-                  <div
-                    class="px-3 py-2 font-heading text-xs text-white/70 border-b border-white/10"
-                  >
+                  <div class="px-3 py-2 font-heading text-xs text-white/70 border-b border-white/10">
                     {{ t(item.title) }}
                   </div>
                   <NuxtLink
@@ -155,8 +147,7 @@
   }
 
   /** Stable, locale-independent test id for a nav link, e.g. /admin/terminal -> nav-admin-terminal. */
-  const linkTestId = (route: string) =>
-    `nav-${route.replace(/^\//, '').replace(/\//g, '-') || 'root'}`
+  const linkTestId = (route: string) => `nav-${route.replace(/^\//, '').replace(/\//g, '-') || 'root'}`
 
   function getPopupPosition(route: string) {
     const pos = itemPositions.value[route]
@@ -253,7 +244,7 @@
           expanded.value[item.route] = true
         }
       })
-    }
+    },
   )
 
   function isActive(route: string): boolean {

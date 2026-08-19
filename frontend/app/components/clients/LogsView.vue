@@ -50,11 +50,7 @@
     <template #actions>
       <div v-if="resolvedClientId" class="flex gap-2">
         <div v-if="logContent.length > 0">
-          <CoreAppFilterInput
-            v-model="filterQuery"
-            size="sm"
-            input-class="w-full sm:w-56 md:w-72 lg:w-80"
-          />
+          <CoreAppFilterInput v-model="filterQuery" size="sm" input-class="w-full sm:w-56 md:w-72 lg:w-80" />
         </div>
         <div v-if="logContent.length > 0">
           <CoreAppButton
@@ -113,10 +109,7 @@
     </template>
 
     <div class="flex flex-col h-full gap-1.5 min-h-0">
-      <div
-        v-if="logContent.length > 0 && hasMarker"
-        class="flex items-center gap-1 text-xs text-muted shrink-0 px-1.5"
-      >
+      <div v-if="logContent.length > 0 && hasMarker" class="flex items-center gap-1 text-xs text-muted shrink-0 px-1.5">
         <CoreAppButton
           :icon="icons.bookmark"
           variant="soft"
@@ -149,9 +142,7 @@
         class="shrink-0"
       >
         <template #actions>
-          <CoreAppButton size="xs" color="primary" @click="dismissAndFetch"
-            >{{ $t('common.reload') }}
-          </CoreAppButton>
+          <CoreAppButton size="xs" color="primary" @click="dismissAndFetch">{{ $t('common.reload') }} </CoreAppButton>
           <CoreAppButton size="xs" variant="ghost" color="neutral" @click="logUpdatePending = false"
             >{{ $t('common.dismiss') }}
           </CoreAppButton>
@@ -165,10 +156,7 @@
         <div v-else-if="!selectedLogTypeValue" class="h-full bg-(--color-background) rounded-xl">
           <CoreAppEmptyState :icon="icons.log" :message="String($t('logs.selectType'))" />
         </div>
-        <div
-          v-else-if="loading && logContent.length === 0"
-          class="flex items-center justify-center h-full gap-2 text-muted"
-        >
+        <div v-else-if="loading && logContent.length === 0" class="flex items-center justify-center h-full gap-2 text-muted">
           <CoreAppLoadingSpinner />
         </div>
         <CoreAppAlertInline
@@ -183,20 +171,13 @@
         <div v-else-if="logContent.length === 0" class="h-full bg-(--color-background) rounded-xl">
           <CoreAppEmptyState :icon="icons.log" :message="String($t('logs.none'))" />
         </div>
-        <div
-          v-else
-          ref="logContainerRef"
-          class="h-full overflow-auto log-viewer bg-(--color-background) rounded-xl font-mono text-xs"
-        >
+        <div v-else ref="logContainerRef" class="h-full overflow-auto log-viewer bg-(--color-background) rounded-xl font-mono text-xs">
           <div
             v-for="(line, idx) in filteredLogContent"
             :id="'logrow-' + idx"
             :key="idx"
             v-clickable
-            :class="[
-              getLogRowClass(line, idx),
-              'flex items-start hover:bg-(--color-surface-hover) cursor-pointer transition-colors group',
-            ]"
+            :class="[getLogRowClass(line, idx), 'flex items-start hover:bg-(--color-surface-hover) cursor-pointer transition-colors group']"
             role="button"
             tabindex="0"
             @click="setMarker(idx)"
@@ -209,15 +190,9 @@
               {{ idx + 1 }}
             </span>
             <span class="w-3 shrink-0 flex items-center justify-center py-0.5">
-              <CoreAppIcon
-                v-if="markerLine === idx"
-                :name="icons.bookmark"
-                class="w-3 h-3 text-opsi-blue"
-              />
+              <CoreAppIcon v-if="markerLine === idx" :name="icons.bookmark" class="w-3 h-3 text-opsi-blue" />
             </span>
-            <code class="flex-1 px-0.5 py-0.5 whitespace-pre-wrap break-all leading-4 min-h-4">{{
-              line
-            }}</code>
+            <code class="flex-1 px-0.5 py-0.5 whitespace-pre-wrap break-all leading-4 min-h-4">{{ line }}</code>
           </div>
         </div>
       </div>
@@ -302,7 +277,7 @@
     (v) => {
       if (v !== clientSelectorModel.value) clientSelectorModel.value = v || ''
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   watch(clientSelectorModel, (v) => {
@@ -316,9 +291,7 @@
   })
 
   const selectedLogTypeValue = ref<string>('instlog')
-  const selectedLogType = computed<LogType | undefined>(() =>
-    LOG_TYPES.find((t) => t.value === selectedLogTypeValue.value)
-  )
+  const selectedLogType = computed<LogType | undefined>(() => LOG_TYPES.find((t) => t.value === selectedLogTypeValue.value))
   const fetchLogRequestId = ref(0)
   const logContent = ref<string[]>([])
   const loading = ref(false)
@@ -338,8 +311,7 @@
   const filteredLogContent = computed(() => {
     return logContent.value.filter((line) => {
       if (!isLogLevelVisible(line)) return false
-      if (filterQuery.value && !line.toLowerCase().includes(filterQuery.value.toLowerCase()))
-        return false
+      if (filterQuery.value && !line.toLowerCase().includes(filterQuery.value.toLowerCase())) return false
       return true
     })
   })
@@ -376,9 +348,7 @@
 
   function scrollToMarker() {
     if (markerLine.value < 0) return
-    document
-      .getElementById('logrow-' + markerLine.value)
-      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    document.getElementById('logrow-' + markerLine.value)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
   function scrollToBottom() {
@@ -458,7 +428,7 @@
       logUpdatePending.value = false
       if (clientId && logType) fetchLog()
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   let autoRefreshInterval: ReturnType<typeof setInterval> | null = null
@@ -481,18 +451,14 @@
       if (!msg) return
       const channel = (msg as { channel?: string }).channel
       const data = (msg as { data?: { type?: string; object_id?: string } }).data
-      if (
-        channel === 'event:log_updated' &&
-        data?.type === selectedLogType.value?.value &&
-        data?.object_id === resolvedClientId.value
-      ) {
+      if (channel === 'event:log_updated' && data?.type === selectedLogType.value?.value && data?.object_id === resolvedClientId.value) {
         if (autoRefresh.value) {
           fetchLog()
         } else {
           logUpdatePending.value = true
         }
       }
-    }
+    },
   )
 
   const { mount: mbMount } = useMessageBus(undefined, false, ['event:log_updated'])

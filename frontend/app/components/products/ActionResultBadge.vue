@@ -13,43 +13,24 @@
       <CoreAppTooltip v-if="iconOnly" :text="String($t('common.mixed'))">
         <CoreAppStatusBadge status="warning" :icon="icons.unequal" size="xs" />
       </CoreAppTooltip>
-      <CoreAppStatusBadge
-        v-else
-        status="warning"
-        :icon="icons.unequal"
-        :label="$t('common.mixed')"
-      />
+      <CoreAppStatusBadge v-else status="warning" :icon="icons.unequal" :label="$t('common.mixed')" />
     </CoreAppTooltipTable>
 
     <template v-else-if="normalizedResult === 'successful'">
       <CoreAppTooltip v-if="iconOnly" :text="String($t('common.success'))">
         <CoreAppStatusBadge status="success" :icon="icons.checkCircle" size="xs" />
       </CoreAppTooltip>
-      <CoreAppStatusBadge
-        v-else
-        status="success"
-        :icon="icons.checkCircle"
-        :label="$t('common.success')"
-      />
+      <CoreAppStatusBadge v-else status="success" :icon="icons.checkCircle" :label="$t('common.success')" />
     </template>
 
     <template v-else-if="normalizedResult === 'failed'">
       <CoreAppTooltip v-if="iconOnly" :text="String($t('common.failed'))">
         <CoreAppStatusBadge status="error" :icon="icons.xCircle" size="xs" />
       </CoreAppTooltip>
-      <CoreAppStatusBadge
-        v-else
-        status="error"
-        :icon="icons.xCircle"
-        :label="$t('common.failed')"
-      />
+      <CoreAppStatusBadge v-else status="error" :icon="icons.xCircle" :label="$t('common.failed')" />
     </template>
 
-    <span
-      v-else-if="normalizedResult === 'none' || !normalizedResult"
-      class="text-(--color-text-muted) text-xs"
-      >-</span
-    >
+    <span v-else-if="normalizedResult === 'none' || !normalizedResult" class="text-(--color-text-muted) text-xs">-</span>
 
     <CoreAppTooltip v-else-if="iconOnly" :text="String(result)">
       <CoreAppStatusBadge status="info" :icon="icons.productActionResult" size="xs" />
@@ -88,9 +69,7 @@
 
   const mixedTooltipRows = computed(() => {
     if (!props.resultDetails) return []
-    const heading = props.productId
-      ? [{ key: String($t('products.id')), value: props.productId }]
-      : []
+    const heading = props.productId ? [{ key: String($t('products.id')), value: props.productId }] : []
     const clients = props.selectedClients || []
     if (clients.length > 0 && clients.length === props.resultDetails.length) {
       return [
@@ -102,8 +81,7 @@
             key: c,
             value: props.resultDetails![i] || 'none',
             badge: result === 'none' ? undefined : result,
-            badgeColor:
-              result === 'successful' ? 'success' : result === 'failed' ? 'error' : undefined,
+            badgeColor: result === 'successful' ? 'success' : result === 'failed' ? 'error' : undefined,
           }
         }),
       ]

@@ -24,16 +24,12 @@ export function useSessionTimer(autoStart = false) {
 
   function calculateRemaining(): number {
     if (!userStore.sessionEndTime) return 0
-    return Math.max(
-      0,
-      Math.floor((new Date(userStore.sessionEndTime).getTime() - Date.now()) / 1000)
-    )
+    return Math.max(0, Math.floor((new Date(userStore.sessionEndTime).getTime() - Date.now()) / 1000))
   }
 
   function updateState() {
     sessionState.remainingSeconds = calculateRemaining()
-    sessionState.isWarning =
-      sessionState.remainingSeconds > 0 && sessionState.remainingSeconds <= WARNING_THRESHOLD_SEC
+    sessionState.isWarning = sessionState.remainingSeconds > 0 && sessionState.remainingSeconds <= WARNING_THRESHOLD_SEC
     sessionState.isExpired = sessionState.remainingSeconds === 0 && !!userStore.sessionEndTime
   }
 
@@ -107,7 +103,7 @@ export function useSessionTimer(autoStart = false) {
         sessionState.isWarning = false
         sessionState.isExpired = false
       }
-    }
+    },
   )
 
   return {

@@ -16,12 +16,7 @@
           <slot name="filters" />
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
-          <CoreAppFilterInput
-            v-if="showFilter"
-            v-model="searchModel"
-            :placeholder="searchPlaceholder || $t('common.filter')"
-            size="sm"
-          />
+          <CoreAppFilterInput v-if="showFilter" v-model="searchModel" :placeholder="searchPlaceholder || $t('common.filter')" size="sm" />
           <slot name="tableControls" />
           <slot name="actions" />
           <slot name="saveActions" />
@@ -43,18 +38,12 @@
       </div>
     </div>
 
-    <div
-      class="page-body flex-1 min-h-0 relative"
-      :class="showPanel && !useOverlayPanel ? 'flex' : ''"
-    >
+    <div class="page-body flex-1 min-h-0 relative" :class="showPanel && !useOverlayPanel ? 'flex' : ''">
       <div
         :style="mainStyle"
         class="min-h-0 overflow-y-auto transition-[width] duration-75 ease-out min-w-0"
         :tabindex="allowXScroll ? 0 : undefined"
-        :class="[
-          showPanel && !useOverlayPanel ? '' : 'h-full',
-          allowXScroll ? 'overflow-x-auto' : 'overflow-x-hidden',
-        ]"
+        :class="[showPanel && !useOverlayPanel ? '' : 'h-full', allowXScroll ? 'overflow-x-auto' : 'overflow-x-hidden']"
       >
         <slot />
       </div>
@@ -71,9 +60,7 @@
               class="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-12 bg-(--color-border) rounded group-hover:bg-opsi-blue transition-colors"
             />
           </div>
-          <div
-            class="shrink-0 sticky top-0 z-20 border-t border-b border-(--color-border) px-2.5 py-1.5 bg-(--color-surface)"
-          >
+          <div class="shrink-0 sticky top-0 z-20 border-t border-b border-(--color-border) px-2.5 py-1.5 bg-(--color-surface)">
             <div class="flex items-center gap-3">
               <CoreAppButton
                 v-if="useOverlayPanel"
@@ -91,10 +78,7 @@
                   <span class="font-semibold truncate m-0 text-sm">
                     <slot name="panel-title">Details</slot>
                   </span>
-                  <span
-                    v-if="$slots['panel-subtitle']"
-                    class="text-xs text-(--color-text-muted) truncate"
-                  >
+                  <span v-if="$slots['panel-subtitle']" class="text-xs text-(--color-text-muted) truncate">
                     <slot name="panel-subtitle" />
                   </span>
                 </div>
@@ -141,7 +125,7 @@
     }>(),
     {
       defaultPanelWidthPercent: 50,
-    }
+    },
   )
 
   const emit = defineEmits<{
@@ -161,7 +145,7 @@
       !!useSlots().filters ||
       !!useSlots().actions ||
       !!useSlots().tableControls ||
-      !!useSlots().saveActions
+      !!useSlots().saveActions,
   )
 
   const searchModel = computed({
@@ -189,9 +173,7 @@
     onUnmounted(() => window.removeEventListener('resize', updateLayoutMode))
   })
 
-  const useOverlayPanel = computed(
-    () => isMobile.value || (props.showPanel && isSplitPanelNarrow.value)
-  )
+  const useOverlayPanel = computed(() => isMobile.value || (props.showPanel && isSplitPanelNarrow.value))
 
   const mainStyle = computed(() => {
     if (!props.showPanel || useOverlayPanel.value) return { width: '100%' }
@@ -219,9 +201,7 @@
     const onMove = (ev: MouseEvent) => {
       const delta = startX - ev.clientX
       const deltaPercent = (delta / containerWidth) * 100
-      panelWidthPercent.value = Math.round(
-        Math.min(maxPanelPercent, Math.max(minPanelPercent, startPercent + deltaPercent))
-      )
+      panelWidthPercent.value = Math.round(Math.min(maxPanelPercent, Math.max(minPanelPercent, startPercent + deltaPercent)))
     }
 
     const onUp = () => {

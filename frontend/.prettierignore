@@ -1,0 +1,12 @@
+node_modules
+.pnpm-store
+.nuxt
+.output
+.e2e-build
+dist
+coverage
+test-results
+screenshots
+tests/e2e/reports
+certs
+pnpm-lock.yaml

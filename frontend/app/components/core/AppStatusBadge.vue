@@ -17,20 +17,10 @@
     :title="tooltipText"
     @click.stop="$emit('click')"
   >
-    <UBadge
-      :color="badgeColor"
-      :variant="variant"
-      :size="size"
-      class="justify-center cursor-pointer"
-    >
+    <UBadge :color="badgeColor" :variant="variant" :size="size" class="justify-center cursor-pointer">
       <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
       <UIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
-      <span
-        v-if="label"
-        class="text-[11px] leading-none opacity-80 mr-0.5"
-        :style="contentTextStyle"
-        >{{ label }}</span
-      >
+      <span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label }}</span>
       <span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
     </UBadge>
   </UButton>
@@ -46,12 +36,7 @@
   >
     <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
     <UIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
-    <span
-      v-if="label"
-      class="text-[11px] leading-none opacity-80 mr-0.5"
-      :style="contentTextStyle"
-      >{{ label }}</span
-    >
+    <span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label }}</span>
     <span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
   </UBadge>
   <UBadge

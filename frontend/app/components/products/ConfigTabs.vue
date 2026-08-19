@@ -27,10 +27,7 @@
       </div>
     </div>
 
-    <div
-      v-show="activeTab === 'properties'"
-      class="flex flex-col overflow-hidden min-h-0 flex-1 bg-(--color-surface)"
-    >
+    <div v-show="activeTab === 'properties'" class="flex flex-col overflow-hidden min-h-0 flex-1 bg-(--color-surface)">
       <ProductsPropertiesForm
         :properties="editableProperties"
         :loading="loadingProps"
@@ -40,28 +37,15 @@
       />
     </div>
 
-    <div
-      v-show="activeTab === 'dependencies'"
-      class="flex flex-col overflow-hidden min-h-0 flex-1 bg-(--color-surface)"
-    >
-      <ProductsDependenciesForm
-        :dependencies="dependencies"
-        :loading="loadingDeps"
-        :external-filter="filterQuery"
-      />
+    <div v-show="activeTab === 'dependencies'" class="flex flex-col overflow-hidden min-h-0 flex-1 bg-(--color-surface)">
+      <ProductsDependenciesForm :dependencies="dependencies" :loading="loadingDeps" :external-filter="filterQuery" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { useSelectionStore } from '~/stores/selectionStore'
-  import type {
-    ProductDependency,
-    ProductProperty,
-    EditableProductProperty,
-    EditablePropertyValue,
-    ProductConfigTabsRef,
-  } from '~/types'
+  import type { ProductDependency, ProductProperty, EditableProductProperty, EditablePropertyValue, ProductConfigTabsRef } from '~/types'
 
   interface Props {
     productId: string | null
@@ -88,7 +72,7 @@
     () => props.tab,
     (v) => {
       if (v) activeTab.value = v
-    }
+    },
   )
 
   const loadingProps = ref(false)
@@ -216,10 +200,7 @@
         .map((p: unknown) => {
           const prop = p as ProductProperty
           const initialValue = getInitialPropertyValue(prop)
-          originalPropertyValues.value.set(
-            prop.propertyId,
-            JSON.parse(JSON.stringify(initialValue))
-          )
+          originalPropertyValues.value.set(prop.propertyId, JSON.parse(JSON.stringify(initialValue)))
           return {
             ...prop,
             _value: JSON.parse(JSON.stringify(initialValue)),
@@ -315,7 +296,7 @@
       activeTab.value = props.tab || 'properties'
       await refresh()
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   watch(
@@ -323,7 +304,7 @@
     async () => {
       if (!props.productId) return
       await refresh()
-    }
+    },
   )
 
   defineExpose<ProductConfigTabsRef>({

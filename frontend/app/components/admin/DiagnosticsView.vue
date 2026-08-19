@@ -21,13 +21,7 @@
       <CoreAppTabsNav v-model="activeTab" :tabs="tabs" />
     </template>
     <template #actions>
-      <CoreAppButton
-        :icon="icons.download"
-        variant="outline"
-        color="primary"
-        size="sm"
-        @click="downloadDiagnostics"
-      >
+      <CoreAppButton :icon="icons.download" variant="outline" color="primary" size="sm" @click="downloadDiagnostics">
         {{ $t('common.download') }}</CoreAppButton
       >
     </template>
@@ -101,13 +95,7 @@
       <div v-if="statusFilter" class="flex items-center gap-2 mt-2">
         <span class="text-sm text-(--color-text-muted)">{{ $t('common.filterBy') }}:</span>
         <CoreAppStatusBadge :status="getStatusType(statusFilter)" :label="statusFilter" />
-        <CoreAppButton
-          variant="ghost"
-          color="neutral"
-          size="xs"
-          :icon="icons.x"
-          @click="statusFilter = ''"
-        />
+        <CoreAppButton variant="ghost" color="neutral" size="xs" :icon="icons.x" @click="statusFilter = ''" />
       </div>
     </template>
 
@@ -199,11 +187,7 @@
   const validTabs = ['healthcheck', 'modules', 'system'] as const
   type TabValue = (typeof validTabs)[number]
 
-  const activeTab = ref<TabValue>(
-    validTabs.includes(props.initialTab as TabValue)
-      ? (props.initialTab as TabValue)
-      : 'healthcheck'
-  )
+  const activeTab = ref<TabValue>(validTabs.includes(props.initialTab as TabValue) ? (props.initialTab as TabValue) : 'healthcheck')
 
   watch(activeTab, (val) => {
     // Carry statusFilter in the URL when switching to healthcheck; clear when leaving
@@ -251,8 +235,7 @@
         description: item.check?.description || '',
         message: item.message || '',
       }
-      if (item.partial_results && item.partial_results.length > 0)
-        node.children = transformHealthData(item.partial_results)
+      if (item.partial_results && item.partial_results.length > 0) node.children = transformHealthData(item.partial_results)
       return node
     })
   }
@@ -290,9 +273,7 @@
   const filteredModules = computed(() => {
     if (!filter.value) return modules.value
     const f = filter.value.toLowerCase()
-    return modules.value.filter(
-      (m) => m.toLowerCase().includes(f) || formatModuleName(m).toLowerCase().includes(f)
-    )
+    return modules.value.filter((m) => m.toLowerCase().includes(f) || formatModuleName(m).toLowerCase().includes(f))
   })
 
   const systemInfo = computed(() => {
@@ -300,8 +281,7 @@
     const skipKeys = ['health_check', 'modules', 'available_modules']
     for (const [key, value] of Object.entries(diagnosticsData.value)) {
       if (skipKeys.includes(key)) continue
-      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean')
-        info[key] = value
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') info[key] = value
     }
     return info
   })
@@ -311,8 +291,7 @@
     const f = filter.value.toLowerCase()
     const result: Record<string, unknown> = {}
     for (const [key, value] of Object.entries(systemInfo.value)) {
-      if (key.toLowerCase().includes(f) || String(value).toLowerCase().includes(f))
-        result[key] = value
+      if (key.toLowerCase().includes(f) || String(value).toLowerCase().includes(f)) result[key] = value
     }
     return result
   })
@@ -404,8 +383,7 @@
     if (sharedDiagData.value) {
       diagnosticsData.value = sharedDiagData.value
       const typedData = sharedDiagData.value
-      if (Array.isArray(typedData.health_check))
-        healthCheckData.value = typedData.health_check as HealthCheckResult[]
+      if (Array.isArray(typedData.health_check)) healthCheckData.value = typedData.health_check as HealthCheckResult[]
       if (sharedModules.value.length > 0) {
         modules.value = sharedModules.value
       } else if (Array.isArray(typedData.modules)) {
@@ -439,7 +417,7 @@
         if (item.status === 'error' || item.status === 'warning') expanded.value[item.key] = true
       })
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   onMounted(() => {

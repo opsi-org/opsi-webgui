@@ -43,10 +43,6 @@ export function isAutoPageStalled(rowCountAtRequest: number, rowCountNow: number
  * server-reported total exceeds the reachable rows (e.g. restricted depot
  * access).
  */
-export function hasMoreInfiniteData(
-  stalled: boolean,
-  rowCount: number,
-  serverTotal: number
-): boolean {
+export function hasMoreInfiniteData(stalled: boolean, rowCount: number, serverTotal: number): boolean {
   return !stalled && rowCount < serverTotal
 }

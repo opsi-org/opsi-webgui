@@ -28,15 +28,13 @@ test.describe('Login', () => {
 
         const usernameNamed = await p
           .locator(
-            'input#login-username, input[aria-label*="user" i], input[aria-label*="benutzer" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]'
+            'input#login-username, input[aria-label*="user" i], input[aria-label*="benutzer" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]',
           )
           .first()
           .isVisible()
           .catch(() => false)
         const passwordNamed = await p
-          .locator(
-            'input#login-password, input[type="password"][aria-label*="pass" i], input[type="password"][placeholder*="pass" i]'
-          )
+          .locator('input#login-password, input[type="password"][aria-label*="pass" i], input[type="password"][placeholder*="pass" i]')
           .first()
           .isVisible()
           .catch(() => false)
@@ -56,23 +54,21 @@ test.describe('Login', () => {
         await expect(passwordInput).toBeFocused()
 
         // Ensure core fields expose accessible names
-        const unnamedCount = await p
-          .locator('input#login-username, input#login-password')
-          .evaluateAll((els) => {
-            const nameOf = (el: Element): string => {
-              const aria = el.getAttribute('aria-label')
-              if (aria && aria.trim()) return aria.trim()
-              const labelledby = el.getAttribute('aria-labelledby')
-              if (labelledby) return labelledby.trim()
-              const id = el.getAttribute('id')
-              if (id) {
-                const label = document.querySelector(`label[for="${id}"]`)
-                if (label?.textContent?.trim()) return label.textContent.trim()
-              }
-              return ''
+        const unnamedCount = await p.locator('input#login-username, input#login-password').evaluateAll((els) => {
+          const nameOf = (el: Element): string => {
+            const aria = el.getAttribute('aria-label')
+            if (aria && aria.trim()) return aria.trim()
+            const labelledby = el.getAttribute('aria-labelledby')
+            if (labelledby) return labelledby.trim()
+            const id = el.getAttribute('id')
+            if (id) {
+              const label = document.querySelector(`label[for="${id}"]`)
+              if (label?.textContent?.trim()) return label.textContent.trim()
             }
-            return els.filter((el) => !nameOf(el)).length
-          })
+            return ''
+          }
+          return els.filter((el) => !nameOf(el)).length
+        })
         expect(unnamedCount).toBe(0)
       },
       // Check contrast AFTER filling in credentials so the enabled button state is tested

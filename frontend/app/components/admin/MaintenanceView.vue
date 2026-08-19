@@ -36,24 +36,15 @@
         <CoreAppCard>
           <template #header>
             <div class="flex items-center justify-between">
-              <span class="text-sm font-heading uppercase tracking-wide">{{
-                $t('clients.blocked')
-              }}</span>
-              <CoreAppStatusBadge
-                v-if="blockedClientsCount > 0"
-                status="warning"
-                :label="String(blockedClientsCount)"
-              />
+              <span class="text-sm font-heading uppercase tracking-wide">{{ $t('clients.blocked') }}</span>
+              <CoreAppStatusBadge v-if="blockedClientsCount > 0" status="warning" :label="String(blockedClientsCount)" />
             </div>
           </template>
           <div v-if="loadingClients" class="py-6 text-center">
             <CoreAppLoadingSpinner size="md" />
           </div>
           <div v-else-if="blockedClientsCount === 0" class="py-6 text-center">
-            <CoreAppIcon
-              :name="icons.checkCircle"
-              class="w-10 h-10 text-(--color-success-soft-text) mx-auto mb-2"
-            />
+            <CoreAppIcon :name="icons.checkCircle" class="w-10 h-10 text-(--color-success-soft-text) mx-auto mb-2" />
             <p class="text-(--color-text-muted)">{{ $t('clients.blockedNone') }}</p>
           </div>
           <div v-else class="space-y-4">
@@ -77,9 +68,7 @@
               compact
               @close="clientCardMessage = null"
             />
-            <div
-              class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)"
-            >
+            <div class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)">
               <div
                 v-for="client in blockedClientEntries"
                 :key="client.clientId"
@@ -87,10 +76,7 @@
               >
                 <div class="min-w-0">
                   <div class="truncate">{{ client.clientId }}</div>
-                  <div
-                    v-if="client.contexts.length > 0"
-                    class="truncate text-xs text-(--color-text-muted)"
-                  >
+                  <div v-if="client.contexts.length > 0" class="truncate text-xs text-(--color-text-muted)">
                     {{ client.contexts.join(', ') }}
                   </div>
                 </div>
@@ -122,24 +108,15 @@
         <CoreAppCard>
           <template #header>
             <div class="flex items-center justify-between">
-              <span class="text-sm font-heading uppercase tracking-wide">{{
-                $t('products.locked')
-              }}</span>
-              <CoreAppStatusBadge
-                v-if="lockedProductsCount > 0"
-                status="warning"
-                :label="String(lockedProductsCount)"
-              />
+              <span class="text-sm font-heading uppercase tracking-wide">{{ $t('products.locked') }}</span>
+              <CoreAppStatusBadge v-if="lockedProductsCount > 0" status="warning" :label="String(lockedProductsCount)" />
             </div>
           </template>
           <div v-if="loadingProducts" class="py-6 text-center">
             <CoreAppLoadingSpinner size="md" />
           </div>
           <div v-else-if="lockedProductsCount === 0" class="py-6 text-center">
-            <CoreAppIcon
-              :name="icons.checkCircle"
-              class="w-10 h-10 text-(--color-success-soft-text) mx-auto mb-2"
-            />
+            <CoreAppIcon :name="icons.checkCircle" class="w-10 h-10 text-(--color-success-soft-text) mx-auto mb-2" />
             <p class="text-(--color-text-muted)">{{ $t('products.lockedNone') }}</p>
           </div>
           <div v-else class="space-y-4">
@@ -163,9 +140,7 @@
               compact
               @close="productCardMessage = null"
             />
-            <div
-              class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)"
-            >
+            <div class="max-h-48 overflow-y-auto border border-(--color-border) rounded-lg divide-y divide-(--color-border)">
               <div
                 v-for="product in lockedProductEntries"
                 :key="product.productId"
@@ -173,16 +148,10 @@
               >
                 <div class="min-w-0">
                   <div class="truncate">{{ product.productId }}</div>
-                  <div
-                    v-if="product.locations.length > 0"
-                    class="truncate text-xs text-(--color-text-muted)"
-                  >
+                  <div v-if="product.locations.length > 0" class="truncate text-xs text-(--color-text-muted)">
                     {{ product.locations.join(', ') }}
                   </div>
-                  <div
-                    v-else-if="product.reason"
-                    class="truncate text-xs text-(--color-text-muted)"
-                  >
+                  <div v-else-if="product.reason" class="truncate text-xs text-(--color-text-muted)">
                     {{ product.reason }}
                   </div>
                 </div>
@@ -216,14 +185,8 @@
         <CoreAppCard fill>
           <template #header>
             <div class="flex items-center justify-between">
-              <span class="text-sm font-heading uppercase tracking-wide">{{
-                $t('admin.appState')
-              }}</span>
-              <CoreAppStatusBadge
-                :status="currentAppState === 'normal' ? 'success' : 'warning'"
-                :label="currentAppState"
-                size="lg"
-              />
+              <span class="text-sm font-heading uppercase tracking-wide">{{ $t('admin.appState') }}</span>
+              <CoreAppStatusBadge :status="currentAppState === 'normal' ? 'success' : 'warning'" :label="currentAppState" size="lg" />
             </div>
           </template>
           <div v-if="loadingAppState" class="py-6 text-center flex-1">
@@ -274,18 +237,11 @@
                       class="flex-1"
                       @keydown.enter.prevent="addAddressException"
                     />
-                    <CoreAppButton
-                      color="primary"
-                      size="sm"
-                      :icon="icons.add"
-                      @click="addAddressException"
-                      >{{ $t('common.add') }}</CoreAppButton
-                    >
+                    <CoreAppButton color="primary" size="sm" :icon="icons.add" @click="addAddressException">{{
+                      $t('common.add')
+                    }}</CoreAppButton>
                   </div>
-                  <div
-                    v-if="newAppState.address_exceptions.length > 0"
-                    class="flex flex-wrap gap-2 mt-2"
-                  >
+                  <div v-if="newAppState.address_exceptions.length > 0" class="flex flex-wrap gap-2 mt-2">
                     <span
                       v-for="(addr, idx) in newAppState.address_exceptions"
                       :key="idx"
@@ -305,20 +261,12 @@
                   </div>
                 </CoreAppFormField>
                 <CoreAppFormField :label="$t('fields.retryAfter')">
-                  <CoreAppInput
-                    v-model.number="newAppState.retry_after"
-                    type="number"
-                    size="sm"
-                    min="0"
-                    class="w-full"
-                  />
+                  <CoreAppInput v-model.number="newAppState.retry_after" type="number" size="sm" min="0" class="w-full" />
                 </CoreAppFormField>
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-2 mt-auto">
-              <CoreAppButton variant="outline" color="primary" size="sm" @click="resetAppState"
-                >{{ $t('common.reset') }}
-              </CoreAppButton>
+              <CoreAppButton variant="outline" color="primary" size="sm" @click="resetAppState">{{ $t('common.reset') }} </CoreAppButton>
               <CoreAppButton
                 color="primary"
                 size="sm"
@@ -334,15 +282,11 @@
         <CoreAppCard fill>
           <template #header>
             <div class="flex items-center gap-2">
-              <span class="text-sm font-heading uppercase tracking-wide">{{
-                $t('backup.create')
-              }}</span>
+              <span class="text-sm font-heading uppercase tracking-wide">{{ $t('backup.create') }}</span>
             </div>
           </template>
           <div class="space-y-4 h-full flex flex-col">
-            <div
-              class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1"
-            >
+            <div class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1">
               <CoreAppCheckbox
                 id="backup-maintenance-mode"
                 v-model="backupOptions.maintenance_mode"
@@ -355,9 +299,7 @@
               {{ $t('backup.include') }}
             </div>
             <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
-              <div
-                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1"
-              >
+              <div class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1">
                 <CoreAppCheckbox
                   id="backup-config-files"
                   v-model="backupOptions.config_files"
@@ -366,9 +308,7 @@
                 />
                 <span class="font-medium text-sm">{{ $t('backup.configFiles') }}</span>
               </div>
-              <div
-                class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1"
-              >
+              <div class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1">
                 <CoreAppCheckbox
                   id="backup-redis-data"
                   v-model="backupOptions.redis_data"
@@ -404,9 +344,7 @@
         <CoreAppCard fill>
           <template #header>
             <div class="flex items-center gap-2">
-              <span class="text-sm font-heading uppercase tracking-wide">{{
-                $t('backup.restore')
-              }}</span>
+              <span class="text-sm font-heading uppercase tracking-wide">{{ $t('backup.restore') }}</span>
             </div>
           </template>
           <div class="space-y-4 h-full flex flex-col">
@@ -422,9 +360,7 @@
                 <div
                   class="flex items-center gap-3 p-3 rounded-lg border-2 border-dashed border-(--color-border) hover:border-(--color-primary) transition-colors"
                 >
-                  <div
-                    class="w-10 h-10 rounded-lg bg-(--color-surface) flex items-center justify-center"
-                  >
+                  <div class="w-10 h-10 rounded-lg bg-(--color-surface) flex items-center justify-center">
                     <CoreAppIcon :name="icons.upload" class="w-5 h-5 text-(--color-text-muted)" />
                   </div>
                   <div class="flex-1 min-w-0">
@@ -443,9 +379,7 @@
                 {{ $t('backup.restoreOptions') }}
               </div>
               <div class="space-y-3 border border-(--color-border) rounded-lg p-2">
-                <div
-                  class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1"
-                >
+                <div class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1">
                   <CoreAppCheckbox
                     id="restore-config-files"
                     v-model="restoreOptions.config_files"
@@ -454,9 +388,7 @@
                   />
                   <span class="font-medium text-sm">{{ $t('backup.configFiles') }}</span>
                 </div>
-                <div
-                  class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1"
-                >
+                <div class="flex items-start gap-3 rounded-lg hover:bg-(--color-surface-hover) transition-colors p-1">
                   <CoreAppCheckbox
                     id="restore-redis-data"
                     v-model="restoreOptions.redis_data"
@@ -506,10 +438,7 @@
                 <span>{{ uploadProgress }}%</span>
               </div>
               <div class="w-full bg-(--color-surface-hover) rounded-full h-1.5">
-                <div
-                  class="bg-(--color-primary) h-1.5 rounded-full transition-all"
-                  :style="{ width: uploadProgress + '%' }"
-                />
+                <div class="bg-(--color-primary) h-1.5 rounded-full transition-all" :style="{ width: uploadProgress + '%' }" />
               </div>
             </div>
             <CoreAppButton
@@ -661,10 +590,7 @@
           const entries = data as Record<string, unknown>
           blockedClients.value = Object.keys(entries)
           blockedClientContexts.value = Object.fromEntries(
-            Object.entries(entries).map(([clientId, value]) => [
-              clientId,
-              normalizeStringArray(value),
-            ])
+            Object.entries(entries).map(([clientId, value]) => [clientId, normalizeStringArray(value)]),
           )
         } else {
           blockedClients.value = []
@@ -900,10 +826,7 @@
       restoreOptions.value.file_id = fileId
       const { error: restoreErr } = await api.restoreBackup({
         ...restoreOptions.value,
-        server_id:
-          serverIdOption.value === 'new'
-            ? restoreOptions.value.server_id.trim()
-            : serverIdOption.value,
+        server_id: serverIdOption.value === 'new' ? restoreOptions.value.server_id.trim() : serverIdOption.value,
       })
       if (restoreErr) throw restoreErr
       pageMessage.value = { type: 'success', message: String($t('backup.restored')) }

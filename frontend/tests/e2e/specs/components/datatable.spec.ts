@@ -41,16 +41,12 @@ test.describe('DataTable - component', () => {
           await headerCheckbox.click()
           await p.waitForTimeout(400)
           // At least one row should now be checked
-          const checkedRows = p.locator(
-            'tbody [type="checkbox"]:checked, tbody [aria-checked="true"]'
-          )
+          const checkedRows = p.locator('tbody [type="checkbox"]:checked, tbody [aria-checked="true"]')
           expect(await checkedRows.count()).toBeGreaterThan(0)
         }
 
         // Verify pagination controls are visible while the settings popover stays open.
-        const pagination = p
-          .locator('[class*="pagination"], [aria-label*="page" i], [role="navigation"]')
-          .first()
+        const pagination = p.locator('[class*="pagination"], [aria-label*="page" i], [role="navigation"]').first()
         if (await pagination.isVisible().catch(() => false)) {
           const pageButtons = pagination.locator('button, [role="button"]')
           const count = await pageButtons.count()
@@ -80,9 +76,7 @@ test.describe('DataTable - component', () => {
                 await p.waitForTimeout(300)
               }
             }
-            const headerCheckbox = p
-              .locator('thead [type="checkbox"], thead [role="checkbox"]')
-              .first()
+            const headerCheckbox = p.locator('thead [type="checkbox"], thead [role="checkbox"]').first()
             if (await headerCheckbox.isVisible().catch(() => false)) {
               await headerCheckbox.click()
               await p.waitForTimeout(300)

@@ -18,7 +18,7 @@ function installLocalStorage(): Storage {
     removeItem: (k: string) => map.delete(k),
     setItem: (k: string, v: string) => map.set(k, String(v)),
   }
-    ; (globalThis as { localStorage?: Storage }).localStorage = storage
+  ;(globalThis as { localStorage?: Storage }).localStorage = storage
   return storage
 }
 
@@ -115,8 +115,7 @@ describe('useDataTableSettings', () => {
 
   describe('display / selection / page size setters', () => {
     it('setPageSize, setDisplayMode and setSelectionMode update the settings', () => {
-      const { settings, setPageSize, setDisplayMode, setSelectionMode } =
-        useDataTableSettings('clients')
+      const { settings, setPageSize, setDisplayMode, setSelectionMode } = useDataTableSettings('clients')
       setPageSize(50)
       setDisplayMode('pagination')
       setSelectionMode('single')
@@ -150,7 +149,7 @@ describe('useDataTableSettings', () => {
             displayMode: 'pagination',
             selectionMode: 'single',
           },
-        })
+        }),
       )
       const { settings } = useDataTableSettings('clients')
       expect(settings.visibleColumns).toEqual(['only-this'])
@@ -183,7 +182,7 @@ describe('useDataTableSettings', () => {
           throw new Error('blocked')
         }),
       } as unknown as Storage
-        ; (globalThis as { localStorage?: Storage }).localStorage = throwing
+      ;(globalThis as { localStorage?: Storage }).localStorage = throwing
       expect(() => useDataTableSettings('clients')).not.toThrow()
     })
   })

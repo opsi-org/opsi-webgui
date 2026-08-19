@@ -27,7 +27,7 @@ async function seedClientSelection(page: import('@playwright/test').Page) {
         ...current,
         selectedClients: [clientId],
         selectionSource: 'table',
-      })
+      }),
     )
   }, firstClientId)
 }
@@ -36,13 +36,10 @@ test.describe('Clients', () => {
   test('clients products split view opens from deep link', async ({ page }) => {
     await seedClientSelection(page)
 
-    await page.goto(
-      '/clients?view=panel&panelType=products&sortBy=version_outdated&type=localboot',
-      {
-        waitUntil: 'networkidle',
-        timeout: 30000,
-      }
-    )
+    await page.goto('/clients?view=panel&panelType=products&sortBy=version_outdated&type=localboot', {
+      waitUntil: 'networkidle',
+      timeout: 30000,
+    })
 
     await waitForTable(page)
     const detailPanel = page.getByTestId('detail-panel')
@@ -58,13 +55,10 @@ test.describe('Clients', () => {
     await seedClientSelection(page)
     await page.setViewportSize({ width: 1100, height: 900 })
 
-    await page.goto(
-      '/clients?view=panel&panelType=products&sortBy=version_outdated&type=localboot',
-      {
-        waitUntil: 'networkidle',
-        timeout: 30000,
-      }
-    )
+    await page.goto('/clients?view=panel&panelType=products&sortBy=version_outdated&type=localboot', {
+      waitUntil: 'networkidle',
+      timeout: 30000,
+    })
 
     await waitForTable(page)
     const detailPanel = page.getByTestId('detail-panel')
@@ -73,9 +67,7 @@ test.describe('Clients', () => {
     const firstPanelCell = detailPanel.locator('tbody td').first()
     await expect(firstPanelCell).toBeVisible({ timeout: 15000 })
 
-    const fontSize = await firstPanelCell.evaluate((el) =>
-      Number.parseFloat(getComputedStyle(el).fontSize)
-    )
+    const fontSize = await firstPanelCell.evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
     expect(fontSize).toBeGreaterThanOrEqual(14)
 
     const panelBox = await detailPanel.boundingBox()
@@ -96,9 +88,7 @@ test.describe('Clients', () => {
         await waitForTable(p)
 
         // Click first row to select a client
-        const firstRow = p
-          .locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"])')
-          .first()
+        const firstRow = p.locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"])').first()
         await firstRow.click()
         await p.waitForTimeout(800)
 
@@ -110,11 +100,7 @@ test.describe('Clients', () => {
           await p.waitForTimeout(2000)
 
           // Wait for products table to load in the detail panel
-          const panelTable = p
-            .locator(
-              '[data-testid="detail-panel"] table tbody tr, main .split-panel table tbody tr'
-            )
-            .first()
+          const panelTable = p.locator('[data-testid="detail-panel"] table tbody tr, main .split-panel table tbody tr').first()
           await panelTable.waitFor({ state: 'visible', timeout: 12000 }).catch(() => undefined)
         }
       },
@@ -134,7 +120,7 @@ test.describe('Clients', () => {
         // Filtering
         const filterInput = p
           .locator(
-            'input[placeholder*="filter" i], input[placeholder*="suche" i], input[placeholder*="search" i], input[placeholder*="Filter" i]'
+            'input[placeholder*="filter" i], input[placeholder*="suche" i], input[placeholder*="search" i], input[placeholder*="Filter" i]',
           )
           .first()
         if (await filterInput.isVisible().catch(() => false)) {
@@ -146,9 +132,7 @@ test.describe('Clients', () => {
         }
 
         // Row selection
-        const firstRow = p
-          .locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"])')
-          .first()
+        const firstRow = p.locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"])').first()
         if (await firstRow.isVisible().catch(() => false)) {
           await firstRow.click()
           await p.waitForTimeout(600)
@@ -167,7 +151,7 @@ test.describe('Clients', () => {
           .locator(
             'table tbody tr:first-child [aria-label*="aktion" i], ' +
               'table tbody tr:first-child [aria-label*="action" i], ' +
-              'table tbody tr:first-child [class*="row-action"]'
+              'table tbody tr:first-child [class*="row-action"]',
           )
           .first()
         if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -260,7 +244,7 @@ test.describe('Clients', () => {
               .locator(
                 'table tbody tr:first-child [aria-label*="aktion" i], ' +
                   'table tbody tr:first-child [aria-label*="action" i], ' +
-                  'table tbody tr:first-child [class*="row-action"]'
+                  'table tbody tr:first-child [class*="row-action"]',
               )
               .first()
             if (await rowBtn.isVisible().catch(() => false)) {
@@ -276,8 +260,7 @@ test.describe('Clients', () => {
         // Clone button element in selected-client context
         {
           name: 'opsi-webgui-client-clone-button',
-          captureSelector:
-            'button:has-text("Clone"), button:has-text("Klonen"), [aria-label*="clone" i], [aria-label*="klon" i]',
+          captureSelector: 'button:has-text("Clone"), button:has-text("Klonen"), [aria-label*="clone" i], [aria-label*="klon" i]',
           before: async (p) => {
             await waitForTable(p)
             const firstRow = p.locator('table tbody tr').first()
@@ -302,7 +285,7 @@ test.describe('Clients', () => {
               .locator(
                 'table tbody tr:first-child [aria-label*="aktion" i], ' +
                   'table tbody tr:first-child [aria-label*="action" i], ' +
-                  'table tbody tr:first-child [class*="row-action"]'
+                  'table tbody tr:first-child [class*="row-action"]',
               )
               .first()
             if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -428,19 +411,14 @@ test.describe('Clients', () => {
         // Parameters content area should occupy full page area and be scroll-capable
         const contentShell = p.locator('main #main-content').first()
         const paramsCard = p.locator('main .opsi-card').first()
-        const fallbackPane = p
-          .locator('main [class*="overflow-y-auto"], main [class*="overflow-auto"]')
-          .first()
+        const fallbackPane = p.locator('main [class*="overflow-y-auto"], main [class*="overflow-auto"]').first()
         await expect(contentShell).toBeVisible()
         const hasParamsCard = await paramsCard.isVisible().catch(() => false)
         if (!hasParamsCard) {
           await expect(fallbackPane).toBeVisible()
         }
 
-        const sizes = await Promise.all([
-          contentShell.boundingBox(),
-          (hasParamsCard ? paramsCard : fallbackPane).boundingBox(),
-        ])
+        const sizes = await Promise.all([contentShell.boundingBox(), (hasParamsCard ? paramsCard : fallbackPane).boundingBox()])
         const shellBox = sizes[0]
         const cardBox = sizes[1]
         expect(shellBox).not.toBeNull()
@@ -449,14 +427,10 @@ test.describe('Clients', () => {
           expect(cardBox.height).toBeGreaterThan(shellBox.height * 0.45)
         }
 
-        const hasScrollableArea = await (hasParamsCard ? paramsCard : fallbackPane).evaluate(
-          (el) => {
-            const candidate = (el.querySelector(
-              '[style*="overflow"], .overflow-y-auto, .overflow-auto'
-            ) || el) as HTMLElement
-            return candidate.scrollHeight >= candidate.clientHeight
-          }
-        )
+        const hasScrollableArea = await (hasParamsCard ? paramsCard : fallbackPane).evaluate((el) => {
+          const candidate = (el.querySelector('[style*="overflow"], .overflow-y-auto, .overflow-auto') || el) as HTMLElement
+          return candidate.scrollHeight >= candidate.clientHeight
+        })
         expect(hasScrollableArea).toBeTruthy()
       },
     })
@@ -471,9 +445,9 @@ test.describe('Clients', () => {
       skipVisualRegression: true,
       functional: async (p) => {
         await expect(p.locator('main')).toBeVisible()
-        await expect(
-          p.getByText(/select a client to clone|bitte wählen sie einen client zum klonen aus/i)
-        ).toBeVisible({ timeout: 10000 })
+        await expect(p.getByText(/select a client to clone|bitte wählen sie einen client zum klonen aus/i)).toBeVisible({
+          timeout: 10000,
+        })
       },
     })
   })
@@ -498,7 +472,7 @@ test.describe('Clients', () => {
           .locator(
             'table tbody tr:first-child [aria-label*="aktion" i], ' +
               'table tbody tr:first-child [aria-label*="action" i], ' +
-              'table tbody tr:first-child [class*="row-action"]'
+              'table tbody tr:first-child [class*="row-action"]',
           )
           .first()
         if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -530,7 +504,7 @@ test.describe('Clients', () => {
               .locator(
                 'table tbody tr:first-child [aria-label*="aktion" i], ' +
                   'table tbody tr:first-child [aria-label*="action" i], ' +
-                  'table tbody tr:first-child [class*="row-action"]'
+                  'table tbody tr:first-child [class*="row-action"]',
               )
               .first()
             if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -568,7 +542,7 @@ test.describe('Clients', () => {
               .locator(
                 'table tbody tr:first-child [aria-label*="aktion" i], ' +
                   'table tbody tr:first-child [aria-label*="action" i], ' +
-                  'table tbody tr:first-child [class*="row-action"]'
+                  'table tbody tr:first-child [class*="row-action"]',
               )
               .first()
             if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -606,7 +580,7 @@ test.describe('Clients', () => {
               .locator(
                 'table tbody tr:first-child [aria-label*="aktion" i], ' +
                   'table tbody tr:first-child [aria-label*="action" i], ' +
-                  'table tbody tr:first-child [class*="row-action"]'
+                  'table tbody tr:first-child [class*="row-action"]',
               )
               .first()
             if (await rowActionBtn.isVisible().catch(() => false)) {
@@ -668,7 +642,7 @@ test.describe('Clients', () => {
           // Verify at least one log row with a colour class is rendered
           const coloredRows = p.locator(
             '[class*="text-opsi-log-"], [class*="log-essential"], [class*="log-critical"],' +
-              '[class*="log-error"], [class*="log-warning"], [class*="log-info"], [class*="log-debug"]'
+              '[class*="log-error"], [class*="log-warning"], [class*="log-info"], [class*="log-debug"]',
           )
           // Logs may be empty in the test environment; tolerate that gracefully
           const hasRows = (await coloredRows.count()) > 0

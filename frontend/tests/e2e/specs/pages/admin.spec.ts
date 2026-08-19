@@ -27,9 +27,9 @@ test.describe('Admin', () => {
         waitAfterNav: 5000,
         docName: 'opsi-webgui-admin-diagnostics-healthcheck',
         functional: async (p) => {
-          await expect(
-            p.locator('[class*="health"], [class*="check"], [class*="status"]').first()
-          ).toBeVisible({ timeout: 15000 })
+          await expect(p.locator('[class*="health"], [class*="check"], [class*="status"]').first()).toBeVisible({
+            timeout: 15000,
+          })
         },
         vrMask: ['[class*="timestamp"]', '[class*="time"]', '[class*="uptime"]'],
       })
@@ -45,7 +45,7 @@ test.describe('Admin', () => {
           await expect(p.locator('main')).toBeVisible()
           // Modules list / cards should be present
           const modules = p.locator(
-            '[class*="module"], [class*="card"], [class*="list"] li, [role="listitem"], table tbody tr, [data-testid*="module"]'
+            '[class*="module"], [class*="card"], [class*="list"] li, [role="listitem"], table tbody tr, [data-testid*="module"]',
           )
           const visible = await modules
             .first()
@@ -70,18 +70,11 @@ test.describe('Admin', () => {
         functional: async (p) => {
           await expect(p.locator('main')).toBeVisible()
           // System info table / key-value pairs should be present
-          const rows = p.locator(
-            '[class*="system"], [class*="info"], table tr, [role="row"], dt, dd'
-          )
+          const rows = p.locator('[class*="system"], [class*="info"], table tr, [role="row"], dt, dd')
           await rows.first().waitFor({ state: 'visible', timeout: 10000 })
           expect(await rows.count()).toBeGreaterThan(0)
         },
-        vrMask: [
-          '[class*="timestamp"]',
-          '[class*="time"]',
-          '[class*="uptime"]',
-          '[class*="version"]',
-        ],
+        vrMask: ['[class*="timestamp"]', '[class*="time"]', '[class*="uptime"]', '[class*="version"]'],
       })
     })
   })
@@ -127,7 +120,7 @@ test.describe('Admin', () => {
 
         // Card class names can vary by UI library/theme. Assert stable controls instead.
         const maintenanceControls = p.locator(
-          '#backup-maintenance-mode, #backup-config-files, #restore-config-files, button:has-text("Backup"), button:has-text("Sicherung"), [class*="maintenance"], [class*="card"]'
+          '#backup-maintenance-mode, #backup-config-files, #restore-config-files, button:has-text("Backup"), button:has-text("Sicherung"), [class*="maintenance"], [class*="card"]',
         )
         const controlVisible = await maintenanceControls
           .first()
@@ -139,9 +132,7 @@ test.describe('Admin', () => {
           return
         }
 
-        const scrollShell = p
-          .locator('main [class*="overflow-y-auto"], main [class*="overflow-auto"]')
-          .first()
+        const scrollShell = p.locator('main [class*="overflow-y-auto"], main [class*="overflow-auto"]').first()
         const hasScrollableShell = await scrollShell.isVisible().catch(() => false)
         if (hasScrollableShell) {
           const scrollReady = await scrollShell.evaluate((el) => {

@@ -54,9 +54,7 @@ async function setAutoRefresh(page: Page, enabled: boolean): Promise<void> {
   await ensureQuickPanelOpen(page)
   const checkbox = page
     .getByTestId('quickpanel')
-    .locator(
-      '[role="checkbox"][aria-label*="Auto-Refresh" i], [role="checkbox"][aria-label*="auto" i]'
-    )
+    .locator('[role="checkbox"][aria-label*="Auto-Refresh" i], [role="checkbox"][aria-label*="auto" i]')
     .first()
   await checkbox.waitFor({ state: 'visible', timeout: 10000 })
   const checked = (await checkbox.getAttribute('aria-checked')) === 'true'
@@ -106,16 +104,12 @@ test.describe('Messagebus & auto-refresh', () => {
     const marker = `e2e auto-refresh ${Date.now()}`
 
     try {
-      await rpc(page, 'host_updateObject', [
-        { id: clientId, type: 'OpsiClient', description: marker },
-      ])
+      await rpc(page, 'host_updateObject', [{ id: clientId, type: 'OpsiClient', description: marker }])
 
       // messagebus event -> matched -> debounced (2s) refresh -> new data rendered
       await expect(page.getByText(marker).first()).toBeVisible({ timeout: 30000 })
     } finally {
-      await rpc(page, 'host_updateObject', [
-        { id: clientId, type: 'OpsiClient', description: originalDescription },
-      ]).catch(() => undefined)
+      await rpc(page, 'host_updateObject', [{ id: clientId, type: 'OpsiClient', description: originalDescription }]).catch(() => undefined)
     }
   })
 
@@ -131,9 +125,7 @@ test.describe('Messagebus & auto-refresh', () => {
     const marker = `e2e changes-detected ${Date.now()}`
 
     try {
-      await rpc(page, 'host_updateObject', [
-        { id: clientId, type: 'OpsiClient', description: marker },
-      ])
+      await rpc(page, 'host_updateObject', [{ id: clientId, type: 'OpsiClient', description: marker }])
 
       // The page toolbar shows a single "changes detected" refresh button
       // instead of reloading automatically (no duplicated global alert).
@@ -156,9 +148,7 @@ test.describe('Messagebus & auto-refresh', () => {
       await expect(changesButton).toBeHidden()
     } finally {
       await setAutoRefresh(page, true).catch(() => undefined)
-      await rpc(page, 'host_updateObject', [
-        { id: clientId, type: 'OpsiClient', description: originalDescription },
-      ]).catch(() => undefined)
+      await rpc(page, 'host_updateObject', [{ id: clientId, type: 'OpsiClient', description: originalDescription }]).catch(() => undefined)
     }
   })
 })

@@ -60,7 +60,5 @@
 
   const overlayBgClass = computed(() => (props.connected ? 'bg-[#009605]' : 'bg-[#d01030]'))
 
-  const ringClass = computed(() =>
-    props.darkBg ? 'ring-2 ring-opsi-blue' : 'ring-2 ring-(--color-background)'
-  )
+  const ringClass = computed(() => (props.darkBg ? 'ring-2 ring-opsi-blue' : 'ring-2 ring-(--color-background)'))
 </script>

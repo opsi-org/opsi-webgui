@@ -23,27 +23,13 @@ type Terminal = {
 type RefreshCallback = () => void | Promise<void>
 
 //  Event Constants
-const HOST_EVENTS = [
-  'event:host_created',
-  'event:host_updated',
-  'event:host_deleted',
-  'event:host_connected',
-  'event:host_disconnected',
-]
+const HOST_EVENTS = ['event:host_created', 'event:host_updated', 'event:host_deleted', 'event:host_connected', 'event:host_disconnected']
 
-const PRODUCT_EVENTS = [
-  'event:productOnClient_created',
-  'event:productOnClient_updated',
-  'event:productOnClient_deleted',
-]
+const PRODUCT_EVENTS = ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted']
 
 const CONFIG_EVENTS = ['event:config_created', 'event:config_updated', 'event:config_deleted']
 
-const CONFIG_STATE_EVENTS = [
-  'event:configState_created',
-  'event:configState_updated',
-  'event:configState_deleted',
-]
+const CONFIG_STATE_EVENTS = ['event:configState_created', 'event:configState_updated', 'event:configState_deleted']
 
 const LOG_EVENTS = ['event:log_updated']
 
@@ -58,11 +44,7 @@ function wsWait(ms: number) {
 }
 
 // Core MessageBus composable
-export function useMessageBus(
-  onMessage?: MessageHandler,
-  _showNotifications = false,
-  _channels: string[] = []
-) {
+export function useMessageBus(onMessage?: MessageHandler, _showNotifications = false, _channels: string[] = []) {
   const store = useMessageBusStore()
   const channels = _channels || []
 
@@ -152,10 +134,7 @@ export function useMessageBus(
 }
 
 // Auto-Refresh composable (integrates with MessageBus)
-export function useAutoRefresh(
-  refreshCallback: RefreshCallback,
-  options: { watchEvents?: string[]; debounceMs?: number } = {}
-) {
+export function useAutoRefresh(refreshCallback: RefreshCallback, options: { watchEvents?: string[]; debounceMs?: number } = {}) {
   const mbStore = useMessageBusStore()
   const { lastMsg: storeLastMsg } = storeToRefs(mbStore)
 
@@ -204,10 +183,7 @@ export function useAutoRefresh(
     const msgType = record.type as string
     if (!msgType) return
 
-    const eventName =
-      msgType === 'event'
-        ? (record.event as string) || String(record.channel || '').replace(/^event:/, '')
-        : msgType
+    const eventName = msgType === 'event' ? (record.event as string) || String(record.channel || '').replace(/^event:/, '') : msgType
 
     if (!eventName) return
     const matches = watchEvents.some((ev) => ev.replace(/^event:/, '') === eventName)
@@ -270,12 +246,4 @@ export function useAutoRefreshServers(cb: RefreshCallback) {
   return useAutoRefresh(cb, { watchEvents: SERVER_EVENTS })
 }
 
-export {
-  HOST_EVENTS,
-  PRODUCT_EVENTS,
-  CONFIG_EVENTS,
-  CONFIG_STATE_EVENTS,
-  SYSTEM_EVENTS,
-  SERVER_EVENTS,
-  ALL_DATA_EVENTS,
-}
+export { HOST_EVENTS, PRODUCT_EVENTS, CONFIG_EVENTS, CONFIG_STATE_EVENTS, SYSTEM_EVENTS, SERVER_EVENTS, ALL_DATA_EVENTS }

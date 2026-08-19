@@ -89,18 +89,9 @@ function getRecursiveMembersCacheKey(groupId: string, selectedServers: string[] 
   return `${groupId}::${[...selectedServers].sort().join(',')}`
 }
 
-function transformApiToTree(
-  data: Record<string, unknown>,
-  groupType: 'client' | 'product',
-  level = 0
-): GroupTreeNodeData[] {
+function transformApiToTree(data: Record<string, unknown>, groupType: 'client' | 'product', level = 0): GroupTreeNodeData[] {
   if (!data || typeof data !== 'object') return []
-  const processNode = (
-    key: string,
-    value: unknown,
-    parentId?: string,
-    nodeLevel = 0
-  ): GroupTreeNodeData | null => {
+  const processNode = (key: string, value: unknown, parentId?: string, nodeLevel = 0): GroupTreeNodeData | null => {
     if (!value || typeof value !== 'object') return null
     const obj = value as Record<string, unknown>
     const rawId = (obj.id as string) || key
@@ -111,18 +102,13 @@ function transformApiToTree(
     const nodeType = obj.type as string
     if (nodeType === 'ObjectToGroup' || !nodeId) return null
     const isSpecial = nodeTextLower === 'not_assigned' || nodeIdLower.includes('not_assigned')
-    const isRoot =
-      nodeTextLower === 'clientdirectory' ||
-      nodeTextLower === 'groups' ||
-      nodeTextLower === 'productgroups'
+    const isRoot = nodeTextLower === 'clientdirectory' || nodeTextLower === 'groups' || nodeTextLower === 'productgroups'
     let memberCount = 0
     const members: string[] = []
     const childNodes: GroupTreeNodeData[] = []
     if (obj.children && typeof obj.children === 'object') {
       const children = obj.children as Record<string, unknown> | unknown[]
-      const entries = Array.isArray(children)
-        ? children.map((c, i) => [String(i), c])
-        : Object.entries(children)
+      const entries = Array.isArray(children) ? children.map((c, i) => [String(i), c]) : Object.entries(children)
       for (const [childKey, childValue] of entries) {
         const childObj = childValue as Record<string, unknown>
         if (childObj?.type === 'ObjectToGroup') {
@@ -135,8 +121,7 @@ function transformApiToTree(
               label: memberId,
               parentId: nodeId,
               type: groupType === 'client' ? 'HostGroup' : 'ProductGroup',
-              memberCount:
-                typeof childObj.member_count === 'number' ? (childObj.member_count as number) : 0,
+              memberCount: typeof childObj.member_count === 'number' ? (childObj.member_count as number) : 0,
               members: [],
               children: [],
               isRoot: false,
@@ -224,9 +209,7 @@ export function useCachedData() {
   const healthCounts = computed(() => {
     const result = { ok: 0, warning: 0, error: 0 }
     for (const check of healthCheckData.value) {
-      const status =
-        (check.check_status as string) ||
-        ((check.check as Record<string, unknown>)?.status as string)
+      const status = (check.check_status as string) || ((check.check as Record<string, unknown>)?.status as string)
       if (status === 'ok') result.ok++
       else if (status === 'warning') result.warning++
       else if (status === 'error') result.error++
@@ -249,17 +232,12 @@ export function useCachedData() {
     return []
   })
 
-  const modulesDetailed = computed(
-    (): Record<string, { available: boolean; state: string; client_number: number }> => {
-      if (!diagnosticsState.data) return {}
-      const licenses = diagnosticsState.data.licenses as Record<string, unknown> | undefined
-      if (!licenses?.modules) return {}
-      return licenses.modules as Record<
-        string,
-        { available: boolean; state: string; client_number: number }
-      >
-    }
-  )
+  const modulesDetailed = computed((): Record<string, { available: boolean; state: string; client_number: number }> => {
+    if (!diagnosticsState.data) return {}
+    const licenses = diagnosticsState.data.licenses as Record<string, unknown> | undefined
+    if (!licenses?.modules) return {}
+    return licenses.modules as Record<string, { available: boolean; state: string; client_number: number }>
+  })
 
   const obsoleteModules = computed(() => {
     if (!diagnosticsState.data) return [] as string[]
@@ -388,8 +366,7 @@ export function useCachedData() {
           clientGroupsState.loadedGroups = new Set<string>()
           clientGroupRecursiveMembersCache.clear()
           const first = clientGroupsState.tree[0]
-          if (first && !clientGroupsState.expanded.has(first.id))
-            clientGroupsState.expanded = new Set([first.id])
+          if (first && !clientGroupsState.expanded.has(first.id)) clientGroupsState.expanded = new Set([first.id])
           const rootIds = new Set(clientGroupsState.tree.map((node) => node.id))
           for (const expandedId of clientGroupsState.expanded) {
             if (!rootIds.has(expandedId)) void fetchGroupChildrenLazy(expandedId, selectedServers)
@@ -427,16 +404,12 @@ export function useCachedData() {
         }
         if (result.data) {
           const rawData = (result.data as Record<string, unknown>).groups || result.data
-          productGroupsState.tree = transformApiToTree(
-            rawData as Record<string, unknown>,
-            'product'
-          )
+          productGroupsState.tree = transformApiToTree(rawData as Record<string, unknown>, 'product')
           productGroupsState.fetched = true
           productGroupsState.loadedGroups = new Set<string>()
           productGroupRecursiveMembersCache.clear()
           const first = productGroupsState.tree[0]
-          if (first && !productGroupsState.expanded.has(first.id))
-            productGroupsState.expanded = new Set([first.id])
+          if (first && !productGroupsState.expanded.has(first.id)) productGroupsState.expanded = new Set([first.id])
           const rootIds = new Set(productGroupsState.tree.map((node) => node.id))
           for (const expandedId of productGroupsState.expanded) {
             if (!rootIds.has(expandedId)) void fetchProductGroupChildrenLazy(expandedId)
@@ -460,10 +433,7 @@ export function useCachedData() {
   /**
    * Lazy-load the children of a client group node.
    */
-  async function fetchGroupChildrenLazy(
-    groupId: string,
-    selectedServers: string[] = []
-  ): Promise<void> {
+  async function fetchGroupChildrenLazy(groupId: string, selectedServers: string[] = []): Promise<void> {
     if (clientGroupsState.loadedGroups.has(groupId)) return
     if (clientGroupsState.loadingGroups.has(groupId)) return
 
@@ -477,9 +447,7 @@ export function useCachedData() {
         withClients: true,
       }
       if (selectedServers.length > 0) params.selectedDepots = `[${selectedServers.join(',')}]`
-      const result = await getHostGroupsDynamic(
-        params as Parameters<typeof getHostGroupsDynamic>[0]
-      )
+      const result = await getHostGroupsDynamic(params as Parameters<typeof getHostGroupsDynamic>[0])
       if (result.data?.groups) {
         const groupData = result.data.groups as Record<string, unknown>
         const children = (groupData.children || {}) as Record<string, unknown>
@@ -491,8 +459,7 @@ export function useCachedData() {
           const childType = c.type as string
           const childId = (c.id as string)?.split(';')[0] || (c.text as string) || ''
           if (!childId) continue
-          const isSpecialMember =
-            childType === 'ObjectToGroup' && childId.toLowerCase().includes('not_assigned')
+          const isSpecialMember = childType === 'ObjectToGroup' && childId.toLowerCase().includes('not_assigned')
           if (isSpecialMember) {
             subGroups.push({
               id: childId,
@@ -558,8 +525,7 @@ export function useCachedData() {
           const childType = c.type as string
           const childId = (c.id as string)?.split(';')[0] || (c.text as string) || ''
           if (!childId) continue
-          const isSpecialMember =
-            childType === 'ObjectToGroup' && childId.toLowerCase().includes('not_assigned')
+          const isSpecialMember = childType === 'ObjectToGroup' && childId.toLowerCase().includes('not_assigned')
           if (isSpecialMember) {
             subGroups.push({
               id: childId,
@@ -604,10 +570,7 @@ export function useCachedData() {
     }
   }
 
-  async function fetchGroupMembersRecursive(
-    groupId: string,
-    selectedServers: string[] = []
-  ): Promise<string[]> {
+  async function fetchGroupMembersRecursive(groupId: string, selectedServers: string[] = []): Promise<string[]> {
     const cacheKey = getRecursiveMembersCacheKey(groupId, selectedServers)
     const cachedMembers = clientGroupRecursiveMembersCache.get(cacheKey)
     if (cachedMembers) return cachedMembers
@@ -637,12 +600,7 @@ export function useCachedData() {
   }
 
   /** Recursively find a node and patch its members/children */
-  function patchTreeNodeContents(
-    nodes: GroupTreeNodeData[],
-    targetId: string,
-    members: string[],
-    subGroups: GroupTreeNodeData[]
-  ): boolean {
+  function patchTreeNodeContents(nodes: GroupTreeNodeData[], targetId: string, members: string[], subGroups: GroupTreeNodeData[]): boolean {
     for (const node of nodes) {
       if (node.id === targetId) {
         node.members = members
@@ -650,24 +608,16 @@ export function useCachedData() {
         if (subGroups.length > 0) {
           const existingChildren = node.children || []
           const existingIds = new Set(existingChildren.map((child) => child.id))
-          node.children = [
-            ...existingChildren,
-            ...subGroups.filter((child) => !existingIds.has(child.id)),
-          ]
+          node.children = [...existingChildren, ...subGroups.filter((child) => !existingIds.has(child.id))]
         }
         return true
       }
-      if (node.children && patchTreeNodeContents(node.children, targetId, members, subGroups))
-        return true
+      if (node.children && patchTreeNodeContents(node.children, targetId, members, subGroups)) return true
     }
     return false
   }
 
-  function toggleGroupExpand(
-    groupType: 'client' | 'product',
-    groupId: string,
-    selectedServers: string[] = []
-  ) {
+  function toggleGroupExpand(groupType: 'client' | 'product', groupId: string, selectedServers: string[] = []) {
     const state = groupType === 'client' ? clientGroupsState : productGroupsState
     const isCurrentlyExpanded = state.expanded.has(groupId)
     const newSet = new Set(state.expanded)

@@ -42,7 +42,7 @@ async function seedClientSelectionFromCurrentTable(page: Page): Promise<void> {
         ...current,
         selectedClients: [clientId],
         selectionSource: 'quickpanel',
-      })
+      }),
     )
   }, normalized)
   await page.reload({ waitUntil: 'domcontentloaded' })
@@ -132,17 +132,9 @@ test.describe('Quick Panel - tabs', () => {
         await openQuickPanelTab(p, /server/i)
         await expect(p.getByTestId('quickpanel')).toBeVisible({ timeout: 5000 })
         // Server list should render
-        const items = p
-          .getByTestId('quickpanel')
-          .locator('[class*="item"], [role="listitem"], li')
-          .first()
+        const items = p.getByTestId('quickpanel').locator('[class*="item"], [role="listitem"], li').first()
         if (await items.waitFor({ state: 'visible', timeout: 8000 }).catch(() => false)) {
-          expect(
-            await p
-              .getByTestId('quickpanel')
-              .locator('[class*="item"], [role="listitem"], li')
-              .count()
-          ).toBeGreaterThan(0)
+          expect(await p.getByTestId('quickpanel').locator('[class*="item"], [role="listitem"], li').count()).toBeGreaterThan(0)
         }
       },
       vrMask: ['[data-testid="session-timer"]'],
@@ -329,10 +321,7 @@ test.describe('Quick Actions', () => {
               })
             })
 
-            const productQABtn = p
-              .getByTestId('quickpanel-product-actions')
-              .locator('button')
-              .first()
+            const productQABtn = p.getByTestId('quickpanel-product-actions').locator('button').first()
             await expect(productQABtn).toBeVisible({ timeout: 10000 })
             await productQABtn.click()
 

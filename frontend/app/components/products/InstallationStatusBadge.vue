@@ -13,46 +13,25 @@
       <CoreAppTooltip v-if="iconOnly" :text="String($t('common.mixed'))">
         <CoreAppStatusBadge status="warning" :icon="icons.unequal" size="xs" />
       </CoreAppTooltip>
-      <CoreAppStatusBadge
-        v-else
-        status="warning"
-        :icon="icons.unequal"
-        :label="$t('common.mixed')"
-      />
+      <CoreAppStatusBadge v-else status="warning" :icon="icons.unequal" :label="$t('common.mixed')" />
     </CoreAppTooltipTable>
 
     <template v-else-if="normalizedStatus === 'installed'">
       <CoreAppTooltip v-if="iconOnly" :text="String($t('products.installed'))">
         <CoreAppStatusBadge status="success" :icon="icons.checkCircle" size="xs" />
       </CoreAppTooltip>
-      <CoreAppStatusBadge
-        v-else
-        status="success"
-        :icon="icons.checkCircle"
-        :label="$t('products.installed')"
-      />
+      <CoreAppStatusBadge v-else status="success" :icon="icons.checkCircle" :label="$t('products.installed')" />
     </template>
 
     <template v-else-if="normalizedStatus === 'unknown'">
       <CoreAppTooltip v-if="iconOnly" :text="String($t('common.unknown'))">
-        <CoreAppStatusBadge
-          status="warning"
-          :icon="icons.productInstallationStatusUnknown"
-          size="xs"
-        />
+        <CoreAppStatusBadge status="warning" :icon="icons.productInstallationStatusUnknown" size="xs" />
       </CoreAppTooltip>
-      <CoreAppStatusBadge
-        v-else
-        status="warning"
-        :icon="icons.productInstallationStatusUnknown"
-        :label="$t('common.unknown')"
-      />
+      <CoreAppStatusBadge v-else status="warning" :icon="icons.productInstallationStatusUnknown" :label="$t('common.unknown')" />
     </template>
 
     <span
-      v-else-if="
-        normalizedStatus === 'not_installed' || normalizedStatus === 'none' || !normalizedStatus
-      "
+      v-else-if="normalizedStatus === 'not_installed' || normalizedStatus === 'none' || !normalizedStatus"
       class="text-(--color-text-muted) text-xs"
       >-</span
     >
@@ -94,9 +73,7 @@
 
   const mixedTooltipRows = computed(() => {
     if (!props.statusDetails) return []
-    const heading = props.productId
-      ? [{ key: String($t('products.id')), value: props.productId }]
-      : []
+    const heading = props.productId ? [{ key: String($t('products.id')), value: props.productId }] : []
     const clients = props.selectedClients || []
     if (clients.length > 0 && clients.length === props.statusDetails.length) {
       return [
@@ -108,8 +85,7 @@
             key: c,
             value: props.statusDetails![i] || 'none',
             badge: status === 'not_installed' || status === 'none' ? undefined : status,
-            badgeColor:
-              status === 'installed' ? 'success' : status === 'unknown' ? 'warning' : undefined,
+            badgeColor: status === 'installed' ? 'success' : status === 'unknown' ? 'warning' : undefined,
           }
         }),
       ]

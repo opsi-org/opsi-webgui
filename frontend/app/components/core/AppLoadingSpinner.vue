@@ -22,7 +22,7 @@
     {
       size: 'md',
       centered: true,
-    }
+    },
   )
 
   const icons = useIcons()

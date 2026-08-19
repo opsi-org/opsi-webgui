@@ -4,9 +4,7 @@ const vuePlugin = require('eslint-plugin-vue')
 const tsPlugin = require('@typescript-eslint/eslint-plugin')
 const a11yPlugin = require('eslint-plugin-vuejs-accessibility')
 
-const a11yErrorRules = Object.fromEntries(
-  Object.keys(a11yPlugin.configs.recommended?.rules || {}).map((rule) => [rule, 'error'])
-)
+const a11yErrorRules = Object.fromEntries(Object.keys(a11yPlugin.configs.recommended?.rules || {}).map((rule) => [rule, 'error']))
 
 module.exports = [
   {
@@ -35,10 +33,7 @@ module.exports = [
       ...a11yErrorRules,
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       '@typescript-eslint/no-explicit-any': 'warn',
-      'padding-line-between-statements': [
-        'error',
-        { blankLine: 'always', prev: 'function', next: 'function' },
-      ],
+      'padding-line-between-statements': ['error', { blankLine: 'always', prev: 'function', next: 'function' }],
     },
   },
   {
@@ -55,14 +50,8 @@ module.exports = [
       ...(tsPlugin.configs.recommended?.rules || {}),
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-      ],
-      'padding-line-between-statements': [
-        'error',
-        { blankLine: 'always', prev: 'function', next: 'function' },
-      ],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'padding-line-between-statements': ['error', { blankLine: 'always', prev: 'function', next: 'function' }],
     },
   },
 ]

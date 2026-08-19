@@ -33,12 +33,7 @@
           >
             <CoreAppIcon
               :name="statusMessage.type === 'success' ? icons.checkCircle : icons.xCircle"
-              :class="[
-                'w-4 h-4 shrink-0',
-                statusMessage.type === 'success'
-                  ? 'text-(--color-success)'
-                  : 'text-(--color-error)',
-              ]"
+              :class="['w-4 h-4 shrink-0', statusMessage.type === 'success' ? 'text-(--color-success)' : 'text-(--color-error)']"
             />
             <span>{{ statusMessage.text }}</span>
             <CoreAppButton
@@ -56,11 +51,7 @@
       </div>
     </template>
 
-    <div
-      ref="containerRef"
-      class="groups-dense flex h-full min-h-0 relative"
-      style="min-height: 400px"
-    >
+    <div ref="containerRef" class="groups-dense flex h-full min-h-0 relative" style="min-height: 400px">
       <div
         :style="{ width: isMobile ? '100%' : `${sidebarWidthPercent}%` }"
         class="shrink-0 border-r border-(--color-border) bg-(--color-background) flex flex-col transition-[width] duration-100"
@@ -99,13 +90,7 @@
               :aria-label="String($t('groups.create'))"
               :disabled="isReadOnly"
             >
-              <CoreAppStackedIcons
-                :primary-icon="icons.group"
-                :secondary-icon="icons.addBold"
-                size="sm"
-                badge
-                badge-color="none"
-              />
+              <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge badge-color="none" />
             </CoreAppButton>
           </div>
           <CoreAppFilterInput v-model="searchQuery" size="xs" input-class="w-full" />
@@ -125,9 +110,7 @@
                 @click="toggleCollapsedSection(rootGroup.id)"
               >
                 <CoreAppIcon
-                  :name="
-                    collapsedSections.has(rootGroup.id) ? icons.chevronRight : icons.chevronDown
-                  "
+                  :name="collapsedSections.has(rootGroup.id) ? icons.chevronRight : icons.chevronDown"
                   class="w-3.5 h-3.5 text-(--color-text-muted)"
                 />
                 <CoreAppTooltip
@@ -157,13 +140,7 @@
                 :aria-label="String($t('groups.create'))"
                 @click.stop="openCreateModal(rootGroup.id)"
               >
-                <CoreAppStackedIcons
-                  :primary-icon="icons.group"
-                  :secondary-icon="icons.addBold"
-                  size="xs"
-                  badge
-                  badge-color="none"
-                />
+                <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="xs" badge badge-color="none" />
               </CoreAppButton>
             </div>
             <template v-if="activeGroupType !== 'clients' || !collapsedSections.has(rootGroup.id)">
@@ -185,10 +162,7 @@
               />
             </template>
           </template>
-          <div
-            v-if="filteredTreeGroups.length === 0 && !loading"
-            class="text-sm text-(--color-text-muted) px-2 py-4 text-center"
-          >
+          <div v-if="filteredTreeGroups.length === 0 && !loading" class="text-sm text-(--color-text-muted) px-2 py-4 text-center">
             {{ searchQuery ? $t('common.noResults') : $t('groups.none') }}
           </div>
         </div>
@@ -207,22 +181,11 @@
 
       <div class="flex-1 min-w-0 bg-(--color-background) overflow-hidden">
         <div v-if="selectedGroup" class="h-full min-h-0 flex flex-col">
-          <div
-            class="p-2 border-b border-(--color-border) flex items-center justify-between bg-(--color-background)"
-          >
+          <div class="p-2 border-b border-(--color-border) flex items-center justify-between bg-(--color-background)">
             <div class="flex items-center gap-2">
-              <CoreAppButton
-                v-if="isMobile"
-                :icon="icons.back"
-                variant="ghost"
-                color="neutral"
-                size="xs"
-                @click="showSidebar = true"
-              />
+              <CoreAppButton v-if="isMobile" :icon="icons.back" variant="ghost" color="neutral" size="xs" @click="showSidebar = true" />
               <span class="font-medium text-(--color-text)">{{ selectedGroup.label }}</span>
-              <span v-if="selectedGroup.isSpecial" class="text-xs text-(--color-text-muted)">
-                ({{ $t('diag.systemGroup') }})
-              </span>
+              <span v-if="selectedGroup.isSpecial" class="text-xs text-(--color-text-muted)"> ({{ $t('diag.systemGroup') }}) </span>
             </div>
             <div class="flex gap-1" v-if="!selectedGroup.isSpecial">
               <CoreAppButton
@@ -242,13 +205,7 @@
                 @click="openCreateModal(selectedGroup.id)"
                 :disabled="isReadOnly"
               >
-                <CoreAppStackedIcons
-                  :primary-icon="icons.group"
-                  :secondary-icon="icons.addBold"
-                  size="sm"
-                  badge
-                  badge-color="none"
-                />
+                <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge badge-color="none" />
               </CoreAppButton>
               <CoreAppButton
                 :icon="icons.pencil"
@@ -269,10 +226,7 @@
                 :disabled="isReadOnly"
               />
             </div>
-            <div
-              class="flex gap-1"
-              v-else-if="selectedGroup.isSpecial && activeGroupType === 'clients'"
-            >
+            <div class="flex gap-1" v-else-if="selectedGroup.isSpecial && activeGroupType === 'clients'">
               <CoreAppButton
                 variant="ghost"
                 color="neutral"
@@ -281,23 +235,13 @@
                 @click="openCreateModal(selectedGroup.id)"
                 :disabled="isReadOnly"
               >
-                <CoreAppStackedIcons
-                  :primary-icon="icons.group"
-                  :secondary-icon="icons.addBold"
-                  size="sm"
-                  badge
-                  badge-color="none"
-                />
+                <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge badge-color="none" />
               </CoreAppButton>
             </div>
           </div>
 
           <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- keyboard navigation container for member list (roving focus) -->
-          <div
-            class="flex-1 overflow-auto px-2 pb-2 pt-0 outline-none"
-            tabindex="-1"
-            @keydown="handleMemberListKeydown"
-          >
+          <div class="flex-1 overflow-auto px-2 pb-2 pt-0 outline-none" tabindex="-1" @keydown="handleMemberListKeydown">
             <div class="border-(--color-border) bg-(--color-background)">
               <div
                 class="sticky top-0 z-20 bg-(--color-background) pt-2 pb-1.5 border-b border-(--color-border)"
@@ -306,9 +250,7 @@
                 <div class="flex items-center justify-between mb-1.5">
                   <h2 class="text-xs font-heading uppercase tracking-wide text-(--color-text) m-0">
                     {{ $t('groups.members') }}
-                    <span class="text-(--color-text-muted) font-normal"
-                      >({{ (selectedGroup.members || []).length }})</span
-                    >
+                    <span class="text-(--color-text-muted) font-normal">({{ (selectedGroup.members || []).length }})</span>
                   </h2>
                   <div class="flex items-center gap-2">
                     <CoreAppButton
@@ -343,18 +285,10 @@
                   size="sm"
                   input-class="w-full mb-2"
                 />
-                <div
-                  v-if="filteredMembers.length > 0 && !selectedGroup.isSpecial"
-                  class="flex items-center gap-1.5 px-1 py-0.5 mb-0.5"
-                >
+                <div v-if="filteredMembers.length > 0 && !selectedGroup.isSpecial" class="flex items-center gap-1.5 px-1 py-0.5 mb-0.5">
                   <CoreAppCheckbox
-                    :model-value="
-                      selectedMembers.length === filteredMembers.length &&
-                      filteredMembers.length > 0
-                    "
-                    :indeterminate="
-                      selectedMembers.length > 0 && selectedMembers.length < filteredMembers.length
-                    "
+                    :model-value="selectedMembers.length === filteredMembers.length && filteredMembers.length > 0"
+                    :indeterminate="selectedMembers.length > 0 && selectedMembers.length < filteredMembers.length"
                     :aria-label="String($t('common.selectAll'))"
                     @update:model-value="toggleSelectAllMembers"
                   />
@@ -416,10 +350,7 @@
                 <div v-if="loadingSelectedGroupMembers" class="py-8 text-center">
                   <CoreAppLoadingSpinner size="sm" />
                 </div>
-                <div
-                  v-else-if="filteredMembers.length === 0"
-                  class="text-sm text-(--color-text-muted) py-4 text-center"
-                >
+                <div v-else-if="filteredMembers.length === 0" class="text-sm text-(--color-text-muted) py-4 text-center">
                   {{ memberSearchQuery ? $t('common.noResults') : $t('groups.membersNone') }}
                 </div>
                 <CoreAppButton
@@ -431,8 +362,7 @@
                   class="py-2!"
                   @click="showMoreMembers"
                 >
-                  {{ $t('common.showMore') }} ({{ filteredMembers.length - memberDisplayLimit }}
-                  {{ $t('common.remaining') }})
+                  {{ $t('common.showMore') }} ({{ filteredMembers.length - memberDisplayLimit }} {{ $t('common.remaining') }})
                 </CoreAppButton>
               </div>
             </div>
@@ -441,13 +371,7 @@
 
         <CoreAppEmptyState v-else :icon="icons.group" :message="String($t('common.noSelection'))">
           <template v-if="isMobile" #actions>
-            <CoreAppButton
-              :icon="icons.back"
-              variant="ghost"
-              color="neutral"
-              size="sm"
-              @click="showSidebar = true"
-            >
+            <CoreAppButton :icon="icons.back" variant="ghost" color="neutral" size="sm" @click="showSidebar = true">
               {{ $t('common.back') }}
             </CoreAppButton>
           </template>
@@ -469,13 +393,7 @@
                   {{ createForm.parentGroupId }}
                 </p>
               </div>
-              <CoreAppButton
-                :icon="icons.x"
-                variant="ghost"
-                color="neutral"
-                size="xs"
-                @click="showCreateModal = false"
-              />
+              <CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="xs" @click="showCreateModal = false" />
             </div>
           </template>
           <CoreAppForm @submit="doCreateGroup" class="space-y-5">
@@ -517,11 +435,7 @@
                 </div>
 
                 <div v-if="createAddMembersEnabled" class="space-y-2">
-                  <CoreAppFilterInput
-                    v-model="createMembersSearch"
-                    size="sm"
-                    :placeholder="$t('groups.membersSearch')"
-                  />
+                  <CoreAppFilterInput v-model="createMembersSearch" size="sm" :placeholder="$t('groups.membersSearch')" />
                   <div class="border border-(--color-border) rounded-lg overflow-hidden">
                     <div class="max-h-40 overflow-auto">
                       <span
@@ -543,20 +457,13 @@
                           {{ item }}
                         </button>
                       </span>
-                      <div
-                        v-if="filteredCreateMembers.length === 0"
-                        class="text-sm text-(--color-text-muted) py-3 text-center"
-                      >
+                      <div v-if="filteredCreateMembers.length === 0" class="text-sm text-(--color-text-muted) py-3 text-center">
                         {{ createMembersSearch ? $t('common.noResults') : $t('common.noData') }}
                       </div>
                     </div>
                   </div>
                   <div class="flex items-center justify-between text-xs text-(--color-text-muted)">
-                    <button
-                      type="button"
-                      class="underline decoration-dotted"
-                      @click="toggleSelectAllCreateMembers"
-                    >
+                    <button type="button" class="underline decoration-dotted" @click="toggleSelectAllCreateMembers">
                       {{ $t('common.selectAll') }}
                     </button>
                     <span>{{ createSelectedMembers.length }} {{ $t('common.selected') }}</span>
@@ -570,13 +477,7 @@
               <CoreAppButton variant="outline" color="primary" @click="showCreateModal = false">
                 {{ $t('common.cancel') }}
               </CoreAppButton>
-              <CoreAppButton
-                color="primary"
-                :loading="saving"
-                @click="doCreateGroup"
-                :disabled="!createForm.groupId"
-                :icon="icons.add"
-              >
+              <CoreAppButton color="primary" :loading="saving" @click="doCreateGroup" :disabled="!createForm.groupId" :icon="icons.add">
                 {{ $t('common.create') }}
               </CoreAppButton>
             </div>
@@ -597,13 +498,7 @@
                 </h3>
                 <p class="text-sm text-(--color-text-muted)">{{ editForm.groupId }}</p>
               </div>
-              <CoreAppButton
-                :icon="icons.x"
-                variant="ghost"
-                color="neutral"
-                size="xs"
-                @click="showEditModal = false"
-              />
+              <CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="xs" @click="showEditModal = false" />
             </div>
           </template>
           <CoreAppForm @submit="doEditGroup" class="space-y-5">
@@ -637,12 +532,7 @@
               <CoreAppButton variant="outline" color="primary" @click="showEditModal = false">
                 {{ $t('common.cancel') }}
               </CoreAppButton>
-              <CoreAppButton
-                color="primary"
-                :loading="saving"
-                @click="doEditGroup"
-                :icon="icons.check"
-              >
+              <CoreAppButton color="primary" :loading="saving" @click="doEditGroup" :icon="icons.check">
                 {{ $t('common.save') }}
               </CoreAppButton>
             </div>
@@ -663,13 +553,7 @@
                 </h3>
                 <p class="text-sm text-(--color-text-muted)">{{ groupToDelete?.id }}</p>
               </div>
-              <CoreAppButton
-                :icon="icons.x"
-                variant="ghost"
-                color="neutral"
-                size="xs"
-                @click="showDeleteModal = false"
-              />
+              <CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="xs" @click="showDeleteModal = false" />
             </div>
           </template>
           <p class="text-sm text-(--color-text)">
@@ -688,15 +572,8 @@
           />
           <template #footer>
             <div class="flex justify-end gap-2">
-              <CoreAppButton variant="outline" color="primary" @click="showDeleteModal = false"
-                >{{ $t('common.cancel') }}
-              </CoreAppButton>
-              <CoreAppButton
-                color="error"
-                :loading="deleting"
-                @click="deleteGroup"
-                :icon="icons.delete"
-              >
+              <CoreAppButton variant="outline" color="primary" @click="showDeleteModal = false">{{ $t('common.cancel') }} </CoreAppButton>
+              <CoreAppButton color="error" :loading="deleting" @click="deleteGroup" :icon="icons.delete">
                 {{ $t('common.delete') }}</CoreAppButton
               >
             </div>
@@ -717,13 +594,7 @@
                 </h3>
                 <p class="text-sm text-(--color-text-muted)">{{ memberTargetGroup?.label }}</p>
               </div>
-              <CoreAppButton
-                :icon="icons.x"
-                variant="ghost"
-                color="neutral"
-                size="xs"
-                @click="showAddMembersModal = false"
-              />
+              <CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="xs" @click="showAddMembersModal = false" />
             </div>
           </template>
           <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- keyboard navigation container for available members list -->
@@ -746,14 +617,8 @@
               <div class="flex items-center justify-between px-1">
                 <span class="flex items-center gap-2 cursor-pointer">
                   <CoreAppCheckbox
-                    :model-value="
-                      selectedNewMembers.length === filteredAvailableMembers.length &&
-                      filteredAvailableMembers.length > 0
-                    "
-                    :indeterminate="
-                      selectedNewMembers.length > 0 &&
-                      selectedNewMembers.length < filteredAvailableMembers.length
-                    "
+                    :model-value="selectedNewMembers.length === filteredAvailableMembers.length && filteredAvailableMembers.length > 0"
+                    :indeterminate="selectedNewMembers.length > 0 && selectedNewMembers.length < filteredAvailableMembers.length"
                     :aria-label="String($t('common.selectAll'))"
                     @update:model-value="toggleSelectAllNewMembers"
                   />
@@ -769,9 +634,7 @@
                     >
                   </span>
                 </span>
-                <span class="text-xs text-(--color-text-muted)"
-                  >{{ selectedNewMembers.length }} {{ $t('common.selected') }}</span
-                >
+                <span class="text-xs text-(--color-text-muted)">{{ selectedNewMembers.length }} {{ $t('common.selected') }}</span>
               </div>
               <div class="border border-(--color-border) rounded-lg overflow-hidden">
                 <div class="max-h-60 overflow-auto">
@@ -794,10 +657,7 @@
                       {{ item }}
                     </button>
                   </span>
-                  <div
-                    v-if="filteredAvailableMembers.length === 0"
-                    class="text-sm text-(--color-text-muted) py-4 text-center"
-                  >
+                  <div v-if="filteredAvailableMembers.length === 0" class="text-sm text-(--color-text-muted) py-4 text-center">
                     {{ availableMembersSearch ? $t('common.noResults') : $t('common.noData') }}
                   </div>
                 </div>
@@ -806,12 +666,9 @@
           </div>
           <template #footer>
             <div class="flex justify-end gap-2">
-              <CoreAppButton
-                variant="outline"
-                color="primary"
-                @click="showAddMembersModal = false"
-                >{{ $t('common.cancel') }}</CoreAppButton
-              >
+              <CoreAppButton variant="outline" color="primary" @click="showAddMembersModal = false">{{
+                $t('common.cancel')
+              }}</CoreAppButton>
               <CoreAppButton
                 color="primary"
                 :loading="addingMembers"
@@ -838,8 +695,7 @@
   const route = useRoute()
   const router = useRouter()
   const selectionStore = useSelectionStore()
-  const { isReadOnly, isHostGroupAccessRestricted, isProductGroupAccessRestricted } =
-    useUserPermissions()
+  const { isReadOnly, isHostGroupAccessRestricted, isProductGroupAccessRestricted } = useUserPermissions()
   const {
     getClientIds,
     getServerIds,
@@ -894,11 +750,7 @@
   let statusTimer: ReturnType<typeof setTimeout> | null = null
 
   function showStatus(type: 'success' | 'error', text: string) {
-    const modalOpen =
-      showCreateModal.value ||
-      showEditModal.value ||
-      showDeleteModal.value ||
-      showAddMembersModal.value
+    const modalOpen = showCreateModal.value || showEditModal.value || showDeleteModal.value || showAddMembersModal.value
     if (type === 'error' && modalOpen) {
       modalStatusMessage.value = text
       return
@@ -999,9 +851,7 @@
     function expandMatching(nodes: GroupTreeNodeData[]) {
       for (const node of nodes) {
         if (node.children?.length) {
-          const hasMatch = node.children.some((c) =>
-            (c.label || c.id).toLowerCase().includes(query)
-          )
+          const hasMatch = node.children.some((c) => (c.label || c.id).toLowerCase().includes(query))
           if (hasMatch && !newIds.has(node.id)) {
             newIds.add(node.id)
             changed = true
@@ -1038,8 +888,7 @@
   const filteredAvailableMembers = computed(() => {
     if (!memberTargetGroup.value) return []
     const currentMembers = new Set(memberTargetGroup.value.members || [])
-    const allAvailable =
-      activeGroupType.value === 'clients' ? availableClients.value : availableProducts.value
+    const allAvailable = activeGroupType.value === 'clients' ? availableClients.value : availableProducts.value
     let available = allAvailable.filter((m) => !currentMembers.has(m))
 
     if (availableMembersSearch.value.trim()) {
@@ -1050,8 +899,7 @@
   })
 
   const filteredCreateMembers = computed(() => {
-    const allAvailable =
-      activeGroupType.value === 'clients' ? availableClients.value : availableProducts.value
+    const allAvailable = activeGroupType.value === 'clients' ? availableClients.value : availableProducts.value
     let available = allAvailable
     if (createMembersSearch.value.trim()) {
       const query = createMembersSearch.value.toLowerCase()
@@ -1241,8 +1089,7 @@
   }
 
   async function removeSelectedMembers() {
-    if (!selectedGroup.value || selectedGroup.value.isSpecial || selectedMembers.value.length === 0)
-      return
+    if (!selectedGroup.value || selectedGroup.value.isSpecial || selectedMembers.value.length === 0) return
 
     try {
       const groupId = selectedGroup.value.id
@@ -1252,17 +1099,12 @@
         const batch = members.slice(i, i + BATCH_SIZE)
         await Promise.all(
           batch.map((memberId) =>
-            activeGroupType.value === 'clients'
-              ? removeClientFromGroups(memberId, [groupId])
-              : removeProductFromGroup(groupId, memberId)
-          )
+            activeGroupType.value === 'clients' ? removeClientFromGroups(memberId, [groupId]) : removeProductFromGroup(groupId, memberId),
+          ),
         )
       }
 
-      showStatus(
-        'success',
-        String($t('notify.host.removed.group', { client: `${members.length}` }))
-      )
+      showStatus('success', String($t('notify.host.removed.group', { client: `${members.length}` })))
       selectedMembers.value = []
       await fetchCurrentGroups()
       const updated = findGroupById(currentTreeGroups.value, selectedGroup.value.id)
@@ -1401,9 +1243,7 @@
         const range = list.slice(start, end + 1)
         const allSelected = range.every((m) => createSelectedMembers.value.includes(m))
         if (allSelected) {
-          createSelectedMembers.value = createSelectedMembers.value.filter(
-            (m) => !range.includes(m)
-          )
+          createSelectedMembers.value = createSelectedMembers.value.filter((m) => !range.includes(m))
         } else {
           const newSet = new Set([...createSelectedMembers.value, ...range])
           createSelectedMembers.value = [...newSet]
@@ -1482,14 +1322,10 @@
       await fetchCurrentGroups()
 
       if (memberAddError) {
-        const details =
-          memberAddError instanceof Error ? memberAddError.message : String($t('notify.error'))
+        const details = memberAddError instanceof Error ? memberAddError.message : String($t('notify.error'))
         showStatus('error', `Group "${groupId}" created, but adding members failed: ${details}`)
       } else if (createAddMembersEnabled.value && createSelectedMembers.value.length > 0) {
-        showStatus(
-          'success',
-          `Group "${groupId}" created and ${createSelectedMembers.value.length} members added.`
-        )
+        showStatus('success', `Group "${groupId}" created and ${createSelectedMembers.value.length} members added.`)
       } else {
         showStatus('success', String($t('notify.group.created', { group: groupId })))
       }
@@ -1574,10 +1410,7 @@
       const addFn = activeGroupType.value === 'clients' ? addClientsToGroup : addProductsToGroup
       await addFn(memberTargetGroup.value.id, selectedNewMembers.value)
 
-      showStatus(
-        'success',
-        String($t('notify.client.added.group', { group: memberTargetGroup.value.label }))
-      )
+      showStatus('success', String($t('notify.client.added.group', { group: memberTargetGroup.value.label })))
       showAddMembersModal.value = false
       await fetchCurrentGroups()
 
@@ -1616,14 +1449,10 @@
     if (!selectedGroup.value || selectedGroup.value.isSpecial) return
 
     try {
-      const removeFn =
-        activeGroupType.value === 'clients' ? removeClientsFromGroup : removeProductsFromGroup
+      const removeFn = activeGroupType.value === 'clients' ? removeClientsFromGroup : removeProductsFromGroup
       await removeFn(selectedGroup.value.id)
 
-      showStatus(
-        'success',
-        String($t('notify.host.removed.group', { client: selectedGroup.value.label }))
-      )
+      showStatus('success', String($t('notify.host.removed.group', { client: selectedGroup.value.label })))
       await fetchCurrentGroups()
 
       const updated = findGroupById(currentTreeGroups.value, selectedGroup.value.id)
@@ -1654,10 +1483,7 @@
     const onMove = (e: MouseEvent) => {
       const delta = e.clientX - startX
       const deltaPercent = (delta / containerWidth) * 100
-      const newPercent = Math.min(
-        maxSidebarPercent,
-        Math.max(minSidebarPercent, startPercent + deltaPercent)
-      )
+      const newPercent = Math.min(maxSidebarPercent, Math.max(minSidebarPercent, startPercent + deltaPercent))
       sidebarWidthPercent.value = Math.round(newPercent)
     }
 
@@ -1718,7 +1544,7 @@
       if (activeGroupType.value === 'clients') {
         fetchCurrentGroups()
       }
-    }
+    },
   )
 </script>
 

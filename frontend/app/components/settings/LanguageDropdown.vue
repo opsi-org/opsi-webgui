@@ -9,20 +9,10 @@
 -->
 <template>
   <div class="relative" ref="containerRef">
-    <CoreAppButton
-      @click="open = !open"
-      color="primary"
-      size="xs"
-      data-testid="language-dropdown"
-      :title="String(t('common.settings'))"
-    >
+    <CoreAppButton @click="open = !open" color="primary" size="xs" data-testid="language-dropdown" :title="String(t('common.settings'))">
       <CoreAppIcon :name="icons.language" class="w-3.5 h-3.5" />
       <span class="text-xs font-medium">{{ currentLocale.toUpperCase() }}</span>
-      <CoreAppIcon
-        :name="icons.chevronDown"
-        class="w-3 h-3 transition-transform"
-        :class="{ 'rotate-180': open }"
-      />
+      <CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 transition-transform" :class="{ 'rotate-180': open }" />
     </CoreAppButton>
     <Transition :name="direction === 'up' ? 'dropdown-up' : 'dropdown'">
       <div
@@ -88,16 +78,12 @@
   const visibleLocaleCodes = ['en', 'de', 'fr']
 
   const supportedLocales = computed(() =>
-    (locales.value as LocaleInfo[])
-      .map((locale) => String(locale.code))
-      .filter((code) => visibleLocaleCodes.includes(code))
+    (locales.value as LocaleInfo[]).map((locale) => String(locale.code)).filter((code) => visibleLocaleCodes.includes(code)),
   )
 
   const availableLocales = computed<LocaleInfo[]>(() => {
     const allLocales = locales.value as LocaleInfo[]
-    return allLocales.filter(
-      (l) => visibleLocaleCodes.includes(l.code) && l.code !== currentLocale.value
-    )
+    return allLocales.filter((l) => visibleLocaleCodes.includes(l.code) && l.code !== currentLocale.value)
   })
 
   const priorityOrder = ['en', 'de', 'fr']
@@ -105,7 +91,7 @@
   const priorityLocales = computed(() =>
     priorityOrder
       .map((code) => availableLocales.value.find((locale) => locale.code === code))
-      .filter((locale): locale is LocaleInfo => !!locale)
+      .filter((locale): locale is LocaleInfo => !!locale),
   )
 
   async function switchTo(code: string) {

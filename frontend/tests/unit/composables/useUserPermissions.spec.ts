@@ -133,12 +133,7 @@ describe('useUserPermissions', () => {
       mockUserStore.disabledFeatures = ['terminal', 'messagebus_terminal']
 
       const { filterNavItems } = await getPermissions()
-      const items = [
-        { route: '/clients' },
-        { route: '/admin/terminal' },
-        { route: '/admin/maintenance' },
-        { route: '/products' },
-      ]
+      const items = [{ route: '/clients' }, { route: '/admin/terminal' }, { route: '/admin/maintenance' }, { route: '/products' }]
       const filtered = filterNavItems(items)
 
       expect(filtered.some((i) => i.route === '/clients')).toBe(true)
@@ -154,11 +149,7 @@ describe('useUserPermissions', () => {
       const items = [
         {
           route: '/admin',
-          submenu: [
-            { route: '/admin/diagnostics' },
-            { route: '/admin/terminal' },
-            { route: '/admin/maintenance' },
-          ],
+          submenu: [{ route: '/admin/diagnostics' }, { route: '/admin/terminal' }, { route: '/admin/maintenance' }],
         },
       ]
       const filtered = filterNavItems(items)

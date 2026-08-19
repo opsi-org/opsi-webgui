@@ -28,19 +28,10 @@
       <slot name="actions" />
     </template>
   </UAlert>
-  <UAlert
-    v-else
-    :color="color"
-    :variant="variant"
-    :close="closable"
-    :class="alertClass"
-    @update:open="$emit('close')"
-  >
+  <UAlert v-else :color="color" :variant="variant" :close="closable" :class="alertClass" @update:open="$emit('close')">
     <template #title>
       <span class="inline-flex items-center gap-2 flex-wrap">
-        <span class="uppercase font-bold text-xs tracking-wide">{{
-          $slots.title ? '' : title
-        }}</span>
+        <span class="uppercase font-bold text-xs tracking-wide">{{ $slots.title ? '' : title }}</span>
         <slot v-if="$slots.title" name="title" />
         <span v-if="description" class="font-normal text-xs">{{ description }}</span>
         <slot v-if="$slots.description" name="description" />
@@ -68,7 +59,7 @@
       variant: 'subtle',
       closable: false,
       compact: false,
-    }
+    },
   )
 
   defineEmits<{

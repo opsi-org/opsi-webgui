@@ -13,22 +13,20 @@ export const urlsWithoutSession = ['/auth/logout', '/user/configuration']
 
 const SESSION_LIFETIME_HEADER = 'X-opsi-session-lifetime'
 
-export function headersToObject(
-	headers: Headers | Record<string, string> | undefined
-): Record<string, string> {
-	if (!headers) return {}
-	if (headers instanceof Headers) {
-		const obj: Record<string, string> = {}
-		headers.forEach((value, key) => {
-			obj[key] = value
-		})
-		return obj
-	}
-	return headers
+export function headersToObject(headers: Headers | Record<string, string> | undefined): Record<string, string> {
+  if (!headers) return {}
+  if (headers instanceof Headers) {
+    const obj: Record<string, string> = {}
+    headers.forEach((value, key) => {
+      obj[key] = value
+    })
+    return obj
+  }
+  return headers
 }
 
 export function shouldSendSessionHeader(url: string): boolean {
-	return !urlsWithoutSession.some((path) => url.includes(path))
+  return !urlsWithoutSession.some((path) => url.includes(path))
 }
 
 /**
@@ -41,22 +39,22 @@ export function shouldSendSessionHeader(url: string): boolean {
  * server rejects ("Invalid X-opsi-session-lifetime header").
  */
 export function mergeRequestHeaders(
-	existingHeaders: Record<string, string>,
-	url: string,
-	sessionExpiry: number | string,
-	isFormData: boolean
+  existingHeaders: Record<string, string>,
+  url: string,
+  sessionExpiry: number | string,
+  isFormData: boolean,
 ): Record<string, string> {
-	const merged: Record<string, string> = {}
-	for (const [key, value] of Object.entries(existingHeaders)) {
-		if (key.toLowerCase() === SESSION_LIFETIME_HEADER.toLowerCase()) continue
-		merged[key] = value
-	}
-	if (shouldSendSessionHeader(url)) {
-		merged[SESSION_LIFETIME_HEADER] = String(sessionExpiry)
-	}
-	merged['Accept'] = 'application/json, text/plain, */*'
-	if (!isFormData) {
-		merged['Content-Type'] = 'application/json'
-	}
-	return merged
+  const merged: Record<string, string> = {}
+  for (const [key, value] of Object.entries(existingHeaders)) {
+    if (key.toLowerCase() === SESSION_LIFETIME_HEADER.toLowerCase()) continue
+    merged[key] = value
+  }
+  if (shouldSendSessionHeader(url)) {
+    merged[SESSION_LIFETIME_HEADER] = String(sessionExpiry)
+  }
+  merged['Accept'] = 'application/json, text/plain, */*'
+  if (!isFormData) {
+    merged['Content-Type'] = 'application/json'
+  }
+  return merged
 }

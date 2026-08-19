@@ -17,9 +17,7 @@
     :aria-label="isDarkMode ? $t('settings.theme.light') : $t('settings.theme.dark')"
   >
     <CoreAppIcon :name="isDarkMode ? icons.themeDark : icons.themeLight" class="w-3.5 h-3.5" />
-    <span class="text-xs font-medium">{{
-      isDarkMode ? $t('settings.theme.dark') : $t('settings.theme.light')
-    }}</span>
+    <span class="text-xs font-medium">{{ isDarkMode ? $t('settings.theme.dark') : $t('settings.theme.light') }}</span>
   </CoreAppButton>
 </template>
 

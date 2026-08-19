@@ -18,17 +18,12 @@
     <template v-else>
       <div class="flex items-center gap-1 mb-1.5 shrink-0">
         <CoreAppFilterInput v-model="searchQuery" size="xs" input-class="flex-1 min-w-0" />
-        <CoreAppTooltip
-          v-if="isDepotAccessRestricted"
-          :text="$t('opsiConfig.serverFeatures.depotAccess.disabled')"
-        >
+        <CoreAppTooltip v-if="isDepotAccessRestricted" :text="$t('opsiConfig.serverFeatures.depotAccess.disabled')">
           <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help shrink-0">
             {{ $t('auth.restricted') }}
           </CoreAppBadge>
         </CoreAppTooltip>
-        <CoreAppTooltip
-          :text="`${$t('common.clearAll')} (${selectionStore.selectedServers.length})`"
-        >
+        <CoreAppTooltip :text="`${$t('common.clearAll')} (${selectionStore.selectedServers.length})`">
           <CoreAppButton
             :icon="icons.xCircle"
             size="xs"
@@ -41,10 +36,7 @@
       </div>
 
       <div class="flex-1 overflow-y-auto min-h-0 space-y-0.5">
-        <div
-          v-if="filteredServers.length === 0"
-          class="text-xs text-(--color-text-muted) py-4 text-center"
-        >
+        <div v-if="filteredServers.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">
           {{ $t('common.noResults') }}
         </div>
         <div
@@ -67,13 +59,9 @@
               :name="server.isConfigServer ? icons.serverStack : icons.server"
               class="w-3 h-3 shrink-0 text-(--color-text-muted)"
             />
-            <span class="truncate" :class="server.isConfigServer ? 'font-medium' : ''">{{
-              server.serverId
-            }}</span>
+            <span class="truncate" :class="server.isConfigServer ? 'font-medium' : ''">{{ server.serverId }}</span>
           </button>
-          <CoreAppBadge v-if="server.isConfigServer" size="xs" variant="subtle" color="primary">{{
-            $t('servers.config')
-          }}</CoreAppBadge>
+          <CoreAppBadge v-if="server.isConfigServer" size="xs" variant="subtle" color="primary">{{ $t('servers.config') }}</CoreAppBadge>
         </div>
       </div>
     </template>
@@ -112,9 +100,7 @@
   const filteredServers = computed(() => {
     if (!searchQuery.value) return servers.value
     const q = searchQuery.value.toLowerCase()
-    return servers.value.filter(
-      (s) => s.serverId.toLowerCase().includes(q) || s.description?.toLowerCase().includes(q)
-    )
+    return servers.value.filter((s) => s.serverId.toLowerCase().includes(q) || s.description?.toLowerCase().includes(q))
   })
 
   function toggleServer(serverId: string) {
@@ -163,6 +149,6 @@
         fetchServers()
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 </script>
