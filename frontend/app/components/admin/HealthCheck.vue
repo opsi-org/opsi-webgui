@@ -21,7 +21,7 @@
     <div v-else class="space-y-1">
       <div v-for="item in filteredHealthData" :key="item.key" class="rounded-lg overflow-hidden">
         <div
-          class="flex items-start gap-2 p-2 cursor-pointer transition-colors hover:bg-(--color-surface-hover) rounded-md"
+          class="flex items-center gap-2 p-2 cursor-pointer transition-colors hover:bg-(--color-surface-hover) rounded-md"
           role="button"
           tabindex="0"
           @click="$emit('toggleExpand', item.key)"
@@ -31,31 +31,31 @@
           <CoreAppIcon
             v-if="item.children && item.children.length > 0"
             :name="expanded[item.key] ? icons.chevronDown : icons.chevronRight"
-            class="w-3.5 h-3.5 mt-0.5 shrink-0 text-(--color-text-muted)"
+            class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)"
           />
-          <div v-else class="w-4" />
+          <div v-else class="w-4 shrink-0" />
           <CoreAppStatusBadge :status="getStatusType(item.status)" :label="item.status" class="shrink-0" />
-          <div class="flex-1 min-w-0">
-            <div class="font-medium text-sm leading-4" :title="item.description">
+          <div class="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-baseline sm:gap-2">
+            <span class="font-medium text-sm leading-4 shrink-0 sm:truncate sm:max-w-[45%]" :title="item.description">
               {{ item.name }}
-            </div>
-            <div v-if="item.message" class="text-(--color-text-muted) break-all">
+            </span>
+            <span v-if="item.message" class="text-(--color-text-muted) text-xs truncate" :title="item.message">
               {{ item.message }}
-            </div>
+            </span>
           </div>
         </div>
         <div v-if="item.children && item.children.length > 0 && expanded[item.key]" class="border-l border-(--color-border)">
           <div
             v-for="child in item.children"
             :key="child.key"
-            class="flex items-start gap-2 py-1.5 px-2 pl-8 hover:bg-(--color-surface-hover) transition-colors rounded-md"
+            class="flex items-center gap-2 py-1.5 px-2 pl-8 hover:bg-(--color-surface-hover) transition-colors rounded-md"
           >
             <CoreAppStatusBadge :status="getStatusType(child.status)" :label="child.status" class="shrink-0" />
-            <div class="flex-1 min-w-0">
-              <div class="font-medium text-sm">{{ child.name }}</div>
-              <div v-if="child.message" class="text-(--color-text-muted) break-all">
+            <div class="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-baseline sm:gap-2">
+              <span class="font-medium text-sm shrink-0 sm:truncate sm:max-w-[45%]">{{ child.name }}</span>
+              <span v-if="child.message" class="text-(--color-text-muted) text-xs truncate" :title="child.message">
                 {{ child.message }}
-              </div>
+              </span>
             </div>
           </div>
         </div>
