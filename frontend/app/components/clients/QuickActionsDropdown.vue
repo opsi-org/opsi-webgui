@@ -82,11 +82,7 @@
     </template>
   </div>
 
-  <CoreAppModal
-    v-model:open="confirmOpen"
-    :dismissible="true"
-    data-testid="client-quick-actions-dialog"
-  >
+  <CoreAppModal v-model:open="confirmOpen" :dismissible="true" data-testid="client-quick-actions-dialog">
     <template #content>
       <div class="p-4 min-w-87.5" @click.stop>
         <div class="flex items-center justify-between mb-3">
@@ -98,17 +94,11 @@
               :alt="actionLabel(currentAction)"
               image-class="w-8 h-8 shrink-0"
             />
-            <CoreAppIcon
-              v-else
-              :name="currentActionIcon"
-              class="w-8 h-8 text-(--color-text-muted)"
-            />
+            <CoreAppIcon v-else :name="currentActionIcon" class="w-8 h-8 text-(--color-text-muted)" />
             {{ actionLabel(currentAction) }}
-            <span
-              v-if="clientIds.length === 1"
-              class="text-(--color-text-muted) font-normal normal-case truncate max-w-48"
-              >{{ clientIds[0] }}</span
-            >
+            <span v-if="clientIds.length === 1" class="text-(--color-text-muted) font-normal normal-case truncate max-w-48">{{
+              clientIds[0]
+            }}</span>
             <span v-else-if="clientIds.length > 1" class="text-(--color-text-muted) font-normal"
               >({{ clientIds.length }} {{ $t('clients.title') }})</span
             >
@@ -140,38 +130,21 @@
         </div>
 
         <div v-if="currentAction === 'notify'" class="mb-4">
-          <CoreAppTextarea
-            v-model="notifyText"
-            :placeholder="$t('notifications.text')"
-            :rows="3"
-            class="w-full"
-          />
+          <CoreAppTextarea v-model="notifyText" :placeholder="$t('notifications.text')" :rows="3" class="w-full" />
         </div>
 
-        <div
-          v-if="currentAction === 'reboot'"
-          class="mb-4 p-3 bg-(--color-warning-soft-bg) rounded border border-(--color-warning)/30"
-        >
+        <div v-if="currentAction === 'reboot'" class="mb-4 p-3 bg-(--color-warning-soft-bg) rounded border border-(--color-warning)/30">
           <div class="flex items-start gap-2">
-            <CoreAppIcon
-              :name="icons.warning"
-              class="w-4 h-4 text-(--color-warning-soft-text) mt-0.5"
-            />
+            <CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-warning-soft-text) mt-0.5" />
             <p class="text-sm text-(--color-warning-soft-text)">
               {{ $t('clients.reboot.warn') }}
             </p>
           </div>
         </div>
 
-        <div
-          v-if="currentAction === 'shutdown'"
-          class="mb-4 p-3 bg-(--color-warning-soft-bg) rounded border border-(--color-warning)/30"
-        >
+        <div v-if="currentAction === 'shutdown'" class="mb-4 p-3 bg-(--color-warning-soft-bg) rounded border border-(--color-warning)/30">
           <div class="flex items-start gap-2">
-            <CoreAppIcon
-              :name="icons.warning"
-              class="w-4 h-4 text-(--color-warning-soft-text) mt-0.5"
-            />
+            <CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-warning-soft-text) mt-0.5" />
             <p class="text-sm text-(--color-warning-soft-text)">
               {{ $t('clients.shutdown.warn') }}
             </p>
@@ -197,20 +170,11 @@
             </CoreAppButton>
           </div>
           <div>
-            <span class="block text-xs text-[--color-text-muted] mb-1">{{
-              $t('auth.username')
-            }}</span>
-            <CoreAppInput
-              v-model="deployOptions.username"
-              :placeholder="$t('fields.adminUsername')"
-              size="sm"
-              class="w-full"
-            />
+            <span class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.username') }}</span>
+            <CoreAppInput v-model="deployOptions.username" :placeholder="$t('fields.adminUsername')" size="sm" class="w-full" />
           </div>
           <div>
-            <span class="block text-xs text-[--color-text-muted] mb-1">{{
-              $t('auth.password')
-            }}</span>
+            <span class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.password') }}</span>
             <CoreAppInput
               v-model="deployOptions.password"
               type="password"
@@ -234,31 +198,17 @@
                 :color="renameValidation.color as any"
               />
               <span class="text-sm text-(--color-text-muted)">.</span>
-              <CoreAppInput
-                v-model="renameDomain"
-                :placeholder="String($t('fields.domain'))"
-                class="flex-1"
-              />
+              <CoreAppInput v-model="renameDomain" :placeholder="String($t('fields.domain'))" class="flex-1" />
             </div>
-            <p
-              v-if="renameValidation.message"
-              class="text-xs mt-1"
-              :class="renameValidation.textClass"
-            >
+            <p v-if="renameValidation.message" class="text-xs mt-1" :class="renameValidation.textClass">
               {{ renameValidation.message }}
             </p>
           </CoreAppFormField>
         </div>
 
-        <div
-          v-if="currentAction === 'delete'"
-          class="mb-4 p-3 bg-(--color-error-soft-bg) rounded border border-(--color-error)/30"
-        >
+        <div v-if="currentAction === 'delete'" class="mb-4 p-3 bg-(--color-error-soft-bg) rounded border border-(--color-error)/30">
           <div class="flex items-start gap-2">
-            <CoreAppIcon
-              :name="icons.warning"
-              class="w-4 h-4 text-(--color-error-soft-text) mt-0.5"
-            />
+            <CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-error-soft-text) mt-0.5" />
             <div>
               <p class="text-sm text-(--color-error-soft-text) font-medium">
                 {{ $t('clients.delete.warn') }}
@@ -271,9 +221,7 @@
         </div>
 
         <div class="flex justify-end gap-2 pt-3 border-[--color-border]">
-          <CoreAppButton variant="outline" color="primary" @click="confirmOpen = false"
-            >{{ $t('common.cancel') }}
-          </CoreAppButton>
+          <CoreAppButton variant="outline" color="primary" @click="confirmOpen = false">{{ $t('common.cancel') }} </CoreAppButton>
           <CoreAppButton
             :color="currentAction === 'delete' ? 'error' : 'primary'"
             :loading="loading"
@@ -320,30 +268,18 @@
                 <CoreAppIcon
                   :name="result.success ? icons.checkCircle : icons.xCircle"
                   class="w-4 h-4 shrink-0"
-                  :class="
-                    result.success
-                      ? 'text-(--color-success-soft-text)'
-                      : 'text-(--color-error-soft-text)'
-                  "
+                  :class="result.success ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'"
                 />
                 <span class="font-medium truncate">{{ clientId }}</span>
               </div>
-              <CoreAppBadge
-                :color="result.success ? 'success' : 'error'"
-                size="xs"
-                variant="subtle"
-              >
+              <CoreAppBadge :color="result.success ? 'success' : 'error'" size="xs" variant="subtle">
                 {{ result.success ? $t('common.success') : $t('common.failed') }}
               </CoreAppBadge>
             </div>
             <div
               v-if="result.message"
               class="mt-1.5 pl-6 text-sm wrap-break-word"
-              :class="
-                result.success
-                  ? 'text-(--color-success-soft-text)'
-                  : 'text-(--color-error-soft-text)'
-              "
+              :class="result.success ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'"
             >
               {{ result.message }}
             </div>
@@ -351,9 +287,7 @@
         </div>
 
         <div class="flex justify-end mt-4 pt-3 border-t border-[--color-border]">
-          <CoreAppButton variant="ghost" color="neutral" @click="resultOpen = false"
-            >{{ $t('common.close') }}
-          </CoreAppButton>
+          <CoreAppButton variant="ghost" color="neutral" @click="resultOpen = false">{{ $t('common.close') }} </CoreAppButton>
         </div>
       </div>
     </template>
@@ -377,15 +311,8 @@
 
   const icons = useIcons()
   const { t: $t } = useI18n()
-  const {
-    triggerOnDemand,
-    sendNotification,
-    rebootClients,
-    shutdownClients,
-    deployClientAgent,
-    deleteClient,
-    renameClient,
-  } = useApiHelpers()
+  const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deployClientAgent, deleteClient, renameClient } =
+    useApiHelpers()
   const selectionStore = useSelectionStore()
   const { isReadOnly, canCreateClients } = useUserPermissions()
 
@@ -450,11 +377,7 @@
     { key: 'delete', icon: icons.delete, color: 'text-(--color-error-soft-text)' },
   ] as const
 
-  const actions = computed(() =>
-    allActions.filter(
-      (a) => a.key !== 'rename' || (props.showRename && props.clientIds.length === 1)
-    )
-  )
+  const actions = computed(() => allActions.filter((a) => a.key !== 'rename' || (props.showRename && props.clientIds.length === 1)))
 
   const renameValidation = computed(() => {
     const hostname = renameHostname.value.trim()
@@ -487,16 +410,8 @@
 
   const canExecute = computed(() => {
     if (currentAction.value === 'notify' && !notifyText.value.trim()) return false
-    if (
-      currentAction.value === 'deployClientAgent' &&
-      (!deployOptions.value.username || !deployOptions.value.password)
-    )
-      return false
-    if (
-      currentAction.value === 'rename' &&
-      (!renameHostname.value.trim() || !!renameValidation.value.message)
-    )
-      return false
+    if (currentAction.value === 'deployClientAgent' && (!deployOptions.value.username || !deployOptions.value.password)) return false
+    if (currentAction.value === 'rename' && (!renameHostname.value.trim() || !!renameValidation.value.message)) return false
     return true
   })
 
@@ -523,7 +438,7 @@
         darkImage: 'darkImage' in action ? action.darkImage : undefined,
         disabled: isReadOnly.value,
         onSelect: () => openConfirm(action.key),
-      }))
+      })),
     )
 
     if (renameAction || deleteAction) {
@@ -641,9 +556,7 @@
               result[clientId] = { success: false, error: String(e) }
             }
           }
-          selectionStore.setClients(
-            selectionStore.selectedClients.filter((c) => !props.clientIds.includes(c))
-          )
+          selectionStore.setClients(selectionStore.selectedClients.filter((c) => !props.clientIds.includes(c)))
           break
       }
 
@@ -652,11 +565,9 @@
           id,
           {
             success: result[id]?.success !== false && !result[id]?.error,
-            message: result[id]?.error
-              ? String(result[id].error)
-              : result[id]?.message || undefined,
+            message: result[id]?.error ? String(result[id].error) : result[id]?.message || undefined,
           },
-        ])
+        ]),
       )
 
       const successCount = Object.values(actionResults.value).filter((r) => r.success).length

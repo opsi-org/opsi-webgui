@@ -12,9 +12,7 @@ export const test = base.extend<{ page: Page }>({
     const isFirefox = testInfo.project.name.includes('firefox')
     const testUser = process.env.TEST_USER || 'adminuser'
     const testPassword = process.env.TEST_PASSWORD || 'adminuser'
-    const disableAutoAuth =
-      testInfo.file.endsWith('/tests/e2e/specs/pages/login.spec.ts') ||
-      testInfo.project.name.includes('login')
+    const disableAutoAuth = testInfo.file.endsWith('/tests/e2e/specs/pages/login.spec.ts') || testInfo.project.name.includes('login')
 
     const isLoginUrl = (url: string) => /\/login(?:\?|$|\/)/.test(url)
 
@@ -25,7 +23,7 @@ export const test = base.extend<{ page: Page }>({
 
       const usernameInput = page
         .locator(
-          '#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]'
+          '#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]',
         )
         .first()
       const passwordInput = page.locator('#login-password, input[type="password"]').first()
@@ -63,9 +61,7 @@ export const test = base.extend<{ page: Page }>({
           } catch (error) {
             lastError = error
             const msg = String(error)
-            const retryable =
-              isFirefox &&
-              /(NS_BINDING_ABORTED|frame was detached|Navigation interrupted)/i.test(msg)
+            const retryable = isFirefox && /(NS_BINDING_ABORTED|frame was detached|Navigation interrupted)/i.test(msg)
             if (!retryable || attempt >= maxAttempts) throw error
             await page.waitForTimeout(400)
           }
@@ -77,9 +73,7 @@ export const test = base.extend<{ page: Page }>({
         if (!disableAutoAuth) {
           await ensureAuthenticated(target)
           if (isFirefox && isLoginUrl(page.url())) {
-            await page
-              .reload({ waitUntil: 'domcontentloaded', timeout: 30000 })
-              .catch(() => undefined)
+            await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => undefined)
             await ensureAuthenticated(target)
           }
         }

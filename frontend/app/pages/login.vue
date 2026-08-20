@@ -15,5 +15,5 @@
   definePageMeta({ layout: 'auth' })
 
   const { t: $t } = useI18n()
-  useHead({ title: () => `${$t('auth.login')} - opsi-WebGUI` })
+  useHead({ title: () => `${$t('auth.login')} - OPSI-WebGUI` })
 </script>

@@ -12,177 +12,165 @@ logger = get_logger()
 
 
 def _get_all_parents_groupids(raw_groups: list, group_id: str) -> set[str]:
-    """
-    Returns all parent group IDs for a given group ID.
-    """
-    if not raw_groups:
-        return set()
+	"""
+	Returns all parent group IDs for a given group ID.
+	"""
+	if not raw_groups:
+		return set()
 
-    all_parents = set()
-    for row in raw_groups:
-        if row["group_id"] == group_id:
-            if row["parent_id"]:
-                all_parents.add(row["parent_id"].lower())
-                all_parents.update(
-                    _get_all_parents_groupids(raw_groups, row["parent_id"])
-                )
-            break
+	all_parents = set()
+	for row in raw_groups:
+		if row["group_id"] == group_id:
+			if row["parent_id"]:
+				all_parents.add(row["parent_id"].lower())
+				all_parents.update(_get_all_parents_groupids(raw_groups, row["parent_id"]))
+			break
 
-    return all_parents
+	return all_parents
 
 
 def _is_allowed(group_id: str, allowed: set[str] | None) -> bool:
-    """
-    Checks if a group ID is in the allowed list.
-    """
-    if not group_id:
-        return True
-    if allowed is None:
-        return True
-    normalized_group_id = group_id.lower()
-    if normalized_group_id == "clientdirectory" or normalized_group_id in allowed:
-        return True
-    return False
+	"""
+	Checks if a group ID is in the allowed list.
+	"""
+	if not group_id:
+		return True
+	if allowed is None:
+		return True
+	normalized_group_id = group_id.lower()
+	if normalized_group_id == "clientdirectory" or normalized_group_id in allowed:
+		return True
+	return False
 
 
-def _next_allowed_parent(
-    parent_id: str, raw_groups: list, allowed: set[str] | None
-) -> str | None:
-    """
-    Finds the next allowed parent group ID.
-    """
-    if not parent_id or not raw_groups:
-        return None
-    if _is_allowed(parent_id, allowed):
-        return parent_id
-    for row in raw_groups:
-        if row["group_id"] == parent_id:
-            if _is_allowed(row["parent_id"], allowed):
-                return row["parent_id"]
-            return _next_allowed_parent(row["parent_id"], raw_groups, allowed)
-    return None
+def _next_allowed_parent(parent_id: str, raw_groups: list, allowed: set[str] | None) -> str | None:
+	"""
+	Finds the next allowed parent group ID.
+	"""
+	if not parent_id or not raw_groups:
+		return None
+	if _is_allowed(parent_id, allowed):
+		return parent_id
+	for row in raw_groups:
+		if row["group_id"] == parent_id:
+			if _is_allowed(row["parent_id"], allowed):
+				return row["parent_id"]
+			return _next_allowed_parent(row["parent_id"], raw_groups, allowed)
+	return None
 
 
 def read_groups(
-    raw_groups: list,
-    root_group: dict,
-    selected_object_ids: list | None,
-    allowed: list[str] | None,
-    withClients: bool = True,
-    gtype: str = "HostGroup",  # pylint: disable=invalid-name
+	raw_groups: list,
+	root_group: dict,
+	selected_object_ids: list | None,
+	allowed: list[str] | None,
+	withClients: bool = True,
+	gtype: str = "HostGroup",  # pylint: disable=invalid-name
 ) -> dict:
-    normalized_selected_object_ids = selected_object_ids or []
-    updated_allowed = None
-    if allowed is not None:
-        updated_allowed = set()
-        for group_id in allowed:
-            if group_id == "clientdirectory":
-                continue
-            updated_allowed.add(group_id.lower())
-            # currently in configed the behavior is to allow all children of the group, but not the parents (user roles)
-            # updated_allowed.update(_get_all_parents_groupids(raw_groups, group_id))
-            updated_allowed.update(get_all_children_groupid(raw_groups, group_id))
+	normalized_selected_object_ids = selected_object_ids or []
+	updated_allowed = None
+	if allowed is not None:
+		updated_allowed = set()
+		for group_id in allowed:
+			if group_id == "clientdirectory":
+				continue
+			updated_allowed.add(group_id.lower())
+			# currently in configed the behavior is to allow all children of the group, but not the parents (user roles)
+			# updated_allowed.update(_get_all_parents_groupids(raw_groups, group_id))
+			updated_allowed.update(get_all_children_groupid(raw_groups, group_id))
 
-    if not isinstance(normalized_selected_object_ids, list) and withClients:
-        normalized_selected_object_ids = []
-    all_groups = {}
-    for row in raw_groups:
-        if not _is_allowed(row["group_id"], updated_allowed):
-            continue
-        if row["group_id"] not in all_groups:
-            # get next allowed parent
-            if _is_allowed(row["parent_id"], updated_allowed):
-                parent = row["parent_id"] or root_group["id"]
-            else:
-                parent = _next_allowed_parent(
-                    parent_id=row["parent_id"],
-                    raw_groups=raw_groups,
-                    allowed=updated_allowed,
-                )
-            all_groups[row["group_id"]] = {
-                "id": f"{row['group_id']};{parent.lower()}"
-                if parent
-                else row["group_id"],
-                "type": gtype,
-                "text": row["group_id"],
-                "parent": parent,
-                "children": None,
-            }
-        if row["object_id"] and withClients:
-            if _is_allowed(row["parent_id"], updated_allowed):
-                parent = row["parent_id"] or root_group["id"]
-            else:
-                parent = _next_allowed_parent(
-                    parent_id=row["parent_id"],
-                    raw_groups=raw_groups,
-                    allowed=updated_allowed,
-                )
+	if not isinstance(normalized_selected_object_ids, list) and withClients:
+		normalized_selected_object_ids = []
+	all_groups = {}
+	for row in raw_groups:
+		if not _is_allowed(row["group_id"], updated_allowed):
+			continue
+		if row["group_id"] not in all_groups:
+			# get next allowed parent
+			if _is_allowed(row["parent_id"], updated_allowed):
+				parent = row["parent_id"] or root_group["id"]
+			else:
+				parent = _next_allowed_parent(
+					parent_id=row["parent_id"],
+					raw_groups=raw_groups,
+					allowed=updated_allowed,
+				)
+			all_groups[row["group_id"]] = {
+				"id": f"{row['group_id']};{parent.lower()}" if parent else row["group_id"],
+				"type": gtype,
+				"text": row["group_id"],
+				"parent": parent,
+				"children": None,
+			}
+		if row["object_id"] and withClients:
+			if _is_allowed(row["parent_id"], updated_allowed):
+				parent = row["parent_id"] or root_group["id"]
+			else:
+				parent = _next_allowed_parent(
+					parent_id=row["parent_id"],
+					raw_groups=raw_groups,
+					allowed=updated_allowed,
+				)
 
-            if row["object_id"] in normalized_selected_object_ids:
-                all_groups[row["group_id"]]["hasAnySelection"] = True
-            if not all_groups[row["group_id"]].get("children"):
-                all_groups[row["group_id"]]["children"] = {}
-            if row["group_id"] == parent:
-                if row["object_id"] not in all_groups:
-                    all_groups[row["object_id"]] = {
-                        "id": f"{row['object_id']};{parent.lower()}"
-                        if parent
-                        else row["object_id"],
-                        "type": "ObjectToGroup",
-                        "text": row["object_id"],
-                        "parent": parent.lower() if parent else None,
-                    }
-            else:
-                all_groups[row["group_id"]]["children"][row["object_id"]] = {
-                    "id": f"{row['object_id']};{parent.lower()}"
-                    if parent
-                    else row["object_id"],
-                    "type": "ObjectToGroup",
-                    "text": row["object_id"],
-                    "parent": row["group_id"].lower() if row["group_id"] else None,
-                }
-            # fixing group_id for children to ensure uniqueness
-            for child in all_groups[row["group_id"]]["children"].values():
-                if ";" not in child["id"] and child["parent"]:
-                    child["id"] = f"{child['id']};{child['parent'].lower()}"
+			if row["object_id"] in normalized_selected_object_ids:
+				all_groups[row["group_id"]]["hasAnySelection"] = True
+			if not all_groups[row["group_id"]].get("children"):
+				all_groups[row["group_id"]]["children"] = {}
+			if row["group_id"] == parent:
+				if row["object_id"] not in all_groups:
+					all_groups[row["object_id"]] = {
+						"id": f"{row['object_id']};{parent.lower()}" if parent else row["object_id"],
+						"type": "ObjectToGroup",
+						"text": row["object_id"],
+						"parent": parent.lower() if parent else None,
+					}
+			else:
+				all_groups[row["group_id"]]["children"][row["object_id"]] = {
+					"id": f"{row['object_id']};{parent.lower()}" if parent else row["object_id"],
+					"type": "ObjectToGroup",
+					"text": row["object_id"],
+					"parent": row["group_id"].lower() if row["group_id"] else None,
+				}
+			# fixing group_id for children to ensure uniqueness
+			for child in all_groups[row["group_id"]]["children"].values():
+				if ";" not in child["id"] and child["parent"]:
+					child["id"] = f"{child['id']};{child['parent'].lower()}"
 
-    return all_groups
+	return all_groups
 
 
 def build_nested_group(
-    current_group: dict[str, Any],
-    groups: dict[str, dict[str, Any]],
-    processed: dict[str, bool] | None = None,
-    empty_parent_group_id: str = "groups",
+	current_group: dict[str, Any],
+	groups: dict[str, dict[str, Any]],
+	processed: dict[str, bool] | None = None,
+	empty_parent_group_id: str = "groups",
 ) -> dict[str, Any]:
-    if processed is None:
-        processed = {}
-    processed[current_group["id"]] = True
-    for group_id, group in groups.items():
-        if group_id in processed:
-            continue  # Skip already processed groups
+	if processed is None:
+		processed = {}
+	processed[current_group["id"]] = True
+	for group_id, group in groups.items():
+		if group_id in processed:
+			continue  # Skip already processed groups
 
-        if group.get("parent") is not None and group_id != "clientdirectory":
-            # Ensure the group ID is unique and formatted correctly
-            if ";" not in group["id"]:
-                parent = group.get("parent")
-                group["id"] = (
-                    f"{group['id']};{parent.lower()}" if parent else group["id"]
-                )
+		if group.get("parent") is not None and group_id != "clientdirectory":
+			# Ensure the group ID is unique and formatted correctly
+			if ";" not in group["id"]:
+				parent = group.get("parent")
+				group["id"] = f"{group['id']};{parent.lower()}" if parent else group["id"]
 
-        parent_id: str | None = group.get("parent")
-        if parent_id is None and group_id != "clientdirectory":
-            parent_id = empty_parent_group_id
-            group["parent"] = empty_parent_group_id
+		parent_id: str | None = group.get("parent")
+		if parent_id is None and group_id != "clientdirectory":
+			parent_id = empty_parent_group_id
+			group["parent"] = empty_parent_group_id
 
-        if parent_id and parent_id.lower() == current_group.get("text", "").lower():
-            if current_group.get("children") is None:
-                current_group["children"] = {}
+		if parent_id and parent_id.lower() == current_group.get("text", "").lower():
+			if current_group.get("children") is None:
+				current_group["children"] = {}
 
-            current_group["children"][group_id] = group
-            processed[group_id] = True
+			current_group["children"][group_id] = group
+			processed[group_id] = True
 
-            # Rekursiver Aufruf, um Kinder der aktuellen Gruppe zu verarbeiten
-            build_nested_group(group, groups, processed, empty_parent_group_id)
+			# Rekursiver Aufruf, um Kinder der aktuellen Gruppe zu verarbeiten
+			build_nested_group(group, groups, processed, empty_parent_group_id)
 
-    return current_group
+	return current_group

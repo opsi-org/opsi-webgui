@@ -10,10 +10,7 @@
 <template>
   <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- conditionally interactive: role/tabindex/keyboard handlers are bound only when `clickable` is true -->
   <div
-    :class="[
-      'opsi-card transition-all duration-200',
-      clickable ? 'cursor-pointer opsi-card-hover group' : '',
-    ]"
+    :class="['opsi-card transition-all duration-200', clickable ? 'cursor-pointer opsi-card-hover group' : '']"
     :role="clickable ? 'button' : 'region'"
     :tabindex="0"
     :aria-label="clickable ? label : label + ': ' + (value ?? '-')"
@@ -48,7 +45,7 @@
     }>(),
     {
       clickable: false,
-    }
+    },
   )
 
   defineEmits<{ click: [] }>()

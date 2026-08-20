@@ -8,18 +8,12 @@
   ClientsCloneForm - Form for cloning an existing client to a new client.
 -->
 <template>
-  <CoreAppNavigationGuardModal
-    v-model="showLeaveWarning"
-    @cancel="cancelLeave"
-    @confirm="confirmLeave"
-  />
+  <CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
 
   <div v-if="!canCreateClients || isReadOnly" class="flex items-center justify-center h-full p-8">
     <CoreAppAlertInline color="warning" :title="$t('auth.permissionDenied')">
       <template #description>{{
-        isReadOnly
-          ? $t('opsiConfig.serverFeatures.readOnly.disabled')
-          : $t('opsiConfig.serverFeatures.clientCreation.disabled')
+        isReadOnly ? $t('opsiConfig.serverFeatures.readOnly.disabled') : $t('opsiConfig.serverFeatures.clientCreation.disabled')
       }}</template>
     </CoreAppAlertInline>
   </div>
@@ -69,13 +63,7 @@
     />
 
     <div v-else :class="['flex-1 overflow-y-auto space-y-3 opsi-dense-form opsi-compact-page']">
-      <CoreAppAlertInline
-        v-if="success"
-        color="success"
-        :title="String($t('common.success'))"
-        closable
-        @close="success = false"
-      >
+      <CoreAppAlertInline v-if="success" color="success" :title="String($t('common.success'))" closable @close="success = false">
         <template #description>{{ $t('clients.clone.ok') }}</template>
       </CoreAppAlertInline>
       <CoreAppAlertInline
@@ -110,9 +98,7 @@
           <div
             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
           >
-            <span class="text-sm min-w-0 md:w-1/3 break-all">
-              {{ $t('clients.id') }} <span class="text-error">*</span>
-            </span>
+            <span class="text-sm min-w-0 md:w-1/3 break-all"> {{ $t('clients.id') }} <span class="text-error">*</span> </span>
             <div class="flex-1 flex flex-col items-start gap-1 min-w-0">
               <div class="flex items-center gap-2 w-full">
                 <CoreAppInput
@@ -202,11 +188,7 @@
               {{ $t('config.items') }}
             </span>
             <div class="flex-1 flex items-center gap-2 min-w-0">
-              <CoreAppCheckbox
-                v-model="cloneclient.options.configs"
-                :disabled="loading"
-                @click.stop
-              />
+              <CoreAppCheckbox v-model="cloneclient.options.configs" :disabled="loading" @click.stop />
             </div>
           </button>
           <button
@@ -218,11 +200,7 @@
               {{ $t('products.title') }}
             </span>
             <div class="flex-1 flex items-center gap-2 min-w-0">
-              <CoreAppCheckbox
-                v-model="cloneclient.options.products"
-                :disabled="loading"
-                @click.stop
-              />
+              <CoreAppCheckbox v-model="cloneclient.options.products" :disabled="loading" @click.stop />
             </div>
           </button>
           <button
@@ -234,11 +212,7 @@
               {{ $t('products.properties') }}
             </span>
             <div class="flex-1 flex items-center gap-2 min-w-0">
-              <CoreAppCheckbox
-                v-model="cloneclient.options.productProperties"
-                :disabled="loading"
-                @click.stop
-              />
+              <CoreAppCheckbox v-model="cloneclient.options.productProperties" :disabled="loading" @click.stop />
             </div>
           </button>
         </div>
@@ -270,13 +244,11 @@
     () => props.sourceId,
     (v) => {
       sourceSelectorModel.value = v || ''
-    }
+    },
   )
   watch(sourceSelectorModel, (v) => emit('update:sourceId', v || null))
 
-  const resolvedSourceId = computed(
-    () => props.sourceId || (props.showSourceSelector ? sourceSelectorModel.value : null)
-  )
+  const resolvedSourceId = computed(() => props.sourceId || (props.showSourceSelector ? sourceSelectorModel.value : null))
 
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -373,11 +345,7 @@
     success.value = false
     cloneclient.target.hostId = clientName.value + domain.value
     try {
-      const res = await cloneClientApi(
-        resolvedSourceId.value,
-        cloneclient.target,
-        cloneclient.options
-      )
+      const res = await cloneClientApi(resolvedSourceId.value, cloneclient.target, cloneclient.options)
       if (res.error) throw res.error
       success.value = true
       refresh()

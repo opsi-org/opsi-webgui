@@ -26,7 +26,7 @@
   const route = useRoute()
   const router = useRouter()
 
-  useHead({ title: () => `${$t('clients.clone.title')} - opsi-WebGUI` })
+  useHead({ title: () => `${$t('clients.clone.title')} - OPSI-WebGUI` })
 
   const routeClientId = computed(() => {
     const id = route.params.id
@@ -51,7 +51,7 @@
         manualClientId.value = id
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   function handleSuccess() {

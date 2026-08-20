@@ -12,21 +12,13 @@
     <h1 class="sr-only">{{ $t('auth.login') }}</h1>
     <div class="text-center mb-6">
       <CoreAppImage
-        :src="
-          isDark ? '~/assets/images/opsi-webgui-dark.svg' : '~/assets/images/opsi-webgui-light.svg'
-        "
-        alt="opsi-WebGUI Logo"
+        :src="isDark ? '~/assets/images/opsi-webgui-dark.svg' : '~/assets/images/opsi-webgui-light.svg'"
+        alt="OPSI-WebGUI Logo"
         image-class="mx-auto mb-2 h-50"
       />
     </div>
     <CoreAppForm @submit="handleLogin" class="space-y-5">
-      <CoreAppAlertInline
-        v-if="errorMessage"
-        color="error"
-        variant="soft"
-        closable
-        @close="errorMessage = ''"
-      >
+      <CoreAppAlertInline v-if="errorMessage" color="error" variant="soft" closable @close="errorMessage = ''">
         <template #title>{{ errorMessage }}</template>
       </CoreAppAlertInline>
 
@@ -34,9 +26,7 @@
         <CoreAppIcon :name="icons.serverStack" class="w-5 h-5 text-opsi-blue" />
         <div class="flex-1 min-w-0">
           <span class="text-xs text-(--color-text-muted) block">{{ $t('servers.config') }}</span>
-          <span v-if="configServerName" class="font-medium text-(--color-text) truncate block">{{
-            configServerName
-          }}</span>
+          <span v-if="configServerName" class="font-medium text-(--color-text) truncate block">{{ configServerName }}</span>
           <span v-else class="font-medium block italic">{{ $t('common.loading') }}</span>
         </div>
       </div>
@@ -62,13 +52,7 @@
         class="w-full"
       />
       <div class="space-y-3 pt-2">
-        <CoreAppButton
-          type="submit"
-          block
-          :disabled="!cred.username || !cred.password"
-          color="primary"
-          :loading="loading"
-        >
+        <CoreAppButton type="submit" block :disabled="!cred.username || !cred.password" color="primary" :loading="loading">
           {{ $t('auth.login') }}</CoreAppButton
         >
         <div v-if="showSaml" class="relative my-4">
@@ -76,20 +60,10 @@
             <div class="w-full border-t border-(--color-border)" />
           </div>
           <div class="relative flex justify-center text-sm">
-            <span class="px-2 bg-(--color-background) text-(--color-text-muted)">{{
-              $t('common.or')
-            }}</span>
+            <span class="px-2 bg-(--color-background) text-(--color-text-muted)">{{ $t('common.or') }}</span>
           </div>
         </div>
-        <CoreAppButton
-          v-if="showSaml"
-          type="button"
-          block
-          size="lg"
-          variant="outline"
-          color="primary"
-          @click="samlLogin"
-        >
+        <CoreAppButton v-if="showSaml" type="button" block size="lg" variant="outline" color="primary" @click="samlLogin">
           {{ $t('auth.loginSaml') }}</CoreAppButton
         >
       </div>
@@ -124,9 +98,7 @@
         method: 'GET',
         credentials: 'include',
       })
-      const methods = (res.headers.get('X-opsi-auth-methods') || '')
-        .split(',')
-        .map((m: string) => m.trim())
+      const methods = (res.headers.get('X-opsi-auth-methods') || '').split(',').map((m: string) => m.trim())
       showSaml.value = methods.includes('saml')
     } catch {
       showSaml.value = false
@@ -143,10 +115,7 @@
     try {
       const result = await getConfigServer()
       if (result.data) {
-        configServerName.value =
-          typeof result.data === 'string'
-            ? result.data
-            : (result.data as { result?: string })?.result || ''
+        configServerName.value = typeof result.data === 'string' ? result.data : (result.data as { result?: string })?.result || ''
       }
       if (result.error) {
         errorMessage.value = ` ${result.error.message || ''}`
@@ -203,10 +172,7 @@
   }
 
   const samlLogin = () => {
-    const currentUrl =
-      window.location.origin +
-      (config.public.OWN_PATH || '/addons/webgui/app') +
-      '/login?session=saml'
+    const currentUrl = window.location.origin + (config.public.OWN_PATH || '/addons/webgui/app') + '/login?session=saml'
     window.location.href = '/auth/saml/login?redirect=' + encodeURIComponent(currentUrl)
   }
 </script>

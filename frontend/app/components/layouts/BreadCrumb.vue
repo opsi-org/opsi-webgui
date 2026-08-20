@@ -10,22 +10,10 @@
 <template>
   <div class="shrink-0 px-3 md:px-4 py-1.5 border-b border-(--color-border) bg-(--color-surface)">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-      <nav
-        class="flex items-center gap-1.5 text-xs overflow-x-auto"
-        :aria-label="$t('nav.breadcrumb')"
-        tabindex="0"
-      >
+      <nav class="flex items-center gap-1.5 text-xs overflow-x-auto" :aria-label="$t('nav.breadcrumb')" tabindex="0">
         <template v-for="(crumb, i) in breadcrumbs" :key="i">
-          <CoreAppIcon
-            v-if="i > 0"
-            :name="icons.chevronRight"
-            class="w-2.5 h-2.5 text-(--color-text-muted) shrink-0"
-          />
-          <NuxtLink
-            v-if="crumb.to"
-            :to="crumb.to"
-            class="text-(--color-text-muted) hover:text-opsi-blue whitespace-nowrap"
-          >
+          <CoreAppIcon v-if="i > 0" :name="icons.chevronRight" class="w-2.5 h-2.5 text-(--color-text-muted) shrink-0" />
+          <NuxtLink v-if="crumb.to" :to="crumb.to" class="text-(--color-text-muted) hover:text-opsi-blue whitespace-nowrap">
             {{ crumb.label }}
           </NuxtLink>
           <h1 v-else class="text-(--color-text) font-medium whitespace-nowrap text-xs m-0">

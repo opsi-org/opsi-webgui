@@ -50,9 +50,7 @@ test.describe('DataTable scroll', () => {
     await page.waitForTimeout(3000)
     await waitForTable(page)
 
-    await expect
-      .poll(async () => getTableRowCount(page), { timeout: 15000, intervals: [500, 1000, 1500] })
-      .toBeGreaterThan(20)
+    await expect.poll(async () => getTableRowCount(page), { timeout: 15000, intervals: [500, 1000, 1500] }).toBeGreaterThan(20)
 
     const m = await metrics(page)
     expect(m.scrollHeight).toBeGreaterThanOrEqual(m.clientHeight)

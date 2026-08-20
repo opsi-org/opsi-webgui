@@ -34,8 +34,7 @@ const DEFAULT_CHANNELS = [
 ]
 
 export function createUUID() {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
-    return crypto.randomUUID()
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID()
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0
     return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
@@ -80,10 +79,7 @@ export const useMessageBusStore = defineStore('messageBus', {
   },
   actions: {
     connect() {
-      if (
-        this.bus?.readyState === WebSocket.OPEN ||
-        this.bus?.readyState === WebSocket.CONNECTING
-      ) {
+      if (this.bus?.readyState === WebSocket.OPEN || this.bus?.readyState === WebSocket.CONNECTING) {
         return
       }
       if (this._connecting) return
@@ -99,9 +95,7 @@ export const useMessageBusStore = defineStore('messageBus', {
       const port =
         process.env.NODE_ENV === 'production'
           ? window.location.port
-          : Number(
-            (runtimeConfig as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT
-          ) || 4447
+          : Number((runtimeConfig as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT) || 4447
       const ws = new WebSocket(`wss://${host}:${port}/messagebus/v1`)
       ws.binaryType = 'arraybuffer'
 
@@ -127,8 +121,7 @@ export const useMessageBusStore = defineStore('messageBus', {
           if (
             message &&
             typeof message === 'object' &&
-            (!(message as Record<string, unknown>).expires ||
-              ((message as Record<string, unknown>).expires as number) > Date.now())
+            (!(message as Record<string, unknown>).expires || ((message as Record<string, unknown>).expires as number) > Date.now())
           ) {
             this.lastMsg = message
           }

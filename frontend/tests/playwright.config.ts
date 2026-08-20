@@ -30,11 +30,7 @@ export default defineConfig({
   snapshotDir: './e2e/__snapshots__',
   snapshotPathTemplate: '{snapshotDir}/{arg}{ext}',
   reporter: process.env.CI
-    ? [
-        ['junit', { outputFile: '../test-results/junit.xml' }],
-        ['html', { outputFolder: '../test-results/html' }],
-        ['list'],
-      ]
+    ? [['junit', { outputFile: '../test-results/junit.xml' }], ['html', { outputFolder: '../test-results/html' }], ['list']]
     : 'list',
   timeout: isNightly ? 480_000 : 90_000,
   expect: {

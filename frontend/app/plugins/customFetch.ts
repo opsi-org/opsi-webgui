@@ -9,11 +9,7 @@
  */
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 import { useUserStore } from '~/stores/userStore'
-import {
-  headersToObject,
-  mergeRequestHeaders,
-  shouldSendSessionHeader,
-} from '../utils/requestHeaders'
+import { headersToObject, mergeRequestHeaders, shouldSendSessionHeader } from '../utils/requestHeaders'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
@@ -34,12 +30,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         userStore.setSession()
       }
 
-      options.headers = mergeRequestHeaders(
-        existingHeaders,
-        url,
-        userStore.sessionExpiry,
-        isFormData
-      ) as unknown as Headers
+      options.headers = mergeRequestHeaders(existingHeaders, url, userStore.sessionExpiry, isFormData) as unknown as Headers
     },
     onResponseError({ response }) {
       if (response.status === 401) {

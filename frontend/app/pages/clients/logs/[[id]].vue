@@ -25,7 +25,7 @@
   const route = useRoute()
   const router = useRouter()
 
-  useHead({ title: () => `${$t('logs.title')} - opsi-WebGUI` })
+  useHead({ title: () => `${$t('logs.title')} - OPSI-WebGUI` })
 
   const routeClientId = computed<string>(() => {
     const id = route.params.id
@@ -34,9 +34,7 @@
 
   const manualClientId = ref<string>(routeClientId.value)
 
-  const selectedClientId = computed<string | null>(
-    () => routeClientId.value || manualClientId.value || null
-  )
+  const selectedClientId = computed<string | null>(() => routeClientId.value || manualClientId.value || null)
 
   watch(routeClientId, (id) => {
     if (id !== manualClientId.value) manualClientId.value = id

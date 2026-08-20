@@ -8,9 +8,7 @@
   LayoutsTopbar - Main application topbar with logo, health check, messagebus status, and user menu.
 -->
 <template>
-  <header
-    class="bg-opsi-blue text-white h-12 flex items-center px-2.5 md:px-3 shadow-md shrink-0 z-50"
-  >
+  <header class="bg-opsi-blue text-white h-12 flex items-center px-2.5 md:px-3 shadow-md shrink-0 z-50">
     <div class="flex items-center gap-2 md:gap-3">
       <CoreAppButton
         @click="$emit('toggle-sidebar')"
@@ -22,15 +20,8 @@
         <CoreAppIcon :name="icons.menu" class="w-5 h-5" />
       </CoreAppButton>
       <NuxtLink :to="defaultPage" class="flex items-center gap-1.5 min-w-0">
-        <CoreAppImage
-          src="~/assets/images/opsi-webgui-wide-dark.svg"
-          alt="OPSI"
-          image-class="h-13"
-        />
-        <span
-          class="text-[9px] sm:text-[10px] leading-none opacity-80 self-center max-w-[5rem] truncate"
-          :title="`v${packageVersion}`"
-        >
+        <CoreAppImage src="~/assets/images/opsi-webgui-wide-dark.svg" alt="OPSI" image-class="h-13" />
+        <span class="text-[9px] sm:text-[10px] leading-none opacity-80 self-center max-w-[5rem] truncate" :title="`v${packageVersion}`">
           v{{ packageVersion }}
         </span>
       </NuxtLink>

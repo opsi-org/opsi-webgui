@@ -11,27 +11,27 @@
 const FILTER_STORAGE_KEY = 'opsi-webgui-datatable-filter-queries'
 
 function getStoredFilters(): Record<string, string> {
-	if (import.meta.server) return {}
-	try {
-		const raw = localStorage.getItem(FILTER_STORAGE_KEY)
-		return raw ? JSON.parse(raw) : {}
-	} catch {
-		return {}
-	}
+  if (import.meta.server) return {}
+  try {
+    const raw = localStorage.getItem(FILTER_STORAGE_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
 }
 
 export function getStoredDataTableFilter(filterId: string): string {
-	const all = getStoredFilters()
-	return all[filterId] || ''
+  const all = getStoredFilters()
+  return all[filterId] || ''
 }
 
 export function saveStoredDataTableFilter(filterId: string, filterQuery: string) {
-	if (import.meta.server) return
-	try {
-		const all = getStoredFilters()
-		all[filterId] = filterQuery
-		localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(all))
-	} catch {
-		/* */
-	}
+  if (import.meta.server) return
+  try {
+    const all = getStoredFilters()
+    all[filterId] = filterQuery
+    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(all))
+  } catch {
+    /* */
+  }
 }

@@ -14,10 +14,7 @@
     :loading="loading"
     :filter-fields="['label']"
     :virtualize="virtualizeConfig"
-    :placeholder="
-      placeholder ||
-      (type === 'server' ? String($t('servers.select')) : String($t('clients.select')))
-    "
+    :placeholder="placeholder || (type === 'server' ? String($t('servers.select')) : String($t('clients.select')))"
     value-key="value"
     class="min-w-56"
     :ui="{ content: 'max-h-60 overflow-y-auto' }"
@@ -26,10 +23,7 @@
     @open="onOpen"
   >
     <template #leading>
-      <CoreAppIcon
-        :name="type === 'server' ? icons.server : icons.client"
-        class="w-4 h-4 text-muted"
-      />
+      <CoreAppIcon :name="type === 'server' ? icons.server : icons.client" class="w-4 h-4 text-muted" />
     </template>
     <template #item="{ item }">
       <template v-if="item.value === '__clear__'">
@@ -105,9 +99,7 @@
   })
 
   const normalizedSelectedServers = computed(() =>
-    selectionStore.selectedServers
-      .map((server) => String(server || '').trim())
-      .filter((server) => server.length > 0)
+    selectionStore.selectedServers.map((server) => String(server || '').trim()).filter((server) => server.length > 0),
   )
 
   const filteredOptions = computed<DropdownItem[]>(() => {
@@ -116,8 +108,7 @@
       result.unshift({ label: String($t('common.clearSelection')), value: '__clear__' })
     }
     if (props.allowAll && result.length > 0) {
-      const allLabel =
-        props.type === 'server' ? String($t('servers.all')) : String($t('clients.all'))
+      const allLabel = props.type === 'server' ? String($t('servers.all')) : String($t('clients.all'))
       return [{ label: allLabel, value: '' }, ...result.filter((o) => o.value !== '__clear__')]
     }
     return result
@@ -125,9 +116,7 @@
 
   const dropdownOptions = computed<DropdownItem[]>(() => filteredOptions.value)
 
-  const virtualizeConfig = computed(() =>
-    dropdownOptions.value.length > VIRTUALIZE_THRESHOLD ? { estimateSize: 28 } : false
-  )
+  const virtualizeConfig = computed(() => (dropdownOptions.value.length > VIRTUALIZE_THRESHOLD ? { estimateSize: 28 } : false))
 
   async function fetchItems(force = false) {
     const key = cacheKey.value
@@ -148,9 +137,7 @@
       let nextItems: string[] = []
       if (props.type === 'server') {
         const { data, error } = await getServers()
-        nextItems = !error && Array.isArray(data)
-          ? [...new Set(data.map((server) => server.depotId).filter(Boolean))].sort()
-          : []
+        nextItems = !error && Array.isArray(data) ? [...new Set(data.map((server) => server.depotId).filter(Boolean))].sort() : []
       } else {
         let scopedServers =
           normalizedSelectedServers.value.length > 0

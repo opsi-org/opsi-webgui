@@ -57,8 +57,7 @@ export default defineAppConfig({
         {
           color: 'primary',
           variant: 'outline',
-          class:
-            'border-(--color-primary) text-(--color-primary-soft-text) hover:bg-(--color-primary-soft-bg)',
+          class: 'border-(--color-primary) text-(--color-primary-soft-text) hover:bg-(--color-primary-soft-bg)',
         },
         {
           color: 'primary',
@@ -90,8 +89,7 @@ export default defineAppConfig({
         {
           color: 'secondary',
           variant: 'soft',
-          class:
-            'bg-(--color-bg-muted) text-(--color-text) ring-1 ring-inset ring-(--color-border)/30 hover:bg-(--color-surface-hover)',
+          class: 'bg-(--color-bg-muted) text-(--color-text) ring-1 ring-inset ring-(--color-border)/30 hover:bg-(--color-surface-hover)',
         },
         {
           color: 'secondary',
@@ -107,14 +105,12 @@ export default defineAppConfig({
         {
           color: 'success',
           variant: 'solid',
-          class:
-            'bg-(--color-success) text-(--color-success-text) hover:bg-(--color-success-hover)',
+          class: 'bg-(--color-success) text-(--color-success-text) hover:bg-(--color-success-hover)',
         },
         {
           color: 'success',
           variant: 'outline',
-          class:
-            'border-(--color-success) text-(--color-success-soft-text) hover:bg-(--color-success-soft-bg)',
+          class: 'border-(--color-success) text-(--color-success-soft-text) hover:bg-(--color-success-soft-bg)',
         },
         {
           color: 'success',
@@ -141,14 +137,12 @@ export default defineAppConfig({
         {
           color: 'info',
           variant: 'outline',
-          class:
-            'border-(--color-info) text-(--color-info-soft-text) hover:bg-(--color-info-soft-bg)',
+          class: 'border-(--color-info) text-(--color-info-soft-text) hover:bg-(--color-info-soft-bg)',
         },
         {
           color: 'info',
           variant: 'soft',
-          class:
-            'bg-(--color-info-soft-bg) text-(--color-info-soft-text) ring-1 ring-inset ring-(--color-info-soft-ring) hover:opacity-80',
+          class: 'bg-(--color-info-soft-bg) text-(--color-info-soft-text) ring-1 ring-inset ring-(--color-info-soft-ring) hover:opacity-80',
         },
         {
           color: 'info',
@@ -160,14 +154,12 @@ export default defineAppConfig({
         {
           color: 'warning',
           variant: 'solid',
-          class:
-            'bg-(--color-warning) text-(--color-warning-text) hover:bg-(--color-warning-hover)',
+          class: 'bg-(--color-warning) text-(--color-warning-text) hover:bg-(--color-warning-hover)',
         },
         {
           color: 'warning',
           variant: 'outline',
-          class:
-            'border-(--color-warning) text-(--color-warning-soft-text) hover:bg-(--color-warning-soft-bg)',
+          class: 'border-(--color-warning) text-(--color-warning-soft-text) hover:bg-(--color-warning-soft-bg)',
         },
         {
           color: 'warning',
@@ -194,8 +186,7 @@ export default defineAppConfig({
         {
           color: 'error',
           variant: 'outline',
-          class:
-            'border-(--color-error) text-(--color-error-soft-text) hover:bg-(--color-error-soft-bg)',
+          class: 'border-(--color-error) text-(--color-error-soft-text) hover:bg-(--color-error-soft-bg)',
         },
         {
           color: 'error',
@@ -227,8 +218,7 @@ export default defineAppConfig({
         {
           color: 'neutral',
           variant: 'soft',
-          class:
-            'bg-(--color-bg-muted) text-(--color-text) ring-1 ring-inset ring-(--color-border)/30 hover:bg-(--color-surface-hover)',
+          class: 'bg-(--color-bg-muted) text-(--color-text) ring-1 ring-inset ring-(--color-border)/30 hover:bg-(--color-surface-hover)',
         },
         {
           color: 'neutral',
@@ -250,8 +240,7 @@ export default defineAppConfig({
     selectMenu: {
       slots: {
         base: 'bg-(--color-background) border border-(--color-border) text-(--color-text) rounded-lg',
-        content:
-          'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
+        content: 'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
         item: 'text-(--color-text) rounded-lg transition-colors duration-100 hover:bg-(--color-surface-hover) data-[highlighted]:bg-(--color-surface-hover) data-[state=checked]:bg-(--color-primary-soft-bg) data-[state=checked]:text-(--color-text)',
         itemLeadingIcon: 'text-(--color-text-muted)',
       },
@@ -310,8 +299,7 @@ export default defineAppConfig({
         {
           color: 'primary',
           variant: 'soft',
-          class:
-            'bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) ring-1 ring-inset ring-(--color-primary-soft-ring)',
+          class: 'bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) ring-1 ring-inset ring-(--color-primary-soft-ring)',
         },
         {
           color: 'primary',
@@ -332,8 +320,7 @@ export default defineAppConfig({
         {
           color: 'success',
           variant: 'soft',
-          class:
-            'bg-(--color-success-soft-bg) text-(--color-success-soft-text) ring-1 ring-inset ring-(--color-success-soft-ring)',
+          class: 'bg-(--color-success-soft-bg) text-(--color-success-soft-text) ring-1 ring-inset ring-(--color-success-soft-ring)',
         },
         {
           color: 'success',
@@ -350,8 +337,7 @@ export default defineAppConfig({
         {
           color: 'info',
           variant: 'soft',
-          class:
-            'bg-(--color-info-soft-bg) text-(--color-info-soft-text) ring-1 ring-inset ring-(--color-info-soft-ring)',
+          class: 'bg-(--color-info-soft-bg) text-(--color-info-soft-text) ring-1 ring-inset ring-(--color-info-soft-ring)',
         },
         {
           color: 'info',
@@ -372,8 +358,7 @@ export default defineAppConfig({
         {
           color: 'warning',
           variant: 'soft',
-          class:
-            'bg-(--color-warning-soft-bg) text-(--color-warning-soft-text) ring-1 ring-inset ring-(--color-warning-soft-ring)',
+          class: 'bg-(--color-warning-soft-bg) text-(--color-warning-soft-text) ring-1 ring-inset ring-(--color-warning-soft-ring)',
         },
         {
           color: 'warning',
@@ -390,8 +375,7 @@ export default defineAppConfig({
         {
           color: 'error',
           variant: 'soft',
-          class:
-            'bg-(--color-error-soft-bg) text-(--color-error-soft-text) ring-1 ring-inset ring-(--color-error-soft-ring)',
+          class: 'bg-(--color-error-soft-bg) text-(--color-error-soft-text) ring-1 ring-inset ring-(--color-error-soft-ring)',
         },
         {
           color: 'error',
@@ -408,8 +392,7 @@ export default defineAppConfig({
         {
           color: 'neutral',
           variant: 'soft',
-          class:
-            'bg-(--color-bg-muted) text-(--color-text) ring-1 ring-inset ring-(--color-border)/30',
+          class: 'bg-(--color-bg-muted) text-(--color-text) ring-1 ring-inset ring-(--color-border)/30',
         },
         {
           color: 'neutral',
@@ -420,21 +403,18 @@ export default defineAppConfig({
     },
     dropdown: {
       slots: {
-        content:
-          'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
+        content: 'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
         item: 'text-(--color-text) rounded-lg hover:bg-(--color-surface-hover) transition-colors duration-100',
       },
     },
     popover: {
       slots: {
-        content:
-          'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
+        content: 'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
       },
     },
     tooltip: {
       slots: {
-        content:
-          'bg-(--color-surface-elevated) text-(--color-text) text-xs px-2 py-1 rounded shadow-lg border border-(--color-border)',
+        content: 'bg-(--color-surface-elevated) text-(--color-text) text-xs px-2 py-1 rounded shadow-lg border border-(--color-border)',
       },
     },
     modal: {
@@ -509,8 +489,7 @@ export default defineAppConfig({
     },
     contextMenu: {
       slots: {
-        content:
-          'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
+        content: 'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
         item: 'text-(--color-text) rounded-lg hover:bg-(--color-surface-hover)',
       },
     },
@@ -518,8 +497,7 @@ export default defineAppConfig({
       slots: {
         root: '',
         item: 'text-(--color-text)',
-        indicator:
-          'border-(--color-border) data-[state=checked]:border-(--color-primary) data-[state=checked]:bg-(--color-primary)',
+        indicator: 'border-(--color-border) data-[state=checked]:border-(--color-primary) data-[state=checked]:bg-(--color-primary)',
       },
     },
     skeleton: {

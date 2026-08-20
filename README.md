@@ -20,11 +20,11 @@
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript" alt="TypeScript">
 </p>
 
-**opsi-WebGUI** is the official browser-based management interface for [OPSI](https://www.opsi.org), the open-source client management system.
+**OPSI-WebGUI** is the official browser-based management interface for [OPSI](https://www.opsi.org), the open-source client management system.
 
 Manage clients, deploy software, configure servers, inspect logs and perform administration tasks directly from your browser without installing additional software.
 
-![opsi-WebGUI clients overview](./screenshots/readme/opsi-webgui-clients.png)
+![OPSI-WebGUI clients overview](./screenshots/readme/opsi-webgui-clients.png)
 
 ## Install
 
@@ -35,7 +35,7 @@ sudo apt update && sudo apt install opsi-webgui
 sudo systemctl restart opsiconfd
 ```
 
-Access the opsi-WebGUI at `https://<SERVER>:4447/addons/webgui/app`.
+Access the OPSI-WebGUI at `https://<SERVER>:4447/addons/webgui/app`.
 
 ### Manual addon upload
 
@@ -165,7 +165,7 @@ Contributions are welcome! Please read this section before opening a pull reques
 
 Please open an issue on [GitHub Issues](https://github.com/opsi-org/opsi-webgui/issues) with:
 
-- opsi-WebGUI version (shown in the bottom-left corner of the login page)
+- OPSI-WebGUI version (shown either in the bottom-left of the login page or in the top bar next to the OPSI-WebGUI logo after login).
 - Steps to reproduce
 - Expected vs. actual behavior
 

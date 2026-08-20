@@ -8,20 +8,11 @@
   DashboardMainView - Dashboard overview with statistics cards and quick navigation.
 -->
 <template>
-  <LayoutsPageLayout
-    :show-filter="false"
-    :show-refresh="true"
-    :loading="loading"
-    @refresh="refreshAll"
-  >
+  <LayoutsPageLayout :show-filter="false" :show-refresh="true" :loading="loading" @refresh="refreshAll">
     <div class="@container h-full flex flex-col min-h-0 overflow-y-auto gap-2 lg:gap-3">
       <!-- Row 1: Config Server, Health Check, User Config & Restrictions -->
       <div class="grid grid-cols-1 @2xl:grid-cols-2 @5xl:grid-cols-4 gap-2 lg:gap-3 shrink-0">
-        <DashboardInfoCard
-          :icon="icons.serverStack"
-          :label="$t('servers.config')"
-          :value="serverHostname"
-        />
+        <DashboardInfoCard :icon="icons.serverStack" :label="$t('servers.config')" :value="serverHostname" />
         <div
           class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
           role="button"
@@ -40,29 +31,15 @@
               aria-hidden="true"
             />
           </div>
-          <div
-            v-if="healthCounts"
-            class="flex items-center gap-2 flex-wrap mt-4"
-            aria-hidden="true"
-          >
-            <CoreAppStatusBadge
-              v-if="healthCounts.error > 0"
-              status="error"
-              :value="healthCounts.error"
-              :label="$t('common.errors')"
-            />
+          <div v-if="healthCounts" class="flex items-center gap-2 flex-wrap mt-4" aria-hidden="true">
+            <CoreAppStatusBadge v-if="healthCounts.error > 0" status="error" :value="healthCounts.error" :label="$t('common.errors')" />
             <CoreAppStatusBadge
               v-if="healthCounts.warning > 0"
               status="warning"
               :value="healthCounts.warning"
               :label="$t('common.warnings')"
             />
-            <CoreAppStatusBadge
-              v-if="healthCounts.ok > 0"
-              status="success"
-              :value="healthCounts.ok"
-              :label="$t('common.ok')"
-            />
+            <CoreAppStatusBadge v-if="healthCounts.ok > 0" status="success" :value="healthCounts.ok" :label="$t('common.ok')" />
           </div>
           <CoreAppLoadingSpinner v-else size="sm" />
         </div>
@@ -72,9 +49,7 @@
           class="opsi-card @2xl:col-span-2"
           role="region"
           tabindex="0"
-          :aria-label="
-            $t('users.current') + ': ' + (sharedUserConfig?.user || userStore.username || '-')
-          "
+          :aria-label="$t('users.current') + ': ' + (sharedUserConfig?.user || userStore.username || '-')"
         >
           <div class="flex items-center gap-3 mb-3">
             <CoreAppIcon :name="icons.user" class="w-4.5 h-4.5" aria-hidden="true" />
@@ -105,11 +80,7 @@
               aria-hidden="true"
             />
           </div>
-          <div
-            v-if="userConfigData"
-            class="grid grid-cols-4 sm:grid-cols-7 gap-1.5"
-            aria-hidden="true"
-          >
+          <div v-if="userConfigData" class="grid grid-cols-4 sm:grid-cols-7 gap-1.5" aria-hidden="true">
             <CoreAppRestrictionBadge
               v-for="feat in webguiFeatures"
               :key="feat.key"
@@ -145,14 +116,9 @@
               class="ml-auto w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity"
             />
           </div>
-          <div
-            v-if="diagnosticData"
-            class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0.5 text-sm"
-          >
+          <div v-if="diagnosticData" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-0.5 text-sm">
             <template v-for="item in systemInfoItems" :key="item.label">
-              <div
-                class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors"
-              >
+              <div class="flex justify-between items-center rounded-md px-2 py-1 hover:bg-(--color-surface-hover) transition-colors">
                 <span class="text-(--color-text-muted) text-sm">{{ item.label }}</span>
                 <template v-if="item.badge">
                   <CoreAppStatusBadge :status="item.badge.color" :label="item.badge.text" />
@@ -197,16 +163,10 @@
               <p v-else class="text-2xl font-bold">{{ clientCount ?? '-' }}</p>
             </div>
             <p class="text-sm mb-2">{{ $t('dashboard.totalClients') }}</p>
-            <div
-              v-if="sharedClientNumbers"
-              class="space-y-1.5 pt-1.5 border-t border-(--color-border)/30"
-            >
+            <div v-if="sharedClientNumbers" class="space-y-1.5 pt-1.5 border-t border-(--color-border)/30">
               <div class="flex items-center gap-4">
                 <span class="flex items-center gap-1.5">
-                  <CoreAppIcon
-                    :name="icons.checkCircle"
-                    class="w-4 h-4 shrink-0 text-(--color-success)"
-                  />
+                  <CoreAppIcon :name="icons.checkCircle" class="w-4 h-4 shrink-0 text-(--color-success)" />
                   <span class="font-medium">{{ sharedClientNumbers.all }}</span>
                   {{ $t('clients.active') }}
                 </span>
@@ -218,10 +178,7 @@
               </div>
               <div class="flex items-center gap-4">
                 <span class="flex items-center gap-1.5">
-                  <CoreAppIcon
-                    :name="icons.windows"
-                    class="w-4 h-4 shrink-0 text-(--color-os-windows)"
-                  />
+                  <CoreAppIcon :name="icons.windows" class="w-4 h-4 shrink-0 text-(--color-os-windows)" />
                   <span class="font-medium">{{ sharedClientNumbers.windows }}</span>
                 </span>
                 <span class="flex items-center gap-1.5">
@@ -260,10 +217,7 @@
         </div>
 
         <!-- Products stat card -->
-        <CoreAppTooltipTable
-          v-if="depotProductTooltipRows.length > 0"
-          :rows="depotProductTooltipRows"
-        >
+        <CoreAppTooltipTable v-if="depotProductTooltipRows.length > 0" :rows="depotProductTooltipRows">
           <div
             class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
             role="button"
@@ -428,9 +382,7 @@
   const healthCounts = sharedHealthCounts
 
   const webguiFeatures = computed(() => {
-    const terminalDisabled =
-      userStore.disabledFeatures.includes('messagebus_terminal') ||
-      userStore.disabledFeatures.includes('terminal')
+    const terminalDisabled = userStore.disabledFeatures.includes('messagebus_terminal') || userStore.disabledFeatures.includes('terminal')
     return [
       {
         key: 'readOnly',
@@ -484,9 +436,7 @@
     ]
   })
 
-  const webguiRestrictionsCount = computed(
-    () => webguiFeatures.value.filter((f) => f.restricted).length
-  )
+  const webguiRestrictionsCount = computed(() => webguiFeatures.value.filter((f) => f.restricted).length)
 
   const serverHostname = computed(() => {
     if (!diagnosticData.value) return null
@@ -510,7 +460,7 @@
     depotClientCounts.value.map((entry) => ({
       key: entry.depotId,
       value: String(entry.clientCount),
-    }))
+    })),
   )
 
   const sysHostname = computed(() => {
@@ -579,8 +529,7 @@
       })
 
     const memory = d.memory as Record<string, unknown> | undefined
-    if (memory)
-      items.push({ label: 'memory', value: `${memory.total_human} (${memory.used_percent}%)` })
+    if (memory) items.push({ label: 'memory', value: `${memory.total_human} (${memory.used_percent}%)` })
 
     if (sysHostname.value) items.push({ label: 'hostname', value: sysHostname.value })
 
@@ -603,9 +552,7 @@
 
   const productCounts = computed(() => {
     if (!diagnosticData.value) return { total: 0, localboot: 0, netboot: 0 }
-    const products = diagnosticData.value.products as
-      | Record<string, Record<string, { type: string }>>
-      | undefined
+    const products = diagnosticData.value.products as Record<string, Record<string, { type: string }>> | undefined
     if (!products) return { total: 0, localboot: 0, netboot: 0 }
     const allIds = new Set<string>()
     const localbootIds = new Set<string>()
@@ -626,9 +573,7 @@
 
   const depotProductCounts = computed(() => {
     if (!diagnosticData.value) return []
-    const products = diagnosticData.value.products as
-      | Record<string, Record<string, unknown>>
-      | undefined
+    const products = diagnosticData.value.products as Record<string, Record<string, unknown>> | undefined
     if (!products) return []
     return Object.entries(products).map(([depotId, depotProducts]) => ({
       depotId,
@@ -647,17 +592,11 @@
 
   const failedClients = computed(() => {
     if (!diagnosticData.value) return null
-    const healthChecks = diagnosticData.value.health_check as
-      | Array<Record<string, unknown>>
-      | undefined
+    const healthChecks = diagnosticData.value.health_check as Array<Record<string, unknown>> | undefined
     if (!healthChecks) return null
-    const failedCheck = healthChecks.find(
-      (c) => (c.check as Record<string, unknown>)?.id === 'opsi_failed_clients'
-    )
+    const failedCheck = healthChecks.find((c) => (c.check as Record<string, unknown>)?.id === 'opsi_failed_clients')
     if (!failedCheck?.details) return null
-    return (failedCheck.details as Record<string, unknown>).failed_actions as
-      | Record<string, string[]>
-      | undefined
+    return (failedCheck.details as Record<string, unknown>).failed_actions as Record<string, string[]> | undefined
   })
 
   async function refreshAll() {
@@ -671,10 +610,7 @@
   }
 
   async function loadDepotClientCounts() {
-    const depots =
-      (diagnosticData.value?.depots as Record<string, unknown> | undefined)?.ids as
-        | string[]
-        | undefined
+    const depots = (diagnosticData.value?.depots as Record<string, unknown> | undefined)?.ids as string[] | undefined
     if (!depots || depots.length === 0) {
       depotClientCounts.value = []
       return
@@ -696,7 +632,7 @@
             depotId,
             clientCount: Array.isArray(data) ? data.length : 0,
           }
-        })
+        }),
       )
       depotClientCounts.value = fallbackCounts.sort((a, b) => a.depotId.localeCompare(b.depotId))
       return
@@ -707,9 +643,7 @@
     depotClientCounts.value = rows
       .map((row) => {
         const depotId = String(
-          (row as { depotId?: string; depotid?: string }).depotId ||
-            (row as { depotId?: string; depotid?: string }).depotid ||
-            ''
+          (row as { depotId?: string; depotid?: string }).depotId || (row as { depotId?: string; depotid?: string }).depotid || '',
         )
         const clientCountRaw =
           (row as { clientCount?: number | string; clientcount?: number | string }).clientCount ??
@@ -727,11 +661,7 @@
   async function initDashboard() {
     loading.value = true
     try {
-      await Promise.all([
-        fetchDiagnosticsIfNeeded(),
-        fetchUserConfigIfNeeded(),
-        fetchDisabledFeaturesIfNeeded(),
-      ])
+      await Promise.all([fetchDiagnosticsIfNeeded(), fetchUserConfigIfNeeded(), fetchDisabledFeaturesIfNeeded()])
       await loadDepotClientCounts()
     } finally {
       loading.value = false

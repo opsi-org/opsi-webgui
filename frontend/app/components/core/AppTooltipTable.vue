@@ -8,20 +8,12 @@
   CoreAppTooltipTable - Tooltip with tabular data display.
 -->
 <template>
-  <UTooltip
-    v-if="visibleRows.length > 0"
-    :delay="{ open: 200 }"
-    :ui="{ content: 'p-0 bg-transparent shadow-none border-0' }"
-  >
+  <UTooltip v-if="visibleRows.length > 0" :delay="{ open: 200 }" :ui="{ content: 'p-0 bg-transparent shadow-none border-0' }">
     <slot />
     <template #content>
       <div class="max-h-[70vh] max-w-[min(92vw,72rem)] overflow-auto rounded-md bg-(--color-surface) p-4 shadow-lg">
         <table class="min-w-full border-collapse text-sm">
-          <tr
-            v-for="(row, i) in visibleRows"
-            :key="i"
-            class="border-b border-(--color-border)/30 last:border-0"
-          >
+          <tr v-for="(row, i) in visibleRows" :key="i" class="border-b border-(--color-border)/30 last:border-0">
             <td class="pr-4 py-1 text-(--color-text-muted) whitespace-nowrap align-top">
               {{ row.key }}
             </td>
@@ -30,13 +22,7 @@
                 <span v-if="shouldShowValue(row)">{{ row.value }}</span>
                 <CoreAppStatusBadge
                   v-if="row.badge"
-                  :status="
-                    row.badgeColor === 'success'
-                      ? 'success'
-                      : row.badgeColor === 'warning'
-                        ? 'warning'
-                        : 'error'
-                  "
+                  :status="row.badgeColor === 'success' ? 'success' : row.badgeColor === 'warning' ? 'warning' : 'error'"
                   :label="row.badge"
                   size="xs"
                 />

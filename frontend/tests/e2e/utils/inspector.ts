@@ -72,8 +72,7 @@ export async function inspectA11y(page: Page, options?: InspectorOptions): Promi
       if (htmlEl.closest('[aria-hidden="true"]')) continue
       if (htmlEl.hasAttribute('disabled')) continue
       if (htmlEl.getAttribute('aria-disabled') === 'true') continue
-      if (htmlEl.matches('button[role="checkbox"][data-slot="base"], [data-grace-area-trigger]'))
-        continue
+      if (htmlEl.matches('button[role="checkbox"][data-slot="base"], [data-grace-area-trigger]')) continue
       if (isExcluded(htmlEl)) continue
       if (!accessibleName(htmlEl)) {
         const tag = htmlEl.tagName.toLowerCase()
@@ -87,9 +86,7 @@ export async function inspectA11y(page: Page, options?: InspectorOptions): Promi
 
   // 2. Heading outline: exactly one h1, no skipped levels.
   const headings = await page.evaluate(() => {
-    const hs = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')).filter(
-      (h) => (h as HTMLElement).offsetParent !== null
-    )
+    const hs = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')).filter((h) => (h as HTMLElement).offsetParent !== null)
     const problems: string[] = []
     const levels = hs.map((h) => parseInt(h.tagName[1] as string, 10))
     const h1Count = levels.filter((l) => l === 1).length
@@ -168,23 +165,14 @@ export async function inspectA11y(page: Page, options?: InspectorOptions): Promi
     keyboard: Array.from(new Set(keyboard)).slice(0, 10),
   }
 
-  const total =
-    result.unnamed.length +
-    result.headings.length +
-    result.landmarks.length +
-    result.keyboard.length
+  const total = result.unnamed.length + result.headings.length + result.landmarks.length + result.keyboard.length
 
   if (total > 0) {
     const parts: string[] = []
-    if (result.unnamed.length)
-      parts.push(
-        `Interactive elements without accessible name:\n  - ${result.unnamed.join('\n  - ')}`
-      )
-    if (result.headings.length)
-      parts.push(`Heading outline:\n  - ${result.headings.join('\n  - ')}`)
+    if (result.unnamed.length) parts.push(`Interactive elements without accessible name:\n  - ${result.unnamed.join('\n  - ')}`)
+    if (result.headings.length) parts.push(`Heading outline:\n  - ${result.headings.join('\n  - ')}`)
     if (result.landmarks.length) parts.push(`Landmarks:\n  - ${result.landmarks.join('\n  - ')}`)
-    if (result.keyboard.length)
-      parts.push(`Keyboard / focus:\n  - ${result.keyboard.join('\n  - ')}`)
+    if (result.keyboard.length) parts.push(`Keyboard / focus:\n  - ${result.keyboard.join('\n  - ')}`)
     expect(total, `Accessibility inspector findings:\n${parts.join('\n')}`).toBe(0)
   }
 }

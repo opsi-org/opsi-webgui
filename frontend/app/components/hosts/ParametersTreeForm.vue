@@ -9,12 +9,7 @@
 -->
 <template>
   <div class="params-tree">
-    <div
-      v-for="node in visibleNodes"
-      :key="node.key"
-      class="param-tree-node"
-      :class="{ 'param-tree-node-root': getDepth(node.key) === 0 }"
-    >
+    <div v-for="node in visibleNodes" :key="node.key" class="param-tree-node" :class="{ 'param-tree-node-root': getDepth(node.key) === 0 }">
       <!-- Category node -->
       <template v-if="node.children">
         <div
@@ -29,18 +24,11 @@
           @keydown.enter="toggle(node.key)"
           @keydown.space.prevent="toggle(node.key)"
         >
-          <span
-            v-for="i in getDepth(node.key)"
-            :key="i"
-            class="tree-guide-line"
-            :style="{ left: `${8 + (i - 1) * 16}px` }"
-          />
+          <span v-for="i in getDepth(node.key)" :key="i" class="tree-guide-line" :style="{ left: `${8 + (i - 1) * 16}px` }" />
           <span
             aria-hidden="true"
             class="inline-flex items-center justify-center w-5 h-5 rounded shrink-0"
-            :class="
-              open[node.key] ? 'text-(--color-primary) bg-primary/10' : 'text-(--color-text-muted)'
-            "
+            :class="open[node.key] ? 'text-(--color-primary) bg-primary/10' : 'text-(--color-text-muted)'"
           >
             <CoreAppIcon
               :name="icons.chevronRight"
@@ -48,15 +36,10 @@
               :class="{ 'rotate-90': open[node.key] }"
             />
           </span>
-          <span
-            class="text-sm flex-1 truncate transition-colors"
-            :class="open[node.key] ? 'font-medium' : ''"
-          >
+          <span class="text-sm flex-1 truncate transition-colors" :class="open[node.key] ? 'font-medium' : ''">
             {{ node.label }}
           </span>
-          <span class="text-xs text-(--color-text-muted) opacity-60">{{
-            node.leafCount ?? 0
-          }}</span>
+          <span class="text-xs text-(--color-text-muted) opacity-60">{{ node.leafCount ?? 0 }}</span>
         </div>
         <div v-if="mounted[node.key]" v-show="open[node.key]" class="children-container">
           <HostsParametersTreeForm :tree="node.children" v-bind="passProps" />
@@ -67,18 +50,11 @@
         <div
           :class="[
             'flex items-start gap-1 px-1.5 py-1 rounded transition-colors',
-            changedParams.has(node.param.configId)
-              ? 'bg-(--color-changed-bg)'
-              : 'hover:bg-(--color-surface-hover)',
+            changedParams.has(node.param.configId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)',
           ]"
           :style="{ paddingLeft: `${8 + getDepth(node.key) * 16}px` }"
         >
-          <span
-            v-for="i in getDepth(node.key)"
-            :key="i"
-            class="tree-guide-line"
-            :style="{ left: `${8 + (i - 1) * 16}px` }"
-          />
+          <span v-for="i in getDepth(node.key)" :key="i" class="tree-guide-line" :style="{ left: `${8 + (i - 1) * 16}px` }" />
           <span class="w-5 flex items-center justify-center shrink-0 mt-1" />
           <div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-2.5">
             <div class="min-w-0 md:w-2/5 flex items-center gap-1">
@@ -130,9 +106,7 @@
       </template>
     </div>
     <div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-2">
-      <span class="text-xs text-(--color-text-muted) animate-pulse"
-        >{{ $t('common.loading') }}…</span
-      >
+      <span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('common.loading') }}…</span>
     </div>
   </div>
 </template>
@@ -175,8 +149,7 @@
   }>()
 
   const { t: $t } = useI18n()
-  const { changedParams, readonly, currentValue, setParam, discardSingleParam, icons, fmtVal } =
-    toRefs(props)
+  const { changedParams, readonly, currentValue, setParam, discardSingleParam, icons, fmtVal } = toRefs(props)
   const passProps = computed(() => ({
     changedParams: changedParams.value,
     readonly: readonly.value,
@@ -241,9 +214,7 @@
 
   const open = ref<Record<string, boolean>>({})
   const mounted = ref<Record<string, boolean>>({})
-  const tree = computed<TreeNode[]>(
-    () => props.tree ?? (props.params ? buildTree(props.params) : [])
-  )
+  const tree = computed<TreeNode[]>(() => props.tree ?? (props.params ? buildTree(props.params) : []))
 
   // Progressive rendering: only render a batch of nodes at a time to keep initial render fast
   const RENDER_BATCH = 30
@@ -256,7 +227,7 @@
     () => tree.value.length,
     () => {
       renderLimit.value = RENDER_BATCH
-    }
+    },
   )
 
   useIntersectionObserver(loadMoreSentinel, ([entry]) => {
@@ -277,7 +248,7 @@
         }
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   function getDepth(key: string): number {
@@ -311,7 +282,7 @@
         const firstCategory = mainCategories[0]
         if (firstCategory) open.value[firstCategory.key] = true
       }
-    }
+    },
   )
 </script>
 

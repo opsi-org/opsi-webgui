@@ -45,10 +45,7 @@ describe('selectionStore bulk operations – large-data performance', () => {
   it('addClients (Set-based) with 5000 items < 50 ms', () => {
     const ids = generateIds('client', 5000)
     const ms = measureMs(() => addItemsToArray([], ids))
-    expect(
-      ms,
-      'addItems(5000) took ' + ms.toFixed(1) + ' ms — exceeds 50 ms threshold'
-    ).toBeLessThan(50)
+    expect(ms, 'addItems(5000) took ' + ms.toFixed(1) + ' ms — exceeds 50 ms threshold').toBeLessThan(50)
   })
 
   it('addClients idempotent for 5000 duplicates < 50 ms', () => {
@@ -70,14 +67,9 @@ describe('selectionStore bulk operations – large-data performance', () => {
     const ids = generateIds('client', 2000)
     const setMs = measureMs(() => addItemsToArray([], ids))
     const slowMs = measureMs(() => addItemsToArraySlow([], ids))
-    expect(
-      setMs * 5,
-      'Set (' +
-      setMs.toFixed(1) +
-      ' ms) should be >=5x faster than includes (' +
-      slowMs.toFixed(1) +
-      ' ms)'
-    ).toBeLessThan(slowMs)
+    expect(setMs * 5, 'Set (' + setMs.toFixed(1) + ' ms) should be >=5x faster than includes (' + slowMs.toFixed(1) + ' ms)').toBeLessThan(
+      slowMs,
+    )
   })
 })
 
@@ -108,23 +100,14 @@ type FlatItem = {
   isExpanded: boolean
 }
 
-function flattenNodes(
-  nodes: GroupTreeNodeData[],
-  depth: number,
-  query: string,
-  expandedSet: Set<string>
-): FlatItem[] {
+function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string, expandedSet: Set<string>): FlatItem[] {
   const result: FlatItem[] = []
   for (const node of nodes) {
     const label = node.label || node.id
     const labelMatch = query === '' || label.toLowerCase().includes(query)
     const hasGroupChildren = (node.children?.length || 0) > 0
     const hasMemberChildren = (node.members?.length || 0) > 0
-    const isGroup =
-      hasGroupChildren ||
-      hasMemberChildren ||
-      node.type === 'HostGroup' ||
-      node.type === 'ProductGroup'
+    const isGroup = hasGroupChildren || hasMemberChildren || node.type === 'HostGroup' || node.type === 'ProductGroup'
     const isExpanded = expandedSet.has(node.id)
     if (query === '' && isExpanded === false) {
       if (labelMatch) {
@@ -141,18 +124,12 @@ function flattenNodes(
       continue
     }
     const childQuery = labelMatch ? '' : query
-    const childItems = node.children
-      ? flattenNodes(node.children, depth + 1, childQuery, expandedSet)
-      : []
+    const childItems = node.children ? flattenNodes(node.children, depth + 1, childQuery, expandedSet) : []
     const memberItems: FlatItem[] = []
     if (node.members) {
       const memberDepth = depth + 1
       for (const member of node.members) {
-        if (
-          childQuery &&
-          !member.includes(childQuery) &&
-          !member.toLowerCase().includes(childQuery)
-        ) {
+        if (childQuery && !member.includes(childQuery) && !member.toLowerCase().includes(childQuery)) {
           continue
         }
         memberItems.push({
@@ -229,7 +206,7 @@ describe('member selection Set lookup performance', () => {
       runs.push(
         measureMs(() => {
           for (const m of members) selectedSet.has(m)
-        })
+        }),
       )
     }
 
@@ -247,13 +224,8 @@ describe('member selection Set lookup performance', () => {
     const setMs = measureMs(() => {
       for (const m of members) selectedSet.has(m)
     })
-    expect(
-      setMs * 5,
-      'Set (' +
-      setMs.toFixed(2) +
-      ' ms) should be >=5x faster than includes (' +
-      arrayMs.toFixed(2) +
-      ' ms)'
-    ).toBeLessThan(arrayMs)
+    expect(setMs * 5, 'Set (' + setMs.toFixed(2) + ' ms) should be >=5x faster than includes (' + arrayMs.toFixed(2) + ' ms)').toBeLessThan(
+      arrayMs,
+    )
   })
 })

@@ -42,7 +42,7 @@
     {
       size: 'sm',
       inputClass: 'w-full sm:w-72 md:w-80 lg:w-96',
-    }
+    },
   )
 
   const model = defineModel<string>({ default: '' })

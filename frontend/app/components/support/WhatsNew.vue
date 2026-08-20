@@ -8,10 +8,7 @@
   SupportWhatsNew - Release notes display.
 -->
 <template>
-  <CoreAppCard
-    class="h-full min-h-0"
-    :ui="{ root: 'h-full min-h-0 flex flex-col', body: 'flex-1 min-h-0 overflow-y-auto p-2' }"
-  >
+  <CoreAppCard class="h-full min-h-0" :ui="{ root: 'h-full min-h-0 flex flex-col', body: 'flex-1 min-h-0 overflow-y-auto p-2' }">
     <template #header>
       <CoreAppHeading :icon="icons.whatsNew" :text="$t('support.whatsNew')" />
     </template>
@@ -24,11 +21,7 @@
       {{ $t('products.changelog.none') }}
     </div>
     <div v-else class="space-y-1 flex-1">
-      <div
-        v-for="(item, idx) in items"
-        :key="idx"
-        class="changelog-item flex items-start gap-1.5 text-xs leading-snug py-1 px-1"
-      >
+      <div v-for="(item, idx) in items" :key="idx" class="changelog-item flex items-start gap-1.5 text-xs leading-snug py-1 px-1">
         <CoreAppIcon :name="icons.minus" class="h-4 w-2 mt-0.5 shrink-0" />
         <span>{{ item.text }}</span>
       </div>
@@ -89,7 +82,7 @@
     (v) => {
       if (v) items.value = parseChangelog(v)
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   onMounted(() => {

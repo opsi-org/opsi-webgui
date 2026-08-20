@@ -8,25 +8,10 @@
   ServersMainView - Server table with detail panel.
 -->
 <template>
-  <LayoutsPageLayout
-    show-refresh
-    :loading="loading"
-    :show-panel="!!panelServer"
-    @refresh="fetchServers"
-    @close-panel="closePanel"
-  >
+  <LayoutsPageLayout show-refresh :loading="loading" :show-panel="!!panelServer" @refresh="fetchServers" @close-panel="closePanel">
     <template #actions>
-      <CoreAppTooltip
-        v-if="isDepotAccessRestricted"
-        :text="$t('opsiConfig.serverFeatures.depotAccess.disabled')"
-      >
-        <CoreAppBadge
-          color="warning"
-          variant="subtle"
-          size="xs"
-          class="cursor-help"
-          data-testid="servers-restricted-badge"
-        >
+      <CoreAppTooltip v-if="isDepotAccessRestricted" :text="$t('opsiConfig.serverFeatures.depotAccess.disabled')">
+        <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help" data-testid="servers-restricted-badge">
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
@@ -82,9 +67,7 @@
           :name="(row as Server).type === 'OpsiConfigserver' ? icons.serverStack : icons.server"
           class="w-3.5 h-3.5 text-(--color-text-muted) mr-2"
         />
-        <span :class="(row as Server).type === 'OpsiConfigserver' ? 'font-bold' : ''">{{
-          (row as Server).depotId
-        }}</span>
+        <span :class="(row as Server).type === 'OpsiConfigserver' ? 'font-bold' : ''">{{ (row as Server).depotId }}</span>
       </template>
       <template #cell-type="{ row }">
         <CoreAppStatusBadge
@@ -94,10 +77,7 @@
         />
       </template>
       <template #cell-description="{ row }">
-        <span
-          class="block truncate max-w-[18rem] text-sm leading-5"
-          :title="(row as Server).description || undefined"
-        >
+        <span class="block truncate max-w-[18rem] text-sm leading-5" :title="(row as Server).description || undefined">
           {{ (row as Server).description || '-' }}
         </span>
       </template>
@@ -108,11 +88,7 @@
           size="xs"
           :title="$t('config.title')"
           :color="panelServer?.depotId === (row as Server).depotId ? 'primary' : 'neutral'"
-          :class="
-            panelServer?.depotId === (row as Server).depotId
-              ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!'
-              : ''
-          "
+          :class="panelServer?.depotId === (row as Server).depotId ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
           @click.stop="openConfig(row as Server)"
         />
       </template>
@@ -139,11 +115,7 @@
         />
       </div>
 
-      <CoreAppNavigationGuardModal
-        v-model="showLeaveWarning"
-        @cancel="cancelPanelLeave"
-        @confirm="confirmPanelLeave"
-      />
+      <CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelPanelLeave" @confirm="confirmPanelLeave" />
     </template>
   </LayoutsPageLayout>
 </template>
@@ -162,8 +134,7 @@
   const router = useRouter()
   const route = useRoute()
   const { isReadOnly, hasServerWriteAccess, isDepotAccessRestricted } = useUserPermissions()
-  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } =
-    useAutoRefreshServers(fetchServers)
+  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshServers(fetchServers)
 
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -173,9 +144,7 @@
   const panelType = ref<'config' | null>(null)
   const panelTab = ref('parameters')
   const lastPageParams = ref<PageChangeParams | null>(null)
-  const currentFilterQuery = ref(
-    typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('servers')
-  )
+  const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('servers'))
   const fetchServersRequestId = ref(0)
   const tableSettings = useDataTableSettings('servers')
   const configTabsRef = ref<{
@@ -185,8 +154,7 @@
   } | null>(null)
   const showCreateConfigModal = ref(false)
   const sortBySelectionEnabled = computed(
-    () =>
-      selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedServers.length > 0
+    () => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedServers.length > 0,
   )
 
   const {
@@ -351,13 +319,10 @@
   watch(
     () => selectionStore.selectedServers.join(','),
     () => {
-      if (
-        (lastPageParams.value?.sortBySelection || sortBySelectionEnabled.value) &&
-        selectionStore.selectionSource !== 'table'
-      ) {
+      if ((lastPageParams.value?.sortBySelection || sortBySelectionEnabled.value) && selectionStore.selectionSource !== 'table') {
         fetchServers()
       }
-    }
+    },
   )
 
   onMounted(async () => {
@@ -365,12 +330,7 @@
     const serverId = route.query.server as string | undefined
     const configType = route.query.configType as string | undefined
     if (configType) {
-      const normalized =
-        configType === 'attribute'
-          ? 'attributes'
-          : configType === 'parameter'
-            ? 'parameters'
-            : configType
+      const normalized = configType === 'attribute' ? 'attributes' : configType === 'parameter' ? 'parameters' : configType
       if (normalized === 'parameters' || normalized === 'attributes') {
         panelTab.value = normalized
       }
@@ -384,8 +344,7 @@
   watch(
     () => route.query.filter,
     (newFilter) => {
-      currentFilterQuery.value =
-        typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('servers')
-    }
+      currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('servers')
+    },
   )
 </script>

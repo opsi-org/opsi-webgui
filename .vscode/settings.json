@@ -1,4 +1,24 @@
 {
+  "chat.promptFilesLocations": {
+    ".github/prompts": true
+  },
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true
+  },
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "file": ".github/instructions/git-commit-message.instructions.md"
+    }
+  ],
+  "github.copilot.chat.reviewSelection.enabled": true,
+  "github.copilot.chat.reviewSelection.instructions": [
+    {
+      "file": ".github/instructions/python-coding-style.instructions.md"
+    },
+    {
+      "file": ".github/instructions/frontend-coding-style.instructions.md"
+    }
+  ],
   "files.watcherExclude": {
     "**/node_modules/**": true,
     "**/.nuxt/**": true,
@@ -23,12 +43,28 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[vue]": {
-    "editor.defaultFormatter": "Vue.volar"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "vue.format.enable": false,
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    },
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "python.languageServer": "Pylance",
+  "python.testing.pytestEnabled": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "eslint.validate": ["javascript", "typescript", "vue", "html", "json", "jsonc"],
-  "prettier.configPath": "/workspace/frontend/.prettierrc",
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "vue",
+    "html",
+    "json",
+    "jsonc"
+  ],
   "trailing-spaces.trimOnSave": true,
   "git.ignoreLimitWarning": true,
   "files.associations": {
@@ -37,9 +73,15 @@
   "editor.quickSuggestions": {
     "strings": "on"
   },
-  "tailwindCSS.classAttributes": ["class", "ui"],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "ui"
+  ],
   "tailwindCSS.experimental.classRegex": [
-    ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+    [
+      "ui:\\s*{([^)]*)\\s*}",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ]
   ],
   "coverage-gutters.coverageFileNames": [
     "backend/coverage.lcov",
@@ -54,7 +96,6 @@
     "defaultColor": "white",
     "reloadButton": "↻",
     "loadNpmCommands": false,
-
     "commands": [
       {
         // reload opsiconfd

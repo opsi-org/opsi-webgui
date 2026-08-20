@@ -97,11 +97,7 @@ export async function disableAnimations(page: Page): Promise<void> {
  * Wait for a data table to render at least one row.
  */
 export async function waitForTable(page: Page, timeout = 30000): Promise<void> {
-  const row = page
-    .locator(
-      'table tbody tr, [class*="table"] [class*="row"]:not([class*="header"]), [role="rowgroup"] [role="row"]'
-    )
-    .first()
+  const row = page.locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"]), [role="rowgroup"] [role="row"]').first()
 
   try {
     await row.waitFor({ state: 'visible', timeout })
@@ -111,7 +107,7 @@ export async function waitForTable(page: Page, timeout = 30000): Promise<void> {
     if (/\/login(?:\?|$|\/)/.test(url)) {
       const usernameInput = page
         .locator(
-          '#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]'
+          '#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]',
         )
         .first()
       const passwordInput = page.locator('#login-password, input[type="password"]').first()
@@ -132,12 +128,9 @@ export async function waitForTable(page: Page, timeout = 30000): Promise<void> {
         await usernameInput.fill(testUser)
         await passwordInput.fill(testPassword)
         await page.locator('button[type="submit"]').first().click()
-        await page.waitForURL(
-          (current) => !/\/login(?:\?|$|\/)/.test(`${current.pathname}${current.search}`),
-          {
-            timeout: 30000,
-          }
-        )
+        await page.waitForURL((current) => !/\/login(?:\?|$|\/)/.test(`${current.pathname}${current.search}`), {
+          timeout: 30000,
+        })
         await page.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => undefined)
         await row.waitFor({ state: 'visible', timeout: Math.max(timeout, 45000) })
         return
@@ -164,9 +157,5 @@ export async function waitForTable(page: Page, timeout = 30000): Promise<void> {
  * Get the row count from a data table.
  */
 export async function getTableRowCount(page: Page): Promise<number> {
-  return page
-    .locator(
-      'table tbody tr, [class*="table"] [class*="row"]:not([class*="header"]), [role="rowgroup"] [role="row"]'
-    )
-    .count()
+  return page.locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"]), [role="rowgroup"] [role="row"]').count()
 }

@@ -13,8 +13,7 @@ import pkg from './package.json'
 const certsPath = path.join(__dirname, 'certs')
 const keyPath = path.join(certsPath, 'server.key')
 const certPath = path.join(certsPath, 'server.crt')
-const httpsConfig =
-  fs.existsSync(keyPath) && fs.existsSync(certPath) ? { key: keyPath, cert: certPath } : false
+const httpsConfig = fs.existsSync(keyPath) && fs.existsSync(certPath) ? { key: keyPath, cert: certPath } : false
 const localeDir = path.join(__dirname, 'i18n', 'locales')
 const localeNameMap: Record<string, string> = {
   de: 'Deutsch',
@@ -47,14 +46,7 @@ export default defineNuxtConfig({
     '~/': './app',
   },
 
-  modules: [
-    '@nuxt/ui',
-    '@nuxt/icon',
-    '@nuxt/fonts',
-    '@nuxtjs/i18n',
-    '@pinia/nuxt',
-    'pinia-plugin-persistedstate/nuxt',
-  ],
+  modules: ['@nuxt/ui', '@nuxt/icon', '@nuxt/fonts', '@nuxtjs/i18n', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt'],
 
   // Bundle all used icons at build time to work in offline environments.
   icon: {
@@ -140,7 +132,7 @@ export default defineNuxtConfig({
   app: {
     baseURL: ADDON_PATH + '/app',
     head: {
-      title: 'opsi-WebGUI',
+      title: 'OPSI-WebGUI',
       htmlAttrs: {
         lang: 'en',
       },

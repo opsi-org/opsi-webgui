@@ -69,27 +69,18 @@
                 class="w-3.5 h-3.5 text-(--color-text-muted)"
               />
               <CoreAppTooltip v-if="sectionTooltip(section.id)" :text="sectionTooltip(section.id)">
-                <span
-                  class="text-xs font-semibold text-(--color-text) cursor-help border-b border-dashed border-(--color-text-muted)/40"
-                  >{{ sectionLabel(section.id) }}</span
-                >
+                <span class="text-xs font-semibold text-(--color-text) cursor-help border-b border-dashed border-(--color-text-muted)/40">{{
+                  sectionLabel(section.id)
+                }}</span>
               </CoreAppTooltip>
-              <span v-else class="text-xs font-semibold text-(--color-text)">{{
-                sectionLabel(section.id)
-              }}</span>
+              <span v-else class="text-xs font-semibold text-(--color-text)">{{ sectionLabel(section.id) }}</span>
             </div>
           </button>
           <template v-if="!isSectionCollapsed(section.id)">
             <div
               v-for="item in section.flatItems"
               :key="`${section.id}-${item.id}`"
-              v-memo="[
-                item.isExpanded,
-                item.hasChildren,
-                isItemChecked(item),
-                item.memberCount,
-                isBusyGroup(item.id),
-              ]"
+              v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount, isBusyGroup(item.id)]"
               :style="{
                 paddingLeft: `${item.depth * 14 + 6}px`,
                 borderLeftWidth: item.depth > 0 ? '1px' : '0',
@@ -108,11 +99,7 @@
                 :aria-label="item.isExpanded ? $t('common.collapse') : $t('common.expand')"
                 @click.stop="toggleExpand(item.id)"
               />
-              <CoreAppLoadingSpinner
-                v-else-if="isBusyGroup(item.id)"
-                size="xs"
-                class="shrink-0 w-4 h-4"
-              />
+              <CoreAppLoadingSpinner v-else-if="isBusyGroup(item.id)" size="xs" class="shrink-0 w-4 h-4" />
               <span v-else class="w-4 shrink-0" />
               <CoreAppCheckbox
                 :model-value="isItemChecked(item)"
@@ -122,10 +109,7 @@
                 :aria-label="item.label"
                 @update:model-value="handleItemClick(item)"
               />
-              <CoreAppTooltip
-                v-if="item.label === 'not_assigned'"
-                :text="$t('clients.directoryNotAssigned')"
-              >
+              <CoreAppTooltip v-if="item.label === 'not_assigned'" :text="$t('clients.directoryNotAssigned')">
                 <button
                   type="button"
                   class="truncate flex-1 text-left bg-transparent border-0 p-0 cursor-pointer"
@@ -146,15 +130,10 @@
                 :aria-label="item.label"
                 @click="handleItemClick(item)"
               >
-                <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{
-                  item.label
-                }}</span>
+                <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
               </button>
             </div>
-            <div
-              v-if="section.flatItems.length === 0"
-              class="text-xs text-(--color-text-muted) py-1 px-2 italic"
-            >
+            <div v-if="section.flatItems.length === 0" class="text-xs text-(--color-text-muted) py-1 px-2 italic">
               {{ $t('common.noResults') }}
             </div>
           </template>
@@ -165,13 +144,7 @@
         <div
           v-for="item in productFlatItems"
           :key="item.id"
-          v-memo="[
-            item.isExpanded,
-            item.hasChildren,
-            isItemChecked(item),
-            item.memberCount,
-            isBusyGroup(item.id),
-          ]"
+          v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount, isBusyGroup(item.id)]"
           :style="{ paddingLeft: `${item.depth * 16}px` }"
           class="flex items-center gap-1 py-0 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer"
         >
@@ -185,11 +158,7 @@
             :aria-label="item.isExpanded ? $t('common.collapse') : $t('common.expand')"
             @click.stop="toggleExpand(item.id)"
           />
-          <CoreAppLoadingSpinner
-            v-else-if="isBusyGroup(item.id)"
-            size="xs"
-            class="shrink-0 w-4 h-4"
-          />
+          <CoreAppLoadingSpinner v-else-if="isBusyGroup(item.id)" size="xs" class="shrink-0 w-4 h-4" />
           <span v-else class="w-4 shrink-0" />
           <CoreAppCheckbox
             :model-value="isItemChecked(item)"
@@ -205,15 +174,10 @@
             :aria-label="item.label"
             @click="handleItemClick(item)"
           >
-            <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{
-              item.label
-            }}</span>
+            <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
           </button>
         </div>
-        <div
-          v-if="productFlatItems.length === 0"
-          class="text-xs text-(--color-text-muted) py-4 text-center"
-        >
+        <div v-if="productFlatItems.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">
           {{ $t('common.noResults') }}
         </div>
       </template>
@@ -250,9 +214,7 @@
   const { isHostGroupAccessRestricted, isProductGroupAccessRestricted } = useUserPermissions()
 
   const isGroupRestricted = computed(() =>
-    props.groupType === 'client'
-      ? isHostGroupAccessRestricted.value
-      : isProductGroupAccessRestricted.value
+    props.groupType === 'client' ? isHostGroupAccessRestricted.value : isProductGroupAccessRestricted.value,
   )
 
   const $t = (key: string) => {
@@ -290,15 +252,9 @@
     collapsedSections.value = newSet
   }
 
-  const loading = computed(() =>
-    props.groupType === 'client' ? clientGroupsLoading.value : productGroupsLoading.value
-  )
-  const errorMsg = computed(() =>
-    props.groupType === 'client' ? clientGroupsError.value : productGroupsError.value
-  )
-  const rawTree = computed(() =>
-    props.groupType === 'client' ? clientGroupsTree.value : productGroupsTree.value
-  )
+  const loading = computed(() => (props.groupType === 'client' ? clientGroupsLoading.value : productGroupsLoading.value))
+  const errorMsg = computed(() => (props.groupType === 'client' ? clientGroupsError.value : productGroupsError.value))
+  const rawTree = computed(() => (props.groupType === 'client' ? clientGroupsTree.value : productGroupsTree.value))
   const expandedIds = computed(() => {
     return props.groupType === 'client' ? clientGroupsExpanded.value : productGroupsExpanded.value
   })
@@ -317,17 +273,11 @@
   }
 
   const selectedItemsSet = computed(() => {
-    const items =
-      props.groupType === 'client'
-        ? selectionStore.selectedClients
-        : selectionStore.selectedProducts
+    const items = props.groupType === 'client' ? selectionStore.selectedClients : selectionStore.selectedProducts
     return new Set(items)
   })
   const selectedGroupsSet = computed(() => {
-    const groups =
-      props.groupType === 'client'
-        ? selectionStore.selectedClientGroups
-        : selectionStore.selectedProductGroups
+    const groups = props.groupType === 'client' ? selectionStore.selectedClientGroups : selectionStore.selectedProductGroups
     return new Set(groups)
   })
 
@@ -373,12 +323,7 @@
     return false
   }
 
-  function flattenNodes(
-    nodes: GroupTreeNodeData[],
-    depth: number,
-    query: string,
-    expandedSet: Set<string>
-  ): FlatItem[] {
+  function flattenNodes(nodes: GroupTreeNodeData[], depth: number, query: string, expandedSet: Set<string>): FlatItem[] {
     const result: FlatItem[] = []
     for (const node of nodes) {
       const label = node.label || node.id
@@ -386,14 +331,8 @@
       const hasGroupChildren = (node.children?.length || 0) > 0
       // Also treat a node as having children if memberCount > 0 even if members aren't loaded yet (lazy loading)
       const hasMemberChildren =
-        (node.members?.length || 0) > 0 ||
-        (node.memberCount || 0) > 0 ||
-        (props.groupType === 'client' && node.isSpecial === true)
-      const isGroup =
-        hasGroupChildren ||
-        hasMemberChildren ||
-        node.type === 'HostGroup' ||
-        node.type === 'ProductGroup'
+        (node.members?.length || 0) > 0 || (node.memberCount || 0) > 0 || (props.groupType === 'client' && node.isSpecial === true)
+      const isGroup = hasGroupChildren || hasMemberChildren || node.type === 'HostGroup' || node.type === 'ProductGroup'
       const isExpanded = expandedSet.has(node.id)
 
       // Skip recursing into children/members for collapsed nodes when not searching
@@ -413,9 +352,7 @@
       }
 
       const childQuery = labelMatch ? '' : query
-      const childItems = node.children
-        ? flattenNodes(node.children, depth + 1, childQuery, expandedSet)
-        : []
+      const childItems = node.children ? flattenNodes(node.children, depth + 1, childQuery, expandedSet) : []
       const memberItems: FlatItem[] = []
       if (node.members) {
         const members = node.members
@@ -476,15 +413,10 @@
   })
 
   const selectedCount = computed(() =>
-    props.groupType === 'client'
-      ? selectionStore.selectedClients.length
-      : selectionStore.selectedProducts.length
+    props.groupType === 'client' ? selectionStore.selectedClients.length : selectionStore.selectedProducts.length,
   )
 
-  function findGroupNodeById(
-    nodes: GroupTreeNodeData[],
-    groupId: string
-  ): GroupTreeNodeData | null {
+  function findGroupNodeById(nodes: GroupTreeNodeData[], groupId: string): GroupTreeNodeData | null {
     for (const node of nodes) {
       if (node.id === groupId) return node
       if (node.children?.length) {
@@ -683,7 +615,7 @@
         }
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   watch(
@@ -692,6 +624,6 @@
       if (props.groupType !== 'client') return
       if (!props.active && !hasData.value) return
       fetchClientGroups(true, selectionStore.selectedServers)
-    }
+    },
   )
 </script>

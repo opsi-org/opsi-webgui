@@ -3,11 +3,11 @@
 #
 # Usage: bash scripts/build_addon.sh [ADDON_ID] [ADDON_NAME] [WORKING_DIR]
 #   ADDON_ID    - addon identifier, e.g. "webgui" or "webgui-dev" (default: webgui)
-#   ADDON_NAME  - addon name, e.g. "OpsiWebGUI" (default: OpsiWebGUI)
+#   ADDON_NAME  - addon name, e.g. "OPSI-WebGUI" (default: "OPSI-WebGUI")
 #   WORKING_DIR - absolute path to the repo root (default: current directory)
 
 ADDON_ID="${1:-webgui}"
-ADDON_NAME="${2:-OpsiWebGUI}"
+ADDON_NAME="${2:-OPSI-WebGUI}"
 WORKING_DIR="${3:-$(pwd)}"
 
 FRONTEND_DIR="frontend"
@@ -20,7 +20,7 @@ TS_CONFIG_FILE="${WORKING_DIR}/${FRONTEND_DIR}/nuxt.config.ts"
 SBOM_FILE="${WORKING_DIR}/sbom.cyclonedx.json"
 
 ADDON_ID_ORIGIN="webgui"
-ADDON_NAME_ORIGIN="OpsiWebGUI"
+ADDON_NAME_ORIGIN="OPSI-WebGUI"
 
 cleanup() {
     echo '> Restoring modified files...'

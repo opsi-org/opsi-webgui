@@ -65,8 +65,7 @@ export const useSelectionStore = defineStore('selection', {
     },
 
     setServers(servers: string[], source: SelectionSource = 'table') {
-      this.selectedServers =
-        servers.length === 0 && this.configServer ? [this.configServer] : servers
+      this.selectedServers = servers.length === 0 && this.configServer ? [this.configServer] : servers
       this.selectionSource = source
     },
     toggleServer(serverId: string, source: SelectionSource = 'table') {

@@ -33,10 +33,7 @@ export default defineNuxtPlugin({
       const configServerResult = await getConfigServer()
       if (configServerResult.data) {
         const serverData = configServerResult.data as unknown
-        const serverId =
-          typeof serverData === 'string'
-            ? serverData
-            : ((serverData as Record<string, unknown>)?.result as string)
+        const serverId = typeof serverData === 'string' ? serverData : ((serverData as Record<string, unknown>)?.result as string)
         if (serverId) selectionStore.setConfigServer(serverId)
       }
     } catch {}
@@ -50,10 +47,7 @@ export default defineNuxtPlugin({
           promises.push(getServers({}))
         }
 
-        const [, serverResult] = (await Promise.all(promises)) as [
-          void,
-          Awaited<ReturnType<typeof getServers>> | undefined,
-        ]
+        const [, serverResult] = (await Promise.all(promises)) as [void, Awaited<ReturnType<typeof getServers>> | undefined]
 
         if (serverResult?.data && serverResult.data.length > 0) {
           const configServer = serverResult.data.find((d) => d.type === 'OpsiConfigserver')

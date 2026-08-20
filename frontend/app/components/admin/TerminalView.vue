@@ -21,35 +21,20 @@
           @click="connect"
           >{{ $t('terminal.connect') }}
         </CoreAppButton>
-        <CoreAppButton
-          v-else
-          color="error"
-          variant="outline"
-          size="sm"
-          :icon="icons.x"
-          @click="disconnect"
-          >{{ $t('terminal.disconnect') }}</CoreAppButton
-        >
-        <span
-          v-if="isConnected"
-          class="flex items-center gap-1 text-sm text-(--color-success-soft-text)"
-        >
+        <CoreAppButton v-else color="error" variant="outline" size="sm" :icon="icons.x" @click="disconnect">{{
+          $t('terminal.disconnect')
+        }}</CoreAppButton>
+        <span v-if="isConnected" class="flex items-center gap-1 text-sm text-(--color-success-soft-text)">
           <CoreAppIcon :name="icons.checkCircle" class="w-6 h-6 text-(--color-success)" />
           {{ $t('terminal.connected') }}
         </span>
         <span v-else class="flex items-center gap-1 text-sm" :class="terminalStatusClass"
-          ><span class="w-2 h-2 rounded-full" :class="terminalStatusDotClass"></span
-          >{{ terminalStatusText }}</span
+          ><span class="w-2 h-2 rounded-full" :class="terminalStatusDotClass"></span>{{ terminalStatusText }}</span
         >
       </div>
-      <CoreAppButton
-        variant="outline"
-        color="primary"
-        size="sm"
-        :icon="icons.config"
-        @click="showSettings = !showSettings"
-        >{{ $t('common.settings') }}</CoreAppButton
-      >
+      <CoreAppButton variant="outline" color="primary" size="sm" :icon="icons.config" @click="showSettings = !showSettings">{{
+        $t('common.settings')
+      }}</CoreAppButton>
     </div>
 
     <div v-if="showSettings" class="shrink-0 p-3 rounded-lg">
@@ -58,12 +43,7 @@
           <CoreAppInput v-model="terminalId" :disabled="isConnected" size="sm" class="w-full" />
         </CoreAppFormField>
         <CoreAppFormField :label="$t('terminal.channel')">
-          <CoreAppInput
-            v-model="terminalChannel"
-            :disabled="isConnected"
-            size="sm"
-            class="w-full"
-          />
+          <CoreAppInput v-model="terminalChannel" :disabled="isConnected" size="sm" class="w-full" />
         </CoreAppFormField>
       </div>
     </div>
@@ -72,10 +52,7 @@
       <template #title>{{ $t('terminal.disabled') }}</template>
     </CoreAppAlertInline>
 
-    <div
-      v-if="!isDisabled"
-      class="flex-1 min-h-0 rounded-lg overflow-hidden border border-(--color-border)"
-    >
+    <div v-if="!isDisabled" class="flex-1 min-h-0 rounded-lg overflow-hidden border border-(--color-border)">
       <div ref="terminalContainer" class="h-full w-full bg-gray-900" />
     </div>
   </div>
@@ -171,8 +148,7 @@
       disconnect()
     } else if (message.type === 'terminal_data_read' && message.data) {
       terminal.write(message.data)
-      const decoded =
-        typeof message.data === 'string' ? message.data : new TextDecoder().decode(message.data)
+      const decoded = typeof message.data === 'string' ? message.data : new TextDecoder().decode(message.data)
       if (/(?:^|\r?\n)(?:logout|exit)\s*$|connection\s+closed|session\s+closed/i.test(decoded)) {
         disconnect()
       }

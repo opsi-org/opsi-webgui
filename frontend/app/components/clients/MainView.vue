@@ -8,11 +8,7 @@
   ClientsMainView - Client table with detail panel, filtering, and batch operations.
 -->
 <template>
-  <CoreAppNavigationGuardModal
-    v-model="showLeaveWarning"
-    @cancel="cancelPanelLeave"
-    @confirm="confirmPanelLeave"
-  />
+  <CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelPanelLeave" @confirm="confirmPanelLeave" />
 
   <LayoutsPageLayout
     show-refresh
@@ -22,17 +18,8 @@
     @close-panel="closePanel"
   >
     <template #actions>
-      <CoreAppTooltip
-        v-if="isHostGroupAccessRestricted"
-        :text="$t('opsiConfig.serverFeatures.hostGroupAccess.disabled')"
-      >
-        <CoreAppBadge
-          color="warning"
-          variant="subtle"
-          size="xs"
-          class="cursor-help"
-          data-testid="clients-restricted-badge"
-        >
+      <CoreAppTooltip v-if="isHostGroupAccessRestricted" :text="$t('opsiConfig.serverFeatures.hostGroupAccess.disabled')">
+        <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help" data-testid="clients-restricted-badge">
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
@@ -106,10 +93,7 @@
         </div>
       </template>
       <template #cell-description="{ row }">
-        <span
-          class="block truncate max-w-[16rem] text-sm leading-5"
-          :title="(row as OpsiClient).description || undefined"
-        >
+        <span class="block truncate max-w-[16rem] text-sm leading-5" :title="(row as OpsiClient).description || undefined">
           {{ (row as OpsiClient).description || '-' }}
         </span>
       </template>
@@ -120,11 +104,7 @@
         <span class="text-sm text-(--color-text)">{{ (row as OpsiClient).ipAddress || '-' }}</span>
       </template>
       <template #cell-lastSeen="{ row }">
-        {{
-          (row as OpsiClient).lastSeen
-            ? new Date((row as OpsiClient).lastSeen as string).toLocaleString()
-            : '-'
-        }}
+        {{ (row as OpsiClient).lastSeen ? new Date((row as OpsiClient).lastSeen as string).toLocaleString() : '-' }}
       </template>
       <template #cell-uefi="{ row }">
         <CoreAppStatusBadge v-if="(row as OpsiClient).uefi" status="info" label="UEFI" />
@@ -209,11 +189,7 @@
       <template #row-actions="{ row }">
         <ClientsRowActionsDropdown
           :client-id="(row as OpsiClient).clientId"
-          :active-action="
-            panelClient?.clientId === (row as OpsiClient).clientId
-              ? (panelType as 'config' | 'logs' | 'clone' | null)
-              : null
-          "
+          :active-action="panelClient?.clientId === (row as OpsiClient).clientId ? (panelType as 'config' | 'logs' | 'clone' | null) : null"
           @open-config="openPanel(row as OpsiClient, 'config')"
           @open-logs="openPanel(row as OpsiClient, 'logs')"
           @open-clone="openPanel(row as OpsiClient, 'clone')"
@@ -225,13 +201,7 @@
     <template #panel-title>
       <span class="flex items-center gap-2">
         <CoreAppIcon
-          :name="
-            panelType === 'products'
-              ? icons.product
-              : panelType === 'add'
-                ? icons.add
-                : icons.client
-          "
+          :name="panelType === 'products' ? icons.product : panelType === 'add' ? icons.add : icons.client"
           class="w-4 h-4 text-(--color-text-muted) shrink-0"
         />
         <template v-if="panelType === 'products'">{{ $t('products.title') }}</template>
@@ -317,9 +287,7 @@
   const reachableLoading = ref<Record<string, boolean>>({})
   const blockedClients = ref<Set<string>>(new Set())
   const lastPageParams = ref<PageChangeParams | null>(null)
-  const currentFilterQuery = ref(
-    typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('clients')
-  )
+  const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('clients'))
   const fetchClientsRequestId = ref(0)
   const tableSettings = useDataTableSettings('clients')
   const productsSortColumn = ref<string | undefined>(undefined)
@@ -334,10 +302,7 @@
   let resolveRouteLeave: ((ok: boolean) => void) | null = null
 
   onBeforeRouteLeave(() => {
-    const hasChanges =
-      configTabsRef.value?.hasAnyChanges ||
-      productsTableRef.value?.hasUnsavedChanges ||
-      cloneFormRef.value?.hasChanges
+    const hasChanges = configTabsRef.value?.hasAnyChanges || productsTableRef.value?.hasUnsavedChanges || cloneFormRef.value?.hasChanges
     if (!hasChanges) return true
     showLeaveWarning.value = true
     return new Promise<boolean>((resolve) => {
@@ -346,12 +311,10 @@
   })
 
   const sortBySelectionEnabled = computed(
-    () =>
-      selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedClients.length > 0
+    () => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedClients.length > 0,
   )
 
-  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } =
-    useAutoRefreshClients(fetchClients)
+  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
 
   const columns: DataTableColumnDef[] = [
     {
@@ -498,11 +461,7 @@
     })
   }
 
-  function openProductsPanelForClient(
-    client: OpsiClient,
-    sortColumn: string,
-    productType?: 'localboot' | 'netboot'
-  ) {
+  function openProductsPanelForClient(client: OpsiClient, sortColumn: string, productType?: 'localboot' | 'netboot') {
     selectionStore.setClients([client.clientId], 'table')
     productsSortColumn.value = sortColumn
     panelProductType.value = productType || 'localboot'
@@ -528,15 +487,7 @@
     checkUnsavedAndDo(() => {
       panelClient.value = null
       panelType.value = null
-      const {
-        client: _c,
-        view: _v,
-        panelType: _pt,
-        configType: _ct,
-        sortBy: _sb,
-        type: _ty,
-        ...rest
-      } = route.query
+      const { client: _c, view: _v, panelType: _pt, configType: _ct, sortBy: _sb, type: _ty, ...rest } = route.query
       router.replace({ query: rest })
     })
   }
@@ -648,8 +599,7 @@
         selectedDepots: selectionStore.selectedServersParam,
         selectedClients: `[${selectionStore.selectedClients.join(',')}]`,
       }
-      if (selectionSortActive && selectionStore.selectedClients.length > 0)
-        p.selected = `[${selectionStore.selectedClients.join(',')}]`
+      if (selectionSortActive && selectionStore.selectedClients.length > 0) p.selected = `[${selectionStore.selectedClients.join(',')}]`
       if (effectiveParams) {
         p.pageNumber = effectiveParams.pageNumber
         p.perPage = effectiveParams.perPage
@@ -739,10 +689,7 @@
 
       const record = current as Record<string, unknown>
       for (const [key, value] of Object.entries(record)) {
-        if (
-          typeof value === 'string' &&
-          /(hostId|host_id|clientId|client_id|objectId|object_id)$/i.test(key)
-        ) {
+        if (typeof value === 'string' && /(hostId|host_id|clientId|client_id|objectId|object_id)$/i.test(key)) {
           return value
         }
         if (value && typeof value === 'object') queue.push(value)
@@ -771,13 +718,10 @@
   watch(
     () => selectionStore.selectedClients.join(','),
     () => {
-      if (
-        (lastPageParams.value?.sortBySelection || sortBySelectionEnabled.value) &&
-        selectionStore.selectionSource !== 'table'
-      ) {
+      if ((lastPageParams.value?.sortBySelection || sortBySelectionEnabled.value) && selectionStore.selectionSource !== 'table') {
         fetchClients()
       }
-    }
+    },
   )
 
   watch(
@@ -785,7 +729,7 @@
     () => {
       fetchClients(buildInitialPageParams(currentFilterQuery.value))
       fetchBlockedClients()
-    }
+    },
   )
 
   watch(panelTab, (newTab) => {
@@ -806,7 +750,7 @@
       if (typeof sortBy === 'string') {
         productsSortColumn.value = sortBy
       }
-    }
+    },
   )
 
   watch(
@@ -815,7 +759,7 @@
       if (newType === 'localboot' || newType === 'netboot') {
         panelProductType.value = newType
       }
-    }
+    },
   )
 
   onMounted(async () => {
@@ -825,26 +769,12 @@
     if (routeProductType === 'localboot' || routeProductType === 'netboot') {
       panelProductType.value = routeProductType
     }
-    await Promise.all([
-      fetchClients(buildInitialPageParams(currentFilterQuery.value)),
-      fetchBlockedClients(),
-    ])
+    await Promise.all([fetchClients(buildInitialPageParams(currentFilterQuery.value)), fetchBlockedClients()])
     const clientId = route.query.client as string | undefined
-    const pType = route.query.panelType as
-      | 'config'
-      | 'logs'
-      | 'clone'
-      | 'products'
-      | 'add'
-      | undefined
+    const pType = route.query.panelType as 'config' | 'logs' | 'clone' | 'products' | 'add' | undefined
     const configType = route.query.configType as string | undefined
     if (configType) {
-      const normalized =
-        configType === 'attribute'
-          ? 'attributes'
-          : configType === 'parameter'
-            ? 'parameters'
-            : configType
+      const normalized = configType === 'attribute' ? 'attributes' : configType === 'parameter' ? 'parameters' : configType
       if (normalized === 'parameters' || normalized === 'attributes') {
         panelTab.value = normalized
       }
@@ -871,8 +801,7 @@
   watch(
     () => route.query.filter,
     (newFilter) => {
-      currentFilterQuery.value =
-        typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('clients')
-    }
+      currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('clients')
+    },
   )
 </script>

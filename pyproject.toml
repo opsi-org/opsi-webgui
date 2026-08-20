@@ -1,0 +1,16 @@
+[tool.ruff]
+line-length = 140
+target-version = "py313"
+src = ["backend"]
+extend-exclude = ["backend/webgui/data/app", "docker/opsiconfd", "frontend"]
+
+[tool.ruff.format]
+indent-style = "tab"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+fixable = ["ALL"]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI parameter defaults like Body(...), Depends(...), and Query(...) are the intended pattern.
+extend-immutable-calls = ["fastapi.Body", "fastapi.Depends", "fastapi.Query"]

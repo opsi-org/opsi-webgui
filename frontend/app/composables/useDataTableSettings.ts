@@ -66,15 +66,7 @@ const defaults: Record<string, DataTableSettings> = {
     selectionMode: 'multi',
   },
   products: {
-    visibleColumns: [
-      'productId',
-      'description',
-      'version',
-      'installationStatus',
-      'actionResult',
-      'actionProgress',
-      'actionRequest',
-    ],
+    visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionResult', 'actionProgress', 'actionRequest'],
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
@@ -82,15 +74,7 @@ const defaults: Record<string, DataTableSettings> = {
     selectionMode: 'multi',
   },
   'products-localboot': {
-    visibleColumns: [
-      'productId',
-      'description',
-      'version',
-      'installationStatus',
-      'actionResult',
-      'actionProgress',
-      'actionRequest',
-    ],
+    visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionResult', 'actionProgress', 'actionRequest'],
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
@@ -144,7 +128,7 @@ export function useDataTableSettings(tableId: string) {
   watch(
     () => ({ ...settings }),
     (n) => save(tableId, n),
-    { deep: true }
+    { deep: true },
   )
 
   function setVisibleColumns(cols: string[]) {
@@ -168,8 +152,7 @@ export function useDataTableSettings(tableId: string) {
     if (direction) {
       settings.sortColumn = column
       settings.sortDirection = direction
-    } else if (settings.sortColumn === column)
-      settings.sortDirection = settings.sortDirection === 'asc' ? 'desc' : 'asc'
+    } else if (settings.sortColumn === column) settings.sortDirection = settings.sortDirection === 'asc' ? 'desc' : 'asc'
     else {
       settings.sortColumn = column
       settings.sortDirection = 'asc'

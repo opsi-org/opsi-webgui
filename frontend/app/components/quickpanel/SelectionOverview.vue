@@ -15,9 +15,7 @@
 
     <template v-else>
       <div class="flex items-center justify-between mb-1 shrink-0">
-        <span class="text-xs text-(--color-text-muted)"
-          >{{ totalCount }} {{ $t('common.total') }}</span
-        >
+        <span class="text-xs text-(--color-text-muted)">{{ totalCount }} {{ $t('common.total') }}</span>
         <CoreAppButton
           :icon="icons.xCircle"
           size="xs"
@@ -35,9 +33,7 @@
             <div class="flex items-center gap-1.5 text-xs font-medium">
               <CoreAppIcon :name="icons.server" class="w-3.5 h-3.5" />
               <h2 class="text-xs">{{ $t('servers.title') }}</h2>
-              <span class="text-xs text-(--color-text-muted)"
-                >({{ selectionStore.selectedServers.length }})</span
-              >
+              <span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedServers.length }})</span>
             </div>
             <CoreAppButton
               :icon="icons.xCircle"
@@ -74,9 +70,7 @@
             <div class="flex items-center gap-1.5 text-xs font-medium">
               <CoreAppIcon :name="icons.client" class="w-3.5 h-3.5" />
               <h2 class="text-xs">{{ $t('clients.title') }}</h2>
-              <span class="text-xs text-(--color-text-muted)"
-                >({{ selectionStore.selectedClients.length }})</span
-              >
+              <span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedClients.length }})</span>
             </div>
             <CoreAppButton
               :icon="icons.xCircle"
@@ -113,9 +107,7 @@
             <div class="flex items-center gap-1.5 text-xs font-medium">
               <CoreAppIcon :name="icons.product" class="w-3.5 h-3.5" />
               <h2 class="text-xs">{{ $t('products.title') }}</h2>
-              <span class="text-xs text-(--color-text-muted)"
-                >({{ selectionStore.selectedProducts.length }})</span
-              >
+              <span class="text-xs text-(--color-text-muted)">({{ selectionStore.selectedProducts.length }})</span>
             </div>
             <CoreAppButton
               :icon="icons.xCircle"
@@ -170,10 +162,7 @@
   const hasAny = computed(() => selectionStore.hasAnySelection)
 
   const totalCount = computed(
-    () =>
-      selectionStore.selectedServers.length +
-      selectionStore.selectedClients.length +
-      selectionStore.selectedProducts.length
+    () => selectionStore.selectedServers.length + selectionStore.selectedClients.length + selectionStore.selectedProducts.length,
   )
 
   function clearServers() {

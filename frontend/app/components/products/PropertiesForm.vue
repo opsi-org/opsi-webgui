@@ -13,11 +13,7 @@
       <CoreAppLoadingSpinner />
     </div>
 
-    <CoreAppEmptyState
-      v-else-if="properties.length === 0"
-      :icon="icons.config"
-      :message="String($t('products.propertiesNone'))"
-    />
+    <CoreAppEmptyState v-else-if="properties.length === 0" :icon="icons.config" :message="String($t('products.propertiesNone'))" />
 
     <template v-else>
       <CoreAppCard
@@ -32,11 +28,7 @@
             v-for="prop in visibleProperties"
             :key="prop.propertyId"
             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-0.5 gap-x-1 min-h-8 transition-colors"
-            :class="
-              changedPropertyIds.has(prop.propertyId)
-                ? 'bg-(--color-changed-bg)'
-                : 'hover:bg-(--color-surface-hover)'
-            "
+            :class="changedPropertyIds.has(prop.propertyId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)'"
           >
             <div class="min-w-0 md:w-2/5 flex items-center gap-1.5">
               <CoreAppTooltipTable :rows="getPropertyTooltipRows(prop)">
@@ -50,10 +42,7 @@
                   {{ prop.propertyId }}
                 </span>
               </CoreAppTooltipTable>
-              <span
-                v-if="changedPropertyIds.has(prop.propertyId)"
-                class="inline-flex items-center text-(--color-changed-text)"
-              >
+              <span v-if="changedPropertyIds.has(prop.propertyId)" class="inline-flex items-center text-(--color-changed-text)">
                 <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
               </span>
             </div>
@@ -69,9 +58,7 @@
                 :password="isPasswordProperty(prop.propertyId)"
                 :mixed="isMixedValue(prop)"
                 :aria-label="prop.propertyId"
-                @update:model-value="
-                  (v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)
-                "
+                @update:model-value="(v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)"
               />
 
               <CoreAppButton
@@ -85,14 +72,8 @@
               />
             </div>
           </div>
-          <div
-            v-if="hasMore"
-            ref="loadMoreSentinel"
-            class="flex items-center justify-center py-1.5"
-          >
-            <span class="text-xs text-(--color-text-muted) animate-pulse"
-              >{{ $t('common.loading') }}…</span
-            >
+          <div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-1.5">
+            <span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('common.loading') }}…</span>
           </div>
         </div>
       </CoreAppCard>
@@ -128,10 +109,7 @@
   const filteredProperties = computed(() => {
     const q = (props.externalFilter || '').trim().toLowerCase()
     if (!q) return props.properties
-    return props.properties.filter(
-      (p) =>
-        p.propertyId.toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q)
-    )
+    return props.properties.filter((p) => p.propertyId.toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q))
   })
 
   const RENDER_BATCH = 40
@@ -144,15 +122,12 @@
     () => filteredProperties.value.length,
     () => {
       renderLimit.value = RENDER_BATCH
-    }
+    },
   )
 
   useIntersectionObserver(loadMoreSentinel, ([entry]) => {
     if (entry?.isIntersecting && hasMore.value) {
-      renderLimit.value = Math.min(
-        renderLimit.value + RENDER_BATCH,
-        filteredProperties.value.length
-      )
+      renderLimit.value = Math.min(renderLimit.value + RENDER_BATCH, filteredProperties.value.length)
     }
   })
 
@@ -175,26 +150,21 @@
     return ['password', 'secret', 'passwd'].some((marker) => id.includes(marker))
   }
 
-  function getPropertyTooltipRows(
-    prop: EditableProductProperty
-  ): Array<{ key: string; value: string }> {
+  function getPropertyTooltipRows(prop: EditableProductProperty): Array<{ key: string; value: string }> {
     const rows: Array<{ key: string; value: string }> = []
     rows.push({
       key: String($t('common.type')),
       value: `${prop.type === 'BoolProductProperty' ? 'Bool' : 'Text'}${prop.multiValue ? ' (multi)' : ''}${prop.editable ? ' (editable)' : ''}`,
     })
-    if (prop.description)
-      rows.push({ key: String($t('common.description')), value: prop.description })
+    if (prop.description) rows.push({ key: String($t('common.description')), value: prop.description })
     if (prop.default && prop.default.length > 0) {
       rows.push({ key: String($t('common.default')), value: prop.default.join(', ') })
     }
     if (prop.allValues && prop.allValues.length > 0) {
       rows.push({ key: String($t('common.values')), value: prop.allValues.map(String).join(', ') })
     }
-    if (prop.anyDepotDifferentFromDefault)
-      rows.push({ key: String($t('common.note')), value: String($t('products.depotDiffNote')) })
-    if (prop.anyClientDifferentFromDepot)
-      rows.push({ key: String($t('common.note')), value: String($t('products.clientDiffNote')) })
+    if (prop.anyDepotDifferentFromDefault) rows.push({ key: String($t('common.note')), value: String($t('products.depotDiffNote')) })
+    if (prop.anyClientDifferentFromDepot) rows.push({ key: String($t('common.note')), value: String($t('products.clientDiffNote')) })
     return rows
   }
 

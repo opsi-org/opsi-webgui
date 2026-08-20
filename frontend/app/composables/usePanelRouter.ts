@@ -65,13 +65,7 @@ export function usePanelRouter(options: PanelRouterOptions) {
   }
 
   function clearPanelQuery() {
-    const keysToRemove = new Set([
-      options.entityQueryKey,
-      'view',
-      'panelType',
-      'configType',
-      ...(options.additionalQueryKeys || []),
-    ])
+    const keysToRemove = new Set([options.entityQueryKey, 'view', 'panelType', 'configType', ...(options.additionalQueryKeys || [])])
     const rest: Record<string, string> = {}
     for (const [k, v] of Object.entries(route.query)) {
       if (!keysToRemove.has(k) && v != null) rest[k] = String(v)

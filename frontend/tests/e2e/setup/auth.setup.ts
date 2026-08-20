@@ -9,10 +9,7 @@ import fs from 'node:fs'
 const TEST_USER = process.env.TEST_USER || 'adminuser'
 const TEST_PASSWORD = process.env.TEST_PASSWORD || 'adminuser'
 const baseURL = process.env.BASE_URL || 'https://localhost:3000/addons/webgui/app'
-const TEST_SESSION_EXPIRY_SEC = Math.max(
-  Number(process.env.TEST_SESSION_EXPIRY_SEC || '10800'),
-  1800
-)
+const TEST_SESSION_EXPIRY_SEC = Math.max(Number(process.env.TEST_SESSION_EXPIRY_SEC || '10800'), 1800)
 
 export function authFileFor(browserName: 'chromium' | 'firefox'): string {
   return path.resolve(process.cwd(), `test-results/.auth/${browserName}.json`)
@@ -41,12 +38,10 @@ async function extendSessionLifetime(page: import('@playwright/test').Page) {
       })
 
       if (!response.ok) {
-        throw new Error(
-          `Failed to extend session lifetime: ${response.status} ${response.statusText}`
-        )
+        throw new Error(`Failed to extend session lifetime: ${response.status} ${response.statusText}`)
       }
     },
-    { expiry: TEST_SESSION_EXPIRY_SEC }
+    { expiry: TEST_SESSION_EXPIRY_SEC },
   )
 }
 
@@ -69,7 +64,7 @@ async function loginAndStore(browserName: 'chromium' | 'firefox') {
   await passwordInput.waitFor({ state: 'visible', timeout: 30000 })
   const usernameInput = page
     .locator(
-      '#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]'
+      '#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]',
     )
     .first()
 

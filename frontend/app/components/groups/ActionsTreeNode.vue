@@ -12,19 +12,12 @@
     <div
       :class="[
         'flex items-center gap-1 px-1.5 py-1 rounded transition-colors group/node',
-        isSelected
-          ? 'bg-primary/8 border border-primary/25 shadow-sm'
-          : 'hover:bg-(--color-surface-hover)',
+        isSelected ? 'bg-primary/8 border border-primary/25 shadow-sm' : 'hover:bg-(--color-surface-hover)',
       ]"
       :style="{ paddingLeft: `${indentPx}px` }"
     >
       <!-- Tree connector lines -->
-      <span
-        v-for="i in treeDepth"
-        :key="i"
-        class="tree-guide-line"
-        :style="{ left: `${8 + (i - 1) * 16}px` }"
-      />
+      <span v-for="i in treeDepth" :key="i" class="tree-guide-line" :style="{ left: `${8 + (i - 1) * 16}px` }" />
       <CoreAppButton
         v-if="hasChildren"
         variant="ghost"
@@ -56,24 +49,12 @@
         <CoreAppIcon
           :name="group.isSpecial ? icons.group : hasChildren ? icons.group : icons.group"
           class="w-3.5 h-3.5 shrink-0 transition-colors"
-          :class="
-            isSelected
-              ? 'text-(--color-primary)'
-              : group.isSpecial
-                ? 'text-(--color-text-muted)'
-                : 'text-(--color-text)'
-          "
+          :class="isSelected ? 'text-(--color-primary)' : group.isSpecial ? 'text-(--color-text-muted)' : 'text-(--color-text)'"
         />
-        <CoreAppTooltip
-          v-if="group.label === 'not_assigned'"
-          :text="$t('clients.directoryNotAssigned')"
-        >
+        <CoreAppTooltip v-if="group.label === 'not_assigned'" :text="$t('clients.directoryNotAssigned')">
           <span
             class="text-xs flex-1 truncate transition-colors cursor-help"
-            :class="[
-              isSelected ? 'font-medium text-(--color-text)' : '',
-              group.isSpecial ? 'text-(--color-text-muted) italic' : '',
-            ]"
+            :class="[isSelected ? 'font-medium text-(--color-text)' : '', group.isSpecial ? 'text-(--color-text-muted) italic' : '']"
           >
             {{ group.label }}
           </span>
@@ -81,10 +62,7 @@
         <span
           v-else
           class="text-xs flex-1 truncate transition-colors"
-          :class="[
-            isSelected ? 'font-medium text-(--color-text)' : '',
-            group.isSpecial ? 'text-(--color-text-muted) italic' : '',
-          ]"
+          :class="[isSelected ? 'font-medium text-(--color-text)' : '', group.isSpecial ? 'text-(--color-text-muted) italic' : '']"
         >
           {{ group.label }}
         </span>
@@ -104,20 +82,10 @@
           :disabled="groupDisabled"
           @click="$emit('create-subgroup', group.id)"
         >
-          <CoreAppStackedIcons
-            :primary-icon="icons.group"
-            :secondary-icon="icons.addBold"
-            size="xs"
-            badge
-            badge-color="none"
-          />
+          <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="xs" badge badge-color="none" />
         </CoreAppButton>
       </div>
-      <div
-        v-else-if="!group.isSpecial"
-        class="opacity-0 group-hover/node:opacity-100 flex gap-1 transition-opacity"
-        @click.stop
-      >
+      <div v-else-if="!group.isSpecial" class="opacity-0 group-hover/node:opacity-100 flex gap-1 transition-opacity" @click.stop>
         <CoreAppButton
           :icon="icons.add"
           size="xs"
@@ -139,13 +107,7 @@
           :disabled="groupDisabled"
           @click="$emit('create-subgroup', group.id)"
         >
-          <CoreAppStackedIcons
-            :primary-icon="icons.group"
-            :secondary-icon="icons.addBold"
-            size="xs"
-            badge
-            badge-color="none"
-          />
+          <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="xs" badge badge-color="none" />
         </CoreAppButton>
         <CoreAppButton
           :icon="icons.pencil"
@@ -199,8 +161,7 @@
           :style="{ paddingLeft: `${(props.group.level || 0) * 16 + 24}px` }"
           @click="childrenLimit += CHILDREN_PAGE_SIZE"
         >
-          {{ $t('common.showMore') }} ({{ (group.children?.length || 0) - childrenLimit }}
-          {{ $t('common.remaining') }})
+          {{ $t('common.showMore') }} ({{ (group.children?.length || 0) - childrenLimit }} {{ $t('common.remaining') }})
         </CoreAppButton>
       </div>
     </Transition>

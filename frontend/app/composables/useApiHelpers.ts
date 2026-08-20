@@ -26,12 +26,7 @@ export function useApiHelpers() {
     try {
       const qs = params
         ? '?' +
-        new URLSearchParams(
-          Object.entries(params).map(([k, v]) => [
-            k,
-            typeof v === 'object' ? JSON.stringify(v) : String(v),
-          ])
-        ).toString()
+          new URLSearchParams(Object.entries(params).map(([k, v]) => [k, typeof v === 'object' ? JSON.stringify(v) : String(v)])).toString()
         : ''
       const response = await $customFetch.raw<T>(url + qs)
       const total = response.headers.get('X-Total-Count')
@@ -101,10 +96,7 @@ export function useApiHelpers() {
 
   const callLogout = () => apiPost('/auth/logout')
 
-  const getUserSettings = () =>
-    apiGet<{ username: string; expertmode: boolean; recentactivityexpiry: number }>(
-      '/user/getsettings'
-    )
+  const getUserSettings = () => apiGet<{ username: string; expertmode: boolean; recentactivityexpiry: number }>('/user/getsettings')
 
   const getUserConfiguration = () =>
     apiGet<{
@@ -146,13 +138,12 @@ export function useApiHelpers() {
   const getDepotClientCounts = (selectedDepots?: string[]) =>
     apiGet<Array<{ depotId: string; clientCount: number }>>(
       '/opsidata/depots/client-counts',
-      selectedDepots?.length ? { selectedDepots: `[${selectedDepots.join(',')}]` } : undefined
+      selectedDepots?.length ? { selectedDepots: `[${selectedDepots.join(',')}]` } : undefined,
     )
 
   const getDiagnosticData = () => apiGet<Record<string, unknown>>('/opsidata/server/diagnostic')
 
-  const getServerAttributes = (serverId: string) =>
-    apiGet<Array<Record<string, unknown>>>(`/opsidata/servers?servers=[${serverId}]`)
+  const getServerAttributes = (serverId: string) => apiGet<Array<Record<string, unknown>>>(`/opsidata/servers?servers=[${serverId}]`)
 
   const updateServerAttributes = (serverId: string, attrs: Record<string, unknown>) =>
     apiPut<Record<string, unknown>>(`/opsidata/servers/${serverId}`, attrs)
@@ -185,8 +176,7 @@ export function useApiHelpers() {
       }>
     >('/opsidata/clients', params)
 
-  const getClientIds = (servers: string[]) =>
-    apiGet<string[]>(`/opsidata/depots/clients?selectedDepots=[${servers.join(',')}]`)
+  const getClientIds = (servers: string[]) => apiGet<string[]>(`/opsidata/depots/clients?selectedDepots=[${servers.join(',')}]`)
 
   const createClient = (request: {
     client: {
@@ -208,32 +198,25 @@ export function useApiHelpers() {
   const cloneClient = (
     clientId: string,
     target: { hostId: string; ipAddress?: string; hardwareAddress?: string; systemUUID?: string },
-    options: { configs?: boolean; products?: boolean; productProperties?: boolean }
+    options: { configs?: boolean; products?: boolean; productProperties?: boolean },
   ) => apiPost<void>(`/opsidata/clients/${clientId}/clone`, { target, options })
 
   const updateClientAttributes = (clientId: string, attrs: Record<string, unknown>) =>
     apiPut<Record<string, unknown>>(`/opsidata/clients/${clientId}`, attrs)
 
-  const getHostAttributes = (hostId: string) =>
-    apiGet<Array<Record<string, unknown>>>(`/opsidata/hosts?hosts=${hostId}`)
+  const getHostAttributes = (hostId: string) => apiGet<Array<Record<string, unknown>>>(`/opsidata/hosts?hosts=${hostId}`)
 
   const checkClientReachable = (clientIds: string[]) =>
     apiGet<Record<string, boolean>>('/opsidata/clients/reachable', {
       selectedClients: `[${clientIds.join(',')}]`,
     })
 
-  const deployClientAgent = (agentData: {
-    clients: string[]
-    username: string
-    password: string
-    type: 'windows' | 'linux' | 'mac'
-  }) => apiPost<void>('/opsidata/clients/deploy', agentData)
+  const deployClientAgent = (agentData: { clients: string[]; username: string; password: string; type: 'windows' | 'linux' | 'mac' }) =>
+    apiPost<void>('/opsidata/clients/deploy', agentData)
 
-  const addClientToGroups = (clientId: string, groupIds: string[]) =>
-    apiPost<void>(`/opsidata/clients/${clientId}/groups`, groupIds)
+  const addClientToGroups = (clientId: string, groupIds: string[]) => apiPost<void>(`/opsidata/clients/${clientId}/groups`, groupIds)
 
-  const removeClientFromGroups = (clientId: string, groupIds: string[]) =>
-    apiDelete(`/opsidata/clients/${clientId}/groups`, groupIds)
+  const removeClientFromGroups = (clientId: string, groupIds: string[]) => apiDelete(`/opsidata/clients/${clientId}/groups`, groupIds)
 
   const getClientLogs = (clientId: string, logType: string, params?: Record<string, unknown>) =>
     apiGet<{ content: string; marker: number }>('/opsidata/log', {
@@ -253,11 +236,9 @@ export function useApiHelpers() {
       params,
     })
 
-  const triggerOnDemand = (clientIds: string[]) =>
-    opsiclientdRpc(clientIds, 'fireEvent', ['on_demand'])
+  const triggerOnDemand = (clientIds: string[]) => opsiclientdRpc(clientIds, 'fireEvent', ['on_demand'])
 
-  const sendNotification = (clientIds: string[], message: string) =>
-    opsiclientdRpc(clientIds, 'showPopup', [message])
+  const sendNotification = (clientIds: string[], message: string) => opsiclientdRpc(clientIds, 'showPopup', [message])
 
   const rebootClients = (clientIds: string[]) => opsiclientdRpc(clientIds, 'reboot', [])
 
@@ -285,10 +266,7 @@ export function useApiHelpers() {
       selectedDepots: `[${selectedServers.join(',')}]`,
     }
     if (productType) params.productType = productType
-    return apiGet<Array<{ productId: string;[k: string]: unknown }>>(
-      '/opsidata/depots/products',
-      params
-    )
+    return apiGet<Array<{ productId: string; [k: string]: unknown }>>('/opsidata/depots/products', params)
   }
 
   const setClientProductActions = (data: {
@@ -299,18 +277,13 @@ export function useApiHelpers() {
     actionResult?: string
   }) => apiPost<void>('/opsidata/clients/products', data)
 
-  const getProductIcons = () =>
-    apiGet<{ result: Record<string, unknown> }>('/opsidata/producticons')
+  const getProductIcons = () => apiGet<{ result: Record<string, unknown> }>('/opsidata/producticons')
 
   const getInstallationStatuses = () => apiGet<string[]>('/opsidata/products/installation-status')
 
   const getActionResults = () => apiGet<string[]>('/opsidata/products/action-result')
 
-  const processActionRequests = (
-    clientIds: string[],
-    productIds?: string[],
-    visibility?: '' | 'visible' | 'hidden'
-  ) =>
+  const processActionRequests = (clientIds: string[], productIds?: string[], visibility?: '' | 'visible' | 'hidden') =>
     apiPost<Record<string, Record<string, unknown>>>('/command/process_action', {
       client_ids: clientIds,
       product_ids: productIds,
@@ -327,13 +300,9 @@ export function useApiHelpers() {
     selectedDepots: string[] | null
   }) => apiPost<Record<string, unknown>>('/opsidata/clients/action', params)
 
-  const getProductProperties = (
-    productId: string,
-    params?: { selectedClients?: string[]; selectedServers?: string[] }
-  ) => {
+  const getProductProperties = (productId: string, params?: { selectedClients?: string[]; selectedServers?: string[] }) => {
     const qp: Record<string, unknown> = {}
-    if (params?.selectedClients?.length)
-      qp.selectedClients = `[${params.selectedClients.join(',')}]`
+    if (params?.selectedClients?.length) qp.selectedClients = `[${params.selectedClients.join(',')}]`
     if (params?.selectedServers?.length) qp.selectedDepots = `[${params.selectedServers.join(',')}]`
     return apiGet<{
       properties: Record<string, unknown>
@@ -350,17 +319,12 @@ export function useApiHelpers() {
       clientIds?: string[]
       depotIds?: string[]
       properties: Record<string, string | boolean | string[]>
-    }
-  ) =>
-    apiPost<{ status: number; data: Record<string, unknown> }>(
-      `/opsidata/products/${productId}/properties`,
-      data
-    )
+    },
+  ) => apiPost<{ status: number; data: Record<string, unknown> }>(`/opsidata/products/${productId}/properties`, data)
 
   const getProductDependencies = (productId: string, params?: { selectedClients?: string[] }) => {
     const qp: Record<string, unknown> = {}
-    if (params?.selectedClients?.length)
-      qp.selectedClients = `[${params.selectedClients.join(',')}]`
+    if (params?.selectedClients?.length) qp.selectedClients = `[${params.selectedClients.join(',')}]`
     return apiGet<{
       dependencies: Array<{
         productId: string
@@ -384,8 +348,7 @@ export function useApiHelpers() {
   // Groups
   // ---------------------------------------------------------------------------
 
-  const getHostGroups = (params?: Record<string, unknown>) =>
-    apiGet<Record<string, unknown>>('/opsidata/hosts/groups', params)
+  const getHostGroups = (params?: Record<string, unknown>) => apiGet<Record<string, unknown>>('/opsidata/hosts/groups', params)
 
   const getHostGroupsDynamic = (params: {
     parentGroup: string
@@ -393,82 +356,56 @@ export function useApiHelpers() {
     selectedDepots?: string
     selectedClients?: string
     recursiveMembers?: boolean
-  }) =>
-    apiGet<{ groups: Record<string, unknown> }>(
-      '/opsidata/hosts/groups-dynamic',
-      params as Record<string, unknown>
-    )
+  }) => apiGet<{ groups: Record<string, unknown> }>('/opsidata/hosts/groups-dynamic', params as Record<string, unknown>)
 
   const getHostGroupMembersRecursive = (params: { parentGroup: string; selectedDepots?: string }) =>
-    apiGet<{ groups: Record<string, unknown>; members?: string[] }>(
-      '/opsidata/hosts/groups-dynamic',
-      { ...params, recursiveMembers: true, withClients: true }
-    )
+    apiGet<{ groups: Record<string, unknown>; members?: string[] }>('/opsidata/hosts/groups-dynamic', {
+      ...params,
+      recursiveMembers: true,
+      withClients: true,
+    })
 
   const getProductGroups = (params?: Record<string, unknown>) =>
     apiGet<{ groups?: Record<string, unknown> }>('/opsidata/products/groups', params)
 
-  const getProductGroupsDynamic = (params: {
-    parentGroup: string
-    withProducts?: boolean
-    recursiveMembers?: boolean
-  }) =>
-    apiGet<{ groups: Record<string, unknown> }>(
-      '/opsidata/products/groups-dynamic',
-      params as Record<string, unknown>
-    )
+  const getProductGroupsDynamic = (params: { parentGroup: string; withProducts?: boolean; recursiveMembers?: boolean }) =>
+    apiGet<{ groups: Record<string, unknown> }>('/opsidata/products/groups-dynamic', params as Record<string, unknown>)
 
   const getProductGroupMembersRecursive = (params: { parentGroup: string }) =>
-    apiGet<{ groups: Record<string, unknown>; members?: string[] }>(
-      '/opsidata/products/groups-dynamic',
-      { ...params, recursiveMembers: true, withProducts: true }
-    )
+    apiGet<{ groups: Record<string, unknown>; members?: string[] }>('/opsidata/products/groups-dynamic', {
+      ...params,
+      recursiveMembers: true,
+      withProducts: true,
+    })
 
   const getHostGroupIds = () => apiGet<string[]>('/opsidata/hosts/groups/id')
 
-  const createHostGroup = (groupData: {
-    groupId: string
-    parentGroupId?: string
-    description?: string
-    notes?: string
-  }) => apiPost('/opsidata/hosts/groups', groupData)
+  const createHostGroup = (groupData: { groupId: string; parentGroupId?: string; description?: string; notes?: string }) =>
+    apiPost('/opsidata/hosts/groups', groupData)
 
-  const createProductGroup = (groupData: {
-    groupId: string
-    parentGroupId?: string
-    description?: string
-    notes?: string
-  }) => apiPost('/opsidata/products/groups', groupData)
+  const createProductGroup = (groupData: { groupId: string; parentGroupId?: string; description?: string; notes?: string }) =>
+    apiPost('/opsidata/products/groups', groupData)
 
-  const updateHostGroup = (
-    groupId: string,
-    updateData: { parent?: string; description?: string; note?: string }
-  ) => apiPut(`/opsidata/hosts/groups/${groupId}`, updateData)
+  const updateHostGroup = (groupId: string, updateData: { parent?: string; description?: string; note?: string }) =>
+    apiPut(`/opsidata/hosts/groups/${groupId}`, updateData)
 
-  const updateProductGroup = (
-    groupId: string,
-    updateData: { parent?: string; description?: string; note?: string }
-  ) => apiPut(`/opsidata/products/groups/${groupId}`, updateData)
+  const updateProductGroup = (groupId: string, updateData: { parent?: string; description?: string; note?: string }) =>
+    apiPut(`/opsidata/products/groups/${groupId}`, updateData)
 
   const deleteHostGroup = (groupId: string) => apiDelete(`/opsidata/hosts/groups/${groupId}`)
 
   // TODO: Backend bug: product group deletion uses GET instead of DELETE
   const deleteProductGroup = (groupId: string) => apiGet(`/opsidata/products/groups/${groupId}`)
 
-  const addClientsToGroup = (groupId: string, clientIds: string[]) =>
-    apiPost(`/opsidata/hosts/groups/${groupId}/clients`, clientIds)
+  const addClientsToGroup = (groupId: string, clientIds: string[]) => apiPost(`/opsidata/hosts/groups/${groupId}/clients`, clientIds)
 
-  const removeClientsFromGroup = (groupId: string) =>
-    apiDelete(`/opsidata/hosts/groups/${groupId}/clients`)
+  const removeClientsFromGroup = (groupId: string) => apiDelete(`/opsidata/hosts/groups/${groupId}/clients`)
 
-  const addProductsToGroup = (groupId: string, productIds: string[]) =>
-    apiPost(`/opsidata/products/groups/${groupId}/products`, productIds)
+  const addProductsToGroup = (groupId: string, productIds: string[]) => apiPost(`/opsidata/products/groups/${groupId}/products`, productIds)
 
-  const removeProductsFromGroup = (groupId: string) =>
-    apiDelete(`/opsidata/products/groups/${groupId}/products`)
+  const removeProductsFromGroup = (groupId: string) => apiDelete(`/opsidata/products/groups/${groupId}/products`)
 
-  const removeProductFromGroup = (groupId: string, productId: string) =>
-    apiDelete(`/opsidata/products/groups/${groupId}/${productId}`)
+  const removeProductFromGroup = (groupId: string, productId: string) => apiDelete(`/opsidata/products/groups/${groupId}/${productId}`)
 
   // ---------------------------------------------------------------------------
   // Config
@@ -526,10 +463,7 @@ export function useApiHelpers() {
       >
     >(`/opsidata/config/objects/${hostId}`)
 
-  const saveHostConfigState = (
-    hostId: string,
-    configs: Array<{ configId: string; value: unknown }>
-  ) =>
+  const saveHostConfigState = (hostId: string, configs: Array<{ configId: string; value: unknown }>) =>
     apiPost<string>('/opsidata/config/values/objects', {
       objectIds: [hostId],
       configs: configs.map((c) => ({ configId: c.configId, value: c.value })),
@@ -552,8 +486,7 @@ export function useApiHelpers() {
   // Admin / Maintenance
   // ---------------------------------------------------------------------------
 
-  const getBlockedClients = () =>
-    apiGet<string[] | Record<string, string>>('/opsidata/blocked-clients')
+  const getBlockedClients = () => apiGet<string[] | Record<string, string>>('/opsidata/blocked-clients')
 
   const unblockClient = (clientId: string) => apiPost<void>(`/opsidata/clients/${clientId}/unblock`)
 
@@ -561,28 +494,17 @@ export function useApiHelpers() {
 
   const getLockedProducts = () => apiGet<Record<string, unknown>>('/opsidata/locked-products')
 
-  const unlockProduct = (productId: string) =>
-    apiPost<void>(`/opsidata/products/${productId}/unlock`)
+  const unlockProduct = (productId: string) => apiPost<void>(`/opsidata/products/${productId}/unlock`)
 
   const unlockAllProducts = () => apiPost<void>('/opsidata/products/unlock')
 
-  const getAppState = () =>
-    apiGet<{ type: 'normal' | 'maintenance'; address_exceptions: string[]; retry_after: number }>(
-      '/app-state'
-    )
+  const getAppState = () => apiGet<{ type: 'normal' | 'maintenance'; address_exceptions: string[]; retry_after: number }>('/app-state')
 
-  const setAppState = (state: {
-    type: string
-    address_exceptions?: string[]
-    retry_after?: number
-  }) => apiPost<{ type: string }>('/app-state', state)
+  const setAppState = (state: { type: string; address_exceptions?: string[]; retry_after?: number }) =>
+    apiPost<{ type: string }>('/app-state', state)
 
-  const createBackup = (options: {
-    config_files?: boolean
-    redis_data?: boolean
-    maintenance_mode?: boolean
-    password?: string
-  }) => apiPost<string>('/backup/create', options)
+  const createBackup = (options: { config_files?: boolean; redis_data?: boolean; maintenance_mode?: boolean; password?: string }) =>
+    apiPost<string>('/backup/create', options)
 
   const restoreBackup = (options: {
     file_id: string

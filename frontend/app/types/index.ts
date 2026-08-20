@@ -203,13 +203,7 @@ export interface GroupTreeNodeData {
   level?: number
 }
 
-export type GroupAction =
-  | 'addSubgroup'
-  | 'edit'
-  | 'delete'
-  | 'manageMembers'
-  | 'removeAllMembers'
-  | 'copy'
+export type GroupAction = 'addSubgroup' | 'edit' | 'delete' | 'manageMembers' | 'removeAllMembers' | 'copy'
 
 export interface GroupFormData {
   groupId: string

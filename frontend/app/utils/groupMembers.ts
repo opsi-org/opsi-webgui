@@ -11,10 +11,7 @@ function normalizeMemberId(raw: unknown): string | null {
   return id
 }
 
-export function extractRecursiveMembersFromDynamicResponse(payload: {
-  members?: unknown
-  groups?: Record<string, unknown>
-}): string[] {
+export function extractRecursiveMembersFromDynamicResponse(payload: { members?: unknown; groups?: Record<string, unknown> }): string[] {
   const collected: string[] = []
 
   if (Array.isArray(payload.members)) {

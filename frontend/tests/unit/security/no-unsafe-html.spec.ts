@@ -39,7 +39,7 @@ describe('no unsafe v-html (XSS guard)', () => {
     }
     expect(
       offenders,
-      `v-html found in: ${offenders.join(', ')}. Render text with {{ }} to keep auto-escaping, or add an audited entry to ALLOWLIST.`
+      `v-html found in: ${offenders.join(', ')}. Render text with {{ }} to keep auto-escaping, or add an audited entry to ALLOWLIST.`,
     ).toEqual([])
   })
 })

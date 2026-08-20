@@ -30,7 +30,7 @@
     }>(),
     {
       error: null,
-    }
+    },
   )
 
   defineEmits<{ (e: 'close'): void }>()

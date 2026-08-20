@@ -17,33 +17,16 @@
               v-for="col in columns"
               :key="col.key"
               class="px-2 py-1 font-medium"
-              :class="[
-                col.class,
-                col.sortable ? 'cursor-pointer select-none hover:text-(--color-text)' : '',
-              ]"
+              :class="[col.class, col.sortable ? 'cursor-pointer select-none hover:text-(--color-text)' : '']"
               :style="col.width ? { width: col.width } : {}"
-              :aria-sort="
-                col.sortable
-                  ? sortKey === col.key
-                    ? sortDir === 'asc'
-                      ? 'ascending'
-                      : 'descending'
-                    : 'none'
-                  : undefined
-              "
+              :aria-sort="col.sortable ? (sortKey === col.key ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none') : undefined"
               @click="col.sortable && emit('sort', col.key)"
             >
               <span class="inline-flex items-center gap-1">
                 {{ col.label }}
                 <CoreAppIcon
                   v-if="col.sortable"
-                  :name="
-                    sortKey === col.key
-                      ? sortDir === 'asc'
-                        ? icons.sortAsc
-                        : icons.sortDesc
-                      : icons.sort
-                  "
+                  :name="sortKey === col.key ? (sortDir === 'asc' ? icons.sortAsc : icons.sortDesc) : icons.sort"
                   :class="['w-3 h-3', sortKey === col.key ? '' : 'opacity-30']"
                 />
               </span>
@@ -92,4 +75,3 @@
     return { maxHeight: props.maxHeight }
   })
 </script>
-

@@ -141,11 +141,7 @@
     }
   })
 
-  const badgeRingClass = computed(() =>
-    props.badgeColor === 'none' ? 'ring-(--color-border)' : 'ring-(--color-surface)'
-  )
+  const badgeRingClass = computed(() => (props.badgeColor === 'none' ? 'ring-(--color-border)' : 'ring-(--color-surface)'))
 
-  const badgeIconColorClass = computed(() =>
-    props.badgeColor === 'none' ? 'text-(--color-text)' : 'text-white'
-  )
+  const badgeIconColorClass = computed(() => (props.badgeColor === 'none' ? 'text-(--color-text)' : 'text-white'))
 </script>

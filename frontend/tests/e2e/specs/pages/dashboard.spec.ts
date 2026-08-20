@@ -54,9 +54,7 @@ test.describe('Dashboard', () => {
         },
       ],
       functional: async (p) => {
-        const serverCard = p
-          .locator('.opsi-card, [class*="card"], [data-testid*="card"], main section')
-          .first()
+        const serverCard = p.locator('.opsi-card, [class*="card"], [data-testid*="card"], main section').first()
         await expect(serverCard).toBeVisible({ timeout: 30000 })
 
         await expect(p.getByText(/healthCheck|Health/i).first()).toBeVisible({ timeout: 10000 })
@@ -95,11 +93,7 @@ test.describe('Dashboard', () => {
         const el = document.activeElement as HTMLElement | null
         if (!el || el === document.body) return null
         const role = el.getAttribute('role') || el.tagName.toLowerCase()
-        const label =
-          el.getAttribute('aria-label') ||
-          el.getAttribute('title') ||
-          el.textContent?.trim().slice(0, 40) ||
-          ''
+        const label = el.getAttribute('aria-label') || el.getAttribute('title') || el.textContent?.trim().slice(0, 40) || ''
         return `${role}: ${label}`
       })
       if (info) focusedElements.push(info)
@@ -109,17 +103,11 @@ test.describe('Dashboard', () => {
     // Config server card (role=region), health card (role=button), user card (role=region),
     // system info (role=button), stat cards (role=button), failed clients list (role=region)
     const hasRegionOrButton = focusedElements.some(
-      (el) => el.startsWith('button:') || el.startsWith('region:') || el.includes('role=button')
+      (el) => el.startsWith('button:') || el.startsWith('region:') || el.includes('role=button'),
     )
-    expect(
-      hasRegionOrButton,
-      `No focusable dashboard cards found. Tab stops: ${focusedElements.slice(0, 10).join(' | ')}`
-    ).toBe(true)
+    expect(hasRegionOrButton, `No focusable dashboard cards found. Tab stops: ${focusedElements.slice(0, 10).join(' | ')}`).toBe(true)
 
     // Ensure at least 5 distinct focusable elements (header controls + dashboard cards)
-    expect(
-      focusedElements.length,
-      'Too few keyboard tab stops on dashboard'
-    ).toBeGreaterThanOrEqual(5)
+    expect(focusedElements.length, 'Too few keyboard tab stops on dashboard').toBeGreaterThanOrEqual(5)
   })
 })

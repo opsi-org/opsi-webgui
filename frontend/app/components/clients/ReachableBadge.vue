@@ -27,10 +27,7 @@
         :aria-label="String($t('clients.reachable.is'))"
         @click="$emit('check')"
       >
-        <CoreAppIcon
-          :name="icons.clientReachable"
-          class="w-4 h-4 text-(--color-success-soft-text)"
-        />
+        <CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 text-(--color-success-soft-text)" />
       </button>
     </CoreAppTooltip>
 

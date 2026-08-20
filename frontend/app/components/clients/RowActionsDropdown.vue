@@ -14,11 +14,7 @@
       variant="ghost"
       size="xs"
       :color="activeAction === 'config' ? 'primary' : 'neutral'"
-      :class="
-        activeAction === 'config'
-          ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!'
-          : ''
-      "
+      :class="activeAction === 'config' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
       :aria-label="String($t('config.title'))"
       :title="String($t('config.title'))"
       data-testid="client-row-action-config"
@@ -30,11 +26,7 @@
       variant="ghost"
       size="xs"
       :color="activeAction === 'logs' ? 'primary' : 'neutral'"
-      :class="
-        activeAction === 'logs'
-          ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!'
-          : ''
-      "
+      :class="activeAction === 'logs' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
       :aria-label="String($t('logs.title'))"
       :title="String($t('logs.title'))"
       data-testid="client-row-action-logs"
@@ -46,11 +38,7 @@
       variant="ghost"
       size="xs"
       :color="activeAction === 'clone' ? 'primary' : 'neutral'"
-      :class="
-        activeAction === 'clone'
-          ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!'
-          : ''
-      "
+      :class="activeAction === 'clone' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
       :aria-label="String($t('clients.clone.title'))"
       :title="String($t('clients.clone.title'))"
       @click="emit('open-clone')"
@@ -58,13 +46,7 @@
       data-testid="client-row-action-clone"
     />
 
-    <ClientsQuickActionsDropdown
-      class="ml-0.5"
-      :client-ids="[clientId]"
-      inline
-      show-rename
-      @action-complete="handleActionComplete"
-    />
+    <ClientsQuickActionsDropdown class="ml-0.5" :client-ids="[clientId]" inline show-rename @action-complete="handleActionComplete" />
   </div>
 </template>
 

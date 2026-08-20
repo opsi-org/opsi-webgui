@@ -23,22 +23,10 @@
 
 import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
-import {
-  setTheme,
-  setLocale,
-  applyLocaleCookie,
-  disableAnimations,
-  waitForLoaded,
-  type Theme,
-  type Locale,
-} from '../utils/ui'
+import { setTheme, setLocale, applyLocaleCookie, disableAnimations, waitForLoaded, type Theme, type Locale } from '../utils/ui'
 import { checkA11y } from '../utils/a11y'
 import { inspectA11y } from '../utils/inspector'
-import {
-  checkContrast,
-  captureColorBlindSimulations,
-  checkContrastUnderColorBlindSimulations,
-} from '../utils/contrast'
+import { checkContrast, captureColorBlindSimulations, checkContrastUnderColorBlindSimulations } from '../utils/contrast'
 import { auditScreenReader } from '../utils/screenreader'
 import { viewports } from '../utils/viewports'
 
@@ -52,10 +40,7 @@ const MARKETING_DIR = `${SCREENSHOT_DIR}/marketing`
 
 const COLORBLIND_REVIEW_MODE = process.env.COLORBLIND_REVIEW_MODE || 'auto'
 
-const ALLOWED_MARKETING_SHOTS = new Set([
-  'opsi-webgui-dashboard',
-  'opsi-webgui-clients-with-products',
-])
+const ALLOWED_MARKETING_SHOTS = new Set(['opsi-webgui-dashboard', 'opsi-webgui-clients-with-products'])
 
 /**
  * Regions that change every run and must be masked out of every visual
@@ -162,12 +147,7 @@ async function scrollToRevealAll(page: Page): Promise<void> {
 }
 
 // Helper: navigate once, set locale + theme, disable animations, wait for load.
-async function navigateTo(
-  page: Page,
-  config: UITestConfig,
-  locale: Locale,
-  theme: Theme
-): Promise<void> {
+async function navigateTo(page: Page, config: UITestConfig, locale: Locale, theme: Theme): Promise<void> {
   await page.setViewportSize(viewports['desktop'])
   await applyLocaleCookie(page, locale)
   await page.goto(config.route, { waitUntil: 'load', timeout: 30000 })
@@ -186,7 +166,7 @@ async function navigateTo(
 
     const usernameInput = page
       .locator(
-        '#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]'
+        '#login-username, input[autocomplete="username"], input[aria-label*="user" i], input[placeholder*="user" i], input[placeholder*="benutzer" i]',
       )
       .first()
     const passwordInput = page.locator('#login-password, input[type="password"]').first()
@@ -208,12 +188,9 @@ async function navigateTo(
     await usernameInput.fill(testUser)
     await passwordInput.fill(testPassword)
     await page.locator('button[type="submit"]').first().click()
-    await page.waitForURL(
-      (current) => !/\/login(?:\?|$|\/)/.test(`${current.pathname}${current.search}`),
-      {
-        timeout: 30000,
-      }
-    )
+    await page.waitForURL((current) => !/\/login(?:\?|$|\/)/.test(`${current.pathname}${current.search}`), {
+      timeout: 30000,
+    })
     await page.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => undefined)
   }
 
@@ -274,7 +251,7 @@ async function takeVRScreenshot(page: Page, config: UITestConfig): Promise<void>
 async function runA11yChecks(
   page: Page,
   config: UITestConfig,
-  opts: { inspector?: boolean; colorBlind?: boolean; screenReader?: boolean }
+  opts: { inspector?: boolean; colorBlind?: boolean; screenReader?: boolean },
 ): Promise<void> {
   const exclude = config.a11yExclude ? { exclude: config.a11yExclude } : undefined
   if (!config.skipA11y) {
@@ -395,11 +372,7 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
     await switchTheme(page, 'light')
 
     // Phase 5 (nightly): marketing viewport (only if spec has marketingName)
-    if (
-      browserName === 'chromium' &&
-      config.marketingName &&
-      ALLOWED_MARKETING_SHOTS.has(config.marketingName)
-    ) {
+    if (browserName === 'chromium' && config.marketingName && ALLOWED_MARKETING_SHOTS.has(config.marketingName)) {
       for (const locale of ['de', 'en'] as Locale[]) {
         await applyLocaleCookie(page, locale)
         await page.setViewportSize(viewports['marketing'])

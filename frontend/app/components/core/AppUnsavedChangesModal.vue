@@ -13,14 +13,7 @@
     <div class="inline-flex rounded-md shadow-sm">
       <template v-if="showSaveDiscard">
         <UTooltip :text="$t('common.save')">
-          <UButton
-            :size="size"
-            color="success"
-            variant="solid"
-            class="rounded-r-none"
-            :loading="isSaving"
-            @click="handleQuickSave"
-          >
+          <UButton :size="size" color="success" variant="solid" class="rounded-r-none" :loading="isSaving" @click="handleQuickSave">
             <UIcon :name="icons.check" class="w-3.5 h-3.5" />
           </UButton>
         </UTooltip>
@@ -49,11 +42,7 @@
     </div>
   </template>
 
-  <UModal
-    v-model:open="open"
-    :title="$t('unsaved.changes')"
-    :ui="{ content: 'w-[98vw] max-w-[98vw] h-[92vh] max-h-[92vh]' }"
-  >
+  <UModal v-model:open="open" :title="$t('unsaved.changes')" :ui="{ content: 'w-[98vw] max-w-[98vw] h-[92vh] max-h-[92vh]' }">
     <template #body>
       <div class="flex flex-col gap-3 h-full min-h-0 overflow-hidden">
         <!-- Result alerts inside modal -->
@@ -88,48 +77,34 @@
         <!-- Product changes table -->
         <template v-if="flatChanges.length > 0">
           <div class="flex-1 min-h-0">
-            <CoreAppTable
-              :columns="productChangeColumns"
-              max-height="100%"
-              wrapper-class="h-full min-h-0"
-            >
-            <tr
-              v-for="change in flatChanges"
-              :key="change.key"
-              class="hover:bg-(--color-surface-hover)"
-            >
-              <td class="px-2 py-1 max-w-32 font-medium">
-                <UTooltip :text="change.productId" :delay-duration="300">
-                  <span class="block truncate">{{ change.productId }}</span>
-                </UTooltip>
-              </td>
-              <td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
-                <UTooltip :text="change.label" :delay-duration="300">
-                  <span class="block truncate">{{ change.label }}</span>
-                </UTooltip>
-              </td>
-              <td class="px-2 py-1 max-w-24 text-(--color-text-muted)">
-                <UTooltip :text="String(change.oldValue)" :delay-duration="300">
-                  <span class="block truncate">{{ change.oldValue }}</span>
-                </UTooltip>
-              </td>
-              <td class="px-2 py-1 max-w-24 font-medium">
-                <UTooltip :text="String(change.newValue)" :delay-duration="300">
-                  <span class="block truncate">{{ change.newValue }}</span>
-                </UTooltip>
-              </td>
-              <td class="px-2 py-1 text-center">
-                <UTooltip :text="$t('common.discard')">
-                  <UButton
-                    size="xs"
-                    :icon="icons.x"
-                    color="neutral"
-                    variant="ghost"
-                    @click="change.discard()"
-                  />
-                </UTooltip>
-              </td>
-            </tr>
+            <CoreAppTable :columns="productChangeColumns" max-height="100%" wrapper-class="h-full min-h-0">
+              <tr v-for="change in flatChanges" :key="change.key" class="hover:bg-(--color-surface-hover)">
+                <td class="px-2 py-1 max-w-32 font-medium">
+                  <UTooltip :text="change.productId" :delay-duration="300">
+                    <span class="block truncate">{{ change.productId }}</span>
+                  </UTooltip>
+                </td>
+                <td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
+                  <UTooltip :text="change.label" :delay-duration="300">
+                    <span class="block truncate">{{ change.label }}</span>
+                  </UTooltip>
+                </td>
+                <td class="px-2 py-1 max-w-24 text-(--color-text-muted)">
+                  <UTooltip :text="String(change.oldValue)" :delay-duration="300">
+                    <span class="block truncate">{{ change.oldValue }}</span>
+                  </UTooltip>
+                </td>
+                <td class="px-2 py-1 max-w-24 font-medium">
+                  <UTooltip :text="String(change.newValue)" :delay-duration="300">
+                    <span class="block truncate">{{ change.newValue }}</span>
+                  </UTooltip>
+                </td>
+                <td class="px-2 py-1 text-center">
+                  <UTooltip :text="$t('common.discard')">
+                    <UButton size="xs" :icon="icons.x" color="neutral" variant="ghost" @click="change.discard()" />
+                  </UTooltip>
+                </td>
+              </tr>
             </CoreAppTable>
           </div>
         </template>
@@ -140,51 +115,30 @@
             {{ $t('config.params') }}
           </h5>
           <div class="flex-1 min-h-0">
-          <CoreAppTable
-            :columns="paramChangeColumns"
-            max-height="100%"
-            wrapper-class="h-full min-h-0"
-          >
-            <tr
-              v-for="[key] in configRef?.changedParams"
-              :key="key"
-              class="hover:bg-(--color-surface-hover)"
-            >
-              <td class="px-2 py-1 max-w-40 font-medium">
-                <UTooltip :text="key" :delay-duration="300">
-                  <span class="block truncate">{{ key }}</span>
-                </UTooltip>
-              </td>
-              <td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
-                <UTooltip
-                  :text="fmtVal(configRef?.getOriginalParamValue?.(key))"
-                  :delay-duration="300"
-                >
-                  <span class="block truncate">{{
-                    fmtVal(configRef?.getOriginalParamValue?.(key))
-                  }}</span>
-                </UTooltip>
-              </td>
-              <td class="px-2 py-1 max-w-28 font-medium">
-                <UTooltip :text="fmtVal(configRef?.changedParams?.get(key))" :delay-duration="300">
-                  <span class="block truncate">{{
-                    fmtVal(configRef?.changedParams?.get(key))
-                  }}</span>
-                </UTooltip>
-              </td>
-              <td class="px-2 py-1 text-center">
-                <UTooltip :text="$t('common.discard')">
-                  <UButton
-                    size="xs"
-                    :icon="icons.x"
-                    color="neutral"
-                    variant="ghost"
-                    @click="configRef?.discardSingleParam?.(key)"
-                  />
-                </UTooltip>
-              </td>
-            </tr>
-          </CoreAppTable>
+            <CoreAppTable :columns="paramChangeColumns" max-height="100%" wrapper-class="h-full min-h-0">
+              <tr v-for="[key] in configRef?.changedParams" :key="key" class="hover:bg-(--color-surface-hover)">
+                <td class="px-2 py-1 max-w-40 font-medium">
+                  <UTooltip :text="key" :delay-duration="300">
+                    <span class="block truncate">{{ key }}</span>
+                  </UTooltip>
+                </td>
+                <td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
+                  <UTooltip :text="fmtVal(configRef?.getOriginalParamValue?.(key))" :delay-duration="300">
+                    <span class="block truncate">{{ fmtVal(configRef?.getOriginalParamValue?.(key)) }}</span>
+                  </UTooltip>
+                </td>
+                <td class="px-2 py-1 max-w-28 font-medium">
+                  <UTooltip :text="fmtVal(configRef?.changedParams?.get(key))" :delay-duration="300">
+                    <span class="block truncate">{{ fmtVal(configRef?.changedParams?.get(key)) }}</span>
+                  </UTooltip>
+                </td>
+                <td class="px-2 py-1 text-center">
+                  <UTooltip :text="$t('common.discard')">
+                    <UButton size="xs" :icon="icons.x" color="neutral" variant="ghost" @click="configRef?.discardSingleParam?.(key)" />
+                  </UTooltip>
+                </td>
+              </tr>
+            </CoreAppTable>
           </div>
         </template>
 
@@ -194,51 +148,40 @@
             {{ $t('common.attributes') }}
           </h5>
           <div class="flex-1 min-h-0">
-          <CoreAppTable
-            :columns="attrChangeColumns"
-            max-height="100%"
-            wrapper-class="h-full min-h-0"
-          >
-            <tr
-              v-for="item in configRef?.changedAttributesList"
-              :key="item.key"
-              class="hover:bg-(--color-surface-hover)"
-            >
-              <td class="px-2 py-1 max-w-40 font-medium">
-                <UTooltip :text="item.key" :delay-duration="300">
-                  <span class="block truncate">{{ item.key }}</span>
-                </UTooltip>
-              </td>
-              <td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
-                <UTooltip :text="fmtVal(item.oldValue)" :delay-duration="300">
-                  <span class="block truncate">{{ fmtVal(item.oldValue) }}</span>
-                </UTooltip>
-              </td>
-              <td class="px-2 py-1 max-w-28 font-medium">
-                <UTooltip :text="fmtVal(item.newValue)" :delay-duration="300">
-                  <span class="block truncate">{{ fmtVal(item.newValue) }}</span>
-                </UTooltip>
-              </td>
-              <td class="px-2 py-1 text-center">
-                <UTooltip :text="$t('common.discard')">
-                  <UButton
-                    size="xs"
-                    :icon="icons.x"
-                    color="neutral"
-                    variant="ghost"
-                    @click="configRef?.discardSingleAttribute?.(item.key)"
-                  />
-                </UTooltip>
-              </td>
-            </tr>
-          </CoreAppTable>
+            <CoreAppTable :columns="attrChangeColumns" max-height="100%" wrapper-class="h-full min-h-0">
+              <tr v-for="item in configRef?.changedAttributesList" :key="item.key" class="hover:bg-(--color-surface-hover)">
+                <td class="px-2 py-1 max-w-40 font-medium">
+                  <UTooltip :text="item.key" :delay-duration="300">
+                    <span class="block truncate">{{ item.key }}</span>
+                  </UTooltip>
+                </td>
+                <td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
+                  <UTooltip :text="fmtVal(item.oldValue)" :delay-duration="300">
+                    <span class="block truncate">{{ fmtVal(item.oldValue) }}</span>
+                  </UTooltip>
+                </td>
+                <td class="px-2 py-1 max-w-28 font-medium">
+                  <UTooltip :text="fmtVal(item.newValue)" :delay-duration="300">
+                    <span class="block truncate">{{ fmtVal(item.newValue) }}</span>
+                  </UTooltip>
+                </td>
+                <td class="px-2 py-1 text-center">
+                  <UTooltip :text="$t('common.discard')">
+                    <UButton
+                      size="xs"
+                      :icon="icons.x"
+                      color="neutral"
+                      variant="ghost"
+                      @click="configRef?.discardSingleAttribute?.(item.key)"
+                    />
+                  </UTooltip>
+                </td>
+              </tr>
+            </CoreAppTable>
           </div>
         </template>
 
-        <div
-          v-if="totalChangesCount === 0 && !saveResult"
-          class="py-6 text-center text-sm text-(--color-text-muted)"
-        >
+        <div v-if="totalChangesCount === 0 && !saveResult" class="py-6 text-center text-sm text-(--color-text-muted)">
           {{ $t('common.noResults') }}
         </div>
       </div>
@@ -246,10 +189,7 @@
     <template #footer>
       <div class="w-full space-y-3">
         <!-- Save & Process options (products mode) -->
-        <div
-          v-if="showProcessOptions && totalChangesCount > 0"
-          class="border border-(--color-border) rounded-lg overflow-hidden"
-        >
+        <div v-if="showProcessOptions && totalChangesCount > 0" class="border border-(--color-border) rounded-lg overflow-hidden">
           <div class="bg-(--color-surface) px-3 py-1.5 flex items-center gap-2">
             <UIcon :name="icons.onDemand" class="w-4 h-4 text-(--color-text-muted)" />
             <span class="flex items-center gap-2 cursor-pointer">
@@ -260,16 +200,9 @@
           <template v-if="processAfterSave">
             <div class="px-3 py-2 space-y-2">
               <div class="space-y-1">
-                <span class="text-xs font-medium text-(--color-text-muted)"
-                  >{{ $t('products.title') }}:</span
-                >
+                <span class="text-xs font-medium text-(--color-text-muted)">{{ $t('products.title') }}:</span>
                 <div class="flex flex-wrap items-center gap-2">
-                  <CoreAppRadio
-                    v-model="onDemandProductMode"
-                    value="all"
-                    :label="$t('common.all')"
-                    size="xs"
-                  />
+                  <CoreAppRadio v-model="onDemandProductMode" value="all" :label="$t('common.all')" size="xs" />
                   <CoreAppRadio
                     v-if="selectedProductIds.length > 0"
                     v-model="onDemandProductMode"
@@ -280,39 +213,19 @@
                 </div>
               </div>
               <div class="space-y-1">
-                <span class="text-xs font-medium text-(--color-text-muted)"
-                  >{{ $t('common.visibility') }}:</span
-                >
+                <span class="text-xs font-medium text-(--color-text-muted)">{{ $t('common.visibility') }}:</span>
                 <div class="flex flex-wrap items-center gap-2">
-                  <CoreAppRadio
-                    v-model="onDemandVisibility"
-                    value=""
-                    :label="$t('clients.default')"
-                    size="xs"
-                  />
-                  <CoreAppRadio
-                    v-model="onDemandVisibility"
-                    value="visible"
-                    :label="$t('common.visible')"
-                    size="xs"
-                  />
-                  <CoreAppRadio
-                    v-model="onDemandVisibility"
-                    value="hidden"
-                    :label="$t('common.hidden')"
-                    size="xs"
-                  />
+                  <CoreAppRadio v-model="onDemandVisibility" value="" :label="$t('clients.default')" size="xs" />
+                  <CoreAppRadio v-model="onDemandVisibility" value="visible" :label="$t('common.visible')" size="xs" />
+                  <CoreAppRadio v-model="onDemandVisibility" value="hidden" :label="$t('common.hidden')" size="xs" />
                 </div>
               </div>
               <div class="space-y-1">
-                <span class="text-xs font-medium text-(--color-text-muted)"
-                  >{{ $t('clients.title') }}:</span
-                >
+                <span class="text-xs font-medium text-(--color-text-muted)">{{ $t('clients.title') }}:</span>
                 <div class="text-xs text-(--color-text-muted)">
                   {{ onDemandClientIds.length }}
                   <span v-if="onDemandClientIds.length > 0" class="ml-1">
-                    ({{ onDemandClientIds.slice(0, 3).join(', ')
-                    }}{{ onDemandClientIds.length > 3 ? '...' : '' }})
+                    ({{ onDemandClientIds.slice(0, 3).join(', ') }}{{ onDemandClientIds.length > 3 ? '...' : '' }})
                   </span>
                 </div>
               </div>
@@ -321,20 +234,12 @@
         </div>
         <div class="flex gap-2 justify-end">
           <template v-if="totalChangesCount > 0">
-            <UButton variant="outline" color="primary" @click="handleDiscardAll"
-              >{{ $t('common.discardAll') }}
-            </UButton>
+            <UButton variant="outline" color="primary" @click="handleDiscardAll">{{ $t('common.discardAll') }} </UButton>
             <UButton color="primary" :loading="isSaving" @click="handleSaveAll">
-              {{
-                processAfterSave && showProcessOptions
-                  ? $t('actions.saveAndProcess')
-                  : $t('common.saveAll')
-              }}
+              {{ processAfterSave && showProcessOptions ? $t('actions.saveAndProcess') : $t('common.saveAll') }}
             </UButton>
           </template>
-          <UButton v-else variant="ghost" color="neutral" @click="open = false"
-            >{{ $t('common.close') }}
-          </UButton>
+          <UButton v-else variant="ghost" color="neutral" @click="open = false">{{ $t('common.close') }} </UButton>
         </div>
       </div>
     </template>
@@ -342,12 +247,7 @@
 </template>
 
 <script setup lang="ts">
-  import type {
-    ProductConfigTabsRef,
-    ProductActionRequestChange,
-    EditablePropertyValue,
-    ProductVisibility,
-  } from '~/types'
+  import type { ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue, ProductVisibility } from '~/types'
   import type { TableColumn } from '~/components/core/AppTable.vue'
 
   /**
@@ -416,7 +316,7 @@
       selectedProductIds: () => [],
       showProcessOptions: false,
       clientIds: () => [],
-    }
+    },
   )
 
   const emit = defineEmits<{
@@ -475,9 +375,7 @@
     return String(v)
   }
 
-  const isSaving = computed(
-    () => props.configRef?.isSaving || props.productConfigRef?.isSaving || false
-  )
+  const isSaving = computed(() => props.configRef?.isSaving || props.productConfigRef?.isSaving || false)
 
   /** Product-grouped changes (properties + action requests) */
   const groupedProductChanges = computed<ChangeGroup[]>(() => {
@@ -492,10 +390,7 @@
           key: `prop-${key}`,
           type: 'property',
           label: key,
-          oldValue:
-            props.productConfigRef.fmtVal?.(
-              props.productConfigRef.getOriginalPropertyValue?.(key)
-            ) || '-',
+          oldValue: props.productConfigRef.fmtVal?.(props.productConfigRef.getOriginalPropertyValue?.(key)) || '-',
           newValue: props.productConfigRef.fmtVal?.(newVal) || '-',
           discard: () => props.productConfigRef?.discardSingleProperty?.(key),
         })
@@ -565,8 +460,7 @@
     const options =
       processAfterSave.value && props.showProcessOptions
         ? {
-            productIds:
-              onDemandProductMode.value === 'selected' ? props.selectedProductIds : undefined,
+            productIds: onDemandProductMode.value === 'selected' ? props.selectedProductIds : undefined,
             visibility: onDemandVisibility.value || undefined,
             clientIds: onDemandClientIds.value.length > 0 ? onDemandClientIds.value : undefined,
           }

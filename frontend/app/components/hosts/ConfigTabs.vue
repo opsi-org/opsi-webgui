@@ -25,21 +25,12 @@
           <template v-if="showHostSelector">
             <span class="h-5 w-px bg-(--color-border) mx-1" />
             <slot name="hostSelector">
-              <HostsSelector
-                v-model="hostSelectorModel"
-                :type="hostType"
-                :placeholder="hostSelectorPlaceholder"
-                allow-clear
-              />
+              <HostsSelector v-model="hostSelectorModel" :type="hostType" :placeholder="hostSelectorPlaceholder" allow-clear />
             </slot>
           </template>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
-          <CoreAppFilterInput
-            v-model="paramSearch"
-            size="xs"
-            input-class="w-full sm:w-52 md:w-64 lg:w-72"
-          />
+          <CoreAppFilterInput v-model="paramSearch" size="xs" input-class="w-full sm:w-52 md:w-64 lg:w-72" />
           <CoreAppButton
             v-if="isServerDefaultMode && !readonly"
             :icon="icons.add"
@@ -71,27 +62,20 @@
       </div>
     </div>
 
-    <div
-      v-show="activeTab === 'parameters'"
-      :class="['flex flex-col min-h-0 flex-1 overflow-hidden bg-(--color-surface)']"
-    >
+    <div v-show="activeTab === 'parameters'" :class="['flex flex-col min-h-0 flex-1 overflow-hidden bg-(--color-surface)']">
       <div v-if="loadingParams" class="py-8 flex justify-center">
         <CoreAppLoadingSpinner size="md" />
       </div>
       <CoreAppEmptyState
         v-else-if="categoryAwareTree.length === 0"
         :icon="icons.config"
-        :message="
-          hostId || hostType === 'server'
-            ? String($t('config.paramsNone'))
-            : String($t('hosts.select'))
-        "
+        :message="hostId || hostType === 'server' ? String($t('config.paramsNone')) : String($t('hosts.select'))"
       />
       <CoreAppCard
         v-else
         :ui="{
           root: 'flex flex-col min-h-0 flex-1',
-            body: 'p-0 overflow-y-auto min-h-0 flex-1',
+          body: 'p-0 overflow-y-auto min-h-0 flex-1',
         }"
       >
         <HostsParametersTreeForm
@@ -108,28 +92,18 @@
       </CoreAppCard>
     </div>
 
-    <div
-      v-show="activeTab === 'attributes'"
-      :class="['flex flex-col min-h-0 flex-1 overflow-hidden bg-(--color-surface)']"
-    >
+    <div v-show="activeTab === 'attributes'" :class="['flex flex-col min-h-0 flex-1 overflow-hidden bg-(--color-surface)']">
       <div v-if="loadingAttrs" class="py-8 flex justify-center">
         <CoreAppLoadingSpinner size="md" />
       </div>
-      <CoreAppEmptyState
-        v-else-if="!hostId"
-        :icon="icons.config"
-        :message="String($t('hosts.select'))"
-      />
+      <CoreAppEmptyState v-else-if="!hostId" :icon="icons.config" :message="String($t('hosts.select'))" />
       <CoreAppCard
         v-else-if="filteredReadonlyAttrKeys.length || filteredEditableAttrKeys.length"
         :ui="{ root: 'flex flex-col min-h-0 flex-1', body: 'overflow-y-auto min-h-0 flex-1' }"
       >
         <div
           v-if="filteredReadonlyAttrKeys.length"
-          :class="[
-            'border-b border-(--color-border)',
-            filteredEditableAttrKeys.length ? 'mb-1' : '',
-          ]"
+          :class="['border-b border-(--color-border)', filteredEditableAttrKeys.length ? 'mb-1' : '']"
         >
           <div
             v-for="key in filteredReadonlyAttrKeys"
@@ -154,10 +128,7 @@
           >
             <span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
               {{ getAttributeLabel(key) }}
-              <span
-                v-if="isAttrChanged(key)"
-                class="inline-flex items-center text-xs text-(--color-changed-text)"
-              >
+              <span v-if="isAttrChanged(key)" class="inline-flex items-center text-xs text-(--color-changed-text)">
                 <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
               </span>
             </span>
@@ -169,9 +140,7 @@
               />
               <CoreAppCheckbox
                 v-else-if="key === 'isMasterDepot'"
-                :model-value="
-                  editableAttributes[key] === true || editableAttributes[key] === 'true'
-                "
+                :model-value="editableAttributes[key] === true || editableAttributes[key] === 'true'"
                 :disabled="readonly"
                 @update:model-value="
                   (v: boolean | 'indeterminate') => {
@@ -283,7 +252,7 @@
     () => props.tab,
     (v) => {
       if (v) activeTab.value = v
-    }
+    },
   )
   watch(activeTab, (v) => emit('update:tab', v))
 
@@ -292,7 +261,7 @@
     () => props.hostId,
     (v) => {
       hostSelectorModel.value = v || ''
-    }
+    },
   )
 
   let pendingHostChangeId: string | null = null
@@ -316,9 +285,7 @@
   const showLeaveWarning = ref(false)
   let resolveLeave: ((ok: boolean) => void) | null = null
 
-  const showUnsavedModal = computed(
-    () => hasAnyChanges.value || changedParams.value.size > 0 || hasAttributeChanges.value
-  )
+  const showUnsavedModal = computed(() => hasAnyChanges.value || changedParams.value.size > 0 || hasAttributeChanges.value)
 
   const unsavedChangesRef = computed(() => ({
     hasAnyChanges: hasAnyChanges.value,
@@ -369,10 +336,7 @@
 
   const tabDefs = computed(() => [
     {
-      label:
-        !props.hostId && props.hostType === 'server'
-          ? String($t('config.paramsDefault'))
-          : String($t('config.params')),
+      label: !props.hostId && props.hostType === 'server' ? String($t('config.paramsDefault')) : String($t('config.params')),
       value: 'parameters',
     },
     { label: String($t('common.attributes')), value: 'attributes' },
@@ -415,14 +379,7 @@
   const categoryAwareTree = computed<TreeNode[]>(() => {
     const q = paramSearch.value.trim().toLowerCase()
     const raw = rawParams.value
-    const categoryOrder = [
-      'general',
-      'clientconfig',
-      'opsi-script',
-      'opsiclientd',
-      'software-on-demand',
-      'licensing',
-    ]
+    const categoryOrder = ['general', 'clientconfig', 'opsi-script', 'opsiclientd', 'software-on-demand', 'licensing']
     const categoryKeys = [
       ...categoryOrder.filter((k) => k in raw),
       ...Object.keys(raw)
@@ -435,12 +392,7 @@
       type ParamBranch = Map<string, ParamLeaf | ParamBranch>
       const root: ParamBranch = new Map()
       for (const p of params) {
-        if (
-          q &&
-          !p.configId.toLowerCase().includes(q) &&
-          !(p.description || '').toLowerCase().includes(q)
-        )
-          continue
+        if (q && !p.configId.toLowerCase().includes(q) && !(p.description || '').toLowerCase().includes(q)) continue
         const parts = p.configId.split('.')
         let node = root
         for (let i = 0; i < parts.length; i++) {
@@ -554,27 +506,20 @@
 
   const hasAttributeChanges = computed(() =>
     Object.keys(editableAttributes.value).some(
-      (k) =>
-        !isReadonlyAttribute(k) &&
-        JSON.stringify(originalAttributes.value[k]) !== JSON.stringify(editableAttributes.value[k])
-    )
+      (k) => !isReadonlyAttribute(k) && JSON.stringify(originalAttributes.value[k]) !== JSON.stringify(editableAttributes.value[k]),
+    ),
   )
   watch(hasAttributeChanges, (v) => emit('attribute-change', v))
 
   const changedAttributesList = computed(() =>
     Object.keys(editableAttributes.value)
-      .filter(
-        (k) =>
-          !isReadonlyAttribute(k) &&
-          JSON.stringify(originalAttributes.value[k]) !==
-            JSON.stringify(editableAttributes.value[k])
-      )
+      .filter((k) => !isReadonlyAttribute(k) && JSON.stringify(originalAttributes.value[k]) !== JSON.stringify(editableAttributes.value[k]))
       .map((k) => ({
         key: k,
         label: getAttributeLabel(k),
         oldValue: originalAttributes.value[k],
         newValue: editableAttributes.value[k],
-      }))
+      })),
   )
 
   function discardSingleAttribute(key: string) {
@@ -605,15 +550,10 @@
 
   const isReadonlyAttribute = (k: string) => READONLY_KEYS.includes(k)
   const isPasswordAttribute = (k: string) => PASSWORD_KEYS.includes(k)
-  const getAttributeLabel = (k: string) =>
-    ATTR_LABELS[k] || k.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase())
+  const getAttributeLabel = (k: string) => ATTR_LABELS[k] || k.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase())
 
-  const readonlyAttrKeys = computed(() =>
-    Object.keys(editableAttributes.value).filter((k) => isReadonlyAttribute(k))
-  )
-  const editableAttrKeys = computed(() =>
-    Object.keys(editableAttributes.value).filter((k) => !isReadonlyAttribute(k))
-  )
+  const readonlyAttrKeys = computed(() => Object.keys(editableAttributes.value).filter((k) => isReadonlyAttribute(k)))
+  const editableAttrKeys = computed(() => Object.keys(editableAttributes.value).filter((k) => !isReadonlyAttribute(k)))
   const attributeSearch = computed(() => paramSearch.value.trim().toLowerCase())
 
   const filteredReadonlyAttrKeys = computed(() =>
@@ -622,8 +562,8 @@
         getAttributeLabel(k).toLowerCase().includes(attributeSearch.value) ||
         String(originalAttributes.value[k] ?? '')
           .toLowerCase()
-          .includes(attributeSearch.value)
-    )
+          .includes(attributeSearch.value),
+    ),
   )
 
   const filteredEditableAttrKeys = computed(() =>
@@ -632,8 +572,8 @@
         getAttributeLabel(k).toLowerCase().includes(attributeSearch.value) ||
         String(editableAttributes.value[k] ?? '')
           .toLowerCase()
-          .includes(attributeSearch.value)
-    )
+          .includes(attributeSearch.value),
+    ),
   )
 
   async function fetchParameters() {
@@ -673,10 +613,7 @@
     }
     loadingAttrs.value = true
     try {
-      const fetcher =
-        props.hostType === 'server'
-          ? getServerAttributes(props.hostId)
-          : getHostAttributes(props.hostId)
+      const fetcher = props.hostType === 'server' ? getServerAttributes(props.hostId) : getHostAttributes(props.hostId)
       const { data } = await fetcher
       const attrs = (data as Array<Record<string, unknown>>)?.[0] || {}
       originalAttributes.value = { ...attrs }
@@ -707,7 +644,7 @@
         editableAttributes.value = {}
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   watch(activeTab, async (tab) => {
@@ -721,7 +658,7 @@
     async (type) => {
       if (type === 'server' && !props.hostId) await fetchParameters()
     },
-    { immediate: false }
+    { immediate: false },
   )
 
   async function saveParameters() {
@@ -753,11 +690,7 @@
       // Only send changed attributes to avoid re-hashing already-stored password fields
       const changedAttrs: Record<string, unknown> = {}
       for (const key of Object.keys(editableAttributes.value)) {
-        if (
-          !isReadonlyAttribute(key) &&
-          JSON.stringify(originalAttributes.value[key]) !==
-            JSON.stringify(editableAttributes.value[key])
-        ) {
+        if (!isReadonlyAttribute(key) && JSON.stringify(originalAttributes.value[key]) !== JSON.stringify(editableAttributes.value[key])) {
           changedAttrs[key] = editableAttributes.value[key]
         }
       }
@@ -782,11 +715,7 @@
   const isSaving = computed(() => savingParams.value || savingAttrs.value)
 
   function isAttrChanged(key: string): boolean {
-    return (
-      !isReadonlyAttribute(key) &&
-      JSON.stringify(originalAttributes.value[key]) !==
-        JSON.stringify(editableAttributes.value[key])
-    )
+    return !isReadonlyAttribute(key) && JSON.stringify(originalAttributes.value[key]) !== JSON.stringify(editableAttributes.value[key])
   }
 
   async function saveAll() {

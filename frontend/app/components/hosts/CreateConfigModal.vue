@@ -33,11 +33,7 @@
         <div class="space-y-4">
           <div>
             <span class="block text-sm font-medium mb-1">{{ $t('config.id') }} *</span>
-            <CoreAppInput
-              v-model="newConfig.configId"
-              :placeholder="String($t('config.idPlaceholder'))"
-              size="sm"
-            />
+            <CoreAppInput v-model="newConfig.configId" :placeholder="String($t('config.idPlaceholder'))" size="sm" />
           </div>
           <div>
             <span class="block text-sm font-medium mb-1">{{ $t('common.description') }}</span>
@@ -158,16 +154,10 @@
         </div>
         <template #footer>
           <div class="flex gap-2 justify-end">
-            <CoreAppButton variant="ghost" color="neutral" @click="handleClose"
-              >{{ $t('common.cancel') }}
-            </CoreAppButton>
-            <CoreAppButton
-              color="primary"
-              :loading="creatingConfig"
-              :disabled="!newConfig.configId.trim()"
-              @click="handleCreateConfig"
-              >{{ $t('common.create') }}</CoreAppButton
-            >
+            <CoreAppButton variant="ghost" color="neutral" @click="handleClose">{{ $t('common.cancel') }} </CoreAppButton>
+            <CoreAppButton color="primary" :loading="creatingConfig" :disabled="!newConfig.configId.trim()" @click="handleCreateConfig">{{
+              $t('common.create')
+            }}</CoreAppButton>
           </div>
         </template>
       </CoreAppCard>

@@ -13,11 +13,7 @@
       <CoreAppLoadingSpinner />
     </div>
 
-    <CoreAppEmptyState
-      v-else-if="dependencies.length === 0"
-      :icon="icons.product"
-      :message="String($t('products.dependenciesNone'))"
-    />
+    <CoreAppEmptyState v-else-if="dependencies.length === 0" :icon="icons.product" :message="String($t('products.dependenciesNone'))" />
 
     <template v-else>
       <div class="flex-1 overflow-auto min-h-0 bg-(--color-surface)">
@@ -91,7 +87,7 @@
       (d) =>
         d.requiredProductId.toLowerCase().includes(q) ||
         (d.requirementType || '').toLowerCase().includes(q) ||
-        (d.requiredAction || '').toLowerCase().includes(q)
+        (d.requiredAction || '').toLowerCase().includes(q),
     )
   })
 </script>

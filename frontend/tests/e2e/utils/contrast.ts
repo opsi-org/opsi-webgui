@@ -90,11 +90,7 @@ async function applyCvd(page: Page, type: CvdType | null): Promise<void> {
   }, type)
 }
 
-export async function captureColorBlindSimulations(
-  page: Page,
-  name: string,
-  dir: string
-): Promise<void> {
+export async function captureColorBlindSimulations(page: Page, name: string, dir: string): Promise<void> {
   await ensureCvdFilters(page)
   for (const type of Object.keys(CVD_MATRICES) as CvdType[]) {
     await applyCvd(page, type)
@@ -109,10 +105,7 @@ export async function captureColorBlindSimulations(
  * Runs the same axe contrast checks under protanopia/deuteranopia/tritanopia
  * simulation filters. This replaces manual image inspection when desired.
  */
-export async function checkContrastUnderColorBlindSimulations(
-  page: Page,
-  options?: ContrastOptions
-): Promise<void> {
+export async function checkContrastUnderColorBlindSimulations(page: Page, options?: ContrastOptions): Promise<void> {
   await ensureCvdFilters(page)
   for (const type of Object.keys(CVD_MATRICES) as CvdType[]) {
     await applyCvd(page, type)
