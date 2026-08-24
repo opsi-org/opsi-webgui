@@ -526,6 +526,9 @@
     "title": "Server"
   },
   "settings": {
+    "panelView": "Standard-Clientpanel",
+    "rowActions": "Client-Zeilenaktionen",
+    "showAllRowActions": "Alle Panelaktionen in der Tabelle anzeigen",
     "autoRefresh": "Auto-Refresh",
     "autoRefreshDesc": "Ruft automatisch alle 5 Sekunden neue Logeinträge ab",
     "autoRefreshTooltip": "Seite automatisch aktualisieren, wenn Änderungen über den OPSI Messagebus erkannt werden – andernfalls werden Sie aufgefordert, die Seite manuell zu aktualisieren.",

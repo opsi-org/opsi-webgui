@@ -523,6 +523,9 @@
     "title": "Serveurs"
   },
   "settings": {
+    "panelView": "Panneau client par défaut",
+    "rowActions": "Actions de ligne client",
+    "showAllRowActions": "Afficher toutes les actions du panneau dans le tableau",
     "autoRefresh": "Actualisation automatique",
     "autoRefreshDesc": "Récupère automatiquement les nouvelles entrées de journal toutes les 5 secondes",
     "autoRefreshTooltip": "Actualiser automatiquement la page lorsque des modifications sont détectées via opsi Messagebus – sinon, vous serez invité à actualiser manuellement.",

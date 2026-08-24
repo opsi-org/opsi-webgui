@@ -525,6 +525,9 @@
     "title": "Servers"
   },
   "settings": {
+    "panelView": "Default client panel",
+    "rowActions": "Client row actions",
+    "showAllRowActions": "Show all panel actions in table",
     "autoRefresh": "Auto-Refresh",
     "autoRefreshDesc": "Automatically fetches new log entries every 5 seconds",
     "autoRefreshTooltip": "Automatically refresh page when changes are detected via opsi Messagebus – otherwise you will be prompted to manually refresh.",
