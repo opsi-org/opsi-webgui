@@ -403,23 +403,24 @@ export default defineAppConfig({
     },
     dropdown: {
       slots: {
-        content: 'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
-        item: 'text-(--color-text) rounded-lg hover:bg-(--color-surface-hover) transition-colors duration-100',
+        content: 'bg-(--color-background) border border-(--color-border)/50 shadow-lg rounded-lg',
+        item: 'text-(--color-text) rounded-md hover:bg-(--color-surface-hover) transition-colors duration-100',
       },
     },
     popover: {
       slots: {
-        content: 'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
+        content: 'bg-(--color-background) border border-(--color-border)/50 shadow-lg rounded-lg',
       },
     },
     tooltip: {
       slots: {
-        content: 'bg-(--color-surface-elevated) text-(--color-text) text-xs px-2 py-1 rounded shadow-lg border border-(--color-border)',
+        content:
+          'bg-(--color-background) text-(--color-text) text-xs px-2 py-1 rounded-lg shadow-lg border border-(--color-border) select-text',
       },
     },
     modal: {
       slots: {
-        content: 'bg-(--color-background) border border-(--color-border)/50 rounded-xl',
+        content: 'bg-(--color-background) border border-(--color-border)/50 rounded-lg',
         header: 'text-(--color-text)',
         body: 'text-(--color-text)',
       },
@@ -489,8 +490,8 @@ export default defineAppConfig({
     },
     contextMenu: {
       slots: {
-        content: 'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl',
-        item: 'text-(--color-text) rounded-lg hover:bg-(--color-surface-hover)',
+        content: 'bg-(--color-background) border border-(--color-border)/50 shadow-lg rounded-lg',
+        item: 'text-(--color-text) rounded-md hover:bg-(--color-surface-hover)',
       },
     },
     radioGroup: {
