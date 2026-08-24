@@ -44,7 +44,6 @@
     class="opacity-70"
     disabled
     :aria-label="String($t('products.quickHelp'))"
-    :title="String($t('products.quickHelp'))"
   >
     <CoreAppIcon :name="icons.product" class="w-4 h-4" />
     <span class="hidden sm:inline">{{ $t('products.quick') }}</span>
@@ -53,7 +52,7 @@
   <CoreAppModal
     v-model:open="dialogOpen"
     :dismissible="true"
-    :ui="{ content: 'w-[96vw] max-w-[96vw] h-[84vh] max-h-[84vh]' }"
+    :ui="{ content: 'w-[92vw] max-w-[48rem] h-auto max-h-[80vh]' }"
     data-testid="product-quick-actions-dialog"
   >
     <template #content>
@@ -223,7 +222,7 @@
                     }}
                   </td>
                   <td class="px-1.5 py-1 text-sm whitespace-nowrap">
-                    {{ row.product.actionRequest || actionRequest }}
+                    {{ formatActionRequestLabel(row.product.actionRequest || actionRequest) }}
                   </td>
                 </tr>
               </CoreAppTable>
@@ -312,6 +311,12 @@
 
   const NOT_APPLIED = String($t('products.notApplied'))
 
+  function formatActionRequestLabel(value?: string | null): string {
+    const normalized = (value || 'none').toLowerCase()
+    if (normalized === 'none') return `— ${String($t('common.none')).toLowerCase()} —`
+    return normalized
+  }
+
   const previewColumns = computed(() => [
     { key: 'clientId', label: String($t('clients.id')), sortable: true },
     { key: 'productId', label: String($t('products.id')), sortable: true },
@@ -351,13 +356,13 @@
 
   const actionRequestOptions = [
     { value: NOT_APPLIED, label: NOT_APPLIED },
-    { value: 'none', label: 'none' },
-    { value: 'setup', label: 'setup' },
-    { value: 'uninstall', label: 'uninstall' },
-    { value: 'update', label: 'update' },
-    { value: 'always', label: 'always' },
-    { value: 'once', label: 'once' },
-    { value: 'custom', label: 'custom' },
+    { value: 'none', label: formatActionRequestLabel('none') },
+    { value: 'setup', label: formatActionRequestLabel('setup') },
+    { value: 'uninstall', label: formatActionRequestLabel('uninstall') },
+    { value: 'update', label: formatActionRequestLabel('update') },
+    { value: 'always', label: formatActionRequestLabel('always') },
+    { value: 'once', label: formatActionRequestLabel('once') },
+    { value: 'custom', label: formatActionRequestLabel('custom') },
   ]
 
   const scopeOptions = [
@@ -479,7 +484,7 @@
     const actResult = filters.value.actionResult === NOT_APPLIED ? null : filters.value.actionResult
     const action = actionRequest.value === NOT_APPLIED ? '' : actionRequest.value
 
-    if (!filters.value.outdatedOnly && instStatus === null && actResult === null) {
+    if (!filters.value.outdatedOnly && instStatus === null && actResult === null && action === '') {
       previewData.value = null
       return null
     }

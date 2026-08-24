@@ -75,6 +75,8 @@
 </template>
 
 <script setup lang="ts">
+  import { getActionRequestColorClass, getActionRequestStatus, type ActionRequestStatus } from '~/utils/actionRequest'
+
   interface Props {
     mode?: 'row' | 'header'
     productId?: string
@@ -113,23 +115,8 @@
     return normalized || 'none'
   }
 
-  function getRequestStatus(value?: string | null): 'success' | 'warning' | 'error' | 'info' | 'neutral' {
-    switch (normalizeRequest(value)) {
-      case 'setup':
-        return 'warning'
-      case 'uninstall':
-        return 'error'
-      case 'update':
-        return 'info'
-      case 'always':
-        return 'success'
-      case 'once':
-        return 'info'
-      case 'custom':
-        return 'neutral'
-      default:
-        return 'neutral'
-    }
+  function getRequestStatus(value?: string | null): ActionRequestStatus {
+    return getActionRequestStatus(value)
   }
 
   function getRequestLabel(value?: string | null): string {
@@ -215,18 +202,7 @@
   const currentRequestStatus = computed(() => getRequestStatus(selectedRequest.value))
 
   const requestColorClass = computed(() => {
-    switch (currentRequestStatus.value) {
-      case 'warning':
-        return 'bg-(--color-warning-soft-bg)! border-(--color-warning-soft-text)/40! text-(--color-warning-soft-text)!'
-      case 'error':
-        return 'bg-(--color-error-soft-bg)! border-(--color-error-soft-text)/40! text-(--color-error-soft-text)!'
-      case 'info':
-        return 'bg-(--color-info-soft-bg)! border-(--color-info-soft-text)/40! text-(--color-info-soft-text)!'
-      case 'success':
-        return 'bg-(--color-success-soft-bg)! border-(--color-success-soft-text)/40! text-(--color-success-soft-text)!'
-      default:
-        return ''
-    }
+    return getActionRequestColorClass(selectedRequest.value)
   })
 
   function handleChange(value: string) {

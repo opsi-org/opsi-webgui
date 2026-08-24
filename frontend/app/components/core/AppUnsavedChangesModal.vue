@@ -253,6 +253,8 @@
 </template>
 
 <script setup lang="ts">
+  import { getActionRequestStatus } from '~/utils/actionRequest'
+
   import type { ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue, ProductVisibility } from '~/types'
   import type { TableColumn } from '~/components/core/AppTable.vue'
 
@@ -385,22 +387,6 @@
     const normalized = String(value ?? 'none').toLowerCase()
     if (normalized === 'none') return `— ${String($t('common.none')).toLowerCase()} —`
     return normalized
-  }
-
-  function getActionRequestStatus(value: unknown): 'success' | 'warning' | 'error' | 'info' | 'neutral' {
-    switch (String(value ?? 'none').toLowerCase()) {
-      case 'setup':
-        return 'warning'
-      case 'uninstall':
-        return 'error'
-      case 'update':
-      case 'once':
-        return 'info'
-      case 'always':
-        return 'success'
-      default:
-        return 'neutral'
-    }
   }
 
   function formatProductChangeValue(change: ChangeItem, value: unknown): string {
