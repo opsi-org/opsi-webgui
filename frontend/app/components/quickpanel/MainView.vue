@@ -160,25 +160,25 @@
   const selectionTabs = computed(() => [
     {
       id: 'overview' as TabId,
-      label: 'overview',
+      label: 'dashboard.title',
       icon: icons.list,
       count: totalSelectionCount.value,
     },
     {
       id: 'servers' as TabId,
-      label: 'servers',
+      label: 'servers.title',
       icon: icons.server,
       count: selectionStore.selectedServers.length,
     },
     {
       id: 'clients' as TabId,
-      label: 'clients',
+      label: 'clients.title',
       icon: icons.client,
       count: selectionStore.selectedClients.length,
     },
     {
       id: 'products' as TabId,
-      label: 'products',
+      label: 'products.title',
       icon: icons.product,
       count: selectionStore.selectedProducts.length,
     },

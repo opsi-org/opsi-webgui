@@ -391,49 +391,49 @@
         i18nKey: 'readOnly',
         restricted: userConfigData.value?.read_only ?? false,
         icon: icons.eye,
-        shortLabel: 'Read Only',
+        shortLabel: String($t('opsiConfig.serverFeatures.readOnly.label')),
       },
       {
         key: 'serverWrite',
         i18nKey: 'serverWrite',
         restricted: !(userConfigData.value?.server_write_access ?? true),
         icon: icons.serverStack,
-        shortLabel: 'Server Write',
+        shortLabel: String($t('opsiConfig.serverFeatures.serverWrite.label')),
       },
       {
         key: 'depotAccess',
         i18nKey: 'depotAccess',
         restricted: userConfigData.value?.depot_access ?? false,
         icon: icons.server,
-        shortLabel: 'Depot Access',
+        shortLabel: String($t('opsiConfig.serverFeatures.depotAccess.label')),
       },
       {
         key: 'clientCreation',
         i18nKey: 'clientCreation',
         restricted: !(userConfigData.value?.client_creation ?? true),
         icon: icons.add,
-        shortLabel: 'Client Create',
+        shortLabel: String($t('opsiConfig.serverFeatures.clientCreation.label')),
       },
       {
         key: 'hostGroupAccess',
         i18nKey: 'hostGroupAccess',
         restricted: userConfigData.value?.host_group_access ?? false,
         icon: icons.client,
-        shortLabel: 'Host Groups',
+        shortLabel: String($t('opsiConfig.serverFeatures.hostGroupAccess.label')),
       },
       {
         key: 'productGroupAccess',
         i18nKey: 'productGroupAccess',
         restricted: userConfigData.value?.product_group_access ?? false,
         icon: icons.product,
-        shortLabel: 'Product Groups',
+        shortLabel: String($t('opsiConfig.serverFeatures.productGroupAccess.label')),
       },
       {
         key: 'terminal',
         i18nKey: 'terminal',
         restricted: terminalDisabled,
         icon: 'heroicons:command-line',
-        shortLabel: 'Terminal',
+        shortLabel: String($t('opsiConfig.serverFeatures.terminal.label')),
       },
     ]
   })
@@ -518,36 +518,36 @@
     const items: SystemInfoItem[] = []
     const d = diagnosticData.value
 
-    if (d.opsiconfd_version) items.push({ label: 'opsiconfd', value: String(d.opsiconfd_version) })
+    if (d.opsiconfd_version) items.push({ label: String($t('dashboard.system.opsiconfd')), value: String(d.opsiconfd_version) })
 
     const osRelease = d.os_release as Record<string, unknown> | undefined
-    if (osRelease?.PRETTY_NAME) items.push({ label: 'os', value: String(osRelease.PRETTY_NAME) })
+    if (osRelease?.PRETTY_NAME) items.push({ label: String($t('dashboard.system.os')), value: String(osRelease.PRETTY_NAME) })
 
     const processor = d.processor as Record<string, unknown> | undefined
     if (processor)
       items.push({
-        label: 'cpu',
-        value: `${processor.cpu_count} cores · ${sysProcessorModel.value}`,
+        label: String($t('dashboard.system.cpu')),
+        value: String($t('dashboard.system.cpuValue', { count: processor.cpu_count, model: sysProcessorModel.value })),
       })
 
     const memory = d.memory as Record<string, unknown> | undefined
-    if (memory) items.push({ label: 'memory', value: `${memory.total_human} (${memory.used_percent}%)` })
+    if (memory) items.push({ label: String($t('dashboard.system.memory')), value: `${memory.total_human} (${memory.used_percent}%)` })
 
-    if (sysHostname.value) items.push({ label: 'hostname', value: sysHostname.value })
+    if (sysHostname.value) items.push({ label: String($t('dashboard.system.hostname')), value: sysHostname.value })
 
     if (sysIsDocker.value !== null)
       items.push({
-        label: 'docker',
+        label: String($t('dashboard.system.docker')),
         value: null,
         badge: {
-          text: sysIsDocker.value ? 'Yes' : 'No',
+          text: sysIsDocker.value ? String($t('common.yes')) : String($t('common.no')),
           color: sysIsDocker.value ? 'info' : 'neutral',
         },
       })
 
-    if (sysPythonVersion.value) items.push({ label: 'python', value: sysPythonVersion.value })
+    if (sysPythonVersion.value) items.push({ label: String($t('dashboard.system.python')), value: sysPythonVersion.value })
 
-    if (sysLoadAvg.value) items.push({ label: 'load', value: sysLoadAvg.value })
+    if (sysLoadAvg.value) items.push({ label: String($t('dashboard.system.load')), value: sysLoadAvg.value })
 
     return items
   })

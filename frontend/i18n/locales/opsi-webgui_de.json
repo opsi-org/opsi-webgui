@@ -179,6 +179,7 @@
     "discardAll": "Alle verwerfen",
     "dismiss": "Schließen",
     "download": "Herunterladen",
+    "details": "Details",
     "edit": "Bearbeiten",
     "editable": "Bearbeitbar",
     "editValue": "Wert bearbeiten",
@@ -223,6 +224,7 @@
     "save": "Speichern",
     "saveAll": "Alle speichern",
     "selectAll": "Alle auswählen",
+    "selectRow": "Zeile auswählen",
     "selected": "Ausgewählt",
     "settings": "Einstellungen",
     "showing": "Zeige",
@@ -238,6 +240,8 @@
     "visibility": "Sichtbarkeit",
     "visible": "Sichtbar",
     "warning": "Warnung",
+    "yes": "Ja",
+    "no": "Nein",
     "warnings": "Warnungen"
   },
   "config": {
@@ -255,6 +259,17 @@
     "title": "Konfiguration"
   },
   "dashboard": {
+    "system": {
+      "cpu": "CPU",
+      "cpuValue": "{count} Kerne · {model}",
+      "docker": "Docker",
+      "hostname": "Hostname",
+      "load": "Systemlast",
+      "memory": "Arbeitsspeicher",
+      "opsiconfd": "opsiconfd",
+      "os": "Betriebssystem",
+      "python": "Python"
+    },
     "title": "Dashboard",
     "totalClients": "Clients gesamt",
     "totalProducts": "Produkte gesamt",
@@ -503,6 +518,7 @@
     "requirementType": "Anforderungstyp",
     "status": "Installationsstatus",
     "statusInstalled": "Installierte Produkte",
+    "statusNotInstalled": "Nicht installiert",
     "statusUnknown": "Unbekannter Installationsstatus",
     "title": "Produkte",
     "unlock": "Entsperren",

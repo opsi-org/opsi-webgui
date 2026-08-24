@@ -220,7 +220,7 @@
                 <th
                   v-if="selectable"
                   class="w-9 px-1 py-0.5 text-center whitespace-nowrap bg-(--color-surface)"
-                  :aria-label="effectiveSelectionMode === 'multi' ? 'Select all' : 'Selection'"
+                  :aria-label="effectiveSelectionMode === 'multi' ? String($t('common.selectAll')) : String($t('settings.selection'))"
                 >
                   <div class="flex items-center justify-center gap-1">
                     <input
@@ -229,7 +229,7 @@
                       :checked="allSelected"
                       :indeterminate="someSelected"
                       class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue"
-                      aria-label="Select all rows"
+                      :aria-label="String($t('common.selectAll'))"
                       @change="toggleSelectAll"
                     />
                     <UButton
@@ -325,7 +325,7 @@
                     type="checkbox"
                     :checked="isSelected(row)"
                     class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue"
-                    :aria-label="'Select row ' + getRowKey(row)"
+                    :aria-label="`${String($t('common.selectRow'))} ${getRowKey(row)}`"
                   />
                   <input
                     v-else
@@ -333,7 +333,7 @@
                     :checked="isSelected(row)"
                     :name="tableId + '-selection'"
                     class="border-(--color-border) text-opsi-blue focus:ring-opsi-blue"
-                    :aria-label="'Select row ' + getRowKey(row)"
+                    :aria-label="`${String($t('common.selectRow'))} ${getRowKey(row)}`"
                   />
                 </td>
 

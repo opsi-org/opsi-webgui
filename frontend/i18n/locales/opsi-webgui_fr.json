@@ -179,6 +179,7 @@
     "discardAll": "Tout abandonner",
     "dismiss": "Fermer",
     "download": "Télécharger",
+    "details": "Détails",
     "edit": "Modifier",
     "editable": "Modifiable",
     "editValue": "Modifier la valeur",
@@ -223,6 +224,7 @@
     "save": "Enregistrer",
     "saveAll": "Tout enregistrer",
     "selectAll": "Tout sélectionner",
+    "selectRow": "Sélectionner la ligne",
     "selected": "Sélectionné",
     "settings": "Paramètres",
     "showing": "Affichage",
@@ -238,6 +240,8 @@
     "visibility": "Visibilité",
     "visible": "Visible",
     "warning": "Avertissement",
+    "yes": "Oui",
+    "no": "Non",
     "warnings": "Avertissements"
   },
   "config": {
@@ -255,6 +259,17 @@
     "title": "Configuration"
   },
   "dashboard": {
+    "system": {
+      "cpu": "CPU",
+      "cpuValue": "{count} cœurs · {model}",
+      "docker": "Docker",
+      "hostname": "Nom d’hôte",
+      "load": "Charge moyenne",
+      "memory": "Mémoire",
+      "opsiconfd": "opsiconfd",
+      "os": "Système d’exploitation",
+      "python": "Python"
+    },
     "title": "Tableau de bord",
     "totalClients": "Total des clients",
     "totalProducts": "Total des produits",
@@ -500,6 +515,7 @@
     "requirementType": "Type d'exigence",
     "status": "Statut d'installation",
     "statusInstalled": "Produits installés",
+    "statusNotInstalled": "Non installé",
     "statusUnknown": "Statut d'installation inconnu",
     "title": "Produits",
     "unlock": "Déverrouiller",

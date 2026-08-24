@@ -91,7 +91,7 @@
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-x-1 min-w-0">
                   <span class="font-semibold truncate m-0 text-sm">
-                    <slot name="panel-title">Details</slot>
+                    <slot name="panel-title">{{ $t('common.details') }}</slot>
                   </span>
                   <span v-if="$slots['panel-subtitle']" class="text-xs text-(--color-text-muted) truncate">
                     <slot name="panel-subtitle" />
