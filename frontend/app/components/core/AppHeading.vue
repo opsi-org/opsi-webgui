@@ -31,7 +31,7 @@
 
   const headingClass = computed(() => [
     'font-heading uppercase tracking-wide text-(--color-text) m-0 flex items-center gap-2',
-    props.size === 'xs' ? 'text-xs' : props.size === 'lg' ? 'text-base' : 'text-sm',
+    props.size === 'xs' ? 'text-xs' : 'text-sm',
   ])
 
   const iconClass = computed(() => (props.size === 'xs' ? 'w-4 h-4 shrink-0' : 'w-5 h-5 shrink-0'))

@@ -263,9 +263,9 @@
                         <UIcon
                           v-if="tableSettings.settings.sortColumn === col.key"
                           :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
-                          class="w-3 h-3"
+                          class="w-2 h-2"
                         />
-                        <UIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
+                        <UIcon v-else :name="icons.sort" class="w-2 h-2 opacity-30" />
                       </template>
                     </div>
                   </slot>
@@ -274,7 +274,7 @@
                 <th
                   v-if="hasActions"
                   ref="actionsHeaderRef"
-                  class="min-w-18 px-[0.4rem] py-0.5 text-center text-xs font-medium tracking-wide text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-40 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
+                  class="min-w-12 px-0.5 py-0.5 text-center text-xs font-medium tracking-wide text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-40 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
                 >
                   {{ $t('actions.title') }}
                 </th>
@@ -296,7 +296,7 @@
                 @click="handleRowClick(row, $event)"
                 @keydown.enter="handleRowClick(row, $event)"
               >
-                <td v-if="selectable" class="px-1 py-0.5 text-center align-middle" role="gridcell" @click.stop="handleCheckboxClick(row)">
+                <td v-if="selectable" class="px-1 py-px text-center align-middle" role="gridcell" @click.stop="handleCheckboxClick(row)">
                   <input
                     v-if="effectiveSelectionMode === 'multi'"
                     type="checkbox"
@@ -318,7 +318,7 @@
                   v-for="col in visibleColumns"
                   :key="col.key"
                   role="gridcell"
-                  class="px-[0.4rem] py-0.5 text-sm leading-4 text-(--color-text) whitespace-nowrap align-middle"
+                  class="px-[0.4rem] py-px text-sm leading-4 text-(--color-text) whitespace-nowrap align-middle"
                   :class="[
                     col.class,
                     col.stickyRight
@@ -348,15 +348,15 @@
 
                 <td
                   v-if="hasActions"
-                  class="px-[0.4rem] py-0.5 text-center sticky right-0 z-10 min-w-18 whitespace-nowrap shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
+                  class="px-0.5 py-px text-center sticky right-0 z-10 min-w-10 whitespace-nowrap shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
                   :class="
                     isHighlighted(row) ? 'bg-(--color-row-selected)' : 'bg-(--color-background) group-hover:bg-(--color-surface-hover)'
                   "
                   @click.stop
                 >
                   <div
-                    class="flex items-center justify-center gap-1 rounded-md transition-colors"
-                    :class="isHighlighted(row) ? 'bg-(--color-primary)/10 ring-1 ring-(--color-primary)/30 px-1' : ''"
+                    class="flex items-center justify-center gap-0 rounded-md transition-colors"
+                    :class="isHighlighted(row) ? 'bg-(--color-primary)/10 ring-1 ring-(--color-primary)/30 px-0.5' : ''"
                   >
                     <slot name="row-actions" :row="row" :index="idx" :selected="isSelected(row)" :active="isActive(row)" />
                   </div>
@@ -505,7 +505,7 @@
 
   const tableContainer = ref<HTMLElement | null>(null)
   const actionsHeaderRef = ref<HTMLElement | null>(null)
-  const actionsColWidth = ref(96)
+  const actionsColWidth = ref(48)
   const scrollSentinel = ref<HTMLElement | null>(null)
   const selectedKeys = ref<string[]>([])
   const selectedKeysSet = computed(() => new Set(selectedKeys.value))
