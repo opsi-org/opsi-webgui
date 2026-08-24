@@ -22,7 +22,7 @@
       <CoreAppIcon v-if="icon" :name="icon" class="w-5 h-5 shrink-0" />
       <div class="flex-1 min-w-0">
         <p class="font-heading text-xs text-(--color-text-muted) tracking-wider m-0">{{ label }}</p>
-        <p class="truncate text-base font-semibold" :title="String(value)">{{ value || '-' }}</p>
+        <p class="truncate text-sm font-semibold" :title="String(value)">{{ value || '-' }}</p>
       </div>
       <slot name="trailing" />
       <CoreAppIcon

@@ -10,7 +10,6 @@
 <template>
   <LayoutsPageLayout :show-filter="false" :show-refresh="true" :loading="loading" @refresh="refreshAll">
     <div class="@container h-full flex flex-col min-h-0 overflow-y-auto gap-2 lg:gap-3">
-      <!-- Row 1: Config Server, Health Check, User Config & Restrictions -->
       <div class="grid grid-cols-1 @2xl:grid-cols-2 @5xl:grid-cols-4 gap-2 lg:gap-3 shrink-0">
         <DashboardInfoCard :icon="icons.serverStack" :label="$t('servers.config')" :value="serverHostname" />
         <div
@@ -97,7 +96,6 @@
         </div>
       </div>
 
-      <!-- Row 2: System Info -->
       <div class="shrink-0">
         <div
           class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
@@ -131,7 +129,6 @@
         </div>
       </div>
 
-      <!-- Row 3: Stat Cards -->
       <div class="grid grid-cols-2 @5xl:grid-cols-4 gap-2 lg:gap-3 shrink-0">
         <DashboardStatCard
           :icon="icons.server"
@@ -141,60 +138,7 @@
           @click="navigateTo('/servers')"
         />
 
-        <!-- Clients stat card -->
-        <CoreAppTooltipTable v-if="depotClientTooltipRows.length > 0" :rows="depotClientTooltipRows">
-          <div
-            class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-            role="button"
-            tabindex="0"
-            @click="navigateTo('/clients')"
-            @keydown.enter="navigateTo('/clients')"
-            @keydown.space.prevent="navigateTo('/clients')"
-          >
-            <div class="flex items-center justify-between mb-1">
-              <CoreAppIcon :name="icons.client" class="w-5 h-5" />
-              <CoreAppIcon
-                :name="icons.chevronRight"
-                class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity"
-              />
-            </div>
-            <div class="min-h-8 mb-0.5 flex items-center">
-              <CoreAppLoadingSpinner v-if="loading && clientCount === null" size="sm" />
-              <p v-else class="text-2xl font-bold">{{ clientCount ?? '-' }}</p>
-            </div>
-            <p class="text-sm mb-2">{{ $t('dashboard.totalClients') }}</p>
-            <div v-if="sharedClientNumbers" class="space-y-1.5 pt-1.5 border-t border-(--color-border)/30">
-              <div class="flex items-center gap-4">
-                <span class="flex items-center gap-1.5">
-                  <CoreAppIcon :name="icons.checkCircle" class="w-4 h-4 shrink-0 text-(--color-success)" />
-                  <span class="font-medium">{{ sharedClientNumbers.all }}</span>
-                  {{ $t('clients.active') }}
-                </span>
-                <span class="flex items-center gap-1.5">
-                  <CoreAppIcon :name="icons.xCircle" class="w-4 h-4 shrink-0 text-(--color-error)" />
-                  <span class="font-medium">{{ sharedClientNumbers.inactive }}</span>
-                  {{ $t('clients.inactive') }}
-                </span>
-              </div>
-              <div class="flex items-center gap-4">
-                <span class="flex items-center gap-1.5">
-                  <CoreAppIcon :name="icons.windows" class="w-4 h-4 shrink-0 text-(--color-os-windows)" />
-                  <span class="font-medium">{{ sharedClientNumbers.windows }}</span>
-                </span>
-                <span class="flex items-center gap-1.5">
-                  <CoreAppIcon :name="icons.linux" class="w-4 h-4 shrink-0 text-(--color-os-linux)" />
-                  <span class="font-medium">{{ sharedClientNumbers.linux }}</span>
-                </span>
-                <span class="flex items-center gap-1.5">
-                  <CoreAppIcon :name="icons.apple" class="w-4 h-4 shrink-0 text-(--color-os-macos)" />
-                  <span class="font-medium">{{ sharedClientNumbers.macos }}</span>
-                </span>
-              </div>
-            </div>
-          </div>
-        </CoreAppTooltipTable>
         <div
-          v-else
           class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
           role="button"
           tabindex="0"
@@ -203,7 +147,20 @@
           @keydown.space.prevent="navigateTo('/clients')"
         >
           <div class="flex items-center justify-between mb-1">
-            <CoreAppIcon :name="icons.client" class="w-5 h-5" />
+            <div class="flex items-center gap-1.5">
+              <CoreAppIcon :name="icons.client" class="w-5 h-5" />
+              <CoreAppTooltipTable v-if="depotClientTooltipRows.length > 0" :rows="depotClientTooltipRows">
+                <CoreAppButton
+                  size="xs"
+                  variant="ghost"
+                  color="neutral"
+                  :icon="icons.info"
+                  :aria-label="String($t('common.info'))"
+                  class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
+                  @click.stop
+                />
+              </CoreAppTooltipTable>
+            </div>
             <CoreAppIcon
               :name="icons.chevronRight"
               class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity"
@@ -214,44 +171,59 @@
             <p v-else class="text-2xl font-bold">{{ clientCount ?? '-' }}</p>
           </div>
           <p class="text-sm mb-2">{{ $t('dashboard.totalClients') }}</p>
-        </div>
-
-        <!-- Products stat card -->
-        <CoreAppTooltipTable v-if="depotProductTooltipRows.length > 0" :rows="depotProductTooltipRows">
-          <div
-            class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-            role="button"
-            tabindex="0"
-            @click="navigateTo('/products')"
-            @keydown.enter="navigateTo('/products')"
-            @keydown.space.prevent="navigateTo('/products')"
-          >
-            <div class="flex items-center justify-between mb-2">
-              <CoreAppIcon :name="icons.product" class="w-5 h-5" />
-              <CoreAppIcon
-                :name="icons.chevronRight"
-                class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity"
-              />
-            </div>
-            <div class="min-h-8 mb-1 flex items-center">
-              <CoreAppLoadingSpinner v-if="loading && totalProductCount === null" size="sm" />
-              <p v-else class="text-2xl font-bold">{{ totalProductCount ?? '-' }}</p>
-            </div>
-            <p>{{ $t('dashboard.totalProducts') }}</p>
-            <div class="mt-2 pt-2 border-t border-(--color-border)/30 flex gap-2">
-              <span>
-                <span class="font-medium text-(--color-text)">{{ localbootProductCount }}</span>
-                {{ $t('products.localboot') }}
+          <div v-if="sharedClientNumbers" class="space-y-1.5 pt-1.5 border-t border-(--color-border)/30">
+            <div class="flex items-center gap-4">
+              <span class="flex items-center gap-1.5">
+                <CoreAppIcon :name="icons.checkCircle" class="w-4 h-4 shrink-0 text-(--color-success)" />
+                <span class="font-medium">{{ sharedClientNumbers?.all ?? '-' }}</span>
+                {{ $t('clients.active') }}
+                <CoreAppTooltipTable :rows="activeClientsTooltipRows">
+                  <CoreAppButton
+                    size="xs"
+                    variant="ghost"
+                    color="neutral"
+                    :icon="icons.info"
+                    :aria-label="String($t('clients.active'))"
+                    class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
+                    @click.stop
+                  />
+                </CoreAppTooltipTable>
               </span>
-              <span class="ml-4">
-                <span class="font-medium text-(--color-text)">{{ netbootProductCount }}</span>
-                {{ $t('products.netboot') }}
+              <span class="flex items-center gap-1.5">
+                <CoreAppIcon :name="icons.xCircle" class="w-4 h-4 shrink-0 text-(--color-error)" />
+                <span class="font-medium">{{ sharedClientNumbers?.inactive ?? '-' }}</span>
+                {{ $t('clients.inactive') }}
+                <CoreAppTooltipTable :rows="inactiveClientsTooltipRows">
+                  <CoreAppButton
+                    size="xs"
+                    variant="ghost"
+                    color="neutral"
+                    :icon="icons.info"
+                    :aria-label="String($t('clients.inactive'))"
+                    class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
+                    @click.stop
+                  />
+                </CoreAppTooltipTable>
+              </span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="flex items-center gap-1.5">
+                <CoreAppIcon :name="icons.windows" class="w-4 h-4 shrink-0 text-(--color-os-windows)" />
+                <span class="font-medium">{{ sharedClientNumbers?.windows ?? '-' }}</span>
+              </span>
+              <span class="flex items-center gap-1.5">
+                <CoreAppIcon :name="icons.linux" class="w-4 h-4 shrink-0 text-(--color-os-linux)" />
+                <span class="font-medium">{{ sharedClientNumbers?.linux ?? '-' }}</span>
+              </span>
+              <span class="flex items-center gap-1.5">
+                <CoreAppIcon :name="icons.apple" class="w-4 h-4 shrink-0 text-(--color-os-macos)" />
+                <span class="font-medium">{{ sharedClientNumbers?.macos ?? '-' }}</span>
               </span>
             </div>
           </div>
-        </CoreAppTooltipTable>
+        </div>
+
         <div
-          v-else
           class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
           role="button"
           tabindex="0"
@@ -260,7 +232,20 @@
           @keydown.space.prevent="navigateTo('/products')"
         >
           <div class="flex items-center justify-between mb-2">
-            <CoreAppIcon :name="icons.product" class="w-5 h-5" />
+            <div class="flex items-center gap-1.5">
+              <CoreAppIcon :name="icons.product" class="w-5 h-5" />
+              <CoreAppTooltipTable v-if="depotProductTooltipRows.length > 0" :rows="depotProductTooltipRows">
+                <CoreAppButton
+                  size="xs"
+                  variant="ghost"
+                  color="neutral"
+                  :icon="icons.info"
+                  :aria-label="String($t('common.info'))"
+                  class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
+                  @click.stop
+                />
+              </CoreAppTooltipTable>
+            </div>
             <CoreAppIcon
               :name="icons.chevronRight"
               class="w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity"
@@ -271,9 +256,18 @@
             <p v-else class="text-2xl font-bold">{{ totalProductCount ?? '-' }}</p>
           </div>
           <p>{{ $t('dashboard.totalProducts') }}</p>
+          <div class="mt-2 pt-2 border-t border-(--color-border)/30 flex gap-2">
+            <span>
+              <span class="font-medium text-(--color-text)">{{ localbootProductCount }}</span>
+              {{ $t('products.localboot') }}
+            </span>
+            <span class="ml-4">
+              <span class="font-medium text-(--color-text)">{{ netbootProductCount }}</span>
+              {{ $t('products.netboot') }}
+            </span>
+          </div>
         </div>
 
-        <!-- Modules Card -->
         <div
           class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
           role="button"
@@ -302,11 +296,21 @@
         </div>
       </div>
 
-      <!-- Row 4: Failed Clients -->
-      <div class="opsi-card shrink-0 min-h-[104px] flex flex-col">
+      <div class="group opsi-card shrink-0 min-h-[104px] flex flex-col">
         <div class="flex items-center gap-2 mb-1.5">
           <CoreAppIcon :name="icons.warning" class="w-5 h-5" />
           <CoreAppHeading size="xs">{{ $t('actions.failedClients') }}</CoreAppHeading>
+          <CoreAppButton
+            size="xs"
+            variant="ghost"
+            color="neutral"
+            :title="$t('actions.failedClientsHelp')"
+            :icon="icons.info"
+            :aria-label="String($t('common.info'))"
+            class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
+            @click.stop
+          />
+
           <CoreAppStatusBadge
             v-if="failedClients && Object.keys(failedClients).length > 0"
             status="error"
@@ -316,7 +320,7 @@
         </div>
         <div
           v-if="failedClients && Object.keys(failedClients).length > 0"
-          class="space-y-0.5 max-h-36 overflow-y-auto"
+          class="space-y-0.5 max-h-48 overflow-y-auto"
           tabindex="0"
           role="region"
           :aria-label="String($t('actions.failedClients'))"
@@ -326,9 +330,7 @@
             :key="clientId"
             class="flex items-center justify-between px-2 py-1.5 rounded-lg text-sm"
           >
-            <span class="truncate">
-              {{ clientId }}
-            </span>
+            <span class="truncate">{{ clientId }}</span>
             <div class="flex gap-1">
               <CoreAppStatusBadge
                 v-for="p in Array.isArray(products) ? products : [products]"
@@ -587,6 +589,17 @@
       value: String(d.count),
     }))
   })
+
+  const activeClientsTooltipRows = computed(() => [
+    { key: String($t('common.description')), value: String($t('clients.activeHelp')) },
+    { key: 'RPC', value: String($t('clients.activeSource')) },
+    { key: String($t('common.info')), value: String($t('clients.activeBreakdownHelp')) },
+  ])
+
+  const inactiveClientsTooltipRows = computed(() => [
+    { key: String($t('common.description')), value: String($t('clients.inactiveHelp')) },
+    { key: 'RPC', value: String($t('clients.activeSource')) },
+  ])
 
   const modulesAvailableCount = computed(() => sharedModules.value.length || null)
 
