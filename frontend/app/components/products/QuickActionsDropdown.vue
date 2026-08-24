@@ -222,7 +222,11 @@
                     }}
                   </td>
                   <td class="px-1.5 py-1 text-sm whitespace-nowrap">
-                    {{ formatActionRequestLabel(row.product.actionRequest || actionRequest) }}
+                    <CoreAppStatusBadge
+                      :status="getActionRequestStatus(row.product.actionRequest || actionRequest)"
+                      :label="formatActionRequestLabel(row.product.actionRequest || actionRequest)"
+                      size="xs"
+                    />
                   </td>
                 </tr>
               </CoreAppTable>
@@ -286,6 +290,7 @@
 </template>
 
 <script setup lang="ts">
+  import { getActionRequestStatus } from '~/utils/actionRequest'
   import { useSelectionStore } from '~/stores/selectionStore'
   import type { ProductRow } from '~/types'
 
@@ -342,16 +347,16 @@
 
   const installationStatusOptions = ref([
     { value: NOT_APPLIED, label: NOT_APPLIED },
-    { value: 'installed', label: 'installed' },
-    { value: 'not_installed', label: 'not_installed' },
-    { value: 'unknown', label: 'unknown' },
+    { value: 'installed', label: String($t('products.statusInstalled')) },
+    { value: 'not_installed', label: String($t('products.statusNotInstalled')) },
+    { value: 'unknown', label: String($t('products.statusUnknown')) },
   ])
 
   const actionResultOptions = ref([
     { value: NOT_APPLIED, label: NOT_APPLIED },
-    { value: 'failed', label: 'failed' },
-    { value: 'successful', label: 'successful' },
-    { value: 'none', label: 'none' },
+    { value: 'failed', label: String($t('actions.live.failed')) },
+    { value: 'successful', label: String($t('actions.success')) },
+    { value: 'none', label: String($t('common.none')) },
   ])
 
   const actionRequestOptions = [
