@@ -236,7 +236,11 @@ export function useApiHelpers() {
       params,
     })
 
-  const triggerOnDemand = (clientIds: string[]) => opsiclientdRpc(clientIds, 'fireEvent', ['on_demand'])
+  const triggerClientEvent = (clientIds: string[], eventName: string) => opsiclientdRpc(clientIds, 'fireEvent', [eventName])
+
+  const triggerOnDemand = (clientIds: string[]) => triggerClientEvent(clientIds, 'on_demand')
+
+  const triggerTimerEvent = (clientIds: string[]) => triggerClientEvent(clientIds, 'timer')
 
   const sendNotification = (clientIds: string[], message: string) => opsiclientdRpc(clientIds, 'showPopup', [message])
 
@@ -552,7 +556,9 @@ export function useApiHelpers() {
     addClientToGroups,
     removeClientFromGroups,
     getClientLogs,
+    triggerClientEvent,
     triggerOnDemand,
+    triggerTimerEvent,
     sendNotification,
     rebootClients,
     shutdownClients,

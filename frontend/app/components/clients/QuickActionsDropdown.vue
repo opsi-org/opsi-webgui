@@ -12,17 +12,18 @@
     <!-- Inline mode: just a dropdown trigger icon (for row actions) -->
     <template v-if="inline">
       <CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
-        <CoreAppButton
-          :icon="icons.moreVertical"
-          variant="ghost"
-          color="neutral"
-          size="xs"
-          :loading="loading"
-          :disabled="loading"
-          :title="String($t('clients.actions'))"
-          :aria-label="String($t('clients.actions'))"
-          data-testid="client-quick-actions-trigger-inline"
-        />
+        <CoreAppTooltip :text="String($t('clients.actions'))">
+          <CoreAppButton
+            :icon="icons.moreVertical"
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            :loading="loading"
+            :disabled="loading"
+            :aria-label="String($t('clients.actions'))"
+            data-testid="client-quick-actions-trigger-inline"
+          />
+        </CoreAppTooltip>
         <template #item-leading="{ item }">
           <CoreAppImage
             v-if="menuItem(item).image"
@@ -38,20 +39,21 @@
     <!-- Standard mode: button with badge -->
     <template v-else>
       <CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
-        <CoreAppButton
-          variant="soft"
-          color="primary"
-          size="sm"
-          :class="compact ? '' : 'w-full'"
-          :aria-label="String($t('clients.actions'))"
-          :title="String($t('clients.actions'))"
-          data-testid="client-quick-actions-trigger"
-        >
-          <CoreAppIcon :name="icons.client" class="w-4 h-4" />
-          <span v-if="!compact">{{ $t('clients.actions') }}</span>
-          <CoreAppBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</CoreAppBadge>
-          <CoreAppIcon v-if="!compact" :name="icons.chevronDown" class="w-3 h-3 ml-1" />
-        </CoreAppButton>
+        <CoreAppTooltip :text="String($t('clients.actions'))">
+          <CoreAppButton
+            variant="soft"
+            color="primary"
+            size="sm"
+            :class="compact ? '' : 'w-full'"
+            :aria-label="String($t('clients.actions'))"
+            data-testid="client-quick-actions-trigger"
+          >
+            <CoreAppIcon :name="icons.client" class="w-4 h-4" />
+            <span v-if="!compact">{{ $t('clients.actions') }}</span>
+            <CoreAppBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</CoreAppBadge>
+            <CoreAppIcon v-if="!compact" :name="icons.chevronDown" class="w-3 h-3 ml-1" />
+          </CoreAppButton>
+        </CoreAppTooltip>
         <template #item-leading="{ item }">
           <CoreAppImage
             v-if="menuItem(item).image"
@@ -63,29 +65,27 @@
           <CoreAppIcon v-else :name="menuItem(item).icon" class="w-5 h-5 shrink-0" />
         </template>
       </CoreAppDropdownMenu>
-      <CoreAppButton
-        v-else
-        variant="ghost"
-        color="neutral"
-        size="sm"
-        class="opacity-50 hover:opacity-70"
-        :class="compact ? '' : 'w-full'"
-        aria-disabled="true"
-        :aria-label="String($t('clients.selectFirst'))"
-        :title="String($t('clients.selectFirst'))"
-        @click="showSelectionHint"
-      >
-        <CoreAppIcon :name="icons.client" class="w-4 h-4" />
-        <span v-if="!compact">{{ $t('clients.actions') }}</span>
-        <CoreAppIcon v-if="!compact" :name="icons.chevronDown" class="w-3 h-3 ml-1" />
-      </CoreAppButton>
+      <CoreAppTooltip v-else :text="String($t('clients.selectFirst'))">
+        <CoreAppButton
+          variant="soft"
+          color="primary"
+          size="sm"
+          :class="compact ? '' : 'w-full'"
+          :disabled="true"
+          :aria-label="String($t('clients.selectFirst'))"
+        >
+          <CoreAppIcon :name="icons.client" class="w-4 h-4" />
+          <span v-if="!compact">{{ $t('clients.actions') }}</span>
+          <CoreAppIcon v-if="!compact" :name="icons.chevronDown" class="w-3 h-3 ml-1" />
+        </CoreAppButton>
+      </CoreAppTooltip>
     </template>
   </div>
 
   <CoreAppModal v-model:open="confirmOpen" :dismissible="true" data-testid="client-quick-actions-dialog">
     <template #content>
-      <div class="p-4 min-w-87.5" @click.stop>
-        <div class="flex items-center justify-between mb-3">
+      <div class="p-3 min-w-87.5" @click.stop>
+        <div class="flex items-center justify-between mb-2">
           <h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
             <CoreAppImage
               v-if="currentAction === 'deployClientAgent'"
@@ -123,9 +123,15 @@
           @close="statusMessage = null"
         />
 
-        <div v-if="currentAction === 'onDemand'" class="mb-4 p-3">
+        <div v-if="currentAction === 'onDemand'" class="mb-3 p-2">
           <p class="mb-2">
-            {{ $t('actions.ondemandDesc') }}
+            {{ $t('actions.fireOnDemandDesc') }}
+          </p>
+        </div>
+
+        <div v-if="currentAction === 'timer'" class="mb-3 p-2">
+          <p class="mb-2">
+            {{ $t('actions.fireTimerDesc') }}
           </p>
         </div>
 
@@ -133,7 +139,7 @@
           <CoreAppTextarea v-model="notifyText" :placeholder="$t('notifications.text')" :rows="3" class="w-full" />
         </div>
 
-        <div v-if="currentAction === 'reboot'" class="mb-4 p-3 bg-(--color-warning-soft-bg) rounded border border-(--color-warning)/30">
+        <div v-if="currentAction === 'reboot'" class="mb-3 p-2 bg-(--color-warning-soft-bg) rounded border border-(--color-warning)/30">
           <div class="flex items-start gap-2">
             <CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-warning-soft-text) mt-0.5" />
             <p class="text-sm text-(--color-warning-soft-text)">
@@ -142,7 +148,7 @@
           </div>
         </div>
 
-        <div v-if="currentAction === 'shutdown'" class="mb-4 p-3 bg-(--color-warning-soft-bg) rounded border border-(--color-warning)/30">
+        <div v-if="currentAction === 'shutdown'" class="mb-3 p-2 bg-(--color-warning-soft-bg) rounded border border-(--color-warning)/30">
           <div class="flex items-start gap-2">
             <CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-warning-soft-text) mt-0.5" />
             <p class="text-sm text-(--color-warning-soft-text)">
@@ -206,7 +212,7 @@
           </CoreAppFormField>
         </div>
 
-        <div v-if="currentAction === 'delete'" class="mb-4 p-3 bg-(--color-error-soft-bg) rounded border border-(--color-error)/30">
+        <div v-if="currentAction === 'delete'" class="mb-3 p-2 bg-(--color-error-soft-bg) rounded border border-(--color-error)/30">
           <div class="flex items-start gap-2">
             <CoreAppIcon :name="icons.warning" class="w-4 h-4 text-(--color-error-soft-text) mt-0.5" />
             <div>
@@ -237,7 +243,7 @@
 
   <CoreAppModal v-model:open="resultOpen" :dismissible="true">
     <template #content>
-      <div class="p-4 min-w-87.5">
+      <div class="p-3 min-w-87.5">
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
             <CoreAppIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
@@ -311,8 +317,16 @@
 
   const icons = useIcons()
   const { t: $t } = useI18n()
-  const { triggerOnDemand, sendNotification, rebootClients, shutdownClients, deployClientAgent, deleteClient, renameClient } =
-    useApiHelpers()
+  const {
+    triggerOnDemand,
+    triggerTimerEvent,
+    sendNotification,
+    rebootClients,
+    shutdownClients,
+    deployClientAgent,
+    deleteClient,
+    renameClient,
+  } = useApiHelpers()
   const selectionStore = useSelectionStore()
   const { isReadOnly, canCreateClients } = useUserPermissions()
 
@@ -339,7 +353,8 @@
 
   // Map each action to its translation key (reuses existing keys where possible).
   const actionLabelKeys: Record<string, string> = {
-    onDemand: 'actions.ondemand',
+    onDemand: 'actions.fireOnDemand',
+    timer: 'actions.fireTimer',
     notify: 'actions.notify',
     reboot: 'actions.reboot',
     shutdown: 'actions.shutdown',
@@ -351,18 +366,9 @@
     return key ? $t(actionLabelKeys[key] ?? key) : ''
   }
 
-  function showSelectionHint() {
-    statusMessage.value = {
-      type: 'warning',
-      message: $t('clients.selectFirst'),
-    }
-    setTimeout(() => {
-      statusMessage.value = null
-    }, 4000)
-  }
-
   const allActions = [
     { key: 'onDemand', icon: icons.onDemand, color: 'text-(--color-info-soft-text)' },
+    { key: 'timer', icon: icons.clock, color: 'text-(--color-info-soft-text)' },
     { key: 'notify', icon: icons.notify, color: 'text-(--color-info-soft-text)' },
     { key: 'reboot', icon: icons.reboot, color: 'text-(--color-warning-soft-text)' },
     { key: 'shutdown', icon: icons.shutdown, color: 'text-(--color-warning-soft-text)' },
@@ -494,6 +500,13 @@
       switch (currentAction.value) {
         case 'onDemand': {
           const res = await triggerOnDemand(props.clientIds)
+          if (res.error) throw res.error
+          result = res.data || {}
+          break
+        }
+
+        case 'timer': {
+          const res = await triggerTimerEvent(props.clientIds)
           if (res.error) throw res.error
           result = res.data || {}
           break
