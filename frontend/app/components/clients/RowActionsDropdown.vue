@@ -10,37 +10,40 @@
 <template>
   <div class="flex items-center gap-1">
     <CoreAppButton
+      v-if="showAllActions || defaultAction === 'config'"
       :icon="icons.config"
       variant="ghost"
       size="xs"
+      class="h-7 w-7 p-1"
       :color="activeAction === 'config' ? 'primary' : 'neutral'"
       :class="activeAction === 'config' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
       :aria-label="String($t('config.title'))"
-      :title="String($t('config.title'))"
       data-testid="client-row-action-config"
       @click="emit('open-config')"
     />
 
     <CoreAppButton
+      v-if="showAllActions || defaultAction === 'logs'"
       :icon="icons.log"
       variant="ghost"
       size="xs"
+      class="h-7 w-7 p-1"
       :color="activeAction === 'logs' ? 'primary' : 'neutral'"
       :class="activeAction === 'logs' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
       :aria-label="String($t('logs.title'))"
-      :title="String($t('logs.title'))"
       data-testid="client-row-action-logs"
       @click="emit('open-logs')"
     />
 
     <CoreAppButton
+      v-if="showAllActions || defaultAction === 'clone'"
       :icon="icons.clone"
       variant="ghost"
       size="xs"
+      class="h-7 w-7 p-1"
       :color="activeAction === 'clone' ? 'primary' : 'neutral'"
       :class="activeAction === 'clone' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
       :aria-label="String($t('clients.clone.title'))"
-      :title="String($t('clients.clone.title'))"
       @click="emit('open-clone')"
       :disabled="isReadOnly || !canCreateClients"
       data-testid="client-row-action-clone"
@@ -53,9 +56,14 @@
 <script setup lang="ts">
   const props = defineProps<{
     clientId: string
+    defaultAction?: 'config' | 'logs' | 'clone'
+    showAllActions?: boolean
     /** Which panel is currently open for this row (highlights the matching button). */
     activeAction?: 'config' | 'logs' | 'clone' | null
   }>()
+
+  const defaultAction = computed(() => props.defaultAction || 'config')
+  const showAllActions = computed(() => props.showAllActions ?? false)
 
   const emit = defineEmits<{
     (e: 'open-config'): void

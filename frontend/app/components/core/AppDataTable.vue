@@ -97,6 +97,29 @@
                   </UButton>
                 </div>
 
+                <template v-if="panelViewOptions?.length">
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.panelView') }}</span>
+                  <USelect
+                    :model-value="panelView"
+                    :items="panelViewOptions"
+                    size="xs"
+                    :aria-label="String($t('settings.panelView'))"
+                    @update:model-value="(v: string) => emit('update:panelView', v)"
+                  />
+                </template>
+
+                <template v-if="rowActionsOptions">
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.rowActions') }}</span>
+                  <div class="flex items-center gap-2">
+                    <CoreAppCheckbox
+                      :model-value="rowActionsOptions.showAll"
+                      :aria-label="String($t('settings.showAllRowActions'))"
+                      @update:model-value="(value: boolean) => emit('update:showAllRowActions', value)"
+                    />
+                    <span class="text-xs">{{ $t('settings.showAllRowActions') }}</span>
+                  </div>
+                </template>
+
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.pageSize') }}</span>
                 <USelect
                   :model-value="tableSettings.settings.pageSize"
@@ -469,6 +492,9 @@
 
     maxHeight?: string
     sortBySelectionEnabled?: boolean
+    panelView?: string
+    panelViewOptions?: Array<{ value: string; label: string }>
+    rowActionsOptions?: { showAll: boolean }
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -488,6 +514,8 @@
     (e: 'row-activate', row: T): void
     (e: 'page-change', params: PageChangeParams): void
     (e: 'update:filterQuery', value: string): void
+    (e: 'update:panelView', value: string): void
+    (e: 'update:showAllRowActions', value: boolean): void
   }>()
 
   defineSlots<{
