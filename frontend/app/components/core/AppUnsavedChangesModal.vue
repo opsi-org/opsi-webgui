@@ -42,7 +42,7 @@
     </div>
   </template>
 
-  <UModal v-model:open="open" :title="$t('unsaved.changes')" :ui="{ content: 'w-[98vw] max-w-[98vw] h-[92vh] max-h-[92vh]' }">
+  <UModal v-model:open="open" :title="$t('unsaved.changes')" :ui="{ content: 'w-[94vw] max-w-[56rem] h-auto max-h-[76vh]' }">
     <template #body>
       <div class="flex flex-col gap-3 h-full min-h-0 overflow-hidden">
         <!-- Result alerts inside modal -->
@@ -76,7 +76,7 @@
 
         <!-- Product changes table -->
         <template v-if="flatChanges.length > 0">
-          <div class="flex-1 min-h-0">
+          <div class="flex-1 min-h-0 overflow-auto">
             <CoreAppTable :columns="productChangeColumns" max-height="100%" wrapper-class="h-full min-h-0">
               <tr v-for="change in flatChanges" :key="change.key" class="hover:bg-(--color-surface-hover)">
                 <td class="px-2 py-1 max-w-32 font-medium">
@@ -84,19 +84,25 @@
                     <span class="block truncate">{{ change.productId }}</span>
                   </UTooltip>
                 </td>
-                <td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
+                <td v-if="mode !== 'actionRequests'" class="px-2 py-1 max-w-28 text-(--color-text-muted)">
                   <UTooltip :text="change.label" :delay-duration="300">
                     <span class="block truncate">{{ change.label }}</span>
                   </UTooltip>
                 </td>
                 <td class="px-2 py-1 max-w-24 text-(--color-text-muted)">
-                  <UTooltip :text="String(change.oldValue)" :delay-duration="300">
-                    <span class="block truncate">{{ change.oldValue }}</span>
+                  <UTooltip :text="formatProductChangeValue(change, change.oldValue)" :delay-duration="300">
+                    <span class="block truncate">{{ formatProductChangeValue(change, change.oldValue) }}</span>
                   </UTooltip>
                 </td>
                 <td class="px-2 py-1 max-w-24 font-medium">
-                  <UTooltip :text="String(change.newValue)" :delay-duration="300">
-                    <span class="block truncate">{{ change.newValue }}</span>
+                  <UTooltip :text="formatProductChangeValue(change, change.newValue)" :delay-duration="300">
+                    <CoreAppStatusBadge
+                      v-if="change.type === 'actionRequest'"
+                      :status="getActionRequestStatus(change.newValue)"
+                      :label="formatProductChangeValue(change, change.newValue)"
+                      size="xs"
+                    />
+                    <span v-else class="block truncate">{{ formatProductChangeValue(change, change.newValue) }}</span>
                   </UTooltip>
                 </td>
                 <td class="px-2 py-1 text-center">
@@ -334,7 +340,7 @@
 
   const productChangeColumns = computed<TableColumn[]>(() => [
     { key: 'productId', label: String($t('products.id')) },
-    { key: 'property', label: String($t('products.property')) },
+    ...(props.mode === 'actionRequests' ? [] : [{ key: 'property', label: String($t('products.property')) }]),
     { key: 'oldValue', label: String($t('common.oldValue')) },
     { key: 'newValue', label: String($t('common.newValue')) },
     { key: 'actions', label: '', width: '2.5rem' },
@@ -373,6 +379,33 @@
     if (v === null || v === undefined) return '-'
     if (Array.isArray(v)) return v.join(', ')
     return String(v)
+  }
+
+  function formatActionRequestValue(value: unknown): string {
+    const normalized = String(value ?? 'none').toLowerCase()
+    if (normalized === 'none') return `— ${String($t('common.none')).toLowerCase()} —`
+    return normalized
+  }
+
+  function getActionRequestStatus(value: unknown): 'success' | 'warning' | 'error' | 'info' | 'neutral' {
+    switch (String(value ?? 'none').toLowerCase()) {
+      case 'setup':
+        return 'warning'
+      case 'uninstall':
+        return 'error'
+      case 'update':
+      case 'once':
+        return 'info'
+      case 'always':
+        return 'success'
+      default:
+        return 'neutral'
+    }
+  }
+
+  function formatProductChangeValue(change: ChangeItem, value: unknown): string {
+    if (change.type === 'actionRequest') return formatActionRequestValue(value)
+    return String(value ?? '-')
   }
 
   const isSaving = computed(() => props.configRef?.isSaving || props.productConfigRef?.isSaving || false)
