@@ -8,25 +8,21 @@
   ServersMainView - Server table with detail panel.
 -->
 <template>
-  <LayoutsPageLayout show-refresh :loading="loading" :show-panel="!!panelServer" @refresh="fetchServers" @close-panel="closePanel">
+  <LayoutsPageLayout
+    show-refresh
+    :loading="loading"
+    :show-panel="!!panelServer"
+    :changes-detected="changesDetected && !autoRefreshEnabled"
+    :changes-description="lastChangeDescription"
+    @refresh="manualRefresh"
+    @close-panel="closePanel"
+  >
     <template #actions>
       <CoreAppTooltip v-if="isDepotAccessRestricted" :text="$t('opsiConfig.serverFeatures.depotAccess.disabled')">
         <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help" data-testid="servers-restricted-badge">
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
-      <CoreAppButton
-        v-if="changesDetected && !autoRefreshEnabled"
-        :icon="icons.refresh"
-        color="warning"
-        variant="soft"
-        size="xs"
-        data-testid="messagebus-changes-button"
-        @click="manualRefresh"
-        :title="lastChangeDescription"
-      >
-        {{ $t('bus.changes') }}
-      </CoreAppButton>
       <CoreAppButton
         v-if="!isReadOnly && hasServerWriteAccess"
         :icon="icons.add"

@@ -20,14 +20,29 @@
           <slot name="tableControls" />
           <slot name="actions" />
           <slot name="saveActions" />
+          <CoreAppTooltip v-if="showRefresh && changesDetected" :text="changesDescription">
+            <CoreAppButton
+              :icon="icons.refresh"
+              color="warning"
+              variant="soft"
+              size="sm"
+              :loading="loading"
+              data-testid="page-refresh-button"
+              :aria-label="String($t('bus.changes'))"
+              @click="$emit('refresh')"
+            >
+              <span class="hidden sm:inline">{{ $t('bus.changes') }}</span>
+            </CoreAppButton>
+          </CoreAppTooltip>
           <CoreAppButton
-            v-if="showRefresh"
+            v-else-if="showRefresh"
             :icon="icons.refresh"
             color="primary"
             variant="outline"
             size="sm"
             :loading="loading"
             :title="String($t('common.refresh'))"
+            data-testid="page-refresh-button"
             @click="$emit('refresh')"
           />
         </div>
@@ -122,6 +137,8 @@
       showPanel?: boolean
       defaultPanelWidthPercent?: number
       allowXScroll?: boolean
+      changesDetected?: boolean
+      changesDescription?: string
     }>(),
     {
       defaultPanelWidthPercent: 50,

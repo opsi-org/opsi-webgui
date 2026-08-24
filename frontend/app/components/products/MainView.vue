@@ -15,8 +15,10 @@
     :loading="loading"
     :show-panel="showConfigPanel"
     :allow-x-scroll="panelMode"
+    :changes-detected="changesDetected && !autoRefreshEnabled"
+    :changes-description="lastChangeDescription"
     @close-panel="closePanel"
-    @refresh="fetchProducts"
+    @refresh="manualRefresh"
   >
     <template #tabs>
       <slot name="tabs" />
@@ -27,28 +29,17 @@
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
-      <CoreAppButton
-        v-if="changesDetected && !autoRefreshEnabled"
-        :icon="icons.refresh"
-        color="warning"
-        variant="soft"
-        size="xs"
-        data-testid="messagebus-changes-button"
-        @click="manualRefresh"
-        :title="lastChangeDescription"
-      >
-        {{ $t('bus.changes') }}
-      </CoreAppButton>
-      <ProductsQuickActionsDropdown :products="products" @applied="fetchProducts" class="w-70" />
+      <ProductsQuickActionsDropdown :products="products" :compact="panelMode" @applied="fetchProducts" :class="panelMode ? '' : 'w-70'" />
       <CoreAppButton
         variant="outline"
         color="primary"
         size="sm"
         :icon="icons.onDemand"
-        :title="String($t('products.processHelp'))"
+        :title="String($t('actions.processRequests'))"
+        :aria-label="String($t('actions.processRequests'))"
         @click="processActionsOpen = true"
       >
-        {{ $t('actions.ondemand') }}
+        <span v-if="!panelMode">{{ $t('actions.processRequests') }}</span>
       </CoreAppButton>
     </template>
 
@@ -563,7 +554,8 @@
       label: String($t('actions.request')),
       labelKey: 'actions.request',
       sortable: true,
-      class: 'w-40',
+      class: 'w-36',
+      minWidth: '80px',
       alwaysVisible: true,
       stickyRight: true,
     },
