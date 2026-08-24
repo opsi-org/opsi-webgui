@@ -45,6 +45,17 @@
           <div data-testid="quickpanel-product-actions">
             <ProductsQuickActionsDropdown :products="[]" compact @applied="() => {}" />
           </div>
+          <CoreAppButton
+            variant="soft"
+            color="primary"
+            size="sm"
+            :disabled="selectionStore.selectedClients.length === 0"
+            :title="String($t('actions.processRequests'))"
+            :aria-label="String($t('actions.processRequests'))"
+            @click="processActionsOpen = true"
+          >
+            <CoreAppIcon :name="icons.onDemand" class="w-4 h-4" />
+          </CoreAppButton>
         </div>
       </div>
 
@@ -75,14 +86,15 @@
             <CoreAppCheckbox v-model="autoRefreshEnabled" :aria-label="$t('settings.autoRefresh')" />
           </div>
           <div class="flex items-center gap-1.5 flex-nowrap">
-            <CoreAppSelect
-              v-model="defaultPage"
-              :items="defaultPageOptions"
-              size="xs"
-              :aria-label="$t('nav.defaultPage')"
-              :title="defaultPageTooltip"
-              class="flex-1 w-full"
-            />
+            <CoreAppTooltip :text="defaultPageTooltip">
+              <CoreAppSelect
+                v-model="defaultPage"
+                :items="defaultPageOptions"
+                size="xs"
+                :aria-label="$t('nav.defaultPage')"
+                class="flex-1 w-full"
+              />
+            </CoreAppTooltip>
             <SettingsThemeToggle />
             <SettingsLanguageDropdown direction="up" />
           </div>
@@ -126,6 +138,7 @@
       </div>
     </div>
   </div>
+  <ProductsProcessActionsModal v-model:open="processActionsOpen" :selected-product-ids="selectionStore.selectedProducts" />
 </template>
 <script setup lang="ts">
   import { useUserStore } from '~/stores/userStore'
@@ -142,6 +155,7 @@
   type TabId = 'overview' | 'servers' | 'clients' | 'products'
 
   const activeTab = ref<TabId>('overview')
+  const processActionsOpen = ref(false)
 
   const selectionTabs = computed(() => [
     {
@@ -231,14 +245,7 @@
     return match?.[1] ? decodeURIComponent(match[1]) : null
   }
 
-  const $t = (key: string) => {
-    const translated = i18nT(key)
-    if (translated && translated !== key) return String(translated)
-    return key
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, (s) => s.toUpperCase())
-      .trim()
-  }
+  const $t = (key: string) => String(i18nT(key))
 
   async function handleLogout() {
     loggingOut.value = true
