@@ -25,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+  import { useSelectionStore } from '~/stores/selectionStore'
+
   definePageMeta({
     layout: 'default',
     key: (route) => {
@@ -35,6 +37,7 @@
   })
 
   const { isReadOnly } = useUserPermissions()
+  const selectionStore = useSelectionStore()
 
   const VALID_TABS = ['parameters', 'attributes'] as const
   const TAB_ALIASES: Record<string, string> = { parameter: 'parameters', attribute: 'attributes' }
@@ -56,7 +59,7 @@
   })
 
   const manualClientId = ref<string>('')
-  const selectedClientId = computed(() => manualClientId.value)
+  const selectedClientId = computed(() => manualClientId.value || selectionStore.selectedClients.at(-1) || '')
 
   const activeTab = computed({
     get: () => routeTab.value,
