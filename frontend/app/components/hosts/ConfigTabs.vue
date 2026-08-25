@@ -126,12 +126,12 @@
             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-0.5 gap-x-4 hover:bg-(--color-surface-hover) rounded transition-colors"
             :class="isAttrChanged(key) ? 'bg-(--color-changed-bg)' : ''"
           >
-            <label class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all" :for="attributeInputId(key)">
+            <span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
               {{ getAttributeLabel(key) }}
               <span v-if="isAttrChanged(key)" class="inline-flex items-center text-xs text-(--color-changed-text)">
                 <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
               </span>
-            </label>
+            </span>
             <div class="flex-1 flex items-center gap-2 min-w-0">
               <CoreAppCheckbox
                 v-if="typeof originalAttributes[key] === 'boolean'"

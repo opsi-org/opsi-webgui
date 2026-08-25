@@ -138,20 +138,22 @@
           @click="navigateTo('/servers')"
         />
 
-        <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200" @click="navigateTo('/clients')">
+        <div
+          class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
+          role="button"
+          tabindex="0"
+          :aria-label="String($t('dashboard.totalClients'))"
+          @click="navigateTo('/clients')"
+          @keydown.enter="navigateTo('/clients')"
+          @keydown.space.prevent="navigateTo('/clients')"
+        >
           <div class="flex items-center justify-between mb-1">
             <div class="flex items-center gap-1.5">
               <CoreAppIcon :name="icons.client" class="w-5 h-5" />
               <CoreAppTooltipTable v-if="depotClientTooltipRows.length > 0" :rows="depotClientTooltipRows">
-                <CoreAppButton
-                  size="xs"
-                  variant="ghost"
-                  color="neutral"
-                  :icon="icons.info"
-                  :aria-label="String($t('common.info'))"
-                  class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
-                  @click.stop
-                />
+                <span class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity" aria-hidden="true">
+                  <CoreAppIcon :name="icons.info" class="w-4 h-4" />
+                </span>
               </CoreAppTooltipTable>
             </div>
             <CoreAppIcon
@@ -171,15 +173,9 @@
                 <span class="font-medium">{{ sharedClientNumbers?.all ?? '-' }}</span>
                 {{ $t('clients.active') }}
                 <CoreAppTooltipTable :rows="activeClientsTooltipRows">
-                  <CoreAppButton
-                    size="xs"
-                    variant="ghost"
-                    color="neutral"
-                    :icon="icons.info"
-                    :aria-label="String($t('clients.active'))"
-                    class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
-                    @click.stop
-                  />
+                  <span class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity" aria-hidden="true">
+                    <CoreAppIcon :name="icons.info" class="w-4 h-4" />
+                  </span>
                 </CoreAppTooltipTable>
               </span>
               <span class="flex items-center gap-1.5">
@@ -187,15 +183,9 @@
                 <span class="font-medium">{{ sharedClientNumbers?.inactive ?? '-' }}</span>
                 {{ $t('clients.inactive') }}
                 <CoreAppTooltipTable :rows="inactiveClientsTooltipRows">
-                  <CoreAppButton
-                    size="xs"
-                    variant="ghost"
-                    color="neutral"
-                    :icon="icons.info"
-                    :aria-label="String($t('clients.inactive'))"
-                    class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
-                    @click.stop
-                  />
+                  <span class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity" aria-hidden="true">
+                    <CoreAppIcon :name="icons.info" class="w-4 h-4" />
+                  </span>
                 </CoreAppTooltipTable>
               </span>
             </div>
@@ -216,20 +206,22 @@
           </div>
         </div>
 
-        <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200" @click="navigateTo('/products')">
+        <div
+          class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
+          role="button"
+          tabindex="0"
+          :aria-label="String($t('dashboard.totalProducts'))"
+          @click="navigateTo('/products')"
+          @keydown.enter="navigateTo('/products')"
+          @keydown.space.prevent="navigateTo('/products')"
+        >
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-1.5">
               <CoreAppIcon :name="icons.product" class="w-5 h-5" />
               <CoreAppTooltipTable v-if="depotProductTooltipRows.length > 0" :rows="depotProductTooltipRows">
-                <CoreAppButton
-                  size="xs"
-                  variant="ghost"
-                  color="neutral"
-                  :icon="icons.info"
-                  :aria-label="String($t('common.info'))"
-                  class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
-                  @click.stop
-                />
+                <span class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity" aria-hidden="true">
+                  <CoreAppIcon :name="icons.info" class="w-4 h-4" />
+                </span>
               </CoreAppTooltipTable>
             </div>
             <CoreAppIcon
