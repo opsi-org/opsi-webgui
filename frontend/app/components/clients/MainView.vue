@@ -14,7 +14,9 @@
     show-refresh
     :loading="loading"
     :show-panel="!!panelClient || !!panelType"
-    @refresh="fetchClients"
+    :changes-detected="changesDetected && !autoRefreshEnabled"
+    :changes-description="lastChangeDescription"
+    @refresh="manualRefresh"
     @close-panel="closePanel"
   >
     <template #actions>
@@ -23,18 +25,6 @@
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
-      <CoreAppButton
-        v-if="changesDetected && !autoRefreshEnabled"
-        :icon="icons.refresh"
-        color="warning"
-        variant="soft"
-        size="xs"
-        data-testid="messagebus-changes-button"
-        @click="manualRefresh"
-        :title="lastChangeDescription"
-      >
-        {{ $t('bus.changes') }}
-      </CoreAppButton>
       <CoreAppButton
         v-if="selectionStore.selectedClients.length > 0"
         :icon="icons.product"
@@ -74,12 +64,26 @@
       :selected-keys="selectionStore.selectedClients"
       :active-key="panelClient?.clientId"
       :sort-by-selection-enabled="sortBySelectionEnabled"
+      :panel-view="defaultClientPanelView"
+      :panel-view-options="clientPanelViewOptions"
+      :row-actions-options="{ showAll: showAllClientRowActions }"
       @row-activate="handleRowActivate"
       @selection-change="handleSelectionChange"
       @page-change="handlePageChange"
       @update:filter-query="handleFilterQueryUpdate"
+      @update:panel-view="setDefaultClientPanelView"
+      @update:show-all-row-actions="setShowAllClientRowActions"
       @refresh="fetchClients"
     >
+      <template #header-cell-reachable="{ sortColumn, sortDirection }">
+        <div class="flex items-center justify-center gap-1">
+          <CoreAppTooltip :text="String($t('clients.reachable.help'))">
+            <CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 cursor-help" />
+          </CoreAppTooltip>
+          <CoreAppIcon v-if="sortColumn === 'reachable'" :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc" class="w-3 h-3" />
+          <CoreAppIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
+        </div>
+      </template>
       <template #cell-clientId="{ row }">
         <div class="flex items-center gap-1.5">
           <CoreAppIcon
@@ -179,16 +183,13 @@
         />
       </template>
       <template #cell-reachable="{ row }">
-        <ClientsReachableBadge
-          :client-id="(row as OpsiClient).clientId"
-          :reachable="reachableStatus[(row as OpsiClient).clientId]"
-          :loading="reachableLoading[(row as OpsiClient).clientId]"
-          @check="checkReachability((row as OpsiClient).clientId)"
-        />
+        <ClientsReachableBadge :reachable="reachableStatus[(row as OpsiClient).clientId]" />
       </template>
       <template #row-actions="{ row }">
         <ClientsRowActionsDropdown
           :client-id="(row as OpsiClient).clientId"
+          :default-action="defaultClientPanelView"
+          :show-all-actions="showAllClientRowActions"
           :active-action="panelClient?.clientId === (row as OpsiClient).clientId ? (panelType as 'config' | 'logs' | 'clone' | null) : null"
           @open-config="openPanel(row as OpsiClient, 'config')"
           @open-logs="openPanel(row as OpsiClient, 'logs')"
@@ -209,10 +210,20 @@
         <template v-else>{{ panelClient?.clientId }}</template>
       </span>
     </template>
-    <template #panel-subtitle>
-      <template v-if="panelType === 'config'">{{ $t('config.title') }}</template>
-      <template v-else-if="panelType === 'logs'">{{ $t('logs.title') }}</template>
-      <template v-else-if="panelType === 'clone'">{{ $t('clients.clone.title') }}</template>
+    <template #panel-actions>
+      <div v-if="panelClient && clientPanelViews.length > 1" class="flex items-center justify-end gap-1">
+        <CoreAppTooltip v-for="view in clientPanelViews" :key="view.value" :text="view.label">
+          <CoreAppButton
+            :icon="view.icon"
+            variant="ghost"
+            size="xs"
+            :color="panelType === view.value ? 'primary' : 'neutral'"
+            :class="panelType === view.value ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+            :aria-label="view.label"
+            @click="openPanel(panelClient, view.value as ClientPanelType)"
+          />
+        </CoreAppTooltip>
+      </div>
     </template>
     <template #panel>
       <div v-if="panelClient" class="h-full flex flex-col min-h-0">
@@ -263,7 +274,7 @@
 
   const icons = useIcons()
   const { t: $t } = useI18n()
-  const { getClients, getServerIds, getBlockedClients, checkClientReachable } = useApiHelpers()
+  const { getClients, getServerIds, getBlockedClients } = useApiHelpers()
   const selectionStore = useSelectionStore()
   const messageBusStore = useMessageBusStore()
   const { lastMsg: messageBusLastMsg } = storeToRefs(messageBusStore)
@@ -275,16 +286,31 @@
   const error = ref<string | null>(null)
   const clients = ref<OpsiClient[]>([])
   const totalItems = ref(0)
+  type ClientPanelType = 'config' | 'logs' | 'clone'
+
   const panelClient = ref<OpsiClient | null>(null)
-  const panelType = ref<'config' | 'logs' | 'clone' | 'products' | 'add' | null>(null)
+  const panelType = ref<ClientPanelType | 'products' | 'add' | null>(null)
   const panelTab = ref('parameters')
+  const DEFAULT_CLIENT_PANEL_VIEW_KEY = 'opsi-webgui-default-client-panel-view'
+  const SHOW_ALL_CLIENT_ROW_ACTIONS_KEY = 'opsi-webgui-show-all-client-row-actions'
+  const defaultClientPanelView = ref<ClientPanelType>('config')
+  const showAllClientRowActions = ref(false)
   const panelProductType = ref('localboot')
   const panelProductTypes = [
     { label: String($t('products.localboot')), value: 'localboot' },
     { label: String($t('products.netboot')), value: 'netboot' },
   ]
+  const clientPanelViews = computed(() => [
+    { label: String($t('config.title')), value: 'config', icon: icons.config },
+    { label: String($t('logs.title')), value: 'logs', icon: icons.log },
+    ...(isReadOnly.value || !canCreateClients.value
+      ? []
+      : [{ label: String($t('clients.clone.title')), value: 'clone', icon: icons.clone }]),
+  ])
+  const clientPanelViewOptions = computed(() => clientPanelViews.value.map(({ label, value }) => ({ label, value: String(value) })))
   const reachableStatus = ref<Record<string, boolean | undefined>>({})
-  const reachableLoading = ref<Record<string, boolean>>({})
+  // Clients whose state came from a live host_connected/host_disconnected event
+  const reachableLiveIds = ref<Set<string>>(new Set())
   const blockedClients = ref<Set<string>>(new Set())
   const lastPageParams = ref<PageChangeParams | null>(null)
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('clients'))
@@ -384,7 +410,7 @@
       label: String($t('clients.reachable.status')),
       labelKey: 'clients.reachable.status',
       headerIcon: icons.clientReachable,
-      sortable: false,
+      sortable: true,
       class: 'text-center w-10',
       minWidth: '50px',
     },
@@ -420,7 +446,7 @@
     { key: 'uefi', label: 'UEFI', sortable: true, visible: false },
   ]
 
-  function doOpenPanel(client: OpsiClient, type: 'config' | 'logs' | 'clone') {
+  function doOpenPanel(client: OpsiClient, type: ClientPanelType) {
     panelClient.value = client
     panelType.value = type
     const query: Record<string, string> = {
@@ -433,7 +459,7 @@
     router.replace({ query })
   }
 
-  function openPanel(client: OpsiClient, type: 'config' | 'logs' | 'clone') {
+  function openPanel(client: OpsiClient, type: ClientPanelType) {
     checkUnsavedAndDo(() => doOpenPanel(client, type))
   }
 
@@ -529,8 +555,24 @@
   function handleRowActivate(row: OpsiClient) {
     checkUnsavedAndDo(() => {
       selectionStore.setClients([row.clientId], 'table')
-      doOpenPanel(row, 'config')
+      doOpenPanel(row, defaultClientPanelView.value)
     })
+  }
+
+  function getCookie(name: string): string | null {
+    const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)'))
+    return match?.[1] ? decodeURIComponent(match[1]) : null
+  }
+
+  function setDefaultClientPanelView(value: string) {
+    if (!clientPanelViewOptions.value.some((option) => option.value === value)) return
+    defaultClientPanelView.value = value as ClientPanelType
+    document.cookie = `${DEFAULT_CLIENT_PANEL_VIEW_KEY}=${value}; path=/; max-age=31536000; SameSite=Lax`
+  }
+
+  function setShowAllClientRowActions(value: boolean) {
+    showAllClientRowActions.value = value
+    localStorage.setItem(SHOW_ALL_CLIENT_ROW_ACTIONS_KEY, String(value))
   }
 
   function handleSelectionChange(_rows: OpsiClient[], keys: string[]) {
@@ -583,7 +625,14 @@
     error.value = null
     try {
       if (params) lastPageParams.value = params
-      const effectiveParams = params ?? lastPageParams.value ?? undefined
+      // A reload without params must refetch every row that is currently
+      // loaded, not just the last requested page.
+      const isReload = !params
+      const baseParams = lastPageParams.value ?? undefined
+      const effectiveParams =
+        isReload && baseParams
+          ? { ...baseParams, pageNumber: 1, perPage: reloadWindowPerPage(baseParams.perPage, clients.value.length) }
+          : baseParams
       const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
       await selectionStore.ensureServersSelected()
       if (selectionStore.selectedServers.length === 0) {
@@ -615,14 +664,18 @@
       else if (result.data) {
         const newData = result.data as OpsiClient[]
         if (result.total !== null) totalItems.value = result.total
-        if (effectiveParams && effectiveParams.pageNumber > 1 && lastPageParams.value) {
+        if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
           const existingIds = new Set(clients.value.map((c) => c.clientId))
           const unique = newData.filter((c) => !existingIds.has(c.clientId))
           clients.value = [...clients.value, ...unique]
         } else {
           clients.value = newData
         }
-        void checkReachability(newData.map((c) => c.clientId))
+        for (const client of newData) {
+          if (typeof client.reachable === 'boolean' && !reachableLiveIds.value.has(client.clientId)) {
+            reachableStatus.value[client.clientId] = client.reachable
+          }
+        }
       }
     } catch (e) {
       if (requestId !== fetchClientsRequestId.value) return
@@ -643,32 +696,6 @@
       }
     } catch {
       /* silently fail */
-    }
-  }
-
-  async function checkReachability(clientIds: string | string[]) {
-    const ids = Array.isArray(clientIds) ? [...new Set(clientIds)] : [clientIds]
-    if (ids.length === 0) return
-
-    for (const id of ids) {
-      reachableLoading.value[id] = true
-    }
-
-    try {
-      const result = await checkClientReachable(ids)
-      if (result.data) {
-        for (const id of ids) {
-          if (Object.prototype.hasOwnProperty.call(result.data, id)) {
-            reachableStatus.value[id] = Boolean(result.data[id])
-          }
-        }
-      }
-    } catch {
-      // keep previous status on transient errors
-    } finally {
-      for (const id of ids) {
-        reachableLoading.value[id] = false
-      }
     }
   }
 
@@ -699,19 +726,28 @@
     return undefined
   }
 
+  function getMessageEventName(msg: unknown): string {
+    if (!msg || typeof msg !== 'object') return ''
+    const record = msg as Record<string, unknown>
+    const msgType = typeof record.type === 'string' ? record.type : ''
+    if (msgType === 'event') {
+      if (typeof record.event === 'string') return record.event
+      if (typeof record.channel === 'string') return record.channel.replace(/^event:/, '')
+    }
+    return msgType
+  }
+
   watch(messageBusLastMsg, (msg) => {
     if (!msg || typeof msg !== 'object') return
-    const type = (msg as Record<string, unknown>).type
-    if (typeof type !== 'string') return
+    const eventName = getMessageEventName(msg)
+    if (!eventName) return
 
-    if (type === 'event:host_connected' || type === 'host_connected') {
+    if (eventName === 'host_connected' || eventName === 'host_disconnected') {
       const hostId = extractHostId(msg)
-      if (hostId) reachableStatus.value[hostId] = true
-    }
-
-    if (type === 'event:host_disconnected' || type === 'host_disconnected') {
-      const hostId = extractHostId(msg)
-      if (hostId) reachableStatus.value[hostId] = false
+      if (hostId) {
+        reachableStatus.value[hostId] = eventName === 'host_connected'
+        reachableLiveIds.value.add(hostId)
+      }
     }
   })
 
@@ -736,6 +772,13 @@
     if (panelType.value === 'config' && panelClient.value) {
       router.replace({ query: { ...(route.query as Record<string, string>), configType: newTab } })
     }
+  })
+
+  watch(panelType, (newType) => {
+    if (newType !== 'config' && newType !== 'logs' && newType !== 'clone') return
+    defaultClientPanelView.value = newType
+    document.cookie = `${DEFAULT_CLIENT_PANEL_VIEW_KEY}=${newType}; path=/; max-age=31536000; SameSite=Lax`
+    if (panelClient.value) doOpenPanel(panelClient.value, newType)
   })
 
   watch(panelProductType, (newType) => {
@@ -763,6 +806,15 @@
   )
 
   onMounted(async () => {
+    const storedDefaultPanelView = getCookie(DEFAULT_CLIENT_PANEL_VIEW_KEY)
+    showAllClientRowActions.value = localStorage.getItem(SHOW_ALL_CLIENT_ROW_ACTIONS_KEY) === 'true'
+    if (
+      storedDefaultPanelView === 'config' ||
+      storedDefaultPanelView === 'logs' ||
+      (storedDefaultPanelView === 'clone' && canCreateClients.value && !isReadOnly.value)
+    ) {
+      defaultClientPanelView.value = storedDefaultPanelView
+    }
     const routeSortBy = route.query.sortBy as string | undefined
     if (routeSortBy) productsSortColumn.value = routeSortBy
     const routeProductType = route.query.type as string | undefined
@@ -781,7 +833,7 @@
     }
     if (clientId && route.query.view === 'panel') {
       const c = clients.value.find((cl) => cl.clientId === clientId)
-      const clientPanelType = pType === 'logs' || pType === 'clone' ? pType : 'config'
+      const clientPanelType = pType === 'logs' || pType === 'clone' ? pType : defaultClientPanelView.value
       if (c) doOpenPanel(c, clientPanelType)
       return
     }

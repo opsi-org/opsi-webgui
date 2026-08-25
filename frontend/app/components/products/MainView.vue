@@ -15,8 +15,10 @@
     :loading="loading"
     :show-panel="showConfigPanel"
     :allow-x-scroll="panelMode"
+    :changes-detected="changesDetected && !autoRefreshEnabled"
+    :changes-description="lastChangeDescription"
     @close-panel="closePanel"
-    @refresh="fetchProducts"
+    @refresh="manualRefresh"
   >
     <template #tabs>
       <slot name="tabs" />
@@ -27,28 +29,17 @@
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
-      <CoreAppButton
-        v-if="changesDetected && !autoRefreshEnabled"
-        :icon="icons.refresh"
-        color="warning"
-        variant="soft"
-        size="xs"
-        data-testid="messagebus-changes-button"
-        @click="manualRefresh"
-        :title="lastChangeDescription"
-      >
-        {{ $t('bus.changes') }}
-      </CoreAppButton>
-      <ProductsQuickActionsDropdown :products="products" @applied="fetchProducts" class="w-70" />
+      <ProductsQuickActionsDropdown :products="products" :compact="panelMode" @applied="fetchProducts" :class="panelMode ? '' : 'w-70'" />
       <CoreAppButton
         variant="outline"
         color="primary"
         size="sm"
         :icon="icons.onDemand"
-        :title="String($t('products.processHelp'))"
+        :title="String($t('actions.processRequests'))"
+        :aria-label="String($t('actions.processRequests'))"
         @click="processActionsOpen = true"
       >
-        {{ $t('actions.ondemand') }}
+        <span v-if="!panelMode">{{ $t('actions.processRequests') }}</span>
       </CoreAppButton>
     </template>
 
@@ -563,7 +554,8 @@
       label: String($t('actions.request')),
       labelKey: 'actions.request',
       sortable: true,
-      class: 'w-40',
+      class: 'w-36',
+      minWidth: '80px',
       alwaysVisible: true,
       stickyRight: true,
     },
@@ -960,7 +952,14 @@
     error.value = null
     try {
       if (params) lastPageParams.value = params
-      const effectiveParams = params ?? lastPageParams.value ?? undefined
+      // A reload without params (e.g. after saving action requests) must refetch
+      // every row that is currently loaded, not just the last requested page.
+      const isReload = !params
+      const baseParams = lastPageParams.value ?? undefined
+      const effectiveParams =
+        isReload && baseParams
+          ? { ...baseParams, pageNumber: 1, perPage: reloadWindowPerPage(baseParams.perPage, products.value.length) }
+          : baseParams
       const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
       await selectionStore.ensureServersSelected()
       if (selectionStore.selectedServers.length === 0) {
@@ -1003,7 +1002,7 @@
       if (result.error) throw result.error
       const newData = (result.data || []) as ProductRow[]
       if (result.total !== null) totalItems.value = result.total
-      if (params && params.pageNumber > 1 && lastPageParams.value) {
+      if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
         const existingIds = new Set(products.value.map((p) => p.productId))
         const unique = newData.filter((p) => !existingIds.has(p.productId))
         products.value = [...products.value, ...unique]
@@ -1086,16 +1085,23 @@
     }
   }
 
-  watch(
-    () => selectionStore.selectedClients,
-    () => fetchProducts(buildInitialPageParams(currentFilterQuery.value)),
-    { deep: true },
-  )
-  watch(
-    () => selectionStore.selectedServers,
-    () => fetchProducts(buildInitialPageParams(currentFilterQuery.value)),
-    { deep: true },
-  )
+  // Selecting many clients/depots one by one would otherwise fire one full
+  // product request per click; coalesce them into a single refetch.
+  let selectionScopeTimer: ReturnType<typeof setTimeout> | null = null
+  function refetchForSelectionScope() {
+    if (selectionScopeTimer) clearTimeout(selectionScopeTimer)
+    selectionScopeTimer = setTimeout(() => {
+      selectionScopeTimer = null
+      fetchProducts(buildInitialPageParams(currentFilterQuery.value))
+    }, 250)
+  }
+
+  onUnmounted(() => {
+    if (selectionScopeTimer) clearTimeout(selectionScopeTimer)
+  })
+
+  watch(() => selectionStore.selectedClients, refetchForSelectionScope)
+  watch(() => selectionStore.selectedServers, refetchForSelectionScope)
   watch(
     () => selectionStore.selectedProducts.join(','),
     () => {

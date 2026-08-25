@@ -42,7 +42,7 @@
                   :data-testid="linkTestId(sub.route)"
                   class="flex items-center gap-2 px-2 py-1 rounded-lg text-xs transition-colors duration-100"
                   :class="
-                    isSubActive(sub.route, item.submenu)
+                    isSubActive(sub, item.submenu)
                       ? 'bg-(--ui-color-primary-200) text-(--color-opsi-deep-blue) font-medium'
                       : 'text-white/80 hover:text-white hover:bg-white/15'
                   "
@@ -82,7 +82,7 @@
                     @click="hoveredItem = null"
                     class="flex items-center px-2 py-1 rounded-lg mx-1 my-0.5 text-xs transition-colors duration-100"
                     :class="
-                      isSubActive(sub.route, item.submenu)
+                      isSubActive(sub, item.submenu)
                         ? 'bg-(--ui-color-primary-200) text-(--color-opsi-deep-blue) font-medium'
                         : 'text-white/80 hover:text-white hover:bg-white/15'
                     "
@@ -158,11 +158,18 @@
     }
   }
 
+  interface NavSubItem {
+    title: string
+    route: string
+    /** Prefix used for active-state matching when it differs from `route` (e.g. a section with multiple sub-tabs). */
+    match?: string
+  }
+
   interface NavItem {
     title: string
     route: string
     icon: string
-    submenu?: { title: string; route: string }[]
+    submenu?: NavSubItem[]
   }
 
   const navGroups = computed<NavItem[][]>(() => {
@@ -191,7 +198,7 @@
           icon: icons.serverStack,
           submenu: [
             { title: 'allServers', route: '/servers' },
-            { title: 'configuration', route: '/servers/configuration/parameters' },
+            { title: 'configuration', route: '/servers/configuration/parameters', match: '/servers/configuration' },
           ],
         },
         {
@@ -202,7 +209,7 @@
             { title: 'allClients', route: '/clients' },
             { title: 'addNew', route: '/clients/add' },
             { title: 'clone', route: '/clients/clone' },
-            { title: 'configuration', route: '/clients/configuration/parameters' },
+            { title: 'configuration', route: '/clients/configuration/parameters', match: '/clients/configuration' },
             { title: 'logs', route: '/clients/logs' },
           ],
         },
@@ -251,16 +258,16 @@
     return $route.path.startsWith(route)
   }
 
-  function isSubActive(subRoute: string, submenu: { route: string }[]): boolean {
+  function isSubActive(sub: NavSubItem, submenu: NavSubItem[]): boolean {
     const path = $route.path
-    if (path === subRoute) return true
-    if (!path.startsWith(subRoute + '/')) return false
+    const matchRoute = sub.match ?? sub.route
+    if (path !== matchRoute && !path.startsWith(matchRoute + '/')) return false
     // Among sibling sub-routes that match the current path, only the longest prefix wins.
     const longest = submenu
-      .map((s) => s.route)
+      .map((s) => s.match ?? s.route)
       .filter((r) => path === r || path.startsWith(r + '/'))
       .reduce((a, b) => (b.length > a.length ? b : a), '')
-    return longest === subRoute
+    return longest === matchRoute
   }
 
   function toggleSubmenu(route: string) {

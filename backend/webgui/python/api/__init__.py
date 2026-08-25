@@ -334,7 +334,7 @@ async def create_backup(
 
 @api_router.get("/api/opsidata/changelogs")
 def get_markdown() -> PlainTextResponse:
-	changelog_path = Path(__file__).parent.parent / "data" / "changelog" / "changelog.md"
+	changelog_path = Path(__file__).resolve().parents[2] / "data" / "changelog" / "changelog.md"
 	if not changelog_path.is_file():
 		return PlainTextResponse("", status_code=404)
 	return PlainTextResponse(changelog_path.read_text(encoding="utf-8"))

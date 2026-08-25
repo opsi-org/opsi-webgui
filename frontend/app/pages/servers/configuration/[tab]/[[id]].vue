@@ -23,6 +23,8 @@
 </template>
 
 <script setup lang="ts">
+  import { useSelectionStore } from '~/stores/selectionStore'
+
   definePageMeta({
     layout: 'default',
     key: (route) => {
@@ -39,6 +41,7 @@
 
   const route = useRoute()
   const router = useRouter()
+  const selectionStore = useSelectionStore()
 
   const routeTab = computed((): string => {
     const t = route.params.tab
@@ -53,7 +56,10 @@
   })
 
   const manualServerId = ref<string>('')
-  const selectedServerId = computed(() => manualServerId.value)
+  const explicitlyClearedServer = ref(false)
+  const selectedServerId = computed(
+    () => manualServerId.value || (explicitlyClearedServer.value ? '' : selectionStore.selectedServers.at(-1) || ''),
+  )
 
   const activeTab = computed({
     get: () => routeTab.value,
@@ -70,6 +76,7 @@
 
   function updateSelectedServerId(id: string | null) {
     manualServerId.value = id || ''
+    explicitlyClearedServer.value = !id
     if (id === routeServerId.value) return
     const tab = activeTab.value
     router.replace(id ? `/servers/configuration/${tab}/${id}` : `/servers/configuration/${tab}`)
@@ -81,6 +88,7 @@
     routeServerId,
     (id) => {
       manualServerId.value = id
+      if (id) explicitlyClearedServer.value = false
     },
     { immediate: true },
   )

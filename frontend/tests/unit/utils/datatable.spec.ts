@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { needsMoreToFill, isAutoPageStalled, hasMoreInfiniteData } from '~/app/utils/datatable'
+import { needsMoreToFill, isAutoPageStalled, hasMoreInfiniteData, reloadWindowPerPage, shouldPrefetchNextPage } from '~/app/utils/datatable'
 
 describe('needsMoreToFill', () => {
   it('loads more when content does not fill the container and more data exists', () => {
@@ -61,5 +61,40 @@ describe('hasMoreInfiniteData', () => {
     // Regression: restricted depot access users saw a permanently spinning
     // loading row because total > reachable rows kept hasMoreData true.
     expect(hasMoreInfiniteData(true, 1, 4)).toBe(false)
+  })
+})
+
+describe('reloadWindowPerPage', () => {
+  it('covers every loaded row so a reload does not drop earlier pages', () => {
+    // Regression: saving action requests after scrolling to product 120
+    // reloaded page 6 only and replaced all rows with that single page.
+    expect(reloadWindowPerPage(20, 120)).toBe(120)
+  })
+
+  it('rounds up to full pages', () => {
+    expect(reloadWindowPerPage(20, 105)).toBe(120)
+  })
+
+  it('keeps at least one page for an empty table', () => {
+    expect(reloadWindowPerPage(20, 0)).toBe(20)
+  })
+
+  it('returns the page size unchanged for invalid page sizes', () => {
+    expect(reloadWindowPerPage(0, 120)).toBe(0)
+  })
+})
+
+describe('shouldPrefetchNextPage', () => {
+  it('requests the next page before the end of the list is reached', () => {
+    expect(shouldPrefetchNextPage({ scrollTop: 1400, scrollHeight: 3000, clientHeight: 1000 })).toBe(true)
+  })
+
+  it('does not request while the user is far from the end', () => {
+    expect(shouldPrefetchNextPage({ scrollTop: 0, scrollHeight: 3000, clientHeight: 1000 })).toBe(false)
+  })
+
+  it('uses a minimum trigger distance on small viewports', () => {
+    expect(shouldPrefetchNextPage({ scrollTop: 500, scrollHeight: 1000, clientHeight: 200 })).toBe(true)
+    expect(shouldPrefetchNextPage({ scrollTop: 400, scrollHeight: 1000, clientHeight: 200 })).toBe(false)
   })
 })

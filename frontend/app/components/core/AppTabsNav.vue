@@ -10,7 +10,7 @@
 <template>
   <UTabs
     :items="tabItems"
-    :model-value="modelValue"
+    :model-value="modelValue ?? undefined"
     @update:model-value="(val: string | number) => emit('update:modelValue', String(val))"
     :ui="{
       indicator: 'hidden',
@@ -55,7 +55,7 @@
 
   const props = defineProps<{
     tabs: Tab[]
-    modelValue: string
+    modelValue: string | null
     hideLabels?: boolean
   }>()
 

@@ -44,7 +44,6 @@
     class="opacity-70"
     disabled
     :aria-label="String($t('products.quickHelp'))"
-    :title="String($t('products.quickHelp'))"
   >
     <CoreAppIcon :name="icons.product" class="w-4 h-4" />
     <span class="hidden sm:inline">{{ $t('products.quick') }}</span>
@@ -53,7 +52,7 @@
   <CoreAppModal
     v-model:open="dialogOpen"
     :dismissible="true"
-    :ui="{ content: 'w-[96vw] max-w-[96vw] h-[84vh] max-h-[84vh]' }"
+    :ui="{ content: 'w-[92vw] max-w-[48rem] h-auto max-h-[80vh]' }"
     data-testid="product-quick-actions-dialog"
   >
     <template #content>
@@ -199,7 +198,7 @@
                 data-testid="product-quick-actions-preview-table"
                 :columns="previewColumns"
                 max-height="100%"
-                wrapper-class="h-full min-h-0"
+                wrapper-class="h-full min-h-0 flex flex-col"
                 :sort-key="previewSortKey"
                 :sort-dir="previewSortDir"
                 @sort="togglePreviewSort"
@@ -223,7 +222,11 @@
                     }}
                   </td>
                   <td class="px-1.5 py-1 text-sm whitespace-nowrap">
-                    {{ row.product.actionRequest || actionRequest }}
+                    <CoreAppStatusBadge
+                      :status="getActionRequestStatus(row.product.actionRequest || actionRequest)"
+                      :label="formatActionRequestLabel(row.product.actionRequest || actionRequest)"
+                      size="xs"
+                    />
                   </td>
                 </tr>
               </CoreAppTable>
@@ -287,6 +290,7 @@
 </template>
 
 <script setup lang="ts">
+  import { getActionRequestStatus } from '~/utils/actionRequest'
   import { useSelectionStore } from '~/stores/selectionStore'
   import type { ProductRow } from '~/types'
 
@@ -311,6 +315,12 @@
   const { isReadOnly } = useUserPermissions()
 
   const NOT_APPLIED = String($t('products.notApplied'))
+
+  function formatActionRequestLabel(value?: string | null): string {
+    const normalized = (value || 'none').toLowerCase()
+    if (normalized === 'none') return `— ${String($t('common.none')).toLowerCase()} —`
+    return normalized
+  }
 
   const previewColumns = computed(() => [
     { key: 'clientId', label: String($t('clients.id')), sortable: true },
@@ -337,27 +347,27 @@
 
   const installationStatusOptions = ref([
     { value: NOT_APPLIED, label: NOT_APPLIED },
-    { value: 'installed', label: 'installed' },
-    { value: 'not_installed', label: 'not_installed' },
-    { value: 'unknown', label: 'unknown' },
+    { value: 'installed', label: String($t('products.statusInstalled')) },
+    { value: 'not_installed', label: String($t('products.statusNotInstalled')) },
+    { value: 'unknown', label: String($t('products.statusUnknown')) },
   ])
 
   const actionResultOptions = ref([
     { value: NOT_APPLIED, label: NOT_APPLIED },
-    { value: 'failed', label: 'failed' },
-    { value: 'successful', label: 'successful' },
-    { value: 'none', label: 'none' },
+    { value: 'failed', label: String($t('actions.live.failed')) },
+    { value: 'successful', label: String($t('actions.success')) },
+    { value: 'none', label: String($t('common.none')) },
   ])
 
   const actionRequestOptions = [
     { value: NOT_APPLIED, label: NOT_APPLIED },
-    { value: 'none', label: 'none' },
-    { value: 'setup', label: 'setup' },
-    { value: 'uninstall', label: 'uninstall' },
-    { value: 'update', label: 'update' },
-    { value: 'always', label: 'always' },
-    { value: 'once', label: 'once' },
-    { value: 'custom', label: 'custom' },
+    { value: 'none', label: formatActionRequestLabel('none') },
+    { value: 'setup', label: formatActionRequestLabel('setup') },
+    { value: 'uninstall', label: formatActionRequestLabel('uninstall') },
+    { value: 'update', label: formatActionRequestLabel('update') },
+    { value: 'always', label: formatActionRequestLabel('always') },
+    { value: 'once', label: formatActionRequestLabel('once') },
+    { value: 'custom', label: formatActionRequestLabel('custom') },
   ]
 
   const scopeOptions = [
@@ -479,7 +489,7 @@
     const actResult = filters.value.actionResult === NOT_APPLIED ? null : filters.value.actionResult
     const action = actionRequest.value === NOT_APPLIED ? '' : actionRequest.value
 
-    if (!filters.value.outdatedOnly && instStatus === null && actResult === null) {
+    if (!filters.value.outdatedOnly && instStatus === null && actResult === null && action === '') {
       previewData.value = null
       return null
     }

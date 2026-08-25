@@ -8,12 +8,18 @@
   ProductsActionRequestDropdown - Dropdown for selecting product action requests.
 -->
 <template>
-  <div v-if="mode === 'header'" class="flex items-center gap-1" @click.stop>
-    <span class="font-heading text-xs tracking-wider">{{ $t('actions.request') }}</span>
-    <CoreAppIcon v-if="sortColumn === 'actionRequest'" :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc" class="w-3 h-3" />
-    <CoreAppIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
-    <CoreAppPopover v-if="hasClientsSelected && hasProductsSelected">
-      <CoreAppButton size="xs" variant="ghost" color="neutral" :icon="icons.chevronDown" :title="$t('products.quickHelp')" />
+  <div v-if="mode === 'header'" class="flex items-center gap-1 w-full" @click.stop>
+    <CoreAppPopover v-if="hasClientsSelected && hasProductsSelected" class="flex-1 min-w-0">
+      <CoreAppButton
+        size="xs"
+        variant="soft"
+        color="primary"
+        block
+        class="justify-between gap-1 w-full px-1.5! text-[0.6875rem]! font-medium tracking-wide"
+      >
+        <span class="truncate">{{ $t('actions.request') }}</span>
+        <CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 shrink-0" />
+      </CoreAppButton>
       <template #content>
         <div class="p-2 w-44">
           <p class="text-xs text-(--color-text-muted) mb-2">{{ $t('quick.setFor') }}</p>
@@ -22,18 +28,27 @@
               v-for="action in bulkActionOptions"
               :key="action"
               size="xs"
-              variant="ghost"
-              color="neutral"
+              variant="soft"
+              :color="getRequestStatus(action)"
               block
               class="justify-start"
               @click="emit('apply', action)"
             >
-              {{ action }}
+              {{ getRequestSelectLabel(action) }}
             </CoreAppButton>
           </div>
         </div>
       </template>
     </CoreAppPopover>
+    <span v-else class="flex-1 min-w-0 truncate text-left text-[0.6875rem] font-medium tracking-wide text-(--color-text-muted)">
+      {{ $t('actions.request') }}
+    </span>
+    <CoreAppIcon
+      v-if="sortColumn === 'actionRequest'"
+      :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
+      class="w-2 h-2 shrink-0"
+    />
+    <CoreAppIcon v-else :name="icons.sort" class="w-2 h-2 opacity-30 shrink-0" />
   </div>
 
   <div v-else class="flex items-center gap-1">
@@ -48,7 +63,8 @@
         :items="requestItems"
         size="xs"
         class="min-w-24"
-        aria-label="Action request"
+        :class="requestColorClass"
+        :aria-label="String($t('actions.request'))"
         @update:model-value="handleChange"
       />
       <CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
@@ -57,9 +73,7 @@
         </CoreAppBadge>
       </CoreAppTooltipTable>
     </template>
-    <span v-else class="text-xs text-(--color-text-muted)">
-      {{ currentLabel || '-' }}
-    </span>
+    <CoreAppStatusBadge v-else :status="currentRequestStatus" :label="currentLabel" size="xs" variant="soft" />
     <span
       v-if="hasChanged || hasPendingChange"
       class="w-1.5 h-1.5 rounded-full bg-(--color-warning) shrink-0"
@@ -69,6 +83,8 @@
 </template>
 
 <script setup lang="ts">
+  import { getActionRequestColorClass, getActionRequestStatus, type ActionRequestStatus } from '~/utils/actionRequest'
+
   interface Props {
     mode?: 'row' | 'header'
     productId?: string
@@ -102,6 +118,33 @@
 
   const bulkActionOptions = ['none', 'setup', 'uninstall', 'update', 'always', 'once', 'custom']
 
+  function normalizeRequest(value?: string | null): string {
+    const normalized = (value || 'none').toLowerCase()
+    return normalized || 'none'
+  }
+
+  function getRequestStatus(value?: string | null): ActionRequestStatus {
+    return getActionRequestStatus(value)
+  }
+
+  function getRequestLabel(value?: string | null): string {
+    switch (normalizeRequest(value)) {
+      case 'none':
+        return '—'
+      default:
+        return normalizeRequest(value)
+    }
+  }
+
+  function getRequestSelectLabel(value?: string | null): string {
+    switch (normalizeRequest(value)) {
+      case 'none':
+        return `— ${String($t('common.none')).toLowerCase()} —`
+      default:
+        return normalizeRequest(value)
+    }
+  }
+
   const isMixed = computed(() => {
     if (!props.requestDetails || props.requestDetails.length <= 1) return false
     const unique = [...new Set(props.requestDetails.map((r) => r?.toLowerCase() || 'none'))]
@@ -120,7 +163,12 @@
     if (clients.length > 0 && clients.length === props.requestDetails.length) {
       return [
         { key: `── ${String($t('clients.title'))} ──`, value: '' },
-        ...clients.map((c, i) => ({ key: c, value: props.requestDetails![i] || 'none' })),
+        ...clients.map((c, i) => ({
+          key: c,
+          value: '',
+          badge: getRequestLabel(props.requestDetails![i]),
+          badgeColor: getRequestStatus(props.requestDetails![i]),
+        })),
       ]
     }
     const counts: Record<string, number> = {}
@@ -130,7 +178,12 @@
     })
     return [
       { key: `── ${String($t('actions.request'))} ──`, value: '' },
-      ...Object.entries(counts).map(([k, v]) => ({ key: k, value: String(v) })),
+      ...Object.entries(counts).map(([k, v]) => ({
+        key: getRequestSelectLabel(k),
+        value: String(v),
+        badge: getRequestLabel(k),
+        badgeColor: getRequestStatus(k),
+      })),
     ]
   })
 
@@ -139,7 +192,7 @@
   const requestItems = computed(() => {
     const actions = props.availableActions.length > 0 ? ['none', ...props.availableActions] : defaultActions
     return [...new Set(actions)].map((a) => ({
-      label: a === 'none' ? String($t('common.none')) : a,
+      label: getRequestSelectLabel(a),
       value: a,
     }))
   })
@@ -151,7 +204,13 @@
 
   const currentLabel = computed(() => {
     const option = requestItems.value.find((o) => o.value === selectedRequest.value)
-    return option?.label || selectedRequest.value || String($t('common.none'))
+    return option?.label || getRequestSelectLabel(selectedRequest.value)
+  })
+
+  const currentRequestStatus = computed(() => getRequestStatus(selectedRequest.value))
+
+  const requestColorClass = computed(() => {
+    return getActionRequestColorClass(selectedRequest.value)
   })
 
   function handleChange(value: string) {

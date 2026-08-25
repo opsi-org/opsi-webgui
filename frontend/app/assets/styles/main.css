@@ -767,3 +767,48 @@ textarea:focus-visible,
   height: 8px;
   border-radius: 4px;
 }
+
+/* ============================================
+   INTERACTION CURSORS
+   Single source of truth for pointer feedback. Nuxt UI keep the
+   default arrow on menu, select and tab items (desktop-app semantics), which
+   made identical controls feel inconsistent across the app.
+   ============================================ */
+
+button:not(:disabled),
+a[href],
+summary,
+select:not(:disabled),
+[role='button'],
+[role='tab'],
+[role='menuitem'],
+[role='menuitemcheckbox'],
+[role='menuitemradio'],
+[role='option'],
+[role='combobox'],
+[role='switch'],
+[role='checkbox'],
+[role='radio'],
+input[type='checkbox']:not(:disabled),
+input[type='radio']:not(:disabled),
+input[type='range']:not(:disabled),
+label:has(input[type='checkbox']:not(:disabled)),
+label:has(input[type='radio']:not(:disabled)) {
+  cursor: pointer;
+}
+
+/* Text entry keeps the I-beam. */
+input:not([type='checkbox'], [type='radio'], [type='range'], [type='button'], [type='submit'], [type='reset']):not(:disabled),
+textarea:not(:disabled) {
+  cursor: text;
+}
+
+/* Nothing that cannot be activated may look clickable. */
+button:disabled,
+select:disabled,
+input:disabled,
+textarea:disabled,
+[aria-disabled='true'],
+[data-disabled] {
+  cursor: not-allowed;
+}

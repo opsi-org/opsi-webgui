@@ -8,25 +8,21 @@
   ServersMainView - Server table with detail panel.
 -->
 <template>
-  <LayoutsPageLayout show-refresh :loading="loading" :show-panel="!!panelServer" @refresh="fetchServers" @close-panel="closePanel">
+  <LayoutsPageLayout
+    show-refresh
+    :loading="loading"
+    :show-panel="!!panelServer"
+    :changes-detected="changesDetected && !autoRefreshEnabled"
+    :changes-description="lastChangeDescription"
+    @refresh="manualRefresh"
+    @close-panel="closePanel"
+  >
     <template #actions>
       <CoreAppTooltip v-if="isDepotAccessRestricted" :text="$t('opsiConfig.serverFeatures.depotAccess.disabled')">
         <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help" data-testid="servers-restricted-badge">
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
-      <CoreAppButton
-        v-if="changesDetected && !autoRefreshEnabled"
-        :icon="icons.refresh"
-        color="warning"
-        variant="soft"
-        size="xs"
-        data-testid="messagebus-changes-button"
-        @click="manualRefresh"
-        :title="lastChangeDescription"
-      >
-        {{ $t('bus.changes') }}
-      </CoreAppButton>
       <CoreAppButton
         v-if="!isReadOnly && hasServerWriteAccess"
         :icon="icons.add"
@@ -262,7 +258,14 @@
     error.value = null
     try {
       if (params) lastPageParams.value = params
-      const effectiveParams = params ?? lastPageParams.value ?? undefined
+      // A reload without params must refetch every row that is currently
+      // loaded, not just the last requested page.
+      const isReload = !params
+      const baseParams = lastPageParams.value ?? undefined
+      const effectiveParams =
+        isReload && baseParams
+          ? { ...baseParams, pageNumber: 1, perPage: reloadWindowPerPage(baseParams.perPage, servers.value.length) }
+          : baseParams
       const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
       const p: Record<string, unknown> = {}
       if (effectiveParams) {
@@ -284,7 +287,7 @@
       if (result.data) {
         const newData = result.data as Server[]
         if (result.total !== null) totalItems.value = result.total
-        if (effectiveParams && effectiveParams.pageNumber > 1 && lastPageParams.value) {
+        if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
           const existingIds = new Set(servers.value.map((s) => s.depotId))
           const unique = newData.filter((s) => !existingIds.has(s.depotId))
           servers.value = [...servers.value, ...unique]

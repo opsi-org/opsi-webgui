@@ -46,3 +46,33 @@ export function isAutoPageStalled(rowCountAtRequest: number, rowCountNow: number
 export function hasMoreInfiniteData(stalled: boolean, rowCount: number, serverTotal: number): boolean {
   return !stalled && rowCount < serverTotal
 }
+
+/**
+ * Page size for reloading the rows that are currently loaded in infinite
+ * scroll mode as a single page-1 request. Reloading with the last requested
+ * page number instead would replace all loaded rows by that single page,
+ * which drops earlier rows and breaks the visible ordering.
+ *
+ * @param perPage configured page size of the table
+ * @param loadedRows number of rows currently held by the view
+ */
+export function reloadWindowPerPage(perPage: number, loadedRows: number): number {
+  if (perPage <= 0) return perPage
+  return Math.max(1, Math.ceil(loadedRows / perPage)) * perPage
+}
+
+export interface PrefetchCheckInput {
+  scrollTop: number
+  scrollHeight: number
+  clientHeight: number
+}
+
+/**
+ * Whether the next page should be requested already. The trigger distance
+ * grows with the viewport height so the next rows arrive before the user
+ * reaches the end of the list.
+ */
+export function shouldPrefetchNextPage(input: PrefetchCheckInput): boolean {
+  const threshold = Math.max(300, input.clientHeight * 0.75)
+  return input.scrollTop + input.clientHeight >= input.scrollHeight - threshold
+}

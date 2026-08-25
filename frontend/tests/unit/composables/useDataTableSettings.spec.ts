@@ -45,7 +45,7 @@ describe('useDataTableSettings', () => {
       const { settings } = useDataTableSettings('does-not-exist')
       expect(settings.visibleColumns).toEqual([])
       expect(settings.sortColumn).toBe('')
-      expect(settings.pageSize).toBe(20)
+      expect(settings.pageSize).toBe(50)
       expect(settings.selectionMode).toBe('multi')
     })
   })
@@ -132,7 +132,7 @@ describe('useDataTableSettings', () => {
       setPageSize(99)
       reset()
       expect(settings.visibleColumns).toEqual(['depotId', 'description', 'type', 'ip'])
-      expect(settings.pageSize).toBe(20)
+      expect(settings.pageSize).toBe(50)
     })
   })
 

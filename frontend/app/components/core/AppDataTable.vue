@@ -97,7 +97,35 @@
                   </UButton>
                 </div>
 
-                <span class="text-xs text-(--color-text-muted)">{{ $t('settings.pageSize') }}</span>
+                <template v-if="panelViewOptions?.length">
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.panelView') }}</span>
+                  <USelect
+                    :model-value="panelView"
+                    :items="panelViewOptions"
+                    size="xs"
+                    :aria-label="String($t('settings.panelView'))"
+                    @update:model-value="(v: string) => emit('update:panelView', v)"
+                  />
+                </template>
+
+                <template v-if="rowActionsOptions">
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.rowActions') }}</span>
+                  <div class="flex items-center gap-2">
+                    <CoreAppCheckbox
+                      :model-value="rowActionsOptions.showAll"
+                      :aria-label="String($t('settings.showAllRowActions'))"
+                      @update:model-value="(value: boolean) => emit('update:showAllRowActions', value)"
+                    />
+                    <span class="text-xs">{{ $t('settings.showAllRowActions') }}</span>
+                  </div>
+                </template>
+
+                <span class="flex items-center gap-1 text-xs text-(--color-text-muted)">
+                  {{ $t('settings.pageSize') }}
+                  <CoreAppTooltip :text="String($t('settings.pageSizeHelp'))">
+                    <CoreAppIcon :name="icons.info" class="w-3 h-3 cursor-help" />
+                  </CoreAppTooltip>
+                </span>
                 <USelect
                   :model-value="tableSettings.settings.pageSize"
                   :items="pageSizeOptions"
@@ -197,7 +225,7 @@
                 <th
                   v-if="selectable"
                   class="w-9 px-1 py-0.5 text-center whitespace-nowrap bg-(--color-surface)"
-                  :aria-label="effectiveSelectionMode === 'multi' ? 'Select all' : 'Selection'"
+                  :aria-label="effectiveSelectionMode === 'multi' ? String($t('common.selectAll')) : String($t('settings.selection'))"
                 >
                   <div class="flex items-center justify-center gap-1">
                     <input
@@ -206,7 +234,7 @@
                       :checked="allSelected"
                       :indeterminate="someSelected"
                       class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue"
-                      aria-label="Select all rows"
+                      :aria-label="String($t('common.selectAll'))"
                       @change="toggleSelectAll"
                     />
                     <UButton
@@ -227,7 +255,7 @@
                   v-for="col in visibleColumns"
                   :key="col.key"
                   :aria-sort="getSortAriaLabel(col.key)"
-                  class="px-[0.4rem] py-0.5 text-left text-xs font-medium tracking-wide text-(--color-text-muted) whitespace-nowrap"
+                  class="px-[0.4rem] py-0.5 text-left text-[0.6875rem] font-medium tracking-wide text-(--color-text-muted) whitespace-nowrap"
                   :class="[
                     col.headerClass,
                     { 'cursor-pointer hover:bg-(--color-surface-hover)': col.sortable },
@@ -235,7 +263,7 @@
                   ]"
                   :style="{
                     width: col.width,
-                    minWidth: col.minWidth || '68px',
+                    minWidth: col.minWidth || '52px',
                     maxWidth: col.maxWidth,
                     textAlign: col.align,
                     ...(col.stickyRight ? { right: hasActions ? actionsColWidth + 'px' : '0' } : {}),
@@ -263,9 +291,9 @@
                         <UIcon
                           v-if="tableSettings.settings.sortColumn === col.key"
                           :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
-                          class="w-3 h-3"
+                          class="w-2 h-2"
                         />
-                        <UIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
+                        <UIcon v-else :name="icons.sort" class="w-2 h-2 opacity-30" />
                       </template>
                     </div>
                   </slot>
@@ -274,35 +302,37 @@
                 <th
                   v-if="hasActions"
                   ref="actionsHeaderRef"
-                  class="min-w-18 px-[0.4rem] py-0.5 text-center text-xs font-medium tracking-wide text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-40 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
+                  class="min-w-10 px-0.5 py-0.5 text-center text-[0.6875rem] font-medium tracking-wide text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-40 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
                 >
-                  {{ $t('actions.title') }}
+                  <span class="sr-only">{{ $t('actions.title') }}</span>
                 </th>
               </tr>
             </thead>
 
             <tbody class="data-table-body" :class="{ 'pb-2': displayMode === 'pagination' }">
+              <tr v-if="topSpacerHeight > 0" aria-hidden="true" class="virtual-spacer" :style="{ height: topSpacerHeight + 'px' }">
+                <td :colspan="totalColSpan" class="p-0"></td>
+              </tr>
               <tr
                 v-for="(row, idx) in displayRows"
                 :key="getRowKey(row)"
                 :aria-selected="isSelected(row)"
                 :tabindex="0"
-                class="group data-table-row hover:bg-(--color-surface-hover) focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue focus:ring-offset-1 focus:ring-offset-(--color-background)"
+                class="group data-table-row cursor-pointer hover:bg-(--color-surface-hover) focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue focus:ring-offset-1 focus:ring-offset-(--color-background)"
                 :class="{
-                  'cursor-pointer': true,
                   'bg-(--color-primary-soft-bg)': isHighlighted(row),
                   'shadow-[inset_3px_0_0_0_var(--color-primary)]': isActive(row),
                 }"
                 @click="handleRowClick(row, $event)"
                 @keydown.enter="handleRowClick(row, $event)"
               >
-                <td v-if="selectable" class="px-1 py-0.5 text-center align-middle" role="gridcell" @click.stop="handleCheckboxClick(row)">
+                <td v-if="selectable" class="px-1 py-px text-center align-middle" role="gridcell" @click.stop="handleCheckboxClick(row)">
                   <input
                     v-if="effectiveSelectionMode === 'multi'"
                     type="checkbox"
                     :checked="isSelected(row)"
                     class="rounded border-(--color-border) text-opsi-blue focus:ring-opsi-blue"
-                    :aria-label="'Select row ' + getRowKey(row)"
+                    :aria-label="`${String($t('common.selectRow'))} ${getRowKey(row)}`"
                   />
                   <input
                     v-else
@@ -310,7 +340,7 @@
                     :checked="isSelected(row)"
                     :name="tableId + '-selection'"
                     class="border-(--color-border) text-opsi-blue focus:ring-opsi-blue"
-                    :aria-label="'Select row ' + getRowKey(row)"
+                    :aria-label="`${String($t('common.selectRow'))} ${getRowKey(row)}`"
                   />
                 </td>
 
@@ -318,7 +348,7 @@
                   v-for="col in visibleColumns"
                   :key="col.key"
                   role="gridcell"
-                  class="px-[0.4rem] py-0.5 text-sm leading-4 text-(--color-text) whitespace-nowrap align-middle"
+                  class="px-[0.4rem] py-px text-sm leading-4 text-(--color-text) whitespace-nowrap align-middle"
                   :class="[
                     col.class,
                     col.stickyRight
@@ -338,7 +368,7 @@
                     ...(col.stickyRight ? { right: hasActions ? actionsColWidth + 'px' : '0' } : {}),
                   }"
                 >
-                  <slot :name="`cell-${col.key}` as any" :row="row" :value="getNestedValue(row, col.key)" :index="idx">
+                  <slot :name="`cell-${col.key}` as any" :row="row" :value="getNestedValue(row, col.key)" :index="displayStartIndex + idx">
                     <CoreAppTooltip v-if="col.tooltip && getTooltipValue(row, col)" :text="getTooltipValue(row, col)">
                       <span :class="getCellContentClass(col)">{{ formatCellValue(row, col) }}</span>
                     </CoreAppTooltip>
@@ -348,22 +378,32 @@
 
                 <td
                   v-if="hasActions"
-                  class="px-[0.4rem] py-0.5 text-center sticky right-0 z-10 min-w-18 whitespace-nowrap shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
+                  class="px-0.5 py-px text-center sticky right-0 z-10 min-w-10 whitespace-nowrap shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
                   :class="
                     isHighlighted(row) ? 'bg-(--color-row-selected)' : 'bg-(--color-background) group-hover:bg-(--color-surface-hover)'
                   "
                   @click.stop
                 >
                   <div
-                    class="flex items-center justify-center gap-1 rounded-md transition-colors"
-                    :class="isHighlighted(row) ? 'bg-(--color-primary)/10 ring-1 ring-(--color-primary)/30 px-1' : ''"
+                    class="flex items-center justify-center gap-0 rounded-md transition-colors"
+                    :class="isHighlighted(row) ? 'bg-(--color-primary)/10 ring-1 ring-(--color-primary)/30 px-0.5' : ''"
                   >
-                    <slot name="row-actions" :row="row" :index="idx" :selected="isSelected(row)" :active="isActive(row)" />
+                    <slot
+                      name="row-actions"
+                      :row="row"
+                      :index="displayStartIndex + idx"
+                      :selected="isSelected(row)"
+                      :active="isActive(row)"
+                    />
                   </div>
                 </td>
               </tr>
 
-              <tr v-if="rows.length === 0 && !loading">
+              <tr v-if="bottomSpacerHeight > 0" aria-hidden="true" class="virtual-spacer" :style="{ height: bottomSpacerHeight + 'px' }">
+                <td :colspan="totalColSpan" class="p-0"></td>
+              </tr>
+
+              <tr v-if="visibleRows.length === 0 && !loading">
                 <td :colspan="totalColSpan" class="px-4 py-12 text-center">
                   <div class="flex flex-col items-center gap-2 text-(--color-text-muted)">
                     <UIcon :name="icons.table" class="w-8 h-8 opacity-50" />
@@ -469,6 +509,9 @@
 
     maxHeight?: string
     sortBySelectionEnabled?: boolean
+    panelView?: string
+    panelViewOptions?: Array<{ value: string; label: string }>
+    rowActionsOptions?: { showAll: boolean }
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -488,6 +531,8 @@
     (e: 'row-activate', row: T): void
     (e: 'page-change', params: PageChangeParams): void
     (e: 'update:filterQuery', value: string): void
+    (e: 'update:panelView', value: string): void
+    (e: 'update:showAllRowActions', value: boolean): void
   }>()
 
   defineSlots<{
@@ -505,7 +550,7 @@
 
   const tableContainer = ref<HTMLElement | null>(null)
   const actionsHeaderRef = ref<HTMLElement | null>(null)
-  const actionsColWidth = ref(96)
+  const actionsColWidth = ref(48)
   const scrollSentinel = ref<HTMLElement | null>(null)
   const selectedKeys = ref<string[]>([])
   const selectedKeysSet = computed(() => new Set(selectedKeys.value))
@@ -548,10 +593,12 @@
   })
 
   const pageSizeOptions = computed(() => [
-    { value: 10, label: '10' },
     { value: 20, label: '20' },
     { value: 50, label: '50' },
     { value: 100, label: '100' },
+    { value: 250, label: '250' },
+    { value: 500, label: '500' },
+    { value: 1000, label: '1000' },
   ])
 
   const sortableColumnOptions = computed(() =>
@@ -561,6 +608,19 @@
   const toggleableColumns = computed(() => props.columns.filter((c) => !c.alwaysVisible && c.key !== 'actions'))
 
   const visibleColumns = computed(() => props.columns.filter((c) => c.alwaysVisible || tableSettings.isColumnVisible(c.key, props.columns)))
+
+  // Cell keys are resolved for every rendered cell and for every row while filtering,
+  // so the path is split once per key instead of on each access.
+  const nestedPathCache = new Map<string, string[]>()
+
+  function nestedPath(key: string): string[] {
+    let path = nestedPathCache.get(key)
+    if (!path) {
+      path = key.split('.')
+      nestedPathCache.set(key, path)
+    }
+    return path
+  }
 
   function isColumnVisibleComputed(key: string): boolean {
     return tableSettings.isColumnVisible(key, props.columns)
@@ -603,9 +663,81 @@
     return false
   })
 
-  const displayRows = computed(() => props.rows)
+  // The server applies the filter too, but only after the debounce and the round
+  // trip. Filtering the already loaded rows locally makes every keystroke visible
+  // immediately; rows the server returns for the same query always match again.
+  const localFilterTerm = computed(() => filterQueryInternal.value.trim().toLowerCase())
 
-  const allSelected = computed(() => props.rows.length > 0 && props.rows.every((row) => isSelected(row)))
+  const visibleRows = computed(() => {
+    const term = localFilterTerm.value
+    if (!props.filterable || !term) return props.rows
+    const cols = visibleColumns.value
+    return props.rows.filter((row) => cols.some((col) => formatCellValue(row, col).toLowerCase().includes(term)))
+  })
+
+  // Row virtualization: only rows near the viewport are rendered, the rest is
+  // replaced by two spacer rows. Kicks in for large row sets only, so small
+  // tables keep the plain DOM.
+  const VIRTUALIZATION_MIN_ROWS = 60
+  const VIRTUALIZATION_OVERSCAN = 10
+  const DEFAULT_ROW_HEIGHT = 30
+  const measuredRowHeight = ref(DEFAULT_ROW_HEIGHT)
+  const virtualStart = ref(0)
+  const virtualCount = ref(60)
+  let rowHeightMeasured = false
+  let containerHeight = 0
+
+  const virtualizationActive = computed(() => visibleRows.value.length > VIRTUALIZATION_MIN_ROWS)
+  const displayStartIndex = computed(() => (virtualizationActive.value ? virtualStart.value : 0))
+  const displayRows = computed(() =>
+    virtualizationActive.value ? visibleRows.value.slice(virtualStart.value, virtualStart.value + virtualCount.value) : visibleRows.value,
+  )
+  const topSpacerHeight = computed(() => (virtualizationActive.value ? virtualStart.value * measuredRowHeight.value : 0))
+  const bottomSpacerHeight = computed(() => {
+    if (!virtualizationActive.value) return 0
+    const rendered = virtualStart.value + displayRows.value.length
+    return Math.max(0, visibleRows.value.length - rendered) * measuredRowHeight.value
+  })
+
+  // Reading offsetHeight forces a synchronous layout, so the row height is measured
+  // once and only re-measured when the rendered columns change.
+  function measureRowHeight() {
+    if (rowHeightMeasured) return
+    const rowEl = tableContainer.value?.querySelector('tbody .data-table-row') as HTMLElement | null
+    if (rowEl && rowEl.offsetHeight > 0) {
+      measuredRowHeight.value = rowEl.offsetHeight
+      rowHeightMeasured = true
+    }
+  }
+
+  watch(
+    () => visibleColumns.value.map((c) => c.key).join(','),
+    () => {
+      rowHeightMeasured = false
+    },
+  )
+
+  function updateVirtualWindow() {
+    const el = tableContainer.value
+    if (!el || !virtualizationActive.value) {
+      virtualStart.value = 0
+      return
+    }
+    measureRowHeight()
+    if (!containerHeight) containerHeight = el.clientHeight
+    const rowHeight = measuredRowHeight.value || DEFAULT_ROW_HEIGHT
+    const visibleCount = Math.ceil(containerHeight / rowHeight) + VIRTUALIZATION_OVERSCAN * 2
+    const firstVisible = Math.floor(el.scrollTop / rowHeight) - VIRTUALIZATION_OVERSCAN
+    virtualCount.value = visibleCount
+    virtualStart.value = Math.max(0, Math.min(firstVisible, visibleRows.value.length - visibleCount))
+  }
+
+  function scrollToTop() {
+    virtualStart.value = 0
+    tableContainer.value?.scrollTo({ top: 0 })
+  }
+
+  const allSelected = computed(() => visibleRows.value.length > 0 && visibleRows.value.every((row) => isSelected(row)))
 
   const someSelected = computed(() => selectedKeys.value.length > 0 && !allSelected.value)
 
@@ -629,7 +761,9 @@
   }
 
   function getNestedValue(obj: T, path: string): unknown {
-    return path.split('.').reduce((acc: unknown, part: string) => {
+    const parts = nestedPath(path)
+    if (parts.length === 1) return (obj as Record<string, unknown>)[path]
+    return parts.reduce((acc: unknown, part: string) => {
       if (acc && typeof acc === 'object' && part in acc) {
         return (acc as Record<string, unknown>)[part]
       }
@@ -672,12 +806,14 @@
       tableSettings.settings.sortDirection = 'asc'
     }
     currentPage.value = 1
+    scrollToTop()
     emitPageChange()
   }
 
   function changeSortDirection(dir: 'asc' | 'desc') {
     tableSettings.settings.sortDirection = dir
     currentPage.value = 1
+    scrollToTop()
     emitPageChange()
   }
 
@@ -706,7 +842,7 @@
       emit('row-activate', row)
     } else {
       const mouseEvent = event as MouseEvent
-      const currentIndex = displayRows.value.indexOf(row)
+      const currentIndex = visibleRows.value.indexOf(row)
       if (mouseEvent.shiftKey && lastClickedIndex.value !== null && currentIndex >= 0) {
         shiftSelectRange(lastClickedIndex.value, currentIndex)
       } else {
@@ -719,7 +855,7 @@
   function shiftSelectRange(fromIndex: number, toIndex: number) {
     const start = Math.min(fromIndex, toIndex)
     const end = Math.max(fromIndex, toIndex)
-    const rangeKeys = displayRows.value.slice(start, end + 1).map((r) => getRowKey(r))
+    const rangeKeys = visibleRows.value.slice(start, end + 1).map((r) => getRowKey(r))
     const rangeKeySet = new Set(rangeKeys)
     const currentSelected = selectedKeysSet.value
     const allAlreadySelected = rangeKeys.every((k) => currentSelected.has(k))
@@ -768,7 +904,7 @@
 
   function toggleSelectAll() {
     if (allSelected.value) selectedKeys.value = []
-    else selectedKeys.value = props.rows.map((row) => getRowKey(row))
+    else selectedKeys.value = visibleRows.value.map((row) => getRowKey(row))
     emitSelectionChange()
   }
 
@@ -816,18 +952,28 @@
   function goToPage(page: number) {
     if (page >= 1 && page <= totalPages.value) {
       currentPage.value = page
+      scrollToTop()
       emitPageChange()
     }
   }
 
+  // The virtual window must follow the scroll position in the same frame, otherwise
+  // the spacer rows stay in place for a frame and the table shows blank areas.
+  // Only the prefetch check, which reads scrollHeight and forces a layout, is
+  // coalesced into an animation frame.
+  let scrollFrame: number | null = null
+
   function handleScroll() {
-    if (!tableContainer.value) return
-    const { scrollTop, scrollHeight, clientHeight } = tableContainer.value
-    if (displayMode.value === 'infinite') {
-      if (scrollTop + clientHeight >= scrollHeight - 100) {
+    updateVirtualWindow()
+    if (displayMode.value !== 'infinite' || scrollFrame !== null) return
+    scrollFrame = requestAnimationFrame(() => {
+      scrollFrame = null
+      const el = tableContainer.value
+      if (!el) return
+      if (shouldPrefetchNextPage({ scrollTop: el.scrollTop, scrollHeight: el.scrollHeight, clientHeight: el.clientHeight })) {
         requestNextInfinitePage()
       }
-    }
+    })
   }
 
   let sentinelObserver: IntersectionObserver | null = null
@@ -908,11 +1054,15 @@
           }
         }
       },
-      { root: tableContainer.value, threshold: 0.1 },
+      { root: tableContainer.value, rootMargin: '400px 0px', threshold: 0 },
     )
 
     if (tableContainer.value) {
-      containerResizeObserver = new ResizeObserver(() => maybeFillViewport())
+      containerResizeObserver = new ResizeObserver(() => {
+        containerHeight = tableContainer.value?.clientHeight ?? containerHeight
+        updateVirtualWindow()
+        maybeFillViewport()
+      })
       containerResizeObserver.observe(tableContainer.value)
     }
 
@@ -932,6 +1082,7 @@
         autoPageRowCountAtRequest = -1
       }
       await nextTick()
+      updateVirtualWindow()
       resetInfinitePagingState()
       maybeFillViewport()
     },
@@ -969,6 +1120,10 @@
     if (containerResizeObserver) {
       containerResizeObserver.disconnect()
       containerResizeObserver = null
+    }
+    if (scrollFrame !== null) {
+      cancelAnimationFrame(scrollFrame)
+      scrollFrame = null
     }
   })
 
@@ -1011,11 +1166,21 @@
   watch(filterQueryInternal, (val) => {
     saveStoredDataTableFilter(effectiveFilterStorageId.value, val)
     emit('update:filterQuery', val)
+    // The local filter narrows the loaded rows right away, so reset the scroll
+    // position immediately instead of waiting for the server response.
+    scrollToTop()
     if (filterDebounceTimer) clearTimeout(filterDebounceTimer)
+    // Clearing the filter cannot be answered from the loaded rows (the server
+    // already narrowed them), so the reload starts without the typing debounce.
+    if (!val) {
+      currentPage.value = 1
+      emitPageChange()
+      return
+    }
     filterDebounceTimer = setTimeout(() => {
       currentPage.value = 1
       emitPageChange()
-    }, 160)
+    }, 300)
   })
 
   watch(
@@ -1063,7 +1228,7 @@
         }
       }
     },
-    { immediate: true, deep: true },
+    { immediate: true },
   )
 
   defineExpose({
@@ -1115,5 +1280,10 @@
 
   .data-table-body .data-table-row {
     border-bottom: 0;
+  }
+
+  .data-table tbody tr.virtual-spacer td {
+    padding: 0;
+    border: 0;
   }
 </style>

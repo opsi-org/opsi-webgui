@@ -134,6 +134,7 @@
         :filter="filter"
         :formatKey="formatKey"
         :formatValue="formatValue"
+        :isCopied="clipboard.isCopied"
         @copyToClipboard="copyToClipboard"
       />
     </div>
@@ -200,6 +201,7 @@
   const diagnosticsData = ref<Record<string, unknown>>({})
   const modules = ref<string[]>([])
   const expanded = ref<Record<string, boolean>>({})
+  const clipboard = useClipboard()
 
   const tabs = [
     { label: String($t('diag.health')), value: 'healthcheck' },
@@ -348,16 +350,7 @@
   }
 
   async function copyToClipboard(text: string) {
-    try {
-      await navigator.clipboard.writeText(text)
-    } catch {
-      const textArea = document.createElement('textarea')
-      textArea.value = text
-      document.body.appendChild(textArea)
-      textArea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textArea)
-    }
+    await clipboard.copy(text)
   }
 
   function toggleExpand(key: string) {

@@ -206,11 +206,6 @@ export function useApiHelpers() {
 
   const getHostAttributes = (hostId: string) => apiGet<Array<Record<string, unknown>>>(`/opsidata/hosts?hosts=${hostId}`)
 
-  const checkClientReachable = (clientIds: string[]) =>
-    apiGet<Record<string, boolean>>('/opsidata/clients/reachable', {
-      selectedClients: `[${clientIds.join(',')}]`,
-    })
-
   const deployClientAgent = (agentData: { clients: string[]; username: string; password: string; type: 'windows' | 'linux' | 'mac' }) =>
     apiPost<void>('/opsidata/clients/deploy', agentData)
 
@@ -236,7 +231,11 @@ export function useApiHelpers() {
       params,
     })
 
-  const triggerOnDemand = (clientIds: string[]) => opsiclientdRpc(clientIds, 'fireEvent', ['on_demand'])
+  const triggerClientEvent = (clientIds: string[], eventName: string) => opsiclientdRpc(clientIds, 'fireEvent', [eventName])
+
+  const triggerOnDemand = (clientIds: string[]) => triggerClientEvent(clientIds, 'on_demand')
+
+  const triggerTimerEvent = (clientIds: string[]) => triggerClientEvent(clientIds, 'timer')
 
   const sendNotification = (clientIds: string[], message: string) => opsiclientdRpc(clientIds, 'showPopup', [message])
 
@@ -547,12 +546,13 @@ export function useApiHelpers() {
     cloneClient,
     updateClientAttributes,
     getHostAttributes,
-    checkClientReachable,
     deployClientAgent,
     addClientToGroups,
     removeClientFromGroups,
     getClientLogs,
+    triggerClientEvent,
     triggerOnDemand,
+    triggerTimerEvent,
     sendNotification,
     rebootClients,
     shutdownClients,

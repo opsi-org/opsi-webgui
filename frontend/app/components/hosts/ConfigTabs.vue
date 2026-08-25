@@ -135,13 +135,17 @@
             <div class="flex-1 flex items-center gap-2 min-w-0">
               <CoreAppCheckbox
                 v-if="typeof originalAttributes[key] === 'boolean'"
+                :id="attributeInputId(key)"
                 v-model="(editableAttributes as Record<string, boolean>)[key]"
                 :disabled="readonly"
+                :aria-label="getAttributeLabel(key)"
               />
               <CoreAppCheckbox
                 v-else-if="key === 'isMasterDepot'"
+                :id="attributeInputId(key)"
                 :model-value="editableAttributes[key] === true || editableAttributes[key] === 'true'"
                 :disabled="readonly"
+                :aria-label="getAttributeLabel(key)"
                 @update:model-value="
                   (v: boolean | 'indeterminate') => {
                     editableAttributes[key] = v
@@ -150,18 +154,22 @@
               />
               <CoreAppPasswordInput
                 v-else-if="isPasswordAttribute(key)"
+                :id="attributeInputId(key)"
                 v-model="(editableAttributes as Record<string, string>)[key]"
                 size="xs"
                 :disabled="readonly"
                 class="flex-1"
                 :maxlength="32"
+                :aria-label="getAttributeLabel(key)"
               />
               <CoreAppInput
                 v-else
+                :id="attributeInputId(key)"
                 v-model="(editableAttributes as Record<string, string>)[key]"
                 size="xs"
                 :disabled="readonly"
                 class="flex-1"
+                :aria-label="getAttributeLabel(key)"
               />
               <CoreAppButton
                 v-if="isAttrChanged(key)"
@@ -478,6 +486,10 @@
     if (v === null || v === undefined) return '-'
     if (Array.isArray(v)) return v.join(', ')
     return String(v)
+  }
+
+  function attributeInputId(key: string): string {
+    return `host-attr-${key.replace(/[^a-zA-Z0-9_-]/g, '-')}`
   }
 
   function setParam(p: Param, value: unknown) {

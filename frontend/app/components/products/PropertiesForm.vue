@@ -30,18 +30,40 @@
             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-0.5 gap-x-1 min-h-8 transition-colors"
             :class="changedPropertyIds.has(prop.propertyId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)'"
           >
-            <div class="min-w-0 md:w-2/5 flex items-center gap-1.5">
-              <CoreAppTooltipTable :rows="getPropertyTooltipRows(prop)">
-                <span
-                  class="text-sm break-all cursor-help"
-                  :class="{
-                    italic: prop.anyClientDifferentFromDepot,
-                    'font-bold': prop.anyDepotDifferentFromDefault,
-                  }"
-                >
-                  {{ prop.propertyId }}
-                </span>
-              </CoreAppTooltipTable>
+            <div class="min-w-0 md:w-2/5 flex items-center gap-1.5 group/proprow">
+              <span
+                class="text-sm break-all select-text"
+                :class="{
+                  italic: prop.anyClientDifferentFromDepot,
+                  'font-bold': prop.anyDepotDifferentFromDefault,
+                }"
+              >
+                {{ prop.propertyId }}
+              </span>
+              <span
+                class="flex items-center gap-0.5 shrink-0 opacity-0 group-hover/proprow:opacity-100 group-focus-within/proprow:opacity-100 transition-opacity"
+              >
+                <CoreAppButton
+                  size="xs"
+                  :icon="clipboard.isCopied(prop.propertyId) ? icons.check : icons.copy"
+                  variant="ghost"
+                  :color="clipboard.isCopied(prop.propertyId) ? 'success' : 'neutral'"
+                  class="shrink-0"
+                  :title="String(clipboard.isCopied(prop.propertyId) ? $t('common.copied') : $t('common.copy'))"
+                  :aria-label="`${String($t('common.copy'))} ${prop.propertyId}`"
+                  @click="copyToClipboard(prop.propertyId)"
+                />
+                <CoreAppTooltipTable v-if="getPropertyTooltipRows(prop).length > 0" :rows="getPropertyTooltipRows(prop)">
+                  <CoreAppButton
+                    size="xs"
+                    :icon="icons.info"
+                    variant="ghost"
+                    color="neutral"
+                    class="shrink-0"
+                    :aria-label="`${String($t('common.info'))} ${prop.propertyId}`"
+                  />
+                </CoreAppTooltipTable>
+              </span>
               <span v-if="changedPropertyIds.has(prop.propertyId)" class="inline-flex items-center text-(--color-changed-text)">
                 <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
               </span>
@@ -105,6 +127,7 @@
 
   const icons = useIcons()
   const { t: $t } = useI18n()
+  const clipboard = useClipboard()
 
   const filteredProperties = computed(() => {
     const q = (props.externalFilter || '').trim().toLowerCase()
@@ -170,6 +193,10 @@
 
   function handlePropertyChange(prop: EditableProductProperty, value: EditablePropertyValue) {
     emit('update:property', prop.propertyId, value)
+  }
+
+  async function copyToClipboard(text: string) {
+    await clipboard.copy(text)
   }
 
   function discardSingleProperty(propertyId: string) {

@@ -161,8 +161,8 @@ async def test_filter_depot_access_no_depot_restriction_keeps_selection(monkeypa
 def test_filter_depot_access_endpoint_signatures_are_consistent() -> None:
 	"""Guard: scan all @filter_depot_access endpoints. Endpoints without a
 	selectedDepots parameter are only safe because the decorator skips kwarg
-	injection for them (regression: reachable_clients). This test documents
-	which endpoints rely on that skip so signature changes are reviewed."""
+	injection for them. This test documents which endpoints (if any) rely on
+	that skip so signature changes are reviewed."""
 	import re
 	from pathlib import Path
 
@@ -185,8 +185,9 @@ def test_filter_depot_access_endpoint_signatures_are_consistent() -> None:
 	assert endpoints_with_selected_depots, (
 		"No @filter_depot_access endpoints with selectedDepots found — regex or API layout changed, update this test"
 	)
-	# Endpoints relying on the decorator skipping injection:
-	assert endpoints_without_selected_depots == {"reachable_clients"}
+	# No endpoints currently rely on the decorator skipping kwarg injection
+	# (reachable_clients, the last one, was removed). Update this set if a new one is added.
+	assert endpoints_without_selected_depots == set()
 
 
 def test_get_objects_of_group_works_with_user_register_active(monkeypatch):
@@ -362,60 +363,3 @@ class TestGetBoolConfigValueDefaults:
 		"""depot_access_configured must remain False by default (no restriction)."""
 		self._make_db([], monkeypatch)
 		assert utils.depot_access_configured("alice") is False
-
-
-class TestRestrictClientsToAllowedDepots:
-	"""Depot-restricted users must not be able to probe reachability of
-	clients outside their allowed depots (clients/reachable endpoint)."""
-
-	@pytest.fixture
-	def api_clients(self):
-		from webgui.python.api import clients as api_clients_module
-
-		return api_clients_module
-
-	def test_unrestricted_user_passes_through(self, monkeypatch, api_clients):
-		monkeypatch.setattr(api_clients, "user_register", lambda: False)
-		assert api_clients._restrict_clients_to_allowed_depots(["c1"]) == ["c1"]
-		assert api_clients._restrict_clients_to_allowed_depots(None) is None
-
-	def test_no_depot_restriction_passes_through(self, monkeypatch, api_clients):
-		monkeypatch.setattr(api_clients, "user_register", lambda: True)
-		monkeypatch.setattr(api_clients, "get_username", lambda: "alice")
-		monkeypatch.setattr(api_clients, "depot_access_configured", lambda _user: False)
-		assert api_clients._restrict_clients_to_allowed_depots(["c1"]) == ["c1"]
-
-	def test_restricted_user_selection_is_filtered(self, monkeypatch, api_clients):
-		monkeypatch.setattr(api_clients, "user_register", lambda: True)
-		monkeypatch.setattr(api_clients, "get_username", lambda: "alice")
-		monkeypatch.setattr(api_clients, "depot_access_configured", lambda _user: True)
-		monkeypatch.setattr(api_clients, "get_allowed_depots", lambda _user: ["depot-a"])
-		monkeypatch.setattr(
-			api_clients,
-			"_clients_of_depots",
-			lambda depots: ["allowed-1.opsi.org", "allowed-2.opsi.org"],
-		)
-		result = api_clients._restrict_clients_to_allowed_depots(["allowed-1.opsi.org", "forbidden.opsi.org"])
-		assert result == ["allowed-1.opsi.org"]
-
-	def test_restricted_user_without_selection_gets_allowed_clients(self, monkeypatch, api_clients):
-		monkeypatch.setattr(api_clients, "user_register", lambda: True)
-		monkeypatch.setattr(api_clients, "get_username", lambda: "alice")
-		monkeypatch.setattr(api_clients, "depot_access_configured", lambda _user: True)
-		monkeypatch.setattr(api_clients, "get_allowed_depots", lambda _user: ["depot-a"])
-		monkeypatch.setattr(
-			api_clients,
-			"_clients_of_depots",
-			lambda depots: ["b.opsi.org", "a.opsi.org"],
-		)
-		result = api_clients._restrict_clients_to_allowed_depots(None)
-		assert result == ["a.opsi.org", "b.opsi.org"]
-
-	def test_restricted_user_with_no_allowed_clients(self, monkeypatch, api_clients):
-		monkeypatch.setattr(api_clients, "user_register", lambda: True)
-		monkeypatch.setattr(api_clients, "get_username", lambda: "alice")
-		monkeypatch.setattr(api_clients, "depot_access_configured", lambda _user: True)
-		monkeypatch.setattr(api_clients, "get_allowed_depots", lambda _user: [])
-		monkeypatch.setattr(api_clients, "_clients_of_depots", lambda depots: [])
-		assert api_clients._restrict_clients_to_allowed_depots(["c1"]) == []
-		assert api_clients._restrict_clients_to_allowed_depots(None) == []

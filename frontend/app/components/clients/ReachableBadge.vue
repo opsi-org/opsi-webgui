@@ -9,70 +9,40 @@
 -->
 <template>
   <div class="flex items-center justify-center">
-    <CoreAppTooltip v-if="loading" :text="String($t('common.loading'))">
-      <button
-        type="button"
-        class="inline-flex items-center justify-center rounded p-0.5 hover:bg-(--color-surface-hover) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-opsi-blue"
-        :aria-label="String($t('clients.reachable.check'))"
-        @click="$emit('check')"
-      >
-        <CoreAppLoadingSpinner size="sm" />
-      </button>
-    </CoreAppTooltip>
+    <CoreAppTooltip :text="tooltipText">
+      <span class="inline-flex items-center justify-center rounded p-0.5" :aria-label="tooltipText">
+        <CoreAppIcon v-if="reachable === true" :name="icons.clientReachable" class="w-4 h-4 text-(--color-success-soft-text)" />
 
-    <CoreAppTooltip v-else-if="reachable === true" :text="String($t('clients.reachable.is'))">
-      <button
-        type="button"
-        class="inline-flex items-center justify-center rounded p-0.5 hover:bg-(--color-surface-hover) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-opsi-blue"
-        :aria-label="String($t('clients.reachable.is'))"
-        @click="$emit('check')"
-      >
-        <CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 text-(--color-success-soft-text)" />
-      </button>
-    </CoreAppTooltip>
-
-    <CoreAppTooltip v-else-if="reachable === false" :text="String($t('clients.reachable.not'))">
-      <button
-        type="button"
-        class="inline-flex items-center justify-center rounded p-0.5 hover:bg-(--color-surface-hover) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-opsi-blue"
-        :aria-label="String($t('clients.reachable.not'))"
-        @click="$emit('check')"
-      >
         <CoreAppStackedIcons
+          v-else-if="reachable === false"
           :primary-icon="icons.clientReachable"
           :secondary-icon="icons.x"
           size="sm"
           primary-class="w-4 h-4 text-(--color-error-soft-text)"
           secondary-class="w-2.5 h-2.5 text-(--color-error-soft-text)"
         />
-      </button>
-    </CoreAppTooltip>
 
-    <CoreAppTooltip v-else :text="String($t('clients.reachable.check'))">
-      <button
-        type="button"
-        class="inline-flex items-center justify-center rounded p-0.5 hover:bg-(--color-surface-hover) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-opsi-blue"
-        :aria-label="String($t('clients.reachable.check'))"
-        @click="$emit('check')"
-      >
-        <CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 text-(--color-text-muted)" />
-      </button>
+        <CoreAppIcon v-else :name="icons.clientReachable" class="w-4 h-4 text-(--color-text-muted) opacity-50" />
+      </span>
     </CoreAppTooltip>
   </div>
 </template>
 
 <script setup lang="ts">
   interface Props {
-    clientId: string
     reachable?: boolean
-    loading?: boolean
   }
 
-  defineProps<Props>()
-  defineEmits<{
-    check: []
-  }>()
+  const props = defineProps<Props>()
 
   const icons = useIcons()
   const { t: $t } = useI18n()
+
+  const tooltipText = computed(() =>
+    props.reachable === true
+      ? String($t('clients.reachable.is'))
+      : props.reachable === false
+        ? String($t('clients.reachable.not'))
+        : String($t('clients.reachable.unknown')),
+  )
 </script>

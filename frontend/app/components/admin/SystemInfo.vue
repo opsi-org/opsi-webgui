@@ -58,9 +58,24 @@
                 <span class="tree-guide-line" style="left: 8px" />
                 <span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
                 <div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-                  <span class="text-sm text-(--color-text) min-w-0 md:w-2/5 break-all truncate" :title="String(key)">
-                    {{ key }}
-                  </span>
+                  <div class="min-w-0 md:w-2/5 flex items-center gap-1">
+                    <span class="text-sm text-(--color-text) min-w-0 break-all truncate select-text" :title="String(key)">
+                      {{ key }}
+                    </span>
+                    <CoreAppButton
+                      color="neutral"
+                      variant="ghost"
+                      size="xs"
+                      :icon="isCopied(String(key)) ? icons.check : icons.copy"
+                      :class="[
+                        'opacity-0 group-hover/leaf:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0',
+                        { 'opacity-100! text-(--color-success)': isCopied(String(key)) },
+                      ]"
+                      :title="String(isCopied(String(key)) ? $t('common.copied') : $t('common.copy'))"
+                      :aria-label="`${String($t('common.copy'))} ${String(key)}`"
+                      @click.stop="$emit('copyToClipboard', String(key))"
+                    />
+                  </div>
                   <div class="flex items-center gap-2 flex-1 min-w-0">
                     <CoreAppBadge v-if="typeof value === 'boolean'" :color="value ? 'success' : 'neutral'" variant="soft" size="xs">
                       {{ value ? 'Yes' : 'No' }}
@@ -69,11 +84,15 @@
                       {{ formatValue(value) }}
                     </span>
                     <CoreAppButton
-                      color="primary"
-                      variant="soft"
+                      color="neutral"
+                      variant="ghost"
                       size="xs"
-                      :icon="icons.copy"
-                      class="opacity-0 group-hover/leaf:opacity-100 transition-opacity shrink-0"
+                      :icon="isCopied(`${String(key)}::value`) ? icons.check : icons.copy"
+                      :class="[
+                        'opacity-0 group-hover/leaf:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0',
+                        { 'opacity-100!': isCopied(`${String(key)}::value`) },
+                      ]"
+                      :title="String(isCopied(`${String(key)}::value`) ? $t('common.copied') : $t('common.copy'))"
                       @click.stop="$emit('copyToClipboard', String(value))"
                     />
                   </div>
@@ -168,9 +187,24 @@
                           <span class="tree-guide-line" style="left: 24px" />
                           <span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
                           <div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-                            <span class="text-sm text-(--color-text) min-w-0 md:w-2/5 break-all truncate" :title="String(sk)">
-                              {{ sk }}
-                            </span>
+                            <div class="min-w-0 md:w-2/5 flex items-center gap-1">
+                              <span class="text-sm text-(--color-text) min-w-0 break-all truncate select-text" :title="String(sk)">
+                                {{ sk }}
+                              </span>
+                              <CoreAppButton
+                                color="neutral"
+                                variant="ghost"
+                                size="xs"
+                                :icon="isCopied(String(sk)) ? icons.check : icons.copy"
+                                :class="[
+                                  'opacity-0 group-hover/deep:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0',
+                                  { 'opacity-100! text-(--color-success)': isCopied(String(sk)) },
+                                ]"
+                                :title="String(isCopied(String(sk)) ? $t('common.copied') : $t('common.copy'))"
+                                :aria-label="`${String($t('common.copy'))} ${String(sk)}`"
+                                @click.stop="$emit('copyToClipboard', String(sk))"
+                              />
+                            </div>
                             <div class="flex items-center gap-2 flex-1 min-w-0">
                               <CoreAppBadge v-if="typeof sv === 'boolean'" :color="sv ? 'success' : 'neutral'" variant="soft" size="xs">
                                 {{ sv ? 'Yes' : 'No' }}
@@ -186,11 +220,15 @@
                                 {{ formatValue(sv) }}
                               </span>
                               <CoreAppButton
-                                color="primary"
-                                variant="soft"
+                                color="neutral"
+                                variant="ghost"
                                 size="xs"
-                                :icon="icons.copy"
-                                class="opacity-0 group-hover/deep:opacity-100 transition-opacity shrink-0"
+                                :icon="isCopied(`${String(sk)}::value`) ? icons.check : icons.copy"
+                                :class="[
+                                  'opacity-0 group-hover/deep:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0',
+                                  { 'opacity-100!': isCopied(`${String(sk)}::value`) },
+                                ]"
+                                :title="String(isCopied(`${String(sk)}::value`) ? $t('common.copied') : $t('common.copy'))"
                                 @click.stop="$emit('copyToClipboard', typeof sv === 'object' ? JSON.stringify(sv, null, 2) : String(sv))"
                               />
                             </div>
@@ -209,9 +247,24 @@
                     <span class="tree-guide-line" style="left: 8px" />
                     <span class="w-5 flex items-center justify-center shrink-0 mt-0.5" />
                     <div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-                      <span class="text-sm text-(--color-text) min-w-0 md:w-2/5 break-all truncate" :title="String(k)">
-                        {{ k }}
-                      </span>
+                      <div class="min-w-0 md:w-2/5 flex items-center gap-1">
+                        <span class="text-sm text-(--color-text) min-w-0 break-all truncate select-text" :title="String(k)">
+                          {{ k }}
+                        </span>
+                        <CoreAppButton
+                          color="neutral"
+                          variant="ghost"
+                          size="xs"
+                          :icon="isCopied(String(k)) ? icons.check : icons.copy"
+                          :class="[
+                            'opacity-0 group-hover/leaf:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0',
+                            { 'opacity-100! text-(--color-success)': isCopied(String(k)) },
+                          ]"
+                          :title="String(isCopied(String(k)) ? $t('common.copied') : $t('common.copy'))"
+                          :aria-label="`${String($t('common.copy'))} ${String(k)}`"
+                          @click.stop="$emit('copyToClipboard', String(k))"
+                        />
+                      </div>
                       <div class="flex items-center gap-2 flex-1 min-w-0">
                         <CoreAppBadge v-if="typeof v === 'boolean'" :color="v ? 'success' : 'neutral'" variant="soft" size="xs">
                           {{ v ? 'Yes' : 'No' }}
@@ -220,11 +273,15 @@
                           {{ formatValue(v) }}
                         </span>
                         <CoreAppButton
-                          color="primary"
-                          variant="soft"
+                          color="neutral"
+                          variant="ghost"
                           size="xs"
-                          :icon="icons.copy"
-                          class="opacity-0 group-hover/leaf:opacity-100 transition-opacity shrink-0"
+                          :icon="isCopied(`${String(k)}::value`) ? icons.check : icons.copy"
+                          :class="[
+                            'opacity-0 group-hover/leaf:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0',
+                            { 'opacity-100!': isCopied(`${String(k)}::value`) },
+                          ]"
+                          :title="String(isCopied(`${String(k)}::value`) ? $t('common.copied') : $t('common.copy'))"
                           @click.stop="$emit('copyToClipboard', typeof v === 'object' ? JSON.stringify(v, null, 2) : String(v))"
                         />
                       </div>
@@ -249,7 +306,16 @@
 
 <script setup lang="ts">
   const { t: $t } = useI18n()
-  const props = defineProps(['filteredSystemInfo', 'filteredDiagnosticsData', 'loading', 'icons', 'filter', 'formatKey', 'formatValue'])
+  const props = defineProps([
+    'filteredSystemInfo',
+    'filteredDiagnosticsData',
+    'loading',
+    'icons',
+    'filter',
+    'formatKey',
+    'formatValue',
+    'isCopied',
+  ])
   defineEmits(['copyToClipboard'])
 
   const expanded = ref<Record<string, boolean>>({})
@@ -268,7 +334,7 @@
 
 <style scoped>
   .system-info-tree {
-    user-select: none;
+    user-select: text;
   }
 
   .tree-node {

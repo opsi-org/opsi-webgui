@@ -57,21 +57,34 @@
           <span v-for="i in getDepth(node.key)" :key="i" class="tree-guide-line" :style="{ left: `${8 + (i - 1) * 16}px` }" />
           <span class="w-5 flex items-center justify-center shrink-0 mt-1" />
           <div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-2.5">
-            <div class="min-w-0 md:w-2/5 flex items-center gap-1">
-              <span class="text-xs text-(--color-text) truncate" :title="node.param.configId">
+            <div class="min-w-0 md:w-2/5 flex items-center gap-1 group/paramrow">
+              <span class="text-xs text-(--color-text) truncate select-text min-w-0" :title="node.param.configId">
                 {{ node.param.configId }}
               </span>
-              <CoreAppTooltip v-if="node.param.description" :text="node.param.description">
+              <span
+                class="flex items-center gap-0.5 shrink-0 opacity-0 group-hover/paramrow:opacity-100 group-focus-within/paramrow:opacity-100 transition-opacity"
+              >
                 <CoreAppButton
                   size="xs"
-                  :icon="icons.info"
+                  :icon="clipboard.isCopied(node.param.configId) ? icons.check : icons.copy"
                   variant="ghost"
-                  color="neutral"
-                  class="shrink-0 opacity-60 hover:opacity-100"
-                  tabindex="-1"
-                  :aria-label="node.param.description"
+                  :color="clipboard.isCopied(node.param.configId) ? 'success' : 'neutral'"
+                  class="h-5! min-h-5! px-1!"
+                  :title="String(clipboard.isCopied(node.param.configId) ? $t('common.copied') : $t('common.copy'))"
+                  :aria-label="`${String($t('common.copy'))} ${node.param.configId}`"
+                  @click="copyToClipboard(node.param.configId)"
                 />
-              </CoreAppTooltip>
+                <CoreAppTooltip v-if="node.param.description" :text="node.param.description">
+                  <CoreAppButton
+                    size="xs"
+                    :icon="icons.info"
+                    variant="ghost"
+                    color="neutral"
+                    class="h-5! min-h-5! px-1!"
+                    :aria-label="node.param.description"
+                  />
+                </CoreAppTooltip>
+              </span>
               <span
                 v-if="changedParams.has(node.param.configId)"
                 class="inline-flex items-center text-xs text-(--color-changed-text) ml-0.5"
@@ -149,6 +162,7 @@
   }>()
 
   const { t: $t } = useI18n()
+  const clipboard = useClipboard()
   const { changedParams, readonly, currentValue, setParam, discardSingleParam, icons, fmtVal } = toRefs(props)
   const passProps = computed(() => ({
     changedParams: changedParams.value,
@@ -164,6 +178,10 @@
 
   function isPasswordParam(configId: string): boolean {
     return PASSWORD_PATTERNS.test(configId)
+  }
+
+  async function copyToClipboard(text: string) {
+    await clipboard.copy(text)
   }
 
   function buildTree(params: Param[]): TreeNode[] {
@@ -288,7 +306,7 @@
 
 <style scoped>
   .params-tree {
-    user-select: none;
+    user-select: text;
   }
 
   .param-tree-node {

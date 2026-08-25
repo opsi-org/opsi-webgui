@@ -19,11 +19,14 @@
 </template>
 
 <script setup lang="ts">
+  import { useSelectionStore } from '~/stores/selectionStore'
+
   definePageMeta({ layout: 'default' })
 
   const { t: $t } = useI18n()
   const route = useRoute()
   const router = useRouter()
+  const selectionStore = useSelectionStore()
 
   useHead({ title: () => `${$t('logs.title')} - OPSI-WebGUI` })
 
@@ -34,7 +37,9 @@
 
   const manualClientId = ref<string>(routeClientId.value)
 
-  const selectedClientId = computed<string | null>(() => routeClientId.value || manualClientId.value || null)
+  const selectedClientId = computed<string | null>(
+    () => routeClientId.value || manualClientId.value || selectionStore.selectedClients.at(-1) || null,
+  )
 
   watch(routeClientId, (id) => {
     if (id !== manualClientId.value) manualClientId.value = id

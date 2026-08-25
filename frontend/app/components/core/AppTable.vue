@@ -9,7 +9,7 @@
 -->
 <template>
   <div class="border border-(--color-border) rounded-lg overflow-hidden" :class="wrapperClass">
-    <div :class="['overflow-y-auto text-xs', scrollClass]" :style="scrollStyle">
+    <div :class="['min-h-0 flex-1 overflow-y-auto text-xs', scrollClass]" :style="scrollStyle">
       <table class="min-w-full table-auto">
         <thead v-if="columns.length > 0" class="bg-(--color-surface) sticky top-0 z-10">
           <tr class="text-left text-(--color-text-muted)">
