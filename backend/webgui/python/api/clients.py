@@ -14,17 +14,13 @@ from typing import Any, Literal
 from fastapi import APIRouter, Body, Depends, Request, status
 
 try:
-	from opsi.exception import BackendMissingDataError
-except ImportError:  # pragma: no cover - legacy opsi fallback
-	from opsi_legacy.Exceptions import BackendMissingDataError  # type: ignore
-
-try:
 	from opsi.opsi.service.model.object import ProductOnClient
 except ImportError:  # pragma: no cover - legacy opsi fallback
 	from opsi_legacy.Object import ProductOnClient  # type: ignore
 
 from opsiconfd.application.admininterface import _unblock_client
 from opsiconfd.config import config, get_configserver_id
+from opsiconfd.messagebus.redis import get_websocket_connected_users
 from opsiconfd.redis import ip_address_from_redis_key, redis_client
 from opsiconfd.rest import (
 	OpsiApiException,
@@ -47,9 +43,7 @@ from ..logger import get_logger
 from ..utils import (
 	backend,
 	check_client_creation_rights,
-	depot_access_configured,
 	filter_depot_access,
-	get_allowed_depots,
 	get_allowed_group_objects,
 	get_objects_of_group,
 	get_username,
@@ -179,30 +173,31 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		else:
 			params["selected"] = [""]
 
-		reachable_clients: list[str] | None = None
 		sort_by = commons.get("sortBy") or []
-		use_messagebus = backend._host_control_use_messagebus
-		if use_messagebus is True or (use_messagebus is not None and use_messagebus == "hybrid" and "reachable" in sort_by):
+		sort_by_reachable = "reachable" in sort_by
+		connected_clients: list[str] | None = None
+		if backend._host_control_use_messagebus:
 			try:
-				result: dict[str, bool] = await backend.hostControl_reachable(allowed_clients or [], 20)  # pylint: disable=protected-access
-				reachable_clients = [cid for cid, reachable in result.items() if reachable]
-			except BackendMissingDataError:
-				# No matching clients (e.g. freshly set up server without
-				# any clients). Treat as "no reachable clients" instead of error.
-				reachable_clients = []
+				# Fast redis-only lookup of messagebus connected clients (no per-host TCP
+				# probing). This is the reachability snapshot for the whole page; afterwards
+				# the client only follows host_connected/host_disconnected messagebus events.
+				connected_clients = await get_websocket_connected_users(user_type="client")
+			except Exception as err:  # pylint: disable=broad-except
+				logger.warning("Failed to resolve messagebus connected clients: %s", err)
+				connected_clients = []
 
-		if reachable_clients is None:
+		if connected_clients is None:
 			is_reachable_sql = "NULL AS reachable"
-		elif reachable_clients == []:
+		elif not connected_clients:
 			is_reachable_sql = "FALSE AS reachable"
 		else:
-			in_values = ", ".join(f"'{c}'" for c in reachable_clients)
-			is_reachable_sql = f"IF(hd.clientId IN ({in_values}), TRUE, FALSE) AS reachable"
+			params["connected_clients"] = connected_clients
+			is_reachable_sql = "IF(h.hostId IN :connected_clients, TRUE, FALSE) AS reachable"
 
-		client_with_depot = alias(
+		base_select = (
 			select(  # type: ignore
 				text(  # type: ignore
-					"""
+					f"""
 				h.hostId AS clientId,
 				h.hostId AS ident,
 				h.hardwareAddress AS macAddress,
@@ -229,18 +224,17 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 				COALESCE(
 					(SELECT cs.values FROM CONFIG_STATE AS cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault)
-				) AS uefi_value
+				) AS uefi_value,
+				{is_reachable_sql},
+				IF(h.hostId IN :selected, TRUE, FALSE) AS selected
 			"""
 				)
 			)
 			.select_from(table("HOST").alias("h"))
 			.where(where)
-			.subquery(),
-			name="hd",
 		)
-		client_select = select(
-			text(  # type: ignore
-				f"""
+
+		client_columns = """
 			hd.clientId,
 			hd.ident,
 			hd.macAddress,
@@ -250,7 +244,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 			DATE_FORMAT(hd.lastSeen, '%Y-%m-%dT%TZ') AS lastSeen,
 			hd.uefi,
 			hd.uefi_value,
-			{is_reachable_sql},
+			hd.reachable,
 			(
 				SELECT
 					COUNT(*)
@@ -301,24 +295,45 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
 				WHERE poc.clientId = hd.clientId AND poc.actionResult = 'successful'
 			) AS actionResult_successful,
-			IF(
-				hd.clientId IN :selected,
-				TRUE,
-				FALSE
-			) AS selected
+			hd.selected
 		"""
-			)
-		).select_from(client_with_depot)
 
-		# Sort selected items first when a selection is active
-		if selected and selected != [""]:
-			client_select = client_select.order_by(text("selected DESC"))
-		query = order_by(client_select, commons)  # type: ignore
-		query = pagination(query, commons)
+		def apply_ordering(query: Any) -> Any:
+			# Sort selected items first when a selection is active
+			if selected and selected != [""]:
+				query = query.order_by(text("selected DESC"))
+			# "reachable" is a boolean column (FALSE=0/TRUE=1): a plain ASC/DESC order_by would
+			# list unreachable clients first when ascending. Invert direction so the first
+			# click on the column groups the connected clients at the top.
+			if sort_by_reachable:
+				reachable_direction = "ASC" if commons.get("sortDesc") else "DESC"
+				query = query.order_by(text(f"reachable {reachable_direction}"))
+			remaining_sort_by = [col for col in sort_by if col != "reachable"]
+			if remaining_sort_by:
+				query = order_by(query, {**commons, "sortBy": remaining_sort_by})
+			# Rows with equal sort values must keep a stable order across pages,
+			# otherwise infinite scroll drops and duplicates rows.
+			if not remaining_sort_by or not {"clientId", "ident"} & set(remaining_sort_by):
+				query = query.order_by(text("clientId ASC"))
+			return query
+
+		# Ordering and pagination are pushed into the inner query whenever possible so
+		# that the expensive per-row count subqueries only run for the returned page.
+		sortable_base_columns = {"clientId", "ident", "macAddress", "ipAddress", "description", "notes", "lastSeen", "uefi", "reachable"}
+		if all(col in sortable_base_columns for col in sort_by):
+			paged_clients = alias(pagination(apply_ordering(base_select), commons).subquery(), name="hd")
+			query = apply_ordering(select(text(client_columns)).select_from(paged_clients))  # type: ignore
+		else:
+			client_with_depot = alias(base_select.subquery(), name="hd")
+			client_select = select(text(client_columns)).select_from(client_with_depot)  # type: ignore
+			query = pagination(apply_ordering(client_select), commons)
 		result = session.execute(query, params)
 		result = result.fetchall()
 
-		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]  # type: ignore
+		total = session.execute(
+			select(text("COUNT(*)")).select_from(table("HOST").alias("h")).where(where),  # type: ignore
+			params,
+		).fetchone()[0]  # type: ignore
 		data = []
 		for row in result:
 			if row is not None:
@@ -330,48 +345,9 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		return RESTResponse(data=data, total=total)
 
 
-def _restrict_clients_to_allowed_depots(
-	selected_clients: list[str] | None,
-) -> list[str] | None:
-	"""Limit *selected_clients* for users with restricted depot access.
-
-	Returns the (possibly filtered) client list. For restricted users
-	without an explicit selection, returns all clients on their allowed
-	depots. Unrestricted users get their selection back unchanged.
-	"""
-	if not user_register():
-		return selected_clients
-	username = get_username()
-	if not depot_access_configured(username):
-		return selected_clients
-	allowed_clients = set(_clients_of_depots(get_allowed_depots(username)))
-	if selected_clients:
-		return [client for client in selected_clients if client in allowed_clients]
-	return sorted(allowed_clients)
-
-
-@api_router.get("/api/opsidata/clients/reachable", response_model=list[ClientList])
-@rest_api
-@filter_depot_access
-async def reachable_clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
-	request: Request,
-	selectedClients: list[str] = Depends(parse_client_list),
-) -> RESTResponse:
-	"""
-	Get List of reachable Clients. Only test "clients".
-	"""
-	# Users with restricted depot access may only check clients
-	# that belong to their allowed depots.
-	selectedClients = _restrict_clients_to_allowed_depots(selectedClients)
-	if selectedClients == []:
-		return RESTResponse(data={}, total=0)
-	result = await backend.hostControl_reachable(selectedClients, 20)
-	return RESTResponse(data=result, total=len(result))
-
-
 def _depots_of_clients(clients: list[str] | None) -> dict:
 	# TODO check if clients of config server always work
-	response = {}
+	response: dict[str, str] = {}
 	with mysql.session() as session:
 		where = text("h.type = 'OpsiClient'")
 		params = {}
@@ -1009,7 +985,9 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 				except InvalidVersion:
 					continue
 		else:
-			result = set(backend.productOnClient_getObjects(installationStatus="installed", clientId=hosts))
+			result = set(backend.productOnClient_getObjects(clientId=hosts))
+			if not product_action.installation_status and not product_action.action_result:
+				poc_list = result
 		for poc in poc_list:
 			poc.actionRequest = product_action.action
 			if poc.clientId not in updates:

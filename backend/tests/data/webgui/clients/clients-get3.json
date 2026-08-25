@@ -8,7 +8,7 @@
     "notes": null,
     "uefi": false,
     "uefi_value": null,
-    "reachable": null,
+    "reachable": false,
     "version_outdated": 0,
     "version_outdated_netboot": 0,
     "installationStatus_unknown": 0,
