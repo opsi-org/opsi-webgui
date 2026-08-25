@@ -138,14 +138,7 @@
           @click="navigateTo('/servers')"
         />
 
-        <div
-          class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-          role="button"
-          tabindex="0"
-          @click="navigateTo('/clients')"
-          @keydown.enter="navigateTo('/clients')"
-          @keydown.space.prevent="navigateTo('/clients')"
-        >
+        <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200" @click="navigateTo('/clients')">
           <div class="flex items-center justify-between mb-1">
             <div class="flex items-center gap-1.5">
               <CoreAppIcon :name="icons.client" class="w-5 h-5" />
@@ -223,14 +216,7 @@
           </div>
         </div>
 
-        <div
-          class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
-          role="button"
-          tabindex="0"
-          @click="navigateTo('/products')"
-          @keydown.enter="navigateTo('/products')"
-          @keydown.space.prevent="navigateTo('/products')"
-        >
+        <div class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200" @click="navigateTo('/products')">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-1.5">
               <CoreAppIcon :name="icons.product" class="w-5 h-5" />
