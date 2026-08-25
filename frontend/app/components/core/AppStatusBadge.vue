@@ -8,7 +8,7 @@
   CoreAppStatusBadge - Unified badge component for status labels and statistic counts.
 -->
 <template>
-  <CoreAppTooltip v-if="tooltipText" :text="tooltipText">
+  <CoreAppTooltip v-if="tooltipText && hasBadgeContent" :text="tooltipText">
     <UButton
       v-if="clickable && displayValue !== null && displayValue > 0"
       variant="ghost"
@@ -118,7 +118,7 @@
     <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
     <UIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
   </UBadge>
-  <span v-else class="text-(--color-text-muted) text-xs flex justify-center">-</span>
+  <span v-else-if="!tooltip" class="text-(--color-text-muted) text-xs flex justify-center">-</span>
 </template>
 
 <script setup lang="ts">
@@ -158,6 +158,12 @@
   }
 
   const displayValue = computed(() => props.value)
+  // Zero-count cells render nothing, so the tooltip wrapper is skipped for them.
+  // In large tables this saves one tooltip instance per empty cell.
+  const hasBadgeContent = computed(() => {
+    if (props.value != null) return props.value > 0
+    return Boolean(props.label || props.icon || props.imageSrc)
+  })
   const tooltipText = computed(() => {
     if (!props.tooltip) return undefined
     if (props.value != null) return `${props.tooltip}: ${props.value}`

@@ -82,7 +82,7 @@
     </template>
   </div>
 
-  <CoreAppModal v-model:open="confirmOpen" :dismissible="true" data-testid="client-quick-actions-dialog">
+  <CoreAppModal v-if="confirmMounted" v-model:open="confirmOpen" :dismissible="true" data-testid="client-quick-actions-dialog">
     <template #content>
       <div class="p-3 min-w-87.5" @click.stop>
         <div class="flex items-center justify-between mb-2">
@@ -241,7 +241,7 @@
     </template>
   </CoreAppModal>
 
-  <CoreAppModal v-model:open="resultOpen" :dismissible="true">
+  <CoreAppModal v-if="resultMounted" v-model:open="resultOpen" :dismissible="true">
     <template #content>
       <div class="p-3 min-w-87.5">
         <div class="flex items-center justify-between mb-3">
@@ -335,6 +335,10 @@
 
   const confirmOpen = ref(false)
   const resultOpen = ref(false)
+  // This dropdown is rendered once per table row, so the dialogs are only
+  // instantiated after they have been opened for the first time.
+  const confirmMounted = ref(false)
+  const resultMounted = ref(false)
   const currentAction = ref<string>('')
   const loading = ref(false)
   const notifyText = ref('')
@@ -484,7 +488,10 @@
       renameDomain.value = dotIndex > 0 ? clientId.substring(dotIndex + 1) : ''
     }
 
-    confirmOpen.value = true
+    confirmMounted.value = true
+    void nextTick(() => {
+      confirmOpen.value = true
+    })
   }
 
   async function executeAction() {
@@ -586,7 +593,10 @@
       const successCount = Object.values(actionResults.value).filter((r) => r.success).length
       const failCount = props.clientIds.length - successCount
 
-      resultOpen.value = true
+      resultMounted.value = true
+      void nextTick(() => {
+        resultOpen.value = true
+      })
 
       if (failCount === 0) {
         emit('action-complete', currentAction.value, true)

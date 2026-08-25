@@ -1085,16 +1085,23 @@
     }
   }
 
-  watch(
-    () => selectionStore.selectedClients,
-    () => fetchProducts(buildInitialPageParams(currentFilterQuery.value)),
-    { deep: true },
-  )
-  watch(
-    () => selectionStore.selectedServers,
-    () => fetchProducts(buildInitialPageParams(currentFilterQuery.value)),
-    { deep: true },
-  )
+  // Selecting many clients/depots one by one would otherwise fire one full
+  // product request per click; coalesce them into a single refetch.
+  let selectionScopeTimer: ReturnType<typeof setTimeout> | null = null
+  function refetchForSelectionScope() {
+    if (selectionScopeTimer) clearTimeout(selectionScopeTimer)
+    selectionScopeTimer = setTimeout(() => {
+      selectionScopeTimer = null
+      fetchProducts(buildInitialPageParams(currentFilterQuery.value))
+    }, 250)
+  }
+
+  onUnmounted(() => {
+    if (selectionScopeTimer) clearTimeout(selectionScopeTimer)
+  })
+
+  watch(() => selectionStore.selectedClients, refetchForSelectionScope)
+  watch(() => selectionStore.selectedServers, refetchForSelectionScope)
   watch(
     () => selectionStore.selectedProducts.join(','),
     () => {

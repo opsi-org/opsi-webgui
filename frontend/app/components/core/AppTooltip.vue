@@ -10,7 +10,7 @@
 <template>
   <UTooltip v-bind="$attrs">
     <slot />
-    <template v-for="(_, name) in $slots" :key="name" #[name]="slotData">
+    <template v-for="name in forwardedSlots" :key="name" #[name]="slotData">
       <slot :name="name" v-bind="slotData || {}" />
     </template>
   </UTooltip>
@@ -18,4 +18,9 @@
 
 <script setup lang="ts">
   defineOptions({ inheritAttrs: false })
+
+  const slots = useSlots()
+  // "default" is already rendered above; forwarding it again would define the
+  // slot twice and mount the trigger content for a second time.
+  const forwardedSlots = computed(() => Object.keys(slots).filter((name) => name !== 'default'))
 </script>

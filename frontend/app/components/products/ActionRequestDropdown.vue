@@ -10,7 +10,13 @@
 <template>
   <div v-if="mode === 'header'" class="flex items-center gap-1 w-full" @click.stop>
     <CoreAppPopover v-if="hasClientsSelected && hasProductsSelected" class="flex-1 min-w-0">
-      <CoreAppButton size="xs" variant="soft" color="primary" block class="justify-between gap-1 w-full px-1.5!">
+      <CoreAppButton
+        size="xs"
+        variant="soft"
+        color="primary"
+        block
+        class="justify-between gap-1 w-full px-1.5! text-[0.6875rem]! font-medium tracking-wide"
+      >
         <span class="truncate">{{ $t('actions.request') }}</span>
         <CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 shrink-0" />
       </CoreAppButton>
@@ -34,13 +40,15 @@
         </div>
       </template>
     </CoreAppPopover>
-    <span v-else class="flex-1 min-w-0 truncate text-left text-xs font-medium">{{ $t('actions.request') }}</span>
+    <span v-else class="flex-1 min-w-0 truncate text-left text-[0.6875rem] font-medium tracking-wide text-(--color-text-muted)">
+      {{ $t('actions.request') }}
+    </span>
     <CoreAppIcon
       v-if="sortColumn === 'actionRequest'"
       :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
-      class="w-2.5 h-2.5 shrink-0"
+      class="w-2 h-2 shrink-0"
     />
-    <CoreAppIcon v-else :name="icons.sort" class="w-2.5 h-2.5 opacity-30 shrink-0" />
+    <CoreAppIcon v-else :name="icons.sort" class="w-2 h-2 opacity-30 shrink-0" />
   </div>
 
   <div v-else class="flex items-center gap-1">

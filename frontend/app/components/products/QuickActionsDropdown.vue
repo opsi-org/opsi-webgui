@@ -198,7 +198,7 @@
                 data-testid="product-quick-actions-preview-table"
                 :columns="previewColumns"
                 max-height="100%"
-                wrapper-class="h-full min-h-0"
+                wrapper-class="h-full min-h-0 flex flex-col"
                 :sort-key="previewSortKey"
                 :sort-dir="previewSortDir"
                 @sort="togglePreviewSort"
