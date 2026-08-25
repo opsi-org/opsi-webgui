@@ -171,7 +171,7 @@ test.describe('User permissions', () => {
         await expect(p.getByText(/restricted|eingeschränkt/i).first()).toBeVisible({
           timeout: 15000,
         })
-        await expect(p.getByText('Read Only').first()).toBeVisible({ timeout: 15000 })
+        await expect(p.getByText(/Read Only|Nur-Lese-Zugriff|Accès en lecture seule/i).first()).toBeVisible({ timeout: 15000 })
         await expect(p.getByText('Terminal').first()).toBeVisible({ timeout: 15000 })
       },
     })

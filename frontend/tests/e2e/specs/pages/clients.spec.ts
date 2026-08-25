@@ -373,8 +373,10 @@ test.describe('Clients', () => {
       functional: async (p) => {
         const inputs = p.locator('input, select, textarea')
         expect(await inputs.count()).toBeGreaterThan(0)
-        const submitBtn = p.locator('button[type="submit"], button[title]')
-        await expect(submitBtn.first()).toBeVisible({ timeout: 10000 })
+        const createBtn = p.getByRole('button', {
+          name: /Add Client|Client hinzufügen|Ajouter un client/i,
+        })
+        await expect(createBtn).toBeVisible({ timeout: 10000 })
       },
     })
   })
