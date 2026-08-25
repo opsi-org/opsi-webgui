@@ -421,32 +421,31 @@ def get_allowed_clients(user: str) -> list:
 	all_groups = get_groups("HostGroup")
 	allowed_groups = get_allowed_host_groups(user)
 	allowed_groups_with_childs = get_all_children_groupids(all_groups, allowed_groups)
+	if not allowed_groups_with_childs:
+		return []
 
 	allowed_clients = []
 	with mysql.session() as session:
-		for group in allowed_groups_with_childs:
-			query = select(text("otg.objectId AS client")).select_from(text("OBJECT_TO_GROUP AS otg")).where(text("otg.groupId = :groupid"))
-			otg_result = session.execute(query, {"groupid": group})
-			otg_result = otg_result.fetchall()
-			for otg_row in otg_result:
-				if otg_row is not None:
-					allowed_clients.append(dict(otg_row).get("client"))
+		query = select(text("otg.objectId AS client")).select_from(text("OBJECT_TO_GROUP AS otg")).where(text("otg.groupId IN :groupids"))
+		otg_result = session.execute(query, {"groupids": allowed_groups_with_childs}).fetchall()
+		for otg_row in otg_result:
+			if otg_row is not None:
+				allowed_clients.append(dict(otg_row).get("client"))
 	return allowed_clients
 
 
 def get_allowed_products(user: str) -> list:
 	allowed_groups = get_allowed_product_groups(user)
+	if not allowed_groups:
+		return []
+
 	allowed_products = []
 	with mysql.session() as session:
-		for group in allowed_groups:
-			query = (
-				select(text("otg.objectId AS product")).select_from(text("OBJECT_TO_GROUP AS otg")).where(text("otg.groupId = :groupid"))
-			)
-			otg_result = session.execute(query, {"groupid": group})
-			otg_result = otg_result.fetchall()
-			for otg_row in otg_result:
-				if otg_row is not None:
-					allowed_products.append(dict(otg_row).get("product"))
+		query = select(text("otg.objectId AS product")).select_from(text("OBJECT_TO_GROUP AS otg")).where(text("otg.groupId IN :groupids"))
+		otg_result = session.execute(query, {"groupids": allowed_groups}).fetchall()
+		for otg_row in otg_result:
+			if otg_row is not None:
+				allowed_products.append(dict(otg_row).get("product"))
 	return allowed_products
 
 
