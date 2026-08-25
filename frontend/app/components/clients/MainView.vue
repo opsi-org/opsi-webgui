@@ -629,7 +629,14 @@
     error.value = null
     try {
       if (params) lastPageParams.value = params
-      const effectiveParams = params ?? lastPageParams.value ?? undefined
+      // A reload without params must refetch every row that is currently
+      // loaded, not just the last requested page.
+      const isReload = !params
+      const baseParams = lastPageParams.value ?? undefined
+      const effectiveParams =
+        isReload && baseParams
+          ? { ...baseParams, pageNumber: 1, perPage: reloadWindowPerPage(baseParams.perPage, clients.value.length) }
+          : baseParams
       const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
       await selectionStore.ensureServersSelected()
       if (selectionStore.selectedServers.length === 0) {
@@ -661,7 +668,7 @@
       else if (result.data) {
         const newData = result.data as OpsiClient[]
         if (result.total !== null) totalItems.value = result.total
-        if (effectiveParams && effectiveParams.pageNumber > 1 && lastPageParams.value) {
+        if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
           const existingIds = new Set(clients.value.map((c) => c.clientId))
           const unique = newData.filter((c) => !existingIds.has(c.clientId))
           clients.value = [...clients.value, ...unique]

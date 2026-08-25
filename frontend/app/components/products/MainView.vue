@@ -952,7 +952,14 @@
     error.value = null
     try {
       if (params) lastPageParams.value = params
-      const effectiveParams = params ?? lastPageParams.value ?? undefined
+      // A reload without params (e.g. after saving action requests) must refetch
+      // every row that is currently loaded, not just the last requested page.
+      const isReload = !params
+      const baseParams = lastPageParams.value ?? undefined
+      const effectiveParams =
+        isReload && baseParams
+          ? { ...baseParams, pageNumber: 1, perPage: reloadWindowPerPage(baseParams.perPage, products.value.length) }
+          : baseParams
       const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
       await selectionStore.ensureServersSelected()
       if (selectionStore.selectedServers.length === 0) {
@@ -995,7 +1002,7 @@
       if (result.error) throw result.error
       const newData = (result.data || []) as ProductRow[]
       if (result.total !== null) totalItems.value = result.total
-      if (params && params.pageNumber > 1 && lastPageParams.value) {
+      if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
         const existingIds = new Set(products.value.map((p) => p.productId))
         const unique = newData.filter((p) => !existingIds.has(p.productId))
         products.value = [...products.value, ...unique]
