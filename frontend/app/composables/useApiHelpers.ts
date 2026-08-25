@@ -206,11 +206,6 @@ export function useApiHelpers() {
 
   const getHostAttributes = (hostId: string) => apiGet<Array<Record<string, unknown>>>(`/opsidata/hosts?hosts=${hostId}`)
 
-  const checkClientReachable = (clientIds: string[]) =>
-    apiGet<Record<string, boolean>>('/opsidata/clients/reachable', {
-      selectedClients: `[${clientIds.join(',')}]`,
-    })
-
   const deployClientAgent = (agentData: { clients: string[]; username: string; password: string; type: 'windows' | 'linux' | 'mac' }) =>
     apiPost<void>('/opsidata/clients/deploy', agentData)
 
@@ -551,7 +546,6 @@ export function useApiHelpers() {
     cloneClient,
     updateClientAttributes,
     getHostAttributes,
-    checkClientReachable,
     deployClientAgent,
     addClientToGroups,
     removeClientFromGroups,

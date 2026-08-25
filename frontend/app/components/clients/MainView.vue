@@ -183,12 +183,7 @@
         />
       </template>
       <template #cell-reachable="{ row }">
-        <ClientsReachableBadge
-          :client-id="(row as OpsiClient).clientId"
-          :reachable="reachableStatus[(row as OpsiClient).clientId]"
-          :loading="reachableLoading[(row as OpsiClient).clientId]"
-          @check="checkReachability((row as OpsiClient).clientId)"
-        />
+        <ClientsReachableBadge :reachable="reachableStatus[(row as OpsiClient).clientId]" />
       </template>
       <template #row-actions="{ row }">
         <ClientsRowActionsDropdown
@@ -279,7 +274,7 @@
 
   const icons = useIcons()
   const { t: $t } = useI18n()
-  const { getClients, getServerIds, getBlockedClients, checkClientReachable } = useApiHelpers()
+  const { getClients, getServerIds, getBlockedClients } = useApiHelpers()
   const selectionStore = useSelectionStore()
   const messageBusStore = useMessageBusStore()
   const { lastMsg: messageBusLastMsg } = storeToRefs(messageBusStore)
@@ -314,7 +309,8 @@
   ])
   const clientPanelViewOptions = computed(() => clientPanelViews.value.map(({ label, value }) => ({ label, value: String(value) })))
   const reachableStatus = ref<Record<string, boolean | undefined>>({})
-  const reachableLoading = ref<Record<string, boolean>>({})
+  // Clients whose state came from a live host_connected/host_disconnected event
+  const reachableLiveIds = ref<Set<string>>(new Set())
   const blockedClients = ref<Set<string>>(new Set())
   const lastPageParams = ref<PageChangeParams | null>(null)
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('clients'))
@@ -675,11 +671,10 @@
         } else {
           clients.value = newData
         }
-        const unknownReachabilityClientIds = newData
-          .map((c) => c.clientId)
-          .filter((clientId) => reachableStatus.value[clientId] === undefined)
-        if (unknownReachabilityClientIds.length > 0) {
-          void checkReachability(unknownReachabilityClientIds)
+        for (const client of newData) {
+          if (typeof client.reachable === 'boolean' && !reachableLiveIds.value.has(client.clientId)) {
+            reachableStatus.value[client.clientId] = client.reachable
+          }
         }
       }
     } catch (e) {
@@ -701,32 +696,6 @@
       }
     } catch {
       /* silently fail */
-    }
-  }
-
-  async function checkReachability(clientIds: string | string[]) {
-    const ids = Array.isArray(clientIds) ? [...new Set(clientIds)] : [clientIds]
-    if (ids.length === 0) return
-
-    for (const id of ids) {
-      reachableLoading.value[id] = true
-    }
-
-    try {
-      const result = await checkClientReachable(ids)
-      if (result.data) {
-        for (const id of ids) {
-          if (Object.prototype.hasOwnProperty.call(result.data, id)) {
-            reachableStatus.value[id] = Boolean(result.data[id])
-          }
-        }
-      }
-    } catch {
-      // keep previous status on transient errors
-    } finally {
-      for (const id of ids) {
-        reachableLoading.value[id] = false
-      }
     }
   }
 
@@ -773,14 +742,12 @@
     const eventName = getMessageEventName(msg)
     if (!eventName) return
 
-    if (eventName === 'host_connected') {
+    if (eventName === 'host_connected' || eventName === 'host_disconnected') {
       const hostId = extractHostId(msg)
-      if (hostId) reachableStatus.value[hostId] = true
-    }
-
-    if (eventName === 'host_disconnected') {
-      const hostId = extractHostId(msg)
-      if (hostId) reachableStatus.value[hostId] = false
+      if (hostId) {
+        reachableStatus.value[hostId] = eventName === 'host_connected'
+        reachableLiveIds.value.add(hostId)
+      }
     }
   })
 

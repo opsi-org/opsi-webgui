@@ -23,7 +23,11 @@ type Terminal = {
 type RefreshCallback = () => void | Promise<void>
 
 //  Event Constants
-const HOST_EVENTS = ['event:host_created', 'event:host_updated', 'event:host_deleted', 'event:host_connected', 'event:host_disconnected']
+const HOST_DATA_EVENTS = ['event:host_created', 'event:host_updated', 'event:host_deleted']
+
+const HOST_CONNECTION_EVENTS = ['event:host_connected', 'event:host_disconnected']
+
+const HOST_EVENTS = [...HOST_DATA_EVENTS, ...HOST_CONNECTION_EVENTS]
 
 const PRODUCT_EVENTS = ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted']
 
@@ -235,7 +239,9 @@ export function useAutoRefresh(refreshCallback: RefreshCallback, options: { watc
 }
 
 export function useAutoRefreshClients(cb: RefreshCallback) {
-  return useAutoRefresh(cb, { watchEvents: HOST_EVENTS })
+  // host_connected/host_disconnected only change the reachable state of a single
+  // client, which the client table updates in place - no full table reload.
+  return useAutoRefresh(cb, { watchEvents: HOST_DATA_EVENTS })
 }
 
 export function useAutoRefreshProducts(cb: RefreshCallback) {
@@ -246,4 +252,14 @@ export function useAutoRefreshServers(cb: RefreshCallback) {
   return useAutoRefresh(cb, { watchEvents: SERVER_EVENTS })
 }
 
-export { HOST_EVENTS, PRODUCT_EVENTS, CONFIG_EVENTS, CONFIG_STATE_EVENTS, SYSTEM_EVENTS, SERVER_EVENTS, ALL_DATA_EVENTS }
+export {
+  HOST_EVENTS,
+  HOST_DATA_EVENTS,
+  HOST_CONNECTION_EVENTS,
+  PRODUCT_EVENTS,
+  CONFIG_EVENTS,
+  CONFIG_STATE_EVENTS,
+  SYSTEM_EVENTS,
+  SERVER_EVENTS,
+  ALL_DATA_EVENTS,
+}
