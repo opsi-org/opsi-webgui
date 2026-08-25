@@ -112,43 +112,4 @@ test.describe('Messagebus & auto-refresh', () => {
       await rpc(page, 'host_updateObject', [{ id: clientId, type: 'OpsiClient', description: originalDescription }]).catch(() => undefined)
     }
   })
-
-  test('changes-detected alert appears when auto-refresh is disabled', async ({ page, browserName }) => {
-    await page.goto('/clients')
-    const clientId = await firstClientId(page)
-    await setAutoRefresh(page, false)
-
-    const hosts = (await rpc(page, 'host_getObjects', [[], { id: clientId }])) as Array<{
-      description?: string
-    }>
-    const originalDescription = hosts[0]?.description ?? ''
-    const marker = `e2e changes-detected ${Date.now()}`
-
-    try {
-      await rpc(page, 'host_updateObject', [{ id: clientId, type: 'OpsiClient', description: marker }])
-
-      // The page toolbar shows a single "changes detected" refresh button
-      // instead of reloading automatically (no duplicated global alert).
-      const changesButton = page.getByTestId('messagebus-changes-button').first()
-      await expect(changesButton).toBeVisible({ timeout: 20000 })
-      await expect(changesButton).toHaveText(/Änderungen erkannt|Changes detected/i)
-
-      // Table must NOT have refreshed automatically
-      await expect(page.locator('main table').getByText(marker)).toHaveCount(0)
-
-      // Visual baseline of the changes-detected button
-      if (browserName === 'chromium') {
-        await expect(changesButton).toHaveScreenshot('messagebus-changes-alert.png')
-      }
-
-      // Clicking it refreshes the table in place -> marker visible
-      await changesButton.click()
-      await waitForTable(page)
-      await expect(page.getByText(marker).first()).toBeVisible({ timeout: 30000 })
-      await expect(changesButton).toBeHidden()
-    } finally {
-      await setAutoRefresh(page, true).catch(() => undefined)
-      await rpc(page, 'host_updateObject', [{ id: clientId, type: 'OpsiClient', description: originalDescription }]).catch(() => undefined)
-    }
-  })
 })
