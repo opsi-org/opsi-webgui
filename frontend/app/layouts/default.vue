@@ -241,11 +241,29 @@
   const sidebarOpen = ref(false)
   const quickpanelOpen = ref(false)
 
-  const DEFAULT_QUICKPANEL_WIDTH = 264
+  const { layout: workspaceLayout } = useWorkspaceLayout()
   const MIN_QUICKPANEL_WIDTH = 220
-  const quickpanelWidth = ref(DEFAULT_QUICKPANEL_WIDTH)
+  const quickpanelWidth = computed({
+    get: () => workspaceLayout.quickpanelWidth,
+    set: (value: number) => {
+      workspaceLayout.quickpanelWidth = value
+    },
+  })
   const isResizingQuickpanel = ref(false)
   const useOverlayQuickpanel = computed(() => isMobile.value || isNarrowDesktop.value)
+
+  watch(
+    () => uiStore.quickpanelOpened,
+    (isOpen) => {
+      if (!isMobile.value) quickpanelOpen.value = isOpen
+    },
+  )
+  watch(
+    () => uiStore.menuCollapsed,
+    (collapsed) => {
+      if (!isMobile.value) sidebarOpen.value = !collapsed
+    },
+  )
 
   function startQuickpanelResize(e: MouseEvent) {
     e.preventDefault()
