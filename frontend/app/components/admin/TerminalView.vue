@@ -32,9 +32,48 @@
           ><span class="w-2 h-2 rounded-full" :class="terminalStatusDotClass"></span>{{ terminalStatusText }}</span
         >
       </div>
-      <CoreAppButton variant="outline" color="primary" size="sm" :icon="icons.config" @click="showSettings = !showSettings">{{
-        $t('common.settings')
-      }}</CoreAppButton>
+      <div class="flex items-center gap-2">
+        <CoreAppHoverPopover :title="String($t('terminal.quickCommands'))" content-class="min-w-80">
+          <CoreAppButton variant="outline" color="neutral" size="sm" :icon="icons.commandLine" data-testid="terminal-quick-commands">
+            {{ $t('terminal.quickCommands') }}
+          </CoreAppButton>
+          <template #content>
+            <p class="m-0 text-[0.6875rem] text-(--color-text-muted)">{{ $t('terminal.quickCommandsHelp') }}</p>
+
+            <CoreAppManagedList
+              :items="savedCommandItems"
+              :empty-text="String($t('terminal.quickCommandsNone'))"
+              monospace
+              @apply="runSavedCommand"
+              @delete="removeSavedCommands"
+            />
+
+            <div class="flex items-center gap-1.5 pt-1 border-t border-(--color-border)">
+              <CoreAppInput
+                v-model="newCommandText"
+                size="sm"
+                class="flex-1 font-mono"
+                :placeholder="String($t('terminal.newCommandPlaceholder'))"
+                :aria-label="String($t('terminal.newCommandPlaceholder'))"
+                @keydown.enter.prevent="addSavedCommand"
+              />
+              <CoreAppTooltip :text="String($t('terminal.saveCommand'))">
+                <UButton
+                  :icon="icons.add"
+                  size="sm"
+                  color="primary"
+                  :disabled="!newCommandText.trim()"
+                  :aria-label="String($t('terminal.saveCommand'))"
+                  @click="addSavedCommand"
+                />
+              </CoreAppTooltip>
+            </div>
+          </template>
+        </CoreAppHoverPopover>
+        <CoreAppButton variant="outline" color="primary" size="sm" :icon="icons.config" @click="showSettings = !showSettings">{{
+          $t('common.settings')
+        }}</CoreAppButton>
+      </div>
     </div>
 
     <div v-if="showSettings" class="shrink-0 p-3 rounded-lg">
@@ -280,6 +319,50 @@
     } finally {
       isConnecting.value = false
     }
+  }
+
+  const SAVED_COMMANDS_KEY = 'opsi-webgui-terminal-quick-commands'
+  const newCommandText = ref('')
+  const savedCommands = ref<string[]>(readSavedCommands())
+  const savedCommandItems = computed(() => savedCommands.value.map((command) => ({ id: command, label: command })))
+
+  function readSavedCommands(): string[] {
+    if (import.meta.server) return []
+    try {
+      const raw = localStorage.getItem(SAVED_COMMANDS_KEY)
+      return raw ? (JSON.parse(raw) as string[]) : []
+    } catch {
+      return []
+    }
+  }
+
+  function persistSavedCommands() {
+    if (!import.meta.server) localStorage.setItem(SAVED_COMMANDS_KEY, JSON.stringify(savedCommands.value))
+  }
+
+  function addSavedCommand() {
+    const command = newCommandText.value.trim()
+    if (!command || savedCommands.value.includes(command)) return
+    savedCommands.value = [...savedCommands.value, command]
+    persistSavedCommands()
+    newCommandText.value = ''
+  }
+
+  function removeSavedCommands(commands: string[]) {
+    const removed = new Set(commands)
+    savedCommands.value = savedCommands.value.filter((c) => !removed.has(c))
+    persistSavedCommands()
+  }
+
+  async function runSavedCommand(command: string) {
+    if (!isConnected.value) {
+      await connect()
+      // give the session a brief moment to fully establish
+      // before sending input, otherwise the command can be dropped.
+      await new Promise((resolve) => setTimeout(resolve, 400))
+    }
+    if (!isConnected.value || !terminalInstance.value) return
+    messageBus.wsTerminalSend(`${command}\r`, terminalInstance.value.terminal)
   }
 
   function disconnect() {
