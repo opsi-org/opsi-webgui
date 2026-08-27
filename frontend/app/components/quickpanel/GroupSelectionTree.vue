@@ -109,6 +109,7 @@
                 :aria-label="item.label"
                 @update:model-value="handleItemClick(item)"
               />
+              <CoreAppIcon v-if="!item.isGroup" :name="icons.client" class="w-3 h-3 shrink-0 text-(--color-text-muted)/60" />
               <CoreAppTooltip v-if="item.label === 'not_assigned'" :text="$t('clients.directoryNotAssigned')">
                 <button
                   type="button"
@@ -168,6 +169,7 @@
             :aria-label="item.label"
             @update:model-value="handleItemClick(item)"
           />
+          <CoreAppIcon v-if="!item.isGroup" :name="icons.product" class="w-3 h-3 shrink-0 text-(--color-text-muted)/60" />
           <button
             type="button"
             class="truncate flex-1 text-left bg-transparent border-0 p-0 cursor-pointer"
