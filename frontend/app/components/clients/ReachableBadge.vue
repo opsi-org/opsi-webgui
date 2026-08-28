@@ -11,18 +11,25 @@
   <div class="flex items-center justify-center">
     <CoreAppTooltip :text="tooltipText">
       <span class="inline-flex items-center justify-center rounded p-0.5" :aria-label="tooltipText">
-        <CoreAppIcon v-if="reachable === true" :name="icons.clientReachable" class="w-4 h-4 text-(--color-success-soft-text)" />
+        <CoreAppStackedIcons
+          v-if="reachable === true"
+          :primary-icon="icons.client"
+          :secondary-icon="icons.check"
+          size="sm"
+          primary-class="w-4 h-4 text-(--color-text-muted)"
+          secondary-class="w-2.5 h-2.5 text-(--color-success-soft-text)"
+        />
 
         <CoreAppStackedIcons
           v-else-if="reachable === false"
-          :primary-icon="icons.clientReachable"
+          :primary-icon="icons.client"
           :secondary-icon="icons.x"
           size="sm"
-          primary-class="w-4 h-4 text-(--color-error-soft-text)"
+          primary-class="w-4 h-4 text-(--color-text-muted)"
           secondary-class="w-2.5 h-2.5 text-(--color-error-soft-text)"
         />
 
-        <CoreAppIcon v-else :name="icons.clientReachable" class="w-4 h-4 text-(--color-text-muted) opacity-50" />
+        <CoreAppIcon v-else :name="icons.client" class="w-4 h-4 text-(--color-text-muted) opacity-50" />
       </span>
     </CoreAppTooltip>
   </div>

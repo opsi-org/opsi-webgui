@@ -51,6 +51,7 @@ from ..utils import (
 	mysql,
 	parse_client_list,
 	parse_depot_list,
+	parse_filter_query,
 	parse_group_list,
 	parse_selected_list,
 	read_only_check,
@@ -99,6 +100,11 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 	selectedDepots: list[str] = Depends(parse_depot_list),
 	selected: list[str] | None = Depends(parse_selected_list),
 	filteredGroups: list[str] | None = Depends(parse_group_list),
+	reachableFilter: bool | None = None,
+	notSeenSinceDays: int | None = None,
+	hasFailedProducts: bool | None = None,
+	hasOutdatedProducts: bool | None = None,
+	onlySelected: bool = False,
 ) -> RESTResponse:
 	"""
 	Get Clients on selected depots with infos on the client.
@@ -119,7 +125,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 
 	with mysql.session() as session:
 		where = and_(text("h.type = 'OpsiClient'"))
-		params: dict[str, list[Any] | str] = {
+		params: dict[str, Any] = {
 			"depot_ids": [],
 			"search": [],
 			"configserver_id": get_configserver_id(),
@@ -128,9 +134,27 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		if filteredGroups:
 			where = and_(where, text("(h.hostId IN :filtered_groups)"))
 			params["filtered_groups"] = get_objects_of_group(filteredGroups, "HostGroup")
-		if commons.get("filterQuery"):
-			where = and_(where, text("(h.hostId LIKE :search OR h.description LIKE :search)"))
-			params["search"] = f"%{commons.get('filterQuery')}%"
+		filter_query = parse_filter_query(commons.get("filterQuery"))
+		if isinstance(filter_query, dict):
+			for field, column in (("id", "h.hostId"), ("description", "h.description")):
+				value = filter_query.get(field)
+				if isinstance(value, list):
+					params[f"filter_{field}"] = value
+					where = and_(where, text(f"{column} IN :filter_{field}"))
+				elif value:
+					params[f"filter_{field}"] = f"%{value}%"
+					where = and_(where, text(f"{column} LIKE :filter_{field}"))
+		elif filter_query:
+			# Free text search covers every column the client table can display, not only id/description.
+			where = and_(
+				where,
+				text(
+					"(h.hostId LIKE :search OR h.description LIKE :search OR h.notes LIKE :search "
+					"OR h.ipAddress LIKE :search OR h.hardwareAddress LIKE :search OR h.systemUUID LIKE :search "
+					"OR h.inventoryNumber LIKE :search)"
+				),
+			)
+			params["search"] = f"%{filter_query}%"
 		if selectedDepots:
 			normalized_depots: list[str] = []
 			for depot in selectedDepots:
@@ -172,6 +196,45 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 			params["selected"] = selected
 		else:
 			params["selected"] = [""]
+		if notSeenSinceDays is not None and notSeenSinceDays >= 0:
+			# "Not seen since" = last messagebus/opsiclientd contact older than N days (or never seen).
+			params["not_seen_since_days"] = notSeenSinceDays
+			where = and_(where, text("(h.lastSeen IS NULL OR TIMESTAMPDIFF(DAY, h.lastSeen, NOW()) >= :not_seen_since_days)"))
+		if hasFailedProducts:
+			where = and_(
+				where,
+				text("EXISTS (SELECT 1 FROM PRODUCT_ON_CLIENT AS poc WHERE poc.clientId = h.hostId AND poc.actionResult = 'failed')"),
+			)
+		if hasOutdatedProducts:
+			# A product is "outdated" on this client when its installed version differs from
+			# the depot's current version for the depot the client is assigned to.
+			where = and_(
+				where,
+				text(
+					"""
+					EXISTS (
+						SELECT 1
+						FROM PRODUCT_ON_CLIENT AS poc
+						JOIN PRODUCT_ON_DEPOT AS pod ON
+							pod.productId = poc.productId AND
+							CONCAT(poc.productVersion, '-', poc.packageVersion) != CONCAT(pod.productVersion, '-', pod.packageVersion)
+						WHERE
+							poc.clientId = h.hostId AND
+							NOT poc.installationStatus = 'not_installed' AND
+							pod.depotId = COALESCE(
+								(
+									SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`))
+									FROM CONFIG_STATE AS cs
+									WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.depot.id'
+								),
+								:configserver_id
+							)
+					)
+					"""
+				),
+			)
+		if onlySelected and selected and selected != [""]:
+			where = and_(where, text("h.hostId IN :selected"))
 
 		sort_by = commons.get("sortBy") or []
 		sort_by_reachable = "reachable" in sort_by
@@ -193,6 +256,17 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		else:
 			params["connected_clients"] = connected_clients
 			is_reachable_sql = "IF(h.hostId IN :connected_clients, TRUE, FALSE) AS reachable"
+
+		if reachableFilter is not None:
+			if connected_clients:
+				params["reachable_filter_clients"] = connected_clients
+				if reachableFilter:
+					where = and_(where, text("h.hostId IN :reachable_filter_clients"))
+				else:
+					where = and_(where, text("h.hostId NOT IN :reachable_filter_clients"))
+			elif reachableFilter:
+				# messagebus reports no connected clients at all -> "online only" matches nothing
+				where = and_(where, text("1 = 0"))
 
 		base_select = (
 			select(  # type: ignore

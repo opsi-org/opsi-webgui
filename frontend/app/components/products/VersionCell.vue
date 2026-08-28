@@ -41,7 +41,7 @@
           class="gap-0.5"
           :title="$t('products.tooltip.notOnAllDepotsShort')"
         >
-          <CoreAppIcon :name="icons.warning" class="w-3 h-3" />
+          {{ '!' }}
         </CoreAppBadge>
         <CoreAppIcon
           v-if="!row.client_version_outdated && !row.depot_version_diff && !row.not_on_all_depots"
@@ -116,7 +116,7 @@
         rows.push({
           key: String($t('products.tooltip.notOnAllDepotsShort')),
           value: '',
-          badge: '⚠',
+          badge: '!',
           badgeColor: 'warning',
         })
       }

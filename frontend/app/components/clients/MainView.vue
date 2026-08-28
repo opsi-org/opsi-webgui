@@ -25,18 +25,19 @@
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
-      <CoreAppButton
-        v-if="selectionStore.selectedClients.length > 0"
-        :icon="icons.product"
-        color="primary"
-        size="sm"
-        @click="openProductsPanel"
-        :disabled="isReadOnly"
-        :aria-label="String($t('products.title'))"
-        data-testid="clients-open-products-panel"
-      >
-        {{ $t('products.title') }}
-      </CoreAppButton>
+      <CoreAppTooltip :text="String($t('products.viewCatalogHint'))">
+        <CoreAppButton
+          :icon="icons.product"
+          color="primary"
+          size="sm"
+          @click="openProductsPanel"
+          :disabled="isReadOnly"
+          :aria-label="String($t('products.title'))"
+          data-testid="clients-open-products-panel"
+        >
+          {{ $t('products.title') }}
+        </CoreAppButton>
+      </CoreAppTooltip>
       <CoreAppButton
         :icon="icons.add"
         color="primary"
@@ -59,6 +60,9 @@
       row-key="clientId"
       :selectable="true"
       :filterable="true"
+      :filter-query="currentFilterQuery || undefined"
+      saved-searches-scope-id="clients"
+      :advanced-filters="advancedFilters"
       :show-refresh="false"
       :total-items="totalItems"
       :selected-keys="selectionStore.selectedClients"
@@ -73,15 +77,19 @@
       @update:filter-query="handleFilterQueryUpdate"
       @update:panel-view="setDefaultClientPanelView"
       @update:show-all-row-actions="setShowAllClientRowActions"
+      @apply-saved-search="handleApplySavedSearch"
       @refresh="fetchClients"
     >
+      <template #filter-actions>
+        <ClientsAdvancedFiltersPopover v-model="advancedFilters" @update:model-value="handleAdvancedFiltersChange" />
+      </template>
       <template #header-cell-reachable="{ sortColumn, sortDirection }">
         <div class="flex items-center justify-center gap-1">
           <CoreAppTooltip :text="String($t('clients.reachable.help'))">
             <CoreAppIcon :name="icons.clientReachable" class="w-4 h-4 cursor-help" />
           </CoreAppTooltip>
-          <CoreAppIcon v-if="sortColumn === 'reachable'" :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc" class="w-3 h-3" />
-          <CoreAppIcon v-else :name="icons.sort" class="w-3 h-3 opacity-30" />
+          <CoreAppIcon v-if="sortColumn === 'reachable'" :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc" class="w-2 h-2" />
+          <CoreAppIcon v-else :name="icons.sort" class="w-2 h-2 opacity-80" />
         </div>
       </template>
       <template #cell-clientId="{ row }">
@@ -92,7 +100,6 @@
             class="w-3.5 h-3.5 text-(--color-error-soft-text) shrink-0"
             :title="$t('clients.blocked')"
           />
-          <CoreAppIcon v-else :name="icons.client" class="w-4 h-4 shrink-0 text-neutral-400" />
           <span>{{ (row as OpsiClient).clientId }}</span>
         </div>
       </template>
@@ -267,6 +274,7 @@
   import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
   import type { Client as OpsiClient } from '~/types'
+  import type { ClientAdvancedFilters } from '~/components/clients/AdvancedFiltersPopover.vue'
   import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
@@ -315,6 +323,29 @@
   const lastPageParams = ref<PageChangeParams | null>(null)
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('clients'))
   const fetchClientsRequestId = ref(0)
+  const ADVANCED_FILTERS_KEY = 'opsi-webgui-clients-advanced-filters'
+  const advancedFilters = ref<ClientAdvancedFilters>(readStoredAdvancedFilters())
+
+  function readStoredAdvancedFilters(): ClientAdvancedFilters {
+    if (import.meta.server) return {}
+    try {
+      const raw = localStorage.getItem(ADVANCED_FILTERS_KEY)
+      return raw ? (JSON.parse(raw) as ClientAdvancedFilters) : {}
+    } catch {
+      return {}
+    }
+  }
+
+  function handleAdvancedFiltersChange(value: ClientAdvancedFilters) {
+    advancedFilters.value = value
+    if (!import.meta.server) localStorage.setItem(ADVANCED_FILTERS_KEY, JSON.stringify(value))
+    fetchClients(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
+  }
+
+  function handleApplySavedSearch(value: { filterQuery: string; advancedFilters: Record<string, unknown> }) {
+    currentFilterQuery.value = value.filterQuery
+    handleAdvancedFiltersChange(value.advancedFilters as ClientAdvancedFilters)
+  }
   const tableSettings = useDataTableSettings('clients')
   const productsSortColumn = ref<string | undefined>(undefined)
   const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void } | null>(null)
@@ -343,6 +374,14 @@
   const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
 
   const columns: DataTableColumnDef[] = [
+    {
+      key: 'reachable',
+      label: String($t('clients.reachable.status')),
+      labelKey: 'clients.reachable.status',
+      headerIcon: icons.clientReachable,
+      sortable: true,
+      class: 'text-center w-10 p-0',
+    },
     {
       key: 'clientId',
       label: String($t('clients.id')),
@@ -402,15 +441,6 @@
       headerIcon: icons.productActionResultSuccessful,
       sortable: true,
       visible: false,
-      class: 'text-center w-10',
-      minWidth: '50px',
-    },
-    {
-      key: 'reachable',
-      label: String($t('clients.reachable.status')),
-      labelKey: 'clients.reachable.status',
-      headerIcon: icons.clientReachable,
-      sortable: true,
       class: 'text-center w-10',
       minWidth: '50px',
     },
@@ -616,6 +646,7 @@
       sortDesc: tableSettings.settings.sortDirection === 'desc',
       filterQuery,
       sortBySelection: sortBySelectionEnabled.value,
+      onlySelected: false,
     }
   }
 
@@ -648,16 +679,25 @@
         selectedDepots: selectionStore.selectedServersParam,
         selectedClients: `[${selectionStore.selectedClients.join(',')}]`,
       }
-      if (selectionSortActive && selectionStore.selectedClients.length > 0) p.selected = `[${selectionStore.selectedClients.join(',')}]`
+      if ((selectionSortActive || effectiveParams?.onlySelected) && selectionStore.selectedClients.length > 0) {
+        p.selected = `[${selectionStore.selectedClients.join(',')}]`
+      }
       if (effectiveParams) {
         p.pageNumber = effectiveParams.pageNumber
         p.perPage = effectiveParams.perPage
         p.sortBy = effectiveParams.sortBy
         p.sortDesc = effectiveParams.sortDesc
         p.filterQuery = effectiveParams.filterQuery
+        if (effectiveParams.onlySelected) p.onlySelected = true
       } else if (currentFilterQuery.value) {
         p.filterQuery = currentFilterQuery.value
       }
+      if (advancedFilters.value.reachable !== undefined) p.reachableFilter = advancedFilters.value.reachable
+      if (advancedFilters.value.notSeenSinceDays !== undefined && advancedFilters.value.notSeenSinceDays !== null) {
+        p.notSeenSinceDays = advancedFilters.value.notSeenSinceDays
+      }
+      if (advancedFilters.value.hasFailedProducts) p.hasFailedProducts = true
+      if (advancedFilters.value.hasOutdatedProducts) p.hasOutdatedProducts = true
       const result = await getClients(p)
       if (requestId !== fetchClientsRequestId.value) return
       if (result.error) error.value = result.error.message

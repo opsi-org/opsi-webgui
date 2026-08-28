@@ -31,6 +31,7 @@ from ..utils import (
 	host_group_access_configured,
 	mysql,
 	parse_depot_list,
+	parse_filter_query,
 	parse_selected_list,
 	user_register,
 )
@@ -85,6 +86,8 @@ def depots(
 	request: Request,
 	commons: dict = Depends(common_query_parameters),
 	selected: list[str] | None = Depends(parse_selected_list),
+	onlySelected: bool = False,
+	serverTypeFilter: str | None = None,
 ) -> RESTResponse:
 	"""
 	Get all depots with depotId, ident, type, ip and description.
@@ -96,9 +99,31 @@ def depots(
 	with mysql.session() as session:
 		where = and_(text("h.type IN ('OpsiConfigserver', 'OpsiDepotserver')"))
 
-		if commons.get("filterQuery"):
-			where = and_(where, text("(h.hostId LIKE :search OR h.description LIKE :search)"))
-			params["search"] = f"%{commons['filterQuery']}%"
+		filter_query = parse_filter_query(commons.get("filterQuery"))
+		if isinstance(filter_query, dict):
+			for field, column in (("id", "h.hostId"), ("description", "h.description")):
+				value = filter_query.get(field)
+				if isinstance(value, list):
+					params[f"filter_{field}"] = value
+					where = and_(where, text(f"{column} IN :filter_{field}"))
+				elif value:
+					params[f"filter_{field}"] = f"%{value}%"
+					where = and_(where, text(f"{column} LIKE :filter_{field}"))
+		elif filter_query:
+			# Free text search covers every column the server table can display.
+			where = and_(
+				where,
+				text(
+					"(h.hostId LIKE :search OR h.description LIKE :search OR h.notes LIKE :search "
+					"OR h.ipAddress LIKE :search OR h.hardwareAddress LIKE :search OR h.inventoryNumber LIKE :search)"
+				),
+			)
+			params["search"] = f"%{filter_query}%"
+		if serverTypeFilter in ("OpsiConfigserver", "OpsiDepotserver"):
+			where = and_(where, text("h.type = :server_type"))
+			params["server_type"] = serverTypeFilter
+		if onlySelected and selected:
+			where = and_(where, text("h.hostId IN :selected"))
 
 		# Restrict rows for users with limited depot access BEFORE pagination,
 		# so paginated data and total stay consistent (otherwise the frontend

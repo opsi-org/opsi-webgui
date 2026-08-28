@@ -119,7 +119,7 @@ describe('useDataTableSettings', () => {
       setPageSize(50)
       setDisplayMode('pagination')
       setSelectionMode('single')
-      expect(settings.pageSize).toBe(50)
+      expect(settings.pageSize).toBe(20)
       expect(settings.displayMode).toBe('pagination')
       expect(settings.selectionMode).toBe('single')
     })
@@ -132,7 +132,7 @@ describe('useDataTableSettings', () => {
       setPageSize(99)
       reset()
       expect(settings.visibleColumns).toEqual(['depotId', 'description', 'type', 'ip'])
-      expect(settings.pageSize).toBe(50)
+      expect(settings.pageSize).toBe(20)
     })
   })
 

@@ -48,6 +48,9 @@
       row-key="depotId"
       :selectable="true"
       :filterable="true"
+      :filter-query="currentFilterQuery || undefined"
+      saved-searches-scope-id="servers"
+      :advanced-filters="advancedFilters"
       :show-refresh="false"
       :total-items="totalItems"
       :selected-keys="selectionStore.selectedServers"
@@ -56,8 +59,13 @@
       @row-activate="handleRowActivate"
       @selection-change="handleSelectionChange"
       @page-change="handlePageChange"
+      @update:filter-query="handleFilterQueryUpdate"
+      @apply-saved-search="handleApplySavedSearch"
       @refresh="fetchServers"
     >
+      <template #filter-actions>
+        <ServersAdvancedFiltersPopover v-model="advancedFilters" @update:model-value="handleAdvancedFiltersChange" />
+      </template>
       <template #cell-depotId="{ row }">
         <CoreAppIcon
           :name="(row as Server).type === 'OpsiConfigserver' ? icons.serverStack : icons.server"
@@ -120,6 +128,7 @@
   import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
   import type { Server } from '~/types'
+  import type { ServerAdvancedFilters } from '~/components/servers/AdvancedFiltersPopover.vue'
   import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
   import { useSelectionStore } from '~/stores/selectionStore'
 
@@ -142,6 +151,29 @@
   const lastPageParams = ref<PageChangeParams | null>(null)
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('servers'))
   const fetchServersRequestId = ref(0)
+  const ADVANCED_FILTERS_KEY = 'opsi-webgui-servers-advanced-filters'
+  const advancedFilters = ref<ServerAdvancedFilters>(readStoredAdvancedFilters())
+
+  function readStoredAdvancedFilters(): ServerAdvancedFilters {
+    if (import.meta.server) return {}
+    try {
+      const raw = localStorage.getItem(ADVANCED_FILTERS_KEY)
+      return raw ? (JSON.parse(raw) as ServerAdvancedFilters) : {}
+    } catch {
+      return {}
+    }
+  }
+
+  function handleAdvancedFiltersChange(value: ServerAdvancedFilters) {
+    advancedFilters.value = value
+    if (!import.meta.server) localStorage.setItem(ADVANCED_FILTERS_KEY, JSON.stringify(value))
+    fetchServers(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
+  }
+
+  function handleApplySavedSearch(value: { filterQuery: string; advancedFilters: Record<string, unknown> }) {
+    currentFilterQuery.value = value.filterQuery
+    handleAdvancedFiltersChange(value.advancedFilters as ServerAdvancedFilters)
+  }
   const tableSettings = useDataTableSettings('servers')
   const configTabsRef = ref<{
     hasAnyChanges: boolean
@@ -237,6 +269,16 @@
     fetchServers(params)
   }
 
+  function handleFilterQueryUpdate(value: string) {
+    currentFilterQuery.value = value
+    if (lastPageParams.value) {
+      lastPageParams.value = {
+        ...lastPageParams.value,
+        filterQuery: value,
+      }
+    }
+  }
+
   function handleConfigCreated() {
     configTabsRef.value?.refresh?.()
   }
@@ -249,6 +291,7 @@
       sortDesc: tableSettings.settings.sortDirection === 'desc',
       filterQuery,
       sortBySelection: sortBySelectionEnabled.value,
+      onlySelected: false,
     }
   }
 
@@ -274,8 +317,10 @@
         p.sortBy = effectiveParams.sortBy
         p.sortDesc = effectiveParams.sortDesc
         p.filterQuery = effectiveParams.filterQuery
+        if (effectiveParams.onlySelected) p.onlySelected = true
       }
-      if (selectionSortActive && selectionStore.selectedServers.length > 0) {
+      if (advancedFilters.value.type) p.serverTypeFilter = advancedFilters.value.type
+      if ((selectionSortActive || effectiveParams?.onlySelected) && selectionStore.selectedServers.length > 0) {
         p.selected = selectionStore.selectedServersParam
       }
       const result = await getServers(p)

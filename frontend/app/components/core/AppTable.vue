@@ -27,7 +27,7 @@
                 <CoreAppIcon
                   v-if="col.sortable"
                   :name="sortKey === col.key ? (sortDir === 'asc' ? icons.sortAsc : icons.sortDesc) : icons.sort"
-                  :class="['w-3 h-3', sortKey === col.key ? '' : 'opacity-30']"
+                  :class="['w-2 h-2', sortKey === col.key ? '' : 'opacity-80']"
                 />
               </span>
             </th>
