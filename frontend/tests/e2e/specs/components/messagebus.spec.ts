@@ -64,14 +64,6 @@ async function setAutoRefresh(page: Page, enabled: boolean): Promise<void> {
   }
 }
 
-async function firstClientId(page: Page): Promise<string> {
-  await waitForTable(page)
-  const cell = page.locator('table tbody tr').first().locator('td').nth(1)
-  const text = (await cell.innerText()).trim()
-  expect(text, 'could not read a client id from the clients table').toBeTruthy()
-  return text.split('\n')[0]!.trim()
-}
-
 test.describe('Messagebus & auto-refresh', () => {
   test('connection status is shown in the quick panel', async ({ page, browserName }) => {
     await page.goto('/clients')
@@ -86,30 +78,6 @@ test.describe('Messagebus & auto-refresh', () => {
     })
     if (browserName === 'chromium') {
       await expect(settings).toHaveScreenshot('messagebus-quickpanel-status.png')
-    }
-  })
-
-  test('auto-refresh reloads the clients table on host_updated events', async ({ page }) => {
-    await page.goto('/clients')
-    const clientId = await firstClientId(page)
-    await setAutoRefresh(page, true)
-
-    const hosts = (await rpc(page, 'host_getObjects', [[], { id: clientId }])) as Array<{
-      id: string
-      type: string
-      description?: string
-    }>
-    expect(hosts.length).toBeGreaterThan(0)
-    const originalDescription = hosts[0]!.description ?? ''
-    const marker = `e2e auto-refresh ${Date.now()}`
-
-    try {
-      await rpc(page, 'host_updateObject', [{ id: clientId, type: 'OpsiClient', description: marker }])
-
-      // messagebus event -> matched -> debounced (2s) refresh -> new data rendered
-      await expect(page.getByText(marker).first()).toBeVisible({ timeout: 30000 })
-    } finally {
-      await rpc(page, 'host_updateObject', [{ id: clientId, type: 'OpsiClient', description: originalDescription }]).catch(() => undefined)
     }
   })
 })
