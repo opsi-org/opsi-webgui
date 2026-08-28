@@ -14,11 +14,13 @@
       :host-id="selectedClientId"
       host-type="client"
       :tab="activeTab"
+      :search="searchQuery"
       show-host-selector
       :host-selector-placeholder="String($t('clients.select'))"
       :readonly="isReadOnly"
       @update:host-id="updateSelectedClientId"
       @update:tab="updateActiveTab"
+      @update:search="updateSearchQuery"
       @saved="handleSaved"
     />
   </div>
@@ -71,14 +73,22 @@
   function updateActiveTab(v: string) {
     const id = selectedClientId.value
     const path = id ? `/clients/configuration/${v}/${id}` : `/clients/configuration/${v}`
-    if (route.fullPath !== path) router.replace(path)
+    if (route.fullPath !== path) router.replace({ path, query: { ...route.query } })
   }
 
   function updateSelectedClientId(id: string | null) {
     manualClientId.value = id || ''
     if (id === routeClientId.value) return
     const tab = activeTab.value
-    router.replace(id ? `/clients/configuration/${tab}/${id}` : `/clients/configuration/${tab}`)
+    const path = id ? `/clients/configuration/${tab}/${id}` : `/clients/configuration/${tab}`
+    router.replace({ path, query: { ...route.query } })
+  }
+
+  const searchQuery = ref(typeof route.query.search === 'string' ? route.query.search : '')
+
+  function updateSearchQuery(value: string) {
+    searchQuery.value = value
+    router.replace({ query: { ...route.query, search: value || undefined } })
   }
 
   function handleSaved() {}

@@ -635,7 +635,7 @@
   "unsaved": {
     "changes": "Unsaved Changes",
     "discarded": "All changes have been discarded.",
-    "quickActions": "Save or discard without opening the details",
+    "quickActions": "Save or discard all changes quickly",
     "saveNow": "Save all now",
     "discardNow": "Discard all now"
   },

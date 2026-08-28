@@ -633,7 +633,7 @@
   "unsaved": {
     "changes": "Modifications non enregistrées",
     "discarded": "Toutes les modifications ont été abandonnées.",
-    "quickActions": "Enregistrer ou abandonner sans ouvrir les détails",
+    "quickActions": "Enregistrer ou abandonner toutes les modifications rapidement",
     "saveNow": "Tout enregistrer maintenant",
     "discardNow": "Tout abandonner maintenant"
   },

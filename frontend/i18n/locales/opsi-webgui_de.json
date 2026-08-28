@@ -637,7 +637,7 @@
   "unsaved": {
     "changes": "Ungespeicherte Änderungen",
     "discarded": "Alle Änderungen wurden verworfen.",
-    "quickActions": "Speichern oder verwerfen, ohne die Details zu öffnen",
+    "quickActions": "Alle Änderungen schnell speichern oder verwerfen",
     "saveNow": "Jetzt alle speichern",
     "discardNow": "Jetzt alle verwerfen"
   },
