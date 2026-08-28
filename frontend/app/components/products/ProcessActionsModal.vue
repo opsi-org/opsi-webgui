@@ -154,9 +154,14 @@
 
   const executing = ref(false)
   const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+  const VISIBILITY_KEY = 'opsi-webgui-process-actions-visibility'
   const productMode = ref<'all' | 'selected'>('all')
-  const visibility = ref<ProductVisibility>('')
+  const visibility = ref<ProductVisibility>((!import.meta.server && (localStorage.getItem(VISIBILITY_KEY) as ProductVisibility)) || '')
   const clientIds = ref<string[]>([...selectionStore.selectedClients])
+
+  watch(visibility, (value) => {
+    if (!import.meta.server) localStorage.setItem(VISIBILITY_KEY, value)
+  })
 
   watch(open, (isOpen) => {
     if (isOpen) {
