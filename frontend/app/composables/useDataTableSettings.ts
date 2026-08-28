@@ -33,6 +33,7 @@ export interface DataTableSettings {
   pageSize: number
   displayMode: 'infinite' | 'pagination'
   selectionMode: 'multi' | 'single'
+  onlySelected?: boolean
 }
 
 const STORAGE_KEY = 'opsi-webgui-datatable-settings'
@@ -42,7 +43,7 @@ const defaults: Record<string, DataTableSettings> = {
     visibleColumns: ['depotId', 'description', 'type', 'ip'],
     sortColumn: 'depotId',
     sortDirection: 'asc',
-    pageSize: 50,
+    pageSize: 20,
     displayMode: 'infinite',
     selectionMode: 'single',
   },
@@ -61,7 +62,7 @@ const defaults: Record<string, DataTableSettings> = {
     ],
     sortColumn: 'clientId',
     sortDirection: 'asc',
-    pageSize: 50,
+    pageSize: 20,
     displayMode: 'infinite',
     selectionMode: 'multi',
   },
@@ -69,7 +70,7 @@ const defaults: Record<string, DataTableSettings> = {
     visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionResult', 'actionProgress', 'actionRequest'],
     sortColumn: 'productId',
     sortDirection: 'asc',
-    pageSize: 50,
+    pageSize: 20,
     displayMode: 'infinite',
     selectionMode: 'multi',
   },
@@ -77,7 +78,7 @@ const defaults: Record<string, DataTableSettings> = {
     visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionResult', 'actionProgress', 'actionRequest'],
     sortColumn: 'productId',
     sortDirection: 'asc',
-    pageSize: 50,
+    pageSize: 20,
     displayMode: 'infinite',
     selectionMode: 'multi',
   },
@@ -85,7 +86,7 @@ const defaults: Record<string, DataTableSettings> = {
     visibleColumns: ['productId', 'description', 'version', 'actionProgress'],
     sortColumn: 'productId',
     sortDirection: 'asc',
-    pageSize: 50,
+    pageSize: 20,
     displayMode: 'infinite',
     selectionMode: 'multi',
   },
@@ -118,7 +119,7 @@ export function useDataTableSettings(tableId: string) {
     visibleColumns: [],
     sortColumn: '',
     sortDirection: 'asc' as const,
-    pageSize: 50,
+    pageSize: 20,
     displayMode: 'infinite' as const,
     selectionMode: 'multi' as const,
   }

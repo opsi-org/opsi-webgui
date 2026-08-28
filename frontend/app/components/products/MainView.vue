@@ -24,6 +24,10 @@
       <slot name="tabs" />
     </template>
     <template #actions>
+      <p v-if="showDepotScopeHint" class="text-xs text-(--color-text-muted) mb-1.5 flex items-center gap-1 max-w-100">
+        <CoreAppIcon :name="icons.info" class="w-3.5 h-3.5 shrink-0" />
+        {{ $t('products.depotScopeHint.description') }}
+      </p>
       <CoreAppTooltip v-if="isProductGroupAccessRestricted" :text="$t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
         <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help" data-testid="products-restricted-badge">
           {{ $t('auth.restricted') }}
@@ -79,6 +83,8 @@
       :table-id="tableId"
       filter-storage-id="products"
       :filter-query="currentFilterQuery || undefined"
+      saved-searches-scope-id="products"
+      :advanced-filters="advancedFilters"
       row-key="productId"
       :selectable="true"
       :filterable="true"
@@ -91,8 +97,12 @@
       @selection-change="handleSelectionChange"
       @page-change="handlePageChange"
       @update:filter-query="handleFilterQueryUpdate"
+      @apply-saved-search="handleApplySavedSearch"
       @refresh="fetchProducts"
     >
+      <template #filter-actions>
+        <ProductsAdvancedFiltersPopover v-model="advancedFilters" @update:model-value="handleAdvancedFiltersChange" />
+      </template>
       <template #header-cell-actionRequest="{ sortColumn, sortDirection }">
         <ProductsActionRequestDropdown
           mode="header"
@@ -294,8 +304,10 @@
           ref="configTabsComponentRef"
           :product-id="configProduct.productId"
           :panel-mode="true"
+          :search="propertiesSearch"
           class="flex-1"
           @saved="onConfigSaved"
+          @update:search="handlePropertiesSearchUpdate"
         />
       </div>
     </template>
@@ -306,6 +318,7 @@
   import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
   import type { ProductRow, ProductType, ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue } from '~/types'
+  import type { ProductAdvancedFilters } from '~/components/products/AdvancedFiltersPopover.vue'
   import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
@@ -358,7 +371,36 @@
   const configTabsComponentRef = ref<InstanceType<typeof import('./ConfigTabs.vue').default> | null>(null)
   const lastPageParams = ref<PageChangeParams | null>(null)
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('products'))
+  const propertiesSearch = ref(typeof route.query.propertiesSearch === 'string' ? route.query.propertiesSearch : '')
+
+  function handlePropertiesSearchUpdate(value: string) {
+    propertiesSearch.value = value
+    router.replace({ query: { ...route.query, propertiesSearch: value || undefined } })
+  }
   const fetchProductsRequestId = ref(0)
+  const ADVANCED_FILTERS_KEY = 'opsi-webgui-products-advanced-filters'
+  const advancedFilters = ref<ProductAdvancedFilters>(readStoredAdvancedFilters())
+
+  function readStoredAdvancedFilters(): ProductAdvancedFilters {
+    if (import.meta.server) return {}
+    try {
+      const raw = localStorage.getItem(ADVANCED_FILTERS_KEY)
+      return raw ? (JSON.parse(raw) as ProductAdvancedFilters) : {}
+    } catch {
+      return {}
+    }
+  }
+
+  function handleAdvancedFiltersChange(value: ProductAdvancedFilters) {
+    advancedFilters.value = value
+    if (!import.meta.server) localStorage.setItem(ADVANCED_FILTERS_KEY, JSON.stringify(value))
+    fetchProducts(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
+  }
+
+  function handleApplySavedSearch(value: { filterQuery: string; advancedFilters: Record<string, unknown> }) {
+    currentFilterQuery.value = value.filterQuery
+    handleAdvancedFiltersChange(value.advancedFilters as ProductAdvancedFilters)
+  }
   const productIcons = computed(() => (cachedProductIcons.value ?? {}) as Record<string, string>)
   const processActionsOpen = ref(false)
   const productLiveStatus = ref(new Map<string, ProductLiveStatus>())
@@ -366,6 +408,8 @@
   const showLeaveWarning = ref(false)
   const pendingAction = ref<(() => void) | null>(null)
   let resolveRouteLeave: ((ok: boolean) => void) | null = null
+
+  const showDepotScopeHint = computed(() => selectionStore.selectedClients.length === 0)
 
   function confirmLeave() {
     showLeaveWarning.value = false
@@ -897,6 +941,7 @@
       sortDesc: tableSettings.value.settings.sortDirection === 'desc',
       filterQuery,
       sortBySelection: sortBySelectionEnabled.value,
+      onlySelected: false,
     }
   }
 
@@ -979,7 +1024,9 @@
         selectedDepots: selectionStore.selectedServersParam,
       }
       if (selectionStore.selectedClients.length > 0) p.selectedClients = `[${selectionStore.selectedClients.join(',')}]`
-      if (selectionSortActive && selectionStore.selectedProducts.length > 0) p.selected = `[${selectionStore.selectedProducts.join(',')}]`
+      if ((selectionSortActive || effectiveParams?.onlySelected) && selectionStore.selectedProducts.length > 0) {
+        p.selected = `[${selectionStore.selectedProducts.join(',')}]`
+      }
       if (effectiveParams) {
         p.pageNumber = effectiveParams.pageNumber
         p.perPage = effectiveParams.perPage
@@ -988,6 +1035,7 @@
           p.sortDesc = effectiveParams.sortDesc
         }
         p.filterQuery = effectiveParams.filterQuery
+        if (effectiveParams.onlySelected) p.onlySelected = true
       } else if (currentFilterQuery.value) {
         p.filterQuery = currentFilterQuery.value
       } else {
@@ -996,6 +1044,10 @@
           p.sortDesc = tableSettings.value.settings.sortDirection === 'desc'
         }
       }
+      if (advancedFilters.value.installationStatus) p.installationStatusFilter = advancedFilters.value.installationStatus
+      if (advancedFilters.value.hasFailedActionResult) p.hasFailedActionResult = true
+      if (advancedFilters.value.hasPendingActionRequest) p.hasPendingActionRequest = true
+      if (advancedFilters.value.unused) p.unused = true
 
       const result = await getProducts(p)
       if (requestId !== fetchProductsRequestId.value) return

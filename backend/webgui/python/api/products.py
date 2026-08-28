@@ -54,6 +54,7 @@ from ..utils import (
 	mysql,
 	parse_client_list,
 	parse_depot_list,
+	parse_filter_query,
 	parse_group_list,
 	parse_selected_list,
 	product_group_access_configured,
@@ -241,6 +242,11 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 	selectedDepots: list[str] = Depends(parse_depot_list),
 	selected: list[str] | None = Depends(parse_selected_list),
 	filteredGroups: list[str] | None = Depends(parse_group_list),
+	onlySelected: bool = False,
+	installationStatusFilter: str | None = None,
+	hasFailedActionResult: bool | None = None,
+	hasPendingActionRequest: bool | None = None,
+	unused: bool | None = None,
 ) -> RESTResponse:
 	"""
 	Get products from selected depots and clients.
@@ -280,12 +286,72 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 		if filteredGroups:
 			where = and_(where, text("(pod.productId IN :filtered_groups)"))
 			params["filtered_groups"] = get_objects_of_group(filteredGroups, "ProductGroup")
-		if commons.get("filterQuery"):
-			where = and_(where, text("(pod.productId LIKE :search)"))
-			params["search"] = f"%{commons['filterQuery']}%"
+		filter_query = parse_filter_query(commons.get("filterQuery"))
+		if isinstance(filter_query, dict):
+			for field, column in (("id", "pod.productId"), ("description", "pr.description")):
+				value = filter_query.get(field)
+				if isinstance(value, list):
+					params[f"filter_{field}"] = value
+					where = and_(where, text(f"{column} IN :filter_{field}"))
+				elif value:
+					params[f"filter_{field}"] = f"%{value}%"
+					where = and_(where, text(f"{column} LIKE :filter_{field}"))
+		elif filter_query:
+			where = and_(
+				where,
+				text("(pod.productId LIKE :search OR pr.name LIKE :search OR pr.description LIKE :search OR pr.advice LIKE :search)"),
+			)
+			params["search"] = f"%{filter_query}%"
 		if allowed_products:
 			params["allowed_products"] = allowed_products
 			where = and_(where, text("(pod.productId in :allowed_products)"))
+		if onlySelected and selected and selected != [""]:
+			where = and_(where, text("(pod.productId IN :selected)"))
+		# Client scope: when clients are selected the advanced filters look at those clients only,
+		# otherwise at every client of the selected depots.
+		client_scope = " AND poc.clientId IN :clients" if params["clients"] != [""] else ""
+		if installationStatusFilter in ("installed", "not_installed", "unknown"):
+			# Matches products where at least one relevant client (all clients if none selected)
+			# currently has the given installationStatus - same semantics as the aggregate
+			# "installationStatus" column already computed per row below.
+			params["installation_status_filter"] = installationStatusFilter
+			where = and_(
+				where,
+				text(
+					f"""
+					EXISTS (
+						SELECT 1 FROM PRODUCT_ON_CLIENT AS poc
+						WHERE poc.productId = pod.productId{client_scope}
+							AND IFNULL(poc.installationStatus, 'not_installed') = :installation_status_filter
+					)
+					"""
+				),
+			)
+		if hasFailedActionResult:
+			where = and_(
+				where,
+				text(
+					f"EXISTS (SELECT 1 FROM PRODUCT_ON_CLIENT AS poc "
+					f"WHERE poc.productId = pod.productId{client_scope} AND poc.actionResult = 'failed')"
+				),
+			)
+		if hasPendingActionRequest:
+			where = and_(
+				where,
+				text(
+					f"EXISTS (SELECT 1 FROM PRODUCT_ON_CLIENT AS poc "
+					f"WHERE poc.productId = pod.productId{client_scope} "
+					f"AND poc.actionRequest IS NOT NULL AND poc.actionRequest NOT IN ('none', ''))"
+				),
+			)
+		if unused:
+			where = and_(
+				where,
+				text(
+					f"NOT EXISTS (SELECT 1 FROM PRODUCT_ON_CLIENT AS poc "
+					f"WHERE poc.productId = pod.productId{client_scope} AND poc.installationStatus = 'installed')"
+				),
+			)
 		query = (
 			select(
 				text(
@@ -521,8 +587,24 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 
 			products.append(product)
 
+		# The filter can reference PRODUCT columns (name/description/advice), so the count
+		# query has to join PRODUCT the same way the data query does.
 		products_on_depots = alias(
-			select(text("*")).select_from(text("PRODUCT_ON_DEPOT AS pod")).where(where).group_by(text("pod.productId")).subquery()
+			select(text("pod.productId AS productId"))
+			.select_from(text("PRODUCT_ON_DEPOT AS pod"))
+			.join(
+				text("PRODUCT AS pr"),
+				text(
+					"""
+				pr.productId=pod.productId
+					AND pr.productVersion=pod.productVersion
+					AND pr.packageVersion=pod.packageVersion
+			"""
+				),
+			)
+			.where(where)
+			.group_by(text("pod.productId"))
+			.subquery()
 		)
 		total = session.execute(select(text("COUNT(*)")).select_from(products_on_depots), params).fetchone()[0]
 

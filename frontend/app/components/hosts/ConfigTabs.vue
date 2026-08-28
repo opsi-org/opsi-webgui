@@ -30,7 +30,14 @@
           </template>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
-          <CoreAppFilterInput v-model="paramSearch" size="xs" input-class="w-full sm:w-52 md:w-64 lg:w-72" />
+          <CoreAppFilterInput
+            v-model="paramSearch"
+            v-model:options="paramSearchOptions"
+            size="xs"
+            show-options
+            :pattern-valid="paramMatcher.valid"
+            input-class="w-full sm:w-52 md:w-64 lg:w-72"
+          />
           <CoreAppButton
             v-if="isServerDefaultMode && !readonly"
             :icon="icons.add"
@@ -189,6 +196,8 @@
 </template>
 
 <script setup lang="ts">
+  import { createTextFilterOptions, createTextMatcher, type TextFilterOptions } from '~/composables/useTextFilter'
+
   interface Param {
     configId: string
     type: 'BoolConfig' | 'UnicodeConfig'
@@ -363,6 +372,8 @@
   })
   const activeCategory = ref('all')
   const paramsFetchRequestId = ref(0)
+  const paramSearchOptions = ref<TextFilterOptions>(createTextFilterOptions())
+  const paramMatcher = computed(() => createTextMatcher(paramSearch.value, paramSearchOptions.value))
 
   const flatParams = computed<Param[]>(() => {
     const all: Param[] = []
@@ -385,7 +396,7 @@
   }
 
   const categoryAwareTree = computed<TreeNode[]>(() => {
-    const q = paramSearch.value.trim().toLowerCase()
+    const matches = paramMatcher.value.test
     const raw = rawParams.value
     const categoryOrder = ['general', 'clientconfig', 'opsi-script', 'opsiclientd', 'software-on-demand', 'licensing']
     const categoryKeys = [
@@ -400,7 +411,7 @@
       type ParamBranch = Map<string, ParamLeaf | ParamBranch>
       const root: ParamBranch = new Map()
       for (const p of params) {
-        if (q && !p.configId.toLowerCase().includes(q) && !(p.description || '').toLowerCase().includes(q)) continue
+        if (matches && !matches(p.configId) && !matches(p.description || '')) continue
         const parts = p.configId.split('.')
         let node = root
         for (let i = 0; i < parts.length; i++) {
@@ -566,27 +577,17 @@
 
   const readonlyAttrKeys = computed(() => Object.keys(editableAttributes.value).filter((k) => isReadonlyAttribute(k)))
   const editableAttrKeys = computed(() => Object.keys(editableAttributes.value).filter((k) => !isReadonlyAttribute(k)))
-  const attributeSearch = computed(() => paramSearch.value.trim().toLowerCase())
+  const filteredReadonlyAttrKeys = computed(() => {
+    const matches = paramMatcher.value.test
+    if (!matches) return readonlyAttrKeys.value
+    return readonlyAttrKeys.value.filter((k) => matches(getAttributeLabel(k)) || matches(String(originalAttributes.value[k] ?? '')))
+  })
 
-  const filteredReadonlyAttrKeys = computed(() =>
-    readonlyAttrKeys.value.filter(
-      (k) =>
-        getAttributeLabel(k).toLowerCase().includes(attributeSearch.value) ||
-        String(originalAttributes.value[k] ?? '')
-          .toLowerCase()
-          .includes(attributeSearch.value),
-    ),
-  )
-
-  const filteredEditableAttrKeys = computed(() =>
-    editableAttrKeys.value.filter(
-      (k) =>
-        getAttributeLabel(k).toLowerCase().includes(attributeSearch.value) ||
-        String(editableAttributes.value[k] ?? '')
-          .toLowerCase()
-          .includes(attributeSearch.value),
-    ),
-  )
+  const filteredEditableAttrKeys = computed(() => {
+    const matches = paramMatcher.value.test
+    if (!matches) return editableAttrKeys.value
+    return editableAttrKeys.value.filter((k) => matches(getAttributeLabel(k)) || matches(String(editableAttributes.value[k] ?? '')))
+  })
 
   async function fetchParameters() {
     const requestId = ++paramsFetchRequestId.value

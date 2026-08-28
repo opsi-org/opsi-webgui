@@ -32,6 +32,27 @@ backend = get_protected_backend()
 mysql = get_mysql()
 
 
+def parse_filter_query(value: Any) -> str | dict[str, str | list[str]]:
+	"""Parse legacy free text or the structured table filter query format."""
+	if not isinstance(value, str):
+		return ""
+	try:
+		parsed = loads(value)
+	except (TypeError, ValueError):
+		return value
+	if not isinstance(parsed, dict):
+		return value
+	result: dict[str, str | list[str]] = {}
+	for key, item in parsed.items():
+		if isinstance(item, str) and item:
+			result[key] = item
+		elif isinstance(item, list):
+			values = [entry for entry in item if isinstance(entry, str) and entry]
+			if values:
+				result[key] = values
+	return result
+
+
 def get_depot_of_client(client: str) -> str:
 	params = {}
 	with mysql.session() as session:

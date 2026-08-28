@@ -18,16 +18,16 @@
 
     <template v-else-if="normalizedResult === 'successful'">
       <CoreAppTooltip v-if="iconOnly" :text="String($t('common.success'))">
-        <CoreAppStatusBadge status="success" :icon="icons.checkCircle" size="xs" />
+        <CoreAppStatusBadge status="success" :icon="icons.check" size="xs" />
       </CoreAppTooltip>
-      <CoreAppStatusBadge v-else status="success" :icon="icons.checkCircle" :label="$t('common.success')" />
+      <CoreAppStatusBadge v-else status="success" :icon="icons.check" :label="$t('common.success')" />
     </template>
 
     <template v-else-if="normalizedResult === 'failed'">
       <CoreAppTooltip v-if="iconOnly" :text="String($t('common.failed'))">
-        <CoreAppStatusBadge status="error" :icon="icons.xCircle" size="xs" />
+        <CoreAppStatusBadge status="error" :icon="icons.x" size="xs" />
       </CoreAppTooltip>
-      <CoreAppStatusBadge v-else status="error" :icon="icons.xCircle" :label="$t('common.failed')" />
+      <CoreAppStatusBadge v-else status="error" :icon="icons.x" :label="$t('common.failed')" />
     </template>
 
     <span v-else-if="normalizedResult === 'none' || !normalizedResult" class="text-(--color-text-muted) text-xs">-</span>

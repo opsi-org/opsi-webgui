@@ -51,6 +51,7 @@
     productId: string | null
     tab?: string
     panelMode?: boolean
+    search?: string
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -60,6 +61,7 @@
 
   const emit = defineEmits<{
     saved: []
+    'update:search': [value: string]
   }>()
 
   const { t: $t } = useI18n()
@@ -79,7 +81,14 @@
   const loadingDeps = ref(false)
   const savingProps = ref(false)
   const statusMessage = ref<{ type: 'success' | 'error'; message: string } | null>(null)
-  const filterQuery = ref('')
+  const _internalFilterQuery = ref('')
+  const filterQuery = computed({
+    get: () => (props.search !== undefined ? props.search : _internalFilterQuery.value),
+    set: (v: string) => {
+      if (props.search !== undefined) emit('update:search', v)
+      else _internalFilterQuery.value = v
+    },
+  })
 
   const rawProperties = ref<Record<string, ProductProperty>>({})
   const editableProperties = ref<EditableProductProperty[]>([])

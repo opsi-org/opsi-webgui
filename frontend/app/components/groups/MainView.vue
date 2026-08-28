@@ -802,7 +802,13 @@
   const containerRef = ref<HTMLElement | null>(null)
   const isMobile = ref(false)
   const showSidebar = ref(true)
-  const sidebarWidthPercent = ref(50)
+  const { layout: workspaceLayout } = useWorkspaceLayout()
+  const sidebarWidthPercent = computed({
+    get: () => workspaceLayout.groupsSidebarWidthPercent,
+    set: (value: number) => {
+      workspaceLayout.groupsSidebarWidthPercent = value
+    },
+  })
   const isResizing = ref(false)
   const minSidebarPercent = 20
   const maxSidebarPercent = 65

@@ -48,7 +48,7 @@
       :name="sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
       class="w-2 h-2 shrink-0"
     />
-    <CoreAppIcon v-else :name="icons.sort" class="w-2 h-2 opacity-30 shrink-0" />
+    <CoreAppIcon v-else :name="icons.sort" class="w-2 h-2 opacity-80 shrink-0" />
   </div>
 
   <div v-else class="flex items-center gap-1">

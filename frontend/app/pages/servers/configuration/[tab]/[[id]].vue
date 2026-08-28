@@ -13,10 +13,12 @@
       :host-id="selectedServerId"
       host-type="server"
       :tab="activeTab"
+      :search="searchQuery"
       show-host-selector
       :readonly="isReadOnly || !hasServerWriteAccess"
       @update:host-id="updateSelectedServerId"
       @update:tab="updateActiveTab"
+      @update:search="updateSearchQuery"
       @saved="handleSaved"
     />
   </div>
@@ -71,7 +73,7 @@
   function updateActiveTab(v: string) {
     const id = selectedServerId.value
     const path = id ? `/servers/configuration/${v}/${id}` : `/servers/configuration/${v}`
-    if (route.fullPath !== path) router.replace(path)
+    if (route.fullPath !== path) router.replace({ path, query: { ...route.query } })
   }
 
   function updateSelectedServerId(id: string | null) {
@@ -79,7 +81,15 @@
     explicitlyClearedServer.value = !id
     if (id === routeServerId.value) return
     const tab = activeTab.value
-    router.replace(id ? `/servers/configuration/${tab}/${id}` : `/servers/configuration/${tab}`)
+    const path = id ? `/servers/configuration/${tab}/${id}` : `/servers/configuration/${tab}`
+    router.replace({ path, query: { ...route.query } })
+  }
+
+  const searchQuery = ref(typeof route.query.search === 'string' ? route.query.search : '')
+
+  function updateSearchQuery(value: string) {
+    searchQuery.value = value
+    router.replace({ query: { ...route.query, search: value || undefined } })
   }
 
   function handleSaved() {}

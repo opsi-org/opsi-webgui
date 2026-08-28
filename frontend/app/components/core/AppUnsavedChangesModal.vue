@@ -10,36 +10,29 @@
 
 <template>
   <template v-if="totalChangesCount > 0">
-    <div class="inline-flex rounded-md shadow-sm">
-      <template v-if="showSaveDiscard">
-        <UTooltip :text="$t('common.save')">
-          <UButton :size="size" color="success" variant="solid" class="rounded-r-none" :loading="isSaving" @click="handleQuickSave">
-            <UIcon :name="icons.check" class="w-3.5 h-3.5" />
-          </UButton>
-        </UTooltip>
-        <UTooltip :text="$t('common.discard')">
-          <UButton
-            :size="size"
-            color="neutral"
-            variant="soft"
-            class="rounded-none border border-(--color-border)"
-            @click="handleQuickDiscard"
-          >
-            <UIcon :name="icons.delete" class="w-3.5 h-3.5" />
-          </UButton>
-        </UTooltip>
-      </template>
+    <UButton :size="size" color="warning" variant="soft" @click="open = true">
+      {{ $t('unsaved.changes') }}
+      <CoreAppStatusBadge status="warning" size="xs" :value="totalChangesCount" />
+    </UButton>
+    <CoreAppHoverPopover v-if="showSaveDiscard" :title="String($t('unsaved.quickActions'))">
       <UButton
         :size="size"
         color="neutral"
-        variant="soft"
-        :class="showSaveDiscard ? 'rounded-l-none border border-(--color-border)' : ''"
-        @click="open = true"
-      >
-        {{ $t('unsaved.changes') }}
-        <CoreAppStatusBadge status="warning" size="xs" :value="totalChangesCount" class="ml-1" />
-      </UButton>
-    </div>
+        variant="outline"
+        :icon="icons.moreVertical"
+        :loading="isSaving"
+        square
+        :aria-label="String($t('unsaved.quickActions'))"
+      />
+      <template #content>
+        <UButton size="sm" color="success" variant="soft" :icon="icons.check" block :loading="isSaving" @click="handleQuickSave">
+          {{ $t('unsaved.saveNow') }}
+        </UButton>
+        <UButton size="sm" color="error" variant="soft" :icon="icons.delete" block @click="handleQuickDiscard">
+          {{ $t('unsaved.discardNow') }}
+        </UButton>
+      </template>
+    </CoreAppHoverPopover>
   </template>
 
   <UModal v-model:open="open" :title="$t('unsaved.changes')" :ui="{ content: 'w-[94vw] max-w-[56rem] h-auto max-h-[76vh]' }">
@@ -206,16 +199,21 @@
           <template v-if="processAfterSave">
             <div class="px-3 py-2 space-y-2">
               <div class="space-y-1">
-                <span class="text-xs font-medium text-(--color-text-muted)">{{ $t('products.title') }}:</span>
+                <span class="flex items-center gap-1 text-xs font-medium text-(--color-text-muted)">
+                  {{ $t('products.title') }}:
+                  <CoreAppTooltip :text="String($t('actions.saveAndProcessScopeHelp'))">
+                    <CoreAppIcon :name="icons.info" class="w-3 h-3 cursor-help" />
+                  </CoreAppTooltip>
+                </span>
                 <div class="flex flex-wrap items-center gap-2">
-                  <CoreAppRadio v-model="onDemandProductMode" value="all" :label="$t('common.all')" size="xs" />
                   <CoreAppRadio
-                    v-if="selectedProductIds.length > 0"
+                    v-if="changedProductIds.length > 0"
                     v-model="onDemandProductMode"
-                    value="selected"
-                    :label="`${$t('common.selected')} (${selectedProductIds.length})`"
+                    value="changed"
+                    :label="`${$t('actions.changedProductsOnly')} (${changedProductIds.length})`"
                     size="xs"
                   />
+                  <CoreAppRadio v-model="onDemandProductMode" value="all" :label="$t('common.all')" size="xs" />
                 </div>
               </div>
               <div class="space-y-1">
@@ -361,16 +359,27 @@
     { key: 'newValue', label: String($t('common.newValue')) },
     { key: 'actions', label: '', width: '2.5rem' },
   ])
-  const processAfterSave = ref(false)
-  const onDemandProductMode = ref<'all' | 'selected'>('all')
-  const onDemandVisibility = ref<ProductVisibility>('')
+  const SAVE_AND_PROCESS_KEY = 'opsi-webgui-save-and-process'
+  const processAfterSave = ref(!import.meta.server && localStorage.getItem(SAVE_AND_PROCESS_KEY) === '1')
+  const onDemandProductMode = ref<'all' | 'changed'>('changed')
+  const VISIBILITY_KEY = 'opsi-webgui-process-actions-visibility'
+  const onDemandVisibility = ref<ProductVisibility>(
+    (!import.meta.server && (localStorage.getItem(VISIBILITY_KEY) as ProductVisibility)) || '',
+  )
   const onDemandClientIds = ref<string[]>([])
   const saveResult = ref<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
+
+  watch(processAfterSave, (value) => {
+    if (!import.meta.server) localStorage.setItem(SAVE_AND_PROCESS_KEY, value ? '1' : '0')
+  })
+  watch(onDemandVisibility, (value) => {
+    if (!import.meta.server) localStorage.setItem(VISIBILITY_KEY, value)
+  })
 
   watch(open, (isOpen) => {
     if (isOpen) {
       onDemandClientIds.value = [...props.clientIds]
-      onDemandProductMode.value = props.selectedProductIds.length > 0 ? 'selected' : 'all'
+      onDemandProductMode.value = changedProductIds.value.length > 0 ? 'changed' : 'all'
       saveResult.value = null
     }
   })
@@ -435,6 +444,10 @@
     return Array.from(groups.entries()).map(([productId, changes]) => ({ productId, changes }))
   })
 
+  /** Product IDs that actually have pending changes in this modal - used as the safe default
+   *  scope for "save and process", independent of whatever is selected in the table. */
+  const changedProductIds = computed(() => groupedProductChanges.value.map((g) => g.productId))
+
   /** Flat list of all product changes for table display */
   const flatChanges = computed(() => {
     const items: Array<ChangeItem & { productId: string }> = []
@@ -479,7 +492,7 @@
     const options =
       processAfterSave.value && props.showProcessOptions
         ? {
-            productIds: onDemandProductMode.value === 'selected' ? props.selectedProductIds : undefined,
+            productIds: onDemandProductMode.value === 'changed' ? changedProductIds.value : undefined,
             visibility: onDemandVisibility.value || undefined,
             clientIds: onDemandClientIds.value.length > 0 ? onDemandClientIds.value : undefined,
           }

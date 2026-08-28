@@ -26,6 +26,8 @@
     "result": "Action Result",
     "results": "Action Results",
     "saveAndProcess": "Save and process action requests",
+    "saveAndProcessScopeHelp": "Choose which products to process: only the ones you just changed here, or every product for the affected clients.",
+    "changedProductsOnly": "Changed products only",
     "sequence": "Action Sequence",
     "shutdown": "Shutdown",
     "success": "Successful Actions",
@@ -91,6 +93,11 @@
     "activeSource": "backend_getLicensingInfo().client_numbers",
     "activeBreakdownHelp": "The Windows/Linux/macOS counts below only include active clients, not inactive ones.",
     "inactiveHelp": "Clients licensed but currently counted as not active by the opsi licensing service.",
+    "advancedFilters": {
+      "notSeenSince": "Not seen since (days)",
+      "hasFailedProducts": "Has failed products",
+      "hasOutdatedProducts": "Has outdated product versions"
+    },
     "all": "All Clients",
     "blocked": "Blocked Clients",
     "blockedNone": "No blocked clients",
@@ -148,7 +155,9 @@
     "validation": {
       "exists": "A client with this ID already exists.",
       "noNumber": "Client name cannot start with a number"
-    }
+    },
+    "reachable.yes": "Reachable",
+    "reachable.no": "Not reachable"
   },
   "common": {
     "activity": "Activity",
@@ -170,6 +179,7 @@
     "collapse": "Collapse",
     "collapseAll": "Collapse All",
     "create": "Create",
+    "days": "Days",
     "default": "Default",
     "delete": "Delete",
     "descending": "Descending",
@@ -241,7 +251,11 @@
     "warning": "Warning",
     "yes": "Yes",
     "no": "No",
-    "warnings": "Warnings"
+    "warnings": "Warnings",
+    "select": "Select",
+    "deleteSelected": "Delete selected entries",
+    "rangeSelectHint": "Select all - shift-click selects a range",
+    "advancedFilters": "Advanced Filters"
   },
   "config": {
     "create": "Create Configuration",
@@ -472,6 +486,12 @@
     "support": "Quick access to support resources and release notes"
   },
   "products": {
+    "advancedFilters": {
+      "hasFailedActionResult": "Has failed action result",
+      "scopeHelp": "Advanced filters always apply on top of the selected depots. If clients are selected, they look at those clients only; otherwise at every client of the selected depots.",
+      "hasPendingActionRequest": "Has pending action request",
+      "unused": "Not installed on any client (unused)"
+    },
     "advice": "Advice",
     "all": "All Products",
     "clientDiffNote": "Client differs from depot (italic)",
@@ -479,6 +499,9 @@
     "conditions": "Conditions",
     "defaultValues": "Default Values",
     "depotDiffNote": "Depot differs from default (bold)",
+    "depotScopeHint": {
+      "description": "Showing the depot product catalog (no clients selected)"
+    },
     "dependencies": "Dependencies",
     "dependenciesNone": "No dependencies found",
     "id": "Product ID",
@@ -522,6 +545,7 @@
     "title": "Products",
     "unlock": "Unlock",
     "unlockAll": "Unlock All",
+    "viewCatalogHint": "View products - shows the depot catalog if no clients are selected.",
     "unlocked": "Product {product} has been unlocked."
   },
   "quick": {
@@ -532,6 +556,13 @@
   },
   "redis": {
     "data": "Redis Data"
+  },
+  "savedSearches": {
+    "title": "Saved Searches",
+    "help": "Apply a saved search, or save the current filter.",
+    "saveCurrent": "Save the current filter",
+    "none": "No saved searches yet.",
+    "namePlaceholder": "Search name"
   },
   "servers": {
     "all": "All Servers",
@@ -559,6 +590,8 @@
     "singleSelect": "Single Select",
     "sortBy": "Sort By",
     "sortBySelection": "Sort by Selection",
+    "showOnlySelected": "Show only selected rows",
+    "showOnlySelectedHint": "Only currently selected rows are shown; the total above reflects this subset, not the full list.",
     "table": "Table Settings",
     "communityLanguages": "Community Languages",
     "theme.dark": "Dark",
@@ -591,13 +624,28 @@
     "failed": "Connection failed!",
     "id": "Terminal ID",
     "press": "Press Connect to start a session...",
+    "quickCommands": "Quick commands",
+    "quickCommandsHelp": "Save and run your own frequently used terminal commands. Connects automatically if not yet connected.",
+    "quickCommandsNone": "No saved commands yet. Type a command below and save it.",
+    "newCommandPlaceholder": "e.g. systemctl status opsiconfd",
+    "runCommand": "Run command",
+    "saveCommand": "Save command",
     "title": "Terminal"
   },
   "unsaved": {
     "changes": "Unsaved Changes",
-    "discarded": "All changes have been discarded."
+    "discarded": "All changes have been discarded.",
+    "quickActions": "Save or discard all changes quickly",
+    "saveNow": "Save all now",
+    "discardNow": "Discard all now"
   },
   "users": {
     "current": "Current User"
+  },
+  "filter": {
+    "matchCase": "Match case",
+    "wholeWord": "Match whole word",
+    "regex": "Use regular expression (applied to the loaded rows)",
+    "regexInvalid": "Invalid regular expression"
   }
 }

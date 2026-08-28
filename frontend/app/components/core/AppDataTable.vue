@@ -22,36 +22,57 @@
         >
           {{ selectedKeys.length }}
         </UButton>
+        <CoreAppTooltip v-if="selectedKeys.length > 0" :text="String($t('settings.showOnlySelected'))">
+          <UButton
+            size="xs"
+            variant="ghost"
+            :color="onlySelected ? 'primary' : 'neutral'"
+            :icon="onlySelected ? icons.eyeOff : icons.eye"
+            :aria-label="String($t('settings.showOnlySelected'))"
+            data-testid="show-only-selected"
+            @click="onlySelected = !onlySelected"
+          />
+        </CoreAppTooltip>
         <UBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
           {{ $t('settings.singleSelect') }}
         </UBadge>
       </div>
 
       <div class="flex items-center gap-2">
-        <CoreAppFilterInput
-          v-if="filterable"
-          v-model="filterQueryInternal"
-          :placeholder="String($t('common.filter'))"
-          size="sm"
-          input-class="w-full sm:w-56 md:w-72 lg:w-80"
-        />
+        <UFieldGroup v-if="filterable" class="min-w-0">
+          <slot name="filter-actions" />
+          <CoreAppSavedSearchesDropdown
+            v-if="savedSearchesScopeId"
+            v-model:filter-query="filterQueryInternal"
+            :entries="savedSearchEntries"
+            @apply="applySavedSearch"
+            @delete="removeSavedSearches"
+            @save="saveCurrentSearch"
+          />
+          <CoreAppFilterInput
+            v-model="filterQueryInternal"
+            v-model:options="filterOptions"
+            :placeholder="String($t('common.filter'))"
+            size="sm"
+            show-options
+            :saveable="!!savedSearchesScopeId"
+            :pattern-valid="localMatcher.valid"
+            input-class="w-full sm:w-56 md:w-72 lg:w-80"
+            @save="saveCurrentSearch"
+          />
+        </UFieldGroup>
 
-        <UPopover v-model:open="tableSettingsOpen">
+        <CoreAppHoverPopover :title="String($t('settings.table'))" content-class="min-w-96">
           <UButton
             :icon="icons.tableSettings"
             :aria-label="$t('settings.table')"
             variant="outline"
             color="primary"
             size="sm"
-            :title="$t('settings.table')"
             data-testid="table-settings"
           />
           <template #content>
-            <div class="p-2.5 min-w-96 overflow-y-auto bg-(--color-background) rounded shadow-lg">
-              <div class="text-sm font-medium text-(--color-text-muted) mb-2.5">
-                {{ $t('settings.table') }}
-              </div>
-
+            <div class="max-h-[70vh] overflow-y-auto">
               <div class="mb-3 grid grid-cols-[6.5rem_1fr] items-center gap-x-2 gap-y-2.5">
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.display') }}</span>
                 <div class="flex gap-0.5">
@@ -110,14 +131,13 @@
 
                 <template v-if="rowActionsOptions">
                   <span class="text-xs text-(--color-text-muted)">{{ $t('settings.rowActions') }}</span>
-                  <div class="flex items-center gap-2">
-                    <CoreAppCheckbox
-                      :model-value="rowActionsOptions.showAll"
-                      :aria-label="String($t('settings.showAllRowActions'))"
-                      @update:model-value="(value: boolean) => emit('update:showAllRowActions', value)"
-                    />
-                    <span class="text-xs">{{ $t('settings.showAllRowActions') }}</span>
-                  </div>
+                  <CoreAppCheckbox
+                    :model-value="rowActionsOptions.showAll"
+                    :label="String($t('settings.showAllRowActions'))"
+                    size="xs"
+                    :ui="{ label: 'text-xs' }"
+                    @update:model-value="(value: boolean) => emit('update:showAllRowActions', value)"
+                  />
                 </template>
 
                 <span class="flex items-center gap-1 text-xs text-(--color-text-muted)">
@@ -158,24 +178,20 @@
               </div>
 
               <div class="mb-4">
-                <span class="text-xs text-(--color-text-muted) block mb-1">{{ $t('settings.columns') }}</span>
+                <h4 class="m-0 mb-1 text-xs font-semibold uppercase tracking-wider text-(--color-text-muted)">
+                  {{ $t('settings.columns') }}
+                </h4>
                 <div class="space-y-0.5 max-h-40 overflow-y-auto">
-                  <button
+                  <CoreAppCheckbox
                     v-for="col in toggleableColumns"
                     :key="col.key"
-                    type="button"
-                    class="w-full text-left flex items-center gap-2 px-1 py-1 rounded hover:bg-(--color-surface-hover) cursor-pointer"
-                    @click="onToggleableColumnRowClick($event, col)"
-                  >
-                    <CoreAppCheckbox
-                      :model-value="isColumnVisibleComputed(col.key)"
-                      :disabled="col.alwaysVisible"
-                      :aria-label="resolveColumnLabel(col)"
-                      @click.stop
-                      @update:model-value="(value: boolean) => setColumnVisibility(col.key, value)"
-                    />
-                    <span class="text-xs" :class="{ 'opacity-50': col.alwaysVisible }">{{ resolveColumnLabel(col) }}</span>
-                  </button>
+                    :model-value="isColumnVisibleComputed(col.key)"
+                    :disabled="col.alwaysVisible"
+                    :label="resolveColumnLabel(col)"
+                    size="xs"
+                    :ui="{ root: 'w-full px-1 py-1 rounded hover:bg-(--color-surface-hover)', label: 'text-xs w-full cursor-pointer' }"
+                    @update:model-value="(value: boolean) => setColumnVisibility(col.key, value)"
+                  />
                 </div>
               </div>
 
@@ -184,7 +200,7 @@
               </UButton>
             </div>
           </template>
-        </UPopover>
+        </CoreAppHoverPopover>
 
         <UButton
           v-if="showRefresh"
@@ -243,8 +259,8 @@
                       variant="ghost"
                       color="neutral"
                       :icon="sortBySelection ? icons.sortDesc : icons.sort"
-                      :class="sortBySelection ? '' : 'opacity-30'"
-                      class="p-0! w-4 h-4"
+                      :class="sortBySelection ? '' : 'opacity-80'"
+                      class="p-0! max-w-0.5 max-h-0.5"
                       :title="String($t('settings.sortBySelection'))"
                       @click.stop="sortBySelection = !sortBySelection"
                     />
@@ -293,7 +309,7 @@
                           :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
                           class="w-2 h-2"
                         />
-                        <UIcon v-else :name="icons.sort" class="w-2 h-2 opacity-30" />
+                        <UIcon v-else :name="icons.sort" class="w-2 h-2 opacity-80" />
                       </template>
                     </div>
                   </slot>
@@ -438,6 +454,7 @@
           {{ $t('common.showing') }} {{ paginationStartIndex + 1 }}-{{ Math.min(paginationEndIndex, serverTotal) }} {{ $t('common.of') }}
           {{ serverTotal }}
         </template>
+        <span v-if="onlySelected" class="ml-1 text-(--color-warning-soft-text)">{{ $t('settings.showOnlySelectedHint') }}</span>
       </span>
       <div v-if="displayMode === 'pagination' && totalPages > 1" class="flex items-center gap-1">
         <UButton
@@ -480,6 +497,8 @@
 <script setup lang="ts" generic="T extends Record<string, unknown>">
   import { useDataTableSettings, type DataTableColumnDef } from '~/composables/useDataTableSettings'
   import { getStoredDataTableFilter, saveStoredDataTableFilter } from '~/composables/useDataTableFilter'
+  import { createTextFilterOptions, createTextMatcher, type TextFilterOptions } from '~/composables/useTextFilter'
+  import { useSavedSearches } from '~/composables/useSavedSearches'
 
   export interface PageChangeParams {
     pageNumber: number
@@ -488,6 +507,7 @@
     sortDesc: boolean
     filterQuery: string
     sortBySelection: boolean
+    onlySelected: boolean
   }
 
   interface Props {
@@ -506,6 +526,8 @@
     filterable?: boolean
     filterQuery?: string
     showRefresh?: boolean
+    savedSearchesScopeId?: string
+    advancedFilters?: Record<string, unknown>
 
     maxHeight?: string
     sortBySelectionEnabled?: boolean
@@ -533,11 +555,13 @@
     (e: 'update:filterQuery', value: string): void
     (e: 'update:panelView', value: string): void
     (e: 'update:showAllRowActions', value: boolean): void
+    (e: 'apply-saved-search', value: { filterQuery: string; advancedFilters: Record<string, unknown> }): void
   }>()
 
   defineSlots<{
     [key: `header-cell-${string}`]: (props: { column: DataTableColumnDef; sortColumn: string; sortDirection: 'asc' | 'desc' }) => unknown
     [key: `cell-${string}`]: (props: { row: T; value: unknown; index: number }) => unknown
+    'filter-actions': () => unknown
     'row-actions': (props: { row: T; index: number; selected: boolean; active: boolean }) => unknown
   }>()
 
@@ -560,8 +584,45 @@
   const currentPage = ref(1)
   const selectionModeOverride = ref<'single' | 'multi' | null>(null)
   const sortBySelection = ref(Boolean(props.sortBySelectionEnabled && (props.selectedKeys?.length ?? 0) > 0))
-  const tableSettingsOpen = ref(false)
+  const onlySelected = computed({
+    get: () => tableSettings.settings.onlySelected ?? false,
+    set: (value: boolean) => {
+      tableSettings.settings.onlySelected = value
+    },
+  })
   const lastClickedIndex = ref<number | null>(null)
+  const filterOptions = ref<TextFilterOptions>(createTextFilterOptions())
+
+  // A regular expression cannot be translated into the server side LIKE search, so the
+  // server returns the unfiltered page and the pattern is applied to the loaded rows only.
+  // Match case / whole word stay server compatible because LIKE '%x%' is a superset of both.
+  const serverFilterQuery = computed(() => (filterOptions.value.regex ? '' : filterQueryInternal.value))
+
+  const savedSearchScope = computed(() => props.savedSearchesScopeId || '')
+  const {
+    savedSearches,
+    save: persistSavedSearch,
+    remove: removeSavedSearch,
+    get: getSavedSearch,
+  } = useSavedSearches<Record<string, unknown>>(savedSearchScope)
+  const savedSearchEntries = computed(() => savedSearches.value.map((entry) => ({ id: entry.id, label: entry.name })))
+
+  function saveCurrentSearch() {
+    const name = filterQueryInternal.value.trim()
+    if (!name) return
+    persistSavedSearch(name, filterQueryInternal.value, { ...(props.advancedFilters ?? {}) })
+  }
+
+  function removeSavedSearches(ids: string[]) {
+    removeSavedSearch(ids)
+  }
+
+  function applySavedSearch(id: string) {
+    const entry = getSavedSearch(id)
+    if (!entry) return
+    filterQueryInternal.value = entry.filterQuery
+    emit('apply-saved-search', { filterQuery: entry.filterQuery, advancedFilters: entry.advancedFilters })
+  }
 
   watch(
     () => props.sortBySelectionEnabled,
@@ -573,6 +634,11 @@
   )
 
   watch(sortBySelection, () => {
+    currentPage.value = 1
+    emitPageChange()
+  })
+
+  watch(onlySelected, () => {
     currentPage.value = 1
     emitPageChange()
   })
@@ -609,8 +675,6 @@
 
   const visibleColumns = computed(() => props.columns.filter((c) => c.alwaysVisible || tableSettings.isColumnVisible(c.key, props.columns)))
 
-  // Cell keys are resolved for every rendered cell and for every row while filtering,
-  // so the path is split once per key instead of on each access.
   const nestedPathCache = new Map<string, string[]>()
 
   function nestedPath(key: string): string[] {
@@ -666,13 +730,20 @@
   // The server applies the filter too, but only after the debounce and the round
   // trip. Filtering the already loaded rows locally makes every keystroke visible
   // immediately; rows the server returns for the same query always match again.
-  const localFilterTerm = computed(() => filterQueryInternal.value.trim().toLowerCase())
+  const localMatcher = computed(() => createTextMatcher(filterQueryInternal.value, filterOptions.value))
+
+  const filterableColumns = computed(() => props.columns.filter((col) => col.key !== 'actions'))
 
   const visibleRows = computed(() => {
-    const term = localFilterTerm.value
-    if (!props.filterable || !term) return props.rows
-    const cols = visibleColumns.value
-    return props.rows.filter((row) => cols.some((col) => formatCellValue(row, col).toLowerCase().includes(term)))
+    const test = localMatcher.value.test
+    if (!props.filterable || !test) return props.rows
+    const cols = filterableColumns.value
+    return props.rows.filter((row) => {
+      for (const col of cols) {
+        if (test(formatCellValue(row, col))) return true
+      }
+      return false
+    })
   })
 
   // Row virtualization: only rows near the viewport are rendered, the rest is
@@ -747,8 +818,9 @@
       perPage: pageSize.value,
       sortBy: tableSettings.settings.sortColumn,
       sortDesc: tableSettings.settings.sortDirection === 'desc',
-      filterQuery: filterQueryInternal.value,
+      filterQuery: serverFilterQuery.value,
       sortBySelection: sortBySelection.value,
+      onlySelected: onlySelected.value,
     }
   }
 
@@ -912,6 +984,7 @@
     selectedKeys.value = []
     selectionModeOverride.value = null
     sortBySelection.value = false
+    onlySelected.value = false
     emitSelectionChange()
   }
 
@@ -942,10 +1015,10 @@
     tableSettings.reset()
     selectionModeOverride.value = null
     sortBySelection.value = Boolean(props.sortBySelectionEnabled && (props.selectedKeys?.length ?? 0) > 0)
+    onlySelected.value = false
     autoPageStalled.value = false
     autoPageRowCountAtRequest = -1
     currentPage.value = 1
-    tableSettingsOpen.value = false
     emitPageChange()
   }
 
@@ -1137,11 +1210,6 @@
     }
   }
 
-  function toggleColumnFromRow(col: DataTableColumnDef) {
-    if (col.alwaysVisible) return
-    tableSettings.toggleColumn(col.key)
-  }
-
   function setColumnVisibility(key: string, visible: boolean) {
     const next = [...tableSettings.settings.visibleColumns]
     const hasKey = next.includes(key)
@@ -1155,13 +1223,16 @@
     }
   }
 
-  function onToggleableColumnRowClick(event: MouseEvent, col: DataTableColumnDef) {
-    const target = event.target as HTMLElement
-    if (target.closest("[role='checkbox'], input[type='checkbox'], label")) {
-      return
-    }
-    toggleColumnFromRow(col)
-  }
+  // Toggling the regular expression mode changes what the server can pre-filter, so the
+  // page has to be requested again; the other options only refine the loaded rows.
+  watch(
+    () => filterOptions.value.regex,
+    () => {
+      if (!filterQueryInternal.value) return
+      currentPage.value = 1
+      emitPageChange()
+    },
+  )
 
   watch(filterQueryInternal, (val) => {
     saveStoredDataTableFilter(effectiveFilterStorageId.value, val)
@@ -1170,17 +1241,16 @@
     // position immediately instead of waiting for the server response.
     scrollToTop()
     if (filterDebounceTimer) clearTimeout(filterDebounceTimer)
-    // Clearing the filter cannot be answered from the loaded rows (the server
-    // already narrowed them), so the reload starts without the typing debounce.
-    if (!val) {
-      currentPage.value = 1
-      emitPageChange()
-      return
-    }
-    filterDebounceTimer = setTimeout(() => {
-      currentPage.value = 1
-      emitPageChange()
-    }, 300)
+    // Clearing cannot be answered from the loaded rows (the server already narrowed them),
+    // so it reloads with a much shorter delay - but still debounced, otherwise holding
+    // backspace fires a full unfiltered reload per keystroke.
+    filterDebounceTimer = setTimeout(
+      () => {
+        currentPage.value = 1
+        emitPageChange()
+      },
+      val ? 300 : 120,
+    )
   })
 
   watch(
@@ -1219,6 +1289,9 @@
         selectedKeys.value = [...newKeys]
         if (newKeys.length === 0 && sortBySelection.value) {
           sortBySelection.value = false
+        }
+        if (newKeys.length === 0 && onlySelected.value) {
+          onlySelected.value = false
         }
         if (newKeys.length > 1 && effectiveSelectionMode.value === 'single') {
           selectionModeOverride.value = 'multi'

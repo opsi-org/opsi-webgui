@@ -18,9 +18,9 @@
 
     <template v-else-if="normalizedStatus === 'installed'">
       <CoreAppTooltip v-if="iconOnly" :text="String($t('products.installed'))">
-        <CoreAppStatusBadge status="success" :icon="icons.checkCircle" size="xs" />
+        <CoreAppStatusBadge status="success" :icon="icons.check" size="xs" />
       </CoreAppTooltip>
-      <CoreAppStatusBadge v-else status="success" :icon="icons.checkCircle" :label="$t('products.installed')" />
+      <CoreAppStatusBadge v-else status="success" :icon="icons.check" :label="$t('products.installed')" />
     </template>
 
     <template v-else-if="normalizedStatus === 'unknown'">

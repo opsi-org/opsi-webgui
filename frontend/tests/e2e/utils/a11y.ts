@@ -14,6 +14,7 @@ export interface A11yOptions {
 const NUXTUI_EXCLUSIONS = [
   '[data-grace-area-trigger]', // UTooltip trigger wrappers (informational, not interactive buttons)
   'button[role="checkbox"][data-slot="base"]', // UCheckbox internal button (name from contextual label)
+  '[id^="reka-popover-trigger"]', // Reka popover trigger elements (Nuxt UI internal) - axe false positives
 ]
 
 /**

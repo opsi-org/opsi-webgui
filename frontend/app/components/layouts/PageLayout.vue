@@ -174,7 +174,13 @@
   const isMobile = ref(false)
   const isSplitPanelNarrow = ref(false)
   const containerRef = ref<HTMLElement | null>(null)
-  const panelWidthPercent = ref(props.defaultPanelWidthPercent)
+  const { layout: workspaceLayout } = useWorkspaceLayout()
+  const panelWidthPercent = computed({
+    get: () => workspaceLayout.detailPanelWidthPercent ?? props.defaultPanelWidthPercent,
+    set: (value: number) => {
+      workspaceLayout.detailPanelWidthPercent = value
+    },
+  })
   const minPanelPercent = 25
   const maxPanelPercent = 75
   const narrowSplitMinWidth = 1180

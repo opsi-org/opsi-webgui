@@ -27,6 +27,8 @@
     "result": "Aktionsergebnis",
     "results": "Aktionsergebnisse",
     "saveAndProcess": "Speichern und Aktionsanfragen verarbeiten",
+    "saveAndProcessScopeHelp": "Wählen Sie, welche Produkte verarbeitet werden sollen: nur die hier geänderten, oder alle Produkte für die betroffenen Clients.",
+    "changedProductsOnly": "Nur geänderte Produkte",
     "sequence": "Aktionssequenz",
     "shutdown": "Herunterfahren",
     "success": "Erfolgreiche Aktionen",
@@ -92,6 +94,11 @@
     "activeSource": "backend_getLicensingInfo().client_numbers",
     "activeBreakdownHelp": "Die Windows-/Linux-/macOS-Zahlen unten umfassen nur aktive Clients, keine inaktiven.",
     "inactiveHelp": "Lizenzierte Clients, die vom opsi-Lizenzierungsdienst aktuell als nicht aktiv gezählt werden.",
+    "advancedFilters": {
+      "notSeenSince": "Nicht gesehen seit (Tage)",
+      "hasFailedProducts": "Mit fehlgeschlagenen Produkten",
+      "hasOutdatedProducts": "Mit veralteten Produktversionen"
+    },
     "all": "Alle Clients",
     "blocked": "Gesperrte Clients",
     "blockedNone": "Keine gesperrten Clients",
@@ -149,7 +156,9 @@
     "validation": {
       "exists": "Ein Client mit dieser ID existiert bereits.",
       "noNumber": "Client-Name darf nicht mit einer Zahl beginnen"
-    }
+    },
+    "reachable.yes": "Erreichbar",
+    "reachable.no": "Nicht erreichbar"
   },
   "common": {
     "activity": "Aktivität",
@@ -171,6 +180,7 @@
     "collapse": "Einklappen",
     "collapseAll": "Alle einklappen",
     "create": "Erstellen",
+    "days": "Tage",
     "default": "Standard",
     "delete": "Löschen",
     "descending": "Absteigend",
@@ -242,7 +252,11 @@
     "warning": "Warnung",
     "yes": "Ja",
     "no": "Nein",
-    "warnings": "Warnungen"
+    "warnings": "Warnungen",
+    "select": "Auswählen",
+    "deleteSelected": "Ausgewählte Einträge löschen",
+    "rangeSelectHint": "Alle auswählen - Umschalt-Klick wählt einen Bereich",
+    "advancedFilters": "Erweiterte Filter"
   },
   "config": {
     "create": "Konfiguration erstellen",
@@ -473,6 +487,12 @@
     "support": "Schnellzugriff auf Support-Ressourcen und Versionshinweise"
   },
   "products": {
+    "advancedFilters": {
+      "hasFailedActionResult": "Mit fehlgeschlagenem Aktionsergebnis",
+      "scopeHelp": "Erweiterte Filter gelten immer zusätzlich zu den ausgewählten Depots. Sind Clients ausgewählt, betrachten sie nur diese Clients, sonst alle Clients der ausgewählten Depots.",
+      "hasPendingActionRequest": "Hat offene Aktionsanforderung",
+      "unused": "Auf keinem Client installiert (ungenutzt)"
+    },
     "advice": "Hinweis",
     "all": "Alle Produkte",
     "clientDiffNote": "Client weicht vom Depot ab (kursiv)",
@@ -480,6 +500,9 @@
     "conditions": "Bedingungen",
     "defaultValues": "Standardwerte",
     "depotDiffNote": "Depot weicht vom Standard ab (fett)",
+    "depotScopeHint": {
+      "description": "Depot-Produktkatalog wird angezeigt (keine Clients ausgewählt)"
+    },
     "dependencies": "Abhängigkeiten",
     "dependenciesNone": "Keine Abhängigkeiten gefunden",
     "id": "Produkt-ID",
@@ -523,6 +546,7 @@
     "title": "Produkte",
     "unlock": "Entsperren",
     "unlockAll": "Alle entsperren",
+    "viewCatalogHint": "Produkte anzeigen – zeigt den Depot-Katalog, wenn keine Clients ausgewählt sind.",
     "unlocked": "Produkt {product} wurde entsperrt."
   },
   "quick": {
@@ -533,6 +557,14 @@
   },
   "redis": {
     "data": "Redis-Daten"
+  },
+
+  "savedSearches": {
+    "title": "Gespeicherte Suchen",
+    "help": "Gespeicherte Suche anwenden oder aktuellen Filter speichern.",
+    "saveCurrent": "Aktuellen Filter speichern",
+    "none": "Noch keine gespeicherten Suchen.",
+    "namePlaceholder": "Name der Suche"
   },
   "servers": {
     "all": "Alle Server",
@@ -560,6 +592,8 @@
     "singleSelect": "Einfachauswahl",
     "sortBy": "Sortieren nach",
     "sortBySelection": "Nach Auswahl sortieren",
+    "showOnlySelected": "Nur ausgewählte Zeilen anzeigen",
+    "showOnlySelectedHint": "Es werden nur die aktuell ausgewählten Zeilen angezeigt; die Gesamtzahl oben bezieht sich auf diese Teilmenge, nicht auf die vollständige Liste.",
     "table": "Tabelleneinstellungen",
     "communityLanguages": "Community-Sprachen",
     "theme.dark": "Dunkel",
@@ -592,13 +626,28 @@
     "failed": "Verbindung fehlgeschlagen!",
     "id": "Terminal-ID",
     "press": "Drücken Sie Verbinden, um eine Sitzung zu starten...",
+    "quickCommands": "Schnellbefehle",
+    "quickCommandsHelp": "Eigene häufig genutzte Terminalbefehle speichern und ausführen. Verbindet automatisch, falls noch nicht verbunden.",
+    "quickCommandsNone": "Noch keine gespeicherten Befehle. Befehl unten eingeben und speichern.",
+    "newCommandPlaceholder": "z. B. systemctl status opsiconfd",
+    "runCommand": "Befehl ausführen",
+    "saveCommand": "Befehl speichern",
     "title": "Terminal"
   },
   "unsaved": {
     "changes": "Ungespeicherte Änderungen",
-    "discarded": "Alle Änderungen wurden verworfen."
+    "discarded": "Alle Änderungen wurden verworfen.",
+    "quickActions": "Alle Änderungen schnell speichern oder verwerfen",
+    "saveNow": "Jetzt alle speichern",
+    "discardNow": "Jetzt alle verwerfen"
   },
   "users": {
     "current": "Aktueller Benutzer"
+  },
+  "filter": {
+    "matchCase": "Groß-/Kleinschreibung beachten",
+    "wholeWord": "Nur ganzes Wort",
+    "regex": "Regulären Ausdruck verwenden (wird auf die geladenen Zeilen angewendet)",
+    "regexInvalid": "Ungültiger regulärer Ausdruck"
   }
 }
