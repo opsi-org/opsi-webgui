@@ -40,9 +40,11 @@ from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table  # type: ignore[import]
 from starlette.concurrency import run_in_threadpool
 
+from ..const import MAX_IDS_PER_REQUEST
 from ..logger import get_logger
 from ..utils import (
 	backend,
+	check_batch_size,
 	check_client_creation_rights,
 	filter_depot_access,
 	get_allowed_group_objects,
@@ -775,8 +777,8 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -
 
 
 class ProcessActionRPC(BaseModel):  # pylint: disable=too-few-public-methods
-	client_ids: list[str]
-	product_ids: list[str] | None = None
+	client_ids: list[str] = Field(..., max_length=MAX_IDS_PER_REQUEST)
+	product_ids: list[str] | None = Field(default=None, max_length=MAX_IDS_PER_REQUEST)
 	visibility: Literal["", "visible", "hidden"] | None = ""
 
 
@@ -803,7 +805,7 @@ async def host_control_process_action(request: Request, data: ProcessActionRPC) 
 
 
 class OpsiclientdRPC(BaseModel):  # pylint: disable=too-few-public-methods
-	client_ids: list[str]
+	client_ids: list[str] = Field(..., max_length=MAX_IDS_PER_REQUEST)
 	method: str
 	params: list[Any] | None = None
 
@@ -827,7 +829,7 @@ async def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTRespons
 
 
 class ClientDeployData(BaseModel):  # pylint: disable=too-few-public-methods
-	clients: list[str]
+	clients: list[str] = Field(..., max_length=MAX_IDS_PER_REQUEST)
 	username: str
 	password: str
 	type: str = Field("windows", pattern="^(windows)$|^(linux)$|^(macos)$")
@@ -902,6 +904,7 @@ def add_client_to_groups(
 	if not groups:
 		logger.error("No groups given.")
 		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="No groups given.")
+	check_batch_size(groups, "groups")
 
 	try:
 		for group in groups:
@@ -936,6 +939,7 @@ def rm_client_from_groups(
 	if not groups:
 		logger.error("No group given.")
 		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="No group given.")
+	check_batch_size(groups, "groups")
 
 	try:
 		for group in groups:

@@ -21,15 +21,17 @@ from opsiconfd.rest import (
 	order_by,
 	rest_api,
 )
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, column, select, table, text, update  # type: ignore[import]
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 
+from ..const import MAX_IDS_PER_REQUEST
 from ..logger import get_logger
 from ..utils import (
 	backend,
 	bool_value,
+	check_batch_combination,
 	mysql,
 	opsi_server_write_check,
 	parse_client_list,
@@ -391,8 +393,8 @@ class Config(BaseModel):  # pylint: disable=too-few-public-methods
 
 
 class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
-	objectIds: list[str] = []
-	configs: list[Config]
+	objectIds: list[str] = Field(default=[], max_length=MAX_IDS_PER_REQUEST)
+	configs: list[Config] = Field(..., max_length=MAX_IDS_PER_REQUEST)
 
 
 @api_router.delete("/api/opsidata/config/delete/{configid}")
@@ -680,6 +682,8 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 			http_status=status.HTTP_400_BAD_REQUEST,
 			message="No configurations were transferred to save.",
 		)
+
+	check_batch_combination(data.objectIds, data.configs, "object/config combinations")
 
 	rows = []
 	for client in data.objectIds:

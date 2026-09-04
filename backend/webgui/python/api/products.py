@@ -30,16 +30,18 @@ from opsiconfd.rest import (
 	pagination,
 	rest_api,
 )
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 from sqlalchemy import alias, and_, column, or_, select, text  # type: ignore[import]
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 
+from ..const import MAX_IDS_PER_REQUEST
 from ..logger import get_logger
 from ..utils import (
 	backend,
 	bool_value,
+	check_batch_combination,
 	expand_allowed_groups,
 	filter_depot_access,
 	get_all_children_groupids,
@@ -698,8 +700,8 @@ def product_count(
 
 
 class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
-	clientIds: list[str]
-	productIds: list[str]
+	clientIds: list[str] = Field(..., max_length=MAX_IDS_PER_REQUEST)
+	productIds: list[str] = Field(..., max_length=MAX_IDS_PER_REQUEST)
 	actionRequest: str | None = None
 	actionProgress: str | None = None
 	actionResult: str | None = None
@@ -720,6 +722,8 @@ def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statemen
 	result_data: dict = {}
 	depot_product_version: dict = {}
 	product_actions: dict = {}
+
+	check_batch_combination(data.clientIds, data.productIds, "client/product combinations")
 
 	get_product_type.cache_clear()
 	depot_get_product_version.cache_clear()
@@ -1224,8 +1228,8 @@ def get_product_product_property_state(object_id: str, product_id: str, property
 
 
 class ProductProperty(BaseModel):  # pylint: disable=too-few-public-methods
-	clientIds: list[str] | None = []
-	depotIds: list[str] | None = []
+	clientIds: list[str] | None = Field(default=[], max_length=MAX_IDS_PER_REQUEST)
+	depotIds: list[str] | None = Field(default=[], max_length=MAX_IDS_PER_REQUEST)
 	properties: dict
 
 
@@ -1259,6 +1263,8 @@ def save_poduct_property(  # pylint: disable=invalid-name, too-many-locals, too-
 			message="No clients or depots set.",
 			http_status=status.HTTP_400_BAD_REQUEST,
 		)
+
+	check_batch_combination(objects, data.properties, "object/property combinations")
 
 	depot_by_object = get_depots_of_clients(objects)
 	with mysql.session() as session:

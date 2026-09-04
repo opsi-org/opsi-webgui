@@ -41,6 +41,7 @@ from ..logger import get_logger
 from ..utils import (
 	backend,
 	build_tree,
+	check_batch_size,
 	depot_access_configured,
 	expand_allowed_groups,
 	filter_depot_access,
@@ -269,6 +270,7 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 	"""
 	Add clients to host group
 	"""
+	check_batch_size(clients, "clients")
 	with mysql.session() as session:
 		try:
 			values = {
