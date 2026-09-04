@@ -24,6 +24,7 @@ from opsiconfd.config import get_configserver_id
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, select, table, text  # type: ignore[import]
 
+from .const import MAX_ID_COMBINATIONS, MAX_IDS_PER_REQUEST
 from .logger import get_logger
 
 logger = get_logger()
@@ -69,6 +70,45 @@ def get_depot_of_client(client: str) -> str:
 		else:
 			depot = get_configserver_id()
 		return depot
+
+
+def get_depots_of_clients(clients: list[str]) -> dict[str, str]:
+	"""Batch variant of get_depot_of_client: resolves all clients' depots in a single query."""
+	if not clients:
+		return {}
+	configserver_id = get_configserver_id()
+	result = {client: configserver_id for client in clients}
+	with mysql.session() as session:
+		where = text("cs.configId='clientconfig.depot.id' AND cs.objectId IN :clients")
+		query = select(text("cs.objectId AS client, cs.values")).select_from(text("CONFIG_STATE AS cs")).where(where)
+
+		for row in session.execute(query, {"clients": clients}).fetchall():
+			if row is None:
+				continue
+			row_dict = dict(row)
+			depot = (row_dict.get("values") or "")[2:-2]
+			if depot and row_dict.get("client") in result:
+				result[row_dict["client"]] = depot
+	return result
+
+
+def check_batch_size(items: Any, name: str, limit: int = MAX_IDS_PER_REQUEST) -> None:
+	"""Reject oversized id lists before any backend/database work is done."""
+	if items and len(items) > limit:
+		raise OpsiApiException(
+			message=f"Too many {name} in request ({len(items)}), maximum is {limit}.",
+			http_status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+		)
+
+
+def check_batch_combination(first: Any, second: Any, name: str, limit: int = MAX_ID_COMBINATIONS) -> None:
+	"""Reject requests whose cartesian product of ids would cause excessive backend work."""
+	combinations = len(first or []) * len(second or [])
+	if combinations > limit:
+		raise OpsiApiException(
+			message=f"Too many {name} in request ({combinations}), maximum is {limit}.",
+			http_status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+		)
 
 
 def parse_hosts_list(hosts: list[str] = Query(None)) -> list | None:

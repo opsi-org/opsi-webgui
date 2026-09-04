@@ -7,6 +7,7 @@ from opsiconfd.auth.ldap import LDAPAuthentication
 from opsiconfd.config import opsi_config  # type: ignore
 from opsiconfd.session import authenticate as opsiconfd_authenticate
 from opsiconfd.session import ensure_session, post_authenticate
+from starlette.concurrency import run_in_threadpool
 from starlette.types import Receive
 
 from .config import ENV_KEY_LDAP_URL, Config
@@ -122,7 +123,8 @@ class Authentication:
 				with_event=True,
 			)
 
-		groupnames = self._check_group_ldap(username, password)
+		# LDAP calls are blocking, keep them off the event loop
+		groupnames = await run_in_threadpool(self._check_group_ldap, username, password)
 		if groupnames:
 			session.authenticated = True
 			# Store only the groups the user is actually member of, not all configured groups

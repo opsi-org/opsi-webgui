@@ -30,22 +30,24 @@ from opsiconfd.rest import (
 	pagination,
 	rest_api,
 )
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 from sqlalchemy import alias, and_, column, or_, select, text  # type: ignore[import]
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 
+from ..const import MAX_IDS_PER_REQUEST
 from ..logger import get_logger
 from ..utils import (
 	backend,
 	bool_value,
+	check_batch_combination,
 	expand_allowed_groups,
 	filter_depot_access,
 	get_all_children_groupids,
 	get_allowed_group_objects,
 	get_allowed_product_groups,
-	get_depot_of_client,
+	get_depots_of_clients,
 	get_groups_ids,
 	get_objects_of_group,
 	get_sub_groups,
@@ -362,107 +364,59 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 			pr.description AS description,
 			pr.advice AS advice,
 			GROUP_CONCAT(pod.depotId SEPARATOR ',') AS selectedDepots,
-			(
-				SELECT GROUP_CONCAT(poc.clientId SEPARATOR ',')
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.clientId IN :clients AND poc.productId=pod.productId
-				ORDER BY poc.clientId
-			) AS selectedClients,
-			(
-				SELECT GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',')
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
-				ORDER BY poc.clientId
-			) AS installationStatusDetails,
-			(
-				SELECT IF(GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE '%unknown%',
-					1,
-					IF(GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE '%,installed%' OR GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE 'installed%',
-						0,
-						2
-					)
+			poc_agg.selectedClients AS selectedClients,
+			poc_agg.installationStatusDetails AS installationStatusDetails,
+			IF(poc_agg.installationStatusDetails LIKE '%unknown%',
+				1,
+				IF(poc_agg.installationStatusDetails LIKE '%,installed%' OR poc_agg.installationStatusDetails LIKE 'installed%',
+					0,
+					2
 				)
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
-				ORDER BY poc.clientId
 			) AS installationStatusErrorLevel,
-			(	SELECT
-					IF(
-						COUNT(DISTINCT IFNULL(poc.installationStatus, "not_installed")) > 1 OR (:client_count > 1 AND GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') IN ("installed")),
-						"mixed",
-						IFNULL(poc.installationStatus, "not_installed")
-					)
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
+			IF(
+				COALESCE(poc_agg.installationStatus_distinct, 0) > 1 OR (:client_count > 1 AND poc_agg.installationStatusDetails IN ("installed")),
+				"mixed",
+				COALESCE(poc_agg.installationStatus_value, "not_installed")
 			) AS installationStatus,
-			(
-				SELECT GROUP_CONCAT(IFNULL(poc.actionRequest, "none") SEPARATOR ',')
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
-				ORDER BY poc.clientId
-			) AS actionRequestDetails,
-			(	SELECT
-					IF(
-						COUNT(DISTINCT IFNULL(poc.actionRequest, "none")) > 1,
-						"mixed",
-						IFNULL(poc.actionRequest, "none")
-					)
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
+			poc_agg.actionRequestDetails AS actionRequestDetails,
+			IF(
+				COALESCE(poc_agg.actionRequest_distinct, 0) > 1,
+				"mixed",
+				COALESCE(poc_agg.actionRequest_value, "none")
 			) AS actionRequest,
-			(
-				SELECT GROUP_CONCAT(IFNULL(poc.actionProgress, "none") SEPARATOR ',')
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
-				ORDER BY poc.clientId
-			) AS actionProgressDetails,
-			(	SELECT
-					IF(
-						COUNT(DISTINCT IFNULL(poc.actionProgress, "")) > 1,
-						"mixed",
-						IFNULL(poc.actionProgress, "")
-					)
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
+			poc_agg.actionProgressDetails AS actionProgressDetails,
+			IF(
+				COALESCE(poc_agg.actionProgress_distinct, 0) > 1,
+				"mixed",
+				COALESCE(poc_agg.actionProgress_value, "")
 			) AS actionProgress,
-			(
-				SELECT GROUP_CONCAT(IFNULL(poc.actionResult, "none") SEPARATOR ',')
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
-				ORDER BY poc.clientId
-			) AS actionResultDetails,
-			(
-				SELECT IF(GROUP_CONCAT(IFNULL(poc.actionResult, "none") SEPARATOR ',') LIKE '%failed%',
-					1,
-					IF(GROUP_CONCAT(IFNULL(poc.actionResult, "none") SEPARATOR ',') LIKE '%successful%',
-						0,
-						2
-					)
+			poc_agg.actionResultDetails AS actionResultDetails,
+			IF(poc_agg.actionResultDetails LIKE '%failed%',
+				1,
+				IF(poc_agg.actionResultDetails LIKE '%successful%',
+					0,
+					2
 				)
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
-				ORDER BY poc.clientId
 			) AS actionResultErrorLevel,
-			(	SELECT
-					IF(
-						COUNT(DISTINCT IFNULL(poc.actionResult, "none")) > 1 OR (:client_count > 1 AND GROUP_CONCAT(IFNULL(poc.actionResult, "none") SEPARATOR ',') IN ("failed","successful")),
-						"mixed",
-						IFNULL(poc.actionResult, "none")
-					)
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
+			IF(
+				COALESCE(poc_agg.actionResult_distinct, 0) > 1 OR (:client_count > 1 AND poc_agg.actionResultDetails IN ("failed","successful")),
+				"mixed",
+				COALESCE(poc_agg.actionResult_value, "none")
 			) AS actionResult,
-			(	SELECT
-					IF(
-						COUNT(DISTINCT IFNULL(poc.lastAction, "none")) > 1,
-						"mixed",
-						IFNULL(poc.lastAction, "none")
-					)
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
+			IF(
+				COALESCE(poc_agg.lastAction_distinct, 0) > 1,
+				"mixed",
+				COALESCE(poc_agg.lastAction_value, "none")
 			) AS lastAction,
             NULL AS actionSequence,
-			DATE_FORMAT((	SELECT
-					IF(
-						COUNT(DISTINCT IFNULL(poc.modificationTime, "")) > 1,
-						"mixed",
-						IFNULL(poc.modificationTime, "")
-					)
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
-			), '%Y-%m-%dT%TZ') AS modificationTime,
-			(
-				SELECT GROUP_CONCAT(CONCAT(poc.productVersion,'-',poc.packageVersion) SEPARATOR ',')
-				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
-				ORDER BY poc.clientId
-			) AS clientVersions,
+			DATE_FORMAT(
+				IF(
+					COALESCE(poc_agg.modificationTime_distinct, 0) > 1,
+					"mixed",
+					COALESCE(poc_agg.modificationTime_value, "")
+				), '%Y-%m-%dT%TZ'
+			) AS modificationTime,
+			poc_agg.clientVersions AS clientVersions,
 			0 IN (
 				SELECT IF(
 						CONCAT(poc.productVersion, '-', poc.packageVersion) = CONCAT(pod.productVersion, '-', pod.packageVersion) OR poc.productVersion IS NULL,
@@ -525,6 +479,39 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 					AND pr.packageVersion=pod.packageVersion
 			"""
 				),
+			)
+			.join(
+				text(
+					"""
+				(
+					SELECT
+						poc.productId AS productId,
+						GROUP_CONCAT(poc.clientId SEPARATOR ',') AS selectedClients,
+						GROUP_CONCAT(IFNULL(poc.installationStatus, 'not_installed') SEPARATOR ',') AS installationStatusDetails,
+						GROUP_CONCAT(IFNULL(poc.actionRequest, 'none') SEPARATOR ',') AS actionRequestDetails,
+						GROUP_CONCAT(IFNULL(poc.actionProgress, 'none') SEPARATOR ',') AS actionProgressDetails,
+						GROUP_CONCAT(IFNULL(poc.actionResult, 'none') SEPARATOR ',') AS actionResultDetails,
+						GROUP_CONCAT(CONCAT(poc.productVersion, '-', poc.packageVersion) SEPARATOR ',') AS clientVersions,
+						COUNT(DISTINCT IFNULL(poc.installationStatus, 'not_installed')) AS installationStatus_distinct,
+						MIN(IFNULL(poc.installationStatus, 'not_installed')) AS installationStatus_value,
+						COUNT(DISTINCT IFNULL(poc.actionRequest, 'none')) AS actionRequest_distinct,
+						MIN(IFNULL(poc.actionRequest, 'none')) AS actionRequest_value,
+						COUNT(DISTINCT IFNULL(poc.actionProgress, '')) AS actionProgress_distinct,
+						MIN(IFNULL(poc.actionProgress, '')) AS actionProgress_value,
+						COUNT(DISTINCT IFNULL(poc.actionResult, 'none')) AS actionResult_distinct,
+						MIN(IFNULL(poc.actionResult, 'none')) AS actionResult_value,
+						COUNT(DISTINCT IFNULL(poc.lastAction, 'none')) AS lastAction_distinct,
+						MIN(IFNULL(poc.lastAction, 'none')) AS lastAction_value,
+						COUNT(DISTINCT IFNULL(poc.modificationTime, '')) AS modificationTime_distinct,
+						MIN(IFNULL(poc.modificationTime, '')) AS modificationTime_value
+					FROM PRODUCT_ON_CLIENT AS poc
+					WHERE poc.clientId IN :clients
+					GROUP BY poc.productId
+				) AS poc_agg
+			"""
+				),
+				text("poc_agg.productId = pod.productId"),
+				isouter=True,
 			)
 		)
 		if not commons.get("filterQuery"):
@@ -713,8 +700,8 @@ def product_count(
 
 
 class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
-	clientIds: list[str]
-	productIds: list[str]
+	clientIds: list[str] = Field(..., max_length=MAX_IDS_PER_REQUEST)
+	productIds: list[str] = Field(..., max_length=MAX_IDS_PER_REQUEST)
 	actionRequest: str | None = None
 	actionProgress: str | None = None
 	actionResult: str | None = None
@@ -736,14 +723,17 @@ def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statemen
 	depot_product_version: dict = {}
 	product_actions: dict = {}
 
+	check_batch_combination(data.clientIds, data.productIds, "client/product combinations")
+
 	get_product_type.cache_clear()
 	depot_get_product_version.cache_clear()
 	poc_list = []
+	depot_by_client = get_depots_of_clients(data.clientIds)
 	for client_id in data.clientIds:
 		if client_id not in result_data:
 			result_data[client_id] = {}
 
-		depot_id = get_depot_of_client(client_id)
+		depot_id = depot_by_client[client_id]
 
 		for product_id in data.productIds:
 			if depot_id not in depot_product_version:
@@ -931,8 +921,9 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 			http_status=status.HTTP_400_BAD_REQUEST,
 		)
 	if selectedClients:
+		depot_by_client = get_depots_of_clients(selectedClients)
 		for client in selectedClients:
-			depot = get_depot_of_client(client)
+			depot = depot_by_client[client]
 			if depot not in clients_on_depot:
 				clients_on_depot[depot] = []
 				params["depots"].append(depot)
@@ -1237,8 +1228,8 @@ def get_product_product_property_state(object_id: str, product_id: str, property
 
 
 class ProductProperty(BaseModel):  # pylint: disable=too-few-public-methods
-	clientIds: list[str] | None = []
-	depotIds: list[str] | None = []
+	clientIds: list[str] | None = Field(default=[], max_length=MAX_IDS_PER_REQUEST)
+	depotIds: list[str] | None = Field(default=[], max_length=MAX_IDS_PER_REQUEST)
 	properties: dict
 
 
@@ -1273,12 +1264,15 @@ def save_poduct_property(  # pylint: disable=invalid-name, too-many-locals, too-
 			http_status=status.HTTP_400_BAD_REQUEST,
 		)
 
+	check_batch_combination(objects, data.properties, "object/property combinations")
+
+	depot_by_object = get_depots_of_clients(objects)
 	with mysql.session() as session:
 		for object_id in objects:
 			if object_id not in result_data:
 				result_data[object_id] = {}
 
-			depot_id = get_depot_of_client(object_id)
+			depot_id = depot_by_object[object_id]
 
 			if depot_id not in depot_product_version:
 				depot_product_version[depot_id] = {}
@@ -1389,8 +1383,9 @@ def product_dependencies(  # pylint: disable=too-many-locals, too-many-branches,
 	depots = set()
 	depots.add(get_configserver_id())
 	if selectedClients:
+		depot_by_client = get_depots_of_clients(selectedClients)
 		for client in selectedClients:
-			depots.add(get_depot_of_client(client))
+			depots.add(depot_by_client[client])
 
 	params["depots"] = list(depots)
 	where = and_(where, text("(pod.depotId IN :depots)"))

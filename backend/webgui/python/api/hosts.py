@@ -41,6 +41,7 @@ from ..logger import get_logger
 from ..utils import (
 	backend,
 	build_tree,
+	check_batch_size,
 	depot_access_configured,
 	expand_allowed_groups,
 	filter_depot_access,
@@ -269,6 +270,7 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 	"""
 	Add clients to host group
 	"""
+	check_batch_size(clients, "clients")
 	with mysql.session() as session:
 		try:
 			values = {
@@ -276,8 +278,8 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 				"groupId": group,
 			}
 
-			for client in clients:
-				values["objectId"] = client
+			rows = [{**values, "objectId": client} for client in clients]
+			if rows:
 				query = insert(
 					table(
 						"OBJECT_TO_GROUP",
@@ -285,17 +287,17 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 						column("groupId"),
 						column("objectId"),
 					)
-				).values(values)
+				).values(rows)
 				session.execute(query)
 
 			return RESTResponse(data=clients, http_status=status.HTTP_201_CREATED)
 
 		except Exception as err:  # pylint: disable=broad-except
-			logger.error("Could not add client '%s' to group object.", client)
+			logger.error("Could not add clients %s to group object.", clients)
 			logger.error(err)
 			session.rollback()
 			raise OpsiApiException(
-				message=f"Could not add client '{client}'  to group object.",
+				message=f"Could not add clients {clients} to group object.",
 				http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
 				error=err,
 			) from err
@@ -971,7 +973,6 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 def group_get_all_clients(group: str, depots: list | None = None) -> list:
 	clients = set()
 	all_clients = set()
-	groups = {group}
 
 	username = get_username()
 	restricted = user_register() and host_group_access_configured(username)
@@ -982,26 +983,35 @@ def group_get_all_clients(group: str, depots: list | None = None) -> list:
 			return []
 
 	with mysql.session() as session:
-		while groups:
-			for group_id in groups.copy():
-				query = (
-					select(text("g.groupId AS group_id, g.type AS group_type"))
-					.select_from(table("GROUP").alias("g"))
-					.where(text("g.parentGroupId = :group_id"))
-				)
-				result = session.execute(query, {"group_id": group_id})
-				result = result.fetchall()
+		# Fetch the whole group hierarchy and all group memberships once, instead of
+		# issuing 2 queries per group node while walking the tree.
+		group_rows = session.execute(
+			select(text("g.groupId AS group_id, g.parentGroupId AS parent_id")).select_from(table("GROUP").alias("g"))
+		).fetchall()
+		children_by_parent: dict[str, list[str]] = {}
+		for row in group_rows:
+			if row:
+				row_dict = dict(row)
+				children_by_parent.setdefault(row_dict.get("parent_id"), []).append(row_dict.get("group_id"))
 
-				for row in result:
-					if row:
-						groups.add(dict(row).get("group_id", ""))
-				query = select(text("objectId")).select_from(table("OBJECT_TO_GROUP")).where(text("groupId = :group_id"))
-				result2 = session.execute(query, {"group_id": group_id})
-				result2 = result2.fetchall()
-				for row in result2:
-					if row:
-						clients.add(dict(row).get("objectId"))
-				groups.remove(group_id)
+		groups: set = set()
+		to_visit = [group]
+		while to_visit:
+			group_id = to_visit.pop()
+			if group_id in groups:
+				continue
+			groups.add(group_id)
+			to_visit.extend(children_by_parent.get(group_id, []))
+
+		member_rows = session.execute(
+			select(text("objectId")).select_from(table("OBJECT_TO_GROUP")).where(text("groupId IN :group_ids")),
+			{"group_ids": list(groups)},
+		).fetchall()
+		for row in member_rows:
+			if row:
+				object_id = dict(row).get("objectId")
+				if object_id:
+					clients.add(object_id)
 
 		where = and_(text("h.type = 'OpsiClient'"))
 		params: dict = {"depot_ids": []}

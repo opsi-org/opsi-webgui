@@ -14,4 +14,8 @@ ADDON_ID = "webgui"
 ADDON_NAME = "OPSI-WebGUI"
 ADDON_VERSION = "4.3.48.13"
 
+# Upper bounds for id lists accepted by batch/action endpoints to avoid resource exhaustion
+MAX_IDS_PER_REQUEST = 1000
+MAX_ID_COMBINATIONS = 10000
+
 test_router = APIRouter()

@@ -209,8 +209,7 @@
                     ? icons.onDemand
                     : icons.refresh
             "
-            :label="getLiveStatus((row as ProductRow).productId)?.message"
-            :tooltip="getLiveStatus((row as ProductRow).productId)?.tooltip"
+            :tooltip="getLiveStatus((row as ProductRow).productId)?.tooltip || getLiveStatus((row as ProductRow).productId)?.message"
             variant="soft"
             size="xs"
           />
@@ -624,6 +623,16 @@
     return productLiveStatus.value.get(productId)
   }
 
+  const pendingLiveUpdateIds = new Set<string>()
+  let liveUpdateFlushTimer: ReturnType<typeof setTimeout> | null = null
+  function flushPendingLiveUpdates() {
+    liveUpdateFlushTimer = null
+    if (pendingLiveUpdateIds.size === 0) return
+    const ids = [...pendingLiveUpdateIds]
+    pendingLiveUpdateIds.clear()
+    setLiveStatus(ids, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
+  }
+
   function extractProductIdsFromMessage(payload: unknown): string[] {
     const ids = new Set<string>()
     const visited = new Set<unknown>()
@@ -766,10 +775,18 @@
     const savedIds: string[] = []
     try {
       const clientIds = selectionStore.selectedClients
+      // Group pending products by their target actionRequest so all products sharing the
+      // same value can be saved in a single request instead of one request per product.
+      const productIdsByAction = new Map<string | undefined, string[]>()
       for (const [pid, change] of pendingActionRequests.value) {
+        const group = productIdsByAction.get(change.actionRequest)
+        if (group) group.push(pid)
+        else productIdsByAction.set(change.actionRequest, [pid])
+      }
+      for (const [actionRequest, pids] of productIdsByAction) {
         try {
           setLiveStatus(
-            [pid],
+            pids,
             {
               kind: 'saving',
               message: String($t('actions.live.saving')),
@@ -779,16 +796,16 @@
           )
           const r = await setClientProductActions({
             clientIds,
-            productIds: [pid],
-            actionRequest: change.actionRequest,
+            productIds: pids,
+            actionRequest,
           })
           if (r.error) throw r.error
-          savedIds.push(pid)
-          setLiveStatus([pid], { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
+          savedIds.push(...pids)
+          setLiveStatus(pids, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
         } catch (e) {
-          errors.push(`${pid}: ${e instanceof Error ? e.message : String(e)}`)
+          errors.push(...pids.map((pid) => `${pid}: ${e instanceof Error ? e.message : String(e)}`))
           setLiveStatus(
-            [pid],
+            pids,
             {
               kind: 'error',
               message: String($t('actions.live.failed')),
@@ -1150,6 +1167,7 @@
 
   onUnmounted(() => {
     if (selectionScopeTimer) clearTimeout(selectionScopeTimer)
+    if (liveUpdateFlushTimer) clearTimeout(liveUpdateFlushTimer)
   })
 
   watch(() => selectionStore.selectedClients, refetchForSelectionScope)
@@ -1168,11 +1186,16 @@
     if (!eventName.includes('productOnClient_')) return
     const ids = extractProductIdsFromMessage(msg)
     if (ids.length > 0) {
-      setLiveStatus(ids, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
+      for (const id of ids) pendingLiveUpdateIds.add(id)
+    } else if (selectedProductIds.value.length > 0) {
+      for (const id of selectedProductIds.value) pendingLiveUpdateIds.add(id)
+    } else {
       return
     }
-    if (selectedProductIds.value.length > 0) {
-      setLiveStatus(selectedProductIds.value, { kind: 'updated', message: String($t('actions.live.updated')) }, 8000)
+    // A bulk save can trigger hundreds of individual productOnClient_* messagebus
+    // events; coalesce them into a single reactive update instead of one per event.
+    if (!liveUpdateFlushTimer) {
+      liveUpdateFlushTimer = setTimeout(flushPendingLiveUpdates, 200)
     }
   })
 

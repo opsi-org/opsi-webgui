@@ -297,10 +297,12 @@ def client_counts_on_depots(
 			return RESTResponse(data=[])
 		allowed_clients_set = set(allowed_clients)
 
-	allowed_depots = set(depots)
-
 	with mysql.session() as session:
-		query = (
+		if allowed_clients_set is not None:
+			where = and_(where, text("h.hostId IN :allowed_clients"))
+			params["allowed_clients"] = allowed_clients
+
+		host_depots = (
 			select(
 				text(  # type: ignore[arg-type]
 					"""
@@ -318,22 +320,26 @@ def client_counts_on_depots(
 			)
 			.select_from(table("HOST").alias("h"))
 			.where(where)
-		)
+		).subquery()
 
-		rows = session.execute(query, params).fetchall()
+		# Count in SQL instead of pulling one row per client to Python.
+		params["depots"] = depots
+		count_query = (
+			select(text("depotId AS depotId, COUNT(*) AS clientCount"))
+			.select_from(host_depots)
+			.where(text("depotId IN :depots"))
+			.group_by(text("depotId"))
+		)
+		rows = session.execute(count_query, params).fetchall()
 
 		count_by_depot: dict[str, int] = {depot: 0 for depot in depots}
 		for row in rows:
 			if row is None:
 				continue
 			row_data = dict(row)
-			client_id = row_data.get("clientId")
 			depot_id = row_data.get("depotId")
-			if not client_id or not depot_id or depot_id not in allowed_depots:
-				continue
-			if allowed_clients_set is not None and client_id not in allowed_clients_set:
-				continue
-			count_by_depot[depot_id] = count_by_depot.get(depot_id, 0) + 1
+			if depot_id in count_by_depot:
+				count_by_depot[depot_id] = int(row_data.get("clientCount") or 0)
 
 		data = [{"depotId": depot, "clientCount": count_by_depot.get(depot, 0)} for depot in sorted(count_by_depot.keys())]
 		return RESTResponse(data=data)

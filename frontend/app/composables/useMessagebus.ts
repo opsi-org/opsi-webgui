@@ -155,6 +155,31 @@ export function useAutoRefresh(refreshCallback: RefreshCallback, options: { watc
   })
 
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
+  let refreshInProgress = false
+  let refreshQueued = false
+
+  function scheduleRefresh() {
+    if (debounceTimer) clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(async () => {
+      debounceTimer = null
+      if (refreshInProgress) {
+        refreshQueued = true
+        return
+      }
+      refreshInProgress = true
+      try {
+        await refreshCallback()
+        changesDetected.value = false
+        mbStore.setChangesDetected(false)
+      } finally {
+        refreshInProgress = false
+        if (refreshQueued) {
+          refreshQueued = false
+          scheduleRefresh()
+        }
+      }
+    }, debounceMs)
+  }
 
   function getEventDescription(eventName: string): string {
     const map: Record<string, string> = {
@@ -198,12 +223,7 @@ export function useAutoRefresh(refreshCallback: RefreshCallback, options: { watc
       lastChangeDescription.value = getEventDescription(eventName)
       mbStore.setLastEvent(eventName)
       if (autoRefreshEnabled.value) {
-        if (debounceTimer) clearTimeout(debounceTimer)
-        debounceTimer = setTimeout(async () => {
-          await refreshCallback()
-          changesDetected.value = false
-          mbStore.setChangesDetected(false)
-        }, debounceMs)
+        scheduleRefresh()
       }
     }
   }
