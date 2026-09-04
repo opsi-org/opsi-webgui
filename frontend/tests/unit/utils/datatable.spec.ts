@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { needsMoreToFill, isAutoPageStalled, hasMoreInfiniteData, reloadWindowPerPage, shouldPrefetchNextPage } from '~/app/utils/datatable'
+import {
+  appendInfinitePage,
+  INFINITE_WINDOW_PAGE_COUNT,
+  needsMoreToFill,
+  isAutoPageStalled,
+  hasMoreInfiniteData,
+  shouldPrefetchNextPage,
+} from '~/app/utils/datatable'
 
 describe('needsMoreToFill', () => {
   it('loads more when content does not fill the container and more data exists', () => {
@@ -64,23 +71,21 @@ describe('hasMoreInfiniteData', () => {
   })
 })
 
-describe('reloadWindowPerPage', () => {
-  it('covers every loaded row so a reload does not drop earlier pages', () => {
-    // Regression: saving action requests after scrolling to product 120
-    // reloaded page 6 only and replaced all rows with that single page.
-    expect(reloadWindowPerPage(20, 120)).toBe(120)
-  })
+describe('appendInfinitePage', () => {
+  it.each([1000, 10_000, 50_000, 100_000])('retains a bounded row window while scrolling through %i rows', (totalRows) => {
+    const perPage = 100
+    const rows: number[] = []
+    let offset = 0
+    for (let start = 0; start < totalRows; start += perPage) {
+      offset += appendInfinitePage(
+        rows,
+        Array.from({ length: Math.min(perPage, totalRows - start) }, (_, index) => start + index),
+        perPage,
+      )
+    }
 
-  it('rounds up to full pages', () => {
-    expect(reloadWindowPerPage(20, 105)).toBe(120)
-  })
-
-  it('keeps at least one page for an empty table', () => {
-    expect(reloadWindowPerPage(20, 0)).toBe(20)
-  })
-
-  it('returns the page size unchanged for invalid page sizes', () => {
-    expect(reloadWindowPerPage(0, 120)).toBe(0)
+    expect(rows).toHaveLength(Math.min(totalRows, perPage * INFINITE_WINDOW_PAGE_COUNT))
+    expect(offset + rows.length).toBe(totalRows)
   })
 })
 
