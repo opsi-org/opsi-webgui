@@ -681,6 +681,7 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 			message="No configurations were transferred to save.",
 		)
 
+	rows = []
 	for client in data.objectIds:
 		for config in data.configs:
 			changes.append(f"{client}: {config.configId}")
@@ -694,38 +695,38 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 			else:
 				cs_values = f'["{config.value}"]'
 
-			values = {
-				"objectId": client,
-				"configId": config.configId,
-				"values": cs_values,
-			}
+			rows.append({"objectId": client, "configId": config.configId, "values": cs_values})
 
-			with mysql.session() as session:
-				if get_config_state(client, config.configId):
-					stmt = (
-						update(
-							table(
-								"CONFIG_STATE",
-								*[column(name) for name in values],  # pylint: disable=consider-iterating-dictionary
-							)
-						)
-						.where(text(f"objectId = '{client}' AND configId = '{config.configId}'"))
-						.values(**values)
-					)
-					backend._send_messagebus_event("configState_updated", data=values)  # pylint: disable=protected-access
-				else:
-					stmt = (
-						insert(
-							table(
-								"CONFIG_STATE",
-								*[column(name) for name in values],  # pylint: disable=consider-iterating-dictionary
-							)
-						)
-						.values(**values)
-						.on_duplicate_key_update(**values)
-					)
-					backend._send_messagebus_event("configState_created", data=values)  # pylint: disable=protected-access
-				session.execute(stmt)
+	if not rows:
+		return RESTResponse(http_status=status.HTTP_200_OK, data="No config states to save.")
+
+	config_ids = list({row["configId"] for row in rows})
+	with mysql.session() as session:
+		# One existing-pairs lookup instead of a per-(client, config) SELECT, so the
+		# correct messagebus event (created/updated) can still be sent per row.
+		existing_query = (
+			select(text("objectId AS objectId, configId AS configId"))
+			.select_from(table("CONFIG_STATE"))
+			.where(and_(text("objectId IN :clients"), text("configId IN :configs")))
+		)
+		existing_result = session.execute(existing_query, {"clients": data.objectIds, "configs": config_ids}).fetchall()
+		existing_pairs = {(dict(row)["objectId"], dict(row)["configId"]) for row in existing_result if row is not None}
+
+		stmt = insert(
+			table(
+				"CONFIG_STATE",
+				column("objectId"),
+				column("configId"),
+				column("values"),
+			)
+		).values(rows)
+		# stmt.inserted.values would collide with ColumnCollection.values(); use item access.
+		stmt = stmt.on_duplicate_key_update(**{"values": stmt.inserted["values"]})
+		session.execute(stmt)
+
+		for row in rows:
+			event = "configState_updated" if (row["objectId"], row["configId"]) in existing_pairs else "configState_created"
+			backend._send_messagebus_event(event, data=row)  # pylint: disable=protected-access
 
 	return RESTResponse(
 		http_status=status.HTTP_200_OK,

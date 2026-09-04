@@ -71,6 +71,26 @@ def get_depot_of_client(client: str) -> str:
 		return depot
 
 
+def get_depots_of_clients(clients: list[str]) -> dict[str, str]:
+	"""Batch variant of get_depot_of_client: resolves all clients' depots in a single query."""
+	if not clients:
+		return {}
+	configserver_id = get_configserver_id()
+	result = {client: configserver_id for client in clients}
+	with mysql.session() as session:
+		where = text("cs.configId='clientconfig.depot.id' AND cs.objectId IN :clients")
+		query = select(text("cs.objectId AS client, cs.values")).select_from(text("CONFIG_STATE AS cs")).where(where)
+
+		for row in session.execute(query, {"clients": clients}).fetchall():
+			if row is None:
+				continue
+			row_dict = dict(row)
+			depot = (row_dict.get("values") or "")[2:-2]
+			if depot and row_dict.get("client") in result:
+				result[row_dict["client"]] = depot
+	return result
+
+
 def parse_hosts_list(hosts: list[str] = Query(None)) -> list | None:
 	return parse_list(hosts)
 

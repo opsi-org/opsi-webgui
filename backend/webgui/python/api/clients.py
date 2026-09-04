@@ -35,6 +35,7 @@ from packaging import version
 from packaging.version import InvalidVersion
 from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 from sqlalchemy import alias, and_, select, text  # type: ignore[import]
+from sqlalchemy import column as sa_column  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table  # type: ignore[import]
 from starlette.concurrency import run_in_threadpool
@@ -308,7 +309,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 			.where(where)
 		)
 
-		client_columns = """
+		client_columns_base = """
 			hd.clientId,
 			hd.ident,
 			hd.macAddress,
@@ -349,6 +350,11 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 					pod.productType = 'NetbootProduct' AND
 					NOT poc.installationStatus = 'not_installed'
 			) AS version_outdated_netboot,
+		"""
+
+		# Used when the page is already limited to a handful of rows (pagination pushdown):
+		# a correlated subquery per row stays cheap since it only ever scans one client's rows.
+		client_status_columns_correlated = """
 			(
 				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
 				WHERE poc.clientId = hd.clientId AND poc.installationStatus = 'unknown'
@@ -357,10 +363,10 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
 				WHERE poc.clientId = hd.clientId AND poc.installationStatus = 'installed'
 			) AS installationStatus_installed,
-            (
-                SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
-                WHERE poc.clientId = hd.clientId AND IFNULL(poc.actionRequest, 'none') <> 'none'
-            ) AS actionRequest_set,
+			(
+				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
+				WHERE poc.clientId = hd.clientId AND IFNULL(poc.actionRequest, 'none') <> 'none'
+			) AS actionRequest_set,
 			(
 				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
 				WHERE poc.clientId = hd.clientId AND poc.actionResult = 'failed'
@@ -369,7 +375,17 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
 				WHERE poc.clientId = hd.clientId AND poc.actionResult = 'successful'
 			) AS actionResult_successful,
-			hd.selected
+		"""
+
+		# Used when the per-row lookups would otherwise run for every matching client before
+		# pagination (calculated-column sort). A single GROUP BY over PRODUCT_ON_CLIENT,
+		# joined once, replaces 5 correlated subqueries per client.
+		client_status_columns_aggregated = """
+			COALESCE(poc_agg.installationStatus_unknown, 0) AS installationStatus_unknown,
+			COALESCE(poc_agg.installationStatus_installed, 0) AS installationStatus_installed,
+			COALESCE(poc_agg.actionRequest_set, 0) AS actionRequest_set,
+			COALESCE(poc_agg.actionResult_failed, 0) AS actionResult_failed,
+			COALESCE(poc_agg.actionResult_successful, 0) AS actionResult_successful,
 		"""
 
 		def apply_ordering(query: Any) -> Any:
@@ -395,11 +411,38 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		# that the expensive per-row count subqueries only run for the returned page.
 		sortable_base_columns = {"clientId", "ident", "macAddress", "ipAddress", "description", "notes", "lastSeen", "uefi", "reachable"}
 		if all(col in sortable_base_columns for col in sort_by):
+			client_columns = client_columns_base + client_status_columns_correlated + "hd.selected"
 			paged_clients = alias(pagination(apply_ordering(base_select), commons).subquery(), name="hd")
 			query = apply_ordering(select(text(client_columns)).select_from(paged_clients))  # type: ignore
 		else:
+			# The status/result counts are the same for every matching client here (the full,
+			# unpaginated set), so aggregate PRODUCT_ON_CLIENT once instead of per client row.
+			client_columns = client_columns_base + client_status_columns_aggregated + "hd.selected"
+			# Reuse the same HOST filter (search/permissions/depot/group) so the aggregate only
+			# scans PRODUCT_ON_CLIENT for the clients this request actually matches, not the whole table.
+			relevant_clients = select(text("h.hostId")).select_from(table("HOST").alias("h")).where(where)
+			poc_status_agg = alias(
+				select(
+					text(
+						"""
+						poc.clientId AS clientId,
+						COUNT(CASE WHEN poc.installationStatus = 'unknown' THEN 1 END) AS installationStatus_unknown,
+						COUNT(CASE WHEN poc.installationStatus = 'installed' THEN 1 END) AS installationStatus_installed,
+						COUNT(CASE WHEN IFNULL(poc.actionRequest, 'none') <> 'none' THEN 1 END) AS actionRequest_set,
+						COUNT(CASE WHEN poc.actionResult = 'failed' THEN 1 END) AS actionResult_failed,
+						COUNT(CASE WHEN poc.actionResult = 'successful' THEN 1 END) AS actionResult_successful
+						"""
+					)
+				)
+				.select_from(table("PRODUCT_ON_CLIENT").alias("poc"))
+				.where(sa_column("clientId").in_(relevant_clients))
+				.group_by(text("poc.clientId"))
+				.subquery(),
+				name="poc_agg",
+			)
 			client_with_depot = alias(base_select.subquery(), name="hd")
-			client_select = select(text(client_columns)).select_from(client_with_depot)  # type: ignore
+			client_from = client_with_depot.outerjoin(poc_status_agg, text("poc_agg.clientId = hd.clientId"))
+			client_select = select(text(client_columns)).select_from(client_from)  # type: ignore
 			query = pagination(apply_ordering(client_select), commons)
 		result = session.execute(query, params)
 		result = result.fetchall()
