@@ -9,6 +9,7 @@
  */
 import { defineStore } from 'pinia'
 import { useCookie } from 'nuxt/app'
+import { useMessageBusStore } from '~/stores/messageBusStore'
 
 const SESSION_EXPIRY_SEC = 60 * 30 // 30 minutes
 const SESSION_COOKIE_NAME = 'opsiconfd-session'
@@ -66,6 +67,7 @@ export const useUserStore = defineStore('user', {
       this.sessionEndTime = new Date(Date.now() + expiry * 1000).toISOString()
     },
     logout() {
+      useMessageBusStore().disconnect()
       this.username = ''
       this.usernameUpdated = null
       this.sessionEndTime = ''
