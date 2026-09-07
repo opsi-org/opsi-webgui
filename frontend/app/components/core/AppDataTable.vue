@@ -518,6 +518,7 @@
     rowKey?: string
     loading?: boolean
     totalItems?: number
+    rowOffset?: number
 
     selectable?: boolean
     selectedKeys?: string[]
@@ -540,6 +541,7 @@
     rowKey: 'id',
     loading: false,
     totalItems: 0,
+    rowOffset: 0,
     selectable: true,
     filterable: true,
     showRefresh: true,
@@ -723,7 +725,9 @@
   })
 
   const hasMoreData = computed(() => {
-    if (displayMode.value === 'infinite') return hasMoreInfiniteData(autoPageStalled.value, props.rows.length, serverTotal.value)
+    if (displayMode.value === 'infinite') {
+      return hasMoreInfiniteData(autoPageStalled.value, props.rowOffset + props.rows.length, serverTotal.value)
+    }
     return false
   })
 
@@ -736,7 +740,11 @@
 
   const visibleRows = computed(() => {
     const test = localMatcher.value.test
-    if (!props.filterable || !test) return props.rows
+    // Server-compatible filters are applied before pagination. Filtering those
+    // rows again here makes every keystroke O(loaded rows × columns) and is
+    // redundant. Regular expressions cannot be represented by the API and
+    // therefore remain a local refinement of the current result page.
+    if (!props.filterable || !filterOptions.value.regex || !test) return props.rows
     const cols = filterableColumns.value
     return props.rows.filter((row) => {
       for (const col of cols) {
@@ -758,16 +766,18 @@
   let rowHeightMeasured = false
   let containerHeight = 0
 
-  const virtualizationActive = computed(() => visibleRows.value.length > VIRTUALIZATION_MIN_ROWS)
-  const displayStartIndex = computed(() => (virtualizationActive.value ? virtualStart.value : 0))
-  const displayRows = computed(() =>
-    virtualizationActive.value ? visibleRows.value.slice(virtualStart.value, virtualStart.value + virtualCount.value) : visibleRows.value,
-  )
+  const virtualizationActive = computed(() => props.rowOffset > 0 || visibleRows.value.length > VIRTUALIZATION_MIN_ROWS)
+  const displayStartIndex = computed(() => (virtualizationActive.value ? virtualStart.value : props.rowOffset))
+  const displayRows = computed(() => {
+    if (!virtualizationActive.value) return visibleRows.value
+    const start = Math.max(0, virtualStart.value - props.rowOffset)
+    return visibleRows.value.slice(start, start + virtualCount.value)
+  })
   const topSpacerHeight = computed(() => (virtualizationActive.value ? virtualStart.value * measuredRowHeight.value : 0))
   const bottomSpacerHeight = computed(() => {
     if (!virtualizationActive.value) return 0
     const rendered = virtualStart.value + displayRows.value.length
-    return Math.max(0, visibleRows.value.length - rendered) * measuredRowHeight.value
+    return Math.max(0, props.rowOffset + visibleRows.value.length - rendered) * measuredRowHeight.value
   })
 
   // Reading offsetHeight forces a synchronous layout, so the row height is measured
@@ -791,7 +801,7 @@
   function updateVirtualWindow() {
     const el = tableContainer.value
     if (!el || !virtualizationActive.value) {
-      virtualStart.value = 0
+      virtualStart.value = props.rowOffset
       return
     }
     measureRowHeight()
@@ -800,11 +810,12 @@
     const visibleCount = Math.ceil(containerHeight / rowHeight) + VIRTUALIZATION_OVERSCAN * 2
     const firstVisible = Math.floor(el.scrollTop / rowHeight) - VIRTUALIZATION_OVERSCAN
     virtualCount.value = visibleCount
-    virtualStart.value = Math.max(0, Math.min(firstVisible, visibleRows.value.length - visibleCount))
+    const maxStart = Math.max(props.rowOffset, props.rowOffset + visibleRows.value.length - visibleCount)
+    virtualStart.value = Math.max(props.rowOffset, Math.min(firstVisible, maxStart))
   }
 
   function scrollToTop() {
-    virtualStart.value = 0
+    virtualStart.value = props.rowOffset
     tableContainer.value?.scrollTo({ top: 0 })
   }
 
@@ -1065,7 +1076,7 @@
       return
     }
     sentinelLoadPending = true
-    autoPageRowCountAtRequest = props.rows.length
+    autoPageRowCountAtRequest = props.rowOffset + props.rows.length
     currentPage.value++
     emitPageChange()
     setTimeout(() => {
@@ -1147,9 +1158,9 @@
   })
 
   watch(
-    () => props.rows.length,
-    async (newLength, oldLength) => {
-      if (newLength !== oldLength) {
+    () => [props.rows.length, props.rowOffset],
+    async ([newLength, newOffset], [oldLength, oldOffset]) => {
+      if (newLength !== oldLength || newOffset !== oldOffset) {
         // Row set changed: allow auto-paging again.
         autoPageStalled.value = false
         autoPageRowCountAtRequest = -1
@@ -1167,7 +1178,7 @@
       if (!loading) {
         // A next-page request finished without adding rows: stall auto-paging
         // to avoid an endless request loop on inconsistent data/total.
-        if (isAutoPageStalled(autoPageRowCountAtRequest, props.rows.length)) {
+        if (isAutoPageStalled(autoPageRowCountAtRequest, props.rowOffset + props.rows.length)) {
           autoPageStalled.value = true
         }
         autoPageRowCountAtRequest = -1

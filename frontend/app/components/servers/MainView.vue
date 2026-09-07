@@ -53,6 +53,7 @@
       :advanced-filters="advancedFilters"
       :show-refresh="false"
       :total-items="totalItems"
+      :row-offset="rowOffset"
       :selected-keys="selectionStore.selectedServers"
       :active-key="panelServer?.depotId"
       :sort-by-selection-enabled="sortBySelectionEnabled"
@@ -144,6 +145,7 @@
   const loading = ref(false)
   const error = ref<string | null>(null)
   const servers = ref<Server[]>([])
+  const rowOffset = ref(0)
   const totalItems = ref(0)
   const panelServer = ref<Server | null>(null)
   const panelType = ref<'config' | null>(null)
@@ -151,6 +153,7 @@
   const lastPageParams = ref<PageChangeParams | null>(null)
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('servers'))
   const fetchServersRequestId = ref(0)
+  let fetchServersController: AbortController | null = null
   const ADVANCED_FILTERS_KEY = 'opsi-webgui-servers-advanced-filters'
   const advancedFilters = ref<ServerAdvancedFilters>(readStoredAdvancedFilters())
 
@@ -257,8 +260,10 @@
   function handlePageChange(params: PageChangeParams) {
     lastPageParams.value = params
     currentFilterQuery.value = params.filterQuery
-    // Persist filter query to URL
-    if (params.filterQuery || route.query.filter) {
+    // Sorting and paging reuse the existing filter; avoid unnecessary router
+    // work unless the normalized query value actually changed.
+    const routeFilter = typeof route.query.filter === 'string' ? route.query.filter : ''
+    if (routeFilter !== params.filterQuery) {
       router.replace({
         query: {
           ...(route.query as Record<string, string>),
@@ -271,6 +276,7 @@
 
   function handleFilterQueryUpdate(value: string) {
     currentFilterQuery.value = value
+    fetchServersController?.abort()
     if (lastPageParams.value) {
       lastPageParams.value = {
         ...lastPageParams.value,
@@ -297,18 +303,16 @@
 
   async function fetchServers(params?: PageChangeParams) {
     const requestId = ++fetchServersRequestId.value
+    fetchServersController?.abort()
+    const controller = new AbortController()
+    fetchServersController = controller
     loading.value = true
     error.value = null
     try {
       if (params) lastPageParams.value = params
-      // A reload without params must refetch every row that is currently
-      // loaded, not just the last requested page.
       const isReload = !params
       const baseParams = lastPageParams.value ?? undefined
-      const effectiveParams =
-        isReload && baseParams
-          ? { ...baseParams, pageNumber: 1, perPage: reloadWindowPerPage(baseParams.perPage, servers.value.length) }
-          : baseParams
+      const effectiveParams = baseParams
       const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
       const p: Record<string, unknown> = {}
       if (effectiveParams) {
@@ -323,7 +327,7 @@
       if ((selectionSortActive || effectiveParams?.onlySelected) && selectionStore.selectedServers.length > 0) {
         p.selected = selectionStore.selectedServersParam
       }
-      const result = await getServers(p)
+      const result = await getServers(p, { signal: controller.signal })
       if (requestId !== fetchServersRequestId.value) return
       if (result.error) {
         error.value = result.error.message
@@ -333,11 +337,10 @@
         const newData = result.data as Server[]
         if (result.total !== null) totalItems.value = result.total
         if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
-          const existingIds = new Set(servers.value.map((s) => s.depotId))
-          const unique = newData.filter((s) => !existingIds.has(s.depotId))
-          servers.value = [...servers.value, ...unique]
+          rowOffset.value += appendInfinitePage(servers.value, newData, effectiveParams.perPage)
         } else {
           servers.value = newData
+          rowOffset.value = isReload && effectiveParams ? (effectiveParams.pageNumber - 1) * effectiveParams.perPage : 0
         }
         const cs = servers.value.find((d) => d.type === 'OpsiConfigserver')
         if (cs) {
@@ -354,6 +357,7 @@
     } finally {
       if (requestId === fetchServersRequestId.value) {
         loading.value = false
+        fetchServersController = null
       }
     }
   }
@@ -388,6 +392,8 @@
       if (s) doOpenConfig(s)
     }
   })
+
+  onUnmounted(() => fetchServersController?.abort())
 
   watch(
     () => route.query.filter,

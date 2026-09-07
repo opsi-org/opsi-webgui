@@ -13,6 +13,10 @@ interface ApiResponse<T> {
   total: number | null
 }
 
+interface ApiRequestOptions {
+  signal?: AbortSignal
+}
+
 export function useApiHelpers() {
   const { $customFetch } = useNuxtApp() as unknown as {
     $customFetch: typeof $fetch
@@ -22,13 +26,13 @@ export function useApiHelpers() {
   // Core HTTP helpers
   // ---------------------------------------------------------------------------
 
-  async function apiGet<T>(url: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
+  async function apiGet<T>(url: string, params?: Record<string, unknown>, options?: ApiRequestOptions): Promise<ApiResponse<T>> {
     try {
       const qs = params
         ? '?' +
           new URLSearchParams(Object.entries(params).map(([k, v]) => [k, typeof v === 'object' ? JSON.stringify(v) : String(v)])).toString()
         : ''
-      const response = await $customFetch.raw<T>(url + qs)
+      const response = await $customFetch.raw<T>(url + qs, options)
       const total = response.headers.get('X-Total-Count')
       return {
         data: response._data ?? null,
@@ -120,7 +124,7 @@ export function useApiHelpers() {
   // Servers / Depots
   // ---------------------------------------------------------------------------
 
-  const getServers = (params?: Record<string, unknown>) =>
+  const getServers = (params?: Record<string, unknown>, options?: ApiRequestOptions) =>
     apiGet<
       Array<{
         depotId: string
@@ -131,7 +135,7 @@ export function useApiHelpers() {
         repositoryRemoteUrl: string
         workbenchRemoteUrl: string
       }>
-    >('/opsidata/depots', params)
+    >('/opsidata/depots', params, options)
 
   const getServerIds = () => apiGet<string[]>('/opsidata/depot_ids')
 
@@ -152,7 +156,7 @@ export function useApiHelpers() {
   // Clients
   // ---------------------------------------------------------------------------
 
-  const getClients = (params?: Record<string, unknown>) =>
+  const getClients = (params?: Record<string, unknown>, options?: ApiRequestOptions) =>
     apiGet<
       Array<{
         clientId: string
@@ -174,7 +178,7 @@ export function useApiHelpers() {
         selected?: boolean
         reachable?: boolean | null
       }>
-    >('/opsidata/clients', params)
+    >('/opsidata/clients', params, options)
 
   const getClientIds = (servers: string[]) => apiGet<string[]>(`/opsidata/depots/clients?selectedDepots=[${servers.join(',')}]`)
 
@@ -247,7 +251,7 @@ export function useApiHelpers() {
   // Products
   // ---------------------------------------------------------------------------
 
-  const getProducts = (params?: Record<string, unknown>) =>
+  const getProducts = (params?: Record<string, unknown>, options?: ApiRequestOptions) =>
     apiGet<
       Array<{
         productId: string
@@ -258,7 +262,7 @@ export function useApiHelpers() {
         productVersion: string
         packageVersion: string
       }>
-    >('/opsidata/products', params)
+    >('/opsidata/products', params, options)
 
   const getServersProducts = (selectedServers: string[], productType?: string) => {
     const params: Record<string, unknown> = {

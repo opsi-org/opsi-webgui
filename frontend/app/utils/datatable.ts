@@ -47,8 +47,15 @@ export function hasMoreInfiniteData(stalled: boolean, rowCount: number, serverTo
   return !stalled && rowCount < serverTotal
 }
 
-/** Number of pages retained by an infinite table after older pages are discarded. */
-export const INFINITE_WINDOW_PAGE_COUNT = 3
+/**
+ * Number of pages retained by an infinite table after older pages are discarded.
+ *
+ * Scrolling back up past the evicted window shows blank rows (the data is gone and
+ * nothing re-fetches it), so this trades a bit of memory for a much larger scroll-back
+ * range: at the default page size that is still only a few thousand plain row objects,
+ * which is negligible next to the DOM savings virtualization already provides.
+ */
+export const INFINITE_WINDOW_PAGE_COUNT = 20
 
 /**
  * Appends one server page to a bounded in-memory window without copying the

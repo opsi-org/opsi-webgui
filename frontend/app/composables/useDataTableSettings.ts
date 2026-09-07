@@ -44,7 +44,7 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'depotId',
     sortDirection: 'asc',
     pageSize: 20,
-    displayMode: 'infinite',
+    displayMode: 'pagination',
     selectionMode: 'single',
   },
   clients: {
@@ -63,7 +63,7 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'clientId',
     sortDirection: 'asc',
     pageSize: 20,
-    displayMode: 'infinite',
+    displayMode: 'pagination',
     selectionMode: 'multi',
   },
   products: {
@@ -71,7 +71,7 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
-    displayMode: 'infinite',
+    displayMode: 'pagination',
     selectionMode: 'multi',
   },
   'products-localboot': {
@@ -79,7 +79,7 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
-    displayMode: 'infinite',
+    displayMode: 'pagination',
     selectionMode: 'multi',
   },
   'products-netboot': {
@@ -87,7 +87,7 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
-    displayMode: 'infinite',
+    displayMode: 'pagination',
     selectionMode: 'multi',
   },
 }
