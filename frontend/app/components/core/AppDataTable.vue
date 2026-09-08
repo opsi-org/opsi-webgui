@@ -120,10 +120,11 @@
 
                 <template v-if="panelViewOptions?.length">
                   <span class="text-xs text-(--color-text-muted)">{{ $t('settings.panelView') }}</span>
-                  <USelect
+                  <CoreAppSelectMenu
                     :model-value="panelView"
                     :items="panelViewOptions"
                     size="xs"
+                    open-on-hover
                     :aria-label="String($t('settings.panelView'))"
                     @update:model-value="(v: string) => emit('update:panelView', v)"
                   />
@@ -146,20 +147,22 @@
                     <CoreAppIcon :name="icons.info" class="w-3 h-3 cursor-help" />
                   </CoreAppTooltip>
                 </span>
-                <USelect
+                <CoreAppSelectMenu
                   :model-value="tableSettings.settings.pageSize"
                   :items="pageSizeOptions"
                   size="xs"
+                  open-on-hover
                   :aria-label="String($t('settings.pageSize'))"
                   @update:model-value="(v: number) => changePageSize(v)"
                 />
 
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.sortBy') }}</span>
                 <div class="flex items-center gap-1">
-                  <USelect
+                  <CoreAppSelectMenu
                     :model-value="tableSettings.settings.sortColumn"
                     :items="sortableColumnOptions"
                     size="xs"
+                    open-on-hover
                     :aria-label="String($t('settings.sortBy'))"
                     class="flex-1"
                     @update:model-value="(v: string) => handleSort(v)"
@@ -780,13 +783,19 @@
     return Math.max(0, props.rowOffset + visibleRows.value.length - rendered) * measuredRowHeight.value
   })
 
-  // Reading offsetHeight forces a synchronous layout, so the row height is measured
-  // once and only re-measured when the rendered columns change.
+  // Reading layout metrics forces a synchronous layout, so the row height is measured once
+  // per row-set/column change instead of on every scroll. getBoundingClientRect (sub-pixel)
+  // is used instead of offsetHeight (rounded to an integer): at fractional browser/OS zoom
+  // levels the rounding error is tiny per row but accumulates with the row index, and by the
+  // time the spacer math reaches rows near the bottom of a long table it is off by enough
+  // pixels to show as blank rows - exactly what a one-time, unrefreshed measurement can't recover from.
   function measureRowHeight() {
     if (rowHeightMeasured) return
     const rowEl = tableContainer.value?.querySelector('tbody .data-table-row') as HTMLElement | null
-    if (rowEl && rowEl.offsetHeight > 0) {
-      measuredRowHeight.value = rowEl.offsetHeight
+    if (!rowEl) return
+    const height = rowEl.getBoundingClientRect().height
+    if (height > 0) {
+      measuredRowHeight.value = height
       rowHeightMeasured = true
     }
   }
@@ -1019,6 +1028,10 @@
     autoPageStalled.value = false
     autoPageRowCountAtRequest = -1
     currentPage.value = 1
+    // Data reloads back to page 1, so the scroll/virtual window must follow - otherwise the
+    // browser keeps its old scroll position while the spacer math jumps back to row 0,
+    // which is exactly the "refresh doesn't fix the blank rows" symptom.
+    scrollToTop()
     emitPageChange()
   }
 
@@ -1164,6 +1177,9 @@
         // Row set changed: allow auto-paging again.
         autoPageStalled.value = false
         autoPageRowCountAtRequest = -1
+        // Re-verify the row height on every fetch/reload instead of trusting a value measured
+        // once at mount - a stale value is exactly what let the spacer drift survive a refresh.
+        rowHeightMeasured = false
       }
       await nextTick()
       updateVirtualWindow()
@@ -1360,6 +1376,17 @@
 
   .data-table--compact .data-table-row {
     contain-intrinsic-size: 30px;
+  }
+
+  /* Virtualization positions rows by multiplying a single measured row height (see
+     measureRowHeight in the script) with the row index. Any row that renders taller than
+     that (e.g. a live-status badge appearing after a save, or an extra wrapped line) makes
+     the spacer rows over/under-shoot, which is exactly what showed up as "blank" rows above
+     or below the changed one. Clamping every row to a fixed height keeps that assumption true. */
+  .data-table--compact .data-table-row > td {
+    height: 1.875rem;
+    max-height: 1.875rem;
+    overflow: hidden;
   }
 
   .data-table-body .data-table-row {

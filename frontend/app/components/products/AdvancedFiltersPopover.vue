@@ -31,10 +31,11 @@
 
       <div class="flex flex-col gap-1">
         <span class="text-xs text-(--color-text-muted)">{{ $t('products.status') }}</span>
-        <CoreAppSelect
+        <CoreAppSelectMenu
           :model-value="modelValue.installationStatus || 'all'"
           :items="installationStatusOptions"
           size="sm"
+          open-on-hover
           :aria-label="String($t('products.status'))"
           @update:model-value="(v: string) => setFilter({ installationStatus: v === 'all' ? undefined : v })"
         />

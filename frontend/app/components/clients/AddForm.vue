@@ -183,7 +183,7 @@
             >
               <span class="text-sm min-w-0 md:w-1/3 break-all"> {{ $t('depot.title') }} <span class="text-error">*</span> </span>
               <div class="flex-1 flex flex-col items-start gap-1 min-w-0">
-                <CoreAppSelect
+                <CoreAppSelectMenu
                   v-model="form.depotId"
                   :items="depotOptions"
                   :loading="loadingDepots"

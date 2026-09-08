@@ -11,19 +11,21 @@
   <div class="relative">
     <!-- Inline mode: just a dropdown trigger icon (for row actions) -->
     <template v-if="inline">
-      <CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
-        <CoreAppTooltip :text="String($t('clients.actions'))">
-          <CoreAppButton
-            :icon="icons.moreVertical"
-            variant="ghost"
-            color="neutral"
-            size="xs"
-            :loading="loading"
-            :disabled="loading"
-            :aria-label="String($t('clients.actions'))"
-            data-testid="client-quick-actions-trigger-inline"
-          />
-        </CoreAppTooltip>
+      <CoreAppSelectMenu
+        v-if="clientIds.length > 0"
+        open-on-hover
+        borderless
+        no-caret
+        size="xs"
+        :items="actionItems"
+        :model-value="null"
+        :disabled="loading"
+        :aria-label="String($t('clients.actions'))"
+        data-testid="client-quick-actions-trigger-inline"
+        @update:model-value="handleActionSelect"
+      >
+        <CoreAppLoadingSpinner v-if="loading" size="xs" />
+        <CoreAppIcon v-else :name="icons.moreVertical" class="w-4 h-4" />
         <template #item-leading="{ item }">
           <CoreAppImage
             v-if="menuItem(item).image"
@@ -34,26 +36,26 @@
           />
           <CoreAppIcon v-else :name="menuItem(item).icon" class="w-5 h-5 shrink-0" />
         </template>
-      </CoreAppDropdownMenu>
+      </CoreAppSelectMenu>
     </template>
     <!-- Standard mode: button with badge -->
     <template v-else>
-      <CoreAppDropdownMenu v-if="clientIds.length > 0" :items="actionItems">
-        <CoreAppTooltip :text="String($t('clients.actions'))">
-          <CoreAppButton
-            variant="soft"
-            color="primary"
-            size="sm"
-            :class="compact ? '' : 'w-full'"
-            :aria-label="String($t('clients.actions'))"
-            data-testid="client-quick-actions-trigger"
-          >
-            <CoreAppIcon :name="icons.client" class="w-4 h-4" />
-            <span v-if="!compact">{{ $t('clients.actions') }}</span>
-            <CoreAppBadge size="xs" color="primary" class="ml-1">{{ clientIds.length }}</CoreAppBadge>
-            <CoreAppIcon v-if="!compact" :name="icons.chevronDown" class="w-3 h-3 ml-1" />
-          </CoreAppButton>
-        </CoreAppTooltip>
+      <CoreAppSelectMenu
+        v-if="clientIds.length > 0"
+        open-on-hover
+        borderless
+        no-caret
+        size="sm"
+        :items="actionItems"
+        :model-value="null"
+        :class="compact ? '' : 'w-full'"
+        :aria-label="String($t('clients.actions'))"
+        data-testid="client-quick-actions-trigger"
+        @update:model-value="handleActionSelect"
+      >
+        <CoreAppIcon :name="icons.client" class="w-4 h-4" />
+        <CoreAppBadge size="xs" color="primary">{{ clientIds.length }}</CoreAppBadge>
+        <span v-if="!compact">{{ $t('clients.actions') }}</span>
         <template #item-leading="{ item }">
           <CoreAppImage
             v-if="menuItem(item).image"
@@ -64,7 +66,7 @@
           />
           <CoreAppIcon v-else :name="menuItem(item).icon" class="w-5 h-5 shrink-0" />
         </template>
-      </CoreAppDropdownMenu>
+      </CoreAppSelectMenu>
       <CoreAppTooltip v-else :text="String($t('clients.selectFirst'))">
         <CoreAppButton
           variant="soft"
@@ -429,11 +431,11 @@
     const groups: Array<
       Array<{
         label: string
+        value: string
         icon: string
         image?: string
         darkImage?: string
         disabled: boolean
-        onSelect: () => void
       }>
     > = []
     const mainActions = actions.value.filter((a) => a.key !== 'rename' && a.key !== 'delete')
@@ -443,11 +445,11 @@
     groups.push(
       mainActions.map((action) => ({
         label: actionLabel(action.key),
+        value: action.key,
         icon: action.icon,
         image: 'image' in action ? action.image : undefined,
         darkImage: 'darkImage' in action ? action.darkImage : undefined,
         disabled: isReadOnly.value,
-        onSelect: () => openConfirm(action.key),
       })),
     )
 
@@ -456,17 +458,17 @@
       if (renameAction) {
         group.push({
           label: actionLabel(renameAction.key),
+          value: renameAction.key,
           icon: renameAction.icon,
           disabled: isReadOnly.value,
-          onSelect: () => openConfirm(renameAction.key),
         })
       }
       if (deleteAction) {
         group.push({
           label: actionLabel(deleteAction.key),
+          value: deleteAction.key,
           icon: deleteAction.icon,
           disabled: isReadOnly.value || !canCreateClients.value,
-          onSelect: () => openConfirm(deleteAction.key),
         })
       }
       groups.push(group)
@@ -474,6 +476,12 @@
 
     return groups
   })
+
+  // CoreAppSelectMenu is a value-picker, not an action menu: the model is never actually
+  // bound (kept null), so picking an item just fires this once instead of "selecting" it.
+  function handleActionSelect(value: unknown) {
+    if (typeof value === 'string' && value) openConfirm(value)
+  }
 
   function openConfirm(action: string) {
     currentAction.value = action

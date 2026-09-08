@@ -86,15 +86,15 @@
             <CoreAppCheckbox v-model="autoRefreshEnabled" :aria-label="$t('settings.autoRefresh')" />
           </div>
           <div class="flex items-center gap-1.5 flex-nowrap">
-            <CoreAppTooltip :text="defaultPageTooltip">
-              <CoreAppSelect
-                v-model="defaultPage"
-                :items="defaultPageOptions"
-                size="xs"
-                :aria-label="$t('nav.defaultPage')"
-                class="flex-1 w-full"
-              />
-            </CoreAppTooltip>
+            <CoreAppSelectMenu
+              v-model="defaultPage"
+              :items="defaultPageOptions"
+              size="xs"
+              open-on-hover
+              :aria-label="$t('nav.defaultPage')"
+              :title="defaultPageTooltip"
+              class="flex-1 w-full"
+            />
             <SettingsThemeToggle />
             <SettingsLanguageDropdown direction="up" />
           </div>
