@@ -1032,7 +1032,10 @@
       if (params) lastPageParams.value = params
       const isReload = !params
       const baseParams = lastPageParams.value ?? undefined
-      const effectiveParams = baseParams
+      const effectiveParams =
+        isReload && baseParams && (rowOffset.value > 0 || baseParams.pageNumber > 1)
+          ? { ...baseParams, pageNumber: 1, perPage: Math.max(baseParams.perPage, rowOffset.value + products.value.length) }
+          : baseParams
       const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
       await selectionStore.ensureServersSelected()
       if (selectionStore.selectedServers.length === 0) {
