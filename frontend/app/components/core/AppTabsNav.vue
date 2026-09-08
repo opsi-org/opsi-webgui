@@ -29,14 +29,14 @@
         :text="getTabTooltip(String(item.value)) || String(item.label)"
       >
         <span class="inline-flex items-center gap-1.5">
-          <UIcon v-if="getTabIcon(String(item.value))" :name="getTabIcon(String(item.value))" class="w-3 h-3 shrink-0" />
+          <CoreAppIcon v-if="getTabIcon(String(item.value))" :name="getTabIcon(String(item.value))" class="w-3 h-3 shrink-0" />
           <span v-if="!hideLabels">{{ item.label }}</span>
           <span v-else class="sr-only">{{ item.label }}</span>
           <span v-if="getTabCount(String(item.value)) > 0" class="text-xs opacity-70">{{ getTabCount(String(item.value)) }}</span>
         </span>
       </CoreAppTooltip>
       <span v-else class="inline-flex items-center gap-1.5">
-        <UIcon v-if="getTabIcon(String(item.value))" :name="getTabIcon(String(item.value))" class="w-3 h-3 shrink-0" />
+        <CoreAppIcon v-if="getTabIcon(String(item.value))" :name="getTabIcon(String(item.value))" class="w-3 h-3 shrink-0" />
         <span>{{ item.label }}</span>
         <span v-if="getTabCount(String(item.value)) > 0" class="text-xs opacity-70">{{ getTabCount(String(item.value)) }}</span>
       </span>

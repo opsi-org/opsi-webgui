@@ -58,7 +58,7 @@
                 @keydown.enter.prevent="addSavedCommand"
               />
               <CoreAppTooltip :text="String($t('terminal.saveCommand'))">
-                <UButton
+                <CoreAppButton
                   :icon="icons.add"
                   size="sm"
                   color="primary"

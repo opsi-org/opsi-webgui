@@ -9,7 +9,7 @@
   saveable search and optional match case / whole word / regular expression toggles (like the VS Code search box).
 -->
 <template>
-  <UInput
+  <CoreAppInput
     v-model="model"
     :placeholder="placeholder || $t('common.filter')"
     :aria-label="placeholder || $t('common.filter')"
@@ -23,7 +23,7 @@
       <span class="flex items-center gap-0.5">
         <template v-if="showOptions">
           <CoreAppTooltip :text="String($t('filter.matchCase'))">
-            <UButton
+            <CoreAppButton
               size="xs"
               variant="solid"
               :color="options.matchCase ? 'primary' : 'neutral'"
@@ -33,10 +33,10 @@
               @click="toggleOption('matchCase')"
             >
               Aa
-            </UButton>
+            </CoreAppButton>
           </CoreAppTooltip>
           <CoreAppTooltip :text="String($t('filter.wholeWord'))">
-            <UButton
+            <CoreAppButton
               size="xs"
               variant="solid"
               :color="options.wholeWord ? 'primary' : 'neutral'"
@@ -46,10 +46,10 @@
               @click="toggleOption('wholeWord')"
             >
               ab
-            </UButton>
+            </CoreAppButton>
           </CoreAppTooltip>
           <CoreAppTooltip :text="regexTooltip">
-            <UButton
+            <CoreAppButton
               size="xs"
               variant="solid"
               :color="regexButtonColor"
@@ -59,11 +59,11 @@
               @click="toggleOption('regex')"
             >
               .*
-            </UButton>
+            </CoreAppButton>
           </CoreAppTooltip>
         </template>
         <CoreAppTooltip v-if="saveable && model" :text="String($t('savedSearches.saveCurrent'))">
-          <UButton
+          <CoreAppButton
             :icon="icons.bookmark"
             size="xs"
             variant="ghost"
@@ -72,7 +72,7 @@
             @click="emit('save')"
           />
         </CoreAppTooltip>
-        <UButton
+        <CoreAppButton
           v-if="model"
           :icon="icons.x"
           size="xs"
@@ -83,7 +83,7 @@
         />
       </span>
     </template>
-  </UInput>
+  </CoreAppInput>
 </template>
 
 <script setup lang="ts">

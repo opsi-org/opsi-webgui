@@ -9,7 +9,7 @@
 -->
 <template>
   <div :class="containerClass">
-    <UIcon :name="icons.refresh" :class="['animate-spin', sizeClass]" />
+    <CoreAppIcon :name="icons.refresh" :class="['animate-spin', sizeClass]" />
   </div>
 </template>
 

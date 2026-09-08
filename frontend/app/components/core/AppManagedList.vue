@@ -24,7 +24,7 @@
           {{ selectedIds.length > 0 ? `${selectedIds.length} ${$t('common.selected')}` : $t('common.rangeSelectHint') }}
         </span>
         <CoreAppTooltip :text="String($t('common.deleteSelected'))">
-          <UButton
+          <CoreAppButton
             class="ml-auto"
             size="xs"
             variant="ghost"
@@ -56,7 +56,7 @@
             {{ item.label }}
           </button>
           <CoreAppTooltip :text="`${$t('common.delete')}: ${item.label}`">
-            <UButton
+            <CoreAppButton
               :icon="icons.delete"
               size="xs"
               variant="ghost"

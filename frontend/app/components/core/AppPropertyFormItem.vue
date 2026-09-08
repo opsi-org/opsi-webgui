@@ -12,7 +12,7 @@
   <div class="flex-1 flex items-center gap-1.5 min-w-0 w-full">
     <!-- Bool: checkbox -->
     <template v-if="type === 'bool'">
-      <UCheckbox
+      <CoreAppCheckbox
         :model-value="boolValue"
         :indeterminate="mixed"
         :disabled="disabled"
@@ -41,7 +41,7 @@
           <button
             type="button"
             :aria-label="controlAriaLabel"
-            class="w-full flex items-center justify-between gap-2 px-2 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-(--color-primary)/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
+            class="w-full flex items-center justify-between gap-2 px-2 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-primary/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
             :class="[
               size === 'xs' ? 'py-1 min-h-8' : 'py-1.5 md:py-1 min-h-11 md:min-h-8',
               disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
@@ -53,7 +53,7 @@
               <span
                 v-for="val in arrayValue.slice(0, 3)"
                 :key="val"
-                class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20 max-w-32 truncate"
+                class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-primary/20 max-w-32 truncate"
               >
                 {{ formatDisplayValue(val) }}
               </span>
@@ -64,13 +64,13 @@
                 +{{ arrayValue.length - 3 }}
               </span>
             </span>
-            <UIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
+            <CoreAppIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
           </button>
           <template #content>
             <div class="max-h-72 overflow-y-auto">
               <div v-if="editable" class="sticky top-0 z-10 bg-(--color-surface-elevated) border-b border-(--color-border) px-2 py-1">
                 <div class="flex items-center gap-1">
-                  <UInput
+                  <CoreAppInput
                     ref="multiAddInputRef"
                     v-model="customInput"
                     :placeholder="$t('groups.membersSearch')"
@@ -78,7 +78,7 @@
                     class="flex-1"
                     @keydown.enter.prevent="addCustomMultiItem"
                   />
-                  <UButton
+                  <CoreAppButton
                     size="xs"
                     variant="ghost"
                     color="primary"
@@ -96,7 +96,7 @@
                 :class="size === 'xs' ? 'py-0.5 min-h-8' : 'py-1 min-h-10 md:min-h-8'"
                 @click="toggleMultiItem(opt)"
               >
-                <UIcon
+                <CoreAppIcon
                   :name="arrayValue.includes(opt) ? icons.squareCheck : icons.square"
                   class="w-4 h-4 shrink-0"
                   :class="arrayValue.includes(opt) ? 'text-(--color-primary-soft-text)' : 'text-(--color-text-muted)'"
@@ -125,10 +125,10 @@
           <span
             v-for="(val, idx) in arrayValue"
             :key="idx"
-            class="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-(--color-primary)/20 max-w-48 group/tag"
+            class="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-primary/20 max-w-48 group/tag"
           >
             <span class="truncate" :title="val">{{ formatDisplayValue(val) }}</span>
-            <UButton
+            <CoreAppButton
               v-if="!disabled"
               type="button"
               variant="ghost"
@@ -137,10 +137,10 @@
               class="p-0! hover:text-(--color-error-soft-text) transition-colors opacity-60 group-hover/tag:opacity-100"
               @click="removeMultiItem(idx)"
             >
-              <UIcon :name="icons.x" class="w-3 h-3" />
-            </UButton>
+              <CoreAppIcon :name="icons.x" class="w-3 h-3" />
+            </CoreAppButton>
           </span>
-          <UButton
+          <CoreAppButton
             v-if="hasMultilineValues(arrayValue)"
             type="button"
             variant="ghost"
@@ -149,9 +149,9 @@
             class="p-0! inline-flex items-center gap-0.5 px-1 py-0.5 text-xs text-(--color-text-muted) hover:text-(--color-primary) transition-colors"
             @click="openMultilineEditor"
           >
-            <UIcon :name="icons.pencilSquare" class="w-3 h-3" />
-          </UButton>
-          <UInput
+            <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
+          </CoreAppButton>
+          <CoreAppInput
             v-if="editable && !disabled"
             v-model="customInput"
             class="flex-1 min-w-24"
@@ -167,7 +167,7 @@
 
     <!-- Single value, non-editable with possible values: select -->
     <template v-else-if="hasPossibleValues && !editable">
-      <USelect
+      <CoreAppSelectMenu
         :model-value="selectModelValue"
         :items="selectItemsWithEmpty"
         :disabled="disabled"
@@ -185,7 +185,7 @@
           <button
             type="button"
             :aria-label="controlAriaLabel"
-            class="w-full flex items-center justify-between gap-2 px-2 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-(--color-primary)/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
+            class="w-full flex items-center justify-between gap-2 px-2 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-primary/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
             :class="[
               size === 'xs' ? 'py-1 min-h-8' : 'py-1.5 md:py-1 min-h-11 md:min-h-8',
               disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
@@ -195,12 +195,12 @@
             <span :class="stringValue ? '' : 'text-(--color-text-muted)'" class="truncate">
               {{ stringValue ? formatDisplayValue(stringValue) : `(${$t('common.empty')})` }}
             </span>
-            <UIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
+            <CoreAppIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
           </button>
           <template #content>
             <div class="max-h-64 overflow-y-auto">
               <div class="sticky top-0 z-10 bg-(--color-surface-elevated) border-b border-(--color-border) px-2 py-1">
-                <UInput
+                <CoreAppInput
                   v-model="editableSearchInput"
                   :placeholder="$t('common.enterValue')"
                   size="xs"
@@ -239,7 +239,7 @@
                 :class="size === 'xs' ? 'py-0.5 min-h-8' : 'py-1 min-h-10 md:min-h-8'"
                 @click="applyEditableCustomValue"
               >
-                <UIcon :name="icons.add" class="w-3.5 h-3.5" />
+                <CoreAppIcon :name="icons.add" class="w-3.5 h-3.5" />
                 <span>{{ editableSearchInput.trim() }}</span>
               </button>
             </div>
@@ -253,7 +253,7 @@
       <div class="flex-1 flex items-center gap-1 min-w-0">
         <div
           v-clickable
-          class="flex-1 px-2 text-sm border border-(--color-border) rounded-md bg-(--color-surface-elevated) cursor-pointer hover:border-(--color-primary)/50 transition-colors truncate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
+          class="flex-1 px-2 text-sm border border-(--color-border) rounded-md bg-(--color-surface-elevated) cursor-pointer hover:border-primary/50 transition-colors truncate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
           :class="[size === 'xs' ? 'py-1 min-h-8' : 'py-1.5 md:py-1 min-h-11 md:min-h-8', disabled ? 'opacity-50 cursor-not-allowed' : '']"
           :title="stringValue"
           role="button"
@@ -264,13 +264,13 @@
         >
           {{ formatDisplayValue(stringValue) }}
         </div>
-        <UButton v-if="!disabled" size="xs" variant="ghost" color="neutral" :icon="icons.pencilSquare" @click="openMultilineEditor" />
+        <CoreAppButton v-if="!disabled" size="xs" variant="ghost" color="neutral" :icon="icons.pencilSquare" @click="openMultilineEditor" />
       </div>
     </template>
 
     <!-- Plain input (no possible values, single value) -->
     <template v-else>
-      <UInput
+      <CoreAppInput
         :model-value="stringValue"
         :disabled="disabled"
         :size="controlSize"
@@ -281,17 +281,17 @@
     </template>
 
     <!-- Multiline editor modal -->
-    <UModal v-model:open="showMultilineEditor" :title="$t('common.editValue')" :ui="{ content: 'max-w-sm sm:max-w-xl' }">
+    <CoreAppModal v-model:open="showMultilineEditor" :title="$t('common.editValue')" :ui="{ content: 'max-w-sm sm:max-w-xl' }">
       <template #body>
         <CoreAppTextarea ref="multilineTextareaRef" v-model="multilineEditValue" class="w-full" :rows="12" :disabled="disabled" />
       </template>
       <template #footer>
         <div class="flex gap-2 justify-end">
-          <UButton variant="ghost" color="neutral" @click="showMultilineEditor = false">{{ $t('common.cancel') }} </UButton>
-          <UButton color="primary" @click="applyMultilineEdit">{{ $t('common.apply') }}</UButton>
+          <CoreAppButton variant="ghost" color="neutral" @click="showMultilineEditor = false">{{ $t('common.cancel') }} </CoreAppButton>
+          <CoreAppButton color="primary" @click="applyMultilineEdit">{{ $t('common.apply') }}</CoreAppButton>
         </div>
       </template>
-    </UModal>
+    </CoreAppModal>
   </div>
 </template>
 

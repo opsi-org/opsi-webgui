@@ -11,7 +11,7 @@
   <div class="data-table flex flex-col h-full min-h-0 min-w-0" :class="{ 'data-table--compact': isCompactDensity }">
     <div class="shrink-0 flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
       <div class="flex items-center gap-3 text-sm">
-        <UButton
+        <CoreAppButton
           v-if="selectedKeys.length > 0"
           :icon="icons.xCircle"
           variant="soft"
@@ -21,9 +21,9 @@
           @click="clearSelection"
         >
           {{ selectedKeys.length }}
-        </UButton>
+        </CoreAppButton>
         <CoreAppTooltip v-if="selectedKeys.length > 0" :text="String($t('settings.showOnlySelected'))">
-          <UButton
+          <CoreAppButton
             size="xs"
             variant="ghost"
             :color="onlySelected ? 'primary' : 'neutral'"
@@ -33,9 +33,9 @@
             @click="onlySelected = !onlySelected"
           />
         </CoreAppTooltip>
-        <UBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
+        <CoreAppBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
           {{ $t('settings.singleSelect') }}
-        </UBadge>
+        </CoreAppBadge>
       </div>
 
       <div class="flex items-center gap-2">
@@ -63,7 +63,7 @@
         </UFieldGroup>
 
         <CoreAppHoverPopover :title="String($t('settings.table'))" content-class="min-w-96">
-          <UButton
+          <CoreAppButton
             :icon="icons.tableSettings"
             :aria-label="$t('settings.table')"
             variant="outline"
@@ -76,7 +76,7 @@
               <div class="mb-3 grid grid-cols-[6.5rem_1fr] items-center gap-x-2 gap-y-2.5">
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.display') }}</span>
                 <div class="flex gap-0.5">
-                  <UButton
+                  <CoreAppButton
                     size="xs"
                     class="flex-1"
                     :color="'primary'"
@@ -84,8 +84,8 @@
                     @click="changeDisplayMode('infinite')"
                   >
                     {{ $t('settings.infiniteScroll') }}
-                  </UButton>
-                  <UButton
+                  </CoreAppButton>
+                  <CoreAppButton
                     size="xs"
                     class="flex-1"
                     :color="'primary'"
@@ -93,12 +93,12 @@
                     @click="changeDisplayMode('pagination')"
                   >
                     {{ $t('table.pagination') }}
-                  </UButton>
+                  </CoreAppButton>
                 </div>
 
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.selection') }}</span>
                 <div class="flex gap-0.5">
-                  <UButton
+                  <CoreAppButton
                     size="xs"
                     class="flex-1"
                     :color="'primary'"
@@ -106,8 +106,8 @@
                     @click="forceSelectionMode('multi')"
                   >
                     {{ $t('settings.multiSelect') }}
-                  </UButton>
-                  <UButton
+                  </CoreAppButton>
+                  <CoreAppButton
                     size="xs"
                     class="flex-1"
                     :color="'primary'"
@@ -115,7 +115,7 @@
                     @click="forceSelectionMode('single')"
                   >
                     {{ $t('settings.singleSelect') }}
-                  </UButton>
+                  </CoreAppButton>
                 </div>
 
                 <template v-if="panelViewOptions?.length">
@@ -167,7 +167,7 @@
                     class="flex-1"
                     @update:model-value="(v: string) => handleSort(v)"
                   />
-                  <UButton
+                  <CoreAppButton
                     size="xs"
                     variant="ghost"
                     color="neutral"
@@ -198,14 +198,14 @@
                 </div>
               </div>
 
-              <UButton variant="outline" color="primary" size="xs" block @click="resetTableSettings">
+              <CoreAppButton variant="outline" color="primary" size="xs" block @click="resetTableSettings">
                 {{ $t('common.resetDefaults') }}
-              </UButton>
+              </CoreAppButton>
             </div>
           </template>
         </CoreAppHoverPopover>
 
-        <UButton
+        <CoreAppButton
           v-if="showRefresh"
           :icon="icons.refresh"
           variant="ghost"
@@ -218,7 +218,7 @@
       </div>
     </div>
 
-    <UCard
+    <CoreAppCard
       :ui="{ body: 'p-0 sm:p-0 flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden' }"
       :style="{ maxHeight: effectiveMaxHeight }"
       class="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden"
@@ -256,7 +256,7 @@
                       :aria-label="String($t('common.selectAll'))"
                       @change="toggleSelectAll"
                     />
-                    <UButton
+                    <CoreAppButton
                       v-if="selectedKeys.length > 0"
                       size="xs"
                       variant="ghost"
@@ -299,20 +299,20 @@
                   >
                     <div class="flex items-center gap-1">
                       <template v-if="col.headerIcon">
-                        <UTooltip :text="resolveColumnLabel(col)">
-                          <UIcon :name="col.headerIcon" class="w-4 h-4" :aria-label="resolveColumnLabel(col)" />
-                        </UTooltip>
+                        <CoreAppTooltip :text="resolveColumnLabel(col)">
+                          <CoreAppIcon :name="col.headerIcon" class="w-4 h-4" :aria-label="resolveColumnLabel(col)" />
+                        </CoreAppTooltip>
                       </template>
                       <template v-else>
                         {{ resolveColumnLabel(col) }}
                       </template>
                       <template v-if="col.sortable">
-                        <UIcon
+                        <CoreAppIcon
                           v-if="tableSettings.settings.sortColumn === col.key"
                           :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
                           class="w-2 h-2"
                         />
-                        <UIcon v-else :name="icons.sort" class="w-2 h-2 opacity-80" />
+                        <CoreAppIcon v-else :name="icons.sort" class="w-2 h-2 opacity-80" />
                       </template>
                     </div>
                   </slot>
@@ -405,7 +405,7 @@
                 >
                   <div
                     class="flex items-center justify-center gap-0 rounded-md transition-colors"
-                    :class="isHighlighted(row) ? 'bg-(--color-primary)/10 ring-1 ring-(--color-primary)/30 px-0.5' : ''"
+                    :class="isHighlighted(row) ? 'bg-primary/10 ring-1 ring-primary/30 px-0.5' : ''"
                   >
                     <slot
                       name="row-actions"
@@ -425,7 +425,7 @@
               <tr v-if="visibleRows.length === 0 && !loading">
                 <td :colspan="totalColSpan" class="px-4 py-12 text-center">
                   <div class="flex flex-col items-center gap-2 text-(--color-text-muted)">
-                    <UIcon :name="icons.table" class="w-8 h-8 opacity-50" />
+                    <CoreAppIcon :name="icons.table" class="w-8 h-8 opacity-50" />
                     <span>{{ $t('common.noResults') }}</span>
                   </div>
                 </td>
@@ -446,7 +446,7 @@
           </table>
         </div>
       </div>
-    </UCard>
+    </CoreAppCard>
 
     <div class="shrink-0 px-1 rounded-b-lg flex items-center justify-between gap-4">
       <span class="text-xs text-(--color-text-muted)">
@@ -460,7 +460,7 @@
         <span v-if="onlySelected" class="ml-1 text-(--color-warning-soft-text)">{{ $t('settings.showOnlySelectedHint') }}</span>
       </span>
       <div v-if="displayMode === 'pagination' && totalPages > 1" class="flex items-center gap-1">
-        <UButton
+        <CoreAppButton
           :icon="icons.chevronLeft"
           :aria-label="$t('common.previous')"
           variant="outline"
@@ -471,7 +471,7 @@
         />
         <template v-for="page in visiblePageNumbers" :key="page">
           <span v-if="page === '...'" class="px-2 text-(--color-text-muted)">...</span>
-          <UButton
+          <CoreAppButton
             v-else
             :aria-label="`${$t('common.page')} ${page}` + (page === currentPage ? ` (${$t('common.current')})` : '')"
             :variant="page === currentPage ? 'solid' : 'ghost'"
@@ -481,9 +481,9 @@
             @click="goToPage(page as number)"
           >
             {{ page }}
-          </UButton>
+          </CoreAppButton>
         </template>
-        <UButton
+        <CoreAppButton
           :icon="icons.chevronRight"
           :aria-label="$t('common.next')"
           variant="outline"

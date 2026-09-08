@@ -8,7 +8,7 @@
   CoreAppPasswordInput - Password input with visibility toggle.
 -->
 <template>
-  <UInput
+  <CoreAppInput
     v-bind="$attrs"
     :model-value="modelValue"
     :type="show ? 'text' : 'password'"
@@ -21,7 +21,7 @@
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #trailing>
-      <UButton
+      <CoreAppButton
         color="neutral"
         variant="link"
         :size="effectiveSize"
@@ -32,7 +32,7 @@
         @click="show = !show"
       />
     </template>
-  </UInput>
+  </CoreAppInput>
 </template>
 
 <script setup lang="ts">
