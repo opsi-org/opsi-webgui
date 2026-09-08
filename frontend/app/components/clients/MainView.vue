@@ -65,6 +65,7 @@
       :advanced-filters="advancedFilters"
       :show-refresh="false"
       :total-items="totalItems"
+      :row-offset="rowOffset"
       :selected-keys="selectionStore.selectedClients"
       :active-key="panelClient?.clientId"
       :sort-by-selection-enabled="sortBySelectionEnabled"
@@ -293,6 +294,7 @@
   const loading = ref(false)
   const error = ref<string | null>(null)
   const clients = ref<OpsiClient[]>([])
+  const rowOffset = ref(0)
   const totalItems = ref(0)
   type ClientPanelType = 'config' | 'logs' | 'clone'
 
@@ -323,6 +325,7 @@
   const lastPageParams = ref<PageChangeParams | null>(null)
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('clients'))
   const fetchClientsRequestId = ref(0)
+  let fetchClientsController: AbortController | null = null
   const ADVANCED_FILTERS_KEY = 'opsi-webgui-clients-advanced-filters'
   const advancedFilters = ref<ClientAdvancedFilters>(readStoredAdvancedFilters())
 
@@ -616,8 +619,10 @@
   function handlePageChange(params: PageChangeParams) {
     lastPageParams.value = params
     currentFilterQuery.value = params.filterQuery
-    // Persist filter query to URL
-    if (params.filterQuery || route.query.filter) {
+    // Sorting and paging reuse the existing filter; avoid unnecessary router
+    // work unless the normalized query value actually changed.
+    const routeFilter = typeof route.query.filter === 'string' ? route.query.filter : ''
+    if (routeFilter !== params.filterQuery) {
       router.replace({
         query: {
           ...(route.query as Record<string, string>),
@@ -630,6 +635,7 @@
 
   function handleFilterQueryUpdate(value: string) {
     currentFilterQuery.value = value
+    fetchClientsController?.abort()
     if (lastPageParams.value) {
       lastPageParams.value = {
         ...lastPageParams.value,
@@ -652,18 +658,16 @@
 
   async function fetchClients(params?: PageChangeParams) {
     const requestId = ++fetchClientsRequestId.value
+    fetchClientsController?.abort()
+    const controller = new AbortController()
+    fetchClientsController = controller
     loading.value = true
     error.value = null
     try {
       if (params) lastPageParams.value = params
-      // A reload without params must refetch every row that is currently
-      // loaded, not just the last requested page.
       const isReload = !params
       const baseParams = lastPageParams.value ?? undefined
-      const effectiveParams =
-        isReload && baseParams
-          ? { ...baseParams, pageNumber: 1, perPage: reloadWindowPerPage(baseParams.perPage, clients.value.length) }
-          : baseParams
+      const effectiveParams = baseParams
       const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
       await selectionStore.ensureServersSelected()
       if (selectionStore.selectedServers.length === 0) {
@@ -698,18 +702,17 @@
       }
       if (advancedFilters.value.hasFailedProducts) p.hasFailedProducts = true
       if (advancedFilters.value.hasOutdatedProducts) p.hasOutdatedProducts = true
-      const result = await getClients(p)
+      const result = await getClients(p, { signal: controller.signal })
       if (requestId !== fetchClientsRequestId.value) return
       if (result.error) error.value = result.error.message
       else if (result.data) {
         const newData = result.data as OpsiClient[]
         if (result.total !== null) totalItems.value = result.total
         if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
-          const existingIds = new Set(clients.value.map((c) => c.clientId))
-          const unique = newData.filter((c) => !existingIds.has(c.clientId))
-          clients.value = [...clients.value, ...unique]
+          rowOffset.value += appendInfinitePage(clients.value, newData, effectiveParams.perPage)
         } else {
           clients.value = newData
+          rowOffset.value = isReload && effectiveParams ? (effectiveParams.pageNumber - 1) * effectiveParams.perPage : 0
         }
         for (const client of newData) {
           if (typeof client.reachable === 'boolean' && !reachableLiveIds.value.has(client.clientId)) {
@@ -723,6 +726,7 @@
     } finally {
       if (requestId === fetchClientsRequestId.value) {
         loading.value = false
+        fetchClientsController = null
       }
     }
   }
@@ -889,6 +893,8 @@
       panelType.value = 'add'
     }
   })
+
+  onUnmounted(() => fetchClientsController?.abort())
 
   watch(
     () => route.query.filter,

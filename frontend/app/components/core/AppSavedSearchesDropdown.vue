@@ -10,7 +10,7 @@
 -->
 <template>
   <CoreAppHoverPopover :title="String($t('savedSearches.title'))" content-class="min-w-80">
-    <UButton
+    <CoreAppButton
       :icon="icons.bookmark"
       :aria-label="String($t('savedSearches.title'))"
       variant="outline"
@@ -37,9 +37,9 @@
           :placeholder="String($t('common.filter'))"
           @keydown.enter.prevent="emit('save')"
         />
-        <UButton size="sm" color="primary" :icon="icons.bookmark" :disabled="!filterQuery.trim()" @click="emit('save')">
+        <CoreAppButton size="sm" color="primary" :icon="icons.bookmark" :disabled="!filterQuery.trim()" @click="emit('save')">
           {{ $t('common.save') }}
-        </UButton>
+        </CoreAppButton>
       </div>
     </template>
   </CoreAppHoverPopover>

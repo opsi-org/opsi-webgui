@@ -41,7 +41,7 @@
           </div>
           <div>
             <span class="block text-sm font-medium mb-1">{{ $t('common.type') }}</span>
-            <CoreAppSelect v-model="newConfig.type" :items="configTypeOptions" size="sm" />
+            <CoreAppSelectMenu v-model="newConfig.type" :items="configTypeOptions" size="sm" open-on-hover />
           </div>
           <div class="flex flex-wrap items-center gap-4">
             <span class="flex items-center gap-2 text-sm">
@@ -133,7 +133,7 @@
           </div>
           <div v-if="newConfig.type === 'BoolConfig'">
             <span class="block text-sm font-medium mb-1">{{ $t('products.defaultValues') }}</span>
-            <CoreAppSelect
+            <CoreAppSelectMenu
               v-model="newConfig.boolDefault"
               :items="[
                 { label: 'true', value: 'true' },

@@ -90,6 +90,7 @@
       :filterable="true"
       :show-refresh="false"
       :total-items="totalItems"
+      :row-offset="rowOffset"
       :selected-keys="selectedTableKeys"
       :active-key="configProduct?.productId"
       :sort-by-selection-enabled="sortBySelectionEnabled"
@@ -357,6 +358,7 @@
   const loading = ref(false)
   const error = ref<string | null>(null)
   const products = ref<ProductRow[]>([])
+  const rowOffset = ref(0)
   const totalItems = ref(0)
   const configProduct = ref<ProductRow | null>(null)
   const showConfigPanel = ref(false)
@@ -377,6 +379,7 @@
     router.replace({ query: { ...route.query, propertiesSearch: value || undefined } })
   }
   const fetchProductsRequestId = ref(0)
+  let fetchProductsController: AbortController | null = null
   const ADVANCED_FILTERS_KEY = 'opsi-webgui-products-advanced-filters'
   const advancedFilters = ref<ProductAdvancedFilters>(readStoredAdvancedFilters())
 
@@ -815,10 +818,15 @@
           )
         }
       }
+      const savedActionRequests = new Map(pendingActionRequests.value)
       for (const pid of savedIds) {
         pendingActionRequests.value.delete(pid)
       }
-      await fetchProducts()
+      for (const pid of savedIds) {
+        const product = products.value.find((row) => row.productId === pid)
+        const savedRequest = savedActionRequests.get(pid)?.actionRequest
+        if (product && savedRequest !== undefined) product.actionRequest = savedRequest
+      }
       if (errors.length > 0 && savedIds.length > 0) {
         return {
           type: 'warning',
@@ -922,14 +930,17 @@
   }
 
   function onConfigSaved() {
-    fetchProducts()
+    // Product properties do not alter the list's aggregate fields. Avoid a
+    // table reload (and retain the current bounded server-page window).
   }
 
   function handlePageChange(params: PageChangeParams) {
     lastPageParams.value = params
     currentFilterQuery.value = params.filterQuery
-    // Persist filter query to URL
-    if (params.filterQuery || route.query.filter) {
+    // Sorting and paging reuse the existing filter; avoid unnecessary router
+    // work unless the normalized query value actually changed.
+    const routeFilter = typeof route.query.filter === 'string' ? route.query.filter : ''
+    if (routeFilter !== params.filterQuery) {
       router.replace({
         query: {
           ...(route.query as Record<string, string>),
@@ -942,6 +953,7 @@
 
   function handleFilterQueryUpdate(value: string) {
     currentFilterQuery.value = value
+    fetchProductsController?.abort()
     if (lastPageParams.value) {
       lastPageParams.value = {
         ...lastPageParams.value,
@@ -964,6 +976,7 @@
 
   function resetTableScopeState() {
     products.value = []
+    rowOffset.value = 0
     totalItems.value = 0
     lastPageParams.value = null
     pendingActionRequests.value.clear()
@@ -1010,17 +1023,18 @@
 
   async function fetchProducts(params?: PageChangeParams) {
     const requestId = ++fetchProductsRequestId.value
+    fetchProductsController?.abort()
+    const controller = new AbortController()
+    fetchProductsController = controller
     loading.value = true
     error.value = null
     try {
       if (params) lastPageParams.value = params
-      // A reload without params (e.g. after saving action requests) must refetch
-      // every row that is currently loaded, not just the last requested page.
       const isReload = !params
       const baseParams = lastPageParams.value ?? undefined
       const effectiveParams =
-        isReload && baseParams
-          ? { ...baseParams, pageNumber: 1, perPage: reloadWindowPerPage(baseParams.perPage, products.value.length) }
+        isReload && baseParams && (rowOffset.value > 0 || baseParams.pageNumber > 1)
+          ? { ...baseParams, pageNumber: 1, perPage: Math.max(baseParams.perPage, rowOffset.value + products.value.length) }
           : baseParams
       const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
       await selectionStore.ensureServersSelected()
@@ -1066,17 +1080,16 @@
       if (advancedFilters.value.hasPendingActionRequest) p.hasPendingActionRequest = true
       if (advancedFilters.value.unused) p.unused = true
 
-      const result = await getProducts(p)
+      const result = await getProducts(p, { signal: controller.signal })
       if (requestId !== fetchProductsRequestId.value) return
       if (result.error) throw result.error
       const newData = (result.data || []) as ProductRow[]
       if (result.total !== null) totalItems.value = result.total
       if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
-        const existingIds = new Set(products.value.map((p) => p.productId))
-        const unique = newData.filter((p) => !existingIds.has(p.productId))
-        products.value = [...products.value, ...unique]
+        rowOffset.value += appendInfinitePage(products.value, newData, effectiveParams.perPage)
       } else {
         products.value = newData
+        rowOffset.value = isReload && effectiveParams ? (effectiveParams.pageNumber - 1) * effectiveParams.perPage : 0
       }
     } catch (e) {
       if (requestId !== fetchProductsRequestId.value) return
@@ -1084,6 +1097,7 @@
     } finally {
       if (requestId === fetchProductsRequestId.value) {
         loading.value = false
+        fetchProductsController = null
       }
     }
   }
@@ -1168,6 +1182,7 @@
   onUnmounted(() => {
     if (selectionScopeTimer) clearTimeout(selectionScopeTimer)
     if (liveUpdateFlushTimer) clearTimeout(liveUpdateFlushTimer)
+    fetchProductsController?.abort()
   })
 
   watch(() => selectionStore.selectedClients, refetchForSelectionScope)

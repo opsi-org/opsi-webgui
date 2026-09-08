@@ -19,6 +19,7 @@
     class="min-w-56"
     :ui="{ content: 'max-h-60 overflow-y-auto' }"
     :size="size"
+    open-on-hover
     @update:model-value="onSelect"
     @open="onOpen"
   >

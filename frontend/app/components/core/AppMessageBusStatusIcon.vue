@@ -23,7 +23,7 @@
       class="absolute -right-4 -bottom-1 w-3.5 h-3.5 rounded-full inline-flex items-center justify-center"
       :class="[overlayBgClass, ringClass]"
     >
-      <UIcon :name="connected ? icons.check : icons.x" class="w-full h-full p-px text-white" />
+      <CoreAppIcon :name="connected ? icons.check : icons.x" class="w-full h-full p-px text-white" />
     </span>
   </span>
 </template>

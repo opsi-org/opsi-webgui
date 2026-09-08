@@ -30,6 +30,7 @@
         label-key="label"
         class="min-w-30"
         size="xs"
+        open-on-hover
       />
       <div v-if="logContent.length > 0" class="flex flex-col gap-1 min-w-30">
         <span class="text-xs font-medium text-muted">

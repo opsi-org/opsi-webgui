@@ -513,7 +513,7 @@
               @close="modalStatusMessage = null"
             />
             <CoreAppFormField :label="$t('groups.parent')" class="add-border">
-              <CoreAppSelect
+              <CoreAppSelectMenu
                 v-model="editForm.parentGroupId"
                 :items="editParentGroupSelectItems"
                 :placeholder="$t('common.none')"

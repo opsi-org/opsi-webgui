@@ -9,7 +9,7 @@
 -->
 <template>
   <CoreAppTooltip v-if="tooltipText && hasBadgeContent" :text="tooltipText">
-    <UButton
+    <CoreAppButton
       v-if="clickable && displayValue !== null && displayValue > 0"
       variant="ghost"
       color="neutral"
@@ -17,54 +17,54 @@
       class="p-0!"
       @click.stop="$emit('click')"
     >
-      <UBadge :color="badgeColor" :variant="variant" :size="size" class="justify-center cursor-pointer">
+      <CoreAppBadge :color="badgeColor" :variant="variant" :size="size" class="justify-center cursor-pointer">
         <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
-        <UIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
+        <CoreAppIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
         <span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label }}</span>
         <span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
-      </UBadge>
-    </UButton>
-    <UBadge
+      </CoreAppBadge>
+    </CoreAppButton>
+    <CoreAppBadge
       v-else-if="displayValue !== null && displayValue > 0"
       :color="badgeColor"
       :variant="variant"
       :size="size"
       class="justify-center"
-      :class="{ 'cursor-pointer': clickable }"
+      :class="clickable ? 'cursor-pointer' : ''"
       v-on="clickable ? { click: onBadgeClick } : {}"
     >
       <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
-      <UIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
+      <CoreAppIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
       <span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label }}</span>
       <span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
-    </UBadge>
-    <UBadge
+    </CoreAppBadge>
+    <CoreAppBadge
       v-else-if="label && displayValue === null"
       :color="badgeColor"
       :variant="variant"
       :size="size"
       class="gap-1"
-      :class="{ 'cursor-pointer': clickable }"
+      :class="clickable ? 'cursor-pointer' : ''"
       v-on="clickable ? { click: onBadgeClick } : {}"
     >
       <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
-      <UIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
+      <CoreAppIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
       <span class="text-[12px] leading-none" :style="contentTextStyle">{{ label }}</span>
-    </UBadge>
-    <UBadge
+    </CoreAppBadge>
+    <CoreAppBadge
       v-else-if="displayValue === null && (icon || imageSrc)"
       :color="badgeColor"
       :variant="variant"
       :size="size"
       class="justify-center"
-      :class="{ 'cursor-pointer': clickable }"
+      :class="clickable ? 'cursor-pointer' : ''"
       v-on="clickable ? { click: onBadgeClick } : {}"
     >
       <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
-      <UIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
-    </UBadge>
+      <CoreAppIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
+    </CoreAppBadge>
   </CoreAppTooltip>
-  <UButton
+  <CoreAppButton
     v-else-if="clickable && displayValue !== null && displayValue > 0"
     variant="ghost"
     color="neutral"
@@ -72,52 +72,52 @@
     class="p-0!"
     @click.stop="$emit('click')"
   >
-    <UBadge :color="badgeColor" :variant="variant" :size="size" class="justify-center cursor-pointer">
+    <CoreAppBadge :color="badgeColor" :variant="variant" :size="size" class="justify-center cursor-pointer">
       <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
-      <UIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
+      <CoreAppIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
       <span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label }}</span>
       <span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
-    </UBadge>
-  </UButton>
-  <UBadge
+    </CoreAppBadge>
+  </CoreAppButton>
+  <CoreAppBadge
     v-else-if="displayValue !== null && displayValue > 0"
     :color="badgeColor"
     :variant="variant"
     :size="size"
     class="justify-center"
-    :class="{ 'cursor-pointer': clickable }"
+    :class="clickable ? 'cursor-pointer' : ''"
     v-on="clickable ? { click: onBadgeClick } : {}"
   >
     <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
-    <UIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
+    <CoreAppIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
     <span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label }}</span>
     <span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
-  </UBadge>
-  <UBadge
+  </CoreAppBadge>
+  <CoreAppBadge
     v-else-if="label && displayValue === null"
     :color="badgeColor"
     :variant="variant"
     :size="size"
     class="gap-1"
-    :class="{ 'cursor-pointer': clickable }"
+    :class="clickable ? 'cursor-pointer' : ''"
     v-on="clickable ? { click: onBadgeClick } : {}"
   >
     <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
-    <UIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
+    <CoreAppIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
     <span class="text-[12px] leading-none" :style="contentTextStyle">{{ label }}</span>
-  </UBadge>
-  <UBadge
+  </CoreAppBadge>
+  <CoreAppBadge
     v-else-if="displayValue === null && (icon || imageSrc)"
     :color="badgeColor"
     :variant="variant"
     :size="size"
     class="justify-center"
-    :class="{ 'cursor-pointer': clickable }"
+    :class="clickable ? 'cursor-pointer' : ''"
     v-on="clickable ? { click: onBadgeClick } : {}"
   >
     <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
-    <UIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
-  </UBadge>
+    <CoreAppIcon v-else-if="icon" :name="icon" :class="iconSizeClass" />
+  </CoreAppBadge>
   <span v-else-if="!tooltip" class="text-(--color-text-muted) text-xs flex justify-center">-</span>
 </template>
 

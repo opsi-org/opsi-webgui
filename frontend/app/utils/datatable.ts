@@ -48,17 +48,26 @@ export function hasMoreInfiniteData(stalled: boolean, rowCount: number, serverTo
 }
 
 /**
- * Page size for reloading the rows that are currently loaded in infinite
- * scroll mode as a single page-1 request. Reloading with the last requested
- * page number instead would replace all loaded rows by that single page,
- * which drops earlier rows and breaks the visible ordering.
+ * Number of pages retained by an infinite table after older pages are discarded.
  *
- * @param perPage configured page size of the table
- * @param loadedRows number of rows currently held by the view
+ * Scrolling back up past the evicted window shows blank rows (the data is gone and
+ * nothing re-fetches it), so this trades a bit of memory for a much larger scroll-back
+ * range: at the default page size that is still only a few thousand plain row objects,
+ * which is negligible next to the DOM savings virtualization already provides.
  */
-export function reloadWindowPerPage(perPage: number, loadedRows: number): number {
-  if (perPage <= 0) return perPage
-  return Math.max(1, Math.ceil(loadedRows / perPage)) * perPage
+export const INFINITE_WINDOW_PAGE_COUNT = 20
+
+/**
+ * Appends one server page to a bounded in-memory window without copying the
+ * previously retained rows. Returns the number of discarded leading rows so
+ * callers can retain their absolute virtual-scroll offset.
+ */
+export function appendInfinitePage<T>(rows: T[], page: T[], perPage: number): number {
+  rows.push(...page)
+  const maxRows = Math.max(1, perPage) * INFINITE_WINDOW_PAGE_COUNT
+  const overflow = Math.max(0, rows.length - maxRows)
+  if (overflow > 0) rows.splice(0, overflow)
+  return overflow
 }
 
 export interface PrefetchCheckInput {

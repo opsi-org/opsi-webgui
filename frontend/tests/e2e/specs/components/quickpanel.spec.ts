@@ -89,7 +89,7 @@ async function openClientQuickActionsMenu(page: Page) {
   await expect(trigger).toBeVisible({ timeout: 10000 })
   await expect(trigger).toBeEnabled({ timeout: 10000 })
   await trigger.click()
-  const menuItems = page.getByRole('menuitem')
+  const menuItems = page.getByRole('option')
   await expect(menuItems.first()).toBeVisible({ timeout: 10000 })
   return menuItems
 }

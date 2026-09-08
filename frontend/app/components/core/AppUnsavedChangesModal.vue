@@ -10,12 +10,12 @@
 
 <template>
   <template v-if="totalChangesCount > 0">
-    <UButton :size="size" color="warning" variant="soft" @click="open = true">
+    <CoreAppButton :size="size" color="warning" variant="soft" @click="open = true">
       {{ $t('unsaved.changes') }}
       <CoreAppStatusBadge status="warning" size="xs" :value="totalChangesCount" />
-    </UButton>
+    </CoreAppButton>
     <CoreAppHoverPopover v-if="showSaveDiscard" :title="String($t('unsaved.quickActions'))">
-      <UButton
+      <CoreAppButton
         :size="size"
         color="neutral"
         variant="outline"
@@ -25,17 +25,17 @@
         :aria-label="String($t('unsaved.quickActions'))"
       />
       <template #content>
-        <UButton size="sm" color="success" variant="soft" :icon="icons.check" block :loading="isSaving" @click="handleQuickSave">
+        <CoreAppButton size="sm" color="success" variant="soft" :icon="icons.check" block :loading="isSaving" @click="handleQuickSave">
           {{ $t('unsaved.saveNow') }}
-        </UButton>
-        <UButton size="sm" color="error" variant="soft" :icon="icons.delete" block @click="handleQuickDiscard">
+        </CoreAppButton>
+        <CoreAppButton size="sm" color="error" variant="soft" :icon="icons.delete" block @click="handleQuickDiscard">
           {{ $t('unsaved.discardNow') }}
-        </UButton>
+        </CoreAppButton>
       </template>
     </CoreAppHoverPopover>
   </template>
 
-  <UModal v-model:open="open" :title="$t('unsaved.changes')" :ui="{ content: 'w-[94vw] max-w-[56rem] h-auto max-h-[76vh]' }">
+  <CoreAppModal v-model:open="open" :title="$t('unsaved.changes')" :ui="{ content: 'w-[94vw] max-w-4xl h-auto max-h-[76vh]' }">
     <template #body>
       <div class="flex flex-col gap-3 h-full min-h-0 overflow-hidden">
         <!-- Result alerts inside modal -->
@@ -73,22 +73,22 @@
             <CoreAppTable :columns="productChangeColumns" max-height="100%" wrapper-class="h-full min-h-0">
               <tr v-for="change in flatChanges" :key="change.key" class="hover:bg-(--color-surface-hover)">
                 <td class="px-2 py-1 max-w-32 font-medium">
-                  <UTooltip :text="change.productId" :delay-duration="300">
+                  <CoreAppTooltip :text="change.productId" :delay-duration="300">
                     <span class="block truncate">{{ change.productId }}</span>
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
                 <td v-if="mode !== 'actionRequests'" class="px-2 py-1 max-w-28 text-(--color-text-muted)">
-                  <UTooltip :text="change.label" :delay-duration="300">
+                  <CoreAppTooltip :text="change.label" :delay-duration="300">
                     <span class="block truncate">{{ change.label }}</span>
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
                 <td class="px-2 py-1 max-w-24 text-(--color-text-muted)">
-                  <UTooltip :text="formatProductChangeValue(change, change.oldValue)" :delay-duration="300">
+                  <CoreAppTooltip :text="formatProductChangeValue(change, change.oldValue)" :delay-duration="300">
                     <span class="block truncate">{{ formatProductChangeValue(change, change.oldValue) }}</span>
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
                 <td class="px-2 py-1 max-w-24 font-medium">
-                  <UTooltip :text="formatProductChangeValue(change, change.newValue)" :delay-duration="300">
+                  <CoreAppTooltip :text="formatProductChangeValue(change, change.newValue)" :delay-duration="300">
                     <CoreAppStatusBadge
                       v-if="change.type === 'actionRequest'"
                       :status="getActionRequestStatus(change.newValue)"
@@ -96,12 +96,12 @@
                       size="xs"
                     />
                     <span v-else class="block truncate">{{ formatProductChangeValue(change, change.newValue) }}</span>
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
                 <td class="px-2 py-1 text-center">
-                  <UTooltip :text="$t('common.discard')">
-                    <UButton size="xs" :icon="icons.x" color="neutral" variant="ghost" @click="change.discard()" />
-                  </UTooltip>
+                  <CoreAppTooltip :text="$t('common.discard')">
+                    <CoreAppButton size="xs" :icon="icons.x" color="neutral" variant="ghost" @click="change.discard()" />
+                  </CoreAppTooltip>
                 </td>
               </tr>
             </CoreAppTable>
@@ -117,24 +117,30 @@
             <CoreAppTable :columns="paramChangeColumns" max-height="100%" wrapper-class="h-full min-h-0">
               <tr v-for="[key] in configRef?.changedParams" :key="key" class="hover:bg-(--color-surface-hover)">
                 <td class="px-2 py-1 max-w-40 font-medium">
-                  <UTooltip :text="key" :delay-duration="300">
+                  <CoreAppTooltip :text="key" :delay-duration="300">
                     <span class="block truncate">{{ key }}</span>
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
                 <td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
-                  <UTooltip :text="fmtVal(configRef?.getOriginalParamValue?.(key))" :delay-duration="300">
+                  <CoreAppTooltip :text="fmtVal(configRef?.getOriginalParamValue?.(key))" :delay-duration="300">
                     <span class="block truncate">{{ fmtVal(configRef?.getOriginalParamValue?.(key)) }}</span>
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
                 <td class="px-2 py-1 max-w-28 font-medium">
-                  <UTooltip :text="fmtVal(configRef?.changedParams?.get(key))" :delay-duration="300">
+                  <CoreAppTooltip :text="fmtVal(configRef?.changedParams?.get(key))" :delay-duration="300">
                     <span class="block truncate">{{ fmtVal(configRef?.changedParams?.get(key)) }}</span>
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
                 <td class="px-2 py-1 text-center">
-                  <UTooltip :text="$t('common.discard')">
-                    <UButton size="xs" :icon="icons.x" color="neutral" variant="ghost" @click="configRef?.discardSingleParam?.(key)" />
-                  </UTooltip>
+                  <CoreAppTooltip :text="$t('common.discard')">
+                    <CoreAppButton
+                      size="xs"
+                      :icon="icons.x"
+                      color="neutral"
+                      variant="ghost"
+                      @click="configRef?.discardSingleParam?.(key)"
+                    />
+                  </CoreAppTooltip>
                 </td>
               </tr>
             </CoreAppTable>
@@ -150,30 +156,30 @@
             <CoreAppTable :columns="attrChangeColumns" max-height="100%" wrapper-class="h-full min-h-0">
               <tr v-for="item in configRef?.changedAttributesList" :key="item.key" class="hover:bg-(--color-surface-hover)">
                 <td class="px-2 py-1 max-w-40 font-medium">
-                  <UTooltip :text="item.key" :delay-duration="300">
+                  <CoreAppTooltip :text="item.key" :delay-duration="300">
                     <span class="block truncate">{{ item.key }}</span>
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
                 <td class="px-2 py-1 max-w-28 text-(--color-text-muted)">
-                  <UTooltip :text="fmtVal(item.oldValue)" :delay-duration="300">
+                  <CoreAppTooltip :text="fmtVal(item.oldValue)" :delay-duration="300">
                     <span class="block truncate">{{ fmtVal(item.oldValue) }}</span>
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
                 <td class="px-2 py-1 max-w-28 font-medium">
-                  <UTooltip :text="fmtVal(item.newValue)" :delay-duration="300">
+                  <CoreAppTooltip :text="fmtVal(item.newValue)" :delay-duration="300">
                     <span class="block truncate">{{ fmtVal(item.newValue) }}</span>
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
                 <td class="px-2 py-1 text-center">
-                  <UTooltip :text="$t('common.discard')">
-                    <UButton
+                  <CoreAppTooltip :text="$t('common.discard')">
+                    <CoreAppButton
                       size="xs"
                       :icon="icons.x"
                       color="neutral"
                       variant="ghost"
                       @click="configRef?.discardSingleAttribute?.(item.key)"
                     />
-                  </UTooltip>
+                  </CoreAppTooltip>
                 </td>
               </tr>
             </CoreAppTable>
@@ -190,7 +196,7 @@
         <!-- Save & Process options (products mode) -->
         <div v-if="showProcessOptions && totalChangesCount > 0" class="border border-(--color-border) rounded-lg overflow-hidden">
           <div class="bg-(--color-surface) px-3 py-1.5 flex items-center gap-2">
-            <UIcon :name="icons.onDemand" class="w-4 h-4 text-(--color-text-muted)" />
+            <CoreAppIcon :name="icons.onDemand" class="w-4 h-4 text-(--color-text-muted)" />
             <span class="flex items-center gap-2 cursor-pointer">
               <CoreAppCheckbox v-model="processAfterSave" size="sm" />
               <span class="text-sm font-medium">{{ $t('actions.saveAndProcess') }}</span>
@@ -238,16 +244,16 @@
         </div>
         <div class="flex gap-2 justify-end">
           <template v-if="totalChangesCount > 0">
-            <UButton variant="outline" color="primary" @click="handleDiscardAll">{{ $t('common.discardAll') }} </UButton>
-            <UButton color="primary" :loading="isSaving" @click="handleSaveAll">
+            <CoreAppButton variant="outline" color="primary" @click="handleDiscardAll">{{ $t('common.discardAll') }} </CoreAppButton>
+            <CoreAppButton color="primary" :loading="isSaving" @click="handleSaveAll">
               {{ processAfterSave && showProcessOptions ? $t('actions.saveAndProcess') : $t('common.saveAll') }}
-            </UButton>
+            </CoreAppButton>
           </template>
-          <UButton v-else variant="ghost" color="neutral" @click="open = false">{{ $t('common.close') }} </UButton>
+          <CoreAppButton v-else variant="ghost" color="neutral" @click="open = false">{{ $t('common.close') }} </CoreAppButton>
         </div>
       </div>
     </template>
-  </UModal>
+  </CoreAppModal>
 </template>
 
 <script setup lang="ts">

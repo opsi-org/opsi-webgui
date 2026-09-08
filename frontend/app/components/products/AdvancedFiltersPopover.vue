@@ -9,7 +9,7 @@
 -->
 <template>
   <CoreAppHoverPopover :title="String($t('common.advancedFilters'))" content-class="min-w-80 max-w-150">
-    <UButton
+    <CoreAppButton
       :aria-label="String($t('common.advancedFilters'))"
       variant="outline"
       color="primary"
@@ -24,17 +24,18 @@
         secondary-class="w-2.5 h-2.5"
       />
       <template v-if="activeCount > 0">{{ activeCount }}</template>
-    </UButton>
+    </CoreAppButton>
 
     <template #content>
       <p class="m-0 text-xs text-(--color-text-muted)">{{ $t('products.advancedFilters.scopeHelp') }}</p>
 
       <div class="flex flex-col gap-1">
         <span class="text-xs text-(--color-text-muted)">{{ $t('products.status') }}</span>
-        <CoreAppSelect
+        <CoreAppSelectMenu
           :model-value="modelValue.installationStatus || 'all'"
           :items="installationStatusOptions"
           size="sm"
+          open-on-hover
           :aria-label="String($t('products.status'))"
           @update:model-value="(v: string) => setFilter({ installationStatus: v === 'all' ? undefined : v })"
         />
@@ -51,7 +52,7 @@
       />
 
       <div class="pt-1">
-        <UButton variant="outline" color="primary" size="xs" block @click="reset">{{ $t('common.resetDefaults') }}</UButton>
+        <CoreAppButton variant="outline" color="primary" size="xs" block @click="reset">{{ $t('common.resetDefaults') }}</CoreAppButton>
       </div>
     </template>
   </CoreAppHoverPopover>

@@ -96,7 +96,7 @@
                     <span class="text-xs text-(--color-text-muted) block mb-1">
                       {{ $t('products.status') }}
                     </span>
-                    <CoreAppSelect
+                    <CoreAppSelectMenu
                       v-model="filters.installationStatus"
                       :items="installationStatusOptions"
                       size="xs"
@@ -110,7 +110,7 @@
                     <span class="text-xs text-(--color-text-muted) block mb-1">
                       {{ $t('actions.result') }}
                     </span>
-                    <CoreAppSelect
+                    <CoreAppSelectMenu
                       v-model="filters.actionResult"
                       :items="actionResultOptions"
                       size="xs"
@@ -138,7 +138,7 @@
                 {{ $t('actions.request') }}
               </span>
               <div class="flex-1">
-                <CoreAppSelect
+                <CoreAppSelectMenu
                   v-model="actionRequest"
                   :items="actionRequestOptions"
                   size="sm"
@@ -155,7 +155,7 @@
                 {{ $t('fields.scope') }}
               </span>
               <div class="flex-1">
-                <CoreAppSelect
+                <CoreAppSelectMenu
                   v-model="scope"
                   :items="scopeOptions"
                   size="sm"

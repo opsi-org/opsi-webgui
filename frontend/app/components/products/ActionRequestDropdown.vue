@@ -9,37 +9,31 @@
 -->
 <template>
   <div v-if="mode === 'header'" class="flex items-center gap-1 w-full" @click.stop>
-    <CoreAppPopover v-if="hasClientsSelected && hasProductsSelected" class="flex-1 min-w-0">
-      <CoreAppButton
-        size="xs"
-        variant="soft"
-        color="primary"
-        block
-        class="justify-between gap-1 w-full px-1.5! text-[0.6875rem]! font-medium tracking-wide"
+    <CoreAppSelectMenu
+      v-if="hasClientsSelected && hasProductsSelected"
+      :items="bulkActionItems"
+      :model-value="selectedBulkAction"
+      open-on-hover
+      borderless
+      no-caret
+      size="xs"
+      class="flex-1 min-w-0"
+      :aria-label="String($t('actions.request'))"
+      @update:model-value="handleBulkActionSelect"
+    >
+      <span
+        class="inline-flex items-center justify-between gap-1 w-full px-1.5! text-[0.6875rem]! font-medium tracking-wide"
+        :class="bulkActionTriggerClass"
       >
-        <span class="truncate">{{ $t('actions.request') }}</span>
+        <span class="truncate">{{ selectedBulkActionLabel }}</span>
         <CoreAppIcon :name="icons.chevronDown" class="w-3 h-3 shrink-0" />
-      </CoreAppButton>
-      <template #content>
-        <div class="p-2 w-44">
-          <p class="text-xs text-(--color-text-muted) mb-2">{{ $t('quick.setFor') }}</p>
-          <div class="space-y-1">
-            <CoreAppButton
-              v-for="action in bulkActionOptions"
-              :key="action"
-              size="xs"
-              variant="soft"
-              :color="getRequestStatus(action)"
-              block
-              class="justify-start"
-              @click="emit('apply', action)"
-            >
-              {{ getRequestSelectLabel(action) }}
-            </CoreAppButton>
-          </div>
-        </div>
+      </span>
+      <template #item="{ item }">
+        <span class="block w-full rounded px-2 py-1 text-xs font-medium" :class="getRequestMenuItemClass(menuItemValue(item))">
+          {{ getRequestSelectLabel(menuItemValue(item)) }}
+        </span>
       </template>
-    </CoreAppPopover>
+    </CoreAppSelectMenu>
     <span v-else class="flex-1 min-w-0 truncate text-left text-[0.6875rem] font-medium tracking-wide text-(--color-text-muted)">
       {{ $t('actions.request') }}
     </span>
@@ -58,12 +52,13 @@
       </CoreAppBadge>
     </CoreAppTooltipTable>
     <template v-else-if="!disabled">
-      <CoreAppSelect
+      <CoreAppSelectMenu
         v-model="selectedRequest"
         :items="requestItems"
         size="xs"
         class="min-w-24"
         :class="requestColorClass"
+        open-on-hover
         :aria-label="String($t('actions.request'))"
         @update:model-value="handleChange"
       />
@@ -118,6 +113,10 @@
 
   const bulkActionOptions = ['none', 'setup', 'uninstall', 'update', 'always', 'once', 'custom']
 
+  function menuItemValue(item: unknown): string {
+    return String((item as { value?: unknown })?.value ?? item ?? 'none')
+  }
+
   function normalizeRequest(value?: string | null): string {
     const normalized = (value || 'none').toLowerCase()
     return normalized || 'none'
@@ -125,6 +124,10 @@
 
   function getRequestStatus(value?: string | null): ActionRequestStatus {
     return getActionRequestStatus(value)
+  }
+
+  function getRequestMenuItemClass(value?: string | null): string {
+    return getActionRequestColorClass(value) || 'bg-(--color-surface)! text-(--color-text)!'
   }
 
   function getRequestLabel(value?: string | null): string {
@@ -197,8 +200,16 @@
     }))
   })
 
+  const bulkActionItems = computed(() =>
+    bulkActionOptions.map((action) => ({
+      label: getRequestSelectLabel(action),
+      value: action,
+    })),
+  )
+
   const originalRequest = ref(props.currentRequest || 'none')
   const selectedRequest = ref(props.currentRequest || 'none')
+  const selectedBulkAction = ref('')
 
   const hasChanged = computed(() => selectedRequest.value !== originalRequest.value)
 
@@ -213,8 +224,21 @@
     return getActionRequestColorClass(selectedRequest.value)
   })
 
+  const selectedBulkActionLabel = computed(() =>
+    selectedBulkAction.value ? getRequestSelectLabel(selectedBulkAction.value) : $t('actions.request'),
+  )
+
+  const bulkActionTriggerClass = computed(() => getActionRequestColorClass(selectedBulkAction.value) || 'text-(--color-text)')
+
   function handleChange(value: string) {
     emit('change', value)
+  }
+
+  function handleBulkActionSelect(value: unknown) {
+    const action = menuItemValue(value)
+    if (!action) return
+    selectedBulkAction.value = action
+    emit('apply', action)
   }
 
   function resetToOriginal() {

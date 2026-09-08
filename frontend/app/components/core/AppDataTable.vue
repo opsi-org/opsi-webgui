@@ -11,7 +11,7 @@
   <div class="data-table flex flex-col h-full min-h-0 min-w-0" :class="{ 'data-table--compact': isCompactDensity }">
     <div class="shrink-0 flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
       <div class="flex items-center gap-3 text-sm">
-        <UButton
+        <CoreAppButton
           v-if="selectedKeys.length > 0"
           :icon="icons.xCircle"
           variant="soft"
@@ -21,9 +21,9 @@
           @click="clearSelection"
         >
           {{ selectedKeys.length }}
-        </UButton>
+        </CoreAppButton>
         <CoreAppTooltip v-if="selectedKeys.length > 0" :text="String($t('settings.showOnlySelected'))">
-          <UButton
+          <CoreAppButton
             size="xs"
             variant="ghost"
             :color="onlySelected ? 'primary' : 'neutral'"
@@ -33,9 +33,9 @@
             @click="onlySelected = !onlySelected"
           />
         </CoreAppTooltip>
-        <UBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
+        <CoreAppBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
           {{ $t('settings.singleSelect') }}
-        </UBadge>
+        </CoreAppBadge>
       </div>
 
       <div class="flex items-center gap-2">
@@ -63,7 +63,7 @@
         </UFieldGroup>
 
         <CoreAppHoverPopover :title="String($t('settings.table'))" content-class="min-w-96">
-          <UButton
+          <CoreAppButton
             :icon="icons.tableSettings"
             :aria-label="$t('settings.table')"
             variant="outline"
@@ -76,7 +76,7 @@
               <div class="mb-3 grid grid-cols-[6.5rem_1fr] items-center gap-x-2 gap-y-2.5">
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.display') }}</span>
                 <div class="flex gap-0.5">
-                  <UButton
+                  <CoreAppButton
                     size="xs"
                     class="flex-1"
                     :color="'primary'"
@@ -84,8 +84,8 @@
                     @click="changeDisplayMode('infinite')"
                   >
                     {{ $t('settings.infiniteScroll') }}
-                  </UButton>
-                  <UButton
+                  </CoreAppButton>
+                  <CoreAppButton
                     size="xs"
                     class="flex-1"
                     :color="'primary'"
@@ -93,12 +93,12 @@
                     @click="changeDisplayMode('pagination')"
                   >
                     {{ $t('table.pagination') }}
-                  </UButton>
+                  </CoreAppButton>
                 </div>
 
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.selection') }}</span>
                 <div class="flex gap-0.5">
-                  <UButton
+                  <CoreAppButton
                     size="xs"
                     class="flex-1"
                     :color="'primary'"
@@ -106,8 +106,8 @@
                     @click="forceSelectionMode('multi')"
                   >
                     {{ $t('settings.multiSelect') }}
-                  </UButton>
-                  <UButton
+                  </CoreAppButton>
+                  <CoreAppButton
                     size="xs"
                     class="flex-1"
                     :color="'primary'"
@@ -115,15 +115,16 @@
                     @click="forceSelectionMode('single')"
                   >
                     {{ $t('settings.singleSelect') }}
-                  </UButton>
+                  </CoreAppButton>
                 </div>
 
                 <template v-if="panelViewOptions?.length">
                   <span class="text-xs text-(--color-text-muted)">{{ $t('settings.panelView') }}</span>
-                  <USelect
+                  <CoreAppSelectMenu
                     :model-value="panelView"
                     :items="panelViewOptions"
                     size="xs"
+                    open-on-hover
                     :aria-label="String($t('settings.panelView'))"
                     @update:model-value="(v: string) => emit('update:panelView', v)"
                   />
@@ -146,25 +147,27 @@
                     <CoreAppIcon :name="icons.info" class="w-3 h-3 cursor-help" />
                   </CoreAppTooltip>
                 </span>
-                <USelect
+                <CoreAppSelectMenu
                   :model-value="tableSettings.settings.pageSize"
                   :items="pageSizeOptions"
                   size="xs"
+                  open-on-hover
                   :aria-label="String($t('settings.pageSize'))"
                   @update:model-value="(v: number) => changePageSize(v)"
                 />
 
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.sortBy') }}</span>
                 <div class="flex items-center gap-1">
-                  <USelect
+                  <CoreAppSelectMenu
                     :model-value="tableSettings.settings.sortColumn"
                     :items="sortableColumnOptions"
                     size="xs"
+                    open-on-hover
                     :aria-label="String($t('settings.sortBy'))"
                     class="flex-1"
                     @update:model-value="(v: string) => handleSort(v)"
                   />
-                  <UButton
+                  <CoreAppButton
                     size="xs"
                     variant="ghost"
                     color="neutral"
@@ -195,14 +198,14 @@
                 </div>
               </div>
 
-              <UButton variant="outline" color="primary" size="xs" block @click="resetTableSettings">
+              <CoreAppButton variant="outline" color="primary" size="xs" block @click="resetTableSettings">
                 {{ $t('common.resetDefaults') }}
-              </UButton>
+              </CoreAppButton>
             </div>
           </template>
         </CoreAppHoverPopover>
 
-        <UButton
+        <CoreAppButton
           v-if="showRefresh"
           :icon="icons.refresh"
           variant="ghost"
@@ -215,7 +218,7 @@
       </div>
     </div>
 
-    <UCard
+    <CoreAppCard
       :ui="{ body: 'p-0 sm:p-0 flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden' }"
       :style="{ maxHeight: effectiveMaxHeight }"
       class="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden"
@@ -253,7 +256,7 @@
                       :aria-label="String($t('common.selectAll'))"
                       @change="toggleSelectAll"
                     />
-                    <UButton
+                    <CoreAppButton
                       v-if="selectedKeys.length > 0"
                       size="xs"
                       variant="ghost"
@@ -296,20 +299,20 @@
                   >
                     <div class="flex items-center gap-1">
                       <template v-if="col.headerIcon">
-                        <UTooltip :text="resolveColumnLabel(col)">
-                          <UIcon :name="col.headerIcon" class="w-4 h-4" :aria-label="resolveColumnLabel(col)" />
-                        </UTooltip>
+                        <CoreAppTooltip :text="resolveColumnLabel(col)">
+                          <CoreAppIcon :name="col.headerIcon" class="w-4 h-4" :aria-label="resolveColumnLabel(col)" />
+                        </CoreAppTooltip>
                       </template>
                       <template v-else>
                         {{ resolveColumnLabel(col) }}
                       </template>
                       <template v-if="col.sortable">
-                        <UIcon
+                        <CoreAppIcon
                           v-if="tableSettings.settings.sortColumn === col.key"
                           :name="tableSettings.settings.sortDirection === 'asc' ? icons.sortAsc : icons.sortDesc"
                           class="w-2 h-2"
                         />
-                        <UIcon v-else :name="icons.sort" class="w-2 h-2 opacity-80" />
+                        <CoreAppIcon v-else :name="icons.sort" class="w-2 h-2 opacity-80" />
                       </template>
                     </div>
                   </slot>
@@ -402,7 +405,7 @@
                 >
                   <div
                     class="flex items-center justify-center gap-0 rounded-md transition-colors"
-                    :class="isHighlighted(row) ? 'bg-(--color-primary)/10 ring-1 ring-(--color-primary)/30 px-0.5' : ''"
+                    :class="isHighlighted(row) ? 'bg-primary/10 ring-1 ring-primary/30 px-0.5' : ''"
                   >
                     <slot
                       name="row-actions"
@@ -422,7 +425,7 @@
               <tr v-if="visibleRows.length === 0 && !loading">
                 <td :colspan="totalColSpan" class="px-4 py-12 text-center">
                   <div class="flex flex-col items-center gap-2 text-(--color-text-muted)">
-                    <UIcon :name="icons.table" class="w-8 h-8 opacity-50" />
+                    <CoreAppIcon :name="icons.table" class="w-8 h-8 opacity-50" />
                     <span>{{ $t('common.noResults') }}</span>
                   </div>
                 </td>
@@ -443,7 +446,7 @@
           </table>
         </div>
       </div>
-    </UCard>
+    </CoreAppCard>
 
     <div class="shrink-0 px-1 rounded-b-lg flex items-center justify-between gap-4">
       <span class="text-xs text-(--color-text-muted)">
@@ -457,7 +460,7 @@
         <span v-if="onlySelected" class="ml-1 text-(--color-warning-soft-text)">{{ $t('settings.showOnlySelectedHint') }}</span>
       </span>
       <div v-if="displayMode === 'pagination' && totalPages > 1" class="flex items-center gap-1">
-        <UButton
+        <CoreAppButton
           :icon="icons.chevronLeft"
           :aria-label="$t('common.previous')"
           variant="outline"
@@ -468,7 +471,7 @@
         />
         <template v-for="page in visiblePageNumbers" :key="page">
           <span v-if="page === '...'" class="px-2 text-(--color-text-muted)">...</span>
-          <UButton
+          <CoreAppButton
             v-else
             :aria-label="`${$t('common.page')} ${page}` + (page === currentPage ? ` (${$t('common.current')})` : '')"
             :variant="page === currentPage ? 'solid' : 'ghost'"
@@ -478,9 +481,9 @@
             @click="goToPage(page as number)"
           >
             {{ page }}
-          </UButton>
+          </CoreAppButton>
         </template>
-        <UButton
+        <CoreAppButton
           :icon="icons.chevronRight"
           :aria-label="$t('common.next')"
           variant="outline"
@@ -518,6 +521,7 @@
     rowKey?: string
     loading?: boolean
     totalItems?: number
+    rowOffset?: number
 
     selectable?: boolean
     selectedKeys?: string[]
@@ -540,6 +544,7 @@
     rowKey: 'id',
     loading: false,
     totalItems: 0,
+    rowOffset: 0,
     selectable: true,
     filterable: true,
     showRefresh: true,
@@ -723,7 +728,9 @@
   })
 
   const hasMoreData = computed(() => {
-    if (displayMode.value === 'infinite') return hasMoreInfiniteData(autoPageStalled.value, props.rows.length, serverTotal.value)
+    if (displayMode.value === 'infinite') {
+      return hasMoreInfiniteData(autoPageStalled.value, props.rowOffset + props.rows.length, serverTotal.value)
+    }
     return false
   })
 
@@ -736,7 +743,11 @@
 
   const visibleRows = computed(() => {
     const test = localMatcher.value.test
-    if (!props.filterable || !test) return props.rows
+    // Server-compatible filters are applied before pagination. Filtering those
+    // rows again here makes every keystroke O(loaded rows × columns) and is
+    // redundant. Regular expressions cannot be represented by the API and
+    // therefore remain a local refinement of the current result page.
+    if (!props.filterable || !filterOptions.value.regex || !test) return props.rows
     const cols = filterableColumns.value
     return props.rows.filter((row) => {
       for (const col of cols) {
@@ -758,25 +769,33 @@
   let rowHeightMeasured = false
   let containerHeight = 0
 
-  const virtualizationActive = computed(() => visibleRows.value.length > VIRTUALIZATION_MIN_ROWS)
-  const displayStartIndex = computed(() => (virtualizationActive.value ? virtualStart.value : 0))
-  const displayRows = computed(() =>
-    virtualizationActive.value ? visibleRows.value.slice(virtualStart.value, virtualStart.value + virtualCount.value) : visibleRows.value,
-  )
+  const virtualizationActive = computed(() => props.rowOffset > 0 || visibleRows.value.length > VIRTUALIZATION_MIN_ROWS)
+  const displayStartIndex = computed(() => (virtualizationActive.value ? virtualStart.value : props.rowOffset))
+  const displayRows = computed(() => {
+    if (!virtualizationActive.value) return visibleRows.value
+    const start = Math.max(0, virtualStart.value - props.rowOffset)
+    return visibleRows.value.slice(start, start + virtualCount.value)
+  })
   const topSpacerHeight = computed(() => (virtualizationActive.value ? virtualStart.value * measuredRowHeight.value : 0))
   const bottomSpacerHeight = computed(() => {
     if (!virtualizationActive.value) return 0
     const rendered = virtualStart.value + displayRows.value.length
-    return Math.max(0, visibleRows.value.length - rendered) * measuredRowHeight.value
+    return Math.max(0, props.rowOffset + visibleRows.value.length - rendered) * measuredRowHeight.value
   })
 
-  // Reading offsetHeight forces a synchronous layout, so the row height is measured
-  // once and only re-measured when the rendered columns change.
+  // Reading layout metrics forces a synchronous layout, so the row height is measured once
+  // per row-set/column change instead of on every scroll. getBoundingClientRect (sub-pixel)
+  // is used instead of offsetHeight (rounded to an integer): at fractional browser/OS zoom
+  // levels the rounding error is tiny per row but accumulates with the row index, and by the
+  // time the spacer math reaches rows near the bottom of a long table it is off by enough
+  // pixels to show as blank rows - exactly what a one-time, unrefreshed measurement can't recover from.
   function measureRowHeight() {
     if (rowHeightMeasured) return
     const rowEl = tableContainer.value?.querySelector('tbody .data-table-row') as HTMLElement | null
-    if (rowEl && rowEl.offsetHeight > 0) {
-      measuredRowHeight.value = rowEl.offsetHeight
+    if (!rowEl) return
+    const height = rowEl.getBoundingClientRect().height
+    if (height > 0) {
+      measuredRowHeight.value = height
       rowHeightMeasured = true
     }
   }
@@ -791,7 +810,7 @@
   function updateVirtualWindow() {
     const el = tableContainer.value
     if (!el || !virtualizationActive.value) {
-      virtualStart.value = 0
+      virtualStart.value = props.rowOffset
       return
     }
     measureRowHeight()
@@ -800,11 +819,12 @@
     const visibleCount = Math.ceil(containerHeight / rowHeight) + VIRTUALIZATION_OVERSCAN * 2
     const firstVisible = Math.floor(el.scrollTop / rowHeight) - VIRTUALIZATION_OVERSCAN
     virtualCount.value = visibleCount
-    virtualStart.value = Math.max(0, Math.min(firstVisible, visibleRows.value.length - visibleCount))
+    const maxStart = Math.max(props.rowOffset, props.rowOffset + visibleRows.value.length - visibleCount)
+    virtualStart.value = Math.max(props.rowOffset, Math.min(firstVisible, maxStart))
   }
 
   function scrollToTop() {
-    virtualStart.value = 0
+    virtualStart.value = props.rowOffset
     tableContainer.value?.scrollTo({ top: 0 })
   }
 
@@ -1008,6 +1028,10 @@
     autoPageStalled.value = false
     autoPageRowCountAtRequest = -1
     currentPage.value = 1
+    // Data reloads back to page 1, so the scroll/virtual window must follow - otherwise the
+    // browser keeps its old scroll position while the spacer math jumps back to row 0,
+    // which is exactly the "refresh doesn't fix the blank rows" symptom.
+    scrollToTop()
     emitPageChange()
   }
 
@@ -1065,7 +1089,7 @@
       return
     }
     sentinelLoadPending = true
-    autoPageRowCountAtRequest = props.rows.length
+    autoPageRowCountAtRequest = props.rowOffset + props.rows.length
     currentPage.value++
     emitPageChange()
     setTimeout(() => {
@@ -1147,12 +1171,15 @@
   })
 
   watch(
-    () => props.rows.length,
-    async (newLength, oldLength) => {
-      if (newLength !== oldLength) {
+    () => [props.rows.length, props.rowOffset],
+    async ([newLength, newOffset], [oldLength, oldOffset]) => {
+      if (newLength !== oldLength || newOffset !== oldOffset) {
         // Row set changed: allow auto-paging again.
         autoPageStalled.value = false
         autoPageRowCountAtRequest = -1
+        // Re-verify the row height on every fetch/reload instead of trusting a value measured
+        // once at mount - a stale value is exactly what let the spacer drift survive a refresh.
+        rowHeightMeasured = false
       }
       await nextTick()
       updateVirtualWindow()
@@ -1167,7 +1194,7 @@
       if (!loading) {
         // A next-page request finished without adding rows: stall auto-paging
         // to avoid an endless request loop on inconsistent data/total.
-        if (isAutoPageStalled(autoPageRowCountAtRequest, props.rows.length)) {
+        if (isAutoPageStalled(autoPageRowCountAtRequest, props.rowOffset + props.rows.length)) {
           autoPageStalled.value = true
         }
         autoPageRowCountAtRequest = -1
@@ -1349,6 +1376,17 @@
 
   .data-table--compact .data-table-row {
     contain-intrinsic-size: 30px;
+  }
+
+  /* Virtualization positions rows by multiplying a single measured row height (see
+     measureRowHeight in the script) with the row index. Any row that renders taller than
+     that (e.g. a live-status badge appearing after a save, or an extra wrapped line) makes
+     the spacer rows over/under-shoot, which is exactly what showed up as "blank" rows above
+     or below the changed one. Clamping every row to a fixed height keeps that assumption true. */
+  .data-table--compact .data-table-row > td {
+    height: 1.875rem;
+    max-height: 1.875rem;
+    overflow: hidden;
   }
 
   .data-table-body .data-table-row {
