@@ -21,6 +21,7 @@ from opsiconfd.addon import Addon  # type: ignore
 from opsiconfd.session import (  # type: ignore
 	ACCESS_ROLE_AUTHENTICATED,
 	ACCESS_ROLE_PUBLIC,
+	SessionMiddleware,
 )
 from opsiconfd.utils import Singleton  # type: ignore
 from opsiconfd.utils.fastapi import remove_route_path  # type: ignore
@@ -61,6 +62,17 @@ class Webgui(Addon, metaclass=Singleton):
 	name = ADDON_NAME
 	version = ADDON_VERSION
 
+	def _register_static_public_path(self, app: FastAPI) -> None:
+		"""Prevent static WebGUI assets from creating an opsiconfd session."""
+		static_path = f"{self.router_prefix}/app"
+		for middleware in app.user_middleware:
+			if middleware.cls is not SessionMiddleware:
+				continue
+			public_paths = middleware.kwargs.get("public_path")
+			if isinstance(public_paths, list) and static_path not in public_paths:
+				public_paths.append(static_path)
+			return
+
 	def init(self) -> None:
 		# Init config
 		if Globals().config is not None:
@@ -96,6 +108,7 @@ class Webgui(Addon, metaclass=Singleton):
 			return
 
 		self.init()
+		self._register_static_public_path(app)
 
 		app.include_router(api_router, prefix=self.router_prefix)
 		app.include_router(product_router, prefix=self.router_prefix)

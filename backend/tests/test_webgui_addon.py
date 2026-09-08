@@ -9,6 +9,8 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
+from fastapi import FastAPI
+from opsiconfd.session import SessionMiddleware
 
 from webgui.python import Webgui
 
@@ -23,6 +25,18 @@ def _new_addon() -> Webgui:
 	# Avoid Addon/Singleton setup side effects; method under test only needs
 	# instance methods and logging.
 	return object.__new__(Webgui)
+
+
+def test_register_static_public_path_prevents_asset_sessions() -> None:
+	app = FastAPI()
+	app.add_middleware(SessionMiddleware, public_path=["/static"])
+
+	addon = _new_addon()
+	addon._register_static_public_path(app)
+	addon._register_static_public_path(app)
+
+	public_paths = app.user_middleware[0].kwargs["public_path"]
+	assert public_paths == ["/static", "/addons/webgui/app"]
 
 
 @pytest.mark.asyncio
