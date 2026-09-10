@@ -26,10 +26,12 @@
     </template>
 
     <template #actions>
-      <label v-if="activeTab === 'software'" class="flex items-center gap-1.5 text-xs text-(--color-text-muted)">
-        <CoreAppCheckbox v-model="includeKbUpdates" />
-        {{ $t('inventory.includeKbUpdates') }}
-      </label>
+      <CoreAppCheckbox
+        v-if="activeTab === 'software'"
+        v-model="includeKbUpdates"
+        :label="String($t('inventory.includeKbUpdates'))"
+        :ui="{ label: 'text-xs text-(--color-text-muted)' }"
+      />
       <CoreAppButton
         :icon="icons.refresh"
         variant="ghost"
@@ -41,17 +43,18 @@
         :title="String($t('common.refresh'))"
         @click="refreshCurrentTab"
       />
-      <CoreAppButton
-        :icon="icons.download"
-        variant="outline"
-        color="primary"
-        size="sm"
-        :disabled="!currentMeta || exporting"
-        :loading="exporting"
-        :aria-label="String($t('inventory.export'))"
-        :title="String($t('inventory.export'))"
-        @click="exportCsv"
-      />
+      <CoreAppTooltip :text="String($t('inventory.exportDesc'))">
+        <CoreAppButton
+          :icon="icons.download"
+          variant="outline"
+          color="primary"
+          size="sm"
+          :disabled="!currentMeta || exporting"
+          :loading="exporting"
+          :aria-label="String($t('inventory.export'))"
+          @click="exportCsv"
+        />
+      </CoreAppTooltip>
     </template>
 
     <div class="flex flex-col h-full min-h-0 gap-1.5">
@@ -104,12 +107,13 @@
           @update:filter-query="handleFilterQueryUpdate"
         >
           <template #status>
-            <CoreAppBadge
-              v-if="currentMeta"
-              :color="metaStateColor(currentMeta.state)"
-              :label="String($t(`inventory.${currentMeta.state === 'not_scanned' ? 'notScanned' : currentMeta.state}`))"
-              size="xs"
-            />
+            <CoreAppTooltip v-if="currentMeta" :text="metaStateDesc(currentMeta.state)">
+              <CoreAppBadge
+                :color="metaStateColor(currentMeta.state)"
+                :label="String($t(`inventory.${currentMeta.state === 'not_scanned' ? 'notScanned' : currentMeta.state}`))"
+                size="xs"
+              />
+            </CoreAppTooltip>
             <span v-if="currentMeta?.lastScan" class="text-[0.6875rem] text-(--color-text-muted)">
               {{ $t('inventory.scannedAt') }}: {{ currentMeta.lastScan }}
             </span>
@@ -289,8 +293,24 @@
   const dataTableRef = ref<{ refresh: () => void } | null>(null)
   const summary = ref<InventorySummary | null>(null)
 
+  const INVENTORY_STALE_DAYS = 30
+
   function metaStateColor(state: InventoryMeta['state']) {
     return state === 'ok' ? 'success' : state === 'stale' ? 'warning' : 'neutral'
+  }
+
+  // Tooltip copy for the status badge: explains what each inventory state means.
+  function metaStateDesc(state: InventoryMeta['state']): string {
+    switch (state) {
+      case 'ok':
+        return String($t('inventory.okDesc', { days: INVENTORY_STALE_DAYS }))
+      case 'stale':
+        return String($t('inventory.staleDesc', { days: INVENTORY_STALE_DAYS }))
+      case 'empty':
+        return String($t('inventory.emptyDesc'))
+      default:
+        return String($t('inventory.notScannedDesc'))
+    }
   }
 
   // Compact tab tooltip: scan state plus last-scan date, so the tab stays a single line.
