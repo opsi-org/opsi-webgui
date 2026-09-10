@@ -244,6 +244,12 @@ export default defineAppConfig({
         item: 'text-(--color-text) rounded-lg transition-colors duration-100 hover:bg-(--color-surface-hover) data-[highlighted]:bg-(--color-surface-hover) data-[state=checked]:bg-(--color-primary-soft-bg) data-[state=checked]:text-(--color-text)',
         itemLeadingIcon: 'text-(--color-text-muted)',
       },
+      variants: {
+        variant: {
+          // Used via CoreAppSelectMenu's `borderless` prop for icon-only triggers (e.g. row action menus).
+          ghost: 'bg-transparent border-transparent hover:bg-(--color-surface-hover)',
+        },
+      },
     },
     toggle: {
       slots: {

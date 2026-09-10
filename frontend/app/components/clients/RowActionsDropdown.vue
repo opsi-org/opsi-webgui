@@ -36,6 +36,19 @@
     />
 
     <CoreAppButton
+      v-if="showAllActions || defaultAction === 'inventory'"
+      :icon="icons.inventory"
+      variant="ghost"
+      size="xs"
+      class="h-7 w-7 p-1"
+      :color="activeAction === 'inventory' ? 'primary' : 'neutral'"
+      :class="activeAction === 'inventory' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+      :aria-label="String($t('inventory.title'))"
+      data-testid="client-row-action-inventory"
+      @click="emit('open-inventory')"
+    />
+
+    <CoreAppButton
       v-if="showAllActions || defaultAction === 'clone'"
       :icon="icons.clone"
       variant="ghost"
@@ -56,10 +69,10 @@
 <script setup lang="ts">
   const props = defineProps<{
     clientId: string
-    defaultAction?: 'config' | 'logs' | 'clone'
+    defaultAction?: 'config' | 'logs' | 'inventory' | 'clone'
     showAllActions?: boolean
     /** Which panel is currently open for this row (highlights the matching button). */
-    activeAction?: 'config' | 'logs' | 'clone' | null
+    activeAction?: 'config' | 'logs' | 'inventory' | 'clone' | null
   }>()
 
   const defaultAction = computed(() => props.defaultAction || 'config')
@@ -68,6 +81,7 @@
   const emit = defineEmits<{
     (e: 'open-config'): void
     (e: 'open-logs'): void
+    (e: 'open-inventory'): void
     (e: 'open-clone'): void
     (e: 'action-complete', action: string, success: boolean): void
   }>()

@@ -11,31 +11,34 @@
   <div class="data-table flex flex-col h-full min-h-0 min-w-0" :class="{ 'data-table--compact': isCompactDensity }">
     <div class="shrink-0 flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
       <div class="flex items-center gap-3 text-sm">
-        <CoreAppButton
-          v-if="selectedKeys.length > 0"
-          :icon="icons.xCircle"
-          variant="soft"
-          color="primary"
-          size="xs"
-          :title="`${selectedKeys.length} ${$t('common.selected')} - ${$t('common.clearSelection')}`"
-          @click="clearSelection"
-        >
-          {{ selectedKeys.length }}
-        </CoreAppButton>
-        <CoreAppTooltip v-if="selectedKeys.length > 0" :text="String($t('settings.showOnlySelected'))">
+        <template v-if="selectable">
           <CoreAppButton
+            v-if="selectedKeys.length > 0"
+            :icon="icons.xCircle"
+            variant="soft"
+            color="primary"
             size="xs"
-            variant="ghost"
-            :color="onlySelected ? 'primary' : 'neutral'"
-            :icon="onlySelected ? icons.eyeOff : icons.eye"
-            :aria-label="String($t('settings.showOnlySelected'))"
-            data-testid="show-only-selected"
-            @click="onlySelected = !onlySelected"
-          />
-        </CoreAppTooltip>
-        <CoreAppBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
-          {{ $t('settings.singleSelect') }}
-        </CoreAppBadge>
+            :title="`${selectedKeys.length} ${$t('common.selected')} - ${$t('common.clearSelection')}`"
+            @click="clearSelection"
+          >
+            {{ selectedKeys.length }}
+          </CoreAppButton>
+          <CoreAppTooltip v-if="selectedKeys.length > 0" :text="String($t('settings.showOnlySelected'))">
+            <CoreAppButton
+              size="xs"
+              variant="ghost"
+              :color="onlySelected ? 'primary' : 'neutral'"
+              :icon="onlySelected ? icons.eyeOff : icons.eye"
+              :aria-label="String($t('settings.showOnlySelected'))"
+              data-testid="show-only-selected"
+              @click="onlySelected = !onlySelected"
+            />
+          </CoreAppTooltip>
+          <CoreAppBadge v-if="effectiveSelectionMode === 'single'" color="info" variant="subtle" size="xs">
+            {{ $t('settings.singleSelect') }}
+          </CoreAppBadge>
+        </template>
+        <slot name="status" />
       </div>
 
       <div class="flex items-center gap-2">
@@ -96,27 +99,29 @@
                   </CoreAppButton>
                 </div>
 
-                <span class="text-xs text-(--color-text-muted)">{{ $t('settings.selection') }}</span>
-                <div class="flex gap-0.5">
-                  <CoreAppButton
-                    size="xs"
-                    class="flex-1"
-                    :color="'primary'"
-                    :variant="effectiveSelectionMode === 'multi' ? 'solid' : 'outline'"
-                    @click="forceSelectionMode('multi')"
-                  >
-                    {{ $t('settings.multiSelect') }}
-                  </CoreAppButton>
-                  <CoreAppButton
-                    size="xs"
-                    class="flex-1"
-                    :color="'primary'"
-                    :variant="effectiveSelectionMode === 'single' ? 'solid' : 'outline'"
-                    @click="forceSelectionMode('single')"
-                  >
-                    {{ $t('settings.singleSelect') }}
-                  </CoreAppButton>
-                </div>
+                <template v-if="selectable">
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.selection') }}</span>
+                  <div class="flex gap-0.5">
+                    <CoreAppButton
+                      size="xs"
+                      class="flex-1"
+                      :color="'primary'"
+                      :variant="effectiveSelectionMode === 'multi' ? 'solid' : 'outline'"
+                      @click="forceSelectionMode('multi')"
+                    >
+                      {{ $t('settings.multiSelect') }}
+                    </CoreAppButton>
+                    <CoreAppButton
+                      size="xs"
+                      class="flex-1"
+                      :color="'primary'"
+                      :variant="effectiveSelectionMode === 'single' ? 'solid' : 'outline'"
+                      @click="forceSelectionMode('single')"
+                    >
+                      {{ $t('settings.singleSelect') }}
+                    </CoreAppButton>
+                  </div>
+                </template>
 
                 <template v-if="panelViewOptions?.length">
                   <span class="text-xs text-(--color-text-muted)">{{ $t('settings.panelView') }}</span>
@@ -567,6 +572,7 @@
     [key: `header-cell-${string}`]: (props: { column: DataTableColumnDef; sortColumn: string; sortDirection: 'asc' | 'desc' }) => unknown
     [key: `cell-${string}`]: (props: { row: T; value: unknown; index: number }) => unknown
     'filter-actions': () => unknown
+    status: () => unknown
     'row-actions': (props: { row: T; index: number; selected: boolean; active: boolean }) => unknown
   }>()
 

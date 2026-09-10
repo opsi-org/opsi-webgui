@@ -348,6 +348,42 @@
   "hosts": {
     "select": "Host auswählen um Konfiguration anzuzeigen"
   },
+  "inventory": {
+    "absent": "Entfernt",
+    "architecture": "Architektur",
+    "class": "Klasse",
+    "count": "{count} Einträge",
+    "displayName": "Name",
+    "empty": "Keine Daten gefunden",
+    "emptyDesc": "Es wurde gescannt, aber es sind aktuell keine Einträge vorhanden.",
+    "export": "CSV exportieren",
+    "filterClass": "Nach Klasse filtern",
+    "firstSeen": "Zuerst gesehen",
+    "hardware": "Hardware",
+    "hardwareClass": "Hardwareklasse",
+    "identifier": "Kennung",
+    "includeAbsent": "Entfernte Einträge anzeigen",
+    "includeKbUpdates": "Microsoft/KB-Updates",
+    "kbUpdate": "KB-Update",
+    "language": "Sprache",
+    "limited": "Inventarergebnis begrenzt",
+    "limitedDesc": "Dieser Client hat {count} Einträge. In dieser Ansicht sind nur die ersten 5.000 gefilterten Einträge verfügbar.",
+    "nextPage": "Nächste Seite",
+    "noItems": "Keine Einträge entsprechen dem aktuellen Filter",
+    "notScanned": "Noch nicht gescannt",
+    "notScannedDesc": "Für diesen Client wurden noch keine Inventardaten erfasst.",
+    "ok": "Inventar aktuell",
+    "present": "Vorhanden",
+    "previousPage": "Vorherige Seite",
+    "page": "Seite {page} von {pages}",
+    "scannedAt": "Gescannt",
+    "select": "Client auswählen um Inventar anzuzeigen",
+    "software": "Software",
+    "stale": "Scandaten sind veraltet",
+    "staleDesc": "Der letzte Scan ist älter als {days} Tage. Ein clientseitiger Scan aktualisiert diese Daten.",
+    "title": "Inventar",
+    "version": "Version"
+  },
   "logs": {
     "clearMarker": "Marker löschen",
     "level": "Log-Level",
@@ -386,6 +422,7 @@
     "diagnostics": "Diagnose",
     "groups": "Gruppen",
     "healthcheck": "Health Check",
+    "inventory": "Inventar",
     "leaveAnyway": "Trotzdem verlassen",
     "logs": "Log",
     "maintenance": "Wartung",
@@ -558,7 +595,6 @@
   "redis": {
     "data": "Redis-Daten"
   },
-
   "savedSearches": {
     "title": "Gespeicherte Suchen",
     "help": "Gespeicherte Suche anwenden oder aktuellen Filter speichern.",

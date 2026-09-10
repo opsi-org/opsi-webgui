@@ -211,6 +211,7 @@
             { title: 'clone', route: '/clients/clone' },
             { title: 'configuration', route: '/clients/configuration/parameters', match: '/clients/configuration' },
             { title: 'logs', route: '/clients/logs' },
+            { title: 'inventory', route: '/clients/inventory' },
           ],
         },
         {

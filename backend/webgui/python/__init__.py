@@ -35,6 +35,7 @@ from .api.clients import api_router as client_router
 from .api.config import api_router as config_router
 from .api.depots import api_router as depot_router
 from .api.hosts import api_router as host_router
+from .api.inventory import api_router as inventory_router
 from .api.products import api_router as product_router
 from .api.server import api_router as server_router
 from .auth import Authentication
@@ -114,6 +115,7 @@ class Webgui(Addon, metaclass=Singleton):
 		app.include_router(product_router, prefix=self.router_prefix)
 		app.include_router(host_router, prefix=self.router_prefix)
 		app.include_router(client_router, prefix=self.router_prefix)
+		app.include_router(inventory_router, prefix=self.router_prefix)
 		app.include_router(depot_router, prefix=self.router_prefix)
 		app.include_router(config_router, prefix=self.router_prefix)
 		app.include_router(server_router, prefix=self.router_prefix)
