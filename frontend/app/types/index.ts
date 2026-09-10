@@ -68,6 +68,74 @@ export interface Client {
   reachable?: boolean | null
 }
 
+export type InventoryState = 'ok' | 'stale' | 'not_scanned' | 'empty'
+
+export interface InventoryMeta {
+  clientId: string
+  source: string
+  state: InventoryState
+  count: number
+  lastScan: string | null
+  truncated: boolean
+}
+
+export interface InventoryAttribute {
+  key: string
+  label: string
+  value: unknown
+}
+
+export interface HardwareInventoryItem {
+  identifier: string
+  hardwareClass: string
+  className: string
+  displayName: string
+  firstseen: string | null
+  lastseen: string | null
+  state: number | null
+  attributes: InventoryAttribute[]
+}
+
+export interface SoftwareInventoryItem {
+  identifier: string
+  name: string
+  version: string | null
+  subVersion: string | null
+  language: string | null
+  architecture: string | null
+  displayName: string
+  windowsSoftwareId: string | null
+  windowsDisplayName: string | null
+  windowsDisplayVersion: string | null
+  isOperatingSystem: boolean
+  isKbUpdate: boolean
+  installSize: number | null
+  firstseen: string | null
+  lastseen: string | null
+  state: number | null
+  usageFrequency: number | null
+  lastUsed: string | null
+  licenseKey: string | null
+  binaryName: string | null
+  uninstallString: string | null
+}
+
+export interface HardwareInventoryResponse {
+  meta: InventoryMeta
+  items: HardwareInventoryItem[]
+}
+
+export interface SoftwareInventoryResponse {
+  meta: InventoryMeta
+  items: SoftwareInventoryItem[]
+}
+
+export interface InventorySummary {
+  clientId: string
+  hardware: InventoryMeta
+  software: InventoryMeta
+}
+
 export interface ClientAttr {
   hostId: string
   type: string

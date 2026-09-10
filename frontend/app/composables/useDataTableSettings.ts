@@ -90,6 +90,22 @@ const defaults: Record<string, DataTableSettings> = {
     displayMode: 'pagination',
     selectionMode: 'multi',
   },
+  'inventory-hardware': {
+    visibleColumns: ['className', 'displayName', 'lastseen'],
+    sortColumn: 'className',
+    sortDirection: 'asc',
+    pageSize: 50,
+    displayMode: 'pagination',
+    selectionMode: 'single',
+  },
+  'inventory-software': {
+    visibleColumns: ['displayName', 'version', 'architecture', 'language', 'lastseen'],
+    sortColumn: 'displayName',
+    sortDirection: 'asc',
+    pageSize: 50,
+    displayMode: 'pagination',
+    selectionMode: 'single',
+  },
 }
 
 function getStored(): Record<string, DataTableSettings> {

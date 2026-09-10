@@ -17,6 +17,15 @@ interface ApiRequestOptions {
   signal?: AbortSignal
 }
 
+export function buildQueryString(params?: Record<string, unknown>): string {
+  if (!params) return ''
+  const entries = Object.entries(params)
+    .filter(([, value]) => value !== undefined && value !== null)
+    .map(([key, value]) => [key, typeof value === 'object' ? JSON.stringify(value) : String(value)] as [string, string])
+  const query = new URLSearchParams(entries).toString()
+  return query ? `?${query}` : ''
+}
+
 export function useApiHelpers() {
   const { $customFetch } = useNuxtApp() as unknown as {
     $customFetch: typeof $fetch
@@ -28,11 +37,7 @@ export function useApiHelpers() {
 
   async function apiGet<T>(url: string, params?: Record<string, unknown>, options?: ApiRequestOptions): Promise<ApiResponse<T>> {
     try {
-      const qs = params
-        ? '?' +
-          new URLSearchParams(Object.entries(params).map(([k, v]) => [k, typeof v === 'object' ? JSON.stringify(v) : String(v)])).toString()
-        : ''
-      const response = await $customFetch.raw<T>(url + qs, options)
+      const response = await $customFetch.raw<T>(url + buildQueryString(params), options)
       const total = response.headers.get('X-Total-Count')
       return {
         data: response._data ?? null,
@@ -82,6 +87,15 @@ export function useApiHelpers() {
       return { data, error: null, total: null }
     } catch (e) {
       return { data: null, error: e as Error, total: null }
+    }
+  }
+
+  async function apiGetBlob(url: string, params?: Record<string, unknown>): Promise<{ blob: Blob | null; error: Error | null }> {
+    try {
+      const blob = await $customFetch<Blob>(url + buildQueryString(params), { responseType: 'blob' })
+      return { blob, error: null }
+    } catch (e) {
+      return { blob: null, error: e as Error }
     }
   }
 
@@ -506,6 +520,51 @@ export function useApiHelpers() {
   const setAppState = (state: { type: string; address_exceptions?: string[]; retry_after?: number }) =>
     apiPost<{ type: string }>('/app-state', state)
 
+  // ---------------------------------------------------------------------------
+  // Client inventory (hardware/software audit data, read-only)
+  // ---------------------------------------------------------------------------
+
+  const getClientInventorySummary = (clientId: string) =>
+    apiGet<import('~/types').InventorySummary>(`/opsidata/clients/${clientId}/inventory/summary`)
+
+  const getClientHardwareInventory = (
+    clientId: string,
+    params?: {
+      hardwareClass?: string[]
+      filterQuery?: string
+      includeAbsent?: boolean
+      sortBy?: string
+      sortDesc?: boolean
+      page?: number
+      perPage?: number
+    },
+    options?: ApiRequestOptions,
+  ) => apiGet<import('~/types').HardwareInventoryResponse>(`/opsidata/clients/${clientId}/inventory/hardware`, params, options)
+
+  const getClientSoftwareInventory = (
+    clientId: string,
+    params?: {
+      filterQuery?: string
+      includeKbUpdates?: boolean
+      includeAbsent?: boolean
+      sortBy?: string
+      sortDesc?: boolean
+      page?: number
+      perPage?: number
+    },
+    options?: ApiRequestOptions,
+  ) => apiGet<import('~/types').SoftwareInventoryResponse>(`/opsidata/clients/${clientId}/inventory/software`, params, options)
+
+  const exportHardwareInventoryCsv = (
+    clientId: string,
+    params?: { hardwareClass?: string[]; filterQuery?: string; includeAbsent?: boolean; sortBy?: string; sortDesc?: boolean },
+  ) => apiGetBlob(`/opsidata/clients/${clientId}/inventory/hardware/csv`, params)
+
+  const exportSoftwareInventoryCsv = (
+    clientId: string,
+    params?: { filterQuery?: string; includeKbUpdates?: boolean; includeAbsent?: boolean; sortBy?: string; sortDesc?: boolean },
+  ) => apiGetBlob(`/opsidata/clients/${clientId}/inventory/software/csv`, params)
+
   const createBackup = (options: { config_files?: boolean; redis_data?: boolean; maintenance_mode?: boolean; password?: string }) =>
     apiPost<string>('/backup/create', options)
 
@@ -523,6 +582,7 @@ export function useApiHelpers() {
     apiPost,
     apiPut,
     apiDelete,
+    apiGetBlob,
 
     // Auth & User
     getConfigServer,
@@ -560,6 +620,11 @@ export function useApiHelpers() {
     sendNotification,
     rebootClients,
     shutdownClients,
+    getClientInventorySummary,
+    getClientHardwareInventory,
+    getClientSoftwareInventory,
+    exportHardwareInventoryCsv,
+    exportSoftwareInventoryCsv,
 
     // Products
     getProducts,

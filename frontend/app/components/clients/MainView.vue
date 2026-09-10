@@ -198,9 +198,12 @@
           :client-id="(row as OpsiClient).clientId"
           :default-action="defaultClientPanelView"
           :show-all-actions="showAllClientRowActions"
-          :active-action="panelClient?.clientId === (row as OpsiClient).clientId ? (panelType as 'config' | 'logs' | 'clone' | null) : null"
+          :active-action="
+            panelClient?.clientId === (row as OpsiClient).clientId ? (panelType as 'config' | 'logs' | 'inventory' | 'clone' | null) : null
+          "
           @open-config="openPanel(row as OpsiClient, 'config')"
           @open-logs="openPanel(row as OpsiClient, 'logs')"
+          @open-inventory="openPanel(row as OpsiClient, 'inventory')"
           @open-clone="openPanel(row as OpsiClient, 'clone')"
           @action-complete="handleActionComplete"
         />
@@ -246,6 +249,13 @@
           @update:tab="panelTab = $event"
         />
         <ClientsLogsView v-if="panelType === 'logs'" :client-id="panelClient.clientId" panel-mode />
+        <ClientsInventoryPanel
+          v-if="panelType === 'inventory'"
+          :client-id="panelClient.clientId"
+          :tab="panelInventoryTab"
+          panel-mode
+          @update:tab="panelInventoryTab = $event"
+        />
         <ClientsCloneForm
           v-if="panelType === 'clone'"
           ref="cloneFormRef"
@@ -296,11 +306,12 @@
   const clients = ref<OpsiClient[]>([])
   const rowOffset = ref(0)
   const totalItems = ref(0)
-  type ClientPanelType = 'config' | 'logs' | 'clone'
+  type ClientPanelType = 'config' | 'logs' | 'clone' | 'inventory'
 
   const panelClient = ref<OpsiClient | null>(null)
   const panelType = ref<ClientPanelType | 'products' | 'add' | null>(null)
   const panelTab = ref('parameters')
+  const panelInventoryTab = ref<'hardware' | 'software'>('hardware')
   const DEFAULT_CLIENT_PANEL_VIEW_KEY = 'opsi-webgui-default-client-panel-view'
   const SHOW_ALL_CLIENT_ROW_ACTIONS_KEY = 'opsi-webgui-show-all-client-row-actions'
   const defaultClientPanelView = ref<ClientPanelType>('config')
@@ -313,6 +324,7 @@
   const clientPanelViews = computed(() => [
     { label: String($t('config.title')), value: 'config', icon: icons.config },
     { label: String($t('logs.title')), value: 'logs', icon: icons.log },
+    { label: String($t('inventory.title')), value: 'inventory', icon: icons.inventory },
     ...(isReadOnly.value || !canCreateClients.value
       ? []
       : [{ label: String($t('clients.clone.title')), value: 'clone', icon: icons.clone }]),
@@ -482,13 +494,15 @@
   function doOpenPanel(client: OpsiClient, type: ClientPanelType) {
     panelClient.value = client
     panelType.value = type
+    const { configType: _ct, inventoryTab: _it, ...restQuery } = route.query as Record<string, string>
     const query: Record<string, string> = {
-      ...(route.query as Record<string, string>),
+      ...restQuery,
       client: client.clientId,
       view: 'panel',
       panelType: type,
     }
     if (type === 'config') query.configType = panelTab.value
+    if (type === 'inventory') query.inventoryTab = panelInventoryTab.value
     router.replace({ query })
   }
 
@@ -818,8 +832,14 @@
     }
   })
 
+  watch(panelInventoryTab, (newTab) => {
+    if (panelType.value === 'inventory' && panelClient.value) {
+      router.replace({ query: { ...(route.query as Record<string, string>), inventoryTab: newTab } })
+    }
+  })
+
   watch(panelType, (newType) => {
-    if (newType !== 'config' && newType !== 'logs' && newType !== 'clone') return
+    if (newType !== 'config' && newType !== 'logs' && newType !== 'clone' && newType !== 'inventory') return
     defaultClientPanelView.value = newType
     document.cookie = `${DEFAULT_CLIENT_PANEL_VIEW_KEY}=${newType}; path=/; max-age=31536000; SameSite=Lax`
     if (panelClient.value) doOpenPanel(panelClient.value, newType)
@@ -855,6 +875,7 @@
     if (
       storedDefaultPanelView === 'config' ||
       storedDefaultPanelView === 'logs' ||
+      storedDefaultPanelView === 'inventory' ||
       (storedDefaultPanelView === 'clone' && canCreateClients.value && !isReadOnly.value)
     ) {
       defaultClientPanelView.value = storedDefaultPanelView
@@ -867,7 +888,7 @@
     }
     await Promise.all([fetchClients(buildInitialPageParams(currentFilterQuery.value)), fetchBlockedClients()])
     const clientId = route.query.client as string | undefined
-    const pType = route.query.panelType as 'config' | 'logs' | 'clone' | 'products' | 'add' | undefined
+    const pType = route.query.panelType as 'config' | 'logs' | 'clone' | 'inventory' | 'products' | 'add' | undefined
     const configType = route.query.configType as string | undefined
     if (configType) {
       const normalized = configType === 'attribute' ? 'attributes' : configType === 'parameter' ? 'parameters' : configType
@@ -875,9 +896,13 @@
         panelTab.value = normalized
       }
     }
+    const inventoryTab = route.query.inventoryTab as string | undefined
+    if (inventoryTab === 'hardware' || inventoryTab === 'software') {
+      panelInventoryTab.value = inventoryTab
+    }
     if (clientId && route.query.view === 'panel') {
       const c = clients.value.find((cl) => cl.clientId === clientId)
-      const clientPanelType = pType === 'logs' || pType === 'clone' ? pType : defaultClientPanelView.value
+      const clientPanelType = pType === 'logs' || pType === 'clone' || pType === 'inventory' ? pType : defaultClientPanelView.value
       if (c) doOpenPanel(c, clientPanelType)
       return
     }
