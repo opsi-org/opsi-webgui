@@ -660,6 +660,7 @@ def create_client(request: Request, client: Client, depot: str = Body(default=""
 			backend.configState_create("opsiclientd.event_gui_startup.active", client.hostId, [not client.wanMode])
 			backend.configState_create("opsiclientd.event_gui_startup{user_logged_in}.active", client.hostId, [not client.wanMode])
 			backend.configState_create("opsiclientd.event_timer.active", client.hostId, [client.wanMode])
+			backend.configState_create("opsiclientd.event_net_connection.active", client.hostId, [client.wanMode])
 		if client.smartCache is not None:
 			backend.configState_create("clientconfig.smart_cache", client.hostId, [client.smartCache])
 		if client.installOnShutdown is not None:
@@ -729,6 +730,7 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
 			backend.configState_create("opsiclientd.event_gui_startup.active", client.hostId, [not client.wanMode])
 			backend.configState_create("opsiclientd.event_gui_startup{user_logged_in}.active", client.hostId, [not client.wanMode])
 			backend.configState_create("opsiclientd.event_timer.active", client.hostId, [client.wanMode])
+			backend.configState_create("opsiclientd.event_net_connection.active", client.hostId, [client.wanMode])
 		if client.smartCache is not None:
 			backend.configState_create("clientconfig.smart_cache", client.hostId, [client.smartCache])
 		if client.installOnShutdown is not None:
