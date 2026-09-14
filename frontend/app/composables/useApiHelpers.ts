@@ -283,7 +283,7 @@ export function useApiHelpers() {
       selectedDepots: `[${selectedServers.join(',')}]`,
     }
     if (productType) params.productType = productType
-    return apiGet<Array<{ productId: string;[k: string]: unknown }>>('/opsidata/depots/products', params)
+    return apiGet<Array<{ productId: string; [k: string]: unknown }>>('/opsidata/depots/products', params)
   }
 
   const setClientProductActions = (data: {
