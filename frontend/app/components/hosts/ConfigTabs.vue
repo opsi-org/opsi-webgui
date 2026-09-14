@@ -118,7 +118,13 @@
             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-0.5 gap-x-4 hover:bg-(--color-surface-hover) rounded transition-colors"
           >
             <span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
-              {{ getAttributeLabel(key) }}
+              <CoreAppTooltip v-if="getAttributeHelp(key)" :text="getAttributeHelp(key)">
+                <span class="inline-flex items-center gap-1">
+                  {{ getAttributeLabel(key) }}
+                  <CoreAppIcon :name="icons.info" class="w-3 h-3 text-(--color-text-muted)" />
+                </span>
+              </CoreAppTooltip>
+              <template v-else>{{ getAttributeLabel(key) }}</template>
             </span>
             <span class="text-sm flex-1 truncate" :title="fmtVal(originalAttributes[key])">
               {{ fmtVal(originalAttributes[key]) }}
@@ -134,30 +140,25 @@
             :class="isAttrChanged(key) ? 'bg-(--color-changed-bg)' : ''"
           >
             <span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
-              {{ getAttributeLabel(key) }}
+              <CoreAppTooltip v-if="getAttributeHelp(key)" :text="getAttributeHelp(key)">
+                <span class="inline-flex items-center gap-1">
+                  {{ getAttributeLabel(key) }}
+                  <CoreAppIcon :name="icons.info" class="w-3 h-3 text-(--color-text-muted)" />
+                </span>
+              </CoreAppTooltip>
+              <template v-else>{{ getAttributeLabel(key) }}</template>
               <span v-if="isAttrChanged(key)" class="inline-flex items-center text-xs text-(--color-changed-text)">
                 <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
               </span>
             </span>
             <div class="flex-1 flex items-center gap-2 min-w-0">
               <CoreAppCheckbox
-                v-if="typeof originalAttributes[key] === 'boolean'"
+                v-if="isBooleanAttribute(key)"
                 :id="attributeInputId(key)"
-                v-model="(editableAttributes as Record<string, boolean>)[key]"
+                :model-value="toBooleanAttribute(editableAttributes[key])"
                 :disabled="readonly"
                 :aria-label="getAttributeLabel(key)"
-              />
-              <CoreAppCheckbox
-                v-else-if="key === 'isMasterDepot'"
-                :id="attributeInputId(key)"
-                :model-value="editableAttributes[key] === true || editableAttributes[key] === 'true'"
-                :disabled="readonly"
-                :aria-label="getAttributeLabel(key)"
-                @update:model-value="
-                  (v: boolean | 'indeterminate') => {
-                    editableAttributes[key] = v
-                  }
-                "
+                @update:model-value="(v: boolean | 'indeterminate') => (editableAttributes[key] = v === true)"
               />
               <CoreAppPasswordInput
                 v-else-if="isPasswordAttribute(key)"
@@ -264,7 +265,7 @@
   // Create Config modal state
   const showCreateConfigModal = ref(false)
 
-  const activeTab = ref(props.tab || 'parameters')
+  const activeTab = ref(props.tab || 'attributes')
   watch(
     () => props.tab,
     (v) => {
@@ -352,11 +353,11 @@
   const showAttrChanges = ref(false)
 
   const tabDefs = computed(() => [
+    { label: String($t('common.attributes')), value: 'attributes' },
     {
       label: !props.hostId && props.hostType === 'server' ? String($t('config.paramsDefault')) : String($t('config.params')),
       value: 'parameters',
     },
-    { label: String($t('common.attributes')), value: 'attributes' },
   ])
   const loadingParams = ref(false)
   const savingParams = ref(false)
@@ -549,8 +550,9 @@
     editableAttributes.value = { ...editableAttributes.value, [key]: originalAttributes.value[key] }
   }
 
-  const READONLY_KEYS = ['type', 'created', 'lastSeen', 'systemUUID', 'hostId', 'depotId', 'id']
+  const READONLY_KEYS = ['type', 'created', 'lastSeen', 'systemUUID', 'hostId', 'depotId', 'id', 'uefi', 'uefi_value']
   const PASSWORD_KEYS = ['opsiHostKey', 'oneTimePassword']
+  const BOOLEAN_ATTRIBUTE_KEYS = ['isMasterDepot', 'smartCache', 'installOnShutdown', 'monitoring', 'wanMode']
   const ATTR_LABELS: Record<string, string> = {
     hostId: 'Host ID',
     depotId: 'Depot ID',
@@ -564,6 +566,12 @@
     systemUUID: 'System UUID',
     opsiHostKey: 'OPSI Host Key',
     oneTimePassword: 'One-Time Password',
+    uefi: 'UEFI',
+    uefi_value: 'UEFI boot value',
+    wanMode: 'WAN / VPN mode',
+    smartCache: 'SmartCache',
+    installOnShutdown: 'Install pending software on shutdown',
+    monitoring: 'Monitoring',
     type: 'Type',
     isMasterDepot: 'Is Master Depot',
     masterDepotId: 'Master Depot ID',
@@ -571,9 +579,16 @@
     depotRemoteUrl: 'Depot URL',
   }
 
+  const ATTRIBUTE_HELP: Record<string, string> = {
+    monitoring: String($t('config.attributeHelp.monitoring')),
+  }
+
   const isReadonlyAttribute = (k: string) => READONLY_KEYS.includes(k)
   const isPasswordAttribute = (k: string) => PASSWORD_KEYS.includes(k)
+  const isBooleanAttribute = (k: string) => typeof originalAttributes.value[k] === 'boolean' || BOOLEAN_ATTRIBUTE_KEYS.includes(k)
+  const toBooleanAttribute = (value: unknown) => value === true || value === 1 || value === '1' || value === 'true'
   const getAttributeLabel = (k: string) => ATTR_LABELS[k] || k.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase())
+  const getAttributeHelp = (k: string) => ATTRIBUTE_HELP[k]
 
   const readonlyAttrKeys = computed(() => Object.keys(editableAttributes.value).filter((k) => isReadonlyAttribute(k)))
   const editableAttrKeys = computed(() => Object.keys(editableAttributes.value).filter((k) => !isReadonlyAttribute(k)))
@@ -701,7 +716,7 @@
     savingAttrs.value = true
     try {
       // Only send changed attributes to avoid re-hashing already-stored password fields
-      const changedAttrs: Record<string, unknown> = {}
+      const changedAttrs: Record<string, unknown> = { hostId: props.hostId }
       for (const key of Object.keys(editableAttributes.value)) {
         if (!isReadonlyAttribute(key) && JSON.stringify(originalAttributes.value[key]) !== JSON.stringify(editableAttributes.value[key])) {
           changedAttrs[key] = editableAttributes.value[key]

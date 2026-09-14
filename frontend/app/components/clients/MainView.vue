@@ -317,7 +317,7 @@
 
   const panelClient = ref<OpsiClient | null>(null)
   const panelType = ref<ClientPanelType | 'products' | 'add' | null>(null)
-  const panelTab = ref('parameters')
+  const panelTab = ref('attributes')
   const panelInventoryTab = ref<'hardware' | 'software'>('hardware')
   const DEFAULT_CLIENT_PANEL_VIEW_KEY = 'opsi-webgui-default-client-panel-view'
   const SHOW_ALL_CLIENT_ROW_ACTIONS_KEY = 'opsi-webgui-show-all-client-row-actions'
