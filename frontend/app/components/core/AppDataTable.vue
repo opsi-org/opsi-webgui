@@ -548,7 +548,7 @@
 <script setup lang="ts" generic="T extends Record<string, unknown>">
   import { useDataTableSettings, type DataTableColumnDef } from '~/composables/data-table/useDataTableSettings'
   import { getStoredDataTableFilter, saveStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
-  import { createTextFilterOptions, createTextMatcher, type TextFilterOptions } from '~/composables/useTextFilter'
+  import { createTextFilterOptions, createTextMatcher, hasTextFilterOptions, type TextFilterOptions } from '~/composables/useTextFilter'
   import { useSavedSearches } from '~/composables/useSavedSearches'
   import { useDataTableVirtualization } from '~/composables/data-table/useDataTableVirtualization'
 
@@ -558,6 +558,7 @@
     sortBy: string
     sortDesc: boolean
     filterQuery: string
+    serverFilterQuery?: string
     sortBySelection: boolean
     onlySelected: boolean
   }
@@ -842,7 +843,7 @@
 
   const visibleRows = computed(() => {
     const test = localMatcher.value.test
-    if (!props.filterable || !filterOptions.value.regex || !test) return props.rows
+    if (!props.filterable || !hasTextFilterOptions(filterOptions.value) || !test) return props.rows
     const cols = filterableColumns.value
     return props.rows.filter((row) => {
       for (const col of cols) {
@@ -880,7 +881,8 @@
       perPage: pageSize.value,
       sortBy: tableSettings.settings.sortColumn,
       sortDesc: tableSettings.settings.sortDirection === 'desc',
-      filterQuery: serverFilterQuery.value,
+      filterQuery: filterQueryInternal.value,
+      serverFilterQuery: serverFilterQuery.value,
       sortBySelection: sortBySelection.value,
       onlySelected: onlySelected.value,
     }

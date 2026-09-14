@@ -749,7 +749,8 @@
         p.perPage = effectiveParams.perPage
         p.sortBy = effectiveParams.sortBy
         p.sortDesc = effectiveParams.sortDesc
-        if (effectiveParams.filterQuery) p.filterQuery = effectiveParams.filterQuery
+        if (effectiveParams.serverFilterQuery || effectiveParams.filterQuery)
+          p.filterQuery = effectiveParams.serverFilterQuery || effectiveParams.filterQuery
         if (effectiveParams.onlySelected) p.onlySelected = true
       } else if (currentFilterQuery.value) {
         p.filterQuery = currentFilterQuery.value
@@ -781,6 +782,7 @@
       }
     } catch (e) {
       if (requestId !== fetchClientsRequestId.value) return
+      if (controller.signal.aborted) return
       error.value = (e as Error).message
     } finally {
       if (requestId === fetchClientsRequestId.value) {

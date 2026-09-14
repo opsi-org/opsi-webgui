@@ -353,7 +353,7 @@
         p.perPage = effectiveParams.perPage
         p.sortBy = effectiveParams.sortBy
         p.sortDesc = effectiveParams.sortDesc
-        p.filterQuery = effectiveParams.filterQuery
+        p.filterQuery = effectiveParams.serverFilterQuery || effectiveParams.filterQuery
         if (effectiveParams.onlySelected) p.onlySelected = true
       }
       if (advancedFilters.value.type) p.serverTypeFilter = advancedFilters.value.type
@@ -386,6 +386,7 @@
       }
     } catch (e) {
       if (requestId !== fetchServersRequestId.value) return
+      if (controller.signal.aborted) return
       error.value = (e as Error).message
     } finally {
       if (requestId === fetchServersRequestId.value) {

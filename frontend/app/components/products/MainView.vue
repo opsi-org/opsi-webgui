@@ -1098,7 +1098,8 @@
           p.sortBy = translateSortBy(effectiveParams.sortBy)
           p.sortDesc = effectiveParams.sortDesc
         }
-        if (effectiveParams.filterQuery) p.filterQuery = effectiveParams.filterQuery
+        if (effectiveParams.serverFilterQuery || effectiveParams.filterQuery)
+          p.filterQuery = effectiveParams.serverFilterQuery || effectiveParams.filterQuery
         if (effectiveParams.onlySelected) p.onlySelected = true
       } else if (currentFilterQuery.value) {
         p.filterQuery = currentFilterQuery.value
@@ -1126,6 +1127,7 @@
       }
     } catch (e) {
       if (requestId !== fetchProductsRequestId.value) return
+      if (controller.signal.aborted) return
       error.value = e instanceof Error ? e.message : String($t('products.none'))
     } finally {
       if (requestId === fetchProductsRequestId.value) {
