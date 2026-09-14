@@ -6,15 +6,17 @@
  * License: AGPL-3.0
  *
  * useSavedSearches - Named, per-table saved search presets (free-text filter + advanced
- * filters) persisted in localStorage. Generic over the advanced-filters shape so it can be
- * reused by clients/products/servers without duplicating storage/CRUD logic.
+ * filters) persisted in localStorage.
  */
+import type { ShallowRef } from 'vue'
+
 export interface SavedSearch<T> {
   id: string
   name: string
   filterQuery: string
   advancedFilters: T
   createdAt: number
+  favorite?: boolean
 }
 
 function storageKey(scopeId: string) {
@@ -40,12 +42,25 @@ function writeJSON(key: string, value: unknown) {
   }
 }
 
+const storeCache = new Map<string, ShallowRef<SavedSearch<unknown>[]>>()
+
+function getSharedStore<T>(key: string) {
+  let store = storeCache.get(key)
+  if (!store) {
+    store = shallowRef<SavedSearch<unknown>[]>(readJSON(key, []))
+    storeCache.set(key, store)
+  }
+  return store as ShallowRef<SavedSearch<T>[]>
+}
+
 export function useSavedSearches<T>(scopeId: MaybeRefOrGetter<string>) {
   const key = computed(() => storageKey(toValue(scopeId)))
-  const savedSearches = shallowRef<SavedSearch<T>[]>(readJSON(key.value, [] as SavedSearch<T>[]))
 
-  watch(key, (newKey) => {
-    savedSearches.value = readJSON(newKey, [] as SavedSearch<T>[])
+  const savedSearches = computed<SavedSearch<T>[]>({
+    get: () => getSharedStore<T>(key.value).value,
+    set: (value) => {
+      getSharedStore<T>(key.value).value = value
+    },
   })
 
   function persist() {
@@ -53,14 +68,15 @@ export function useSavedSearches<T>(scopeId: MaybeRefOrGetter<string>) {
   }
 
   function save(name: string, filterQuery: string, advancedFilters: T) {
+    const previous = savedSearches.value.find((s) => s.name === name)
     const entry: SavedSearch<T> = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: previous?.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       name,
       filterQuery,
       advancedFilters,
-      createdAt: Date.now(),
+      createdAt: previous?.createdAt ?? Date.now(),
+      favorite: previous?.favorite,
     }
-    // Saving the same name again replaces the previous preset instead of piling up duplicates.
     savedSearches.value = [...savedSearches.value.filter((s) => s.name !== name), entry]
     persist()
     return entry
@@ -76,5 +92,10 @@ export function useSavedSearches<T>(scopeId: MaybeRefOrGetter<string>) {
     return savedSearches.value.find((s) => s.id === id)
   }
 
-  return { savedSearches, save, remove, get }
+  function toggleFavorite(id: string) {
+    savedSearches.value = savedSearches.value.map((s) => (s.id === id ? { ...s, favorite: !s.favorite } : s))
+    persist()
+  }
+
+  return { savedSearches, save, remove, get, toggleFavorite }
 }

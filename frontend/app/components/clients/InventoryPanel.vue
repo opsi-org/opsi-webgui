@@ -161,8 +161,8 @@
 
 <script setup lang="ts">
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
-  import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
-  import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
+  import { useDataTableSettings, type DataTableColumnDef } from '~/composables/data-table/useDataTableSettings'
+  import { getStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
   import type { HardwareInventoryItem, InventoryMeta, InventorySummary, SoftwareInventoryItem } from '~/types'
 
   type TabValue = 'hardware' | 'software'

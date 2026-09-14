@@ -82,7 +82,7 @@
       :loading="loading"
       :table-id="tableId"
       filter-storage-id="products"
-      :filter-query="currentFilterQuery || undefined"
+      :filter-query="currentFilterQuery"
       saved-searches-scope-id="products"
       :advanced-filters="advancedFilters"
       row-key="productId"
@@ -101,8 +101,13 @@
       @apply-saved-search="handleApplySavedSearch"
       @refresh="fetchProducts"
     >
-      <template #filter-actions>
-        <ProductsAdvancedFiltersPopover v-model="advancedFilters" @update:model-value="handleAdvancedFiltersChange" />
+      <template #filter-actions="{ canSaveSearch, favorite }">
+        <ProductsAdvancedFiltersPopover
+          v-model="advancedFilters"
+          :can-save-search="canSaveSearch"
+          @update:model-value="handleAdvancedFiltersChange"
+          @favorite="favorite"
+        />
       </template>
       <template #header-cell-actionRequest="{ sortColumn, sortDirection }">
         <ProductsActionRequestDropdown
@@ -315,11 +320,13 @@
 </template>
 
 <script setup lang="ts">
-  import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
+  import { useDataTableSettings, type DataTableColumnDef } from '~/composables/data-table/useDataTableSettings'
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
   import type { ProductRow, ProductType, ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue } from '~/types'
   import type { ProductAdvancedFilters } from '~/components/products/AdvancedFiltersPopover.vue'
-  import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
+  import { getStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
+  import { useSavedSearches } from '~/composables/useSavedSearches'
+  import { CLEAR_ALL_FILTERS_EVENT } from '~/composables/useGlobalFavorites'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
   import { storeToRefs } from 'pinia'
@@ -396,13 +403,39 @@
   function handleAdvancedFiltersChange(value: ProductAdvancedFilters) {
     advancedFilters.value = value
     if (!import.meta.server) localStorage.setItem(ADVANCED_FILTERS_KEY, JSON.stringify(value))
-    fetchProducts(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
+    return fetchProducts(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
   }
 
   function handleApplySavedSearch(value: { filterQuery: string; advancedFilters: Record<string, unknown> }) {
+    // Otherwise a stale lastPageParams.filterQuery (captured on the last page-change) would win
+    // over this new value in handleAdvancedFiltersChange's fallback below.
+    lastPageParams.value = null
     currentFilterQuery.value = value.filterQuery
-    handleAdvancedFiltersChange(value.advancedFilters as ProductAdvancedFilters)
+    return handleAdvancedFiltersChange(value.advancedFilters as ProductAdvancedFilters)
   }
+
+  // Global Search favorites navigate here with ?savedSearchId=... (+ ?filter=... when the
+  // favorite has quick-filter text). Always resolve both filterQuery and advancedFilters to
+  // concrete values (even '' / {}) so a previously applied filter can't linger, then drop the
+  // param. Runs both on first load and on later in-app navigation to a different favorite,
+  // since navigating between two /products?... URLs doesn't remount this component.
+  function applyFavoriteFromRoute(savedSearchId: string) {
+    const entry = useSavedSearches<ProductAdvancedFilters>('products').get(savedSearchId)
+    const fetchPromise = handleApplySavedSearch({
+      filterQuery: entry?.filterQuery ?? '',
+      advancedFilters: (entry?.advancedFilters as Record<string, unknown>) ?? {},
+    })
+    const { savedSearchId: _ssid, ...restQuery } = route.query
+    router.replace({ query: restQuery })
+    return fetchPromise
+  }
+
+  watch(
+    () => route.query.savedSearchId,
+    (id) => {
+      if (typeof id === 'string' && id) applyFavoriteFromRoute(id)
+    },
+  )
   const productIcons = computed(() => (cachedProductIcons.value ?? {}) as Record<string, string>)
   const processActionsOpen = ref(false)
   const productLiveStatus = ref(new Map<string, ProductLiveStatus>())
@@ -1065,7 +1098,7 @@
           p.sortBy = translateSortBy(effectiveParams.sortBy)
           p.sortDesc = effectiveParams.sortDesc
         }
-        p.filterQuery = effectiveParams.filterQuery
+        if (effectiveParams.filterQuery) p.filterQuery = effectiveParams.filterQuery
         if (effectiveParams.onlySelected) p.onlySelected = true
       } else if (currentFilterQuery.value) {
         p.filterQuery = currentFilterQuery.value
@@ -1185,6 +1218,16 @@
     fetchProductsController?.abort()
   })
 
+  // Global Search "clear all filters" resets every scope; only react to it while this page is mounted.
+  function handleClearAllFilters() {
+    handleApplySavedSearch({ filterQuery: '', advancedFilters: {} })
+    router.replace({ query: { ...route.query, filter: undefined } })
+  }
+  if (!import.meta.server) window.addEventListener(CLEAR_ALL_FILTERS_EVENT, handleClearAllFilters)
+  onUnmounted(() => {
+    if (!import.meta.server) window.removeEventListener(CLEAR_ALL_FILTERS_EVENT, handleClearAllFilters)
+  })
+
   watch(() => selectionStore.selectedClients, refetchForSelectionScope)
   watch(() => selectionStore.selectedServers, refetchForSelectionScope)
   watch(
@@ -1220,7 +1263,14 @@
     } else if (typeof route.query.sortBy === 'string') {
       applyExternalSort(route.query.sortBy)
     }
-    await Promise.all([fetchProducts(buildInitialPageParams(currentFilterQuery.value)), fetchProductIcons()])
+    // Global Search favorites navigate here with ?savedSearchId=... - apply once on load; later
+    // clicks on a different favorite are handled by the watch() above (no remount happens).
+    const savedSearchId = route.query.savedSearchId as string | undefined
+    if (savedSearchId) {
+      await Promise.all([applyFavoriteFromRoute(savedSearchId), fetchProductIcons()])
+    } else {
+      await Promise.all([fetchProducts(buildInitialPageParams(currentFilterQuery.value)), fetchProductIcons()])
+    }
     tryOpenPanelFromRoute()
   })
 

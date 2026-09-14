@@ -97,7 +97,9 @@
     "advancedFilters": {
       "notSeenSince": "Nicht gesehen seit (Tage)",
       "hasFailedProducts": "Mit fehlgeschlagenen Produkten",
-      "hasOutdatedProducts": "Mit veralteten Produktversionen"
+      "hasOutdatedProducts": "Mit veralteten Produktversionen",
+      "operatingSystem": "Betriebssystem",
+      "allOperatingSystems": "Alle Betriebssysteme"
     },
     "all": "Alle Clients",
     "blocked": "Gesperrte Clients",
@@ -130,6 +132,8 @@
     "inactive": "Inaktive Clients",
     "initialSetup": "Ersteinrichtung",
     "logs.select": "Bitte wählen Sie einen Client zur Ansicht der Logs",
+    "operatingSystem": "Betriebssystem",
+    "operatingSystemShort": "OS",
     "reachable.unknown": "Erreichbarkeit unbekannt (Messagebus nicht verfügbar).",
     "reachable.help": "Erreichbar = per Messagebus verbunden. Der Status wird mit der Client-Liste geladen und danach live über host_connected- / host_disconnected-Ereignisse aktualisiert.",
     "reachable.is": "Client ist erreichbar.",
@@ -233,6 +237,7 @@
     "resetDefaults": "Auf Standard zurücksetzen",
     "save": "Speichern",
     "saveAll": "Alle speichern",
+    "search": "Suchen",
     "selectAll": "Alle auswählen",
     "selectRow": "Zeile auswählen",
     "selected": "Ausgewählt",
@@ -597,12 +602,28 @@
   "redis": {
     "data": "Redis-Daten"
   },
+  "globalSearch": {
+    "title": "Globale Suche",
+    "help": "Über Clients, Produkte und Server hinweg suchen oder eine favorisierte gespeicherte Suche öffnen.",
+    "scope": "Bereich",
+    "allScopes": "Alle",
+    "quickSearchPlaceholder": "Schnellsuche...",
+    "clearAllFilters": "Alle angewendeten Filter zurücksetzen",
+    "favorites": "Favoriten",
+    "clearAllFavorites": "Alle Favoriten entfernen",
+    "removeFavorite": "Favorit entfernen",
+    "noFavorites": "Noch keine Favoriten. Markieren Sie eine gespeicherte Suche in der jeweiligen Tabelle als Favorit."
+  },
   "savedSearches": {
     "title": "Gespeicherte Suchen",
     "help": "Gespeicherte Suche anwenden oder aktuellen Filter speichern.",
     "saveCurrent": "Aktuellen Filter speichern",
     "none": "Noch keine gespeicherten Suchen.",
-    "namePlaceholder": "Name der Suche"
+    "namePlaceholder": "Name der Suche",
+    "favorite": "Als Favorit markieren",
+    "unfavorite": "Aus Favoriten entfernen",
+    "saveAsFavorite": "Als Favorit speichern",
+    "clearAll": "Gespeicherte Suchen löschen"
   },
   "servers": {
     "all": "Alle Server",

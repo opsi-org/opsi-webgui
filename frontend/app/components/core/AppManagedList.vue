@@ -13,7 +13,7 @@
     <p v-if="items.length === 0" class="m-0 text-xs text-(--color-text-muted) italic">{{ emptyText }}</p>
 
     <template v-else>
-      <div class="flex items-center gap-1.5 pb-0.5 border-b border-(--color-border)">
+      <div v-if="selectable" class="flex items-center gap-1.5 p-0.5 border-(--color-border)">
         <CoreAppCheckbox
           :model-value="someSelected ? 'indeterminate' : allSelected"
           size="xs"
@@ -29,7 +29,7 @@
             size="xs"
             variant="ghost"
             color="error"
-            :icon="icons.delete"
+            :icon="icons.xCircle"
             :disabled="selectedIds.length === 0"
             :aria-label="String($t('common.deleteSelected'))"
             @click="deleteSelected"
@@ -38,8 +38,9 @@
       </div>
 
       <ul class="m-0 p-0 list-none flex flex-col max-h-52 overflow-y-auto">
-        <li v-for="(item, index) in items" :key="item.id" class="flex items-center gap-1 px-0.5 rounded hover:bg-(--color-surface-hover)">
+        <li v-for="(item, index) in items" :key="item.id" class="flex items-center gap-1 rounded hover:bg-(--color-surface-hover)">
           <CoreAppCheckbox
+            v-if="selectable"
             :model-value="selectedSet.has(item.id)"
             size="xs"
             :aria-label="`${$t('common.select')}: ${item.label}`"
@@ -55,9 +56,19 @@
           >
             {{ item.label }}
           </button>
+          <CoreAppTooltip v-if="showFavorite" :text="String(item.favorite ? $t('savedSearches.unfavorite') : $t('savedSearches.favorite'))">
+            <CoreAppButton
+              :icon="item.favorite ? icons.starSolid : icons.star"
+              size="xs"
+              variant="ghost"
+              :color="item.favorite ? 'warning' : 'neutral'"
+              :aria-label="String(item.favorite ? $t('savedSearches.unfavorite') : $t('savedSearches.favorite'))"
+              @click="emit('toggle-favorite', item.id)"
+            />
+          </CoreAppTooltip>
           <CoreAppTooltip :text="`${$t('common.delete')}: ${item.label}`">
             <CoreAppButton
-              :icon="icons.delete"
+              :icon="icons.xCircle"
               size="xs"
               variant="ghost"
               color="error"
@@ -75,6 +86,7 @@
   export interface ManagedListItem {
     id: string
     label: string
+    favorite?: boolean
   }
 
   const props = withDefaults(
@@ -82,13 +94,16 @@
       items: ManagedListItem[]
       emptyText: string
       monospace?: boolean
+      showFavorite?: boolean
+      selectable?: boolean
     }>(),
-    { monospace: false },
+    { monospace: false, showFavorite: false, selectable: true },
   )
 
   const emit = defineEmits<{
     (e: 'apply', id: string): void
     (e: 'delete', ids: string[]): void
+    (e: 'toggle-favorite', id: string): void
   }>()
 
   const icons = useIcons()

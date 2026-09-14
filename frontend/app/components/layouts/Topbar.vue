@@ -28,6 +28,8 @@
     </div>
     <div class="flex-1" />
     <nav class="flex items-center gap-2 md:gap-3 px-2 py-1 rounded-lg">
+      <CoreAppGlobalSearch />
+
       <div
         v-if="formattedTime && formattedTime !== '0:00' && isWarning"
         class="h-8 w-16 inline-flex items-center justify-center gap-1 rounded-md text-xs bg-yellow-500 text-black px-2 font-semibold hover:bg-yellow-500/30 transition-colors"

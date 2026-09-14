@@ -96,7 +96,9 @@
     "advancedFilters": {
       "notSeenSince": "Not seen since (days)",
       "hasFailedProducts": "Has failed products",
-      "hasOutdatedProducts": "Has outdated product versions"
+      "hasOutdatedProducts": "Has outdated product versions",
+      "operatingSystem": "Operating system",
+      "allOperatingSystems": "All operating systems"
     },
     "all": "All Clients",
     "blocked": "Blocked Clients",
@@ -129,6 +131,8 @@
     "inactive": "Inactive Clients",
     "initialSetup": "Initial Setup",
     "logs.select": "Please select a client to view logs",
+    "operatingSystem": "Operating System",
+    "operatingSystemShort": "OS",
     "reachable.unknown": "Reachability unknown (messagebus not available).",
     "reachable.help": "Reachable = connected via messagebus. The state is loaded with the client list and then updated live from host_connected / host_disconnected events.",
     "reachable.is": "Client is reachable.",
@@ -232,6 +236,7 @@
     "resetDefaults": "Reset to Defaults",
     "save": "Save",
     "saveAll": "Save All",
+    "search": "Search",
     "selectAll": "Select All",
     "selectRow": "Select row",
     "selected": "Selected",
@@ -596,12 +601,28 @@
   "redis": {
     "data": "Redis Data"
   },
+  "globalSearch": {
+    "title": "Global Search",
+    "help": "Search across clients, products and servers, or open one of your favorite saved searches.",
+    "scope": "Scope",
+    "allScopes": "All",
+    "quickSearchPlaceholder": "Quick search...",
+    "clearAllFilters": "Clear all applied filters",
+    "favorites": "Favorites",
+    "clearAllFavorites": "Clear all favorites",
+    "removeFavorite": "Remove favorite",
+    "noFavorites": "No favorites yet. Mark a saved search as favorite from its table's saved searches list."
+  },
   "savedSearches": {
     "title": "Saved Searches",
     "help": "Apply a saved search, or save the current filter.",
     "saveCurrent": "Save the current filter",
     "none": "No saved searches yet.",
-    "namePlaceholder": "Search name"
+    "namePlaceholder": "Search name",
+    "favorite": "Mark as favorite",
+    "unfavorite": "Remove from favorites",
+    "saveAsFavorite": "Save as favorite",
+    "clearAll": "Clear saved searches"
   },
   "servers": {
     "all": "All Servers",

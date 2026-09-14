@@ -66,6 +66,7 @@ export interface Client {
   actionResult_successful?: number
   selected?: boolean | number
   reachable?: boolean | null
+  operatingSystem?: string | null
 }
 
 export type InventoryState = 'ok' | 'stale' | 'not_scanned' | 'empty'

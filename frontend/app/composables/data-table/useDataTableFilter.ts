@@ -35,3 +35,14 @@ export function saveStoredDataTableFilter(filterId: string, filterQuery: string)
     /* */
   }
 }
+
+export function clearStoredDataTableFilter(filterId: string) {
+  if (import.meta.server) return
+  try {
+    const all = getStoredFilters()
+    delete all[filterId]
+    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(all))
+  } catch {
+    /* */
+  }
+}

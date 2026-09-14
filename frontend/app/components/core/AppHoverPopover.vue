@@ -11,15 +11,16 @@
   the pointer leaves trigger and content, on Escape, or when the trigger is clicked again.
 -->
 <template>
-  <UPopover v-model:open="isOpen" :dismissible="false" :content="contentProps" :ui="{ content: 'pointer-events-auto' }">
+  <UPopover v-model:open="isOpen" :content="contentProps" :ui="{ content: 'pointer-events-auto' }">
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- wrapper only adds hover/escape handling around the interactive trigger it contains -->
-    <span class="inline-flex" @pointerenter="scheduleOpen" @pointerleave="scheduleClose" @keydown.esc="closeNow">
+    <span ref="triggerRef" class="inline-flex" @pointerenter="scheduleOpen" @pointerleave="scheduleClose" @keydown.esc="closeNow">
       <slot :open="isOpen" />
     </span>
 
     <template #content>
       <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- dialog container only tracks hover and Escape so the popover stays open while it is used -->
       <div
+        ref="contentRef"
         class="flex flex-col gap-2 p-2.5 rounded bg-(--color-background) shadow-lg"
         :class="contentClass"
         role="dialog"
@@ -58,6 +59,8 @@
 
   const isOpen = ref(false)
   const openedByPointer = ref(false)
+  const triggerRef = ref<HTMLElement | null>(null)
+  const contentRef = ref<HTMLElement | null>(null)
   let openTimer: ReturnType<typeof setTimeout> | null = null
   let closeTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -112,8 +115,10 @@
     closeTimer = setTimeout(() => {
       closeTimer = null
       // A select or menu opened from inside renders in its own portal, so the pointer
-      // "leaves" this popover while the user is still working in it.
-      if (nestedOverlayOpen()) {
+      // "leaves" this popover while the user is still working in it. Selecting an option
+      // closes that portal instantly (removing it before this timeout re-checks), but focus
+      // then lands back on an element inside the trigger/content, so check that too.
+      if (nestedOverlayOpen() || (!openedByPointer.value && focusStillInside())) {
         scheduleClose()
         return
       }
@@ -124,6 +129,13 @@
   function nestedOverlayOpen(): boolean {
     if (import.meta.server) return false
     return !!document.querySelector('[role="listbox"], [role="menu"]')
+  }
+
+  function focusStillInside(): boolean {
+    if (import.meta.server) return false
+    const active = document.activeElement
+    if (!active || active === document.body) return false
+    return !!(triggerRef.value?.contains(active) || contentRef.value?.contains(active))
   }
 
   function closeNow() {

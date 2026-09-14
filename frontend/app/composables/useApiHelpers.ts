@@ -505,6 +505,8 @@ export function useApiHelpers() {
 
   const getBlockedClients = () => apiGet<string[] | Record<string, string>>('/opsidata/blocked-clients')
 
+  const getClientOperatingSystems = () => apiGet<string[]>('/opsidata/clients/operating-systems')
+
   const unblockClient = (clientId: string) => apiPost<void>(`/opsidata/clients/${clientId}/unblock`)
 
   const unblockAllClients = () => apiPost<void>('/opsidata/clients/unblock')
@@ -669,6 +671,7 @@ export function useApiHelpers() {
 
     // Admin / Maintenance
     getBlockedClients,
+    getClientOperatingSystems,
     unblockClient,
     unblockAllClients,
     getLockedProducts,

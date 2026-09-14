@@ -43,15 +43,58 @@
 
       <div class="flex items-center gap-2">
         <UFieldGroup v-if="filterable" class="min-w-0">
-          <slot name="filter-actions" />
-          <CoreAppSavedSearchesDropdown
+          <CoreAppHoverPopover
             v-if="savedSearchesScopeId"
-            v-model:filter-query="filterQueryInternal"
-            :entries="savedSearchEntries"
-            @apply="applySavedSearch"
-            @delete="removeSavedSearches"
-            @save="saveCurrentSearch"
-          />
+            :aria-label="String($t('common.advancedFilters'))"
+            content-class="min-w-80 max-w-100"
+          >
+            <CoreAppButton
+              :icon="icons.filter"
+              :aria-label="String($t('common.advancedFilters'))"
+              variant="outline"
+              :color="advancedFiltersActiveCount > 0 || savedSearchEntries.length > 0 ? 'primary' : 'neutral'"
+              size="sm"
+              data-testid="filters-and-saved-searches"
+            >
+              <template v-if="advancedFiltersActiveCount > 0">{{ advancedFiltersActiveCount }}</template>
+            </CoreAppButton>
+
+            <template #content>
+              <div class="flex flex-col gap-2">
+                <div v-if="$slots['filter-actions']" class="flex flex-col gap-2">
+                  <slot name="filter-actions" :can-save-search="canSaveSearch" :favorite="favoriteCurrentSearch" />
+                </div>
+                <hr v-if="$slots['filter-actions']" class="border-(--color-border)" />
+                <CoreAppSavedSearchesDropdown
+                  v-model:filter-query="filterQueryInternal"
+                  :entries="savedSearchEntries"
+                  :can-save="canSaveQuery"
+                  @apply="applySavedSearch"
+                  @delete="removeSavedSearches"
+                  @save="saveCurrentQuery"
+                  @toggle-favorite="toggleSavedSearchFavorite"
+                />
+                <hr class="border-(--color-border)" />
+                <div class="flex justify-end gap-2">
+                  <CoreAppButton variant="soft" color="error" size="xs" :disabled="!canSaveSearch" @click="clearAllFilters">
+                    {{ $t('globalSearch.clearAllFilters') }}
+                  </CoreAppButton>
+                  <CoreAppButton
+                    variant="soft"
+                    :color="favoriteFeedback ? 'warning' : 'primary'"
+                    size="xs"
+                    :icon="icons.starSolid"
+                    :disabled="!canSaveSearch"
+                    data-testid="favorite-advanced-filters"
+                    @click="favorite"
+                  >
+                    {{ $t('savedSearches.saveAsFavorite') }}
+                  </CoreAppButton>
+                </div>
+              </div>
+            </template>
+          </CoreAppHoverPopover>
+          <slot v-else name="filter-actions" :can-save-search="canSaveSearch" :favorite="favoriteCurrentSearch" />
           <CoreAppFilterInput
             v-model="filterQueryInternal"
             v-model:options="filterOptions"
@@ -61,7 +104,7 @@
             :saveable="!!savedSearchesScopeId"
             :pattern-valid="localMatcher.valid"
             input-class="w-full sm:w-56 md:w-72 lg:w-80"
-            @save="saveCurrentSearch"
+            @save="saveCurrentQuery"
           />
         </UFieldGroup>
 
@@ -503,10 +546,11 @@
 </template>
 
 <script setup lang="ts" generic="T extends Record<string, unknown>">
-  import { useDataTableSettings, type DataTableColumnDef } from '~/composables/useDataTableSettings'
-  import { getStoredDataTableFilter, saveStoredDataTableFilter } from '~/composables/useDataTableFilter'
+  import { useDataTableSettings, type DataTableColumnDef } from '~/composables/data-table/useDataTableSettings'
+  import { getStoredDataTableFilter, saveStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
   import { createTextFilterOptions, createTextMatcher, type TextFilterOptions } from '~/composables/useTextFilter'
   import { useSavedSearches } from '~/composables/useSavedSearches'
+  import { useDataTableVirtualization } from '~/composables/data-table/useDataTableVirtualization'
 
   export interface PageChangeParams {
     pageNumber: number
@@ -571,7 +615,7 @@
   defineSlots<{
     [key: `header-cell-${string}`]: (props: { column: DataTableColumnDef; sortColumn: string; sortDirection: 'asc' | 'desc' }) => unknown
     [key: `cell-${string}`]: (props: { row: T; value: unknown; index: number }) => unknown
-    'filter-actions': () => unknown
+    'filter-actions': (props: { canSaveSearch: boolean; favorite: () => void }) => unknown
     status: () => unknown
     'row-actions': (props: { row: T; index: number; selected: boolean; active: boolean }) => unknown
   }>()
@@ -603,6 +647,7 @@
   })
   const lastClickedIndex = ref<number | null>(null)
   const filterOptions = ref<TextFilterOptions>(createTextFilterOptions())
+  const favoriteFeedback = ref(false)
 
   // A regular expression cannot be translated into the server side LIKE search, so the
   // server returns the unfiltered page and the pattern is applied to the loaded rows only.
@@ -615,13 +660,59 @@
     save: persistSavedSearch,
     remove: removeSavedSearch,
     get: getSavedSearch,
+    toggleFavorite: toggleSavedSearchFavoriteState,
   } = useSavedSearches<Record<string, unknown>>(savedSearchScope)
-  const savedSearchEntries = computed(() => savedSearches.value.map((entry) => ({ id: entry.id, label: entry.name })))
+  const savedSearchEntries = computed(() =>
+    savedSearches.value.map((entry) => ({ id: entry.id, label: entry.name, favorite: entry.favorite })),
+  )
 
-  function saveCurrentSearch() {
-    const name = filterQueryInternal.value.trim()
-    if (!name) return
-    persistSavedSearch(name, filterQueryInternal.value, { ...(props.advancedFilters ?? {}) })
+  function toggleSavedSearchFavorite(id: string) {
+    toggleSavedSearchFavoriteState(id)
+  }
+
+  const hasActiveAdvancedFilters = computed(() =>
+    Object.values(props.advancedFilters ?? {}).some((value) => value !== undefined && value !== '' && value !== false),
+  )
+
+  const advancedFiltersActiveCount = computed(
+    () => Object.values(props.advancedFilters ?? {}).filter((value) => value !== undefined && value !== '' && value !== false).length,
+  )
+  const canSaveQuery = computed(() => !!filterQueryInternal.value.trim())
+  const canSaveSearch = computed(() => !!filterQueryInternal.value.trim() || hasActiveAdvancedFilters.value)
+
+  // Generic, single-place naming for a save/favorite: reused for every scope instead of each
+  // advanced-filters popover describing its own conditions. Falls back to a timestamp only if
+  // there is truly nothing else to describe (both quick filter and advanced filters are empty).
+  function describeActiveFilters(): string {
+    return Object.entries(props.advancedFilters ?? {})
+      .filter(([, value]) => value !== undefined && value !== '' && value !== false)
+      .map(([key, value]) => (value === true ? key : `${key}: ${value}`))
+      .join(', ')
+  }
+
+  function currentSearchName() {
+    const query = filterQueryInternal.value.trim()
+    const advanced = describeActiveFilters()
+    if (query && advanced) return `${query} · ${advanced}`
+    return query || advanced || `${$t('savedSearches.title')} ${new Date().toLocaleString()}`
+  }
+
+  function saveCurrentQuery() {
+    if (!canSaveQuery.value) return
+    persistSavedSearch(currentSearchName(), filterQueryInternal.value, { ...(props.advancedFilters ?? {}) })
+  }
+
+  // Every saved search represents the complete table search state.
+  function favoriteCurrentSearch() {
+    if (!canSaveSearch.value) return
+    const entry = persistSavedSearch(currentSearchName(), filterQueryInternal.value, { ...(props.advancedFilters ?? {}) })
+    if (!entry.favorite) toggleSavedSearchFavoriteState(entry.id)
+  }
+
+  function favorite() {
+    favoriteCurrentSearch()
+    favoriteFeedback.value = true
+    window.setTimeout(() => (favoriteFeedback.value = false), 800)
   }
 
   function removeSavedSearches(ids: string[]) {
@@ -633,6 +724,11 @@
     if (!entry) return
     filterQueryInternal.value = entry.filterQuery
     emit('apply-saved-search', { filterQuery: entry.filterQuery, advancedFilters: entry.advancedFilters })
+  }
+
+  function clearAllFilters() {
+    filterQueryInternal.value = ''
+    emit('apply-saved-search', { filterQuery: '', advancedFilters: {} })
   }
 
   watch(
@@ -740,19 +836,12 @@
     return false
   })
 
-  // The server applies the filter too, but only after the debounce and the round
-  // trip. Filtering the already loaded rows locally makes every keystroke visible
-  // immediately; rows the server returns for the same query always match again.
   const localMatcher = computed(() => createTextMatcher(filterQueryInternal.value, filterOptions.value))
 
   const filterableColumns = computed(() => props.columns.filter((col) => col.key !== 'actions'))
 
   const visibleRows = computed(() => {
     const test = localMatcher.value.test
-    // Server-compatible filters are applied before pagination. Filtering those
-    // rows again here makes every keystroke O(loaded rows × columns) and is
-    // redundant. Regular expressions cannot be represented by the API and
-    // therefore remain a local refinement of the current result page.
     if (!props.filterable || !filterOptions.value.regex || !test) return props.rows
     const cols = filterableColumns.value
     return props.rows.filter((row) => {
@@ -763,76 +852,23 @@
     })
   })
 
-  // Row virtualization: only rows near the viewport are rendered, the rest is
-  // replaced by two spacer rows. Kicks in for large row sets only, so small
-  // tables keep the plain DOM.
-  const VIRTUALIZATION_MIN_ROWS = 60
-  const VIRTUALIZATION_OVERSCAN = 10
-  const DEFAULT_ROW_HEIGHT = 30
-  const measuredRowHeight = ref(DEFAULT_ROW_HEIGHT)
-  const virtualStart = ref(0)
-  const virtualCount = ref(60)
-  let rowHeightMeasured = false
-  let containerHeight = 0
-
-  const virtualizationActive = computed(() => props.rowOffset > 0 || visibleRows.value.length > VIRTUALIZATION_MIN_ROWS)
-  const displayStartIndex = computed(() => (virtualizationActive.value ? virtualStart.value : props.rowOffset))
-  const displayRows = computed(() => {
-    if (!virtualizationActive.value) return visibleRows.value
-    const start = Math.max(0, virtualStart.value - props.rowOffset)
-    return visibleRows.value.slice(start, start + virtualCount.value)
-  })
-  const topSpacerHeight = computed(() => (virtualizationActive.value ? virtualStart.value * measuredRowHeight.value : 0))
-  const bottomSpacerHeight = computed(() => {
-    if (!virtualizationActive.value) return 0
-    const rendered = virtualStart.value + displayRows.value.length
-    return Math.max(0, props.rowOffset + visibleRows.value.length - rendered) * measuredRowHeight.value
-  })
-
-  // Reading layout metrics forces a synchronous layout, so the row height is measured once
-  // per row-set/column change instead of on every scroll. getBoundingClientRect (sub-pixel)
-  // is used instead of offsetHeight (rounded to an integer): at fractional browser/OS zoom
-  // levels the rounding error is tiny per row but accumulates with the row index, and by the
-  // time the spacer math reaches rows near the bottom of a long table it is off by enough
-  // pixels to show as blank rows - exactly what a one-time, unrefreshed measurement can't recover from.
-  function measureRowHeight() {
-    if (rowHeightMeasured) return
-    const rowEl = tableContainer.value?.querySelector('tbody .data-table-row') as HTMLElement | null
-    if (!rowEl) return
-    const height = rowEl.getBoundingClientRect().height
-    if (height > 0) {
-      measuredRowHeight.value = height
-      rowHeightMeasured = true
-    }
-  }
+  const rowOffsetRef = computed(() => props.rowOffset)
+  const {
+    virtualizationActive,
+    displayStartIndex,
+    displayRows,
+    topSpacerHeight,
+    bottomSpacerHeight,
+    resetRowHeightMeasurement,
+    refreshContainerHeight,
+    updateVirtualWindow,
+    scrollToTop,
+  } = useDataTableVirtualization({ containerRef: tableContainer, rowOffset: rowOffsetRef, rows: visibleRows })
 
   watch(
     () => visibleColumns.value.map((c) => c.key).join(','),
-    () => {
-      rowHeightMeasured = false
-    },
+    () => resetRowHeightMeasurement(),
   )
-
-  function updateVirtualWindow() {
-    const el = tableContainer.value
-    if (!el || !virtualizationActive.value) {
-      virtualStart.value = props.rowOffset
-      return
-    }
-    measureRowHeight()
-    if (!containerHeight) containerHeight = el.clientHeight
-    const rowHeight = measuredRowHeight.value || DEFAULT_ROW_HEIGHT
-    const visibleCount = Math.ceil(containerHeight / rowHeight) + VIRTUALIZATION_OVERSCAN * 2
-    const firstVisible = Math.floor(el.scrollTop / rowHeight) - VIRTUALIZATION_OVERSCAN
-    virtualCount.value = visibleCount
-    const maxStart = Math.max(props.rowOffset, props.rowOffset + visibleRows.value.length - visibleCount)
-    virtualStart.value = Math.max(props.rowOffset, Math.min(firstVisible, maxStart))
-  }
-
-  function scrollToTop() {
-    virtualStart.value = props.rowOffset
-    tableContainer.value?.scrollTo({ top: 0 })
-  }
 
   const allSelected = computed(() => visibleRows.value.length > 0 && visibleRows.value.every((row) => isSelected(row)))
 
@@ -1034,9 +1070,6 @@
     autoPageStalled.value = false
     autoPageRowCountAtRequest = -1
     currentPage.value = 1
-    // Data reloads back to page 1, so the scroll/virtual window must follow - otherwise the
-    // browser keeps its old scroll position while the spacer math jumps back to row 0,
-    // which is exactly the "refresh doesn't fix the blank rows" symptom.
     scrollToTop()
     emitPageChange()
   }
@@ -1060,10 +1093,6 @@
     }
   }
 
-  // The virtual window must follow the scroll position in the same frame, otherwise
-  // the spacer rows stay in place for a frame and the table shows blank areas.
-  // Only the prefetch check, which reads scrollHeight and forces a layout, is
-  // coalesced into an animation frame.
   let scrollFrame: number | null = null
 
   function handleScroll() {
@@ -1083,10 +1112,6 @@
   let sentinelLoadPending = false
   let actionsResizeObserver: ResizeObserver | null = null
   let containerResizeObserver: ResizeObserver | null = null
-  // Guard against endless next-page requests when the server reports a total
-  // larger than the rows it actually returns (e.g. restricted depot access):
-  // if a next-page request completes without adding new rows, stop auto-paging
-  // until the row set changes again (filter, refresh, external reload).
   const autoPageStalled = ref(false)
   let autoPageRowCountAtRequest = -1
 
@@ -1105,9 +1130,6 @@
 
   function resetInfinitePagingState() {
     if (displayMode.value !== 'infinite') return
-    // Keep currentPage aligned with the amount of currently loaded rows.
-    // This prevents stale high page numbers after external scope resets
-    // (e.g. server selection changes from quickpanel).
     const inferredPage = Math.max(1, Math.ceil(props.rows.length / pageSize.value))
     if (currentPage.value > inferredPage) {
       currentPage.value = inferredPage
@@ -1162,7 +1184,7 @@
 
     if (tableContainer.value) {
       containerResizeObserver = new ResizeObserver(() => {
-        containerHeight = tableContainer.value?.clientHeight ?? containerHeight
+        refreshContainerHeight()
         updateVirtualWindow()
         maybeFillViewport()
       })
@@ -1183,9 +1205,7 @@
         // Row set changed: allow auto-paging again.
         autoPageStalled.value = false
         autoPageRowCountAtRequest = -1
-        // Re-verify the row height on every fetch/reload instead of trusting a value measured
-        // once at mount - a stale value is exactly what let the spacer drift survive a refresh.
-        rowHeightMeasured = false
+        resetRowHeightMeasurement()
       }
       await nextTick()
       updateVirtualWindow()
@@ -1198,8 +1218,6 @@
     () => props.loading,
     (loading) => {
       if (!loading) {
-        // A next-page request finished without adding rows: stall auto-paging
-        // to avoid an endless request loop on inconsistent data/total.
         if (isAutoPageStalled(autoPageRowCountAtRequest, props.rowOffset + props.rows.length)) {
           autoPageStalled.value = true
         }
@@ -1256,8 +1274,6 @@
     }
   }
 
-  // Toggling the regular expression mode changes what the server can pre-filter, so the
-  // page has to be requested again; the other options only refine the loaded rows.
   watch(
     () => filterOptions.value.regex,
     () => {
@@ -1270,13 +1286,8 @@
   watch(filterQueryInternal, (val) => {
     saveStoredDataTableFilter(effectiveFilterStorageId.value, val)
     emit('update:filterQuery', val)
-    // The local filter narrows the loaded rows right away, so reset the scroll
-    // position immediately instead of waiting for the server response.
     scrollToTop()
     if (filterDebounceTimer) clearTimeout(filterDebounceTimer)
-    // Clearing cannot be answered from the loaded rows (the server already narrowed them),
-    // so it reloads with a much shorter delay - but still debounced, otherwise holding
-    // backspace fires a full unfiltered reload per keystroke.
     filterDebounceTimer = setTimeout(
       () => {
         currentPage.value = 1
@@ -1384,11 +1395,6 @@
     contain-intrinsic-size: 30px;
   }
 
-  /* Virtualization positions rows by multiplying a single measured row height (see
-     measureRowHeight in the script) with the row index. Any row that renders taller than
-     that (e.g. a live-status badge appearing after a save, or an extra wrapped line) makes
-     the spacer rows over/under-shoot, which is exactly what showed up as "blank" rows above
-     or below the changed one. Clamping every row to a fixed height keeps that assumption true. */
   .data-table--compact .data-table-row > td {
     height: 1.875rem;
     max-height: 1.875rem;
