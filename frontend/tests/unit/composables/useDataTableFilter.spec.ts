@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { getStoredDataTableFilter, saveStoredDataTableFilter } from '~/app/composables/useDataTableFilter'
+import { getStoredDataTableFilter, saveStoredDataTableFilter } from '~/app/composables/data-table/useDataTableFilter'
 
 const STORAGE_KEY = 'opsi-webgui-datatable-filter-queries'
 

@@ -97,7 +97,9 @@
     "advancedFilters": {
       "notSeenSince": "Non vu depuis (jours)",
       "hasFailedProducts": "Avec des produits en échec",
-      "hasOutdatedProducts": "Avec des versions de produits obsolètes"
+      "hasOutdatedProducts": "Avec des versions de produits obsolètes",
+      "operatingSystem": "Système d'exploitation",
+      "allOperatingSystems": "Tous les systèmes d'exploitation"
     },
     "all": "Tous les clients",
     "blocked": "Clients bloqués",
@@ -130,6 +132,8 @@
     "inactive": "Clients inactifs",
     "initialSetup": "Configuration initiale",
     "logs.select": "Veuillez sélectionner un client pour afficher les journaux",
+    "operatingSystem": "Système d'exploitation",
+    "operatingSystemShort": "OS",
     "reachable.unknown": "Accessibilité inconnue (messagebus non disponible).",
     "reachable.help": "Accessible = connecté via le messagebus. L'état est chargé avec la liste des clients puis mis à jour en direct par les événements host_connected / host_disconnected.",
     "reachable.is": "Le client est accessible.",
@@ -233,6 +237,7 @@
     "resetDefaults": "Réinitialiser aux valeurs par défaut",
     "save": "Enregistrer",
     "saveAll": "Tout enregistrer",
+    "search": "Rechercher",
     "selectAll": "Tout sélectionner",
     "selectRow": "Sélectionner la ligne",
     "selected": "Sélectionné",
@@ -594,12 +599,28 @@
   "redis": {
     "data": "Données Redis"
   },
+  "globalSearch": {
+    "title": "Recherche globale",
+    "help": "Rechercher parmi les clients, produits et serveurs, ou ouvrir une recherche enregistrée favorite.",
+    "scope": "Portée",
+    "allScopes": "Tout",
+    "quickSearchPlaceholder": "Recherche rapide...",
+    "clearAllFilters": "Réinitialiser tous les filtres appliqués",
+    "favorites": "Favoris",
+    "clearAllFavorites": "Supprimer tous les favoris",
+    "removeFavorite": "Retirer le favori",
+    "noFavorites": "Aucun favori pour le moment. Marquez une recherche enregistrée comme favorite depuis sa table."
+  },
   "savedSearches": {
     "title": "Recherches enregistrées",
     "help": "Appliquer une recherche enregistrée ou enregistrer le filtre actuel.",
     "saveCurrent": "Enregistrer le filtre actuel",
     "none": "Aucune recherche enregistrée.",
-    "namePlaceholder": "Nom de la recherche"
+    "namePlaceholder": "Nom de la recherche",
+    "favorite": "Marquer comme favori",
+    "unfavorite": "Retirer des favoris",
+    "saveAsFavorite": "Enregistrer comme favori",
+    "clearAll": "Effacer les recherches enregistrées"
   },
   "servers": {
     "all": "Tous les serveurs",

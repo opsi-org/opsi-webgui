@@ -60,7 +60,7 @@
       row-key="clientId"
       :selectable="true"
       :filterable="true"
-      :filter-query="currentFilterQuery || undefined"
+      :filter-query="currentFilterQuery"
       saved-searches-scope-id="clients"
       :advanced-filters="advancedFilters"
       :show-refresh="false"
@@ -81,8 +81,13 @@
       @apply-saved-search="handleApplySavedSearch"
       @refresh="fetchClients"
     >
-      <template #filter-actions>
-        <ClientsAdvancedFiltersPopover v-model="advancedFilters" @update:model-value="handleAdvancedFiltersChange" />
+      <template #filter-actions="{ canSaveSearch, favorite }">
+        <ClientsAdvancedFiltersPopover
+          v-model="advancedFilters"
+          :can-save-search="canSaveSearch"
+          @update:model-value="handleAdvancedFiltersChange"
+          @favorite="favorite"
+        />
       </template>
       <template #header-cell-reachable="{ sortColumn, sortDirection }">
         <div class="flex items-center justify-center gap-1">
@@ -282,11 +287,13 @@
 </template>
 
 <script setup lang="ts">
-  import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
+  import { useDataTableSettings, type DataTableColumnDef } from '~/composables/data-table/useDataTableSettings'
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
   import type { Client as OpsiClient } from '~/types'
   import type { ClientAdvancedFilters } from '~/components/clients/AdvancedFiltersPopover.vue'
-  import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
+  import { getStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
+  import { useSavedSearches } from '~/composables/useSavedSearches'
+  import { CLEAR_ALL_FILTERS_EVENT } from '~/composables/useGlobalFavorites'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
   import { storeToRefs } from 'pinia'
@@ -354,13 +361,39 @@
   function handleAdvancedFiltersChange(value: ClientAdvancedFilters) {
     advancedFilters.value = value
     if (!import.meta.server) localStorage.setItem(ADVANCED_FILTERS_KEY, JSON.stringify(value))
-    fetchClients(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
+    return fetchClients(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
   }
 
   function handleApplySavedSearch(value: { filterQuery: string; advancedFilters: Record<string, unknown> }) {
+    // Otherwise a stale lastPageParams.filterQuery (captured on the last page-change) would win
+    // over this new value in handleAdvancedFiltersChange's fallback below.
+    lastPageParams.value = null
     currentFilterQuery.value = value.filterQuery
-    handleAdvancedFiltersChange(value.advancedFilters as ClientAdvancedFilters)
+    return handleAdvancedFiltersChange(value.advancedFilters as ClientAdvancedFilters)
   }
+
+  // Global Search favorites navigate here with ?savedSearchId=... (+ ?filter=... when the
+  // favorite has quick-filter text). Always resolve both filterQuery and advancedFilters to
+  // concrete values (even '' / {}) so a previously applied filter can't linger, then drop the
+  // param. Runs both on first load and on later in-app navigation to a different favorite,
+  // since navigating between two /clients?... URLs doesn't remount this component.
+  function applyFavoriteFromRoute(savedSearchId: string) {
+    const entry = useSavedSearches<ClientAdvancedFilters>('clients').get(savedSearchId)
+    const fetchPromise = handleApplySavedSearch({
+      filterQuery: entry?.filterQuery ?? '',
+      advancedFilters: (entry?.advancedFilters as Record<string, unknown>) ?? {},
+    })
+    const { savedSearchId: _ssid, ...restQuery } = route.query
+    router.replace({ query: restQuery })
+    return fetchPromise
+  }
+
+  watch(
+    () => route.query.savedSearchId,
+    (id) => {
+      if (typeof id === 'string' && id) applyFavoriteFromRoute(id)
+    },
+  )
   const tableSettings = useDataTableSettings('clients')
   const productsSortColumn = ref<string | undefined>(undefined)
   const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void } | null>(null)
@@ -465,6 +498,15 @@
       labelKey: 'common.description',
       sortable: true,
       maxWidth: '16rem',
+      truncate: true,
+      tooltip: true,
+    },
+    {
+      // Not sortable: computed per-page from the audit software catalog, not a HOST table column.
+      key: 'operatingSystem',
+      label: String($t('clients.operatingSystemShort')),
+      labelKey: 'clients.operatingSystemShort',
+      maxWidth: '14rem',
       truncate: true,
       tooltip: true,
     },
@@ -695,7 +737,9 @@
       }
       const p: Record<string, unknown> = {
         selectedDepots: selectionStore.selectedServersParam,
-        selectedClients: `[${selectionStore.selectedClients.join(',')}]`,
+      }
+      if (selectionStore.selectedClients.length > 0) {
+        p.selectedClients = `[${selectionStore.selectedClients.join(',')}]`
       }
       if ((selectionSortActive || effectiveParams?.onlySelected) && selectionStore.selectedClients.length > 0) {
         p.selected = `[${selectionStore.selectedClients.join(',')}]`
@@ -705,7 +749,8 @@
         p.perPage = effectiveParams.perPage
         p.sortBy = effectiveParams.sortBy
         p.sortDesc = effectiveParams.sortDesc
-        p.filterQuery = effectiveParams.filterQuery
+        if (effectiveParams.serverFilterQuery || effectiveParams.filterQuery)
+          p.filterQuery = effectiveParams.serverFilterQuery || effectiveParams.filterQuery
         if (effectiveParams.onlySelected) p.onlySelected = true
       } else if (currentFilterQuery.value) {
         p.filterQuery = currentFilterQuery.value
@@ -716,6 +761,7 @@
       }
       if (advancedFilters.value.hasFailedProducts) p.hasFailedProducts = true
       if (advancedFilters.value.hasOutdatedProducts) p.hasOutdatedProducts = true
+      if (advancedFilters.value.operatingSystem) p.operatingSystem = advancedFilters.value.operatingSystem
       const result = await getClients(p, { signal: controller.signal })
       if (requestId !== fetchClientsRequestId.value) return
       if (result.error) error.value = result.error.message
@@ -736,6 +782,7 @@
       }
     } catch (e) {
       if (requestId !== fetchClientsRequestId.value) return
+      if (controller.signal.aborted) return
       error.value = (e as Error).message
     } finally {
       if (requestId === fetchClientsRequestId.value) {
@@ -886,7 +933,14 @@
     if (routeProductType === 'localboot' || routeProductType === 'netboot') {
       panelProductType.value = routeProductType
     }
-    await Promise.all([fetchClients(buildInitialPageParams(currentFilterQuery.value)), fetchBlockedClients()])
+    // Global Search favorites navigate here with ?savedSearchId=... - apply once on load; later
+    // clicks on a different favorite are handled by the watch() above (no remount happens).
+    const savedSearchId = route.query.savedSearchId as string | undefined
+    if (savedSearchId) {
+      await Promise.all([applyFavoriteFromRoute(savedSearchId), fetchBlockedClients()])
+    } else {
+      await Promise.all([fetchClients(buildInitialPageParams(currentFilterQuery.value)), fetchBlockedClients()])
+    }
     const clientId = route.query.client as string | undefined
     const pType = route.query.panelType as 'config' | 'logs' | 'clone' | 'inventory' | 'products' | 'add' | undefined
     const configType = route.query.configType as string | undefined
@@ -920,6 +974,16 @@
   })
 
   onUnmounted(() => fetchClientsController?.abort())
+
+  // Global Search "clear all filters" resets every scope; only react to it while this page is mounted.
+  function handleClearAllFilters() {
+    handleApplySavedSearch({ filterQuery: '', advancedFilters: {} })
+    router.replace({ query: { ...route.query, filter: undefined } })
+  }
+  if (!import.meta.server) window.addEventListener(CLEAR_ALL_FILTERS_EVENT, handleClearAllFilters)
+  onUnmounted(() => {
+    if (!import.meta.server) window.removeEventListener(CLEAR_ALL_FILTERS_EVENT, handleClearAllFilters)
+  })
 
   watch(
     () => route.query.filter,

@@ -16,7 +16,8 @@
     "actionRequest_set": 1,
     "actionResult_failed": 1,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-client-3.domain.local",
@@ -35,6 +36,7 @@
     "actionRequest_set": 1,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   }
 ]

@@ -161,8 +161,8 @@
 
 <script setup lang="ts">
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
-  import type { DataTableColumnDef } from '~/composables/useDataTableSettings'
-  import { getStoredDataTableFilter } from '~/composables/useDataTableFilter'
+  import { useDataTableSettings, type DataTableColumnDef } from '~/composables/data-table/useDataTableSettings'
+  import { getStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
   import type { HardwareInventoryItem, InventoryMeta, InventorySummary, SoftwareInventoryItem } from '~/types'
 
   type TabValue = 'hardware' | 'software'
@@ -443,7 +443,7 @@
 
     try {
       const commonParams = {
-        filterQuery: params.filterQuery || undefined,
+        filterQuery: params.serverFilterQuery || params.filterQuery || undefined,
         sortBy: backendSortKey(params.sortBy),
         sortDesc: params.sortDesc,
         page: params.pageNumber,
@@ -472,6 +472,7 @@
       }
     } catch (caught) {
       if (currentRequestId !== requestId) return
+      if (controller.signal.aborted) return
       error.value = caught instanceof Error ? caught.message : String($t('common.error'))
     } finally {
       if (currentRequestId === requestId) {
@@ -498,7 +499,7 @@
     exporting.value = true
     try {
       const commonParams = {
-        filterQuery: params.filterQuery || undefined,
+        filterQuery: params.serverFilterQuery || params.filterQuery || undefined,
         sortBy: backendSortKey(params.sortBy),
         sortDesc: params.sortDesc,
       }

@@ -8,6 +8,7 @@ webgui client methods
 
 import os
 import subprocess
+import time
 from datetime import date, datetime
 from typing import Any, Literal
 
@@ -65,6 +66,29 @@ api_router = APIRouter()
 logger = get_logger()
 
 
+def _is_audit_state_present(state: Any) -> bool:
+	# Audit rows keep history: state 0 means the software/hardware is no longer present on the
+	# client, so it must not match a search for what's currently installed/plugged in.
+	return state is None or state != 0
+
+
+_OS_CATALOG_CACHE_SECONDS = 300
+_os_catalog_cache: dict[str, Any] = {"time": 0.0, "names": set()}
+
+
+def _get_os_catalog_names() -> set[str]:
+	now = time.time()
+	if now - _os_catalog_cache["time"] > _OS_CATALOG_CACHE_SECONDS:
+		try:
+			os_rows = backend.auditSoftware_getObjects(isOperatingSystem=True)
+		except Exception as err:  # pylint: disable=broad-except
+			logger.warning("Failed to load operating system catalog: %s", err)
+			os_rows = []
+		_os_catalog_cache["names"] = {row.name for row in os_rows if getattr(row, "name", None)}
+		_os_catalog_cache["time"] = now
+	return _os_catalog_cache["names"]
+
+
 class ClientList(BaseModel):  # pylint: disable=too-few-public-methods
 	clientId: str
 	ident: str
@@ -77,6 +101,7 @@ class ClientList(BaseModel):  # pylint: disable=too-few-public-methods
 	actionRequest_set: int
 	actionResult_failed: int
 	actionResult_successful: int
+	operatingSystem: str | None = None
 
 
 class Client(BaseModel):  # pylint: disable=too-few-public-methods
@@ -107,6 +132,7 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 	notSeenSinceDays: int | None = None,
 	hasFailedProducts: bool | None = None,
 	hasOutdatedProducts: bool | None = None,
+	operatingSystem: str | None = None,
 	onlySelected: bool = False,
 ) -> RESTResponse:
 	"""
@@ -238,6 +264,20 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 			)
 		if onlySelected and selected and selected != [""]:
 			where = and_(where, text("h.hostId IN :selected"))
+
+		if operatingSystem:
+			try:
+				os_rows = backend.auditSoftwareOnClient_getObjects(name=operatingSystem)
+			except Exception as err:  # pylint: disable=broad-except
+				logger.warning("Failed to query operating system audit data for filter '%s': %s", operatingSystem, err)
+				os_rows = []
+			os_client_ids = sorted(
+				{row.clientId for row in os_rows if getattr(row, "clientId", None) and _is_audit_state_present(getattr(row, "state", None))}
+			)
+			if not os_client_ids:
+				return RESTResponse(data=[], total=0)
+			params["os_filter_clients"] = os_client_ids
+			where = and_(where, text("h.hostId IN :os_filter_clients"))
 
 		sort_by = commons.get("sortBy") or []
 		sort_by_reachable = "reachable" in sort_by
@@ -461,7 +501,37 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 				client["reachable"] = bool(client["reachable"]) if client["reachable"] is not None else None
 				client["selected"] = bool(client["selected"]) if client["selected"] is not None else None
 				data.append(client)
+
+		os_catalog_names = _get_os_catalog_names()
+		if data and os_catalog_names:
+			page_client_ids = [client["clientId"] for client in data]
+			try:
+				os_rows = backend.auditSoftwareOnClient_getObjects(clientId=page_client_ids, name=sorted(os_catalog_names))
+			except Exception as err:  # pylint: disable=broad-except
+				logger.warning("Failed to load operating system info for client page: %s", err)
+				os_rows = []
+			os_by_client: dict[str, str] = {}
+			for os_row in os_rows:
+				if not _is_audit_state_present(getattr(os_row, "state", None)):
+					continue
+				client_id = getattr(os_row, "clientId", None)
+				if client_id and client_id not in os_by_client:
+					os_by_client[client_id] = getattr(os_row, "name", None) or ""
+			for client in data:
+				client["operatingSystem"] = os_by_client.get(client["clientId"])
+
 		return RESTResponse(data=data, total=total)
+
+
+@api_router.get("/api/opsidata/clients/operating-systems")
+@rest_api
+def client_operating_systems(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
+	"""
+	Distinct operating systems known from the audit software catalog, for the clients
+	"operating system" filter dropdown.
+	"""
+	names = sorted(_get_os_catalog_names())
+	return RESTResponse(data=names, total=len(names))
 
 
 def _depots_of_clients(clients: list[str] | None) -> dict:

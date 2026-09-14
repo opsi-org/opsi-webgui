@@ -16,7 +16,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-client-1.domain.local",
@@ -35,7 +36,8 @@
     "actionRequest_set": 1,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-client-2.domain.local",
@@ -54,7 +56,8 @@
     "actionRequest_set": 1,
     "actionResult_failed": 1,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-client-3.domain.local",
@@ -73,7 +76,8 @@
     "actionRequest_set": 1,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-client-4.domain.local",
@@ -92,7 +96,8 @@
     "actionRequest_set": 1,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-client-5.domain.local",
@@ -111,7 +116,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-client-6.domain.local",
@@ -130,7 +136,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-client-7.domain.local",
@@ -149,7 +156,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-client-8.domain.local",
@@ -168,7 +176,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-client-9.domain.local",
@@ -187,7 +196,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-host-0.domain.local",
@@ -206,7 +216,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-host-1.domain.local",
@@ -225,7 +236,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-host-10.domain.local",
@@ -244,7 +256,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-host-11.domain.local",
@@ -263,7 +276,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-host-12.domain.local",
@@ -282,7 +296,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-host-13.domain.local",
@@ -301,7 +316,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-host-14.domain.local",
@@ -320,7 +336,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-host-15.domain.local",
@@ -339,7 +356,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-host-16.domain.local",
@@ -358,7 +376,8 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   },
   {
     "clientId": "pytest-host-17.domain.local",
@@ -377,6 +396,7 @@
     "actionRequest_set": 0,
     "actionResult_failed": 0,
     "actionResult_successful": 0,
-    "selected": false
+    "selected": false,
+    "operatingSystem": null
   }
 ]

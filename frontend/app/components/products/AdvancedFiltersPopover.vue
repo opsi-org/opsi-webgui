@@ -5,57 +5,36 @@
   All rights reserved.
   License: AGPL-3.0
 
-  ProductsAdvancedFiltersPopover - Installation status / action result / usage filters for the products table.
+  ProductsAdvancedFiltersPopover - Installation status / action result / usage filters for the
+  products table. Content-only (no popover/trigger of its own): rendered as the "Advanced
+  Filters" section inside CoreAppDataTable's combined filters popover.
 -->
 <template>
-  <CoreAppHoverPopover :title="String($t('common.advancedFilters'))" content-class="min-w-80 max-w-150">
-    <CoreAppButton
-      :aria-label="String($t('common.advancedFilters'))"
-      variant="outline"
-      color="primary"
+  <CoreAppSectionHeader :title="String($t('common.advancedFilters'))" />
+
+  <p class="m-0 text-xs text-(--color-text-muted)">{{ $t('products.advancedFilters.scopeHelp') }}</p>
+
+  <div class="flex flex-col gap-1">
+    <span class="text-xs text-(--color-text-muted)">{{ $t('products.status') }}</span>
+    <CoreAppSelectMenu
+      :model-value="modelValue.installationStatus || 'all'"
+      :items="installationStatusOptions"
       size="sm"
-      data-testid="products-advanced-filters"
-    >
-      <CoreAppStackedIcons
-        :primary-icon="icons.filter"
-        :secondary-icon="icons.starSolid"
-        size="sm"
-        primary-class="w-4 h-4"
-        secondary-class="w-2.5 h-2.5"
-      />
-      <template v-if="activeCount > 0">{{ activeCount }}</template>
-    </CoreAppButton>
+      open-on-hover
+      :aria-label="String($t('products.status'))"
+      @update:model-value="(v: string) => setFilter({ installationStatus: v === 'all' ? undefined : v })"
+    />
+  </div>
 
-    <template #content>
-      <p class="m-0 text-xs text-(--color-text-muted)">{{ $t('products.advancedFilters.scopeHelp') }}</p>
-
-      <div class="flex flex-col gap-1">
-        <span class="text-xs text-(--color-text-muted)">{{ $t('products.status') }}</span>
-        <CoreAppSelectMenu
-          :model-value="modelValue.installationStatus || 'all'"
-          :items="installationStatusOptions"
-          size="sm"
-          open-on-hover
-          :aria-label="String($t('products.status'))"
-          @update:model-value="(v: string) => setFilter({ installationStatus: v === 'all' ? undefined : v })"
-        />
-      </div>
-
-      <CoreAppCheckbox
-        v-for="option in toggleOptions"
-        :key="option.key"
-        :model-value="!!modelValue[option.key]"
-        :label="option.label"
-        size="xs"
-        :ui="{ root: 'w-full px-1 py-1 rounded hover:bg-(--color-surface-hover)', label: 'text-xs w-full cursor-pointer' }"
-        @update:model-value="(v: boolean) => setFilter({ [option.key]: v || undefined })"
-      />
-
-      <div class="pt-1">
-        <CoreAppButton variant="outline" color="primary" size="xs" block @click="reset">{{ $t('common.resetDefaults') }}</CoreAppButton>
-      </div>
-    </template>
-  </CoreAppHoverPopover>
+  <CoreAppCheckbox
+    v-for="option in toggleOptions"
+    :key="option.key"
+    :model-value="!!modelValue[option.key]"
+    :label="option.label"
+    size="xs"
+    :ui="{ root: 'w-full px-1 py-1 rounded hover:bg-(--color-surface-hover)', label: 'text-xs w-full cursor-pointer' }"
+    @update:model-value="(v: boolean) => setFilter({ [option.key]: v || undefined })"
+  />
 </template>
 
 <script setup lang="ts">
@@ -70,9 +49,11 @@
 
   const props = defineProps<{
     modelValue: ProductAdvancedFilters
+    canSaveSearch?: boolean
   }>()
   const emit = defineEmits<{
     (e: 'update:modelValue', value: ProductAdvancedFilters): void
+    (e: 'favorite'): void
   }>()
 
   const icons = useIcons()
@@ -91,20 +72,7 @@
     { key: 'unused', label: String($t('products.advancedFilters.unused')) },
   ])
 
-  const activeCount = computed(() => {
-    let count = 0
-    if (props.modelValue.installationStatus) count++
-    for (const option of toggleOptions.value) {
-      if (props.modelValue[option.key]) count++
-    }
-    return count
-  })
-
   function setFilter(patch: Partial<ProductAdvancedFilters>) {
     emit('update:modelValue', { ...props.modelValue, ...patch })
-  }
-
-  function reset() {
-    emit('update:modelValue', {})
   }
 </script>
