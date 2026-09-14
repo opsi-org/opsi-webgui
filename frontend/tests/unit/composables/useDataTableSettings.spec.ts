@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { nextTick } from 'vue'
-import type { DataTableColumnDef } from '~/app/composables/useDataTableSettings'
-import { useDataTableSettings } from '~/app/composables/useDataTableSettings'
+import type { DataTableColumnDef } from '~/app/composables/data-table/useDataTableSettings'
+import { useDataTableSettings } from '~/app/composables/data-table/useDataTableSettings'
 
 const STORAGE_KEY = 'opsi-webgui-datatable-settings'
 
