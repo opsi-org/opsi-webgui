@@ -590,6 +590,7 @@
     "requirementType": "Anforderungstyp",
     "status": "Installationsstatus",
     "statusInstalled": "Installierte Produkte",
+    "statusBadgeClickHint": "klicken, um die Produkttabelle mit passender Sortierung zu öffnen",
     "statusNotInstalled": "Nicht installiert",
     "statusUnknown": "Unbekannter Installationsstatus",
     "title": "Produkte",

@@ -110,7 +110,7 @@
         {{ panelServer?.depotId }}
       </span>
     </template>
-    <template #panel-subtitle>{{ $t('config.title') }}</template>
+    <template #panel-subtitle>- {{ $t('config.title') }}</template>
     <template #panel>
       <div v-if="panelServer" class="h-full flex flex-col min-h-0">
         <HostsConfigTabs
