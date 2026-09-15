@@ -90,7 +90,7 @@
               :aria-label="String($t('groups.create'))"
               :disabled="isReadOnly"
             >
-              <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge badge-color="none" />
+              <CoreAppIcon :name="icons.group" class="w-4 h-4" />
             </CoreAppButton>
           </div>
           <CoreAppFilterInput v-model="searchQuery" size="xs" input-class="w-full" />
@@ -140,7 +140,7 @@
                 :aria-label="String($t('groups.create'))"
                 @click.stop="openCreateModal(rootGroup.id)"
               >
-                <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="xs" badge badge-color="none" />
+                <CoreAppIcon :name="icons.group" class="w-3.5 h-3.5" />
               </CoreAppButton>
             </div>
             <template v-if="activeGroupType !== 'clients' || !collapsedSections.has(rootGroup.id)">
@@ -205,7 +205,7 @@
                 @click="openCreateModal(selectedGroup.id)"
                 :disabled="isReadOnly"
               >
-                <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge badge-color="none" />
+                <CoreAppIcon :name="icons.group" class="w-4 h-4" />
               </CoreAppButton>
               <CoreAppButton
                 :icon="icons.pencil"
@@ -235,7 +235,7 @@
                 @click="openCreateModal(selectedGroup.id)"
                 :disabled="isReadOnly"
               >
-                <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="sm" badge badge-color="none" />
+                <CoreAppIcon :name="icons.group" class="w-4 h-4" />
               </CoreAppButton>
             </div>
           </div>

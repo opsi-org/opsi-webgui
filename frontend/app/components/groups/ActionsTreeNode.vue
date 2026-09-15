@@ -82,7 +82,7 @@
           :disabled="groupDisabled"
           @click="$emit('create-subgroup', group.id)"
         >
-          <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="xs" badge badge-color="none" />
+          <CoreAppIcon :name="icons.group" class="w-3.5 h-3.5" />
         </CoreAppButton>
       </div>
       <div v-else-if="!group.isSpecial" class="opacity-0 group-hover/node:opacity-100 flex gap-1 transition-opacity" @click.stop>
@@ -107,7 +107,7 @@
           :disabled="groupDisabled"
           @click="$emit('create-subgroup', group.id)"
         >
-          <CoreAppStackedIcons :primary-icon="icons.group" :secondary-icon="icons.addBold" size="xs" badge badge-color="none" />
+          <CoreAppIcon :name="icons.group" class="w-3.5 h-3.5" />
         </CoreAppButton>
         <CoreAppButton
           :icon="icons.pencil"
