@@ -156,7 +156,7 @@
   const totalItems = ref(0)
   const panelServer = ref<Server | null>(null)
   const panelType = ref<'config' | null>(null)
-  const panelTab = ref('parameters')
+  const panelTab = ref('attributes')
   const lastPageParams = ref<PageChangeParams | null>(null)
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('servers'))
   const fetchServersRequestId = ref(0)

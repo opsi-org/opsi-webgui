@@ -100,6 +100,10 @@ class Client(Host):  # pylint: disable=too-few-public-methods
 	created: str
 	lastSeen: str
 	oneTimePassword: str
+	wanMode: bool | None = None
+	smartCache: bool | None = None
+	installOnShutdown: bool | None = None
+	monitoring: bool | None = None
 
 
 @api_router.get("/api/opsidata/hosts", response_model=list[Client])
@@ -168,6 +172,15 @@ def get_host_data(
 					TRUE,
 					FALSE
 				) AS uefi
+			,
+			IF(COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.smart_cache'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'clientconfig.smart_cache' AND cv.isDefault)) LIKE '%true%', TRUE, FALSE) AS smartCache,
+			IF(COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsiclientd.event_on_shutdown.active'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsiclientd.event_on_shutdown.active' AND cv.isDefault)) LIKE '%true%', TRUE, FALSE) AS installOnShutdown,
+			IF(COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsi.check.enabled'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsi.check.enabled' AND cv.isDefault)) LIKE '%true%', TRUE, FALSE) AS monitoring,
+			IF(
+				COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsiclientd.event_net_connection.active'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsiclientd.event_net_connection.active' AND cv.isDefault)) LIKE '%true%'
+				AND COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsiclientd.event_timer.active'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsiclientd.event_timer.active' AND cv.isDefault)) LIKE '%true%'
+				AND COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsiclientd.event_gui_startup.active'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsiclientd.event_gui_startup.active' AND cv.isDefault)) LIKE '%false%'
+				AND COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsiclientd.event_gui_startup{user_logged_in}.active'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsiclientd.event_gui_startup{user_logged_in}.active' AND cv.isDefault)) LIKE '%false%', TRUE, FALSE) AS wanMode
 
 		"""
 				)
@@ -190,6 +203,7 @@ def get_host_data(
 						row_dict[key] = row_dict.get(key, datetime.datetime(2000, 1, 1, 0, 0)).isoformat()
 				row_dict["uefi"] = bool(row_dict["uefi"])
 				host_data.append(row_dict)
+
 		return RESTResponse(data=host_data)
 
 

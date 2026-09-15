@@ -264,6 +264,15 @@
     "advancedFilters": "Filtres avancés"
   },
   "config": {
+    "attributeDisabled": "Désactivé",
+    "attributeEnabled": "Activé",
+    "attributeHelp": {
+      "installOnShutdown": "Installer les logiciels en attente à l’arrêt du client.",
+      "isMasterDepot": "Indique si ce dépôt est le dépôt maître.",
+      "monitoring": "Contrôle la surveillance de l’état de santé opsiconfd pour ce client.",
+      "smartCache": "Indique si ce client agit comme serveur SmartCache.",
+      "wanMode": "Active le mode WAN/VPN pour cet hôte."
+    },
     "create": "Créer une configuration",
     "id": "ID de configuration",
     "idPlaceholder": "p. ex. category.subcategory.name",

@@ -263,6 +263,11 @@
     "advancedFilters": "Advanced Filters"
   },
   "config": {
+    "attributeDisabled": "Disabled",
+    "attributeEnabled": "Enabled",
+    "attributeHelp": {
+      "monitoring": "Controls the opsiconfd health-check monitoring for this client."
+    },
     "create": "Create Configuration",
     "id": "Config ID",
     "idPlaceholder": "e.g. category.subcategory.name",

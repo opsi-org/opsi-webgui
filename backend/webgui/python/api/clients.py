@@ -115,6 +115,10 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	inventoryNumber: str | None = ""
 	systemUUID: str | None = ""
 	oneTimePassword: str | None = None
+	wanMode: bool | None = None
+	smartCache: bool | None = None
+	installOnShutdown: bool | None = None
+	monitoring: bool | None = None
 	created: datetime | None = None
 	lastSeen: datetime | None = None
 
@@ -648,6 +652,21 @@ def create_client(request: Request, client: Client, depot: str = Body(default=""
 			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 			client.systemUUID,
 		)
+		if client.smartCache:
+			client.wanMode = False
+		elif client.wanMode:
+			client.smartCache = False
+		if client.wanMode is not None:
+			backend.configState_create("opsiclientd.event_gui_startup.active", client.hostId, [not client.wanMode])
+			backend.configState_create("opsiclientd.event_gui_startup{user_logged_in}.active", client.hostId, [not client.wanMode])
+			backend.configState_create("opsiclientd.event_timer.active", client.hostId, [client.wanMode])
+			backend.configState_create("opsiclientd.event_net_connection.active", client.hostId, [client.wanMode])
+		if client.smartCache is not None:
+			backend.configState_create("clientconfig.smart_cache", client.hostId, [client.smartCache])
+		if client.installOnShutdown is not None:
+			backend.configState_create("opsiclientd.event_on_shutdown.active", client.hostId, [client.installOnShutdown])
+		if client.monitoring is not None:
+			backend.configState_create("opsi.check.enabled", client.hostId, [client.monitoring])
 		headers = {"Location": f"{request.url}/{client.hostId}"}
 
 		if depot:
@@ -703,6 +722,21 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
 			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 			client.systemUUID,
 		)
+		if client.smartCache:
+			client.wanMode = False
+		elif client.wanMode:
+			client.smartCache = False
+		if client.wanMode is not None:
+			backend.configState_create("opsiclientd.event_gui_startup.active", client.hostId, [not client.wanMode])
+			backend.configState_create("opsiclientd.event_gui_startup{user_logged_in}.active", client.hostId, [not client.wanMode])
+			backend.configState_create("opsiclientd.event_timer.active", client.hostId, [client.wanMode])
+			backend.configState_create("opsiclientd.event_net_connection.active", client.hostId, [client.wanMode])
+		if client.smartCache is not None:
+			backend.configState_create("clientconfig.smart_cache", client.hostId, [client.smartCache])
+		if client.installOnShutdown is not None:
+			backend.configState_create("opsiclientd.event_on_shutdown.active", client.hostId, [client.installOnShutdown])
+		if client.monitoring is not None:
+			backend.configState_create("opsi.check.enabled", client.hostId, [client.monitoring])
 		headers = {"Location": f"{request.url}/{client.hostId}"}
 
 		return RESTResponse(data=client.__dict__, http_status=status.HTTP_201_CREATED, headers=headers)
@@ -759,6 +793,10 @@ def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branc
 					TRUE,
 					FALSE
 				) AS uefi
+							,
+							IF(COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.smart_cache'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'clientconfig.smart_cache' AND cv.isDefault)) LIKE '%true%', TRUE, FALSE) AS smartCache,
+							IF(COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsiclientd.event_on_shutdown.active'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsiclientd.event_on_shutdown.active' AND cv.isDefault)) LIKE '%true%', TRUE, FALSE) AS installOnShutdown,
+							IF(COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsi.check.enabled'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsi.check.enabled' AND cv.isDefault)) LIKE '%true%', TRUE, FALSE) AS monitoring
 			"""
 					)
 				)

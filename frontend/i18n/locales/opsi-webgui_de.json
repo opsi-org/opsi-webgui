@@ -264,6 +264,11 @@
     "advancedFilters": "Erweiterte Filter"
   },
   "config": {
+    "attributeDisabled": "Deaktiviert",
+    "attributeEnabled": "Aktiviert",
+    "attributeHelp": {
+      "monitoring": "Steuert die opsiconfd-Gesundheitsprüfung für diesen Client."
+    },
     "create": "Konfiguration erstellen",
     "id": "Konfigurations-ID",
     "idPlaceholder": "z. B. category.subcategory.name",
