@@ -50,6 +50,14 @@ export function useDataTableVirtualization<T>({ containerRef, rowOffset, rows }:
     rowHeightMeasured = false
   }
 
+  // A refresh can replace the page while keeping the same row count. Reset the
+  // absolute window as well, otherwise displayRows may slice from the previous
+  // scroll position and render no rows until another scroll event occurs.
+  function resetVirtualWindow() {
+    virtualStart.value = rowOffset.value
+    virtualCount.value = 60
+  }
+
   function refreshContainerHeight() {
     containerHeight = containerRef.value?.clientHeight ?? containerHeight
   }
@@ -71,9 +79,16 @@ export function useDataTableVirtualization<T>({ containerRef, rowOffset, rows }:
   }
 
   function scrollToTop() {
-    virtualStart.value = rowOffset.value
+    resetVirtualWindow()
     containerRef.value?.scrollTo({ top: 0 })
   }
+
+  watch([rows, rowOffset], ([newRows, newOffset], [oldRows, oldOffset]) => {
+    // Appending a page should preserve the current viewport. A replacement
+    // (including a refresh with the same number of rows) must start from the
+    // new page's offset instead.
+    if (newOffset !== oldOffset || newRows.length <= oldRows.length) resetVirtualWindow()
+  })
 
   return {
     virtualizationActive,
@@ -83,6 +98,7 @@ export function useDataTableVirtualization<T>({ containerRef, rowOffset, rows }:
     bottomSpacerHeight,
     measureRowHeight,
     resetRowHeightMeasurement,
+    resetVirtualWindow,
     refreshContainerHeight,
     updateVirtualWindow,
     scrollToTop,
