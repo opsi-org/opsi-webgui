@@ -464,7 +464,7 @@
       currentMeta.value = result.data?.meta ?? null
       totalItems.value = result.total ?? result.data?.items.length ?? 0
       const pageItems = (result.data?.items ?? []) as InventoryItem[]
-      if (params.pageNumber > 1) {
+      if (params.displayMode === 'infinite' && params.pageNumber > 1) {
         rowOffset.value += appendInfinitePage(currentItems.value, pageItems, params.perPage)
       } else {
         currentItems.value = pageItems

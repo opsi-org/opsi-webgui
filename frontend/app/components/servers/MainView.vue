@@ -372,7 +372,7 @@
       if (result.data) {
         const newData = result.data as Server[]
         if (result.total !== null) totalItems.value = result.total
-        if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
+        if (!isReload && effectiveParams?.displayMode === 'infinite' && effectiveParams.pageNumber > 1) {
           rowOffset.value += appendInfinitePage(servers.value, newData, effectiveParams.perPage)
         } else {
           servers.value = newData

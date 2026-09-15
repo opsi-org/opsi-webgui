@@ -561,6 +561,7 @@
     serverFilterQuery?: string
     sortBySelection: boolean
     onlySelected: boolean
+    displayMode?: 'infinite' | 'pagination'
   }
 
   interface Props {
@@ -885,6 +886,7 @@
       serverFilterQuery: serverFilterQuery.value,
       sortBySelection: sortBySelection.value,
       onlySelected: onlySelected.value,
+      displayMode: displayMode.value,
     }
   }
 

@@ -1119,7 +1119,7 @@
       if (result.error) throw result.error
       const newData = (result.data || []) as ProductRow[]
       if (result.total !== null) totalItems.value = result.total
-      if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
+      if (!isReload && effectiveParams?.displayMode === 'infinite' && effectiveParams.pageNumber > 1) {
         rowOffset.value += appendInfinitePage(products.value, newData, effectiveParams.perPage)
       } else {
         products.value = newData
