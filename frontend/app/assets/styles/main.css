@@ -352,7 +352,7 @@ label,
 code,
 pre,
 .font-mono {
-  font-family: 'Roboto Mono', ui-monospace, monospace;
+  font-family: ui-monospace, monospace;
 }
 
 /* ============================================

@@ -108,7 +108,6 @@ export default defineNuxtConfig({
     families: [
       { name: 'Open Sans', weights: [300, 400, 500, 600, 700] },
       { name: 'Montserrat', weights: [400, 500, 600, 700] },
-      { name: 'Roboto Mono', weights: [400, 500] },
     ],
     defaults: {
       fallbacks: {
