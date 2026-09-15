@@ -36,6 +36,9 @@
           data-testid="clients-open-products-panel"
         >
           {{ $t('products.title') }}
+          <span class="inline-flex items-center gap-1">
+            (<CoreAppIcon :name="productScopeIcon" class="w-4 h-4" /> {{ productScopeCount }})
+          </span>
         </CoreAppButton>
       </CoreAppTooltip>
       <CoreAppButton
@@ -98,6 +101,14 @@
           <CoreAppIcon v-else :name="icons.sort" class="w-2 h-2 opacity-80" />
         </div>
       </template>
+      <template #header-cell-actions>
+        <ClientsQuickActionsDropdown
+          :client-ids="selectionStore.selectedClients"
+          compact
+          :disabled="isReadOnly"
+          @action-complete="handleActionComplete"
+        />
+      </template>
       <template #cell-clientId="{ row }">
         <div class="flex items-center gap-1.5">
           <CoreAppIcon
@@ -132,7 +143,7 @@
           :value="(row as OpsiClient).version_outdated"
           :icon="icons.productsOutdated"
           label="L"
-          :tooltip="$t('products.outdated.localboot')"
+          :tooltip="`${$t('products.statusBadgeClickHint')}: ${$t('products.outdated.localboot')}`"
           status="warning"
           size="xs"
           clickable
@@ -144,7 +155,7 @@
           :value="(row as OpsiClient).version_outdated_netboot"
           :icon="icons.productsOutdated"
           label="N"
-          :tooltip="$t('products.outdated.netboot')"
+          :tooltip="`${$t('products.statusBadgeClickHint')}: ${$t('products.outdated.netboot')}`"
           status="warning"
           size="xs"
           clickable
@@ -155,7 +166,7 @@
         <CoreAppStatusBadge
           :value="(row as OpsiClient).actionRequest_set"
           :icon="icons.onDemand"
-          :tooltip="$t('actions.request')"
+          :tooltip="`${$t('products.statusBadgeClickHint')}: ${$t('actions.request')}`"
           size="xs"
           status="info"
           clickable
@@ -166,7 +177,7 @@
         <CoreAppStatusBadge
           :value="(row as OpsiClient).installationStatus_installed"
           :icon="icons.productInstallationStatusInstalled"
-          :tooltip="$t('products.statusInstalled')"
+          :tooltip="`${$t('products.statusBadgeClickHint')}: ${$t('products.statusInstalled')}`"
           status="success"
           size="xs"
           clickable
@@ -177,7 +188,7 @@
         <CoreAppStatusBadge
           :value="(row as OpsiClient).actionResult_successful"
           :icon="icons.productActionResultSuccessful"
-          :tooltip="$t('actions.success')"
+          :tooltip="`${$t('products.statusBadgeClickHint')}: ${$t('actions.success')}`"
           status="success"
           size="xs"
           clickable
@@ -188,7 +199,7 @@
         <CoreAppStatusBadge
           :value="(row as OpsiClient).actionResult_failed"
           :icon="icons.productsFailedActionResult"
-          :tooltip="$t('actions.failed')"
+          :tooltip="`${$t('products.statusBadgeClickHint')}: ${$t('actions.failed')}`"
           status="error"
           size="xs"
           clickable
@@ -221,9 +232,15 @@
           :name="panelType === 'products' ? icons.product : panelType === 'add' ? icons.add : icons.client"
           class="w-4 h-4 text-(--color-text-muted) shrink-0"
         />
-        <template v-if="panelType === 'products'">{{ $t('products.title') }}</template>
+        <template v-if="panelType === 'products'">
+          <CoreAppIcon :name="productScopeIcon" class="w-3.5 h-3.5" />
+          {{ productScopeLabel }}
+        </template>
         <template v-else-if="panelType === 'add'">{{ $t('common.new') }}</template>
-        <template v-else>{{ panelClient?.clientId }}</template>
+        <template v-else>
+          {{ panelClient?.clientId }}
+          <span v-if="panelType" class="font-normal text-(--color-text-muted)">– {{ clientPanelTitle }}</span>
+        </template>
       </span>
     </template>
     <template #panel-actions>
@@ -328,6 +345,20 @@
     { label: String($t('products.localboot')), value: 'localboot' },
     { label: String($t('products.netboot')), value: 'netboot' },
   ]
+  const productScopeIcon = computed(() => (selectionStore.selectedClients.length > 0 ? icons.client : icons.server))
+  const productScopeCount = computed(() =>
+    selectionStore.selectedClients.length > 0 ? selectionStore.selectedClients.length : selectionStore.selectedServers.length,
+  )
+  const productScopeLabel = computed(() => {
+    const clients = selectionStore.selectedClients
+    const servers = selectionStore.selectedServers
+    if (clients.length === 1) return `${clients[0]} – ${String($t('products.title'))}`
+    if (clients.length > 1) return `${clients.length} ${String($t('clients.title'))} – ${String($t('products.title'))}`
+    return `${servers.length} ${String($t('servers.title'))} – ${String($t('products.title'))}`
+  })
+  const clientPanelTitle = computed(() =>
+    panelType.value === 'clone' ? String($t('clients.clone.title')) : String($t(`${panelType.value}.title`)),
+  )
   const clientPanelViews = computed(() => [
     { label: String($t('config.title')), value: 'config', icon: icons.config },
     { label: String($t('logs.title')), value: 'logs', icon: icons.log },
