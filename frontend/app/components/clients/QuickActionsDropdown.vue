@@ -178,11 +178,11 @@
             </CoreAppButton>
           </div>
           <div>
-            <span class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.username') }}</span>
+            <span class="block text-xs text-(--color-text-muted) mb-1">{{ $t('auth.username') }}</span>
             <CoreAppInput v-model="deployOptions.username" :placeholder="$t('fields.adminUsername')" size="sm" class="w-full" />
           </div>
           <div>
-            <span class="block text-xs text-[--color-text-muted] mb-1">{{ $t('auth.password') }}</span>
+            <span class="block text-xs text-(--color-text-muted) mb-1">{{ $t('auth.password') }}</span>
             <CoreAppInput
               v-model="deployOptions.password"
               type="password"
@@ -228,7 +228,7 @@
           </div>
         </div>
 
-        <div class="flex justify-end gap-2 pt-3 border-[--color-border]">
+        <div class="flex justify-end gap-2 pt-3 border-(--color-border)">
           <CoreAppButton variant="outline" color="primary" @click="confirmOpen = false">{{ $t('common.cancel') }} </CoreAppButton>
           <CoreAppButton
             :color="currentAction === 'delete' ? 'error' : 'primary'"
@@ -294,7 +294,7 @@
           </div>
         </div>
 
-        <div class="flex justify-end mt-4 pt-3 border-t border-[--color-border]">
+        <div class="flex justify-end mt-4 pt-3 border-t border-(--color-border)">
           <CoreAppButton variant="ghost" color="neutral" @click="resultOpen = false">{{ $t('common.close') }} </CoreAppButton>
         </div>
       </div>

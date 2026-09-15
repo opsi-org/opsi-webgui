@@ -21,7 +21,7 @@
           <CoreAppIcon :name="restricted ? icons.lock : icons.check" class="w-3 h-3" :class="colorClasses.badgeIcon" />
         </span>
       </div>
-      <span class="text-[11px] text-[--color-text-muted] font-medium leading-tight text-center max-w-13 line-clamp-2">{{ label }}</span>
+      <span class="text-[11px] text-(--color-text-muted) font-medium leading-tight text-center max-w-13 line-clamp-2">{{ label }}</span>
     </div>
   </CoreAppTooltip>
 </template>

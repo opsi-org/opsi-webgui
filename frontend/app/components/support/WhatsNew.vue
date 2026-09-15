@@ -17,7 +17,7 @@
       <CoreAppLoadingSpinner />
     </div>
 
-    <div v-else-if="error" class="text-xs text-[--color-text-muted]">
+    <div v-else-if="error" class="text-xs text-(--color-text-muted)">
       {{ $t('products.changelog.none') }}
     </div>
     <div v-else class="space-y-1 flex-1">
@@ -28,7 +28,7 @@
     </div>
 
     <template v-if="!loading && !error && items.length" #footer>
-      <div class="text-xs text-[--color-text-muted]">{{ $t('common.version') }}: {{ version }}</div>
+      <div class="text-xs text-(--color-text-muted)">{{ $t('common.version') }}: {{ version }}</div>
     </template>
   </CoreAppCard>
 </template>

@@ -26,7 +26,7 @@
             <CoreAppHeading size="xs">{{ $t('diag.health') }}</CoreAppHeading>
             <CoreAppIcon
               :name="icons.chevronRight"
-              class="ml-auto w-3 h-3 text-[--color-text-muted] opacity-0 group-hover:opacity-100 transition-opacity"
+              class="ml-auto w-3 h-3 text-(--color-text-muted) opacity-0 group-hover:opacity-100 transition-opacity"
               aria-hidden="true"
             />
           </div>
