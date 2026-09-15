@@ -8,7 +8,11 @@
     "ipAddress": null,
     "inventoryNumber": "",
     "systemUUID": null,
-    "uefi": false
+    "uefi": false,
+    "smartCache": false,
+    "installOnShutdown": false,
+    "monitoring": false,
+    "wanMode": false
   },
   {
     "hostId": "pytest-test-depot-8.domain.local",
@@ -19,6 +23,10 @@
     "ipAddress": null,
     "inventoryNumber": "",
     "systemUUID": null,
-    "uefi": false
+    "uefi": false,
+    "smartCache": false,
+    "installOnShutdown": false,
+    "monitoring": false,
+    "wanMode": false
   }
 ]

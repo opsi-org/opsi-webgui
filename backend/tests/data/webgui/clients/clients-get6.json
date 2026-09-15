@@ -7,5 +7,8 @@
   "ipAddress": null,
   "inventoryNumber": "1",
   "systemUUID": null,
-  "uefi": false
+  "uefi": false,
+  "smartCache": false,
+  "installOnShutdown": false,
+  "monitoring": false
 }

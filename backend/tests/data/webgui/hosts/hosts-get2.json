@@ -8,7 +8,11 @@
     "ipAddress": "172.30.0.5",
     "inventoryNumber": "",
     "systemUUID": "9160f45f-5884-11ee-8729-0242ac1f0004",
-    "uefi": false
+    "uefi": false,
+    "smartCache": false,
+    "installOnShutdown": false,
+    "monitoring": false,
+    "wanMode": false
   },
   {
     "hostId": "pytest-lost-client-03.domain.local",
@@ -19,6 +23,10 @@
     "ipAddress": null,
     "inventoryNumber": null,
     "systemUUID": null,
-    "uefi": false
+    "uefi": false,
+    "smartCache": false,
+    "installOnShutdown": false,
+    "monitoring": false,
+    "wanMode": false
   }
 ]
