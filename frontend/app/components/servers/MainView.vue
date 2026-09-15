@@ -345,7 +345,10 @@
       if (params) lastPageParams.value = params
       const isReload = !params
       const baseParams = lastPageParams.value ?? undefined
-      const effectiveParams = baseParams
+      const effectiveParams =
+        isReload && baseParams && (rowOffset.value > 0 || baseParams.pageNumber > 1)
+          ? { ...baseParams, pageNumber: 1, perPage: Math.max(baseParams.perPage, rowOffset.value + servers.value.length) }
+          : baseParams
       const selectionSortActive = effectiveParams?.sortBySelection ?? sortBySelectionEnabled.value
       const p: Record<string, unknown> = {}
       if (effectiveParams) {
