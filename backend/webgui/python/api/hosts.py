@@ -363,24 +363,47 @@ def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 @rest_api
 @read_only_check
 def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request,  # pylint: disable=unused-argument
 	group: str,
-	parent: str = Body(default=None),
-	description: str = Body(default=None),
-	note: str = Body(default=None),
+	parent: str | None = Body(default=None),
+	description: str | None = Body(default=None),
+	note: str | None = Body(default=None),
 ) -> RESTResponse:
 	"""
 	Update host group
 	"""
-	values = {"id": group, "type": "HostGroup"}
+	if parent == "groups" or not parent:
+		parent = None
 	if parent:
-		values["parentGroupId"] = parent
-	if description:
-		values["description"] = description
-	if note:
-		values["note"] = note
+		groups = get_groups_ids("HostGroup")
+		if parent not in groups:
+			return RESTErrorResponse(
+				message=f"Could not update group... Parent group '{parent}' does not exist.",
+				http_status=status.HTTP_400_BAD_REQUEST,
+			)
+		if parent == group or parent in get_sub_groups(group):
+			return RESTErrorResponse(
+				message=f"Could not update group... '{parent}' is the group itself or one of its subgroups.",
+				http_status=status.HTTP_400_BAD_REQUEST,
+			)
+
+	existing_groups = backend.group_getObjects(id=group, type="HostGroup")
+	if not existing_groups:
+		return RESTErrorResponse(message=f"Group '{group}' does not exist.", http_status=status.HTTP_404_NOT_FOUND)
+	current = existing_groups[0]
+
+	# group_updateObject cannot clear parentGroupId to NULL (set_null=False), so use
+	# group_insertObject (update-only, set_null=True) with unchanged fields carried over explicitly
+	values = {
+		"id": group,
+		"type": "HostGroup",
+		"parentGroupId": parent,
+		"description": description if description is not None else current.description,
+		"notes": note if note is not None else current.notes,
+	}
 
 	try:
-		backend.group_updateObject(values)
+		backend.group_insertObject(values)
 	except Exception as error:  # pylint: disable=broad-exception-caught
 		logger.error(error)
 		return RESTErrorResponse(message=f"Could not update group {group}.", details=error)

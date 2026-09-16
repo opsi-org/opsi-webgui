@@ -10,6 +10,7 @@ test opsiconfd webgui products
 import json
 import os
 import socket
+import uuid
 from string import Template
 
 import pytest
@@ -131,6 +132,71 @@ async def test_host_groups_dynamic_does_not_return_group_as_its_own_child(config
 	assert parent_group not in children
 	assert child_group in children
 	assert client_id in children
+
+
+@pytest.mark.asyncio
+async def test_host_group_move_to_other_group_and_top_level(config):
+	suffix = uuid.uuid4().hex[:8]
+	group_a = f"pytest-host-move-a-{suffix}"
+	group_b = f"pytest-host-move-b-{suffix}"
+	child_group = f"pytest-host-move-child-{suffix}"
+
+	for group_id in (group_a, group_b):
+		res = requests.post(
+			f"{config.external_url}{API_ROOT}/hosts/groups",
+			auth=(ADMIN_USER, ADMIN_PASS),
+			verify=False,
+			json={"groupId": group_id},
+		)
+		assert res.status_code == status.HTTP_201_CREATED
+
+	create_child = requests.post(
+		f"{config.external_url}{API_ROOT}/hosts/groups",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		json={"groupId": child_group, "parentGroupId": group_a},
+	)
+	assert create_child.status_code == status.HTTP_201_CREATED
+
+	move_to_b = requests.put(
+		f"{config.external_url}{API_ROOT}/hosts/groups/{child_group}",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		json={"parent": group_b, "note": "moved to b"},
+	)
+	assert move_to_b.status_code == status.HTTP_200_OK
+
+	children = requests.get(
+		f"{config.external_url}{API_ROOT}/hosts/groups-dynamic",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		params={"parentGroup": group_b, "withClients": False},
+	).json()["groups"]["children"]
+	assert child_group in children
+
+	move_to_top = requests.put(
+		f"{config.external_url}{API_ROOT}/hosts/groups/{child_group}",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		json={"parent": "groups"},
+	)
+	assert move_to_top.status_code == status.HTTP_200_OK
+
+	children = requests.get(
+		f"{config.external_url}{API_ROOT}/hosts/groups-dynamic",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		params={"parentGroup": "groups", "withClients": False},
+	).json()["groups"]["children"]
+	assert child_group in children
+
+	move_to_self = requests.put(
+		f"{config.external_url}{API_ROOT}/hosts/groups/{group_a}",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		json={"parent": group_a},
+	)
+	assert move_to_self.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.asyncio
