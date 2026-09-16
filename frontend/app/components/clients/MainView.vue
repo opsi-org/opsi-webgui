@@ -53,7 +53,18 @@
       </CoreAppButton>
     </template>
 
-    <CoreAppErrorBanner :error="error" @close="error = null" />
+    <CoreAppErrorBanner :error="error" :show="!!(error || actionStatus)" @close="error = null">
+      <CoreAppAlertInline
+        v-if="actionStatus"
+        :color="actionStatus.type"
+        :title="actionStatus.title"
+        :description="actionStatus.message"
+        variant="subtle"
+        closable
+        compact
+        @close="actionStatus = null"
+      />
+    </CoreAppErrorBanner>
 
     <CoreAppDataTable
       :rows="clients"
@@ -327,6 +338,8 @@
 
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const actionStatus = ref<{ type: 'success'; title: string; message: string } | null>(null)
+  let actionStatusTimer: ReturnType<typeof setTimeout> | null = null
   const clients = ref<OpsiClient[]>([])
   const rowOffset = ref(0)
   const totalItems = ref(0)
@@ -625,9 +638,23 @@
   }
 
   function handleAddSaved() {
+    if (actionStatusTimer) clearTimeout(actionStatusTimer)
+    actionStatus.value = {
+      type: 'success',
+      title: String($t('common.success')),
+      message: String($t('clients.create.ok')),
+    }
+    actionStatusTimer = setTimeout(() => {
+      actionStatus.value = null
+      actionStatusTimer = null
+    }, 5000)
     closePanel()
     fetchClients()
   }
+
+  onBeforeUnmount(() => {
+    if (actionStatusTimer) clearTimeout(actionStatusTimer)
+  })
 
   function closePanel() {
     checkUnsavedAndDo(() => {
