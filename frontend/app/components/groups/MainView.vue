@@ -101,7 +101,6 @@
         <div v-else class="flex-1 overflow-auto p-1 space-y-0.5">
           <template v-for="rootGroup in filteredTreeGroups" :key="rootGroup.id">
             <div
-              v-if="activeGroupType === 'clients'"
               class="flex items-center justify-between font-heading text-xs text-(--color-text) px-1 py-1 mt-1.5 first:mt-0.5 select-none"
             >
               <button
@@ -115,7 +114,7 @@
                 />
                 <CoreAppTooltip
                   :text="
-                    rootGroup.label === 'groups'
+                    rootGroup.label === 'groups' && activeGroupType === 'clients'
                       ? $t('groups.tooltip')
                       : rootGroup.label === 'clientdirectory'
                         ? $t('clients.directoryTooltip')
@@ -143,15 +142,15 @@
                 <CoreAppIcon :name="icons.group" class="w-3.5 h-3.5" />
               </CoreAppButton>
             </div>
-            <template v-if="activeGroupType !== 'clients' || !collapsedSections.has(rootGroup.id)">
+            <template v-if="!collapsedSections.has(rootGroup.id)">
               <GroupsActionsTreeNode
-                v-for="g in activeGroupType === 'clients' ? rootGroup.children : [rootGroup]"
+                v-for="g in rootGroup.children || []"
                 :key="g.id"
                 :group="g"
                 :selected-id="selectedGroup?.id"
                 :expanded-ids="expandedGroupIds"
                 :group-type="activeGroupType"
-                :is-root-level="activeGroupType === 'products'"
+                :is-root-level="false"
                 :root-id="rootGroup.id"
                 @select="selectGroup"
                 @toggle="toggleExpand"
@@ -824,11 +823,7 @@
     if (activeGroupType.value === 'clients') {
       return clientGroupsTree.value
     }
-    const tree = productGroupsTree.value
-    if (tree.length === 1 && tree[0]?.isRoot) {
-      return tree[0].children || []
-    }
-    return tree
+    return productGroupsTree.value
   })
 
   const filteredTreeGroups = computed(() => {
@@ -924,7 +919,9 @@
       for (const node of nodes) {
         if (node.id !== currentId && node.id !== 'not_assigned' && !childIds.has(node.id)) {
           const indent = '\u00A0\u00A0\u00A0\u00A0'.repeat(depth)
-          items.push({ label: `${indent}${node.id}`, value: node.id })
+          const label =
+            node.id === 'groups' ? String($t('groups.title')) : node.id === 'clientdirectory' ? String($t('clients.directory')) : node.id
+          items.push({ label: `${indent}${label}`, value: node.id })
         }
         if (node.children?.length) {
           walk(node.children, depth + 1)
@@ -1349,11 +1346,12 @@
     try {
       const parentId = editForm.parentGroupId || undefined
       const updateFn = activeGroupType.value === 'clients' ? updateHostGroup : updateProductGroup
-      await updateFn(editForm.groupId, {
+      const updateResult = await updateFn(editForm.groupId, {
         parent: parentId,
         description: editForm.description || undefined,
         note: editForm.notes || undefined,
       })
+      if (updateResult?.error) throw updateResult.error
       showStatus('success', String($t('notify.group.updated', { group: editForm.groupId })))
       showEditModal.value = false
       await fetchCurrentGroups()
