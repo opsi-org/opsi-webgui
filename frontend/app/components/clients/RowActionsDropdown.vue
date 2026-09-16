@@ -9,58 +9,62 @@
 -->
 <template>
   <div class="flex items-center gap-1">
-    <CoreAppButton
-      v-if="showAllActions || defaultAction === 'config'"
-      :icon="icons.config"
-      variant="ghost"
-      size="xs"
-      class="h-7 w-7 p-1"
-      :color="activeAction === 'config' ? 'primary' : 'neutral'"
-      :class="activeAction === 'config' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
-      :aria-label="String($t('config.title'))"
-      data-testid="client-row-action-config"
-      @click="emit('open-config')"
-    />
+    <CoreAppTooltip v-if="showAllActions || defaultAction === 'config'" :text="String($t('config.title'))" :delay="{ open: 0 }">
+      <CoreAppButton
+        :icon="icons.config"
+        variant="ghost"
+        size="xs"
+        class="h-7 w-7 p-1"
+        :color="activeAction === 'config' ? 'primary' : 'neutral'"
+        :class="activeAction === 'config' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+        :aria-label="String($t('config.title'))"
+        data-testid="client-row-action-config"
+        @click="emit('open-config')"
+      />
+    </CoreAppTooltip>
 
-    <CoreAppButton
-      v-if="showAllActions || defaultAction === 'logs'"
-      :icon="icons.log"
-      variant="ghost"
-      size="xs"
-      class="h-7 w-7 p-1"
-      :color="activeAction === 'logs' ? 'primary' : 'neutral'"
-      :class="activeAction === 'logs' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
-      :aria-label="String($t('logs.title'))"
-      data-testid="client-row-action-logs"
-      @click="emit('open-logs')"
-    />
+    <CoreAppTooltip v-if="showAllActions || defaultAction === 'logs'" :text="String($t('logs.title'))" :delay="{ open: 0 }">
+      <CoreAppButton
+        :icon="icons.log"
+        variant="ghost"
+        size="xs"
+        class="h-7 w-7 p-1"
+        :color="activeAction === 'logs' ? 'primary' : 'neutral'"
+        :class="activeAction === 'logs' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+        :aria-label="String($t('logs.title'))"
+        data-testid="client-row-action-logs"
+        @click="emit('open-logs')"
+      />
+    </CoreAppTooltip>
 
-    <CoreAppButton
-      v-if="showAllActions || defaultAction === 'inventory'"
-      :icon="icons.inventory"
-      variant="ghost"
-      size="xs"
-      class="h-7 w-7 p-1"
-      :color="activeAction === 'inventory' ? 'primary' : 'neutral'"
-      :class="activeAction === 'inventory' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
-      :aria-label="String($t('inventory.title'))"
-      data-testid="client-row-action-inventory"
-      @click="emit('open-inventory')"
-    />
+    <CoreAppTooltip v-if="showAllActions || defaultAction === 'inventory'" :text="String($t('inventory.title'))" :delay="{ open: 0 }">
+      <CoreAppButton
+        :icon="icons.inventory"
+        variant="ghost"
+        size="xs"
+        class="h-7 w-7 p-1"
+        :color="activeAction === 'inventory' ? 'primary' : 'neutral'"
+        :class="activeAction === 'inventory' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+        :aria-label="String($t('inventory.title'))"
+        data-testid="client-row-action-inventory"
+        @click="emit('open-inventory')"
+      />
+    </CoreAppTooltip>
 
-    <CoreAppButton
-      v-if="showAllActions || defaultAction === 'clone'"
-      :icon="icons.clone"
-      variant="ghost"
-      size="xs"
-      class="h-7 w-7 p-1"
-      :color="activeAction === 'clone' ? 'primary' : 'neutral'"
-      :class="activeAction === 'clone' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
-      :aria-label="String($t('clients.clone.title'))"
-      @click="emit('open-clone')"
-      :disabled="isReadOnly || !canCreateClients"
-      data-testid="client-row-action-clone"
-    />
+    <CoreAppTooltip v-if="showAllActions || defaultAction === 'clone'" :text="String($t('clients.clone.title'))" :delay="{ open: 0 }">
+      <CoreAppButton
+        :icon="icons.clone"
+        variant="ghost"
+        size="xs"
+        class="h-7 w-7 p-1"
+        :color="activeAction === 'clone' ? 'primary' : 'neutral'"
+        :class="activeAction === 'clone' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+        :aria-label="String($t('clients.clone.title'))"
+        @click="emit('open-clone')"
+        :disabled="isReadOnly || !canCreateClients"
+        data-testid="client-row-action-clone"
+      />
+    </CoreAppTooltip>
 
     <ClientsQuickActionsDropdown class="ml-0.5" :client-ids="[clientId]" inline show-rename @action-complete="handleActionComplete" />
   </div>
