@@ -142,49 +142,63 @@
       </template>
 
       <template v-else>
-        <div
-          v-for="item in productFlatItems"
-          :key="item.id"
-          v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount, isBusyGroup(item.id)]"
-          :style="{ paddingLeft: `${item.depth * 16}px` }"
-          class="flex items-center gap-1 py-0 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer"
-        >
-          <CoreAppButton
-            v-if="item.hasChildren && !isBusyGroup(item.id)"
-            :icon="item.isExpanded ? icons.chevronDown : icons.chevronRight"
-            size="xs"
-            variant="ghost"
-            color="neutral"
-            class="shrink-0 p-0! h-4! w-4!"
-            :aria-label="item.isExpanded ? $t('common.collapse') : $t('common.expand')"
-            @click.stop="toggleExpand(item.id)"
-          />
-          <CoreAppLoadingSpinner v-else-if="isBusyGroup(item.id)" size="xs" class="shrink-0 w-4 h-4" />
-          <span v-else class="w-4 shrink-0" />
-          <CoreAppCheckbox
-            :model-value="isItemChecked(item)"
-            size="sm"
-            class="shrink-0"
-            @click.stop
-            :aria-label="item.label"
-            @update:model-value="handleItemClick(item)"
-          />
-          <CoreAppIcon v-if="!item.isGroup" :name="icons.product" class="w-3 h-3 shrink-0 text-(--color-text-muted)/60" />
+        <div v-if="productRoot" class="mb-2">
           <button
             type="button"
-            class="truncate flex-1 text-left bg-transparent border-0 p-0 cursor-pointer"
-            :aria-label="itemLabel(item)"
-            @click="handleItemClick(item)"
+            class="w-full flex items-center gap-1.5 px-1 py-1.5 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded text-left"
+            :aria-expanded="productRootExpanded"
+            :aria-label="itemLabel({ id: productRoot.id, label: productRoot.label || productRoot.id })"
+            @click="toggleExpand(productRoot.id)"
           >
-            <CoreAppTooltip v-if="item.id === 'groups'" :text="$t('groups.productTooltip')">
-              <span
-                class="truncate block cursor-help border-b border-dashed border-(--color-text-muted)/40"
-                :class="item.isGroup ? 'font-medium' : ''"
-                >{{ itemLabel(item) }}</span
-              >
+            <CoreAppIcon
+              :name="productRootExpanded ? icons.chevronDown : icons.chevronRight"
+              class="w-3.5 h-3.5 text-(--color-text-muted)"
+            />
+            <CoreAppTooltip :text="$t('groups.productTooltip')">
+              <span class="text-xs font-semibold text-(--color-text) cursor-help border-b border-dashed border-(--color-text-muted)/40">
+                {{ itemLabel({ id: productRoot.id, label: productRoot.label || productRoot.id }) }}
+              </span>
             </CoreAppTooltip>
-            <span v-else class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ itemLabel(item) }}</span>
           </button>
+          <template v-if="productRootExpanded">
+            <div
+              v-for="item in productFlatItems"
+              :key="item.id"
+              v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount, isBusyGroup(item.id)]"
+              :style="{ paddingLeft: `${item.depth * 16 + 6}px` }"
+              class="flex items-center gap-1 py-0 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer"
+            >
+              <CoreAppButton
+                v-if="item.hasChildren && !isBusyGroup(item.id)"
+                :icon="item.isExpanded ? icons.chevronDown : icons.chevronRight"
+                size="xs"
+                variant="ghost"
+                color="neutral"
+                class="shrink-0 p-0! h-4! w-4!"
+                :aria-label="item.isExpanded ? $t('common.collapse') : $t('common.expand')"
+                @click.stop="toggleExpand(item.id)"
+              />
+              <CoreAppLoadingSpinner v-else-if="isBusyGroup(item.id)" size="xs" class="shrink-0 w-4 h-4" />
+              <span v-else class="w-4 shrink-0" />
+              <CoreAppCheckbox
+                :model-value="isItemChecked(item)"
+                size="sm"
+                class="shrink-0"
+                @click.stop
+                :aria-label="item.label"
+                @update:model-value="handleItemClick(item)"
+              />
+              <CoreAppIcon v-if="!item.isGroup" :name="icons.product" class="w-3 h-3 shrink-0 text-(--color-text-muted)/60" />
+              <button
+                type="button"
+                class="truncate flex-1 text-left bg-transparent border-0 p-0 cursor-pointer"
+                :aria-label="item.label"
+                @click="handleItemClick(item)"
+              >
+                <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
+              </button>
+            </div>
+          </template>
         </div>
         <div v-if="productFlatItems.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">
           {{ $t('common.noResults') }}
@@ -275,7 +289,7 @@
     return id
   }
 
-  function itemLabel(item: FlatItem): string {
+  function itemLabel(item: Pick<FlatItem, 'id' | 'label'>): string {
     return item.id === 'groups' ? $t('groups.title') : item.label
   }
 
@@ -419,8 +433,12 @@
     if (props.groupType !== 'product') return []
     const q = debouncedSearch.value.toLowerCase()
     const expanded = expandedIds.value
-    return flattenNodes(rawTree.value, 0, q, expanded)
+    const root = rawTree.value[0]
+    return root?.children ? flattenNodes(root.children, 0, q, expanded) : []
   })
+
+  const productRoot = computed(() => (props.groupType === 'product' ? rawTree.value[0] : null))
+  const productRootExpanded = computed(() => (productRoot.value ? expandedIds.value.has(productRoot.value.id) : false))
 
   const selectedCount = computed(() =>
     props.groupType === 'client' ? selectionStore.selectedClients.length : selectionStore.selectedProducts.length,
