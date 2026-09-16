@@ -21,6 +21,7 @@
         :model-value="null"
         :disabled="loading"
         :aria-label="String($t('clients.actions'))"
+        :ui="{ content: 'max-h-96 overflow-y-auto' }"
         data-testid="client-quick-actions-trigger-inline"
         @update:model-value="handleActionSelect"
       >
@@ -50,6 +51,7 @@
         :model-value="null"
         :class="compact ? '' : 'w-full'"
         :aria-label="String($t('clients.actions'))"
+        :ui="{ content: 'max-h-96 overflow-y-auto' }"
         data-testid="client-quick-actions-trigger"
         @update:model-value="handleActionSelect"
       >
