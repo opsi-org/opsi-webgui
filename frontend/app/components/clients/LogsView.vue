@@ -467,29 +467,34 @@
   onMounted(() => {
     mbMount()
 
-    // Restore log type and level from URL when not in panel mode
-    if (!props.panelMode) {
-      const qLogType = route.query.logType as string | undefined
-      const qLogLevel = route.query.logLevel as string | undefined
-      if (qLogType && LOG_TYPES.some((t) => t.value === qLogType)) {
-        selectedLogTypeValue.value = qLogType
-      }
-      if (qLogLevel) {
-        const parsed = parseInt(qLogLevel, 10)
-        if (parsed >= 1 && parsed <= 9) logLevel.value = parsed
-      }
+    const qLogType = route.query.logType as string | undefined
+    const qLogLevel = route.query.logLevel as string | undefined
+    const qFilter = route.query.filter as string | undefined
+    const qLogMarker = route.query.logMarker as string | undefined
+    if (qLogType && LOG_TYPES.some((t) => t.value === qLogType)) {
+      selectedLogTypeValue.value = qLogType
+    }
+    if (qLogLevel) {
+      const parsed = parseInt(qLogLevel, 10)
+      if (parsed >= 1 && parsed <= 9) logLevel.value = parsed
+    }
+    if (qFilter) {
+      filterQuery.value = qFilter
+    }
+    if (qLogMarker) {
+      const parsed = parseInt(qLogMarker, 10)
+      if (parsed >= 0) markerLine.value = parsed
     }
   })
 
-  // Sync log type and level to URL when not in panel mode
-  if (!props.panelMode) {
-    watch(selectedLogTypeValue, (v) => {
-      if (v) router.replace({ query: { ...(route.query as Record<string, string>), logType: v } })
-    })
-    watch(logLevel, (v) => {
-      router.replace({ query: { ...(route.query as Record<string, string>), logLevel: String(v) } })
-    })
+  function updateLogQuery(key: string, value: string | undefined) {
+    router.replace({ query: { ...(route.query as Record<string, string>), [key]: value || undefined } })
   }
+
+  watch(selectedLogTypeValue, (v) => updateLogQuery('logType', v))
+  watch(logLevel, (v) => updateLogQuery('logLevel', String(v)))
+  watch(filterQuery, (v) => updateLogQuery('filter', v))
+  watch(markerLine, (v) => updateLogQuery('logMarker', v >= 0 ? String(v) : undefined))
 
   onUnmounted(() => {
     if (autoRefreshInterval) clearInterval(autoRefreshInterval)
