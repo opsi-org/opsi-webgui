@@ -176,7 +176,14 @@
             :aria-label="itemLabel(item)"
             @click="handleItemClick(item)"
           >
-            <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ itemLabel(item) }}</span>
+            <CoreAppTooltip v-if="item.id === 'groups'" :text="$t('groups.productTooltip')">
+              <span
+                class="truncate block cursor-help border-b border-dashed border-(--color-text-muted)/40"
+                :class="item.isGroup ? 'font-medium' : ''"
+                >{{ itemLabel(item) }}</span
+              >
+            </CoreAppTooltip>
+            <span v-else class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ itemLabel(item) }}</span>
           </button>
         </div>
         <div v-if="productFlatItems.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">

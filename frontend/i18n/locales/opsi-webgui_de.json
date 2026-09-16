@@ -353,7 +353,8 @@
     "product": "Produktgruppen",
     "subgroup": "Untergruppe hinzufügen",
     "title": "Gruppen",
-    "tooltip": "Ein Client kann mehreren Untergruppen innerhalb dieser Gruppe zugeordnet werden."
+    "tooltip": "Ein Client kann mehreren Untergruppen innerhalb dieser Gruppe zugeordnet werden.",
+    "productTooltip": "Ein Produkt kann mehreren Untergruppen innerhalb dieser Gruppe zugeordnet werden."
   },
   "hosts": {
     "select": "Host auswählen um Konfiguration anzuzeigen"

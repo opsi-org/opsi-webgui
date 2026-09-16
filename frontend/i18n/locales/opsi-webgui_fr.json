@@ -357,7 +357,8 @@
     "product": "Groupes de produits",
     "subgroup": "Ajouter un sous-groupe",
     "title": "Groupes",
-    "tooltip": "Un client peut être affecté à plusieurs sous-groupes au sein de ce groupe."
+    "tooltip": "Un client peut être affecté à plusieurs sous-groupes au sein de ce groupe.",
+    "productTooltip": "Un produit peut être affecté à plusieurs sous-groupes au sein de ce groupe."
   },
   "hosts": {
     "select": "Sélectionner un hôte pour afficher la configuration"

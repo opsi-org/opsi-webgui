@@ -102,8 +102,8 @@
                 />
                 <CoreAppTooltip
                   :text="
-                    rootGroup.label === 'groups' && activeGroupType === 'clients'
-                      ? $t('groups.tooltip')
+                    rootGroup.label === 'groups'
+                      ? $t(activeGroupType === 'clients' ? 'groups.tooltip' : 'groups.productTooltip')
                       : rootGroup.label === 'clientdirectory'
                         ? $t('clients.directoryTooltip')
                         : ''
