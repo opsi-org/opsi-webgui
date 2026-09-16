@@ -463,6 +463,7 @@
 
   function isItemChecked(item: FlatItem): boolean {
     if (item.isGroup) {
+      if (selectedItemsSet.value.size === 0) return false
       if (selectedGroupsSet.value.has(item.id)) return true
       if (hasSelectedAncestorGroup(item.id)) return true
       const members = collectLoadedGroupMembersRecursive(item.id)
