@@ -15,7 +15,7 @@
     :title="title"
     :description="description"
     :close="closable"
-    :class="alertClass"
+    :class="[alertClass, 'py-1.5 px-2 text-xs']"
     @update:open="$emit('close')"
   >
     <template v-if="$slots.title" #title>
@@ -28,7 +28,14 @@
       <slot name="actions" />
     </template>
   </UAlert>
-  <UAlert v-else :color="color" :variant="variant" :close="closable" :class="alertClass" @update:open="$emit('close')">
+  <UAlert
+    v-else
+    :color="color"
+    :variant="variant"
+    :close="closable"
+    :class="[alertClass, 'py-1 px-2 text-xs leading-tight']"
+    @update:open="$emit('close')"
+  >
     <template #title>
       <span class="inline-flex items-center gap-2 flex-wrap">
         <span class="uppercase font-bold text-xs tracking-wide">{{ $slots.title ? '' : title }}</span>
@@ -58,7 +65,7 @@
       color: 'info',
       variant: 'subtle',
       closable: false,
-      compact: false,
+      compact: true,
     },
   )
 
