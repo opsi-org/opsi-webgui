@@ -591,6 +591,7 @@
     "requirementType": "Type d'exigence",
     "status": "Statut d'installation",
     "statusInstalled": "Produits installés",
+    "statusBadgeClickHint": "cliquer pour ouvrir la table des produits avec le tri correspondant",
     "statusNotInstalled": "Non installé",
     "statusUnknown": "Statut d'installation inconnu",
     "title": "Produits",

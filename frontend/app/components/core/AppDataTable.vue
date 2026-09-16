@@ -371,7 +371,9 @@
                   ref="actionsHeaderRef"
                   class="min-w-10 px-0.5 py-0.5 text-center text-[0.6875rem] font-medium tracking-wide text-(--color-text-muted) whitespace-nowrap sticky right-0 bg-(--color-surface) z-40 shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
                 >
-                  <span class="sr-only">{{ $t('actions.title') }}</span>
+                  <slot name="header-cell-actions">
+                    <span class="sr-only">{{ $t('actions.title') }}</span>
+                  </slot>
                 </th>
               </tr>
             </thead>
@@ -618,6 +620,7 @@
     [key: `header-cell-${string}`]: (props: { column: DataTableColumnDef; sortColumn: string; sortDirection: 'asc' | 'desc' }) => unknown
     [key: `cell-${string}`]: (props: { row: T; value: unknown; index: number }) => unknown
     'filter-actions': (props: { canSaveSearch: boolean; favorite: () => void }) => unknown
+    'header-cell-actions': () => unknown
     status: () => unknown
     'row-actions': (props: { row: T; index: number; selected: boolean; active: boolean }) => unknown
   }>()
