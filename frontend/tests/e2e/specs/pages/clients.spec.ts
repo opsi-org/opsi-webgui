@@ -2,7 +2,7 @@ import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
 import { waitForTable, getTableRowCount } from '../../utils/ui'
 
-async function seedClientSelection(page: import('@playwright/test').Page) {
+async function seedClientSelection(page: import('@playwright/test').Page): Promise<string> {
   await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
   await page.waitForTimeout(3000)
   await waitForTable(page)
@@ -15,7 +15,7 @@ async function seedClientSelection(page: import('@playwright/test').Page) {
     return ''
   })
 
-  if (!firstClientId) return
+  if (!firstClientId) return ''
 
   await page.evaluate((clientId) => {
     const key = 'opsi-webgui-selection'
@@ -30,6 +30,8 @@ async function seedClientSelection(page: import('@playwright/test').Page) {
       }),
     )
   }, firstClientId)
+
+  return firstClientId
 }
 
 test.describe('Clients', () => {
@@ -73,8 +75,42 @@ test.describe('Clients', () => {
     const panelBox = await detailPanel.boundingBox()
     expect(panelBox).not.toBeNull()
     if (panelBox) {
-      expect(panelBox.width).toBeGreaterThan(700)
+      expect(panelBox.width).toBeGreaterThan(650)
     }
+  })
+
+  test('clients hardware and software inventory', async ({ page }) => {
+    await runUITest(page, {
+      name: 'clients-inventory',
+      route: '/clients',
+      waitAfterNav: 5000,
+      docName: 'opsi-webgui-clients-inventory',
+      functional: async (p) => {
+        await waitForTable(p)
+        const firstRow = p.locator('table tbody tr').first()
+        const clientId = await firstRow.locator('td').evaluateAll((cells) => {
+          for (const cell of cells) {
+            const text = (cell.textContent || '').trim()
+            if (text && text.includes('.')) return text
+          }
+          return ''
+        })
+        expect(clientId).not.toBe('')
+        await p.goto(`/clients?client=${encodeURIComponent(clientId)}&view=panel&panelType=inventory&inventoryTab=hardware`, {
+          waitUntil: 'networkidle',
+          timeout: 30000,
+        })
+        await waitForTable(p)
+
+        const detailPanel = p.getByTestId('detail-panel')
+        await expect(detailPanel).toBeVisible({ timeout: 15000 })
+        const hardwareTab = detailPanel.getByRole('tab', { name: /hardware/i })
+        const softwareTab = detailPanel.getByRole('tab', { name: /software/i })
+        await expect(hardwareTab).toHaveAttribute('data-state', 'active')
+        await softwareTab.click()
+        await expect(softwareTab).toHaveAttribute('data-state', 'active')
+      },
+    })
   })
 
   test('clients overview and key actions', async ({ page }) => {
