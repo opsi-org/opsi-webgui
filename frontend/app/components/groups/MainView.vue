@@ -80,18 +80,6 @@
                 {{ $t('auth.restricted') }}
               </CoreAppBadge>
             </CoreAppTooltip>
-            <CoreAppButton
-              v-if="activeGroupType === 'products'"
-              size="xs"
-              variant="ghost"
-              color="neutral"
-              @click="openCreateModal()"
-              :title="$t('groups.create')"
-              :aria-label="String($t('groups.create'))"
-              :disabled="isReadOnly"
-            >
-              <CoreAppIcon :name="icons.group" class="w-4 h-4" />
-            </CoreAppButton>
           </div>
           <CoreAppFilterInput v-model="searchQuery" size="xs" input-class="w-full" />
         </div>
