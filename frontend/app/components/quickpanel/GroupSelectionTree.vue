@@ -173,10 +173,10 @@
           <button
             type="button"
             class="truncate flex-1 text-left bg-transparent border-0 p-0 cursor-pointer"
-            :aria-label="item.label"
+            :aria-label="itemLabel(item)"
             @click="handleItemClick(item)"
           >
-            <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
+            <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ itemLabel(item) }}</span>
           </button>
         </div>
         <div v-if="productFlatItems.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">
@@ -266,6 +266,10 @@
     if (id === 'groups') return $t('groups.title')
     if (id === 'clientdirectory') return $t('clients.directory')
     return id
+  }
+
+  function itemLabel(item: FlatItem): string {
+    return item.id === 'groups' ? $t('groups.title') : item.label
   }
 
   function sectionTooltip(id: string): string {
@@ -408,10 +412,7 @@
     if (props.groupType !== 'product') return []
     const q = debouncedSearch.value.toLowerCase()
     const expanded = expandedIds.value
-    const root = rawTree.value
-    const first = root.length === 1 ? root[0] : null
-    const nodes = first?.children?.length ? first.children : root
-    return flattenNodes(nodes, 0, q, expanded)
+    return flattenNodes(rawTree.value, 0, q, expanded)
   })
 
   const selectedCount = computed(() =>
