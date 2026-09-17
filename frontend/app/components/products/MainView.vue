@@ -24,10 +24,6 @@
       <slot name="tabs" />
     </template>
     <template #actions>
-      <p v-if="showDepotScopeHint" class="text-xs text-(--color-text-muted) mb-1.5 flex items-center gap-1 max-w-100">
-        <CoreAppIcon :name="icons.info" class="w-3.5 h-3.5 shrink-0" />
-        {{ $t('products.depotScopeHint.description') }}
-      </p>
       <CoreAppTooltip v-if="isProductGroupAccessRestricted" :text="$t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
         <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help" data-testid="products-restricted-badge">
           {{ $t('auth.restricted') }}
@@ -81,7 +77,7 @@
       :columns="columns"
       :loading="loading"
       :table-id="tableId"
-      filter-storage-id="products"
+      :filter-storage-id="filterStorageId"
       :filter-query="currentFilterQuery"
       saved-searches-scope-id="products"
       :advanced-filters="advancedFilters"
@@ -378,7 +374,14 @@
   const savingActionRequests = ref(false)
   const configTabsComponentRef = ref<InstanceType<typeof import('./ConfigTabs.vue').default> | null>(null)
   const lastPageParams = ref<PageChangeParams | null>(null)
-  const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('products'))
+  const filterStorageId = computed(() => (props.panelMode ? 'clients-panel-products' : 'products'))
+  const currentFilterQuery = ref(
+    props.panelMode
+      ? getStoredDataTableFilter(filterStorageId.value)
+      : typeof route.query.filter === 'string'
+        ? route.query.filter
+        : getStoredDataTableFilter(filterStorageId.value),
+  )
   const propertiesSearch = ref(typeof route.query.propertiesSearch === 'string' ? route.query.propertiesSearch : '')
 
   function handlePropertiesSearchUpdate(value: string) {
@@ -443,8 +446,6 @@
   const showLeaveWarning = ref(false)
   const pendingAction = ref<(() => void) | null>(null)
   let resolveRouteLeave: ((ok: boolean) => void) | null = null
-
-  const showDepotScopeHint = computed(() => selectionStore.selectedClients.length === 0)
 
   function confirmLeave() {
     showLeaveWarning.value = false
@@ -973,7 +974,7 @@
     // Sorting and paging reuse the existing filter; avoid unnecessary router
     // work unless the normalized query value actually changed.
     const routeFilter = typeof route.query.filter === 'string' ? route.query.filter : ''
-    if (routeFilter !== params.filterQuery) {
+    if (!props.panelMode && routeFilter !== params.filterQuery) {
       router.replace({
         query: {
           ...(route.query as Record<string, string>),
@@ -1167,7 +1168,8 @@
   watch(
     () => route.query.filter,
     (newFilter) => {
-      currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('products')
+      if (props.panelMode) return
+      currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter(filterStorageId.value)
     },
     { immediate: true },
   )

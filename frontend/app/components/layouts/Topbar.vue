@@ -20,14 +20,14 @@
         <CoreAppIcon :name="icons.menu" class="w-5 h-5" />
       </CoreAppButton>
       <NuxtLink :to="defaultPage" class="flex items-center gap-1.5 min-w-0">
-        <CoreAppImage src="~/assets/images/opsi-webgui-wide-dark.svg" alt="OPSI" image-class="h-13" />
-        <span class="text-[9px] sm:text-[10px] leading-none opacity-80 self-center max-w-[5rem] truncate" :title="`v${packageVersion}`">
+        <CoreAppImage src="~/assets/images/opsi-webgui-wide-dark.svg" alt="OPSI" image-class="h-10 py-1" />
+        <span class="text-[9px] sm:text-[10px] leading-none opacity-80 self-center max-w-20 truncate" :title="`v${packageVersion}`">
           v{{ packageVersion }}
         </span>
       </NuxtLink>
     </div>
     <div class="flex-1" />
-    <nav class="flex items-center gap-2 md:gap-3 px-2 py-1 rounded-lg">
+    <nav class="flex items-center gap-1.5 md:gap-2 px-1.5 py-1 rounded-lg">
       <CoreAppGlobalSearch />
 
       <div
@@ -71,12 +71,12 @@
         variant="ghost"
         color="neutral"
         data-testid="quickpanel-toggle"
-        class="h-8 text-white hover:bg-white/10 active:bg-white/10! focus:bg-transparent! inline-flex items-center gap-1.5 rounded-md"
+        class="h-8 text-white bg-white/10 hover:bg-white/20 active:bg-white/20! focus:bg-white/20! inline-flex items-center gap-1 rounded-md px-2!"
         :title="$t('quick.panel')"
       >
-        <CoreAppIcon :name="icons.user" class="w-5 h-5" />
-        <span class="hidden md:inline text-sm">{{ userStore.username }}</span>
-        <CoreAppIcon :name="icons.quickPanel" class="w-4.5 h-4.5" />
+        <CoreAppIcon :name="icons.user" class="w-4 h-4" />
+        <span class="hidden md:inline text-xs max-w-28 truncate">{{ userStore.username }}</span>
+        <CoreAppIcon :name="icons.quickPanel" class="w-4 h-4" />
       </CoreAppButton>
     </nav>
   </header>

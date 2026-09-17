@@ -8,7 +8,7 @@
   ClientsQuickActionsDropdown - Bulk action dropdown for selected clients (on-demand, reboot, etc).
 -->
 <template>
-  <div class="relative">
+  <div v-bind="attrs" class="relative">
     <!-- Inline mode: just a dropdown trigger icon (for row actions) -->
     <template v-if="inline">
       <CoreAppSelectMenu
@@ -21,6 +21,7 @@
         :model-value="null"
         :disabled="loading"
         :aria-label="String($t('clients.actions'))"
+        :ui="{ content: 'max-h-96 overflow-y-auto' }"
         data-testid="client-quick-actions-trigger-inline"
         @update:model-value="handleActionSelect"
       >
@@ -50,6 +51,7 @@
         :model-value="null"
         :class="compact ? '' : 'w-full'"
         :aria-label="String($t('clients.actions'))"
+        :ui="{ content: 'max-h-96 overflow-y-auto' }"
         data-testid="client-quick-actions-trigger"
         @update:model-value="handleActionSelect"
       >
@@ -303,6 +305,9 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ inheritAttrs: false })
+
+  const attrs = useAttrs()
   import { useSelectionStore } from '~/stores/selectionStore'
 
   const props = defineProps<{

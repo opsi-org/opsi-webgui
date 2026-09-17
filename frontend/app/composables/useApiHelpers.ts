@@ -17,6 +17,24 @@ interface ApiRequestOptions {
   signal?: AbortSignal
 }
 
+function getApiErrorMessage(error: unknown): string {
+  if (error instanceof Error && error.message) {
+    const responseData = (error as Error & { data?: unknown }).data
+    if (responseData && typeof responseData === 'object') {
+      const detail = (responseData as Record<string, unknown>).detail
+      if (typeof detail === 'string' && detail) return detail
+      if (Array.isArray(detail)) return detail.map((item) => (typeof item === 'string' ? item : JSON.stringify(item))).join('; ')
+      const message = (responseData as Record<string, unknown>).message
+      const details = (responseData as Record<string, unknown>).details
+      if (typeof message === 'string' && message && typeof details === 'string' && details) return `${message}: ${details}`
+      if (typeof message === 'string' && message) return message
+      if (typeof details === 'string' && details) return details
+    }
+    return error.message
+  }
+  return String(error)
+}
+
 export function buildQueryString(params?: Record<string, unknown>): string {
   if (!params) return ''
   const entries = Object.entries(params)
@@ -45,7 +63,7 @@ export function useApiHelpers() {
         total: total ? parseInt(total, 10) : null,
       }
     } catch (e) {
-      return { data: null, error: e as Error, total: null }
+      return { data: null, error: new Error(getApiErrorMessage(e)), total: null }
     }
   }
 
@@ -62,7 +80,7 @@ export function useApiHelpers() {
         total: total ? parseInt(total, 10) : null,
       }
     } catch (e) {
-      return { data: null, error: e as Error, total: null }
+      return { data: null, error: new Error(getApiErrorMessage(e)), total: null }
     }
   }
 
@@ -74,7 +92,7 @@ export function useApiHelpers() {
       })
       return { data, error: null, total: null }
     } catch (e) {
-      return { data: null, error: e as Error, total: null }
+      return { data: null, error: new Error(getApiErrorMessage(e)), total: null }
     }
   }
 
@@ -86,7 +104,7 @@ export function useApiHelpers() {
       })
       return { data, error: null, total: null }
     } catch (e) {
-      return { data: null, error: e as Error, total: null }
+      return { data: null, error: new Error(getApiErrorMessage(e)), total: null }
     }
   }
 
@@ -95,7 +113,7 @@ export function useApiHelpers() {
       const blob = await $customFetch<Blob>(url + buildQueryString(params), { responseType: 'blob' })
       return { blob, error: null }
     } catch (e) {
-      return { blob: null, error: e as Error }
+      return { blob: null, error: new Error(getApiErrorMessage(e)) }
     }
   }
 

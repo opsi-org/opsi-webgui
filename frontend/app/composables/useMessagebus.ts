@@ -8,7 +8,7 @@
  * useMessagebus - WebSocket messagebus connection for real-time server communication.
  */
 import { encode } from '@msgpack/msgpack'
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useMessageBusStore, createUUID, createMsgTemplate } from '~/stores/messageBusStore'
 import { storeToRefs } from 'pinia'
 
@@ -138,11 +138,15 @@ export function useMessageBus(onMessage?: MessageHandler, _showNotifications = f
 }
 
 // Auto-Refresh composable (integrates with MessageBus)
-export function useAutoRefresh(refreshCallback: RefreshCallback, options: { watchEvents?: string[]; debounceMs?: number } = {}) {
+export function useAutoRefresh(
+  refreshCallback: RefreshCallback,
+  options: { watchEvents?: string[]; refreshEvents?: string[]; debounceMs?: number } = {},
+) {
   const mbStore = useMessageBusStore()
   const { lastMsg: storeLastMsg } = storeToRefs(mbStore)
 
   const watchEvents = options.watchEvents || ALL_DATA_EVENTS
+  const refreshEvents = options.refreshEvents || watchEvents
   const debounceMs = options.debounceMs || 2000
 
   const changesDetected = ref(false)
@@ -157,11 +161,13 @@ export function useAutoRefresh(refreshCallback: RefreshCallback, options: { watc
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
   let refreshInProgress = false
   let refreshQueued = false
+  let disposed = false
 
   function scheduleRefresh() {
     if (debounceTimer) clearTimeout(debounceTimer)
     debounceTimer = setTimeout(async () => {
       debounceTimer = null
+      if (disposed) return
       if (refreshInProgress) {
         refreshQueued = true
         return
@@ -173,7 +179,7 @@ export function useAutoRefresh(refreshCallback: RefreshCallback, options: { watc
         mbStore.setChangesDetected(false)
       } finally {
         refreshInProgress = false
-        if (refreshQueued) {
+        if (refreshQueued && !disposed) {
           refreshQueued = false
           scheduleRefresh()
         }
@@ -222,7 +228,7 @@ export function useAutoRefresh(refreshCallback: RefreshCallback, options: { watc
       lastChangeEvent.value = eventName
       lastChangeDescription.value = getEventDescription(eventName)
       mbStore.setLastEvent(eventName)
-      if (autoRefreshEnabled.value) {
+      if (autoRefreshEnabled.value && refreshEvents.some((ev) => ev.replace(/^event:/, '') === eventName)) {
         scheduleRefresh()
       }
     }
@@ -247,6 +253,13 @@ export function useAutoRefresh(refreshCallback: RefreshCallback, options: { watc
     mbStore.connect()
   })
 
+  onUnmounted(() => {
+    disposed = true
+    if (debounceTimer) clearTimeout(debounceTimer)
+    debounceTimer = null
+    refreshQueued = false
+  })
+
   return {
     isConnected,
     autoRefreshEnabled,
@@ -265,7 +278,7 @@ export function useAutoRefreshClients(cb: RefreshCallback) {
 }
 
 export function useAutoRefreshProducts(cb: RefreshCallback) {
-  return useAutoRefresh(cb, { watchEvents: PRODUCT_EVENTS })
+  return useAutoRefresh(cb, { watchEvents: PRODUCT_EVENTS, refreshEvents: [] })
 }
 
 export function useAutoRefreshServers(cb: RefreshCallback) {

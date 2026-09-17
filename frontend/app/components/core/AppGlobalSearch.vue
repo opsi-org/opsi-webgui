@@ -15,7 +15,7 @@
       :title="String($t('globalSearch.title'))"
       variant="ghost"
       color="neutral"
-      class="h-8 text-white hover:bg-white/10 active:bg-white/10! focus:bg-transparent!"
+      class="h-8 w-9! bg-white/10 text-white hover:bg-white/20 active:bg-white/20! focus:bg-white/20! rounded-md px-1.5!"
       data-testid="global-search"
     />
 

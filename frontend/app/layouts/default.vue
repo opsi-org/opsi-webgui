@@ -237,7 +237,6 @@
   }
 
   const isMobile = ref(false)
-  const isNarrowDesktop = ref(false)
   const sidebarOpen = ref(false)
   const quickpanelOpen = ref(false)
 
@@ -250,7 +249,7 @@
     },
   })
   const isResizingQuickpanel = ref(false)
-  const useOverlayQuickpanel = computed(() => isMobile.value || isNarrowDesktop.value)
+  const useOverlayQuickpanel = computed(() => isMobile.value)
 
   watch(
     () => uiStore.quickpanelOpened,
@@ -299,7 +298,6 @@
         if (isMobile.value) document.documentElement.setAttribute('data-mobile-view', 'true')
         else document.documentElement.removeAttribute('data-mobile-view')
       }
-      isNarrowDesktop.value = window.innerWidth < 1280
       if (!isMobile.value) {
         sidebarOpen.value = !uiStore.menuCollapsed
         quickpanelOpen.value = uiStore.quickpanelOpened

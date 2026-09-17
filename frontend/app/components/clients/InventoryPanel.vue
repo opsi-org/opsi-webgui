@@ -119,23 +119,27 @@
             </span>
           </template>
           <template #cell-className="{ row }">
-            <span class="inline-flex items-center gap-1.5">
-              <CoreAppIcon
-                :name="classIcon(asHardwareItem(row).hardwareClass)"
-                class="w-4 h-4 shrink-0"
-                :class="classIconColor(asHardwareItem(row).hardwareClass)"
-              />
-              {{ asHardwareItem(row).className }}
-            </span>
+            <CoreAppTooltipTable :rows="hardwareRows(asHardwareItem(row))">
+              <span class="inline-flex items-center gap-1.5">
+                <CoreAppIcon
+                  :name="classIcon(asHardwareItem(row).hardwareClass)"
+                  class="w-4 h-4 shrink-0"
+                  :class="classIconColor(asHardwareItem(row).hardwareClass)"
+                />
+                {{ asHardwareItem(row).className }}
+                <CoreAppIcon :name="icons.info" class="w-3 h-3 text-(--color-text-muted)" aria-hidden="true" />
+              </span>
+            </CoreAppTooltipTable>
           </template>
           <template #cell-displayName="{ row }">
-            <CoreAppTooltipTable v-if="activeTab === 'hardware'" :rows="hardwareRows(asHardwareItem(row))">
-              <span class="block max-w-80 truncate cursor-help">{{ asHardwareItem(row).displayName }}</span>
-            </CoreAppTooltipTable>
+            <template v-if="activeTab === 'hardware'">
+              <span class="block max-w-80 truncate">{{ asHardwareItem(row).displayName }}</span>
+            </template>
             <CoreAppTooltipTable v-else :rows="softwareRows(asSoftwareItem(row))">
-              <span class="inline-flex max-w-80 items-center gap-1 truncate cursor-help">
+              <span class="inline-flex max-w-80 items-center gap-1 truncate">
                 {{ asSoftwareItem(row).displayName }}
                 <CoreAppBadge v-if="asSoftwareItem(row).isKbUpdate" color="info" :label="String($t('inventory.kbUpdate'))" size="xs" />
+                <CoreAppIcon :name="icons.info" class="w-3 h-3 text-(--color-text-muted)" aria-hidden="true" />
               </span>
             </CoreAppTooltipTable>
           </template>
@@ -344,7 +348,7 @@
 
   const HARDWARE_CLASS_ICONS: Record<string, string> = {
     COMPUTER_SYSTEM: icons.client,
-    BASE_BOARD: icons.motherboard,
+    BASE_BOARD: icons.hardware,
     CHASSIS: icons.chassis,
     PROCESSOR: icons.hardware,
     MEMORY_MODULE: icons.memory,

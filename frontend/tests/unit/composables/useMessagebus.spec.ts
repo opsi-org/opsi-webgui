@@ -109,6 +109,21 @@ describe('useAutoRefresh', () => {
     expect(lastChangeEvent.value).toBe('productOnClient_updated')
   })
 
+  it('can detect events without refreshing for in-place table updates', async () => {
+    const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
+    const cb = vi.fn()
+    const { changesDetected } = useAutoRefresh(cb, {
+      watchEvents: ['event:productOnClient_updated'],
+      refreshEvents: [],
+    })
+
+    await emitMessage({ type: 'event', event: 'productOnClient_updated' })
+    await vi.advanceTimersByTimeAsync(3000)
+
+    expect(changesDetected.value).toBe(true)
+    expect(cb).not.toHaveBeenCalled()
+  })
+
   it('provides human-readable descriptions for config/configState/log events', async () => {
     const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
     const cb = vi.fn()
