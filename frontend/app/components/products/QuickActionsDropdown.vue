@@ -585,4 +585,22 @@
     errorMessage.value = null
     applyResult.value = null
   }
+
+  defineShortcuts({
+    ctrl_escape: {
+      usingInput: true,
+      handler: (e) => {
+        e.preventDefault()
+        dialogOpen.value = false
+      },
+    },
+    ctrl_enter: {
+      usingInput: true,
+      handler: (e) => {
+        e.preventDefault()
+        if (isReadOnly.value || previewData.value == null || applying.value) return
+        applyActions()
+      },
+    },
+  })
 </script>

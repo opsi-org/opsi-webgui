@@ -286,7 +286,7 @@
         </div>
 
         <div v-else>
-          <table class="w-max min-w-full" role="grid">
+          <table class="w-max min-w-full" role="grid" :aria-activedescendant="activeRowId">
             <thead class="bg-(--color-surface) sticky top-0 z-30">
               <tr>
                 <th
@@ -385,10 +385,13 @@
               <tr
                 v-for="(row, idx) in displayRows"
                 :key="getRowKey(row)"
+                :data-row-index="displayStartIndex + idx"
+                :id="`${tableId}-row-${getRowKey(row)}`"
                 :aria-selected="isSelected(row)"
-                :tabindex="0"
+                :tabindex="keyboardIndex === displayStartIndex + idx ? 0 : -1"
                 class="group data-table-row cursor-pointer hover:bg-(--color-surface-hover) focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue focus:ring-offset-1 focus:ring-offset-(--color-background)"
                 :class="{
+                  'bg-(--color-surface-hover)': activeRowId === `${tableId}-row-${getRowKey(row)}`,
                   'bg-(--color-primary-soft-bg)': isHighlighted(row),
                   'shadow-[inset_3px_0_0_0_var(--color-primary)]': isActive(row),
                 }"
@@ -448,9 +451,11 @@
                 <td
                   v-if="hasActions"
                   class="px-0.5 py-px text-center sticky right-0 z-10 min-w-10 whitespace-nowrap shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
-                  :class="
-                    isHighlighted(row) ? 'bg-(--color-row-selected)' : 'bg-(--color-background) group-hover:bg-(--color-surface-hover)'
-                  "
+                  :class="{
+                    'bg-(--color-row-selected)': isHighlighted(row),
+                    'bg-(--color-background) group-hover:bg-(--color-surface-hover)': !isHighlighted(row),
+                    'bg-(--color-surface-hover)': activeRowId === `${tableId}-row-${getRowKey(row)}`,
+                  }"
                   @click.stop
                 >
                   <div
@@ -989,6 +994,7 @@
       } else {
         toggleSelection(row)
         lastClickedIndex.value = currentIndex >= 0 ? currentIndex : null
+        keyboardIndex.value = lastClickedIndex.value !== null ? lastClickedIndex.value : -1
       }
     }
   }
@@ -1218,6 +1224,10 @@
       updateVirtualWindow()
       resetInfinitePagingState()
       maybeFillViewport()
+
+      if (keyboardIndex.value >= visibleRows.value.length) {
+        keyboardIndex.value = visibleRows.value.length - 1
+      }
     },
   )
 
@@ -1238,6 +1248,74 @@
     if (oldEl && sentinelObserver) sentinelObserver.unobserve(oldEl)
     if (el && sentinelObserver) sentinelObserver.observe(el)
   })
+
+  const keyboardIndex = ref(lastClickedIndex.value !== null && lastClickedIndex.value !== undefined ? lastClickedIndex.value : -1)
+  const activeRowId = computed(() => {
+    if (keyboardIndex.value < 0) return undefined
+    const row = visibleRows.value[keyboardIndex.value]
+    if (!row) return undefined
+    const rendered = !!tableContainer.value?.querySelector(`tbody [data-row-index="${keyboardIndex.value}"]`)
+    return rendered ? `${props.tableId}-row-${getRowKey(row)}` : undefined
+  })
+
+  watch(
+    () => props.activeKey,
+    (key) => {
+      if (!key) {
+        keyboardIndex.value = -1
+        return
+      }
+      const i = visibleRows.value.findIndex((row) => getRowKey(row) === key)
+      if (i >= 0) keyboardIndex.value = i
+    },
+  )
+
+  function moveKeyboardFocus(delta: number) {
+    const total = visibleRows.value.length
+    if (total === 0) return
+
+    if (keyboardIndex.value === -1) {
+      // No anchor yet: Down starts at the top, Up at the bottom
+      keyboardIndex.value = delta > 0 ? 0 : total - 1
+    } else {
+      keyboardIndex.value = Math.max(0, Math.min(total - 1, keyboardIndex.value + delta))
+    }
+
+    const row = visibleRows.value[keyboardIndex.value]
+    if (!row) return
+
+    // Mirror the mouse behavior: single-select mode selects + activates,
+    // multi mode just moves the visual cursor without touching selection
+    if (effectiveSelectionMode.value === 'single') {
+      // selectSingle(row)
+      emit('select', row)
+    } else {
+      emit('select', row)
+    }
+
+    scrollToKeyboardRow()
+  }
+
+  async function scrollToKeyboardRow() {
+    const k = keyboardIndex.value
+    if (k < 0) return
+    const el = tableContainer.value
+    if (!el) return
+    await nextTick()
+    el?.querySelector(`tr[data-row-index="${k}"]`)?.scrollIntoView({ block: 'nearest' })
+  }
+
+  function handleSpaceToggle(e: KeyboardEvent) {
+    e.preventDefault()
+    if (keyboardIndex.value < 0) return
+    const row = visibleRows.value[keyboardIndex.value]
+    if (!row) return
+    if (effectiveSelectionMode.value === 'single') {
+      selectSingle(row)
+    } else if (props.selectable) {
+      toggleSelection(row)
+    }
+  }
 
   onUnmounted(() => {
     if (sentinelObserver) {
@@ -1265,6 +1343,34 @@
       if (effectiveSelectionMode.value !== 'multi' || !props.selectable) return
       e.preventDefault()
       toggleSelectAll()
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      moveKeyboardFocus(1)
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      moveKeyboardFocus(-1)
+    }
+
+    if (e.ctrlKey) {
+      switch (e.key) {
+        case ' ':
+          handleSpaceToggle(e)
+          break
+        case 'r':
+          e.preventDefault()
+          handleRefresh()
+          break
+        case 'Enter':
+          e.preventDefault()
+          const row = visibleRows.value[keyboardIndex.value]
+          if (!row) return
+          emit('row-activate', row)
+          break
+      }
     }
   }
 

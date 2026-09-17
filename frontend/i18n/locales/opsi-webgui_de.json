@@ -6,6 +6,8 @@
       "saving": "Wird gespeichert",
       "updated": "Aktualisiert"
     },
+    "bulkSummary": "{totalProducts} Produktaktion(en) für {totalClients} Client(s) - {succeeded} erfolgreich, {failed} fehlgeschlagen",
+    "processingSummary": "{totalProducts} Produktaktion(en) für {totalClients} Client(s) werden verarbeitet...",
     "failed": "Fehlgeschlagene Aktionen",
     "failedClients": "Fehlgeschlagene Clients",
     "failedClientsHelp": "Zeigt aktivierte Clients, bei denen mindestens ein ProductOnClient den Status actionResult = failed hat.",
@@ -705,6 +707,29 @@
     "quickActions": "Alle Änderungen schnell speichern oder verwerfen",
     "saveNow": "Jetzt alle speichern",
     "discardNow": "Jetzt alle verwerfen"
+  },
+  "shortcuts": {
+    "title": "Tastenkombinationen",
+    "global": "Globale Tastenkombinationen",
+    "table": "Tabelle",
+    "clientsTable": "Client-Tabelle",
+    "serversTable": "Server-Tabelle",
+    "productsTable": "Produkt-Tabelle",
+    "forms": "Formulare",
+    "save": "Aktuelles Formular speichern / alle ungespeicherten Änderungen speichern",
+    "discard": "Ungespeicherte Änderungen verwerfen",
+    "saveAndExecute": "Speichern & Ausführen (nur Produkttabelle): speichert Produktaktionsanforderungen und führt Prozessaktionen aus",
+    "toggleQuickPanel": "Schnellzugriff ein-/ausblenden",
+    "closePanel": "Dialog oder aktives Panel schließen",
+    "showShortcuts": "Verfügbare Tastenkombinationen anzeigen",
+    "openDetail": "Detailansicht öffnen",
+    "refreshTable": "Tabellendaten aktualisieren",
+    "navigateRows": "Zeilen navigieren",
+    "selectRow": "Zeile auswählen",
+    "addClient": "Panel „Client hinzufügen“ öffnen",
+    "addServerConfig": "Dialog „Server-Konfiguration erstellen“ öffnen",
+    "productsSaveAndExecute": "Produktaktion speichern & ausführen",
+    "submitForm": "Aktuelles Formular absenden"
   },
   "users": {
     "current": "Aktueller Benutzer"

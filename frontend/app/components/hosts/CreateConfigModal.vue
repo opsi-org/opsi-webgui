@@ -264,4 +264,15 @@
       resetState()
     }
   })
+
+  defineShortcuts({
+    ctrl_enter: {
+      usingInput: true,
+      handler: (e) => {
+        e.preventDefault()
+        if (newConfig.configId.trim() === '') return
+        handleCreateConfig()
+      },
+    },
+  })
 </script>

@@ -6,6 +6,8 @@
       "saving": "Enregistrement",
       "updated": "Mis à jour"
     },
+    "bulkSummary": "{totalProducts} action(s) produit sur {totalClients} client(s) - {succeeded} réussie(s), {failed} échouée(s)",
+    "processingSummary": "Traitement de {totalProducts} action(s) produit sur {totalClients} client(s)...",
     "failed": "Actions échouées",
     "failedClients": "Clients en échec",
     "failedClientsHelp": "Affiche les clients activés pour lesquels au moins un ProductOnClient a actionResult = failed.",

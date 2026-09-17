@@ -1552,6 +1552,46 @@
       }
     },
   )
+
+  defineShortcuts({
+    ctrl_enter: {
+      usingInput: true,
+      handler: (e) => {
+        e.preventDefault()
+        if (isReadOnly.value) return
+        if (showCreateModal.value && !createForm.groupId) {
+          doCreateGroup()
+        }
+        if (showEditModal.value) {
+          doEditGroup()
+        }
+        if (showDeleteModal.value) {
+          deleteGroup()
+        }
+        if (showAddMembersModal.value && selectedMembers.value.length !== 0) {
+          addSelectedMembers()
+        }
+      },
+    },
+    ctrl_escape: {
+      usingInput: true,
+      handler: (e) => {
+        e.preventDefault()
+        if (showCreateModal.value) {
+          showCreateModal.value = false
+        }
+        if (showEditModal.value) {
+          showEditModal.value = false
+        }
+        if (showDeleteModal.value) {
+          showDeleteModal.value = false
+        }
+        if (showAddMembersModal.value) {
+          showAddMembersModal.value = false
+        }
+      },
+    },
+  })
 </script>
 
 <style scoped>

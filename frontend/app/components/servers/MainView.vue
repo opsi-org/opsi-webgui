@@ -215,6 +215,7 @@
     hasAnyChanges: boolean
     discardAll: () => void
     refresh?: () => void
+    saveAll: () => void
   } | null>(null)
   const showCreateConfigModal = ref(false)
   const sortBySelectionEnabled = computed(
@@ -455,4 +456,29 @@
       currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('servers')
     },
   )
+
+  useShortcutContext({
+    save: () => configTabsRef.value?.saveAll?.(),
+    canSave: () => !!configTabsRef.value?.hasAnyChanges && !isReadOnly.value,
+    discard: () => configTabsRef.value?.discardAll?.(),
+    canDiscard: () => !!configTabsRef.value?.hasAnyChanges,
+    closeActivePanel: () => {
+      if (showCreateConfigModal.value) {
+        showCreateConfigModal.value = false
+        return true
+      }
+      if (!panelServer.value && !panelType.value) return false
+      closePanel()
+      return true
+    },
+  })
+
+  defineShortcuts({
+    ctrl_shift_n: {
+      usingInput: true,
+      handler: () => {
+        showCreateConfigModal.value = !showCreateConfigModal.value
+      },
+    },
+  })
 </script>

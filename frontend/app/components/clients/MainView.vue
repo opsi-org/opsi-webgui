@@ -440,10 +440,11 @@
   )
   const tableSettings = useDataTableSettings('clients')
   const productsSortColumn = ref<string | undefined>(undefined)
-  const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void } | null>(null)
+  const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void; saveAll?: () => void } | null>(null)
   const productsTableRef = ref<{
     hasUnsavedChanges?: boolean
     discardAllChanges?: () => void
+    saveAll?: () => void
   } | null>(null)
   const cloneFormRef = ref<{ hasChanges?: boolean } | null>(null)
   const showLeaveWarning = ref(false)
@@ -1052,4 +1053,28 @@
       currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('clients')
     },
   )
+
+  useShortcutContext({
+    save: () => configTabsRef.value?.saveAll?.() ?? productsTableRef.value?.saveAll?.(),
+    canSave: () => !!(configTabsRef.value?.hasAnyChanges || productsTableRef.value?.hasUnsavedChanges) && !isReadOnly.value,
+    discard: () => {
+      configTabsRef.value?.discardAll?.()
+      productsTableRef.value?.discardAllChanges?.()
+    },
+    canDiscard: () => !!(configTabsRef.value?.hasAnyChanges || productsTableRef.value?.hasUnsavedChanges),
+    closeActivePanel: () => {
+      if (!panelClient.value && !panelType.value) return false
+      closePanel()
+      return true
+    },
+  })
+
+  defineShortcuts({
+    ctrl_shift_n: {
+      usingInput: true,
+      handler: () => {
+        if (!isReadOnly.value && canCreateClients.value) openAddPanel()
+      },
+    },
+  })
 </script>

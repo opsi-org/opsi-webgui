@@ -262,9 +262,22 @@
           />
         </div>
 
+        <div class="flex gap-1.5 mb-3">
+          <CoreAppButton
+            v-for="filterOption in resultFilterOptions"
+            :key="filterOption.value"
+            size="xs"
+            :variant="resultFilter === filterOption.value ? 'solid' : 'outline'"
+            :color="filterOption.value === 'failed' ? 'error' : filterOption.value === 'succeeded' ? 'success' : 'neutral'"
+            @click="resultFilter = filterOption.value"
+          >
+            {{ filterOption.label }} ({{ filterOption.count }})
+          </CoreAppButton>
+        </div>
+
         <div class="max-h-80 overflow-y-auto space-y-1.5">
           <div
-            v-for="(result, clientId) in actionResults"
+            v-for="[clientId, result] in filteredActionResults"
             :key="clientId"
             class="p-3 rounded-lg border text-sm"
             :class="
@@ -294,6 +307,9 @@
               {{ result.message }}
             </div>
           </div>
+          <p v-if="filteredActionResults.length === 0" class="text-sm text-center py-4">
+            {{ $t('common.noResults') }}
+          </p>
         </div>
 
         <div class="flex justify-end mt-4 pt-3 border-t border-(--color-border)">
@@ -352,6 +368,23 @@
   const deployOptions = ref({ username: '', password: '', type: 'windows' })
   const actionResults = ref<Record<string, { success: boolean; message?: string }>>({})
   const statusMessage = ref<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
+  const resultFilter = ref<'all' | 'failed' | 'succeeded'>('failed')
+
+  const resultFilterOptions = computed(() => {
+    const entries = Object.values(actionResults.value)
+    return [
+      { value: 'all' as const, label: String($t('common.all')), count: entries.length },
+      { value: 'failed' as const, label: String($t('common.failed')), count: entries.filter((r) => !r.success).length },
+      { value: 'succeeded' as const, label: String($t('common.success')), count: entries.filter((r) => r.success).length },
+    ]
+  })
+
+  const filteredActionResults = computed(() => {
+    const entries = Object.entries(actionResults.value)
+    if (resultFilter.value === 'failed') return entries.filter(([, r]) => !r.success)
+    if (resultFilter.value === 'succeeded') return entries.filter(([, r]) => r.success)
+    return entries
+  })
 
   const renameHostname = ref('')
   const renameDomain = ref('')
@@ -606,6 +639,8 @@
       const successCount = Object.values(actionResults.value).filter((r) => r.success).length
       const failCount = props.clientIds.length - successCount
 
+      // Default to the failures view since that's what needs attention; fall back to all when nothing failed.
+      resultFilter.value = failCount > 0 ? 'failed' : 'all'
       resultMounted.value = true
       void nextTick(() => {
         resultOpen.value = true
