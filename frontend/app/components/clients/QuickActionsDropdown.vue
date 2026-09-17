@@ -8,7 +8,7 @@
   ClientsQuickActionsDropdown - Bulk action dropdown for selected clients (on-demand, reboot, etc).
 -->
 <template>
-  <div class="relative">
+  <div v-bind="attrs" class="relative">
     <!-- Inline mode: just a dropdown trigger icon (for row actions) -->
     <template v-if="inline">
       <CoreAppSelectMenu
@@ -305,6 +305,9 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ inheritAttrs: false })
+
+  const attrs = useAttrs()
   import { useSelectionStore } from '~/stores/selectionStore'
 
   const props = defineProps<{
