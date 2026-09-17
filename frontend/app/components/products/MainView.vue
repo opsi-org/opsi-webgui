@@ -24,10 +24,6 @@
       <slot name="tabs" />
     </template>
     <template #actions>
-      <p v-if="showDepotScopeHint" class="text-xs text-(--color-text-muted) mb-1.5 flex items-center gap-1 max-w-100">
-        <CoreAppIcon :name="icons.info" class="w-3.5 h-3.5 shrink-0" />
-        {{ $t('products.depotScopeHint.description') }}
-      </p>
       <CoreAppTooltip v-if="isProductGroupAccessRestricted" :text="$t('opsiConfig.serverFeatures.productGroupAccess.disabled')">
         <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help" data-testid="products-restricted-badge">
           {{ $t('auth.restricted') }}
@@ -450,8 +446,6 @@
   const showLeaveWarning = ref(false)
   const pendingAction = ref<(() => void) | null>(null)
   let resolveRouteLeave: ((ok: boolean) => void) | null = null
-
-  const showDepotScopeHint = computed(() => selectionStore.selectedClients.length === 0)
 
   function confirmLeave() {
     showLeaveWarning.value = false

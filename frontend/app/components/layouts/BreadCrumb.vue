@@ -16,8 +16,14 @@
           <NuxtLink v-if="crumb.to" :to="crumb.to" class="text-(--color-text-muted) hover:text-opsi-blue whitespace-nowrap">
             {{ crumb.label }}
           </NuxtLink>
-          <h1 v-else class="text-(--color-text) font-medium whitespace-nowrap text-xs m-0">
-            {{ crumb.label }}
+          <h1 v-else class="text-(--color-text) font-medium whitespace-nowrap text-xs m-0 inline-flex items-center gap-1">
+            <template v-if="crumb.label === $t('nav.products')">
+              {{ crumb.label }}
+              <span class="inline-flex items-center gap-0.5">
+                (<CoreAppIcon :name="productScopeIcon" class="w-3 h-3" /> {{ productScopeCount }})
+              </span>
+            </template>
+            <template v-else>{{ crumb.label }}</template>
           </h1>
         </template>
       </nav>
@@ -29,7 +35,10 @@
 </template>
 
 <script setup lang="ts">
+  import { useSelectionStore } from '~/stores/selectionStore'
+
   const icons = useIcons()
+  const selectionStore = useSelectionStore()
 
   const $route = useRoute()
   const { t: i18nT } = useI18n()
@@ -139,4 +148,9 @@
   const pageDescription = computed(() => {
     return getPageDescription($route.path)
   })
+
+  const productScopeIcon = computed(() => (selectionStore.selectedClients.length > 0 ? icons.client : icons.server))
+  const productScopeCount = computed(() =>
+    selectionStore.selectedClients.length > 0 ? selectionStore.selectedClients.length : selectionStore.selectedServers.length,
+  )
 </script>
