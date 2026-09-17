@@ -825,7 +825,7 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 						)
 					)
 					.select_from(table("OBJECT_TO_GROUP").alias("og"))
-					.where(text("og.groupId = :parent"))
+					.where(text("og.groupType = 'HostGroup' AND og.groupId = :parent"))
 				)
 				member_rows = session.execute(member_query, params).fetchall()
 
