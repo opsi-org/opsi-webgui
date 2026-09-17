@@ -81,7 +81,7 @@
       :columns="columns"
       :loading="loading"
       :table-id="tableId"
-      filter-storage-id="products"
+      :filter-storage-id="filterStorageId"
       :filter-query="currentFilterQuery"
       saved-searches-scope-id="products"
       :advanced-filters="advancedFilters"
@@ -378,7 +378,14 @@
   const savingActionRequests = ref(false)
   const configTabsComponentRef = ref<InstanceType<typeof import('./ConfigTabs.vue').default> | null>(null)
   const lastPageParams = ref<PageChangeParams | null>(null)
-  const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('products'))
+  const filterStorageId = computed(() => (props.panelMode ? 'clients-panel-products' : 'products'))
+  const currentFilterQuery = ref(
+    props.panelMode
+      ? getStoredDataTableFilter(filterStorageId.value)
+      : typeof route.query.filter === 'string'
+        ? route.query.filter
+        : getStoredDataTableFilter(filterStorageId.value),
+  )
   const propertiesSearch = ref(typeof route.query.propertiesSearch === 'string' ? route.query.propertiesSearch : '')
 
   function handlePropertiesSearchUpdate(value: string) {
@@ -973,7 +980,7 @@
     // Sorting and paging reuse the existing filter; avoid unnecessary router
     // work unless the normalized query value actually changed.
     const routeFilter = typeof route.query.filter === 'string' ? route.query.filter : ''
-    if (routeFilter !== params.filterQuery) {
+    if (!props.panelMode && routeFilter !== params.filterQuery) {
       router.replace({
         query: {
           ...(route.query as Record<string, string>),
@@ -1167,7 +1174,8 @@
   watch(
     () => route.query.filter,
     (newFilter) => {
-      currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('products')
+      if (props.panelMode) return
+      currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter(filterStorageId.value)
     },
     { immediate: true },
   )

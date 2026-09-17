@@ -478,7 +478,7 @@
       const parsed = parseInt(qLogLevel, 10)
       if (parsed >= 1 && parsed <= 9) logLevel.value = parsed
     }
-    if (qFilter) {
+    if (!props.panelMode && qFilter) {
       filterQuery.value = qFilter
     }
     if (qLogMarker) {
@@ -493,7 +493,9 @@
 
   watch(selectedLogTypeValue, (v) => updateLogQuery('logType', v))
   watch(logLevel, (v) => updateLogQuery('logLevel', String(v)))
-  watch(filterQuery, (v) => updateLogQuery('filter', v))
+  watch(filterQuery, (v) => {
+    if (!props.panelMode) updateLogQuery('filter', v)
+  })
   watch(markerLine, (v) => updateLogQuery('logMarker', v >= 0 ? String(v) : undefined))
 
   onUnmounted(() => {
