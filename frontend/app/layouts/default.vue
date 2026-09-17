@@ -20,6 +20,7 @@
       :health-counts="currentHealthCounts"
       @toggle-sidebar="toggleSidebar"
       @toggle-quickpanel="toggleQuickpanel"
+      @show-shortcuts="showShortcutsHelp = true"
     />
 
     <div class="flex-1 flex overflow-hidden relative">
@@ -141,6 +142,8 @@
       </Transition>
     </div>
 
+    <CoreAppShortcutsHelpModal v-model="showShortcutsHelp" />
+
     <Transition name="slide-up">
       <div v-if="quickpanelOpen && useOverlayQuickpanel" class="fixed inset-0 z-50">
         <div
@@ -239,6 +242,7 @@
   const isMobile = ref(false)
   const sidebarOpen = ref(false)
   const quickpanelOpen = ref(false)
+  const showShortcutsHelp = ref(false)
 
   const { layout: workspaceLayout } = useWorkspaceLayout()
   const MIN_QUICKPANEL_WIDTH = 220
@@ -335,6 +339,53 @@
     }
     updateDefaultPage()
   }
+
+  const shortcutActions = useActiveShortcutActions()
+
+  defineShortcuts({
+    ctrl_s: {
+      usingInput: true,
+      handler: (e) => {
+        e?.preventDefault()
+        if (shortcutActions.save && (shortcutActions.canSave?.() ?? true)) shortcutActions.save()
+      },
+    },
+    ctrl_d: {
+      usingInput: true,
+      handler: () => {
+        if (shortcutActions.discard && (shortcutActions.canDiscard?.() ?? true)) shortcutActions.discard()
+      },
+    },
+    ctrl_shift_s: {
+      usingInput: true,
+      handler: (e) => {
+        e?.preventDefault()
+        if (shortcutActions.saveAndExecute && (shortcutActions.canSaveAndExecute?.() ?? true)) shortcutActions.saveAndExecute()
+      },
+    },
+    ctrl_shift_q: {
+      usingInput: true,
+      handler: (e) => {
+        e?.preventDefault()
+        toggleQuickpanel()
+      },
+    },
+    ctrl_escape: {
+      usingInput: true,
+      handler: (e) => {
+        e?.preventDefault()
+        if (showShortcutsHelp.value) {
+          showShortcutsHelp.value = false
+          return
+        }
+        shortcutActions.closeActivePanel?.()
+      },
+    },
+    'ctrl_shift_?': {
+      usingInput: true,
+      handler: () => (showShortcutsHelp.value = true),
+    },
+  })
 </script>
 
 <style scoped>

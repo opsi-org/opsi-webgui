@@ -695,4 +695,15 @@
       loading.value = false
     }
   }
+
+  defineShortcuts({
+    ctrl_enter: {
+      usingInput: true,
+      handler: (e) => {
+        e.preventDefault()
+        if (!canCreateClients.value || !canCreate.value || isReadOnly.value) return
+        handleSubmit()
+      },
+    },
+  })
 </script>

@@ -6,6 +6,8 @@
       "saving": "Saving",
       "updated": "Updated"
     },
+    "bulkSummary": "{totalProducts} product action(s) on {totalClients} client(s) - {succeeded} succeeded, {failed} failed",
+    "processingSummary": "Processing {totalProducts} product action(s) on {totalClients} client(s)...",
     "failed": "Failed Actions",
     "failedClients": "Failed Clients",
     "failedClientsHelp": "Shows enabled clients where at least one ProductOnClient has actionResult = failed.",
@@ -704,6 +706,29 @@
     "quickActions": "Save or discard all changes quickly",
     "saveNow": "Save all now",
     "discardNow": "Discard all now"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "global": "Global Shortcuts",
+    "table": "Table",
+    "clientsTable": "Client Table",
+    "serversTable": "Servers Table",
+    "productsTable": "Products Table",
+    "forms": "Forms",
+    "save": "Save the current editable form / save all for unsaved changes",
+    "discard": "Discard unsaved changes",
+    "saveAndExecute": "Save & Execute (Products table only): saves product action requests and executes process actions",
+    "toggleQuickPanel": "Open/close the Quick Panel",
+    "closePanel": "Close the dialog or active panel",
+    "showShortcuts": "Show available keyboard shortcuts",
+    "openDetail": "Open detail panel",
+    "refreshTable": "Refresh table data",
+    "navigateRows": "Navigate rows",
+    "selectRow": "Select row",
+    "addClient": "Open Add New Client panel",
+    "addServerConfig": "Open Create Server Configuration popup",
+    "productsSaveAndExecute": "Save & Execute product action",
+    "submitForm": "Submit the current form"
   },
   "users": {
     "current": "Current User"

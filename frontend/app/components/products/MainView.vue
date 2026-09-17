@@ -61,15 +61,55 @@
         v-if="actionStatus"
         :color="actionStatus.type"
         :title="actionStatus.title"
-        :description="actionStatus.message"
         variant="subtle"
         closable
         compact
-        @close="actionStatus = null"
-      />
+        @close="closeActionStatus"
+      >
+        <template #description>
+          <span class="inline-flex items-center gap-2 flex-wrap">
+            <span class="font-normal text-xs">{{ actionStatus.message }}</span>
+            <CoreAppButton
+              v-if="bulkActionResult && bulkActionResult.details.length > 0"
+              variant="ghost"
+              color="neutral"
+              size="xs"
+              @click="openBulkResultDetails"
+            >
+              {{ $t('common.details') }}
+            </CoreAppButton>
+          </span>
+        </template>
+      </CoreAppAlertInline>
     </CoreAppErrorBanner>
 
     <ProductsProcessActionsModal v-model:open="processActionsOpen" :selected-product-ids="selectedProductIds" @executed="fetchProducts" />
+
+    <CoreAppModal v-if="bulkResultModalMounted" v-model:open="bulkResultModalOpen" :dismissible="true">
+      <template #content>
+        <div class="p-3 min-w-125">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
+              <CoreAppIcon :name="icons.onDemand" class="w-5 h-5" />
+              {{ $t('actions.results') }}
+            </h3>
+            <CoreAppButton
+              :icon="icons.x"
+              variant="ghost"
+              color="neutral"
+              :aria-label="String($t('common.close'))"
+              @click="bulkResultModalOpen = false"
+            />
+          </div>
+
+          <ProductsBulkResultDetails v-model:filter="bulkResultFilter" :details="bulkActionResult?.details ?? []" />
+
+          <div class="flex justify-end mt-4 pt-3 border-t border-(--color-border)">
+            <CoreAppButton variant="ghost" color="neutral" @click="bulkResultModalOpen = false">{{ $t('common.close') }}</CoreAppButton>
+          </div>
+        </div>
+      </template>
+    </CoreAppModal>
 
     <CoreAppDataTable
       :key="tableId"
@@ -318,7 +358,15 @@
 <script setup lang="ts">
   import { useDataTableSettings, type DataTableColumnDef } from '~/composables/data-table/useDataTableSettings'
   import type { PageChangeParams } from '~/components/core/AppDataTable.vue'
-  import type { ProductRow, ProductType, ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue } from '~/types'
+  import type {
+    ProductRow,
+    ProductType,
+    ProductConfigTabsRef,
+    ProductActionRequestChange,
+    EditablePropertyValue,
+    BulkActionResult,
+    BulkActionDetail,
+  } from '~/types'
   import type { ProductAdvancedFilters } from '~/components/products/AdvancedFiltersPopover.vue'
   import { getStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
   import { useSavedSearches } from '~/composables/useSavedSearches'
@@ -370,8 +418,13 @@
     title: string
     message: string
   } | null>(null)
+  const bulkActionResult = ref<BulkActionResult | null>(null)
+  const bulkResultModalOpen = ref(false)
+  const bulkResultModalMounted = ref(false)
+  const bulkResultFilter = ref<'all' | 'failed' | 'succeeded'>('failed')
   const pendingActionRequests = ref(new Map<string, ProductActionRequestChange>())
   const savingActionRequests = ref(false)
+  const processingProcessActions = ref(false)
   const configTabsComponentRef = ref<InstanceType<typeof import('./ConfigTabs.vue').default> | null>(null)
   const lastPageParams = ref<PageChangeParams | null>(null)
   const filterStorageId = computed(() => (props.panelMode ? 'clients-panel-products' : 'products'))
@@ -488,7 +541,7 @@
       if (pendingActionRequests.value.size === 0) return null
       return {
         hasAnyChanges: pendingActionRequests.value.size > 0,
-        isSaving: savingActionRequests.value,
+        isSaving: savingActionRequests.value || processingProcessActions.value,
         changedCount: pendingActionRequests.value.size,
         changedProperties: new Map<string, EditablePropertyValue>(),
         changedActionRequests: pendingActionRequests.value,
@@ -505,7 +558,7 @@
     }
     return {
       hasAnyChanges: tabs.hasAnyChanges || pendingActionRequests.value.size > 0,
-      isSaving: (tabs.isSaving as unknown as boolean) || savingActionRequests.value,
+      isSaving: (tabs.isSaving as unknown as boolean) || savingActionRequests.value || processingProcessActions.value,
       changedCount: (tabs.changedCount || 0) + pendingActionRequests.value.size,
       changedProperties: tabs.changedProperties as unknown as Map<string, EditablePropertyValue>,
       changedActionRequests: pendingActionRequests.value,
@@ -658,6 +711,20 @@
 
   function getLiveStatus(productId: string): ProductLiveStatus | undefined {
     return productLiveStatus.value.get(productId)
+  }
+
+  function closeActionStatus() {
+    actionStatus.value = null
+    bulkActionResult.value = null
+  }
+
+  function openBulkResultDetails() {
+    bulkResultModalMounted.value = true
+    // Default to the failures view since that's what needs attention; fall back to all when nothing failed.
+    bulkResultFilter.value = bulkActionResult.value?.failed ? 'failed' : 'all'
+    nextTick(() => {
+      bulkResultModalOpen.value = true
+    })
   }
 
   const pendingLiveUpdateIds = new Set<string>()
@@ -894,20 +961,60 @@
     if (processOnDemand) {
       const clientIds = onDemandOptions?.clientIds || selectionStore.selectedClients
       if (clientIds.length > 0) {
+        const processedIds = (onDemandOptions?.productIds?.length ? onDemandOptions.productIds : selectedProductIds.value) || []
+        processingProcessActions.value = true
+        bulkActionResult.value = null
+        actionStatus.value = {
+          type: 'info',
+          title: String($t('actions.live.processing')),
+          message: String($t('actions.processingSummary', { totalProducts: processedIds.length, totalClients: clientIds.length })),
+        }
         try {
           const productIds = onDemandOptions?.productIds || undefined
-          const processedIds = productIds && productIds.length > 0 ? productIds : selectedProductIds.value
           if (processedIds.length > 0) {
             setLiveStatus(processedIds, { kind: 'processing', message: String($t('actions.live.processing')) }, 0)
           }
-          await processActionRequests(clientIds, productIds)
+          const result = await processActionRequests(clientIds, productIds)
+          type ProductActionResult = { success?: boolean; error?: string; message?: string }
+          if (result.error) throw result.error
+          const resultData: Record<string, ProductActionResult> = result.data || {}
           if (processedIds.length > 0) {
             setLiveStatus(processedIds, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
           }
+          const details: BulkActionDetail[] = Object.entries(resultData).map(([clientId, data]) => ({
+            clientId,
+            success: !data?.error,
+            message: data?.error ? String(data.error) : data?.message,
+          }))
+          const failedCount = details.filter((d) => !d.success).length
+          const succeededCount = details.length - failedCount
+          bulkActionResult.value = {
+            type: failedCount === 0 ? 'success' : succeededCount === 0 ? 'error' : 'warning',
+            totalClients: details.length,
+            totalProducts: processedIds.length,
+            succeeded: succeededCount,
+            failed: failedCount,
+            details,
+          }
+          actionStatus.value = {
+            type: bulkActionResult.value.type,
+            title:
+              bulkActionResult.value.type === 'error'
+                ? String($t('notify.errorActionsLoad'))
+                : String($t('notify.product.actions.executed')),
+            message: String(
+              $t('actions.bulkSummary', {
+                totalProducts: processedIds.length,
+                totalClients: details.length,
+                succeeded: succeededCount,
+                failed: failedCount,
+              }),
+            ),
+          }
           onResult?.({ type: 'success', message: String($t('notify.product.actions.executed')) })
         } catch (e) {
-          const processedIds =
-            onDemandOptions?.productIds && onDemandOptions.productIds.length > 0 ? onDemandOptions.productIds : selectedProductIds.value
+          bulkActionResult.value = null
+          actionStatus.value = { type: 'error', title: String($t('notify.errorActionsLoad')), message: String(e) }
           if (processedIds.length > 0) {
             setLiveStatus(
               processedIds,
@@ -923,6 +1030,8 @@
             type: 'error',
             message: e instanceof Error ? e.message : String($t('notify.errorActionsLoad')),
           })
+        } finally {
+          processingProcessActions.value = false
         }
         return
       }
@@ -1279,4 +1388,18 @@
   })
 
   defineExpose({ refresh: () => fetchProducts(), hasUnsavedChanges, discardAllChanges })
+
+  useShortcutContext({
+    save: saveAllChanges,
+    canSave: () => hasUnsavedChanges.value && !isReadOnly.value,
+    discard: discardAllChanges,
+    canDiscard: () => hasUnsavedChanges.value,
+    saveAndExecute: () => handleSaveAll(true, { productIds: selectionStore.selectedProducts }),
+    canSaveAndExecute: () => hasUnsavedChanges.value && !isReadOnly.value && !processingProcessActions.value,
+    closeActivePanel: () => {
+      if (!showConfigPanel.value) return false
+      closePanel()
+      return true
+    },
+  })
 </script>
