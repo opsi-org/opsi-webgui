@@ -25,54 +25,7 @@
           </div>
         </template>
 
-        <CoreAppAlertInline
-          v-if="!executionResult"
-          color="info"
-          variant="soft"
-          :description="String($t('products.processHelp'))"
-          compact
-          class="mb-3"
-        />
-
-        <CoreAppAlertInline
-          v-if="executionResult"
-          :color="executionResult.type"
-          variant="subtle"
-          class="mb-3"
-          closable
-          @close="executionResult = null"
-        >
-          <template #description>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-xs font-normal">
-                {{
-                  $t('actions.bulkSummary', {
-                    totalProducts: executionResult.totalProducts,
-                    totalClients: executionResult.totalClients,
-                    succeeded: executionResult.succeeded,
-                    failed: executionResult.failed,
-                  })
-                }}
-              </span>
-              <CoreAppButton
-                v-if="executionResult.details.length > 0"
-                variant="ghost"
-                color="neutral"
-                size="xs"
-                @click="showDetails = !showDetails"
-              >
-                {{ $t('common.details') }}
-              </CoreAppButton>
-            </div>
-          </template>
-        </CoreAppAlertInline>
-
-        <ProductsBulkResultDetails
-          v-if="showDetails && executionResult"
-          v-model:filter="detailsFilter"
-          :details="executionResult.details"
-          class="mb-3"
-        />
+        <CoreAppAlertInline color="info" variant="soft" :description="String($t('products.processHelp'))" compact class="mb-3" />
 
         <div class="flex-1 min-h-0 flex flex-col gap-3">
           <div class="divide-y divide-(--color-border) flex-1 min-h-0 overflow-auto">
@@ -148,7 +101,7 @@
         <template #footer>
           <div class="flex justify-end gap-2">
             <CoreAppButton variant="outline" color="primary" size="sm" @click="open = false">
-              {{ executionResult ? $t('common.close') : $t('common.cancel') }}
+              {{ $t('common.cancel') }}
             </CoreAppButton>
             <CoreAppButton
               color="primary"
@@ -182,7 +135,8 @@
   })
 
   const emit = defineEmits<{
-    executed: []
+    started: [clientCount: number, productCount: number]
+    completed: [result: BulkActionResult]
   }>()
 
   const icons = useIcons()
@@ -192,11 +146,6 @@
   const { isReadOnly } = useUserPermissions()
 
   const executing = ref(false)
-  const executionResult = ref<BulkActionResult | null>(null)
-  const showDetails = ref(false)
-  const detailsFilter = ref<'all' | 'failed' | 'succeeded'>('failed')
-  // Set right before a programmatic reopen so the next watch(open) doesn't wipe the result it's meant to show.
-  const preserveStateOnReopen = ref(false)
   const VISIBILITY_KEY = 'opsi-webgui-process-actions-visibility'
   const productMode = ref<'all' | 'selected'>('all')
   const visibility = ref<ProductVisibility>((!import.meta.server && (localStorage.getItem(VISIBILITY_KEY) as ProductVisibility)) || '')
@@ -208,15 +157,8 @@
 
   watch(open, (isOpen) => {
     if (isOpen) {
-      if (preserveStateOnReopen.value) {
-        preserveStateOnReopen.value = false
-        return
-      }
       clientIds.value = [...selectionStore.selectedClients]
       productMode.value = props.selectedProductIds.length > 0 ? 'selected' : 'all'
-      executionResult.value = null
-      showDetails.value = false
-      detailsFilter.value = 'failed'
     }
   })
 
@@ -230,10 +172,10 @@
   async function executeProcessAction() {
     if (clientIds.value.length === 0) return
     executing.value = true
-    executionResult.value = null
-    showDetails.value = false
+    const productIds = productMode.value === 'selected' ? props.selectedProductIds : undefined
+    emit('started', clientIds.value.length, productIds?.length ?? 0)
+    open.value = false
     try {
-      const productIds = productMode.value === 'selected' ? props.selectedProductIds : undefined
       const result = await processActionRequests(clientIds.value, productIds, visibility.value || undefined)
 
       if (result.error) throw result.error
@@ -247,7 +189,7 @@
       }))
       const failed = details.filter((d) => !d.success).length
       const succeeded = details.length - failed
-      executionResult.value = {
+      const executionResult: BulkActionResult = {
         type: failed === 0 ? 'success' : succeeded === 0 ? 'error' : 'warning',
         totalClients: details.length,
         totalProducts: productIds?.length ?? 0,
@@ -256,15 +198,9 @@
         details,
       }
 
-      if (failed > 0 && !open.value) {
-        // The user closed the dialog while this request was in flight; bring it back to show the failure.
-        preserveStateOnReopen.value = true
-        open.value = true
-      }
-
-      emit('executed')
+      emit('completed', executionResult)
     } catch (e) {
-      executionResult.value = {
+      emit('completed', {
         type: 'error',
         totalClients: clientIds.value.length,
         totalProducts: 0,
@@ -275,12 +211,7 @@
           success: false,
           message: e instanceof Error ? e.message : String($t('notify.errorActionsLoad')),
         })),
-      }
-
-      if (!open.value) {
-        preserveStateOnReopen.value = true
-        open.value = true
-      }
+      })
     } finally {
       executing.value = false
     }

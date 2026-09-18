@@ -245,13 +245,13 @@
     </template>
   </CoreAppModal>
 
-  <CoreAppModal v-if="resultMounted" v-model:open="resultOpen" :dismissible="true">
+  <CoreAppModal v-if="resultMounted" v-model:open="resultOpen" :dismissible="true" :ui="{ content: 'w-[94vw] max-w-4xl max-h-[84vh]' }">
     <template #content>
-      <div class="p-3 min-w-87.5">
+      <div class="p-4">
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
             <CoreAppIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
-            {{ $t('actions.results') }}
+            {{ $t('actions.results') }} - {{ actionLabel(currentAction) }}
           </h3>
           <CoreAppButton
             :icon="icons.x"
@@ -262,59 +262,7 @@
           />
         </div>
 
-        <div class="flex gap-1.5 mb-3">
-          <CoreAppButton
-            v-for="filterOption in resultFilterOptions"
-            :key="filterOption.value"
-            size="xs"
-            :variant="resultFilter === filterOption.value ? 'solid' : 'outline'"
-            :color="filterOption.value === 'failed' ? 'error' : filterOption.value === 'succeeded' ? 'success' : 'neutral'"
-            @click="resultFilter = filterOption.value"
-          >
-            {{ filterOption.label }} ({{ filterOption.count }})
-          </CoreAppButton>
-        </div>
-
-        <div class="max-h-80 overflow-y-auto space-y-1.5">
-          <div
-            v-for="[clientId, result] in filteredActionResults"
-            :key="clientId"
-            class="p-3 rounded-lg border text-sm"
-            :class="
-              result.success
-                ? 'bg-(--color-success-soft-bg) border-(--color-success)/30'
-                : 'bg-(--color-error-soft-bg) border-(--color-error)/30'
-            "
-          >
-            <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2 min-w-0">
-                <CoreAppIcon
-                  :name="result.success ? icons.checkCircle : icons.xCircle"
-                  class="w-4 h-4 shrink-0"
-                  :class="result.success ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'"
-                />
-                <span class="font-medium truncate">{{ clientId }}</span>
-              </div>
-              <CoreAppBadge :color="result.success ? 'success' : 'error'" size="xs" variant="subtle">
-                {{ result.success ? $t('common.success') : $t('common.failed') }}
-              </CoreAppBadge>
-            </div>
-            <div
-              v-if="result.message"
-              class="mt-1.5 pl-6 text-sm wrap-break-word"
-              :class="result.success ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'"
-            >
-              {{ result.message }}
-            </div>
-          </div>
-          <p v-if="filteredActionResults.length === 0" class="text-sm text-center py-4">
-            {{ $t('common.noResults') }}
-          </p>
-        </div>
-
-        <div class="flex justify-end mt-4 pt-3 border-t border-(--color-border)">
-          <CoreAppButton variant="ghost" color="neutral" @click="resultOpen = false">{{ $t('common.close') }} </CoreAppButton>
-        </div>
+        <CoreAppActionResultsTable v-model:filter="resultFilter" :details="actionResultDetails" />
       </div>
     </template>
   </CoreAppModal>
@@ -369,22 +317,7 @@
   const actionResults = ref<Record<string, { success: boolean; message?: string }>>({})
   const statusMessage = ref<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
   const resultFilter = ref<'all' | 'failed' | 'succeeded'>('failed')
-
-  const resultFilterOptions = computed(() => {
-    const entries = Object.values(actionResults.value)
-    return [
-      { value: 'all' as const, label: String($t('common.all')), count: entries.length },
-      { value: 'failed' as const, label: String($t('common.failed')), count: entries.filter((r) => !r.success).length },
-      { value: 'succeeded' as const, label: String($t('common.success')), count: entries.filter((r) => r.success).length },
-    ]
-  })
-
-  const filteredActionResults = computed(() => {
-    const entries = Object.entries(actionResults.value)
-    if (resultFilter.value === 'failed') return entries.filter(([, r]) => !r.success)
-    if (resultFilter.value === 'succeeded') return entries.filter(([, r]) => r.success)
-    return entries
-  })
+  const actionResultDetails = computed(() => Object.entries(actionResults.value).map(([clientId, result]) => ({ clientId, ...result })))
 
   const renameHostname = ref('')
   const renameDomain = ref('')

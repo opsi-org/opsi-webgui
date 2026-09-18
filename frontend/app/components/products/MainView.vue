@@ -83,15 +83,25 @@
       </CoreAppAlertInline>
     </CoreAppErrorBanner>
 
-    <ProductsProcessActionsModal v-model:open="processActionsOpen" :selected-product-ids="selectedProductIds" @executed="fetchProducts" />
+    <ProductsProcessActionsModal
+      v-model:open="processActionsOpen"
+      :selected-product-ids="selectedProductIds"
+      @started="handleProcessActionsStarted"
+      @completed="handleProcessActionsCompleted"
+    />
 
-    <CoreAppModal v-if="bulkResultModalMounted" v-model:open="bulkResultModalOpen" :dismissible="true">
+    <CoreAppModal
+      v-if="bulkResultModalMounted"
+      v-model:open="bulkResultModalOpen"
+      :dismissible="true"
+      :ui="{ content: 'w-[94vw] max-w-4xl max-h-[84vh]' }"
+    >
       <template #content>
-        <div class="p-3 min-w-125">
+        <div class="p-4">
           <div class="flex items-center justify-between mb-2">
             <h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
               <CoreAppIcon :name="icons.onDemand" class="w-5 h-5" />
-              {{ $t('actions.results') }}
+              {{ $t('actions.results') }} - {{ $t('actions.processRequests') }}
             </h3>
             <CoreAppButton
               :icon="icons.x"
@@ -102,11 +112,7 @@
             />
           </div>
 
-          <ProductsBulkResultDetails v-model:filter="bulkResultFilter" :details="bulkActionResult?.details ?? []" />
-
-          <div class="flex justify-end mt-4 pt-3 border-t border-(--color-border)">
-            <CoreAppButton variant="ghost" color="neutral" @click="bulkResultModalOpen = false">{{ $t('common.close') }}</CoreAppButton>
-          </div>
+          <CoreAppActionResultsTable v-model:filter="bulkResultFilter" :details="bulkActionResult?.details ?? []" />
         </div>
       </template>
     </CoreAppModal>
@@ -436,6 +442,34 @@
         : getStoredDataTableFilter(filterStorageId.value),
   )
   const propertiesSearch = ref(typeof route.query.propertiesSearch === 'string' ? route.query.propertiesSearch : '')
+
+  function handleProcessActionsStarted(clientCount: number, productCount: number) {
+    processingProcessActions.value = true
+    bulkActionResult.value = null
+    actionStatus.value = {
+      type: 'info',
+      title: String($t('actions.live.processing')),
+      message: String($t('actions.processingSummary', { totalProducts: productCount, totalClients: clientCount })),
+    }
+  }
+
+  function handleProcessActionsCompleted(result: BulkActionResult) {
+    processingProcessActions.value = false
+    bulkActionResult.value = result
+    actionStatus.value = {
+      type: result.type,
+      title: result.type === 'error' ? String($t('notify.errorActionsLoad')) : String($t('notify.product.actions.executed')),
+      message: String(
+        $t('actions.bulkSummary', {
+          totalProducts: result.totalProducts,
+          totalClients: result.totalClients,
+          succeeded: result.succeeded,
+          failed: result.failed,
+        }),
+      ),
+    }
+    if (result.details.length > 0) fetchProducts()
+  }
 
   function handlePropertiesSearchUpdate(value: string) {
     propertiesSearch.value = value
@@ -955,6 +989,7 @@
     onDemandOptions?: { productIds?: string[]; visibility?: string; clientIds?: string[] },
     onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void,
   ) {
+    if (processOnDemand && processingProcessActions.value) return
     const clientIds = onDemandOptions?.clientIds || selectionStore.selectedClients
     const processedIds = (onDemandOptions?.productIds?.length ? onDemandOptions.productIds : selectedProductIds.value) || []
     if (processOnDemand && clientIds.length > 0) {
