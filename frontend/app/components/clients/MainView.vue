@@ -788,8 +788,9 @@
   }
 
   async function fetchClients(params?: PageChangeParams) {
-    const requestId = ++fetchClientsRequestId.value
-    fetchClientsController?.abort()
+    const isInfinitePageRequest = params?.displayMode === 'infinite' && params.pageNumber > 1
+    const requestId = isInfinitePageRequest ? fetchClientsRequestId.value : ++fetchClientsRequestId.value
+    if (!isInfinitePageRequest) fetchClientsController?.abort()
     const controller = new AbortController()
     fetchClientsController = controller
     loading.value = true
@@ -864,7 +865,7 @@
       if (controller.signal.aborted) return
       error.value = (e as Error).message
     } finally {
-      if (requestId === fetchClientsRequestId.value) {
+      if (requestId === fetchClientsRequestId.value && fetchClientsController === controller) {
         loading.value = false
         fetchClientsController = null
       }

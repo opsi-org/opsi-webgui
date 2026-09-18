@@ -336,8 +336,9 @@
   }
 
   async function fetchServers(params?: PageChangeParams) {
-    const requestId = ++fetchServersRequestId.value
-    fetchServersController?.abort()
+    const isInfinitePageRequest = params?.displayMode === 'infinite' && params.pageNumber > 1
+    const requestId = isInfinitePageRequest ? fetchServersRequestId.value : ++fetchServersRequestId.value
+    if (!isInfinitePageRequest) fetchServersController?.abort()
     const controller = new AbortController()
     fetchServersController = controller
     loading.value = true
@@ -393,7 +394,7 @@
       if (controller.signal.aborted) return
       error.value = (e as Error).message
     } finally {
-      if (requestId === fetchServersRequestId.value) {
+      if (requestId === fetchServersRequestId.value && fetchServersController === controller) {
         loading.value = false
         fetchServersController = null
       }

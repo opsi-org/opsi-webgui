@@ -1208,8 +1208,9 @@
   }
 
   async function fetchProducts(params?: PageChangeParams) {
-    const requestId = ++fetchProductsRequestId.value
-    fetchProductsController?.abort()
+    const isInfinitePageRequest = params?.displayMode === 'infinite' && params.pageNumber > 1
+    const requestId = isInfinitePageRequest ? fetchProductsRequestId.value : ++fetchProductsRequestId.value
+    if (!isInfinitePageRequest) fetchProductsController?.abort()
     const controller = new AbortController()
     fetchProductsController = controller
     loading.value = true
@@ -1283,7 +1284,7 @@
       if (controller.signal.aborted) return
       error.value = e instanceof Error ? e.message : String($t('products.none'))
     } finally {
-      if (requestId === fetchProductsRequestId.value) {
+      if (requestId === fetchProductsRequestId.value && fetchProductsController === controller) {
         loading.value = false
         fetchProductsController = null
       }
