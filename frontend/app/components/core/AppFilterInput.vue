@@ -15,7 +15,7 @@
     :aria-label="placeholder || $t('common.filter')"
     :icon="icons.filter"
     :size="effectiveSize"
-    :class="[inputClass, model ? 'ring-2 ring-(--color-primary)/35 bg-(--color-primary-soft-bg)' : '']"
+    :class="[inputClass, model ? 'border-2 border-(--color-text)' : '']"
     :aria-invalid="patternValid ? undefined : 'true'"
     :ui="{ trailing: 'pe-1' }"
   >

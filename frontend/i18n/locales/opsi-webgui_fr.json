@@ -23,7 +23,7 @@
     "progress": "Progression des actions",
     "reboot": "Redémarrer",
     "rename": "Renommer",
-    "processRequests": "Traiter les demandes d'action",
+    "processRequests": "Actions de processus",
     "processRequestsSelectionHelp": "Sans liste de produits, opsiconfd traite toutes les demandes d'action en attente pour les clients sélectionnés. Avec une liste de produits, seules les entrées ProductOnClient correspondantes avec actionRequest != none sont préparées avec leurs dépendances puis exécutées.",
     "request": "Demande d'action",
     "result": "Résultat de l'action",
@@ -587,7 +587,7 @@
     "propertiesSaved": "Propriétés enregistrées avec succès.",
     "processHelp": "Traiter maintenant les demandes d'action en attente déjà enregistrées pour les clients et produits sélectionnés.",
     "property": "Propriété",
-    "quick": "Actions rapides sur les produits",
+    "quick": "Actions rapides",
     "quickHelp": "Sélectionnez des produits et des clients pour définir des demandes d'action pour plusieurs produits.",
     "quickScopeHelp": "La portée serveur s'étend aux clients affectés aux serveurs sélectionnés. L'aperçu liste toujours les clients concernés.",
     "requiredAction": "Action requise",
@@ -606,7 +606,7 @@
   },
   "quick": {
     "actions": "Actions rapides",
-    "panel": "Accès rapide",
+    "panel": "Quick Panel",
     "selection": "Sélection rapide",
     "setFor": "Appliquer à la sélection"
   },

@@ -25,8 +25,6 @@
           </div>
         </template>
 
-        <CoreAppAlertInline color="info" variant="soft" :description="String($t('products.processHelp'))" compact class="mb-3" />
-
         <div class="flex-1 min-h-0 flex flex-col gap-3">
           <div class="divide-y divide-(--color-border) flex-1 min-h-0 overflow-auto">
             <div class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-4 py-1.5">

@@ -25,7 +25,6 @@
               size="xs"
               :icon="icons.x"
               :aria-label="String($t('common.close'))"
-              :title="String($t('common.close'))"
               @click="handleClose"
             />
           </div>

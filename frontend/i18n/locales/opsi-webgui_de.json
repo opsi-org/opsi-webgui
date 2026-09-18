@@ -23,7 +23,7 @@
     "progress": "Aktionsfortschritt",
     "reboot": "Neu starten",
     "rename": "Umbenennen",
-    "processRequests": "Aktionsanforderungen verarbeiten",
+    "processRequests": "Prozessaktionen",
     "processRequestsSelectionHelp": "Ohne Produktliste verarbeitet opsiconfd alle ausstehenden Action Requests der ausgewählten Clients. Mit Produktliste werden nur passende ProductOnClient-Einträge mit actionRequest != none inklusive Abhängigkeiten vorbereitet und ausgeführt.",
     "request": "Aktionsanforderung",
     "result": "Aktionsergebnis",
@@ -586,7 +586,7 @@
     "propertiesSaved": "Eigenschaften erfolgreich gespeichert.",
     "processHelp": "Bereits gespeicherte, ausstehende Aktionsanforderungen jetzt für die ausgewählten Clients und Produkte verarbeiten.",
     "property": "Eigenschaft",
-    "quick": "Produkt-Schnellaktionen",
+    "quick": "Schnellaktionen",
     "quickHelp": "Produkte und Clients auswählen, um Aktionsanforderungen für mehrere Produkte zu setzen.",
     "quickScopeHelp": "Der Server-Bereich erweitert sich auf die Clients, die den ausgewählten Servern zugeordnet sind. Die Vorschau zeigt immer die betroffenen Clients an.",
     "requiredAction": "Erforderliche Aktion",
@@ -605,7 +605,7 @@
   },
   "quick": {
     "actions": "Schnellaktionen",
-    "panel": "Schnellzugriff",
+    "panel": "Quick Panel",
     "selection": "Schnellauswahl",
     "setFor": "Für Auswahl setzen"
   },

@@ -63,7 +63,7 @@
             :title="String($t('settings.autoRefreshDesc'))"
           >
             <CoreAppIcon :name="icons.check" class="w-4 h-4" v-if="autoRefresh" />
-            <span class="hidden sm:inline text-xs">{{ $t('settings.autoRefresh') }}</span>
+            <span class="text-xs">{{ $t('settings.autoRefresh') }}</span>
           </CoreAppButton>
         </div>
         <div v-if="logContent.length > 0">
@@ -76,7 +76,7 @@
             :aria-label="String($t('settings.autoScroll'))"
             :title="String($t('settings.autoScrollDesc'))"
           >
-            <span class="hidden sm:inline text-xs">{{ $t('settings.autoScroll') }}</span>
+            <span class="text-xs">{{ $t('settings.autoScroll') }}</span>
           </CoreAppButton>
         </div>
 

@@ -35,7 +35,7 @@
         color="primary"
         size="sm"
         :icon="icons.onDemand"
-        :title="String($t('actions.processRequests'))"
+        :title="String($t('products.processHelp'))"
         :aria-label="String($t('actions.processRequests'))"
         @click="processActionsOpen = true"
       >

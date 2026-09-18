@@ -53,6 +53,7 @@
               :aria-label="String($t('common.advancedFilters'))"
               variant="outline"
               :color="advancedFiltersActiveCount > 0 || savedSearchEntries.length > 0 ? 'primary' : 'neutral'"
+              :class="advancedFiltersActiveCount > 0 ? 'border-2 border-(--color-text)' : ''"
               size="sm"
               data-testid="filters-and-saved-searches"
             >
