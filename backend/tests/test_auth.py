@@ -25,7 +25,6 @@ import pytest
 import yaml
 from fastapi import HTTPException, status
 from opsiconfd.utils import Singleton
-
 from webgui.python.auth import Authentication, AuthException
 from webgui.python.config import ADDON_ID, ENV_KEY_LDAP_URL, Config
 

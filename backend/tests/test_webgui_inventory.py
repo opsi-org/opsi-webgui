@@ -14,7 +14,6 @@ from datetime import datetime, timedelta
 from types import SimpleNamespace
 
 import pytest
-
 from webgui.python.api import inventory
 
 
