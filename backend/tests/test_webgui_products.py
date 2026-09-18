@@ -12,6 +12,7 @@ test opsiconfd webgui products
 import json
 import os
 import socket
+import uuid
 from string import Template
 
 import pytest
@@ -232,3 +233,82 @@ async def test_product_groups_dynamic_returns_children_and_products(config):
 	assert parent_group not in children
 	assert child_group in children
 	assert product_id in children
+
+
+def _find_group_node(tree: dict, group_id: str) -> dict | None:
+	if tree.get("text") == group_id:
+		return tree
+	for child in (tree.get("children") or {}).values():
+		found = _find_group_node(child, group_id)
+		if found:
+			return found
+	return None
+
+
+@pytest.mark.asyncio
+async def test_product_group_move_to_other_group_and_top_level(config):
+	suffix = uuid.uuid4().hex[:8]
+	group_a = f"pytest-prod-move-a-{suffix}"
+	group_b = f"pytest-prod-move-b-{suffix}"
+	child_group = f"pytest-prod-move-child-{suffix}"
+
+	for group_id in (group_a, group_b):
+		res = requests.post(
+			f"{config.external_url}{API_ROOT}/products/groups",
+			auth=(ADMIN_USER, ADMIN_PASS),
+			verify=False,
+			json={"groupId": group_id},
+		)
+		assert res.status_code == 201
+
+	create_child = requests.post(
+		f"{config.external_url}{API_ROOT}/products/groups",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		json={"groupId": child_group, "parentGroupId": group_a},
+	)
+	assert create_child.status_code == 201
+
+	move_to_b = requests.put(
+		f"{config.external_url}{API_ROOT}/products/groups/{child_group}",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		json={"parent": group_b, "note": "moved to b"},
+	)
+	assert move_to_b.status_code == 200
+
+	tree = requests.get(
+		f"{config.external_url}{API_ROOT}/products/groups",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		params={"withProducts": False},
+	).json()["groups"]
+	child_node = _find_group_node(tree, child_group)
+	assert child_node is not None
+	assert child_node["parent"] == group_b
+
+	move_to_top = requests.put(
+		f"{config.external_url}{API_ROOT}/products/groups/{child_group}",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		json={"parent": "groups"},
+	)
+	assert move_to_top.status_code == 200
+
+	tree = requests.get(
+		f"{config.external_url}{API_ROOT}/products/groups",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		params={"withProducts": False},
+	).json()["groups"]
+	child_node = _find_group_node(tree, child_group)
+	assert child_node is not None
+	assert child_node["parent"] == "groups"
+
+	move_to_self = requests.put(
+		f"{config.external_url}{API_ROOT}/products/groups/{group_a}",
+		auth=(ADMIN_USER, ADMIN_PASS),
+		verify=False,
+		json={"parent": group_a},
+	)
+	assert move_to_self.status_code == 400
