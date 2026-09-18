@@ -11,7 +11,7 @@
 image: node:26.3-bookworm-slim
 
 variables:
-  CI: 'true'
+  CI: "true"
   DEBIAN_FRONTEND: noninteractive
 
 workflow:
@@ -180,6 +180,7 @@ validate:backend-style:
         -w /workspace \
         opsi-webgui-dev:latest \
         bash -lc '
+          set -euo pipefail
           cd /workspace/docker/opsiconfd
           uv sync
           cd /workspace
@@ -385,7 +386,7 @@ build:addon:
     - bash "$(pwd)/scripts/build_addon.sh" webgui "OPSI-WebGUI" "$(pwd)"
     - ls -lah opsi-webgui.zip webgui/
   artifacts:
-    name: 'opsi-webgui-${PACKAGE_VERSION}'
+    name: "opsi-webgui-${PACKAGE_VERSION}"
     paths: [opsi-webgui.zip, webgui/]
     expire_in: 7 days
 
@@ -404,11 +405,17 @@ release:sbom:
 release:binary-index:
   stage: release
   extends: [.pybuilder, .only-tags]
-  needs: [build:addon, setup:versions, release:sbom, { job: setup:changelog, optional: true }]
+  needs:
+    [
+      build:addon,
+      setup:versions,
+      release:sbom,
+      { job: setup:changelog, optional: true },
+    ]
   script:
     - opsi-dev-cli self upgrade
     - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
-    - '[ -f output/changelog.md ] && opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip --sbom-file frontend/sbom.cyclonedx.json || true'
+    - "[ -f output/changelog.md ] && opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip --sbom-file frontend/sbom.cyclonedx.json || true"
 
 release:obs-external:
   stage: release
