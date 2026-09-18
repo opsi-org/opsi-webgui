@@ -183,7 +183,16 @@
         <div v-if="selectedGroup" class="h-full min-h-0 flex flex-col">
           <div class="p-2 border-b border-(--color-border) flex items-center justify-between bg-(--color-background)">
             <div class="flex items-center gap-2">
-              <CoreAppButton v-if="isMobile" :icon="icons.back" variant="ghost" color="neutral" size="xs" @click="showSidebar = true" />
+              <CoreAppButton
+                v-if="isMobile"
+                :icon="icons.back"
+                variant="ghost"
+                color="neutral"
+                size="xs"
+                :aria-label="String($t('common.back'))"
+                :title="String($t('common.back'))"
+                @click="closeMobileGroupPanel"
+              />
               <span class="font-medium text-(--color-text)">{{ selectedGroup.label }}</span>
               <span v-if="selectedGroup.isSpecial" class="text-xs text-(--color-text-muted)"> ({{ $t('diag.systemGroup') }}) </span>
             </div>
@@ -1024,6 +1033,11 @@
     } finally {
       loadingSelectedGroupMembers.value = false
     }
+  }
+
+  function closeMobileGroupPanel() {
+    selectedGroup.value = null
+    showSidebar.value = true
   }
 
   function toggleMemberSelection(member: string, event?: MouseEvent | KeyboardEvent) {

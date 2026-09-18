@@ -252,7 +252,6 @@
     <template v-else-if="isMultilineValue">
       <div class="flex-1 flex items-center gap-1 min-w-0">
         <div
-          v-clickable
           class="flex-1 px-2 text-sm border border-(--color-border) rounded-md bg-(--color-surface-elevated) cursor-pointer hover:border-primary/50 transition-colors truncate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
           :class="[size === 'xs' ? 'py-1 min-h-8' : 'py-1.5 md:py-1 min-h-11 md:min-h-8', disabled ? 'opacity-50 cursor-not-allowed' : '']"
           :title="stringValue"

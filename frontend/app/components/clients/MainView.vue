@@ -128,6 +128,14 @@
             class="w-3.5 h-3.5 text-(--color-error-soft-text) shrink-0"
             :title="$t('clients.blocked')"
           />
+          <CoreAppTooltip v-if="(row as OpsiClient).operatingSystem" :text="String((row as OpsiClient).operatingSystem)">
+            <CoreAppIcon
+              :name="operatingSystemIcon((row as OpsiClient).operatingSystem)"
+              class="w-3.5 h-3.5 shrink-0"
+              :class="operatingSystemIconColor((row as OpsiClient).operatingSystem)"
+              :aria-label="String((row as OpsiClient).operatingSystem)"
+            />
+          </CoreAppTooltip>
           <span>{{ (row as OpsiClient).clientId }}</span>
         </div>
       </template>
@@ -464,6 +472,23 @@
     () => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedClients.length > 0,
   )
 
+  function operatingSystemIcon(operatingSystem?: string | null): string {
+    const value = (operatingSystem || '').toLowerCase()
+    if (value.includes('windows')) return icons.windows
+    if (value.includes('mac') || value.includes('darwin') || value.includes('os x')) return icons.apple
+    if (value.includes('linux') || value.includes('unix') || value.includes('debian') || value.includes('ubuntu')) return icons.linux
+    return icons.info
+  }
+
+  function operatingSystemIconColor(operatingSystem?: string | null): string {
+    const value = (operatingSystem || '').toLowerCase()
+    if (value.includes('windows')) return 'text-(--color-os-windows)'
+    if (value.includes('mac') || value.includes('darwin') || value.includes('os x')) return 'text-(--color-os-macos)'
+    if (value.includes('linux') || value.includes('unix') || value.includes('debian') || value.includes('ubuntu'))
+      return 'text-(--color-os-linux)'
+    return 'text-(--color-text-muted)'
+  }
+
   const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
 
   const columns: DataTableColumnDef[] = [
@@ -543,15 +568,6 @@
       labelKey: 'common.description',
       sortable: true,
       maxWidth: '16rem',
-      truncate: true,
-      tooltip: true,
-    },
-    {
-      // Not sortable: computed per-page from the audit software catalog, not a HOST table column.
-      key: 'operatingSystem',
-      label: String($t('clients.operatingSystemShort')),
-      labelKey: 'clients.operatingSystemShort',
-      maxWidth: '14rem',
       truncate: true,
       tooltip: true,
     },
@@ -825,6 +841,7 @@
       if (advancedFilters.value.hasOutdatedProducts) p.hasOutdatedProducts = true
       if (advancedFilters.value.operatingSystem) p.operatingSystem = advancedFilters.value.operatingSystem
       const result = await getClients(p, { signal: controller.signal })
+      if (controller.signal.aborted) return
       if (requestId !== fetchClientsRequestId.value) return
       if (result.error) error.value = result.error.message
       else if (result.data) {

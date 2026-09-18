@@ -23,7 +23,7 @@ export const icons = {
   productInstallationStatusUnknown: 'heroicons:question-mark-circle',
   productInstallationStatusInstalled: 'heroicons:check',
   productActionResultSuccessful: 'heroicons:check',
-  productsFailedActionResult: 'heroicons:x-mark',
+  productsFailedActionResult: 'heroicons:x-circle',
   clientReachable: 'heroicons:wifi',
   client: 'heroicons:computer-desktop',
   server: 'heroicons:server',

@@ -172,7 +172,6 @@
 
   // Split view state
   const isMobile = ref(false)
-  const isSplitPanelNarrow = ref(false)
   const containerRef = ref<HTMLElement | null>(null)
   const { layout: workspaceLayout } = useWorkspaceLayout()
   const panelWidthPercent = computed({
@@ -183,20 +182,17 @@
   })
   const minPanelPercent = 25
   const maxPanelPercent = 75
-  const narrowSplitMinWidth = 1180
 
   onMounted(() => {
     const updateLayoutMode = () => {
-      const containerWidth = containerRef.value?.clientWidth || window.innerWidth
       isMobile.value = window.innerWidth < 768
-      isSplitPanelNarrow.value = containerWidth < narrowSplitMinWidth
     }
     updateLayoutMode()
     window.addEventListener('resize', updateLayoutMode)
     onUnmounted(() => window.removeEventListener('resize', updateLayoutMode))
   })
 
-  const useOverlayPanel = computed(() => isMobile.value || (props.showPanel && isSplitPanelNarrow.value))
+  const useOverlayPanel = computed(() => isMobile.value)
 
   const mainStyle = computed(() => {
     if (!props.showPanel || useOverlayPanel.value) return { width: '100%' }

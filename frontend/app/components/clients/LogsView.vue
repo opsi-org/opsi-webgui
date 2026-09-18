@@ -177,7 +177,6 @@
             v-for="(line, idx) in filteredLogContent"
             :id="'logrow-' + idx"
             :key="idx"
-            v-clickable
             :class="[getLogRowClass(line, idx), 'flex items-start hover:bg-(--color-surface-hover) cursor-pointer transition-colors group']"
             role="button"
             tabindex="0"

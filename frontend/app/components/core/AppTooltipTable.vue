@@ -14,6 +14,7 @@
       <div
         class="max-h-[70vh] max-w-[22rem] sm:max-w-[26rem] lg:max-w-[30rem] overflow-auto rounded-md border border-(--color-border) bg-(--color-background) p-2 shadow-lg select-text text-xs"
       >
+        <div v-if="title" class="mb-1 border-b border-(--color-border)/50 pb-1 font-semibold text-(--color-text)">{{ title }}</div>
         <table class="min-w-full border-collapse">
           <tr v-for="(row, i) in visibleRows" :key="i" class="border-b border-(--color-border)/30 last:border-0">
             <td class="pr-2 py-0.5 text-(--color-text-muted) whitespace-nowrap align-top">
@@ -60,6 +61,7 @@
 
   const props = defineProps<{
     rows: TooltipRow[]
+    title?: string
   }>()
 
   const visibleRows = computed(() => props.rows.filter((r) => r.key?.trim() || r.value?.trim()))

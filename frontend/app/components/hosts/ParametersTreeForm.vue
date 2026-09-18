@@ -57,8 +57,13 @@
           <span v-for="i in getDepth(node.key)" :key="i" class="tree-guide-line" :style="{ left: `${8 + (i - 1) * 16}px` }" />
           <span class="w-5 flex items-center justify-center shrink-0 mt-1" />
           <div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-1 md:gap-2.5">
-            <div class="min-w-0 md:w-2/5 flex items-center gap-1 group/paramrow">
-              <span class="text-xs text-(--color-text) truncate select-text min-w-0" :title="node.param.configId">
+            <div
+              class="min-w-0 w-full md:w-2/5 flex items-center gap-1 group/paramrow px-1.5 py-0.5 rounded bg-(--color-surface-hover) md:bg-transparent md:px-0 md:py-0"
+            >
+              <span
+                class="text-xs font-medium md:font-normal text-(--color-text) truncate select-text min-w-0"
+                :title="node.param.configId"
+              >
                 {{ node.param.configId }}
               </span>
               <span
@@ -92,7 +97,7 @@
                 <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
               </span>
             </div>
-            <div class="flex-1 flex items-center gap-1.5 min-w-0">
+            <div class="w-full md:flex-1 flex items-center gap-1.5 min-w-0">
               <CoreAppPropertyFormItem
                 :model-value="currentValue(node.param)"
                 size="xs"

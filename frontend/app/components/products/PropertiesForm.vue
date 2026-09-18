@@ -30,9 +30,11 @@
             class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-0.5 gap-x-1 min-h-8 transition-colors"
             :class="changedPropertyIds.has(prop.propertyId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)'"
           >
-            <div class="min-w-0 md:w-2/5 flex items-center gap-1.5 group/proprow">
+            <div
+              class="min-w-0 w-full md:w-2/5 flex items-center gap-1.5 group/proprow px-1.5 py-0.5 rounded bg-(--color-surface-hover) md:bg-transparent md:px-0 md:py-0"
+            >
               <span
-                class="text-sm break-all select-text"
+                class="text-sm font-medium md:font-normal break-all select-text"
                 :class="{
                   italic: prop.anyClientDifferentFromDepot,
                   'font-bold': prop.anyDepotDifferentFromDefault,
@@ -69,7 +71,7 @@
               </span>
             </div>
 
-            <div class="flex-1 flex items-center gap-1 min-w-0 w-full">
+            <div class="w-full md:flex-1 flex items-center gap-1 min-w-0">
               <CoreAppPropertyFormItem
                 :model-value="prop._value"
                 size="xs"
