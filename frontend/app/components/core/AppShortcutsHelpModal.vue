@@ -11,32 +11,31 @@
   <CoreAppModal
     v-model:open="model"
     :title="$t('shortcuts.title')"
-    :ui="{ content: 'w-[94vw] max-w-lg h-auto max-h-[80vh]', body: 'overflow-hidden' }"
+    :ui="{ content: 'w-[94vw] max-w-2xl h-auto max-h-[85vh]', body: 'overflow-hidden' }"
   >
     <template #body>
-      <div class="space-y-5 overflow-y-auto max-h-[65vh] pr-1" :tabindex="0" role="region" :aria-label="$t('shortcuts.title')">
+      <div class="space-y-3 overflow-y-auto max-h-[70vh] pr-1" :tabindex="0" role="region" :aria-label="$t('shortcuts.title')">
         <div v-for="group in shortcutGroups" :key="group.title">
-          <CoreAppHeading tag="h3" size="xs" :text="group.title" class="mb-2 normal-case" />
-          <ul class="space-y-1.5">
-            <li v-for="item in group.items" :key="item.description" class="flex items-center justify-between gap-3 text-sm">
-              <span class="text-(--color-text)">{{ item.description }}</span>
-              <span class="flex items-center gap-1 shrink-0">
+          <CoreAppHeading tag="h3" size="xs" :text="group.title" class="mb-1 normal-case" />
+          <ul class="space-y-0.5">
+            <li
+              v-for="item in group.items"
+              :key="item.description"
+              class="flex items-center justify-between gap-3 rounded-md px-2 py-1 text-sm transition-colors hover:bg-(--color-surface-hover) focus-within:bg-(--color-surface-hover)"
+            >
+              <span class="min-w-0 truncate text-(--color-text)">{{ item.description }}</span>
+              <span class="flex shrink-0 items-center gap-0.5">
                 <template v-for="(key, index) in item.keys" :key="key">
                   <kbd
-                    class="px-1.5 py-0.5 text-xs text-(--color-text) bg-(--color-surface-hover) rounded border border-(--color-border)"
+                    class="rounded border border-(--color-border) bg-(--color-surface-hover) px-1 py-px text-[0.6875rem] leading-4 text-(--color-text)"
                     >{{ key }}</kbd
                   >
-                  <span v-if="index < item.keys.length - 1" class="text-xs text-(--color-text)">/</span>
+                  <span v-if="index < item.keys.length - 1" class="px-px text-[0.6875rem] text-(--color-text-muted)">/</span>
                 </template>
               </span>
             </li>
           </ul>
         </div>
-      </div>
-    </template>
-    <template #footer>
-      <div class="flex justify-end">
-        <CoreAppButton variant="outline" color="neutral" @click="model = false">{{ $t('common.close') }}</CoreAppButton>
       </div>
     </template>
   </CoreAppModal>
