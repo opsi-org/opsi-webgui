@@ -887,38 +887,40 @@
         if (group) group.push(pid)
         else productIdsByAction.set(change.actionRequest, [pid])
       }
-      for (const [actionRequest, pids] of productIdsByAction) {
-        try {
-          setLiveStatus(
-            pids,
-            {
-              kind: 'saving',
-              message: String($t('actions.live.saving')),
-              tooltip: String($t('actions.request')),
-            },
-            0,
-          )
-          const r = await setClientProductActions({
-            clientIds,
-            productIds: pids,
-            actionRequest,
-          })
-          if (r.error) throw r.error
-          savedIds.push(...pids)
-          setLiveStatus(pids, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
-        } catch (e) {
-          errors.push(...pids.map((pid) => `${pid}: ${e instanceof Error ? e.message : String(e)}`))
-          setLiveStatus(
-            pids,
-            {
-              kind: 'error',
-              message: String($t('actions.live.failed')),
-              tooltip: e instanceof Error ? e.message : String(e),
-            },
-            15000,
-          )
-        }
-      }
+      await Promise.all(
+        [...productIdsByAction].map(async ([actionRequest, pids]) => {
+          try {
+            setLiveStatus(
+              pids,
+              {
+                kind: 'saving',
+                message: String($t('actions.live.saving')),
+                tooltip: String($t('actions.request')),
+              },
+              0,
+            )
+            const r = await setClientProductActions({
+              clientIds,
+              productIds: pids,
+              actionRequest,
+            })
+            if (r.error) throw r.error
+            savedIds.push(...pids)
+            setLiveStatus(pids, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
+          } catch (e) {
+            errors.push(...pids.map((pid) => `${pid}: ${e instanceof Error ? e.message : String(e)}`))
+            setLiveStatus(
+              pids,
+              {
+                kind: 'error',
+                message: String($t('actions.live.failed')),
+                tooltip: e instanceof Error ? e.message : String(e),
+              },
+              15000,
+            )
+          }
+        }),
+      )
       const savedActionRequests = new Map(pendingActionRequests.value)
       for (const pid of savedIds) {
         pendingActionRequests.value.delete(pid)
@@ -953,22 +955,28 @@
     onDemandOptions?: { productIds?: string[]; visibility?: string; clientIds?: string[] },
     onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void,
   ) {
+    const clientIds = onDemandOptions?.clientIds || selectionStore.selectedClients
+    const processedIds = (onDemandOptions?.productIds?.length ? onDemandOptions.productIds : selectedProductIds.value) || []
+    if (processOnDemand && clientIds.length > 0) {
+      processingProcessActions.value = true
+      bulkActionResult.value = null
+      actionStatus.value = {
+        type: 'info',
+        title: String($t('actions.live.processing')),
+        message: String($t('actions.processingSummary', { totalProducts: processedIds.length, totalClients: clientIds.length })),
+      }
+    }
     const result = await saveActionRequests()
     if (result.type === 'error') {
+      if (processOnDemand) {
+        processingProcessActions.value = false
+        actionStatus.value = { type: 'error', title: String($t('notify.errorActionsSave')), message: result.message }
+      }
       onResult?.(result)
       return
     }
     if (processOnDemand) {
-      const clientIds = onDemandOptions?.clientIds || selectionStore.selectedClients
       if (clientIds.length > 0) {
-        const processedIds = (onDemandOptions?.productIds?.length ? onDemandOptions.productIds : selectedProductIds.value) || []
-        processingProcessActions.value = true
-        bulkActionResult.value = null
-        actionStatus.value = {
-          type: 'info',
-          title: String($t('actions.live.processing')),
-          message: String($t('actions.processingSummary', { totalProducts: processedIds.length, totalClients: clientIds.length })),
-        }
         try {
           const productIds = onDemandOptions?.productIds || undefined
           if (processedIds.length > 0) {

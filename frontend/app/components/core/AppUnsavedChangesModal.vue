@@ -487,6 +487,7 @@
 
   function handleQuickSave() {
     emit('saveAll', false)
+    open.value = false
   }
 
   function handleQuickDiscard() {
@@ -506,6 +507,9 @@
     emit('saveAll', processAfterSave.value && props.showProcessOptions, options, (result) => {
       saveResult.value = result
     })
+    // Saving and processing continues in the parent. Close this transient
+    // confirmation dialog so progress and errors are shown in the main view.
+    open.value = false
   }
 
   function handleDiscardAll() {

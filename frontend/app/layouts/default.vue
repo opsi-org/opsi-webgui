@@ -347,6 +347,7 @@
       usingInput: true,
       handler: (e) => {
         e?.preventDefault()
+        if (e?.target instanceof HTMLElement && e.target.closest('[role="dialog"]')) return
         if (shortcutActions.save && (shortcutActions.canSave?.() ?? true)) shortcutActions.save()
       },
     },
@@ -360,6 +361,7 @@
       usingInput: true,
       handler: (e) => {
         e?.preventDefault()
+        if (e?.target instanceof HTMLElement && e.target.closest('[role="dialog"]')) return
         if (shortcutActions.saveAndExecute && (shortcutActions.canSaveAndExecute?.() ?? true)) shortcutActions.saveAndExecute()
       },
     },
