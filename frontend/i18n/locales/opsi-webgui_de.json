@@ -18,13 +18,12 @@
     "noFailed": "Keine fehlgeschlagenen Clients",
     "notify": "Benachrichtigen",
     "ondemand": "OnDemand",
-    "ondemandDesc": "Aktionsanforderungen für ausgewählte Clients verarbeiten",
+    "ondemandDesc": "Ausstehende Aktionsanforderungen für ausgewählte Clients verarbeiten",
     "last": "Letzte Aktion",
     "progress": "Aktionsfortschritt",
     "reboot": "Neu starten",
     "rename": "Umbenennen",
     "processRequests": "Prozessaktionen",
-    "processRequestsSelectionHelp": "Ohne Produktliste verarbeitet opsiconfd alle ausstehenden Action Requests der ausgewählten Clients. Mit Produktliste werden nur passende ProductOnClient-Einträge mit actionRequest != none inklusive Abhängigkeiten vorbereitet und ausgeführt.",
     "request": "Aktionsanforderung",
     "result": "Aktionsergebnis",
     "results": "Aktionsergebnisse",
@@ -122,7 +121,7 @@
     "default": "Client-Standard",
     "delete": {
       "desc": "Ausgewählte Clients werden gelöscht.",
-      "warn": "Diese Aktion kann nicht rükgängig gemacht werden."
+      "warn": "Diese Aktion kann nicht rückgängig gemacht werden."
     },
     "deploy": "Client-Agent bereitstellen",
     "deployDesc": "Installiert den opsi-Client-Agent auf den ausgewählten Clients mit den unten angegebenen Zugangsdaten.",
@@ -342,7 +341,7 @@
   "groups": {
     "client": "Client-Gruppen",
     "create": "Gruppe erstellen",
-    "delete": "Möchten Sie die Gruppe \"{groupId}\" wirklich löschen? Diese Aktion kann nicht rükgängig gemacht werden.",
+    "delete": "Möchten Sie die Gruppe \"{groupId}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
     "edit": "Gruppe bearbeiten",
     "error": "Fehler beim Laden der Gruppen",
     "id": "Gruppen-ID",
