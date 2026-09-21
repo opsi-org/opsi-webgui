@@ -597,7 +597,7 @@
   function doOpenPanel(client: OpsiClient, type: ClientPanelType) {
     panelClient.value = client
     panelType.value = type
-    const { configType: _ct, inventoryTab: _it, ...restQuery } = route.query as Record<string, string>
+    const { configType: _ct, inventoryTab: _it, sortBy: _sortBy, type: _type, ...restQuery } = route.query as Record<string, string>
     const query: Record<string, string> = {
       ...restQuery,
       client: client.clientId,
@@ -617,9 +617,17 @@
     checkUnsavedAndDo(() => {
       panelClient.value = null
       panelType.value = 'products'
+      const {
+        client: _client,
+        configType: _configType,
+        inventoryTab: _inventoryTab,
+        sortBy: _sortBy,
+        type: _type,
+        ...restQuery
+      } = route.query
       router.replace({
         query: {
-          ...route.query,
+          ...restQuery,
           view: 'panel',
           panelType: 'products',
           sortBy: productsSortColumn.value,
@@ -633,7 +641,8 @@
     checkUnsavedAndDo(() => {
       panelClient.value = null
       panelType.value = 'add'
-      router.replace({ query: { ...route.query, view: 'panel', panelType: 'add' } })
+      const { client: _client, configType: _configType, inventoryTab: _inventoryTab, ...restQuery } = route.query
+      router.replace({ query: { ...restQuery, view: 'panel', panelType: 'add' } })
     })
   }
 
@@ -643,9 +652,10 @@
     panelProductType.value = productType || 'localboot'
     panelClient.value = null
     panelType.value = 'products'
+    const { client: _client, configType: _configType, inventoryTab: _inventoryTab, ...restQuery } = route.query
     router.replace({
       query: {
-        ...route.query,
+        ...restQuery,
         view: 'panel',
         panelType: 'products',
         sortBy: sortColumn,
