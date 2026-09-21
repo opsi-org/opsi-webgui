@@ -124,6 +124,20 @@ describe('useAutoRefresh', () => {
     expect(cb).not.toHaveBeenCalled()
   })
 
+  it('refreshes product data when a product-on-client event changes the action request', async () => {
+    const { useAutoRefreshProducts } = await import('~/app/composables/useMessagebus')
+    const cb = vi.fn()
+    const { changesDetected } = useAutoRefreshProducts(cb)
+
+    await emitMessage({ type: 'event', event: 'productOnClient_updated', channel: 'event:productOnClient_updated' })
+    expect(changesDetected.value).toBe(true)
+    expect(cb).not.toHaveBeenCalled()
+
+    await vi.advanceTimersByTimeAsync(2100)
+    expect(cb).toHaveBeenCalledTimes(1)
+    expect(changesDetected.value).toBe(false)
+  })
+
   it('provides human-readable descriptions for config/configState/log events', async () => {
     const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
     const cb = vi.fn()
