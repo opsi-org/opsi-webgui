@@ -80,6 +80,9 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <CoreAppFormField :label="$t('terminal.id')">
           <CoreAppInput v-model="terminalId" :disabled="isConnected" size="sm" class="w-full" />
+          <div v-if="terminalId.length === 0" class="text-xs text-error">
+            {{ $t('terminal.idEmpty') }}
+          </div>
         </CoreAppFormField>
         <CoreAppFormField :label="$t('terminal.channel')">
           <CoreAppInput v-model="terminalChannel" :disabled="isConnected" size="sm" class="w-full" />
@@ -149,7 +152,7 @@
   }
 
   async function checkDisabled() {
-    if (isReadOnly.value || !isTerminalEnabled.value) {
+    if (isReadOnly.value || !isTerminalEnabled.value || terminalId.value.length === 0) {
       isDisabled.value = true
       return
     }
@@ -380,6 +383,14 @@
     terminalId.value = crypto.randomUUID()
     terminalChannel.value = terminalChannelDefault
   }
+
+  watch(terminalId, async (newId) => {
+    await checkDisabled()
+    if (!isDisabled.value) {
+      await nextTick()
+      await initTerminal()
+    }
+  })
 
   onMounted(async () => {
     await checkDisabled()

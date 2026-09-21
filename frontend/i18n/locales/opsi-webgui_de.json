@@ -693,6 +693,7 @@
     "exited": "Sitzung beendet",
     "failed": "Verbindung fehlgeschlagen!",
     "id": "Terminal-ID",
+    "idEmpty": "Terminal-ID darf nicht leer sein.",
     "press": "Drücken Sie Verbinden, um eine Sitzung zu starten...",
     "quickCommands": "Schnellbefehle",
     "quickCommandsHelp": "Eigene häufig genutzte Terminalbefehle speichern und ausführen. Verbindet automatisch, falls noch nicht verbunden.",

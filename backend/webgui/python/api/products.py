@@ -1844,7 +1844,7 @@ def get_product_groups_dynamic(
 	return RESTResponse(data={"groups": product_groups})
 
 
-@api_router.get("/api/opsidata/products/groups/{group}")
+@api_router.delete("/api/opsidata/products/groups/{group}")
 @rest_api
 @read_only_check
 def delete_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements

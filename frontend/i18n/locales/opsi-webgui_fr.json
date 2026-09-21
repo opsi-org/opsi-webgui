@@ -693,6 +693,7 @@
     "exited": "Session terminée",
     "failed": "Échec de la connexion !",
     "id": "ID du terminal",
+    "idEmpty": "L'ID du terminal ne peut pas être vide.",
     "press": "Appuyez sur Connecter pour démarrer une session...",
     "quickCommands": "Commandes rapides",
     "quickCommandsHelp": "Enregistrez et exécutez vos propres commandes de terminal fréquentes. Se connecte automatiquement si nécessaire.",

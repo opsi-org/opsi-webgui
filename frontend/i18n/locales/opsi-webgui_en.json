@@ -693,6 +693,7 @@
     "exited": "Session exited",
     "failed": "Connection failed!",
     "id": "Terminal ID",
+    "idEmpty": "Terminal ID cannot be empty.",
     "press": "Press Connect to start a session...",
     "quickCommands": "Quick commands",
     "quickCommandsHelp": "Save and run your own frequently used terminal commands. Connects automatically if not yet connected.",
