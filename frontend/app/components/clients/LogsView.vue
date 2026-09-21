@@ -174,25 +174,28 @@
         </div>
         <div v-else ref="logContainerRef" class="h-full overflow-auto log-viewer bg-(--color-background) rounded-xl font-mono text-xs">
           <div
-            v-for="(line, idx) in filteredLogContent"
-            :id="'logrow-' + idx"
-            :key="idx"
-            :class="[getLogRowClass(line, idx), 'flex items-start hover:bg-(--color-surface-hover) cursor-pointer transition-colors group']"
+            v-for="entry in filteredLogContent"
+            :id="'logrow-' + entry.index"
+            :key="entry.index"
+            :class="[
+              getLogRowClass(entry.line, entry.index),
+              'flex items-start hover:bg-(--color-surface-hover) cursor-pointer transition-colors group',
+            ]"
             role="button"
             tabindex="0"
-            @click="setMarker(idx)"
-            @keydown.enter="setMarker(idx)"
-            @keydown.space.prevent="setMarker(idx)"
+            @click="setMarker(entry.index)"
+            @keydown.enter="setMarker(entry.index)"
+            @keydown.space.prevent="setMarker(entry.index)"
           >
             <span
               class="w-8 shrink-0 px-0.5 py-0.5 text-[10px] text-right text-(--color-text-muted) border-r border-(--color-border) select-none sticky left-0 bg-inherit"
             >
-              {{ idx + 1 }}
+              {{ entry.index + 1 }}
             </span>
             <span class="w-3 shrink-0 flex items-center justify-center py-0.5">
-              <CoreAppIcon v-if="markerLine === idx" :name="icons.bookmark" class="w-3 h-3 text-opsi-blue" />
+              <CoreAppIcon v-if="markerLine === entry.index" :name="icons.bookmark" class="w-3 h-3 text-opsi-blue" />
             </span>
-            <code class="flex-1 px-0.5 py-0.5 whitespace-pre-wrap break-all leading-4 min-h-4">{{ line }}</code>
+            <code class="flex-1 px-0.5 py-0.5 whitespace-pre-wrap break-all leading-4 min-h-4">{{ entry.line }}</code>
           </div>
         </div>
       </div>
@@ -309,10 +312,10 @@
   const hasMarker = computed(() => markerLine.value >= 0)
 
   const filteredLogContent = computed(() => {
-    return logContent.value.filter((line) => {
-      if (!isLogLevelVisible(line)) return false
-      if (filterQuery.value && !line.toLowerCase().includes(filterQuery.value.toLowerCase())) return false
-      return true
+    return logContent.value.flatMap((line, index) => {
+      if (!isLogLevelVisible(line)) return []
+      if (filterQuery.value && !line.toLowerCase().includes(filterQuery.value.toLowerCase())) return []
+      return [{ line, index }]
     })
   })
 
@@ -402,7 +405,7 @@
 
   function downloadLog() {
     const fileName = `${resolvedClientId.value}_${selectedLogType.value?.value || 'log'}.log`
-    const content = filteredLogContent.value.join('\n')
+    const content = filteredLogContent.value.map((entry) => entry.line).join('\n')
     const blob = new Blob([content], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
