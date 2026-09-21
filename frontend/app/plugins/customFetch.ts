@@ -37,6 +37,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         const userStore = useUserStore()
         if (userStore.username && !userStore.errorLoggedOutShown) {
           userStore.setErrorLoggedOutShown(true)
+          userStore.globalError = 'auth.required'
           userStore.logout()
           if (typeof window !== 'undefined') {
             window.location.href = '/addons/webgui/app/login'

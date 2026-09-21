@@ -59,12 +59,19 @@
               v-if="userStore.globalError"
               color="error"
               :title="$t('common.error')"
-              :description="userStore.globalError"
+              :description="userStore.globalError === 'auth.required' ? undefined : userStore.globalError"
               closable
               compact
               class="mt-2"
               @close="userStore.globalError = undefined"
-            />
+            >
+              <template v-if="userStore.globalError === 'auth.required'" #description>
+                <span>
+                  {{ $t('auth.required') }}
+                  <NuxtLink to="/login" class="underline font-medium">{{ $t('auth.goToLogin') }}</NuxtLink>
+                </span>
+              </template>
+            </CoreAppAlertInline>
           </Transition>
           <Transition name="slide-down">
             <CoreAppAlertInline
