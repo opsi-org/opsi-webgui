@@ -1274,7 +1274,7 @@
       const newData = (result.data || []) as ProductRow[]
       if (result.total !== null) totalItems.value = result.total
       if (!isReload && effectiveParams?.displayMode === 'infinite' && effectiveParams.pageNumber > 1) {
-        rowOffset.value += appendInfinitePage(products.value, newData, effectiveParams.perPage)
+        rowOffset.value += appendInfinitePage(products.value, newData, effectiveParams.perPage, (product) => product.productId)
       } else {
         products.value = newData
         rowOffset.value = isReload && effectiveParams ? (effectiveParams.pageNumber - 1) * effectiveParams.perPage : 0

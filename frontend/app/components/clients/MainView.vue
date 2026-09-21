@@ -859,7 +859,7 @@
         const newData = result.data as OpsiClient[]
         if (result.total !== null) totalItems.value = result.total
         if (!isReload && effectiveParams?.displayMode === 'infinite' && effectiveParams.pageNumber > 1) {
-          rowOffset.value += appendInfinitePage(clients.value, newData, effectiveParams.perPage)
+          rowOffset.value += appendInfinitePage(clients.value, newData, effectiveParams.perPage, (client) => client.clientId)
         } else {
           clients.value = newData
           rowOffset.value = isReload && effectiveParams ? (effectiveParams.pageNumber - 1) * effectiveParams.perPage : 0

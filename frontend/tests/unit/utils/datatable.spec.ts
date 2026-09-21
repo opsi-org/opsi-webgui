@@ -72,6 +72,15 @@ describe('hasMoreInfiniteData', () => {
 })
 
 describe('appendInfinitePage', () => {
+  it('does not append rows already present in the retained window', () => {
+    const rows = [{ id: 'product-a' }]
+
+    const discarded = appendInfinitePage(rows, [{ id: 'product-a' }, { id: 'product-b' }], 100, (row) => row.id)
+
+    expect(rows).toEqual([{ id: 'product-a' }, { id: 'product-b' }])
+    expect(discarded).toBe(0)
+  })
+
   it.each([1000, 10_000, 50_000, 100_000])('retains a bounded row window while scrolling through %i rows', (totalRows) => {
     const perPage = 100
     const rows: number[] = []
