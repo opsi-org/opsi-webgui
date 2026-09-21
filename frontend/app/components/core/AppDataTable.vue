@@ -143,18 +143,6 @@
                   </CoreAppButton>
                 </div>
 
-                <span v-if="filterModeOptions.length > 1" class="text-xs text-(--color-text-muted)">{{ $t('settings.filtering') }}</span>
-                <div v-if="filterModeOptions.length > 1" class="flex items-center gap-3 text-xs">
-                  <label v-if="filterModeOptions.includes('primary')" for="data-table-filter-primary" class="flex items-center gap-1">
-                    <input id="data-table-filter-primary" v-model="tableSettings.settings.filterMode" type="radio" value="primary" />
-                    {{ primaryFilterLabel }}
-                  </label>
-                  <label v-if="filterModeOptions.includes('all')" for="data-table-filter-all" class="flex items-center gap-1">
-                    <input id="data-table-filter-all" v-model="tableSettings.settings.filterMode" type="radio" value="all" />
-                    {{ $t('settings.allColumns') }}
-                  </label>
-                </div>
-
                 <template v-if="selectable">
                   <span class="text-xs text-(--color-text-muted)">{{ $t('settings.selection') }}</span>
                   <div class="flex gap-0.5">
@@ -179,43 +167,29 @@
                   </div>
                 </template>
 
-                <template v-if="panelViewOptions?.length">
-                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.panelView') }}</span>
-                  <CoreAppSelectMenu
-                    :model-value="panelView"
-                    :items="panelViewOptions"
+                <span v-if="filterModeOptions.length > 1" class="text-xs text-(--color-text-muted)">{{ $t('settings.filtering') }}</span>
+                <div v-if="filterModeOptions.length > 1" class="flex gap-0.5">
+                  <CoreAppButton
+                    v-if="filterModeOptions.includes('primary')"
                     size="xs"
-                    open-on-hover
-                    :aria-label="String($t('settings.panelView'))"
-                    @update:model-value="(v: string) => emit('update:panelView', v)"
-                  />
-                </template>
-
-                <template v-if="rowActionsOptions">
-                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.rowActions') }}</span>
-                  <CoreAppCheckbox
-                    :model-value="rowActionsOptions.showAll"
-                    :label="String($t('settings.showAllRowActions'))"
+                    class="flex-1"
+                    color="primary"
+                    :variant="tableSettings.settings.filterMode === 'primary' ? 'solid' : 'outline'"
+                    @click="tableSettings.settings.filterMode = 'primary'"
+                  >
+                    {{ primaryFilterLabel }}
+                  </CoreAppButton>
+                  <CoreAppButton
+                    v-if="filterModeOptions.includes('all')"
                     size="xs"
-                    :ui="{ label: 'text-xs' }"
-                    @update:model-value="(value: boolean) => emit('update:showAllRowActions', value)"
-                  />
-                </template>
-
-                <span class="flex items-center gap-1 text-xs text-(--color-text-muted)">
-                  {{ $t('settings.pageSize') }}
-                  <CoreAppTooltip :text="String($t('settings.pageSizeHelp'))">
-                    <CoreAppIcon :name="icons.info" class="w-3 h-3 cursor-help" />
-                  </CoreAppTooltip>
-                </span>
-                <CoreAppSelectMenu
-                  :model-value="tableSettings.settings.pageSize"
-                  :items="pageSizeOptions"
-                  size="xs"
-                  open-on-hover
-                  :aria-label="String($t('settings.pageSize'))"
-                  @update:model-value="(v: number) => changePageSize(v)"
-                />
+                    class="flex-1"
+                    color="primary"
+                    :variant="tableSettings.settings.filterMode === 'all' ? 'solid' : 'outline'"
+                    @click="tableSettings.settings.filterMode = 'all'"
+                  >
+                    {{ $t('settings.allColumns') }}
+                  </CoreAppButton>
+                </div>
 
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.sortBy') }}</span>
                 <div class="flex items-center gap-1">
@@ -239,6 +213,44 @@
                     @click="toggleSortDirection"
                   />
                 </div>
+
+                <span class="flex items-center gap-1 text-xs text-(--color-text-muted)">
+                  {{ $t('settings.pageSize') }}
+                  <CoreAppTooltip :text="String($t('settings.pageSizeHelp'))">
+                    <CoreAppIcon :name="icons.info" class="w-3 h-3 cursor-help" />
+                  </CoreAppTooltip>
+                </span>
+                <CoreAppSelectMenu
+                  :model-value="tableSettings.settings.pageSize"
+                  :items="pageSizeOptions"
+                  size="xs"
+                  open-on-hover
+                  :aria-label="String($t('settings.pageSize'))"
+                  @update:model-value="(v: number) => changePageSize(v)"
+                />
+
+                <template v-if="panelViewOptions?.length">
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.panelView') }}</span>
+                  <CoreAppSelectMenu
+                    :model-value="panelView"
+                    :items="panelViewOptions"
+                    size="xs"
+                    open-on-hover
+                    :aria-label="String($t('settings.panelView'))"
+                    @update:model-value="(v: string) => emit('update:panelView', v)"
+                  />
+                </template>
+
+                <template v-if="rowActionsOptions">
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.rowActions') }}</span>
+                  <CoreAppCheckbox
+                    :model-value="rowActionsOptions.showAll"
+                    :label="String($t('settings.showAllRowActions'))"
+                    size="xs"
+                    :ui="{ label: 'text-xs' }"
+                    @update:model-value="(value: boolean) => emit('update:showAllRowActions', value)"
+                  />
+                </template>
               </div>
 
               <div class="mb-4">
