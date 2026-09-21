@@ -99,6 +99,7 @@
           row-key="identifier"
           :selectable="false"
           :filterable="true"
+          :filter-mode-options="['all']"
           :show-refresh="false"
           :total-items="totalItems"
           :row-offset="rowOffset"

@@ -143,6 +143,18 @@
                   </CoreAppButton>
                 </div>
 
+                <span v-if="filterModeOptions.length > 1" class="text-xs text-(--color-text-muted)">{{ $t('settings.filtering') }}</span>
+                <div v-if="filterModeOptions.length > 1" class="flex items-center gap-3 text-xs">
+                  <label v-if="filterModeOptions.includes('primary')" for="data-table-filter-primary" class="flex items-center gap-1">
+                    <input id="data-table-filter-primary" v-model="tableSettings.settings.filterMode" type="radio" value="primary" />
+                    {{ primaryFilterLabel }}
+                  </label>
+                  <label v-if="filterModeOptions.includes('all')" for="data-table-filter-all" class="flex items-center gap-1">
+                    <input id="data-table-filter-all" v-model="tableSettings.settings.filterMode" type="radio" value="all" />
+                    {{ $t('settings.allColumns') }}
+                  </label>
+                </div>
+
                 <template v-if="selectable">
                   <span class="text-xs text-(--color-text-muted)">{{ $t('settings.selection') }}</span>
                   <div class="flex gap-0.5">
@@ -597,6 +609,7 @@
     panelView?: string
     panelViewOptions?: Array<{ value: string; label: string }>
     rowActionsOptions?: { showAll: boolean }
+    filterModeOptions?: Array<'primary' | 'all'>
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -608,6 +621,7 @@
     filterable: true,
     showRefresh: true,
     maxHeight: 'calc(100vh - 180px)',
+    filterModeOptions: () => ['primary', 'all'],
   })
 
   const emit = defineEmits<{
@@ -659,11 +673,33 @@
   const lastClickedIndex = ref<number | null>(null)
   const filterOptions = ref<TextFilterOptions>(createTextFilterOptions())
   const favoriteFeedback = ref(false)
+  const filterModeOptions = computed(() => props.filterModeOptions ?? ['primary', 'all'])
+  const effectiveFilterMode = computed(() =>
+    filterModeOptions.value.includes(tableSettings.settings.filterMode ?? 'all') ? (tableSettings.settings.filterMode ?? 'all') : 'all',
+  )
 
   // A regular expression cannot be translated into the server side LIKE search, so the
   // server returns the unfiltered page and the pattern is applied to the loaded rows only.
   // Match case / whole word stay server compatible because LIKE '%x%' is a superset of both.
-  const serverFilterQuery = computed(() => (filterOptions.value.regex ? '' : filterQueryInternal.value))
+  const primaryFilterColumn = computed(() =>
+    props.columns.find((column) => ['productId', 'clientId', 'depotId', 'className', 'displayName', 'identifier'].includes(column.key)),
+  )
+  const primaryFilterField = computed(() => {
+    const key = primaryFilterColumn.value?.key
+    if (key === 'description') return 'description'
+    if (key === 'productId' || key === 'clientId' || key === 'depotId') return 'id'
+    return undefined
+  })
+  const primaryFilterLabel = computed(() =>
+    primaryFilterColumn.value?.labelKey
+      ? String($t(primaryFilterColumn.value.labelKey))
+      : primaryFilterColumn.value?.label || String($t('settings.primaryColumn')),
+  )
+  const serverFilterQuery = computed(() => {
+    if (filterOptions.value.regex) return ''
+    if (effectiveFilterMode.value !== 'primary' || !primaryFilterField.value) return filterQueryInternal.value
+    return JSON.stringify({ [primaryFilterField.value]: filterQueryInternal.value })
+  })
 
   const savedSearchScope = computed(() => props.savedSearchesScopeId || '')
   const {
@@ -854,7 +890,8 @@
   const visibleRows = computed(() => {
     const test = localMatcher.value.test
     if (!props.filterable || !hasTextFilterOptions(filterOptions.value) || !test) return props.rows
-    const cols = filterableColumns.value
+    const cols =
+      effectiveFilterMode.value === 'primary' && primaryFilterColumn.value ? [primaryFilterColumn.value] : filterableColumns.value
     return props.rows.filter((row) => {
       for (const col of cols) {
         if (test(formatCellValue(row, col))) return true
@@ -1396,6 +1433,13 @@
       emitPageChange()
     },
   )
+
+  watch(effectiveFilterMode, (mode, previousMode) => {
+    if (mode === previousMode) return
+    currentPage.value = 1
+    scrollToTop()
+    emitPageChange()
+  })
 
   watch(filterQueryInternal, (val) => {
     saveStoredDataTableFilter(effectiveFilterStorageId.value, val)
