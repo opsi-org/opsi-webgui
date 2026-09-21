@@ -430,7 +430,7 @@ export function useApiHelpers() {
   const deleteHostGroup = (groupId: string) => apiDelete(`/opsidata/hosts/groups/${groupId}`)
 
   // TODO: Backend bug: product group deletion uses GET instead of DELETE
-  const deleteProductGroup = (groupId: string) => apiGet(`/opsidata/products/groups/${groupId}`)
+  const deleteProductGroup = (groupId: string) => apiDelete(`/opsidata/products/groups/${groupId}`)
 
   const addClientsToGroup = (groupId: string, clientIds: string[]) => apiPost(`/opsidata/hosts/groups/${groupId}/clients`, clientIds)
 
