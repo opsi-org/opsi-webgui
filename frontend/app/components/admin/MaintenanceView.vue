@@ -460,6 +460,7 @@
 </template>
 
 <script setup lang="ts">
+  import { formatApiErrorMessage } from '~/composables/useApiHelpers'
   const icons = useIcons()
   const { t: $t } = useI18n()
   const api = useApiHelpers()
@@ -603,7 +604,7 @@
     } catch (e) {
       clientCardMessage.value = {
         type: 'error',
-        message: e instanceof Error ? e.message : String(e),
+        message: formatApiErrorMessage(e),
       }
     }
     loadingClients.value = false
@@ -622,7 +623,7 @@
     } catch (e) {
       productCardMessage.value = {
         type: 'error',
-        message: e instanceof Error ? e.message : String(e),
+        message: formatApiErrorMessage(e),
       }
     }
     loadingProducts.value = false
@@ -642,7 +643,7 @@
         }
       }
     } catch (e) {
-      pageMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+      pageMessage.value = { type: 'error', message: formatApiErrorMessage(e) }
     }
     loadingAppState.value = false
   }
@@ -661,7 +662,7 @@
     } catch (e) {
       clientCardMessage.value = {
         type: 'error',
-        message: e instanceof Error ? e.message : String(e),
+        message: formatApiErrorMessage(e),
       }
     }
     unblockingClient.value = false
@@ -681,7 +682,7 @@
     } catch (e) {
       productCardMessage.value = {
         type: 'error',
-        message: e instanceof Error ? e.message : String(e),
+        message: formatApiErrorMessage(e),
       }
     }
     unlockingProduct.value = false
@@ -699,7 +700,7 @@
       } catch (e) {
         clientCardMessage.value = {
           type: 'error',
-          message: e instanceof Error ? e.message : String(e),
+          message: formatApiErrorMessage(e),
         }
       }
       unblockingClient.value = false
@@ -717,7 +718,7 @@
       } catch (e) {
         productCardMessage.value = {
           type: 'error',
-          message: e instanceof Error ? e.message : String(e),
+          message: formatApiErrorMessage(e),
         }
       }
       unlockingProduct.value = false
@@ -733,7 +734,7 @@
       if (data) currentAppState.value = data.type
       pageMessage.value = { type: 'success', message: String($t('notify.state.saved')) }
     } catch (e) {
-      pageMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+      pageMessage.value = { type: 'error', message: formatApiErrorMessage(e) }
     }
     savingAppState.value = false
   }
@@ -771,7 +772,7 @@
         pageMessage.value = { type: 'success', message: String($t('backup.created')) }
       }
     } catch (e) {
-      pageMessage.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+      pageMessage.value = { type: 'error', message: formatApiErrorMessage(e) }
     }
     creatingBackup.value = false
   }

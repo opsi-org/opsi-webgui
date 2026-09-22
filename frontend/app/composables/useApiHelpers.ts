@@ -17,7 +17,7 @@ interface ApiRequestOptions {
   signal?: AbortSignal
 }
 
-function getApiErrorMessage(error: unknown): string {
+export function formatApiErrorMessage(error: unknown): string {
   if (error instanceof Error && error.message) {
     const responseData = (error as Error & { data?: unknown }).data
     if (responseData && typeof responseData === 'object') {
@@ -32,7 +32,44 @@ function getApiErrorMessage(error: unknown): string {
     }
     return error.message
   }
+  if (typeof error === 'string') return error
+  if (error && typeof error === 'object') {
+    const value = error as Record<string, unknown>
+    for (const key of ['message', 'error', 'detail', 'details']) {
+      if (typeof value[key] === 'string' && value[key]) return value[key]
+    }
+    try {
+      return JSON.stringify(error)
+    } catch {
+      return 'Unknown error'
+    }
+  }
   return String(error)
+}
+
+interface NormalizedActionResult {
+  success: boolean
+  message?: string
+}
+
+export function normalizeActionResults(results: Record<string, unknown> | null | undefined): Record<string, NormalizedActionResult> {
+  return Object.fromEntries(
+    Object.entries(results || {}).map(([clientId, rawResult]) => {
+      const result = rawResult && typeof rawResult === 'object' ? (rawResult as Record<string, unknown>) : {}
+      const hasError = result.error !== undefined && result.error !== null && result.error !== ''
+      return [
+        clientId,
+        {
+          success: result.success !== false && !hasError,
+          message: hasError ? formatApiErrorMessage(result.error) : typeof result.message === 'string' ? result.message : undefined,
+        },
+      ]
+    }),
+  )
+}
+
+export function normalizeActionResultDetails(results: Record<string, unknown> | null | undefined) {
+  return Object.entries(normalizeActionResults(results)).map(([clientId, result]) => ({ clientId, ...result }))
 }
 
 export function buildQueryString(params?: Record<string, unknown>): string {
@@ -63,7 +100,7 @@ export function useApiHelpers() {
         total: total ? parseInt(total, 10) : null,
       }
     } catch (e) {
-      return { data: null, error: new Error(getApiErrorMessage(e)), total: null }
+      return { data: null, error: new Error(formatApiErrorMessage(e)), total: null }
     }
   }
 
@@ -80,7 +117,7 @@ export function useApiHelpers() {
         total: total ? parseInt(total, 10) : null,
       }
     } catch (e) {
-      return { data: null, error: new Error(getApiErrorMessage(e)), total: null }
+      return { data: null, error: new Error(formatApiErrorMessage(e)), total: null }
     }
   }
 
@@ -92,7 +129,7 @@ export function useApiHelpers() {
       })
       return { data, error: null, total: null }
     } catch (e) {
-      return { data: null, error: new Error(getApiErrorMessage(e)), total: null }
+      return { data: null, error: new Error(formatApiErrorMessage(e)), total: null }
     }
   }
 
@@ -104,7 +141,7 @@ export function useApiHelpers() {
       })
       return { data, error: null, total: null }
     } catch (e) {
-      return { data: null, error: new Error(getApiErrorMessage(e)), total: null }
+      return { data: null, error: new Error(formatApiErrorMessage(e)), total: null }
     }
   }
 
@@ -113,7 +150,7 @@ export function useApiHelpers() {
       const blob = await $customFetch<Blob>(url + buildQueryString(params), { responseType: 'blob' })
       return { blob, error: null }
     } catch (e) {
-      return { blob: null, error: new Error(getApiErrorMessage(e)) }
+      return { blob: null, error: new Error(formatApiErrorMessage(e)) }
     }
   }
 

@@ -292,6 +292,7 @@
 </template>
 
 <script setup lang="ts">
+  import { formatApiErrorMessage } from '~/composables/useApiHelpers'
   import { getActionRequestStatus } from '~/utils/actionRequest'
   import { useSelectionStore } from '~/stores/selectionStore'
   import type { ProductRow } from '~/types'
@@ -477,7 +478,7 @@
         ]
       }
     } catch (e) {
-      errorMessage.value = e instanceof Error ? e.message : String(e)
+      errorMessage.value = formatApiErrorMessage(e)
     } finally {
       loadingOptions.value = false
     }
@@ -544,7 +545,7 @@
       previewData.value = (result.data || {}) as Record<string, PreviewProduct[]>
     } catch (e) {
       if (requestId !== previewRequestId.value) return
-      errorMessage.value = e instanceof Error ? e.message : String(e)
+      errorMessage.value = formatApiErrorMessage(e)
       previewData.value = null
     } finally {
       if (requestId === previewRequestId.value) {
@@ -567,7 +568,7 @@
       applyResult.value = { type: 'success', message: String($t('notify.action.executed')) }
       emit('applied')
     } catch (e) {
-      applyResult.value = { type: 'error', message: e instanceof Error ? e.message : String(e) }
+      applyResult.value = { type: 'error', message: formatApiErrorMessage(e) }
     } finally {
       applying.value = false
     }

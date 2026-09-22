@@ -380,6 +380,7 @@
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
   import { storeToRefs } from 'pinia'
+  import { formatApiErrorMessage, normalizeActionResultDetails } from '~/composables/useApiHelpers'
 
   interface Props {
     productType: ProductType
@@ -942,13 +943,13 @@
             savedIds.push(...pids)
             setLiveStatus(pids, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
           } catch (e) {
-            errors.push(...pids.map((pid) => `${pid}: ${e instanceof Error ? e.message : String(e)}`))
+            errors.push(...pids.map((pid) => `${pid}: ${formatApiErrorMessage(e)}`))
             setLiveStatus(
               pids,
               {
                 kind: 'error',
                 message: String($t('actions.live.failed')),
-                tooltip: e instanceof Error ? e.message : String(e),
+                tooltip: formatApiErrorMessage(e),
               },
               15000,
             )
@@ -1018,17 +1019,12 @@
             setLiveStatus(processedIds, { kind: 'processing', message: String($t('actions.live.processing')) }, 0)
           }
           const result = await processActionRequests(clientIds, productIds)
-          type ProductActionResult = { success?: boolean; error?: string; message?: string }
           if (result.error) throw result.error
-          const resultData: Record<string, ProductActionResult> = result.data || {}
+          const resultData = result.data || {}
           if (processedIds.length > 0) {
             setLiveStatus(processedIds, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
           }
-          const details: BulkActionDetail[] = Object.entries(resultData).map(([clientId, data]) => ({
-            clientId,
-            success: !data?.error,
-            message: data?.error ? String(data.error) : data?.message,
-          }))
+          const details: BulkActionDetail[] = normalizeActionResultDetails(resultData)
           const failedCount = details.filter((d) => !d.success).length
           const succeededCount = details.length - failedCount
           bulkActionResult.value = {
@@ -1057,14 +1053,14 @@
           onResult?.({ type: 'success', message: String($t('notify.product.actions.executed')) })
         } catch (e) {
           bulkActionResult.value = null
-          actionStatus.value = { type: 'error', title: String($t('notify.errorActionsLoad')), message: String(e) }
+          actionStatus.value = { type: 'error', title: String($t('notify.errorActionsLoad')), message: formatApiErrorMessage(e) }
           if (processedIds.length > 0) {
             setLiveStatus(
               processedIds,
               {
                 kind: 'error',
                 message: String($t('actions.live.failed')),
-                tooltip: e instanceof Error ? e.message : String(e),
+                tooltip: formatApiErrorMessage(e),
               },
               15000,
             )
@@ -1092,7 +1088,7 @@
         await configTabsComponentRef.value.saveAll()
         onResult?.({ type: 'success', message: String($t('notify.host.params.saved')) })
       } catch (e) {
-        onResult?.({ type: 'error', message: e instanceof Error ? e.message : String(e) })
+        onResult?.({ type: 'error', message: formatApiErrorMessage(e) })
       }
     }
   }

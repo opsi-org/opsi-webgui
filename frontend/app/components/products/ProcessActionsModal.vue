@@ -121,6 +121,7 @@
 <script setup lang="ts">
   import { useSelectionStore } from '~/stores/selectionStore'
   import type { BulkActionResult, ProductVisibility } from '~/types'
+  import { normalizeActionResultDetails } from '~/composables/useApiHelpers'
 
   const open = defineModel<boolean>('open', { default: false })
 
@@ -178,13 +179,7 @@
 
       if (result.error) throw result.error
 
-      type ProductActionResult = { success?: boolean; error?: string; message?: string }
-      const resultData: Record<string, ProductActionResult> = result.data || {}
-      const details = Object.entries(resultData).map(([clientId, data]) => ({
-        clientId,
-        success: !data?.error,
-        message: data?.error ? String(data.error) : data?.message,
-      }))
+      const details = normalizeActionResultDetails(result.data)
       const failed = details.filter((d) => !d.success).length
       const succeeded = details.length - failed
       const executionResult: BulkActionResult = {

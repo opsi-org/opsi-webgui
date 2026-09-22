@@ -269,6 +269,7 @@
 </template>
 
 <script setup lang="ts">
+  import { formatApiErrorMessage, normalizeActionResults } from '~/composables/useApiHelpers'
   defineOptions({ inheritAttrs: false })
 
   const attrs = useAttrs()
@@ -540,7 +541,7 @@
             result[clientId] = { success: true, message: `→ ${newHostId}` }
             emit('action-complete', 'rename', true)
           } catch (e) {
-            result[clientId] = { success: false, error: String(e instanceof Error ? e.message : e) }
+            result[clientId] = { success: false, error: formatApiErrorMessage(e) }
             emit('action-complete', 'rename', false)
           }
           break
@@ -552,22 +553,15 @@
               await deleteClient(clientId)
               result[clientId] = { success: true }
             } catch (e) {
-              result[clientId] = { success: false, error: String(e) }
+              result[clientId] = { success: false, error: formatApiErrorMessage(e) }
             }
           }
           selectionStore.setClients(selectionStore.selectedClients.filter((c) => !props.clientIds.includes(c)))
           break
       }
 
-      actionResults.value = Object.fromEntries(
-        props.clientIds.map((id) => [
-          id,
-          {
-            success: result[id]?.success !== false && !result[id]?.error,
-            message: result[id]?.error ? String(result[id].error) : result[id]?.message || undefined,
-          },
-        ]),
-      )
+      const normalizedResults = normalizeActionResults(result)
+      actionResults.value = Object.fromEntries(props.clientIds.map((id) => [id, normalizedResults[id] || { success: false }]))
 
       const successCount = Object.values(actionResults.value).filter((r) => r.success).length
       const failCount = props.clientIds.length - successCount
@@ -587,7 +581,7 @@
     } catch (e) {
       statusMessage.value = {
         type: 'error',
-        message: e instanceof Error ? e.message : String(e),
+        message: formatApiErrorMessage(e),
       }
     } finally {
       loading.value = false

@@ -165,6 +165,7 @@
 </template>
 
 <script setup lang="ts">
+  import { formatApiErrorMessage } from '~/composables/useApiHelpers'
   const open = defineModel<boolean>('open', { default: false })
 
   const emit = defineEmits<{
@@ -252,7 +253,7 @@
       emit('created')
       handleClose()
     } catch (error: unknown) {
-      createConfigError.value = error instanceof Error ? error.message : String(error)
+      createConfigError.value = formatApiErrorMessage(error)
     } finally {
       creatingConfig.value = false
     }

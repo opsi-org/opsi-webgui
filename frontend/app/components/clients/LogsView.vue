@@ -204,6 +204,7 @@
 </template>
 
 <script setup lang="ts">
+  import { formatApiErrorMessage } from '~/composables/useApiHelpers'
   import { useMessageBusStore } from '~/stores/messageBusStore'
 
   export interface ClientsLogsRef {
@@ -389,7 +390,7 @@
       }
     } catch (e) {
       if (requestId !== fetchLogRequestId.value) return
-      error.value = e instanceof Error ? e.message : String(e)
+      error.value = formatApiErrorMessage(e)
       logContent.value = []
     } finally {
       if (requestId === fetchLogRequestId.value) {
