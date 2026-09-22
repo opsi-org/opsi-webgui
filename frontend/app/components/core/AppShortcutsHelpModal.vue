@@ -23,7 +23,7 @@
               :key="item.description"
               class="flex items-center justify-between gap-3 rounded-md px-2 py-1 text-sm transition-colors hover:bg-(--color-surface-hover) focus-within:bg-(--color-surface-hover)"
             >
-              <span class="min-w-0 truncate text-(--color-text)">{{ item.description }}</span>
+              <span class="min-w-0 text-(--color-text)">{{ item.description }}</span>
               <span class="flex shrink-0 items-center gap-0.5">
                 <template v-for="(key, index) in item.keys" :key="key">
                   <kbd
@@ -62,7 +62,6 @@
       items: [
         { keys: ['Ctrl', 'S'], description: $t('shortcuts.save') },
         { keys: ['Ctrl', 'D'], description: $t('shortcuts.discard') },
-        { keys: ['Ctrl', 'Shift', 'S'], description: $t('shortcuts.saveAndExecute') },
         { keys: ['Ctrl', 'Shift', 'Q'], description: $t('shortcuts.toggleQuickPanel') },
         { keys: ['Ctrl', 'Esc'], description: $t('shortcuts.closePanel') },
         { keys: ['Ctrl', 'Shift', '?'], description: $t('shortcuts.showShortcuts') },

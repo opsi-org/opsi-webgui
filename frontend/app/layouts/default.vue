@@ -364,15 +364,6 @@
         if (shortcutActions.discard && (shortcutActions.canDiscard?.() ?? true)) shortcutActions.discard()
       },
     },
-    ctrl_shift_s: {
-      usingInput: true,
-      handler: (e) => {
-        e?.preventDefault()
-        if (e?.repeat) return
-        if (e?.target instanceof HTMLElement && e.target.closest('[role="dialog"]')) return
-        if (shortcutActions.saveAndExecute && (shortcutActions.canSaveAndExecute?.() ?? true)) shortcutActions.saveAndExecute()
-      },
-    },
     ctrl_shift_q: {
       usingInput: true,
       handler: (e) => {

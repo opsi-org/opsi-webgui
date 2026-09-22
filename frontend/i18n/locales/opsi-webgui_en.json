@@ -725,7 +725,6 @@
     "forms": "Forms",
     "save": "Save the current editable form / save all for unsaved changes",
     "discard": "Discard unsaved changes",
-    "saveAndExecute": "Save & Execute (Products table only): saves product action requests and executes process actions",
     "toggleQuickPanel": "Open/close the Quick Panel",
     "closePanel": "Close the dialog or active panel",
     "showShortcuts": "Show available keyboard shortcuts",
@@ -735,7 +734,7 @@
     "selectRow": "Select row",
     "addClient": "Open Add New Client panel",
     "addServerConfig": "Open Create Server Configuration popup",
-    "productsSaveAndExecute": "Save & Execute product action",
+    "productsSaveAndExecute": "Save & Execute product action requests",
     "submitForm": "Submit the current form"
   },
   "users": {

@@ -1434,12 +1434,22 @@
     canSave: () => hasUnsavedChanges.value && !isReadOnly.value,
     discard: discardAllChanges,
     canDiscard: () => hasUnsavedChanges.value,
-    saveAndExecute: () => handleSaveAll(true, { productIds: selectionStore.selectedProducts }),
-    canSaveAndExecute: () => hasUnsavedChanges.value && !isReadOnly.value && !processingProcessActions.value,
     closeActivePanel: () => {
       if (!showConfigPanel.value) return false
       closePanel()
       return true
+    },
+  })
+
+  defineShortcuts({
+    ctrl_shift_s: {
+      usingInput: true,
+      handler: () => {
+        if (!hasUnsavedChanges.value && isReadOnly.value && processingProcessActions.value) {
+          return
+        }
+        handleSaveAll(true, { productIds: selectionStore.selectedProducts })
+      },
     },
   })
 </script>
