@@ -13,8 +13,6 @@ export interface ShortcutContextActions {
   canSave?: () => boolean
   discard?: () => void
   canDiscard?: () => boolean
-  saveAndExecute?: () => void | Promise<void>
-  canSaveAndExecute?: () => boolean
   closeActivePanel?: () => boolean
 }
 

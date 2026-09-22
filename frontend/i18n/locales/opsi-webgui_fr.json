@@ -728,7 +728,6 @@
     "forms": "Formulaires",
     "save": "Enregistrer le formulaire actuel / toutes les modifications non enregistrées",
     "discard": "Abandonner les modifications non enregistrées",
-    "saveAndExecute": "Enregistrer et exécuter (tableau des produits uniquement) : enregistre les demandes d'action et exécute les actions de processus",
     "toggleQuickPanel": "Afficher/masquer le Quick Panel",
     "closePanel": "Fermer la boîte de dialogue ou le panneau actif",
     "showShortcuts": "Afficher les raccourcis clavier disponibles",

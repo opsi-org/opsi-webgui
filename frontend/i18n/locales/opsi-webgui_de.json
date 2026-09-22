@@ -725,7 +725,6 @@
     "forms": "Formulare",
     "save": "Aktuelles Formular speichern / alle ungespeicherten Änderungen speichern",
     "discard": "Ungespeicherte Änderungen verwerfen",
-    "saveAndExecute": "Speichern & Ausführen (nur Produkttabelle): speichert Produktaktionsanforderungen und führt Prozessaktionen aus",
     "toggleQuickPanel": "Schnellzugriff ein-/ausblenden",
     "closePanel": "Dialog oder aktives Panel schließen",
     "showShortcuts": "Verfügbare Tastenkombinationen anzeigen",
@@ -735,7 +734,7 @@
     "selectRow": "Zeile auswählen",
     "addClient": "Panel „Client hinzufügen“ öffnen",
     "addServerConfig": "Dialog „Server-Konfiguration erstellen“ öffnen",
-    "productsSaveAndExecute": "Produktaktion speichern & ausführen",
+    "productsSaveAndExecute": "Produktaktionsanforderungen speichern & ausführen",
     "submitForm": "Aktuelles Formular absenden"
   },
   "users": {
