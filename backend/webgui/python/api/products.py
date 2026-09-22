@@ -528,7 +528,21 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 			query = query.order_by(text("installationStatus='not_installed' ASC"))
 		if "actionResult" in commons.get("sortBy", []):
 			query = query.order_by(text("actionResult='none' ASC"))
-		query = order_by(query, commons)
+		sort_by = commons.get("sortBy", [])
+		if "productVersion" in sort_by or "packageVersion" in sort_by:
+			direction = "DESC" if commons.get("sortDesc", False) else "ASC"
+			query = query.order_by(
+				text(f"client_version_outdated {direction}"),
+				text(f"depot_version_diff {direction}"),
+				text(f"not_on_all_depots {direction}"),
+				text(f"pod.productVersion {direction}"),
+				text(f"pod.packageVersion {direction}"),
+				text(f"pod.productId {direction}"),
+			)
+		else:
+			query = order_by(query, commons)
+		# Keep pagination stable when multiple products have identical sort values.
+		query = query.order_by(text("pod.productId ASC"))
 		# logger.debug(query)
 		query = pagination(query, commons)
 

@@ -1169,7 +1169,7 @@
   function translateSortBy(sortBy: string): string {
     switch (sortBy) {
       case 'version':
-        return '["client_version_outdated", "depot_version_diff", "not_on_all_depots"]'
+        return '["client_version_outdated", "depot_version_diff", "not_on_all_depots", "productVersion", "packageVersion", "productId"]'
       case 'version_outdated':
         return 'client_version_outdated'
       case 'installationStatus':
