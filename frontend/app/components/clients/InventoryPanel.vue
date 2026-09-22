@@ -99,6 +99,7 @@
           row-key="identifier"
           :selectable="false"
           :filterable="true"
+          :filter-mode-options="['all']"
           :show-refresh="false"
           :total-items="totalItems"
           :row-offset="rowOffset"
@@ -119,7 +120,7 @@
             </span>
           </template>
           <template #cell-className="{ row }">
-            <CoreAppTooltipTable :rows="hardwareRows(asHardwareItem(row))">
+            <CoreAppTooltipTable :title="asHardwareItem(row).className" :rows="hardwareRows(asHardwareItem(row))">
               <span class="inline-flex items-center gap-1.5">
                 <CoreAppIcon
                   :name="classIcon(asHardwareItem(row).hardwareClass)"
@@ -135,7 +136,7 @@
             <template v-if="activeTab === 'hardware'">
               <span class="block max-w-80 truncate">{{ asHardwareItem(row).displayName }}</span>
             </template>
-            <CoreAppTooltipTable v-else :rows="softwareRows(asSoftwareItem(row))">
+            <CoreAppTooltipTable v-else :title="asSoftwareItem(row).displayName" :rows="softwareRows(asSoftwareItem(row))">
               <span class="inline-flex max-w-80 items-center gap-1 truncate">
                 {{ asSoftwareItem(row).displayName }}
                 <CoreAppBadge v-if="asSoftwareItem(row).isKbUpdate" color="info" :label="String($t('inventory.kbUpdate'))" size="xs" />
@@ -469,7 +470,7 @@
       totalItems.value = result.total ?? result.data?.items.length ?? 0
       const pageItems = (result.data?.items ?? []) as InventoryItem[]
       if (params.displayMode === 'infinite' && params.pageNumber > 1) {
-        rowOffset.value += appendInfinitePage(currentItems.value, pageItems, params.perPage)
+        rowOffset.value += appendInfinitePage(currentItems.value, pageItems, params.perPage, (item) => String(item.identifier))
       } else {
         currentItems.value = pageItems
         rowOffset.value = 0

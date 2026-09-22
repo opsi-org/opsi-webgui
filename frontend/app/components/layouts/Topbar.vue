@@ -65,7 +65,6 @@
           variant="solid"
         />
       </NuxtLink>
-
       <CoreAppButton
         @click="$emit('toggle-quickpanel')"
         variant="ghost"

@@ -2,7 +2,7 @@ services:
   redis:
     image: redislabs/redistimeseries:latest
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 3s
       timeout: 3s
       retries: 20
@@ -18,7 +18,7 @@ services:
         - UID
         - ADDON_NAME
         - ADDON_ID
-    entrypoint: ['/test-entrypoint.sh']
+    entrypoint: ["/test-entrypoint.sh"]
     hostname: opsi.test.local
     depends_on:
       redis:
@@ -32,15 +32,23 @@ services:
       MYSQL_USER: opsi
       MYSQL_PASSWORD: opsi
       MYSQL_HOST: localhost
-      OPSICONFD_PORT: '4447'
-      OPSICONFD_ADDON_DIRS: '[/var/lib/opsiconfd/addons]'
+      OPSICONFD_PORT: "4447"
+      OPSICONFD_ADDON_DIRS: "[/var/lib/opsiconfd/addons]"
       OPSICONFD_REDIS_INTERNAL_URL: redis://redis:6379/0
-      OPSICONFD_MAX_SESSIONS_PER_IP: '10000'
-      OPSICONFD_MAX_AUTH_FAILURES: '10000'
-      OPSICONFD_CLIENT_BLOCK_TIME: '1'
+      OPSICONFD_MAX_SESSIONS_PER_IP: "10000"
+      OPSICONFD_MAX_AUTH_FAILURES: "10000"
+      OPSICONFD_CLIENT_BLOCK_TIME: "1"
       OPSI_BACKUP_URL: ${OPSI_BACKUP_URL:-https://binaryindex.uib.gmbh/development/opsi-backups/opsi.acme.corp_4.3.json}
     healthcheck:
-      test: ['CMD', 'curl', '-sk', '-o', '/dev/null', 'https://localhost:4447/admin/healthy']
+      test:
+        [
+          "CMD",
+          "curl",
+          "-sk",
+          "-o",
+          "/dev/null",
+          "https://localhost:4447/admin/healthy",
+        ]
       interval: 5s
       timeout: 5s
       retries: 40
@@ -64,14 +72,14 @@ services:
       BASE_URL: https://opsiconfd:4447/addons/webgui/app
       TEST_USER: adminuser
       TEST_PASSWORD: adminuser
-      NODE_TLS_REJECT_UNAUTHORIZED: '0'
-      CI: 'true'
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
+      CI: "true"
       NITRO_OUTPUT_DIR: /frontend/.e2e-build/.output
       # Smoke vs full matrix: `pnpm test:e2e` reads CI_PIPELINE_SOURCE at runtime.
       # Leave unset for the smoke matrix (DE/light/desktop/Chromium); set
       # E2E_PIPELINE_SOURCE=schedule to run the full matrix (all locales/themes/
       # viewports + Firefox + visual regression).
-      CI_PIPELINE_SOURCE: '${E2E_PIPELINE_SOURCE:-}'
+      CI_PIPELINE_SOURCE: "${E2E_PIPELINE_SOURCE:-}"
     networks: [test-net]
     command:
       - sh
@@ -80,9 +88,9 @@ services:
         corepack enable pnpm
         pnpm install --frozen-lockfile
         if [ "${CI_PIPELINE_SOURCE}" = "schedule" ]; then
-          pnpm exec playwright install chromium firefox
+          pnpm exec playwright install --only-shell chromium firefox
         else
-          pnpm exec playwright install chromium
+          pnpm exec playwright install --only-shell chromium
         fi
         if [ -f /addon-app/index.html ]; then
           echo "Reusing pre-built SPA in /addon-app (skipping pnpm generate)."
@@ -99,7 +107,7 @@ services:
     depends_on:
       opsiconfd:
         condition: service_healthy
-    network_mode: 'service:opsiconfd'
+    network_mode: "service:opsiconfd"
     volumes:
       - ${LOCAL_WORKSPACE_DIR:-..}:/workspace
       - opsiconfd-venv:/workspace/docker/opsiconfd/.venv

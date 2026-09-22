@@ -23,7 +23,6 @@ from pathlib import Path
 import pytest
 import yaml
 from opsiconfd.utils import Singleton
-
 from webgui.python.config import ADDON_ID, ENV_KEY_LDAP_URL, PATH, Config
 
 # ---------------------------------------------------------------------------

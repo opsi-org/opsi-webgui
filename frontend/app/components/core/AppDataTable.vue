@@ -53,6 +53,7 @@
               :aria-label="String($t('common.advancedFilters'))"
               variant="outline"
               :color="advancedFiltersActiveCount > 0 || savedSearchEntries.length > 0 ? 'primary' : 'neutral'"
+              :class="advancedFiltersActiveCount > 0 ? 'border-2 border-(--color-text)' : ''"
               size="sm"
               data-testid="filters-and-saved-searches"
             >
@@ -166,43 +167,29 @@
                   </div>
                 </template>
 
-                <template v-if="panelViewOptions?.length">
-                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.panelView') }}</span>
-                  <CoreAppSelectMenu
-                    :model-value="panelView"
-                    :items="panelViewOptions"
+                <span v-if="filterModeOptions.length > 1" class="text-xs text-(--color-text-muted)">{{ $t('settings.filtering') }}</span>
+                <div v-if="filterModeOptions.length > 1" class="flex gap-0.5">
+                  <CoreAppButton
+                    v-if="filterModeOptions.includes('primary')"
                     size="xs"
-                    open-on-hover
-                    :aria-label="String($t('settings.panelView'))"
-                    @update:model-value="(v: string) => emit('update:panelView', v)"
-                  />
-                </template>
-
-                <template v-if="rowActionsOptions">
-                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.rowActions') }}</span>
-                  <CoreAppCheckbox
-                    :model-value="rowActionsOptions.showAll"
-                    :label="String($t('settings.showAllRowActions'))"
+                    class="flex-1"
+                    color="primary"
+                    :variant="tableSettings.settings.filterMode === 'primary' ? 'solid' : 'outline'"
+                    @click="tableSettings.settings.filterMode = 'primary'"
+                  >
+                    {{ primaryFilterLabel }}
+                  </CoreAppButton>
+                  <CoreAppButton
+                    v-if="filterModeOptions.includes('all')"
                     size="xs"
-                    :ui="{ label: 'text-xs' }"
-                    @update:model-value="(value: boolean) => emit('update:showAllRowActions', value)"
-                  />
-                </template>
-
-                <span class="flex items-center gap-1 text-xs text-(--color-text-muted)">
-                  {{ $t('settings.pageSize') }}
-                  <CoreAppTooltip :text="String($t('settings.pageSizeHelp'))">
-                    <CoreAppIcon :name="icons.info" class="w-3 h-3 cursor-help" />
-                  </CoreAppTooltip>
-                </span>
-                <CoreAppSelectMenu
-                  :model-value="tableSettings.settings.pageSize"
-                  :items="pageSizeOptions"
-                  size="xs"
-                  open-on-hover
-                  :aria-label="String($t('settings.pageSize'))"
-                  @update:model-value="(v: number) => changePageSize(v)"
-                />
+                    class="flex-1"
+                    color="primary"
+                    :variant="tableSettings.settings.filterMode === 'all' ? 'solid' : 'outline'"
+                    @click="tableSettings.settings.filterMode = 'all'"
+                  >
+                    {{ $t('settings.allColumns') }}
+                  </CoreAppButton>
+                </div>
 
                 <span class="text-xs text-(--color-text-muted)">{{ $t('settings.sortBy') }}</span>
                 <div class="flex items-center gap-1">
@@ -226,6 +213,44 @@
                     @click="toggleSortDirection"
                   />
                 </div>
+
+                <span class="flex items-center gap-1 text-xs text-(--color-text-muted)">
+                  {{ $t('settings.pageSize') }}
+                  <CoreAppTooltip :text="String($t('settings.pageSizeHelp'))">
+                    <CoreAppIcon :name="icons.info" class="w-3 h-3 cursor-help" />
+                  </CoreAppTooltip>
+                </span>
+                <CoreAppSelectMenu
+                  :model-value="tableSettings.settings.pageSize"
+                  :items="pageSizeOptions"
+                  size="xs"
+                  open-on-hover
+                  :aria-label="String($t('settings.pageSize'))"
+                  @update:model-value="(v: number) => changePageSize(v)"
+                />
+
+                <template v-if="panelViewOptions?.length">
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.panelView') }}</span>
+                  <CoreAppSelectMenu
+                    :model-value="panelView"
+                    :items="panelViewOptions"
+                    size="xs"
+                    open-on-hover
+                    :aria-label="String($t('settings.panelView'))"
+                    @update:model-value="(v: string) => emit('update:panelView', v)"
+                  />
+                </template>
+
+                <template v-if="rowActionsOptions">
+                  <span class="text-xs text-(--color-text-muted)">{{ $t('settings.rowActions') }}</span>
+                  <CoreAppCheckbox
+                    :model-value="rowActionsOptions.showAll"
+                    :label="String($t('settings.showAllRowActions'))"
+                    size="xs"
+                    :ui="{ label: 'text-xs' }"
+                    @update:model-value="(value: boolean) => emit('update:showAllRowActions', value)"
+                  />
+                </template>
               </div>
 
               <div class="mb-4">
@@ -286,7 +311,7 @@
         </div>
 
         <div v-else>
-          <table class="w-max min-w-full" role="grid">
+          <table class="w-max min-w-full" role="grid" :aria-activedescendant="activeRowId">
             <thead class="bg-(--color-surface) sticky top-0 z-30">
               <tr>
                 <th
@@ -385,10 +410,13 @@
               <tr
                 v-for="(row, idx) in displayRows"
                 :key="getRowKey(row)"
+                :data-row-index="displayStartIndex + idx"
+                :id="`${tableId}-row-${getRowKey(row)}`"
                 :aria-selected="isSelected(row)"
-                :tabindex="0"
+                :tabindex="keyboardIndex === displayStartIndex + idx ? 0 : -1"
                 class="group data-table-row cursor-pointer hover:bg-(--color-surface-hover) focus:outline-none focus:ring-2 focus:ring-inset focus:ring-opsi-blue focus:ring-offset-1 focus:ring-offset-(--color-background)"
                 :class="{
+                  'bg-(--color-surface-hover)': activeRowId === `${tableId}-row-${getRowKey(row)}`,
                   'bg-(--color-primary-soft-bg)': isHighlighted(row),
                   'shadow-[inset_3px_0_0_0_var(--color-primary)]': isActive(row),
                 }"
@@ -448,9 +476,11 @@
                 <td
                   v-if="hasActions"
                   class="px-0.5 py-px text-center sticky right-0 z-10 min-w-10 whitespace-nowrap shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.1)]"
-                  :class="
-                    isHighlighted(row) ? 'bg-(--color-row-selected)' : 'bg-(--color-background) group-hover:bg-(--color-surface-hover)'
-                  "
+                  :class="{
+                    'bg-(--color-row-selected)': isHighlighted(row),
+                    'bg-(--color-background) group-hover:bg-(--color-surface-hover)': !isHighlighted(row),
+                    'bg-(--color-surface-hover)': activeRowId === `${tableId}-row-${getRowKey(row)}`,
+                  }"
                   @click.stop
                 >
                   <div
@@ -591,6 +621,7 @@
     panelView?: string
     panelViewOptions?: Array<{ value: string; label: string }>
     rowActionsOptions?: { showAll: boolean }
+    filterModeOptions?: Array<'primary' | 'all'>
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -602,6 +633,7 @@
     filterable: true,
     showRefresh: true,
     maxHeight: 'calc(100vh - 180px)',
+    filterModeOptions: () => ['primary', 'all'],
   })
 
   const emit = defineEmits<{
@@ -653,11 +685,33 @@
   const lastClickedIndex = ref<number | null>(null)
   const filterOptions = ref<TextFilterOptions>(createTextFilterOptions())
   const favoriteFeedback = ref(false)
+  const filterModeOptions = computed(() => props.filterModeOptions ?? ['primary', 'all'])
+  const effectiveFilterMode = computed(() =>
+    filterModeOptions.value.includes(tableSettings.settings.filterMode ?? 'all') ? (tableSettings.settings.filterMode ?? 'all') : 'all',
+  )
 
   // A regular expression cannot be translated into the server side LIKE search, so the
   // server returns the unfiltered page and the pattern is applied to the loaded rows only.
   // Match case / whole word stay server compatible because LIKE '%x%' is a superset of both.
-  const serverFilterQuery = computed(() => (filterOptions.value.regex ? '' : filterQueryInternal.value))
+  const primaryFilterColumn = computed(() =>
+    props.columns.find((column) => ['productId', 'clientId', 'depotId', 'className', 'displayName', 'identifier'].includes(column.key)),
+  )
+  const primaryFilterField = computed(() => {
+    const key = primaryFilterColumn.value?.key
+    if (key === 'description') return 'description'
+    if (key === 'productId' || key === 'clientId' || key === 'depotId') return 'id'
+    return undefined
+  })
+  const primaryFilterLabel = computed(() =>
+    primaryFilterColumn.value?.labelKey
+      ? String($t(primaryFilterColumn.value.labelKey))
+      : primaryFilterColumn.value?.label || String($t('settings.primaryColumn')),
+  )
+  const serverFilterQuery = computed(() => {
+    if (filterOptions.value.regex) return ''
+    if (effectiveFilterMode.value !== 'primary' || !primaryFilterField.value) return filterQueryInternal.value
+    return JSON.stringify({ [primaryFilterField.value]: filterQueryInternal.value })
+  })
 
   const savedSearchScope = computed(() => props.savedSearchesScopeId || '')
   const {
@@ -848,7 +902,8 @@
   const visibleRows = computed(() => {
     const test = localMatcher.value.test
     if (!props.filterable || !hasTextFilterOptions(filterOptions.value) || !test) return props.rows
-    const cols = filterableColumns.value
+    const cols =
+      effectiveFilterMode.value === 'primary' && primaryFilterColumn.value ? [primaryFilterColumn.value] : filterableColumns.value
     return props.rows.filter((row) => {
       for (const col of cols) {
         if (test(formatCellValue(row, col))) return true
@@ -989,6 +1044,7 @@
       } else {
         toggleSelection(row)
         lastClickedIndex.value = currentIndex >= 0 ? currentIndex : null
+        keyboardIndex.value = lastClickedIndex.value !== null ? lastClickedIndex.value : -1
       }
     }
   }
@@ -1218,6 +1274,10 @@
       updateVirtualWindow()
       resetInfinitePagingState()
       maybeFillViewport()
+
+      if (keyboardIndex.value >= visibleRows.value.length) {
+        keyboardIndex.value = visibleRows.value.length - 1
+      }
     },
   )
 
@@ -1238,6 +1298,74 @@
     if (oldEl && sentinelObserver) sentinelObserver.unobserve(oldEl)
     if (el && sentinelObserver) sentinelObserver.observe(el)
   })
+
+  const keyboardIndex = ref(lastClickedIndex.value !== null && lastClickedIndex.value !== undefined ? lastClickedIndex.value : -1)
+  const activeRowId = computed(() => {
+    if (keyboardIndex.value < 0) return undefined
+    const row = visibleRows.value[keyboardIndex.value]
+    if (!row) return undefined
+    const rendered = !!tableContainer.value?.querySelector(`tbody [data-row-index="${keyboardIndex.value}"]`)
+    return rendered ? `${props.tableId}-row-${getRowKey(row)}` : undefined
+  })
+
+  watch(
+    () => props.activeKey,
+    (key) => {
+      if (!key) {
+        keyboardIndex.value = -1
+        return
+      }
+      const i = visibleRows.value.findIndex((row) => getRowKey(row) === key)
+      if (i >= 0) keyboardIndex.value = i
+    },
+  )
+
+  function moveKeyboardFocus(delta: number) {
+    const total = visibleRows.value.length
+    if (total === 0) return
+
+    if (keyboardIndex.value === -1) {
+      // No anchor yet: Down starts at the top, Up at the bottom
+      keyboardIndex.value = delta > 0 ? 0 : total - 1
+    } else {
+      keyboardIndex.value = Math.max(0, Math.min(total - 1, keyboardIndex.value + delta))
+    }
+
+    const row = visibleRows.value[keyboardIndex.value]
+    if (!row) return
+
+    // Mirror the mouse behavior: single-select mode selects + activates,
+    // multi mode just moves the visual cursor without touching selection
+    if (effectiveSelectionMode.value === 'single') {
+      // selectSingle(row)
+      emit('select', row)
+    } else {
+      emit('select', row)
+    }
+
+    scrollToKeyboardRow()
+  }
+
+  async function scrollToKeyboardRow() {
+    const k = keyboardIndex.value
+    if (k < 0) return
+    const el = tableContainer.value
+    if (!el) return
+    await nextTick()
+    el?.querySelector(`tr[data-row-index="${k}"]`)?.scrollIntoView({ block: 'nearest' })
+  }
+
+  function handleSpaceToggle(e: KeyboardEvent) {
+    e.preventDefault()
+    if (keyboardIndex.value < 0) return
+    const row = visibleRows.value[keyboardIndex.value]
+    if (!row) return
+    if (effectiveSelectionMode.value === 'single') {
+      selectSingle(row)
+    } else if (props.selectable) {
+      toggleSelection(row)
+    }
+  }
 
   onUnmounted(() => {
     if (sentinelObserver) {
@@ -1266,6 +1394,34 @@
       e.preventDefault()
       toggleSelectAll()
     }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      moveKeyboardFocus(1)
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      moveKeyboardFocus(-1)
+    }
+
+    if (e.ctrlKey) {
+      switch (e.key) {
+        case ' ':
+          handleSpaceToggle(e)
+          break
+        case 'r':
+          e.preventDefault()
+          handleRefresh()
+          break
+        case 'Enter':
+          e.preventDefault()
+          const row = visibleRows.value[keyboardIndex.value]
+          if (!row) return
+          emit('row-activate', row)
+          break
+      }
+    }
   }
 
   function setColumnVisibility(key: string, visible: boolean) {
@@ -1289,6 +1445,13 @@
       emitPageChange()
     },
   )
+
+  watch(effectiveFilterMode, (mode, previousMode) => {
+    if (mode === previousMode) return
+    currentPage.value = 1
+    scrollToTop()
+    emitPageChange()
+  })
 
   watch(filterQueryInternal, (val) => {
     saveStoredDataTableFilter(effectiveFilterStorageId.value, val)

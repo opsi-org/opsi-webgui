@@ -381,4 +381,15 @@
     cloneClient,
     hasChanges,
   })
+
+  defineShortcuts({
+    ctrl_enter: {
+      usingInput: true,
+      handler: (e) => {
+        e.preventDefault()
+        if (!canCreateClients.value || isReadOnly.value) return
+        cloneClient()
+      },
+    },
+  })
 </script>

@@ -232,6 +232,21 @@ export interface ProductActionRequestChange {
   oldRequest: string
 }
 
+export interface BulkActionDetail {
+  clientId: string
+  success: boolean
+  message?: string
+}
+
+export interface BulkActionResult {
+  type: 'success' | 'warning' | 'error'
+  totalClients: number
+  totalProducts: number
+  succeeded: number
+  failed: number
+  details: BulkActionDetail[]
+}
+
 export type EditablePropertyValue = string | boolean | string[]
 
 export interface EditableProductProperty extends ProductProperty {

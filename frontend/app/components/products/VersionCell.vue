@@ -10,7 +10,7 @@
 <template>
   <div class="flex items-center gap-1.5">
     <span class="text-sm text-(--color-text)">{{ primaryVersion }}</span>
-    <CoreAppTooltipTable v-if="hasVersionDetails" :rows="versionTooltipRows">
+    <CoreAppTooltipTable v-if="hasVersionDetails" :title="row.productId" :rows="versionTooltipRows">
       <span class="flex items-center gap-0.5">
         <CoreAppBadge
           v-if="row.client_version_outdated"
@@ -91,8 +91,6 @@
     const clientVersions = props.row.clientVersions || []
     const depots = selectedDepotIds.value
     const selectedClients = props.row.selectedClients || []
-
-    rows.push({ key: String($t('products.id')), value: props.row.productId || '-' })
 
     if (props.row.client_version_outdated || props.row.depot_version_diff || props.row.not_on_all_depots) {
       rows.push({ key: `── ${String($t('products.tooltip.indicators'))} ──`, value: '' })

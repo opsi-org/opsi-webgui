@@ -278,7 +278,7 @@ export function useAutoRefreshClients(cb: RefreshCallback) {
 }
 
 export function useAutoRefreshProducts(cb: RefreshCallback) {
-  return useAutoRefresh(cb, { watchEvents: PRODUCT_EVENTS, refreshEvents: [] })
+  return useAutoRefresh(cb, { watchEvents: PRODUCT_EVENTS, refreshEvents: PRODUCT_EVENTS })
 }
 
 export function useAutoRefreshServers(cb: RefreshCallback) {

@@ -8,7 +8,6 @@
 from types import SimpleNamespace
 
 import pytest
-
 from webgui.python import utils
 
 

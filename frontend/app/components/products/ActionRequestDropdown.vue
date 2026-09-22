@@ -46,7 +46,7 @@
   </div>
 
   <div v-else class="flex items-center gap-1">
-    <CoreAppTooltipTable v-if="isMixed && disabled" :rows="mixedTooltipRows">
+    <CoreAppTooltipTable v-if="isMixed && disabled" :title="productId" :rows="mixedTooltipRows">
       <CoreAppBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help">
         <CoreAppIcon :name="icons.unequal" class="w-3 h-3" />
       </CoreAppBadge>
@@ -62,7 +62,7 @@
         :aria-label="String($t('actions.request'))"
         @update:model-value="handleChange"
       />
-      <CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
+      <CoreAppTooltipTable v-if="isMixed" :title="productId" :rows="mixedTooltipRows">
         <CoreAppBadge color="warning" variant="subtle" size="xs" class="gap-1 cursor-help shrink-0">
           <CoreAppIcon :name="icons.unequal" class="w-3 h-3" />
         </CoreAppBadge>

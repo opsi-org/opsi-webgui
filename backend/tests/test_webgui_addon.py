@@ -11,7 +11,6 @@ from types import SimpleNamespace
 import pytest
 from fastapi import FastAPI
 from opsiconfd.session import SessionMiddleware
-
 from webgui.python import Webgui
 
 

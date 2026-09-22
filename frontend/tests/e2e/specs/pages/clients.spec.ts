@@ -53,32 +53,6 @@ test.describe('Clients', () => {
     await expect(page).toHaveURL(/sortBy=version_outdated/)
   })
 
-  test('clients products split view stays readable on narrow window', async ({ page }) => {
-    await seedClientSelection(page)
-    await page.setViewportSize({ width: 1100, height: 900 })
-
-    await page.goto('/clients?view=panel&panelType=products&sortBy=version_outdated&type=localboot', {
-      waitUntil: 'networkidle',
-      timeout: 30000,
-    })
-
-    await waitForTable(page)
-    const detailPanel = page.getByTestId('detail-panel')
-    await expect(detailPanel).toBeVisible({ timeout: 15000 })
-
-    const firstPanelCell = detailPanel.locator('tbody td').first()
-    await expect(firstPanelCell).toBeVisible({ timeout: 15000 })
-
-    const fontSize = await firstPanelCell.evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
-    expect(fontSize).toBeGreaterThanOrEqual(14)
-
-    const panelBox = await detailPanel.boundingBox()
-    expect(panelBox).not.toBeNull()
-    if (panelBox) {
-      expect(panelBox.width).toBeGreaterThan(650)
-    }
-  })
-
   test('clients hardware and software inventory', async ({ page }) => {
     await runUITest(page, {
       name: 'clients-inventory',

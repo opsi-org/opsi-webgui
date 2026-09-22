@@ -22,7 +22,7 @@
   const attrs = useAttrs()
   const uiStore = useUiStore()
   const accessibleAttrs = computed(() => {
-    const a = withAccessibleName(attrs) as Record<string, unknown>
+    const a = { ...(withAccessibleName(attrs) as Record<string, unknown>) }
     if (uiStore.isMobile) a.size = 'xs'
     return a
   })

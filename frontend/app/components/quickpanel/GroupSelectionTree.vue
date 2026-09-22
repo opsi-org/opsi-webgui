@@ -78,7 +78,7 @@
           </button>
           <template v-if="!isSectionCollapsed(section.id)">
             <div
-              v-for="item in section.flatItems"
+              v-for="item in visibleClientItems(section)"
               :key="`${section.id}-${item.id}`"
               v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount, isBusyGroup(item.id)]"
               :style="{
@@ -137,6 +137,17 @@
             <div v-if="section.flatItems.length === 0" class="text-xs text-(--color-text-muted) py-1 px-2 italic">
               {{ $t('common.noResults') }}
             </div>
+            <CoreAppButton
+              v-else-if="hasMoreClientItems(section)"
+              variant="ghost"
+              color="primary"
+              size="xs"
+              block
+              class="py-1!"
+              @click="showMoreClientItems(section.id)"
+            >
+              {{ $t('common.showMore') }} ({{ section.flatItems.length - clientDisplayLimit(section.id) }} {{ $t('common.remaining') }})
+            </CoreAppButton>
           </template>
         </div>
       </template>
@@ -162,7 +173,7 @@
           </button>
           <template v-if="productRootExpanded">
             <div
-              v-for="item in productFlatItems"
+              v-for="item in visibleProductItems"
               :key="item.id"
               v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount, isBusyGroup(item.id)]"
               :style="{ paddingLeft: `${item.depth * 16 + 6}px` }"
@@ -203,6 +214,17 @@
         <div v-if="productFlatItems.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">
           {{ $t('common.noResults') }}
         </div>
+        <CoreAppButton
+          v-else-if="productFlatItems.length > productDisplayLimit"
+          variant="ghost"
+          color="primary"
+          size="xs"
+          block
+          class="py-1!"
+          @click="productDisplayLimit += DISPLAY_BATCH"
+        >
+          {{ $t('common.showMore') }} ({{ productFlatItems.length - productDisplayLimit }} {{ $t('common.remaining') }})
+        </CoreAppButton>
       </template>
     </div>
   </div>
@@ -230,6 +252,7 @@
     productGroupsLoadingGroups,
     fetchClientGroups,
     fetchProductGroups,
+    fetchGroupChildrenLazy,
     fetchGroupMembersRecursive,
     fetchProductGroupMembersRecursive,
     toggleGroupExpand,
@@ -260,6 +283,9 @@
     }, 150)
   })
   const collapsedSections = ref<Set<string>>(new Set(['groups', 'clientdirectory']))
+  const DISPLAY_BATCH = 200
+  const clientDisplayLimits = ref<Record<string, number>>({})
+  const productDisplayLimit = ref(DISPLAY_BATCH)
 
   function isSectionCollapsed(sectionId: string): boolean {
     return collapsedSections.value.has(sectionId) && !debouncedSearch.value
@@ -395,7 +421,6 @@
             hasChildren: false,
             isExpanded: false,
           })
-          if (memberItems.length >= 200) break
         }
       }
 
@@ -429,6 +454,25 @@
     }))
   })
 
+  function clientDisplayLimit(sectionId: string): number {
+    return clientDisplayLimits.value[sectionId] || DISPLAY_BATCH
+  }
+
+  function visibleClientItems(section: (typeof clientSections.value)[number]) {
+    return section.flatItems.slice(0, clientDisplayLimit(section.id))
+  }
+
+  function hasMoreClientItems(section: (typeof clientSections.value)[number]): boolean {
+    return section.flatItems.length > clientDisplayLimit(section.id)
+  }
+
+  function showMoreClientItems(sectionId: string) {
+    clientDisplayLimits.value = {
+      ...clientDisplayLimits.value,
+      [sectionId]: clientDisplayLimit(sectionId) + DISPLAY_BATCH,
+    }
+  }
+
   const productFlatItems = computed(() => {
     if (props.groupType !== 'product') return []
     const q = debouncedSearch.value.toLowerCase()
@@ -439,6 +483,7 @@
 
   const productRoot = computed(() => (props.groupType === 'product' ? rawTree.value[0] : null))
   const productRootExpanded = computed(() => (productRoot.value ? expandedIds.value.has(productRoot.value.id) : false))
+  const visibleProductItems = computed(() => productFlatItems.value.slice(0, productDisplayLimit.value))
 
   const selectedCount = computed(() =>
     props.groupType === 'client' ? selectionStore.selectedClients.length : selectionStore.selectedProducts.length,
@@ -482,6 +527,11 @@
 
   async function fetchAllGroupMembers(groupId: string): Promise<string[]> {
     if (props.groupType === 'client') {
+      const node = findGroupNodeById(rawTree.value, groupId)
+      if (node?.isSpecial) {
+        await fetchGroupChildrenLazy(groupId, selectionStore.selectedServers)
+        return collectLoadedGroupMembersRecursive(groupId)
+      }
       return fetchGroupMembersRecursive(groupId, selectionStore.selectedServers)
     }
     return fetchProductGroupMembersRecursive(groupId)
@@ -572,7 +622,8 @@
           selectionStore.toggleClientGroup(item.id)
         }
         if (members.length > 0) {
-          selectionStore.addClients(members, 'quickpanel')
+          const availableClientSlots = Math.max(0, DISPLAY_BATCH - selectionStore.selectedClients.length)
+          selectionStore.addClients(members.slice(0, availableClientSlots), 'quickpanel')
         }
       }
     } else {
@@ -588,7 +639,8 @@
           selectionStore.toggleProductGroup(item.id)
         }
         if (members.length > 0) {
-          selectionStore.addProducts(members, 'quickpanel')
+          const availableProductSlots = Math.max(0, DISPLAY_BATCH - selectionStore.selectedProducts.length)
+          selectionStore.addProducts(members.slice(0, availableProductSlots), 'quickpanel')
         }
       }
     }

@@ -25,7 +25,6 @@
               size="xs"
               :icon="icons.x"
               :aria-label="String($t('common.close'))"
-              :title="String($t('common.close'))"
               @click="handleClose"
             />
           </div>
@@ -263,5 +262,16 @@
     if (!isOpen) {
       resetState()
     }
+  })
+
+  defineShortcuts({
+    ctrl_enter: {
+      usingInput: true,
+      handler: (e) => {
+        e.preventDefault()
+        if (newConfig.configId.trim() === '') return
+        handleCreateConfig()
+      },
+    },
   })
 </script>

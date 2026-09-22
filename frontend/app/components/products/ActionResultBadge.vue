@@ -9,7 +9,7 @@
 -->
 <template>
   <div class="flex justify-center">
-    <CoreAppTooltipTable v-if="isMixed" :rows="mixedTooltipRows">
+    <CoreAppTooltipTable v-if="isMixed" :title="productId" :rows="mixedTooltipRows">
       <CoreAppTooltip v-if="iconOnly" :text="String($t('common.mixed'))">
         <CoreAppStatusBadge status="warning" :icon="icons.unequal" size="xs" />
       </CoreAppTooltip>
@@ -69,11 +69,9 @@
 
   const mixedTooltipRows = computed(() => {
     if (!props.resultDetails) return []
-    const heading = props.productId ? [{ key: String($t('products.id')), value: props.productId }] : []
     const clients = props.selectedClients || []
     if (clients.length > 0 && clients.length === props.resultDetails.length) {
       return [
-        ...heading,
         { key: `── ${String($t('clients.title'))} ──`, value: '' },
         ...clients.map((c, i) => {
           const result = (props.resultDetails![i] || 'none').toLowerCase()
@@ -92,7 +90,6 @@
       counts[key] = (counts[key] || 0) + 1
     })
     return [
-      ...heading,
       { key: `── ${String($t('actions.results'))} ──`, value: '' },
       ...Object.entries(counts).map(([k, v]) => ({
         key: k,

@@ -170,7 +170,16 @@
         <div v-if="selectedGroup" class="h-full min-h-0 flex flex-col">
           <div class="p-2 border-b border-(--color-border) flex items-center justify-between bg-(--color-background)">
             <div class="flex items-center gap-2">
-              <CoreAppButton v-if="isMobile" :icon="icons.back" variant="ghost" color="neutral" size="xs" @click="showSidebar = true" />
+              <CoreAppButton
+                v-if="isMobile"
+                :icon="icons.back"
+                variant="ghost"
+                color="neutral"
+                size="xs"
+                :aria-label="String($t('common.back'))"
+                :title="String($t('common.back'))"
+                @click="closeMobileGroupPanel"
+              />
               <span class="font-medium text-(--color-text)">{{ selectedGroup.label }}</span>
               <span v-if="selectedGroup.isSpecial" class="text-xs text-(--color-text-muted)"> ({{ $t('diag.systemGroup') }}) </span>
             </div>
@@ -1011,6 +1020,11 @@
     }
   }
 
+  function closeMobileGroupPanel() {
+    selectedGroup.value = null
+    showSidebar.value = true
+  }
+
   function toggleMemberSelection(member: string, event?: MouseEvent | KeyboardEvent) {
     if (event?.shiftKey && lastClickedMember.value) {
       const list = filteredMembers.value
@@ -1538,6 +1552,46 @@
       }
     },
   )
+
+  defineShortcuts({
+    ctrl_enter: {
+      usingInput: true,
+      handler: (e) => {
+        e.preventDefault()
+        if (isReadOnly.value) return
+        if (showCreateModal.value && !createForm.groupId) {
+          doCreateGroup()
+        }
+        if (showEditModal.value) {
+          doEditGroup()
+        }
+        if (showDeleteModal.value) {
+          deleteGroup()
+        }
+        if (showAddMembersModal.value && selectedMembers.value.length !== 0) {
+          addSelectedMembers()
+        }
+      },
+    },
+    ctrl_escape: {
+      usingInput: true,
+      handler: (e) => {
+        e.preventDefault()
+        if (showCreateModal.value) {
+          showCreateModal.value = false
+        }
+        if (showEditModal.value) {
+          showEditModal.value = false
+        }
+        if (showDeleteModal.value) {
+          showDeleteModal.value = false
+        }
+        if (showAddMembersModal.value) {
+          showAddMembersModal.value = false
+        }
+      },
+    },
+  })
 </script>
 
 <style scoped>

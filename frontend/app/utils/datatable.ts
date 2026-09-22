@@ -62,8 +62,20 @@ export const INFINITE_WINDOW_PAGE_COUNT = 20
  * previously retained rows. Returns the number of discarded leading rows so
  * callers can retain their absolute virtual-scroll offset.
  */
-export function appendInfinitePage<T>(rows: T[], page: T[], perPage: number): number {
-  rows.push(...page)
+export function appendInfinitePage<T>(rows: T[], page: T[], perPage: number, getKey?: (row: T) => string): number {
+  if (getKey) {
+    const existingKeys = new Set(rows.map(getKey))
+    rows.push(
+      ...page.filter((row) => {
+        const key = getKey(row)
+        if (existingKeys.has(key)) return false
+        existingKeys.add(key)
+        return true
+      }),
+    )
+  } else {
+    rows.push(...page)
+  }
   const maxRows = Math.max(1, perPage) * INFINITE_WINDOW_PAGE_COUNT
   const overflow = Math.max(0, rows.length - maxRows)
   if (overflow > 0) rows.splice(0, overflow)

@@ -245,13 +245,13 @@
     </template>
   </CoreAppModal>
 
-  <CoreAppModal v-if="resultMounted" v-model:open="resultOpen" :dismissible="true">
+  <CoreAppModal v-if="resultMounted" v-model:open="resultOpen" :dismissible="true" :ui="{ content: 'w-[94vw] max-w-4xl max-h-[84vh]' }">
     <template #content>
-      <div class="p-3 min-w-87.5">
+      <div class="p-4">
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
             <CoreAppIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
-            {{ $t('actions.results') }}
+            {{ $t('actions.results') }} - {{ actionLabel(currentAction) }}
           </h3>
           <CoreAppButton
             :icon="icons.x"
@@ -262,43 +262,7 @@
           />
         </div>
 
-        <div class="max-h-80 overflow-y-auto space-y-1.5">
-          <div
-            v-for="(result, clientId) in actionResults"
-            :key="clientId"
-            class="p-3 rounded-lg border text-sm"
-            :class="
-              result.success
-                ? 'bg-(--color-success-soft-bg) border-(--color-success)/30'
-                : 'bg-(--color-error-soft-bg) border-(--color-error)/30'
-            "
-          >
-            <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2 min-w-0">
-                <CoreAppIcon
-                  :name="result.success ? icons.checkCircle : icons.xCircle"
-                  class="w-4 h-4 shrink-0"
-                  :class="result.success ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'"
-                />
-                <span class="font-medium truncate">{{ clientId }}</span>
-              </div>
-              <CoreAppBadge :color="result.success ? 'success' : 'error'" size="xs" variant="subtle">
-                {{ result.success ? $t('common.success') : $t('common.failed') }}
-              </CoreAppBadge>
-            </div>
-            <div
-              v-if="result.message"
-              class="mt-1.5 pl-6 text-sm wrap-break-word"
-              :class="result.success ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'"
-            >
-              {{ result.message }}
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-end mt-4 pt-3 border-t border-(--color-border)">
-          <CoreAppButton variant="ghost" color="neutral" @click="resultOpen = false">{{ $t('common.close') }} </CoreAppButton>
-        </div>
+        <CoreAppActionResultsTable v-model:filter="resultFilter" :details="actionResultDetails" />
       </div>
     </template>
   </CoreAppModal>
@@ -352,6 +316,8 @@
   const deployOptions = ref({ username: '', password: '', type: 'windows' })
   const actionResults = ref<Record<string, { success: boolean; message?: string }>>({})
   const statusMessage = ref<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
+  const resultFilter = ref<'all' | 'failed' | 'succeeded'>('failed')
+  const actionResultDetails = computed(() => Object.entries(actionResults.value).map(([clientId, result]) => ({ clientId, ...result })))
 
   const renameHostname = ref('')
   const renameDomain = ref('')
@@ -606,6 +572,8 @@
       const successCount = Object.values(actionResults.value).filter((r) => r.success).length
       const failCount = props.clientIds.length - successCount
 
+      // Default to the failures view since that's what needs attention; fall back to all when nothing failed.
+      resultFilter.value = failCount > 0 ? 'failed' : 'all'
       resultMounted.value = true
       void nextTick(() => {
         resultOpen.value = true

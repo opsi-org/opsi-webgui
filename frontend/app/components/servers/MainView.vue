@@ -215,6 +215,7 @@
     hasAnyChanges: boolean
     discardAll: () => void
     refresh?: () => void
+    saveAll: () => void
   } | null>(null)
   const showCreateConfigModal = ref(false)
   const sortBySelectionEnabled = computed(
@@ -335,8 +336,9 @@
   }
 
   async function fetchServers(params?: PageChangeParams) {
-    const requestId = ++fetchServersRequestId.value
-    fetchServersController?.abort()
+    const isInfinitePageRequest = params?.displayMode === 'infinite' && params.pageNumber > 1
+    const requestId = isInfinitePageRequest ? fetchServersRequestId.value : ++fetchServersRequestId.value
+    if (!isInfinitePageRequest) fetchServersController?.abort()
     const controller = new AbortController()
     fetchServersController = controller
     loading.value = true
@@ -373,7 +375,7 @@
         const newData = result.data as Server[]
         if (result.total !== null) totalItems.value = result.total
         if (!isReload && effectiveParams?.displayMode === 'infinite' && effectiveParams.pageNumber > 1) {
-          rowOffset.value += appendInfinitePage(servers.value, newData, effectiveParams.perPage)
+          rowOffset.value += appendInfinitePage(servers.value, newData, effectiveParams.perPage, (server) => server.depotId)
         } else {
           servers.value = newData
           rowOffset.value = isReload && effectiveParams ? (effectiveParams.pageNumber - 1) * effectiveParams.perPage : 0
@@ -392,7 +394,7 @@
       if (controller.signal.aborted) return
       error.value = (e as Error).message
     } finally {
-      if (requestId === fetchServersRequestId.value) {
+      if (requestId === fetchServersRequestId.value && fetchServersController === controller) {
         loading.value = false
         fetchServersController = null
       }
@@ -455,4 +457,29 @@
       currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('servers')
     },
   )
+
+  useShortcutContext({
+    save: () => configTabsRef.value?.saveAll?.(),
+    canSave: () => !!configTabsRef.value?.hasAnyChanges && !isReadOnly.value,
+    discard: () => configTabsRef.value?.discardAll?.(),
+    canDiscard: () => !!configTabsRef.value?.hasAnyChanges,
+    closeActivePanel: () => {
+      if (showCreateConfigModal.value) {
+        showCreateConfigModal.value = false
+        return true
+      }
+      if (!panelServer.value && !panelType.value) return false
+      closePanel()
+      return true
+    },
+  })
+
+  defineShortcuts({
+    ctrl_shift_n: {
+      usingInput: true,
+      handler: () => {
+        showCreateConfigModal.value = !showCreateConfigModal.value
+      },
+    },
+  })
 </script>

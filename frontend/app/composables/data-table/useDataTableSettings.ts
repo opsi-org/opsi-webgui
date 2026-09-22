@@ -34,6 +34,7 @@ export interface DataTableSettings {
   displayMode: 'infinite' | 'pagination'
   selectionMode: 'multi' | 'single'
   onlySelected?: boolean
+  filterMode?: 'primary' | 'all'
 }
 
 const STORAGE_KEY = 'opsi-webgui-datatable-settings'
@@ -46,6 +47,7 @@ const defaults: Record<string, DataTableSettings> = {
     pageSize: 20,
     displayMode: 'pagination',
     selectionMode: 'single',
+    filterMode: 'all',
   },
   clients: {
     visibleColumns: [
@@ -65,6 +67,7 @@ const defaults: Record<string, DataTableSettings> = {
     pageSize: 20,
     displayMode: 'pagination',
     selectionMode: 'multi',
+    filterMode: 'all',
   },
   products: {
     visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionResult', 'actionProgress', 'actionRequest'],
@@ -73,6 +76,7 @@ const defaults: Record<string, DataTableSettings> = {
     pageSize: 20,
     displayMode: 'pagination',
     selectionMode: 'multi',
+    filterMode: 'all',
   },
   'products-localboot': {
     visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionResult', 'actionProgress', 'actionRequest'],
@@ -81,6 +85,7 @@ const defaults: Record<string, DataTableSettings> = {
     pageSize: 20,
     displayMode: 'pagination',
     selectionMode: 'multi',
+    filterMode: 'all',
   },
   'products-netboot': {
     visibleColumns: ['productId', 'description', 'version', 'actionProgress'],
@@ -89,6 +94,7 @@ const defaults: Record<string, DataTableSettings> = {
     pageSize: 20,
     displayMode: 'pagination',
     selectionMode: 'multi',
+    filterMode: 'all',
   },
   'inventory-hardware': {
     visibleColumns: ['className', 'displayName', 'lastseen'],
@@ -97,6 +103,7 @@ const defaults: Record<string, DataTableSettings> = {
     pageSize: 50,
     displayMode: 'pagination',
     selectionMode: 'single',
+    filterMode: 'all',
   },
   'inventory-software': {
     visibleColumns: ['displayName', 'version', 'architecture', 'language', 'lastseen'],
@@ -105,6 +112,7 @@ const defaults: Record<string, DataTableSettings> = {
     pageSize: 50,
     displayMode: 'pagination',
     selectionMode: 'single',
+    filterMode: 'all',
   },
 }
 

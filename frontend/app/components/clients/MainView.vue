@@ -128,6 +128,14 @@
             class="w-3.5 h-3.5 text-(--color-error-soft-text) shrink-0"
             :title="$t('clients.blocked')"
           />
+          <CoreAppTooltip v-if="(row as OpsiClient).operatingSystem" :text="String((row as OpsiClient).operatingSystem)">
+            <CoreAppIcon
+              :name="operatingSystemIcon((row as OpsiClient).operatingSystem)"
+              class="w-3.5 h-3.5 shrink-0"
+              :class="operatingSystemIconColor((row as OpsiClient).operatingSystem)"
+              :aria-label="String((row as OpsiClient).operatingSystem)"
+            />
+          </CoreAppTooltip>
           <span>{{ (row as OpsiClient).clientId }}</span>
         </div>
       </template>
@@ -440,10 +448,11 @@
   )
   const tableSettings = useDataTableSettings('clients')
   const productsSortColumn = ref<string | undefined>(undefined)
-  const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void } | null>(null)
+  const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void; saveAll?: () => void } | null>(null)
   const productsTableRef = ref<{
     hasUnsavedChanges?: boolean
     discardAllChanges?: () => void
+    saveAll?: () => void
   } | null>(null)
   const cloneFormRef = ref<{ hasChanges?: boolean } | null>(null)
   const showLeaveWarning = ref(false)
@@ -462,6 +471,23 @@
   const sortBySelectionEnabled = computed(
     () => selectionStore.selectionSource === 'quickpanel' && selectionStore.selectedClients.length > 0,
   )
+
+  function operatingSystemIcon(operatingSystem?: string | null): string {
+    const value = (operatingSystem || '').toLowerCase()
+    if (value.includes('windows')) return icons.windows
+    if (value.includes('mac') || value.includes('darwin') || value.includes('os x')) return icons.apple
+    if (value.includes('linux') || value.includes('unix') || value.includes('debian') || value.includes('ubuntu')) return icons.linux
+    return icons.info
+  }
+
+  function operatingSystemIconColor(operatingSystem?: string | null): string {
+    const value = (operatingSystem || '').toLowerCase()
+    if (value.includes('windows')) return 'text-(--color-os-windows)'
+    if (value.includes('mac') || value.includes('darwin') || value.includes('os x')) return 'text-(--color-os-macos)'
+    if (value.includes('linux') || value.includes('unix') || value.includes('debian') || value.includes('ubuntu'))
+      return 'text-(--color-os-linux)'
+    return 'text-(--color-text-muted)'
+  }
 
   const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
 
@@ -546,15 +572,6 @@
       tooltip: true,
     },
     {
-      // Not sortable: computed per-page from the audit software catalog, not a HOST table column.
-      key: 'operatingSystem',
-      label: String($t('clients.operatingSystemShort')),
-      labelKey: 'clients.operatingSystemShort',
-      maxWidth: '14rem',
-      truncate: true,
-      tooltip: true,
-    },
-    {
       key: 'lastSeen',
       label: String($t('fields.lastSeen')),
       labelKey: 'fields.lastSeen',
@@ -580,7 +597,7 @@
   function doOpenPanel(client: OpsiClient, type: ClientPanelType) {
     panelClient.value = client
     panelType.value = type
-    const { configType: _ct, inventoryTab: _it, ...restQuery } = route.query as Record<string, string>
+    const { configType: _ct, inventoryTab: _it, sortBy: _sortBy, type: _type, ...restQuery } = route.query as Record<string, string>
     const query: Record<string, string> = {
       ...restQuery,
       client: client.clientId,
@@ -600,9 +617,17 @@
     checkUnsavedAndDo(() => {
       panelClient.value = null
       panelType.value = 'products'
+      const {
+        client: _client,
+        configType: _configType,
+        inventoryTab: _inventoryTab,
+        sortBy: _sortBy,
+        type: _type,
+        ...restQuery
+      } = route.query
       router.replace({
         query: {
-          ...route.query,
+          ...restQuery,
           view: 'panel',
           panelType: 'products',
           sortBy: productsSortColumn.value,
@@ -616,7 +641,8 @@
     checkUnsavedAndDo(() => {
       panelClient.value = null
       panelType.value = 'add'
-      router.replace({ query: { ...route.query, view: 'panel', panelType: 'add' } })
+      const { client: _client, configType: _configType, inventoryTab: _inventoryTab, ...restQuery } = route.query
+      router.replace({ query: { ...restQuery, view: 'panel', panelType: 'add' } })
     })
   }
 
@@ -626,9 +652,10 @@
     panelProductType.value = productType || 'localboot'
     panelClient.value = null
     panelType.value = 'products'
+    const { client: _client, configType: _configType, inventoryTab: _inventoryTab, ...restQuery } = route.query
     router.replace({
       query: {
-        ...route.query,
+        ...restQuery,
         view: 'panel',
         panelType: 'products',
         sortBy: sortColumn,
@@ -771,8 +798,9 @@
   }
 
   async function fetchClients(params?: PageChangeParams) {
-    const requestId = ++fetchClientsRequestId.value
-    fetchClientsController?.abort()
+    const isInfinitePageRequest = params?.displayMode === 'infinite' && params.pageNumber > 1
+    const requestId = isInfinitePageRequest ? fetchClientsRequestId.value : ++fetchClientsRequestId.value
+    if (!isInfinitePageRequest) fetchClientsController?.abort()
     const controller = new AbortController()
     fetchClientsController = controller
     loading.value = true
@@ -824,13 +852,14 @@
       if (advancedFilters.value.hasOutdatedProducts) p.hasOutdatedProducts = true
       if (advancedFilters.value.operatingSystem) p.operatingSystem = advancedFilters.value.operatingSystem
       const result = await getClients(p, { signal: controller.signal })
+      if (controller.signal.aborted) return
       if (requestId !== fetchClientsRequestId.value) return
       if (result.error) error.value = result.error.message
       else if (result.data) {
         const newData = result.data as OpsiClient[]
         if (result.total !== null) totalItems.value = result.total
         if (!isReload && effectiveParams?.displayMode === 'infinite' && effectiveParams.pageNumber > 1) {
-          rowOffset.value += appendInfinitePage(clients.value, newData, effectiveParams.perPage)
+          rowOffset.value += appendInfinitePage(clients.value, newData, effectiveParams.perPage, (client) => client.clientId)
         } else {
           clients.value = newData
           rowOffset.value = isReload && effectiveParams ? (effectiveParams.pageNumber - 1) * effectiveParams.perPage : 0
@@ -846,7 +875,7 @@
       if (controller.signal.aborted) return
       error.value = (e as Error).message
     } finally {
-      if (requestId === fetchClientsRequestId.value) {
+      if (requestId === fetchClientsRequestId.value && fetchClientsController === controller) {
         loading.value = false
         fetchClientsController = null
       }
@@ -1052,4 +1081,28 @@
       currentFilterQuery.value = typeof newFilter === 'string' ? newFilter : getStoredDataTableFilter('clients')
     },
   )
+
+  useShortcutContext({
+    save: () => configTabsRef.value?.saveAll?.() ?? productsTableRef.value?.saveAll?.(),
+    canSave: () => !!(configTabsRef.value?.hasAnyChanges || productsTableRef.value?.hasUnsavedChanges) && !isReadOnly.value,
+    discard: () => {
+      configTabsRef.value?.discardAll?.()
+      productsTableRef.value?.discardAllChanges?.()
+    },
+    canDiscard: () => !!(configTabsRef.value?.hasAnyChanges || productsTableRef.value?.hasUnsavedChanges),
+    closeActivePanel: () => {
+      if (!panelClient.value && !panelType.value) return false
+      closePanel()
+      return true
+    },
+  })
+
+  defineShortcuts({
+    ctrl_shift_n: {
+      usingInput: true,
+      handler: () => {
+        if (!isReadOnly.value && canCreateClients.value) openAddPanel()
+      },
+    },
+  })
 </script>
