@@ -75,13 +75,15 @@
               class="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-12 bg-(--color-border) rounded group-hover:bg-opsi-blue transition-colors"
             />
           </div>
-          <div class="shrink-0 sticky top-0 z-20 border-t border-b border-(--color-border) px-2.5 py-1.5 bg-(--color-surface)">
-            <div class="flex items-center gap-3">
+          <div
+            class="shrink-0 sticky top-0 z-20 border-t border-b border-(--color-primary)/35 px-2.5 py-1.5 bg-(--color-surface-elevated) text-(--color-text) shadow-sm"
+          >
+            <div class="flex items-center gap-3 rounded-md px-1 transition-colors hover:bg-(--color-primary-soft-bg)">
               <CoreAppButton
                 v-if="useOverlayPanel"
                 @click="$emit('close-panel')"
-                variant="ghost"
-                color="neutral"
+                variant="soft"
+                color="primary"
                 size="xs"
                 :aria-label="String($t('common.back'))"
                 :title="String($t('common.back'))"
@@ -93,7 +95,7 @@
                   <span class="font-semibold truncate m-0 text-sm">
                     <slot name="panel-title">{{ $t('common.details') }}</slot>
                   </span>
-                  <span v-if="$slots['panel-subtitle']" class="text-xs text-(--color-text-muted) truncate">
+                  <span v-if="$slots['panel-subtitle']" class="text-xs text-(--color-text) truncate">
                     <slot name="panel-subtitle" />
                   </span>
                 </div>
@@ -102,8 +104,8 @@
                 <slot name="panel-actions" />
                 <CoreAppButton
                   @click="$emit('close-panel')"
-                  variant="ghost"
-                  color="neutral"
+                  variant="soft"
+                  color="primary"
                   size="xs"
                   :aria-label="String($t('common.close'))"
                   :title="String($t('common.close'))"

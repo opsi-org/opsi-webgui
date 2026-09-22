@@ -249,7 +249,7 @@
       <span class="flex items-center gap-2">
         <CoreAppIcon
           :name="panelType === 'products' ? icons.product : panelType === 'add' ? icons.add : icons.client"
-          class="w-4 h-4 text-(--color-text-muted) shrink-0"
+          class="w-4 h-4 text-(--color-text) shrink-0"
         />
         <template v-if="panelType === 'products'">
           <CoreAppIcon :name="productScopeIcon" class="w-3.5 h-3.5" />
@@ -258,7 +258,7 @@
         <template v-else-if="panelType === 'add'">{{ $t('common.new') }}</template>
         <template v-else>
           {{ panelClient?.clientId }}
-          <span v-if="panelType" class="font-normal text-(--color-text-muted)">– {{ clientPanelTitle }}</span>
+          <span v-if="panelType" class="font-normal text-(--color-text)">– {{ clientPanelTitle }}</span>
         </template>
       </span>
     </template>
