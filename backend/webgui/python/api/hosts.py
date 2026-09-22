@@ -166,8 +166,8 @@ def get_host_data(
 			h.oneTimePassword AS oneTimePassword,
 			IF(
 					(COALESCE(
-						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.dhcpd.filename'),
-						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault))
+						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.uefinetbootlabel'),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.uefinetbootlabel' AND cv.isDefault))
 					) LIKE '%efi%',
 					TRUE,
 					FALSE

@@ -336,15 +336,15 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 				) AS depotId,
 				IF(
 					(COALESCE(
-						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.dhcpd.filename'),
-						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault))
+						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.uefinetbootlabel'),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.uefinetbootlabel' AND cv.isDefault))
 					) LIKE '%efi%',
 					TRUE,
 					FALSE
 				) AS uefi,
 				COALESCE(
-					(SELECT cs.values FROM CONFIG_STATE AS cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
-					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault)
+					(SELECT cs.values FROM CONFIG_STATE AS cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.uefinetbootlabel"),
+					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.uefinetbootlabel' AND cv.isDefault)
 				) AS uefi_value,
 				{is_reachable_sql},
 				IF(h.hostId IN :selected, TRUE, FALSE) AS selected
@@ -787,8 +787,8 @@ def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branc
 				h.oneTimePassword AS oneTimePassword,
 				IF(
 					(COALESCE(
-						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.dhcpd.filename'),
-						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault))
+						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.uefinetbootlabel'),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.uefinetbootlabel' AND cv.isDefault))
 					) LIKE '%efi%',
 					TRUE,
 					FALSE
@@ -859,29 +859,6 @@ def delete_client(request: Request, clientid: str) -> RESTResponse:  # pylint: d
 			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
 			error=err,
 		) from err
-
-
-@api_router.post("/api/opsidata/clients/{clientid}/uefi")
-def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -> RESTResponse:  # pylint: disable=unused-argument
-	"""
-	Set uefi config of client
-	"""
-
-	if uefi:
-		config_value = ["linux/pxelinux.cfg/shimx64.efi.signed"]
-	else:
-		config_value = [""]
-
-	backend.configState_create("clientconfig.dhcpd.filename", clientid, config_value)
-
-	return RESTResponse(
-		http_status=200,
-		data={
-			"configId": "clientconfig.dhcpd.filename",
-			"objectId": clientid,
-			"values": config_value,
-		},
-	)
 
 
 class ProcessActionRPC(BaseModel):  # pylint: disable=too-few-public-methods

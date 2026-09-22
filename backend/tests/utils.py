@@ -376,10 +376,10 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 
 	cursor.execute(
 		"INSERT INTO CONFIG_STATE (configId, objectId, CONFIG_STATE.values) VALUES "
-		'("clientconfig.dhcpd.filename", "pytest-client-1.domain.local", NULL),'
-		'("clientconfig.dhcpd.filename", "pytest-client-2.domain.local", NULL),'
-		'("clientconfig.dhcpd.filename", "pytest-client-3.domain.local",	NULL),'
-		'("clientconfig.dhcpd.filename", "pytest-client-4.domain.local", NULL);'
+		'("clientconfig.uefinetbootlabel", "pytest-client-1.domain.local", NULL),'
+		'("clientconfig.uefinetbootlabel", "pytest-client-2.domain.local", NULL),'
+		'("clientconfig.uefinetbootlabel", "pytest-client-3.domain.local",	NULL),'
+		'("clientconfig.uefinetbootlabel", "pytest-client-4.domain.local", NULL);'
 	)
 
 	cursor.close()
