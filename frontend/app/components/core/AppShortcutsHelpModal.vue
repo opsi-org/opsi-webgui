@@ -11,7 +11,7 @@
   <CoreAppModal
     v-model:open="model"
     :title="$t('shortcuts.title')"
-    :ui="{ content: 'w-[94vw] max-w-3xl h-auto max-h-[85vh]', body: 'overflow-hidden' }"
+    :ui="{ content: 'w-[94vw] max-w-2xl h-auto max-h-[85vh]', body: 'overflow-hidden' }"
   >
     <template #body>
       <div class="space-y-3 overflow-y-auto max-h-[70vh] pr-1" :tabindex="0" role="region" :aria-label="$t('shortcuts.title')">
