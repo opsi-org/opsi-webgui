@@ -80,15 +80,14 @@
             <div
               v-for="item in visibleClientItems(section)"
               :key="`${section.id}-${item.id}`"
-              v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount, isBusyGroup(item.id)]"
+              v-memo="[item.isExpanded, item.hasChildren, getItemSelectionState(item), item.memberCount, isBusyGroup(item.id)]"
               :style="{
                 paddingLeft: `${item.depth * 14 + 6}px`,
-                borderLeftWidth: item.depth > 0 ? '1px' : '0',
                 marginLeft: item.depth > 0 ? `${(item.depth - 1) * 14 + 10}px` : '0',
               }"
-              class="flex items-center gap-1 py-0 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer border-l-transparent hover:border-l-(--color-border)"
-              :class="{ 'border-l-(--color-border)/40': item.depth > 0 }"
+              class="relative flex items-center gap-1 py-0 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer"
             >
+              <span v-for="depth in item.depth" :key="depth" class="tree-guide-line" :style="{ left: `${8 + (depth - 1) * 14}px` }" />
               <CoreAppButton
                 v-if="item.hasChildren && !isBusyGroup(item.id)"
                 :icon="item.isExpanded ? icons.chevronDown : icons.chevronRight"
@@ -102,7 +101,7 @@
               <CoreAppLoadingSpinner v-else-if="isBusyGroup(item.id)" size="xs" class="shrink-0 w-4 h-4" />
               <span v-else class="w-4 shrink-0" />
               <CoreAppCheckbox
-                :model-value="isItemChecked(item)"
+                :model-value="getItemCheckboxValue(item)"
                 size="sm"
                 class="shrink-0"
                 @click.stop
@@ -153,42 +152,67 @@
       </template>
 
       <template v-else>
-        <div
-          v-for="item in visibleProductItems"
-          :key="item.id"
-          v-memo="[item.isExpanded, item.hasChildren, isItemChecked(item), item.memberCount, isBusyGroup(item.id)]"
-          :style="{ paddingLeft: `${item.depth * 16}px` }"
-          class="flex items-center gap-1 py-0 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer"
-        >
-          <CoreAppButton
-            v-if="item.hasChildren && !isBusyGroup(item.id)"
-            :icon="item.isExpanded ? icons.chevronDown : icons.chevronRight"
-            size="xs"
-            variant="ghost"
-            color="neutral"
-            class="shrink-0 p-0! h-4! w-4!"
-            :aria-label="item.isExpanded ? $t('common.collapse') : $t('common.expand')"
-            @click.stop="toggleExpand(item.id)"
-          />
-          <CoreAppLoadingSpinner v-else-if="isBusyGroup(item.id)" size="xs" class="shrink-0 w-4 h-4" />
-          <span v-else class="w-4 shrink-0" />
-          <CoreAppCheckbox
-            :model-value="isItemChecked(item)"
-            size="sm"
-            class="shrink-0"
-            @click.stop
-            :aria-label="item.label"
-            @update:model-value="handleItemClick(item)"
-          />
-          <CoreAppIcon v-if="!item.isGroup" :name="icons.product" class="w-3 h-3 shrink-0 text-(--color-text-muted)/60" />
+        <div v-if="productRoot" class="mb-2">
           <button
             type="button"
-            class="truncate flex-1 text-left bg-transparent border-0 p-0 cursor-pointer"
-            :aria-label="item.label"
-            @click="handleItemClick(item)"
+            class="w-full flex items-center gap-1.5 px-1 py-1.5 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded text-left"
+            :aria-expanded="productRootExpanded"
+            :aria-label="itemLabel({ id: productRoot.id, label: productRoot.label || productRoot.id })"
+            @click="toggleExpand(productRoot.id)"
           >
-            <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
+            <CoreAppIcon
+              :name="productRootExpanded ? icons.chevronDown : icons.chevronRight"
+              class="w-3.5 h-3.5 text-(--color-text-muted)"
+            />
+            <CoreAppTooltip :text="$t('groups.productTooltip')">
+              <span class="text-xs font-semibold text-(--color-text) cursor-help border-b border-dashed border-(--color-text-muted)/40">
+                {{ itemLabel({ id: productRoot.id, label: productRoot.label || productRoot.id }) }}
+              </span>
+            </CoreAppTooltip>
           </button>
+          <template v-if="productRootExpanded">
+            <div
+              v-for="item in visibleProductItems"
+              :key="item.id"
+              v-memo="[item.isExpanded, item.hasChildren, getItemSelectionState(item), item.memberCount, isBusyGroup(item.id)]"
+              :style="{
+                paddingLeft: `${item.depth * 14 + 6}px`,
+                marginLeft: item.depth > 0 ? `${(item.depth - 1) * 14 + 10}px` : '0',
+              }"
+              class="relative flex items-center gap-1 py-0 px-1 rounded text-sm hover:bg-(--color-surface-hover) cursor-pointer"
+            >
+              <span v-for="depth in item.depth" :key="depth" class="tree-guide-line" :style="{ left: `${8 + (depth - 1) * 14}px` }" />
+              <CoreAppButton
+                v-if="item.hasChildren && !isBusyGroup(item.id)"
+                :icon="item.isExpanded ? icons.chevronDown : icons.chevronRight"
+                size="xs"
+                variant="ghost"
+                color="neutral"
+                class="shrink-0 p-0! h-4! w-4!"
+                :aria-label="item.isExpanded ? $t('common.collapse') : $t('common.expand')"
+                @click.stop="toggleExpand(item.id)"
+              />
+              <CoreAppLoadingSpinner v-else-if="isBusyGroup(item.id)" size="xs" class="shrink-0 w-4 h-4" />
+              <span v-else class="w-4 shrink-0" />
+              <CoreAppCheckbox
+                :model-value="getItemCheckboxValue(item)"
+                size="sm"
+                class="shrink-0"
+                @click.stop
+                :aria-label="item.label"
+                @update:model-value="handleItemClick(item)"
+              />
+              <CoreAppIcon v-if="!item.isGroup" :name="icons.product" class="w-3 h-3 shrink-0 text-(--color-text-muted)/60" />
+              <button
+                type="button"
+                class="truncate flex-1 text-left bg-transparent border-0 p-0 cursor-pointer"
+                :aria-label="item.label"
+                @click="handleItemClick(item)"
+              >
+                <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
+              </button>
+            </div>
+          </template>
         </div>
         <div v-if="productFlatItems.length === 0" class="text-xs text-(--color-text-muted) py-4 text-center">
           {{ $t('common.noResults') }}
@@ -292,6 +316,10 @@
     if (id === 'groups') return $t('groups.title')
     if (id === 'clientdirectory') return $t('clients.directory')
     return id
+  }
+
+  function itemLabel(item: Pick<FlatItem, 'id' | 'label'>): string {
+    return item.id === 'groups' ? $t('groups.title') : item.label
   }
 
   function sectionTooltip(id: string): string {
@@ -452,12 +480,12 @@
     if (props.groupType !== 'product') return []
     const q = debouncedSearch.value.toLowerCase()
     const expanded = expandedIds.value
-    const root = rawTree.value
-    const first = root.length === 1 ? root[0] : null
-    const nodes = first?.children?.length ? first.children : root
-    return flattenNodes(nodes, 0, q, expanded)
+    const root = rawTree.value[0]
+    return root?.children ? flattenNodes(root.children, 0, q, expanded) : []
   })
 
+  const productRoot = computed(() => (props.groupType === 'product' ? rawTree.value[0] : null))
+  const productRootExpanded = computed(() => (productRoot.value ? expandedIds.value.has(productRoot.value.id) : false))
   const visibleProductItems = computed(() => productFlatItems.value.slice(0, productDisplayLimit.value))
 
   const selectedCount = computed(() =>
@@ -473,19 +501,6 @@
       }
     }
     return null
-  }
-
-  function hasSelectedAncestorGroup(groupId: string): boolean {
-    let currentNode = findGroupNodeById(rawTree.value, groupId)
-    let parentId = currentNode?.parentId || null
-
-    while (parentId) {
-      if (selectedGroupsSet.value.has(parentId)) return true
-      currentNode = findGroupNodeById(rawTree.value, parentId)
-      parentId = currentNode?.parentId || null
-    }
-
-    return false
   }
 
   function collectLoadedGroupMembersRecursive(groupId: string): string[] {
@@ -512,22 +527,24 @@
     return fetchProductGroupMembersRecursive(groupId)
   }
 
-  function isItemChecked(item: FlatItem): boolean {
-    if (item.isGroup) {
-      if (selectedItemsSet.value.size === 0) return false
-      if (selectedGroupsSet.value.has(item.id)) return true
-      if (hasSelectedAncestorGroup(item.id)) return true
-      const members = collectLoadedGroupMembersRecursive(item.id)
-      if (members && members.length > 0) {
-        const set = selectedItemsSet.value
-        for (const m of members) {
-          if (!set.has(m)) return false
-        }
-        return true
-      }
-      return selectedGroupsSet.value.has(item.id)
-    }
-    return selectedItemsSet.value.has(item.id)
+  type ItemSelectionState = 'unchecked' | 'indeterminate' | 'checked'
+
+  function getItemSelectionState(item: FlatItem): ItemSelectionState {
+    if (!item.isGroup) return selectedItemsSet.value.has(item.id) ? 'checked' : 'unchecked'
+
+    const members = collectLoadedGroupMembersRecursive(item.id)
+    if (members.length === 0) return 'unchecked'
+
+    const selectedMemberCount = members.filter((member) => selectedItemsSet.value.has(member)).length
+    if (selectedMemberCount === 0) return 'unchecked'
+    if (selectedMemberCount === members.length) return 'checked'
+    return 'indeterminate'
+  }
+
+  function getItemCheckboxValue(item: FlatItem): boolean | 'indeterminate' {
+    const selectionState = getItemSelectionState(item)
+    if (selectionState === 'indeterminate') return 'indeterminate'
+    return selectionState === 'checked'
   }
 
   function isGroupLoading(groupId: string): boolean {
@@ -541,27 +558,6 @@
 
   async function handleItemClick(item: FlatItem) {
     if (item.isGroup) {
-      const isCurrentlyChecked = isItemChecked(item)
-      const isExplicitlySelectedGroup = selectedGroupsSet.value.has(item.id)
-
-      if (isCurrentlyChecked && isExplicitlySelectedGroup) {
-        const loadedMembers = collectLoadedGroupMembersRecursive(item.id)
-        _doGroupSelection(item, loadedMembers)
-        void (async () => {
-          try {
-            const allMembers = await fetchAllGroupMembers(item.id)
-            if (props.groupType === 'client') {
-              selectionStore.removeClients(allMembers, 'quickpanel')
-            } else {
-              selectionStore.removeProducts(allMembers, 'quickpanel')
-            }
-          } catch {
-            // Keep optimistic UI behavior even if deep cleanup fetch fails.
-          }
-        })()
-        return
-      }
-
       const nextLoading = new Set(selectionLoadingIds.value)
       nextLoading.add(item.id)
       selectionLoadingIds.value = nextLoading
@@ -581,7 +577,7 @@
   }
 
   function _doGroupSelection(item: FlatItem, members: string[]) {
-    const isCurrentlyChecked = isItemChecked(item)
+    const isCurrentlyChecked = getItemSelectionState(item) === 'checked'
     if (props.groupType === 'client') {
       if (isCurrentlyChecked) {
         // Uncheck: remove group and its members
@@ -651,7 +647,7 @@
       // On manual refresh, also clear lazy-load tracking so children are re-fetched
       fetchClientGroups(true, selectionStore.selectedServers)
     } else {
-      fetchProductGroups(true)
+      fetchProductGroups(true, true)
     }
   }
 
@@ -667,7 +663,7 @@
         if (props.groupType === 'client') {
           fetchClientGroups(false, selectionStore.selectedServers)
         } else {
-          fetchProductGroups()
+          fetchProductGroups(false, true)
         }
       }
     },
@@ -683,3 +679,15 @@
     },
   )
 </script>
+
+<style scoped>
+  .tree-guide-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: var(--color-border);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+</style>

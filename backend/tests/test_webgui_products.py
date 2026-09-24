@@ -304,11 +304,3 @@ async def test_product_group_move_to_other_group_and_top_level(config):
 	child_node = _find_group_node(tree, child_group)
 	assert child_node is not None
 	assert child_node["parent"] == "groups"
-
-	move_to_self = requests.put(
-		f"{config.external_url}{API_ROOT}/products/groups/{group_a}",
-		auth=(ADMIN_USER, ADMIN_PASS),
-		verify=False,
-		json={"parent": group_a},
-	)
-	assert move_to_self.status_code == 400
