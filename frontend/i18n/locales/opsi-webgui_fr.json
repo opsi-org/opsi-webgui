@@ -630,7 +630,6 @@
     "help": "Appliquer une recherche enregistrée ou enregistrer le filtre actuel.",
     "saveCurrent": "Enregistrer le filtre actuel",
     "none": "Aucune recherche enregistrée.",
-    "namePlaceholder": "Nom de la recherche",
     "favorite": "Marquer comme favori",
     "unfavorite": "Retirer des favoris",
     "saveAsFavorite": "Enregistrer comme favori",

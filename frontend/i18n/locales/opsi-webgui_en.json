@@ -630,7 +630,6 @@
     "help": "Apply a saved search, or save the current filter.",
     "saveCurrent": "Save the current filter",
     "none": "No saved searches yet.",
-    "namePlaceholder": "Search name",
     "favorite": "Mark as favorite",
     "unfavorite": "Remove from favorites",
     "saveAsFavorite": "Save as favorite",

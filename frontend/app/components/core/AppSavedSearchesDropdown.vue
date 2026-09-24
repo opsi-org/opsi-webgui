@@ -19,7 +19,7 @@
         v-model="filterQuery"
         class="flex-1"
         input-class="w-full"
-        :placeholder="String($t('savedSearches.namePlaceholder'))"
+        :placeholder="String($t('common.filter'))"
         @keydown.enter.prevent="emit('save')"
       />
       <CoreAppButton size="sm" color="primary" :icon="icons.bookmark" :disabled="!canSave" @click="emit('save')" />
