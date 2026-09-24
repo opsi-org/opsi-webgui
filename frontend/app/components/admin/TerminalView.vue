@@ -94,7 +94,7 @@
       <template #title>{{ $t('terminal.disabled') }}</template>
     </CoreAppAlertInline>
 
-    <div v-if="!isDisabled" class="flex-1 min-h-0 rounded-lg overflow-hidden border border-(--color-border)">
+    <div v-show="!isDisabled" class="flex-1 min-h-0 rounded-lg overflow-hidden border border-(--color-border)">
       <div ref="terminalContainer" class="h-full w-full bg-gray-900" />
     </div>
   </div>
@@ -388,7 +388,11 @@
     await checkDisabled()
     if (!isDisabled.value) {
       await nextTick()
-      await initTerminal()
+      if (terminalInstance.value) {
+        terminalInstance.value.fitAddon.fit()
+      } else {
+        await initTerminal()
+      }
     }
   })
 
