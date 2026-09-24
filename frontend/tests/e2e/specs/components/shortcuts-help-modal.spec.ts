@@ -9,9 +9,10 @@ test.describe('Keyboard shortcuts help modal', () => {
       waitAfterNav: 3000,
       skipVisualRegression: true,
       docName: 'opsi-webgui-keyboard-shortcut-helper',
-      marketingName: 'opsi-webgui-keyboard-shortcut-helper',
-      functional: async (p) => {
+      prepareAfterNavigation: async (p) => {
         await p.keyboard.press('Control+Shift+?')
+      },
+      functional: async (p) => {
         const modal = p.getByRole('dialog')
         await expect(modal).toBeVisible({ timeout: 10000 })
       },

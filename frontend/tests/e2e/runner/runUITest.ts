@@ -135,6 +135,7 @@ export interface UITestConfig {
   docDarkMode?: boolean
   elementShots?: ElementShot[]
   marketingName?: string
+  prepareAfterNavigation?: (page: Page) => Promise<void>
   marketingPrepare?: (page: Page) => Promise<void>
 }
 
@@ -303,6 +304,7 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
 
   //  Phase 1: Baseline - de + light + desktop
   await navigateTo(page, config, 'de', 'light')
+  await config.prepareAfterNavigation?.(page)
 
   if (config.functional) {
     await config.functional(page)
@@ -346,6 +348,7 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
 
     // Phase 3 (nightly): en + light + standard
     await navigateTo(page, config, 'en', 'light')
+    await config.prepareAfterNavigation?.(page)
     await runA11yChecks(page, config, {})
 
     // Doc screenshot : en + light
@@ -383,6 +386,7 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
         await page.waitForTimeout(300)
         await disableAnimations(page)
         await waitForLoaded(page)
+        await config.prepareAfterNavigation?.(page)
 
         if (config.marketingPrepare) {
           await config.marketingPrepare(page)
