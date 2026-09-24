@@ -190,10 +190,6 @@
       disconnect()
     } else if (message.type === 'terminal_data_read' && message.data) {
       terminal.write(message.data)
-      const decoded = typeof message.data === 'string' ? message.data : new TextDecoder().decode(message.data)
-      if (/(?:^|\r?\n)(?:logout|exit)\s*$|connection\s+closed|session\s+closed/i.test(decoded)) {
-        disconnect()
-      }
     }
   }
 
