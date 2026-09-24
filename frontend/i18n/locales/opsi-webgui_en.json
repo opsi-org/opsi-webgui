@@ -358,7 +358,8 @@
     "product": "Product Groups",
     "subgroup": "Add Subgroup",
     "title": "Groups",
-    "tooltip": "A client can be assigned to multiple subgroups within this group."
+    "tooltip": "A client can be assigned to multiple subgroups within this group.",
+    "productTooltip": "A product can be assigned to multiple subgroups within this group."
   },
   "hosts": {
     "select": "Select host to view configuration"

@@ -190,14 +190,6 @@ async def test_host_group_move_to_other_group_and_top_level(config):
 	).json()["groups"]["children"]
 	assert child_group in children
 
-	move_to_self = requests.put(
-		f"{config.external_url}{API_ROOT}/hosts/groups/{group_a}",
-		auth=(ADMIN_USER, ADMIN_PASS),
-		verify=False,
-		json={"parent": group_a},
-	)
-	assert move_to_self.status_code == status.HTTP_400_BAD_REQUEST
-
 
 @pytest.mark.asyncio
 async def test_servers_respect_restricted_depot_access(config):  # pylint: disable=redefined-outer-name

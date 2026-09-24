@@ -78,6 +78,7 @@ const productGroupsState = reactive({
   loading: false,
   error: null as string | null,
   fetched: false,
+  membersFetched: false,
   expanded: new Set<string>(),
   loadedGroups: new Set<string>(),
   loadingGroups: new Set<string>(),
@@ -387,17 +388,20 @@ export function useCachedData() {
 
   // Product groups
 
-  async function fetchProductGroups(force = false) {
-    if (productGroupsState.fetched && !force) return
+  async function fetchProductGroups(force = false, withProducts = false) {
+    if (productGroupsState.fetched && (!withProducts || productGroupsState.membersFetched) && !force) return
     if (productGroupsPromise && !force) {
       await productGroupsPromise
+      if (withProducts && !productGroupsState.membersFetched) {
+        await fetchProductGroups(true, true)
+      }
       return
     }
     productGroupsState.loading = true
     productGroupsState.error = null
     const doFetch = async () => {
       try {
-        const result = await getProductGroups({ withProducts: false })
+        const result = await getProductGroups({ withProducts })
         if (result.error) {
           productGroupsState.error = result.error.message || 'Failed to load groups'
           return
@@ -406,6 +410,7 @@ export function useCachedData() {
           const rawData = (result.data as Record<string, unknown>).groups || result.data
           productGroupsState.tree = transformApiToTree(rawData as Record<string, unknown>, 'product')
           productGroupsState.fetched = true
+          productGroupsState.membersFetched = withProducts
           productGroupsState.loadedGroups = new Set<string>()
           productGroupRecursiveMembersCache.clear()
           const first = productGroupsState.tree[0]

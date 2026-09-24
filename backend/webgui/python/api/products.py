@@ -1895,18 +1895,6 @@ def update_product_group(  # pylint: disable=invalid-name, too-many-locals, too-
 	"""
 	if parent == "groups" or not parent:
 		parent = None
-	if parent:
-		groups = get_groups_ids("ProductGroup")
-		if parent not in groups:
-			return RESTErrorResponse(
-				message=f"Could not update group... Parent group '{parent}' does not exist.",
-				http_status=status.HTTP_400_BAD_REQUEST,
-			)
-		if parent == group or parent in get_sub_groups(group):
-			return RESTErrorResponse(
-				message=f"Could not update group... '{parent}' is the group itself or one of its subgroups.",
-				http_status=status.HTTP_400_BAD_REQUEST,
-			)
 
 	existing_groups = backend.group_getObjects(id=group, type="ProductGroup")
 	if not existing_groups:

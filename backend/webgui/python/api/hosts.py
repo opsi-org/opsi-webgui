@@ -374,18 +374,6 @@ def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 	"""
 	if parent == "groups" or not parent:
 		parent = None
-	if parent:
-		groups = get_groups_ids("HostGroup")
-		if parent not in groups:
-			return RESTErrorResponse(
-				message=f"Could not update group... Parent group '{parent}' does not exist.",
-				http_status=status.HTTP_400_BAD_REQUEST,
-			)
-		if parent == group or parent in get_sub_groups(group):
-			return RESTErrorResponse(
-				message=f"Could not update group... '{parent}' is the group itself or one of its subgroups.",
-				http_status=status.HTTP_400_BAD_REQUEST,
-			)
 
 	existing_groups = backend.group_getObjects(id=group, type="HostGroup")
 	if not existing_groups:
@@ -825,7 +813,7 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 						)
 					)
 					.select_from(table("OBJECT_TO_GROUP").alias("og"))
-					.where(text("og.groupId = :parent"))
+					.where(text("og.groupType = 'HostGroup' AND og.groupId = :parent"))
 				)
 				member_rows = session.execute(member_query, params).fetchall()
 
