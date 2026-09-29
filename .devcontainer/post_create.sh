@@ -5,9 +5,7 @@ set -e
 
 echo "[post_create] Running as $(whoami)"
 
-# Install uv
-echo "[post_create] Installing uv..."
-curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sudo sh
+# uv and the managed Python interpreter are installed in the shared Docker image.
 echo 'eval "$(uv generate-shell-completion bash)"\n' >> ~/.bashrc # needs new line for proper formatting
 
 # Setup bash config (uv completion and useful aliases)
@@ -60,6 +58,9 @@ if [ -d "$OPSICONFD_DIR" ]; then
         echo "[post_create] Removing broken venv (incompatible Python path)..."
         rm -rf .venv
     fi
+    # In Dockerfile we already call rustup default stable to make it available for pipelines,
+    # but we still need to run it here, to ensure the Rust toolchain is active in this environment
+    rustup default stable
     uv sync
     # Symlink static directory
     rm -f "$OPSICONFD_DIR/static"

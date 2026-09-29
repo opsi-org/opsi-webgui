@@ -34,6 +34,20 @@ RUN mkdir -p /usr/local/share/keyrings \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
+ENV UV_PYTHON=3.15 \
+	PATH="/root/.local/bin:${PATH}"
+
+# Update uv and install specified Python version for subsequent builds and scripts
+RUN uv self update \
+	&& uv --version \
+	&& uv python install "$UV_PYTHON" \
+	&& chmod a+rx /root /root/.local /root/.local/bin \
+	&& chmod a+rX /root/.local/bin/uv
+
+# Ensure Rust toolchain is set to stable for subsequent builds and scripts
+# Required by blake3 for Python 3.15, since it needs a Rust compiler to build wheel.
+RUN rustup default stable
+
 COPY docker/files/ /
 
 # Redis + MySQL runtime dirs
@@ -92,9 +106,6 @@ RUN mkdir -p /var/lib/opsiconfd/addons \
 
 # Addon symlink
 RUN ln -sf /workspace/backend/${ADDON_ID} /var/lib/opsiconfd/addons/${ADDON_ID}
-
-# Allow opsiconfd user to access uv-installed Python
-RUN chmod a+rx /root && mkdir -p /root/.local/share && chmod -R a+rX /root/.local
 
 # Node.js 22 LTS + pnpm
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
