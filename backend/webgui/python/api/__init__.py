@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # This file is part of the OPSI-WebGUI application.
 # The OPSI-WebGUI backend is an addon for opsiconfd.
 # https://opsi.org/en/
