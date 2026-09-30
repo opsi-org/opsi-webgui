@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# opsiconfd is part of the desktop management solution opsi https://www.opsi.org
-# Copyright (c) 2026 uib GmbH <info@uib.de>
+# This file is part of the OPSI-WebGUI application.
+# The OPSI-WebGUI backend is an addon for opsiconfd.
+# https://opsi.org/en/
+#
+# Copyright (c) UIB GmbH info@uib.de 2026
 # All rights reserved.
 # License: AGPL-3.0
+
 """
 addon opsi-portal - utils
 """
