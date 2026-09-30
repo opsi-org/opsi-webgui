@@ -32,7 +32,6 @@ test.describe('DataTable scroll', () => {
   test('vertical scroll: content overflows and the container scrolls', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-    await page.waitForTimeout(3000)
     await waitForTable(page)
 
     const m = await metrics(page)
@@ -44,7 +43,6 @@ test.describe('DataTable scroll', () => {
   test('horizontal scroll: wide table scrolls sideways on a narrow window', async ({ page }) => {
     await page.setViewportSize({ width: 820, height: 800 })
     await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-    await page.waitForTimeout(3000)
     await waitForTable(page)
 
     const m = await metrics(page)
@@ -57,12 +55,8 @@ test.describe('DataTable scroll', () => {
     // A 4K-class viewport: 20 rows can never fill it
     await page.setViewportSize({ width: 2560, height: 1440 })
     await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-    await page.waitForTimeout(3000)
     await waitForTable(page)
 
     await expect.poll(async () => getTableRowCount(page), { timeout: 15000, intervals: [500, 1000, 1500] }).toBeGreaterThan(20)
-
-    const m = await metrics(page)
-    expect(m.scrollHeight).toBeGreaterThanOrEqual(m.clientHeight)
   })
 })

@@ -40,33 +40,25 @@ test.describe('DataTable - component', () => {
           .getByRole('button')
           .filter({ hasText: /pagination|seiten/i })
           .first()
-        if (await paginationButton.isVisible().catch(() => false)) {
-          await paginationButton.click()
-          await p.waitForTimeout(300)
-        }
+        await expect(paginationButton).toBeVisible()
+        await paginationButton.click()
+        await p.waitForTimeout(300)
 
         // Select all rows via header checkbox (multiselect)
         const headerCheckbox = p.locator('thead [type="checkbox"], thead [role="checkbox"]').first()
-        if (await headerCheckbox.isVisible().catch(() => false)) {
-          await headerCheckbox.click()
-          await p.waitForTimeout(400)
-          // At least one row should now be checked
-          const checkedRows = p.locator('tbody [type="checkbox"]:checked, tbody [aria-checked="true"]')
-          expect(await checkedRows.count()).toBeGreaterThan(0)
-        }
+        await expect(headerCheckbox).toBeVisible()
+        await headerCheckbox.click()
+        await p.waitForTimeout(400)
+        // At least one row should now be checked
+        const checkedRows = p.locator('tbody [type="checkbox"]:checked, tbody [aria-checked="true"]')
+        await expect(checkedRows.first()).toBeVisible()
 
         // Verify pagination controls are visible while the settings popover stays open.
-        const pagination = p.locator('[class*="pagination"], [aria-label*="page" i], [role="navigation"]').first()
-        if (await pagination.isVisible().catch(() => false)) {
-          const pageButtons = pagination.locator('button, [role="button"]')
-          const count = await pageButtons.count()
-          if (count > 0) {
-            expect(count).toBeGreaterThan(0)
-          }
-        }
+        const pagination = p.locator('main [class*="pagination"], main [aria-label*="page" i]').first()
+        await expect(pagination).toBeVisible()
+        await expect(pagination.locator('button, [role="button"]').first()).toBeVisible()
       },
       vrMask: ['[class*="timestamp"]', '[class*="lastSeen"]'],
-      elementShots: [],
     })
   })
 })

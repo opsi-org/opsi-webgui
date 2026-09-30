@@ -14,7 +14,6 @@ import { waitForTable, getTableRowCount } from '../../utils/ui'
 
 async function seedClientSelection(page: import('@playwright/test').Page): Promise<string> {
   await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-  await page.waitForTimeout(3000)
   await waitForTable(page)
 
   const firstClientId = await page.locator('table tbody tr td').evaluateAll((cells) => {
@@ -388,7 +387,7 @@ test.describe('Clients', () => {
 
         const hasScrollableArea = await (hasParamsCard ? paramsCard : fallbackPane).evaluate((el) => {
           const candidate = (el.querySelector('[style*="overflow"], .overflow-y-auto, .overflow-auto') || el) as HTMLElement
-          return candidate.scrollHeight >= candidate.clientHeight
+          return candidate.scrollHeight > candidate.clientHeight
         })
         expect(hasScrollableArea).toBeTruthy()
       },

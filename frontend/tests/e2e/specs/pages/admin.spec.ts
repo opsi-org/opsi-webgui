@@ -147,7 +147,7 @@ test.describe('Admin', () => {
         if (hasScrollableShell) {
           const scrollReady = await scrollShell.evaluate((el) => {
             const target = el as HTMLElement
-            return target.clientHeight > 0 && target.scrollHeight >= target.clientHeight
+            return target.clientHeight > 0 && target.scrollHeight > target.clientHeight
           })
           expect(scrollReady).toBeTruthy()
         }

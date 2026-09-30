@@ -14,7 +14,6 @@ import { waitForTable, getTableRowCount } from '../../utils/ui'
 
 async function seedClientSelectionFromClientsPage(page: import('@playwright/test').Page) {
   await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-  await page.waitForTimeout(3000)
   await waitForTable(page)
 
   const clientIds = await page.locator('table tbody tr td').evaluateAll((cells) => {

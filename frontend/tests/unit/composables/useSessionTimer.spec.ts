@@ -43,12 +43,6 @@ describe('useSessionTimer', () => {
     mockUserStore.isAuthenticated = true
   })
 
-  it('should export the composable', async () => {
-    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
-    expect(useSessionTimer).toBeDefined()
-    expect(typeof useSessionTimer).toBe('function')
-  })
-
   it('should provide timer state', async () => {
     const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
     const timer = useSessionTimer(false)

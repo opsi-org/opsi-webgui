@@ -41,7 +41,6 @@ test.describe('Servers', () => {
           }
         }
       },
-      elementShots: [],
     })
   })
 
