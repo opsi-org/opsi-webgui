@@ -13,7 +13,7 @@
   "github.copilot.chat.reviewSelection.enabled": true,
   "github.copilot.chat.reviewSelection.instructions": [
     {
-      "file": ".github/instructions/python-coding-style.instructions.md"
+      "file": ".github/instructions/backend-python-coding-style.instructions.md"
     },
     {
       "file": ".github/instructions/frontend-coding-style.instructions.md"
@@ -45,7 +45,6 @@
   "[vue]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "vue.format.enable": false,
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.fixAll.ruff": "explicit",
@@ -57,15 +56,6 @@
   "python.testing.pytestEnabled": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-    "vue",
-    "html",
-    "json",
-    "jsonc"
-  ],
-  "trailing-spaces.trimOnSave": true,
   "git.ignoreLimitWarning": true,
   "files.associations": {
     "*.css": "tailwindcss"
@@ -73,37 +63,8 @@
   "editor.quickSuggestions": {
     "strings": "on"
   },
-  "tailwindCSS.classAttributes": [
-    "class",
-    "ui"
-  ],
+  "tailwindCSS.classAttributes": ["class", "ui"],
   "tailwindCSS.experimental.classRegex": [
-    [
-      "ui:\\s*{([^)]*)\\s*}",
-      "(?:'|\"|`)([^']*)(?:'|\"|`)"
-    ]
-  ],
-  "coverage-gutters.coverageFileNames": [
-    "backend/coverage.lcov",
-    "coverage.lcov",
-    "backend/coverage.xml",
-    "coverage.xml",
-    "lcov.info"
-  ],
-  "coverage-gutters.showLineCoverage": true,
-  "coverage-gutters.showRulerCoverage": true,
-  "actionButtons": {
-    "defaultColor": "white",
-    "reloadButton": "↻",
-    "loadNpmCommands": false,
-    "commands": [
-      {
-        // reload opsiconfd
-        "name": "$(refresh) b-reload",
-        "tooltip": "reload opsiconfd without restarting",
-        "singleInstance": true,
-        "command": "curl -I --request POST -u \"$OPSI_ADMIN_USER:$OPSI_ADMIN_PW\" \"https://localhost:$OPSICONFD_PORT/admin/reload\" && exit 0 || exit 1",
-      },
-    ],
-  },
+    ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ]
 }
