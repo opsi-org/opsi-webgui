@@ -101,6 +101,7 @@
 </template>
 
 <script setup lang="ts">
+  import { encode, decode } from '@msgpack/msgpack'
   const icons = useIcons()
   const { t: $t } = useI18n()
   const { isReadOnly, isTerminalEnabled } = useUserPermissions()
@@ -121,6 +122,7 @@
   const terminalId = ref(terminalIdDefault)
   const terminalChannel = ref(terminalChannelDefault)
   const terminalSessionChannel = ref('')
+  const terminalOutputProcessed = ref(false)
 
   const terminalStatusText = computed(() => {
     if (isConnected.value) return String($t('terminal.connected'))
@@ -134,6 +136,9 @@
   const messageBus = useMessageBus(handleMessage, false)
 
   let _onDataDisposable: { dispose: () => void } | null = null
+  let _onResizeDisposable: { dispose: () => void } | null = null
+  let terminalConnectTimeout: ReturnType<typeof setTimeout> | null = null
+  const pendingSavedCommands: string[] = []
 
   function createTerminalInterface(t: unknown): {
     cols: number
@@ -142,7 +147,7 @@
     terminalChannel: string
     terminalSessionChannel: string
     writeln: (text: string) => void
-    write: (data: string | Uint8Array) => void
+    write: (data: string | Uint8Array, callback?: () => void) => void
     onData: (cb: (data: string) => void) => { dispose: () => void }
     onResize: (cb: (size: { rows: number; cols: number }) => void) => { dispose: () => void }
     clear: () => void
@@ -160,27 +165,55 @@
     if (data) isDisabled.value = data.includes('terminal')
   }
 
-  async function handleMessage(msg: unknown) {
+  function handleMessage(msg: unknown) {
     if (!msg || typeof msg !== 'object') return
     const message = msg as {
       type?: string
+      terminal_id?: string
       cols?: number
       rows?: number
       data?: Uint8Array | string
       back_channel?: string
       reason?: string
+      error?: string | { message?: string }
+      subscribed_channels?: unknown
+    }
+
+    if (message.type === 'channel_subscription_event') {
+      if (!isConnecting.value) return
+      if (message.error) {
+        disconnect()
+        return
+      }
+      if (
+        !Array.isArray(message.subscribed_channels) ||
+        !message.subscribed_channels.includes(terminalSessionChannel.value) ||
+        !terminalInstance.value
+      ) {
+        return
+      }
+
+      void messageBus.wsTerminalOpen(terminalId.value, terminalInstance.value.terminal).catch(() => {
+        disconnect()
+      })
+      return
     }
 
     if (!message.type?.startsWith('terminal_')) return
-    if (!terminalInstance.value) return
+    if (!terminalInstance.value || message.terminal_id !== terminalId.value) return
 
     const terminal = terminalInstance.value.terminal
 
-    if (message.type === 'terminal_open_event' || message.type === 'terminal_resize_event') {
-      if (message.type === 'terminal_open_event' && message.back_channel) {
+    if (message.type === 'terminal_open_event') {
+      if (message.back_channel) {
         terminalChannel.value = message.back_channel
         terminal.terminalChannel = message.back_channel
       }
+      activateTerminal()
+      if (terminal.cols !== message.cols || terminal.rows !== message.rows) {
+        terminalInstance.value.fitAddon.fit()
+      }
+    } else if (message.type === 'terminal_resize_event') {
       if (terminal.cols !== message.cols || terminal.rows !== message.rows) {
         terminalInstance.value.fitAddon.fit()
       }
@@ -189,7 +222,10 @@
     } else if (message.type === 'terminal_error') {
       disconnect()
     } else if (message.type === 'terminal_data_read' && message.data) {
-      terminal.write(message.data)
+      terminal.write(message.data, () => {
+        terminalOutputProcessed.value = true
+        executePendingSavedCommands()
+      })
     }
   }
 
@@ -268,10 +304,60 @@
     }
   }
 
+  function activateTerminal() {
+    const terminal = terminalInstance.value?.terminal
+    if (!terminal || isConnected.value) return
+    if (terminalConnectTimeout) clearTimeout(terminalConnectTimeout)
+    terminalConnectTimeout = null
+
+    terminal.writeln(`\x1b[1;32m${$t('terminal.connected')}\x1b[0m`)
+    terminal.writeln('')
+    isConnected.value = true
+    isConnecting.value = false
+
+    _onDataDisposable?.dispose()
+    _onDataDisposable = terminal.onData((data: string) => {
+      if (!isConnected.value) return
+      if (data === 'exit\r' || data === 'exit\n') {
+        messageBus.wsTerminalSend(data, terminal)
+        setTimeout(() => {
+          if (isConnected.value) disconnect()
+        }, 300)
+        return
+      }
+      messageBus.wsTerminalSend(data, terminal)
+    })
+
+    _onResizeDisposable?.dispose()
+    let skipResizeEvent = true
+    setTimeout(() => {
+      skipResizeEvent = false
+    }, 500)
+    _onResizeDisposable = terminal.onResize((event: { rows: number; cols: number }) => {
+      if (!skipResizeEvent && isConnected.value) {
+        messageBus.wsTerminalResize(event.rows, event.cols, terminal)
+      }
+    })
+
+    executePendingSavedCommands()
+  }
+
+  function executePendingSavedCommands() {
+    if (!isConnected.value || !terminalOutputProcessed.value || !terminalInstance.value) return
+    for (const command of pendingSavedCommands.splice(0)) {
+      messageBus.wsTerminalSend(`${command}\r`, terminalInstance.value.terminal)
+    }
+  }
+
   async function connect() {
-    if (!terminalInstance.value) return
+    if (!terminalInstance.value || isConnecting.value || isConnected.value) return
 
     isConnecting.value = true
+    terminalOutputProcessed.value = false
+    if (terminalConnectTimeout) clearTimeout(terminalConnectTimeout)
+    terminalConnectTimeout = setTimeout(() => {
+      if (isConnecting.value) disconnect()
+    }, 15000)
 
     try {
       const terminal = terminalInstance.value.terminal
@@ -279,44 +365,12 @@
       terminal.clear()
       terminal.writeln(`\x1b[1;33m${$t('terminal.connecting')}\x1b[0m`)
       terminalSessionChannel.value = 'session:' + terminalId.value
+      terminal.terminalId = terminalId.value
+      terminal.terminalChannel = terminalChannelDefault
       terminal.terminalSessionChannel = terminalSessionChannel.value
-      await messageBus.wsTerminalOpen(terminalId.value, terminal)
-      terminal.writeln(`\x1b[1;32m${$t('terminal.connected')}\x1b[0m`)
-      terminal.writeln('')
-      isConnected.value = true
-
-      // prevents double-input on reconnect
-      if (_onDataDisposable) {
-        _onDataDisposable.dispose()
-        _onDataDisposable = null
-      }
-
-      _onDataDisposable = terminal.onData((data: string) => {
-        if (!isConnected.value) return
-        if (data === 'exit\r' || data === 'exit\n') {
-          messageBus.wsTerminalSend(data, terminal)
-          setTimeout(() => {
-            if (isConnected.value) disconnect()
-          }, 300)
-          return
-        }
-        messageBus.wsTerminalSend(data, terminal)
-      })
-
-      let skipResizeEvent = true
-      setTimeout(() => {
-        skipResizeEvent = false
-      }, 500)
-
-      terminal.onResize((event: { rows: number; cols: number }) => {
-        if (!skipResizeEvent && isConnected.value) {
-          messageBus.wsTerminalResize(event.rows, event.cols, terminal)
-        }
-      })
-    } catch (_e) {
+      await messageBus.subscribeChannels([terminalSessionChannel.value])
+    } catch (error) {
       disconnect()
-    } finally {
-      isConnecting.value = false
     }
   }
 
@@ -354,14 +408,12 @@
   }
 
   async function runSavedCommand(command: string) {
-    if (!isConnected.value) {
-      await connect()
-      // give the session a brief moment to fully establish
-      // before sending input, otherwise the command can be dropped.
-      await new Promise((resolve) => setTimeout(resolve, 400))
+    if (isConnected.value && terminalInstance.value && terminalOutputProcessed.value) {
+      messageBus.wsTerminalSend(`${command}\r`, terminalInstance.value.terminal)
+      return
     }
-    if (!isConnected.value || !terminalInstance.value) return
-    messageBus.wsTerminalSend(`${command}\r`, terminalInstance.value.terminal)
+    pendingSavedCommands.push(command)
+    if (!isConnected.value) await connect()
   }
 
   function disconnect() {
@@ -374,6 +426,15 @@
       terminalInstance.value.terminal.writeln('')
       terminalInstance.value.terminal.writeln(`\x1b[1;33m${$t('terminal.disconnected')}\x1b[0m`)
     }
+
+    _onResizeDisposable?.dispose()
+    _onResizeDisposable = null
+    if (terminalConnectTimeout) clearTimeout(terminalConnectTimeout)
+    terminalConnectTimeout = null
+    isConnecting.value = false
+
+    pendingSavedCommands.length = 0
+    terminalOutputProcessed.value = false
 
     isConnected.value = false
     terminalId.value = crypto.randomUUID()

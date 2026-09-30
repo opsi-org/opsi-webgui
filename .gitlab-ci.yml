@@ -260,15 +260,15 @@ validate:backend:
     - docker compose -f docker/docker-compose.test.yml down -v || true
     - |
       if [ ! -f backend/coverage.xml ]; then
-        cat > backend/coverage.xml <<'EOF'
-        <?xml version="1.0" ?>
-        <coverage version="1.0" timestamp="0" lines-valid="0" lines-covered="0" line-rate="0" branches-valid="0" branches-covered="0" branch-rate="0" complexity="0">
-          <sources>
-            <source>/builds/${CI_PROJECT_PATH}/backend</source>
-          </sources>
-          <packages />
-        </coverage>
-        EOF
+        cat > backend/coverage.xml <<EOF
+      <?xml version="1.0" ?>
+      <coverage version="1.0" timestamp="0" lines-valid="0" lines-covered="0" line-rate="0" branches-valid="0" branches-covered="0" branch-rate="0" complexity="0">
+        <sources>
+          <source>/builds/${CI_PROJECT_PATH}/backend</source>
+        </sources>
+        <packages />
+      </coverage>
+      EOF
       fi
   coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+)%/'
   artifacts:

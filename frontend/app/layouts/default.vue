@@ -300,7 +300,7 @@
 
   onMounted(() => {
     updateDefaultPage()
-    messageBusStore.connect()
+    void messageBusStore.connect().catch(() => undefined)
     const checkMobile = () => {
       isMobile.value = window.innerWidth < 768
       uiStore.setIsMobile(isMobile.value)

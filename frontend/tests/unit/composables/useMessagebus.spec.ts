@@ -15,6 +15,7 @@ vi.mock('vue', async () => {
   return {
     ...actual,
     onMounted: vi.fn((cb: () => void) => cb()),
+    onUnmounted: vi.fn(),
   }
 })
 
@@ -25,10 +26,10 @@ const mockStore = reactive({
   changesDetected: false,
   lastEventType: '',
   bus: undefined,
-  connect: vi.fn(),
+  connect: vi.fn(() => Promise.resolve({} as WebSocket)),
   disconnect: vi.fn(),
-  send: vi.fn(),
-  subscribeChannels: vi.fn(),
+  send: vi.fn(() => Promise.resolve()),
+  subscribeChannels: vi.fn(() => Promise.resolve()),
   setAutoRefresh: vi.fn((val: boolean) => {
     mockStore.autoRefresh = val
   }),
@@ -56,7 +57,6 @@ vi.mock('pinia', () => ({
 async function emitMessage(msg: unknown) {
   mockStore.lastMsg = msg
   await nextTick()
-  // handleMessage is async — give it a microtask to run
   await Promise.resolve()
 }
 
@@ -68,6 +68,9 @@ describe('useAutoRefresh', () => {
     mockStore.autoRefresh = true
     mockStore.changesDetected = false
     mockStore.lastEventType = ''
+    mockStore.connect.mockResolvedValue({} as WebSocket)
+    mockStore.send.mockResolvedValue()
+    mockStore.subscribeChannels.mockResolvedValue()
   })
 
   afterEach(() => {
@@ -291,5 +294,61 @@ describe('useAutoRefresh', () => {
     const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
     useAutoRefresh(vi.fn())
     expect(mockStore.connect).toHaveBeenCalled()
+  })
+
+  it('waits for requested channels to be subscribed during mount', async () => {
+    const { useMessageBus } = await import('~/app/composables/useMessagebus')
+    let resolveSubscription!: () => void
+    mockStore.subscribeChannels.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSubscription = resolve
+        }),
+    )
+
+    let mountFinished = false
+    const mountPromise = useMessageBus(undefined, false, ['event:test'])
+      .mount()
+      .then(() => {
+        mountFinished = true
+      })
+    await Promise.resolve()
+
+    expect(mockStore.connect).toHaveBeenCalled()
+    expect(mockStore.subscribeChannels).toHaveBeenCalledWith(['event:test'])
+    expect(mountFinished).toBe(false)
+
+    resolveSubscription()
+    await mountPromise
+    expect(mountFinished).toBe(true)
+  })
+
+  it('sends one terminal open request without waiting for a terminal status', async () => {
+    const { useMessageBus } = await import('~/app/composables/useMessagebus')
+    const terminal = {
+      terminalId: '',
+      terminalChannel: '',
+      terminalSessionChannel: '',
+      cols: 80,
+      rows: 24,
+    }
+    await useMessageBus().wsTerminalOpen('terminal-id', terminal)
+
+    expect(mockStore.subscribeChannels).not.toHaveBeenCalled()
+    expect(mockStore.send).toHaveBeenCalledWith(expect.objectContaining({ type: 'terminal_open_request', terminal_id: 'terminal-id' }))
+    expect(mockStore.send).toHaveBeenCalledTimes(1)
+  })
+
+  it('delivers messages to the callback when lastMsg changes', async () => {
+    const { useMessageBus } = await import('~/app/composables/useMessagebus')
+    const handler = vi.fn()
+    useMessageBus(handler)
+    const subscriptionAck = { type: 'channel_subscription_event', subscribed_channels: ['session:terminal-id'] }
+    const terminalOpen = { type: 'terminal_open_event', terminal_id: 'terminal-id' }
+
+    await emitMessage(subscriptionAck)
+    await emitMessage(terminalOpen)
+
+    expect(handler.mock.calls).toEqual([[subscriptionAck], [terminalOpen]])
   })
 })
