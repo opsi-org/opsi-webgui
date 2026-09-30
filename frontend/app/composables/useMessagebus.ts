@@ -12,7 +12,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useMessageBusStore, createUUID, createMsgTemplate } from '~/stores/messageBusStore'
 import { storeToRefs } from 'pinia'
 
-type MessageHandler = (msg: unknown) => Promise<void>
+type MessageHandler = (msg: unknown) => void | Promise<void>
 type Terminal = {
   terminalId: string
   terminalChannel: string
@@ -43,10 +43,6 @@ const SERVER_EVENTS = [...HOST_EVENTS, ...CONFIG_EVENTS, ...CONFIG_STATE_EVENTS,
 
 const ALL_DATA_EVENTS = [...SERVER_EVENTS, ...PRODUCT_EVENTS, ...LOG_EVENTS]
 
-function wsWait(ms: number) {
-  return new Promise((r) => setTimeout(r, ms))
-}
-
 // Core MessageBus composable
 export function useMessageBus(onMessage?: MessageHandler, _showNotifications = false, _channels: string[] = []) {
   const store = useMessageBusStore()
@@ -62,9 +58,13 @@ export function useMessageBus(onMessage?: MessageHandler, _showNotifications = f
     })
   }
 
-  function mount() {
-    store.connect()
-    if (channels.length) store.subscribeChannels(channels)
+  async function mount() {
+    await store.connect()
+    if (channels.length) await store.subscribeChannels(channels)
+  }
+
+  function subscribeChannels(requestedChannels: string[]) {
+    store.subscribeChannels(requestedChannels)
   }
 
   function wsDisconnect() {
@@ -72,15 +72,13 @@ export function useMessageBus(onMessage?: MessageHandler, _showNotifications = f
   }
 
   function wsSend(msg: Record<string, unknown>) {
-    store.send(msg)
+    return store.send(msg)
   }
 
   async function wsTerminalOpen(suid: string, terminal: Terminal) {
     terminal.terminalId = suid || createUUID()
     terminal.terminalChannel = 'service:config:terminal'
     terminal.terminalSessionChannel = 'session:' + suid
-    store.subscribeChannels([terminal.terminalSessionChannel])
-    await wsWait(2000)
     const m = createMsgTemplate()
     m.type = 'terminal_open_request'
     m.terminal_id = terminal.terminalId
@@ -88,7 +86,7 @@ export function useMessageBus(onMessage?: MessageHandler, _showNotifications = f
     m.back_channel = terminal.terminalSessionChannel
     m.cols = terminal.cols
     m.rows = terminal.rows
-    wsSend(m)
+    await store.send(m)
   }
 
   function wsTerminalClose(terminal: Terminal) {
@@ -126,6 +124,7 @@ export function useMessageBus(onMessage?: MessageHandler, _showNotifications = f
 
   return {
     mount,
+    subscribeChannels,
     channels,
     wsBus: computed(() => store.bus),
     busMsg: computed(() => store.lastMsg),
@@ -212,7 +211,7 @@ export function useAutoRefresh(
     return map[cleanType] || cleanType
   }
 
-  async function handleMessage(msg: unknown) {
+  function handleMessage(msg: unknown) {
     if (!msg || typeof msg !== 'object') return
     const record = msg as Record<string, unknown>
     const msgType = record.type as string
@@ -250,7 +249,7 @@ export function useAutoRefresh(
   })
 
   onMounted(() => {
-    mbStore.connect()
+    void mbStore.connect().catch(() => undefined)
   })
 
   onUnmounted(() => {
