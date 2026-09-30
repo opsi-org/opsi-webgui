@@ -298,7 +298,14 @@ validate:e2e:smoke:
     - docker compose -f docker/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from e2e opsiconfd e2e
   artifacts:
     when: always
-    paths: [frontend/test-results/, screenshots/, docker-test.log]
+    paths:
+      [
+        frontend/test-results/,
+        screenshots/documentation/,
+        screenshots/marketing/,
+        screenshots/colorblind/,
+        docker-test.log,
+      ]
     reports:
       junit: frontend/test-results/junit.xml
     expire_in: 7 days
@@ -333,7 +340,14 @@ validate:e2e:full:
     - docker compose -f docker/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from e2e opsiconfd e2e
   artifacts:
     when: always
-    paths: [frontend/test-results/, screenshots/, docker-test.log]
+    paths:
+      [
+        frontend/test-results/,
+        screenshots/documentation/,
+        screenshots/marketing/,
+        screenshots/colorblind/,
+        docker-test.log,
+      ]
     reports:
       junit: frontend/test-results/junit.xml
     expire_in: 30 days
