@@ -17,8 +17,6 @@
     "fireTimerDesc": "Directly fires the event timer on the selected clients.",
     "noFailed": "No failed clients",
     "notify": "Notify",
-    "ondemand": "OnDemand",
-    "ondemandDesc": "Process pending action requests on selected clients",
     "last": "Last Action",
     "progress": "Action Progress",
     "reboot": "Reboot",
@@ -135,8 +133,6 @@
     "inactive": "Inactive Clients",
     "initialSetup": "Initial Setup",
     "logs.select": "Please select a client to view logs",
-    "operatingSystem": "Operating System",
-    "operatingSystemShort": "OS",
     "reachable.unknown": "Reachability unknown (messagebus not available).",
     "reachable.help": "Reachable = connected via messagebus. The state is loaded with the client list and then updated live from host_connected / host_disconnected events.",
     "reachable.is": "Client is reachable.",
@@ -168,7 +164,6 @@
     "reachable.no": "Not reachable"
   },
   "common": {
-    "activity": "Activity",
     "add": "Add",
     "all": "All",
     "apply": "Apply",
@@ -185,7 +180,6 @@
     "clearSelection": "Clear Selection",
     "close": "Close",
     "collapse": "Collapse",
-    "collapseAll": "Collapse All",
     "create": "Create",
     "days": "Days",
     "default": "Default",
@@ -206,7 +200,6 @@
     "errors": "Errors",
     "message": "Message",
     "expand": "Expand",
-    "expandAll": "Expand All",
     "failed": "Failed",
     "filter": "Filter",
     "filterBy": "Filtering by",
@@ -241,7 +234,6 @@
     "resetDefaults": "Reset to Defaults",
     "save": "Save",
     "saveAll": "Save All",
-    "search": "Search",
     "results": "Results",
     "selectAll": "Select All",
     "selectRow": "Select row",
@@ -269,8 +261,6 @@
     "advancedFilters": "Advanced Filters"
   },
   "config": {
-    "attributeDisabled": "Disabled",
-    "attributeEnabled": "Enabled",
     "attributeHelp": {
       "monitoring": "Controls the opsiconfd health-check monitoring for this client."
     },
@@ -307,8 +297,7 @@
   "depot": {
     "networkAddress": "Enter network address and press Enter",
     "required": "Depot is required",
-    "title": "Depot",
-    "versionDiff": "Version differs across depots"
+    "title": "Depot"
   },
   "diag": {
     "checks": "Checks",
@@ -368,32 +357,25 @@
     "absent": "Removed",
     "architecture": "Architecture",
     "class": "Class",
-    "count": "{count} entries",
     "displayName": "Name",
     "empty": "No data found",
     "emptyDesc": "Inventory was scanned, but nothing is currently present.",
     "export": "Export CSV",
     "exportDesc": "Export to CSV: Export filtered and sorted rows.",
-    "filterClass": "Filter by class",
     "firstSeen": "First seen",
     "hardware": "Hardware",
     "hardwareClass": "Hardware class",
     "identifier": "Identifier",
-    "includeAbsent": "Show removed entries",
     "includeKbUpdates": "Microsoft/KB updates",
     "kbUpdate": "KB Update",
     "language": "Language",
     "limited": "Inventory result limited",
     "limitedDesc": "This client has {count} entries. Only the first 5,000 filtered entries are available in this view.",
-    "nextPage": "Next page",
-    "noItems": "No entries match the current filter",
     "notScanned": "Not scanned yet",
     "notScannedDesc": "No inventory data has been collected for this client yet.",
     "ok": "OK",
     "okDesc": "Inventory exists and was scanned within the last {days} days.",
     "present": "Present",
-    "previousPage": "Previous page",
-    "page": "Page {page} of {pages}",
     "scannedAt": "Scanned",
     "select": "Select a client to view inventory",
     "software": "Software",
@@ -429,8 +411,6 @@
   "nav": {
     "addNew": "Add New",
     "admin": "Admin",
-    "allClients": "All Clients",
-    "allServers": "All Servers",
     "breadcrumb": "Breadcrumb",
     "clients": "Clients",
     "clone": "Clone",
@@ -440,7 +420,6 @@
     "diagnostics": "Diagnostics",
     "groups": "Groups",
     "healthcheck": "Health Check",
-    "inventory": "Inventory",
     "leaveAnyway": "Leave Anyway",
     "logs": "Logs",
     "maintenance": "Maintenance",
@@ -517,8 +496,7 @@
         "disabled": "opsiconfd disabled-features: messagebus_terminal → Terminal page is disabled",
         "enabled": "opsiconfd disabled-features: messagebus_terminal is NOT listed → Terminal page accessible at /admin/terminal",
         "label": "Server Terminal"
-      },
-      "title": "Webgui Feature Restrictions"
+      }
     }
   },
   "pages": {
@@ -555,9 +533,6 @@
     "conditions": "Conditions",
     "defaultValues": "Default Values",
     "depotDiffNote": "Depot differs from default (bold)",
-    "depotScopeHint": {
-      "description": "Showing the depot product catalog (no clients selected)"
-    },
     "dependencies": "Dependencies",
     "dependenciesNone": "No dependencies found",
     "id": "Product ID",
@@ -608,17 +583,14 @@
   "quick": {
     "actions": "Quick Actions",
     "panel": "Quick Panel",
-    "selection": "Quick Selection",
-    "setFor": "Set for Selection"
+    "selection": "Quick Selection"
   },
   "redis": {
     "data": "Redis Data"
   },
   "globalSearch": {
     "title": "Global Search",
-    "help": "Search across clients, products and servers, or open one of your favorite saved searches.",
     "scope": "Scope",
-    "allScopes": "All",
     "quickSearchPlaceholder": "Quick search...",
     "clearAllFilters": "Clear all applied filters",
     "favorites": "Favorites",
@@ -628,7 +600,6 @@
   },
   "savedSearches": {
     "title": "Saved Searches",
-    "help": "Apply a saved search, or save the current filter.",
     "saveCurrent": "Save the current filter",
     "none": "No saved searches yet.",
     "favorite": "Mark as favorite",
@@ -668,7 +639,6 @@
     "showOnlySelected": "Show only selected rows",
     "showOnlySelectedHint": "Only currently selected rows are shown; the total above reflects this subset, not the full list.",
     "table": "Table Settings",
-    "communityLanguages": "Community Languages",
     "theme.dark": "Dark",
     "theme.light": "Light"
   },
@@ -695,8 +665,6 @@
     "disabled": "Terminal is currently disabled.",
     "disconnect": "Disconnect",
     "disconnected": "Disconnected",
-    "exited": "Session exited",
-    "failed": "Connection failed!",
     "id": "Terminal ID",
     "idEmpty": "Terminal ID cannot be empty.",
     "press": "Press Connect to start a session...",
@@ -704,7 +672,6 @@
     "quickCommandsHelp": "Save and run your own frequently used terminal commands. Connects automatically if not yet connected.",
     "quickCommandsNone": "No saved commands yet. Type a command below and save it.",
     "newCommandPlaceholder": "e.g. systemctl status opsiconfd",
-    "runCommand": "Run command",
     "saveCommand": "Save command",
     "title": "Terminal"
   },

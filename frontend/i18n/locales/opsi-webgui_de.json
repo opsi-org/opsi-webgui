@@ -17,8 +17,6 @@
     "fireTimerDesc": "Löst direkt das Ereignis timer auf den ausgewählten Clients aus.",
     "noFailed": "Keine fehlgeschlagenen Clients",
     "notify": "Benachrichtigen",
-    "ondemand": "OnDemand",
-    "ondemandDesc": "Ausstehende Aktionsanforderungen für ausgewählte Clients verarbeiten",
     "last": "Letzte Aktion",
     "progress": "Aktionsfortschritt",
     "reboot": "Neu starten",
@@ -135,8 +133,6 @@
     "inactive": "Inaktive Clients",
     "initialSetup": "Ersteinrichtung",
     "logs.select": "Bitte wählen Sie einen Client zur Ansicht der Logs",
-    "operatingSystem": "Betriebssystem",
-    "operatingSystemShort": "OS",
     "reachable.unknown": "Erreichbarkeit unbekannt (Messagebus nicht verfügbar).",
     "reachable.help": "Erreichbar = per Messagebus verbunden. Der Status wird mit der Client-Liste geladen und danach live über host_connected- / host_disconnected-Ereignisse aktualisiert.",
     "reachable.is": "Client ist erreichbar.",
@@ -168,7 +164,6 @@
     "reachable.no": "Nicht erreichbar"
   },
   "common": {
-    "activity": "Aktivität",
     "add": "Hinzufügen",
     "all": "Alle",
     "apply": "Anwenden",
@@ -185,7 +180,6 @@
     "clearSelection": "Auswahl aufheben",
     "close": "Schließen",
     "collapse": "Einklappen",
-    "collapseAll": "Alle einklappen",
     "create": "Erstellen",
     "days": "Tage",
     "default": "Standard",
@@ -206,7 +200,6 @@
     "errors": "Fehler",
     "message": "Meldung",
     "expand": "Ausklappen",
-    "expandAll": "Alle ausklappen",
     "failed": "Fehlgeschlagen",
     "filter": "Filter",
     "filterBy": "Gefiltert nach",
@@ -241,7 +234,6 @@
     "resetDefaults": "Auf Standard zurücksetzen",
     "save": "Speichern",
     "saveAll": "Alle speichern",
-    "search": "Suchen",
     "results": "Ergebnisse",
     "selectAll": "Alle auswählen",
     "selectRow": "Zeile auswählen",
@@ -269,8 +261,6 @@
     "advancedFilters": "Erweiterte Filter"
   },
   "config": {
-    "attributeDisabled": "Deaktiviert",
-    "attributeEnabled": "Aktiviert",
     "attributeHelp": {
       "monitoring": "Steuert die opsiconfd-Gesundheitsprüfung für diesen Client."
     },
@@ -307,8 +297,7 @@
   "depot": {
     "networkAddress": "Netzwerkadresse eingeben und Enter drücken",
     "required": "Depot ist erforderlich",
-    "title": "Depot",
-    "versionDiff": "Version unterscheidet sich auf Depots"
+    "title": "Depot"
   },
   "diag": {
     "checks": "Prüfungen",
@@ -368,32 +357,25 @@
     "absent": "Entfernt",
     "architecture": "Architektur",
     "class": "Klasse",
-    "count": "{count} Einträge",
     "displayName": "Name",
     "empty": "Keine Daten gefunden",
     "emptyDesc": "Es wurde gescannt, aber es sind aktuell keine Einträge vorhanden.",
     "export": "CSV exportieren",
     "exportDesc": "Als CSV exportieren: Gefilterte und sortierte Zeilen exportieren.",
-    "filterClass": "Nach Klasse filtern",
     "firstSeen": "Zuerst gesehen",
     "hardware": "Hardware",
     "hardwareClass": "Hardwareklasse",
     "identifier": "Kennung",
-    "includeAbsent": "Entfernte Einträge anzeigen",
     "includeKbUpdates": "Microsoft/KB-Updates",
     "kbUpdate": "KB-Update",
     "language": "Sprache",
     "limited": "Inventarergebnis begrenzt",
     "limitedDesc": "Dieser Client hat {count} Einträge. In dieser Ansicht sind nur die ersten 5.000 gefilterten Einträge verfügbar.",
-    "nextPage": "Nächste Seite",
-    "noItems": "Keine Einträge entsprechen dem aktuellen Filter",
     "notScanned": "Noch nicht gescannt",
     "notScannedDesc": "Für diesen Client wurden noch keine Inventardaten erfasst.",
     "ok": "OK",
     "okDesc": "Inventar vorhanden und innerhalb der letzten {days} Tage gescannt.",
     "present": "Vorhanden",
-    "previousPage": "Vorherige Seite",
-    "page": "Seite {page} von {pages}",
     "scannedAt": "Gescannt",
     "select": "Client auswählen um Inventar anzuzeigen",
     "software": "Software",
@@ -429,8 +411,6 @@
   "nav": {
     "addNew": "Neu hinzufügen",
     "admin": "Administration",
-    "allClients": "Alle Clients",
-    "allServers": "Alle Server",
     "breadcrumb": "Brotkrümelnavigation",
     "clients": "Clients",
     "clone": "Klonen",
@@ -440,7 +420,6 @@
     "diagnostics": "Diagnose",
     "groups": "Gruppen",
     "healthcheck": "Health Check",
-    "inventory": "Inventar",
     "leaveAnyway": "Trotzdem verlassen",
     "logs": "Log",
     "maintenance": "Wartung",
@@ -517,8 +496,7 @@
         "disabled": "opsiconfd disabled-features: messagebus_terminal → Terminal-Seite ist deaktiviert",
         "enabled": "opsiconfd disabled-features: messagebus_terminal ist NICHT gelistet → Terminal-Seite unter /admin/terminal zugänglich",
         "label": "Server-Terminal"
-      },
-      "title": "Webgui-Feature-Einschränkungen"
+      }
     }
   },
   "pages": {
@@ -555,9 +533,6 @@
     "conditions": "Bedingungen",
     "defaultValues": "Standardwerte",
     "depotDiffNote": "Depot weicht vom Standard ab (fett)",
-    "depotScopeHint": {
-      "description": "Depot-Produktkatalog wird angezeigt (keine Clients ausgewählt)"
-    },
     "dependencies": "Abhängigkeiten",
     "dependenciesNone": "Keine Abhängigkeiten gefunden",
     "id": "Produkt-ID",
@@ -608,17 +583,14 @@
   "quick": {
     "actions": "Schnellaktionen",
     "panel": "Quick Panel",
-    "selection": "Schnellauswahl",
-    "setFor": "Für Auswahl setzen"
+    "selection": "Schnellauswahl"
   },
   "redis": {
     "data": "Redis-Daten"
   },
   "globalSearch": {
     "title": "Globale Suche",
-    "help": "Über Clients, Produkte und Server hinweg suchen oder eine favorisierte gespeicherte Suche öffnen.",
     "scope": "Bereich",
-    "allScopes": "Alle",
     "quickSearchPlaceholder": "Schnellsuche...",
     "clearAllFilters": "Alle angewendeten Filter zurücksetzen",
     "favorites": "Favoriten",
@@ -628,7 +600,6 @@
   },
   "savedSearches": {
     "title": "Gespeicherte Suchen",
-    "help": "Gespeicherte Suche anwenden oder aktuellen Filter speichern.",
     "saveCurrent": "Aktuellen Filter speichern",
     "none": "Noch keine gespeicherten Suchen.",
     "favorite": "Als Favorit markieren",
@@ -668,7 +639,6 @@
     "showOnlySelected": "Nur ausgewählte Zeilen anzeigen",
     "showOnlySelectedHint": "Es werden nur die aktuell ausgewählten Zeilen angezeigt; die Gesamtzahl oben bezieht sich auf diese Teilmenge, nicht auf die vollständige Liste.",
     "table": "Tabelleneinstellungen",
-    "communityLanguages": "Community-Sprachen",
     "theme.dark": "Dunkel",
     "theme.light": "Hell"
   },
@@ -695,8 +665,6 @@
     "disabled": "Terminal ist derzeit deaktiviert.",
     "disconnect": "Trennen",
     "disconnected": "Getrennt",
-    "exited": "Sitzung beendet",
-    "failed": "Verbindung fehlgeschlagen!",
     "id": "Terminal-ID",
     "idEmpty": "Terminal-ID darf nicht leer sein.",
     "press": "Drücken Sie Verbinden, um eine Sitzung zu starten...",
@@ -704,7 +672,6 @@
     "quickCommandsHelp": "Eigene häufig genutzte Terminalbefehle speichern und ausführen. Verbindet automatisch, falls noch nicht verbunden.",
     "quickCommandsNone": "Noch keine gespeicherten Befehle. Befehl unten eingeben und speichern.",
     "newCommandPlaceholder": "z. B. systemctl status opsiconfd",
-    "runCommand": "Befehl ausführen",
     "saveCommand": "Befehl speichern",
     "title": "Terminal"
   },
