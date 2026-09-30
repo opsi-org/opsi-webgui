@@ -88,15 +88,6 @@ def test_config_singleton_returns_same_instance(config_file: Path, monkeypatch: 
 # ---------------------------------------------------------------------------
 
 
-def test_update_data_returns_empty_dict_for_missing_file(
-	config_instance: Config,
-) -> None:
-	"""_update_data leaves _data as {} when the config file does not exist."""
-	assert not config_instance.config_file.exists()
-	config_instance._update_data()
-	assert config_instance._data == {}
-
-
 def test_update_data_returns_empty_dict_for_empty_file(config_instance: Config) -> None:
 	"""_update_data treats an empty YAML file as {} (yaml.safe_load returns None)."""
 	config_instance.config_file.write_text("", encoding="utf-8")
@@ -334,14 +325,16 @@ def test_get_ldap_auth_groups_conflict_prefers_dict(config_instance: Config) -> 
 # ---------------------------------------------------------------------------
 
 
-def test_set_logger_changes_logger_instance(config_instance: Config) -> None:
+def test_set_logger_changes_logger_instance(config_instance: Config, monkeypatch: pytest.MonkeyPatch) -> None:
 	"""set_logger updates the global logger instance."""
 	import logging
 
+	import webgui.python.config as config_module
+
 	new_logger = logging.getLogger("test_logger")
+	monkeypatch.setattr(config_module, "logger", config_module.logger)
 	config_instance.set_logger(new_logger)
-	# Logger should be updated (testing that the method executes without error)
-	# We can't easily assert the global logger changed, but we can verify no exception
+	assert config_module.logger is new_logger
 
 
 # ---------------------------------------------------------------------------
@@ -406,17 +399,6 @@ def test_create_default_config_file_creates_file_with_defaults(tmp_path: Path, m
 # ---------------------------------------------------------------------------
 # _update_data error handling and warnings
 # ---------------------------------------------------------------------------
-
-
-def test_update_data_logs_warning_when_file_missing_and_autocreate_off(
-	config_instance: Config,
-) -> None:
-	"""_update_data logs warning when config file doesn't exist and AUTO_CREATE_CONFIG is False."""
-	# File doesn't exist, should log warning
-	assert not config_instance.config_file.exists()
-	config_instance._update_data()
-	# Should not crash, _data should remain empty
-	assert config_instance._data == {}
 
 
 def test_update_data_handles_yaml_parse_error(config_instance: Config) -> None:

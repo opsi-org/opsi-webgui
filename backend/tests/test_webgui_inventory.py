@@ -18,6 +18,12 @@ import pytest
 from webgui.python.api import inventory
 
 
+@pytest.fixture(autouse=True)
+def create_check_data():
+	"""Skip the integration database seed for these isolated unit tests."""
+	yield
+
+
 def hw_row(hardware_class, state=1, lastseen="2026-09-01 10:00:00", firstseen="2026-01-01 10:00:00", **attrs):
 	data = {"hardwareClass": hardware_class, "hostId": "client1.test.local", "firstseen": firstseen, "lastseen": lastseen, "state": state}
 	data.update(attrs)

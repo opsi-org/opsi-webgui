@@ -14,6 +14,12 @@ import pytest
 from webgui.python import utils
 
 
+@pytest.fixture(autouse=True)
+def create_check_data():
+	"""Skip the integration database seed for these isolated unit tests."""
+	yield
+
+
 @pytest.fixture
 def request_with_user() -> SimpleNamespace:
 	return SimpleNamespace(scope={"session": SimpleNamespace(username="alice")})
