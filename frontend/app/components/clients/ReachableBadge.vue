@@ -49,9 +49,9 @@ https://opsi.org/en/
 
   const tooltipText = computed(() =>
     props.reachable === true
-      ? String($t('clients.reachable.is'))
+      ? String($t('clients.reachable.status'))
       : props.reachable === false
-        ? String($t('clients.reachable.not'))
+        ? String($t('clients.reachable.no'))
         : String($t('clients.reachable.unknown')),
   )
 </script>

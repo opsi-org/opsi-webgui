@@ -169,7 +169,7 @@ https://opsi.org/en/
                   </div>
                 </template>
 
-                <span v-if="filterModeOptions.length > 1" class="text-xs text-(--color-text-muted)">{{ $t('settings.filtering') }}</span>
+                <span v-if="filterModeOptions.length > 1" class="text-xs text-(--color-text-muted)">{{ $t('common.filterBy') }}</span>
                 <div v-if="filterModeOptions.length > 1" class="flex gap-0.5">
                   <CoreAppButton
                     v-if="filterModeOptions.includes('primary')"

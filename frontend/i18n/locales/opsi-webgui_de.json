@@ -1,7 +1,6 @@
 {
   "actions": {
     "live": {
-      "failed": "Fehlgeschlagen",
       "processing": "Wird verarbeitet",
       "saving": "Wird gespeichert",
       "updated": "Aktualisiert"
@@ -12,9 +11,8 @@
     "failedClients": "Fehlgeschlagene Clients",
     "failedClientsHelp": "Zeigt aktivierte Clients, bei denen mindestens ein ProductOnClient den Status actionResult = failed hat.",
     "fireOnDemand": "OnDemand-Ereignis feuern",
-    "fireOnDemandDesc": "Löst direkt das Ereignis on_demand auf den ausgewählten Clients aus.",
+    "fireEventDesc": "Löst das Ereignis {event} direkt auf den ausgewählten Clients aus.",
     "fireTimer": "Timer-Ereignis feuern",
-    "fireTimerDesc": "Löst direkt das Ereignis timer auf den ausgewählten Clients aus.",
     "noFailed": "Keine fehlgeschlagenen Clients",
     "notify": "Benachrichtigen",
     "last": "Letzte Aktion",
@@ -23,8 +21,6 @@
     "rename": "Umbenennen",
     "processRequests": "Prozessaktionen",
     "request": "Aktionsanforderung",
-    "result": "Aktionsergebnis",
-    "results": "Aktionsergebnisse",
     "saveAndProcess": "Speichern und Aktionsanfragen verarbeiten",
     "saveAndProcessScopeHelp": "Wählen Sie, welche Produkte verarbeitet werden sollen: nur die hier geänderten, oder alle Produkte für die betroffenen Clients.",
     "changedProductsOnly": "Nur geänderte Produkte",
@@ -35,15 +31,12 @@
   },
   "admin": {
     "appState": "Anwendungsstatus",
-    "maintenance": "Wartung",
-    "maintenanceMode": "Wartungsmodus",
-    "title": "Admin"
+    "maintenance": "Wartung"
   },
   "auth": {
     "enterPassword": "Passwort eingeben",
     "expired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
     "expiresIn": "Sitzung läuft ab in",
-    "hidePassword": "Passwort verbergen",
     "invalid": "Ungültige Zugangsdaten.",
     "loggingOut": "Abmeldung...",
     "login": "Anmelden",
@@ -56,7 +49,6 @@
     "goToLogin": "Zur Anmeldeseite",
     "readOnly": "Nur-Lese-Modus ist aktiv. Änderungen sind nicht erlaubt.",
     "restricted": "eingeschränkt",
-    "showPassword": "Passwort anzeigen",
     "username": "Benutzername"
   },
   "backup": {
@@ -76,8 +68,7 @@
     "serverIdHandling": "Server-ID-Behandlung",
     "uploading": "Wird hochgeladen",
     "useFrom": "Aus Backup",
-    "useLocalId": "Lokal beibehalten",
-    "useNewId": "Neue ID"
+    "useLocalId": "Lokal beibehalten"
   },
   "bus": {
     "acceptCert": "opsiconfd-Verfügbarkeit prüfen und Zertifikat verifizieren",
@@ -99,7 +90,6 @@
       "notSeenSince": "Nicht gesehen seit (Tage)",
       "hasFailedProducts": "Mit fehlgeschlagenen Produkten",
       "hasOutdatedProducts": "Mit veralteten Produktversionen",
-      "operatingSystem": "Betriebssystem",
       "allOperatingSystems": "Alle Betriebssysteme"
     },
     "all": "Alle Clients",
@@ -135,8 +125,6 @@
     "logs.select": "Bitte wählen Sie einen Client zur Ansicht der Logs",
     "reachable.unknown": "Erreichbarkeit unbekannt (Messagebus nicht verfügbar).",
     "reachable.help": "Erreichbar = per Messagebus verbunden. Der Status wird mit der Client-Liste geladen und danach live über host_connected- / host_disconnected-Ereignisse aktualisiert.",
-    "reachable.is": "Client ist erreichbar.",
-    "reachable.not": "Client ist nicht erreichbar.",
     "reachable.status": "Erreichbar",
     "reboot": {
       "warn": "Dies wird die ausgewählten Clients sofort neu starten."
@@ -160,7 +148,6 @@
       "exists": "Ein Client mit dieser ID existiert bereits.",
       "noNumber": "Client-Name darf nicht mit einer Zahl beginnen"
     },
-    "reachable.yes": "Erreichbar",
     "reachable.no": "Nicht erreichbar"
   },
   "common": {
@@ -174,6 +161,7 @@
     "back": "Zurück",
     "cancel": "Abbrechen",
     "clear": "Leeren",
+    "hide": "Ausblenden",
     "clearAll": "Alle löschen",
     "copy": "Kopieren",
     "copied": "Kopiert!",
@@ -188,7 +176,6 @@
     "description": "Beschreibung",
     "discard": "Verwerfen",
     "discardAll": "Alle verwerfen",
-    "dismiss": "Schließen",
     "download": "Herunterladen",
     "details": "Details",
     "edit": "Bearbeiten",
@@ -202,7 +189,7 @@
     "expand": "Ausklappen",
     "failed": "Fehlgeschlagen",
     "filter": "Filter",
-    "filterBy": "Gefiltert nach",
+    "filterBy": "Filtern nach",
     "hidden": "Ausgeblendet",
     "info": "Info",
     "loading": "Wird geladen...",
@@ -214,6 +201,7 @@
     "none": "Keine",
     "noResults": "Keine Ergebnisse gefunden",
     "noSelection": "Keine Einträge ausgewählt",
+    "operatingSystem": "Betriebssystem",
     "note": "Hinweis",
     "notes": "Notizen",
     "of": "von",
@@ -235,11 +223,13 @@
     "save": "Speichern",
     "saveAll": "Alle speichern",
     "results": "Ergebnisse",
+    "result": "Ergebnis",
     "selectAll": "Alle auswählen",
     "selectRow": "Zeile auswählen",
     "selected": "Ausgewählt",
     "settings": "Einstellungen",
     "showing": "Zeige",
+    "show": "Anzeigen",
     "showMore": "Mehr anzeigen",
     "skipToContent": "Zum Inhalt springen",
     "success": "Erfolg",
@@ -272,7 +262,6 @@
     "param": "Parameter",
     "params": "Parameter",
     "paramsDefault": "Parameter (Globale Standardwerte)",
-    "paramsNone": "Keine Parameter gefunden",
     "possibleValues": "Mögliche Werte",
     "selectValues": "Werte auswählen",
     "title": "Konfiguration"
@@ -286,7 +275,6 @@
       "load": "Systemlast",
       "memory": "Arbeitsspeicher",
       "opsiconfd": "opsiconfd",
-      "os": "Betriebssystem",
       "python": "Python"
     },
     "title": "Dashboard",
@@ -338,11 +326,9 @@
     "id": "Gruppen-ID",
     "members": "Gruppenmitglieder",
     "membersAdd": "Mitglieder hinzufügen",
-    "membersFilter": "Mitglieder filtern...",
     "membersNone": "Keine Mitglieder in dieser Gruppe",
     "membersRemoveAll": "Alle Mitglieder entfernen",
     "membersSearch": "Hinzufügen oder suchen...",
-    "none": "Keine Gruppen gefunden",
     "parent": "Übergeordnete Gruppe",
     "product": "Produktgruppen",
     "subgroup": "Untergruppe hinzufügen",
@@ -358,7 +344,6 @@
     "architecture": "Architektur",
     "class": "Klasse",
     "displayName": "Name",
-    "empty": "Keine Daten gefunden",
     "emptyDesc": "Es wurde gescannt, aber es sind aktuell keine Einträge vorhanden.",
     "export": "CSV exportieren",
     "exportDesc": "Als CSV exportieren: Gefilterte und sortierte Zeilen exportieren.",
@@ -373,7 +358,6 @@
     "limitedDesc": "Dieser Client hat {count} Einträge. In dieser Ansicht sind nur die ersten 5.000 gefilterten Einträge verfügbar.",
     "notScanned": "Noch nicht gescannt",
     "notScannedDesc": "Für diesen Client wurden noch keine Inventardaten erfasst.",
-    "ok": "OK",
     "okDesc": "Inventar vorhanden und innerhalb der letzten {days} Tage gescannt.",
     "present": "Vorhanden",
     "scannedAt": "Gescannt",
@@ -381,14 +365,12 @@
     "software": "Software",
     "stale": "veraltet",
     "staleDesc": "Der letzte Scan ist älter als {days} Tage. Ein clientseitiger Scan aktualisiert diese Daten.",
-    "title": "Inventar",
-    "version": "Version"
+    "title": "Inventar"
   },
   "logs": {
     "clearMarker": "Marker löschen",
     "level": "Log-Level",
     "marker": "Marker",
-    "none": "Keine Logs gefunden",
     "scroll": "Zum Marker scrollen",
     "selectType": "Log-Typ zum Anzeigen auswählen",
     "title": "Logs"
@@ -402,7 +384,6 @@
     "free": "Kostenlose Module",
     "integrated": "Im Kern integriert",
     "licensed": "Lizenziert",
-    "none": "Keine Module gefunden",
     "obsolete.desc": "Veraltete Lizenzmodule, die nicht mehr unterstützt werden. Nur noch aus historischen Gründen aufgeführt.",
     "title": "Module",
     "unlimited": "Unbegrenzte Clients",
@@ -412,27 +393,13 @@
     "addNew": "Neu hinzufügen",
     "admin": "Administration",
     "breadcrumb": "Brotkrümelnavigation",
-    "clients": "Clients",
     "clone": "Klonen",
-    "configuration": "Konfiguration",
-    "dashboard": "Dashboard",
     "defaultPage": "Standardseite",
-    "diagnostics": "Diagnose",
-    "groups": "Gruppen",
-    "healthcheck": "Health Check",
     "leaveAnyway": "Trotzdem verlassen",
-    "logs": "Log",
-    "maintenance": "Wartung",
-    "modules": "Module",
     "navigateAway": "Sie haben ungespeicherte Änderungen. Wenn Sie die Seite verlassen, gehen diese verloren. Möchten Sie fortfahren?",
-    "products": "Produkte",
     "redirect": "Weiterleitung...",
-    "servers": "Server",
     "sidebar": "Seitenleiste ein-/ausblenden",
-    "stayOnPage": "Auf Seite bleiben",
-    "support": "Support",
-    "systemInfo": "Systeminfo",
-    "terminal": "Terminal"
+    "stayOnPage": "Auf Seite bleiben"
   },
   "notifications": {
     "target.both": "An ausgewählte Server und Clients",
@@ -534,14 +501,12 @@
     "defaultValues": "Standardwerte",
     "depotDiffNote": "Depot weicht vom Standard ab (fett)",
     "dependencies": "Abhängigkeiten",
-    "dependenciesNone": "Keine Abhängigkeiten gefunden",
     "id": "Produkt-ID",
     "installed": "Installiert",
     "localboot": "Localboot-Produkte",
     "locked": "Gesperrte Produkte",
     "lockedNone": "Keine gesperrten Produkte",
     "netboot": "Netboot-Produkte",
-    "noMatch": "Keine Produkte entsprechen den ausgewählten Kriterien",
     "none": "Keine Produkte",
     "notApplied": "- nicht angewendet -",
     "notOnAllDepots": "Nicht auf allen Depots",
@@ -559,11 +524,9 @@
       "notOnAllDepotsShort": "Auf einigen ausgewählten Depots fehlt das Produkt"
     },
     "properties": "Produkteigenschaften",
-    "propertiesNone": "Keine Eigenschaften gefunden",
     "propertiesSaved": "Eigenschaften erfolgreich gespeichert.",
     "processHelp": "Bereits gespeicherte, ausstehende Aktionsanforderungen jetzt für die ausgewählten Clients und Produkte verarbeiten.",
     "property": "Eigenschaft",
-    "quick": "Schnellaktionen",
     "quickHelp": "Produkte und Clients auswählen, um Aktionsanforderungen für mehrere Produkte zu setzen.",
     "quickScopeHelp": "Der Server-Bereich erweitert sich auf die Clients, die den ausgewählten Servern zugeordnet sind. Die Vorschau zeigt immer die betroffenen Clients an.",
     "requiredAction": "Erforderliche Aktion",
@@ -591,7 +554,6 @@
   "globalSearch": {
     "title": "Globale Suche",
     "scope": "Bereich",
-    "quickSearchPlaceholder": "Schnellsuche...",
     "clearAllFilters": "Alle angewendeten Filter zurücksetzen",
     "favorites": "Favoriten",
     "clearAllFavorites": "Alle Favoriten entfernen",
@@ -625,7 +587,6 @@
     "autoScrollDesc": "Scrollt automatisch nach unten, wenn neue Inhalte geladen werden",
     "columns": "Spalten",
     "display": "Anzeigemodus",
-    "filtering": "Filtern nach",
     "primaryColumn": "Primärspalte",
     "allColumns": "Alle Spalten",
     "infiniteScroll": "Endlos-Scrollen",
@@ -698,7 +659,6 @@
     "openDetail": "Detailansicht öffnen",
     "refreshTable": "Tabellendaten aktualisieren",
     "navigateRows": "Zeilen navigieren",
-    "selectRow": "Zeile auswählen",
     "addClient": "Panel „Client hinzufügen“ öffnen",
     "addServerConfig": "Dialog „Server-Konfiguration erstellen“ öffnen",
     "productsSaveAndExecute": "Produktaktionsanforderungen speichern & ausführen",

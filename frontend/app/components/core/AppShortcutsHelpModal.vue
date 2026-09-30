@@ -75,7 +75,7 @@ https://opsi.org/en/
         { keys: ['Ctrl', 'Enter'], description: $t('shortcuts.openDetail') },
         { keys: ['Ctrl', 'R'], description: $t('shortcuts.refreshTable') },
         { keys: ['↑', '↓'], description: $t('shortcuts.navigateRows') },
-        { keys: ['Ctrl', 'Space'], description: $t('shortcuts.selectRow') },
+        { keys: ['Ctrl', 'Space'], description: $t('common.selectRow') },
       ],
     },
     {

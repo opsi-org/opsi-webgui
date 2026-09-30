@@ -37,7 +37,7 @@ https://opsi.org/en/
           v-model="quickFilter"
           class="flex-1 min-w-0"
           input-class="w-full"
-          :placeholder="String($t('globalSearch.quickSearchPlaceholder'))"
+          :placeholder="String($t('common.filter'))"
           @keydown.enter.prevent="runQuickSearch"
         />
         <CoreAppButton size="sm" color="primary" :icon="icons.search" @click="runQuickSearch" />
@@ -60,12 +60,12 @@ https://opsi.org/en/
             class="flex-1 min-w-0 flex items-center gap-2 rounded px-1.5 py-1 text-left text-sm bg-transparent border-0 cursor-pointer hover:bg-(--color-surface-hover)"
             @click="openFavorite(favorite)"
           >
-            <CoreAppTooltip :text="String($t(`nav.${favorite.scope}`))">
+            <CoreAppTooltip :text="scopeLabel(favorite.scope)">
               <CoreAppIcon
                 :name="scopeIcon(favorite.scope)"
                 i
                 class="w-4 h-4 text-(--color-text-muted) shrink-0"
-                :aria-label="String($t(`nav.${favorite.scope}`))"
+                :aria-label="scopeLabel(favorite.scope)"
               />
             </CoreAppTooltip>
             <span class="truncate flex-1">{{ favorite.name }}</span>
@@ -105,11 +105,17 @@ https://opsi.org/en/
 
   const scope = ref<GlobalSearchScope>('clients')
   const quickFilter = ref('')
+  const scopeLabelKeys: Record<GlobalSearchScope, string> = {
+    clients: 'clients.title',
+    products: 'products.title',
+    servers: 'servers.title',
+  }
+  const scopeLabel = (searchScope: GlobalSearchScope) => String($t(scopeLabelKeys[searchScope]))
 
   const scopeOptions = computed(() => [
-    { label: String($t('nav.clients')), value: 'clients' as const },
-    { label: String($t('nav.products')), value: 'products' as const },
-    { label: String($t('nav.servers')), value: 'servers' as const },
+    { label: scopeLabel('clients'), value: 'clients' as const },
+    { label: scopeLabel('products'), value: 'products' as const },
+    { label: scopeLabel('servers'), value: 'servers' as const },
   ])
 
   function scopeIcon(scope: GlobalSearchScope) {

@@ -79,7 +79,7 @@ https://opsi.org/en/
         <CoreAppAlertInline
           v-else-if="currentMeta?.state === 'empty'"
           color="info"
-          :title="String($t('inventory.empty'))"
+          :title="String($t('common.noData'))"
           :description="String($t('inventory.emptyDesc'))"
         />
 
@@ -111,11 +111,7 @@ https://opsi.org/en/
         >
           <template #status>
             <CoreAppTooltip v-if="currentMeta" :text="metaStateDesc(currentMeta.state)">
-              <CoreAppBadge
-                :color="metaStateColor(currentMeta.state)"
-                :label="String($t(`inventory.${currentMeta.state === 'not_scanned' ? 'notScanned' : currentMeta.state}`))"
-                size="xs"
-              />
+              <CoreAppBadge :color="metaStateColor(currentMeta.state)" :label="metaStateLabel(currentMeta.state)" size="xs" />
             </CoreAppTooltip>
             <span v-if="currentMeta?.lastScan" class="text-[0.6875rem] text-(--color-text-muted)">
               {{ $t('inventory.scannedAt') }}: {{ currentMeta.lastScan }}
@@ -276,7 +272,7 @@ https://opsi.org/en/
       sortable: true,
       alwaysVisible: true,
     },
-    { key: 'version', label: String($t('inventory.version')), labelKey: 'inventory.version', sortable: true },
+    { key: 'version', label: String($t('common.version')), labelKey: 'common.version', sortable: true },
     { key: 'architecture', label: String($t('inventory.architecture')), labelKey: 'inventory.architecture' },
     { key: 'language', label: String($t('inventory.language')), labelKey: 'inventory.language' },
     { key: 'identifier', label: String($t('inventory.identifier')), labelKey: 'inventory.identifier', visible: false },
@@ -306,6 +302,11 @@ https://opsi.org/en/
     return state === 'ok' ? 'success' : state === 'stale' ? 'warning' : 'neutral'
   }
 
+  function metaStateLabel(state: InventoryMeta['state']): string {
+    if (state === 'ok') return String($t('common.ok'))
+    return String($t(`inventory.${state === 'not_scanned' ? 'notScanned' : state}`))
+  }
+
   // Tooltip copy for the status badge: explains what each inventory state means.
   function metaStateDesc(state: InventoryMeta['state']): string {
     switch (state) {
@@ -323,7 +324,7 @@ https://opsi.org/en/
   // Compact tab tooltip: scan state plus last-scan date, so the tab stays a single line.
   function summaryTabTooltip(meta: InventoryMeta | undefined): string {
     if (!meta) return ''
-    const state = String($t(`inventory.${meta.state === 'not_scanned' ? 'notScanned' : meta.state}`))
+    const state = metaStateLabel(meta.state)
     return meta.lastScan ? `${state} \u2013 ${$t('inventory.scannedAt')}: ${meta.lastScan}` : state
   }
 

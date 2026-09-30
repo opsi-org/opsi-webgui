@@ -92,7 +92,7 @@ https://opsi.org/en/
       counts[key] = (counts[key] || 0) + 1
     })
     return [
-      { key: `── ${String($t('actions.results'))} ──`, value: '' },
+      { key: `── ${String($t('common.results'))} ──`, value: '' },
       ...Object.entries(counts).map(([k, v]) => ({
         key: k,
         value: String(v),

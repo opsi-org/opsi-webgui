@@ -147,7 +147,7 @@ https://opsi.org/en/
         <template #actions>
           <CoreAppButton size="xs" color="primary" @click="dismissAndFetch">{{ $t('common.reload') }} </CoreAppButton>
           <CoreAppButton size="xs" variant="ghost" color="neutral" @click="logUpdatePending = false"
-            >{{ $t('common.dismiss') }}
+            >{{ $t('common.close') }}
           </CoreAppButton>
         </template>
       </CoreAppAlertInline>
@@ -172,7 +172,7 @@ https://opsi.org/en/
           @close="error = null"
         />
         <div v-else-if="logContent.length === 0" class="h-full bg-(--color-background) rounded-xl">
-          <CoreAppEmptyState :icon="icons.log" :message="String($t('logs.none'))" />
+          <CoreAppEmptyState :icon="icons.log" :message="String($t('common.noResults'))" />
         </div>
         <div v-else ref="logContainerRef" class="h-full overflow-auto log-viewer bg-(--color-background) rounded-xl font-mono text-xs">
           <div

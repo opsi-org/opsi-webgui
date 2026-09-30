@@ -131,13 +131,13 @@ https://opsi.org/en/
 
         <div v-if="currentAction === 'onDemand'" class="mb-3 p-2">
           <p class="mb-2">
-            {{ $t('actions.fireOnDemandDesc') }}
+            {{ $t('actions.fireEventDesc', { event: 'on_demand' }) }}
           </p>
         </div>
 
         <div v-if="currentAction === 'timer'" class="mb-3 p-2">
           <p class="mb-2">
-            {{ $t('actions.fireTimerDesc') }}
+            {{ $t('actions.fireEventDesc', { event: 'timer' }) }}
           </p>
         </div>
 
@@ -253,7 +253,7 @@ https://opsi.org/en/
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
             <CoreAppIcon :name="currentActionIcon" class="w-5 h-5 text-(--color-text-muted)" />
-            {{ $t('actions.results') }} - {{ actionLabel(currentAction) }}
+            {{ $t('common.results') }} - {{ actionLabel(currentAction) }}
           </h3>
           <CoreAppButton
             :icon="icons.x"

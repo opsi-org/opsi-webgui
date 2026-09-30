@@ -15,7 +15,7 @@ https://opsi.org/en/
       <CoreAppLoadingSpinner />
     </div>
 
-    <CoreAppEmptyState v-else-if="dependencies.length === 0" :icon="icons.product" :message="String($t('products.dependenciesNone'))" />
+    <CoreAppEmptyState v-else-if="dependencies.length === 0" :icon="icons.product" :message="String($t('common.noData'))" />
 
     <template v-else>
       <div class="flex-1 overflow-auto min-h-0 bg-(--color-surface)">

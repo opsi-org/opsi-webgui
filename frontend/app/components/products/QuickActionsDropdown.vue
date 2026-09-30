@@ -11,12 +11,12 @@ https://opsi.org/en/
 -->
 <template>
   <div class="contents">
-    <CoreAppTooltip v-if="hasSelections && compact" :text="$t('products.quick')">
+    <CoreAppTooltip v-if="hasSelections && compact" :text="$t('quick.actions')">
       <CoreAppButton
         variant="soft"
         color="primary"
         size="sm"
-        :aria-label="String($t('products.quick'))"
+        :aria-label="String($t('quick.actions'))"
         @click="dialogOpen = true"
         data-testid="product-quick-actions-trigger"
       >
@@ -28,11 +28,11 @@ https://opsi.org/en/
       color="primary"
       size="sm"
       @click="dialogOpen = true"
-      :aria-label="String($t('products.quick'))"
+      :aria-label="String($t('quick.actions'))"
       data-testid="product-quick-actions-trigger"
     >
       <CoreAppIcon :name="icons.product" class="w-4 h-4" />
-      <span class="hidden sm:inline">{{ $t('products.quick') }}</span>
+      <span class="hidden sm:inline">{{ $t('quick.actions') }}</span>
     </CoreAppButton>
     <CoreAppTooltip v-else-if="compact" :text="$t('products.quickHelp')">
       <CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-70" :aria-label="String($t('products.quickHelp'))" disabled>
@@ -49,7 +49,7 @@ https://opsi.org/en/
       :aria-label="String($t('products.quickHelp'))"
     >
       <CoreAppIcon :name="icons.product" class="w-4 h-4" />
-      <span class="hidden sm:inline">{{ $t('products.quick') }}</span>
+      <span class="hidden sm:inline">{{ $t('quick.actions') }}</span>
     </CoreAppButton>
 
     <CoreAppModal
@@ -62,7 +62,7 @@ https://opsi.org/en/
         <CoreAppCard class="h-full min-w-0" :ui="{ root: 'h-full flex flex-col', body: 'flex-1 min-h-0 overflow-hidden p-2.5' }">
           <template #header>
             <div class="flex items-center justify-between">
-              <CoreAppHeading :icon="icons.product" :text="$t('products.quick')" />
+              <CoreAppHeading :icon="icons.product" :text="$t('quick.actions')" />
               <CoreAppButton
                 variant="ghost"
                 color="neutral"
@@ -111,14 +111,14 @@ https://opsi.org/en/
                     </div>
                     <div>
                       <span class="text-xs text-(--color-text-muted) block mb-1">
-                        {{ $t('actions.result') }}
+                        {{ $t('common.result') }}
                       </span>
                       <CoreAppSelectMenu
                         v-model="filters.actionResult"
                         :items="actionResultOptions"
                         size="xs"
                         class="w-full"
-                        :aria-label="String($t('actions.result'))"
+                        :aria-label="String($t('common.result'))"
                         data-testid="product-quick-actions-action-result"
                         @update:model-value="fetchPreview"
                       />
@@ -237,7 +237,7 @@ https://opsi.org/en/
                   v-else-if="previewData !== null"
                   class="flex justify-center items-center text-xs text-(--color-text-muted) h-full min-h-0"
                 >
-                  {{ $t('products.noMatch') }}
+                  {{ $t('common.noResults') }}
                 </div>
                 <div v-else class="flex justify-center items-center text-xs text-(--color-text-muted) h-full min-h-0">--</div>
               </div>
@@ -359,7 +359,7 @@ https://opsi.org/en/
 
   const actionResultOptions = ref([
     { value: NOT_APPLIED, label: NOT_APPLIED },
-    { value: 'failed', label: String($t('actions.live.failed')) },
+    { value: 'failed', label: String($t('common.failed')) },
     { value: 'successful', label: String($t('actions.success')) },
     { value: 'none', label: String($t('common.none')) },
   ])

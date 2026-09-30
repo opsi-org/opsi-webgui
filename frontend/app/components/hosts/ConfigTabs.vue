@@ -78,7 +78,7 @@ https://opsi.org/en/
       <CoreAppEmptyState
         v-else-if="categoryAwareTree.length === 0"
         :icon="icons.config"
-        :message="hostId || hostType === 'server' ? String($t('config.paramsNone')) : String($t('hosts.select'))"
+        :message="hostId || hostType === 'server' ? String($t('common.noData')) : String($t('hosts.select'))"
       />
       <CoreAppCard
         v-else

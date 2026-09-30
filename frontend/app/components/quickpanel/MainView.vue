@@ -226,7 +226,7 @@ https://opsi.org/en/
     const page = defaultPageOptions.value.find((o) => o.value === defaultPage.value)
     if (!page) return $t('nav.defaultPage')
     if (defaultPage.value.startsWith('/admin/')) {
-      return `${$t('nav.defaultPage')}: ${$t('admin.title')} - ${page.label}`
+      return `${$t('nav.defaultPage')}: ${$t('nav.admin')} - ${page.label}`
     }
     return `${$t('nav.defaultPage')}: ${page.label}`
   })

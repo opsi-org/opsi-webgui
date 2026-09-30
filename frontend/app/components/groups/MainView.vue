@@ -152,7 +152,7 @@ https://opsi.org/en/
             </template>
           </template>
           <div v-if="filteredTreeGroups.length === 0 && !loading" class="text-sm text-(--color-text-muted) px-2 py-4 text-center">
-            {{ searchQuery ? $t('common.noResults') : $t('groups.none') }}
+            {{ $t('common.noResults') }}
           </div>
         </div>
       </div>
@@ -279,7 +279,7 @@ https://opsi.org/en/
                 <CoreAppFilterInput
                   v-if="(selectedGroup.members?.length || 0) > 5"
                   v-model="memberSearchQuery"
-                  :placeholder="$t('groups.membersFilter') + '...'"
+                  :placeholder="$t('common.filter')"
                   size="sm"
                   input-class="w-full mb-2"
                 />

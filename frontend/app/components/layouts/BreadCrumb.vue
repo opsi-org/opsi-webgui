@@ -19,7 +19,7 @@ https://opsi.org/en/
             {{ crumb.label }}
           </NuxtLink>
           <h1 v-else class="text-(--color-text) font-medium whitespace-nowrap text-xs m-0 inline-flex items-center gap-1">
-            <template v-if="crumb.label === $t('nav.products')">
+            <template v-if="crumb.label === $t('products.title')">
               {{ crumb.label }}
               <span class="inline-flex items-center gap-0.5">
                 (<CoreAppIcon :name="productScopeIcon" class="w-3 h-3" /> {{ productScopeCount }})
@@ -46,21 +46,21 @@ https://opsi.org/en/
   const { t: i18nT } = useI18n()
 
   const segmentI18nMap: Record<string, string> = {
-    dashboard: 'nav.dashboard',
+    dashboard: 'dashboard.title',
     admin: 'nav.admin',
-    terminal: 'nav.terminal',
-    diagnostics: 'nav.diagnostics',
-    healthcheck: 'nav.healthcheck',
-    modules: 'nav.modules',
-    system: 'nav.systemInfo',
-    maintenance: 'nav.maintenance',
-    servers: 'nav.servers',
-    clients: 'nav.clients',
-    products: 'nav.products',
-    groups: 'nav.groups',
-    support: 'nav.support',
-    configuration: 'nav.configuration',
-    logs: 'nav.logs',
+    terminal: 'terminal.title',
+    diagnostics: 'diag.title',
+    healthcheck: 'diag.health',
+    modules: 'mods.title',
+    system: 'diag.systemInfo',
+    maintenance: 'admin.maintenance',
+    servers: 'servers.title',
+    clients: 'clients.title',
+    products: 'products.title',
+    groups: 'groups.title',
+    support: 'support.title',
+    configuration: 'config.title',
+    logs: 'logs.title',
     clone: 'nav.clone',
     add: 'nav.addNew',
   }
@@ -131,7 +131,6 @@ https://opsi.org/en/
     }
     if (exactMatches[normalizedPath]) return exactMatches[normalizedPath]
 
-    // Match paths with dynamic host/client IDs at the end (e.g. clients/configuration/parameters/aa21.acme.corp)
     const prefixMatches: [RegExp, string][] = [
       [/^clients\/configuration\/parameters\//, $t('pages.clientsConfigParams')],
       [/^clients\/configuration\/attributes\//, $t('pages.clientsConfigAttrs')],
@@ -147,9 +146,7 @@ https://opsi.org/en/
     return ''
   }
 
-  const pageDescription = computed(() => {
-    return getPageDescription($route.path)
-  })
+  const pageDescription = computed(() => getPageDescription($route.path))
 
   const productScopeIcon = computed(() => (selectionStore.selectedClients.length > 0 ? icons.client : icons.server))
   const productScopeCount = computed(() =>

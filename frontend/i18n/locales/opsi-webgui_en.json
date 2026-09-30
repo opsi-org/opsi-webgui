@@ -1,7 +1,6 @@
 {
   "actions": {
     "live": {
-      "failed": "Failed",
       "processing": "Processing",
       "saving": "Saving",
       "updated": "Updated"
@@ -12,9 +11,8 @@
     "failedClients": "Failed Clients",
     "failedClientsHelp": "Shows enabled clients where at least one ProductOnClient has actionResult = failed.",
     "fireOnDemand": "Fire OnDemand event",
-    "fireOnDemandDesc": "Directly fires the event on_demand on the selected clients.",
+    "fireEventDesc": "Directly fires the {event} event on the selected clients.",
     "fireTimer": "Fire timer event",
-    "fireTimerDesc": "Directly fires the event timer on the selected clients.",
     "noFailed": "No failed clients",
     "notify": "Notify",
     "last": "Last Action",
@@ -23,8 +21,6 @@
     "rename": "Rename",
     "processRequests": "Process actions",
     "request": "Action Request",
-    "result": "Action Result",
-    "results": "Action Results",
     "saveAndProcess": "Save and process action requests",
     "saveAndProcessScopeHelp": "Choose which products to process: only the ones you just changed here, or every product for the affected clients.",
     "changedProductsOnly": "Changed products only",
@@ -35,15 +31,12 @@
   },
   "admin": {
     "appState": "Application State",
-    "maintenance": "Maintenance",
-    "maintenanceMode": "Maintenance Mode",
-    "title": "Admin"
+    "maintenance": "Maintenance"
   },
   "auth": {
     "enterPassword": "Enter password",
     "expired": "Your session has expired. Please log in again.",
     "expiresIn": "Session expires in",
-    "hidePassword": "Hide password",
     "invalid": "Invalid credentials.",
     "loggingOut": "Logging out...",
     "login": "Login",
@@ -56,7 +49,6 @@
     "goToLogin": "Go to the login page",
     "readOnly": "Read-only mode is active. Changes are not allowed.",
     "restricted": "restricted",
-    "showPassword": "Show password",
     "username": "Username"
   },
   "backup": {
@@ -76,8 +68,7 @@
     "serverIdHandling": "Server ID Handling",
     "uploading": "Uploading",
     "useFrom": "From Backup",
-    "useLocalId": "Keep Local",
-    "useNewId": "New ID"
+    "useLocalId": "Keep Local"
   },
   "bus": {
     "acceptCert": "Check opsiconfd availability and verify certificate",
@@ -99,7 +90,6 @@
       "notSeenSince": "Not seen since (days)",
       "hasFailedProducts": "Has failed products",
       "hasOutdatedProducts": "Has outdated product versions",
-      "operatingSystem": "Operating system",
       "allOperatingSystems": "All operating systems"
     },
     "all": "All Clients",
@@ -135,8 +125,6 @@
     "logs.select": "Please select a client to view logs",
     "reachable.unknown": "Reachability unknown (messagebus not available).",
     "reachable.help": "Reachable = connected via messagebus. The state is loaded with the client list and then updated live from host_connected / host_disconnected events.",
-    "reachable.is": "Client is reachable.",
-    "reachable.not": "Client is not reachable.",
     "reachable.status": "Reachable",
     "reboot": {
       "warn": "This will immediately reboot the selected clients."
@@ -160,7 +148,6 @@
       "exists": "A client with this ID already exists.",
       "noNumber": "Client name cannot start with a number"
     },
-    "reachable.yes": "Reachable",
     "reachable.no": "Not reachable"
   },
   "common": {
@@ -174,6 +161,7 @@
     "back": "Back",
     "cancel": "Cancel",
     "clear": "Clear",
+    "hide": "Hide",
     "clearAll": "Clear All",
     "copy": "Copy",
     "copied": "Copied!",
@@ -188,7 +176,6 @@
     "description": "Description",
     "discard": "Discard",
     "discardAll": "Discard All",
-    "dismiss": "Dismiss",
     "download": "Download",
     "details": "Details",
     "edit": "Edit",
@@ -202,7 +189,7 @@
     "expand": "Expand",
     "failed": "Failed",
     "filter": "Filter",
-    "filterBy": "Filtering by",
+    "filterBy": "Filter by",
     "hidden": "Hidden",
     "info": "Info",
     "loading": "Loading...",
@@ -214,6 +201,7 @@
     "none": "None",
     "noResults": "No results found",
     "noSelection": "No items selected",
+    "operatingSystem": "Operating system",
     "note": "Note",
     "notes": "Notes",
     "of": "of",
@@ -235,11 +223,13 @@
     "save": "Save",
     "saveAll": "Save All",
     "results": "Results",
+    "result": "Result",
     "selectAll": "Select All",
     "selectRow": "Select row",
     "selected": "Selected",
     "settings": "Settings",
     "showing": "Showing",
+    "show": "Show",
     "showMore": "Show More",
     "skipToContent": "Skip to content",
     "success": "Success",
@@ -272,7 +262,6 @@
     "param": "Parameter",
     "params": "Parameters",
     "paramsDefault": "Parameters (Global Defaults)",
-    "paramsNone": "No parameters found",
     "possibleValues": "Possible Values",
     "selectValues": "Select values",
     "title": "Configuration"
@@ -286,7 +275,6 @@
       "load": "Load average",
       "memory": "Memory",
       "opsiconfd": "opsiconfd",
-      "os": "Operating system",
       "python": "Python"
     },
     "title": "Dashboard",
@@ -338,11 +326,9 @@
     "id": "Group ID",
     "members": "Group Members",
     "membersAdd": "Add Members",
-    "membersFilter": "Filter members...",
     "membersNone": "No members in this group",
     "membersRemoveAll": "Remove All Members",
     "membersSearch": "Add or search...",
-    "none": "No groups found",
     "parent": "Parent Group",
     "product": "Product Groups",
     "subgroup": "Add Subgroup",
@@ -358,7 +344,6 @@
     "architecture": "Architecture",
     "class": "Class",
     "displayName": "Name",
-    "empty": "No data found",
     "emptyDesc": "Inventory was scanned, but nothing is currently present.",
     "export": "Export CSV",
     "exportDesc": "Export to CSV: Export filtered and sorted rows.",
@@ -373,7 +358,6 @@
     "limitedDesc": "This client has {count} entries. Only the first 5,000 filtered entries are available in this view.",
     "notScanned": "Not scanned yet",
     "notScannedDesc": "No inventory data has been collected for this client yet.",
-    "ok": "OK",
     "okDesc": "Inventory exists and was scanned within the last {days} days.",
     "present": "Present",
     "scannedAt": "Scanned",
@@ -381,14 +365,12 @@
     "software": "Software",
     "stale": "stale",
     "staleDesc": "The last scan is older than {days} days. A client-side scan refreshes this data.",
-    "title": "Inventory",
-    "version": "Version"
+    "title": "Inventory"
   },
   "logs": {
     "clearMarker": "Clear Marker",
     "level": "Log Level",
     "marker": "Marker",
-    "none": "No logs found",
     "scroll": "Scroll to Marker",
     "selectType": "Select log type to view",
     "title": "Logs"
@@ -402,7 +384,6 @@
     "free": "Free Modules",
     "integrated": "Integrated in Core",
     "licensed": "Licensed",
-    "none": "No modules found",
     "obsolete.desc": "Obsolete license modules no longer supported. Listed for historical reasons only.",
     "title": "Modules",
     "unlimited": "Unlimited clients",
@@ -412,27 +393,13 @@
     "addNew": "Add New",
     "admin": "Admin",
     "breadcrumb": "Breadcrumb",
-    "clients": "Clients",
     "clone": "Clone",
-    "configuration": "Configuration",
-    "dashboard": "Dashboard",
     "defaultPage": "Default Page",
-    "diagnostics": "Diagnostics",
-    "groups": "Groups",
-    "healthcheck": "Health Check",
     "leaveAnyway": "Leave Anyway",
-    "logs": "Logs",
-    "maintenance": "Maintenance",
-    "modules": "Modules",
     "navigateAway": "You have unsaved changes. If you leave, they will be lost. Continue?",
-    "products": "Products",
     "redirect": "Redirecting...",
-    "servers": "Servers",
     "sidebar": "Toggle Sidebar",
-    "stayOnPage": "Stay on Page",
-    "support": "Support",
-    "systemInfo": "System Info",
-    "terminal": "Terminal"
+    "stayOnPage": "Stay on Page"
   },
   "notifications": {
     "target.both": "To both selected servers and clients",
@@ -534,14 +501,12 @@
     "defaultValues": "Default Values",
     "depotDiffNote": "Depot differs from default (bold)",
     "dependencies": "Dependencies",
-    "dependenciesNone": "No dependencies found",
     "id": "Product ID",
     "installed": "Installed",
     "localboot": "Localboot Products",
     "locked": "Locked Products",
     "lockedNone": "No locked products",
     "netboot": "Netboot Products",
-    "noMatch": "No products match selected criteria",
     "none": "No Products",
     "notApplied": "- not applied -",
     "notOnAllDepots": "Not on all depots",
@@ -559,11 +524,9 @@
       "notOnAllDepotsShort": "Missing on some selected depots"
     },
     "properties": "Product Properties",
-    "propertiesNone": "No properties found",
     "propertiesSaved": "Properties saved successfully.",
     "processHelp": "Process already-saved pending action requests now for the selected clients and products.",
     "property": "Property",
-    "quick": "Quick Actions",
     "quickHelp": "Select products and clients to set action requests for multiple products.",
     "quickScopeHelp": "Server scope expands to the clients assigned to the selected servers. The preview always lists the affected clients.",
     "requiredAction": "Required Action",
@@ -591,7 +554,6 @@
   "globalSearch": {
     "title": "Global Search",
     "scope": "Scope",
-    "quickSearchPlaceholder": "Quick search...",
     "clearAllFilters": "Clear all applied filters",
     "favorites": "Favorites",
     "clearAllFavorites": "Clear all favorites",
@@ -625,7 +587,6 @@
     "autoScrollDesc": "Automatically scrolls down when new content is loaded",
     "columns": "Columns",
     "display": "Display Mode",
-    "filtering": "Filter by",
     "primaryColumn": "Primary column",
     "allColumns": "All columns",
     "infiniteScroll": "Infinite Scroll",
@@ -698,7 +659,6 @@
     "openDetail": "Open detail panel",
     "refreshTable": "Refresh table data",
     "navigateRows": "Navigate rows",
-    "selectRow": "Select row",
     "addClient": "Open Add New Client panel",
     "addServerConfig": "Open Create Server Configuration popup",
     "productsSaveAndExecute": "Save & Execute product action requests",

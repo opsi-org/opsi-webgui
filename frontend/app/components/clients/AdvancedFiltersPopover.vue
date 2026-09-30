@@ -42,7 +42,7 @@ https://opsi.org/en/
           primary-class="w-4 h-4"
           secondary-class="w-2.5 h-2.5 text-(--color-success-soft-text)"
         />
-        {{ $t('clients.reachable.yes') }}
+        {{ $t('clients.reachable.status') }}
       </CoreAppButton>
       <CoreAppButton
         size="xs"
@@ -64,13 +64,13 @@ https://opsi.org/en/
   </div>
 
   <div class="flex flex-col gap-1">
-    <span class="text-xs text-(--color-text-muted)">{{ $t('clients.advancedFilters.operatingSystem') }}</span>
+    <span class="text-xs text-(--color-text-muted)">{{ $t('common.operatingSystem') }}</span>
     <CoreAppSelectMenu
       :model-value="modelValue.operatingSystem || 'all'"
       :items="operatingSystemOptions"
       size="sm"
       open-on-hover
-      :aria-label="String($t('clients.advancedFilters.operatingSystem'))"
+      :aria-label="String($t('common.operatingSystem'))"
       @update:model-value="(v: string) => setFilter({ operatingSystem: v === 'all' ? undefined : v })"
     />
   </div>

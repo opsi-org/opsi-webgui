@@ -293,9 +293,9 @@ https://opsi.org/en/
                 id="backup-maintenance-mode"
                 v-model="backupOptions.maintenance_mode"
                 class="mt-0.5"
-                :aria-label="String($t('admin.maintenanceMode'))"
+                :aria-label="String($t('admin.maintenance'))"
               />
-              <span class="font-medium text-sm">{{ $t('admin.maintenanceMode') }}</span>
+              <span class="font-medium text-sm">{{ $t('admin.maintenance') }}</span>
             </div>
             <div class="text-sm font-medium text-(--color-text) mb-3">
               {{ $t('backup.include') }}
@@ -571,7 +571,7 @@ https://opsi.org/en/
   const serverIdOptions = computed(() => [
     { label: String($t('backup.useFrom')), value: 'backup' },
     { label: String($t('backup.useLocalId')), value: 'local' },
-    { label: String($t('backup.useNewId')), value: 'new' },
+    { label: String($t('fields.newId')), value: 'new' },
   ])
 
   watch(serverIdOption, (val) => {

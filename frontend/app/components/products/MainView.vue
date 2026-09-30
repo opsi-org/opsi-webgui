@@ -103,7 +103,7 @@ https://opsi.org/en/
           <div class="flex items-center justify-between mb-2">
             <h3 class="text-sm font-heading uppercase tracking-wide flex items-center gap-2 m-0">
               <CoreAppIcon :name="icons.onDemand" class="w-5 h-5" />
-              {{ $t('actions.results') }} - {{ $t('actions.processRequests') }}
+              {{ $t('common.results') }} - {{ $t('actions.processRequests') }}
             </h3>
             <CoreAppButton
               :icon="icons.x"
@@ -653,8 +653,8 @@ https://opsi.org/en/
     },
     {
       key: 'actionResult',
-      label: String($t('actions.result')),
-      labelKey: 'actions.result',
+      label: String($t('common.result')),
+      labelKey: 'common.result',
       headerIcon: icons.productActionResult,
       sortable: true,
       class: 'text-center w-16',
@@ -950,7 +950,7 @@ https://opsi.org/en/
               pids,
               {
                 kind: 'error',
-                message: String($t('actions.live.failed')),
+                message: String($t('common.failed')),
                 tooltip: formatApiErrorMessage(e),
               },
               15000,
@@ -1061,7 +1061,7 @@ https://opsi.org/en/
               processedIds,
               {
                 kind: 'error',
-                message: String($t('actions.live.failed')),
+                message: String($t('common.failed')),
                 tooltip: formatApiErrorMessage(e),
               },
               15000,

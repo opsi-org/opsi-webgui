@@ -28,7 +28,7 @@ https://opsi.org/en/
         variant="link"
         :size="effectiveSize"
         :icon="show ? icons.eyeOff : icons.eye"
-        :aria-label="show ? String($t('auth.hidePassword')) : String($t('auth.showPassword'))"
+        :aria-label="show ? String($t('common.hide')) : String($t('common.show'))"
         :aria-pressed="show"
         :disabled="disabled"
         @click="show = !show"

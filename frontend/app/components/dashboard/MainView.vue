@@ -501,7 +501,7 @@ https://opsi.org/en/
     if (d.opsiconfd_version) items.push({ label: String($t('dashboard.system.opsiconfd')), value: String(d.opsiconfd_version) })
 
     const osRelease = d.os_release as Record<string, unknown> | undefined
-    if (osRelease?.PRETTY_NAME) items.push({ label: String($t('dashboard.system.os')), value: String(osRelease.PRETTY_NAME) })
+    if (osRelease?.PRETTY_NAME) items.push({ label: String($t('common.operatingSystem')), value: String(osRelease.PRETTY_NAME) })
 
     const processor = d.processor as Record<string, unknown> | undefined
     if (processor)

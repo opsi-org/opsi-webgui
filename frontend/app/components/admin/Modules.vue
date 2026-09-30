@@ -24,7 +24,7 @@ https://opsi.org/en/
       <CoreAppLoadingSpinner />
     </div>
     <div v-else-if="filteredModules.length === 0" class="py-8 text-center text-(--color-text-muted)">
-      {{ filter ? $t('common.noResults') : $t('mods.none') }}
+      {{ filter ? $t('common.noResults') : $t('common.noData') }}
     </div>
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
       <div

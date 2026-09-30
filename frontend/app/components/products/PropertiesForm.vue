@@ -15,7 +15,7 @@ https://opsi.org/en/
       <CoreAppLoadingSpinner />
     </div>
 
-    <CoreAppEmptyState v-else-if="properties.length === 0" :icon="icons.config" :message="String($t('products.propertiesNone'))" />
+    <CoreAppEmptyState v-else-if="properties.length === 0" :icon="icons.config" :message="String($t('common.noData'))" />
 
     <template v-else>
       <CoreAppCard
