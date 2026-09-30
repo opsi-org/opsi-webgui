@@ -47,7 +47,7 @@
             <span class="text-sm flex-1 truncate" :class="expanded['_system'] ? 'font-medium' : ''">
               {{ $t('diag.systemProps') }}
             </span>
-            <span class="text-xs text-(--color-text-muted) opacity-60">{{ Object.keys(filteredSystemInfo).length }}</span>
+            <span class="text-xs text-(--color-text-muted)">{{ Object.keys(filteredSystemInfo).length }}</span>
           </div>
           <div v-if="expanded['_system']" class="children-container">
             <div v-for="(value, key) in filteredSystemInfo" :key="key" class="tree-node">
@@ -128,7 +128,7 @@
               <span class="text-sm flex-1 truncate" :class="expanded[String(category)] ? 'font-medium' : ''">
                 {{ String(category) }}
               </span>
-              <span class="text-xs text-(--color-text-muted) opacity-60">{{ Object.keys(values as object).length }}</span>
+              <span class="text-xs text-(--color-text-muted)">{{ Object.keys(values as object).length }}</span>
             </div>
             <div v-if="expanded[String(category)]" class="children-container">
               <template v-for="(v, k) in values as Record<string, unknown>" :key="k">
@@ -159,7 +159,7 @@
                     <span class="text-sm flex-1 truncate" :class="expanded[String(category) + '.' + String(k)] ? 'font-medium' : ''">
                       {{ k }}
                     </span>
-                    <span class="text-xs text-(--color-text-muted) opacity-60">
+                    <span class="text-xs text-(--color-text-muted)">
                       {{ typeof v === 'object' && v !== null ? Object.keys(v as object).length : '' }}
                     </span>
                   </div>

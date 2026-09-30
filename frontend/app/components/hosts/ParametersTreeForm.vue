@@ -39,7 +39,7 @@
           <span class="text-sm flex-1 truncate transition-colors" :class="open[node.key] ? 'font-medium' : ''">
             {{ node.label }}
           </span>
-          <span class="text-xs text-(--color-text-muted) opacity-60">{{ node.leafCount ?? 0 }}</span>
+          <span class="text-xs text-(--color-text-muted)">{{ node.leafCount ?? 0 }}</span>
         </div>
         <div v-if="mounted[node.key]" v-show="open[node.key]" class="children-container">
           <HostsParametersTreeForm :tree="node.children" v-bind="passProps" />
