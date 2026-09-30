@@ -213,7 +213,6 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 		logger.warning("Error cleaning database before tests: %s", e)
 		pass
 
-	configserver = socket.getfqdn()
 	# MARK: ---- loop
 	for i in range(TEST_NUM_ITEMS * 2):
 		cursor.execute(  # old clientnames
@@ -234,7 +233,7 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 		if i > 5:
 			cursor.execute(
 				"INSERT INTO CONFIG_STATE (configId, objectId, CONFIG_STATE.values) VALUES "
-				f'("clientconfig.depot.id", "pytest-client-{i}.domain.local", \'["{configserver}"]\');'
+				f'("clientconfig.depot.id", "pytest-client-{i}.domain.local", \'["{config_server_id}"]\');'
 			)
 
 		cursor.execute(
@@ -243,7 +242,7 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 		)
 		cursor.execute(
 			f"INSERT INTO PRODUCT_ON_DEPOT (productId, productVersion, packageVersion, depotId, productType) VALUES "
-			f'("pytest-prod-{i}", "1.0", "1", "{configserver}", "LocalbootProduct");'
+			f'("pytest-prod-{i}", "1.0", "1", "{config_server_id}", "LocalbootProduct");'
 		)
 
 	# MARK: ---- host
@@ -256,7 +255,6 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 
 	# MARK: ---- pod
 	####pytest-test-depot-2.domain.local and product pytest-product-3
-
 	cursor.execute(
 		"INSERT INTO PRODUCT_ON_DEPOT (productId, productVersion, packageVersion, depotId, productType) VALUES "
 		'("pytest-prod-1", "1.0", "1", "pytest-test-depot-1.domain.local", "LocalbootProduct"),'
@@ -328,12 +326,12 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 	cursor.execute(
 		"INSERT INTO PRODUCT_PROPERTY_STATE (productId, propertyId, objectId, `values`) VALUES "
 		# depot defaults
-		f'("pytest-prod-1", "param1u", "{configserver}", \'["B"]\'),'
-		f'("pytest-prod-1", "param1b", "{configserver}", \'["true"]\'),'
-		f'("pytest-prod-2", "param2u", "{configserver}", \'["Z"]\'),'
-		f'("pytest-prod-2", "param2b", "{configserver}", \'["false"]\'),'
-		f'("pytest-prod-3", "param3u", "{configserver}", \'["III"]\'),'
-		f'("pytest-prod-3", "param3b", "{configserver}", \'["true"]\'),'
+		f'("pytest-prod-1", "param1u", "{config_server_id}", \'["B"]\'),'
+		f'("pytest-prod-1", "param1b", "{config_server_id}", \'["true"]\'),'
+		f'("pytest-prod-2", "param2u", "{config_server_id}", \'["Z"]\'),'
+		f'("pytest-prod-2", "param2b", "{config_server_id}", \'["false"]\'),'
+		f'("pytest-prod-3", "param3u", "{config_server_id}", \'["III"]\'),'
+		f'("pytest-prod-3", "param3b", "{config_server_id}", \'["true"]\'),'
 		# depot1
 		f'("pytest-prod-1", "param1u", "pytest-test-depot-1.domain.local", \'["A"]\'),'  # no diff
 		f'("pytest-prod-1", "param1b", "pytest-test-depot-1.domain.local", \'["false"]\'),'
