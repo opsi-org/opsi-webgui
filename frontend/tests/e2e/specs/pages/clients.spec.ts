@@ -219,29 +219,6 @@ test.describe('Clients', () => {
           },
         },
         {
-          name: 'opsi-webgui-table-settings-button',
-          captureTestId: 'table-settings',
-        },
-        {
-          name: 'opsi-webgui-client-row-action-menu-button',
-          captureTestId: 'client-quick-actions-trigger-inline',
-          before: async (p) => {
-            await waitForTable(p)
-            const firstRow = p.locator('table tbody tr').first()
-            if (await firstRow.isVisible().catch(() => false)) {
-              await firstRow.click()
-              await p.waitForTimeout(300)
-            }
-          },
-        },
-        {
-          name: 'opsi-webgui-client-row-action-config-button',
-          captureTestId: 'client-row-action-config',
-          before: async (p) => {
-            await waitForTable(p)
-          },
-        },
-        {
           name: 'opsi-webgui-client-row-action-logs-button',
           captureTestId: 'client-row-action-logs',
           before: async (p) => {
@@ -326,46 +303,6 @@ test.describe('Clients', () => {
           after: async (p) => {
             await p.keyboard.press('Escape')
             await p.waitForTimeout(200)
-          },
-        },
-        // Quickpanel overview tab
-        {
-          name: 'opsi-webgui-quickpanel-overview-section',
-          captureTestId: 'quickpanel-tab-content',
-          before: async (p) => {
-            const panel = p.getByTestId('quickpanel')
-            const tab = panel
-              .getByRole('tab')
-              .filter({ hasText: /overview|übersicht/i })
-              .first()
-            if (await tab.isVisible().catch(() => false)) {
-              await tab.click()
-              await p.waitForTimeout(300)
-            }
-          },
-        },
-        // Quickpanel client groups tree (cropped)
-        {
-          name: 'opsi-webgui-quickpanel-client-groups',
-          captureTestId: 'quickpanel-tab-content',
-          before: async (p) => {
-            const toggle = p.getByTestId('quickpanel-toggle')
-            const panel = p.getByTestId('quickpanel')
-            if (await toggle.isVisible().catch(() => false)) {
-              if (!(await panel.isVisible().catch(() => false))) {
-                await toggle.click()
-                await p.waitForTimeout(400)
-              }
-            }
-            const tab = p
-              .getByTestId('quickpanel')
-              .getByRole('tab')
-              .filter({ hasText: /client|gruppe|group/i })
-              .first()
-            if (await tab.isVisible().catch(() => false)) {
-              await tab.click()
-              await p.waitForTimeout(300)
-            }
           },
         },
         {

@@ -66,38 +66,7 @@ test.describe('DataTable - component', () => {
         }
       },
       vrMask: ['[class*="timestamp"]', '[class*="lastSeen"]'],
-      elementShots: [
-        {
-          name: 'datatable-pagination-multiselect-settings',
-          captureSelector: 'main',
-          before: async (p) => {
-            await waitForTable(p)
-            const settingsButton = p.getByTestId('table-settings')
-            if (await settingsButton.isVisible().catch(() => false)) {
-              await settingsButton.click()
-              await p.waitForTimeout(300)
-              const settingsDialog = p.locator('[role="dialog"]').first()
-              const paginationButton = settingsDialog
-                .getByRole('button')
-                .filter({ hasText: /pagination|seiten/i })
-                .first()
-              if (await paginationButton.isVisible().catch(() => false)) {
-                await paginationButton.click()
-                await p.waitForTimeout(300)
-              }
-            }
-            const headerCheckbox = p.locator('thead [type="checkbox"], thead [role="checkbox"]').first()
-            if (await headerCheckbox.isVisible().catch(() => false)) {
-              await headerCheckbox.click()
-              await p.waitForTimeout(300)
-            }
-          },
-          after: async (p) => {
-            await p.keyboard.press('Escape')
-            await p.waitForTimeout(200)
-          },
-        },
-      ],
+      elementShots: [],
     })
   })
 })

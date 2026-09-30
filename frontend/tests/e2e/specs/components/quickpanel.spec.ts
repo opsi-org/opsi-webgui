@@ -215,27 +215,9 @@ test.describe('Quick Actions', () => {
           },
         },
         {
-          name: 'quickactions-client-notify-dialog',
-          captureSelector: '[role="dialog"]',
-          before: async (p) => openClientQuickActionDialog(p, 1),
-          after: async (p) => {
-            await p.keyboard.press('Escape')
-            await p.waitForTimeout(200)
-          },
-        },
-        {
           name: 'quickactions-client-reboot-dialog',
           captureSelector: '[role="dialog"]',
           before: async (p) => openClientQuickActionDialog(p, 2),
-          after: async (p) => {
-            await p.keyboard.press('Escape')
-            await p.waitForTimeout(200)
-          },
-        },
-        {
-          name: 'quickactions-client-shutdown-dialog',
-          captureSelector: '[role="dialog"]',
-          before: async (p) => openClientQuickActionDialog(p, 3),
           after: async (p) => {
             await p.keyboard.press('Escape')
             await p.waitForTimeout(200)
@@ -251,7 +233,7 @@ test.describe('Quick Actions', () => {
           },
         },
         {
-          name: 'quickactions-client-delete-dialog',
+          name: 'quickactions-client-deploy-agent-dialog',
           captureSelector: '[role="dialog"]',
           before: async (p) => openClientQuickActionDialog(p, 5),
           after: async (p) => {

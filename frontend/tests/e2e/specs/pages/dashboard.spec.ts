@@ -34,34 +34,8 @@ test.describe('Dashboard', () => {
       docDarkMode: true,
       // Cropped topbar controls for the documentation (generated via test ids).
       elementShots: [
-        { name: 'opsi-webgui-control-theme-toggle', testId: 'theme-toggle' },
-        { name: 'opsi-webgui-control-language-dropdown', testId: 'language-dropdown' },
-        { name: 'opsi-webgui-control-quickpanel-toggle', testId: 'quickpanel-toggle' },
         // Topbar right-side status area (health-badge + messagebus icon + user button)
         { name: 'opsi-webgui-topbar-status-area', captureSelector: 'header nav' },
-        {
-          name: 'opsi-webgui-control-language-menu',
-          before: async (p) => {
-            await p.getByTestId('language-dropdown').click()
-            await p.waitForTimeout(300)
-          },
-          captureTestId: 'language-dropdown-menu',
-          after: async (p) => {
-            await p.keyboard.press('Escape')
-          },
-        },
-        {
-          name: 'opsi-webgui-mobile-dashboard-overview',
-          captureSelector: 'main',
-          before: async (p) => {
-            await p.setViewportSize({ width: 375, height: 812 })
-            await p.waitForTimeout(500)
-          },
-          after: async (p) => {
-            await p.setViewportSize({ width: 1552, height: 920 })
-            await p.waitForTimeout(200)
-          },
-        },
       ],
       functional: async (p) => {
         const serverCard = p.locator('.opsi-card, [class*="card"], [data-testid*="card"], main section').first()

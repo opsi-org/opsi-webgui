@@ -209,31 +209,6 @@ test.describe('Products', () => {
             }
           },
         },
-        {
-          name: 'opsi-webgui-quickpanel-product-groups',
-          captureTestId: 'quickpanel-tab-content',
-          before: async (p) => {
-            // Open quickpanel if not open
-            const toggle = p.getByTestId('quickpanel-toggle')
-            const panel = p.getByTestId('quickpanel')
-            if (await toggle.isVisible().catch(() => false)) {
-              if (!(await panel.isVisible().catch(() => false))) {
-                await toggle.click()
-                await p.waitForTimeout(400)
-              }
-            }
-            // Switch to products/groups tab
-            const tab = p
-              .getByTestId('quickpanel')
-              .getByRole('tab')
-              .filter({ hasText: /product|produkt/i })
-              .first()
-            if (await tab.isVisible().catch(() => false)) {
-              await tab.click()
-              await p.waitForTimeout(300)
-            }
-          },
-        },
       ],
     })
   })

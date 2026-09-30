@@ -41,40 +41,7 @@ test.describe('Servers', () => {
           }
         }
       },
-      elementShots: [
-        // Quickpanel servers tab with a server selected
-        {
-          name: 'opsi-webgui-quickpanel-server-selection-tab',
-          captureTestId: 'quickpanel-tab-content',
-          before: async (p) => {
-            const panel = p.getByTestId('quickpanel')
-            const tab = panel
-              .getByRole('tab')
-              .filter({ hasText: /server/i })
-              .first()
-            if (await tab.isVisible().catch(() => false)) {
-              await tab.click()
-              await p.waitForTimeout(300)
-            }
-          },
-        },
-        // Quickpanel overview tab showing the selected server
-        {
-          name: 'opsi-webgui-quickpanel-overview-with-server',
-          captureTestId: 'quickpanel-tab-content',
-          before: async (p) => {
-            const panel = p.getByTestId('quickpanel')
-            const tab = panel
-              .getByRole('tab')
-              .filter({ hasText: /overview|übersicht/i })
-              .first()
-            if (await tab.isVisible().catch(() => false)) {
-              await tab.click()
-              await p.waitForTimeout(300)
-            }
-          },
-        },
-      ],
+      elementShots: [],
     })
   })
 
