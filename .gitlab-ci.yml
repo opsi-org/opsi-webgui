@@ -38,10 +38,6 @@ stages: [setup, validate, build, release]
     - npm install -g corepack
     - corepack enable pnpm
 
-.install-devtools: &install-devtools |
-  apt update && apt -y install curl zip wget
-  curl -sS "${OPSIDEVTOOLS_INSTALLER_URL_LINUX_X64}" | sh
-
 .clone-opsiconfd: &clone-opsiconfd |
   command -v git >/dev/null 2>&1 || apk add --no-cache git
   OPSICONFD_REF="${OPSICONFD_REF:-v4.3}"
@@ -287,10 +283,8 @@ validate:backend:
     - when: manual
       allow_failure: true
 
-# Smoke e2e (DE / light / desktop / Chromium) against a real opsiconfd.
-validate:e2e:smoke:
+.e2e-test:
   extends: .docker-test
-  needs: [setup:spa, validate:backend]
   variables:
     COMPOSE_PROJECT_NAME: webgui-e2e-$CI_JOB_ID
   script:
@@ -308,6 +302,12 @@ validate:e2e:smoke:
       ]
     reports:
       junit: frontend/test-results/junit.xml
+
+# Smoke e2e (DE / light / desktop / Chromium) against a real opsiconfd.
+validate:e2e:smoke:
+  extends: .e2e-test
+  needs: [setup:spa, validate:backend]
+  artifacts:
     expire_in: 7 days
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
@@ -321,35 +321,15 @@ validate:e2e:smoke:
 
 # Full e2e matrix: nightly schedule + tags (all locales/themes/viewports/browsers).
 validate:e2e:full:
-  extends: .docker-test
+  extends: .e2e-test
   needs:
     - job: setup:spa
     - job: validate:backend
       optional: true
-  retry:
-    max: 1
-    when:
-      - script_failure
-      - runner_system_failure
-      - stuck_or_timeout_failure
   variables:
     COMPOSE_PROJECT_NAME: webgui-e2e-$CI_JOB_ID
     E2E_PIPELINE_SOURCE: schedule
-  script:
-    - mkdir -p backend/webgui/data/app && cp -r frontend/.output/public/. backend/webgui/data/app/ 2>/dev/null || true
-    - docker compose -f docker/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from e2e opsiconfd e2e
   artifacts:
-    when: always
-    paths:
-      [
-        frontend/test-results/,
-        screenshots/documentation/,
-        screenshots/marketing/,
-        screenshots/colorblind/,
-        docker-test.log,
-      ]
-    reports:
-      junit: frontend/test-results/junit.xml
     expire_in: 30 days
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
@@ -392,8 +372,8 @@ build:addon:
       validate:types,
       validate:backend-style,
       validate:audit,
-      { job: setup:patch-version, optional: true },
-      { job: setup:changelog, optional: true },
+      setup:patch-version,
+      setup:changelog,
     ]
   script:
     - apt update && apt -y install zip
@@ -419,13 +399,7 @@ release:sbom:
 release:binary-index:
   stage: release
   extends: [.pybuilder, .only-tags]
-  needs:
-    [
-      build:addon,
-      setup:versions,
-      release:sbom,
-      { job: setup:changelog, optional: true },
-    ]
+  needs: [build:addon, setup:versions, release:sbom, setup:changelog]
   script:
     - opsi-dev-cli self upgrade
     - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
@@ -434,7 +408,7 @@ release:binary-index:
 release:obs-external:
   stage: release
   extends: [.pybuilder, .only-tags]
-  needs: [build:addon, setup:versions, { job: setup:changelog, optional: true }]
+  needs: [build:addon, setup:versions, setup:changelog]
   script:
     - opsi-dev-cli self upgrade
     - opsi-dev-cli -l info packaging obs update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
