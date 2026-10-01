@@ -22,7 +22,7 @@
  *   pnpm test:e2e:update-baselines  # Regenerate visual-regression baselines
  *   pnpm screenshots:docs           # Generate documentation/marketing screenshots into ../screenshots/
  *                                   # (artifacts are minimized to documentation/{light,dark} and marketing/{light,dark})
- *                                   # colorblind: automated checks by default; set COLORBLIND_REVIEW_MODE=artifacts for manual screenshots
+ *                                   # colorblind: set COLORBLIND_REVIEW_MODE=artifacts for manual simulation screenshots
  */
 
 import { defineConfig, devices } from '@playwright/test'

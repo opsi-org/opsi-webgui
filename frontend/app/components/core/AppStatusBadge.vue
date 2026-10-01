@@ -22,7 +22,7 @@ https://opsi.org/en/
       <CoreAppBadge :color="badgeColor" :variant="variant" :size="size" class="justify-center cursor-pointer">
         <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
         <CoreAppIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
-        <span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label }}</span>
+        <span v-if="label" class="text-[11px] leading-none mr-0.5" :style="contentTextStyle">{{ label }}</span>
         <span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
       </CoreAppBadge>
     </CoreAppButton>
@@ -37,7 +37,7 @@ https://opsi.org/en/
     >
       <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
       <CoreAppIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
-      <span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label }}</span>
+      <span v-if="label" class="text-[11px] leading-none mr-0.5" :style="contentTextStyle">{{ label }}</span>
       <span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
     </CoreAppBadge>
     <CoreAppBadge
@@ -77,7 +77,7 @@ https://opsi.org/en/
     <CoreAppBadge :color="badgeColor" :variant="variant" :size="size" class="justify-center cursor-pointer">
       <img v-if="imageSrc" :src="imageSrc" :alt="imageAlt || ''" :class="iconSizeClass" />
       <CoreAppIcon v-else-if="icon" :name="icon" :class="[iconSizeClass]" />
-      <span v-if="label" class="text-[11px] leading-none opacity-80 mr-0.5" :style="contentTextStyle">{{ label }}</span>
+      <span v-if="label" class="text-[11px] leading-none mr-0.5" :style="contentTextStyle">{{ label }}</span>
       <span class="text-[12px] leading-none" :style="contentTextStyle">{{ displayValue }}</span>
     </CoreAppBadge>
   </CoreAppButton>

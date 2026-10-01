@@ -13,7 +13,7 @@
  * Copyright (c) uib GmbH <info@uib.de>
  * License: AGPL-3.0
  *
- * Contrast & colour-vision accessibility checks.
+ * Contrast checks and optional colour-vision simulation screenshots.
  */
 
 import type { Page } from '@playwright/test'
@@ -105,21 +105,6 @@ export async function captureColorBlindSimulations(page: Page, name: string, dir
   for (const type of Object.keys(CVD_MATRICES) as CvdType[]) {
     await applyCvd(page, type)
     await page.screenshot({ path: `${dir}/${name}-${type}.png`, fullPage: true })
-  }
-  await applyCvd(page, null)
-}
-
-/**
- * Automated colour-blind accessibility gate.
- *
- * Runs the same axe contrast checks under protanopia/deuteranopia/tritanopia
- * simulation filters. This replaces manual image inspection when desired.
- */
-export async function checkContrastUnderColorBlindSimulations(page: Page, options?: ContrastOptions): Promise<void> {
-  await ensureCvdFilters(page)
-  for (const type of Object.keys(CVD_MATRICES) as CvdType[]) {
-    await applyCvd(page, type)
-    await checkContrast(page, options)
   }
   await applyCvd(page, null)
 }

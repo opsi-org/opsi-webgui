@@ -33,7 +33,8 @@ const NUXTUI_EXCLUSIONS = [
  * Runs axe-core WCAG 2.1 AA scan. Fails the test on critical/serious violations.
  */
 export async function checkA11y(page: Page, options?: A11yOptions): Promise<void> {
-  let builder = new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+  // checkContrast owns color-contrast so the same expensive axe rule runs once.
+  let builder = new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).disableRules(['color-contrast'])
 
   const exclusions = [...NUXTUI_EXCLUSIONS, ...(options?.exclude || [])]
   for (const sel of exclusions) {

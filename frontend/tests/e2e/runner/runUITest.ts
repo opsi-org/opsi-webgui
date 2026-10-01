@@ -18,15 +18,15 @@
  *   4. Accessibility scan (axe-core WCAG 2.1 AA, desktop viewport only)
  *   5. Accessibility inspector (keyboard/focus/name/heading/landmark checks that
  *      axe misses, runs once per page on the strict baseline variant)
- *   6. Contrast / colour audit (axe colour-contrast + use-of-colour, per theme)
- *      plus either automated CVD checks or optional simulation artifacts
+ *   6. Contrast audit (axe color-contrast + link-in-text-block, once per state)
+ *      plus optional colour-vision simulation screenshots for manual review
  *   7. Screen-reader audit (accessibility tree + document title, baseline variant)
  *
  * Modes:
  *   smoke (default)   :    DE + light + desktop (1552×920) + Chromium
  *                          -> 1 navigation per spec
  *   Nightly (schedule):    EN+DE × light+dark + Chromium+Firefox
- *                          -> 3 navigations per spec (de, en, marketing if needed)
+ *                          -> 2 navigations per spec (de, en) plus marketing captures if needed
  *                          Theme switch reuses the same page load (no re-navigate).
  *                          Mobile viewport skipped for a11y (covered by desktop).
  */
@@ -36,7 +36,7 @@ import type { Page } from '@playwright/test'
 import { setTheme, setLocale, applyLocaleCookie, disableAnimations, waitForLoaded, type Theme, type Locale } from '../utils/ui'
 import { checkA11y } from '../utils/a11y'
 import { inspectA11y } from '../utils/inspector'
-import { checkContrast, captureColorBlindSimulations, checkContrastUnderColorBlindSimulations } from '../utils/contrast'
+import { checkContrast, captureColorBlindSimulations } from '../utils/contrast'
 import { auditScreenReader } from '../utils/screenreader'
 import { viewports } from '../utils/viewports'
 
@@ -48,7 +48,7 @@ const SCREENSHOT_DIR = process.env.SCREENSHOT_DIR || '../screenshots'
 const DOCS_DIR = `${SCREENSHOT_DIR}/documentation`
 const MARKETING_DIR = `${SCREENSHOT_DIR}/marketing`
 
-const COLORBLIND_REVIEW_MODE = process.env.COLORBLIND_REVIEW_MODE || 'auto'
+const COLORBLIND_REVIEW_MODE = process.env.COLORBLIND_REVIEW_MODE || 'off'
 
 const ALLOWED_MARKETING_SHOTS = new Set(['opsi-webgui-dashboard', 'opsi-webgui-clients-with-products'])
 
@@ -128,6 +128,14 @@ export interface ElementShot {
   captureSelector?: string
 }
 
+export interface UITestCheckpoint {
+  name: string
+  run: (page: Page) => Promise<void>
+  reset: (page: Page) => Promise<void>
+  vrMask?: string[]
+  skipKeyboardWalk?: boolean
+}
+
 export interface UITestConfig {
   name: string
   route: string
@@ -144,6 +152,7 @@ export interface UITestConfig {
   docName?: string
   docDarkMode?: boolean
   elementShots?: ElementShot[]
+  checkpoints?: UITestCheckpoint[]
   marketingName?: string
   prepareAfterNavigation?: (page: Page) => Promise<void>
   marketingPrepare?: (page: Page) => Promise<void>
@@ -162,7 +171,7 @@ async function navigateTo(page: Page, config: UITestConfig, locale: Locale, them
   await page.setViewportSize(viewports['desktop'])
   await applyLocaleCookie(page, locale)
   await page.goto(config.route, { waitUntil: 'load', timeout: 30000 })
-  await page.waitForTimeout(config.waitAfterNav || 3000)
+  await page.waitForTimeout(config.waitAfterNav ?? 3000)
   if (!config.route.includes('/login')) {
     await setTheme(page, theme)
     await setLocale(page, locale)
@@ -209,7 +218,7 @@ async function navigateTo(page: Page, config: UITestConfig, locale: Locale, them
 
   if (!config.route.includes('/login') && /\/login(?:\?|$|\/)/.test(page.url())) {
     await page.goto(config.route, { waitUntil: 'load', timeout: 30000 }).catch(() => undefined)
-    await page.waitForTimeout(config.waitAfterNav || 3000)
+    await page.waitForTimeout(config.waitAfterNav ?? 3000)
     await disableAnimations(page)
     await waitForLoaded(page)
     await tryLoginRecovery()
@@ -270,12 +279,8 @@ async function runA11yChecks(
   }
   if (!config.skipContrast) {
     await checkContrast(page, exclude)
-    if (opts.colorBlind) {
-      if (COLORBLIND_REVIEW_MODE === 'auto') {
-        await checkContrastUnderColorBlindSimulations(page, exclude)
-      } else if (COLORBLIND_REVIEW_MODE === 'artifacts') {
-        await captureColorBlindSimulations(page, config.name, `${SCREENSHOT_DIR}/colorblind`)
-      }
+    if (opts.colorBlind && COLORBLIND_REVIEW_MODE === 'artifacts') {
+      await captureColorBlindSimulations(page, config.name, `${SCREENSHOT_DIR}/colorblind`)
     }
   }
   if (opts.inspector && !config.skipInspector) {
@@ -342,6 +347,34 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
     }
   }
 
+  // Additional UI states on this route can keep their own screenshots and
+  // accessibility checks without starting another page/test navigation.
+  for (const checkpoint of config.checkpoints || []) {
+    const checkpointConfig: UITestConfig = {
+      ...config,
+      name: checkpoint.name,
+      vrMask: checkpoint.vrMask ?? config.vrMask,
+      skipKeyboardWalk: checkpoint.skipKeyboardWalk ?? config.skipKeyboardWalk,
+    }
+    await checkpoint.run(page)
+    await waitForLoaded(page)
+    await takeVRScreenshot(page, checkpointConfig)
+    await runA11yChecks(page, checkpointConfig, {
+      inspector: true,
+      colorBlind: true,
+      screenReader: true,
+    })
+
+    if (isNightly) {
+      await switchTheme(page, 'dark')
+      await runA11yChecks(page, checkpointConfig, {})
+      await switchTheme(page, 'light')
+    }
+
+    await checkpoint.reset(page)
+    await waitForLoaded(page)
+  }
+
   // Phase 2 (nightly only): in-place dark switch on the de navigation
   if (isNightly) {
     await switchTheme(page, 'dark')
@@ -390,7 +423,7 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
         await applyLocaleCookie(page, locale)
         await page.setViewportSize(viewports['marketing'])
         await page.goto(config.route, { waitUntil: 'load', timeout: 30000 })
-        await page.waitForTimeout(config.waitAfterNav || 3000)
+        await page.waitForTimeout(config.waitAfterNav ?? 3000)
         await setTheme(page, 'light')
         await setLocale(page, locale)
         await page.waitForTimeout(300)

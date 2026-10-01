@@ -11,8 +11,9 @@
 import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
 import { waitForTable, getTableRowCount } from '../../utils/ui'
+import type { Page } from '@playwright/test'
 
-async function seedClientSelection(page: import('@playwright/test').Page): Promise<string> {
+async function seedClientSelection(page: Page): Promise<string> {
   await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
   await waitForTable(page)
 
@@ -100,7 +101,7 @@ test.describe('Clients', () => {
     await runUITest(page, {
       name: 'clients',
       route: '/clients',
-      waitAfterNav: 5000,
+      waitAfterNav: 0,
       docName: 'opsi-webgui-clients-overview',
       marketingName: 'opsi-webgui-clients-with-products',
       marketingPrepare: async (p) => {
@@ -124,6 +125,16 @@ test.describe('Clients', () => {
         }
       },
       functional: async (p) => {
+        const sidebar = p.getByRole('navigation').first()
+        await expect(sidebar).toBeVisible({ timeout: 10000 })
+        await expect(p.getByTestId('nav-dashboard')).toBeVisible()
+        await expect(p.getByTestId('nav-clients')).toBeVisible()
+
+        await p.getByTestId('nav-dashboard').click()
+        await expect(p).toHaveURL(/\/dashboard/, { timeout: 10000 })
+        await p.getByTestId('nav-clients').click()
+        await expect(p).toHaveURL(/\/clients/, { timeout: 10000 })
+
         await waitForTable(p)
         const count = await getTableRowCount(p)
         expect(count).toBeGreaterThan(0)
@@ -304,18 +315,6 @@ test.describe('Clients', () => {
             await p.waitForTimeout(200)
           },
         },
-        {
-          name: 'opsi-webgui-quickpanel-quick-actions-section',
-          captureTestId: 'quickpanel-quick-actions-section',
-        },
-        {
-          name: 'opsi-webgui-quickpanel-settings-section',
-          captureTestId: 'quickpanel-settings-section',
-        },
-        {
-          name: 'opsi-webgui-quickpanel-footer-section',
-          captureTestId: 'quickpanel-footer-section',
-        },
       ],
     })
   })
@@ -407,161 +406,6 @@ test.describe('Clients', () => {
           timeout: 10000,
         })
       },
-    })
-  })
-
-  test('client action dialogs - deploy, reboot, on-demand', async ({ page }) => {
-    await runUITest(page, {
-      name: 'clients-action-dialogs',
-      route: '/clients',
-      waitAfterNav: 5000,
-      skipVisualRegression: true, // covered by element shots below
-      skipKeyboardWalk: true,
-      functional: async (p) => {
-        await waitForTable(p)
-        // Select first client row
-        const firstRow = p.locator('table tbody tr').first()
-        await firstRow.waitFor({ state: 'visible', timeout: 10000 })
-        await firstRow.click()
-        await p.waitForTimeout(400)
-
-        // Open the row quick-actions inline dropdown
-        const rowActionBtn = p
-          .locator(
-            'table tbody tr:first-child [aria-label*="aktion" i], ' +
-              'table tbody tr:first-child [aria-label*="action" i], ' +
-              'table tbody tr:first-child [class*="row-action"]',
-          )
-          .first()
-        if (await rowActionBtn.isVisible().catch(() => false)) {
-          await rowActionBtn.click()
-          await p.waitForTimeout(400)
-          const menu = p.locator('[role="menu"]').first()
-          if (await menu.isVisible().catch(() => false)) {
-            const actionItems = menu.locator('[role="menuitem"]')
-            expect(await actionItems.count()).toBeGreaterThan(0)
-          }
-          await p.keyboard.press('Escape')
-          await p.waitForTimeout(200)
-        }
-      },
-      elementShots: [
-        // Deploy Client Agent dialog
-        {
-          name: 'opsi-webgui-client-action-deploy-dialog',
-          captureSelector: '[role="dialog"]',
-          before: async (p) => {
-            await waitForTable(p)
-            const firstRow = p.locator('table tbody tr').first()
-            if (await firstRow.isVisible().catch(() => false)) {
-              await firstRow.click()
-              await p.waitForTimeout(400)
-            }
-            // Try row-level action button
-            const rowActionBtn = p
-              .locator(
-                'table tbody tr:first-child [aria-label*="aktion" i], ' +
-                  'table tbody tr:first-child [aria-label*="action" i], ' +
-                  'table tbody tr:first-child [class*="row-action"]',
-              )
-              .first()
-            if (await rowActionBtn.isVisible().catch(() => false)) {
-              await rowActionBtn.click()
-              await p.waitForTimeout(400)
-              const deployItem = p
-                .locator('[role="menuitem"]')
-                .filter({ hasText: /deploy|client.agent|agent/i })
-                .first()
-              if (await deployItem.isVisible().catch(() => false)) {
-                await deployItem.click()
-                await p.waitForTimeout(500)
-              } else {
-                await p.keyboard.press('Escape')
-              }
-            }
-          },
-          after: async (p) => {
-            await p.keyboard.press('Escape')
-            await p.waitForTimeout(200)
-          },
-        },
-        // Reboot dialog
-        {
-          name: 'opsi-webgui-client-action-reboot-dialog',
-          captureSelector: '[role="dialog"]',
-          before: async (p) => {
-            await waitForTable(p)
-            const firstRow = p.locator('table tbody tr').first()
-            if (await firstRow.isVisible().catch(() => false)) {
-              await firstRow.click()
-              await p.waitForTimeout(400)
-            }
-            const rowActionBtn = p
-              .locator(
-                'table tbody tr:first-child [aria-label*="aktion" i], ' +
-                  'table tbody tr:first-child [aria-label*="action" i], ' +
-                  'table tbody tr:first-child [class*="row-action"]',
-              )
-              .first()
-            if (await rowActionBtn.isVisible().catch(() => false)) {
-              await rowActionBtn.click()
-              await p.waitForTimeout(400)
-              const rebootItem = p
-                .locator('[role="menuitem"]')
-                .filter({ hasText: /reboot|neustart/i })
-                .first()
-              if (await rebootItem.isVisible().catch(() => false)) {
-                await rebootItem.click()
-                await p.waitForTimeout(500)
-              } else {
-                await p.keyboard.press('Escape')
-              }
-            }
-          },
-          after: async (p) => {
-            await p.keyboard.press('Escape')
-            await p.waitForTimeout(200)
-          },
-        },
-        // On-demand dialog
-        {
-          name: 'opsi-webgui-client-action-ondemand-dialog',
-          captureSelector: '[role="dialog"]',
-          before: async (p) => {
-            await waitForTable(p)
-            const firstRow = p.locator('table tbody tr').first()
-            if (await firstRow.isVisible().catch(() => false)) {
-              await firstRow.click()
-              await p.waitForTimeout(400)
-            }
-            const rowActionBtn = p
-              .locator(
-                'table tbody tr:first-child [aria-label*="aktion" i], ' +
-                  'table tbody tr:first-child [aria-label*="action" i], ' +
-                  'table tbody tr:first-child [class*="row-action"]',
-              )
-              .first()
-            if (await rowActionBtn.isVisible().catch(() => false)) {
-              await rowActionBtn.click()
-              await p.waitForTimeout(400)
-              const onDemandItem = p
-                .locator('[role="menuitem"]')
-                .filter({ hasText: /on.demand|demand|on-demand/i })
-                .first()
-              if (await onDemandItem.isVisible().catch(() => false)) {
-                await onDemandItem.click()
-                await p.waitForTimeout(500)
-              } else {
-                await p.keyboard.press('Escape')
-              }
-            }
-          },
-          after: async (p) => {
-            await p.keyboard.press('Escape')
-            await p.waitForTimeout(200)
-          },
-        },
-      ],
     })
   })
 

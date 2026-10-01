@@ -10,6 +10,33 @@
 
 import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
+import type { Page } from '@playwright/test'
+
+async function expectDashboardCardsKeyboardReachable(page: Page): Promise<void> {
+  const focusedElements: string[] = []
+  const maxTabs = 40
+
+  for (let i = 0; i < maxTabs; i++) {
+    await page.keyboard.press('Tab')
+    const info = await page.evaluate(() => {
+      const el = document.activeElement as HTMLElement | null
+      if (!el || el === document.body) return null
+      const role = el.getAttribute('role') || el.tagName.toLowerCase()
+      const label = el.getAttribute('aria-label') || el.getAttribute('title') || el.textContent?.trim().slice(0, 40) || ''
+      return `${role}: ${label}`
+    })
+    if (info) focusedElements.push(info)
+  }
+
+  // Config server card (role=region), health card (role=button), user card (role=region),
+  // system info (role=button), stat cards (role=button), failed clients list (role=region)
+  const hasRegionOrButton = focusedElements.some((el) => el.startsWith('button:') || el.startsWith('region:') || el.includes('role=button'))
+  expect(hasRegionOrButton, `No focusable dashboard cards found. Tab stops: ${focusedElements.slice(0, 10).join(' | ')}`).toBe(true)
+
+  // Ensure at least 5 distinct focusable elements (header controls + dashboard cards)
+  expect(focusedElements.length, 'Too few keyboard tab stops on dashboard').toBeGreaterThanOrEqual(5)
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur())
+}
 
 test.describe('Dashboard', () => {
   test('dashboard overview', async ({ page }) => {
@@ -55,43 +82,16 @@ test.describe('Dashboard', () => {
         if (await healthCard.isVisible().catch(() => false)) {
           await healthCard.click()
           await expect(p).toHaveURL(/\/admin\/diagnostics/i, { timeout: 15000 })
-          await p.goto('/dashboard', { waitUntil: 'networkidle', timeout: 30000 })
-          await p.waitForTimeout(1000)
+          await p.goBack({ waitUntil: 'domcontentloaded', timeout: 30000 })
+          await expect(p).toHaveURL(/\/dashboard/i, { timeout: 15000 })
+          await expect(serverCard).toBeVisible({ timeout: 15000 })
         }
+
+        // Reuse this dashboard visit for keyboard reachability instead of
+        // opening a fresh page in a second test.
+        await expectDashboardCardsKeyboardReachable(p)
       },
       vrMask: ['[class*="timestamp"]', '[class*="time"]', '[data-testid*="timer"]'],
     })
-  })
-
-  test('dashboard keyboard tab order - all cards reachable', async ({ page }) => {
-    await page.goto('/dashboard', { waitUntil: 'networkidle', timeout: 30000 })
-    await page.waitForTimeout(3000)
-
-    // Tab through the page and collect all focusable elements
-    const focusedElements: string[] = []
-    const maxTabs = 40
-
-    for (let i = 0; i < maxTabs; i++) {
-      await page.keyboard.press('Tab')
-      const info = await page.evaluate(() => {
-        const el = document.activeElement as HTMLElement | null
-        if (!el || el === document.body) return null
-        const role = el.getAttribute('role') || el.tagName.toLowerCase()
-        const label = el.getAttribute('aria-label') || el.getAttribute('title') || el.textContent?.trim().slice(0, 40) || ''
-        return `${role}: ${label}`
-      })
-      if (info) focusedElements.push(info)
-    }
-
-    // All dashboard cards should be tab-reachable
-    // Config server card (role=region), health card (role=button), user card (role=region),
-    // system info (role=button), stat cards (role=button), failed clients list (role=region)
-    const hasRegionOrButton = focusedElements.some(
-      (el) => el.startsWith('button:') || el.startsWith('region:') || el.includes('role=button'),
-    )
-    expect(hasRegionOrButton, `No focusable dashboard cards found. Tab stops: ${focusedElements.slice(0, 10).join(' | ')}`).toBe(true)
-
-    // Ensure at least 5 distinct focusable elements (header controls + dashboard cards)
-    expect(focusedElements.length, 'Too few keyboard tab stops on dashboard').toBeGreaterThanOrEqual(5)
   })
 })
