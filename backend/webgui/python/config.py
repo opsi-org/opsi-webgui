@@ -103,7 +103,6 @@ class Config(metaclass=Singleton):  # pylint: disable=too-few-public-methods
 		if not self.config_file.exists() and not AUTO_CREATE_CONFIG:
 			return
 		elif not self.config_file.exists():
-			logger.warning(f"Config file '{self.config_file}' does not exist. Creating default config file.")
 			return
 
 		mtime = self.config_file.stat().st_mtime

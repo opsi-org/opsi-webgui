@@ -24,13 +24,17 @@ def create_check_data():
 	yield
 
 
-def hw_row(hardware_class, state=1, lastseen="2026-09-01 10:00:00", firstseen="2026-01-01 10:00:00", **attrs):
+def hw_row(hardware_class, state=1, lastseen="__NOW__", firstseen="2026-01-01 10:00:00", **attrs):
+	if lastseen == "__NOW__":
+		lastseen = datetime.now().strftime(inventory.OPSI_TIMESTAMP_FORMAT)
 	data = {"hardwareClass": hardware_class, "hostId": "client1.test.local", "firstseen": firstseen, "lastseen": lastseen, "state": state}
 	data.update(attrs)
 	return SimpleNamespace(to_hash=lambda d=data: dict(d), **data)
 
 
-def sw_client_row(name, version="1.0", sub_version="", language="", architecture="x64", state=1, lastseen="2026-09-01 10:00:00", **kw):
+def sw_client_row(name, version="1.0", sub_version="", language="", architecture="x64", state=1, lastseen="__NOW__", **kw):
+	if lastseen == "__NOW__":
+		lastseen = datetime.now().strftime(inventory.OPSI_TIMESTAMP_FORMAT)
 	defaults = {
 		"name": name,
 		"version": version,
