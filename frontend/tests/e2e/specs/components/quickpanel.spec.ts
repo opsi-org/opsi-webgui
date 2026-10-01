@@ -269,7 +269,8 @@ test.describe('Quick Actions', () => {
         {
           name: 'quickactions-client-popup',
           run: async (p) => {
-            const firstAction = p.getByRole('option').first()
+            const menuItems = await openClientQuickActionsMenu(p)
+            const firstAction = menuItems.first()
             await expect(firstAction).toBeVisible({ timeout: 10000 })
             await firstAction.click()
             await expect(p.locator('[role="dialog"]').first()).toBeVisible({ timeout: 5000 })
