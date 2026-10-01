@@ -61,7 +61,7 @@ async function selectFirstClientForQuickActions(page: Page): Promise<void> {
 
 async function prepareClientQuickActions(page: Page): Promise<void> {
   await selectFirstClientForQuickActions(page)
-  await openQuickPanelTab(page, /overview|übersicht/i)
+  await openQuickPanelTab(page, /overview|übersicht|dashboard/i)
 }
 
 async function openClientQuickActionsMenu(page: Page) {
@@ -203,7 +203,7 @@ test.describe('Quick Panel - tabs', () => {
           await firstRow.click()
           await p.waitForTimeout(400)
         }
-        await openQuickPanelTab(p, /overview|übersicht/i)
+        await openQuickPanelTab(p, /overview|übersicht|dashboard/i)
         await expect(p.getByTestId('quickpanel')).toBeVisible({ timeout: 5000 })
         await expect(p.getByTestId('quickpanel-tab-overview')).toBeVisible()
       },
@@ -215,7 +215,7 @@ test.describe('Quick Panel - tabs', () => {
             await openQuickPanelTab(p, /client|gruppe|group/i)
             await expect(p.getByTestId('quickpanel-tab-clients')).toBeVisible()
           },
-          reset: async (p) => openQuickPanelTab(p, /overview|übersicht/i),
+          reset: async (p) => openQuickPanelTab(p, /overview|übersicht|dashboard/i),
         },
       ],
       vrMask: ['[data-testid="session-timer"]'],

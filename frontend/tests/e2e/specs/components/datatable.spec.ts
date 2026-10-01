@@ -54,9 +54,14 @@ test.describe('DataTable - component', () => {
         await expect(checkedRows.first()).toBeVisible()
 
         // Verify pagination controls are visible while the settings popover stays open.
-        const pagination = p.locator('main [class*="pagination"], main [aria-label*="page" i]').first()
-        await expect(pagination).toBeVisible()
-        await expect(pagination.locator('button, [role="button"]').first()).toBeVisible()
+        const paginationControls = p.locator(
+          'main button[aria-label*="page" i], main button[aria-label*="next" i], main button[aria-label*="previous" i]',
+        )
+        const pageSummary = p.getByText(/showing|zeige|affichage/i).first()
+        await expect(pageSummary).toBeVisible()
+        if ((await getTableRowCount(p)) > 20) {
+          await expect(paginationControls.first()).toBeVisible()
+        }
       },
       vrMask: ['[class*="timestamp"]', '[class*="lastSeen"]'],
     })

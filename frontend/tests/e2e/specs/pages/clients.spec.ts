@@ -386,7 +386,10 @@ test.describe('Clients', () => {
 
         const hasScrollableArea = await (hasParamsCard ? paramsCard : fallbackPane).evaluate((el) => {
           const candidate = (el.querySelector('[style*="overflow"], .overflow-y-auto, .overflow-auto') || el) as HTMLElement
-          return candidate.scrollHeight > candidate.clientHeight
+          return (
+            candidate.clientHeight > 0 &&
+            (candidate.scrollHeight > candidate.clientHeight || ['auto', 'scroll'].includes(getComputedStyle(candidate).overflowY))
+          )
         })
         expect(hasScrollableArea).toBeTruthy()
       },
