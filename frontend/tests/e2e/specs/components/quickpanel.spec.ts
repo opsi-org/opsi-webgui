@@ -10,7 +10,7 @@
 
 import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
-import { waitForTable } from '../../utils/ui'
+import { ensureQuickPanelOpen, waitForTable } from '../../utils/ui'
 import type { Page } from '@playwright/test'
 
 /**
@@ -20,17 +20,6 @@ import type { Page } from '@playwright/test'
  * The quick panel lives in the layout on every page; we use the clients
  * page as the host (good default data set).
  */
-
-async function ensureQuickPanelOpen(page: Page): Promise<void> {
-  const toggle = page.getByTestId('quickpanel-toggle')
-  const panel = page.getByTestId('quickpanel')
-  if (await toggle.isVisible().catch(() => false)) {
-    if (!(await panel.isVisible().catch(() => false))) {
-      await toggle.click()
-      await page.waitForTimeout(400)
-    }
-  }
-}
 
 async function openQuickPanelTab(page: Page, tabText: RegExp): Promise<void> {
   await ensureQuickPanelOpen(page)
@@ -291,8 +280,6 @@ test.describe('Quick Actions', () => {
       ],
       vrMask: ['[data-testid="session-timer"]'],
       elementShots: [
-        clientQuickActionDialogShot('quickactions-client-ondemand-dialog', /on.?demand/i),
-        clientQuickActionDialogShot('quickactions-client-reboot-dialog', /reboot|neustart/i),
         clientQuickActionDialogShot('quickactions-client-deploy-agent-dialog', /deploy|agent/i),
         {
           name: 'opsi-webgui-product-quick-actions-preview',

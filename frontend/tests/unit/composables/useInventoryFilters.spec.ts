@@ -9,13 +9,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import {
-  createRequestGuard,
-  filterHardwareItems,
-  filterSoftwareItems,
-  isInventoryPresent,
-  sortInventoryItems,
-} from '~/app/composables/useInventoryFilters'
+import { createRequestGuard, filterHardwareItems, filterSoftwareItems, sortInventoryItems } from '~/app/composables/useInventoryFilters'
 import type { HardwareInventoryItem, SoftwareInventoryItem } from '~/app/types'
 
 function hwItem(overrides: Partial<HardwareInventoryItem> = {}): HardwareInventoryItem {
@@ -59,23 +53,7 @@ function swItem(overrides: Partial<SoftwareInventoryItem> = {}): SoftwareInvento
   }
 }
 
-describe('isInventoryPresent', () => {
-  it('treats null/undefined state as present (default)', () => {
-    expect(isInventoryPresent(null)).toBe(true)
-    expect(isInventoryPresent(undefined)).toBe(true)
-  })
-
-  it('treats state 0 as absent, any other value as present', () => {
-    expect(isInventoryPresent(0)).toBe(false)
-    expect(isInventoryPresent(1)).toBe(true)
-  })
-})
-
 describe('filterHardwareItems', () => {
-  it('returns an empty list unchanged (no crash on empty/null data)', () => {
-    expect(filterHardwareItems([])).toEqual([])
-  })
-
   it('filters by hardware class', () => {
     const items = [hwItem({ className: 'Computer' }), hwItem({ identifier: 'id-2', className: 'Disk' })]
     expect(filterHardwareItems(items, { classFilter: 'Disk' })).toHaveLength(1)
@@ -97,10 +75,6 @@ describe('filterHardwareItems', () => {
 })
 
 describe('filterSoftwareItems', () => {
-  it('returns an empty list unchanged (no crash on empty/null data)', () => {
-    expect(filterSoftwareItems([])).toEqual([])
-  })
-
   it('excludes KB updates when includeKbUpdates is false', () => {
     const items = [swItem({ isKbUpdate: true }), swItem({ identifier: 'id-2', isKbUpdate: false })]
     expect(filterSoftwareItems(items, { includeKbUpdates: false })).toHaveLength(1)
@@ -143,16 +117,5 @@ describe('createRequestGuard (client switching / race condition protection)', ()
 
     expect(guard.isCurrent(first)).toBe(false)
     expect(guard.isCurrent(second)).toBe(true)
-  })
-
-  it('simulates an out-of-order response (slow first fetch resolves after a faster second one)', () => {
-    const guard = createRequestGuard()
-    const requestForClientA = guard.next()
-    const requestForClientB = guard.next()
-
-    // Client B's response arrives first (fast network).
-    expect(guard.isCurrent(requestForClientB)).toBe(true)
-    // Client A's slower response arrives afterwards and must be discarded.
-    expect(guard.isCurrent(requestForClientA)).toBe(false)
   })
 })

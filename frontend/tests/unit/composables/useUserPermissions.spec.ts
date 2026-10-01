@@ -50,31 +50,16 @@ describe('useUserPermissions', () => {
     return mod.useUserPermissions()
   }
 
-  describe('isFeatureDisabled', () => {
-    it('returns false when feature is not disabled', async () => {
-      mockUserStore.disabledFeatures = []
-      const { isFeatureDisabled } = await getPermissions()
-      expect(isFeatureDisabled('terminal')).toBe(false)
-    })
+  describe('feature availability', () => {
+    it.each([
+      { disabledFeatures: [], disabled: false, enabled: true },
+      { disabledFeatures: ['terminal'], disabled: true, enabled: false },
+    ])('reports the state for $disabledFeatures', async ({ disabledFeatures, disabled, enabled }) => {
+      mockUserStore.disabledFeatures = disabledFeatures
+      const { isFeatureDisabled, isFeatureEnabled } = await getPermissions()
 
-    it('returns true when feature is disabled', async () => {
-      mockUserStore.disabledFeatures = ['terminal']
-      const { isFeatureDisabled } = await getPermissions()
-      expect(isFeatureDisabled('terminal')).toBe(true)
-    })
-  })
-
-  describe('isFeatureEnabled', () => {
-    it('returns true when feature is not in disabled list', async () => {
-      mockUserStore.disabledFeatures = []
-      const { isFeatureEnabled } = await getPermissions()
-      expect(isFeatureEnabled('terminal')).toBe(true)
-    })
-
-    it('returns false when feature is in disabled list', async () => {
-      mockUserStore.disabledFeatures = ['terminal']
-      const { isFeatureEnabled } = await getPermissions()
-      expect(isFeatureEnabled('terminal')).toBe(false)
+      expect(isFeatureDisabled('terminal')).toBe(disabled)
+      expect(isFeatureEnabled('terminal')).toBe(enabled)
     })
   })
 

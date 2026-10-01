@@ -18,6 +18,52 @@ import { expect } from '@playwright/test'
 export type Theme = 'light' | 'dark'
 export type Locale = 'en' | 'de'
 
+/** Open the quick panel when its toggle is available; leave it unchanged if already open. */
+export async function ensureQuickPanelOpen(page: Page): Promise<void> {
+  const panel = page.getByTestId('quickpanel')
+  if (await panel.isVisible().catch(() => false)) return
+
+  const toggle = page.getByTestId('quickpanel-toggle')
+  if (!(await toggle.isVisible().catch(() => false))) return
+
+  await toggle.click()
+  await expect(panel).toBeVisible({ timeout: 5000 })
+}
+
+/** Seed a client selection from the clients table for tests that start on another route. */
+export async function seedClientSelection(
+  page: Page,
+  options: { count?: number; source?: 'table' | 'quickpanel' } = {},
+): Promise<string[]> {
+  const { count = 1, source = 'table' } = options
+  await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
+  await waitForTable(page)
+
+  const clientIds = await page.locator('table tbody tr td').evaluateAll((cells, maxCount) => {
+    const ids: string[] = []
+    for (const cell of cells) {
+      const text = (cell.textContent || '').trim()
+      if (text.includes('.')) ids.push(text)
+      if (ids.length === maxCount) break
+    }
+    return ids
+  }, count)
+
+  if (clientIds.length) {
+    await page.evaluate(
+      ({ ids, selectionSource }) => {
+        const key = 'opsi-webgui-selection'
+        const raw = window.localStorage.getItem(key)
+        const current = raw ? JSON.parse(raw) : {}
+        window.localStorage.setItem(key, JSON.stringify({ ...current, selectedClients: ids, selectionSource }))
+      },
+      { ids: clientIds, selectionSource: source },
+    )
+  }
+
+  return clientIds
+}
+
 /**
  * Switch the app theme via the theme toggle button.
  */

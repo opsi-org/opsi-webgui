@@ -10,42 +10,11 @@
 
 import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
-import { waitForTable, getTableRowCount } from '../../utils/ui'
-
-async function seedClientSelectionFromClientsPage(page: import('@playwright/test').Page) {
-  await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-  await waitForTable(page)
-
-  const clientIds = await page.locator('table tbody tr td').evaluateAll((cells) => {
-    const ids: string[] = []
-    for (const cell of cells) {
-      const text = (cell.textContent || '').trim()
-      if (text && text.includes('.')) ids.push(text)
-      if (ids.length === 2) break
-    }
-    return ids
-  })
-
-  if (clientIds.length > 0) {
-    await page.evaluate((ids) => {
-      const key = 'opsi-webgui-selection'
-      const raw = window.localStorage.getItem(key)
-      const current = raw ? JSON.parse(raw) : {}
-      window.localStorage.setItem(
-        key,
-        JSON.stringify({
-          ...current,
-          selectedClients: ids,
-          selectionSource: 'quickpanel',
-        }),
-      )
-    }, clientIds)
-  }
-}
+import { seedClientSelection, waitForTable, getTableRowCount } from '../../utils/ui'
 
 test.describe('Products', () => {
   test('products localboot overview and actions', async ({ page }) => {
-    await seedClientSelectionFromClientsPage(page)
+    await seedClientSelection(page, { count: 2, source: 'quickpanel' })
     await runUITest(page, {
       name: 'products-localboot',
       route: '/products/LocalbootProduct',

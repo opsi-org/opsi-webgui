@@ -19,19 +19,7 @@
  *     instead (with a visual-regression baseline of the alert).
  */
 import { test, expect } from '../../fixtures'
-import { waitForTable } from '../../utils/ui'
-import type { Page } from '@playwright/test'
-
-async function ensureQuickPanelOpen(page: Page): Promise<void> {
-  const toggle = page.getByTestId('quickpanel-toggle')
-  const panel = page.getByTestId('quickpanel')
-  if (await toggle.isVisible().catch(() => false)) {
-    if (!(await panel.isVisible().catch(() => false))) {
-      await toggle.click()
-      await page.waitForTimeout(400)
-    }
-  }
-}
+import { ensureQuickPanelOpen, waitForTable } from '../../utils/ui'
 
 test.describe('Messagebus & auto-refresh', () => {
   test('connection status is shown in the quick panel', async ({ page, browserName }) => {

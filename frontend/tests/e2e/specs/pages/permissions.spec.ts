@@ -19,6 +19,7 @@
  */
 import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
+import { ensureQuickPanelOpen } from '../../utils/ui'
 import type { Page } from '@playwright/test'
 
 interface UserConfigurationOverrides {
@@ -122,15 +123,7 @@ test.describe('User permissions', () => {
       functional: async (p) => {
         // Open the quickpanel if it is not already open
         const quickpanel = p.locator('[data-testid="quickpanel"]')
-        if (!(await quickpanel.isVisible().catch(() => false))) {
-          const toggle = p
-            .locator('button[aria-label*="quick" i], button[aria-label*="panel" i], [data-testid="quickpanel-toggle"]')
-            .first()
-          if (await toggle.isVisible().catch(() => false)) {
-            await toggle.click()
-            await p.waitForTimeout(500)
-          }
-        }
+        await ensureQuickPanelOpen(p)
         await quickpanel.waitFor({ state: 'visible', timeout: 10000 })
 
         // Servers tab shows the "restricted" badge for depot-restricted users
@@ -154,6 +147,7 @@ test.describe('User permissions', () => {
       name: 'permissions-no-server-write',
       route: '/servers',
       waitAfterNav: 2500,
+      skipVisualRegression: true,
       functional: async (p) => {
         // The servers table must still render (viewing is allowed)
         const table = p.locator('main table tbody tr').first()

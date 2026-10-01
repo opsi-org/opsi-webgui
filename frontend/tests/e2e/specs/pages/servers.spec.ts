@@ -10,7 +10,7 @@
 
 import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
-import { waitForTable, getTableRowCount } from '../../utils/ui'
+import { ensureQuickPanelOpen, waitForTable, getTableRowCount } from '../../utils/ui'
 
 test.describe('Servers', () => {
   test('servers overview with quickpanel', async ({ page }) => {
@@ -31,15 +31,7 @@ test.describe('Servers', () => {
           await p.waitForTimeout(500)
         }
 
-        // Open quickpanel
-        const toggle = p.getByTestId('quickpanel-toggle')
-        const panel = p.getByTestId('quickpanel')
-        if (await toggle.isVisible().catch(() => false)) {
-          if (!(await panel.isVisible().catch(() => false))) {
-            await toggle.click()
-            await p.waitForTimeout(400)
-          }
-        }
+        await ensureQuickPanelOpen(p)
       },
     })
   })

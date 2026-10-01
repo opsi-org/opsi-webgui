@@ -10,6 +10,7 @@
 
 import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
+import { ensureQuickPanelOpen } from '../../utils/ui'
 import type { Page } from '@playwright/test'
 
 async function expectDashboardCardsKeyboardReachable(page: Page): Promise<void> {
@@ -47,15 +48,7 @@ test.describe('Dashboard', () => {
       docName: 'opsi-webgui-dashboard',
       marketingName: 'opsi-webgui-dashboard',
       marketingPrepare: async (p) => {
-        const toggle = p.getByTestId('quickpanel-toggle')
-        const panel = p.getByTestId('quickpanel')
-        if (await toggle.isVisible().catch(() => false)) {
-          const panelVisible = await panel.isVisible().catch(() => false)
-          if (!panelVisible) {
-            await toggle.click()
-            await p.waitForTimeout(400)
-          }
-        }
+        await ensureQuickPanelOpen(p)
       },
 
       docDarkMode: true,

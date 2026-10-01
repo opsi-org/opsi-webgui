@@ -43,17 +43,6 @@ describe('useSessionTimer', () => {
     mockUserStore.isAuthenticated = true
   })
 
-  it('should provide timer state', async () => {
-    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
-    const timer = useSessionTimer(false)
-
-    expect(timer.remainingSeconds).toBeDefined()
-    expect(timer.isWarning).toBeDefined()
-    expect(timer.isExpired).toBeDefined()
-    expect(timer.formattedTime).toBeDefined()
-    expect(timer.formattedTimeText).toBeDefined()
-  })
-
   it('should format time correctly', async () => {
     const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
     const timer = useSessionTimer(false)
@@ -61,15 +50,6 @@ describe('useSessionTimer', () => {
     expect(timer.formatTime(0)).toBe('0:00')
     expect(timer.formatTime(65)).toBe('1:05')
     expect(timer.formatTime(3661)).toBe('61:01')
-  })
-
-  it('should provide start and stop functions', async () => {
-    const { useSessionTimer } = await import('~/app/composables/useSessionTimer')
-    const timer = useSessionTimer(false)
-
-    expect(typeof timer.startTimer).toBe('function')
-    expect(typeof timer.stopTimer).toBe('function')
-    expect(typeof timer.refreshSession).toBe('function')
   })
 
   it('formatTimeText formats expired, seconds, minutes and hours', async () => {
@@ -92,6 +72,8 @@ describe('useSessionTimer', () => {
     expect(timer.isWarning.value).toBe(true)
     expect(timer.isExpired.value).toBe(false)
     expect(timer.isRunning.value).toBe(true)
+    expect(timer.formattedTime.value).toBe(timer.formatTime(timer.remainingSeconds.value))
+    expect(timer.formattedTimeText.value).toBe(timer.formatTimeText(timer.remainingSeconds.value))
 
     timer.stopTimer()
     expect(timer.isRunning.value).toBe(false)

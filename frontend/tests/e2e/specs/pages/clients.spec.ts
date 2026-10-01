@@ -10,39 +10,7 @@
 
 import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
-import { waitForTable, getTableRowCount } from '../../utils/ui'
-import type { Page } from '@playwright/test'
-
-async function seedClientSelection(page: Page): Promise<string> {
-  await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-  await waitForTable(page)
-
-  const firstClientId = await page.locator('table tbody tr td').evaluateAll((cells) => {
-    for (const cell of cells) {
-      const text = (cell.textContent || '').trim()
-      if (text && text.includes('.')) return text
-    }
-    return ''
-  })
-
-  if (!firstClientId) return ''
-
-  await page.evaluate((clientId) => {
-    const key = 'opsi-webgui-selection'
-    const raw = window.localStorage.getItem(key)
-    const current = raw ? JSON.parse(raw) : {}
-    window.localStorage.setItem(
-      key,
-      JSON.stringify({
-        ...current,
-        selectedClients: [clientId],
-        selectionSource: 'table',
-      }),
-    )
-  }, firstClientId)
-
-  return firstClientId
-}
+import { ensureQuickPanelOpen, seedClientSelection, waitForTable, getTableRowCount } from '../../utils/ui'
 
 test.describe('Clients', () => {
   test('clients products split view opens from deep link', async ({ page }) => {
@@ -197,14 +165,8 @@ test.describe('Clients', () => {
         }
 
         // Ensure quickpanel is open and tabs are available
-        const toggle = p.getByTestId('quickpanel-toggle')
         const panel = p.getByTestId('quickpanel')
-        if (await toggle.isVisible().catch(() => false)) {
-          if (!(await panel.isVisible().catch(() => false))) {
-            await toggle.click()
-            await p.waitForTimeout(400)
-          }
-        }
+        await ensureQuickPanelOpen(p)
         if (await panel.isVisible().catch(() => false)) {
           const tabs = panel.getByRole('tab')
           expect(await tabs.count()).toBeGreaterThan(0)
