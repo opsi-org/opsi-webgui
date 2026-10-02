@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# update-e2e-baselines.sh
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

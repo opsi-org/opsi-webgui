@@ -7,8 +7,7 @@
  * All rights reserved.
  * License: AGPL-3.0
  *
- * useTextFilter - Shared free-text matching options (match case / whole word / regular
- * expression, like the VS Code search box) used by every filter input in the app.
+ * useTextFilter - Shared text-filter options and matching.
  */
 
 export interface TextFilterOptions {

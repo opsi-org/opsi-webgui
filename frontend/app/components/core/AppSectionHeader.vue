@@ -1,14 +1,13 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
   License: AGPL-3.0
 
-  CoreAppSectionHeader - Compact title + right-aligned icon actions row, used to head up a
-  section inside a popover (e.g. "Advanced Filters") without repeating the title elsewhere.
+  CoreAppSectionHeader - Compact section heading with optional actions.
 -->
 <template>
   <div class="flex items-center justify-between gap-2">

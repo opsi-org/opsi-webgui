@@ -1,21 +1,6 @@
 #!/usr/bin/env bash
-# dev-e2e.sh
-#
-# Run the Playwright e2e suite *inside the dev container*, against the dev
-# container's opsiconfd (https://localhost:4447/addons/webgui/app).
-#
-# Usage:
-#   scripts/dev-e2e.sh                 # smoke matrix (DE/light/desktop/chromium)
-#   scripts/dev-e2e.sh --build         # rebuild the SPA first (pick up frontend changes)
-#   scripts/dev-e2e.sh --live          # run against the running `pnpm dev` server
-#                                      # (:3000) - NO opsiconfd boot, NO SPA build.
-#                                      # Fastest loop: start `pnpm dev` once, then
-#                                      # iterate. Requires opsiconfd already up.
-#   scripts/dev-e2e.sh -g "login"      # grep filter (forwarded to playwright)
-#   scripts/dev-e2e.sh tests/e2e/specs/pages/login.spec.ts   # single spec
-#   scripts/dev-e2e.sh -u -g "..."     # refresh baselines (CI accepts these,
-#                                      # maxDiffPixelRatio 0.05 absorbs font-AA)
-#   scripts/dev-e2e.sh --live -u       # refresh baselines against the running Nuxt dev server (no SPA build)
+# Run Playwright E2E tests in the dev container; supports --build, --live, -u,
+# and forwarded Playwright filters.
 
 set -euo pipefail
 

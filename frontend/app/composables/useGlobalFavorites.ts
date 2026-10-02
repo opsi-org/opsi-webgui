@@ -7,8 +7,7 @@
  * All rights reserved.
  * License: AGPL-3.0
  *
- * useGlobalFavorites - Aggregates favorite saved searches from the clients/products/servers
- * tables (each scoped independently via useSavedSearches)
+ * useGlobalFavorites - Favorites across client, product, and server tables.
  */
 import { clearStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
 

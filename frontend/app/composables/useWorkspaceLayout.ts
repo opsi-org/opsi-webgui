@@ -7,8 +7,7 @@
  * All rights reserved.
  * License: AGPL-3.0
  *
- * useWorkspaceLayout - Persisted panel sizes (quickpanel width, detail panel / groups split width).
- * The user's last arrangement is auto-saved to localStorage on every change.
+ * useWorkspaceLayout - Persisted panel layout sizes.
  */
 
 export interface WorkspaceLayoutState {

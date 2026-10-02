@@ -1,16 +1,13 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
   License: AGPL-3.0
 
-  CoreAppSelectMenu - UI library wrapper for searchable/multi-select dropdown rendering. Pass
-  `open-on-hover` to also open it while the pointer rests on the trigger (click and keyboard
-  still work as before). Pass `borderless` for a plain/ghost look (no ring/background) and
-  `no-caret` to hide the trailing chevron, e.g. when the trigger already has its own icon.
+  CoreAppSelectMenu - UI library wrapper for searchable selects.
 -->
 <template>
   <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- wrapper only adds hover/escape handling around the interactive select it contains -->

@@ -1,17 +1,13 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
   License: AGPL-3.0
 
-  CoreAppSavedSearchesDropdown - Apply, save and delete named search presets (filter text +
-  advanced filters). Content-only (no popover/trigger of its own): rendered as the "Saved
-  Searches" section inside CoreAppDataTable's combined filters popover, right below the
-  scope's own advanced-filters section, so saving/favoriting and reusing a search happen in
-  one place instead of two separate popovers.
+  CoreAppSavedSearchesDropdown - Saved-search controls for the combined filters popover.
 -->
 <template>
   <div class="flex flex-col gap-1.5">

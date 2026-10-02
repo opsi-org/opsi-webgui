@@ -9,10 +9,6 @@
  */
 
 /**
- * This file is part of opsi-webgui.
- * Copyright (c) uib GmbH <info@uib.de>
- * License: AGPL-3.0
- *
  * Accessibility inspector - manual-style checks that automated axe-core scans typically miss.
  */
 

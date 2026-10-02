@@ -9,20 +9,7 @@
  */
 
 /**
- * This file is part of opsi-webgui.
- * Copyright (c) uib GmbH <info@uib.de>
- * License: AGPL-3.0
- *
- * Playwright E2E test configuration.
- * Tests run against a real opsiconfd backend, no mocks.
- *
- * Usage:
- *   pnpm test:e2e                   # PR/smoke mode (DE, light, desktop, Chromium)
- *   pnpm test:e2e:full              # Full matrix (all locales/themes/viewports, + Firefox + visual regression)
- *   pnpm test:e2e:update-baselines  # Regenerate visual-regression baselines
- *   pnpm screenshots:docs           # Generate documentation/marketing screenshots into ../screenshots/
- *                                   # (artifacts are minimized to documentation/{light,dark} and marketing/{light,dark})
- *                                   # colorblind: set COLORBLIND_REVIEW_MODE=artifacts for manual simulation screenshots
+ * Playwright E2E config; tests use a real opsiconfd backend.
  */
 
 import { defineConfig, devices } from '@playwright/test'

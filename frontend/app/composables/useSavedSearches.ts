@@ -7,8 +7,7 @@
  * All rights reserved.
  * License: AGPL-3.0
  *
- * useSavedSearches - Named, per-table saved search presets (free-text filter + advanced
- * filters) persisted in localStorage.
+ * useSavedSearches - Persisted per-table saved searches.
  */
 import type { ShallowRef } from 'vue'
 

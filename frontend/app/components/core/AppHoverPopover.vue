@@ -1,16 +1,13 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
   License: AGPL-3.0
 
-  CoreAppHoverPopover - Popover that opens on hover (and on click/keyboard for pointer-less
-  use). It intentionally does not close on interaction: clicking a button, a select that
-  renders in its own portal, or pressing Enter inside an input keeps it open. It closes when
-  the pointer leaves trigger and content, on Escape, or when the trigger is clicked again.
+  CoreAppHoverPopover - Hover-enabled popover with click and keyboard support.
 -->
 <template>
   <UPopover v-model:open="isOpen" :content="contentProps" :ui="{ content: 'pointer-events-auto' }">
