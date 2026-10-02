@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-Unit tests for webgui single-client hardware/software inventory (backend/webgui/python/api/inventory.py).
-"""
+"""Test OPSI-WebGUI inventory API."""
 
 import json
 from datetime import datetime, timedelta

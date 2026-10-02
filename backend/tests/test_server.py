@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-test opsiconfd products
-"""
+"""Unit tests for webgui.python.api.server of the OPSI-WebGUI addon."""
 
 import pytest
 import urllib3

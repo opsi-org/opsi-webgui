@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-webgui host methods
-"""
+"""Host-related API routes for the OPSI-WebGUI addon."""
 
 import datetime
 from typing import Any

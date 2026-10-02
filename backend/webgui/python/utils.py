@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-webgui utils
-"""
+"""Utility functions for the OPSI-WebGUI addon."""
 
 import inspect
 from collections.abc import Callable

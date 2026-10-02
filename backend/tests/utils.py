@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-admininterface tests
-"""
+"""Utility functions and fixtures for OPSI-WebGUI backend tests."""
 
 import json
 import os

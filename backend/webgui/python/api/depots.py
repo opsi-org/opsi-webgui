@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-webgui depot methods
-"""
+"""Depot-related API routes for the OPSI-WebGUI addon."""
 
 from typing import Any
 

@@ -6,14 +6,12 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-webgui client methods
-"""
+"""Client-related API routes for the OPSI-WebGUI addon."""
 
 import os
 import subprocess
 import time
-from datetime import date, datetime
+from datetime import datetime
 from typing import Any, Literal
 
 from fastapi import APIRouter, Body, Depends, Request, status
@@ -57,7 +55,6 @@ from ..utils import (
 	get_username,
 	host_group_access_configured,
 	mysql,
-	parse_client_list,
 	parse_depot_list,
 	parse_filter_query,
 	parse_group_list,
@@ -614,18 +611,6 @@ def _clients_of_depots(depots: list[str] | None) -> list[str]:
 		return [dict(row)["hostId"] for row in result if row is not None]
 
 
-@api_router.get("/api/opsidata/clientsdepots", response_model=dict[str, str])
-@rest_api
-def depots_of_clients(  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
-	selectedClients: list[str] = Depends(parse_client_list),
-) -> RESTResponse:
-	"""
-	Get a mapping of clients to depots.
-	"""
-
-	return RESTResponse(data=_depots_of_clients(selectedClients))
-
-
 @api_router.post("/api/opsidata/clients")
 @rest_api
 @read_only_check
@@ -762,77 +747,6 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
 			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
 			error=err,
 		) from err
-
-
-@api_router.get("/api/opsidata/clients/{clientid}", response_model=Client)
-@rest_api
-def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name
-	"""
-	Get Clients on selected depots with infos on the client.
-	"""
-
-	with mysql.session() as session:
-		try:
-			query = (
-				select(
-					text(  # type: ignore
-						"""
-				h.hostId AS hostId,
-				h.type AS type,
-				h.description AS description,
-				h.notes AS notes,
-				h.hardwareAddress AS hardwareAddress,
-				h.ipAddress AS ipAddress,
-				h.inventoryNumber AS inventoryNumber,
-				h.systemUUID AS systemUUID,
-				h.created AS created,
-				h.lastSeen AS lastSeen,
-				h.opsiHostKey AS opsiHostKey,
-				h.oneTimePassword AS oneTimePassword,
-				IF(
-					(COALESCE(
-						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.uefinetbootlabel'),
-						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.uefinetbootlabel' AND cv.isDefault))
-					) LIKE '%efi%',
-					TRUE,
-					FALSE
-				) AS uefi
-							,
-							IF(COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.smart_cache'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'clientconfig.smart_cache' AND cv.isDefault)) LIKE '%true%', TRUE, FALSE) AS smartCache,
-							IF(COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsiclientd.event_on_shutdown.active'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsiclientd.event_on_shutdown.active' AND cv.isDefault)) LIKE '%true%', TRUE, FALSE) AS installOnShutdown,
-							IF(COALESCE((SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsi.check.enabled'), (SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsi.check.enabled' AND cv.isDefault)) LIKE '%true%', TRUE, FALSE) AS monitoring
-			"""
-					)
-				)
-				.select_from(table("HOST").alias("h"))
-				.where(text("h.hostId = :clientid and h.type = 'OpsiClient'"))
-			)  # pylint: disable=redefined-outer-name
-
-			result = session.execute(query, {"clientid": clientid})
-			result = result.fetchone()
-			if result:
-				data = dict(result)
-				for key in data:
-					if isinstance(data.get(key), (date, datetime)):
-						data[key] = data.get(key, "").strftime("%Y-%m-%d %H:%M:%S")
-				data["uefi"] = bool(data["uefi"])
-				return RESTResponse(data=data)
-			logger.error("Client with id '%s' not found.", clientid)
-			return RESTErrorResponse(
-				message=f"Client with id '{clientid}' not found.",
-				http_status=status.HTTP_404_NOT_FOUND,
-			)
-
-		except Exception as err:  # pylint: disable=broad-except
-			if isinstance(err, OpsiApiException):
-				raise err
-			logger.error("Could not get client object.")
-			logger.error(err)
-			raise OpsiApiException(
-				message="Could not get client object.",
-				http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-				error=err,
-			) from err
 
 
 @api_router.delete("/api/opsidata/clients/{clientid}")

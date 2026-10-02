@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-webgui product methods
-"""
+"""Product-related API routes for the OPSI-WebGUI addon."""
 
 import json
 from functools import lru_cache
@@ -680,41 +678,6 @@ def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, to
 					products[product["productId"]].append(product["depotId"])
 
 		return RESTResponse(data=products)
-
-
-@api_router.get("/api/opsidata/products/count", response_model=list[Product])
-@rest_api
-@filter_depot_access
-def product_count(
-	request: Request,  # pylint:  disable=invalid-name, unused-argument
-	type: str = "all",  # pylint:  disable=redefined-builtin
-	selectedDepots: list[str] = Depends(parse_depot_list),  # pylint:  disable=invalid-name, unused-argument
-) -> RESTResponse:
-	"""
-	Get number products from selected depots.
-	"""
-	if selectedDepots == []:
-		# Empty selection (e.g. depot-restricted user without accessible depots)
-		return RESTResponse(data=0)
-	if selectedDepots is None:
-		selectedDepots = get_depots(get_username())
-		if not selectedDepots:
-			return RESTResponse(data=0)
-
-	params = {"depots": selectedDepots, "product_type": ""}
-	if type == "all":
-		where = text("pod.depotId IN :depots")
-	else:
-		params["product_type"] = type
-		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
-
-	with mysql.session() as session:
-		count = session.execute(
-			select(text("COUNT(*)")).select_from(text("PRODUCT_ON_DEPOT AS pod")).where(where),
-			params,
-		).fetchone()[0]
-
-	return RESTResponse(data=count)
 
 
 class PocItem(BaseModel):  # pylint: disable=too-few-public-methods

@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-conftest - pytest configuration for backend integration tests.
-"""
+"""Pytest configuration for backend tests of the OPSI-WebGUI addon."""
 
 import os
 import sys

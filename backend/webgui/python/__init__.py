@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-opsiconfd addon for opsi web interface
-"""
+"""OPSI-WebGUI addon for opsiconfd."""
 
 import os
 from typing import Any

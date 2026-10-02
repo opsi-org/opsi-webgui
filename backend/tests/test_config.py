@@ -6,13 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-Unit tests for webgui.python.config.Config.
-
-Run with:
-    cd /workspace/docker/opsiconfd
-    .venv/bin/python -m pytest /workspace/backend/tests/test_config.py -v
-"""
+"""Unit tests for webgui.python.config.Config of the OPSI-WebGUI addon."""
 
 from __future__ import annotations
 

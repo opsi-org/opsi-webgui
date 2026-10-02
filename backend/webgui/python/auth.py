@@ -6,6 +6,8 @@
 # All rights reserved.
 # License: AGPL-3.0
 
+"""Authentication utilities for the OPSI-WebGUI addon."""
+
 import os
 
 from fastapi import HTTPException, Request, status
