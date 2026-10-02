@@ -96,10 +96,6 @@ def get_username(raise_error: bool = True) -> str:
 class Logger(logging.Logger):
 	def __init__(self, name: str) -> None:
 		super().__init__(name)
-		# _lvl = Config().get_log_level() if hasattr(Config, "get_log_level") else "INFO"
-		# LOG_LEVEL: int = getattr(logging, _lvl, logging.INFO)
-
-		# self.setLevel(LOG_LEVEL)
 		self.propagate = False
 
 	def set_config(self, config: Config) -> None:

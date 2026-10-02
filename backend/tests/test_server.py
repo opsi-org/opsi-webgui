@@ -20,7 +20,6 @@ from .utils import (
 )
 
 urllib3.disable_warnings()
-# from backend.tests.utils import ADMIN_PASS, ADMIN_USER  # pylint: disable=import-error, unused-import
 ADDON_ID = "webgui"
 API_ROOT = f"/addons/{ADDON_ID}/api/opsidata/"
 _fixture_refs = (config, create_check_data)

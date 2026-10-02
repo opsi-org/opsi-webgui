@@ -15,8 +15,6 @@ from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, Request, status
 from opsiconfd.backend import get_protected_backend
-
-# from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
 	RESTErrorResponse,
@@ -58,7 +56,6 @@ def get_server_config(
 	"""
 
 	params: dict = {}
-	# where = text("cv.isDefault=1")
 	where = text("")
 	if commons.get("filterQuery"):
 		where = and_(where, text("(c.configId LIKE :search)"))
@@ -86,8 +83,6 @@ def get_server_config(
 		)  # pylint: disable=redefined-outer-name
 
 		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
-		# query = pagination(query, commons)  # type: ignore[assignment,arg-type]
-
 		result = session.execute(query, params)
 		result = result.fetchall()
 		config_data: dict = {

@@ -15,14 +15,10 @@ from json import loads  # pylint: disable=no-name-in-module
 from typing import Any
 
 from fastapi import Query, status
-
-# from OPSI.Backend.MySQL import MySQL, MySQLBackend
 from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import parse_list
 from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
-
-# from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, select, table, text  # type: ignore[import]
 

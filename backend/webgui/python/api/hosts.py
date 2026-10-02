@@ -14,8 +14,6 @@ from typing import Any
 from fastapi import APIRouter, Body, Depends, Request, status
 from opsi.exception import BackendBadValueError
 from opsiconfd.config import get_configserver_id
-
-# from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
 	RESTErrorResponse,
