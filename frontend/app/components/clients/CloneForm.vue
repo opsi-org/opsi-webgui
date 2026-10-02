@@ -181,42 +181,57 @@ https://opsi.org/en/
           </h4>
         </div>
         <div>
-          <button
-            type="button"
-            class="form-row w-full text-left flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
-            @click="cloneclient.options.configs = !cloneclient.options.configs"
+          <div
+            class="form-row w-full flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
           >
-            <span class="text-sm min-w-0 md:w-1/3 break-all">
+            <CoreAppButton
+              type="button"
+              variant="ghost"
+              color="neutral"
+              class="text-sm! min-w-0! md:w-1/3! break-all! text-left! justify-start!"
+              :aria-pressed="cloneclient.options.configs"
+              @click="cloneclient.options.configs = !cloneclient.options.configs"
+            >
               {{ $t('config.items') }}
-            </span>
+            </CoreAppButton>
             <div class="flex-1 flex items-center gap-2 min-w-0">
               <CoreAppCheckbox v-model="cloneclient.options.configs" :disabled="loading" @click.stop />
             </div>
-          </button>
-          <button
-            type="button"
-            class="form-row w-full text-left flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
-            @click="cloneclient.options.products = !cloneclient.options.products"
+          </div>
+          <div
+            class="form-row w-full flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
           >
-            <span class="text-sm min-w-0 md:w-1/3 break-all">
+            <CoreAppButton
+              type="button"
+              variant="ghost"
+              color="neutral"
+              class="text-sm! min-w-0! md:w-1/3! break-all! text-left! justify-start!"
+              :aria-pressed="cloneclient.options.products"
+              @click="cloneclient.options.products = !cloneclient.options.products"
+            >
               {{ $t('products.title') }}
-            </span>
+            </CoreAppButton>
             <div class="flex-1 flex items-center gap-2 min-w-0">
               <CoreAppCheckbox v-model="cloneclient.options.products" :disabled="loading" @click.stop />
             </div>
-          </button>
-          <button
-            type="button"
-            class="form-row w-full text-left flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors cursor-pointer"
-            @click="cloneclient.options.productProperties = !cloneclient.options.productProperties"
+          </div>
+          <div
+            class="form-row w-full flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
           >
-            <span class="text-sm min-w-0 md:w-1/3 break-all">
+            <CoreAppButton
+              type="button"
+              variant="ghost"
+              color="neutral"
+              class="text-sm! min-w-0! md:w-1/3! break-all! text-left! justify-start!"
+              :aria-pressed="cloneclient.options.productProperties"
+              @click="cloneclient.options.productProperties = !cloneclient.options.productProperties"
+            >
               {{ $t('products.properties') }}
-            </span>
+            </CoreAppButton>
             <div class="flex-1 flex items-center gap-2 min-w-0">
               <CoreAppCheckbox v-model="cloneclient.options.productProperties" :disabled="loading" @click.stop />
             </div>
-          </button>
+          </div>
         </div>
       </div>
     </div>

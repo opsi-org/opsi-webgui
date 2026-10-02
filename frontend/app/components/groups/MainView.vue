@@ -26,8 +26,8 @@ https://opsi.org/en/
             :class="[
               'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border',
               statusMessage.type === 'success'
-                ? 'bg-(--color-success)/10 border-(--color-success)/35 text-(--color-text)'
-                : 'bg-(--color-error)/10 border-(--color-error)/35 text-(--color-text)',
+                ? 'bg-success/10 border-success/35 text-(--color-text)'
+                : 'bg-error/10 border-error/35 text-(--color-text)',
             ]"
             :role="statusMessage.type === 'error' ? 'alert' : 'status'"
             :aria-live="statusMessage.type === 'error' ? 'assertive' : 'polite'"
@@ -93,9 +93,11 @@ https://opsi.org/en/
             <div
               class="flex items-center justify-between font-heading text-xs text-(--color-text) px-1 py-1 mt-1.5 first:mt-0.5 select-none"
             >
-              <button
+              <CoreAppButton
                 type="button"
-                class="flex items-center gap-1 flex-1 min-w-0 text-left bg-transparent border-0 p-0 cursor-pointer"
+                variant="ghost"
+                color="neutral"
+                class="flex! items-center! gap-1! flex-1! min-w-0! text-left! bg-transparent! border-0! p-0! cursor-pointer!"
                 @click="toggleCollapsedSection(rootGroup.id)"
               >
                 <CoreAppIcon
@@ -119,7 +121,7 @@ https://opsi.org/en/
                         : rootGroup.label
                   }}</span>
                 </CoreAppTooltip>
-              </button>
+              </CoreAppButton>
               <CoreAppButton
                 size="xs"
                 variant="ghost"
@@ -422,14 +424,16 @@ https://opsi.org/en/
                     :aria-label="String($t('groups.membersAdd'))"
                     @update:model-value="toggleCreateAddMembers"
                   />
-                  <button
+                  <CoreAppButton
                     type="button"
-                    class="text-sm text-(--color-text) text-left bg-transparent border-0 p-0 cursor-pointer"
+                    variant="ghost"
+                    color="neutral"
+                    class="text-sm! text-(--color-text)! text-left! bg-transparent! border-0! p-0! cursor-pointer!"
                     @click="toggleCreateAddMembers(!createAddMembersEnabled)"
                   >
                     {{ $t('groups.membersAdd') }}
                     <span class="text-(--color-text-muted)">({{ $t('common.optional') }})</span>
-                  </button>
+                  </CoreAppButton>
                 </div>
 
                 <div v-if="createAddMembersEnabled" class="space-y-2">
@@ -447,13 +451,15 @@ https://opsi.org/en/
                           :aria-label="item"
                           @update:model-value="toggleCreateMemberSelection(item)"
                         />
-                        <button
+                        <CoreAppButton
                           type="button"
-                          class="text-sm truncate text-left bg-transparent border-0 p-0 flex-1 cursor-pointer"
+                          variant="ghost"
+                          color="neutral"
+                          class="text-sm! truncate! text-left! bg-transparent! border-0! p-0! flex-1! cursor-pointer!"
                           @click.prevent="toggleCreateMemberSelection(item, $event)"
                         >
                           {{ item }}
-                        </button>
+                        </CoreAppButton>
                       </span>
                       <div v-if="filteredCreateMembers.length === 0" class="text-sm text-(--color-text-muted) py-3 text-center">
                         {{ createMembersSearch ? $t('common.noResults') : $t('common.noData') }}
@@ -461,9 +467,16 @@ https://opsi.org/en/
                     </div>
                   </div>
                   <div class="flex items-center justify-between text-xs text-(--color-text-muted)">
-                    <button type="button" class="underline decoration-dotted" @click="toggleSelectAllCreateMembers">
+                    <CoreAppButton
+                      type="button"
+                      variant="ghost"
+                      color="neutral"
+                      size="xs"
+                      class="underline! decoration-dotted!"
+                      @click="toggleSelectAllCreateMembers"
+                    >
                       {{ $t('common.selectAll') }}
-                    </button>
+                    </CoreAppButton>
                     <span>{{ createSelectedMembers.length }} {{ $t('common.selected') }}</span>
                   </div>
                 </div>
@@ -647,13 +660,15 @@ https://opsi.org/en/
                       :aria-label="item"
                       @update:model-value="toggleNewMemberSelection(item)"
                     />
-                    <button
+                    <CoreAppButton
                       type="button"
-                      class="text-sm truncate text-left bg-transparent border-0 p-0 flex-1 cursor-pointer"
+                      variant="ghost"
+                      color="neutral"
+                      class="text-sm! truncate! text-left! bg-transparent! border-0! p-0! flex-1! cursor-pointer!"
                       @click.prevent="toggleNewMemberSelection(item, $event)"
                     >
                       {{ item }}
-                    </button>
+                    </CoreAppButton>
                   </span>
                   <div v-if="filteredAvailableMembers.length === 0" class="text-sm text-(--color-text-muted) py-4 text-center">
                     {{ availableMembersSearch ? $t('common.noResults') : $t('common.noData') }}

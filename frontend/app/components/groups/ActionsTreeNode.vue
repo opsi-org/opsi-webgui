@@ -43,9 +43,11 @@ https://opsi.org/en/
       <span v-else class="w-5 flex items-center justify-center shrink-0">
         <span class="w-1.5 h-1.5 rounded-full bg-(--color-text-muted)/40" />
       </span>
-      <button
+      <CoreAppButton
         type="button"
-        class="flex items-center gap-1 flex-1 min-w-0 text-left bg-transparent border-0 p-0 cursor-pointer"
+        variant="ghost"
+        color="neutral"
+        class="flex! items-center! gap-1! flex-1! min-w-0! text-left! bg-transparent! border-0! p-0! cursor-pointer!"
         @click="handleClick"
       >
         <CoreAppIcon
@@ -68,7 +70,7 @@ https://opsi.org/en/
         >
           {{ group.label }}
         </span>
-      </button>
+      </CoreAppButton>
       <div
         v-if="group.isSpecial && group.label !== 'not_assigned'"
         class="opacity-0 group-hover/node:opacity-100 flex gap-1 transition-opacity"

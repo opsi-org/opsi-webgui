@@ -52,9 +52,11 @@ https://opsi.org/en/
             :aria-label="server.serverId"
             @update:model-value="toggleServer(server.serverId)"
           />
-          <button
+          <CoreAppButton
             type="button"
-            class="flex-1 min-w-0 flex items-center gap-1.5 text-left cursor-pointer bg-transparent"
+            variant="ghost"
+            color="neutral"
+            class="flex-1! min-w-0! flex! items-center! gap-1.5! text-left! cursor-pointer! bg-transparent!"
             @click="toggleServer(server.serverId)"
           >
             <CoreAppIcon
@@ -62,7 +64,7 @@ https://opsi.org/en/
               class="w-3 h-3 shrink-0 text-(--color-text-muted)"
             />
             <span class="truncate" :class="server.isConfigServer ? 'font-medium' : ''">{{ server.serverId }}</span>
-          </button>
+          </CoreAppButton>
           <CoreAppBadge v-if="server.isConfigServer" size="xs" variant="subtle" color="primary">{{ $t('servers.config') }}</CoreAppBadge>
         </div>
       </div>
