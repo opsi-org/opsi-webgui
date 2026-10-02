@@ -452,8 +452,6 @@ export function useApiHelpers() {
       withProducts: true,
     })
 
-  const getHostGroupIds = () => apiGet<string[]>('/opsidata/hosts/groups/id')
-
   const createHostGroup = (groupData: { groupId: string; parentGroupId?: string; description?: string; notes?: string }) =>
     apiPost('/opsidata/hosts/groups', groupData)
 
@@ -484,22 +482,6 @@ export function useApiHelpers() {
   // ---------------------------------------------------------------------------
   // Config
   // ---------------------------------------------------------------------------
-
-  const getServerConfig = (params?: Record<string, unknown>) =>
-    apiGet<
-      Record<
-        string,
-        Array<{
-          configId: string
-          description: string
-          type: string
-          value: unknown
-          possibleValues: string
-          multiValue: boolean
-          editable: boolean
-        }>
-      >
-    >('/opsidata/config/server', params)
 
   const getServerDefaultConfig = (filterQuery?: string) =>
     apiGet<
@@ -705,7 +687,6 @@ export function useApiHelpers() {
     getProductGroups,
     getProductGroupsDynamic,
     getProductGroupMembersRecursive,
-    getHostGroupIds,
     createHostGroup,
     createProductGroup,
     updateHostGroup,
@@ -719,7 +700,6 @@ export function useApiHelpers() {
     removeProductFromGroup,
 
     // Config
-    getServerConfig,
     getServerDefaultConfig,
     getHostConfigObjects,
     saveHostConfigState,

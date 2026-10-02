@@ -12,10 +12,6 @@
  */
 import type { HardwareInventoryItem, SoftwareInventoryItem } from '~/types'
 
-export function isInventoryPresent(state: number | null | undefined): boolean {
-  return state === null || state === undefined || state !== 0
-}
-
 export function filterHardwareItems(
   items: HardwareInventoryItem[],
   options: { classFilter?: string; query?: string } = {},
