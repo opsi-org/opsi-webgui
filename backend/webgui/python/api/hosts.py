@@ -72,6 +72,32 @@ logger = get_logger()
 api_router = APIRouter()
 
 
+def _extract_clientdirectory(host_groups: dict[str, Any]) -> dict[str, Any]:
+	group_children = host_groups.setdefault("children", {})
+	clientdirectory = group_children.pop("clientdirectory", None)
+	if clientdirectory is None:
+		clientdirectory = {
+			"id": "clientdirectory",
+			"type": "HostGroup",
+			"text": "clientdirectory",
+			"parent": None,
+			"children": {},
+		}
+	clientdirectory["parent"] = None
+	children = {
+		"not_assigned": {
+			"id": "not_assigned",
+			"type": "HostGroup",
+			"text": "not_assigned",
+			"parent": "clientdirectory",
+			"children": {},
+		}
+	}
+	children.update(clientdirectory.get("children") or {})
+	clientdirectory["children"] = children
+	return clientdirectory
+
+
 class Host(BaseModel):  # pylint: disable=too-few-public-methods
 	hostId: str
 	opsiHostKey: str | None = None
@@ -549,23 +575,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 					all_groups[gid]["children"] = {}
 
 	host_groups = build_nested_group(root_group, all_groups)
-
-	clientdirectory = host_groups["children"]["clientdirectory"]
-	clientdirectory["parent"] = None
-
-	if not clientdirectory.get("children"):
-		clientdirectory["children"] = {}
-
-	children = {}
-	children["not_assigned"] = {
-		"id": "not_assigned",
-		"type": "HostGroup",
-		"text": "not_assigned",
-		"parent": "clientdirectory",
-		"children": {},
-	}
-	children.update(clientdirectory["children"])
-	clientdirectory["children"] = children
+	clientdirectory = _extract_clientdirectory(host_groups)
 
 	if withClients:
 		clients = group_get_all_clients("clientdirectory", params["depots"])
@@ -578,7 +588,6 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 				"parent": "not_assigned",
 			}
 
-	del host_groups["children"]["clientdirectory"]
 	return RESTResponse(data={"groups": host_groups, "clientdirectory": clientdirectory})
 
 
