@@ -17,8 +17,6 @@ from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 from opsiconfd import contextvar_client_session
 from opsiconfd.application import AppState
 from opsiconfd.config import get_configserver_id
-
-# from opsiconfd.logging import logger
 from opsiconfd.rest import RESTResponse, rest_api
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool

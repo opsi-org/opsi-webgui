@@ -13,13 +13,7 @@ import { runUITest } from '../../runner/runUITest'
 import { ensureQuickPanelOpen, waitForTable } from '../../utils/ui'
 import type { Page } from '@playwright/test'
 
-/**
- * Quick-panel component specs: VR baseline + a11y for every tab, and
- * for both client and product quick-action controls.
- *
- * The quick panel lives in the layout on every page; we use the clients
- * page as the host (good default data set).
- */
+/** Quick-panel visual/a11y coverage and client/product quick-action checks. */
 
 async function openQuickPanelTab(page: Page, tabText: RegExp): Promise<void> {
   await ensureQuickPanelOpen(page)

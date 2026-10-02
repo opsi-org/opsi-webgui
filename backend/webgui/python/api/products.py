@@ -575,12 +575,6 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 				]:
 					if product.get(value):
 						product[value] = product.get(value, "").split(",")
-				# if "failed" in product.get("installationStatusDetails", []) or product.get("installationStatus") == "failed":
-				# 	product["installationStatusErrorLevel"] = 2
-				# elif "unknown " in product.get("installationStatusDetails", []) or product.get("installationStatus") == "unknown ":
-				# 	product["installationStatusErrorLevel"] = 1
-				# else:
-				# 	product["installationStatusErrorLevel"] = 0
 			product["depot_version_diff"] = bool(product.get("depot_version_diff", False))
 			product["client_version_outdated"] = bool(product.get("client_version_outdated", False))
 			product["not_on_all_depots"] = bool(product.get("not_on_all_depots", False))
@@ -1031,8 +1025,6 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 						else:
 							property["depots"][depot] = property["defaultDetails"][depot]
 
-						# if not clients_on_depot.get(depot):
-						# 	continue
 						for client in clients_on_depot.get(depot, []):
 							query = (
 								select(
