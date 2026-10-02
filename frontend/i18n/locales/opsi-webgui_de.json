@@ -114,6 +114,8 @@
       "warn": "Diese Aktion kann nicht rückgängig gemacht werden."
     },
     "deploy": "Client-Agent bereitstellen",
+    "deployRequirements": "Voraussetzungen für die Bereitstellung des OPSI",
+    "deployRequirementsLinkText": "Client-Agent für {platform}",
     "deployDesc": "Installiert den opsi-Client-Agent auf den ausgewählten Clients mit den unten angegebenen Zugangsdaten.",
     "directory": "Client Directory",
     "directoryNotAssigned": "Clients, die keiner Untergruppe explizit zugewiesen sind, erscheinen hier.",

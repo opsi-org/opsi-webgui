@@ -181,6 +181,18 @@ https://opsi.org/en/
               {{ os.label }}
             </CoreAppButton>
           </div>
+          <div class="text-sm text-(--color-text-muted) mb-3">
+            {{ $t('clients.deployRequirements') }}
+            <NuxtLink
+              :to="`https://docs.opsi.org/opsi-docs-${locale === 'de' ? 'de' : 'en'}/4.3/clients/${deployOptions.type}-client/adding-clients.html#firststeps-software-deployment-client-integration-opsi-deploy`"
+              target="_blank"
+              class="text-(--color-text-muted) hover:text-opsi-blue"
+            >
+              {{
+                $t('clients.deployRequirementsLinkText', { platform: osTypes.find((osType) => osType.value === deployOptions.type)?.label })
+              }}
+            </NuxtLink>
+          </div>
           <div>
             <span class="block text-xs text-(--color-text-muted) mb-1">{{ $t('auth.username') }}</span>
             <CoreAppInput v-model="deployOptions.username" :placeholder="$t('fields.adminUsername')" size="sm" class="w-full" />
@@ -276,6 +288,7 @@ https://opsi.org/en/
 
   const attrs = useAttrs()
   import { useSelectionStore } from '~/stores/selectionStore'
+  import { useUiStore } from '~/stores/uiStore'
 
   const props = defineProps<{
     clientIds: string[]
@@ -303,6 +316,7 @@ https://opsi.org/en/
   } = useApiHelpers()
   const selectionStore = useSelectionStore()
   const { isReadOnly, canCreateClients } = useUserPermissions()
+  const { locale } = useI18n()
 
   type ActionMenuItem = { label: string; icon: string; image?: string; darkImage?: string }
   const menuItem = (i: unknown): ActionMenuItem => i as ActionMenuItem

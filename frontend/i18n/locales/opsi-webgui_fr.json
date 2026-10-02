@@ -114,6 +114,8 @@
       "warn": "Cette action est irréversible."
     },
     "deploy": "Déployer l'agent client",
+    "deployRequirements": "Exigences de déploiement de l'OPSI",
+    "deployRequirementsLinkText": "agent client pour {platform}",
     "deployDesc": "Installer l'agent client opsi sur les clients sélectionnés à l'aide des identifiants ci-dessous.",
     "directory": "Répertoire des clients",
     "directoryNotAssigned": "Les clients non explicitement affectés à un sous-groupe apparaissent ici.",

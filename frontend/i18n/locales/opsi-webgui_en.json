@@ -114,6 +114,8 @@
       "warn": "This action cannot be undone."
     },
     "deploy": "Deploy Client Agent",
+    "deployRequirements": "Deployment requirements for OPSI",
+    "deployRequirementsLinkText": "client agent for {platform}",
     "deployDesc": "Install the opsi client agent on the selected clients using the credentials below.",
     "directory": "Client Directory",
     "directoryNotAssigned": "Clients not explicitly assigned to a subgroup appear here.",
