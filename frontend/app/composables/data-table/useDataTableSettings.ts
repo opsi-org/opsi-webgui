@@ -9,6 +9,8 @@
  *
  * useDataTableSettings - Persistent data table column visibility and sorting settings.
  */
+import { readStorageJSON, writeStorageJSON } from '~/utils/storage'
+
 export interface DataTableColumnDef {
   key: string
   label: string
@@ -120,23 +122,14 @@ const defaults: Record<string, DataTableSettings> = {
 
 function getStored(): Record<string, DataTableSettings> {
   if (import.meta.server) return {}
-  try {
-    const s = localStorage.getItem(STORAGE_KEY)
-    return s ? JSON.parse(s) : {}
-  } catch {
-    return {}
-  }
+  return readStorageJSON<Record<string, DataTableSettings>>(STORAGE_KEY, {})
 }
 
 function save(id: string, s: DataTableSettings) {
   if (import.meta.server) return
-  try {
-    const all = getStored()
-    all[id] = s
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
-  } catch {
-    /* */
-  }
+  const all = getStored()
+  all[id] = s
+  writeStorageJSON(STORAGE_KEY, all)
 }
 
 export function useDataTableSettings(tableId: string) {

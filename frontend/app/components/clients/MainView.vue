@@ -99,7 +99,7 @@
     >
       <template #filter-actions="{ canSaveSearch, favorite }">
         <ClientsAdvancedFiltersPopover
-          v-model="advancedFilters"
+          :model-value="advancedFilters"
           :can-save-search="canSaveSearch"
           @update:model-value="handleAdvancedFiltersChange"
           @favorite="favorite"
@@ -334,6 +334,8 @@
   import { CLEAR_ALL_FILTERS_EVENT } from '~/composables/useGlobalFavorites'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
+  import { useUiStore } from '~/stores/uiStore'
+  import { useDataTableFilterStore } from '~/stores/dataTableFilterStore'
   import { storeToRefs } from 'pinia'
 
   const icons = useIcons()
@@ -341,6 +343,9 @@
   const { getClients, getServerIds, getBlockedClients } = useApiHelpers()
   const selectionStore = useSelectionStore()
   const messageBusStore = useMessageBusStore()
+  const uiStore = useUiStore()
+  const dataTableFilterStore = useDataTableFilterStore()
+  dataTableFilterStore.initialize()
   const { lastMsg: messageBusLastMsg } = storeToRefs(messageBusStore)
   const router = useRouter()
   const route = useRoute()
@@ -360,9 +365,8 @@
   const panelTab = ref('attributes')
   const panelInventoryTab = ref<'hardware' | 'software'>('hardware')
   const DEFAULT_CLIENT_PANEL_VIEW_KEY = 'opsi-webgui-default-client-panel-view'
-  const SHOW_ALL_CLIENT_ROW_ACTIONS_KEY = 'opsi-webgui-show-all-client-row-actions'
   const defaultClientPanelView = ref<ClientPanelType>('config')
-  const showAllClientRowActions = ref(false)
+  const showAllClientRowActions = computed(() => uiStore.clients.showAllRowActions)
   const panelProductType = ref('localboot')
   const panelProductTypes = [
     { label: String($t('products.localboot')), value: 'localboot' },
@@ -399,22 +403,10 @@
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('clients'))
   const fetchClientsRequestId = ref(0)
   let fetchClientsController: AbortController | null = null
-  const ADVANCED_FILTERS_KEY = 'opsi-webgui-clients-advanced-filters'
-  const advancedFilters = ref<ClientAdvancedFilters>(readStoredAdvancedFilters())
-
-  function readStoredAdvancedFilters(): ClientAdvancedFilters {
-    if (import.meta.server) return {}
-    try {
-      const raw = localStorage.getItem(ADVANCED_FILTERS_KEY)
-      return raw ? (JSON.parse(raw) as ClientAdvancedFilters) : {}
-    } catch {
-      return {}
-    }
-  }
+  const advancedFilters = computed(() => dataTableFilterStore.advancedFilters.clients as ClientAdvancedFilters & Record<string, unknown>)
 
   function handleAdvancedFiltersChange(value: ClientAdvancedFilters) {
-    advancedFilters.value = value
-    if (!import.meta.server) localStorage.setItem(ADVANCED_FILTERS_KEY, JSON.stringify(value))
+    dataTableFilterStore.setAdvancedFilters('clients', value)
     return fetchClients(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
   }
 
@@ -747,8 +739,7 @@
   }
 
   function setShowAllClientRowActions(value: boolean) {
-    showAllClientRowActions.value = value
-    localStorage.setItem(SHOW_ALL_CLIENT_ROW_ACTIONS_KEY, String(value))
+    uiStore.clients.showAllRowActions = value
   }
 
   function handleSelectionChange(_rows: OpsiClient[], keys: string[]) {
@@ -1010,7 +1001,6 @@
 
   onMounted(async () => {
     const storedDefaultPanelView = getCookie(DEFAULT_CLIENT_PANEL_VIEW_KEY)
-    showAllClientRowActions.value = localStorage.getItem(SHOW_ALL_CLIENT_ROW_ACTIONS_KEY) === 'true'
     if (
       storedDefaultPanelView === 'config' ||
       storedDefaultPanelView === 'logs' ||

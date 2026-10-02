@@ -10,6 +10,7 @@
  * useSavedSearches - Persisted per-table saved searches.
  */
 import type { ShallowRef } from 'vue'
+import { readStorageJSON, writeStorageJSON } from '~/utils/storage'
 
 export interface SavedSearch<T> {
   id: string
@@ -26,21 +27,12 @@ function storageKey(scopeId: string) {
 
 function readJSON<T>(key: string, fallback: T): T {
   if (import.meta.server) return fallback
-  try {
-    const raw = localStorage.getItem(key)
-    return raw ? (JSON.parse(raw) as T) : fallback
-  } catch {
-    return fallback
-  }
+  return readStorageJSON(key, fallback)
 }
 
 function writeJSON(key: string, value: unknown) {
   if (import.meta.server) return
-  try {
-    localStorage.setItem(key, JSON.stringify(value))
-  } catch {
-    // localStorage may be unavailable (private mode / quota) - saved searches just won't persist.
-  }
+  writeStorageJSON(key, value)
 }
 
 const storeCache = new Map<string, ShallowRef<SavedSearch<unknown>[]>>()

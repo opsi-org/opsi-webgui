@@ -21,6 +21,7 @@ export default defineNuxtPlugin({
     const userStore = useUserStore()
     const selectionStore = useSelectionStore()
     const uiStore = useUiStore()
+    uiStore.initializePreferences()
 
     if (typeof document !== 'undefined') {
       uiStore.initTheme()

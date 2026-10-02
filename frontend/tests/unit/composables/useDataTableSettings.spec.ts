@@ -12,25 +12,9 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { nextTick } from 'vue'
 import type { DataTableColumnDef } from '~/app/composables/data-table/useDataTableSettings'
 import { useDataTableSettings } from '~/app/composables/data-table/useDataTableSettings'
+import { installLocalStorage } from '../helpers/localStorage'
 
 const STORAGE_KEY = 'opsi-webgui-datatable-settings'
-
-/** Minimal in-memory localStorage stub (vitest runs in the node environment). */
-function installLocalStorage(): Storage {
-  const map = new Map<string, string>()
-  const storage: Storage = {
-    get length() {
-      return map.size
-    },
-    clear: () => map.clear(),
-    getItem: (k: string) => (map.has(k) ? map.get(k)! : null),
-    key: (i: number) => Array.from(map.keys())[i] ?? null,
-    removeItem: (k: string) => map.delete(k),
-    setItem: (k: string, v: string) => map.set(k, String(v)),
-  }
-  ;(globalThis as { localStorage?: Storage }).localStorage = storage
-  return storage
-}
 
 const columns: DataTableColumnDef[] = [
   { key: 'id', label: 'ID', alwaysVisible: true },
@@ -40,6 +24,7 @@ const columns: DataTableColumnDef[] = [
 
 describe('useDataTableSettings', () => {
   beforeEach(() => {
+    vi.unstubAllGlobals()
     installLocalStorage()
   })
 

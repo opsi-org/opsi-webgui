@@ -104,6 +104,7 @@
 
 <script setup lang="ts">
   import { encode, decode } from '@msgpack/msgpack'
+  import { useUiStore } from '~/stores/uiStore'
   const icons = useIcons()
   const { t: $t } = useI18n()
   const { isReadOnly, isTerminalEnabled } = useUserPermissions()
@@ -135,7 +136,7 @@
 
   const terminalStatusDotClass = computed(() => 'bg-(--color-text-muted)')
 
-  const messageBus = useMessageBus(handleMessage, false)
+  const messageBus = useMessageBus(handleMessage)
 
   let _onDataDisposable: { dispose: () => void } | null = null
   let _onResizeDisposable: { dispose: () => void } | null = null
@@ -376,37 +377,26 @@
     }
   }
 
-  const SAVED_COMMANDS_KEY = 'opsi-webgui-terminal-quick-commands'
+  const uiStore = useUiStore()
+  const savedCommands = computed({
+    get: () => uiStore.terminal.quickCommands,
+    set: (commands: string[]) => {
+      uiStore.terminal.quickCommands = commands
+    },
+  })
   const newCommandText = ref('')
-  const savedCommands = ref<string[]>(readSavedCommands())
   const savedCommandItems = computed(() => savedCommands.value.map((command) => ({ id: command, label: command })))
-
-  function readSavedCommands(): string[] {
-    if (import.meta.server) return []
-    try {
-      const raw = localStorage.getItem(SAVED_COMMANDS_KEY)
-      return raw ? (JSON.parse(raw) as string[]) : []
-    } catch {
-      return []
-    }
-  }
-
-  function persistSavedCommands() {
-    if (!import.meta.server) localStorage.setItem(SAVED_COMMANDS_KEY, JSON.stringify(savedCommands.value))
-  }
 
   function addSavedCommand() {
     const command = newCommandText.value.trim()
     if (!command || savedCommands.value.includes(command)) return
     savedCommands.value = [...savedCommands.value, command]
-    persistSavedCommands()
     newCommandText.value = ''
   }
 
   function removeSavedCommands(commands: string[]) {
     const removed = new Set(commands)
     savedCommands.value = savedCommands.value.filter((c) => !removed.has(c))
-    persistSavedCommands()
   }
 
   async function runSavedCommand(command: string) {

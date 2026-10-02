@@ -261,7 +261,8 @@
 <script setup lang="ts">
   import { getActionRequestStatus } from '~/utils/actionRequest'
 
-  import type { ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue, ProductVisibility } from '~/types'
+  import type { ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue } from '~/types'
+  import { useUiStore } from '~/stores/uiStore'
   import type { TableColumn } from '~/components/core/AppTable.vue'
 
   /**
@@ -367,22 +368,22 @@
     { key: 'newValue', label: String($t('common.newValue')) },
     { key: 'actions', label: '', width: '2.5rem' },
   ])
-  const SAVE_AND_PROCESS_KEY = 'opsi-webgui-save-and-process'
-  const processAfterSave = ref(!import.meta.server && localStorage.getItem(SAVE_AND_PROCESS_KEY) === '1')
+  const uiStore = useUiStore()
+  const processAfterSave = computed({
+    get: () => uiStore.productActions.processAfterSave,
+    set: (value: boolean) => {
+      uiStore.productActions.processAfterSave = value
+    },
+  })
+  const onDemandVisibility = computed({
+    get: () => uiStore.productActions.visibility,
+    set: (value) => {
+      uiStore.productActions.visibility = value
+    },
+  })
   const onDemandProductMode = ref<'all' | 'changed'>('changed')
-  const VISIBILITY_KEY = 'opsi-webgui-process-actions-visibility'
-  const onDemandVisibility = ref<ProductVisibility>(
-    (!import.meta.server && (localStorage.getItem(VISIBILITY_KEY) as ProductVisibility)) || '',
-  )
   const onDemandClientIds = ref<string[]>([])
   const saveResult = ref<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
-
-  watch(processAfterSave, (value) => {
-    if (!import.meta.server) localStorage.setItem(SAVE_AND_PROCESS_KEY, value ? '1' : '0')
-  })
-  watch(onDemandVisibility, (value) => {
-    if (!import.meta.server) localStorage.setItem(VISIBILITY_KEY, value)
-  })
 
   watch(open, (isOpen) => {
     if (isOpen) {

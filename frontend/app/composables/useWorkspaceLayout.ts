@@ -9,6 +9,7 @@
  *
  * useWorkspaceLayout - Persisted panel layout sizes.
  */
+import { readStorageJSON, writeStorageJSON } from '~/utils/storage'
 
 export interface WorkspaceLayoutState {
   quickpanelWidth: number
@@ -26,21 +27,12 @@ export const DEFAULT_WORKSPACE_LAYOUT: WorkspaceLayoutState = {
 
 function readJSON<T>(key: string, fallback: T): T {
   if (import.meta.server) return fallback
-  try {
-    const raw = localStorage.getItem(key)
-    return raw ? (JSON.parse(raw) as T) : fallback
-  } catch {
-    return fallback
-  }
+  return readStorageJSON(key, fallback)
 }
 
 function writeJSON(key: string, value: unknown) {
   if (import.meta.server) return
-  try {
-    localStorage.setItem(key, JSON.stringify(value))
-  } catch {
-    // localStorage may be unavailable (private mode / quota) - layout just won't persist.
-  }
+  writeStorageJSON(key, value)
 }
 
 // Module-level singleton so every component (layout shell, page panels) shares one

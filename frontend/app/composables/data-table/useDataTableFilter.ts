@@ -9,42 +9,41 @@
  *
  * useDataTableFilter - Shared persisted filter-query helpers for data tables.
  */
+import { readStorageJSON, writeStorageJSON } from '~/utils/storage'
 
 const FILTER_STORAGE_KEY = 'opsi-webgui-datatable-filter-queries'
+type FilterStorage = { queries: Record<string, string>; advancedFilters: Record<string, object> }
 
-function getStoredFilters(): Record<string, string> {
-  if (import.meta.server) return {}
-  try {
-    const raw = localStorage.getItem(FILTER_STORAGE_KEY)
-    return raw ? JSON.parse(raw) : {}
-  } catch {
-    return {}
-  }
+function readFilters(): FilterStorage {
+  if (import.meta.server) return { queries: {}, advancedFilters: {} }
+  const value = readStorageJSON<unknown>(FILTER_STORAGE_KEY, {})
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return { queries: {}, advancedFilters: {} }
+  const record = value as Record<string, unknown>
+  const queries =
+    record.queries && typeof record.queries === 'object' && !Array.isArray(record.queries)
+      ? (record.queries as Record<string, string>)
+      : (record as Record<string, string>)
+  const advancedFilters =
+    record.advancedFilters && typeof record.advancedFilters === 'object' && !Array.isArray(record.advancedFilters)
+      ? (record.advancedFilters as Record<string, object>)
+      : {}
+  return { queries, advancedFilters }
 }
 
 export function getStoredDataTableFilter(filterId: string): string {
-  const all = getStoredFilters()
-  return all[filterId] || ''
+  return readFilters().queries[filterId] || ''
 }
 
 export function saveStoredDataTableFilter(filterId: string, filterQuery: string) {
   if (import.meta.server) return
-  try {
-    const all = getStoredFilters()
-    all[filterId] = filterQuery
-    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(all))
-  } catch {
-    /* */
-  }
+  const all = readFilters()
+  all.queries[filterId] = filterQuery
+  writeStorageJSON(FILTER_STORAGE_KEY, all)
 }
 
 export function clearStoredDataTableFilter(filterId: string) {
   if (import.meta.server) return
-  try {
-    const all = getStoredFilters()
-    delete all[filterId]
-    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(all))
-  } catch {
-    /* */
-  }
+  const all = readFilters()
+  delete all.queries[filterId]
+  writeStorageJSON(FILTER_STORAGE_KEY, all)
 }

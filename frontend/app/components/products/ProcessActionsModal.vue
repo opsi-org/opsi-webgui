@@ -122,7 +122,8 @@
 
 <script setup lang="ts">
   import { useSelectionStore } from '~/stores/selectionStore'
-  import type { BulkActionResult, ProductVisibility } from '~/types'
+  import { useUiStore } from '~/stores/uiStore'
+  import type { BulkActionResult } from '~/types'
   import { normalizeActionResultDetails } from '~/composables/useApiHelpers'
 
   const open = defineModel<boolean>('open', { default: false })
@@ -143,18 +144,19 @@
   const icons = useIcons()
   const { t: $t } = useI18n()
   const selectionStore = useSelectionStore()
+  const uiStore = useUiStore()
   const { processActionRequests } = useApiHelpers()
   const { isReadOnly } = useUserPermissions()
 
   const executing = ref(false)
-  const VISIBILITY_KEY = 'opsi-webgui-process-actions-visibility'
   const productMode = ref<'all' | 'selected'>('all')
-  const visibility = ref<ProductVisibility>((!import.meta.server && (localStorage.getItem(VISIBILITY_KEY) as ProductVisibility)) || '')
-  const clientIds = ref<string[]>([...selectionStore.selectedClients])
-
-  watch(visibility, (value) => {
-    if (!import.meta.server) localStorage.setItem(VISIBILITY_KEY, value)
+  const visibility = computed({
+    get: () => uiStore.productActions.visibility,
+    set: (value) => {
+      uiStore.productActions.visibility = value
+    },
   })
+  const clientIds = ref<string[]>([...selectionStore.selectedClients])
 
   watch(open, (isOpen) => {
     if (isOpen) {

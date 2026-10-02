@@ -467,7 +467,7 @@
     },
   )
 
-  const { mount: mbMount } = useMessageBus(undefined, false, ['event:log_updated'])
+  const { mount: mbMount } = useMessageBus(undefined, ['event:log_updated'])
 
   onMounted(() => {
     mbMount()

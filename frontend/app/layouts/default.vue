@@ -134,7 +134,7 @@
             <div class="flex items-center justify-between mb-2">
               <span class="text-sm font-medium text-(--color-text)">{{ $t('quick.panel') }}</span>
               <CoreAppButton
-                @click="quickpanelOpen = false"
+                @click="setQuickpanelOpen(false)"
                 variant="ghost"
                 color="neutral"
                 :aria-label="String($t('common.close'))"
@@ -160,9 +160,9 @@
           role="button"
           tabindex="0"
           :aria-label="String($t('common.close'))"
-          @click="quickpanelOpen = false"
-          @keydown.enter="quickpanelOpen = false"
-          @keydown.space.prevent="quickpanelOpen = false"
+          @click="setQuickpanelOpen(false)"
+          @keydown.enter="setQuickpanelOpen(false)"
+          @keydown.space.prevent="setQuickpanelOpen(false)"
         />
         <div class="absolute inset-0 bg-(--color-background) overflow-hidden">
           <div class="p-2.5 h-full min-h-0 flex flex-col overflow-hidden">
@@ -179,7 +179,7 @@
                 color="neutral"
                 :aria-label="String($t('common.close'))"
                 class="rounded-full"
-                @click="quickpanelOpen = false"
+                @click="setQuickpanelOpen(false)"
               />
             </div>
 
@@ -342,11 +342,13 @@
   }
 
   function toggleQuickpanel() {
-    quickpanelOpen.value = !quickpanelOpen.value
-    if (!isMobile.value) {
-      uiStore.quickpanelOpened = quickpanelOpen.value
-    }
+    setQuickpanelOpen(!quickpanelOpen.value)
     updateDefaultPage()
+  }
+
+  function setQuickpanelOpen(isOpen: boolean) {
+    quickpanelOpen.value = isOpen
+    if (!isMobile.value) uiStore.quickpanelOpened = isOpen
   }
 
   const shortcutActions = useActiveShortcutActions()

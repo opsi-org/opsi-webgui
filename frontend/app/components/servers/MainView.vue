@@ -68,7 +68,7 @@
     >
       <template #filter-actions="{ canSaveSearch, favorite }">
         <ServersAdvancedFiltersPopover
-          v-model="advancedFilters"
+          :model-value="advancedFilters"
           :can-save-search="canSaveSearch"
           @update:model-value="handleAdvancedFiltersChange"
           @favorite="favorite"
@@ -141,11 +141,16 @@
   import { useSavedSearches } from '~/composables/useSavedSearches'
   import { CLEAR_ALL_FILTERS_EVENT } from '~/composables/useGlobalFavorites'
   import { useSelectionStore } from '~/stores/selectionStore'
+  import { useUiStore } from '~/stores/uiStore'
+  import { useDataTableFilterStore } from '~/stores/dataTableFilterStore'
 
   const icons = useIcons()
   const { t: $t } = useI18n()
   const { getServers } = useApiHelpers()
   const selectionStore = useSelectionStore()
+  const uiStore = useUiStore()
+  const dataTableFilterStore = useDataTableFilterStore()
+  dataTableFilterStore.initialize()
   const router = useRouter()
   const route = useRoute()
   const { isReadOnly, hasServerWriteAccess, isDepotAccessRestricted } = useUserPermissions()
@@ -163,22 +168,10 @@
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('servers'))
   const fetchServersRequestId = ref(0)
   let fetchServersController: AbortController | null = null
-  const ADVANCED_FILTERS_KEY = 'opsi-webgui-servers-advanced-filters'
-  const advancedFilters = ref<ServerAdvancedFilters>(readStoredAdvancedFilters())
-
-  function readStoredAdvancedFilters(): ServerAdvancedFilters {
-    if (import.meta.server) return {}
-    try {
-      const raw = localStorage.getItem(ADVANCED_FILTERS_KEY)
-      return raw ? (JSON.parse(raw) as ServerAdvancedFilters) : {}
-    } catch {
-      return {}
-    }
-  }
+  const advancedFilters = computed(() => dataTableFilterStore.advancedFilters.servers as ServerAdvancedFilters & Record<string, unknown>)
 
   function handleAdvancedFiltersChange(value: ServerAdvancedFilters) {
-    advancedFilters.value = value
-    if (!import.meta.server) localStorage.setItem(ADVANCED_FILTERS_KEY, JSON.stringify(value))
+    dataTableFilterStore.setAdvancedFilters('servers', value)
     return fetchServers(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
   }
 

@@ -394,12 +394,18 @@
     "admin": "Admin",
     "breadcrumb": "Breadcrumb",
     "clone": "Clone",
+    "clients": "Clients",
+    "dashboard": "Dashboard",
     "defaultPage": "Default Page",
+    "groups": "Groups",
     "leaveAnyway": "Leave Anyway",
     "navigateAway": "You have unsaved changes. If you leave, they will be lost. Continue?",
+    "products": "Products",
     "redirect": "Redirecting...",
+    "servers": "Servers",
     "sidebar": "Toggle Sidebar",
-    "stayOnPage": "Stay on Page"
+    "stayOnPage": "Stay on Page",
+    "support": "Support"
   },
   "notifications": {
     "target.both": "To both selected servers and clients",

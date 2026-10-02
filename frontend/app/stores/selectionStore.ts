@@ -10,26 +10,18 @@
  * selectionStore - Pinia store for selected servers, groups, and global selection state.
  */
 import { defineStore } from 'pinia'
+import { safeLocalStorage } from '~/utils/storage'
 
 export type SelectionSource = 'table' | 'quickpanel' | 'groups' | null
 
 export const useSelectionStore = defineStore('selection', {
   persist: {
     key: 'opsi-webgui-selection',
-    storage: localStorage,
-    pick: [
-      'configServer',
-      '_initialized',
-      'selectedServers',
-      'selectedClients',
-      'selectedProducts',
-      'selectedClientGroups',
-      'selectedProductGroups',
-    ],
+    storage: safeLocalStorage,
+    pick: ['configServer', 'selectedServers', 'selectedClients', 'selectedProducts', 'selectedClientGroups', 'selectedProductGroups'],
   },
   state: () => ({
     configServer: '',
-    _initialized: false,
     selectedServers: [] as string[],
     selectedClients: [] as string[],
     selectedProducts: [] as string[],
@@ -38,9 +30,6 @@ export const useSelectionStore = defineStore('selection', {
     selectionSource: null as SelectionSource,
   }),
   getters: {
-    serverCount: (s) => s.selectedServers.length,
-    clientCount: (s) => s.selectedClients.length,
-    productCount: (s) => s.selectedProducts.length,
     hasAnySelection: (s) =>
       s.selectedServers.length > 0 ||
       s.selectedClients.length > 0 ||
@@ -48,7 +37,6 @@ export const useSelectionStore = defineStore('selection', {
       s.selectedClientGroups.length > 0 ||
       s.selectedProductGroups.length > 0,
     selectedServersParam: (s): string => `[${s.selectedServers.join(',')}]`,
-    isInitialized: (s): boolean => s._initialized,
   },
   actions: {
     setConfigServer(server: string) {
@@ -62,10 +50,6 @@ export const useSelectionStore = defineStore('selection', {
       }
       return false
     },
-    setInitialized(value: boolean) {
-      this._initialized = value
-    },
-
     setServers(servers: string[], source: SelectionSource = 'table') {
       this.selectedServers = servers.length === 0 && this.configServer ? [this.configServer] : servers
       this.selectionSource = source
@@ -111,9 +95,6 @@ export const useSelectionStore = defineStore('selection', {
       this.selectedProducts = []
     },
 
-    setClientGroups(groups: string[]) {
-      this.selectedClientGroups = groups
-    },
     toggleClientGroup(groupId: string) {
       const next = new Set(this.selectedClientGroups)
       if (next.has(groupId)) next.delete(groupId)
@@ -124,9 +105,6 @@ export const useSelectionStore = defineStore('selection', {
       this.selectedClientGroups = []
     },
 
-    setProductGroups(groups: string[]) {
-      this.selectedProductGroups = groups
-    },
     toggleProductGroup(groupId: string) {
       const next = new Set(this.selectedProductGroups)
       if (next.has(groupId)) next.delete(groupId)

@@ -642,44 +642,6 @@ export function useCachedData() {
     state.expanded = newSet
   }
 
-  function expandAllGroups(groupType: 'client' | 'product') {
-    const tree = groupType === 'client' ? clientGroupsState.tree : productGroupsState.tree
-    const allIds = new Set<string>()
-    const collect = (nodes: GroupTreeNodeData[]) => {
-      for (const n of nodes) {
-        if (n.children?.length || n.members?.length) {
-          allIds.add(n.id)
-          if (n.children) collect(n.children)
-        }
-      }
-    }
-    collect(tree)
-    if (groupType === 'client') clientGroupsState.expanded = allIds
-    else productGroupsState.expanded = allIds
-  }
-
-  function collapseAllGroups(groupType: 'client' | 'product') {
-    const tree = groupType === 'client' ? clientGroupsState.tree : productGroupsState.tree
-    const rootId = tree[0]?.id
-    if (groupType === 'client') clientGroupsState.expanded = rootId ? new Set([rootId]) : new Set()
-    else productGroupsState.expanded = rootId ? new Set([rootId]) : new Set()
-  }
-
-  function getGroupMembers(groupId: string, groupType: 'client' | 'product'): string[] {
-    const tree = groupType === 'client' ? clientGroupsState.tree : productGroupsState.tree
-    const find = (nodes: GroupTreeNodeData[]): GroupTreeNodeData | null => {
-      for (const n of nodes) {
-        if (n.id === groupId) return n
-        if (n.children) {
-          const f = find(n.children)
-          if (f) return f
-        }
-      }
-      return null
-    }
-    return find(tree)?.members || []
-  }
-
   // Batch fetchers & refresh
 
   /** Fetch user config + disabled features together (used after login and in init plugin). */
@@ -695,7 +657,6 @@ export function useCachedData() {
   return {
     // Diagnostics
     diagnosticsData: computed(() => diagnosticsState.data),
-    diagnosticsLoading: computed(() => diagnosticsState.loading),
     diagnosticsFetched: computed(() => diagnosticsState.fetched),
     healthCheckData,
     healthCounts,
@@ -708,17 +669,14 @@ export function useCachedData() {
 
     // User configuration
     userConfigData: computed(() => userConfigState.data),
-    userConfigLoading: computed(() => userConfigState.loading),
     fetchUserConfig,
 
     // Disabled features
     disabledFeatures: computed(() => disabledFeaturesState.data ?? []),
-    disabledFeaturesLoading: computed(() => disabledFeaturesState.loading),
     fetchDisabledFeatures,
 
     // Product icons
     productIcons: computed(() => productIconsState.data),
-    productIconsLoading: computed(() => productIconsState.loading),
     fetchProductIcons,
 
     // Changelogs
@@ -731,9 +689,7 @@ export function useCachedData() {
     clientGroupsLoading: computed(() => clientGroupsState.loading),
     clientGroupsError: computed(() => clientGroupsState.error),
     clientGroupsExpanded: computed(() => clientGroupsState.expanded),
-    clientGroupsFetched: computed(() => clientGroupsState.fetched),
     clientGroupsLoadingGroups: computed(() => clientGroupsState.loadingGroups),
-    clientGroupsLoadedGroups: computed(() => clientGroupsState.loadedGroups),
     fetchClientGroups,
     fetchGroupChildrenLazy,
     fetchGroupMembersRecursive,
@@ -743,18 +699,13 @@ export function useCachedData() {
     productGroupsLoading: computed(() => productGroupsState.loading),
     productGroupsError: computed(() => productGroupsState.error),
     productGroupsExpanded: computed(() => productGroupsState.expanded),
-    productGroupsFetched: computed(() => productGroupsState.fetched),
     productGroupsLoadingGroups: computed(() => productGroupsState.loadingGroups),
-    productGroupsLoadedGroups: computed(() => productGroupsState.loadedGroups),
     fetchProductGroups,
     fetchProductGroupChildrenLazy,
     fetchProductGroupMembersRecursive,
 
-    // Group tree helpers
+    // Group tree actions
     toggleGroupExpand,
-    expandAllGroups,
-    collapseAllGroups,
-    getGroupMembers,
 
     // Batch
     fetchPostLoginData,

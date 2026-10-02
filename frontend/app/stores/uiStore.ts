@@ -7,79 +7,57 @@
  * All rights reserved.
  * License: AGPL-3.0
  *
- * uiStore - Pinia store for UI state (sidebar, theme, language, datatable and layout preferences).
+ * uiStore - Pinia store for shared UI state and user preferences.
  */
 import { defineStore } from 'pinia'
 import { useColorMode } from '@vueuse/core'
-import { useCookie } from 'nuxt/app'
+import type { ProductVisibility } from '~/types'
+import { readStorageJSON, readStorageValue, removeStorageValue, safeLocalStorage } from '~/utils/storage'
 
-type Lang = 'en' | 'de'
 type Theme = 'light' | 'dark'
-type TableType = 'servers' | 'clients' | 'products'
-
-const defaultVisible: Record<TableType, string[]> = {
-  servers: ['selected', 'depotId', 'description', 'type', 'actions'],
-  clients: [
-    'selected',
-    'clientId',
-    'description',
-    'lastSeen',
-    'version_outdated',
-    'installationStatus_installed',
-    'actionRequest_set',
-    'actionResult_failed',
-    'actionResult_successful',
-    'reachable',
-    'actions',
-  ],
-  products: ['selected', 'installationStatus', 'actionResult', 'productId', 'version', 'actionRequest', 'actions'],
-}
-
-const defaultSort: Record<TableType, { column: string; isDesc: boolean }> = {
-  servers: { column: 'depotId', isDesc: false },
-  clients: { column: 'clientId', isDesc: false },
-  products: { column: 'productId', isDesc: false },
-}
+const legacyPreferenceKeys = [
+  'opsi-webgui-save-and-process',
+  'opsi-webgui-process-actions-visibility',
+  'opsi-webgui-show-all-client-row-actions',
+  'opsi-webgui-terminal-quick-commands',
+]
 
 export const useUiStore = defineStore('ui', {
-  persist: { key: 'opsi-webgui-ui', storage: localStorage },
+  persist: {
+    key: 'opsi-webgui-ui',
+    storage: safeLocalStorage,
+    pick: ['theme', 'quickpanelOpened', 'menuCollapsed', 'productActions', 'clients', 'terminal'],
+  },
   state: () => ({
     isMobile: false,
-    language: 'en' as Lang,
     theme: (useColorMode().value === 'auto' ? 'light' : useColorMode().value) as Theme,
     quickpanelOpened: true,
     menuCollapsed: false,
-    splitviewClient: true,
-    splitviewServer: true,
-    visibleColumns: { ...defaultVisible } as Record<TableType, string[]>,
-    sortColumns: { ...defaultSort } as Record<TableType, { column: string; isDesc: boolean }>,
-    filterQuery: { clients: '', products: '' } as Record<string, string>,
-    lastSelected: { clients: '', servers: '', products: '' },
-    secondColumnSelectedRowId: '',
-    productActionRequest: {} as Record<string, string>,
-    productsLastRequestUrl: '',
-    productsLastRequestParams: {} as unknown,
-    productsLastRequestTime: 0,
-    logmarker: '-1;;instlog',
-    loglevel: 5,
-    logtype: 'instlog',
-    autofetch: false,
-    autoscroll: true,
-    syncSelection: true,
+    productActions: { processAfterSave: false, visibility: '' as ProductVisibility },
+    clients: { showAllRowActions: false },
+    terminal: { quickCommands: [] as string[] },
   }),
-  getters: {
-    isLight: (s) => s.theme === 'light',
-    getColumns: (s) => (type: TableType) => s.visibleColumns[type],
-    getSorting: (s) => (type: TableType) => s.sortColumns[type],
-    getFilter: (s) => (type: TableType) => s.filterQuery[type] || '',
-    logmarkerNr: (s) => parseInt(String(s.logmarker?.split(';')[0] ?? '-1')) || -1,
-    logmarkerId: (s) => s.logmarker?.split(';')[1] || '',
-    logmarkerType: (s) => s.logmarker?.split(';')[2] || '',
-  },
   actions: {
-    setLanguage(lang: Lang) {
-      this.language = lang
-      useCookie('opsi-webgui-language').value = lang
+    initializePreferences() {
+      if (import.meta.server) return
+
+      const processAfterSave = readStorageValue('opsi-webgui-save-and-process')
+      if (processAfterSave !== null) this.productActions.processAfterSave = processAfterSave === '1'
+      const visibility = readStorageValue('opsi-webgui-process-actions-visibility')
+      if (visibility === '' || visibility === 'hidden' || visibility === 'visible') {
+        this.productActions.visibility = visibility
+      }
+      const showAllClientRowActions = readStorageValue('opsi-webgui-show-all-client-row-actions')
+      if (showAllClientRowActions !== null) this.clients.showAllRowActions = showAllClientRowActions === 'true'
+      const commandsKey = 'opsi-webgui-terminal-quick-commands'
+      if (readStorageValue(commandsKey) !== null) {
+        const commands = readStorageJSON<unknown>(commandsKey, [])
+        this.terminal.quickCommands = Array.isArray(commands)
+          ? commands.filter((command): command is string => typeof command === 'string')
+          : []
+      }
+
+      legacyPreferenceKeys.forEach(removeStorageValue)
     },
     setTheme(theme: Theme) {
       this.theme = theme
@@ -94,51 +72,8 @@ export const useUiStore = defineStore('ui', {
         document.cookie = `opsi-webgui-color-mode=${this.theme}; path=/; max-age=31536000; SameSite=Lax`
       }
     },
-    setQuickpanelOpened(opened: boolean) {
-      this.quickpanelOpened = opened
-      useCookie('opsi-webgui-quickpanel-opened').value = opened ? 'true' : 'false'
-    },
-    setMenuCollapsed(collapsed: boolean) {
-      this.menuCollapsed = collapsed
-    },
     setIsMobile(isMobile: boolean) {
       this.isMobile = isMobile
-    },
-    setSplitviewClient(val: boolean) {
-      this.splitviewClient = val
-    },
-    setSplitviewServer(val: boolean) {
-      this.splitviewServer = val
-    },
-    setSecondColumnSelectedRowId(id: string) {
-      this.secondColumnSelectedRowId = id
-    },
-    setColumns(type: TableType, columns: string[]) {
-      this.visibleColumns[type] = columns
-    },
-    setSort(type: TableType, column: string, isDesc: boolean) {
-      this.sortColumns[type] = { column, isDesc }
-    },
-    setFilter(type: TableType, filter: string) {
-      this.filterQuery[type] = filter
-    },
-    toggleFilter(type: TableType, filter: string) {
-      this.filterQuery[type] = this.filterQuery[type] === filter ? '' : filter
-    },
-    resetTable() {
-      this.visibleColumns = { ...defaultVisible }
-      this.sortColumns = { ...defaultSort }
-    },
-    setProductActionRequest(key: string, value: string) {
-      this.productActionRequest[key] = value
-    },
-    setProductsLastRequest(url: string, params: unknown, time: number) {
-      this.productsLastRequestUrl = url
-      this.productsLastRequestParams = params
-      this.productsLastRequestTime = time
-    },
-    setLogmarker(nr: number, id: string) {
-      this.logmarker = `${nr};${id};${this.logtype}`
     },
   },
 })

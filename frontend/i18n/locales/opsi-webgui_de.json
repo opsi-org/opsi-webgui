@@ -394,12 +394,18 @@
     "admin": "Administration",
     "breadcrumb": "Brotkrümelnavigation",
     "clone": "Klonen",
+    "clients": "Clients",
+    "dashboard": "Dashboard",
     "defaultPage": "Standardseite",
+    "groups": "Gruppen",
     "leaveAnyway": "Trotzdem verlassen",
     "navigateAway": "Sie haben ungespeicherte Änderungen. Wenn Sie die Seite verlassen, gehen diese verloren. Möchten Sie fortfahren?",
+    "products": "Produkte",
     "redirect": "Weiterleitung...",
+    "servers": "Server",
     "sidebar": "Seitenleiste ein-/ausblenden",
-    "stayOnPage": "Auf Seite bleiben"
+    "stayOnPage": "Auf Seite bleiben",
+    "support": "Support"
   },
   "notifications": {
     "target.both": "An ausgewählte Server und Clients",

@@ -8,29 +8,15 @@
  * License: AGPL-3.0
  */
 
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getStoredDataTableFilter, saveStoredDataTableFilter } from '~/app/composables/data-table/useDataTableFilter'
+import { installLocalStorage } from '../helpers/localStorage'
 
 const STORAGE_KEY = 'opsi-webgui-datatable-filter-queries'
 
-function installLocalStorage(): Storage {
-  const map = new Map<string, string>()
-  const storage: Storage = {
-    get length() {
-      return map.size
-    },
-    clear: () => map.clear(),
-    getItem: (k: string) => (map.has(k) ? map.get(k)! : null),
-    key: (i: number) => Array.from(map.keys())[i] ?? null,
-    removeItem: (k: string) => map.delete(k),
-    setItem: (k: string, v: string) => map.set(k, String(v)),
-  }
-  ;(globalThis as { localStorage?: Storage }).localStorage = storage
-  return storage
-}
-
 describe('useDataTableFilter helpers', () => {
   beforeEach(() => {
+    vi.unstubAllGlobals()
     installLocalStorage()
   })
 
@@ -45,7 +31,7 @@ describe('useDataTableFilter helpers', () => {
     expect(getStoredDataTableFilter('servers')).toBe('')
 
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
-    expect(stored.clients).toBe('abc')
+    expect(stored.queries.clients).toBe('abc')
   })
 
   it('keeps a shared products filter for whichever product table reads it', () => {

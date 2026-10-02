@@ -147,7 +147,7 @@
     >
       <template #filter-actions="{ canSaveSearch, favorite }">
         <ProductsAdvancedFiltersPopover
-          v-model="advancedFilters"
+          :model-value="advancedFilters"
           :can-save-search="canSaveSearch"
           @update:model-value="handleAdvancedFiltersChange"
           @favorite="favorite"
@@ -381,6 +381,8 @@
   import { CLEAR_ALL_FILTERS_EVENT } from '~/composables/useGlobalFavorites'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
+  import { useUiStore } from '~/stores/uiStore'
+  import { useDataTableFilterStore } from '~/stores/dataTableFilterStore'
   import { storeToRefs } from 'pinia'
   import { formatApiErrorMessage, normalizeActionResultDetails } from '~/composables/useApiHelpers'
 
@@ -398,6 +400,9 @@
   const { productIcons: cachedProductIcons, fetchProductIcons } = useCachedData()
   const selectionStore = useSelectionStore()
   const messageBusStore = useMessageBusStore()
+  const uiStore = useUiStore()
+  const dataTableFilterStore = useDataTableFilterStore()
+  dataTableFilterStore.initialize()
   const { lastMsg: messageBusLastMsg } = storeToRefs(messageBusStore)
   const { isReadOnly, isProductGroupAccessRestricted } = useUserPermissions()
   const router = useRouter()
@@ -480,22 +485,10 @@
   }
   const fetchProductsRequestId = ref(0)
   let fetchProductsController: AbortController | null = null
-  const ADVANCED_FILTERS_KEY = 'opsi-webgui-products-advanced-filters'
-  const advancedFilters = ref<ProductAdvancedFilters>(readStoredAdvancedFilters())
-
-  function readStoredAdvancedFilters(): ProductAdvancedFilters {
-    if (import.meta.server) return {}
-    try {
-      const raw = localStorage.getItem(ADVANCED_FILTERS_KEY)
-      return raw ? (JSON.parse(raw) as ProductAdvancedFilters) : {}
-    } catch {
-      return {}
-    }
-  }
+  const advancedFilters = computed(() => dataTableFilterStore.advancedFilters.products as ProductAdvancedFilters & Record<string, unknown>)
 
   function handleAdvancedFiltersChange(value: ProductAdvancedFilters) {
-    advancedFilters.value = value
-    if (!import.meta.server) localStorage.setItem(ADVANCED_FILTERS_KEY, JSON.stringify(value))
+    dataTableFilterStore.setAdvancedFilters('products', value)
     return fetchProducts(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
   }
 

@@ -12,6 +12,7 @@
 import { defineStore } from 'pinia'
 import { encode, decode } from '@msgpack/msgpack'
 import { markRaw } from 'vue'
+import { safeLocalStorage } from '~/utils/storage'
 
 const connectionPromises = new WeakMap<object, Promise<WebSocket>>()
 
@@ -60,17 +61,13 @@ export function createMsgTemplate(): Record<string, unknown> {
 export const useMessageBusStore = defineStore('messageBus', {
   persist: {
     key: 'opsi-webgui-messagebus',
-    storage: localStorage,
+    storage: safeLocalStorage,
     pick: ['autoRefresh'],
   },
   state: () => ({
     bus: undefined as WebSocket | undefined,
     lastMsg: undefined as unknown,
     autoRefresh: true,
-    changesDetected: false,
-    lastEventType: '',
-    lastEventDescription: '',
-    lastEventTime: 0,
     _reconnectTimer: null as ReturnType<typeof setTimeout> | null,
     _reconnectDelay: 1000,
     _connecting: false,
@@ -230,14 +227,6 @@ export const useMessageBusStore = defineStore('messageBus', {
 
     setAutoRefresh(val: boolean) {
       this.autoRefresh = val
-    },
-    setChangesDetected(val: boolean) {
-      this.changesDetected = val
-    },
-    setLastEvent(type: string) {
-      this.lastEventType = type
-      this.lastEventTime = Date.now()
-      this.changesDetected = true
     },
   },
 })

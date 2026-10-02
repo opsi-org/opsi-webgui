@@ -33,8 +33,6 @@ const mockStore = reactive({
   lastMsg: undefined as unknown,
   autoRefresh: true,
   isConnected: true,
-  changesDetected: false,
-  lastEventType: '',
   bus: undefined,
   connect: vi.fn(() => Promise.resolve({} as WebSocket)),
   disconnect: vi.fn(),
@@ -42,13 +40,6 @@ const mockStore = reactive({
   subscribeChannels: vi.fn(() => Promise.resolve()),
   setAutoRefresh: vi.fn((val: boolean) => {
     mockStore.autoRefresh = val
-  }),
-  setChangesDetected: vi.fn((val: boolean) => {
-    mockStore.changesDetected = val
-  }),
-  setLastEvent: vi.fn((type: string) => {
-    mockStore.lastEventType = type
-    mockStore.changesDetected = true
   }),
 })
 
@@ -76,8 +67,6 @@ describe('useAutoRefresh', () => {
     vi.useFakeTimers()
     mockStore.lastMsg = undefined
     mockStore.autoRefresh = true
-    mockStore.changesDetected = false
-    mockStore.lastEventType = ''
     mockStore.connect.mockResolvedValue({} as WebSocket)
     mockStore.send.mockResolvedValue()
     mockStore.subscribeChannels.mockResolvedValue()
@@ -90,7 +79,7 @@ describe('useAutoRefresh', () => {
   it('detects opsiconfd EventMessage format (type="event" + event field)', async () => {
     const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
     const cb = vi.fn()
-    const { changesDetected, lastChangeEvent, lastChangeDescription } = useAutoRefresh(cb)
+    const { changesDetected, lastChangeDescription } = useAutoRefresh(cb)
 
     await emitMessage({
       type: 'event',
@@ -100,9 +89,7 @@ describe('useAutoRefresh', () => {
     })
 
     expect(changesDetected.value).toBe(true)
-    expect(lastChangeEvent.value).toBe('host_created')
     expect(lastChangeDescription.value).toBe('Client created')
-    expect(mockStore.setLastEvent).toHaveBeenCalledWith('host_created')
 
     // auto refresh is debounced
     expect(cb).not.toHaveBeenCalled()
@@ -114,12 +101,12 @@ describe('useAutoRefresh', () => {
   it('falls back to the channel when the event field is missing', async () => {
     const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
     const cb = vi.fn()
-    const { changesDetected, lastChangeEvent } = useAutoRefresh(cb)
+    const { changesDetected, lastChangeDescription } = useAutoRefresh(cb)
 
     await emitMessage({ type: 'event', channel: 'event:productOnClient_updated' })
 
     expect(changesDetected.value).toBe(true)
-    expect(lastChangeEvent.value).toBe('productOnClient_updated')
+    expect(lastChangeDescription.value).toBe('Product action updated')
   })
 
   it('can detect events without refreshing for in-place table updates', async () => {
@@ -194,7 +181,7 @@ describe('useAutoRefresh', () => {
   it('detects configState events in default watchers', async () => {
     const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
     const cb = vi.fn()
-    const { changesDetected, lastChangeEvent } = useAutoRefresh(cb)
+    const { changesDetected, lastChangeDescription } = useAutoRefresh(cb)
 
     await emitMessage({
       type: 'event',
@@ -203,7 +190,7 @@ describe('useAutoRefresh', () => {
     })
 
     expect(changesDetected.value).toBe(true)
-    expect(lastChangeEvent.value).toBe('configState_updated')
+    expect(lastChangeDescription.value).toBe('Config state updated')
     await vi.advanceTimersByTimeAsync(2100)
     expect(cb).toHaveBeenCalledTimes(1)
   })
@@ -284,20 +271,6 @@ describe('useAutoRefresh', () => {
     manualRefresh()
     expect(cb).toHaveBeenCalledTimes(1)
     expect(changesDetected.value).toBe(false)
-    expect(mockStore.setChangesDetected).toHaveBeenCalledWith(false)
-  })
-
-  it('dismissChanges clears state without refreshing', async () => {
-    const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
-    mockStore.autoRefresh = false
-    const cb = vi.fn()
-    const { changesDetected, dismissChanges } = useAutoRefresh(cb)
-
-    await emitMessage({ type: 'event', event: 'host_created', channel: 'event:host_created' })
-    dismissChanges()
-
-    expect(changesDetected.value).toBe(false)
-    expect(cb).not.toHaveBeenCalled()
   })
 
   it('connects the messagebus on mount', async () => {
@@ -317,7 +290,7 @@ describe('useAutoRefresh', () => {
     )
 
     let mountFinished = false
-    const mountPromise = useMessageBus(undefined, false, ['event:test'])
+    const mountPromise = useMessageBus(undefined, ['event:test'])
       .mount()
       .then(() => {
         mountFinished = true

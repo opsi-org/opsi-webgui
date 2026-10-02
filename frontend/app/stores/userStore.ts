@@ -12,6 +12,7 @@
 import { defineStore } from 'pinia'
 import { useCookie } from 'nuxt/app'
 import { useMessageBusStore } from '~/stores/messageBusStore'
+import { safeLocalStorage } from '~/utils/storage'
 
 const SESSION_EXPIRY_SEC = 60 * 30 // 30 minutes
 const SESSION_COOKIE_NAME = 'opsiconfd-session'
@@ -19,7 +20,7 @@ const SESSION_COOKIE_NAME = 'opsiconfd-session'
 export const useUserStore = defineStore('user', {
   persist: {
     key: 'opsi-webgui-user',
-    storage: typeof window !== 'undefined' ? localStorage : undefined,
+    storage: safeLocalStorage,
     pick: ['username', 'usernameUpdated', 'sessionExpiry', 'sessionEndTime'],
   },
   state: () => ({
@@ -28,9 +29,7 @@ export const useUserStore = defineStore('user', {
     sessionExpiry: SESSION_EXPIRY_SEC,
     sessionEndTime: '',
     errorLoggedOutShown: false,
-    authMethods: '',
     globalError: undefined as string | undefined,
-    config: undefined as unknown,
     readOnly: false,
     serverWriteAccess: true,
     depotAccessRestricted: false,
@@ -74,9 +73,6 @@ export const useUserStore = defineStore('user', {
       this.usernameUpdated = null
       this.sessionEndTime = ''
       this.errorLoggedOutShown = false
-    },
-    setConfig(config: unknown) {
-      this.config = config
     },
     setUserConfiguration(cfg: {
       read_only?: boolean
