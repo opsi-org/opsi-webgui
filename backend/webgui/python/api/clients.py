@@ -11,7 +11,7 @@
 import os
 import subprocess
 import time
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Literal
 
 from fastapi import APIRouter, Body, Depends, Request, status
@@ -747,6 +747,75 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
 			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
 			error=err,
 		) from err
+
+
+@api_router.get("/api/opsidata/clients/{clientid}", response_model=Client)
+@rest_api
+def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branches, invalid-name
+	"""Get an OPSI client by ID."""
+	with mysql.session() as session:
+		try:
+			query = (
+				select(
+					text(
+						"""
+						h.hostId AS hostId,
+						h.type AS type,
+						h.description AS description,
+						h.notes AS notes,
+						h.hardwareAddress AS hardwareAddress,
+						h.ipAddress AS ipAddress,
+						h.inventoryNumber AS inventoryNumber,
+						h.systemUUID AS systemUUID,
+						h.created AS created,
+						h.lastSeen AS lastSeen,
+						h.opsiHostKey AS opsiHostKey,
+						h.oneTimePassword AS oneTimePassword,
+						IF(COALESCE(
+							(SELECT cs.values FROM CONFIG_STATE AS cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.uefinetbootlabel'),
+							(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.uefinetbootlabel' AND cv.isDefault)
+						) LIKE '%efi%', TRUE, FALSE) AS uefi,
+						IF(COALESCE(
+							(SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.smart_cache'),
+							(SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'clientconfig.smart_cache' AND cv.isDefault)
+						) LIKE '%true%', TRUE, FALSE) AS smartCache,
+						IF(COALESCE(
+							(SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsiclientd.event_on_shutdown.active'),
+							(SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsiclientd.event_on_shutdown.active' AND cv.isDefault)
+						) LIKE '%true%', TRUE, FALSE) AS installOnShutdown,
+						IF(COALESCE(
+							(SELECT cs.values FROM CONFIG_STATE cs WHERE cs.objectId = h.hostId AND cs.configId = 'opsi.check.enabled'),
+							(SELECT cv.value FROM CONFIG_VALUE cv WHERE cv.configId = 'opsi.check.enabled' AND cv.isDefault)
+						) LIKE '%true%', TRUE, FALSE) AS monitoring
+					"""
+					)
+				)
+				.select_from(table("HOST").alias("h"))
+				.where(text("h.hostId = :clientid AND h.type = 'OpsiClient'"))
+			)
+			result = session.execute(query, {"clientid": clientid}).fetchone()
+			if not result:
+				logger.error("Client with id '%s' not found.", clientid)
+				return RESTErrorResponse(
+					message=f"Client with id '{clientid}' not found.",
+					http_status=status.HTTP_404_NOT_FOUND,
+				)
+			data = dict(result)
+			for key, value in data.items():
+				if isinstance(value, (date, datetime)):
+					data[key] = value.strftime("%Y-%m-%d %H:%M:%S")
+			data["uefi"] = bool(data["uefi"])
+			return RESTResponse(data=data)
+		except Exception as err:  # pylint: disable=broad-except
+			if isinstance(err, OpsiApiException):
+				raise
+			logger.error("Could not get client object.")
+			logger.error(err)
+			raise OpsiApiException(
+				message="Could not get client object.",
+				http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+				error=err,
+			) from err
 
 
 @api_router.delete("/api/opsidata/clients/{clientid}")
