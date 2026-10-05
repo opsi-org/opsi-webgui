@@ -332,6 +332,27 @@
                 class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
               >
                 <span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
+                  <!-- empty component since we don't need a label/icon here -->
+                </span>
+                <div class="flex-1 flex items-center gap-2 min-w-0 text-(--color-text-muted)">
+                  {{ $t('clients.deployRequirements') }}
+                  <NuxtLink
+                    :to="`https://docs.opsi.org/opsi-docs-${locale === 'de' ? 'de' : 'en'}/4.3/clients/${form.agentType}-client/adding-clients.html#firststeps-software-deployment-client-integration-opsi-deploy`"
+                    target="_blank"
+                    class="text-(--color-text-muted) hover:text-opsi-blue"
+                  >
+                    {{
+                      $t('clients.deployRequirementsLinkText', {
+                        platform: osTypes.find((osType) => osType.value === form.agentType)?.label,
+                      })
+                    }}
+                  </NuxtLink>
+                </div>
+              </div>
+              <div
+                class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
+              >
+                <span class="text-sm min-w-0 md:w-1/3 break-all flex items-center gap-1.5">
                   <CoreAppIcon :name="icons.user" class="w-4 h-4 text-(--color-text-muted)" />
                   {{ $t('auth.username') }}
                 </span>
@@ -374,6 +395,7 @@
 <script setup lang="ts">
   import type { GroupTreeNodeData } from '~/types'
   import { useSelectionStore } from '~/stores/selectionStore'
+  import { useUiStore } from '~/stores/uiStore'
 
   const { canCreateClients, isReadOnly } = useUserPermissions()
 
@@ -417,6 +439,7 @@
   const netbootProductOptions = ref<Array<{ label: string; value: string }>>([])
   const groupSearch = ref('')
   const expandedGroupIds = ref<Set<string>>(new Set())
+  const { locale } = useI18n()
 
   interface GroupTreeFlatItem {
     id: string
