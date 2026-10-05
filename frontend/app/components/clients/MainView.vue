@@ -334,7 +334,6 @@
   import { CLEAR_ALL_FILTERS_EVENT } from '~/composables/useGlobalFavorites'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
-  import { useUiStore } from '~/stores/uiStore'
   import { useDataTableFilterStore } from '~/stores/dataTableFilterStore'
   import { storeToRefs } from 'pinia'
 
@@ -343,7 +342,6 @@
   const { getClients, getServerIds, getBlockedClients } = useApiHelpers()
   const selectionStore = useSelectionStore()
   const messageBusStore = useMessageBusStore()
-  const uiStore = useUiStore()
   const dataTableFilterStore = useDataTableFilterStore()
   dataTableFilterStore.initialize()
   const { lastMsg: messageBusLastMsg } = storeToRefs(messageBusStore)
@@ -364,9 +362,14 @@
   const panelType = ref<ClientPanelType | 'products' | 'add' | null>(null)
   const panelTab = ref('attributes')
   const panelInventoryTab = ref<'hardware' | 'software'>('hardware')
-  const DEFAULT_CLIENT_PANEL_VIEW_KEY = 'opsi-webgui-default-client-panel-view'
-  const defaultClientPanelView = ref<ClientPanelType>('config')
-  const showAllClientRowActions = computed(() => uiStore.clients.showAllRowActions)
+  const tableSettings = useDataTableSettings('clients')
+  const defaultClientPanelView = computed<ClientPanelType>({
+    get: () => tableSettings.settings.defaultPanelView ?? 'config',
+    set: (value) => {
+      tableSettings.settings.defaultPanelView = value
+    },
+  })
+  const showAllClientRowActions = computed(() => tableSettings.settings.showAllRowActions ?? false)
   const panelProductType = ref('localboot')
   const panelProductTypes = [
     { label: String($t('products.localboot')), value: 'localboot' },
@@ -440,7 +443,6 @@
       if (typeof id === 'string' && id) applyFavoriteFromRoute(id)
     },
   )
-  const tableSettings = useDataTableSettings('clients')
   const productsSortColumn = ref<string | undefined>(undefined)
   const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void; saveAll?: () => void } | null>(null)
   const productsTableRef = ref<{
@@ -727,19 +729,13 @@
     })
   }
 
-  function getCookie(name: string): string | null {
-    const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)'))
-    return match?.[1] ? decodeURIComponent(match[1]) : null
-  }
-
   function setDefaultClientPanelView(value: string) {
     if (!clientPanelViewOptions.value.some((option) => option.value === value)) return
     defaultClientPanelView.value = value as ClientPanelType
-    document.cookie = `${DEFAULT_CLIENT_PANEL_VIEW_KEY}=${value}; path=/; max-age=31536000; SameSite=Lax`
   }
 
   function setShowAllClientRowActions(value: boolean) {
-    uiStore.clients.showAllRowActions = value
+    tableSettings.settings.showAllRowActions = value
   }
 
   function handleSelectionChange(_rows: OpsiClient[], keys: string[]) {
@@ -971,7 +967,6 @@
   watch(panelType, (newType) => {
     if (newType !== 'config' && newType !== 'logs' && newType !== 'clone' && newType !== 'inventory') return
     defaultClientPanelView.value = newType
-    document.cookie = `${DEFAULT_CLIENT_PANEL_VIEW_KEY}=${newType}; path=/; max-age=31536000; SameSite=Lax`
     if (panelClient.value) doOpenPanel(panelClient.value, newType)
   })
 
@@ -1000,14 +995,8 @@
   )
 
   onMounted(async () => {
-    const storedDefaultPanelView = getCookie(DEFAULT_CLIENT_PANEL_VIEW_KEY)
-    if (
-      storedDefaultPanelView === 'config' ||
-      storedDefaultPanelView === 'logs' ||
-      storedDefaultPanelView === 'inventory' ||
-      (storedDefaultPanelView === 'clone' && canCreateClients.value && !isReadOnly.value)
-    ) {
-      defaultClientPanelView.value = storedDefaultPanelView
+    if (defaultClientPanelView.value === 'clone' && (!canCreateClients.value || isReadOnly.value)) {
+      defaultClientPanelView.value = 'config'
     }
     const routeSortBy = route.query.sortBy as string | undefined
     if (routeSortBy) productsSortColumn.value = routeSortBy

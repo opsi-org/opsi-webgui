@@ -24,11 +24,8 @@
 </template>
 
 <script setup lang="ts">
-  import { useUiStore } from '~/stores/uiStore'
-
   const icons = useIcons()
   const colorMode = useColorMode()
-  const uiStore = useUiStore()
   const { t: $t } = useI18n()
 
   const isDarkMode = computed(() => colorMode.preference === 'dark')
@@ -36,6 +33,5 @@
   function toggleTheme() {
     const newMode = isDarkMode.value ? 'light' : 'dark'
     colorMode.preference = newMode
-    uiStore.setTheme(newMode)
   }
 </script>

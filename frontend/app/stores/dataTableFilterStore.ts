@@ -89,6 +89,13 @@ export const useDataTableFilterStore = defineStore('dataTableFilters', {
     },
     setAdvancedFilters(scope: AdvancedFilterScope, filters: object) {
       this.initialize()
+      const stored = readStorageJSON<unknown>(STORAGE_KEY, {})
+      const isCurrentFormat = isRecord(stored) && 'queries' in stored
+      this.queries = readQueries(isCurrentFormat ? stored.queries : stored)
+      const latestAdvancedFilters = isCurrentFormat && isRecord(stored) ? readAdvancedFilters(stored.advancedFilters) : {}
+      for (const storedScope of scopes) {
+        if (latestAdvancedFilters[storedScope]) this.advancedFilters[storedScope] = latestAdvancedFilters[storedScope]
+      }
       this.advancedFilters[scope] = filters
       this.persist()
     },

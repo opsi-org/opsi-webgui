@@ -208,6 +208,7 @@
 <script setup lang="ts">
   import { formatApiErrorMessage } from '~/composables/useApiHelpers'
   import { useMessageBusStore } from '~/stores/messageBusStore'
+  import { useUiStore } from '~/stores/uiStore'
 
   export interface ClientsLogsRef {
     fetchLog?: () => Promise<void>
@@ -238,6 +239,7 @@
   const router = useRouter()
   const { getClientLogs } = useApiHelpers()
   const mbStore = useMessageBusStore()
+  const uiStore = useUiStore()
 
   interface LogType {
     label: string
@@ -296,17 +298,20 @@
     return null
   })
 
-  const selectedLogTypeValue = ref<string>('instlog')
+  const selectedLogTypeValue = ref<string>(
+    LOG_TYPES.some(({ value }) => value === uiStore.logs.lastSelectedLogType) ? uiStore.logs.lastSelectedLogType : 'instlog',
+  )
   const selectedLogType = computed<LogType | undefined>(() => LOG_TYPES.find((t) => t.value === selectedLogTypeValue.value))
   const fetchLogRequestId = ref(0)
   const logContent = ref<string[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  const logLevel = ref(6)
-  const filterQuery = ref('')
-  const autoRefresh = ref(false)
-  const autoScroll = ref(true)
+  const savedLogLevel = uiStore.logs.lastSelectedLogLevel
+  const logLevel = ref(Number.isInteger(savedLogLevel) && savedLogLevel >= 1 && savedLogLevel <= 9 ? savedLogLevel : 6)
+  const filterQuery = ref(typeof uiStore.logs.filter === 'string' ? uiStore.logs.filter : '')
+  const autoRefresh = ref(uiStore.logs.autoRefresh === true)
+  const autoScroll = ref(uiStore.logs.autoScroll !== false)
   const markerLine = ref(-1)
 
   const logUpdatePending = ref(false)
@@ -439,17 +444,21 @@
 
   let autoRefreshInterval: ReturnType<typeof setInterval> | null = null
 
-  watch(autoRefresh, (enabled) => {
-    if (autoRefreshInterval) {
-      clearInterval(autoRefreshInterval)
-      autoRefreshInterval = null
-    }
-    if (enabled) {
-      autoRefreshInterval = setInterval(() => {
-        if (selectedLogTypeValue.value && resolvedClientId.value) fetchLog()
-      }, 5000)
-    }
-  })
+  watch(
+    autoRefresh,
+    (enabled) => {
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval)
+        autoRefreshInterval = null
+      }
+      if (enabled) {
+        autoRefreshInterval = setInterval(() => {
+          if (selectedLogTypeValue.value && resolvedClientId.value) fetchLog()
+        }, 5000)
+      }
+    },
+    { immediate: true },
+  )
 
   watch(
     () => mbStore.lastMsg as Record<string, unknown> | null | undefined,
@@ -483,7 +492,7 @@
       const parsed = parseInt(qLogLevel, 10)
       if (parsed >= 1 && parsed <= 9) logLevel.value = parsed
     }
-    if (!props.panelMode && qFilter) {
+    if (!props.panelMode && typeof qFilter === 'string') {
       filterQuery.value = qFilter
     }
     if (qLogMarker) {
@@ -496,10 +505,23 @@
     router.replace({ query: { ...(route.query as Record<string, string>), [key]: value || undefined } })
   }
 
-  watch(selectedLogTypeValue, (v) => updateLogQuery('logType', v))
-  watch(logLevel, (v) => updateLogQuery('logLevel', String(v)))
+  watch(selectedLogTypeValue, (v) => {
+    uiStore.logs.lastSelectedLogType = v
+    updateLogQuery('logType', v)
+  })
+  watch(logLevel, (v) => {
+    uiStore.logs.lastSelectedLogLevel = v
+    updateLogQuery('logLevel', String(v))
+  })
   watch(filterQuery, (v) => {
+    uiStore.logs.filter = v
     if (!props.panelMode) updateLogQuery('filter', v)
+  })
+  watch(autoRefresh, (v) => {
+    uiStore.logs.autoRefresh = v
+  })
+  watch(autoScroll, (v) => {
+    uiStore.logs.autoScroll = v
   })
   watch(markerLine, (v) => updateLogQuery('logMarker', v >= 0 ? String(v) : undefined))
 

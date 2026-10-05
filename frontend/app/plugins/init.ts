@@ -24,9 +24,7 @@ export default defineNuxtPlugin({
     uiStore.initializePreferences()
 
     if (typeof document !== 'undefined') {
-      uiStore.initTheme()
-      const colorMode = useColorMode()
-      colorMode.preference = uiStore.theme
+      document.cookie = 'opsi-webgui-color-mode=; path=/; max-age=0; SameSite=Lax'
     }
 
     // Before login: always fetch config server info

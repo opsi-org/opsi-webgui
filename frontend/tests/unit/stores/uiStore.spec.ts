@@ -11,8 +11,6 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-vi.mock('@vueuse/core', () => ({ useColorMode: () => ({ value: 'light' }) }))
-
 import { useUiStore } from '~/stores/uiStore'
 import { useDataTableFilterStore } from '~/stores/dataTableFilterStore'
 import { installLocalStorage } from '../helpers/localStorage'
@@ -30,19 +28,30 @@ describe('uiStore preferences', () => {
     storage.setItem('opsi-webgui-show-all-client-row-actions', 'true')
     storage.setItem('opsi-webgui-terminal-quick-commands', JSON.stringify(['hostname']))
     storage.setItem('opsi-webgui-clients-advanced-filters', JSON.stringify({ reachable: true }))
+    storage.setItem('opsi-webgui-ui', JSON.stringify({ theme: 'dark', clients: { showAllRowActions: true } }))
 
     const store = useUiStore()
     store.initializePreferences()
     const filterStore = useDataTableFilterStore()
     filterStore.initialize()
+    const clientSettings = JSON.parse(storage.getItem('opsi-webgui-datatable-settings') ?? '{}')
 
     expect(store.productActions.processAfterSave).toBe(true)
     expect(store.productActions.visibility).toBe('hidden')
-    expect(store.clients.showAllRowActions).toBe(true)
+    expect(clientSettings.clients.showAllRowActions).toBe(true)
     expect(store.terminal.quickCommands).toEqual(['hostname'])
+    expect(store.logs).toEqual({
+      lastSelectedLogLevel: 6,
+      lastSelectedLogType: 'instlog',
+      filter: '',
+      autoRefresh: false,
+      autoScroll: true,
+    })
     expect(filterStore.advancedFilters.clients).toEqual({ reachable: true })
     expect(storage.getItem('opsi-webgui-save-and-process')).toBeNull()
     expect(storage.getItem('opsi-webgui-clients-advanced-filters')).toBeNull()
+    expect(storage.getItem('opsi-webgui-color-mode')).toBe('dark')
+    expect(JSON.parse(storage.getItem('opsi-webgui-ui') ?? '{}')).not.toHaveProperty('theme')
 
     store.productActions.processAfterSave = false
     store.initializePreferences()
