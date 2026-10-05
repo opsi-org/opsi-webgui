@@ -7,9 +7,7 @@
  * All rights reserved.
  * License: AGPL-3.0
  *
- * useHoverOpen - Shared open/close-with-delay state for hover-enabled popovers, selects and
- * dropdown menus. Opening is debounced so moving the pointer across a table doesn't flash
- * every trigger it passes over.
+ * useHoverOpen - Shared delayed hover state for popovers, selects, and menus.
  */
 export interface UseHoverOpenOptions {
   openDelay?: number

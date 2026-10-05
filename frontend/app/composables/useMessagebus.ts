@@ -46,9 +46,8 @@ const SERVER_EVENTS = [...HOST_EVENTS, ...CONFIG_EVENTS, ...CONFIG_STATE_EVENTS,
 const ALL_DATA_EVENTS = [...SERVER_EVENTS, ...PRODUCT_EVENTS, ...LOG_EVENTS]
 
 // Core MessageBus composable
-export function useMessageBus(onMessage?: MessageHandler, _showNotifications = false, _channels: string[] = []) {
+export function useMessageBus(onMessage?: MessageHandler, channels: string[] = []) {
   const store = useMessageBusStore()
-  const channels = _channels || []
 
   if (onMessage) {
     const { lastMsg: storeLastMsg } = storeToRefs(store)
@@ -66,11 +65,7 @@ export function useMessageBus(onMessage?: MessageHandler, _showNotifications = f
   }
 
   function subscribeChannels(requestedChannels: string[]) {
-    store.subscribeChannels(requestedChannels)
-  }
-
-  function wsDisconnect() {
-    store.disconnect()
+    return store.subscribeChannels(requestedChannels)
   }
 
   function wsSend(msg: Record<string, unknown>) {
@@ -127,14 +122,10 @@ export function useMessageBus(onMessage?: MessageHandler, _showNotifications = f
   return {
     mount,
     subscribeChannels,
-    channels,
-    wsBus: computed(() => store.bus),
-    busMsg: computed(() => store.lastMsg),
     wsTerminalResize,
     wsTerminalSend,
     wsTerminalClose,
     wsTerminalOpen,
-    wsDisconnect,
   }
 }
 
@@ -151,9 +142,7 @@ export function useAutoRefresh(
   const debounceMs = options.debounceMs || 2000
 
   const changesDetected = ref(false)
-  const lastChangeEvent = ref('')
   const lastChangeDescription = ref('')
-  const isConnected = computed(() => mbStore.isConnected)
   const autoRefreshEnabled = computed({
     get: () => mbStore.autoRefresh,
     set: (val: boolean) => mbStore.setAutoRefresh(val),
@@ -177,7 +166,6 @@ export function useAutoRefresh(
       try {
         await refreshCallback()
         changesDetected.value = false
-        mbStore.setChangesDetected(false)
       } finally {
         refreshInProgress = false
         if (refreshQueued && !disposed) {
@@ -226,9 +214,7 @@ export function useAutoRefresh(
 
     if (matches) {
       changesDetected.value = true
-      lastChangeEvent.value = eventName
       lastChangeDescription.value = getEventDescription(eventName)
-      mbStore.setLastEvent(eventName)
       if (autoRefreshEnabled.value && refreshEvents.some((ev) => ev.replace(/^event:/, '') === eventName)) {
         scheduleRefresh()
       }
@@ -237,13 +223,7 @@ export function useAutoRefresh(
 
   function manualRefresh() {
     changesDetected.value = false
-    mbStore.setChangesDetected(false)
     refreshCallback()
-  }
-
-  function dismissChanges() {
-    changesDetected.value = false
-    mbStore.setChangesDetected(false)
   }
 
   watch(storeLastMsg, (msg) => {
@@ -262,38 +242,9 @@ export function useAutoRefresh(
   })
 
   return {
-    isConnected,
     autoRefreshEnabled,
     changesDetected,
-    lastChangeEvent,
     lastChangeDescription,
     manualRefresh,
-    dismissChanges,
   }
-}
-
-export function useAutoRefreshClients(cb: RefreshCallback) {
-  // host_connected/host_disconnected only change the reachable state of a single
-  // client, which the client table updates in place - no full table reload.
-  return useAutoRefresh(cb, { watchEvents: HOST_DATA_EVENTS })
-}
-
-export function useAutoRefreshProducts(cb: RefreshCallback) {
-  return useAutoRefresh(cb, { watchEvents: PRODUCT_EVENTS, refreshEvents: PRODUCT_EVENTS })
-}
-
-export function useAutoRefreshServers(cb: RefreshCallback) {
-  return useAutoRefresh(cb, { watchEvents: SERVER_EVENTS })
-}
-
-export {
-  HOST_EVENTS,
-  HOST_DATA_EVENTS,
-  HOST_CONNECTION_EVENTS,
-  PRODUCT_EVENTS,
-  CONFIG_EVENTS,
-  CONFIG_STATE_EVENTS,
-  SYSTEM_EVENTS,
-  SERVER_EVENTS,
-  ALL_DATA_EVENTS,
 }

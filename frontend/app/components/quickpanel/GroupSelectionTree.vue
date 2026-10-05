@@ -1,7 +1,7 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
@@ -58,9 +58,11 @@ https://opsi.org/en/
     <div v-else class="flex-1 overflow-y-auto min-h-0">
       <template v-if="groupType === 'client'">
         <div v-for="section in clientSections" :key="section.id" class="mb-2">
-          <button
+          <CoreAppButton
             type="button"
-            class="w-full flex items-center justify-between px-1 py-1.5 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded text-left"
+            variant="ghost"
+            color="neutral"
+            class="w-full! flex! items-center! justify-between! px-1! py-1.5! mb-0.5! cursor-pointer! hover:bg-(--color-surface-hover)! rounded! text-left!"
             :aria-expanded="!isSectionCollapsed(section.id)"
             :aria-label="sectionLabel(section.id)"
             @click="toggleSectionCollapse(section.id)"
@@ -77,7 +79,7 @@ https://opsi.org/en/
               </CoreAppTooltip>
               <span v-else class="text-xs font-semibold text-(--color-text)">{{ sectionLabel(section.id) }}</span>
             </div>
-          </button>
+          </CoreAppButton>
           <template v-if="!isSectionCollapsed(section.id)">
             <div
               v-for="item in visibleClientItems(section)"
@@ -112,9 +114,11 @@ https://opsi.org/en/
               />
               <CoreAppIcon v-if="!item.isGroup" :name="icons.client" class="w-3 h-3 shrink-0 text-(--color-text-muted)/60" />
               <CoreAppTooltip v-if="item.label === 'not_assigned'" :text="$t('clients.directoryNotAssigned')">
-                <button
+                <CoreAppButton
                   type="button"
-                  class="truncate flex-1 text-left bg-transparent border-0 p-0 cursor-pointer"
+                  variant="ghost"
+                  color="neutral"
+                  class="truncate! flex-1! text-left! bg-transparent! border-0! p-0! cursor-pointer!"
                   :aria-label="item.label"
                   @click="handleItemClick(item)"
                 >
@@ -123,17 +127,19 @@ https://opsi.org/en/
                     :class="item.isGroup ? 'font-medium' : ''"
                     >{{ item.label }}</span
                   >
-                </button>
+                </CoreAppButton>
               </CoreAppTooltip>
-              <button
+              <CoreAppButton
                 v-else
                 type="button"
-                class="truncate flex-1 text-left bg-transparent border-0 p-0 cursor-pointer"
+                variant="ghost"
+                color="neutral"
+                class="truncate! flex-1! text-left! bg-transparent! border-0! p-0! cursor-pointer!"
                 :aria-label="item.label"
                 @click="handleItemClick(item)"
               >
                 <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
-              </button>
+              </CoreAppButton>
             </div>
             <div v-if="section.flatItems.length === 0" class="text-xs text-(--color-text-muted) py-1 px-2 italic">
               {{ $t('common.noResults') }}
@@ -155,9 +161,11 @@ https://opsi.org/en/
 
       <template v-else>
         <div v-if="productRoot" class="mb-2">
-          <button
+          <CoreAppButton
             type="button"
-            class="w-full flex items-center gap-1.5 px-1 py-1.5 mb-0.5 cursor-pointer hover:bg-(--color-surface-hover) rounded text-left"
+            variant="ghost"
+            color="neutral"
+            class="w-full! flex! items-center! gap-1.5! px-1! py-1.5! mb-0.5! cursor-pointer! hover:bg-(--color-surface-hover)! rounded! text-left!"
             :aria-expanded="productRootExpanded"
             :aria-label="itemLabel({ id: productRoot.id, label: productRoot.label || productRoot.id })"
             @click="toggleExpand(productRoot.id)"
@@ -171,7 +179,7 @@ https://opsi.org/en/
                 {{ itemLabel({ id: productRoot.id, label: productRoot.label || productRoot.id }) }}
               </span>
             </CoreAppTooltip>
-          </button>
+          </CoreAppButton>
           <template v-if="productRootExpanded">
             <div
               v-for="item in visibleProductItems"
@@ -205,14 +213,16 @@ https://opsi.org/en/
                 @update:model-value="handleItemClick(item)"
               />
               <CoreAppIcon v-if="!item.isGroup" :name="icons.product" class="w-3 h-3 shrink-0 text-(--color-text-muted)/60" />
-              <button
+              <CoreAppButton
                 type="button"
-                class="truncate flex-1 text-left bg-transparent border-0 p-0 cursor-pointer"
+                variant="ghost"
+                color="neutral"
+                class="truncate! flex-1! text-left! bg-transparent! border-0! p-0! cursor-pointer!"
                 :aria-label="item.label"
                 @click="handleItemClick(item)"
               >
                 <span class="truncate block" :class="item.isGroup ? 'font-medium' : ''">{{ item.label }}</span>
-              </button>
+              </CoreAppButton>
             </div>
           </template>
         </div>

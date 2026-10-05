@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-test opsiconfd webgui products
-"""
+"""Test OPSI-WebGUI products API."""
 
 import json
 import os

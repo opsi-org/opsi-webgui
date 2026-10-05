@@ -1,7 +1,7 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.

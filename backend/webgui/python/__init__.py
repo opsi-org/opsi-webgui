@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-opsiconfd addon for opsi web interface
-"""
+"""OPSI-WebGUI addon for opsiconfd."""
 
 import os
 from typing import Any
@@ -29,8 +27,6 @@ from opsiconfd.session import (  # type: ignore
 )
 from opsiconfd.utils import Singleton  # type: ignore
 from opsiconfd.utils.fastapi import remove_route_path  # type: ignore
-
-# from starlette.concurrency import run_in_threadpool
 from starlette.types import Receive, Send
 
 from .api import PUBLIC_PATHS as PP_API

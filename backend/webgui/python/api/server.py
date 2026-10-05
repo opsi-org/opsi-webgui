@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-webgui server methods
-"""
+"""Server-related API routes for the OPSI-WebGUI addon."""
 
 from fastapi import APIRouter, Request, status
 from opsiconfd.config import config
@@ -20,28 +18,6 @@ from ..utils import backend
 api_router = APIRouter()
 
 logger = get_logger()
-
-
-@api_router.get("/api/opsidata/server/health")
-@rest_api
-def get_health_check(request: Request, clear_cache: bool = False) -> RESTResponse:  # pylint: disable=unused-argument
-	"""
-	get server health
-	"""
-
-	try:
-		server_health = backend.service_healthCheck(clear_cache=bool(clear_cache))
-
-	except Exception as err:  # pylint: disable=broad-except
-		logger.error("Could not get health check.")
-		logger.error(err)
-		raise OpsiApiException(
-			message="Could not get health check.",
-			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-			error=err,
-		) from err
-
-	return RESTResponse(http_status=200, data=server_health)
 
 
 @api_router.get("/api/opsidata/server/diagnostic")

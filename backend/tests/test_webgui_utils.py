@@ -6,7 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""Unit tests for webgui backend utility decorators."""
+"""Unit tests for the OPSI-WebGUI backend utility decorators."""
 
 from types import SimpleNamespace
 

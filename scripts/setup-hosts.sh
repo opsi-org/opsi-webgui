@@ -1,5 +1,4 @@
 #!/bin/sh
-# setup-hosts.sh - Configure /etc/hosts with opsi hostname
 echo "[INFO] Setting up /etc/hosts..."
 
 echo "127.0.0.1       ${OPSI_HOSTNAME} $(hostname) mysql redis localhost" > /tmp/hosts

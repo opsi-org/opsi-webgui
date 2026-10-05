@@ -9,42 +9,20 @@
  *
  * useDataTableFilter - Shared persisted filter-query helpers for data tables.
  */
-
-const FILTER_STORAGE_KEY = 'opsi-webgui-datatable-filter-queries'
-
-function getStoredFilters(): Record<string, string> {
-  if (import.meta.server) return {}
-  try {
-    const raw = localStorage.getItem(FILTER_STORAGE_KEY)
-    return raw ? JSON.parse(raw) : {}
-  } catch {
-    return {}
-  }
-}
+import { readDataTableFilterStorage, writeDataTableFilterStorage } from '~/utils/dataTableFilterStorage'
 
 export function getStoredDataTableFilter(filterId: string): string {
-  const all = getStoredFilters()
-  return all[filterId] || ''
+  return readDataTableFilterStorage().queries[filterId] || ''
 }
 
 export function saveStoredDataTableFilter(filterId: string, filterQuery: string) {
-  if (import.meta.server) return
-  try {
-    const all = getStoredFilters()
-    all[filterId] = filterQuery
-    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(all))
-  } catch {
-    /* */
-  }
+  const all = readDataTableFilterStorage()
+  all.queries[filterId] = filterQuery
+  writeDataTableFilterStorage(all)
 }
 
 export function clearStoredDataTableFilter(filterId: string) {
-  if (import.meta.server) return
-  try {
-    const all = getStoredFilters()
-    delete all[filterId]
-    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(all))
-  } catch {
-    /* */
-  }
+  const all = readDataTableFilterStorage()
+  delete all.queries[filterId]
+  writeDataTableFilterStorage(all)
 }

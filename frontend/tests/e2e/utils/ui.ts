@@ -21,13 +21,13 @@ export type Locale = 'en' | 'de'
 /** Open the quick panel when its toggle is available; leave it unchanged if already open. */
 export async function ensureQuickPanelOpen(page: Page): Promise<void> {
   const panel = page.getByTestId('quickpanel')
-  if (await panel.isVisible().catch(() => false)) return
-
-  const toggle = page.getByTestId('quickpanel-toggle')
-  if (!(await toggle.isVisible().catch(() => false))) return
-
-  await toggle.click()
-  await expect(panel).toBeVisible({ timeout: 5000 })
+  if (!(await panel.isVisible().catch(() => false))) {
+    const toggle = page.getByTestId('quickpanel-toggle')
+    await expect(toggle).toBeVisible({ timeout: 10000 })
+    await toggle.click()
+    await expect(panel).toBeVisible({ timeout: 10000 })
+  }
+  await expect(panel.getByRole('tab').first()).toBeVisible({ timeout: 10000 })
 }
 
 /** Seed a client selection from the clients table for tests that start on another route. */

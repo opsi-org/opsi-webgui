@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-test opsiconfd webgui products
-"""
+"""Test OPSI-WebGUI hosts API."""
 
 import json
 import os
@@ -90,6 +88,20 @@ async def test_hosts_get(config, path, query_params, expected_result):  # pylint
 
 		assert res.status_code == status.HTTP_200_OK
 		assert sorted(res_data, key=lambda item: item["hostId"]) == sorted(json_data, key=lambda item: item["hostId"])
+
+
+def test_extract_clientdirectory_when_group_is_missing():
+	from webgui.python.api.hosts import _extract_clientdirectory
+
+	host_groups = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
+
+	clientdirectory = _extract_clientdirectory(host_groups)
+
+	assert host_groups["children"] == {}
+	assert clientdirectory["id"] == "clientdirectory"
+	assert clientdirectory["parent"] is None
+	assert set(clientdirectory["children"]) == {"not_assigned"}
+	assert clientdirectory["children"]["not_assigned"]["children"] == {}
 
 
 @pytest.mark.asyncio

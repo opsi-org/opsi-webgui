@@ -6,14 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-Security regression tests for the webgui addon.
-
-These tests send SQL-injection payloads through user-controllable query
-parameters (selectedDepots, filterQuery) and assert that the backend
-neutralises them: the request must not trigger a SQL error (HTTP 5xx) and the
-data must stay intact.
-"""
+"""Security regression tests for the OPSI-WebGUI addon."""
 
 import socket
 

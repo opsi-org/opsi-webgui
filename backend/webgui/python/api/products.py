@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-webgui product methods
-"""
+"""Product-related API routes for the OPSI-WebGUI addon."""
 
 import json
 from functools import lru_cache
@@ -23,8 +21,6 @@ except ImportError:  # pragma: no cover - legacy opsi fallback
 	from opsi_legacy.Object import ProductOnClient  # type: ignore
 
 from opsiconfd.config import get_configserver_id
-
-# from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
 	RESTErrorResponse,
@@ -579,12 +575,6 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 				]:
 					if product.get(value):
 						product[value] = product.get(value, "").split(",")
-				# if "failed" in product.get("installationStatusDetails", []) or product.get("installationStatus") == "failed":
-				# 	product["installationStatusErrorLevel"] = 2
-				# elif "unknown " in product.get("installationStatusDetails", []) or product.get("installationStatus") == "unknown ":
-				# 	product["installationStatusErrorLevel"] = 1
-				# else:
-				# 	product["installationStatusErrorLevel"] = 0
 			product["depot_version_diff"] = bool(product.get("depot_version_diff", False))
 			product["client_version_outdated"] = bool(product.get("client_version_outdated", False))
 			product["not_on_all_depots"] = bool(product.get("not_on_all_depots", False))
@@ -680,41 +670,6 @@ def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, to
 					products[product["productId"]].append(product["depotId"])
 
 		return RESTResponse(data=products)
-
-
-@api_router.get("/api/opsidata/products/count", response_model=list[Product])
-@rest_api
-@filter_depot_access
-def product_count(
-	request: Request,  # pylint:  disable=invalid-name, unused-argument
-	type: str = "all",  # pylint:  disable=redefined-builtin
-	selectedDepots: list[str] = Depends(parse_depot_list),  # pylint:  disable=invalid-name, unused-argument
-) -> RESTResponse:
-	"""
-	Get number products from selected depots.
-	"""
-	if selectedDepots == []:
-		# Empty selection (e.g. depot-restricted user without accessible depots)
-		return RESTResponse(data=0)
-	if selectedDepots is None:
-		selectedDepots = get_depots(get_username())
-		if not selectedDepots:
-			return RESTResponse(data=0)
-
-	params = {"depots": selectedDepots, "product_type": ""}
-	if type == "all":
-		where = text("pod.depotId IN :depots")
-	else:
-		params["product_type"] = type
-		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
-
-	with mysql.session() as session:
-		count = session.execute(
-			select(text("COUNT(*)")).select_from(text("PRODUCT_ON_DEPOT AS pod")).where(where),
-			params,
-		).fetchone()[0]
-
-	return RESTResponse(data=count)
 
 
 class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
@@ -1070,8 +1025,6 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 						else:
 							property["depots"][depot] = property["defaultDetails"][depot]
 
-						# if not clients_on_depot.get(depot):
-						# 	continue
 						for client in clients_on_depot.get(depot, []):
 							query = (
 								select(

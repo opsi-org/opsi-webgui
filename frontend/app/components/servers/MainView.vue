@@ -1,7 +1,7 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
@@ -68,7 +68,7 @@ https://opsi.org/en/
     >
       <template #filter-actions="{ canSaveSearch, favorite }">
         <ServersAdvancedFiltersPopover
-          v-model="advancedFilters"
+          :model-value="advancedFilters"
           :can-save-search="canSaveSearch"
           @update:model-value="handleAdvancedFiltersChange"
           @favorite="favorite"
@@ -141,15 +141,35 @@ https://opsi.org/en/
   import { useSavedSearches } from '~/composables/useSavedSearches'
   import { CLEAR_ALL_FILTERS_EVENT } from '~/composables/useGlobalFavorites'
   import { useSelectionStore } from '~/stores/selectionStore'
+  import { useUiStore } from '~/stores/uiStore'
+  import { useDataTableFilterStore } from '~/stores/dataTableFilterStore'
 
   const icons = useIcons()
   const { t: $t } = useI18n()
   const { getServers } = useApiHelpers()
   const selectionStore = useSelectionStore()
+  const uiStore = useUiStore()
+  const dataTableFilterStore = useDataTableFilterStore()
+  dataTableFilterStore.initialize()
   const router = useRouter()
   const route = useRoute()
   const { isReadOnly, hasServerWriteAccess, isDepotAccessRestricted } = useUserPermissions()
-  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshServers(fetchServers)
+  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefresh(fetchServers, {
+    watchEvents: [
+      'event:host_created',
+      'event:host_updated',
+      'event:host_deleted',
+      'event:host_connected',
+      'event:host_disconnected',
+      'event:config_created',
+      'event:config_updated',
+      'event:config_deleted',
+      'event:configState_created',
+      'event:configState_updated',
+      'event:configState_deleted',
+      'event:app_state_changed',
+    ],
+  })
 
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -163,22 +183,10 @@ https://opsi.org/en/
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('servers'))
   const fetchServersRequestId = ref(0)
   let fetchServersController: AbortController | null = null
-  const ADVANCED_FILTERS_KEY = 'opsi-webgui-servers-advanced-filters'
-  const advancedFilters = ref<ServerAdvancedFilters>(readStoredAdvancedFilters())
-
-  function readStoredAdvancedFilters(): ServerAdvancedFilters {
-    if (import.meta.server) return {}
-    try {
-      const raw = localStorage.getItem(ADVANCED_FILTERS_KEY)
-      return raw ? (JSON.parse(raw) as ServerAdvancedFilters) : {}
-    } catch {
-      return {}
-    }
-  }
+  const advancedFilters = computed(() => dataTableFilterStore.advancedFilters.servers as ServerAdvancedFilters & Record<string, unknown>)
 
   function handleAdvancedFiltersChange(value: ServerAdvancedFilters) {
-    advancedFilters.value = value
-    if (!import.meta.server) localStorage.setItem(ADVANCED_FILTERS_KEY, JSON.stringify(value))
+    dataTableFilterStore.setAdvancedFilters('servers', value)
     return fetchServers(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
   }
 

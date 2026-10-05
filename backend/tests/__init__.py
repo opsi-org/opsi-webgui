@@ -6,6 +6,8 @@
 # All rights reserved.
 # License: AGPL-3.0
 
+"""Initialization for backend tests of the OPSI-WebGUI addon."""
+
 import urllib3
 
 urllib3.disable_warnings()

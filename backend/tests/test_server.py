@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-test opsiconfd products
-"""
+"""Unit tests for webgui.python.api.server of the OPSI-WebGUI addon."""
 
 import pytest
 import urllib3
@@ -22,7 +20,6 @@ from .utils import (
 )
 
 urllib3.disable_warnings()
-# from backend.tests.utils import ADMIN_PASS, ADMIN_USER  # pylint: disable=import-error, unused-import
 ADDON_ID = "webgui"
 API_ROOT = f"/addons/{ADDON_ID}/api/opsidata/"
 _fixture_refs = (config, create_check_data)

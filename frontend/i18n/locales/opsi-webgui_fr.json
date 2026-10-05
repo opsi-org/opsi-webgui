@@ -396,12 +396,18 @@
     "admin": "Administration",
     "breadcrumb": "Fil d'Ariane",
     "clone": "Cloner",
+    "clients": "Clients",
+    "dashboard": "Tableau de bord",
     "defaultPage": "Page par défaut",
+    "groups": "Groupes",
     "leaveAnyway": "Quitter quand même",
     "navigateAway": "Vous avez des modifications non enregistrées. Si vous quittez, elles seront perdues. Continuer ?",
+    "products": "Produits",
     "redirect": "Redirection...",
+    "servers": "Serveurs",
     "sidebar": "Basculer la barre latérale",
-    "stayOnPage": "Rester sur la page"
+    "stayOnPage": "Rester sur la page",
+    "support": "Assistance"
   },
   "notifications": {
     "target.both": "Aux serveurs et clients sélectionnés",

@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-addon opsi-portal - config
-"""
+"""Configuration management for the OPSI-WebGUI addon."""
 
 import logging
 import os

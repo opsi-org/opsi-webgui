@@ -6,30 +6,14 @@
 # All rights reserved.
 # License: AGPL-3.0
 
+"""Utility functions for handling group-related data in the OPSI-WebGUI addon."""
+
 from typing import Any
 
 from ..logger import get_logger
 from ..utils import get_all_children_groupid
 
 logger = get_logger()
-
-
-def _get_all_parents_groupids(raw_groups: list, group_id: str) -> set[str]:
-	"""
-	Returns all parent group IDs for a given group ID.
-	"""
-	if not raw_groups:
-		return set()
-
-	all_parents = set()
-	for row in raw_groups:
-		if row["group_id"] == group_id:
-			if row["parent_id"]:
-				all_parents.add(row["parent_id"].lower())
-				all_parents.update(_get_all_parents_groupids(raw_groups, row["parent_id"]))
-			break
-
-	return all_parents
 
 
 def _is_allowed(group_id: str, allowed: set[str] | None) -> bool:
@@ -79,7 +63,6 @@ def read_groups(
 				continue
 			updated_allowed.add(group_id.lower())
 			# currently in configed the behavior is to allow all children of the group, but not the parents (user roles)
-			# updated_allowed.update(_get_all_parents_groupids(raw_groups, group_id))
 			updated_allowed.update(get_all_children_groupid(raw_groups, group_id))
 
 	if not isinstance(normalized_selected_object_ids, list) and withClients:

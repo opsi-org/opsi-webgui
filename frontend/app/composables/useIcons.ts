@@ -57,7 +57,6 @@ export const icons = {
   menu: 'heroicons:bars-3',
   quickPanel: 'heroicons:squares-2x2',
   add: 'heroicons:plus',
-  addBold: 'heroicons:plus-16-solid',
   minus: 'heroicons:minus',
   delete: 'heroicons:trash',
   copy: 'heroicons:clipboard-document',
@@ -89,7 +88,6 @@ export const icons = {
   upload: 'heroicons:arrow-up-tray',
   download: 'heroicons:arrow-down-tray',
   filter: 'heroicons:funnel',
-  filterOff: 'heroicons:arrow-uturn-left',
   eye: 'heroicons:eye',
   eyeOff: 'heroicons:eye-slash',
   table: 'heroicons:table-cells',
@@ -109,5 +107,4 @@ export const icons = {
   shutdown: 'heroicons:power',
 } as const
 
-export type IconName = keyof typeof icons
 export const useIcons = () => icons

@@ -117,7 +117,7 @@ setup:patch-version:
   stage: setup
   extends: .pybuilder
   before_script:
-    - opsi-dev-cli self upgrade # min 1.61.0
+    - opsi-dev-cli self upgrade
   script:
     - |
       echo "Init Version (dev-tool version: $(opsi-dev-cli --version))"
@@ -275,13 +275,6 @@ validate:backend:
       coverage_report:
         coverage_format: cobertura
         path: backend/coverage.xml
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-      when: never
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - when: manual
-      allow_failure: true
 
 .e2e-test:
   extends: .docker-test
@@ -310,14 +303,7 @@ validate:e2e:smoke:
   artifacts:
     expire_in: 7 days
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-      when: never
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      allow_failure: false
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      allow_failure: false
-    - when: manual
-      allow_failure: true
+    - if: $CI_PIPELINE_SOURCE != "schedule"
 
 # Full e2e matrix: nightly schedule + tags (all locales/themes/viewports/browsers).
 validate:e2e:full:
@@ -333,7 +319,6 @@ validate:e2e:full:
     expire_in: 30 days
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
-    - if: $CI_COMMIT_TAG
 
 # Dependency vulnerability audit
 validate:audit:
@@ -341,6 +326,10 @@ validate:audit:
   extends: .node
   needs: [setup:deps]
   script: cd frontend && pnpm audit --audit-level=high
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      allow_failure: true
+    - when: on_success
 
 # Supply-chain check: fail if any dependency runs an UNAPPROVED install/build
 validate:install-scripts:

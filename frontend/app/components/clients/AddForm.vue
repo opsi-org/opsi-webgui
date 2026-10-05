@@ -1,7 +1,7 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
@@ -242,14 +242,16 @@ https://opsi.org/en/
                         :disabled="loading"
                         @update:model-value="toggleGroupSelection(item.node)"
                       />
-                      <button
+                      <CoreAppButton
                         type="button"
-                        class="truncate text-left bg-transparent border-0 p-0 flex-1 cursor-pointer leading-tight"
+                        variant="ghost"
+                        color="neutral"
+                        class="truncate! text-left! bg-transparent! border-0! p-0! flex-1! cursor-pointer! leading-tight!"
                         :disabled="loading"
                         @click.prevent="toggleGroupSelection(item.node)"
                       >
                         {{ item.label }}
-                      </button>
+                      </CoreAppButton>
                     </div>
                     <div v-if="visibleGroupTreeItems.length === 0" class="text-xs text-(--color-text-muted) py-2 px-2">
                       {{ groupSearch ? $t('common.noResults') : $t('common.noData') }}

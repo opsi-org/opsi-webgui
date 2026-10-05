@@ -9,6 +9,8 @@
  *
  * useDataTableSettings - Persistent data table column visibility and sorting settings.
  */
+import { readStorageJSON, writeStorageJSON } from '~/utils/storage'
+
 export interface DataTableColumnDef {
   key: string
   label: string
@@ -37,6 +39,8 @@ export interface DataTableSettings {
   selectionMode: 'multi' | 'single'
   onlySelected?: boolean
   filterMode?: 'primary' | 'all'
+  defaultPanelView?: 'config' | 'logs' | 'inventory' | 'clone'
+  showAllRowActions?: boolean
 }
 
 const STORAGE_KEY = 'opsi-webgui-datatable-settings'
@@ -70,6 +74,8 @@ const defaults: Record<string, DataTableSettings> = {
     displayMode: 'pagination',
     selectionMode: 'multi',
     filterMode: 'all',
+    defaultPanelView: 'config',
+    showAllRowActions: false,
   },
   products: {
     visibleColumns: ['productId', 'description', 'version', 'installationStatus', 'actionResult', 'actionProgress', 'actionRequest'],
@@ -118,29 +124,64 @@ const defaults: Record<string, DataTableSettings> = {
   },
 }
 
-function getStored(): Record<string, DataTableSettings> {
+function getStored(tableId: string): Record<string, DataTableSettings> {
   if (import.meta.server) return {}
-  try {
-    const s = localStorage.getItem(STORAGE_KEY)
-    return s ? JSON.parse(s) : {}
-  } catch {
-    return {}
+  const all = readStorageJSON<Record<string, DataTableSettings>>(STORAGE_KEY, {})
+  if (tableId !== 'clients') return all
+
+  const clientSettings = { ...all.clients }
+  let migrated = false
+  const ui = readStorageJSON<Record<string, unknown>>('opsi-webgui-ui', {})
+  const legacyClients = ui.clients
+  if (typeof clientSettings.showAllRowActions !== 'boolean' && legacyClients && typeof legacyClients === 'object') {
+    const oldValue = (legacyClients as Record<string, unknown>).showAllRowActions
+    if (typeof oldValue === 'boolean') {
+      clientSettings.showAllRowActions = oldValue
+      migrated = true
+    }
   }
+
+  if (typeof document !== 'undefined') {
+    const cookie = document.cookie.match(/(?:^|; )opsi-webgui-default-client-panel-view=([^;]*)/)?.[1]
+    if (!('defaultPanelView' in clientSettings) && cookie) {
+      let oldValue: string | undefined
+      try {
+        oldValue = decodeURIComponent(cookie)
+      } catch {
+        oldValue = undefined
+      }
+      if (oldValue === 'config' || oldValue === 'logs' || oldValue === 'inventory' || oldValue === 'clone') {
+        clientSettings.defaultPanelView = oldValue
+        migrated = true
+      }
+    }
+    if (cookie !== undefined) document.cookie = 'opsi-webgui-default-client-panel-view=; path=/; max-age=0; SameSite=Lax'
+  }
+
+  if (migrated) {
+    all.clients = { ...defaults.clients!, ...clientSettings }
+    writeStorageJSON(STORAGE_KEY, all)
+  }
+
+  if (legacyClients && typeof legacyClients === 'object') {
+    const { clients: _legacyClients, theme: _legacyTheme, ...remainingUi } = ui
+    writeStorageJSON('opsi-webgui-ui', remainingUi)
+  } else if ('theme' in ui) {
+    const { theme: _legacyTheme, ...remainingUi } = ui
+    writeStorageJSON('opsi-webgui-ui', remainingUi)
+  }
+  return all
 }
 
 function save(id: string, s: DataTableSettings) {
   if (import.meta.server) return
-  try {
-    const all = getStored()
-    all[id] = s
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
-  } catch {
-    /* */
-  }
+  const all = getStored(id)
+  all[id] = s
+  writeStorageJSON(STORAGE_KEY, all)
 }
 
 export function useDataTableSettings(tableId: string) {
-  const stored = getStored()
+  const stored = getStored(tableId)
   const def = defaults[tableId] || {
     visibleColumns: [],
     sortColumn: '',

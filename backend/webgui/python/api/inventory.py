@@ -6,14 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-webgui single-client hardware/software inventory (read-only)
-
-Uses opsiconfd audit RPC methods as the only data source:
-  auditHardware_getConfig, auditHardwareOnHost_getObjects,
-  auditSoftware_getObjects, auditSoftwareOnClient_getObjects
-No direct audit table/SQL access happens here.
-"""
+"""Single-client hardware/software inventory (read-only) for the OPSI-WebGUI addon."""
 
 import csv
 import hashlib

@@ -27,6 +27,7 @@ export default defineConfig({
     alias: {
       '~/types': path.resolve(__dirname, 'app/types'),
       '~/stores': path.resolve(__dirname, 'app/stores'),
+      '~/utils': path.resolve(__dirname, 'app/utils'),
       '~': path.resolve(__dirname),
       '@': path.resolve(__dirname),
     },

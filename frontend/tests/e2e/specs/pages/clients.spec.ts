@@ -35,7 +35,6 @@ test.describe('Clients', () => {
     await runUITest(page, {
       name: 'clients-inventory',
       route: '/clients',
-      waitAfterNav: 5000,
       docName: 'opsi-webgui-clients-inventory',
       functional: async (p) => {
         await waitForTable(p)
@@ -285,7 +284,6 @@ test.describe('Clients', () => {
     await runUITest(page, {
       name: 'clients-create',
       route: '/clients/add',
-      waitAfterNav: 3000,
       docName: 'opsi-webgui-clients-create',
       functional: async (p) => {
         const inputs = p.locator('input, select, textarea')
@@ -302,7 +300,6 @@ test.describe('Clients', () => {
     await runUITest(page, {
       name: 'clients-config',
       route: '/clients/configuration/parameters/nb-00001a.acme.corp',
-      waitAfterNav: 4000,
       docName: 'opsi-webgui-clients-configuration',
       functional: async (p) => {
         await expect(p.getByText('Host auswählen um Konfiguration anzuzeigen')).toBeHidden({
@@ -362,7 +359,6 @@ test.describe('Clients', () => {
     await runUITest(page, {
       name: 'clients-clone-page',
       route: '/clients/clone',
-      waitAfterNav: 3500,
       docName: 'opsi-webgui-clients-clone',
       skipVisualRegression: true,
       functional: async (p) => {
@@ -397,7 +393,6 @@ test.describe('Clients', () => {
     await runUITest(page, {
       name: 'clients-logs',
       route: '/clients/logs/nb-00001a.acme.corp?logType=instlog',
-      waitAfterNav: 3000,
       docName: 'opsi-webgui-clients-logs',
       functional: async (p) => {
         await expect(p.locator('main')).toBeVisible()

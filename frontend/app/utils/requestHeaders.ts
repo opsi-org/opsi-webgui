@@ -7,8 +7,7 @@
  * All rights reserved.
  * License: AGPL-3.0
  *
- * requestHeaders - Pure helpers for building API request headers (used by the
- * customFetch plugin, extracted for unit testing).
+ * requestHeaders - Helpers for building API request headers.
  */
 
 export const urlsWithoutSession = ['/auth/logout', '/user/configuration']

@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-webgui depot methods
-"""
+"""Depot-related API routes for the OPSI-WebGUI addon."""
 
 from typing import Any
 
@@ -72,12 +70,10 @@ def get_depots(username: str | None = None) -> list[str]:
 
 @api_router.get("/api/opsidata/depot_ids", response_model=list[str])
 @rest_api
-def depot_ids(request: Request) -> RESTResponse:
+def depot_ids() -> RESTResponse:
 	"""
 	Get all depotIds.
 	"""
-	# TODO Item "None" of "Optional[Any]" has no attribute "user_store"  [union-attr]mypy(error)
-	# username = request.scope.get("session", OPSISession("0.0.0.0", 4447)).username
 	username = get_username()
 	depot_list = get_depots(username)
 

@@ -171,7 +171,7 @@ async function navigateTo(page: Page, config: UITestConfig, locale: Locale, them
   await page.setViewportSize(viewports['desktop'])
   await applyLocaleCookie(page, locale)
   await page.goto(config.route, { waitUntil: 'load', timeout: 30000 })
-  await page.waitForTimeout(config.waitAfterNav ?? 3000)
+  if (config.waitAfterNav) await page.waitForTimeout(config.waitAfterNav)
   if (!config.route.includes('/login')) {
     await setTheme(page, theme)
     await setLocale(page, locale)
@@ -218,7 +218,7 @@ async function navigateTo(page: Page, config: UITestConfig, locale: Locale, them
 
   if (!config.route.includes('/login') && /\/login(?:\?|$|\/)/.test(page.url())) {
     await page.goto(config.route, { waitUntil: 'load', timeout: 30000 }).catch(() => undefined)
-    await page.waitForTimeout(config.waitAfterNav ?? 3000)
+    if (config.waitAfterNav) await page.waitForTimeout(config.waitAfterNav)
     await disableAnimations(page)
     await waitForLoaded(page)
     await tryLoginRecovery()
@@ -271,10 +271,10 @@ async function takeVRScreenshot(page: Page, config: UITestConfig): Promise<void>
 async function runA11yChecks(
   page: Page,
   config: UITestConfig,
-  opts: { inspector?: boolean; colorBlind?: boolean; screenReader?: boolean },
+  opts: { accessibility?: boolean; inspector?: boolean; colorBlind?: boolean; screenReader?: boolean },
 ): Promise<void> {
   const exclude = config.a11yExclude ? { exclude: config.a11yExclude } : undefined
-  if (!config.skipA11y) {
+  if (!config.skipA11y && opts.accessibility !== false) {
     await checkA11y(page, exclude)
   }
   if (!config.skipContrast) {
@@ -367,7 +367,7 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
 
     if (isNightly) {
       await switchTheme(page, 'dark')
-      await runA11yChecks(page, checkpointConfig, {})
+      await runA11yChecks(page, checkpointConfig, { accessibility: false })
       await switchTheme(page, 'light')
     }
 
@@ -378,7 +378,7 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
   // Phase 2 (nightly only): in-place dark switch on the de navigation
   if (isNightly) {
     await switchTheme(page, 'dark')
-    await runA11yChecks(page, config, {})
+    await runA11yChecks(page, config, { accessibility: false })
 
     // Doc screenshot : de + dark (if docDarkMode)
     if (shouldCaptureDocs && config.docName && config.docDarkMode) {
@@ -407,7 +407,7 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
 
     // Phase 4 (nightly): en + dark (in-place theme switch)
     await switchTheme(page, 'dark')
-    await runA11yChecks(page, config, {})
+    await runA11yChecks(page, config, { accessibility: false })
 
     // Doc screenshot : en + dark (if docDarkMode)
     if (shouldCaptureDocs && config.docName && config.docDarkMode) {
@@ -423,7 +423,7 @@ export async function runUITest(page: Page, config: UITestConfig): Promise<void>
         await applyLocaleCookie(page, locale)
         await page.setViewportSize(viewports['marketing'])
         await page.goto(config.route, { waitUntil: 'load', timeout: 30000 })
-        await page.waitForTimeout(config.waitAfterNav ?? 3000)
+        if (config.waitAfterNav) await page.waitForTimeout(config.waitAfterNav)
         await setTheme(page, 'light')
         await setLocale(page, locale)
         await page.waitForTimeout(300)

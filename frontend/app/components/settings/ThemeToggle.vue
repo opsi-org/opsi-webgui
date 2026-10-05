@@ -1,7 +1,7 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
@@ -24,11 +24,8 @@ https://opsi.org/en/
 </template>
 
 <script setup lang="ts">
-  import { useUiStore } from '~/stores/uiStore'
-
   const icons = useIcons()
   const colorMode = useColorMode()
-  const uiStore = useUiStore()
   const { t: $t } = useI18n()
 
   const isDarkMode = computed(() => colorMode.preference === 'dark')
@@ -36,7 +33,5 @@ https://opsi.org/en/
   function toggleTheme() {
     const newMode = isDarkMode.value ? 'light' : 'dark'
     colorMode.preference = newMode
-    uiStore.setTheme(newMode)
-    document.cookie = `opsi-webgui-color-mode=${newMode}; path=/; max-age=31536000; SameSite=Lax`
   }
 </script>

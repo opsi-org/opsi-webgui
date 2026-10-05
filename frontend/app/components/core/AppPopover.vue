@@ -1,14 +1,13 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
   License: AGPL-3.0
 
-  CoreAppPopover - UI library wrapper for popover rendering. Pass `open-on-hover` to also
-  open it while the pointer rests on the trigger (click and keyboard still work as before).
+  CoreAppPopover - UI library popover wrapper.
 -->
 <template>
   <UPopover v-if="openOnHover" v-bind="$attrs" mode="hover" :open-delay="openDelay" :close-delay="closeDelay">

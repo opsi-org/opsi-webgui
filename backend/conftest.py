@@ -1,7 +1,13 @@
-# Root conftest for backend tests.
-# Must be the FIRST conftest loaded so it can clean sys.argv before any opsiconfd
-# module is imported. opsiconfd initialises its argparse config on import and would
-# crash with SystemExit: 2 if it encounters unknown pytest arguments.
+# This file is part of the OPSI-WebGUI application.
+# The OPSI-WebGUI backend is an addon for opsiconfd.
+# https://opsi.org/en/
+#
+# Copyright (c) UIB GmbH info@uib.de 2026
+# All rights reserved.
+# License: AGPL-3.0
+
+"""Root conftest for backend tests of the OPSI-WebGUI addon."""
+
 import sys
 
 # Keep only the executable name; opsiconfd's configargparse can then initialise

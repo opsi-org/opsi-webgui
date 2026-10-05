@@ -7,7 +7,7 @@
 # License: AGPL-3.0
 
 """
-webgui config methods
+Configuration management for the OPSI-WebGUI addon.
 """
 
 import json
@@ -15,8 +15,6 @@ from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, Request, status
 from opsiconfd.backend import get_protected_backend
-
-# from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
 	RESTErrorResponse,
@@ -38,10 +36,8 @@ from ..utils import (
 	check_batch_combination,
 	mysql,
 	opsi_server_write_check,
-	parse_client_list,
 	read_only_check,
 	unicode_config,
-	unicode_value,
 )
 
 api_router = APIRouter()
@@ -60,7 +56,6 @@ def get_server_config(
 	"""
 
 	params: dict = {}
-	# where = text("cv.isDefault=1")
 	where = text("")
 	if commons.get("filterQuery"):
 		where = and_(where, text("(c.configId LIKE :search)"))
@@ -88,8 +83,6 @@ def get_server_config(
 		)  # pylint: disable=redefined-outer-name
 
 		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
-		# query = pagination(query, commons)  # type: ignore[assignment,arg-type]
-
 		result = session.execute(query, params)
 		result = result.fetchall()
 		config_data: dict = {
@@ -184,199 +177,6 @@ def get_client_config(
 	return RESTResponse(data=config_data)
 
 
-@api_router.get("/api/opsidata/config/clients")
-@rest_api
-def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
-	selectedClients: list[str] | None = Depends(parse_client_list),  # pylint: disable=invalid-name
-	commons: dict = Depends(common_query_parameters),
-) -> RESTResponse:
-	selected_clients = selectedClients or []
-
-	if not selected_clients:
-		return RESTResponse(
-			data={
-				"general": [],
-				"clientconfig": [],
-				"opsi-script": [],
-				"opsiclientd": [],
-				"software-on-demand": [],
-			}
-		)
-
-	where = text("")
-	params: dict = {"clients": selected_clients, "num_clients": len(selected_clients)}
-	if commons.get("filterQuery"):
-		where = text("(c.configId LIKE :search)")
-		params["search"] = f"%{commons['filterQuery']}%"
-
-	with mysql.session() as session:
-		query = (
-			select(
-				text(  # type: ignore
-					"""
-						cv.configId AS configId,
-						c.description AS description,
-						c.type AS type,
-						GROUP_CONCAT(DISTINCT IF(cv.isDefault, cv.value, NULL) SEPARATOR ';') AS defaultValue,
-						IF(
-							COUNT(DISTINCT cs.values) > 1,
-							"mixed",
-							IF(cs.values IS NOT NULL, cs.values, GROUP_CONCAT(DISTINCT IF(cv.isDefault, cv.value, NULL) SEPARATOR ';'))
-						) AS value,
-						GROUP_CONCAT(DISTINCT cs.values SEPARATOR ';') AS clientValuesOld,
-						(SELECT GROUP_CONCAT(cs.values SEPARATOR ';')
-							FROM CONFIG_STATE AS cs WHERE cs.configId=c.configId AND cs.objectId IN :clients GROUP BY cs.configId) AS clientValues,
-						GROUP_CONCAT(DISTINCT cv.value SEPARATOR ';') AS possibleValues,
-						c.multiValue AS multiValue,
-						c.editable AS editable,
-						GROUP_CONCAT(DISTINCT cs.objectId SEPARATOR ';') AS clientsWithDiff
-				"""
-				)
-			)
-			.select_from(table("CONFIG").alias("c"))
-			.join(text("CONFIG_VALUE AS cv"), text("c.configId = cv.configId"))  # type: ignore[arg-type]
-			.join(
-				text("CONFIG_STATE AS cs"),
-				text("c.configId=cs.configId AND cs.objectId IN :clients OR cs.objectId IS NULL"),
-				isouter=True,
-			)
-			.where(where)
-			.group_by(text("c.configId"))
-		)  # pylint: disable=redefined-outer-name
-
-		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
-
-		result = session.execute(query, params)
-		result = result.fetchall()
-		configs: dict = {
-			"general": [],
-			"clientconfig": [],
-			"opsi-script": [],
-			"opsiclientd": [],
-			"software-on-demand": [],
-		}
-		server_configs = ["user", "configed"]
-		count = 0
-
-		for row in result:
-			if row is not None:
-				config = dict(row)
-
-				id_prefix = config.get("configId", "").split(".")[0]
-				if id_prefix in server_configs:
-					continue
-				if id_prefix not in configs:
-					id_prefix = "general"
-
-				config["multiValue"] = bool(config.get("multiValue", ""))
-				config["editable"] = bool(config.get("editable", ""))
-
-				if not config.get("clientValues"):
-					config["clientValues"] = ""
-				if not config.get("clientsWithDiff"):
-					config["clientsWithDiff"] = ""
-
-				if config.get("type", "") == "BoolConfig":
-					config["value"] = bool_value(config.get("value", ""))
-					config["possibleValues"] = [True, False]
-					config["defaultValue"] = bool_value(config.get("defaultValue", ""))
-					config["clientValues"] = [bool_value(value) for value in config.get("clientValues", "").split(";")]
-				else:
-					config["value"] = unicode_value(config.get("value", ""))
-					config["possibleValues"] = unicode_value(config.get("possibleValues", ""))
-					config["defaultValue"] = unicode_value(config.get("defaultValue", ""))
-					if ";" in config.get("clientValues", ""):
-						config["clientValues"] = [unicode_value(value) for value in config.get("clientValues", "").split(";")]
-					elif config.get("multiValue", False):
-						config["clientValues"] = [unicode_value(config.get("clientValues", ""))]
-					else:
-						config["clientValues"] = unicode_value(config.get("clientValues", ""))
-					p_values = config.get("possibleValues", [])
-
-					for values in config.get("clientValues", []):
-						if isinstance(values, list):
-							p_values.extend(values)
-						else:
-							p_values.append(values)
-
-					config["possibleValues"] = list(dict.fromkeys(p_values))
-
-				client_values = config.get("clientValues", [])
-				if (
-					(
-						len(config.get("clientsWithDiff", "").split(";")) != len(selected_clients)
-						and config.get("value", "") != config.get("defaultValue", "")
-					)
-					or config.get("value", "") == "mixed"
-					or config.get("clientValues", []) == config.get("values", [])
-					or (client_values and client_values[0] == config.get("defaultValue", []))
-				):
-					config["allClientValuesEqual"] = False
-				else:
-					config["allClientValuesEqual"] = True
-
-				if not config.get("allClientValuesEqual") or config.get("value", "") != config.get("defaultValue", ""):
-					config["anyClientDiffrentFromDefault"] = True
-				else:
-					config["anyClientDiffrentFromDefault"] = False
-
-				config["clients"] = {}
-				if (
-					config.get("clientsWithDiff", "")
-					and (
-						not config.get("allClientValuesEqual", False)
-						or len(config.get("clientsWithDiff", "").split(";")) == len(selected_clients)
-					)  # len 1
-					and config.get("value", "") != config.get("defaultValue", "")
-				):
-					clients = config.get("clientsWithDiff", "").split(";")
-					client_values = config.get("clientValues", [])
-
-					for idx, client in enumerate(clients):
-						config["clients"][client] = {}
-						if idx < len(client_values):
-							config["clients"][client] = client_values[idx]
-						else:
-							config["clients"][client] = ""
-
-				del config["clientValues"]
-				del config["clientsWithDiff"]
-				del config["value"]
-				for client in selected_clients:
-					if client not in config.get("clients", []):
-						config["clients"][client] = config.get("defaultValue", "")
-
-				if config.get("editable", False):
-					config["newValue"] = ""
-					config["newValues"] = []
-
-				count = count + 1
-				configs[id_prefix].append(config)
-
-	return RESTResponse(data=configs)
-
-
-@api_router.get("/api/opsidata/config/exists/{configid}")
-@rest_api
-def exists_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
-	request: Request, configid: str
-) -> RESTResponse:
-	"""
-	Check if a config exists
-	"""
-	logger.deubg("Checking if config %s exists", configid)
-	try:
-		config_ids = backend.config_getIdents()
-		return RESTResponse(data=configid in config_ids)
-	except Exception as err:  # pylint: disable=broad-except
-		logger.error("Could not check if config object exists, error: %s", err)
-		raise OpsiApiException(
-			message="Could not check if config object exists.",
-			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-			error=err,
-		) from err
-
-
 ConfigType = Literal["UnicodeConfig", "BoolConfig"]
 
 
@@ -399,40 +199,6 @@ class Config(BaseModel):  # pylint: disable=too-few-public-methods
 class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
 	objectIds: list[str] = Field(default=[], max_length=MAX_IDS_PER_REQUEST)
 	configs: list[Config] = Field(..., max_length=MAX_IDS_PER_REQUEST)
-
-
-@api_router.delete("/api/opsidata/config/delete/{configid}")
-@rest_api
-@read_only_check
-@opsi_server_write_check
-def delete_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
-	request: Request, configid: str
-) -> RESTResponse:
-	"""
-	Delete a config
-	"""
-	logger.warning("Deleting config %s", configid)
-	try:
-		# with mysql.session() as session:
-		config_ids = backend.config_getIdents()
-		if configid not in config_ids:
-			logger.error("Could not delete config object.")
-			raise OpsiApiException(
-				message=f"Could not delete config object. Config '{configid}' does not exist",
-				http_status=status.HTTP_404_NOT_FOUND,
-			)
-
-		backend.config_delete(id=configid)
-
-		return RESTResponse()
-	except Exception as err:
-		logger.error("Could not delete config object, error: %s", err)
-		logger.error(err)
-		raise OpsiApiException(
-			message="Could not delete config object.",
-			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-			error=err,
-		) from err
 
 
 @api_router.post("/api/opsidata/config")

@@ -1,7 +1,7 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
@@ -131,6 +131,8 @@ https://opsi.org/en/
 </template>
 
 <script setup lang="ts">
+  import { useUiStore } from '~/stores/uiStore'
+
   const props = withDefaults(
     defineProps<{
       showFilter?: boolean
@@ -177,11 +179,11 @@ https://opsi.org/en/
   // Split view state
   const isMobile = ref(false)
   const containerRef = ref<HTMLElement | null>(null)
-  const { layout: workspaceLayout } = useWorkspaceLayout()
+  const uiStore = useUiStore()
   const panelWidthPercent = computed({
-    get: () => workspaceLayout.detailPanelWidthPercent ?? props.defaultPanelWidthPercent,
+    get: () => uiStore.layout.detailPanelWidthPercent ?? props.defaultPanelWidthPercent,
     set: (value: number) => {
-      workspaceLayout.detailPanelWidthPercent = value
+      uiStore.layout.detailPanelWidthPercent = value
     },
   })
   const minPanelPercent = 25

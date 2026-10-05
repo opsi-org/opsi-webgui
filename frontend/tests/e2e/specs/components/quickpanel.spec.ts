@@ -13,20 +13,15 @@ import { runUITest } from '../../runner/runUITest'
 import { ensureQuickPanelOpen, waitForTable } from '../../utils/ui'
 import type { Page } from '@playwright/test'
 
-/**
- * Quick-panel component specs: VR baseline + a11y for every tab, and
- * for both client and product quick-action controls.
- *
- * The quick panel lives in the layout on every page; we use the clients
- * page as the host (good default data set).
- */
+/** Quick-panel visual/a11y coverage and client/product quick-action checks. */
 
-async function openQuickPanelTab(page: Page, tabText: RegExp): Promise<void> {
+async function openQuickPanelTab(page: Page, tabIndex: number, contentTestId: string): Promise<void> {
   await ensureQuickPanelOpen(page)
-  const tab = page.getByTestId('quickpanel').getByRole('tab').filter({ hasText: tabText }).first()
+  const tab = page.getByTestId('quickpanel').getByRole('tab').nth(tabIndex)
   await expect(tab).toBeVisible()
   await tab.click()
   await expect(tab).toHaveAttribute('data-state', 'active')
+  await expect(page.getByTestId(contentTestId)).toBeVisible()
 }
 
 async function selectFirstClientForQuickActions(page: Page): Promise<void> {
@@ -40,17 +35,15 @@ async function selectFirstClientForQuickActions(page: Page): Promise<void> {
     const nativeChecked = await checkbox.isChecked().catch(() => false)
     if (!ariaChecked && !nativeChecked) {
       await checkbox.click()
-      await page.waitForTimeout(500)
     }
   } else {
     await firstRow.click()
-    await page.waitForTimeout(500)
   }
 }
 
 async function prepareClientQuickActions(page: Page): Promise<void> {
   await selectFirstClientForQuickActions(page)
-  await openQuickPanelTab(page, /overview|übersicht|dashboard/i)
+  await openQuickPanelTab(page, 0, 'quickpanel-tab-overview')
 }
 
 async function openClientQuickActionsMenu(page: Page) {
@@ -192,7 +185,7 @@ test.describe('Quick Panel - tabs', () => {
           await firstRow.click()
           await p.waitForTimeout(400)
         }
-        await openQuickPanelTab(p, /overview|übersicht|dashboard/i)
+        await openQuickPanelTab(p, 0, 'quickpanel-tab-overview')
         await expect(p.getByTestId('quickpanel')).toBeVisible({ timeout: 5000 })
         await expect(p.getByTestId('quickpanel-tab-overview')).toBeVisible()
       },
@@ -201,10 +194,10 @@ test.describe('Quick Panel - tabs', () => {
           name: 'quickpanel-tab-clients',
           run: async (p) => {
             await waitForTable(p)
-            await openQuickPanelTab(p, /client|gruppe|group/i)
+            await openQuickPanelTab(p, 2, 'quickpanel-tab-clients')
             await expect(p.getByTestId('quickpanel-tab-clients')).toBeVisible()
           },
-          reset: async (p) => openQuickPanelTab(p, /overview|übersicht|dashboard/i),
+          reset: async (p) => openQuickPanelTab(p, 0, 'quickpanel-tab-overview'),
         },
       ],
       vrMask: ['[data-testid="session-timer"]'],
@@ -217,7 +210,7 @@ test.describe('Quick Panel - tabs', () => {
       route: '/servers',
       waitAfterNav: 4000,
       functional: async (p) => {
-        await openQuickPanelTab(p, /server/i)
+        await openQuickPanelTab(p, 1, 'quickpanel-tab-servers')
         await expect(p.getByTestId('quickpanel-tab-servers')).toBeVisible()
         // Server list should render
         await expect(p.getByTestId('quickpanel-tab-servers').locator('[class*="item"], [role="listitem"], li').first()).toBeVisible({
@@ -234,7 +227,7 @@ test.describe('Quick Panel - tabs', () => {
       route: '/products/LocalbootProduct',
       waitAfterNav: 5000,
       functional: async (p) => {
-        await openQuickPanelTab(p, /product|produkt/i)
+        await openQuickPanelTab(p, 3, 'quickpanel-tab-products')
         await expect(p.getByTestId('quickpanel-tab-products')).toBeVisible()
       },
       vrMask: ['[data-testid="session-timer"]'],

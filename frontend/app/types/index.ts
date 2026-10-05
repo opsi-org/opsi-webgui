@@ -22,29 +22,6 @@ export interface Server {
   selected?: boolean | number
 }
 
-export interface ServerAttr {
-  hostId: string
-  type: 'OpsiConfigserver' | 'OpsiDepotserver'
-  description: string
-  notes: string
-  hardwareAddress?: string
-  ipAddress: string
-  inventoryNumber?: string
-  systemUUID?: string
-  opsiHostKey?: string
-  depotLocalUrl?: string
-  depotRemoteUrl?: string
-  depotWebdavUrl?: string
-  repositoryLocalUrl?: string
-  repositoryRemoteUrl?: string
-  workbenchLocalUrl?: string
-  workbenchRemoteUrl?: string
-  networkAddress?: string
-  maxBandwidth?: number
-  isMasterDepot?: boolean
-  masterDepotId?: string
-}
-
 export interface Client {
   clientId: string
   ident?: string
@@ -137,22 +114,6 @@ export interface InventorySummary {
   clientId: string
   hardware: InventoryMeta
   software: InventoryMeta
-}
-
-export interface ClientAttr {
-  hostId: string
-  type: string
-  description: string
-  notes: string
-  hardwareAddress?: string
-  ipAddress?: string
-  inventoryNumber: string
-  systemUUID?: string
-  created: string
-  lastSeen: string
-  opsiHostKey: string
-  oneTimePassword?: string
-  uefi: boolean
 }
 
 export type ProductType = 'LocalbootProduct' | 'NetbootProduct'
@@ -289,41 +250,6 @@ export interface GroupTreeNodeData {
   level?: number
 }
 
-export type GroupAction = 'addSubgroup' | 'edit' | 'delete' | 'manageMembers' | 'removeAllMembers' | 'copy'
-
-export interface GroupFormData {
-  groupId: string
-  description: string
-  notes: string
-  parentGroupId: string
-}
-
-export type ConfigType = 'BoolConfig' | 'UnicodeConfig'
-
-export interface ConfigEntry {
-  configId: string
-  description: string
-  type: ConfigType
-  value?: string | boolean | string[]
-  defaultValues?: unknown[]
-  possibleValues?: (string | boolean)[]
-  multiValue: boolean
-  editable: boolean
-  objects?: Record<string, unknown>
-  newValue?: string
-  newValues?: unknown[]
-}
-
-export interface HealthCheck {
-  check_id: string
-  check_name: string
-  check_status: 'ok' | 'warning' | 'error'
-  check_description: string
-  message: string
-  upgrade_issue: string | null
-  partial_results: Array<{ message: string; check_status: string }>
-}
-
 export type LogType = 'instlog' | 'clientconnect' | 'userlogin' | 'bootimage' | 'opsiconfd'
 
 export interface TableColumn {
@@ -339,5 +265,3 @@ export interface TableColumn {
   align?: 'left' | 'center' | 'right'
   icon?: string
 }
-
-export type NestedStringMap = Record<string, Record<string, string>>

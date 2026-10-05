@@ -6,9 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""
-webgui utils
-"""
+"""Utility functions for the OPSI-WebGUI addon."""
 
 import inspect
 from collections.abc import Callable
@@ -17,14 +15,10 @@ from json import loads  # pylint: disable=no-name-in-module
 from typing import Any
 
 from fastapi import Query, status
-
-# from OPSI.Backend.MySQL import MySQL, MySQLBackend
 from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import parse_list
 from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
-
-# from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 from sqlalchemy import and_, select, table, text  # type: ignore[import]
 
@@ -192,10 +186,6 @@ def build_tree(  # pylint: disable=too-many-branches
 		if "children" not in group:
 			group["children"] = {}
 		group["children"].update(children)
-	# else:
-	# 	if group["type"] == "HostGroup":
-	# 		group["children"] = None
-
 	if not is_root_group and group.get("children"):
 		for child in group["children"].values():
 			# Correct id for webgui
@@ -471,8 +461,6 @@ def get_allowed_sql(user: str, gtype: str = "HostGroup") -> list:
 	allowed_objects = []
 	with mysql.session() as session:
 		result = session.execute(text(sql), params)
-		# return [row[0] for row in result.fetchall()]
-
 		otg_result = result.fetchall()
 		for otg_row in otg_result:
 			if otg_row is not None:

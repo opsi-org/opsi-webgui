@@ -1,15 +1,13 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
   License: AGPL-3.0
 
-  ClientsAdvancedFiltersPopover - Reachable/not-seen-since/failed-products/OS filters for the
-  clients table. Content-only (no popover/trigger of its own): rendered as the "Advanced
-  Filters" section inside CoreAppDataTable's combined filters popover, above "Saved Searches".
+  ClientsAdvancedFiltersPopover - Client table filters.
 -->
 <template>
   <CoreAppSectionHeader :title="String($t('common.advancedFilters'))" />

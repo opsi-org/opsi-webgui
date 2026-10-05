@@ -6,7 +6,7 @@
 # All rights reserved.
 # License: AGPL-3.0
 
-"""Regression tests for webgui addon exception handling."""
+"""Unit tests for the webgui addon of the OPSI-WebGUI addon."""
 
 from __future__ import annotations
 

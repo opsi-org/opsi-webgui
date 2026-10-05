@@ -92,6 +92,39 @@ function getRecursiveMembersCacheKey(groupId: string, selectedServers: string[] 
   return `${groupId}::${[...selectedServers].sort().join(',')}`
 }
 
+function parseLazyGroupChildren(children: Record<string, unknown>, groupId: string, groupType: 'client' | 'product') {
+  const members: string[] = []
+  const subGroups: GroupTreeNodeData[] = []
+  const nodeType = groupType === 'client' ? 'HostGroup' : 'ProductGroup'
+
+  for (const child of Object.values(children)) {
+    const data = child as Record<string, unknown>
+    const childType = data.type as string
+    const childId = (data.id as string)?.split(';')[0] || (data.text as string) || ''
+    if (!childId) continue
+
+    const isMember = childType === 'ObjectToGroup'
+    const isSpecial = isMember && childId.toLowerCase().includes('not_assigned')
+    if (isMember && !isSpecial) {
+      members.push(childId)
+    } else if (isSpecial || (childType === nodeType && childId !== groupId)) {
+      subGroups.push({
+        id: childId,
+        label: (data.text as string) || childId,
+        parentId: groupId,
+        type: nodeType,
+        memberCount: typeof data.member_count === 'number' ? data.member_count : 0,
+        members: [],
+        children: [],
+        isRoot: false,
+        isSpecial: isSpecial || childId.toLowerCase().includes('not_assigned'),
+      })
+    }
+  }
+
+  return { members, subGroups }
+}
+
 function transformApiToTree(data: Record<string, unknown>, groupType: 'client' | 'product', level = 0): GroupTreeNodeData[] {
   if (!data || typeof data !== 'object') return []
   const processNode = (key: string, value: unknown, parentId?: string, nodeLevel = 0): GroupTreeNodeData | null => {
@@ -458,43 +491,7 @@ export function useCachedData() {
       if (result.data?.groups) {
         const groupData = result.data.groups as Record<string, unknown>
         const children = (groupData.children || {}) as Record<string, unknown>
-        const members: string[] = []
-        const subGroups: GroupTreeNodeData[] = []
-
-        for (const [_key, child] of Object.entries(children)) {
-          const c = child as Record<string, unknown>
-          const childType = c.type as string
-          const childId = (c.id as string)?.split(';')[0] || (c.text as string) || ''
-          if (!childId) continue
-          const isSpecialMember = childType === 'ObjectToGroup' && childId.toLowerCase().includes('not_assigned')
-          if (isSpecialMember) {
-            subGroups.push({
-              id: childId,
-              label: (c.text as string) || childId,
-              parentId: groupId,
-              type: 'HostGroup',
-              memberCount: typeof c.member_count === 'number' ? (c.member_count as number) : 0,
-              members: [],
-              children: [],
-              isRoot: false,
-              isSpecial: true,
-            })
-          } else if (childType === 'ObjectToGroup') {
-            members.push(childId)
-          } else if (childType === 'HostGroup' && childId !== groupId) {
-            subGroups.push({
-              id: childId,
-              label: (c.text as string) || childId,
-              parentId: groupId,
-              type: 'HostGroup',
-              memberCount: typeof c.member_count === 'number' ? (c.member_count as number) : 0,
-              members: [],
-              children: [],
-              isRoot: false,
-              isSpecial: childId.toLowerCase().includes('not_assigned'),
-            })
-          }
-        }
+        const { members, subGroups } = parseLazyGroupChildren(children, groupId, 'client')
 
         patchTreeNodeContents(clientGroupsState.tree, groupId, members, subGroups)
 
@@ -524,43 +521,7 @@ export function useCachedData() {
       if (result.data?.groups) {
         const groupData = result.data.groups as Record<string, unknown>
         const children = (groupData.children || {}) as Record<string, unknown>
-        const members: string[] = []
-        const subGroups: GroupTreeNodeData[] = []
-
-        for (const [_key, child] of Object.entries(children)) {
-          const c = child as Record<string, unknown>
-          const childType = c.type as string
-          const childId = (c.id as string)?.split(';')[0] || (c.text as string) || ''
-          if (!childId) continue
-          const isSpecialMember = childType === 'ObjectToGroup' && childId.toLowerCase().includes('not_assigned')
-          if (isSpecialMember) {
-            subGroups.push({
-              id: childId,
-              label: (c.text as string) || childId,
-              parentId: groupId,
-              type: 'ProductGroup',
-              memberCount: typeof c.member_count === 'number' ? (c.member_count as number) : 0,
-              members: [],
-              children: [],
-              isRoot: false,
-              isSpecial: true,
-            })
-          } else if (childType === 'ObjectToGroup') {
-            members.push(childId)
-          } else if (childType === 'ProductGroup' && childId !== groupId) {
-            subGroups.push({
-              id: childId,
-              label: (c.text as string) || childId,
-              parentId: groupId,
-              type: 'ProductGroup',
-              memberCount: typeof c.member_count === 'number' ? (c.member_count as number) : 0,
-              members: [],
-              children: [],
-              isRoot: false,
-              isSpecial: childId.toLowerCase().includes('not_assigned'),
-            })
-          }
-        }
+        const { members, subGroups } = parseLazyGroupChildren(children, groupId, 'product')
 
         patchTreeNodeContents(productGroupsState.tree, groupId, members, subGroups)
 
@@ -642,44 +603,6 @@ export function useCachedData() {
     state.expanded = newSet
   }
 
-  function expandAllGroups(groupType: 'client' | 'product') {
-    const tree = groupType === 'client' ? clientGroupsState.tree : productGroupsState.tree
-    const allIds = new Set<string>()
-    const collect = (nodes: GroupTreeNodeData[]) => {
-      for (const n of nodes) {
-        if (n.children?.length || n.members?.length) {
-          allIds.add(n.id)
-          if (n.children) collect(n.children)
-        }
-      }
-    }
-    collect(tree)
-    if (groupType === 'client') clientGroupsState.expanded = allIds
-    else productGroupsState.expanded = allIds
-  }
-
-  function collapseAllGroups(groupType: 'client' | 'product') {
-    const tree = groupType === 'client' ? clientGroupsState.tree : productGroupsState.tree
-    const rootId = tree[0]?.id
-    if (groupType === 'client') clientGroupsState.expanded = rootId ? new Set([rootId]) : new Set()
-    else productGroupsState.expanded = rootId ? new Set([rootId]) : new Set()
-  }
-
-  function getGroupMembers(groupId: string, groupType: 'client' | 'product'): string[] {
-    const tree = groupType === 'client' ? clientGroupsState.tree : productGroupsState.tree
-    const find = (nodes: GroupTreeNodeData[]): GroupTreeNodeData | null => {
-      for (const n of nodes) {
-        if (n.id === groupId) return n
-        if (n.children) {
-          const f = find(n.children)
-          if (f) return f
-        }
-      }
-      return null
-    }
-    return find(tree)?.members || []
-  }
-
   // Batch fetchers & refresh
 
   /** Fetch user config + disabled features together (used after login and in init plugin). */
@@ -695,7 +618,6 @@ export function useCachedData() {
   return {
     // Diagnostics
     diagnosticsData: computed(() => diagnosticsState.data),
-    diagnosticsLoading: computed(() => diagnosticsState.loading),
     diagnosticsFetched: computed(() => diagnosticsState.fetched),
     healthCheckData,
     healthCounts,
@@ -708,17 +630,14 @@ export function useCachedData() {
 
     // User configuration
     userConfigData: computed(() => userConfigState.data),
-    userConfigLoading: computed(() => userConfigState.loading),
     fetchUserConfig,
 
     // Disabled features
     disabledFeatures: computed(() => disabledFeaturesState.data ?? []),
-    disabledFeaturesLoading: computed(() => disabledFeaturesState.loading),
     fetchDisabledFeatures,
 
     // Product icons
     productIcons: computed(() => productIconsState.data),
-    productIconsLoading: computed(() => productIconsState.loading),
     fetchProductIcons,
 
     // Changelogs
@@ -731,9 +650,7 @@ export function useCachedData() {
     clientGroupsLoading: computed(() => clientGroupsState.loading),
     clientGroupsError: computed(() => clientGroupsState.error),
     clientGroupsExpanded: computed(() => clientGroupsState.expanded),
-    clientGroupsFetched: computed(() => clientGroupsState.fetched),
     clientGroupsLoadingGroups: computed(() => clientGroupsState.loadingGroups),
-    clientGroupsLoadedGroups: computed(() => clientGroupsState.loadedGroups),
     fetchClientGroups,
     fetchGroupChildrenLazy,
     fetchGroupMembersRecursive,
@@ -743,18 +660,13 @@ export function useCachedData() {
     productGroupsLoading: computed(() => productGroupsState.loading),
     productGroupsError: computed(() => productGroupsState.error),
     productGroupsExpanded: computed(() => productGroupsState.expanded),
-    productGroupsFetched: computed(() => productGroupsState.fetched),
     productGroupsLoadingGroups: computed(() => productGroupsState.loadingGroups),
-    productGroupsLoadedGroups: computed(() => productGroupsState.loadedGroups),
     fetchProductGroups,
     fetchProductGroupChildrenLazy,
     fetchProductGroupMembersRecursive,
 
-    // Group tree helpers
+    // Group tree actions
     toggleGroupExpand,
-    expandAllGroups,
-    collapseAllGroups,
-    getGroupMembers,
 
     // Batch
     fetchPostLoginData,

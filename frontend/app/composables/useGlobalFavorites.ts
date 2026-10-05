@@ -7,10 +7,10 @@
  * All rights reserved.
  * License: AGPL-3.0
  *
- * useGlobalFavorites - Aggregates favorite saved searches from the clients/products/servers
- * tables (each scoped independently via useSavedSearches)
+ * useGlobalFavorites - Favorites across client, product, and server tables.
  */
 import { clearStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
+import { useDataTableFilterStore } from '~/stores/dataTableFilterStore'
 
 export interface GlobalFavorite {
   id: string
@@ -35,15 +35,12 @@ export function scopeRoute(scope: GlobalSearchScope): string {
 
 export const CLEAR_ALL_FILTERS_EVENT = 'opsi-webgui:clear-all-filters'
 
-function advancedFiltersStorageKey(scope: GlobalSearchScope): string {
-  return `opsi-webgui-${scope}-advanced-filters`
-}
-
 export function clearAllFilters() {
   if (import.meta.server) return
+  const dataTableFilterStore = useDataTableFilterStore()
   for (const scope of GLOBAL_SEARCH_SCOPES) {
     clearStoredDataTableFilter(scope)
-    localStorage.removeItem(advancedFiltersStorageKey(scope))
+    dataTableFilterStore.setAdvancedFilters(scope, {})
   }
   window.dispatchEvent(new Event(CLEAR_ALL_FILTERS_EVENT))
 }

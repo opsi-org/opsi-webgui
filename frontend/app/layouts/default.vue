@@ -1,7 +1,7 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
@@ -134,7 +134,7 @@ https://opsi.org/en/
             <div class="flex items-center justify-between mb-2">
               <span class="text-sm font-medium text-(--color-text)">{{ $t('quick.panel') }}</span>
               <CoreAppButton
-                @click="quickpanelOpen = false"
+                @click="setQuickpanelOpen(false)"
                 variant="ghost"
                 color="neutral"
                 :aria-label="String($t('common.close'))"
@@ -160,9 +160,9 @@ https://opsi.org/en/
           role="button"
           tabindex="0"
           :aria-label="String($t('common.close'))"
-          @click="quickpanelOpen = false"
-          @keydown.enter="quickpanelOpen = false"
-          @keydown.space.prevent="quickpanelOpen = false"
+          @click="setQuickpanelOpen(false)"
+          @keydown.enter="setQuickpanelOpen(false)"
+          @keydown.space.prevent="setQuickpanelOpen(false)"
         />
         <div class="absolute inset-0 bg-(--color-background) overflow-hidden">
           <div class="p-2.5 h-full min-h-0 flex flex-col overflow-hidden">
@@ -179,7 +179,7 @@ https://opsi.org/en/
                 color="neutral"
                 :aria-label="String($t('common.close'))"
                 class="rounded-full"
-                @click="quickpanelOpen = false"
+                @click="setQuickpanelOpen(false)"
               />
             </div>
 
@@ -253,12 +253,11 @@ https://opsi.org/en/
   const quickpanelOpen = ref(false)
   const showShortcutsHelp = ref(false)
 
-  const { layout: workspaceLayout } = useWorkspaceLayout()
   const MIN_QUICKPANEL_WIDTH = 220
   const quickpanelWidth = computed({
-    get: () => workspaceLayout.quickpanelWidth,
+    get: () => uiStore.layout.quickpanelWidth,
     set: (value: number) => {
-      workspaceLayout.quickpanelWidth = value
+      uiStore.layout.quickpanelWidth = value
     },
   })
   const isResizingQuickpanel = ref(false)
@@ -342,11 +341,13 @@ https://opsi.org/en/
   }
 
   function toggleQuickpanel() {
-    quickpanelOpen.value = !quickpanelOpen.value
-    if (!isMobile.value) {
-      uiStore.quickpanelOpened = quickpanelOpen.value
-    }
+    setQuickpanelOpen(!quickpanelOpen.value)
     updateDefaultPage()
+  }
+
+  function setQuickpanelOpen(isOpen: boolean) {
+    quickpanelOpen.value = isOpen
+    if (!isMobile.value) uiStore.quickpanelOpened = isOpen
   }
 
   const shortcutActions = useActiveShortcutActions()

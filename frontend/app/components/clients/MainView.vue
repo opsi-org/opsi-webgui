@@ -1,7 +1,7 @@
 <!--
   This file is part of the OPSI-WebGUI application.
   OPSI-WebGUI is the web-based management interface for OPSI.
-https://opsi.org/en/
+  https://opsi.org/en/
 
   Copyright (c) UIB GmbH info@uib.de 2026
   All rights reserved.
@@ -99,7 +99,7 @@ https://opsi.org/en/
     >
       <template #filter-actions="{ canSaveSearch, favorite }">
         <ClientsAdvancedFiltersPopover
-          v-model="advancedFilters"
+          :model-value="advancedFilters"
           :can-save-search="canSaveSearch"
           @update:model-value="handleAdvancedFiltersChange"
           @favorite="favorite"
@@ -334,6 +334,7 @@ https://opsi.org/en/
   import { CLEAR_ALL_FILTERS_EVENT } from '~/composables/useGlobalFavorites'
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useMessageBusStore } from '~/stores/messageBusStore'
+  import { useDataTableFilterStore } from '~/stores/dataTableFilterStore'
   import { storeToRefs } from 'pinia'
 
   const icons = useIcons()
@@ -341,6 +342,8 @@ https://opsi.org/en/
   const { getClients, getServerIds, getBlockedClients } = useApiHelpers()
   const selectionStore = useSelectionStore()
   const messageBusStore = useMessageBusStore()
+  const dataTableFilterStore = useDataTableFilterStore()
+  dataTableFilterStore.initialize()
   const { lastMsg: messageBusLastMsg } = storeToRefs(messageBusStore)
   const router = useRouter()
   const route = useRoute()
@@ -359,10 +362,14 @@ https://opsi.org/en/
   const panelType = ref<ClientPanelType | 'products' | 'add' | null>(null)
   const panelTab = ref('attributes')
   const panelInventoryTab = ref<'hardware' | 'software'>('hardware')
-  const DEFAULT_CLIENT_PANEL_VIEW_KEY = 'opsi-webgui-default-client-panel-view'
-  const SHOW_ALL_CLIENT_ROW_ACTIONS_KEY = 'opsi-webgui-show-all-client-row-actions'
-  const defaultClientPanelView = ref<ClientPanelType>('config')
-  const showAllClientRowActions = ref(false)
+  const tableSettings = useDataTableSettings('clients')
+  const defaultClientPanelView = computed<ClientPanelType>({
+    get: () => tableSettings.settings.defaultPanelView ?? 'config',
+    set: (value) => {
+      tableSettings.settings.defaultPanelView = value
+    },
+  })
+  const showAllClientRowActions = computed(() => tableSettings.settings.showAllRowActions ?? false)
   const panelProductType = ref('localboot')
   const panelProductTypes = [
     { label: String($t('products.localboot')), value: 'localboot' },
@@ -399,22 +406,10 @@ https://opsi.org/en/
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('clients'))
   const fetchClientsRequestId = ref(0)
   let fetchClientsController: AbortController | null = null
-  const ADVANCED_FILTERS_KEY = 'opsi-webgui-clients-advanced-filters'
-  const advancedFilters = ref<ClientAdvancedFilters>(readStoredAdvancedFilters())
-
-  function readStoredAdvancedFilters(): ClientAdvancedFilters {
-    if (import.meta.server) return {}
-    try {
-      const raw = localStorage.getItem(ADVANCED_FILTERS_KEY)
-      return raw ? (JSON.parse(raw) as ClientAdvancedFilters) : {}
-    } catch {
-      return {}
-    }
-  }
+  const advancedFilters = computed(() => dataTableFilterStore.advancedFilters.clients as ClientAdvancedFilters & Record<string, unknown>)
 
   function handleAdvancedFiltersChange(value: ClientAdvancedFilters) {
-    advancedFilters.value = value
-    if (!import.meta.server) localStorage.setItem(ADVANCED_FILTERS_KEY, JSON.stringify(value))
+    dataTableFilterStore.setAdvancedFilters('clients', value)
     return fetchClients(buildInitialPageParams(lastPageParams.value?.filterQuery ?? currentFilterQuery.value))
   }
 
@@ -448,7 +443,6 @@ https://opsi.org/en/
       if (typeof id === 'string' && id) applyFavoriteFromRoute(id)
     },
   )
-  const tableSettings = useDataTableSettings('clients')
   const productsSortColumn = ref<string | undefined>(undefined)
   const configTabsRef = ref<{ hasAnyChanges?: boolean; discardAll?: () => void; saveAll?: () => void } | null>(null)
   const productsTableRef = ref<{
@@ -491,7 +485,9 @@ https://opsi.org/en/
     return 'text-(--color-text-muted)'
   }
 
-  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
+  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefresh(fetchClients, {
+    watchEvents: ['event:host_created', 'event:host_updated', 'event:host_deleted'],
+  })
 
   const columns: DataTableColumnDef[] = [
     {
@@ -735,20 +731,13 @@ https://opsi.org/en/
     })
   }
 
-  function getCookie(name: string): string | null {
-    const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)'))
-    return match?.[1] ? decodeURIComponent(match[1]) : null
-  }
-
   function setDefaultClientPanelView(value: string) {
     if (!clientPanelViewOptions.value.some((option) => option.value === value)) return
     defaultClientPanelView.value = value as ClientPanelType
-    document.cookie = `${DEFAULT_CLIENT_PANEL_VIEW_KEY}=${value}; path=/; max-age=31536000; SameSite=Lax`
   }
 
   function setShowAllClientRowActions(value: boolean) {
-    showAllClientRowActions.value = value
-    localStorage.setItem(SHOW_ALL_CLIENT_ROW_ACTIONS_KEY, String(value))
+    tableSettings.settings.showAllRowActions = value
   }
 
   function handleSelectionChange(_rows: OpsiClient[], keys: string[]) {
@@ -980,7 +969,6 @@ https://opsi.org/en/
   watch(panelType, (newType) => {
     if (newType !== 'config' && newType !== 'logs' && newType !== 'clone' && newType !== 'inventory') return
     defaultClientPanelView.value = newType
-    document.cookie = `${DEFAULT_CLIENT_PANEL_VIEW_KEY}=${newType}; path=/; max-age=31536000; SameSite=Lax`
     if (panelClient.value) doOpenPanel(panelClient.value, newType)
   })
 
@@ -1009,15 +997,8 @@ https://opsi.org/en/
   )
 
   onMounted(async () => {
-    const storedDefaultPanelView = getCookie(DEFAULT_CLIENT_PANEL_VIEW_KEY)
-    showAllClientRowActions.value = localStorage.getItem(SHOW_ALL_CLIENT_ROW_ACTIONS_KEY) === 'true'
-    if (
-      storedDefaultPanelView === 'config' ||
-      storedDefaultPanelView === 'logs' ||
-      storedDefaultPanelView === 'inventory' ||
-      (storedDefaultPanelView === 'clone' && canCreateClients.value && !isReadOnly.value)
-    ) {
-      defaultClientPanelView.value = storedDefaultPanelView
+    if (defaultClientPanelView.value === 'clone' && (!canCreateClients.value || isReadOnly.value)) {
+      defaultClientPanelView.value = 'config'
     }
     const routeSortBy = route.query.sortBy as string | undefined
     if (routeSortBy) productsSortColumn.value = routeSortBy
