@@ -485,7 +485,9 @@
     return 'text-(--color-text-muted)'
   }
 
-  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshClients(fetchClients)
+  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefresh(fetchClients, {
+    watchEvents: ['event:host_created', 'event:host_updated', 'event:host_deleted'],
+  })
 
   const columns: DataTableColumnDef[] = [
     {

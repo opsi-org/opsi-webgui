@@ -34,6 +34,11 @@ export function readStorageJSON<T>(key: string, fallback: T): T {
   }
 }
 
+export function readClientStorageJSON<T>(key: string, fallback: T): T {
+  if (import.meta.server) return fallback
+  return readStorageJSON(key, fallback)
+}
+
 export function writeStorageValue(key: string, value: string): void {
   try {
     getLocalStorage()?.setItem(key, value)
@@ -48,6 +53,11 @@ export function writeStorageJSON(key: string, value: unknown): void {
   } catch {
     // Ignore unserializable values and continue without persistence.
   }
+}
+
+export function writeClientStorageJSON(key: string, value: unknown): void {
+  if (import.meta.server) return
+  writeStorageJSON(key, value)
 }
 
 export function removeStorageValue(key: string): void {

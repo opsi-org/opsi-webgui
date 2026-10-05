@@ -26,12 +26,42 @@ const legacyPreferenceKeys = [
   'opsi-webgui-show-all-client-row-actions',
   'opsi-webgui-terminal-quick-commands',
 ]
+const UI_STORAGE_KEY = 'opsi-webgui-ui'
+const LEGACY_LAYOUT_KEY = 'opsi-webgui-workspace-layout'
+
+interface WorkspaceLayoutState {
+  quickpanelWidth: number
+  detailPanelWidthPercent: number
+  groupsSidebarWidthPercent: number
+}
+
+const DEFAULT_WORKSPACE_LAYOUT: WorkspaceLayoutState = {
+  quickpanelWidth: 264,
+  detailPanelWidthPercent: 50,
+  groupsSidebarWidthPercent: 50,
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+}
+
+function migrateShowAllRowActions(value: boolean) {
+  const tableSettings = readStorageJSON<Record<string, unknown>>('opsi-webgui-datatable-settings', {})
+  const clientSettings = tableSettings.clients
+  if (!clientSettings || typeof clientSettings !== 'object' || !('showAllRowActions' in clientSettings)) {
+    tableSettings.clients = {
+      ...(clientSettings && typeof clientSettings === 'object' ? clientSettings : {}),
+      showAllRowActions: value,
+    }
+    writeStorageJSON('opsi-webgui-datatable-settings', tableSettings)
+  }
+}
 
 export const useUiStore = defineStore('ui', {
   persist: {
     key: 'opsi-webgui-ui',
     storage: safeLocalStorage,
-    pick: ['quickpanelOpened', 'menuCollapsed', 'productActions', 'terminal', 'logs'],
+    pick: ['quickpanelOpened', 'menuCollapsed', 'productActions', 'terminal', 'logs', 'layout'],
   },
   state: () => ({
     isMobile: false,
@@ -46,12 +76,13 @@ export const useUiStore = defineStore('ui', {
       autoRefresh: false,
       autoScroll: true,
     },
+    layout: { ...DEFAULT_WORKSPACE_LAYOUT },
   }),
   actions: {
     initializePreferences() {
       if (import.meta.server) return
 
-      const storedUi = readStorageJSON<unknown>('opsi-webgui-ui', {})
+      const storedUi = readStorageJSON<unknown>(UI_STORAGE_KEY, {})
       if (storedUi && typeof storedUi === 'object' && !Array.isArray(storedUi)) {
         const legacyTheme = 'theme' in storedUi ? storedUi.theme : undefined
         if ((legacyTheme === 'light' || legacyTheme === 'dark') && readStorageValue('opsi-webgui-color-mode') === null) {
@@ -65,23 +96,32 @@ export const useUiStore = defineStore('ui', {
           'showAllRowActions' in legacyClients &&
           typeof legacyClients.showAllRowActions === 'boolean'
         ) {
-          const tableSettings = readStorageJSON<Record<string, unknown>>('opsi-webgui-datatable-settings', {})
-          const clientSettings = tableSettings.clients
-          if (!clientSettings || typeof clientSettings !== 'object' || !('showAllRowActions' in clientSettings)) {
-            tableSettings.clients = {
-              ...(clientSettings && typeof clientSettings === 'object' ? clientSettings : {}),
-              showAllRowActions: legacyClients.showAllRowActions,
-            }
-            writeStorageJSON('opsi-webgui-datatable-settings', tableSettings)
-          }
+          migrateShowAllRowActions(legacyClients.showAllRowActions)
         }
 
         if ('theme' in storedUi || 'clients' in storedUi) {
           const preferences = { ...storedUi } as Record<string, unknown>
           delete preferences.theme
           delete preferences.clients
-          writeStorageJSON('opsi-webgui-ui', preferences)
+          writeStorageJSON(UI_STORAGE_KEY, preferences)
         }
+      }
+
+      const legacyLayoutRaw = readStorageValue(LEGACY_LAYOUT_KEY)
+      if (legacyLayoutRaw !== null) {
+        const legacyLayout = readStorageJSON<unknown>(LEGACY_LAYOUT_KEY, {})
+        const storedLayout = isRecord(storedUi) && isRecord(storedUi.layout) ? storedUi.layout : {}
+        const migratedLayout = { ...DEFAULT_WORKSPACE_LAYOUT }
+        for (const key of Object.keys(DEFAULT_WORKSPACE_LAYOUT) as (keyof WorkspaceLayoutState)[]) {
+          const oldValue = legacyLayout && isRecord(legacyLayout) ? legacyLayout[key] : undefined
+          const currentValue = storedLayout[key]
+          const value = typeof currentValue === 'number' ? currentValue : oldValue
+          if (typeof value === 'number' && Number.isFinite(value)) migratedLayout[key] = value
+        }
+        this.layout = migratedLayout
+        const uiPreferences = readStorageJSON<unknown>(UI_STORAGE_KEY, {})
+        writeStorageJSON(UI_STORAGE_KEY, { ...(isRecord(uiPreferences) ? uiPreferences : {}), layout: migratedLayout })
+        removeStorageValue(LEGACY_LAYOUT_KEY)
       }
 
       const processAfterSave = readStorageValue('opsi-webgui-save-and-process')
@@ -91,17 +131,7 @@ export const useUiStore = defineStore('ui', {
         this.productActions.visibility = visibility
       }
       const showAllClientRowActions = readStorageValue('opsi-webgui-show-all-client-row-actions')
-      if (showAllClientRowActions !== null) {
-        const tableSettings = readStorageJSON<Record<string, unknown>>('opsi-webgui-datatable-settings', {})
-        const clientSettings = tableSettings.clients
-        if (!clientSettings || typeof clientSettings !== 'object' || !('showAllRowActions' in clientSettings)) {
-          tableSettings.clients = {
-            ...(clientSettings && typeof clientSettings === 'object' ? clientSettings : {}),
-            showAllRowActions: showAllClientRowActions === 'true',
-          }
-          writeStorageJSON('opsi-webgui-datatable-settings', tableSettings)
-        }
-      }
+      if (showAllClientRowActions !== null) migrateShowAllRowActions(showAllClientRowActions === 'true')
       const commandsKey = 'opsi-webgui-terminal-quick-commands'
       if (readStorageValue(commandsKey) !== null) {
         const commands = readStorageJSON<unknown>(commandsKey, [])

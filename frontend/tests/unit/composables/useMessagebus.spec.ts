@@ -125,9 +125,12 @@ describe('useAutoRefresh', () => {
   })
 
   it('refreshes product data when a product-on-client event changes the action request', async () => {
-    const { useAutoRefreshProducts } = await import('~/app/composables/useMessagebus')
+    const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
     const cb = vi.fn()
-    const { changesDetected } = useAutoRefreshProducts(cb)
+    const { changesDetected } = useAutoRefresh(cb, {
+      watchEvents: ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'],
+      refreshEvents: ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'],
+    })
 
     await emitMessage({ type: 'event', event: 'productOnClient_updated', channel: 'event:productOnClient_updated' })
     expect(changesDetected.value).toBe(true)
@@ -196,9 +199,11 @@ describe('useAutoRefresh', () => {
   })
 
   it('scoped watchers (clients) ignore product events', async () => {
-    const { useAutoRefreshClients } = await import('~/app/composables/useMessagebus')
+    const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
     const cb = vi.fn()
-    const { changesDetected } = useAutoRefreshClients(cb)
+    const { changesDetected } = useAutoRefresh(cb, {
+      watchEvents: ['event:host_created', 'event:host_updated', 'event:host_deleted'],
+    })
 
     await emitMessage({
       type: 'event',
@@ -212,9 +217,24 @@ describe('useAutoRefresh', () => {
   })
 
   it('scoped watchers (servers) react to config events and ignore product events', async () => {
-    const { useAutoRefreshServers } = await import('~/app/composables/useMessagebus')
+    const { useAutoRefresh } = await import('~/app/composables/useMessagebus')
     const cb = vi.fn()
-    const { changesDetected } = useAutoRefreshServers(cb)
+    const { changesDetected } = useAutoRefresh(cb, {
+      watchEvents: [
+        'event:host_created',
+        'event:host_updated',
+        'event:host_deleted',
+        'event:host_connected',
+        'event:host_disconnected',
+        'event:config_created',
+        'event:config_updated',
+        'event:config_deleted',
+        'event:configState_created',
+        'event:configState_updated',
+        'event:configState_deleted',
+        'event:app_state_changed',
+      ],
+    })
 
     await emitMessage({
       type: 'event',

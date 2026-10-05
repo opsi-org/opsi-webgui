@@ -248,17 +248,3 @@ export function useAutoRefresh(
     manualRefresh,
   }
 }
-
-export function useAutoRefreshClients(cb: RefreshCallback) {
-  // host_connected/host_disconnected only change the reachable state of a single
-  // client, which the client table updates in place - no full table reload.
-  return useAutoRefresh(cb, { watchEvents: HOST_DATA_EVENTS })
-}
-
-export function useAutoRefreshProducts(cb: RefreshCallback) {
-  return useAutoRefresh(cb, { watchEvents: PRODUCT_EVENTS, refreshEvents: PRODUCT_EVENTS })
-}
-
-export function useAutoRefreshServers(cb: RefreshCallback) {
-  return useAutoRefresh(cb, { watchEvents: SERVER_EVENTS })
-}

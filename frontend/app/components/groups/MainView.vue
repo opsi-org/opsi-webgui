@@ -702,12 +702,14 @@
 <script setup lang="ts">
   import type { GroupTreeNodeData } from '~/types'
   import { useSelectionStore } from '~/stores/selectionStore'
+  import { useUiStore } from '~/stores/uiStore'
 
   const icons = useIcons()
   const { t: $t } = useI18n()
   const route = useRoute()
   const router = useRouter()
   const selectionStore = useSelectionStore()
+  const uiStore = useUiStore()
   const { isReadOnly, isHostGroupAccessRestricted, isProductGroupAccessRestricted } = useUserPermissions()
   const {
     getClientIds,
@@ -815,11 +817,10 @@
   const containerRef = ref<HTMLElement | null>(null)
   const isMobile = ref(false)
   const showSidebar = ref(true)
-  const { layout: workspaceLayout } = useWorkspaceLayout()
   const sidebarWidthPercent = computed({
-    get: () => workspaceLayout.groupsSidebarWidthPercent,
+    get: () => uiStore.layout.groupsSidebarWidthPercent,
     set: (value: number) => {
-      workspaceLayout.groupsSidebarWidthPercent = value
+      uiStore.layout.groupsSidebarWidthPercent = value
     },
   })
   const isResizing = ref(false)

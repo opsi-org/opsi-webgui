@@ -92,6 +92,39 @@ function getRecursiveMembersCacheKey(groupId: string, selectedServers: string[] 
   return `${groupId}::${[...selectedServers].sort().join(',')}`
 }
 
+function parseLazyGroupChildren(children: Record<string, unknown>, groupId: string, groupType: 'client' | 'product') {
+  const members: string[] = []
+  const subGroups: GroupTreeNodeData[] = []
+  const nodeType = groupType === 'client' ? 'HostGroup' : 'ProductGroup'
+
+  for (const child of Object.values(children)) {
+    const data = child as Record<string, unknown>
+    const childType = data.type as string
+    const childId = (data.id as string)?.split(';')[0] || (data.text as string) || ''
+    if (!childId) continue
+
+    const isMember = childType === 'ObjectToGroup'
+    const isSpecial = isMember && childId.toLowerCase().includes('not_assigned')
+    if (isMember && !isSpecial) {
+      members.push(childId)
+    } else if (isSpecial || (childType === nodeType && childId !== groupId)) {
+      subGroups.push({
+        id: childId,
+        label: (data.text as string) || childId,
+        parentId: groupId,
+        type: nodeType,
+        memberCount: typeof data.member_count === 'number' ? data.member_count : 0,
+        members: [],
+        children: [],
+        isRoot: false,
+        isSpecial: isSpecial || childId.toLowerCase().includes('not_assigned'),
+      })
+    }
+  }
+
+  return { members, subGroups }
+}
+
 function transformApiToTree(data: Record<string, unknown>, groupType: 'client' | 'product', level = 0): GroupTreeNodeData[] {
   if (!data || typeof data !== 'object') return []
   const processNode = (key: string, value: unknown, parentId?: string, nodeLevel = 0): GroupTreeNodeData | null => {
@@ -458,43 +491,7 @@ export function useCachedData() {
       if (result.data?.groups) {
         const groupData = result.data.groups as Record<string, unknown>
         const children = (groupData.children || {}) as Record<string, unknown>
-        const members: string[] = []
-        const subGroups: GroupTreeNodeData[] = []
-
-        for (const [_key, child] of Object.entries(children)) {
-          const c = child as Record<string, unknown>
-          const childType = c.type as string
-          const childId = (c.id as string)?.split(';')[0] || (c.text as string) || ''
-          if (!childId) continue
-          const isSpecialMember = childType === 'ObjectToGroup' && childId.toLowerCase().includes('not_assigned')
-          if (isSpecialMember) {
-            subGroups.push({
-              id: childId,
-              label: (c.text as string) || childId,
-              parentId: groupId,
-              type: 'HostGroup',
-              memberCount: typeof c.member_count === 'number' ? (c.member_count as number) : 0,
-              members: [],
-              children: [],
-              isRoot: false,
-              isSpecial: true,
-            })
-          } else if (childType === 'ObjectToGroup') {
-            members.push(childId)
-          } else if (childType === 'HostGroup' && childId !== groupId) {
-            subGroups.push({
-              id: childId,
-              label: (c.text as string) || childId,
-              parentId: groupId,
-              type: 'HostGroup',
-              memberCount: typeof c.member_count === 'number' ? (c.member_count as number) : 0,
-              members: [],
-              children: [],
-              isRoot: false,
-              isSpecial: childId.toLowerCase().includes('not_assigned'),
-            })
-          }
-        }
+        const { members, subGroups } = parseLazyGroupChildren(children, groupId, 'client')
 
         patchTreeNodeContents(clientGroupsState.tree, groupId, members, subGroups)
 
@@ -524,43 +521,7 @@ export function useCachedData() {
       if (result.data?.groups) {
         const groupData = result.data.groups as Record<string, unknown>
         const children = (groupData.children || {}) as Record<string, unknown>
-        const members: string[] = []
-        const subGroups: GroupTreeNodeData[] = []
-
-        for (const [_key, child] of Object.entries(children)) {
-          const c = child as Record<string, unknown>
-          const childType = c.type as string
-          const childId = (c.id as string)?.split(';')[0] || (c.text as string) || ''
-          if (!childId) continue
-          const isSpecialMember = childType === 'ObjectToGroup' && childId.toLowerCase().includes('not_assigned')
-          if (isSpecialMember) {
-            subGroups.push({
-              id: childId,
-              label: (c.text as string) || childId,
-              parentId: groupId,
-              type: 'ProductGroup',
-              memberCount: typeof c.member_count === 'number' ? (c.member_count as number) : 0,
-              members: [],
-              children: [],
-              isRoot: false,
-              isSpecial: true,
-            })
-          } else if (childType === 'ObjectToGroup') {
-            members.push(childId)
-          } else if (childType === 'ProductGroup' && childId !== groupId) {
-            subGroups.push({
-              id: childId,
-              label: (c.text as string) || childId,
-              parentId: groupId,
-              type: 'ProductGroup',
-              memberCount: typeof c.member_count === 'number' ? (c.member_count as number) : 0,
-              members: [],
-              children: [],
-              isRoot: false,
-              isSpecial: childId.toLowerCase().includes('not_assigned'),
-            })
-          }
-        }
+        const { members, subGroups } = parseLazyGroupChildren(children, groupId, 'product')
 
         patchTreeNodeContents(productGroupsState.tree, groupId, members, subGroups)
 

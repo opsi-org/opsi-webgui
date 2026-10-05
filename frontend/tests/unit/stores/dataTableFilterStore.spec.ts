@@ -1,5 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { getStoredDataTableFilter, saveStoredDataTableFilter } from '~/app/composables/data-table/useDataTableFilter'
 import { useDataTableFilterStore } from '~/stores/dataTableFilterStore'
 import { installLocalStorage } from '../helpers/localStorage'
 
@@ -17,7 +18,7 @@ describe('dataTableFilterStore', () => {
     const store = useDataTableFilterStore()
     store.initialize()
 
-    expect(store.queries.clients).toBe('name:pc')
+    expect(getStoredDataTableFilter('clients')).toBe('name:pc')
     expect(store.advancedFilters.products).toEqual({ unused: true })
     expect(JSON.parse(storage.getItem('opsi-webgui-datatable-filter-queries') ?? '{}')).toEqual({
       queries: { clients: 'name:pc' },
@@ -30,8 +31,8 @@ describe('dataTableFilterStore', () => {
     const storage = installLocalStorage()
     const store = useDataTableFilterStore()
     store.initialize()
+    saveStoredDataTableFilter('servers', 'server01')
     store.setAdvancedFilters('servers', { type: 'depot' })
-    store.saveFilterQuery('servers', 'server01')
 
     const stored = JSON.parse(storage.getItem('opsi-webgui-datatable-filter-queries') ?? '{}')
     expect(stored.queries.servers).toBe('server01')

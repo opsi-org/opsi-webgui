@@ -29,6 +29,10 @@ describe('uiStore preferences', () => {
     storage.setItem('opsi-webgui-terminal-quick-commands', JSON.stringify(['hostname']))
     storage.setItem('opsi-webgui-clients-advanced-filters', JSON.stringify({ reachable: true }))
     storage.setItem('opsi-webgui-ui', JSON.stringify({ theme: 'dark', clients: { showAllRowActions: true } }))
+    storage.setItem(
+      'opsi-webgui-workspace-layout',
+      JSON.stringify({ quickpanelWidth: 320, detailPanelWidthPercent: 45, groupsSidebarWidthPercent: 60 }),
+    )
 
     const store = useUiStore()
     store.initializePreferences()
@@ -47,9 +51,11 @@ describe('uiStore preferences', () => {
       autoRefresh: false,
       autoScroll: true,
     })
+    expect(store.layout).toEqual({ quickpanelWidth: 320, detailPanelWidthPercent: 45, groupsSidebarWidthPercent: 60 })
     expect(filterStore.advancedFilters.clients).toEqual({ reachable: true })
     expect(storage.getItem('opsi-webgui-save-and-process')).toBeNull()
     expect(storage.getItem('opsi-webgui-clients-advanced-filters')).toBeNull()
+    expect(storage.getItem('opsi-webgui-workspace-layout')).toBeNull()
     expect(storage.getItem('opsi-webgui-color-mode')).toBe('dark')
     expect(JSON.parse(storage.getItem('opsi-webgui-ui') ?? '{}')).not.toHaveProperty('theme')
 

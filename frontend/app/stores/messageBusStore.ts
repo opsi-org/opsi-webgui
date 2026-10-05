@@ -219,12 +219,6 @@ export const useMessageBusStore = defineStore('messageBus', {
       }
     },
 
-    reset() {
-      this.disconnect()
-      this.lastMsg = undefined
-      this._connected = false
-    },
-
     setAutoRefresh(val: boolean) {
       this.autoRefresh = val
     },

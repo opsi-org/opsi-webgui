@@ -154,7 +154,22 @@
   const router = useRouter()
   const route = useRoute()
   const { isReadOnly, hasServerWriteAccess, isDepotAccessRestricted } = useUserPermissions()
-  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshServers(fetchServers)
+  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefresh(fetchServers, {
+    watchEvents: [
+      'event:host_created',
+      'event:host_updated',
+      'event:host_deleted',
+      'event:host_connected',
+      'event:host_disconnected',
+      'event:config_created',
+      'event:config_updated',
+      'event:config_deleted',
+      'event:configState_created',
+      'event:configState_updated',
+      'event:configState_deleted',
+      'event:app_state_changed',
+    ],
+  })
 
   const loading = ref(false)
   const error = ref<string | null>(null)

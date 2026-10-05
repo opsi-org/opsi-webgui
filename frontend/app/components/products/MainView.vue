@@ -625,7 +625,10 @@
 
   const hasUnsavedChanges = computed(() => productConfigTabsRef.value?.hasAnyChanges || false)
 
-  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefreshProducts(fetchProducts)
+  const { autoRefreshEnabled, changesDetected, lastChangeDescription, manualRefresh } = useAutoRefresh(fetchProducts, {
+    watchEvents: ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'],
+    refreshEvents: ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'],
+  })
 
   const columns: DataTableColumnDef[] = [
     {

@@ -253,12 +253,11 @@
   const quickpanelOpen = ref(false)
   const showShortcutsHelp = ref(false)
 
-  const { layout: workspaceLayout } = useWorkspaceLayout()
   const MIN_QUICKPANEL_WIDTH = 220
   const quickpanelWidth = computed({
-    get: () => workspaceLayout.quickpanelWidth,
+    get: () => uiStore.layout.quickpanelWidth,
     set: (value: number) => {
-      workspaceLayout.quickpanelWidth = value
+      uiStore.layout.quickpanelWidth = value
     },
   })
   const isResizingQuickpanel = ref(false)

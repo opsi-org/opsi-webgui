@@ -131,6 +131,8 @@
 </template>
 
 <script setup lang="ts">
+  import { useUiStore } from '~/stores/uiStore'
+
   const props = withDefaults(
     defineProps<{
       showFilter?: boolean
@@ -177,11 +179,11 @@
   // Split view state
   const isMobile = ref(false)
   const containerRef = ref<HTMLElement | null>(null)
-  const { layout: workspaceLayout } = useWorkspaceLayout()
+  const uiStore = useUiStore()
   const panelWidthPercent = computed({
-    get: () => workspaceLayout.detailPanelWidthPercent ?? props.defaultPanelWidthPercent,
+    get: () => uiStore.layout.detailPanelWidthPercent ?? props.defaultPanelWidthPercent,
     set: (value: number) => {
-      workspaceLayout.detailPanelWidthPercent = value
+      uiStore.layout.detailPanelWidthPercent = value
     },
   })
   const minPanelPercent = 25
