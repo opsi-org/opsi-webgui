@@ -623,8 +623,7 @@
     "whatsNew": "What's New"
   },
   "table": {
-    "allLoaded": "All items loaded",
-    "pagination": "Pagination"
+    "allLoaded": "All items loaded"
   },
   "terminal": {
     "channel": "Terminal Channel",

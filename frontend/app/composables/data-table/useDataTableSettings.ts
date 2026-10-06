@@ -35,7 +35,6 @@ export interface DataTableSettings {
   sortColumn: string
   sortDirection: 'asc' | 'desc'
   pageSize: number
-  displayMode: 'infinite' | 'pagination'
   selectionMode: 'multi' | 'single'
   onlySelected?: boolean
   filterMode?: 'primary' | 'all'
@@ -51,7 +50,6 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'depotId',
     sortDirection: 'asc',
     pageSize: 20,
-    displayMode: 'pagination',
     selectionMode: 'single',
     filterMode: 'all',
   },
@@ -71,7 +69,6 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'clientId',
     sortDirection: 'asc',
     pageSize: 20,
-    displayMode: 'pagination',
     selectionMode: 'multi',
     filterMode: 'all',
     defaultPanelView: 'config',
@@ -82,7 +79,6 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
-    displayMode: 'pagination',
     selectionMode: 'multi',
     filterMode: 'all',
   },
@@ -91,7 +87,6 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
-    displayMode: 'pagination',
     selectionMode: 'multi',
     filterMode: 'all',
   },
@@ -100,7 +95,6 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'productId',
     sortDirection: 'asc',
     pageSize: 20,
-    displayMode: 'pagination',
     selectionMode: 'multi',
     filterMode: 'all',
   },
@@ -109,7 +103,6 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'className',
     sortDirection: 'asc',
     pageSize: 50,
-    displayMode: 'pagination',
     selectionMode: 'single',
     filterMode: 'all',
   },
@@ -118,7 +111,6 @@ const defaults: Record<string, DataTableSettings> = {
     sortColumn: 'displayName',
     sortDirection: 'asc',
     pageSize: 50,
-    displayMode: 'pagination',
     selectionMode: 'single',
     filterMode: 'all',
   },
@@ -187,11 +179,12 @@ export function useDataTableSettings(tableId: string) {
     sortColumn: '',
     sortDirection: 'asc' as const,
     pageSize: 20,
-    displayMode: 'infinite' as const,
     selectionMode: 'multi' as const,
   }
 
-  const settings = reactive<DataTableSettings>({ ...def, ...stored[tableId] })
+  const storedSettings = { ...stored[tableId] }
+  delete (storedSettings as DataTableSettings & { displayMode?: unknown }).displayMode
+  const settings = reactive<DataTableSettings>({ ...def, ...storedSettings })
 
   watch(
     () => ({ ...settings }),
@@ -231,10 +224,6 @@ export function useDataTableSettings(tableId: string) {
     settings.pageSize = size
   }
 
-  function setDisplayMode(mode: 'infinite' | 'pagination') {
-    settings.displayMode = mode
-  }
-
   function setSelectionMode(mode: 'multi' | 'single') {
     settings.selectionMode = mode
   }
@@ -250,7 +239,6 @@ export function useDataTableSettings(tableId: string) {
     isColumnVisible,
     setSort,
     setPageSize,
-    setDisplayMode,
     setSelectionMode,
     reset,
   }
