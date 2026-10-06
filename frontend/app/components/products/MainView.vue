@@ -1202,7 +1202,7 @@
   }
 
   async function fetchProducts(params?: PageChangeParams) {
-    const isInfinitePageRequest = params?.displayMode === 'infinite' && params.pageNumber > 1
+    const isInfinitePageRequest = params != null && params.pageNumber > 1
     const requestId = isInfinitePageRequest ? fetchProductsRequestId.value : ++fetchProductsRequestId.value
     if (!isInfinitePageRequest) fetchProductsController?.abort()
     const controller = new AbortController()
@@ -1267,7 +1267,7 @@
       if (result.error) throw result.error
       const newData = (result.data || []) as ProductRow[]
       if (result.total !== null) totalItems.value = result.total
-      if (!isReload && effectiveParams?.displayMode === 'infinite' && effectiveParams.pageNumber > 1) {
+      if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
         rowOffset.value += appendInfinitePage(products.value, newData, effectiveParams.perPage, (product) => product.productId)
       } else {
         products.value = newData

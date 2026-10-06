@@ -7,7 +7,7 @@
   All rights reserved.
   License: AGPL-3.0
 
-  CoreAppDataTable - Main data table with sorting, filtering, selection, and pagination.
+  CoreAppDataTable - Main data table with sorting, filtering, selection, and infinite scrolling.
 -->
 <template>
   <div class="data-table flex flex-col h-full min-h-0 min-w-0" :class="{ 'data-table--compact': isCompactDensity }">
@@ -123,28 +123,6 @@
           <template #content>
             <div class="max-h-[70vh] overflow-y-auto">
               <div class="mb-3 grid grid-cols-[6.5rem_1fr] items-center gap-x-2 gap-y-2.5">
-                <span class="text-xs text-(--color-text-muted)">{{ $t('settings.display') }}</span>
-                <div class="flex gap-0.5">
-                  <CoreAppButton
-                    size="xs"
-                    class="flex-1"
-                    :color="'primary'"
-                    :variant="tableSettings.settings.displayMode === 'infinite' ? 'solid' : 'outline'"
-                    @click="changeDisplayMode('infinite')"
-                  >
-                    {{ $t('settings.infiniteScroll') }}
-                  </CoreAppButton>
-                  <CoreAppButton
-                    size="xs"
-                    class="flex-1"
-                    :color="'primary'"
-                    :variant="tableSettings.settings.displayMode === 'pagination' ? 'solid' : 'outline'"
-                    @click="changeDisplayMode('pagination')"
-                  >
-                    {{ $t('table.pagination') }}
-                  </CoreAppButton>
-                </div>
-
                 <template v-if="selectable">
                   <span class="text-xs text-(--color-text-muted)">{{ $t('settings.selection') }}</span>
                   <div class="flex gap-0.5">
@@ -405,7 +383,7 @@
               </tr>
             </thead>
 
-            <tbody class="data-table-body" :class="{ 'pb-2': displayMode === 'pagination' }">
+            <tbody class="data-table-body">
               <tr v-if="topSpacerHeight > 0" aria-hidden="true" class="virtual-spacer" :style="{ height: topSpacerHeight + 'px' }">
                 <td :colspan="totalColSpan" class="p-0"></td>
               </tr>
@@ -513,13 +491,13 @@
                 </td>
               </tr>
 
-              <tr v-if="displayMode === 'infinite' && hasMoreData" ref="scrollSentinel" class="scroll-sentinel">
+              <tr v-if="hasMoreData" ref="scrollSentinel" class="scroll-sentinel">
                 <td :colspan="totalColSpan" class="px-4 py-4 text-center">
                   <CoreAppLoadingSpinner size="sm" />
                 </td>
               </tr>
 
-              <tr v-else-if="displayMode === 'infinite' && rows.length > 0 && !hasMoreData">
+              <tr v-else-if="rows.length > 0 && !hasMoreData">
                 <td :colspan="totalColSpan" class="px-4 py-3 text-center">
                   <span class="text-xs text-(--color-text-muted)">{{ $t('table.allLoaded') }}</span>
                 </td>
@@ -532,49 +510,9 @@
 
     <div class="shrink-0 px-1 rounded-b-lg flex items-center justify-between gap-4">
       <span class="text-xs text-(--color-text-muted)">
-        <template v-if="displayMode === 'infinite'">
-          {{ $t('common.showing') }} {{ rows.length }} {{ $t('common.of') }} {{ serverTotal }}
-        </template>
-        <template v-else>
-          {{ $t('common.showing') }} {{ paginationStartIndex + 1 }}-{{ Math.min(paginationEndIndex, serverTotal) }} {{ $t('common.of') }}
-          {{ serverTotal }}
-        </template>
+        {{ $t('common.showing') }} {{ rowOffset + rows.length }} {{ $t('common.of') }} {{ serverTotal }}
         <span v-if="onlySelected" class="ml-1 text-(--color-warning-soft-text)">{{ $t('settings.showOnlySelectedHint') }}</span>
       </span>
-      <div v-if="displayMode === 'pagination' && totalPages > 1" class="flex items-center gap-1">
-        <CoreAppButton
-          :icon="icons.chevronLeft"
-          :aria-label="$t('common.previous')"
-          variant="outline"
-          color="neutral"
-          size="xs"
-          :disabled="currentPage === 1"
-          @click="goToPage(currentPage - 1)"
-        />
-        <template v-for="page in visiblePageNumbers" :key="page">
-          <span v-if="page === '...'" class="px-2 text-(--color-text-muted)">...</span>
-          <CoreAppButton
-            v-else
-            :aria-label="`${$t('common.page')} ${page}` + (page === currentPage ? ` (${$t('common.current')})` : '')"
-            :variant="page === currentPage ? 'solid' : 'ghost'"
-            :color="page === currentPage ? 'primary' : 'neutral'"
-            size="xs"
-            class="min-w-7"
-            @click="goToPage(page as number)"
-          >
-            {{ page }}
-          </CoreAppButton>
-        </template>
-        <CoreAppButton
-          :icon="icons.chevronRight"
-          :aria-label="$t('common.next')"
-          variant="outline"
-          color="neutral"
-          size="xs"
-          :disabled="currentPage === totalPages"
-          @click="goToPage(currentPage + 1)"
-        />
-      </div>
     </div>
   </div>
 </template>
@@ -595,7 +533,6 @@
     serverFilterQuery?: string
     sortBySelection: boolean
     onlySelected: boolean
-    displayMode?: 'infinite' | 'pagination'
   }
 
   interface Props {
@@ -813,7 +750,6 @@
 
   let filterDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
-  const displayMode = computed(() => tableSettings.settings.displayMode)
   const pageSize = computed(() => tableSettings.settings.pageSize)
   const isCompactDensity = computed(() => true)
   const effectiveMaxHeight = computed(() => {
@@ -868,34 +804,7 @@
   })
 
   const serverTotal = computed(() => props.totalItems || props.rows.length)
-  const totalPages = computed(() => Math.max(1, Math.ceil(serverTotal.value / pageSize.value)))
-  const paginationStartIndex = computed(() => (currentPage.value - 1) * pageSize.value)
-  const paginationEndIndex = computed(() => currentPage.value * pageSize.value)
-
-  const visiblePageNumbers = computed(() => {
-    const pages: (number | string)[] = []
-    const total = totalPages.value
-    const current = currentPage.value
-    if (total <= 7) {
-      for (let i = 1; i <= total; i++) pages.push(i)
-    } else {
-      pages.push(1)
-      if (current > 3) pages.push('...')
-      const start = Math.max(2, current - 1)
-      const end = Math.min(total - 1, current + 1)
-      for (let i = start; i <= end; i++) pages.push(i)
-      if (current < total - 2) pages.push('...')
-      pages.push(total)
-    }
-    return pages
-  })
-
-  const hasMoreData = computed(() => {
-    if (displayMode.value === 'infinite') {
-      return hasMoreInfiniteData(autoPageStalled.value, props.rowOffset + props.rows.length, serverTotal.value)
-    }
-    return false
-  })
+  const hasMoreData = computed(() => hasMoreInfiniteData(autoPageStalled.value, props.rowOffset + props.rows.length, serverTotal.value))
 
   const localMatcher = computed(() => createTextMatcher(filterQueryInternal.value, filterOptions.value))
 
@@ -946,7 +855,6 @@
       serverFilterQuery: serverFilterQuery.value,
       sortBySelection: sortBySelection.value,
       onlySelected: onlySelected.value,
-      displayMode: displayMode.value,
     }
   }
 
@@ -1021,12 +929,6 @@
 
   function changePageSize(size: number) {
     tableSettings.setPageSize(size)
-    currentPage.value = 1
-    emitPageChange()
-  }
-
-  function changeDisplayMode(mode: 'infinite' | 'pagination') {
-    tableSettings.setDisplayMode(mode)
     currentPage.value = 1
     emitPageChange()
   }
@@ -1150,19 +1052,11 @@
     emitPageChange()
   }
 
-  function goToPage(page: number) {
-    if (page >= 1 && page <= totalPages.value) {
-      currentPage.value = page
-      scrollToTop()
-      emitPageChange()
-    }
-  }
-
   let scrollFrame: number | null = null
 
   function handleScroll() {
     updateVirtualWindow()
-    if (displayMode.value !== 'infinite' || scrollFrame !== null) return
+    if (scrollFrame !== null) return
     scrollFrame = requestAnimationFrame(() => {
       scrollFrame = null
       const el = tableContainer.value
@@ -1181,7 +1075,7 @@
   let autoPageRowCountAtRequest = -1
 
   function requestNextInfinitePage() {
-    if (displayMode.value !== 'infinite' || autoPageStalled.value || sentinelLoadPending || props.loading || !hasMoreData.value) {
+    if (autoPageStalled.value || sentinelLoadPending || props.loading || !hasMoreData.value) {
       return
     }
     sentinelLoadPending = true
@@ -1194,7 +1088,6 @@
   }
 
   function resetInfinitePagingState() {
-    if (displayMode.value !== 'infinite') return
     const inferredPage = Math.max(1, Math.ceil(props.rows.length / pageSize.value))
     if (currentPage.value > inferredPage) {
       currentPage.value = inferredPage
@@ -1204,7 +1097,7 @@
 
   function maybeFillViewport() {
     const el = tableContainer.value
-    if (!el || displayMode.value !== 'infinite' || sentinelLoadPending) return
+    if (!el || sentinelLoadPending) return
     if (
       needsMoreToFill({
         scrollHeight: el.scrollHeight,

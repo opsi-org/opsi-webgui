@@ -108,14 +108,12 @@ describe('useDataTableSettings', () => {
     })
   })
 
-  describe('display / selection / page size setters', () => {
-    it('setPageSize, setDisplayMode and setSelectionMode update the settings', () => {
-      const { settings, setPageSize, setDisplayMode, setSelectionMode } = useDataTableSettings('clients')
+  describe('selection / page size setters', () => {
+    it('setPageSize and setSelectionMode update the settings', () => {
+      const { settings, setPageSize, setSelectionMode } = useDataTableSettings('clients')
       setPageSize(50)
-      setDisplayMode('pagination')
       setSelectionMode('single')
       expect(settings.pageSize).toBe(50)
-      expect(settings.displayMode).toBe('pagination')
       expect(settings.selectionMode).toBe('single')
     })
   })
@@ -141,7 +139,6 @@ describe('useDataTableSettings', () => {
             sortColumn: 'lastSeen',
             sortDirection: 'desc',
             pageSize: 100,
-            displayMode: 'pagination',
             selectionMode: 'single',
           },
         }),
