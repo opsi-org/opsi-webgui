@@ -789,7 +789,7 @@
   }
 
   async function fetchClients(params?: PageChangeParams) {
-    const isInfinitePageRequest = params?.displayMode === 'infinite' && params.pageNumber > 1
+    const isInfinitePageRequest = params != null && params.pageNumber > 1
     const requestId = isInfinitePageRequest ? fetchClientsRequestId.value : ++fetchClientsRequestId.value
     if (!isInfinitePageRequest) fetchClientsController?.abort()
     const controller = new AbortController()
@@ -849,7 +849,7 @@
       else if (result.data) {
         const newData = result.data as OpsiClient[]
         if (result.total !== null) totalItems.value = result.total
-        if (!isReload && effectiveParams?.displayMode === 'infinite' && effectiveParams.pageNumber > 1) {
+        if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
           rowOffset.value += appendInfinitePage(clients.value, newData, effectiveParams.perPage, (client) => client.clientId)
         } else {
           clients.value = newData
@@ -968,7 +968,6 @@
 
   watch(panelType, (newType) => {
     if (newType !== 'config' && newType !== 'logs' && newType !== 'clone' && newType !== 'inventory') return
-    defaultClientPanelView.value = newType
     if (panelClient.value) doOpenPanel(panelClient.value, newType)
   })
 

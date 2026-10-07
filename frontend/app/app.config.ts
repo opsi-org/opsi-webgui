@@ -517,13 +517,6 @@ export default defineAppConfig({
         root: 'bg-(--color-surface-elevated) border border-(--color-border)/50 shadow-lg rounded-xl text-(--color-text)',
       },
     },
-    pagination: {
-      slots: {
-        root: '',
-        list: 'gap-1',
-        item: 'text-(--color-text)',
-      },
-    },
     progress: {
       slots: {
         root: 'bg-(--color-surface-hover)',

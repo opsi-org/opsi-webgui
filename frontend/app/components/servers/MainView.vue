@@ -346,7 +346,7 @@
   }
 
   async function fetchServers(params?: PageChangeParams) {
-    const isInfinitePageRequest = params?.displayMode === 'infinite' && params.pageNumber > 1
+    const isInfinitePageRequest = params != null && params.pageNumber > 1
     const requestId = isInfinitePageRequest ? fetchServersRequestId.value : ++fetchServersRequestId.value
     if (!isInfinitePageRequest) fetchServersController?.abort()
     const controller = new AbortController()
@@ -384,7 +384,7 @@
       if (result.data) {
         const newData = result.data as Server[]
         if (result.total !== null) totalItems.value = result.total
-        if (!isReload && effectiveParams?.displayMode === 'infinite' && effectiveParams.pageNumber > 1) {
+        if (!isReload && effectiveParams && effectiveParams.pageNumber > 1) {
           rowOffset.value += appendInfinitePage(servers.value, newData, effectiveParams.perPage, (server) => server.depotId)
         } else {
           servers.value = newData
