@@ -1,12 +1,9 @@
 overrides:
   # Security (pnpm audit):
-  tar: '>=7.5.21'
+  simple-git: '>=4.0.1'
+  postcss-selector-parser: '>=7.1.6'
   esbuild: '>=0.28.1'
-  nanoid: '>=3.3.17'
-  browserslist: '>=4.28.7'
   undici: '>=7.29.1'
-  markdown-it: '>=14.3.1'
-  '@tiptap/pm': '3.31.2'
 
 allowBuilds:
   '@parcel/watcher': true
