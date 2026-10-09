@@ -321,6 +321,8 @@
   },
   "groups": {
     "client": "Groupes de clients",
+    "clientsNone": "Aucun client trouvé",
+    "productsNone": "Aucun produit trouvé",
     "create": "Créer un groupe",
     "delete": "Voulez-vous vraiment supprimer le groupe \"{groupId}\" ? Cette action est irréversible.",
     "edit": "Modifier le groupe",
@@ -328,15 +330,19 @@
     "id": "ID du groupe",
     "members": "Membres du groupe",
     "membersAdd": "Ajouter des membres",
+    "dragHelp": "Ajouter des membres par glisser-déposer",
+    "dragMembersHelp": "Glissez-déposez des membres sur un autre groupe pour les ajouter.",
     "membersNone": "Aucun membre dans ce groupe",
     "membersRemoveAll": "Retirer tous les membres",
     "membersSearch": "Ajouter ou rechercher...",
     "parent": "Groupe parent",
     "product": "Groupes de produits",
+    "selected": "Groupe : {groupName}",
     "subgroup": "Ajouter un sous-groupe",
     "title": "Groupes",
     "tooltip": "Un client peut être affecté à plusieurs sous-groupes au sein de ce groupe.",
-    "productTooltip": "Un produit peut être affecté à plusieurs sous-groupes au sein de ce groupe."
+    "productTooltip": "Un produit peut être affecté à plusieurs sous-groupes au sein de ce groupe.",
+    "move.invalidTarget": "Un groupe ne peut pas être déplacé dans lui-même ou dans l'un de ses sous-groupes."
   },
   "hosts": {
     "select": "Sélectionner un hôte pour afficher la configuration"
@@ -419,7 +425,7 @@
     "action.executed": "Action exécutée avec succès.",
     "action.saved": "Demandes d'action enregistrées avec succès.",
     "chooseAction": "Veuillez choisir une action",
-    "client.added.group": "Clients ajoutés au groupe \"{group}\" avec succès.",
+    "members.added.group": "{count} membres ajoutés au groupe \"{group}\" avec succès.",
     "error": "Une erreur s'est produite.",
     "errorActionsLoad": "Échec du traitement des actions.",
     "errorActionsSave": "Échec de l'enregistrement des demandes d'action.",

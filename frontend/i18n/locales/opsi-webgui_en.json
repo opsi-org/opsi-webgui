@@ -321,6 +321,8 @@
   },
   "groups": {
     "client": "Client Groups",
+    "clientsNone": "No clients found",
+    "productsNone": "No products found",
     "create": "Create Group",
     "delete": "Are you sure you want to delete group \"{groupId}\"? This action cannot be undone.",
     "edit": "Edit Group",
@@ -328,15 +330,19 @@
     "id": "Group ID",
     "members": "Group Members",
     "membersAdd": "Add Members",
+    "dragHelp": "Add members using drag and drop",
+    "dragMembersHelp": "Drag and drop members onto another group to add them.",
     "membersNone": "No members in this group",
     "membersRemoveAll": "Remove All Members",
     "membersSearch": "Add or search...",
     "parent": "Parent Group",
     "product": "Product Groups",
+    "selected": "Group: {groupName}",
     "subgroup": "Add Subgroup",
     "title": "Groups",
     "tooltip": "A client can be assigned to multiple subgroups within this group.",
-    "productTooltip": "A product can be assigned to multiple subgroups within this group."
+    "productTooltip": "A product can be assigned to multiple subgroups within this group.",
+    "move.invalidTarget": "A group cannot be moved into itself or one of its subgroups."
   },
   "hosts": {
     "select": "Select host to view configuration"
@@ -419,7 +425,7 @@
     "action.executed": "Action executed successfully.",
     "action.saved": "Action requests saved successfully.",
     "chooseAction": "Please choose an action",
-    "client.added.group": "Clients added to group \"{group}\" successfully.",
+    "members.added.group": "{count} members added to group \"{group}\" successfully.",
     "error": "An error occurred.",
     "errorActionsLoad": "Failed to process actions.",
     "errorActionsSave": "Failed to save action requests.",
