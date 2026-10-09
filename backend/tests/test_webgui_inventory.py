@@ -276,8 +276,11 @@ def test_get_hardware_inventory_wraps_backend_errors(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_get_software_inventory_endpoint_returns_json(monkeypatch):
-	monkeypatch.setattr(inventory.backend, "auditSoftwareOnClient_getObjects", lambda **_kw: [sw_client_row("Firefox")])
+async def test_get_software_inventory_endpoint_returns_json(monkeypatch: pytest.MonkeyPatch) -> None:
+	recent_scan = datetime.now().strftime(inventory.OPSI_TIMESTAMP_FORMAT)
+	monkeypatch.setattr(
+		inventory.backend, "auditSoftwareOnClient_getObjects", lambda **_kw: [sw_client_row("Firefox", lastseen=recent_scan)]
+	)
 	monkeypatch.setattr(inventory.backend, "auditSoftware_getObjects", lambda **_kw: [sw_meta_row("Firefox")])
 
 	response = await inventory.get_software_inventory(clientid="client1.test.local")

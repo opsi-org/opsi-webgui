@@ -11,12 +11,23 @@
 -->
 <template>
   <div class="group-tree-node" :class="{ 'group-tree-node-root': isRootLevel }">
+    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- draggable tree row -->
     <div
       :class="[
         'flex items-center gap-1 px-1.5 py-1 rounded transition-colors group/node',
         isSelected ? 'bg-primary/8 border border-primary/25 shadow-sm' : 'hover:bg-(--color-surface-hover)',
+        isDragging ? 'opacity-50' : '',
+        isDropTarget ? 'ring-1 ring-primary bg-primary/8' : '',
+        isMemberDropTarget ? 'ring-1 ring-(--color-success) bg-success/10' : '',
+        isMemberSourceGroup ? 'opacity-50 cursor-not-allowed [&_button]:cursor-not-allowed' : '',
       ]"
       :style="{ paddingLeft: `${indentPx}px` }"
+      :draggable="canDrag"
+      @dragstart="handleDragStart"
+      @dragover.stop="handleDragOver"
+      @dragleave="isDropTarget = false"
+      @drop.stop="handleDrop"
+      @dragend="handleDragEnd"
     >
       <!-- Tree connector lines -->
       <span v-for="i in treeDepth" :key="i" class="tree-guide-line" :style="{ left: `${8 + (i - 1) * 16}px` }" />
@@ -25,7 +36,7 @@
         variant="ghost"
         color="neutral"
         size="xs"
-        class="w-5! h-5! p-0! shrink-0"
+        class="w-5! h-5! p-0! shrink-0 flex items-center justify-center"
         :aria-label="String(isExpanded ? $t('common.collapse') : $t('common.expand'))"
         :class="
           isExpanded
@@ -71,11 +82,7 @@
           {{ group.label }}
         </span>
       </CoreAppButton>
-      <div
-        v-if="group.isSpecial && group.label !== 'not_assigned'"
-        class="opacity-0 group-hover/node:opacity-100 flex gap-1 transition-opacity"
-        @click.stop
-      >
+      <div v-if="group.isSpecial && group.label !== 'not_assigned'" class="flex gap-1" @click.stop>
         <CoreAppButton
           size="xs"
           variant="ghost"
@@ -89,7 +96,7 @@
           <CoreAppIcon :name="icons.group" class="w-3.5 h-3.5" />
         </CoreAppButton>
       </div>
-      <div v-else-if="!group.isSpecial" class="opacity-0 group-hover/node:opacity-100 flex gap-1 transition-opacity" @click.stop>
+      <div v-else-if="!group.isSpecial" class="flex gap-1" @click.stop>
         <CoreAppButton
           :icon="icons.add"
           size="xs"
@@ -146,6 +153,11 @@
           :selected-id="selectedId"
           :expanded-ids="expandedIds"
           :group-type="groupType"
+          :dragged-group-id="draggedGroupId"
+          :invalid-drop-target-ids="invalidDropTargetIds"
+          :dragged-member-group-type="draggedMemberGroupType"
+          :dragged-member-source-group-id="draggedMemberSourceGroupId"
+          :member-drop-target-id="memberDropTargetId"
           :is-root-level="false"
           :root-id="rootId"
           @select="$emit('select', $event)"
@@ -154,6 +166,11 @@
           @edit="$emit('edit', $event)"
           @delete="$emit('delete', $event)"
           @add-members="$emit('add-members', $event)"
+          @move-group="$emit('move-group', $event)"
+          @drag-group-start="$emit('drag-group-start', $event)"
+          @drag-group-end="$emit('drag-group-end')"
+          @add-members-drop="$emit('add-members-drop', $event)"
+          @member-drop-target="$emit('member-drop-target', $event)"
         />
         <CoreAppButton
           v-if="hasMoreChildren"
@@ -180,6 +197,11 @@
     selectedId?: string | null
     expandedIds: Set<string>
     groupType: 'clients' | 'products'
+    draggedGroupId?: string | null
+    invalidDropTargetIds?: Set<string>
+    draggedMemberGroupType?: 'clients' | 'products' | null
+    draggedMemberSourceGroupId?: string | null
+    memberDropTargetId?: string | null
     isRootLevel?: boolean
     rootId?: string
   }
@@ -196,6 +218,11 @@
     (e: 'edit', group: GroupTreeNodeData): void
     (e: 'delete', group: GroupTreeNodeData): void
     (e: 'add-members', group: GroupTreeNodeData): void
+    (e: 'move-group', data: { groupId: string; parentId: string }): void
+    (e: 'drag-group-start', groupId: string): void
+    (e: 'drag-group-end'): void
+    (e: 'add-members-drop', group: GroupTreeNodeData): void
+    (e: 'member-drop-target', groupId: string | null): void
   }>()
 
   const icons = useIcons()
@@ -203,6 +230,21 @@
   const { isReadOnly } = useUserPermissions()
 
   const groupDisabled = computed(() => isReadOnly.value)
+  const canDrag = computed(() => !props.group.isSpecial && !groupDisabled.value)
+  const canDrop = computed(() => props.group.label !== 'not_assigned' && !groupDisabled.value)
+  const isMemberSourceGroup = computed(() => props.draggedMemberSourceGroupId === props.group.id)
+  const canAcceptMembers = computed(
+    () =>
+      Boolean(props.draggedMemberGroupType) &&
+      props.draggedMemberGroupType === props.groupType &&
+      !isMemberSourceGroup.value &&
+      !props.group.isSpecial &&
+      !groupDisabled.value,
+  )
+  const isInvalidDropTarget = computed(() => props.invalidDropTargetIds?.has(props.group.id) ?? false)
+  const isDragging = ref(false)
+  const isDropTarget = ref(false)
+  const isMemberDropTarget = computed(() => props.memberDropTargetId === props.group.id)
 
   const CHILDREN_PAGE_SIZE = 100
   const childrenLimit = ref(CHILDREN_PAGE_SIZE)
@@ -239,6 +281,55 @@
 
   function handleClick() {
     emit('select', props.group)
+  }
+
+  function handleDragStart(event: DragEvent) {
+    if (!canDrag.value || !event.dataTransfer) return
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/group-id', props.group.id)
+    isDragging.value = true
+    emit('drag-group-start', props.group.id)
+  }
+
+  function handleDragOver(event: DragEvent) {
+    if (props.draggedMemberGroupType) {
+      if (!canAcceptMembers.value || !event.dataTransfer) {
+        if (event.dataTransfer) event.dataTransfer.dropEffect = 'none'
+        emit('member-drop-target', null)
+        return
+      }
+      event.preventDefault()
+      event.dataTransfer.dropEffect = 'copy'
+      emit('member-drop-target', props.group.id)
+      return
+    }
+    if (!canDrop.value || isInvalidDropTarget.value || !event.dataTransfer) {
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'none'
+      isDropTarget.value = false
+      return
+    }
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+    isDropTarget.value = true
+  }
+
+  function handleDrop(event: DragEvent) {
+    isDropTarget.value = false
+    emit('member-drop-target', null)
+    if (props.draggedMemberGroupType) {
+      if (canAcceptMembers.value) emit('add-members-drop', props.group)
+      return
+    }
+    const groupId = event.dataTransfer?.getData('text/group-id')
+    if (!canDrop.value || isInvalidDropTarget.value || !groupId || groupId === props.group.id) return
+    emit('move-group', { groupId, parentId: props.group.id })
+  }
+
+  function handleDragEnd() {
+    isDragging.value = false
+    isDropTarget.value = false
+    emit('member-drop-target', null)
+    emit('drag-group-end')
   }
 </script>
 

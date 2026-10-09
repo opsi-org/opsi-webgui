@@ -39,7 +39,7 @@ export default defineConfig({
   retries: 0,
   // Allow multiple spec files to run in parallel (tests within each file remain sequential
   // to avoid conflicts on the shared opsiconfd state).
-  workers: isNightly ? 4 : 2,
+  workers: isNightly ? 4 : 1,
   fullyParallel: false,
 
   use: {

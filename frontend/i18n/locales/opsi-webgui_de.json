@@ -321,6 +321,8 @@
   },
   "groups": {
     "client": "Client-Gruppen",
+    "clientsNone": "Keine Clients gefunden",
+    "productsNone": "Keine Produkte gefunden",
     "create": "Gruppe erstellen",
     "delete": "Möchten Sie die Gruppe \"{groupId}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
     "edit": "Gruppe bearbeiten",
@@ -328,15 +330,19 @@
     "id": "Gruppen-ID",
     "members": "Gruppenmitglieder",
     "membersAdd": "Mitglieder hinzufügen",
+    "dragHelp": "Mitglieder per Drag & Drop hinzufügen",
+    "dragMembersHelp": "Mitglieder per Drag & Drop zu einer anderen Gruppe hinzufügen.",
     "membersNone": "Keine Mitglieder in dieser Gruppe",
     "membersRemoveAll": "Alle Mitglieder entfernen",
     "membersSearch": "Hinzufügen oder suchen...",
     "parent": "Übergeordnete Gruppe",
     "product": "Produktgruppen",
+    "selected": "Gruppe: {groupName}",
     "subgroup": "Untergruppe hinzufügen",
     "title": "Gruppen",
     "tooltip": "Ein Client kann mehreren Untergruppen innerhalb dieser Gruppe zugeordnet werden.",
-    "productTooltip": "Ein Produkt kann mehreren Untergruppen innerhalb dieser Gruppe zugeordnet werden."
+    "productTooltip": "Ein Produkt kann mehreren Untergruppen innerhalb dieser Gruppe zugeordnet werden.",
+    "move.invalidTarget": "Eine Gruppe kann nicht in sich selbst oder eine Untergruppe verschoben werden."
   },
   "hosts": {
     "select": "Host auswählen um Konfiguration anzuzeigen"
@@ -419,7 +425,7 @@
     "action.executed": "Aktion erfolgreich ausgeführt.",
     "action.saved": "Aktionsanforderungen erfolgreich gespeichert.",
     "chooseAction": "Bitte wählen Sie eine Aktion",
-    "client.added.group": "Clients wurden erfolgreich zur Gruppe \"{group}\" hinzugefügt.",
+    "members.added.group": "{count} Mitglieder wurden erfolgreich zur Gruppe \"{group}\" hinzugefügt.",
     "error": "Ein Fehler ist aufgetreten.",
     "errorActionsLoad": "Aktionen konnten nicht verarbeitet werden.",
     "errorActionsSave": "Aktionsanforderungen konnten nicht gespeichert werden.",
