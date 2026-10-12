@@ -9,7 +9,7 @@
  */
 
 import { defineConfig } from 'vitest/config'
-import path from 'path'
+import path from 'node:path'
 
 export default defineConfig({
   test: {
@@ -22,14 +22,15 @@ export default defineConfig({
       include: ['app/utils/**', 'app/composables/**'],
       exclude: ['**/*.d.ts', '**/types/**'],
     },
+    isolate: false,
   },
   resolve: {
     alias: {
-      '~/types': path.resolve(__dirname, 'app/types'),
-      '~/stores': path.resolve(__dirname, 'app/stores'),
-      '~/utils': path.resolve(__dirname, 'app/utils'),
-      '~': path.resolve(__dirname),
-      '@': path.resolve(__dirname),
+      '~/types': path.resolve(import.meta.dirname, 'app/types'),
+      '~/stores': path.resolve(import.meta.dirname, 'app/stores'),
+      '~/utils': path.resolve(import.meta.dirname, 'app/utils'),
+      '~': path.resolve(import.meta.dirname),
+      '@': path.resolve(import.meta.dirname),
     },
   },
 })
