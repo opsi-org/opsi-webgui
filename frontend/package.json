@@ -37,33 +37,33 @@
     "@xterm/addon-search": "^0.16.0",
     "@xterm/addon-web-links": "^0.12.0",
     "@xterm/xterm": "^6.0.0",
-    "nuxt": "^4.6.0",
+    "nuxt": "^4.6.1",
     "pinia": "^4.0.3",
     "pinia-plugin-persistedstate": "^4.7.1",
     "tailwindcss": "^4.3.3",
     "vue": "^3.5.43",
-    "vue-router": "^5.3.1"
+    "vue-router": "^5.4.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@cyclonedx/cdxgen": "^12.8.5",
     "@iconify-json/heroicons": "^1.2.3",
-    "@iconify-json/lucide": "^1.2.140",
+    "@iconify-json/lucide": "^1.2.142",
     "@iconify-json/simple-icons": "^1.2.99",
     "@nuxtjs/tailwindcss": "^6.14.0",
-    "@playwright/test": "^1.63.0",
-    "@types/node": "^26.6.4",
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^26.6.5",
     "@typescript-eslint/eslint-plugin": "^8.71.1",
     "@typescript-eslint/parser": "^8.71.1",
     "@vitejs/plugin-basic-ssl": "^2.3.0",
     "@vitest/coverage-v8": "5.0.3",
     "eslint": "^10.12.0",
     "eslint-plugin-vue": "^10.11.1",
-    "eslint-plugin-vuejs-accessibility": "2.6.0",
-    "prettier": "^3.9.9",
-    "typescript": "^6.0.3",
+    "eslint-plugin-vuejs-accessibility": "2.6.2",
+    "prettier": "^3.9.10",
+    "typescript": "6.0.3",
     "vitest": "^5.0.3",
     "vue-eslint-parser": "^10.4.1",
-    "vue-tsc": "^3.3.12"
+    "vue-tsc": "^3.3.13"
   }
 }
