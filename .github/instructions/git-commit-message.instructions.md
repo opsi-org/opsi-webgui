@@ -6,3 +6,9 @@ Use `[<type>[,pub]] [<component>: ]<imperative summary>`.
 - Add a useful component when needed: `backend`, `frontend`, `ui`, `ci`, `devcontainer`, `docker`, `docs`, `tests`, `config`, or `deps`. Join components with `+`.
 - Keep the subject concise and specific. Use one commit per logical change; an optional body may summarize related details.
 - For security dependency fixes, name the resolved package and version; distinguish direct updates, parent updates, and overrides.
+
+Examples:
+
+- [dep] deps: update frontend packages
+- [sec] backend: fix security vulnerability in authentication module
+- [new,pub] backend+frontend: add a new feature
