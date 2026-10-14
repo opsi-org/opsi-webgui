@@ -52,12 +52,14 @@
 </template>
 
 <script setup lang="ts">
+  import type { ComputedRef } from 'vue'
+
   const props = defineProps<{
     direction?: 'up' | 'down'
   }>()
 
   const icons = useIcons()
-  const { locale, locales, setLocale, t } = useI18n()
+  const { locale, t } = useI18n()
   const currentLocale = computed(() => locale.value || 'en')
   const transifexUrl = 'https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/'
 
@@ -66,15 +68,17 @@
     name?: string
   }
 
-  const visibleLocaleCodes = ['en', 'de', 'fr']
+  const visibleLocaleCodes: string[] = ['en', 'de', 'fr']
+  const i18n = useNuxtApp().$i18n as ReturnType<typeof useI18n> & {
+    locales: ComputedRef<LocaleInfo[]>
+    setLocale: (locale: string) => Promise<void>
+  }
 
-  const supportedLocales = computed(() =>
-    (locales.value as LocaleInfo[]).map((locale) => String(locale.code)).filter((code) => visibleLocaleCodes.includes(code)),
-  )
+  const locales = i18n.locales
+  const supportedLocales = computed(() => locales.value.map((locale) => locale.code).filter((code) => visibleLocaleCodes.includes(code)))
 
   const availableLocales = computed<LocaleInfo[]>(() => {
-    const allLocales = locales.value as LocaleInfo[]
-    return allLocales.filter((l) => visibleLocaleCodes.includes(l.code) && l.code !== currentLocale.value)
+    return locales.value.filter((l) => visibleLocaleCodes.includes(l.code) && l.code !== currentLocale.value)
   })
 
   const priorityOrder = ['en', 'de', 'fr']
@@ -86,9 +90,9 @@
   )
 
   async function switchTo(code: string) {
-    if (!supportedLocales.value.includes(code)) return
+    if (!supportedLocales.value.some((localeCode) => localeCode === code)) return
     try {
-      await setLocale(code as Parameters<typeof setLocale>[0])
+      await i18n.setLocale(code)
     } catch (error) {
       console.error('Failed to switch locale', { code, error })
     }
