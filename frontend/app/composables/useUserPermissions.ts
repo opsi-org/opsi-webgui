@@ -25,10 +25,7 @@ export function useUserPermissions() {
   function isPageAccessible(route: string): boolean {
     const routeFeatureMap: Record<string, () => boolean> = {
       '/admin/terminal': () => !userStore.readOnly && isFeatureEnabled('terminal') && isFeatureEnabled('messagebus_terminal'),
-      '/clients/add': () => !userStore.readOnly && userStore.clientCreation,
-      '/clients/clone': () => !userStore.readOnly && userStore.clientCreation,
       '/admin/maintenance': () => !userStore.readOnly,
-      '/servers/configuration': () => !userStore.readOnly || userStore.serverWriteAccess,
     }
 
     for (const [pattern, check] of Object.entries(routeFeatureMap)) {

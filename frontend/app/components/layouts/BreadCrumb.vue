@@ -61,8 +61,6 @@
     support: 'support.title',
     configuration: 'config.title',
     logs: 'logs.title',
-    clone: 'nav.clone',
-    add: 'nav.addNew',
   }
 
   const $t = (key: string) => {
@@ -117,31 +115,12 @@
       'admin/diagnostics/system': $t('pages.admin.diag.system'),
       'admin/maintenance': $t('pages.admin.maintenance'),
       servers: $t('pages.servers'),
-      'servers/configuration/parameters': $t('pages.serversConfigParams'),
-      'servers/configuration/attributes': $t('pages.serversConfigAttrs'),
       clients: $t('pages.clients'),
-      'clients/add': $t('pages.clientsAdd'),
-      'clients/clone': $t('pages.clientsClone'),
-      'clients/configuration/parameters': $t('pages.clientsConfigParams'),
-      'clients/configuration/attributes': $t('pages.clientsConfigAttrs'),
-      'clients/logs': $t('pages.clientsLogs'),
       products: $t('pages.products'),
       groups: $t('pages.groups'),
       support: $t('pages.support'),
     }
     if (exactMatches[normalizedPath]) return exactMatches[normalizedPath]
-
-    const prefixMatches: [RegExp, string][] = [
-      [/^clients\/configuration\/parameters\//, $t('pages.clientsConfigParams')],
-      [/^clients\/configuration\/attributes\//, $t('pages.clientsConfigAttrs')],
-      [/^clients\/logs\//, $t('pages.clientsLogs')],
-      [/^clients\/clone\//, $t('pages.clientsClone')],
-      [/^servers\/configuration\/parameters\//, $t('pages.serversConfigParams')],
-      [/^servers\/configuration\/attributes\//, $t('pages.serversConfigAttrs')],
-    ]
-    for (const [pattern, description] of prefixMatches) {
-      if (pattern.test(normalizedPath)) return description
-    }
 
     return ''
   }

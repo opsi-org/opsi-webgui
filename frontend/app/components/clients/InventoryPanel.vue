@@ -13,18 +13,6 @@
   <LayoutsPageLayout>
     <template #filters>
       <CoreAppTabsNav v-model="activeTab" :tabs="tabs" />
-      <template v-if="showClientSelector">
-        <span class="h-5 w-px bg-(--color-border) mx-1" />
-        <slot name="clientSelector">
-          <HostsSelector
-            v-model="clientSelectorModel"
-            type="client"
-            :placeholder="clientSelectorPlaceholder || String($t('clients.select'))"
-            :allow-all="false"
-            allow-clear
-          />
-        </slot>
-      </template>
     </template>
 
     <template #actions>
@@ -39,7 +27,7 @@
         variant="ghost"
         color="neutral"
         size="sm"
-        :disabled="!resolvedClientId"
+        :disabled="!props.clientId"
         :loading="loading"
         :aria-label="String($t('common.refresh'))"
         :title="String($t('common.refresh'))"
@@ -60,7 +48,7 @@
     </template>
 
     <div class="flex flex-col h-full min-h-0 gap-1.5">
-      <CoreAppEmptyState v-if="!resolvedClientId" :icon="icons.inventory" :message="String($t('inventory.select'))" />
+      <CoreAppEmptyState v-if="!props.clientId" :icon="icons.inventory" :message="String($t('inventory.select'))" />
       <template v-else>
         <CoreAppAlertInline
           v-if="error"
@@ -174,23 +162,16 @@
   const props = withDefaults(
     defineProps<{
       clientId?: string | null
-      panelMode?: boolean
       tab?: TabValue
-      showClientSelector?: boolean
-      clientSelectorPlaceholder?: string
     }>(),
     {
       clientId: null,
-      panelMode: false,
       tab: 'hardware',
-      showClientSelector: false,
-      clientSelectorPlaceholder: undefined,
     },
   )
 
   const emit = defineEmits<{
     'update:tab': [value: TabValue]
-    'update:clientId': [value: string | null]
   }>()
 
   const icons = useIcons()
@@ -206,17 +187,6 @@
   const hardwareTableSettings = useDataTableSettings('inventory-hardware')
   const softwareTableSettings = useDataTableSettings('inventory-software')
 
-  const clientSelectorModel = ref(props.clientId || '')
-  watch(
-    () => props.clientId,
-    (value) => {
-      if (value !== clientSelectorModel.value) clientSelectorModel.value = value || ''
-    },
-    { immediate: true },
-  )
-  watch(clientSelectorModel, (value) => emit('update:clientId', value || null))
-
-  const resolvedClientId = computed(() => props.clientId || (props.showClientSelector ? clientSelectorModel.value || null : null))
   const activeTab = ref<TabValue>(props.tab)
   watch(
     () => props.tab,
@@ -291,6 +261,8 @@
   const includeKbUpdates = ref(true)
   const currentFilterQuery = ref(getStoredDataTableFilter('inventory-hardware'))
   let requestId = 0
+  let summaryRequestId = 0
+  let exportRequestId = 0
   let fetchController: AbortController | null = null
 
   const dataTableRef = ref<{ refresh: () => void } | null>(null)
@@ -304,6 +276,7 @@
 
   function metaStateLabel(state: InventoryMeta['state']): string {
     if (state === 'ok') return String($t('common.ok'))
+    if (state === 'empty') return String($t('common.empty'))
     return String($t(`inventory.${state === 'not_scanned' ? 'notScanned' : state}`))
   }
 
@@ -329,14 +302,17 @@
   }
 
   async function fetchSummary() {
-    const clientId = resolvedClientId.value
+    const currentRequestId = ++summaryRequestId
+    summary.value = null
+    const clientId = props.clientId
     if (!clientId) return
     try {
       const result = await getClientInventorySummary(clientId)
+      if (currentRequestId !== summaryRequestId) return
       if (result.error) throw result.error
       summary.value = result.data ?? null
     } catch {
-      summary.value = null
+      if (currentRequestId === summaryRequestId) summary.value = null
     }
   }
 
@@ -438,7 +414,7 @@
   }
 
   async function fetchInventory(params: PageChangeParams) {
-    const clientId = resolvedClientId.value
+    const clientId = props.clientId
     if (!clientId) return
 
     lastPageParams.value = params
@@ -501,8 +477,10 @@
   }
 
   async function exportCsv() {
-    const clientId = resolvedClientId.value
+    const clientId = props.clientId
     if (!clientId) return
+    const currentExportId = ++exportRequestId
+    const tab = activeTab.value
     const params = lastPageParams.value ?? buildInitialPageParams()
     exporting.value = true
     try {
@@ -512,9 +490,10 @@
         sortDesc: params.sortDesc,
       }
       const result =
-        activeTab.value === 'hardware'
+        tab === 'hardware'
           ? await exportHardwareInventoryCsv(clientId, commonParams)
           : await exportSoftwareInventoryCsv(clientId, { ...commonParams, includeKbUpdates: includeKbUpdates.value })
+      if (currentExportId !== exportRequestId) return
       if (result.error || !result.blob) {
         error.value = result.error?.message || String($t('common.error'))
         return
@@ -522,31 +501,47 @@
       const url = URL.createObjectURL(result.blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `${clientId}_${activeTab.value}_inventory.csv`
+      link.download = `${clientId}_${tab}_inventory.csv`
       document.body.appendChild(link)
       link.click()
       link.remove()
       URL.revokeObjectURL(url)
+    } catch (caught) {
+      if (currentExportId === exportRequestId) error.value = caught instanceof Error ? caught.message : String($t('common.error'))
     } finally {
-      exporting.value = false
+      if (currentExportId === exportRequestId) exporting.value = false
     }
   }
 
   function resetAndFetch() {
+    requestId++
+    exportRequestId++
     fetchController?.abort()
+    loading.value = false
+    exporting.value = false
+    error.value = null
     currentMeta.value = null
     currentItems.value = []
     totalItems.value = 0
     rowOffset.value = 0
     lastPageParams.value = null
     currentFilterQuery.value = getStoredDataTableFilter(tableId.value)
-    if (resolvedClientId.value) fetchInventory(buildInitialPageParams())
+    if (props.clientId) fetchInventory(buildInitialPageParams())
   }
 
-  watch(() => [resolvedClientId.value, activeTab.value], resetAndFetch, { immediate: true })
-  watch(resolvedClientId, () => fetchSummary(), { immediate: true })
+  watch(() => [props.clientId, activeTab.value], resetAndFetch, { immediate: true })
+  watch(
+    () => props.clientId,
+    () => fetchSummary(),
+    { immediate: true },
+  )
   watch(includeKbUpdates, () => {
     if (activeTab.value === 'software') fetchInventory(buildInitialPageParams())
   })
-  onUnmounted(() => fetchController?.abort())
+  onUnmounted(() => {
+    requestId++
+    summaryRequestId++
+    exportRequestId++
+    fetchController?.abort()
+  })
 </script>

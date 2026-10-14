@@ -39,15 +39,13 @@ export async function seedClientSelection(
   await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
   await waitForTable(page)
 
-  const clientIds = await page.locator('table tbody tr td').evaluateAll((cells, maxCount) => {
-    const ids: string[] = []
-    for (const cell of cells) {
-      const text = (cell.textContent || '').trim()
-      if (text.includes('.')) ids.push(text)
-      if (ids.length === maxCount) break
-    }
-    return ids
-  }, count)
+  const clientHeader = page.getByRole('columnheader', { name: /^(Client ID|Client-ID)$/ })
+  await expect(clientHeader).toBeVisible({ timeout: 30000 })
+  const table = page.getByRole('grid').filter({ has: clientHeader })
+  const columnIndex = await clientHeader.evaluate((header) => (header as HTMLTableCellElement).cellIndex)
+  const clientCells = table.locator(`tbody tr > td:nth-child(${columnIndex + 1})[role="gridcell"]`)
+  await expect(clientCells.nth(count - 1)).toBeVisible({ timeout: 30000 })
+  const clientIds = (await clientCells.allTextContents()).slice(0, count).map((text) => text.trim())
 
   if (clientIds.length) {
     await page.evaluate(

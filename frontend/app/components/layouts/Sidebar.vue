@@ -139,13 +139,7 @@
   let hoverTimeout: ReturnType<typeof setTimeout> | null = null
 
   const t = (key: string) => {
-    const navKey = `nav.${key}`
-    const translated = $t(navKey)
-    if (translated && translated !== navKey) return String(translated)
-    return key
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, (s) => s.toUpperCase())
-      .trim()
+    return String($t(key))
   }
 
   /** Stable, locale-independent test id for a nav link, e.g. /admin/terminal -> nav-admin-terminal. */
@@ -178,58 +172,46 @@
     const rawGroups: NavItem[][] = [
       [
         {
-          title: 'dashboard',
+          title: 'dashboard.title',
           route: '/dashboard',
           icon: icons.dashboard,
         },
         {
-          title: 'admin',
+          title: 'nav.admin',
           route: '/admin',
           icon: icons.admin,
           submenu: [
-            { title: 'terminal', route: '/admin/terminal' },
-            { title: 'diagnostics', route: '/admin/diagnostics' },
-            { title: 'maintenance', route: '/admin/maintenance' },
+            { title: 'terminal.title', route: '/admin/terminal' },
+            { title: 'diag.title', route: '/admin/diagnostics' },
+            { title: 'admin.maintenance', route: '/admin/maintenance' },
           ],
         },
       ],
       [
         {
-          title: 'servers',
+          title: 'servers.title',
           route: '/servers',
           icon: icons.serverStack,
-          submenu: [
-            { title: 'allServers', route: '/servers' },
-            { title: 'configuration', route: '/servers/configuration/parameters', match: '/servers/configuration' },
-          ],
         },
         {
-          title: 'clients',
+          title: 'clients.title',
           route: '/clients',
           icon: icons.client,
-          submenu: [
-            { title: 'allClients', route: '/clients' },
-            { title: 'addNew', route: '/clients/add' },
-            { title: 'clone', route: '/clients/clone' },
-            { title: 'configuration', route: '/clients/configuration/parameters', match: '/clients/configuration' },
-            { title: 'logs', route: '/clients/logs' },
-            { title: 'inventory', route: '/clients/inventory' },
-          ],
         },
         {
-          title: 'products',
+          title: 'products.title',
           route: '/products',
           icon: icons.product,
         },
         {
-          title: 'groups',
+          title: 'groups.title',
           route: '/groups',
           icon: icons.group,
         },
       ],
       [
         {
-          title: 'support',
+          title: 'support.title',
           route: '/support',
           icon: icons.support,
         },

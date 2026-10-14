@@ -19,7 +19,7 @@
  */
 import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
-import { ensureQuickPanelOpen } from '../../utils/ui'
+import { ensureQuickPanelOpen, seedClientSelection } from '../../utils/ui'
 import type { Page } from '@playwright/test'
 
 interface UserConfigurationOverrides {
@@ -66,6 +66,27 @@ async function mockDisabledFeatures(page: Page, features: string[] = []): Promis
 }
 
 test.describe('User permissions', () => {
+  for (const restriction of ['read_only', 'client_creation'] as const) {
+    test(`clients clone panel denies writes with ${restriction} restriction`, async ({ page }) => {
+      const [clientId] = await seedClientSelection(page)
+      expect(clientId).toBeTruthy()
+      await mockUserConfiguration(page, { [restriction]: restriction === 'read_only' })
+      const writes: string[] = []
+      await page.route('**/opsidata/clients/*/clone', async (route) => {
+        writes.push(route.request().url())
+        await route.fulfill({ status: 403, json: { message: 'Permission denied' } })
+      })
+      await page.goto(`/clients?client=${encodeURIComponent(clientId)}&view=panel&panelType=clone`, { waitUntil: 'networkidle' })
+      const panel = page.getByTestId('detail-panel')
+      await expect(panel).toContainText(clientId)
+      await expect(panel).toContainText(/permission denied|zugriff verweigert|accès refusé/i)
+      await expect(panel.getByRole('textbox')).toHaveCount(0)
+      await page.keyboard.press('Control+Enter')
+      await expect(panel).toContainText(/permission denied|zugriff verweigert|accès refusé/i)
+      expect(writes).toHaveLength(0)
+    })
+  }
+
   test('read-only user sees banner and disabled write actions on clients page', async ({ page }) => {
     await mockUserConfiguration(page, { read_only: true, client_creation: false })
 
@@ -103,10 +124,21 @@ test.describe('User permissions', () => {
     })
     expect(page.url()).not.toContain('/admin/maintenance')
 
-    // /clients/add is blocked without client-creation permission
-    await page.goto('/clients/add')
-    await page.waitForURL((url) => !url.pathname.includes('/clients/add'), { timeout: 30000 })
-    expect(page.url()).not.toContain('/clients/add')
+    await page.goto('/clients?view=panel&panelType=add', { waitUntil: 'networkidle' })
+    const panel = page.getByTestId('detail-panel')
+    await expect(panel).toBeVisible()
+    await expect(panel.getByRole('textbox')).toHaveCount(0)
+    await expect(panel).toContainText(/permission|berechtigung|autorisation/i)
+  })
+
+  test('client creation disabled blocks the add panel form', async ({ page }) => {
+    await mockUserConfiguration(page, { client_creation: false })
+    await page.goto('/clients?view=panel&panelType=add', { waitUntil: 'networkidle' })
+    const panel = page.getByTestId('detail-panel')
+    await expect(panel).toBeVisible()
+    await expect(panel.getByRole('textbox')).toHaveCount(0)
+    await expect(panel).toContainText(/permission|berechtigung|autorisation/i)
+    await expect(page.locator('main').getByRole('button', { name: /^(new|neu|nouveau)$/i })).toBeDisabled()
   })
 
   test('depot/group-restricted user sees restriction badges in quickpanel', async ({ page }) => {

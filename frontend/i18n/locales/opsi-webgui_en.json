@@ -99,7 +99,6 @@
       "err": "Failed to clone client",
       "ok": "Client cloned successfully.",
       "options": "Clone Options",
-      "source": "Source Client",
       "title": "Clone Client"
     },
     "create": {
@@ -171,6 +170,7 @@
     "close": "Close",
     "collapse": "Collapse",
     "create": "Create",
+    "current": "Current",
     "days": "Days",
     "default": "Default",
     "delete": "Delete",
@@ -199,6 +199,7 @@
     "mixed": "Mixed",
     "new": "New",
     "newValue": "New Value",
+    "next": "Next",
     "noData": "No data available",
     "none": "None",
     "noResults": "No results found",
@@ -211,8 +212,10 @@
     "oldValue": "Old Value",
     "optional": "optional",
     "or": "or",
+    "page": "Page",
     "pressEnterToAdd": "Press Enter to add",
     "preview": "Preview",
+    "previous": "Previous",
     "priority": "Priority",
     "readOnly": "Read-only access",
     "refresh": "Refresh",
@@ -257,6 +260,7 @@
       "monitoring": "Controls the opsiconfd health-check monitoring for this client."
     },
     "create": "Create Configuration",
+    "globalParameters": "Global Parameters",
     "id": "Config ID",
     "idPlaceholder": "e.g. category.subcategory.name",
     "items": "Configurations",
@@ -348,7 +352,6 @@
     "select": "Select host to view configuration"
   },
   "inventory": {
-    "absent": "Removed",
     "architecture": "Architecture",
     "class": "Class",
     "displayName": "Name",
@@ -367,7 +370,6 @@
     "notScanned": "Not scanned yet",
     "notScannedDesc": "No inventory data has been collected for this client yet.",
     "okDesc": "Inventory exists and was scanned within the last {days} days.",
-    "present": "Present",
     "scannedAt": "Scanned",
     "select": "Select a client to view inventory",
     "software": "Software",
@@ -398,12 +400,8 @@
     "unlicensed": "Unlicensed"
   },
   "nav": {
-    "addNew": "Add New",
     "admin": "Admin",
     "breadcrumb": "Breadcrumb",
-    "clone": "Clone",
-    "clients": "Clients",
-    "dashboard": "Dashboard",
     "defaultPage": "Default Page",
     "groups": "Groups",
     "leaveAnyway": "Leave Anyway",
@@ -487,17 +485,10 @@
     "admin.maintenance": "Manage locked clients, locked products, application state, and backups",
     "admin.terminal": "Direct access to the server terminal",
     "clients": "View and manage clients",
-    "clientsAdd": "Add a new client",
-    "clientsClone": "Clone an existing client",
-    "clientsConfigAttrs": "View and manage client attributes",
-    "clientsConfigParams": "View and manage client parameters",
-    "clientsLogs": "View client logs. Select an entry to set a bookmark.",
     "dashboard": "Get a quick overview. Click dashboard cards to navigate to specific pages.",
     "groups": "Organize clients and products in groups.",
     "products": "View and manage localboot and netboot products",
     "servers": "View and manage servers",
-    "serversConfigAttrs": "View and manage server attributes",
-    "serversConfigParams": "View and manage server parameters. If no server is selected, the server defaults are shown.",
     "support": "Quick access to support resources and release notes"
   },
   "products": {

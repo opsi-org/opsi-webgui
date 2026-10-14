@@ -7,29 +7,14 @@
   All rights reserved.
   License: AGPL-3.0
 
-  HostsConfigTabs - Tabbed host configuration editor with panel and standalone mode.
+  HostsConfigTabs - Tabbed host configuration editor for client and server panels.
 -->
 <template>
   <div class="flex flex-col h-full min-h-0 opsi-compact-page opsi-dense-form">
-    <CoreAppNavigationGuardModal
-      v-if="showHostSelector || !panelMode"
-      v-model="showLeaveWarning"
-      @cancel="cancelLeave"
-      @confirm="confirmLeave"
-    />
-
-    <HostsCreateConfigModal v-model:open="showCreateConfigModal" @created="fetchParameters" />
-
     <div class="shrink-0 sticky top-0 z-10 bg-(--color-surface) mb-1">
       <div class="flex flex-wrap items-center justify-between gap-1.5">
         <div class="flex items-center gap-1.5">
           <CoreAppTabsNav v-model="activeTab" :tabs="tabDefs" />
-          <template v-if="showHostSelector">
-            <span class="h-5 w-px bg-(--color-border) mx-1" />
-            <slot name="hostSelector">
-              <HostsSelector v-model="hostSelectorModel" :type="hostType" :placeholder="hostSelectorPlaceholder" allow-clear />
-            </slot>
-          </template>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
           <CoreAppFilterInput
@@ -40,17 +25,6 @@
             :pattern-valid="paramMatcher.valid"
             input-class="w-full sm:w-52 md:w-64 lg:w-72"
           />
-          <CoreAppButton
-            v-if="isServerDefaultMode && !readonly"
-            :icon="icons.add"
-            color="primary"
-            variant="soft"
-            size="sm"
-            :title="String($t('config.create'))"
-            @click="showCreateConfigModal = true"
-          >
-            <span class="hidden sm:inline">{{ $t('config.create') }}</span>
-          </CoreAppButton>
           <CoreAppUnsavedChangesModal
             v-if="showUnsavedModal"
             :config-ref="unsavedChangesRef"
@@ -220,12 +194,7 @@
     hostType?: 'client' | 'server'
     readonly?: boolean
     tab?: string
-    showTabs?: boolean
     search?: string
-    panelMode?: boolean
-    showChangeBanner?: boolean
-    showHostSelector?: boolean
-    hostSelectorPlaceholder?: string
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -233,19 +202,12 @@
     hostType: 'client',
     readonly: false,
     tab: '',
-    showTabs: true,
     search: undefined,
-    panelMode: false,
-    showChangeBanner: true,
-    showHostSelector: false,
-    hostSelectorPlaceholder: undefined,
   })
 
   const emit = defineEmits<{
     saved: []
-    'attribute-change': [hasChanges: boolean]
     'update:search': [value: string]
-    'update:hostId': [value: string | null]
     'update:tab': [value: string]
   }>()
 
@@ -264,46 +226,15 @@
 
   const isServerDefaultMode = computed(() => props.hostType === 'server' && !props.hostId)
 
-  // Create Config modal state
-  const showCreateConfigModal = ref(false)
-
-  const activeTab = ref(props.tab || 'attributes')
+  const activeTab = ref(isServerDefaultMode.value ? 'parameters' : props.tab || 'attributes')
   watch(
-    () => props.tab,
-    (v) => {
-      if (v) activeTab.value = v
+    () => [props.tab, isServerDefaultMode.value] as const,
+    ([tab, defaultMode]) => {
+      if (defaultMode) activeTab.value = 'parameters'
+      else if (tab) activeTab.value = tab
     },
   )
   watch(activeTab, (v) => emit('update:tab', v))
-
-  const hostSelectorModel = ref<string>(props.hostId || '')
-  watch(
-    () => props.hostId,
-    (v) => {
-      hostSelectorModel.value = v || ''
-    },
-  )
-
-  let pendingHostChangeId: string | null = null
-  let _ignoreHostSelectorWatch = false
-
-  watch(hostSelectorModel, (newVal) => {
-    if (_ignoreHostSelectorWatch) {
-      _ignoreHostSelectorWatch = false
-      return
-    }
-    if (hasAnyChanges.value && newVal !== (props.hostId || '')) {
-      pendingHostChangeId = newVal
-      _ignoreHostSelectorWatch = true
-      hostSelectorModel.value = props.hostId || ''
-      showLeaveWarning.value = true
-      return
-    }
-    emit('update:hostId', newVal || null)
-  })
-
-  const showLeaveWarning = ref(false)
-  let resolveLeave: ((ok: boolean) => void) | null = null
 
   const showUnsavedModal = computed(() => hasAnyChanges.value || changedParams.value.size > 0 || hasAttributeChanges.value)
 
@@ -321,41 +252,8 @@
     fmtVal,
   }))
 
-  if (!props.panelMode) {
-    onBeforeRouteLeave(() => {
-      if (!hasAnyChanges.value) return true
-      showLeaveWarning.value = true
-      return new Promise<boolean>((resolve) => {
-        resolveLeave = resolve
-      })
-    })
-  }
-
-  function confirmLeave() {
-    showLeaveWarning.value = false
-    discardAll()
-    if (pendingHostChangeId !== null) {
-      const id = pendingHostChangeId
-      pendingHostChangeId = null
-      hostSelectorModel.value = id
-      // hasAnyChanges is now false after discardAll, so the watch will emit update:hostId
-    }
-    resolveLeave?.(true)
-    resolveLeave = null
-  }
-
-  function cancelLeave() {
-    showLeaveWarning.value = false
-    pendingHostChangeId = null
-    resolveLeave?.(false)
-    resolveLeave = null
-  }
-
-  const showParamChanges = ref(false)
-  const showAttrChanges = ref(false)
-
   const tabDefs = computed(() => [
-    { label: String($t('common.attributes')), value: 'attributes' },
+    ...(!isServerDefaultMode.value ? [{ label: String($t('common.attributes')), value: 'attributes' }] : []),
     {
       label: !props.hostId && props.hostType === 'server' ? String($t('config.paramsDefault')) : String($t('config.params')),
       value: 'parameters',
@@ -535,8 +433,6 @@
       (k) => !isReadonlyAttribute(k) && JSON.stringify(originalAttributes.value[k]) !== JSON.stringify(editableAttributes.value[k]),
     ),
   )
-  watch(hasAttributeChanges, (v) => emit('attribute-change', v))
-
   const changedAttributesList = computed(() =>
     Object.keys(editableAttributes.value)
       .filter((k) => !isReadonlyAttribute(k) && JSON.stringify(originalAttributes.value[k]) !== JSON.stringify(editableAttributes.value[k]))
@@ -710,7 +606,6 @@
 
   function discardParams() {
     changedParams.value.clear()
-    showParamChanges.value = false
   }
 
   async function saveAttributes() {
@@ -736,7 +631,6 @@
 
   function discardAttributeChanges() {
     editableAttributes.value = { ...originalAttributes.value }
-    showAttrChanges.value = false
   }
 
   const hasParamChanges = computed(() => changedParams.value.size > 0)
@@ -766,23 +660,8 @@
 
   defineExpose({
     refresh,
-    hasParamChanges,
-    hasAttributeChanges,
     hasAnyChanges,
-    changedCount,
-    isSaving,
-    changedParams,
-    changedAttributesList,
-    paramSearch,
-    saveParameters,
-    discardParams,
-    saveAttributes,
-    discardAttributeChanges,
-    discardSingleParam,
-    discardSingleAttribute,
     saveAll,
     discardAll,
-    getOriginalParamValue,
-    fmtVal,
   })
 </script>

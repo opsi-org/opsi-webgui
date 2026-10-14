@@ -97,22 +97,17 @@ describe('useUserPermissions', () => {
       expect(isPageAccessible('/admin/terminal')).toBe(true)
     })
 
-    it('returns false for client creation when readOnly', async () => {
+    it('keeps the client list accessible when readOnly', async () => {
       mockUserStore.readOnly = true
       const { isPageAccessible } = await getPermissions()
-      expect(isPageAccessible('/clients/add')).toBe(false)
+      expect(isPageAccessible('/clients')).toBe(true)
     })
 
-    it('returns false for client creation when clientCreation disabled', async () => {
+    it('exposes disabled client creation without blocking the client list', async () => {
       mockUserStore.clientCreation = false
-      const { isPageAccessible } = await getPermissions()
-      expect(isPageAccessible('/clients/add')).toBe(false)
-    })
-
-    it('returns false for client clone when not permitted', async () => {
-      mockUserStore.clientCreation = false
-      const { isPageAccessible } = await getPermissions()
-      expect(isPageAccessible('/clients/clone')).toBe(false)
+      const { isPageAccessible, canCreateClients } = await getPermissions()
+      expect(canCreateClients.value).toBe(false)
+      expect(isPageAccessible('/clients')).toBe(true)
     })
 
     it('returns false for maintenance when readOnly', async () => {

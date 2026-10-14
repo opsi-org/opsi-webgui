@@ -75,17 +75,20 @@ export function usePanelRouter(options: PanelRouterOptions) {
     router.replace({ query: rest })
   }
 
-  onBeforeRouteLeave(() => {
+  function guardUnsavedChanges() {
     if (!options.hasUnsavedChanges()) return true
     showLeaveWarning.value = true
     return new Promise<boolean>((resolve) => {
       resolveRouteLeave = resolve
     })
-  })
+  }
+
+  onBeforeRouteLeave(guardUnsavedChanges)
 
   return {
     showLeaveWarning,
     checkUnsavedAndDo,
+    guardUnsavedChanges,
     confirmLeave,
     cancelLeave,
     setPanelQuery,

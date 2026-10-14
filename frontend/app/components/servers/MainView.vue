@@ -10,10 +10,12 @@
   ServersMainView - Server table with detail panel.
 -->
 <template>
+  <CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelPanelLeave" @confirm="confirmPanelLeave" />
+
   <LayoutsPageLayout
     show-refresh
     :loading="loading"
-    :show-panel="!!panelServer"
+    :show-panel="panelType === 'config'"
     :changes-detected="changesDetected && !autoRefreshEnabled"
     :changes-description="lastChangeDescription"
     @refresh="manualRefresh"
@@ -25,6 +27,16 @@
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
+      <CoreAppButton
+        :icon="icons.globalParameters"
+        color="primary"
+        size="sm"
+        :title="String($t('config.globalParameters'))"
+        data-testid="servers-open-global-parameters-panel"
+        @click="openGlobalParametersPanel"
+      >
+        {{ $t('config.globalParameters') }}
+      </CoreAppButton>
       <CoreAppButton
         v-if="!isReadOnly && hasServerWriteAccess"
         :icon="icons.add"
@@ -39,6 +51,7 @@
     </template>
 
     <CoreAppErrorBanner :error="error" @close="error = null" />
+    <CoreAppErrorBanner :error="panelLinkError" @close="panelLinkError = null" />
 
     <HostsCreateConfigModal v-model:open="showCreateConfigModal" @created="handleConfigCreated" />
 
@@ -108,26 +121,30 @@
 
     <template #panel-title>
       <span class="flex items-center gap-2">
-        <CoreAppIcon :name="icons.server" class="w-4 h-4 shrink-0" />
-        {{ panelServer?.depotId }}
+        <CoreAppIcon :name="panelServer || panelLinkLoading ? icons.server : icons.globalParameters" class="w-4 h-4 shrink-0" />
+        {{ panelLinkLoading ? route.query.server : panelServer?.depotId || $t('config.globalParameters') }}
       </span>
     </template>
-    <template #panel-subtitle>- {{ $t('config.title') }}</template>
+    <template #panel-subtitle
+      ><template v-if="panelServer">- {{ $t('config.title') }}</template></template
+    >
     <template #panel>
-      <div v-if="panelServer" class="h-full flex flex-col min-h-0">
+      <div v-if="panelType === 'config'" class="h-full flex flex-col min-h-0">
+        <div v-if="panelLinkLoading" role="status" :aria-label="String($t('common.loading'))" class="py-8 flex justify-center">
+          <CoreAppLoadingSpinner size="md" />
+        </div>
         <HostsConfigTabs
-          v-if="panelType === 'config'"
+          v-else
           ref="configTabsRef"
-          :host-id="panelServer.depotId"
+          :host-id="panelServer?.depotId || null"
           host-type="server"
           :tab="panelTab"
-          panel-mode
+          :search="typeof route.query.search === 'string' ? route.query.search : undefined"
           :readonly="isReadOnly || !hasServerWriteAccess"
           @update:tab="panelTab = $event"
+          @update:search="router.replace({ query: { ...route.query, search: $event || undefined } })"
         />
       </div>
-
-      <CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelPanelLeave" @confirm="confirmPanelLeave" />
     </template>
   </LayoutsPageLayout>
 </template>
@@ -179,6 +196,11 @@
   const panelServer = ref<Server | null>(null)
   const panelType = ref<'config' | null>(null)
   const panelTab = ref('attributes')
+  const panelLinkError = ref<string | null>(null)
+  const panelLinkLoading = ref(false)
+  let panelLinkRequestId = 0
+  let panelRouteReady = false
+  let panelRouteHistoryPosition: number | undefined
   const lastPageParams = ref<PageChangeParams | null>(null)
   const currentFilterQuery = ref(typeof route.query.filter === 'string' ? route.query.filter : getStoredDataTableFilter('servers'))
   const fetchServersRequestId = ref(0)
@@ -235,6 +257,7 @@
   const {
     showLeaveWarning,
     checkUnsavedAndDo,
+    guardUnsavedChanges,
     confirmLeave: confirmPanelLeave,
     cancelLeave: cancelPanelLeave,
     setPanelQuery,
@@ -243,7 +266,7 @@
     entityQueryKey: 'server',
     hasUnsavedChanges: () => configTabsRef.value?.hasAnyChanges ?? false,
     discardAllChanges: () => configTabsRef.value?.discardAll?.(),
-    additionalQueryKeys: ['configType'],
+    additionalQueryKeys: ['configType', 'search'],
   })
 
   const columns: DataTableColumnDef[] = [
@@ -278,6 +301,91 @@
     panelType.value = 'config'
     setPanelQuery(row.depotId, { configType: panelTab.value })
   }
+
+  function updatePanelServer(id: string | null) {
+    router.replace({
+      query: { ...route.query, server: id || undefined, view: 'panel', panelType: 'config', configType: panelTab.value },
+    })
+  }
+
+  function openGlobalParametersPanel() {
+    checkUnsavedAndDo(() => {
+      router.replace({
+        query: {
+          ...route.query,
+          server: undefined,
+          view: 'panel',
+          panelType: 'config',
+          configType: 'parameters',
+          search: undefined,
+        },
+      })
+    })
+  }
+
+  function normalizeConfigTab(tab: unknown) {
+    return tab === 'parameters' || tab === 'parameter' ? 'parameters' : 'attributes'
+  }
+
+  async function openServerPanelFromRoute() {
+    const requestId = ++panelLinkRequestId
+    panelLinkError.value = null
+    panelLinkLoading.value = false
+    if (route.query.view !== 'panel') {
+      panelServer.value = null
+      panelType.value = null
+      return
+    }
+    panelTab.value = normalizeConfigTab(route.query.configType)
+    const serverId = typeof route.query.server === 'string' ? route.query.server : ''
+    if (!serverId) {
+      panelTab.value = 'parameters'
+      panelServer.value = null
+      panelType.value = 'config'
+      return
+    }
+    if (panelServer.value?.depotId === serverId) return
+    panelServer.value = null
+    panelType.value = 'config'
+    panelLinkLoading.value = true
+    const result = await getServers({ filterQuery: JSON.stringify({ id: [serverId] }), pageNumber: 1, perPage: 1 })
+    if (requestId !== panelLinkRequestId) return
+    panelLinkLoading.value = false
+    const server = result.data?.find((entry) => entry.depotId === serverId)
+    if (!server) {
+      panelType.value = null
+      panelLinkError.value = result.error?.message || String($t('common.noData'))
+      return
+    }
+    panelServer.value = server
+    panelType.value = 'config'
+  }
+
+  onBeforeRouteUpdate((to, from) => {
+    if (to.query.view === from.query.view && to.query.server === from.query.server) return true
+    const { server: _server, view: _view, panelType: _panelType, configType: _configType, search: _search, ...context } = from.query
+    const query = { ...context, ...to.query }
+    const isHistoryNavigation = window.history.state?.position !== panelRouteHistoryPosition
+    if (to.query.view === 'panel' && !isHistoryNavigation && JSON.stringify(query) !== JSON.stringify(to.query)) {
+      return { path: to.path, query }
+    }
+    return guardUnsavedChanges()
+  })
+
+  watch(
+    () => [route.query.server, route.query.view, route.query.configType],
+    () => {
+      if (panelRouteReady) void openServerPanelFromRoute()
+    },
+  )
+
+  watch(
+    () => route.fullPath,
+    () => {
+      panelRouteHistoryPosition = window.history.state?.position
+    },
+    { flush: 'post' },
+  )
 
   function openConfig(row: Server) {
     checkUnsavedAndDo(() => doOpenConfig(row))
@@ -435,21 +543,15 @@
     } else {
       await fetchServers(buildInitialPageParams(currentFilterQuery.value))
     }
-    const serverId = route.query.server as string | undefined
-    const configType = route.query.configType as string | undefined
-    if (configType) {
-      const normalized = configType === 'attribute' ? 'attributes' : configType === 'parameter' ? 'parameters' : configType
-      if (normalized === 'parameters' || normalized === 'attributes') {
-        panelTab.value = normalized
-      }
-    }
-    if (serverId && route.query.view === 'panel') {
-      const s = servers.value.find((sv) => sv.depotId === serverId)
-      if (s) doOpenConfig(s)
-    }
+    panelRouteHistoryPosition = window.history.state?.position
+    panelRouteReady = true
+    await openServerPanelFromRoute()
   })
 
-  onUnmounted(() => fetchServersController?.abort())
+  onUnmounted(() => {
+    fetchServersController?.abort()
+    panelLinkRequestId++
+  })
 
   // Global Search "clear all filters" resets every scope; only react to it while this page is mounted.
   function handleClearAllFilters() {

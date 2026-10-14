@@ -15,7 +15,7 @@
   <LayoutsPageLayout
     show-refresh
     :loading="loading"
-    :show-panel="!!panelClient || !!panelType"
+    :show-panel="panelLinkLoading || !!panelClient || !!panelType"
     :changes-detected="changesDetected && !autoRefreshEnabled"
     :changes-description="lastChangeDescription"
     @refresh="manualRefresh"
@@ -67,6 +67,8 @@
         @close="actionStatus = null"
       />
     </CoreAppErrorBanner>
+
+    <CoreAppErrorBanner :error="panelLinkError" :show="!!panelLinkError" @close="panelLinkError = null" />
 
     <CoreAppDataTable
       :rows="clients"
@@ -259,7 +261,7 @@
         </template>
         <template v-else-if="panelType === 'add'">{{ $t('common.new') }}</template>
         <template v-else>
-          {{ panelClient?.clientId }}
+          {{ panelClient?.clientId || (panelLinkLoading ? route.query.client : '') }}
           <span v-if="panelType" class="font-normal text-(--color-text)">– {{ clientPanelTitle }}</span>
         </template>
       </span>
@@ -280,32 +282,27 @@
       </div>
     </template>
     <template #panel>
-      <div v-if="panelClient" class="h-full flex flex-col min-h-0">
+      <div v-if="panelLinkLoading" role="status" :aria-label="String($t('common.loading'))" class="py-8 flex justify-center">
+        <CoreAppLoadingSpinner size="md" />
+      </div>
+      <div v-else-if="panelClient" class="h-full flex flex-col min-h-0">
         <HostsConfigTabs
           v-if="panelType === 'config'"
           ref="configTabsRef"
           :host-id="panelClient.clientId"
           host-type="client"
           :tab="panelTab"
-          panel-mode
           :readonly="isReadOnly"
           @update:tab="panelTab = $event"
         />
-        <ClientsLogsView v-if="panelType === 'logs'" :client-id="panelClient.clientId" panel-mode />
+        <ClientsLogsView v-if="panelType === 'logs'" :client-id="panelClient.clientId" />
         <ClientsInventoryPanel
           v-if="panelType === 'inventory'"
           :client-id="panelClient.clientId"
           :tab="panelInventoryTab"
-          panel-mode
           @update:tab="panelInventoryTab = $event"
         />
-        <ClientsCloneForm
-          v-if="panelType === 'clone'"
-          ref="cloneFormRef"
-          :source-id="panelClient.clientId"
-          panel-mode
-          @saved="fetchClients"
-        />
+        <ClientsCloneForm v-if="panelType === 'clone'" ref="cloneFormRef" :source-id="panelClient.clientId" @saved="fetchClients" />
       </div>
       <template v-if="panelType === 'products'">
         <ProductsMainView
@@ -319,7 +316,7 @@
           </template>
         </ProductsMainView>
       </template>
-      <ClientsAddForm v-if="panelType === 'add'" panel-mode @saved="handleAddSaved" />
+      <ClientsAddForm v-if="panelType === 'add'" ref="addFormRef" @saved="handleAddSaved" />
     </template>
   </LayoutsPageLayout>
 </template>
@@ -351,6 +348,11 @@
 
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const panelLinkError = ref<string | null>(null)
+  const panelLinkLoading = ref(false)
+  let panelLinkRequestId = 0
+  let panelRouteReady = false
+  let panelRouteHistoryPosition: number | undefined
   const actionStatus = ref<{ type: 'success'; title: string; message: string } | null>(null)
   let actionStatusTimer: ReturnType<typeof setTimeout> | null = null
   const clients = ref<OpsiClient[]>([])
@@ -450,13 +452,18 @@
     discardAllChanges?: () => void
     saveAll?: () => void
   } | null>(null)
-  const cloneFormRef = ref<{ hasChanges?: boolean } | null>(null)
+  const cloneFormRef = ref<{ hasChanges?: boolean; refresh?: () => void } | null>(null)
+  const addFormRef = ref<{ hasChanges?: boolean; resetForm?: () => void } | null>(null)
   const showLeaveWarning = ref(false)
   const pendingPanelAction = ref<(() => void) | null>(null)
   let resolveRouteLeave: ((ok: boolean) => void) | null = null
 
   onBeforeRouteLeave(() => {
-    const hasChanges = configTabsRef.value?.hasAnyChanges || productsTableRef.value?.hasUnsavedChanges || cloneFormRef.value?.hasChanges
+    const hasChanges =
+      configTabsRef.value?.hasAnyChanges ||
+      productsTableRef.value?.hasUnsavedChanges ||
+      cloneFormRef.value?.hasChanges ||
+      addFormRef.value?.hasChanges
     if (!hasChanges) return true
     showLeaveWarning.value = true
     return new Promise<boolean>((resolve) => {
@@ -611,6 +618,113 @@
     checkUnsavedAndDo(() => doOpenPanel(client, type))
   }
 
+  function isIndependentClientPanel(type: unknown): type is ClientPanelType {
+    return type === 'config' || type === 'logs' || type === 'inventory' || type === 'clone'
+  }
+
+  function normalizeConfigTab(tab: unknown): 'parameters' | 'attributes' {
+    return tab === 'parameters' || tab === 'parameter' ? 'parameters' : 'attributes'
+  }
+
+  async function openClientPanelFromRoute() {
+    const requestId = ++panelLinkRequestId
+    panelLinkError.value = null
+    panelLinkLoading.value = false
+    const clientId = route.query.client
+    const type = route.query.panelType
+    if (route.query.view === 'panel' && type === 'add') {
+      panelClient.value = null
+      panelType.value = 'add'
+      return
+    }
+    if (route.query.view !== 'panel' || !isIndependentClientPanel(type) || typeof clientId !== 'string' || !clientId) {
+      if (isIndependentClientPanel(panelType.value) || panelType.value === 'add') {
+        panelClient.value = null
+        panelType.value = null
+      }
+      return
+    }
+    if (type === 'inventory') {
+      panelInventoryTab.value = route.query.inventoryTab === 'software' ? 'software' : 'hardware'
+    }
+    if (type === 'config') panelTab.value = normalizeConfigTab(route.query.configType)
+    if (panelClient.value?.clientId === clientId && panelType.value === type) return
+    panelClient.value = null
+    panelType.value = null
+    panelLinkLoading.value = true
+    const result = await getClients({ filterQuery: JSON.stringify({ id: [clientId] }), pageNumber: 1, perPage: 1 })
+    if (requestId !== panelLinkRequestId) return
+    panelLinkLoading.value = false
+    const client = result.data?.find((entry) => entry.clientId === clientId)
+    if (!client) {
+      panelClient.value = null
+      panelType.value = null
+      panelLinkError.value = result.error?.message || String($t('common.noData'))
+      return
+    }
+    panelClient.value = client
+    panelType.value = type
+  }
+
+  onBeforeRouteUpdate((to, from) => {
+    const opensClientPanel =
+      to.query.view === 'panel' &&
+      (to.query.panelType === 'add' || (isIndependentClientPanel(to.query.panelType) && typeof to.query.client === 'string'))
+    const leavesEditablePanel =
+      from.query.view === 'panel' &&
+      (from.query.panelType === 'config' || from.query.panelType === 'clone' || from.query.panelType === 'add')
+    if (!opensClientPanel && !leavesEditablePanel) return true
+    if (from.query.view === to.query.view && from.query.panelType === to.query.panelType && from.query.client === to.query.client)
+      return true
+    const {
+      client: _client,
+      view: _view,
+      panelType: _panelType,
+      configType: _configType,
+      inventoryTab: _inventoryTab,
+      ...context
+    } = from.query
+    const query = opensClientPanel
+      ? {
+          ...context,
+          ...(to.query.panelType === 'add' ? {} : { client: to.query.client }),
+          view: 'panel',
+          panelType: to.query.panelType,
+          ...(to.query.panelType === 'config' ? { configType: normalizeConfigTab(to.query.configType) } : {}),
+          ...(to.query.panelType === 'inventory' ? { inventoryTab: to.query.inventoryTab === 'software' ? 'software' : 'hardware' } : {}),
+        }
+      : { ...context, ...to.query }
+    const isHistoryNavigation = window.history.state?.position !== panelRouteHistoryPosition
+    if (!isHistoryNavigation && JSON.stringify(query) !== JSON.stringify(to.query)) return { path: to.path, query }
+    if (opensClientPanel && panelClient.value?.clientId === to.query.client && panelType.value === to.query.panelType) return true
+    if (
+      !configTabsRef.value?.hasAnyChanges &&
+      !productsTableRef.value?.hasUnsavedChanges &&
+      !cloneFormRef.value?.hasChanges &&
+      !addFormRef.value?.hasChanges
+    )
+      return true
+    showLeaveWarning.value = true
+    return new Promise<boolean>((resolve) => {
+      resolveRouteLeave = resolve
+    })
+  })
+
+  watch(
+    () => [route.query.client, route.query.view, route.query.panelType, route.query.configType, route.query.inventoryTab],
+    () => {
+      if (panelRouteReady) void openClientPanelFromRoute()
+    },
+  )
+
+  watch(
+    () => route.fullPath,
+    () => {
+      panelRouteHistoryPosition = window.history.state?.position
+    },
+    { flush: 'post' },
+  )
+
   function openProductsPanel() {
     checkUnsavedAndDo(() => {
       panelClient.value = null
@@ -683,9 +797,11 @@
 
   function closePanel() {
     checkUnsavedAndDo(() => {
+      panelLinkRequestId++
+      panelLinkLoading.value = false
       panelClient.value = null
       panelType.value = null
-      const { client: _c, view: _v, panelType: _pt, configType: _ct, sortBy: _sb, type: _ty, ...rest } = route.query
+      const { client: _c, view: _v, panelType: _pt, configType: _ct, inventoryTab: _it, sortBy: _sb, type: _ty, ...rest } = route.query
       router.replace({ query: rest })
     })
   }
@@ -693,7 +809,7 @@
   function checkUnsavedAndDo(action: () => void) {
     const hasConfigChanges = configTabsRef.value?.hasAnyChanges
     const hasProductChanges = productsTableRef.value?.hasUnsavedChanges
-    if (hasConfigChanges || hasProductChanges) {
+    if (hasConfigChanges || hasProductChanges || cloneFormRef.value?.hasChanges || addFormRef.value?.hasChanges) {
       pendingPanelAction.value = action
       showLeaveWarning.value = true
       return
@@ -705,6 +821,8 @@
     showLeaveWarning.value = false
     configTabsRef.value?.discardAll?.()
     productsTableRef.value?.discardAllChanges?.()
+    cloneFormRef.value?.refresh?.()
+    addFormRef.value?.resetForm?.()
     if (resolveRouteLeave) {
       resolveRouteLeave(true)
       resolveRouteLeave = null
@@ -996,6 +1114,7 @@
   )
 
   onMounted(async () => {
+    panelRouteHistoryPosition = window.history.state?.position
     if (defaultClientPanelView.value === 'clone' && (!canCreateClients.value || isReadOnly.value)) {
       defaultClientPanelView.value = 'config'
     }
@@ -1013,23 +1132,16 @@
     } else {
       await Promise.all([fetchClients(buildInitialPageParams(currentFilterQuery.value)), fetchBlockedClients()])
     }
+    panelRouteReady = true
+    if (route.query.view === 'panel' && (isIndependentClientPanel(route.query.panelType) || route.query.panelType === 'add')) {
+      await openClientPanelFromRoute()
+      return
+    }
     const clientId = route.query.client as string | undefined
-    const pType = route.query.panelType as 'config' | 'logs' | 'clone' | 'inventory' | 'products' | 'add' | undefined
-    const configType = route.query.configType as string | undefined
-    if (configType) {
-      const normalized = configType === 'attribute' ? 'attributes' : configType === 'parameter' ? 'parameters' : configType
-      if (normalized === 'parameters' || normalized === 'attributes') {
-        panelTab.value = normalized
-      }
-    }
-    const inventoryTab = route.query.inventoryTab as string | undefined
-    if (inventoryTab === 'hardware' || inventoryTab === 'software') {
-      panelInventoryTab.value = inventoryTab
-    }
+    const pType = route.query.panelType
     if (clientId && route.query.view === 'panel') {
       const c = clients.value.find((cl) => cl.clientId === clientId)
-      const clientPanelType = pType === 'logs' || pType === 'clone' || pType === 'inventory' ? pType : defaultClientPanelView.value
-      if (c) doOpenPanel(c, clientPanelType)
+      if (c) doOpenPanel(c, defaultClientPanelView.value)
       return
     }
 
@@ -1038,14 +1150,12 @@
       panelType.value = 'products'
       return
     }
-
-    if (route.query.view === 'panel' && pType === 'add') {
-      panelClient.value = null
-      panelType.value = 'add'
-    }
   })
 
-  onUnmounted(() => fetchClientsController?.abort())
+  onUnmounted(() => {
+    fetchClientsController?.abort()
+    panelLinkRequestId++
+  })
 
   // Global Search "clear all filters" resets every scope; only react to it while this page is mounted.
   function handleClearAllFilters() {

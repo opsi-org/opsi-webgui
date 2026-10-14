@@ -99,7 +99,6 @@
       "err": "Échec du clonage du client",
       "ok": "Client cloné avec succès.",
       "options": "Options de clonage",
-      "source": "Client source",
       "title": "Cloner le client"
     },
     "create": {
@@ -171,6 +170,7 @@
     "close": "Fermer",
     "collapse": "Replier",
     "create": "Créer",
+    "current": "Actuelle",
     "days": "Jours",
     "default": "Par défaut",
     "delete": "Supprimer",
@@ -199,6 +199,7 @@
     "mixed": "Mixte",
     "new": "Nouveau",
     "newValue": "Nouvelle valeur",
+    "next": "Suivante",
     "noData": "Aucune donnée disponible",
     "none": "Aucun",
     "noResults": "Aucun résultat trouvé",
@@ -211,8 +212,10 @@
     "oldValue": "Ancienne valeur",
     "optional": "optionnel",
     "or": "ou",
+    "page": "Page",
     "pressEnterToAdd": "Appuyez sur Entrée pour ajouter",
     "preview": "Aperçu",
+    "previous": "Précédente",
     "priority": "Priorité",
     "readOnly": "Accès en lecture seule",
     "refresh": "Actualiser",
@@ -257,6 +260,7 @@
       "monitoring": "Contrôle la surveillance de l’état de santé opsiconfd pour ce client."
     },
     "create": "Créer une configuration",
+    "globalParameters": "Paramètres globaux",
     "id": "ID de configuration",
     "idPlaceholder": "p. ex. category.subcategory.name",
     "items": "Configurations",
@@ -348,7 +352,6 @@
     "select": "Sélectionner un hôte pour afficher la configuration"
   },
   "inventory": {
-    "absent": "Supprimé",
     "architecture": "Architecture",
     "class": "Classe",
     "displayName": "Nom",
@@ -367,7 +370,6 @@
     "notScanned": "Pas encore scanné",
     "notScannedDesc": "Aucune donnée d'inventaire n'a encore été collectée pour ce client.",
     "okDesc": "L'inventaire existe et a été scanné au cours des {days} derniers jours.",
-    "present": "Présent",
     "scannedAt": "Scanné",
     "select": "Sélectionner un client pour afficher l'inventaire",
     "software": "Logiciel",
@@ -398,12 +400,8 @@
     "unlicensed": "Sans licence"
   },
   "nav": {
-    "addNew": "Ajouter",
     "admin": "Administration",
     "breadcrumb": "Fil d'Ariane",
-    "clone": "Cloner",
-    "clients": "Clients",
-    "dashboard": "Tableau de bord",
     "defaultPage": "Page par défaut",
     "groups": "Groupes",
     "leaveAnyway": "Quitter quand même",
@@ -487,17 +485,10 @@
     "admin.maintenance": "Gérer les clients verrouillés, les produits verrouillés, l'état de l'application et les sauvegardes",
     "admin.terminal": "Accès direct au terminal du serveur",
     "clients": "Afficher et gérer les clients",
-    "clientsAdd": "Ajouter un nouveau client",
-    "clientsClone": "Cloner un client existant",
-    "clientsConfigAttrs": "Afficher et gérer les attributs du client",
-    "clientsConfigParams": "Afficher et gérer les paramètres du client",
-    "clientsLogs": "Afficher les journaux du client. Sélectionnez une entrée pour définir un signet.",
     "dashboard": "Obtenez une vue d'ensemble rapide. Cliquez sur les cartes du tableau de bord pour accéder à des pages spécifiques.",
     "groups": "Organiser les clients et les produits en groupes.",
     "products": "Afficher et gérer les produits localboot et netboot",
     "servers": "Afficher et gérer les serveurs",
-    "serversConfigAttrs": "Afficher et gérer les attributs du serveur",
-    "serversConfigParams": "Afficher et gérer les paramètres du serveur. Si aucun serveur n'est sélectionné, les valeurs par défaut du serveur sont affichées.",
     "support": "Accès rapide aux ressources d'assistance et aux notes de version"
   },
   "products": {
