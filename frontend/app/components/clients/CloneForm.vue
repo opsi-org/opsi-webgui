@@ -10,8 +10,6 @@
   ClientsCloneForm - Form for cloning an existing client to a new client.
 -->
 <template>
-  <CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
-
   <div v-if="!canCreateClients || isReadOnly" class="flex items-center justify-center h-full p-8">
     <CoreAppAlertInline color="warning" :title="$t('auth.permissionDenied')">
       <template #description>{{
@@ -20,51 +18,30 @@
     </CoreAppAlertInline>
   </div>
   <template v-else>
-    <div class="shrink-0 pb-2 sticky top-0 z-10 bg-(--color-surface) mb-2">
-      <div class="flex flex-wrap items-center gap-2">
-        <div v-if="showSourceSelector" class="flex items-center gap-1.5">
-          <slot name="sourceSelector">
-            <HostsSelector
-              v-model="sourceSelectorModel"
-              type="client"
-              :placeholder="sourceSelectorPlaceholder"
-              :allow-all="false"
-              allow-clear
-            />
-          </slot>
-        </div>
-        <div class="flex-1" />
-        <div class="flex flex-wrap items-center gap-1.5">
-          <CoreAppButton
-            v-if="resolvedSourceId"
-            color="success"
-            :loading="loading"
-            :title="String($t('clients.clone.title'))"
-            size="sm"
-            @click="cloneClient"
-          >
-            <CoreAppIcon :name="icons.clone" /> {{ $t('clients.clone.title') }}
-          </CoreAppButton>
-          <CoreAppButton
-            :icon="icons.refresh"
-            color="primary"
-            variant="outline"
-            size="sm"
-            :title="String($t('common.refresh'))"
-            @click="refresh"
-          />
-        </div>
-      </div>
+    <div class="shrink-0 pb-2 sticky top-0 z-10 bg-(--color-surface) mb-2 flex flex-wrap items-center justify-end gap-1.5">
+      <CoreAppButton
+        v-if="sourceId"
+        color="success"
+        :loading="loading"
+        :title="String($t('clients.clone.title'))"
+        size="sm"
+        @click="cloneClient"
+      >
+        <CoreAppIcon :name="icons.clone" /> {{ $t('clients.clone.title') }}
+      </CoreAppButton>
+      <CoreAppButton
+        :icon="icons.refresh"
+        color="primary"
+        variant="outline"
+        size="sm"
+        :title="String($t('common.refresh'))"
+        @click="refresh"
+      />
     </div>
 
-    <CoreAppEmptyState
-      v-if="!resolvedSourceId && !loading"
-      :icon="icons.client"
-      :message="String($t('clients.selectClone'))"
-      class="flex-1"
-    />
+    <CoreAppEmptyState v-if="!sourceId && !loading" :icon="icons.client" :message="String($t('clients.selectClone'))" class="flex-1" />
 
-    <div v-else :class="['flex-1 overflow-y-auto space-y-3 opsi-dense-form opsi-compact-page']">
+    <div v-else class="flex-1 overflow-y-auto space-y-3 opsi-dense-form opsi-compact-page">
       <CoreAppAlertInline v-if="success" color="success" :title="String($t('common.success'))" closable @close="success = false">
         <template #description>{{ $t('clients.clone.ok') }}</template>
       </CoreAppAlertInline>
@@ -77,24 +54,11 @@
         @close="error = null"
       />
 
-      <div v-if="!panelMode || showSourceInPanel" class="opsi-card">
-        <div
-          class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-1 gap-x-6 min-h-10 hover:bg-(--color-surface-hover) rounded transition-colors"
-        >
-          <span class="text-sm text-(--color-text) min-w-0 md:w-1/3 break-all">
-            {{ $t('clients.clone.source') }}
-          </span>
-          <span class="text-sm flex-1 truncate" :title="resolvedSourceId || undefined">
-            {{ resolvedSourceId }}
-          </span>
-        </div>
-      </div>
-
       <div class="opsi-card">
         <div class="flex items-center justify-between mb-2">
-          <h4 class="text-xs font-heading uppercase tracking-wide m-0">
+          <h2 class="text-xs font-heading uppercase tracking-wide m-0">
             {{ $t('clients.create.title') }}
-          </h4>
+          </h2>
         </div>
         <div>
           <div
@@ -176,9 +140,9 @@
 
       <div class="opsi-card h-full">
         <div class="flex items-center justify-between mb-2">
-          <h4 class="text-xs font-heading uppercase tracking-wide m-0">
+          <h2 class="text-xs font-heading uppercase tracking-wide m-0">
             {{ $t('clients.clone.options') }}
-          </h4>
+          </h2>
         </div>
         <div>
           <div
@@ -195,7 +159,7 @@
               {{ $t('config.items') }}
             </CoreAppButton>
             <div class="flex-1 flex items-center gap-2 min-w-0">
-              <CoreAppCheckbox v-model="cloneclient.options.configs" :disabled="loading" @click.stop />
+              <CoreAppCheckbox v-model="cloneclient.options.configs" :aria-label="String($t('config.items'))" :disabled="loading" />
             </div>
           </div>
           <div
@@ -212,7 +176,7 @@
               {{ $t('products.title') }}
             </CoreAppButton>
             <div class="flex-1 flex items-center gap-2 min-w-0">
-              <CoreAppCheckbox v-model="cloneclient.options.products" :disabled="loading" @click.stop />
+              <CoreAppCheckbox v-model="cloneclient.options.products" :aria-label="String($t('products.title'))" :disabled="loading" />
             </div>
           </div>
           <div
@@ -229,7 +193,11 @@
               {{ $t('products.properties') }}
             </CoreAppButton>
             <div class="flex-1 flex items-center gap-2 min-w-0">
-              <CoreAppCheckbox v-model="cloneclient.options.productProperties" :disabled="loading" @click.stop />
+              <CoreAppCheckbox
+                v-model="cloneclient.options.productProperties"
+                :aria-label="String($t('products.properties'))"
+                :disabled="loading"
+              />
             </div>
           </div>
         </div>
@@ -239,33 +207,15 @@
 </template>
 
 <script setup lang="ts">
-  import { useSelectionStore } from '~/stores/selectionStore'
-
   const { canCreateClients, isReadOnly } = useUserPermissions()
   const icons = useIcons()
   const { t: $t } = useI18n()
   const { getClientIds, cloneClient: cloneClientApi } = useApiHelpers()
-  const selectionStore = useSelectionStore()
   const props = defineProps<{
     sourceId?: string | null
-    panelMode?: boolean
-    showSourceInPanel?: boolean
-    showSourceSelector?: boolean
-    sourceSelectorPlaceholder?: string
   }>()
 
-  const emit = defineEmits(['saved', 'has-changes', 'update:sourceId'])
-
-  const sourceSelectorModel = ref<string>(props.sourceId || '')
-  watch(
-    () => props.sourceId,
-    (v) => {
-      sourceSelectorModel.value = v || ''
-    },
-  )
-  watch(sourceSelectorModel, (v) => emit('update:sourceId', v || null))
-
-  const resolvedSourceId = computed(() => props.sourceId || (props.showSourceSelector ? sourceSelectorModel.value : null))
+  const emit = defineEmits(['saved'])
 
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -274,35 +224,6 @@
   const clientName = ref('')
   const domain = ref('')
   const clientIds = ref<string[]>([])
-
-  const showLeaveWarning = ref(false)
-  let resolveLeave: ((ok: boolean) => void) | null = null
-
-  const hasChanges = computed(() => clientName.value.length > 0)
-
-  // Only register route-leave guard when NOT in panel mode.
-  // In panel mode the parent page handles navigation guards.
-  if (!props.panelMode) {
-    onBeforeRouteLeave(() => {
-      if (!hasChanges.value) return true
-      showLeaveWarning.value = true
-      return new Promise<boolean>((resolve) => {
-        resolveLeave = resolve
-      })
-    })
-  }
-
-  function confirmLeave() {
-    showLeaveWarning.value = false
-    resolveLeave?.(true)
-    resolveLeave = null
-  }
-
-  function cancelLeave() {
-    showLeaveWarning.value = false
-    resolveLeave?.(false)
-    resolveLeave = null
-  }
 
   const cloneclient = reactive({
     target: {
@@ -323,14 +244,25 @@
     return idx > 0 ? id.substring(idx) : ''
   }
 
+  const hasChanges = computed(
+    () =>
+      clientName.value.length > 0 ||
+      domain.value !== (props.sourceId ? getDefaultDomain(props.sourceId) : '') ||
+      !!cloneclient.target.ipAddress ||
+      !!cloneclient.target.hardwareAddress ||
+      !!cloneclient.target.systemUUID ||
+      !cloneclient.options.configs ||
+      !cloneclient.options.products ||
+      cloneclient.options.productProperties,
+  )
+
   onMounted(() => {
-    if (resolvedSourceId.value) domain.value = getDefaultDomain(resolvedSourceId.value)
+    if (props.sourceId) domain.value = getDefaultDomain(props.sourceId)
     fetchClientIds()
   })
 
   async function fetchClientIds() {
-    const depots = selectionStore.selectedServers
-    const result = await getClientIds(depots)
+    const result = await getClientIds([])
     clientIds.value = result.data || []
   }
 
@@ -353,7 +285,7 @@
   }
 
   async function cloneClient() {
-    if (!resolvedSourceId.value || !checkValid()) {
+    if (!props.sourceId || !checkValid()) {
       error.value = $t('clients.validation.exists')
       return
     }
@@ -362,10 +294,10 @@
     success.value = false
     cloneclient.target.hostId = clientName.value + domain.value
     try {
-      const res = await cloneClientApi(resolvedSourceId.value, cloneclient.target, cloneclient.options)
+      const res = await cloneClientApi(props.sourceId, cloneclient.target, cloneclient.options)
       if (res.error) throw res.error
-      success.value = true
       refresh()
+      success.value = true
       emit('saved')
     } catch (e: unknown) {
       error.value = (e instanceof Error ? e.message : '') || $t('clients.clone.err')
@@ -376,7 +308,7 @@
 
   function refresh() {
     clientName.value = ''
-    domain.value = resolvedSourceId.value ? getDefaultDomain(resolvedSourceId.value) : ''
+    domain.value = props.sourceId ? getDefaultDomain(props.sourceId) : ''
     cloneclient.target = {
       hostId: '',
       ipAddress: '',
@@ -395,7 +327,6 @@
 
   defineExpose({
     refresh,
-    cloneClient,
     hasChanges,
   })
 

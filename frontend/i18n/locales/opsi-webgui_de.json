@@ -99,7 +99,6 @@
       "err": "Client konnte nicht geklont werden",
       "ok": "Client erfolgreich geklont.",
       "options": "Klon-Optionen",
-      "source": "Quell-Client",
       "title": "Client klonen"
     },
     "create": {
@@ -171,6 +170,7 @@
     "close": "Schließen",
     "collapse": "Einklappen",
     "create": "Erstellen",
+    "current": "Aktuell",
     "days": "Tage",
     "default": "Standard",
     "delete": "Löschen",
@@ -199,6 +199,7 @@
     "mixed": "gemischt",
     "new": "Neu",
     "newValue": "Neuer Wert",
+    "next": "Nächste",
     "noData": "Keine Daten verfügbar",
     "none": "Keine",
     "noResults": "Keine Ergebnisse gefunden",
@@ -211,8 +212,10 @@
     "oldValue": "Alter Wert",
     "optional": "optional",
     "or": "oder",
+    "page": "Seite",
     "pressEnterToAdd": "Enter drücken zum Hinzufügen",
     "preview": "Vorschau",
+    "previous": "Vorherige",
     "priority": "Priorität",
     "readOnly": "Nur-Lese-Zugriff",
     "refresh": "Aktualisieren",
@@ -257,6 +260,7 @@
       "monitoring": "Steuert die opsiconfd-Gesundheitsprüfung für diesen Client."
     },
     "create": "Konfiguration erstellen",
+    "globalParameters": "Globale Parameter",
     "id": "Konfigurations-ID",
     "idPlaceholder": "z. B. category.subcategory.name",
     "items": "Konfigurationen",
@@ -348,7 +352,6 @@
     "select": "Host auswählen um Konfiguration anzuzeigen"
   },
   "inventory": {
-    "absent": "Entfernt",
     "architecture": "Architektur",
     "class": "Klasse",
     "displayName": "Name",
@@ -367,7 +370,6 @@
     "notScanned": "Noch nicht gescannt",
     "notScannedDesc": "Für diesen Client wurden noch keine Inventardaten erfasst.",
     "okDesc": "Inventar vorhanden und innerhalb der letzten {days} Tage gescannt.",
-    "present": "Vorhanden",
     "scannedAt": "Gescannt",
     "select": "Client auswählen um Inventar anzuzeigen",
     "software": "Software",
@@ -398,12 +400,8 @@
     "unlicensed": "Nicht lizenziert"
   },
   "nav": {
-    "addNew": "Neu hinzufügen",
     "admin": "Administration",
     "breadcrumb": "Brotkrümelnavigation",
-    "clone": "Klonen",
-    "clients": "Clients",
-    "dashboard": "Dashboard",
     "defaultPage": "Standardseite",
     "groups": "Gruppen",
     "leaveAnyway": "Trotzdem verlassen",
@@ -487,17 +485,10 @@
     "admin.maintenance": "Wartung: gesperrte Clients, gesperrte Produkte, Anwendungsstatus festlegen, Backups erstellen oder wiederherstellen",
     "admin.terminal": "Direkter Zugriff auf das Server-Terminal",
     "clients": "Clients anzeigen und verwalten",
-    "clientsAdd": "Einen neuen Client hinzufügen",
-    "clientsClone": "Einen bestehenden Client klonen",
-    "clientsConfigAttrs": "Client-Attribute anzeigen und verwalten",
-    "clientsConfigParams": "Client-Parameter anzeigen und verwalten",
-    "clientsLogs": "Client-Logs anzeigen. Wählen Sie einen Eintrag aus, um ein Lesezeichen zu setzen.",
     "dashboard": "Schnellübersicht erhalten. Klicken Sie auf die Dashboard-Karten, um schnell zu bestimmten Seiten zu navigieren.",
     "groups": "Organisieren Sie Clients und Produkte in Gruppen.",
     "products": "Localboot- und Netboot-Produkte sowie deren Eigenschaften und Abhängigkeiten anzeigen und verwalten",
     "servers": "Server anzeigen und verwalten",
-    "serversConfigAttrs": "Serverattribute anzeigen und verwalten",
-    "serversConfigParams": "Serverparameter anzeigen und verwalten. Wenn kein Server ausgewählt ist, werden die Standardwerte des Servers angezeigt.",
     "support": "Schnellzugriff auf Support-Ressourcen und Versionshinweise"
   },
   "products": {

@@ -16,6 +16,7 @@ export const icons = {
   apple: 'simple-icons:apple',
   // Lucide
   health: 'lucide:activity',
+  globalParameters: 'heroicons:cog-8-tooth',
   unequal: 'lucide:equal-not',
   squareCheck: 'lucide:square-check',
   square: 'lucide:square',

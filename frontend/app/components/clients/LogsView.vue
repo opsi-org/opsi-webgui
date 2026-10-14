@@ -12,17 +12,6 @@
 <template>
   <LayoutsPageLayout :loading="loading">
     <template #filters>
-      <slot name="clientSelector">
-        <HostsSelector
-          v-if="showClientSelector"
-          v-model="clientSelectorModel"
-          size="xs"
-          type="client"
-          :placeholder="clientSelectorPlaceholder || String($t('clients.select'))"
-          :allow-all="false"
-          allow-clear
-        />
-      </slot>
       <CoreAppSelectMenu
         v-model="selectedLogTypeValue"
         :placeholder="$t('logs.selectType')"
@@ -51,7 +40,7 @@
       </div>
     </template>
     <template #actions>
-      <div v-if="resolvedClientId" class="flex gap-2">
+      <div v-if="resolvedClientId" class="flex flex-wrap gap-2">
         <div v-if="logContent.length > 0">
           <CoreAppFilterInput v-model="filterQuery" size="sm" input-class="w-full sm:w-56 md:w-72 lg:w-80" />
         </div>
@@ -210,28 +199,13 @@
   import { useMessageBusStore } from '~/stores/messageBusStore'
   import { useUiStore } from '~/stores/uiStore'
 
-  export interface ClientsLogsRef {
-    fetchLog?: () => Promise<void>
-    selectedLogType?: Ref<{ label: string; value: string } | undefined>
-  }
-
   interface Props {
     clientId?: string | null
-    panelMode?: boolean
-    showClientSelector?: boolean
-    clientSelectorPlaceholder?: string
   }
 
   const props = withDefaults(defineProps<Props>(), {
     clientId: null,
-    panelMode: false,
-    showClientSelector: false,
-    clientSelectorPlaceholder: undefined,
   })
-
-  const emit = defineEmits<{
-    'update:clientId': [value: string | null]
-  }>()
 
   const icons = useIcons()
   const { t: $t } = useI18n()
@@ -278,25 +252,7 @@
     'text-opsi-log-secret',
   ]
 
-  const clientSelectorModel = ref<string>(props.clientId || '')
-
-  watch(
-    () => props.clientId,
-    (v) => {
-      if (v !== clientSelectorModel.value) clientSelectorModel.value = v || ''
-    },
-    { immediate: true },
-  )
-
-  watch(clientSelectorModel, (v) => {
-    emit('update:clientId', v || null)
-  })
-
-  const resolvedClientId = computed<string | null>(() => {
-    if (props.clientId) return props.clientId
-    if (props.showClientSelector) return clientSelectorModel.value || null
-    return null
-  })
+  const resolvedClientId = toRef(props, 'clientId')
 
   const selectedLogTypeValue = ref<string>(
     LOG_TYPES.some(({ value }) => value === uiStore.logs.lastSelectedLogType) ? uiStore.logs.lastSelectedLogType : 'instlog',
@@ -425,10 +381,6 @@
     URL.revokeObjectURL(url)
   }
 
-  function refresh() {
-    fetchLog()
-  }
-
   watch(
     [() => resolvedClientId.value, selectedLogTypeValue],
     ([clientId, logType], [prevClientId, prevLogType]) => {
@@ -483,7 +435,6 @@
 
     const qLogType = route.query.logType as string | undefined
     const qLogLevel = route.query.logLevel as string | undefined
-    const qFilter = route.query.filter as string | undefined
     const qLogMarker = route.query.logMarker as string | undefined
     if (qLogType && LOG_TYPES.some((t) => t.value === qLogType)) {
       selectedLogTypeValue.value = qLogType
@@ -491,9 +442,6 @@
     if (qLogLevel) {
       const parsed = parseInt(qLogLevel, 10)
       if (parsed >= 1 && parsed <= 9) logLevel.value = parsed
-    }
-    if (!props.panelMode && typeof qFilter === 'string') {
-      filterQuery.value = qFilter
     }
     if (qLogMarker) {
       const parsed = parseInt(qLogMarker, 10)
@@ -515,7 +463,7 @@
   })
   watch(filterQuery, (v) => {
     uiStore.logs.filter = v
-    if (!props.panelMode) updateLogQuery('filter', v)
+    updateLogQuery('filter', v)
   })
   watch(autoRefresh, (v) => {
     uiStore.logs.autoRefresh = v
@@ -528,6 +476,4 @@
   onUnmounted(() => {
     if (autoRefreshInterval) clearInterval(autoRefreshInterval)
   })
-
-  defineExpose({ fetchLog, selectedLogType, selectedLogTypeValue, refresh })
 </script>

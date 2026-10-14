@@ -21,11 +21,8 @@
     <template v-else>
       <div class="shrink-0 sticky top-0 z-10 bg-(--color-surface) px-2 py-1.5">
         <div class="flex items-center justify-between">
-          <CoreAppAlertInline v-if="success" color="success" :title="String($t('common.success'))" class="flex-1 mr-2">
-            <template #description>{{ $t('clients.create.ok') }}</template>
-          </CoreAppAlertInline>
           <CoreAppAlertInline
-            v-else-if="error"
+            v-if="error"
             color="error"
             :title="String($t('common.error'))"
             :description="error"
@@ -413,10 +410,10 @@
   const loading = ref(false)
   const loadingDepots = ref(false)
   const error = ref<string | null>(null)
-  const success = ref(false)
 
   const clientName = ref('')
   const domain = ref('')
+  const defaultDepotId = ref('')
   const clientIds = ref<string[]>([])
 
   const form = reactive({
@@ -440,6 +437,24 @@
   const groupSearch = ref('')
   const expandedGroupIds = ref<Set<string>>(new Set())
   const { locale } = useI18n()
+
+  const hasChanges = computed(
+    () =>
+      loading.value ||
+      !!clientName.value ||
+      (!!defaultDepotId.value && (form.depotId !== defaultDepotId.value || domain.value !== getDefaultDomainFromDepot(form.depotId))) ||
+      !!form.description ||
+      !!form.inventoryNumber ||
+      !!form.ipAddress ||
+      !!form.macAddress ||
+      !!form.notes ||
+      form.agentSetup ||
+      form.agentType !== 'windows' ||
+      !!form.agentUsername ||
+      !!form.agentPassword ||
+      form.netbootProducts.length > 0 ||
+      form.groups.length > 0,
+  )
 
   interface GroupTreeFlatItem {
     id: string
@@ -525,6 +540,7 @@
 
   function resetForm() {
     clientName.value = ''
+    form.depotId = defaultDepotId.value
     if (form.depotId) {
       domain.value = getDefaultDomainFromDepot(form.depotId)
     }
@@ -542,15 +558,14 @@
     formErrors.clientId = ''
     formErrors.depotId = ''
     error.value = null
-    success.value = false
   }
 
   onMounted(async () => {
     await fetchDepots()
-    if (form.depotId) {
-      domain.value = getDefaultDomainFromDepot(form.depotId)
+    if (!form.depotId) {
+      await Promise.all([fetchClientIds(), fetchNetbootProducts()])
     }
-    await Promise.all([fetchClientIds(), fetchNetbootProducts(), fetchClientGroups(false, selectionStore.selectedServers)])
+    await fetchClientGroups(false, selectionStore.selectedServers)
   })
 
   async function fetchDepots() {
@@ -564,6 +579,7 @@
         } else if (depots.value.length > 0 && depots.value[0]) {
           form.depotId = depots.value[0].depotId
         }
+        defaultDepotId.value = form.depotId
       }
     } catch (e) {
     } finally {
@@ -670,7 +686,6 @@
 
   async function handleSubmit() {
     error.value = null
-    success.value = false
 
     if (!validateForm()) return
 
@@ -713,8 +728,8 @@
         })
       }
 
-      success.value = true
-      clientIds.value.push(hostId)
+      resetForm()
+      loading.value = false
       emit('saved')
     } catch (e: unknown) {
       error.value = e instanceof Error ? e.message : String($t('clients.create.err'))
@@ -722,6 +737,8 @@
       loading.value = false
     }
   }
+
+  defineExpose({ hasChanges, resetForm })
 
   defineShortcuts({
     ctrl_enter: {
