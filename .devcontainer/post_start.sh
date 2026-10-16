@@ -40,7 +40,7 @@ fi
 
 # Wait for opsiconfd to be healthy (responds to requests)
 for i in $(seq 1 90); do
-    if curl -sk -o /dev/null -w '%{http_code}' https://localhost:4447/admin/healthy 2>/dev/null | grep -q '[2-4]'; then
+    if curl -sk -o /dev/null -w '%{http_code}' "https://localhost:${OPSICONFD_PORT:-4447}/admin/healthy" 2>/dev/null | grep -q '[2-4]'; then
         echo "[post_start] opsiconfd is ready."
         break
     fi
@@ -53,8 +53,8 @@ echo " opsi-webgui Dev Container Ready"
 echo "========================================"
 echo ""
 echo " Endpoints:"
-echo "   API docs:     https://localhost:4447/docs"
-echo "   WebGUI API:   https://localhost:4447/addons/${ADDON_ID:-webgui}/api/user/opsiserver"
+echo "   API docs:     https://localhost:${OPSICONFD_PORT:-4447}/docs"
+echo "   WebGUI API:   https://localhost:${OPSICONFD_PORT:-4447}/addons/${ADDON_ID:-webgui}/api/user/opsiserver"
 echo ""
 echo " opsiconfd management:"
 echo "   sudo supervisorctl status"

@@ -16,14 +16,15 @@ services:
     volumes:
       - ${LOCAL_WORKSPACE_DIR:-..}:/workspace
     ports:
-      - '4447:4447' # opsiconfd
-      - '3000:3000' # webgui
+      - "${OPSICONFD_PORT:-4447}:${OPSICONFD_PORT:-4447}" # opsiconfd
+      - "${ADDON_DEV_PORT:-3000}:${ADDON_DEV_PORT:-3000}" # webgui
     environment:
       MYSQL_ROOT_PASSWORD: opsi
       MYSQL_DATABASE: opsi
       MYSQL_USER: opsi
       MYSQL_PASSWORD: opsi
       MYSQL_HOST: localhost
-      OPSICONFD_PORT: ${OPSICONFD_PORT}
+      OPSICONFD_PORT: ${OPSICONFD_PORT:-4447}
+      ADDON_DEV_PORT: ${ADDON_DEV_PORT:-3000}
       OPSICONFD_ADDON_DIRS: '[/var/lib/opsiconfd/addons]'
     entrypoint: ['/entrypoint.sh']

@@ -226,7 +226,7 @@ validate:unit:
       cat > docker/.env <<EOF
       OPSI_HOSTNAME=opsi.test.local
       OPSI_DOMAIN=test.local
-      OPSICONFD_PORT=4447
+      OPSICONFD_PORT=${OPSICONFD_PORT:-4447}
       USER=root
       UID=0
       ADDON_NAME=webgui

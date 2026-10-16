@@ -19,6 +19,7 @@ for i in $(seq 1 30); do
 done
 
 exec uv run opsiconfd \
+    --port="${OPSICONFD_PORT:-4447}" \
     --log-level-stderr=7 \
     --static-dir=/workspace/docker/opsiconfd/opsiconfd_data/static \
     --workers=1
