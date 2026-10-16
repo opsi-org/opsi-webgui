@@ -44,9 +44,9 @@ cd /workspace/frontend
 
 ADDON_APP="/workspace/backend/webgui/data/app"
 if [ "$LIVE" = "1" ]; then
-  BASE_URL="https://localhost:3000/addons/webgui/app"
+  BASE_URL="https://localhost:${ADDON_DEV_PORT:-3000}/addons/webgui/app"
 else
-  BASE_URL="https://localhost:4447/addons/webgui/app"
+  BASE_URL="https://localhost:${OPSICONFD_PORT:-4447}/addons/webgui/app"
 fi
 
 case " $* " in
@@ -72,7 +72,7 @@ else
 
   echo ">> Waiting for opsiconfd health ..."
   for _ in $(seq 1 90); do
-    code=$(curl -sk -o /dev/null -w '%{http_code}' https://localhost:4447/admin/healthy 2>/dev/null || echo 000)
+    code=$(curl -sk -o /dev/null -w '%{http_code}' "https://localhost:${OPSICONFD_PORT:-4447}/admin/healthy" 2>/dev/null || echo 000)
     [ "$code" != "000" ] && { echo "   opsiconfd up (HTTP $code)."; break; }
     sleep 2
   done

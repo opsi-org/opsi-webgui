@@ -135,6 +135,6 @@ RUN apt-get update \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s \
-	CMD curl -fsk https://localhost:4447/admin/healthy || exit 1
+	CMD curl -fsk "https://localhost:${OPSICONFD_PORT:-4447}/admin/healthy" || exit 1
 
 WORKDIR /workspace

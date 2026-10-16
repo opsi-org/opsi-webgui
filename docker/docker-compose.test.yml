@@ -32,7 +32,7 @@ services:
       MYSQL_USER: opsi
       MYSQL_PASSWORD: opsi
       MYSQL_HOST: localhost
-      OPSICONFD_PORT: "4447"
+      OPSICONFD_PORT: "${OPSICONFD_PORT:-4447}"
       OPSICONFD_ADDON_DIRS: "[/var/lib/opsiconfd/addons]"
       OPSICONFD_REDIS_INTERNAL_URL: redis://redis:6379/0
       OPSICONFD_MAX_SESSIONS_PER_IP: "10000"
@@ -47,7 +47,7 @@ services:
           "-sk",
           "-o",
           "/dev/null",
-          "https://localhost:4447/admin/healthy",
+          "https://localhost:${OPSICONFD_PORT:-4447}/admin/healthy",
         ]
       interval: 5s
       timeout: 5s
@@ -69,7 +69,7 @@ services:
       - e2e-build:/frontend/.e2e-build
     working_dir: /frontend
     environment:
-      BASE_URL: https://opsiconfd:4447/addons/webgui/app
+      BASE_URL: https://opsiconfd:${OPSICONFD_PORT:-4447}/addons/webgui/app
       TEST_USER: adminuser
       TEST_PASSWORD: adminuser
       NODE_TLS_REJECT_UNAUTHORIZED: "0"
@@ -114,6 +114,7 @@ services:
     working_dir: /workspace/backend
     environment:
       MYSQL_HOST: 127.0.0.1
+      OPSICONFD_PORT: "${OPSICONFD_PORT:-4447}"
       MYSQL_DATABASE: opsi
       MYSQL_USER: opsi
       MYSQL_PASSWORD: opsi

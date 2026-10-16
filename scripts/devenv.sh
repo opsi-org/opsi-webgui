@@ -43,7 +43,8 @@ fi
 echo "[INFO] Creating .env file..."
 echo "OPSI_HOSTNAME=$(hostname -f)" > $ENVFILE
 echo "OPSI_DOMAIN=$(hostname -d)" >> $ENVFILE
-echo "OPSICONFD_PORT=4447" >> $ENVFILE
+echo "OPSICONFD_PORT=${OPSICONFD_PORT:-4447}" >> $ENVFILE
+echo "ADDON_DEV_PORT=${ADDON_DEV_PORT:-3000}" >> $ENVFILE
 
 if [ -z ${USER+x} ]; then
     echo "USER=$DEV_USER" >> $ENVFILE

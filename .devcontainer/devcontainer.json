@@ -48,8 +48,5 @@
       ]
     }
   },
-  "forwardPorts": [
-    4447
-  ],
   "remoteUser": "${localEnv:USER}"
 }

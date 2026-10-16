@@ -62,7 +62,7 @@ supervisorctl start opsiconfd >/dev/null 2>&1 || sudo supervisorctl start opsico
 
 echo "[test-entrypoint] Waiting for opsiconfd to be healthy..."
 for i in $(seq 1 90); do
-    if curl -sk -o /dev/null https://localhost:4447/admin/healthy 2>/dev/null; then
+    if curl -sk -o /dev/null "https://localhost:${OPSICONFD_PORT:-4447}/admin/healthy" 2>/dev/null; then
         echo "[test-entrypoint] opsiconfd is ready."
         break
     fi
