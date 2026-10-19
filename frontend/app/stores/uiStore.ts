@@ -61,7 +61,7 @@ export const useUiStore = defineStore('ui', {
   persist: {
     key: 'opsi-webgui-ui',
     storage: safeLocalStorage,
-    pick: ['quickpanelOpened', 'menuCollapsed', 'productActions', 'terminal', 'logs', 'layout'],
+    pick: ['quickpanelOpened', 'menuCollapsed', 'productActions', 'terminal', 'logs', 'layout', 'panelWidths'],
   },
   state: () => ({
     isMobile: false,
@@ -77,6 +77,7 @@ export const useUiStore = defineStore('ui', {
       autoScroll: true,
     },
     layout: { ...DEFAULT_WORKSPACE_LAYOUT },
+    panelWidths: {} as Record<string, number>,
   }),
   actions: {
     initializePreferences() {

@@ -18,25 +18,21 @@
     <CoreAppEmptyState v-else-if="properties.length === 0" :icon="icons.config" :message="String($t('common.noData'))" />
 
     <template v-else>
-      <CoreAppCard
-        class="flex-1 min-h-0"
-        :ui="{
-          root: 'flex flex-col min-h-0 flex-1 border-0 shadow-none bg-transparent',
-          body: 'p-0 flex-1 min-h-0 overflow-y-auto bg-(--color-background)',
-        }"
-      >
-        <div class="space-y-0 min-h-full bg-(--color-background)">
+      <div class="flex-1 min-h-0 overflow-y-auto bg-(--color-background)">
+        <div
+          class="space-y-0 min-h-full bg-(--color-background) md:grid md:grid-cols-[minmax(40%,max-content)_minmax(min(3rem,40%),1fr)] md:gap-x-1 md:content-start"
+        >
           <div
             v-for="prop in visibleProperties"
             :key="prop.propertyId"
-            class="form-row flex flex-col md:flex-row items-start md:items-center gap-y-0.5 gap-x-1 min-h-8 transition-colors"
+            class="form-row flex flex-col md:grid md:col-span-2 md:grid-cols-subgrid items-start md:items-center gap-y-0.5 gap-x-1 min-h-8 transition-colors"
             :class="changedPropertyIds.has(prop.propertyId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)'"
           >
             <div
-              class="min-w-0 w-full md:w-2/5 flex items-center gap-1.5 group/proprow px-1.5 py-0.5 rounded bg-(--color-surface-hover) md:bg-transparent md:px-0 md:py-0"
+              class="min-w-0 w-full flex items-center gap-1 px-1.5 py-0.5 rounded bg-(--color-surface-hover) md:bg-transparent md:px-0 md:py-0"
             >
               <span
-                class="text-sm font-medium md:font-normal break-all select-text"
+                class="flex-1 min-w-0 text-sm font-medium md:font-normal break-all select-text"
                 :class="{
                   italic: prop.anyClientDifferentFromDepot,
                   'font-bold': prop.anyDepotDifferentFromDefault,
@@ -44,15 +40,16 @@
               >
                 {{ prop.propertyId }}
               </span>
-              <span
-                class="flex items-center gap-0.5 shrink-0 opacity-0 group-hover/proprow:opacity-100 group-focus-within/proprow:opacity-100 transition-opacity"
-              >
+              <span v-if="changedPropertyIds.has(prop.propertyId)" class="inline-flex items-center text-(--color-changed-text)">
+                <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
+              </span>
+              <span class="flex items-center shrink-0 w-14">
                 <CoreAppButton
                   size="xs"
                   :icon="clipboard.isCopied(prop.propertyId) ? icons.check : icons.copy"
                   variant="ghost"
                   :color="clipboard.isCopied(prop.propertyId) ? 'success' : 'neutral'"
-                  class="shrink-0"
+                  class="shrink-0 size-7 justify-center p-1"
                   :title="String(clipboard.isCopied(prop.propertyId) ? $t('common.copied') : $t('common.copy'))"
                   :aria-label="`${String($t('common.copy'))} ${prop.propertyId}`"
                   @click="copyToClipboard(prop.propertyId)"
@@ -63,17 +60,14 @@
                     :icon="icons.info"
                     variant="ghost"
                     color="neutral"
-                    class="shrink-0"
+                    class="shrink-0 size-7 justify-center p-1"
                     :aria-label="`${String($t('common.info'))} ${prop.propertyId}`"
                   />
                 </CoreAppTooltipTable>
               </span>
-              <span v-if="changedPropertyIds.has(prop.propertyId)" class="inline-flex items-center text-(--color-changed-text)">
-                <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
-              </span>
             </div>
 
-            <div class="w-full md:flex-1 flex items-center gap-1 min-w-0">
+            <div class="w-full flex items-center gap-1 min-w-0">
               <CoreAppPropertyFormItem
                 :model-value="prop._value"
                 size="xs"
@@ -98,11 +92,11 @@
               />
             </div>
           </div>
-          <div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-1.5">
+          <div v-if="hasMore" ref="loadMoreSentinel" class="flex items-center justify-center py-1.5 md:col-span-2">
             <span class="text-xs text-(--color-text-muted) animate-pulse">{{ $t('common.loading') }}…</span>
           </div>
         </div>
-      </CoreAppCard>
+      </div>
     </template>
   </div>
 </template>

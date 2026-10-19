@@ -13,6 +13,36 @@ import { runUITest } from '../../runner/runUITest'
 import { seedClientSelection, waitForTable, getTableRowCount } from '../../utils/ui'
 
 test.describe('Products', () => {
+  test('splitter preserves standalone product panels and separate preferences', async ({ page }) => {
+    const errors: string[] = []
+    page.on('pageerror', (error) => errors.push(error.message))
+    await seedClientSelection(page)
+    await page.goto('/products/LocalbootProduct', { waitUntil: 'networkidle' })
+    await page
+      .locator('table tbody tr')
+      .first()
+      .getByRole('button', { name: /^configuration|konfiguration$/i })
+      .click()
+    const handle = page.locator('[data-slot="handle"][role="separator"]')
+    await expect(handle).toHaveCount(1)
+    const before = await page.evaluate(() => JSON.parse(localStorage.getItem('opsi-webgui-ui') || '{}').panelWidths || {})
+    await handle.focus()
+    await page.keyboard.press('ArrowLeft')
+    await expect
+      .poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('opsi-webgui-ui') || '{}').panelWidths?.products))
+      .toBeGreaterThan(0)
+    const after = await page.evaluate(() => JSON.parse(localStorage.getItem('opsi-webgui-ui') || '{}').panelWidths)
+    expect(after.clients).toBe(before.clients)
+    expect(after['clients/products']).toBe(before['clients/products'])
+    await page
+      .getByTestId('detail-panel')
+      .getByRole('button', { name: /^(close|schließen|fermer)$/i })
+      .click()
+    await expect(handle).toHaveCount(0)
+    await expect(page.locator('table')).toBeVisible()
+    expect(errors).toEqual([])
+  })
+
   test('products localboot overview and actions', async ({ page }) => {
     await seedClientSelection(page, { count: 2, source: 'quickpanel' })
     await runUITest(page, {

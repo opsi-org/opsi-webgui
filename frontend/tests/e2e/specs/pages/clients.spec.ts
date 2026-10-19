@@ -13,6 +13,38 @@ import type { Page } from '@playwright/test'
 import { runUITest } from '../../runner/runUITest'
 import { ensureQuickPanelOpen, seedClientSelection, waitForTable, getTableRowCount } from '../../utils/ui'
 
+async function openProductsSplitter(page: Page) {
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  await page.setViewportSize({ width: 2000, height: 1000 })
+  await seedClientSelection(page)
+  await page.evaluate(() => {
+    const preferences = JSON.parse(localStorage.getItem('opsi-webgui-ui') || '{}')
+    preferences.panelWidths = { clients: 900, 'clients/products': 320 }
+    preferences.quickpanelOpened = false
+    localStorage.setItem('opsi-webgui-ui', JSON.stringify(preferences))
+  })
+  await page.reload({ waitUntil: 'networkidle' })
+  await page.getByTestId('clients-open-products-panel').click()
+  await page
+    .getByTestId('detail-panel')
+    .locator('tbody tr')
+    .first()
+    .getByRole('button', { name: /^configuration|konfiguration$/i })
+    .click()
+  await expect(page.locator('[data-slot="handle"][role="separator"]')).toHaveCount(2)
+  return errors
+}
+
+async function moveSplitter(page: Page, index: number, delta: number) {
+  const handle = page.locator('[data-slot="handle"][role="separator"]').nth(index)
+  const box = await handle.boundingBox()
+  expect(box).not.toBeNull()
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(box!.x + box!.width / 2 + delta, box!.y + box!.height / 2, { steps: 8 })
+}
+
 async function navigateClientPanel(
   page: Page,
   clientId: string,
@@ -40,6 +72,107 @@ async function navigateClientPanel(
 }
 
 test.describe('Clients', () => {
+  test('splitter keeps dividers independent, pushes at limits and saves only on release', async ({ page }, testInfo) => {
+    const errors = await openProductsSplitter(page)
+    const handles = page.locator('[data-slot="handle"][role="separator"]')
+    const group = handles.first().locator('..')
+    const panes = group.locator(':scope > [data-slot="panel"]')
+    await expect(panes).toHaveCount(3)
+    expect(await handles.evaluateAll((elements) => elements[0]!.parentElement === elements[1]!.parentElement)).toBe(true)
+    const position = async (index: number) => (await handles.nth(index).boundingBox())!.x
+    const rightBefore = await position(1)
+    await page.evaluate(() => {
+      const state = window as Window & { splitterWrites: number }
+      state.splitterWrites = 0
+      const original = Storage.prototype.setItem
+      Storage.prototype.setItem = function (key, value) {
+        if (key === 'opsi-webgui-ui') state.splitterWrites++
+        original.call(this, key, value)
+      }
+    })
+    await moveSplitter(page, 0, -20)
+    await expect.poll(() => position(0)).toBeLessThan(rightBefore - 300)
+    expect(Math.abs((await position(1)) - rightBefore)).toBeLessThan(1)
+    expect(await page.evaluate(() => (window as Window & { splitterWrites: number }).splitterWrites)).toBe(0)
+    await page.mouse.up()
+    await expect.poll(() => page.evaluate(() => (window as Window & { splitterWrites: number }).splitterWrites)).toBe(1)
+
+    const leftBefore = await position(0)
+    await moveSplitter(page, 1, -20)
+    await page.mouse.up()
+    expect(Math.abs((await position(0)) - leftBefore)).toBeLessThan(1)
+    const rightBeforePush = await position(1)
+    await moveSplitter(page, 0, 700)
+    await page.mouse.up()
+    await expect.poll(() => position(1)).toBeGreaterThan(rightBeforePush + 10)
+    const leftBeforePush = await position(0)
+    await moveSplitter(page, 1, -700)
+    await page.mouse.up()
+    await expect.poll(() => position(0)).toBeLessThan(leftBeforePush - 10)
+    for (const pane of await panes.all()) expect((await pane.boundingBox())!.width).toBeGreaterThanOrEqual(279)
+
+    const readWidths = () => page.evaluate(() => JSON.parse(localStorage.getItem('opsi-webgui-ui') || '{}').panelWidths)
+    const pointerWidths = await readWidths()
+    await handles.nth(1).focus()
+    await page.keyboard.press('ArrowRight')
+    await expect.poll(async () => (await readWidths())['clients/products']).toBeLessThan(pointerWidths['clients/products'])
+    const saved = await readWidths()
+    expect(saved.clients).toBeGreaterThan(0)
+    expect(saved['clients/products']).toBeGreaterThan(0)
+    await page.screenshot({ path: testInfo.outputPath('splitter-desktop.png') })
+    await page.reload({ waitUntil: 'networkidle' })
+    await expect(handles).toHaveCount(2)
+    expect(await readWidths()).toEqual(saved)
+    const restoredRight = (await panes.nth(2).boundingBox())!.width
+    expect(Math.abs(restoredRight - saved['clients/products'])).toBeLessThan(5)
+    expect(errors).toEqual([])
+  })
+
+  test('splitter supports closing properties and narrow-screen back navigation', async ({ page }, testInfo) => {
+    const errors = await openProductsSplitter(page)
+    const handles = page.locator('[data-slot="handle"][role="separator"]')
+    await page
+      .getByTestId('detail-panel')
+      .last()
+      .getByRole('button', { name: /^(close|schließen|fermer)$/i })
+      .click()
+    await expect(handles).toHaveCount(1)
+    await page
+      .getByTestId('detail-panel')
+      .locator('tbody tr')
+      .first()
+      .getByRole('button', { name: /^configuration|konfiguration$/i })
+      .click()
+    await expect(handles).toHaveCount(2)
+    const editor = await page.getByTestId('detail-panel').last().getByTestId('detail-panel-content').elementHandle()
+    await page.setViewportSize({ width: 480, height: 860 })
+    await expect(handles.filter({ visible: true })).toHaveCount(0)
+    const visiblePanel = page.getByTestId('detail-panel').filter({ visible: true })
+    await expect(visiblePanel).toHaveCount(1)
+    expect(await editor!.evaluate((element) => element.isConnected)).toBe(true)
+    await page.screenshot({ path: testInfo.outputPath('splitter-mobile.png') })
+    await page.setViewportSize({ width: 2000, height: 1000 })
+    await expect(handles.filter({ visible: true })).toHaveCount(2)
+    expect(await editor!.evaluate((element) => element.isConnected)).toBe(true)
+    await page.setViewportSize({ width: 480, height: 860 })
+    await visiblePanel.getByRole('button', { name: /^(back|zurück|retour)$/i }).click()
+    await expect(visiblePanel.locator('table')).toBeVisible()
+    await visiblePanel.getByRole('button', { name: /^(back|zurück|retour)$/i }).click()
+    await expect(page.getByTestId('detail-panel')).toHaveCount(0)
+    await expect(page.getByRole('grid')).toBeVisible()
+    await page.setViewportSize({ width: 2000, height: 1000 })
+    await page.getByTestId('clients-open-products-panel').click()
+    await expect(handles).toHaveCount(1)
+    await page
+      .getByTestId('detail-panel')
+      .locator('tbody tr')
+      .first()
+      .getByRole('button', { name: /^configuration|konfiguration$/i })
+      .click()
+    await expect(handles).toHaveCount(2)
+    expect(errors).toEqual([])
+  })
+
   test('clients add deep link preserves table context without a selected client', async ({ page }) => {
     await page.goto('/clients', { waitUntil: 'networkidle' })
     const filter = 'add-link-no-matching-client'

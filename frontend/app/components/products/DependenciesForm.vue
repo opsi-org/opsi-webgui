@@ -19,7 +19,7 @@
 
     <template v-else>
       <div class="flex-1 overflow-auto min-h-0 bg-(--color-surface)">
-        <div class="opsi-card h-full">
+        <div class="min-h-full bg-(--color-background)">
           <div class="space-y-0">
             <div
               v-for="(dep, index) in filteredDependencies"
