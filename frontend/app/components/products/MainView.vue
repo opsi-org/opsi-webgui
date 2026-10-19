@@ -13,6 +13,7 @@
   <CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelLeave" @confirm="confirmLeave" />
 
   <LayoutsPageLayout
+    panel-key="products"
     show-refresh
     :loading="loading"
     :show-panel="showConfigPanel"
@@ -22,6 +23,9 @@
     @close-panel="closePanel"
     @refresh="manualRefresh"
   >
+    <template v-if="$slots.workspace" #workspace="workspace">
+      <slot name="workspace" v-bind="workspace" :show-panel="showConfigPanel" />
+    </template>
     <template #tabs>
       <slot name="tabs" />
     </template>

@@ -30,7 +30,7 @@
         :model-value="stringValue"
         :disabled="disabled"
         :size="controlSize"
-        class="flex-1"
+        class="flex-1 min-w-0"
         :aria-label="controlAriaLabel"
         @update:model-value="(v: string) => emit('update:modelValue', v)"
       />
@@ -38,7 +38,7 @@
 
     <!-- Multi-value with possible values: popover with checkmarks + inline add -->
     <template v-else-if="multiValue && hasPossibleValues">
-      <div class="flex-1">
+      <div class="flex-1 min-w-0">
         <UPopover :ui="{ content: 'p-0 w-72' }">
           <button
             type="button"
@@ -50,12 +50,12 @@
             ]"
             :disabled="disabled"
           >
-            <span v-if="arrayValue.length === 0" class="text-(--color-text-muted)">{{ $t('config.selectValues') }}</span>
+            <span v-if="arrayValue.length === 0" class="truncate text-(--color-text-muted)">{{ $t('config.selectValues') }}</span>
             <span v-else class="flex flex-wrap gap-1 min-w-0">
               <span
                 v-for="val in arrayValue.slice(0, 3)"
                 :key="val"
-                class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-primary/20 max-w-32 truncate"
+                class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-primary/20 max-w-[min(8rem,100%)] truncate"
               >
                 {{ formatDisplayValue(val) }}
               </span>
@@ -119,7 +119,7 @@
 
     <!-- Multi-value without possible values: tags + inline input -->
     <template v-else-if="multiValue">
-      <div class="flex-1">
+      <div class="flex-1 min-w-0">
         <div
           class="flex flex-wrap items-center gap-1 p-1 border border-(--color-border) rounded-md bg-(--color-background)"
           :class="[size === 'xs' ? 'min-h-8' : 'min-h-11 md:min-h-8', disabled ? 'opacity-50' : '']"
@@ -127,16 +127,16 @@
           <span
             v-for="(val, idx) in arrayValue"
             :key="idx"
-            class="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-primary/20 max-w-48 group/tag"
+            class="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-primary/20 max-w-[min(12rem,100%)] group/tag"
           >
-            <span class="truncate" :title="val">{{ formatDisplayValue(val) }}</span>
+            <span class="min-w-0 truncate" :title="val">{{ formatDisplayValue(val) }}</span>
             <CoreAppButton
               v-if="!disabled"
               type="button"
               variant="ghost"
               color="neutral"
               size="xs"
-              class="p-0! hover:text-(--color-error-soft-text) transition-colors opacity-60 group-hover/tag:opacity-100"
+              class="shrink-0 p-0! hover:text-(--color-error-soft-text) transition-colors opacity-60 group-hover/tag:opacity-100"
               @click="removeMultiItem(idx)"
             >
               <CoreAppIcon :name="icons.x" class="w-3 h-3" />
@@ -156,7 +156,7 @@
           <CoreAppInput
             v-if="editable && !disabled"
             v-model="customInput"
-            class="flex-1 min-w-24"
+            class="flex-1 basis-24 min-w-0"
             size="xs"
             :aria-label="controlAriaLabel"
             :placeholder="arrayValue.length === 0 ? $t('common.pressEnterToAdd') : ''"
@@ -175,14 +175,14 @@
         :disabled="disabled"
         :size="controlSize"
         :aria-label="controlAriaLabel"
-        class="flex-1"
+        class="flex-1 min-w-0"
         @update:model-value="handleNonEditableSelectChange"
       />
     </template>
 
     <!-- Single value, editable with possible values: combobox-style -->
     <template v-else-if="hasPossibleValues && editable">
-      <div class="flex-1">
+      <div class="flex-1 min-w-0">
         <UPopover :ui="{ content: 'p-0 w-64' }">
           <button
             type="button"
@@ -275,7 +275,7 @@
         :model-value="stringValue"
         :disabled="disabled"
         :size="controlSize"
-        class="flex-1"
+        class="flex-1 min-w-0"
         :aria-label="controlAriaLabel"
         @update:model-value="(v: string) => emit('update:modelValue', v)"
       />

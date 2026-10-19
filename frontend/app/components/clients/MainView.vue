@@ -13,6 +13,7 @@
   <CoreAppNavigationGuardModal v-model="showLeaveWarning" @cancel="cancelPanelLeave" @confirm="confirmPanelLeave" />
 
   <LayoutsPageLayout
+    panel-key="clients"
     show-refresh
     :loading="loading"
     :show-panel="panelLinkLoading || !!panelClient || !!panelType"
@@ -21,6 +22,28 @@
     @refresh="manualRefresh"
     @close-panel="closePanel"
   >
+    <template v-if="panelType === 'products'" #workspace="{ main, panel, split }">
+      <ProductsMainView
+        ref="productsTableRef"
+        panel-mode
+        :product-type="panelProductType === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'"
+        :initial-sort-column="productsSortColumn"
+      >
+        <template #tabs>
+          <CoreAppTabsNav v-model="panelProductType" :tabs="panelProductTypes" />
+        </template>
+        <template #workspace="products">
+          <component
+            :is="split"
+            :panels="[
+              { key: 'clients-main', view: main },
+              { key: 'clients', view: panel, body: products.main },
+              ...(products.showPanel ? [{ key: 'clients/products', view: products.panel }] : []),
+            ]"
+          />
+        </template>
+      </ProductsMainView>
+    </template>
     <template #actions>
       <CoreAppTooltip v-if="isHostGroupAccessRestricted" :text="$t('opsiConfig.serverFeatures.hostGroupAccess.disabled')">
         <CoreAppBadge color="warning" variant="subtle" size="xs" class="cursor-help" data-testid="clients-restricted-badge">
@@ -304,18 +327,6 @@
         />
         <ClientsCloneForm v-if="panelType === 'clone'" ref="cloneFormRef" :source-id="panelClient.clientId" @saved="fetchClients" />
       </div>
-      <template v-if="panelType === 'products'">
-        <ProductsMainView
-          ref="productsTableRef"
-          panel-mode
-          :product-type="panelProductType === 'netboot' ? 'NetbootProduct' : 'LocalbootProduct'"
-          :initial-sort-column="productsSortColumn"
-        >
-          <template #tabs>
-            <CoreAppTabsNav v-model="panelProductType" :tabs="panelProductTypes" />
-          </template>
-        </ProductsMainView>
-      </template>
       <ClientsAddForm v-if="panelType === 'add'" ref="addFormRef" @saved="handleAddSaved" />
     </template>
   </LayoutsPageLayout>
