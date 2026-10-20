@@ -651,6 +651,7 @@
     "current": "Utilisateur actuel"
   },
   "shortcuts": {
+    "modifierKey": "Ctrl",
     "title": "Raccourcis clavier",
     "global": "Raccourcis globaux",
     "table": "Tableau",

@@ -648,6 +648,7 @@
     "discardNow": "Jetzt alle verwerfen"
   },
   "shortcuts": {
+    "modifierKey": "Strg",
     "title": "Tastenkombinationen",
     "global": "Globale Tastenkombinationen",
     "table": "Tabelle",

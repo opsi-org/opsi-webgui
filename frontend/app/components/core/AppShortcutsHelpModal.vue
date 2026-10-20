@@ -62,37 +62,37 @@
     {
       title: $t('shortcuts.global'),
       items: [
-        { keys: ['Ctrl', 'S'], description: $t('shortcuts.save') },
-        { keys: ['Ctrl', 'D'], description: $t('shortcuts.discard') },
-        { keys: ['Ctrl', 'Shift', 'Q'], description: $t('shortcuts.toggleQuickPanel') },
-        { keys: ['Ctrl', 'Esc'], description: $t('shortcuts.closePanel') },
-        { keys: ['Ctrl', 'Shift', '?'], description: $t('shortcuts.showShortcuts') },
+        { keys: [$t('shortcuts.modifierKey'), 'S'], description: $t('shortcuts.save') },
+        { keys: [$t('shortcuts.modifierKey'), 'D'], description: $t('shortcuts.discard') },
+        { keys: [$t('shortcuts.modifierKey'), 'Shift', 'Q'], description: $t('shortcuts.toggleQuickPanel') },
+        { keys: [$t('shortcuts.modifierKey'), 'Esc'], description: $t('shortcuts.closePanel') },
+        { keys: [$t('shortcuts.modifierKey'), 'Shift', '?'], description: $t('shortcuts.showShortcuts') },
       ],
     },
     {
       title: $t('shortcuts.table'),
       items: [
-        { keys: ['Ctrl', 'Enter'], description: $t('shortcuts.openDetail') },
-        { keys: ['Ctrl', 'R'], description: $t('shortcuts.refreshTable') },
+        { keys: [$t('shortcuts.modifierKey'), 'Enter'], description: $t('shortcuts.openDetail') },
+        { keys: [$t('shortcuts.modifierKey'), 'R'], description: $t('shortcuts.refreshTable') },
         { keys: ['↑', '↓'], description: $t('shortcuts.navigateRows') },
-        { keys: ['Ctrl', 'Space'], description: $t('common.selectRow') },
+        { keys: [$t('shortcuts.modifierKey'), 'Space'], description: $t('common.selectRow') },
       ],
     },
     {
       title: $t('shortcuts.clientsTable'),
-      items: [{ keys: ['Ctrl', 'Shift', 'N'], description: $t('shortcuts.addClient') }],
+      items: [{ keys: [$t('shortcuts.modifierKey'), 'Shift', 'N'], description: $t('shortcuts.addClient') }],
     },
     {
       title: $t('shortcuts.serversTable'),
-      items: [{ keys: ['Ctrl', 'Shift', 'N'], description: $t('shortcuts.addServerConfig') }],
+      items: [{ keys: [$t('shortcuts.modifierKey'), 'Shift', 'N'], description: $t('shortcuts.addServerConfig') }],
     },
     {
       title: $t('shortcuts.productsTable'),
-      items: [{ keys: ['Ctrl', 'Shift', 'S'], description: $t('shortcuts.productsSaveAndExecute') }],
+      items: [{ keys: [$t('shortcuts.modifierKey'), 'Shift', 'S'], description: $t('shortcuts.productsSaveAndExecute') }],
     },
     {
       title: $t('shortcuts.forms'),
-      items: [{ keys: ['Ctrl', 'Enter'], description: $t('shortcuts.submitForm') }],
+      items: [{ keys: [$t('shortcuts.modifierKey'), 'Enter'], description: $t('shortcuts.submitForm') }],
     },
   ])
 </script>

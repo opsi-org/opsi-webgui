@@ -648,6 +648,7 @@
     "discardNow": "Discard all now"
   },
   "shortcuts": {
+    "modifierKey": "Ctrl",
     "title": "Keyboard Shortcuts",
     "global": "Global Shortcuts",
     "table": "Table",
