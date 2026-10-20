@@ -776,11 +776,15 @@ test.describe('Clients', () => {
           )
           .first()
         if (await filterInput.isVisible().catch(() => false)) {
-          await filterInput.fill('client')
-          await p.waitForTimeout(1200)
-          expect(await getTableRowCount(p)).toBeGreaterThan(0)
+          const clientRows = p.locator('tr[id^="clients-row-"]')
+          const clientRowId = await clientRows.first().getAttribute('id')
+          expect(clientRowId).toBeTruthy()
+          const clientId = clientRowId!.slice('clients-row-'.length)
+          await filterInput.fill(clientId)
+          await expect(p.locator(`[id="clients-row-${clientId}"]`)).toBeVisible()
+          await expect(clientRows).toHaveCount(1)
           await filterInput.fill('')
-          await p.waitForTimeout(600)
+          await expect.poll(() => getTableRowCount(p)).toBe(count)
         }
 
         // Row selection

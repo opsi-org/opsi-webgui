@@ -31,7 +31,12 @@ async function createHostGroup(page: import('@playwright/test').Page, groupId: s
     .click()
   await page.getByLabel(/^(Group ID|Gruppen-ID)$/).fill(groupId)
   await page.getByRole('button', { name: /^(Create|Erstellen)$/ }).click()
-  await expect(page.getByRole('button', { name: groupId, exact: true })).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: groupId, exact: true }),
+    'The created group must appear after the tree reloads',
+  ).toBeVisible({
+    timeout: 30000,
+  })
 }
 
 test.describe('Groups', () => {

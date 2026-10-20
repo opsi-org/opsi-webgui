@@ -25,9 +25,8 @@ async function openQuickPanelTab(page: Page, tabIndex: number, contentTestId: st
 }
 
 async function selectFirstClientForQuickActions(page: Page): Promise<void> {
-  await waitForTable(page)
-  const firstRow = page.locator('table tbody tr').first()
-  await expect(firstRow).toBeVisible({ timeout: 10000 })
+  const firstRow = page.locator('tr[id^="clients-row-"]').first()
+  await expect(firstRow).toBeVisible({ timeout: 30000 })
 
   const checkbox = firstRow.locator('[role="checkbox"], input[type="checkbox"]').first()
   if (await checkbox.isVisible().catch(() => false)) {

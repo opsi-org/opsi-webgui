@@ -36,8 +36,7 @@ export async function seedClientSelection(
   options: { count?: number; source?: 'table' | 'quickpanel' } = {},
 ): Promise<string[]> {
   const { count = 1, source = 'table' } = options
-  await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-  await waitForTable(page)
+  await page.goto('/clients', { waitUntil: 'domcontentloaded', timeout: 30000 })
 
   const clientHeader = page.getByRole('columnheader', { name: /^(Client ID|Client-ID)$/ })
   await expect(clientHeader).toBeVisible({ timeout: 30000 })
@@ -112,23 +111,12 @@ export async function setLocale(page: Page, target: Locale): Promise<void> {
 }
 
 export async function waitForLoaded(page: Page, timeout = 10000): Promise<void> {
-  const spinners = page.locator('.animate-spin')
-  try {
-    await expect(spinners).toHaveCount(0, { timeout })
-  } catch {
-    // wait for spinner to disappear, but don't fail if its still there (e.g. reachability check on clients page)
-  }
+  if (/\/login(?:\?|$|\/)/.test(page.url())) return
 
-  // Best-effort app shell readiness check (skip login route)
-  if (!/\/login(?:\?|$|\/)/.test(page.url())) {
-    await page
-      .locator('main, #main-content, [data-testid="main-content"]')
-      .first()
-      .waitFor({ state: 'visible', timeout })
-      .catch(() => undefined)
-  }
-
-  await page.waitForTimeout(200)
+  const content = page.locator('main, #main-content, [data-testid="main-content"]').first()
+  const errorPage = page.getByRole('heading', { name: /^Internal Server Error$/i })
+  await expect(content.or(errorPage).first(), 'The application must render its content or report a loading error').toBeVisible({ timeout })
+  await expect(errorPage, 'The application rendered an error page instead of its content').toHaveCount(0)
 }
 
 /**
@@ -151,7 +139,7 @@ export async function disableAnimations(page: Page): Promise<void> {
  * Wait for a data table to render at least one row.
  */
 export async function waitForTable(page: Page, timeout = 30000): Promise<void> {
-  const row = page.locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"]), [role="rowgroup"] [role="row"]').first()
+  const row = page.locator('main table tbody tr[id]').first()
 
   try {
     await row.waitFor({ state: 'visible', timeout })
@@ -211,5 +199,5 @@ export async function waitForTable(page: Page, timeout = 30000): Promise<void> {
  * Get the row count from a data table.
  */
 export async function getTableRowCount(page: Page): Promise<number> {
-  return page.locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"]), [role="rowgroup"] [role="row"]').count()
+  return page.locator('main table tbody tr[id]').count()
 }

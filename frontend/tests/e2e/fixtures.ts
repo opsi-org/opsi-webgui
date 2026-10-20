@@ -13,6 +13,7 @@
  */
 import { test as base, expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
+import { waitForLoaded } from './utils/ui'
 
 export const APP_BASE = '/addons/webgui/app'
 
@@ -86,6 +87,7 @@ export const test = base.extend<{ page: Page }>({
             await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => undefined)
             await ensureAuthenticated(target)
           }
+          await waitForLoaded(page, 30000)
         }
         return res
       })

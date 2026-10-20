@@ -17,9 +17,11 @@ test.describe('Products', () => {
     const errors: string[] = []
     page.on('pageerror', (error) => errors.push(error.message))
     await seedClientSelection(page)
-    await page.goto('/products/LocalbootProduct', { waitUntil: 'networkidle' })
+    await page.goto('/products/LocalbootProduct', { waitUntil: 'domcontentloaded' })
+    const firstProduct = page.locator('tr[id^="products-localboot-row-"]').first()
+    await expect(firstProduct, 'The localboot product table must contain a product').toBeVisible({ timeout: 30000 })
     await page
-      .locator('table tbody tr')
+      .locator('tr[id^="products-localboot-row-"]')
       .first()
       .getByRole('button', { name: /^configuration|konfiguration$/i })
       .click()
@@ -48,7 +50,6 @@ test.describe('Products', () => {
     await runUITest(page, {
       name: 'products-localboot',
       route: '/products/LocalbootProduct',
-      waitAfterNav: 5000,
       docName: 'opsi-webgui-products-localboot',
       functional: async (p) => {
         await waitForTable(p)
@@ -66,18 +67,15 @@ test.describe('Products', () => {
 
         if ((await localbootTab.isVisible().catch(() => false)) && (await netbootTab.isVisible().catch(() => false))) {
           await netbootTab.click()
-          await p.waitForTimeout(1200)
-          await waitForTable(p)
-          expect(await getTableRowCount(p)).toBeGreaterThan(0)
+          await expect(p.locator('tr[id^="products-netboot-row-"]').first()).toBeVisible({ timeout: 30000 })
 
           await localbootTab.click()
-          await p.waitForTimeout(1200)
-          await waitForTable(p)
-          expect(await getTableRowCount(p)).toBeGreaterThan(0)
+          await expect(p.locator('tr[id^="products-localboot-row-"]').first()).toBeVisible({ timeout: 30000 })
         }
 
-        const headers = p.locator('thead th, [class*="header"] [class*="cell"]')
-        expect(await headers.count()).toBeGreaterThan(1)
+        const table = p.getByRole('grid').filter({ has: p.locator('tr[id^="products-localboot-row-"]') })
+        const headers = table.getByRole('columnheader')
+        await expect.poll(() => headers.count()).toBeGreaterThan(1)
 
         const filterInput = p
           .locator('input[placeholder*="filter" i], input[placeholder*="suche" i], input[placeholder*="search" i]')
