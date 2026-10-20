@@ -108,6 +108,7 @@
                 :multi-value="node.param.multiValue"
                 :editable="node.param.editable"
                 :disabled="false"
+                :config-id="node.param.configId"
                 :password="isPasswordParam(node.param.configId)"
                 @update:model-value="(v: unknown) => node.param && setParam(node.param, v)"
               />

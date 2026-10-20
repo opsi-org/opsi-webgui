@@ -165,6 +165,7 @@
     "hide": "Ausblenden",
     "clearAll": "Alle löschen",
     "copy": "Kopieren",
+    "copyValue": "{id} Wert kopieren",
     "copied": "Kopiert!",
     "clearSelection": "Auswahl aufheben",
     "close": "Schließen",

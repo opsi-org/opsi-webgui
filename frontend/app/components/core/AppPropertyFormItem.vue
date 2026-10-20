@@ -26,259 +26,364 @@
 
     <!-- Password -->
     <template v-else-if="password">
-      <CoreAppPasswordInput
-        :model-value="stringValue"
-        :disabled="disabled"
-        :size="controlSize"
-        class="flex-1 min-w-0"
-        :aria-label="controlAriaLabel"
-        @update:model-value="(v: string) => emit('update:modelValue', v)"
-      />
+      <div class="flex-1 min-w-0 group/paramrow">
+        <span class="flex gap-1 min-w-0 items-center shrink-0">
+          <CoreAppPasswordInput
+            :model-value="stringValue"
+            :disabled="disabled"
+            :size="controlSize"
+            class="flex-1 min-w-0"
+            :aria-label="controlAriaLabel"
+            @update:model-value="(v: string) => emit('update:modelValue', v)"
+          />
+          <CoreAppButton
+            size="xs"
+            :icon="clipboard.isCopied(stringValue) ? icons.check : icons.copy"
+            variant="ghost"
+            :color="clipboard.isCopied(stringValue) ? 'success' : 'neutral'"
+            class="h-5! min-h-5! px-1! opacity-0 group-hover/paramrow:opacity-100 group-focus-within/paramrow:opacity-100 transition-opacity"
+            :title="String(clipboard.isCopied(stringValue) ? $t('common.copied') : $t('common.copy'))"
+            :aria-label="`${String($t('common.copyValue', { id: props.configId }))}`"
+            @click="copyToClipboard(stringValue)"
+          />
+        </span>
+      </div>
     </template>
 
     <!-- Multi-value with possible values: popover with checkmarks + inline add -->
     <template v-else-if="multiValue && hasPossibleValues">
-      <div class="flex-1 min-w-0">
-        <UPopover :ui="{ content: 'p-0 w-72' }">
-          <button
-            type="button"
-            :aria-label="controlAriaLabel"
-            class="w-full flex items-center justify-between gap-2 px-2 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-primary/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
-            :class="[
-              size === 'xs' ? 'py-1 min-h-8' : 'py-1.5 md:py-1 min-h-11 md:min-h-8',
-              disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-            ]"
-            :disabled="disabled"
-          >
-            <span v-if="arrayValue.length === 0" class="truncate text-(--color-text-muted)">{{ $t('config.selectValues') }}</span>
-            <span v-else class="flex flex-wrap gap-1 min-w-0">
-              <span
-                v-for="val in arrayValue.slice(0, 3)"
-                :key="val"
-                class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-primary/20 max-w-[min(8rem,100%)] truncate"
-              >
-                {{ formatDisplayValue(val) }}
+      <div class="flex-1 min-w-0 group/paramrow">
+        <span class="flex gap-1 min-w-0 items-center shrink-0">
+          <UPopover :ui="{ content: 'p-0 w-72' }">
+            <button
+              type="button"
+              :aria-label="controlAriaLabel"
+              class="w-full flex items-center justify-between gap-2 px-2 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-primary/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
+              :class="[
+                size === 'xs' ? 'py-1 min-h-8' : 'py-1.5 md:py-1 min-h-11 md:min-h-8',
+                disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+              ]"
+              :disabled="disabled"
+            >
+              <span v-if="arrayValue.length === 0" class="truncate text-(--color-text-muted)">{{ $t('config.selectValues') }}</span>
+              <span v-else class="flex flex-wrap gap-1 min-w-0">
+                <span
+                  v-for="val in arrayValue.slice(0, 3)"
+                  :key="val"
+                  class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-primary/20 max-w-[min(8rem,100%)] truncate"
+                >
+                  {{ formatDisplayValue(val) }}
+                </span>
+                <span
+                  v-if="arrayValue.length > 3"
+                  class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-surface) text-(--color-text-muted)"
+                >
+                  +{{ arrayValue.length - 3 }}
+                </span>
               </span>
-              <span
-                v-if="arrayValue.length > 3"
-                class="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-(--color-surface) text-(--color-text-muted)"
-              >
-                +{{ arrayValue.length - 3 }}
+              <span class="flex gap-1">
+                <CoreAppIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
               </span>
-            </span>
-            <CoreAppIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
-          </button>
-          <template #content>
-            <div class="max-h-72 overflow-y-auto">
-              <div v-if="editable" class="sticky top-0 z-10 bg-(--color-surface-elevated) border-b border-(--color-border) px-2 py-1">
-                <div class="flex items-center gap-1">
-                  <CoreAppInput
-                    ref="multiAddInputRef"
-                    v-model="customInput"
-                    :placeholder="$t('groups.membersSearch')"
-                    size="xs"
-                    class="flex-1"
-                    @keydown.enter.prevent="addCustomMultiItem"
+            </button>
+
+            <template #content>
+              <div class="max-h-72 overflow-y-auto">
+                <div v-if="editable" class="sticky top-0 z-10 bg-(--color-surface-elevated) border-b border-(--color-border) px-2 py-1">
+                  <div class="flex items-center gap-1">
+                    <CoreAppInput
+                      ref="multiAddInputRef"
+                      v-model="customInput"
+                      :placeholder="$t('groups.membersSearch')"
+                      size="xs"
+                      class="flex-1"
+                      @keydown.enter.prevent="addCustomMultiItem"
+                    />
+                    <CoreAppButton
+                      size="xs"
+                      variant="ghost"
+                      color="primary"
+                      :icon="icons.add"
+                      :disabled="!customInput.trim()"
+                      @click="addCustomMultiItem"
+                    />
+                  </div>
+                </div>
+                <button
+                  v-for="opt in filteredMultiOptions"
+                  :key="opt"
+                  type="button"
+                  class="flex items-center gap-2 w-full px-2.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
+                  :class="size === 'xs' ? 'py-0.5 min-h-8' : 'py-1 min-h-10 md:min-h-8'"
+                  @click="toggleMultiItem(opt)"
+                >
+                  <CoreAppIcon
+                    :name="arrayValue.includes(opt) ? icons.squareCheck : icons.square"
+                    class="w-4 h-4 shrink-0"
+                    :class="arrayValue.includes(opt) ? 'text-(--color-primary-soft-text)' : 'text-(--color-text-muted)'"
                   />
-                  <CoreAppButton
-                    size="xs"
-                    variant="ghost"
-                    color="primary"
-                    :icon="icons.add"
-                    :disabled="!customInput.trim()"
-                    @click="addCustomMultiItem"
-                  />
+                  <span class="truncate text-left" :title="opt">{{ formatDisplayValue(opt) }}</span>
+                </button>
+                <div
+                  v-if="filteredMultiOptions.length === 0 && customInput.trim()"
+                  class="px-3 py-2 text-xs text-(--color-text-muted) text-center"
+                >
+                  {{ $t('common.pressEnterToAdd') }}
                 </div>
               </div>
-              <button
-                v-for="opt in filteredMultiOptions"
-                :key="opt"
-                type="button"
-                class="flex items-center gap-2 w-full px-2.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
-                :class="size === 'xs' ? 'py-0.5 min-h-8' : 'py-1 min-h-10 md:min-h-8'"
-                @click="toggleMultiItem(opt)"
-              >
-                <CoreAppIcon
-                  :name="arrayValue.includes(opt) ? icons.squareCheck : icons.square"
-                  class="w-4 h-4 shrink-0"
-                  :class="arrayValue.includes(opt) ? 'text-(--color-primary-soft-text)' : 'text-(--color-text-muted)'"
-                />
-                <span class="truncate text-left" :title="opt">{{ formatDisplayValue(opt) }}</span>
-              </button>
-              <div
-                v-if="filteredMultiOptions.length === 0 && customInput.trim()"
-                class="px-3 py-2 text-xs text-(--color-text-muted) text-center"
-              >
-                {{ $t('common.pressEnterToAdd') }}
-              </div>
-            </div>
-          </template>
-        </UPopover>
+            </template>
+          </UPopover>
+          <CoreAppButton
+            size="xs"
+            :icon="clipboard.isCopied(arrayValue.join(', ')) ? icons.check : icons.copy"
+            variant="ghost"
+            :color="clipboard.isCopied(arrayValue.join(', ')) ? 'success' : 'neutral'"
+            class="h-5! min-h-5! px-1! opacity-0 group-hover/paramrow:opacity-100 group-focus-within/paramrow:opacity-100 transition-opacity"
+            :title="String(clipboard.isCopied(arrayValue.join(',')) ? $t('common.copied') : $t('common.copy'))"
+            :aria-label="`${String($t('common.copyValue', { id: props.configId }))}`"
+            @click="copyToClipboard(arrayValue.join(', '))"
+          />
+        </span>
       </div>
     </template>
 
     <!-- Multi-value without possible values: tags + inline input -->
     <template v-else-if="multiValue">
-      <div class="flex-1 min-w-0">
-        <div
-          class="flex flex-wrap items-center gap-1 p-1 border border-(--color-border) rounded-md bg-(--color-background)"
-          :class="[size === 'xs' ? 'min-h-8' : 'min-h-11 md:min-h-8', disabled ? 'opacity-50' : '']"
-        >
-          <span
-            v-for="(val, idx) in arrayValue"
-            :key="idx"
-            class="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-primary/20 max-w-[min(12rem,100%)] group/tag"
+      <div class="flex-1 min-w-0 group/paramrow">
+        <span class="flex gap-1 min-w-0 items-center shrink-0">
+          <div
+            class="flex flex-wrap items-center gap-1 p-1 border border-(--color-border) rounded-md bg-(--color-background) w-full"
+            :class="[size === 'xs' ? 'min-h-8' : 'min-h-11 md:min-h-8', disabled ? 'opacity-50' : '']"
           >
-            <span class="min-w-0 truncate" :title="val">{{ formatDisplayValue(val) }}</span>
+            <span
+              v-for="(val, idx) in arrayValue"
+              :key="idx"
+              class="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs rounded-full bg-(--color-primary-soft-bg) text-(--color-primary-soft-text) border border-primary/20 max-w-[min(12rem,100%)] group/tag"
+            >
+              <span class="min-w-0 truncate" :title="val">{{ formatDisplayValue(val) }}</span>
+              <CoreAppButton
+                v-if="!disabled"
+                type="button"
+                variant="ghost"
+                color="neutral"
+                size="xs"
+                class="shrink-0 p-0! hover:text-(--color-error-soft-text) transition-colors opacity-60 group-hover/tag:opacity-100"
+                @click="removeMultiItem(idx)"
+              >
+                <CoreAppIcon :name="icons.x" class="w-3 h-3" />
+              </CoreAppButton>
+            </span>
             <CoreAppButton
-              v-if="!disabled"
+              v-if="hasMultilineValues(arrayValue)"
               type="button"
               variant="ghost"
               color="neutral"
               size="xs"
-              class="shrink-0 p-0! hover:text-(--color-error-soft-text) transition-colors opacity-60 group-hover/tag:opacity-100"
-              @click="removeMultiItem(idx)"
+              class="p-0! inline-flex items-center gap-0.5 px-1 py-0.5 text-xs text-(--color-text-muted) hover:text-(--color-primary) transition-colors"
+              @click="openMultilineEditor"
             >
-              <CoreAppIcon :name="icons.x" class="w-3 h-3" />
+              <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
             </CoreAppButton>
-          </span>
+            <CoreAppInput
+              v-if="editable && !disabled"
+              v-model="customInput"
+              class="flex-1 basis-24 min-w-0"
+              size="xs"
+              :aria-label="controlAriaLabel"
+              :placeholder="arrayValue.length === 0 ? $t('common.pressEnterToAdd') : ''"
+              @keydown.enter.prevent="addCustomMultiItem"
+              @keydown.backspace="handleTagBackspace"
+            />
+          </div>
           <CoreAppButton
-            v-if="hasMultilineValues(arrayValue)"
-            type="button"
+            size="xs"
+            :icon="clipboard.isCopied(arrayValue.join(', ')) ? icons.check : icons.copy"
             variant="ghost"
-            color="neutral"
-            size="xs"
-            class="p-0! inline-flex items-center gap-0.5 px-1 py-0.5 text-xs text-(--color-text-muted) hover:text-(--color-primary) transition-colors"
-            @click="openMultilineEditor"
-          >
-            <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
-          </CoreAppButton>
-          <CoreAppInput
-            v-if="editable && !disabled"
-            v-model="customInput"
-            class="flex-1 basis-24 min-w-0"
-            size="xs"
-            :aria-label="controlAriaLabel"
-            :placeholder="arrayValue.length === 0 ? $t('common.pressEnterToAdd') : ''"
-            @keydown.enter.prevent="addCustomMultiItem"
-            @keydown.backspace="handleTagBackspace"
+            :color="clipboard.isCopied(arrayValue.join(', ')) ? 'success' : 'neutral'"
+            class="h-5! min-h-5! px-1! opacity-0 group-hover/paramrow:opacity-100 group-focus-within/paramrow:opacity-100 transition-opacity"
+            :title="String(clipboard.isCopied(arrayValue.join(', ')) ? $t('common.copied') : $t('common.copy'))"
+            :aria-label="`${String($t('common.copyValue', { id: props.configId }))}`"
+            @click="copyToClipboard(arrayValue.join(', '))"
           />
-        </div>
+        </span>
       </div>
     </template>
 
     <!-- Single value, non-editable with possible values: select -->
     <template v-else-if="hasPossibleValues && !editable">
-      <CoreAppSelectMenu
-        :model-value="selectModelValue"
-        :items="selectItemsWithEmpty"
-        :disabled="disabled"
-        :size="controlSize"
-        :aria-label="controlAriaLabel"
-        class="flex-1 min-w-0"
-        @update:model-value="handleNonEditableSelectChange"
-      />
+      <div class="flex-1 min-w-0 group/paramrow">
+        <span class="flex gap-1 min-w-0 items-center shrink-0">
+          <CoreAppSelectMenu
+            :model-value="selectModelValue"
+            :items="selectItemsWithEmpty"
+            :disabled="disabled"
+            :size="controlSize"
+            :aria-label="controlAriaLabel"
+            class="flex-1 min-w-0"
+            @update:model-value="handleNonEditableSelectChange"
+          />
+          <CoreAppButton
+            size="xs"
+            :icon="clipboard.isCopied(selectModelValue) ? icons.check : icons.copy"
+            variant="ghost"
+            :color="clipboard.isCopied(selectModelValue) ? 'success' : 'neutral'"
+            class="h-5! min-h-5! px-1! opacity-0 group-hover/paramrow:opacity-100 group-focus-within/paramrow:opacity-100 transition-opacity"
+            :title="String(clipboard.isCopied(selectModelValue) ? $t('common.copied') : $t('common.copy'))"
+            :aria-label="`${String($t('common.copyValue', { id: props.configId }))}`"
+            @click="copyToClipboard(selectModelValue)"
+          />
+        </span>
+      </div>
     </template>
 
     <!-- Single value, editable with possible values: combobox-style -->
     <template v-else-if="hasPossibleValues && editable">
-      <div class="flex-1 min-w-0">
-        <UPopover :ui="{ content: 'p-0 w-64' }">
-          <button
-            type="button"
-            :aria-label="controlAriaLabel"
-            class="w-full flex items-center justify-between gap-2 px-2 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-primary/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
-            :class="[
-              size === 'xs' ? 'py-1 min-h-8' : 'py-1.5 md:py-1 min-h-11 md:min-h-8',
-              disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-            ]"
-            :disabled="disabled"
-          >
-            <span :class="stringValue ? '' : 'text-(--color-text-muted)'" class="truncate">
-              {{ stringValue ? formatDisplayValue(stringValue) : `(${$t('common.empty')})` }}
-            </span>
-            <CoreAppIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
-          </button>
-          <template #content>
-            <div class="max-h-64 overflow-y-auto">
-              <div class="sticky top-0 z-10 bg-(--color-surface-elevated) border-b border-(--color-border) px-2 py-1">
-                <CoreAppInput
-                  v-model="editableSearchInput"
-                  :placeholder="$t('common.enterValue')"
-                  size="xs"
-                  class="w-full"
-                  @keydown.enter.prevent="applyEditableCustomValue"
-                />
+      <div class="flex-1 min-w-0 group/paramrow">
+        <span class="flex gap-1 min-w-0 items-center shrink-0">
+          <UPopover :ui="{ content: 'p-0 w-64' }">
+            <button
+              type="button"
+              :aria-label="controlAriaLabel"
+              class="w-full flex items-center justify-between gap-2 px-2 text-sm font-normal border border-(--color-border) rounded-md bg-(--color-surface-elevated) hover:border-primary/50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
+              :class="[
+                size === 'xs' ? 'py-1 min-h-8' : 'py-1.5 md:py-1 min-h-11 md:min-h-8',
+                disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+              ]"
+              :disabled="disabled"
+            >
+              <span :class="stringValue ? '' : 'text-(--color-text-muted)'" class="truncate">
+                {{ stringValue ? formatDisplayValue(stringValue) : `(${$t('common.empty')})` }}
+              </span>
+              <CoreAppIcon :name="icons.chevronDown" class="w-3.5 h-3.5 shrink-0 text-(--color-text-muted)" />
+            </button>
+            <template #content>
+              <div class="max-h-64 overflow-y-auto">
+                <div class="sticky top-0 z-10 bg-(--color-surface-elevated) border-b border-(--color-border) px-2 py-1">
+                  <CoreAppInput
+                    v-model="editableSearchInput"
+                    :placeholder="$t('common.enterValue')"
+                    size="xs"
+                    class="w-full"
+                    @keydown.enter.prevent="applyEditableCustomValue"
+                  />
+                </div>
+                <button
+                  type="button"
+                  class="flex items-center gap-2 w-full px-2.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
+                  :class="[
+                    size === 'xs' ? 'py-0.5 min-h-8' : 'py-1 min-h-10 md:min-h-8',
+                    !stringValue
+                      ? 'text-(--color-primary-soft-text) font-medium bg-(--color-primary-soft-bg)'
+                      : 'text-(--color-text-muted)',
+                  ]"
+                  @click="setEmptyEditableValue"
+                >
+                  <span>({{ $t('common.empty') }})</span>
+                </button>
+                <button
+                  v-for="opt in filteredEditableOptions"
+                  :key="opt"
+                  type="button"
+                  class="flex items-center gap-2 w-full px-3 text-sm hover:bg-(--color-surface-hover) transition-colors"
+                  :class="[
+                    size === 'xs' ? 'py-0.5 min-h-8' : 'py-1.5 min-h-10 md:min-h-8',
+                    stringValue === opt ? 'text-(--color-text) font-medium bg-(--color-primary-soft-bg)' : '',
+                  ]"
+                  @click="setEditableValue(opt)"
+                >
+                  <span class="truncate" :title="opt">{{ formatDisplayValue(opt) }}</span>
+                </button>
+                <button
+                  v-if="editableSearchInput.trim() && !filteredPossibleValueStrings.includes(editableSearchInput.trim())"
+                  type="button"
+                  class="flex items-center gap-2 w-full px-2.5 text-sm text-(--color-primary) hover:bg-(--color-surface-hover) transition-colors border-t border-(--color-border)"
+                  :class="size === 'xs' ? 'py-0.5 min-h-8' : 'py-1 min-h-10 md:min-h-8'"
+                  @click="applyEditableCustomValue"
+                >
+                  <CoreAppIcon :name="icons.add" class="w-3.5 h-3.5" />
+                  <span>{{ editableSearchInput.trim() }}</span>
+                </button>
               </div>
-              <button
-                type="button"
-                class="flex items-center gap-2 w-full px-2.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
-                :class="[
-                  size === 'xs' ? 'py-0.5 min-h-8' : 'py-1 min-h-10 md:min-h-8',
-                  !stringValue ? 'text-(--color-primary-soft-text) font-medium bg-(--color-primary-soft-bg)' : 'text-(--color-text-muted)',
-                ]"
-                @click="setEmptyEditableValue"
-              >
-                <span>({{ $t('common.empty') }})</span>
-              </button>
-              <button
-                v-for="opt in filteredEditableOptions"
-                :key="opt"
-                type="button"
-                class="flex items-center gap-2 w-full px-3 text-sm hover:bg-(--color-surface-hover) transition-colors"
-                :class="[
-                  size === 'xs' ? 'py-0.5 min-h-8' : 'py-1.5 min-h-10 md:min-h-8',
-                  stringValue === opt ? 'text-(--color-text) font-medium bg-(--color-primary-soft-bg)' : '',
-                ]"
-                @click="setEditableValue(opt)"
-              >
-                <span class="truncate" :title="opt">{{ formatDisplayValue(opt) }}</span>
-              </button>
-              <button
-                v-if="editableSearchInput.trim() && !filteredPossibleValueStrings.includes(editableSearchInput.trim())"
-                type="button"
-                class="flex items-center gap-2 w-full px-2.5 text-sm text-(--color-primary) hover:bg-(--color-surface-hover) transition-colors border-t border-(--color-border)"
-                :class="size === 'xs' ? 'py-0.5 min-h-8' : 'py-1 min-h-10 md:min-h-8'"
-                @click="applyEditableCustomValue"
-              >
-                <CoreAppIcon :name="icons.add" class="w-3.5 h-3.5" />
-                <span>{{ editableSearchInput.trim() }}</span>
-              </button>
-            </div>
-          </template>
-        </UPopover>
+            </template>
+          </UPopover>
+          <CoreAppButton
+            size="xs"
+            :icon="clipboard.isCopied(stringValue) ? icons.check : icons.copy"
+            variant="ghost"
+            :color="clipboard.isCopied(stringValue) ? 'success' : 'neutral'"
+            class="h-5! min-h-5! px-1! opacity-0 group-hover/paramrow:opacity-100 group-focus-within/paramrow:opacity-100 transition-opacity"
+            :title="String(clipboard.isCopied(stringValue) ? $t('common.copied') : $t('common.copy'))"
+            :aria-label="`${String($t('common.copyValue', { id: props.configId }))}`"
+            @click="copyToClipboard(stringValue)"
+          />
+        </span>
       </div>
     </template>
 
     <!-- Multiline single value: show preview + edit button -->
     <template v-else-if="isMultilineValue">
-      <div class="flex-1 flex items-center gap-1 min-w-0">
-        <div
-          class="flex-1 px-2 text-sm border border-(--color-border) rounded-md bg-(--color-surface-elevated) cursor-pointer hover:border-primary/50 transition-colors truncate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
-          :class="[size === 'xs' ? 'py-1 min-h-8' : 'py-1.5 md:py-1 min-h-11 md:min-h-8', disabled ? 'opacity-50 cursor-not-allowed' : '']"
-          :title="stringValue"
-          role="button"
-          tabindex="0"
-          @click="!disabled && openMultilineEditor()"
-          @keydown.enter="!disabled && openMultilineEditor()"
-          @keydown.space.prevent="!disabled && openMultilineEditor()"
-        >
-          {{ formatDisplayValue(stringValue) }}
-        </div>
-        <CoreAppButton v-if="!disabled" size="xs" variant="ghost" color="neutral" :icon="icons.pencilSquare" @click="openMultilineEditor" />
+      <div class="flex-1 flex items-center gap-1 min-w-0 group/paramrow">
+        <span class="flex gap-1 min-w-0 items-center shrink-0">
+          <div
+            class="flex-1 px-2 text-sm border border-(--color-border) rounded-md bg-(--color-surface-elevated) cursor-pointer hover:border-primary/50 transition-colors truncate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-1 focus-visible:ring-offset-(--color-surface-elevated)"
+            :class="[
+              size === 'xs' ? 'py-1 min-h-8' : 'py-1.5 md:py-1 min-h-11 md:min-h-8',
+              disabled ? 'opacity-50 cursor-not-allowed' : '',
+            ]"
+            :title="stringValue"
+            role="button"
+            tabindex="0"
+            @click="!disabled && openMultilineEditor()"
+            @keydown.enter="!disabled && openMultilineEditor()"
+            @keydown.space.prevent="!disabled && openMultilineEditor()"
+          >
+            {{ formatDisplayValue(stringValue) }}
+          </div>
+          <CoreAppButton
+            v-if="!disabled"
+            size="xs"
+            variant="ghost"
+            color="neutral"
+            :icon="icons.pencilSquare"
+            @click="openMultilineEditor"
+          />
+          <CoreAppButton
+            size="xs"
+            :icon="clipboard.isCopied(stringValue) ? icons.check : icons.copy"
+            variant="ghost"
+            :color="clipboard.isCopied(stringValue) ? 'success' : 'neutral'"
+            class="h-5! min-h-5! px-1! opacity-0 group-hover/paramrow:opacity-100 group-focus-within/paramrow:opacity-100 transition-opacity"
+            :title="String(clipboard.isCopied(stringValue) ? $t('common.copied') : $t('common.copy'))"
+            :aria-label="`${String($t('common.copyValue', { id: props.configId }))}`"
+            @click="copyToClipboard(stringValue)"
+          />
+        </span>
       </div>
     </template>
 
     <!-- Plain input (no possible values, single value) -->
     <template v-else>
-      <CoreAppInput
-        :model-value="stringValue"
-        :disabled="disabled"
-        :size="controlSize"
-        class="flex-1 min-w-0"
-        :aria-label="controlAriaLabel"
-        @update:model-value="(v: string) => emit('update:modelValue', v)"
-      />
+      <div class="flex-1 min-w-0 group/paramrow">
+        <span class="flex gap-1 min-w-0 items-center shrink-0">
+          <CoreAppInput
+            :model-value="stringValue"
+            :disabled="disabled"
+            :size="controlSize"
+            class="flex-1 min-w-0"
+            :aria-label="controlAriaLabel"
+            @update:model-value="(v: string) => emit('update:modelValue', v)"
+          />
+          <CoreAppButton
+            size="xs"
+            :icon="clipboard.isCopied(stringValue) ? icons.check : icons.copy"
+            variant="ghost"
+            :color="clipboard.isCopied(stringValue) ? 'success' : 'neutral'"
+            class="h-5! min-h-5! px-1! opacity-0 group-hover/paramrow:opacity-100 group-focus-within/paramrow:opacity-100 transition-opacity"
+            :title="String(clipboard.isCopied(stringValue) ? $t('common.copied') : $t('common.copy'))"
+            :aria-label="`${String($t('common.copyValue', { id: props.configId }))}`"
+            @click="copyToClipboard(stringValue)"
+          />
+        </span>
+      </div>
     </template>
 
     <!-- Multiline editor modal -->
@@ -307,6 +412,7 @@
     password?: boolean
     mixed?: boolean
     ariaLabel?: string
+    configId?: string
     size?: 'xs' | 'sm'
   }
 
@@ -400,6 +506,12 @@
     return [{ label: `(${String($t('common.empty'))})`, value: EMPTY_SENTINEL }, ...items]
   })
 
+  const clipboard = useClipboard()
+
+  async function copyToClipboard(text: string) {
+    await clipboard.copy(text)
+  }
+
   /** Format a value for display: show first line + "..." for multiline, truncate long values */
   function formatDisplayValue(value: string): string {
     if (value.includes('\n')) {
@@ -411,6 +523,12 @@
 
   /** Check if any value in the array contains newlines */
   function hasMultilineValues(values: string[]): boolean {
+    console.log(
+      'Checking for multiline values in array:',
+      values,
+      'has multiline:',
+      values.some((v) => v.includes('\n')),
+    )
     return values.some((v) => v.includes('\n'))
   }
 
