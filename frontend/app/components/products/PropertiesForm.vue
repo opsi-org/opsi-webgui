@@ -29,10 +29,10 @@
             :class="changedPropertyIds.has(prop.propertyId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)'"
           >
             <div
-              class="min-w-0 w-full flex items-center gap-1 px-1.5 py-0.5 rounded bg-(--color-surface-hover) md:bg-transparent md:px-0 md:py-0"
+              class="min-w-0 w-full flex items-center gap-1 px-1.5 py-0.5 rounded bg-(--color-surface-hover) md:bg-transparent md:px-0 md:py-0 group/paramrow"
             >
               <span
-                class="flex-1 min-w-0 text-sm font-medium md:font-normal break-all select-text"
+                class="min-w-0 text-sm font-medium md:font-normal break-all select-text"
                 :class="{
                   italic: prop.anyClientDifferentFromDepot,
                   'font-bold': prop.anyDepotDifferentFromDefault,
@@ -43,7 +43,9 @@
               <span v-if="changedPropertyIds.has(prop.propertyId)" class="inline-flex items-center text-(--color-changed-text)">
                 <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
               </span>
-              <span class="flex items-center shrink-0 w-14">
+              <span
+                class="flex items-center shrink-0 w-14 opacity-0 group-hover/paramrow:opacity-100 group-focus-within/paramrow:opacity-100 transition-opacity"
+              >
                 <CoreAppButton
                   size="xs"
                   :icon="clipboard.isCopied(prop.propertyId) ? icons.check : icons.copy"
@@ -78,6 +80,7 @@
                 :password="isPasswordProperty(prop.propertyId)"
                 :mixed="isMixedValue(prop)"
                 :aria-label="prop.propertyId"
+                :configId="prop.propertyId"
                 @update:model-value="(v: unknown) => handlePropertyChange(prop, v as EditablePropertyValue)"
               />
 
