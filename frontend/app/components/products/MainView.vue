@@ -774,30 +774,44 @@
     setLiveStatus(ids, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
   }
 
-  function extractProductIdsFromMessage(payload: unknown): string[] {
+  function extractProductIdsFromMessage(payload: unknown, selectedClients: string[], productType: ProductType): string[] {
+    const clients = new Set(selectedClients)
     const ids = new Set<string>()
-    const visited = new Set<unknown>()
-    const visit = (value: unknown, keyHint = '') => {
-      if (value === null || value === undefined) return
-      if (typeof value === 'string') {
-        if (/(^|_)(productid|product_id)$/.test(keyHint.toLowerCase())) {
-          ids.add(value)
-        }
-        return
-      }
-      if (typeof value !== 'object') return
-      if (visited.has(value)) return
+    const visited = new Set<object>()
+
+    const visit = (value: unknown) => {
+      if (!value || typeof value !== 'object' || visited.has(value)) return
       visited.add(value)
       if (Array.isArray(value)) {
-        for (const item of value) visit(item, keyHint)
+        for (const item of value) visit(item)
         return
       }
-      for (const [key, nested] of Object.entries(value as Record<string, unknown>)) {
-        visit(nested, key)
+
+      const record = value as Record<string, unknown>
+      const productId = record.productId ?? record.product_id
+      const clientId = record.clientId ?? record.client_id
+      const eventProductType = record.productType ?? record.product_type
+      if (
+        typeof productId === 'string' &&
+        productId.length > 0 &&
+        typeof clientId === 'string' &&
+        clients.has(clientId) &&
+        (eventProductType === undefined || eventProductType === productType)
+      ) {
+        ids.add(productId)
       }
+      for (const nested of Object.values(record)) visit(nested)
     }
+
     visit(payload)
     return [...ids]
+  }
+
+  function clearLiveUpdates() {
+    if (liveUpdateFlushTimer) clearTimeout(liveUpdateFlushTimer)
+    liveUpdateFlushTimer = null
+    pendingLiveUpdateIds.clear()
+    productLiveStatus.value.clear()
   }
 
   function getMessagebusEventName(msg: unknown): string {
@@ -1164,7 +1178,7 @@
     totalItems.value = 0
     lastPageParams.value = null
     pendingActionRequests.value.clear()
-    productLiveStatus.value.clear()
+    clearLiveUpdates()
     selectionStore.setProducts([], 'table')
   }
 
@@ -1360,6 +1374,7 @@
   // product request per click; coalesce them into a single refetch.
   let selectionScopeTimer: ReturnType<typeof setTimeout> | null = null
   function refetchForSelectionScope() {
+    clearLiveUpdates()
     if (selectionScopeTimer) clearTimeout(selectionScopeTimer)
     selectionScopeTimer = setTimeout(() => {
       selectionScopeTimer = null
@@ -1397,14 +1412,9 @@
   watch(messageBusLastMsg, (msg) => {
     const eventName = getMessagebusEventName(msg)
     if (!eventName.includes('productOnClient_')) return
-    const ids = extractProductIdsFromMessage(msg)
-    if (ids.length > 0) {
-      for (const id of ids) pendingLiveUpdateIds.add(id)
-    } else if (selectedProductIds.value.length > 0) {
-      for (const id of selectedProductIds.value) pendingLiveUpdateIds.add(id)
-    } else {
-      return
-    }
+    const ids = extractProductIdsFromMessage(msg, selectionStore.selectedClients, props.productType)
+    if (ids.length === 0) return
+    for (const id of ids) pendingLiveUpdateIds.add(id)
     // A bulk save can trigger hundreds of individual productOnClient_* messagebus
     // events; coalesce them into a single reactive update instead of one per event.
     if (!liveUpdateFlushTimer) {
