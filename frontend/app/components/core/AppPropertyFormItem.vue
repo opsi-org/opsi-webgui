@@ -523,12 +523,6 @@
 
   /** Check if any value in the array contains newlines */
   function hasMultilineValues(values: string[]): boolean {
-    console.log(
-      'Checking for multiline values in array:',
-      values,
-      'has multiline:',
-      values.some((v) => v.includes('\n')),
-    )
     return values.some((v) => v.includes('\n'))
   }
 
