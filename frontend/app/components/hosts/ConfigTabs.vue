@@ -358,9 +358,7 @@
     return categoryKeys
       .map((cat) => {
         const children = buildSubTree(raw[cat] || [], cat)
-        console.log('Building subtree for category:', cat, 'children', children, 'params', raw[cat] || [])
         const leafCount = children.reduce((sum, c) => sum + (c.leafCount ?? 0), 0)
-        console.log('Leaf count for category:', cat, 'is', leafCount)
         return { key: cat, label: cat, children, leafCount }
       })
       .filter((n) => n.children.length > 0)
