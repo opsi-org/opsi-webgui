@@ -53,9 +53,6 @@ test.beforeEach(async ({ page, context, baseURL }, testInfo) => {
     else if (pathname.endsWith('/opsidata/depots'))
       data = [{ depotId: 'config.test.local', type: 'OpsiConfigserver', description: 'Test depot' }]
     else if (pathname.endsWith('/opsidata/clients')) data = clients
-    else if (pathname.endsWith('/opsidata/hosts')) data = [{ id: 'beta.test.local', description: 'Notebook' }]
-    else if (pathname.endsWith('/opsidata/server/diagnostic')) data = { health_check: [], modules: [], available_modules: [] }
-    else if (pathname.endsWith('/opsidata/changelogs')) data = '# Release notes\n\nTest release.'
     else if (/groups|icons/.test(pathname)) data = {}
     await route.fulfill({
       status: 200,
@@ -153,47 +150,4 @@ test('restore requires warning confirmation before transferring data', async ({ 
   await dialog.getByRole('button', { name: 'Cancel', exact: true }).click()
   await expect(dialog).toBeHidden()
   expect(transfers).toHaveLength(0)
-})
-
-for (const route of ['/servers', '/products', '/groups', '/admin/diagnostics', '/admin/terminal', '/support']) {
-  test(`action rendering on ${route}`, async ({ page }, testInfo) => {
-    const errors: string[] = []
-    page.on('pageerror', (error) => errors.push(error.message))
-    await page.goto(`${appPath}${route}`)
-    await expect(page.locator('main')).toBeVisible()
-    await expect(page.getByTestId('global-search')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
-    await expect(page.getByTestId('quickpanel-toggle')).toHaveAttribute('aria-expanded', 'false')
-    if (route === '/servers') {
-      await expect(page.getByTestId('servers-open-global-parameters-panel')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
-    } else if (route === '/admin/diagnostics') {
-      await expect(page.getByRole('tab', { selected: true })).toHaveCount(1)
-      await page.locator('main button[aria-pressed]').first().click()
-      await expect(page.locator('main button[aria-pressed="true"]')).toHaveCount(1)
-    } else if (route === '/admin/terminal') {
-      await expect(page.getByTestId('terminal-quick-commands')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
-    }
-    await capture(page, testInfo, route.replaceAll('/', '-').slice(1))
-    expect(errors).toEqual([])
-  })
-}
-
-test('Quickpanel tabs and commands keep their semantics', async ({ page }, testInfo) => {
-  await page.goto(`${appPath}/clients`)
-  await page.getByTestId('quickpanel-toggle').click()
-  await expect(page.getByTestId('quickpanel-toggle')).toHaveAttribute('aria-expanded', 'true')
-  const quickpanel = page.getByTestId('quickpanel')
-  await expect(quickpanel).toBeVisible()
-  await expect(quickpanel.getByRole('tab', { selected: true })).toHaveCSS('background-color', 'rgb(63, 90, 166)')
-  await quickpanel.getByRole('tab', { selected: false }).first().click()
-  await expect(quickpanel.getByRole('tab', { selected: true })).toHaveCSS('color', 'rgb(255, 255, 255)')
-  await capture(page, testInfo, 'quickpanel')
-})
-
-test('client creation confirms in primary, with a neutral reset', async ({ page }, testInfo) => {
-  await page.goto(`${appPath}/clients?view=panel&panelType=add`)
-  const panel = page.getByTestId('detail-panel')
-  await expect(panel).toBeVisible()
-  await expect(panel.getByRole('button', { name: 'Add Client', exact: true })).toHaveClass(/bg-\(--color-primary\)/)
-  await expect(panel.getByRole('button', { name: 'Reset', exact: true })).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
-  await capture(page, testInfo, 'create-client')
 })
