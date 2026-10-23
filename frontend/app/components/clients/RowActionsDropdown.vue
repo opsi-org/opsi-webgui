@@ -11,6 +11,21 @@
 -->
 <template>
   <div class="flex items-center gap-1">
+    <CoreAppTooltip v-if="showAllActions || defaultAction === 'products'" :text="String($t('products.title'))" :delay="{ open: 0 }">
+      <CoreAppButton
+        :icon="icons.product"
+        variant="ghost"
+        size="xs"
+        class="h-7 w-7 p-1"
+        :color="activeAction === 'products' ? 'primary' : 'neutral'"
+        :class="activeAction === 'products' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+        :aria-label="String($t('products.title'))"
+        data-testid="client-row-action-products"
+        @click="emit('open-products')"
+        :disabled="isReadOnly"
+      />
+    </CoreAppTooltip>
+
     <CoreAppTooltip v-if="showAllActions || defaultAction === 'config'" :text="String($t('config.title'))" :delay="{ open: 0 }">
       <CoreAppButton
         :icon="icons.config"
@@ -75,16 +90,17 @@
 <script setup lang="ts">
   const props = defineProps<{
     clientId: string
-    defaultAction?: 'config' | 'logs' | 'inventory' | 'clone'
+    defaultAction?: 'config' | 'logs' | 'inventory' | 'clone' | 'products'
     showAllActions?: boolean
     /** Which panel is currently open for this row (highlights the matching button). */
-    activeAction?: 'config' | 'logs' | 'inventory' | 'clone' | null
+    activeAction?: 'config' | 'logs' | 'inventory' | 'clone' | 'products' | null
   }>()
 
   const defaultAction = computed(() => props.defaultAction || 'config')
   const showAllActions = computed(() => props.showAllActions ?? false)
 
   const emit = defineEmits<{
+    (e: 'open-products'): void
     (e: 'open-config'): void
     (e: 'open-logs'): void
     (e: 'open-inventory'): void

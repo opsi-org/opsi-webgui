@@ -261,8 +261,15 @@
           :default-action="defaultClientPanelView"
           :show-all-actions="showAllClientRowActions"
           :active-action="
-            panelClient?.clientId === (row as OpsiClient).clientId ? (panelType as 'config' | 'logs' | 'inventory' | 'clone' | null) : null
+            panelType === 'products'
+              ? selectionStore.selectedClients.includes((row as OpsiClient).clientId)
+                ? 'products'
+                : null
+              : panelClient?.clientId === (row as OpsiClient).clientId
+                ? (panelType as 'config' | 'logs' | 'inventory' | 'clone' | null)
+                : null
           "
+          @open-products="openProductsPanelFromRow(row as OpsiClient)"
           @open-config="openPanel(row as OpsiClient, 'config')"
           @open-logs="openPanel(row as OpsiClient, 'logs')"
           @open-inventory="openPanel(row as OpsiClient, 'inventory')"
@@ -290,7 +297,7 @@
       </span>
     </template>
     <template #panel-actions>
-      <div v-if="panelClient && clientPanelViews.length > 1" class="flex items-center justify-end gap-1">
+      <div v-if="clientPanelActionTarget && clientPanelViews.length > 1" class="flex items-center justify-end gap-1">
         <CoreAppTooltip v-for="view in clientPanelViews" :key="view.value" :text="view.label">
           <CoreAppButton
             :icon="view.icon"
@@ -299,7 +306,7 @@
             :color="panelType === view.value ? 'primary' : 'neutral'"
             :class="panelType === view.value ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
             :aria-label="view.label"
-            @click="openPanel(panelClient, view.value as ClientPanelType)"
+            @click="openClientPanelView(clientPanelActionTarget, view.value)"
           />
         </CoreAppTooltip>
       </div>
@@ -370,20 +377,21 @@
   const rowOffset = ref(0)
   const totalItems = ref(0)
   type ClientPanelType = 'config' | 'logs' | 'clone' | 'inventory'
+  type DefaultClientPanelView = ClientPanelType | 'products'
 
   const panelClient = ref<OpsiClient | null>(null)
   const panelType = ref<ClientPanelType | 'products' | 'add' | null>(null)
   const panelTab = ref('attributes')
   const panelInventoryTab = ref<'hardware' | 'software'>('hardware')
   const tableSettings = useDataTableSettings('clients')
-  const defaultClientPanelView = computed<ClientPanelType>({
+  const defaultClientPanelView = computed<DefaultClientPanelView>({
     get: () => tableSettings.settings.defaultPanelView ?? 'config',
     set: (value) => {
       tableSettings.settings.defaultPanelView = value
     },
   })
   const showAllClientRowActions = computed(() => tableSettings.settings.showAllRowActions ?? false)
-  const panelProductType = ref('localboot')
+  const panelProductType = ref<'localboot' | 'netboot'>('localboot')
   const panelProductTypes = [
     { label: String($t('products.localboot')), value: 'localboot' },
     { label: String($t('products.netboot')), value: 'netboot' },
@@ -402,14 +410,21 @@
   const clientPanelTitle = computed(() =>
     panelType.value === 'clone' ? String($t('clients.clone.title')) : String($t(`${panelType.value}.title`)),
   )
-  const clientPanelViews = computed(() => [
+  const clientPanelViews = computed<Array<{ label: string; value: DefaultClientPanelView; icon: string }>>(() => [
+    ...(!isReadOnly.value ? [{ label: String($t('products.title')), value: 'products' as const, icon: icons.product }] : []),
     { label: String($t('config.title')), value: 'config', icon: icons.config },
     { label: String($t('logs.title')), value: 'logs', icon: icons.log },
     { label: String($t('inventory.title')), value: 'inventory', icon: icons.inventory },
     ...(isReadOnly.value || !canCreateClients.value
       ? []
-      : [{ label: String($t('clients.clone.title')), value: 'clone', icon: icons.clone }]),
+      : [{ label: String($t('clients.clone.title')), value: 'clone' as const, icon: icons.clone }]),
   ])
+  const clientPanelActionTarget = computed(() => {
+    if (panelClient.value) return panelClient.value
+    if (panelType.value !== 'products' || selectionStore.selectedClients.length !== 1) return null
+    const [clientId] = selectionStore.selectedClients
+    return clientId ? (clients.value.find((client) => client.clientId === clientId) ?? null) : null
+  })
   const clientPanelViewOptions = computed(() => clientPanelViews.value.map(({ label, value }) => ({ label, value: String(value) })))
   const reachableStatus = ref<Record<string, boolean | undefined>>({})
   // Clients whose state came from a live host_connected/host_disconnected event
@@ -629,6 +644,14 @@
     checkUnsavedAndDo(() => doOpenPanel(client, type))
   }
 
+  function openClientPanelView(client: OpsiClient, type: DefaultClientPanelView) {
+    if (type === 'products') {
+      checkUnsavedAndDo(() => openProductsPanelForClient(client, productsSortColumn.value ?? 'productId', panelProductType.value))
+      return
+    }
+    openPanel(client, type)
+  }
+
   function isIndependentClientPanel(type: unknown): type is ClientPanelType {
     return type === 'config' || type === 'logs' || type === 'inventory' || type === 'clone'
   }
@@ -787,6 +810,10 @@
     })
   }
 
+  function openProductsPanelFromRow(client: OpsiClient) {
+    checkUnsavedAndDo(() => openProductsPanelForClient(client, 'productId'))
+  }
+
   function handleAddSaved() {
     if (actionStatusTimer) clearTimeout(actionStatusTimer)
     actionStatus.value = {
@@ -856,13 +883,14 @@
   function handleRowActivate(row: OpsiClient) {
     checkUnsavedAndDo(() => {
       selectionStore.setClients([row.clientId], 'table')
-      doOpenPanel(row, defaultClientPanelView.value)
+      if (defaultClientPanelView.value === 'products') openProductsPanelForClient(row, 'productId')
+      else doOpenPanel(row, defaultClientPanelView.value)
     })
   }
 
   function setDefaultClientPanelView(value: string) {
     if (!clientPanelViewOptions.value.some((option) => option.value === value)) return
-    defaultClientPanelView.value = value as ClientPanelType
+    defaultClientPanelView.value = value as DefaultClientPanelView
   }
 
   function setShowAllClientRowActions(value: boolean) {
@@ -1126,7 +1154,10 @@
 
   onMounted(async () => {
     panelRouteHistoryPosition = window.history.state?.position
-    if (defaultClientPanelView.value === 'clone' && (!canCreateClients.value || isReadOnly.value)) {
+    if (
+      (defaultClientPanelView.value === 'clone' && (!canCreateClients.value || isReadOnly.value)) ||
+      (defaultClientPanelView.value === 'products' && isReadOnly.value)
+    ) {
       defaultClientPanelView.value = 'config'
     }
     const routeSortBy = route.query.sortBy as string | undefined
@@ -1152,7 +1183,10 @@
     const pType = route.query.panelType
     if (clientId && route.query.view === 'panel') {
       const c = clients.value.find((cl) => cl.clientId === clientId)
-      if (c) doOpenPanel(c, defaultClientPanelView.value)
+      if (c) {
+        if (defaultClientPanelView.value === 'products') openProductsPanelForClient(c, 'productId')
+        else doOpenPanel(c, defaultClientPanelView.value)
+      }
       return
     }
 
