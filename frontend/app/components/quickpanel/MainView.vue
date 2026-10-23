@@ -49,6 +49,7 @@
           </div>
           <CoreAppButton
             variant="soft"
+            intent="command"
             color="primary"
             size="sm"
             :disabled="selectionStore.selectedClients.length === 0"

@@ -20,6 +20,7 @@
         :color="activeAction === 'config' ? 'primary' : 'neutral'"
         :class="activeAction === 'config' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
         :aria-label="String($t('config.title'))"
+        :aria-expanded="activeAction === 'config'"
         data-testid="client-row-action-config"
         @click="emit('open-config')"
       />
@@ -34,6 +35,7 @@
         :color="activeAction === 'logs' ? 'primary' : 'neutral'"
         :class="activeAction === 'logs' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
         :aria-label="String($t('logs.title'))"
+        :aria-expanded="activeAction === 'logs'"
         data-testid="client-row-action-logs"
         @click="emit('open-logs')"
       />
@@ -48,6 +50,7 @@
         :color="activeAction === 'inventory' ? 'primary' : 'neutral'"
         :class="activeAction === 'inventory' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
         :aria-label="String($t('inventory.title'))"
+        :aria-expanded="activeAction === 'inventory'"
         data-testid="client-row-action-inventory"
         @click="emit('open-inventory')"
       />
@@ -62,6 +65,7 @@
         :color="activeAction === 'clone' ? 'primary' : 'neutral'"
         :class="activeAction === 'clone' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
         :aria-label="String($t('clients.clone.title'))"
+        :aria-expanded="activeAction === 'clone'"
         @click="emit('open-clone')"
         :disabled="isReadOnly || !canCreateClients"
         data-testid="client-row-action-clone"

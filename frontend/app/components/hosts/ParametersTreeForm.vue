@@ -120,6 +120,7 @@
                 :icon="icons.x"
                 :title="$t('common.discard')"
                 @click="() => node.param && discardSingleParam(node.param.configId)"
+                intent="destructive"
               />
             </div>
           </div>

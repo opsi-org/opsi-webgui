@@ -33,7 +33,7 @@
           <div v-else />
           <div class="flex gap-2 shrink-0">
             <CoreAppButton
-              color="success"
+              color="primary"
               :loading="loading"
               size="sm"
               :disabled="!canCreate"
@@ -51,6 +51,7 @@
               :disabled="loading"
               :title="String($t('common.reset'))"
               @click="resetForm"
+              intent="dismiss"
             />
           </div>
         </div>
@@ -313,6 +314,7 @@
                       v-for="os in osTypes"
                       :key="os.value"
                       :variant="form.agentType === os.value ? 'solid' : 'outline'"
+                      :aria-pressed="form.agentType === os.value"
                       :color="form.agentType === os.value ? 'primary' : 'neutral'"
                       size="sm"
                       class="justify-center"

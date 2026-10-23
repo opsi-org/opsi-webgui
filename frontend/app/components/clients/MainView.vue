@@ -53,6 +53,7 @@
       <CoreAppTooltip :text="String($t('products.viewCatalogHint'))">
         <CoreAppButton
           :icon="icons.product"
+          intent="command"
           color="primary"
           size="sm"
           @click="openProductsPanel"
@@ -68,6 +69,7 @@
       </CoreAppTooltip>
       <CoreAppButton
         :icon="icons.add"
+        intent="command"
         color="primary"
         size="sm"
         @click="openAddPanel"
@@ -299,6 +301,7 @@
             :color="panelType === view.value ? 'primary' : 'neutral'"
             :class="panelType === view.value ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
             :aria-label="view.label"
+            :aria-expanded="panelType === view.value"
             @click="openPanel(panelClient, view.value as ClientPanelType)"
           />
         </CoreAppTooltip>

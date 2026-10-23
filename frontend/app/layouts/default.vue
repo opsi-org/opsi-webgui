@@ -20,6 +20,8 @@
       :health-check-tooltip="healthCheckTooltip"
       :health-worst-case="currentHealthWorstCase"
       :health-counts="currentHealthCounts"
+      :sidebar-open="sidebarOpen"
+      :quickpanel-open="quickpanelOpen"
       @toggle-sidebar="toggleSidebar"
       @toggle-quickpanel="toggleQuickpanel"
       @show-shortcuts="showShortcutsHelp = true"
@@ -164,7 +166,7 @@
           @keydown.enter="setQuickpanelOpen(false)"
           @keydown.space.prevent="setQuickpanelOpen(false)"
         />
-        <div class="absolute inset-0 bg-(--color-background) overflow-hidden">
+        <div class="absolute inset-0 bg-(--color-background) overflow-hidden" data-testid="quickpanel">
           <div class="p-2.5 h-full min-h-0 flex flex-col overflow-hidden">
             <div class="flex justify-center mb-3">
               <div class="w-10 h-1 bg-(--color-border) rounded-full" />

@@ -1,8 +1,10 @@
 # Actions and tabs
 
-**Decision:** Styling rules accepted on 2026-10-22 for the frontend. Global implementation and visual verification are not yet complete.
+**Decision:** Styling rules accepted on 2026-10-22 for the frontend.
 
-**Implementation:** Partial. Toolbar commands have been updated in Clients, Products, Servers, and Quickpanel. Clients and Products also implement the row-state and toggle rules below. Global migration and visual verification are pending.
+**Implementation:** Migrated across the frontend, including shared buttons, command menus, table controls, row panels, tabs, forms, Quickpanel, and administration views. Global preferences remain deferred as described below.
+
+**Verification:** Isolated Chromium checks cover light and dark themes at desktop (1440 x 1000) and mobile (390 x 844) sizes. API responses are simulated; integration testing against a running opsiconfd backend remains a separate requirement.
 
 ## Scope
 
@@ -61,14 +63,23 @@ Row selection and the displayed panel are independent states:
 - **Other row commands:** neutral, with no selected background or border around the action group. There is no vertical panel marker.
 - **Accessibility:** hover and keyboard focus remain visible. Row selection and panel expansion are exposed separately to assistive technology.
 
-Click behavior is unchanged, including automatic panel opening in single-selection mode. These styles are currently implemented in Clients and Products; other tables still need migration.
+Click behavior is unchanged, including automatic panel opening in single-selection mode. Selection styling is shared by all data tables; Clients, Products, and Servers expose their row-panel state independently.
 
 ## Toggles and feedback
 
 Active toggles use soft primary styling; inactive toggles are neutral and background-free until hover. This includes search matching options, showing only selected rows, automatic scrolling or refresh, favorites, and mutually exclusive options. Invalid search options retain their error indication.
 
-Use a checkbox or switch where appropriate; toggle buttons expose `aria-pressed`. Color alone must not carry the state. The soft toggle style remains distinct from the filled active-tab style. The table controls are currently implemented in Clients and Products; other controls still need migration.
+Use a checkbox or switch where appropriate; toggle buttons expose `aria-pressed`. Color alone must not carry the state. The soft toggle style remains distinct from the filled active-tab style. Shared table controls, search options, favorites, log options, diagnostics filters, and mutually exclusive form options use this rule.
 
 Applied filters have a separate visible indicator or count; their opening button remains an ordinary command. Temporary feedback, such as successful copying, may briefly change the icon or color, then returns to the normal appearance.
 
 Permissions, translations, keyboard access, and availability rules must remain unchanged during migration. Verify the result in light and dark themes, on desktop and mobile; do not mark the global implementation complete based on the initial panels alone.
+
+## Implementation and checks
+
+- `CoreAppButton` accepts an explicit `intent`: `command`, `confirm`, `dismiss`, `destructive`, `inline`, or `toggle`. Toggle intent also accepts `active` and sets `aria-pressed`. Existing buttons with `aria-pressed` receive the shared toggle appearance; invalid search options keep their error color.
+- `CoreAppSelectMenu` accepts `command` for toolbar menu triggers; ordinary selects remain form fields. Header commands use the light primary palette on the blue header for contrast.
+- `CoreAppTabsNav` owns tab selection styling and keyboard focus. Shared popovers are constrained to the viewport on mobile.
+- Backup restoration opens a translated warning confirmation before transferring the file. Cancelling sends no restore request.
+- Run `pnpm test:e2e:actions` in `frontend` with the dev server running. `BASE_URL` can override the default `http://localhost:3000/addons/webgui/app`.
+- The isolated suite checks selection versus row-panel state, tab styling, accessible toggles, stable geometry, keyboard focus, disabled commands, restoration confirmation, and rendering in Clients, Servers, Products, Groups, Diagnostics, Terminal, Support, Quickpanel, and client creation. Screenshots are written under `frontend/test-results/button-actions` for visual review; they are not production-data snapshot baselines.

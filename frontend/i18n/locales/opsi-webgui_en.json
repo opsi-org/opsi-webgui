@@ -63,6 +63,7 @@
     "optional": "Optional settings",
     "password": "Backup Password",
     "restore": "Restore Backup",
+    "restoreConfirm": "Restoring this backup will overwrite existing server data. Continue?",
     "restored": "Backup restored successfully.",
     "restoreOptions": "Restore Options",
     "serverIdHandling": "Server ID Handling",

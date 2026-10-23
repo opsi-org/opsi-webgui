@@ -13,6 +13,7 @@
   <div class="contents">
     <CoreAppTooltip v-if="hasSelections && compact" :text="$t('quick.actions')">
       <CoreAppButton
+        intent="command"
         variant="soft"
         color="primary"
         size="sm"
@@ -25,6 +26,7 @@
     </CoreAppTooltip>
     <CoreAppButton
       v-else-if="hasSelections"
+      intent="command"
       color="primary"
       size="sm"
       @click="dialogOpen = true"
@@ -35,12 +37,13 @@
       <span class="hidden sm:inline">{{ $t('quick.actions') }}</span>
     </CoreAppButton>
     <CoreAppTooltip v-else-if="compact" :text="$t('products.quickHelp')">
-      <CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-70" :aria-label="String($t('products.quickHelp'))" disabled>
+      <CoreAppButton intent="command" size="sm" :title="String($t('products.quickHelp'))" disabled>
         <CoreAppIcon :name="icons.product" class="w-4 h-4" />
       </CoreAppButton>
     </CoreAppTooltip>
     <CoreAppButton
       v-else
+      intent="command"
       variant="ghost"
       color="neutral"
       size="sm"
@@ -265,9 +268,10 @@
                 @close="applyResult = null"
               />
               <div class="flex justify-end gap-2">
-                <CoreAppButton variant="outline" color="primary" size="sm" @click="resetForm">{{ $t('common.reset') }} </CoreAppButton>
+                <CoreAppButton intent="dismiss" size="sm" @click="resetForm">{{ $t('common.reset') }} </CoreAppButton>
                 <CoreAppButton
                   v-if="applyResult?.type === 'success'"
+                  intent="dismiss"
                   variant="outline"
                   color="primary"
                   size="sm"

@@ -92,6 +92,7 @@
                 :icon="icons.x"
                 :title="$t('common.discard')"
                 @click="discardSingleProperty(prop.propertyId)"
+                intent="destructive"
               />
             </div>
           </div>

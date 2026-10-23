@@ -63,6 +63,7 @@
     "optional": "Optionale Einstellungen",
     "password": "Backup-Passwort",
     "restore": "Backup wiederherstellen",
+    "restoreConfirm": "Die Wiederherstellung dieses Backups überschreibt vorhandene Serverdaten. Fortfahren?",
     "restored": "Backup erfolgreich wiederhergestellt.",
     "restoreOptions": "Wiederherstellungsoptionen",
     "serverIdHandling": "Server-ID-Behandlung",

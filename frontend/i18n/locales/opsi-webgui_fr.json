@@ -63,6 +63,7 @@
     "optional": "Paramètres optionnels",
     "password": "Mot de passe de sauvegarde",
     "restore": "Restaurer la sauvegarde",
+    "restoreConfirm": "La restauration de cette sauvegarde écrasera les données existantes du serveur. Continuer ?",
     "restored": "Sauvegarde restaurée avec succès.",
     "restoreOptions": "Options de restauration",
     "serverIdHandling": "Gestion de l'ID serveur",

@@ -18,9 +18,11 @@
       indicator: 'hidden',
       list: 'bg-(--color-surface) rounded-lg p-0.5 gap-0.5 before:hidden',
       trigger: [
-        'rounded-md px-3 py-1.5 text-sm font-medium transition-colors duration-100 cursor-pointer',
-        'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)',
+        'rounded-md border-0 px-3 py-1.5 text-sm font-medium transition-colors duration-100 cursor-pointer',
+        'data-[state=inactive]:bg-transparent data-[state=inactive]:shadow-none',
+        'text-(--color-text-muted) data-[state=inactive]:hover:text-(--color-text) data-[state=inactive]:hover:bg-(--color-surface-hover)',
         'data-[state=active]:bg-opsi-blue data-[state=active]:text-white data-[state=active]:shadow-sm',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary)',
       ].join(' '),
       content: 'hidden',
     }"
@@ -30,14 +32,14 @@
         v-if="hideLabels || getTabTooltip(String(item.value))"
         :text="getTabTooltip(String(item.value)) || String(item.label)"
       >
-        <span class="inline-flex items-center gap-1.5">
+        <span class="inline-flex items-center justify-center gap-1.5 min-h-5">
           <CoreAppIcon v-if="getTabIcon(String(item.value))" :name="getTabIcon(String(item.value))" class="w-3 h-3 shrink-0" />
           <span v-if="!hideLabels">{{ item.label }}</span>
           <span v-else class="sr-only">{{ item.label }}</span>
           <span v-if="getTabCount(String(item.value)) > 0" class="text-xs opacity-70">{{ getTabCount(String(item.value)) }}</span>
         </span>
       </CoreAppTooltip>
-      <span v-else class="inline-flex items-center gap-1.5">
+      <span v-else class="inline-flex items-center justify-center gap-1.5 min-h-5">
         <CoreAppIcon v-if="getTabIcon(String(item.value))" :name="getTabIcon(String(item.value))" class="w-3 h-3 shrink-0" />
         <span>{{ item.label }}</span>
         <span v-if="getTabCount(String(item.value)) > 0" class="text-xs opacity-70">{{ getTabCount(String(item.value)) }}</span>

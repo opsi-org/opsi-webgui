@@ -20,7 +20,7 @@
       <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- dialog container only tracks hover and Escape so the popover stays open while it is used -->
       <div
         ref="contentRef"
-        class="flex flex-col gap-2 p-2.5 rounded bg-(--color-background) shadow-lg"
+        class="flex flex-col gap-2 p-2.5 rounded bg-(--color-background) shadow-lg max-w-[calc(100vw-1rem)] max-sm:min-w-0!"
         :class="contentClass"
         role="dialog"
         :aria-label="title || ariaLabel"

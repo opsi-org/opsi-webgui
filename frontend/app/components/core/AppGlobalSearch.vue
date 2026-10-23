@@ -15,9 +15,8 @@
       :icon="icons.search"
       :aria-label="String($t('globalSearch.title'))"
       :title="String($t('globalSearch.title'))"
-      variant="ghost"
-      color="neutral"
-      class="h-8 w-9! bg-white/10 text-white hover:bg-white/20 active:bg-white/20! focus:bg-white/20! rounded-md px-1.5!"
+      intent="command"
+      class="h-8 w-9! rounded-md px-1.5!"
       data-testid="global-search"
     />
 
@@ -40,7 +39,7 @@
           :placeholder="String($t('common.filter'))"
           @keydown.enter.prevent="runQuickSearch"
         />
-        <CoreAppButton size="sm" color="primary" :icon="icons.search" @click="runQuickSearch" />
+        <CoreAppButton size="sm" intent="confirm" :icon="icons.search" :title="String($t('globalSearch.title'))" @click="runQuickSearch" />
       </div>
 
       <div class="flex items-center justify-between gap-2">
@@ -78,11 +77,12 @@
               color="neutral"
               :aria-label="String($t('globalSearch.removeFavorite'))"
               @click="removeFavorite(favorite)"
+              intent="destructive"
             />
           </CoreAppTooltip>
         </li>
       </ul>
-      <CoreAppButton variant="soft" color="error" size="xs" block :icon="icons.xCircle" @click="handleClearAllFilters">
+      <CoreAppButton intent="dismiss" size="xs" block :icon="icons.xCircle" @click="handleClearAllFilters">
         {{ $t('globalSearch.clearAllFilters') }}
       </CoreAppButton>
     </template>
