@@ -50,8 +50,8 @@
       responsiveAttrs['aria-pressed'] = Boolean(props.active)
     }
     responsiveAttrs.class = [
-      'justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary) disabled:cursor-not-allowed disabled:opacity-50',
-      !slots.default && 'shrink-0 aspect-square',
+      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary) disabled:cursor-not-allowed disabled:opacity-50',
+      !slots.default && 'justify-center shrink-0 aspect-square',
       attrs.class,
     ]
     delete responsiveAttrs.title
