@@ -50,22 +50,6 @@
           {{ $t('auth.restricted') }}
         </CoreAppBadge>
       </CoreAppTooltip>
-      <CoreAppTooltip :text="String($t('products.viewCatalogHint'))">
-        <CoreAppButton
-          :icon="icons.product"
-          color="primary"
-          size="sm"
-          @click="openProductsPanel"
-          :disabled="isReadOnly"
-          :aria-label="String($t('products.title'))"
-          data-testid="clients-open-products-panel"
-        >
-          {{ $t('products.title') }}
-          <span class="inline-flex items-center gap-1">
-            (<CoreAppIcon :name="productScopeIcon" class="w-4 h-4" /> {{ productScopeCount }})
-          </span>
-        </CoreAppButton>
-      </CoreAppTooltip>
       <CoreAppButton
         :icon="icons.add"
         color="primary"
@@ -397,9 +381,6 @@
     { label: String($t('products.netboot')), value: 'netboot' },
   ]
   const productScopeIcon = computed(() => (selectionStore.selectedClients.length > 0 ? icons.client : icons.server))
-  const productScopeCount = computed(() =>
-    selectionStore.selectedClients.length > 0 ? selectionStore.selectedClients.length : selectionStore.selectedServers.length,
-  )
   const productScopeLabel = computed(() => {
     const clients = selectionStore.selectedClients
     const servers = selectionStore.selectedServers
@@ -758,30 +739,6 @@
     },
     { flush: 'post' },
   )
-
-  function openProductsPanel() {
-    checkUnsavedAndDo(() => {
-      panelClient.value = null
-      panelType.value = 'products'
-      const {
-        client: _client,
-        configType: _configType,
-        inventoryTab: _inventoryTab,
-        sortBy: _sortBy,
-        type: _type,
-        ...restQuery
-      } = route.query
-      router.replace({
-        query: {
-          ...restQuery,
-          view: 'panel',
-          panelType: 'products',
-          sortBy: productsSortColumn.value,
-          type: panelProductType.value,
-        },
-      })
-    })
-  }
 
   function openAddPanel() {
     checkUnsavedAndDo(() => {

@@ -24,8 +24,7 @@ async function openProductsSplitter(page: Page) {
     preferences.quickpanelOpened = false
     localStorage.setItem('opsi-webgui-ui', JSON.stringify(preferences))
   })
-  await page.reload({ waitUntil: 'networkidle' })
-  await page.getByTestId('clients-open-products-panel').click()
+  await page.goto('/clients?view=panel&panelType=products&type=localboot', { waitUntil: 'networkidle' })
   await page
     .getByTestId('detail-panel')
     .locator('tbody tr')
@@ -161,7 +160,7 @@ test.describe('Clients', () => {
     await expect(page.getByTestId('detail-panel')).toHaveCount(0)
     await expect(page.getByRole('grid')).toBeVisible()
     await page.setViewportSize({ width: 2000, height: 1000 })
-    await page.getByTestId('clients-open-products-panel').click()
+    await page.goto('/clients?view=panel&panelType=products&type=localboot', { waitUntil: 'networkidle' })
     await expect(handles).toHaveCount(1)
     await page
       .getByTestId('detail-panel')
@@ -259,10 +258,6 @@ test.describe('Clients', () => {
     await expect(dialog).toBeVisible()
     await stay.click()
     await closingRoute
-    await expect(hostname).toHaveValue('panel-add-test')
-    await page.getByTestId('clients-open-products-panel').click()
-    await expect(dialog).toBeVisible()
-    await stay.click()
     await expect(hostname).toHaveValue('panel-add-test')
     await page.getByTestId('nav-products').click()
     await expect(dialog).toBeVisible()
@@ -734,17 +729,11 @@ test.describe('Clients', () => {
         await firstRow.click()
         await p.waitForTimeout(800)
 
-        // Wait for the products button to become visible (needs selection)
-        const productsButton = p.getByTestId('clients-open-products-panel').first()
-        await productsButton.waitFor({ state: 'visible', timeout: 8000 }).catch(() => undefined)
-        if (await productsButton.isVisible().catch(() => false)) {
-          await productsButton.click()
-          await p.waitForTimeout(2000)
+        await p.goto('/clients?view=panel&panelType=products&type=localboot', { waitUntil: 'networkidle' })
 
-          // Wait for products table to load in the detail panel
-          const panelTable = p.locator('[data-testid="detail-panel"] table tbody tr, main .split-panel table tbody tr').first()
-          await panelTable.waitFor({ state: 'visible', timeout: 12000 }).catch(() => undefined)
-        }
+        // Wait for products table to load in the detail panel
+        const panelTable = p.locator('[data-testid="detail-panel"] table tbody tr, main .split-panel table tbody tr').first()
+        await panelTable.waitFor({ state: 'visible', timeout: 12000 }).catch(() => undefined)
       },
       functional: async (p) => {
         const sidebar = p.getByRole('navigation').first()
