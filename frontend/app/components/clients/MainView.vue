@@ -609,7 +609,14 @@
   function doOpenPanel(client: OpsiClient, type: ClientPanelType) {
     panelClient.value = client
     panelType.value = type
-    const { configType: _ct, inventoryTab: _it, sortBy: _sortBy, type: _type, ...restQuery } = route.query as Record<string, string>
+    const {
+      configType: _ct,
+      inventoryTab: _it,
+      sortBy: _sortBy,
+      type: _type,
+      sortDirection: _sortDirection,
+      ...restQuery
+    } = route.query as Record<string, string>
     const query: Record<string, string> = {
       ...restQuery,
       client: client.clientId,
@@ -650,6 +657,10 @@
     if (route.query.view === 'panel' && type === 'add') {
       panelClient.value = null
       panelType.value = 'add'
+      const { sortBy: _sortBy, type: _productType, sortDirection: _sortDirection, ...restQuery } = route.query
+      if ('sortBy' in route.query || 'type' in route.query || 'sortDirection' in route.query) {
+        router.replace({ query: restQuery })
+      }
       return
     }
     if (route.query.view !== 'panel' || !isIndependentClientPanel(type) || typeof clientId !== 'string' || !clientId) {
@@ -658,6 +669,10 @@
         panelType.value = null
       }
       return
+    }
+    const { sortBy: _sortBy, type: _productType, sortDirection: _sortDirection, ...restQuery } = route.query
+    if ('sortBy' in route.query || 'type' in route.query || 'sortDirection' in route.query) {
+      router.replace({ query: restQuery })
     }
     if (type === 'inventory') {
       panelInventoryTab.value = route.query.inventoryTab === 'software' ? 'software' : 'hardware'
@@ -697,6 +712,9 @@
       panelType: _panelType,
       configType: _configType,
       inventoryTab: _inventoryTab,
+      sortBy: _sortBy,
+      type: _productType,
+      sortDirection: _sortDirection,
       ...context
     } = from.query
     const query = opensClientPanel
@@ -744,7 +762,15 @@
     checkUnsavedAndDo(() => {
       panelClient.value = null
       panelType.value = 'add'
-      const { client: _client, configType: _configType, inventoryTab: _inventoryTab, ...restQuery } = route.query
+      const {
+        client: _client,
+        configType: _configType,
+        inventoryTab: _inventoryTab,
+        sortBy: _sortBy,
+        type: _productType,
+        sortDirection: _sortDirection,
+        ...restQuery
+      } = route.query
       router.replace({ query: { ...restQuery, view: 'panel', panelType: 'add' } })
     })
   }
@@ -796,7 +822,17 @@
       panelLinkLoading.value = false
       panelClient.value = null
       panelType.value = null
-      const { client: _c, view: _v, panelType: _pt, configType: _ct, inventoryTab: _it, sortBy: _sb, type: _ty, ...rest } = route.query
+      const {
+        client: _c,
+        view: _v,
+        panelType: _pt,
+        configType: _ct,
+        inventoryTab: _it,
+        sortBy: _sb,
+        type: _ty,
+        sortDirection: _sortDirection,
+        ...rest
+      } = route.query
       router.replace({ query: rest })
     })
   }

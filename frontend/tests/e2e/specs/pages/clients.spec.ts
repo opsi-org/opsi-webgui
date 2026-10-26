@@ -709,14 +709,15 @@ test.describe('Clients', () => {
     await expect(page).toHaveURL(/sortDirection=desc/)
     await expect(descriptionHeader).toHaveAttribute('aria-sort', 'descending')
 
-    await detailPanel
-      .locator('tbody tr')
-      .first()
-      .getByRole('button', { name: /^configuration|konfiguration$/i })
+    await page
+      .getByTestId('detail-panel')
+      .last()
+      .getByRole('button', { name: /^(close|schließen|fermer)$/i })
       .click()
-    await expect(page).toHaveURL(/type=netboot/)
-    await expect(page).toHaveURL(/sortBy=description/)
-    await expect(page.getByTestId('detail-panel').last()).toBeVisible()
+    await page.getByTestId('client-row-action-products').first().click()
+    await expect(page).toHaveURL(/type=localboot/)
+    await expect(page).toHaveURL(/sortBy=productId/)
+    await expect(page).toHaveURL(/sortDirection=desc/)
     await expect(
       page
         .getByTestId('detail-panel')
@@ -724,26 +725,11 @@ test.describe('Clients', () => {
         .getByRole('columnheader', { name: /description/i }),
     ).toHaveAttribute('aria-sort', 'descending')
 
-    await page.reload({ waitUntil: 'networkidle' })
-    await expect(page).toHaveURL(/type=netboot/)
-    await expect(page).toHaveURL(/sortBy=description/)
-    await expect(page).toHaveURL(/sortDirection=desc/)
-    await expect(
-      page
-        .getByTestId('detail-panel')
-        .first()
-        .getByRole('columnheader', { name: /description/i }),
-    ).toHaveAttribute('aria-sort', 'descending')
-    await page.getByTestId('client-row-action-products').first().click()
-    await expect(page).toHaveURL(/type=localboot/)
-    await expect(page).toHaveURL(/sortBy=description/)
-    await expect(page).toHaveURL(/sortDirection=desc/)
-    await expect(
-      page
-        .getByTestId('detail-panel')
-        .first()
-        .getByRole('columnheader', { name: /description/i }),
-    ).toHaveAttribute('aria-sort', 'descending')
+    await page.getByTestId('client-row-action-config').first().click()
+    await expect(page).toHaveURL(/panelType=config/)
+    await expect(page).not.toHaveURL(/[?&]sortBy=/)
+    await expect(page).not.toHaveURL(/[?&]type=/)
+    await expect(page).not.toHaveURL(/[?&]sortDirection=/)
   })
 
   test('clients hardware and software inventory', async ({ page }) => {
