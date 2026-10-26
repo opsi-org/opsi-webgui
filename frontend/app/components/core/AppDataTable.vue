@@ -20,7 +20,7 @@
             :icon="icons.xCircle"
             variant="soft"
             color="primary"
-            size="xs"
+            size="sm"
             :title="`${selectedKeys.length} ${$t('common.selected')} - ${$t('common.clearSelection')}`"
             @click="clearSelection"
           >
@@ -28,7 +28,7 @@
           </CoreAppButton>
           <CoreAppTooltip v-if="selectedKeys.length > 0" :text="String($t('settings.showOnlySelected'))">
             <CoreAppButton
-              size="xs"
+              size="sm"
               variant="ghost"
               :color="onlySelected ? 'primary' : 'neutral'"
               :aria-pressed="onlySelected"
@@ -58,6 +58,7 @@
               variant="outline"
               color="primary"
               size="sm"
+              :square="advancedFiltersActiveCount === 0"
               data-testid="filters-and-saved-searches"
             >
               <template v-if="advancedFiltersActiveCount > 0">{{ advancedFiltersActiveCount }}</template>

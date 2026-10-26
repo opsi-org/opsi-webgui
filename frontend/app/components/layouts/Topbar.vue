@@ -72,10 +72,10 @@
       </NuxtLink>
       <CoreAppButton
         @click="$emit('toggle-quickpanel')"
-        intent="command"
+        intent="inline"
         :aria-expanded="quickpanelOpen"
         data-testid="quickpanel-toggle"
-        class="h-8 inline-flex items-center gap-1 rounded-md px-2!"
+        class="h-8 inline-flex items-center gap-1 rounded-md px-2! text-white hover:bg-white/20"
         :title="$t('quick.panel')"
       >
         <CoreAppIcon :name="icons.user" class="w-4 h-4" />

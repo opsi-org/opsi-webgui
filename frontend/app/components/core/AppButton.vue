@@ -49,9 +49,11 @@
     if (props.intent === 'toggle') {
       responsiveAttrs['aria-pressed'] = Boolean(props.active)
     }
+    const iconOnly = !slots.default && !attrs.label
+    if (responsiveAttrs.square === undefined) responsiveAttrs.square = iconOnly
     responsiveAttrs.class = [
       'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary) disabled:cursor-not-allowed disabled:opacity-50',
-      !slots.default && 'justify-center shrink-0 aspect-square',
+      iconOnly && 'justify-center shrink-0',
       attrs.class,
     ]
     delete responsiveAttrs.title

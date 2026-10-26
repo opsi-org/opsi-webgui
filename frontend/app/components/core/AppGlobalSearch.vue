@@ -15,8 +15,8 @@
       :icon="icons.search"
       :aria-label="String($t('globalSearch.title'))"
       :title="String($t('globalSearch.title'))"
-      intent="command"
-      class="h-8 w-9! rounded-md px-1.5!"
+      intent="inline"
+      class="h-8 w-9! rounded-md px-1.5! text-white hover:bg-white/20"
       data-testid="global-search"
     />
 

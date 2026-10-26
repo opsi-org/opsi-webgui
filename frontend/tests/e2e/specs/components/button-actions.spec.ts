@@ -63,6 +63,67 @@ test.beforeEach(async ({ page, context, baseURL }, testInfo) => {
   })
 })
 
+for (const view of ['clients', 'products', 'servers']) {
+  test(`${view} toolbar actions share dimensions across groups`, async ({ page }) => {
+    await page.goto(`${appPath}/${view}`)
+    const refresh = page.getByTestId('page-refresh-button')
+    await expect(refresh).toBeVisible()
+    await expect(refresh).toBeEnabled()
+    const actions = page
+      .locator('.page-header button:not([role="tab"])')
+      .or(page.getByTestId('table-settings'))
+      .or(page.getByTestId('filters-and-saved-searches'))
+    await expect(page.getByTestId('table-settings')).toBeVisible()
+    const expectedHeight = (await refresh.boundingBox())!.height
+    for (const action of await actions.all()) {
+      const bounds = await action.boundingBox()
+      expect(bounds!.height, await action.getAttribute('aria-label')).toBe(expectedHeight)
+      const icon = action.locator('[data-slot="leadingIcon"]')
+      if (await icon.count()) await expect(icon).toHaveCSS('width', '16px')
+    }
+    for (const action of [refresh, page.getByTestId('table-settings'), page.getByTestId('filters-and-saved-searches')]) {
+      const bounds = await action.boundingBox()
+      expect(bounds!.width, await action.getAttribute('aria-label')).toBe(bounds!.height)
+    }
+
+    if (view === 'clients') {
+      await page.locator('[id="clients-row-alpha.test.local"] input[type="checkbox"]').check()
+      const selectedOnly = page.getByTestId('show-only-selected')
+      const clearSelection = page.locator('.data-table').getByRole('button', { name: '1', exact: true })
+      for (const action of [selectedOnly, clearSelection]) {
+        await expect(action).toBeVisible()
+        expect((await action.boundingBox())!.height).toBe(expectedHeight)
+      }
+      const bounds = await selectedOnly.boundingBox()
+      expect(bounds!.width).toBe(bounds!.height)
+      await selectedOnly.click()
+      expect(await selectedOnly.boundingBox()).toEqual(bounds)
+    }
+  })
+}
+
+test('header and navigation controls remain visually borderless', async ({ page }) => {
+  await page.goto(`${appPath}/clients`)
+  const sidebarToggle = page.getByRole('button', { name: 'Toggle Sidebar', exact: true })
+  const controls = [sidebarToggle, page.getByTestId('global-search'), page.getByTestId('quickpanel-toggle')]
+  for (const control of controls) {
+    await expect(control).toBeVisible()
+    await expect(control).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)')
+    await expect(control).toHaveCSS('box-shadow', 'none')
+    await expect(control).toHaveCSS('color', 'rgb(255, 255, 255)')
+  }
+  await sidebarToggle.click()
+  const administration = page.getByRole('complementary', { name: 'Navigation' }).getByRole('button', { name: 'Admin', exact: true })
+  await expect(administration).toBeVisible()
+  await expect(administration).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)')
+  await expect(administration).toHaveCSS('box-shadow', 'none')
+  await administration.focus()
+  await administration.press('Tab')
+  await page.keyboard.press('Shift+Tab')
+  await expect(administration).toBeFocused()
+  await expect(administration).toHaveCSS('outline-style', 'solid')
+})
+
 test('row selection and open panel remain independent', async ({ page }, testInfo) => {
   await page.goto(`${appPath}/clients`)
   const firstRow = page.locator('[id="clients-row-alpha.test.local"]')
