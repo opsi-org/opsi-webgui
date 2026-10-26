@@ -177,7 +177,7 @@
           status="warning"
           size="xs"
           clickable
-          @click="openProductsPanelForClient(row as OpsiClient, 'version_outdated')"
+          @click="openProductsPanelForClient(row as OpsiClient, 'version_outdated', 'localboot')"
         />
       </template>
       <template #cell-version_outdated_netboot="{ row }">
@@ -749,10 +749,10 @@
     })
   }
 
-  function openProductsPanelForClient(client: OpsiClient, sortColumn: string, productType?: 'localboot' | 'netboot') {
+  function openProductsPanelForClient(client: OpsiClient, sortColumn?: string, productType?: 'localboot' | 'netboot') {
     selectionStore.setClients([client.clientId], 'table')
-    productsSortColumn.value = sortColumn
-    panelProductType.value = productType || 'localboot'
+    productsSortColumn.value = sortColumn ?? 'productId'
+    panelProductType.value = productType ?? 'localboot'
     panelClient.value = null
     panelType.value = 'products'
     const { client: _client, configType: _configType, inventoryTab: _inventoryTab, ...restQuery } = route.query
@@ -761,14 +761,14 @@
         ...restQuery,
         view: 'panel',
         panelType: 'products',
-        sortBy: sortColumn,
+        sortBy: productsSortColumn.value,
         type: panelProductType.value,
       },
     })
   }
 
   function openProductsPanelFromRow(client: OpsiClient) {
-    checkUnsavedAndDo(() => openProductsPanelForClient(client, 'productId'))
+    checkUnsavedAndDo(() => openProductsPanelForClient(client))
   }
 
   function handleAddSaved() {
@@ -840,7 +840,7 @@
   function handleRowActivate(row: OpsiClient) {
     checkUnsavedAndDo(() => {
       selectionStore.setClients([row.clientId], 'table')
-      if (defaultClientPanelView.value === 'products') openProductsPanelForClient(row, 'productId')
+      if (defaultClientPanelView.value === 'products') openProductsPanelForClient(row, productsSortColumn.value, panelProductType.value)
       else doOpenPanel(row, defaultClientPanelView.value)
     })
   }
@@ -1141,7 +1141,7 @@
     if (clientId && route.query.view === 'panel') {
       const c = clients.value.find((cl) => cl.clientId === clientId)
       if (c) {
-        if (defaultClientPanelView.value === 'products') openProductsPanelForClient(c, 'productId')
+        if (defaultClientPanelView.value === 'products') openProductsPanelForClient(c)
         else doOpenPanel(c, defaultClientPanelView.value)
       }
       return

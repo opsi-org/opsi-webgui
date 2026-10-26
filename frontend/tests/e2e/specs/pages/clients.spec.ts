@@ -675,6 +675,77 @@ test.describe('Clients', () => {
     await expect(page).toHaveURL(/sortBy=version_outdated/)
   })
 
+  test('product type and sorting are preserved when opening product properties', async ({ page }) => {
+    await seedClientSelection(page)
+    await page.evaluate(() => {
+      const settings = JSON.parse(localStorage.getItem('opsi-webgui-datatable-settings') || '{}')
+      settings.clients = { ...settings.clients, showAllRowActions: true }
+      settings['products-netboot'] = {
+        ...settings['products-netboot'],
+        sortColumn: 'productId',
+        sortDirection: 'asc',
+      }
+      settings['products-localboot'] = {
+        ...settings['products-localboot'],
+        sortColumn: 'productId',
+        sortDirection: 'asc',
+      }
+      localStorage.setItem('opsi-webgui-datatable-settings', JSON.stringify(settings))
+    })
+    await page.goto('/clients?view=panel&panelType=products&type=localboot', {
+      waitUntil: 'networkidle',
+      timeout: 30000,
+    })
+
+    const detailPanel = page.getByTestId('detail-panel')
+    await expect(detailPanel).toBeVisible({ timeout: 15000 })
+    await page.getByRole('tab', { name: /netboot/i }).click()
+    await expect(page).toHaveURL(/type=netboot/)
+    const descriptionHeader = detailPanel.getByRole('columnheader', { name: /description/i })
+    await descriptionHeader.click()
+    await expect(page).toHaveURL(/sortBy=description/)
+    await expect(page).toHaveURL(/sortDirection=asc/)
+    await descriptionHeader.click()
+    await expect(page).toHaveURL(/sortDirection=desc/)
+    await expect(descriptionHeader).toHaveAttribute('aria-sort', 'descending')
+
+    await detailPanel
+      .locator('tbody tr')
+      .first()
+      .getByRole('button', { name: /^configuration|konfiguration$/i })
+      .click()
+    await expect(page).toHaveURL(/type=netboot/)
+    await expect(page).toHaveURL(/sortBy=description/)
+    await expect(page.getByTestId('detail-panel').last()).toBeVisible()
+    await expect(
+      page
+        .getByTestId('detail-panel')
+        .first()
+        .getByRole('columnheader', { name: /description/i }),
+    ).toHaveAttribute('aria-sort', 'descending')
+
+    await page.reload({ waitUntil: 'networkidle' })
+    await expect(page).toHaveURL(/type=netboot/)
+    await expect(page).toHaveURL(/sortBy=description/)
+    await expect(page).toHaveURL(/sortDirection=desc/)
+    await expect(
+      page
+        .getByTestId('detail-panel')
+        .first()
+        .getByRole('columnheader', { name: /description/i }),
+    ).toHaveAttribute('aria-sort', 'descending')
+    await page.getByTestId('client-row-action-products').first().click()
+    await expect(page).toHaveURL(/type=localboot/)
+    await expect(page).toHaveURL(/sortBy=description/)
+    await expect(page).toHaveURL(/sortDirection=desc/)
+    await expect(
+      page
+        .getByTestId('detail-panel')
+        .first()
+        .getByRole('columnheader', { name: /description/i }),
+    ).toHaveAttribute('aria-sort', 'descending')
+  })
+
   test('clients hardware and software inventory', async ({ page }) => {
     await runUITest(page, {
       name: 'clients-inventory',

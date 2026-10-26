@@ -1135,6 +1135,16 @@
   function handlePageChange(params: PageChangeParams) {
     lastPageParams.value = params
     currentFilterQuery.value = params.filterQuery
+    const sortDirection = params.sortDesc ? 'desc' : 'asc'
+    if (props.panelMode && (route.query.sortBy !== params.sortBy || route.query.sortDirection !== sortDirection)) {
+      router.replace({
+        query: {
+          ...route.query,
+          sortBy: params.sortBy,
+          sortDirection,
+        },
+      })
+    }
     // Sorting and paging reuse the existing filter; avoid unnecessary router
     // work unless the normalized query value actually changed.
     const routeFilter = typeof route.query.filter === 'string' ? route.query.filter : ''
@@ -1211,12 +1221,18 @@
     }
   }
 
-  function applyExternalSort(sortColumn: string | undefined) {
+  function applyExternalSort(sortColumn: string | undefined, sortDirection: 'asc' | 'desc' = 'desc') {
     if (!sortColumn) return
-    tableSettings.value.setSort(sortColumn, 'desc')
+    tableSettings.value.setSort(sortColumn, sortDirection)
     if (sortColumn === 'version_outdated') {
       ensureVersionColumnVisible()
     }
+  }
+
+  function getRouteSortDirection(): 'asc' | 'desc' | undefined {
+    const direction = route.query.sortDirection
+    if (direction === 'asc' || direction === 'desc') return direction
+    return undefined
   }
 
   async function fetchProducts(params?: PageChangeParams) {
@@ -1307,25 +1323,31 @@
     () => props.productType,
     () => {
       resetTableScopeState()
+      if (props.panelMode && typeof route.query.sortBy === 'string') {
+        applyExternalSort(route.query.sortBy, getRouteSortDirection() ?? 'desc')
+      }
       fetchProducts(buildInitialPageParams(currentFilterQuery.value))
     },
   )
 
   watch(
-    () => props.initialSortColumn,
-    (newCol) => {
-      if (newCol) {
-        applyExternalSort(newCol)
+    () => [props.initialSortColumn, route.query.sortDirection] as const,
+    ([newCol]) => {
+      const sortDirection = getRouteSortDirection() ?? 'desc'
+      if (newCol && (newCol !== tableSettings.value.settings.sortColumn || sortDirection !== tableSettings.value.settings.sortDirection)) {
+        applyExternalSort(newCol, sortDirection)
         fetchProducts()
       }
     },
   )
 
   watch(
-    () => route.query.sortBy,
-    (newSortBy) => {
-      if (typeof newSortBy !== 'string' || newSortBy === props.initialSortColumn) return
-      applyExternalSort(newSortBy)
+    () => [route.query.sortBy, route.query.sortDirection] as const,
+    ([sortBy]) => {
+      if (typeof sortBy !== 'string') return
+      const sortDirection = getRouteSortDirection() ?? 'desc'
+      if (sortBy === tableSettings.value.settings.sortColumn && sortDirection === tableSettings.value.settings.sortDirection) return
+      applyExternalSort(sortBy, sortDirection)
       fetchProducts()
     },
   )
@@ -1424,9 +1446,9 @@
 
   onMounted(async () => {
     if (props.initialSortColumn) {
-      applyExternalSort(props.initialSortColumn)
+      applyExternalSort(props.initialSortColumn, getRouteSortDirection() ?? 'desc')
     } else if (typeof route.query.sortBy === 'string') {
-      applyExternalSort(route.query.sortBy)
+      applyExternalSort(route.query.sortBy, getRouteSortDirection() ?? 'desc')
     }
     // Global Search favorites navigate here with ?savedSearchId=... - apply once on load; later
     // clicks on a different favorite are handled by the watch() above (no remount happens).
