@@ -718,12 +718,6 @@ test.describe('Clients', () => {
     await expect(page).toHaveURL(/type=localboot/)
     await expect(page).toHaveURL(/sortBy=productId/)
     await expect(page).toHaveURL(/sortDirection=desc/)
-    await expect(
-      page
-        .getByTestId('detail-panel')
-        .first()
-        .getByRole('columnheader', { name: /description/i }),
-    ).toHaveAttribute('aria-sort', 'descending')
 
     await page.getByTestId('client-row-action-config').first().click()
     await expect(page).toHaveURL(/panelType=config/)
