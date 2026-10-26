@@ -33,7 +33,14 @@ Color expresses what an action does, not where its button appears:
 - The same action keeps its color and style in compact and mobile views.
 - Disabled buttons keep their style but look unavailable and cannot be activated. Explain missing prerequisites where needed.
 - Existing warning signals, such as refresh highlighting external changes, remain distinct from ordinary actions.
+- Header and navigation controls (global search, the user/Quickpanel menu, the sidebar toggle, and the Administration expander) remain visually borderless, with light foregrounds on the blue background. Hover feedback and visible keyboard focus are preserved; outlined commands in content toolbars are unchanged.
 - Direct execution does not automatically make a toolbar command a filled confirmation button. Ordinary toolbar commands retain the outlined style; final confirmations are filled. Download and copy follow the same placement rule: outlined in toolbars, neutral inline.
+
+## Toolbar sizing
+
+Actions within the same toolbar use the same size, including across separate button groups. This applies to text buttons, icon-only buttons, and menu triggers: they share a common height, icon size, and padding rules. Action semantics determine color and style, not size.
+
+Text button widths may vary with their labels; icon-only buttons are square at the common toolbar height. Refresh and table settings must not be larger than New or Products merely because they use different components. This rule also applies in compact and mobile views.
 
 ## Semantic colors
 
@@ -78,8 +85,9 @@ Permissions, translations, keyboard access, and availability rules must remain u
 ## Implementation and checks
 
 - `CoreAppButton` accepts an explicit `intent`: `command`, `confirm`, `dismiss`, `destructive`, `inline`, or `toggle`. Toggle intent also accepts `active` and sets `aria-pressed`. Existing buttons with `aria-pressed` receive the shared toggle appearance; invalid search options keep their error color.
-- `CoreAppSelectMenu` accepts `command` for toolbar menu triggers; ordinary selects remain form fields. Header commands use the light primary palette on the blue header for contrast.
+- Shared button sizing aligns text line height with icon size, reserves equal border space for all appearances, and uses the UI library's square padding for icon-only buttons. Table-toolbar selection commands use the same size as the other toolbar commands.
+- `CoreAppSelectMenu` accepts `command` for toolbar menu triggers; ordinary selects remain form fields. Header and navigation controls use borderless styling with light foregrounds on the blue background for contrast.
 - `CoreAppTabsNav` owns tab selection styling and keyboard focus. Shared popovers are constrained to the viewport on mobile.
 - Backup restoration opens a translated warning confirmation before transferring the file. Cancelling sends no restore request.
 - Run `pnpm test:e2e:actions` in `frontend` with the dev server running. `BASE_URL` can override the default `http://localhost:3000/addons/webgui/app`.
-- The isolated suite contains four focused scenarios: selection versus row-panel state and tab styling; accessible toggles, stable geometry and keyboard focus; disabled commands; and restoration confirmation. Each runs in light and dark themes at desktop and mobile sizes. It uses its own mocked session and is excluded from the regular backend-backed E2E run. Existing page and Quickpanel integration tests remain in that regular run. Screenshots are written under `frontend/test-results/button-actions` for visual review; they are not production-data snapshot baselines.
+- The isolated suite checks toolbar dimensions across Clients, Products, and Servers; borderless header and navigation controls; selection versus row-panel state and tab styling; accessible toggles, stable geometry and keyboard focus; disabled commands; and restoration confirmation. Each runs in light and dark themes at desktop and mobile sizes. It uses its own mocked session and is excluded from the regular backend-backed E2E run. Existing page and Quickpanel integration tests remain in that regular run. Screenshots are written under `frontend/test-results/button-actions` for visual review; they are not production-data snapshot baselines.
