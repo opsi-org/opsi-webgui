@@ -584,6 +584,8 @@
     "title": "Server"
   },
   "settings": {
+    "appearance": "Darstellung",
+    "language": "Sprache",
     "panelView": "Standard-Clientpanel",
     "rowActions": "Client-Zeilenaktionen",
     "showAllRowActions": "Alle Panelaktionen in der Tabelle anzeigen",

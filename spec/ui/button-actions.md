@@ -12,7 +12,7 @@ These rules apply across the frontend to action buttons, command-menu triggers, 
 
 Existing differences are migration work, not automatically approved exceptions.
 
-Global preferences (theme, language, and default page) are deferred. Their previous redesign was reverted; existing controls remain unchanged.
+Global preferences use a dialog opened from the bottom of the left navigation. Its trigger follows the borderless navigation style; language, appearance, and default page use labelled selects, and automatic refresh uses a checkbox. Connection status remains in the top bar only. Changes apply immediately; closing is neutral and there is no save action.
 
 ## Problem
 

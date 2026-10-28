@@ -584,6 +584,8 @@
     "title": "Servers"
   },
   "settings": {
+    "appearance": "Appearance",
+    "language": "Language",
     "panelView": "Default client panel",
     "rowActions": "Client row actions",
     "showAllRowActions": "Show all panel actions in table",

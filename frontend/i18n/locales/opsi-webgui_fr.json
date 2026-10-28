@@ -584,6 +584,8 @@
     "title": "Serveurs"
   },
   "settings": {
+    "appearance": "Apparence",
+    "language": "Langue",
     "panelView": "Panneau client par défaut",
     "rowActions": "Actions de ligne client",
     "showAllRowActions": "Afficher toutes les actions du panneau dans le tableau",

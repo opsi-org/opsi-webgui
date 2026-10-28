@@ -52,7 +52,7 @@
               : 'w-12',
         ]"
       >
-        <LayoutsSidebar :collapsed="!sidebarOpen && !isMobile" :is-mobile="isMobile" />
+        <LayoutsSidebar :collapsed="!sidebarOpen && !isMobile" :is-mobile="isMobile" @open-settings="openSettings" />
       </aside>
 
       <main class="flex-1 flex flex-col overflow-hidden bg-(--color-surface)">
@@ -154,6 +154,7 @@
     </div>
 
     <CoreAppShortcutsHelpModal v-model="showShortcutsHelp" />
+    <SettingsPreferencesModal v-model:open="showSettings" :return-focus="settingsTrigger" @default-page-changed="defaultPage = $event" />
 
     <Transition name="slide-up">
       <div v-if="quickpanelOpen && useOverlayQuickpanel" class="fixed inset-0 z-50">
@@ -213,6 +214,13 @@
   const { t: i18nT } = useI18n()
 
   const defaultPage = ref('/clients')
+  const showSettings = ref(false)
+  const settingsTrigger = shallowRef<HTMLElement>()
+
+  function openSettings(event: MouseEvent) {
+    if (event.currentTarget instanceof HTMLElement) settingsTrigger.value = event.currentTarget
+    showSettings.value = true
+  }
 
   const healthCheckTooltip = computed(() => {
     const counts = diagnosticsFetched.value ? cachedHealthCounts.value : userStore.healthCounts

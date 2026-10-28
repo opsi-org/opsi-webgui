@@ -1,8 +1,10 @@
-import { test, expect, type Page, type TestInfo } from '@playwright/test'
+import { test, expect, type Page, type TestInfo, type WebSocketRoute } from '@playwright/test'
+import { encode } from '@msgpack/msgpack'
+import { openSettings, setLocale, setTheme } from '../../utils/ui'
 
 async function capture(page: Page, testInfo: TestInfo, name: string) {
   const path = testInfo.outputPath(`${name}.png`)
-  await page.screenshot({ path })
+  await page.screenshot({ path, animations: 'disabled' })
   await testInfo.attach(name, { path, contentType: 'image/png' })
 }
 
@@ -24,8 +26,9 @@ test.beforeEach(async ({ page, context, baseURL }, testInfo) => {
   ])
   await page.addInitScript((theme) => {
     if (window.top !== window.self) return
-    localStorage.setItem('opsi-webgui-color-mode', theme)
-    localStorage.setItem('opsi-webgui-ui', JSON.stringify({ quickpanelOpened: false, menuCollapsed: true }))
+    if (!localStorage.getItem('opsi-webgui-color-mode')) localStorage.setItem('opsi-webgui-color-mode', theme)
+    if (!localStorage.getItem('opsi-webgui-ui'))
+      localStorage.setItem('opsi-webgui-ui', JSON.stringify({ quickpanelOpened: false, menuCollapsed: true }))
     localStorage.setItem(
       'opsi-webgui-user',
       JSON.stringify({
@@ -60,6 +63,169 @@ test.beforeEach(async ({ page, context, baseURL }, testInfo) => {
       headers: { 'X-Total-Count': String(Array.isArray(data) ? data.length : 1) },
       body: JSON.stringify(data),
     })
+  })
+})
+
+test.describe('global settings', () => {
+  let socket: WebSocketRoute
+
+  test.beforeEach(async ({ page }) => {
+    await page.routeWebSocket('**/messagebus/v1', (ws) => {
+      socket = ws
+    })
+  })
+
+  test('navigation entry, focus and Quickpanel separation', async ({ page }) => {
+    await page.goto(`${appPath}/clients`)
+    const url = page.url()
+    const close = await openSettings(page)
+    await expect(page.getByTestId('quickpanel')).toBeHidden()
+    expect(page.url()).toBe(url)
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toHaveAccessibleName('Settings')
+    for (let index = 0; index < 12; index++) {
+      await page.keyboard.press('Tab')
+      expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true)
+    }
+    await page.getByTestId('language-select').click()
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('listbox')).toBeHidden()
+    await expect(dialog).toBeVisible()
+    await page.getByTestId('default-page-select').click()
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('listbox')).toBeHidden()
+    await expect(dialog).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(dialog).toBeHidden()
+    await expect(page.getByTestId('settings-toggle')).toBeFocused()
+    await page.getByTestId('settings-toggle').press('Enter')
+    await expect(dialog).toBeVisible()
+    await close()
+
+    await page.locator('header button[aria-expanded]').first().click()
+    const closeExpanded = await openSettings(page)
+    await expect(dialog).toBeVisible()
+    await closeExpanded()
+    await page.getByTestId('quickpanel-toggle').click()
+    await expect(page.getByTestId('quickpanel')).toBeVisible()
+    await expect(page.getByTestId('quickpanel-settings-section')).toHaveCount(0)
+    await expect(page.getByTestId('quickpanel-quick-actions-section')).toBeVisible()
+    await expect(page.getByTestId('quickpanel-footer-section')).toContainText('ui-test')
+    await expect(page.getByTestId('quickpanel-footer-section').getByRole('button', { name: 'Logout', exact: true })).toBeVisible()
+    await expect(page.getByTestId('session-timer')).toBeVisible()
+    await expect(page.getByTestId('quickpanel').getByRole('tab')).toHaveCount(4)
+  })
+
+  test('existing preferences, immediate changes and reload persistence', async ({ page, context, baseURL }, testInfo) => {
+    await context.addCookies([{ name: 'opsi-webgui-default-page', value: '/products', url: new URL(baseURL!).origin }])
+    await page.addInitScript(() => {
+      if (!localStorage.getItem('opsi-webgui-messagebus'))
+        localStorage.setItem('opsi-webgui-messagebus', JSON.stringify({ autoRefresh: false }))
+    })
+    await page.goto(`${appPath}/clients`)
+    let close = await openSettings(page)
+    await expect(page.getByTestId('default-page-select')).toContainText('Products')
+    const refresh = page.getByTestId('auto-refresh-checkbox')
+    await expect(refresh).not.toBeChecked()
+    const connectionStatus = page.locator('header [aria-label*="Messagebus"]')
+    await expect(connectionStatus).toHaveAttribute('aria-label', 'opsi-Messagebus connected')
+    await refresh.check()
+    await expect(connectionStatus).toHaveAttribute('aria-label', 'opsi-Messagebus connected')
+    await refresh.uncheck()
+    await expect(connectionStatus).toHaveAttribute('aria-label', 'opsi-Messagebus connected')
+    await page.getByTestId('default-page-select').click()
+    await page.getByRole('option', { name: 'Dashboard', exact: true }).click()
+    await expect(page.locator('header a').first()).toHaveAttribute('href', `${appPath}/dashboard`)
+    await expect(page).toHaveURL(new RegExp(`${appPath}/clients$`))
+    const theme = testInfo.project.use.colorScheme === 'dark' ? 'light' : 'dark'
+    await setTheme(page, theme)
+    await expect(page.getByTestId('settings-dialog')).toBeVisible()
+    await setLocale(page, 'de')
+    await expect(page.getByRole('dialog')).toHaveAccessibleName('Einstellungen')
+    await close()
+    await page.reload()
+    close = await openSettings(page)
+    await expect(page.getByTestId('language-select')).toContainText('Deutsch')
+    await expect(page.locator('html')).toHaveClass(new RegExp(`\\b${theme}\\b`))
+    await expect(page.getByTestId('default-page-select')).toContainText('Dashboard')
+    await expect(page.getByTestId('auto-refresh-checkbox')).not.toBeChecked()
+    await close()
+    await page.locator('header a').first().click()
+    await expect(page).toHaveURL(new RegExp(`${appPath}/dashboard$`))
+  })
+
+  test('translations fit, helpers restore overlays, and status follows connection', async ({ page }, testInfo) => {
+    await page.goto(`${appPath}/clients`)
+    for (const locale of ['en', 'de', 'fr'] as const) {
+      await setLocale(page, locale)
+      await expect(page.getByTestId('settings-dialog')).toBeHidden()
+      if ((page.viewportSize()?.width ?? 0) < 768)
+        await expect(page.locator('header button[aria-expanded]').first()).toHaveAttribute('aria-expanded', 'false')
+      const close = await openSettings(page)
+      for (const id of ['language-select', 'theme-select', 'default-page-select', 'settings-close']) {
+        await expect(page.getByTestId(id)).toBeInViewport()
+      }
+      const dialog = page.getByRole('dialog')
+      expect(await dialog.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true)
+      await expect(dialog.getByTestId('settings-connection-status')).toHaveCount(0)
+      await expect(dialog.getByRole('status')).toHaveCount(0)
+      await expect(dialog.getByRole('alert')).toHaveCount(0)
+      await expect(dialog).not.toContainText(/opsi-Messagebus/i)
+      await capture(page, testInfo, `settings-${locale}`)
+      await close()
+    }
+    await setLocale(page, 'en')
+    const close = await openSettings(page)
+    const connectionStatus = page.locator('header [aria-label*="Messagebus"]')
+    await expect(connectionStatus).toHaveAttribute('aria-label', 'opsi-Messagebus connected')
+    await socket.close()
+    await expect(connectionStatus).toHaveAttribute('aria-label', 'opsi-Messagebus disconnected')
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('status')).toHaveCount(0)
+    await expect(dialog.getByRole('alert')).toHaveCount(0)
+    await expect(dialog).not.toContainText(/opsi-Messagebus/i)
+    await close()
+    await setTheme(page, 'dark')
+    await expect(page.getByTestId('settings-dialog')).toBeHidden()
+  })
+
+  test('refresh switch retains automatic reload and changes-detected behavior', async ({ page }) => {
+    await page.goto(`${appPath}/clients`)
+    await expect(page.locator('[id="clients-row-alpha.test.local"]')).toBeVisible()
+    let close = await openSettings(page)
+    await expect(page.locator('header [aria-label*="Messagebus"]')).toHaveAttribute('aria-label', 'opsi-Messagebus connected')
+    await page.getByTestId('auto-refresh-checkbox').check()
+    await close()
+    const nextLoad = page.waitForResponse(
+      (response) => response.url().includes('/opsidata/clients') && response.request().method() === 'GET',
+    )
+    socket.send(Buffer.from(encode({ type: 'event', event: 'host_updated', channel: 'event:host_updated' })))
+    await nextLoad
+    close = await openSettings(page)
+    await page.getByTestId('auto-refresh-checkbox').uncheck()
+    await close()
+    let loads = 0
+    page.on('request', (request) => {
+      if (request.url().includes('/opsidata/clients') && request.method() === 'GET') loads++
+    })
+    socket.send(Buffer.from(encode({ type: 'event', event: 'host_updated', channel: 'event:host_updated' })))
+    await expect(page.getByTestId('page-refresh-button')).toHaveAccessibleName('Changes detected.')
+    await page.waitForTimeout(2500)
+    expect(loads).toBe(0)
+  })
+
+  test('read-only users can change personal settings', async ({ page }) => {
+    await page.route('**/addons/webgui/api/user/configuration', (route) =>
+      route.fulfill({
+        json: { user: 'ui-test', configuration: { read_only: true, server_write_access: false, client_creation: false } },
+      }),
+    )
+    await page.goto(`${appPath}/clients`)
+    await setTheme(page, 'dark')
+    await expect(page.locator('html')).toHaveClass(/\bdark\b/)
+    await expect(page.getByRole('button', { name: 'New', exact: true })).toBeDisabled()
+    await page.getByTestId('quickpanel-toggle').click()
+    await expect(page.getByTestId('quickpanel-footer-section')).toContainText(/Read.only/i)
   })
 })
 
