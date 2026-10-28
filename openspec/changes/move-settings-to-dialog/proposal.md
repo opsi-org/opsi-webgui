@@ -7,7 +7,7 @@ Move global preferences out of the selection-oriented Quickpanel into a dedicate
 ## What Changes
 
 - Add a bottom-left settings button: labelled when expanded, icon with tooltip when collapsed, accessible through mobile navigation.
-- Open a responsive dialog for language, light/dark appearance, default page, and automatic refresh with connection status.
+- Open a responsive dialog for language, light/dark appearance, default page, and automatic refresh. Connection status stays in the top bar only.
 - Remove the Quickpanel settings section; leave selection, quick actions, and session functions unchanged.
 - Apply changes immediately, preserving stored preferences; no save/cancel workflow.
 

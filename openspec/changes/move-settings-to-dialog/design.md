@@ -36,13 +36,13 @@ Read stored values before writing edits. Keep existing choices and use `getDefau
 
 After saving the default-page cookie, emit a typed change event to update the layout's `defaultPage` ref without navigation. A new store or cookie polling is unnecessary.
 
-Bind refresh and connection status to the existing messagebus store. Do not move connection setup: disabling refresh must not disconnect the bus. Show status text, icon, and tooltip.
+Bind refresh to the existing messagebus store. Do not move connection setup: disabling refresh must not disconnect the bus. Keep connection status in the top bar only; the dialog has no duplicate status or connection warning.
 
 ### Test integration
 
 Update theme/locale helpers to open settings on desktop/mobile, assert the result, and restore only overlays they opened. Missing controls must fail rather than silently skip.
 
-Move messagebus status assertions into the dialog. Use the isolated action suite for UI scenarios and backend-backed tests for real refresh behavior; see [tasks.md](tasks.md).
+Keep messagebus status assertions in the top bar and verify the dialog has no connection indicator or warning. Use the isolated action suite for UI scenarios and backend-backed tests for real refresh behavior; see [tasks.md](tasks.md).
 
 ## Risks / Trade-offs
 

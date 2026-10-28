@@ -2,7 +2,7 @@
 
 **Decision:** Styling rules accepted on 2026-10-22 for the frontend.
 
-**Implementation:** Migrated across the frontend, including shared buttons, command menus, table controls, row panels, tabs, forms, Quickpanel, and administration views. Global preferences remain deferred as described below.
+**Implementation:** Migrated across the frontend, including shared buttons, command menus, table controls, row panels, tabs, forms, Quickpanel, administration views, and the global settings dialog.
 
 **Verification:** Isolated Chromium checks cover light and dark themes at desktop (1440 x 1000) and mobile (390 x 844) sizes. API responses are simulated; integration testing against a running opsiconfd backend remains a separate requirement.
 

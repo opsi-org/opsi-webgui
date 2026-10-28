@@ -24,19 +24,12 @@ The application SHALL anchor a settings button below the left navigation's scrol
 
 ### Requirement: Complete and clearly labelled preferences
 
-The dialog SHALL provide translated labels for language, light/dark appearance, default page, and automatic refresh with live connection status. Existing choices SHALL remain, including English, German, and French.
+The dialog SHALL provide translated labels for language, light/dark appearance, default page, and automatic refresh. Existing choices SHALL remain, including English, German, and French. Connection status SHALL remain in the top bar, without a duplicate status or connection warning in the dialog.
 
 #### Scenario: Inspect current settings
 
 - **WHEN** the dialog opens
 - **THEN** all four controls show current values and visible labels
-- **AND** connection status uses text and an icon, not color alone
-
-#### Scenario: Connection status changes
-
-- **WHEN** connection state changes while the dialog is open
-- **THEN** its status updates live
-- **AND** disabling refresh does not disconnect the connection
 
 ### Requirement: Immediate changes and preference compatibility
 
@@ -62,6 +55,7 @@ Changes SHALL apply immediately without saving and SHALL survive dismissal and r
 
 - **WHEN** an external update occurs with refresh enabled or disabled
 - **THEN** existing automatic-reload or changes-detected behavior applies respectively
+- **AND** disabling refresh does not disconnect the messagebus
 
 ### Requirement: Accessible and responsive dialog
 
