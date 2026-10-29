@@ -17,7 +17,7 @@ test.describe('Products', () => {
     const errors: string[] = []
     page.on('pageerror', (error) => errors.push(error.message))
     await seedClientSelection(page)
-    await page.goto('/products/LocalbootProduct', { waitUntil: 'domcontentloaded' })
+    await page.goto('/products?type=localboot', { waitUntil: 'domcontentloaded' })
     const firstProduct = page.locator('tr[id^="products-localboot-row-"]').first()
     await expect(firstProduct, 'The localboot product table must contain a product').toBeVisible({ timeout: 30000 })
     await page
@@ -49,7 +49,7 @@ test.describe('Products', () => {
     await seedClientSelection(page, { count: 2, source: 'quickpanel' })
     await runUITest(page, {
       name: 'products-localboot',
-      route: '/products/LocalbootProduct',
+      route: '/products?type=localboot',
       docName: 'opsi-webgui-products-localboot',
       functional: async (p) => {
         await waitForTable(p)
