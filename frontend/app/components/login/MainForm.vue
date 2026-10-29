@@ -175,7 +175,6 @@
 
   const samlLogin = () => {
     const currentUrl = (config.public.OWN_PATH || '/addons/webgui/app') + '/login?session=saml'
-    console.log('Redirecting to SAML login with URL:', currentUrl)
     window.location.href = '/auth/saml/login?redirect=' + encodeURIComponent(currentUrl)
   }
 </script>
