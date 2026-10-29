@@ -798,7 +798,8 @@ test.describe('Clients', () => {
         await expect(p).toHaveURL(/\/clients/, { timeout: 10000 })
 
         await waitForTable(p)
-        const count = await getTableRowCount(p)
+        const clientRows = p.locator('tr[id^="clients-row-"]')
+        const count = await clientRows.count()
         expect(count).toBeGreaterThan(0)
 
         // Table header columns are visible
@@ -815,16 +816,23 @@ test.describe('Clients', () => {
             'input[placeholder*="filter" i], input[placeholder*="suche" i], input[placeholder*="search" i], input[placeholder*="Filter" i]',
           )
           .first()
-        if (await filterInput.isVisible().catch(() => false)) {
-          await filterInput.fill('client')
-          await p.waitForTimeout(1200)
-          expect(await getTableRowCount(p)).toBeGreaterThan(0)
-          await filterInput.fill('')
-          await p.waitForTimeout(600)
+        await expect(filterInput).toBeVisible()
+        const firstClientRow = clientRows.first()
+        await expect(firstClientRow).toHaveAttribute('id', /^clients-row-.+$/)
+        const clientRowId = await firstClientRow.getAttribute('id')
+        if (clientRowId === null) {
+          throw new Error('Expected the client row to have an id')
         }
+        const clientId = clientRowId.slice('clients-row-'.length)
+        await filterInput.fill(clientId)
+        await expect(clientRows).toHaveCount(1)
+        await expect(clientRows.first()).toHaveAttribute('id', clientRowId)
+        await expect(clientRows.first()).toBeVisible()
+        await filterInput.fill('')
+        await expect(clientRows).toHaveCount(count)
 
         // Row selection
-        const firstRow = p.locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"])').first()
+        const firstRow = clientRows.first()
         if (await firstRow.isVisible().catch(() => false)) {
           await firstRow.click()
           await p.waitForTimeout(600)
