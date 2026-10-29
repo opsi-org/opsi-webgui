@@ -89,7 +89,7 @@ test.describe('Products', () => {
         }
 
         // Open the first row detail panel and verify that properties + dependencies load.
-        const firstRow = p.locator('table tbody tr').first()
+        const firstRow = p.locator('tr[id^="products-localboot-row-"]').first()
         if (await firstRow.isVisible().catch(() => false)) {
           await firstRow.click()
           await p.waitForTimeout(800)
