@@ -38,7 +38,7 @@ export interface DataTableSettings {
   selectionMode: 'multi' | 'single'
   onlySelected?: boolean
   filterMode?: 'primary' | 'all'
-  defaultPanelView?: 'config' | 'logs' | 'inventory' | 'clone'
+  defaultPanelView?: 'config' | 'logs' | 'inventory' | 'clone' | 'products'
   showAllRowActions?: boolean
 }
 
@@ -142,7 +142,7 @@ function getStored(tableId: string): Record<string, DataTableSettings> {
       } catch {
         oldValue = undefined
       }
-      if (oldValue === 'config' || oldValue === 'logs' || oldValue === 'inventory' || oldValue === 'clone') {
+      if (oldValue === 'config' || oldValue === 'logs' || oldValue === 'inventory' || oldValue === 'clone' || oldValue === 'products') {
         clientSettings.defaultPanelView = oldValue
         migrated = true
       }
