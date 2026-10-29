@@ -27,7 +27,7 @@ stages: [setup, validate, build, release]
 
 # TEMPLATES
 .pybuilder:
-  image: docker.uib.gmbh/opsi/dev/pybuilder:deb9-py3.11
+  image: docker.uib.gmbh/opsi/dev/pybuilder:deb12
 
 .only-tags:
   rules:
