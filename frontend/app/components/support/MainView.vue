@@ -33,7 +33,7 @@
         </CoreAppCard>
         <CoreAppCard fill>
           <template #header>
-            <CoreAppHeading :icon="icons.document" :text="$t('support.docs')" />
+            <CoreAppHeading :icon="documentIcon" :text="$t('support.docs')" />
           </template>
           <p class="text-sm text-(--color-text-muted) mb-4">{{ $t('support.docsDesc') }}</p>
           <CoreAppButton variant="outline" color="primary" block as="a" :href="docsUrl" target="_blank">
@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
   const icons = useIcons()
+  const documentIcon: string = icons.document
   const { t: $t, locale } = useI18n()
   const supportUrl = computed(() =>
     locale.value === 'de' ? 'https://opsi.org/de/services/support/' : 'https://opsi.org/en/services/support/',

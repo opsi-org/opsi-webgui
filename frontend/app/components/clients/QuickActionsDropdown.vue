@@ -110,7 +110,7 @@
             >
           </h3>
           <CoreAppButton
-            :icon="icons.x"
+            :icon="closeIcon"
             variant="ghost"
             color="neutral"
             :aria-label="String($t('common.close'))"
@@ -268,7 +268,7 @@
             {{ $t('common.results') }} - {{ actionLabel(currentAction) }}
           </h3>
           <CoreAppButton
-            :icon="icons.x"
+            :icon="closeIcon"
             variant="ghost"
             color="neutral"
             :aria-label="String($t('common.close'))"
@@ -303,6 +303,7 @@
   }>()
 
   const icons = useIcons()
+  const closeIcon: string = icons.x
   const { t: $t } = useI18n()
   const {
     triggerOnDemand,
