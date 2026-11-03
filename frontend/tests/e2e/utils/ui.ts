@@ -81,11 +81,12 @@ export async function seedClientSelection(
 }
 
 /**
- * Switch the app theme via the theme toggle button.
+ * Switch the theme via the login footer or the authenticated settings dialog.
  */
 export async function setTheme(page: Page, target: Theme): Promise<void> {
   const authToggle = page.getByTestId('theme-toggle')
-  if (await authToggle.isVisible()) {
+  if (/\/login(?:[/?#]|$)/.test(page.url())) {
+    await expect(authToggle).toBeVisible()
     if ((await authToggle.getAttribute('data-theme')) !== target) await authToggle.click()
     await expect(page.locator('html')).toHaveClass(new RegExp(`\\b${target}\\b`))
     return
@@ -106,7 +107,8 @@ export async function applyLocaleCookie(page: Page, target: Locale): Promise<voi
 export async function setLocale(page: Page, target: Locale): Promise<void> {
   const languages = { en: 'English', de: 'Deutsch', fr: 'Français' }
   const authDropdown = page.getByTestId('language-dropdown')
-  if (await authDropdown.isVisible()) {
+  if (/\/login(?:[/?#]|$)/.test(page.url())) {
+    await expect(authDropdown).toBeVisible()
     if (!(await authDropdown.textContent())?.includes(target.toUpperCase())) {
       await authDropdown.click()
       await page.getByTestId(`language-dropdown-item-${target}`).click()
