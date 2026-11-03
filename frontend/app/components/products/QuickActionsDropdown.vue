@@ -107,7 +107,7 @@
                         :items="installationStatusOptions"
                         size="xs"
                         class="w-full"
-                        :aria-label="String($t('products.status'))"
+                        :aria-label="`${$t('products.status')}: ${installationStatusOptions.find((option) => option.value === filters.installationStatus)?.label ?? filters.installationStatus}`"
                         data-testid="product-quick-actions-installation-status"
                         @update:model-value="fetchPreview"
                       />
@@ -121,7 +121,7 @@
                         :items="actionResultOptions"
                         size="xs"
                         class="w-full"
-                        :aria-label="String($t('common.result'))"
+                        :aria-label="`${$t('common.result')}: ${actionResultOptions.find((option) => option.value === filters.actionResult)?.label ?? filters.actionResult}`"
                         data-testid="product-quick-actions-action-result"
                         @update:model-value="fetchPreview"
                       />
@@ -149,7 +149,7 @@
                     :items="actionRequestOptions"
                     size="sm"
                     class="w-full"
-                    :aria-label="String($t('actions.request'))"
+                    :aria-label="`${$t('actions.request')}: ${actionRequestOptions.find((option) => option.value === actionRequest)?.label ?? actionRequest}`"
                     data-testid="product-quick-actions-action-request"
                     @update:model-value="fetchPreview"
                   />
@@ -166,7 +166,7 @@
                     :items="scopeOptions"
                     size="sm"
                     class="w-full"
-                    :aria-label="String($t('fields.scope'))"
+                    :aria-label="`${$t('fields.scope')}: ${scopeOptions.find((option) => option.value === scope)?.label ?? scope}`"
                     data-testid="product-quick-actions-scope"
                     @update:model-value="fetchPreview"
                   />

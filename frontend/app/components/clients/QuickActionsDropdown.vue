@@ -53,7 +53,7 @@
         :items="actionItems"
         :model-value="null"
         :class="compact ? '' : 'w-full'"
-        :aria-label="String($t('clients.actions'))"
+        :aria-label="`${clientIds.length} ${$t('clients.actions')}`"
         :ui="{ content: 'max-h-96 overflow-y-auto' }"
         data-testid="client-quick-actions-trigger"
         @update:model-value="handleActionSelect"

@@ -15,6 +15,7 @@
       <CoreAppSelectMenu
         v-model="selectedLogTypeValue"
         :placeholder="$t('logs.selectType')"
+        :aria-label="`${$t('logs.selectType')}: ${selectedLogType?.label ?? ''}`"
         :items="LOG_TYPES"
         :loading="loading"
         value-key="value"

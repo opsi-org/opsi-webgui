@@ -87,6 +87,7 @@ Permissions, translations, keyboard access, and availability rules must remain u
 - `CoreAppButton` accepts an explicit `intent`: `command`, `confirm`, `dismiss`, `destructive`, `inline`, or `toggle`. Toggle intent also accepts `active` and sets `aria-pressed`. Existing buttons with `aria-pressed` receive the shared toggle appearance; invalid search options keep their error color.
 - Shared button sizing aligns text line height with icon size, reserves equal border space for all appearances, and uses the UI library's square padding for icon-only buttons. Table-toolbar selection commands use the same size as the other toolbar commands.
 - `CoreAppSelectMenu` accepts `command` for toolbar menu triggers; ordinary selects remain form fields. Header and navigation controls use borderless styling with light foregrounds on the blue background for contrast.
+- Accessible names include the visible trigger text, including selection counts and selected option labels (WCAG 2.5.3). Resolve option labels rather than appending internal values. Clickable cards use their visible content as their name; expandable nodes additionally expose `aria-expanded`.
 - `CoreAppTabsNav` owns tab selection styling and keyboard focus. Shared popovers are constrained to the viewport on mobile.
 - Backup restoration opens a translated warning confirmation before transferring the file. Cancelling sends no restore request.
 - Run `pnpm test:e2e:actions` in `frontend` with the dev server running. `BASE_URL` can override the default `http://localhost:3000/addons/webgui/app`.

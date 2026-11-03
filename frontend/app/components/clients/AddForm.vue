@@ -187,7 +187,7 @@
                   v-model="form.depotId"
                   :items="depotOptions"
                   :loading="loadingDepots"
-                  :aria-label="String($t('depot.title'))"
+                  :aria-label="`${$t('depot.title')}: ${depotOptions.find((option) => option.value === form.depotId)?.label ?? form.depotId}`"
                   :disabled="loading"
                   size="sm"
                   class="w-full"

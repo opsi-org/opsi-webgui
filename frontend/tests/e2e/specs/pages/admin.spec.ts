@@ -79,6 +79,7 @@ test.describe('Admin', () => {
         docName: 'opsi-webgui-admin-diagnostics-system-info',
         functional: async (p) => {
           await expect(p.locator('main')).toBeVisible()
+          await expect(p.locator('.tree-node > [role="button"]').first()).toHaveAttribute('aria-expanded', /^(true|false)$/)
           // System info table / key-value pairs should be present
           const rows = p.locator('[class*="system"], [class*="info"], table tr, [role="row"], dt, dd')
           await rows.first().waitFor({ state: 'visible', timeout: 10000 })
