@@ -1,4 +1,4 @@
-FROM docker.uib.gmbh/opsi/dev/pybuilder:deb10-py3.13
+FROM docker.uib.gmbh/opsi/dev/pybuilder:deb12
 
 ARG USER
 ARG UID
@@ -8,7 +8,7 @@ ARG ADDON_ID
 ENV DEV_USER=${USER:-dev} \
 	DEV_UID=${UID:-1000} \
 	ADDON_ID=${ADDON_ID:-webgui} \
-	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.3:/development/Debian_10/ \
+	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.3:/development/Debian_12/ \
 	PYTHONFAULTHANDLER=1 \
 	PYTHONUNBUFFERED=1
 
@@ -21,11 +21,11 @@ RUN mkdir -p /usr/local/share/keyrings \
 	&& apt-get --yes --no-install-recommends install \
 	mariadb-client \
 	libmariadb-dev \
-	librsync1 \
+	librsync2 \
 	sudo \
 	git \
 	vim \
-	netcat \
+	netcat-openbsd \
 	supervisor \
 	mariadb-server \
 	redis-server \
@@ -54,7 +54,7 @@ COPY docker/files/ /
 RUN sed -i 's/^daemonize yes/daemonize no/' /etc/redis/redis.conf \
 	&& sed -i 's|^dir \./|dir /var/lib/redis|' /etc/redis/redis.conf \
 	&& mkdir -p /var/run/redis /var/lib/redis && chown redis:redis /var/run/redis /var/lib/redis \
-	&& install -m 755 -o mysql -g root -d /var/run/mysqld
+	&& install -m 755 -o mysql -g root -d /var/run/mysqld /var/log/mysql
 
 # Users and groups
 # NOTE: ${DEV_USER} may already exist (e.g. CI builds with USER=root/UID=0).

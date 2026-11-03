@@ -39,7 +39,7 @@ export default defineConfig({
   retries: 0,
   // Allow multiple spec files to run in parallel (tests within each file remain sequential
   // to avoid conflicts on the shared opsiconfd state).
-  workers: isNightly ? 4 : 1,
+  workers: isNightly ? 4 : 2,
   fullyParallel: false,
 
   use: {
@@ -48,7 +48,7 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
     viewport: { width: 1552, height: 920 },
     screenshot: 'only-on-failure',
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     // Prevent individual locator actions (click, fill, waitFor…) from hanging
     // indefinitely, especially on Firefox.
     actionTimeout: 30_000,
