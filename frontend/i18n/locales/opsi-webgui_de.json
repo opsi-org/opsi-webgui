@@ -547,7 +547,6 @@
     "title": "Produkte",
     "unlock": "Entsperren",
     "unlockAll": "Alle entsperren",
-    "viewCatalogHint": "Produkte anzeigen – zeigt den Depot-Katalog, wenn keine Clients ausgewählt sind.",
     "unlocked": "Produkt {product} wurde entsperrt."
   },
   "quick": {

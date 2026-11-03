@@ -547,7 +547,6 @@
     "title": "Products",
     "unlock": "Unlock",
     "unlockAll": "Unlock All",
-    "viewCatalogHint": "View products - shows the depot catalog if no clients are selected.",
     "unlocked": "Product {product} has been unlocked."
   },
   "quick": {

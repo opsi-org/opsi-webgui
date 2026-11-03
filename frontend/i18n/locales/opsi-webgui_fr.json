@@ -547,7 +547,6 @@
     "title": "Produits",
     "unlock": "Déverrouiller",
     "unlockAll": "Tout déverrouiller",
-    "viewCatalogHint": "Afficher les produits – montre le catalogue du dépôt si aucun client n'est sélectionné.",
     "unlocked": "Le produit {product} a été déverrouillé."
   },
   "quick": {

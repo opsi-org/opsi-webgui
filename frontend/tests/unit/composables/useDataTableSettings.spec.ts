@@ -150,11 +150,13 @@ describe('useDataTableSettings', () => {
     })
 
     it('writes changes back to localStorage', async () => {
-      const { setPageSize } = useDataTableSettings('clients')
+      const { settings, setPageSize } = useDataTableSettings('clients')
       setPageSize(75)
+      settings.defaultPanelView = 'products'
       await nextTick()
       const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
       expect(stored.clients.pageSize).toBe(75)
+      expect(stored.clients.defaultPanelView).toBe('products')
     })
 
     it('tolerates malformed stored JSON without throwing', () => {
