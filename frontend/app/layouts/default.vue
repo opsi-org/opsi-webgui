@@ -22,7 +22,7 @@
       :health-counts="currentHealthCounts"
       @toggle-sidebar="toggleSidebar"
       @toggle-quickpanel="toggleQuickpanel"
-      @show-shortcuts="showShortcutsHelp = true"
+      @show-shortcuts="openShortcutsHelp"
     />
 
     <div class="flex-1 flex overflow-hidden relative">
@@ -253,6 +253,11 @@
   const quickpanelOpen = ref(false)
   const showShortcutsHelp = ref(false)
 
+  function openShortcutsHelp() {
+    if (document.querySelector('[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"]')) return
+    showShortcutsHelp.value = true
+  }
+
   const MIN_QUICKPANEL_WIDTH = 220
   const quickpanelWidth = computed({
     get: () => uiStore.layout.quickpanelWidth,
@@ -387,7 +392,7 @@
     },
     'ctrl_shift_?': {
       usingInput: true,
-      handler: () => (showShortcutsHelp.value = true),
+      handler: openShortcutsHelp,
     },
   })
 </script>
