@@ -12,7 +12,7 @@ import os
 import subprocess
 import time
 from datetime import date, datetime
-from typing import Any, Literal
+from typing import Any, ClassVar, Literal
 
 from fastapi import APIRouter, Body, Depends, Request, status
 
@@ -122,6 +122,28 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	monitoring: bool | None = None
 	created: datetime | None = None
 	lastSeen: datetime | None = None
+
+	API_TO_BACKEND_FIELDS: ClassVar[dict[str, str]] = {
+		"hostId": "id",
+		"description": "description",
+		"notes": "notes",
+		"hardwareAddress": "hardwareAddress",
+		"ipAddress": "ipAddress",
+		"inventoryNumber": "inventoryNumber",
+		"opsiHostKey": "opsiHostKey",
+		"oneTimePassword": "oneTimePassword",
+		"systemUUID": "systemUUID",
+		"monitoring": "monitoring",
+		"wanMode": "wan_vpn",
+		"smartCache": "smart_cache",
+		"installOnShutdown": "install_on_shutdown",
+	}
+
+	def to_backend_update_payload(self) -> dict[str, Any]:
+		provided = self.model_dump(exclude_unset=True)
+		return {
+			backend_field: provided[api_field] for api_field, backend_field in self.API_TO_BACKEND_FIELDS.items() if api_field in provided
+		}
 
 
 @api_router.get("/api/opsidata/clients", response_model=list[ClientList])
@@ -698,19 +720,7 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
 		if client_id != client.hostId:
 			logger.notice("Renaming Client %s to %s.", client_id, client.hostId)
 			backend.host_renameOpsiClient(client_id, client.hostId)
-		backend.host_createOpsiClient(
-			client.hostId,
-			client.opsiHostKey,
-			client.description,
-			client.notes,
-			client.hardwareAddress,
-			client.ipAddress,
-			client.inventoryNumber,
-			client.oneTimePassword,
-			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-			client.systemUUID,
-		)
+		backend.host_updateClients(client.to_backend_update_payload())
 		if client.smartCache:
 			client.wanMode = False
 		elif client.wanMode:
