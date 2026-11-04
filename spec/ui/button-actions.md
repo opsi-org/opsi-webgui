@@ -54,6 +54,8 @@ Text button widths may vary with their labels; icon-only buttons are square at t
 
 Ordinary inline and row commands use neutral icons with a transparent background and a subtle hover background. Destructive commands use error red. Icon-only controls have stable dimensions, centered icons, a tooltip, an accessible name, and visible keyboard focus. Row-panel buttons additionally indicate the open panel as described below.
 
+Shared tooltips, including table tooltips, default to `ignoreNonKeyboardFocus`: hover and keyboard-visible focus can open them, but mouse-driven focus restoration does not. Individual tooltips can override this default. This follows the browser's `:focus-visible` heuristic, not a blanket suppression of programmatic focus; keyboard-driven dialog focus may still open a tooltip. Accessible names and dialog focus management remain unchanged.
+
 ## Tab styling
 
 Tabs share a subtle surface background. The active tab has a filled blue background, white text and icons, and a subtle shadow. Inactive tabs have muted text and no individual background; on hover, their text becomes stronger and their background slightly highlighted.

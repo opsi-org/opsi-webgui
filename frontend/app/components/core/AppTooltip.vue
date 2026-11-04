@@ -10,7 +10,7 @@
   CoreAppTooltip - UI library wrapper for tooltip rendering.
 -->
 <template>
-  <UTooltip v-bind="$attrs">
+  <UTooltip :ignore-non-keyboard-focus="true" v-bind="$attrs">
     <slot />
     <template v-for="name in forwardedSlots" :key="name" #[name]="slotData">
       <slot :name="name" v-bind="slotData || {}" />
