@@ -12,6 +12,7 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const args = process.argv.slice(2)
 
@@ -20,6 +21,7 @@ let omitDev = false
 let devScope = 'optional'
 let runtimeOnly = false
 let stripDependencyRiskMetadata = false
+let includeDevDirect = false
 
 for (let i = 0; i < args.length; i += 1) {
   const arg = args[i]
@@ -31,6 +33,11 @@ for (let i = 0; i < args.length; i += 1) {
 
   if (arg === '--runtime-only') {
     runtimeOnly = true
+    continue
+  }
+
+  if (arg === '--include-dev-direct') {
+    includeDevDirect = true
     continue
   }
 
@@ -191,6 +198,134 @@ function updateMetadataNamespaces(sbom) {
   sbom.metadata.properties = sbom.metadata.properties.filter((property) => property?.name !== 'cdx:bom:componentNamespaces')
 }
 
+function readLockImporter(projectRoot) {
+  const lines = fs.readFileSync(path.join(projectRoot, 'pnpm-lock.yaml'), 'utf8').split(/\r?\n/)
+  const importersIndex = lines.lastIndexOf('importers:')
+  const rootIndex = lines.indexOf('  .:', importersIndex)
+
+  if (importersIndex < 0 || rootIndex < 0) {
+    throw new Error('Cannot add development dependencies: pnpm lockfile importer is missing')
+  }
+
+  const importer = { dependencies: {}, devDependencies: {}, optionalDependencies: {} }
+  let section = null
+  let packageName = null
+
+  for (const line of lines.slice(rootIndex + 1)) {
+    if (/^(packages|snapshots):$/.test(line)) {
+      break
+    }
+
+    const sectionMatch = line.match(/^    (dependencies|devDependencies|optionalDependencies):$/)
+    if (sectionMatch) {
+      section = sectionMatch[1]
+      packageName = null
+      continue
+    }
+
+    const packageMatch = line.match(/^      (?:(['"])(.*?)\1|([^:]+)):\s*$/)
+    if (packageMatch && section) {
+      packageName = packageMatch[2] ?? packageMatch[3]
+      continue
+    }
+
+    const versionMatch = line.match(/^        version:\s*([^\s]+)/)
+    if (versionMatch && section && packageName) {
+      importer[section][packageName] = versionMatch[1].split('(')[0]
+      packageName = null
+    }
+  }
+
+  return importer
+}
+
+function includeDevelopmentDependencies(sbom) {
+  const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+  const manifest = JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8'))
+  const lockImporter = readLockImporter(projectRoot)
+  const rootRef = sbom?.metadata?.component?.['bom-ref']
+  const rootDependency = sbom.dependencies?.find((entry) => entry?.ref === rootRef)
+
+  if (!rootRef || !rootDependency || !lockImporter || !Array.isArray(sbom.components) || !Array.isArray(sbom.dependencies)) {
+    throw new Error('Cannot add development dependencies: SBOM root dependency graph is incomplete')
+  }
+
+  const componentsByName = new Map()
+  for (const component of sbom.components) {
+    const components = componentsByName.get(component.name) || []
+    components.push(component)
+    componentsByName.set(component.name, components)
+  }
+
+  function resolveDirectRefs(names, field) {
+    return names.map((name) => {
+      const lockedVersion = String(lockImporter[field]?.[name] || '').split('(')[0]
+      const matches = (componentsByName.get(name) || []).filter((component) => component.version === lockedVersion)
+      if (matches.length !== 1 || typeof matches[0]['bom-ref'] !== 'string') {
+        throw new Error(`Expected one lockfile-matched SBOM component for direct dependency '${name}', found ${matches.length}`)
+      }
+      return matches[0]['bom-ref']
+    })
+  }
+
+  const productionRefs = resolveDirectRefs(Object.keys(manifest.dependencies || {}), 'dependencies')
+  const developmentRefs = resolveDirectRefs(Object.keys(manifest.devDependencies || {}), 'devDependencies')
+  rootDependency.dependsOn = [...new Set([...rootDependency.dependsOn, ...developmentRefs])].sort()
+  const graph = new Map(
+    sbom.dependencies.map((entry) => [entry?.ref, Array.isArray(entry?.dependsOn) ? entry.dependsOn.filter(Boolean) : []]),
+  )
+
+  function getReachableRefs(startRefs) {
+    const reachableRefs = new Set(startRefs)
+    const stack = [...startRefs]
+
+    while (stack.length > 0) {
+      const ref = stack.pop()
+      for (const dependencyRef of graph.get(ref) || []) {
+        if (!reachableRefs.has(dependencyRef)) {
+          reachableRefs.add(dependencyRef)
+          stack.push(dependencyRef)
+        }
+      }
+    }
+
+    return reachableRefs
+  }
+
+  const productionReachable = getReachableRefs(productionRefs)
+  const developmentReachable = getReachableRefs(developmentRefs)
+  const allReachable = getReachableRefs([rootRef])
+  const unreachableCount = sbom.components.filter((component) => !allReachable.has(component['bom-ref'])).length
+
+  if (unreachableCount > 0) {
+    sbom.compositions ||= []
+    const composition = sbom.compositions.find((entry) => entry?.aggregate)
+    if (composition) {
+      composition.aggregate = 'incomplete'
+    } else {
+      sbom.compositions.push({ aggregate: 'incomplete' })
+    }
+  }
+
+  for (const component of sbom.components) {
+    const componentRef = component['bom-ref']
+    const developmentOnly = developmentReachable.has(componentRef) && !productionReachable.has(componentRef)
+    const properties = Array.isArray(component.properties) ? component.properties : []
+    component.properties = properties.filter((property) => property?.name !== 'cdx:npm:package:development')
+
+    if (developmentOnly) {
+      component.properties.push({ name: 'cdx:npm:package:development', value: 'true' })
+      component.scope = devScope
+    }
+
+    if (component.properties.length === 0) {
+      delete component.properties
+    }
+  }
+
+  return unreachableCount
+}
+
 const sbom = JSON.parse(fs.readFileSync(targetPath, 'utf8'))
 const reachableRefs = runtimeOnly ? buildReachableRefs(sbom) : null
 const rootRef = sbom?.metadata?.component?.['bom-ref']
@@ -200,6 +335,7 @@ let devScopeAdjusted = 0
 let devRemoved = 0
 let unreachableRemoved = 0
 let riskMetadataStripped = 0
+let graphUnreachable = 0
 
 if (Array.isArray(sbom.components)) {
   const normalizedComponents = []
@@ -246,6 +382,10 @@ if (sbom.metadata?.component) {
   normalizeComponentName(sbom.metadata.component)
 }
 
+if (includeDevDirect) {
+  graphUnreachable = includeDevelopmentDependencies(sbom)
+}
+
 if (removedRefs.size > 0 && Array.isArray(sbom.dependencies)) {
   sbom.dependencies = sbom.dependencies
     .filter((entry) => !removedRefs.has(entry?.ref))
@@ -280,4 +420,7 @@ if (omitDev) {
 }
 if (stripDependencyRiskMetadata) {
   console.log(`Stripped install-risk metadata from ${riskMetadataStripped} dependency component(s)`)
+}
+if (includeDevDirect) {
+  console.log(`Added production/development dependency relationships; ${graphUnreachable} component(s) remain unreachable`)
 }
