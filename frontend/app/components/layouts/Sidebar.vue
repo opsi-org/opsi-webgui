@@ -126,6 +126,8 @@
         data-testid="settings-toggle"
         :aria-label="t('common.settings')"
         aria-haspopup="dialog"
+        aria-keyshortcuts="Control+,"
+        :title="`${t('common.settings')} (${t('shortcuts.modifierKey')}+,)`"
         class="w-full flex items-center gap-2 px-2 py-2 rounded-lg text-white hover:bg-white/15"
         :class="{ 'justify-center': collapsed }"
         @click="$emit('open-settings', $event)"

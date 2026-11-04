@@ -217,8 +217,9 @@
   const showSettings = ref(false)
   const settingsTrigger = shallowRef<HTMLElement>()
 
-  function openSettings(event: MouseEvent) {
-    if (event.currentTarget instanceof HTMLElement) settingsTrigger.value = event.currentTarget
+  function openSettings(event?: MouseEvent) {
+    const trigger = event?.currentTarget ?? document.activeElement
+    settingsTrigger.value = trigger instanceof HTMLElement ? trigger : undefined
     showSettings.value = true
   }
 
@@ -363,6 +364,14 @@
   const shortcutActions = useActiveShortcutActions()
 
   defineShortcuts({
+    'ctrl_,': {
+      usingInput: true,
+      handler: (e) => {
+        e?.preventDefault()
+        if (showSettings.value || (e?.target instanceof HTMLElement && e.target.closest('[role="dialog"]'))) return
+        openSettings()
+      },
+    },
     ctrl_s: {
       usingInput: true,
       handler: (e) => {
