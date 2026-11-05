@@ -68,7 +68,7 @@
             :icon="icons.bookmark"
             size="xs"
             variant="ghost"
-            color="primary"
+            color="neutral"
             :aria-label="String($t('savedSearches.saveCurrent'))"
             @click="emit('save')"
           />
@@ -79,6 +79,7 @@
           size="xs"
           variant="ghost"
           color="neutral"
+          :title="String($t('common.clear'))"
           :aria-label="String($t('common.clear'))"
           @click="model = ''"
         />

@@ -41,6 +41,9 @@ test.describe('DataTable - component', () => {
         // At least one row should now be checked
         const checkedRows = p.locator('tbody [type="checkbox"]:checked, tbody [aria-checked="true"]')
         await expect(checkedRows.first()).toBeVisible()
+        await expect(p.getByTestId('client-quick-actions-trigger').first()).toHaveAccessibleName(
+          new RegExp(`^${await checkedRows.count()}\\s`),
+        )
       },
       vrMask: ['[class*="timestamp"]', '[class*="lastSeen"]'],
     })

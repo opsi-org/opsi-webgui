@@ -28,6 +28,7 @@
         <CoreAppTooltip :text="`${$t('common.clearAll')} (${selectionStore.selectedServers.length})`">
           <CoreAppButton
             :icon="icons.xCircle"
+            intent="dismiss"
             size="xs"
             variant="outline"
             color="primary"

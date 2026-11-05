@@ -15,6 +15,7 @@
       <CoreAppSelectMenu
         v-model="selectedLogTypeValue"
         :placeholder="$t('logs.selectType')"
+        :aria-label="`${$t('logs.selectType')}: ${selectedLogType?.label ?? ''}`"
         :items="LOG_TYPES"
         :loading="loading"
         value-key="value"
@@ -48,6 +49,7 @@
           <CoreAppButton
             color="primary"
             :variant="autoRefresh ? 'solid' : 'outline'"
+            :aria-pressed="autoRefresh"
             size="sm"
             @click="autoRefresh = !autoRefresh"
             :aria-label="String($t('settings.autoRefresh'))"
@@ -61,6 +63,7 @@
           <CoreAppButton
             :color="autoScroll ? 'primary' : 'neutral'"
             :variant="autoScroll && !hasMarker ? 'solid' : 'ghost'"
+            :aria-pressed="autoScroll && !hasMarker"
             :disabled="hasMarker"
             size="sm"
             @click="autoScroll = !autoScroll"
@@ -104,6 +107,7 @@
       <div v-if="logContent.length > 0 && hasMarker" class="flex items-center gap-1 text-xs text-muted shrink-0 px-1.5">
         <CoreAppButton
           :icon="icons.bookmark"
+          intent="inline"
           variant="soft"
           color="neutral"
           size="xs"
@@ -134,7 +138,7 @@
         class="shrink-0"
       >
         <template #actions>
-          <CoreAppButton size="xs" color="primary" @click="dismissAndFetch">{{ $t('common.reload') }} </CoreAppButton>
+          <CoreAppButton size="xs" intent="command" @click="dismissAndFetch">{{ $t('common.reload') }} </CoreAppButton>
           <CoreAppButton size="xs" variant="ghost" color="neutral" @click="logUpdatePending = false"
             >{{ $t('common.close') }}
           </CoreAppButton>

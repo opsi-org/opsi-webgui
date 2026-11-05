@@ -72,15 +72,20 @@ async function openClientQuickActionDialog(page: Page, actionName: RegExp): Prom
   await expect(page.locator('[role="dialog"]').first()).toBeVisible({ timeout: 5000 })
 }
 
+async function closeQuickActionDialog(page: Page): Promise<void> {
+  const dialog = page.getByRole('dialog')
+  if (await dialog.isVisible()) {
+    await dialog.getByRole('button', { name: /^(Close|Schließen|Fermer)$/, exact: true }).click()
+    await expect(dialog).toBeHidden()
+  }
+}
+
 function clientQuickActionDialogShot(name: string, actionName: RegExp) {
   return {
     name,
     captureSelector: '[role="dialog"]',
     before: async (page: Page) => openClientQuickActionDialog(page, actionName),
-    after: async (page: Page) => {
-      await page.keyboard.press('Escape')
-      await page.waitForTimeout(200)
-    },
+    after: closeQuickActionDialog,
   }
 }
 
@@ -110,7 +115,7 @@ async function mockClientActionResponse(page: Page): Promise<void> {
 }
 
 async function openProductQuickActions(page: Page, preview = false): Promise<void> {
-  await page.keyboard.press('Escape').catch(() => undefined)
+  await closeQuickActionDialog(page)
   await selectFirstClientForQuickActions(page)
   await ensureQuickPanelOpen(page)
 
@@ -159,7 +164,7 @@ async function openProductQuickActions(page: Page, preview = false): Promise<voi
 }
 
 async function reopenClientQuickActionsMenu(page: Page): Promise<void> {
-  await page.keyboard.press('Escape').catch(() => undefined)
+  await closeQuickActionDialog(page)
   const trigger = page.getByTestId('quickpanel-client-actions').locator('button').first()
   await expect(trigger).toBeVisible({ timeout: 10000 })
   const menuItem = page.getByRole('option').first()
@@ -280,10 +285,7 @@ test.describe('Quick Actions', () => {
             await mockClientActionResponse(p)
             await openProductQuickActions(p, true)
           },
-          after: async (p) => {
-            await p.keyboard.press('Escape').catch(() => undefined)
-            await p.waitForTimeout(200)
-          },
+          after: closeQuickActionDialog,
         },
       ],
     })

@@ -15,6 +15,7 @@
       <div class="flex items-center gap-3">
         <CoreAppButton
           v-if="!isConnected"
+          intent="command"
           color="primary"
           size="sm"
           :icon="icons.checkCircle"
@@ -23,9 +24,7 @@
           @click="connect"
           >{{ $t('terminal.connect') }}
         </CoreAppButton>
-        <CoreAppButton v-else color="error" variant="outline" size="sm" :icon="icons.x" @click="disconnect">{{
-          $t('terminal.disconnect')
-        }}</CoreAppButton>
+        <CoreAppButton v-else intent="dismiss" size="sm" :icon="icons.x" @click="disconnect">{{ $t('terminal.disconnect') }}</CoreAppButton>
         <span v-if="isConnected" class="flex items-center gap-1 text-sm text-(--color-success-soft-text)">
           <CoreAppIcon :name="icons.checkCircle" class="w-6 h-6 text-(--color-success)" />
           {{ $t('terminal.connected') }}
@@ -36,7 +35,7 @@
       </div>
       <div class="flex items-center gap-2">
         <CoreAppHoverPopover :title="String($t('terminal.quickCommands'))" content-class="min-w-80">
-          <CoreAppButton variant="outline" color="neutral" size="sm" :icon="icons.commandLine" data-testid="terminal-quick-commands">
+          <CoreAppButton intent="command" size="sm" :icon="icons.commandLine" data-testid="terminal-quick-commands">
             {{ $t('terminal.quickCommands') }}
           </CoreAppButton>
           <template #content>

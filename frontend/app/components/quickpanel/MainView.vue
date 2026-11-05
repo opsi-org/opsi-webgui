@@ -49,6 +49,7 @@
           </div>
           <CoreAppButton
             variant="soft"
+            intent="command"
             color="primary"
             size="sm"
             :disabled="selectionStore.selectedClients.length === 0"
@@ -58,48 +59,6 @@
           >
             <CoreAppIcon :name="icons.onDemand" class="w-4 h-4" />
           </CoreAppButton>
-        </div>
-      </div>
-
-      <div class="border-t border-(--color-border) pt-1.5" data-testid="quickpanel-settings-section">
-        <div class="font-heading text-xs tracking-wide text-(--color-text-muted) mb-0.5">
-          {{ $t('common.settings') }}
-        </div>
-        <div class="space-y-1">
-          <div class="flex items-center justify-between gap-1.5 py-1 rounded hover:bg-(--color-surface-hover) transition-colors">
-            <CoreAppTooltip
-              :text="
-                (messageBusStore.isConnected ? $t('bus.connected') : $t('bus.disconnected')) + ' - ' + $t('settings.autoRefreshTooltip')
-              "
-            >
-              <div class="flex items-center gap-5 cursor-help pl-0.5">
-                <CoreAppMessageBusStatusIcon :connected="messageBusStore.isConnected" class="pl-1.5" />
-                <div class="flex flex-col">
-                  <span class="text-xs">{{ $t('settings.autoRefresh') }}</span>
-                  <span
-                    class="text-xs font-medium"
-                    :class="messageBusStore.isConnected ? 'text-(--color-success-soft-text)' : 'text-(--color-error-soft-text)'"
-                  >
-                    {{ messageBusStore.isConnected ? $t('bus.connected') : $t('bus.disconnected') }}
-                  </span>
-                </div>
-              </div>
-            </CoreAppTooltip>
-            <CoreAppCheckbox v-model="autoRefreshEnabled" :aria-label="$t('settings.autoRefresh')" />
-          </div>
-          <div class="flex items-center gap-1.5 flex-nowrap">
-            <CoreAppSelectMenu
-              v-model="defaultPage"
-              :items="defaultPageOptions"
-              size="xs"
-              open-on-hover
-              :aria-label="$t('nav.defaultPage')"
-              :title="defaultPageTooltip"
-              class="flex-1 w-full"
-            />
-            <SettingsThemeToggle />
-            <SettingsLanguageDropdown direction="up" />
-          </div>
         </div>
       </div>
 
@@ -145,13 +104,11 @@
 <script setup lang="ts">
   import { useUserStore } from '~/stores/userStore'
   import { useSelectionStore } from '~/stores/selectionStore'
-  import { useMessageBusStore } from '~/stores/messageBusStore'
   import { useSessionTimer } from '~/composables/useSessionTimer'
 
   const icons = useIcons()
   const userStore = useUserStore()
   const selectionStore = useSelectionStore()
-  const messageBusStore = useMessageBusStore()
   const { callLogout } = useApiHelpers()
 
   type TabId = 'overview' | 'servers' | 'clients' | 'products'
@@ -200,52 +157,9 @@
     () => selectionStore.selectedServers.length + selectionStore.selectedClients.length + selectionStore.selectedProducts.length,
   )
 
-  const autoRefreshEnabled = computed({
-    get: () => messageBusStore.autoRefresh,
-    set: (val: boolean) => messageBusStore.setAutoRefresh(val),
-  })
-
   const { remainingSeconds, isWarning, formattedTimeText } = useSessionTimer(true)
   const { t: i18nT } = useI18n()
   const loggingOut = ref(false)
-
-  const DEFAULT_PAGE_KEY = 'opsi-webgui-default-page'
-  const defaultPageOptions = computed(() => [
-    { value: '/dashboard', label: $t('dashboard.title') },
-    { value: '/servers', label: $t('servers.title') },
-    { value: '/clients', label: $t('clients.title') },
-    { value: '/products', label: $t('products.title') },
-    { value: '/admin/terminal', label: $t('terminal.title') },
-    { value: '/admin/diagnostics', label: $t('diag.title') },
-    { value: '/admin/maintenance', label: $t('admin.maintenance') },
-  ])
-
-  const defaultPage = ref('/clients')
-
-  const defaultPageTooltip = computed(() => {
-    const page = defaultPageOptions.value.find((o) => o.value === defaultPage.value)
-    if (!page) return $t('nav.defaultPage')
-    if (defaultPage.value.startsWith('/admin/')) {
-      return `${$t('nav.defaultPage')}: ${$t('nav.admin')} - ${page.label}`
-    }
-    return `${$t('nav.defaultPage')}: ${page.label}`
-  })
-
-  onMounted(() => {
-    const stored = getCookie(DEFAULT_PAGE_KEY)
-    if (stored && defaultPageOptions.value.some((o) => o.value === stored)) {
-      defaultPage.value = stored
-    }
-  })
-
-  watch(defaultPage, (val) => {
-    document.cookie = `${DEFAULT_PAGE_KEY}=${val}; path=/; max-age=31536000; SameSite=Lax`
-  })
-
-  function getCookie(name: string): string | null {
-    const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)'))
-    return match?.[1] ? decodeURIComponent(match[1]) : null
-  }
 
   const $t = (key: string) => String(i18nT(key))
 

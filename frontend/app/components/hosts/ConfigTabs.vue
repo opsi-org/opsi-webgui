@@ -163,6 +163,7 @@
                 :icon="icons.x"
                 :title="$t('common.discard')"
                 @click="discardSingleAttribute(key)"
+                intent="destructive"
               />
             </div>
           </div>

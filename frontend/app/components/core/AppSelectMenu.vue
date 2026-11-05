@@ -37,7 +37,7 @@
 
   defineOptions({ inheritAttrs: false })
 
-  const props = defineProps<{ openOnHover?: boolean; borderless?: boolean; noCaret?: boolean }>()
+  const props = defineProps<{ openOnHover?: boolean; borderless?: boolean; noCaret?: boolean; command?: boolean }>()
   const attrs = useAttrs()
   const uiStore = useUiStore()
   const accessibleAttrs = computed(() => {
@@ -56,6 +56,20 @@
     const callerUi = (a.ui as Record<string, unknown> | undefined) ?? {}
     const callerContent = typeof callerUi.content === 'string' ? callerUi.content : ''
     a.ui = { ...callerUi, content: ['w-max min-w-(--reka-combobox-trigger-width)', callerContent].filter(Boolean).join(' ') }
+    if (props.command) {
+      a.variant = 'outline'
+      a.color = 'primary'
+      a.ui = {
+        ...callerUi,
+        content: ['w-max min-w-(--reka-combobox-trigger-width)', callerContent].filter(Boolean).join(' '),
+        base: [
+          'bg-transparent border border-(--color-primary) text-(--color-primary-soft-text) hover:bg-(--color-primary-soft-bg) disabled:opacity-50',
+          callerUi.base,
+        ]
+          .filter(Boolean)
+          .join(' '),
+      }
+    }
     return a
   })
 
