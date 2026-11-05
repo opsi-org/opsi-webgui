@@ -63,6 +63,7 @@
     "optional": "Optionale Einstellungen",
     "password": "Backup-Passwort",
     "restore": "Backup wiederherstellen",
+    "restoreConfirm": "Die Wiederherstellung dieses Backups überschreibt vorhandene Serverdaten. Fortfahren?",
     "restored": "Backup erfolgreich wiederhergestellt.",
     "restoreOptions": "Wiederherstellungsoptionen",
     "serverIdHandling": "Server-ID-Behandlung",
@@ -546,7 +547,6 @@
     "title": "Produkte",
     "unlock": "Entsperren",
     "unlockAll": "Alle entsperren",
-    "viewCatalogHint": "Produkte anzeigen – zeigt den Depot-Katalog, wenn keine Clients ausgewählt sind.",
     "unlocked": "Produkt {product} wurde entsperrt."
   },
   "quick": {
@@ -583,6 +583,8 @@
     "title": "Server"
   },
   "settings": {
+    "appearance": "Darstellung",
+    "language": "Sprache",
     "panelView": "Standard-Clientpanel",
     "rowActions": "Client-Zeilenaktionen",
     "showAllRowActions": "Alle Panelaktionen in der Tabelle anzeigen",

@@ -281,6 +281,7 @@
               />
               <CoreAppButton
                 :icon="icons.delete"
+                intent="destructive"
                 variant="ghost"
                 size="xs"
                 color="neutral"
@@ -403,6 +404,7 @@
                           block
                           class="py-2!"
                           @click="showMoreCreateMembers"
+                          intent="inline"
                         >
                           {{ $t('common.showMore') }} ({{ filteredCreateMembers.length - createMemberDisplayLimit }}
                           {{ $t('common.remaining') }})
@@ -530,6 +532,7 @@
                 block
                 class="py-2!"
                 @click="showMoreAvailableMembers"
+                intent="inline"
               >
                 {{ $t('common.showMore') }} ({{ filteredAvailableMembers.length - availableMemberDisplayLimit }}
                 {{ $t('common.remaining') }})
@@ -579,6 +582,7 @@
                       color="error"
                       :disabled="isReadOnly"
                       @click="removeSelectedMembers"
+                      intent="destructive"
                     >
                       {{ $t('common.remove') }} ({{ selectedMembers.length }})
                     </CoreAppButton>
@@ -591,6 +595,7 @@
                       :disabled="isReadOnly"
                       :title="$t('groups.membersRemoveAll')"
                       @click="confirmRemoveAllMembers"
+                      intent="destructive"
                     >
                       {{ $t('common.removeAll') }}
                     </CoreAppButton>
@@ -662,6 +667,7 @@
                     :title="$t('common.remove')"
                     class="shrink-0"
                     @click.stop="removeSingleMember(member)"
+                    intent="destructive"
                   />
                 </div>
                 <div v-if="loadingSelectedGroupMembers || (!selectedGroup && loadingMembers)" class="py-8 text-center">
@@ -678,6 +684,7 @@
                   block
                   class="py-2!"
                   @click="showMoreMembers"
+                  intent="inline"
                 >
                   {{ $t('common.showMore') }} ({{ filteredMembers.length - memberDisplayLimit }} {{ $t('common.remaining') }})
                 </CoreAppButton>
@@ -700,7 +707,13 @@
                 </h3>
                 <p class="text-sm text-(--color-text-muted)">{{ groupToDelete?.id }}</p>
               </div>
-              <CoreAppButton :icon="icons.x" variant="ghost" color="neutral" size="xs" @click="showDeleteModal = false" />
+              <CoreAppButton
+                :icon="icons.x"
+                intent="dismiss"
+                :title="String($t('common.close'))"
+                size="xs"
+                @click="showDeleteModal = false"
+              />
             </div>
           </template>
           <p class="text-sm text-(--color-text)">
@@ -719,7 +732,7 @@
           />
           <template #footer>
             <div class="flex justify-end gap-2">
-              <CoreAppButton variant="outline" color="primary" @click="showDeleteModal = false">{{ $t('common.cancel') }} </CoreAppButton>
+              <CoreAppButton intent="dismiss" @click="showDeleteModal = false">{{ $t('common.cancel') }} </CoreAppButton>
               <CoreAppButton color="error" :loading="deleting" @click="deleteGroup" :icon="icons.delete">
                 {{ $t('common.delete') }}</CoreAppButton
               >

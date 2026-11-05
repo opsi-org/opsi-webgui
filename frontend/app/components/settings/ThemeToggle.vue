@@ -10,7 +10,20 @@
   SettingsThemeToggle - Dark/light theme toggle switch.
 -->
 <template>
+  <CoreAppSelectMenu
+    v-if="field"
+    :model-value="isDarkMode ? 'dark' : 'light'"
+    :items="[
+      { value: 'light', label: $t('settings.theme.light') },
+      { value: 'dark', label: $t('settings.theme.dark') },
+    ]"
+    :aria-label="$t('settings.appearance')"
+    :search-input="false"
+    data-testid="theme-select"
+    @update:model-value="colorMode.preference = $event"
+  />
   <CoreAppButton
+    v-else
     @click="toggleTheme"
     color="primary"
     size="xs"
@@ -24,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+  defineProps<{ field?: boolean }>()
   const icons = useIcons()
   const colorMode = useColorMode()
   const { t: $t } = useI18n()

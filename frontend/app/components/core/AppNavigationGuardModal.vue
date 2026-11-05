@@ -16,7 +16,7 @@
     </template>
     <template #footer>
       <div class="flex gap-2 justify-end">
-        <CoreAppButton variant="outline" color="primary" @click="$emit('cancel')">{{ $t('nav.stayOnPage') }}</CoreAppButton>
+        <CoreAppButton intent="dismiss" @click="$emit('cancel')">{{ $t('nav.stayOnPage') }}</CoreAppButton>
         <CoreAppButton color="error" @click="$emit('confirm')">{{ $t('nav.leaveAnyway') }}</CoreAppButton>
       </div>
     </template>

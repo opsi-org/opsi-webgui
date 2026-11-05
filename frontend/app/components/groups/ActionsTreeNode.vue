@@ -38,11 +38,7 @@
         size="xs"
         class="w-5! h-5! p-0! shrink-0 flex items-center justify-center"
         :aria-label="String(isExpanded ? $t('common.collapse') : $t('common.expand'))"
-        :class="
-          isExpanded
-            ? 'text-(--color-primary) bg-primary/10'
-            : 'text-(--color-text-muted) hover:text-(--color-text) hover:bg-(--color-surface-hover)'
-        "
+        :aria-expanded="isExpanded"
         @click.stop="$emit('toggle', group.id)"
       >
         <CoreAppIcon
@@ -133,6 +129,7 @@
         />
         <CoreAppButton
           :icon="icons.delete"
+          intent="destructive"
           size="xs"
           variant="ghost"
           color="neutral"
@@ -181,6 +178,7 @@
           class="py-1.5!"
           :style="{ paddingLeft: `${(props.group.level || 0) * 16 + 24}px` }"
           @click="childrenLimit += CHILDREN_PAGE_SIZE"
+          intent="inline"
         >
           {{ $t('common.showMore') }} ({{ (group.children?.length || 0) - childrenLimit }} {{ $t('common.remaining') }})
         </CoreAppButton>

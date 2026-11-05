@@ -18,7 +18,6 @@
           class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
           role="button"
           tabindex="0"
-          :aria-label="$t('diag.health')"
           @click="navigateTo('/admin/diagnostics/healthcheck')"
           @keydown.enter="navigateTo('/admin/diagnostics/healthcheck')"
           @keydown.space.prevent="navigateTo('/admin/diagnostics/healthcheck')"
@@ -32,7 +31,7 @@
               aria-hidden="true"
             />
           </div>
-          <div v-if="healthCounts" class="flex items-center gap-2 flex-wrap mt-4" aria-hidden="true">
+          <div v-if="healthCounts" class="flex items-center gap-2 flex-wrap mt-4">
             <CoreAppStatusBadge v-if="healthCounts.error > 0" status="error" :value="healthCounts.error" :label="$t('common.errors')" />
             <CoreAppStatusBadge
               v-if="healthCounts.warning > 0"
@@ -103,7 +102,6 @@
           class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
           role="button"
           tabindex="0"
-          :aria-label="$t('diag.systemInfo')"
           @click="navigateTo('/admin/diagnostics/system')"
           @keydown.enter="navigateTo('/admin/diagnostics/system')"
           @keydown.space.prevent="navigateTo('/admin/diagnostics/system')"
@@ -144,7 +142,6 @@
           class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
           role="button"
           tabindex="0"
-          :aria-label="String($t('dashboard.totalClients'))"
           @click="navigateTo('/clients')"
           @keydown.enter="navigateTo('/clients')"
           @keydown.space.prevent="navigateTo('/clients')"
@@ -212,7 +209,6 @@
           class="group opsi-card opsi-card-hover cursor-pointer transition-all duration-200"
           role="button"
           tabindex="0"
-          :aria-label="String($t('dashboard.totalProducts'))"
           @click="navigateTo('/products')"
           @keydown.enter="navigateTo('/products')"
           @keydown.space.prevent="navigateTo('/products')"

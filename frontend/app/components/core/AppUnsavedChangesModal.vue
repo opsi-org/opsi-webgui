@@ -12,12 +12,13 @@
 
 <template>
   <template v-if="totalChangesCount > 0">
-    <CoreAppButton :size="size" color="warning" variant="soft" @click="open = true">
+    <CoreAppButton :size="size" intent="command" @click="open = true">
       {{ $t('unsaved.changes') }}
       <CoreAppStatusBadge status="warning" size="xs" :value="totalChangesCount" />
     </CoreAppButton>
     <CoreAppHoverPopover v-if="showSaveDiscard" :title="String($t('unsaved.quickActions'))">
       <CoreAppButton
+        intent="command"
         :size="size"
         color="neutral"
         variant="outline"
@@ -27,10 +28,10 @@
         :aria-label="String($t('unsaved.quickActions'))"
       />
       <template #content>
-        <CoreAppButton size="sm" color="success" variant="soft" :icon="icons.check" block :loading="isSaving" @click="handleQuickSave">
+        <CoreAppButton size="sm" intent="confirm" :icon="icons.check" block :loading="isSaving" @click="handleQuickSave">
           {{ $t('unsaved.saveNow') }}
         </CoreAppButton>
-        <CoreAppButton size="sm" color="error" variant="soft" :icon="icons.delete" block @click="handleQuickDiscard">
+        <CoreAppButton size="sm" intent="destructive" :icon="icons.delete" block @click="handleQuickDiscard">
           {{ $t('unsaved.discardNow') }}
         </CoreAppButton>
       </template>
@@ -102,7 +103,13 @@
                 </td>
                 <td class="px-2 py-1 text-center">
                   <CoreAppTooltip :text="$t('common.discard')">
-                    <CoreAppButton size="xs" :icon="icons.x" color="neutral" variant="ghost" @click="change.discard()" />
+                    <CoreAppButton
+                      size="xs"
+                      :icon="icons.x"
+                      intent="destructive"
+                      :title="String($t('common.discard'))"
+                      @click="change.discard()"
+                    />
                   </CoreAppTooltip>
                 </td>
               </tr>
@@ -138,7 +145,8 @@
                     <CoreAppButton
                       size="xs"
                       :icon="icons.x"
-                      color="neutral"
+                      intent="destructive"
+                      :title="String($t('common.discard'))"
                       variant="ghost"
                       @click="configRef?.discardSingleParam?.(key)"
                     />
@@ -177,7 +185,8 @@
                     <CoreAppButton
                       size="xs"
                       :icon="icons.x"
-                      color="neutral"
+                      intent="destructive"
+                      :title="String($t('common.discard'))"
                       variant="ghost"
                       @click="configRef?.discardSingleAttribute?.(item.key)"
                     />
@@ -246,7 +255,7 @@
         </div>
         <div class="flex gap-2 justify-end">
           <template v-if="totalChangesCount > 0">
-            <CoreAppButton variant="outline" color="primary" @click="handleDiscardAll">{{ $t('common.discardAll') }} </CoreAppButton>
+            <CoreAppButton variant="solid" color="error" @click="handleDiscardAll">{{ $t('common.discardAll') }} </CoreAppButton>
             <CoreAppButton color="primary" :loading="isSaving" @click="handleSaveAll">
               {{ processAfterSave && showProcessOptions ? $t('actions.saveAndProcess') : $t('common.saveAll') }}
             </CoreAppButton>

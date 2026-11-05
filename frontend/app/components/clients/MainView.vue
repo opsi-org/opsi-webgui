@@ -52,6 +52,7 @@
       </CoreAppTooltip>
       <CoreAppButton
         :icon="icons.add"
+        intent="command"
         color="primary"
         size="sm"
         @click="openAddPanel"
@@ -290,6 +291,7 @@
             :color="panelType === view.value ? 'primary' : 'neutral'"
             :class="panelType === view.value ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
             :aria-label="view.label"
+            :aria-expanded="panelType === view.value"
             @click="openClientPanelView(clientPanelActionTarget, view.value)"
           />
         </CoreAppTooltip>

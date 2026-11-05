@@ -20,7 +20,14 @@
         :placeholder="String($t('common.filter'))"
         @keydown.enter.prevent="emit('save')"
       />
-      <CoreAppButton size="sm" color="primary" :icon="icons.bookmark" :disabled="!canSave" @click="emit('save')" />
+      <CoreAppButton
+        size="sm"
+        intent="confirm"
+        :icon="icons.bookmark"
+        :title="String($t('savedSearches.saveCurrent'))"
+        :disabled="!canSave"
+        @click="emit('save')"
+      />
     </div>
 
     <div v-if="entries.length > 0" class="flex justify-end">

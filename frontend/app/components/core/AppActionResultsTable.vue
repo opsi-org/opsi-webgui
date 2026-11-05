@@ -17,8 +17,8 @@
         v-for="option in filterOptions"
         :key="option.value"
         size="xs"
-        :variant="filter === option.value ? 'solid' : 'outline'"
-        :color="option.value === 'failed' ? 'error' : option.value === 'succeeded' ? 'success' : 'neutral'"
+        intent="toggle"
+        :active="filter === option.value"
         @click="filter = option.value"
       >
         {{ option.label }} ({{ option.count }})
