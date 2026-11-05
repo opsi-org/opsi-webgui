@@ -29,6 +29,7 @@
       </CoreAppTooltip>
       <CoreAppButton
         :icon="icons.globalParameters"
+        intent="command"
         color="primary"
         size="sm"
         :title="String($t('config.globalParameters'))"
@@ -39,6 +40,7 @@
       </CoreAppButton>
       <CoreAppButton
         v-if="!isReadOnly && hasServerWriteAccess"
+        intent="command"
         :icon="icons.add"
         color="primary"
         variant="soft"
@@ -112,8 +114,13 @@
           variant="ghost"
           size="xs"
           :title="$t('config.title')"
-          :color="panelServer?.depotId === (row as Server).depotId ? 'primary' : 'neutral'"
-          :class="panelServer?.depotId === (row as Server).depotId ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+          :color="panelType === 'config' && panelServer?.depotId === (row as Server).depotId ? 'primary' : 'neutral'"
+          :class="
+            panelType === 'config' && panelServer?.depotId === (row as Server).depotId
+              ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!'
+              : ''
+          "
+          :aria-expanded="panelType === 'config' && panelServer?.depotId === (row as Server).depotId"
           @click.stop="openConfig(row as Server)"
         />
       </template>

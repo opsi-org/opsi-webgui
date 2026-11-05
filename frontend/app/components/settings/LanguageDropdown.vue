@@ -10,7 +10,28 @@
   SettingsLanguageDropdown - Language selection dropdown.
 -->
 <template>
-  <CoreAppPopover open-on-hover :content="{ side: direction === 'up' ? 'top' : 'bottom', align: 'end' }">
+  <div v-if="field" class="space-y-2">
+    <CoreAppSelectMenu
+      :model-value="currentLocale"
+      :items="
+        locales.filter((locale) => supportedLocales.includes(locale.code)).map((locale) => ({ value: locale.code, label: locale.name }))
+      "
+      :aria-label="t('settings.language')"
+      :search-input="false"
+      data-testid="language-select"
+      @update:model-value="switchTo"
+    />
+    <a
+      :href="transifexUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-xs text-(--color-primary-soft-text) underline"
+      :title="String(t('message.contributeTranslations'))"
+    >
+      {{ t('message.translationMissing') }}
+    </a>
+  </div>
+  <CoreAppPopover v-else open-on-hover :content="{ side: direction === 'up' ? 'top' : 'bottom', align: 'end' }">
     <CoreAppButton color="primary" size="xs" data-testid="language-dropdown" :title="String(t('common.settings'))">
       <CoreAppIcon :name="icons.language" class="w-3.5 h-3.5" />
       <span class="text-xs font-medium">{{ currentLocale.toUpperCase() }}</span>
@@ -56,6 +77,7 @@
 
   const props = defineProps<{
     direction?: 'up' | 'down'
+    field?: boolean
   }>()
 
   const icons = useIcons()

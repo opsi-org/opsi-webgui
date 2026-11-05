@@ -20,7 +20,7 @@
       no-caret
       size="xs"
       class="flex-1 min-w-0"
-      :aria-label="String($t('actions.request'))"
+      :aria-label="`${selectedBulkActionLabel}: ${$t('actions.request')}`"
       @update:model-value="handleBulkActionSelect"
     >
       <span
@@ -61,7 +61,7 @@
         class="min-w-24"
         :class="requestColorClass"
         open-on-hover
-        :aria-label="String($t('actions.request'))"
+        :aria-label="`${currentLabel}: ${$t('actions.request')}`"
         @update:model-value="handleChange"
       />
       <CoreAppTooltipTable v-if="isMixed" :title="productId" :rows="mixedTooltipRows">

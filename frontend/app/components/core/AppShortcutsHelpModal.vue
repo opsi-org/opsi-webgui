@@ -62,6 +62,7 @@
     {
       title: $t('shortcuts.global'),
       items: [
+        { keys: [$t('shortcuts.modifierKey'), ','], description: $t('common.settings') },
         { keys: [$t('shortcuts.modifierKey'), 'S'], description: $t('shortcuts.save') },
         { keys: [$t('shortcuts.modifierKey'), 'D'], description: $t('shortcuts.discard') },
         { keys: [$t('shortcuts.modifierKey'), 'Shift', 'Q'], description: $t('shortcuts.toggleQuickPanel') },

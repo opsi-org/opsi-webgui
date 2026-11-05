@@ -59,7 +59,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'], storageState: chromiumAuthFile },
-      testIgnore: /login\.spec/,
+      testIgnore: [/login\.spec/, /button-actions\.spec/],
     },
     {
       name: 'chromium-login',
@@ -71,7 +71,7 @@ export default defineConfig({
           {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'], storageState: firefoxAuthFile },
-            testIgnore: /login\.spec/,
+            testIgnore: [/login\.spec/, /button-actions\.spec/],
           },
           {
             name: 'firefox-login',

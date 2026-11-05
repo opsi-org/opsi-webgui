@@ -63,6 +63,7 @@
               size="xs"
               variant="ghost"
               :color="item.favorite ? 'warning' : 'neutral'"
+              :aria-pressed="Boolean(item.favorite)"
               :aria-label="String(item.favorite ? $t('savedSearches.unfavorite') : $t('savedSearches.favorite'))"
               @click="emit('toggle-favorite', item.id)"
             />

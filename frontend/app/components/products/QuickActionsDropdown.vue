@@ -13,6 +13,7 @@
   <div class="contents">
     <CoreAppTooltip v-if="hasSelections && compact" :text="$t('quick.actions')">
       <CoreAppButton
+        intent="command"
         variant="soft"
         color="primary"
         size="sm"
@@ -25,6 +26,7 @@
     </CoreAppTooltip>
     <CoreAppButton
       v-else-if="hasSelections"
+      intent="command"
       color="primary"
       size="sm"
       @click="dialogOpen = true"
@@ -35,12 +37,13 @@
       <span class="hidden sm:inline">{{ $t('quick.actions') }}</span>
     </CoreAppButton>
     <CoreAppTooltip v-else-if="compact" :text="$t('products.quickHelp')">
-      <CoreAppButton variant="ghost" color="neutral" size="sm" class="opacity-70" :aria-label="String($t('products.quickHelp'))" disabled>
+      <CoreAppButton intent="command" size="sm" :title="String($t('products.quickHelp'))" disabled>
         <CoreAppIcon :name="icons.product" class="w-4 h-4" />
       </CoreAppButton>
     </CoreAppTooltip>
     <CoreAppButton
       v-else
+      intent="command"
       variant="ghost"
       color="neutral"
       size="sm"
@@ -104,7 +107,7 @@
                         :items="installationStatusOptions"
                         size="xs"
                         class="w-full"
-                        :aria-label="String($t('products.status'))"
+                        :aria-label="`${$t('products.status')}: ${installationStatusOptions.find((option) => option.value === filters.installationStatus)?.label ?? filters.installationStatus}`"
                         data-testid="product-quick-actions-installation-status"
                         @update:model-value="fetchPreview"
                       />
@@ -118,7 +121,7 @@
                         :items="actionResultOptions"
                         size="xs"
                         class="w-full"
-                        :aria-label="String($t('common.result'))"
+                        :aria-label="`${$t('common.result')}: ${actionResultOptions.find((option) => option.value === filters.actionResult)?.label ?? filters.actionResult}`"
                         data-testid="product-quick-actions-action-result"
                         @update:model-value="fetchPreview"
                       />
@@ -146,7 +149,7 @@
                     :items="actionRequestOptions"
                     size="sm"
                     class="w-full"
-                    :aria-label="String($t('actions.request'))"
+                    :aria-label="`${$t('actions.request')}: ${actionRequestOptions.find((option) => option.value === actionRequest)?.label ?? actionRequest}`"
                     data-testid="product-quick-actions-action-request"
                     @update:model-value="fetchPreview"
                   />
@@ -163,7 +166,7 @@
                     :items="scopeOptions"
                     size="sm"
                     class="w-full"
-                    :aria-label="String($t('fields.scope'))"
+                    :aria-label="`${$t('fields.scope')}: ${scopeOptions.find((option) => option.value === scope)?.label ?? scope}`"
                     data-testid="product-quick-actions-scope"
                     @update:model-value="fetchPreview"
                   />
@@ -265,9 +268,10 @@
                 @close="applyResult = null"
               />
               <div class="flex justify-end gap-2">
-                <CoreAppButton variant="outline" color="primary" size="sm" @click="resetForm">{{ $t('common.reset') }} </CoreAppButton>
+                <CoreAppButton intent="dismiss" size="sm" @click="resetForm">{{ $t('common.reset') }} </CoreAppButton>
                 <CoreAppButton
                   v-if="applyResult?.type === 'success'"
+                  intent="dismiss"
                   variant="outline"
                   color="primary"
                   size="sm"

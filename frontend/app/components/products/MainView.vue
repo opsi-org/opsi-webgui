@@ -323,7 +323,13 @@
         <CoreAppButton
           :icon="icons.config"
           variant="ghost"
-          color="neutral"
+          :color="showConfigPanel && configProduct?.productId === (row as ProductRow).productId ? 'primary' : 'neutral'"
+          :class="
+            showConfigPanel && configProduct?.productId === (row as ProductRow).productId
+              ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!'
+              : ''
+          "
+          :aria-expanded="showConfigPanel && configProduct?.productId === (row as ProductRow).productId"
           size="xs"
           :title="$t('config.title')"
           @click.stop="openProductConfig(row as ProductRow)"

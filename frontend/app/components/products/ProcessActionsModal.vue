@@ -71,6 +71,7 @@
                     color="primary"
                     :disabled="arraysEqual(clientIds, selectionStore.selectedClients)"
                     @click="clientIds = [...selectionStore.selectedClients]"
+                    intent="dismiss"
                   >
                     {{ $t('common.reset') }}
                   </CoreAppButton>
@@ -87,6 +88,7 @@
                       color="neutral"
                       :icon="icons.x"
                       @click="clientIds = clientIds.filter((c) => c !== id)"
+                      :title="String($t('common.remove'))"
                     />
                   </div>
                 </div>
@@ -100,7 +102,7 @@
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <CoreAppButton variant="outline" color="primary" size="sm" @click="open = false">
+            <CoreAppButton intent="dismiss" size="sm" @click="open = false">
               {{ $t('common.cancel') }}
             </CoreAppButton>
             <CoreAppButton

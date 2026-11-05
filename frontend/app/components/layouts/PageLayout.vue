@@ -82,6 +82,7 @@
           <div class="flex items-center gap-3 rounded-md px-1 transition-colors hover:bg-(--color-primary-soft-bg)">
             <CoreAppButton
               v-if="overlay"
+              intent="dismiss"
               @click="$emit('close-panel')"
               variant="soft"
               color="primary"
@@ -105,6 +106,7 @@
               <slot name="panel-actions" />
               <CoreAppButton
                 @click="$emit('close-panel')"
+                intent="dismiss"
                 variant="soft"
                 color="primary"
                 size="xs"

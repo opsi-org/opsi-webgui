@@ -42,6 +42,7 @@
       <CoreAppButton
         v-if="selectedCount > 0"
         :icon="icons.xCircle"
+        intent="dismiss"
         size="xs"
         variant="outline"
         color="primary"
@@ -152,6 +153,7 @@
               block
               class="py-1!"
               @click="showMoreClientItems(section.id)"
+              intent="inline"
             >
               {{ $t('common.showMore') }} ({{ section.flatItems.length - clientDisplayLimit(section.id) }} {{ $t('common.remaining') }})
             </CoreAppButton>
@@ -237,6 +239,7 @@
           block
           class="py-1!"
           @click="productDisplayLimit += DISPLAY_BATCH"
+          intent="inline"
         >
           {{ $t('common.showMore') }} ({{ productFlatItems.length - productDisplayLimit }} {{ $t('common.remaining') }})
         </CoreAppButton>
