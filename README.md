@@ -41,6 +41,8 @@ Access the OPSI-WebGUI at `https://<SERVER>:4447/addons/webgui/app`.
 
 Download [opsi-webgui.zip](https://tools.43.opsi.org/stable/opsi-webgui.zip) and upload it via the opsiconfd admin interface at `https://<SERVER>:4447/admin/#addons`.
 
+Updating this way sometimes does not work. On the opsi-server delete `/usr/lib/opsiconfd/addons/webgui`. This way, the version in `/var/lib/opsiconfd/addons/webgui` will be used.
+
 ---
 
 ## Development
