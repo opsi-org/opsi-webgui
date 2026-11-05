@@ -495,7 +495,16 @@
   }
 
   async function executeAction() {
-    if (!currentAction.value || !props.clientIds.length) return
+    if (
+      !confirmOpen.value ||
+      !currentAction.value ||
+      !props.clientIds.length ||
+      isReadOnly.value ||
+      loading.value ||
+      !canExecute.value ||
+      (currentAction.value === 'delete' && !canCreateClients.value)
+    )
+      return
 
     loading.value = true
     actionResults.value = {}
@@ -607,4 +616,30 @@
       loading.value = false
     }
   }
+
+  defineShortcuts(
+    computed(() => {
+      if (!confirmOpen.value && !resultOpen.value) return {}
+
+      return {
+        ctrl_escape: {
+          usingInput: true,
+          handler: (e: KeyboardEvent) => {
+            e.preventDefault()
+            if (resultOpen.value) resultOpen.value = false
+            else confirmOpen.value = false
+          },
+        },
+        ctrl_enter: confirmOpen.value
+          ? {
+              usingInput: true,
+              handler: (e: KeyboardEvent) => {
+                e.preventDefault()
+                void executeAction()
+              },
+            }
+          : undefined,
+      }
+    }),
+  )
 </script>
