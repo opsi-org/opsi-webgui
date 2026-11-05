@@ -87,6 +87,7 @@
                   variant="soft"
                   color="primary"
                   :loading="unblockingClient"
+                  intent="inline"
                   :disabled="isReadOnly"
                   @click="unblockSingleClient(client.clientId)"
                 >
@@ -100,6 +101,7 @@
               color="warning"
               size="sm"
               :loading="unblockingClient"
+              intent="command"
               :disabled="isReadOnly"
               @click="unblockAll('clients')"
               >{{ $t('clients.unblockAll') }}
@@ -162,6 +164,7 @@
                   variant="soft"
                   color="primary"
                   :loading="unlockingProduct"
+                  intent="inline"
                   :disabled="isReadOnly"
                   @click="unlockSingleProduct(product.productId)"
                 >
@@ -175,6 +178,7 @@
               color="warning"
               size="sm"
               :loading="unlockingProduct"
+              intent="command"
               :disabled="isReadOnly"
               @click="unblockAll('products')"
               >{{ $t('products.unlockAll') }}
@@ -200,27 +204,11 @@
                 v-for="state in ['normal', 'maintenance']"
                 :key="state"
                 @click="newAppState.type = state"
-                variant="ghost"
-                color="neutral"
-                :class="[
-                  'flex-1 min-w-28 px-4! py-2! rounded-lg border-2 transition-all text-center h-auto!',
-                  newAppState.type === state
-                    ? state === 'normal'
-                      ? 'border-(--color-primary) bg-(--color-primary-soft-bg)'
-                      : 'border-(--color-warning)/50 bg-(--color-warning-soft-bg)'
-                    : 'border-(--color-border) hover:border-(--color-text-muted)',
-                ]"
+                intent="toggle"
+                :active="newAppState.type === state"
+                class="flex-1 min-w-28 px-4! py-2! rounded-md text-center h-auto!"
               >
-                <div
-                  class="font-medium"
-                  :class="
-                    newAppState.type === state
-                      ? state === 'normal'
-                        ? 'text-(--color-primary-soft-text)'
-                        : 'text-(--color-warning-soft-text)'
-                      : ''
-                  "
-                >
+                <div class="font-medium">
                   {{ $t(state) }}
                 </div>
               </CoreAppButton>
@@ -252,10 +240,11 @@
                       {{ addr }}
                       <CoreAppButton
                         @click="removeAddressException(idx)"
+                        :title="String($t('common.remove'))"
                         variant="ghost"
                         color="neutral"
                         size="xs"
-                        class="text-(--color-text-muted) hover:text-(--color-error-soft-text)"
+                        class="text-(--color-text-muted)"
                       >
                         <CoreAppIcon :name="icons.x" class="w-3 h-3" />
                       </CoreAppButton>
@@ -268,7 +257,7 @@
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-2 mt-auto">
-              <CoreAppButton variant="outline" color="primary" size="sm" @click="resetAppState">{{ $t('common.reset') }} </CoreAppButton>
+              <CoreAppButton intent="dismiss" size="sm" @click="resetAppState">{{ $t('common.reset') }} </CoreAppButton>
               <CoreAppButton
                 color="primary"
                 size="sm"
@@ -411,6 +400,7 @@
                     size="sm"
                     :color="'primary'"
                     :variant="serverIdOption === opt.value ? 'solid' : 'outline'"
+                    :aria-pressed="serverIdOption === opt.value"
                   >
                     {{ opt.label }}
                   </CoreAppButton>
@@ -451,7 +441,7 @@
               class="mt-auto"
               :loading="restoringBackup || uploadingFile"
               :disabled="isReadOnly || !hasServerWriteAccess || !selectedFile"
-              @click="restoreBackup"
+              @click="showRestoreConfirmation = true"
               >{{ $t('backup.restore') }}</CoreAppButton
             >
           </div>
@@ -459,6 +449,24 @@
       </div>
     </div>
   </div>
+  <CoreAppModal v-model:open="showRestoreConfirmation" :title="$t('backup.restore')">
+    <template #body>
+      <CoreAppAlertInline color="warning" :description="$t('backup.restoreConfirm')" />
+    </template>
+    <template #footer>
+      <div class="flex justify-end gap-2">
+        <CoreAppButton intent="dismiss" @click="showRestoreConfirmation = false">{{ $t('common.cancel') }}</CoreAppButton>
+        <CoreAppButton
+          color="warning"
+          variant="solid"
+          :disabled="isReadOnly || !hasServerWriteAccess || !selectedFile"
+          @click="confirmRestore"
+        >
+          {{ $t('backup.restore') }}
+        </CoreAppButton>
+      </div>
+    </template>
+  </CoreAppModal>
 </template>
 
 <script setup lang="ts">
@@ -491,6 +499,7 @@
     password: '',
   })
   const restoringBackup = ref(false)
+  const showRestoreConfirmation = ref(false)
   const uploadingFile = ref(false)
   const uploadProgress = ref(0)
   const selectedFile = ref<File | null>(null)
@@ -785,6 +794,11 @@
       selectedFile.value = input.files[0]
       selectedFileName.value = input.files[0].name
     }
+  }
+
+  function confirmRestore() {
+    showRestoreConfirmation.value = false
+    return restoreBackup()
   }
 
   async function restoreBackup() {

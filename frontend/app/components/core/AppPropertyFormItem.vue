@@ -101,8 +101,9 @@
                     <CoreAppButton
                       size="xs"
                       variant="ghost"
-                      color="primary"
+                      color="neutral"
                       :icon="icons.add"
+                      :title="String($t('common.add'))"
                       :disabled="!customInput.trim()"
                       @click="addCustomMultiItem"
                     />
@@ -112,8 +113,12 @@
                   v-for="opt in filteredMultiOptions"
                   :key="opt"
                   type="button"
+                  :aria-pressed="arrayValue.includes(opt)"
                   class="flex items-center gap-2 w-full px-2.5 text-sm hover:bg-(--color-surface-hover) transition-colors"
-                  :class="size === 'xs' ? 'py-0.5 min-h-8' : 'py-1 min-h-10 md:min-h-8'"
+                  :class="[
+                    size === 'xs' ? 'py-0.5 min-h-8' : 'py-1 min-h-10 md:min-h-8',
+                    arrayValue.includes(opt) ? 'bg-(--color-primary-soft-bg) text-(--color-primary-soft-text)' : '',
+                  ]"
                   @click="toggleMultiItem(opt)"
                 >
                   <CoreAppIcon
@@ -166,7 +171,8 @@
                 variant="ghost"
                 color="neutral"
                 size="xs"
-                class="shrink-0 p-0! hover:text-(--color-error-soft-text) transition-colors opacity-60 group-hover/tag:opacity-100"
+                class="shrink-0 p-0! transition-colors opacity-60 group-hover/tag:opacity-100"
+                :title="String($t('common.remove'))"
                 @click="removeMultiItem(idx)"
               >
                 <CoreAppIcon :name="icons.x" class="w-3 h-3" />
@@ -180,6 +186,7 @@
               size="xs"
               class="p-0! inline-flex items-center gap-0.5 px-1 py-0.5 text-xs text-(--color-text-muted) hover:text-(--color-primary) transition-colors"
               @click="openMultilineEditor"
+              :title="String($t('common.editValue'))"
             >
               <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
             </CoreAppButton>
@@ -344,6 +351,7 @@
             variant="ghost"
             color="neutral"
             :icon="icons.pencilSquare"
+            :title="String($t('common.editValue'))"
             @click="openMultilineEditor"
           />
           <CoreAppButton

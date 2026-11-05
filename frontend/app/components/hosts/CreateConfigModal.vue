@@ -68,8 +68,9 @@
                   variant="ghost"
                   color="neutral"
                   size="xs"
-                  class="p-0! hover:text-(--color-error-soft-text) transition-colors"
+                  class="p-0! transition-colors"
                   @click="newConfig.possibleValues.splice(idx, 1)"
+                  :title="String($t('common.remove'))"
                 >
                   <CoreAppIcon :name="icons.x" class="w-3 h-3" />
                 </CoreAppButton>
@@ -107,8 +108,9 @@
                   variant="ghost"
                   color="neutral"
                   size="xs"
-                  class="p-0! hover:text-(--color-error-soft-text) transition-colors"
+                  class="p-0! transition-colors"
                   @click="newConfig.defaultValues.splice(idx, 1)"
+                  :title="String($t('common.remove'))"
                 >
                   <CoreAppIcon :name="icons.x" class="w-3 h-3" />
                 </CoreAppButton>

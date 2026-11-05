@@ -45,6 +45,7 @@
     <template v-else>
       <CoreAppSelectMenu
         v-if="clientIds.length > 0"
+        command
         open-on-hover
         borderless
         no-caret
@@ -52,7 +53,7 @@
         :items="actionItems"
         :model-value="null"
         :class="compact ? '' : 'w-full'"
-        :aria-label="String($t('clients.actions'))"
+        :aria-label="`${clientIds.length} ${$t('clients.actions')}`"
         :ui="{ content: 'max-h-96 overflow-y-auto' }"
         data-testid="client-quick-actions-trigger"
         @update:model-value="handleActionSelect"
@@ -73,6 +74,7 @@
       </CoreAppSelectMenu>
       <CoreAppTooltip v-else :text="String($t('clients.selectFirst'))">
         <CoreAppButton
+          intent="command"
           variant="soft"
           color="primary"
           size="sm"
@@ -172,6 +174,7 @@
               v-for="os in osTypes"
               :key="os.value"
               :variant="deployOptions.type === os.value ? 'solid' : 'outline'"
+              :aria-pressed="deployOptions.type === os.value"
               :color="deployOptions.type === os.value ? 'primary' : 'neutral'"
               size="sm"
               class="justify-center"
@@ -245,7 +248,7 @@
         </div>
 
         <div class="flex justify-end gap-2 pt-3 border-(--color-border)">
-          <CoreAppButton variant="outline" color="primary" @click="confirmOpen = false">{{ $t('common.cancel') }} </CoreAppButton>
+          <CoreAppButton intent="dismiss" @click="confirmOpen = false">{{ $t('common.cancel') }} </CoreAppButton>
           <CoreAppButton
             :color="currentAction === 'delete' ? 'error' : 'primary'"
             :loading="loading"

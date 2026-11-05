@@ -25,7 +25,30 @@ test.describe('Keyboard shortcuts help modal', () => {
       functional: async (p) => {
         const modal = p.getByRole('dialog')
         await expect(modal).toBeVisible({ timeout: 10000 })
+        const settingsShortcut = modal.getByRole('listitem').filter({ has: p.locator('kbd', { hasText: /^,$/ }) })
+        await expect(settingsShortcut).toContainText(/Einstellungen|Settings|Paramètres/)
+        await p.keyboard.press('Control+,')
+        await expect(modal).toBeVisible()
+        await expect(p.getByTestId('settings-dialog')).toBeHidden()
       },
     })
+  })
+
+  test('opening settings with Control+Comma restores focus', async ({ page }) => {
+    await page.goto('/clients')
+    await expect(page.getByTestId('settings-toggle')).toHaveAttribute('aria-keyshortcuts', 'Control+,')
+
+    for (const trigger of [page.getByTestId('global-search'), page.locator('main').getByRole('textbox').first()]) {
+      await trigger.focus()
+      await page.keyboard.press('Control+,')
+      await expect(page.getByTestId('settings-dialog')).toBeVisible()
+      await expect(page.getByRole('dialog')).toHaveCount(1)
+
+      await page.keyboard.press('Control+,')
+      await expect(page.getByRole('dialog')).toHaveCount(1)
+      await page.getByTestId('settings-close').click()
+      await expect(page.getByTestId('settings-dialog')).toBeHidden()
+      await expect(trigger).toBeFocused()
+    }
   })
 })

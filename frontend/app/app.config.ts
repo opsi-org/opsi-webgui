@@ -24,13 +24,22 @@ export default defineAppConfig({
     },
     button: {
       slots: {
-        base: 'font-medium transition-colors',
+        // Avoid the legacy .border rule that overrides transparent border colors.
+        base: 'font-medium transition-colors border-1 border-transparent',
       },
       defaultVariants: {
         color: 'primary',
         variant: 'solid',
       },
       variants: {
+        // Keep text line boxes aligned with icons despite global typography overrides.
+        size: {
+          xs: { base: 'leading-4!' },
+          sm: { base: 'leading-4!' },
+          md: { base: 'leading-5!' },
+          lg: { base: 'leading-5!' },
+          xl: { base: 'leading-6!' },
+        },
         variant: {
           solid: '',
           outline: 'bg-transparent border',

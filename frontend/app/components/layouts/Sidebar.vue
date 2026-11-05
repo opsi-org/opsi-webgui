@@ -11,7 +11,7 @@
 -->
 <template>
   <nav class="h-full flex flex-col bg-opsi-blue text-white opsi-compact-page">
-    <div :class="['flex-1 py-1', collapsed ? 'overflow-visible' : 'overflow-y-auto']">
+    <div :class="['flex-1 min-h-0 py-1', collapsed ? 'overflow-visible' : 'overflow-y-auto']">
       <template v-for="(group, groupIdx) in navGroups" :key="groupIdx">
         <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- hover-popup wrapper; interactive content provided by child links/buttons -->
         <div
@@ -119,6 +119,23 @@
         <div v-if="groupIdx < navGroups.length - 1" class="my-3"></div>
       </template>
     </div>
+    <div class="shrink-0 p-0.5 border-t border-white/20">
+      <CoreAppButton
+        variant="ghost"
+        color="neutral"
+        data-testid="settings-toggle"
+        :aria-label="t('common.settings')"
+        aria-haspopup="dialog"
+        aria-keyshortcuts="Control+,"
+        :title="`${t('common.settings')} (${t('shortcuts.modifierKey')}+,)`"
+        class="w-full flex items-center gap-2 px-2 py-2 rounded-lg text-white hover:bg-white/15"
+        :class="{ 'justify-center': collapsed }"
+        @click="$emit('open-settings', $event)"
+      >
+        <CoreAppIcon :name="icons.config" class="w-5 h-5 shrink-0" />
+        <span v-if="!collapsed" class="text-xs">{{ t('common.settings') }}</span>
+      </CoreAppButton>
+    </div>
   </nav>
 </template>
 
@@ -127,6 +144,7 @@
     collapsed: boolean
     isMobile: boolean
   }>()
+  defineEmits<{ 'open-settings': [event: MouseEvent] }>()
 
   const icons = useIcons()
   const { t: $t } = useI18n()

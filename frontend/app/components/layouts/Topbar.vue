@@ -18,6 +18,7 @@
         color="neutral"
         class="p-1.5! text-white hover:bg-white/20 active:bg-white/20! focus:bg-transparent!"
         :aria-label="$t('nav.sidebar')"
+        :aria-expanded="sidebarOpen"
       >
         <CoreAppIcon :name="icons.menu" class="w-5 h-5" />
       </CoreAppButton>
@@ -29,7 +30,9 @@
       </NuxtLink>
     </div>
     <div class="flex-1" />
-    <nav class="flex items-center gap-1.5 md:gap-2 px-1.5 py-1 rounded-lg">
+    <nav
+      class="flex items-center gap-1.5 md:gap-2 px-1.5 py-1 rounded-lg [--color-primary:var(--ui-color-primary-100)] [--color-primary-soft-text:var(--ui-color-primary-50)] [--color-primary-soft-bg:rgb(255_255_255/0.12)]"
+    >
       <CoreAppGlobalSearch />
 
       <div
@@ -69,10 +72,10 @@
       </NuxtLink>
       <CoreAppButton
         @click="$emit('toggle-quickpanel')"
-        variant="ghost"
-        color="neutral"
+        intent="inline"
+        :aria-expanded="quickpanelOpen"
         data-testid="quickpanel-toggle"
-        class="h-8 text-white bg-white/10 hover:bg-white/20 active:bg-white/20! focus:bg-white/20! inline-flex items-center gap-1 rounded-md px-2!"
+        class="h-8 inline-flex items-center gap-1 rounded-md px-2! text-white hover:bg-white/20"
         :title="$t('quick.panel')"
       >
         <CoreAppIcon :name="icons.user" class="w-4 h-4" />
@@ -95,6 +98,8 @@
     healthCheckTooltip: string
     healthWorstCase: string
     healthCounts: Record<string, number>
+    sidebarOpen: boolean
+    quickpanelOpen: boolean
   }>()
 
   defineEmits<{
