@@ -275,13 +275,22 @@
               </span>
               <div class="flex-1 flex items-center gap-2 min-w-0">
                 <CoreAppSelectMenu
-                  v-model="form.netbootProducts"
+                  v-model="form.netbootProduct"
                   :items="netbootProductOptions"
-                  multiple
                   :aria-label="String($t('products.netboot'))"
                   :disabled="loading"
                   size="sm"
                   class="w-full"
+                />
+                <CoreAppButton
+                  v-if="form.netbootProduct"
+                  :icon="icons.x"
+                  :aria-label="String($t('common.clear'))"
+                  :disabled="loading"
+                  variant="ghost"
+                  color="neutral"
+                  size="sm"
+                  @click="form.netbootProduct = ''"
                 />
               </div>
             </div>
@@ -429,7 +438,7 @@
     agentType: 'windows' as 'windows' | 'linux' | 'mac',
     agentUsername: '',
     agentPassword: '',
-    netbootProducts: [] as Array<{ label: string; value: string }>,
+    netbootProduct: '',
     groups: [] as Array<{ label: string; value: string }>,
   })
 
@@ -454,7 +463,7 @@
       form.agentType !== 'windows' ||
       !!form.agentUsername ||
       !!form.agentPassword ||
-      form.netbootProducts.length > 0 ||
+      !!form.netbootProduct ||
       form.groups.length > 0,
   )
 
@@ -555,7 +564,7 @@
     form.agentType = 'windows'
     form.agentUsername = ''
     form.agentPassword = ''
-    form.netbootProducts = []
+    form.netbootProduct = ''
     form.groups = []
     formErrors.clientId = ''
     formErrors.depotId = ''
@@ -721,11 +730,10 @@
         })
       }
 
-      if (form.netbootProducts.length > 0) {
-        const productIds = form.netbootProducts.map((p) => p.value)
+      if (form.netbootProduct) {
         await setClientProductActions({
           clientIds: [hostId],
-          productIds,
+          productIds: [form.netbootProduct],
           actionRequest: 'setup',
         })
       }
