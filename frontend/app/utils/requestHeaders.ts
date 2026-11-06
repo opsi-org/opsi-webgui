@@ -14,6 +14,14 @@ export const urlsWithoutSession = ['/auth/logout', '/user/configuration']
 
 const SESSION_LIFETIME_HEADER = 'X-opsi-session-lifetime'
 
+export function isAuthenticationFailure(status: number, data?: unknown): boolean {
+  if (status === 401) return true
+  if (status !== 403 || !data || typeof data !== 'object') return false
+
+  const response = data as Record<string, unknown>
+  return [response.error, response.message, response.detail].some((value) => typeof value === 'string' && /not authenticated/i.test(value))
+}
+
 export function headersToObject(headers: Headers | Record<string, string> | undefined): Record<string, string> {
   if (!headers) return {}
   if (headers instanceof Headers) {

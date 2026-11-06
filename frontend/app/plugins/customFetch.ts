@@ -11,7 +11,7 @@
  */
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 import { useUserStore } from '~/stores/userStore'
-import { headersToObject, mergeRequestHeaders, shouldSendSessionHeader } from '../utils/requestHeaders'
+import { headersToObject, isAuthenticationFailure, mergeRequestHeaders, shouldSendSessionHeader } from '../utils/requestHeaders'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
@@ -35,15 +35,12 @@ export default defineNuxtPlugin((nuxtApp) => {
       options.headers = mergeRequestHeaders(existingHeaders, url, userStore.sessionExpiry, isFormData) as unknown as Headers
     },
     onResponseError({ response }) {
-      if (response.status === 401) {
+      if (isAuthenticationFailure(response.status, response._data)) {
         const userStore = useUserStore()
         if (userStore.username && !userStore.errorLoggedOutShown) {
           userStore.setErrorLoggedOutShown(true)
           userStore.globalError = 'auth.required'
           userStore.logout()
-          if (typeof window !== 'undefined') {
-            window.location.href = '/addons/webgui/app/login'
-          }
         }
       }
     },

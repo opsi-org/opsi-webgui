@@ -37,7 +37,7 @@ from ..utils import (
 logger = get_logger()
 api_router = APIRouter()
 
-PUBLIC_PATHS = ["/api/user/opsiserver"]
+PUBLIC_PATHS = ["/api/user/opsiserver", "/api/auth/logout"]
 
 
 @api_router.get("")

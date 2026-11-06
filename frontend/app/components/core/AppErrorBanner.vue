@@ -12,7 +12,7 @@
 <template>
   <div v-if="visible" class="sticky top-0 z-10 bg-(--color-surface) pb-2">
     <CoreAppAlertInline
-      v-if="error"
+      v-if="error && !isAuthenticationError"
       color="error"
       :title="$t('common.error')"
       :description="error"
@@ -40,4 +40,5 @@
   const { t: $t } = useI18n()
 
   const visible = computed(() => props.show ?? !!props.error)
+  const isAuthenticationError = computed(() => /not authenticated|unauthorized/i.test(props.error || ''))
 </script>
