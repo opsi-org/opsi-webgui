@@ -270,7 +270,7 @@
 <script setup lang="ts">
   import { getActionRequestStatus } from '~/utils/actionRequest'
 
-  import type { ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue } from '~/types'
+  import type { ProductConfigTabsRef, ProductActionRequestChange, EditablePropertyValue, ProductVisibility } from '~/types'
   import { useUiStore } from '~/stores/uiStore'
   import type { TableColumn } from '~/components/core/AppTable.vue'
 
@@ -346,7 +346,7 @@
   const emit = defineEmits<{
     saveAll: [
       processOnDemand: boolean,
-      onDemandOptions?: { productIds?: string[]; visibility?: string; clientIds?: string[] },
+      onDemandOptions?: { productIds?: string[]; visibility?: ProductVisibility; clientIds?: string[] },
       onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void,
     ]
     discardAll: []

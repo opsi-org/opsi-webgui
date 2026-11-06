@@ -384,6 +384,7 @@
     ProductActionRequestChange,
     EditablePropertyValue,
     BulkActionResult,
+    ProductVisibility,
   } from '~/types'
   import type { ProductAdvancedFilters } from '~/components/products/AdvancedFiltersPopover.vue'
   import { getStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
@@ -1002,7 +1003,7 @@
 
   async function handleSaveAll(
     processOnDemand?: boolean,
-    onDemandOptions?: { productIds?: string[]; visibility?: string; clientIds?: string[] },
+    onDemandOptions?: { productIds?: string[]; visibility?: ProductVisibility; clientIds?: string[] },
     onResult?: (result: { type: 'success' | 'error' | 'warning'; message: string }) => void,
   ) {
     if (processOnDemand && processingProcessActions.value) return
@@ -1033,7 +1034,7 @@
           if (processedIds.length > 0) {
             setLiveStatus(processedIds, { kind: 'processing', message: String($t('actions.live.processing')) }, 0)
           }
-          const result = await processActionRequests(clientIds, productIds)
+          const result = await processActionRequests(clientIds, productIds, onDemandOptions?.visibility)
           if (result.error) throw result.error
           const executionResult = normalizeProcessActionResult(result.data, clientIds, {
             noActionRequests: String($t('actions.noActionRequests')),
